@@ -1,7 +1,7 @@
 package com.enonic.wem.api.content.data;
 
 
-import com.enonic.wem.api.content.datatype.DataTypes;
+import com.enonic.wem.api.content.data.datatype.DataTypes;
 
 public final class Text
     extends Data

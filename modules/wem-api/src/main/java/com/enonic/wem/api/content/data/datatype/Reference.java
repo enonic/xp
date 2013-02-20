@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.datatype;
+package com.enonic.wem.api.content.data.datatype;
 
 import com.enonic.wem.api.content.data.Value;
 

@@ -10,8 +10,8 @@ import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Entry;
-import com.enonic.wem.api.content.datatype.BaseDataType;
-import com.enonic.wem.api.content.datatype.DataTypes;
+import com.enonic.wem.api.content.data.datatype.BaseDataType;
+import com.enonic.wem.api.content.data.datatype.DataTypes;
 
 
 public final class EntryXmlSerializer

@@ -16,7 +16,7 @@ import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.DataSetArray;
 import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.EntryPath;
-import com.enonic.wem.api.content.datatype.DataTypes;
+import com.enonic.wem.api.content.data.datatype.DataTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.MockContentTypeFetcher;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;

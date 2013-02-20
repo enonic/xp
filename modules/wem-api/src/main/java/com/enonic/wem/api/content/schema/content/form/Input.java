@@ -4,8 +4,8 @@ package com.enonic.wem.api.content.schema.content.form;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.datatype.InvalidDataTypeException;
-import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
+import com.enonic.wem.api.content.data.datatype.InvalidDataTypeException;
+import com.enonic.wem.api.content.data.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.schema.content.form.inputtype.BaseInputType;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputType;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypeConfig;

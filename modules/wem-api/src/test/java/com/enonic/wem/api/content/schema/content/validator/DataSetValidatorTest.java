@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.datatype.DataTypes;
+import com.enonic.wem.api.content.data.datatype.DataTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
 import com.enonic.wem.api.content.schema.content.form.inputtype.HtmlAreaConfig;

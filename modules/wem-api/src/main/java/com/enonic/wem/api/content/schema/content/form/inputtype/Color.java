@@ -4,12 +4,12 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.datatype.DataTypes;
-import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
+import com.enonic.wem.api.content.data.datatype.DataTypes;
+import com.enonic.wem.api.content.data.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
-import static com.enonic.wem.api.content.datatype.DataTool.newDataChecker;
+import static com.enonic.wem.api.content.data.datatype.DataTool.newDataChecker;
 
 public class Color
     extends BaseInputType

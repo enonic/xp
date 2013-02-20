@@ -2,8 +2,8 @@ package com.enonic.wem.api.content.schema.content.form;
 
 
 import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.datatype.InvalidDataTypeException;
-import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
+import com.enonic.wem.api.content.data.datatype.InvalidDataTypeException;
+import com.enonic.wem.api.content.data.datatype.InvalidValueTypeException;
 
 public class InvalidDataException
     extends RuntimeException

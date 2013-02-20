@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
+import com.enonic.wem.api.content.data.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 

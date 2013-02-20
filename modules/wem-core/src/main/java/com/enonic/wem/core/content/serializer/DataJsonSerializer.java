@@ -7,8 +7,8 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.datatype.BaseDataType;
-import com.enonic.wem.api.content.datatype.DataTypes;
+import com.enonic.wem.api.content.data.datatype.BaseDataType;
+import com.enonic.wem.api.content.data.datatype.DataTypes;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
