@@ -16,7 +16,7 @@ public class DataValidationError
     DataValidationError( final FormItemPath path, final String errorMessage, final Object... args )
     {
         this.path = path;
-        this.errorMessage = MessageFormat.format( errorMessage, args );
+        this.errorMessage = args.length == 0 ? errorMessage : MessageFormat.format( errorMessage, args );
     }
 
     public FormItemPath getPath()

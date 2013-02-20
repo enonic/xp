@@ -19,63 +19,57 @@ import com.enonic.wem.api.content.schema.type.form.InvalidDataException;
  * Validates that given DataSet is valid, meaning it is of valid:
  * type, format, value.
  */
-public class DataSetValidator
+public final class DataSetValidator
 {
-    private ContentType contentType;
+    private final ContentType contentType;
 
-    private boolean recordExceptions = false;
-
-    private boolean checkValidationRegexp;
-
-    private final List<InvalidDataException> invalidDataExceptions = new ArrayList<>();
-
-    private DataSetValidator()
+    public DataSetValidator( final ContentType contentType )
     {
-        // Protection
+        Preconditions.checkNotNull( contentType, "contentType is required" );
+        this.contentType = contentType;
     }
 
-    public void validate( final DataSet dataSet )
+    public DataValidationErrors validate( final DataSet dataSet )
         throws InvalidDataException
     {
-        doValidateEntries( dataSet );
+        final List<DataValidationError> validationErrors = new ArrayList<>();
+
+        validateEntries( dataSet, validationErrors );
+
+        return DataValidationErrors.from( validationErrors );
     }
 
-    public List<InvalidDataException> getInvalidDataExceptions()
-    {
-        return invalidDataExceptions;
-    }
-
-    private void doValidateEntries( final Iterable<Entry> entries )
+    private void validateEntries( final Iterable<Entry> entries, final List<DataValidationError> validationErrors )
     {
         for ( Entry data : entries )
         {
-            doValidateData( data );
+            validateData( data, validationErrors );
         }
     }
 
-    private void doValidateData( final Entry entry )
+    private void validateData( final Entry entry, final List<DataValidationError> validationErrors )
         throws InvalidDataException
     {
         if ( entry.isDataSet() )
         {
-            doValidateDataSet( entry.toDataSet() );
+            validateDataSet( entry.toDataSet(), validationErrors );
         }
         else
         {
-            checkDataTypeValidity( entry.toData() );
+            checkDataTypeValidity( entry.toData(), validationErrors );
 
             final FormItem formItem = contentType.form().getFormItem( entry.getPath().resolveFormItemPath().toString() );
             if ( formItem != null )
             {
                 if ( formItem instanceof Input )
                 {
-                    checkInputValidity( entry.toData(), (Input) formItem );
+                    checkInputValidity( entry.toData(), (Input) formItem, validationErrors );
                 }
             }
         }
     }
 
-    private void doValidateDataSet( final DataSet dataSet )
+    private void validateDataSet( final DataSet dataSet, final List<DataValidationError> validationErrors )
     {
         final String path = dataSet.getPath().resolveFormItemPath().toString();
         final FormItem formItem = contentType.form().getFormItem( path );
@@ -88,7 +82,7 @@ public class DataSetValidator
                     final FormItem subFormItem = contentType.form().getFormItem( entry.getPath().resolveFormItemPath().toString() );
                     if ( subFormItem instanceof Input )
                     {
-                        checkInputValidity( entry.toData(), (Input) subFormItem );
+                        checkInputValidity( entry.toData(), (Input) subFormItem, validationErrors );
                     }
                 }
             }
@@ -100,11 +94,11 @@ public class DataSetValidator
         }
         else
         {
-            doValidateEntries( dataSet );
+            validateEntries( dataSet, validationErrors );
         }
     }
 
-    private void checkDataTypeValidity( final Data data )
+    private void checkDataTypeValidity( final Data data, final List<DataValidationError> validationErrors )
     {
         try
         {
@@ -112,11 +106,11 @@ public class DataSetValidator
         }
         catch ( InvalidDataException e )
         {
-            registerInvalidDataException( e );
+            validationErrors.add( translateInvalidDataException( e ) );
         }
     }
 
-    private void checkInputValidity( final Data data, final Input input )
+    private void checkInputValidity( final Data data, final Input input, final List<DataValidationError> validationErrors )
     {
         try
         {
@@ -124,65 +118,25 @@ public class DataSetValidator
         }
         catch ( InvalidDataException e )
         {
-            registerInvalidDataException( e );
+            validationErrors.add( translateInvalidDataException( e ) );
         }
 
-        if ( checkValidationRegexp )
+        try
         {
-            try
+            if ( input.getValidationRegexp() != null )
             {
                 input.checkValidationRegexp( data );
             }
-            catch ( InvalidDataException e )
-            {
-                registerInvalidDataException( e );
-            }
+        }
+        catch ( InvalidDataException e )
+        {
+            validationErrors.add( translateInvalidDataException( e ) );
         }
     }
 
-    private void registerInvalidDataException( final InvalidDataException invalidDataException )
+    private DataValidationError translateInvalidDataException( final InvalidDataException invalidDataException )
     {
-        if ( !recordExceptions )
-        {
-            throw invalidDataException;
-        }
-
-        invalidDataExceptions.add( invalidDataException );
-    }
-
-    public static Builder newValidator()
-    {
-        return new Builder();
-    }
-
-    public static class Builder
-    {
-        private DataSetValidator validator = new DataSetValidator();
-
-        public Builder contentType( ContentType contentType )
-        {
-            validator.contentType = contentType;
-            return this;
-        }
-
-        public Builder recordExceptions( boolean value )
-        {
-            validator.recordExceptions = value;
-            return this;
-        }
-
-        public Builder checkValidationRegexp( boolean value )
-        {
-            validator.checkValidationRegexp = value;
-            return this;
-        }
-
-        public DataSetValidator build()
-        {
-            Preconditions.checkNotNull( validator.contentType, "contentType is required" );
-            return validator;
-        }
-
+        return new DataValidationError( invalidDataException.getData().getPath().resolveFormItemPath(), invalidDataException.getMessage() );
     }
 
 }

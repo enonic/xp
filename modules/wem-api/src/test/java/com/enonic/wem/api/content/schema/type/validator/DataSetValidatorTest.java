@@ -3,20 +3,12 @@ package com.enonic.wem.api.content.schema.type.validator;
 import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.datatype.DataTypes;
-import com.enonic.wem.api.content.datatype.InvalidDataTypeException;
-import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.schema.type.ContentType;
-import com.enonic.wem.api.content.schema.type.form.BreaksRegexValidationException;
-import com.enonic.wem.api.content.schema.type.form.FieldSet;
 import com.enonic.wem.api.content.schema.type.form.FormItemSet;
-import com.enonic.wem.api.content.schema.type.form.InvalidDataException;
-import com.enonic.wem.api.content.schema.type.form.InvalidValueException;
 import com.enonic.wem.api.content.schema.type.form.inputtype.HtmlAreaConfig;
 import com.enonic.wem.api.content.schema.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.schema.type.form.inputtype.SingleSelectorConfig;
@@ -26,7 +18,6 @@ import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.schema.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.schema.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.schema.type.form.Input.newInput;
-import static com.enonic.wem.api.content.schema.type.validator.DataSetValidator.newValidator;
 import static org.junit.Assert.*;
 
 
@@ -57,15 +48,10 @@ public class DataSetValidatorTest
         content.setData( "mySingleSelector", "nonExistingOption" );
 
         // exercise & verify
-        DataSetValidator validator = newValidator().contentType( contentType ).recordExceptions( true ).build();
-        try
-        {
-            validator.validate( content.getRootDataSet() );
-        }
-        catch ( Throwable e )
-        {
-            fail( "ContentDataValidator is not supposed to throw any exception" );
-        }
+        DataSetValidator validator = new DataSetValidator( contentType );
+        DataValidationErrors validationErrors = validator.validate( content.getRootDataSet() );
+        assertTrue( validationErrors.hasErrors() );
+        assertEquals( "mySingleSelector", validationErrors.getFirst().getPath().toString() );
     }
 
     @Test
@@ -85,16 +71,10 @@ public class DataSetValidatorTest
         content.setData( "mySingleSelector2", "nonExistingOption" );
 
         // exercise & verify
-        DataSetValidator validator = newValidator().contentType( contentType ).recordExceptions( true ).build();
-        try
-        {
-            validator.validate( content.getRootDataSet() );
-        }
-        catch ( Throwable e )
-        {
-            fail( "ContentDataValidator is not supposed to throw any exception" );
-        }
-        assertEquals( 2, validator.getInvalidDataExceptions().size() );
+        DataSetValidator validator = new DataSetValidator( contentType );
+        DataValidationErrors validationErrors = validator.validate( content.getRootDataSet() );
+        assertTrue( validationErrors.hasErrors() );
+        assertEquals( 2, validationErrors.size() );
     }
 
     @Test
@@ -124,146 +104,9 @@ public class DataSetValidatorTest
         content.setData( "myHtmlArea", "<h1>Hello world</h1>" );
 
         // exercise
-        DataSetValidator validator = newValidator().contentType( contentType ).build();
-        validator.validate( content.getRootDataSet() );
-    }
-
-    @Test
-    public void given_invalid_data_according_to_inputs_validationRegex_when_validate_then_exception()
-    {
-        // setup
-        contentType.form().addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).validationRegexp( "a*c" ).build() );
-
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "myTextLine", "aax" );
-
-        // exercise
-        DataSetValidator validator = newValidator().contentType( contentType ).checkValidationRegexp( true ).build();
-        validateAndAssertInvalidDataException( validator, content, BreaksRegexValidationException.class, content.getData( "myTextLine" ) );
-    }
-
-    @Test
-    @Ignore
-    public void given_content_with_invalid_dataSet_according_to_input_inside_a_formItemSet_when_validate_then_exception_is_thrown()
-    {
-        // setup
-        FormItemSet formItemSet = newFormItemSet().name( "mySet" ).build();
-        contentType.form().addFormItem( formItemSet );
-        formItemSet.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
-
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "mySet.myColor.red", 0l );
-        content.setData( "mySet.myColor.green", 0l );
-        content.setData( "mySet.myColor.blue", -1l );
-
-        // exercise
-        DataSetValidator validator = newValidator().contentType( contentType ).build();
-        validateAndAssertInvalidDataException( validator, content, InvalidValueException.class, content.getData( "mySet.myColor" ) );
-
-    }
-
-    @Test
-    @Ignore
-    public void given_content_with_invalid_dataSet_according_to_input_inside_a_layout_when_validate_then_exception_is_thrown()
-    {
-        // setup
-        FieldSet layout = FieldSet.newFieldSet().name( "mySet" ).label( "Label" ).build();
-        contentType.form().addFormItem( layout );
-        layout.addFormItem( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
-
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "myColor.red", 0l );
-        content.setData( "myColor.green", 0l );
-        content.setData( "myColor.blue", -1l );
-
-        // exercise
-        DataSetValidator validator = newValidator().contentType( contentType ).build();
-        validateAndAssertInvalidDataException( validator, content, InvalidValueException.class, content.getData( "myColor" ) );
-
-    }
-
-    @Test
-    @Ignore
-    public void given_content_with_invalid_dataSet_according_to_dataType_inside_a_formItemSet_when_validate_then_exception_is_thrown()
-    {
-        // setup
-        FormItemSet formItemSet = newFormItemSet().name( "mySet" ).build();
-        contentType.form().addFormItem( formItemSet );
-        formItemSet.add( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
-
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "mySet.myGeoLocation.latitude", 0.0 );
-        content.setData( "mySet.myGeoLocation.longitude", -181.00 );
-
-        // exercise
-        DataSetValidator validator = newValidator().contentType( contentType ).build();
-        validateAndAssertInvalidDataException( validator, content, InvalidValueException.class, content.getData( "mySet.myGeoLocation" ) );
-    }
-
-    @Test
-    public void given_content_with_invalid_data_according_to_dataType_inside_a_formItemSet_when_validate_then_exception_is_thrown()
-    {
-        // setup
-        FormItemSet formItemSet = newFormItemSet().name( "mySet" ).build();
-        contentType.form().addFormItem( formItemSet );
-        formItemSet.add( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
-
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "mySet.myDate", "2000-01-01" );
-
-        // exercise
-        DataSetValidator validator = newValidator().contentType( contentType ).build();
-        validateAndAssertInvalidDataException( validator, content, InvalidValueTypeException.class, content.getData( "mySet.myDate" ) );
-    }
-
-    @Test
-    public void given_nonExistingValue_for_radio_button_when_checkValidity_then_InvalidDataException_is_thrown()
-    {
-        // setup
-        SingleSelectorConfig singleSelectorConfig =
-            SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "Option 1", "o1" ).build();
-
-        contentType.form().addFormItem(
-            newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
-
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "mySingleSelector", "nonExistingOption" );
-
-        // exercise
-        DataSetValidator validator = newValidator().contentType( contentType ).build();
-        validateAndAssertInvalidDataException( validator, content, InvalidValueException.class, content.getData( "mySingleSelector" ) );
-    }
-
-    @Test
-    @Ignore
-    public void given_illegal_type_for_longitude_when_checkValidity_then_InvalidDataException_is_thrown()
-    {
-        // setup
-        contentType.form().addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
-
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "myGeoLocation.latitude", 0.0 );
-        content.setData( "myGeoLocation.longitude", "0.0" );
-
-        // exercise
-        DataSetValidator validator = newValidator().contentType( contentType ).build();
-        validateAndAssertInvalidDataException( validator, content, InvalidDataTypeException.class, content.getData( "myGeoLocation" ) );
-    }
-
-    @Test
-    @Ignore
-    public void given_illegal_value_for_a_dataSet_defined_by_a_dataType_when_checkValidity_then_InvalidDataException_is_thrown()
-    {
-        // setup:
-        contentType.form().addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
-
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "myGeoLocation.latitude", 0.0 );
-        content.setData( "myGeoLocation.longitude", -181.00 );
-
-        // exercise
-        DataSetValidator validator = newValidator().contentType( contentType ).build();
-        validateAndAssertInvalidDataException( validator, content, InvalidValueException.class, content.getData( "myGeoLocation" ) );
+        DataSetValidator validator = new DataSetValidator( contentType );
+        DataValidationErrors validationErrors = validator.validate( content.getRootDataSet() );
+        assertFalse( validationErrors.hasErrors() );
     }
 
     @Test
@@ -298,23 +141,9 @@ public class DataSetValidatorTest
         Assert.assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getObject() );
 
         // verify
-        DataSetValidator validator = newValidator().contentType( contentType ).build();
-        validator.validate( content.getRootDataSet() );
+        DataSetValidator validator = new DataSetValidator( contentType );
+        DataValidationErrors validationErrors = validator.validate( content.getRootDataSet() );
+        assertFalse( validationErrors.hasErrors() );
     }
 
-    private void validateAndAssertInvalidDataException( DataSetValidator validator, Content content, Class cause, Data data )
-    {
-        try
-        {
-            validator.validate( content.getRootDataSet() );
-            fail( "Expected " + InvalidDataException.class.getSimpleName() );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( "Expected exception " + InvalidDataException.class.getSimpleName(), InvalidDataException.class.isInstance( e ) );
-            assertTrue( "Expected cause " + cause.getSimpleName(), cause.isInstance( e.getCause() ) );
-            InvalidDataException invalidDataException = (InvalidDataException) e;
-            assertEquals( data.getPath(), invalidDataException.getData().getPath() );
-        }
-    }
 }
