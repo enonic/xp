@@ -32,26 +32,6 @@ import static junit.framework.Assert.assertTrue;
 public class Content_usageTest
 {
     @Test
-    public void content_setData()
-    {
-        Content content = newContent().name( "myContent" ).build();
-
-        // exercise
-        content.setData( "myText", "abc" );
-        content.setData( "myNum", 123L );
-        content.setData( "myDate", new DateMidnight( 2013, 1, 13 ) );
-        content.setData( "myDec", 123.123 );
-        content.setData( "myHtml", "<p>abc</p>", HTML_PART );
-
-        // verify
-        assertEquals( TEXT, content.getData( "myText" ).getType() );
-        assertEquals( WHOLE_NUMBER, content.getData( "myNum" ).getType() );
-        assertEquals( DATE, content.getData( "myDate" ).getType() );
-        assertEquals( DECIMAL_NUMBER, content.getData( "myDec" ).getType() );
-        assertEquals( HTML_PART, content.getData( "myHtml" ).getType() );
-    }
-
-    @Test
     public void dataSet_setData()
     {
         Content content = newContent().name( "myContent" ).build();
@@ -62,7 +42,7 @@ public class Content_usageTest
         dataSet.setData( "myNum", 123L );
         dataSet.setData( "myDate", new DateMidnight( 2013, 1, 13 ) );
         dataSet.setData( "myDec", 123.123 );
-        content.setData( "myHtml", "<p>abc</p>", HTML_PART );
+        dataSet.setData( "myHtml", HTML_PART, "<p>abc</p>" );
 
         // verify
         assertEquals( TEXT, content.getData( "myText" ).getType() );

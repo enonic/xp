@@ -45,7 +45,7 @@ public class DataSetValidatorTest
             newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "mySingleSelector", "nonExistingOption" );
+        content.getRootDataSet().setData( "mySingleSelector", "nonExistingOption" );
 
         // exercise & verify
         DataSetValidator validator = new DataSetValidator( contentType );
@@ -67,8 +67,8 @@ public class DataSetValidatorTest
             newInput().name( "mySingleSelector2" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "mySingleSelector1", "nonExistingOption" );
-        content.setData( "mySingleSelector2", "nonExistingOption" );
+        content.getRootDataSet().setData( "mySingleSelector1", "nonExistingOption" );
+        content.getRootDataSet().setData( "mySingleSelector2", "nonExistingOption" );
 
         // exercise & verify
         DataSetValidator validator = new DataSetValidator( contentType );
@@ -98,10 +98,10 @@ public class DataSetValidatorTest
         contentType.form().addFormItem( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "myDate", new DateMidnight( 2012, 9, 11 ) );
-        content.setData( "myDecimalNumber", 12.34 );
-        content.setData( "mySingleSelector", "o1" );
-        content.setData( "myHtmlArea", "<h1>Hello world</h1>" );
+        content.getRootDataSet().setData( "myDate", new DateMidnight( 2012, 9, 11 ) );
+        content.getRootDataSet().setData( "myDecimalNumber", 12.34 );
+        content.getRootDataSet().setData( "mySingleSelector", "o1" );
+        content.getRootDataSet().setData( "myHtmlArea", "<h1>Hello world</h1>" );
 
         // exercise
         DataSetValidator validator = new DataSetValidator( contentType );
@@ -114,13 +114,13 @@ public class DataSetValidatorTest
     {
         // setup
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "name", "Thomas" );
-        content.setData( "personalia.eyeColour", "Blue" );
-        content.setData( "personalia.hairColour", "Blonde" );
-        content.setData( "crimes[0].description", "Stole tomatoes from neighbour" );
-        content.setData( "crimes[0].year", "1989" );
-        content.setData( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
-        content.setData( "crimes[1].year", "1990" );
+        content.getRootDataSet().setData( "name", "Thomas" );
+        content.getRootDataSet().setData( "personalia.eyeColour", "Blue" );
+        content.getRootDataSet().setData( "personalia.hairColour", "Blonde" );
+        content.getRootDataSet().setData( "crimes[0].description", "Stole tomatoes from neighbour" );
+        content.getRootDataSet().setData( "crimes[0].year", "1989" );
+        content.getRootDataSet().setData( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
+        content.getRootDataSet().setData( "crimes[1].year", "1990" );
 
         assertEquals( DataTypes.TEXT, content.getData( "personalia.eyeColour" ).getType() );
         Assert.assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getObject() );

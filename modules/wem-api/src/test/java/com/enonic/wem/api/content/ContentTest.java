@@ -52,7 +52,7 @@ public class ContentTest
     public void array_getting_entry_from_array_of_size_one()
     {
         Content content = newContent().build();
-        content.setData( "array[0]", "First" );
+        content.getRootDataSet().setData( "array[0]", "First" );
 
         assertEquals( "First", content.getData( "array" ).getObject() );
         assertEquals( "First", content.getData( "array[0]" ).getObject() );
@@ -62,8 +62,8 @@ public class ContentTest
     public void array_getting_entries_from_array_of_size_two()
     {
         Content content = newContent().build();
-        content.setData( "array[0]", "First" );
-        content.setData( "array[1]", "Second" );
+        content.getRootDataSet().setData( "array[0]", "First" );
+        content.getRootDataSet().setData( "array[1]", "Second" );
 
         Data array = content.getData( "array" );
         assertEquals( "First", array.getObject() );
@@ -97,9 +97,9 @@ public class ContentTest
     public void array_getting_entries_from_array_of_size_three()
     {
         Content content = newContent().build();
-        content.setData( "array[0]", "First" );
-        content.setData( "array[1]", "Second" );
-        content.setData( "array[2]", "Third" );
+        content.getRootDataSet().setData( "array[0]", "First" );
+        content.getRootDataSet().setData( "array[1]", "Second" );
+        content.getRootDataSet().setData( "array[2]", "Third" );
 
         assertEquals( "First", content.getData( "array" ).getObject() );
         assertEquals( "First", content.getData( "array[0]" ).getObject() );
@@ -113,9 +113,9 @@ public class ContentTest
     public void array_overwriting_does_not_create_array()
     {
         Content content = newContent().build();
-        content.setData( "noArray", "First" );
-        content.setData( "noArray", "Second" );
-        content.setData( "noArray", "Third" );
+        content.getRootDataSet().setData( "noArray", "First" );
+        content.getRootDataSet().setData( "noArray", "Second" );
+        content.getRootDataSet().setData( "noArray", "Third" );
 
         assertEquals( "Third", content.getData( "noArray" ).getObject() );
     }
@@ -124,9 +124,9 @@ public class ContentTest
     public void array_setData_assigning_same_array_element_a_second_time_ovewrites_the_first_value()
     {
         Content content = newContent().build();
-        content.setData( "array[0]", "First" );
-        content.setData( "array[1]", "Second" );
-        content.setData( "array[1]", "Second again" );
+        content.getRootDataSet().setData( "array[0]", "First" );
+        content.getRootDataSet().setData( "array[1]", "Second" );
+        content.getRootDataSet().setData( "array[1]", "Second again" );
 
         assertEquals( "First", content.getData( "array[0]" ).getObject() );
         assertEquals( "Second again", content.getData( "array[1]" ).getObject() );
@@ -137,8 +137,8 @@ public class ContentTest
     public void array_setData_setting_second_data_with_same_path_at_index_1_creates_array_of_size_2()
     {
         Content content = newContent().build();
-        content.setData( "myArray", "First" );
-        content.setData( "myArray[1]", "Second" );
+        content.getRootDataSet().setData( "myArray", "First" );
+        content.getRootDataSet().setData( "myArray[1]", "Second" );
 
         assertEquals( true, content.getData( "myArray" ).isArray() );
         assertEquals( 2, content.getData( "myArray" ).getArray().size() );
@@ -151,8 +151,8 @@ public class ContentTest
     public void array_setData_array_within_set()
     {
         Content content = newContent().build();
-        content.setData( "set.myArray[0]", "First" );
-        content.setData( "set.myArray[1]", "Second" );
+        content.getRootDataSet().setData( "set.myArray[0]", "First" );
+        content.getRootDataSet().setData( "set.myArray[1]", "Second" );
 
         assertEquals( "First", content.getData( "set.myArray[0]" ).getObject() );
         assertEquals( "Second", content.getData( "set.myArray[1]" ).getObject() );
@@ -165,8 +165,8 @@ public class ContentTest
     public void array_setData_array_of_set_within_set()
     {
         Content content = newContent().build();
-        content.setData( "company.address[0].street", "Kirkegata 1-3" );
-        content.setData( "company.address[1].street", "Sonsteli" );
+        content.getRootDataSet().setData( "company.address[0].street", "Kirkegata 1-3" );
+        content.getRootDataSet().setData( "company.address[1].street", "Sonsteli" );
 
         assertEquals( "Kirkegata 1-3", content.getData( "company.address[0].street" ).getString() );
         assertEquals( "Sonsteli", content.getData( "company.address[1].street" ).getString() );
@@ -200,8 +200,8 @@ public class ContentTest
     public void array_set()
     {
         Content content = newContent().build();
-        content.setData( "set[0].myText", "First" );
-        content.setData( "set[1].myText", "Second" );
+        content.getRootDataSet().setData( "set[0].myText", "First" );
+        content.getRootDataSet().setData( "set[1].myText", "Second" );
 
         assertEquals( "First", content.getData( "set.myText" ).getObject() );
         assertEquals( "First", content.getData( "set[0].myText" ).getObject() );
@@ -221,10 +221,10 @@ public class ContentTest
     public void array_set2()
     {
         Content content = newContent().build();
-        content.setData( "set[0].myText", "First" );
-        content.setData( "set[0].myOther", "First other" );
-        content.setData( "set[1].myText", "Second" );
-        content.setData( "set[1].myOther", "Second other" );
+        content.getRootDataSet().setData( "set[0].myText", "First" );
+        content.getRootDataSet().setData( "set[0].myOther", "First other" );
+        content.getRootDataSet().setData( "set[1].myText", "Second" );
+        content.getRootDataSet().setData( "set[1].myOther", "Second other" );
 
         assertEquals( "First", content.getData( "set[0].myText" ).getObject() );
         assertEquals( "First other", content.getData( "set[0].myOther" ).getObject() );
@@ -245,7 +245,7 @@ public class ContentTest
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "myTags", "A line of text" );
+        content.getRootDataSet().setData( "myTags", "A line of text" );
 
         assertEquals( "A line of text", content.getData( "myTags" ).getObject() );
     }
@@ -263,9 +263,9 @@ public class ContentTest
         contentType.form().mixinReferencesToFormItems( mixinFetcher );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "myTags[0]", "Java" );
-        content.setData( "myTags[1]", "XML" );
-        content.setData( "myTags[2]", "JSON" );
+        content.getRootDataSet().setData( "myTags[0]", "Java" );
+        content.getRootDataSet().setData( "myTags[1]", "XML" );
+        content.getRootDataSet().setData( "myTags[2]", "JSON" );
 
         assertEquals( "Java", content.getData( "myTags" ).getString( 0 ) );
         assertEquals( "XML", content.getData( "myTags" ).getString( 1 ) );
@@ -278,7 +278,7 @@ public class ContentTest
         contentType.form().addFormItem( newInput().name( "myPhone" ).type( InputTypes.PHONE ).required( true ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "myPhone", "98327891" );
+        content.getRootDataSet().setData( "myPhone", "98327891" );
 
         assertEquals( "98327891", content.getData( "myPhone" ).getObject() );
     }
@@ -294,9 +294,9 @@ public class ContentTest
         formItemSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "name", "Ola Nordmann" );
-        content.setData( "personalia.eyeColour", "Blue" );
-        content.setData( "personalia.hairColour", "Blonde" );
+        content.getRootDataSet().setData( "name", "Ola Nordmann" );
+        content.getRootDataSet().setData( "personalia.eyeColour", "Blue" );
+        content.getRootDataSet().setData( "personalia.hairColour", "Blonde" );
 
         assertEquals( "Ola Nordmann", content.getData( "name" ).getObject() );
         assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getObject() );
@@ -316,13 +316,13 @@ public class ContentTest
         formItemSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "name", "Norske" );
-        content.setData( "personalia[0].name", "Ola Nordmann" );
-        content.setData( "personalia[0].eyeColour", "Blue" );
-        content.setData( "personalia[0].hairColour", "Blonde" );
-        content.setData( "personalia[1].name", "Kari Trestakk" );
-        content.setData( "personalia[1].eyeColour", "Green" );
-        content.setData( "personalia[1].hairColour", "Brown" );
+        content.getRootDataSet().setData( "name", "Norske" );
+        content.getRootDataSet().setData( "personalia[0].name", "Ola Nordmann" );
+        content.getRootDataSet().setData( "personalia[0].eyeColour", "Blue" );
+        content.getRootDataSet().setData( "personalia[0].hairColour", "Blonde" );
+        content.getRootDataSet().setData( "personalia[1].name", "Kari Trestakk" );
+        content.getRootDataSet().setData( "personalia[1].eyeColour", "Green" );
+        content.getRootDataSet().setData( "personalia[1].hairColour", "Brown" );
 
         assertEquals( "Norske", content.getData( "name" ).getObject() );
         assertEquals( "Ola Nordmann", content.getData( "personalia[0].name" ).getObject() );
@@ -337,16 +337,16 @@ public class ContentTest
     public void unstructured()
     {
         Content content = newContent().build();
-        content.setData( "firstName", "Thomas", DataTypes.TEXT );
-        content.setData( "description", "Grew up in Noetteveien", DataTypes.HTML_PART );
-        content.setData( "child[0].name", "Joachim" );
-        content.setData( "child[0].age", "9" );
-        content.setData( "child[0].features.eyeColour", "Blue" );
-        content.setData( "child[0].features.hairColour", "Blonde" );
-        content.setData( "child[1].name", "Madeleine" );
-        content.setData( "child[1].age", "7" );
-        content.setData( "child[1].features.eyeColour", "Brown" );
-        content.setData( "child[1].features.hairColour", "Black" );
+        content.getRootDataSet().setData( "firstName", DataTypes.TEXT, "Thomas" );
+        content.getRootDataSet().setData( "description", DataTypes.HTML_PART, "Grew up in Noetteveien" );
+        content.getRootDataSet().setData( "child[0].name", "Joachim" );
+        content.getRootDataSet().setData( "child[0].age", "9" );
+        content.getRootDataSet().setData( "child[0].features.eyeColour", "Blue" );
+        content.getRootDataSet().setData( "child[0].features.hairColour", "Blonde" );
+        content.getRootDataSet().setData( "child[1].name", "Madeleine" );
+        content.getRootDataSet().setData( "child[1].age", "7" );
+        content.getRootDataSet().setData( "child[1].features.eyeColour", "Brown" );
+        content.getRootDataSet().setData( "child[1].features.hairColour", "Black" );
 
         assertEquals( "Thomas", content.getData( "firstName" ).getObject() );
         assertEquals( DataTypes.TEXT, content.getData( "firstName" ).getType() );
@@ -365,14 +365,14 @@ public class ContentTest
     public void unstructured_getEntries()
     {
         Content content = newContent().build();
-        content.setData( "child[0].name", "Joachim" );
-        content.setData( "child[0].age", "9" );
-        content.setData( "child[0].features.eyeColour", "Blue" );
-        content.setData( "child[0].features.hairColour", "Blonde" );
-        content.setData( "child[1].name", "Madeleine" );
-        content.setData( "child[1].age", "7" );
-        content.setData( "child[1].features.eyeColour", "Brown" );
-        content.setData( "child[1].features.hairColour", "Black" );
+        content.getRootDataSet().setData( "child[0].name", "Joachim" );
+        content.getRootDataSet().setData( "child[0].age", "9" );
+        content.getRootDataSet().setData( "child[0].features.eyeColour", "Blue" );
+        content.getRootDataSet().setData( "child[0].features.hairColour", "Blonde" );
+        content.getRootDataSet().setData( "child[1].name", "Madeleine" );
+        content.getRootDataSet().setData( "child[1].age", "7" );
+        content.getRootDataSet().setData( "child[1].features.eyeColour", "Brown" );
+        content.getRootDataSet().setData( "child[1].features.hairColour", "Black" );
 
         DataSet child0 = content.getEntry( "child[0]" ).toDataSet();
         assertEquals( "Joachim", child0.getData( "name" ).getObject() );
@@ -398,14 +398,14 @@ public class ContentTest
         contentType.form().addFormItem( child );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "child[0].name", "Joachim" );
-        content.setData( "child[0].age", "9" );
-        content.setData( "child[0].features.eyeColour", "Blue" );
-        content.setData( "child[0].features.hairColour", "Blonde" );
-        content.setData( "child[1].name", "Madeleine" );
-        content.setData( "child[1].age", "7" );
-        content.setData( "child[1].features.eyeColour", "Brown" );
-        content.setData( "child[1].features.hairColour", "Black" );
+        content.getRootDataSet().setData( "child[0].name", "Joachim" );
+        content.getRootDataSet().setData( "child[0].age", "9" );
+        content.getRootDataSet().setData( "child[0].features.eyeColour", "Blue" );
+        content.getRootDataSet().setData( "child[0].features.hairColour", "Blonde" );
+        content.getRootDataSet().setData( "child[1].name", "Madeleine" );
+        content.getRootDataSet().setData( "child[1].age", "7" );
+        content.getRootDataSet().setData( "child[1].features.eyeColour", "Brown" );
+        content.getRootDataSet().setData( "child[1].features.hairColour", "Black" );
 
         DataSet child0 = content.getEntry( "child[0]" ).toDataSet();
         assertEquals( "Joachim", child0.getData( "name" ).getObject() );
@@ -423,9 +423,9 @@ public class ContentTest
     {
         // setup
         Content content = newContent().build();
-        content.setData( "name", "Thomas" );
-        content.setData( "personalia.eyeColour", "Blue", DataTypes.TEXT );
-        content.setData( "personalia.hairColour", "Blonde" );
+        content.getRootDataSet().setData( "name", "Thomas" );
+        content.getRootDataSet().setData( "personalia.eyeColour", DataTypes.TEXT, "Blue" );
+        content.getRootDataSet().setData( "personalia.hairColour", "Blonde" );
 
         assertEquals( DataTypes.TEXT, content.getData( "personalia.eyeColour" ).getType() );
         assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getObject() );
@@ -459,11 +459,11 @@ public class ContentTest
         contentType.form().mixinReferencesToFormItems( mixinFetcher );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "name", "Ola Normann" );
-        content.setData( "address.street", "Bakkebygrenda 1" );
-        content.setData( "address.postalCode", "2676" );
-        content.setData( "address.postalPlace", "Heidal" );
-        content.setData( "address.country", "NO" );
+        content.getRootDataSet().setData( "name", "Ola Normann" );
+        content.getRootDataSet().setData( "address.street", "Bakkebygrenda 1" );
+        content.getRootDataSet().setData( "address.postalCode", "2676" );
+        content.getRootDataSet().setData( "address.postalPlace", "Heidal" );
+        content.getRootDataSet().setData( "address.country", "NO" );
 
         assertEquals( "Ola Normann", content.getData( "name" ).getString() );
         assertEquals( "Bakkebygrenda 1", content.getData( "address.street" ).getString() );
@@ -491,16 +491,16 @@ public class ContentTest
         contentType.form().mixinReferencesToFormItems( mixinFetcher );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "address[0].label", "Home" );
-        content.setData( "address[0].street", "Bakkebygrenda 1" );
-        content.setData( "address[0].postalCode", "2676" );
-        content.setData( "address[0].postalPlace", "Heidal" );
-        content.setData( "address[0].country", "NO" );
-        content.setData( "address[1].label", "Cabin" );
-        content.setData( "address[1].street", "Heia" );
-        content.setData( "address[1].postalCode", "2676" );
-        content.setData( "address[1].postalPlace", "Gjende" );
-        content.setData( "address[1].country", "NO" );
+        content.getRootDataSet().setData( "address[0].label", "Home" );
+        content.getRootDataSet().setData( "address[0].street", "Bakkebygrenda 1" );
+        content.getRootDataSet().setData( "address[0].postalCode", "2676" );
+        content.getRootDataSet().setData( "address[0].postalPlace", "Heidal" );
+        content.getRootDataSet().setData( "address[0].country", "NO" );
+        content.getRootDataSet().setData( "address[1].label", "Cabin" );
+        content.getRootDataSet().setData( "address[1].street", "Heia" );
+        content.getRootDataSet().setData( "address[1].postalCode", "2676" );
+        content.getRootDataSet().setData( "address[1].postalPlace", "Gjende" );
+        content.getRootDataSet().setData( "address[1].country", "NO" );
 
         assertEquals( "Home", content.getData( "address[0].label" ).getString() );
         assertEquals( "Bakkebygrenda 1", content.getData( "address[0].street" ).getString() );
@@ -524,10 +524,10 @@ public class ContentTest
         contentType.form().mixinReferencesToFormItems( new MockMixinFetcher() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "name", "Ola Normann" );
+        content.getRootDataSet().setData( "name", "Ola Normann" );
         try
         {
-            content.setData( "address.street", "Norvegen 99" );
+            content.getRootDataSet().setData( "address.street", "Norvegen 99" );
         }
         catch ( Exception e )
         {
@@ -553,12 +553,12 @@ public class ContentTest
         Content content = newContent().type( contentType.getQualifiedName() ).build();
 
         // exercise
-        content.setData( "name", "Ola Norman" );
-        content.setData( "eyeColour", "Blue" );
-        content.setData( "hairColour", "Blonde" );
-        content.setData( "tattoo[0]", "Skull on left arm" );
-        content.setData( "tattoo[1]", "Mothers name on right arm" );
-        content.setData( "scar[0]", "Chin" );
+        content.getRootDataSet().setData( "name", "Ola Norman" );
+        content.getRootDataSet().setData( "eyeColour", "Blue" );
+        content.getRootDataSet().setData( "hairColour", "Blonde" );
+        content.getRootDataSet().setData( "tattoo[0]", "Skull on left arm" );
+        content.getRootDataSet().setData( "tattoo[1]", "Mothers name on right arm" );
+        content.getRootDataSet().setData( "scar[0]", "Chin" );
 
         // verify
         assertEquals( "Ola Norman", content.getData( "name" ).getString() );
@@ -574,12 +574,12 @@ public class ContentTest
     {
         // setup
         Content content = newContent().build();
-        content.setData( "myData", "Value 1", DataTypes.TEXT );
+        content.getRootDataSet().setData( "myData", DataTypes.TEXT, "Value 1" );
 
         // exercise
         try
         {
-            content.setData( "myData[1]", new DateMidnight( 2000, 1, 1 ), DataTypes.DATE );
+            content.getRootDataSet().setData( "myData[1]", DataTypes.DATE, new DateMidnight( 2000, 1, 1 ) );
             fail( "Expected exception" );
         }
         catch ( Exception e )

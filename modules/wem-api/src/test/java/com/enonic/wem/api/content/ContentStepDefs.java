@@ -41,9 +41,8 @@ public class ContentStepDefs
     public void setting_value_to_path_to_content_named( String value, String path, String contentName )
         throws Throwable
     {
-
         Content content = contentByName.get( contentName );
-        content.setData( path, value );
+        content.getRootDataSet().setData( path, value );
     }
 
     @When("^getting value \"([^\"]*)\" from content named \"([^\"]*)\"$")
