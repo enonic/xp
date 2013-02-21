@@ -20,14 +20,14 @@ Ext.define('Admin.controller.contentStudio.BrowseController', {
 
         this.control(
             {
-                '*[action=newBaseType]': {
+                '*[action=newSchema]': {
                     click: function (btn, evt) {
-                        this.showSelectBaseTypeWindow();
+                        this.showSelectSchemaWindow();
                     }
                 },
-                '*[action=editBaseType]': {
+                '*[action=editSchema]': {
                     click: function (btn, evt) {
-                        this.showEditBaseTypePanel();
+                        this.showEditSchemaPanel();
 
                     }
                 },
@@ -36,16 +36,16 @@ Ext.define('Admin.controller.contentStudio.BrowseController', {
                         this.showPreviewContentTypePanel();
                     }
                 },
-                '*[action=deleteBaseType]': {
+                '*[action=deleteSchema]': {
                     click: function (btn, evt) {
-                        this.showDeleteBaseTypeWindow();
+                        this.showDeleteSchemaWindow();
                     }
                 },
 
                 '#searchTextField': {
                     change: this.filterStore
                 },
-                '#showBaseTypesOnlyCheckbox': {
+                '#showSchemaOnlyCheckbox': {
                     change: this.filterStore
                 }
             }
@@ -56,7 +56,7 @@ Ext.define('Admin.controller.contentStudio.BrowseController', {
     filterStore: function () {
         var store = this.getStore('Admin.store.contentStudio.ContentTypeStore');
         var searchTextValue = this.getFilterPanel().getComponent('searchTextField').getValue();
-        var baseTypesOnly = this.getFilterPanel().getComponent('showBaseTypesOnlyCheckbox').getValue();
+        var schemaOnly = this.getFilterPanel().getComponent('showSchemasOnlyCheckbox').getValue();
         var treeGridPanel = this.getTreeGridPanel();
         store.clearFilter();
         if (searchTextValue !== '') {
@@ -64,15 +64,15 @@ Ext.define('Admin.controller.contentStudio.BrowseController', {
         } else {
             treeGridPanel.setActiveList('tree');
         }
-        this.doFilterStore(store, searchTextValue, baseTypesOnly);
+        this.doFilterStore(store, searchTextValue, schemaOnly);
     },
 
 
-    doFilterStore: function (store, searchText, baseTypesOnly) {
+    doFilterStore: function (store, searchText, schemaOnly) {
         var regExp = new RegExp('^' + searchText, 'i');
 
         store.filterBy(function (record) {
-            if (baseTypesOnly) {
+            if (schemaOnly) {
                 return regExp.test(record.raw.name) && record.raw.type === 'system';
             } else {
                 return regExp.test(record.raw.name);

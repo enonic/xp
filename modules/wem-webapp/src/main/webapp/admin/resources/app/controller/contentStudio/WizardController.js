@@ -19,17 +19,17 @@ Ext.define('Admin.controller.contentStudio.WizardController', {
             },
             'contentStudioWizardPanel *[action=saveType]': {
                 click: function (button, event) {
-                    me.saveBaseType(button.up('contentStudioWizardPanel'), false, button.baseType);
+                    me.saveSchema(button.up('contentStudioWizardPanel'), false, button.schema);
                 }
             },
             'contentStudioWizardPanel wizardPanel': {
                 finished: function (wizard, data) {
-                    me.saveBaseType(wizard.up('contentStudioWizardPanel'), true);
+                    me.saveSchema(wizard.up('contentStudioWizardPanel'), true);
                 }
             },
             'contentStudioWizardPanel *[action=deleteType]': {
                 click: function (button, event) {
-                    this.deleteBaseType(button.up('contentStudioWizardPanel'), false, button.baseType);
+                    this.deleteSchema(button.up('contentStudioWizardPanel'), false, button.schema);
                 }
             }
         });
@@ -37,8 +37,8 @@ Ext.define('Admin.controller.contentStudio.WizardController', {
 
     closeWizard: function (el, e) {
         var tab = this.getWizardTab();
-        var baseTypeWizard = this.getWizardPanel();
-        if (baseTypeWizard.getWizardPanel().isWizardDirty) {
+        var schemaWizard = this.getWizardPanel();
+        if (schemaWizard.getWizardPanel().isWizardDirty) {
             Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?',
                 function (answer) {
                     if ('yes' === answer) {
@@ -50,8 +50,8 @@ Ext.define('Admin.controller.contentStudio.WizardController', {
         }
     },
 
-    saveBaseType: function (wizard, closeWizard, baseType) {
-        switch (baseType) {
+    saveSchema: function (wizard, closeWizard, schema) {
+        switch (schema) {
         case 'contentType':
             this.application.fireEvent('saveContentType', wizard, closeWizard);
             break;
@@ -67,8 +67,8 @@ Ext.define('Admin.controller.contentStudio.WizardController', {
 
     },
 
-    deleteBaseType: function (wizard, closeWizard, baseType) {
-        switch (baseType) {
+    deleteSchema: function (wizard, closeWizard, schema) {
+        switch (schema) {
         case 'contentType':
             this.application.fireEvent('deleteContentType', wizard, closeWizard);
             break;

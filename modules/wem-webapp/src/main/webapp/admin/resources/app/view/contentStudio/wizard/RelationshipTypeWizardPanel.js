@@ -26,7 +26,7 @@ Ext.define('Admin.view.contentStudio.wizard.RelationshipTypeWizardPanel', {
 
         me.tbar = Ext.createByAlias('widget.contentStudioWizardToolbar', {
             isNew: isNew,
-            baseType: 'relationshipType'
+            schema: 'relationshipType'
         });
 
         me.items = [

@@ -14,12 +14,12 @@ Ext.define('Admin.view.contentStudio.BrowseToolbar', {
 
             {
                 text: 'New',
-                action: 'newBaseType'
+                action: 'newSchema'
             },
             {
                 text: 'Edit',
                 disabled: true,
-                action: 'editBaseType'
+                action: 'editSchema'
             },
             {
                 text: 'Open',
@@ -29,7 +29,7 @@ Ext.define('Admin.view.contentStudio.BrowseToolbar', {
             {
                 text: 'Delete',
                 disabled: true,
-                action: 'deleteBaseType'
+                action: 'deleteSchema'
             },
             {
                 text: 'Re-index',

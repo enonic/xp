@@ -26,7 +26,7 @@ Ext.define('Admin.view.contentStudio.wizard.ContentTypeWizardPanel', {
 
         me.tbar = Ext.createByAlias('widget.contentStudioWizardToolbar', {
             isNew: isNew,
-            baseType: 'contentType'
+            schema: 'contentType'
         });
 
         me.items = [

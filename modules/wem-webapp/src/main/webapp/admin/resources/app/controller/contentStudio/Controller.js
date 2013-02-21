@@ -14,20 +14,20 @@ Ext.define('Admin.controller.contentStudio.Controller', {
 
     init: function () {
         this.application.on({
-            createNewBaseType: {
-                fn: this.createNewBaseType,
+            createNewSchema: {
+                fn: this.createNewSchema,
                 scope: this
             },
-            showEditBaseTypePanel: {
-                fn: this.showEditBaseTypePanel,
+            showEditSchemaPanel: {
+                fn: this.showEditSchemaPanel,
                 scope: this
             },
             showPreviewContentTypePanel: {
                 fn: this.showPreviewContentTypePanel,
                 scope: this
             },
-            showDeleteBaseTypeWindow: {
-                fn: this.showDeleteBaseTypeWindow,
+            showDeleteSchemaWindow: {
+                fn: this.showDeleteSchemaWindow,
                 scope: this
             }
         });
@@ -35,23 +35,23 @@ Ext.define('Admin.controller.contentStudio.Controller', {
 
 
     generateTabId: function (contentType, isEdit) {
-        return 'tab-' + ( isEdit ? 'edit-' : 'preview-') + contentType.get('type') + '-' + contentType.get('qualifiedName');
+        return 'tab-' + (isEdit ? 'edit-' : 'preview-') + contentType.get('type') + '-' + contentType.get('qualifiedName');
     },
 
-    createNewBaseType: function (record) {
+    createNewSchema: function (record) {
         console.log('Event caught');
-        this.createNewBaseTypePanel(record.data.name);
+        this.createNewSchemaPanel(record.data.name);
     },
 
-    showEditBaseTypePanel: function (baseType) {
-        if (!baseType) {
-            baseType = this.getTreeGridPanel().getSelection();
+    showEditSchemaPanel: function (schema) {
+        if (!schema) {
+            schema = this.getTreeGridPanel().getSelection();
         } else {
-            baseType = [].concat(baseType);
+            schema = [].concat(schema);
         }
         var i;
-        for (i = 0; i < baseType.length; i += 1) {
-            this.createEditBaseTypePanel(baseType[i]);
+        for (i = 0; i < schema.length; i += 1) {
+            this.createEditSchemaPanel(schema[i]);
         }
     },
 
@@ -69,46 +69,46 @@ Ext.define('Admin.controller.contentStudio.Controller', {
     },
 
 
-    showDeleteBaseTypeWindow: function (baseType) {
-        if (!baseType) {
-            baseType = this.getTreeGridPanel().getSelection();
+    showDeleteSchemaWindow: function (schema) {
+        if (!schema) {
+            schema = this.getTreeGridPanel().getSelection();
         } else {
-            baseType = [].concat(baseType);
+            schema = [].concat(schema);
         }
-        if (baseType.length === 1) {
-            this.getDeleteContentTypeWindow().doShow(baseType);
+        if (schema.length === 1) {
+            this.getDeleteContentTypeWindow().doShow(schema);
         }
     },
 
-    showSelectBaseTypeWindow: function () {
-        this.getSelectBaseTypeWindow().show();
+    showSelectSchemaWindow: function () {
+        this.getSelectSchemaWindow().show();
     },
 
-    createNewBaseTypePanel: function (baseTypeModel) {
-        switch (baseTypeModel.data.name) {
+    createNewSchemaPanel: function (schemaModel) {
+        switch (schemaModel.data.name) {
         case 'ContentType':
-            this.createNewContentTypePanel(baseTypeModel);
+            this.createNewContentTypePanel(schemaModel);
             break;
         case 'Mixin':
-            this.createNewMixinPanel(baseTypeModel);
+            this.createNewMixinPanel(schemaModel);
             break;
         case 'RelationshipType':
-            this.createNewRelationshipTypePanel(baseTypeModel);
+            this.createNewRelationshipTypePanel(schemaModel);
             break;
         }
     },
 
-    createEditBaseTypePanel: function (baseTypeModel) {
-        var baseType = baseTypeModel && baseTypeModel.data.type;
-        switch (baseType) {
+    createEditSchemaPanel: function (schemaModel) {
+        var schema = schemaModel && schemaModel.data.type;
+        switch (schema) {
         case 'ContentType':
-            this.createEditContentTypePanel(baseTypeModel);
+            this.createEditContentTypePanel(schemaModel);
             break;
         case 'Mixin':
-            this.createEditMixinPanel(baseTypeModel);
+            this.createEditMixinPanel(schemaModel);
             break;
         case 'RelationshipType':
-            this.createEditRelationshipTypePanel(baseTypeModel);
+            this.createEditRelationshipTypePanel(schemaModel);
             break;
         }
     },
@@ -153,12 +153,12 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         });
     },
 
-    createNewContentTypePanel: function (baseTypeModel) {
+    createNewContentTypePanel: function (schemaModel) {
         var tabPanel = this.getCmsTabPanel();
         tabPanel.addTab({
             id: 'tab-new-content-type',
             editing: true,
-            modelData: baseTypeModel.data,
+            modelData: schemaModel.data,
             xtype: 'contentStudioContentTypeWizardPanel',
             title: '[New Content Type]'
         });
@@ -204,12 +204,12 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         });
     },
 
-    createNewMixinPanel: function (baseTypeModel) {
+    createNewMixinPanel: function (schemaModel) {
         var tabPanel = this.getCmsTabPanel();
         tabPanel.addTab({
             id: 'tab-new-mixin',
             editing: true,
-            modelData: baseTypeModel.data,
+            modelData: schemaModel.data,
             xtype: 'contentStudioMixinWizardPanel',
             title: '[New Mixin]'
         });
@@ -255,12 +255,12 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         });
     },
 
-    createNewRelationshipTypePanel: function (baseTypeModel) {
+    createNewRelationshipTypePanel: function (schemaModel) {
         var tabPanel = this.getCmsTabPanel();
         tabPanel.addTab({
             id: 'tab-new-relationship-type',
             editing: true,
-            modelData: baseTypeModel.data,
+            modelData: schemaModel.data,
             xtype: 'contentStudioRelationshipTypeWizardPanel',
             title: '[New Relationship Type]'
         });
@@ -310,7 +310,7 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         return win;
     },
 
-    getSelectBaseTypeWindow: function () {
+    getSelectSchemaWindow: function () {
         var win = Ext.ComponentQuery.query('selectSchemaWindow')[0];
         if (!win) {
             win = Ext.create('widget.selectSchemaWindow');

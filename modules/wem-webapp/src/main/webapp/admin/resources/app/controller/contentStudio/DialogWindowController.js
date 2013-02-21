@@ -15,9 +15,9 @@ Ext.define('Admin.controller.contentStudio.DialogWindowController', {
                 click: this.doDelete
             },
             'selectSchemaWindow': {
-                createNewBaseType: function (modalWindow, item) {
+                createNewSchema: function (modalWindow, item) {
                     modalWindow.close();
-                    this.createNewBaseTypePanel(item);
+                    this.createNewSchemaPanel(item);
                 }
             }
         });

@@ -32,7 +32,7 @@ Ext.define('Admin.view.contentStudio.wizard.MixinWizardPanel', {
 
         me.tbar = Ext.createByAlias('widget.contentStudioWizardToolbar', {
             isNew: isNew,
-            baseType: 'mixin'
+            schema: 'mixin'
         });
 
         me.items = [

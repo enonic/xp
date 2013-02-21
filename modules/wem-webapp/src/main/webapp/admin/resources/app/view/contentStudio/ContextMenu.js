@@ -6,7 +6,7 @@ Ext.define('Admin.view.contentStudio.ContextMenu', {
         {
             text: 'Edit',
             iconCls: 'icon-edit',
-            action: 'editBaseType'
+            action: 'editSchema'
         },
         {
             text: 'Open',
@@ -16,7 +16,7 @@ Ext.define('Admin.view.contentStudio.ContextMenu', {
         {
             text: 'Delete',
             iconCls: 'icon-delete',
-            action: 'deleteContentType'
+            action: 'deleteSchema'
         }
     ]
 });

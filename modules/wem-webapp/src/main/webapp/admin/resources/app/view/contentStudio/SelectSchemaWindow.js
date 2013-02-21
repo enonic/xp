@@ -31,7 +31,7 @@ Ext.define('Admin.view.contentStudio.SelectSchemaWindow', {
     initComponent: function () {
         var me = this;
 
-        Ext.define('Admin.model.contentStudio.BaseType', {
+        Ext.define('Admin.model.contentStudio.Schema', {
             extend: 'Ext.data.Model',
             fields: [
                 { name: 'name', type: 'string' },
@@ -39,25 +39,25 @@ Ext.define('Admin.view.contentStudio.SelectSchemaWindow', {
             ]
         });
 
-        var baseTypeStore = Ext.create('Ext.data.Store', {
-            model: 'Admin.model.contentStudio.BaseType',
+        var schemaStore = Ext.create('Ext.data.Store', {
+            model: 'Admin.model.contentStudio.Schema',
             data: [
                 {
                     name: 'ContentType',
-                    iconUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/basetype/image/ContentType:System:structured')
+                    iconUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/schema/image/ContentType:System:structured')
                 },
                 {
                     name: 'RelationshipType',
-                    iconUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/basetype/image/RelationshipType:_:_') // default icon for RelationshipType
+                    iconUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/schema/image/RelationshipType:_:_') // default icon for RelationshipType
                 },
                 {
                     name: 'Mixin',
-                    iconUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/basetype/image/Mixin:_:_') // default icon for Mixin
+                    iconUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/schema/image/Mixin:_:_') // default icon for Mixin
                 }
             ]
         });
 
-        var baseDataView = {
+        var schemaDataView = {
             xtype: 'dataview',
             cls: 'admin-data-view',
             itemId: 'basetypeList',
@@ -65,10 +65,10 @@ Ext.define('Admin.view.contentStudio.SelectSchemaWindow', {
             itemSelector: '.admin-data-view-row',
             trackOver: true,
             overItemCls: 'x-item-over',
-            store: baseTypeStore,
+            store: schemaStore,
             listeners: {
                 itemclick: function (view, record, item, index, e, eOpts) {
-                    me.fireEvent('createNewBaseType', me, record);
+                    me.fireEvent('createNewSchema', me, record);
                 }
             }
         };
@@ -97,7 +97,7 @@ Ext.define('Admin.view.contentStudio.SelectSchemaWindow', {
                         overflowY: 'auto',
                         border: false,
                         items: [
-                            baseDataView
+                            schemaDataView
                         ]
                     }
                 ]
@@ -124,7 +124,7 @@ Ext.define('Admin.view.contentStudio.SelectSchemaWindow', {
 
         this.callParent(arguments);
 
-        this.addEvents('createNewBaseType');
+        this.addEvents('createNewSchema');
     }
 
 

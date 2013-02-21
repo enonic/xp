@@ -38,11 +38,11 @@ Ext.define('Admin.view.contentStudio.TreeGridPanel', {
 
     nameRenderer: function (value, p, record) {
         var me = this;
-        var baseType = record.data;
+        var schema = record.data;
         var activeListType = this.getActiveList().itemId;
-        var baseTypeIconUrl = baseType.iconUrl;
-        return Ext.String.format(me.getNameColumnRendererTemplate(), activeListType, baseTypeIconUrl, baseType.displayName,
-            baseType.qualifiedName);
+        var schemaIconUrl = schema.iconUrl;
+        return Ext.String.format(me.getNameColumnRendererTemplate(), activeListType, schemaIconUrl, schema.displayName,
+            schema.qualifiedName);
     },
 
     prettyDateRenderer: function (value, p, record) {
