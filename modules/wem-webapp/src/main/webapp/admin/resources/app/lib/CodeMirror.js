@@ -4,7 +4,7 @@ Ext.define('Admin.lib.CodeMirror', {
     alias: 'widget.codemirror',
 
     codeMirror: null,
-    codeMirrorPath: '../../admin/resources/lib/codemirror',
+    codeMirrorPath: '../admin/resources/lib/codemirror',
     languageMode: 'xml', // Se codemirror/mode/ for valid modes
 
     width: 640,
