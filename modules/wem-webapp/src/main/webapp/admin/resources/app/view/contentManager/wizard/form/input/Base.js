@@ -4,7 +4,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
 
     contentTypeItemConfig: undefined,
 
-    width: 1000,
+    width: 640,
 
     layout: {
         type: 'hbox'

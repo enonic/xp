@@ -20,8 +20,10 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
     fieldLabel: '',
 
     margin: '10 0 10 0',
-
     cls: 'form-item-set',
+    maxWidth: 640,
+    minWidth: 500,
+    padding: '15 15 15 15',
 
     initComponent: function () {
         this.callParent(arguments);
@@ -163,7 +165,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
             margin: '5 0',
             padding: '0 0 10 0',
             defaults: {
-                margin: '5 10'
+                margin: '5 15'
             },
             items: [me.createBlockHeader()],
             getValue: function () {
@@ -195,8 +197,8 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
 
         return {
             xtype: 'container',
-            margin: '0 0 15 0',
-            padding: 5,
+            margin: '0 0 15 15',
+            padding: '5 0 5 0',
             cls: 'header',
             layout: {
                 type: 'table',
@@ -241,9 +243,9 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
     setIndent: function () {
         var me = this;
         var parent = me.up();
-        var parentIsBlock = parent.cls && parent.cls.indexOf('formitem-set-block') > -1;
+        var parentIsBlock = parent.cls && parent.cls.indexOf('admin-formitemset-block') > -1;
         if (parentIsBlock) {
-            me.margin = '10 0 10 20';
+            me.margin = '10 15 10 15';
         }
     },
 
@@ -301,7 +303,8 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
                     }
                     value = value.concat(currentItemValue);
                 }
-            });
+            }
+        );
         return value;
     },
 

@@ -2432,28 +2432,23 @@ td {
     color: #777777;
 }
 
-/* line 167, ../sass/admin/css/_form.scss */
-.form-item-set .form-item-set {
-    margin-left: 10px !important;
-}
-
-/* line 169, ../sass/admin/css/_form.scss */
+/* line 168, ../sass/admin/css/_form.scss */
 .form-item-set .form-item-set .admin-formitemset-block {
     background-color: #f9f9f9;
 }
 
-/* line 174, ../sass/admin/css/_form.scss */
+/* line 173, ../sass/admin/css/_form.scss */
 .form-item-set .form-item-set .form-item-set .admin-formitemset-block {
     background-color: #ffffff;
 }
 
-/* line 179, ../sass/admin/css/_form.scss */
+/* line 178, ../sass/admin/css/_form.scss */
 .form-item-set .form-item-set .form-item-set .form-item-set .admin-formitemset-block {
     background-color: #f9f9f9;
 }
 
 /* To allow box-shadow, we must override overflow: hidden on containing elements. */
-/* line 193, ../sass/admin/css/_form.scss */
+/* line 192, ../sass/admin/css/_form.scss */
 .admin-wizard .x-fieldset-body,
 .admin-wizard .x-panel-body,
 .admin-wizard .x-fit-item,
@@ -2462,7 +2457,7 @@ td {
 }
 
 /* Fix for fieldset/legend in Firefox (see CMS-1013). We should try to find a better workaround */
-/* line 199, ../sass/admin/css/_form.scss */
+/* line 198, ../sass/admin/css/_form.scss */
 body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     padding: 0;
 }
