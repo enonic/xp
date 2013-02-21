@@ -55,7 +55,7 @@ public class DeleteSpaceRpcHandlerTest
         final ObjectNode expectedResult = objectNode();
         expectedResult.put( "success", true );
         expectedResult.put( "deleted", false );
-        expectedResult.put( "reason", "Space [missingSpace] was not found" );
+        expectedResult.put( "reason", "Space [missingSpace] not found" );
         testSuccess( params, expectedResult );
     }
 }

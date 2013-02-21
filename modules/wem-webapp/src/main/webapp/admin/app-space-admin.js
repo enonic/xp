@@ -6,7 +6,8 @@ Ext.application({
         'Admin.controller.spaceAdmin.GridPanelController',
         'Admin.controller.spaceAdmin.BrowseToolbarController',
         'Admin.controller.spaceAdmin.DetailPanelController',
-        'Admin.controller.spaceAdmin.DetailToolbarController'
+        'Admin.controller.spaceAdmin.DetailToolbarController',
+        'Admin.controller.spaceAdmin.DialogWindowController'
     ],
 
     stores: [
@@ -19,7 +20,10 @@ Ext.application({
         'Admin.view.spaceAdmin.FilterPanel',
         'Admin.view.spaceAdmin.BrowseToolbar',
         'Admin.view.spaceAdmin.TreeGridPanel',
-        'Admin.view.spaceAdmin.DetailPanel'
+        'Admin.view.spaceAdmin.DetailPanel',
+        'Admin.MessageBus',
+        'Admin.view.FeedbackBox',
+        'Admin.view.TabPanel'
     ],
 
     launch: function () {
@@ -81,6 +85,8 @@ Ext.application({
                 }
             ]
         });
+
+        Ext.create('widget.feedbackBox');
     }
 
 });
