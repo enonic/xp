@@ -33,7 +33,7 @@ public class DataSetTest
         dataSet.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "A value" ).build() );
 
         assertEquals( "mySet.myData", dataSet.getData( "myData" ).getPath().toString() );
-        assertEquals( "A value", dataSet.getData( "myData" ).asString() );
+        assertEquals( "A value", dataSet.getData( "myData" ).getString() );
     }
 
     @Test
@@ -43,9 +43,9 @@ public class DataSetTest
         dataSet.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "1" ).build() );
         dataSet.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "2" ).build() );
 
-        assertEquals( "1", dataSet.getData( "myData" ).asString() );
-        assertEquals( "1", dataSet.getData( "myData[0]" ).asString() );
-        assertEquals( "2", dataSet.getData( "myData[1]" ).asString() );
+        assertEquals( "1", dataSet.getData( "myData" ).getString() );
+        assertEquals( "1", dataSet.getData( "myData[0]" ).getString() );
+        assertEquals( "2", dataSet.getData( "myData[1]" ).getString() );
     }
 
     @Test
@@ -108,8 +108,8 @@ public class DataSetTest
         dataSet.add( myArray1 );
         dataSet.add( myArray2 );
 
-        assertEquals( "1", dataSet.getData( "myArray[0]" ).asString() );
-        assertEquals( "2", dataSet.getData( "myArray[1]" ).asString() );
+        assertEquals( "1", dataSet.getData( "myArray[0]" ).getString() );
+        assertEquals( "2", dataSet.getData( "myArray[1]" ).getString() );
     }
 
     @Test
@@ -171,8 +171,8 @@ public class DataSetTest
         dataSet.setData( EntryPath.from( "myArray[0]" ), "2a", DataTypes.TEXT );
         dataSet.setData( EntryPath.from( "myArray[1]" ), "2b", DataTypes.TEXT );
 
-        assertEquals( "2a", dataSet.getData( "myArray", 0 ).asString() );
-        assertEquals( "2b", dataSet.getData( "myArray", 1 ).asString() );
+        assertEquals( "2a", dataSet.getData( "myArray", 0 ).getString() );
+        assertEquals( "2b", dataSet.getData( "myArray", 1 ).getString() );
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -239,7 +239,7 @@ public class DataSetTest
         DataSet dataSet = DataSet.newRootDataSet();
         dataSet.setData( EntryPath.from( "myData" ), "1", DataTypes.TEXT );
 
-        assertEquals( "1", dataSet.getData( "myData" ).asString() );
+        assertEquals( "1", dataSet.getData( "myData" ).getString() );
         assertEquals( "1", dataSet.getData( "myData" ).getValue( 0 ).asString() );
         assertEquals( "1", dataSet.getValue( "myData" ).asString() );
     }
@@ -251,8 +251,8 @@ public class DataSetTest
         dataSet.setData( EntryPath.from( "myData1" ), "1", DataTypes.TEXT );
         dataSet.setData( EntryPath.from( "myData2" ), "2", DataTypes.TEXT );
 
-        assertEquals( "1", dataSet.getData( "myData1" ).asString() );
-        assertEquals( "2", dataSet.getData( "myData2" ).asString() );
+        assertEquals( "1", dataSet.getData( "myData1" ).getString() );
+        assertEquals( "2", dataSet.getData( "myData2" ).getString() );
     }
 
     @Test
@@ -262,7 +262,7 @@ public class DataSetTest
         dataSet.setData( EntryPath.from( "set.myData1" ), "1", DataTypes.TEXT );
         dataSet.setData( EntryPath.from( "set.myData2" ), "2", DataTypes.TEXT );
 
-        assertEquals( "1", dataSet.getData( "set.myData1" ).asString() );
+        assertEquals( "1", dataSet.getData( "set.myData1" ).getString() );
         assertEquals( "2", dataSet.getValue( "set.myData2" ).asString() );
     }
 
@@ -288,7 +288,7 @@ public class DataSetTest
         dataSet.setData( EntryPath.from( "myArray[1]" ), "2b", DataTypes.TEXT );
 
         // verify
-        assertEquals( "2b", dataSet.getData( "myArray", 1 ).asString() );
+        assertEquals( "2b", dataSet.getData( "myArray", 1 ).getString() );
     }
 
     @Test

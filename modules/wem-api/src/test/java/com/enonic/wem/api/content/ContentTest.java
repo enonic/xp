@@ -67,11 +67,11 @@ public class ContentTest
 
         Data array = content.getData( "array" );
         assertEquals( "First", array.getObject() );
-        assertEquals( "First", content.getData( "array" ).asString( 0 ) );
-        assertEquals( "First", content.getData( "array[0]" ).asString() );
+        assertEquals( "First", content.getData( "array" ).getString( 0 ) );
+        assertEquals( "First", content.getData( "array[0]" ).getString() );
 
-        assertEquals( "Second", content.getData( "array" ).asString( 1 ) );
-        assertEquals( "Second", content.getData( "array[1]" ).asString() );
+        assertEquals( "Second", content.getData( "array" ).getString( 1 ) );
+        assertEquals( "Second", content.getData( "array[1]" ).getString() );
     }
 
     @Test
@@ -85,11 +85,11 @@ public class ContentTest
 
         Data array = content.getData( "array" );
         assertEquals( "First", array.getObject() );
-        assertEquals( "First", content.getData( "array" ).asString( 0 ) );
+        assertEquals( "First", content.getData( "array" ).getString( 0 ) );
         assertEquals( "First", content.getData( "array[0]" ).getObject() );
 
-        assertEquals( "Second", content.getData( "array" ).asString( 1 ) );
-        assertEquals( "Second", content.getData( "array[1]" ).asString() );
+        assertEquals( "Second", content.getData( "array" ).getString( 1 ) );
+        assertEquals( "Second", content.getData( "array[1]" ).getString() );
 
     }
 
@@ -157,8 +157,8 @@ public class ContentTest
         assertEquals( "First", content.getData( "set.myArray[0]" ).getObject() );
         assertEquals( "Second", content.getData( "set.myArray[1]" ).getObject() );
         assertEquals( "set.myArray[0]", content.getData( "set.myArray" ).getPath().toString() );
-        assertEquals( "First", content.getData( "set.myArray" ).asString( 0 ) );
-        assertEquals( "Second", content.getData( "set.myArray" ).asString( 1 ) );
+        assertEquals( "First", content.getData( "set.myArray" ).getString( 0 ) );
+        assertEquals( "Second", content.getData( "set.myArray" ).getString( 1 ) );
     }
 
     @Test
@@ -168,10 +168,10 @@ public class ContentTest
         content.setData( "company.address[0].street", "Kirkegata 1-3" );
         content.setData( "company.address[1].street", "Sonsteli" );
 
-        assertEquals( "Kirkegata 1-3", content.getData( "company.address[0].street" ).asString() );
-        assertEquals( "Sonsteli", content.getData( "company.address[1].street" ).asString() );
-        assertEquals( "Sonsteli", content.getDataSet( "company" ).getDataSet( "address", 1 ).getData( "street" ).asString() );
-        assertEquals( "Sonsteli", content.getDataSet( "company" ).getDataSet( "address[1]" ).getData( "street" ).asString() );
+        assertEquals( "Kirkegata 1-3", content.getData( "company.address[0].street" ).getString() );
+        assertEquals( "Sonsteli", content.getData( "company.address[1].street" ).getString() );
+        assertEquals( "Sonsteli", content.getDataSet( "company" ).getDataSet( "address", 1 ).getData( "street" ).getString() );
+        assertEquals( "Sonsteli", content.getDataSet( "company" ).getDataSet( "address[1]" ).getData( "street" ).getString() );
     }
 
     @Test
@@ -192,8 +192,8 @@ public class ContentTest
 
         assertEquals( "Kirkegata 1-3", content.getData( "company.address[0].street" ).getObject() );
         assertEquals( "Sonsteli", content.getData( "company.address[1].street" ).getObject() );
-        assertEquals( "Sonsteli", content.getDataSet( "company" ).getDataSet( "address", 1 ).getData( "street" ).asString() );
-        assertEquals( "Sonsteli", content.getDataSet( "company" ).getDataSet( "address[1]" ).getData( "street" ).asString() );
+        assertEquals( "Sonsteli", content.getDataSet( "company" ).getDataSet( "address", 1 ).getData( "street" ).getString() );
+        assertEquals( "Sonsteli", content.getDataSet( "company" ).getDataSet( "address[1]" ).getData( "street" ).getString() );
     }
 
     @Test
@@ -213,8 +213,8 @@ public class ContentTest
         assertEquals( "set[1].myText", content.getData( "set[1].myText" ).getPath().toString() );
         assertEquals( "set[0]", content.getDataSet( "set[0]" ).getPath().toString() );
         assertEquals( "set[1]", content.getDataSet( "set[1]" ).getPath().toString() );
-        assertEquals( "First", content.getDataSet( "set[0]" ).getData( "myText" ).asString() );
-        assertEquals( "Second", content.getDataSet( "set[1]" ).getData( "myText" ).asString() );
+        assertEquals( "First", content.getDataSet( "set[0]" ).getData( "myText" ).getString() );
+        assertEquals( "Second", content.getDataSet( "set[1]" ).getData( "myText" ).getString() );
     }
 
     @Test
@@ -234,8 +234,8 @@ public class ContentTest
         assertEquals( "set[1].myText", content.getData( "set[1].myText" ).getPath().toString() );
         assertEquals( "set[0]", content.getDataSet( "set[0]" ).getPath().toString() );
         assertEquals( "set[1]", content.getDataSet( "set[1]" ).getPath().toString() );
-        assertEquals( "First", content.getEntry( "set[0]" ).toDataSet().getData( "myText" ).asString() );
-        assertEquals( "Second", content.getEntry( "set[1]" ).toDataSet().getData( "myText" ).asString() );
+        assertEquals( "First", content.getEntry( "set[0]" ).toDataSet().getData( "myText" ).getString() );
+        assertEquals( "Second", content.getEntry( "set[1]" ).toDataSet().getData( "myText" ).getString() );
     }
 
     @Test
@@ -267,9 +267,9 @@ public class ContentTest
         content.setData( "myTags[1]", "XML" );
         content.setData( "myTags[2]", "JSON" );
 
-        assertEquals( "Java", content.getData( "myTags" ).asString( 0 ) );
-        assertEquals( "XML", content.getData( "myTags" ).asString( 1 ) );
-        assertEquals( "JSON", content.getData( "myTags" ).asString( 2 ) );
+        assertEquals( "Java", content.getData( "myTags" ).getString( 0 ) );
+        assertEquals( "XML", content.getData( "myTags" ).getString( 1 ) );
+        assertEquals( "JSON", content.getData( "myTags" ).getString( 2 ) );
     }
 
     @Test
@@ -465,11 +465,11 @@ public class ContentTest
         content.setData( "address.postalPlace", "Heidal" );
         content.setData( "address.country", "NO" );
 
-        assertEquals( "Ola Normann", content.getData( "name" ).asString() );
-        assertEquals( "Bakkebygrenda 1", content.getData( "address.street" ).asString() );
-        assertEquals( "2676", content.getData( "address.postalCode" ).asString() );
-        assertEquals( "Heidal", content.getData( "address.postalPlace" ).asString() );
-        assertEquals( "NO", content.getData( "address.country" ).asString() );
+        assertEquals( "Ola Normann", content.getData( "name" ).getString() );
+        assertEquals( "Bakkebygrenda 1", content.getData( "address.street" ).getString() );
+        assertEquals( "2676", content.getData( "address.postalCode" ).getString() );
+        assertEquals( "Heidal", content.getData( "address.postalPlace" ).getString() );
+        assertEquals( "NO", content.getData( "address.country" ).getString() );
     }
 
     @Test
@@ -502,17 +502,17 @@ public class ContentTest
         content.setData( "address[1].postalPlace", "Gjende" );
         content.setData( "address[1].country", "NO" );
 
-        assertEquals( "Home", content.getData( "address[0].label" ).asString() );
-        assertEquals( "Bakkebygrenda 1", content.getData( "address[0].street" ).asString() );
-        assertEquals( "2676", content.getData( "address[0].postalCode" ).asString() );
-        assertEquals( "Heidal", content.getData( "address[0].postalPlace" ).asString() );
-        assertEquals( "NO", content.getData( "address[0].country" ).asString() );
+        assertEquals( "Home", content.getData( "address[0].label" ).getString() );
+        assertEquals( "Bakkebygrenda 1", content.getData( "address[0].street" ).getString() );
+        assertEquals( "2676", content.getData( "address[0].postalCode" ).getString() );
+        assertEquals( "Heidal", content.getData( "address[0].postalPlace" ).getString() );
+        assertEquals( "NO", content.getData( "address[0].country" ).getString() );
 
-        assertEquals( "Cabin", content.getData( "address[1].label" ).asString() );
-        assertEquals( "Heia", content.getData( "address[1].street" ).asString() );
-        assertEquals( "2676", content.getData( "address[1].postalCode" ).asString() );
-        assertEquals( "Gjende", content.getData( "address[1].postalPlace" ).asString() );
-        assertEquals( "NO", content.getData( "address[1].country" ).asString() );
+        assertEquals( "Cabin", content.getData( "address[1].label" ).getString() );
+        assertEquals( "Heia", content.getData( "address[1].street" ).getString() );
+        assertEquals( "2676", content.getData( "address[1].postalCode" ).getString() );
+        assertEquals( "Gjende", content.getData( "address[1].postalPlace" ).getString() );
+        assertEquals( "NO", content.getData( "address[1].country" ).getString() );
     }
 
     @Test
@@ -561,12 +561,12 @@ public class ContentTest
         content.setData( "scar[0]", "Chin" );
 
         // verify
-        assertEquals( "Ola Norman", content.getData( "name" ).asString() );
-        assertEquals( "Blue", content.getData( "eyeColour" ).asString() );
-        assertEquals( "Blonde", content.getData( "hairColour" ).asString() );
-        assertEquals( "Skull on left arm", content.getData( "tattoo[0]" ).asString() );
-        assertEquals( "Mothers name on right arm", content.getData( "tattoo[1]" ).asString() );
-        assertEquals( "Chin", content.getData( "scar[0]" ).asString() );
+        assertEquals( "Ola Norman", content.getData( "name" ).getString() );
+        assertEquals( "Blue", content.getData( "eyeColour" ).getString() );
+        assertEquals( "Blonde", content.getData( "hairColour" ).getString() );
+        assertEquals( "Skull on left arm", content.getData( "tattoo[0]" ).getString() );
+        assertEquals( "Mothers name on right arm", content.getData( "tattoo[1]" ).getString() );
+        assertEquals( "Chin", content.getData( "scar[0]" ).getString() );
     }
 
     @Test
@@ -601,7 +601,7 @@ public class ContentTest
 
         assertEquals( "1", content.getData( "myData" ).getValue().asString() );
 
-        assertEquals( "1", content.getData( "myData" ).asString() );
+        assertEquals( "1", content.getData( "myData" ).getString() );
     }
 
     @Test

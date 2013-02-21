@@ -37,7 +37,7 @@ public class DataJsonSerializer
         dataObj.put( ENTRY_NAME, name );
         dataObj.put( ENTRY_PATH, path );
         dataObj.put( ENTRY_TYPE, data.getType().getName() );
-        dataObj.put( ENTRY_VALUE, data.asString() );
+        dataObj.put( ENTRY_VALUE, data.getString() );
         return dataObj;
     }
 

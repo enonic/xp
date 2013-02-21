@@ -148,4 +148,50 @@ public class Content_usageTest
         assertNotNull( content.getRootDataSet().getDataSet( "mySet" ) );
     }
 
+    @Test
+    public void data_getValue()
+    {
+        Content content = newContent().name( "myContent" ).build();
+        DataSet dataSet = content.getRootDataSet();
+        dataSet.add( newData().name( "myText" ).value( "abc" ).type( TEXT ).build() );
+        dataSet.add( newData().name( "myNum" ).value( 123L ).type( WHOLE_NUMBER ).build() );
+        dataSet.add( newData().name( "myDec" ).value( 123.123 ).type( DECIMAL_NUMBER ).build() );
+        dataSet.add( newData().name( "myDate" ).value( new DateMidnight( 2013, 1, 13 ) ).type( DATE ).build() );
+        dataSet.add( newData().name( "myHtml" ).value( "<p>abc</p>" ).type( HTML_PART ).build() );
+
+        assertEquals( "abc", content.getData( "myText" ).getString() );
+        assertEquals( new Long( 123L ), content.getData( "myNum" ).getLong() );
+        assertEquals( 123.123, content.getData( "myDec" ).getDouble() );
+        assertEquals( new DateMidnight( 2013, 1, 13 ), content.getData( "myDate" ).getDate() );
+        assertEquals( "<p>abc</p>", content.getData( "myHtml" ).getString() );
+    }
+
+    @Test
+    public void data_add_array()
+    {
+        Content content = newContent().name( "myContent" ).build();
+        DataSet dataSet = content.getRootDataSet();
+        dataSet.add( newData().name( "myText" ).value( "a" ).type( TEXT ).build() );
+        dataSet.add( newData().name( "myText" ).value( "b" ).type( TEXT ).build() );
+        dataSet.add( newData().name( "myText" ).value( "c" ).type( TEXT ).build() );
+
+        assertEquals( "a", content.getData( "myText" ).getString( 0 ) );
+        assertEquals( "b", content.getData( "myText" ).getString( 1 ) );
+        assertEquals( "c", content.getData( "myText" ).getString( 2 ) );
+    }
+
+    /*@Test
+    public void data_set_array()
+    {
+        Content content = newContent().name( "myContent" ).build();
+        DataSet dataSet = content.getRootDataSet();
+        dataSet.setData( newData().name( "myText", 0 ).value( "a" ).type( TEXT ).build() );
+        dataSet.setData( newData().name( "myText", 1 ).value( "b" ).type( TEXT ).build() );
+        dataSet.setData( newData().name( "myText", 2 ).value( "c" ).type( TEXT ).build() );
+
+        assertEquals( "a", content.getData( "myText" ).getString( 0 ) );
+        assertEquals( "b", content.getData( "myText" ).getString( 1 ) );
+        assertEquals( "c", content.getData( "myText" ).getString( 2 ) );
+    }*/
+
 }

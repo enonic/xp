@@ -356,7 +356,7 @@ public abstract class AbstractContentSerializerTest
         Content parsedContent = toContent( serialized );
 
         // verify
-        assertEquals( "A value", parsedContent.getData( "myText" ).asString() );
+        assertEquals( "A value", parsedContent.getData( "myText" ).getString() );
         assertEquals( "myText", parsedContent.getData( "myText" ).getPath().toString() );
     }
 

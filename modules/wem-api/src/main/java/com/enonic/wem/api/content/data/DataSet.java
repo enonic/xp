@@ -114,6 +114,24 @@ public class DataSet
         setData( path, value );
     }
 
+    public final void setData( final Data data )
+    {
+        final Entry exEntry = entryById.get( data.getEntryId() );
+
+        if ( exEntry == null )
+        {
+            data.setParent( this );
+            registerArray( data );
+            entryById.put( data.getEntryId(), data );
+        }
+        else
+        {
+            data.setParent( this );
+            registerArray( data );
+            entryById.put( data.getEntryId(), data );
+        }
+    }
+
     private void setData( final EntryId entryId, final Value value )
     {
         final Entry exEntry = entryById.get( entryId );

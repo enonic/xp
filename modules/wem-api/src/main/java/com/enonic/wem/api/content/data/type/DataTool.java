@@ -63,7 +63,7 @@ public class DataTool
                                      "range checking can only be done for types: [" + DataTypes.WHOLE_NUMBER + ", " +
                                          DataTypes.DECIMAL_NUMBER + "]" );
 
-        double value = data.asDouble();
+        double value = data.getDouble();
         if ( value < rangeStart.doubleValue() || value > rangeStop.doubleValue() )
         {
             throw new InvalidValueException( data, "Value not within range from " + rangeStart + " to " + rangeStop );

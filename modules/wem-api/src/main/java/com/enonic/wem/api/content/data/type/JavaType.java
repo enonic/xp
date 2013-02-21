@@ -180,7 +180,11 @@ public final class JavaType
 
         public DateMidnight convertFrom( Object value )
         {
-            if ( value instanceof java.lang.String )
+            if ( value instanceof DateMidnight )
+            {
+                return (DateMidnight) value;
+            }
+            else if ( value instanceof java.lang.String )
             {
                 return FORMATTER.parseDateTime( (java.lang.String) value ).toDateMidnight();
             }

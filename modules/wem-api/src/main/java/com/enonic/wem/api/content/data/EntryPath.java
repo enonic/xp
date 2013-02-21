@@ -459,8 +459,10 @@ public final class EntryPath
             Preconditions.checkArgument( !StringUtils.isBlank( name ), "A name cannot be blank: %s", name );
             Preconditions.checkArgument( !name.contains( EntryPath.ELEMENT_DIVIDER ), "A name cannot contain %s: %s",
                                          EntryPath.ELEMENT_DIVIDER, name );
-            Preconditions.checkArgument( !name.contains( INDEX_START_MARKER ), "A name cannot contain %s: %s", INDEX_START_MARKER, name );
-            Preconditions.checkArgument( !name.contains( INDEX_STOP_MARKER ), "A name cannot contain %s: %s", INDEX_STOP_MARKER, name );
+            Preconditions.checkArgument( !name.contains( INDEX_START_MARKER ), "A name cannot contain array index value. Found %s: %s",
+                                         INDEX_START_MARKER, name );
+            Preconditions.checkArgument( !name.contains( INDEX_STOP_MARKER ), "A name cannot contain array index value. Found %s: %s",
+                                         INDEX_STOP_MARKER, name );
         }
     }
 }

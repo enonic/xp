@@ -85,7 +85,7 @@ public class Data
         return value.getObject();
     }
 
-    public String asString()
+    public String getString()
         throws InconvertibleValueException
     {
         return value.asString();
@@ -96,13 +96,13 @@ public class Data
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a String.
      */
-    public String asString( final int arrayIndex )
+    public String getString( final int arrayIndex )
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asString();
     }
 
-    public Long asLong()
+    public Long getLong()
         throws InconvertibleValueException
     {
         return value.asLong();
@@ -113,22 +113,44 @@ public class Data
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a Long.
      */
-    public Long asLong( final int arrayIndex )
+    public Long getLong( final int arrayIndex )
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asLong();
     }
 
-    public Double asDouble()
+    public Double getDouble()
         throws InconvertibleValueException
     {
         return value.asDouble();
     }
 
-    public DateMidnight asDate()
+    /**
+     * Returns the value at of the data at the given array index as a Double.
+     *
+     * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a Double.
+     */
+    public Double getDouble( final int arrayIndex )
+        throws InconvertibleValueException
+    {
+        return getArray().getValue( arrayIndex ).asDouble();
+    }
+
+    public DateMidnight getDate()
         throws InconvertibleValueException
     {
         return value.asDate();
+    }
+
+    /**
+     * Returns the value at of the data at the given array index as a Double.
+     *
+     * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a org.joda.time.DateMidnight.
+     */
+    public DateMidnight getDate( final int arrayIndex )
+        throws InconvertibleValueException
+    {
+        return getArray().getValue( arrayIndex ).asDate();
     }
 
     public void checkDataTypeValidity()
@@ -321,6 +343,12 @@ public class Data
             this.name = value;
             return getThis();
         }
+
+        /*public T name( String value, int index )
+        {
+            this.name = value;
+            return getThis();
+        }*/
 
         T type( BaseDataType value )
         {

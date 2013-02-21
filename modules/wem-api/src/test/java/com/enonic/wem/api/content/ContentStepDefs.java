@@ -51,7 +51,7 @@ public class ContentStepDefs
         throws Throwable
     {
         Content content = contentByName.get( contentName );
-        returnedValue = content.getRootDataSet().getData( EntryPath.from( path ) ).asString();
+        returnedValue = content.getRootDataSet().getData( EntryPath.from( path ) ).getString();
     }
 
     @Then("^the returned value should be \"([^\"]*)\"$")

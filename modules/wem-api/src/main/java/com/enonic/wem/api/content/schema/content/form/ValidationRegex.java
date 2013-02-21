@@ -27,7 +27,7 @@ public class ValidationRegex
             return;
         }
 
-        final Matcher matcher = pattern.matcher( data.asString() );
+        final Matcher matcher = pattern.matcher( data.getString() );
         if ( !matcher.matches() )
         {
             throw new BreaksRegexValidationException( data, pattern.toString() );

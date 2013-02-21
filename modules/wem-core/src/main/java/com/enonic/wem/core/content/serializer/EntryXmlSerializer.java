@@ -59,7 +59,7 @@ public final class EntryXmlSerializer
                                          "Data at path [%s] of type BLOB needs to have a BlobKey as value before it is serialized: " +
                                              data.getObject().getClass(), data.getPath() );
         }
-        dataEl.addContent( data.asString() );
+        dataEl.addContent( data.getString() );
     }
 
     public final void parse( Element parentEl, final DataSet parentDataSet )

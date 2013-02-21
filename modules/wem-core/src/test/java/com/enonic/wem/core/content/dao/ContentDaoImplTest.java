@@ -152,9 +152,9 @@ public class ContentDaoImplTest
 
         Content storedContent = contentDao.select( ContentPath.from( "myspace:myContent" ), session );
 
-        assertEquals( "1", storedContent.getData( "myData" ).asString() );
-        assertEquals( "2", storedContent.getData( "mySet.myData" ).asString() );
-        assertEquals( "3", storedContent.getData( "mySet.myOtherData" ).asString() );
+        assertEquals( "1", storedContent.getData( "myData" ).getString() );
+        assertEquals( "2", storedContent.getData( "mySet.myData" ).getString() );
+        assertEquals( "3", storedContent.getData( "mySet.myOtherData" ).getString() );
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -199,7 +199,7 @@ public class ContentDaoImplTest
         assertNotNull( session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root/myContent" ) );
 
         Content storedContent = contentDao.select( ContentPath.from( "myspace:myContent" ), session );
-        assertEquals( "changed value", storedContent.getData( "myData" ).asString() );
+        assertEquals( "changed value", storedContent.getData( "myData" ).getString() );
     }
 
     @Test
@@ -305,8 +305,8 @@ public class ContentDaoImplTest
         assertEquals( "myspace:/myContent", content.getPath().toString() );
 
         DataSet rootDataSet = actualContent.getRootDataSet();
-        assertEquals( "myValue", rootDataSet.getData( EntryPath.from( "myData" ) ).asString() );
-        assertEquals( "myOtherValue", rootDataSet.getData( EntryPath.from( "mySet.myData" ) ).asString() );
+        assertEquals( "myValue", rootDataSet.getData( EntryPath.from( "myData" ) ).getString() );
+        assertEquals( "myOtherValue", rootDataSet.getData( EntryPath.from( "mySet.myData" ) ).getString() );
     }
 
     @Test
@@ -336,12 +336,12 @@ public class ContentDaoImplTest
         assertEquals( "myspace:/myContent2", actualContents.last().getPath().toString() );
 
         DataSet rootDataSet1 = actualContents.first().getRootDataSet();
-        assertEquals( "myValue", rootDataSet1.getData( EntryPath.from( "myData" ) ).asString() );
-        assertEquals( "myOtherValue", rootDataSet1.getData( EntryPath.from( "mySet.myData" ) ).asString() );
+        assertEquals( "myValue", rootDataSet1.getData( EntryPath.from( "myData" ) ).getString() );
+        assertEquals( "myOtherValue", rootDataSet1.getData( EntryPath.from( "mySet.myData" ) ).getString() );
 
         DataSet rootDataSet2 = actualContents.last().getRootDataSet();
-        assertEquals( "myValue2", rootDataSet2.getData( EntryPath.from( "myData" ) ).asString() );
-        assertEquals( "myOtherValue2", rootDataSet2.getData( EntryPath.from( "mySet.myData" ) ).asString() );
+        assertEquals( "myValue2", rootDataSet2.getData( EntryPath.from( "myData" ) ).getString() );
+        assertEquals( "myOtherValue2", rootDataSet2.getData( EntryPath.from( "mySet.myData" ) ).getString() );
     }
 
     @Test
@@ -371,12 +371,12 @@ public class ContentDaoImplTest
         assertEquals( "myspace:/myContent2", actualContents.last().getPath().toString() );
 
         DataSet rootDataSet1 = actualContents.first().getRootDataSet();
-        assertEquals( "myValue", rootDataSet1.getData( EntryPath.from( "myData" ) ).asString() );
-        assertEquals( "myOtherValue", rootDataSet1.getData( EntryPath.from( "mySet.myData" ) ).asString() );
+        assertEquals( "myValue", rootDataSet1.getData( EntryPath.from( "myData" ) ).getString() );
+        assertEquals( "myOtherValue", rootDataSet1.getData( EntryPath.from( "mySet.myData" ) ).getString() );
 
         DataSet rootDataSet2 = actualContents.last().getRootDataSet();
-        assertEquals( "myValue2", rootDataSet2.getData( EntryPath.from( "myData" ) ).asString() );
-        assertEquals( "myOtherValue2", rootDataSet2.getData( EntryPath.from( "mySet.myData" ) ).asString() );
+        assertEquals( "myValue2", rootDataSet2.getData( EntryPath.from( "myData" ) ).getString() );
+        assertEquals( "myOtherValue2", rootDataSet2.getData( EntryPath.from( "mySet.myData" ) ).getString() );
     }
 
     @Test
@@ -399,8 +399,8 @@ public class ContentDaoImplTest
         assertEquals( "myspace:/myContent", content.getPath().toString() );
 
         DataSet rootDataSet = actualContent.getRootDataSet();
-        assertEquals( "myValue", rootDataSet.getData( EntryPath.from( "myData" ) ).asString() );
-        assertEquals( "myOtherValue", rootDataSet.getData( EntryPath.from( "mySet.myData" ) ).asString() );
+        assertEquals( "myValue", rootDataSet.getData( EntryPath.from( "myData" ) ).getString() );
+        assertEquals( "myOtherValue", rootDataSet.getData( EntryPath.from( "mySet.myData" ) ).getString() );
     }
 
     @Test

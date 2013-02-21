@@ -15,16 +15,16 @@ public class DataTest
     public void getDate_given_value_as_string()
     {
         Data data = newData().name( "myDate" ).type( DataTypes.TEXT ).value( "2012-08-31" ).build();
-        assertEquals( DateMidnight.class, data.asDate().getClass() );
-        assertEquals( new DateMidnight( 2012, 8, 31 ), data.asDate() );
+        assertEquals( DateMidnight.class, data.getDate().getClass() );
+        assertEquals( new DateMidnight( 2012, 8, 31 ), data.getDate() );
     }
 
     @Test
     public void getDouble_given_value_as_long()
     {
         Data data = newData().name( "myNumber" ).type( DataTypes.WHOLE_NUMBER ).value( (long) 2 ).build();
-        assertEquals( Double.class, data.asDouble().getClass() );
-        assertEquals( 2.0, data.asDouble() );
+        assertEquals( Double.class, data.getDouble().getClass() );
+        assertEquals( 2.0, data.getDouble() );
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -37,20 +37,20 @@ public class DataTest
     public void getLong_given_value_as_long()
     {
         Data data = newData().name( "myNumber" ).type( DataTypes.WHOLE_NUMBER ).value( 1l ).build();
-        assertEquals( new Long( 1 ), data.asLong() );
+        assertEquals( new Long( 1 ), data.getLong() );
     }
 
     @Test
     public void getLong_given_value_as_decimal_number()
     {
         Data data = newData().name( "myNumber" ).type( DataTypes.DECIMAL_NUMBER ).value( 1.1 ).build();
-        assertEquals( new Long( 1 ), data.asLong() );
+        assertEquals( new Long( 1 ), data.getLong() );
     }
 
     @Test
     public void getLong_given_value_as_string()
     {
         Data data = newData().name( "myText" ).type( DataTypes.TEXT ).value( "1" ).build();
-        assertEquals( new Long( 1 ), data.asLong() );
+        assertEquals( new Long( 1 ), data.getLong() );
     }
 }
