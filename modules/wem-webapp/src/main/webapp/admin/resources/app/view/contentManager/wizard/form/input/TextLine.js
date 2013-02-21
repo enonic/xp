@@ -9,8 +9,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.TextLine', {
             {
                 xtype: 'textfield',
                 name: me.name,
-                value: me.value,
-                labelWidth: 110 //Why doesnt this work?
+                value: me.value
             }
         ];
 
