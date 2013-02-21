@@ -7,11 +7,13 @@ Ext.define('Admin.store.spaceAdmin.SpaceStore', {
     autoLoad: true,
 
     proxy: {
-        type: 'ajax',
-        url: 'resources/data/spacesStub.json',
+        type: 'direct',
+        directFn: Admin.lib.RemoteService.space_list,
+        simpleSortMode: true,
         reader: {
             type: 'json',
-            root: 'spaces'
+            root: 'spaces',
+            totalProperty: 'total'
         }
     }
 });

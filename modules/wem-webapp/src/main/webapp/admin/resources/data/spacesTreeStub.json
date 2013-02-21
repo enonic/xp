@@ -1,39 +1,39 @@
 {
     "key": 0,
-    "displaydisplayName": "Root",
-    "image_url": "resources/images/icons/128x128/form_blue.png",
+    "displayname": "Root",
+    "iconUrl": "resources/images/icons/128x128/form_blue.png",
     "children": [
         {
             "key": 1,
-            "displayName": "Form",
-            "description": "Form description",
-            "image_url": "resources/images/icons/128x128/form_blue.png",
+            "name": "Form",
+            "displayName": "Form displayName",
+            "iconUrl": "resources/images/icons/128x128/form_blue.png",
             "modifiedTime": "2011-11-11 11:11:11",
             "createdTime": "2010-10-10 10:10:10",
             "children": []
         },
         {
             "key": 2,
-            "displayName": "Folder",
-            "description": "Folder description",
-            "image_url": "resources/images/icons/128x128/folder_blue.png",
+            "name": "Folder",
+            "displayName": "Folder displayName",
+            "iconUrl": "resources/images/icons/128x128/folder_blue.png",
             "modifiedTime": "2011-11-11 11:11:11",
             "createdTime": "2010-10-10 10:10:10",
             "children": [
                 {
                     "key": 3,
-                    "displayName": "News",
-                    "description": "News description",
-                    "image_url": "resources/images/icons/128x128/folder_blue.png",
+                    "name": "News",
+                    "displayName": "News displayName",
+                    "iconUrl": "resources/images/icons/128x128/folder_blue.png",
                     "modifiedTime": "2011-11-11 11:11:11",
                     "createdTime": "2010-10-10 10:10:10",
                     "children": []
                 },
                 {
                     "key": 5,
-                    "displayName": "Persons",
-                    "description": "Persons description",
-                    "image_url": "resources/images/icons/128x128/folder_blue.png",
+                    "name": "Persons",
+                    "displayName": "Persons displayName",
+                    "iconUrl": "resources/images/icons/128x128/folder_blue.png",
                     "modifiedTime": "2011-11-11 11:11:11",
                     "createdTime": "2010-10-10 10:10:10",
                     "children": []
@@ -42,17 +42,17 @@
         },
         {
             "key": 6,
-            "displayName": "Media",
-            "description": "Media description",
-            "image_url": "resources/images/icons/128x128/film.png",
+            "name": "Media",
+            "displayName": "Media displayName",
+            "iconUrl": "resources/images/icons/128x128/film.png",
             "modifiedTime": "2011-11-11 11:11:11",
             "createdTime": "2010-10-10 10:10:10",
             "children": [
                 {
                     "key": 7,
-                    "displayName": "Audio",
-                    "description": "Audio description",
-                    "image_url": "resources/images/icons/128x128/film.png",
+                    "name": "Audio",
+                    "displayName": "Audio displayName",
+                    "iconUrl": "resources/images/icons/128x128/film.png",
                     "modifiedTime": "2011-11-11 11:11:11",
                     "createdTime": "2010-10-10 10:10:10",
                     "children": [
@@ -61,31 +61,31 @@
                 },
                 {
                     "key": 8,
-                    "displayName": "Image",
-                    "description": "Image description",
+                    "name": "Image",
+                    "displayName": "Image displayName",
                     "modifiedTime": "2011-11-11 11:11:11",
                     "createdTime": "2010-10-10 10:10:10",
-                    "image_url": "resources/images/icons/128x128/film.png",
+                    "iconUrl": "resources/images/icons/128x128/film.png",
                     "children": [
 
                     ]
                 },
                 {
                     "key": 9,
-                    "displayName": "Video",
-                    "description": "Video description",
+                    "name": "Video",
+                    "displayName": "Video displayName",
                     "modifiedTime": "2011-11-11 11:11:11",
                     "createdTime": "2010-10-10 10:10:10",
-                    "image_url": "resources/images/icons/128x128/film.png",
+                    "iconUrl": "resources/images/icons/128x128/film.png",
                     "children": [
 
                     ]
                 },
                 {
                     "key": 10,
-                    "displayName": "Document",
-                    "description": "Document description",
-                    "image_url": "resources/images/icons/128x128/film.png",
+                    "name": "Document",
+                    "displayName": "Document displayName",
+                    "iconUrl": "resources/images/icons/128x128/film.png",
                     "modifiedTime": "2011-11-11 11:11:11",
                     "createdTime": "2010-10-10 10:10:10",
                     "children": [
@@ -96,9 +96,9 @@
         },
         {
             "key": 11,
-            "displayName": "Shortcut",
-            "description": "Shortcut description",
-            "image_url": "resources/images/icons/128x128/link.png",
+            "name": "Shortcut",
+            "displayName": "Shortcut displayName",
+            "iconUrl": "resources/images/icons/128x128/link.png",
             "modifiedTime": "2011-11-11 11:11:11",
             "createdTime": "2010-10-10 10:10:10",
             "children": [
@@ -107,28 +107,28 @@
         },
         {
             "key": 12,
-            "displayName": "Structured",
-            "description": "Structured description",
-            "image_url": "resources/images/icons/128x128/books_blue.png",
+            "name": "Structured",
+            "displayName": "Structured displayName",
+            "iconUrl": "resources/images/icons/128x128/books_blue.png",
             "modifiedTime": "2011-11-11 11:11:11",
             "createdTime": "2010-10-10 10:10:10",
             "children": [
                 {
                     "key": 13,
-                    "displayName": "Fruit",
-                    "description": "Fruit description",
-                    "image_url": "resources/images/icons/128x128/books_blue.png",
+                    "name": "Fruit",
+                    "displayName": "Fruit displayName",
+                    "iconUrl": "resources/images/icons/128x128/books_blue.png",
                     "modifiedTime": "2011-11-11 11:11:11",
                     "createdTime": "2010-10-10 10:10:10",
                     "leaf": true
                 },
                 {
                     "key": 14,
-                    "displayName": "Person",
-                    "description": "Person description",
+                    "name": "Person",
+                    "displayName": "Person displayName",
                     "modifiedTime": "2011-11-11 11:11:11",
                     "createdTime": "2010-10-10 10:10:10",
-                    "image_url": "resources/images/icons/128x128/books_blue.png",
+                    "iconUrl": "resources/images/icons/128x128/books_blue.png",
                     "leaf": true
                 }
             ]

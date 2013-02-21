@@ -4,8 +4,12 @@
 
     Ext.Loader.setConfig({
         enabled: true,
-        disableCaching: true
+        disableCaching: true,
+        paths: {
+            'Admin': 'resources/app'
+        }
     });
+    Ext.require('Admin.lib.RemoteService');
 
     Ext.override(Ext.LoadMask, {
         floating: {

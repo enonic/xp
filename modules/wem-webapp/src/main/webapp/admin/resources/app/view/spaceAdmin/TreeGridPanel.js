@@ -46,13 +46,14 @@ Ext.define('Admin.view.spaceAdmin.TreeGridPanel', {
             }
         ];
         this.callParent(arguments);
+        this.setActiveList('grid'); // show as grid (not as tree) by default
     },
 
 
     nameRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
         var space = record.data;
         var activeListType = this.getActiveList().itemId;
-        return Ext.String.format(this.nameTemplate, activeListType, space.image_url, value, space.description);
+        return Ext.String.format(this.nameTemplate, activeListType, space.iconUrl, value, space.name);
     },
 
     statusRenderer: function () {

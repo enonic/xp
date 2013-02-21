@@ -12,7 +12,7 @@ Ext.define('Admin.view.spaceAdmin.DeleteSpaceWindow', {
     singleTemplate: '<div>' +
                     '<div class="admin-content-info clearfix">' +
                     '<div class="admin-content-photo west admin-left">' +
-                    '<div class="photo-placeholder"><img src="{image_url}" alt="{name}"/></div>' +
+                    '<div class="photo-placeholder"><img src="{iconUrl}" alt="{name}"/></div>' +
                     '</div>' +
                     '<div class="admin-left">' +
                     '<h2>{displayName}</h2>' +

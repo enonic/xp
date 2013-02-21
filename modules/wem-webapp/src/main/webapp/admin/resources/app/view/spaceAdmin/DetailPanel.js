@@ -16,7 +16,7 @@ Ext.define('Admin.view.spaceAdmin.DetailPanel', {
 
     singleTemplate: {
 
-        photo: '<img src="{data.image_url}?size=100" style="width: 100px;" alt="{name}"/>',
+        photo: '<img src="{data.iconUrl}?size=100" style="width: 100px;" alt="{name}"/>',
 
         header: '<h1>{data.displayName}</h1><span>{data.description}</span>',
 
@@ -30,7 +30,7 @@ Ext.define('Admin.view.spaceAdmin.DetailPanel', {
 
     smallBoxTemplate: '<tpl for=".">' +
                       '<div id="selected-item-box-{data.key}" class="admin-selected-item-box small clearfix">' +
-                      '<div class="left"><img src="{data.image_url}?size=20" alt="{data.name}"/></div>' +
+                      '<div class="left"><img src="{data.iconUrl}?size=20" alt="{data.name}"/></div>' +
                       '<div class="center">{data.displayName}</div>' +
                       '<div class="right">' +
                       '<a id="remove-from-selection-button:{data.key}" class="deselect" href="javascript:;"></a>' +
@@ -40,7 +40,7 @@ Ext.define('Admin.view.spaceAdmin.DetailPanel', {
 
     largeBoxTemplate: '<tpl for=".">' +
                       '<div id="selected-item-box-{data.key}" class="admin-selected-item-box large clearfix">' +
-                      '<div class="left"><img src="{data.image_url}?size=32" alt="{data.name}"/></div>' +
+                      '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>' +
                       '<div class="center"><h6>{data.displayName}</h6><p>{data.description}</p></div>' +
                       '<div class="right">' +
                       '<a id="remove-from-selection-button:{data.key}" class="deselect" href="javascript:;"></a>' +
