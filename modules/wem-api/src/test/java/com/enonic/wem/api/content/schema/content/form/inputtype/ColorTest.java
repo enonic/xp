@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
@@ -27,11 +28,12 @@ public class ColorTest
         throws InvalidValueTypeException, InvalidValueException
     {
         Content content = newContent().build();
-        content.getRootDataSet().setData( "myColor.red", 40l );
-        content.getRootDataSet().setData( "myColor.green", 40l );
-        content.getRootDataSet().setData( "myColor.blue", 40l );
+        RootDataSet rootDataSet = content.getRootDataSet();
+        rootDataSet.setData( "myColor.red", 40l );
+        rootDataSet.setData( "myColor.green", 40l );
+        rootDataSet.setData( "myColor.blue", 40l );
 
-        Data myColor = content.getData( "myColor" );
+        Data myColor = rootDataSet.getData( "myColor" );
 
         InputTypes.COLOR.checkValidity( myColor );
     }
@@ -41,10 +43,11 @@ public class ColorTest
     public void given_data_missing_red_checkValidity_throws_InvalidDataException()
     {
         Content content = newContent().build();
-        content.getRootDataSet().setData( "myColor.green", 40l );
-        content.getRootDataSet().setData( "myColor.blue", 40l );
+        RootDataSet rootDataSet = content.getRootDataSet();
+        rootDataSet.setData( "myColor.green", 40l );
+        rootDataSet.setData( "myColor.blue", 40l );
 
-        Data myColor = content.getData( "myColor" );
+        Data myColor = rootDataSet.getData( "myColor" );
 
         try
         {
@@ -66,11 +69,12 @@ public class ColorTest
     public void given_data_with_illegal_red_checkValidity_throws_InvalidDataException()
     {
         Content content = newContent().build();
-        content.getRootDataSet().setData( "myColor.red", 256l );
-        content.getRootDataSet().setData( "myColor.green", 40l );
-        content.getRootDataSet().setData( "myColor.blue", 40l );
+        RootDataSet rootDataSet = content.getRootDataSet();
+        rootDataSet.setData( "myColor.red", 256l );
+        rootDataSet.setData( "myColor.green", 40l );
+        rootDataSet.setData( "myColor.blue", 40l );
 
-        Data myColor = content.getData( "myColor" );
+        Data myColor = rootDataSet.getData( "myColor" );
 
         try
         {

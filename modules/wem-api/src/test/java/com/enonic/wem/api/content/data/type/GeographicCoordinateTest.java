@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
 import static com.enonic.wem.api.content.Content.newContent;
@@ -20,10 +21,11 @@ public class GeographicCoordinateTest
     {
         // setup
         Content content = newContent().build();
-        content.getRootDataSet().setData( "myGeographicCoordinate.latitude", "1.1" );
+        RootDataSet rootDataSet = content.getRootDataSet();
+        rootDataSet.setData( "myGeographicCoordinate.latitude", "1.1" );
 
         GeographicCoordinate geographicCoordinate = DataTypes.GEOGRAPHIC_COORDINATE;
-        Data data = content.getData( "myGeographicCoordinate" );
+        Data data = rootDataSet.getData( "myGeographicCoordinate" );
 
         // exercise
         geographicCoordinate.checkValidity( data );
@@ -35,10 +37,11 @@ public class GeographicCoordinateTest
     {
         // setup
         Content content = newContent().build();
-        content.getRootDataSet().setData( "myGeographicCoordinate.latitude", 90.0 );
-        content.getRootDataSet().setData( "myGeographicCoordinate.longitude", 180.2 );
+        RootDataSet rootDataSet = content.getRootDataSet();
+        rootDataSet.setData( "myGeographicCoordinate.latitude", 90.0 );
+        rootDataSet.setData( "myGeographicCoordinate.longitude", 180.2 );
         GeographicCoordinate geographicCoordinate = DataTypes.GEOGRAPHIC_COORDINATE;
-        Data data = content.getData( "myGeographicCoordinate" );
+        Data data = rootDataSet.getData( "myGeographicCoordinate" );
 
         // exercise
         try

@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
@@ -113,18 +114,18 @@ public class DataSetValidatorTest
     public void given_untyped_content_when_setting_type_that_fits_then_everything_validates()
     {
         // setup
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "name", "Thomas" );
-        content.getRootDataSet().setData( "personalia.eyeColour", "Blue" );
-        content.getRootDataSet().setData( "personalia.hairColour", "Blonde" );
-        content.getRootDataSet().setData( "crimes[0].description", "Stole tomatoes from neighbour" );
-        content.getRootDataSet().setData( "crimes[0].year", "1989" );
-        content.getRootDataSet().setData( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
-        content.getRootDataSet().setData( "crimes[1].year", "1990" );
+        RootDataSet rootDataSet = new RootDataSet();
+        rootDataSet.setData( "name", "Thomas" );
+        rootDataSet.setData( "personalia.eyeColour", "Blue" );
+        rootDataSet.setData( "personalia.hairColour", "Blonde" );
+        rootDataSet.setData( "crimes[0].description", "Stole tomatoes from neighbour" );
+        rootDataSet.setData( "crimes[0].year", "1989" );
+        rootDataSet.setData( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
+        rootDataSet.setData( "crimes[1].year", "1990" );
 
-        assertEquals( DataTypes.TEXT, content.getData( "personalia.eyeColour" ).getType() );
-        Assert.assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getObject() );
-        Assert.assertEquals( "personalia.eyeColour", content.getData( "personalia.eyeColour" ).getPath().toString() );
+        assertEquals( DataTypes.TEXT, rootDataSet.getData( "personalia.eyeColour" ).getType() );
+        Assert.assertEquals( "Blue", rootDataSet.getData( "personalia.eyeColour" ).getObject() );
+        Assert.assertEquals( "personalia.eyeColour", rootDataSet.getData( "personalia.eyeColour" ).getPath().toString() );
 
         // exercise
         contentType.form().addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
@@ -137,12 +138,12 @@ public class DataSetValidatorTest
         crimes.add( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
         crimes.add( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
 
-        assertEquals( DataTypes.TEXT, content.getData( "personalia.eyeColour" ).getType() );
-        Assert.assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getObject() );
+        assertEquals( DataTypes.TEXT, rootDataSet.getData( "personalia.eyeColour" ).getType() );
+        Assert.assertEquals( "Blue", rootDataSet.getData( "personalia.eyeColour" ).getObject() );
 
         // verify
         DataSetValidator validator = new DataSetValidator( contentType );
-        DataValidationErrors validationErrors = validator.validate( content.getRootDataSet() );
+        DataValidationErrors validationErrors = validator.validate( rootDataSet );
         assertFalse( validationErrors.hasErrors() );
     }
 

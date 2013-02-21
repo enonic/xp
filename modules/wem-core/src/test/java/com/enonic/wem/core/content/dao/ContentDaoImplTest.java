@@ -152,9 +152,9 @@ public class ContentDaoImplTest
 
         Content storedContent = contentDao.select( ContentPath.from( "myspace:myContent" ), session );
 
-        assertEquals( "1", storedContent.getData( "myData" ).getString() );
-        assertEquals( "2", storedContent.getData( "mySet.myData" ).getString() );
-        assertEquals( "3", storedContent.getData( "mySet.myOtherData" ).getString() );
+        assertEquals( "1", storedContent.getRootDataSet().getData( "myData" ).getString() );
+        assertEquals( "2", storedContent.getRootDataSet().getData( "mySet.myData" ).getString() );
+        assertEquals( "3", storedContent.getRootDataSet().getData( "mySet.myOtherData" ).getString() );
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -199,7 +199,7 @@ public class ContentDaoImplTest
         assertNotNull( session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root/myContent" ) );
 
         Content storedContent = contentDao.select( ContentPath.from( "myspace:myContent" ), session );
-        assertEquals( "changed value", storedContent.getData( "myData" ).getString() );
+        assertEquals( "changed value", storedContent.getRootDataSet().getData( "myData" ).getString() );
     }
 
     @Test

@@ -6,10 +6,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.Entry;
-import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
@@ -110,21 +107,6 @@ public final class Content
     public ContentVersionId getVersionId()
     {
         return versionId;
-    }
-
-    public Entry getEntry( final String path )
-    {
-        return this.rootDataSet.getEntry( EntryPath.from( path ) );
-    }
-
-    public Data getData( final String path )
-    {
-        return this.rootDataSet.getData( EntryPath.from( path ) );
-    }
-
-    public DataSet getDataSet( String path )
-    {
-        return this.rootDataSet.getDataSet( EntryPath.from( path ) );
     }
 
     @Override
