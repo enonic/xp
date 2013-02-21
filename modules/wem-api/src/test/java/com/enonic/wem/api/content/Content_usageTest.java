@@ -35,12 +35,15 @@ public class Content_usageTest
     public void content_setData()
     {
         Content content = newContent().name( "myContent" ).build();
+
+        // exercise
         content.setData( "myText", "abc" );
         content.setData( "myNum", 123L );
         content.setData( "myDate", new DateMidnight( 2013, 1, 13 ) );
         content.setData( "myDec", 123.123 );
         content.setData( "myHtml", "<p>abc</p>", HTML_PART );
 
+        // verify
         assertEquals( TEXT, content.getData( "myText" ).getType() );
         assertEquals( WHOLE_NUMBER, content.getData( "myNum" ).getType() );
         assertEquals( DATE, content.getData( "myDate" ).getType() );
@@ -53,12 +56,15 @@ public class Content_usageTest
     {
         Content content = newContent().name( "myContent" ).build();
         DataSet dataSet = content.getRootDataSet();
+
+        // exercise
         dataSet.setData( "myText", "abc" );
         dataSet.setData( "myNum", 123L );
         dataSet.setData( "myDate", new DateMidnight( 2013, 1, 13 ) );
         dataSet.setData( "myDec", 123.123 );
         content.setData( "myHtml", "<p>abc</p>", HTML_PART );
 
+        // verify
         assertEquals( TEXT, content.getData( "myText" ).getType() );
         assertEquals( WHOLE_NUMBER, content.getData( "myNum" ).getType() );
         assertEquals( DATE, content.getData( "myDate" ).getType() );
@@ -71,12 +77,15 @@ public class Content_usageTest
     {
         Content content = newContent().name( "myContent" ).build();
         DataSet dataSet = content.getRootDataSet();
+
+        // exercise
         dataSet.add( newData().name( "myText" ).value( "abc" ).type( TEXT ).build() );
         dataSet.add( newData().name( "myNum" ).value( 123L ).type( WHOLE_NUMBER ).build() );
         dataSet.add( newData().name( "myDec" ).value( 123.123 ).type( DECIMAL_NUMBER ).build() );
         dataSet.add( newData().name( "myDate" ).value( new DateMidnight( 2013, 1, 13 ) ).type( DATE ).build() );
         dataSet.add( newData().name( "myHtml" ).value( "<p>abc</p>" ).type( HTML_PART ).build() );
 
+        // verify
         assertEquals( TEXT, content.getData( "myText" ).getType() );
         assertEquals( WHOLE_NUMBER, content.getData( "myNum" ).getType() );
         assertEquals( DATE, content.getData( "myDate" ).getType() );
@@ -95,12 +104,15 @@ public class Content_usageTest
     {
         Content content = newContent().name( "myContent" ).build();
         DataSet dataSet = content.getRootDataSet();
+
+        // exercise
         dataSet.add( newText().name( "myText" ).value( "abc" ).build() );
         dataSet.add( newWholeNumber().name( "myNum" ).value( 123L ).build() );
         dataSet.add( newDecimalNumber().name( "myDec" ).value( 123.123 ).build() );
         dataSet.add( newDate().name( "myDate" ).value( new DateMidnight( 2013, 1, 13 ) ).build() );
         dataSet.add( newHtmlPart().name( "myHtml" ).value( "<p>abc</p>" ).build() );
 
+        // verify
         assertEquals( TEXT, content.getData( "myText" ).getType() );
         assertEquals( WHOLE_NUMBER, content.getData( "myNum" ).getType() );
         assertEquals( DATE, content.getData( "myDate" ).getType() );
@@ -119,12 +131,15 @@ public class Content_usageTest
     {
         Content content = newContent().name( "myContent" ).build();
         DataSet dataSet = content.getRootDataSet();
+
+        // exercise
         dataSet.add( new Text( "myText", "abc" ) );
         dataSet.add( new WholeNumber( "myNum", 123L ) );
         dataSet.add( new DecimalNumber( "myDec", 123.123 ) );
         dataSet.add( new Date( "myDate", new DateMidnight( 2013, 1, 13 ) ) );
         dataSet.add( new HtmlPart( "myHtml", "<p>abc</p>" ) );
 
+        // verify
         assertEquals( TEXT, content.getData( "myText" ).getType() );
         assertEquals( WHOLE_NUMBER, content.getData( "myNum" ).getType() );
         assertEquals( DATE, content.getData( "myDate" ).getType() );
@@ -143,8 +158,11 @@ public class Content_usageTest
     {
         Content content = newContent().name( "myContent" ).build();
         DataSet dataSet = newDataSet().name( "mySet" ).build();
+
+        // exercise
         content.getRootDataSet().add( dataSet );
 
+        // verify
         assertNotNull( content.getRootDataSet().getDataSet( "mySet" ) );
     }
 
@@ -159,6 +177,7 @@ public class Content_usageTest
         dataSet.add( newData().name( "myDate" ).value( new DateMidnight( 2013, 1, 13 ) ).type( DATE ).build() );
         dataSet.add( newData().name( "myHtml" ).value( "<p>abc</p>" ).type( HTML_PART ).build() );
 
+        // exercise & verify
         assertEquals( "abc", content.getData( "myText" ).getString() );
         assertEquals( new Long( 123L ), content.getData( "myNum" ).getLong() );
         assertEquals( 123.123, content.getData( "myDec" ).getDouble() );
@@ -167,31 +186,35 @@ public class Content_usageTest
     }
 
     @Test
-    public void data_add_array()
+    public void dataSet_add_Data_array()
     {
         Content content = newContent().name( "myContent" ).build();
         DataSet dataSet = content.getRootDataSet();
+
+        // exercise
         dataSet.add( newData().name( "myText" ).value( "a" ).type( TEXT ).build() );
         dataSet.add( newData().name( "myText" ).value( "b" ).type( TEXT ).build() );
         dataSet.add( newData().name( "myText" ).value( "c" ).type( TEXT ).build() );
 
+        // verify
         assertEquals( "a", content.getData( "myText" ).getString( 0 ) );
         assertEquals( "b", content.getData( "myText" ).getString( 1 ) );
         assertEquals( "c", content.getData( "myText" ).getString( 2 ) );
     }
 
-    /*@Test
-    public void data_set_array()
+    @Test
+    public void dataSet_setData_array()
     {
         Content content = newContent().name( "myContent" ).build();
         DataSet dataSet = content.getRootDataSet();
-        dataSet.setData( newData().name( "myText", 0 ).value( "a" ).type( TEXT ).build() );
-        dataSet.setData( newData().name( "myText", 1 ).value( "b" ).type( TEXT ).build() );
-        dataSet.setData( newData().name( "myText", 2 ).value( "c" ).type( TEXT ).build() );
 
+        // exercise
+        dataSet.setData( "myText", "a", "b", "c" );
+
+        // verify
         assertEquals( "a", content.getData( "myText" ).getString( 0 ) );
         assertEquals( "b", content.getData( "myText" ).getString( 1 ) );
         assertEquals( "c", content.getData( "myText" ).getString( 2 ) );
-    }*/
+    }
 
 }

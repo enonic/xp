@@ -344,12 +344,6 @@ public class Data
             return getThis();
         }
 
-        /*public T name( String value, int index )
-        {
-            this.name = value;
-            return getThis();
-        }*/
-
         T type( BaseDataType value )
         {
             this.valueBuilder.type( value );

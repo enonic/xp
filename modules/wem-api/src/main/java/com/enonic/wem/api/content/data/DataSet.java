@@ -64,76 +64,79 @@ public class DataSet
         entryById.put( newEntry.getEntryId(), newEntry );
     }
 
-    public final void setData( final String path, final String value )
+    public final void setData( final String path, final String... values )
     {
-        setData( EntryPath.from( path ), value, DataTypes.TEXT );
+        setData( EntryPath.from( path ), DataTypes.TEXT, values );
     }
 
-    public final void setData( final EntryPath path, final String value )
+    public final void setData( final EntryPath path, final String... values )
     {
-        setData( path, newValue().type( DataTypes.TEXT ).value( value ).build() );
+        setData( path, DataTypes.TEXT, values );
     }
 
-    public final void setData( final String path, final Long value )
+    public final void setData( final String path, final Long... values )
     {
-        setData( EntryPath.from( path ), value, DataTypes.WHOLE_NUMBER );
+        setData( EntryPath.from( path ), DataTypes.WHOLE_NUMBER, values );
     }
 
-    public final void setData( final String path, final Double value )
+    public final void setData( final String path, final Double... values )
     {
-        setData( EntryPath.from( path ), value, DataTypes.DECIMAL_NUMBER );
+        setData( EntryPath.from( path ), DataTypes.DECIMAL_NUMBER, values );
     }
 
-    public final void setData( final String path, final DateMidnight value )
+    public final void setData( final String path, final DateMidnight... values )
     {
-        setData( EntryPath.from( path ), value, DataTypes.DATE );
+        setData( EntryPath.from( path ), DataTypes.DATE, values );
     }
 
-    public final void setData( final EntryPath path, final Value value )
+    public final void setData( final EntryPath path, final Value... values )
         throws InvalidDataException
     {
         if ( path.elementCount() > 1 )
         {
-            forwardSetDataToDataSet( path, value );
+            forwardSetDataToDataSet( path, values );
         }
         else
         {
-            final EntryPath newPath = EntryPath.from( getPath(), path.getFirstElement() );
-            setData( EntryId.from( newPath.getLastElement() ), value );
+            Preconditions.checkArgument( values.length > 0, "No values given for path: %s", path.toString() );
+            if ( values.length == 1 )
+            {
+                doSetData( EntryId.from( path.getFirstElement() ), values[0] );
+            }
+            else
+            {
+                if ( path.getFirstElement().hasIndex() )
+                {
+                    Preconditions.checkArgument( path.getFirstElement().getIndex() > 0,
+                                                 "Cannot set array at to another starting index than zero: %s", path.toString() );
+                }
+
+                for ( int i = 0; i < values.length; i++ )
+                {
+                    doSetData( EntryId.from( path.getFirstElement().getName(), i ), values[i] );
+                }
+            }
         }
     }
 
-    final void setData( final EntryPath path, final Object valueObject, final BaseDataType dataType )
+    final void setData( final EntryPath path, final BaseDataType dataType, final Object... valueObjects )
         throws InvalidDataException
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
 
-        final Value value = newValue().type( dataType ).value( valueObject ).build();
+        Value[] values = new Value[valueObjects.length];
+        for ( int i = 0; i < valueObjects.length; i++ )
+        {
+            values[i] = newValue().type( dataType ).value( valueObjects[i] ).build();
+        }
 
-        setData( path, value );
+        setData( path, values );
     }
 
-    public final void setData( final Data data )
+    private void doSetData( final EntryId entryId, final Value value )
     {
-        final Entry exEntry = entryById.get( data.getEntryId() );
-
-        if ( exEntry == null )
-        {
-            data.setParent( this );
-            registerArray( data );
-            entryById.put( data.getEntryId(), data );
-        }
-        else
-        {
-            data.setParent( this );
-            registerArray( data );
-            entryById.put( data.getEntryId(), data );
-        }
-    }
-
-    private void setData( final EntryId entryId, final Value value )
-    {
+        Preconditions.checkNotNull( value, "No value given for Entry: %s", entryId );
         final Entry exEntry = entryById.get( entryId );
 
         if ( exEntry == null )
@@ -151,10 +154,10 @@ public class DataSet
         }
     }
 
-    private void forwardSetDataToDataSet( final EntryPath path, final Value value )
+    private void forwardSetDataToDataSet( final EntryPath path, final Value... values )
     {
         final DataSet dataSet = findOrCreateDataSet( EntryId.from( path.getFirstElement() ) );
-        dataSet.setData( path.asNewWithoutFirstPathElement(), value );
+        dataSet.setData( path.asNewWithoutFirstPathElement(), values );
     }
 
     private DataSet findOrCreateDataSet( final EntryId entryId )
