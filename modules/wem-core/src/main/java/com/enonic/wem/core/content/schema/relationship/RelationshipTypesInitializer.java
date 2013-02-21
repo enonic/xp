@@ -1,7 +1,8 @@
 package com.enonic.wem.core.content.schema.relationship;
 
-import org.apache.commons.io.IOUtils;
 import javax.inject.Inject;
+
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -24,11 +25,13 @@ import static com.enonic.wem.api.content.schema.relationship.RelationshipType.ne
 public class RelationshipTypesInitializer
     implements InitializerTask
 {
-    private static final RelationshipType PARENT = createRelationshipType( "parent", "Parent", "parent of", "child of" );
+    private static final RelationshipType PARENT =
+        createRelationshipType( QualifiedRelationshipTypeName.PARENT, "Parent", "parent of", "child of" );
 
-    private static final RelationshipType LINK = createRelationshipType( "link", "Link", "links to", "linked by" );
+    private static final RelationshipType LINK =
+        createRelationshipType( QualifiedRelationshipTypeName.LINK, "Link", "links to", "linked by" );
 
-    private static final RelationshipType LIKE = createRelationshipType( "like", "Like", "likes", "liked by" );
+    private static final RelationshipType LIKE = createRelationshipType( QualifiedRelationshipTypeName.LIKE, "Like", "likes", "liked by" );
 
     private Client client;
 
@@ -87,16 +90,16 @@ public class RelationshipTypesInitializer
         }
     }
 
-    private static RelationshipType createRelationshipType( final String name, final String displayName, final String fromSemantic,
-                                                            final String toSemantic )
+    private static RelationshipType createRelationshipType( final QualifiedRelationshipTypeName qualifiedName, final String displayName,
+                                                            final String fromSemantic, final String toSemantic )
     {
         return newRelationshipType().
-            name( name ).
+            name( qualifiedName.getLocalName() ).
             displayName( displayName ).
             fromSemantic( fromSemantic ).
             toSemantic( toSemantic ).
-            module( ModuleName.SYSTEM ).
-            icon( loadRelationshipTypeIcon( new QualifiedRelationshipTypeName( ModuleName.SYSTEM, name ) ) ).
+            module( qualifiedName.getModuleName() ).
+            icon( loadRelationshipTypeIcon( qualifiedName ) ).
             build();
     }
 

@@ -1,5 +1,8 @@
 package com.enonic.wem.core.content;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.jcr.Session;
 
@@ -8,12 +11,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.command.content.relationship.CreateRelationship;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.DataVisitor;
+import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
+import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.core.search.IndexService;
 
 @Component
@@ -51,18 +62,18 @@ public class CreateContentHandler
         final ContentId contentId = contentDao.create( content, session );
         session.save();
 
-        /*final List<Data> references = resolveReferences( content.getRootDataSet() );
+        final List<Data> references = resolveReferences( content.getRootDataSet() );
         for ( Data reference : references )
         {
-            final ContentId toContent = ContentIdFactory.from( reference.asString() );
+            final ContentId toContent = ContentIdFactory.from( reference.getString() );
             final CreateRelationship createRelationship = Commands.relationship().create();
             createRelationship.fromContent( contentId );
             createRelationship.toContent( toContent );
-            createRelationship.type( QualifiedRelationshipTypeName.from( "system:default" ) );
+            createRelationship.type( QualifiedRelationshipTypeName.PARENT );
             createRelationship.managed( reference.getPath() );
 
-            //context.getClient().execute( createRelationship );
-        }*/
+            context.getClient().execute( createRelationship );
+        }
 
         try
         {
@@ -78,7 +89,7 @@ public class CreateContentHandler
         command.setResult( contentId );
     }
 
-    /*private List<Data> resolveReferences( final RootDataSet rootDataSet )
+    private List<Data> resolveReferences( final RootDataSet rootDataSet )
     {
         final List<Data> references = new ArrayList<>();
         final DataVisitor dataVisitor = new DataVisitor()
@@ -92,7 +103,7 @@ public class CreateContentHandler
         dataVisitor.restrictType( DataTypes.CONTENT_REFERENCE );
         dataVisitor.traverse( rootDataSet );
         return references;
-    }*/
+    }
 
     @Inject
     public void setContentDao( final ContentDao contentDao )

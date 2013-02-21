@@ -2,6 +2,7 @@ package com.enonic.wem.api.command.content.relationship;
 
 
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -98,5 +99,32 @@ public class CreateRelationship
         {
             Preconditions.checkNotNull( managingData, "managingData cannot be null" );
         }
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final CreateRelationship that = (CreateRelationship) o;
+
+        return Objects.equals( managed, that.managed ) &&
+            Objects.equals( fromContent, that.fromContent ) &&
+            Objects.equals( toContent, that.toContent ) &&
+            Objects.equals( type, that.type ) &&
+            Objects.equals( managingData, that.managingData );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( managed, fromContent, toContent, type, managingData );
     }
 }

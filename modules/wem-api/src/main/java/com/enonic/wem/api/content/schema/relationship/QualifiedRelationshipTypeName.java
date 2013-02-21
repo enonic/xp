@@ -7,6 +7,12 @@ import com.enonic.wem.api.module.ModuleName;
 public final class QualifiedRelationshipTypeName
     extends ModuleBasedQualifiedName
 {
+    public static final QualifiedRelationshipTypeName PARENT = new QualifiedRelationshipTypeName( ModuleName.SYSTEM, "parent" );
+
+    public static final QualifiedRelationshipTypeName LINK = new QualifiedRelationshipTypeName( ModuleName.SYSTEM, "link" );
+
+    public static final QualifiedRelationshipTypeName LIKE = new QualifiedRelationshipTypeName( ModuleName.SYSTEM, "like" );
+
     public QualifiedRelationshipTypeName( final ModuleName moduleName, final String name )
     {
         super( moduleName, name );
