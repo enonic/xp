@@ -65,7 +65,7 @@
 
             var $component = $(event.target).closest('[data-live-edit-type]');
             var componentInfo = util.getComponentInfo($component);
-            var pos = me.resolvePosition(event);
+            var pos = me.getPosition(event);
 
             me.getEl().css({
                 top: pos.y,
@@ -87,7 +87,7 @@
     };
 
 
-    proto.resolvePosition = function (event) {
+    proto.getPosition = function (event) {
         var t = this;
         var pageX = event.pageX;
         var pageY = event.pageY;
@@ -98,7 +98,7 @@
         var toolTipWidth = t.getEl().width();
         var toolTipHeight = t.getEl().height();
 
-        if (x + toolTipWidth > (viewPortSize.width - t.OFFSET_X * 2)) {
+        if (x + toolTipWidth > (viewPortSize.width - t.OFFSET_X * 2) - 50) {
             x = pageX - toolTipWidth - (t.OFFSET_X * 2);
         }
         if (y + toolTipHeight > (viewPortSize.height + scrollTop - t.OFFSET_Y * 2)) {

@@ -17,7 +17,13 @@
         me.registerGlobalListeners();
 
         me.registerEvents();
+        /*
+        */
     };
+
+    var BAR_WIDTH = 235;
+    var TOGGLE_WIDTH = 30;
+    var INNER_WIDTH = BAR_WIDTH - TOGGLE_WIDTH;
 
 
     // Inherits Base.js
@@ -36,9 +42,8 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     var html = '';
-    html += '<div class="live-edit-components-container">';
-    html += '    <div class="live-edit-toggle-components-container">';
-    html += '        <div class="live-edit-components-toggle-text">Hide components</div>';
+    html += '<div class="live-edit-components-container" style="width:' + BAR_WIDTH + 'px; right: -' + INNER_WIDTH + 'px">';
+    html += '    <div class="live-edit-toggle-components-container" style="width:' + TOGGLE_WIDTH + 'px"><span class="live-edit-toggle-text-container">Show Components</span></div>';
     html += '        <div class="live-edit-components">';
     html += '            <div class="live-edit-form-container">';
     html += '               <form>';
@@ -177,12 +182,16 @@
 
 
     proto.show = function () {
-        this.getBar().css('right', '0');
+        var me = this;
+        me.getBar().css('right', '0');
+        me.getToggleTextContainer().text('Hide Components');
     };
 
 
     proto.hide = function () {
-        this.getBar().css('right', '-200px');
+        var me = this;
+        me.getBar().css('right', '-' + INNER_WIDTH + 'px');
+        me.getToggleTextContainer().text('Show Components');
     };
 
 
@@ -208,7 +217,7 @@
 
 
     proto.getToggle = function () {
-        return $('.live-edit-components-toggle-text', this.getEl());
+        return $('.live-edit-toggle-components-container', this.getEl());
     };
 
 
@@ -224,6 +233,11 @@
 
     proto.getComponentList = function () {
         return $('.live-edit-component', this.getEl());
+    };
+
+
+    proto.getToggleTextContainer = function () {
+        return $('.live-edit-toggle-text-container', this.getEl());
     };
 
 }($liveedit));

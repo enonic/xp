@@ -337,38 +337,36 @@ svg.live-edit-highlighter rect {
     position: fixed;
     z-index: 1100150;
     top: 0;
-    right: -200px;
     bottom: 0;
-    background-color: #ebebeb;
-    min-width: 235px;
+    background-color: #fff;
     font: 14px Tahoma, sans-serif;
 }
 
 
 .live-edit-components-container {
-    -webkit-transition: right 100ms ease-in, opacity 100ms linear;
-    transition: right 100ms ease-in, opacity 100ms linear;
+    -webkit-transition: right 100ms ease-in, opacity 50ms linear;
+    transition: right 100ms ease-in, opacity 50ms linear;
 }
 
 .live-edit-form-container {
     overflow: hidden;
 }
 
-.live-edit-components-toggle-text-container {
-    float: left;
-    text-align: center;
+.live-edit-toggle-components-container {
+    cursor: pointer;
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    background-color: #eee;
 }
 
-.live-edit-components-toggle-text {
-    transform: rotate(90deg);
-    -webkit-transform: rotate(90deg);
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
+.live-edit-toggle-text-container {
+    display: inline-block;
     position: absolute;
-    top: 50%;
-    left: -37px;
-    cursor: pointer;
+    width: 150px;
+    margin-top: 50%;
+    margin-left: -10px;
+    -webkit-transform: rotate(90deg);
+    left: -50px;
 }
 
 .live-edit-components {
@@ -377,7 +375,7 @@ svg.live-edit-highlighter rect {
     position: absolute;
     bottom: 0;
     top: 0;
-    min-width: 200px;
+    min-width: 205px;
     z-index: -2;
 }
 
