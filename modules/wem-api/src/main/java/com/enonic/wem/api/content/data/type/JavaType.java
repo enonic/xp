@@ -8,8 +8,6 @@ import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
-import com.enonic.wem.api.blob.BlobKey;
-
 
 public final class JavaType
 {
@@ -21,7 +19,7 @@ public final class JavaType
 
     public static final Date DATE = new Date();
 
-    public static final Blob BLOB = new Blob();
+    public static final BlobKey BLOB_KEY = new BlobKey();
 
     public static final DataSet DATA_SET = new DataSet();
 
@@ -30,7 +28,7 @@ public final class JavaType
     static
     {
         INSTANCES.put( DATA_SET.getType(), DATA_SET );
-        INSTANCES.put( BLOB.getType(), BLOB );
+        INSTANCES.put( BLOB_KEY.getType(), BLOB_KEY );
         INSTANCES.put( STRING.getType(), STRING );
         INSTANCES.put( DOUBLE.getType(), DOUBLE );
         INSTANCES.put( LONG.getType(), LONG );
@@ -97,7 +95,7 @@ public final class JavaType
             {
                 return value.toString();
             }
-            else if ( value instanceof BlobKey )
+            else if ( value instanceof com.enonic.wem.api.blob.BlobKey )
             {
                 return value.toString();
             }
@@ -199,19 +197,19 @@ public final class JavaType
         }
     }
 
-    public final static class Blob
+    public final static class BlobKey
         extends BaseType
     {
-        Blob()
+        BlobKey()
         {
-            super( BlobKey.class );
+            super( com.enonic.wem.api.blob.BlobKey.class );
         }
 
-        public BlobKey convertFrom( Object value )
+        public com.enonic.wem.api.blob.BlobKey convertFrom( Object value )
         {
-            if ( value instanceof BlobKey )
+            if ( value instanceof com.enonic.wem.api.blob.BlobKey )
             {
-                return (BlobKey) value;
+                return (com.enonic.wem.api.blob.BlobKey) value;
             }
             else
             {

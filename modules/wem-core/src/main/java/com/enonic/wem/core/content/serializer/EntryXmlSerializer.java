@@ -6,7 +6,6 @@ import org.jdom.Element;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Entry;
@@ -53,12 +52,6 @@ public final class EntryXmlSerializer
 
         final Element dataEl = new Element( name ).setAttribute( "type", data.getType().getName() );
         parentDataEl.addContent( dataEl );
-        if ( data.getType().equals( DataTypes.BLOB ) )
-        {
-            Preconditions.checkArgument( data.getObject() instanceof BlobKey,
-                                         "Data at path [%s] of type BLOB needs to have a BlobKey as value before it is serialized: " +
-                                             data.getObject().getClass(), data.getPath() );
-        }
         dataEl.addContent( data.getString() );
     }
 

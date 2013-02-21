@@ -4,6 +4,7 @@ import org.joda.time.DateMidnight;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.data.type.BaseDataType;
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
 import com.enonic.wem.api.content.data.type.JavaType;
@@ -96,6 +97,17 @@ public final class Value
         if ( object != null && converted == null )
         {
             throw new InconvertibleValueException( object, JavaType.DATE );
+        }
+        return converted;
+    }
+
+    public BlobKey asBlobKey()
+        throws InconvertibleValueException
+    {
+        final BlobKey converted = JavaType.BLOB_KEY.convertFrom( object );
+        if ( object != null && converted == null )
+        {
+            throw new InconvertibleValueException( object, JavaType.BLOB_KEY );
         }
         return converted;
     }

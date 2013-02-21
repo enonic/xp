@@ -18,13 +18,13 @@ public class Attachment
     public void checkValidity( final Data data )
         throws InvalidValueTypeException, InvalidValueException
     {
-        DataTypes.BLOB.checkValidity( data );
+        DataTypes.BINARY_REFERENCE.checkValidity( data );
     }
 
     @Override
     public void ensureType( final Data data )
     {
-        DataTypes.BLOB.ensureType( data );
+        DataTypes.BINARY_REFERENCE.ensureType( data );
     }
 
     @Override

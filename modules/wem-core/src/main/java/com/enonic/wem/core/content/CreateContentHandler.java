@@ -1,11 +1,11 @@
 package com.enonic.wem.core.content;
 
+import javax.inject.Inject;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.CreateContent;
@@ -89,7 +89,7 @@ public class CreateContentHandler
                 references.add( reference );
             }
         };
-        dataVisitor.restrictType( DataTypes.REFERENCE );
+        dataVisitor.restrictType( DataTypes.CONTENT_REFERENCE );
         dataVisitor.traverse( rootDataSet );
         return references;
     }*/

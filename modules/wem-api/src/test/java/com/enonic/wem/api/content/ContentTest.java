@@ -540,7 +540,7 @@ public class ContentTest
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "FormItem at path [address.street] expected to be of type FieldSet: REFERENCE", e.getMessage() );
+            assertEquals( "FormItem at path [address.street] expected to be of type FieldSet: CONTENT_REFERENCE", e.getMessage() );
         }
     }
 

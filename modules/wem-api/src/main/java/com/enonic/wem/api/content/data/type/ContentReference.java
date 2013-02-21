@@ -2,10 +2,10 @@ package com.enonic.wem.api.content.data.type;
 
 import com.enonic.wem.api.content.data.Value;
 
-public class Reference
+public class ContentReference
     extends BaseDataType
 {
-    Reference( int key )
+    ContentReference( int key )
     {
         super( key, JavaType.STRING );
     }

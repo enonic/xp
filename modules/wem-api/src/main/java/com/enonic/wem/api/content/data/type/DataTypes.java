@@ -13,7 +13,7 @@ public final class DataTypes
 
     public static final Text TEXT = new Text( 1 );
 
-    public static final Blob BLOB = new Blob( 2 );
+    public static final BinaryReference BINARY_REFERENCE = new BinaryReference( 2 );
 
     public static final HtmlPart HTML_PART = new HtmlPart( 3 );
 
@@ -21,7 +21,7 @@ public final class DataTypes
 
     public static final Date DATE = new Date( 5 );
 
-    public static final Reference REFERENCE = new Reference( 6 );
+    public static final ContentReference CONTENT_REFERENCE = new ContentReference( 6 );
 
     public static final WholeNumber WHOLE_NUMBER = new WholeNumber( 7 );
 
@@ -37,11 +37,11 @@ public final class DataTypes
     {
         register( SET );
         register( TEXT );
-        register( BLOB );
+        register( BINARY_REFERENCE );
         register( HTML_PART );
         register( XML );
         register( DATE );
-        register( REFERENCE );
+        register( CONTENT_REFERENCE );
         register( WHOLE_NUMBER );
         register( DECIMAL_NUMBER );
         register( GEOGRAPHIC_COORDINATE );

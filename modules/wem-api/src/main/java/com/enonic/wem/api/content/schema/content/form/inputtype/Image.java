@@ -20,7 +20,7 @@ public class Image
     public void checkValidity( final Data data )
         throws InvalidValueTypeException, InvalidValueException
     {
-        DataTool.checkDataType( data, "binary", DataTypes.BLOB );
+        DataTool.checkDataType( data, "binary", DataTypes.BINARY_REFERENCE );
         DataTool.checkDataType( data, "caption", DataTypes.TEXT );
     }
 
@@ -28,7 +28,7 @@ public class Image
     public void ensureType( final Data data )
     {
         final DataSet dataSet = data.toDataSet();
-        DataTypes.BLOB.ensureType( dataSet.getData( "binary" ) );
+        DataTypes.BINARY_REFERENCE.ensureType( dataSet.getData( "binary" ) );
         DataTypes.TEXT.ensureType( dataSet.getData( "caption" ) );
     }
 
