@@ -44,12 +44,12 @@ public class ContentIndexDocumentsFactoryTest
     {
         Content content = createContentWithMetadata();
 
-        content.setData( "mydata.value1", 1.0 );
-        content.setData( "mydata.value2", DateMidnight.now() );
-        content.setData( "mydata.value2[1]", DateMidnight.now() );
-        content.setData( "mydata.value3.subvalue1", "value3.1" );
-        content.setData( "mydata.value3.subvalue2", "value3.2" );
-        content.setData( "mydata.value3.subvalue3", "value3.3" );
+        content.getRootDataSet().setData( "mydata.value1", 1.0 );
+        content.getRootDataSet().setData( "mydata.value2", DateMidnight.now() );
+        content.getRootDataSet().setData( "mydata.value2[1]", DateMidnight.now() );
+        content.getRootDataSet().setData( "mydata.value3.subvalue1", "value3.1" );
+        content.getRootDataSet().setData( "mydata.value3.subvalue2", "value3.2" );
+        content.getRootDataSet().setData( "mydata.value3.subvalue3", "value3.3" );
 
         final Collection<IndexDocument> indexDocuments = ContentIndexDocumentsFactory.create( content );
 

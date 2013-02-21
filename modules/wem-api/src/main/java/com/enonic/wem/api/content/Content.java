@@ -1,24 +1,18 @@
 package com.enonic.wem.api.content;
 
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.content.data.BlobToKeyReplacer;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.EntryPath;
-import com.enonic.wem.api.content.data.MockBlobKeyResolver;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.data.type.BaseDataType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-
-import static com.enonic.wem.api.content.data.Value.newValue;
 
 public final class Content
 {
@@ -118,31 +112,6 @@ public final class Content
         return versionId;
     }
 
-    public void setData( final String path, final String value )
-    {
-        this.rootDataSet.setData( path, value );
-    }
-
-    public void setData( final String path, final Long value )
-    {
-        this.rootDataSet.setData( path, value );
-    }
-
-    public void setData( final String path, final Double value )
-    {
-        this.rootDataSet.setData( path, value );
-    }
-
-    public void setData( final String path, final DateMidnight value )
-    {
-        this.rootDataSet.setData( path, value );
-    }
-
-    public void setData( final String path, final Object value, BaseDataType dataType )
-    {
-        this.rootDataSet.setData( EntryPath.from( path ), newValue().type( dataType ).value( value ).build() );
-    }
-
     public Entry getEntry( final String path )
     {
         return this.rootDataSet.getEntry( EntryPath.from( path ) );
@@ -156,11 +125,6 @@ public final class Content
     public DataSet getDataSet( String path )
     {
         return this.rootDataSet.getDataSet( EntryPath.from( path ) );
-    }
-
-    public void replaceBlobsWithKeys( final MockBlobKeyResolver blobToKeyResolver )
-    {
-        new BlobToKeyReplacer( blobToKeyResolver ).replace( rootDataSet );
     }
 
     @Override

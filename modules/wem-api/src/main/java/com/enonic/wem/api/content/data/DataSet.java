@@ -119,7 +119,13 @@ public class DataSet
         }
     }
 
-    final void setData( final EntryPath path, final BaseDataType dataType, final Object... valueObjects )
+    public final void setData( final String path, final BaseDataType dataType, final Object... valueObjects )
+        throws InvalidDataException
+    {
+        setData( EntryPath.from( path ), dataType, valueObjects );
+    }
+
+    public final void setData( final EntryPath path, final BaseDataType dataType, final Object... valueObjects )
         throws InvalidDataException
     {
         Preconditions.checkNotNull( path, "path cannot be null" );

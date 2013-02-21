@@ -27,9 +27,9 @@ public class ColorTest
         throws InvalidValueTypeException, InvalidValueException
     {
         Content content = newContent().build();
-        content.setData( "myColor.red", 40l );
-        content.setData( "myColor.green", 40l );
-        content.setData( "myColor.blue", 40l );
+        content.getRootDataSet().setData( "myColor.red", 40l );
+        content.getRootDataSet().setData( "myColor.green", 40l );
+        content.getRootDataSet().setData( "myColor.blue", 40l );
 
         Data myColor = content.getData( "myColor" );
 
@@ -41,8 +41,8 @@ public class ColorTest
     public void given_data_missing_red_checkValidity_throws_InvalidDataException()
     {
         Content content = newContent().build();
-        content.setData( "myColor.green", 40l );
-        content.setData( "myColor.blue", 40l );
+        content.getRootDataSet().setData( "myColor.green", 40l );
+        content.getRootDataSet().setData( "myColor.blue", 40l );
 
         Data myColor = content.getData( "myColor" );
 
@@ -66,9 +66,9 @@ public class ColorTest
     public void given_data_with_illegal_red_checkValidity_throws_InvalidDataException()
     {
         Content content = newContent().build();
-        content.setData( "myColor.red", 256l );
-        content.setData( "myColor.green", 40l );
-        content.setData( "myColor.blue", 40l );
+        content.getRootDataSet().setData( "myColor.red", 256l );
+        content.getRootDataSet().setData( "myColor.green", 40l );
+        content.getRootDataSet().setData( "myColor.blue", 40l );
 
         Data myColor = content.getData( "myColor" );
 

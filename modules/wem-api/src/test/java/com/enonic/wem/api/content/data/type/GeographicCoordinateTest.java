@@ -20,7 +20,7 @@ public class GeographicCoordinateTest
     {
         // setup
         Content content = newContent().build();
-        content.setData( "myGeographicCoordinate.latitude", "1.1" );
+        content.getRootDataSet().setData( "myGeographicCoordinate.latitude", "1.1" );
 
         GeographicCoordinate geographicCoordinate = DataTypes.GEOGRAPHIC_COORDINATE;
         Data data = content.getData( "myGeographicCoordinate" );
@@ -35,8 +35,8 @@ public class GeographicCoordinateTest
     {
         // setup
         Content content = newContent().build();
-        content.setData( "myGeographicCoordinate.latitude", 90.0 );
-        content.setData( "myGeographicCoordinate.longitude", 180.2 );
+        content.getRootDataSet().setData( "myGeographicCoordinate.latitude", 90.0 );
+        content.getRootDataSet().setData( "myGeographicCoordinate.longitude", 180.2 );
         GeographicCoordinate geographicCoordinate = DataTypes.GEOGRAPHIC_COORDINATE;
         Data data = content.getData( "myGeographicCoordinate" );
 

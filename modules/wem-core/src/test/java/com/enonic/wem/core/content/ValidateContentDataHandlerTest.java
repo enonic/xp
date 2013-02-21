@@ -74,7 +74,7 @@ public class ValidateContentDataHandlerTest
             build();
 
         final Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "mySet.myInput", "thing" );
+        content.getRootDataSet().setData( "mySet.myInput", "thing" );
 
         // exercise
         final ValidateRootDataSet command =
