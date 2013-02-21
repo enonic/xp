@@ -49,7 +49,7 @@ public abstract class AbstractContentTypeSerializerTest
     abstract void assertSerializedResult( String fileNameForExpected, String actualSerialization );
 
     @Test
-    public void given_all_base_types_when_parsed_then_paths_are_as_expected()
+    public void given_all_schemas_when_parsed_then_paths_are_as_expected()
         throws Exception
     {
         Mixin inputMixin = newMixin().formItem( Input.newInput().name( "mySharedInput" ).type( InputTypes.TEXT_LINE ).build() ).module(
