@@ -1,6 +1,6 @@
 package com.enonic.wem.web.rest.rpc.space;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Icon;
@@ -67,7 +67,7 @@ public final class CreateOrUpdateSpaceRpcHandler
         return !client.execute( space().get().name( spaceName ) ).isEmpty();
     }
 
-    @Autowired
+    @Inject
     public void setUploadService( final UploadService uploadService )
     {
         this.uploadService = uploadService;

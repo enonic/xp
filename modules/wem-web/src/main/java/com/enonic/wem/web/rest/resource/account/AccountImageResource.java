@@ -9,7 +9,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
@@ -50,7 +50,7 @@ public final class AccountImageResource
         return this.helper.getDefaultImage( name, size );
     }
 
-    @Autowired
+    @Inject
     public void setClient( final Client client )
     {
         this.client = client;

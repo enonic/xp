@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.schema.relationship;
 
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -100,7 +100,7 @@ public class RelationshipTypesInitializer
             build();
     }
 
-    @Autowired
+    @Inject
     public void setClient( final Client client )
     {
         this.client = client;

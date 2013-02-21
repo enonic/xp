@@ -8,7 +8,7 @@ import javax.annotation.PostConstruct;
 import org.elasticsearch.indices.IndexAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.Account;
@@ -113,19 +113,19 @@ public class IndexService
         this.doReindexOnEmptyIndex = doReindexOnEmptyIndex;
     }
 
-    @Autowired
+    @Inject
     public void setElasticsearchIndexService( final ElasticsearchIndexServiceImpl elasticsearchIndexService )
     {
         this.elasticsearchIndexService = elasticsearchIndexService;
     }
 
-    @Autowired
+    @Inject
     public void setIndexMappingProvider( final IndexMappingProvider indexMappingProvider )
     {
         this.indexMappingProvider = indexMappingProvider;
     }
 
-    @Autowired
+    @Inject
     public void setReindexService( final ReindexService reindexService )
     {
         this.reindexService = reindexService;

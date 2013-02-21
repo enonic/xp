@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.jcr.Session;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.Account;
@@ -72,7 +72,7 @@ public final class GetAccountsHandler
         return Accounts.from( accountList );
     }
 
-    @Autowired
+    @Inject
     public void setAccountDao( final AccountDao accountDao )
     {
         this.accountDao = accountDao;

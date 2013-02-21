@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content.schema.mixin;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.mixin.DeleteMixins;
@@ -55,13 +55,13 @@ public final class DeleteMixinsHandler
         command.setResult( mixinDeletionResult );
     }
 
-    @Autowired
+    @Inject
     public void setMixinDao( final MixinDao mixinDao )
     {
         this.mixinDao = mixinDao;
     }
 
-    /*@Autowired
+    /*@Inject
     public void setContentTypeDao( final ContentTypeDao contentTypeDao )
     {
         this.contentTypeDao = contentTypeDao;

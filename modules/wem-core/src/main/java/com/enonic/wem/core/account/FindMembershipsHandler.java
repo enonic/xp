@@ -3,7 +3,7 @@ package com.enonic.wem.core.account;
 import java.util.Set;
 
 import org.elasticsearch.common.collect.Sets;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
@@ -68,13 +68,13 @@ public final class FindMembershipsHandler
         }
     }
 
-    @Autowired
+    @Inject
     public void setAccountDao( final AccountDao accountDao )
     {
         this.accountDao = accountDao;
     }
 
-    @Autowired
+    @Inject
     public void setAccountSearchService( final AccountSearchService accountSearchService )
     {
         this.accountSearchService = accountSearchService;

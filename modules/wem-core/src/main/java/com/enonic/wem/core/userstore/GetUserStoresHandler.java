@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.jcr.Session;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -55,7 +55,7 @@ public class GetUserStoresHandler
         command.setResult( UserStores.from( userStoreList ) );
     }
 
-    @Autowired
+    @Inject
     public void setAccountDao( final AccountDao accountDao )
     {
         this.accountDao = accountDao;

@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.schema.content;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.content.CreateContentType;
@@ -74,7 +74,7 @@ public final class CreateContentTypeHandler
         throw new InvalidContentTypeException( contentType, validationResult.getFirst().getErrorMessage() );
     }
 
-    @Autowired
+    @Inject
     public void setContentTypeDao( final ContentTypeDao contentTypeDao )
     {
         this.contentTypeDao = contentTypeDao;

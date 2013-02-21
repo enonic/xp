@@ -1,6 +1,6 @@
 package com.enonic.wem.core.userstore;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.userstore.FindAllUserStores;
@@ -28,7 +28,7 @@ public class FindAllUserStoresHandler
         command.setResult( UserStoreNames.from( userStoreNames ) );
     }
 
-    @Autowired
+    @Inject
     public void setAccountDao( final AccountDao accountDao )
     {
         this.accountDao = accountDao;

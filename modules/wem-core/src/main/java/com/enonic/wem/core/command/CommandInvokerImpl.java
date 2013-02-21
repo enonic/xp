@@ -2,7 +2,7 @@ package com.enonic.wem.core.command;
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Maps;
@@ -52,7 +52,7 @@ public final class CommandInvokerImpl
         throw new SystemException( "Handle for command [{0}] not found", type.getName() );
     }
 
-    @Autowired
+    @Inject
     public void setHandlers( final CommandHandler... handlers )
     {
         for ( final CommandHandler handler : handlers )

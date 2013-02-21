@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.relationship;
 
 import javax.jcr.Session;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.relationship.UpdateRelationships;
@@ -53,7 +53,7 @@ public final class UpdateRelationshipsHandler
         command.setResult( result.build() );
     }
 
-    @Autowired
+    @Inject
     public void setRelationshipDao( final RelationshipDao relationshipDao )
     {
         this.relationshipDao = relationshipDao;

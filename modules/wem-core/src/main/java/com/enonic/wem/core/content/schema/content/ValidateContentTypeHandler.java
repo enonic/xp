@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.schema.content;
 
 import javax.jcr.Session;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.content.ValidateContentType;
@@ -39,7 +39,7 @@ public class ValidateContentTypeHandler
         command.setResult( validator.getResult() );
     }
 
-    @Autowired
+    @Inject
     public void setContentTypeDao( final ContentTypeDao contentTypeDao )
     {
         this.contentTypeDao = contentTypeDao;

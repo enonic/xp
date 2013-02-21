@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
@@ -44,7 +44,7 @@ public final class DataMigrator
         doInitialize();
     }
 
-    @Autowired
+    @Inject
     public void setTasks( final List<MigrateTask> tasks )
     {
         this.tasks = tasks;
@@ -75,7 +75,7 @@ public final class DataMigrator
         }
     }
 
-    @Autowired
+    @Inject
     public void setSystemConfig( final SystemConfig systemConfig )
     {
         this.dataSource.setUrl( systemConfig.getMigrateJdbcUrl() );

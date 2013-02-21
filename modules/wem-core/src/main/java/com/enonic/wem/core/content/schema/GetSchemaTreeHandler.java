@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.schema;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -89,19 +89,19 @@ public class GetSchemaTreeHandler
     }
 
 
-    @Autowired
+    @Inject
     public void setContentTypeDao( final ContentTypeDao contentTypeDao )
     {
         this.contentTypeDao = contentTypeDao;
     }
 
-    @Autowired
+    @Inject
     public void setRelationshipTypeDao( final RelationshipTypeDao relationshipTypeDao )
     {
         this.relationshipTypeDao = relationshipTypeDao;
     }
 
-    @Autowired
+    @Inject
     public void setMixinDao( final MixinDao mixinDao )
     {
         this.mixinDao = mixinDao;

@@ -6,7 +6,7 @@ import javax.annotation.PreDestroy;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.node.Node;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -35,7 +35,7 @@ public final class ElasticClientFactory
         return true;
     }
 
-    @Autowired
+    @Inject
     public void setNode( final Node node )
     {
         this.node = node;

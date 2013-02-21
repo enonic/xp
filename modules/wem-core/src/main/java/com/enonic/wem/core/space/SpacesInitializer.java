@@ -1,6 +1,6 @@
 package com.enonic.wem.core.space;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -51,7 +51,7 @@ public class SpacesInitializer
         }
     }
 
-    @Autowired
+    @Inject
     public void setClient( final Client client )
     {
         this.client = client;

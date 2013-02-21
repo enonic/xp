@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Predicate;
@@ -57,7 +57,7 @@ public class IndexSettingsBuilder
         } );
     }
 
-    @Autowired
+    @Inject
     public void setIndexSettingsSourceProvider( final IndexSettingsSourceProvider indexSettingsSourceProvider )
     {
         this.indexSettingsSourceProvider = indexSettingsSourceProvider;

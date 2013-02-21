@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content.schema.relationship;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.relationship.DeleteRelationshipTypes;
@@ -45,7 +45,7 @@ public final class DeleteRelationshipTypesHandler
         command.setResult( relationshipTypeDeletionResult );
     }
 
-    @Autowired
+    @Inject
     public void setRelationshipTypeDao( final RelationshipTypeDao relationshipTypeDao )
     {
         this.relationshipTypeDao = relationshipTypeDao;

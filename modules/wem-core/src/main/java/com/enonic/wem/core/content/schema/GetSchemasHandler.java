@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.jcr.Session;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Iterables;
@@ -68,19 +68,19 @@ public final class GetSchemasHandler
         command.setResult( schemas );
     }
 
-    @Autowired
+    @Inject
     public void setContentTypeDao( final ContentTypeDao contentTypeDao )
     {
         this.contentTypeDao = contentTypeDao;
     }
 
-    @Autowired
+    @Inject
     public void setMixinDao( final MixinDao mixinDao )
     {
         this.mixinDao = mixinDao;
     }
 
-    @Autowired
+    @Inject
     public void setRelationshipTypeDao( final RelationshipTypeDao relationshipTypeDao )
     {
         this.relationshipTypeDao = relationshipTypeDao;

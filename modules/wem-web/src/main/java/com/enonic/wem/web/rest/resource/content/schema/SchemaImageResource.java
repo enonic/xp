@@ -11,7 +11,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
@@ -133,7 +133,7 @@ public final class SchemaImageResource
 
     }
 
-    @Autowired
+    @Inject
     public void setClient( final Client client )
     {
         this.client = client;

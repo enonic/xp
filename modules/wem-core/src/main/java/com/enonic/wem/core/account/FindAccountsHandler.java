@@ -5,7 +5,7 @@ import java.util.Set;
 
 import javax.jcr.Session;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -119,13 +119,13 @@ public final class FindAccountsHandler
         return facet;
     }
 
-    @Autowired
+    @Inject
     public void setAccountSearchService( final AccountSearchService accountSearchService )
     {
         this.accountSearchService = accountSearchService;
     }
 
-    @Autowired
+    @Inject
     public void setAccountDao( final AccountDao accountDao )
     {
         this.accountDao = accountDao;

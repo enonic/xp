@@ -6,7 +6,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -146,7 +146,7 @@ public class ContentTypesInitializer
         }
     }
 
-    @Autowired
+    @Inject
     public void setClient( final Client client )
     {
         this.client = client;

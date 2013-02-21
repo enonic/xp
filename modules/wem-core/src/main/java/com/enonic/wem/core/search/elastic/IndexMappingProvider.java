@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
@@ -81,7 +81,7 @@ public class IndexMappingProvider
         return new IndexMapping( resourceIndexName, indexType, mapping );
     }
 
-    @Autowired
+    @Inject
     public void setResourcePatternResolver( final ResourcePatternResolver resourcePatternResolver )
     {
         this.resourcePatternResolver = resourcePatternResolver;

@@ -21,7 +21,7 @@ import org.apache.jackrabbit.oak.plugins.nodetype.RegistrationValidatorProvider;
 import org.apache.jackrabbit.oak.plugins.nodetype.TypeValidatorProvider;
 import org.apache.jackrabbit.oak.plugins.nodetype.write.InitialContent;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -69,7 +69,7 @@ public final class JcrRepositoryFactory
         this.repository = new RepositoryImpl( oak.createContentRepository(), null, null );
     }
 
-    @Autowired
+    @Inject
     public void setMicroKernel( final MicroKernel microKernel )
     {
         this.microKernel = microKernel;

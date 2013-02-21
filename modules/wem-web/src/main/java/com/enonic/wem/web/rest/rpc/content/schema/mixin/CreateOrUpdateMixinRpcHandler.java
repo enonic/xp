@@ -1,6 +1,6 @@
 package com.enonic.wem.web.rest.rpc.content.schema.mixin;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Icon;
@@ -104,7 +104,7 @@ public class CreateOrUpdateMixinRpcHandler
         return !client.execute( getMixins ).isEmpty();
     }
 
-    @Autowired
+    @Inject
     public void setUploadService( final UploadService uploadService )
     {
         this.uploadService = uploadService;

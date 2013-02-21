@@ -3,7 +3,7 @@ package com.enonic.wem.core.account;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.Account;
@@ -59,13 +59,13 @@ public final class CreateAccountHandler
     }
 
 
-    @Autowired
+    @Inject
     public void setAccountDao( final AccountDao accountDao )
     {
         this.accountDao = accountDao;
     }
 
-    @Autowired
+    @Inject
     public void setIndexService( final IndexService indexService )
     {
         this.indexService = indexService;

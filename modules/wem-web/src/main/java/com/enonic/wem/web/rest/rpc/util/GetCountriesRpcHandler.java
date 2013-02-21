@@ -1,6 +1,6 @@
 package com.enonic.wem.web.rest.rpc.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.country.CountryService;
@@ -26,7 +26,7 @@ public final class GetCountriesRpcHandler
         context.setResult( result );
     }
 
-    @Autowired
+    @Inject
     public void setCountryService( final CountryService countryService )
     {
         this.countryService = countryService;

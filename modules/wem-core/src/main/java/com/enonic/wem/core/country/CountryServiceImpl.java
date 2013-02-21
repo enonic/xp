@@ -9,7 +9,7 @@ import org.jdom.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -84,7 +84,7 @@ public final class CountryServiceImpl
         return list;
     }
 
-    @Autowired
+    @Inject
     public void setSystemConfig( final SystemConfig systemConfig )
     {
         this.systemConfig = systemConfig;

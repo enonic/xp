@@ -5,7 +5,7 @@ import javax.jcr.Session;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.CreateContent;
@@ -94,13 +94,13 @@ public class CreateContentHandler
         return references;
     }*/
 
-    @Autowired
+    @Inject
     public void setContentDao( final ContentDao contentDao )
     {
         this.contentDao = contentDao;
     }
 
-    @Autowired
+    @Inject
     public void setIndexService( final IndexService indexService )
     {
         this.indexService = indexService;

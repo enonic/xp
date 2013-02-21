@@ -2,7 +2,7 @@ package com.enonic.wem.core.account;
 
 import javax.jcr.Session;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
@@ -47,13 +47,13 @@ public class DeleteAccountsHandler
         command.setResult( accountsDeleted );
     }
 
-    @Autowired
+    @Inject
     public void setAccountDao( final AccountDao accountDao )
     {
         this.accountDao = accountDao;
     }
 
-    @Autowired
+    @Inject
     public void setIndexService( final IndexService indexService )
     {
         this.indexService = indexService;

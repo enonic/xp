@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.jcr.loader.JcrInitializer;
@@ -16,13 +16,13 @@ public final class StartupInitializer
 
     private List<InitializerTask> tasks;
 
-    @Autowired
+    @Inject
     public void setJcrInitializer( final JcrInitializer jcrInitializer )
     {
         this.jcrInitializer = jcrInitializer;
     }
 
-    @Autowired
+    @Inject
     public void setTasks( final List<InitializerTask> tasks )
     {
         this.tasks = tasks;

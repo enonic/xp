@@ -10,7 +10,7 @@ import javax.jcr.Session;
 import javax.jcr.Workspace;
 
 import org.apache.jackrabbit.commons.cnd.CndImporter;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.jcr.JcrConstants;
@@ -22,7 +22,7 @@ public final class JcrInitializer
 {
     private final JcrSessionProvider jcrSessionProvider;
 
-    @Autowired
+    @Inject
     public JcrInitializer( final JcrSessionProvider jcrSessionProvider )
     {
         this.jcrSessionProvider = jcrSessionProvider;

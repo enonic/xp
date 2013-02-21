@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -89,7 +89,7 @@ public final class JsonRpcController
         return this.processor.process( req );
     }
 
-    @Autowired
+    @Inject
     public void setProcessor( final JsonRpcProcessor processor )
     {
         this.processor = processor;

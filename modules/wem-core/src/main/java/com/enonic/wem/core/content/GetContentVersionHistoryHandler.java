@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.primitives.Longs;
@@ -55,7 +55,7 @@ public class GetContentVersionHistoryHandler
         }
     }
 
-    @Autowired
+    @Inject
     public void setContentDao( final ContentDao contentDao )
     {
         this.contentDao = contentDao;

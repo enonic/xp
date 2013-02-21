@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.schema.mixin;
 
 import javax.jcr.Session;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.mixin.GetMixins;
@@ -53,7 +53,7 @@ public final class GetMixinsHandler
         return mixinDao.select( qualifiedMixinNames, session );
     }
 
-    @Autowired
+    @Inject
     public void setMixinDao( final MixinDao mixinDao )
     {
         this.mixinDao = mixinDao;

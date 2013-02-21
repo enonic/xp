@@ -1,6 +1,6 @@
 package com.enonic.wem.core.account;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
@@ -37,7 +37,7 @@ public final class ChangePasswordHandler
         command.setResult( true );
     }
 
-    @Autowired
+    @Inject
     public void setAccountDao( final AccountDao accountDao )
     {
         this.accountDao = accountDao;

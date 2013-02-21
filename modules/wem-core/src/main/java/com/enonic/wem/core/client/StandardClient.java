@@ -1,6 +1,6 @@
 package com.enonic.wem.core.client;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
@@ -42,13 +42,13 @@ public final class StandardClient
         }
     }
 
-    @Autowired
+    @Inject
     public void setInvoker( final CommandInvoker invoker )
     {
         this.invoker = invoker;
     }
 
-    @Autowired
+    @Inject
     public void setCommandContextFactory( final CommandContextFactory commandContextFactory )
     {
         this.commandContextFactory = commandContextFactory;

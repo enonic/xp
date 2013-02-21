@@ -9,7 +9,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -48,7 +48,7 @@ public final class ElasticNodeFactory
         this.node.start();
     }
 
-    @Autowired
+    @Inject
     public void setNodeSettingsBuilder( final NodeSettingsBuilder nodeSettingsBuilder )
     {
         this.nodeSettingsBuilder = nodeSettingsBuilder;

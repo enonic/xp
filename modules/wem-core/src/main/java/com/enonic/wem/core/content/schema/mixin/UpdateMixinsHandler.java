@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.schema.mixin;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.mixin.UpdateMixins;
@@ -67,7 +67,7 @@ public final class UpdateMixinsHandler
         return mixins.isEmpty() ? null : mixins.first();
     }
 
-    @Autowired
+    @Inject
     public void setMixinDao( final MixinDao mixinDao )
     {
         this.mixinDao = mixinDao;

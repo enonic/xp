@@ -3,7 +3,7 @@ package com.enonic.wem.core.content;
 
 import javax.jcr.Session;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.DeleteContents;
@@ -69,13 +69,13 @@ public class DeleteContentsHandler
         command.setResult( contentDeletionResult );
     }
 
-    @Autowired
+    @Inject
     public void setContentDao( final ContentDao contentDao )
     {
         this.contentDao = contentDao;
     }
 
-    @Autowired
+    @Inject
     public void setIndexService( final IndexService indexService )
     {
         this.indexService = indexService;

@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.relationship;
 
 import javax.jcr.Session;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.relationship.DeleteRelationships;
@@ -48,7 +48,7 @@ public final class DeleteRelationshipHandler
         command.setResult( result );
     }
 
-    @Autowired
+    @Inject
     public void setRelationshipDao( final RelationshipDao relationshipDao )
     {
         this.relationshipDao = relationshipDao;

@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.jcr.Session;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -62,7 +62,7 @@ public final class GetSpacesHandler
         return Spaces.from( spaceList );
     }
 
-    @Autowired
+    @Inject
     public void setSpaceDao( final SpaceDao spaceDao )
     {
         this.spaceDao = spaceDao;

@@ -1,6 +1,6 @@
 package com.enonic.wem.web.rest.rpc;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
@@ -15,7 +15,7 @@ public abstract class AbstractDataRpcHandler
         super( name );
     }
 
-    @Autowired
+    @Inject
     public final void setClient( final Client client )
     {
         this.client = client;

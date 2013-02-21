@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content.schema.content;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.content.DeleteContentTypes;
@@ -57,13 +57,13 @@ public final class DeleteContentTypesHandler
         command.setResult( contentTypeDeletionResult );
     }
 
-    @Autowired
+    @Inject
     public void setContentTypeDao( final ContentTypeDao contentTypeDao )
     {
         this.contentTypeDao = contentTypeDao;
     }
 
-    @Autowired
+    @Inject
     public void setContentDao( final ContentDao contentDao )
     {
         this.contentDao = contentDao;

@@ -12,7 +12,7 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.facet.Facet;
 import org.elasticsearch.search.facet.Facets;
 import org.elasticsearch.search.facet.terms.TermsFacet;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
@@ -116,13 +116,13 @@ public class AccountSearchService
         this.client.admin().indices().flush( new FlushRequest( IndexConstants.WEM_INDEX ).refresh( true ) ).actionGet();
     }
 
-    @Autowired
+    @Inject
     public void setClient( Client client )
     {
         this.client = client;
     }
 
-    @Autowired
+    @Inject
     public void setTranslator( AccountQueryTranslator translator )
     {
         this.translator = translator;

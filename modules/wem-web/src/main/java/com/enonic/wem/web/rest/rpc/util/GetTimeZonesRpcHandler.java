@@ -1,6 +1,6 @@
 package com.enonic.wem.web.rest.rpc.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.time.TimeZoneService;
@@ -26,7 +26,7 @@ public final class GetTimeZonesRpcHandler
         context.setResult( result );
     }
 
-    @Autowired
+    @Inject
     public void setTimezoneService( final TimeZoneService timezoneService )
     {
         this.timezoneService = timezoneService;

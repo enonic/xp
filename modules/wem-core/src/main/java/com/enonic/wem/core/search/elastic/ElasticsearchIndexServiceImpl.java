@@ -17,7 +17,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
@@ -178,13 +178,13 @@ public class ElasticsearchIndexServiceImpl
         return clusterHealthResponse;
     }
 
-    @Autowired
+    @Inject
     public void setClient( final Client client )
     {
         this.client = client;
     }
 
-    @Autowired
+    @Inject
     public void setIndexSettingsBuilder( final IndexSettingsBuilder indexSettingsBuilder )
     {
         this.indexSettingsBuilder = indexSettingsBuilder;

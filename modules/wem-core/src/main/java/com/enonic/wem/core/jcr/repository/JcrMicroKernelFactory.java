@@ -8,7 +8,7 @@ import javax.annotation.PreDestroy;
 import org.apache.jackrabbit.mk.api.MicroKernel;
 import org.apache.jackrabbit.mk.core.MicroKernelImpl;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.config.SystemConfig;
@@ -60,7 +60,7 @@ public final class JcrMicroKernelFactory
         this.mk.dispose();
     }
 
-    @Autowired
+    @Inject
     public void setSystemConfig( final SystemConfig systemConfig )
     {
         this.location = new File( systemConfig.getDataDir(), "jcr" );

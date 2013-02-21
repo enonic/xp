@@ -12,7 +12,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -80,7 +80,7 @@ public final class UploadResource
         items.add( item );
     }
 
-    @Autowired
+    @Inject
     public void setUploadService( final UploadService uploadService )
     {
         this.uploadService = uploadService;

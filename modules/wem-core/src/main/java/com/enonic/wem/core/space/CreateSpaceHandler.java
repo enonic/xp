@@ -3,7 +3,7 @@ package com.enonic.wem.core.space;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.space.CreateSpace;
@@ -63,13 +63,13 @@ public final class CreateSpaceHandler
         command.setResult( createdSpace );
     }
 
-    @Autowired
+    @Inject
     public void setSpaceDao( final SpaceDao spaceDao )
     {
         this.spaceDao = spaceDao;
     }
 
-    @Autowired
+    @Inject
     public void setContentDao( final ContentDao contentDao )
     {
         this.contentDao = contentDao;

@@ -1,6 +1,6 @@
 package com.enonic.wem.core.command;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.exception.BaseException;
@@ -38,7 +38,7 @@ public final class CommandContextFactoryImpl
         return context;
     }
 
-    @Autowired
+    @Inject
     public void setJcrSessionProvider( final JcrSessionProvider jcrSessionProvider )
     {
         this.jcrSessionProvider = jcrSessionProvider;

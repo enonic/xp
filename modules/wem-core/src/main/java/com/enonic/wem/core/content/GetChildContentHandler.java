@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.GetChildContent;
@@ -14,7 +14,7 @@ import com.enonic.wem.core.content.dao.ContentDao;
 public class GetChildContentHandler
     extends CommandHandler<GetChildContent>
 {
-    @Autowired
+    @Inject
     private ContentDao contentDao;
 
     public GetChildContentHandler()

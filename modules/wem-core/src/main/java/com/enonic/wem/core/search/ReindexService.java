@@ -6,7 +6,7 @@ import javax.jcr.Session;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.Account;
@@ -58,19 +58,19 @@ public class ReindexService
     }
 
 
-    @Autowired
+    @Inject
     public void setAccountDao( final AccountDao accountDao )
     {
         this.accountDao = accountDao;
     }
 
-    @Autowired
+    @Inject
     public void setJcrSessionProvider( final JcrSessionProvider jcrSessionProvider )
     {
         this.jcrSessionProvider = jcrSessionProvider;
     }
 
-    @Autowired
+    @Inject
     public void setIndexService( final IndexService indexService )
     {
         this.indexService = indexService;

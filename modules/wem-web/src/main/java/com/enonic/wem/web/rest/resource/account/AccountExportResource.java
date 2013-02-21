@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Function;
@@ -119,7 +119,7 @@ public class AccountExportResource
         return String.format( "Accounts-%s.csv", dateFormatted );
     }
 
-    @Autowired
+    @Inject
     public final void setClient( final Client client )
     {
         this.client = client;

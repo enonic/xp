@@ -7,7 +7,7 @@ import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 
 import com.enonic.wem.core.config.ConfigProperties;
 
@@ -48,7 +48,7 @@ public class AbstractSettingsBuilder
         return indexPropertyValue;
     }
 
-    @Autowired
+    @Inject
     public void setConfigProperties( final ConfigProperties configProperties )
     {
         this.configProperties = configProperties;

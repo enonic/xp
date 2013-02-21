@@ -1,6 +1,6 @@
 package com.enonic.wem.web.rest.rpc.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
@@ -27,7 +27,7 @@ public final class GetLocalesRpcHandler
         context.setResult( result );
     }
 
-    @Autowired
+    @Inject
     public void setLocaleService( final LocaleService localeService )
     {
         this.localeService = localeService;

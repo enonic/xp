@@ -2,7 +2,7 @@ package com.enonic.wem.core.userstore;
 
 import javax.jcr.Session;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKeys;
@@ -38,7 +38,7 @@ public class CreateUserStoreHandler
         command.setResult( userStore.getName() );
     }
 
-    @Autowired
+    @Inject
     public void setAccountDao( final AccountDao accountDao )
     {
         this.accountDao = accountDao;

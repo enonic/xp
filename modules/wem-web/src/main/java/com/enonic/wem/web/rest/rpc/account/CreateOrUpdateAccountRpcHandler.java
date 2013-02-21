@@ -11,7 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -260,7 +260,7 @@ public final class CreateOrUpdateAccountRpcHandler
         return null;
     }
 
-    @Autowired
+    @Inject
     public void setUploadService( final UploadService uploadService )
     {
         this.uploadService = uploadService;

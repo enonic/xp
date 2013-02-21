@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.relationship;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
@@ -49,7 +49,7 @@ public final class CreateRelationshipHandler
         command.setResult( relationship.getId() );
     }
 
-    @Autowired
+    @Inject
     public void setRelationshipDao( final RelationshipDao relationshipDao )
     {
         this.relationshipDao = relationshipDao;

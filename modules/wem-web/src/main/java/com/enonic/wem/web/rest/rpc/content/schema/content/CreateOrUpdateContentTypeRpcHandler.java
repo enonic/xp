@@ -1,6 +1,6 @@
 package com.enonic.wem.web.rest.rpc.content.schema.content;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Icon;
@@ -97,7 +97,7 @@ public class CreateOrUpdateContentTypeRpcHandler
         return !client.execute( getContentTypes ).isEmpty();
     }
 
-    @Autowired
+    @Inject
     public void setUploadService( final UploadService uploadService )
     {
         this.uploadService = uploadService;

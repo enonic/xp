@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.schema.relationship;
 
 import javax.jcr.Session;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.relationship.RelationshipTypesExists;
@@ -35,7 +35,7 @@ public final class RelationshipTypesExistsHandler
         command.setResult( RelationshipTypesExistsResult.from( existing ) );
     }
 
-    @Autowired
+    @Inject
     public void setRelationshipTypeDao( final RelationshipTypeDao relationshipTypeDao )
     {
         this.relationshipTypeDao = relationshipTypeDao;
