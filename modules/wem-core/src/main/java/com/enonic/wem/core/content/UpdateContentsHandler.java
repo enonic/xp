@@ -1,9 +1,10 @@
 package com.enonic.wem.core.content;
 
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.UpdateContents;
@@ -40,28 +41,35 @@ public class UpdateContentsHandler
         final Contents contents = contentDao.select( command.getSelectors(), context.getJcrSession() );
         for ( Content contentToUpdate : contents )
         {
-            ContentEditor contentEditor = command.getEditor();
-            final Content modifiedContent = contentEditor.edit( contentToUpdate );
-            if ( modifiedContent != null )
+            handleContent( context, command, contentToUpdate );
+        }
+    }
+
+    private void handleContent( final CommandContext context, final UpdateContents command, Content contentToUpdate )
+        throws Exception
+    {
+        final ContentEditor contentEditor = command.getEditor();
+        final Content modifiedContent = contentEditor.edit( contentToUpdate );
+        if ( modifiedContent != null )
+        {
+            contentToUpdate = newContent( modifiedContent ).
+                modifiedTime( DateTime.now() ).
+                modifier( command.getModifier() ).build();
+            final boolean createNewVersion = true;
+
+            contentDao.update( contentToUpdate, createNewVersion, context.getJcrSession() );
+            context.getJcrSession().save();
+
+            try
             {
-                contentToUpdate = newContent( modifiedContent ).
-                    modifiedTime( DateTime.now() ).
-                    modifier( command.getModifier() ).build();
-                final boolean createNewVersion = true;
-                contentDao.update( contentToUpdate, createNewVersion, context.getJcrSession() );
-                context.getJcrSession().save();
-
-                try
-                {
-                    // TODO: Temporary easy solution. The index logic should eventually not be here anyway
-                    indexService.indexContent( contentToUpdate );
-                }
-                catch ( Exception e )
-                {
-                    LOG.error( "Index content failed", e );
-                }
-
+                // TODO: Temporary easy solution. The index logic should eventually not be here anyway
+                indexService.indexContent( contentToUpdate );
             }
+            catch ( Exception e )
+            {
+                LOG.error( "Index content failed", e );
+            }
+
         }
     }
 
