@@ -52,6 +52,7 @@ public class ContentJsonSerializer
         jsonContent.put( "displayName", content.getDisplayName() );
         jsonContent.put( "owner", content.getOwner() != null ? content.getOwner().toString() : null );
         jsonContent.put( "modifier", content.getModifier() != null ? content.getModifier().toString() : null );
+        jsonContent.put( "isRoot", content.getPath().isRoot() );
         setDateTimeValue( "modifiedTime", content.getModifiedTime(), jsonContent );
         setDateTimeValue( "createdTime", content.getCreatedTime(), jsonContent );
 

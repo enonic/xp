@@ -74,12 +74,14 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         var contentWizardData = contentWizard.getData();
         var contentData = contentWizardData.contentData;
         var displayName = contentWizardData.displayName;
+        var contentName = contentWizardData.contentName;
         var isNewContent = !content.path;
 
         var contentParams = {
             contentData: contentData,
             qualifiedContentTypeName: contentType.qualifiedName,
             contentPath: isNewContent ? null : content.path,
+            contentName: contentName,
             parentContentPath: isNewContent ? contentParent.path : null,
             displayName: displayName
         };

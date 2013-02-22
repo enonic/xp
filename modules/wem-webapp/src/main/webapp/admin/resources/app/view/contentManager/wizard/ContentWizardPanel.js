@@ -26,26 +26,13 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     listeners: {
         afterrender: function () {
             this.setLiveMode(this.isLiveMode);
-
-            if (this.isLiveMode) {
-                var livePreview = this.down('#livePreview');
-                //TODO update urls when they are ready
-                livePreview.load('/dev/live-edit/page/page.jsp?edit=true');
-            }
         }
     },
 
     initComponent: function () {
         var me = this;
 
-        this.headerData = {
-            imageUrl: (this.data && this.data.content) ? this.data.content.iconUrl : undefined,
-            displayName: (this.data && this.data.content) ? this.data.content.displayName : 'New Content',
-            contentPath: (this.data && this.data.content) ? this.data.content.path : this.data.contentParent ? this.data.contentParent.path
-                : '',
-            contentAssignee: 'Thomas Sigdestad',
-            contentStatus: 'Draft'
-        };
+        var headerData = this.prepareHeaderData(this.data);
 
         me.tbar = Ext.createByAlias('widget.contentWizardToolbar', {
             isLiveMode: this.isLiveMode
@@ -71,7 +58,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
                             xtype: 'image',
                             width: 100,
                             height: 100,
-                            src: me.headerData.imageUrl,
+                            src: headerData.imageUrl,
                             listeners: {
                                 render: function (cmp) {
 
@@ -106,21 +93,24 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
                             items: [
                                 {
                                     xtype: 'textfield',
+                                    colspan: 2,
                                     itemId: 'displayName',
-                                    value: me.headerData.displayName,
+                                    hideLabel: true,
+                                    value: headerData.displayName,
                                     emptyText: 'Display Name',
                                     enableKeyEvents: true,
                                     cls: 'admin-display-name',
                                     dirtyCls: 'admin-display-name-dirty'
                                 },
                                 {
-                                    xtype: 'container',
-                                    itemId: 'wizardHeader',
-                                    styleHtmlContent: true,
-                                    autoHeight: true,
-                                    cls: 'admin-wizard-header-container',
-                                    tpl: new Ext.XTemplate(Templates.contentManager.contentWizardHeader),
-                                    data: me.headerData
+                                    xtype: 'component',
+                                    itemId: 'contentPath',
+                                    cls: 'admin-content-path',
+                                    data: headerData,
+                                    tpl: '<table><tr>' +
+                                         '<td><span>{contentPath}</span></td>' +
+                                         '<td class="fluid"><input type="text" value="{contentName}" {[values.isRoot ? "readonly" : ""]}/></td>' +
+                                         '</tr></table>'
                                 }
                             ]
                         },
@@ -145,6 +135,46 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         this.items = [wizardPanel, liveEdit];
         this.callParent(arguments);
 
+    },
+
+    prepareHeaderData: function (data) {
+        var contentPath = '';
+        var isRoot = false;
+        var isNew = true;
+
+        if (data.content) {
+            if (!Ext.isEmpty(data.content.path)) {
+                contentPath = data.content.path;
+                isNew = false;
+            }
+            if (Ext.isDefined(data.content.isRoot)) {
+                isRoot = data.content.isRoot;
+            }
+        }
+        if (isNew && data.contentParent) {
+            if (!Ext.isEmpty(data.contentParent.path)) {
+                // content is deletable if not root
+                var isParentRoot = !data.contentParent.deletable || false;
+                contentPath = data.contentParent.path + (isParentRoot ? '' : '/');
+            }
+        }
+
+        var lastSlashIndex = contentPath.lastIndexOf('/');
+
+        var contentName = '/';
+        if (lastSlashIndex >= 0) {
+            // consider last / as name in case it is root, or part of the path otherwise
+            contentName = contentPath.substring(lastSlashIndex + (isRoot ? 0 : 1));
+            contentPath = contentPath.substring(0, lastSlashIndex + (isRoot ? 0 : 1));
+        }
+
+        return {
+            imageUrl: (data && data.content) ? data.content.iconUrl : undefined,
+            displayName: (data && data.content) ? data.content.displayName : 'New Content',
+            contentPath: contentPath,
+            contentName: contentName,
+            isRoot: isRoot
+        };
     },
 
     getSteps: function () {
@@ -176,14 +206,11 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     },
 
     getData: function () {
-        var wizardData = {displayName: '', contentData: {}};
-        var contentData = this.getWizardPanel().getData();
-        var displayNameField = this.down('#displayName');
-        if (displayNameField) {
-            wizardData.displayName = displayNameField.getValue();
-        }
-        wizardData.contentData = contentData;
-        return wizardData;
+        return {
+            displayName: this.down('#displayName').getValue(),
+            contentName: this.down('#contentPath').el.down('input').getValue(),
+            contentData: this.getWizardPanel().getData()
+        };
     },
 
     setLiveMode: function (mode) {
