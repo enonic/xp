@@ -488,31 +488,31 @@ Templates.contentManager = {
 
     previewSelectionLarge:
 		'<tpl for=".">' + 
-		    '<div id="selected-item-box-{data.key}" class="admin-selected-item-box large clearfix">' + 
+		    '<div id="selected-item-box-{data.path}" class="admin-selected-item-box large clearfix">' +
 		        '<div class="left">' + 
-		            '<img src="{data.iconUrl}?size=32" alt="{data.name}"/>' + 
+		            '<img src="{data.iconUrl}?size=32" alt="{data.name}"/>' +
 		        '</div>' + 
 		        '<div class="center">' + 
-		            '<h6>{data.name}</h6>' + 
+		            '<h6>{data.name}</h6>' +
 		            '<p>{data.type}</p>' + 
 		        '</div>' + 
 		        '<div class="right">' + 
-		            '<a id="remove-from-selection-button-{data.key}" class="remove-selection" href="javascript:;"></a>' + 
+		            '<a id="remove-from-selection-button-{data.path}" class="remove-selection" href="javascript:;"></a>' +
 		        '</div>' + 
 		    '</div>' + 
 		'</tpl>',
 
     previewSelectionSmall:
 		'<tpl for=".">' + 
-		    '<div id="selected-item-box-{data.key}" class="admin-selected-item-box small clearfix">' + 
+		    '<div id="selected-item-box-{data.path}" class="admin-selected-item-box small clearfix">' +
 		        '<div class="left">' + 
-		            '<img src="{data.iconUrl}?size=20" alt="{data.name}"/>' + 
+		            '<img src="{data.iconUrl}?size=20" alt="{data.name}"/>' +
 		        '</div>' + 
 		        '<div class="center">' + 
-		            '{data.name}' + 
+		            '{data.name}' +
 		        '</div>' + 
 		        '<div class="right">' + 
-		            '<a id="remove-from-selection-button-{data.key}" class="remove-selection" href="javascript:;"></a>' + 
+		            '<a id="remove-from-selection-button-{data.path}" class="remove-selection" href="javascript:;"></a>' +
 		        '</div>' + 
 		    '</div>' + 
 		'</tpl>',
