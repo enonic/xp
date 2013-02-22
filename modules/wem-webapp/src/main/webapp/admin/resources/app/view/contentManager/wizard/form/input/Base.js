@@ -25,7 +25,6 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
         var me = this;
 
         me.defaults = {
-            margin: '0 0 5 5',
             width: 450
         };
         if (this.copyNo > this.contentTypeItemConfig.occurrences.minimum && this.copyNo > 1) {

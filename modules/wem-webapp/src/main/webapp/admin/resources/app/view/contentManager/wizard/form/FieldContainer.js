@@ -26,6 +26,9 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldContainer', {
                 itemId: 'inputFieldsPanel',
                 layout: 'vbox',
                 minWidth: 100,
+                bodyStyle: {
+                    backgroundColor: 'inherit'
+                },
                 items: [this.field.cloneConfig()],
                 dockedItems: [
                     {
