@@ -1,5 +1,5 @@
 Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
-    extend: 'Ext.form.FieldContainer',
+    extend: 'Ext.container.Container',
     alias: 'widget.FormItemSet',
 
     requires: [
@@ -45,7 +45,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
     initLayout: function () {
 
         // Edit form mode
-        if (this.value) {
+        if (!Ext.isEmpty(this.value)) {
             this.addBlock(false);
         } else {
             this.addBlock(true);

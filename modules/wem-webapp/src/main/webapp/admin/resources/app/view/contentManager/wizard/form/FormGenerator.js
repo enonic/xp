@@ -61,19 +61,37 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
             console.error('Unsupported input type', inputConfig);
             return;
         }
-        var label = inputConfig.label;
-        if (inputConfig.occurrences.minimum > 0) {
-            label += ' <sup style="color: #E32400">' + inputConfig.occurrences.minimum + '</sup>';
-        }
-        return Ext.create({
+
+        var field = Ext.create({
             xclass: classAlias,
-            fieldLabel: label,
             name: inputConfig.name,
             copyNo: inputConfig.copyNo || 1,
             contentTypeItemConfig: inputConfig,
             value: contentItem
         });
+        return Ext.create({
+            xclass: 'widget.FieldContainer',
+            label: this.createInputLabel(inputConfig),
+            field: field
+        });
 
+    },
+
+    /**
+     * @private
+     * @param inputConfig
+     */
+    createInputLabel: function (inputConfig) {
+        var label = inputConfig.label + ':';
+        if (inputConfig.occurrences.minimum > 0) {
+            label += ' <sup style="color: #E32400">' + inputConfig.occurrences.minimum + '</sup>';
+        }
+        return Ext.create({
+            xclass: 'widget.label',
+            width: 100,
+            styleHtmlContent: true,
+            html: label
+        });
     },
 
     /**

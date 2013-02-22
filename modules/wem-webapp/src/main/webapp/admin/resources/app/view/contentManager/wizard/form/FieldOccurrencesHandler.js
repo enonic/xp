@@ -71,12 +71,12 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldOccurrencesHandler', {
         if (this.nextField) {
             this.nextField.prevField = this.prevField;
         }
-        parent.remove(this);
+
         if (linkedField) {
             linkedField.updateCopyNo();
             linkedField.fireEvent('copyremoved', linkedField);
         }
-
+        parent.remove(this);
         return linkedField;
     },
 
