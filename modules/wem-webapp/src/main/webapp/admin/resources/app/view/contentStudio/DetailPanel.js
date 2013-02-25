@@ -43,6 +43,7 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
                 type: 'column',
                 columns: 3
             },
+            autoScroll: true,
             defaults: {
                 border: 0
             },

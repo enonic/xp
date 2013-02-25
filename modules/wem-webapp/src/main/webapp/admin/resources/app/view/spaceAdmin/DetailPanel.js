@@ -128,6 +128,7 @@ Ext.define('Admin.view.spaceAdmin.DetailPanel', {
                 type: 'column',
                 columns: 3
             },
+            autoScroll: true,
             defaults: {
                 border: 0
             },
@@ -205,6 +206,7 @@ Ext.define('Admin.view.spaceAdmin.DetailPanel', {
             xtype: 'component',
             styleHtmlContent: true,
             padding: 10,
+            autoScroll: true,
             bodyStyle: {
                 border: 'none'
             },
@@ -219,6 +221,7 @@ Ext.define('Admin.view.spaceAdmin.DetailPanel', {
             xtype: 'component',
             styleHtmlContent: true,
             padding: 10,
+            autoScroll: true,
             bodyStyle: {
                 border: 'none'
             },
