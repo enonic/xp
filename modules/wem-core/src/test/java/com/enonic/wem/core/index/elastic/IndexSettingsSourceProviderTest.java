@@ -24,8 +24,8 @@ public class IndexSettingsSourceProviderTest
         final ResourcePatternResolver resourcePatternResolver = Mockito.mock( ResourcePatternResolver.class );
 
         Mockito.when( resourcePatternResolver.getResources( IndexSettingsSourceProvider.INDEX_SETTINGS_LOCATION ) ).thenReturn(
-            new Resource[]{new ClassPathResource( "com/enonic/wem/core/search/elastic/wem-analyzer-settings.json" ),
-                new ClassPathResource( "com/enonic/wem/core/search/elastic/wem-other-settings.json" )} );
+            new Resource[]{new ClassPathResource( "com/enonic/wem/core/index/elastic/wem-analyzer-settings.json" ),
+                new ClassPathResource( "com/enonic/wem/core/index/elastic/wem-other-settings.json" )} );
 
         indexSettingsSourceProvider.setResourcePatternResolver( resourcePatternResolver );
         indexSettingsSourceProvider.init();

@@ -23,9 +23,9 @@ public class IndexMappingProviderTest
     {
         final ResourcePatternResolver resourcePatternResolver = Mockito.mock( ResourcePatternResolver.class );
 
-        Resource[] resources = new Resource[]{new ClassPathResource( "com/enonic/wem/core/search/elastic/wem-content-mapping.json" ),
-            new ClassPathResource( "com/enonic/wem/core/search/elastic/wem-account-mapping.json" ),
-            new ClassPathResource( "com/enonic/wem/core/search/elastic/wem-relations-mapping.json" )};
+        Resource[] resources = new Resource[]{new ClassPathResource( "com/enonic/wem/core/index/elastic/wem-content-mapping.json" ),
+            new ClassPathResource( "com/enonic/wem/core/index/elastic/wem-account-mapping.json" ),
+            new ClassPathResource( "com/enonic/wem/core/index/elastic/wem-relations-mapping.json" )};
 
         Mockito.when( resourcePatternResolver.getResources( IndexMappingProvider.MAPPING_RESOURCE_LOCATION ) ).thenReturn( resources );
         IndexMappingProvider mappingProvider = new IndexMappingProvider();
@@ -48,16 +48,16 @@ public class IndexMappingProviderTest
         throws Exception
     {
         String expected = "{\n" +
-            "    \"content\":{\n" +
-            "        \"_all\":{\n" +
-            "            \"enabled\":false\n" +
+            "    \"content\": {\n" +
+            "        \"_all\": {\n" +
+            "            \"enabled\": false\n" +
             "        }\n" +
             "    }\n" +
             "}";
 
         final ResourcePatternResolver resourcePatternResolver = Mockito.mock( ResourcePatternResolver.class );
 
-        Resource[] resources = new Resource[]{new ClassPathResource( "com/enonic/wem/core/search/elastic/wem-content-mapping.json" )};
+        Resource[] resources = new Resource[]{new ClassPathResource( "com/enonic/wem/core/index/elastic/wem-content-mapping.json" )};
 
         Mockito.when( resourcePatternResolver.getResources( IndexMappingProvider.MAPPING_RESOURCE_LOCATION ) ).thenReturn( resources );
         IndexMappingProvider mappingProvider = new IndexMappingProvider();
@@ -78,7 +78,7 @@ public class IndexMappingProviderTest
     {
         final ResourcePatternResolver resourcePatternResolver = Mockito.mock( ResourcePatternResolver.class );
 
-        Resource[] resources = new Resource[]{new ClassPathResource( "com/enonic/wem/core/search/elastic/content-mapping.json" )};
+        Resource[] resources = new Resource[]{new ClassPathResource( "com/enonic/wem/core/index/elastic/content-mapping.json" )};
 
         Mockito.when( resourcePatternResolver.getResources( IndexMappingProvider.MAPPING_RESOURCE_LOCATION ) ).thenReturn( resources );
         IndexMappingProvider mappingProvider = new IndexMappingProvider();
@@ -96,8 +96,7 @@ public class IndexMappingProviderTest
     {
         final ResourcePatternResolver resourcePatternResolver = Mockito.mock( ResourcePatternResolver.class );
 
-        Resource[] resources =
-            new Resource[]{new ClassPathResource( "com/enonic/wem/core/search/elastic/otherindex-account-mapping.json" )};
+        Resource[] resources = new Resource[]{new ClassPathResource( "com/enonic/wem/core/index/elastic/otherindex-account-mapping.json" )};
 
         Mockito.when( resourcePatternResolver.getResources( IndexMappingProvider.MAPPING_RESOURCE_LOCATION ) ).thenReturn( resources );
         IndexMappingProvider mappingProvider = new IndexMappingProvider();
