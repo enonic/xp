@@ -19,7 +19,7 @@ class ContentDaoHandlerRename
     void handle( ContentPath content, String newName )
         throws RepositoryException
     {
-        final Node contentNode = doGetContentNode( session, content );
+        final Node contentNode = doGetContentNode( content );
         if ( contentNode == null )
         {
             throw new ContentNotFoundException( content );

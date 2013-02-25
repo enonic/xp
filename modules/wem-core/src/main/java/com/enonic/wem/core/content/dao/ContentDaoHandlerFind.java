@@ -24,7 +24,7 @@ final class ContentDaoHandlerFind
     Content findContentByPath( final ContentPath contentPath )
         throws RepositoryException
     {
-        return doFindContent( contentPath, session );
+        return doFindContent( contentPath );
     }
 
     Contents findContentsByPath( final ContentPaths contentPaths )
@@ -34,7 +34,7 @@ final class ContentDaoHandlerFind
         for ( ContentPath contentPath : contentPaths )
         {
             Preconditions.checkArgument( contentPath.isAbsolute(), "Content path must be absolute: " + contentPath.toString() );
-            final Content content = doFindContent( contentPath, session );
+            final Content content = doFindContent( contentPath );
             if ( content != null )
             {
                 contentsBuilder.add( content );
@@ -49,7 +49,7 @@ final class ContentDaoHandlerFind
         final Contents.Builder contentsBuilder = Contents.builder();
         for ( ContentId contentId : contentIds )
         {
-            final Content content = doFindContent( contentId, session );
+            final Content content = doFindContent( contentId );
             if ( content != null )
             {
                 contentsBuilder.add( content );
@@ -61,7 +61,7 @@ final class ContentDaoHandlerFind
     Content findContentById( final ContentId contentId )
         throws RepositoryException
     {
-        return doFindContent( contentId, session );
+        return doFindContent( contentId );
     }
 }
 

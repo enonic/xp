@@ -58,7 +58,7 @@ abstract class AbstractContentDaoHandler
         return contentList;
     }
 
-    protected final Iterator<Node> doGetTopContentNodes( final Session session )
+    protected final Iterator<Node> doGetTopContentNodes()
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
@@ -80,7 +80,7 @@ abstract class AbstractContentDaoHandler
         return contentParentNode.getNodes();
     }
 
-    protected final Node doGetContentNode( final Session session, final ContentPath contentPath )
+    protected final Node doGetContentNode( final ContentPath contentPath )
         throws RepositoryException
     {
         final String path = getNodePath( contentPath );
@@ -88,7 +88,7 @@ abstract class AbstractContentDaoHandler
         return getNodeOrNull( rootNode, path );
     }
 
-    protected final Node doGetContentNode( final Session session, final ContentId contentId )
+    protected final Node doGetContentNode( final ContentId contentId )
         throws RepositoryException
     {
         try
@@ -101,10 +101,10 @@ abstract class AbstractContentDaoHandler
         }
     }
 
-    protected final Content doFindContent( final ContentPath contentPath, final Session session )
+    protected final Content doFindContent( final ContentPath contentPath )
         throws RepositoryException
     {
-        final Node contentNode = doGetContentNode( session, contentPath );
+        final Node contentNode = doGetContentNode( contentPath );
         if ( contentNode == null )
         {
             return null;
@@ -116,10 +116,10 @@ abstract class AbstractContentDaoHandler
 
     }
 
-    protected final Content doFindContent( final ContentId contentId, final Session session )
+    protected final Content doFindContent( final ContentId contentId )
         throws RepositoryException
     {
-        final Node contentNode = doGetContentNode( session, contentId );
+        final Node contentNode = doGetContentNode( contentId );
         if ( contentNode == null )
         {
             return null;

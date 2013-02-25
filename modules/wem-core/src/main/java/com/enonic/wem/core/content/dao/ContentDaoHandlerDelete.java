@@ -24,7 +24,7 @@ final class ContentDaoHandlerDelete
     void deleteContentByPath( final ContentPath pathToContent )
         throws RepositoryException
     {
-        final Node contentNode = doGetContentNode( session, pathToContent );
+        final Node contentNode = doGetContentNode( pathToContent );
         if ( contentNode == null )
         {
             throw new ContentNotFoundException( pathToContent );
@@ -41,7 +41,7 @@ final class ContentDaoHandlerDelete
     public void deleteContentById( final ContentId contentId )
         throws RepositoryException
     {
-        final Node contentNode = doGetContentNode( session, contentId );
+        final Node contentNode = doGetContentNode( contentId );
         if ( contentNode == null )
         {
             throw new ContentNotFoundException( contentId );

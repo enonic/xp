@@ -24,14 +24,14 @@ final class ContentDaoHandlerGetVersion
     Content handle( final ContentId contentId, final ContentVersionId versionId )
         throws RepositoryException
     {
-        final Node contentNode = doGetContentNode( session, contentId );
+        final Node contentNode = doGetContentNode( contentId );
         return getContentFromNode( contentNode, versionId );
     }
 
     Content handle( final ContentPath contentPath, final ContentVersionId versionId )
         throws RepositoryException
     {
-        final Node contentNode = doGetContentNode( session, contentPath );
+        final Node contentNode = doGetContentNode( contentPath );
         return getContentFromNode( contentNode, versionId );
     }
 

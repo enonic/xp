@@ -75,7 +75,7 @@ final class ContentDaoHandlerCreate
         }
         else
         {
-            final Node parentContentNode = doGetContentNode( session, path.getParentPath() );
+            final Node parentContentNode = doGetContentNode( path.getParentPath() );
             if ( parentContentNode == null )
             {
                 throw new ContentNotFoundException( path.getParentPath() );
