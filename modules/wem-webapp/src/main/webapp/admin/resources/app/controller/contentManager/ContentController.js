@@ -16,7 +16,7 @@ Ext.define('Admin.controller.contentManager.ContentController', {
     remoteCreateOrUpdateContent: function (contentParams, callback) {
         Admin.lib.RemoteService.content_createOrUpdate(contentParams, function (r) {
             if (r && r.success) {
-                callback(r.created, r.updated, r.contentPath);
+                callback(r.created, r.updated, r.contentPath, r.contentId);
             } else {
                 Ext.Msg.alert("Error", r ? r.error : "Internal error occured.");
             }

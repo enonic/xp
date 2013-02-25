@@ -90,11 +90,11 @@ public class ContentDaoImpl
     }
 
     @Override
-    public void renameContent( final ContentPath contentPath, final String newName, final Session session )
+    public boolean renameContent( final ContentId contentId, final String newName, final Session session )
     {
         try
         {
-            new ContentDaoHandlerRename( session ).handle( contentPath, newName );
+            return new ContentDaoHandlerRename( session ).handle( contentId , newName );
         }
         catch ( RepositoryException e )
         {

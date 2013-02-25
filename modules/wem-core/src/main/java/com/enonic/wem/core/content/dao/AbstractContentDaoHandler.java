@@ -26,6 +26,7 @@ import static com.enonic.wem.core.content.dao.ContentDao.SPACE_CONTENT_ROOT_NODE
 import static com.enonic.wem.core.jcr.JcrHelper.getNodeOrNull;
 import static org.apache.commons.lang.StringUtils.removeStart;
 import static org.apache.commons.lang.StringUtils.substringAfter;
+import static org.apache.commons.lang.StringUtils.substringBefore;
 
 abstract class AbstractContentDaoHandler
 {
@@ -142,6 +143,15 @@ abstract class AbstractContentDaoHandler
             final String relativePathToContent = contentPath.getRelativePath();
             return getSpaceRootPath( contentPath.getSpace() ) + "/" + removeStart( relativePathToContent, "/" );
         }
+    }
+
+    protected ContentPath getContentPathFromNode( final Node node )
+        throws RepositoryException
+    {
+        final String jcrNodePath = substringAfter( node.getPath(), SPACES_PATH );
+        final String spaceName = substringBefore( jcrNodePath, "/" + SPACE_CONTENT_ROOT_NODE );
+        final String contentPath = substringAfter( jcrNodePath, "/" + SPACE_CONTENT_ROOT_NODE );
+        return ContentPath.from( spaceName + ":" + contentPath );
     }
 
     protected String getSpaceRootPath( final SpaceName spaceName )
