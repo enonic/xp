@@ -39,6 +39,12 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
             },
             'contentWizardToolbar toggleslide': {
                 change: this.toggleLiveWizard
+            },
+            'contentWizardPanel textfield#displayName': {
+                keyup: function (field, event) {
+                    var text = Ext.String.trim(field.getValue());
+                    me.getTopBar().setTitleButtonText(text);
+                }
             }
         });
 
