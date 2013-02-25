@@ -2,11 +2,12 @@ package com.enonic.wem.core.content.schema.content;
 
 import java.io.StringWriter;
 
+import javax.inject.Inject;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.inject.Inject;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +46,7 @@ public class ContentTypesInitializer
 
     private static final String[] TEST_CONTENT_TYPES =
         {"demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json", "demo-contenttype-set.json", "demo-contenttype-blog.json",
-            "demo-contenttype-article1.json", "demo-contenttype-article2.json"};
+            "demo-contenttype-article1.json", "demo-contenttype-article2.json", "demo-contenttype-relation.json"};
 
     private static final Logger LOG = LoggerFactory.getLogger( ContentTypesInitializer.class );
 

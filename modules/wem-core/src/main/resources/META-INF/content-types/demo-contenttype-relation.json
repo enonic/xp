@@ -1,0 +1,68 @@
+{
+    "name": "Relation",
+    "module": "Demo",
+    "qualifiedName": "Demo:Relation",
+    "displayName": "Relation Demo",
+    "superType": "System:structured",
+    "isAbstract": false,
+    "isFinal": true,
+    "form": [
+        {
+            "Input": {
+                "name": "title",
+                "label": "Title",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "Article title",
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myRelation",
+                "label": "A single relation to another content",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Relation",
+                    "builtIn": true
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myRelations",
+                "label": "Multiple relations to other content",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Relation",
+                    "builtIn": true
+                }
+            }
+        }
+    ]
+}
