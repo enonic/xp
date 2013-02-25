@@ -6,6 +6,8 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
 
     border: false,
 
+    keyField: 'path',
+
     gridConf: {
         selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36}),
         plugins: [ 'persistentGridSelection' ]
