@@ -360,12 +360,13 @@ svg.live-edit-highlighter rect {
 }
 
 .live-edit-toggle-text-container {
-    display: inline-block;
+    display: block;
     position: absolute;
     width: 150px;
-    margin-top: 50%;
-    margin-left: -10px;
-    -webkit-transform: rotate(90deg);
+    top:50%;
+    margin-left: -8px;
+    -webkit-transform: rotate(90deg) translateY(0);
+    transform: rotate(90deg) translateY(0);
     left: -50px;
 }
 

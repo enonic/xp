@@ -35,7 +35,7 @@ Ext.define('Admin.controller.homescreen.Controller', {
                         view.setVersionText(r.version);
                     });
 
-                    view.setBackgroundImage('http://revivalministry.files.wordpress.com/2009/03/blueprint_wide.jpg');
+                    view.setBackgroundImage('http://www.wallsave.com/wallpapers/1280x800/squares/178115/squares-backgrounds-template-birthday-background-178115.jpg');
                     view.setLicensedToText('Licensed to Large Customer');
                 },
                 beforeshow: function () {
