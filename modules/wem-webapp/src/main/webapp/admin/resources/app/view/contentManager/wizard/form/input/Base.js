@@ -15,10 +15,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
         fieldOccurrencesHandler: 'Admin.view.contentManager.wizard.form.FieldOccurrencesHandler'
     },
 
-    showAddDeleteButton: true,
-
     listeners: {
-        beforerender: function () {
+        afterrender: function () {
             this.handleOccurrences();
         }
     },
@@ -28,11 +26,10 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
         var me = this;
 
         me.defaults = {
-            margin: '0 0 5 5',
             width: 450
         };
-        if (this.contentTypeItemConfig.occurrences.minimum !== this.contentTypeItemConfig.occurrences.maximum && this.showAddDeleteButton) {
-            this.items.push(this.createAddDeleteButton());
+        if (this.copyNo > this.contentTypeItemConfig.occurrences.minimum && this.copyNo > 1) {
+            this.items.push(this.createDeleteButton());
         }
         me.callParent(arguments);
 
@@ -58,53 +55,25 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
      * @private
      * @return {*}
      */
-    createAddDeleteButton: function () {
+    createDeleteButton: function () {
         var element = this;
         return {
             xtype: 'button',
             mode: 'delete',
-            itemId: 'add-delete-button',
+            itemId: 'delete-button',
             iconCls: 'icon-remove icon-2x',
             cls: 'nobg icon-button',
             scale: 'medium',
             width: '24',
             listeners: {
                 click: function () {
-                    switch (this.mode) {
-                    case 'add':
-                        element.addCopy();
-                        element.updateButtonState();
-                        break;
-                    case 'delete':
-                        var remainElement = element.removeCopy();
-                        if (remainElement) {
-                            remainElement.updateButtonState();
-                        }
-                        break;
+                    var remainElement = element.removeCopy();
+                    if (remainElement) {
+                        remainElement.updateButtonState();
                     }
-                }
-            },
-            changeMode: function (mode) {
-                if (mode) {
-                    this.setText('+');
-                    this.mode = 'add';
-                } else {
-                    this.setText('x');
-                    this.mode = 'delete';
                 }
             }
         };
-    },
-
-    /**
-     * @private
-     * @param state - true is for add mode, false is for delete mode
-     */
-    setButtonState: function (state) {
-        var button = this.down('#add-delete-button');
-        if (button) {
-            button.changeMode(state);
-        }
     },
 
     /**
@@ -119,7 +88,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
     },
 
     /**
-     * Update state of component buttons, they could either delete buttons or add buttons
+     * Update state of component buttons, they could be either delete buttons or add buttons
      */
     updateButtonState: function () {
         var totalCount = 1;
@@ -143,17 +112,11 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
         var min = this.contentTypeItemConfig.occurrences.minimum;
         var max = this.contentTypeItemConfig.occurrences.maximum;
         this.setButtonDisabled(totalCount === min && this.copyNo !== totalCount);
-        if (this.copyNo === max) {
-            this.setButtonState(false);
-        } else if (this.copyNo === totalCount) {
-            this.setButtonState(true);
-        } else {
-            this.setButtonState(false);
-        }
         if (this.nextField) {
             this.nextField.updateButtonStateInternal(totalCount);
         }
     }
 
 
-});
+})
+;

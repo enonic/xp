@@ -39,6 +39,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldOccurrencesHandler', {
 
         var clone = this.cloneConfig({
             copyNo: this.copyNo + 1,
+            fieldLabel: '',
             value: value || ''
         });
         //Support links between copies (linked list), so we could analyze them and change their state
@@ -70,12 +71,12 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldOccurrencesHandler', {
         if (this.nextField) {
             this.nextField.prevField = this.prevField;
         }
-        parent.remove(this);
+
         if (linkedField) {
             linkedField.updateCopyNo();
             linkedField.fireEvent('copyremoved', linkedField);
         }
-
+        parent.remove(this);
         return linkedField;
     },
 
