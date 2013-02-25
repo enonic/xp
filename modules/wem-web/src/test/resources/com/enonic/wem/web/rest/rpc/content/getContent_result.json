@@ -8,6 +8,7 @@
         "displayName": "My Content",
         "owner": "user:myStore:me",
         "modifier": "user:system:admin",
+        "isRoot": false,
         "modifiedTime": "2000-01-01T11:00:00.000Z",
         "createdTime": "2000-01-01T11:00:00.000Z",
         "data": [
