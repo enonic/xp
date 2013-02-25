@@ -21,7 +21,7 @@ import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.dao.ContentIdFactory;
-import com.enonic.wem.core.search.IndexService;
+import com.enonic.wem.core.index.IndexService;
 
 import static junit.framework.Assert.assertNotNull;
 

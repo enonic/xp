@@ -25,7 +25,7 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.dao.ContentIdFactory;
-import com.enonic.wem.core.search.IndexService;
+import com.enonic.wem.core.index.IndexService;
 
 @Component
 public class CreateContentHandler

@@ -17,11 +17,11 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.FindAccounts;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.search.account.AccountSearchQuery;
-import com.enonic.wem.core.search.account.AccountSearchResults;
-import com.enonic.wem.core.search.account.AccountSearchService;
-import com.enonic.wem.core.search.facet.Facet;
-import com.enonic.wem.core.search.facet.FacetEntry;
+import com.enonic.wem.core.index.account.AccountSearchQuery;
+import com.enonic.wem.core.index.account.AccountSearchResults;
+import com.enonic.wem.core.index.account.AccountSearchService;
+import com.enonic.wem.core.index.facet.Facet;
+import com.enonic.wem.core.index.facet.FacetEntry;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;

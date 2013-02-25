@@ -3,9 +3,9 @@ package com.enonic.wem.core.account;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.jcr.Session;
 
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -22,15 +22,15 @@ import com.enonic.wem.api.command.account.FindAccounts;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.search.SearchSortOrder;
-import com.enonic.wem.core.search.account.AccountIndexField;
-import com.enonic.wem.core.search.account.AccountSearchHit;
-import com.enonic.wem.core.search.account.AccountSearchQuery;
-import com.enonic.wem.core.search.account.AccountSearchResults;
-import com.enonic.wem.core.search.account.AccountSearchService;
-import com.enonic.wem.core.search.facet.Facet;
-import com.enonic.wem.core.search.facet.FacetEntry;
-import com.enonic.wem.core.search.facet.Facets;
+import com.enonic.wem.core.index.SearchSortOrder;
+import com.enonic.wem.core.index.account.AccountIndexField;
+import com.enonic.wem.core.index.account.AccountSearchHit;
+import com.enonic.wem.core.index.account.AccountSearchQuery;
+import com.enonic.wem.core.index.account.AccountSearchResults;
+import com.enonic.wem.core.index.account.AccountSearchService;
+import com.enonic.wem.core.index.facet.Facet;
+import com.enonic.wem.core.index.facet.FacetEntry;
+import com.enonic.wem.core.index.facet.Facets;
 
 import static com.enonic.wem.api.account.query.AccountQuery.Direction;
 

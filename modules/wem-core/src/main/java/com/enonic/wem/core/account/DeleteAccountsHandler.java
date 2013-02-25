@@ -1,8 +1,8 @@
 package com.enonic.wem.core.account;
 
+import javax.inject.Inject;
 import javax.jcr.Session;
 
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
@@ -11,7 +11,7 @@ import com.enonic.wem.api.command.account.DeleteAccounts;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.search.IndexService;
+import com.enonic.wem.core.index.IndexService;
 
 @Component
 public class DeleteAccountsHandler

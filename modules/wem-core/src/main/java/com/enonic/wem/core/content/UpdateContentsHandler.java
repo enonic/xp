@@ -14,7 +14,7 @@ import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
-import com.enonic.wem.core.search.IndexService;
+import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.api.content.Content.newContent;
 

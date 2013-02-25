@@ -2,8 +2,9 @@ package com.enonic.wem.core.account;
 
 import java.util.Set;
 
-import org.elasticsearch.common.collect.Sets;
 import javax.inject.Inject;
+
+import org.elasticsearch.common.collect.Sets;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
@@ -13,10 +14,10 @@ import com.enonic.wem.api.exception.AccountNotFoundException;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.search.account.AccountSearchHit;
-import com.enonic.wem.core.search.account.AccountSearchQuery;
-import com.enonic.wem.core.search.account.AccountSearchResults;
-import com.enonic.wem.core.search.account.AccountSearchService;
+import com.enonic.wem.core.index.account.AccountSearchHit;
+import com.enonic.wem.core.index.account.AccountSearchQuery;
+import com.enonic.wem.core.index.account.AccountSearchResults;
+import com.enonic.wem.core.index.account.AccountSearchService;
 
 @Component
 public final class FindMembershipsHandler
