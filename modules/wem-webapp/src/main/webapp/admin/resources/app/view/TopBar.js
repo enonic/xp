@@ -82,7 +82,7 @@ Ext.define('Admin.view.TopBar', {
                 menuAlign: 't-b?',
                 menu: me.tabMenu,
                 styleHtmlContent: true,
-                text: '<span class="title">Title</span><span class="count" style="padding: 4px; margin-left: 4px; background: red;">0</span>',
+                text: '<span class="title">Title</span><span class="count">0</span>',
 
                 setTitle: function(title) {
                     // update title only, without changing count
@@ -126,8 +126,24 @@ Ext.define('Admin.view.TopBar', {
     },
 
     setActiveTab: function (tab) {
-        this.setButtonTitle(tab.card, this.getMenuItemDescription(tab.card));
         this.tabMenu.markActiveTab(tab);
+
+        var card = tab.card;
+        var buttonText = tab.text1;
+        var iconClass;
+
+        if ('tab-browse' === card.id) {
+            buttonText = '[ Select ]';
+        } else if (card.tab.iconClass) {
+            iconClass = card.tab.iconClass;
+        } else if (card.tab.editing) {
+            iconClass = 'icon-icomoon-pencil-32';
+        } else {
+            iconClass = 'icon-icomoon-eye-32';
+        }
+
+        this.titleButton.setIconCls(iconClass);
+        this.setTitleButtonText(buttonText);
     },
 
     remove: function (tab) {
@@ -157,7 +173,7 @@ Ext.define('Admin.view.TopBar', {
             iconSrc: me.getMenuItemIcon(item),
             iconClass : cfg.iconClass,
             editing: cfg.editing || false,
-            text1: Ext.String.ellipsis(cfg.title || 'first line', 26),
+            text1: Ext.String.ellipsis(me.getMenuItemDisplayName(item), 26),
             text2: Ext.String.ellipsis(me.getMenuItemDescription(item), 38)
         };
     },
@@ -206,25 +222,38 @@ Ext.define('Admin.view.TopBar', {
         return desc;
     },
 
+    getMenuItemDisplayName: function (card) {
+        var desc;
+        if (card.data) {
+            var data = card.data.data || card.data; // to accept either record or record.data
+            desc = data.displayName;
+
+            if (!desc && data.content) {
+                var content = data.content;
+                desc = content.displayName;
+            }
+            if (!desc && data.contentType) {
+                var contentType = data.contentType;
+                desc = contentType.displayName;
+            }
+        }
+        if (!desc) {
+            desc = card.title;
+        }
+        return desc;
+    },
+
 
     /*  Public  */
 
-    setButtonTitle: function (card, text) {
-        var buttonText = text;
-        var iconClass;
+    setTitleButtonText: function (text) {
+        this.titleButton.setTitle(text);
+        var activeTab = this.titleButton.menu.activeTab;
 
-        if ('tab-browse' === card.id) {
-            buttonText = '[ Select ]';
-        } else if (card.tab.iconClass) {
-            iconClass = card.tab.iconClass;
-        } else if (card.tab.editing) {
-            iconClass = 'icon-icomoon-pencil-32';
-        } else {
-            iconClass = 'icon-icomoon-eye-32';
+        if (activeTab) {
+            activeTab.text1 = text;
+            activeTab.updateTitleContainer();
         }
-
-        this.titleButton.setIconCls(iconClass);
-        this.titleButton.setTitle(buttonText);
     },
 
     getStartButton: function () {

@@ -12,6 +12,16 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
 
 
     init: function () {
+        var me = this;
+        me.control({
+            'contentStudioContentTypeWizardPanel textfield#displayName': {
+                keyup: function (field, event) {
+                    var text = Ext.String.trim(field.getValue());
+                    me.getTopBar().setTitleButtonText(text);
+                }
+            }
+        });
+
         this.application.on({
             saveContentType: {
                 fn: this.saveType,

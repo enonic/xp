@@ -219,6 +219,7 @@ Ext.define('Admin.controller.account.UserWizardController', {
             displayName.on('blur', this.displayNameBlur, this);
             displayName.on('focus', this.displayNameFocus, this);
             displayName.on('keydown', this.displayNameChanged, this, {wizard: wizard});
+            displayName.on('keyup', this.onChangeDisplayName, this);
         }
     },
 
@@ -258,6 +259,11 @@ Ext.define('Admin.controller.account.UserWizardController', {
         } else {
             opts.wizard.displayNameAutoGenerate = false;
         }
+    },
+
+    onChangeDisplayName: function (element) {
+        var text = Ext.String.trim(element.getValue());
+        this.getTopBar().setTitleButtonText(text);
     },
 
     userStoreFieldsLoaded: function (target) {
