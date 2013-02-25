@@ -20,5 +20,6 @@ public interface RelationshipDao
 
     public RelationshipIds exists( final RelationshipIds relationshipIds, final Session session );
 
-    public Relationships select( RelationshipIds selectors, final Session session );
+    public Relationships select( RelationshipIds relationshipIds, final Session session );
+
 }
