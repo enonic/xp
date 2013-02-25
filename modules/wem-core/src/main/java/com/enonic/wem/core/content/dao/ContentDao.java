@@ -41,7 +41,7 @@ public interface ContentDao
 
     Content select( ContentSelector contentSelector, Session session );
 
-    void renameContent( ContentPath contentPath, String newName, Session session );
+    boolean renameContent( ContentId contentId, String newName, Session session );
 
     List<ContentVersion> getContentVersions( ContentSelector contentSelector, Session session );
 

@@ -80,15 +80,19 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         var contentParams = {
             contentData: contentData,
             qualifiedContentTypeName: contentType.qualifiedName,
+            contentId: isNewContent ? null : content.id,
             contentPath: isNewContent ? null : content.path,
             contentName: contentName,
             parentContentPath: isNewContent ? contentParent.path : null,
             displayName: displayName
         };
 
-        var onUpdateContentSuccess = function (created, updated, contentPath) {
-            if (created) {
+        var onUpdateContentSuccess = function (created, updated, contentPath, contentId) {
+            if (contentPath) {
                 content.path = contentPath;
+            }
+            if (contentId) {
+                content.id = contentId;
             }
             if (created || updated) {
                 if (closeWizard) {

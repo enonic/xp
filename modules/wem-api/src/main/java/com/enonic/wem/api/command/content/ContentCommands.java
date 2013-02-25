@@ -52,4 +52,9 @@ public final class ContentCommands
     {
         return new GenerateContentName();
     }
+
+    public RenameContent rename()
+    {
+        return new RenameContent();
+    }
 }

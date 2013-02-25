@@ -3,12 +3,16 @@ package com.enonic.wem.web.rest.rpc.content;
 
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Strings;
+
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.command.content.RenameContent;
 import com.enonic.wem.api.command.content.UpdateContents;
 import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
@@ -16,12 +20,15 @@ import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.exception.ContentAlreadyExistException;
 import com.enonic.wem.api.exception.ContentNotFoundException;
 import com.enonic.wem.core.content.ContentPathNameGenerator;
+import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
+import static com.enonic.wem.api.command.Commands.content;
 import static com.enonic.wem.api.content.editor.ContentEditors.composite;
 import static com.enonic.wem.api.content.editor.ContentEditors.setContentData;
 import static com.enonic.wem.api.content.editor.ContentEditors.setContentDisplayName;
@@ -41,23 +48,25 @@ public final class CreateOrUpdateContentRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final String contentPathParam = context.param( "contentPath" ).asString();
+        final String idParam = context.param( "contentId" ).asString();
         final String parentContentPathParam = context.param( "parentContentPath" ).asString();
-        final ContentPath contentPath;
+        final String newContentName = context.param( "contentName" ).asString();
+
         final ContentPath parentContentPath;
-        if ( contentPathParam != null )
+        final ContentId contentId;
+        if ( idParam != null )
         {
-            contentPath = ContentPath.from( contentPathParam );
+            contentId = ContentIdFactory.from( idParam );
             parentContentPath = null;
         }
         else if ( parentContentPathParam != null )
         {
             parentContentPath = ContentPath.from( parentContentPathParam );
-            contentPath = null;
+            contentId = null;
         }
         else
         {
-            context.setResult( new JsonErrorResult( "Missing parameter [contentPath] or [parentContentPath]" ) );
+            context.setResult( new JsonErrorResult( "Missing parameter [contentId] or [parentContentPath]" ) );
             return;
         }
 
@@ -69,13 +78,13 @@ public final class CreateOrUpdateContentRpcHandler
 
         final RootDataSet rootDataSet = new RootDataSetParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
 
-        if ( contentPath == null )
+        if ( contentId == null )
         {
             try
             {
                 final ContentPath newContentPath = getPathForNewContent( parentContentPath, displayName );
-                final ContentId contentId = doCreateContent( qualifiedContentTypeName, newContentPath, displayName, rootDataSet );
-                context.setResult( CreateOrUpdateContentJsonResult.created( contentId, newContentPath ) );
+                final ContentId newContentId = createContent( qualifiedContentTypeName, newContentPath, displayName, rootDataSet );
+                context.setResult( CreateOrUpdateContentJsonResult.created( newContentId, newContentPath ) );
             }
             catch ( ContentNotFoundException e )
             {
@@ -85,9 +94,27 @@ public final class CreateOrUpdateContentRpcHandler
         }
         else
         {
-            doUpdateContent( contentPath, displayName, rootDataSet );
+            updateContent( contentId, displayName, rootDataSet );
+            if ( !Strings.isNullOrEmpty( newContentName ) )
+            {
+                try
+                {
+                    renameContent( contentId, newContentName );
+                }
+                catch ( ContentAlreadyExistException e )
+                {
+                    context.setResult( new JsonErrorResult( "Unable to rename content. Content with path [{0}] already exists.", e.getContentPath() ) );
+                    return;
+                }
+            }
             context.setResult( CreateOrUpdateContentJsonResult.updated() );
         }
+    }
+
+    private void renameContent( final ContentId contentId, final String newContentName )
+    {
+        final RenameContent renameContent = content().rename().contentId( contentId ).newName( newContentName );
+        client.execute( renameContent );
     }
 
     private ContentType getContentType( final QualifiedContentTypeName qualifiedContentTypeName )
@@ -97,10 +124,10 @@ public final class CreateOrUpdateContentRpcHandler
         return client.execute( getContentTypes ).first();
     }
 
-    private ContentId doCreateContent( final QualifiedContentTypeName qualifiedContentTypeName, ContentPath contentPath,
-                                       final String displayName, final RootDataSet rootDataSet )
+    private ContentId createContent( final QualifiedContentTypeName qualifiedContentTypeName, ContentPath contentPath,
+                                     final String displayName, final RootDataSet rootDataSet )
     {
-        final CreateContent createContent = Commands.content().create();
+        final CreateContent createContent = content().create();
         createContent.contentPath( contentPath );
         createContent.contentType( qualifiedContentTypeName );
         createContent.rootDataSet( rootDataSet );
@@ -122,10 +149,10 @@ public final class CreateOrUpdateContentRpcHandler
         return contentPath;
     }
 
-    private void doUpdateContent( final ContentPath contentPath, final String displayName, final RootDataSet rootDataSet )
+    private void updateContent( final ContentId contentId, final String displayName, final RootDataSet rootDataSet )
     {
-        final UpdateContents updateContents = Commands.content().update();
-        updateContents.selectors( ContentPaths.from( contentPath ) );
+        final UpdateContents updateContents = content().update();
+        updateContents.selectors( ContentIds.from( contentId ) );
         updateContents.editor( composite( setContentData( rootDataSet ), setContentDisplayName( displayName ) ) );
         updateContents.modifier( AccountKey.anonymous() );
 
@@ -134,7 +161,7 @@ public final class CreateOrUpdateContentRpcHandler
 
     private boolean contentExists( final ContentPath contentPath )
     {
-        final Contents contents = client.execute( Commands.content().get().selectors( ContentPaths.from( contentPath ) ) );
+        final Contents contents = client.execute( content().get().selectors( ContentPaths.from( contentPath ) ) );
         return contents.isNotEmpty();
     }
 }

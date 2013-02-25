@@ -6,5 +6,6 @@
         "myFormItemSet.myTextLine1": "value3"
     },
     "qualifiedContentTypeName": "myModule:myContentType",
-    "contentId": "1fad493a-6a72-41a3-bac4-88aba3d83bcc"
+    "contentId": "1fad493a-6a72-41a3-bac4-88aba3d83bcc",
+    "contentName": "newName"
 }

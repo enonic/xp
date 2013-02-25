@@ -13,6 +13,7 @@ import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.exception.ContentAlreadyExistException;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.api.exception.UnableToDeleteContentException;
 import com.enonic.wem.api.support.tree.Tree;
@@ -458,9 +459,10 @@ public class ContentDaoImplTest
         content.getRootDataSet().setData( "myData", "myValue" );
         content.getRootDataSet().setData( "mySet.myData", "myOtherValue" );
         ContentId contentId = contentDao.create( content, session );
+        commit();
 
         // exercise
-        contentDao.renameContent( ContentPath.from( "myspace:myContent" ), "newContentName", session );
+        contentDao.renameContent( contentId, "newContentName", session );
         commit();
 
         // verify
@@ -470,6 +472,28 @@ public class ContentDaoImplTest
 
         Content contentNotFound = contentDao.select( ContentPath.from( "myspace:myContent" ), session );
         assertNull( contentNotFound );
+    }
+
+    @Test(expected = ContentAlreadyExistException.class)
+    public void renameContent_to_existing_path()
+        throws Exception
+    {
+        // setup
+        contentDao.create( createContent( "myspace:/" ), session );
+        Content existingContent = newContent().path( ContentPath.from( "myspace:myExistingContent" ) ).build();
+        existingContent.getRootDataSet().setData( "myData", "myValue" );
+        existingContent.getRootDataSet().setData( "mySet.myData", "myOtherValue" );
+        contentDao.create( existingContent, session );
+
+        Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
+        content.getRootDataSet().setData( "myData", "myValue" );
+        content.getRootDataSet().setData( "mySet.myData", "myOtherValue" );
+        ContentId contentId = contentDao.create( content, session );
+        commit();
+
+        // exercise
+        contentDao.renameContent( contentId, "myExistingContent", session );
+        commit();
     }
 
     private Content createContent( String path )

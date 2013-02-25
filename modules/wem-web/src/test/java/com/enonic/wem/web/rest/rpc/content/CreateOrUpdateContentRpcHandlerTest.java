@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.GetContents;
+import com.enonic.wem.api.command.content.RenameContent;
 import com.enonic.wem.api.command.content.UpdateContents;
 import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.Content;
@@ -16,6 +17,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.MockContentId;
 import com.enonic.wem.api.content.schema.content.ContentTypes;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.exception.ContentAlreadyExistException;
 import com.enonic.wem.api.exception.ContentNotFoundException;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
@@ -115,4 +117,39 @@ public class CreateOrUpdateContentRpcHandlerTest
         // exercise & verify
         testSuccess( "createOrUpdateContent_create_param.json", expectedJson );
     }
+
+    @Test
+    public void updateWithRenaming()
+        throws Exception
+    {
+        Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
+        Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
+        Mockito.when( client.execute( isA( UpdateContents.class ) ) ).thenReturn( 1 );
+
+        ObjectNode expectedJson = objectNode();
+        expectedJson.put( "success", true );
+        expectedJson.put( "created", false );
+        expectedJson.put( "updated", true );
+
+        // exercise & verify
+        testSuccess( "createOrUpdateContent_rename_param.json", expectedJson );
+    }
+
+    @Test
+    public void updateWithRenaming_to_existing_path()
+        throws Exception
+    {
+        Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
+        Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
+        Mockito.when( client.execute( isA( UpdateContents.class ) ) ).thenReturn( 1 );
+        Mockito.when( client.execute( isA( RenameContent.class) ) ).thenThrow( new ContentAlreadyExistException(ContentPath.from("mysite:/existingContent")) );
+
+        ObjectNode expectedJson = objectNode();
+        expectedJson.put( "success", false );
+        expectedJson.put( "error", "Unable to rename content. Content with path [mysite:/existingContent] already exists." );
+
+        // exercise & verify
+        testSuccess( "createOrUpdateContent_rename_param.json", expectedJson );
+    }
+
 }
