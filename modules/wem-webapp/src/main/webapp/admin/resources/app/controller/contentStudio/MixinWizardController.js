@@ -12,6 +12,16 @@ Ext.define('Admin.controller.contentStudio.MixinWizardController', {
 
 
     init: function () {
+        var me = this;
+        me.control({
+            'contentStudioMixinWizardPanel textfield#displayName': {
+                keyup: function (field, event) {
+                    var text = Ext.String.trim(field.getValue());
+                    me.getTopBar().setTitleButtonText(text);
+                }
+            }
+        });
+
         this.application.on({
             saveMixin: {
                 fn: this.saveType,
