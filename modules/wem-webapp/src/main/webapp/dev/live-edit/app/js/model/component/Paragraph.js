@@ -27,13 +27,14 @@
 
             if ($paragraph.data('live-edit-paragraph-mode') === undefined) {
                 $paragraph.data('live-edit-paragraph-mode', 'select');
+
                 $('body').css('cursor', 'text');
 
                 $paragraph.get(0).contentEditable = false;
             } else if ($paragraph.data('live-edit-paragraph-mode') === 'select') {
                 $paragraph.data('live-edit-paragraph-mode', 'edit');
 
-                // $paragraph.css('border', '1px solid blue');
+                $('body').css('cursor', 'text');
 
                 $paragraph.get(0).contentEditable = true;
                 $paragraph.get(0).focus();
