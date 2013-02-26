@@ -13,20 +13,20 @@ final class CompositeEditor
     }
 
     @Override
-    public Content edit( final Content content )
+    public Content edit( final Content toBeEdited )
         throws Exception
     {
         boolean modified = false;
-        Content contentEdited = content;
+        Content contentToBeEdited = toBeEdited;
         for ( final ContentEditor editor : this.editors )
         {
-            final Content updatedContent = editor.edit( contentEdited );
+            final Content updatedContent = editor.edit( contentToBeEdited );
             if ( updatedContent != null )
             {
-                contentEdited = updatedContent;
+                contentToBeEdited = updatedContent;
                 modified = true;
             }
         }
-        return modified ? contentEdited : null;
+        return modified ? contentToBeEdited : null;
     }
 }
