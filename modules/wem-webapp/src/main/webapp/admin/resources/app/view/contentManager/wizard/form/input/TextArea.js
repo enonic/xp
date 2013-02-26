@@ -3,17 +3,16 @@ Ext.define('Admin.view.contentManager.wizard.form.input.TextArea', {
     alias: 'widget.TextArea',
     label: 'Text Area',
     initComponent: function () {
-        var me = this;
 
-        me.items = [
+        this.items = [
             {
                 xtype: 'textarea',
-                name: me.name,
-                value: me.value
+                name: this.name,
+                value: this.value
             }
         ];
 
-        me.callParent(arguments);
+        this.callParent(arguments);
     },
 
     setValue: function (value) {
