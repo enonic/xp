@@ -2,7 +2,6 @@ package com.enonic.wem.core.jcr;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.jcr.Binary;
@@ -17,14 +16,21 @@ import javax.jcr.Value;
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.value.StringValue;
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 import com.google.common.collect.Lists;
 
-public abstract class JcrHelper
+public final class JcrHelper
 {
+
+    private static DateTimeFormatter isoDateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
+
+    private JcrHelper()
+    {
+    }
+
     public static Node getOrAddNode( final Node parent, final String relPath )
         throws RepositoryException
     {
@@ -64,25 +70,12 @@ public abstract class JcrHelper
     {
         if ( value == null )
         {
-            node.setProperty( propertyName, (Calendar) null );
+            node.setProperty( propertyName, (String) null );
         }
         else
         {
-            final DateTime utcDateTime = value.withZone( DateTimeZone.UTC );
-            node.setProperty( propertyName, utcDateTime.toGregorianCalendar() );
-        }
-    }
-
-    public static void setPropertyDateMidnight( final Node node, final String propertyName, final DateMidnight value )
-        throws RepositoryException
-    {
-        if ( value == null )
-        {
-            node.setProperty( propertyName, (Calendar) null );
-        }
-        else
-        {
-            node.setProperty( propertyName, value.toGregorianCalendar() );
+            final String dateTimeValue = isoDateTimeFormatter.print( value );
+            node.setProperty( propertyName, dateTimeValue );
         }
     }
 
@@ -166,15 +159,8 @@ public abstract class JcrHelper
     public static DateTime getPropertyDateTime( final Node node, final String propertyName )
         throws RepositoryException
     {
-        Property property = getInternalProperty( node, propertyName );
-        return property == null ? null : new DateTime( property.getDate() ).withZoneRetainFields( DateTimeZone.UTC );
-    }
-
-    public static DateMidnight getPropertyDateMidnight( final Node node, final String propertyName )
-        throws RepositoryException
-    {
-        Property property = getInternalProperty( node, propertyName );
-        return property == null ? null : new DateMidnight( property.getDate() );
+        final String value = getPropertyString( node, propertyName );
+        return value == null ? null : isoDateTimeFormatter.parseDateTime( value );
     }
 
     public static byte[] getPropertyBinary( final Node node, final String propertyName )
