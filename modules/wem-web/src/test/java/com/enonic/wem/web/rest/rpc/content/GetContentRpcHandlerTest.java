@@ -2,6 +2,7 @@ package com.enonic.wem.web.rest.rpc.content;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+import org.joda.time.DateTimeZone;
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -29,7 +30,7 @@ public class GetContentRpcHandlerTest
     protected JsonRpcHandler createHandler()
         throws Exception
     {
-        DateTimeUtils.setCurrentMillisFixed( new DateTime( 2000, 1, 1, 12, 0, 0 ).getMillis() );
+        DateTimeUtils.setCurrentMillisFixed( new DateTime( 2000, 1, 1, 12, 0, 0, DateTimeZone.UTC ).getMillis() );
         final GetContentRpcHandler handler = new GetContentRpcHandler();
 
         client = Mockito.mock( Client.class );
