@@ -19,10 +19,14 @@ final class SetContentDisplayNameEditor
     public Content edit( final Content toBeEdited )
         throws Exception
     {
-        final Content afterEdit = newContent( toBeEdited ).
+        if ( toBeEdited.getDisplayName().equals( displayName ) )
+        {
+            return null;
+        }
+
+        return newContent( toBeEdited ).
             displayName( displayName ).
             build();
-        return toBeEdited.getDisplayName().equals( afterEdit.getDisplayName() ) ? null : afterEdit;
     }
 
 }

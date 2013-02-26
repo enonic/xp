@@ -8,23 +8,25 @@ import static com.enonic.wem.api.content.Content.newContent;
 final class SetContentDataEditor
     implements ContentEditor
 {
-    protected final RootDataSet source;
+    protected final RootDataSet rootDataSet;
 
-    SetContentDataEditor( final RootDataSet source )
+    SetContentDataEditor( final RootDataSet rootDataSet )
     {
-        this.source = source;
+        this.rootDataSet = rootDataSet;
     }
 
     @Override
     public Content edit( final Content toBeEdited )
         throws Exception
     {
+        if ( toBeEdited.getRootDataSet().equals( rootDataSet ) )
+        {
+            return null;
+        }
 
-        final Content afterEdit = newContent( toBeEdited ).
-            rootDataSet( source ).
+        return newContent( toBeEdited ).
+            rootDataSet( rootDataSet ).
             build();
-
-        return toBeEdited.getRootDataSet().equals( afterEdit.getRootDataSet() ) ? null : afterEdit;
     }
 
 }
