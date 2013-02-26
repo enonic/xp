@@ -66,6 +66,11 @@ public final class Relationship
         return id;
     }
 
+    public RelationshipKey getKey()
+    {
+        return RelationshipKey.from( type, fromContent, managingData, toContent );
+    }
+
     public DateTime getCreatedTime()
     {
         return createdTime;
