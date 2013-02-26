@@ -24,7 +24,17 @@ Ext.define('Admin.view.account.wizard.group.WizardStepMembersPanel', {
             name: 'members',
             itemId: 'members',
             value: memberKeys,
-            store: Ext.create('Admin.store.account.AccountStore'),
+            store: Ext.create('Admin.store.account.AccountStore', {
+                autoLoad: true,
+                buffered: false,
+                remoteSort: false,
+                sorters: [
+                    {
+                        property: 'type',
+                        direction: 'ASC'
+                    }
+                ]
+            }),
             mode: 'local',
             displayField: 'displayName',
             itemClassResolver: function (values) {
@@ -84,7 +94,6 @@ Ext.define('Admin.view.account.wizard.group.WizardStepMembersPanel', {
         ];
 
         this.callParent(arguments);
-        this.down('#members').getStore().sort('type', 'ASC'); // show group accounts first
 
         // only select members from same userstore if it is remote
         this.down('#members').getStore().getProxy().extraParams = {
