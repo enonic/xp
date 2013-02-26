@@ -4,23 +4,21 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relation', {
     fieldLabel: 'Relation',
 
     initComponent: function () {
-        var me = this;
 
-        me.selectedContentStore = this.createSelectedContentStore();
+        this.selectedContentStore = this.createSelectedContentStore();
 
-        me.items = [
-            me.createHiddenInput(),
-            me.createComboBox(),
-            me.createViewForSelectedContent()
+        this.items = [
+            this.createHiddenInput(),
+            this.createComboBox(),
+            this.createViewForSelectedContent()
         ];
 
-        me.callParent(arguments);
+        this.callParent(arguments);
     },
 
 
     getValue: function () {
-        var me = this;
-        return me.getComponent(me.name).getValue();
+        return this.getComponent(this.name).getValue();
     },
 
 
@@ -28,11 +26,10 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relation', {
      * @private
      */
     createHiddenInput: function () {
-        var me = this;
         return {
             xtype: 'hiddenfield',
-            name: me.name,
-            itemId: me.name, // TODO: Is this unique enough?
+            name: this.name,
+            itemId: this.name, // TODO: Is this unique enough?
             value: ''
         };
     },
@@ -107,7 +104,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relation', {
                 datachanged: function (store) {
                     me.updateHiddenValue();
                     try {
-                        me.down('combobox').setDisabled(me.selectedContentStore.getCount() === me.contentTypeItemConfig.occurrences.maximum);
+                        me.down('combobox').setDisabled(me.selectedContentStore.getCount() ===
+                                                        me.contentTypeItemConfig.occurrences.maximum);
                     } catch (exception) {
                         /**/
                     }
@@ -157,7 +155,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relation', {
     /**
      * @private
      */
-    alertContentIsAdded: function(records) {
+    alertContentIsAdded: function (records) {
         alert('Temporary alert! Can not have duplicates in Relation field\n"' + records[0].raw.title + '" has already been added');
         this.down('combobox').focus('');
     },
@@ -167,13 +165,12 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relation', {
      * @private
      */
     updateHiddenValue: function () {
-        var me = this;
         var keys = [];
-        if (me.items) {
+        if (this.items) {
             Ext.Array.each(me.selectedContentStore.data.items, function (item) {
                 keys.push(item.data.key);
             });
-            me.getComponent(me.name).setValue(keys);
+            this.getComponent(this.name).setValue(keys);
         }
     }
 

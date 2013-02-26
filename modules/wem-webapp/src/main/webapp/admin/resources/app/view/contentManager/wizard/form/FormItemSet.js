@@ -8,10 +8,10 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
 
     mixins: {
         formGenerator: 'Admin.view.contentManager.wizard.form.FormGenerator',
-        fieldOccurrencesHandler: 'Admin.view.contentManager.wizard.form.FieldOccurrencesHandler'
+        formItemOccurrencesHandler: 'Admin.view.contentManager.wizard.form.FormItemOccurrencesHandler'
     },
 
-    contentTypeItemConfig: undefined,
+    formItemSetConfig: undefined,
 
     content: null, // Blocks
 
@@ -21,7 +21,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
 
     margin: '10 0 10 0',
     cls: 'form-item-set',
-    maxWidth: 640,
+    maxWidth: 740,
     minWidth: 500,
     padding: '15 15 15 15',
 
@@ -32,7 +32,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
 
     listeners: {
         beforerender: function () {
-            this.handleOccurrences();
+            this.handleOccurrences(this.formItemSetConfig.occurrences.minimum);
             this.setIndent();
         },
         render: function () {
@@ -63,7 +63,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
     },
 
     updateButtonState: function () {
-        var max = this.contentTypeItemConfig.occurrences.maximum;
+        var max = this.formItemSetConfig.occurrences.maximum;
         if (this.addButton) {
             if (this.nextField || this.copyNo === max) {
                 this.addButton.hide();
@@ -99,7 +99,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
             style: {
                 float: 'left'
             },
-            text: 'Add ' + me.contentTypeItemConfig.label,
+            text: 'Add ' + me.formItemSetConfig.label,
             handler: function () {
                 me.addCopy();
             }
@@ -157,7 +157,6 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
      * @private
      */
     addBlock: function (hasContent) {
-        var me = this;
 
         var block = new Ext.container.Container({
             cls: 'admin-sortable admin-formitemset-block',
@@ -167,7 +166,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
             defaults: {
                 margin: '5 15'
             },
-            items: [me.createBlockHeader()],
+            items: [this.createBlockHeader()],
             getValue: function () {
                 var value = [];
                 this.items.each(function (item) {
@@ -179,13 +178,9 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
             }
         });
 
-        // Rename argument createBlankBlock. hasContent
-        if (hasContent) {
-            me.addComponentsBasedOnContentType(me.contentTypeItemConfig.items, block);
-        } else {
-            me.addComponentsBasedOnContentData(me.value[0].value, me.contentTypeItemConfig.items, block);
-        }
-        me.add(block);
+        var contentData = !Ext.isEmpty(this.value) ? this.value[0].value : undefined;
+        this.addComponentsBasedOnContentType(this.formItemSetConfig.items, block, contentData);
+        this.add(block);
     },
 
 
@@ -217,7 +212,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
                  },*/
                 {
                     xtype: 'component',
-                    html: '<h6>' + (me.contentTypeItemConfig.label || '{No label}') + ': </h6>'
+                    html: '<h6>' + (me.formItemSetConfig.label || '{No label}') + ': </h6>'
                 },
                 {
                     tdAttrs: {
@@ -267,8 +262,8 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
      * @param totalCount
      */
     updateButtonStateInternal: function (totalCount) {
-        var min = this.contentTypeItemConfig.occurrences.minimum;
-        var max = this.contentTypeItemConfig.occurrences.maximum;
+        var min = this.formItemSetConfig.occurrences.minimum;
+        var max = this.formItemSetConfig.occurrences.maximum;
         this.setDisableRemoveBlockButton(totalCount === min);
         if (this.nextField) {
             this.nextField.updateButtonStateInternal(totalCount);

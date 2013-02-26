@@ -3,17 +3,16 @@ Ext.define('Admin.view.contentManager.wizard.form.input.TextLine', {
     alias: 'widget.TextLine',
     label: 'Text Line',
     initComponent: function () {
-        var me = this;
 
-        me.items = [
+        this.items = [
             {
                 xtype: 'textfield',
-                name: me.name,
-                value: me.value
+                name: this.name,
+                value: this.value
             }
         ];
 
-        me.callParent(arguments);
+        this.callParent(arguments);
     },
 
     setValue: function (value) {

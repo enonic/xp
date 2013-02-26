@@ -1,15 +1,14 @@
-Ext.define('Admin.view.contentManager.wizard.form.FieldOccurrencesHandler', {
+Ext.define('Admin.view.contentManager.wizard.form.FormItemOccurrencesHandler', {
 
     copyNo: 1,
 
     /**
      * Handles multiple occurences, called right before component is rendered, could be overriden for custom implementation
      */
-    handleOccurrences: function () {
+    handleOccurrences: function (minimum) {
         this.addEvents('copyadded', 'copyremoved');
         this.bindOccurrencesEventsHandlers();
-        var minOcc = this.contentTypeItemConfig.occurrences.minimum;
-        if (this.contentTypeItemConfig && (this.value === undefined) && (this.copyNo < minOcc)) {
+        if (Ext.isEmpty(this.value) && this.copyNo < minimum) {
             this.addCopy();
         } else {
             var value = this.value;
@@ -20,7 +19,6 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldOccurrencesHandler', {
                 }
             }
         }
-        this.fireEvent('copyadded', this);
     },
 
     /**

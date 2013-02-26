@@ -2,9 +2,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
     extend: 'Ext.form.FieldContainer',
     label: '',
 
-    contentTypeItemConfig: undefined,
+    inputConfig: undefined,
 
-    width: 640,
+    minWidth: 640,
     labelWidth: 105,
 
     layout: {
@@ -12,26 +12,25 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
     },
 
     mixins: {
-        fieldOccurrencesHandler: 'Admin.view.contentManager.wizard.form.FieldOccurrencesHandler'
+        formItemOccurrencesHandler: 'Admin.view.contentManager.wizard.form.FormItemOccurrencesHandler'
     },
 
     listeners: {
-        afterrender: function () {
-            this.handleOccurrences();
+        beforerender: function () {
+            this.handleOccurrences(this.inputConfig.occurrences.minimum);
         }
     },
 
 
     initComponent: function () {
-        var me = this;
 
-        me.defaults = {
+        this.defaults = {
             width: 450
         };
-        if (this.copyNo > this.contentTypeItemConfig.occurrences.minimum && this.copyNo > 1) {
+        if (this.copyNo > this.inputConfig.occurrences.minimum && this.copyNo > 1) {
             this.items.push(this.createDeleteButton());
         }
-        me.callParent(arguments);
+        this.callParent(arguments);
 
     },
 
@@ -109,8 +108,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
      * @param totalCount
      */
     updateButtonStateInternal: function (totalCount) {
-        var min = this.contentTypeItemConfig.occurrences.minimum;
-        var max = this.contentTypeItemConfig.occurrences.maximum;
+        var min = this.inputConfig.occurrences.minimum;
         this.setButtonDisabled(totalCount === min && this.copyNo !== totalCount);
         if (this.nextField) {
             this.nextField.updateButtonStateInternal(totalCount);
@@ -118,5 +116,4 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
     }
 
 
-})
-;
+});
