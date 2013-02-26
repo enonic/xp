@@ -127,6 +127,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                 type: 'column',
                 columns: 3
             },
+            autoScroll: true,
             defaults: {
                 border: 0
             },
