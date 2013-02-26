@@ -8,6 +8,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.schema.Schema;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 public class SchemaJsonSerializer
     extends AbstractJsonSerializer<Schema>
@@ -24,23 +25,8 @@ public class SchemaJsonSerializer
         objectNode.put( "qualifiedName", schema.getQualifiedName().toString() );
         objectNode.put( "displayName", schema.getDisplayName() );
         objectNode.put( "type", schema.getClass().getSimpleName() );
-
-        if ( schema.getCreatedTime() != null )
-        {
-            objectNode.put( "createdTime", schema.getCreatedTime().toString() );
-        }
-        else
-        {
-            objectNode.putNull( "createdTime" );
-        }
-        if ( schema.getModifiedTime() != null )
-        {
-            objectNode.put( "modifiedTime", schema.getModifiedTime().toString() );
-        }
-        else
-        {
-            objectNode.putNull( "modifiedTime" );
-        }
+        JsonSerializerUtil.setDateTimeValue( "createdTime", schema.getCreatedTime(), objectNode );
+        JsonSerializerUtil.setDateTimeValue( "modifiedTime", schema.getModifiedTime(), objectNode );
         return objectNode;
     }
 

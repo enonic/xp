@@ -4,8 +4,9 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.web.rest.resource.account.AccountImageUriResolver;
+import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 import com.enonic.wem.web.json.JsonResult;
+import com.enonic.wem.web.rest.resource.account.AccountImageUriResolver;
 
 abstract class AbstractAccountJsonResult
     extends JsonResult
@@ -28,8 +29,8 @@ abstract class AbstractAccountJsonResult
         json.put( "qualifiedName", account.getKey().getQualifiedName() );
         json.put( "builtIn", account.getKey().isBuiltIn() );
         json.put( "displayName", account.getDisplayName() );
-        json.put( "modifiedTime", account.getModifiedTime().toString() );
-        json.put( "createdTime", account.getCreatedTime().toString() );
+        JsonSerializerUtil.setDateTimeValue( "modifiedTime", account.getModifiedTime(), json );
+        JsonSerializerUtil.setDateTimeValue( "createdTime", account.getCreatedTime(), json );
         json.put( "editable", account.isEditable() );
         json.put( "deleted", account.isDeleted() );
         json.put( "image_url", AccountImageUriResolver.resolve( account ) );

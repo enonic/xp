@@ -19,6 +19,7 @@ import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.value.StringValue;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import com.google.common.collect.Lists;
 
@@ -67,7 +68,8 @@ public abstract class JcrHelper
         }
         else
         {
-            node.setProperty( propertyName, value.toGregorianCalendar() );
+            final DateTime utcDateTime = value.withZone( DateTimeZone.UTC );
+            node.setProperty( propertyName, utcDateTime.toGregorianCalendar() );
         }
     }
 
@@ -165,7 +167,7 @@ public abstract class JcrHelper
         throws RepositoryException
     {
         Property property = getInternalProperty( node, propertyName );
-        return property == null ? null : new DateTime( property.getDate() );
+        return property == null ? null : new DateTime( property.getDate() ).withZoneRetainFields( DateTimeZone.UTC );
     }
 
     public static DateMidnight getPropertyDateMidnight( final Node node, final String propertyName )

@@ -1,6 +1,7 @@
 package com.enonic.wem.web.rest.rpc.account;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
@@ -19,6 +20,8 @@ import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 public abstract class AbstractAccountRpcHandlerTest
     extends AbstractRpcHandlerTest
 {
+    private final static DateTime DATE_TIME = new DateTime( 2012, 1, 1, 10, 01, 10, 101, DateTimeZone.UTC );
+
     protected AccountQueryHits createAccountResult( final int totalSize, final Accounts accounts )
     {
         final AccountQueryHits result = new AccountQueryHits( totalSize, accounts.getKeys() );
@@ -42,8 +45,8 @@ public abstract class AbstractAccountRpcHandlerTest
         final UserAccount user = UserAccount.create( accountKey.asUser() );
         user.setDisplayName( accountKey.getLocalName().toUpperCase() );
         user.setEmail( accountKey.getLocalName() + "@" + accountKey.getUserStore() + ".com" );
-        user.setCreatedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
-        user.setModifiedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
+        user.setCreatedTime( DATE_TIME );
+        user.setModifiedTime( DATE_TIME );
         user.setImage( "image".getBytes() );
         return user;
     }
@@ -53,8 +56,8 @@ public abstract class AbstractAccountRpcHandlerTest
         final AccountKey accountKey = GroupKey.from( qName );
         final GroupAccount group = GroupAccount.create( accountKey.asGroup() );
         group.setDisplayName( accountKey.getLocalName().toUpperCase() );
-        group.setCreatedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
-        group.setModifiedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
+        group.setCreatedTime( DATE_TIME );
+        group.setModifiedTime( DATE_TIME );
         group.setMembers( AccountKeys.from( members ) );
         return group;
     }
@@ -64,8 +67,8 @@ public abstract class AbstractAccountRpcHandlerTest
         final AccountKey accountKey = RoleKey.from( qName );
         final RoleAccount group = RoleAccount.create( accountKey.asRole() );
         group.setDisplayName( accountKey.getLocalName().toUpperCase() );
-        group.setCreatedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
-        group.setModifiedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
+        group.setCreatedTime( DATE_TIME );
+        group.setModifiedTime( DATE_TIME );
         group.setMembers( AccountKeys.from( members ) );
         return group;
     }
