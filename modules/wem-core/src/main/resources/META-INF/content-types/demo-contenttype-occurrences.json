@@ -1,0 +1,87 @@
+{
+    "name": "occurrences",
+    "module": "Demo",
+    "displayName": "Occurrences Demo",
+    "superType": "System:structured",
+    "isAbstract": false,
+    "isFinal": true,
+    "form": [
+        {
+            "Input": {
+                "name": "title",
+                "label": "Title",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "Title",
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "textLineUnlimitedOccurrences",
+                "label": "TextLine unrequired, unlimited occurrences",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "textLineRequiredAndUnlimitedOccurrences",
+                "label": "TextLine required, unlimited occurrences",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            }
+        }
+        ,
+        {
+            "Input": {
+                "name": "textLineMin2Max4",
+                "label": "TextLine min 2 and max 2 occurrences",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 2,
+                    "maximum": 4
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            }
+        }
+    ]
+}
