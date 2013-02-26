@@ -13,10 +13,10 @@
         attachMouseOverEvent: function () {
             var me = this;
 
-            $(document).on('mouseover', this.cssSelector, function (event) {
+            $(document).on('mouseover', me.cssSelector, function (event) {
                 var $component = $(this);
 
-                var targetIsUiComponent = me.isLiveEditUiComponent(event);
+                var targetIsUiComponent = me.isLiveEditUiComponent($(event.target));
                 var cancelEvent = targetIsUiComponent || me.hasComponentSelected() || AdminLiveEdit.DragDrop.isDragging();
                 if (cancelEvent) {
                     return;
@@ -44,25 +44,23 @@
         attachClickEvent: function () {
             var me = this;
 
-            $(document).on('click touchstart', this.cssSelector, function (event) {
-                if (me.isLiveEditUiComponent(event)) {
+            $(document).on('click touchstart', me.cssSelector, function (event) {
+                console.log('Base click');
+                if (me.isLiveEditUiComponent($(event.target))) {
                     return;
                 }
                 event.stopPropagation();
                 event.preventDefault();
-                var $closestComponentFromTarget = $(event.target).closest('[data-live-edit-type]');
-                var componentIsSelected = $closestComponentFromTarget.hasClass('live-edit-selected-component');
-                if (componentIsSelected) {
+
+                var $closestComponentFromTarget = $(event.target).closest('[data-live-edit-type]'),
+                    componentIsSelected = $closestComponentFromTarget.hasClass('live-edit-selected-component'),
+                    pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
+
+                if (componentIsSelected || pageHasComponentSelected) {
                     $(window).trigger('component:click:deselect');
                 } else {
-                    var pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
-                    if (pageHasComponentSelected) {
-                        $(window).trigger('component:click:deselect');
-                    } else {
-                        $(window).trigger('component:click:select', [$closestComponentFromTarget]);
-                    }
+                    $(window).trigger('component:click:select', [$closestComponentFromTarget]);
                 }
-                // return false;
             });
         },
 
@@ -72,8 +70,8 @@
         },
 
 
-        isLiveEditUiComponent: function (event) {
-            return $(event.target).is('[id*=live-edit-ui-cmp]') || $(event.target).parents('[id*=live-edit-ui-cmp]').length > 0;
+        isLiveEditUiComponent: function ($target) {
+            return $target.is('[id*=live-edit-ui-cmp]') || $target.parents('[id*=live-edit-ui-cmp]').length > 0;
         },
 
 

@@ -10,7 +10,8 @@ AdminLiveEdit.DragDrop = (function () {
     var cursorAt = AdminLiveEdit.Util.supportsTouch() ? {left: 15, top: 70} : {left: -15, top: -20};
 
     var regionSelector = '[data-live-edit-type=region]';
-    var itemsToSort = '[data-live-edit-type=part], [data-live-edit-type=paragraph]';
+    // var itemsToSort = '[data-live-edit-type=part], [data-live-edit-type=paragraph]';
+    var itemsToSort = '[data-live-edit-type=part]';
 
 
     function enableDragDrop() {
@@ -207,7 +208,8 @@ AdminLiveEdit.DragDrop = (function () {
             receive             : handleReceive,
             update              : handleSortUpdate, // This event is triggered when the user stopped sorting and the DOM position has changed.
             stop                : handleSortStop    // This event is triggered when sorting has stopped.
-        }).disableSelection();
+        });
+        // }).disableSelection(); // will not make contenteditable work.
 
         initSubscribers();
     }

@@ -4,7 +4,6 @@
     $(window).load(function () {
         $('.live-edit-loader-splash-container').remove();
 
-        var selection           = new AdminLiveEdit.Selection();
         var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
 
         // To be restructured
@@ -28,10 +27,11 @@
 
         // *******************************************************************************************************************************//
         // Experiment: Simple replace all A href's on page in order to not navigate if a link is clicked.
-        $('a').attr('href', '#');
+        //$('a').attr('href', '#');
         // *******************************************************************************************************************************//
         // Experiment: Move all scripts without @src to the body element in order to prevent script elements to be dragged.
         // TODO: Update CSS selector to only include page components.
+        /*
         var $scripts = $('script:not([src])');
         $scripts.each(function () {
             var script = this;
@@ -39,6 +39,7 @@
             // Use standard DOM appendChild as jQuery append is buggy regarding script elements.
             $body.appendChild(script);
         });
+        */
 
     });
 

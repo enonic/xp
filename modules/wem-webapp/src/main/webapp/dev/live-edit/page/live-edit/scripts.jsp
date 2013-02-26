@@ -19,7 +19,6 @@
 <script type="text/javascript" charset="UTF-8" src="../app/js/Util.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/MutationObserver.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/HtmlElementReplacer.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/Selection.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/DragDrop.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/PageLeave.js"></script>
 

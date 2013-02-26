@@ -3,6 +3,8 @@
 
     // Class definition (constructor function)
     var highlighter = AdminLiveEdit.view.Highlighter = function () {
+        this.$selectedComponent = null;
+
         this.addView();
         this.registerGlobalListeners();
     };
@@ -22,14 +24,19 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.registerGlobalListeners = function () {
-        $(window).on('component:mouseover', $.proxy(this.highlight, this));
+
+        $(window).on('component:mouseover', $.proxy(this.onMouseOver, this));
         $(window).on('component:mouseout', $.proxy(this.hide, this));
-        $(window).on('component:click:select', $.proxy(this.highlight, this));
+        $(window).on('component:click:select', $.proxy(this.onSelect, this));
         $(window).on('component:click:deselect', $.proxy(this.deselect, this));
         $(window).on('component:sort:start', $.proxy(this.hide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));
 
-        // $(window).on('componentBar:mouseover', $.proxy(this.hide, this));
+        $(window).on('component:sort:stop', function (event, uiEvent, ui, wasSelectedOnDragStart) {
+            if (wasSelectedOnDragStart) {
+                $(window).trigger('component:click:select', [ui.item]);
+            }
+        });
     };
 
 
@@ -42,54 +49,86 @@
     };
 
 
-    proto.highlight = function (event, $selectedComponent) {
+    proto.onMouseOver = function (event, $component) {
+        var me = this;
+        me.show();
+        me.paintOutline($component);
+    };
+
+
+    proto.onSelect = function (event, $component) {
         var me = this;
 
+        me.$selectedComponent = $component;
+
         // Highlighter should not be shown when page is selected.
-        if (util.getComponentType($selectedComponent) === 'page' && event.type === 'component:click:select') {
+        if (util.getComponentType($component) === 'page') {
             me.hide();
             return;
         }
 
-        me.getEl().show();
-        me.resize($selectedComponent);
+        me.show();
 
-        var $highlighter = me.getEl();
+        me.paintOutline($component);
 
-        var style = me.getStyleForComponent($selectedComponent);
+        $('.live-edit-selected-component').removeClass('live-edit-selected-component');
+        $component.addClass('live-edit-selected-component');
 
-        $highlighter.css('stroke', style.strokeColor);
-        $highlighter.css('fill', style.fillColor);
-        $highlighter.css('stroke-dasharray', style.strokeDashArray);
+        if (util.getComponentType($component) !== 'page') {
+            me.scrollComponentIntoView($component);
+        }
     };
 
 
-    proto.resize = function ($selectedComponent) {
+    proto.deselect = function () {
         var me = this;
-        var componentType = util.getComponentType($selectedComponent);
-        var componentTagName = util.getTagNameForComponent($selectedComponent);
-        var componentBoxModel = util.getBoxModel($selectedComponent);
+
+        me.$selectedComponent = null;
+        me.hide();
+        $('.live-edit-selected-component').removeClass('live-edit-selected-component');
+    };
+
+
+    proto.paintOutline = function ($component) {
+        var me = this,
+            $outline = me.getEl();
+
+        me.resizeOutlineToComponent($component);
+
+        var style = me.getOutlineStyleForComponent($component);
+
+        $outline.css('stroke', style.strokeColor);
+        $outline.css('fill', style.fillColor);
+        $outline.css('stroke-dasharray', style.strokeDashArray);
+    };
+
+
+    proto.resizeOutlineToComponent = function ($component) {
+        var me = this;
+        var componentType = util.getComponentType($component);
+        var componentTagName = util.getTagNameForComponent($component);
+        var componentBoxModel = util.getBoxModel($component);
         var w       = Math.round(componentBoxModel.width);
         var h       = Math.round(componentBoxModel.height);
         var top     = Math.round(componentBoxModel.top);
         var left    = Math.round(componentBoxModel.left);
 
-        var $highlighter = me.getEl();
-        var $highlighterRect = $highlighter.find('rect');
+        var $outline = me.getEl();
+        var $outlineRect = $outline.find('rect');
 
-        $highlighter.width(w);
-        $highlighter.height(h);
-        $highlighterRect[0].setAttribute('width', w);
-        $highlighterRect[0].setAttribute('height', h);
-        $highlighter.css({
+        $outline.width(w);
+        $outline.height(h);
+        $outlineRect[0].setAttribute('width', w);
+        $outlineRect[0].setAttribute('height', h);
+        $outline.css({
             top : top,
             left: left
         });
     };
 
 
-    proto.deselect = function () {
-        // this.getEl().css('opacity', '1');
+    proto.show = function () {
+        this.getEl().show();
     };
 
 
@@ -98,7 +137,7 @@
     };
 
 
-    proto.getStyleForComponent = function ($component) {
+    proto.getOutlineStyleForComponent = function ($component) {
         var componentType = util.getComponentType($component);
 
         var strokeColor,
@@ -142,5 +181,14 @@
             fillColor: fillColor
         };
     };
+
+
+    proto.scrollComponentIntoView = function ($selectedComponent) {
+        var componentTopPosition = util.getPagePositionForComponent($selectedComponent).top;
+        if (componentTopPosition <= window.pageYOffset) {
+            $('html, body').animate({scrollTop: componentTopPosition - 10}, 200);
+        }
+    };
+
 
 }($liveedit));
