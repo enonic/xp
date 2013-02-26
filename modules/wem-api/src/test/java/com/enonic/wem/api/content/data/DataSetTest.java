@@ -5,12 +5,70 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.content.AbstractEqualsTest;
 import com.enonic.wem.api.content.data.type.DataTypes;
 
 import static org.junit.Assert.*;
 
 public class DataSetTest
 {
+
+    @Test
+    public void equals()
+    {
+        AbstractEqualsTest equalsTest = new AbstractEqualsTest()
+        {
+            @Override
+            public Object getObjectX()
+            {
+                return DataSet.newDataSet().
+                    name( "mySet" ).
+                    set( "myData1", "aaa", DataTypes.TEXT ).
+                    set( "myData2", "bbb", DataTypes.TEXT ).
+                    build();
+            }
+
+            @Override
+            public Object[] getObjectsThatNotEqualsX()
+            {
+                return new Object[]{DataSet.newDataSet().
+                    name( "mySet" ).
+                    set( "myData1", "aaa", DataTypes.TEXT ).
+                    build(), DataSet.newDataSet().
+                    name( "mySet" ).
+                    set( "myData1", "aaa", DataTypes.TEXT ).
+                    set( "myData2", "bbb", DataTypes.TEXT ).
+                    set( "myData3", "bbb", DataTypes.TEXT ).
+                    build(), DataSet.newDataSet().
+                    name( "mySet" ).
+                    set( "myData1", "111", DataTypes.TEXT ).
+                    set( "myData2", "222", DataTypes.TEXT ).
+                    build()};
+            }
+
+            @Override
+            public Object getObjectThatEqualsXButNotTheSame()
+            {
+                return DataSet.newDataSet().
+                    name( "mySet" ).
+                    set( "myData1", "aaa", DataTypes.TEXT ).
+                    set( "myData2", "bbb", DataTypes.TEXT ).
+                    build();
+            }
+
+            @Override
+            public Object getObjectThatEqualsXButNotTheSame2()
+            {
+                return DataSet.newDataSet().
+                    name( "mySet" ).
+                    set( "myData1", "aaa", DataTypes.TEXT ).
+                    set( "myData2", "bbb", DataTypes.TEXT ).
+                    build();
+            }
+        };
+        equalsTest.assertEqualsAndHashCodeContract();
+    }
+
     @Test
     public void name_cannot_be_blank()
     {

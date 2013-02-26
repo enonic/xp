@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateMidnight;
@@ -427,6 +428,29 @@ public class DataSet
     public final DataSetArray getArray()
     {
         return (DataSetArray) super.getArray();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final DataSet other = (DataSet) o;
+
+        return Objects.equals( getName(), other.getName() ) && Objects.equals( entryById, other.entryById );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( getName(), entryById );
     }
 
     @Override
