@@ -65,7 +65,6 @@ Ext.define('Admin.view.DetailPanel', {
 
     createSingleSelection: function (data) {
         var me = this;
-        console.log(data);
         return {
             xtype: 'container',
             itemId: 'singleSelection',
@@ -128,7 +127,7 @@ Ext.define('Admin.view.DetailPanel', {
                       '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>' +
                       '<div class="center"><h6>{data.displayName}</h6><p>{data.description}</p></div>' +
                       '<div class="right">' +
-                      '<a id="remove-from-selection-button:{data.key}" class="deselect" href="javascript:;"></a>' +
+                      '<a id="remove-from-selection-button:{internalId}" class="deselect" href="javascript:;"></a>' +
                       '</div>' +
                       '</div>' +
                       '</tpl>',
@@ -265,8 +264,6 @@ Ext.define('Admin.view.DetailPanel', {
     },
 
     updateActiveItem: function (data, item) {
-        console.log(data);
-        console.log(item);
         item = item || this.getLayout().getActiveItem();
         if ('singleSelection' === item.itemId) {
             var previewHeader = item.down('#previewHeader');
@@ -277,7 +274,6 @@ Ext.define('Admin.view.DetailPanel', {
 
             var previewInfo = item.down('#previewInfo');
             previewInfo.update(data);
-            console.log("Preview info updated -> " + previewInfo);
         } else if ('largeBoxSelection' === item.itemId || 'smallBoxSelection' === item.itemId) {
             item.update(data);
         }

@@ -6,7 +6,7 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
 
     border: false,
 
-    keyField: 'path',
+    keyField: 'id',
 
     gridConf: {
         selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36}),

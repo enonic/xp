@@ -126,7 +126,6 @@ Ext.define('Admin.view.TreeGridPanel', {
     },
 
     select: function (key, keepExisting) {
-
         var activeList = this.getActiveList();
         var selModel = activeList.getSelectionModel();
 
@@ -146,25 +145,23 @@ Ext.define('Admin.view.TreeGridPanel', {
 
     // -1 deselects all
     deselect: function (key) {
-
+        console.log(key);
+        console.log(this.keyField);
         var activeList = this.getActiveList();
         var selModel = activeList.getSelectionModel();
 
         if (!key || key === -1) {
             if (activeList.xtype === 'treepanel') {
                 selModel.deselectAll();
-            }
-            else if (activeList.xtype === 'grid') {
+            } else if (activeList.xtype === 'grid') {
                 var plugin = activeList.getPlugin('persistentGridSelection');
                 if (plugin) {
                     plugin.clearSelection();
-                }
-                else {
+                } else {
                     selModel.deselectAll();
                 }
             }
-        }
-        else {
+        } else {
             if (activeList.xtype === 'treepanel') {
                 var selNodes = selModel.getSelection();
                 var i;
@@ -175,8 +172,7 @@ Ext.define('Admin.view.TreeGridPanel', {
                         selModel.deselect(selNode);
                     }
                 }
-            }
-            else if (activeList.xtype === 'grid') {
+            } else if (activeList.xtype === 'grid') {
                 var record = activeList.getStore().findRecord(this.keyField, key);
                 if (record) {
                     selModel.deselect(record);

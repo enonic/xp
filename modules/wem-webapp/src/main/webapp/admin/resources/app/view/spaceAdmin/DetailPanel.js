@@ -7,24 +7,6 @@ Ext.define('Admin.view.spaceAdmin.DetailPanel', {
     ],
 
     showToolbar: false,
-    isLiveMode: true,
-
-
-    /*listeners: {
-     afterrender: function (detail) {
-     detail.el.on('click', function (event, target, opts) {
-     var key = target.attributes.getNamedItem('id').nodeValue.split('remove-from-selection-button:')[1];
-     detail.fireEvent('deselect', key);
-     }, this, {
-     delegate: '.deselect'
-     });
-     detail.el.on('click', function (event, target, opts) {
-     detail.fireEvent('clearselection');
-     }, this, {
-     delegate: '.clearSelection'
-     });
-     }
-     },*/
 
     initComponent: function () {
         var data = this.resolveActiveData(this.data);

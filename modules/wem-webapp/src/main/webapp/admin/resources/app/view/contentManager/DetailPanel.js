@@ -9,31 +9,29 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     ],
 
     showToolbar: true,
-    isLiveMode: false,
-
-    /*listeners: {
-     afterrender: function () {
-     if (this.isLiveMode) {
-     var livePreview = this.down('#livePreview');
-     //TODO update urls when they are ready
-     livePreview.load('/dev/live-edit/page/page.jsp');
-     }
-     if (!this.showToolbar) {
-     var toggleBtn = this.down('#toggleBtn');
-     var a = toggleBtn.el.down('a');
-     a.on('click', function () {
-     this.toggleLive();
-     if (this.isLiveMode) {
-     a.setHTML('Switch to Info View');
-     } else {
-     a.setHTML('Switch to Live View');
-     }
-     }, this);
-     }
-     }
-     },*/
+    isLiveMode: true,
 
     initComponent: function () {
+        this.on('afterrender', function () {
+            if (this.isLiveMode) {
+                var livePreview = this.down('#livePreview');
+                //TODO update urls when they are ready
+                livePreview.load('/dev/live-edit/page/page.jsp');
+            }
+            if (!this.showToolbar) {
+                var toggleBtn = this.down('#toggleBtn');
+                var a = toggleBtn.el.down('a');
+                a.on('click', function () {
+                    this.toggleLive();
+                    if (this.isLiveMode) {
+                        a.setHTML('Switch to Info View');
+                    } else {
+                        a.setHTML('Switch to Live View');
+                    }
+                }, this);
+            }
+        }, this);
+
         this.resolveActiveData(this.data);
 
         this.setDataCallback = function (data) {
@@ -132,48 +130,11 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
     },
 
-    /*
-     createSmallBoxSelection: function (data) {
-     var tpl = Ext.Template(Templates.contentManager.previewSelectionSmall);
-
-     var panel = {
-     xtype: 'panel',
-     itemId: 'smallBoxSelection',
-     styleHtmlContent: true,
-     listeners: {
-     click: {
-     element: 'body',
-     fn: this.deselectItem,
-     scope: this
-     }
-     },
-     autoScroll: true,
-     padding: 10,
-     border: 0,
-     tpl: tpl,
-     data: data
-     };
-
-     return panel;
-     },
-     */
-
     createLivePreview: function (data) {
         return {
             itemId: 'livePreview',
             xtype: 'contentLive'
         };
-    },
-
-
-    deselectItem: function (event, target) {
-        var className = target.className;
-        if (className && className === 'remove-selection') {
-            var key = target.attributes.getNamedItem('id').nodeValue.split('remove-from-selection-button-')[1];
-            if (!Ext.isEmpty(key)) {
-                this.fireEvent('deselectrecord', key);
-            }
-        }
     },
 
     toggleLive: function () {
