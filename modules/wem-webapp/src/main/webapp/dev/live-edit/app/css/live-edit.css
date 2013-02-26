@@ -23,7 +23,6 @@ svg.live-edit-highlighter rect,
 .live-edit-button,
 .live-edit-button-text,
 .live-edit-button-icon,
-.live-edit-icon-parent,
 .live-edit-components-container,
 #live-edit-drag-helper,
 #live-edit-drag-helper img,
@@ -220,7 +219,6 @@ svg.live-edit-highlighter rect {
 /*** Component tip ***/
 
 .live-edit-component-tip {
-    display: table-row;
     position: absolute;
     z-index: 1000050;
     background-color: #fff9cb;
@@ -283,33 +281,50 @@ svg.live-edit-highlighter rect {
 .live-edit-component-tip-left,
 .live-edit-component-tip-center,
 .live-edit-component-tip-right {
-    display: table-cell;
+    line-height: 9px; /* In case user CSS sets this */
 }
 
+
 .live-edit-component-tip-left {
+    float: left;
     text-align: center;
     border-right: 1px solid #989898;
 }
 .live-edit-component-tip-center {
-    vertical-align: middle;
+    float: left;
     text-align: center;
     min-width: 80px;
-    padding: 0 10px;
+    padding: 8px 10px 0 10px;
 }
 .live-edit-component-tip-right {
+    float: right;
     border-left: 1px solid #989898;
 }
 .live-edit-component-tip-icon-menu,
 .live-edit-component-tip-icon-parent,
 .live-edit-component-tip-icon-deselect {
-    vertical-align: middle;
-    padding: 15px 15px;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    padding: 15px;
     cursor: pointer;
 }
 
-.live-edit-component-tip-icon-menu-selected {
-    background-color: #ffda85;
+.live-edit-component-tip-icon-parent {
+    background: url("../images/arrow-up.png") no-repeat scroll 50% 50% transparent;
 }
+
+.live-edit-component-tip-icon-menu {
+    background: url("../images/menu-button.png") no-repeat scroll 50% 50% transparent;
+}
+.live-edit-component-tip-icon-menu-selected {
+    background: url("../images/menu-button-active.png") no-repeat scroll 50% 50% #444;
+}
+
+.live-edit-component-tip-icon-deselect {
+    background: url("../images/close.png") no-repeat scroll 50% 50% transparent;
+}
+
 
 .live-edit-component-tip-type-text,
 .live-edit-component-tip-name-text {
@@ -326,12 +341,44 @@ svg.live-edit-highlighter rect {
 .live-edit-component-menu {
     position: absolute;
     z-index: 1000150;
-    padding: 1px 1px 0 1px;
-    background-color: #989898;
+    padding: 0;
+    border: 2px solid #444;
 }
+
+/* Component menu button */
+
+.live-edit-component-menu-button {
+    width: 120px;
+    padding: 10px;
+    background-color: #fff;
+}
+.live-edit-component-menu-button:hover {
+    background-color: #0a6cf9;
+    color: #fff !important;
+}
+.live-edit-component-menu-button:hover .live-edit-button-text {
+    color: #fff !important;
+}
+
+
+.live-edit-button-text {
+    text-transform: capitalize;
+}
+
+.live-edit-button-icon {
+    display: block;
+    width: auto;
+    height: 24px;
+    padding-bottom: 10px;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center 5px;
+}
+
 
 /*** Component bar */
 
+/* TODO: rename classes to components bar */
 .live-edit-components-container {
     opacity: 1;
     position: fixed;
@@ -474,52 +521,6 @@ svg.live-edit-highlighter rect {
     text-decoration: none;
 }
 
-/* Hover menu button */
-.live-edit-button.live-edit-hover-menu-button {
-    width: 62px;
-    text-align: center;
-    margin-bottom: 1px;
-    padding: 5px;
-    background-color: #7a7a7a;
-}
-
-/* Component menu button */
-.live-edit-button.live-edit-component-menu-button {
-    width: 120px;
-    margin-bottom: 1px;
-    padding: 10px;
-    background-color: #ebebeb;
-}
-
-.live-edit-button-text {
-    text-transform: capitalize;
-}
-
-.live-edit-hover-menu-button .live-edit-button-text {
-    color: #fff;
-}
-
-.live-edit-component-menu-button .live-edit-button-text {
-    color: #000;
-}
-
-/*** Component Menu buttons */
-
-.live-edit-button-icon {
-    display: block;
-    width: auto;
-    height: 24px;
-    padding-bottom: 10px;
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: center 5px;
-}
-
-/*** Button icons */
-
-.live-edit-icon-parent {
-    background-image: url("../images/arrow_up_right.png");
-}
 
 /*** Drag and Drop */
 
