@@ -1,7 +1,6 @@
 Ext.define('Admin.view.contentManager.wizard.form.input.TextLine', {
     extend: 'Admin.view.contentManager.wizard.form.input.Base',
     alias: 'widget.TextLine',
-    label: 'Text Line',
     initComponent: function () {
 
         this.items = [

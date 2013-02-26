@@ -2,7 +2,7 @@ Ext.define('Admin.view.contentManager.wizard.form.InputContainer', {
     extend: 'Ext.container.Container',
     alias: 'widget.inputContainer',
 
-    layout: 'hbox',
+    layout: 'column',
 
     label: undefined,
 
@@ -22,7 +22,7 @@ Ext.define('Admin.view.contentManager.wizard.form.InputContainer', {
         this.minFields = this.field.inputConfig.occurrences.minimum;
         var dockItems = [];
 
-        if (this.maxFields > 1 && this.minFields !== this.maxFields) {
+        if ((this.maxFields > 1 && this.minFields !== this.maxFields) || (this.maxFields === 0)) {
             dockItems = [
                 {
                     xtype: 'button',
@@ -48,7 +48,7 @@ Ext.define('Admin.view.contentManager.wizard.form.InputContainer', {
             {
                 xtype: 'panel',
                 itemId: 'inputFieldsPanel',
-                layout: 'vbox',
+                layout: 'anchor',
                 minWidth: 100,
                 bodyStyle: {
                     backgroundColor: 'inherit'
