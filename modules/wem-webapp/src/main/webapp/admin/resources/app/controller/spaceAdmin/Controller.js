@@ -28,7 +28,15 @@ Ext.define('Admin.controller.spaceAdmin.Controller', {
 
 
     showNewSpaceWindow: function () {
-        Ext.Msg.alert("New Space", "To be done yet");
+        var tabs = this.getCmsTabPanel();
+
+        var tabItem = {
+            id: 'new-space',
+            xtype: 'spaceAdminWizardPanel',
+            title: 'New Space'
+        };
+
+        tabs.addTab(tabItem);
     },
 
     viewSpace: function (space) {
