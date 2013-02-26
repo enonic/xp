@@ -25,6 +25,8 @@
         $(document).on('click', me.cssSelector, function (event) {
             var $paragraph = $(this);
 
+            // test
+
             if ($paragraph.data('live-edit-paragraph-mode') === undefined) {
                 $paragraph.data('live-edit-paragraph-mode', 'select');
 
