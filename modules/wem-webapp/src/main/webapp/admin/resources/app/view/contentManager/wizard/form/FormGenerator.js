@@ -35,7 +35,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
             xclass: 'widget.FieldSetLayout',
             name: fieldSetLayoutConfig.name,
             fieldSetLayoutConfig: fieldSetLayoutConfig,
-            content: fieldSetlayoutData
+            content: fieldSetLayoutData
         });
     },
 
