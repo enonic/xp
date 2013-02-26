@@ -16,12 +16,13 @@ final class SetContentNameEditor
     }
 
     @Override
-    public Content edit( final Content content )
+    public Content edit( final Content toBeEdited )
         throws Exception
     {
-        final Content updated = newContent( content ).
+        final Content afterEdit = newContent( toBeEdited ).
             name( source ).
             build();
-        return updated;
+
+        return toBeEdited.getName().equals( afterEdit.getName() ) ? null : afterEdit;
     }
 }

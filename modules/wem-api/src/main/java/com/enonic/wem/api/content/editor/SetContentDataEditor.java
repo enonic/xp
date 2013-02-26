@@ -16,19 +16,15 @@ final class SetContentDataEditor
     }
 
     @Override
-    public Content edit( final Content content )
+    public Content edit( final Content toBeEdited )
         throws Exception
     {
-        return edit( this.source, content );
-    }
 
-    private Content edit( final RootDataSet source, final Content target )
-        throws Exception
-    {
-        final Content updated = newContent( target ).
+        final Content afterEdit = newContent( toBeEdited ).
             rootDataSet( source ).
             build();
-        return updated;
+
+        return toBeEdited.getRootDataSet().equals( afterEdit.getRootDataSet() ) ? null : afterEdit;
     }
 
 }
