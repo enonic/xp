@@ -1,6 +1,6 @@
-Ext.define('Admin.view.contentManager.wizard.form.FieldContainer', {
+Ext.define('Admin.view.contentManager.wizard.form.InputContainer', {
     extend: 'Ext.container.Container',
-    alias: 'widget.FieldContainer',
+    alias: 'widget.inputContainer',
 
     layout: 'hbox',
 
@@ -18,7 +18,31 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldContainer', {
 
     initComponent: function () {
         var me = this;
-        this.maxFields = this.field.contentTypeItemConfig.occurrences.maximum;
+        this.maxFields = this.field.inputConfig.occurrences.maximum;
+        this.minFields = this.field.inputConfig.occurrences.minimum;
+        var dockItems = [];
+
+        if (this.maxFields > 1 && this.minFields !== this.maxFields) {
+            dockItems = [
+                {
+                    xtype: 'button',
+                    itemId: 'addButton',
+                    text: 'Add',
+                    listeners: {
+                        click: function () {
+                            var inputFieldsPanel = me.down('#inputFieldsPanel');
+                            var last = inputFieldsPanel.items.last();
+                            if (last) {
+                                last.addCopy();
+                            } else {
+                                inputFieldsPanel.add(me.field.cloneConfig());
+                            }
+                            me.updateAddButtonState();
+                        }
+                    }
+                }
+            ];
+        }
         me.items = [
             this.label,
             {
@@ -34,25 +58,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldContainer', {
                     {
                         xtype: 'container',
                         dock: 'bottom',
-                        items: [
-                            {
-                                xtype: 'button',
-                                itemId: 'addButton',
-                                text: 'Add',
-                                listeners: {
-                                    click: function () {
-                                        var inputFieldsPanel = me.down('#inputFieldsPanel');
-                                        var last = inputFieldsPanel.items.last();
-                                        if (last) {
-                                            last.addCopy();
-                                        } else {
-                                            inputFieldsPanel.add(me.field.cloneConfig());
-                                        }
-                                        me.updateAddButtonState();
-                                    }
-                                }
-                            }
-                        ]
+                        items: dockItems
                     }
                 ]
             }

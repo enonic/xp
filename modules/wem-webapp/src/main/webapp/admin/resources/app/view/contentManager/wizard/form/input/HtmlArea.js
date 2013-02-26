@@ -2,17 +2,16 @@ Ext.define('Admin.view.contentManager.wizard.form.input.HtmlArea', {
     extend: 'Admin.view.contentManager.wizard.form.input.Base',
     alias: 'widget.HtmlArea',
     initComponent: function () {
-        var me = this;
 
-        me.items = [
+        this.items = [
             {
                 xtype: 'htmleditor',
-                name: me.name,
-                value: me.value
+                name: this.name,
+                value: this.value
             }
         ];
 
-        me.callParent(arguments);
+        this.callParent(arguments);
     },
 
     setValue: function (value) {
