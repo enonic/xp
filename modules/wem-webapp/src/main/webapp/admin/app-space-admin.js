@@ -7,7 +7,8 @@ Ext.application({
         'Admin.controller.spaceAdmin.BrowseToolbarController',
         'Admin.controller.spaceAdmin.DetailPanelController',
         'Admin.controller.spaceAdmin.DetailToolbarController',
-        'Admin.controller.spaceAdmin.DialogWindowController'
+        'Admin.controller.spaceAdmin.DialogWindowController',
+        'Admin.controller.spaceAdmin.WizardController'
     ],
 
     stores: [
