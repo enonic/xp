@@ -28,7 +28,7 @@
         {
             "Input": {
                 "name": "textLineUnlimitedOccurrences",
-                "label": "TextLine unrequired, unlimited occurrences",
+                "label": "TextLine with min 0 and unlimited max",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
@@ -47,7 +47,7 @@
         {
             "Input": {
                 "name": "textLineRequiredAndUnlimitedOccurrences",
-                "label": "TextLine required, unlimited occurrences",
+                "label": "TextLine with min 1 and unlimited max",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 1,
@@ -67,7 +67,7 @@
         {
             "Input": {
                 "name": "textLineMin2Max4",
-                "label": "TextLine min 2 and max 2 occurrences",
+                "label": "TextLine with min 2 and max 4",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 2,
@@ -81,6 +81,220 @@
                     "name": "TextLine",
                     "builtIn": true
                 }
+            }
+        },
+        {
+            "FormItemSet": {
+                "name": "formItemSetRequiredAndOneOccurrence",
+                "label": "Set with min 1 and max 1",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "customText": null,
+                "helpText": null,
+                "items": [
+                    {
+                        "Input": {
+                            "name": "myText",
+                            "label": "My Text",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "myOtherText",
+                            "label": "My other Text",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    }
+                ]
+            }
+        } ,
+        {
+            "FormItemSet": {
+                "name": "formItemSetUnrequiredAndUnlimitedOccurrences",
+                "label": "Set with min 0 and unlimited max",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "customText": null,
+                "helpText": null,
+                "items": [
+                    {
+                        "Input": {
+                            "name": "myText",
+                            "label": "My Text",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "myOtherText",
+                            "label": "My other Text",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+        ,
+        {
+            "FormItemSet": {
+                "name": "formItemSetRequiredAndUnlimitedOccurrences",
+                "label": "Set with min 1 and unlimited max",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 0
+                },
+                "customText": null,
+                "helpText": null,
+                "items": [
+                    {
+                        "Input": {
+                            "name": "myText",
+                            "label": "My Text",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "myOtherText",
+                            "label": "My other Text",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+        ,
+        {
+            "FormItemSet": {
+                "name": "formItemSetRequired2AndMax4Occurrences",
+                "label": "Set with min 2 and max 4",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 2,
+                    "maximum": 4
+                },
+                "customText": null,
+                "helpText": null,
+                "items": [
+                    {
+                        "Input": {
+                            "name": "myText",
+                            "label": "My Text",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "myOtherText",
+                            "label": "My other Text",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    }
+                ]
             }
         }
     ]
