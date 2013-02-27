@@ -5,7 +5,9 @@ Ext.define('Admin.controller.spaceAdmin.BrowseToolbarController', {
 
     stores: [],
     models: [],
-    views: [],
+    views: [
+        'Admin.view.spaceAdmin.wizard.WizardPanel'
+    ],
 
     init: function () {
 

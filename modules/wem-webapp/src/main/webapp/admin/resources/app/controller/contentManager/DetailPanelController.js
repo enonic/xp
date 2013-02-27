@@ -12,7 +12,8 @@ Ext.define('Admin.controller.contentManager.DetailPanelController', {
     init: function () {
         this.control({
             'contentDetail': {
-                deselectrecord: this.deselectRecord
+                deselect: this.deselectRecord,
+                clearselection: this.clearSelection
             }
         });
     },
@@ -20,7 +21,10 @@ Ext.define('Admin.controller.contentManager.DetailPanelController', {
 
     deselectRecord: function (key) {
         this.getContentTreeGridPanel().deselect(key);
-    }
+    },
 
+    clearSelection: function () {
+        this.getContentTreeGridPanel().deselect(-1);
+    }
 
 });

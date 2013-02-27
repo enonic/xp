@@ -24,7 +24,7 @@ final class ContentDaoHandlerGetContentTree
     {
         final Tree<Content> tree = new Tree<>();
 
-        final List<ContentAndNode> topContent = doContentNodesToContentAndNodes( doGetTopContentNodes( session ) );
+        final List<ContentAndNode> topContent = doContentNodesToContentAndNodes( doGetTopContentNodes() );
 
         for ( ContentAndNode parentContentAndNode : topContent )
         {

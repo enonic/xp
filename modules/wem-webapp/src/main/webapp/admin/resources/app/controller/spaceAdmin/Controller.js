@@ -23,12 +23,20 @@ Ext.define('Admin.controller.spaceAdmin.Controller', {
     },
 
     generateTabId: function (space, isEdit) {
-        return 'tab-' + ( isEdit ? 'edit-' : 'preview-') + space.get('key');
+        return 'tab-' + ( isEdit ? 'edit-' : 'preview-') + space.get('name');
     },
 
 
     showNewSpaceWindow: function () {
-        Ext.Msg.alert("New Space", "To be done yet");
+        var tabs = this.getCmsTabPanel();
+
+        var tabItem = {
+            id: 'new-space',
+            xtype: 'spaceAdminWizardPanel',
+            title: 'New Space'
+        };
+
+        tabs.addTab(tabItem);
     },
 
     viewSpace: function (space) {
@@ -53,26 +61,38 @@ Ext.define('Admin.controller.spaceAdmin.Controller', {
     },
 
     editSpace: function (space) {
-        if (space) {
-            var me = this;
-            var tabs = this.getCmsTabPanel();
-
-            var tabItem = {
-                id: me.generateTabId(space, true),
-                xtype: 'component',
-                editing: true,
-                tpl: '<h3>Edit {data.displayName}</h3>',
-                data: space,
-                title: space.data.displayName
-            };
-
-            //check if preview tab is open and close it
-            var index = tabs.items.indexOfKey(me.generateTabId(space, false));
-            if (index >= 0) {
-                tabs.remove(index);
-            }
-            tabs.addTab(tabItem, index >= 0 ? index : undefined);
+        if (!space) {
+            return;
         }
+
+        var me = this;
+        var tabs = this.getCmsTabPanel();
+
+        tabs.el.mask();
+        Admin.lib.RemoteService.space_get({
+            "spaceName": [space.get('name')]
+        }, function (r) {
+            tabs.el.unmask();
+            if (r) {
+                var tabItem = {
+                    id: me.generateTabId(space, true),
+                    editing: true,
+                    xtype: 'spaceAdminWizardPanel',
+                    data: space,
+                    title: space.data.displayName,
+                    modelData: space.raw
+                };
+
+                //check if preview tab is open and close it
+                var index = tabs.items.indexOfKey(me.generateTabId(space, false));
+                if (index >= 0) {
+                    tabs.remove(index);
+                }
+                tabs.addTab(tabItem, index >= 0 ? index : undefined, undefined);
+            } else {
+                Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve space.");
+            }
+        });
     },
 
     showDeleteSpaceWindow: function (space) {

@@ -1,31 +1,16 @@
 Ext.define('Admin.view.account.DetailPanel', {
-    extend: 'Ext.panel.Panel',
+    extend: 'Admin.view.DetailPanel',
     alias: 'widget.accountDetail',
 
-    cls: 'admin-detail',
-    border: false,
     split: true,
-    autoScroll: true,
-    layout: 'card',
 
     initComponent: function () {
-
-        this.tbar = {
-            xtype: 'toolbar',
-            cls: 'admin-white-toolbar',
-            items: [
-                {
-                    xtype: 'tbtext',
-                    text: 'No items selected - Choose from list above - <a href="javascript:;">Clear selection</a>'
-                }
-            ]
-        };
 
         var largeBoxesPanel = this.createLargeBoxSelection();
         var userPreviewPanel = this.createUserPreviewPanel();
         var groupPreviewPanel = this.createGroupPreviewPanel();
         var smallBoxesPanel = this.createSmallBoxSelection();
-        var noneSelectedPanel = this.createNoneSelection();
+        var noneSelectedPanel = this.createNoSelection();
 
         this.items = [
             noneSelectedPanel,
@@ -72,8 +57,8 @@ Ext.define('Admin.view.account.DetailPanel', {
     },
 
     showNoneSelection: function (data) {
-        var activeItem = this.down('#noneSelectedPanel');
-        this.getLayout().setActiveItem('noneSelectedPanel');
+        var activeItem = this.down('#noSelection');
+        this.getLayout().setActiveItem('noSelection');
         activeItem.update(data);
     },
 
@@ -89,21 +74,6 @@ Ext.define('Admin.view.account.DetailPanel', {
             xtype: 'groupPreviewPanel',
             showToolbar: false
         };
-    },
-
-    createNoneSelection: function () {
-        var tpl = new Ext.XTemplate(Templates.account.noUserSelected);
-
-        var panel = {
-            xtype: 'panel',
-            itemId: 'noneSelectedPanel',
-            styleHtmlContent: true,
-            padding: 10,
-            border: 0,
-            tpl: tpl
-        };
-
-        return panel;
     },
 
     createLargeBoxSelection: function () {
@@ -174,34 +144,6 @@ Ext.define('Admin.view.account.DetailPanel', {
 
     getCurrentAccount: function () {
         return this.currentAccount;
-    },
-
-    updateTitle: function (persistentGridSelection) {
-        this.persistentGridSelection = persistentGridSelection;
-        var count = persistentGridSelection.getSelectionCount();
-        var headerText;
-        if (count === 0) {
-            headerText = "No items selected - Choose from list above";
-        } else {
-            headerText = count + " Account(s) selected (<a href='javascript:;' class='clearSelection'>Clear selection</a>)";
-        }
-
-        var tbar = this.dockedItems.get(0);
-        if (tbar) {
-            var tbtext = tbar.down('tbtext');
-            if (tbtext) {
-                tbtext.update(headerText);
-                if (count > 0) {
-                    var clearSel = tbtext.el.down('a.clearSelection');
-                    if (clearSel) {
-                        clearSel.on("click", function () {
-                            persistentGridSelection.clearSelection();
-                        }, this);
-                    }
-                }
-            }
-        }
-
     }
 
 });

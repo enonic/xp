@@ -32,14 +32,14 @@ final class ContentDaoHandlerGetContentVersionHistory
     List<ContentVersion> handle( final ContentPath contentPath )
         throws RepositoryException
     {
-        final Node contentNode = doGetContentNode( session, contentPath );
+        final Node contentNode = doGetContentNode( contentPath );
         return getContentVersions( contentNode );
     }
 
     List<ContentVersion> handle( final ContentId contentId )
         throws RepositoryException
     {
-        final Node contentNode = doGetContentNode( session, contentId );
+        final Node contentNode = doGetContentNode( contentId );
         return getContentVersions( contentNode );
     }
 

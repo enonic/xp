@@ -4,6 +4,7 @@ package com.enonic.wem.api.content.data;
 import org.joda.time.DateMidnight;
 import org.junit.Test;
 
+import com.enonic.wem.api.content.AbstractEqualsTest;
 import com.enonic.wem.api.content.data.type.DataTypes;
 
 import static com.enonic.wem.api.content.data.Data.newData;
@@ -11,6 +12,40 @@ import static junit.framework.Assert.assertEquals;
 
 public class DataTest
 {
+    @Test
+    public void equals()
+    {
+        AbstractEqualsTest equalsTest = new AbstractEqualsTest()
+        {
+            @Override
+            public Object getObjectX()
+            {
+                return Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "aaa" ).build();
+            }
+
+            @Override
+            public Object[] getObjectsThatNotEqualsX()
+            {
+                return new Object[]{Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "bbb" ).build(),
+                    Data.newData().name( "myOtherData" ).type( DataTypes.TEXT ).value( "aaa" ).build(),
+                    Data.newData().name( "myData" ).type( DataTypes.HTML_PART ).value( "aaa" ).build()};
+            }
+
+            @Override
+            public Object getObjectThatEqualsXButNotTheSame()
+            {
+                return Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "aaa" ).build();
+            }
+
+            @Override
+            public Object getObjectThatEqualsXButNotTheSame2()
+            {
+                return Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "aaa" ).build();
+            }
+        };
+        equalsTest.assertEqualsAndHashCodeContract();
+    }
+
     @Test
     public void getDate_given_value_as_string()
     {

@@ -15,7 +15,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.DeleteAccounts;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.search.IndexService;
+import com.enonic.wem.core.index.IndexService;
 
 import static org.junit.Assert.*;
 

@@ -1,5 +1,7 @@
 package com.enonic.wem.api.content.data;
 
+import java.util.Objects;
+
 import org.joda.time.DateMidnight;
 
 import com.google.common.base.Preconditions;
@@ -110,6 +112,29 @@ public final class Value
             throw new InconvertibleValueException( object, JavaType.BLOB_KEY );
         }
         return converted;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final Value other = (Value) o;
+
+        return Objects.equals( type, other.type ) && Objects.equals( object, other.object );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( type, object );
     }
 
     @Override

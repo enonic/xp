@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.MockContentId;
+import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
 import static junit.framework.Assert.assertEquals;
@@ -35,4 +36,72 @@ public class RelationshipTest
         assertEquals( "like", relationship.getType().getLocalName() );
         assertEquals( "4", relationship.getProperty( "stars" ) );
     }
+
+    @Test
+    public void getKey_having_relationship_with_mangingData()
+    {
+        // setup
+        final Relationship.Builder relationBuilder = Relationship.newRelationship();
+        relationBuilder.fromContent( MockContentId.from( "a" ) );
+        relationBuilder.toContent( MockContentId.from( "b" ) );
+        relationBuilder.type( QualifiedRelationshipTypeName.from( "system:like" ) );
+        relationBuilder.managed( EntryPath.from( "myData" ) );
+
+        // exercise
+        Relationship relationship = relationBuilder.build();
+
+        // verify
+        assertEquals( "system:like", relationship.getKey().getType().toString() );
+        assertEquals( "a", relationship.getKey().getFromContent().toString() );
+        assertEquals( "b", relationship.getKey().getToContent().toString() );
+        assertEquals( "myData", relationship.getKey().getManagingData().toString() );
+    }
+
+    @Test
+    public void getKey_having_relationship_without_mangingData()
+    {
+        // setup
+        final Relationship.Builder relationBuilder = Relationship.newRelationship();
+        relationBuilder.fromContent( MockContentId.from( "a" ) );
+        relationBuilder.toContent( MockContentId.from( "b" ) );
+        relationBuilder.type( QualifiedRelationshipTypeName.from( "system:like" ) );
+
+        // exercise
+        Relationship relationship = relationBuilder.build();
+
+        // verify
+        assertEquals( "system:like", relationship.getKey().getType().toString() );
+        assertEquals( "a", relationship.getKey().getFromContent().toString() );
+        assertEquals( "b", relationship.getKey().getToContent().toString() );
+        assertEquals( null, relationship.getKey().getManagingData() );
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void given_property_with_null_value_when_build_then_NullPointerExpception_is_thrown()
+    {
+        // setup
+        final Relationship.Builder relationBuilder = Relationship.newRelationship();
+        relationBuilder.fromContent( MockContentId.from( "a" ) );
+        relationBuilder.toContent( MockContentId.from( "b" ) );
+        relationBuilder.type( QualifiedRelationshipTypeName.from( "system:like" ) );
+        relationBuilder.property( "key", null );
+
+        // exercise
+        relationBuilder.build();
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void given_property_with_null_key_when_build_then_NullPointerExpception_is_thrown()
+    {
+        // setup
+        final Relationship.Builder relationBuilder = Relationship.newRelationship();
+        relationBuilder.fromContent( MockContentId.from( "a" ) );
+        relationBuilder.toContent( MockContentId.from( "b" ) );
+        relationBuilder.type( QualifiedRelationshipTypeName.from( "system:like" ) );
+        relationBuilder.property( null, "value" );
+
+        // exercise
+        relationBuilder.build();
+    }
+
 }

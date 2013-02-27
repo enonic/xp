@@ -23,7 +23,7 @@ final class ContentDaoHandlerUpdate
     void handle( Content content, final boolean createNewVersion )
         throws RepositoryException
     {
-        final Node contentNode = doGetContentNode( session, content.getPath() );
+        final Node contentNode = doGetContentNode( content.getPath() );
         if ( contentNode == null )
         {
             throw new ContentNotFoundException( content.getPath() );

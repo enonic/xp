@@ -7,7 +7,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.util.AbstractImmutableEntitySet;
+import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 
 public final class SpaceNames
     extends AbstractImmutableEntitySet<SpaceName>

@@ -189,6 +189,29 @@ public class Data
     }
 
     @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final Data data = (Data) o;
+
+        return Objects.equal( getName(), data.getName() ) && Objects.equal( value, data.value );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hashCode( getName(), value );
+    }
+
+    @Override
     public String toString()
     {
         final Objects.ToStringHelper s = Objects.toStringHelper( this );

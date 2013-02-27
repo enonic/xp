@@ -4,7 +4,6 @@ package com.enonic.wem.core.content.schema.content;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
-import org.joda.time.DateTime;
 
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
@@ -93,27 +92,11 @@ public class ContentTypeJsonSerializer
         builder.setFinal( JsonSerializerUtil.getBooleanValue( "isFinal", contentTypeNode ) );
         if ( includeCreatedTime )
         {
-            if ( contentTypeNode.has( "createdTime" ) )
-            {
-                // TODO check necessary to handle old json data, should be remove later on
-                builder.createdTime( JsonSerializerUtil.getDateTimeValue( "createdTime", contentTypeNode ) );
-            }
-            else
-            {
-                builder.createdTime( DateTime.now() );
-            }
+            builder.createdTime( JsonSerializerUtil.getDateTimeValue( "createdTime", contentTypeNode ) );
         }
         if ( includeModifiedTime )
         {
-            if ( contentTypeNode.has( "modifiedTime" ) )
-            {
-                // TODO check necessary to handle old json data, should be remove later on
-                builder.modifiedTime( JsonSerializerUtil.getDateTimeValue( "modifiedTime", contentTypeNode ) );
-            }
-            else
-            {
-                builder.modifiedTime( DateTime.now() );
-            }
+            builder.modifiedTime( JsonSerializerUtil.getDateTimeValue( "modifiedTime", contentTypeNode ) );
         }
 
         try

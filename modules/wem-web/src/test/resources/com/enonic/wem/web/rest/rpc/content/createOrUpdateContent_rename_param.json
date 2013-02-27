@@ -1,0 +1,11 @@
+{
+    "displayName": "My Child Content",
+    "contentData": {
+        "myTextLine1": "value1",
+        "myTextLine2": "value2",
+        "myFormItemSet.myTextLine1": "value3"
+    },
+    "qualifiedContentTypeName": "myModule:myContentType",
+    "contentId": "1fad493a-6a72-41a3-bac4-88aba3d83bcc",
+    "contentName": "newName"
+}

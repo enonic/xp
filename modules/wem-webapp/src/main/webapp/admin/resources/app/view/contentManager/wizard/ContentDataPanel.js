@@ -9,7 +9,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
         'Admin.view.contentManager.wizard.form.input.Relation',
         'Admin.view.contentManager.wizard.form.input.TextArea',
         'Admin.view.contentManager.wizard.form.input.TextLine',
-        'Admin.view.contentManager.wizard.form.FieldContainer'
+        'Admin.view.contentManager.wizard.form.InputContainer'
     ],
     mixins: {
         formGenerator: 'Admin.view.contentManager.wizard.form.FormGenerator'
@@ -24,16 +24,11 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     autoDestroy: true,
 
     initComponent: function () {
-        var me = this;
-        me.items = [];
-        var existingContent = me.content && me.content.data;
-        if (existingContent) {
-            me.addComponentsBasedOnContentType(me.contentType.form, me, me.content.data);
-        } else {
-            me.addComponentsBasedOnContentType(me.contentType.form, me);
-        }
+        this.items = [];
+        var contentData = !Ext.isEmpty(this.content) ? this.content.data : undefined;
+        this.addComponentsBasedOnContentType(this.contentType.form, this, contentData);
 
-        me.callParent(arguments);
+        this.callParent(arguments);
     },
 
 

@@ -24,7 +24,7 @@ final class ContentDaoHandlerCountContentTypeUsage
             return 0;
         }
 
-        final List<ContentAndNode> topContentAndNodes = doContentNodesToContentAndNodes( doGetTopContentNodes( session ) );
+        final List<ContentAndNode> topContentAndNodes = doContentNodesToContentAndNodes( doGetTopContentNodes() );
 
         int count = 0;
         for ( ContentAndNode topContentAndNode : topContentAndNodes )

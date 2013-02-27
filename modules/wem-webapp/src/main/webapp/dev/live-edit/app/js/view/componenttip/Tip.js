@@ -10,10 +10,12 @@
     // Class definition (constructor function)
     var tip = AdminLiveEdit.view.componenttip.Tip = function () {
         var me = this;
-        me.addView();
-        me.addEvents();
         me.menu = new AdminLiveEdit.view.componenttip.menu.Menu();
         me.menu.trigger = me;
+        me.$selectedComponent = null;
+
+        me.addView();
+        me.addEvents();
         me.registerGlobalListeners();
     };
 
@@ -32,7 +34,7 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    proto.$selectedComponent = null;
+
 
     proto.registerGlobalListeners = function () {
         $(window).on('component:click:select', $.proxy(this.show, this));
@@ -47,15 +49,15 @@
 
         var html = '<div class="live-edit-component-tip live-edit-component-tip-arrow-bottom" style="top:-5000px; left:-5000px;">' +
                    '    <div class="live-edit-component-tip-left">' +
-                   '        <img src="../app/images/drag-handle.png" class="live-edit-component-tip-icon-menu"/>' +
+                   '        <div title="Show Menu" class="live-edit-component-tip-icon-menu"></div>' +
                    '    </div>' +
                    '    <div class="live-edit-component-tip-center">' +
                    '        <span class="live-edit-component-tip-name-text"></span>' +
                    '        <span class="live-edit-component-tip-type-text"></span> ' +
                    '    </div>' +
                    '    <div class="live-edit-component-tip-right">' +
-                   '        <img src="../app/images/aiga-forward-and-right-arrow.png" class="live-edit-component-tip-icon-parent"/>' +
-                   '        <img src="../app/images/navigate_cross.png" class="live-edit-component-tip-icon-deselect" style="display: none"/>' +
+                   '        <div title="Select parent component" class="live-edit-component-tip-icon-parent"></div>' +
+                   '        <div title="Deselect" class="live-edit-component-tip-icon-deselect" style="display: none"></div>' +
                    '    </div>' +
                    '</div>';
 
@@ -73,11 +75,7 @@
         });
 
         me.getMenuButton().click(function () {
-            me.getMenuButton().toggleClass('live-edit-component-tip-icon-menu-selected');
-
-            if (me.$selectedComponent) {
-                $(window).trigger('tip:menu:click', [me.$selectedComponent]);
-            }
+            me.handleMenuButtonClick();
         });
 
         me.getParentButton().click(function () {
@@ -177,8 +175,27 @@
 
     proto.toggleRightSideButton = function (isPageComponent) {
         var me = this;
-        me.getParentButton().css('display', isPageComponent ? 'none' : 'inline');
-        me.getDeselectButton().css('display', isPageComponent ? 'inline' : 'none');
+        me.getParentButton().css('display', isPageComponent ? 'none' : 'block');
+        me.getDeselectButton().css('display', isPageComponent ? 'block' : 'none');
+    };
+
+
+    proto.handleMenuButtonClick = function () {
+        var me = this;
+        var $menuButton = me.getMenuButton();
+        if (!$menuButton.hasClass('live-edit-component-tip-icon-menu-selected')) {
+            $menuButton.addClass('live-edit-component-tip-icon-menu-selected');
+            $menuButton.attr('title', 'Hide menu');
+            $menuButton.attr('alt', 'Hide menu');
+        } else {
+            $menuButton.removeClass('live-edit-component-tip-icon-menu-selected');
+            $menuButton.attr('title', 'Show menu');
+            $menuButton.attr('alt', 'Show menu');
+        }
+
+        if (me.$selectedComponent) {
+            $(window).trigger('tip:menu:click', [me.$selectedComponent]);
+        }
     };
 
 

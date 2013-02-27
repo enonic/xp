@@ -8,11 +8,13 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.relationship.RelationshipIds;
+import com.enonic.wem.api.content.relationship.RelationshipKey;
 import com.enonic.wem.api.content.relationship.Relationships;
 
 /**
  * A Relationship is stored on the following path:
- * <path-to-fromContent>/relationships/<module-name>/<relationship-type-name>/<to-content-id>
+ * <path-to-fromContent>/relationships/<relationshipType-moduleName>/<relationshipType-localName>/[managingData/]<toContent-id>
+ * Note: the managingData part is only included if set
  */
 @Component
 public class RelationshipDaoImpl
@@ -39,7 +41,15 @@ public class RelationshipDaoImpl
     public void delete( final RelationshipId relationshipId, final Session session )
     {
         final RelationshipDaoHandlerDelete handler = new RelationshipDaoHandlerDelete( session );
-        handler.relationship( relationshipId );
+        handler.relationshipId( relationshipId );
+        handler.handle();
+    }
+
+    @Override
+    public void delete( final RelationshipKey relationshipKey, final Session session )
+    {
+        final RelationshipDaoHandlerDelete handler = new RelationshipDaoHandlerDelete( session );
+        handler.relationshipKey( relationshipKey );
         handler.handle();
     }
 
@@ -55,8 +65,18 @@ public class RelationshipDaoImpl
     @Override
     public Relationships select( final RelationshipIds relationshipIds, final Session session )
     {
-        final RelationshipDaoHandlerSelect handler = new RelationshipDaoHandlerSelect( session );
-        handler.selectors( relationshipIds );
+        final RelationshipDaoHandlerSelectByIds handler = new RelationshipDaoHandlerSelectByIds( session );
+        handler.relationshipIds( relationshipIds );
+        handler.handle();
+        return handler.getResult();
+    }
+
+    @Override
+    public Relationship select( final RelationshipKey relationshipKey, final Session session )
+    {
+        final RelationshipDaoHandlerSelectByKey handler = new RelationshipDaoHandlerSelectByKey( session );
+        handler.relationshipKey( relationshipKey );
+        handler.handle();
         return handler.getResult();
     }
 }

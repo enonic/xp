@@ -1,11 +1,13 @@
 package com.enonic.wem.web.rest.rpc.space;
 
 import javax.inject.Inject;
+
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.space.UpdateSpaces;
 import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.api.space.editor.SpaceEditor;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.json.rpc.JsonRpcException;
@@ -55,8 +57,16 @@ public final class CreateOrUpdateSpaceRpcHandler
         }
         else
         {
-            final UpdateSpaces updateCommand =
-                space().update().name( spaceName ).editor( composite( setDisplayName( displayName ), setIcon( icon ) ) );
+            final SpaceEditor editor;
+            if ( icon == null )
+            {
+                editor = setDisplayName( displayName );
+            }
+            else
+            {
+                editor = composite( setDisplayName( displayName ), setIcon( icon ) );
+            }
+            final UpdateSpaces updateCommand = space().update().name( spaceName ).editor( editor );
             client.execute( updateCommand );
             context.setResult( CreateOrUpdateSpaceJsonResult.updated() );
         }

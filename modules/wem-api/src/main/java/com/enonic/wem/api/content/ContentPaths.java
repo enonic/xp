@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.util.AbstractImmutableEntitySet;
+import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 
 public final class ContentPaths
     extends AbstractImmutableEntitySet<ContentPath>

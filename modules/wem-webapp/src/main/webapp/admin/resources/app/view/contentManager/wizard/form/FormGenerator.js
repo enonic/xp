@@ -1,14 +1,14 @@
 Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
 
-    addComponentsBasedOnContentType: function (contentTypeItemConfigItems, parentComponent, contentData) {
+    addComponentsBasedOnContentType: function (formItemConfigs, parentComponent, contentData) {
         var me = this;
         var component;
 
-        Ext.each(contentTypeItemConfigItems, function (item) {
-            var contentItemConfig = me.getContentItemConfig(item);
-            var data = me.getDataForConfig(contentItemConfig, contentData);
+        Ext.each(formItemConfigs, function (item) {
+            var formItemConfig = me.getFormItemConfig(item);
+            var data = me.getDataForConfig(formItemConfig, contentData);
             var creationFunction = me.constructCreationFunction(item);
-            component = creationFunction.call(me, contentItemConfig, data);
+            component = creationFunction.call(me, formItemConfig, data);
 
             me.addComponent(component, parentComponent);
         });
@@ -30,12 +30,12 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
     /**
      * @private
      */
-    createLayoutComponent: function (layoutConfig, contentItem) {
+    createLayoutComponent: function (fieldSetLayoutConfig, fieldSetLayoutData) {
         return Ext.create({
             xclass: 'widget.FieldSetLayout',
-            name: layoutConfig.name,
-            contentTypeItemConfig: layoutConfig,
-            content: contentItem
+            name: fieldSetLayoutConfig.name,
+            fieldSetLayoutConfig: fieldSetLayoutConfig,
+            content: fieldSetLayoutData
         });
     },
 
@@ -43,19 +43,19 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
     /**
      * @private
      */
-    createFormItemSetComponent: function (formItemSetConfig, contentItem) {
+    createFormItemSetComponent: function (formItemSetConfig, formItemSetData) {
         return Ext.create({
             xclass: 'widget.FormItemSet',
             name: formItemSetConfig.name,
-            contentTypeItemConfig: formItemSetConfig,
-            value: contentItem
+            formItemSetConfig: formItemSetConfig,
+            value: formItemSetData
         });
     },
 
     /**
      * @private
      */
-    createInputComponent: function (inputConfig, contentItem) {
+    createInputComponent: function (inputConfig, inputData) {
         var classAlias = 'widget.' + inputConfig.type.name;
         if (!this.formItemIsSupported(classAlias)) {
             console.error('Unsupported input type', inputConfig);
@@ -66,11 +66,11 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
             xclass: classAlias,
             name: inputConfig.name,
             copyNo: inputConfig.copyNo || 1,
-            contentTypeItemConfig: inputConfig,
-            value: contentItem
+            inputConfig: inputConfig,
+            value: inputData
         });
         return Ext.create({
-            xclass: 'widget.FieldContainer',
+            xclass: 'widget.inputContainer',
             label: this.createInputLabel(inputConfig),
             field: field
         });
@@ -97,13 +97,13 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
     /**
      * @private
      */
-    getDataForConfig: function (contentItemConfig, contentData) {
+    getDataForConfig: function (formItemConfig, formItemData) {
         var key, data = [];
 
-        for (key in contentData) {
-            if (contentData.hasOwnProperty(key)) {
-                if (contentItemConfig.name === contentData[key].name) {
-                    data.push(contentData[key]);
+        for (key in formItemData) {
+            if (formItemData.hasOwnProperty(key)) {
+                if (formItemConfig.name === formItemData[key].name) {
+                    data.push(formItemData[key]);
                 }
             }
         }
@@ -117,15 +117,15 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
      * Function name should be "create" + content type capitalized + "Component"
      * @private
      */
-    constructCreationFunction: function (contentTypeConfig) {
+    constructCreationFunction: function (formItemConfig) {
         var key;
 
-        for (key in contentTypeConfig) {
-            if (contentTypeConfig.hasOwnProperty(key)) {
+        for (key in formItemConfig) {
+            if (formItemConfig.hasOwnProperty(key)) {
                 return this["create" + key + "Component"];
             }
         }
-        console.error("No handler for ", contentTypeConfig);
+        console.error("No handler for ", formItemConfig);
         return null;
     },
 
@@ -133,12 +133,12 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
      *
      * @private
      */
-    getContentItemConfig: function (contentTypeConfig) {
+    getFormItemConfig: function (formItemConfig) {
         var key;
 
-        for (key in contentTypeConfig) {
-            if (contentTypeConfig.hasOwnProperty(key)) {
-                return contentTypeConfig[key];
+        for (key in formItemConfig) {
+            if (formItemConfig.hasOwnProperty(key)) {
+                return formItemConfig[key];
             }
         }
 

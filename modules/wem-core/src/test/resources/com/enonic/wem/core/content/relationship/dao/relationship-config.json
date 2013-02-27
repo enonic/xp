@@ -1,0 +1,10 @@
+{
+    "type": "System:link",
+    "fromContent": "111",
+    "toContent": "222",
+    "managingData": "mySet.myData",
+    "properties": {
+        "stars": "5",
+        "stripes": "3"
+    }
+}

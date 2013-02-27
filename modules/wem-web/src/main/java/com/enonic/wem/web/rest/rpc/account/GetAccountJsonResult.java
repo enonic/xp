@@ -10,6 +10,7 @@ import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.profile.Address;
 import com.enonic.wem.api.account.profile.Addresses;
 import com.enonic.wem.api.account.profile.UserProfile;
+import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 class GetAccountJsonResult
     extends AbstractAccountJsonResult
@@ -56,7 +57,7 @@ class GetAccountJsonResult
         json.put( "middleName", profile.getMiddleName() );
         if ( profile.getBirthday() != null )
         {
-            json.put( "birthday", profile.getBirthday().toString() );
+            JsonSerializerUtil.setDateTimeValue( "birthday", profile.getBirthday(), json );
         }
         json.put( "country", profile.getCountry() );
         json.put( "description", profile.getDescription() );

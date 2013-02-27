@@ -1,85 +1,37 @@
 package com.enonic.wem.core;
 
 
-import java.io.IOException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-
-import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.jdom.Document;
+import org.elasticsearch.common.joda.time.DateTimeUtils;
+import org.junit.After;
 
-import com.enonic.wem.core.util.JdomHelper;
-
-public class AbstractSerializerTest
+public abstract class AbstractSerializerTest
 {
-    private final JdomHelper jdomHelper = new JdomHelper();
+    private final TestUtil testUtil;
 
-    protected String getXmlAsString( String fileName )
+    protected AbstractSerializerTest()
     {
-        try
-        {
-            final URL resource = getClass().getResource( fileName );
-            if ( resource == null )
-            {
-                throw new IllegalArgumentException( "File not found: " + fileName );
-            }
-
-            Document document = this.jdomHelper.parse( resource.openStream() );
-            return this.jdomHelper.serialize( document, true );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
+        testUtil = new TestUtil( this );
     }
 
-    protected String getJsonAsString( String fileName )
+    @After
+    public final void afterAbstractSerializerTest()
     {
-        try
-        {
-            return toJsonString( getJson( fileName ) );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
+        DateTimeUtils.setCurrentMillisSystem();
     }
 
-    private JsonNode getJson( String fileName )
+    protected String jsonToString( final JsonNode node )
     {
-        try
-        {
-            final ObjectMapper mapper = createObjectMapper();
-            final JsonFactory factory = mapper.getJsonFactory();
-            final URL resource = getClass().getResource( fileName );
-            if ( resource == null )
-            {
-                throw new IllegalArgumentException( "File not found: " + fileName );
-            }
-            final JsonParser parser = factory.createJsonParser( resource );
-            return parser.readValueAsTree();
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( e );
-        }
+        return testUtil.jsonToString( node );
     }
 
-    private String toJsonString( final JsonNode value )
-        throws Exception
+    protected String getXmlAsString( final String fileName )
     {
-        final ObjectMapper mapper = createObjectMapper();
-        return mapper.defaultPrettyPrintingWriter().writeValueAsString( value );
+        return testUtil.getXmlFileAsString( fileName );
     }
 
-
-    private static ObjectMapper createObjectMapper()
+    protected String getJsonAsString( final String fileName )
     {
-        final ObjectMapper mapper = new ObjectMapper();
-        mapper.setDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) );
-        return mapper;
+        return testUtil.getJsonFileAsString( fileName );
     }
 }

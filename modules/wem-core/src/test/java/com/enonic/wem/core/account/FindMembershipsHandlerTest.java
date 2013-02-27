@@ -15,10 +15,10 @@ import com.enonic.wem.api.command.account.FindMemberships;
 import com.enonic.wem.api.exception.AccountNotFoundException;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.search.account.AccountSearchHit;
-import com.enonic.wem.core.search.account.AccountSearchQuery;
-import com.enonic.wem.core.search.account.AccountSearchResults;
-import com.enonic.wem.core.search.account.AccountSearchService;
+import com.enonic.wem.core.index.account.AccountSearchHit;
+import com.enonic.wem.core.index.account.AccountSearchQuery;
+import com.enonic.wem.core.index.account.AccountSearchResults;
+import com.enonic.wem.core.index.account.AccountSearchService;
 
 import static org.junit.Assert.*;
 

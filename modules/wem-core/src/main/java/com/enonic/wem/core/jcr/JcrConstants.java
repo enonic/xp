@@ -47,7 +47,9 @@ public interface JcrConstants
 
     public static final String ACCOUNT_TYPE = "wem:account";
 
-    public static final String CONTENT_TYPE = "wem:content";
+    public static final String CONTENT_NODETYPE = "wem:content";
+
+    public static final String RELATIONSHIP_NODETYPE = "wem:relationship";
 
     public static final String SPACE_TYPE = "nt:unstructured";
 

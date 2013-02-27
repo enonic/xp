@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.util.AbstractImmutableEntityList;
+import com.enonic.wem.api.support.AbstractImmutableEntityList;
 
 public final class Schemas
     extends AbstractImmutableEntityList<Schema>

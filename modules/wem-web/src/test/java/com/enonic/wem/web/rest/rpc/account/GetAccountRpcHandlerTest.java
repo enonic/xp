@@ -6,6 +6,7 @@ import java.util.TimeZone;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -95,7 +96,7 @@ public class GetAccountRpcHandlerTest
         final UserAccount user1 = createUser( "enonic:1" );
         final UserProfile profile = new UserProfile();
         profile.setFax( "fax" );
-        profile.setBirthday( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
+        profile.setBirthday( new DateTime( 2012, 1, 1, 10, 01, 10, 101, DateTimeZone.UTC ) );
         profile.setCountry( "country" );
         profile.setDescription( "description" );
         profile.setFirstName( "first-name" );

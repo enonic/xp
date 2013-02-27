@@ -17,8 +17,4 @@ public final class RelationshipCommands
         return new DeleteRelationships();
     }
 
-    /*public GetRelationshipTypes get()
-    {
-        return new GetRelationshipTypes();
-    }*/
 }

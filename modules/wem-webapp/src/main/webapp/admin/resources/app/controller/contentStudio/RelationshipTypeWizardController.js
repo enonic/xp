@@ -12,6 +12,16 @@ Ext.define('Admin.controller.contentStudio.RelationshipTypeWizardController', {
 
 
     init: function () {
+        var me = this;
+        me.control({
+            'contentStudioRelationshipTypeWizardPanel textfield#displayName': {
+                keyup: function (field, event) {
+                    var text = Ext.String.trim(field.getValue());
+                    me.getTopBar().setTitleButtonText(text);
+                }
+            }
+        });
+
         this.application.on({
             saveRelationshipType: {
                 fn: this.saveType,

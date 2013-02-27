@@ -1,13 +1,13 @@
 package com.enonic.wem.core.content.relationship;
 
+import javax.inject.Inject;
 import javax.jcr.Session;
 
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.relationship.DeleteRelationships;
 import com.enonic.wem.api.command.content.relationship.DeleteRelationshipsResult;
-import com.enonic.wem.api.content.relationship.RelationshipId;
+import com.enonic.wem.api.content.relationship.RelationshipKey;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
@@ -31,17 +31,17 @@ public final class DeleteRelationshipHandler
         final DeleteRelationshipsResult result = new DeleteRelationshipsResult();
         final Session session = context.getJcrSession();
 
-        for ( RelationshipId relationshipId : command.getRelationshipIds() )
+        for ( RelationshipKey relationshipKey : command.getRelationshipKeys() )
         {
             try
             {
-                relationshipDao.delete( relationshipId, session );
+                relationshipDao.delete( relationshipKey, session );
                 session.save();
-                result.success( relationshipId );
+                result.success( relationshipKey );
             }
             catch ( SystemException e )
             {
-                result.failure( relationshipId, e );
+                result.failure( relationshipKey, e );
             }
         }
 

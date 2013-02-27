@@ -6,6 +6,7 @@ Ext.define('Admin.controller.account.GroupWizardController', {
     views: [],
 
     init: function () {
+        var me = this;
 
         this.control({
             'groupWizardPanel *[action=saveGroup]': {
@@ -29,6 +30,7 @@ Ext.define('Admin.controller.account.GroupWizardController', {
                         displayName: value,
                         qualifiedName: groupWizard.userstore + '\\' + field.getValue()
                     });
+                    me.getTopBar().setTitleButtonText(value);
                 }
             },
             'groupWizardPanel wizardPanel': {

@@ -43,6 +43,7 @@
 
   <!-- Third party plugins -->
 
+  <script type="text/javascript" src="resources/lib/plupload/js/plupload.full.js"></script>
 
   <!-- Application -->
 

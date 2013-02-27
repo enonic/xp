@@ -8,20 +8,24 @@ import static com.enonic.wem.api.content.Content.newContent;
 final class SetContentNameEditor
     implements ContentEditor
 {
-    private String source;
+    private String name;
 
-    SetContentNameEditor( final String source )
+    SetContentNameEditor( final String name )
     {
-        this.source = source;
+        this.name = name;
     }
 
     @Override
-    public Content edit( final Content content )
+    public Content edit( final Content toBeEdited )
         throws Exception
     {
-        final Content updated = newContent( content ).
-            name( source ).
+        if ( toBeEdited.getName().equals( name ) )
+        {
+            return null;
+        }
+
+        return newContent( toBeEdited ).
+            name( name ).
             build();
-        return updated;
     }
 }

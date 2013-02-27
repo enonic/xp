@@ -2,6 +2,7 @@ package com.enonic.wem.web.rest.rpc.space;
 
 import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -21,7 +22,7 @@ public class GetSpaceRpcHandlerTest
 {
     private Client client;
 
-    private static final DateTime CURRENT_TIME = new DateTime( 2000, 1, 1, 12, 0, 0 );
+    private static final DateTime CURRENT_TIME = new DateTime( 2000, 1, 1, 12, 0, 0, DateTimeZone.UTC );
 
     @Override
     protected JsonRpcHandler createHandler()
