@@ -23,11 +23,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                 var a = toggleBtn.el.down('a');
                 a.on('click', function () {
                     this.toggleLive();
-                    if (this.isLiveMode) {
-                        a.setHTML('Switch to Info View');
-                    } else {
-                        a.setHTML('Switch to Live View');
-                    }
+                    this.updateDetailViewButtonText();
                 }, this);
             }
         }, this);
@@ -35,6 +31,10 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         this.resolveActiveData(this.data);
 
         this.setDataCallback = function (data) {
+            if (data.length > 1) {
+                this.isLiveMode = false;
+            }
+            this.updateDetailViewButtonText();
             if (this.isLiveMode) {
 
                 var livePreview = this.down('#livePreview');
@@ -44,6 +44,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                 livePreview.load('/dev/live-edit/page/page.jsp');
 
             }
+
         };
 
         this.toolBarConfig({
@@ -128,6 +129,16 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         this.callParent(arguments);
         this.addEvents('deselectrecord');
 
+    },
+
+    updateDetailViewButtonText: function () {
+        var toggleBtn = this.down('#toggleBtn');
+        var a = toggleBtn.el.down('a');
+        if (this.isLiveMode) {
+            a.setHTML('Switch to Info View');
+        } else {
+            a.setHTML('Switch to Live View');
+        }
     },
 
     createLivePreview: function (data) {
