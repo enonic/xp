@@ -6,6 +6,7 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
+import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 
@@ -41,6 +42,14 @@ final class RelationshipDaoHandlerCreate
         final Node relationshipsNode = JcrHelper.getOrAddNode( fromContentNode, RelationshipDao.RELATIONSHIPS_NODE );
         final Node moduleNode = JcrHelper.getOrAddNode( relationshipsNode, relationship.getType().getModuleName().toString() );
         final Node relationshipTypeNameNode = JcrHelper.getOrAddNode( moduleNode, relationship.getType().getLocalName() );
-        return relationshipTypeNameNode.addNode( relationship.getToContent().toString() );
+        if ( relationship.getManagingData() != null )
+        {
+            final Node entryPathNode = JcrHelper.getOrAddNode( relationshipTypeNameNode, relationship.getManagingData().toString() );
+            return entryPathNode.addNode( relationship.getToContent().toString(), JcrConstants.RELATIONSHIP_NODETYPE );
+        }
+        else
+        {
+            return relationshipTypeNameNode.addNode( relationship.getToContent().toString(), JcrConstants.RELATIONSHIP_NODETYPE );
+        }
     }
 }

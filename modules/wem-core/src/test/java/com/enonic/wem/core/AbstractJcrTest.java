@@ -4,6 +4,8 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.codehaus.jackson.JsonNode;
+import org.joda.time.DateTimeUtils;
 import org.junit.After;
 import org.junit.Before;
 
@@ -18,8 +20,30 @@ public abstract class AbstractJcrTest
 
     private JcrMicroKernelFactory jcrMicroKernelFactory;
 
+    private final TestUtil testUtil;
+
+    protected AbstractJcrTest()
+    {
+        testUtil = new TestUtil( this ).prettyPrintJson( false );
+    }
+
+    protected String getJsonFileAsString( final String fileName )
+    {
+        return testUtil.getJsonFileAsString( fileName );
+    }
+
+    protected JsonNode getJsonFileAsJson( final String fileName )
+    {
+        return testUtil.parseFileAsJson( fileName );
+    }
+
+    protected JsonNode stringToJson( final String jsonString )
+    {
+        return testUtil.stringToJson( jsonString );
+    }
+
     @Before
-    public final void before()
+    public final void beforeAbstractJcrTest()
         throws Exception
     {
         jcrMicroKernelFactory = new JcrMicroKernelFactory();
@@ -43,9 +67,10 @@ public abstract class AbstractJcrTest
     }
 
     @After
-    public final void after()
+    public final void afterAbstractJcrTest()
     {
         jcrMicroKernelFactory.dispose();
+        DateTimeUtils.setCurrentMillisSystem();
     }
 
     protected abstract void setupDao()

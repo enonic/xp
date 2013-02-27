@@ -5,25 +5,25 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.relationship.RelationshipId;
+import com.enonic.wem.api.content.relationship.RelationshipKey;
 
 public final class DeleteRelationshipsResult
 {
-    private List<RelationshipId> successes = Lists.newArrayList();
+    private List<RelationshipKey> successes = Lists.newArrayList();
 
     private List<Failure> failures = Lists.newArrayList();
 
-    public void success( final RelationshipId relationshipId )
+    public void success( final RelationshipKey relationshipKey )
     {
-        successes.add( relationshipId );
+        successes.add( relationshipKey );
     }
 
-    public void failure( final RelationshipId relationshipId, final Exception e )
+    public void failure( final RelationshipKey relationshipKey, final Exception e )
     {
-        failures.add( new Failure( relationshipId, e, e.getMessage() ) );
+        failures.add( new Failure( relationshipKey, e, e.getMessage() ) );
     }
 
-    public Iterable<RelationshipId> successes()
+    public Iterable<RelationshipKey> successes()
     {
         return successes;
     }
@@ -40,15 +40,15 @@ public final class DeleteRelationshipsResult
 
     public class Failure
     {
-        public final RelationshipId relationshipId;
+        public final RelationshipKey relationshipKey;
 
         public final Exception exception;
 
         public final String reason;
 
-        public Failure( final RelationshipId relationshipId, final Exception exception, final String reason )
+        public Failure( final RelationshipKey relationshipKey, final Exception exception, final String reason )
         {
-            this.relationshipId = relationshipId;
+            this.relationshipKey = relationshipKey;
             this.exception = exception;
             this.reason = reason;
         }

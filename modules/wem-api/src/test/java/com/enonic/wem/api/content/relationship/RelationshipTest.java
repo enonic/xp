@@ -76,4 +76,32 @@ public class RelationshipTest
         assertEquals( null, relationship.getKey().getManagingData() );
     }
 
+    @Test(expected = NullPointerException.class)
+    public void given_property_with_null_value_when_build_then_NullPointerExpception_is_thrown()
+    {
+        // setup
+        final Relationship.Builder relationBuilder = Relationship.newRelationship();
+        relationBuilder.fromContent( MockContentId.from( "a" ) );
+        relationBuilder.toContent( MockContentId.from( "b" ) );
+        relationBuilder.type( QualifiedRelationshipTypeName.from( "system:like" ) );
+        relationBuilder.property( "key", null );
+
+        // exercise
+        relationBuilder.build();
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void given_property_with_null_key_when_build_then_NullPointerExpception_is_thrown()
+    {
+        // setup
+        final Relationship.Builder relationBuilder = Relationship.newRelationship();
+        relationBuilder.fromContent( MockContentId.from( "a" ) );
+        relationBuilder.toContent( MockContentId.from( "b" ) );
+        relationBuilder.type( QualifiedRelationshipTypeName.from( "system:like" ) );
+        relationBuilder.property( null, "value" );
+
+        // exercise
+        relationBuilder.build();
+    }
+
 }

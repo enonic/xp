@@ -95,7 +95,7 @@ final class ContentDaoHandlerCreate
         throws RepositoryException
     {
         final String nodeName = content.getName() == null ? SPACE_CONTENT_ROOT_NODE : content.getName();
-        final Node newContentNode = parentNode.addNode( nodeName, JcrConstants.CONTENT_TYPE );
+        final Node newContentNode = parentNode.addNode( nodeName, JcrConstants.CONTENT_NODETYPE );
         contentJcrMapper.toJcr( content, newContentNode );
         return newContentNode;
     }

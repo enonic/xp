@@ -1,15 +1,17 @@
 package com.enonic.wem.core.content.relationship;
 
 
+import java.util.Iterator;
+import java.util.Map;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
+import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.relationship.Relationship;
-import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.content.dao.ContentIdFactory;
-import com.enonic.wem.core.content.relationship.dao.RelationshipIdFactory;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonParsingException;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
@@ -17,17 +19,23 @@ import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 public class RelationshipJsonSerializer
     extends AbstractJsonSerializer<Relationship>
 {
-    private boolean includeId;
+    private boolean includeCreator;
 
-    private RelationshipId id;
+    private boolean includeCreatedTime;
 
     public RelationshipJsonSerializer()
     {
     }
 
-    public RelationshipJsonSerializer includeId( boolean value )
+    public RelationshipJsonSerializer includeCreator( boolean value )
     {
-        this.includeId = value;
+        this.includeCreator = value;
+        return this;
+    }
+
+    public RelationshipJsonSerializer includeCreatedTime( boolean value )
+    {
+        this.includeCreatedTime = value;
         return this;
     }
 
@@ -39,16 +47,17 @@ public class RelationshipJsonSerializer
     public JsonNode serialize( final Relationship relationship )
     {
         final ObjectNode objectNode = objectMapper().createObjectNode();
-        if ( includeId )
+        if ( includeCreator )
         {
-            objectNode.put( "id", relationship.getId().toString() );
+            objectNode.put( "creator", relationship.getCreator().toString() );
         }
-        objectNode.put( "creator", relationship.getCreator().toString() );
-        JsonSerializerUtil.setDateTimeValue( "createdTime", relationship.getCreatedTime(), objectNode );
+        if ( includeCreatedTime )
+        {
+            JsonSerializerUtil.setDateTimeValue( "createdTime", relationship.getCreatedTime(), objectNode );
+        }
         objectNode.put( "type", relationship.getType().toString() );
         objectNode.put( "fromContent", relationship.getFromContent().toString() );
         objectNode.put( "toContent", relationship.getToContent().toString() );
-        objectNode.put( "managed", relationship.isManaged() );
 
         if ( relationship.getManagingData() != null )
         {
@@ -64,13 +73,24 @@ public class RelationshipJsonSerializer
 
     private void serializeProperties( final Relationship relationship, final ObjectNode objectNode )
     {
-
+        final Map<String, String> properties = relationship.getProperties();
+        if ( properties.size() == 0 )
+        {
+            objectNode.putNull( "properties" );
+        }
+        else
+        {
+            final ObjectNode propertiesNode = objectNode.putObject( "properties" );
+            for ( Map.Entry<String, String> entry : properties.entrySet() )
+            {
+                propertiesNode.put( entry.getKey(), entry.getValue() );
+            }
+        }
     }
 
-    public Relationship toRelationship( final String json, final RelationshipId id )
+    public Relationship toRelationship( final String json )
         throws JsonParsingException
     {
-        this.id = id;
         return toObject( json );
     }
 
@@ -78,21 +98,31 @@ public class RelationshipJsonSerializer
     {
         final Relationship.Builder builder = Relationship.newRelationship();
 
-        if ( id != null )
+        if ( includeCreator )
         {
-            builder.id( id );
+            builder.creator( JsonSerializerUtil.getUserKeyValue( "creator", relationshipNode ) );
         }
-        else if ( includeId )
+        if ( includeCreatedTime )
         {
-            builder.id( RelationshipIdFactory.from( JsonSerializerUtil.getStringValue( "id", relationshipNode ) ) );
+            builder.createdTime( JsonSerializerUtil.getDateTimeValue( "createdTime", relationshipNode ) );
         }
-
-        builder.creator( JsonSerializerUtil.getUserKeyValue( "creator", relationshipNode ) );
-        builder.createdTime( JsonSerializerUtil.getDateTimeValue( "createdTime", relationshipNode ) );
         builder.type( QualifiedRelationshipTypeName.from( JsonSerializerUtil.getStringValue( "type", relationshipNode ) ) );
         builder.fromContent( ContentIdFactory.from( JsonSerializerUtil.getStringValue( "fromContent", relationshipNode ) ) );
         builder.toContent( ContentIdFactory.from( JsonSerializerUtil.getStringValue( "toContent", relationshipNode ) ) );
-
+        if ( !relationshipNode.get( "managingData" ).isNull() )
+        {
+            builder.managed( EntryPath.from( JsonSerializerUtil.getStringValue( "managingData", relationshipNode ) ) );
+        }
+        if ( !relationshipNode.get( "properties" ).isNull() )
+        {
+            final ObjectNode propertiesNode = (ObjectNode) relationshipNode.get( "properties" );
+            final Iterator<String> it = propertiesNode.getFieldNames();
+            while ( it.hasNext() )
+            {
+                final String fieldName = it.next();
+                builder.property( fieldName, propertiesNode.get( fieldName ).getTextValue() );
+            }
+        }
         return builder.build();
     }
 }

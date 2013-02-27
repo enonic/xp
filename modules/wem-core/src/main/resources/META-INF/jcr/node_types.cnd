@@ -47,3 +47,5 @@
 [wem:contents] > wem:base
 + * (wem:content)
 
+[wem:relationship] > wem:base, nt:unstructured, mix:referenceable
+

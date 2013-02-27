@@ -4,28 +4,28 @@ package com.enonic.wem.api.command.content.relationship;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.relationship.RelationshipIds;
+import com.enonic.wem.api.content.relationship.RelationshipKeys;
 
 public class DeleteRelationships
     extends Command<DeleteRelationshipsResult>
 {
-    private RelationshipIds relationshipIds;
+    private RelationshipKeys relationshipKeys;
 
-    public DeleteRelationships relationshipIds( final RelationshipIds value )
+    public DeleteRelationships relationships( final RelationshipKeys value )
     {
-        this.relationshipIds = value;
+        this.relationshipKeys = value;
         return this;
     }
 
-    public RelationshipIds getRelationshipIds()
+    public RelationshipKeys getRelationshipKeys()
     {
-        return relationshipIds;
+        return relationshipKeys;
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( relationshipIds, "relationshipIds cannot be null" );
-        Preconditions.checkArgument( relationshipIds.isNotEmpty(), "relationshipIds cannot be empty" );
+        Preconditions.checkNotNull( relationshipKeys, "relationshipKeys cannot be null" );
+        Preconditions.checkArgument( relationshipKeys.isNotEmpty(), "relationshipKeys cannot be empty" );
     }
 }

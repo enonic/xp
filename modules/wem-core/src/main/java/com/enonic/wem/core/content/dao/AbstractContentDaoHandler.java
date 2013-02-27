@@ -28,13 +28,13 @@ import static org.apache.commons.lang.StringUtils.removeStart;
 import static org.apache.commons.lang.StringUtils.substringAfter;
 import static org.apache.commons.lang.StringUtils.substringBefore;
 
-abstract class AbstractContentDaoHandler
+public abstract class AbstractContentDaoHandler
 {
     protected final Session session;
 
     protected final ContentJcrMapper contentJcrMapper = new ContentJcrMapper();
 
-    AbstractContentDaoHandler( final Session session )
+    protected AbstractContentDaoHandler( final Session session )
     {
         this.session = session;
     }
@@ -169,7 +169,7 @@ abstract class AbstractContentDaoHandler
         throws RepositoryException
     {
         final String nodeVersionName = CONTENT_VERSION_PREFIX + content.getVersionId().id();
-        final Node contentVersionNode = contentVersionParent.addNode( nodeVersionName, JcrConstants.CONTENT_TYPE );
+        final Node contentVersionNode = contentVersionParent.addNode( nodeVersionName, JcrConstants.CONTENT_NODETYPE );
         contentJcrMapper.toJcr( content, contentVersionNode );
         return contentVersionNode;
     }

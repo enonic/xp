@@ -10,17 +10,17 @@ import com.enonic.wem.api.content.relationship.RelationshipIds;
 import com.enonic.wem.api.content.relationship.Relationships;
 
 
-final class RelationshipDaoHandlerSelect
+final class RelationshipDaoHandlerSelectByIds
     extends AbstractRelationshipDaoHandler<Relationships>
 {
     private RelationshipIds relationshipIds;
 
-    RelationshipDaoHandlerSelect( final Session session )
+    RelationshipDaoHandlerSelectByIds( final Session session )
     {
         super( session );
     }
 
-    RelationshipDaoHandlerSelect selectors( RelationshipIds relationshipIds )
+    RelationshipDaoHandlerSelectByIds relationshipIds( RelationshipIds relationshipIds )
     {
         this.relationshipIds = relationshipIds;
         return this;

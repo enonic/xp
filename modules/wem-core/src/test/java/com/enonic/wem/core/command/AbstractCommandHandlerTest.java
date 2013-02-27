@@ -2,6 +2,8 @@ package com.enonic.wem.core.command;
 
 import javax.jcr.Session;
 
+import org.joda.time.DateTimeUtils;
+import org.junit.After;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
@@ -22,5 +24,11 @@ public abstract class AbstractCommandHandlerTest
         this.context.setClient( client );
         session = Mockito.mock( Session.class );
         this.context.setJcrSession( session );
+    }
+
+    @After
+    public void afterAbstractCommandHandlerTest()
+    {
+        DateTimeUtils.setCurrentMillisSystem();
     }
 }

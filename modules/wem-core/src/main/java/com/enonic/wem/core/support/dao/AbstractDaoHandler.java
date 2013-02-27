@@ -9,11 +9,14 @@ public abstract class AbstractDaoHandler<R>
 {
     private R result;
 
+    private boolean handled;
+
     public final AbstractDaoHandler handle()
     {
         try
         {
             doHandle();
+            handled = true;
             return this;
         }
         catch ( RepositoryException e )
@@ -33,6 +36,10 @@ public abstract class AbstractDaoHandler<R>
 
     public R getResult()
     {
+        if ( !handled )
+        {
+            throw new IllegalStateException( "handle must invoked before any result can be retrieved" );
+        }
         return result;
     }
 
