@@ -11,7 +11,7 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jdom.Document;
 
-import com.enonic.wem.core.util.JdomHelper;
+import com.enonic.wem.core.support.util.JdomHelper;
 
 public class TestUtil
 {

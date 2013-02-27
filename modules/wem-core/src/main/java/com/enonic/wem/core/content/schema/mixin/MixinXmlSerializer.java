@@ -15,7 +15,7 @@ import com.enonic.wem.core.content.schema.content.form.FormItemsXmlSerializer;
 import com.enonic.wem.core.support.serializer.ParsingException;
 import com.enonic.wem.core.support.serializer.SerializingException;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
-import com.enonic.wem.core.util.JdomHelper;
+import com.enonic.wem.core.support.util.JdomHelper;
 
 import static com.enonic.wem.api.content.schema.mixin.Mixin.newMixin;
 

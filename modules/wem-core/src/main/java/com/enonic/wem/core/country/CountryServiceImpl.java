@@ -5,18 +5,19 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.jdom.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import javax.inject.Inject;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.util.JdomHelper;
+import com.enonic.wem.core.support.util.JdomHelper;
 
 /**
  * This implements the country service. It load country codes from an xml file. It tries to find the first resource that exists and load
@@ -59,7 +60,7 @@ public final class CountryServiceImpl
 
     private Resource findCountryResource()
     {
-        final File countryFile = new File(this.systemConfig.getConfigDir(), "countries.xml");
+        final File countryFile = new File( this.systemConfig.getConfigDir(), "countries.xml" );
         if ( countryFile.exists() && countryFile.isFile() )
         {
             return new FileSystemResource( countryFile );

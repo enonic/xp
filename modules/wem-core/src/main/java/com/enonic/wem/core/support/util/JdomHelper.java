@@ -1,4 +1,4 @@
-package com.enonic.wem.core.util;
+package com.enonic.wem.core.support.util;
 
 import java.io.IOException;
 import java.io.InputStream;

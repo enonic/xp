@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.relationship.RelationshipType;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
-import com.enonic.wem.core.util.JdomHelper;
+import com.enonic.wem.core.support.util.JdomHelper;
 
 public class RelationshipTypeXmlSerializer
     implements RelationshipTypeSerializer

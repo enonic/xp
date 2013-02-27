@@ -11,7 +11,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.core.util.JdomHelper;
+import com.enonic.wem.core.support.util.JdomHelper;
 
 public class ContentXmlSerializer
     implements ContentSerializer
