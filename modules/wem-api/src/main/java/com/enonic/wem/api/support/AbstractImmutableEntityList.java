@@ -1,4 +1,4 @@
-package com.enonic.wem.api.util;
+package com.enonic.wem.api.support;
 
 import java.util.Iterator;
 import java.util.List;

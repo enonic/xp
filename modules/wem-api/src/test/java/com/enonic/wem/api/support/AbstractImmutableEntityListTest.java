@@ -1,4 +1,4 @@
-package com.enonic.wem.api.util;
+package com.enonic.wem.api.support;
 
 
 import org.junit.Test;

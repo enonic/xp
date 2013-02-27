@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.wem.api.util.AbstractImmutableEntitySet;
+import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 
 public class RelationshipKeys
     extends AbstractImmutableEntitySet<RelationshipKey>
