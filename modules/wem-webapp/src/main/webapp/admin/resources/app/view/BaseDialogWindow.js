@@ -11,11 +11,52 @@ Ext.define('Admin.view.BaseDialogWindow', {
     maxHeight: 600,
     cls: 'admin-window',
     closeAction: 'hide',
+    padding: 20,
 
     modelData: undefined,
+    // Title and subtitle deprecated. Use header() instead
     dialogTitle: 'Base dialog',
     dialogSubTitle: '',
     dialogInfoTpl: Templates.common.userInfo,
+
+    buttonItems: [],
+
+    buttonRow: function () {
+        var i;
+        if (arguments.length !== 0) {
+            this.buttonItems = [];
+        }
+        for (i = 0; i < arguments.length; i++) {
+            this.buttonItems.push(arguments[i]);
+        }
+
+        return {
+            region: 'south',
+            margin: '20 0 0 0',
+            border: false,
+            layout: {
+                type: 'hbox',
+                pack: 'end'
+            },
+            defaults: {
+                xtype: 'button',
+                margin: '0 0 0 10'
+            },
+            items: this.buttonItems
+        };
+    },
+    header: function (title, subtitle) {
+        return {
+            region: 'north',
+            xtype: 'component',
+            tpl: '<h2>{title}</h2><tpl if="subtitle != undefined"><p>{subtitle}</p></tpl>',
+            data: {
+                title: title,
+                subtitle: subtitle
+            },
+            margin: '0 0 20 0'
+        };
+    },
 
     listeners: {
         show: function (cmp) {
@@ -199,6 +240,7 @@ Ext.define('Admin.view.BaseDialogWindow', {
         this.destroy();
     },
 
+    // Should be replaced with header()
     createTitle: function (title) {
 
         return {
@@ -212,6 +254,7 @@ Ext.define('Admin.view.BaseDialogWindow', {
         };
     },
 
+    // Should be replaced with buttonrow()
     createCloseButton: function () {
         var me = this;
         return {

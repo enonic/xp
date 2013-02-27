@@ -4,39 +4,10 @@ Ext.define('Admin.view.contentManager.DeleteContentWindow', {
 
     dialogTitle: undefined,
 
-    /*items: [
-     {
-     margin: '10px 0 10px 0px',
-     xtype: 'container',
-     defaults: {
-     xtype: 'button',
-     scale: 'medium',
-     margin: '0 10 0 0'
-     },
-     items: [
-     {
-     text: 'Delete',
-     iconCls: 'icon-delete-user-24',
-     itemId: 'deleteContentButton',
-     action: 'deleteContent'
-     }
-     ]
-     }
-     ],*/
-    padding: 20,
-
     initComponent: function () {
         var me = this;
         this.items = [
-            {
-                region: 'north',
-                xtype: 'component',
-                tpl: '<h2>{title}</h2>',
-                data: {
-                    title: 'Delete content(s)'
-                },
-                margin: '0 0 20 0'
-            },
+            me.header('Delete content(s)'),
             {
                 region: 'center',
                 layout: {
@@ -54,30 +25,16 @@ Ext.define('Admin.view.contentManager.DeleteContentWindow', {
                     tpl: me.deleteTemplate
                 }
             },
-            {
-                region: 'south',
-                margin: '20 0 0 0',
-                border: false,
-                layout: {
-                    type: 'hbox',
-                    pack: 'end'
-                },
-                items: [
-                    {
-                        xtype: 'button',
-                        text: 'Delete',
-                        action: 'deleteContent',
-                        margin: '0 10 0 0'
-                    },
-                    {
-                        xtype: 'button',
-                        text: 'Cancel',
-                        handler: function (btn, evt) {
-                            me.close();
-                        }
-                    }
-                ]
-            }
+            me.buttonRow({
+                text: 'Delete',
+                action: 'deleteContent'
+            }, {
+                xtype: 'button',
+                text: 'Cancel',
+                handler: function (btn, evt) {
+                    me.close();
+                }
+            })
         ];
 
         this.callParent(arguments);

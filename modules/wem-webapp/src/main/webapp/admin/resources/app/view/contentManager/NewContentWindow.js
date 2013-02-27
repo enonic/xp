@@ -13,7 +13,6 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
 
     width: 800,
     height: 560,
-    padding: 20,
 
     layout: 'border',
     defaultType: 'container',
@@ -101,16 +100,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
         }, baseDataViewConfig);
 
         this.items = [
-            {
-                region: 'north',
-                xtype: 'component',
-                tpl: '<h2>{title}</h2><p>You are creating content with parent: <a href="#">{parent}</a></p>',
-                data: {
-                    title: 'Select Content Type',
-                    parent: 'parent/of/new/content'
-                },
-                margin: '0 0 20 0'
-            },
+            me.header('Select Content Type', 'parent/of/new/content'),
             {
                 region: 'west',
                 width: 300,
@@ -177,23 +167,13 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
                     }
                 ]
             },
-            {
-                region: 'south',
-                margin: '20 0 0 0',
-                layout: {
-                    type: 'hbox',
-                    pack: 'end'
-                },
-                items: [
-                    {
-                        xtype: 'button',
-                        text: 'Cancel',
-                        handler: function (btn, evt) {
-                            me.close();
-                        }
-                    }
-                ]
-            }
+            me.buttonRow({
+                xtype: 'button',
+                text: 'Cancel',
+                handler: function (btn, evt) {
+                    me.close();
+                }
+            })
         ];
 
         this.callParent(arguments);
