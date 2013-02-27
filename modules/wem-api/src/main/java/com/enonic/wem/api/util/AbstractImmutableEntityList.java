@@ -35,7 +35,7 @@ public abstract class AbstractImmutableEntityList<T>
 
     public final T get( final int index )
     {
-        return this.list.get( 0 );
+        return this.list.get( index );
     }
 
     public final T first()
