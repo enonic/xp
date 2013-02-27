@@ -1,7 +1,7 @@
 Ext.define('Admin.controller.spaceAdmin.SpaceController', {
     extend: 'Admin.controller.spaceAdmin.Controller',
 
-    /*      Base controller for content model     */
+    /*      Base controller for Space model     */
 
     stores: [],
     models: [],
@@ -12,6 +12,16 @@ Ext.define('Admin.controller.spaceAdmin.SpaceController', {
 
 
     /*   Public, only CRUD model methods here please     */
+
+    remoteCreateOrUpdateSpace: function (spaceParams, callback) {
+        Admin.lib.RemoteService.space_createOrUpdate(spaceParams, function (r) {
+            if (r && r.success) {
+                callback(r.created, r.updated);
+            } else {
+                Ext.Msg.alert("Error", r ? r.error : "An unexpected error occurred.");
+            }
+        });
+    },
 
     remoteDeleteSpace: function (spaceNames, callback) {
         var me = this;

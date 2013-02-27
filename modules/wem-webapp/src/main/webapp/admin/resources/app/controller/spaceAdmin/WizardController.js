@@ -1,7 +1,7 @@
 Ext.define('Admin.controller.spaceAdmin.WizardController', {
-    extend: 'Admin.controller.spaceAdmin.Controller',
+    extend: 'Admin.controller.spaceAdmin.SpaceController',
 
-    /*      Controller for handling Content Type Wizard UI events       */
+    /*      Controller for handling Space Wizard UI events       */
 
 
     stores: [
@@ -18,13 +18,13 @@ Ext.define('Admin.controller.spaceAdmin.WizardController', {
                 click: me.closeWizard
             },
             'spaceAdminWizardPanel *[action=saveSpace]': {
-                click: function () {
-                    alert('Not implemented');
+                click: function (el) {
+                    me.saveSpace(el.up('spaceAdminWizardPanel'), false);
                 }
             },
             'spaceAdminWizardPanel *[action=deleteSpace]': {
                 click: function () {
-                    alert('Not implemented');
+                    this.deleteSpace(this.getWizardPanel().data);
                 }
             }
         });
@@ -45,6 +45,37 @@ Ext.define('Admin.controller.spaceAdmin.WizardController', {
         }
     },
 
+    saveSpace: function (spaceWizard, closeWizard) {
+        var me = this;
+        var spaceWizardData = spaceWizard.getData();
+        var displayName = spaceWizardData.displayName;
+        var spaceName = spaceWizardData.spaceName;
+        var iconReference = spaceWizardData.iconRef;
+
+        var spaceParams = {
+            spaceName: spaceName,
+            displayName: displayName,
+            iconReference: iconReference
+        };
+
+        var onUpdateSpaceSuccess = function (created, updated) {
+            if (created || updated) {
+                if (closeWizard) {
+                    me.getWizardTab().close();
+                }
+
+                Admin.MessageBus.showFeedback({
+                    title: 'Space saved',
+                    message: 'Space "' + spaceName + '" was saved',
+                    opts: {}
+                });
+
+                me.getSpaceTreeGridPanel().refresh();
+            }
+        };
+        this.remoteCreateOrUpdateSpace(spaceParams, onUpdateSpaceSuccess);
+    },
+
     /*      Getters     */
 
     getWizardTab: function () {
@@ -53,6 +84,22 @@ Ext.define('Admin.controller.spaceAdmin.WizardController', {
 
     getWizardPanel: function () {
         return this.getWizardTab();
+    },
+
+    deleteSpace: function (wizard) {
+        var me = this;
+        var onDeleteSpaceSuccess = function (success, failures) {
+            if (success) {
+                me.getWizardTab().close();
+                Admin.MessageBus.showFeedback({
+                    title: 'Space deleted',
+                    message: 'Space was deleted',
+                    opts: {}
+                });
+            }
+        }
+
+        this.remoteDeleteSpace(wizard.data.name, onDeleteSpaceSuccess);
     }
 
 })

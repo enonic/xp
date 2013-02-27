@@ -18,8 +18,12 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
         var me = this;
         var steps = me.getSteps();
 
-        var iconUrl = 'rest/space/image/default?size=100';
-        var displayNameValue = 'Public Web';
+        var iconUrl = 'resources/images/icons/128x128/default_space.png';
+        var displayNameValue = 'Space Name';
+        if (me.modelData) {
+            displayNameValue = me.modelData.displayName || me.modelData.name;
+            iconUrl = me.modelData.iconUrl;
+        }
 
         me.headerData = {
             displayName: displayNameValue
@@ -37,7 +41,7 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
                         width: 111,
                         height: 111,
                         photoUrl: iconUrl,
-                        title: "Content",
+                        title: "Space",
                         style: {
                             margin: '1px'
                         },
@@ -110,6 +114,8 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
 
         this.callParent(arguments);
 
+        var uploader = this.down('photoUploadButton');
+        uploader.on('fileuploaded', me.photoUploaded, me);
     },
 
 
@@ -117,7 +123,8 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
 
         return [
             {
-                xtype: 'spaceStepPanel'
+                xtype: 'spaceStepPanel',
+                modelData: this.modelData
             },
             {
                 stepTitle: 'Schemas'
@@ -141,7 +148,7 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
     },
 
     photoUploaded: function (photoUploadButton, response) {
-        var wizard = this.down('wizardPanel'),
+        var wizard = this.getWizardPanel(),
             iconRef = response.items && response.items.length > 0 && response.items[0].id;
         wizard.addData({iconRef: iconRef});
     }

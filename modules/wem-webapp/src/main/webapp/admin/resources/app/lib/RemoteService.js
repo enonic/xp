@@ -19,7 +19,7 @@ Ext.define('Admin.lib.RemoteService', {
                 "content_delete", "content_validate", "contentType_createOrUpdate", "contentType_delete", "contentType_tree",
                 "schema_list", "schema_tree", "system_getSystemInfo", "mixin_get", "mixin_createOrUpdate", "mixin_delete",
                 "relationshipType_get", "relationshipType_createOrUpdate", "relationshipType_delete", "space_list", "space_get",
-                "space_delete"
+                "space_delete", "space_createOrUpdate"
             ]
         };
 
@@ -180,6 +180,10 @@ Ext.define('Admin.lib.RemoteService', {
     },
 
     space_delete: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    space_createOrUpdate: function (params, callback) {
         console.log(params, callback);
     },
 
