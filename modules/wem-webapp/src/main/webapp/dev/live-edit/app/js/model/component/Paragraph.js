@@ -25,26 +25,34 @@
         $(document).on('click', me.cssSelector, function (event) {
             var $paragraph = $(this);
 
-            // test
-
             if ($paragraph.data('live-edit-paragraph-mode') === undefined) {
                 $paragraph.data('live-edit-paragraph-mode', 'select');
 
                 $('body').css('cursor', 'text');
 
-                $paragraph.get(0).contentEditable = false;
+                me.setContentEditable($paragraph);
             } else if ($paragraph.data('live-edit-paragraph-mode') === 'select') {
                 $paragraph.data('live-edit-paragraph-mode', 'edit');
-
                 $('body').css('cursor', 'text');
-
-                $paragraph.get(0).contentEditable = true;
-                $paragraph.get(0).focus();
+                me.setContentEditable($paragraph);
             } else {
                 $paragraph.removeData('live-edit-paragraph-mode');
-                $paragraph.get(0).contentEditable = false;
+                me.removeContentEditable($paragraph);
             }
         });
+    };
+
+
+    proto.setContentEditable = function ($paragraph) {
+        $paragraph.get(0).contentEditable = true;
+        $paragraph.get(0).focus();
+    };
+
+
+    proto.removeContentEditable = function ($paragraph) {
+        $paragraph.get(0).contentEditable = false;
+        $paragraph.get(0).blur();
+
     };
 
 }($liveedit));
