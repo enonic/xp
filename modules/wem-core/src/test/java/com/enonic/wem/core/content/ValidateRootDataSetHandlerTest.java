@@ -1,17 +1,23 @@
 package com.enonic.wem.core.content;
 
+import javax.jcr.Session;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.schema.content.ContentType;
+import com.enonic.wem.api.content.schema.content.ContentTypes;
+import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.schema.content.form.FieldSet;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
+import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
@@ -23,7 +29,9 @@ import static org.junit.Assert.*;
 public class ValidateRootDataSetHandlerTest
     extends AbstractCommandHandlerTest
 {
-    private ValidateRootDataSetHandler handlerValidate;
+    private ValidateRootDataSetHandler handler;
+
+    private ContentTypeDao contentTypeDao;
 
     @Before
     public void setUp()
@@ -31,7 +39,9 @@ public class ValidateRootDataSetHandlerTest
     {
         super.initialize();
 
-        handlerValidate = new ValidateRootDataSetHandler();
+        contentTypeDao = Mockito.mock( ContentTypeDao.class );
+        handler = new ValidateRootDataSetHandler();
+        handler.setContentTypeDao( contentTypeDao );
     }
 
     @Test
@@ -46,12 +56,15 @@ public class ValidateRootDataSetHandlerTest
                 newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build() ).
             build();
 
+        Mockito.when( contentTypeDao.select( Mockito.any( QualifiedContentTypeNames.class ), Mockito.any( Session.class ) ) ).thenReturn(
+            ContentTypes.from( contentType ) );
+
         final Content content = newContent().type( contentType.getQualifiedName() ).build();
 
         // exercise
         final ValidateRootDataSet command =
-            Commands.content().validate().rootDataSet( content.getRootDataSet() ).contentType( contentType );
-        this.handlerValidate.handle( this.context, command );
+            Commands.content().validate().rootDataSet( content.getRootDataSet() ).contentType( contentType.getQualifiedName() );
+        this.handler.handle( this.context, command );
 
         // test
         final DataValidationErrors result = command.getResult();
@@ -73,13 +86,16 @@ public class ValidateRootDataSetHandlerTest
             addFormItem( fieldSet ).
             build();
 
+        Mockito.when( contentTypeDao.select( Mockito.any( QualifiedContentTypeNames.class ), Mockito.any( Session.class ) ) ).thenReturn(
+            ContentTypes.from( contentType ) );
+
         final Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.getRootDataSet().setData( "mySet.myInput", "thing" );
 
         // exercise
         final ValidateRootDataSet command =
-            Commands.content().validate().rootDataSet( content.getRootDataSet() ).contentType( contentType );
-        this.handlerValidate.handle( this.context, command );
+            Commands.content().validate().rootDataSet( content.getRootDataSet() ).contentType( contentType.getQualifiedName() );
+        this.handler.handle( this.context, command );
 
         // test
         final DataValidationErrors result = command.getResult();

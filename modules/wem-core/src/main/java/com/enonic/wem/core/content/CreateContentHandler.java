@@ -11,8 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.command.content.relationship.CreateRelationship;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -20,6 +22,8 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataVisitor;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
+import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
@@ -63,6 +67,9 @@ public class CreateContentHandler
         session.save();
 
         final List<Data> references = resolveReferences( content.getRootDataSet() );
+
+        validateContentData( context.getClient(), content );
+
         for ( Data reference : references )
         {
             final ContentId toContent = ContentIdFactory.from( reference.getString() );
@@ -87,6 +94,20 @@ public class CreateContentHandler
         }
 
         command.setResult( contentId );
+    }
+
+    private void validateContentData( final Client client, final Content content )
+    {
+        final ValidateRootDataSet validateRootDataSet = Commands.content().validate();
+        validateRootDataSet.contentType( content.getType() );
+        validateRootDataSet.rootDataSet( content.getRootDataSet() );
+        final DataValidationErrors dataValidationErrors = client.execute( validateRootDataSet );
+
+        for ( DataValidationError error : dataValidationErrors )
+        {
+            LOG.info( "*** DataValidationError: " + error.getErrorMessage() );
+            // TODO: Throw exception or return rich result instead when GUI can display error message
+        }
     }
 
     private List<Data> resolveReferences( final RootDataSet rootDataSet )

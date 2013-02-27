@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.schema.content.ContentType;
+import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 
 public class ValidateRootDataSet
@@ -13,7 +13,7 @@ public class ValidateRootDataSet
 {
     private RootDataSet rootDataSet;
 
-    private ContentType contentType;
+    private QualifiedContentTypeName contentType;
 
     public RootDataSet getRootDataSet()
     {
@@ -26,12 +26,12 @@ public class ValidateRootDataSet
         return this;
     }
 
-    public ContentType getContentType()
+    public QualifiedContentTypeName getContentType()
     {
         return contentType;
     }
 
-    public ValidateRootDataSet contentType( final ContentType contentType )
+    public ValidateRootDataSet contentType( final QualifiedContentTypeName contentType )
     {
         this.contentType = contentType;
         return this;

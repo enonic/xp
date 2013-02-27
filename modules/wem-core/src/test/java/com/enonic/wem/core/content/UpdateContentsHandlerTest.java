@@ -13,6 +13,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.UpdateContents;
+import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.command.content.relationship.CreateRelationship;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPaths;
@@ -22,6 +23,7 @@ import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.editor.ContentEditors;
+import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
@@ -52,6 +54,8 @@ public class UpdateContentsHandlerTest
         handler = new UpdateContentsHandler();
         handler.setContentDao( contentDao );
         handler.setIndexService( indexService );
+
+        Mockito.when( super.client.execute( Mockito.isA( ValidateRootDataSet.class ) ) ).thenReturn( DataValidationErrors.empty() );
     }
 
     @Test

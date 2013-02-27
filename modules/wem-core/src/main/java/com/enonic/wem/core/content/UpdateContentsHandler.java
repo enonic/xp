@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.UpdateContents;
+import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.command.content.relationship.CreateRelationship;
 import com.enonic.wem.api.command.content.relationship.DeleteRelationships;
 import com.enonic.wem.api.content.Content;
@@ -25,6 +26,8 @@ import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.relationship.RelationshipKeys;
+import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
+import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
@@ -72,6 +75,8 @@ public class UpdateContentsHandler
                 modifiedTime( DateTime.now() ).
                 modifier( command.getModifier() ).build();
 
+            validateContentData( context, modifiedContent );
+
             new SyncRelationships( context.getClient(), persistedContent, modifiedContent ).invoke();
 
             final boolean createNewVersion = true;
@@ -88,6 +93,19 @@ public class UpdateContentsHandler
                 LOG.error( "Index content failed", e );
             }
 
+        }
+    }
+
+    private void validateContentData( final CommandContext context, final Content modifiedContent )
+    {
+        final ValidateRootDataSet validateRootDataSet = Commands.content().validate();
+        validateRootDataSet.contentType( modifiedContent.getType() );
+        validateRootDataSet.rootDataSet( modifiedContent.getRootDataSet() );
+        final DataValidationErrors dataValidationErrors = context.getClient().execute( validateRootDataSet );
+        for ( DataValidationError error : dataValidationErrors )
+        {
+            LOG.info( "*** DataValidationError: " + error.getErrorMessage() );
+            // TODO: Throw exception or return rich result instead when GUI can display error message
         }
     }
 

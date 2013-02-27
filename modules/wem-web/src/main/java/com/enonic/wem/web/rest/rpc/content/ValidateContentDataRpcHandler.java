@@ -39,7 +39,7 @@ public final class ValidateContentDataRpcHandler
         final RootDataSet rootDataSet = new RootDataSetParser( contentType ).parse( contentDataParam );
 
         final DataValidationErrors validationErrors =
-            client.execute( content().validate().rootDataSet( rootDataSet ).contentType( contentType ) );
+            client.execute( content().validate().rootDataSet( rootDataSet ).contentType( qualifiedContentTypeName ) );
 
         final ValidateContentDataJsonResult result = new ValidateContentDataJsonResult( validationErrors );
         context.setResult( result );
