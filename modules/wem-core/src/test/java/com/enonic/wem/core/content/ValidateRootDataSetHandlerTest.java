@@ -20,10 +20,10 @@ import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newForm
 import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
 import static org.junit.Assert.*;
 
-public class ValidateContentDataHandlerTest
+public class ValidateRootDataSetHandlerTest
     extends AbstractCommandHandlerTest
 {
-    private ValidateContentDataHandler handlerValidate;
+    private ValidateRootDataSetHandler handlerValidate;
 
     @Before
     public void setUp()
@@ -31,7 +31,7 @@ public class ValidateContentDataHandlerTest
     {
         super.initialize();
 
-        handlerValidate = new ValidateContentDataHandler();
+        handlerValidate = new ValidateRootDataSetHandler();
     }
 
     @Test

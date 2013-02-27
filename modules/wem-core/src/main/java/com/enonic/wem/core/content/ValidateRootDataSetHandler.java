@@ -11,11 +11,11 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 
 @Component
-public final class ValidateContentDataHandler
+public final class ValidateRootDataSetHandler
     extends CommandHandler<ValidateRootDataSet>
 {
 
-    public ValidateContentDataHandler()
+    public ValidateRootDataSetHandler()
     {
         super( ValidateRootDataSet.class );
     }
