@@ -16,7 +16,15 @@ public final class ContentTypeEditors
 
     public static ContentTypeEditor setContentType( final ContentType contentType )
     {
-        return SetContentTypeEditor.newSetContentTypeEditor( contentType ).build();
+        return SetContentTypeEditor.newSetContentTypeEditor().
+            displayName( contentType.getDisplayName() ).
+            icon( contentType.getIcon() ).
+            superType( contentType.getSuperType() ).
+            setAbstract( contentType.isAbstract() ).
+            setFinal( contentType.isFinal() ).
+            contentDisplayNameScript( contentType.getContentDisplayNameScript() ).
+            form( contentType.form() ).
+            build();
     }
 
     public static ContentTypeEditor setIcon( final Icon icon )

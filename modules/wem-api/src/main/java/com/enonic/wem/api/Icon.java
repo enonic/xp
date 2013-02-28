@@ -22,6 +22,7 @@ public final class Icon
 
     public byte[] getData()
     {
+        // TODO return copy, and avoid copying Icon in other places?
         return iconData;
     }
 

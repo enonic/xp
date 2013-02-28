@@ -1,5 +1,7 @@
 package com.enonic.wem.api.content.schema.content.editor;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
@@ -40,11 +42,6 @@ public final class SetContentTypeEditor
         return new Builder();
     }
 
-    public static Builder newSetContentTypeEditor( final ContentType contentType )
-    {
-        return new Builder( contentType );
-    }
-
     public static class Builder
     {
         private String displayName;
@@ -63,17 +60,6 @@ public final class SetContentTypeEditor
 
         private Builder()
         {
-        }
-
-        private Builder( final ContentType contentType )
-        {
-            displayName = contentType.getDisplayName();
-            superType = contentType.getSuperType();
-            isAbstract = contentType.isAbstract();
-            isFinal = contentType.isFinal();
-            form = contentType.form();
-            icon = contentType.getIcon();
-            contentDisplayNameScript = contentType.getContentDisplayNameScript();
         }
 
         public Builder displayName( final String displayName )
@@ -120,6 +106,9 @@ public final class SetContentTypeEditor
 
         public SetContentTypeEditor build()
         {
+            Preconditions.checkArgument(
+                this.displayName != null || this.superType != null || this.isFinal != null || this.isAbstract != null ||
+                    this.icon != null || this.form != null || this.contentDisplayNameScript != null, "Missing edit fields" );
             return new SetContentTypeEditor( this );
         }
 
@@ -129,7 +118,7 @@ public final class SetContentTypeEditor
     public ContentType edit( final ContentType contentType )
         throws Exception
     {
-        final boolean modified = ( this.icon != null ) ||
+        final boolean modified = ( this.icon != null ) && !icon.equals( contentType.getIcon() ) ||
             ( this.displayName != null && !displayName.equals( contentType.getDisplayName() ) ) ||
             ( this.contentDisplayNameScript != null && !contentDisplayNameScript.equals( contentType.getContentDisplayNameScript() ) ) ||
             ( this.superType != null && !superType.equals( contentType.getSuperType() ) ) ||
