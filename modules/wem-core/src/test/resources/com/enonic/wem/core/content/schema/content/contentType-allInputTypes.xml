@@ -4,6 +4,7 @@
   <module>myModule</module>
   <qualified-name>myModule:AllInputTypes</qualified-name>
   <display-name>All the Input Types</display-name>
+  <display-name-script/>
   <super-type>System:Content</super-type>
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>

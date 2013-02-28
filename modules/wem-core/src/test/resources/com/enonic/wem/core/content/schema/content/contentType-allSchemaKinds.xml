@@ -4,6 +4,7 @@
   <module>myModule</module>
   <qualified-name>myModule:AllSchemas</qualified-name>
   <display-name>All the Base Types</display-name>
+  <display-name-script/>
   <super-type>System:Content</super-type>
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>
