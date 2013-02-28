@@ -4,6 +4,8 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.schema.content.ContentType;
@@ -34,6 +36,7 @@ public final class ValidateRootDataSetHandler
         final QualifiedContentTypeName qualifiedContentTypeName = command.getContentType();
         final ContentType contentType =
             contentTypeDao.select( QualifiedContentTypeNames.from( qualifiedContentTypeName ), context.getJcrSession() ).first();
+        Preconditions.checkArgument( contentType != null, "ContentType [%s] not found", qualifiedContentTypeName );
 
         final OccurrenceValidator occurrenceValidator = new OccurrenceValidator( contentType );
 

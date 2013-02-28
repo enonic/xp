@@ -13,8 +13,10 @@ class ContentTypeJcrMapper
 {
     static final String CONTENT_TYPE = "contentType";
 
-    private final ContentTypeJsonSerializer jsonSerializer =
-        new ContentTypeJsonSerializer().includeCreatedTime( true ).includeModifiedTime( true );
+    private final ContentTypeJsonSerializer jsonSerializer = new ContentTypeJsonSerializer().
+        includeCreatedTime( true ).
+        includeModifiedTime( true ).
+        includeQualifiedName( false );
 
     private final IconJcrMapper iconJcrMapper = new IconJcrMapper();
 

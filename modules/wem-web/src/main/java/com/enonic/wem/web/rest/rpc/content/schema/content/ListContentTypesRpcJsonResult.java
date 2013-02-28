@@ -13,7 +13,7 @@ import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
 final class ListContentTypesRpcJsonResult
     extends JsonResult
 {
-    private final ContentTypeJsonSerializer contentTypeSerializer = new ContentTypeJsonSerializer();
+    private final ContentTypeJsonSerializer contentTypeSerializer = new ContentTypeJsonSerializer().includeQualifiedName( true );
 
     private final ContentTypes contentTypes;
 

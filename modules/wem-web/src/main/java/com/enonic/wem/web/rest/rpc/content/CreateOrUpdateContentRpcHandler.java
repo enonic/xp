@@ -3,6 +3,7 @@ package com.enonic.wem.web.rest.rpc.content;
 
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import com.enonic.wem.api.account.AccountKey;
@@ -103,7 +104,8 @@ public final class CreateOrUpdateContentRpcHandler
                 }
                 catch ( ContentAlreadyExistException e )
                 {
-                    context.setResult( new JsonErrorResult( "Unable to rename content. Content with path [{0}] already exists.", e.getContentPath() ) );
+                    context.setResult(
+                        new JsonErrorResult( "Unable to rename content. Content with path [{0}] already exists.", e.getContentPath() ) );
                     return;
                 }
             }
@@ -121,7 +123,9 @@ public final class CreateOrUpdateContentRpcHandler
     {
         final GetContentTypes getContentTypes =
             Commands.contentType().get().names( QualifiedContentTypeNames.from( qualifiedContentTypeName ) );
-        return client.execute( getContentTypes ).first();
+        final ContentType contentType = client.execute( getContentTypes ).first();
+        Preconditions.checkArgument( contentType != null, "ContentType [%s] not found", qualifiedContentTypeName );
+        return contentType;
     }
 
     private ContentId createContent( final QualifiedContentTypeName qualifiedContentTypeName, ContentPath contentPath,

@@ -8,7 +8,8 @@ public class ContentTypeJsonSerializerTest
     @Override
     ContentTypeSerializer getSerializer()
     {
-        final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer();
+        final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer().
+            includeQualifiedName( true );
         contentTypeJsonSerializer.prettyPrint();
         return contentTypeJsonSerializer;
     }

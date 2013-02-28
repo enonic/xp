@@ -1,7 +1,6 @@
 {
     "name": "Article",
     "module": "News",
-    "qualifiedName": "News:Article",
     "displayName": "Article",
     "superType": "System:structured",
     "isAbstract": false,

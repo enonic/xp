@@ -3,6 +3,7 @@ package com.enonic.wem.api.content.schema.content.validator;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.data.DataSet;
@@ -22,6 +23,7 @@ class MaximumOccurrencesValidator
 
     MaximumOccurrencesValidator( final ContentType contentType )
     {
+        Preconditions.checkNotNull( contentType, "No contentType given" );
         this.contentType = contentType;
     }
 

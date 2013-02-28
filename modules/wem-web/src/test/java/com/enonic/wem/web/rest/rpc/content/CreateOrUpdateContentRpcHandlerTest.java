@@ -15,10 +15,12 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.MockContentId;
+import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.ContentTypes;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.exception.ContentAlreadyExistException;
 import com.enonic.wem.api.exception.ContentNotFoundException;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
@@ -47,7 +49,12 @@ public class CreateOrUpdateContentRpcHandlerTest
         throws Exception
     {
         ContentId contentId = MockContentId.from( "123" );
-        Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
+        ContentType contentType = ContentType.newContentType().
+            name( "myContentType" ).
+            module( ModuleName.from( "myModule" ) ).
+            build();
+
+        Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
         Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
         Mockito.when( client.execute( isA( CreateContent.class ) ) ).thenReturn( contentId );
 
@@ -67,7 +74,12 @@ public class CreateOrUpdateContentRpcHandlerTest
         throws Exception
     {
         ContentId contentId = MockContentId.from( "123" );
-        Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
+        ContentType contentType = ContentType.newContentType().
+            name( "myContentType" ).
+            module( ModuleName.from( "myModule" ) ).
+            build();
+
+        Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
         final Contents contents =
             Contents.from( Content.newContent().name( "my-child-content" ).type( QualifiedContentTypeName.unstructured() ).build() );
         Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( contents ).thenReturn( Contents.empty() );
@@ -88,7 +100,12 @@ public class CreateOrUpdateContentRpcHandlerTest
     public void updateExistingContent()
         throws Exception
     {
-        Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
+        ContentType contentType = ContentType.newContentType().
+            name( "myContentType" ).
+            module( ModuleName.from( "myModule" ) ).
+            build();
+
+        Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
         Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
         Mockito.when( client.execute( isA( UpdateContents.class ) ) ).thenReturn( 1 );
 
@@ -105,8 +122,13 @@ public class CreateOrUpdateContentRpcHandlerTest
     public void createContent_parent_not_found()
         throws Exception
     {
+        ContentType contentType = ContentType.newContentType().
+            name( "myContentType" ).
+            module( ModuleName.from( "myModule" ) ).
+            build();
         ContentPath parentContentPath = ContentPath.from( "/myContent/childContent" ).getParentPath();
-        Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
+
+        Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
         Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
         Mockito.when( client.execute( isA( CreateContent.class ) ) ).thenThrow( new ContentNotFoundException( parentContentPath ) );
 
@@ -122,7 +144,12 @@ public class CreateOrUpdateContentRpcHandlerTest
     public void updateWithRenaming()
         throws Exception
     {
-        Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
+        ContentType contentType = ContentType.newContentType().
+            name( "myContentType" ).
+            module( ModuleName.from( "myModule" ) ).
+            build();
+
+        Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
         Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
         Mockito.when( client.execute( isA( UpdateContents.class ) ) ).thenReturn( 1 );
 
@@ -139,10 +166,16 @@ public class CreateOrUpdateContentRpcHandlerTest
     public void updateWithRenaming_to_existing_path()
         throws Exception
     {
-        Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
+        ContentType contentType = ContentType.newContentType().
+            name( "myContentType" ).
+            module( ModuleName.from( "myModule" ) ).
+            build();
+
+        Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
         Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
         Mockito.when( client.execute( isA( UpdateContents.class ) ) ).thenReturn( 1 );
-        Mockito.when( client.execute( isA( RenameContent.class) ) ).thenThrow( new ContentAlreadyExistException(ContentPath.from("mysite:/existingContent")) );
+        Mockito.when( client.execute( isA( RenameContent.class ) ) ).thenThrow(
+            new ContentAlreadyExistException( ContentPath.from( "mysite:/existingContent" ) ) );
 
         ObjectNode expectedJson = objectNode();
         expectedJson.put( "success", false );

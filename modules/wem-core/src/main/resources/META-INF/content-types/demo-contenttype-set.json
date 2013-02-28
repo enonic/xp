@@ -1,7 +1,6 @@
 {
     "name": "Contact (Set in Set)",
     "module": "Demo",
-    "qualifiedName": "Demo:Set",
     "displayName": "Form Item Set Demo",
     "superType": "System:structured",
     "isAbstract": false,

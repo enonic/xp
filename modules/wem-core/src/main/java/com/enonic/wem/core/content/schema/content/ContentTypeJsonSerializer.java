@@ -21,11 +21,19 @@ public class ContentTypeJsonSerializer
     extends AbstractJsonSerializer<ContentType>
     implements ContentTypeSerializer
 {
+    private boolean includeQualifiedName = false;
+
     private boolean includeCreatedTime = false;
 
     private boolean includeModifiedTime = false;
 
     private FormItemsJsonSerializer formItemsSerializer = new FormItemsJsonSerializer( objectMapper() );
+
+    public ContentTypeJsonSerializer includeQualifiedName( final boolean value )
+    {
+        includeQualifiedName = value;
+        return this;
+    }
 
     public ContentTypeJsonSerializer includeCreatedTime( final boolean value )
     {
@@ -46,7 +54,10 @@ public class ContentTypeJsonSerializer
         final ObjectNode objectNode = mapper.createObjectNode();
         objectNode.put( "name", contentType.getName() );
         objectNode.put( "module", contentType.getModuleName().toString() );
-        objectNode.put( "qualifiedName", contentType.getQualifiedName().toString() );
+        if ( includeQualifiedName )
+        {
+            objectNode.put( "qualifiedName", contentType.getQualifiedName().toString() );
+        }
         objectNode.put( "displayName", contentType.getDisplayName() );
         objectNode.put( "contentDisplayNameScript", contentType.getContentDisplayNameScript() );
         objectNode.put( "superType", contentType.getSuperType() != null ? contentType.getSuperType().toString() : null );

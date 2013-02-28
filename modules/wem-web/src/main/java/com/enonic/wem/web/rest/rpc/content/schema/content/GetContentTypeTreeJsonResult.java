@@ -16,7 +16,7 @@ import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
 public class GetContentTypeTreeJsonResult
     extends JsonResult
 {
-    private final static ContentTypeJsonSerializer contentTypeSerializer = new ContentTypeJsonSerializer();
+    private final static ContentTypeJsonSerializer contentTypeSerializer = new ContentTypeJsonSerializer().includeQualifiedName( true );
 
     private Tree<ContentType> tree;
 

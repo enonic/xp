@@ -2,7 +2,6 @@
 <type>
   <name>AllSchemas</name>
   <module>myModule</module>
-  <qualified-name>myModule:AllSchemas</qualified-name>
   <display-name>All the Base Types</display-name>
   <display-name-script/>
   <super-type>System:Content</super-type>

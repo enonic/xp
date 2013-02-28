@@ -13,7 +13,7 @@ import com.enonic.wem.web.json.JsonResult;
 final class ValidateContentTypeJsonResult
     extends JsonResult
 {
-    private final static ContentTypeJsonSerializer contentTypeSerializer = new ContentTypeJsonSerializer();
+    private final static ContentTypeJsonSerializer contentTypeSerializer = new ContentTypeJsonSerializer().includeQualifiedName( true );
 
     private final ContentTypeValidationResult contentTypeValidationResult;
 
