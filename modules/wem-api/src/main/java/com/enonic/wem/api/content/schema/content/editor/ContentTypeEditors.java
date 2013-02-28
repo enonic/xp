@@ -3,8 +3,12 @@ package com.enonic.wem.api.content.schema.content.editor;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.schema.content.ContentType;
 
-public abstract class ContentTypeEditors
+public final class ContentTypeEditors
 {
+    private ContentTypeEditors()
+    {
+    }
+
     public static ContentTypeEditor composite( final ContentTypeEditor... editors )
     {
         return new CompositeContentTypeEditor( editors );
@@ -12,16 +16,11 @@ public abstract class ContentTypeEditors
 
     public static ContentTypeEditor setContentType( final ContentType contentType )
     {
-        return new SetContentTypeEditor( contentType );
+        return SetContentTypeEditor.newSetContentTypeEditor( contentType ).build();
     }
 
     public static ContentTypeEditor setIcon( final Icon icon )
     {
-        return new SetContentTypeIconEditor( icon );
-    }
-
-    public static ContentTypeEditor removeIcon()
-    {
-        return new SetContentTypeIconEditor( null );
+        return SetContentTypeEditor.newSetContentTypeEditor().icon( icon ).build();
     }
 }
