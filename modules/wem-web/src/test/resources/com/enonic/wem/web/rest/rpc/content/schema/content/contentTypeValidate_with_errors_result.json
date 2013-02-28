@@ -14,6 +14,7 @@
         "module": "myModule",
         "qualifiedName": "myModule:AllTypes",
         "displayName": null,
+        "contentDisplayNameScript": null,
         "superType": "System:unstructured",
         "isAbstract": false,
         "isFinal": false,

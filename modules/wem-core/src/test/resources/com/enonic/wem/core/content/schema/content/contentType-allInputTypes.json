@@ -3,6 +3,7 @@
     "module": "myModule",
     "qualifiedName": "myModule:AllInputTypes",
     "displayName": "All the Input Types",
+    "contentDisplayNameScript": null,
     "superType": "System:Content",
     "isAbstract": false,
     "isFinal": true,
