@@ -3,7 +3,7 @@
     "module": "myModule",
     "qualifiedName": "myModule:AllSchemas",
     "displayName": "All the Base Types",
-    "contentDisplayNameScript": null,
+    "contentDisplayNameScript": "$('firstName') + ' ' + $('lastName')",
     "superType": "System:Content",
     "isAbstract": false,
     "isFinal": true,

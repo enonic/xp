@@ -10,9 +10,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.TextLine', {
                 name: this.name,
                 value: this.value,
                 enableKeyEvents: true,
-                listeners : {
-                    change : function (f, e) {
-                        me.up('contentWizardPanel').onContentInputChanged (f, e);
+                listeners: {
+                    change: function (f, e) {
+                        me.up('contentWizardPanel').onFormInputChanged(f, e);
                     }
                 }
             }

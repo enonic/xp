@@ -102,8 +102,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
                                     cls: 'admin-display-name',
                                     dirtyCls: 'admin-display-name-dirty',
                                     enableKeyEvents: true,
-                                    listeners : {
-                                        change : function(f, e) {
+                                    listeners: {
+                                        change: function (f, e) {
                                             me.onDisplayNameChanged(f, e);
                                         }
                                     }
@@ -187,8 +187,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         this.evaluateDisplayName = false;
     },
 
-    onContentInputChanged: function (f, e) {
-        if ( this.evaluateDisplayName ) {
+    onFormInputChanged: function (f, e) {
+        if (this.evaluateDisplayName) {
             var displayNameField = this.down('#displayName');
 
             if (displayNameField) {
