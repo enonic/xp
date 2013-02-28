@@ -12,6 +12,29 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     isLiveMode: true,
 
     initComponent: function () {
+
+        if (Ext.isEmpty(this.data)) {
+
+            this.activeItem = 'noSelection';
+
+        } else if (Ext.isObject(this.data) || this.data.length === 1) {
+
+            if (this.isLiveMode) {
+                this.activeItem = 'livePreview';
+            } else {
+                this.activeItem = 'singleSelection';
+            }
+
+        } else if (this.data.length > 1 && this.data.length <= 10) {
+
+            this.activeItem = 'largeBoxSelection';
+
+        } else {
+
+            this.activeItem = 'smallBoxSelection';
+
+        }
+
         this.on('afterrender', function () {
             if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
@@ -44,7 +67,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                 livePreview.load('/dev/live-edit/page/page.jsp');
 
             }
-
         };
 
         this.toolBarConfig({
@@ -64,7 +86,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             {
                 title: "Content",
                 itemId: 'contentTab',
-                html: 'Content'
+                html: ' Content'
             },
             {
                 title: "Tree",
@@ -147,6 +169,26 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             xtype: 'contentLive'
         };
     },
+
+    resolveActiveItem: function (data) {
+        var activeItem;
+        if (Ext.isEmpty(this.data)) {
+            activeItem = 'noSelection';
+        } else if (Ext.isObject(this.data) || this.data.length === 1) {
+            if (this.isLiveMode) {
+                activeItem = 'livePreview';
+            } else {
+                activeItem = 'singleSelection';
+            }
+
+        } else if (this.data.length > 1 && this.data.length <= 10) {
+            activeItem = 'largeBoxSelection';
+        } else {
+            activeItem = 'smallBoxSelection';
+        }
+        return activeItem;
+    },
+
 
     toggleLive: function () {
         this.isLiveMode = !this.isLiveMode;

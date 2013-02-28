@@ -14,10 +14,16 @@ Ext.define('Admin.controller.contentManager.DetailPanelController', {
             'contentDetail': {
                 deselect: this.deselectRecord,
                 clearselection: this.clearSelection
+            },
+            'toggleslide': {
+                change: this.toggleLiveWizard
             }
         });
     },
 
+    toggleLiveWizard: function (enabled) {
+        this.getContentDetailPanel().toggleLive();
+    },
 
     deselectRecord: function (key) {
         this.getContentTreeGridPanel().deselect(key);

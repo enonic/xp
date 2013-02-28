@@ -30,14 +30,12 @@ Ext.define('Admin.controller.contentManager.Controller', {
     },
 
     viewContent: function (content, callback) {
-
         var me = this;
 
         if (!content) {
             var showPanel = this.getContentTreeGridPanel();
             content = showPanel.getSelection();
-        }
-        else {
+        } else {
             content = [].concat(content);
         }
 
