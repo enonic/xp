@@ -1,6 +1,7 @@
 package com.enonic.wem.web.rest.rpc.content.schema.content;
 
 import javax.inject.Inject;
+
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Icon;
@@ -10,6 +11,7 @@ import com.enonic.wem.api.command.content.schema.content.UpdateContentTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.content.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.core.content.schema.content.ContentTypeXmlSerializer;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.web.json.JsonErrorResult;
@@ -21,7 +23,7 @@ import com.enonic.wem.web.rest.service.upload.UploadService;
 
 import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
-import static com.enonic.wem.api.content.schema.content.editor.ContentTypeEditors.setContentType;
+import static com.enonic.wem.api.content.schema.content.editor.SetContentTypeEditor.newSetContentTypeEditor;
 
 @Component
 public class CreateOrUpdateContentTypeRpcHandler
@@ -82,8 +84,16 @@ public class CreateOrUpdateContentTypeRpcHandler
         {
             final QualifiedContentTypeNames qualifiedContentTypeNames = QualifiedContentTypeNames.from( contentType.getQualifiedName() );
 
-            final UpdateContentTypes updateCommand =
-                contentType().update().names( qualifiedContentTypeNames ).editor( setContentType( contentType ) );
+            final ContentTypeEditor editor = newSetContentTypeEditor().
+                displayName( contentType.getDisplayName() ).
+                icon( contentType.getIcon() ).
+                superType( contentType.getSuperType() ).
+                setAbstract( contentType.isAbstract() ).
+                setFinal( contentType.isFinal() ).
+                contentDisplayNameScript( contentType.getContentDisplayNameScript() ).
+                form( contentType.form() ).
+                build();
+            final UpdateContentTypes updateCommand = contentType().update().names( qualifiedContentTypeNames ).editor( editor );
 
             client.execute( updateCommand );
 

@@ -12,13 +12,14 @@ import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.ContentTypes;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
-import com.enonic.wem.api.content.schema.content.editor.ContentTypeEditors;
+import com.enonic.wem.api.content.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.content.schema.content.validator.InvalidContentTypeException;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
+import static com.enonic.wem.api.content.schema.content.editor.SetContentTypeEditor.newSetContentTypeEditor;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -65,14 +66,12 @@ public class UpdateContentTypesHandlerTest
         Mockito.when( contentTypeDao.select( isA( QualifiedContentTypeNames.class ), any( Session.class ) ) ).thenReturn( contentTypes );
 
         UpdateContentTypes command = Commands.contentType().update().names( QualifiedContentTypeNames.from( "myModule:myContentType" ) );
-        ContentType changeContentType = newContentType().
-            name( "myContentType" ).
-            module( ModuleName.from( "myModule" ) ).
+        final ContentTypeEditor editor = newSetContentTypeEditor().
             displayName( "Changed" ).
             setAbstract( false ).
             superType( QualifiedContentTypeName.structured() ).
             build();
-        command.editor( ContentTypeEditors.setContentType( changeContentType ) );
+        command.editor( editor );
 
         // exercise
         this.handler.handle( this.context, command );
@@ -105,14 +104,12 @@ public class UpdateContentTypesHandlerTest
             ContentTypes.from( existingContentType ) );
 
         UpdateContentTypes command = Commands.contentType().update().names( QualifiedContentTypeNames.from( "myModule:myContentType" ) );
-        ContentType changeContentType = newContentType().
-            name( "myContentType" ).
-            module( ModuleName.from( "myModule" ) ).
+        final ContentTypeEditor editor = newSetContentTypeEditor().
             displayName( "Changed" ).
             setAbstract( false ).
             superType( QualifiedContentTypeName.shortcut() ).
             build();
-        command.editor( ContentTypeEditors.setContentType( changeContentType ) );
+        command.editor( editor );
 
         // exercise
         this.handler.handle( this.context, command );

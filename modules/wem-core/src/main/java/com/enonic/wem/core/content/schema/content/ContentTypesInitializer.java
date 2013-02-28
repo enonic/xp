@@ -16,12 +16,13 @@ import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.content.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.initializer.InitializerTask;
 
 import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
-import static com.enonic.wem.api.content.schema.content.editor.ContentTypeEditors.setContentType;
+import static com.enonic.wem.api.content.schema.content.editor.SetContentTypeEditor.newSetContentTypeEditor;
 
 @Component
 @Order(10)
@@ -88,7 +89,16 @@ public class ContentTypesInitializer
         }
         else
         {
-            client.execute( contentType().update().names( qualifiedNames ).editor( setContentType( contentType ) ) );
+            final ContentTypeEditor editor = newSetContentTypeEditor().
+                displayName( contentType.getDisplayName() ).
+                icon( contentType.getIcon() ).
+                superType( contentType.getSuperType() ).
+                setAbstract( contentType.isAbstract() ).
+                setFinal( contentType.isFinal() ).
+                contentDisplayNameScript( contentType.getContentDisplayNameScript() ).
+                form( contentType.form() ).
+                build();
+            client.execute( contentType().update().names( qualifiedNames ).editor( editor ) );
         }
     }
 
