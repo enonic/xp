@@ -4,11 +4,10 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
 
     inputConfig: undefined,
 
-    minWidth: 640,
     labelWidth: 105,
 
     layout: {
-        type: 'hbox'
+        type: 'column'
     },
 
     mixins: {
@@ -113,6 +112,10 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
         if (this.nextField) {
             this.nextField.updateButtonStateInternal(totalCount);
         }
+    },
+
+    getConfig: function () {
+        return this.inputConfig;
     }
 
 
