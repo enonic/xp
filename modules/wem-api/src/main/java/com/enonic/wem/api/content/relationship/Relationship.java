@@ -35,15 +35,9 @@ public final class Relationship
     private final ImmutableMap<String, String> properties;
 
     /**
-     * If true, managed by fromContent.
-     * It can only be modified through fromContent.
+     * Path to the Data in the fromContent that is managing this Relationship.
      */
-    private boolean managed;
-
-    /**
-     * Path to the Entry in the fromContent that is managing this relationship.
-     */
-    private EntryPath managingData;
+    private final EntryPath managingData;
 
     public Relationship( final Builder builder )
     {
@@ -54,11 +48,7 @@ public final class Relationship
         this.createdTime = builder.createdTime;
         this.creator = builder.creator;
         this.properties = ImmutableMap.copyOf( builder.properties );
-        this.managed = builder.managed;
-        if ( this.managed )
-        {
-            this.managingData = builder.managingData;
-        }
+        this.managingData = builder.managingData;
     }
 
     public RelationshipId getId()
@@ -108,7 +98,7 @@ public final class Relationship
 
     public boolean isManaged()
     {
-        return managed;
+        return managingData != null;
     }
 
     public EntryPath getManagingData()
@@ -153,8 +143,6 @@ public final class Relationship
 
         private Map<String, String> properties = Maps.newLinkedHashMap();
 
-        private boolean managed = false;
-
         private EntryPath managingData;
 
         private Builder( final Relationship relationship )
@@ -166,7 +154,6 @@ public final class Relationship
             fromContent = relationship.fromContent;
             toContent = relationship.toContent;
             properties.putAll( relationship.getProperties() );
-            managed = relationship.managed;
             managingData = relationship.managingData;
         }
 
@@ -226,7 +213,6 @@ public final class Relationship
 
         public Builder managed( EntryPath managingData )
         {
-            this.managed = true;
             this.managingData = managingData;
             return this;
         }
