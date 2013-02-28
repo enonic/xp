@@ -22,6 +22,8 @@ public final class SetContentTypeEditor
 
     private final Icon icon;
 
+    private final String contentDisplayNameScript;
+
     private SetContentTypeEditor( final Builder builder )
     {
         this.displayName = builder.displayName;
@@ -30,6 +32,7 @@ public final class SetContentTypeEditor
         this.isFinal = builder.isFinal;
         this.form = builder.form;
         this.icon = builder.icon;
+        this.contentDisplayNameScript = builder.contentDisplayNameScript;
     }
 
     public static Builder newSetContentTypeEditor()
@@ -56,6 +59,8 @@ public final class SetContentTypeEditor
 
         private Icon icon;
 
+        private String contentDisplayNameScript;
+
         private Builder()
         {
         }
@@ -68,6 +73,7 @@ public final class SetContentTypeEditor
             isFinal = contentType.isFinal();
             form = contentType.form();
             icon = contentType.getIcon();
+            contentDisplayNameScript = contentType.getContentDisplayNameScript();
         }
 
         public Builder displayName( final String displayName )
@@ -106,6 +112,12 @@ public final class SetContentTypeEditor
             return this;
         }
 
+        public Builder contentDisplayNameScript( final String contentDisplayNameScript )
+        {
+            this.contentDisplayNameScript = contentDisplayNameScript;
+            return this;
+        }
+
         public SetContentTypeEditor build()
         {
             return new SetContentTypeEditor( this );
@@ -119,6 +131,7 @@ public final class SetContentTypeEditor
     {
         final boolean modified = ( this.icon != null ) ||
             ( this.displayName != null && !displayName.equals( contentType.getDisplayName() ) ) ||
+            ( this.contentDisplayNameScript != null && !contentDisplayNameScript.equals( contentType.getContentDisplayNameScript() ) ) ||
             ( this.superType != null && !superType.equals( contentType.getSuperType() ) ) ||
             ( this.isAbstract != contentType.isAbstract() ) ||
             ( this.isFinal != contentType.isFinal() ) ||
@@ -148,6 +161,10 @@ public final class SetContentTypeEditor
         if ( this.form != null )
         {
             builder.form( this.form );
+        }
+        if ( this.contentDisplayNameScript != null )
+        {
+            builder.contentDisplayNameScript( this.contentDisplayNameScript );
         }
 
         final Icon iconToSet = ( this.icon == null ) ? null : Icon.copyOf( icon );
