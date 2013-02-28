@@ -2,7 +2,6 @@ Ext.define('Admin.view.DetailPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.detailPanel',
     layout: 'card',
-    autoScroll: true,
     cls: 'admin-preview-panel admin-detail',
     border: false,
 
@@ -72,6 +71,7 @@ Ext.define('Admin.view.DetailPanel', {
                 type: 'column',
                 columns: 3
             },
+            autoScroll: true,
             defaults: {
                 border: 0
             },
@@ -138,6 +138,7 @@ Ext.define('Admin.view.DetailPanel', {
             xtype: 'component',
             styleHtmlContent: true,
             padding: 10,
+            autoScroll: true,
             bodyStyle: {
                 border: 'none'
             },
@@ -169,6 +170,7 @@ Ext.define('Admin.view.DetailPanel', {
             xtype: 'component',
             styleHtmlContent: true,
             padding: 10,
+            autoScroll: true,
             bodyStyle: {
                 border: 'none'
             },
