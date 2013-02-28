@@ -48,7 +48,7 @@ public class ContentTypesInitializer
     private static final String[] TEST_CONTENT_TYPES =
         {"demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json", "demo-contenttype-set.json", "demo-contenttype-blog.json",
             "demo-contenttype-article1.json", "demo-contenttype-article2.json", "demo-contenttype-relation.json",
-            "demo-contenttype-occurrences.json"};
+            "demo-contenttype-occurrences.json", "demo-contenttype-contentDisplayNameScript.json"};
 
     private static final Logger LOG = LoggerFactory.getLogger( ContentTypesInitializer.class );
 

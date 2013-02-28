@@ -29,6 +29,8 @@ public final class CreateContentType
 
     private Icon icon;
 
+    private String contentDisplayNameScript;
+
     public CreateContentType contentType( final ContentType contentType )
     {
         this.name = contentType.getName();
@@ -39,6 +41,7 @@ public final class CreateContentType
         this.moduleName = contentType.getModuleName();
         this.form = contentType.form();
         this.icon = contentType.getIcon();
+        this.contentDisplayNameScript = contentType.getContentDisplayNameScript();
         return this;
     }
 
@@ -80,6 +83,11 @@ public final class CreateContentType
     public Icon getIcon()
     {
         return icon;
+    }
+
+    public String getContentDisplayNameScript()
+    {
+        return contentDisplayNameScript;
     }
 
     @Override

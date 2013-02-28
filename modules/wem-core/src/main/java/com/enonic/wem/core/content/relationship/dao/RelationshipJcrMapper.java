@@ -30,7 +30,6 @@ class RelationshipJcrMapper
         throws RepositoryException
     {
         final String relationshipJson = relationshipNode.getProperty( RELATIONSHIP ).getString();
-        System.out.println( "relationshipJson" + relationshipJson );
         final Relationship relationship = jsonSerializer.toRelationship( relationshipJson );
         return Relationship.newRelationship( relationship ).
             id( RelationshipIdFactory.from( relationshipNode ) ).

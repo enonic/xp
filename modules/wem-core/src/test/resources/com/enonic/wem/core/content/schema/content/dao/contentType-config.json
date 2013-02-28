@@ -1,0 +1,10 @@
+{
+    "name": "myContentType",
+    "module": "myModule",
+    "displayName": "My module",
+    "contentDisplayNameScript": "$('firstName') + ' ' +  $('lastName')",
+    "superType": "System:unstructured",
+    "isAbstract": false,
+    "isFinal": true,
+    "form": []
+}
