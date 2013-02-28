@@ -40,6 +40,8 @@ public final class ContentType
 
     private final Icon icon;
 
+    private final String contentDisplayNameScript;
+
     private ContentType( final Builder builder )
     {
         Preconditions.checkNotNull( builder.name, "Name cannot be null in ContentType" );
@@ -54,6 +56,7 @@ public final class ContentType
         this.modifiedTime = builder.modifiedTime;
         this.form = builder.formBuilder.build();
         this.icon = builder.icon;
+        this.contentDisplayNameScript = builder.contentDisplayNameScript;
     }
 
     @Override
@@ -123,6 +126,11 @@ public final class ContentType
         return SchemaKey.from( getQualifiedName() );
     }
 
+    public String getContentDisplayNameScript()
+    {
+        return contentDisplayNameScript;
+    }
+
     @Override
     public String toString()
     {
@@ -170,6 +178,8 @@ public final class ContentType
 
         private Icon icon;
 
+        private String contentDisplayNameScript;
+
         private Builder()
         {
             formBuilder = newForm();
@@ -189,6 +199,7 @@ public final class ContentType
             }
             this.createdTime = source.createdTime;
             this.modifiedTime = source.modifiedTime;
+            this.contentDisplayNameScript = source.contentDisplayNameScript;
             this.icon = source.icon == null ? null : Icon.copyOf( source.icon );
         }
 
@@ -283,6 +294,12 @@ public final class ContentType
         public Builder icon( final Icon icon )
         {
             this.icon = icon;
+            return this;
+        }
+
+        public Builder contentDisplayNameScript( final String contentDisplayNameScript )
+        {
+            this.contentDisplayNameScript = contentDisplayNameScript;
             return this;
         }
 

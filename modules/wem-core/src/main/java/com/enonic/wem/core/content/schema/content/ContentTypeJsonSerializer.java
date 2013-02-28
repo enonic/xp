@@ -48,6 +48,7 @@ public class ContentTypeJsonSerializer
         objectNode.put( "module", contentType.getModuleName().toString() );
         objectNode.put( "qualifiedName", contentType.getQualifiedName().toString() );
         objectNode.put( "displayName", contentType.getDisplayName() );
+        objectNode.put( "contentDisplayNameScript", contentType.getContentDisplayNameScript() );
         objectNode.put( "superType", contentType.getSuperType() != null ? contentType.getSuperType().toString() : null );
         objectNode.put( "isAbstract", contentType.isAbstract() );
         objectNode.put( "isFinal", contentType.isFinal() );
@@ -87,6 +88,10 @@ public class ContentTypeJsonSerializer
         builder.name( JsonSerializerUtil.getStringValue( "name", contentTypeNode ) );
         builder.module( ModuleName.from( JsonSerializerUtil.getStringValue( "module", contentTypeNode ) ) );
         builder.displayName( JsonSerializerUtil.getStringValue( "displayName", contentTypeNode ) );
+        if ( contentTypeNode.has( "contentDisplayNameScript" ) )
+        {
+            builder.contentDisplayNameScript( JsonSerializerUtil.getStringValue( "contentDisplayNameScript", contentTypeNode ) );
+        }
         builder.superType( superType );
         builder.setAbstract( JsonSerializerUtil.getBooleanValue( "isAbstract", contentTypeNode ) );
         builder.setFinal( JsonSerializerUtil.getBooleanValue( "isFinal", contentTypeNode ) );

@@ -51,6 +51,7 @@ public class ContentTypeXmlSerializer
         typeEl.addContent( new Element( "module" ).setText( type.getModuleName().toString() ) );
         typeEl.addContent( new Element( "qualified-name" ).setText( type.getQualifiedName().toString() ) );
         typeEl.addContent( new Element( "display-name" ).setText( type.getDisplayName() ) );
+        typeEl.addContent( new Element( "display-name-script" ).setText( type.getContentDisplayNameScript() ) );
         typeEl.addContent( new Element( "super-type" ).setText( type.getSuperType() != null ? type.getSuperType().toString() : null ) );
         typeEl.addContent( new Element( "is-abstract" ).setText( Boolean.toString( type.isAbstract() ) ) );
         typeEl.addContent( new Element( "is-final" ).setText( Boolean.toString( type.isFinal() ) ) );
@@ -84,6 +85,7 @@ public class ContentTypeXmlSerializer
         final String module = contentTypeEl.getChildText( "module" );
         final String name = contentTypeEl.getChildText( "name" );
         final String displayName = contentTypeEl.getChildText( "display-name" );
+        final String displayNameScript = contentTypeEl.getChildText( "display-name-script" );
         final String superTypeString = StringUtils.trimToNull( contentTypeEl.getChildText( "super-type" ) );
         final QualifiedContentTypeName superType = superTypeString != null ? new QualifiedContentTypeName( superTypeString ) : null;
         final boolean isAbstract = Boolean.parseBoolean( contentTypeEl.getChildText( "is-abstract" ) );
@@ -93,6 +95,7 @@ public class ContentTypeXmlSerializer
             name( name ).
             module( ModuleName.from( module ) ).
             displayName( displayName ).
+            contentDisplayNameScript( displayNameScript ).
             superType( superType ).
             setAbstract( isAbstract ).
             setFinal( isFinal );

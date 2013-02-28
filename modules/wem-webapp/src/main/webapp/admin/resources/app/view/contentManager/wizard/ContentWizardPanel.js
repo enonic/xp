@@ -16,6 +16,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
 
     border: 0,
     autoScroll: true,
+    evaluateDisplayName: true,
 
     isLiveMode: false,
 
@@ -98,9 +99,14 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
                                     hideLabel: true,
                                     value: headerData.displayName,
                                     emptyText: 'Display Name',
-                                    enableKeyEvents: true,
                                     cls: 'admin-display-name',
-                                    dirtyCls: 'admin-display-name-dirty'
+                                    dirtyCls: 'admin-display-name-dirty',
+                                    enableKeyEvents: true,
+                                    listeners : {
+                                        change : function(f, e) {
+                                            me.onDisplayNameChanged(f, e);
+                                        }
+                                    }
                                 },
                                 {
                                     xtype: 'component',
@@ -175,6 +181,35 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             contentName: contentName,
             isRoot: isRoot
         };
+    },
+
+    onDisplayNameChanged: function (f, e) {
+        this.evaluateDisplayName = false;
+    },
+
+    onContentInputChanged: function (f, e) {
+        if ( this.evaluateDisplayName ) {
+            var displayNameField = this.down('#displayName');
+
+            if (displayNameField) {
+                var rawData = this.getData().contentData;
+                var contentData = {};
+
+                var key;
+                for (key in rawData) {
+                    if (rawData.hasOwnProperty(key)) {
+                        contentData[key.replace(/\[0\]/g, '')] = rawData[key];
+                    }
+                }
+
+                var fn = this.data.contentType.contentDisplayNameScript;
+                var displayName = window.evaluateContentDisplayNameScript(fn, contentData);
+
+                displayNameField.setValue(displayName);
+
+                this.evaluateDisplayName = true;
+            }
+        }
     },
 
     getSteps: function () {

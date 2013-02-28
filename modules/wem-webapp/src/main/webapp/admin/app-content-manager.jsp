@@ -48,6 +48,7 @@
   <!-- Templates -->
 
   <script type="text/javascript" src="resources/app/view/XTemplates.js"></script>
+  <script type="text/javascript" src="resources/app/view/contentManager/wizard/evaluateContentDisplayNameScript.js"></script>
 
   <!-- Third party plugins -->
 
