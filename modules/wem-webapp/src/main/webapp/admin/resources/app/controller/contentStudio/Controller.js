@@ -85,7 +85,7 @@ Ext.define('Admin.controller.contentStudio.Controller', {
     },
 
     createNewSchemaPanel: function (schemaModel) {
-        switch (schemaModel.data.name) {
+        switch (schemaModel.get('name')) {
         case 'ContentType':
             this.createNewContentTypePanel(schemaModel);
             break;
@@ -99,8 +99,7 @@ Ext.define('Admin.controller.contentStudio.Controller', {
     },
 
     createEditSchemaPanel: function (schemaModel) {
-        var schema = schemaModel && schemaModel.data.type;
-        switch (schema) {
+        switch (schemaModel.get('type')) {
         case 'ContentType':
             this.createEditContentTypePanel(schemaModel);
             break;
@@ -128,16 +127,15 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         }, function (r) {
             tabPanel.el.unmask();
             if (r) {
-                contentType.raw.configXML = r.contentTypeXml;
+                contentType.set('configXML', r.contentTypeXml);
 
                 var tabItem = {
                     xtype: 'contentStudioContentTypeWizardPanel',
                     id: me.generateTabId(contentType, true),
                     editing: true,
-                    title: contentType.raw.name,
+                    title: contentType.get('name'),
                     iconCls: 'icon-content-studio-16',
-                    modelData: contentType.raw,
-                    data: contentType.raw   /* needed for tab panel to show path */
+                    data: contentType
                 };
 
                 //check if preview tab is open and close it
@@ -158,7 +156,8 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         tabPanel.addTab({
             id: 'tab-new-content-type',
             editing: true,
-            modelData: schemaModel.data,
+            isNew: true,
+            data: schemaModel,
             xtype: 'contentStudioContentTypeWizardPanel',
             title: '[New Content Type]'
         });
@@ -179,16 +178,15 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         }, function (r) {
             tabPanel.el.unmask();
             if (r) {
-                mixin.raw.configXML = r.mixinXml;
+                mixin.set('configXML', r.mixinXml);
 
                 var tabItem = {
                     xtype: 'contentStudioMixinWizardPanel',
                     id: me.generateTabId(mixin, true),
                     editing: true,
-                    title: mixin.raw.name,
+                    title: mixin.get('name'),
                     iconCls: 'icon-content-studio-16',
-                    modelData: mixin.raw,
-                    data: mixin.raw   /* needed for tab panel to show path */
+                    data: mixin   /* needed for tab panel to show path */
                 };
 
                 //check if preview tab is open and close it
@@ -209,7 +207,8 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         tabPanel.addTab({
             id: 'tab-new-mixin',
             editing: true,
-            modelData: schemaModel.data,
+            isNew: true,
+            data: schemaModel,
             xtype: 'contentStudioMixinWizardPanel',
             title: '[New Mixin]'
         });
@@ -230,16 +229,15 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         }, function (r) {
             tabPanel.el.unmask();
             if (r) {
-                relationshipType.raw.configXML = r.relationshipTypeXml;
+                relationshipType.set('configXML', r.relationshipTypeXml);
 
                 var tabItem = {
                     xtype: 'contentStudioRelationshipTypeWizardPanel',
                     itemId: me.generateTabId(relationshipType, true),
                     editing: true,
-                    title: relationshipType.raw.name,
+                    title: relationshipType.get('name'),
                     iconCls: 'icon-content-studio-16',
-                    modelData: relationshipType.raw,
-                    data: relationshipType.raw   /* needed for tab panel to show path */
+                    data: relationshipType
                 };
 
                 //check if preview tab is open and close it
@@ -260,7 +258,8 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         tabPanel.addTab({
             id: 'tab-new-relationship-type',
             editing: true,
-            modelData: schemaModel.data,
+            isNew: true,
+            data: schemaModel,
             xtype: 'contentStudioRelationshipTypeWizardPanel',
             title: '[New Relationship Type]'
         });
@@ -279,8 +278,8 @@ Ext.define('Admin.controller.contentStudio.Controller', {
                 var tabItem = {
                     id: me.generateTabId(contentType, false),
                     xtype: 'contentTypeDetailPanel',
-                    data: contentType.raw,
-                    title: contentType.raw.name
+                    data: contentType,
+                    title: contentType.get('name')
                 };
                 tabs.addTab(tabItem);
             }

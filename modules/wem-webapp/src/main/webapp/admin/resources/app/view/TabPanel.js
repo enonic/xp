@@ -78,8 +78,6 @@ Ext.define('Admin.view.TabPanel', {
                 var onRequestConfigSuccess = function (response) {
                     var tabContent = createTabFromResponse(response);
                     tab.add(tabContent);
-                    // tab already has data referencing the source for the tab, so update data with response
-                    tab.data = response;
                     mask.hide();
                     // There is a need to call doLayout manually, since it isn't called for background tabs
                     // after content was added

@@ -19,6 +19,11 @@ Ext.define('Admin.view.userstore.wizard.UserstoreWizardPanel', {
         border: false
     },
 
+    headerTemplate: '<div class="admin-wizard-header">' +
+                    '<h1 class="admin-display-name admin-edited-field">{displayName}</h1>' +
+                    '<span>{qualifiedName}</span>' +
+                    '</div>',
+
     initComponent: function () {
         var me = this;
         var isNew = this.isNewUserstore();
@@ -29,7 +34,7 @@ Ext.define('Admin.view.userstore.wizard.UserstoreWizardPanel', {
             autoHeight: true,
             cls: 'admin-wizard-header-container',
             border: false,
-            tpl: new Ext.XTemplate(Templates.account.groupWizardHeader),
+            tpl: new Ext.XTemplate(me.headerTemplate),
             data: {
                 displayName: displayNameValue
             }

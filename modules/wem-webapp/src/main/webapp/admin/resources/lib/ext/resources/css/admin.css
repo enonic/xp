@@ -2433,28 +2433,23 @@ td {
     color: #777777;
 }
 
-/* line 167, ../sass/admin/css/_form.scss */
-.form-item-set .form-item-set {
-    margin-left: 10px !important;
-}
-
-/* line 169, ../sass/admin/css/_form.scss */
+/* line 168, ../sass/admin/css/_form.scss */
 .form-item-set .form-item-set .admin-formitemset-block {
     background-color: #f9f9f9;
 }
 
-/* line 174, ../sass/admin/css/_form.scss */
+/* line 173, ../sass/admin/css/_form.scss */
 .form-item-set .form-item-set .form-item-set .admin-formitemset-block {
     background-color: #ffffff;
 }
 
-/* line 179, ../sass/admin/css/_form.scss */
+/* line 178, ../sass/admin/css/_form.scss */
 .form-item-set .form-item-set .form-item-set .form-item-set .admin-formitemset-block {
     background-color: #f9f9f9;
 }
 
 /* To allow box-shadow, we must override overflow: hidden on containing elements. */
-/* line 193, ../sass/admin/css/_form.scss */
+/* line 192, ../sass/admin/css/_form.scss */
 .admin-wizard .x-fieldset-body,
 .admin-wizard .x-panel-body,
 .admin-wizard .x-fit-item,
@@ -2463,7 +2458,7 @@ td {
 }
 
 /* Fix for fieldset/legend in Firefox (see CMS-1013). We should try to find a better workaround */
-/* line 199, ../sass/admin/css/_form.scss */
+/* line 198, ../sass/admin/css/_form.scss */
 body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     padding: 0;
 }
@@ -3251,10 +3246,17 @@ div.x-mask {
 
 /* line 57, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .title-button button .x-btn-inner {
-    padding-left: 36px;
+    padding-left: 40px;
 }
 
-/* line 65, ../sass/admin/css/_top-bar.scss */
+/* line 60, ../sass/admin/css/_top-bar.scss */
+.x-toolbar.admin-topbar-panel .title-button button .x-btn-inner .count {
+    padding: 4px;
+    margin-left: 8px;
+    background: red;
+}
+
+/* line 71, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .home-button {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
@@ -3280,19 +3282,19 @@ div.x-mask {
 }
 
 /*  Tab menu  */
-/* line 74, ../sass/admin/css/_top-bar.scss */
+/* line 80, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu {
     overflow: visible !important;
 }
 
-/* line 77, ../sass/admin/css/_top-bar.scss */
+/* line 83, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .x-menu-body {
     background: #FFF !important;
     padding: 0 !important;
     border: 1px solid #ccc !important;
 }
 
-/* line 83, ../sass/admin/css/_top-bar.scss */
+/* line 89, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .balloon-tip {
     position: absolute;
     width: 100%;
@@ -3301,7 +3303,7 @@ div.x-mask {
     background: url("../themes/images/default/ballon-tips.png") bottom center no-repeat;
 }
 
-/* line 91, ../sass/admin/css/_top-bar.scss */
+/* line 97, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .title {
     border-bottom: 1px solid #ccc;
     font-size: 11px;
@@ -3311,7 +3313,7 @@ div.x-mask {
     margin-bottom: 12px;
 }
 
-/* line 99, ../sass/admin/css/_top-bar.scss */
+/* line 105, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .title span {
     position: relative;
     bottom: -6px;
@@ -3319,29 +3321,29 @@ div.x-mask {
     background: #FFF;
 }
 
-/* line 107, ../sass/admin/css/_top-bar.scss */
+/* line 113, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item {
     padding: 6px 12px;
     font-size: 13px;
 }
 
-/* line 111, ../sass/admin/css/_top-bar.scss */
+/* line 117, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.current-tab {
     background-color: #eeeeee;
 }
 
-/* line 115, ../sass/admin/css/_top-bar.scss */
+/* line 121, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.active {
     background: #4294DE;
     color: #FFF;
 }
 
-/* line 119, ../sass/admin/css/_top-bar.scss */
+/* line 125, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.active a.close-button {
     background: url("../themes/images/default/navigate_cross-16px.png") 0 -16px no-repeat;
 }
 
-/* line 124, ../sass/admin/css/_top-bar.scss */
+/* line 130, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item a.close-button {
     background: url("../themes/images/default/navigate_cross-16px.png") 0 0 no-repeat;
     border: 1px solid transparent;
@@ -3350,7 +3352,7 @@ div.x-mask {
     cursor: pointer;
 }
 
-/* line 133, ../sass/admin/css/_top-bar.scss */
+/* line 139, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu em {
     position: relative;
     top: -2px;

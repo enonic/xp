@@ -26,32 +26,21 @@ Ext.define('Admin.controller.account.UserPreviewController', {
     },
 
     deleteUser: function (el, e) {
-        var previewPanel = el.up('userPreviewPanel');
-        if (previewPanel && previewPanel.data) {
-            this.showDeleteAccountWindow({data: previewPanel.data});
+        var user = this.getUserPreviewTab().data;
+        if (user) {
+            this.showDeleteAccountWindow(user);
         }
     },
 
     changePassword: function (el, e) {
-        var previewPanel = el.up('userPreviewPanel');
-        if (previewPanel && previewPanel.data) {
-            this.showChangePasswordWindow({data: previewPanel.data});
+        var user = this.getUserPreviewTab().data;
+        if (user) {
+            this.showChangePasswordWindow(user);
         }
     },
 
     editUser: function (el, e) {
-        var tab = this.getCmsTabPanel().getActiveTab();
-        var index = this.getCmsTabPanel().items.indexOf(tab);
-
-        // check if we are inside the account detail view
-        // beneath the grid or in separate tab
-        var user;
-        if (index >= 0) {
-            var previewPanel = tab.down('userPreviewPanel');
-            user = previewPanel ? previewPanel.user : tab.user;
-        } else {
-            user = this.getAccountDetailPanel().getCurrentAccount();
-        }
+        var user = this.getUserPreviewTab().data;
         if (user) {
             this.showEditAccountPanel(user);
         }

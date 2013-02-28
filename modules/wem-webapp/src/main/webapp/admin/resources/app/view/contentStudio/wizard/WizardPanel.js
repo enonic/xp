@@ -18,21 +18,11 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
     initComponent: function () {
         var me = this;
         var steps = me.getSteps();
-        var isNew = this.isNewContentType();
+        var isNew = me.isNewMode();
 
-        var iconUrl = 'resources/images/icons/128x128/cubes.png';
-        var displayNameValue = 'Display Name';
-        if (me.modelData) {
-            displayNameValue = me.modelData.displayName || me.modelData.name;
-            iconUrl = me.modelData.iconUrl;
-        }
-        me.headerData = {
-            displayName: displayNameValue
-        };
+        var headerData = this.resolveHeaderData(this.data);
 
-        /*me.tbar = Ext.createByAlias('widget.contentStudioWizardToolbar', {
-         isNew: isNew
-         });*/
+        me.tbar = this.getToolbar();
 
         me.items = [
             {
@@ -43,7 +33,7 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
                         xtype: 'photoUploadButton',
                         width: 111,
                         height: 111,
-                        photoUrl: iconUrl,
+                        photoUrl: headerData.iconUrl,
                         title: "Content",
                         style: {
                             margin: '1px'
@@ -98,7 +88,7 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
                             {
                                 xtype: 'textfield',
                                 itemId: 'displayName',
-                                value: me.headerData ? me.headerData.displayName : undefined,
+                                value: headerData.displayName,
                                 emptyText: 'Display Name',
                                 enableKeyEvents: true,
                                 cls: 'admin-display-name',
@@ -123,23 +113,31 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
     },
 
 
-    getSteps: function () {
+    getToolbar: function () {
         var me = this;
 
-        var configStep = {
-            stepTitle: 'Content Type',
-            modelData: me.modelData,
-            xtype: 'contentStudioWizardConfigPanel',
-            listeners: {
-                afterrender: function (panel) {
-                    me.panelRendered = true;
-                }
-            }
-        };
-
-        return [configStep];
+        return Ext.createByAlias('widget.contentStudioWizardToolbar', {
+            isNew: me.isNewMode()
+        });
     },
 
+    getSteps: function () {
+        // override to add steps
+        return [];
+    },
+
+    resolveHeaderData: function (data) {
+        var iconUrl = 'resources/images/icons/128x128/cubes.png';
+        var displayNameValue = 'Display Name';
+        if (data) {
+            displayNameValue = data.get('displayName') || data.get('name');
+            iconUrl = data.get('iconUrl');
+        }
+        return {
+            iconUrl: iconUrl,
+            displayName: displayNameValue
+        };
+    },
 
     removeEmptySteps: function (wizardPanel) {
         wizardPanel.items.each(function (item) {
@@ -150,8 +148,8 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
     },
 
 
-    isNewContentType: function () {
-        return this.modelData === undefined;
+    isNewMode: function () {
+        return Ext.isDefined(this.isNew) ? this.isNew : Ext.isEmpty(this.data);
     },
 
 

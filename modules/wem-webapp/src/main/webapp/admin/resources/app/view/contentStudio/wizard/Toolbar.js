@@ -6,7 +6,7 @@ Ext.define('Admin.view.contentStudio.wizard.Toolbar', {
 
     border: false,
 
-    isNewGroup: true,
+    isNew: true,
 
     defaults: {
         scale: 'medium'
