@@ -5,7 +5,8 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     requires: [
         'Admin.view.contentManager.DetailToolbar',
         'Admin.view.contentManager.LivePreview',
-        'Admin.view.account.MembershipsGraphPanel'
+        'Admin.view.account.MembershipsGraphPanel',
+        'Ext.ux.toggleslide.ToggleSlide'
     ],
 
     showToolbar: true,
@@ -25,16 +26,11 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
         this.setDataCallback = function (data) {
 
-            if (data.length > 1) {
-                this.isLiveMode = false;
-            }
             if (this.isLiveMode) {
-
                 var livePreview = this.down('#livePreview');
 
                 //TODO update urls when they are ready
                 livePreview.load('/dev/live-edit/page/page.jsp');
-
             }
         };
 
@@ -110,6 +106,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         } else {
             this.tbar = this.toolBar(['->', {
                 xtype: 'toggleslide',
+                hidden: true,
                 onText: 'Live',
                 offText: 'Form',
                 action: 'toggleLive',
