@@ -24,7 +24,7 @@ Ext.define('Admin.controller.account.GroupController', {
     },
 
     remoteDeleteGroup: function (group, callback) {
-        //TODO
+        //TODO: should accept array/single group model(s)
     }
 
 });

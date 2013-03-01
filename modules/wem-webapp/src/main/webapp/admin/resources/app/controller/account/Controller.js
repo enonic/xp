@@ -519,6 +519,8 @@ Ext.define('Admin.controller.account.Controller', {
         var deleteAccountWindow = item.up('deleteAccountWindow');
         var keys = deleteAccountWindow.getDeleteKeys();
 
+
+        //TODO: should be moved to User- or Group- Controller
         Admin.lib.RemoteService.account_delete({key: keys}, function (response) {
             deleteAccountWindow.close();
             if (!response.success) {

@@ -28,7 +28,7 @@ Ext.define('Admin.controller.contentStudio.RelationshipTypeWizardController', {
                 scope: this
             },
             deleteRelationshipType: {
-                fn: this.saveType,
+                fn: this.deleteType,
                 scope: this
             }
         });
@@ -63,20 +63,20 @@ Ext.define('Admin.controller.contentStudio.RelationshipTypeWizardController', {
     },
 
     deleteType: function (wizard) {
-        var me = this;
+        var relationshipType = wizard.data;
+
         var onDeleteRelationshipTypeSuccess = function (success, failures) {
             if (success) {
-                me.getWizardTab().close();
+                wizard.close();
                 Admin.MessageBus.showFeedback({
                     title: 'Relationship Type was deleted',
                     message: 'Relationship Type was deleted',
                     opts: {}
                 });
             }
-        }
+        };
 
-        this.remoteDeleteContentType(wizard.data, onDeleteRelationshipTypeSuccess());
-
+        this.remoteDeleteRelationshipType(relationshipType, onDeleteRelationshipTypeSuccess);
     }
 
 });

@@ -23,9 +23,12 @@ Ext.define('Admin.controller.contentStudio.SchemaController', {
         });
     },
 
-    remoteDeleteContentType: function (contentType, callback) {
+    remoteDeleteContentType: function (contentTypes, callback) {
         var me = this;
-        Admin.lib.RemoteService.contentType_delete({"qualifiedContentTypeNames": [contentType.qualifiedName]}, function (r) {
+        var contentTypeNames = Ext.Array.map([].concat(contentTypes), function(item) {
+            return item.get('qualifiedName');
+        });
+        Admin.lib.RemoteService.contentType_delete({"qualifiedContentTypeNames": contentTypeNames}, function (r) {
             if (r) {
                 callback.call(me, r.success, r.failures);
             } else {
@@ -44,9 +47,12 @@ Ext.define('Admin.controller.contentStudio.SchemaController', {
         });
     },
 
-    remoteDeleteMixin: function (mixin, callback) {
+    remoteDeleteMixin: function (mixins, callback) {
         var me = this;
-        Admin.lib.RemoteService.mixin_delete({"qualifiedMixinNames": [mixin.qualifiedName]}, function (r) {
+        var mixinNames = Ext.Array.map([].concat(mixins), function(item) {
+            return item.get('qualifiedName');
+        });
+        Admin.lib.RemoteService.mixin_delete({"qualifiedMixinNames": mixinNames}, function (r) {
             if (r) {
                 callback.call(me, r.success, r.failures);
             } else {
@@ -65,9 +71,12 @@ Ext.define('Admin.controller.contentStudio.SchemaController', {
         });
     },
 
-    remoteDeleteRelationshipType: function (relationshipType, callback) {
+    remoteDeleteRelationshipType: function (relationshipTypes, callback) {
         var me = this;
-        Admin.lib.RemoteService.relationshipType_delete({"qualifiedRelationshipTypeNames": [relationshipType.qualifiedName]}, function (r) {
+        var relationshipTypeNames = Ext.Array.map([].concat(relationshipTypes), function(item) {
+            return item.get('qualifiedName');
+        });
+        Admin.lib.RemoteService.relationshipType_delete({"qualifiedRelationshipTypeNames": relationshipTypeNames}, function (r) {
             if (r) {
                 callback.call(me, r.success, r.failures);
             } else {

@@ -23,10 +23,12 @@ Ext.define('Admin.controller.contentManager.ContentController', {
         });
     },
 
-    remoteDeleteContent: function (content, callback) {
-        //TODO
+    remoteDeleteContent: function (contents, callback) {
         var me = this;
-        Admin.lib.RemoteService.content_delete({"contentPaths": [content.path]}, function (r) {
+        var contentPaths = Ext.Array.map([].concat(contents), function(item) {
+            return item.get('path');
+        });
+        Admin.lib.RemoteService.content_delete({"contentPaths": contentPaths }, function (r) {
             if (r) {
                 callback.call(me, r.success, r.failures);
             } else {

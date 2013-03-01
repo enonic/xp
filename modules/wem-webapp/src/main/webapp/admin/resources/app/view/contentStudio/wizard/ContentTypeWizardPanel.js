@@ -3,6 +3,13 @@ Ext.define('Admin.view.contentStudio.wizard.ContentTypeWizardPanel', {
     alias: 'widget.contentStudioContentTypeWizardPanel',
 
 
+    getToolbar: function () {
+        return Ext.createByAlias('widget.contentStudioWizardToolbar', {
+            isNew: this.isNewMode(),
+            schema: 'contentType'
+        });
+    },
+
     getSteps: function () {
         var me = this;
 

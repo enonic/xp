@@ -36,12 +36,14 @@ Ext.define('Admin.controller.contentManager.DialogWindowController', {
         var win = this.getDeleteContentWindow();
         console.log(win);
         var me = this;
-        this.remoteDeleteContent(win.modelData, function (success, details) {
+        var content = win.data;
+
+        var onContentDeleted = function (success, details) {
             win.close();
             if (success) {
                 Admin.MessageBus.showFeedback({
                     title: 'Content was deleted',
-                    message: win.modelData.path + ' was deleted',
+                    message: Ext.isArray(content) && content.length > 1 ? content.length + ' contents were deleted' : '1 content was deleted',
                     opts: {}
                 });
             } else {
@@ -59,7 +61,9 @@ Ext.define('Admin.controller.contentManager.DialogWindowController', {
 
             }
             me.getContentTreeGridPanel().refresh();
-        });
+        };
+
+        this.remoteDeleteContent(content, onContentDeleted);
     }
 
 });

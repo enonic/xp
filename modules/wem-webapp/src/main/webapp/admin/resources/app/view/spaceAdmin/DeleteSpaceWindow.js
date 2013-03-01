@@ -71,6 +71,7 @@ Ext.define('Admin.view.spaceAdmin.DeleteSpaceWindow', {
     setModalDialogData: function (model) {
         console.log("Model");
         console.log(model);
+        this.data = model;
         this.modelData = model[0].data;
         if (model) {
             var info = this.down('#modalDialog');

@@ -3,6 +3,13 @@ Ext.define('Admin.view.contentStudio.wizard.MixinWizardPanel', {
     alias: 'widget.contentStudioMixinWizardPanel',
 
 
+    getToolbar: function () {
+        return Ext.createByAlias('widget.contentStudioWizardToolbar', {
+            isNew: this.isNewMode(),
+            schema: 'mixin'
+        });
+    },
+
     getSteps: function () {
         var me = this;
 

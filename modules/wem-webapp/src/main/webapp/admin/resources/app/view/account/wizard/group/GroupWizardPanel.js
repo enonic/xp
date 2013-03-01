@@ -138,7 +138,7 @@ Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
         return {
             displayName: isNew ? 'Display name' : data.displayName,
             qualifiedName: isNew ? this.userstore + '\\' : data.qualifiedName,
-            iconUrl: isNew ? 'default-image-for-groups' : data.image_url,       //TODO: update default url
+            iconUrl: isNew ? 'rest/account/image/default/group' : data.image_url,
             tipText: isNew ? 'Group' : Ext.String.capitalize(data.type)
         }
     },

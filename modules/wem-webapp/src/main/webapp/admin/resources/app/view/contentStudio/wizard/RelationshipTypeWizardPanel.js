@@ -3,6 +3,13 @@ Ext.define('Admin.view.contentStudio.wizard.RelationshipTypeWizardPanel', {
     alias: 'widget.contentStudioRelationshipTypeWizardPanel',
 
 
+    getToolbar: function () {
+        return Ext.createByAlias('widget.contentStudioWizardToolbar', {
+            isNew: this.isNewMode(),
+            schema: 'relationshipType'
+        });
+    },
+
     getSteps: function () {
         var me = this;
 

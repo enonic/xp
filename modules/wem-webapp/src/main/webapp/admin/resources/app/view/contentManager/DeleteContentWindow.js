@@ -52,6 +52,7 @@ Ext.define('Admin.view.contentManager.DeleteContentWindow', {
 
     setModalDialogData: function (model) {
         this.modelData = model[0].data;
+        this.data = model;
         if (model) {
             var info = this.down('#modalDialog');
             if (info) {

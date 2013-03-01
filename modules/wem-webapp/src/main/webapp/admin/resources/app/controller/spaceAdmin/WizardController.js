@@ -24,7 +24,7 @@ Ext.define('Admin.controller.spaceAdmin.WizardController', {
             },
             'spaceAdminWizardPanel *[action=deleteSpace]': {
                 click: function () {
-                    this.deleteSpace(this.getWizardPanel().data);
+                    this.deleteSpace(this.getWizardTab());
                 }
             }
         });
@@ -88,18 +88,20 @@ Ext.define('Admin.controller.spaceAdmin.WizardController', {
 
     deleteSpace: function (wizard) {
         var me = this;
+        var space = wizard.data;
+
         var onDeleteSpaceSuccess = function (success, failures) {
             if (success) {
-                me.getWizardTab().close();
+                wizard.close();
                 Admin.MessageBus.showFeedback({
                     title: 'Space deleted',
                     message: 'Space was deleted',
                     opts: {}
                 });
             }
-        }
+        };
 
-        this.remoteDeleteSpace(wizard.data.name, onDeleteSpaceSuccess);
+        this.remoteDeleteSpace(space, onDeleteSpaceSuccess);
     }
 })
 ;

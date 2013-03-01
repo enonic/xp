@@ -23,8 +23,11 @@ Ext.define('Admin.controller.spaceAdmin.SpaceController', {
         });
     },
 
-    remoteDeleteSpace: function (spaceNames, callback) {
+    remoteDeleteSpace: function (spaces, callback) {
         var me = this;
+        var spaceNames = Ext.Array.map([].concat(spaces), function(item) {
+            return item.get('name');
+        });
         Admin.lib.RemoteService.space_delete({"spaceName": spaceNames}, function (r) {
             if (r) {
                 callback.call(me, r.success, r);

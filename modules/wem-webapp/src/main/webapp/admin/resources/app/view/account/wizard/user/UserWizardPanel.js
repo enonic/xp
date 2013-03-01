@@ -205,7 +205,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
             displayName: isNew ? 'Display Name' : data.displayName,
             qualifiedName: isNew ? this.userstore + '\\' : data.qualifiedName,
             label: isNew ? "New User" : "User",
-            photoUrl: isNew ? 'default-image-for-user' : data.image_url,
+            photoUrl: isNew ? 'rest/account/image/default/user' : data.image_url,
             userGroups: isNew ? [] : data.memberships,
             edited: false
         };

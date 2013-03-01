@@ -13,6 +13,7 @@ Ext.define('Admin.view.BaseDialogWindow', {
     closeAction: 'hide',
     padding: 20,
 
+    data: undefined,
     modelData: undefined,
     // Title and subtitle deprecated. Use header() instead
     dialogTitle: 'Base dialog',
@@ -216,6 +217,7 @@ Ext.define('Admin.view.BaseDialogWindow', {
 
     setDialogInfoData: function (model) {
         if (model) {
+            this.data = model;
             this.modelData = model.data;
             var info = this.down('#dialogInfo');
             if (info) {
