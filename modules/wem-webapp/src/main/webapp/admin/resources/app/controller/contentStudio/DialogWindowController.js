@@ -4,14 +4,14 @@ Ext.define('Admin.controller.contentStudio.DialogWindowController', {
     stores: [],
     models: [],
     views: [
-        'Admin.view.contentStudio.DeleteContentTypeWindow'
+        'Admin.view.contentStudio.DeleteSchemaWindow'
     ],
 
 
     init: function () {
 
         this.control({
-            'deleteContentTypeWindow *[action=deleteContentType]': {
+            'deleteSchemaWindow *[action=deleteSchema]': {
                 click: this.doDelete
             },
             'selectSchemaWindow': {
@@ -24,7 +24,7 @@ Ext.define('Admin.controller.contentStudio.DialogWindowController', {
     },
 
     doDelete: function (el, e) {
-        var win = this.getDeleteContentTypeWindow();
+        var win = this.getSchemaWindow();
 
         switch (win.modelData.type) {
         case 'ContentType':

@@ -1,13 +1,33 @@
-Ext.define('Admin.view.contentManager.DeleteContentWindow', {
+Ext.define('Admin.view.contentStudio.DeleteSchemaWindow', {
     extend: 'Admin.view.BaseDialogWindow',
-    alias: 'widget.deleteContentWindow',
+    alias: 'widget.deleteSchemaWindow',
 
     dialogTitle: undefined,
+
+    /*    items: [
+     {
+     margin: '10px 0 10px 0px',
+     xtype: 'container',
+     defaults: {
+     xtype: 'button',
+     scale: 'medium',
+     margin: '0 10 0 0'
+     },
+     items: [
+     {
+     text: 'Delete',
+     iconCls: 'icon-delete-user-24',
+     itemId: 'deleteContentTypeButton',
+     action: 'deleteSchema'
+     }
+     ]
+     }
+     ],*/
 
     initComponent: function () {
         var me = this;
         this.items = [
-            me.header('Delete content(s)'),
+            me.header('Delete schema(s)'),
             {
                 region: 'center',
                 layout: {
@@ -27,7 +47,7 @@ Ext.define('Admin.view.contentManager.DeleteContentWindow', {
             },
             me.buttonRow({
                 text: 'Delete',
-                action: 'deleteContent'
+                action: 'deleteSchema'
             }, {
                 xtype: 'button',
                 text: 'Cancel',

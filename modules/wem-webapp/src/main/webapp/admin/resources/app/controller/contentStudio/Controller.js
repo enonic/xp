@@ -8,7 +8,7 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         'Admin.view.contentStudio.wizard.ContentTypeWizardPanel',
         'Admin.view.contentStudio.wizard.MixinWizardPanel',
         'Admin.view.contentStudio.wizard.RelationshipTypeWizardPanel',
-        'Admin.view.contentStudio.DeleteContentTypeWindow',
+        'Admin.view.contentStudio.DeleteSchemaWindow',
         'Admin.view.contentStudio.SelectSchemaWindow'
     ],
 
@@ -76,7 +76,7 @@ Ext.define('Admin.controller.contentStudio.Controller', {
             schema = [].concat(schema);
         }
         if (schema.length === 1) {
-            this.getDeleteContentTypeWindow().doShow(schema);
+            this.getSchemaWindow().doShow(schema);
         }
     },
 
@@ -301,10 +301,10 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         return Ext.ComponentQuery.query('contentTypeDetailPanel')[0];
     },
 
-    getDeleteContentTypeWindow: function () {
-        var win = Ext.ComponentQuery.query('deleteContentTypeWindow')[0];
+    getSchemaWindow: function () {
+        var win = Ext.ComponentQuery.query('deleteSchemaWindow')[0];
         if (!win) {
-            win = Ext.create('widget.deleteContentTypeWindow');
+            win = Ext.create('widget.deleteSchemaWindow');
         }
         return win;
     },
