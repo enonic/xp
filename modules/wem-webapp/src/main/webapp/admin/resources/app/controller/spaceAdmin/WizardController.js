@@ -101,6 +101,5 @@ Ext.define('Admin.controller.spaceAdmin.WizardController', {
 
         this.remoteDeleteSpace(wizard.data.name, onDeleteSpaceSuccess);
     }
-
 })
 ;

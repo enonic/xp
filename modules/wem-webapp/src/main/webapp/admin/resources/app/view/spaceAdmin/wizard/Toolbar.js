@@ -15,9 +15,10 @@ Ext.define('Admin.view.spaceAdmin.wizard.Toolbar', {
     initComponent: function () {
         this.items = [
             {
-                xtype: 'splitbutton',
                 text: 'Save',
-                action: 'saveSpace'
+                action: 'saveSpace',
+                itemId: 'save'
+                //disabled: true
             },
             {
                 text: 'Delete',
@@ -26,14 +27,7 @@ Ext.define('Admin.view.spaceAdmin.wizard.Toolbar', {
             {
                 text: 'Duplicate'
             },
-            {
-                text: 'Move'
-            },
             '->',
-            {
-                xtype: 'splitbutton',
-                text: 'Form Edit'
-            },
             {
                 text: 'Close',
                 action: 'closeWizard'
