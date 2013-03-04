@@ -2,6 +2,9 @@ Ext.define('Admin.view.userstore.ContextMenu', {
     extend: 'Ext.menu.Menu',
     alias: 'widget.userstoreContextMenu',
 
+    cls: 'admin-context-menu',
+    border: false,
+
     items: [
         {
             text: 'Edit Userstore',
