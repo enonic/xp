@@ -14,7 +14,7 @@ import com.google.common.io.Files;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.space.CreateSpace;
 import com.enonic.wem.api.command.space.GetSpaces;
-import com.enonic.wem.api.command.space.UpdateSpaces;
+import com.enonic.wem.api.command.space.UpdateSpace;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.space.Spaces;
@@ -99,7 +99,7 @@ public class CreateOrUpdateSpaceRpcHandlerTest
         expectedResult.put( "updated", true );
         testSuccess( params, expectedResult );
 
-        Mockito.verify( client, times( 1 ) ).execute( isA( UpdateSpaces.class ) );
+        Mockito.verify( client, times( 1 ) ).execute( isA( UpdateSpace.class ) );
     }
 
     private void uploadFile( String id, String name, byte[] data, String type )

@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.command.space.UpdateSpaces;
+import com.enonic.wem.api.command.space.UpdateSpace;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.space.editor.SpaceEditor;
 import com.enonic.wem.web.json.JsonErrorResult;
@@ -66,7 +66,7 @@ public final class CreateOrUpdateSpaceRpcHandler
             {
                 editor = composite( setDisplayName( displayName ), setIcon( icon ) );
             }
-            final UpdateSpaces updateCommand = space().update().name( spaceName ).editor( editor );
+            final UpdateSpace updateCommand = space().update().name( spaceName ).editor( editor );
             client.execute( updateCommand );
             context.setResult( CreateOrUpdateSpaceJsonResult.updated() );
         }

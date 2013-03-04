@@ -13,9 +13,9 @@ public final class SpaceCommands
         return new GetSpaces();
     }
 
-    public UpdateSpaces update()
+    public UpdateSpace update()
     {
-        return new UpdateSpaces();
+        return new UpdateSpace();
     }
 
     public DeleteSpace delete()
