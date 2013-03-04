@@ -19,36 +19,32 @@ import org.apache.jackrabbit.oak.plugins.nodetype.DefaultTypeEditor;
 import org.apache.jackrabbit.oak.plugins.nodetype.RegistrationValidatorProvider;
 import org.apache.jackrabbit.oak.plugins.nodetype.TypeValidatorProvider;
 import org.apache.jackrabbit.oak.plugins.nodetype.write.InitialContent;
-import org.springframework.beans.factory.FactoryBean;
+
 import javax.inject.Inject;
+
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.lifecycle.InitializingBean;
+import com.enonic.wem.core.lifecycle.ProviderFactory;
 
 @Component
 public final class JcrRepositoryFactory
-    implements FactoryBean<Repository>, InitializingBean
+    extends ProviderFactory<Repository>
+    implements InitializingBean
 {
     private MicroKernel microKernel;
 
     private Repository repository;
 
+    public JcrRepositoryFactory()
+    {
+        super( Repository.class );
+    }
+
     @Override
-    public Repository getObject()
+    public Repository get()
     {
         return this.repository;
-    }
-
-    @Override
-    public Class<?> getObjectType()
-    {
-        return Repository.class;
-    }
-
-    @Override
-    public boolean isSingleton()
-    {
-        return true;
     }
 
     @Override

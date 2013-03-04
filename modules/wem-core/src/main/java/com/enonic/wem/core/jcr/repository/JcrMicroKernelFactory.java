@@ -4,17 +4,18 @@ import java.io.File;
 
 import org.apache.jackrabbit.mk.api.MicroKernel;
 import org.apache.jackrabbit.mk.core.MicroKernelImpl;
-import org.springframework.beans.factory.FactoryBean;
 import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.lifecycle.DisposableBean;
 import com.enonic.wem.core.lifecycle.InitializingBean;
+import com.enonic.wem.core.lifecycle.ProviderFactory;
 
 @Component
 public final class JcrMicroKernelFactory
-    implements FactoryBean<MicroKernel>, InitializingBean, DisposableBean
+    extends ProviderFactory<MicroKernel>
+    implements InitializingBean, DisposableBean
 {
     private MicroKernelImpl mk;
 
@@ -22,22 +23,15 @@ public final class JcrMicroKernelFactory
 
     private boolean inMemoryRepo = false;
 
+    public JcrMicroKernelFactory()
+    {
+        super(MicroKernel.class);
+    }
+
     @Override
-    public MicroKernel getObject()
+    public MicroKernel get()
     {
         return this.mk;
-    }
-
-    @Override
-    public Class<?> getObjectType()
-    {
-        return MicroKernel.class;
-    }
-
-    @Override
-    public boolean isSingleton()
-    {
-        return true;
     }
 
     @Inject

@@ -7,15 +7,16 @@ import org.elasticsearch.common.logging.slf4j.Slf4jESLoggerFactory;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.lifecycle.DisposableBean;
 import com.enonic.wem.core.lifecycle.InitializingBean;
+import com.enonic.wem.core.lifecycle.ProviderFactory;
 
 @Component
 public final class ElasticNodeFactory
-    implements FactoryBean<Node>, InitializingBean, DisposableBean
+    extends ProviderFactory<Node>
+    implements InitializingBean, DisposableBean
 {
     private Node node;
 
@@ -23,22 +24,14 @@ public final class ElasticNodeFactory
 
     public ElasticNodeFactory()
     {
+        super(Node.class);
         ESLoggerFactory.setDefaultFactory( new Slf4jESLoggerFactory() );
     }
 
-    public Node getObject()
+    @Override
+    public Node get()
     {
         return this.node;
-    }
-
-    public Class<?> getObjectType()
-    {
-        return Node.class;
-    }
-
-    public boolean isSingleton()
-    {
-        return true;
     }
 
     @Override

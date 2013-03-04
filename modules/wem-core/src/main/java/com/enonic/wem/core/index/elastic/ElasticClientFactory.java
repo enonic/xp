@@ -4,36 +4,30 @@ import javax.inject.Inject;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.node.Node;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.lifecycle.DisposableBean;
 import com.enonic.wem.core.lifecycle.InitializingBean;
+import com.enonic.wem.core.lifecycle.ProviderFactory;
 
 @Component
 public final class ElasticClientFactory
-    implements FactoryBean<Client>, InitializingBean, DisposableBean
+    extends ProviderFactory<Client>
+    implements InitializingBean, DisposableBean
 {
     private Node node;
 
     private Client client;
 
+    public ElasticClientFactory()
+    {
+        super( Client.class );
+    }
+
     @Override
-    public Client getObject()
+    public Client get()
     {
         return this.client;
-    }
-
-    @Override
-    public Class<?> getObjectType()
-    {
-        return Client.class;
-    }
-
-    @Override
-    public boolean isSingleton()
-    {
-        return true;
     }
 
     @Inject

@@ -6,7 +6,6 @@ import java.net.URL;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -15,13 +14,20 @@ import com.google.common.io.Files;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.core.home.HomeDir;
+import com.enonic.wem.core.lifecycle.ProviderFactory;
 
 @Component
 @Profile("itest")
 public final class HomeDirFactory
-    implements FactoryBean<HomeDir>, InitializingBean, DisposableBean
+    extends ProviderFactory<HomeDir>
+    implements InitializingBean, DisposableBean
 {
     private HomeDir homeDir;
+
+    public HomeDirFactory()
+    {
+        super(HomeDir.class);
+    }
 
     @Override
     public void afterPropertiesSet()
@@ -53,18 +59,9 @@ public final class HomeDirFactory
         Files.copy( Resources.newInputStreamSupplier( url ), to );
     }
 
-    public HomeDir getObject()
+    @Override
+    public HomeDir get()
     {
         return this.homeDir;
-    }
-
-    public Class<?> getObjectType()
-    {
-        return HomeDir.class;
-    }
-
-    public boolean isSingleton()
-    {
-        return true;
     }
 }
