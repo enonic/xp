@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.springframework.core.io.Resource;
@@ -16,9 +15,11 @@ import com.google.common.collect.Lists;
 import com.google.common.io.CharStreams;
 
 import com.enonic.wem.core.index.IndexException;
+import com.enonic.wem.core.lifecycle.InitializingBean;
 
 @Component
 public class IndexMappingProvider
+    implements InitializingBean
 {
     public static final String MAPPING_RESOURCE_LOCATION =
         ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + "/META-INF/index/mapping/*-mapping.json";
@@ -27,8 +28,8 @@ public class IndexMappingProvider
 
     private ResourcePatternResolver resourcePatternResolver;
 
-    @PostConstruct
-    public void init()
+    @Override
+    public void afterPropertiesSet()
         throws Exception
     {
         this.resources = Lists.newArrayList( resourcePatternResolver.getResources( MAPPING_RESOURCE_LOCATION ) );

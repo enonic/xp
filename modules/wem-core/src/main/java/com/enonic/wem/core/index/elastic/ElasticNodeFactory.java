@@ -1,7 +1,5 @@
 package com.enonic.wem.core.index.elastic;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.elasticsearch.common.logging.ESLoggerFactory;
@@ -12,9 +10,12 @@ import org.elasticsearch.node.NodeBuilder;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.core.lifecycle.DisposableBean;
+import com.enonic.wem.core.lifecycle.InitializingBean;
+
 @Component
 public final class ElasticNodeFactory
-    implements FactoryBean<Node>
+    implements FactoryBean<Node>, InitializingBean, DisposableBean
 {
     private Node node;
 
@@ -40,8 +41,16 @@ public final class ElasticNodeFactory
         return true;
     }
 
-    @PostConstruct
-    public void start()
+    @Override
+    public void destroy()
+        throws Exception
+    {
+        this.node.close();
+    }
+
+    @Override
+    public void afterPropertiesSet()
+        throws Exception
     {
         final Settings settings = nodeSettingsBuilder.buildNodeSettings();
         this.node = NodeBuilder.nodeBuilder().settings( settings ).build();
@@ -52,11 +61,5 @@ public final class ElasticNodeFactory
     public void setNodeSettingsBuilder( final NodeSettingsBuilder nodeSettingsBuilder )
     {
         this.nodeSettingsBuilder = nodeSettingsBuilder;
-    }
-
-    @PreDestroy
-    public void stop()
-    {
-        this.node.close();
     }
 }

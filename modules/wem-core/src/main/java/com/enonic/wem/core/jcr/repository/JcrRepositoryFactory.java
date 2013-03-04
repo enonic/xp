@@ -1,6 +1,5 @@
 package com.enonic.wem.core.jcr.repository;
 
-import javax.annotation.PostConstruct;
 import javax.jcr.Repository;
 
 import org.apache.jackrabbit.mk.api.MicroKernel;
@@ -24,9 +23,11 @@ import org.springframework.beans.factory.FactoryBean;
 import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.core.lifecycle.InitializingBean;
+
 @Component
 public final class JcrRepositoryFactory
-    implements FactoryBean<Repository>
+    implements FactoryBean<Repository>, InitializingBean
 {
     private MicroKernel microKernel;
 
@@ -50,8 +51,9 @@ public final class JcrRepositoryFactory
         return true;
     }
 
-    @PostConstruct
-    public void init()
+    @Override
+    public void afterPropertiesSet()
+        throws Exception
     {
         final Oak oak = new Oak( this.microKernel );
         oak.with( new InitialContent() );

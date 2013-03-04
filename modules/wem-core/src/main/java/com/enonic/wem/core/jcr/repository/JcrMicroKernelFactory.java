@@ -2,9 +2,6 @@ package com.enonic.wem.core.jcr.repository;
 
 import java.io.File;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.apache.jackrabbit.mk.api.MicroKernel;
 import org.apache.jackrabbit.mk.core.MicroKernelImpl;
 import org.springframework.beans.factory.FactoryBean;
@@ -12,10 +9,12 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.core.lifecycle.DisposableBean;
+import com.enonic.wem.core.lifecycle.InitializingBean;
 
 @Component
 public final class JcrMicroKernelFactory
-    implements FactoryBean<MicroKernel>
+    implements FactoryBean<MicroKernel>, InitializingBean, DisposableBean
 {
     private MicroKernelImpl mk;
 
@@ -41,25 +40,6 @@ public final class JcrMicroKernelFactory
         return true;
     }
 
-    @PostConstruct
-    public void init()
-    {
-        if ( inMemoryRepo )
-        {
-            this.mk = new MicroKernelImpl();
-        }
-        else
-        {
-            this.mk = new MicroKernelImpl( this.location.getAbsolutePath() );
-        }
-    }
-
-    @PreDestroy
-    public void dispose()
-    {
-        this.mk.dispose();
-    }
-
     @Inject
     public void setSystemConfig( final SystemConfig systemConfig )
     {
@@ -69,5 +49,26 @@ public final class JcrMicroKernelFactory
     public void setInMemoryRepository( final boolean inMemory )
     {
         this.inMemoryRepo = inMemory;
+    }
+
+    @Override
+    public void destroy()
+        throws Exception
+    {
+        this.mk.dispose();
+    }
+
+    @Override
+    public void afterPropertiesSet()
+        throws Exception
+    {
+        if ( inMemoryRepo )
+        {
+            this.mk = new MicroKernelImpl();
+        }
+        else
+        {
+            this.mk = new MicroKernelImpl( this.location.getAbsolutePath() );
+        }
     }
 }

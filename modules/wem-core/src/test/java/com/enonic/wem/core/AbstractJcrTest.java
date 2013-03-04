@@ -48,11 +48,11 @@ public abstract class AbstractJcrTest
     {
         jcrMicroKernelFactory = new JcrMicroKernelFactory();
         jcrMicroKernelFactory.setInMemoryRepository( true );
-        jcrMicroKernelFactory.init();
+        jcrMicroKernelFactory.afterPropertiesSet();
 
         final JcrRepositoryFactory jcrRepositoryFactory = new JcrRepositoryFactory();
         jcrRepositoryFactory.setMicroKernel( jcrMicroKernelFactory.getObject() );
-        jcrRepositoryFactory.init();
+        jcrRepositoryFactory.afterPropertiesSet();
         final Repository repo = jcrRepositoryFactory.getObject();
 
         final JcrSessionProviderImpl sessionProvider = new JcrSessionProviderImpl();
@@ -68,8 +68,9 @@ public abstract class AbstractJcrTest
 
     @After
     public final void afterAbstractJcrTest()
+        throws Exception
     {
-        jcrMicroKernelFactory.dispose();
+        jcrMicroKernelFactory.destroy();
         DateTimeUtils.setCurrentMillisSystem();
     }
 
