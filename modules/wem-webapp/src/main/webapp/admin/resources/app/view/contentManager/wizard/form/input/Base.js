@@ -17,6 +17,12 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
     listeners: {
         beforerender: function () {
             this.handleOccurrences(this.inputConfig.occurrences.minimum);
+        },
+        copyadded: function () {
+            this.updateButtonState();
+        },
+        copyremoved: function () {
+            this.updateButtonState();
         }
     },
 
@@ -31,11 +37,6 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
         }
         this.callParent(arguments);
 
-    },
-
-    bindOccurrencesEventsHandlers: function () {
-        this.on('copyadded', this.updateButtonState, this);
-        this.on('copyremoved', this.updateButtonState, this);
     },
 
     getValue: function () {

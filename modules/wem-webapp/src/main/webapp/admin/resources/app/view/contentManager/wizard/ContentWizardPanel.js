@@ -27,6 +27,19 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     listeners: {
         afterrender: function () {
             this.setLiveMode(this.isLiveMode);
+        },
+        copyremoved: function (copy) {
+            console.log(copy.getValue());
+            var wizard = this.getWizardPanel();
+            var data = wizard.getData();
+            var copyData = copy.getValue();
+            if (copyData instanceof Array) {
+                Ext.each(copyData, function (copyDataItem) {
+                    wizard.deleteData(copyDataItem.path);
+                });
+            } else {
+                wizard.deleteData(copyData.path);
+            }
         }
     },
 
@@ -102,8 +115,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
                                     cls: 'admin-display-name',
                                     dirtyCls: 'admin-display-name-dirty',
                                     enableKeyEvents: true,
-                                    listeners : {
-                                        change : function(f, e) {
+                                    listeners: {
+                                        change: function (f, e) {
                                             me.onDisplayNameChanged(f, e);
                                         }
                                     }
@@ -188,7 +201,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     },
 
     onContentInputChanged: function (f, e) {
-        if ( this.evaluateDisplayName ) {
+        if (this.evaluateDisplayName) {
             var displayNameField = this.down('#displayName');
 
             if (displayNameField) {
