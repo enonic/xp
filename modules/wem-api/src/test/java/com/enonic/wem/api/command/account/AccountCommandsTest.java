@@ -21,9 +21,9 @@ public class AccountCommandsTest
     }
 
     @Test
-    public void testDeleteAccounts()
+    public void testDeleteAccount()
     {
-        final DeleteAccounts command = new AccountCommands().delete();
+        final DeleteAccount command = new AccountCommands().delete();
         assertNotNull( command );
     }
 

@@ -22,9 +22,9 @@ public final class AccountCommands
         return new UpdateAccounts();
     }
 
-    public DeleteAccounts delete()
+    public DeleteAccount delete()
     {
-        return new DeleteAccounts();
+        return new DeleteAccount();
     }
 
     public FindMembers findMembers()

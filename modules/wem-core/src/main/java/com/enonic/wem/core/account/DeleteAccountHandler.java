@@ -6,45 +6,40 @@ import javax.jcr.Session;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeys;
-import com.enonic.wem.api.command.account.DeleteAccounts;
+import com.enonic.wem.api.command.account.DeleteAccount;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.index.IndexService;
 
 @Component
-public class DeleteAccountsHandler
-    extends CommandHandler<DeleteAccounts>
+public class DeleteAccountHandler
+    extends CommandHandler<DeleteAccount>
 {
     private AccountDao accountDao;
 
     private IndexService indexService;
 
-    public DeleteAccountsHandler()
+    public DeleteAccountHandler()
     {
-        super( DeleteAccounts.class );
+        super( DeleteAccount.class );
     }
 
     @Override
-    public void handle( final CommandContext context, final DeleteAccounts command )
+    public void handle( final CommandContext context, final DeleteAccount command )
         throws Exception
     {
-        final AccountKeys accountKeys = command.getKeys();
-
-        int accountsDeleted = 0;
+        final AccountKey accountKey = command.getKey();
         final Session session = context.getJcrSession();
-        for ( AccountKey accountKey : accountKeys )
+
+        final boolean accountDeleted = this.accountDao.deleteAccount( accountKey, context.getJcrSession() );
+        if ( accountDeleted )
         {
-            if ( this.accountDao.deleteAccount( accountKey, context.getJcrSession() ) )
-            {
-                this.indexService.deleteAccount( accountKey );
-                accountsDeleted++;
-            }
+            this.indexService.deleteAccount( accountKey );
         }
         session.save();
 
-        command.setResult( accountsDeleted );
+        command.setResult( accountDeleted );
     }
 
     @Inject
