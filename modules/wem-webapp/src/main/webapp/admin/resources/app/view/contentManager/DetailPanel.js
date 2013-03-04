@@ -107,8 +107,8 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             this.tbar = this.toolBar(['->', {
                 xtype: 'toggleslide',
                 hidden: true,
-                onText: 'Live',
-                offText: 'Form',
+                onText: 'Preview',
+                offText: 'Details',
                 action: 'toggleLive',
                 state: me.isLiveMode,
                 listeners: {
