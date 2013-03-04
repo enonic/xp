@@ -3,7 +3,6 @@ package com.enonic.wem.core.content.relationship;
 
 import org.joda.time.DateTime;
 
-import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.Data;
@@ -33,7 +32,7 @@ public class RelationshipFactory
     public Relationship create( final Data toContent )
     {
         final Relationship.Builder builder = newRelationship();
-        builder.creator( AccountKey.anonymous() );
+        builder.creator( creator );
         builder.createdTime( createdTime );
         builder.type( type );
         builder.fromContent( fromContent );
