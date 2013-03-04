@@ -44,10 +44,16 @@ svg.live-edit-highlighter rect,
 
 
 /*** Cursors */
+
 /*
 [data-live-edit-type=paragraph] {
-    cursor: url(../images/pencil_16x16.png), default;
+    cursor: move;
 }
+
+[data-live-edit-type=paragraph].live-edit-selected-component {
+    cursor: url(../images/pencil.png) 0 20, text;
+}
+
 [data-live-edit-type=part] {
     cursor: move;
 }
@@ -55,6 +61,7 @@ svg.live-edit-highlighter rect,
     cursor: pointer;
 }
 */
+
 
 /*** Misc */
 

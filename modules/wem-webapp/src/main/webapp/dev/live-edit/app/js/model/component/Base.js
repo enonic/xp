@@ -6,19 +6,37 @@
 
     AdminLiveEdit.model.component.Base = function () {
         this.cssSelector = '';
+        this.cancelEvents = false;
+        this.registerGlobalListeners();
     };
 
 
     AdminLiveEdit.model.component.Base.prototype = {
+
+        registerGlobalListeners: function () {
+            var me = this;
+
+            $(window).on('component:paragraph:edit', function () {
+                me.cancelEvents = true;
+            });
+
+            $(window).on('shader:click', function () {
+                me.cancelEvents = false;
+            });
+        },
+
         attachMouseOverEvent: function () {
             var me = this;
 
             $(document).on('mouseover', me.cssSelector, function (event) {
+                if (me.cancelEvents) {
+                    return;
+                }
                 var $component = $(this);
 
                 var targetIsUiComponent = me.isLiveEditUiComponent($(event.target));
-                var cancelEvent = targetIsUiComponent || me.hasComponentSelected() || AdminLiveEdit.DragDrop.isDragging();
-                if (cancelEvent) {
+                var cancelEvents = targetIsUiComponent || me.hasComponentSelected() || AdminLiveEdit.DragDrop.isDragging();
+                if (cancelEvents) {
                     return;
                 }
                 event.stopPropagation();
@@ -30,10 +48,15 @@
 
         attachMouseOutEvent: function () {
             var me = this;
+
             $(document).on('mouseout', function () {
+                if (me.cancelEvents) {
+                    return;
+                }
+
                 var hasComponentSelected = $('.live-edit-selected-component').length > 0;
-                var cancelEvent = me.hasComponentSelected();
-                if (cancelEvent) {
+                var cancelEvents = me.hasComponentSelected();
+                if (cancelEvents) {
                     return;
                 }
                 $(window).trigger('component:mouseout');
@@ -45,7 +68,10 @@
             var me = this;
 
             $(document).on('click touchstart', me.cssSelector, function (event) {
-                console.log('Base click');
+                if (me.cancelEvents) {
+                    return;
+                }
+
                 if (me.isLiveEditUiComponent($(event.target))) {
                     return;
                 }

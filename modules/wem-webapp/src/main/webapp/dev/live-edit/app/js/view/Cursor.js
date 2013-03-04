@@ -22,6 +22,7 @@
         var componentType = AdminLiveEdit.Util.getComponentType($component);
         var $body = $('body');
         var cursor = 'default';
+
         switch (componentType) {
         case 'region':
             cursor = 'pointer';
@@ -30,11 +31,12 @@
             cursor = 'move';
             break;
         case 'paragraph':
-            cursor = 'url(../app/images/pencil_16x16.png), default';
+            cursor = 'move';
             break;
         default:
             cursor = 'default';
         }
+
         $body.css('cursor', cursor);
     };
 

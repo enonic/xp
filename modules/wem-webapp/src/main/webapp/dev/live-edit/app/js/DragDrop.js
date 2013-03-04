@@ -166,7 +166,7 @@ AdminLiveEdit.DragDrop = (function () {
     }
 
 
-    function initSubscribers() {
+    function registerGlobalListeners() {
         // The jQuery draggable() is not "live"/support delegates so we have to make sure the components in the component bar are always draggable
         // Make the components in the component bar draggable
         $liveedit(window).on('componentBar:dataLoaded', function () {
@@ -184,10 +184,16 @@ AdminLiveEdit.DragDrop = (function () {
                 disableDragDrop();
             }
         });
+
+        $liveedit(window).on('component:paragraph:edit', function () {
+        });
+
+        $liveedit(window).on('component:paragraph:close', function () {
+        });
     }
 
 
-    function init() {
+    function createSortable () {
         $liveedit(regionSelector).sortable({
             revert              : 1000,
             connectWith         : regionSelector,   // Sortable elements.
@@ -210,8 +216,12 @@ AdminLiveEdit.DragDrop = (function () {
             stop                : handleSortStop    // This event is triggered when sorting has stopped.
         });
         // }).disableSelection(); // will not make contenteditable work.
+    }
 
-        initSubscribers();
+
+    function init() {
+        createSortable();
+        registerGlobalListeners();
     }
 
     // **********************************************************************************************************************************//
