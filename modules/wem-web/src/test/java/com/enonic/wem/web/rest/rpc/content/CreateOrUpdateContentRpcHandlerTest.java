@@ -14,7 +14,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.content.MockContentId;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.ContentTypes;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
@@ -48,7 +47,7 @@ public class CreateOrUpdateContentRpcHandlerTest
     public void createNewContent()
         throws Exception
     {
-        ContentId contentId = MockContentId.from( "123" );
+        ContentId contentId = ContentId.from( "123" );
         ContentType contentType = ContentType.newContentType().
             name( "myContentType" ).
             module( ModuleName.from( "myModule" ) ).
@@ -73,7 +72,7 @@ public class CreateOrUpdateContentRpcHandlerTest
     public void createNewContent_with_existing_generated_name()
         throws Exception
     {
-        ContentId contentId = MockContentId.from( "123" );
+        ContentId contentId = ContentId.from( "123" );
         ContentType contentType = ContentType.newContentType().
             name( "myContentType" ).
             module( ModuleName.from( "myModule" ) ).

@@ -25,6 +25,9 @@ import static com.enonic.wem.api.content.schema.relationship.RelationshipType.ne
 public class RelationshipTypesInitializer
     implements InitializerTask
 {
+    private static final RelationshipType DEFAULT =
+        createRelationshipType( QualifiedRelationshipTypeName.DEFAULT, "Default", "relates to", "related of" );
+
     private static final RelationshipType PARENT =
         createRelationshipType( QualifiedRelationshipTypeName.PARENT, "Parent", "parent of", "child of" );
 
@@ -39,6 +42,7 @@ public class RelationshipTypesInitializer
     public void initialize()
         throws Exception
     {
+        createOrUpdate( DEFAULT );
         createOrUpdate( PARENT );
         createOrUpdate( LINK );
         createOrUpdate( LIKE );

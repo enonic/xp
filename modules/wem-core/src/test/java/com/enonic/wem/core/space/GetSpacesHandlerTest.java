@@ -9,12 +9,12 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.space.GetSpaces;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.space.SpaceNames;
 import com.enonic.wem.api.space.Spaces;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.core.space.dao.SpaceDao;
 
 import static com.enonic.wem.api.space.Space.newSpace;
@@ -53,14 +53,14 @@ public class GetSpacesHandlerTest
             displayName( "My Space" ).
             modifiedTime( time ).
             createdTime( time ).
-            rootContent( ContentIdFactory.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
+            rootContent( ContentId.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
             build();
         final Space space2 = newSpace().
             name( "myOtherSpace" ).
             displayName( "My Other Space" ).
             modifiedTime( time ).
             createdTime( time ).
-            rootContent( ContentIdFactory.from( "2fad493a-6a72-41a3-bac4-88aba3d83bcd" ) ).
+            rootContent( ContentId.from( "2fad493a-6a72-41a3-bac4-88aba3d83bcd" ) ).
             build();
 
         Mockito.when( spaceDao.getSpace( eq( SpaceName.from( "mySpace" ) ), any( Session.class ) ) ).thenReturn( space );
@@ -89,14 +89,14 @@ public class GetSpacesHandlerTest
             displayName( "My Space" ).
             modifiedTime( time ).
             createdTime( time ).
-            rootContent( ContentIdFactory.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
+            rootContent( ContentId.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
             build();
         final Space space2 = newSpace().
             name( "myOtherSpace" ).
             displayName( "My Other Space" ).
             modifiedTime( time ).
             createdTime( time ).
-            rootContent( ContentIdFactory.from( "2fad493a-6a72-41a3-bac4-88aba3d83bcd" ) ).
+            rootContent( ContentId.from( "2fad493a-6a72-41a3-bac4-88aba3d83bcd" ) ).
             build();
 
         final Spaces spaces = Spaces.from( space, space2 );

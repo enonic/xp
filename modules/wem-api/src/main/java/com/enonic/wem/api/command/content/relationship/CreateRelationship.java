@@ -9,7 +9,6 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
@@ -23,10 +22,6 @@ public class CreateRelationship
     private ContentId toContent;
 
     private Map<String, String> properties = Maps.newLinkedHashMap();
-
-    private boolean managed;
-
-    private EntryPath managingData;
 
     public QualifiedRelationshipTypeName getType()
     {
@@ -72,22 +67,6 @@ public class CreateRelationship
         return properties;
     }
 
-    public boolean isManaged()
-    {
-        return managed;
-    }
-
-    public CreateRelationship managed( EntryPath managingData )
-    {
-        this.managed = true;
-        this.managingData = managingData;
-        return this;
-    }
-
-    public EntryPath getManagingData()
-    {
-        return managingData;
-    }
 
     @Override
     public void validate()
@@ -95,10 +74,6 @@ public class CreateRelationship
         Preconditions.checkNotNull( type, "type cannot be null" );
         Preconditions.checkNotNull( fromContent, "fromContent cannot be null" );
         Preconditions.checkNotNull( toContent, "toContent cannot be null" );
-        if ( managed )
-        {
-            Preconditions.checkNotNull( managingData, "managingData cannot be null" );
-        }
     }
 
     @Override
@@ -115,16 +90,15 @@ public class CreateRelationship
 
         final CreateRelationship that = (CreateRelationship) o;
 
-        return Objects.equals( managed, that.managed ) &&
-            Objects.equals( fromContent, that.fromContent ) &&
+        return Objects.equals( fromContent, that.fromContent ) &&
             Objects.equals( toContent, that.toContent ) &&
             Objects.equals( type, that.type ) &&
-            Objects.equals( managingData, that.managingData );
+            Objects.equals( properties, that.properties );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( managed, fromContent, toContent, type, managingData );
+        return Objects.hash( fromContent, toContent, type, properties );
     }
 }

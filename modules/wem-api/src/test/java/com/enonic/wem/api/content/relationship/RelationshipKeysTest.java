@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.relationship;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.AbstractEqualsTest;
-import com.enonic.wem.api.content.MockContentId;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
@@ -12,21 +12,21 @@ public class RelationshipKeysTest
 {
     private static final RelationshipKey parent_111_222_myInput = RelationshipKey.newRelationshipKey().
         type( QualifiedRelationshipTypeName.PARENT ).
-        fromContent( MockContentId.from( "111" ) ).
-        toContent( MockContentId.from( "222" ) ).
+        fromContent( ContentId.from( "111" ) ).
+        toContent( ContentId.from( "222" ) ).
         managingData( EntryPath.from( "myInput" ) ).build();
 
 
     private static final RelationshipKey parent_111_222_myOtherInput = RelationshipKey.newRelationshipKey().
         type( QualifiedRelationshipTypeName.PARENT ).
-        fromContent( MockContentId.from( "111" ) ).
-        toContent( MockContentId.from( "222" ) ).
+        fromContent( ContentId.from( "111" ) ).
+        toContent( ContentId.from( "222" ) ).
         managingData( EntryPath.from( "myOtherInput" ) ).build();
 
     private static final RelationshipKey parent_555_222_myInput = RelationshipKey.newRelationshipKey().
         type( QualifiedRelationshipTypeName.PARENT ).
-        fromContent( MockContentId.from( "555" ) ).
-        toContent( MockContentId.from( "222" ) ).
+        fromContent( ContentId.from( "555" ) ).
+        toContent( ContentId.from( "222" ) ).
         managingData( EntryPath.from( "myInput" ) ).build();
 
     @Test

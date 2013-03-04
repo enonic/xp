@@ -4,25 +4,26 @@ package com.enonic.wem.api.command.content.relationship;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.relationship.RelationshipIds;
+import com.enonic.wem.api.content.relationship.RelationshipKey;
+import com.enonic.wem.api.content.relationship.RelationshipKeys;
 import com.enonic.wem.api.content.relationship.editor.RelationshipEditor;
 
 public class UpdateRelationships
     extends Command<UpdateRelationshipsResult>
 {
-    private RelationshipIds relationshipIds;
+    private RelationshipKeys relationshipKeys;
 
     private RelationshipEditor editor;
 
-    public UpdateRelationships relationshipIds( final RelationshipIds value )
+    public UpdateRelationships relationshipKeys( final RelationshipKeys value )
     {
-        this.relationshipIds = value;
+        this.relationshipKeys = value;
         return this;
     }
 
-    public RelationshipIds getRelationshipIds()
+    public RelationshipKeys getRelationshipKeys()
     {
-        return relationshipIds;
+        return relationshipKeys;
     }
 
     public void editor( final RelationshipEditor relationshipEditor )
@@ -38,7 +39,12 @@ public class UpdateRelationships
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( relationshipIds, "relationshipIds cannot be null" );
-        Preconditions.checkArgument( relationshipIds.isNotEmpty(), "relationshipIds cannot be empty" );
+        Preconditions.checkNotNull( relationshipKeys, "relationshipKeys cannot be null" );
+        Preconditions.checkArgument( relationshipKeys.isNotEmpty(), "relationshipKeys cannot be empty" );
+
+        for ( RelationshipKey relationshipKey : relationshipKeys )
+        {
+            Preconditions.checkArgument( relationshipKey.getManagingData() != null, "Managed Relationship's cannot be updated directly" );
+        }
     }
 }

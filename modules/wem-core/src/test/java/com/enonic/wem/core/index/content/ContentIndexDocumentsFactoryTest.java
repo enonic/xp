@@ -73,20 +73,11 @@ public class ContentIndexDocumentsFactoryTest
             path( ContentPath.from( "/wem/content/test" ) ).
             modifiedTime( DateTime.now() ).
             displayName( "Displayname" ).
-            id( new MockContentId( "eplekake" ) ).
+            id( new ContentId( "eplekake" ) ).
             build();
     }
 
-    private final class MockContentId
-        implements ContentId
-    {
-        final String id;
 
-        private MockContentId( final String id )
-        {
-            this.id = id;
-        }
-    }
 }
 
 

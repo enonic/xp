@@ -12,8 +12,6 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
-import com.enonic.wem.api.content.relationship.RelationshipIds;
-import com.enonic.wem.api.content.relationship.Relationships;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.AbstractJcrTest;
 import com.enonic.wem.core.content.dao.ContentDao;
@@ -137,35 +135,6 @@ public class RelationshipDaoImplTest
         assertEquals( contentB, storedRelationship.getToContent() );
         assertEquals( PARENT, storedRelationship.getType() );
         assertEquals( EntryPath.from( "myData" ), storedRelationship.getManagingData() );
-    }
-
-    @Test
-    public void selectByIds()
-        throws Exception
-    {
-        // setup
-        contentDao.create( createContent( "myspace:/" ), session );
-        ContentId contentA = contentDao.create( createContent( "myspace:a" ), session );
-        ContentId contentB = contentDao.create( createContent( "myspace:b" ), session );
-        commit();
-
-        RelationshipId id1 = relationshipDao.create( createRelationship( contentA, contentB, PARENT ), session );
-        RelationshipId id2 = relationshipDao.create( createRelationship( contentA, contentB, LINK ), session );
-        commit();
-
-        // exercise
-        Relationships storedRelationships = relationshipDao.select( RelationshipIds.from( id1, id2 ), session );
-
-        // verify
-        Relationship storedRelationship1 = storedRelationships.get( 0 );
-        assertEquals( contentA, storedRelationship1.getFromContent() );
-        assertEquals( contentB, storedRelationship1.getToContent() );
-        assertEquals( PARENT, storedRelationship1.getType() );
-
-        Relationship storedRelationship2 = storedRelationships.get( 1 );
-        assertEquals( contentA, storedRelationship2.getFromContent() );
-        assertEquals( contentB, storedRelationship2.getToContent() );
-        assertEquals( LINK, storedRelationship2.getType() );
     }
 
     private Relationship createRelationship( final ContentId contentA, final ContentId contentB, final QualifiedRelationshipTypeName type )

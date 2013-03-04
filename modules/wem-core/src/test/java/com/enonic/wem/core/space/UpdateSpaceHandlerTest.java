@@ -9,12 +9,12 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.space.UpdateSpace;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.space.editor.SpaceEditor;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.core.space.dao.SpaceDao;
 
 import static com.enonic.wem.api.space.Space.newSpace;
@@ -54,7 +54,7 @@ public class UpdateSpaceHandlerTest
             displayName( "My Space" ).
             modifiedTime( time ).
             createdTime( time ).
-            rootContent( ContentIdFactory.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
+            rootContent( ContentId.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
             build();
 
         Mockito.when( spaceDao.getSpace( isA( SpaceName.class ), any( Session.class ) ) ).thenReturn( space );
@@ -81,7 +81,7 @@ public class UpdateSpaceHandlerTest
             displayName( "MY SPACE" ).
             modifiedTime( time ).
             createdTime( time ).
-            rootContent( ContentIdFactory.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
+            rootContent( ContentId.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
             build();
         verify( spaceDao, times( 1 ) ).updateSpace( eq( space1EditExpected ), Mockito.any( Session.class ) );
     }

@@ -1,14 +1,14 @@
 package com.enonic.wem.core.content.relationship;
 
+import javax.inject.Inject;
 import javax.jcr.Session;
 
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.relationship.UpdateRelationships;
 import com.enonic.wem.api.command.content.relationship.UpdateRelationshipsResult;
 import com.enonic.wem.api.content.relationship.Relationship;
-import com.enonic.wem.api.content.relationship.Relationships;
+import com.enonic.wem.api.content.relationship.RelationshipKey;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
@@ -33,23 +33,24 @@ public final class UpdateRelationshipsHandler
         final Session session = context.getJcrSession();
 
         final UpdateRelationshipsResult.Builder result = newUpdateRelationshipsResult();
-        final Relationships relationships = relationshipDao.select( command.getRelationshipIds(), session );
 
-        for ( Relationship existing : relationships )
+        for ( RelationshipKey relationshipKey : command.getRelationshipKeys() )
         {
+            Relationship existing = relationshipDao.select( relationshipKey, session );
             try
             {
                 final Relationship changed = command.getEditor().edit( existing );
                 existing.checkIllegalChange( changed );
                 relationshipDao.update( changed, session );
                 session.save();
-                result.success( existing.getId() );
+                result.success( existing.getKey() );
             }
             catch ( Exception e )
             {
-                result.failure( existing.getId(), e );
+                result.failure( existing.getKey(), e );
             }
         }
+
         command.setResult( result.build() );
     }
 

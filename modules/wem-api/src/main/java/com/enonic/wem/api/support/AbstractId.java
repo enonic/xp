@@ -1,4 +1,4 @@
-package com.enonic.wem.core.support.dao;
+package com.enonic.wem.api.support;
 
 
 import com.google.common.base.Preconditions;

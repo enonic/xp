@@ -11,16 +11,11 @@ public final class ContentIdFactory
     {
         try
         {
-            return new ContentIdImpl( node.getIdentifier() );
+            return ContentId.from( node.getIdentifier() );
         }
         catch ( RepositoryException e )
         {
             throw new RuntimeException( e );
         }
-    }
-
-    public static ContentId from( final String id )
-    {
-        return new ContentIdImpl( id );
     }
 }

@@ -12,10 +12,9 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.relationship.UpdateRelationships;
 import com.enonic.wem.api.command.content.relationship.UpdateRelationshipsResult;
-import com.enonic.wem.api.content.relationship.RelationshipId;
-import com.enonic.wem.api.content.relationship.RelationshipIds;
+import com.enonic.wem.api.content.relationship.RelationshipKey;
+import com.enonic.wem.api.content.relationship.RelationshipKeys;
 import com.enonic.wem.api.content.relationship.editor.RelationshipEditors;
-import com.enonic.wem.core.content.relationship.dao.RelationshipIdFactory;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
@@ -32,7 +31,7 @@ public final class UpdateRelationshipPropertiesRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final RelationshipId relationshipIdToUpdate = RelationshipIdFactory.from( context.param( "relationshipId" ).asString() );
+        final RelationshipKey relationshipKeyToUpdate = RelationshipKey.from( context.param( "relationshipKey" ).required().asObject() );
 
         final RelationshipEditors.CompositeBuilder compositeEditorBuilder = RelationshipEditors.newCompositeBuilder();
         final ObjectNode addNode = context.param( "add" ).asObject();
@@ -48,15 +47,15 @@ public final class UpdateRelationshipPropertiesRpcHandler
         }
 
         final UpdateRelationships updateCommand = Commands.relationship().update();
-        updateCommand.relationshipIds( RelationshipIds.from( relationshipIdToUpdate ) );
+        updateCommand.relationshipKeys( RelationshipKeys.from( relationshipKeyToUpdate ) );
         updateCommand.editor( compositeEditorBuilder.build() );
 
         final UpdateRelationshipsResult result = client.execute( updateCommand );
-        final CreateOrUpdateRelationshipJsonResult.Builder jsonResult = CreateOrUpdateRelationshipJsonResult.newBuilder();
-        jsonResult.updated().relationship( relationshipIdToUpdate );
-        if ( result.isFailure( relationshipIdToUpdate ) )
+        final UpdateRelationshipPropertiesJsonResult.Builder jsonResult = UpdateRelationshipPropertiesJsonResult.newBuilder().
+            relationship( relationshipKeyToUpdate );
+        if ( result.isFailure( relationshipKeyToUpdate ) )
         {
-            jsonResult.failure( result.getFailure( relationshipIdToUpdate ).reason );
+            jsonResult.failure( result.getFailure( relationshipKeyToUpdate ).reason );
         }
         context.setResult( jsonResult.build() );
 

@@ -7,10 +7,10 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.space.GetSpaces;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.space.Spaces;
-import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
@@ -57,7 +57,7 @@ public class ListSpacesRpcHandlerTest
             displayName( displayName ).
             modifiedTime( CURRENT_TIME ).
             createdTime( CURRENT_TIME ).
-            rootContent( ContentIdFactory.from( Integer.toHexString( name.hashCode() ) ) ).
+            rootContent( ContentId.from( Integer.toHexString( name.hashCode() ) ) ).
             build();
     }
 }
