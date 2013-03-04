@@ -17,6 +17,8 @@ Ext.define('Admin.view.WizardPanel', {
     },
     bodyPadding: 10,
     minWidth: 500,
+    minHeight: 500,
+    style: 'overflow: visible',
 
     externalControls: undefined,
     showControls: true,
@@ -61,8 +63,8 @@ Ext.define('Admin.view.WizardPanel', {
                         margin: '0 5 0 0',
                         cls: 'wizard-nav-button wizard-nav-button-left',
                         /*hideMode: 'display',*/
-                        height: 64,
-                        width: 64,
+                        height: 72,
+                        width: 72,
                         handler: function (btn, evt) {
                             wizard.prev();
                         }
@@ -74,8 +76,8 @@ Ext.define('Admin.view.WizardPanel', {
                         cls: 'wizard-nav-button wizard-nav-button-right',
                         formBind: true,
                         iconCls: 'icon-chevron-right icon-4x',
-                        height: 64,
-                        width: 64,
+                        height: 72,
+                        width: 72,
                         handler: function (btn, evt) {
                             wizard.next();
                         }

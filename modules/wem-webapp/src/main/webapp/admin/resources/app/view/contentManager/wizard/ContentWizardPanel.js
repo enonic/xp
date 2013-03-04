@@ -84,6 +84,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
                 {
                     columnWidth: 1,
                     padding: '10 10 10 0',
+                    style: 'overflow: visible',
+                    bodyStyle: 'overflow: visible',
                     defaults: {
                         border: false
                     },
