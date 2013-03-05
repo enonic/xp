@@ -46,6 +46,10 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     initComponent: function () {
         var me = this;
 
+        if (this.data.content && !Ext.isEmpty(this.data.content.path)) {
+            this.evaluateDisplayName = false;
+        }
+
         var headerData = this.prepareHeaderData(this.data);
 
         me.tbar = Ext.createByAlias('widget.contentWizardToolbar', {
