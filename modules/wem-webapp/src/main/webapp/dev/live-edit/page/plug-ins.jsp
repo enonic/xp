@@ -173,7 +173,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml
     <!-- Region -->
     <div id="north" class="clear clearfix" data-live-edit-type="region" data-live-edit-key="70" data-live-edit-name="North">
 
-      <%@ include file="components/window-carousel-customers.html" %>
+      <%@ include file="includes/window-carousel-customers.html" %>
 
     </div>
 
@@ -191,13 +191,13 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml
       <!-- Region -->
       <div id="center" class="column clearfix" data-live-edit-type="region" data-live-edit-key="55" data-live-edit-name="Center">
 
-        <%@ include file="components/window-flash.html" %>
+        <%@ include file="includes/window-flash.html" %>
 
-        <%@ include file="components/window-applet.html" %>
+        <%@ include file="includes/window-applet.html" %>
 
-        <%@ include file="components/window-iframe.html" %>
+        <%@ include file="includes/window-iframe.html" %>
 
-        <%@ include file="components/window-canvas-v-lights.html" %>
+        <%@ include file="includes/window-canvas-v-lights.html" %>
 
       </div>
 
