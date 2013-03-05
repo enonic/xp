@@ -18,7 +18,7 @@
   </servlet>
 
   <servlet>
-    <servlet-name>default</servlet-name>
+    <servlet-name>resource</servlet-name>
     <servlet-class>com.enonic.wem.web.ResourceServlet</servlet-class>
   </servlet>
 
@@ -28,7 +28,7 @@
   </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>default</servlet-name>
+    <servlet-name>resource</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
 
