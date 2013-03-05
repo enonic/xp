@@ -63,6 +63,40 @@
                     "builtIn": true
                 }
             }
+        },
+        {
+            "FormItemSet": {
+                "name": "namesFromAFormItemSet",
+                "label": "Names from a FormItemSet",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "customText": null,
+                "helpText": null,
+                "items": [
+                    {
+                        "Input": {
+                            "name": "myName",
+                            "label": "My name",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 0
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    }
+                ]
+            }
         }
     ]
 }
