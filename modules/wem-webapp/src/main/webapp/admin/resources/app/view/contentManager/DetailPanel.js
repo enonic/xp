@@ -34,21 +34,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             }
         };
 
-        /*
-         this.toolBarConfig({
-         updateTitleCallback: function (data, tbar, count) {
-         var toggleBtn = tbar.down('toggleslide');
-         if (toggleBtn) {
-         if (count === 1) {
-         toggleBtn.show();
-         } else {
-         toggleBtn.hide();
-         }
-         }
-         }
-         });
-         */
-
         this.singleSelection.tabs = [
             {
                 title: "Content",
@@ -100,26 +85,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             this.createSmallBoxSelection(this.data),
             this.createLivePreview(this.data)
         ];
-
-        /* if (this.showToolbar) {
-         this.tbar = Ext.createByAlias('widget.contentDetailToolbar', {
-         isLiveMode: this.isLiveMode
-         });
-         } else {
-         this.tbar = this.toolBar(['->', {
-         xtype: 'toggleslide',
-         hidden: true,
-         onText: 'Preview',
-         offText: 'Details',
-         action: 'toggleLive',
-         state: me.isLiveMode,
-         listeners: {
-         change: function (toggle, state) {
-         me.toggleLive();
-         }
-         }
-         }]);
-         }*/
 
         this.callParent(arguments);
         this.addEvents('deselectrecord');
