@@ -11,21 +11,15 @@
     <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
   </listener>
 
-  <!--
-  <filter>
-    <filter-name>compositeFilter</filter-name>
-    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-  </filter>
-
-  <filter-mapping>
-    <filter-name>compositeFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>-->
-
   <servlet>
     <servlet-name>rest</servlet-name>
     <servlet-class>com.enonic.wem.web.rest.JaxRsServlet</servlet-class>
     <load-on-startup>2</load-on-startup>
+  </servlet>
+
+  <servlet>
+    <servlet-name>default</servlet-name>
+    <servlet-class>com.enonic.wem.web.ResourceServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
@@ -33,14 +27,14 @@
     <url-pattern>/admin/rest/*</url-pattern>
   </servlet-mapping>
 
-  <!--resource-ref>
-    <res-ref-name>jdbc/cms</res-ref-name>
-    <res-type>javax.sql.DataSource</res-type>
-    <res-auth>Container</res-auth>
-  </resource-ref-->
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
 
   <mime-mapping>
     <extension>json</extension>
     <mime-type>application/json</mime-type>
   </mime-mapping>
+
 </web-app>
