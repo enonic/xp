@@ -27,6 +27,7 @@ import com.enonic.wem.api.account.profile.Addresses;
 import com.enonic.wem.api.account.profile.Gender;
 import com.enonic.wem.api.account.profile.UserProfile;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.UpdateResult;
 import com.enonic.wem.api.command.account.UpdateAccounts;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
@@ -68,47 +69,49 @@ public class UpdateAccountsHandlerTest
         final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
 
         final Set<AccountKey> keysEdited = Sets.newHashSet();
-        final UpdateAccounts command = Commands.account().update().keys( accounts ).editor( new AccountEditor()
+        for ( AccountKey account : accounts )
         {
-            @Override
-            public boolean edit( final Account account )
-                throws Exception
+            final UpdateAccounts command = Commands.account().update().key( account ).editor( new AccountEditor()
             {
-                keysEdited.add( account.getKey() );
-                return false;
-            }
-        } );
-        this.handler.handle( this.context, command );
-        final Integer totalUpdated = command.getResult();
+                @Override
+                public boolean edit( final Account account )
+                    throws Exception
+                {
+                    keysEdited.add( account.getKey() );
+                    return false;
+                }
+            } );
+            this.handler.handle( this.context, command );
+            UpdateResult updateResult = command.getResult();
 
-        // verify
-        assertNotNull( totalUpdated );
-        assertEquals( 0l, totalUpdated.longValue() );
+            // verify
+            assertNotNull( updateResult );
+            assertTrue( updateResult.successful() );
+            assertFalse( updateResult.isUpdated() );
+        }
+
         assertEquals( accounts.getSet(), keysEdited );
     }
 
     @Test
-    public void testUpdateGroupsWithMembers()
+    public void testUpdateGroupWithMembers()
         throws Exception
     {
         // setup
         final GroupAccount group1 = createGroup( "enonic", "group1" );
-        final RoleAccount role1 = createRole( "enonic", "contributors" );
         final UserAccount existingMember1 = createUser( "enonic", "member1" );
-        final GroupAccount existingMember2 = createGroup( "enonic", "groupA" );
 
         group1.setMembers( AccountKeys.from( existingMember1.getKey() ) );
-        role1.setMembers( AccountKeys.from( existingMember1.getKey(), existingMember2.getKey() ) );
 
         createUser( "enonic", "user1" );
         createUser( "enonic", "user2" );
         createUser( "enonic", "user3" );
 
         // exercise
-        final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "role:enonic:contributors" );
+        final AccountKey account = AccountKey.from( "group:enonic:group1" );
 
         final Set<AccountKey> keysEdited = Sets.newHashSet();
-        final UpdateAccounts command = Commands.account().update().keys( accounts ).editor( new AccountEditor()
+        final UpdateAccounts command = Commands.account().update().key( account ).editor( new AccountEditor()
         {
             @Override
             public boolean edit( final Account account )
@@ -130,28 +133,76 @@ public class UpdateAccountsHandlerTest
             }
         } );
         this.handler.handle( this.context, command );
-        final Integer totalUpdated = command.getResult();
+        final UpdateResult updateResult = command.getResult();
 
         // verify
-        assertNotNull( totalUpdated );
-        assertEquals( 2l, totalUpdated.longValue() );
-        assertEquals( accounts.getSet(), keysEdited );
+        assertNotNull( updateResult );
+        assertTrue( updateResult.successful() );
+        assertTrue( updateResult.isUpdated() );
+        assertTrue( keysEdited.contains( account ) );
     }
 
     @Test
-    public void testUpdateUsers()
+    public void testUpdateRole()
         throws Exception
     {
         // setup
+        final RoleAccount role1 = createRole( "enonic", "contributors" );
+        final UserAccount existingMember1 = createUser( "enonic", "member1" );
+        final GroupAccount existingMember2 = createGroup( "enonic", "groupA" );
+        role1.setMembers( AccountKeys.from( existingMember1.getKey(), existingMember2.getKey() ) );
+
         createUser( "enonic", "user1" );
         createUser( "enonic", "user2" );
         createUser( "enonic", "user3" );
 
         // exercise
-        final AccountKeys accounts = AccountKeys.from( "user:enonic:user1", "user:enonic:user2", "user:enonic:user3" );
+        final RoleKey account = RoleKey.from( "enonic:contributors" );
 
         final Set<AccountKey> keysEdited = Sets.newHashSet();
-        final UpdateAccounts command = Commands.account().update().keys( accounts ).editor( new AccountEditor()
+        final UpdateAccounts command = Commands.account().update().key( account ).editor( new AccountEditor()
+        {
+            @Override
+            public boolean edit( final Account account )
+                throws Exception
+            {
+                account.setDisplayName( account.getDisplayName() + "_updated" );
+                if ( account.getKey().isGroup() )
+                {
+                    ( (GroupAccount) account ).setMembers(
+                        AccountKeys.from( "user:enonic:user1", "user:enonic:user2", "group:enonic:groupA" ) );
+                }
+                else if ( account.getKey().isRole() )
+                {
+                    ( (RoleAccount) account ).setMembers( AccountKeys.from( "user:enonic:user3" ) );
+                }
+
+                keysEdited.add( account.getKey() );
+                return true;
+            }
+        } );
+        this.handler.handle( this.context, command );
+        final UpdateResult updateResult = command.getResult();
+
+        // verify
+        assertNotNull( updateResult );
+        assertTrue( updateResult.successful() );
+        assertTrue( updateResult.isUpdated() );
+        assertTrue( keysEdited.contains( account ) );
+    }
+
+    @Test
+    public void testUpdateUser()
+        throws Exception
+    {
+        // setup
+        createUser( "enonic", "user1" );
+
+        // exercise
+        final AccountKey account = AccountKey.from( "user:enonic:user1" );
+
+        final Set<AccountKey> keysEdited = Sets.newHashSet();
+        final UpdateAccounts command = Commands.account().update().key( account ).editor( new AccountEditor()
         {
             @Override
             public boolean edit( final Account account )
@@ -202,24 +253,25 @@ public class UpdateAccountsHandlerTest
             }
         } );
         this.handler.handle( this.context, command );
-        final Integer totalUpdated = command.getResult();
+        UpdateResult updateResult = command.getResult();
 
         // verify
-        assertNotNull( totalUpdated );
-        assertEquals( 3l, totalUpdated.longValue() );
-        assertEquals( accounts.getSet(), keysEdited );
+        assertNotNull( updateResult );
+        assertTrue( updateResult.successful() );
+        assertTrue( updateResult.isUpdated() );
+        assertTrue( keysEdited.contains( account ) );
     }
 
     @Test
-    public void testUpdateMissingAccounts()
+    public void testUpdateMissingAccount()
         throws Exception
     {
         // setup
-        final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
+        final AccountKey account = AccountKey.from( "group:enonic:group1" );
         final Set<AccountKey> keysEdited = Sets.newHashSet();
 
         // exercise
-        final UpdateAccounts command = Commands.account().update().keys( accounts ).editor( new AccountEditor()
+        final UpdateAccounts command = Commands.account().update().key( account ).editor( new AccountEditor()
         {
             @Override
             public boolean edit( final Account account )
@@ -231,12 +283,42 @@ public class UpdateAccountsHandlerTest
             }
         } );
         this.handler.handle( this.context, command );
-        final Integer totalUpdated = command.getResult();
+        final UpdateResult updateResult = command.getResult();
 
         // verify
-        assertNotNull( totalUpdated );
-        assertEquals( 0l, totalUpdated.longValue() );
+        assertNotNull( updateResult );
+        assertTrue( updateResult.successful() );
+        assertFalse( updateResult.isUpdated() );
         assertTrue( keysEdited.isEmpty() );
+    }
+
+    @Test
+    public void testUpdateAccountWithFailure()
+        throws Exception
+    {
+        // setup
+        Mockito.when( accountDao.findUser( Matchers.isA( UserKey.class ), Matchers.anyBoolean(), Matchers.anyBoolean(),
+                                           Matchers.eq( session ) ) ).thenThrow( new Exception( "Error message" ) );
+
+        // exercise
+        final UpdateAccounts command = Commands.account().update().key( UserKey.from( "enonic:user" ) ).editor( new AccountEditor()
+        {
+            @Override
+            public boolean edit( final Account account )
+                throws Exception
+            {
+                account.setDisplayName( account.getDisplayName() + "_updated" );
+                return true;
+            }
+        } );
+        this.handler.handle( this.context, command );
+        final UpdateResult updateResult = command.getResult();
+
+        // verify
+        assertNotNull( updateResult );
+        assertFalse( updateResult.successful() );
+        assertFalse( updateResult.isUpdated() );
+        assertEquals( "Error message", updateResult.failureCause() );
     }
 
     private RoleAccount createRole( final String userStore, final String name )

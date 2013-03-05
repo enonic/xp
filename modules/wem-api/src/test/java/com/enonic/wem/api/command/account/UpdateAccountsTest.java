@@ -3,7 +3,7 @@ package com.enonic.wem.api.command.account;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.account.AccountKeys;
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.editor.AccountEditor;
 
 import static org.junit.Assert.*;
@@ -15,25 +15,25 @@ public class UpdateAccountsTest
     {
         final UpdateAccounts command = new UpdateAccounts();
 
-        assertNull( command.getKeys() );
+        assertNull( command.getKey() );
         assertNull( command.getEditor() );
 
         final AccountEditor editor = Mockito.mock( AccountEditor.class );
-        final AccountKeys keys = AccountKeys.from( "user:other:dummy" );
+        final AccountKey key = AccountKey.from( "user:other:dummy" );
 
-        command.keys( keys );
+        command.key( key );
         command.editor( editor );
-        assertSame( keys, command.getKeys() );
+        assertSame( key, command.getKey() );
         assertSame( editor, command.getEditor() );
 
         command.validate();
     }
 
     @Test(expected = NullPointerException.class)
-    public void testNotValid_nullKeys()
+    public void testNotValid_nullKey()
     {
         final UpdateAccounts command = new UpdateAccounts();
-        command.keys( null );
+        command.key( null );
 
         final AccountEditor editor = Mockito.mock( AccountEditor.class );
         command.editor( editor );
@@ -47,8 +47,8 @@ public class UpdateAccountsTest
         final UpdateAccounts command = new UpdateAccounts();
         command.editor( null );
 
-        final AccountKeys keys = AccountKeys.from( "user:other:dummy" );
-        command.keys( keys );
+        final AccountKey key = AccountKey.from( "user:other:dummy" );
+        command.key( key );
 
         command.validate();
     }

@@ -21,7 +21,6 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.CreateAccount;
 import com.enonic.wem.api.command.account.GetAccounts;
-import com.enonic.wem.api.command.account.UpdateAccounts;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.web.rest.service.upload.UploadItem;
@@ -53,7 +52,6 @@ public class CreateOrUpdateAccountRpcHandlerTest
     public void testRequestCreateAccount()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.any( UpdateAccounts.class ) ) ).thenReturn( 1 );
         Mockito.when( client.execute( Mockito.any( GetAccounts.class ) ) ).thenReturn( Accounts.empty() );
         Mockito.when( client.execute( Commands.account().findMemberships().key( UserKey.from( "enonic:user1" ) ) ) ).thenReturn(
             AccountKeys.empty() );

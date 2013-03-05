@@ -7,11 +7,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.inject.Inject;
+
 import org.apache.commons.io.FileUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -82,17 +83,14 @@ public final class CreateOrUpdateAccountRpcHandler
         {
             if ( !newMemberships.contains( groupKey ) )
             {
-                final AccountKeys groupToRemove = AccountKeys.from( groupKey );
-                this.client.execute(
-                    Commands.account().update().keys( groupToRemove ).editor( AccountEditors.removeMembers( userMember ) ) );
+                this.client.execute( Commands.account().update().key( groupKey ).editor( AccountEditors.removeMembers( userMember ) ) );
             }
         }
 
         // add user as member of specified groups
         for ( final AccountKey groupKey : newMemberships )
         {
-            final AccountKeys groupToAdd = AccountKeys.from( groupKey );
-            this.client.execute( Commands.account().update().keys( groupToAdd ).editor( AccountEditors.addMembers( userMember ) ) );
+            this.client.execute( Commands.account().update().key( groupKey ).editor( AccountEditors.addMembers( userMember ) ) );
         }
     }
 
@@ -111,9 +109,8 @@ public final class CreateOrUpdateAccountRpcHandler
     private void updateAccount( final Account account )
         throws Exception
     {
-        final AccountKeys fromKey = AccountKeys.from( account.getKey() );
         final AccountEditor setAccount = AccountEditors.setAccount( account );
-        this.client.execute( Commands.account().update().keys( fromKey ).editor( setAccount ) );
+        this.client.execute( Commands.account().update().key( account.getKey() ).editor( setAccount ) );
     }
 
     private Account getAccountFromRequest( final JsonRpcContext context )

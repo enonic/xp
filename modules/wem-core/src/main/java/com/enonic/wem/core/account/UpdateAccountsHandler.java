@@ -8,11 +8,11 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.editor.AccountEditor;
+import com.enonic.wem.api.command.UpdateResult;
 import com.enonic.wem.api.command.account.UpdateAccounts;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
@@ -38,12 +38,12 @@ public final class UpdateAccountsHandler
     public void handle( final CommandContext context, final UpdateAccounts command )
         throws Exception
     {
-        final AccountKeys accountKeys = command.getKeys();
+        final AccountKey accountKey = command.getKey();
         final AccountEditor editor = command.getEditor();
         final Session session = context.getJcrSession();
 
-        int accountsUpdated = 0;
-        for ( AccountKey accountKey : accountKeys )
+        UpdateResult result = UpdateResult.notUpdated();
+        try
         {
             final Account account = retrieveAccount( session, accountKey );
             if ( account != null )
@@ -52,14 +52,18 @@ public final class UpdateAccountsHandler
                 if ( flag )
                 {
                     updateAccount( session, account );
-                    accountsUpdated++;
+                    result = UpdateResult.updated();
                 }
             }
+        }
+        catch ( Exception e )
+        {
+            result = UpdateResult.failure( e.getMessage() );
         }
 
         session.save();
 
-        command.setResult( accountsUpdated );
+        command.setResult( result );
     }
 
     private Account retrieveAccount( final Session session, final AccountKey account )

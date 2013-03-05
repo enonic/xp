@@ -7,11 +7,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
@@ -207,7 +208,7 @@ public final class AccountMigrateTask
     private void setMembers( final AccountKey nonUserAccountKey, final AccountKeys members )
         throws Exception
     {
-        client.execute( account().update().keys( AccountKeys.from( nonUserAccountKey ) ).editor( AccountEditors.setMembers( members ) ) );
+        client.execute( account().update().key( nonUserAccountKey ).editor( AccountEditors.setMembers( members ) ) );
         final NonUserAccount nonUserAccount = (NonUserAccount) accountsImported.get( nonUserAccountKey );
         nonUserAccount.setMembers( members );
         LOG.info( "Set account members for " + nonUserAccountKey.toString() + ": " + members.toString() );
