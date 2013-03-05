@@ -21,10 +21,10 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.registerGlobalListeners = function () {
-        $(window).on('component:paragraph:edit', $.proxy(this.show, this));
         $(window).on('component:click:deselect', $.proxy(this.hide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));
         $(window).on('component:sort:start', $.proxy(this.hide, this));
+        $(window).on('component:paragraph:edit:init', $.proxy(this.show, this));
     };
 
 

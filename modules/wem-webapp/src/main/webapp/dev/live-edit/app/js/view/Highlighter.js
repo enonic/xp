@@ -21,6 +21,7 @@
     // Uses
     var util = AdminLiveEdit.Util;
 
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.registerGlobalListeners = function () {
@@ -31,6 +32,7 @@
         $(window).on('component:click:deselect', $.proxy(this.deselect, this));
         $(window).on('component:sort:start', $.proxy(this.hide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));
+        $(window).on('component:paragraph:edit:init', $.proxy(this.hide, this));
 
         $(window).on('component:sort:stop', function (event, uiEvent, ui, wasSelectedOnDragStart) {
             if (wasSelectedOnDragStart) {
@@ -58,23 +60,22 @@
 
     proto.onSelect = function (event, $component) {
         var me = this;
-
         me.$selectedComponent = $component;
+        var componentType = util.getComponentType($component);
 
-        // Highlighter should not be shown when page is selected.
-        if (util.getComponentType($component) === 'page') {
+        // Highlighter should not be shown when type page is selected
+        if (componentType === 'page') {
             me.hide();
             return;
         }
 
         me.show();
-
         me.paintOutline($component);
 
         $('.live-edit-selected-component').removeClass('live-edit-selected-component');
         $component.addClass('live-edit-selected-component');
 
-        if (util.getComponentType($component) !== 'page') {
+        if (componentType !== 'page') {
             me.scrollComponentIntoView($component);
         }
     };

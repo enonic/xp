@@ -1,7 +1,7 @@
 /*
     TODO: Refactor to a dynamic object!
 */
-AdminLiveEdit.DragDrop = (function () {
+AdminLiveEdit.DragDropSort = (function () {
     'use strict';
 
     var util = AdminLiveEdit.Util;
@@ -10,8 +10,8 @@ AdminLiveEdit.DragDrop = (function () {
     var cursorAt = AdminLiveEdit.Util.supportsTouch() ? {left: 15, top: 70} : {left: -15, top: -20};
 
     var regionSelector = '[data-live-edit-type=region]';
-    // var itemsToSort = '[data-live-edit-type=part], [data-live-edit-type=paragraph]';
-    var itemsToSort = '[data-live-edit-type=part]';
+    var itemsToSort = '[data-live-edit-type=part], [data-live-edit-type=paragraph]';
+    // var itemsToSort = '[data-live-edit-type=part]';
 
 
     function enableDragDrop() {
@@ -185,10 +185,12 @@ AdminLiveEdit.DragDrop = (function () {
             }
         });
 
-        $liveedit(window).on('component:paragraph:edit', function () {
+        $liveedit(window).on('component:paragraph:select', function () {
+            $liveedit(regionSelector).sortable('option', 'cancel', '[data-live-edit-type=paragraph]');
         });
 
-        $liveedit(window).on('component:paragraph:close', function () {
+        $liveedit(window).on('component:paragraph:edit:destroy', function () {
+            $liveedit(regionSelector).sortable('option', 'cancel', '');
         });
     }
 

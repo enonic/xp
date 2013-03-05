@@ -24,7 +24,7 @@
         $(window).on('component:click:select', $.proxy(me.observe, me));
         $(window).on('component:click:deselect', $.proxy(me.disconnect, me));*/
 
-        $(window).on('component:paragraph:edit', $.proxy(me.observe, me));
+        $(window).on('component:paragraph:edit:init', $.proxy(me.observe, me));
         $(window).on('shader:click', $.proxy(me.disconnect, me));
 
     };
@@ -54,14 +54,13 @@
     // Called when the html in the observed component mutates
     proto.onMutate = function (summaries, event) {
         if (summaries && summaries[0]) {
-            var $targetComponent = $(summaries[0].target);
-            var targetComponentIsSelected = $targetComponent.hasClass('live-edit-selected-component');
-            var componentIsNotSelectedAndMouseIsOver = event.type === 'component:mouseover' && !targetComponentIsSelected;
-            var componentIsParagraphAndBeingEdited = $targetComponent.data('live-edit-paragraph-mode');
-
+            var $targetComponent = $(summaries[0].target),
+                targetComponentIsSelected = $targetComponent.hasClass('live-edit-selected-component'),
+                componentIsNotSelectedAndMouseIsOver = !targetComponentIsSelected && event.type === 'component:mouseover',
+                componentIsParagraphAndBeingEdited = $targetComponent.attr('contenteditable');
 
             if (componentIsParagraphAndBeingEdited) {
-                $(window).trigger('component:paragraph:edit', [$targetComponent]);
+                $(window).trigger('component:paragraph:edit:init', [$targetComponent]);
             } else if (componentIsNotSelectedAndMouseIsOver) {
                 $(window).trigger('component:mouseover', [$targetComponent]);
             } else {

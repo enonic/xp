@@ -93,8 +93,8 @@
 <ul class="links">
   <li><a href="http://enonic.github.com/projects/wem-extjs-theme/">WEM ExtJS Theme</a></li>
   <li><a href="../dev/live-edit/page/page.jsp">Live Edit</a></li>
-  <li><a href="../dev/html-templates/live-edit-components.html">Live Edit: Component Bar HTML</a></li>
-  <li><a href="../dev/live-edit/page/plug-ins.jsp">Live Edit: with draggables containing plugins</a></li>
+  <!--li><a href="../dev/html-templates/live-edit-components.html">Live Edit: Component Bar HTML</a></li>
+  <li><a href="../dev/live-edit/page/plug-ins.jsp">Live Edit: with draggables containing plugins</a></li-->
   <li><a href="../dev/live-edit/page/blank.jsp">Live Edit: Blank page</a></li>
   <li>
     <a href="../dev/filter/index.html">Facet checkboxes with Ext Data View</a>

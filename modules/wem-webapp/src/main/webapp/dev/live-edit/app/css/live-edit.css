@@ -376,7 +376,7 @@ svg.live-edit-highlighter rect {
     background-color: #fff;
 }
 .live-edit-component-menu-button:hover {
-    background-color: #0a6cf9;
+    background-color: #3892dd;
     color: #fff !important;
 }
 .live-edit-component-menu-button:hover .live-edit-button-text {
@@ -502,7 +502,7 @@ svg.live-edit-highlighter rect {
 }
 
 .live-edit-component:hover {
-    background-color: #4a87e5;
+    background-color: #3892dd;
     color: #fff;
 }
 

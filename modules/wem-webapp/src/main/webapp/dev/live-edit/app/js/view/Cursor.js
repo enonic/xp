@@ -9,6 +9,7 @@
     // Shorthand ref to the prototype
     var proto = cursor.prototype;
 
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.registerGlobalListeners = function () {

@@ -4,6 +4,12 @@
     // Namespaces
     AdminLiveEdit.view.componentbar = {};
 
+    // Constants
+    var BAR_WIDTH = 235;
+    var TOGGLE_WIDTH = 30;
+    var INNER_WIDTH = BAR_WIDTH - TOGGLE_WIDTH;
+
+
     // Class definition (constructor)
     var componentBar = AdminLiveEdit.view.componentbar.ComponentBar = function () {
         var me = this;
@@ -17,13 +23,7 @@
         me.registerGlobalListeners();
 
         me.registerEvents();
-        /*
-        */
     };
-
-    var BAR_WIDTH = 235;
-    var TOGGLE_WIDTH = 30;
-    var INNER_WIDTH = BAR_WIDTH - TOGGLE_WIDTH;
 
 
     // Inherits Base.js
