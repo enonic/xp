@@ -25,7 +25,7 @@ public class FormItemsTest
         formItemSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
         // exercise & verify
-        HierarchicalFormItem personaliaConfig = formItems.getFormItemSet( new FormItemPath( "personalia" ) );
+        HierarchicalFormItem personaliaConfig = formItems.getFormItemSet( FormItemPath.from( "personalia" ) );
         assertEquals( "personalia", personaliaConfig.getPath().toString() );
     }
 
@@ -81,7 +81,7 @@ public class FormItemsTest
         // exercise & verify
         try
         {
-            formItems.getFormItem( new FormItemPath( "mySet.myInput" ) );
+            formItems.getFormItem( FormItemPath.from( "mySet.myInput" ) );
         }
         catch ( Exception e )
         {

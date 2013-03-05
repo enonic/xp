@@ -36,8 +36,8 @@ class MaximumOccurrencesValidator
     {
         for ( final String entryName : dataSet.entryNames() )
         {
-            final FormItemPath parentFormItemPath = dataSet.getPath().resolveFormItemPath();
-            final FormItemPath path = new FormItemPath( parentFormItemPath, entryName );
+            final FormItemPath parentFormItemPath = FormItemPath.from( dataSet.getPath().resolvePathElementNames() );
+            final FormItemPath path = FormItemPath.from( parentFormItemPath, entryName );
             final FormItem formItem = contentType.form().getFormItem( path );
 
             if ( formItem instanceof Input )

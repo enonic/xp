@@ -29,7 +29,7 @@ public abstract class HierarchicalFormItem
             throw new IllegalStateException( "Cannot set parent path unless there is already an existing path" );
         }
 
-        this.path = new FormItemPath( parentPath, this.path.getLastElement() );
+        this.path = FormItemPath.from( parentPath, this.path.getLastElement() );
     }
 
     public final FormItemPath getPath()

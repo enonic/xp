@@ -322,7 +322,7 @@ public final class Input
             input.validationRegexp = validationRegexp;
             input.helpText = helpText;
             input.inputTypeConfig = inputTypeConfig;
-            input.setPath( new FormItemPath( input.getName() ) );
+            input.setPath( FormItemPath.from( input.getName() ) );
             return input;
         }
     }

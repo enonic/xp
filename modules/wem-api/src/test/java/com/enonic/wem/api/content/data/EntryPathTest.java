@@ -1,6 +1,8 @@
 package com.enonic.wem.api.content.data;
 
 
+import java.util.Iterator;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -76,6 +78,26 @@ public class EntryPathTest
         equalsTest.assertEqualsAndHashCodeContract();
     }
 
+    @Test
+    public void from_parentPath_element()
+    {
+        EntryPath parentPath = EntryPath.from( "parent.path" );
+        EntryPath path = EntryPath.from( parentPath, EntryPath.Element.from( "element" ) );
+        assertEquals( "parent.path.element", path.toString() );
+        assertSame( parentPath, path.getParent() );
+
+        path = EntryPath.from( parentPath, "element" );
+        assertEquals( "parent.path.element", path.toString() );
+        assertSame( parentPath, path.getParent() );
+    }
+
+    @Test
+    public void from_element_varargs()
+    {
+        EntryPath path = EntryPath.from( EntryPath.Element.from( "a" ), EntryPath.Element.from( "b" ), EntryPath.Element.from( "c" ) );
+        assertEquals( "a.b.c", path.toString() );
+        assertEquals( "a.b", path.getParent().toString() );
+    }
 
     @Test
     public void tostring()
@@ -129,10 +151,14 @@ public class EntryPathTest
     }
 
     @Test
-    public void resolveFormItemPath()
+    public void resolvePathElementNames()
     {
-        assertEquals( "car", EntryPath.from( "car[0]" ).resolveFormItemPath().toString() );
-        assertEquals( "car.model", EntryPath.from( "car[0].model" ).resolveFormItemPath().toString() );
+        Iterator<String> elementNamesIt = EntryPath.from( "car[0]" ).resolvePathElementNames().iterator();
+        assertEquals( "car", elementNamesIt.next() );
+
+        elementNamesIt = EntryPath.from( "car[0].model" ).resolvePathElementNames().iterator();
+        assertEquals( "car", elementNamesIt.next() );
+        assertEquals( "model", elementNamesIt.next() );
     }
 
     @Test
@@ -155,31 +181,16 @@ public class EntryPathTest
     }
 
     @Test
-    public void asNewWithIndexAtPath()
-    {
-        assertEquals( "set", EntryPath.from( "set" ).asNewWithIndexAtPath( 0, EntryPath.from( "nonExisting" ) ).toString() );
-
-        assertEquals( "set[0]", EntryPath.from( "set" ).asNewWithIndexAtPath( 0, EntryPath.from( "set" ) ).toString() );
-        assertEquals( "set[0].input", EntryPath.from( "set.input" ).asNewWithIndexAtPath( 0, EntryPath.from( "set" ) ).toString() );
-        assertEquals( "anotherSet.set[0].input",
-                      EntryPath.from( "anotherSet.set.input" ).asNewWithIndexAtPath( 0, EntryPath.from( "anotherSet.set" ) ).toString() );
-        assertEquals( "anotherSet.set.input[0]", EntryPath.from( "anotherSet.set.input" ).asNewWithIndexAtPath( 0, EntryPath.from(
-            "anotherSet.set.input" ) ).toString() );
-
-    }
-
-    @Test
-    public void asNewWithoutIndexAtLastPathElement()
-    {
-        assertEquals( EntryPath.from( "parent.child" ), EntryPath.from( "parent.child[1]" ).asNewWithoutIndexAtLastPathElement() );
-        assertEquals( EntryPath.from( "element" ), EntryPath.from( "element[1]" ).asNewWithoutIndexAtLastPathElement() );
-    }
-
-    @Test
     public void getParent()
     {
         assertEquals( null, EntryPath.from( "orphan" ).getParent() );
         assertEquals( EntryPath.from( "parent" ), EntryPath.from( "parent.child" ).getParent() );
         assertEquals( EntryPath.from( "parent[0]" ), EntryPath.from( "parent[0].child" ).getParent() );
+    }
+
+    @Test
+    public void asNewWithoutFirstPathElement()
+    {
+        assertEquals( "b.c", EntryPath.from( "a.b.c" ).asNewWithoutFirstPathElement().toString() );
     }
 }

@@ -1,51 +1,61 @@
 package com.enonic.wem.api.content.schema.content.form;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.annotation.concurrent.Immutable;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 @Immutable
 public class FormItemPath
+    implements Iterable<String>
 {
     private final static String ELEMENT_DIVIDER = ".";
 
-    private final List<String> elements;
+    private final ImmutableList<String> elements;
 
-    public FormItemPath()
+    public static FormItemPath from( FormItemPath parentPath, String name )
     {
-        elements = new ArrayList<String>();
+        ImmutableList.Builder<String> builder = ImmutableList.builder();
+        builder.addAll( parentPath );
+        builder.add( name );
+        return new FormItemPath( builder.build() );
     }
 
-    public FormItemPath( List<String> pathElements )
+    public static FormItemPath from( final FormItemPath parentPath, final FormItemPath childPath )
+    {
+        ImmutableList.Builder<String> builder = ImmutableList.builder();
+        builder.addAll( parentPath );
+        builder.addAll( childPath );
+        return new FormItemPath( builder.build() );
+    }
+
+    public static FormItemPath from( Iterable<String> pathElements )
     {
         Preconditions.checkNotNull( pathElements );
-        elements = pathElements;
+        return new FormItemPath( ImmutableList.copyOf( pathElements ) );
     }
 
-    public FormItemPath( FormItemPath parentPath, String name )
-    {
-        elements = new ArrayList<String>();
-        elements.addAll( parentPath.elements );
-        elements.add( name );
-    }
-
-    public FormItemPath( final FormItemPath parentPath, final FormItemPath childPath )
-    {
-        elements = new ArrayList<String>();
-        elements.addAll( parentPath.elements );
-        elements.addAll( childPath.elements );
-    }
-
-    public FormItemPath( String path )
+    public static FormItemPath from( String path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
 
-        elements = splitPathIntoElements( path );
+        return new FormItemPath( ImmutableList.copyOf( splitPathIntoElements( path ) ) );
+    }
+
+    public FormItemPath( final ImmutableList<String> elementNames )
+    {
+        this.elements = elementNames;
+    }
+
+    public FormItemPath()
+    {
+        elements = ImmutableList.of();
     }
 
     public String getFirstElement()
@@ -73,7 +83,13 @@ public class FormItemPath
                 pathElements.add( elements.get( i ) );
             }
         }
-        return new FormItemPath( pathElements );
+        return FormItemPath.from( pathElements );
+    }
+
+    @Override
+    public Iterator<String> iterator()
+    {
+        return elements.iterator();
     }
 
     @Override
@@ -117,7 +133,7 @@ public class FormItemPath
 
     private static List<String> splitPathIntoElements( String path )
     {
-        List<String> elements = new ArrayList<String>();
+        List<String> elements = new ArrayList<>();
 
         StringTokenizer st = new StringTokenizer( path, ELEMENT_DIVIDER );
         while ( st.hasMoreTokens() )

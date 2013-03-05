@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.form.FormItem;
+import com.enonic.wem.api.content.schema.content.form.FormItemPath;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
 import com.enonic.wem.api.content.schema.content.form.Input;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
@@ -58,7 +59,7 @@ public final class DataSetValidator
         {
             checkDataTypeValidity( entry.toData(), validationErrors );
 
-            final FormItem formItem = contentType.form().getFormItem( entry.getPath().resolveFormItemPath().toString() );
+            final FormItem formItem = contentType.form().getFormItem( FormItemPath.from( entry.getPath().resolvePathElementNames() ) );
             if ( formItem != null )
             {
                 if ( formItem instanceof Input )
@@ -71,15 +72,16 @@ public final class DataSetValidator
 
     private void validateDataSet( final DataSet dataSet, final List<DataValidationError> validationErrors )
     {
-        final String path = dataSet.getPath().resolveFormItemPath().toString();
-        final FormItem formItem = contentType.form().getFormItem( path );
+        final FormItemPath formItemPath = FormItemPath.from( dataSet.getPath().resolvePathElementNames() );
+        final FormItem formItem = contentType.form().getFormItem( formItemPath );
         if ( formItem != null )
         {
             if ( formItem instanceof FormItemSet )
             {
-                for ( Entry entry : dataSet )
+                for ( final Entry entry : dataSet )
                 {
-                    final FormItem subFormItem = contentType.form().getFormItem( entry.getPath().resolveFormItemPath().toString() );
+                    final FormItem subFormItem =
+                        contentType.form().getFormItem( FormItemPath.from( entry.getPath().resolvePathElementNames() ) );
                     if ( subFormItem instanceof Input )
                     {
                         checkInputValidity( entry.toData(), (Input) subFormItem, validationErrors );
@@ -89,7 +91,7 @@ public final class DataSetValidator
             else
             {
                 throw new IllegalArgumentException(
-                    "FormItem at path [" + path + "] expected to be a FormItemSet: " + formItem.getClass().getSimpleName() );
+                    "FormItem at path [" + formItemPath + "] expected to be a FormItemSet: " + formItem.getClass().getSimpleName() );
             }
         }
         else
@@ -136,7 +138,8 @@ public final class DataSetValidator
 
     private DataValidationError translateInvalidDataException( final InvalidDataException invalidDataException )
     {
-        return new DataValidationError( invalidDataException.getData().getPath().resolveFormItemPath(), invalidDataException.getMessage() );
+        return new DataValidationError( FormItemPath.from( invalidDataException.getData().getPath().resolvePathElementNames() ),
+                                        invalidDataException.getMessage() );
     }
 
 }

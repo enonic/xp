@@ -24,7 +24,7 @@ public class DataTypeFixer
             @Override
             public void visit( final Data data )
             {
-                final FormItemPath path = data.getPath().resolveFormItemPath();
+                final FormItemPath path = FormItemPath.from( data.getPath().resolvePathElementNames() );
                 final HierarchicalFormItem formItem = contentType.form().getFormItem( path );
                 if ( formItem != null && formItem.getPath().equals( path ) )
                 {

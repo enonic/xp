@@ -28,7 +28,7 @@ public final class Form
 
     public HierarchicalFormItem getFormItem( final String path )
     {
-        return formItems.getFormItem( new FormItemPath( path ) );
+        return formItems.getFormItem( FormItemPath.from( path ) );
     }
 
     public HierarchicalFormItem getFormItem( final FormItemPath path )
@@ -48,7 +48,7 @@ public final class Form
 
     public Input getInput( final String path )
     {
-        return FormItemPath.hasNotPathElementDivider( path ) ? formItems.getInput( path ) : formItems.getInput( new FormItemPath( path ) );
+        return FormItemPath.hasNotPathElementDivider( path ) ? formItems.getInput( path ) : formItems.getInput( FormItemPath.from( path ) );
     }
 
     public FormItemSet getFormItemSet( final FormItemPath path )
@@ -60,7 +60,7 @@ public final class Form
     {
         return FormItemPath.hasNotPathElementDivider( path )
             ? formItems.getFormItemSet( path )
-            : formItems.getFormItemSet( new FormItemPath( path ) );
+            : formItems.getFormItemSet( FormItemPath.from( path ) );
     }
 
     public MixinReference getMixinReference( final FormItemPath path )
@@ -72,7 +72,7 @@ public final class Form
     {
         return FormItemPath.hasNotPathElementDivider( path )
             ? formItems.getMixinReference( path )
-            : formItems.getMixinReference( new FormItemPath( path ) );
+            : formItems.getMixinReference( FormItemPath.from( path ) );
     }
 
     public void mixinReferencesToFormItems( final MixinFetcher mixinFetcher )

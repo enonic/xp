@@ -37,7 +37,7 @@ public final class EntryXmlSerializer
 
     private void generateDataSet( final Element parentDataEl, final DataSet dataSet )
     {
-        final String name = dataSet.getPath().resolveFormItemPath().getLastElement();
+        final String name = dataSet.getPath().getLastElement().getName();
         final Element entryEl = new Element( name ).setAttribute( "type", DataTypes.SET.getName() );
         parentDataEl.addContent( entryEl );
         for ( final Entry subEntry : dataSet )
@@ -48,7 +48,7 @@ public final class EntryXmlSerializer
 
     private void generateData( final Element parentDataEl, final Data data )
     {
-        final String name = data.getPath().resolveFormItemPath().getLastElement();
+        final String name = data.getPath().getLastElement().getName();
 
         final Element dataEl = new Element( name ).setAttribute( "type", data.getType().getName() );
         parentDataEl.addContent( dataEl );

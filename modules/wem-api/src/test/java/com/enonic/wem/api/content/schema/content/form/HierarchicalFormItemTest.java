@@ -14,21 +14,21 @@ public class HierarchicalFormItemTest
     public void setParentPath()
     {
         Input input = newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build();
-        input.setParentPath( new FormItemPath( "myParent" ) );
+        input.setParentPath( FormItemPath.from( "myParent" ) );
         assertEquals( "myParent.myField", input.getPath().toString() );
 
         input = newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build();
-        input.setPath( new FormItemPath( "myParent.myField" ) );
-        input.setParentPath( new FormItemPath( "myNewParent" ) );
+        input.setPath( FormItemPath.from( "myParent.myField" ) );
+        input.setParentPath( FormItemPath.from( "myNewParent" ) );
         assertEquals( "myNewParent.myField", input.getPath().toString() );
 
         input = newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build();
-        input.setParentPath( new FormItemPath( "myGrandParent.myParent" ) );
+        input.setParentPath( FormItemPath.from( "myGrandParent.myParent" ) );
         assertEquals( "myGrandParent.myParent.myField", input.getPath().toString() );
 
         input = newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build();
-        input.setPath( new FormItemPath( "myParent.myField" ) );
-        input.setParentPath( new FormItemPath( "myNewGrandParent.myNewParent" ) );
+        input.setPath( FormItemPath.from( "myParent.myField" ) );
+        input.setParentPath( FormItemPath.from( "myNewGrandParent.myNewParent" ) );
         assertEquals( "myNewGrandParent.myNewParent.myField", input.getPath().toString() );
     }
 }

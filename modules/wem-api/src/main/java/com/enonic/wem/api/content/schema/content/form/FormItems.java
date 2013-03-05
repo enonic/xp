@@ -34,7 +34,7 @@ public class FormItems
     {
         if ( formItem instanceof HierarchicalFormItem )
         {
-            ( (HierarchicalFormItem) formItem ).setPath( new FormItemPath( path, formItem.getName() ) );
+            ( (HierarchicalFormItem) formItem ).setPath( FormItemPath.from( path, formItem.getName() ) );
         }
 
         Object previous = formItemByName.put( formItem.getName(), formItem );

@@ -42,7 +42,7 @@ public class FormItemSet
         {
             Preconditions.checkState( getPath() != null, "Cannot add HierarchicalFormItem before this FormItemSet have a path" );
             final HierarchicalFormItem hierarchicalFormItem = (HierarchicalFormItem) formItem;
-            hierarchicalFormItem.setPath( new FormItemPath( getPath(), formItem.getName() ) );
+            hierarchicalFormItem.setPath( FormItemPath.from( getPath(), formItem.getName() ) );
         }
 
         this.formItems.add( formItem );
@@ -302,7 +302,7 @@ public class FormItemSet
             formItemSet.customText = customText;
             formItemSet.helpText = helpText;
 
-            formItemSet.setPath( new FormItemPath( formItemSet.getName() ) );
+            formItemSet.setPath( FormItemPath.from( formItemSet.getName() ) );
 
             for ( FormItem formItem : formItems )
             {
