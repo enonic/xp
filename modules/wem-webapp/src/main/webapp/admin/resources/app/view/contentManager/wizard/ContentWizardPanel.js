@@ -27,11 +27,28 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     listeners: {
         afterrender: function () {
             this.setLiveMode(this.isLiveMode);
+        },
+        copyremoved: function (copy) {
+            console.log(copy.getValue());
+            var wizard = this.getWizardPanel();
+            var data = wizard.getData();
+            var copyData = copy.getValue();
+            if (copyData instanceof Array) {
+                Ext.each(copyData, function (copyDataItem) {
+                    wizard.deleteData(copyDataItem.path);
+                });
+            } else {
+                wizard.deleteData(copyData.path);
+            }
         }
     },
 
     initComponent: function () {
         var me = this;
+
+        if (this.data.content && !Ext.isEmpty(this.data.content.path)) {
+            this.evaluateDisplayName = false;
+        }
 
         var headerData = this.prepareHeaderData(this.data);
 

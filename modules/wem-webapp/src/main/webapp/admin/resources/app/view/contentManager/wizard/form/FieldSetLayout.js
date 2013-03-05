@@ -31,7 +31,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldSetLayout', {
 
     getValue: function () {
         var value = [];
-        Ext.each(this.items, function (item) {
+        this.items.each(function (item) {
             var currentItemValue = item.getValue();
             value = value.concat(currentItemValue);
         });

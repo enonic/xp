@@ -44,11 +44,15 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
      * @private
      */
     createFormItemSetComponent: function (formItemSetConfig, formItemSetData) {
-        return Ext.create({
+        var formItemSetComponent = Ext.create({
             xclass: 'widget.FormItemSet',
             name: formItemSetConfig.name,
             formItemSetConfig: formItemSetConfig,
             value: formItemSetData
+        });
+        return Ext.create({
+            xclass: 'widget.formItemSetContainer',
+            field: formItemSetComponent
         });
     },
 
