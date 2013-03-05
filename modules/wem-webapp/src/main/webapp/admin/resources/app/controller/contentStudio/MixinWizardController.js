@@ -63,19 +63,19 @@ Ext.define('Admin.controller.contentStudio.MixinWizardController', {
     },
 
     deleteType: function (wizard) {
-        var me = this;
+        var mixin = wizard.data;
+
         var onDeleteMixinSuccess = function (success, failures) {
             if (success) {
-                me.getWizardTab().close();
+                wizard.close();
                 Admin.MessageBus.showFeedback({
                     title: 'Mixin was deleted',
                     message: 'Mixin was deleted',
                     opts: {}
                 });
             }
-        }
+        };
 
-        this.remoteDeleteMixin(wizard.data, onDeleteMixinSuccess);
-
+        this.remoteDeleteMixin(mixin, onDeleteMixinSuccess);
     }
 });

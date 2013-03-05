@@ -200,7 +200,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         this.evaluateDisplayName = false;
     },
 
-    onContentInputChanged: function (f, e) {
+    onFormInputChanged: function (f, e) {
         if (this.evaluateDisplayName) {
             var displayNameField = this.down('#displayName');
 

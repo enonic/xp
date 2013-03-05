@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.relationship.dao;
 
 
 import com.enonic.wem.api.content.relationship.RelationshipId;
-import com.enonic.wem.core.support.dao.AbstractId;
+import com.enonic.wem.api.support.AbstractId;
 
 public class RelationshipIdImpl
     extends AbstractId

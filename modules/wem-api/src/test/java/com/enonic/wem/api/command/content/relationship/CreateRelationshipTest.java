@@ -6,8 +6,6 @@ import org.junit.Test;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.AbstractEqualsTest;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.MockContentId;
-import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
 public class CreateRelationshipTest
@@ -20,52 +18,44 @@ public class CreateRelationshipTest
             @Override
             public Object getObjectX()
             {
-                return createRelationship( QualifiedRelationshipTypeName.LIKE, MockContentId.from( "1" ), MockContentId.from( "2" ),
-                                           EntryPath.from( "myRef" ) );
+                return createRelationship( QualifiedRelationshipTypeName.LIKE, ContentId.from( "1" ), ContentId.from( "2" ), "val1" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
                 return new Object[]{
-                    createRelationship( QualifiedRelationshipTypeName.PARENT, MockContentId.from( "1" ), MockContentId.from( "2" ),
-                                        EntryPath.from( "myRef" ) ),
-                    createRelationship( QualifiedRelationshipTypeName.LIKE, MockContentId.from( "3" ), MockContentId.from( "2" ),
-                                        EntryPath.from( "myRef" ) ),
-                    createRelationship( QualifiedRelationshipTypeName.LIKE, MockContentId.from( "1" ), MockContentId.from( "3" ),
-                                        EntryPath.from( "myRef" ) ),
-                    createRelationship( QualifiedRelationshipTypeName.LIKE, MockContentId.from( "1" ), MockContentId.from( "2" ),
-                                        EntryPath.from( "myOtherRef" ) ),
-                    createRelationship( QualifiedRelationshipTypeName.LIKE, MockContentId.from( "1" ), MockContentId.from( "2" ), null )};
+                    createRelationship( QualifiedRelationshipTypeName.PARENT, ContentId.from( "1" ), ContentId.from( "2" ), "val1" ),
+                    createRelationship( QualifiedRelationshipTypeName.LIKE, ContentId.from( "3" ), ContentId.from( "2" ), "val1" ),
+                    createRelationship( QualifiedRelationshipTypeName.LIKE, ContentId.from( "1" ), ContentId.from( "3" ), "val1" ),
+                    createRelationship( QualifiedRelationshipTypeName.LIKE, ContentId.from( "1" ), ContentId.from( "2" ), "otherValue" ),};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return createRelationship( QualifiedRelationshipTypeName.LIKE, MockContentId.from( "1" ), MockContentId.from( "2" ),
-                                           EntryPath.from( "myRef" ) );
+                return createRelationship( QualifiedRelationshipTypeName.LIKE, ContentId.from( "1" ), ContentId.from( "2" ), "val1" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return createRelationship( QualifiedRelationshipTypeName.LIKE, MockContentId.from( "1" ), MockContentId.from( "2" ),
-                                           EntryPath.from( "myRef" ) );
+                return createRelationship( QualifiedRelationshipTypeName.LIKE, ContentId.from( "1" ), ContentId.from( "2" ), "val1" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();
     }
 
     private CreateRelationship createRelationship( QualifiedRelationshipTypeName type, ContentId fromContent, ContentId toContent,
-                                                   EntryPath managingPath )
+                                                   String propValule )
     {
         CreateRelationship command = Commands.relationship().create();
         command.fromContent( fromContent );
         command.toContent( toContent );
         command.type( type );
-        if ( managingPath != null )
+        if ( propValule != null )
         {
-            command.managed( managingPath );
+            command.property( "prop", propValule );
         }
         return command;
     }

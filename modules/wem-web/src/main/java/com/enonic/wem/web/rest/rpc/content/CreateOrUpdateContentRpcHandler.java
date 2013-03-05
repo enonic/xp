@@ -24,7 +24,6 @@ import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.exception.ContentAlreadyExistException;
 import com.enonic.wem.api.exception.ContentNotFoundException;
 import com.enonic.wem.core.content.ContentPathNameGenerator;
-import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
@@ -57,7 +56,7 @@ public final class CreateOrUpdateContentRpcHandler
         final ContentId contentId;
         if ( idParam != null )
         {
-            contentId = ContentIdFactory.from( idParam );
+            contentId = ContentId.from( idParam );
             parentContentPath = null;
         }
         else if ( parentContentPathParam != null )

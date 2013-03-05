@@ -11,11 +11,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.core.content.JsonFactoryHolder;
-import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 
 import static com.enonic.wem.core.support.serializer.JsonSerializerUtil.getDateTimeValue;
@@ -105,7 +105,7 @@ public class ContentJsonSerializer
         final String id = getStringValue( "id", contentNode, null );
         if ( id != null )
         {
-            contentBuilder.id( ContentIdFactory.from( id ) );
+            contentBuilder.id( ContentId.from( id ) );
         }
         contentBuilder.path( ContentPath.from( getStringValue( "path", contentNode, null ) ) );
         contentBuilder.displayName( getStringValue( "displayName", contentNode, null ) );

@@ -8,10 +8,10 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.space.GetSpaces;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.space.Spaces;
-import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
@@ -45,7 +45,7 @@ public class GetSpaceRpcHandlerTest
             displayName( "My Space" ).
             modifiedTime( CURRENT_TIME ).
             createdTime( CURRENT_TIME ).
-            rootContent( ContentIdFactory.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
+            rootContent( ContentId.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
             build();
 
         Mockito.when( client.execute( isA( GetSpaces.class ) ) ).thenReturn( Spaces.from( space ) );

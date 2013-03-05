@@ -18,7 +18,6 @@ Ext.define('Admin.controller.contentManager.DetailPanelController', {
         });
     },
 
-
     deselectRecord: function (key) {
         this.getContentTreeGridPanel().deselect(key);
     },

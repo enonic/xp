@@ -1,6 +1,7 @@
 Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.groupWizardPanel',
+
     requires: [
         'Admin.view.WizardPanel',
         'Admin.view.account.wizard.group.GroupWizardToolbar',
@@ -18,24 +19,18 @@ Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
         border: false
     },
 
+    headerTemplate: '<div class="admin-wizard-header">' +
+                    '<h1 class="admin-display-name admin-edited-field">{displayName}</h1>' +
+                    '<span>{qualifiedName}</span>' +
+                    '</div>',
+
     initComponent: function () {
         var me = this;
         var isNew = this.isNewGroup();
         var isRole = this.isRole();
-        var displayNameValue = isNew ? 'Display name' : me.modelData.displayName;
-        var qualifiedName = isNew ? me.userstore + '\\' : me.modelData.qualifiedName;
         var steps = me.getSteps();
-        var groupWizardHeader = Ext.create('Ext.container.Container', {
-            itemId: 'wizardHeader',
-            autoHeight: true,
-            cls: 'admin-wizard-header-container',
-            border: false,
-            tpl: new Ext.XTemplate(Templates.account.groupWizardHeader),
-            data: {
-                displayName: displayNameValue,
-                qualifiedName: qualifiedName
-            }
-        });
+
+        var headerData = me.resolveHeaderData(this.data);
 
         me.tbar = Ext.createByAlias('widget.groupWizardToolbar', {
             xtype: 'groupWizardToolbar',
@@ -45,22 +40,21 @@ Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
 
         me.items = [
             {
-                width: 138,
+                xtype: 'container',
                 padding: 5,
                 border: false,
                 items: [
                     {
-                        xtype: 'container',
+                        xtype: 'image',
                         plain: true,
-                        width: 128,
-                        height: 128,
-                        cls: me.modelData &&
-                             (me.modelData.type === 'role') ? 'icon-role-128' : 'icon-group-128',
+                        width: 100,
+                        height: 100,
+                        src: headerData.iconUrl,
                         listeners: {
                             render: function (cmp) {
                                 Ext.tip.QuickTipManager.register({
                                     target: cmp.el,
-                                    text: me.modelData ? Ext.String.capitalize(me.modelData.type) : 'Group',
+                                    text: headerData.tipText,
                                     width: 100,
                                     dismissDelay: 10000 // Hide after 10 seconds hover
                                 });
@@ -70,13 +64,22 @@ Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
                 ]
             },
             {
+                xtype: 'container',
                 columnWidth: 1,
                 padding: '10 10 10 0',
                 defaults: {
                     border: false
                 },
                 items: [
-                    groupWizardHeader,
+                    {
+                        xtype: 'component',
+                        itemId: 'wizardHeader',
+                        autoHeight: true,
+                        cls: 'admin-wizard-header-container',
+                        border: false,
+                        tpl: new Ext.XTemplate(me.headerTemplate),
+                        data: headerData
+                    },
                     {
                         xtype: 'wizardPanel',
                         showControls: true,
@@ -93,33 +96,32 @@ Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
             me.removeEmptySteps(groupWizard.getWizardPanel());
         });
 
-        if (me.modelData) {
+        if (me.data) {
             var wizard = me.down('wizardPanel');
-            wizard.addData({userStore: me.modelData.userStore});
-            wizard.addData({key: me.modelData.key});
-            wizard.addData({'displayName': me.modelData.displayName});
-            wizard.addData({builtIn: me.modelData.type === 'role'});
+            wizard.addData({userStore: me.data.userStore});
+            wizard.addData({key: me.data.key});
+            wizard.addData({'displayName': me.data.displayName});
+            wizard.addData({builtIn: me.data.type === 'role'});
         }
 
     },
 
     getSteps: function () {
         var me = this;
-        var isRole = me.modelData !== undefined ? me.modelData.type === 'role' : false;
+        var isRole = me.isRole();
+
         var generalStep = {
             stepTitle: "General",
-            modelData: this.modelData,
+            data: this.data,
             xtype: 'wizardStepGeneralPanel'
         };
         var membersStep = {
             stepTitle: "Members",
-            modelData: this.modelData,
-            userStore: this.userstore,
+            data: this.data,
             xtype: 'wizardStepMembersPanel'
         };
         var summaryStep = {
             stepTitle: 'Summary',
-            modelData: this.modelData,
             dataType: 'group',
             xtype: 'summaryTreePanel'
         };
@@ -129,7 +131,16 @@ Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
         } else {
             return [generalStep, membersStep, summaryStep];
         }
+    },
 
+    resolveHeaderData: function (data) {
+        var isNew = this.isNewGroup();
+        return {
+            displayName: isNew ? 'Display name' : data.displayName,
+            qualifiedName: isNew ? this.userstore + '\\' : data.qualifiedName,
+            iconUrl: isNew ? 'rest/account/image/default/group' : data.image_url,
+            tipText: isNew ? 'Group' : Ext.String.capitalize(data.type)
+        }
     },
 
     removeEmptySteps: function (wizardPanel) {
@@ -141,11 +152,11 @@ Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
     },
 
     isNewGroup: function () {
-        return this.modelData === undefined;
+        return Ext.isEmpty(this.data);
     },
 
     isRole: function () {
-        return this.modelData && this.modelData.type === 'role';
+        return this.data && this.data.type === 'role';
     },
 
     getWizardPanel: function () {

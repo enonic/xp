@@ -63,19 +63,20 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
     },
 
     deleteType: function (wizard) {
-        var me = this;
+
+        var contentType = wizard.data;
+
         var onDeleteContentTypeSuccess = function (success, failures) {
             if (success) {
-                me.getWizardTab().close();
+                wizard.close();
                 Admin.MessageBus.showFeedback({
                     title: 'Content Type was deleted',
                     message: 'Content Type was deleted',
                     opts: {}
                 });
             }
-        }
+        };
 
-        this.remoteDeleteContentType(wizard.data, onDeleteContentTypeSuccess);
-
+        this.remoteDeleteContentType(contentType, onDeleteContentTypeSuccess);
     }
 });

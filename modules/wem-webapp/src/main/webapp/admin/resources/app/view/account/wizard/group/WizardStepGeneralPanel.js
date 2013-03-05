@@ -18,7 +18,7 @@ Ext.define('Admin.view.account.wizard.group.WizardStepGeneralPanel', {
                         xtype: 'textfield',
                         fieldLabel: 'Name <span style="color: red;">*</span>',
                         allowBlank: false,
-                        value: me.modelData ? me.modelData.displayName : '',
+                        value: me.data ? me.data.displayName : '',
                         name: 'displayName',
                         itemId: 'displayName',
                         enableKeyEvents: true,
@@ -27,7 +27,7 @@ Ext.define('Admin.view.account.wizard.group.WizardStepGeneralPanel', {
                     {
                         xtype: 'checkbox',
                         fieldLabel: 'Public group',
-                        checked: me.modelData ? me.modelData['public'] : false,
+                        checked: me.data ? me.data['public'] : false,
                         name: 'public'
                     },
                     {
@@ -35,7 +35,7 @@ Ext.define('Admin.view.account.wizard.group.WizardStepGeneralPanel', {
                         fieldLabel: 'Description',
                         allowBlank: true,
                         rows: 5,
-                        value: me.modelData ? me.modelData.description : '',
+                        value: me.data ? me.data.description : '',
                         name: 'description'
                     }
                 ]

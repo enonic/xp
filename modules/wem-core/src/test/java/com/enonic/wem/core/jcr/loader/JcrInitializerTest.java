@@ -25,18 +25,19 @@ public class JcrInitializerTest
     {
         jcrMicroKernelFactory = new JcrMicroKernelFactory();
         jcrMicroKernelFactory.setInMemoryRepository( true );
-        jcrMicroKernelFactory.init();
+        jcrMicroKernelFactory.afterPropertiesSet();
 
         final JcrRepositoryFactory jcrRepositoryFactory = new JcrRepositoryFactory();
         jcrRepositoryFactory.setMicroKernel( jcrMicroKernelFactory.getObject() );
-        jcrRepositoryFactory.init();
+        jcrRepositoryFactory.afterPropertiesSet();
         repo = jcrRepositoryFactory.getObject();
     }
 
     @After
     public final void after()
+        throws Exception
     {
-        jcrMicroKernelFactory.dispose();
+        jcrMicroKernelFactory.destroy();
     }
 
     @Test

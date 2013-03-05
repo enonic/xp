@@ -29,12 +29,12 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
             },
             'contentWizardToolbar *[action=duplicateContent]': {
                 click: function (el, e) {
-                    me.duplicateContent(this.getContentWizardPanel().data);
+                    me.duplicateContent(this.getContentWizardTab().data);
                 }
             },
             'contentWizardToolbar *[action=deleteContent]': {
                 click: function (el, e) {
-                    this.deleteContent(this.getContentWizardPanel().data);
+                    this.deleteContent(this.getContentWizardTab().data);
                 }
             },
             'contentWizardToolbar toggleslide': {

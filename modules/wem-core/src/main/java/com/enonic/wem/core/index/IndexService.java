@@ -3,7 +3,6 @@ package com.enonic.wem.core.index;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.elasticsearch.indices.IndexAlreadyExistsException;
@@ -23,9 +22,11 @@ import com.enonic.wem.core.index.elastic.ElasticsearchIndexServiceImpl;
 import com.enonic.wem.core.index.elastic.IndexMapping;
 import com.enonic.wem.core.index.elastic.IndexMappingProvider;
 import com.enonic.wem.core.index.indexdocument.IndexDocument;
+import com.enonic.wem.core.lifecycle.InitializingBean;
 
 @Component
 public class IndexService
+    implements InitializingBean
 {
     private final static Logger LOG = LoggerFactory.getLogger( IndexService.class );
 
@@ -37,8 +38,8 @@ public class IndexService
 
     private boolean doReindexOnEmptyIndex = true;
 
-    @PostConstruct
-    public void initialize()
+    @Override
+    public void afterPropertiesSet()
         throws Exception
     {
         elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX, true );

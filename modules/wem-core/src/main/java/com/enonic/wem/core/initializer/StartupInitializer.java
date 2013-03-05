@@ -2,15 +2,15 @@ package com.enonic.wem.core.initializer;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.jcr.loader.JcrInitializer;
+import com.enonic.wem.core.lifecycle.InitializingBean;
 
 @Component
 public final class StartupInitializer
+    implements InitializingBean
 {
     private JcrInitializer jcrInitializer;
 
@@ -28,8 +28,8 @@ public final class StartupInitializer
         this.tasks = tasks;
     }
 
-    @PostConstruct
-    public void initialize()
+    @Override
+    public void afterPropertiesSet()
         throws Exception
     {
         if ( this.jcrInitializer.initialize() )

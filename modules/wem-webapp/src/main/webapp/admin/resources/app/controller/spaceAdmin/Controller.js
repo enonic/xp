@@ -79,7 +79,7 @@ Ext.define('Admin.controller.spaceAdmin.Controller', {
                     editing: true,
                     xtype: 'spaceAdminWizardPanel',
                     data: space,
-                    title: space.data.displayName,
+                    title: space.get('displayName'),
                     modelData: space.raw
                 };
 

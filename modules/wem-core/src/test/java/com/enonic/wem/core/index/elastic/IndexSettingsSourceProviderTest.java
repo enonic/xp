@@ -28,7 +28,7 @@ public class IndexSettingsSourceProviderTest
                 new ClassPathResource( "com/enonic/wem/core/index/elastic/wem-other-settings.json" )} );
 
         indexSettingsSourceProvider.setResourcePatternResolver( resourcePatternResolver );
-        indexSettingsSourceProvider.init();
+        indexSettingsSourceProvider.afterPropertiesSet();
 
         final List<String> sources = indexSettingsSourceProvider.getSources();
 

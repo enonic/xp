@@ -1,13 +1,14 @@
 package com.enonic.wem.core.space;
 
 import javax.inject.Inject;
+
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.space.CreateSpace;
-import com.enonic.wem.api.command.space.UpdateSpaces;
+import com.enonic.wem.api.command.space.UpdateSpace;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.core.initializer.InitializerTask;
 
@@ -39,7 +40,7 @@ public class SpacesInitializer
         final boolean exists = client.execute( Commands.space().get().name( spaceName ) ).isNotEmpty();
         if ( exists )
         {
-            final UpdateSpaces updateCommand = Commands.space().update();
+            final UpdateSpace updateCommand = Commands.space().update();
             updateCommand.name( spaceName );
             updateCommand.editor( setDisplayName( displayName ) );
             client.execute( updateCommand );

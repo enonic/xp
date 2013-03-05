@@ -23,26 +23,20 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
 
     displayNameAutoGenerate: true,
 
+    headerTemplate: '<div class="admin-wizard-userstore">' +
+                    '<label>{label}: </label>' +
+                    '<span>{userstore}</span>' +
+                    '<span>{qualifiedName}</span>' +
+                    '</div>',
+
     initComponent: function () {
         var me = this;
         var isNew = this.isNewUser();
-        var photoUrl;
-        var userGroups = [];
-        var displayNameValue = 'Display Name';
-        if (me.userFields) {
-            photoUrl = me.userFields.image_url;
-            userGroups = me.userFields.memberships;
-            displayNameValue = me.userFields.displayName;
 
-            this.preProcessAddresses(me.userFields);
+        if (me.data) {
+            this.preProcessAddresses(me.data);
         }
-        me.headerData = {
-            displayName: displayNameValue,
-            userstoreName: me.userstore,
-            qUserName: me.qUserName,
-            isNewUser: isNew,
-            edited: false
-        };
+        me.headerData = this.resolveHeaderData(me.data);
 
         me.tbar = {
             xtype: 'userWizardToolbar',
@@ -56,7 +50,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
                 position: 'fixed',
                 top: '96px'
             },
-            photoUrl: photoUrl,
+            photoUrl: me.headerData.photoUrl,
             title: "User",
             progressBarHeight: 6,
             listeners: {
@@ -73,7 +67,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
         var displayNameField = Ext.create({
             xclass: 'widget.textfield',
             itemId: 'displayName',
-            value: me.headerData ? me.headerData.displayName : undefined,
+            value: me.headerData.displayName,
             emptyText: 'Display Name',
             enableKeyEvents: true,
             cls: 'admin-display-name',
@@ -81,6 +75,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
         });
         me.items = [
             {
+                xtype: 'container',
                 width: 121,
                 padding: 5,
                 items: [
@@ -106,6 +101,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
                 ]
             },
             {
+                xtype: 'container',
                 columnWidth: 1,
                 padding: '10 10 10 0',
                 defaults: {
@@ -123,7 +119,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
                                 styleHtmlContent: true,
                                 autoHeight: true,
                                 cls: 'admin-wizard-header-container',
-                                tpl: new Ext.XTemplate(Templates.account.userWizardHeader),
+                                tpl: new Ext.XTemplate(me.headerTemplate),
                                 data: me.headerData
                             }
                         ]
@@ -138,14 +134,14 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
                                 stepTitle: "Profile",
                                 itemId: "profilePanel",
                                 xtype: 'editUserFormPanel',
-                                userFields: me.userFields,
+                                data: me.data,
                                 enableToolbar: false
                             },
                             {
                                 stepTitle: "User",
                                 itemId: "userPanel",
                                 xtype: 'editUserFormPanel',
-                                userFields: me.userFields,
+                                data: me.data,
                                 includedFields: ['name', 'email', 'password', 'repeatPassword', 'photo',
                                     'country', 'locale', 'timezone', 'globalPosition'],
                                 enableToolbar: false
@@ -155,12 +151,12 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
                                 itemId: 'placesPanel',
                                 xtype: 'editUserFormPanel',
                                 includedFields: ['address'],
-                                userFields: me.userFields,
+                                data: me.data,
                                 enableToolbar: false
                             },
                             {
                                 stepTitle: "Memberships",
-                                groups: userGroups,
+                                groups: me.headerData.userGroups,
                                 xtype: 'wizardStepMembershipPanel',
                                 listeners: {
                                     afterrender: {
@@ -193,23 +189,34 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
         me.on('afterrender', function (userWizard) {
             this.addStickyNavigation(userWizard);
             //Render all user forms
-            if (me.userFields && me.userFields.userStore) {
-                me.renderUserForms(me.userFields.userStore);
-            } else {
-                me.renderUserForms(me.userstore);
-            }
+            me.renderUserForms(me.data && me.data.userStore ? me.data.userStore : me.userstore);
             me.removeEmptySteps(userWizard.getWizardPanel());
             // Set active item to first one. D-02010 bug workaround
             me.getWizardPanel().getLayout().setActiveItem(0);
         });
     },
 
-    preProcessAddresses: function (userFields) {
+
+    resolveHeaderData: function (data) {
+
+        var isNew = this.isNewUser();
+
+        return {
+            displayName: isNew ? 'Display Name' : data.displayName,
+            qualifiedName: isNew ? this.userstore + '\\' : data.qualifiedName,
+            label: isNew ? "New User" : "User",
+            photoUrl: isNew ? 'rest/account/image/default/user' : data.image_url,
+            userGroups: isNew ? [] : data.memberships,
+            edited: false
+        };
+    },
+
+    preProcessAddresses: function (data) {
         // assign each address a position to be able to reflect this in diff
-        if (userFields.profile && userFields.profile.addresses) {
+        if (data.profile && data.profile.addresses) {
             var i;
-            for (i = 0; i < userFields.profile.addresses.length; i++) {
-                userFields.profile.addresses[i].originalIndex = i;
+            for (i = 0; i < data.profile.addresses.length; i++) {
+                data.profile.addresses[i].originalIndex = i;
             }
         }
     },
@@ -261,7 +268,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
     },
 
     isNewUser: function () {
-        return this.userFields === undefined;
+        return Ext.isEmpty(this.data);
     },
 
     getWizardPanel: function () {
@@ -270,8 +277,8 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
 
     getData: function () {
         var wizardData = this.getWizardPanel().getData();
-        if (this.userFields) {
-            wizardData.key = this.userFields.key;
+        if (this.data) {
+            wizardData.key = this.data.key;
         }
         var displayNameField = this.down('#displayName');
         if (displayNameField) {

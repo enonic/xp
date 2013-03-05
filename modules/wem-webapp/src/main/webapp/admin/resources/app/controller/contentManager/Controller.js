@@ -30,14 +30,12 @@ Ext.define('Admin.controller.contentManager.Controller', {
     },
 
     viewContent: function (content, callback) {
-
         var me = this;
 
         if (!content) {
             var showPanel = this.getContentTreeGridPanel();
             content = showPanel.getSelection();
-        }
-        else {
+        } else {
             content = [].concat(content);
         }
 
@@ -54,7 +52,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                         id: me.generateTabId(content[i], false),
                         isLiveMode: me.getContentDetailPanel().isLiveMode,
                         data: content[i],
-                        title: content[i].raw.displayName
+                        title: content[i].get('displayName')
                     };
                     tabs.addTab(tabItem);
                 }
@@ -83,7 +81,10 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 xtype: 'contentWizardPanel',
                 title: response.content.displayName,
                 isLiveMode: me.getContentDetailPanel().isLiveMode,
-                data: {contentType: response.contentType, content: response.content}
+                data: {
+                    contentType: response.contentType,
+                    content: response.content
+                }
             };
         };
 
@@ -123,7 +124,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
             var tabItem = {
                 id: me.generateTabId(content[i], true),
                 title: selectedContent.get('displayName'),
-                data: selectedContent.raw,
+                data: selectedContent,
                 closable: true,
                 editing: true,
                 layout: 'fit'
@@ -140,7 +141,6 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
         var i;
         if (tabs) {
-            var tab;
             for (i = 0; i < content.length; i += 1) {
                 var data = content[i];
                 //TODO: implement when content specification will be developed

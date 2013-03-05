@@ -1,0 +1,68 @@
+{
+    "name": "ContentDisplayNameScript",
+    "module": "Demo",
+    "displayName": "Content Display name script",
+    "superType": "System:structured",
+    "isAbstract": false,
+    "isFinal": true,
+    "contentDisplayNameScript": "$('firstName') + ' ' + $('middleName') + ' ' + $('lastName')",
+    "form": [
+        {
+            "Input": {
+                "name": "firstName",
+                "label": "First name",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": true,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "middleName",
+                "label": "Middle name",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": true,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "lastName",
+                "label": "Last name",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": true,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            }
+        }
+    ]
+}

@@ -1,9 +1,9 @@
 package com.enonic.wem.core.content.relationship;
 
+import javax.inject.Inject;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
@@ -37,10 +37,6 @@ public final class CreateRelationshipHandler
         builder.fromContent( command.getFromContent() );
         builder.toContent( command.getToContent() );
         builder.properties( command.getProperties() );
-        if ( command.isManaged() )
-        {
-            builder.managed( command.getManagingData() );
-        }
         final Relationship relationship = builder.build();
 
         final Session session = context.getJcrSession();

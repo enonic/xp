@@ -108,16 +108,16 @@ Ext.define('Admin.controller.account.UserWizardController', {
     },
 
     deleteUser: function (el, e) {
-        var userWizard = el.up('userWizardPanel');
-        if (userWizard && userWizard.userFields) {
-            this.showDeleteAccountWindow({data: userWizard.userFields});
+        var user = this.getUserWizardTab().data;
+        if (user) {
+            this.showDeleteAccountWindow(user);
         }
     },
 
     changePassword: function (el, e) {
-        var userWizard = el.up('userWizardPanel');
-        if (userWizard && userWizard.userFields) {
-            this.showChangePasswordWindow({data: userWizard.userFields});
+        var user = this.getUserWizardTab().data;
+        if (user) {
+            this.showChangePasswordWindow(user);
         }
     },
 
@@ -146,7 +146,7 @@ Ext.define('Admin.controller.account.UserWizardController', {
             var treePanel = newStep;
             // Can not re-use data object each time the rootnode is set
             // This somewhat confuses the store. Clone for now.
-            treePanel.setDiffData(userWizard.userFields, this.wizardDataToUserInfo(userWizard.getData()));
+            treePanel.setDiffData(userWizard.data, this.wizardDataToUserInfo(userWizard.getData()));
         }
 
         // oldStep can be null for first page
@@ -353,8 +353,8 @@ Ext.define('Admin.controller.account.UserWizardController', {
 
     closeWizard: function (el, e) {
         var tab = this.getUserWizardTab();
-        var userWizard = this.getUserWizardPanel();
-        if (userWizard.getWizardPanel().isWizardDirty) {
+        var wizard = tab.down('wizardPanel');
+        if (wizard.isWizardDirty) {
             Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?',
                 function (answer) {
                     if ('yes' === answer) {
@@ -374,7 +374,7 @@ Ext.define('Admin.controller.account.UserWizardController', {
     },
 
     getUserWizardPanel: function () {
-        return this.getUserWizardTab().items.get(0);
+        return this.getUserWizardTab().down('userWizardPanel');
     }
 
 });

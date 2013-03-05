@@ -21,25 +21,14 @@ Ext.define('Admin.controller.account.GroupPreviewController', {
     },
 
     deleteGroup: function (el, e) {
-        var groupPreview = el.up('groupPreviewPanel');
-        if (groupPreview && groupPreview.data) {
-            this.showDeleteAccountWindow({ data: groupPreview.data });
+        var group = this.getGroupPreviewTab().data;
+        if (group) {
+            this.showDeleteAccountWindow(group);
         }
     },
 
     editGroup: function (el, e) {
-        var tab = this.getCmsTabPanel().getActiveTab();
-        var index = this.getCmsTabPanel().items.indexOf(tab);
-
-        // check if we are inside the account detail view
-        // beneath the grid or in separate tab
-        var group;
-        if (index >= 0) {
-            var previewPanel = tab.down('groupPreviewPanel');
-            group = previewPanel ? previewPanel.group : tab.group;
-        } else {
-            group = this.getAccountDetailPanel().getCurrentAccount();
-        }
+        var group = this.getGroupPreviewTab().data;
         if (group) {
             this.showEditAccountPanel(group);
         }

@@ -11,11 +11,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.AbstractSerializerTest;
-import com.enonic.wem.core.content.dao.ContentIdFactory;
 
 import static org.junit.Assert.*;
 
@@ -34,8 +34,8 @@ public class RelationshipJsonSerializerTest
     public void serialize_relationship()
     {
         Relationship relationship = Relationship.newRelationship().
-            fromContent( ContentIdFactory.from( "111" ) ).
-            toContent( ContentIdFactory.from( "222" ) ).
+            fromContent( ContentId.from( "111" ) ).
+            toContent( ContentId.from( "222" ) ).
             type( QualifiedRelationshipTypeName.PARENT ).
             createdTime( NOW ).
             creator( AccountKey.superUser() ).
@@ -63,8 +63,8 @@ public class RelationshipJsonSerializerTest
     public void serialize_relationship_with_managingData()
     {
         Relationship relationship = Relationship.newRelationship().
-            fromContent( ContentIdFactory.from( "111" ) ).
-            toContent( ContentIdFactory.from( "222" ) ).
+            fromContent( ContentId.from( "111" ) ).
+            toContent( ContentId.from( "222" ) ).
             type( QualifiedRelationshipTypeName.PARENT ).
             managed( EntryPath.from( "mySet.myData" ) ).
             createdTime( NOW ).
@@ -93,8 +93,8 @@ public class RelationshipJsonSerializerTest
     public void serialize_relationship_with_properties()
     {
         Relationship relationship = Relationship.newRelationship().
-            fromContent( ContentIdFactory.from( "111" ) ).
-            toContent( ContentIdFactory.from( "222" ) ).
+            fromContent( ContentId.from( "111" ) ).
+            toContent( ContentId.from( "222" ) ).
             type( QualifiedRelationshipTypeName.PARENT ).
             property( "stars", "4" ).
             property( "stripes", "3" ).
@@ -126,8 +126,8 @@ public class RelationshipJsonSerializerTest
     public void parse_relationship()
     {
         Relationship toSerialize = Relationship.newRelationship().
-            fromContent( ContentIdFactory.from( "111" ) ).
-            toContent( ContentIdFactory.from( "222" ) ).
+            fromContent( ContentId.from( "111" ) ).
+            toContent( ContentId.from( "222" ) ).
             type( QualifiedRelationshipTypeName.PARENT ).
             managed( EntryPath.from( "mySet.myData" ) ).
             property( "stars", "4" ).
@@ -144,8 +144,8 @@ public class RelationshipJsonSerializerTest
         // exercise
         Relationship parsedRelationship = serializer.toRelationship( jsonToString( json ) );
 
-        assertEquals( ContentIdFactory.from( "111" ), parsedRelationship.getFromContent() );
-        assertEquals( ContentIdFactory.from( "222" ), parsedRelationship.getToContent() );
+        assertEquals( ContentId.from( "111" ), parsedRelationship.getFromContent() );
+        assertEquals( ContentId.from( "222" ), parsedRelationship.getToContent() );
         assertEquals( QualifiedRelationshipTypeName.PARENT, parsedRelationship.getType() );
         assertEquals( true, parsedRelationship.isManaged() );
         assertEquals( EntryPath.from( "mySet.myData" ), parsedRelationship.getManagingData() );

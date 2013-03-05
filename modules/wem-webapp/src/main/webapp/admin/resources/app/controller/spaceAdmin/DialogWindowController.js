@@ -19,15 +19,16 @@ Ext.define('Admin.controller.spaceAdmin.DialogWindowController', {
 
     deleteSpace: function () {
         var win = this.getDeleteSpaceWindow(),
-            spaceNames = [],
+            space = win.data,
             me = this;
+
         var onDelete = function (success, details) {
             win.close();
             if (success && details.deleted) {
 
                 Admin.MessageBus.showFeedback({
                     title: 'Space deleted',
-                    message: spaceNames.length > 1? spaceNames.join(', ') + ' were deleted' : spaceNames[0] + ' was deleted' ,
+                    message: Ext.isArray(space) && space.length > 1 ? space.length + ' spaces were deleted' : '1 space was deleted',
                     opts: {}
                 });
 
@@ -41,16 +42,9 @@ Ext.define('Admin.controller.spaceAdmin.DialogWindowController', {
 
             }
             me.getSpaceTreeGridPanel().refresh();
-        }
+        };
 
-        if (win.modelData.selection) {
-            Ext.each(win.modelData.selection, function (space) {
-                spaceNames.push(space.data.name);
-            });
-        } else {
-            spaceNames.push(win.modelData.name);
-        }
-        this.remoteDeleteSpace(spaceNames, onDelete);
+        this.remoteDeleteSpace(space, onDelete);
     }
 
 });

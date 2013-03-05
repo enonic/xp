@@ -19,6 +19,7 @@
         var componentTip        = new AdminLiveEdit.view.componenttip.Tip();
         var shader              = new AdminLiveEdit.view.Shader();
         var componentBar        = new AdminLiveEdit.view.componentbar.ComponentBar();
+        var mutationObserver    = new AdminLiveEdit.MutationObserver();
 
         AdminLiveEdit.DragDrop.init();
     });

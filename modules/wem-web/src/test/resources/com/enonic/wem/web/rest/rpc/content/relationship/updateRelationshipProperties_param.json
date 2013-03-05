@@ -1,5 +1,9 @@
 {
-    "relationshipId": "123321",
+    "relationshipKey": {
+        "fromContent": "123",
+        "toContent": "321",
+        "type": "System:like"
+    },
     "add": {
         "addA": "1",
         "addB": "2"

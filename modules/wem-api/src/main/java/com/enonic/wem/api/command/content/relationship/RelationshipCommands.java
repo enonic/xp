@@ -7,9 +7,9 @@ public final class RelationshipCommands
         return new CreateRelationship();
     }
 
-    public UpdateRelationships update()
+    public UpdateRelationship update()
     {
-        return new UpdateRelationships();
+        return new UpdateRelationship();
     }
 
     public DeleteRelationships delete()

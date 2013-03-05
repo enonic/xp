@@ -95,10 +95,11 @@ Ext.define('Admin.controller.account.GroupWizardController', {
         this.remoteCreateOrUpdateGroup(data, onUpdateGroupSuccess);
     },
 
-    deleteGroup: function (el, evt) {
-        var groupWizard = el.up('groupWizardPanel');
-        if (groupWizard && groupWizard.modelData) {
-            this.showDeleteAccountWindow({data: groupWizard.modelData});
+
+    deleteGroup: function (el, e) {
+        var group = this.getGroupWizardTab().data;
+        if (group) {
+            this.showDeleteAccountWindow(group);
         }
     },
 
@@ -171,8 +172,8 @@ Ext.define('Admin.controller.account.GroupWizardController', {
 
     closeWizard: function (el, e) {
         var tab = this.getGroupWizardTab();
-        var groupWizard = this.getGroupWizardPanel();
-        if (groupWizard.getWizardPanel().isWizardDirty) {
+        var wizard = tab.down('wizardPanel');
+        if (wizard.isWizardDirty) {
             Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?',
                 function (answer) {
                     if ('yes' === answer) {

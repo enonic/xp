@@ -3,7 +3,7 @@
   <name>AllSchemas</name>
   <module>myModule</module>
   <display-name>All the Base Types</display-name>
-  <display-name-script/>
+  <content-display-name-script>$('firstName') + ' ' + $('lastName')</content-display-name-script>
   <super-type>System:Content</super-type>
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>

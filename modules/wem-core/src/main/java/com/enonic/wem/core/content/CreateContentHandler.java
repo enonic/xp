@@ -12,30 +12,36 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
-import com.enonic.wem.api.command.content.relationship.CreateRelationship;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataVisitor;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
-import com.enonic.wem.core.content.dao.ContentIdFactory;
+import com.enonic.wem.core.content.relationship.RelationshipFactory;
+import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
 import com.enonic.wem.core.index.IndexService;
+
+import static com.enonic.wem.core.content.relationship.RelationshipFactory.newRelationshipFactory;
 
 @Component
 public class CreateContentHandler
     extends CommandHandler<CreateContent>
 {
     private ContentDao contentDao;
+
+    private RelationshipDao relationshipDao;
 
     private IndexService indexService;
 
@@ -70,17 +76,7 @@ public class CreateContentHandler
 
         validateContentData( context.getClient(), content );
 
-        for ( Data reference : references )
-        {
-            final ContentId toContent = ContentIdFactory.from( reference.getString() );
-            final CreateRelationship createRelationship = Commands.relationship().create();
-            createRelationship.fromContent( contentId );
-            createRelationship.toContent( toContent );
-            createRelationship.type( QualifiedRelationshipTypeName.PARENT );
-            createRelationship.managed( reference.getPath() );
-
-            context.getClient().execute( createRelationship );
-        }
+        createRelationships( context, contentId, references );
 
         try
         {
@@ -94,6 +90,22 @@ public class CreateContentHandler
         }
 
         command.setResult( contentId );
+    }
+
+    private void createRelationships( final CommandContext context, final ContentId contentId, final List<Data> references )
+    {
+        final RelationshipFactory relationshipFactory = newRelationshipFactory().
+            creator( AccountKey.anonymous() ).
+            createdTime( DateTime.now() ).
+            fromContent( contentId ).
+            type( QualifiedRelationshipTypeName.DEFAULT ).
+            build();
+
+        for ( Data reference : references )
+        {
+            final Relationship relationship = relationshipFactory.create( reference );
+            relationshipDao.create( relationship, context.getJcrSession() );
+        }
     }
 
     private void validateContentData( final Client client, final Content content )
@@ -131,6 +143,13 @@ public class CreateContentHandler
     {
         this.contentDao = contentDao;
     }
+
+    @Inject
+    public void setRelationshipDao( final RelationshipDao relationshipDao )
+    {
+        this.relationshipDao = relationshipDao;
+    }
+
 
     @Inject
     public void setIndexService( final IndexService indexService )

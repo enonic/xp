@@ -8,10 +8,10 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonParsingException;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
@@ -107,8 +107,8 @@ public class RelationshipJsonSerializer
             builder.createdTime( JsonSerializerUtil.getDateTimeValue( "createdTime", relationshipNode ) );
         }
         builder.type( QualifiedRelationshipTypeName.from( JsonSerializerUtil.getStringValue( "type", relationshipNode ) ) );
-        builder.fromContent( ContentIdFactory.from( JsonSerializerUtil.getStringValue( "fromContent", relationshipNode ) ) );
-        builder.toContent( ContentIdFactory.from( JsonSerializerUtil.getStringValue( "toContent", relationshipNode ) ) );
+        builder.fromContent( ContentId.from( JsonSerializerUtil.getStringValue( "fromContent", relationshipNode ) ) );
+        builder.toContent( ContentId.from( JsonSerializerUtil.getStringValue( "toContent", relationshipNode ) ) );
         if ( !relationshipNode.get( "managingData" ).isNull() )
         {
             builder.managed( EntryPath.from( JsonSerializerUtil.getStringValue( "managingData", relationshipNode ) ) );

@@ -1,7 +1,19 @@
 package com.enonic.wem.api.content;
 
-public interface ContentId
-    extends ContentSelector
+import com.enonic.wem.api.support.AbstractId;
+
+public class ContentId
+    extends AbstractId
+    implements ContentSelector
 {
-    public String toString();
+    public ContentId( final String id )
+    {
+        super( id );
+    }
+
+    public static ContentId from( String s )
+    {
+        return new ContentId( s );
+    }
 }
+

@@ -31,7 +31,7 @@ public class IndexMappingProviderTest
         Mockito.when( resourcePatternResolver.getResources( IndexMappingProvider.MAPPING_RESOURCE_LOCATION ) ).thenReturn( resources );
         IndexMappingProvider mappingProvider = new IndexMappingProvider();
         mappingProvider.setResourcePatternResolver( resourcePatternResolver );
-        mappingProvider.init();
+        mappingProvider.afterPropertiesSet();
 
         final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX );
 
@@ -64,7 +64,7 @@ public class IndexMappingProviderTest
         Mockito.when( resourcePatternResolver.getResources( IndexMappingProvider.MAPPING_RESOURCE_LOCATION ) ).thenReturn( resources );
         IndexMappingProvider mappingProvider = new IndexMappingProvider();
         mappingProvider.setResourcePatternResolver( resourcePatternResolver );
-        mappingProvider.init();
+        mappingProvider.afterPropertiesSet();
 
         final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX );
 
@@ -85,7 +85,7 @@ public class IndexMappingProviderTest
         Mockito.when( resourcePatternResolver.getResources( IndexMappingProvider.MAPPING_RESOURCE_LOCATION ) ).thenReturn( resources );
         IndexMappingProvider mappingProvider = new IndexMappingProvider();
         mappingProvider.setResourcePatternResolver( resourcePatternResolver );
-        mappingProvider.init();
+        mappingProvider.afterPropertiesSet();
 
         final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX );
 
@@ -103,7 +103,7 @@ public class IndexMappingProviderTest
         Mockito.when( resourcePatternResolver.getResources( IndexMappingProvider.MAPPING_RESOURCE_LOCATION ) ).thenReturn( resources );
         IndexMappingProvider mappingProvider = new IndexMappingProvider();
         mappingProvider.setResourcePatternResolver( resourcePatternResolver );
-        mappingProvider.init();
+        mappingProvider.afterPropertiesSet();
 
         final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX );
 

@@ -63,6 +63,7 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType.Builder contentTypeBuilder = newContentType().name( "AllSchemas" ).module( myModule.getName() );
         contentTypeBuilder.addFormItem( set );
         contentTypeBuilder.displayName( "All the Base Types" );
+        contentTypeBuilder.contentDisplayNameScript( "$('firstName') + ' ' + $('lastName')" );
         contentTypeBuilder.superType( new QualifiedContentTypeName( "System:Content" ) );
         contentTypeBuilder.setAbstract( false );
         contentTypeBuilder.setFinal( true );

@@ -4,14 +4,14 @@ Ext.define('Admin.controller.contentStudio.DialogWindowController', {
     stores: [],
     models: [],
     views: [
-        'Admin.view.contentStudio.DeleteContentTypeWindow'
+        'Admin.view.contentStudio.DeleteSchemaWindow'
     ],
 
 
     init: function () {
 
         this.control({
-            'deleteContentTypeWindow *[action=deleteContentType]': {
+            'deleteSchemaWindow *[action=deleteSchema]': {
                 click: this.doDelete
             },
             'selectSchemaWindow': {
@@ -24,9 +24,9 @@ Ext.define('Admin.controller.contentStudio.DialogWindowController', {
     },
 
     doDelete: function (el, e) {
-        var win = this.getDeleteContentTypeWindow();
+        var win = this.getSchemaWindow();
 
-        switch (win.modelData.type) {
+        switch (win.data.get('type')) {
         case 'ContentType':
             this.deleteContentType(win);
             break;
@@ -44,13 +44,16 @@ Ext.define('Admin.controller.contentStudio.DialogWindowController', {
 
     deleteContentType: function (win) {
         var me = this;
+        var contentType = win.data;
+
         var onDelete = function (success, details) {
             win.close();
             if (success) {
 
                 Admin.MessageBus.showFeedback({
                     title: 'Content Type was deleted',
-                    message: win.modelData.path + ' was deleted',
+                    message: Ext.isArray(contentType) && contentType.length > 1 ?
+                             contentType.length + ' content types were deleted' : '1 content type was deleted',
                     opts: {}
                 });
 
@@ -69,20 +72,22 @@ Ext.define('Admin.controller.contentStudio.DialogWindowController', {
 
             }
             me.getTreeGridPanel().refresh();
-        }
+        };
 
-        this.remoteDeleteContentType(win.modelData, onDelete);
+        this.remoteDeleteContentType(contentType, onDelete);
     },
 
     deleteMixin: function (win) {
         var me = this;
+        var mixin = win.data;
+
         var onDelete = function (success, details) {
             win.close();
             if (success) {
 
                 Admin.MessageBus.showFeedback({
                     title: 'Mixin was deleted',
-                    message: win.modelData.path + ' was deleted',
+                    message: mixin.get('displayName') + ' was deleted',
                     opts: {}
                 });
 
@@ -101,19 +106,22 @@ Ext.define('Admin.controller.contentStudio.DialogWindowController', {
 
             }
             me.getTreeGridPanel().refresh();
-        }
-        this.remoteDeleteMixin(win.modelData, onDelete);
+        };
+
+        this.remoteDeleteMixin(mixin, onDelete);
     },
 
     deleteRelationshipType: function (win) {
         var me = this;
+        var relationshipType = win.data;
+
         var onDelete = function (success, details) {
             win.close();
             if (success) {
 
                 Admin.MessageBus.showFeedback({
                     title: 'Relationship Type was deleted',
-                    message: win.modelData.path + ' was deleted',
+                    message: relationshipType.get('displayName') + ' was deleted',
                     opts: {}
                 });
 
@@ -132,8 +140,9 @@ Ext.define('Admin.controller.contentStudio.DialogWindowController', {
 
             }
             me.getTreeGridPanel().refresh();
-        }
-        this.remoteDeleteRelationshipType(win.modelData, onDelete);
+        };
+
+        this.remoteDeleteRelationshipType(relationshipType, onDelete);
     }
 
 });

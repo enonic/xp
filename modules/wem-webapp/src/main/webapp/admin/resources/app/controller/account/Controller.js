@@ -10,6 +10,10 @@ Ext.define('Admin.controller.account.Controller', {
     models: [],
     views: [],
 
+    TYPE_USER: 'user',
+    TYPE_GROUP: 'group',
+    TYPE_ROLE: 'role',
+
     init: function () {
 
         this.control({
@@ -53,7 +57,7 @@ Ext.define('Admin.controller.account.Controller', {
     /*      Public, should operate with accounts only      */
 
     generateTabId: function (account, isEdit) {
-        return 'tab-' + ( isEdit ? 'edit-' : 'preview-' ) + account.type + '-' + account.key;
+        return 'tab-' + ( isEdit ? 'edit-' : 'preview-' ) + account.get('type') + '-' + account.get('key');
     },
 
     showDeleteAccountWindow: function (accounts) {
@@ -161,7 +165,7 @@ Ext.define('Admin.controller.account.Controller', {
         var openPreviewUserTab = function (selectedUser) {
             var requestConfig = {
                 doTabRequest: function (handleRpcResponse) {
-                    Admin.lib.RemoteService.account_get({ key: selectedUser.key }, function (rpcResp) {
+                    Admin.lib.RemoteService.account_get({ key: selectedUser.get('key') }, function (rpcResp) {
                         if (rpcResp.success) {
                             handleRpcResponse(rpcResp);
                         }
@@ -170,7 +174,7 @@ Ext.define('Admin.controller.account.Controller', {
                 createTabFromResponse: createUserTabFn
             };
             var tabItem = {
-                title: selectedUser.displayName + ' (' + selectedUser.qualifiedName + ')',
+                title: selectedUser.get('displayName') + ' (' + selectedUser.get('qualifiedName') + ')',
                 id: me.generateTabId(selectedUser, false),
                 data: selectedUser,
                 closable: true,
@@ -186,7 +190,7 @@ Ext.define('Admin.controller.account.Controller', {
         var openPreviewGroupTab = function (selectedGroup) {
             var requestConfig = {
                 doTabRequest: function (handleRpcResponse) {
-                    Admin.lib.RemoteService.account_get({ key: selectedGroup.key }, function (rpcResp) {
+                    Admin.lib.RemoteService.account_get({ key: selectedGroup.get('key') }, function (rpcResp) {
                         if (rpcResp.success) {
                             handleRpcResponse(rpcResp);
                         }
@@ -195,7 +199,7 @@ Ext.define('Admin.controller.account.Controller', {
                 createTabFromResponse: createGroupTabFn
             };
             var tabItem = {
-                title: selectedGroup.displayName,
+                title: selectedGroup.get('displayName'),
                 id: me.generateTabId(selectedGroup, false),
                 data: selectedGroup,
                 closable: true,
@@ -210,8 +214,8 @@ Ext.define('Admin.controller.account.Controller', {
         };
 
         for (i = 0; i < selection.length; i++) {
-            selectedAccount = selection[i].data || selection[i];
-            if (selectedAccount.type === 'user') {
+            selectedAccount = selection[i];
+            if (selectedAccount.get('type') === me.TYPE_USER) {
                 openPreviewUserTab(selectedAccount);
             } else {
                 openPreviewGroupTab(selectedAccount);
@@ -228,9 +232,7 @@ Ext.define('Admin.controller.account.Controller', {
         var createUserWizardFn = function (response) {
             var tab = {
                 xtype: 'userWizardPanel',
-                userstore: response.userStore,
-                qUserName: response.name,
-                userFields: response,
+                data: response,
                 autoScroll: true
             };
             var tabCmp = Ext.widget(tab.xtype, tab);
@@ -247,8 +249,7 @@ Ext.define('Admin.controller.account.Controller', {
         var createGroupWizardFn = function (response) {
             var tab = {
                 xtype: 'groupWizardPanel',
-                modelData: response,
-                userstore: response.userStore,
+                data: response,
                 autoScroll: true
             };
             if (Ext.isFunction(callback)) {
@@ -259,7 +260,7 @@ Ext.define('Admin.controller.account.Controller', {
         var openEditUserTab = function (selectedUser) {
             var requestConfig = {
                 doTabRequest: function (handleRpcResponse) {
-                    Admin.lib.RemoteService.account_get({ key: selectedUser.key }, function (rpcResp) {
+                    Admin.lib.RemoteService.account_get({ key: selectedUser.get('key') }, function (rpcResp) {
                         if (rpcResp.success) {
                             handleRpcResponse(rpcResp);
                         }
@@ -286,7 +287,7 @@ Ext.define('Admin.controller.account.Controller', {
         var openEditGroupTab = function (selectedGroup) {
             var requestConfig = {
                 doTabRequest: function (handleRpcResponse) {
-                    Admin.lib.RemoteService.account_get({ key: selectedGroup.key }, function (rpcResp) {
+                    Admin.lib.RemoteService.account_get({ key: selectedGroup.get('key') }, function (rpcResp) {
                         if (rpcResp.success) {
                             if (rpcResp.success) {
                                 handleRpcResponse(rpcResp);
@@ -297,7 +298,7 @@ Ext.define('Admin.controller.account.Controller', {
                 createTabFromResponse: createGroupWizardFn
             };
 
-            var tabIconCls = selectedGroup.type === 'group' ? 'icon-group' : 'icon-role';
+            var tabIconCls = selectedGroup.get('type') === me.TYPE_GROUP ? 'icon-group' : 'icon-role';
             var tabItem = {
                 id: me.generateTabId(selectedGroup, true),
                 title: selectedGroup.displayName,
@@ -318,9 +319,9 @@ Ext.define('Admin.controller.account.Controller', {
         // Make sure it is array
         selection = [].concat(selection);
         for (i = 0; i < selection.length; i++) {
-            selectedAccount = selection[i].data || selection[i];
-            if (selectedAccount.editable) {
-                if (selectedAccount.type === 'user') {
+            selectedAccount = selection[i];
+            if (selectedAccount.get('editable')) {
+                if (selectedAccount.get('type') === me.TYPE_USER) {
                     openEditUserTab(selectedAccount);
                 } else {
                     openEditGroupTab(selectedAccount);
@@ -350,6 +351,8 @@ Ext.define('Admin.controller.account.Controller', {
     },
 
     updateActionItems: function () {
+        var me = this;
+
         var actionItems2d = [];
         var editButtons = Ext.ComponentQuery.query('*[action=editAccount]');
         var changePasswordButtons = Ext.ComponentQuery.query('*[action=changePassword]');
@@ -377,8 +380,8 @@ Ext.define('Admin.controller.account.Controller', {
         if (selectionCount === 1) {
             var selection = this.getPersistentGridSelectionPlugin().getSelection()[0];
             var isEditable = selection.get('editable');
-            var isUser = selection.get('type') === 'user';
-            var isRole = selection.get('type') === 'role';
+            var isUser = selection.get('type') === me.TYPE_USER;
+            var isRole = selection.get('type') === me.TYPE_ROLE;
 
             for (j = 0; j < editButtons.length; j++) {
                 editButtons[j].setDisabled(!isEditable);
@@ -516,6 +519,8 @@ Ext.define('Admin.controller.account.Controller', {
         var deleteAccountWindow = item.up('deleteAccountWindow');
         var keys = deleteAccountWindow.getDeleteKeys();
 
+
+        //TODO: should be moved to User- or Group- Controller
         Admin.lib.RemoteService.account_delete({key: keys}, function (response) {
             deleteAccountWindow.close();
             if (!response.success) {

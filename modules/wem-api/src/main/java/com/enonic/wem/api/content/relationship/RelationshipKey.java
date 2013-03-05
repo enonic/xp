@@ -3,6 +3,10 @@ package com.enonic.wem.api.content.relationship;
 
 import java.util.Objects;
 
+import org.codehaus.jackson.node.ObjectNode;
+
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
@@ -78,6 +82,17 @@ public final class RelationshipKey
     }
 
     @Override
+    public String toString()
+    {
+        return com.google.common.base.Objects.toStringHelper( this ).
+            add( "fromContent", fromContent ).
+            add( "toContent", toContent ).
+            add( "type", type ).
+            add( "managingData", managingData ).
+            toString();
+    }
+
+    @Override
     public int hashCode()
     {
         return Objects.hash( type, fromContent, toContent, managingData );
@@ -92,6 +107,20 @@ public final class RelationshipKey
                                         final ContentId toContent )
     {
         return new RelationshipKey( type, fromContent, toContent, managingData );
+    }
+
+    public static RelationshipKey from( final ObjectNode objectNode )
+    {
+        Preconditions.checkArgument( objectNode.has( "type" ), "missing required field: type" );
+        final QualifiedRelationshipTypeName type = QualifiedRelationshipTypeName.from( objectNode.get( "type" ).asText() );
+
+        Preconditions.checkArgument( objectNode.has( "fromContent" ), "missing required field: fromContent" );
+        final ContentId fromContent = new ContentId( objectNode.get( "fromContent" ).asText() );
+
+        Preconditions.checkArgument( objectNode.has( "toContent" ), "missing required field: toContent" );
+        final ContentId toContent = new ContentId( objectNode.get( "toContent" ).asText() );
+
+        return new RelationshipKey( type, fromContent, toContent, null );
     }
 
     public static Builder newRelationshipKey()

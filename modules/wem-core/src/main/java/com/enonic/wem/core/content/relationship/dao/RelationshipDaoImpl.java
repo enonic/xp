@@ -9,7 +9,6 @@ import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.relationship.RelationshipIds;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
-import com.enonic.wem.api.content.relationship.Relationships;
 
 /**
  * A Relationship is stored on the following path:
@@ -57,15 +56,6 @@ public class RelationshipDaoImpl
     public RelationshipIds exists( final RelationshipIds relationshipIds, final Session session )
     {
         final RelationshipDaoHandlerExists handler = new RelationshipDaoHandlerExists( session );
-        handler.relationshipIds( relationshipIds );
-        handler.handle();
-        return handler.getResult();
-    }
-
-    @Override
-    public Relationships select( final RelationshipIds relationshipIds, final Session session )
-    {
-        final RelationshipDaoHandlerSelectByIds handler = new RelationshipDaoHandlerSelectByIds( session );
         handler.relationshipIds( relationshipIds );
         handler.handle();
         return handler.getResult();

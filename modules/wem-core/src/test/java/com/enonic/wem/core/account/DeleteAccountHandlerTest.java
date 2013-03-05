@@ -7,12 +7,11 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupKey;
 import com.enonic.wem.api.account.RoleKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.account.DeleteAccounts;
+import com.enonic.wem.api.command.account.DeleteAccount;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.index.IndexService;
@@ -22,7 +21,7 @@ import static org.junit.Assert.*;
 public class DeleteAccountHandlerTest
     extends AbstractCommandHandlerTest
 {
-    private DeleteAccountsHandler handler;
+    private DeleteAccountHandler handler;
 
     private AccountDao accountDao;
 
@@ -35,65 +34,76 @@ public class DeleteAccountHandlerTest
         accountDao = Mockito.mock( AccountDao.class );
         final IndexService indexService = Mockito.mock( IndexService.class );
 
-        handler = new DeleteAccountsHandler();
+        handler = new DeleteAccountHandler();
         handler.setAccountDao( accountDao );
         handler.setIndexService( indexService );
     }
 
     @Test
-    public void deleteExistingAccounts()
+    public void deleteExistingUser()
         throws Exception
     {
-        final AccountKey account1 = UserKey.from( "enonic:joe" );
-        final AccountKey account2 = GroupKey.from( "enonic:people" );
-        final AccountKey account3 = RoleKey.from( "enonic:admin" );
+        final UserKey account = UserKey.from( "enonic:joe" );
         Mockito.when( accountDao.deleteAccount( Mockito.any( AccountKey.class ), Mockito.any( Session.class ) ) ).thenReturn( true );
 
         // exercise
-        final DeleteAccounts command = Commands.account().delete().keys( AccountKeys.from( account1, account2, account3 ) );
+        final DeleteAccount command = Commands.account().delete().key( account );
         this.handler.handle( this.context, command );
-        final Integer deletedCount = command.getResult();
+        final Boolean deleted = command.getResult();
 
         // verify
-        assertNotNull( deletedCount );
-        assertEquals( 3, deletedCount.longValue() );
+        assertNotNull( deleted );
+        assertTrue( deleted );
     }
 
     @Test
-    public void deleteMissingAndExistingAccounts()
+    public void deleteExistingGroup()
         throws Exception
     {
-        final AccountKey account1 = UserKey.from( "enonic:joe" );
-        final AccountKey account2 = GroupKey.from( "enonic:people" );
-        final AccountKey account3 = RoleKey.from( "enonic:admin" );
-        Mockito.when( accountDao.deleteAccount( Mockito.eq( account1 ), Mockito.any( Session.class ) ) ).thenReturn( true );
+        final GroupKey account = GroupKey.from( "enonic:people" );
+        Mockito.when( accountDao.deleteAccount( Mockito.any( AccountKey.class ), Mockito.any( Session.class ) ) ).thenReturn( true );
 
         // exercise
-        final DeleteAccounts command = Commands.account().delete().keys( AccountKeys.from( account1, account2, account3 ) );
+        final DeleteAccount command = Commands.account().delete().key( account );
         this.handler.handle( this.context, command );
-        final Integer deletedCount = command.getResult();
+        final Boolean deleted = command.getResult();
 
         // verify
-        assertNotNull( deletedCount );
-        assertEquals( 1, deletedCount.longValue() );
+        assertNotNull( deleted );
+        assertTrue( deleted );
     }
 
     @Test
-    public void deleteMissingAccounts()
+    public void deleteExistingRole()
+        throws Exception
+    {
+        final RoleKey account = RoleKey.from( "enonic:admin" );
+        Mockito.when( accountDao.deleteAccount( Mockito.any( AccountKey.class ), Mockito.any( Session.class ) ) ).thenReturn( true );
+
+        // exercise
+        final DeleteAccount command = Commands.account().delete().key( account );
+        this.handler.handle( this.context, command );
+        final Boolean deleted = command.getResult();
+
+        // verify
+        assertNotNull( deleted );
+        assertTrue( deleted );
+    }
+
+    @Test
+    public void deleteMissingAccount()
         throws Exception
     {
         final AccountKey account1 = UserKey.from( "enonic:joe" );
-        final AccountKey account2 = GroupKey.from( "enonic:people" );
-        final AccountKey account3 = RoleKey.from( "enonic:admin" );
 
         // exercise
-        final DeleteAccounts command = Commands.account().delete().keys( AccountKeys.from( account1, account2, account3 ) );
+        final DeleteAccount command = Commands.account().delete().key( account1 );
         this.handler.handle( this.context, command );
-        final Integer deletedCount = command.getResult();
+        final Boolean deleted = command.getResult();
 
         // verify
-        assertNotNull( deletedCount );
-        assertEquals( 0, deletedCount.longValue() );
+        assertNotNull( deleted );
+        assertFalse( deleted );
     }
 
 }

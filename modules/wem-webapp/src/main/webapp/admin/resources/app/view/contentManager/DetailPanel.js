@@ -5,51 +5,38 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     requires: [
         'Admin.view.contentManager.DetailToolbar',
         'Admin.view.contentManager.LivePreview',
-        'Admin.view.account.MembershipsGraphPanel'
+        'Admin.view.account.MembershipsGraphPanel',
+        'Ext.ux.toggleslide.ToggleSlide'
     ],
 
     showToolbar: true,
     isLiveMode: true,
 
     initComponent: function () {
+        var me = this;
+        this.activeItem = this.resolveActiveItem(this.data);
+
         this.on('afterrender', function () {
             if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
                 //TODO update urls when they are ready
                 livePreview.load('/dev/live-edit/page/page.jsp');
             }
-            if (!this.showToolbar) {
-                var toggleBtn = this.down('#toggleBtn');
-                var a = toggleBtn.el.down('a');
-                a.on('click', function () {
-                    this.toggleLive();
-                    this.updateDetailViewButtonText();
-                }, this);
-            }
         }, this);
 
-        this.resolveActiveData(this.data);
-
         this.setDataCallback = function (data) {
-            if (data.length > 1) {
-                this.isLiveMode = false;
-            }
-            this.updateDetailViewButtonText();
-            if (this.isLiveMode) {
 
+            if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
-                this.getLayout().setActiveItem(livePreview);
 
                 //TODO update urls when they are ready
                 livePreview.load('/dev/live-edit/page/page.jsp');
-
             }
-
         };
 
         this.toolBarConfig({
             updateTitleCallback: function (data, tbar, count) {
-                var toggleBtn = tbar.down('#toggleBtn');
+                var toggleBtn = tbar.down('toggleslide');
                 if (toggleBtn) {
                     if (count === 1) {
                         toggleBtn.show();
@@ -64,7 +51,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             {
                 title: "Content",
                 itemId: 'contentTab',
-                html: 'Content'
+                html: ' Content'
             },
             {
                 title: "Tree",
@@ -118,28 +105,24 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             });
         } else {
             this.tbar = this.toolBar(['->', {
-                xtype: 'tbtext',
-                itemId: 'toggleBtn',
+                xtype: 'toggleslide',
                 hidden: true,
-                text: '<a href="javascript:;">Switch to Info View</a>'
+                onText: 'Preview',
+                offText: 'Details',
+                action: 'toggleLive',
+                state: me.isLiveMode,
+                listeners: {
+                    change: function (toggle, state) {
+                        me.toggleLive();
+                    }
+                }
             }]);
         }
 
-
         this.callParent(arguments);
         this.addEvents('deselectrecord');
-
     },
 
-    updateDetailViewButtonText: function () {
-        var toggleBtn = this.down('#toggleBtn');
-        var a = toggleBtn.el.down('a');
-        if (this.isLiveMode) {
-            a.setHTML('Switch to Info View');
-        } else {
-            a.setHTML('Switch to Live View');
-        }
-    },
 
     createLivePreview: function (data) {
         return {
@@ -147,6 +130,26 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             xtype: 'contentLive'
         };
     },
+
+    resolveActiveItem: function (data) {
+        var activeItem;
+        if (Ext.isEmpty(this.data)) {
+            activeItem = 'noSelection';
+        } else if (Ext.isObject(this.data) || this.data.length === 1) {
+            if (this.isLiveMode) {
+                activeItem = 'livePreview';
+            } else {
+                activeItem = 'singleSelection';
+            }
+
+        } else if (this.data.length > 1 && this.data.length <= 10) {
+            activeItem = 'largeBoxSelection';
+        } else {
+            activeItem = 'smallBoxSelection';
+        }
+        return activeItem;
+    },
+
 
     toggleLive: function () {
         this.isLiveMode = !this.isLiveMode;

@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.content.MockContentId;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
@@ -18,8 +18,8 @@ public class RelationshipTest
     {
         // setup
         final Relationship.Builder relationBuilder = Relationship.newRelationship();
-        relationBuilder.fromContent( MockContentId.from( "a" ) );
-        relationBuilder.toContent( MockContentId.from( "b" ) );
+        relationBuilder.fromContent( ContentId.from( "a" ) );
+        relationBuilder.toContent( ContentId.from( "b" ) );
         relationBuilder.createdTime( DateTime.parse( "2012-01-01T12:00:00" ) );
         relationBuilder.creator( UserKey.from( "myStore:myUser" ) );
         relationBuilder.type( QualifiedRelationshipTypeName.from( "system:like" ) );
@@ -42,8 +42,8 @@ public class RelationshipTest
     {
         // setup
         final Relationship.Builder relationBuilder = Relationship.newRelationship();
-        relationBuilder.fromContent( MockContentId.from( "a" ) );
-        relationBuilder.toContent( MockContentId.from( "b" ) );
+        relationBuilder.fromContent( ContentId.from( "a" ) );
+        relationBuilder.toContent( ContentId.from( "b" ) );
         relationBuilder.type( QualifiedRelationshipTypeName.from( "system:like" ) );
         relationBuilder.managed( EntryPath.from( "myData" ) );
 
@@ -62,8 +62,8 @@ public class RelationshipTest
     {
         // setup
         final Relationship.Builder relationBuilder = Relationship.newRelationship();
-        relationBuilder.fromContent( MockContentId.from( "a" ) );
-        relationBuilder.toContent( MockContentId.from( "b" ) );
+        relationBuilder.fromContent( ContentId.from( "a" ) );
+        relationBuilder.toContent( ContentId.from( "b" ) );
         relationBuilder.type( QualifiedRelationshipTypeName.from( "system:like" ) );
 
         // exercise
@@ -81,8 +81,8 @@ public class RelationshipTest
     {
         // setup
         final Relationship.Builder relationBuilder = Relationship.newRelationship();
-        relationBuilder.fromContent( MockContentId.from( "a" ) );
-        relationBuilder.toContent( MockContentId.from( "b" ) );
+        relationBuilder.fromContent( ContentId.from( "a" ) );
+        relationBuilder.toContent( ContentId.from( "b" ) );
         relationBuilder.type( QualifiedRelationshipTypeName.from( "system:like" ) );
         relationBuilder.property( "key", null );
 
@@ -95,8 +95,8 @@ public class RelationshipTest
     {
         // setup
         final Relationship.Builder relationBuilder = Relationship.newRelationship();
-        relationBuilder.fromContent( MockContentId.from( "a" ) );
-        relationBuilder.toContent( MockContentId.from( "b" ) );
+        relationBuilder.fromContent( ContentId.from( "a" ) );
+        relationBuilder.toContent( ContentId.from( "b" ) );
         relationBuilder.type( QualifiedRelationshipTypeName.from( "system:like" ) );
         relationBuilder.property( null, "value" );
 

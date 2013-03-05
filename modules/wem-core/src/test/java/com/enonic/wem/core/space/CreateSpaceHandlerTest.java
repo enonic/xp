@@ -13,10 +13,10 @@ import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.space.CreateSpace;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
-import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.core.space.dao.SpaceDao;
 
 import static org.junit.Assert.*;
@@ -64,7 +64,7 @@ public class CreateSpaceHandlerTest
         // setup
         final Icon icon = Icon.from( "imagedata".getBytes(), "image/png" );
         final String rootContentNodeId = "1fad493a-6a72-41a3-bac4-88aba3d83bcc";
-        when( contentDao.create( isA( Content.class ), any( Session.class ) ) ).thenReturn( ContentIdFactory.from( rootContentNodeId ) );
+        when( contentDao.create( isA( Content.class ), any( Session.class ) ) ).thenReturn( ContentId.from( rootContentNodeId ) );
 
         // exercise
         final CreateSpace command = Commands.space().create().displayName( "My Space" ).name( "mySpace" ).icon( icon );
@@ -79,7 +79,7 @@ public class CreateSpaceHandlerTest
         assertEquals( CURRENT_TIME, spaceResult.getModifiedTime() );
         assertEquals( CURRENT_TIME, spaceResult.getCreatedTime() );
         assertEquals( icon, spaceResult.getIcon() );
-        assertEquals( ContentIdFactory.from( rootContentNodeId ), spaceResult.getRootContent() );
+        assertEquals( ContentId.from( rootContentNodeId ), spaceResult.getRootContent() );
     }
 
 }

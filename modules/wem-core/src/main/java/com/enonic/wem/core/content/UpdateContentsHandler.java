@@ -12,37 +12,41 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.Client;
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.UpdateContents;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
-import com.enonic.wem.api.command.content.relationship.CreateRelationship;
-import com.enonic.wem.api.command.content.relationship.DeleteRelationships;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataVisitor;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.type.DataTypes;
-import com.enonic.wem.api.content.relationship.RelationshipKeys;
+import com.enonic.wem.api.content.relationship.Relationship;
+import com.enonic.wem.api.content.relationship.RelationshipKey;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
-import com.enonic.wem.core.content.dao.ContentIdFactory;
+import com.enonic.wem.core.content.relationship.RelationshipFactory;
+import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
 import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.relationship.RelationshipKey.newRelationshipKey;
+import static com.enonic.wem.core.content.relationship.RelationshipFactory.newRelationshipFactory;
 
 @Component
 public class UpdateContentsHandler
     extends CommandHandler<UpdateContents>
 {
     private ContentDao contentDao;
+
+    private RelationshipDao relationshipDao;
 
     private IndexService indexService;
 
@@ -77,7 +81,7 @@ public class UpdateContentsHandler
 
             validateContentData( context, modifiedContent );
 
-            new SyncRelationships( context.getClient(), persistedContent, modifiedContent ).invoke();
+            new SyncRelationships( context, persistedContent, modifiedContent ).invoke();
 
             final boolean createNewVersion = true;
             contentDao.update( modifiedContent, createNewVersion, context.getJcrSession() );
@@ -116,6 +120,12 @@ public class UpdateContentsHandler
     }
 
     @Inject
+    public void setRelationshipDao( final RelationshipDao relationshipDao )
+    {
+        this.relationshipDao = relationshipDao;
+    }
+
+    @Inject
     public void setIndexService( final IndexService indexService )
     {
         this.indexService = indexService;
@@ -123,7 +133,7 @@ public class UpdateContentsHandler
 
     class SyncRelationships
     {
-        private final Client client;
+        private final CommandContext context;
 
         private final Content contentToUpdate;
 
@@ -131,9 +141,9 @@ public class UpdateContentsHandler
 
         private final Map<EntryPath, Data> referencesAfterEditing;
 
-        SyncRelationships( final Client client, final Content contentBeforeEditing, final Content contentAfterEditing )
+        SyncRelationships( final CommandContext context, final Content contentBeforeEditing, final Content contentAfterEditing )
         {
-            this.client = client;
+            this.context = context;
             this.contentToUpdate = contentAfterEditing;
             this.referencesBeforeEditing = resolveReferences( contentBeforeEditing.getRootDataSet() );
             this.referencesAfterEditing = resolveReferences( contentAfterEditing.getRootDataSet() );
@@ -148,33 +158,32 @@ public class UpdateContentsHandler
         private void deleteRemovedRelationships()
         {
             final List<Data> removedReferences = resolveRemovedReferences();
-            final RelationshipKeys.Builder relationshipsToDelete = RelationshipKeys.newRelationshipKeys();
             for ( Data removedReference : removedReferences )
             {
-                relationshipsToDelete.add( newRelationshipKey().
-                    type( QualifiedRelationshipTypeName.PARENT ).
+                final RelationshipKey relationshipKey = newRelationshipKey().
+                    type( QualifiedRelationshipTypeName.DEFAULT ).
                     fromContent( contentToUpdate.getId() ).
-                    toContent( ContentIdFactory.from( removedReference.getString() ) ).
+                    toContent( ContentId.from( removedReference.getString() ) ).
                     managingData( removedReference.getPath() ).
-                    build() );
-
-                final DeleteRelationships deleteRelationships = Commands.relationship().delete();
-                deleteRelationships.relationships( relationshipsToDelete.build() );
-                client.execute( deleteRelationships );
+                    build();
+                relationshipDao.delete( relationshipKey, context.getJcrSession() );
             }
         }
 
         private void createAddedReferences()
         {
+            final RelationshipFactory relationshipFactory = newRelationshipFactory().
+                creator( AccountKey.anonymous() ).
+                createdTime( DateTime.now() ).
+                fromContent( contentToUpdate.getId() ).
+                type( QualifiedRelationshipTypeName.DEFAULT ).
+                build();
+
             final List<Data> addedReferences = resolveAddedReferences();
             for ( Data addedReference : addedReferences )
             {
-                final CreateRelationship createRelationship = Commands.relationship().create().
-                    type( QualifiedRelationshipTypeName.PARENT ).
-                    fromContent( contentToUpdate.getId() ).
-                    toContent( ContentIdFactory.from( addedReference.getString() ) ).
-                    managed( addedReference.getPath() );
-                client.execute( createRelationship );
+                Relationship relationship = relationshipFactory.create( addedReference );
+                relationshipDao.create( relationship, context.getJcrSession() );
             }
         }
 

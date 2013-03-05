@@ -24,11 +24,11 @@ Ext.define('Admin.controller.account.UserController', {
     },
 
     remoteChangePassword: function (user, callback) {
-        //TODO
+        //TODO: should accept array/single user model(s)
     },
 
     remoteDeleteUser: function (user, callback) {
-        //TODO
+        //TODO: should accept array/single user model(s)
     }
 
 });

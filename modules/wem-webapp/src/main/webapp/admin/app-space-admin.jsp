@@ -7,6 +7,7 @@
   <meta charset="utf-8"/>
   <title>Enonic WEM Admin</title>
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/icons-icomoon.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons-metro.css">
 
   <!-- WEM ExtJS theme -->

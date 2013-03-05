@@ -29,26 +29,82 @@ import static com.enonic.wem.api.content.schema.content.editor.SetContentTypeEdi
 public class ContentTypesInitializer
     implements InitializerTask
 {
-    static final ContentType SPACE = createSystemType( QualifiedContentTypeName.space(), true, false );
+    static final ContentType SPACE = createSystemType( QualifiedContentTypeName.space() ).
+        setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType STRUCTURED = createSystemType( QualifiedContentTypeName.structured(), false, true );
+    static final ContentType STRUCTURED = createSystemType( QualifiedContentTypeName.structured() ).
+        setFinal( false ).setAbstract( true ).build();
 
-    static final ContentType UNSTRUCTURED = createSystemType( QualifiedContentTypeName.unstructured(), false, false );
+    static final ContentType UNSTRUCTURED = createSystemType( QualifiedContentTypeName.unstructured() ).
+        setFinal( false ).setAbstract( false ).build();
 
-    static final ContentType FOLDER = createSystemType( QualifiedContentTypeName.folder(), false, false );
+    static final ContentType FOLDER = createSystemType( QualifiedContentTypeName.folder() ).
+        setFinal( false ).setAbstract( false ).build();
 
-    static final ContentType PAGE = createSystemType( QualifiedContentTypeName.page(), true, false );
+    static final ContentType PAGE = createSystemType( QualifiedContentTypeName.page() ).setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType SHORTCUT = createSystemType( QualifiedContentTypeName.shortcut(), true, false );
+    static final ContentType SHORTCUT = createSystemType( QualifiedContentTypeName.shortcut() ).
+        setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType FILE = createSystemType( QualifiedContentTypeName.file(), true, false );
+    static final ContentType FILE = createSystemType( QualifiedContentTypeName.file() ).
+        setFinal( false ).setAbstract( false ).build();
 
-    private static final ContentType[] SYSTEM_TYPES = {SPACE, STRUCTURED, UNSTRUCTURED, FOLDER, PAGE, SHORTCUT, FILE};
+    static final ContentType FILE_TEXT =
+        createSystemType( QualifiedContentTypeName.textFile() ).superType( QualifiedContentTypeName.file() ).
+            setFinal( true ).setAbstract( false ).build();
+
+    static final ContentType FILE_DATA =
+        createSystemType( QualifiedContentTypeName.dataFile() ).superType( QualifiedContentTypeName.file() ).
+            setFinal( true ).setAbstract( false ).build();
+
+    static final ContentType FILE_AUDIO =
+        createSystemType( QualifiedContentTypeName.audioFile() ).superType( QualifiedContentTypeName.file() ).
+            setFinal( true ).setAbstract( false ).build();
+
+    static final ContentType FILE_VIDEO =
+        createSystemType( QualifiedContentTypeName.videoFile() ).superType( QualifiedContentTypeName.file() ).
+            setFinal( true ).setAbstract( false ).build();
+
+    static final ContentType FILE_IMAGE =
+        createSystemType( QualifiedContentTypeName.imageFile() ).superType( QualifiedContentTypeName.file() ).
+            setFinal( true ).setAbstract( false ).build();
+
+    static final ContentType FILE_VECTOR =
+        createSystemType( QualifiedContentTypeName.vectorFile() ).superType( QualifiedContentTypeName.file() ).
+            setFinal( true ).setAbstract( false ).build();
+
+    static final ContentType FILE_ARCHIVE =
+        createSystemType( QualifiedContentTypeName.archiveFile() ).superType( QualifiedContentTypeName.file() ).
+            setFinal( true ).setAbstract( false ).build();
+
+    static final ContentType FILE_DOCUMENT =
+        createSystemType( QualifiedContentTypeName.documentFile() ).superType( QualifiedContentTypeName.file() ).
+            setFinal( true ).setAbstract( false ).build();
+
+    static final ContentType FILE_SPREADSHEET =
+        createSystemType( QualifiedContentTypeName.spreadsheetFile() ).superType( QualifiedContentTypeName.file() ).
+            setFinal( true ).setAbstract( false ).build();
+
+    static final ContentType FILE_PRESENTATION =
+        createSystemType( QualifiedContentTypeName.presentationFile() ).superType( QualifiedContentTypeName.file() ).
+            setFinal( true ).setAbstract( false ).build();
+
+    static final ContentType FILE_CODE =
+        createSystemType( QualifiedContentTypeName.codeFile() ).superType( QualifiedContentTypeName.file() ).
+            setFinal( true ).setAbstract( false ).build();
+
+    static final ContentType FILE_EXECUTABLE =
+        createSystemType( QualifiedContentTypeName.executableFile() ).superType( QualifiedContentTypeName.file() ).
+            setFinal( true ).setAbstract( false ).build();
+
+    private static final ContentType[] SYSTEM_TYPES =
+        {SPACE, STRUCTURED, UNSTRUCTURED, FOLDER, PAGE, SHORTCUT, FILE, FILE_TEXT, FILE_DATA, FILE_AUDIO, FILE_VIDEO, FILE_IMAGE,
+            FILE_VECTOR, FILE_ARCHIVE, FILE_DOCUMENT, FILE_SPREADSHEET, FILE_PRESENTATION, FILE_CODE, FILE_EXECUTABLE};
 
     private static final String[] TEST_CONTENT_TYPES =
         {"demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json", "demo-contenttype-set.json", "demo-contenttype-blog.json",
             "demo-contenttype-article1.json", "demo-contenttype-article2.json", "demo-contenttype-relation.json",
-            "demo-contenttype-occurrences.json"};
+            "demo-contenttype-occurrences.json", "demo-contenttype-contentDisplayNameScript.json"};
 
     private static final Logger LOG = LoggerFactory.getLogger( ContentTypesInitializer.class );
 
@@ -102,19 +158,16 @@ public class ContentTypesInitializer
         }
     }
 
-    private static ContentType createSystemType( final QualifiedContentTypeName qualifiedName, final boolean isFinal,
-                                                 final boolean isAbstract )
+    private static ContentType.Builder createSystemType( final QualifiedContentTypeName qualifiedName )
     {
         final String displayName = WordUtils.capitalize( qualifiedName.getContentTypeName() );
         final String contentTypeName = qualifiedName.getContentTypeName();
-        return newContentType().
-            module( Module.SYSTEM.getName() ).
-            name( contentTypeName ).
-            displayName( displayName ).
-            setFinal( isFinal ).
-            setAbstract( isAbstract ).
-            icon( loadContentTypeIcon( qualifiedName ) ).
-            build();
+        final ContentType.Builder builder = newContentType();
+        builder.module( Module.SYSTEM.getName() );
+        builder.name( contentTypeName );
+        builder.displayName( displayName );
+        builder.icon( loadContentTypeIcon( qualifiedName ) );
+        return builder;
     }
 
     private static Icon loadContentTypeIcon( final QualifiedContentTypeName qualifiedName )

@@ -1,9 +1,9 @@
 package com.enonic.wem.core.content.schema.content;
 
+import javax.inject.Inject;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.content.CreateContentType;
@@ -39,6 +39,7 @@ public final class CreateContentTypeHandler
         final ContentType contentType = newContentType().
             name( command.getName() ).
             displayName( command.getDisplayName() ).
+            contentDisplayNameScript( command.getContentDisplayNameScript() ).
             module( command.getModuleName() ).
             superType( command.getSuperType() ).
             setAbstract( command.isAbstract() ).

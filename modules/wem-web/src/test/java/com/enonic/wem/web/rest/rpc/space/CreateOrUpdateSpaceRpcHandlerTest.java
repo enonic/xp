@@ -14,11 +14,11 @@ import com.google.common.io.Files;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.space.CreateSpace;
 import com.enonic.wem.api.command.space.GetSpaces;
-import com.enonic.wem.api.command.space.UpdateSpaces;
+import com.enonic.wem.api.command.space.UpdateSpace;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.space.Spaces;
-import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.web.rest.service.upload.UploadItem;
@@ -82,7 +82,7 @@ public class CreateOrUpdateSpaceRpcHandlerTest
             displayName( "My Space" ).
             modifiedTime( CURRENT_TIME ).
             createdTime( CURRENT_TIME ).
-            rootContent( ContentIdFactory.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
+            rootContent( ContentId.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
             build();
 
         Mockito.when( client.execute( isA( GetSpaces.class ) ) ).thenReturn( Spaces.from( space ) );
@@ -99,7 +99,7 @@ public class CreateOrUpdateSpaceRpcHandlerTest
         expectedResult.put( "updated", true );
         testSuccess( params, expectedResult );
 
-        Mockito.verify( client, times( 1 ) ).execute( isA( UpdateSpaces.class ) );
+        Mockito.verify( client, times( 1 ) ).execute( isA( UpdateSpace.class ) );
     }
 
     private void uploadFile( String id, String name, byte[] data, String type )

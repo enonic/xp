@@ -84,9 +84,9 @@ Ext.define('Admin.view.TopBar', {
                 styleHtmlContent: true,
                 text: '<span class="title">Title</span><span class="count">0</span>',
 
-                setTitle: function(title) {
+                setTitle: function (title) {
                     // update title only, without changing count
-                    if(this.el) {
+                    if (this.el) {
                         this.el.down('.title').setHTML(title);
                     }
                 },
@@ -171,7 +171,7 @@ Ext.define('Admin.view.TopBar', {
             closable: cfg.closable,
             hidden: cfg.hidden && !item.hiddenByLayout, // only hide if it wasn't hidden by the layout itself
             iconSrc: me.getMenuItemIcon(item),
-            iconClass : cfg.iconClass,
+            iconClass: cfg.iconClass,
             editing: cfg.editing || false,
             text1: Ext.String.ellipsis(me.getMenuItemDisplayName(item), 26),
             text2: Ext.String.ellipsis(me.getMenuItemDescription(item), 38)
@@ -192,31 +192,19 @@ Ext.define('Admin.view.TopBar', {
 
     getMenuItemIcon: function (card) {
         var icon;
-        if (card.data) {
-            var data = card.data.data || card.data; // to accept either record or record.data
-            icon = data.iconUrl || data.image_url;
-            if (!icon && data.content) {
-                icon = data.content.iconUrl;
-            }
+        if (card.data && card.data instanceof Ext.data.Model) {
+            icon = card.data.get('iconUrl') || card.data.get('image_url');
         }
         return icon;
     },
 
     getMenuItemDescription: function (card) {
         var desc;
-        if (card.data) {
-            var data = card.data.data || card.data; // to accept either record or record.data
-            desc = data.path || data.qualifiedName || data.displayName;
-            if (!desc && data.content) {
-                var content = data.content;
-                desc = content.path || content.qualifiedName || content.displayName;
-            }
-            if (!desc && data.contentType) {
-                var contentType = data.contentType;
-                desc = contentType.path || contentType.qualifiedName || contentType.displayName;
-            }
+        if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+            desc = card.data.get('path') || card.data.get('qualifiedName') || card.data.get('displayName');
         }
         if (!desc) {
+            // fall back to card title
             desc = card.title;
         }
         return desc;
@@ -224,20 +212,11 @@ Ext.define('Admin.view.TopBar', {
 
     getMenuItemDisplayName: function (card) {
         var desc;
-        if (card.data) {
-            var data = card.data.data || card.data; // to accept either record or record.data
-            desc = data.displayName;
-
-            if (!desc && data.content) {
-                var content = data.content;
-                desc = content.displayName;
-            }
-            if (!desc && data.contentType) {
-                var contentType = data.contentType;
-                desc = contentType.displayName;
-            }
+        if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+            desc = card.data.get('displayName') || card.data.get('name');
         }
         if (!desc) {
+            // fall back to card title
             desc = card.title;
         }
         return desc;

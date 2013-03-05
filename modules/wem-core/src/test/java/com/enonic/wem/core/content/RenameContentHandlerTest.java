@@ -12,7 +12,6 @@ import com.enonic.wem.api.command.content.RenameContent;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
-import com.enonic.wem.core.content.dao.ContentIdFactory;
 
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -49,7 +48,7 @@ public class RenameContentHandlerTest
         // setup
         Mockito.when( contentDao.renameContent( isA( ContentId.class ), eq( "newName" ), any( Session.class ) ) ).thenReturn( true );
 
-        final ContentId contentId = ContentIdFactory.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" );
+        final ContentId contentId = ContentId.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" );
         final RenameContent command = Commands.content().rename().contentId( contentId ).newName( "newName" );
 
         // exercise

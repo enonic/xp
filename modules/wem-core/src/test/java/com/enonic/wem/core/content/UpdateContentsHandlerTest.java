@@ -14,8 +14,8 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.UpdateContents;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
-import com.enonic.wem.api.command.content.relationship.CreateRelationship;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.Data;
@@ -23,11 +23,12 @@ import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.editor.ContentEditors;
+import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
-import com.enonic.wem.core.content.dao.ContentIdFactory;
+import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
 import com.enonic.wem.core.index.IndexService;
 
 public class UpdateContentsHandlerTest
@@ -41,6 +42,8 @@ public class UpdateContentsHandlerTest
 
     private ContentDao contentDao;
 
+    private RelationshipDao relationshipDao;
+
     @Before
     public void before()
         throws Exception
@@ -49,10 +52,12 @@ public class UpdateContentsHandlerTest
         super.initialize();
 
         contentDao = Mockito.mock( ContentDao.class );
+        relationshipDao = Mockito.mock( RelationshipDao.class );
         IndexService indexService = Mockito.mock( IndexService.class );
 
         handler = new UpdateContentsHandler();
         handler.setContentDao( contentDao );
+        handler.setRelationshipDao( relationshipDao );
         handler.setIndexService( indexService );
 
         Mockito.when( super.client.execute( Mockito.isA( ValidateRootDataSet.class ) ) ).thenReturn( DataValidationErrors.empty() );
@@ -158,18 +163,21 @@ public class UpdateContentsHandlerTest
         handler.handle( context, command );
 
         // verify
-        CreateRelationship createRelationship = new CreateRelationship().
-            type( QualifiedRelationshipTypeName.PARENT ).
-            fromContent( ContentIdFactory.from( "1" ) ).
-            toContent( ContentIdFactory.from( "333" ) ).
-            managed( EntryPath.from( "myRelated3" ) );
-        Mockito.verify( super.client, Mockito.times( 1 ) ).execute( Mockito.eq( createRelationship ) );
+        Relationship createdRelationship = Relationship.newRelationship().
+            creator( AccountKey.anonymous() ).
+            createdTime( UPDATED_TIME ).
+            type( QualifiedRelationshipTypeName.DEFAULT ).
+            fromContent( ContentId.from( "1" ) ).
+            toContent( ContentId.from( "333" ) ).
+            managed( EntryPath.from( "myRelated3" ) ).
+            build();
+        Mockito.verify( relationshipDao, Mockito.times( 1 ) ).create( Mockito.refEq( createdRelationship ), Mockito.any( Session.class ) );
     }
 
     private Content createContent( final RootDataSet rootDataSet )
     {
         return Content.newContent().
-            id( ContentIdFactory.from( "1" ) ).
+            id( ContentId.from( "1" ) ).
             name( "myContent" ).
             createdTime( CREATED_TIME ).
             displayName( "MyContent" ).

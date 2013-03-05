@@ -7,8 +7,8 @@ Ext.define('Admin.view.account.wizard.group.WizardStepMembersPanel', {
 
     initComponent: function () {
         var memberKeys = [];
-        if (this.modelData && this.modelData.members) {
-            Ext.Array.each(this.modelData.members, function (member) {
+        if (this.data && this.data.members) {
+            Ext.Array.each(this.data.members, function (member) {
                 Ext.Array.include(memberKeys, member.key);
             });
         }
@@ -70,8 +70,8 @@ Ext.define('Admin.view.account.wizard.group.WizardStepMembersPanel', {
             text: 'New'
         };
         var formItems = [];
-        if (this.modelData && this.modelData.type === 'role') {
-            var roleDescription = this.getRoleDescription(this.modelData.name);
+        if (this.data && this.data.type === 'role') {
+            var roleDescription = this.getRoleDescription(this.data.name);
             var descriptionItem = {
                 xtype: 'displayfield',
                 fieldLabel: 'Description',
@@ -102,11 +102,11 @@ Ext.define('Admin.view.account.wizard.group.WizardStepMembersPanel', {
     },
 
     getSelectedUserStore: function () {
-        return this.userStore || this.modelData.userStore;
+        return this.userStore || this.data.userStore;
     },
 
     getSelectedKey: function () {
-        return this.modelData ? this.modelData.key : undefined;
+        return this.data ? this.data.key : undefined;
     },
 
     getData: function () {

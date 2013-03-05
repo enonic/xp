@@ -19,10 +19,14 @@
 
     proto.registerGlobalListeners = function () {
         var me = this;
-        $(window).on('component:mouseover', $.proxy(me.observe, me));
+        /*$(window).on('component:mouseover', $.proxy(me.observe, me));
         $(window).on('component:mouseout', $.proxy(me.disconnect, me));
         $(window).on('component:click:select', $.proxy(me.observe, me));
-        $(window).on('component:click:deselect', $.proxy(me.disconnect, me));
+        $(window).on('component:click:deselect', $.proxy(me.disconnect, me));*/
+
+        $(window).on('component:paragraph:edit', $.proxy(me.observe, me));
+        $(window).on('shader:click', $.proxy(me.disconnect, me));
+
     };
 
 
@@ -52,9 +56,13 @@
         if (summaries && summaries[0]) {
             var $targetComponent = $(summaries[0].target);
             var targetComponentIsSelected = $targetComponent.hasClass('live-edit-selected-component');
-            var componentIsNotSelectedAndUserMouseOver = event.type === 'component:mouseover' && !targetComponentIsSelected;
+            var componentIsNotSelectedAndMouseIsOver = event.type === 'component:mouseover' && !targetComponentIsSelected;
+            var componentIsParagraphAndBeingEdited = $targetComponent.data('live-edit-paragraph-mode');
 
-            if (componentIsNotSelectedAndUserMouseOver) {
+
+            if (componentIsParagraphAndBeingEdited) {
+                $(window).trigger('component:paragraph:edit', [$targetComponent]);
+            } else if (componentIsNotSelectedAndMouseIsOver) {
                 $(window).trigger('component:mouseover', [$targetComponent]);
             } else {
                 $(window).trigger('component:click:select', [$targetComponent]);

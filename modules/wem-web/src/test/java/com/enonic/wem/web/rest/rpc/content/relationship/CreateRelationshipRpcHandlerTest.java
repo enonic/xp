@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.relationship.CreateRelationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
+import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.content.relationship.dao.RelationshipIdFactory;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
@@ -41,8 +42,10 @@ public class CreateRelationshipRpcHandlerTest
         ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );
         resultJson.put( "created", true );
-        resultJson.put( "updated", false );
-        resultJson.put( "relationshipId", "123321" );
+        ObjectNode relationshipKeyObj = resultJson.putObject( "relationshipKey" );
+        relationshipKeyObj.put( "fromContent", "123" );
+        relationshipKeyObj.put( "toContent", "321" );
+        relationshipKeyObj.put( "type", QualifiedRelationshipTypeName.LIKE.toString() );
 
         // exercise & verify
         testSuccess( "createRelationship_create_param.json", resultJson );

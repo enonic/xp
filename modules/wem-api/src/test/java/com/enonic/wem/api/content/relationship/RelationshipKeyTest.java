@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.relationship;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.AbstractEqualsTest;
-import com.enonic.wem.api.content.MockContentId;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
@@ -20,8 +20,8 @@ public class RelationshipKeyTest
             {
                 return RelationshipKey.newRelationshipKey().
                     type( QualifiedRelationshipTypeName.PARENT ).
-                    fromContent( MockContentId.from( "111" ) ).
-                    toContent( MockContentId.from( "222" ) ).
+                    fromContent( ContentId.from( "111" ) ).
+                    toContent( ContentId.from( "222" ) ).
                     managingData( EntryPath.from( "myInput" ) ).
                     build();
             }
@@ -31,28 +31,28 @@ public class RelationshipKeyTest
             {
                 return new Object[]{RelationshipKey.newRelationshipKey().
                     type( QualifiedRelationshipTypeName.LINK ).
-                    fromContent( MockContentId.from( "111" ) ).
-                    toContent( MockContentId.from( "222" ) ).
+                    fromContent( ContentId.from( "111" ) ).
+                    toContent( ContentId.from( "222" ) ).
                     managingData( EntryPath.from( "myInput" ) ).
                     build(), RelationshipKey.newRelationshipKey().
                     type( QualifiedRelationshipTypeName.PARENT ).
-                    fromContent( MockContentId.from( "333" ) ).
-                    toContent( MockContentId.from( "222" ) ).
+                    fromContent( ContentId.from( "333" ) ).
+                    toContent( ContentId.from( "222" ) ).
                     managingData( EntryPath.from( "myInput" ) ).
                     build(), RelationshipKey.newRelationshipKey().
                     type( QualifiedRelationshipTypeName.PARENT ).
-                    fromContent( MockContentId.from( "111" ) ).
-                    toContent( MockContentId.from( "444" ) ).
+                    fromContent( ContentId.from( "111" ) ).
+                    toContent( ContentId.from( "444" ) ).
                     managingData( EntryPath.from( "myInput" ) ).
                     build(), RelationshipKey.newRelationshipKey().
                     type( QualifiedRelationshipTypeName.PARENT ).
-                    fromContent( MockContentId.from( "111" ) ).
-                    toContent( MockContentId.from( "222" ) ).
+                    fromContent( ContentId.from( "111" ) ).
+                    toContent( ContentId.from( "222" ) ).
                     managingData( EntryPath.from( "myOtherInput" ) ).
                     build(), RelationshipKey.newRelationshipKey().
                     type( QualifiedRelationshipTypeName.PARENT ).
-                    fromContent( MockContentId.from( "111" ) ).
-                    toContent( MockContentId.from( "222" ) ).
+                    fromContent( ContentId.from( "111" ) ).
+                    toContent( ContentId.from( "222" ) ).
                     build()};
             }
 
@@ -61,8 +61,8 @@ public class RelationshipKeyTest
             {
                 return RelationshipKey.newRelationshipKey().
                     type( QualifiedRelationshipTypeName.PARENT ).
-                    fromContent( MockContentId.from( "111" ) ).
-                    toContent( MockContentId.from( "222" ) ).
+                    fromContent( ContentId.from( "111" ) ).
+                    toContent( ContentId.from( "222" ) ).
                     managingData( EntryPath.from( "myInput" ) ).
                     build();
             }
@@ -72,8 +72,8 @@ public class RelationshipKeyTest
             {
                 return RelationshipKey.newRelationshipKey().
                     type( QualifiedRelationshipTypeName.PARENT ).
-                    fromContent( MockContentId.from( "111" ) ).
-                    toContent( MockContentId.from( "222" ) ).
+                    fromContent( ContentId.from( "111" ) ).
+                    toContent( ContentId.from( "222" ) ).
                     managingData( EntryPath.from( "myInput" ) ).
                     build();
             }
