@@ -24,9 +24,9 @@ Ext.define('Admin.view.DetailPanel', {
 
     initComponent: function () {
         var me = this;
-        if (!this.tbar && this.showToolbar) {
-            this.tbar = this.toolBar();
-        }
+        /*if (!this.tbar && this.showToolbar) {
+         this.tbar = this.toolBar();
+         }*/
         this.callParent(arguments);
     },
 
@@ -181,56 +181,56 @@ Ext.define('Admin.view.DetailPanel', {
      * Toolbar
      * */
 
-    showToolbar: true,
+    /*    showToolbar: true,
 
-    toolBar: function (extendedItems) {
-        var me = this;
-        if (!extendedItems) {
-            extendedItems = [];
-        }
-        return {
-            xtype: 'toolbar',
-            itemId: 'defaultToolbar',
-            cls: 'admin-white-toolbar',
-            items: Ext.Array.merge(me.toolBarSettings.defaultItems, extendedItems)
-        };
-    },
+     toolBar: function (extendedItems) {
+     var me = this;
+     if (!extendedItems) {
+     extendedItems = [];
+     }
+     return {
+     xtype: 'toolbar',
+     itemId: 'defaultToolbar',
+     cls: 'admin-white-toolbar',
+     items: Ext.Array.merge(me.toolBarSettings.defaultItems, extendedItems)
+     };
+     },
 
-    toolBarConfig: function (config) {
-        Ext.apply(this.toolBarSettings, config);
-    },
+     toolBarConfig: function (config) {
+     Ext.apply(this.toolBarSettings, config);
+     },
 
-    toolBarSettings: {
-        defaultItems: [
-            {
-                xtype: 'tbtext',
-                itemId: 'selectionTxt',
-                text: 'No items selected - Choose from list above'
-            }
-        ],
-        noSelectionTitle: 'No items selected - Choose from list above',
-        selectionTitle: ' items(s) selected (<a href="javascript:;" class="clearSelection">Clear selection</a>)',
-        updateTitleCallback: function (data, tbar, count) {
-        }
-    },
+     toolBarSettings: {
+     defaultItems: [
+     {
+     xtype: 'tbtext',
+     itemId: 'selectionTxt',
+     text: 'No items selected - Choose from list above'
+     }
+     ],
+     noSelectionTitle: 'No items selected - Choose from list above',
+     selectionTitle: ' items(s) selected (<a href="javascript:;" class="clearSelection">Clear selection</a>)',
+     updateTitleCallback: function (data, tbar, count) {
+     }
+     },*/
 
-    updateTitle: function (data) {
-        var tbar = this.getDockedComponent('defaultToolbar');
-        if (tbar) {
-            var tbtext = tbar.down('#selectionTxt');
-            if (tbtext) {
-                var count = Ext.isArray(data) ? data.length : Ext.isObject(data) ? 1 : 0;
-                var headerText;
-                if (count === 0) {
-                    headerText = this.toolBarSettings.noSelectionTitle;
-                } else {
-                    headerText = count + this.toolBarSettings.selectionTitle;
-                }
-                tbtext.update(headerText);
-                this.toolBarSettings.updateTitleCallback(data, tbar, count);
-            }
-        }
-    },
+    /*    updateTitle: function (data) {
+     var tbar = this.getDockedComponent('defaultToolbar');
+     if (tbar) {
+     var tbtext = tbar.down('#selectionTxt');
+     if (tbtext) {
+     var count = Ext.isArray(data) ? data.length : Ext.isObject(data) ? 1 : 0;
+     var headerText;
+     if (count === 0) {
+     headerText = this.toolBarSettings.noSelectionTitle;
+     } else {
+     headerText = count + this.toolBarSettings.selectionTitle;
+     }
+     tbtext.update(headerText);
+     this.toolBarSettings.updateTitleCallback(data, tbar, count);
+     }
+     }
+     },*/
 
 
     /*
@@ -289,7 +289,7 @@ Ext.define('Admin.view.DetailPanel', {
         if (active) {
             var activeData = this.resolveActiveData(data);
             this.updateActiveItem(activeData, active);
-            this.updateTitle(activeData);
+            /*            this.updateTitle(activeData);*/
         }
         this.setDataCallback(data);
     },

@@ -14,6 +14,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         me.toolbar = toolbar;
         me.resultTextItem = Ext.create('Ext.toolbar.TextItem', {text: ''});
         me.selectAllButton = me.createSelectAllButton();
+        me.clearSelectionButton = me.createClearSelectionButton();
         me.tbFill = Ext.create('Ext.toolbar.Fill');
         me.orderByButton = me.createOrderByButton();
         me.orderByDirectionButton = me.createOrderByDirectionButton();
@@ -26,10 +27,12 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
 
         me.toolbar.insert(0, me.resultTextItem);
         me.toolbar.insert(1, me.selectAllButton);
+        me.toolbar.insert(2, Ext.create('Ext.toolbar.TextItem', {text: ' | '}));
+        me.toolbar.insert(3, me.clearSelectionButton);
         if (!(me.toolbar.store instanceof Ext.data.TreeStore)) {
-            me.toolbar.insert(2, me.tbFill);
-            me.toolbar.insert(3, me.orderByButton);
-            me.toolbar.insert(4, me.orderByDirectionButton);
+            me.toolbar.insert(4, me.tbFill);
+            me.toolbar.insert(5, me.orderByButton);
+            me.toolbar.insert(6, me.orderByDirectionButton);
         }
 
         me.orderByButton.addListener('change', function () {
@@ -51,6 +54,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         if (me.toolbar.gridPanel) {
             me.toolbar.gridPanel.getSelectionModel().on('selectionchange', function (model, selected, eOpts) {
                 me.updateSelectAll(selected);
+                me.updateClearSelection(selected);
             });
 
             // TODO: Listen for other grid changes
@@ -73,6 +77,28 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
                         if (cmp.el.hasCls('admin-grid-toolbar-btn-none-selected')) {
                             me.toolbar.gridPanel.getSelectionModel().selectAll();
                         } else {
+                            me.toolbar.gridPanel.getSelectionModel().deselectAll();
+                        }
+                    });
+                }
+            }
+        });
+    },
+
+    createClearSelectionButton: function () {
+        var me = this;
+        return Ext.create('Ext.Component', {
+            autoEl: {
+                tag: 'a',
+                href: 'javascript:;',
+                html: ' Clear Selection',
+                cls: 'admin-grid-toolbar-btn-clear-selection'
+            },
+            listeners: {
+                render: function (cmp) {
+                    cmp.el.on('click', function () {
+                        // don't update text here, it will be done on selectionchange
+                        if (cmp.el.hasCls('admin-grid-toolbar-btn-clear-selection')) {
                             me.toolbar.gridPanel.getSelectionModel().deselectAll();
                         }
                     });
@@ -137,11 +163,21 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         var areAllRecordsSelected = !Ext.isEmpty(selected) && this.getCount(this.toolbar.store) == selected.length;
         // switch from select all to deselect all in case we selected all records, and vice versa otherwise
         if (areAllRecordsSelected && isSelectMode) {
-            btn.el.setHTML('Deselect all');
+            btn.update('Deselect all');
             btn.el.removeCls('admin-grid-toolbar-btn-none-selected');
         } else if (!areAllRecordsSelected && !isSelectMode) {
-            btn.el.setHTML('Select all');
+            btn.update('Select all');
             btn.el.addCls('admin-grid-toolbar-btn-none-selected');
+        }
+    },
+
+    updateClearSelection: function (selected) {
+        var btn = this.clearSelectionButton;
+        var count = selected.length;
+        if (count > 0) {
+            btn.update('Clear selection (' + selected.length + ')');
+        } else {
+            btn.update('Clear selection');
         }
     },
 
