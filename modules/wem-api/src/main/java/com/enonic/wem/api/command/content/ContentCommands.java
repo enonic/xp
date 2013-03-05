@@ -57,4 +57,10 @@ public final class ContentCommands
     {
         return new RenameContent();
     }
+
+    public FindContent find()
+    {
+        return new FindContent();
+    }
+
 }

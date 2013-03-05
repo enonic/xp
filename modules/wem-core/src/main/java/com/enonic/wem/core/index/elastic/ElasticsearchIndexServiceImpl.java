@@ -13,23 +13,34 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRespon
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.core.index.DeleteDocument;
+import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.IndexStatus;
 import com.enonic.wem.core.index.IndexType;
+import com.enonic.wem.core.index.content.ContentSearchHit;
+import com.enonic.wem.core.index.content.ContentSearchResults;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSource;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSourceFactory;
 import com.enonic.wem.core.index.elastic.indexsource.XContentBuilderFactory;
+import com.enonic.wem.core.index.elastic.searchsource.SearchSourceFactory;
 import com.enonic.wem.core.index.indexdocument.IndexDocument;
 
 @Component
@@ -145,8 +156,39 @@ public class ElasticsearchIndexServiceImpl
 
         LOG.info( "Mapping for index " + indexName + ", index-type: " + indexType + " deleted" );
 
-
     }
+
+    @Override
+    public ContentSearchResults search( final ContentIndexQuery contentIndexQuery )
+    {
+        final SearchSourceBuilder searchSourceBuilder = SearchSourceFactory.create( contentIndexQuery );
+
+        final SearchRequest searchRequest = Requests.
+            searchRequest( IndexConstants.WEM_INDEX ).
+            types( IndexType.CONTENT.getIndexTypeName() ).
+            source( searchSourceBuilder );
+
+        System.out.println( searchSourceBuilder.toString() );
+
+        final SearchResponse searchResponse = doSearchRequest( searchRequest );
+
+        final SearchHits hits = searchResponse.getHits();
+
+        ContentSearchResults contentSearchResults = new ContentSearchResults( (int) hits.totalHits(), 0 );
+
+        for ( SearchHit hit : hits )
+        {
+            contentSearchResults.add( new ContentSearchHit( ContentId.from( hit.getId() ), hit.score() ) );
+        }
+
+        return contentSearchResults;
+    }
+
+    private SearchResponse doSearchRequest( SearchRequest searchRequest )
+    {
+        return this.client.search( searchRequest ).actionGet();
+    }
+
 
     private ClusterHealthResponse getClusterHealth( String indexName, boolean waitForYellow )
     {

@@ -2,8 +2,10 @@ package com.enonic.wem.core.index.elastic;
 
 import java.util.Collection;
 
+import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.IndexStatus;
+import com.enonic.wem.core.index.content.ContentSearchResults;
 import com.enonic.wem.core.index.indexdocument.IndexDocument;
 
 public interface ElasticsearchIndexService
@@ -20,5 +22,6 @@ public interface ElasticsearchIndexService
 
     public void delete( final DeleteDocument deleteDocument );
 
+    public ContentSearchResults search( final ContentIndexQuery contentIndexQuery );
 
 }

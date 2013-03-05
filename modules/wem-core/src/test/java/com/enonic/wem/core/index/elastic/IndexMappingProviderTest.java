@@ -44,8 +44,8 @@ public class IndexMappingProviderTest
         }
     }
 
+    @Ignore //Test in more robust way
     @Test
-    @Ignore
     public void testContentMapping()
         throws Exception
     {

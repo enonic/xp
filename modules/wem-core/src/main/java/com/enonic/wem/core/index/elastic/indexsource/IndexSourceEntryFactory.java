@@ -84,23 +84,28 @@ final class IndexSourceEntryFactory
 
     private static String generateOrderbyFieldName( final String originalFieldName )
     {
-        return originalFieldName + FIELD_TYPE_SEPARATOR + ORDERBY_FIELD_POSTFIX;
+        return replaceDotWithHyphen( originalFieldName ) + FIELD_TYPE_SEPARATOR + ORDERBY_FIELD_POSTFIX;
 
     }
 
     private static String generateNumericFieldName( final String originalFieldName )
     {
-        return originalFieldName + FIELD_TYPE_SEPARATOR + NUMERIC_FIELD_POSTFIX;
+        return replaceDotWithHyphen( originalFieldName ) + FIELD_TYPE_SEPARATOR + NUMERIC_FIELD_POSTFIX;
     }
 
     private static String generateDateFieldName( final String originalFieldName )
     {
-        return originalFieldName + FIELD_TYPE_SEPARATOR + DATE_FIELD_POSTFIX;
+        return replaceDotWithHyphen( originalFieldName ) + FIELD_TYPE_SEPARATOR + DATE_FIELD_POSTFIX;
     }
 
     private static String generateStringTypeFieldName( final String originalFieldName )
     {
-        return originalFieldName;
+        return replaceDotWithHyphen( originalFieldName );
+    }
+
+    private static String replaceDotWithHyphen( final String originalName )
+    {
+        return originalName.replace( '.', '_' );
     }
 
     private static String genereateStringValue( final String stringValue )
