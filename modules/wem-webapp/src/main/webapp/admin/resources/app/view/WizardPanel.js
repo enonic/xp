@@ -447,6 +447,13 @@ Ext.define('Admin.view.WizardPanel', {
         Ext.merge(this.data, newValues);
     },
 
+    deleteData: function (key) {
+        if (key) {
+            delete this.data[key];
+        }
+    },
+
+
     getData: function () {
         var me = this;
         me.items.each(function (item) {

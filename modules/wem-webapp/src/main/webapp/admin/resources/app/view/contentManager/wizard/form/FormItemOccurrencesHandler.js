@@ -7,7 +7,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemOccurrencesHandler', {
      */
     handleOccurrences: function (minimum) {
         this.addEvents('copyadded', 'copyremoved');
-        this.bindOccurrencesEventsHandlers();
+        this.enableBubble('copyadded', 'copyremoved');
         if (Ext.isEmpty(this.value) && this.copyNo < minimum) {
             this.addCopy();
         } else {
@@ -19,13 +19,6 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemOccurrencesHandler', {
                 }
             }
         }
-    },
-
-    /**
-     * Should be implemented in target class
-     */
-    bindOccurrencesEventsHandlers: function () {
-
     },
 
     /**
@@ -51,7 +44,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemOccurrencesHandler', {
             return false;
         });
         parent.insert(index + 1, clone);
-        this.fireEvent('copyadded', this);
+        clone.fireEvent('copyadded', clone);
         return clone;
     },
 
@@ -72,8 +65,8 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemOccurrencesHandler', {
 
         if (linkedField) {
             linkedField.updateCopyNo();
-            linkedField.fireEvent('copyremoved', linkedField);
         }
+        this.fireEvent('copyremoved', this);
         parent.remove(this);
         return linkedField;
     },
