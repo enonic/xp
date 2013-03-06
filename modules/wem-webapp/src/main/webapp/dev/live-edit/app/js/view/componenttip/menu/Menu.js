@@ -47,6 +47,7 @@
         $(window).on('tip:menu:click', $.proxy(this.toggle, this));
         $(window).on('component:sort:start', $.proxy(this.fadeOutAndHide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));
+        $(window).on('component:paragraph:edit:init', $.proxy(this.hide, this));
     };
 
 

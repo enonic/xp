@@ -6,7 +6,6 @@
 
         var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
 
-        // To be restructured
         var page                = new AdminLiveEdit.model.component.Page();
         var regions             = new AdminLiveEdit.model.component.Region();
         var parts               = new AdminLiveEdit.model.component.Part();

@@ -231,7 +231,7 @@ svg.live-edit-highlighter rect {
     z-index: 1000050;
     background-color: #fff9cb;
     cursor: default;
-    border: 1px solid #989898;
+    border: 1px solid #aaa;
 }
 
 /* Arrow (cssarrowplease.com/) */
@@ -264,7 +264,7 @@ svg.live-edit-highlighter rect {
 }
 .live-edit-component-tip-arrow-bottom:before {
     border-color: rgba(152, 152, 152, 0);
-    border-top-color: #989898;
+    border-top-color: #aaa;
     border-width: 9px;
     left: 50%;
     margin-left: -9px;
@@ -279,7 +279,7 @@ svg.live-edit-highlighter rect {
 }
 .live-edit-component-tip-arrow-top:before {
     border-color: rgba(152, 152, 152, 0);
-    border-bottom-color: #989898;
+    border-bottom-color: #aaa;
     border-width: 9px;
     left: 50%;
     margin-left: -9px;
@@ -296,7 +296,7 @@ svg.live-edit-highlighter rect {
 .live-edit-component-tip-left {
     float: left;
     text-align: center;
-    border-right: 1px solid #989898;
+    border-right: 1px solid #aaa;
 }
 .live-edit-component-tip-center {
     float: left;
@@ -306,7 +306,7 @@ svg.live-edit-highlighter rect {
 }
 .live-edit-component-tip-right {
     float: right;
-    border-left: 1px solid #989898;
+    border-left: 1px solid #aaa;
 }
 .live-edit-component-tip-icon-menu,
 .live-edit-component-tip-icon-parent,
@@ -350,14 +350,14 @@ svg.live-edit-highlighter rect {
     position: absolute;
     z-index: 1000150;
     padding: 0;
-    border: 2px solid #444;
+    border: 1px solid #aaa;
 }
 
 /* Component menu button */
 
 .live-edit-component-menu-button {
     width: 120px;
-    padding: 10px;
+    padding: 5px;
     background-color: #fff;
 }
 .live-edit-component-menu-button:hover {
@@ -370,6 +370,8 @@ svg.live-edit-highlighter rect {
 
 
 .live-edit-button-text {
+    font-size: 16px;
+    line-height: 20px;
     text-transform: capitalize;
 }
 
