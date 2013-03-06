@@ -42,27 +42,6 @@ svg.live-edit-highlighter rect,
 }
 
 
-
-/*** Cursors */
-
-/*
-[data-live-edit-type=paragraph] {
-    cursor: move;
-}
-
-[data-live-edit-type=paragraph].live-edit-selected-component {
-    cursor: url(../images/pencil.png) 0 20, text;
-}
-
-[data-live-edit-type=part] {
-    cursor: move;
-}
-[data-live-edit-type=region] {
-    cursor: pointer;
-}
-*/
-
-
 /*** Misc */
 
 /* This must be disabled for live-edit components, else input fields++ will not work */
@@ -76,6 +55,12 @@ svg.live-edit-highlighter rect,
     user-select: none;
 }
 */
+
+.live-edit-edited-paragraph {
+    outline-color: transparent;
+    outline-style: none;
+}
+
 /*
     Disable pointer events for A elements ("disables CSS hover selectors on links")
     Can we find a better cross browser solution that includes IE?

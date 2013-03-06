@@ -1,7 +1,7 @@
 (function ($) {
     'use strict';
 
-    var paragraphs =  AdminLiveEdit.model.component.Paragraph = function () {
+    var paragraphs = AdminLiveEdit.model.component.Paragraph = function () {
         var me = this;
         me.cssSelector = '[data-live-edit-type=paragraph]';
         me.$selectedParagraph = null;
@@ -26,7 +26,7 @@
     proto.registerGlobalListeners = function () {
         var me = this;
 
-        $(window).on('shader:click', $.proxy(this.closeEditable, this));
+        $(window).on('shader:click', $.proxy(this.destroyEditMode, this));
         $(window).on('component:click:deselect', $.proxy(this.destroyEditMode, this));
     };
 
@@ -35,24 +35,36 @@
         var me = this;
 
         $(document).on('click touchstart', me.cssSelector, function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-
-            me.$selectedParagraph = $(event.currentTarget);
-
-            if (me.mode === undefined) {
-                me.setSelectMode();
-            } else if (me.mode === 'selected') {
-                me.initEditMode();
-
-            } else { // Edit
-            }
-
-            console.log('mode after: "' + me.mode + '"');
+            me.handleClick(event);
         });
 
     };
 
+
+    proto.handleClick = function (event) {
+        var me = this;
+        event.stopPropagation();
+        event.preventDefault();
+
+        var $paragraph = $(event.currentTarget);
+
+        // In case another paragraph is clicked during any mode.
+        if (!$paragraph.is(me.$selectedParagraph)) {
+            me.mode = undefined;
+        }
+
+        me.$selectedParagraph = $paragraph;
+
+        if (me.mode === undefined) {
+            me.setSelectMode();
+        } else if (me.mode === 'selected') {
+            me.initEditMode();
+
+        } else {
+        }
+
+        console.log('mode after: "' + me.mode + '"');
+    };
 
     proto.setSelectMode = function () {
         var me = this;
@@ -73,6 +85,7 @@
 
         $paragraph.get(0).contentEditable = true;
         $paragraph.css('cursor', 'text');
+        $paragraph.addClass('live-edit-edited-paragraph');
         $paragraph.get(0).focus();
 
         me.mode = 'edit';
@@ -80,6 +93,7 @@
 
 
     proto.destroyEditMode = function (event) {
+        console.log('Paragraph: destroy');
         var me = this,
             $paragraph = me.$selectedParagraph;
         if ($paragraph === null) {
@@ -90,6 +104,7 @@
 
         $paragraph.get(0).contentEditable = false;
         $paragraph.css('cursor', '');
+        $paragraph.removeClass('live-edit-edited-paragraph');
         $paragraph.get(0).blur();
         me.$selectedParagraph = null;
 
