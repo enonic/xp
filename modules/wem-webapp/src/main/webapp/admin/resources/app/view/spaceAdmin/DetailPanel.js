@@ -13,20 +13,6 @@ Ext.define('Admin.view.spaceAdmin.DetailPanel', {
 
         this.activeItem = this.resolveActiveItem(data);
 
-        if (this.showToolbar) {
-            this.tbar = Ext.createByAlias('widget.spaceDetailToolbar');
-        } else {
-            this.tbar = this.toolBar([
-                '->',
-                {
-                    xtype: 'tbtext',
-                    itemId: 'toggleBtn',
-                    hidden: true,
-                    text: '<a href="javascript:;">Switch to Info View</a>'
-                }
-            ]);
-        }
-
         this.singleSelection.tabs = [
             {
                 title: "Content",
