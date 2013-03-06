@@ -101,8 +101,6 @@ Ext.define('Admin.controller.account.GridPanelController', {
             });
             detailPanel.showMultipleSelection(selectedUsers, detailed);
         }
-
-        detailPanel.updateTitle(persistentGridSelectionPlugin);
     },
 
     updateFilterPanel: function (store, records, success, opts) {
