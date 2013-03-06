@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import org.joda.time.DateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.core.index.IndexConstants;
@@ -16,6 +17,8 @@ import static org.junit.Assert.*;
 public class IndexSourceFactoryTest
 {
 
+
+    @Ignore // We dont need the all-field as this for know, but keep this if it gets necessary later
     @Test
     public void testNumberDateAndStringsIntoAllUserdataField()
         throws Exception
@@ -49,6 +52,7 @@ public class IndexSourceFactoryTest
         assertTrue( dateValues.contains( now ) );
     }
 
+    @Ignore // We dont need the all-field as this for know, but keep this if it gets necessary later
     @Test
     public void testNotIncludeEntriesMarkedAsNotInAllUserdataField()
         throws Exception
@@ -68,6 +72,7 @@ public class IndexSourceFactoryTest
         assertFalse( stringValues.contains( "value2" ) );
     }
 
+    @Ignore // We dont need the all-field as this for know, but keep this if it gets necessary later
     @Test
     public void testArrayValuesIntoAllUserdataField()
         throws Exception

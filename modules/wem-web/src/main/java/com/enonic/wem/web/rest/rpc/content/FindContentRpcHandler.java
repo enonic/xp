@@ -14,12 +14,10 @@ import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 public class FindContentRpcHandler
     extends AbstractDataRpcHandler
 {
-
     public FindContentRpcHandler()
     {
         super( "content_find" );
     }
-
 
     @Override
     public void handle( final JsonRpcContext context )
@@ -30,7 +28,6 @@ public class FindContentRpcHandler
             ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
             contentIndexQuery.setFullTextSearchString( context.param( "fulltext" ).asString() );
 
-            // Gets the resulting contentids, sorted from searchservice
             final ContentQueryHits hits = this.client.execute( Commands.content().find().query( contentIndexQuery ) );
 
             final Contents contents = this.client.execute( Commands.content().get().selectors( ContentIds.from( hits.getContentIds() ) ) );

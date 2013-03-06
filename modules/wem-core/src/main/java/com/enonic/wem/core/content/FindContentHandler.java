@@ -28,7 +28,6 @@ public class FindContentHandler
     public void handle( final CommandContext context, final FindContent command )
         throws Exception
     {
-
         final ContentIndexQuery contentIndexQuery = command.getContentIndexQuery();
 
         final ContentSearchResults searchResults = searchService.search( contentIndexQuery );
