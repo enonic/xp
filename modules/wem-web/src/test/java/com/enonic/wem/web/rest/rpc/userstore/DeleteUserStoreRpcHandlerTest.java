@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.userstore.DeleteUserStores;
+import com.enonic.wem.api.command.userstore.DeleteUserStore;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
@@ -28,7 +28,7 @@ public class DeleteUserStoreRpcHandlerTest
     public void testRequestDeleteSingle()
         throws Exception
     {
-        setResult( 1 );
+        Mockito.when( client.execute( Mockito.any( DeleteUserStore.class ) ) ).thenReturn( true );
 
         testSuccess( "deleteUserStore_param_single.json", "deleteUserStore_result.json" );
     }
@@ -37,13 +37,9 @@ public class DeleteUserStoreRpcHandlerTest
     public void testRequestDeleteMultiple()
         throws Exception
     {
-        setResult( 1 );
+        Mockito.when( client.execute( Mockito.any( DeleteUserStore.class ) ) ).thenReturn( true ).thenReturn( false );
 
         testSuccess( "deleteUserStore_param_multiple.json", "deleteUserStore_result.json" );
     }
 
-    private void setResult( final int result )
-    {
-        Mockito.when( client.execute( Mockito.any( DeleteUserStores.class ) ) ).thenReturn( result );
-    }
 }

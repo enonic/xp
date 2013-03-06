@@ -22,9 +22,9 @@ public final class UserStoreCommands
         return new UpdateUserStores();
     }
 
-    public DeleteUserStores delete()
+    public DeleteUserStore delete()
     {
-        return new DeleteUserStores();
+        return new DeleteUserStore();
     }
 
     public GetUserStoreConnectors getConnectors()

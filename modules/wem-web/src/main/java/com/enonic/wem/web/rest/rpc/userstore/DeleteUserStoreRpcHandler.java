@@ -3,6 +3,7 @@ package com.enonic.wem.web.rest.rpc.userstore;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.UserStoreNames;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
@@ -22,7 +23,16 @@ public class DeleteUserStoreRpcHandler
     {
         final String[] names = context.param( "name" ).required().asStringArray();
         final UserStoreNames userStoreNames = UserStoreNames.from( names );
-        final Integer userStoresDeleted = client.execute( Commands.userStore().delete().names( userStoreNames ) );
+
+        int userStoresDeleted = 0;
+        for ( UserStoreName userStoreName : userStoreNames )
+        {
+            final boolean deleted = client.execute( Commands.userStore().delete().name( userStoreName ) );
+            if ( deleted )
+            {
+                userStoresDeleted++;
+            }
+        }
         context.setResult( new DeleteUserStoreJsonResult( userStoresDeleted ) );
     }
 }

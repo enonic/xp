@@ -1,0 +1,44 @@
+package com.enonic.wem.core.userstore;
+
+import javax.inject.Inject;
+import javax.jcr.Session;
+
+import org.springframework.stereotype.Component;
+
+import com.enonic.wem.api.command.userstore.DeleteUserStore;
+import com.enonic.wem.api.userstore.UserStoreName;
+import com.enonic.wem.core.account.dao.AccountDao;
+import com.enonic.wem.core.command.CommandContext;
+import com.enonic.wem.core.command.CommandHandler;
+
+@Component
+public class DeleteUserStoreHandler
+    extends CommandHandler<DeleteUserStore>
+{
+    private AccountDao accountDao;
+
+    public DeleteUserStoreHandler()
+    {
+        super( DeleteUserStore.class );
+    }
+
+    @Override
+    public void handle( final CommandContext context, final DeleteUserStore command )
+        throws Exception
+    {
+        final Session session = context.getJcrSession();
+        final UserStoreName userStoreName = command.getName();
+        final boolean userStoreDeleted = accountDao.deleteUserStore( userStoreName, session );
+        if ( userStoreDeleted )
+        {
+            session.save();
+        }
+        command.setResult( userStoreDeleted );
+    }
+
+    @Inject
+    public void setAccountDao( final AccountDao accountDao )
+    {
+        this.accountDao = accountDao;
+    }
+}
