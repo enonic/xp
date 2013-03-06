@@ -36,7 +36,7 @@ public class IndexSourceFactory
             indexSource.addIndexSourceEntries( IndexSourceEntryFactory.create( indexDocumentEntry ) );
         }
 
-        indexSource.addIndexSourceEntries( buildAllFieldValue( allUserData ) );
+        //indexSource.addIndexSourceEntries( buildAllFieldValue( allUserData ) );
 
         return indexSource;
     }

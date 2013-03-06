@@ -1,7 +1,8 @@
 {
     "content": {
         "_all": {
-            "enabled": false
+            "enabled": true,
+            "index_analyzer": "all_field_analyzer"
         },
         "_source": {
             "enabled": true
@@ -9,39 +10,24 @@
         "date_detection": false,
         "numeric_detection": false,
         "properties": {
-            "_all_userdata": {
-                "type": "multi_field",
-                "fields": {
-                    "_all_userdata": {
-                        "include_in_all": false,
-                        "type": "string",
-                        "index": "analyzed",
-                        "analyzer": "keywordlowercase",
-                        "store": "no"
-                    },
-                    "_tokenized": {
-                        "include_in_all": false,
-                        "type": "string",
-                        "index": "analyzed",
-                        "store": "no"
-                    }
-                }
-            },
-            "title": {
+            "displayname": {
                 "type": "multi_field",
                 "fields": {
                     "title": {
-                        "include_in_all": false,
+                        "include_in_all": true,
                         "type": "string",
                         "index": "analyzed",
                         "analyzer": "keywordlowercase",
-                        "store": "no"
+                        "store": "yes",
+                        "boost": "1.1"
                     },
-                    "_tokenized": {
-                        "include_in_all": false,
+                    "fulltext": {
+                        "include_in_all": true,
                         "type": "string",
                         "index": "analyzed",
-                        "store": "no"
+                        "search_analyzer": "fulltext_search",
+                        "index_analyzer": "fulltext_index",
+                        "store": "yes"
                     }
                 }
             }
@@ -54,7 +40,8 @@
                         "type": "string",
                         "store": "no",
                         "index": "analyzed",
-                        "analyzer": "keywordlowercase"
+                        "analyzer": "keywordlowercase",
+                        "include_in_all": false
                     }
                 }
             },
@@ -63,7 +50,8 @@
                     "match": "*.date",
                     "mapping": {
                         "type": "date",
-                        "store": "no"
+                        "store": "no",
+                        "include_in_all": false
                     }
                 }
             },
@@ -72,7 +60,8 @@
                     "match": "*.number",
                     "mapping": {
                         "type": "double",
-                        "store": "no"
+                        "store": "no",
+                        "include_in_all": false
                     }
                 }
             },
@@ -85,12 +74,14 @@
                             "{name}": {
                                 "type": "string",
                                 "index": "analyzed",
-                                "analyzer": "keywordlowercase",
                                 "store": "no"
                             },
-                            "_tokenized": {
+                            "fulltext": {
+                                "include_in_all": true,
                                 "type": "string",
                                 "index": "analyzed",
+                                "search_analyzer": "fulltext_search",
+                                "index_analyzer": "fulltext_index",
                                 "store": "no"
                             }
                         }
@@ -103,8 +94,7 @@
                     "mapping": {
                         "type": "string",
                         "store": "no",
-                        "index": "analyzed",
-                        "analyzer": "keywordlowercase"
+                        "index": "analyzed"
                     }
                 }
             }

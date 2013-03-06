@@ -38,7 +38,6 @@ class ListContentJsonResult
             final ObjectNode contentJson = contentsNode.addObject();
             ContentJsonTemplate.forContentListing( contentJson, content );
             contentJson.put( "iconUrl", SchemaImageUriResolver.resolve( content.getType() ) );
-            contentsNode.add( contentJson );
         }
         return contentsNode;
     }
