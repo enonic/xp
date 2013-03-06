@@ -178,7 +178,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
 
         this.callParent(arguments);
 
-        this.addEvents('contentTypeSelected')
+        this.addEvents('contentTypeSelected');
     },
 
     updateRecentCookies: function (contentType) {
