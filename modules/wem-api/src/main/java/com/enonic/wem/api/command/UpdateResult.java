@@ -1,5 +1,6 @@
 package com.enonic.wem.api.command;
 
+import java.text.MessageFormat;
 import java.util.Objects;
 
 public final class UpdateResult
@@ -45,6 +46,12 @@ public final class UpdateResult
     public static UpdateResult failure( final String failureCause )
     {
         return new UpdateResult( false, false, failureCause );
+    }
+
+    public static UpdateResult failure( final String failureMessage, final Object... arguments )
+    {
+        final String message = MessageFormat.format( failureMessage, arguments );
+        return UpdateResult.failure( message );
     }
 
     public static UpdateResult updated()

@@ -17,9 +17,9 @@ public final class UserStoreCommands
         return new CreateUserStore();
     }
 
-    public UpdateUserStores update()
+    public UpdateUserStore update()
     {
-        return new UpdateUserStores();
+        return new UpdateUserStore();
     }
 
     public DeleteUserStore delete()

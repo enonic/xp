@@ -3,31 +3,32 @@ package com.enonic.wem.api.command.userstore;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.userstore.UserStoreNames;
+import com.enonic.wem.api.command.UpdateResult;
+import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.editor.UserStoreEditor;
 
-public final class UpdateUserStores
-    extends Command<Integer>
+public final class UpdateUserStore
+    extends Command<UpdateResult>
 {
-    private UserStoreNames names;
+    private UserStoreName name;
 
     private UserStoreEditor editor;
 
-    public UpdateUserStores names( final UserStoreNames names )
+    public UpdateUserStore name( final UserStoreName name )
     {
-        this.names = names;
+        this.name = name;
         return this;
     }
 
-    public UpdateUserStores editor( final UserStoreEditor editor )
+    public UpdateUserStore editor( final UserStoreEditor editor )
     {
         this.editor = editor;
         return this;
     }
 
-    public UserStoreNames getNames()
+    public UserStoreName getName()
     {
-        return this.names;
+        return this.name;
     }
 
     public UserStoreEditor getEditor()
@@ -38,7 +39,7 @@ public final class UpdateUserStores
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.names, "UserStore names cannot be null" );
+        Preconditions.checkNotNull( this.name, "UserStore name cannot be null" );
         Preconditions.checkNotNull( this.editor, "UserStore editor cannot be null" );
     }
 }

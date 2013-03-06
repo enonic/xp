@@ -9,7 +9,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.account.CreateAccount;
 import com.enonic.wem.api.command.account.UpdateAccounts;
 import com.enonic.wem.api.command.userstore.CreateUserStore;
-import com.enonic.wem.api.command.userstore.UpdateUserStores;
+import com.enonic.wem.api.command.userstore.UpdateUserStore;
 
 public class AccountMigrateTaskTest
 {
@@ -37,7 +37,7 @@ public class AccountMigrateTaskTest
     {
         jcrAccountsImporter.migrate();
 
-        Mockito.verify( client, Mockito.times( 1 ) ).execute( Matchers.isA( UpdateUserStores.class ) ); // update system user store
+        Mockito.verify( client, Mockito.times( 1 ) ).execute( Matchers.isA( UpdateUserStore.class ) ); // update system user store
         Mockito.verify( client, Mockito.times( 1 ) ).execute( Matchers.isA( CreateUserStore.class ) );
         Mockito.verify( client, Mockito.times( 7 ) ).execute( Matchers.isA( CreateAccount.class ) );
 

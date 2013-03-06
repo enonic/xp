@@ -47,8 +47,11 @@ public class CreateOrUpdateUserStoreRpcHandler
 
         if ( !userStores.isEmpty() )
         {
-            final UserStoreEditor userStoreEditor = UserStoreEditors.setUserStore( userStore );
-            this.client.execute( Commands.userStore().update().names( userStoreNames ).editor( userStoreEditor ) );
+            for ( UserStoreName userStoreName : userStoreNames )
+            {
+                final UserStoreEditor userStoreEditor = UserStoreEditors.setUserStore( userStore );
+                this.client.execute( Commands.userStore().update().name( userStoreName ).editor( userStoreEditor ) );
+            }
             context.setResult( CreateOrUpdateUserStoreJsonResult.updated() );
         }
         else

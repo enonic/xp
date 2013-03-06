@@ -33,7 +33,6 @@ import com.enonic.wem.api.account.profile.Addresses;
 import com.enonic.wem.api.account.profile.UserProfile;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
-import com.enonic.wem.api.userstore.UserStoreNames;
 import com.enonic.wem.api.userstore.config.UserStoreConfig;
 import com.enonic.wem.api.userstore.config.UserStoreConfigParser;
 import com.enonic.wem.migrate.MigrateTask;
@@ -98,18 +97,18 @@ public final class AccountMigrateTask
 
     private void setUserStoreAdministrators()
     {
-        for ( String userStoreName : userStoreAdministrators.keys() )
+        for ( String userStoreNameValue : userStoreAdministrators.keys() )
         {
-            final Collection<AccountKey> adminKeys = userStoreAdministrators.get( userStoreName );
+            final Collection<AccountKey> adminKeys = userStoreAdministrators.get( userStoreNameValue );
             try
             {
                 final AccountKeys administrators = AccountKeys.from( adminKeys );
-                final UserStoreNames userStoreNames = UserStoreNames.from( userStoreName );
-                client.execute( userStore().update().names( userStoreNames ).editor( setAdministrators( administrators ) ) );
+                final UserStoreName userStoreName = UserStoreName.from( userStoreNameValue );
+                client.execute( userStore().update().name( userStoreName ).editor( setAdministrators( administrators ) ) );
             }
             catch ( Exception e )
             {
-                LOG.error( "Unable to set administrators for user store " + userStoreName, e );
+                LOG.error( "Unable to set administrators for user store " + userStoreNameValue, e );
             }
         }
     }
@@ -334,7 +333,7 @@ public final class AccountMigrateTask
         userStore.setConnectorName( connectorName );
         if ( userStore.getName().isSystem() )
         {
-            client.execute( userStore().update().editor( setUserStore( userStore ) ).names( UserStoreNames.from( userStore.getName() ) ) );
+            client.execute( userStore().update().editor( setUserStore( userStore ) ).name( userStore.getName() ) );
         }
         else
         {

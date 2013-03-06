@@ -9,9 +9,10 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.command.UpdateResult;
 import com.enonic.wem.api.command.userstore.CreateUserStore;
 import com.enonic.wem.api.command.userstore.GetUserStores;
-import com.enonic.wem.api.command.userstore.UpdateUserStores;
+import com.enonic.wem.api.command.userstore.UpdateUserStore;
 import com.enonic.wem.api.exception.UserStoreNotFoundException;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
@@ -58,26 +59,14 @@ public class CreateOrUpdateUserStoresRpcHandlerTest
     }
 
     @Test
-    public void updateSingleUserStore()
+    public void updateUserStore()
         throws Exception
     {
         Mockito.when( client.execute( Mockito.isA( GetUserStores.class ) ) ).thenReturn( createUserStores( "store1" ) );
-        Mockito.when( client.execute( Mockito.isA( UpdateUserStores.class ) ) ).thenReturn( 1 );
+        Mockito.when( client.execute( Mockito.isA( UpdateUserStore.class ) ) ).thenReturn( UpdateResult.updated() );
 
         testSuccess( createParams( "store1" ), createResult( false, true ) );
     }
-
-
-    @Test
-    public void updateManyUserStores()
-        throws Exception
-    {
-        Mockito.when( client.execute( Mockito.isA( GetUserStores.class ) ) ).thenReturn( createUserStores( "store1", "store2", "store3" ) );
-        Mockito.when( client.execute( Mockito.isA( UpdateUserStores.class ) ) ).thenReturn( 3 );
-
-        testSuccess( createParams( "store1", "store2", "store3" ), createResult( false, true ) );
-    }
-
 
     private ObjectNode createParams( final boolean isDefault, final String config, String connector, final String... name )
     {
