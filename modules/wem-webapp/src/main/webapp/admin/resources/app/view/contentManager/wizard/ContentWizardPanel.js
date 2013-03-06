@@ -15,7 +15,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     header: false,
 
     border: 0,
-    autoScroll: true,
+    autoScroll: false,
     evaluateDisplayName: true,
 
     isLiveMode: false,

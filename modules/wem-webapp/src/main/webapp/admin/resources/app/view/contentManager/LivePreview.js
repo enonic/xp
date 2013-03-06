@@ -2,7 +2,7 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     extend: 'Ext.Component',
     alias: 'widget.contentLive',
 
-    html: '<iframe style="border: 0 none; margin: -1px 0; width: 100%; height: 100%;"></iframe>',
+    html: '<iframe style="border: 0 none; width: 100%; height: 100%;"></iframe>',
     autoScroll: false,
     styleHtmlContent: true,
     layout: 'fit',
