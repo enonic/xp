@@ -17,15 +17,17 @@ Ext.define('Admin.view.spaceAdmin.wizard.Toolbar', {
             {
                 text: 'Save',
                 action: 'saveSpace',
-                itemId: 'save'
-                //disabled: true
+                itemId: 'save',
+                disabled: true
             },
             {
                 text: 'Delete',
+                disabled: this.isNew,
                 action: 'deleteSpace'
             },
             {
-                text: 'Duplicate'
+                text: 'Duplicate',
+                disabled: this.isNew
             },
             '->',
             {

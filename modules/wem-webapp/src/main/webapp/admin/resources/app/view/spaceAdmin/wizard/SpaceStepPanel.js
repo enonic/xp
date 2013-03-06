@@ -3,6 +3,7 @@ Ext.define('Admin.view.spaceAdmin.wizard.SpaceStepPanel', {
     alias: 'widget.spaceStepPanel',
 
     stepTitle: 'Space',
+    data: undefined,
 
     initComponent: function () {
         this.items = [
@@ -24,4 +25,4 @@ Ext.define('Admin.view.spaceAdmin.wizard.SpaceStepPanel', {
         ];
         this.callParent(arguments);
     }
-})
+});

@@ -26,8 +26,27 @@ Ext.define('Admin.controller.spaceAdmin.WizardController', {
                 click: function () {
                     this.deleteSpace(this.getWizardTab());
                 }
+            },
+            'spaceAdminWizardPanel wizardHeader': {
+                displaynamechange: function (newVal, oldVal) {
+                    this.getTopBar().setTitleButtonText(newVal);
+                }
+            },
+            'spaceAdminWizardPanel wizardPanel': {
+                'validitychange': function (wizard, isValid) {
+                    this.updateWizardToolbarButtons(wizard.isWizardDirty, isValid);
+                },
+                'dirtychange': function (wizard, isDirty) {
+                    this.updateWizardToolbarButtons(isDirty, wizard.isWizardValid);
+                }
             }
         });
+    },
+
+    updateWizardToolbarButtons: function (isDirty, isValid) {
+        var toolbar = this.getWizardToolbar();
+        var save = toolbar.down('button[action=saveSpace]');
+        save.setDisabled(!isDirty || !isValid);
     },
 
     closeWizard: function (el, e) {
@@ -76,16 +95,6 @@ Ext.define('Admin.controller.spaceAdmin.WizardController', {
         this.remoteCreateOrUpdateSpace(spaceParams, onUpdateSpaceSuccess);
     },
 
-    /*      Getters     */
-
-    getWizardTab: function () {
-        return this.getCmsTabPanel().getActiveTab();
-    },
-
-    getWizardPanel: function () {
-        return this.getWizardTab();
-    },
-
     deleteSpace: function (wizard) {
         var me = this;
         var space = wizard.data;
@@ -102,6 +111,21 @@ Ext.define('Admin.controller.spaceAdmin.WizardController', {
         };
 
         this.remoteDeleteSpace(space, onDeleteSpaceSuccess);
+    },
+
+
+    /*      Getters     */
+
+    getWizardTab: function () {
+        return this.getCmsTabPanel().getActiveTab();
+    },
+
+    getWizardPanel: function () {
+        return this.getWizardTab();
+    },
+
+    getWizardToolbar: function () {
+        return Ext.ComponentQuery.query('spaceAdminWizardToolbar', this.getWizardTab())[0];
     }
-})
-;
+
+});

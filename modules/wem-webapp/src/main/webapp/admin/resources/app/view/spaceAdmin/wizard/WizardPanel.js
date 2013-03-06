@@ -3,6 +3,7 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
     alias: 'widget.spaceAdminWizardPanel',
     requires: [
         'Admin.view.WizardPanel',
+        'Admin.view.WizardHeader',
         'Admin.view.spaceAdmin.wizard.Toolbar',
         'Admin.plugin.fileupload.PhotoUploadButton',
         'Admin.view.spaceAdmin.wizard.SpaceStepPanel'
@@ -14,28 +15,24 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
         border: false
     },
 
-    headerData: {},
 
     initComponent: function () {
         var me = this;
         var steps = me.getSteps();
 
-        var iconUrl = 'resources/images/icons/128x128/default_space.png';
-        var displayNameValue = '';
-        var spaceName = '';
-        if (me.modelData) {
-            displayNameValue = me.modelData.displayName || '';
-            spaceName = me.modelData.name || '';
-            iconUrl = me.modelData.iconUrl;
-        }
+        var headerData = me.resolveHeaderData(me.data);
 
-        me.headerData = {
-            'displayName': displayNameValue,
-            'spaceName': spaceName,
-            'isNewSpace': spaceName? false : true
-        };
+        me.tbar = Ext.createByAlias('widget.spaceAdminWizardToolbar', {
+            isNew: headerData.isNewSpace
+        });
 
-        me.tbar = Ext.createByAlias('widget.spaceAdminWizardToolbar', {});
+        var wizardHeader = Ext.create('Admin.view.WizardHeader', {
+            xtype: 'wizardHeader',
+            pathConfig: {
+                hidden: true
+            },
+            data: me.data
+        });
 
         me.items = [
             {
@@ -46,7 +43,7 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
                         xtype: 'photoUploadButton',
                         width: 111,
                         height: 111,
-                        photoUrl: iconUrl,
+                        photoUrl: headerData.iconUrl,
                         title: "Space",
                         style: {
                             margin: '1px'
@@ -93,36 +90,12 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
                     border: false
                 },
                 items: [
-                    {
-                        xtype: 'container',
-                        cls: 'admin-wizard-header-container',
-                        items: [
-                            {
-                                xtype: 'textfield',
-                                colspan: 2,
-                                itemId: 'displayName',
-                                value: me.headerData.displayName,
-                                emptyText: 'Display Name',
-                                enableKeyEvents: true,
-                                cls: 'admin-display-name',
-                                hideLabel: true,
-                                dirtyCls: 'admin-display-name-dirty'
-                            },
-                            {
-                                xtype: 'component',
-                                itemId: 'spaceName',
-                                cls: 'admin-content-path',
-                                data: me.headerData,
-                                tpl: '<table><tr>' +
-                                     '<td class="fluid"><input type="text" value="{spaceName}" placeholder="Name" {[values.isNewSpace ? "" : "readonly"]}/></td>' +
-                                     '</tr></table>'
-                            }
-                        ]
-                    },
+                    wizardHeader,
                     {
                         xtype: 'wizardPanel',
                         showControls: true,
-                        isNew: me.headerData.isNewSpace,
+                        validateItems: [wizardHeader],
+                        isNew: headerData.isNewSpace,
                         items: steps
                     }
                 ]
@@ -135,20 +108,31 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
         uploader.on('fileuploaded', me.photoUploaded, me);
     },
 
-    listeners : {
-        activate: function() {
-            this.down('#displayName').focus(false, 100);
+    resolveHeaderData: function (data) {
+        var me = this;
+        var iconUrl = 'resources/images/icons/128x128/default_space.png';
+        var displayNameValue = '';
+        var spaceName = '';
+        if (data) {
+            displayNameValue = me.data.get('displayName') || '';
+            spaceName = me.data.get('name') || '';
+            iconUrl = me.data.get('iconUrl');
         }
+
+        return {
+            'displayName': displayNameValue,
+            'spaceName': spaceName,
+            'isNewSpace': spaceName ? false : true,
+            'iconUrl': iconUrl
+        };
     },
-
-
 
     getSteps: function () {
 
         return [
             {
                 xtype: 'spaceStepPanel',
-                modelData: this.modelData
+                data: this.data
             },
             {
                 stepTitle: 'Schemas'
@@ -172,12 +156,19 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
         return this.down('wizardPanel');
     },
 
+    getWizardHeader: function() {
+        return this.down('wizardHeader');
+    },
+
 
     getData: function () {
         var data = this.getWizardPanel().getData();
-        data.displayName = this.down('#displayName').getValue();
-        data.spaceName = this.down('#spaceName').el.down('input').getValue();
-        return data;
+        var headerData = this.getWizardHeader().getData();
+
+        return Ext.apply(data, {
+            displayName: headerData.displayName,
+            spaceName: headerData.name
+        });
     },
 
     photoUploaded: function (photoUploadButton, response) {

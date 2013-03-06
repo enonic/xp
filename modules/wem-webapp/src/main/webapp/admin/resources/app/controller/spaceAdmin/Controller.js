@@ -53,7 +53,7 @@ Ext.define('Admin.controller.spaceAdmin.Controller', {
                     xtype: 'spaceDetail',
                     showToolbar: true,
                     data: space,
-                    title: space.data.displayName
+                    title: space.get('displayName')
                 };
                 tabs.addTab(tabItem);
             }
@@ -79,8 +79,7 @@ Ext.define('Admin.controller.spaceAdmin.Controller', {
                     editing: true,
                     xtype: 'spaceAdminWizardPanel',
                     data: space,
-                    title: space.get('displayName'),
-                    modelData: space.raw
+                    title: space.get('displayName')
                 };
 
                 //check if preview tab is open and close it
