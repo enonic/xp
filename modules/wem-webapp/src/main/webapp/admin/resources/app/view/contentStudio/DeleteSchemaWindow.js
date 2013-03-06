@@ -72,6 +72,7 @@ Ext.define('Admin.view.contentStudio.DeleteSchemaWindow', {
 
     setModalDialogData: function (model) {
         this.modelData = model[0].data;
+        this.data = model[0];
         if (model) {
             var info = this.down('#modalDialog');
             if (info) {
