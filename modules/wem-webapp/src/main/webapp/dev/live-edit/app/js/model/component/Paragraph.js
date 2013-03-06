@@ -5,7 +5,14 @@
         var me = this;
         me.cssSelector = '[data-live-edit-type=paragraph]';
         me.$selectedParagraph = null;
-        me.mode = undefined;
+
+        me.modes = {
+            UNSELECTED: 0,
+            SELECTED: 1,
+            EDIT: 2
+        };
+
+        me.currentMode = me.modes.UNSELECTED;
 
         me.attachMouseOverEvent();
         me.attachMouseOutEvent();
@@ -24,11 +31,10 @@
 
 
     proto.registerGlobalListeners = function () {
-        var me = this;
-
         $(window).on('shader:click', $.proxy(this.destroyEditMode, this));
         $(window).on('component:click:deselect', $.proxy(this.destroyEditMode, this));
     };
+
 
     // Override base attachClickEvent
     proto.attachClickEvent = function () {
@@ -46,67 +52,69 @@
         event.stopPropagation();
         event.preventDefault();
 
+        // Remove the unlined cursor when mode is not edit.
+        if (me.$selectedParagraph && !(me.currentMode === me.modes.EDIT)) {
+            me.$selectedParagraph.css('cursor', '');
+        }
+
         var $paragraph = $(event.currentTarget);
 
-        // In case another paragraph is clicked during any mode.
+        // Reset mode in case another paragraph is selected.
         if (!$paragraph.is(me.$selectedParagraph)) {
-            me.mode = undefined;
+            me.currentMode = me.modes.UNSELECTED;
         }
 
         me.$selectedParagraph = $paragraph;
 
-        if (me.mode === undefined) {
+        if (me.currentMode === me.modes.UNSELECTED) {
             me.setSelectMode();
-        } else if (me.mode === 'selected') {
+        } else if (me.currentMode === me.modes.SELECTED) {
             me.initEditMode();
-
         } else {
         }
-
-        console.log('mode after: "' + me.mode + '"');
     };
+
 
     proto.setSelectMode = function () {
         var me = this;
         me.$selectedParagraph.css('cursor', 'url(../app/images/pencil.png) 0 40, text');
 
-        // Make paragraph behave like other components when selected.
+        me.currentMode = me.modes.SELECTED;
+
         $(window).trigger('component:click:select', [me.$selectedParagraph]);
         $(window).trigger('component:paragraph:select', [me.$selectedParagraph]);
-
-        me.mode = 'selected';
     };
+
 
     proto.initEditMode = function () {
         var me = this,
             $paragraph = me.$selectedParagraph;
-
-        $(window).trigger('component:paragraph:edit:init', [me.$selectedParagraph]);
 
         $paragraph.get(0).contentEditable = true;
         $paragraph.css('cursor', 'text');
         $paragraph.addClass('live-edit-edited-paragraph');
         $paragraph.get(0).focus();
 
-        me.mode = 'edit';
+        me.currentMode = me.modes.EDIT;
+
+        $(window).trigger('component:paragraph:edit:init', [me.$selectedParagraph]);
     };
 
 
     proto.destroyEditMode = function (event) {
-        console.log('Paragraph: destroy');
         var me = this,
             $paragraph = me.$selectedParagraph;
         if ($paragraph === null) {
             return;
         }
 
-        me.mode = undefined;
-
         $paragraph.get(0).contentEditable = false;
         $paragraph.css('cursor', '');
         $paragraph.removeClass('live-edit-edited-paragraph');
         $paragraph.get(0).blur();
         me.$selectedParagraph = null;
+
+        me.currentMode = me.modes.UNSELECTED;
 
         $(window).trigger('component:paragraph:edit:destroy', [me.$selectedParagraph]);
     };
