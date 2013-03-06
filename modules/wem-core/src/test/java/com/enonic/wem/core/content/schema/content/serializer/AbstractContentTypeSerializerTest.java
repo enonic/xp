@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.schema.content;
+package com.enonic.wem.core.content.schema.content.serializer;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -3,7 +3,7 @@ package com.enonic.wem.web.rest.rpc.content.schema.content;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.schema.content.ContentType;
-import com.enonic.wem.core.content.schema.content.ContentTypeXmlSerializer;
+import com.enonic.wem.core.content.schema.content.serializer.ContentTypeXmlSerializer;
 import com.enonic.wem.web.json.JsonResult;
 
 final class GetContentTypeConfigRpcJsonResult

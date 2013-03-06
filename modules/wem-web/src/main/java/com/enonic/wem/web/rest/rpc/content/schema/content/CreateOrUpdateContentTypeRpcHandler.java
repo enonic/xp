@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.schema.content.editor.ContentTypeEditor;
-import com.enonic.wem.core.content.schema.content.ContentTypeXmlSerializer;
+import com.enonic.wem.core.content.schema.content.serializer.ContentTypeXmlSerializer;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;

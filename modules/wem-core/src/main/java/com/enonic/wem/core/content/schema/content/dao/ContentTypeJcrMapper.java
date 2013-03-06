@@ -6,7 +6,7 @@ import javax.jcr.RepositoryException;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.schema.content.ContentType;
-import com.enonic.wem.core.content.schema.content.ContentTypeJsonSerializer;
+import com.enonic.wem.core.content.schema.content.serializer.ContentTypeJsonSerializer;
 import com.enonic.wem.core.jcr.JcrHelper;
 import com.enonic.wem.core.support.dao.IconJcrMapper;
 

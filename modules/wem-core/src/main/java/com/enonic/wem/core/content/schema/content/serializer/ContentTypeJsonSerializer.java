@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.schema.content;
+package com.enonic.wem.core.content.schema.content.serializer;
 
 
 import org.codehaus.jackson.JsonNode;
@@ -10,7 +10,6 @@ import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.form.FormItem;
 import com.enonic.wem.api.content.schema.content.form.FormItems;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.core.content.schema.content.form.FormItemsJsonSerializer;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonParsingException;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.schema.content;
+package com.enonic.wem.core.content.schema.content.serializer;
 
 import java.io.IOException;
 
@@ -12,7 +12,6 @@ import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.form.FormItem;
 import com.enonic.wem.api.content.schema.content.form.FormItems;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.core.content.schema.content.form.FormItemsXmlSerializer;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.core.support.util.JdomHelper;
 

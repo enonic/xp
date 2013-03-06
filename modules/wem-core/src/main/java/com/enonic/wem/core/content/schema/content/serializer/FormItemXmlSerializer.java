@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.schema.content.form;
+package com.enonic.wem.core.content.schema.content.serializer;
 
 
 import org.jdom.Element;
@@ -12,7 +12,6 @@ import com.enonic.wem.api.content.schema.content.form.Input;
 import com.enonic.wem.api.content.schema.content.form.Layout;
 import com.enonic.wem.api.content.schema.content.form.MixinReference;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.core.content.schema.content.form.inputtype.InputTypeConfigXmlSerializer;
 import com.enonic.wem.core.content.schema.content.form.inputtype.InputTypeFactory;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 

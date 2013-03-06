@@ -7,7 +7,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.validator.ContentTypeValidationError;
 import com.enonic.wem.api.content.schema.content.validator.ContentTypeValidationResult;
-import com.enonic.wem.core.content.schema.content.ContentTypeJsonSerializer;
+import com.enonic.wem.core.content.schema.content.serializer.ContentTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
 
 final class ValidateContentTypeJsonResult

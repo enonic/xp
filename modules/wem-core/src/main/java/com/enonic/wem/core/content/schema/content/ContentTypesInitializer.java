@@ -18,6 +18,7 @@ import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.core.content.schema.content.serializer.ContentTypeJsonSerializer;
 import com.enonic.wem.core.initializer.InitializerTask;
 
 import static com.enonic.wem.api.command.Commands.contentType;

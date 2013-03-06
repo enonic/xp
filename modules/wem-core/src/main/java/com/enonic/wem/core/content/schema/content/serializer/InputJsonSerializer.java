@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.schema.content.form;
+package com.enonic.wem.core.content.schema.content.serializer;
 
 
 import org.codehaus.jackson.JsonNode;
@@ -7,7 +7,6 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.schema.content.form.Input;
 import com.enonic.wem.api.content.schema.content.form.inputtype.BaseInputType;
-import com.enonic.wem.core.content.schema.content.form.inputtype.InputTypeConfigJsonSerializer;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
@@ -36,7 +35,7 @@ public class InputJsonSerializer
 
     public static final String CONFIG = "config";
 
-    private final com.enonic.wem.core.content.schema.content.form.inputtype.InputTypeJsonSerializer inputTypeSerializer;
+    private final InputTypeJsonSerializer inputTypeSerializer;
 
     private final OccurrencesJsonSerializer occurrencesJsonSerializer;
 
@@ -45,7 +44,7 @@ public class InputJsonSerializer
     public InputJsonSerializer( final ObjectMapper objectMapper )
     {
         super( objectMapper );
-        inputTypeSerializer = new com.enonic.wem.core.content.schema.content.form.inputtype.InputTypeJsonSerializer( objectMapper );
+        inputTypeSerializer = new InputTypeJsonSerializer( objectMapper );
         occurrencesJsonSerializer = new OccurrencesJsonSerializer( objectMapper );
     }
 

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.schema.content.form.inputtype;
+package com.enonic.wem.core.content.schema.content.serializer;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -29,15 +29,7 @@ public class InputTypeConfigJsonSerializer
 
             return (AbstractInputTypeConfigJsonSerializer) cls.newInstance();
         }
-        catch ( ClassNotFoundException e )
-        {
-            throw new RuntimeException( e );
-        }
-        catch ( InstantiationException e )
-        {
-            throw new RuntimeException( e );
-        }
-        catch ( IllegalAccessException e )
+        catch ( ClassNotFoundException | InstantiationException | IllegalAccessException e )
         {
             throw new RuntimeException( e );
         }

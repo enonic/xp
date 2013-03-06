@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.schema.content.form;
+package com.enonic.wem.core.content.schema.content.serializer;
 
 
 import org.codehaus.jackson.JsonNode;

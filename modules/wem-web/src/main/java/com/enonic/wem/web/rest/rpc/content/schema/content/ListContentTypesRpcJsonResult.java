@@ -6,7 +6,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.ContentTypes;
-import com.enonic.wem.core.content.schema.content.ContentTypeJsonSerializer;
+import com.enonic.wem.core.content.schema.content.serializer.ContentTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
 import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
 

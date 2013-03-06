@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.schema.content.form.inputtype;
+package com.enonic.wem.core.content.schema.content.serializer;
 
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
@@ -35,15 +35,7 @@ public class InputTypeConfigXmlSerializer
 
             return (AbstractInputTypeConfigXmlSerializer) cls.newInstance();
         }
-        catch ( ClassNotFoundException e )
-        {
-            throw new RuntimeException( e );
-        }
-        catch ( InstantiationException e )
-        {
-            throw new RuntimeException( e );
-        }
-        catch ( IllegalAccessException e )
+        catch ( ClassNotFoundException | InstantiationException | IllegalAccessException e )
         {
             throw new RuntimeException( e );
         }

@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
-import com.enonic.wem.core.content.schema.content.ContentTypeJsonSerializer;
+import com.enonic.wem.core.content.schema.content.serializer.ContentTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
 import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
 

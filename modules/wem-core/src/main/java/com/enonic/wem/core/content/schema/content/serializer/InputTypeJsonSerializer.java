@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.schema.content.form.inputtype;
+package com.enonic.wem.core.content.schema.content.serializer;
 
 
 import org.codehaus.jackson.JsonNode;
@@ -6,6 +6,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.schema.content.form.inputtype.BaseInputType;
+import com.enonic.wem.core.content.schema.content.form.inputtype.InputTypeFactory;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 

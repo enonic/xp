@@ -11,7 +11,6 @@ import com.enonic.wem.api.content.schema.Schema;
 import com.enonic.wem.api.content.schema.SchemaKey;
 import com.enonic.wem.api.content.schema.content.form.Form;
 import com.enonic.wem.api.content.schema.content.form.FormItem;
-import com.enonic.wem.api.content.schema.content.form.FormItems;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleName;
 
@@ -279,15 +278,6 @@ public final class ContentType
         public Builder form( final Form form )
         {
             this.formBuilder = newForm( form );
-            return this;
-        }
-
-        public Builder formItems( final FormItems formItems )
-        {
-            for ( final FormItem formItem : formItems )
-            {
-                this.formBuilder.addFormItem( formItem );
-            }
             return this;
         }
 

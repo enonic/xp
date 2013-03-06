@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.schema.content.form;
+package com.enonic.wem.core.content.schema.content.serializer;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -10,6 +10,8 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
+
+import junit.framework.Assert;
 
 import com.enonic.wem.api.content.schema.content.form.FormItem;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
@@ -23,7 +25,6 @@ import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newForm
 import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
 import static com.enonic.wem.api.content.schema.content.form.Occurrences.newOccurrences;
 import static com.enonic.wem.api.content.schema.content.form.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
-import static org.junit.Assert.*;
 
 public class FormItemJsonSerializerTest
 {
@@ -70,18 +71,19 @@ public class FormItemJsonSerializerTest
         FormItem formItem = new FormItemJsonSerializer( formItemsJsonSerializer ).parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( formItem instanceof Input );
-        assertEquals( "myTextLine", formItem.getName() );
+
+        Assert.assertTrue( formItem instanceof Input );
+        Assert.assertEquals( "myTextLine", formItem.getName() );
         Input parsedInput = (Input) formItem;
-        assertEquals( true, parsedInput.isRequired() );
-        assertEquals( true, parsedInput.isIndexed() );
-        assertEquals( true, parsedInput.isImmutable() );
-        assertEquals( null, parsedInput.getLabel() );
-        assertEquals( null, parsedInput.getHelpText() );
-        assertEquals( "Custom text", parsedInput.getCustomText() );
-        assertEquals( newOccurrences().minimum( 1 ).maximum( 100 ).build(), parsedInput.getOccurrences() );
-        assertEquals( InputTypes.TEXT_LINE, parsedInput.getInputType() );
-        assertNull( parsedInput.getInputTypeConfig() );
+        Assert.assertEquals( true, parsedInput.isRequired() );
+        Assert.assertEquals( true, parsedInput.isIndexed() );
+        Assert.assertEquals( true, parsedInput.isImmutable() );
+        Assert.assertEquals( null, parsedInput.getLabel() );
+        Assert.assertEquals( null, parsedInput.getHelpText() );
+        Assert.assertEquals( "Custom text", parsedInput.getCustomText() );
+        Assert.assertEquals( newOccurrences().minimum( 1 ).maximum( 100 ).build(), parsedInput.getOccurrences() );
+        Assert.assertEquals( InputTypes.TEXT_LINE, parsedInput.getInputType() );
+        Assert.assertNull( parsedInput.getInputTypeConfig() );
     }
 
     @Test
@@ -104,23 +106,23 @@ public class FormItemJsonSerializerTest
         FormItem formItem = new FormItemJsonSerializer( formItemsJsonSerializer ).parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( formItem instanceof Input );
-        assertEquals( "mySingleSelector", formItem.getName() );
+        Assert.assertTrue( formItem instanceof Input );
+        Assert.assertEquals( "mySingleSelector", formItem.getName() );
         Input parsedInput = (Input) formItem;
-        assertEquals( "My SingleSelector", parsedInput.getLabel() );
-        assertEquals( false, parsedInput.isRequired() );
-        assertEquals( false, parsedInput.isIndexed() );
-        assertEquals( false, parsedInput.isImmutable() );
-        assertEquals( InputTypes.SINGLE_SELECTOR, parsedInput.getInputType() );
+        Assert.assertEquals( "My SingleSelector", parsedInput.getLabel() );
+        Assert.assertEquals( false, parsedInput.isRequired() );
+        Assert.assertEquals( false, parsedInput.isIndexed() );
+        Assert.assertEquals( false, parsedInput.isImmutable() );
+        Assert.assertEquals( InputTypes.SINGLE_SELECTOR, parsedInput.getInputType() );
         InputTypeConfig inputTypeConfig = parsedInput.getInputTypeConfig();
-        assertNotNull( inputTypeConfig );
-        assertTrue( inputTypeConfig instanceof SingleSelectorConfig );
+        Assert.assertNotNull( inputTypeConfig );
+        Assert.assertTrue( inputTypeConfig instanceof SingleSelectorConfig );
         SingleSelectorConfig singleSelectorConfig = (SingleSelectorConfig) inputTypeConfig;
-        assertEquals( 2, singleSelectorConfig.getOptions().size() );
-        assertEquals( "o1", singleSelectorConfig.getOptions().get( 0 ).getValue() );
-        assertEquals( "Option 1", singleSelectorConfig.getOptions().get( 0 ).getLabel() );
-        assertEquals( "o2", singleSelectorConfig.getOptions().get( 1 ).getValue() );
-        assertEquals( "Option 2", singleSelectorConfig.getOptions().get( 1 ).getLabel() );
+        Assert.assertEquals( 2, singleSelectorConfig.getOptions().size() );
+        Assert.assertEquals( "o1", singleSelectorConfig.getOptions().get( 0 ).getValue() );
+        Assert.assertEquals( "Option 1", singleSelectorConfig.getOptions().get( 0 ).getLabel() );
+        Assert.assertEquals( "o2", singleSelectorConfig.getOptions().get( 1 ).getValue() );
+        Assert.assertEquals( "Option 2", singleSelectorConfig.getOptions().get( 1 ).getLabel() );
     }
 
     @Test
@@ -145,12 +147,12 @@ public class FormItemJsonSerializerTest
         FormItem formItem = new FormItemJsonSerializer( formItemsJsonSerializer ).parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( formItem instanceof FormItemSet );
-        assertEquals( "myMixin", formItem.getName() );
+        Assert.assertTrue( formItem instanceof FormItemSet );
+        Assert.assertEquals( "myMixin", formItem.getName() );
         FormItemSet parsedFormItemSet = (FormItemSet) formItem;
-        assertEquals( "My mixin", parsedFormItemSet.getLabel() );
-        assertEquals( true, parsedFormItemSet.isRequired() );
-        assertEquals( true, parsedFormItemSet.isImmutable() );
+        Assert.assertEquals( "My mixin", parsedFormItemSet.getLabel() );
+        Assert.assertEquals( true, parsedFormItemSet.isRequired() );
+        Assert.assertEquals( true, parsedFormItemSet.isImmutable() );
     }
 
     private String fieldSetToJson( FormItemSet formItemSet )

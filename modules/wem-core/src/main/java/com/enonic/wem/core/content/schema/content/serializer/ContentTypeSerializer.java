@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.schema.content;
+package com.enonic.wem.core.content.schema.content.serializer;
 
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.core.support.serializer.ParsingException;
