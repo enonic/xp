@@ -19,7 +19,6 @@ Ext.define('Admin.controller.account.DetailPanelController', {
 
     initDetailToolbar: function () {
         var accountDetail = this.getAccountDetailPanel();
-        accountDetail.updateTitle(this.getPersistentGridSelectionPlugin());
         accountDetail.showNoneSelection();
     }
 
