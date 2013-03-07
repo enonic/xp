@@ -6,13 +6,13 @@ import javax.jcr.Session;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.relationship.UpdateRelationship;
-import com.enonic.wem.api.command.content.relationship.UpdateRelationshipFailureException;
 import com.enonic.wem.api.content.relationship.Relationship;
+import com.enonic.wem.api.content.relationship.UpdateRelationshipFailureException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
 
-import static com.enonic.wem.api.command.content.relationship.UpdateRelationshipFailureException.newUpdateRelationshipsResult;
+import static com.enonic.wem.api.content.relationship.UpdateRelationshipFailureException.newUpdateRelationshipsResult;
 
 @Component
 public final class UpdateRelationshipHandler

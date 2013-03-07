@@ -11,8 +11,8 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.relationship.UpdateRelationship;
-import com.enonic.wem.api.command.content.relationship.UpdateRelationshipFailureException;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
+import com.enonic.wem.api.content.relationship.UpdateRelationshipFailureException;
 import com.enonic.wem.api.content.relationship.editor.RelationshipEditors;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;

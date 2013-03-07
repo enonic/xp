@@ -6,7 +6,7 @@ import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.relationship.RelationshipIds;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
-import com.enonic.wem.api.exception.RelationshipNotFoundException;
+import com.enonic.wem.api.content.relationship.RelationshipNotFoundException;
 
 
 public interface RelationshipDao

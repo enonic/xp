@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content.relationship;
+package com.enonic.wem.api.content.relationship;
 
 
 import java.util.ArrayList;
@@ -6,8 +6,6 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-
-import com.enonic.wem.api.content.relationship.RelationshipKey;
 
 public final class UpdateRelationshipFailureException
     extends RuntimeException

@@ -6,15 +6,15 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.relationship.UpdateRelationship;
-import com.enonic.wem.api.command.content.relationship.UpdateRelationshipFailureException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
+import com.enonic.wem.api.content.relationship.RelationshipNotFoundException;
+import com.enonic.wem.api.content.relationship.UpdateRelationshipFailureException;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.exception.RelationshipNotFoundException;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
-import static com.enonic.wem.api.command.content.relationship.UpdateRelationshipFailureException.newUpdateRelationshipsResult;
+import static com.enonic.wem.api.content.relationship.UpdateRelationshipFailureException.newUpdateRelationshipsResult;
 import static org.mockito.Matchers.isA;
 
 public class UpdateRelationshipPropertiesRpcHandlerTest

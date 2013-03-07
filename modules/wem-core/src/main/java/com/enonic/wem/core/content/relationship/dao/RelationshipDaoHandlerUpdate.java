@@ -5,7 +5,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.content.relationship.Relationship;
-import com.enonic.wem.api.exception.RelationshipNotFoundException;
+import com.enonic.wem.api.content.relationship.RelationshipNotFoundException;
 
 
 final class RelationshipDaoHandlerUpdate

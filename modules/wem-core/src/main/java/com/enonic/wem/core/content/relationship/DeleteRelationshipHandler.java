@@ -6,8 +6,8 @@ import javax.jcr.Session;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.relationship.DeleteRelationship;
-import com.enonic.wem.api.command.content.relationship.DeleteRelationshipResult;
-import com.enonic.wem.api.exception.RelationshipNotFoundException;
+import com.enonic.wem.api.content.relationship.DeleteRelationshipResult;
+import com.enonic.wem.api.content.relationship.RelationshipNotFoundException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
@@ -37,7 +37,7 @@ public final class DeleteRelationshipHandler
         }
         catch ( RelationshipNotFoundException e )
         {
-            command.setResult( DeleteRelationshipResult.NOT_FOUND );
+            command.setResult( DeleteRelationshipResult.from( e ) );
         }
     }
 
