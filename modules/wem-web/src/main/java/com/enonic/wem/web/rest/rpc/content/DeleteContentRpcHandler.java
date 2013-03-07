@@ -5,11 +5,14 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.DeleteContents;
-import com.enonic.wem.api.content.ContentDeletionResult;
+import com.enonic.wem.api.command.content.DeleteContent;
+import com.enonic.wem.api.command.content.DeleteContentResult;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
+
+import static com.enonic.wem.web.rest.rpc.content.DeleteContentJsonResult.newDeleteContentJsonResult;
 
 @Component
 public final class DeleteContentRpcHandler
@@ -24,12 +27,19 @@ public final class DeleteContentRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final ContentPaths contentPaths = ContentPaths.from( context.param( "contentPaths" ).required().asStringArray() );
+        final ContentPaths contentsToDelete = ContentPaths.from( context.param( "contentPaths" ).required().asStringArray() );
 
-        final DeleteContents deleteContents = Commands.content().delete();
-        deleteContents.deleter( AccountKey.anonymous() );
-        deleteContents.selectors( contentPaths );
-        ContentDeletionResult contentDeletionResult = client.execute( deleteContents );
-        context.setResult( new DeleteContentJsonResult( contentDeletionResult ) );
+        final DeleteContentJsonResult.Builder jsonResult = newDeleteContentJsonResult();
+
+        for ( final ContentPath contentToDelete : contentsToDelete )
+        {
+            final DeleteContent deleteContent = Commands.content().delete();
+            deleteContent.deleter( AccountKey.anonymous() );
+            deleteContent.selector( contentToDelete );
+            final DeleteContentResult commandResult = client.execute( deleteContent );
+            jsonResult.registerResult( contentToDelete, commandResult );
+        }
+
+        context.setResult( jsonResult.build() );
     }
 }

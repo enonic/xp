@@ -1,0 +1,14 @@
+{
+    "success": false,
+    "successes": [ ],
+    "failures": [
+        {
+            "path": "/parent/childToDelete1",
+            "reason": "NOT_FOUND"
+        },
+        {
+            "path": "/parent/childToDelete2",
+            "reason": "UNABLE_TO_DELETE"
+        }
+    ]
+}

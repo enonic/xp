@@ -16,10 +16,10 @@ import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.api.content.ContentSelectors;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-import com.enonic.wem.api.exception.UnableToDeleteContentException;
 import com.enonic.wem.api.support.tree.Tree;
 
 
@@ -94,7 +94,7 @@ public class ContentDaoImpl
     {
         try
         {
-            return new ContentDaoHandlerRename( session ).handle( contentId , newName );
+            return new ContentDaoHandlerRename( session ).handle( contentId, newName );
         }
         catch ( RepositoryException e )
         {

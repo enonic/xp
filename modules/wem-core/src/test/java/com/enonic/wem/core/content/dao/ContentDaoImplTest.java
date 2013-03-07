@@ -6,16 +6,16 @@ import javax.jcr.Node;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
-import com.enonic.wem.api.exception.ContentAlreadyExistException;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
-import com.enonic.wem.api.exception.UnableToDeleteContentException;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.core.AbstractJcrTest;
 

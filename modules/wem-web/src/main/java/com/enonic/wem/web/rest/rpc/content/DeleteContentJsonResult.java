@@ -1,50 +1,88 @@
 package com.enonic.wem.web.rest.rpc.content;
 
+import java.util.Map;
+
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.content.ContentDeletionResult;
-import com.enonic.wem.api.content.ContentSelector;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
+import com.enonic.wem.api.command.content.DeleteContentResult;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.web.json.JsonResult;
 
 final class DeleteContentJsonResult
     extends JsonResult
 {
-    private final ContentDeletionResult contentDeletionResult;
+    private final ImmutableList<ContentPath> successes;
 
-    public DeleteContentJsonResult( final ContentDeletionResult contentDeletionResult )
+    private final ImmutableMap<ContentPath, DeleteContentResult> failures;
+
+    public DeleteContentJsonResult( final Builder builder )
     {
-        this.contentDeletionResult = contentDeletionResult;
+        this.successes = builder.success.build();
+        this.failures = builder.failures.build();
     }
 
     @Override
     protected void serialize( final ObjectNode json )
     {
-        json.put( "success", !contentDeletionResult.hasFailures() );
-        json.put( "successes", serializeSuccesses( contentDeletionResult.successes() ) );
-        json.put( "failures", serializeFailures( contentDeletionResult.failures() ) );
+        json.put( "success", failures.isEmpty() );
+        json.put( "successes", serializeSuccesses() );
+        json.put( "failures", serializeFailures() );
     }
 
-    private ArrayNode serializeFailures( Iterable<ContentDeletionResult.Failure> failures )
+    private ArrayNode serializeFailures()
     {
         final ArrayNode array = arrayNode();
-        for ( ContentDeletionResult.Failure failure : failures )
+        for ( final Map.Entry<ContentPath, DeleteContentResult> failure : failures.entrySet() )
         {
             final ObjectNode objectNode = array.addObject();
-            objectNode.put( "path", failure.contentSelector.toString() );
-            objectNode.put( "reason", failure.reason );
+            objectNode.put( "path", failure.getKey().toString() );
+            objectNode.put( "reason", failure.getValue().toString() );
         }
         return array;
     }
 
-    private ArrayNode serializeSuccesses( Iterable<ContentSelector> successes )
+    private ArrayNode serializeSuccesses()
     {
         final ArrayNode array = arrayNode();
-        for ( ContentSelector success : successes )
+        for ( final ContentPath success : successes )
         {
             final ObjectNode objectNode = array.addObject();
             objectNode.put( "path", success.toString() );
         }
         return array;
+    }
+
+    public static Builder newDeleteContentJsonResult()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ImmutableList.Builder<ContentPath> success = ImmutableList.builder();
+
+        private ImmutableMap.Builder<ContentPath, DeleteContentResult> failures = ImmutableMap.builder();
+
+        public Builder registerResult( final ContentPath content, final DeleteContentResult deleteResult )
+        {
+            if ( deleteResult == DeleteContentResult.SUCCESS )
+            {
+                success.add( content );
+            }
+            else
+            {
+                failures.put( content, deleteResult );
+            }
+            return this;
+        }
+
+        public DeleteContentJsonResult build()
+        {
+            return new DeleteContentJsonResult( this );
+        }
     }
 }

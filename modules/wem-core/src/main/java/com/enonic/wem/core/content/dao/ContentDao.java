@@ -7,10 +7,12 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.api.content.ContentSelectors;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
@@ -35,7 +37,8 @@ public interface ContentDao
 
     void update( Content content, boolean createNewVersion, Session session );
 
-    void delete( ContentSelector contentSelector, Session session );
+    void delete( ContentSelector contentSelector, Session session )
+        throws ContentNotFoundException, UnableToDeleteContentException;
 
     Contents select( ContentSelectors contentSelectors, Session session );
 

@@ -1,13 +1,13 @@
 package com.enonic.wem.web.rest.rpc.content;
 
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.content.ContentDeletionResult;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.exception.UnableToDeleteContentException;
+import com.enonic.wem.api.command.content.DeleteContentResult;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
@@ -30,12 +30,7 @@ public class DeleteContentRpcHandlerTest
     public void successful_deletion_of_one_content()
         throws Exception
     {
-        final ContentPath deletedContentPath = ContentPath.from( "/parent/childToDelete" );
-
-        ContentDeletionResult contentDeletionResult = new ContentDeletionResult();
-        contentDeletionResult.success( deletedContentPath );
-
-        Mockito.when( client.execute( Mockito.any( Commands.content().delete().getClass() ) ) ).thenReturn( contentDeletionResult );
+        Mockito.when( client.execute( Mockito.any( Commands.content().delete().getClass() ) ) ).thenReturn( DeleteContentResult.SUCCESS );
 
         testSuccess( "deleteContent_successful_deletion_of_one_content_param.json",
                      "deleteContent_successful_deletion_of_one_content_result.json" );
@@ -45,14 +40,25 @@ public class DeleteContentRpcHandlerTest
     public void failed_deletion_of_one_content()
         throws Exception
     {
-        final ContentPath failedContentPath = ContentPath.from( "/parent/childToDelete" );
-
-        ContentDeletionResult contentDeletionResult = new ContentDeletionResult();
-        contentDeletionResult.failure( failedContentPath, new UnableToDeleteContentException( failedContentPath, "Test" ) );
-
-        Mockito.when( client.execute( Mockito.any( Commands.content().delete().getClass() ) ) ).thenReturn( contentDeletionResult );
+        Mockito.when( client.execute( Mockito.any( Commands.content().delete().getClass() ) ) ).thenReturn( DeleteContentResult.NOT_FOUND );
 
         testSuccess( "deleteContent_failed_deletion_of_one_content_param.json",
                      "deleteContent_failed_deletion_of_one_content_result.json" );
+    }
+
+    @Test
+    public void failed_deletion_of_two_content()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.any( Commands.content().delete().getClass() ) ) ).thenReturn( DeleteContentResult.NOT_FOUND,
+                                                                                                            DeleteContentResult.UNABLE_TO_DELETE );
+
+        ObjectNode param = objectNode();
+        ArrayNode pathsToDelete = arrayNode();
+        pathsToDelete.add( "/parent/childToDelete1" );
+        pathsToDelete.add( "/parent/childToDelete2" );
+        param.put( "contentPaths", pathsToDelete );
+
+        testSuccess( param, "deleteContent_failed_deletion_of_two_content_result.json" );
     }
 }

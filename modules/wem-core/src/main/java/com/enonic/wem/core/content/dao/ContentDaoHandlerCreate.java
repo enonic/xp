@@ -8,10 +8,10 @@ import javax.jcr.Session;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.exception.ContentAlreadyExistException;
-import com.enonic.wem.api.exception.ContentNotFoundException;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.JcrHelper;

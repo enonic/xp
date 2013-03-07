@@ -13,9 +13,9 @@ public final class ContentCommands
         return new UpdateContents();
     }
 
-    public DeleteContents delete()
+    public DeleteContent delete()
     {
-        return new DeleteContents();
+        return new DeleteContent();
     }
 
     public GetContents get()

@@ -1,15 +1,15 @@
-package com.enonic.wem.api.exception;
+package com.enonic.wem.api.content;
 
-import com.enonic.wem.api.content.ContentPath;
+import java.text.MessageFormat;
 
 public final class ContentAlreadyExistException
-    extends BaseException
+    extends RuntimeException
 {
     private final ContentPath path;
 
     public ContentAlreadyExistException( final ContentPath path )
     {
-        super( "Content at path [{0}] already exist", path.toString() );
+        super( MessageFormat.format( "Content at path [{0}] already exist", path.toString() ) );
         this.path = path;
     }
 
