@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.FindContent;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
-import com.enonic.wem.api.content.query.ContentQueryHits;
+import com.enonic.wem.api.content.query.ContentIndexQueryResult;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.index.content.ContentSearchHit;
@@ -32,14 +32,16 @@ public class FindContentHandler
 
         final ContentSearchResults searchResults = searchService.search( contentIndexQuery );
 
-        ContentQueryHits contentQueryHits = new ContentQueryHits( searchResults.getTotal() );
+        ContentIndexQueryResult contentIndexQueryResult = new ContentIndexQueryResult( searchResults.getTotal() );
+
+        contentIndexQueryResult.setFacetsResultSet( searchResults.getFacetsResultSet() );
 
         for ( ContentSearchHit hit : searchResults.getHits() )
         {
-            contentQueryHits.addContentHit( hit.getContentId(), hit.getScore() );
+            contentIndexQueryResult.addContentHit( hit.getContentId(), hit.getScore() );
         }
 
-        command.setResult( contentQueryHits );
+        command.setResult( contentIndexQueryResult );
     }
 
     @Autowired

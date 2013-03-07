@@ -1,29 +1,30 @@
 package com.enonic.wem.core.index.content;
 
-public enum ContentIndexField
+public class ContentIndexField
 {
-    FIELD_SEPARATOR( "_" ),
-    TYPE_SEPARATOR( "." ),
-    KEY( "key" ),
-    DISPLAY_NAME( "displayName" ),
-    LAST_MODIFIED( "lastModified" ),
-    CREATED( "created" ),
-    CONTENT_TYPE( "contentType" ),
-    OWNER( "owner" ),
-    MODIFIER( "modifier" ),
-    CONTENT_DATA_PREFIX( "data" ),
-    PATH( "path" );
+    public final static String FIELD_SEPARATOR = "_";
 
-    private final String id;
+    public final static String TYPE_SEPARATOR = ".";
 
-    private ContentIndexField( final String id )
-    {
-        this.id = id;
-    }
+    public final static String KEY = "key";
 
-    public String id()
-    {
-        return this.id;
-    }
+    public final static String DISPLAY_NAME = "displayName";
+
+    public final static String LAST_MODIFIED = "lastModified";
+
+    public final static String CREATED = "created";
+
+    public final static String CONTENT_TYPE = "contentType";
+
+    public final static String OWNER = "owner";
+
+    public final static String MODIFIER = "modifier";
+
+    public final static String CONTENT_DATA_PREFIX = "data";
+
+    public final static String PATH = "path";
+
+    public final static String SPACE = "space";
+
 
 }

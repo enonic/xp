@@ -3,6 +3,8 @@ package com.enonic.wem.core.index.elastic.indexsource;
 import java.util.Date;
 import java.util.Set;
 
+import org.joda.time.DateTime;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
@@ -39,6 +41,10 @@ final class IndexSourceEntryFactory
         {
             appendDateField( indexDocumentEntry, indexSourceEntries );
         }
+        else if ( value instanceof DateTime )
+        {
+            appendDateTimeField( indexDocumentEntry, indexSourceEntries );
+        }
 
         appendOtherField( indexDocumentEntry, indexSourceEntries );
 
@@ -57,6 +63,14 @@ final class IndexSourceEntryFactory
     {
         final String baseFieldName = indexDocumentEntry.getKey();
         final Date dateValue = ( (Date) indexDocumentEntry.getValue() );
+
+        indexSourceEntries.add( new IndexSourceEntry( generateDateFieldName( baseFieldName ), dateValue ) );
+    }
+
+    private static void appendDateTimeField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
+    {
+        final String baseFieldName = indexDocumentEntry.getKey();
+        final Date dateValue = ( (DateTime) indexDocumentEntry.getValue() ).toDate();
 
         indexSourceEntries.add( new IndexSourceEntry( generateDateFieldName( baseFieldName ), dateValue ) );
     }

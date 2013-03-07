@@ -6,14 +6,17 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.query.FacetsResultSet;
 
-public class ContentQueryHits
+public class ContentIndexQueryResult
 {
     private final int totalSize;
 
     private Set<ContentQueryHit> contentQueryHits = Sets.newLinkedHashSet();
 
-    public ContentQueryHits( final int totalSize )
+    private FacetsResultSet facetsResultSet;
+
+    public ContentIndexQueryResult( final int totalSize )
     {
         this.totalSize = totalSize;
     }
@@ -43,5 +46,15 @@ public class ContentQueryHits
     public Set<ContentQueryHit> getContentQueryHits()
     {
         return contentQueryHits;
+    }
+
+    public void setFacetsResultSet( final FacetsResultSet facetsResultSet )
+    {
+        this.facetsResultSet = facetsResultSet;
+    }
+
+    public FacetsResultSet getFacetsResultSet()
+    {
+        return facetsResultSet;
     }
 }

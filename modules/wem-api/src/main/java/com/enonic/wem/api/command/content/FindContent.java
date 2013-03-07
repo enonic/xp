@@ -2,10 +2,10 @@ package com.enonic.wem.api.command.content;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
-import com.enonic.wem.api.content.query.ContentQueryHits;
+import com.enonic.wem.api.content.query.ContentIndexQueryResult;
 
 public class FindContent
-    extends Command<ContentQueryHits>
+    extends Command<ContentIndexQueryResult>
 {
     private ContentIndexQuery contentIndexQuery;
 

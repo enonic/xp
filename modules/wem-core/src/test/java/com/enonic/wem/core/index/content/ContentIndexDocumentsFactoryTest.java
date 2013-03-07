@@ -34,7 +34,7 @@ public class ContentIndexDocumentsFactoryTest
         final Set<IndexDocumentEntry> indexDocumentEntries = indexDocument.getIndexDocumentEntries();
 
         // Key, path, type, owner, modifier, created, lastModified, displayName
-        assertEquals( 8, indexDocumentEntries.size() );
+        assertEquals( 7, indexDocumentEntries.size() );
     }
 
 
@@ -59,7 +59,7 @@ public class ContentIndexDocumentsFactoryTest
         final Set<IndexDocumentEntry> indexDocumentEntries = indexDocument.getIndexDocumentEntries();
 
         // Key, path, type, owner, modifier, created, lastModified, displayName + 6 content data values
-        assertEquals( 14, indexDocumentEntries.size() );
+        assertEquals( 13, indexDocumentEntries.size() );
     }
 
 

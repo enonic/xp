@@ -30,6 +30,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
+import com.enonic.wem.api.query.FacetsResultSet;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexException;
@@ -40,6 +41,7 @@ import com.enonic.wem.core.index.content.ContentSearchResults;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSource;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSourceFactory;
 import com.enonic.wem.core.index.elastic.indexsource.XContentBuilderFactory;
+import com.enonic.wem.core.index.elastic.result.FacetResultSetCreator;
 import com.enonic.wem.core.index.elastic.searchsource.SearchSourceFactory;
 import com.enonic.wem.core.index.indexdocument.IndexDocument;
 
@@ -155,7 +157,6 @@ public class ElasticsearchIndexServiceImpl
         }
 
         LOG.info( "Mapping for index " + indexName + ", index-type: " + indexType + " deleted" );
-
     }
 
     @Override
@@ -180,6 +181,10 @@ public class ElasticsearchIndexServiceImpl
         {
             contentSearchResults.add( new ContentSearchHit( ContentId.from( hit.getId() ), hit.score() ) );
         }
+
+        final FacetsResultSet facetResultSets = FacetResultSetCreator.create( searchResponse );
+
+        contentSearchResults.setFacetResultSets( facetResultSets );
 
         return contentSearchResults;
     }

@@ -43,15 +43,27 @@ public class ContentIndexDocumentsFactory
 
     private static void addContentMetaData( final Content content, final IndexDocument indexDocument )
     {
-        indexDocument.addDocumentEntry( ContentIndexField.KEY.id(), content.getId().toString(), false, true );
-        indexDocument.addDocumentEntry( ContentIndexField.PATH.id(), content.getPath().toString(), true, true );
-        indexDocument.addDocumentEntry( ContentIndexField.CREATED.id(), content.getCreatedTime(), false, true );
-        indexDocument.addDocumentEntry( ContentIndexField.LAST_MODIFIED.id(), content.getModifiedTime(), false, true );
-        indexDocument.addDocumentEntry( ContentIndexField.CONTENT_TYPE.id(), content.getType().getContentTypeName(), false, true );
-        indexDocument.addDocumentEntry( ContentIndexField.DISPLAY_NAME.id(), content.getDisplayName(), true, true );
-        indexDocument.addDocumentEntry( ContentIndexField.OWNER.id(), content.getOwner().getQualifiedName(), false, true );
-        indexDocument.addDocumentEntry( ContentIndexField.MODIFIER.id(), content.getModifier().getQualifiedName(), false, true );
+        addIfNotNull( indexDocument, ContentIndexField.KEY, content.getId() != null ? content.getId().toString() : null, false, true );
+        addIfNotNull( indexDocument, ContentIndexField.PATH, content.getPath() != null ? content.getPath().toString() : null, true, true );
+        addIfNotNull( indexDocument, ContentIndexField.CREATED, content.getCreatedTime(), false, true );
+        addIfNotNull( indexDocument, ContentIndexField.LAST_MODIFIED, content.getModifiedTime(), false, true );
+        addIfNotNull( indexDocument, ContentIndexField.CONTENT_TYPE, content.getType().getContentTypeName(), false, true );
+        addIfNotNull( indexDocument, ContentIndexField.DISPLAY_NAME, content.getDisplayName(), true, true );
+        addIfNotNull( indexDocument, ContentIndexField.OWNER, content.getOwner().getQualifiedName(), false, true );
+        addIfNotNull( indexDocument, ContentIndexField.MODIFIER, content.getModifier().getQualifiedName(), false, true );
+        addIfNotNull( indexDocument, ContentIndexField.SPACE,
+                      content.getPath().getSpace() != null ? content.getPath().getSpace().toString() : null, true, true );
     }
+
+    private static void addIfNotNull( final IndexDocument indexDocument, final String field, final Object value,
+                                      final boolean includeInAllField, final boolean includeOrderBy )
+    {
+        if ( value != null )
+        {
+            indexDocument.addDocumentEntry( field, value, includeInAllField, includeOrderBy );
+        }
+    }
+
 
     private static void addContentData( final Content content, final IndexDocument indexDocument )
     {
@@ -75,8 +87,7 @@ public class ContentIndexDocumentsFactory
                 final Value dataValue = data.getValue();
                 final Object value = dataValue.getObject();
 
-                final String fieldName =
-                    ContentIndexField.CONTENT_DATA_PREFIX.id() + ContentIndexField.FIELD_SEPARATOR.id() + getEntryPath( entry );
+                final String fieldName = ContentIndexField.CONTENT_DATA_PREFIX + ContentIndexField.FIELD_SEPARATOR + getEntryPath( entry );
 
                 indexDocument.addDocumentEntry( fieldName, value, true, true );
             }

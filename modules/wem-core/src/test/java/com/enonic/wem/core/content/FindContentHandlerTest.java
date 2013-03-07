@@ -8,7 +8,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.FindContent;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
-import com.enonic.wem.api.content.query.ContentQueryHits;
+import com.enonic.wem.api.content.query.ContentIndexQueryResult;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.index.content.ContentSearchHit;
 import com.enonic.wem.core.index.content.ContentSearchResults;
@@ -56,7 +56,7 @@ public class FindContentHandlerTest
 
         findContentHandler.handle( this.context, findContent );
 
-        final ContentQueryHits result = findContent.getResult();
+        final ContentIndexQueryResult result = findContent.getResult();
 
         assertEquals( 5, result.getTotalSize() );
         assertEquals( 1, result.getContentQueryHits().size() );

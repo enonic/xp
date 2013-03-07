@@ -4,6 +4,8 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.query.FacetsResultSet;
+
 public class ContentSearchResults
 {
     private final int from;
@@ -11,6 +13,8 @@ public class ContentSearchResults
     private final int total;
 
     private final Set<ContentSearchHit> hits;
+
+    private FacetsResultSet facetsResultSet;
 
     public ContentSearchResults( final int total, final int from )
     {
@@ -32,5 +36,15 @@ public class ContentSearchResults
     public int getTotal()
     {
         return total;
+    }
+
+    public void setFacetResultSets( final FacetsResultSet facetResults )
+    {
+        this.facetsResultSet = facetResults;
+    }
+
+    public FacetsResultSet getFacetsResultSet()
+    {
+        return facetsResultSet;
     }
 }
