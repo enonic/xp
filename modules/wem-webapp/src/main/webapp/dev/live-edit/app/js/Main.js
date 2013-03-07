@@ -20,7 +20,8 @@
         var componentBar        = new AdminLiveEdit.view.componentbar.ComponentBar();
         var mutationObserver    = new AdminLiveEdit.MutationObserver();
 
-        AdminLiveEdit.DragDropSort.init();
+        AdminLiveEdit.DragDropSort.initialize();
+        AdminLiveEdit.view.InPlaceEditor.initialize();
     });
 
     $(document).ready(function () {

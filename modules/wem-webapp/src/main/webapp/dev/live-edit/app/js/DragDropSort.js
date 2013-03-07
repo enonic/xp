@@ -226,12 +226,13 @@ AdminLiveEdit.DragDropSort = (function () {
         registerGlobalListeners();
     }
 
+
     // **********************************************************************************************************************************//
     // Define public methods
 
     return {
 
-        init: init,
+        initialize: init,
 
         refresh: refresh,
 

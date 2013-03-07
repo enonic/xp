@@ -31,8 +31,8 @@
 
 
     proto.registerGlobalListeners = function () {
-        $(window).on('shader:click', $.proxy(this.destroyEditMode, this));
-        $(window).on('component:click:deselect', $.proxy(this.destroyEditMode, this));
+        $(window).on('shader:click', $.proxy(this.leaveEditMode, this));
+        $(window).on('component:click:deselect', $.proxy(this.leaveEditMode, this));
     };
 
 
@@ -52,7 +52,7 @@
         event.stopPropagation();
         event.preventDefault();
 
-        // Remove the unlined cursor when mode is not edit.
+        // Remove the inlined css cursor when the mode is not EDIT.
         if (me.$selectedParagraph && !(me.currentMode === me.modes.EDIT)) {
             me.$selectedParagraph.css('cursor', '');
         }
@@ -69,7 +69,7 @@
         if (me.currentMode === me.modes.UNSELECTED) {
             me.setSelectMode();
         } else if (me.currentMode === me.modes.SELECTED) {
-            me.initEditMode();
+            me.setEditMode();
         } else {
         }
     };
@@ -86,37 +86,32 @@
     };
 
 
-    proto.initEditMode = function () {
+    proto.setEditMode = function () {
         var me = this,
             $paragraph = me.$selectedParagraph;
 
-        $paragraph.get(0).contentEditable = true;
+        $(window).trigger('component:paragraph:edit:init', [me.$selectedParagraph]);
+
         $paragraph.css('cursor', 'text');
         $paragraph.addClass('live-edit-edited-paragraph');
-        $paragraph.get(0).focus();
 
         me.currentMode = me.modes.EDIT;
-
-        $(window).trigger('component:paragraph:edit:init', [me.$selectedParagraph]);
     };
 
 
-    proto.destroyEditMode = function (event) {
+    proto.leaveEditMode = function (event) {
         var me = this,
             $paragraph = me.$selectedParagraph;
         if ($paragraph === null) {
             return;
         }
+        $(window).trigger('component:paragraph:edit:destroy', [me.$selectedParagraph]);
 
-        $paragraph.get(0).contentEditable = false;
         $paragraph.css('cursor', '');
         $paragraph.removeClass('live-edit-edited-paragraph');
-        $paragraph.get(0).blur();
         me.$selectedParagraph = null;
 
         me.currentMode = me.modes.UNSELECTED;
-
-        $(window).trigger('component:paragraph:edit:destroy', [me.$selectedParagraph]);
     };
 
 }($liveedit));

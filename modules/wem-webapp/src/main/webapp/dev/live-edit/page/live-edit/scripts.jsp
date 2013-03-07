@@ -5,8 +5,10 @@
 <!-- Namespace -->
 <script type="text/javascript" charset="UTF-8" src="../app/js/namespace.js"></script>
 
-<!-- Libs -->
-<script type="text/javascript" charset="UTF-8" src="../../../admin/resources/lib/jquery/jquery-1.8.3.min.js"></script>
+<!--
+  Libs
+-->
+<script type="text/javascript" charset="UTF-8" src="../app/lib/jquery-1.8.3.min.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/lib/jquery-ui-1.10.0.custom.min.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/lib/jquery.ui.touch-punch.min.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/lib/mutation_summary.js"></script>
@@ -31,6 +33,7 @@
 <script type="text/javascript" charset="UTF-8" src="../app/js/model/component/Paragraph.js"></script>
 
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Base.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/InPlaceEditor.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Shader.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Cursor.js"></script>
 
