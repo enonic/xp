@@ -18,9 +18,11 @@ public interface RelationshipDao
     public void update( final Relationship relationship, final Session session )
         throws RelationshipNotFoundException;
 
-    public void delete( final RelationshipId relationshipId, final Session session );
+    public void delete( final RelationshipId relationshipId, final Session session )
+        throws RelationshipNotFoundException;
 
-    public void delete( final RelationshipKey relationshipKey, final Session session );
+    public void delete( final RelationshipKey relationshipKey, final Session session )
+        throws RelationshipNotFoundException;
 
     public RelationshipIds exists( final RelationshipIds relationshipIds, final Session session );
 

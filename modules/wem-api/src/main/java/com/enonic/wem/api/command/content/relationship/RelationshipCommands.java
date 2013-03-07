@@ -12,9 +12,9 @@ public final class RelationshipCommands
         return new UpdateRelationship();
     }
 
-    public DeleteRelationships delete()
+    public DeleteRelationship delete()
     {
-        return new DeleteRelationships();
+        return new DeleteRelationship();
     }
 
 }

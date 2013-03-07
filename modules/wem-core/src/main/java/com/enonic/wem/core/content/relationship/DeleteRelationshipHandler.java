@@ -5,47 +5,40 @@ import javax.jcr.Session;
 
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.command.content.relationship.DeleteRelationships;
-import com.enonic.wem.api.command.content.relationship.DeleteRelationshipsResult;
-import com.enonic.wem.api.content.relationship.RelationshipKey;
-import com.enonic.wem.api.exception.SystemException;
+import com.enonic.wem.api.command.content.relationship.DeleteRelationship;
+import com.enonic.wem.api.command.content.relationship.DeleteRelationshipResult;
+import com.enonic.wem.api.exception.RelationshipNotFoundException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
 
 @Component
 public final class DeleteRelationshipHandler
-    extends CommandHandler<DeleteRelationships>
+    extends CommandHandler<DeleteRelationship>
 {
     private RelationshipDao relationshipDao;
 
     public DeleteRelationshipHandler()
     {
-        super( DeleteRelationships.class );
+        super( DeleteRelationship.class );
     }
 
     @Override
-    public void handle( final CommandContext context, final DeleteRelationships command )
+    public void handle( final CommandContext context, final DeleteRelationship command )
         throws Exception
     {
-        final DeleteRelationshipsResult result = new DeleteRelationshipsResult();
         final Session session = context.getJcrSession();
 
-        for ( RelationshipKey relationshipKey : command.getRelationshipKeys() )
+        try
         {
-            try
-            {
-                relationshipDao.delete( relationshipKey, session );
-                session.save();
-                result.success( relationshipKey );
-            }
-            catch ( SystemException e )
-            {
-                result.failure( relationshipKey, e );
-            }
+            relationshipDao.delete( command.getRelationshipKey(), session );
+            session.save();
+            command.setResult( DeleteRelationshipResult.SUCCESS );
         }
-
-        command.setResult( result );
+        catch ( RelationshipNotFoundException e )
+        {
+            command.setResult( DeleteRelationshipResult.NOT_FOUND );
+        }
     }
 
     @Inject

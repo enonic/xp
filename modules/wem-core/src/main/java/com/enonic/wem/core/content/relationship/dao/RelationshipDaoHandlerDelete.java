@@ -6,6 +6,7 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
+import com.enonic.wem.api.exception.RelationshipNotFoundException;
 
 
 final class RelationshipDaoHandlerDelete
@@ -37,17 +38,33 @@ final class RelationshipDaoHandlerDelete
     {
         if ( relationshipId != null )
         {
-            Node node = getRelationshipNode( relationshipId );
-            node.remove();
+            final Node node = getRelationshipNode( relationshipId );
+            if ( node != null )
+            {
+                node.remove();
+            }
+            else
+            {
+                throw new RelationshipNotFoundException( relationshipId );
+            }
         }
         else if ( relationshipKey != null )
         {
-            Node node = getRelationshipNode( relationshipKey );
-            node.remove();
+            final Node node = getRelationshipNode( relationshipKey );
+            if ( node != null )
+            {
+                node.remove();
+            }
+            else
+            {
+                throw new RelationshipNotFoundException( relationshipKey );
+            }
         }
         else
         {
             throw new IllegalArgumentException( "Neither relationshipId or relationshipKey was specified!" );
         }
+
+
     }
 }
