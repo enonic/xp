@@ -4,14 +4,13 @@
     $(window).load(function () {
         $('.live-edit-loader-splash-container').remove();
 
-        var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
-
         var page                = new AdminLiveEdit.model.component.Page();
         var regions             = new AdminLiveEdit.model.component.Region();
         var parts               = new AdminLiveEdit.model.component.Part();
         var contents            = new AdminLiveEdit.model.component.Content();
         var paragraphs          = new AdminLiveEdit.model.component.Paragraph();
 
+        var htmlElementReplacer = new AdminLiveEdit.view.HtmlElementReplacer();
         var highlighter         = new AdminLiveEdit.view.Highlighter();
         var toolTip             = new AdminLiveEdit.view.ToolTip();
         var cursor              = new AdminLiveEdit.view.Cursor();

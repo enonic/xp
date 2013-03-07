@@ -20,7 +20,6 @@
 
 <script type="text/javascript" charset="UTF-8" src="../app/js/Util.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/MutationObserver.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/HtmlElementReplacer.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/DragDropSort.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/PageLeave.js"></script>
 
@@ -33,6 +32,7 @@
 <script type="text/javascript" charset="UTF-8" src="../app/js/model/component/Paragraph.js"></script>
 
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Base.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/HtmlElementReplacer.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/InPlaceEditor.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Shader.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Cursor.js"></script>

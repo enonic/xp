@@ -38,9 +38,7 @@
             var me = this;
 
             $(document).on('mouseout', function () {
-                var hasComponentSelected = $('.live-edit-selected-component').length > 0;
-                var cancelEvents = me.hasComponentSelected();
-                if (cancelEvents) {
+                if (me.hasComponentSelected()) {
                     return;
                 }
                 $(window).trigger('component:mouseout');

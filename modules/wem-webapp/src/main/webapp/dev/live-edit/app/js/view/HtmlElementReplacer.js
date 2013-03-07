@@ -2,7 +2,7 @@
     'use strict';
 
     // Class definition (constructor function)
-    var htmlElementReplacer = AdminLiveEdit.HtmlElementReplacer = function () {
+    var htmlElementReplacer = AdminLiveEdit.view.HtmlElementReplacer = function () {
         this.elements = ['iframe', 'object'];
 
         this.replaceElementsWithPlaceholders();
