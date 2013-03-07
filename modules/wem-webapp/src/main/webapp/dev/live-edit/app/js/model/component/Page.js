@@ -3,9 +3,8 @@
 
     var page = AdminLiveEdit.model.component.Page = function () {
         this.cssSelector = '[data-live-edit-type=page]';
-        // this.attachMouseOverEvent();
-        // this.attachMouseOutEvent();
         this.attachClickEvent();
+        this.attachContextClickEvent();
     };
     // Inherit from Base prototype
     page.prototype = new AdminLiveEdit.model.component.Base();

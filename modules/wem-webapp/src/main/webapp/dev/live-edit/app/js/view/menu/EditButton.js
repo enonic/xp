@@ -2,39 +2,36 @@
     'use strict';
 
     // Class definition (constructor function)
-    var parentButton = AdminLiveEdit.view.componenttip.menu.ParentButton = function (menu) {
+    var editButton = AdminLiveEdit.view.menu.EditButton = function (menu) {
         this.menu = menu;
         this.init();
     };
 
     // Inherits ui.Button
-    parentButton.prototype = new AdminLiveEdit.view.componenttip.menu.BaseButton();
+    editButton.prototype = new AdminLiveEdit.view.menu.BaseButton();
 
     // Fix constructor as it now is Button
-    parentButton.constructor = parentButton;
+    editButton.constructor = editButton;
 
     // Shorthand ref to the prototype
-    var proto = parentButton.prototype;
+    var proto = editButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.init = function () {
         var me = this;
+
         var $button = me.createButton({
-            id: 'live-edit-button-parent',
-            text: 'Parent',
+            id: 'live-edit-button-edit',
+            text: 'Edit',
             cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
-                var $parent = me.componentmenu.$currentComponent.parents('[data-live-edit-type]');
-                if ($parent && $parent.length > 0) {
-                    $(window).trigger('component:click:select', [$($parent[0])]);
-                }
             }
         });
 
-        me.appendTo(this.menu.getEl());
+        me.appendTo(me.menu.getEl());
         me.menu.buttons.push(me);
     };
 

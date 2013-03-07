@@ -37,8 +37,9 @@
         $body.append('<div id="live-edit-shader-south" class="live-edit-shader"/>');
         $body.append('<div id="live-edit-shader-west" class="live-edit-shader"/>');
 
-        $('.live-edit-shader').click(function (event) {
+        $('.live-edit-shader').on('click contextmenu', function (event) {
             event.stopPropagation();
+            event.preventDefault();
             $(window).trigger('component:click:deselect');
             $(window).trigger('shader:click');
         });

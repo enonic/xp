@@ -6,14 +6,10 @@
 
     AdminLiveEdit.model.component.Base = function () {
         this.cssSelector = '';
-        this.registerGlobalListeners();
     };
 
 
     AdminLiveEdit.model.component.Base.prototype = {
-
-        registerGlobalListeners: function () {
-        },
 
         attachMouseOverEvent: function () {
             var me = this;
@@ -49,7 +45,7 @@
         attachClickEvent: function () {
             var me = this;
 
-            $(document).on('click touchstart', me.cssSelector, function (event) {
+            $(document).on('click contextmenu touchstart', me.cssSelector, function (event) {
                 if (me.isLiveEditUiComponent($(event.target))) {
                     return;
                 }
@@ -66,6 +62,16 @@
                 } else {
                     $(window).trigger('component:click:select', [$component]);
                 }
+            });
+        },
+
+
+        attachContextClickEvent: function () {
+            var me = this;
+            $(document).on('contextmenu', me.cssSelector, function (event) {
+                event.preventDefault();
+                console.log(event);
+
             });
         },
 

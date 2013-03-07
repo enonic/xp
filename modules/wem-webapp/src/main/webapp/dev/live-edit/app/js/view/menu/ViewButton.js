@@ -2,34 +2,32 @@
     'use strict';
 
     // Class definition (constructor function)
-    var removeButton = AdminLiveEdit.view.componenttip.menu.RemoveButton = function (menu) {
+    var viewButton = AdminLiveEdit.view.menu.ViewButton = function (menu) {
         this.menu = menu;
         this.init();
     };
 
     // Inherits ui.Button
-    removeButton.prototype = new AdminLiveEdit.view.componenttip.menu.BaseButton();
+    viewButton.prototype = new AdminLiveEdit.view.menu.BaseButton();
 
     // Fix constructor as it now is Button
-    removeButton.constructor = removeButton;
+    viewButton.constructor = viewButton;
 
     // Shorthand ref to the prototype
-    var proto = removeButton.prototype;
+    var proto = viewButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.init = function () {
         var me = this;
+
         var $button = me.createButton({
-            text: 'Remove',
-            id: 'live-edit-button-remove',
+            text: 'View',
+            id: 'live-edit-button-view',
             cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
-                // For demo purposes
-                me.menu.trigger.$selectedComponent.remove();
-                $(window).trigger('component:remove');
             }
         });
 

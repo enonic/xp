@@ -2,7 +2,7 @@
     'use strict';
 
     // Class definition (constructor function)
-    var button = AdminLiveEdit.view.componenttip.menu.BaseButton = function () {
+    var button = AdminLiveEdit.view.menu.BaseButton = function () {
     };
 
     // Inherits ui.Base

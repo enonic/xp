@@ -2,7 +2,7 @@
     'use strict';
 
     // Class definition (constructor function)
-    var highlighter = AdminLiveEdit.view.Highlighter = function () {
+    var outliner = AdminLiveEdit.view.Outliner = function () {
         this.$selectedComponent = null;
 
         this.addView();
@@ -10,13 +10,13 @@
     };
 
     // Inherits ui.Base
-    highlighter.prototype = new AdminLiveEdit.view.Base();
+    outliner.prototype = new AdminLiveEdit.view.Base();
 
     // Fix constructor as it now is Base
-    highlighter.constructor = highlighter;
+    outliner.constructor = outliner;
 
     // Shorthand ref to the prototype
-    var proto = highlighter.prototype;
+    var proto = outliner.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -26,9 +26,9 @@
 
     proto.registerGlobalListeners = function () {
 
-        $(window).on('component:mouseover', $.proxy(this.onMouseOver, this));
+        $(window).on('component:mouseover', $.proxy(this.onComponentMouseOver, this));
         $(window).on('component:mouseout', $.proxy(this.hide, this));
-        $(window).on('component:click:select', $.proxy(this.onSelect, this));
+        $(window).on('component:click:select', $.proxy(this.onComponentSelect, this));
         $(window).on('component:click:deselect', $.proxy(this.deselect, this));
         $(window).on('component:sort:start', $.proxy(this.hide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));
@@ -43,7 +43,7 @@
 
 
     proto.addView = function () {
-        var html = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlighter" style="top:-5000px;left:-5000px">' +
+        var html = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-outliner" style="top:-5000px;left:-5000px">' +
                    '    <rect width="150" height="150"/>' +
                    '</svg>';
         this.createElement(html);
@@ -51,19 +51,19 @@
     };
 
 
-    proto.onMouseOver = function (event, $component) {
+    proto.onComponentMouseOver = function (event, $component) {
         var me = this;
         me.show();
         me.paintOutline($component);
     };
 
 
-    proto.onSelect = function (event, $component) {
+    proto.onComponentSelect = function (event, $component) {
         var me = this;
         me.$selectedComponent = $component;
         var componentType = util.getComponentType($component);
 
-        // Highlighter should not be shown when type page is selected
+        // Outliner should not be shown when type page is selected
         if (componentType === 'page') {
             me.hide();
             return;

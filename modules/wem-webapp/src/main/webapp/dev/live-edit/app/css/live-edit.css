@@ -9,8 +9,8 @@
 .live-edit-loader-splash-content img,
 .live-edit-loader-splash-content div,
 .live-edit-shader,
-svg.live-edit-highlighter,
-svg.live-edit-highlighter rect,
+svg.live-edit-outliner,
+svg.live-edit-outliner rect,
 .live-edit-empty-region-placeholder,
 .live-edit-empty-part-placeholder,
 .live-edit-tool-tip,
@@ -168,19 +168,19 @@ a {
     z-index: 1000045;
 }
 
-/*** Highlighter */
+/*** Outliner */
 
 .live-edit-selected-component {
     position: relative;
 }
 
-svg.live-edit-highlighter {
+svg.live-edit-outliner {
     pointer-events: none;
     position: absolute;
     z-index: 1000040;
 }
 
-svg.live-edit-highlighter rect {
+svg.live-edit-outliner rect {
     stroke-width: 4;
 }
 

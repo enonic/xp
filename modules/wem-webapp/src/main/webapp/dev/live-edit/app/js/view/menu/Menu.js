@@ -2,11 +2,11 @@
     'use strict';
 
     // Namespaces
-    AdminLiveEdit.view.componenttip.menu = {};
+    AdminLiveEdit.view.menu = {};
 
 
     // Class definition (constructor)
-    var menu = AdminLiveEdit.view.componenttip.menu.Menu = function () {
+    var menu = AdminLiveEdit.view.menu.Menu = function () {
         var me = this;
         me.hidden = true;
         me.buttons = [];
@@ -133,14 +133,14 @@
 
     proto.addButtons = function () {
         var me = this;
-        var settingsButton = new AdminLiveEdit.view.componenttip.menu.SettingsButton(me);
-        var detailsButton = new AdminLiveEdit.view.componenttip.menu.DetailsButton(me);
-        var insertButton = new AdminLiveEdit.view.componenttip.menu.InsertButton(me);
-        var resetButton = new AdminLiveEdit.view.componenttip.menu.ResetButton(me);
-        var clearButton = new AdminLiveEdit.view.componenttip.menu.ClearButton(me);
-        var viewButton = new AdminLiveEdit.view.componenttip.menu.ViewButton(me);
-        var editButton = new AdminLiveEdit.view.componenttip.menu.EditButton(me);
-        var removeButton = new AdminLiveEdit.view.componenttip.menu.RemoveButton(me);
+        var settingsButton = new AdminLiveEdit.view.menu.SettingsButton(me);
+        var detailsButton = new AdminLiveEdit.view.menu.DetailsButton(me);
+        var insertButton = new AdminLiveEdit.view.menu.InsertButton(me);
+        var resetButton = new AdminLiveEdit.view.menu.ResetButton(me);
+        var clearButton = new AdminLiveEdit.view.menu.ClearButton(me);
+        var viewButton = new AdminLiveEdit.view.menu.ViewButton(me);
+        var editButton = new AdminLiveEdit.view.menu.EditButton(me);
+        var removeButton = new AdminLiveEdit.view.menu.RemoveButton(me);
 
         var i;
         for (i = 0; i < me.buttons.length; i++) {

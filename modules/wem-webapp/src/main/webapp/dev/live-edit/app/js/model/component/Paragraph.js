@@ -3,21 +3,23 @@
 
     var paragraphs = AdminLiveEdit.model.component.Paragraph = function () {
         var me = this;
-        me.cssSelector = '[data-live-edit-type=paragraph]';
-        me.$selectedParagraph = null;
+        this.cssSelector = '[data-live-edit-type=paragraph]';
+        this.$selectedParagraph = null;
 
-        me.modes = {
+        this.modes = {
             UNSELECTED: 0,
             SELECTED: 1,
             EDIT: 2
         };
 
-        me.currentMode = me.modes.UNSELECTED;
+        this.currentMode = me.modes.UNSELECTED;
 
-        me.attachMouseOverEvent();
-        me.attachMouseOutEvent();
-        me.attachClickEvent();
-        me.registerGlobalListeners();
+        this.attachMouseOverEvent();
+        this.attachMouseOutEvent();
+        this.attachClickEvent();
+        this.attachContextClickEvent();
+
+        this.registerGlobalListeners();
     };
     // Inherit from Base prototype
     paragraphs.prototype = new AdminLiveEdit.model.component.Base();
@@ -40,7 +42,7 @@
     proto.attachClickEvent = function () {
         var me = this;
 
-        $(document).on('click touchstart', me.cssSelector, function (event) {
+        $(document).on('click contextmenu touchstart', me.cssSelector, function (event) {
             me.handleClick(event);
         });
 
@@ -51,6 +53,7 @@
         var me = this;
         event.stopPropagation();
         event.preventDefault();
+
 
         // Remove the inlined css cursor when the mode is not EDIT.
         if (me.$selectedParagraph && !(me.currentMode === me.modes.EDIT)) {

@@ -10,7 +10,7 @@
     // Class definition (constructor function)
     var tip = AdminLiveEdit.view.componenttip.Tip = function () {
         var me = this;
-        me.menu = new AdminLiveEdit.view.componenttip.menu.Menu();
+        me.menu = new AdminLiveEdit.view.menu.Menu();
         me.menu.trigger = me;
         me.$selectedComponent = null;
 
