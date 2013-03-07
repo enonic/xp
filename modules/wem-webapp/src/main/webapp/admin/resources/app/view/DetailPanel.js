@@ -23,7 +23,6 @@ Ext.define('Admin.view.DetailPanel', {
     },
 
     initComponent: function () {
-        var me = this;
         this.callParent(arguments);
     },
 

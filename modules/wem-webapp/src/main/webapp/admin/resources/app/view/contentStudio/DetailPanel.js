@@ -14,7 +14,6 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
 
         var noneSelectedCmp = this.createNoSelection();
 
-
         this.singleSelection.tabs = [
             {
                 title: "Configuration",

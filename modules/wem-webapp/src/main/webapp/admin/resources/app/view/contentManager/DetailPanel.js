@@ -13,7 +13,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     isLiveMode: true,
 
     initComponent: function () {
-        var me = this;
         this.activeItem = this.resolveActiveItem(this.data);
 
         this.on('afterrender', function () {
