@@ -173,5 +173,5 @@ fieldset.admin-memberships-container {
 
 .admin-preview-panel > .x-panel-body {
     overflow-x: hidden !important;
-    overflow-y: auto !important;
+    overflow-y: hidden !important;
 }
