@@ -41,7 +41,7 @@ import com.enonic.wem.core.index.content.ContentSearchResults;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSource;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSourceFactory;
 import com.enonic.wem.core.index.elastic.indexsource.XContentBuilderFactory;
-import com.enonic.wem.core.index.elastic.result.FacetResultSetCreator;
+import com.enonic.wem.core.index.elastic.result.FacetResultSetFactory;
 import com.enonic.wem.core.index.elastic.searchsource.SearchSourceFactory;
 import com.enonic.wem.core.index.indexdocument.IndexDocument;
 
@@ -182,7 +182,7 @@ public class ElasticsearchIndexServiceImpl
             contentSearchResults.add( new ContentSearchHit( ContentId.from( hit.getId() ), hit.score() ) );
         }
 
-        final FacetsResultSet facetResultSets = FacetResultSetCreator.create( searchResponse );
+        final FacetsResultSet facetResultSets = FacetResultSetFactory.create( searchResponse );
 
         contentSearchResults.setFacetResultSets( facetResultSets );
 

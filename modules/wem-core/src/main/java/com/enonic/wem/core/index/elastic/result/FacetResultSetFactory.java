@@ -10,7 +10,7 @@ import org.elasticsearch.search.facet.terms.TermsFacet;
 
 import com.enonic.wem.api.query.FacetsResultSet;
 
-public class FacetResultSetCreator
+public class FacetResultSetFactory
 {
 
     // private final RangeFacetResultSetCreator rangeFacetResultSetCreator = new RangeFacetResultSetCreator();

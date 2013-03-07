@@ -23,21 +23,23 @@ public class FindContentRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        if ( !context.param( "fulltext" ).isNull() )
-        {
-            ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
-            contentIndexQuery.setFullTextSearchString( context.param( "fulltext" ).asString() );
-            contentIndexQuery.setIncludeFacets( true );
+        final String fulltext = context.param( "fulltext" ).asString( "" );
+        final boolean includeFacets = context.param( "include" ).asBoolean( false );
+        final String interval = context.param( "interval" ).asString( "day" );
 
-            final ContentIndexQueryResult contentIndexQueryResult =
-                this.client.execute( Commands.content().find().query( contentIndexQuery ) );
+        ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
 
-            final Contents contents =
-                this.client.execute( Commands.content().get().selectors( ContentIds.from( contentIndexQueryResult.getContentIds() ) ) );
+        contentIndexQuery.setFullTextSearchString( fulltext );
+        contentIndexQuery.setIncludeFacets( includeFacets );
+        contentIndexQuery.setInterval( interval );
 
-            final FindContentJsonResult json = new FindContentJsonResult( contents, contentIndexQueryResult );
+        final ContentIndexQueryResult contentIndexQueryResult = this.client.execute( Commands.content().find().query( contentIndexQuery ) );
 
-            context.setResult( json );
-        }
+        final Contents contents =
+            this.client.execute( Commands.content().get().selectors( ContentIds.from( contentIndexQueryResult.getContentIds() ) ) );
+
+        final FindContentJsonResult json = new FindContentJsonResult( contents, contentIndexQueryResult );
+
+        context.setResult( json );
     }
 }

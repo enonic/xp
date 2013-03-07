@@ -39,7 +39,8 @@ public class SearchSourceFactory
             final TermsFacetBuilder typeFacet = FacetBuilders.termsFacet( "type" ).field( ContentIndexField.CONTENT_TYPE ).allTerms( true );
 
             final DateHistogramFacetBuilder modifiedFacet =
-                FacetBuilders.dateHistogramFacet( "modified" ).field( ContentIndexField.LAST_MODIFIED + ".date" ).interval( "2d" );
+                FacetBuilders.dateHistogramFacet( "modified" ).field( ContentIndexField.LAST_MODIFIED + ".date" ).interval(
+                    contentIndexQuery.getInterval() );
 
             searchSourceBuilder.facet( spaceFacet ).facet( typeFacet ).facet( modifiedFacet );
         }
