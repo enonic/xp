@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentSelector;
+import com.enonic.wem.api.content.DeleteContentResult;
 
 public final class DeleteContent
     extends Command<DeleteContentResult>

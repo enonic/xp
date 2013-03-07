@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.DeleteContentResult;
+import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 

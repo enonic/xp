@@ -1,8 +1,5 @@
-package com.enonic.wem.api.command.content;
+package com.enonic.wem.api.content;
 
-
-import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.content.UnableToDeleteContentException;
 
 public enum DeleteContentResult
 {

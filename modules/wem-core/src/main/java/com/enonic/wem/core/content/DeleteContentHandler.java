@@ -7,9 +7,9 @@ import javax.jcr.Session;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.DeleteContent;
-import com.enonic.wem.api.command.content.DeleteContentResult;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
+import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;

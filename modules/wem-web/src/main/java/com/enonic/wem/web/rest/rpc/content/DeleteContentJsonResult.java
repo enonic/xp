@@ -8,8 +8,8 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.wem.api.command.content.DeleteContentResult;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.web.json.JsonResult;
 
 final class DeleteContentJsonResult
