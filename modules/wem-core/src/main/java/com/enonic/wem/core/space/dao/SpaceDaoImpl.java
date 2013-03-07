@@ -79,4 +79,17 @@ public final class SpaceDaoImpl
             throw new RuntimeException( e );
         }
     }
+
+    @Override
+    public boolean renameSpace( final SpaceName spaceName, final String newName, final Session session )
+    {
+        try
+        {
+            return new SpaceDaoHandlerRename( session ).handle( spaceName, newName );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
 }

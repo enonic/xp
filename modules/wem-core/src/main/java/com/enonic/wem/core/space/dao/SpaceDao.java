@@ -17,4 +17,6 @@ public interface SpaceDao
     void updateSpace( Space space, Session session );
 
     void deleteSpace( SpaceName spaceName, Session session );
+
+    boolean renameSpace( SpaceName spaceName, String newName, Session session );
 }

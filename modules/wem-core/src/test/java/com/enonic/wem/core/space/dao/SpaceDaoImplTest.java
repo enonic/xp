@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.exception.SpaceAlreadyExistException;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
@@ -237,6 +238,77 @@ public class SpaceDaoImplTest
             modifiedTime( updateTime ).
             build();
         spaceDao.updateSpace( spaceChanges, session );
+    }
+
+    @Test
+    public void renameSpace()
+        throws Exception
+    {
+        // setup
+        final DateTime time = DateTime.now();
+        final Space space = newSpace().
+            name( "mySpace" ).
+            displayName( "My Space" ).
+            createdTime( time ).
+            modifiedTime( time ).
+            build();
+        spaceDao.createSpace( space, session );
+        final ContentId rootContentId = createSpaceRoot( space );
+        commit();
+
+        // exercise
+        final SpaceName spaceToRename = SpaceName.from( "mySpace" );
+        spaceDao.renameSpace( spaceToRename, "newSpaceName", session );
+
+        // verify
+        final Space spaceByOldName = spaceDao.getSpace( SpaceName.from( "mySpace" ), session );
+        final Space spaceWithNewName = spaceDao.getSpace( SpaceName.from( "newSpaceName" ), session );
+
+        assertNull( spaceByOldName );
+        assertNotNull( spaceWithNewName );
+        assertEquals( "newSpaceName", spaceWithNewName.getName().name() );
+        assertEquals( space.getDisplayName(), spaceWithNewName.getDisplayName() );
+        assertEqualsDateTime( space.getCreatedTime(), spaceWithNewName.getCreatedTime() );
+        assertEqualsDateTime( space.getModifiedTime(), spaceWithNewName.getModifiedTime() );
+        assertEquals( rootContentId, spaceWithNewName.getRootContent() );
+        assertEquals( space.getIcon(), spaceWithNewName.getIcon() );
+    }
+
+    @Test(expected = SpaceNotFoundException.class)
+    public void renameSpace_not_existing()
+        throws Exception
+    {
+        // exercise
+        final SpaceName spaceToRename = SpaceName.from( "mySpace" );
+        spaceDao.renameSpace( spaceToRename, "newSpaceName", session );
+    }
+
+    @Test(expected = SpaceAlreadyExistException.class)
+    public void renameSpace_to_existing_name()
+        throws Exception
+    {
+        // setup
+        final DateTime time = DateTime.now();
+        final Space space = newSpace().
+            name( "mySpace" ).
+            displayName( "My Space" ).
+            createdTime( time ).
+            modifiedTime( time ).
+            build();
+        final Space space2 = newSpace().
+            name( "myOtherSpace" ).
+            displayName( "My Other Space" ).
+            createdTime( time ).
+            modifiedTime( time ).
+            build();
+
+        spaceDao.createSpace( space, session );
+        spaceDao.createSpace( space2, session );
+        commit();
+
+        // exercise
+        final SpaceName spaceToRename = SpaceName.from( "mySpace" );
+        spaceDao.renameSpace( spaceToRename, "myOtherSpace", session );
     }
 
     private void assertEqualsDateTime( final DateTime expected, final DateTime actual )

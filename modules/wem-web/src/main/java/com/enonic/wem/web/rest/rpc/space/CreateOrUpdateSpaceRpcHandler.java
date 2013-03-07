@@ -38,6 +38,7 @@ public final class CreateOrUpdateSpaceRpcHandler
         final SpaceName spaceName = SpaceName.from( context.param( "spaceName" ).notBlank().asString() );
         final String displayName = context.param( "displayName" ).notBlank().asString();
         final String iconReference = context.param( "iconReference" ).asString();
+        final String newName = context.param( "newSpaceName" ).asString();
 
         final Icon icon;
         try
@@ -68,6 +69,11 @@ public final class CreateOrUpdateSpaceRpcHandler
             }
             final UpdateSpace updateCommand = space().update().name( spaceName ).editor( editor );
             client.execute( updateCommand );
+
+            if ( newName != null )
+            {
+                client.execute( space().rename().space( spaceName ).newName( newName ) );
+            }
             context.setResult( CreateOrUpdateSpaceJsonResult.updated() );
         }
     }

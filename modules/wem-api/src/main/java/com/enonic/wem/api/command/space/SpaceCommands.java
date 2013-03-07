@@ -22,4 +22,9 @@ public final class SpaceCommands
     {
         return new DeleteSpace();
     }
+
+    public RenameSpace rename()
+    {
+        return new RenameSpace();
+    }
 }
