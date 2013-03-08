@@ -13,6 +13,10 @@ Ext.define('Admin.controller.contentManager.BrowseToolbarController', {
         'Admin.view.contentManager.wizard.ContentWizardPanel'
     ],
 
+    requires: [
+        'Admin.view.contentManager.ToolbarMenu'
+    ],
+
     init: function () {
 
         this.control({
@@ -39,6 +43,21 @@ Ext.define('Admin.controller.contentManager.BrowseToolbarController', {
             'browseToolbar *[action=duplicateContent]': {
                 click: function (button, event) {
                     this.duplicateContent();
+                }
+            },
+            'browseToolbar *[action=showToolbarMenu]': {
+                click: function (button, event) {
+                    this.showToolbarMenu(button, event);
+                }
+            },
+            '*[action=moveDetailPanel]': {
+                click: function (button, event) {
+                    this.moveDetailPanel(button, event);
+                }
+            },
+            '*[action=toggleDetailPanel]': {
+                click: function (button, event) {
+                    this.toggleDetailPanel(button, event);
                 }
             }
         });
