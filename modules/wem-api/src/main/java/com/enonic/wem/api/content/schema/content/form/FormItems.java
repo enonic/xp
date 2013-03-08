@@ -9,10 +9,13 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.MixinFetcher;
 
+/**
+ * Mutable.
+ */
 public class FormItems
     implements Iterable<FormItem>
 {
-    private FormItemPath path;
+    private final FormItem containerFormItem;
 
     private LinkedHashMap<String, FormItem> formItemByName = new LinkedHashMap<String, FormItem>();
 
@@ -20,25 +23,26 @@ public class FormItems
 
     private LinkedHashMap<String, Layout> layoutByName = new LinkedHashMap<String, Layout>();
 
-    public FormItems()
+    public FormItems( final FormItem containerFormItem )
     {
-        path = new FormItemPath();
+        this.containerFormItem = containerFormItem;
     }
 
     public FormItemPath getPath()
     {
-        return path;
+        if ( containerFormItem == null )
+        {
+            return FormItemPath.ROOT;
+        }
+        return containerFormItem.getPath();
     }
 
     public void add( final FormItem formItem )
     {
-        if ( formItem instanceof HierarchicalFormItem )
-        {
-            ( (HierarchicalFormItem) formItem ).setPath( FormItemPath.from( path, formItem.getName() ) );
-        }
-
         Object previous = formItemByName.put( formItem.getName(), formItem );
         Preconditions.checkArgument( previous == null, "FormItem already added: " + formItem );
+
+        formItem.setParent( this );
 
         if ( formItem instanceof Layout )
         {
@@ -47,22 +51,6 @@ public class FormItems
         else if ( formItem instanceof HierarchicalFormItem )
         {
             hierarchicalFormItemByName.put( formItem.getName(), (HierarchicalFormItem) formItem );
-        }
-    }
-
-    public void setPath( final FormItemPath path )
-    {
-        this.path = path;
-        for ( final FormItem formItem : formItemByName.values() )
-        {
-            if ( formItem instanceof HierarchicalFormItem )
-            {
-                ( (HierarchicalFormItem) formItem ).setParentPath( path );
-            }
-            else if ( formItem instanceof FieldSet )
-            {
-                ( (FieldSet) formItem ).forwardSetPath( path );
-            }
         }
     }
 
@@ -210,23 +198,6 @@ public class FormItems
             }
         }
         return s.toString();
-    }
-
-    public FormItems copy()
-    {
-        FormItems copy = new FormItems();
-        copy.path = path;
-        for ( FormItem ci : this.formItemByName.values() )
-        {
-            FormItem copyOfCi = ci.copy();
-            copy.formItemByName.put( copyOfCi.getName(), copyOfCi );
-
-            if ( copyOfCi instanceof FieldSet )
-            {
-                copy.layoutByName.put( copyOfCi.getName(), (FieldSet) copyOfCi );
-            }
-        }
-        return copy;
     }
 
     // TODO: Move method out of here and into it's own class MixinResolver?

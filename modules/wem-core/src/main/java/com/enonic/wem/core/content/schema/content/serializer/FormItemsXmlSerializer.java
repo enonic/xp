@@ -1,11 +1,12 @@
 package com.enonic.wem.core.content.schema.content.serializer;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.jdom.Element;
 
 import com.enonic.wem.api.content.schema.content.form.FormItem;
-import com.enonic.wem.api.content.schema.content.form.FormItems;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.core.support.util.JdomHelper;
 
@@ -33,9 +34,9 @@ public final class FormItemsXmlSerializer
         return itemsEl;
     }
 
-    public FormItems parse( final Element parentEl )
+    public Iterable<FormItem> parse( final Element parentEl )
     {
-        final FormItems formItems = new FormItems();
+        final List<FormItem> formItems = new ArrayList<>();
         final Iterator formItemIt = parentEl.getChildren().iterator();
         while ( formItemIt.hasNext() )
         {

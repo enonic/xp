@@ -1,22 +1,35 @@
 package com.enonic.wem.api.content.schema.content.form;
 
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.schema.mixin.Mixin;
 
 public abstract class FormItem
 {
-    private String name;
+    private final String name;
 
-    FormItem()
+    private FormItems parent;
+
+    FormItem( final String name )
     {
+        Preconditions.checkNotNull( name, "a name is required for a FormItem" );
+        Preconditions.checkArgument( StringUtils.isNotBlank( name ), "a name is required for a FormItem" );
+        Preconditions.checkArgument( !name.contains( "." ), "name cannot contain punctations: " + name );
+
+        this.name = name;
     }
 
-    void setName( final String name )
+    void setParent( final FormItems parent )
     {
-        Preconditions.checkArgument( !name.contains( "." ), "name cannot contain punctations: " + name );
-        this.name = name;
+        this.parent = parent;
+    }
+
+    public FormItems getParent()
+    {
+        return parent;
     }
 
     public final String getName()
@@ -24,23 +37,29 @@ public abstract class FormItem
         return name;
     }
 
-    public FormItem copy()
+    public final FormItemPath getPath()
     {
-        try
+        return resolvePath();
+    }
+
+    FormItemPath resolvePath()
+    {
+        return FormItemPath.from( resolveParentPath(), name );
+    }
+
+    final FormItemPath resolveParentPath()
+    {
+        if ( parent == null )
         {
-            FormItem formItem = this.getClass().newInstance();
-            formItem.name = name;
-            return formItem;
+            return FormItemPath.ROOT;
         }
-        catch ( InstantiationException e )
+        else
         {
-            throw new RuntimeException( "Failed to copy FormItem", e );
-        }
-        catch ( IllegalAccessException e )
-        {
-            throw new RuntimeException( "Failed to copy FormItem", e );
+            return parent.getPath();
         }
     }
+
+    public abstract FormItem copy();
 
     public Input toInput()
     {
@@ -78,18 +97,22 @@ public abstract class FormItem
 
     static FormItem from( final Mixin mixin, final MixinReference mixinReference )
     {
-        final FormItem newFormItem = mixin.getFormItem().copy();
-        newFormItem.setName( mixinReference.getName() );
-
-        if ( newFormItem instanceof FormItemSet )
+        final FormItem formItem = mixin.getFormItem();
+        final FormItem newFormItem;
+        if ( formItem instanceof FormItemSet )
         {
-            final FormItemSet newFormItemSet = (FormItemSet) newFormItem;
-            newFormItemSet.setPath( mixinReference.getPath() );
+            newFormItem = FormItemSet.newFormItemSet( (FormItemSet) formItem ).
+                name( mixinReference.getName() ).build();
         }
-        else if ( newFormItem instanceof Input )
+        else if ( formItem instanceof Input )
         {
-            final Input newInput = (Input) newFormItem;
-            newInput.setPath( mixinReference.getPath() );
+            newFormItem = Input.newInput( (Input) formItem ).
+                name( mixinReference.getName() ).build();
+        }
+        else
+        {
+            throw new IllegalArgumentException(
+                "Cannot create FormItem from mixin [" + mixin.getQualifiedName() + "] of type: " + formItem.getClass().getSimpleName() );
         }
         return newFormItem;
     }

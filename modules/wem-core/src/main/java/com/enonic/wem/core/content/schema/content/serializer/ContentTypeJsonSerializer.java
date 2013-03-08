@@ -8,7 +8,6 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.form.FormItem;
-import com.enonic.wem.api.content.schema.content.form.FormItems;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonParsingException;
@@ -116,8 +115,7 @@ public class ContentTypeJsonSerializer
 
         try
         {
-            final FormItems formItems = formItemsSerializer.parse( contentTypeNode.get( "form" ) );
-            for ( FormItem formItem : formItems )
+            for ( FormItem formItem : formItemsSerializer.parse( contentTypeNode.get( "form" ) ) )
             {
                 builder.addFormItem( formItem );
             }

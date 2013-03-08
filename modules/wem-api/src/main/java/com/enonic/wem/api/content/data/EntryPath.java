@@ -214,7 +214,7 @@ public final class EntryPath
 
     private String toString( final ImmutableList<Element> listOfElements )
     {
-        StringBuilder s = new StringBuilder();
+        final StringBuilder s = new StringBuilder();
         for ( int i = 0, size = listOfElements.size(); i < size; i++ )
         {
             s.append( listOfElements.get( i ) );

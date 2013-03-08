@@ -9,17 +9,26 @@ import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 public class MixinReference
     extends HierarchicalFormItem
 {
-    private QualifiedMixinName qualifiedMixinName;
+    private final QualifiedMixinName qualifiedMixinName;
 
-    private Class mixinClass;
+    private final Class mixinClass;
 
-    private Occurrences occurrences;
+    private final Occurrences occurrences;
 
-    private boolean immutable;
+    private final boolean immutable;
 
-    protected MixinReference()
+    private MixinReference( Builder builder )
     {
-        super();
+        super( builder.name );
+
+        Preconditions.checkNotNull( builder.qualifiedMixinName, "qualifiedMixinName is required" );
+        this.qualifiedMixinName = builder.qualifiedMixinName;
+
+        Preconditions.checkNotNull( builder.mixinClass, "mixinClass is required" );
+        mixinClass = builder.mixinClass;
+
+        this.occurrences = builder.occurrences;
+        this.immutable = builder.immutable;
     }
 
     public QualifiedMixinName getQualifiedMixinName()
@@ -37,30 +46,77 @@ public class MixinReference
         return new Builder();
     }
 
+    public Occurrences getOccurrences()
+    {
+        return occurrences;
+    }
+
+    public boolean isImmutable()
+    {
+        return immutable;
+    }
+
     @Override
     public MixinReference copy()
     {
-        MixinReference mixinReference = (MixinReference) super.copy();
-        mixinReference.qualifiedMixinName = this.qualifiedMixinName;
-        mixinReference.mixinClass = this.mixinClass;
-        return mixinReference;
+        return newMixinReference( this ).build();
+    }
+
+    public static Class resolveMixinClass( final String classSimpleName )
+    {
+        final String packageName = MixinReference.class.getPackage().getName();
+        final String className = packageName + "." + classSimpleName;
+        try
+        {
+            return Class.forName( className );
+        }
+        catch ( ClassNotFoundException e )
+        {
+            throw new IllegalArgumentException( "Mixin class not found: " + className, e );
+        }
     }
 
     public static Builder newMixinReference( final Mixin mixin )
     {
-        Builder builder = new Builder();
-        builder.mixinClass = mixin.getFormItem().getClass().getSimpleName();
-        builder.qualifiedMixinName = mixin.getQualifiedName();
-        return builder;
+        return new Builder( mixin );
+    }
+
+    public static Builder newMixinReference( final MixinReference mixinReference )
+    {
+        return new Builder( mixinReference );
     }
 
     public static class Builder
     {
-        private QualifiedMixinName qualifiedMixinName;
-
         private String name;
 
-        private String mixinClass;
+        private QualifiedMixinName qualifiedMixinName;
+
+        private Class mixinClass;
+
+        private Occurrences occurrences;
+
+        private boolean immutable;
+
+        public Builder()
+        {
+            // default;
+        }
+
+        public Builder( MixinReference source )
+        {
+            this.name = source.getName();
+            this.qualifiedMixinName = source.qualifiedMixinName;
+            this.mixinClass = source.mixinClass;
+            this.occurrences = source.occurrences;
+            this.immutable = source.immutable;
+        }
+
+        public Builder( final Mixin mixin )
+        {
+            this.mixinClass = mixin.getFormItem().getClass();
+            this.qualifiedMixinName = mixin.getQualifiedName();
+        }
 
         public Builder name( String value )
         {
@@ -71,7 +127,7 @@ public class MixinReference
         public Builder mixin( final Mixin mixin )
         {
             this.qualifiedMixinName = mixin.getQualifiedName();
-            this.mixinClass = mixin.getFormItem().getClass().getSimpleName();
+            this.mixinClass = mixin.getFormItem().getClass();
             return this;
         }
 
@@ -89,48 +145,43 @@ public class MixinReference
 
         public Builder type( String value )
         {
-            this.mixinClass = value;
+            this.mixinClass = resolveMixinClass( value );
             return this;
         }
 
         public Builder type( Class value )
         {
-            this.mixinClass = value.getSimpleName();
+            this.mixinClass = value;
             return this;
         }
 
         public Builder typeInput()
         {
-            this.mixinClass = Input.class.getSimpleName();
+            this.mixinClass = Input.class;
             return this;
         }
 
         public Builder typeFormItemSet()
         {
-            this.mixinClass = FormItemSet.class.getSimpleName();
+            this.mixinClass = FormItemSet.class;
+            return this;
+        }
+
+        public Builder occurrences( final Occurrences occurrences )
+        {
+            this.occurrences = occurrences;
+            return this;
+        }
+
+        public Builder immutable( final boolean value )
+        {
+            this.immutable = value;
             return this;
         }
 
         public MixinReference build()
         {
-            Preconditions.checkNotNull( qualifiedMixinName, "qualifiedMixinName is required" );
-            Preconditions.checkNotNull( mixinClass, "mixinClass is required" );
-            Preconditions.checkNotNull( name, "name is required" );
-
-            final MixinReference mixinReference = new MixinReference();
-            mixinReference.setName( name );
-            mixinReference.qualifiedMixinName = qualifiedMixinName;
-            try
-
-            {
-                final String packageName = this.getClass().getPackage().getName();
-                mixinReference.mixinClass = Class.forName( packageName + "." + mixinClass );
-            }
-            catch ( ClassNotFoundException e )
-            {
-                e.printStackTrace();
-            }
-            return mixinReference;
+            return new MixinReference( this );
         }
     }
 }

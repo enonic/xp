@@ -10,7 +10,6 @@ import org.jdom.JDOMException;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.form.FormItem;
-import com.enonic.wem.api.content.schema.content.form.FormItems;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.core.support.util.JdomHelper;
@@ -101,8 +100,7 @@ public class ContentTypeXmlSerializer
         try
         {
             final Element formEl = contentTypeEl.getChild( "form" );
-            final FormItems formItems = formItemsSerializer.parse( formEl );
-            for ( FormItem formItem : formItems )
+            for ( FormItem formItem : formItemsSerializer.parse( formEl ) )
             {
                 contentTypeBuilder.addFormItem( formItem );
             }

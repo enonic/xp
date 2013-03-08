@@ -5,46 +5,42 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
-
 import static com.enonic.wem.api.content.schema.content.form.Occurrences.newOccurrences;
 
 public class FormItemSet
     extends HierarchicalFormItem
     implements Iterable<FormItem>
 {
-    private String label;
+    private final String label;
 
-    private FormItems formItems = new FormItems();
+    private final FormItems formItems;
 
-    private boolean immutable;
+    private final boolean immutable;
 
-    private Occurrences occurrences = newOccurrences().minimum( 0 ).maximum( 1 ).build();
+    private final Occurrences occurrences;
 
-    private String customText;
+    private final String customText;
 
-    private String helpText;
+    private final String helpText;
 
-    protected FormItemSet()
+    private FormItemSet( Builder builder )
     {
-    }
+        super( builder.name );
 
-    @Override
-    void setPath( final FormItemPath formItemPath )
-    {
-        super.setPath( formItemPath );
-        formItems.setPath( formItemPath );
+        this.label = builder.label;
+        this.immutable = builder.immutable;
+        this.occurrences = builder.occurrences;
+        this.customText = builder.customText;
+        this.helpText = builder.helpText;
+        this.formItems = new FormItems( this );
+        for ( final FormItem formItem : builder.formItems )
+        {
+            this.formItems.add( formItem );
+        }
     }
 
     public void add( final FormItem formItem )
     {
-        if ( formItem instanceof HierarchicalFormItem )
-        {
-            Preconditions.checkState( getPath() != null, "Cannot add HierarchicalFormItem before this FormItemSet have a path" );
-            final HierarchicalFormItem hierarchicalFormItem = (HierarchicalFormItem) formItem;
-            hierarchicalFormItem.setPath( FormItemPath.from( getPath(), formItem.getName() ) );
-        }
-
         this.formItems.add( formItem );
     }
 
@@ -95,16 +91,6 @@ public class FormItemSet
     }
 
     @Override
-    void setParentPath( final FormItemPath parentPath )
-    {
-        super.setParentPath( parentPath );
-        for ( HierarchicalFormItem formItem : formItems.iterableForHierarchicalFormItems() )
-        {
-            formItem.setParentPath( this.getPath() );
-        }
-    }
-
-    @Override
     public String toString()
     {
         StringBuilder s = new StringBuilder();
@@ -128,19 +114,7 @@ public class FormItemSet
     @Override
     public FormItemSet copy()
     {
-        FormItemSet copy = (FormItemSet) super.copy();
-        copy.label = label;
-        copy.immutable = immutable;
-        copy.occurrences = newOccurrences( occurrences ).build();
-        copy.customText = customText;
-        copy.helpText = helpText;
-        copy.formItems = formItems.copy();
-        return copy;
-    }
-
-    public static Builder newFormItemSet()
-    {
-        return new Builder();
+        return newFormItemSet( this ).build();
     }
 
     HierarchicalFormItem getHierarchicalFormItem( final FormItemPath formItemPath )
@@ -183,6 +157,16 @@ public class FormItemSet
         return formItems.getLayout( name );
     }
 
+    public static Builder newFormItemSet()
+    {
+        return new Builder();
+    }
+
+    public static Builder newFormItemSet( final FormItemSet formItemSet )
+    {
+        return new Builder( formItemSet );
+    }
+
     public static class Builder
     {
         private String name;
@@ -199,9 +183,24 @@ public class FormItemSet
 
         private List<FormItem> formItems = new ArrayList<FormItem>();
 
-        private Builder()
+        public Builder()
         {
+            // default
+        }
 
+        public Builder( final FormItemSet source )
+        {
+            this.name = source.getName();
+            this.label = source.label;
+            this.immutable = source.immutable;
+            this.occurrences = source.occurrences;
+            this.customText = source.customText;
+            this.helpText = source.helpText;
+
+            for ( final FormItem formItemSource : source.formItems )
+            {
+                formItems.add( formItemSource.copy() );
+            }
         }
 
         public Builder name( String value )
@@ -292,23 +291,7 @@ public class FormItemSet
 
         public FormItemSet build()
         {
-            Preconditions.checkNotNull( name, "a name for the FormItemSet is required" );
-
-            FormItemSet formItemSet = new FormItemSet();
-            formItemSet.setName( name );
-            formItemSet.label = label;
-            formItemSet.immutable = immutable;
-            formItemSet.occurrences = newOccurrences( occurrences ).build();
-            formItemSet.customText = customText;
-            formItemSet.helpText = helpText;
-
-            formItemSet.setPath( FormItemPath.from( formItemSet.getName() ) );
-
-            for ( FormItem formItem : formItems )
-            {
-                formItemSet.add( formItem );
-            }
-            return formItemSet;
+            return new FormItemSet( this );
         }
     }
 }

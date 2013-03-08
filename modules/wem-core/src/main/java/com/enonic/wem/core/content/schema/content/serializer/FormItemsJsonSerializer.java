@@ -1,19 +1,20 @@
 package com.enonic.wem.core.content.schema.content.serializer;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 
 import com.enonic.wem.api.content.schema.content.form.FormItem;
-import com.enonic.wem.api.content.schema.content.form.FormItems;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonParsingException;
 
 public final class FormItemsJsonSerializer
-    extends AbstractJsonSerializer<FormItems>
+    extends AbstractJsonSerializer<Iterable<FormItem>>
 {
     private final FormItemJsonSerializer formItemSerializer;
 
@@ -35,7 +36,7 @@ public final class FormItemsJsonSerializer
     }
 
     @Override
-    public JsonNode serialize( final FormItems formItems )
+    public JsonNode serialize( final Iterable<FormItem> formItems )
     {
         final ArrayNode formItemsArray = objectMapper().createArrayNode();
         for ( FormItem formItem : formItems )
@@ -47,9 +48,9 @@ public final class FormItemsJsonSerializer
     }
 
     @Override
-    public FormItems parse( final JsonNode formItemsNode )
+    public Iterable<FormItem> parse( final JsonNode formItemsNode )
     {
-        final FormItems formItems = new FormItems();
+        final List<FormItem> formItems = new ArrayList<>();
         final Iterator<JsonNode> formItemIt = formItemsNode.getElements();
         while ( formItemIt.hasNext() )
         {

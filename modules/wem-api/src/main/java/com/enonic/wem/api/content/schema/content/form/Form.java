@@ -1,21 +1,29 @@
 package com.enonic.wem.api.content.schema.content.form;
 
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.schema.mixin.MixinFetcher;
 
 public final class Form
+    implements Iterable<FormItem>
 {
     private final FormItems formItems;
 
-    private Form( final FormItems formItems )
+    private Form( final Builder builder )
     {
-        this.formItems = formItems;
+        this.formItems = new FormItems( null );
+        for ( final FormItem formItem : builder.formItems )
+        {
+            this.formItems.add( formItem );
+        }
     }
 
-    // TODO move to builder
     public void addFormItem( final FormItem formItem )
     {
         this.formItems.add( formItem );
@@ -103,21 +111,27 @@ public final class Form
         return new Builder( form );
     }
 
+    @Override
+    public Iterator<FormItem> iterator()
+    {
+        return formItems.iterator();
+    }
+
     public static class Builder
     {
-        private FormItems formItems;
+        private List<FormItem> formItems;
 
         private Builder()
         {
-            this.formItems = new FormItems();
+            this.formItems = new ArrayList<>();
         }
 
-        private Builder( final Form form )
+        private Builder( final Form source )
         {
-            Preconditions.checkNotNull( form, "Given form cannot be null" );
+            Preconditions.checkNotNull( source, "Given form cannot be null" );
 
-            this.formItems = new FormItems();
-            for ( FormItem formItem : form.formItems )
+            this.formItems = new ArrayList<>();
+            for ( FormItem formItem : source.formItems )
             {
                 formItems.add( formItem.copy() );
             }
@@ -131,7 +145,7 @@ public final class Form
 
         public Form build()
         {
-            return new Form( this.formItems );
+            return new Form( this );
         }
     }
 }

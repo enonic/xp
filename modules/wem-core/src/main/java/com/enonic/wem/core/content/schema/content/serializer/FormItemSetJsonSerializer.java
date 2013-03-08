@@ -7,7 +7,6 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.schema.content.form.FormItem;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
-import com.enonic.wem.api.content.schema.content.form.FormItems;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
@@ -67,8 +66,7 @@ class FormItemSetJsonSerializer
 
         parseOccurrences( builder, formItemSetObj.get( OCCURRENCES ) );
 
-        final FormItems formItems = formItemsJsonSerializer.parse( formItemSetObj.get( ITEMS ) );
-        for ( FormItem formItem : formItems.iterable() )
+        for ( final FormItem formItem : formItemsJsonSerializer.parse( formItemSetObj.get( ITEMS ) ) )
         {
             builder.add( formItem );
         }

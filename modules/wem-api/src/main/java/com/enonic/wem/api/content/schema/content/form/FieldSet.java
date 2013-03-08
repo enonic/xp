@@ -11,12 +11,22 @@ public class FieldSet
     extends Layout
     implements Iterable<FormItem>
 {
-    private String label;
+    private final String label;
 
-    private FormItems formItems = new FormItems();
+    private final FormItems formItems;
 
-    protected FieldSet()
+    private FieldSet( final Builder builder )
     {
+        super( builder.name );
+
+        Preconditions.checkNotNull( builder.label, "label is required" );
+
+        this.label = builder.label;
+        this.formItems = new FormItems( this );
+        for ( final FormItem formItem : builder.formItems )
+        {
+            this.formItems.add( formItem );
+        }
     }
 
     public String getLabel()
@@ -33,15 +43,7 @@ public class FieldSet
     @Override
     public FieldSet copy()
     {
-        final FieldSet copy = (FieldSet) super.copy();
-        copy.label = label;
-        copy.formItems = formItems.copy();
-        return copy;
-    }
-
-    public static Builder newFieldSet()
-    {
-        return new Builder();
+        return newFieldSet( this ).build();
     }
 
     public void addFormItem( final FormItem formItem )
@@ -64,14 +66,19 @@ public class FieldSet
         return formItems.getInput( name );
     }
 
-    void forwardSetPath( FormItemPath path )
-    {
-        formItems.setPath( path );
-    }
-
     public Iterable<FormItem> formItemIterable()
     {
         return formItems.iterable();
+    }
+
+    public static Builder newFieldSet()
+    {
+        return new Builder();
+    }
+
+    public static Builder newFieldSet( final FieldSet fieldSet )
+    {
+        return new Builder( fieldSet );
     }
 
     public static class Builder
@@ -81,6 +88,22 @@ public class FieldSet
         private String name;
 
         private List<FormItem> formItems = new ArrayList<FormItem>();
+
+        private Builder()
+        {
+            // default
+        }
+
+        private Builder( final FieldSet source )
+        {
+            this.label = source.label;
+            this.name = source.getName();
+
+            for ( final FormItem formItemSource : source.formItems )
+            {
+                formItems.add( formItemSource.copy() );
+            }
+        }
 
         public Builder label( String value )
         {
@@ -102,17 +125,7 @@ public class FieldSet
 
         public FieldSet build()
         {
-            Preconditions.checkNotNull( this.label, "label is required" );
-            Preconditions.checkNotNull( this.name, "name is required" );
-
-            FieldSet fieldSet = new FieldSet();
-            fieldSet.label = this.label;
-            fieldSet.setName( this.name );
-            for ( FormItem formItem : formItems )
-            {
-                fieldSet.addFormItem( formItem );
-            }
-            return fieldSet;
+            return new FieldSet( this );
         }
     }
 }

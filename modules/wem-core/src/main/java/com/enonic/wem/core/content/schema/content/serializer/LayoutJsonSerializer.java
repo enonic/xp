@@ -7,7 +7,6 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.schema.content.form.FieldSet;
 import com.enonic.wem.api.content.schema.content.form.FormItem;
-import com.enonic.wem.api.content.schema.content.form.FormItems;
 import com.enonic.wem.api.content.schema.content.form.Layout;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonParsingException;
@@ -73,8 +72,7 @@ class LayoutJsonSerializer
         builder.label( JsonSerializerUtil.getStringValue( LABEL, formItemNode, null ) );
         builder.name( JsonSerializerUtil.getStringValue( NAME, formItemNode, null ) );
 
-        final FormItems formItems = formItemsJsonSerializer.parse( formItemNode.get( ITEMS ) );
-        for ( FormItem formItem : formItems.iterable() )
+        for ( FormItem formItem : formItemsJsonSerializer.parse( formItemNode.get( ITEMS ) ) )
         {
             builder.add( formItem );
         }

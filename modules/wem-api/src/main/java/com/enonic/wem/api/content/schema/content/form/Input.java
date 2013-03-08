@@ -15,26 +15,52 @@ import static com.enonic.wem.api.content.schema.content.form.Occurrences.newOccu
 public final class Input
     extends HierarchicalFormItem
 {
-    private BaseInputType type;
+    private final BaseInputType type;
 
-    private String label;
+    private final String label;
 
-    private boolean immutable;
+    private final boolean immutable;
 
-    private Occurrences occurrences = newOccurrences().minimum( 0 ).maximum( 1 ).build();
+    private final Occurrences occurrences;
 
-    private boolean indexed;
+    private final boolean indexed;
 
-    private String customText;
+    private final String customText;
 
-    private ValidationRegex validationRegexp;
+    private final ValidationRegex validationRegexp;
 
-    private String helpText;
+    private final String helpText;
 
-    private InputTypeConfig inputTypeConfig;
+    private final InputTypeConfig inputTypeConfig;
 
-    protected Input()
+    private Input( Builder builder )
     {
+        super( builder.name );
+
+        Preconditions.checkNotNull( builder.inputType, "inputType cannot be null" );
+
+        if ( builder.inputType.requiresConfig() )
+        {
+            Preconditions.checkArgument( builder.inputTypeConfig != null,
+                                         "Input [name='%s', type=%s] is missing required InputTypeConfig: %s", builder.name,
+                                         builder.inputType.getName(), builder.inputType.requiredConfigClass().getName() );
+
+            //noinspection ConstantConditions
+            Preconditions.checkArgument( builder.inputType.requiredConfigClass().isInstance( builder.inputTypeConfig ),
+                                         "Input [name='%s', type=%s] expects InputTypeConfig of type [%s] but was: %s", builder.name,
+                                         builder.inputType.getName(), builder.inputType.requiredConfigClass().getName(),
+                                         builder.inputTypeConfig.getClass().getName() );
+        }
+
+        this.type = builder.inputType;
+        this.label = builder.label;
+        this.immutable = builder.immutable;
+        this.occurrences = builder.occurrences;
+        this.indexed = builder.indexed;
+        this.customText = builder.customText;
+        this.validationRegexp = builder.validationRegexp;
+        this.helpText = builder.helpText;
+        this.inputTypeConfig = builder.inputTypeConfig;
     }
 
     public InputType getInputType()
@@ -145,22 +171,17 @@ public final class Input
     @Override
     public Input copy()
     {
-        final Input copy = (Input) super.copy();
-        copy.type = type;
-        copy.label = label;
-        copy.immutable = immutable;
-        copy.occurrences = newOccurrences( occurrences ).build();
-        copy.indexed = indexed;
-        copy.customText = customText;
-        copy.validationRegexp = validationRegexp;
-        copy.helpText = helpText;
-        copy.inputTypeConfig = inputTypeConfig;
-        return copy;
+        return newInput( this ).build();
     }
 
     public static Builder newInput()
     {
         return new Builder();
+    }
+
+    public static Builder newInput( final Input input )
+    {
+        return new Builder( input );
     }
 
     public static class Builder
@@ -185,9 +206,22 @@ public final class Input
 
         private InputTypeConfig inputTypeConfig;
 
-        private Builder()
+        public Builder()
         {
-            // protection
+            // default
+        }
+
+        public Builder( final Input source )
+        {
+            this.name = source.getName();
+            this.inputType = source.type;
+            this.label = source.label;
+            this.occurrences = source.occurrences;
+            this.indexed = source.indexed;
+            this.customText = source.customText;
+            this.validationRegexp = source.validationRegexp;
+            this.helpText = source.helpText;
+            this.inputTypeConfig = source.inputTypeConfig;
         }
 
         public Builder name( String value )
@@ -296,34 +330,7 @@ public final class Input
 
         public Input build()
         {
-            Preconditions.checkNotNull( name, "name cannot be null" );
-            Preconditions.checkNotNull( inputType, "inputType cannot be null" );
-
-            if ( inputType.requiresConfig() )
-            {
-                Preconditions.checkArgument( inputTypeConfig != null, "Input [name='%s', type=%s] is missing required InputTypeConfig: %s",
-                                             name, inputType.getName(), inputType.requiredConfigClass().getName() );
-
-                //noinspection ConstantConditions
-                Preconditions.checkArgument( inputType.requiredConfigClass().isInstance( inputTypeConfig ),
-                                             "Input [name='%s', type=%s] expects InputTypeConfig of type [%s] but was: %s", name,
-                                             inputType.getName(), inputType.requiredConfigClass().getName(),
-                                             inputTypeConfig.getClass().getName() );
-            }
-
-            Input input = new Input();
-            input.setName( name );
-            input.type = inputType;
-            input.label = label;
-            input.immutable = immutable;
-            input.occurrences = newOccurrences().minimum( occurrences.getMinimum() ).maximum( occurrences.getMaximum() ).build();
-            input.indexed = indexed;
-            input.customText = customText;
-            input.validationRegexp = validationRegexp;
-            input.helpText = helpText;
-            input.inputTypeConfig = inputTypeConfig;
-            input.setPath( FormItemPath.from( input.getName() ) );
-            return input;
+            return new Input( this );
         }
     }
 }

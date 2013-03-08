@@ -23,8 +23,12 @@ public class ContentTypeTest
     public void layout()
     {
         ContentType contentType = newContentType().name( "test" ).module( ModuleName.from( "myModule" ) ).build();
-        FieldSet layout = FieldSet.newFieldSet().label( "Personalia" ).name( "personalia" ).add(
-            newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
+        FieldSet layout = FieldSet.newFieldSet().
+            label( "Personalia" ).
+            name( "personalia" ).
+            add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).
+            build();
+
         contentType.form().addFormItem( layout );
 
         assertEquals( "eyeColour", contentType.form().getInput( "eyeColour" ).getPath().toString() );
@@ -34,8 +38,13 @@ public class ContentTypeTest
     public void layout_inside_formItemSet()
     {
         ContentType contentType = newContentType().name( "test" ).module( ModuleName.from( "myModule" ) ).build();
-        FieldSet layout = FieldSet.newFieldSet().label( "Personalia" ).name( "personalia" ).add(
-            newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
+
+        FieldSet layout = FieldSet.newFieldSet().
+            label( "Personalia" ).
+            name( "personalia" ).
+            add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).
+            build();
+
         FormItemSet myFormItemSet = newFormItemSet().name( "mySet" ).add( layout ).build();
         contentType.form().addFormItem( myFormItemSet );
 

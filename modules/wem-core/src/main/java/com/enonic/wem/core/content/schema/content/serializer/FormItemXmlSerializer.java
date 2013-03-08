@@ -6,7 +6,6 @@ import org.jdom.Element;
 import com.enonic.wem.api.content.schema.content.form.FieldSet;
 import com.enonic.wem.api.content.schema.content.form.FormItem;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
-import com.enonic.wem.api.content.schema.content.form.FormItems;
 import com.enonic.wem.api.content.schema.content.form.HierarchicalFormItem;
 import com.enonic.wem.api.content.schema.content.form.Input;
 import com.enonic.wem.api.content.schema.content.form.Layout;
@@ -214,8 +213,7 @@ public class FormItemXmlSerializer
         builder.occurrences( occurrencesXmlSerializer.parse( formItemEl ) );
 
         final Element itemsEl = formItemEl.getChild( "items" );
-        final FormItems formItems = formItemsSerializer.parse( itemsEl );
-        for ( FormItem formItem : formItems.iterable() )
+        for ( FormItem formItem : formItemsSerializer.parse( itemsEl ) )
         {
             builder.add( formItem );
         }
@@ -243,8 +241,7 @@ public class FormItemXmlSerializer
         builder.label( formItemEl.getChildText( LABEL ) );
 
         final Element itemsEl = formItemEl.getChild( "items" );
-        final FormItems formItems = formItemsSerializer.parse( itemsEl );
-        for ( FormItem formItem : formItems.iterable() )
+        for ( FormItem formItem : formItemsSerializer.parse( itemsEl ) )
         {
             builder.add( formItem );
         }
