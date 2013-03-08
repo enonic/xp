@@ -284,3 +284,18 @@
 .icon-content-studio-128 {
     background: transparent url("../images/icons/128x128/cubes.png") 0 0 no-repeat !important;
 }
+
+.icon-toolbar-settings
+{
+    background-image: url("../images/icons/cog.svg") !important;
+    background-size: 24px;
+    background-repeat: no-repeat;
+    opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+}
+
+.icon-toolbar-settings:hover
+{
+    opacity: 0.6;
+    filter: alpha(opacity=60); /* For IE8 and earlier */
+}

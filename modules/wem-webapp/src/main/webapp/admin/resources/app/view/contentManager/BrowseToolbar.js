@@ -39,6 +39,12 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
                 text: 'Move',
                 disabled: true,
                 action: 'moveContent'
+            },
+            '->',
+            {
+                iconCls: 'icon-toolbar-settings',
+                action: 'showToolbarMenu',
+                minWidth: 48
             }
         ];
 
