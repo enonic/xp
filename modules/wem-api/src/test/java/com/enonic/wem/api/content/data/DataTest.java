@@ -65,7 +65,7 @@ public class DataTest
     @Test(expected = IllegalArgumentException.class)
     public void given_invalid_value_when_build_then_exception_is_thrown()
     {
-        newData().name( "myDate" ).type( DataTypes.DATE ).value( "2012.31.08" ).build();
+        newData().name( "myDate" ).type( DataTypes.DATE_MIDNIGHT ).value( "2012.31.08" ).build();
     }
 
     @Test

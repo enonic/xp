@@ -29,11 +29,11 @@ public class DataVisitorTest
         };
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.add( Data.newData().name( "myText" ).type( DataTypes.TEXT ).value( "abc" ).build() );
-        rootDataSet.add( Data.newData().name( "myDate" ).type( DataTypes.DATE ).value( DateMidnight.now() ).build() );
+        rootDataSet.add( Data.newData().name( "myDate" ).type( DataTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
         mySet.add( Data.newData().name( "myText" ).type( DataTypes.TEXT ).value( "abc" ).build() );
-        mySet.add( Data.newData().name( "myDate" ).type( DataTypes.DATE ).value( DateMidnight.now() ).build() );
+        mySet.add( Data.newData().name( "myDate" ).type( DataTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
         rootDataSet.add( mySet );
 
         dataVisitor.traverse( rootDataSet );
@@ -62,11 +62,11 @@ public class DataVisitorTest
 
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.add( Data.newData().name( "myText" ).type( DataTypes.TEXT ).value( "abc" ).build() );
-        rootDataSet.add( Data.newData().name( "myDate" ).type( DataTypes.DATE ).value( DateMidnight.now() ).build() );
+        rootDataSet.add( Data.newData().name( "myDate" ).type( DataTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
         mySet.add( Data.newData().name( "myText" ).type( DataTypes.TEXT ).value( "abc" ).build() );
-        mySet.add( Data.newData().name( "myDate" ).type( DataTypes.DATE ).value( DateMidnight.now() ).build() );
+        mySet.add( Data.newData().name( "myDate" ).type( DataTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
         rootDataSet.add( mySet );
 
         dataVisitor.traverse( rootDataSet );

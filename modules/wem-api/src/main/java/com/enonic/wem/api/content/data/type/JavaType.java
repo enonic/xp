@@ -4,7 +4,6 @@ package com.enonic.wem.api.content.data.type;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
@@ -17,13 +16,13 @@ public final class JavaType
 
     public static final Long LONG = new Long();
 
-    public static final Date DATE = new Date();
+    public static final DateMidnight DATE_MIDNIGHT = new DateMidnight();
 
     public static final BlobKey BLOB_KEY = new BlobKey();
 
     public static final DataSet DATA_SET = new DataSet();
 
-    public static final Map<java.lang.Class, BaseType> INSTANCES = new LinkedHashMap<Class, BaseType>();
+    public static final Map<java.lang.Class, BaseType> INSTANCES = new LinkedHashMap<>();
 
     static
     {
@@ -32,7 +31,7 @@ public final class JavaType
         INSTANCES.put( STRING.getType(), STRING );
         INSTANCES.put( DOUBLE.getType(), DOUBLE );
         INSTANCES.put( LONG.getType(), LONG );
-        INSTANCES.put( DATE.getType(), DATE );
+        INSTANCES.put( DATE_MIDNIGHT.getType(), DATE_MIDNIGHT );
     }
 
     public static BaseType resolveType( Object o )
@@ -165,22 +164,22 @@ public final class JavaType
 
     }
 
-    public final static class Date
+    public final static class DateMidnight
         extends BaseType
     {
         private final static DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder().
             appendYear( 4, 4 ).appendLiteral( "-" ).appendMonthOfYear( 2 ).appendLiteral( "-" ).appendDayOfMonth( 2 ).toFormatter();
 
-        Date()
+        DateMidnight()
         {
-            super( DateMidnight.class );
+            super( org.joda.time.DateMidnight.class );
         }
 
-        public DateMidnight convertFrom( Object value )
+        public org.joda.time.DateMidnight convertFrom( Object value )
         {
-            if ( value instanceof DateMidnight )
+            if ( value instanceof org.joda.time.DateMidnight )
             {
-                return (DateMidnight) value;
+                return (org.joda.time.DateMidnight) value;
             }
             else if ( value instanceof java.lang.String )
             {
@@ -188,7 +187,7 @@ public final class JavaType
             }
             else if ( value instanceof java.lang.Long )
             {
-                return new DateMidnight( value );
+                return new org.joda.time.DateMidnight( value );
             }
             else
             {

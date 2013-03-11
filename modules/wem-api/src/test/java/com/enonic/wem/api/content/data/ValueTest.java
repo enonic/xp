@@ -49,7 +49,7 @@ public class ValueTest
     public void isJavaType()
     {
         assertTrue( Value.newValue().type( DataTypes.TEXT ).value( "Some text" ).build().isJavaType( String.class ) );
-        assertTrue( Value.newValue().type( DataTypes.DATE ).value( DateMidnight.now() ).build().isJavaType( DateMidnight.class ) );
+        assertTrue( Value.newValue().type( DataTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build().isJavaType( DateMidnight.class ) );
     }
 
     @Test

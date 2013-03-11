@@ -18,13 +18,13 @@ public class Date
     public void checkValidity( final Data data )
         throws InvalidValueTypeException, InvalidValueException
     {
-        DataTypes.DATE.checkValidity( data );
+        DataTypes.DATE_MIDNIGHT.checkValidity( data );
     }
 
     @Override
     public void ensureType( final Data data )
     {
-        DataTypes.DATE.ensureType( data );
+        DataTypes.DATE_MIDNIGHT.ensureType( data );
     }
 
     @Override

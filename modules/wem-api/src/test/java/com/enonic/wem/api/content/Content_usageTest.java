@@ -27,7 +27,7 @@ import static com.enonic.wem.api.content.data.Data.newHtmlPart;
 import static com.enonic.wem.api.content.data.Data.newText;
 import static com.enonic.wem.api.content.data.Data.newWholeNumber;
 import static com.enonic.wem.api.content.data.DataSet.newDataSet;
-import static com.enonic.wem.api.content.data.type.DataTypes.DATE;
+import static com.enonic.wem.api.content.data.type.DataTypes.DATE_MIDNIGHT;
 import static com.enonic.wem.api.content.data.type.DataTypes.DECIMAL_NUMBER;
 import static com.enonic.wem.api.content.data.type.DataTypes.HTML_PART;
 import static com.enonic.wem.api.content.data.type.DataTypes.TEXT;
@@ -54,7 +54,7 @@ public class Content_usageTest
         // verify
         assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
         assertEquals( WHOLE_NUMBER, dataSet.getData( "myNum" ).getType() );
-        assertEquals( DATE, dataSet.getData( "myDate" ).getType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getData( "myDate" ).getType() );
         assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
         assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
     }
@@ -68,13 +68,13 @@ public class Content_usageTest
         dataSet.add( newData().name( "myText" ).value( "abc" ).type( TEXT ).build() );
         dataSet.add( newData().name( "myNum" ).value( 123L ).type( WHOLE_NUMBER ).build() );
         dataSet.add( newData().name( "myDec" ).value( 123.123 ).type( DECIMAL_NUMBER ).build() );
-        dataSet.add( newData().name( "myDate" ).value( new DateMidnight( 2013, 1, 13 ) ).type( DATE ).build() );
+        dataSet.add( newData().name( "myDate" ).value( new DateMidnight( 2013, 1, 13 ) ).type( DATE_MIDNIGHT ).build() );
         dataSet.add( newData().name( "myHtml" ).value( "<p>abc</p>" ).type( HTML_PART ).build() );
 
         // verify
         assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
         assertEquals( WHOLE_NUMBER, dataSet.getData( "myNum" ).getType() );
-        assertEquals( DATE, dataSet.getData( "myDate" ).getType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getData( "myDate" ).getType() );
         assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
         assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
 
@@ -100,7 +100,7 @@ public class Content_usageTest
         // verify
         assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
         assertEquals( WHOLE_NUMBER, dataSet.getData( "myNum" ).getType() );
-        assertEquals( DATE, dataSet.getData( "myDate" ).getType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getData( "myDate" ).getType() );
         assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
         assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
 
@@ -126,7 +126,7 @@ public class Content_usageTest
         // verify
         assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
         assertEquals( WHOLE_NUMBER, dataSet.getData( "myNum" ).getType() );
-        assertEquals( DATE, dataSet.getData( "myDate" ).getType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getData( "myDate" ).getType() );
         assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
         assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
 
@@ -156,7 +156,7 @@ public class Content_usageTest
         dataSet.add( newData().name( "myText" ).value( "abc" ).type( TEXT ).build() );
         dataSet.add( newData().name( "myNum" ).value( 123L ).type( WHOLE_NUMBER ).build() );
         dataSet.add( newData().name( "myDec" ).value( 123.123 ).type( DECIMAL_NUMBER ).build() );
-        dataSet.add( newData().name( "myDate" ).value( new DateMidnight( 2013, 1, 13 ) ).type( DATE ).build() );
+        dataSet.add( newData().name( "myDate" ).value( new DateMidnight( 2013, 1, 13 ) ).type( DATE_MIDNIGHT ).build() );
         dataSet.add( newData().name( "myHtml" ).value( "<p>abc</p>" ).type( HTML_PART ).build() );
 
         // exercise & verify
@@ -208,7 +208,7 @@ public class Content_usageTest
 
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.add(
-            Data.newData().name( "invoiceDate" ).value( invoice.invoiceDate.toDateMidnight() ).type( DataTypes.DATE ).build() );
+            Data.newData().name( "invoiceDate" ).value( invoice.invoiceDate.toDateMidnight() ).type( DataTypes.DATE_MIDNIGHT ).build() );
         rootDataSet.add( Data.newData().name( "recipient" ).value( invoice.recipient ).type( DataTypes.TEXT ).build() );
 
         for ( InvoiceLine line : invoice.lines )

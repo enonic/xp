@@ -588,7 +588,7 @@ public class ContentTest
         // exercise
         try
         {
-            content.getRootDataSet().setData( "myData[1]", DataTypes.DATE, new DateMidnight( 2000, 1, 1 ) );
+            content.getRootDataSet().setData( "myData[1]", DataTypes.DATE_MIDNIGHT, new DateMidnight( 2000, 1, 1 ) );
             fail( "Expected exception" );
         }
         catch ( Exception e )

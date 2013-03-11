@@ -92,7 +92,7 @@ public class DataSet
 
     public final void setData( final String path, final DateMidnight... values )
     {
-        setData( EntryPath.from( path ), DataTypes.DATE, values );
+        setData( EntryPath.from( path ), DataTypes.DATE_MIDNIGHT, values );
     }
 
     public final void setData( final EntryPath path, final Value... values )

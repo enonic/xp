@@ -56,7 +56,7 @@ public final class InputTypes
         register( WHOLE_NUMBER );
         register( XML );
 
-        registerDefaultInputType( DataTypes.DATE, DATE );
+        registerDefaultInputType( DataTypes.DATE_MIDNIGHT, DATE );
         registerDefaultInputType( DataTypes.TEXT, TEXT_AREA );
         registerDefaultInputType( DataTypes.XML, XML );
         registerDefaultInputType( DataTypes.WHOLE_NUMBER, WHOLE_NUMBER );

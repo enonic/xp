@@ -28,7 +28,7 @@ public final class Date
     {
         public DateBuilder()
         {
-            setType( DataTypes.DATE );
+            setType( DataTypes.DATE_MIDNIGHT );
         }
 
         public DateBuilder value( final DateMidnight value )

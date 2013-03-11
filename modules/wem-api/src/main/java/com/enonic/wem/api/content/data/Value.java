@@ -95,10 +95,10 @@ public final class Value
     public DateMidnight asDate()
         throws InconvertibleValueException
     {
-        final DateMidnight converted = JavaType.DATE.convertFrom( object );
+        final DateMidnight converted = JavaType.DATE_MIDNIGHT.convertFrom( object );
         if ( object != null && converted == null )
         {
-            throw new InconvertibleValueException( object, JavaType.DATE );
+            throw new InconvertibleValueException( object, JavaType.DATE_MIDNIGHT );
         }
         return converted;
     }
