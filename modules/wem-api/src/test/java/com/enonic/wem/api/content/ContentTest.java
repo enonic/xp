@@ -594,7 +594,7 @@ public class ContentTest
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "Array [myData] expects Data of type [Text]. Data [myData] was of type: Date", e.getMessage() );
+            assertEquals( "Array [myData] expects Data of type [Text]. Data [myData] was of type: DateMidnight", e.getMessage() );
         }
     }
 
