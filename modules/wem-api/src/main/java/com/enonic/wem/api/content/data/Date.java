@@ -14,6 +14,11 @@ public final class Date
         super( newDate().name( name ).value( value ) );
     }
 
+    public Date( final String name, final String value )
+    {
+        super( newDate().name( name ).value( value ) );
+    }
+
     Date( final DateBuilder dateBuilder )
     {
         super( dateBuilder );
