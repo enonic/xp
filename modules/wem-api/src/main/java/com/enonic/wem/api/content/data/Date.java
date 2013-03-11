@@ -45,7 +45,7 @@ public final class Date
 
         public DateBuilder value( final String value )
         {
-            setValue( JavaType.DATE_MIDNIGHT.convert( value ) );
+            setValue( JavaType.DATE_MIDNIGHT.convertFrom( value ) );
             return this;
         }
 

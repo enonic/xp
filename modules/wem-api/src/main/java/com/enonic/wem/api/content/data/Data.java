@@ -28,9 +28,6 @@ public class Data
         }
         this.value = builder.value;
 
-        final BaseDataType type = value.getType();
-        type.ensureType( this );
-
         try
         {
             getType().checkValidity( this );

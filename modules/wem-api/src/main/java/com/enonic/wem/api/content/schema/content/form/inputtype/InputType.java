@@ -2,6 +2,7 @@ package com.enonic.wem.api.content.schema.content.form.inputtype;
 
 
 import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
 
 /**
@@ -24,5 +25,5 @@ public interface InputType
     void checkBreaksRequiredContract( Data data )
         throws BreaksRequiredContractException;
 
-    void ensureType( Data data );
+    Value newValue( String value );
 }

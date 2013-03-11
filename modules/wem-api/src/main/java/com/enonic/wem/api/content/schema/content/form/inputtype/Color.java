@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.schema.content.form.inputtype;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
@@ -30,20 +30,17 @@ public class Color
     }
 
     @Override
-    public void ensureType( final Data data )
-    {
-        final DataSet dataSet = data.toDataSet();
-        DataTypes.WHOLE_NUMBER.ensureType( dataSet.getData( "red" ) );
-        DataTypes.WHOLE_NUMBER.ensureType( dataSet.getData( "green" ) );
-        DataTypes.WHOLE_NUMBER.ensureType( dataSet.getData( "blue" ) );
-    }
-
-    @Override
     public void checkValidity( final Data data )
         throws InvalidValueTypeException, InvalidValueException
     {
         newDataChecker().pathRequired( "red" ).type( DataTypes.WHOLE_NUMBER ).range( 0, 255 ).check( data );
         newDataChecker().pathRequired( "green" ).type( DataTypes.WHOLE_NUMBER ).range( 0, 255 ).check( data );
         newDataChecker().pathRequired( "blue" ).type( DataTypes.WHOLE_NUMBER ).range( 0, 255 ).check( data );
+    }
+
+    @Override
+    public Value newValue( final String value )
+    {
+        return Value.newValue().type( DataTypes.SET ).value( value ).build();
     }
 }

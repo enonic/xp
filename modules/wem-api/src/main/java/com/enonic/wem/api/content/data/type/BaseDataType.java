@@ -61,30 +61,6 @@ public abstract class BaseDataType
         checkCorrectType( data );
     }
 
-    public void ensureType( final Data data )
-        throws InconvertibleValueException
-    {
-        if ( data == null )
-        {
-            return;
-        }
-
-        data.setValue( ensureTypeOfValue( data.getValue() ) );
-    }
-
-    /**
-     * Ensure that given value is of this type. If it is, it returns same value.
-     * Subclasses, overriding this method should convert the given value when possible.
-     * This method will not try to convert the given value, but throw an InconvertibleException
-     * when given value is not this type.
-     *
-     * @param value
-     */
-    protected Value ensureTypeOfValue( final Value value )
-        throws InconvertibleValueException
-    {
-        return value;
-    }
 
     @Override
     public boolean equals( final Object o )

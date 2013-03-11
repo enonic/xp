@@ -16,12 +16,6 @@ public class DecimalNumber
         return value.toString();
     }
 
-    @Override
-    public Value ensureTypeOfValue( final Value value )
-        throws InconvertibleValueException
-    {
-        return toDecimalNumber( value );
-    }
 
     private Value toDecimalNumber( final Value value )
     {

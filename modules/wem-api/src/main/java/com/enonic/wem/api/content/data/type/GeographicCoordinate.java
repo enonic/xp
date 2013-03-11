@@ -33,13 +33,6 @@ public class GeographicCoordinate
     }
 
     @Override
-    public Value ensureTypeOfValue( final Value value )
-        throws InconvertibleValueException
-    {
-        return toGeographicalCoordinate( value );
-    }
-
-    @Override
     public boolean hasCorrectType( final Object value )
     {
         if ( DataSet.class.isInstance( value ) )

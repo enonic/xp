@@ -2,7 +2,7 @@ package com.enonic.wem.api.content.schema.content.form.inputtype;
 
 
 import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
@@ -29,22 +29,17 @@ public class Address
     }
 
     @Override
-    public void ensureType( final Data data )
-    {
-        DataSet datSet = data.toDataSet();
-        DataTypes.TEXT.ensureType( datSet.getData( "street" ) );
-        DataTypes.TEXT.ensureType( datSet.getData( "postalCode" ) );
-        DataTypes.TEXT.ensureType( datSet.getData( "postalPlace" ) );
-        DataTypes.TEXT.ensureType( datSet.getData( "region" ) );
-        DataTypes.TEXT.ensureType( datSet.getData( "country" ) );
-    }
-
-    @Override
     public void checkBreaksRequiredContract( final Data data )
         throws BreaksRequiredContractException
     {
 
     }
 
+
+    @Override
+    public Value newValue( final String value )
+    {
+        return Value.newValue().type( DataTypes.SET ).value( value ).build();
+    }
 }
 

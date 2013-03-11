@@ -3,6 +3,7 @@ package com.enonic.wem.api.content.schema.content.form.inputtype;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.DataTool;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
@@ -25,14 +26,6 @@ public class Image
     }
 
     @Override
-    public void ensureType( final Data data )
-    {
-        final DataSet dataSet = data.toDataSet();
-        DataTypes.BINARY_REFERENCE.ensureType( dataSet.getData( "binary" ) );
-        DataTypes.TEXT.ensureType( dataSet.getData( "caption" ) );
-    }
-
-    @Override
     public void checkBreaksRequiredContract( final Data data )
         throws BreaksRequiredContractException
     {
@@ -42,6 +35,12 @@ public class Image
         {
             throw new BreaksRequiredContractException( data, this );
         }
+    }
+
+    @Override
+    public Value newValue( final String value )
+    {
+        return Value.newValue().type( DataTypes.BINARY_REFERENCE ).value( value ).build();
     }
 
 }

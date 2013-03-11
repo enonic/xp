@@ -22,8 +22,5 @@ public interface DataType
     void checkValidity( Data data )
         throws InvalidValueException, InvalidValueTypeException;
 
-    void ensureType( Data data )
-        throws InconvertibleValueException;
-
     boolean hasCorrectType( Object value );
 }

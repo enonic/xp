@@ -17,13 +17,6 @@ public class Xml
         return value.toString();
     }
 
-    @Override
-    public Value ensureTypeOfValue( final Value value )
-        throws InconvertibleValueException
-    {
-        return toXml( value );
-    }
-
     public Value toXml( final Value value )
     {
         if ( hasCorrectType( value ) )

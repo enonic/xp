@@ -17,12 +17,6 @@ public class WholeNumber
         return value.toString();
     }
 
-    @Override
-    public Value ensureTypeOfValue( final Value value )
-        throws InconvertibleValueException
-    {
-        return toWholeNumber( value );
-    }
 
     private Value toWholeNumber( final Value value )
     {

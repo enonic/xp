@@ -23,13 +23,6 @@ public class DateMidnight
         return FORMATTER.print( (org.joda.time.DateMidnight) object );
     }
 
-    @Override
-    public Value ensureTypeOfValue( final Value value )
-        throws InconvertibleValueException
-    {
-        return toDate( value );
-    }
-
     public Value toDate( final Value value )
     {
         if ( hasCorrectType( value ) )

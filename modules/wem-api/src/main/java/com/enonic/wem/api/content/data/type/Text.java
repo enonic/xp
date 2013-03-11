@@ -17,13 +17,6 @@ public class Text
         return value.toString();
     }
 
-    @Override
-    public Value ensureTypeOfValue( final Value value )
-        throws InconvertibleValueException
-    {
-        return toString( value );
-    }
-
     public Value toString( final Value value )
     {
         if ( hasCorrectType( value ) )

@@ -195,7 +195,7 @@ public final class JavaType
             }
         }
 
-        public org.joda.time.DateMidnight convert( final java.lang.String value )
+        public org.joda.time.DateMidnight convertFrom( final java.lang.String value )
         {
             return FORMATTER.parseDateTime( value ).toDateMidnight();
         }
