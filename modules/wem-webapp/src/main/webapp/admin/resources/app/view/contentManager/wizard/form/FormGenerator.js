@@ -1,12 +1,12 @@
 Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
 
-    addComponentsBasedOnContentType: function (formItemConfigs, parentComponent, contentData) {
+    addComponentsBasedOnContentType: function (formItemConfigs, parentComponent, dataSet) {
         var me = this;
         var component;
 
         Ext.each(formItemConfigs, function (item) {
             var formItemConfig = me.getFormItemConfig(item);
-            var data = me.getDataForConfig(formItemConfig, contentData);
+            var data = me.getDataForConfig(formItemConfig, dataSet);
             var creationFunction = me.constructCreationFunction(item);
             component = creationFunction.call(me, formItemConfig, data);
 
@@ -101,13 +101,13 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
     /**
      * @private
      */
-    getDataForConfig: function (formItemConfig, formItemData) {
+    getDataForConfig: function (formItemConfig, dataSet) {
         var key, data = [];
 
-        for (key in formItemData) {
-            if (formItemData.hasOwnProperty(key)) {
-                if (formItemConfig.name === formItemData[key].name) {
-                    data.push(formItemData[key]);
+        for (key in dataSet) {
+            if (dataSet.hasOwnProperty(key)) {
+                if (formItemConfig.name === dataSet[key].name) {
+                    data.push(dataSet[key]);
                 }
             }
         }

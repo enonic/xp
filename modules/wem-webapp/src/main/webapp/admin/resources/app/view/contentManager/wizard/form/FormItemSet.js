@@ -25,11 +25,11 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
 
     initComponent: function () {
         var min = this.formItemSetConfig.occurrences.minimum;
-        var contentData = !Ext.isEmpty(this.value) ? this.value[0].value : undefined;
-        this.dockedItems = [this.createBlockHeader(this.copyNo > min)];
+        var dataSet = !Ext.isEmpty(this.value) ? this.value[0].value : undefined;
+        this.dockedItems = [this.createFormItemSetHeader(this.copyNo > min)];
         this.items = [];
         this.callParent(arguments);
-        this.addComponentsBasedOnContentType(this.formItemSetConfig.items, this, contentData);
+        this.addComponentsBasedOnContentType(this.formItemSetConfig.items, this, dataSet);
     },
 
     listeners: {
@@ -44,7 +44,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
     /**
      * @private
      */
-    createBlockHeader: function (closable) {
+    createFormItemSetHeader: function (closable) {
         var me = this;
         var label = {
             xtype: 'component',
