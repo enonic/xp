@@ -1,9 +1,6 @@
 Ext.define('Admin.view.account.ContextMenu', {
-    extend: 'Ext.menu.Menu',
+    extend: 'Admin.view.BaseContextMenu',
     alias: 'widget.accountContextMenu',
-
-    cls: 'admin-context-menu',
-    border: false,
 
     items: [
         {

@@ -1,9 +1,7 @@
 Ext.define('Admin.view.contentManager.ContextMenu', {
-    extend: 'Ext.menu.Menu',
+    extend: 'Admin.view.BaseContextMenu',
     alias: 'widget.contentManagerContextMenu',
 
-    cls: 'admin-context-menu',
-    border: false,
     items: [
         {
             text: 'Edit',

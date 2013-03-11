@@ -1,9 +1,6 @@
 Ext.define('Admin.view.contentStudio.ContextMenu', {
-    extend: 'Ext.menu.Menu',
+    extend: 'Admin.view.BaseContextMenu',
     alias: 'widget.contentStudioContextMenu',
-
-    cls: 'admin-context-menu',
-    border: false,
 
     items: [
         {
