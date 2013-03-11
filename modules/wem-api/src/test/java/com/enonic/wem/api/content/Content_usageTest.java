@@ -1,16 +1,24 @@
 package com.enonic.wem.api.content;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 import org.junit.Test;
 
+import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Date;
 import com.enonic.wem.api.content.data.DecimalNumber;
+import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.HtmlPart;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Text;
 import com.enonic.wem.api.content.data.WholeNumber;
+import com.enonic.wem.api.content.data.type.BaseDataType;
+import com.enonic.wem.api.content.data.type.DataTypes;
 
 import static com.enonic.wem.api.content.data.Data.newData;
 import static com.enonic.wem.api.content.data.Data.newDate;
@@ -188,5 +196,156 @@ public class Content_usageTest
         assertEquals( "b", dataSet.getData( "myText" ).getString( 1 ) );
         assertEquals( "c", dataSet.getData( "myText" ).getString( 2 ) );
     }
+
+    @Test
+    public void invoice_newData()
+    {
+        Invoice invoice = new Invoice();
+        invoice.invoiceDate = DateTime.now();
+        invoice.recipient = "Runar Myklebust";
+        invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 4mm", 120.00 ) );
+        invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
+
+        RootDataSet rootDataSet = new RootDataSet();
+        rootDataSet.add(
+            Data.newData().name( "invoiceDate" ).value( invoice.invoiceDate.toDateMidnight() ).type( DataTypes.DATE ).build() );
+        rootDataSet.add( Data.newData().name( "recipient" ).value( invoice.recipient ).type( DataTypes.TEXT ).build() );
+
+        for ( InvoiceLine line : invoice.lines )
+        {
+            DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
+            invoiceLine.add( newData().name( "text" ).value( line.text ).type( DataTypes.TEXT ).build() );
+            invoiceLine.add( newData().name( "money" ).value( line.money ).type( resolveType( line.money ) ).build() );
+
+            rootDataSet.add( invoiceLine );
+        }
+
+        // print out
+        System.out.println( rootDataSet.getData( "invoiceDate" ).getDate() );
+        System.out.println( rootDataSet.getData( "recipient" ).getString() );
+        for ( Entry invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
+        {
+            DataSet invoiceLineDS = invoiceLine.toDataSet();
+            System.out.println( invoiceLineDS.getData( "text" ).getString() + ": " + invoiceLineDS.getData( "money" ).getString() );
+        }
+
+    }
+
+    @Test
+    public void invoice_newType()
+    {
+        Invoice invoice = new Invoice();
+        invoice.invoiceDate = DateTime.now();
+        invoice.recipient = "Runar Myklebust";
+        invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 4mm", 120.00 ) );
+        invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
+
+        RootDataSet rootDataSet = new RootDataSet();
+        rootDataSet.add( newDate().name( "invoiceDate" ).value( invoice.invoiceDate.toDateMidnight() ).build() );
+        rootDataSet.add( newText().name( "recipient" ).value( invoice.recipient ).build() );
+
+        for ( InvoiceLine line : invoice.lines )
+        {
+            DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
+            invoiceLine.add( newText().name( "text" ).value( line.text ).build() );
+
+            invoiceLine.add( newData().name( "money" ).value( line.money ).type( resolveType( line.money ) ).build() );
+            invoiceLine.add( myNewData( "money", line.money ) );
+
+            rootDataSet.add( invoiceLine );
+        }
+
+        // print out
+        System.out.println( rootDataSet.getData( "invoiceDate" ).getDate() );
+        System.out.println( rootDataSet.getData( "recipient" ).getString() );
+        for ( Entry invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
+        {
+            DataSet invoiceLineDS = invoiceLine.toDataSet();
+            System.out.println( invoiceLineDS.getData( "text" ).getString() + ": " + invoiceLineDS.getData( "money" ).getString() );
+        }
+
+    }
+
+    @Test
+    public void invoice_new_Type()
+    {
+        Invoice invoice = new Invoice();
+        invoice.invoiceDate = DateTime.now();
+        invoice.recipient = "Runar Myklebust";
+        invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 4mm", 120.00 ) );
+        invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
+
+        RootDataSet rootDataSet = new RootDataSet();
+        rootDataSet.add( new Date( "invoiceDate", invoice.invoiceDate.toDateMidnight() ) );
+        rootDataSet.add( new Text( "recipient", invoice.recipient ) );
+
+        for ( InvoiceLine line : invoice.lines )
+        {
+            DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
+            invoiceLine.add( new Text( "text", line.text ) );
+            invoiceLine.add( myNewData( "money", line.money ) );
+            rootDataSet.add( invoiceLine );
+        }
+
+        // print out
+        System.out.println( rootDataSet.getData( "invoiceDate" ).getDate() );
+        System.out.println( rootDataSet.getData( "recipient" ).getString() );
+        for ( Entry invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
+        {
+            DataSet invoiceLineDS = invoiceLine.toDataSet();
+            System.out.println( invoiceLineDS.getData( "text" ).getString() + ": " + invoiceLineDS.getData( "money" ).getString() );
+        }
+
+    }
+
+    private BaseDataType resolveType( final Object value )
+    {
+        if ( value instanceof Double )
+        {
+            return DataTypes.DECIMAL_NUMBER;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private Entry myNewData( final String text, final Object value )
+    {
+        if ( value instanceof Double )
+        {
+            return newDecimalNumber().name( text ).value( (Double) value ).build();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+
+    private class Invoice
+    {
+
+        private DateTime invoiceDate;
+
+        private String recipient;
+
+        private List<InvoiceLine> lines = new ArrayList<>();
+
+    }
+
+    private class InvoiceLine
+    {
+        private String text;
+
+        private Double money;
+
+        private InvoiceLine( final String text, final Double money )
+        {
+            this.text = text;
+            this.money = money;
+        }
+    }
+
 
 }

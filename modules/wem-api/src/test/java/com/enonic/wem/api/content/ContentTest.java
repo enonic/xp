@@ -606,10 +606,7 @@ public class ContentTest
         rootDataSet.add( newText().name( "myData" ).value( "1" ).build() );
         rootDataSet.add( newXml().name( "myXml" ).value( "<root/>" ).build() );
 
-        Content content = newContent().name( "myContent" ).rootDataSet( rootDataSet ).build();
-
         assertEquals( "1", rootDataSet.getData( "myData" ).getValue().asString() );
-
         assertEquals( "1", rootDataSet.getData( "myData" ).getString() );
     }
 

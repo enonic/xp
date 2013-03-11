@@ -8,11 +8,37 @@ public final class Text
 {
     public Text( final String name, final String value )
     {
-        super( Data.newData().name( name ).value( Value.newValue().type( DataTypes.TEXT ).value( value ) ) );
+        super( newText().name( name ).value( value ) );
     }
 
     public Text( final TextBuilder builder )
     {
         super( builder );
+    }
+
+    public static TextBuilder newText()
+    {
+        return new TextBuilder();
+    }
+
+    public static class TextBuilder
+        extends BaseBuilder<TextBuilder>
+    {
+        public TextBuilder()
+        {
+            setType( DataTypes.TEXT );
+        }
+
+        public TextBuilder value( final String value )
+        {
+            setValue( value );
+            return this;
+        }
+
+        @Override
+        public Data build()
+        {
+            return new Text( this );
+        }
     }
 }
