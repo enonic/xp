@@ -114,8 +114,8 @@
 
     proto.showForPage = function ($component) {
         var me = this;
-        me.toggleArrowPosition(true);
-        me.toggleRightSideButton(true);
+        me.toggleTipArrowPosition(true);
+        me.toggleRightSideButtons(true);
         var componentBox = util.getBoxModel($component),
             leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2);
 
@@ -129,8 +129,8 @@
 
     proto.showForComponent = function ($component) {
         var me = this;
-        me.toggleArrowPosition(false);
-        me.toggleRightSideButton(false);
+        me.toggleTipArrowPosition(false);
+        me.toggleRightSideButtons(false);
         var componentBox = util.getBoxModel($component),
             leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2),
             topPos = componentBox.top - me.getEl().height() - 10;
@@ -164,7 +164,7 @@
     };
 
 
-    proto.toggleArrowPosition = function (isPageComponent) {
+    proto.toggleTipArrowPosition = function (isPageComponent) {
         var me = this;
         if (isPageComponent) {
             me.getEl().removeClass('live-edit-component-tip-arrow-bottom').addClass('live-edit-component-tip-arrow-top');
@@ -174,7 +174,7 @@
     };
 
 
-    proto.toggleRightSideButton = function (isPageComponent) {
+    proto.toggleRightSideButtons = function (isPageComponent) {
         var me = this;
         me.getParentButton().css('display', isPageComponent ? 'none' : 'block');
         me.getDeselectButton().css('display', isPageComponent ? 'block' : 'none');
@@ -195,7 +195,7 @@
         }
 
         if (me.$selectedComponent) {
-            $(window).trigger('tip:menu:click', [me.$selectedComponent]);
+            $(window).trigger('tip:menubutton:click', [me.$selectedComponent]);
         }
     };
 

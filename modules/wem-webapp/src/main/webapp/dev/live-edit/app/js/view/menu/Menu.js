@@ -44,7 +44,7 @@
         $(window).on('component:click:select', $.proxy(this.show, this));
         */
         $(window).on('component:click:deselect', $.proxy(this.hide, this));
-        $(window).on('tip:menu:click', $.proxy(this.toggle, this));
+        $(window).on('tip:menubutton:click', $.proxy(this.toggle, this));
         $(window).on('component:sort:start', $.proxy(this.fadeOutAndHide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));
         $(window).on('component:paragraph:edit:init', $.proxy(this.hide, this));
@@ -72,9 +72,22 @@
 
     proto.show = function (event, $selectedComponent) {
         var me = this;
-        me.getMenuForComponent($selectedComponent);
-        me.moveToTip();
+        me.updateMenuItemsForComponent($selectedComponent);
+
+
+        me.moveToTip($selectedComponent);
+
         me.getEl().show();
+
+        /*
+        var componentType = util.getComponentType($selectedComponent);
+        if (componentType === 'page') {
+            me.getEl().css('position', 'fixed');
+        } else {
+            me.getEl().css('position', '');
+        }
+        */
+
         me.hidden = false;
     };
 
@@ -110,7 +123,7 @@
     };
 
 
-    proto.getMenuForComponent = function ($component) {
+    proto.updateMenuItemsForComponent = function ($component) {
         var componentType = util.getComponentType($component);
         if (this.buttonConfig.hasOwnProperty(componentType)) {
             var buttonArray = this.buttonConfig[componentType];

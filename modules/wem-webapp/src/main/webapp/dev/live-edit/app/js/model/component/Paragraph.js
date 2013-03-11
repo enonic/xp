@@ -108,7 +108,7 @@
         if ($paragraph === null) {
             return;
         }
-        $(window).trigger('component:paragraph:edit:destroy', [me.$selectedParagraph]);
+        $(window).trigger('component:paragraph:edit:leave', [me.$selectedParagraph]);
 
         $paragraph.css('cursor', '');
         $paragraph.removeClass('live-edit-edited-paragraph');

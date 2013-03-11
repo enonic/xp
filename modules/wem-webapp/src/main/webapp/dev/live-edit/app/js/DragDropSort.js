@@ -189,7 +189,7 @@ AdminLiveEdit.DragDropSort = (function () {
             $liveedit(regionSelector).sortable('option', 'cancel', '[data-live-edit-type=paragraph]');
         });
 
-        $liveedit(window).on('component:paragraph:edit:destroy', function () {
+        $liveedit(window).on('component:paragraph:edit:leave', function () {
             $liveedit(regionSelector).sortable('option', 'cancel', '');
         });
     }

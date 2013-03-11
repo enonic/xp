@@ -17,7 +17,7 @@ AdminLiveEdit.view.InPlaceEditor = (function ($) {
         $(window).on('component:paragraph:edit:init', function (event, $paragraph) {
             activate($paragraph);
         });
-        $(window).on('component:paragraph:edit:destroy', function (event, $paragraph) {
+        $(window).on('component:paragraph:edit:leave', function (event, $paragraph) {
             deActivate($paragraph);
         });
     }
