@@ -2698,7 +2698,7 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     line-height: 1;
 }
 
-/* line 22, ../sass/admin/css/_wizard.scss */
+/* line 2, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation {
     margin: 0 !important;
     padding: 0 !important;
@@ -2707,12 +2707,12 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     overflow: hidden;
 }
 
-/* line 30, ../sass/admin/css/_wizard.scss */
+/* line 10, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li {
     float: left;
 }
 
-/* line 34, ../sass/admin/css/_wizard.scss */
+/* line 14, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a {
     color: #222;
     text-decoration: none !important;
@@ -2723,12 +2723,12 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     float: left;
 }
 
-/* line 44, ../sass/admin/css/_wizard.scss */
+/* line 24, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.first {
     padding-left: 20px;
 }
 
-/* line 48, ../sass/admin/css/_wizard.scss */
+/* line 28, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a:after {
     content: " ";
     display: block;
@@ -2745,7 +2745,7 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     z-index: 2;
 }
 
-/* line 63, ../sass/admin/css/_wizard.scss */
+/* line 43, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a:before {
     content: " ";
     display: block;
@@ -2763,51 +2763,51 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     z-index: 1;
 }
 
-/* line 82, ../sass/admin/css/_wizard.scss */
+/* line 62, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current {
     background-color: #fff;
 }
 
-/* line 86, ../sass/admin/css/_wizard.scss */
+/* line 66, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current:after {
     border-left: 30px solid white;
 }
 
-/* line 90, ../sass/admin/css/_wizard.scss */
+/* line 70, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current:before {
     border-left: 30px solid white;
 }
 
-/* line 94, ../sass/admin/css/_wizard.scss */
+/* line 74, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.next {
     color: #acacac;
 }
 
-/* line 98, ../sass/admin/css/_wizard.scss */
+/* line 78, ../sass/admin/css/_wizard.scss */
 .admin-wizard .toolbar .x-mask {
     display: none;
 }
 
-/* line 102, ../sass/admin/css/_wizard.scss */
+/* line 82, ../sass/admin/css/_wizard.scss */
 .admin-wizard .toolbar .x-item-disabled {
     opacity: 1;
     filter: none;
 }
 
-/* line 107, ../sass/admin/css/_wizard.scss */
+/* line 87, ../sass/admin/css/_wizard.scss */
 .admin-wizard div.navigation-container {
     padding: 7px 12px 0 6px;
     background-color: #fff;
 }
 
-/* line 111, ../sass/admin/css/_wizard.scss */
+/* line 91, ../sass/admin/css/_wizard.scss */
 .admin-wizard div.navigation-container-sticky {
     position: fixed;
     top: 89px;
     width: 100%;
 }
 
-/* line 121, ../sass/admin/css/_wizard.scss */
+/* line 101, ../sass/admin/css/_wizard.scss */
 .admin-wizard-edit ul.navigation a.next,
 .admin-wizard-edit ul.navigation a.next.immediate,
 .admin-wizard-edit ul.navigation a.next.last {
@@ -2815,31 +2815,31 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     cursor: pointer;
 }
 
-/* line 126, ../sass/admin/css/_wizard.scss */
+/* line 106, ../sass/admin/css/_wizard.scss */
 .admin-wizard-edit .toolbar-disabled ul.navigation a.next.last {
     color: #acacac;
     cursor: default;
 }
 
-/* line 133, ../sass/admin/css/_wizard.scss */
+/* line 113, ../sass/admin/css/_wizard.scss */
 .admin-wizard-new ul.navigation li a.next {
     color: #acacac;
     cursor: default;
 }
 
-/* line 138, ../sass/admin/css/_wizard.scss */
+/* line 118, ../sass/admin/css/_wizard.scss */
 .admin-wizard-new ul.navigation li a.next.immediate {
     /*        color: #222;*/
     cursor: pointer;
 }
 
-/* line 145, ../sass/admin/css/_wizard.scss */
+/* line 125, ../sass/admin/css/_wizard.scss */
 .admin-wizard-new .toolbar-diabled ul.navigation a.next, .admin-wizard-new .toolbar-diabled ul.navigation a.next.immidiate, .admin-wizard-new .toolbar-diabled ul.navigation a.next.last {
     color: #acacac;
     cursor: default;
 }
 
-/* line 156, ../sass/admin/css/_wizard.scss */
+/* line 136, ../sass/admin/css/_wizard.scss */
 .admin-wizard > div > .x-panel-body,
 .admin-glowing-item .x-panel-body,
 .admin-validation-label div,
@@ -2847,58 +2847,164 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     border: 0 none;
 }
 
-/* line 160, ../sass/admin/css/_wizard.scss */
-.admin-display-name {
+/*
+*   Styles used in Admin.view.WizardHeader
+*/
+/* line 181, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container {
+    margin: 0 10px 3px 5px;
+    font-size: 12px;
+}
+
+/* line 185, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-display-name {
+    margin: 0;
     width: 100%;
 }
 
-/* line 163, ../sass/admin/css/_wizard.scss */
-.admin-display-name input {
+/* line 148, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-display-name .x-form-item-body {
+    padding: 3px;
+}
+
+/* line 152, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-display-name .x-form-item-body input {
     border: 1px solid transparent;
     color: #555555;
     font-weight: normal;
     margin: 0;
+    padding: 2px;
     border-radius: 2px;
     background: white none;
+}
+
+/* line 166, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-display-name input:hover {
+    border: 1px solid #98c9f2;
+    box-shadow: 0 0 3px #98c9f2;
+}
+
+/* line 170, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-display-name input:focus {
+    color: #000;
+    border: 1px solid #99bce8;
+}
+
+/* line 175, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-display-name input.x-form-invalid-field {
+    border: 1px solid #cc3300;
+    box-shadow: 0 0 0 transparent;
+}
+
+/* line 190, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-display-name input {
     font-size: 26px;
     line-height: 36px !important;
     height: 36px !important;
 }
 
-/* line 11, ../sass/admin/css/_wizard.scss */
-.admin-display-name input:hover {
-    border: 1px solid #98c9f2;
-    box-shadow: 0 0 3px #98c9f2;
+/* line 197, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-path {
+    margin: 0;
 }
 
-/* line 15, ../sass/admin/css/_wizard.scss */
-.admin-display-name input:focus {
-    color: black !important;
-    border: 1px solid #99bce8 !important;
+/* line 148, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-path .x-form-item-body {
+    padding: 3px;
 }
 
-/* line 175, ../sass/admin/css/_wizard.scss */
-.admin-content-path table {
-    width: 100%;
+/* line 152, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-path .x-form-item-body input {
+    border: 1px solid transparent;
+    color: #555555;
+    font-weight: normal;
+    margin: 0;
+    padding: 2px;
+    border-radius: 2px;
+    background: white none;
 }
 
-/* line 178, ../sass/admin/css/_wizard.scss */
-.admin-content-path table td.fluid {
-    width: 100%;
-}
-
-/* line 182, ../sass/admin/css/_wizard.scss */
-.admin-content-path table span {
+/* line 200, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-path input {
     color: #AAA;
     font-size: 16px;
     line-height: 26px !important;
     height: 26px !important;
-    padding: 0 0 0 10px;
     white-space: nowrap;
 }
 
-/* line 191, ../sass/admin/css/_wizard.scss */
-.admin-content-path table input {
+/* line 209, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-name {
+    margin: 0;
+}
+
+/* line 148, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-name .x-form-item-body {
+    padding: 3px;
+}
+
+/* line 152, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-name .x-form-item-body input {
+    border: 1px solid transparent;
+    color: #555555;
+    font-weight: normal;
+    margin: 0;
+    padding: 2px;
+    border-radius: 2px;
+    background: white none;
+}
+
+/* line 166, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-name:not(.x-form-readonly) input:hover {
+    border: 1px solid #98c9f2;
+    box-shadow: 0 0 3px #98c9f2;
+}
+
+/* line 170, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-name:not(.x-form-readonly) input:focus {
+    color: #000;
+    border: 1px solid #99bce8;
+}
+
+/* line 175, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-name:not(.x-form-readonly) input.x-form-invalid-field {
+    border: 1px solid #cc3300;
+    box-shadow: 0 0 0 transparent;
+}
+
+/* line 215, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-name input {
+    font-size: 16px;
+    line-height: 26px !important;
+    height: 26px !important;
+}
+
+/*
+*   Styles used in old wizard headers with templates
+*   //TODO: To be deleted after every wizard uses Admin.view.WizardHeader
+*/
+/* line 253, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-content-path table {
+    width: 100%;
+}
+
+/* line 256, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-content-path table td.fluid {
+    width: 100%;
+}
+
+/* line 260, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-content-path table span {
+    color: #AAA;
+    font-size: 16px;
+    line-height: 26px !important;
+    height: 26px !important;
+    padding: 0 0 0 6px;
+    white-space: nowrap;
+}
+
+/* line 269, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-content-path table input {
     border: 1px solid transparent;
     color: #555555;
     font-weight: normal;
@@ -2912,29 +3018,21 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     padding: 2px;
 }
 
-/* line 11, ../sass/admin/css/_wizard.scss */
-.admin-content-path table input:not([readonly]):hover {
+/* line 239, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-content-path table input:not([readonly]):hover {
     border: 1px solid #98c9f2;
     box-shadow: 0 0 3px #98c9f2;
 }
 
-/* line 15, ../sass/admin/css/_wizard.scss */
-.admin-content-path table input:not([readonly]):focus {
+/* line 243, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-content-path table input:not([readonly]):focus {
     color: black !important;
     border: 1px solid #99bce8 !important;
 }
 
-/* line 209, ../sass/admin/css/_wizard.scss */
-.admin-wizard-header-container {
-    margin: 0 10px 3px 5px;
-    font-size: 12px;
-}
-
-/* line 213, ../sass/admin/css/_wizard.scss */
-.admin-wizard-header-container .admin-wizard-header {
-    position: relative;
-}
-
+/*
+*   End of styles used in old wizard headers with templates
+*/
 /* line 1, ../sass/admin/css/_image-upload-button.scss */
 .admin-image-upload-button-container {
     position: relative;
