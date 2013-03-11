@@ -274,6 +274,8 @@ public class OccurrenceValidatorTest
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.getRootDataSet().setData( "mySet.myUnrequiredData", "1" );
 
+        assertEquals( "mySet.myRequiredInput", mySet.getInput( "myRequiredInput" ).getPath().toString() );
+
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getRootDataSet() );
         assertTrue( validationResults.hasErrors() );

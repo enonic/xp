@@ -30,7 +30,7 @@ final class MinimumOccurrencesValidator
     {
         final List<DataSet> parentDataSets = Lists.newArrayList();
         parentDataSets.add( dataSet );
-        validate( form.formItemIterable(), parentDataSets );
+        validate( form, parentDataSets );
     }
 
     private void validate( final Iterable<FormItem> formItems, final List<DataSet> parentDataSets )

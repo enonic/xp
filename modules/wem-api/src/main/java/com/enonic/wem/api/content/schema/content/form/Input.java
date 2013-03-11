@@ -13,7 +13,7 @@ import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypeConfig;
 import static com.enonic.wem.api.content.schema.content.form.Occurrences.newOccurrences;
 
 public final class Input
-    extends HierarchicalFormItem
+    extends FormItem
 {
     private final BaseInputType type;
 

@@ -12,23 +12,21 @@ import com.enonic.wem.api.content.schema.mixin.MixinFetcher;
 /**
  * Mutable.
  */
-public class FormItems
+class FormItems
     implements Iterable<FormItem>
 {
     private final FormItem containerFormItem;
 
-    private LinkedHashMap<String, FormItem> formItemByName = new LinkedHashMap<String, FormItem>();
+    private LinkedHashMap<String, FormItem> formItemByName = new LinkedHashMap<>();
 
-    private LinkedHashMap<String, HierarchicalFormItem> hierarchicalFormItemByName = new LinkedHashMap<String, HierarchicalFormItem>();
+    private LinkedHashMap<String, Layout> layoutByName = new LinkedHashMap<>();
 
-    private LinkedHashMap<String, Layout> layoutByName = new LinkedHashMap<String, Layout>();
-
-    public FormItems( final FormItem containerFormItem )
+    FormItems( final FormItem containerFormItem )
     {
         this.containerFormItem = containerFormItem;
     }
 
-    public FormItemPath getPath()
+    FormItemPath getPath()
     {
         if ( containerFormItem == null )
         {
@@ -37,8 +35,13 @@ public class FormItems
         return containerFormItem.getPath();
     }
 
-    public void add( final FormItem formItem )
+    void add( final FormItem formItem )
     {
+        if ( formItem.getParent() != null )
+        {
+            throw new IllegalArgumentException(
+                "formItem [" + formItem.getName() + "] already added to: " + formItem.getParent().getPath().toString() );
+        }
         Object previous = formItemByName.put( formItem.getName(), formItem );
         Preconditions.checkArgument( previous == null, "FormItem already added: " + formItem );
 
@@ -48,54 +51,53 @@ public class FormItems
         {
             layoutByName.put( formItem.getName(), (Layout) formItem );
         }
-        else if ( formItem instanceof HierarchicalFormItem )
-        {
-            hierarchicalFormItemByName.put( formItem.getName(), (HierarchicalFormItem) formItem );
-        }
     }
 
-    public HierarchicalFormItem getHierarchicalFormItem( final FormItemPath path )
+    FormItem getFormItem( final FormItemPath path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
 
-        final String firstPathElement = path.getFirstElement();
         if ( path.elementCount() > 1 )
         {
-            HierarchicalFormItem foundConfig = doGetHierarchicalFormItem( firstPathElement );
-            if ( foundConfig == null )
-            {
-                return null;
-            }
-
-            if ( foundConfig instanceof FormItemSet )
-            {
-                FormItemSet formItemSet = (FormItemSet) foundConfig;
-                return formItemSet.getHierarchicalFormItem( path.asNewWithoutFirstPathElement() );
-            }
-            else if ( foundConfig instanceof MixinReference )
-            {
-                throw new IllegalArgumentException(
-                    "Cannot get formItem [" + path + "] because it's past a MixinReference [" + foundConfig +
-                        "], resolve the MixinReference first." );
-            }
-            else
-            {
-                return foundConfig;
-            }
+            return doForwardGetFormItem( path );
         }
         else
         {
-            return doGetHierarchicalFormItem( firstPathElement );
+            return doGetFormItem( path.getFirstElement() );
         }
     }
 
-    private HierarchicalFormItem doGetHierarchicalFormItem( final String name )
+    private FormItem doForwardGetFormItem( final FormItemPath path )
     {
-        return typeCast( doGetFormItem( name ), HierarchicalFormItem.class );
+        FormItem foundFormItem = doGetFormItem( path.getFirstElement() );
+        if ( foundFormItem == null )
+        {
+            return null;
+        }
+
+        if ( foundFormItem instanceof FormItemSet )
+        {
+            FormItemSet formItemSet = (FormItemSet) foundFormItem;
+            return formItemSet.getFormItem( path.asNewWithoutFirstPathElement() );
+        }
+        else if ( foundFormItem instanceof MixinReference )
+        {
+            throw new IllegalArgumentException( "Cannot get formItem [" + path + "] because it's past a MixinReference [" + foundFormItem +
+                                                    "], resolve the MixinReference first." );
+        }
+        else
+        {
+            return foundFormItem;
+        }
     }
 
-    public FormItem doGetFormItem( final String name )
+    /*private HierarchicalFormItem doGetHierarchicalFormItem( final String name )
+    {
+        return typeCast( doGetFormItem( name ), HierarchicalFormItem.class );
+    }*/
+
+    FormItem doGetFormItem( final String name )
     {
         Preconditions.checkArgument( FormItemPath.hasNotPathElementDivider( name ), "name cannot be a path: %s", name );
 
@@ -107,69 +109,29 @@ public class FormItems
         return foundFormItem;
     }
 
-    public FormItem getFormItem( final String name )
+    Input getInput( final FormItemPath path )
     {
-        return doGetFormItem( name );
+        return typeCast( getFormItem( path ), Input.class );
     }
 
-    public HierarchicalFormItem getFormItem( final FormItemPath path )
+    FormItemSet getFormItemSet( final FormItemPath path )
     {
-        return getHierarchicalFormItem( path );
+        return typeCast( getFormItem( path ), FormItemSet.class );
     }
 
-    public Input getInput( final String name )
+    MixinReference getMixinReference( final FormItemPath path )
     {
-        return typeCast( doGetFormItem( name ), Input.class );
+        return typeCast( getFormItem( path ), MixinReference.class );
     }
 
-    public Input getInput( final FormItemPath path )
+    Layout getLayout( final FormItemPath path )
     {
-        return typeCast( getHierarchicalFormItem( path ), Input.class );
-    }
-
-    public FormItemSet getFormItemSet( final String name )
-    {
-        return typeCast( doGetFormItem( name ), FormItemSet.class );
-    }
-
-    public FormItemSet getFormItemSet( final FormItemPath path )
-    {
-        return typeCast( getHierarchicalFormItem( path ), FormItemSet.class );
-    }
-
-    public MixinReference getMixinReference( final String name )
-    {
-        return typeCast( doGetFormItem( name ), MixinReference.class );
-    }
-
-    public MixinReference getMixinReference( final FormItemPath path )
-    {
-        return typeCast( getHierarchicalFormItem( path ), MixinReference.class );
-    }
-
-    public Layout getLayout( final String name )
-    {
-        return typeCast( doGetFormItem( name ), Layout.class );
+        return typeCast( getFormItem( path ), Layout.class );
     }
 
     public Iterator<FormItem> iterator()
     {
         return formItemByName.values().iterator();
-    }
-
-    public Iterable<FormItem> iterable()
-    {
-        return formItemByName.values();
-    }
-
-    public Iterable<HierarchicalFormItem> iterableForHierarchicalFormItems()
-    {
-        return hierarchicalFormItemByName.values();
-    }
-
-    public int size()
-    {
-        return formItemByName.size();
     }
 
     @Override
@@ -180,22 +142,12 @@ public class FormItems
         final int size = formItemByName.size();
         for ( FormItem entry : formItemByName.values() )
         {
-            if ( entry instanceof HierarchicalFormItem )
+            s.append( entry.getName() );
+            if ( index < size - 1 )
             {
-                s.append( entry.getName() );
-                if ( index < size - 1 )
-                {
-                    s.append( ", " );
-                }
-                index++;
+                s.append( ", " );
             }
-            else if ( entry instanceof FieldSet )
-            {
-                FieldSet fieldSet = (FieldSet) entry;
-                s.append( fieldSet.getName() ).append( "{" );
-                s.append( fieldSet.getFormItems().toString() );
-                s.append( "}" );
-            }
+            index++;
         }
         return s.toString();
     }

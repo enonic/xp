@@ -7,7 +7,7 @@ import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 
 public class MixinReference
-    extends HierarchicalFormItem
+    extends FormItem
 {
     private final QualifiedMixinName qualifiedMixinName;
 
@@ -25,6 +25,8 @@ public class MixinReference
         this.qualifiedMixinName = builder.qualifiedMixinName;
 
         Preconditions.checkNotNull( builder.mixinClass, "mixinClass is required" );
+        Preconditions.checkArgument( builder.mixinClass.equals( Input.class ) || builder.mixinClass.equals( FormItemSet.class ),
+                                     "mixinClass must be of type Input or FormItemSet" );
         mixinClass = builder.mixinClass;
 
         this.occurrences = builder.occurrences;

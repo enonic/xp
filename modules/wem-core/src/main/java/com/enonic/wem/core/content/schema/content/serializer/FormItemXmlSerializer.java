@@ -6,7 +6,6 @@ import org.jdom.Element;
 import com.enonic.wem.api.content.schema.content.form.FieldSet;
 import com.enonic.wem.api.content.schema.content.form.FormItem;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
-import com.enonic.wem.api.content.schema.content.form.HierarchicalFormItem;
 import com.enonic.wem.api.content.schema.content.form.Input;
 import com.enonic.wem.api.content.schema.content.form.Layout;
 import com.enonic.wem.api.content.schema.content.form.MixinReference;
@@ -201,7 +200,7 @@ public class FormItemXmlSerializer
         return builder.build();
     }
 
-    private HierarchicalFormItem parseFormItemSet( final Element formItemEl )
+    private FormItemSet parseFormItemSet( final Element formItemEl )
     {
         final FormItemSet.Builder builder = newFormItemSet();
         builder.name( formItemEl.getAttributeValue( NAME ) );
@@ -249,7 +248,7 @@ public class FormItemXmlSerializer
         return builder.build();
     }
 
-    private HierarchicalFormItem parseMixinReference( final Element formItemEl )
+    private MixinReference parseMixinReference( final Element formItemEl )
     {
         final MixinReference.Builder builder = MixinReference.newMixinReference();
         builder.name( formItemEl.getAttributeValue( NAME ) );

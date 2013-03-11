@@ -58,11 +58,16 @@ public class DataSet
         doAdd( entry );
     }
 
-    private void doAdd( final Entry newEntry )
+    private void doAdd( final Entry entry )
     {
-        newEntry.setParent( this );
-        registerArray( newEntry );
-        entryById.put( newEntry.getEntryId(), newEntry );
+        if ( entry.getParent() != null )
+        {
+            throw new IllegalArgumentException(
+                "entry [" + entry.getName() + "] already added to another parent: " + entry.getParent().getPath().toString() );
+        }
+        entry.setParent( this );
+        registerArray( entry );
+        entryById.put( entry.getEntryId(), entry );
     }
 
     public final void setData( final String path, final String... values )
@@ -240,7 +245,7 @@ public class DataSet
 
         if ( path.elementCount() > 1 )
         {
-            return forwardGetEntryToDataSet( path );
+            return doForwardGetEntry( path );
         }
         else
         {
@@ -248,7 +253,7 @@ public class DataSet
         }
     }
 
-    private Entry forwardGetEntryToDataSet( final EntryPath path )
+    private Entry doForwardGetEntry( final EntryPath path )
     {
         final Entry entry = entryById.get( EntryId.from( path.getFirstElement() ) );
         if ( entry == null )

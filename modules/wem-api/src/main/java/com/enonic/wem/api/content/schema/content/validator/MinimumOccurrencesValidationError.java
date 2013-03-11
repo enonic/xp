@@ -8,7 +8,7 @@ public final class MinimumOccurrencesValidationError
 {
     public MinimumOccurrencesValidationError( final Input input, final int entryCount )
     {
-        super( input.getPath(), "Input [{0}] requires minimum {1,choice,1#1 occurrence|1<{1} occurrences}: {2}", input,
+        super( input.getPath(), "Input [{0}] requires minimum {1,choice,1#1 occurrence|1<{1} occurrences}: {2}", input.getPath(),
                input.getOccurrences().getMinimum(), entryCount );
     }
 

@@ -237,7 +237,7 @@ public abstract class AbstractContentTypeSerializerTest
 
         // verify
         assertEquals( "myInput", parsedContentType.form().getInput( "myInput" ).getPath().toString() );
-        FieldSet fieldSet = (FieldSet) parsedContentType.form().formItemIterable().iterator().next();
+        FieldSet fieldSet = (FieldSet) parsedContentType.form().iterator().next();
         assertEquals( "myInput", fieldSet.getInput( "myInput" ).getPath().toString() );
     }
 

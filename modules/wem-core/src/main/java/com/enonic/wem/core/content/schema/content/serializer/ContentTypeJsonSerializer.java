@@ -75,7 +75,7 @@ public class ContentTypeJsonSerializer
         }
         else
         {
-            objectNode.put( "form", formItemsSerializer.serialize( contentType.form().getFormItems() ) );
+            objectNode.put( "form", formItemsSerializer.serialize( contentType.form() ) );
         }
         return objectNode;
     }

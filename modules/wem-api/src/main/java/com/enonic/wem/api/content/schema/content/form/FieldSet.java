@@ -58,17 +58,17 @@ public class FieldSet
 
     public FormItem getFormItem( final String name )
     {
-        return formItems.getFormItem( name );
+        return formItems.getFormItem( FormItemPath.from( name ) );
     }
 
     public Input getInput( final String name )
     {
-        return formItems.getInput( name );
+        return formItems.getInput( FormItemPath.from( name ) );
     }
 
     public Iterable<FormItem> formItemIterable()
     {
-        return formItems.iterable();
+        return formItems;
     }
 
     public static Builder newFieldSet()

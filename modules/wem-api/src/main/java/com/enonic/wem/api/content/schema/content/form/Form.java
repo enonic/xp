@@ -29,34 +29,19 @@ public final class Form
         this.formItems.add( formItem );
     }
 
-    public Iterable<FormItem> formItemIterable()
-    {
-        return formItems;
-    }
-
-    public HierarchicalFormItem getFormItem( final String path )
+    public FormItem getFormItem( final String path )
     {
         return formItems.getFormItem( FormItemPath.from( path ) );
     }
 
-    public HierarchicalFormItem getFormItem( final FormItemPath path )
+    public FormItem getFormItem( final FormItemPath path )
     {
         return formItems.getFormItem( path );
     }
 
-    public FormItems getFormItems()
+    public FormItemSet getFormItemSet( final String path )
     {
-        return formItems;
-    }
-
-    public Input getInput( final FormItemPath path )
-    {
-        return formItems.getInput( path );
-    }
-
-    public Input getInput( final String path )
-    {
-        return FormItemPath.hasNotPathElementDivider( path ) ? formItems.getInput( path ) : formItems.getInput( FormItemPath.from( path ) );
+        return formItems.getFormItemSet( FormItemPath.from( path ) );
     }
 
     public FormItemSet getFormItemSet( final FormItemPath path )
@@ -64,23 +49,24 @@ public final class Form
         return formItems.getFormItemSet( path );
     }
 
-    public FormItemSet getFormItemSet( final String path )
+    public Input getInput( final String path )
     {
-        return FormItemPath.hasNotPathElementDivider( path )
-            ? formItems.getFormItemSet( path )
-            : formItems.getFormItemSet( FormItemPath.from( path ) );
+        return formItems.getInput( FormItemPath.from( path ) );
     }
 
-    public MixinReference getMixinReference( final FormItemPath path )
+    public Input getInput( final FormItemPath path )
     {
-        return formItems.getMixinReference( path );
+        return formItems.getInput( path );
     }
 
-    public MixinReference getMixinReference( final String path )
+    public MixinReference getMixinReference( final String name )
     {
-        return FormItemPath.hasNotPathElementDivider( path )
-            ? formItems.getMixinReference( path )
-            : formItems.getMixinReference( FormItemPath.from( path ) );
+        return formItems.getMixinReference( FormItemPath.from( name ) );
+    }
+
+    public MixinReference getMixinReference( final FormItemPath formItemPath )
+    {
+        return formItems.getMixinReference( formItemPath );
     }
 
     public void mixinReferencesToFormItems( final MixinFetcher mixinFetcher )

@@ -55,7 +55,7 @@ public class ContentTypeXmlSerializer
 
         final Element formEl = new Element( "form" );
         typeEl.addContent( formEl );
-        formItemsSerializer.serialize( type.form().formItemIterable(), formEl );
+        formItemsSerializer.serialize( type.form(), formEl );
     }
 
     public ContentType toContentType( String xml )

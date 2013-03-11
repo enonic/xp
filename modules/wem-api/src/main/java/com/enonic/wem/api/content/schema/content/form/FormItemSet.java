@@ -8,7 +8,7 @@ import java.util.List;
 import static com.enonic.wem.api.content.schema.content.form.Occurrences.newOccurrences;
 
 public class FormItemSet
-    extends HierarchicalFormItem
+    extends FormItem
     implements Iterable<FormItem>
 {
     private final String label;
@@ -117,29 +117,39 @@ public class FormItemSet
         return newFormItemSet( this ).build();
     }
 
-    HierarchicalFormItem getHierarchicalFormItem( final FormItemPath formItemPath )
+    public FormItem getFormItem( final String path )
     {
-        return formItems.getHierarchicalFormItem( formItemPath );
+        return formItems.getFormItem( FormItemPath.from( path ) );
     }
 
-    public Input getInput( final String name )
+    public FormItem getFormItem( final FormItemPath path )
     {
-        return formItems.getInput( name );
+        return formItems.getFormItem( path );
     }
 
-    public Input getInput( final FormItemPath formItemPath )
+    public FormItemSet getFormItemSet( final String path )
     {
-        return formItems.getInput( formItemPath );
+        return formItems.getFormItemSet( FormItemPath.from( path ) );
     }
 
-    public FormItemSet getFormItemSet( final String name )
+    public FormItemSet getFormItemSet( final FormItemPath path )
     {
-        return formItems.getFormItemSet( name );
+        return formItems.getFormItemSet( path );
     }
 
-    public FormItemSet getFormItemSet( final FormItemPath formItemPath )
+    public Input getInput( final String path )
     {
-        return formItems.getFormItemSet( formItemPath );
+        return formItems.getInput( FormItemPath.from( path ) );
+    }
+
+    public Input getInput( final FormItemPath path )
+    {
+        return formItems.getInput( path );
+    }
+
+    public MixinReference getMixinReference( final String name )
+    {
+        return formItems.getMixinReference( FormItemPath.from( name ) );
     }
 
     public MixinReference getMixinReference( final FormItemPath formItemPath )
@@ -147,14 +157,9 @@ public class FormItemSet
         return formItems.getMixinReference( formItemPath );
     }
 
-    public MixinReference getMixinReference( final String name )
-    {
-        return formItems.getMixinReference( name );
-    }
-
     public Layout getLayout( final String name )
     {
-        return formItems.getLayout( name );
+        return formItems.getLayout( FormItemPath.from( name ) );
     }
 
     public static Builder newFormItemSet()

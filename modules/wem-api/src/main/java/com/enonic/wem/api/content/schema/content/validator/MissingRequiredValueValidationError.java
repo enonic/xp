@@ -8,7 +8,7 @@ public final class MissingRequiredValueValidationError
 {
     public MissingRequiredValueValidationError( final Input input, final Data data )
     {
-        super( input.getPath(), "Missing required value for input [{0}] of type [{1}]: {2}", input, input.getInputType(),
+        super( input.getPath(), "Missing required value for input [{0}] of type [{1}]: {2}", input.getPath(), input.getInputType(),
                data.getObject() );
     }
 }
