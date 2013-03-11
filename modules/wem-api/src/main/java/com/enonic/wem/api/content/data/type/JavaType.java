@@ -175,7 +175,7 @@ public final class JavaType
             super( org.joda.time.DateMidnight.class );
         }
 
-        public org.joda.time.DateMidnight convertFrom( Object value )
+        public org.joda.time.DateMidnight convertFrom( final Object value )
         {
             if ( value instanceof org.joda.time.DateMidnight )
             {
@@ -193,6 +193,11 @@ public final class JavaType
             {
                 return null;
             }
+        }
+
+        public org.joda.time.DateMidnight convert( final java.lang.String value )
+        {
+            return FORMATTER.parseDateTime( value ).toDateMidnight();
         }
     }
 
