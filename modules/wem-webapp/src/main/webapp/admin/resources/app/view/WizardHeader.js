@@ -68,7 +68,7 @@ Ext.define('Admin.view.WizardHeader', {
                 change: function (field, newVal, oldVal, opts) {
                     if (me.fireEvent('displaynamechange', newVal, oldVal) !== false) {
                         if (me.autogenerateName) {
-                            var processedValue = nameField.processRawValue(newVal);
+                            var processedValue = nameField.processRawValue(me.preProcessName(newVal));
                             nameField.setValue(processedValue);
                         }
                     }
@@ -129,6 +129,10 @@ Ext.define('Admin.view.WizardHeader', {
 
         this.callParent(arguments);
         this.addEvents('displaynamechange', 'namechange');
+    },
+
+    preProcessName: function (displayName) {
+        return !Ext.isEmpty(displayName) ? displayName.replace(/\s+/ig, '-').toLowerCase() : '';
     },
 
     prepareHeaderData: function (data) {

@@ -73,14 +73,12 @@ Ext.define('Admin.controller.spaceAdmin.WizardController', {
 
         var spaceModel = spaceWizard.data;
         var originalSpaceName = spaceModel && spaceModel.get('name');
-        var newSpaceName = originalSpaceName !== spaceName? spaceName : undefined;
-        var nameModified = (originalSpaceName !== spaceName);
 
         var spaceParams = {
-            spaceName: nameModified? originalSpaceName : spaceName,
+            spaceName: originalSpaceName || spaceName,
             displayName: displayName,
             iconReference: iconReference,
-            newSpaceName: nameModified? newSpaceName : undefined
+            newSpaceName: (originalSpaceName !== spaceName) ? spaceName : undefined
         };
 
         var onUpdateSpaceSuccess = function (created, updated) {
