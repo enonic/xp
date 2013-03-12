@@ -17,12 +17,6 @@ public class DateMidnight
         super( key, JavaType.DATE_MIDNIGHT );
     }
 
-    @Override
-    public String getIndexableString( final Object object )
-    {
-        return FORMATTER.print( (org.joda.time.DateMidnight) object );
-    }
-
     public Value toDate( final Value value )
     {
         if ( hasCorrectType( value ) )

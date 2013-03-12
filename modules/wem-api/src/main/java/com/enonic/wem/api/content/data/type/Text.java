@@ -11,12 +11,6 @@ public class Text
         super( key, JavaType.STRING );
     }
 
-    @Override
-    public String getIndexableString( final Object value )
-    {
-        return value.toString();
-    }
-
     public Value toString( final Value value )
     {
         if ( hasCorrectType( value ) )

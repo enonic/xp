@@ -10,12 +10,6 @@ public class ContentReference
         super( key, JavaType.STRING );
     }
 
-    @Override
-    public String getIndexableString( final Object value )
-    {
-        return value.toString();
-    }
-
     private Value toString( final Value value )
     {
         if ( hasCorrectType( value ) )

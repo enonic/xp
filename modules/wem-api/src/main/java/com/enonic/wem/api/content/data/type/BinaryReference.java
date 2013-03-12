@@ -11,12 +11,6 @@ public class BinaryReference
         super( key, JavaType.BLOB_KEY );
     }
 
-    @Override
-    public String getIndexableString( final Object value )
-    {
-        return value.toString();
-    }
-
     private Value toString( final Value value )
     {
         if ( hasCorrectType( value ) )

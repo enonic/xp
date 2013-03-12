@@ -19,12 +19,6 @@ public class GeographicCoordinate
     }
 
     @Override
-    public String getIndexableString( final Object value )
-    {
-        return null;
-    }
-
-    @Override
     public void checkValidity( final Data data )
         throws InvalidValueTypeException, InvalidValueException
     {

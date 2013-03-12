@@ -11,12 +11,6 @@ public class WholeNumber
         super( key, JavaType.LONG );
     }
 
-    @Override
-    public String getIndexableString( final Object value )
-    {
-        return value.toString();
-    }
-
 
     private Value toWholeNumber( final Value value )
     {

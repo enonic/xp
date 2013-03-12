@@ -10,9 +10,4 @@ public class HtmlPart
         super( key, JavaType.STRING );
     }
 
-    @Override
-    public String getIndexableString( final Object value )
-    {
-        return value.toString();
-    }
 }

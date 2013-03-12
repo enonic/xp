@@ -10,12 +10,6 @@ public class DecimalNumber
         super( key, JavaType.DOUBLE );
     }
 
-    @Override
-    public String getIndexableString( final Object value )
-    {
-        return value.toString();
-    }
-
 
     private Value toDecimalNumber( final Value value )
     {

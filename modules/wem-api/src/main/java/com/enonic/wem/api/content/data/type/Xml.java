@@ -11,12 +11,6 @@ public class Xml
         super( key, JavaType.STRING );
     }
 
-    @Override
-    public String getIndexableString( final Object value )
-    {
-        return value.toString();
-    }
-
     public Value toXml( final Value value )
     {
         if ( hasCorrectType( value ) )

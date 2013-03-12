@@ -17,8 +17,6 @@ public interface DataType
 
     JavaType.BaseType getJavaType();
 
-    String getIndexableString( Object value );
-
     void checkValidity( Data data )
         throws InvalidValueException, InvalidValueTypeException;
 

@@ -41,12 +41,6 @@ public abstract class BaseDataType
         return this.javaType;
     }
 
-    @Override
-    public String getIndexableString( final Object value )
-    {
-        throw new RuntimeException( "Not implemented method getIndexableString for " + this );
-    }
-
     /**
      * Checks by default if given data's value is of correct Java class.
      * Can be overridden by concrete classes to do extensive validation.
