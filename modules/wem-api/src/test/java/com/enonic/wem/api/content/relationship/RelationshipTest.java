@@ -22,6 +22,8 @@ public class RelationshipTest
         relationBuilder.toContent( ContentId.from( "b" ) );
         relationBuilder.createdTime( DateTime.parse( "2012-01-01T12:00:00" ) );
         relationBuilder.creator( UserKey.from( "myStore:myUser" ) );
+        relationBuilder.modifiedTime( DateTime.parse( "2012-01-01T12:00:00" ) );
+        relationBuilder.modifier( UserKey.from( "myStore:myUser" ) );
         relationBuilder.type( QualifiedRelationshipTypeName.from( "system:like" ) );
         relationBuilder.property( "stars", "4" );
 
@@ -33,6 +35,8 @@ public class RelationshipTest
         assertEquals( "b", relationship.getToContent().toString() );
         assertEquals( "myUser", relationship.getCreator().getLocalName() );
         assertEquals( DateTime.parse( "2012-01-01T12:00:00" ), relationship.getCreatedTime() );
+        assertEquals( "myUser", relationship.getModifier().getLocalName() );
+        assertEquals( DateTime.parse( "2012-01-01T12:00:00" ), relationship.getModifiedTime() );
         assertEquals( "like", relationship.getType().getLocalName() );
         assertEquals( "4", relationship.getProperty( "stars" ) );
     }

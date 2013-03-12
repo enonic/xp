@@ -26,6 +26,10 @@ public final class Relationship
 
     private final UserKey creator;
 
+    private DateTime modifiedTime;
+
+    private UserKey modifier;
+
     private final QualifiedRelationshipTypeName type;
 
     private final ContentId fromContent;
@@ -47,6 +51,8 @@ public final class Relationship
         this.toContent = builder.toContent;
         this.createdTime = builder.createdTime;
         this.creator = builder.creator;
+        this.modifiedTime = builder.modifiedTime;
+        this.modifier = builder.modifier;
         this.properties = ImmutableMap.copyOf( builder.properties );
         this.managingData = builder.managingData;
     }
@@ -69,6 +75,16 @@ public final class Relationship
     public UserKey getCreator()
     {
         return creator;
+    }
+
+    public DateTime getModifiedTime()
+    {
+        return modifiedTime;
+    }
+
+    public UserKey getModifier()
+    {
+        return modifier;
     }
 
     public QualifiedRelationshipTypeName getType()
@@ -106,12 +122,24 @@ public final class Relationship
         return managingData;
     }
 
+    public void setModifiedTime( final DateTime modifiedTime )
+    {
+        this.modifiedTime = modifiedTime;
+    }
+
+    public void setModifier( final UserKey modifier )
+    {
+        this.modifier = modifier;
+    }
+
     @Override
     public void checkIllegalChange( final Relationship to )
         throws IllegalChangeException
     {
         IllegalChange.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Relationship.class );
         IllegalChange.check( "creator", this.getCreator(), to.getCreator(), Relationship.class );
+        IllegalChange.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Relationship.class );
+        IllegalChange.check( "modifier", this.getModifier(), to.getModifier(), Relationship.class );
         IllegalChange.check( "fromContent", this.getFromContent(), to.getFromContent(), Relationship.class );
         IllegalChange.check( "toContent", this.getToContent(), to.getToContent(), Relationship.class );
         IllegalChange.check( "type", this.getType(), to.getType(), Relationship.class );
@@ -145,11 +173,17 @@ public final class Relationship
 
         private EntryPath managingData;
 
+        private UserKey modifier;
+
+        private DateTime modifiedTime;
+
         private Builder( final Relationship relationship )
         {
             id = relationship.id;
             creator = relationship.creator;
             createdTime = relationship.createdTime;
+            modifier = relationship.modifier;
+            modifiedTime = relationship.modifiedTime;
             type = relationship.type;
             fromContent = relationship.fromContent;
             toContent = relationship.toContent;
@@ -195,6 +229,18 @@ public final class Relationship
         public Builder creator( UserKey value )
         {
             this.creator = value;
+            return this;
+        }
+
+        public Builder modifiedTime( DateTime value )
+        {
+            this.modifiedTime = value;
+            return this;
+        }
+
+        public Builder modifier( UserKey value )
+        {
+            this.modifier = value;
             return this;
         }
 
