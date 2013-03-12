@@ -24,6 +24,8 @@ class RelationshipJcrMapper
         relationshipNode.setProperty( RELATIONSHIP, relationshipJson );
         JcrHelper.setPropertyDateTime( relationshipNode, "createdTime", relationship.getCreatedTime() );
         relationshipNode.setProperty( "creator", relationship.getCreator().toString() );
+        JcrHelper.setPropertyDateTime( relationshipNode, "modifiedTime", relationship.getModifiedTime() );
+        relationshipNode.setProperty( "modifier", relationship.getModifier().toString() );
     }
 
     Relationship toRelationship( final Node relationshipNode )
@@ -35,6 +37,8 @@ class RelationshipJcrMapper
             id( RelationshipIdFactory.from( relationshipNode ) ).
             creator( AccountKey.from( relationshipNode.getProperty( "creator" ).getString() ).asUser() ).
             createdTime( JcrHelper.getPropertyDateTime( relationshipNode, "createdTime" ) ).
+            modifier( AccountKey.from( relationshipNode.getProperty( "modifier" ).getString() ).asUser() ).
+            modifiedTime( JcrHelper.getPropertyDateTime( relationshipNode, "modifiedTime" ) ).
             build();
     }
 }

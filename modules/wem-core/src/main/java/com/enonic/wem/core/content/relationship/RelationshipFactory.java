@@ -17,6 +17,10 @@ public class RelationshipFactory
 
     private final UserKey creator;
 
+    private final DateTime modifiedTime;
+
+    private final UserKey modifier;
+
     private final ContentId fromContent;
 
     private final QualifiedRelationshipTypeName type;
@@ -25,6 +29,8 @@ public class RelationshipFactory
     {
         this.createdTime = builder.createdTime;
         this.creator = builder.creator;
+        this.modifiedTime = builder.modifiedTime;
+        this.modifier = builder.modifier;
         this.fromContent = builder.fromContent;
         this.type = builder.type;
     }
@@ -34,6 +40,8 @@ public class RelationshipFactory
         final Relationship.Builder builder = newRelationship();
         builder.creator( creator );
         builder.createdTime( createdTime );
+        builder.modifier( modifier );
+        builder.modifiedTime( modifiedTime );
         builder.type( type );
         builder.fromContent( fromContent );
         builder.toContent( ContentId.from( toContent.getString() ) );
@@ -52,6 +60,10 @@ public class RelationshipFactory
 
         private UserKey creator;
 
+        public DateTime modifiedTime;
+
+        public UserKey modifier;
+
         private ContentId fromContent;
 
         private QualifiedRelationshipTypeName type;
@@ -65,6 +77,18 @@ public class RelationshipFactory
         public Builder creator( final UserKey value )
         {
             this.creator = value;
+            return this;
+        }
+
+        public Builder modifiedTime( final DateTime value )
+        {
+            this.modifiedTime = value;
+            return this;
+        }
+
+        public Builder modifier( final UserKey value )
+        {
+            this.modifier = value;
             return this;
         }
 

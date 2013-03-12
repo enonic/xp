@@ -23,6 +23,10 @@ public class RelationshipJsonSerializer
 
     private boolean includeCreatedTime;
 
+    private boolean includeModifier;
+
+    private boolean includeModifiedTime;
+
     public RelationshipJsonSerializer()
     {
     }
@@ -36,6 +40,18 @@ public class RelationshipJsonSerializer
     public RelationshipJsonSerializer includeCreatedTime( boolean value )
     {
         this.includeCreatedTime = value;
+        return this;
+    }
+
+    public RelationshipJsonSerializer includeModifier( boolean value )
+    {
+        this.includeModifier = value;
+        return this;
+    }
+
+    public RelationshipJsonSerializer includeModifiedTime( boolean value )
+    {
+        this.includeModifiedTime = value;
         return this;
     }
 
@@ -54,6 +70,14 @@ public class RelationshipJsonSerializer
         if ( includeCreatedTime )
         {
             JsonSerializerUtil.setDateTimeValue( "createdTime", relationship.getCreatedTime(), objectNode );
+        }
+        if ( includeModifier )
+        {
+            objectNode.put( "modifier", relationship.getModifier().toString() );
+        }
+        if ( includeModifiedTime )
+        {
+            JsonSerializerUtil.setDateTimeValue( "modifiedTime", relationship.getModifiedTime(), objectNode );
         }
         objectNode.put( "type", relationship.getType().toString() );
         objectNode.put( "fromContent", relationship.getFromContent().toString() );
@@ -105,6 +129,14 @@ public class RelationshipJsonSerializer
         if ( includeCreatedTime )
         {
             builder.createdTime( JsonSerializerUtil.getDateTimeValue( "createdTime", relationshipNode ) );
+        }
+        if ( includeModifier )
+        {
+            builder.modifier( JsonSerializerUtil.getUserKeyValue( "modifier", relationshipNode ) );
+        }
+        if ( includeModifiedTime )
+        {
+            builder.modifiedTime( JsonSerializerUtil.getDateTimeValue( "modifiedTime", relationshipNode ) );
         }
         builder.type( QualifiedRelationshipTypeName.from( JsonSerializerUtil.getStringValue( "type", relationshipNode ) ) );
         builder.fromContent( ContentId.from( JsonSerializerUtil.getStringValue( "fromContent", relationshipNode ) ) );
