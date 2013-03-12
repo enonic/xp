@@ -168,6 +168,10 @@ a {
     z-index: 1000045;
 }
 
+#live-edit-page-shader {
+    position: fixed !important;
+}
+
 /*** Outliner */
 
 .live-edit-selected-component {

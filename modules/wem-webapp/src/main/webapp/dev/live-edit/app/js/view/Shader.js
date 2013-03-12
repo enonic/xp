@@ -32,7 +32,7 @@
 
     proto.addView = function () {
         var $body = $('body');
-        $body.append('<div class="live-edit-shader" id="live-edit-shader-page"/>');
+        $body.append('<div class="live-edit-shader" id="live-edit-page-shader"/>');
 
         $body.append('<div id="live-edit-shader-north" class="live-edit-shader"/>');
         $body.append('<div id="live-edit-shader-east" class="live-edit-shader"/>');
@@ -62,7 +62,7 @@
 
 
     proto.showForPage = function ($component) {
-        $('#live-edit-shader-page').css({
+        $('#live-edit-page-shader').css({
             top: 0,
             right: 0,
             bottom: 0,
@@ -123,7 +123,7 @@
             left: '-15000px'
         });
 
-        $('#live-edit-shader-page').hide();
+        $('#live-edit-page-shader').hide();
     };
 
 }($liveedit));
