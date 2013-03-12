@@ -40,11 +40,13 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.registerGlobalListeners = function () {
-        /*
-        $(window).on('component:click:select', $.proxy(this.show, this));
-        */
+        $(window).on('component:contextclick:select', $.proxy(this.show, this));
+
+        $(window).on('tip:menubutton:click:show', $.proxy(this.show, this));
+        $(window).on('tip:menubutton:click:hide', $.proxy(this.hide, this));
+        $(window).on('tip:parentbutton:click', $.proxy(this.autoShow, this));
+
         $(window).on('component:click:deselect', $.proxy(this.hide, this));
-        $(window).on('tip:menubutton:click', $.proxy(this.toggle, this));
         $(window).on('component:sort:start', $.proxy(this.fadeOutAndHide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));
         $(window).on('component:paragraph:edit:init', $.proxy(this.hide, this));
@@ -54,41 +56,35 @@
     proto.addView = function () {
         var me = this;
 
-        me.createElement('<div class="live-edit-component-menu" style="top:-5000px; left:-5000px;"></div>');
+        me.createElement('<div class="live-edit-component-menu" style="display: none"></div>');
         me.appendTo($('body'));
         me.addButtons();
     };
 
 
-    proto.toggle = function (event, $selectedComponent) {
+    proto.show = function (event, $component, config) {
         var me = this;
-        if (me.hidden) {
-            me.show(event, $selectedComponent);
-        } else {
-            me.hide();
+
+        me.updateMenuItemsForComponent($component);
+
+        me.moveToXY(config.x, config.y);
+
+        me.getEl().show();
+
+        this.hidden = false;
+    };
+
+
+    proto.autoShow = function (event, $component, config) {
+        if (config.autoShow) {
+            this.show(event, $component, config);
         }
     };
 
 
-    proto.show = function (event, $selectedComponent) {
-        var me = this;
-        me.updateMenuItemsForComponent($selectedComponent);
-
-
-        me.moveToTip($selectedComponent);
-
-        me.getEl().show();
-
-        /*
-        var componentType = util.getComponentType($selectedComponent);
-        if (componentType === 'page') {
-            me.getEl().css('position', 'fixed');
-        } else {
-            me.getEl().css('position', '');
-        }
-        */
-
-        me.hidden = false;
+    proto.hide = function () {
+        this.getEl().css({ top: '-5000px', left: '-5000px', right: '' });
+        this.hidden = true;
     };
 
 
@@ -101,24 +97,10 @@
     };
 
 
-    proto.hide = function () {
-        var me = this;
-        me.getEl().css({ top: '-5000px', left: '-5000px', right: '' });
-        me.hidden = true;
-    };
-
-
-    proto.moveToTip = function () {
-        var me = this,
-            tipElement = me.trigger.getEl(),
-            tipOffset = tipElement.offset(),
-            height = tipElement.outerHeight(),
-            topPos = tipOffset.top + height - 1,
-            leftPos = tipOffset.left;
-
-        me.getEl().css({
-            top: topPos,
-            left: leftPos
+    proto.moveToXY = function (x, y) {
+        this.getEl().css({
+            left: x,
+            top: y
         });
     };
 

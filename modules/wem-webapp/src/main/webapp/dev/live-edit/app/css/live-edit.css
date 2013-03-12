@@ -350,27 +350,29 @@ svg.live-edit-outliner rect {
     position: absolute;
     z-index: 1000150;
     padding: 0;
-    border: 1px solid #aaa;
+    border: 2px solid #aaa;
 }
 
 /* Component menu button */
 
 .live-edit-component-menu-button {
     width: 120px;
-    padding: 5px;
+    padding: 8px 8px;
     background-color: #fff;
 }
 .live-edit-component-menu-button:hover {
     background-color: #3892dd;
     color: #fff !important;
 }
+
 .live-edit-component-menu-button:hover .live-edit-button-text {
     color: #fff !important;
 }
 
 
 .live-edit-button-text {
-    font-size: 16px;
+    font-size: 15px;
+    color: #60617d;
     line-height: 20px;
     text-transform: capitalize;
 }

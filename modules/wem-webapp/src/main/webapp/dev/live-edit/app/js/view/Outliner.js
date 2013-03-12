@@ -28,6 +28,7 @@
 
         $(window).on('component:mouseover', $.proxy(this.onComponentMouseOver, this));
         $(window).on('component:mouseout', $.proxy(this.hide, this));
+        $(window).on('component:contextclick:select', $.proxy(this.onComponentSelect, this));
         $(window).on('component:click:select', $.proxy(this.onComponentSelect, this));
         $(window).on('component:click:deselect', $.proxy(this.deselect, this));
         $(window).on('component:sort:start', $.proxy(this.hide, this));

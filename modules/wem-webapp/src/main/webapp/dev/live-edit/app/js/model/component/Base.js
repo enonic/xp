@@ -45,7 +45,7 @@
         attachClickEvent: function () {
             var me = this;
 
-            $(document).on('click contextmenu touchstart', me.cssSelector, function (event) {
+            $(document).on('click touchstart', me.cssSelector, function (event) {
                 if (me.isLiveEditUiComponent($(event.target))) {
                     return;
                 }
@@ -69,8 +69,16 @@
         attachContextClickEvent: function () {
             var me = this;
             $(document).on('contextmenu', me.cssSelector, function (event) {
+                event.stopPropagation();
                 event.preventDefault();
-                console.log(event);
+
+                var $component = $(event.currentTarget),
+                    config = {
+                        x: event.pageX,
+                        y: event.pageY
+                    };
+
+                $(window).trigger('component:contextclick:select', [$component, config]);
 
             });
         },

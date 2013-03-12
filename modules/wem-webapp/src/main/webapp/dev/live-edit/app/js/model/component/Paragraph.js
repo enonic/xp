@@ -41,11 +41,18 @@
     // Override base attachClickEvent
     proto.attachClickEvent = function () {
         var me = this;
-
-        $(document).on('click contextmenu touchstart', me.cssSelector, function (event) {
+        $(document).on('click touchstart', me.cssSelector, function (event) {
             me.handleClick(event);
         });
+    };
 
+
+    // Override base attachContextClickEvent
+    proto.attachContextClickEvent = function () {
+        var me = this;
+        $(document).on('contextmenu', me.cssSelector, function (event) {
+            me.handleClick(event);
+        });
     };
 
 
@@ -70,26 +77,54 @@
         me.$selectedParagraph = $paragraph;
 
         if (me.currentMode === me.modes.UNSELECTED) {
-            me.setSelectMode();
+            me.setSelectMode(event);
         } else if (me.currentMode === me.modes.SELECTED) {
-            me.setEditMode();
+            if (event.type !== 'contextmenu') {
+                me.setEditMode(event);
+            } else {
+                var config = {
+                    x: event.pageX,
+                    y: event.pageY
+                };
+                $(window).trigger('component:contextclick:select', [me.$selectedParagraph, config]);
+
+            }
         } else {
         }
     };
 
 
-    proto.setSelectMode = function () {
+    proto.setSelectMode = function (event) {
         var me = this;
         me.$selectedParagraph.css('cursor', 'url(../app/images/pencil.png) 0 40, text');
 
         me.currentMode = me.modes.SELECTED;
 
+        // Make sure Chrome does not selects the text on context click
+        if (window.getSelection) {
+            window.getSelection().removeAllRanges();
+        }
+
         $(window).trigger('component:click:select', [me.$selectedParagraph]);
+
+        /*
+        if (event.type === 'contextmenu') {
+
+            var config = {
+                x: event.pageX,
+                y: event.pageY
+            };
+            $(window).trigger('component:contextclick:select', [me.$selectedParagraph, config]);
+
+        } else {
+        }
+             */
+
         $(window).trigger('component:paragraph:select', [me.$selectedParagraph]);
     };
 
 
-    proto.setEditMode = function () {
+    proto.setEditMode = function (event) {
         var me = this,
             $paragraph = me.$selectedParagraph;
 
