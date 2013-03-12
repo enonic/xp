@@ -2,7 +2,7 @@
     'use strict';
 
     // Class definition (constructor function)
-    var outliner = AdminLiveEdit.view.Outliner = function () {
+    var highlighter = AdminLiveEdit.view.Highlighter = function () {
         this.$selectedComponent = null;
 
         this.addView();
@@ -10,13 +10,13 @@
     };
 
     // Inherits ui.Base
-    outliner.prototype = new AdminLiveEdit.view.Base();
+    highlighter.prototype = new AdminLiveEdit.view.Base();
 
     // Fix constructor as it now is Base
-    outliner.constructor = outliner;
+    highlighter.constructor = highlighter;
 
     // Shorthand ref to the prototype
-    var proto = outliner.prototype;
+    var proto = highlighter.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -25,7 +25,6 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.registerGlobalListeners = function () {
-
         $(window).on('component:mouseover', $.proxy(this.componentMouseOver, this));
         $(window).on('component:mouseout', $.proxy(this.hide, this));
         $(window).on('component:contextclick:select', $.proxy(this.selectComponent, this));
@@ -44,7 +43,7 @@
 
 
     proto.addView = function () {
-        var html = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-outliner" style="top:-5000px;left:-5000px">' +
+        var html = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlight-border" style="top:-5000px;left:-5000px">' +
                    '    <rect width="150" height="150"/>' +
                    '</svg>';
         this.createElement(html);
@@ -55,7 +54,7 @@
     proto.componentMouseOver = function (event, $component) {
         var me = this;
         me.show();
-        me.paintOutline($component);
+        me.paintBorder($component);
     };
 
 
@@ -64,23 +63,18 @@
         me.$selectedComponent = $component;
         var componentType = util.getComponentType($component);
 
-        // Outliner should not be shown when type page is selected
+        // Highlighter should not be shown when type page is selected
         if (componentType === 'page') {
             me.hide();
             return;
         }
 
+        me.paintBorder($component);
         me.show();
-        me.paintOutline($component);
 
+        // TODO: Move class manipulation to model base
         $('.live-edit-selected-component').removeClass('live-edit-selected-component');
         $component.addClass('live-edit-selected-component');
-
-
-        var scrollComponentIntoView = componentType !== 'page' || event.type !== 'component:contextclick:select';
-        if (scrollComponentIntoView) {
-            me.scrollComponentIntoView($component);
-        }
     };
 
 
@@ -88,26 +82,26 @@
         var me = this;
 
         me.$selectedComponent = null;
-        me.hide();
+
         $('.live-edit-selected-component').removeClass('live-edit-selected-component');
     };
 
 
-    proto.paintOutline = function ($component) {
+    proto.paintBorder = function ($component) {
         var me = this,
-            $outline = me.getEl();
+            $border = me.getEl();
 
-        me.resizeOutlineToComponent($component);
+        me.resizeBorderToComponent($component);
 
-        var style = me.getOutlineStyleForComponent($component);
+        var style = me.getStyleForComponent($component);
 
-        $outline.css('stroke', style.strokeColor);
-        $outline.css('fill', style.fillColor);
-        $outline.css('stroke-dasharray', style.strokeDashArray);
+        $border.css('stroke', style.strokeColor);
+        $border.css('fill', style.fillColor);
+        $border.css('stroke-dasharray', style.strokeDashArray);
     };
 
 
-    proto.resizeOutlineToComponent = function ($component) {
+    proto.resizeBorderToComponent = function ($component) {
         var me = this;
         var componentType = util.getComponentType($component);
         var componentTagName = util.getTagNameForComponent($component);
@@ -117,14 +111,14 @@
         var top     = Math.round(componentBoxModel.top);
         var left    = Math.round(componentBoxModel.left);
 
-        var $outline = me.getEl();
-        var $outlineRect = $outline.find('rect');
+        var $highlighter = me.getEl();
+        var $HighlighterRect = $highlighter.find('rect');
 
-        $outline.width(w);
-        $outline.height(h);
-        $outlineRect[0].setAttribute('width', w);
-        $outlineRect[0].setAttribute('height', h);
-        $outline.css({
+        $highlighter.width(w);
+        $highlighter.height(h);
+        $HighlighterRect[0].setAttribute('width', w);
+        $HighlighterRect[0].setAttribute('height', h);
+        $highlighter.css({
             top : top,
             left: left
         });
@@ -141,7 +135,7 @@
     };
 
 
-    proto.getOutlineStyleForComponent = function ($component) {
+    proto.getStyleForComponent = function ($component) {
         var componentType = util.getComponentType($component);
 
         var strokeColor,
@@ -185,14 +179,5 @@
             fillColor: fillColor
         };
     };
-
-
-    proto.scrollComponentIntoView = function ($selectedComponent) {
-        var componentTopPosition = util.getPagePositionForComponent($selectedComponent).top;
-        if (componentTopPosition <= window.pageYOffset) {
-            $('html, body').animate({scrollTop: componentTopPosition - 10}, 200);
-        }
-    };
-
 
 }($liveedit));

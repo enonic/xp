@@ -40,7 +40,7 @@
 <!--script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/HoverMenu.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/button/ParentButton.js"></script-->
 
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/Outliner.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/Highlighter.js"></script>
 
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/ToolTip.js"></script>
 

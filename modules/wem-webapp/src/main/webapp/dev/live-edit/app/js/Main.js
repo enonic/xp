@@ -11,7 +11,7 @@
         var paragraphs          = new AdminLiveEdit.model.component.Paragraph();
 
         var htmlElementReplacer = new AdminLiveEdit.view.HtmlElementReplacer();
-        var outliner            = new AdminLiveEdit.view.Outliner();
+        var outliner            = new AdminLiveEdit.view.Highlighter();
         var toolTip             = new AdminLiveEdit.view.ToolTip();
         var cursor              = new AdminLiveEdit.view.Cursor();
         var componentTip        = new AdminLiveEdit.view.componenttip.Tip();
