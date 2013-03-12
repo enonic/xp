@@ -37,11 +37,12 @@ public final class UpdateRelationshipHandler
 
         try
         {
-            final Relationship changed = command.getEditor().edit( existing );
+            Relationship changed = command.getEditor().edit( existing );
             existing.checkIllegalChange( changed );
 
-            changed.setModifier( AccountKey.anonymous() );
-            changed.setModifiedTime( DateTime.now() );
+            changed = Relationship.newRelationship( changed ).
+                modifier( AccountKey.anonymous() ).
+                modifiedTime( DateTime.now() ).build();
 
             relationshipDao.update( changed, session );
             session.save();

@@ -26,9 +26,9 @@ public final class Relationship
 
     private final UserKey creator;
 
-    private DateTime modifiedTime;
+    private final DateTime modifiedTime;
 
-    private UserKey modifier;
+    private final UserKey modifier;
 
     private final QualifiedRelationshipTypeName type;
 
@@ -120,16 +120,6 @@ public final class Relationship
     public EntryPath getManagingData()
     {
         return managingData;
-    }
-
-    public void setModifiedTime( final DateTime modifiedTime )
-    {
-        this.modifiedTime = modifiedTime;
-    }
-
-    public void setModifier( final UserKey modifier )
-    {
-        this.modifier = modifier;
     }
 
     @Override

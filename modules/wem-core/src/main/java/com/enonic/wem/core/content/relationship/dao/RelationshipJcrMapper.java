@@ -25,7 +25,7 @@ class RelationshipJcrMapper
         JcrHelper.setPropertyDateTime( relationshipNode, "createdTime", relationship.getCreatedTime() );
         relationshipNode.setProperty( "creator", relationship.getCreator().toString() );
         JcrHelper.setPropertyDateTime( relationshipNode, "modifiedTime", relationship.getModifiedTime() );
-        relationshipNode.setProperty( "modifier", relationship.getModifier().toString() );
+        relationshipNode.setProperty( "modifier", relationship.getModifier() == null ? null : relationship.getModifier().toString() );
     }
 
     Relationship toRelationship( final Node relationshipNode )
@@ -33,12 +33,16 @@ class RelationshipJcrMapper
     {
         final String relationshipJson = relationshipNode.getProperty( RELATIONSHIP ).getString();
         final Relationship relationship = jsonSerializer.toRelationship( relationshipJson );
-        return Relationship.newRelationship( relationship ).
-            id( RelationshipIdFactory.from( relationshipNode ) ).
-            creator( AccountKey.from( relationshipNode.getProperty( "creator" ).getString() ).asUser() ).
-            createdTime( JcrHelper.getPropertyDateTime( relationshipNode, "createdTime" ) ).
-            modifier( AccountKey.from( relationshipNode.getProperty( "modifier" ).getString() ).asUser() ).
-            modifiedTime( JcrHelper.getPropertyDateTime( relationshipNode, "modifiedTime" ) ).
-            build();
+
+        final Relationship.Builder builder = Relationship.newRelationship( relationship );
+        builder.id( RelationshipIdFactory.from( relationshipNode ) );
+        builder.creator( AccountKey.from( relationshipNode.getProperty( "creator" ).getString() ).asUser() );
+        builder.createdTime( JcrHelper.getPropertyDateTime( relationshipNode, "createdTime" ) );
+        if ( relationshipNode.hasNode( "modifier" ) )
+        {
+            builder.modifier( AccountKey.from( relationshipNode.getProperty( "modifier" ).getString() ).asUser() );
+        }
+        builder.modifiedTime( JcrHelper.getPropertyDateTime( relationshipNode, "modifiedTime" ) );
+        return builder.build();
     }
 }
