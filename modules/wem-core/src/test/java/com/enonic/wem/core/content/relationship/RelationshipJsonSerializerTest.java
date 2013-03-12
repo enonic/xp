@@ -100,10 +100,13 @@ public class RelationshipJsonSerializerTest
             property( "stripes", "3" ).
             createdTime( NOW ).
             creator( AccountKey.superUser() ).
+            modifiedTime( NOW ).
+            modifier( AccountKey.superUser() ).
             build();
 
         RelationshipJsonSerializer serializer = new RelationshipJsonSerializer().
-            includeCreator( true ).includeCreatedTime( true );
+            includeCreator( true ).includeCreatedTime( true ).
+            includeModifier( true ).includeModifiedTime( true );
 
         // exercise
         JsonNode actualJson = serializer.serialize( relationship );
@@ -118,6 +121,8 @@ public class RelationshipJsonSerializerTest
         propertiesNode.put( "stripes", "3" );
         expectedJson.put( "creator", "user:system:admin" );
         expectedJson.put( "createdTime", "2013-01-01T12:00:00.000Z" );
+        expectedJson.put( "modifier", "user:system:admin" );
+        expectedJson.put( "modifiedTime", "2013-01-01T12:00:00.000Z" );
 
         assertEquals( "Serialization not as expected", expectedJson, actualJson );
     }
@@ -134,10 +139,13 @@ public class RelationshipJsonSerializerTest
             property( "stripes", "3" ).
             createdTime( NOW ).
             creator( AccountKey.superUser() ).
+            modifiedTime( NOW ).
+            modifier( AccountKey.superUser() ).
             build();
 
         RelationshipJsonSerializer serializer = new RelationshipJsonSerializer().
-            includeCreator( true ).includeCreatedTime( true );
+            includeCreator( true ).includeCreatedTime( true ).
+            includeModifier( true ).includeModifiedTime( true );
 
         JsonNode json = serializer.serialize( toSerialize );
 
@@ -153,5 +161,7 @@ public class RelationshipJsonSerializerTest
         assertEquals( "3", parsedRelationship.getProperty( "stripes" ) );
         assertEquals( NOW, parsedRelationship.getCreatedTime() );
         assertEquals( AccountKey.superUser(), parsedRelationship.getCreator() );
+        assertEquals( NOW, parsedRelationship.getModifiedTime() );
+        assertEquals( AccountKey.superUser(), parsedRelationship.getModifier() );
     }
 }
