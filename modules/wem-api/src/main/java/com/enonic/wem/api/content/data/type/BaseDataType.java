@@ -52,7 +52,7 @@ public abstract class BaseDataType
     public void checkValidity( final Data data )
         throws InvalidValueTypeException, InvalidValueException
     {
-        checkCorrectType( data );
+        checkValueIsOfExpectedJavaClass( data );
     }
 
 
@@ -84,30 +84,30 @@ public abstract class BaseDataType
         return name;
     }
 
-    public boolean hasCorrectType( Object value )
+    public boolean isValueOfExpectedJavaClass( Object value )
     {
         Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
         return javaType.isInstance( value );
     }
 
-    public boolean hasCorrectType( Value value )
+    public boolean isValueOfExpectedJavaClass( Value value )
     {
         Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
         return javaType.isInstance( value.getObject() );
     }
 
-    Value newValue( Object value )
-    {
-        return Value.newValue().type( this ).value( value ).build();
-    }
-
-    private void checkCorrectType( Data data )
+    void checkValueIsOfExpectedJavaClass( Data data )
         throws InvalidValueTypeException
     {
-        if ( !hasCorrectType( ( data.getObject() ) ) )
+        if ( !isValueOfExpectedJavaClass( ( data.getObject() ) ) )
         {
             throw new InvalidValueTypeException( javaType, data );
         }
+    }
+
+    Value newValue( Object value )
+    {
+        return Value.newValue().type( this ).value( value ).build();
     }
 
 }

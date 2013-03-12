@@ -13,7 +13,7 @@ public class DecimalNumber
 
     private Value toDecimalNumber( final Value value )
     {
-        if ( hasCorrectType( value ) )
+        if ( isValueOfExpectedJavaClass( value ) )
         {
             return value;
         }

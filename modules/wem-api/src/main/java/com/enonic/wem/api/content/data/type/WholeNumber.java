@@ -14,7 +14,7 @@ public class WholeNumber
 
     private Value toWholeNumber( final Value value )
     {
-        if ( hasCorrectType( value ) )
+        if ( isValueOfExpectedJavaClass( value ) )
         {
             return value;
         }

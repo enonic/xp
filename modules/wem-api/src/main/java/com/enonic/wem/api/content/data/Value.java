@@ -30,8 +30,8 @@ public final class Value
         type = builder.type;
         object = builder.value;
 
-        Preconditions.checkArgument( type.hasCorrectType( object ), "Object expected to be of type [%s]: %s", type.getJavaType(),
-                                     object.getClass().getSimpleName() );
+        Preconditions.checkArgument( type.isValueOfExpectedJavaClass( object ), "Object expected to be of type [%s]: %s",
+                                     type.getJavaType(), object.getClass().getSimpleName() );
     }
 
     public boolean isJavaType( Class javaType )

@@ -13,7 +13,7 @@ public class BinaryReference
 
     private Value toString( final Value value )
     {
-        if ( hasCorrectType( value ) )
+        if ( isValueOfExpectedJavaClass( value ) )
         {
             return value;
         }

@@ -19,7 +19,7 @@ public class DateMidnight
 
     public Value toDate( final Value value )
     {
-        if ( hasCorrectType( value ) )
+        if ( isValueOfExpectedJavaClass( value ) )
         {
             return value;
         }

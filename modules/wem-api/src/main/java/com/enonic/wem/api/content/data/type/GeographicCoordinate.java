@@ -1,75 +1,73 @@
 package com.enonic.wem.api.content.data.type;
 
 
+import java.util.StringTokenizer;
+
 import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
 public class GeographicCoordinate
     extends BaseDataType
 {
-    private static final String LATITUDE = "latitude";
+    private static final double LATITUDE_RANGE_START = -90.0;
 
-    private static final String LONGITUDE = "longitude";
+    private static final double LATITUDE_RANGE_END = 90.0;
+
+    private static final double LONGITUDE_RANGE_START = -180.0;
+
+    private static final double LONGITUDE_RANGE_END = 180.0;
 
     GeographicCoordinate( int key )
     {
-        super( key, JavaType.DATA_SET );
+        super( key, JavaType.STRING );
     }
 
     @Override
     public void checkValidity( final Data data )
         throws InvalidValueTypeException, InvalidValueException
     {
-        DataTool.newDataChecker().pathRequired( LATITUDE ).range( -90, 90 ).type( DataTypes.DECIMAL_NUMBER ).check( data );
-        DataTool.newDataChecker().pathRequired( LONGITUDE ).range( -180, 180 ).type( DataTypes.DECIMAL_NUMBER ).check( data );
+        checkValueIsOfExpectedJavaClass( data );
+
+        final Value value = data.getValue();
+
+        final ValueHolder valueHolder = parse( value.getString() );
+        if ( valueHolder.latitude < LATITUDE_RANGE_START || valueHolder.latitude > LATITUDE_RANGE_END )
+        {
+            throw new InvalidValueException( data, "Value not within range from " + LATITUDE_RANGE_START + " to " + LATITUDE_RANGE_END );
+        }
+
+        if ( valueHolder.longitude < LONGITUDE_RANGE_START || valueHolder.longitude > LONGITUDE_RANGE_END )
+        {
+            throw new InvalidValueException( data, "Value not within range from " + LONGITUDE_RANGE_START + " to " + LONGITUDE_RANGE_END );
+        }
     }
 
-    @Override
-    public boolean hasCorrectType( final Object value )
+    public static double getLatitude( final String value )
     {
-        if ( DataSet.class.isInstance( value ) )
-        {
-            final DataSet dataSet = (DataSet) value;
-            final Data latitude = dataSet.getData( LATITUDE );
-            if ( latitude == null )
-            {
-                return false;
-            }
-            final Data longitude = dataSet.getData( LONGITUDE );
-            if ( longitude == null )
-            {
-                return false;
-            }
-            if ( DataTypes.DECIMAL_NUMBER.hasCorrectType( latitude.getObject() ) &&
-                DataTypes.DECIMAL_NUMBER.hasCorrectType( longitude.getObject() ) )
-            {
-                return true;
-            }
-        }
-
-        return false;
-
+        return parse( value ).latitude;
     }
 
-    private Value toGeographicalCoordinate( final Value value )
+    public static double getLongitude( final String value )
     {
-        if ( hasCorrectType( value ) )
-        {
-            return value;
-        }
-        /*else if ( value instanceof DataSet )
-        {
-            DataSet dataSet = (DataSet) value;
-            DataTool.ensureType( DataTypes.DECIMAL_NUMBER, dataSet.getData( LATITUDE ) );
-            DataTool.ensureType( DataTypes.DECIMAL_NUMBER, dataSet.getData( LONGITUDE ) );
-            return dataSet;
-        }*/
-        else
-        {
-            throw new InconvertibleValueException( value, this );
-        }
+        return parse( value ).longitude;
+    }
+
+    private static ValueHolder parse( final String str )
+    {
+        final ValueHolder valueHolder = new ValueHolder();
+        final StringTokenizer st = new StringTokenizer( str, "," );
+        valueHolder.latitude = Double.parseDouble( st.nextToken() );
+        valueHolder.longitude = Double.parseDouble( st.nextToken() );
+        return valueHolder;
+    }
+
+
+    private static class ValueHolder
+    {
+        private Double latitude;
+
+        private Double longitude;
 
     }
 }

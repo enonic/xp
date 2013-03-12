@@ -13,7 +13,7 @@ public class Xml
 
     public Value toXml( final Value value )
     {
-        if ( hasCorrectType( value ) )
+        if ( isValueOfExpectedJavaClass( value ) )
         {
             return value;
         }

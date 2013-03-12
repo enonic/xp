@@ -19,6 +19,4 @@ public interface DataType
 
     void checkValidity( Data data )
         throws InvalidValueException, InvalidValueTypeException;
-
-    boolean hasCorrectType( Object value );
 }

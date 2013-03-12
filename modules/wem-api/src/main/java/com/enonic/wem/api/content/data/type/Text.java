@@ -13,7 +13,7 @@ public class Text
 
     public Value toString( final Value value )
     {
-        if ( hasCorrectType( value ) )
+        if ( isValueOfExpectedJavaClass( value ) )
         {
             return value;
         }
