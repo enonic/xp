@@ -8,11 +8,37 @@ public final class WholeNumber
 {
     public WholeNumber( final String name, final Long value )
     {
-        super( Data.newData().name( name ).value( Value.newValue().type( DataTypes.WHOLE_NUMBER ).value( value ) ) );
+        super( newWholeNumber().name( name ).value( value ) );
     }
 
     public WholeNumber( final WholeNumberBuilder builder )
     {
         super( builder );
+    }
+
+    public static WholeNumberBuilder newWholeNumber()
+    {
+        return new WholeNumberBuilder();
+    }
+
+    public static class WholeNumberBuilder
+        extends BaseBuilder<WholeNumberBuilder>
+    {
+        public WholeNumberBuilder()
+        {
+            setType( DataTypes.WHOLE_NUMBER );
+        }
+
+        public WholeNumberBuilder value( final Long value )
+        {
+            setValue( value );
+            return this;
+        }
+
+        @Override
+        public Data build()
+        {
+            return new WholeNumber( this );
+        }
     }
 }

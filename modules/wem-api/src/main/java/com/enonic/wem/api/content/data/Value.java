@@ -30,8 +30,8 @@ public final class Value
         type = builder.type;
         object = builder.value;
 
-        Preconditions.checkArgument( type.hasCorrectType( object ), "Object expected to be of type [%s]: %s", type.getJavaType(),
-                                     object.getClass().getSimpleName() );
+        Preconditions.checkArgument( type.isValueOfExpectedJavaClass( object ), "Object expected to be of type [%s]: %s",
+                                     type.getJavaType(), object.getClass().getSimpleName() );
     }
 
     public boolean isJavaType( Class javaType )
@@ -95,10 +95,10 @@ public final class Value
     public DateMidnight asDate()
         throws InconvertibleValueException
     {
-        final DateMidnight converted = JavaType.DATE.convertFrom( object );
+        final DateMidnight converted = JavaType.DATE_MIDNIGHT.convertFrom( object );
         if ( object != null && converted == null )
         {
-            throw new InconvertibleValueException( object, JavaType.DATE );
+            throw new InconvertibleValueException( object, JavaType.DATE_MIDNIGHT );
         }
         return converted;
     }

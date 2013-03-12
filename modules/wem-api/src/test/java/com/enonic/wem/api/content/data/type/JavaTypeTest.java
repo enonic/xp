@@ -12,7 +12,7 @@ public class JavaTypeTest
     public void resolveType()
     {
         assertEquals( JavaType.STRING, JavaType.resolveType( "String" ) );
-        assertEquals( JavaType.DATE, JavaType.resolveType( new DateMidnight( 2012, 1, 1 ) ) );
+        assertEquals( JavaType.DATE_MIDNIGHT, JavaType.resolveType( new DateMidnight( 2012, 1, 1 ) ) );
         assertFalse( JavaType.STRING.equals( JavaType.resolveType( Boolean.FALSE ) ) );
         assertNull( JavaType.resolveType( new java.util.Date() ) );
     }
@@ -23,13 +23,13 @@ public class JavaTypeTest
     {
         long longValue = 2L;
         assertFalse( JavaType.STRING.isInstance( longValue ) );
-        assertFalse( JavaType.DATE.isInstance( longValue ) );
+        assertFalse( JavaType.DATE_MIDNIGHT.isInstance( longValue ) );
         assertTrue( JavaType.LONG.isInstance( longValue ) );
         assertFalse( JavaType.DOUBLE.isInstance( longValue ) );
 
         DateMidnight dateValue = new DateMidnight( 2012, 8, 31 );
         assertFalse( JavaType.STRING.isInstance( dateValue ) );
-        assertTrue( JavaType.DATE.isInstance( dateValue ) );
+        assertTrue( JavaType.DATE_MIDNIGHT.isInstance( dateValue ) );
         assertFalse( JavaType.LONG.isInstance( dateValue ) );
         assertFalse( JavaType.DOUBLE.isInstance( dateValue ) );
     }

@@ -15,6 +15,33 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     initComponent: function () {
         this.activeItem = this.resolveActiveItem(this.data);
 
+        this.singleSelection.tabs = [
+            {
+                displayName: 'Traffic',
+                tab: 'traffic'
+            },
+            {
+                displayName: 'Graph',
+                tab: 'graph'
+            },
+            {
+                displayName: 'Meta',
+                tab: 'meta'
+            }
+        ];
+
+        this.singleSelection.tabData = {
+            traffic: {
+                html: '<h1>Traffic</h1>'
+            },
+            meta: {
+                html: '<h1>Meta</h1>'
+            },
+            graph: {
+                html: '<h1>Graph</h1>'
+            }
+        };
+
         this.on('afterrender', function () {
             if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
@@ -32,50 +59,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                 livePreview.load('/dev/live-edit/page/page.jsp');
             }
         };
-
-        this.singleSelection.tabs = [
-            {
-                title: "Content",
-                itemId: 'contentTab',
-                html: ' Content'
-            },
-            {
-                title: "Tree",
-                itemId: 'treeTab',
-                html: 'Tree'
-            },
-            {
-                title: "Page",
-                itemId: 'pageTab',
-                html: 'Page'
-            },
-            {
-                title: "Security",
-                itemId: 'securityTab',
-                html: 'Security'
-            },
-            {
-                title: "Relations",
-                itemId: 'relationsTab',
-                items: [
-                    {
-                        tpl: Templates.account.userPreviewMemberships
-                    },
-                    {
-                        xtype: 'membershipsGraphPanel',
-                        extraCls: 'admin-memberships-graph',
-                        listeners: {
-                            afterrender: function (cmp) {
-                                var data = this.data ? this.data.graph : undefined;
-                                if (data) {
-                                    cmp.setGraphData(data);
-                                }
-                            }
-                        }
-                    }
-                ]
-            }
-        ];
 
         this.items = [
             this.createNoSelection(),

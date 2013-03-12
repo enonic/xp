@@ -8,11 +8,37 @@ public final class Xml
 {
     public Xml( final String name, final String value )
     {
-        super( Data.newData().type( DataTypes.XML ).name( name ).value( value ) );
+        super( newXml().name( name ).value( value ) );
     }
 
     public Xml( final XmlBuilder builder )
     {
         super( builder );
+    }
+
+    public static XmlBuilder newXml()
+    {
+        return new XmlBuilder();
+    }
+
+    public static class XmlBuilder
+        extends BaseBuilder<XmlBuilder>
+    {
+        public XmlBuilder()
+        {
+            setType( DataTypes.XML );
+        }
+
+        public XmlBuilder value( final String value )
+        {
+            setValue( value );
+            return this;
+        }
+
+        @Override
+        public Data build()
+        {
+            return new Xml( this );
+        }
     }
 }

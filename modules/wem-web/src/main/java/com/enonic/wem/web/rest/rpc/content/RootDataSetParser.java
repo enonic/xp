@@ -10,11 +10,9 @@ import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
-import com.enonic.wem.api.content.schema.content.DataTypeFixer;
-
-import static com.enonic.wem.api.content.data.Value.newValue;
+import com.enonic.wem.api.content.schema.content.form.FormItemPath;
+import com.enonic.wem.api.content.schema.content.form.Input;
 
 final class RootDataSetParser
 {
@@ -44,34 +42,20 @@ final class RootDataSetParser
             if ( valueNode.isValueNode() )
             {
                 final String fieldValue = valueNode.getTextValue();
-                Value value = newValue().type( DataTypes.TEXT ).value( fieldValue ).build();
-                rootDataSet.setData( path, value );
+                final Input input = contentType.form().getInput( FormItemPath.from( path.resolvePathElementNames() ) );
+                if ( input != null )
+                {
+                    final Value value = input.getInputType().newValue( fieldValue );
+                    rootDataSet.setData( path, value );
+                }
+                else
+                {
+                    rootDataSet.setData( path, fieldValue );
+                }
             }
-        }
-
-        if ( contentType != null )
-        {
-            new DataTypeFixer( contentType ).fix( rootDataSet );
         }
 
         return rootDataSet;
     }
 
-    /*private DataSet parseDataSet( final EntryPath path, final JsonNode valueNode, final DataSet parent )
-    {
-        DataSet dataSet = new DataSet( path.getLastElement().getName(), parent );
-        Iterator<String> fieldNames = valueNode.getFieldNames();
-        while ( fieldNames.hasNext() )
-        {
-            final String fieldName = fieldNames.next();
-            JsonNode childNode = valueNode.get( fieldName );
-            if ( childNode.isValueNode() )
-            {
-                final String valueAsString = childNode.getTextValue();
-                final Data data = Data.newData().name( fieldName ).type( DataTypes.TEXT ).value( valueAsString ).parent( parent ).build();
-                dataSet.add( data );
-            }
-        }
-        return dataSet;
-    }*/
 }

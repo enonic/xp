@@ -15,26 +15,30 @@ Ext.define('Admin.view.spaceAdmin.DetailPanel', {
 
         this.singleSelection.tabs = [
             {
-                title: "Content",
-                itemId: 'contentTab',
-                html: 'Content'
+                displayName: 'Traffic',
+                tab: 'traffic'
             },
             {
-                title: "Tree",
-                itemId: 'treeTab',
-                html: 'Tree'
+                displayName: 'Graph',
+                tab: 'graph'
             },
             {
-                title: "Page",
-                itemId: 'pageTab',
-                html: 'Page'
-            },
-            {
-                title: "Security",
-                itemId: 'securityTab',
-                html: 'Security'
+                displayName: 'Meta',
+                tab: 'meta'
             }
         ];
+
+        this.singleSelection.tabData = {
+            traffic: {
+                html: '<h1>Traffic</h1>'
+            },
+            meta: {
+                html: '<h1>Meta</h1>'
+            },
+            graph: {
+                html: '<h1>Graph</h1>'
+            }
+        };
 
         this.items = [
             this.createNoSelection(),

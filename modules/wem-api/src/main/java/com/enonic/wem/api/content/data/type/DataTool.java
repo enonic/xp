@@ -70,16 +70,6 @@ public class DataTool
         }
     }
 
-    public static void ensureType( final DataType dataType, final Data data )
-    {
-        if ( data.getType().equals( dataType ) )
-        {
-            return;
-        }
-
-        dataType.ensureType( data );
-    }
-
     public static Checker newDataChecker()
     {
         return new Checker();

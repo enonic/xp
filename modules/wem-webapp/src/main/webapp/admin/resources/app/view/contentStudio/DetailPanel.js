@@ -16,21 +16,30 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
 
         this.singleSelection.tabs = [
             {
-                title: "Configuration",
-                itemId: 'configurationTab',
-                items: [
-                    {
-                        xtype: 'textarea',
-                        cls: 'config-container',
-                        grow: true,
-                        readOnly: true,
-                        anchor: '100%',
-                        itemId: 'configurationArea'
-                        //value: data ? data.configXml : undefined
-                    }
-                ]
+                displayName: 'Traffic',
+                tab: 'traffic'
+            },
+            {
+                displayName: 'Graph',
+                tab: 'graph'
+            },
+            {
+                displayName: 'Meta',
+                tab: 'meta'
             }
         ];
+
+        this.singleSelection.tabData = {
+            traffic: {
+                html: '<h1>Traffic</h1>'
+            },
+            meta: {
+                html: '<h1>Meta</h1>'
+            },
+            graph: {
+                html: '<h1>Graph</h1>'
+            }
+        };
 
         this.singleTemplate.info = this.getCommonInfoTemplate();
 

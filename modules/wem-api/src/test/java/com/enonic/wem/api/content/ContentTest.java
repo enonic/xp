@@ -588,13 +588,13 @@ public class ContentTest
         // exercise
         try
         {
-            content.getRootDataSet().setData( "myData[1]", DataTypes.DATE, new DateMidnight( 2000, 1, 1 ) );
+            content.getRootDataSet().setData( "myData[1]", DataTypes.DATE_MIDNIGHT, new DateMidnight( 2000, 1, 1 ) );
             fail( "Expected exception" );
         }
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "Array [myData] expects Data of type [Text]. Data [myData] was of type: Date", e.getMessage() );
+            assertEquals( "Array [myData] expects Data of type [Text]. Data [myData] was of type: DateMidnight", e.getMessage() );
         }
     }
 
@@ -606,10 +606,7 @@ public class ContentTest
         rootDataSet.add( newText().name( "myData" ).value( "1" ).build() );
         rootDataSet.add( newXml().name( "myXml" ).value( "<root/>" ).build() );
 
-        Content content = newContent().name( "myContent" ).rootDataSet( rootDataSet ).build();
-
         assertEquals( "1", rootDataSet.getData( "myData" ).getValue().asString() );
-
         assertEquals( "1", rootDataSet.getData( "myData" ).getString() );
     }
 

@@ -2,6 +2,7 @@ package com.enonic.wem.api.content.schema.content.form.inputtype;
 
 
 import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
@@ -22,17 +23,16 @@ public class Attachment
     }
 
     @Override
-    public void ensureType( final Data data )
-    {
-        DataTypes.BINARY_REFERENCE.ensureType( data );
-    }
-
-    @Override
     public void checkBreaksRequiredContract( final Data data )
         throws BreaksRequiredContractException
     {
 
     }
 
+    @Override
+    public Value newValue( final String value )
+    {
+        return Value.newValue().type( DataTypes.BINARY_REFERENCE ).value( value ).build();
+    }
 }
 

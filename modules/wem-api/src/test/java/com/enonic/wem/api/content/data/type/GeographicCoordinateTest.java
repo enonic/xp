@@ -1,6 +1,5 @@
 package com.enonic.wem.api.content.data.type;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
@@ -12,17 +11,28 @@ import static com.enonic.wem.api.content.Content.newContent;
 import static org.junit.Assert.*;
 
 
-@Ignore
 public class GeographicCoordinateTest
 {
-    @Test(expected = InvalidDataTypeException.class)
-    public void given_data_with_value_as_text_then_checkValidity_throws_InvalidValueTypeException()
+    @Test
+    public void getLatitude()
+    {
+        assertEquals( 59.913869, GeographicCoordinate.getLatitude( "59.913869,10.752245" ), 0 );
+    }
+
+    @Test
+    public void getLongitude()
+    {
+        assertEquals( 10.752245, GeographicCoordinate.getLongitude( "59.913869,10.752245" ), 0 );
+    }
+
+    @Test(expected = InvalidValueTypeException.class)
+    public void given_data_with_value_as_double_then_checkValidity_throws_InvalidValueTypeException()
         throws Exception
     {
         // setup
         Content content = newContent().build();
         RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "myGeographicCoordinate.latitude", "1.1" );
+        rootDataSet.setData( "myGeographicCoordinate", 1.1 );
 
         GeographicCoordinate geographicCoordinate = DataTypes.GEOGRAPHIC_COORDINATE;
         Data data = rootDataSet.getData( "myGeographicCoordinate" );
@@ -38,8 +48,7 @@ public class GeographicCoordinateTest
         // setup
         Content content = newContent().build();
         RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "myGeographicCoordinate.latitude", 90.0 );
-        rootDataSet.setData( "myGeographicCoordinate.longitude", 180.2 );
+        rootDataSet.setData( "myGeographicCoordinate", "90.0,180.2" );
         GeographicCoordinate geographicCoordinate = DataTypes.GEOGRAPHIC_COORDINATE;
         Data data = rootDataSet.getData( "myGeographicCoordinate" );
 
@@ -53,7 +62,7 @@ public class GeographicCoordinateTest
         {
             assertTrue( "Expected InvalidValueException, got: " + e.getClass().getSimpleName(), e instanceof InvalidValueException );
             assertEquals(
-                "Invalid value in [Data{path=myGeographicCoordinate.longitude, type=DecimalNumber, value=180.2}]: Value not within range from -180 to 180: 180.2",
+                "Invalid value in [Data{name=myGeographicCoordinate, type=Text, value=90.0,180.2}]: Value not within range from -180.0 to 180.0: 90.0,180.2",
                 e.getMessage() );
         }
     }

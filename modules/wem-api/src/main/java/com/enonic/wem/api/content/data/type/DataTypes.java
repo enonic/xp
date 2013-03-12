@@ -19,7 +19,7 @@ public final class DataTypes
 
     public static final Xml XML = new Xml( 4 );
 
-    public static final Date DATE = new Date( 5 );
+    public static final DateMidnight DATE_MIDNIGHT = new DateMidnight( 5 );
 
     public static final ContentReference CONTENT_REFERENCE = new ContentReference( 6 );
 
@@ -40,7 +40,7 @@ public final class DataTypes
         register( BINARY_REFERENCE );
         register( HTML_PART );
         register( XML );
-        register( DATE );
+        register( DATE_MIDNIGHT );
         register( CONTENT_REFERENCE );
         register( WHOLE_NUMBER );
         register( DECIMAL_NUMBER );

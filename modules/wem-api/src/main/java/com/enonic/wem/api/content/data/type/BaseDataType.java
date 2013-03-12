@@ -41,12 +41,6 @@ public abstract class BaseDataType
         return this.javaType;
     }
 
-    @Override
-    public String getIndexableString( final Object value )
-    {
-        throw new RuntimeException( "Not implemented method getIndexableString for " + this );
-    }
-
     /**
      * Checks by default if given data's value is of correct Java class.
      * Can be overridden by concrete classes to do extensive validation.
@@ -58,33 +52,9 @@ public abstract class BaseDataType
     public void checkValidity( final Data data )
         throws InvalidValueTypeException, InvalidValueException
     {
-        checkCorrectType( data );
+        checkValueIsOfExpectedJavaClass( data );
     }
 
-    public void ensureType( final Data data )
-        throws InconvertibleValueException
-    {
-        if ( data == null )
-        {
-            return;
-        }
-
-        data.setValue( ensureTypeOfValue( data.getValue() ) );
-    }
-
-    /**
-     * Ensure that given value is of this type. If it is, it returns same value.
-     * Subclasses, overriding this method should convert the given value when possible.
-     * This method will not try to convert the given value, but throw an InconvertibleException
-     * when given value is not this type.
-     *
-     * @param value
-     */
-    protected Value ensureTypeOfValue( final Value value )
-        throws InconvertibleValueException
-    {
-        return value;
-    }
 
     @Override
     public boolean equals( final Object o )
@@ -114,30 +84,30 @@ public abstract class BaseDataType
         return name;
     }
 
-    public boolean hasCorrectType( Object value )
+    public boolean isValueOfExpectedJavaClass( Object value )
     {
         Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
         return javaType.isInstance( value );
     }
 
-    public boolean hasCorrectType( Value value )
+    public boolean isValueOfExpectedJavaClass( Value value )
     {
         Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
         return javaType.isInstance( value.getObject() );
     }
 
-    Value newValue( Object value )
-    {
-        return Value.newValue().type( this ).value( value ).build();
-    }
-
-    private void checkCorrectType( Data data )
+    void checkValueIsOfExpectedJavaClass( Data data )
         throws InvalidValueTypeException
     {
-        if ( !hasCorrectType( ( data.getObject() ) ) )
+        if ( !isValueOfExpectedJavaClass( ( data.getObject() ) ) )
         {
             throw new InvalidValueTypeException( javaType, data );
         }
+    }
+
+    Value newValue( Object value )
+    {
+        return Value.newValue().type( this ).value( value ).build();
     }
 
 }

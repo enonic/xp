@@ -11,22 +11,9 @@ public class BinaryReference
         super( key, JavaType.BLOB_KEY );
     }
 
-    @Override
-    public String getIndexableString( final Object value )
-    {
-        return value.toString();
-    }
-
-    @Override
-    public Value ensureTypeOfValue( final Value value )
-        throws InconvertibleValueException
-    {
-        return toString( value );
-    }
-
     private Value toString( final Value value )
     {
-        if ( hasCorrectType( value ) )
+        if ( isValueOfExpectedJavaClass( value ) )
         {
             return value;
         }

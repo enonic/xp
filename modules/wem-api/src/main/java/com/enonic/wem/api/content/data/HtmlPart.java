@@ -8,11 +8,37 @@ public final class HtmlPart
 {
     public HtmlPart( final String name, final String value )
     {
-        super( Data.newData().name( name ).value( Value.newValue().type( DataTypes.HTML_PART ).value( value ) ) );
+        super( newHtmlPart().name( name ).value( value ) );
     }
 
     public HtmlPart( final HtmlPartBuilder builder )
     {
         super( builder );
+    }
+
+    public static HtmlPartBuilder newHtmlPart()
+    {
+        return new HtmlPartBuilder();
+    }
+
+    public static class HtmlPartBuilder
+        extends BaseBuilder<HtmlPartBuilder>
+    {
+        public HtmlPartBuilder()
+        {
+            setType( DataTypes.HTML_PART );
+        }
+
+        public HtmlPartBuilder value( final String value )
+        {
+            setValue( value );
+            return this;
+        }
+
+        @Override
+        public Data build()
+        {
+            return new HtmlPart( this );
+        }
     }
 }

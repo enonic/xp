@@ -10,22 +10,9 @@ public class ContentReference
         super( key, JavaType.STRING );
     }
 
-    @Override
-    public String getIndexableString( final Object value )
-    {
-        return value.toString();
-    }
-
-    @Override
-    public Value ensureTypeOfValue( final Value value )
-        throws InconvertibleValueException
-    {
-        return toString( value );
-    }
-
     private Value toString( final Value value )
     {
-        if ( hasCorrectType( value ) )
+        if ( isValueOfExpectedJavaClass( value ) )
         {
             return value;
         }

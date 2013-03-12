@@ -11,22 +11,10 @@ public class WholeNumber
         super( key, JavaType.LONG );
     }
 
-    @Override
-    public String getIndexableString( final Object value )
-    {
-        return value.toString();
-    }
-
-    @Override
-    public Value ensureTypeOfValue( final Value value )
-        throws InconvertibleValueException
-    {
-        return toWholeNumber( value );
-    }
 
     private Value toWholeNumber( final Value value )
     {
-        if ( hasCorrectType( value ) )
+        if ( isValueOfExpectedJavaClass( value ) )
         {
             return value;
         }

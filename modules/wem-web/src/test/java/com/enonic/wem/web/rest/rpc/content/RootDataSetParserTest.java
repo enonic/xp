@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
@@ -144,7 +145,6 @@ public class RootDataSetParserTest
     }
 
     @Test
-    @Ignore
     public void geoLocation()
         throws IOException
     {
@@ -155,10 +155,7 @@ public class RootDataSetParserTest
 
         StringBuilder json = new StringBuilder();
         json.append( "{" ).append( "\n" );
-        json.append( "\"myGeoLocation\": {" ).append( "\n" );
-        json.append( "  \"latitude\": \"40.446195\"," ).append( "\n" );
-        json.append( "  \"longitude\": \"-79.948862\"" ).append( "\n" );
-        json.append( "  }" ).append( "\n" );
+        json.append( "\"myGeoLocation\": \"40.446195,-79.948862\"" ).append( "\n" );
         json.append( "}" );
         ObjectMapper objectMapper = ObjectMapperHelper.create();
         ObjectNode objectNode = objectMapper.readValue( json.toString(), ObjectNode.class );
@@ -169,8 +166,8 @@ public class RootDataSetParserTest
 
         // verify
 
-        assertEquals( 40.446195, parsedContentData.getData( EntryPath.from( "myGeoLocation.latitude" ) ).getObject() );
-        assertEquals( -79.948862, parsedContentData.getData( EntryPath.from( "myGeoLocation.longitude" ) ).getObject() );
+        assertEquals( "40.446195,-79.948862", parsedContentData.getData( "myGeoLocation" ).getString() );
+        assertEquals( DataTypes.GEOGRAPHIC_COORDINATE, parsedContentData.getData( "myGeoLocation" ).getType() );
     }
 
     @Test

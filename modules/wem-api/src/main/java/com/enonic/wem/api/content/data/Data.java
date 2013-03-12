@@ -7,7 +7,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.data.type.BaseDataType;
-import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
@@ -28,9 +27,6 @@ public class Data
             builder.value = builder.valueBuilder.build();
         }
         this.value = builder.value;
-
-        final BaseDataType type = value.getType();
-        type.ensureType( this );
 
         try
         {
@@ -226,34 +222,34 @@ public class Data
         return new Builder();
     }
 
-    public static TextBuilder newText()
+    public static Text.TextBuilder newText()
     {
-        return new TextBuilder();
+        return new Text.TextBuilder();
     }
 
-    public static WholeNumberBuilder newWholeNumber()
+    public static WholeNumber.WholeNumberBuilder newWholeNumber()
     {
-        return new WholeNumberBuilder();
+        return new WholeNumber.WholeNumberBuilder();
     }
 
-    public static DecimalNumberBuilder newDecimalNumber()
+    public static DecimalNumber.DecimalNumberBuilder newDecimalNumber()
     {
-        return new DecimalNumberBuilder();
+        return new DecimalNumber.DecimalNumberBuilder();
     }
 
-    public static DateBuilder newDate()
+    public static Date.DateBuilder newDate()
     {
-        return new DateBuilder();
+        return new Date.DateBuilder();
     }
 
-    public static HtmlPartBuilder newHtmlPart()
+    public static HtmlPart.HtmlPartBuilder newHtmlPart()
     {
-        return new HtmlPartBuilder();
+        return new HtmlPart.HtmlPartBuilder();
     }
 
-    public static XmlBuilder newXml()
+    public static Xml.XmlBuilder newXml()
     {
-        return new XmlBuilder();
+        return new Xml.XmlBuilder();
     }
 
     public static class Builder
@@ -261,7 +257,7 @@ public class Data
     {
         public Builder type( BaseDataType value )
         {
-            return super.type( value );
+            return super.setType( value );
         }
 
         @Override
@@ -269,95 +265,22 @@ public class Data
         {
             return new Data( this );
         }
-    }
 
-    public static class TextBuilder
-        extends BaseBuilder
-    {
-        public TextBuilder()
+        public Builder value( Object value )
         {
-            valueBuilder.type( DataTypes.TEXT );
-        }
-
-        @Override
-        public Data build()
-        {
-            return new Text( this );
-        }
-    }
-
-    public static class WholeNumberBuilder
-        extends BaseBuilder
-    {
-        public WholeNumberBuilder()
-        {
-            valueBuilder.type( DataTypes.WHOLE_NUMBER );
-        }
-
-        @Override
-        public Data build()
-        {
-            return new WholeNumber( this );
-        }
-    }
-
-    public static class DecimalNumberBuilder
-        extends BaseBuilder
-    {
-        public DecimalNumberBuilder()
-        {
-            valueBuilder.type( DataTypes.DECIMAL_NUMBER );
-        }
-
-        @Override
-        public DecimalNumber build()
-        {
-            return new DecimalNumber( this );
-        }
-    }
-
-    public static class DateBuilder
-        extends BaseBuilder
-    {
-        public DateBuilder()
-        {
-            valueBuilder.type( DataTypes.DATE );
-        }
-
-        @Override
-        public Data build()
-        {
-            return new Date( this );
-        }
-    }
-
-    public static class HtmlPartBuilder
-        extends BaseBuilder
-    {
-        public HtmlPartBuilder()
-        {
-            valueBuilder.type( DataTypes.HTML_PART );
-        }
-
-        @Override
-        public Data build()
-        {
-            return new HtmlPart( this );
-        }
-    }
-
-    public static class XmlBuilder
-        extends BaseBuilder
-    {
-        public XmlBuilder()
-        {
-            valueBuilder.type( DataTypes.XML );
-        }
-
-        @Override
-        public Data build()
-        {
-            return new Xml( this );
+            if ( value instanceof Value )
+            {
+                super.setValue( (Value) value );
+            }
+            else if ( value instanceof Value.Builder )
+            {
+                super.setValue( ( (Value.Builder) value ).build() );
+            }
+            else
+            {
+                super.setValue( value );
+            }
+            return this;
         }
     }
 
@@ -365,7 +288,7 @@ public class Data
     {
         private String name;
 
-        Value.Builder valueBuilder = Value.newValue();
+        private Value.Builder valueBuilder = Value.newValue();
 
         private Value value;
 
@@ -379,32 +302,27 @@ public class Data
             return (T) this;
         }
 
-        public T name( String value )
+        public T name( final String value )
         {
             this.name = value;
             return getThis();
         }
 
-        T type( BaseDataType value )
+        T setType( final BaseDataType value )
         {
             this.valueBuilder.type( value );
             return getThis();
         }
 
-        public T value( Object value )
+        T setValue( final Object value )
         {
-            if ( value instanceof Value )
-            {
-                this.value = (Value) value;
-            }
-            else if ( value instanceof Value.Builder )
-            {
-                this.value = ( (Value.Builder) value ).build();
-            }
-            else
-            {
-                this.valueBuilder.value( value );
-            }
+            this.valueBuilder.value( value );
+            return getThis();
+        }
+
+        T setValue( final Value value )
+        {
+            this.value = value;
             return getThis();
         }
 

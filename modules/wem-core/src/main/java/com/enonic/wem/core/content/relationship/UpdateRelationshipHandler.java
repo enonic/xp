@@ -3,8 +3,10 @@ package com.enonic.wem.core.content.relationship;
 import javax.inject.Inject;
 import javax.jcr.Session;
 
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.content.relationship.UpdateRelationship;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.UpdateRelationshipFailureException;
@@ -35,8 +37,13 @@ public final class UpdateRelationshipHandler
 
         try
         {
-            final Relationship changed = command.getEditor().edit( existing );
+            Relationship changed = command.getEditor().edit( existing );
             existing.checkIllegalChange( changed );
+
+            changed = Relationship.newRelationship( changed ).
+                modifier( AccountKey.anonymous() ).
+                modifiedTime( DateTime.now() ).build();
+
             relationshipDao.update( changed, session );
             session.save();
         }

@@ -3,8 +3,10 @@ package com.enonic.wem.api.content.schema.content.form.inputtype;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
+import com.enonic.wem.api.content.data.type.JavaType;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
@@ -23,12 +25,6 @@ public class DecimalNumber
     }
 
     @Override
-    public void ensureType( final Data data )
-    {
-        DataTypes.DECIMAL_NUMBER.ensureType( data );
-    }
-
-    @Override
     public void checkBreaksRequiredContract( final Data data )
         throws BreaksRequiredContractException
     {
@@ -37,6 +33,12 @@ public class DecimalNumber
         {
             throw new BreaksRequiredContractException( data, this );
         }
+    }
+
+    @Override
+    public Value newValue( final String value )
+    {
+        return Value.newValue().type( DataTypes.DECIMAL_NUMBER ).value( JavaType.DOUBLE.convertFrom( value ) ).build();
     }
 
 }

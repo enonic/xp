@@ -1,39 +1,25 @@
 package com.enonic.wem.api.content.data.type;
 
 
-import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
 import com.enonic.wem.api.content.data.Value;
 
-public class Date
+public class DateMidnight
     extends BaseDataType
 {
     private final static DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder().
         appendYear( 4, 4 ).appendLiteral( "-" ).appendMonthOfYear( 2 ).appendLiteral( "-" ).appendDayOfMonth( 2 ).toFormatter();
 
-    Date( int key )
+    DateMidnight( int key )
     {
-        super( key, JavaType.DATE );
-    }
-
-    @Override
-    public String getIndexableString( final Object object )
-    {
-        return FORMATTER.print( (DateMidnight) object );
-    }
-
-    @Override
-    public Value ensureTypeOfValue( final Value value )
-        throws InconvertibleValueException
-    {
-        return toDate( value );
+        super( key, JavaType.DATE_MIDNIGHT );
     }
 
     public Value toDate( final Value value )
     {
-        if ( hasCorrectType( value ) )
+        if ( isValueOfExpectedJavaClass( value ) )
         {
             return value;
         }
@@ -51,7 +37,7 @@ public class Date
         else if ( value.isJavaType( Long.class ) )
         {
             final Long longValue = (Long) value.getObject();
-            return newValue( new DateMidnight( longValue ) );
+            return newValue( new org.joda.time.DateMidnight( longValue ) );
         }
         else
         {

@@ -10,22 +10,10 @@ public class DecimalNumber
         super( key, JavaType.DOUBLE );
     }
 
-    @Override
-    public String getIndexableString( final Object value )
-    {
-        return value.toString();
-    }
-
-    @Override
-    public Value ensureTypeOfValue( final Value value )
-        throws InconvertibleValueException
-    {
-        return toDecimalNumber( value );
-    }
 
     private Value toDecimalNumber( final Value value )
     {
-        if ( hasCorrectType( value ) )
+        if ( isValueOfExpectedJavaClass( value ) )
         {
             return value;
         }
