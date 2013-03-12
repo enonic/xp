@@ -61,7 +61,6 @@
         event.stopPropagation();
         event.preventDefault();
 
-
         // Remove the inlined css cursor when the mode is not EDIT.
         if (me.$selectedParagraph && !(me.currentMode === me.modes.EDIT)) {
             me.$selectedParagraph.css('cursor', '');
@@ -91,6 +90,11 @@
             }
         } else {
         }
+
+        if (event.type !== 'contextmenu') {
+            me.scrollComponentIntoView(me.$selectedParagraph);
+        }
+
     };
 
 
@@ -106,20 +110,6 @@
         }
 
         $(window).trigger('component:click:select', [me.$selectedParagraph]);
-
-        /*
-        if (event.type === 'contextmenu') {
-
-            var config = {
-                x: event.pageX,
-                y: event.pageY
-            };
-            $(window).trigger('component:contextclick:select', [me.$selectedParagraph, config]);
-
-        } else {
-        }
-             */
-
         $(window).trigger('component:paragraph:select', [me.$selectedParagraph]);
     };
 

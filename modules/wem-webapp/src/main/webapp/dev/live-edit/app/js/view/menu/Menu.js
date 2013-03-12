@@ -67,7 +67,17 @@
 
         me.updateMenuItemsForComponent($component);
 
-        me.moveToXY(config.x, config.y);
+        // Menu should not move on scrolling for a page selection.
+
+        if (util.getComponentType($component) === 'page') {
+            me.getEl().css('position', 'fixed');
+            me.moveToXY(config.x, config.y - $('body').scrollTop());
+
+        } else {
+            me.getEl().css('position', '');
+            me.moveToXY(config.x, config.y);
+        }
+
 
         me.getEl().show();
 
