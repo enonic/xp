@@ -26,10 +26,10 @@
 
     proto.registerGlobalListeners = function () {
 
-        $(window).on('component:mouseover', $.proxy(this.onComponentMouseOver, this));
+        $(window).on('component:mouseover', $.proxy(this.componentMouseOver, this));
         $(window).on('component:mouseout', $.proxy(this.hide, this));
-        $(window).on('component:contextclick:select', $.proxy(this.onComponentSelect, this));
-        $(window).on('component:click:select', $.proxy(this.onComponentSelect, this));
+        $(window).on('component:contextclick:select', $.proxy(this.selectComponent, this));
+        $(window).on('component:click:select', $.proxy(this.selectComponent, this));
         $(window).on('component:click:deselect', $.proxy(this.deselect, this));
         $(window).on('component:sort:start', $.proxy(this.hide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));
@@ -52,14 +52,14 @@
     };
 
 
-    proto.onComponentMouseOver = function (event, $component) {
+    proto.componentMouseOver = function (event, $component) {
         var me = this;
         me.show();
         me.paintOutline($component);
     };
 
 
-    proto.onComponentSelect = function (event, $component) {
+    proto.selectComponent = function (event, $component) {
         var me = this;
         me.$selectedComponent = $component;
         var componentType = util.getComponentType($component);
@@ -76,7 +76,9 @@
         $('.live-edit-selected-component').removeClass('live-edit-selected-component');
         $component.addClass('live-edit-selected-component');
 
-        if (componentType !== 'page') {
+
+        var scrollComponentIntoView = componentType !== 'page' || event.type !== 'component:contextclick:select';
+        if (scrollComponentIntoView) {
             me.scrollComponentIntoView($component);
         }
     };
