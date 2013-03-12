@@ -42,20 +42,35 @@ Ext.define('Admin.view.DetailPanel', {
      * */
     singleTemplate: {
 
-        photo: '<img src="{data.iconUrl}?size=100" style="width: 100px;" alt="{name}"/>',
+        photo: '<img src="{data.iconUrl}?size=80" style="width: 80px;" alt="{name}"/>',
 
-        header: '<h1>{data.displayName}</h1><span>{data.description}</span>',
-
-        info: '<div class="container"><table><thead>' +
-              '<tr><th colspan="2">General</th></tr>' +
-              '</thead><tbody>' +
-              '<tr><td class="label">Created:</td><td>{data.createdTime}</td></tr>' +
-              '<tr><td class="label">Modified:</td><td>{data.modifiedTime}</td></tr>' +
-              '</tbody></table></div>'
+        header: '<h1>{data.displayName}</h1><span>{data.key}{data.path}</span>'
     },
 
     singleSelection: {
-        tabs: []
+        /* Example tabs - should be set in app*/
+        tabs: [
+            {
+                displayName: 'Traffic',
+                tab: 'traffic'
+            },
+            {
+                displayName: 'Meta',
+                tab: 'meta'
+            }
+        ],
+        /* Example tabData - should be set in app*/
+        tabData: {
+            traffic: {
+                html: '<h1>Traffic</h1>'
+            },
+            meta: {
+                html: '<h1>Meta</h1>'
+            },
+            graph: {
+                html: '<h1>Graph</h1>'
+            }
+        }
     },
 
     createSingleSelection: function (data) {
@@ -63,56 +78,72 @@ Ext.define('Admin.view.DetailPanel', {
         return {
             xtype: 'container',
             itemId: 'singleSelection',
-            layout: {
-                type: 'column',
-                columns: 3
-            },
+            layout: 'border',
             defaults: {
                 border: 0
             },
             autoScroll: true,
             items: [
                 {
-                    xtype: 'component',
-                    width: 100,
-                    cls: 'west',
-                    itemId: 'previewPhoto',
-                    tpl: me.singleTemplate.photo,
-                    data: data,
-                    margin: 5
-                },
-                {
                     xtype: 'container',
-                    columnWidth: 1,
+                    region: 'north',
+                    cls: 'north',
                     margin: '5 0',
+                    layout: 'hbox',
+                    height: 100,
                     defaults: {
+                        height: 100,
                         border: 0
                     },
                     items: [
                         {
                             xtype: 'component',
-                            cls: 'north',
+                            width: 80,
+                            itemId: 'previewPhoto',
+                            tpl: me.singleTemplate.photo,
+                            data: data,
+                            margin: 5
+                        },
+                        {
+                            xtype: 'component',
                             itemId: 'previewHeader',
                             padding: '5 5 15',
                             tpl: me.singleTemplate.header,
                             data: data
-                        },
-                        {
-                            flex: 1,
-                            cls: 'center',
-                            xtype: 'tabpanel',
-                            items: me.singleSelection.tabs
                         }
                     ]
                 },
                 {
-                    xtype: 'component',
-                    width: 300,
-                    margin: 5,
-                    itemId: 'previewInfo',
-                    cls: 'east',
-                    tpl: me.singleTemplate.info,
-                    data: data
+                    xtype: 'container',
+                    region: 'west',
+                    cls: 'west',
+                    width: 200,
+                    tpl: Ext.create('Ext.XTemplate', '<ul class="admin-detail-nav">' +
+                                                     '<tpl for=".">' +
+                                                     '<li data-tab="{tab}">{displayName}</li>' +
+                                                     '</tpl>' +
+                                                     '</ul>'),
+                    data: me.singleSelection.tabs,
+                    listeners: {
+                        click: {
+                            element: 'el', //bind to the underlying el property on the panel
+                            fn: function (evt, element) {
+                                var children = element.parentElement.children;
+                                for (var i = 0; i < children.length; i++) {
+                                    children[i].className = '';
+                                }
+                                element.className = 'active';
+                                var tab = element.attributes['data-tab'].value;
+                                me.changeTab(tab);
+                            }
+                        }
+                    }
+                },
+                {
+                    region: 'center',
+                    cls: 'center',
+                    xtype: 'container',
+                    itemId: 'center'
                 }
             ]
         };
@@ -210,12 +241,10 @@ Ext.define('Admin.view.DetailPanel', {
         if ('singleSelection' === item.itemId) {
             var previewHeader = item.down('#previewHeader');
             previewHeader.update(data);
+            console.log(data);
 
             var previewPhoto = item.down('#previewPhoto');
             previewPhoto.update(data);
-
-            var previewInfo = item.down('#previewInfo');
-            previewInfo.update(data);
         } else if ('largeBoxSelection' === item.itemId || 'smallBoxSelection' === item.itemId) {
             item.update(data);
         }
@@ -231,12 +260,16 @@ Ext.define('Admin.view.DetailPanel', {
         if (active) {
             var activeData = this.resolveActiveData(data);
             this.updateActiveItem(activeData, active);
-            /*            this.updateTitle(activeData);*/
         }
         this.setDataCallback(data);
     },
 
     getData: function () {
         return this.data;
+    },
+
+    /*--------*/
+    changeTab: function (selectedTab) {
+        this.down('#center').update(this.singleSelection.tabData[selectedTab].html);
     }
 });

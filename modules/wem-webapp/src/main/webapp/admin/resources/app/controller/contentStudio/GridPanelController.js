@@ -15,7 +15,7 @@ Ext.define('Admin.controller.contentStudio.GridPanelController', {
     init: function () {
 
         this.control({
-            'contentTypeTreeGridPanel grid, treepanel': {
+            'contentTypeTreeGridPanel grid, #tree': {
                 selectionchange: this.onGridSelectionChange,
                 itemcontextmenu: this.showContextMenu,
                 itemdblclick: function (btn, evt) {

@@ -3497,7 +3497,7 @@ div.x-mask {
 
 /* line 16, ../sass/admin/css/_context-menu.scss */
 .admin-context-menu .x-menu-item-text {
-    font-size: 16px;
+    font-size: 14px;
     color: #333;
 }
 
@@ -3522,6 +3522,23 @@ div.x-mask {
 /* line 35, ../sass/admin/css/_context-menu.scss */
 .admin-context-menu .x-menu-item-active .x-menu-item-link .x-menu-item-text {
     color: #fff;
+}
+
+/* line 2, ../sass/admin/css/_detail.scss */
+.admin-detail-nav li {
+    font-size: 15px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+/* line 6, ../sass/admin/css/_detail.scss */
+.admin-detail-nav li.active {
+    font-weight: bold;
+}
+
+/* line 10, ../sass/admin/css/_detail.scss */
+.admin-detail-nav li:hover {
+    color: #333;
 }
 
 /**
