@@ -12,12 +12,10 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.command.content.UpdateContents;
+import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentPaths;
-import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
@@ -31,14 +29,14 @@ import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
 import com.enonic.wem.core.index.IndexService;
 
-public class UpdateContentsHandlerTest
+public class UpdateContentHandlerTest
     extends AbstractCommandHandlerTest
 {
     private static final DateTime CREATED_TIME = new DateTime( 2013, 1, 1, 12, 0, 0, 0 );
 
     private static final DateTime UPDATED_TIME = new DateTime( 2013, 1, 1, 13, 0, 0, 0 );
 
-    private UpdateContentsHandler handler;
+    private UpdateContentHandler handler;
 
     private ContentDao contentDao;
 
@@ -55,7 +53,7 @@ public class UpdateContentsHandlerTest
         relationshipDao = Mockito.mock( RelationshipDao.class );
         IndexService indexService = Mockito.mock( IndexService.class );
 
-        handler = new UpdateContentsHandler();
+        handler = new UpdateContentHandler();
         handler.setContentDao( contentDao );
         handler.setRelationshipDao( relationshipDao );
         handler.setIndexService( indexService );
@@ -74,17 +72,16 @@ public class UpdateContentsHandlerTest
         existingContentData.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "aaa" ).build() );
 
         Content existingContent = createContent( existingContentData );
-        ContentPaths existingContentPaths = ContentPaths.from( existingContent.getPath() );
 
-        Mockito.when( contentDao.select( Mockito.eq( existingContentPaths ), Mockito.any( Session.class ) ) ).thenReturn(
-            Contents.from( existingContent ) );
+        Mockito.when( contentDao.select( Mockito.eq( existingContent.getPath() ), Mockito.any( Session.class ) ) ).thenReturn(
+            existingContent );
 
         RootDataSet unchangedContentData = new RootDataSet();
         unchangedContentData.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "aaa" ).build() );
 
-        UpdateContents command = new UpdateContents().
+        UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).
-            selectors( ContentPaths.from( existingContent.getPath() ) ).
+            selector( existingContent.getPath() ).
             editor( ContentEditors.setContentData( unchangedContentData ) );
 
         // exercise
@@ -106,17 +103,16 @@ public class UpdateContentsHandlerTest
         existingContentData.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "aaa" ).build() );
 
         Content existingContent = createContent( existingContentData );
-        ContentPaths existingContentPaths = ContentPaths.from( existingContent.getPath() );
 
-        Mockito.when( contentDao.select( Mockito.eq( existingContentPaths ), Mockito.any( Session.class ) ) ).thenReturn(
-            Contents.from( existingContent ) );
+        Mockito.when( contentDao.select( Mockito.eq( existingContent.getPath() ), Mockito.any( Session.class ) ) ).thenReturn(
+            existingContent );
 
         RootDataSet changedContentData = new RootDataSet();
         changedContentData.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "bbb" ).build() );
 
-        UpdateContents command = new UpdateContents().
+        UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).
-            selectors( ContentPaths.from( existingContent.getPath() ) ).
+            selector( existingContent.getPath() ).
             editor( ContentEditors.setContentData( changedContentData ) );
 
         // exercise
@@ -144,19 +140,18 @@ public class UpdateContentsHandlerTest
         existingContentData.add( Data.newData().name( "myRelated2" ).type( DataTypes.CONTENT_REFERENCE ).value( "222" ).build() );
 
         Content existingContent = createContent( existingContentData );
-        ContentPaths existingContentPaths = ContentPaths.from( existingContent.getPath() );
 
-        Mockito.when( contentDao.select( Mockito.eq( existingContentPaths ), Mockito.any( Session.class ) ) ).thenReturn(
-            Contents.from( existingContent ) );
+        Mockito.when( contentDao.select( Mockito.eq( existingContent.getPath() ), Mockito.any( Session.class ) ) ).thenReturn(
+            existingContent );
 
         RootDataSet changedContentData = new RootDataSet();
         changedContentData.add( Data.newData().name( "myRelated1" ).type( DataTypes.CONTENT_REFERENCE ).value( "111" ).build() );
         changedContentData.add( Data.newData().name( "myRelated2" ).type( DataTypes.CONTENT_REFERENCE ).value( "222" ).build() );
         changedContentData.add( Data.newData().name( "myRelated3" ).type( DataTypes.CONTENT_REFERENCE ).value( "333" ).build() );
 
-        UpdateContents command = new UpdateContents().
+        UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).
-            selectors( ContentPaths.from( existingContent.getPath() ) ).
+            selector( existingContent.getPath() ).
             editor( ContentEditors.setContentData( changedContentData ) );
 
         // exercise

@@ -14,11 +14,10 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.UpdateContents;
+import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataVisitor;
 import com.enonic.wem.api.content.data.EntryPath;
@@ -41,8 +40,8 @@ import static com.enonic.wem.api.content.relationship.RelationshipKey.newRelatio
 import static com.enonic.wem.core.content.relationship.RelationshipFactory.newRelationshipFactory;
 
 @Component
-public class UpdateContentsHandler
-    extends CommandHandler<UpdateContents>
+public class UpdateContentHandler
+    extends CommandHandler<UpdateContent>
 {
     private ContentDao contentDao;
 
@@ -50,38 +49,30 @@ public class UpdateContentsHandler
 
     private IndexService indexService;
 
-    private final static Logger LOG = LoggerFactory.getLogger( UpdateContentsHandler.class );
+    private final static Logger LOG = LoggerFactory.getLogger( UpdateContentHandler.class );
 
 
-    public UpdateContentsHandler()
+    public UpdateContentHandler()
     {
-        super( UpdateContents.class );
+        super( UpdateContent.class );
     }
 
     @Override
-    public void handle( final CommandContext context, final UpdateContents command )
+    public void handle( final CommandContext context, final UpdateContent command )
         throws Exception
     {
-        final Contents contents = contentDao.select( command.getSelectors(), context.getJcrSession() );
-        for ( Content contentToUpdate : contents )
-        {
-            handleContent( context, command, contentToUpdate );
-        }
-    }
+        final Content persistedContent = contentDao.select( command.getSelector(), context.getJcrSession() );
 
-    private void handleContent( final CommandContext context, final UpdateContents command, Content persistedContent )
-        throws Exception
-    {
         Content modifiedContent = command.getEditor().edit( persistedContent );
         if ( modifiedContent != null )
         {
-            modifiedContent = newContent( modifiedContent ).
-                modifiedTime( DateTime.now() ).
-                modifier( command.getModifier() ).build();
-
             validateContentData( context, modifiedContent );
 
             new SyncRelationships( context, persistedContent, modifiedContent ).invoke();
+
+            modifiedContent = newContent( modifiedContent ).
+                modifiedTime( DateTime.now() ).
+                modifier( command.getModifier() ).build();
 
             final boolean createNewVersion = true;
             contentDao.update( modifiedContent, createNewVersion, context.getJcrSession() );

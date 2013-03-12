@@ -8,9 +8,9 @@ public final class ContentCommands
         return new CreateContent();
     }
 
-    public UpdateContents update()
+    public UpdateContent update()
     {
-        return new UpdateContents();
+        return new UpdateContent();
     }
 
     public DeleteContent delete()
