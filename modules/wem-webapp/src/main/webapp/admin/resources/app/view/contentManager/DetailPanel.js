@@ -9,7 +9,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         'Ext.ux.toggleslide.ToggleSlide'
     ],
 
-    showToolbar: true,
     isLiveMode: true,
 
     initComponent: function () {
@@ -72,6 +71,16 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         this.addEvents('deselectrecord');
     },
 
+
+    /*
+     * Toolbar
+     */
+
+    createToolBar: function () {
+        return Ext.createByAlias('widget.contentDetailToolbar', {
+            isLiveMode: this.isLiveMode
+        });
+    },
 
     createLivePreview: function (data) {
         return {

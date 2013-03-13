@@ -3,6 +3,7 @@ Ext.define('Admin.view.account.DetailPanel', {
     alias: 'widget.accountDetail',
 
     split: true,
+    showToolbar: false,
 
     initComponent: function () {
 
