@@ -7,6 +7,7 @@ import org.joda.time.DateMidnight;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.type.BaseDataType;
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
 import com.enonic.wem.api.content.data.type.JavaType;
@@ -66,6 +67,17 @@ public final class Value
         if ( object != null && converted == null )
         {
             throw new InconvertibleValueException( object, JavaType.STRING );
+        }
+        return converted;
+    }
+
+    public ContentId asContentId()
+        throws InconvertibleValueException
+    {
+        final ContentId converted = JavaType.CONTENT_ID.convertFrom( object );
+        if ( object != null && converted == null )
+        {
+            throw new InconvertibleValueException( object, JavaType.CONTENT_ID );
         }
         return converted;
     }

@@ -44,7 +44,7 @@ public class RelationshipFactory
         builder.modifiedTime( modifiedTime );
         builder.type( type );
         builder.fromContent( fromContent );
-        builder.toContent( ContentId.from( toContent.getString() ) );
+        builder.toContent( toContent.getContentId() );
         builder.managed( toContent.getPath() );
         return builder.build();
     }

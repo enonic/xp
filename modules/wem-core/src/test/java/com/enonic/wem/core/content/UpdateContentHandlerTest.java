@@ -170,8 +170,10 @@ public class UpdateContentHandlerTest
         DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
 
         RootDataSet existingContentData = new RootDataSet();
-        existingContentData.add( Data.newData().name( "myRelated1" ).type( DataTypes.CONTENT_REFERENCE ).value( "111" ).build() );
-        existingContentData.add( Data.newData().name( "myRelated2" ).type( DataTypes.CONTENT_REFERENCE ).value( "222" ).build() );
+        existingContentData.add(
+            Data.newData().name( "myRelated1" ).type( DataTypes.CONTENT_REFERENCE ).value( ContentId.from( "111" ) ).build() );
+        existingContentData.add(
+            Data.newData().name( "myRelated2" ).type( DataTypes.CONTENT_REFERENCE ).value( ContentId.from( "222" ) ).build() );
 
         Content existingContent = createContent( existingContentData );
 
@@ -179,9 +181,12 @@ public class UpdateContentHandlerTest
             existingContent );
 
         RootDataSet changedContentData = new RootDataSet();
-        changedContentData.add( Data.newData().name( "myRelated1" ).type( DataTypes.CONTENT_REFERENCE ).value( "111" ).build() );
-        changedContentData.add( Data.newData().name( "myRelated2" ).type( DataTypes.CONTENT_REFERENCE ).value( "222" ).build() );
-        changedContentData.add( Data.newData().name( "myRelated3" ).type( DataTypes.CONTENT_REFERENCE ).value( "333" ).build() );
+        changedContentData.add(
+            Data.newData().name( "myRelated1" ).type( DataTypes.CONTENT_REFERENCE ).value( ContentId.from( "111" ) ).build() );
+        changedContentData.add(
+            Data.newData().name( "myRelated2" ).type( DataTypes.CONTENT_REFERENCE ).value( ContentId.from( "222" ) ).build() );
+        changedContentData.add(
+            Data.newData().name( "myRelated3" ).type( DataTypes.CONTENT_REFERENCE ).value( ContentId.from( "333" ) ).build() );
 
         UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).

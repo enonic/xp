@@ -83,8 +83,8 @@ public class CreateContentHandlerTest
         command.contentType( new QualifiedContentTypeName( ModuleName.SYSTEM, "MyContentType" ) );
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setData( "myText", "abc" );
-        rootDataSet.setData( "myReference", DataTypes.CONTENT_REFERENCE, "123" );
-        rootDataSet.setData( "mySet.myRelatedContent", DataTypes.CONTENT_REFERENCE, "124" );
+        rootDataSet.setData( "myReference", DataTypes.CONTENT_REFERENCE, ContentId.from( "123" ) );
+        rootDataSet.setData( "mySet.myRelatedContent", DataTypes.CONTENT_REFERENCE, ContentId.from( "124" ) );
         command.rootDataSet( rootDataSet );
 
         // exercise

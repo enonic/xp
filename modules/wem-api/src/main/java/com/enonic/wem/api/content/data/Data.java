@@ -6,6 +6,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.type.BaseDataType;
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
@@ -88,6 +89,12 @@ public class Data
         return value.asString();
     }
 
+    public ContentId getContentId()
+        throws InconvertibleValueException
+    {
+        return value.asContentId();
+    }
+
     /**
      * Returns the value at of the data at the given array index as a String.
      *
@@ -97,6 +104,12 @@ public class Data
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asString();
+    }
+
+    public ContentId getContentId( final int arrayIndex )
+        throws InconvertibleValueException
+    {
+        return getArray().getValue( arrayIndex ).asContentId();
     }
 
     public Long getLong()

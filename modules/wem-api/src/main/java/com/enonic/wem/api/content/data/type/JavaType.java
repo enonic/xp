@@ -18,6 +18,8 @@ public final class JavaType
 
     public static final DateMidnight DATE_MIDNIGHT = new DateMidnight();
 
+    public static final ContentId CONTENT_ID = new ContentId();
+
     public static final BlobKey BLOB_KEY = new BlobKey();
 
     public static final DataSet DATA_SET = new DataSet();
@@ -198,6 +200,36 @@ public final class JavaType
         public org.joda.time.DateMidnight convertFrom( final java.lang.String value )
         {
             return FORMATTER.parseDateTime( value ).toDateMidnight();
+        }
+    }
+
+    public final static class ContentId
+        extends BaseType
+    {
+        ContentId()
+        {
+            super( com.enonic.wem.api.content.ContentId.class );
+        }
+
+        public com.enonic.wem.api.content.ContentId convertFrom( final Object value )
+        {
+            if ( value instanceof com.enonic.wem.api.content.ContentId )
+            {
+                return (com.enonic.wem.api.content.ContentId) value;
+            }
+            else if ( value instanceof java.lang.String )
+            {
+                return com.enonic.wem.api.content.ContentId.from( (java.lang.String) value );
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public com.enonic.wem.api.content.ContentId convertFrom( final java.lang.String value )
+        {
+            return com.enonic.wem.api.content.ContentId.from( value );
         }
     }
 
