@@ -1,7 +1,7 @@
-Ext.define('Admin.view.contentManager.wizard.form.input.Relation', {
+Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     extend: 'Admin.view.contentManager.wizard.form.input.Base',
-    alias: 'widget.Relation',
-    fieldLabel: 'Relation',
+    alias: 'widget.Relationship',
+    fieldLabel: 'Relationship',
 
     initComponent: function () {
 
@@ -106,7 +106,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relation', {
                     try {
                         me.down('combobox').setDisabled(me.selectedContentStore.getCount() ===
                                                         me.contentTypeItemConfig.occurrences.maximum);
-                    } catch (exception) {
+                    }
+                    catch (exception) {
                         /**/
                     }
                 }
@@ -156,7 +157,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relation', {
      * @private
      */
     alertContentIsAdded: function (records) {
-        alert('Temporary alert! Can not have duplicates in Relation field\n"' + records[0].raw.title + '" has already been added');
+        alert('Temporary alert! Can not have duplicates in Relationship input\n"' + records[0].raw.title + '" has already been added');
         this.down('combobox').focus('');
     },
 
