@@ -132,7 +132,6 @@ Ext.define('Admin.view.FilterPanel', {
     onKeyPressed: function (field, event, opts) {
         if (this.suspendEvents !== true) {
             if (event.getKey() === event.ENTER) {
-                this.updateTitle();
                 this.fireEvent('search', this.getValues());
             } else {
                 var me = this;

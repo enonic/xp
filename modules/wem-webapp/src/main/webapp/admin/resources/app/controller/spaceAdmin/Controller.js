@@ -33,6 +33,7 @@ Ext.define('Admin.controller.spaceAdmin.Controller', {
         var tabItem = {
             id: 'new-space',
             xtype: 'spaceAdminWizardPanel',
+            editing: true,
             title: 'New Space'
         };
 
@@ -40,30 +41,28 @@ Ext.define('Admin.controller.spaceAdmin.Controller', {
     },
 
     viewSpace: function (space) {
-        if (space) {
-            var me = this;
-            var tabs = this.getCmsTabPanel();
+        space = this.validateSpace(space);
 
-            // focus edit tab if present or create new one
-            var activeTab = tabs.setActiveTab(me.generateTabId(space, true));
+        var me = this;
+        var tabs = this.getCmsTabPanel();
 
-            if (!activeTab) {
-                var tabItem = {
-                    id: me.generateTabId(space, false),
-                    xtype: 'spaceDetail',
-                    showToolbar: true,
-                    data: space,
-                    title: space.get('displayName')
-                };
-                tabs.addTab(tabItem);
-            }
+        // focus edit tab if present or create new one
+        var activeTab = tabs.setActiveTab(me.generateTabId(space, true));
+
+        if (!activeTab) {
+            var tabItem = {
+                id: me.generateTabId(space, false),
+                xtype: 'spaceDetail',
+                showToolbar: false,
+                data: space,
+                title: space.get('displayName')
+            };
+            tabs.addTab(tabItem);
         }
     },
 
     editSpace: function (space) {
-        if (!space) {
-            return;
-        }
+        space = this.validateSpace(space);
 
         var me = this;
         var tabs = this.getCmsTabPanel();
@@ -76,8 +75,8 @@ Ext.define('Admin.controller.spaceAdmin.Controller', {
             if (r) {
                 var tabItem = {
                     id: me.generateTabId(space, true),
-                    editing: true,
                     xtype: 'spaceAdminWizardPanel',
+                    editing: true,
                     data: space,
                     title: space.get('displayName')
                 };
@@ -94,11 +93,23 @@ Ext.define('Admin.controller.spaceAdmin.Controller', {
         });
     },
 
-    showDeleteSpaceWindow: function (space) {
-        var win = this.getDeleteSpaceWindow();
-        win.doShow(space);
+    deleteSpace: function (space) {
+        space = this.validateSpace(space);
+        this.showDeleteSpaceWindow([].concat(space));
     },
 
+    showDeleteSpaceWindow: function (spaceArray) {
+        var win = this.getDeleteSpaceWindow();
+        win.doShow(spaceArray);
+    },
+
+    validateSpace: function (space) {
+        if (!space) {
+            var showPanel = this.getSpaceTreeGridPanel();
+            return showPanel.getSelection()[0];
+        }
+        return space;
+    },
 
     updateDetailPanel: function (selected) {
         this.getSpaceDetailPanel().setData(selected);
