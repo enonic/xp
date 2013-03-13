@@ -1,20 +1,17 @@
 Ext.define('Admin.view.contentManager.wizard.form.input.TextLine', {
     extend: 'Admin.view.contentManager.wizard.form.input.Base',
     alias: 'widget.TextLine',
+
+
     initComponent: function () {
-        var me = this;
 
         this.items = [
             {
                 xtype: 'textfield',
+                displayNameSource: true,   // property to select components taking part in auto generation
                 name: this.name,
                 value: this.value,
-                enableKeyEvents: true,
-                listeners: {
-                    change: function (f, e) {
-                        me.up('contentWizardPanel').onFormInputChanged(f, e);
-                    }
-                }
+                enableKeyEvents: true
             }
         ];
 

@@ -4,6 +4,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
 
     requires: [
         'Admin.view.WizardPanel',
+        'Admin.view.WizardHeader',
         'Admin.view.contentManager.wizard.ContentWizardToolbar',
         'Admin.view.contentManager.wizard.ContentDataPanel'
     ],
@@ -46,14 +47,22 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     initComponent: function () {
         var me = this;
 
-        if (this.data.content && !Ext.isEmpty(this.data.content.path)) {
-            this.evaluateDisplayName = false;
-        }
+        this.evaluateDisplayName = this.isNewContent();
 
         var headerData = this.prepareHeaderData(this.data);
 
         me.tbar = Ext.createByAlias('widget.contentWizardToolbar', {
-            isLiveMode: this.isLiveMode
+            isLiveMode: me.isLiveMode
+        });
+
+        var wizardHeader = Ext.create('Admin.view.WizardHeader', {
+            xtype: 'wizardHeader',
+            nameConfig: {
+                readOnly: headerData.isRoot,
+                stripCharsRe: /[^a-z0-9\-\/]+/ig
+            },
+            data: me.data,
+            prepareHeaderData: me.prepareHeaderData
         });
 
         var wizardPanel = {
@@ -107,40 +116,10 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
                         border: false
                     },
                     items: [
-                        {
-                            xtype: 'container',
-                            cls: 'admin-wizard-header-container',
-                            items: [
-                                {
-                                    xtype: 'textfield',
-                                    colspan: 2,
-                                    itemId: 'displayName',
-                                    hideLabel: true,
-                                    value: headerData.displayName,
-                                    emptyText: 'Display Name',
-                                    cls: 'admin-display-name',
-                                    dirtyCls: 'admin-display-name-dirty',
-                                    enableKeyEvents: true,
-                                    listeners: {
-                                        change: function (f, e) {
-                                            me.onDisplayNameChanged(f, e);
-                                        }
-                                    }
-                                },
-                                {
-                                    xtype: 'component',
-                                    itemId: 'contentPath',
-                                    cls: 'admin-content-path',
-                                    data: headerData,
-                                    tpl: '<table><tr>' +
-                                         '<td><span>{contentPath}</span></td>' +
-                                         '<td class="fluid"><input type="text" value="{contentName}" {[values.isRoot ? "readonly" : ""]}/></td>' +
-                                         '</tr></table>'
-                                }
-                            ]
-                        },
+                        wizardHeader,
                         {
                             xtype: 'wizardPanel',
+                            validateItems: [wizardHeader],
                             showControls: true,
                             items: me.getSteps()
                         }
@@ -196,39 +175,10 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         return {
             imageUrl: (data && data.content) ? data.content.iconUrl : undefined,
             displayName: (data && data.content) ? data.content.displayName : 'New Content',
-            contentPath: contentPath,
-            contentName: contentName,
+            path: contentPath,
+            name: contentName,
             isRoot: isRoot
         };
-    },
-
-    onDisplayNameChanged: function (f, e) {
-        this.evaluateDisplayName = false;
-    },
-
-    onFormInputChanged: function (f, e) {
-        if (this.evaluateDisplayName) {
-            var displayNameField = this.down('#displayName');
-
-            if (displayNameField) {
-                var rawData = this.getData().contentData;
-                var contentData = {};
-
-                var key;
-                for (key in rawData) {
-                    if (rawData.hasOwnProperty(key)) {
-                        contentData[key.replace(/\[0\]/g, '')] = rawData[key];
-                    }
-                }
-
-                var fn = this.data.contentType.contentDisplayNameScript;
-                var displayName = window.evaluateContentDisplayNameScript(fn, contentData);
-
-                displayNameField.setValue(displayName);
-
-                this.evaluateDisplayName = true;
-            }
-        }
     },
 
     getSteps: function () {
@@ -255,16 +205,24 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
 
     },
 
+    isNewContent: function () {
+        return !this.data || !this.data.content || Ext.isEmpty(this.data.content.path);
+    },
+
+    getWizardHeader: function () {
+        return this.down('wizardHeader');
+    },
+
     getWizardPanel: function () {
         return this.down('wizardPanel');
     },
 
     getData: function () {
-        return {
-            displayName: this.down('#displayName').getValue(),
-            contentName: this.down('#contentPath').el.down('input').getValue(),
+        var data = {
             contentData: this.getWizardPanel().getData()
         };
+        Ext.apply(data, this.getWizardHeader().getData());
+        return data;
     },
 
     setLiveMode: function (mode) {

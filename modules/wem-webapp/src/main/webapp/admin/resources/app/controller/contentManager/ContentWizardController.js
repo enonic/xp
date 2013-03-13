@@ -9,8 +9,6 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
     ],
     views: [],
 
-    EMPTY_DISPLAY_NAME_TEXT: 'Display Name',
-
     init: function () {
         var me = this;
         me.control({
@@ -40,16 +38,47 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
             'contentWizardToolbar toggleslide': {
                 change: this.toggleLiveWizard
             },
-            'contentWizardPanel textfield#displayName': {
-                keyup: function (field, event) {
-                    var text = Ext.String.trim(field.getValue());
-                    me.getTopBar().setTitleButtonText(text);
-                }
+            'contentWizardPanel wizardHeader': {
+                displaynamechange: this.onDisplayNameChanged,
+                displaynameoverride: this.onDisplayNameOverriden,
+                scope: this
+            },
+            'contentWizardPanel *[displayNameSource]': {
+                change: this.onDisplayNameSourceChanged
             }
         });
 
-        me.application.on({
-        });
+        me.application.on({});
+    },
+
+    onDisplayNameChanged: function (newName, oldName) {
+        this.getTopBar().setTitleButtonText(newName);
+    },
+
+    onDisplayNameOverriden: function (overriden) {
+        var wizard = this.getContentWizardPanel();
+        wizard.evaluateDisplayName = wizard.isNewContent() && !overriden;
+    },
+
+    onDisplayNameSourceChanged: function (field, event, opts) {
+        var wizard = this.getContentWizardPanel();
+        var evaluateFn = wizard.data.contentType.contentDisplayNameScript;
+
+        if (wizard.evaluateDisplayName && !Ext.isEmpty(evaluateFn)) {
+
+            var rawData = wizard.getData().contentData;
+            var contentData = {};
+            var key;
+
+            for (key in rawData) {
+                if (rawData.hasOwnProperty(key)) {
+                    contentData[key.replace(/\[0\]/g, '')] = rawData[key];
+                }
+            }
+
+            var displayName = window.evaluateContentDisplayNameScript(evaluateFn, contentData);
+            wizard.getWizardHeader().setDisplayName(displayName);
+        }
     },
 
     toggleLiveWizard: function (enabled) {
@@ -80,7 +109,7 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         var contentWizardData = contentWizard.getData();
         var contentData = contentWizardData.contentData;
         var displayName = contentWizardData.displayName;
-        var contentName = contentWizardData.contentName;
+        var contentName = contentWizardData.name;
         var isNewContent = !content.path;
 
         var contentParams = {

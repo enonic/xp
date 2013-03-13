@@ -2,19 +2,16 @@ Ext.define('Admin.view.contentManager.wizard.form.input.TextArea', {
     extend: 'Admin.view.contentManager.wizard.form.input.Base',
     alias: 'widget.TextArea',
     label: 'Text Area',
+
+
     initComponent: function () {
-        var me = this;
         this.items = [
             {
                 xtype: 'textarea',
+                displayNameSource: true,   // property to select components taking part in auto generation
                 name: this.name,
                 value: this.value,
-                enableKeyEvents: true,
-                listeners: {
-                    change: function (f, e) {
-                        me.up('contentWizardPanel').onFormInputChanged(f, e);
-                    }
-                }
+                enableKeyEvents: true
             }
         ];
 
