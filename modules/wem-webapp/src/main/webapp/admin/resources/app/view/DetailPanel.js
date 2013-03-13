@@ -5,6 +5,8 @@ Ext.define('Admin.view.DetailPanel', {
     cls: 'admin-preview-panel admin-detail',
     border: false,
 
+    showToolbar: true,
+
     listeners: {
         afterrender: function (detail) {
             detail.el.on('click', function (event, target, opts) {
@@ -22,6 +24,10 @@ Ext.define('Admin.view.DetailPanel', {
     },
 
     initComponent: function () {
+        if (this.showToolbar) {
+            this.tbar = this.createToolBar();
+        }
+
         this.callParent(arguments);
     },
 
@@ -207,8 +213,27 @@ Ext.define('Admin.view.DetailPanel', {
     },
 
     /*
+     * Toolbar
+     */
+
+    createToolBar: function () {
+        return {
+            xtype: 'toolbar',
+            itemId: 'defaultToolbar',
+            cls: 'admin-white-toolbar',
+            items: [
+                {
+                    xtype: 'tbtext',
+                    itemId: 'selectionTxt',
+                    text: 'Stub text'
+                }
+            ]
+        };
+    },
+
+    /*
      * Data
-     * */
+     */
     setDataCallback: function (data) {
     },
 

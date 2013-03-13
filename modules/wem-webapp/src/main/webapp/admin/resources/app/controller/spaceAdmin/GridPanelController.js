@@ -16,12 +16,26 @@ Ext.define('Admin.controller.spaceAdmin.GridPanelController', {
             'spaceTreeGrid gridpanel, spaceTreeGrid treepanel': {
                 selectionchange: this.onGridSelectionChange,
                 itemcontextmenu: this.showContextMenu,
-                itemdblclick: function (btn, evt) {
-                    //this.showEditBaseTypePanel();
+                itemdblclick: function (grid, record) {
+                    this.editSpace(record);
+                }
+            },
+            'spaceContextMenu *[action=deleteSpace]': {
+                click: function (el, e) {
+                    this.deleteSpace();
+                }
+            },
+            'spaceContextMenu *[action=editSpace]': {
+                click: function (el, e) {
+                    this.editSpace();
+                }
+            },
+            'spaceContextMenu *[action=viewSpace]': {
+                click: function (el, e) {
+                    this.viewSpace();
                 }
             }
         });
-
     },
 
     onGridSelectionChange: function (selModel, selected, opts) {
