@@ -2,10 +2,10 @@
     "name": "RelatedContent",
     "module": "Demo",
     "qualifiedName": "Demo:RelatedContent",
-    "displayName":"Relation Field Demo",
-    "superType":"System:Content",
-    "isAbstract":false,
-    "isFinal":true,
+    "displayName": "Relationship Field Demo",
+    "superType": "System:Content",
+    "isAbstract": false,
+    "isFinal": true,
     "form": [
         {
             "Input": {
@@ -40,7 +40,7 @@
                 "validationRegexp": null,
                 "helpText": "Related articles",
                 "type": {
-                    "name": "Relation",
+                    "name": "Relationship",
                     "builtIn": true
                 }
             }
@@ -59,7 +59,7 @@
                 "validationRegexp": null,
                 "helpText": "Related files",
                 "type": {
-                    "name": "Relation",
+                    "name": "Relationship",
                     "builtIn": true
                 }
             }

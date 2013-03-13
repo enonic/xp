@@ -1,7 +1,7 @@
 {
-    "name": "Relation",
+    "name": "Relationship",
     "module": "Demo",
-    "displayName": "Relation Demo",
+    "displayName": "Relationship Demo",
     "superType": "System:structured",
     "isAbstract": false,
     "isFinal": true,
@@ -39,7 +39,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "Relation",
+                    "name": "Relationship",
                     "builtIn": true
                 }
             }
@@ -58,7 +58,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "Relation",
+                    "name": "Relationship",
                     "builtIn": true
                 }
             }
