@@ -38,7 +38,7 @@ public final class UpdateRelationshipHandler
         try
         {
             Relationship changed = command.getEditor().edit( existing );
-            existing.checkIllegalChange( changed );
+            existing.checkIllegalEdit( changed );
 
             changed = Relationship.newRelationship( changed ).
                 modifier( AccountKey.anonymous() ).

@@ -15,9 +15,11 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.UpdateContent;
+import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataVisitor;
 import com.enonic.wem.api.content.data.EntryPath;
@@ -28,6 +30,7 @@ import com.enonic.wem.api.content.relationship.RelationshipKey;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.support.illegalchange.IllegalEditException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
@@ -61,33 +64,46 @@ public class UpdateContentHandler
     public void handle( final CommandContext context, final UpdateContent command )
         throws Exception
     {
-        final Content persistedContent = contentDao.select( command.getSelector(), context.getJcrSession() );
-
-        Content modifiedContent = command.getEditor().edit( persistedContent );
-        if ( modifiedContent != null )
+        try
         {
-            validateContentData( context, modifiedContent );
-
-            new SyncRelationships( context, persistedContent, modifiedContent ).invoke();
-
-            modifiedContent = newContent( modifiedContent ).
-                modifiedTime( DateTime.now() ).
-                modifier( command.getModifier() ).build();
-
-            final boolean createNewVersion = true;
-            contentDao.update( modifiedContent, createNewVersion, context.getJcrSession() );
-            context.getJcrSession().save();
-
-            try
+            final Content persistedContent = contentDao.select( command.getSelector(), context.getJcrSession() );
+            if ( persistedContent == null )
             {
-                // TODO: Temporary easy solution. The index logic should eventually not be here anyway
-                indexService.indexContent( modifiedContent );
-            }
-            catch ( Exception e )
-            {
-                LOG.error( "Index content failed", e );
+                throw new ContentNotFoundException( command.getSelector() );
             }
 
+            Content edited = command.getEditor().edit( persistedContent );
+            if ( edited != null )
+            {
+                persistedContent.checkIllegalEdit( edited );
+
+                validateContentData( context, edited );
+
+                new SyncRelationships( context, persistedContent, edited ).invoke();
+
+                edited = newContent( edited ).
+                    modifiedTime( DateTime.now() ).
+                    modifier( command.getModifier() ).build();
+
+                final boolean createNewVersion = true;
+                contentDao.update( edited, createNewVersion, context.getJcrSession() );
+                context.getJcrSession().save();
+
+                try
+                {
+                    // TODO: Temporary easy solution. The index logic should eventually not be here anyway
+                    indexService.indexContent( edited );
+                }
+                catch ( Exception e )
+                {
+                    LOG.error( "Index content failed", e );
+                }
+                command.setResult( UpdateContentResult.SUCCESS );
+            }
+        }
+        catch ( ContentNotFoundException | IllegalEditException e )
+        {
+            command.setResult( UpdateContentResult.from( e ) );
         }
     }
 

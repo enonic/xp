@@ -1,10 +1,10 @@
 package com.enonic.wem.api.support.illegalchange;
 
 
-public class IllegalChangeException
+public class IllegalEditException
     extends RuntimeException
 {
-    IllegalChangeException( final String property, final Object from, final Object to, final Class objectClass )
+    IllegalEditException( final String property, final Object from, final Object to, final Class objectClass )
     {
         super( buildMesasge( property, from, to, objectClass ) );
     }

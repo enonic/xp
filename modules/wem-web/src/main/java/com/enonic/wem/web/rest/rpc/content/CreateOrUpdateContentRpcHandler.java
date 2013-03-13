@@ -11,6 +11,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.RenameContent;
 import com.enonic.wem.api.command.content.UpdateContent;
+import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentId;
@@ -73,7 +74,7 @@ public final class CreateOrUpdateContentRpcHandler
         {
             HandleUpdateContent handleUpdateContent = new HandleUpdateContent();
             handleUpdateContent.contentId = contentId;
-            handleUpdateContent.updateContent( displayName, rootDataSet );
+            UpdateContentResult result = handleUpdateContent.updateContent( displayName, rootDataSet );
 
             final String newContentName = context.param( "contentName" ).asString();
             final boolean renameContent = !Strings.isNullOrEmpty( newContentName );
@@ -90,7 +91,7 @@ public final class CreateOrUpdateContentRpcHandler
                     return;
                 }
             }
-            context.setResult( CreateOrUpdateContentJsonResult.updated() );
+            context.setResult( CreateOrUpdateContentJsonResult.from( result ) );
         }
     }
 
@@ -149,14 +150,14 @@ public final class CreateOrUpdateContentRpcHandler
     {
         private ContentId contentId;
 
-        private void updateContent( final String displayName, final RootDataSet rootDataSet )
+        private UpdateContentResult updateContent( final String displayName, final RootDataSet rootDataSet )
         {
             final UpdateContent updateContent = content().update();
             updateContent.selector( contentId );
             updateContent.editor( composite( setContentData( rootDataSet ), setContentDisplayName( displayName ) ) );
             updateContent.modifier( AccountKey.anonymous() );
 
-            client.execute( updateContent );
+            return client.execute( updateContent );
         }
     }
 

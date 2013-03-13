@@ -1,8 +1,8 @@
 package com.enonic.wem.core.content.schema.relationship;
 
+import javax.inject.Inject;
 import javax.jcr.Session;
 
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.relationship.UpdateRelationshipType;
@@ -36,7 +36,7 @@ public final class UpdateRelationshipTypesHandler
         final RelationshipType changed = editor.edit( existing );
         if ( changed != null )
         {
-            existing.checkIllegalChange( changed );
+            existing.checkIllegalEdit( changed );
             relationshipTypeDao.update( changed, session );
             session.save();
             command.setResult( Boolean.TRUE );

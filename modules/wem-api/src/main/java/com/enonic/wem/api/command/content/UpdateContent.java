@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.api.content.editor.ContentEditor;
 
 public final class UpdateContent
-    extends Command
+    extends Command<UpdateContentResult>
 {
     private ContentSelector selector;
 

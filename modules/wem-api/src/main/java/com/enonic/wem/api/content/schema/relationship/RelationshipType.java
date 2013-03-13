@@ -16,11 +16,11 @@ import com.enonic.wem.api.content.schema.SchemaKey;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.api.support.illegalchange.IllegalChange;
-import com.enonic.wem.api.support.illegalchange.IllegalChangeAware;
+import com.enonic.wem.api.support.illegalchange.IllegalEdit;
+import com.enonic.wem.api.support.illegalchange.IllegalEditAware;
 
 public final class RelationshipType
-    implements Schema, IllegalChangeAware<RelationshipType>
+    implements Schema, IllegalEditAware<RelationshipType>
 {
     private final ModuleName module;
 
@@ -155,14 +155,14 @@ public final class RelationshipType
         return Objects.hashCode( module, name, displayName, qualifiedName, fromSemantic, toSemantic, allowedFromTypes, allowedToTypes );
     }
 
-    public void checkIllegalChange( final RelationshipType to )
+    public void checkIllegalEdit( final RelationshipType to )
     {
         Preconditions.checkArgument( this.getCreatedTime().equals( to.getCreatedTime() ) );
-        IllegalChange.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), RelationshipType.class );
+        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), RelationshipType.class );
 
         // Cannot be changed since they are a part of a Relationship's storage path in JCR.
-        IllegalChange.check( "name", this.getName(), to.getName(), RelationshipType.class );
-        IllegalChange.check( "moduleName", this.getModuleName(), to.getModuleName(), RelationshipType.class );
+        IllegalEdit.check( "name", this.getName(), to.getName(), RelationshipType.class );
+        IllegalEdit.check( "moduleName", this.getModuleName(), to.getModuleName(), RelationshipType.class );
     }
 
     public static Builder newRelationshipType()

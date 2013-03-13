@@ -13,9 +13,11 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.UpdateContent;
+import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
@@ -28,6 +30,8 @@ import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
 import com.enonic.wem.core.index.IndexService;
+
+import static junit.framework.Assert.assertEquals;
 
 public class UpdateContentHandlerTest
     extends AbstractCommandHandlerTest
@@ -59,6 +63,36 @@ public class UpdateContentHandlerTest
         handler.setIndexService( indexService );
 
         Mockito.when( super.client.execute( Mockito.isA( ValidateRootDataSet.class ) ) ).thenReturn( DataValidationErrors.empty() );
+    }
+
+    @Test
+    public void given_content_not_found_when_handle_then_NOT_FOUND_is_returned()
+        throws Exception
+    {
+        // setup
+        DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
+
+        RootDataSet existingContentData = new RootDataSet();
+        existingContentData.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "aaa" ).build() );
+
+        Mockito.when( contentDao.select( Mockito.eq( ContentPath.from( "myContent" ) ), Mockito.any( Session.class ) ) ).thenReturn( null );
+
+        RootDataSet unchangedContentData = new RootDataSet();
+        unchangedContentData.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "aaa" ).build() );
+
+        UpdateContent command = new UpdateContent().
+            modifier( AccountKey.superUser() ).
+            selector( ContentPath.from( "myContent" ) ).
+            editor( ContentEditors.setContentData( unchangedContentData ) );
+
+        // exercise
+        handler.handle( context, command );
+
+        // verify
+        UpdateContentResult result = command.getResult();
+        assertEquals( UpdateContentResult.Type.NOT_FOUND, result.getType() );
+        Mockito.verify( contentDao, Mockito.times( 0 ) ).update( Mockito.any( Content.class ), Mockito.eq( true ),
+                                                                 Mockito.any( Session.class ) );
     }
 
     @Test

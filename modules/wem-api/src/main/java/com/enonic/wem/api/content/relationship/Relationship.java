@@ -13,12 +13,12 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.support.illegalchange.IllegalChange;
-import com.enonic.wem.api.support.illegalchange.IllegalChangeAware;
-import com.enonic.wem.api.support.illegalchange.IllegalChangeException;
+import com.enonic.wem.api.support.illegalchange.IllegalEdit;
+import com.enonic.wem.api.support.illegalchange.IllegalEditAware;
+import com.enonic.wem.api.support.illegalchange.IllegalEditException;
 
 public final class Relationship
-    implements IllegalChangeAware<Relationship>
+    implements IllegalEditAware<Relationship>
 {
     private final RelationshipId id;
 
@@ -123,16 +123,16 @@ public final class Relationship
     }
 
     @Override
-    public void checkIllegalChange( final Relationship to )
-        throws IllegalChangeException
+    public void checkIllegalEdit( final Relationship to )
+        throws IllegalEditException
     {
-        IllegalChange.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Relationship.class );
-        IllegalChange.check( "creator", this.getCreator(), to.getCreator(), Relationship.class );
-        IllegalChange.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Relationship.class );
-        IllegalChange.check( "modifier", this.getModifier(), to.getModifier(), Relationship.class );
-        IllegalChange.check( "fromContent", this.getFromContent(), to.getFromContent(), Relationship.class );
-        IllegalChange.check( "toContent", this.getToContent(), to.getToContent(), Relationship.class );
-        IllegalChange.check( "type", this.getType(), to.getType(), Relationship.class );
+        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Relationship.class );
+        IllegalEdit.check( "creator", this.getCreator(), to.getCreator(), Relationship.class );
+        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Relationship.class );
+        IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), Relationship.class );
+        IllegalEdit.check( "fromContent", this.getFromContent(), to.getFromContent(), Relationship.class );
+        IllegalEdit.check( "toContent", this.getToContent(), to.getToContent(), Relationship.class );
+        IllegalEdit.check( "type", this.getType(), to.getType(), Relationship.class );
     }
 
     public static Builder newRelationship()

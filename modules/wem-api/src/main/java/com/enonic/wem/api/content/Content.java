@@ -10,8 +10,12 @@ import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
+import com.enonic.wem.api.support.illegalchange.IllegalEdit;
+import com.enonic.wem.api.support.illegalchange.IllegalEditAware;
+import com.enonic.wem.api.support.illegalchange.IllegalEditException;
 
 public final class Content
+    implements IllegalEditAware<Content>
 {
     private final String displayName;
 
@@ -123,6 +127,19 @@ public final class Content
         s.add( "owner", owner );
         s.add( "modifier", modifier );
         return s.toString();
+    }
+
+    @Override
+    public void checkIllegalEdit( final Content to )
+        throws IllegalEditException
+    {
+        IllegalEdit.check( "id", this.getId(), to.getId(), Content.class );
+        IllegalEdit.check( "versionId", this.getVersionId(), to.getVersionId(), Content.class );
+        IllegalEdit.check( "path", this.getPath(), to.getPath(), Content.class );
+        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Content.class );
+        IllegalEdit.check( "owner", this.getOwner(), to.getOwner(), Content.class );
+        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Content.class );
+        IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), Content.class );
     }
 
     public static Builder newContent()
