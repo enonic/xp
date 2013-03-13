@@ -16,8 +16,8 @@ import com.enonic.wem.api.content.schema.SchemaKey;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.api.support.illegalchange.IllegalEdit;
-import com.enonic.wem.api.support.illegalchange.IllegalEditAware;
+import com.enonic.wem.api.support.illegaledit.IllegalEdit;
+import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 
 public final class RelationshipType
     implements Schema, IllegalEditAware<RelationshipType>

@@ -30,7 +30,7 @@ import com.enonic.wem.api.content.relationship.RelationshipKey;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.support.illegalchange.IllegalEditException;
+import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;

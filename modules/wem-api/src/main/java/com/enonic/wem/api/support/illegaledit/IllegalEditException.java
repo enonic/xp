@@ -1,4 +1,4 @@
-package com.enonic.wem.api.support.illegalchange;
+package com.enonic.wem.api.support.illegaledit;
 
 
 public class IllegalEditException

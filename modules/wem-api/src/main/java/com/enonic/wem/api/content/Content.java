@@ -10,9 +10,9 @@ import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-import com.enonic.wem.api.support.illegalchange.IllegalEdit;
-import com.enonic.wem.api.support.illegalchange.IllegalEditAware;
-import com.enonic.wem.api.support.illegalchange.IllegalEditException;
+import com.enonic.wem.api.support.illegaledit.IllegalEdit;
+import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
+import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 public final class Content
     implements IllegalEditAware<Content>

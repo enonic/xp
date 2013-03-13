@@ -1,7 +1,7 @@
 package com.enonic.wem.api.command.content;
 
 import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.support.illegalchange.IllegalEditException;
+import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 public class UpdateContentResult
 {
