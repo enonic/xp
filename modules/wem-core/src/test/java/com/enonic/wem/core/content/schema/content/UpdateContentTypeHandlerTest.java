@@ -7,7 +7,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.schema.content.UpdateContentTypes;
+import com.enonic.wem.api.command.content.schema.content.UpdateContentType;
+import com.enonic.wem.api.command.content.schema.content.UpdateContentTypeResult;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.ContentTypes;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
@@ -27,10 +28,10 @@ import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
-public class UpdateContentTypesHandlerTest
+public class UpdateContentTypeHandlerTest
     extends AbstractCommandHandlerTest
 {
-    private UpdateContentTypesHandler handler;
+    private UpdateContentTypeHandler handler;
 
     private ContentTypeDao contentTypeDao;
 
@@ -41,7 +42,7 @@ public class UpdateContentTypesHandlerTest
         super.initialize();
 
         contentTypeDao = Mockito.mock( ContentTypeDao.class );
-        handler = new UpdateContentTypesHandler();
+        handler = new UpdateContentTypeHandler();
         handler.setContentTypeDao( contentTypeDao );
     }
 
@@ -63,9 +64,11 @@ public class UpdateContentTypesHandlerTest
             build();
 
         ContentTypes contentTypes = ContentTypes.from( existingContentType );
-        Mockito.when( contentTypeDao.select( isA( QualifiedContentTypeNames.class ), any( Session.class ) ) ).thenReturn( contentTypes );
+        Mockito.when( contentTypeDao.select( isA( QualifiedContentTypeName.class ), any( Session.class ) ) ).thenReturn(
+            existingContentType );
 
-        UpdateContentTypes command = Commands.contentType().update().names( QualifiedContentTypeNames.from( "myModule:myContentType" ) );
+        UpdateContentType command =
+            Commands.contentType().update().qualifiedName( QualifiedContentTypeName.from( "myModule:myContentType" ) );
         final ContentTypeEditor editor = newSetContentTypeEditor().
             displayName( "Changed" ).
             setAbstract( false ).
@@ -78,7 +81,7 @@ public class UpdateContentTypesHandlerTest
 
         // verify
         verify( contentTypeDao, atLeastOnce() ).update( Mockito.isA( ContentType.class ), Mockito.any( Session.class ) );
-        assertEquals( (Integer) 1, command.getResult() );
+        assertEquals( UpdateContentTypeResult.SUCCESS, command.getResult() );
     }
 
 
@@ -100,10 +103,11 @@ public class UpdateContentTypesHandlerTest
             build();
 
         Mockito.when(
-            contentTypeDao.select( eq( QualifiedContentTypeNames.from( "myModule:myContentType" ) ), any( Session.class ) ) ).thenReturn(
-            ContentTypes.from( existingContentType ) );
+            contentTypeDao.select( eq( QualifiedContentTypeName.from( "myModule:myContentType" ) ), any( Session.class ) ) ).thenReturn(
+            existingContentType );
 
-        UpdateContentTypes command = Commands.contentType().update().names( QualifiedContentTypeNames.from( "myModule:myContentType" ) );
+        UpdateContentType command =
+            Commands.contentType().update().qualifiedName( QualifiedContentTypeName.from( "myModule:myContentType" ) );
         final ContentTypeEditor editor = newSetContentTypeEditor().
             displayName( "Changed" ).
             setAbstract( false ).

@@ -31,7 +31,8 @@ public final class GetContentTypeRpcHandler
     {
         final String format = context.param( "format" ).required().asString();
         final QualifiedContentTypeName qualifiedName = new QualifiedContentTypeName( context.param( "contentType" ).required().asString() );
-        final GetContentTypes getContentTypes = Commands.contentType().get().names( QualifiedContentTypeNames.from( qualifiedName ) );
+        final GetContentTypes getContentTypes =
+            Commands.contentType().get().qualifiedNames( QualifiedContentTypeNames.from( qualifiedName ) );
         getContentTypes.mixinReferencesToFormItems( context.param( "mixinReferencesToFormItems" ).asBoolean( false ) );
         final ContentTypes result = client.execute( getContentTypes );
 

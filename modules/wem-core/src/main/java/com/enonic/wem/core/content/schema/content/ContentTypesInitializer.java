@@ -139,7 +139,7 @@ public class ContentTypesInitializer
     private void addContentType( final ContentType contentType )
     {
         final QualifiedContentTypeNames qualifiedNames = QualifiedContentTypeNames.from( contentType.getQualifiedName() );
-        final boolean contentTypeExists = !client.execute( contentType().get().names( qualifiedNames ) ).isEmpty();
+        final boolean contentTypeExists = !client.execute( contentType().get().qualifiedNames( qualifiedNames ) ).isEmpty();
         if ( !contentTypeExists )
         {
             client.execute( contentType().create().contentType( contentType ) );
@@ -155,7 +155,7 @@ public class ContentTypesInitializer
                 contentDisplayNameScript( contentType.getContentDisplayNameScript() ).
                 form( contentType.form() ).
                 build();
-            client.execute( contentType().update().names( qualifiedNames ).editor( editor ) );
+            client.execute( contentType().update().qualifiedName( contentType.getQualifiedName() ).editor( editor ) );
         }
     }
 

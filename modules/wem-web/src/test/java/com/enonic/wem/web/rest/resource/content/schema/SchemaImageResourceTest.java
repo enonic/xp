@@ -222,7 +222,8 @@ public class SchemaImageResourceTest
         final List<ContentType> list = Lists.newArrayList();
         list.add( contentType );
         final ContentTypes result = ContentTypes.from( list );
-        final GetContentTypes command = new GetContentTypes().names( QualifiedContentTypeNames.from( contentType.getQualifiedName() ) );
+        final GetContentTypes command =
+            new GetContentTypes().qualifiedNames( QualifiedContentTypeNames.from( contentType.getQualifiedName() ) );
         Mockito.when( client.execute( command ) ).thenReturn( result );
     }
 

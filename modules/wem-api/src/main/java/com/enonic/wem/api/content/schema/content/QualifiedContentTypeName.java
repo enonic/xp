@@ -252,4 +252,9 @@ public final class QualifiedContentTypeName
         return FILE_EXECUTABLE;
     }
 
+    public static QualifiedContentTypeName from( String qualifiedContentTypeName )
+    {
+        return new QualifiedContentTypeName( qualifiedContentTypeName );
+    }
+
 }

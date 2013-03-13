@@ -1,20 +1,19 @@
 package com.enonic.wem.core.content.schema.content;
 
+import javax.inject.Inject;
 import javax.jcr.Session;
 
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.command.content.schema.content.UpdateContentTypes;
+import com.enonic.wem.api.command.content.schema.content.UpdateContentType;
+import com.enonic.wem.api.command.content.schema.content.UpdateContentTypeResult;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.ContentTypeFetcher;
-import com.enonic.wem.api.content.schema.content.ContentTypes;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.content.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.content.schema.content.validator.ContentTypeValidator;
 import com.enonic.wem.api.content.schema.content.validator.InvalidContentTypeException;
+import com.enonic.wem.api.exception.ContentTypeNotFoundException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
@@ -22,42 +21,44 @@ import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
 import static com.enonic.wem.api.content.schema.content.validator.ContentTypeValidator.newContentTypeValidator;
 
 @Component
-public final class UpdateContentTypesHandler
-    extends CommandHandler<UpdateContentTypes>
+public final class UpdateContentTypeHandler
+    extends CommandHandler<UpdateContentType>
 {
     private ContentTypeDao contentTypeDao;
 
-    public UpdateContentTypesHandler()
+    public UpdateContentTypeHandler()
     {
-        super( UpdateContentTypes.class );
+        super( UpdateContentType.class );
     }
 
     @Override
-    public void handle( final CommandContext context, final UpdateContentTypes command )
+    public void handle( final CommandContext context, final UpdateContentType command )
         throws Exception
     {
         final Session session = context.getJcrSession();
-
-        final QualifiedContentTypeNames qualifiedNames = command.getNames();
         final ContentTypeEditor editor = command.getEditor();
-        int contentTypesUpdated = 0;
-        for ( QualifiedContentTypeName qualifiedName : qualifiedNames )
+
+        try
         {
-            final ContentType contentType = selectContentType( qualifiedName, session );
-            if ( contentType != null )
+            final ContentType persistedContentType = contentTypeDao.select( command.getQualifiedName(), session );
+            if ( persistedContentType == null )
             {
-                final ContentType modifiedContentType = editor.edit( contentType );
-                if ( modifiedContentType != null )
-                {
-                    validate( modifiedContentType, session );
-                    contentTypeDao.update( modifiedContentType, session );
-                    contentTypesUpdated++;
-                }
+                throw new ContentTypeNotFoundException( command.getQualifiedName() );
+            }
+
+            final ContentType edited = editor.edit( persistedContentType );
+            if ( edited != null )
+            {
+                validate( edited, session );
+                contentTypeDao.update( edited, session );
+                session.save();
+                command.setResult( UpdateContentTypeResult.SUCCESS );
             }
         }
-
-        session.save();
-        command.setResult( contentTypesUpdated );
+        catch ( ContentTypeNotFoundException e )
+        {
+            UpdateContentTypeResult.from( e );
+        }
     }
 
     private void validate( final ContentType contentType, final Session session )
@@ -73,12 +74,6 @@ public final class UpdateContentTypesHandler
         }
 
         throw new InvalidContentTypeException( contentType, validationResult.getFirst().getErrorMessage() );
-    }
-
-    private ContentType selectContentType( final QualifiedContentTypeName contentTypeName, final Session session )
-    {
-        final ContentTypes contentTypes = contentTypeDao.select( QualifiedContentTypeNames.from( contentTypeName ), session );
-        return contentTypes.isEmpty() ? null : contentTypes.first();
     }
 
     @Inject

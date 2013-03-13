@@ -47,7 +47,8 @@ public final class ValidateContentDataRpcHandler
 
     private ContentType getContentType( final QualifiedContentTypeName qualifiedContentTypeName )
     {
-        final GetContentTypes getContentType = contentType().get().names( QualifiedContentTypeNames.from( qualifiedContentTypeName ) );
+        final GetContentTypes getContentType =
+            contentType().get().qualifiedNames( QualifiedContentTypeNames.from( qualifiedContentTypeName ) );
         final ContentTypes contentTypes = client.execute( getContentType );
         return contentTypes.first();
     }

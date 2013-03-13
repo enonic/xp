@@ -13,7 +13,8 @@ import com.google.common.io.Files;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.schema.content.CreateContentType;
 import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
-import com.enonic.wem.api.command.content.schema.content.UpdateContentTypes;
+import com.enonic.wem.api.command.content.schema.content.UpdateContentType;
+import com.enonic.wem.api.command.content.schema.content.UpdateContentTypeResult;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.ContentTypes;
 import com.enonic.wem.api.module.Module;
@@ -51,7 +52,7 @@ public class CreateOrUpdateContentTypeRpcHandlerTest
     }
 
     @Test
-    public void testCreateContentType()
+    public void create_ContentType()
         throws Exception
     {
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
@@ -66,12 +67,13 @@ public class CreateOrUpdateContentTypeRpcHandlerTest
     }
 
     @Test
-    public void testUpdateContentType()
+    public void update_ContentType()
         throws Exception
     {
         ContentType existingContentType = ContentType.newContentType().name( "aType" ).module( Module.SYSTEM.getName() ).build();
         ContentTypes contentTypes = ContentTypes.from( existingContentType );
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( contentTypes );
+        Mockito.when( client.execute( isA( UpdateContentType.class ) ) ).thenReturn( UpdateContentTypeResult.SUCCESS );
 
         ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );
@@ -79,11 +81,30 @@ public class CreateOrUpdateContentTypeRpcHandlerTest
         resultJson.put( "updated", true );
         testSuccess( "createOrUpdateContentType_param.json", resultJson );
 
-        verify( client, times( 1 ) ).execute( isA( UpdateContentTypes.class ) );
+        verify( client, times( 1 ) ).execute( isA( UpdateContentType.class ) );
     }
 
     @Test
-    public void testCreateContentTypeWithIcon()
+    public void update_ContentType_with_failure()
+        throws Exception
+    {
+        ContentType existingContentType = ContentType.newContentType().name( "aType" ).module( Module.SYSTEM.getName() ).build();
+        ContentTypes contentTypes = ContentTypes.from( existingContentType );
+        Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( contentTypes );
+        Mockito.when( client.execute( isA( UpdateContentType.class ) ) ).thenReturn( UpdateContentTypeResult.NOT_FOUND );
+
+        ObjectNode resultJson = objectNode();
+        resultJson.put( "success", false );
+        resultJson.put( "created", false );
+        resultJson.put( "updated", true );
+        resultJson.put( "failure", "NOT_FOUND" );
+        testSuccess( "createOrUpdateContentType_param.json", resultJson );
+
+        verify( client, times( 1 ) ).execute( isA( UpdateContentType.class ) );
+    }
+
+    @Test
+    public void create_ContentType_with_Icon()
         throws Exception
     {
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );

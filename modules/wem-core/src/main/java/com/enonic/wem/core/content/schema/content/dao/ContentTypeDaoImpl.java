@@ -82,4 +82,18 @@ public final class ContentTypeDaoImpl
             throw new SystemException( e, "Unable to retrieve content types [{0}]", qualifiedContentTypeNames );
         }
     }
+
+    @Override
+    public ContentType select( final QualifiedContentTypeName qualifiedContentTypeName, final Session session )
+    {
+        try
+        {
+            final QualifiedContentTypeNames qualifiedContentTypeNames = QualifiedContentTypeNames.from( qualifiedContentTypeName );
+            return new ContentTypeDaoHandlerSelect( session ).select( qualifiedContentTypeNames ).first();
+        }
+        catch ( RepositoryException e )
+        {
+            throw new SystemException( e, "Unable to retrieve content type [{0}]", qualifiedContentTypeName );
+        }
+    }
 }

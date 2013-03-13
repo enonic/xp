@@ -62,7 +62,7 @@ public class GetContentTypeRpcHandlerTest
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
         final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( new QualifiedContentTypeName( "myModule:myCtype" ) );
-        Mockito.when( client.execute( Commands.contentType().get().names( names ) ) ).thenReturn( contentTypes );
+        Mockito.when( client.execute( Commands.contentType().get().qualifiedNames( names ) ) ).thenReturn( contentTypes );
 
         testSuccess( "getContentTypeJson_param.json", "getContentTypeJson_result.json" );
     }
@@ -90,7 +90,7 @@ public class GetContentTypeRpcHandlerTest
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
         final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( new QualifiedContentTypeName( "myModule:myCtype" ) );
-        Mockito.when( client.execute( Commands.contentType().get().names( names ) ) ).thenReturn( contentTypes );
+        Mockito.when( client.execute( Commands.contentType().get().qualifiedNames( names ) ) ).thenReturn( contentTypes );
 
         testSuccess( "getContentTypeXml_param.json", "getContentTypeXml_result.json" );
     }

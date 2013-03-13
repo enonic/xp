@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.content.schema.content.CreateContentType;
 import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
-import com.enonic.wem.api.command.content.schema.content.UpdateContentTypes;
+import com.enonic.wem.api.command.content.schema.content.UpdateContentType;
+import com.enonic.wem.api.command.content.schema.content.UpdateContentTypeResult;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
@@ -82,8 +83,6 @@ public class CreateOrUpdateContentTypeRpcHandler
         }
         else
         {
-            final QualifiedContentTypeNames qualifiedContentTypeNames = QualifiedContentTypeNames.from( contentType.getQualifiedName() );
-
             final ContentTypeEditor editor = newSetContentTypeEditor().
                 displayName( contentType.getDisplayName() ).
                 icon( contentType.getIcon() ).
@@ -93,17 +92,17 @@ public class CreateOrUpdateContentTypeRpcHandler
                 contentDisplayNameScript( contentType.getContentDisplayNameScript() ).
                 form( contentType.form() ).
                 build();
-            final UpdateContentTypes updateCommand = contentType().update().names( qualifiedContentTypeNames ).editor( editor );
+            final UpdateContentType updateCommand = contentType().update().qualifiedName( contentType.getQualifiedName() ).editor( editor );
 
-            client.execute( updateCommand );
+            UpdateContentTypeResult result = client.execute( updateCommand );
 
-            context.setResult( CreateOrUpdateContentTypeJsonResult.updated() );
+            context.setResult( CreateOrUpdateContentTypeJsonResult.from( result ) );
         }
     }
 
     private boolean contentTypeExists( final QualifiedContentTypeName qualifiedName )
     {
-        final GetContentTypes getContentTypes = contentType().get().names( QualifiedContentTypeNames.from( qualifiedName ) );
+        final GetContentTypes getContentTypes = contentType().get().qualifiedNames( QualifiedContentTypeNames.from( qualifiedName ) );
         return !client.execute( getContentTypes ).isEmpty();
     }
 

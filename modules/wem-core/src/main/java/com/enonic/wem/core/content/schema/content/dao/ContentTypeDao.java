@@ -23,4 +23,6 @@ public interface ContentTypeDao
     ContentTypes selectAll( Session session );
 
     ContentTypes select( QualifiedContentTypeNames qualifiedContentTypeNames, Session session );
+
+    ContentType select( QualifiedContentTypeName qualifiedContentTypeName, Session session );
 }

@@ -1,8 +1,8 @@
 package com.enonic.wem.core.content.schema.content;
 
+import javax.inject.Inject;
 import javax.jcr.Session;
 
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
@@ -41,8 +41,8 @@ public final class GetContentTypesHandler
         }
         else
         {
-            final QualifiedContentTypeNames contentTypeNames = command.getNames();
-            contentTypes = getContentTypes( session, contentTypeNames );
+            final QualifiedContentTypeNames qualifiedNames = command.getQualifiedNames();
+            contentTypes = getContentTypes( session, qualifiedNames );
         }
 
         if ( command.isMixinReferencesToFormItems() )

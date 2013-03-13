@@ -12,9 +12,9 @@ public final class ContentTypeCommands
         return new CreateContentType();
     }
 
-    public UpdateContentTypes update()
+    public UpdateContentType update()
     {
-        return new UpdateContentTypes();
+        return new UpdateContentType();
     }
 
     public DeleteContentTypes delete()

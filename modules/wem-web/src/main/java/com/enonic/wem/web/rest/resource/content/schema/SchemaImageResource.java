@@ -2,6 +2,7 @@ package com.enonic.wem.web.rest.resource.content.schema;
 
 import java.awt.image.BufferedImage;
 
+import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -11,7 +12,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
@@ -114,8 +114,8 @@ public final class SchemaImageResource
         {
             return null;
         }
-        final QualifiedContentTypeNames contentTypeNames = QualifiedContentTypeNames.from( contentTypeName );
-        return client.execute( contentType().get().names( contentTypeNames ) ).first();
+        final QualifiedContentTypeNames qualifiedNames = QualifiedContentTypeNames.from( contentTypeName );
+        return client.execute( contentType().get().qualifiedNames( qualifiedNames ) ).first();
     }
 
     private Icon findMixinIcon( final QualifiedMixinName mixinName )

@@ -56,7 +56,7 @@ public class GetContentTypesHandlerTest
 
         // exercise
         final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( "myModule:myContentType" );
-        final GetContentTypes command = Commands.contentType().get().names( names );
+        final GetContentTypes command = Commands.contentType().get().qualifiedNames( names );
         this.handler.handle( this.context, command );
 
         // verify
