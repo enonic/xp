@@ -10,7 +10,6 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.web.json.JsonResult;
-import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
 
 class ListContentJsonResult
     extends JsonResult
@@ -37,7 +36,6 @@ class ListContentJsonResult
         {
             final ObjectNode contentJson = contentsNode.addObject();
             ContentJsonTemplate.forContentListing( contentJson, content );
-            contentJson.put( "iconUrl", SchemaImageUriResolver.resolve( content.getType() ) );
         }
         return contentsNode;
     }

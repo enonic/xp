@@ -17,7 +17,6 @@ import com.enonic.wem.api.query.FacetResultSet;
 import com.enonic.wem.api.query.FacetsResultSet;
 import com.enonic.wem.api.query.TermsFacetResultSet;
 import com.enonic.wem.web.json.JsonResult;
-import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
 
 public class FindContentJsonResult
     extends JsonResult
@@ -99,7 +98,6 @@ public class FindContentJsonResult
         {
             final ObjectNode contentJson = contentsNode.addObject();
             ContentJsonTemplate.forContentListing( contentJson, content );
-            contentJson.put( "iconUrl", SchemaImageUriResolver.resolve( content.getType() ) );
         }
         return contentsNode;
     }
