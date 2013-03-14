@@ -1,7 +1,7 @@
 {
     "name": "FieldSet",
     "module": "Demo",
-    "displayName": "Fieldset demo",
+    "displayName": "Demo: FieldSet",
     "superType": "System:structured",
     "isAbstract": false,
     "isFinal": true,

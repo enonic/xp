@@ -11,15 +11,22 @@ import com.enonic.wem.api.command.space.CreateSpace;
 import com.enonic.wem.api.command.space.UpdateSpace;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.core.initializer.InitializerTask;
+import com.enonic.wem.core.support.BaseInitializer;
 
 import static com.enonic.wem.api.space.editor.SpaceEditors.setDisplayName;
 
 @Component
 @Order(10)
 public class SpacesInitializer
+    extends BaseInitializer
     implements InitializerTask
 {
     private Client client;
+
+    protected SpacesInitializer()
+    {
+        super( "spaces" );
+    }
 
     @Override
     public void initialize()

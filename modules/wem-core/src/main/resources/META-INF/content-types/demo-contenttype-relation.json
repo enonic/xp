@@ -1,7 +1,7 @@
 {
     "name": "Relationship",
     "module": "Demo",
-    "displayName": "Relationship Demo",
+    "displayName": "Demo: Relationship",
     "superType": "System:structured",
     "isAbstract": false,
     "isFinal": true,

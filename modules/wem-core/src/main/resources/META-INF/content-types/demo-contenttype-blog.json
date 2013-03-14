@@ -1,7 +1,7 @@
 {
     "name": "Labs Blog",
     "module": "Demo",
-    "displayName": "Labs Blog Demo",
+    "displayName": "Demo: Labs Blog",
     "superType": "System:structured",
     "isAbstract": false,
     "isFinal": true,

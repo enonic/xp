@@ -1,28 +1,25 @@
 package com.enonic.wem.core.content.schema.relationship;
 
-import javax.inject.Inject;
-
-import org.apache.commons.io.IOUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.Client;
-import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.schema.relationship.CreateRelationshipType;
 import com.enonic.wem.api.command.content.schema.relationship.UpdateRelationshipType;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.schema.relationship.RelationshipType;
-import com.enonic.wem.api.content.schema.relationship.editor.SetRelationshipTypeEditor;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.initializer.InitializerTask;
+import com.enonic.wem.core.support.BaseInitializer;
 
 import static com.enonic.wem.api.content.schema.relationship.RelationshipType.newRelationshipType;
+import static com.enonic.wem.api.content.schema.relationship.editor.SetRelationshipTypeEditor.newSetRelationshipTypeEditor;
 
 @Component
 @Order(10)
 public class RelationshipTypesInitializer
+    extends BaseInitializer
     implements InitializerTask
 {
     private static final RelationshipType DEFAULT =
@@ -36,61 +33,58 @@ public class RelationshipTypesInitializer
 
     private static final RelationshipType LIKE = createRelationshipType( QualifiedRelationshipTypeName.LIKE, "Like", "likes", "liked by" );
 
-    private Client client;
+    private static final RelationshipType[] SYSTEM_TYPES = {DEFAULT, PARENT, LINK, LIKE};
+
+    protected RelationshipTypesInitializer()
+    {
+        super( "relationship-types" );
+    }
 
     @Override
     public void initialize()
         throws Exception
     {
-        createOrUpdate( DEFAULT );
-        createOrUpdate( PARENT );
-        createOrUpdate( LINK );
-        createOrUpdate( LIKE );
+        for ( RelationshipType relationshipType : SYSTEM_TYPES )
+        {
+            relationshipType = RelationshipType.newRelationshipType( relationshipType ).
+                icon( loadIcon( relationshipType.getQualifiedName() ) ).
+                build();
+            createOrUpdate( relationshipType );
+        }
     }
 
     private void createOrUpdate( final RelationshipType relationshipType )
     {
         final QualifiedRelationshipTypeNames qualifiedNames = QualifiedRelationshipTypeNames.from( relationshipType.getQualifiedName() );
         final boolean notExists = client.execute( Commands.relationshipType().exists().qualifiedNames( qualifiedNames ) ).isEmpty();
-        final Icon icon = loadRelationshipTypeIcon( relationshipType.getQualifiedName() );
         if ( notExists )
         {
             final CreateRelationshipType createCommand = Commands.relationshipType().create();
             createCommand.
                 name( relationshipType.getName() ).
+                module( relationshipType.getModuleName() ).
                 displayName( relationshipType.getDisplayName() ).
-                module( ModuleName.SYSTEM ).
                 fromSemantic( relationshipType.getFromSemantic() ).
                 toSemantic( relationshipType.getToSemantic() ).
-                icon( icon );
+                allowedFromTypes( relationshipType.getAllowedFromTypes() ).
+                allowedToTypes( relationshipType.getAllowedToTypes() ).
+                icon( relationshipType.getIcon() );
+
             client.execute( createCommand );
         }
         else
         {
             final UpdateRelationshipType updateCommand = Commands.relationshipType().update();
             updateCommand.selector( relationshipType.getQualifiedName() );
-            updateCommand.editor( SetRelationshipTypeEditor.newSetRelationshipTypeEditor().
+            updateCommand.editor( newSetRelationshipTypeEditor().
                 displayName( relationshipType.getDisplayName() ).
                 fromSemantic( relationshipType.getFromSemantic() ).
                 toSemantic( relationshipType.getToSemantic() ).
                 allowedFromTypes( relationshipType.getAllowedFromTypes() ).
                 allowedToTypes( relationshipType.getAllowedToTypes() ).
+                icon( relationshipType.getIcon() ).
                 build() );
             client.execute( updateCommand );
-        }
-    }
-
-    private static Icon loadRelationshipTypeIcon( final QualifiedRelationshipTypeName qualifiedName )
-    {
-        try
-        {
-            final String filePath = "/META-INF/relationship-types/" + qualifiedName.toString().replace( ":", "_" ).toLowerCase() + ".png";
-            final byte[] iconData = IOUtils.toByteArray( RelationshipTypesInitializer.class.getResourceAsStream( filePath ) );
-            return Icon.from( iconData, "image/png" );
-        }
-        catch ( Exception e )
-        {
-            return null; // icon for relationship type not found
         }
     }
 
@@ -99,17 +93,11 @@ public class RelationshipTypesInitializer
     {
         return newRelationshipType().
             name( qualifiedName.getLocalName() ).
+            module( ModuleName.SYSTEM ).
             displayName( displayName ).
             fromSemantic( fromSemantic ).
             toSemantic( toSemantic ).
             module( qualifiedName.getModuleName() ).
-            icon( loadRelationshipTypeIcon( qualifiedName ) ).
             build();
-    }
-
-    @Inject
-    public void setClient( final Client client )
-    {
-        this.client = client;
     }
 }

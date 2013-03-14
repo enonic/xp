@@ -3,6 +3,8 @@ package com.enonic.wem.api.content.schema.mixin;
 
 import org.joda.time.DateTime;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.schema.Schema;
 import com.enonic.wem.api.content.schema.SchemaKey;
@@ -120,6 +122,7 @@ public class Mixin
 
         public Builder( final Mixin mixin )
         {
+            Preconditions.checkNotNull( mixin, "mixin cannot be null" );
             this.displayName = mixin.displayName;
             this.moduleName = mixin.moduleName;
             this.createdTime = mixin.createdTime;
