@@ -20,6 +20,9 @@
         };
 
         me.addView();
+
+        me.registerEvents();
+
         me.registerGlobalListeners();
     };
 
@@ -39,6 +42,18 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+    var html = '';
+    html += '<div class="live-edit-component-menu" style="display: none">';
+    html += '   <div class="live-edit-component-menu-title-bar">';
+    html += '       <div class="live-edit-component-menu-title-icon"><div><!-- --></div></div>';
+    html += '       <div class="live-edit-component-menu-title-text"><!-- populated --></div>';
+    html += '       <div class="live-edit-component-menu-title-close-button"><!-- --></div>';
+    html += '   </div>';
+    html += '   <div class="live-edit-component-menu-items">';
+    html += '   </div>';
+    html += '</div>';
+
+
     proto.registerGlobalListeners = function () {
         $(window).on('component:click:select', $.proxy(this.show, this));
         $(window).on('component:click:deselect', $.proxy(this.hide, this));
@@ -51,30 +66,29 @@
     proto.addView = function () {
         var me = this;
 
-        me.createElement('<div class="live-edit-component-menu" style="display: none"></div>');
+        me.createElement(html);
         me.appendTo($('body'));
         me.addButtons();
     };
 
 
-    proto.show = function (event, $component, coordinates) {
+    proto.registerEvents = function () {
         var me = this;
+        $(me.getEl()).draggable({ handle: '.live-edit-component-menu-title-bar' });
 
+        me.getCloseButton().click(function () {
+            me.hide();
+        });
+    };
+
+
+    proto.show = function (event, $component, coordinates) {
+        var me = this,
+            componentInfo = util.getComponentInfo($component);
+
+        me.updateTitleBar($component);
         me.updateMenuItemsForComponent($component);
-
-        // Menu should not move on scrolling for a page selection.
-        /*
-        if (util.getComponentType($component) === 'page') {
-            me.getEl().css('position', 'fixed');
-            me.moveToXY(coordinates.x, coordinates.y - $('body').scrollTop());
-
-        } else {
-            me.getEl().css('position', '');
-            me.moveToXY(coordinates.x, coordinates.y);
-        }*/
-
         me.moveToXY(coordinates.x, coordinates.y);
-
         me.getEl().show();
 
         this.hidden = false;
@@ -104,6 +118,26 @@
     };
 
 
+
+    proto.addButtons = function () {
+        var me = this;
+        var settingsButton = new AdminLiveEdit.view.menu.SettingsButton(me);
+        var detailsButton = new AdminLiveEdit.view.menu.DetailsButton(me);
+        var insertButton = new AdminLiveEdit.view.menu.InsertButton(me);
+        var resetButton = new AdminLiveEdit.view.menu.ResetButton(me);
+        var clearButton = new AdminLiveEdit.view.menu.ClearButton(me);
+        var viewButton = new AdminLiveEdit.view.menu.ViewButton(me);
+        var editButton = new AdminLiveEdit.view.menu.EditButton(me);
+        var removeButton = new AdminLiveEdit.view.menu.RemoveButton(me);
+
+        var i,
+            placeholder = me.getMenuItemsPlaceholderElement();
+        for (i = 0; i < me.buttons.length; i++) {
+            me.buttons[i].appendTo(placeholder);
+        }
+    };
+
+
     proto.updateMenuItemsForComponent = function ($component) {
         var componentType = util.getComponentType($component);
         if (this.buttonConfig.hasOwnProperty(componentType)) {
@@ -125,26 +159,78 @@
     };
 
 
-    proto.addButtons = function () {
-        var me = this;
-        var settingsButton = new AdminLiveEdit.view.menu.SettingsButton(me);
-        var detailsButton = new AdminLiveEdit.view.menu.DetailsButton(me);
-        var insertButton = new AdminLiveEdit.view.menu.InsertButton(me);
-        var resetButton = new AdminLiveEdit.view.menu.ResetButton(me);
-        var clearButton = new AdminLiveEdit.view.menu.ClearButton(me);
-        var viewButton = new AdminLiveEdit.view.menu.ViewButton(me);
-        var editButton = new AdminLiveEdit.view.menu.EditButton(me);
-        var removeButton = new AdminLiveEdit.view.menu.RemoveButton(me);
+    proto.updateTitleBar = function ($component) {
+        var componentInfo = util.getComponentInfo($component);
+        this.setTitle(componentInfo.name);
+        this.setIcon(componentInfo.type);
+    };
 
-        var i;
-        for (i = 0; i < me.buttons.length; i++) {
-            me.buttons[i].appendTo(me.getEl());
+
+    proto.setTitle = function (titleText) {
+        this.getTitleElement().text(titleText);
+    };
+
+
+    proto.setIcon = function (componentType) {
+        var iconCls = this.resolveCssClassForComponentType(componentType);
+        this.getIconElement().children('div').attr('class', iconCls);
+    };
+
+
+    proto.resolveCssClassForComponentType = function (componentType) {
+        var iconCls;
+
+        switch (componentType) {
+        case 'page':
+            iconCls = 'live-edit-component-menu-page-icon';
+            break;
+
+        case 'region':
+            iconCls = 'live-edit-component-menu-region-icon';
+            break;
+
+        case 'part':
+            iconCls = 'live-edit-component-menu-part-icon';
+            break;
+
+        case 'content':
+            iconCls = 'live-edit-component-menu-content-icon';
+            break;
+
+        case 'paragraph':
+            iconCls = 'live-edit-component-menu-paragraph-icon';
+            break;
+
+        default:
+            iconCls = '';
         }
+
+        return iconCls;
     };
 
 
     proto.getButtons = function () {
         return this.buttons;
+    };
+
+
+    proto.getIconElement = function () {
+        return $('.live-edit-component-menu-title-icon', this.getEl());
+    };
+
+
+    proto.getTitleElement = function () {
+        return $('.live-edit-component-menu-title-text', this.getEl());
+    };
+
+
+    proto.getCloseButton = function () {
+        return $('.live-edit-component-menu-title-close-button', this.getEl());
+    };
+
+
+    proto.getMenuItemsPlaceholderElement = function () {
+        return $('.live-edit-component-menu-items', this.getEl());
     };
 
 }($liveedit));

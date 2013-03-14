@@ -38,7 +38,6 @@ svg.live-edit-highlight-border rect,
     vertical-align: baseline;
 }
 
-
 /** Misc */
 
 /* Remove the outline added by the browser */
@@ -55,46 +54,55 @@ a {
     pointer-events: none;
 }
 
-
 /** z-indexes */
 
 .live-edit-loader-splash-container {
     z-index: 2000000;
 }
+
 .live-edit-loader-splash-content {
     z-index: 2000010;
 }
+
 svg.live-edit-highlight-border {
     z-index: 1000000;
 }
+
 #live-edit-shader-north {
     z-index: 1000050;
 }
+
 #live-edit-shader-east {
     z-index: 1000060;
 }
+
 #live-edit-shader-south {
     z-index: 1000070;
 }
+
 #live-edit-shader-west {
     z-index: 1000080;
 }
+
 #live-edit-page-shader {
     z-index: 1000090;
 }
+
 .live-edit-component-tip {
     z-index: 1000100;
 }
+
 .live-edit-tool-tip {
     z-index: 1000150;
 }
+
 .live-edit-component-menu {
     z-index: 1000200;
 }
+
 .live-edit-components-container {
     z-index: 1000250;
 }
-
 
 /*** Loader splash */
 
@@ -192,6 +200,7 @@ svg.live-edit-highlight-border {
     opacity: .3;
     cursor: default !important;
 }
+
 #live-edit-page-shader {
     position: fixed !important;
 }
@@ -201,10 +210,12 @@ svg.live-edit-highlight-border {
 .live-edit-selected-component {
     position: relative;
 }
+
 svg.live-edit-highlight-border {
     pointer-events: none;
     position: absolute;
 }
+
 svg.live-edit-highlight-border rect {
     stroke-width: 4;
 }
@@ -238,11 +249,13 @@ svg.live-edit-highlight-border rect {
     padding: 10px 10px;
     background-color: #ffffc7;
 }
+
 .live-edit-tool-tip-name-text,
 .live-edit-tool-tip-type-text {
     display: block;
     color: #444;
 }
+
 .live-edit-tool-tip-name-text {
     font-weight: bold;
 }
@@ -255,6 +268,7 @@ svg.live-edit-highlight-border rect {
     cursor: default;
     border: 1px solid #aaa;
 }
+
 /* Arrow (cssarrowplease.com/) */
 .live-edit-component-tip-arrow-bottom:after,
 .live-edit-component-tip-arrow-bottom:before,
@@ -267,14 +281,17 @@ svg.live-edit-highlight-border rect {
     position: absolute;
     pointer-events: none;
 }
+
 .live-edit-component-tip-arrow-bottom:after,
-.live-edit-component-tip-arrow-bottom:before{
+.live-edit-component-tip-arrow-bottom:before {
     top: 100%;
 }
+
 .live-edit-component-tip-arrow-top:after,
-.live-edit-component-tip-arrow-top:before{
+.live-edit-component-tip-arrow-top:before {
     bottom: 100%;
 }
+
 .live-edit-component-tip-arrow-bottom:after {
     border-color: rgba(255, 249, 203, 0);
     border-top-color: #fff9cb;
@@ -282,6 +299,7 @@ svg.live-edit-highlight-border rect {
     left: 50%;
     margin-left: -8px;
 }
+
 .live-edit-component-tip-arrow-bottom:before {
     border-color: rgba(152, 152, 152, 0);
     border-top-color: #aaa;
@@ -289,6 +307,7 @@ svg.live-edit-highlight-border rect {
     left: 50%;
     margin-left: -9px;
 }
+
 .live-edit-component-tip-arrow-top:after {
     border-color: rgba(255, 249, 203, 0);
     border-bottom-color: #fff9cb;
@@ -296,6 +315,7 @@ svg.live-edit-highlight-border rect {
     left: 50%;
     margin-left: -8px;
 }
+
 .live-edit-component-tip-arrow-top:before {
     border-color: rgba(152, 152, 152, 0);
     border-bottom-color: #aaa;
@@ -303,26 +323,31 @@ svg.live-edit-highlight-border rect {
     left: 50%;
     margin-left: -9px;
 }
+
 .live-edit-component-tip-left,
 .live-edit-component-tip-center,
 .live-edit-component-tip-right {
     line-height: 9px; /* In case user CSS sets this */
 }
+
 .live-edit-component-tip-left {
     float: left;
     text-align: center;
     border-right: 1px solid #aaa;
 }
+
 .live-edit-component-tip-center {
     float: left;
     text-align: center;
     min-width: 80px;
     padding: 8px 10px 0 10px;
 }
+
 .live-edit-component-tip-right {
     float: right;
     border-left: 1px solid #aaa;
 }
+
 .live-edit-component-tip-icon-menu,
 .live-edit-component-tip-icon-parent,
 .live-edit-component-tip-icon-deselect {
@@ -332,27 +357,32 @@ svg.live-edit-highlight-border rect {
     padding: 15px;
     cursor: pointer;
 }
+
 .live-edit-component-tip-icon-parent {
     background: url("../images/arrow-up.png") no-repeat scroll 50% 50% transparent;
 }
+
 .live-edit-component-tip-icon-menu {
     background: url("../images/menu-button.png") no-repeat scroll 50% 50% transparent;
 }
+
 .live-edit-component-tip-icon-menu-selected {
     background: url("../images/menu-button-active.png") no-repeat scroll 50% 50% #444;
 }
+
 .live-edit-component-tip-icon-deselect {
     background: url("../images/close.png") no-repeat scroll 50% 50% transparent;
 }
+
 .live-edit-component-tip-type-text,
 .live-edit-component-tip-name-text {
     display: block;
     color: #444;
 }
+
 .live-edit-component-tip-name-text {
     font-weight: bold;
 }
-
 
 /*** Component menu */
 
@@ -364,23 +394,79 @@ svg.live-edit-highlight-border rect {
     box-shadow: 0 0 7px #888;
 }
 
+.live-edit-component-menu-title-icon,
+.live-edit-component-menu-title-text,
+.live-edit-component-menu-title-close-button {
+    padding: 5px;
+}
+
+.live-edit-component-menu-title-bar {
+    overflow: hidden;
+    cursor: move;
+}
+
+.live-edit-component-menu-title-icon {
+    float: left;
+}
+
+.live-edit-component-menu-title-icon > div {
+    width: 22px;
+    height: 22px;
+}
+
+.live-edit-component-menu-page-icon {
+    /*TBI*/
+}
+
+.live-edit-component-menu-region-icon {
+    /*TBI*/
+}
+
+.live-edit-component-menu-part-icon {
+    background: transparent url("../images/puzzle.png") center center no-repeat;
+}
+
+.live-edit-component-menu-paragraph-icon {
+    background: transparent url("../images/text-color.png") center center no-repeat;
+}
+
+.live-edit-component-menu-content-icon {
+    /*TBI*/
+}
+
+.live-edit-component-menu-title-text {
+    float: left;
+    font-size: 14px;
+    color: #000;
+    padding-top: 7px;
+}
+
+.live-edit-component-menu-title-close-button {
+    float: right;
+    cursor: pointer;
+    background: transparent url("../images/close.png") center center no-repeat;
+    width: 22px;
+    height: 22px;
+    padding-left: 5px;
+}
 
 /* Component menu button */
-
 .live-edit-component-menu-button {
-    width: 120px;
-    padding: 8px 8px;
+    padding: 7px 10px;
 }
+
 .live-edit-component-menu-button:hover {
     background-color: #3892dd;
     color: #fff !important;
 }
+
 .live-edit-button-text {
-    font-size: 15px;
+    font-size: 14px;
     color: #606060;
     line-height: 20px;
     text-transform: capitalize;
 }
+
 .live-edit-button-icon {
     display: block;
     width: auto;
@@ -390,6 +476,7 @@ svg.live-edit-highlight-border rect {
     background-repeat: no-repeat;
     background-position: center 5px;
 }
+
 .live-edit-component-menu-button:hover .live-edit-button-text {
     color: #fff !important;
 }
@@ -405,29 +492,36 @@ svg.live-edit-highlight-border rect {
     background-color: #fff;
     font: 14px Tahoma, sans-serif;
 }
+
 .live-edit-components-container {
     -webkit-transition: right 100ms ease-in, opacity 50ms linear;
     transition: right 100ms ease-in, opacity 50ms linear;
 }
+
 .live-edit-form-container {
     overflow: hidden;
 }
+
 .live-edit-toggle-components-container {
     cursor: pointer;
     position: absolute;
-    top: 0; left: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    bottom: 0;
     background-color: #eee;
 }
+
 .live-edit-toggle-text-container {
     display: block;
     position: absolute;
     width: 150px;
-    top:50%;
+    top: 50%;
     margin-left: -8px;
     -webkit-transform: rotate(90deg) translateY(0);
     transform: rotate(90deg) translateY(0);
     left: -50px;
 }
+
 .live-edit-components {
     right: 0;
     background-color: #fff;
@@ -437,24 +531,29 @@ svg.live-edit-highlight-border rect {
     min-width: 205px;
     z-index: -2;
 }
+
 .live-edit-components input {
     margin: 8px;
     padding: 5px 3px;
     width: 87%;
     -webkit-user-select: auto;
 }
+
 .live-edit-components ul {
     list-style: none;
     padding: 0;
     margin: 0;
 }
+
 .live-edit-components ul li {
     margin-bottom: 8px;
 }
+
 .live-edit-component-list-header {
     text-align: center;
     position: relative;
 }
+
 .live-edit-component-list-header:before {
     border-top: 2px solid #dfdfdf;
     content: "";
@@ -467,23 +566,28 @@ svg.live-edit-highlight-border rect {
     width: 95%;
     z-index: -1;
 }
+
 .live-edit-component-list-header span {
     background-color: #fff;
     padding: 0 8px;
     color: #4a87e5;
 }
+
 .live-edit-component-list-header span {
 
 }
+
 .live-edit-component {
     overflow: hidden;
     padding: 8px;
     cursor: move;
 }
+
 .live-edit-component:hover {
     background-color: #3892dd;
     color: #fff;
 }
+
 .live-edit-component img {
     float: left;
     display: block;
@@ -491,12 +595,15 @@ svg.live-edit-highlight-border rect {
     height: 32px;
     margin-right: 5px;
 }
+
 .live-edit-component .text {
     float: left;
 }
+
 .live-edit-component span {
     display: block;
 }
+
 .live-edit-component small {
     display: block;
 }
@@ -510,7 +617,6 @@ svg.live-edit-highlight-border rect {
     cursor: pointer;
     text-decoration: none;
 }
-
 
 /*** Drag and Drop */
 
