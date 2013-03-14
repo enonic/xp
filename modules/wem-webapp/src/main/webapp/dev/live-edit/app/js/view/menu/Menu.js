@@ -40,10 +40,7 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.registerGlobalListeners = function () {
-        $(window).on('tip:menubutton:click:show', $.proxy(this.show, this));
-        $(window).on('tip:menubutton:click:hide', $.proxy(this.hide, this));
-        $(window).on('tip:parentbutton:click', $.proxy(this.autoShow, this));
-
+        $(window).on('component:click:select', $.proxy(this.show, this));
         $(window).on('component:click:deselect', $.proxy(this.hide, this));
         $(window).on('component:sort:start', $.proxy(this.fadeOutAndHide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));
@@ -60,33 +57,27 @@
     };
 
 
-    proto.show = function (event, $component, config) {
+    proto.show = function (event, $component, coordinates) {
         var me = this;
 
         me.updateMenuItemsForComponent($component);
 
         // Menu should not move on scrolling for a page selection.
-
+        /*
         if (util.getComponentType($component) === 'page') {
             me.getEl().css('position', 'fixed');
-            me.moveToXY(config.x, config.y - $('body').scrollTop());
+            me.moveToXY(coordinates.x, coordinates.y - $('body').scrollTop());
 
         } else {
             me.getEl().css('position', '');
-            me.moveToXY(config.x, config.y);
-        }
+            me.moveToXY(coordinates.x, coordinates.y);
+        }*/
 
+        me.moveToXY(coordinates.x, coordinates.y);
 
         me.getEl().show();
 
         this.hidden = false;
-    };
-
-
-    proto.autoShow = function (event, $component, config) {
-        if (config.autoShow) {
-            this.show(event, $component, config);
-        }
     };
 
 

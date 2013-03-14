@@ -195,8 +195,7 @@
 
             $(window).trigger('tip:parentbutton:click', [$parent, {
                 x: menuButtonBottomLeftPos.left,
-                y: menuButtonBottomLeftPos.bottom,
-                autoShow: me.menuButtonIsActive()
+                y: menuButtonBottomLeftPos.bottom
             }]);
 
         }

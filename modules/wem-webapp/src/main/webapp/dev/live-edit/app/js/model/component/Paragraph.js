@@ -86,7 +86,12 @@
             window.getSelection().removeAllRanges();
         }
 
-        $(window).trigger('component:click:select', [me.$selectedParagraph]);
+        var coordinates = {
+            x: event.pageX,
+            y: event.pageY
+        };
+
+        $(window).trigger('component:click:select', [me.$selectedParagraph, coordinates]);
         $(window).trigger('component:paragraph:select', [me.$selectedParagraph]);
     };
 

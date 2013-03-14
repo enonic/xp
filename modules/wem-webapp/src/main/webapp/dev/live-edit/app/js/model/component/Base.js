@@ -61,6 +61,7 @@
                     $(window).trigger('component:click:deselect');
                 } else {
 
+                    // Used by eg. Menu
                     var coordinates = {
                         x: event.pageX,
                         y: event.pageY
@@ -68,24 +69,6 @@
 
                     $(window).trigger('component:click:select', [$component, coordinates]);
                 }
-            });
-        },
-
-
-        attachContextClickEvent: function () {
-            var me = this;
-            $(document).on('contextmenu', me.cssSelector, function (event) {
-                event.stopPropagation();
-                event.preventDefault();
-
-                var $component = $(event.currentTarget),
-                    config = {
-                        x: event.pageX,
-                        y: event.pageY
-                    };
-
-                $(window).trigger('component:contextclick:select', [$component, config]);
-
             });
         },
 

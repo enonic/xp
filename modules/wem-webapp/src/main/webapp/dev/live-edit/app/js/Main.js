@@ -14,7 +14,7 @@
         var outliner            = new AdminLiveEdit.view.Highlighter();
         var toolTip             = new AdminLiveEdit.view.ToolTip();
         var cursor              = new AdminLiveEdit.view.Cursor();
-        var componentTip        = new AdminLiveEdit.view.componenttip.Tip();
+        // var componentTip        = new AdminLiveEdit.view.componenttip.Tip();
         var menu                = new AdminLiveEdit.view.menu.Menu();
         var shader              = new AdminLiveEdit.view.Shader();
         var componentBar        = new AdminLiveEdit.view.componentbar.ComponentBar();
