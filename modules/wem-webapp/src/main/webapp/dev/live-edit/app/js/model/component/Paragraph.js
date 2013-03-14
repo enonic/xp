@@ -72,10 +72,6 @@
         } else {
         }
 
-        if (event.type !== 'contextmenu') {
-            me.scrollComponentIntoView(me.$selectedParagraph);
-        }
-
     };
 
 

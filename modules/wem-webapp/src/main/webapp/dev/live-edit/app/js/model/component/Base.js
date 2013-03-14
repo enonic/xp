@@ -67,10 +67,6 @@
                     };
 
                     $(window).trigger('component:click:select', [$component, coordinates]);
-                    var scrollComponentIntoView = AdminLiveEdit.Util.getComponentName($component) !== 'page';
-                    if (scrollComponentIntoView) {
-                        me.scrollComponentIntoView($component);
-                    }
                 }
             });
         },
@@ -106,14 +102,6 @@
 
         getAll: function () {
             return $(this.cssSelector);
-        },
-
-
-        scrollComponentIntoView: function ($component) {
-            var componentTopPosition = AdminLiveEdit.Util.getPagePositionForComponent($component).top;
-            if (componentTopPosition <= window.pageYOffset) {
-                $('html, body').animate({scrollTop: componentTopPosition - 10}, 200);
-            }
         }
 
     };
