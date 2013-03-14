@@ -60,13 +60,15 @@ public class InputJsonSerializer
         jsonObject.put( CUSTOM_TEXT, input.getCustomText() );
         jsonObject.put( VALIDATION_REGEXP, input.getValidationRegexp() != null ? input.getValidationRegexp().toString() : null );
         jsonObject.put( HELP_TEXT, input.getHelpText() );
-        jsonObject.put( TYPE, inputTypeSerializer.serialize( (BaseInputType) input.getInputType() ) );
+
+        final ObjectNode typeObject = (ObjectNode) inputTypeSerializer.serialize( (BaseInputType) input.getInputType() );
         if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
         {
             final JsonNode inputTypeNode =
                 input.getInputType().getInputTypeConfigJsonGenerator().serialize( input.getInputTypeConfig(), objectMapper() );
-            jsonObject.put( CONFIG, inputTypeNode );
+            typeObject.put( CONFIG, inputTypeNode );
         }
+        jsonObject.put( TYPE, typeObject );
         return jsonObject;
     }
 
@@ -83,7 +85,6 @@ public class InputJsonSerializer
 
         parseOccurrences( builder, inputObj.get( OCCURRENCES ) );
         parseInputType( builder, inputObj.get( TYPE ) );
-        parseInputTypeConfig( builder, inputObj.get( CONFIG ) );
 
         return builder.build();
     }
@@ -109,19 +110,16 @@ public class InputJsonSerializer
         }
     }
 
-    private void parseInputTypeConfig( final Input.Builder builder, final JsonNode inputTypeConfigNode )
-    {
-        if ( inputTypeConfigNode != null )
-        {
-            builder.inputTypeConfig( inputTypeConfigSerializer.parse( inputTypeConfigNode ) );
-        }
-    }
-
     private void parseInputType( final Input.Builder builder, final JsonNode inputTypeNode )
     {
         if ( inputTypeNode != null )
         {
-            builder.type( inputTypeSerializer.parse( inputTypeNode ) );
+            final BaseInputType inputType = inputTypeSerializer.parse( inputTypeNode );
+            builder.type( inputType );
+            if ( inputTypeNode.has( CONFIG ) )
+            {
+                builder.inputTypeConfig( inputTypeConfigSerializer.parse( inputTypeNode.get( CONFIG ), inputType.getClass() ) );
+            }
         }
     }
 }

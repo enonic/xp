@@ -71,7 +71,7 @@
       <customText/>
       <helpText/>
       <occurrences minimum="0" maximum="1"/>
-      <config name="com.enonic.wem.api.content.schema.content.form.inputtype.SingleSelectorConfig">
+      <config>
         <options>
           <option>
             <label>myOption 1</label>

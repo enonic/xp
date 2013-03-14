@@ -156,10 +156,8 @@
                 "helpText": null,
                 "type": {
                     "name": "SingleSelector",
-                    "builtIn": true
-                },
-                "config": {
-                    "com.enonic.wem.api.content.schema.content.form.inputtype.SingleSelectorConfig": {
+                    "builtIn": true,
+                    "config": {
                         "selectorType": "DROPDOWN",
                         "options": [
                             {

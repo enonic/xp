@@ -1,26 +1,26 @@
 package com.enonic.wem.core.content.schema.content.serializer;
 
-import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
+
+import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.schema.content.form.inputtype.AbstractInputTypeConfigXmlSerializer;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypeConfig;
+import com.enonic.wem.core.support.serializer.XmlParsingException;
 
 public class InputTypeConfigXmlSerializer
 {
-    public InputTypeConfig parse( final Element inputEl )
+    public InputTypeConfig parse( final Element inputEl, final Class inputTypeClass )
     {
+        Preconditions.checkNotNull( inputEl, "inputEl cannot be null" );
+        Preconditions.checkNotNull( inputTypeClass, "inputTypeClass cannot be null" );
+
         final Element inputTypeConfigEl = inputEl.getChild( "config" );
         if ( inputTypeConfigEl == null )
         {
             return null;
         }
-        final String className = inputTypeConfigEl.getAttributeValue( "name" );
-        if ( StringUtils.isBlank( className ) )
-        {
-            return null;
-        }
-
+        final String className = inputTypeClass.getPackage().getName() + "." + inputTypeClass.getSimpleName() + "Config";
         final String serializerClassName = className + "XmlSerializer";
 
         AbstractInputTypeConfigXmlSerializer parser = instantiateInputTypeConfigXmlParser( serializerClassName );
@@ -37,7 +37,7 @@ public class InputTypeConfigXmlSerializer
         }
         catch ( ClassNotFoundException | InstantiationException | IllegalAccessException e )
         {
-            throw new RuntimeException( e );
+            throw new XmlParsingException( "Failed to instantiate AbstractInputTypeConfigXmlSerializer", e );
         }
     }
 }

@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.schema.content.form.FormItemSet;
 import com.enonic.wem.api.content.schema.content.form.Input;
 import com.enonic.wem.api.content.schema.content.form.Layout;
 import com.enonic.wem.api.content.schema.content.form.MixinReference;
+import com.enonic.wem.api.content.schema.content.form.inputtype.BaseInputType;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.core.content.schema.content.form.inputtype.InputTypeFactory;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
@@ -195,7 +196,6 @@ public class FormItemXmlSerializer
 
         builder.occurrences( occurrencesXmlSerializer.parse( formItemEl ) );
         parseInputType( builder, formItemEl );
-        parseInputTypeConfig( builder, formItemEl );
 
         return builder.build();
     }
@@ -266,16 +266,13 @@ public class FormItemXmlSerializer
         }
     }
 
-    private void parseInputTypeConfig( final Input.Builder builder, final Element formItemEl )
-    {
-        builder.inputTypeConfig( inputTypeConfigSerializer.parse( formItemEl ) );
-    }
-
     private void parseInputType( final Input.Builder builder, final Element formItemEl )
     {
         final String inputTypeName = formItemEl.getAttributeValue( TYPE );
         final boolean builtIn = Boolean.valueOf( formItemEl.getAttributeValue( BUILT_IN ) );
-        builder.type( InputTypeFactory.instantiate( inputTypeName, builtIn ) );
+        final BaseInputType inputType = InputTypeFactory.instantiate( inputTypeName, builtIn );
+        builder.type( inputType );
+        builder.inputTypeConfig( inputTypeConfigSerializer.parse( formItemEl, inputType.getClass() ) );
     }
 
     public String classNameToXmlElementName( final String s )
