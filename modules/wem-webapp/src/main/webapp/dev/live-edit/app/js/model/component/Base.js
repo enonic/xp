@@ -45,7 +45,7 @@
         attachClickEvent: function () {
             var me = this;
 
-            $(document).on('click touchstart', me.cssSelector, function (event) {
+            $(document).on('click contextmenu touchstart', me.cssSelector, function (event) {
                 if (me.isLiveEditUiComponent($(event.target))) {
                     return;
                 }
@@ -60,7 +60,13 @@
                 if (componentIsSelected || pageHasComponentSelected) {
                     $(window).trigger('component:click:deselect');
                 } else {
-                    $(window).trigger('component:click:select', [$component]);
+
+                    var coordinates = {
+                        x: event.pageX,
+                        y: event.pageY
+                    };
+
+                    $(window).trigger('component:click:select', [$component, coordinates]);
                     var scrollComponentIntoView = AdminLiveEdit.Util.getComponentName($component) !== 'page';
                     if (scrollComponentIntoView) {
                         me.scrollComponentIntoView($component);

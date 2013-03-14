@@ -6,7 +6,6 @@
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();
         this.attachClickEvent();
-        this.attachContextClickEvent();
     };
     // Inherit from Base prototype
     contents.prototype = new AdminLiveEdit.model.component.Base();

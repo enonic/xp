@@ -8,7 +8,6 @@
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();
         this.attachClickEvent();
-        this.attachContextClickEvent();
 
         this.registerGlobalListeners();
     };

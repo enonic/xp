@@ -40,8 +40,6 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.registerGlobalListeners = function () {
-        $(window).on('component:contextclick:select', $.proxy(this.show, this));
-
         $(window).on('tip:menubutton:click:show', $.proxy(this.show, this));
         $(window).on('tip:menubutton:click:hide', $.proxy(this.hide, this));
         $(window).on('tip:parentbutton:click', $.proxy(this.autoShow, this));

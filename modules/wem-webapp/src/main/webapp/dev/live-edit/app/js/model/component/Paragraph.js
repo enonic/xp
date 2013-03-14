@@ -17,7 +17,6 @@
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();
         this.attachClickEvent();
-        this.attachContextClickEvent();
 
         this.registerGlobalListeners();
     };
@@ -41,16 +40,7 @@
     // Override base attachClickEvent
     proto.attachClickEvent = function () {
         var me = this;
-        $(document).on('click touchstart', me.cssSelector, function (event) {
-            me.handleClick(event);
-        });
-    };
-
-
-    // Override base attachContextClickEvent
-    proto.attachContextClickEvent = function () {
-        var me = this;
-        $(document).on('contextmenu', me.cssSelector, function (event) {
+        $(document).on('click contextmenu touchstart', me.cssSelector, function (event) {
             me.handleClick(event);
         });
     };
@@ -78,16 +68,7 @@
         if (me.currentMode === me.modes.UNSELECTED) {
             me.setSelectMode(event);
         } else if (me.currentMode === me.modes.SELECTED) {
-            if (event.type !== 'contextmenu') {
-                me.setEditMode(event);
-            } else {
-                var config = {
-                    x: event.pageX,
-                    y: event.pageY
-                };
-                $(window).trigger('component:contextclick:select', [me.$selectedParagraph, config]);
-
-            }
+            me.setEditMode(event);
         } else {
         }
 
@@ -117,6 +98,13 @@
     proto.setEditMode = function (event) {
         var me = this,
             $paragraph = me.$selectedParagraph;
+
+        /*
+        var config = {
+            x: event.pageX,
+            y: event.pageY
+        };
+        */
 
         $(window).trigger('component:paragraph:edit:init', [me.$selectedParagraph]);
 
