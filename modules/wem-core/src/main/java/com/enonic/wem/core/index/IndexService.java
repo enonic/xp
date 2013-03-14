@@ -52,6 +52,7 @@ public class IndexService
 
             if ( doReindexOnEmptyIndex )
             {
+                reindexService.reindexContent();
                 reindexService.reindexAccounts();
             }
         }

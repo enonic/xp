@@ -24,7 +24,7 @@ public class FindContentRpcHandler
         throws Exception
     {
         final String fulltext = context.param( "fulltext" ).asString( "" );
-        final boolean includeFacets = context.param( "include" ).asBoolean( false );
+        final boolean includeFacets = context.param( "include" ).asBoolean( true );
         final String interval = context.param( "interval" ).asString( "day" );
 
         ContentIndexQuery contentIndexQuery = new ContentIndexQuery();

@@ -66,12 +66,17 @@ public abstract class AbstractContentDaoHandler
         final Node contentsNode = getNodeOrNull( rootNode, SPACES_PATH );
 
         final List<Node> topNodes = Lists.newArrayList();
-        final NodeIterator spaceNodesIterator = contentsNode.getNodes();
-        while ( spaceNodesIterator.hasNext() )
+
+        if ( contentsNode != null )
         {
-            final Node spaceNode = spaceNodesIterator.nextNode();
-            topNodes.add( spaceNode.getNode( SPACE_CONTENT_ROOT_NODE ) );
+            final NodeIterator spaceNodesIterator = contentsNode.getNodes();
+            while ( spaceNodesIterator.hasNext() )
+            {
+                final Node spaceNode = spaceNodesIterator.nextNode();
+                topNodes.add( spaceNode.getNode( SPACE_CONTENT_ROOT_NODE ) );
+            }
         }
+
         return topNodes.iterator();
     }
 

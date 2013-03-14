@@ -43,14 +43,17 @@ public class ContentIndexDocumentsFactory
 
     private static void addContentMetaData( final Content content, final IndexDocument indexDocument )
     {
+        // TODO: This should be cleaned up when knowing which fields to index for sure, and also what could be null etc
         addIfNotNull( indexDocument, ContentIndexField.KEY, content.getId() != null ? content.getId().toString() : null, false, true );
         addIfNotNull( indexDocument, ContentIndexField.PATH, content.getPath() != null ? content.getPath().toString() : null, true, true );
         addIfNotNull( indexDocument, ContentIndexField.CREATED, content.getCreatedTime(), false, true );
         addIfNotNull( indexDocument, ContentIndexField.LAST_MODIFIED, content.getModifiedTime(), false, true );
         addIfNotNull( indexDocument, ContentIndexField.CONTENT_TYPE, content.getType().getContentTypeName(), false, true );
         addIfNotNull( indexDocument, ContentIndexField.DISPLAY_NAME, content.getDisplayName(), true, true );
-        addIfNotNull( indexDocument, ContentIndexField.OWNER, content.getOwner().getQualifiedName(), false, true );
-        addIfNotNull( indexDocument, ContentIndexField.MODIFIER, content.getModifier().getQualifiedName(), false, true );
+        addIfNotNull( indexDocument, ContentIndexField.OWNER, content.getOwner() != null ? content.getOwner().getQualifiedName() : null,
+                      false, true );
+        addIfNotNull( indexDocument, ContentIndexField.MODIFIER,
+                      content.getModifier() != null ? content.getModifier().getQualifiedName() : null, false, true );
         addIfNotNull( indexDocument, ContentIndexField.SPACE,
                       content.getPath().getSpace() != null ? content.getPath().getSpace().toString() : null, true, true );
     }
