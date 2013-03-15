@@ -108,4 +108,25 @@ public final class QualifiedContentTypeNames
             return new QualifiedContentTypeName( value );
         }
     }
+
+    public static Builder newQualifiedContentTypeNames()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ImmutableSet.Builder<QualifiedContentTypeName> set = ImmutableSet.builder();
+
+        public Builder add( final QualifiedContentTypeName value )
+        {
+            this.set.add( value );
+            return this;
+        }
+
+        public QualifiedContentTypeNames build()
+        {
+            return new QualifiedContentTypeNames( this.set.build() );
+        }
+    }
 }

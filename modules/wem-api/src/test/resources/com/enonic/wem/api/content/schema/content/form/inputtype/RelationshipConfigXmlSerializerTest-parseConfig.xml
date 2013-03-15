@@ -1,0 +1,7 @@
+<config>
+  <content-type-filter>
+    <allow>System:audio</allow>
+    <allow>System:image</allow>
+  </content-type-filter>
+  <relationship-type>System:like</relationship-type>
+</config>

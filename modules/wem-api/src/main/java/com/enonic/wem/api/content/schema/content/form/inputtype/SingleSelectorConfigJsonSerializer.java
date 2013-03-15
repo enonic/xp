@@ -10,14 +10,13 @@ import org.codehaus.jackson.node.ObjectNode;
 
 
 public class SingleSelectorConfigJsonSerializer
-    extends AbstractInputTypeConfigJsonSerializer
+    extends AbstractInputTypeConfigJsonSerializer<SingleSelectorConfig>
 {
     public static final SingleSelectorConfigJsonSerializer DEFAULT = new SingleSelectorConfigJsonSerializer();
 
     @Override
-    public JsonNode serializeConfig( final InputTypeConfig config, final ObjectMapper objectMapper )
+    public JsonNode serializeConfig( final SingleSelectorConfig singleSelectorConfig, final ObjectMapper objectMapper )
     {
-        final SingleSelectorConfig singleSelectorConfig = (SingleSelectorConfig) config;
         final ObjectNode jsonConfig = objectMapper.createObjectNode();
 
         jsonConfig.put( "selectorType", singleSelectorConfig.getType().toString() );
@@ -32,7 +31,7 @@ public class SingleSelectorConfigJsonSerializer
     }
 
     @Override
-    public InputTypeConfig parseConfig( final JsonNode inputTypeConfigNode )
+    public SingleSelectorConfig parseConfig( final JsonNode inputTypeConfigNode )
     {
         final SingleSelectorConfig.Builder builder = SingleSelectorConfig.newSingleSelectorConfig();
         final SingleSelectorConfig.SelectorType selectorType =

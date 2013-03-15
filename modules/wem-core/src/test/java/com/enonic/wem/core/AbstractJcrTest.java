@@ -20,26 +20,21 @@ public abstract class AbstractJcrTest
 
     private JcrMicroKernelFactory jcrMicroKernelFactory;
 
-    private final TestUtil testUtil;
+    private final SerializingTestHelper serializingTestHelper;
 
     protected AbstractJcrTest()
     {
-        testUtil = new TestUtil( this ).prettyPrintJson( false );
-    }
-
-    protected String getJsonFileAsString( final String fileName )
-    {
-        return testUtil.getJsonFileAsString( fileName );
+        serializingTestHelper = new SerializingTestHelper( this, false );
     }
 
     protected JsonNode getJsonFileAsJson( final String fileName )
     {
-        return testUtil.parseFileAsJson( fileName );
+        return serializingTestHelper.loadTestJson( fileName );
     }
 
     protected JsonNode stringToJson( final String jsonString )
     {
-        return testUtil.stringToJson( jsonString );
+        return serializingTestHelper.stringToJson( jsonString );
     }
 
     @Before

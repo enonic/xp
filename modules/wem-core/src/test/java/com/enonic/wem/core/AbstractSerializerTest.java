@@ -7,11 +7,11 @@ import org.junit.After;
 
 public abstract class AbstractSerializerTest
 {
-    private final TestUtil testUtil;
+    private final SerializingTestHelper serializingTestHelper;
 
     protected AbstractSerializerTest()
     {
-        testUtil = new TestUtil( this );
+        serializingTestHelper = new SerializingTestHelper( this, true );
     }
 
     @After
@@ -22,16 +22,16 @@ public abstract class AbstractSerializerTest
 
     protected String jsonToString( final JsonNode node )
     {
-        return testUtil.jsonToString( node );
+        return serializingTestHelper.jsonToString( node );
     }
 
-    protected String getXmlAsString( final String fileName )
+    protected String loadTestXml( final String fileName )
     {
-        return testUtil.getXmlFileAsString( fileName );
+        return serializingTestHelper.loadTextXml( fileName );
     }
 
-    protected String getJsonAsString( final String fileName )
+    protected String loadJsonAsString( final String fileName )
     {
-        return testUtil.getJsonFileAsString( fileName );
+        return serializingTestHelper.loadJsonAsString( fileName );
     }
 }

@@ -8,8 +8,6 @@ import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractExce
 
 public class SingleSelectorTest
 {
-    private SingleSelector singleSelector = new SingleSelector();
-
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_empty_throws_exception()
     {

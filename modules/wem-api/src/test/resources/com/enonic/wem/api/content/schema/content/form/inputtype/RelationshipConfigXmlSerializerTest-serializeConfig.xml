@@ -1,0 +1,6 @@
+<config>
+  <content-type-filter>
+    <allowed>System:audio</allowed>
+    <allowed>System:image</allowed>
+  </content-type-filter>
+</config>

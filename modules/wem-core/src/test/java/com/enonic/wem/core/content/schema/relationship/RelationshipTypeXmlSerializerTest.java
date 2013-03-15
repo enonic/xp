@@ -14,12 +14,12 @@ public class RelationshipTypeXmlSerializerTest
     @Override
     String getFileAsString( final String fileName )
     {
-        return getXmlAsString( fileName + ".xml" );
+        return loadTestXml( fileName + ".xml" );
     }
 
     @Override
     void assertSerializedResult( final String fileNameForExpected, final String actualSerialization )
     {
-        assertEquals( getXmlAsString( fileNameForExpected + ".xml" ), actualSerialization );
+        assertEquals( loadTestXml( fileNameForExpected + ".xml" ), actualSerialization );
     }
 }

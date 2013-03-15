@@ -16,12 +16,12 @@ public class RelationshipTypeJsonSerializerTest
     @Override
     String getFileAsString( final String fileName )
     {
-        return getJsonAsString( fileName + ".json" );
+        return loadJsonAsString( fileName + ".json" );
     }
 
     @Override
     void assertSerializedResult( final String fileNameForExpected, final String actualSerialization )
     {
-        assertEquals( getJsonAsString( fileNameForExpected + ".json" ), actualSerialization );
+        assertEquals( loadJsonAsString( fileNameForExpected + ".json" ), actualSerialization );
     }
 }
