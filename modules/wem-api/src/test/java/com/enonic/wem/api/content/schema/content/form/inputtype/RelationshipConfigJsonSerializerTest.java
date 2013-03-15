@@ -143,7 +143,7 @@ public class RelationshipConfigJsonSerializerTest
 
         StringBuilder json = new StringBuilder();
         json.append( "{\n" );
-        json.append( "\"allowedContentTypes\": [\"System:audio\", \"System:image\"],\n" );
+        json.append( "\"allowContentTypes\": [\"System:audio\", \"System:image\"],\n" );
         json.append( "\"relationshipType\": null\n" );
         json.append( "}\n" );
 
@@ -167,7 +167,7 @@ public class RelationshipConfigJsonSerializerTest
 
         StringBuilder json = new StringBuilder();
         json.append( "{\n" );
-        json.append( "\"allowedContentTypes\": [\"System:audio\", \"System:image\"]\n" );
+        json.append( "\"allowContentTypes\": [\"System:audio\", \"System:image\"]\n" );
         json.append( "}\n" );
 
         // exercise

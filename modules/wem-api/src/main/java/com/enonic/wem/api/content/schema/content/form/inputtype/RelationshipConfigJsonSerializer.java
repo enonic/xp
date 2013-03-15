@@ -19,7 +19,7 @@ public class RelationshipConfigJsonSerializer
     public JsonNode serializeConfig( final RelationshipConfig config, final ObjectMapper objectMapper )
     {
         final ObjectNode jsonConfig = objectMapper.createObjectNode();
-        final ArrayNode allowedContentTypesArray = jsonConfig.putArray( "allowedContentTypes" );
+        final ArrayNode allowedContentTypesArray = jsonConfig.putArray( "allowContentTypes" );
         for ( QualifiedContentTypeName allowedContentType : config.getAllowedContentTypes() )
         {
             allowedContentTypesArray.add( allowedContentType.toString() );
@@ -37,7 +37,7 @@ public class RelationshipConfigJsonSerializer
         {
             builder.relationshipType( QualifiedRelationshipTypeName.from( relationshipTypeNode.getTextValue() ) );
         }
-        final JsonNode allowedContentTypesNode = inputTypeConfigNode.get( "allowedContentTypes" );
+        final JsonNode allowedContentTypesNode = inputTypeConfigNode.get( "allowContentTypes" );
         if ( allowedContentTypesNode != null )
         {
             for ( JsonNode contentTypeNode : allowedContentTypesNode )
