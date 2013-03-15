@@ -2,17 +2,11 @@ Ext.define('Admin.view.AdminImageButton', {
     extend: 'Ext.button.Button',
     alias: 'widget.adminImageButton',
 
-    style: {
-        padding: 0
-    },
     cls: 'admin-image-button',
     scale: 'large',
+
     popupTpl: undefined,
     popupData: undefined,
-
-    initComponent: function () {
-        this.callParent(arguments);
-    },
 
     listeners: {
         click: function (item) {

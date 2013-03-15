@@ -39,16 +39,21 @@ Ext.define('Admin.view.TopBar', {
 
         this.leftContainer = Ext.create('Ext.Container', {
             flex: 5,
-            margins: '0 8px',
-            layout: 'hbox',
+            padding: 6,
+            layout: {
+                type: 'hbox',
+                align: 'middle'
+            },
             items: [
                 me.startButton,
+                {
+                    xtype: "tbseparator"
+                },
                 me.homeButton
             ]
         });
         this.rightContainer = Ext.create('Ext.Container', {
             flex: 5,
-            margins: '0 8px',
             layout: {
                 type: 'hbox',
                 align: 'middle',
