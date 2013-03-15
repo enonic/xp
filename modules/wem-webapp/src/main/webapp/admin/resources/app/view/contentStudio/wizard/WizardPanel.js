@@ -24,6 +24,17 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
 
         me.tbar = this.getToolbar();
 
+        var wizardHeader = Ext.create('Admin.view.WizardHeader', {
+            xtype: 'wizardHeader',
+            pathConfig: {
+                hidden: true
+            },
+            nameConfig: {
+                hidden: true
+            },
+            data: me.data
+        });
+
         me.items = [
             {
                 width: 121,
@@ -81,23 +92,10 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
                     border: false
                 },
                 items: [
-                    {
-                        xtype: 'container',
-                        cls: 'admin-wizard-header-container',
-                        items: [
-                            {
-                                xtype: 'textfield',
-                                itemId: 'displayName',
-                                value: headerData.displayName,
-                                emptyText: 'Display Name',
-                                enableKeyEvents: true,
-                                cls: 'admin-display-name',
-                                dirtyCls: 'admin-display-name-dirty'
-                            }
-                        ]
-                    },
+                    wizardHeader,
                     {
                         xtype: 'wizardPanel',
+                        validateItems: [wizardHeader],
                         showControls: false,
                         isNew: isNew,
                         items: steps
@@ -112,6 +110,10 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
         uploader.on('fileuploaded', me.photoUploaded, me);
     },
 
+
+    getWizardHeader: function () {
+        return this.down('wizardHeader');
+    },
 
     getToolbar: function () {
         var me = this;
@@ -159,7 +161,7 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
 
 
     getData: function () {
-        return this.getWizardPanel().getData();
+        return Ext.apply(this.getWizardPanel().getData(), this.getWizardHeader().getData());
     },
 
     photoUploaded: function (photoUploadButton, response) {

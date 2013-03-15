@@ -49,6 +49,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
 
         this.evaluateDisplayName = this.isNewContent();
 
+        var evaluateFn = this.data && this.data.contentType && this.data.contentType.contentDisplayNameScript;
+
         var headerData = this.prepareHeaderData(this.data);
 
         me.tbar = Ext.createByAlias('widget.contentWizardToolbar', {
@@ -59,7 +61,11 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             xtype: 'wizardHeader',
             nameConfig: {
                 readOnly: headerData.isRoot,
-                stripCharsRe: /[^a-z0-9\-\/]+/ig
+                stripCharsRe: /[^a-z0-9\-\/]+/ig,
+                vtype: 'path'
+            },
+            displayNameConfig: {
+                autoFocus: !me.evaluateDisplayName || Ext.isEmpty(evaluateFn)
             },
             data: me.data,
             prepareHeaderData: me.prepareHeaderData

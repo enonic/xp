@@ -136,7 +136,7 @@ Ext.define('Admin.view.account.UserFormField', {
             listeners: {
                 'validitychange': me.validityChanged,
                 'change': me.delayValidation ?
-                    me.callValidationTask : function () {
+                          me.callValidationTask : function () {
                 },
                 'keyup': function (field, event) {
                     if (me.delayValidation && (!event.isSpecialKey() ||
@@ -165,6 +165,9 @@ Ext.define('Admin.view.account.UserFormField', {
                 }
             }
         };
+        if (me.isDisplayNameSource()) {
+            fieldConfig.displayNameSource = true;
+        }
         if (me.fieldWidth[me.fieldname]) {
             fieldConfig.width = me.fieldWidth[me.fieldname];
         }
@@ -174,6 +177,11 @@ Ext.define('Admin.view.account.UserFormField', {
             fieldConfig.cls = 'admin-remote-field';
         }
         return fieldConfig;
+    },
+
+    isDisplayNameSource: function () {
+        return this.fieldname == 'name' || this.fieldname == 'prefix' || this.fieldname == 'firstName' ||
+               this.fieldname == 'middleName' || this.fieldname == 'lastName' || this.fieldname == 'suffix';
     },
 
     callValidationTask: function () {

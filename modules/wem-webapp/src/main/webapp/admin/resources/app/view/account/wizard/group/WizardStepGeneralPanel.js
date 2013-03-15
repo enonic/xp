@@ -20,7 +20,7 @@ Ext.define('Admin.view.account.wizard.group.WizardStepGeneralPanel', {
                         allowBlank: false,
                         value: me.data ? me.data.displayName : '',
                         name: 'displayName',
-                        itemId: 'displayName',
+                        displayNameSource: true,        // for the controller to update display name on change
                         enableKeyEvents: true,
                         emptyText: 'Display Name'
                     },

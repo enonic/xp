@@ -15,7 +15,8 @@ Ext.define('Admin.view.WizardHeader', {
         allowBlank: false,
         emptyText: 'Display Name',
         enableKeyEvents: true,
-        hideLabel: true
+        hideLabel: true,
+        autoFocus: true
     },
 
     pathProperty: 'path',
@@ -32,14 +33,16 @@ Ext.define('Admin.view.WizardHeader', {
         allowBlank: false,
         emptyText: 'Name',
         enableKeyEvents: true,
-        hideLabel: true
+        hideLabel: true,
+        vtype: 'name',
+        stripCharsRe: /[^a-z0-9\-]+/ig
     },
 
 
     initComponent: function () {
         var me = this;
 
-        me.appendNameVtype();
+        me.appendVtypes();
 
         var headerData = this.prepareHeaderData(this.data);
 
@@ -52,16 +55,16 @@ Ext.define('Admin.view.WizardHeader', {
             name: this.displayNameProperty,
             value: headerData[this.displayNameProperty],
             cls: 'admin-display-name',
-            dirtyCls: 'admin-display-name-dirty',
-            listeners: {
-                afterrender: function (field) {
-                    field.getFocusEl().focus(100);
-                },
-                keyup: me.onDisplayNameKey,
-                change: me.onDisplayNameChanged,
-                scope: me
-            }
+            dirtyCls: 'admin-display-name-dirty'
         }, me.displayNameConfig, Admin.view.WizardHeader.prototype.displayNameConfig));
+
+        // add listeners separately so they don't get overridden by config
+        this.displayNameField.on({
+            afterrender: me.onDisplayNameAfterrender,
+            keyup: me.onDisplayNameKey,
+            change: me.onDisplayNameChanged,
+            scope: me
+        });
 
         this.pathField = Ext.create('Ext.form.field.Display', Ext.apply({
             xtype: 'displayfield',
@@ -76,16 +79,15 @@ Ext.define('Admin.view.WizardHeader', {
             cls: 'admin-name',
             dirtyCls: 'admin-name-dirty',
             name: this.nameProperty,
-            value: headerData[this.nameProperty],
-            vtype: 'name',
-            stripCharsRe: /[^a-z0-9\-]+/ig,
-            listeners: {
-                keyup: me.onNameKey,
-                change: me.onNameChanged,
-                scope: me
-            }
+            value: headerData[this.nameProperty]
         }, me.nameConfig, Admin.view.WizardHeader.prototype.nameConfig));
 
+        // add listeners separately so they don't get overridden by config
+        this.nameField.on({
+            keyup: me.onNameKey,
+            change: me.onNameChanged,
+            scope: me
+        });
 
         this.items = [
             me.displayNameField
@@ -109,6 +111,12 @@ Ext.define('Admin.view.WizardHeader', {
 
         this.callParent(arguments);
         this.addEvents('displaynamechange', 'displaynameoverride', 'namechange', 'nameoverride');
+    },
+
+    onDisplayNameAfterrender: function (field) {
+        if (!field.readOnly && field.autoFocus) {
+            field.getFocusEl().focus(100);
+        }
     },
 
     onDisplayNameKey: function (field, event, opts) {
@@ -140,16 +148,27 @@ Ext.define('Admin.view.WizardHeader', {
         this.fireEvent('namechange', newVal, oldVal);
     },
 
-    appendNameVtype: function () {
+    appendVtypes: function () {
         Ext.apply(Ext.form.field.VTypes, {
-            //  vtype validation function
             name: function (val, field) {
+                return /^[a-z0-9\-]+$/i.test(val);
+            },
+            nameText: 'Not a valid name. Can contain digits, letters and "-" only.',
+            nameMask: /^[a-z0-9\-]+$/i
+        });
+        Ext.apply(Ext.form.field.VTypes, {
+            qualifiedName: function (val, field) {
+                return /^[a-z0-9\-:]+$/i.test(val);
+            },
+            qualifiedNameText: 'Not a valid qualified name. Can contain digits, letters, ":" and "-" only.',
+            qualifiedNameMask: /^[a-z0-9\-:]+$/i
+        });
+        Ext.apply(Ext.form.field.VTypes, {
+            path: function (val, field) {
                 return /^[a-z0-9\-\/]+$/i.test(val);
             },
-            // vtype Text property: The error text to display when the validation function returns false
-            nameText: 'Not a valid name. Can contain digits, characters and "-" only.',
-            // vtype Mask property: The keystroke filter mask
-            nameMask: /^[a-z0-9\-\/]+$/i
+            pathText: 'Not a valid path. Can contain digits, letters, "/" and "-" only.',
+            pathMask: /^[a-z0-9\-\/]+$/i
         });
     },
 
@@ -158,7 +177,7 @@ Ext.define('Admin.view.WizardHeader', {
     },
 
     prepareHeaderData: function (data) {
-        return data && data.data || {};
+        return data && data.data || data || {};
     },
 
     setData: function (data) {

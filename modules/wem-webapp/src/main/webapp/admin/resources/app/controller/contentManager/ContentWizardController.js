@@ -62,7 +62,7 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
 
     onDisplayNameSourceChanged: function (field, event, opts) {
         var wizard = this.getContentWizardPanel();
-        var evaluateFn = wizard.data.contentType.contentDisplayNameScript;
+        var evaluateFn = wizard.data && wizard.data.contentType && wizard.data.contentType.contentDisplayNameScript;
 
         if (wizard.evaluateDisplayName && !Ext.isEmpty(evaluateFn)) {
 

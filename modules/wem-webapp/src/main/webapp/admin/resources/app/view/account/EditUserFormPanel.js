@@ -201,8 +201,8 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
         };
         this.addressFieldSet = {
             'address': function (field) {
-                if (me.userFields && me.userFields.profile && me.userFields.profile.addresses) {
-                    var addresses = me.userFields.profile.addresses;
+                if (me.data && me.data.profile && me.data.profile.addresses) {
+                    var addresses = me.data.profile.addresses;
                     var tabs = [];
                     var index;
                     for (index in addresses) {
@@ -374,7 +374,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
             validationResultType = 'detail';
             delayValidation = true;
             validationData.userStore = this.currentUser ? this.currentUser.userStore : this.defaultUserStoreName;
-            validationData.userKey = this.userFields ? this.userFields.key : undefined;
+            validationData.userKey = this.data ? this.data.key : undefined;
         }
         return {
             xtype: 'userFormField',
@@ -417,6 +417,8 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
     },
 
     generateForm: function (storeConfig, staticFields, excludedFields) {
+        var me = this;
+
         if (staticFields) {
             this.staticFields = staticFields;
         }
@@ -440,7 +442,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
                 fields.push(fieldModel);
             });
             this.add(this.generateFieldSet('User', this.userFieldSet, fields));
-            if (!this.userFields) {
+            if (!this.data) {
                 this.add(this.generateFieldSet('Security', this.securityFieldSet, fields));
             }
             this.add(this.generateFieldSet('Name', this.nameFieldSet, fields));
@@ -449,7 +451,10 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
             this.add(this.generateFieldSet('Communication', this.communicationFieldSet, fields));
             this.add(this.generateFieldSet('Address', this.addressFieldSet, fields));
         }
-        this.fireEvent('fieldsloaded', this, this);
+
+        Ext.defer(function () {
+            me.fireEvent('fieldsloaded', me);
+        }, 100);
     },
 
     generateFieldSet: function (title, fieldSet, storeConfig) {
@@ -482,10 +487,10 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
             }
             if (fieldSet[item.get('type')] && canBeAdded) {
                 var fieldValue;
-                if (me.userFields) {
-                    fieldValue = me.userFields[item.get('type')];
-                    if ((fieldValue === undefined) && (me.userFields.profile !== undefined)) {
-                        fieldValue = me.userFields.profile[item.get('type')];
+                if (me.data) {
+                    fieldValue = me.data[item.get('type')];
+                    if ((fieldValue === undefined) && (me.data.profile !== undefined)) {
+                        fieldValue = me.data.profile[item.get('type')];
                     }
                 }
                 var baseConfig = {
@@ -493,7 +498,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
                     fieldname: item.get('type'),
                     required: item.get('required') || false,
                     remote: item.get('remote') || false,
-                    readonly: item.get('readOnly') || false || (item.get('type') === 'name' && me.userFields),
+                    readonly: item.get('readOnly') || false || (item.get('type') === 'name' && me.data),
                     // what is that field?
                     vtype: item.get('vtype'),
                     fieldValue: fieldValue,

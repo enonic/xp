@@ -240,7 +240,6 @@ Ext.define('Admin.controller.account.Controller', {
 
             var data = me.userInfoToWizardData(response);
             wizardPanel.addData(data);
-            tabCmp.updateHeader({value: response.displayName, edited: true});
             if (Ext.isFunction(callback)) {
                 callback();
             }
