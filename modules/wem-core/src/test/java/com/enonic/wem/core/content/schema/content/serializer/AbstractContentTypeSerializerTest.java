@@ -11,9 +11,11 @@ import com.enonic.wem.api.content.schema.content.form.Input;
 import com.enonic.wem.api.content.schema.content.form.Layout;
 import com.enonic.wem.api.content.schema.content.form.MixinReference;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.content.schema.content.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.content.schema.content.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.MockMixinFetcher;
+import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.AbstractSerializerTest;
@@ -274,6 +276,11 @@ public abstract class AbstractContentTypeSerializerTest
         SingleSelectorConfig singleSelectorConfig =
             SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "myOption 1", "o1" ).addOption( "myOption 2",
                                                                                                                      "o2" ).build();
+        RelationshipConfig relationshipConfig = RelationshipConfig.newRelationshipConfig().
+            allowedContentType( QualifiedContentTypeName.audioFile() ).
+            allowedContentType( QualifiedContentTypeName.imageFile() ).
+            relationshipType( QualifiedRelationshipTypeName.LIKE ).
+            build();
 
         ContentType.Builder contentTypeBuilder = newContentType().
             name( "AllInputTypes" ).
@@ -297,6 +304,8 @@ public abstract class AbstractContentTypeSerializerTest
         contentTypeBuilder.addFormItem( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
+        contentTypeBuilder.addFormItem(
+            newInput().name( "myRelationship" ).type( InputTypes.RELATIONSHIP ).inputTypeConfig( relationshipConfig ).build() );
 
         return contentTypeBuilder.build();
     }

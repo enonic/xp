@@ -10,31 +10,33 @@ import com.enonic.wem.api.content.data.type.DataTypes;
 
 public final class InputTypes
 {
-    public static final BaseInputType COLOR = new Color();
+    public static final Color COLOR = new Color();
 
-    public static final BaseInputType DATE = new Date();
+    public static final Date DATE = new Date();
 
-    public static final BaseInputType DECIMAL_NUMBER = new DecimalNumber();
+    public static final DecimalNumber DECIMAL_NUMBER = new DecimalNumber();
 
-    public static final BaseInputType GEO_LOCATION = new GeoLocation();
+    public static final GeoLocation GEO_LOCATION = new GeoLocation();
 
-    public static final BaseInputType HTML_AREA = new HtmlArea();
+    public static final HtmlArea HTML_AREA = new HtmlArea();
 
-    public static final BaseInputType MONEY = new Money();
+    public static final Money MONEY = new Money();
 
-    public static final BaseInputType PHONE = new Phone();
+    public static final Phone PHONE = new Phone();
 
-    public static final BaseInputType SINGLE_SELECTOR = new SingleSelector();
+    public static final Relationship RELATIONSHIP = new Relationship();
 
-    public static final BaseInputType TAGS = new Tags();
+    public static final SingleSelector SINGLE_SELECTOR = new SingleSelector();
 
-    public static final BaseInputType TEXT_LINE = new TextLine();
+    public static final Tags TAGS = new Tags();
 
-    public static final BaseInputType TEXT_AREA = new TextArea();
+    public static final TextLine TEXT_LINE = new TextLine();
 
-    public static final BaseInputType WHOLE_NUMBER = new WholeNumber();
+    public static final TextArea TEXT_AREA = new TextArea();
 
-    public static final BaseInputType XML = new Xml();
+    public static final WholeNumber WHOLE_NUMBER = new WholeNumber();
+
+    public static final Xml XML = new Xml();
 
     private static LinkedHashMap<String, BaseInputType> inputTypeByName = new LinkedHashMap<String, BaseInputType>();
 
@@ -49,6 +51,7 @@ public final class InputTypes
         register( HTML_AREA );
         register( MONEY );
         register( PHONE );
+        register( RELATIONSHIP );
         register( SINGLE_SELECTOR );
         register( TAGS );
         register( TEXT_LINE );

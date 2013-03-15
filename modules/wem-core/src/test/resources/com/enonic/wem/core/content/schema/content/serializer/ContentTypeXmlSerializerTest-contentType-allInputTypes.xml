@@ -125,6 +125,21 @@
       <helpText/>
       <occurrences minimum="0" maximum="1"/>
     </input>
+    <input type="Relationship" built-in="true" name="myRelationship">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+      <config>
+        <content-type-filter>
+          <allow>System:audio</allow>
+          <allow>System:image</allow>
+        </content-type-filter>
+        <relationship-type>System:like</relationship-type>
+      </config>
+    </input>
   </form>
 </type>
 

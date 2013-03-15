@@ -16,6 +16,18 @@ public class Relationship
 {
     public Relationship()
     {
+        super( RelationshipConfig.class );
+    }
+
+    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonGenerator()
+    {
+        return RelationshipConfigJsonSerializer.DEFAULT;
+    }
+
+    @Override
+    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlGenerator()
+    {
+        return RelationshipConfigXmlSerializer.DEFAULT;
     }
 
     @Override
