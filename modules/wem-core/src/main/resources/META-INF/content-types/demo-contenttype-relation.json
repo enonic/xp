@@ -40,7 +40,11 @@
                 "helpText": null,
                 "type": {
                     "name": "Relationship",
-                    "builtIn": true
+                    "builtIn": true,
+                    "config": {
+                        "allowContentTypes": [ ],
+                        "relationshipType": null
+                    }
                 }
             }
         },
@@ -59,7 +63,11 @@
                 "helpText": null,
                 "type": {
                     "name": "Relationship",
-                    "builtIn": true
+                    "builtIn": true,
+                    "config": {
+                        "allowContentTypes": [ ],
+                        "relationshipType": null
+                    }
                 }
             }
         }
