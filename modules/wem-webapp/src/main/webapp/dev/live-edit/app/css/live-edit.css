@@ -429,8 +429,8 @@ svg.live-edit-highlight-border rect {
     min-width: 150px;
     padding: 0;
     background-color: #f6f5f7;
-    border: 2px solid #aaa;
-    box-shadow: 0 0 7px #aaa;
+    border: 1px solid #aaa;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .live-edit-component-menu-title-bar {
@@ -446,7 +446,7 @@ svg.live-edit-highlight-border rect {
 }
 
 .live-edit-component-menu-title-icon {
-    padding: 5px 7px;
+    padding: 7px;
     float: left;
 }
 
@@ -479,7 +479,7 @@ svg.live-edit-highlight-border rect {
     float: left;
     font-size: 14px;
     color: #000;
-    padding-top: 6px;
+    padding-top: 7px;
     padding-left: 2px;
 }
 

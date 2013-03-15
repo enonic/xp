@@ -176,8 +176,10 @@
 
 
     proto.setIcon = function (componentType) {
-        var iconCls = this.resolveCssClassForComponentType(componentType);
-        this.getIconElement().children('div').attr('class', iconCls);
+        var $iconCt = this.getIconElement(),
+            iconCls = this.resolveCssClassForComponentType(componentType);
+        $iconCt.children('div').attr('class', iconCls);
+        $iconCt.attr('title', componentType);
     };
 
 
