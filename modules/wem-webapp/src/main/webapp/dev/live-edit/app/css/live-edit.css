@@ -1,37 +1,75 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
 /*** Reset */
 
-.live-edit-loader-splash-content,
 .live-edit-loader-splash-container,
 .live-edit-loader-splash-content,
-.live-edit-loader-splash-content img,
-.live-edit-loader-splash-content div,
+svg.live-edit-highlight-border,
+#live-edit-shader-north,
+#live-edit-shader-east,
+#live-edit-shader-south,
+#live-edit-shader-west,
+#live-edit-page-shader,
+.live-edit-component-tip,
+.live-edit-tool-tip,
+.live-edit-component-menu,
+.live-edit-components-container,
+.live-edit-loader-splash-content,
 .live-edit-shader,
+#live-edit-page-shader,
 svg.live-edit-highlight-border,
 svg.live-edit-highlight-border rect,
 .live-edit-empty-region-placeholder,
 .live-edit-empty-part-placeholder,
 .live-edit-tool-tip,
+.live-edit-tool-tip-name-text,
 .live-edit-tool-tip-type-text,
 .live-edit-tool-tip-name-text,
 .live-edit-component-tip,
+.live-edit-component-tip-arrow-bottom,
+.live-edit-component-tip-arrow-top,
+.live-edit-component-tip-left,
+.live-edit-component-tip-center,
+.live-edit-component-tip-right,
+.live-edit-component-tip-left,
+.live-edit-component-tip-center,
+.live-edit-component-tip-right,
+.live-edit-component-tip-icon-menu,
+.live-edit-component-tip-icon-parent,
+.live-edit-component-tip-icon-deselect,
+.live-edit-component-tip-icon-parent,
+.live-edit-component-tip-icon-menu,
+.live-edit-component-tip-icon-menu-selected,
+.live-edit-component-tip-icon-deselect,
 .live-edit-component-tip-type-text,
-.live-edit-component-tip-name-text,
 .live-edit-component-menu,
-.live-edit-button,
+.live-edit-component-menu-title-bar,
+.live-edit-component-menu-title-icon,
+.live-edit-component-menu-title-text,
+.live-edit-component-menu-title-close-button,
+.live-edit-component-menu-page-icon,
+.live-edit-component-menu-region-icon,
+.live-edit-component-menu-part-icon,
+.live-edit-component-menu-paragraph-icon,
+.live-edit-component-menu-content-icon,
+.live-edit-component-menu-button,
 .live-edit-button-text,
 .live-edit-button-icon,
-.live-edit-components-container,
+.live-edit-button-text,
+.live-edit-button,
 #live-edit-drag-helper,
-#live-edit-drag-helper img,
 #live-edit-drag-helper-status-icon,
+#live-edit-drag-helper-text,
 .live-edit-drop-target-placeholder,
 .live-edit-html-element-placeholder,
-.live-edit-html-element-placeholder div,
-.live-edit-html-element-placeholder .live-edit-iframe,
-.live-edit-html-element-placeholder .live-edit-object {
+.live-edit-html-element-placeholder
+.live-edit-iframe,
+.live-edit-html-element-placeholder
+.live-edit-object {
     border: 0;
     color: #000;
-    font: 11px Tahoma, Geneva, Verdana;
+    font-size: 11px;
+    font-family: Tahoma, Geneva, sans-serif;
     font-weight: normal;
     margin: 0;
     padding: 0;
@@ -388,10 +426,17 @@ svg.live-edit-highlight-border rect {
 
 .live-edit-component-menu {
     position: absolute;
+    min-width: 150px;
     padding: 0;
     background-color: #f6f5f7;
     border: 2px solid #aaa;
-    box-shadow: 0 0 7px #888;
+    box-shadow: 0 0 7px #aaa;
+}
+
+.live-edit-component-menu-title-bar {
+    overflow: hidden;
+    cursor: move;
+    margin-bottom: 2px;
 }
 
 .live-edit-component-menu-title-icon,
@@ -400,13 +445,8 @@ svg.live-edit-highlight-border rect {
     padding: 5px;
 }
 
-.live-edit-component-menu-title-bar {
-    overflow: hidden;
-    cursor: move;
-    margin-bottom: 3px;
-}
-
 .live-edit-component-menu-title-icon {
+    padding: 5px 7px;
     float: left;
 }
 
@@ -416,11 +456,11 @@ svg.live-edit-highlight-border rect {
 }
 
 .live-edit-component-menu-page-icon {
-    /*TBI*/
+    background: transparent url("../images/file.png") center center no-repeat;
 }
 
 .live-edit-component-menu-region-icon {
-    /*TBI*/
+    background: transparent url("../images/compass.png") center center no-repeat;
 }
 
 .live-edit-component-menu-part-icon {
@@ -439,7 +479,8 @@ svg.live-edit-highlight-border rect {
     float: left;
     font-size: 14px;
     color: #000;
-    padding-top: 7px;
+    padding-top: 6px;
+    padding-left: 2px;
 }
 
 .live-edit-component-menu-title-close-button {
@@ -448,7 +489,7 @@ svg.live-edit-highlight-border rect {
     background: transparent url("../images/close.png") center center no-repeat;
     width: 22px;
     height: 22px;
-    padding-left: 5px;
+    padding: 5px 7px;
 }
 
 /* Component menu button */
@@ -572,10 +613,6 @@ svg.live-edit-highlight-border rect {
     background-color: #fff;
     padding: 0 8px;
     color: #4a87e5;
-}
-
-.live-edit-component-list-header span {
-
 }
 
 .live-edit-component {

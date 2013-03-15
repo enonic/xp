@@ -22,8 +22,8 @@ Ext.define('Admin.controller.contentManager.Controller', {
         me.application.on({});
 
         Admin.MessageBus.on('liveEditWindow.show', function () {
-            this.getLiveEditWindow().doShow();
-        }, this);
+            me.getLiveEditWindow().doShow();
+        }, me);
     },
 
     generateTabId: function (content, isEdit) {
