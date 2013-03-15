@@ -28,6 +28,11 @@
             cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
+
+                var $paragraph = me.menu.$selectedComponent;
+                if ($paragraph && $paragraph.length > 0) {
+                    $(window).trigger('component:paragraph:edit:init', [$paragraph]);
+                }
             }
         });
 

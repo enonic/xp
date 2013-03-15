@@ -122,7 +122,6 @@
     };
 
 
-
     proto.addButtons = function () {
         var me = this;
         var parentButton = new AdminLiveEdit.view.menu.ParentButton(me);
@@ -136,9 +135,9 @@
         var removeButton = new AdminLiveEdit.view.menu.RemoveButton(me);
 
         var i,
-            placeholder = me.getMenuItemsPlaceholderElement();
+            $menuItemsPlaceholder = me.getMenuItemsPlaceholderElement();
         for (i = 0; i < me.buttons.length; i++) {
-            me.buttons[i].appendTo(placeholder);
+            me.buttons[i].appendTo($menuItemsPlaceholder);
         }
     };
 

@@ -16,6 +16,9 @@
     // Shorthand ref to the prototype
     var proto = parentButton.prototype;
 
+    // Uses
+    var util = AdminLiveEdit.Util;
+
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -30,8 +33,9 @@
                 var $parent = me.menu.$selectedComponent.parents('[data-live-edit-type]');
                 if ($parent && $parent.length > 0) {
                     $parent = $($parent[0]);
-                    var offset = $parent.offset();
-                    var coordinates = {x: offset.left, y: offset.top};
+                    // The menu should stay at the same position when selecting parent
+                    var offset = me.menu.getEl().offset(),
+                        coordinates = {x: offset.left, y: offset.top};
                     $(window).trigger('component:click:select', [$parent, coordinates]);
                 }
             }
@@ -39,6 +43,14 @@
 
         me.appendTo(this.menu.getEl());
         me.menu.buttons.push(me);
+    };
+
+
+    proto.scrollComponentIntoView = function ($component) {
+        var componentTopPosition = AdminLiveEdit.Util.getPagePositionForComponent($component).top;
+        if (componentTopPosition <= window.pageYOffset) {
+            // $('html, body').animate({scrollTop: componentTopPosition - 10}, 200);
+        }
     };
 
 }($liveedit));

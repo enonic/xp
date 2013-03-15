@@ -106,7 +106,7 @@
 
 
 </head>
-<body data-live-edit-type="page" data-live-edit-key="/path/to/this/page" data-live-edit-name="Page Name">
+<body data-live-edit-type="page" data-live-edit-key="/path/to/this/page" data-live-edit-name="Step into control">
 
 
 <!--stopindex-->
