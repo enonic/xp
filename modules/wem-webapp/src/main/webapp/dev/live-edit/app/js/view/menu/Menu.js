@@ -8,6 +8,7 @@
     // Class definition (constructor)
     var menu = AdminLiveEdit.view.menu.Menu = function () {
         var me = this;
+        me.$selectedComponent = null;
         me.hidden = true;
         me.buttons = [];
 
@@ -86,6 +87,8 @@
         var me = this,
             componentInfo = util.getComponentInfo($component);
 
+        me.$selectedComponent = $component;
+
         me.updateTitleBar($component);
         me.updateMenuItemsForComponent($component);
         me.moveToXY(coordinates.x, coordinates.y);
@@ -107,6 +110,7 @@
             me.hide();
             $(window).trigger('component:click:deselect', {showComponentBar: false});
         });
+        me.$selectedComponent = null;
     };
 
 
