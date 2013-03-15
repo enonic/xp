@@ -403,6 +403,7 @@ svg.live-edit-highlight-border rect {
 .live-edit-component-menu-title-bar {
     overflow: hidden;
     cursor: move;
+    margin-bottom: 3px;
 }
 
 .live-edit-component-menu-title-icon {
