@@ -14,10 +14,10 @@
 
         me.buttonConfig = {
             'page': ['settings', 'reset'],
-            'region': ['settings', 'reset', 'clear'],
-            'part': ['settings', 'details', 'remove'],
-            'content': ['view', 'edit'],
-            'paragraph': ['edit']
+            'region': ['parent', 'settings', 'reset', 'clear'],
+            'part': ['parent', 'settings', 'details', 'remove'],
+            'content': ['parent', 'view', 'edit'],
+            'paragraph': ['parent', 'edit']
         };
 
         me.addView();
@@ -125,6 +125,7 @@
 
     proto.addButtons = function () {
         var me = this;
+        var parentButton = new AdminLiveEdit.view.menu.ParentButton(me);
         var settingsButton = new AdminLiveEdit.view.menu.SettingsButton(me);
         var detailsButton = new AdminLiveEdit.view.menu.DetailsButton(me);
         var insertButton = new AdminLiveEdit.view.menu.InsertButton(me);

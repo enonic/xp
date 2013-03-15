@@ -23,13 +23,16 @@
         var me = this;
         var $button = me.createButton({
             id: 'live-edit-button-parent',
-            text: 'Parent',
+            text: 'Select Parent',
             cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
-                var $parent = me.componentmenu.$currentComponent.parents('[data-live-edit-type]');
+                var $parent = me.menu.$selectedComponent.parents('[data-live-edit-type]');
                 if ($parent && $parent.length > 0) {
-                    $(window).trigger('component:click:select', [$($parent[0])]);
+                    $parent = $($parent[0]);
+                    var offset = $parent.offset();
+                    var coordinates = {x: offset.left, y: offset.top};
+                    $(window).trigger('component:click:select', [$parent, coordinates]);
                 }
             }
         });
