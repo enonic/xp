@@ -1,6 +1,7 @@
 <config>
   <content-type-filter>
-    <allowed>System:audio</allowed>
-    <allowed>System:image</allowed>
+    <allow>System:audio</allow>
+    <allow>System:image</allow>
   </content-type-filter>
+  <relationship-type>System:like</relationship-type>
 </config>

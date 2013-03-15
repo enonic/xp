@@ -6,13 +6,14 @@ import java.io.IOException;
 import org.jdom.Element;
 import org.junit.Before;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import com.enonic.wem.api.XmlTestHelper;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
-import static com.enonic.wem.api.XmlTestHelper.assertXmlEquals;
 import static junit.framework.Assert.assertEquals;
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 
 public class RelationshipConfigXmlSerializerTest
 {
@@ -28,7 +29,7 @@ public class RelationshipConfigXmlSerializerTest
 
     @Test
     public void serializeConfig()
-        throws IOException
+        throws IOException, SAXException
     {
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
@@ -42,7 +43,7 @@ public class RelationshipConfigXmlSerializerTest
         serializer.generateConfig( config, configEl );
 
         // verify
-        assertXmlEquals( xmlHelper.loadTestFile( "serializeConfig.xml" ), xmlHelper.serialize( configEl, true ) );
+        assertXMLEqual( xmlHelper.loadTestFile( "serializeConfig.xml" ), xmlHelper.serialize( configEl, true ) );
     }
 
     @Test

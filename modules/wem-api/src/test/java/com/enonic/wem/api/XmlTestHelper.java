@@ -94,9 +94,4 @@ public class XmlTestHelper
         final Format format = prettyPrint ? Format.getPrettyFormat() : Format.getCompactFormat();
         return new XMLOutputter( format );
     }
-
-    public static void assertXmlEquals( String expectedXml, String actualXml )
-    {
-
-    }
 }
