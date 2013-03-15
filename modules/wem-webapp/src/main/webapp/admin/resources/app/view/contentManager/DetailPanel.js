@@ -41,6 +41,23 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             }
         };
 
+        this.actionButtonItems = [
+            {
+                text: 'Open',
+                action: 'viewContentType'
+            },
+            {
+                text: 'Edit',
+                action: 'editSchema'
+            },
+            {
+                text: 'Duplicate'
+            },
+            {
+                text: 'Move'
+            }
+        ];
+
         this.on('afterrender', function () {
             if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');

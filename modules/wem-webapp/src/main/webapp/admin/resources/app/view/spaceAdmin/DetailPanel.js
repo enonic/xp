@@ -40,6 +40,17 @@ Ext.define('Admin.view.spaceAdmin.DetailPanel', {
             }
         };
 
+        this.actionButtonItems = [
+            {
+                text: 'Open',
+                action: 'viewSpace'
+            },
+            {
+                text: 'Edit',
+                action: 'editSpace'
+            }
+        ];
+
         this.items = [
             this.createNoSelection(),
             this.createSingleSelection(data),

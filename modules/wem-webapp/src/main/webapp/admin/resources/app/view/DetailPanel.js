@@ -1,6 +1,11 @@
 Ext.define('Admin.view.DetailPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.detailPanel',
+    requires: [
+        'Admin.view.DropDownButton',
+        'Admin.view.BaseContextMenu'
+    ],
+
     layout: 'card',
     cls: 'admin-preview-panel admin-detail',
     border: false,
@@ -20,8 +25,17 @@ Ext.define('Admin.view.DetailPanel', {
             }, this, {
                 delegate: '.clearSelection'
             });
+
+            if (this.isFullPage) {
+                var actionsButton = this.down('dropDownButton');
+                if (actionsButton) {
+                    actionsButton.setVisible(false);
+                }
+            }
         }
     },
+
+    isFullPage: false,
 
     initComponent: function () {
         if (this.showToolbar) {
@@ -43,6 +57,41 @@ Ext.define('Admin.view.DetailPanel', {
             html: '<div>Nothing selected</div>'
         };
     },
+
+
+    /*
+     * Actions button
+     * */
+    actionButtonItems: [],
+
+    getActionItems: function () {
+        return this.actionButtonItems;
+    },
+
+    getActionButton: function () {
+        var me = this;
+        if (this.actionButtonItems.length < 1) {
+            return {};
+        }
+        return {
+            xtype: 'dropDownButton',
+            text: 'Actions',
+            height: 30,
+            itemId: 'dropdown',
+            width: 120,
+            tdAttrs: {
+                width: 120,
+                valign: 'top',
+                style: {
+                    padding: '0 20px 0 0'
+                }
+            },
+            menuItems: me.getActionItems()
+
+        };
+
+    },
+
     /*
      * Single selection
      * */
@@ -95,8 +144,16 @@ Ext.define('Admin.view.DetailPanel', {
                     region: 'north',
                     cls: 'north',
                     margin: '5 0',
-                    layout: 'hbox',
                     height: 100,
+                    layout: {
+                        type: 'table',
+                        tableAttrs: {
+                            style: {
+                                width: '100%'
+                            }
+                        },
+                        columns: 3
+                    },
                     defaults: {
                         height: 100,
                         border: 0
@@ -108,15 +165,18 @@ Ext.define('Admin.view.DetailPanel', {
                             itemId: 'previewPhoto',
                             tpl: me.singleTemplate.photo,
                             data: data,
-                            margin: 5
+                            margin: '0 5 0 5',
+                            tdAttrs: {
+                                width: 100
+                            }
                         },
                         {
                             xtype: 'component',
                             itemId: 'previewHeader',
-                            padding: '5 5 15',
                             tpl: me.singleTemplate.header,
                             data: data
-                        }
+                        },
+                        me.getActionButton()
                     ]
                 },
                 {
@@ -266,7 +326,6 @@ Ext.define('Admin.view.DetailPanel', {
         if ('singleSelection' === item.itemId) {
             var previewHeader = item.down('#previewHeader');
             previewHeader.update(data);
-            console.log(data);
 
             var previewPhoto = item.down('#previewPhoto');
             previewPhoto.update(data);

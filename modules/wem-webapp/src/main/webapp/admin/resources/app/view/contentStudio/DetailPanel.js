@@ -41,6 +41,17 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
             }
         };
 
+        this.actionButtonItems = [
+            {
+                text: 'Open',
+                action: 'viewContentType'
+            },
+            {
+                text: 'Edit',
+                action: 'editSchema'
+            }
+        ];
+
         this.singleTemplate.info = this.getCommonInfoTemplate();
 
         var previewCt = this.createSingleSelection(this.data);

@@ -279,7 +279,8 @@ Ext.define('Admin.controller.contentStudio.Controller', {
                     id: me.generateTabId(contentType, false),
                     xtype: 'contentTypeDetailPanel',
                     data: contentType,
-                    title: contentType.get('name')
+                    title: contentType.get('name'),
+                    isFullPage: true
                 };
                 tabs.addTab(tabItem);
             }

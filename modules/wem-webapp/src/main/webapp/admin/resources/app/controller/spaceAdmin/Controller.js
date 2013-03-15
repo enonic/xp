@@ -55,7 +55,8 @@ Ext.define('Admin.controller.spaceAdmin.Controller', {
                 xtype: 'spaceDetail',
                 showToolbar: false,
                 data: space,
-                title: space.get('displayName')
+                title: space.get('displayName'),
+                isFullPage: true
             };
             tabs.addTab(tabItem);
         }
@@ -75,6 +76,7 @@ Ext.define('Admin.controller.spaceAdmin.Controller', {
             if (r) {
                 var tabItem = {
                     id: me.generateTabId(space, true),
+                    editing: true,
                     xtype: 'spaceAdminWizardPanel',
                     editing: true,
                     data: space,

@@ -52,7 +52,8 @@ Ext.define('Admin.controller.contentManager.Controller', {
                         id: me.generateTabId(content[i], false),
                         isLiveMode: me.getContentDetailPanel().isLiveMode,
                         data: content[i],
-                        title: content[i].get('displayName')
+                        title: content[i].get('displayName'),
+                        isFullPage: true
                     };
                     tabs.addTab(tabItem);
                 }
@@ -283,8 +284,8 @@ Ext.define('Admin.controller.contentManager.Controller', {
         var menu = this.getContentManagerToolbarMenu();
         var contentDetail = Ext.ComponentQuery.query('contentDetail');
         var vertical = contentDetail[0].isVisible();
-        menu.items.items[0].setText( 'Details Pane ' + ( vertical ? 'Right' : 'Bottom' ) );
-        menu.showAt( event.getX(), button.getEl().getY() + button.getEl().getHeight());
+        menu.items.items[0].setText('Details Pane ' + ( vertical ? 'Right' : 'Bottom' ));
+        menu.showAt(event.getX(), button.getEl().getY() + button.getEl().getHeight());
     },
 
     getContentManagerToolbarMenu: function () {
@@ -316,7 +317,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
         this.updateToolbarButtons(selected);
     },
 
-    toggleDetailPanel : function () {
+    toggleDetailPanel: function () {
         this.getContentDetailPanel().toggleLive();
     },
 
