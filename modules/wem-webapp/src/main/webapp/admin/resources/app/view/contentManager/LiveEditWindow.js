@@ -15,10 +15,6 @@ Ext.define('Admin.view.contentManager.LiveEditWindow', {
     initComponent: function () {
         var me = this;
 
-        Admin.MessageBus.on('liveEditWindow.show', function () {
-            me.doShow();
-        }, me);
-
         this.items = [
             {
                 region: 'north',

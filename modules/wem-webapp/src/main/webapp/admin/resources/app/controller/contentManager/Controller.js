@@ -15,14 +15,15 @@ Ext.define('Admin.controller.contentManager.Controller', {
     ],
 
     init: function () {
+        var me = this;
 
-        this.control({});
+        me.control({});
 
-        this.application.on({});
+        me.application.on({});
 
-        //Live edit window must be created before usage
-        // This should probably be somewhere else
-        this.getLiveEditWindow();
+        Admin.MessageBus.on('liveEditWindow.show', function () {
+            this.getLiveEditWindow().doShow();
+        }, this);
     },
 
     generateTabId: function (content, isEdit) {
