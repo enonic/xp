@@ -79,6 +79,11 @@ public class XmlTestHelper
         return parse( new StringReader( xml ) );
     }
 
+    public String parseNSerialize( final String xml, final boolean prettyPrint )
+    {
+        return serialize( parse( new StringReader( xml ) ), prettyPrint );
+    }
+
     public String serialize( final Document node, final boolean prettyPrint )
     {
         return newSerializer( prettyPrint ).outputString( node );

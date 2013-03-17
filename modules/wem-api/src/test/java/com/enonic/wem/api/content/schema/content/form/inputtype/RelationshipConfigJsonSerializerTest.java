@@ -45,6 +45,28 @@ public class RelationshipConfigJsonSerializerTest
     }
 
     @Test
+    public void serializeConfig_with_no_relationShipType()
+        throws IOException
+    {
+        // setup
+        RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
+        builder.allowedContentType( QualifiedContentTypeName.audioFile() );
+        builder.allowedContentType( QualifiedContentTypeName.imageFile() );
+        RelationshipConfig config = builder.build();
+
+        // exercise
+        JsonNode json = serializer.serializeConfig( config, jsonHelper.objectMapper() );
+
+        // verify
+        StringBuilder expectedJson = new StringBuilder();
+        expectedJson.append( "{\n" );
+        expectedJson.append( "\"allowContentTypes\": [\"System:audio\",\"System:image\"],\n" );
+        expectedJson.append( "\"relationshipType\": null\n" );
+        expectedJson.append( "}\n" );
+        assertJsonEquals( jsonHelper.stringToJson( expectedJson.toString() ), json );
+    }
+
+    @Test
     public void parseConfig()
         throws IOException
     {
@@ -74,7 +96,7 @@ public class RelationshipConfigJsonSerializerTest
 
         StringBuilder json = new StringBuilder();
         json.append( "{\n" );
-        json.append( "\"allowedContentTypes\": [],\n" );
+        json.append( "\"allowContentTypes\": [],\n" );
         json.append( "\"relationshipType\": \"System:like\"\n" );
         json.append( "}\n" );
 
@@ -97,7 +119,7 @@ public class RelationshipConfigJsonSerializerTest
 
         StringBuilder json = new StringBuilder();
         json.append( "{\n" );
-        json.append( "\"allowedContentTypes\": null,\n" );
+        json.append( "\"allowContentTypes\": null,\n" );
         json.append( "\"relationshipType\": \"System:like\"\n" );
         json.append( "}\n" );
 

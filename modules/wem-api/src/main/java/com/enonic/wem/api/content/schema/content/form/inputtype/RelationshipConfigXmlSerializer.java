@@ -14,7 +14,7 @@ public class RelationshipConfigXmlSerializer
 {
     public static final RelationshipConfigXmlSerializer DEFAULT = new RelationshipConfigXmlSerializer();
 
-    public void generateConfig( final RelationshipConfig relationshipConfig, final Element inputTypeConfigEl )
+    public void serializeConfig( final RelationshipConfig relationshipConfig, final Element inputTypeConfigEl )
     {
         final Element contentTypeFilterEl = new Element( "content-type-filter" );
         inputTypeConfigEl.addContent( contentTypeFilterEl );
@@ -23,7 +23,15 @@ public class RelationshipConfigXmlSerializer
         {
             contentTypeFilterEl.addContent( new Element( "allow" ).setText( contentType.toString() ) );
         }
-        inputTypeConfigEl.addContent( new Element( "relationship-type" ).setText( relationshipConfig.getRelationshipType().toString() ) );
+        if ( relationshipConfig.getRelationshipType() != null )
+        {
+            inputTypeConfigEl.addContent(
+                new Element( "relationship-type" ).setText( relationshipConfig.getRelationshipType().toString() ) );
+        }
+        else
+        {
+            inputTypeConfigEl.addContent( new Element( "relationship-type" ) );
+        }
     }
 
     @Override

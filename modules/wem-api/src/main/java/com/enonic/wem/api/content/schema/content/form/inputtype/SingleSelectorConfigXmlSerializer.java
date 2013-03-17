@@ -12,7 +12,7 @@ public class SingleSelectorConfigXmlSerializer
 {
     public static final SingleSelectorConfigXmlSerializer DEFAULT = new SingleSelectorConfigXmlSerializer();
 
-    public void generateConfig( final InputTypeConfig config, final Element inputTypeConfigEl )
+    public void serializeConfig( final InputTypeConfig config, final Element inputTypeConfigEl )
     {
         final Element optionsEl = new Element( "options" );
         inputTypeConfigEl.addContent( optionsEl );

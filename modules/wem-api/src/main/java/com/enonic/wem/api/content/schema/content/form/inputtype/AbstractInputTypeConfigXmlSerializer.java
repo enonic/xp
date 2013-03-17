@@ -8,11 +8,11 @@ public abstract class AbstractInputTypeConfigXmlSerializer<T extends InputTypeCo
     public final Element generate( final T config )
     {
         final Element inputTypeConfigEl = new Element( "config" );
-        generateConfig( config, inputTypeConfigEl );
+        serializeConfig( config, inputTypeConfigEl );
         return inputTypeConfigEl;
     }
 
-    public abstract void generateConfig( T config, Element inputTypeConfigEl );
+    public abstract void serializeConfig( T config, Element inputTypeConfigEl );
 
 
     public abstract T parseConfig( final Element inputTypeConfigEl );

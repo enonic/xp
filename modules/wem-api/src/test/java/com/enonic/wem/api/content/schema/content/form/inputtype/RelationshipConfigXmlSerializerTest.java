@@ -40,10 +40,37 @@ public class RelationshipConfigXmlSerializerTest
 
         // exercise
         Element configEl = new Element( "config" );
-        serializer.generateConfig( config, configEl );
+        serializer.serializeConfig( config, configEl );
 
         // verify
         assertXMLEqual( xmlHelper.loadTestFile( "serializeConfig.xml" ), xmlHelper.serialize( configEl, true ) );
+    }
+
+    @Test
+    public void serializeConfig_with_no_relationShipType()
+        throws IOException, SAXException
+    {
+        // setup
+        RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
+        builder.allowedContentType( QualifiedContentTypeName.audioFile() );
+        builder.allowedContentType( QualifiedContentTypeName.imageFile() );
+        RelationshipConfig config = builder.build();
+
+        // exercise
+        Element configEl = new Element( "config" );
+        serializer.serializeConfig( config, configEl );
+
+        // verify
+        StringBuilder expectedXml = new StringBuilder();
+        expectedXml.append( "<config>\n" );
+        expectedXml.append( "<content-type-filter>\n" );
+        expectedXml.append( "<allow>System:audio</allow>\n" );
+        expectedXml.append( "<allow>System:image</allow>\n" );
+        expectedXml.append( "</content-type-filter>\n" );
+        expectedXml.append( "<relationship-type />\n" );
+        expectedXml.append( "</config>\n" );
+        String actualXml = xmlHelper.serialize( configEl, true );
+        assertXMLEqual( xmlHelper.parseNSerialize( expectedXml.toString(), true ), actualXml );
     }
 
     @Test
@@ -88,7 +115,6 @@ public class RelationshipConfigXmlSerializerTest
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
         assertEquals( expected.getAllowedContentTypes(), parsed.getAllowedContentTypes() );
     }
-
 
     @Test
     public void parseConfig_with_contentTypeFilter_not_existing()

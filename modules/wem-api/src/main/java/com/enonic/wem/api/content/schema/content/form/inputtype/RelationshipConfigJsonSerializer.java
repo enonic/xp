@@ -24,7 +24,14 @@ public class RelationshipConfigJsonSerializer
         {
             allowedContentTypesArray.add( allowedContentType.toString() );
         }
-        jsonConfig.put( "relationshipType", config.getRelationshipType().toString() );
+        if ( config.getRelationshipType() != null )
+        {
+            jsonConfig.put( "relationshipType", config.getRelationshipType().toString() );
+        }
+        else
+        {
+            jsonConfig.putNull( "relationshipType" );
+        }
         return jsonConfig;
     }
 
