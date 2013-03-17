@@ -165,6 +165,7 @@ public final class CreateOrUpdateContentRpcHandler
     {
         final GetContentTypes getContentTypes =
             Commands.contentType().get().qualifiedNames( QualifiedContentTypeNames.from( qualifiedContentTypeName ) );
+        getContentTypes.mixinReferencesToFormItems( true );
         final ContentType contentType = client.execute( getContentTypes ).first();
         Preconditions.checkArgument( contentType != null, "ContentType [%s] not found", qualifiedContentTypeName );
         return contentType;

@@ -48,8 +48,9 @@ public class ValidateContentDataRpcHandlerTest
         final ContentType contentType = newContentType().
             module( Module.SYSTEM.getName() ).
             name( "MyType" ).
-            addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add( newFormItemSet().name( "mySet" ).required( true ).add(
-                newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build() ).
+            addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
+                newFormItemSet().name( "mySet" ).required( true ).addFormItem(
+                    newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build() ).
             build();
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 

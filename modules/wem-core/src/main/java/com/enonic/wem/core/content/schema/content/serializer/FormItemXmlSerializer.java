@@ -214,7 +214,7 @@ public class FormItemXmlSerializer
         final Element itemsEl = formItemEl.getChild( "items" );
         for ( FormItem formItem : formItemsSerializer.parse( itemsEl ) )
         {
-            builder.add( formItem );
+            builder.addFormItem( formItem );
         }
 
         return builder.build();

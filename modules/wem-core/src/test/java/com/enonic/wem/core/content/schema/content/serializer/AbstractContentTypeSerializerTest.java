@@ -168,11 +168,11 @@ public abstract class AbstractContentTypeSerializerTest
     public void parse_mixin()
     {
         // setup
-        Mixin mixin = newMixin().module( ModuleName.from( "myModule" ) ).formItem(
-            newFormItemSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
-                newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
-                newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
-                newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
+        Mixin mixin = newMixin().module( ModuleName.from( "myModule" ) ).formItem( newFormItemSet().name( "address" ).addFormItem(
+            newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).addFormItem(
+            newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).addFormItem(
+            newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).addFormItem(
+            newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule.getName() );
         contentTypeBuilder.addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
@@ -197,9 +197,9 @@ public abstract class AbstractContentTypeSerializerTest
     {
         // setup
         Input myInnerInput = newInput().name( "my-inner-input" ).type( InputTypes.TEXT_LINE ).build();
-        FormItemSet myInnerSet = newFormItemSet().name( "my-inner-set" ).add( myInnerInput ).build();
+        FormItemSet myInnerSet = newFormItemSet().name( "my-inner-set" ).addFormItem( myInnerInput ).build();
         Input myOuterInput = newInput().name( "my-outer-input" ).type( InputTypes.TEXT_LINE ).build();
-        FormItemSet myOuterSet = newFormItemSet().name( "my-outer-set" ).add( myOuterInput ).add( myInnerSet ).build();
+        FormItemSet myOuterSet = newFormItemSet().name( "my-outer-set" ).addFormItem( myOuterInput ).addFormItem( myInnerSet ).build();
         final ContentType contentType = newContentType().
             name( "myType" ).
             module( myModule.getName() ).

@@ -10,6 +10,7 @@ import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.AbstractSerializerTest;
 
+import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
 import static org.junit.Assert.*;
 
 
@@ -31,11 +32,13 @@ public abstract class AbstractMixinSerializerTest
 
     abstract void assertSerializedResult( String fileNameForExpected, String actualSerialization );
 
+    abstract String getSerializedString( String fileName );
+
     @Test
     public void generate_InputMixin()
         throws Exception
     {
-        Input.Builder inputBuilder = Input.newInput();
+        Input.Builder inputBuilder = newInput();
         inputBuilder.name( "myInput" );
         inputBuilder.label( "My input" );
         inputBuilder.type( InputTypes.TEXT_LINE );
@@ -58,7 +61,7 @@ public abstract class AbstractMixinSerializerTest
     public void generate_FormItemSetMixin()
         throws Exception
     {
-        Input.Builder inputBuilder = Input.newInput();
+        Input.Builder inputBuilder = newInput();
         inputBuilder.name( "myInput" );
         inputBuilder.label( "My input" );
         inputBuilder.type( InputTypes.TEXT_LINE );
@@ -71,7 +74,7 @@ public abstract class AbstractMixinSerializerTest
         formItemSetBuilder.maximumOccurrences( 3 );
         formItemSetBuilder.helpText( "Help text" );
         formItemSetBuilder.customText( "Custom text" );
-        formItemSetBuilder.add( myInput );
+        formItemSetBuilder.addFormItem( myInput );
         FormItemSet myFormItemSet = formItemSetBuilder.build();
 
         Mixin myFormItemSetMixin = Mixin.newMixin().displayName( "My Mixin" ).module( myModule ).formItem( myFormItemSet ).build();
@@ -83,9 +86,36 @@ public abstract class AbstractMixinSerializerTest
     }
 
     @Test
+    public void parse_FormItemSetMixin()
+        throws Exception
+    {
+        // exercise
+        Mixin mixin = toMixin( getSerializedString( "parse-FormItemSetMixin" ) );
+
+        // verify
+        assertEquals( "address", mixin.getName() );
+        assertEquals( "Address Mixin", mixin.getDisplayName() );
+
+        assertTrue( mixin.getFormItem() instanceof FormItemSet );
+        FormItemSet formItemSet = mixin.getFormItem().toFormItemSet();
+        assertEquals( "address.street", formItemSet.getInput( "street" ).getPath().toString() );
+
+        assertEquals( "Street", formItemSet.getInput( "street" ).getLabel() );
+        assertEquals( 0, formItemSet.getInput( "street" ).getOccurrences().getMinimum() );
+        assertEquals( 2, formItemSet.getInput( "street" ).getOccurrences().getMaximum() );
+
+        assertEquals( "address.postalCode", formItemSet.getInput( "postalCode" ).getPath().toString() );
+        assertEquals( 1, formItemSet.getInput( "postalCode" ).getOccurrences().getMinimum() );
+        assertEquals( 1, formItemSet.getInput( "postalCode" ).getOccurrences().getMaximum() );
+        assertEquals( "address.postalPlace", formItemSet.getInput( "postalPlace" ).getPath().toString() );
+        assertEquals( 1, formItemSet.getInput( "postalPlace" ).getOccurrences().getMinimum() );
+        assertEquals( 1, formItemSet.getInput( "postalPlace" ).getOccurrences().getMaximum() );
+    }
+
+    @Test
     public void mixin_serialize_parse_serialize_formSet_roundTrip()
     {
-        Input.Builder inputBuilder = Input.newInput();
+        Input.Builder inputBuilder = newInput();
         inputBuilder.name( "myInput" );
         inputBuilder.label( "My input" );
         inputBuilder.type( InputTypes.TEXT_LINE );
@@ -98,7 +128,9 @@ public abstract class AbstractMixinSerializerTest
         formItemSetBuilder.maximumOccurrences( 3 );
         formItemSetBuilder.helpText( "Help text" );
         formItemSetBuilder.customText( "Custom text" );
-        formItemSetBuilder.add( myInput );
+        formItemSetBuilder.addFormItem( myInput );
+        formItemSetBuilder.addFormItem(
+            Input.newInput().name( "myOtherInput" ).label( "My other input" ).type( InputTypes.TEXT_LINE ).build() );
         FormItemSet myFormItemSet = formItemSetBuilder.build();
 
         Mixin myFormItemSetMixin = Mixin.newMixin().displayName( "My Mixin" ).module( myModule ).formItem( myFormItemSet ).build();
@@ -117,7 +149,7 @@ public abstract class AbstractMixinSerializerTest
     @Test
     public void mixin_serialize_parse_serialize_input_roundTrip()
     {
-        Input.Builder inputBuilder = Input.newInput();
+        Input.Builder inputBuilder = newInput();
         inputBuilder.name( "myInput" );
         inputBuilder.label( "My input" );
         inputBuilder.type( InputTypes.TEXT_LINE );

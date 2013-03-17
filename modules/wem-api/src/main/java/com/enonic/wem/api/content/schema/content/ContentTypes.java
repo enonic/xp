@@ -64,4 +64,25 @@ public final class ContentTypes
             return value.getQualifiedName();
         }
     }
+
+    public static Builder newContentTypes()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ImmutableList.Builder<ContentType> contentTypes = ImmutableList.builder();
+
+        public Builder add( final ContentType value )
+        {
+            contentTypes.add( value );
+            return this;
+        }
+
+        public ContentTypes build()
+        {
+            return new ContentTypes( contentTypes.build() );
+        }
+    }
 }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mixin>
+  <name>address</name>
+  <module>myModule</module>
+  <display-name>Address Mixin</display-name>
+  <form-item-set name="address">
+    <label>Address</label>
+    <immutable>false</immutable>
+    <customText/>
+    <helpText/>
+    <occurrences minimum="1" maximum="3"/>
+    <items>
+      <input type="TextLine" built-in="true" name="street">
+        <label>Street</label>
+        <immutable>false</immutable>
+        <indexed>true</indexed>
+        <customText/>
+        <helpText/>
+        <occurrences minimum="0" maximum="2"/>
+      </input>
+      <input type="TextLine" built-in="true" name="postalCode">
+        <label>Postal code</label>
+        <immutable>false</immutable>
+        <indexed>true</indexed>
+        <customText/>
+        <helpText/>
+        <occurrences minimum="1" maximum="1"/>
+      </input>
+      <input type="TextLine" built-in="true" name="postalPlace">
+        <label>Postal place</label>
+        <immutable>false</immutable>
+        <indexed>true</indexed>
+        <customText/>
+        <helpText/>
+        <occurrences minimum="1" maximum="1"/>
+      </input>
+    </items>
+  </form-item-set>
+</mixin>

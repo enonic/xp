@@ -10,6 +10,7 @@ import com.enonic.wem.api.content.schema.content.form.Input;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.content.schema.content.serializer.FormItemJsonSerializer;
+import com.enonic.wem.core.content.schema.content.serializer.FormItemSetJsonSerializer;
 import com.enonic.wem.core.content.schema.content.serializer.FormItemsJsonSerializer;
 import com.enonic.wem.core.content.schema.content.serializer.InputJsonSerializer;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
@@ -22,6 +23,8 @@ public class MixinJsonSerializer
 {
     private FormItemsJsonSerializer formItemsSerializer;
 
+    private FormItemSetJsonSerializer formItemSetJsonSerializer;
+
     private InputJsonSerializer inputSerializer;
 
     private FormItemJsonSerializer formItemSerializer;
@@ -32,6 +35,7 @@ public class MixinJsonSerializer
         formItemsSerializer = new FormItemsJsonSerializer( objectMapper() );
         inputSerializer = new InputJsonSerializer( objectMapper() );
         formItemSerializer = formItemsSerializer.getFormItemJsonSerializer();
+        formItemSetJsonSerializer = new FormItemSetJsonSerializer( formItemsSerializer, objectMapper() );
     }
 
     @Override
@@ -79,7 +83,8 @@ public class MixinJsonSerializer
         final Mixin.Builder builder = Mixin.newMixin();
         builder.module( ModuleName.from( JsonSerializerUtil.getStringValue( "module", mixinNode ) ) );
         builder.displayName( JsonSerializerUtil.getStringValue( "displayName", mixinNode ) );
-        builder.formItem( formItemSerializer.parse( mixinNode ) );
+        final JsonNode formItemNode = mixinNode.get( FormItemSet.class.getSimpleName() );
+        builder.formItem( formItemSetJsonSerializer.parse( formItemNode ) );
         return builder.build();
     }
 

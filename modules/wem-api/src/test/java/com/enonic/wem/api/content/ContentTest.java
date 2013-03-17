@@ -15,8 +15,6 @@ import com.enonic.wem.api.content.schema.content.form.FieldSet;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
 import com.enonic.wem.api.content.schema.content.form.Input;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
-import com.enonic.wem.api.content.schema.mixin.Mixin;
-import com.enonic.wem.api.content.schema.mixin.MockMixinFetcher;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.Content.newContent;
@@ -29,10 +27,6 @@ import static com.enonic.wem.api.content.schema.content.ContentType.newContentTy
 import static com.enonic.wem.api.content.schema.content.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
-import static com.enonic.wem.api.content.schema.content.form.MixinReference.newMixinReference;
-import static com.enonic.wem.api.content.schema.content.form.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
-import static com.enonic.wem.api.content.schema.mixin.Mixin.newMixin;
-import static com.enonic.wem.api.module.Module.newModule;
 import static org.junit.Assert.*;
 
 public class ContentTest
@@ -251,28 +245,6 @@ public class ContentTest
     }
 
     @Test
-    public void tags_using_mixin()
-    {
-        Module module = newModule().name( "system" ).build();
-        Input input = newInput().name( "tags" ).label( "Tags" ).type( InputTypes.TEXT_LINE ).multiple( true ).build();
-        Mixin inputMixin = newMixin().module( module.getName() ).formItem( input ).build();
-        MockMixinFetcher mixinFetcher = new MockMixinFetcher();
-        mixinFetcher.add( inputMixin );
-
-        contentType.form().addFormItem( newMixinReference().name( "myTags" ).mixin( "system:tags" ).type( Input.class ).build() );
-        contentType.form().mixinReferencesToFormItems( mixinFetcher );
-
-        RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setData( "myTags[0]", "Java" );
-        rootDataSet.setData( "myTags[1]", "XML" );
-        rootDataSet.setData( "myTags[2]", "JSON" );
-
-        assertEquals( "Java", rootDataSet.getData( "myTags" ).getString( 0 ) );
-        assertEquals( "XML", rootDataSet.getData( "myTags" ).getString( 1 ) );
-        assertEquals( "JSON", rootDataSet.getData( "myTags" ).getString( 2 ) );
-    }
-
-    @Test
     public void phone()
     {
         contentType.form().addFormItem( newInput().name( "myPhone" ).type( InputTypes.PHONE ).required( true ).build() );
@@ -436,112 +408,6 @@ public class ContentTest
         assertEquals( DataTypes.TEXT, rootDataSet.getData( "personalia.eyeColour" ).getType() );
         assertEquals( "Blue", rootDataSet.getData( "personalia.eyeColour" ).getObject() );
         assertEquals( "personalia.eyeColour", rootDataSet.getData( "personalia.eyeColour" ).getPath().toString() );
-    }
-
-    @Test
-    public void mixins()
-    {
-        Module module = newModule().name( "myModule" ).build();
-
-        Mixin postalCodeMixin =
-            newMixin().module( module.getName() ).formItem( newInput().name( "postalCode" ).type( InputTypes.TEXT_LINE ).build() ).build();
-        Mixin countryMixin = newMixin().module( module.getName() ).formItem(
-            newInput().name( "country" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig(
-                newSingleSelectorConfig().typeDropdown().addOption( "Norway", "NO" ).build() ).build() ).build();
-
-        Mixin addressMixin = newMixin().module( module.getName() ).formItem(
-            newFormItemSet().name( "address" ).add( newInput().name( "street" ).type( InputTypes.TEXT_LINE ).build() ).add(
-                newMixinReference( postalCodeMixin ).name( "postalCode" ).build() ).add(
-                newInput().name( "postalPlace" ).type( InputTypes.TEXT_LINE ).build() ).add(
-                newMixinReference( countryMixin ).name( "country" ).build() ).build() ).build();
-
-        contentType.form().addFormItem( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
-        contentType.form().addFormItem( newMixinReference( addressMixin ).name( "address" ).build() );
-
-        MockMixinFetcher mixinFetcher = new MockMixinFetcher();
-        mixinFetcher.add( postalCodeMixin );
-        mixinFetcher.add( countryMixin );
-        mixinFetcher.add( addressMixin );
-        contentType.form().mixinReferencesToFormItems( mixinFetcher );
-
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
-        RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "name", "Ola Normann" );
-        rootDataSet.setData( "address.street", "Bakkebygrenda 1" );
-        rootDataSet.setData( "address.postalCode", "2676" );
-        rootDataSet.setData( "address.postalPlace", "Heidal" );
-        rootDataSet.setData( "address.country", "NO" );
-
-        assertEquals( "Ola Normann", rootDataSet.getData( "name" ).getString() );
-        assertEquals( "Bakkebygrenda 1", rootDataSet.getData( "address.street" ).getString() );
-        assertEquals( "2676", rootDataSet.getData( "address.postalCode" ).getString() );
-        assertEquals( "Heidal", rootDataSet.getData( "address.postalPlace" ).getString() );
-        assertEquals( "NO", rootDataSet.getData( "address.country" ).getString() );
-    }
-
-    @Test
-    public void mixins_multiple()
-    {
-        Module module = newModule().name( "myModule" ).build();
-
-        Mixin addressMixin = newMixin().module( module.getName() ).formItem(
-            newFormItemSet().name( "address" ).multiple( true ).add( newInput().type( InputTypes.TEXT_LINE ).name( "label" ).build() ).add(
-                newInput().type( InputTypes.TEXT_LINE ).name( "street" ).build() ).add(
-                newInput().type( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
-                newInput().type( InputTypes.TEXT_LINE ).name( "postalPlace" ).build() ).add(
-                newInput().type( InputTypes.TEXT_LINE ).name( "country" ).build() ).build() ).build();
-
-        contentType.form().addFormItem( newMixinReference( addressMixin ).name( "address" ).build() );
-
-        MockMixinFetcher mixinFetcher = new MockMixinFetcher();
-        mixinFetcher.add( addressMixin );
-        contentType.form().mixinReferencesToFormItems( mixinFetcher );
-
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
-        RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "address[0].label", "Home" );
-        rootDataSet.setData( "address[0].street", "Bakkebygrenda 1" );
-        rootDataSet.setData( "address[0].postalCode", "2676" );
-        rootDataSet.setData( "address[0].postalPlace", "Heidal" );
-        rootDataSet.setData( "address[0].country", "NO" );
-        rootDataSet.setData( "address[1].label", "Cabin" );
-        rootDataSet.setData( "address[1].street", "Heia" );
-        rootDataSet.setData( "address[1].postalCode", "2676" );
-        rootDataSet.setData( "address[1].postalPlace", "Gjende" );
-        rootDataSet.setData( "address[1].country", "NO" );
-
-        assertEquals( "Home", rootDataSet.getData( "address[0].label" ).getString() );
-        assertEquals( "Bakkebygrenda 1", rootDataSet.getData( "address[0].street" ).getString() );
-        assertEquals( "2676", rootDataSet.getData( "address[0].postalCode" ).getString() );
-        assertEquals( "Heidal", rootDataSet.getData( "address[0].postalPlace" ).getString() );
-        assertEquals( "NO", rootDataSet.getData( "address[0].country" ).getString() );
-
-        assertEquals( "Cabin", rootDataSet.getData( "address[1].label" ).getString() );
-        assertEquals( "Heia", rootDataSet.getData( "address[1].street" ).getString() );
-        assertEquals( "2676", rootDataSet.getData( "address[1].postalCode" ).getString() );
-        assertEquals( "Gjende", rootDataSet.getData( "address[1].postalPlace" ).getString() );
-        assertEquals( "NO", rootDataSet.getData( "address[1].country" ).getString() );
-    }
-
-    @Test
-    public void trying_to_set_data_to_a_formItemSetMixin_when_mixin_is_missing()
-    {
-        contentType.form().addFormItem( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
-        contentType.form().addFormItem( newMixinReference().name( "address" ).typeInput().mixin( "myModule:myAddressMixin" ).build() );
-
-        contentType.form().mixinReferencesToFormItems( new MockMixinFetcher() );
-
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "name", "Ola Normann" );
-        try
-        {
-            content.getRootDataSet().setData( "address.street", "Norvegen 99" );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "FormItem at path [address.street] expected to be of type FieldSet: CONTENT_REFERENCE", e.getMessage() );
-        }
     }
 
     @Test

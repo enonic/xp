@@ -6,9 +6,6 @@ import java.util.LinkedHashMap;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.schema.mixin.Mixin;
-import com.enonic.wem.api.content.schema.mixin.MixinFetcher;
-
 /**
  * Mutable.
  */
@@ -150,34 +147,6 @@ class FormItems
             index++;
         }
         return s.toString();
-    }
-
-    // TODO: Move method out of here and into it's own class MixinResolver?
-    public void mixinReferencesToFormItems( final MixinFetcher mixinFetcher )
-    {
-        for ( final FormItem formItem : formItemByName.values() )
-        {
-            if ( formItem instanceof MixinReference )
-            {
-                final MixinReference mixinReference = (MixinReference) formItem;
-                final Mixin mixin = mixinFetcher.getMixin( mixinReference.getQualifiedMixinName() );
-                if ( mixin != null )
-                {
-                    Preconditions.checkArgument( mixinReference.getMixinClass() == mixin.getFormItem().getClass(),
-                                                 "Mixin expected to be of type %s: " + mixin.getFormItem().getClass().getSimpleName(),
-                                                 mixinReference.getMixinClass().getSimpleName() );
-
-                    final FormItem formItemCreatedFromMixin = FormItem.from( mixin, mixinReference );
-                    if ( formItemCreatedFromMixin instanceof FormItemSet )
-                    {
-                        final FormItemSet set = (FormItemSet) formItemCreatedFromMixin;
-                        set.getFormItems().mixinReferencesToFormItems( mixinFetcher );
-                    }
-
-                    formItemByName.put( formItem.getName(), formItemCreatedFromMixin );
-                }
-            }
-        }
     }
 
     private FormItem searchFormItemInLayouts( final String name )

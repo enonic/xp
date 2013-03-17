@@ -24,13 +24,13 @@ public class MixinTest
         Mixin ageMixin = newMixin().module( module ).formItem( newInput().name( "age" ).type( InputTypes.TEXT_LINE ).build() ).build();
 
         final FormItemSet personFormItemSet =
-            newFormItemSet().name( "person" ).add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() ).add(
+            newFormItemSet().name( "person" ).addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() ).addFormItem(
                 newMixinReference( ageMixin ).name( "age" ).build() ).build();
         Mixin personMixin = newMixin().module( module ).formItem( personFormItemSet ).build();
 
         Mixin addressMixin = newMixin().module( module ).formItem(
-            newFormItemSet().name( "address" ).add( newInput().type( InputTypes.TEXT_LINE ).name( "street" ).build() ).add(
-                newInput().type( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
+            newFormItemSet().name( "address" ).addFormItem( newInput().type( InputTypes.TEXT_LINE ).name( "street" ).build() ).addFormItem(
+                newInput().type( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).addFormItem(
                 newInput().type( InputTypes.TEXT_LINE ).name( "postalPlace" ).build() ).build() ).build();
 
         try

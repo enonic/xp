@@ -288,9 +288,15 @@ public class FormItemSet
             return this;
         }
 
-        public Builder add( FormItem value )
+        public Builder addFormItem( FormItem value )
         {
             formItems.add( value );
+            return this;
+        }
+
+        public Builder clearFormItems()
+        {
+            formItems.clear();
             return this;
         }
 

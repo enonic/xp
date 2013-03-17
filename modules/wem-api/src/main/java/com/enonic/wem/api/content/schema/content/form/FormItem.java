@@ -7,6 +7,9 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.schema.mixin.Mixin;
 
+import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
+
 public abstract class FormItem
 {
     private final String name;
@@ -101,12 +104,12 @@ public abstract class FormItem
         final FormItem newFormItem;
         if ( formItem instanceof FormItemSet )
         {
-            newFormItem = FormItemSet.newFormItemSet( (FormItemSet) formItem ).
+            newFormItem = newFormItemSet( (FormItemSet) formItem ).
                 name( mixinReference.getName() ).build();
         }
         else if ( formItem instanceof Input )
         {
-            newFormItem = Input.newInput( (Input) formItem ).
+            newFormItem = newInput( (Input) formItem ).
                 name( mixinReference.getName() ).build();
         }
         else

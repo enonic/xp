@@ -1,7 +1,7 @@
 {
     "name": "address",
-    "module": "Demo",
-    "displayName": "Demo: Address Mixin",
+    "module": "myModule",
+    "displayName": "Address Mixin",
     "FormItemSet": {
         "name": "address",
         "label": "Address",
@@ -57,7 +57,7 @@
                     "label": "Postal place",
                     "immutable": false,
                     "occurrences": {
-                        "minimum": 0,
+                        "minimum": 1,
                         "maximum": 1
                     },
                     "indexed": true,

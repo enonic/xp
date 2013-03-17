@@ -39,7 +39,8 @@ public class MixinsInitializer
     {
         for ( String demoMixinFileName : DEMO_MIXINS )
         {
-            Mixin mixin = serializer.toMixin( loadFileAsString( demoMixinFileName ) );
+            final String mixinJson = loadFileAsString( demoMixinFileName );
+            Mixin mixin = serializer.toMixin( mixinJson );
             mixin = Mixin.newMixin( mixin ).
                 build();
 

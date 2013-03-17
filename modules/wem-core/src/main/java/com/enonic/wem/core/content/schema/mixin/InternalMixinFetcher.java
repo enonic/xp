@@ -25,7 +25,6 @@ public class InternalMixinFetcher
     @Override
     public Mixin getMixin( final QualifiedMixinName qualifiedName )
     {
-        mixinDao.select( QualifiedMixinNames.from( qualifiedName ), session );
-        return null;
+        return mixinDao.select( QualifiedMixinNames.from( qualifiedName ), session ).first();
     }
 }

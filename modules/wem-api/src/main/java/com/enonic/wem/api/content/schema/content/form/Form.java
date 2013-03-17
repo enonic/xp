@@ -8,7 +8,6 @@ import java.util.List;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.schema.mixin.MixinFetcher;
 
 public final class Form
     implements Iterable<FormItem>
@@ -67,11 +66,6 @@ public final class Form
     public MixinReference getMixinReference( final FormItemPath formItemPath )
     {
         return formItems.getMixinReference( formItemPath );
-    }
-
-    public void mixinReferencesToFormItems( final MixinFetcher mixinFetcher )
-    {
-        formItems.mixinReferencesToFormItems( mixinFetcher );
     }
 
     @Override

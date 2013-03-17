@@ -82,8 +82,8 @@ public class GetSchemaTreeHandlerTest
         Mockito.when( contentTypeDao.selectAll( any( Session.class ) ) ).thenReturn( contentTypes );
 
         final FormItemSet formItemSet =
-            newFormItemSet().name( "address" ).add( newInput().type( InputTypes.TEXT_LINE ).name( "street" ).build() ).add(
-                newInput().type( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
+            newFormItemSet().name( "address" ).addFormItem( newInput().type( InputTypes.TEXT_LINE ).name( "street" ).build() ).addFormItem(
+                newInput().type( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).addFormItem(
                 newInput().type( InputTypes.TEXT_LINE ).name( "postalPlace" ).build() ).build();
         final Mixin mixin = newMixin().
             module( ModuleName.from( "myModule" ) ).

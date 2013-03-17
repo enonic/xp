@@ -1,10 +1,15 @@
 package com.enonic.wem.core.content.schema.mixin;
 
+import com.enonic.wem.api.XmlTestHelper;
+
 import static org.junit.Assert.*;
 
 public class MixinXmlSerializerTest
     extends AbstractMixinSerializerTest
 {
+
+    private XmlTestHelper xmlTestHelper = new XmlTestHelper( this );
+
     @Override
     MixinSerializer getSerializer()
     {
@@ -15,5 +20,11 @@ public class MixinXmlSerializerTest
     void assertSerializedResult( final String fileNameForExpected, final String actualSerialization )
     {
         assertEquals( loadTestXml( fileNameForExpected + ".xml" ), actualSerialization );
+    }
+
+    @Override
+    String getSerializedString( final String fileName )
+    {
+        return xmlTestHelper.loadTestFile( fileName + ".xml" );
     }
 }

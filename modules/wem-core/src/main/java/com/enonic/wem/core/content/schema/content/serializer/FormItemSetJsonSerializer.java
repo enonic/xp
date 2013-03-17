@@ -12,7 +12,7 @@ import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newFormItemSet;
 
-class FormItemSetJsonSerializer
+public class FormItemSetJsonSerializer
     extends AbstractJsonSerializer<FormItemSet>
 {
     private static final String NAME = "name";
@@ -66,9 +66,10 @@ class FormItemSetJsonSerializer
 
         parseOccurrences( builder, formItemSetObj.get( OCCURRENCES ) );
 
-        for ( final FormItem formItem : formItemsJsonSerializer.parse( formItemSetObj.get( ITEMS ) ) )
+        final JsonNode formItemsNode = formItemSetObj.get( ITEMS );
+        for ( final FormItem formItem : formItemsJsonSerializer.parse( formItemsNode ) )
         {
-            builder.add( formItem );
+            builder.addFormItem( formItem );
         }
 
         return builder.build();
