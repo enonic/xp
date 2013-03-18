@@ -1,7 +1,6 @@
 package com.enonic.wem.core.support;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -19,18 +18,20 @@ public abstract class BaseInitializer
 {
     private static final Logger LOG = LoggerFactory.getLogger( BaseInitializer.class );
 
+    private static final String FILE_SEPARATOR = "/";
+
     protected Client client;
 
     private String metaInfFolderBasePath;
 
     protected BaseInitializer( final String metaInfFolderName )
     {
-        this.metaInfFolderBasePath = File.separator + "META-INF" + File.separator + metaInfFolderName;
+        this.metaInfFolderBasePath = FILE_SEPARATOR + "META-INF" + FILE_SEPARATOR + metaInfFolderName;
     }
 
     protected String loadFileAsString( final String name )
     {
-        final String filePath = metaInfFolderBasePath + File.separator + name;
+        final String filePath = metaInfFolderBasePath + FILE_SEPARATOR + name;
         final StringWriter writer = new StringWriter();
         try
         {
@@ -47,7 +48,7 @@ public abstract class BaseInitializer
     protected Icon loadIcon( final ModuleBasedQualifiedName qualifiedName )
     {
         final String filePath =
-            metaInfFolderBasePath + File.separator + qualifiedName.toString().replace( ":", "_" ).toLowerCase() + ".png";
+            metaInfFolderBasePath + FILE_SEPARATOR + qualifiedName.toString().replace( ":", "_" ).toLowerCase() + ".png";
         try
         {
             final byte[] iconData = IOUtils.toByteArray( this.getClass().getResourceAsStream( filePath ) );
