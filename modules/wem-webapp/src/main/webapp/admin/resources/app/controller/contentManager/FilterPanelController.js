@@ -13,32 +13,33 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
         this.control({
             'contentFilter': {
                 search: this.doSearch
+            },
+            'treeGridPanel': {
+                datachanged: this.doContentFilterUpdate
             }
         });
+
     },
 
 
-    doSearch: function (values) {
+    // update contentFilter
+    doContentFilterUpdate: function (store) {
+        var rawData = store.getProxy().getReader().jsonData;
+        var filterPanel = this.getContentFilter();
+        filterPanel.updateFacets( rawData.facets );
+    },
 
+    doSearch: function (values) {
         // set browse tab active
         this.getCmsTabPanel().setActiveTab(0);
 
         var filterPanel = this.getContentFilter();
 
-        //TODO: submit the search
-
         // set the list mode
         var treeGridPanel = this.getContentTreeGridPanel();
         treeGridPanel.setActiveList(filterPanel.isDirty() ? 'grid' : 'tree');
-
-        var selected = treeGridPanel.getSelection();
-
-        // update details to current selection
-        this.updateDetailPanel(selected);
-
-        // update the toolbar buttons
-        this.updateToolbarButtons(selected)
-
+        treeGridPanel.setFilter( { fulltext: values.query, include: true, interval: 'year' } );
+        treeGridPanel.refresh();
     }
 
 
