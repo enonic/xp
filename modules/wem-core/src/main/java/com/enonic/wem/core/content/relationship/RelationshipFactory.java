@@ -11,7 +11,7 @@ import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeN
 
 import static com.enonic.wem.api.content.relationship.Relationship.newRelationship;
 
-public class RelationshipFactory
+class RelationshipFactory
 {
     private final DateTime createdTime;
 
@@ -23,7 +23,7 @@ public class RelationshipFactory
 
     private final ContentId fromContent;
 
-    public RelationshipFactory( final Builder builder )
+    RelationshipFactory( final Builder builder )
     {
         this.createdTime = builder.createdTime;
         this.creator = builder.creator;
@@ -32,7 +32,7 @@ public class RelationshipFactory
         this.fromContent = builder.fromContent;
     }
 
-    public Relationship create( final Data toContent, final QualifiedRelationshipTypeName type )
+    Relationship create( final Data toContent, final QualifiedRelationshipTypeName type )
     {
         final Relationship.Builder builder = newRelationship();
         builder.creator( creator );
@@ -46,12 +46,12 @@ public class RelationshipFactory
         return builder.build();
     }
 
-    public static Builder newRelationshipFactory()
+    static Builder newRelationshipFactory()
     {
         return new Builder();
     }
 
-    public static class Builder
+    static class Builder
     {
         private DateTime createdTime;
 

@@ -24,9 +24,9 @@ public class RelationshipServiceImpl
         final ContentType contentType = command.getClient().execute(
             Commands.contentType().get().qualifiedNames( QualifiedContentTypeNames.from( command.getContentType() ) ) ).first();
 
-        final SyncRelationships2 syncRelationships =
-            new SyncRelationships2( contentType.form(), command.getContentToUpdate(), command.getContentBeforeEditing(),
-                                    command.getContentAfterEditing() );
+        final SyncRelationships syncRelationships =
+            new SyncRelationships( contentType.form(), command.getContentToUpdate(), command.getContentBeforeEditing(),
+                                   command.getContentAfterEditing() );
         syncRelationships.invoke();
 
         for ( RelationshipKey relationshipToDelete : syncRelationships.getRelationshipsToDelete() )

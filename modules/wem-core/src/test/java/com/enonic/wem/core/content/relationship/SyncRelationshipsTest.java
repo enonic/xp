@@ -42,7 +42,7 @@ public class SyncRelationshipsTest
         after.add( new ContentReference( "myRelated", CONTENT_ID_201 ) );
 
         // exercise
-        SyncRelationships2 syncRelationships = new SyncRelationships2( form, CONTENT_TO_UPDATE, null, after );
+        SyncRelationships syncRelationships = new SyncRelationships( form, CONTENT_TO_UPDATE, null, after );
         syncRelationships.invoke();
 
         // verify
@@ -73,7 +73,7 @@ public class SyncRelationshipsTest
         after.add( new ContentReference( "myRelated", CONTENT_ID_201 ) );
 
         // exercise
-        SyncRelationships2 syncRelationships = new SyncRelationships2( form, CONTENT_TO_UPDATE, before, after );
+        SyncRelationships syncRelationships = new SyncRelationships( form, CONTENT_TO_UPDATE, before, after );
         syncRelationships.invoke();
 
         // verify
@@ -108,7 +108,7 @@ public class SyncRelationshipsTest
         after.add( mySet );
 
         // exercise
-        SyncRelationships2 syncRelationships = new SyncRelationships2( form, CONTENT_TO_UPDATE, before, after );
+        SyncRelationships syncRelationships = new SyncRelationships( form, CONTENT_TO_UPDATE, before, after );
         syncRelationships.invoke();
 
         // verify
@@ -139,7 +139,7 @@ public class SyncRelationshipsTest
         before.add( new ContentReference( "myRelated", CONTENT_ID_201 ) );
 
         // exercise
-        SyncRelationships2 syncRelationships = new SyncRelationships2( form, CONTENT_TO_UPDATE, before, after );
+        SyncRelationships syncRelationships = new SyncRelationships( form, CONTENT_TO_UPDATE, before, after );
         syncRelationships.invoke();
 
         // verify
