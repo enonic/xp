@@ -11,10 +11,10 @@ import javax.inject.Inject;
 import org.jdom.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.core.lifecycle.InitializingBean;
 import com.enonic.wem.core.support.util.JdomHelper;
 
 /**
