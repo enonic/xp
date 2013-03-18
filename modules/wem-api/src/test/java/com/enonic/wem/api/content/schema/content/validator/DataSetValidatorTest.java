@@ -43,7 +43,7 @@ public class DataSetValidatorTest
             SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "Option 1", "o1" ).build();
 
         contentType.form().addFormItem(
-            newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
+            newInput().name( "mySingleSelector" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.getRootDataSet().setData( "mySingleSelector", "nonExistingOption" );
@@ -62,10 +62,10 @@ public class DataSetValidatorTest
         SingleSelectorConfig singleSelectorConfig =
             SingleSelectorConfig.newSingleSelectorConfig().typeRadio().addOption( "Option 1", "o1" ).build();
 
-        contentType.form().addFormItem(
-            newInput().name( "mySingleSelector1" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
-        contentType.form().addFormItem(
-            newInput().name( "mySingleSelector2" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
+        contentType.form().addFormItem( newInput().name( "mySingleSelector1" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig(
+            singleSelectorConfig ).build() );
+        contentType.form().addFormItem( newInput().name( "mySingleSelector2" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig(
+            singleSelectorConfig ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.getRootDataSet().setData( "mySingleSelector1", "nonExistingOption" );
@@ -86,17 +86,17 @@ public class DataSetValidatorTest
             SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "Option 1", "o1" ).build();
         HtmlAreaConfig htmlAreaConfig = HtmlAreaConfig.newHtmlAreaConfig().build();
 
-        contentType.form().addFormItem( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
-        contentType.form().addFormItem( newInput().name( "myDecimalNumber" ).type( InputTypes.DECIMAL_NUMBER ).build() );
+        contentType.form().addFormItem( newInput().name( "myDate" ).inputType( InputTypes.DATE ).build() );
+        contentType.form().addFormItem( newInput().name( "myDecimalNumber" ).inputType( InputTypes.DECIMAL_NUMBER ).build() );
         contentType.form().addFormItem(
-            newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
+            newInput().name( "mySingleSelector" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
         contentType.form().addFormItem(
-            newInput().name( "myHtmlArea" ).type( InputTypes.HTML_AREA ).inputTypeConfig( htmlAreaConfig ).build() );
-        contentType.form().addFormItem( newInput().name( "myPhone" ).type( InputTypes.PHONE ).build() );
-        contentType.form().addFormItem( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
-        contentType.form().addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.form().addFormItem( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
-        contentType.form().addFormItem( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
+            newInput().name( "myHtmlArea" ).inputType( InputTypes.HTML_AREA ).inputTypeConfig( htmlAreaConfig ).build() );
+        contentType.form().addFormItem( newInput().name( "myPhone" ).inputType( InputTypes.PHONE ).build() );
+        contentType.form().addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).build() );
+        contentType.form().addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
+        contentType.form().addFormItem( newInput().name( "myWholeNumber" ).inputType( InputTypes.WHOLE_NUMBER ).build() );
+        contentType.form().addFormItem( newInput().name( "myXml" ).inputType( InputTypes.XML ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.getRootDataSet().setData( "myDate", new DateMidnight( 2012, 9, 11 ) );
@@ -128,15 +128,15 @@ public class DataSetValidatorTest
         Assert.assertEquals( "personalia.eyeColour", rootDataSet.getData( "personalia.eyeColour" ).getPath().toString() );
 
         // exercise
-        contentType.form().addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.form().addFormItem( newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() );
         FormItemSet personalia = newFormItemSet().name( "personalia" ).multiple( false ).build();
         contentType.form().addFormItem( personalia );
-        personalia.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        personalia.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        personalia.add( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() );
+        personalia.add( newInput().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() );
         FormItemSet crimes = newFormItemSet().name( "crimes" ).multiple( true ).build();
         contentType.form().addFormItem( crimes );
-        crimes.add( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
-        crimes.add( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
+        crimes.add( newInput().name( "description" ).inputType( InputTypes.TEXT_LINE ).build() );
+        crimes.add( newInput().name( "year" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         assertEquals( DataTypes.TEXT, rootDataSet.getData( "personalia.eyeColour" ).getType() );
         Assert.assertEquals( "Blue", rootDataSet.getData( "personalia.eyeColour" ).getObject() );

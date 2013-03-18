@@ -40,14 +40,13 @@ public class ListContentTypesRpcHandlerTest
     public void testListContentTypes()
         throws Exception
     {
-        final Input inputText1 = newInput().name( "inputText1" ).type( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+        final Input inputText1 = newInput().name( "inputText1" ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
             "Help text line 1" ).required( true ).build();
         final Input inputText2 =
-            newInput().name( "inputText2" ).type( TEXT_LINE ).label( "Line Text 2" ).helpText( "Help text line 2" ).immutable(
+            newInput().name( "inputText2" ).inputType( TEXT_LINE ).label( "Line Text 2" ).helpText( "Help text line 2" ).immutable(
                 true ).build();
-        final Input textArea1 =
-            newInput().name( "textArea1" ).type( TEXT_AREA ).label( "Text Area" ).required( true ).helpText( "Help text area" ).required(
-                true ).build();
+        final Input textArea1 = newInput().name( "textArea1" ).inputType( TEXT_AREA ).label( "Text Area" ).required( true ).helpText(
+            "Help text area" ).required( true ).build();
 
         final ContentType contentType1 = newContentType().
             module( ModuleName.from( "myModule" ) ).
@@ -57,8 +56,9 @@ public class ListContentTypesRpcHandlerTest
             addFormItem( textArea1 ).
             build();
 
-        final Input inputTextCty2 = newInput().name( "inputText_1" ).type( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
-            "Help text line 1" ).required( true ).build();
+        final Input inputTextCty2 =
+            newInput().name( "inputText_1" ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+                "Help text line 1" ).required( true ).build();
         final ContentType contentType2 = newContentType().
             module( ModuleName.from( "otherModule" ) ).
             name( "theContentType" ).

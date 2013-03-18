@@ -74,7 +74,7 @@ public class CreateOrUpdateMixinRpcHandlerTest
     public void testUpdateMixin()
         throws Exception
     {
-        final Input input = newInput().name( "someInput" ).type( InputTypes.TEXT_LINE ).build();
+        final Input input = newInput().name( "someInput" ).inputType( InputTypes.TEXT_LINE ).build();
         final Mixin existingMixin = newMixin().formItem( input ).module( Module.SYSTEM.getName() ).build();
         final Mixins mixins = Mixins.from( existingMixin );
         Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( mixins );

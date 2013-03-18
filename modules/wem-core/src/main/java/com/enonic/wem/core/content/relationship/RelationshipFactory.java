@@ -23,8 +23,6 @@ public class RelationshipFactory
 
     private final ContentId fromContent;
 
-    private final QualifiedRelationshipTypeName type;
-
     public RelationshipFactory( final Builder builder )
     {
         this.createdTime = builder.createdTime;
@@ -32,10 +30,9 @@ public class RelationshipFactory
         this.modifiedTime = builder.modifiedTime;
         this.modifier = builder.modifier;
         this.fromContent = builder.fromContent;
-        this.type = builder.type;
     }
 
-    public Relationship create( final Data toContent )
+    public Relationship create( final Data toContent, final QualifiedRelationshipTypeName type )
     {
         final Relationship.Builder builder = newRelationship();
         builder.creator( creator );
@@ -66,8 +63,6 @@ public class RelationshipFactory
 
         private ContentId fromContent;
 
-        private QualifiedRelationshipTypeName type;
-
         public Builder createdTime( final DateTime value )
         {
             this.createdTime = value;
@@ -95,12 +90,6 @@ public class RelationshipFactory
         public Builder fromContent( final ContentId value )
         {
             this.fromContent = value;
-            return this;
-        }
-
-        public Builder type( final QualifiedRelationshipTypeName value )
-        {
-            this.type = value;
             return this;
         }
 

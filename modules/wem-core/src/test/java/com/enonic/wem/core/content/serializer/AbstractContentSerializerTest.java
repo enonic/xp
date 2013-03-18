@@ -287,11 +287,11 @@ public abstract class AbstractContentSerializerTest
     public void given_formItem_and_formItemSet_when_parsed_then_paths_and_values_are_as_expected()
     {
         final FormItemSet formItemSet = newFormItemSet().name( "formItemSet" ).build();
-        formItemSet.add( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).build() );
         final ContentType contentType = newContentType().
             module( myModule.getName() ).
             name( "MyContentType" ).
-            addFormItem( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).
+            addFormItem( newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() ).
             addFormItem( formItemSet ).
             build();
         contentTypeFetcher.add( contentType );
@@ -317,7 +317,7 @@ public abstract class AbstractContentSerializerTest
     public void given_array_of_formItemSet_when_parsed_then_paths_and_values_are_as_expected()
     {
         final FormItemSet formItemSet = newFormItemSet().name( "formItemSet" ).label( "FormItemSet" ).multiple( true ).build();
-        formItemSet.add( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         final ContentType contentType = newContentType().
             module( myModule.getName() ).
@@ -347,12 +347,12 @@ public abstract class AbstractContentSerializerTest
     public void given_formItem_inside_layout_when_parse_then_formItem_path_is_affected_by_name_of_layout()
     {
         final FieldSet layout = newFieldSet().label( "Label" ).name( "fieldSet" ).add(
-            newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() ).build();
+            newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         final ContentType contentType = newContentType().
             module( myModule.getName() ).
             name( "MyContentType" ).
-            addFormItem( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().name( "myField" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( layout ).
             build();
 

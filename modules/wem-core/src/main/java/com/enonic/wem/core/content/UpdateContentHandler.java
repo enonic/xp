@@ -1,10 +1,5 @@
 package com.enonic.wem.core.content;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
@@ -12,35 +7,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.data.DataVisitor;
-import com.enonic.wem.api.content.data.EntryPath;
-import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.data.type.DataTypes;
-import com.enonic.wem.api.content.relationship.Relationship;
-import com.enonic.wem.api.content.relationship.RelationshipKey;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
-import com.enonic.wem.core.content.relationship.RelationshipFactory;
-import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
+import com.enonic.wem.core.content.relationship.RelationshipService;
+import com.enonic.wem.core.content.relationship.SyncRelationshipsCommand;
 import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.api.content.relationship.RelationshipKey.newRelationshipKey;
-import static com.enonic.wem.core.content.relationship.RelationshipFactory.newRelationshipFactory;
 
 @Component
 public class UpdateContentHandler
@@ -48,7 +31,7 @@ public class UpdateContentHandler
 {
     private ContentDao contentDao;
 
-    private RelationshipDao relationshipDao;
+    private RelationshipService relationshipService;
 
     private IndexService indexService;
 
@@ -79,7 +62,13 @@ public class UpdateContentHandler
 
                 validateContentData( context, edited );
 
-                new SyncRelationships( context, persistedContent, edited ).invoke();
+                relationshipService.syncRelationships( new SyncRelationshipsCommand().
+                    client( context.getClient() ).
+                    jcrSession( context.getJcrSession() ).
+                    contentType( persistedContent.getType() ).
+                    contentToUpdate( persistedContent.getId() ).
+                    contentBeforeEditing( persistedContent.getRootDataSet() ).
+                    contentAfterEditing( edited.getRootDataSet() ) );
 
                 edited = newContent( edited ).
                     modifiedTime( DateTime.now() ).
@@ -127,9 +116,9 @@ public class UpdateContentHandler
     }
 
     @Inject
-    public void setRelationshipDao( final RelationshipDao relationshipDao )
+    public void setRelationshipService( final RelationshipService relationshipService )
     {
-        this.relationshipDao = relationshipDao;
+        this.relationshipService = relationshipService;
     }
 
     @Inject
@@ -138,102 +127,4 @@ public class UpdateContentHandler
         this.indexService = indexService;
     }
 
-    class SyncRelationships
-    {
-        private final CommandContext context;
-
-        private final Content contentToUpdate;
-
-        private final Map<EntryPath, Data> referencesBeforeEditing;
-
-        private final Map<EntryPath, Data> referencesAfterEditing;
-
-        SyncRelationships( final CommandContext context, final Content contentBeforeEditing, final Content contentAfterEditing )
-        {
-            this.context = context;
-            this.contentToUpdate = contentAfterEditing;
-            this.referencesBeforeEditing = resolveReferences( contentBeforeEditing.getRootDataSet() );
-            this.referencesAfterEditing = resolveReferences( contentAfterEditing.getRootDataSet() );
-        }
-
-        void invoke()
-        {
-            deleteRemovedRelationships();
-            createAddedReferences();
-        }
-
-        private void deleteRemovedRelationships()
-        {
-            final List<Data> removedReferences = resolveRemovedReferences();
-            for ( Data removedReference : removedReferences )
-            {
-                final RelationshipKey relationshipKey = newRelationshipKey().
-                    type( QualifiedRelationshipTypeName.DEFAULT ).
-                    fromContent( contentToUpdate.getId() ).
-                    toContent( ContentId.from( removedReference.getString() ) ).
-                    managingData( removedReference.getPath() ).
-                    build();
-                relationshipDao.delete( relationshipKey, context.getJcrSession() );
-            }
-        }
-
-        private void createAddedReferences()
-        {
-            final RelationshipFactory relationshipFactory = newRelationshipFactory().
-                creator( AccountKey.anonymous() ).
-                createdTime( DateTime.now() ).
-                fromContent( contentToUpdate.getId() ).
-                type( QualifiedRelationshipTypeName.DEFAULT ).
-                build();
-
-            final List<Data> addedReferences = resolveAddedReferences();
-            for ( Data addedReference : addedReferences )
-            {
-                Relationship relationship = relationshipFactory.create( addedReference );
-                relationshipDao.create( relationship, context.getJcrSession() );
-            }
-        }
-
-        private List<Data> resolveAddedReferences()
-        {
-            final List<Data> addedReferences = new ArrayList<>();
-            for ( Map.Entry<EntryPath, Data> referenceAfterEditing : referencesAfterEditing.entrySet() )
-            {
-                if ( !referencesBeforeEditing.containsKey( referenceAfterEditing.getKey() ) )
-                {
-                    addedReferences.add( referenceAfterEditing.getValue() );
-                }
-            }
-            return addedReferences;
-        }
-
-        private List<Data> resolveRemovedReferences()
-        {
-            final List<Data> removedReferences = new ArrayList<>();
-            for ( Map.Entry<EntryPath, Data> referenceBeforeEditing : referencesBeforeEditing.entrySet() )
-            {
-                if ( !referencesAfterEditing.containsKey( referenceBeforeEditing.getKey() ) )
-                {
-                    removedReferences.add( referenceBeforeEditing.getValue() );
-                }
-            }
-            return removedReferences;
-        }
-
-        private Map<EntryPath, Data> resolveReferences( final RootDataSet rootDataSet )
-        {
-            final Map<EntryPath, Data> references = new LinkedHashMap<>();
-            final DataVisitor dataVisitor = new DataVisitor()
-            {
-                @Override
-                public void visit( final Data reference )
-                {
-                    references.put( reference.getPath(), reference );
-                }
-            };
-            dataVisitor.restrictType( DataTypes.CONTENT_REFERENCE );
-            dataVisitor.traverse( rootDataSet );
-            return references;
-        }
-    }
 }

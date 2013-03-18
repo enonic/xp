@@ -54,7 +54,7 @@ public class ValidateRootDataSetHandlerTest
             name( "MyType" ).
             addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
                 newFormItemSet().name( "mySet" ).required( true ).addFormItem(
-                    newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build() ).
+                    newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build() ).
             build();
 
         Mockito.when( contentTypeDao.select( Mockito.any( QualifiedContentTypeNames.class ), Mockito.any( Session.class ) ) ).thenReturn(
@@ -80,7 +80,7 @@ public class ValidateRootDataSetHandlerTest
         // setup
         final FieldSet fieldSet = newFieldSet().label( "My layout" ).name( "myLayout" ).add(
             newFormItemSet().name( "mySet" ).required( true ).addFormItem(
-                newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
+                newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
         final ContentType contentType = ContentType.newContentType().
             module( Module.SYSTEM.getName() ).
             name( "MyType" ).

@@ -235,7 +235,7 @@ public class ContentTest
     @Test
     public void tags()
     {
-        contentType.form().addFormItem( newInput().name( "myTags" ).type( InputTypes.TAGS ).build() );
+        contentType.form().addFormItem( newInput().name( "myTags" ).inputType( InputTypes.TAGS ).build() );
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
         Content content = newContent().type( contentType.getQualifiedName() ).build();
@@ -247,7 +247,7 @@ public class ContentTest
     @Test
     public void phone()
     {
-        contentType.form().addFormItem( newInput().name( "myPhone" ).type( InputTypes.PHONE ).required( true ).build() );
+        contentType.form().addFormItem( newInput().name( "myPhone" ).inputType( InputTypes.PHONE ).required( true ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.getRootDataSet().setData( "myPhone", "98327891" );
@@ -258,12 +258,12 @@ public class ContentTest
     @Test
     public void formItemSet()
     {
-        contentType.form().addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        contentType.form().addFormItem( newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() );
 
         FormItemSet formItemSet = newFormItemSet().name( "personalia" ).build();
         contentType.form().addFormItem( formItemSet );
-        formItemSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         RootDataSet rootDataSet = content.getRootDataSet();
@@ -279,14 +279,14 @@ public class ContentTest
     @Test
     public void multiple_mixin()
     {
-        Input nameInput = newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build();
+        Input nameInput = newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).required( true ).build();
         contentType.form().addFormItem( nameInput );
 
         FormItemSet formItemSet = newFormItemSet().name( "personalia" ).multiple( true ).build();
         contentType.form().addFormItem( formItemSet );
-        formItemSet.add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         RootDataSet rootDataSet = content.getRootDataSet();
@@ -365,11 +365,11 @@ public class ContentTest
     public void structured_getEntries()
     {
         FormItemSet child = newFormItemSet().name( "child" ).multiple( true ).build();
-        child.add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
-        child.add( newInput().name( "age" ).type( InputTypes.TEXT_LINE ).build() );
+        child.add( newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() );
+        child.add( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() );
         FormItemSet features = newFormItemSet().name( "features" ).multiple( false ).build();
-        features.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        features.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        features.add( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() );
+        features.add( newInput().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() );
         child.add( features );
         contentType.form().addFormItem( child );
 
@@ -414,13 +414,13 @@ public class ContentTest
     public void layout()
     {
         // setup
-        contentType.form().addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.form().addFormItem( newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() );
         FieldSet personalia = newFieldSet().label( "Personalia" ).name( "personalia" ).add(
-            newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).add(
-            newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
+            newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).add(
+            newInput().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         FieldSet tatoos = newFieldSet().label( "Characteristics" ).name( "characteristics" ).add(
-            newInput().name( "tattoo" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() ).add(
-            newInput().name( "scar" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() ).build();
+            newInput().name( "tattoo" ).inputType( InputTypes.TEXT_LINE ).multiple( true ).build() ).add(
+            newInput().name( "scar" ).inputType( InputTypes.TEXT_LINE ).multiple( true ).build() ).build();
         personalia.addFormItem( tatoos );
         contentType.form().addFormItem( personalia );
 

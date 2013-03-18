@@ -19,16 +19,13 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.editor.ContentEditors;
-import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
-import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
+import com.enonic.wem.core.content.relationship.RelationshipService;
 import com.enonic.wem.core.index.IndexService;
 
 import static junit.framework.Assert.assertEquals;
@@ -44,7 +41,7 @@ public class UpdateContentHandlerTest
 
     private ContentDao contentDao;
 
-    private RelationshipDao relationshipDao;
+    private RelationshipService relationshipService;
 
     @Before
     public void before()
@@ -54,12 +51,12 @@ public class UpdateContentHandlerTest
         super.initialize();
 
         contentDao = Mockito.mock( ContentDao.class );
-        relationshipDao = Mockito.mock( RelationshipDao.class );
+        relationshipService = Mockito.mock( RelationshipService.class );
         IndexService indexService = Mockito.mock( IndexService.class );
 
         handler = new UpdateContentHandler();
         handler.setContentDao( contentDao );
-        handler.setRelationshipDao( relationshipDao );
+        handler.setRelationshipService( relationshipService );
         handler.setIndexService( indexService );
 
         Mockito.when( super.client.execute( Mockito.isA( ValidateRootDataSet.class ) ) ).thenReturn( DataValidationErrors.empty() );
@@ -160,52 +157,6 @@ public class UpdateContentHandlerTest
             build();
         Mockito.verify( contentDao, Mockito.times( 1 ) ).update( Mockito.refEq( storedContent ), Mockito.eq( true ),
                                                                  Mockito.any( Session.class ) );
-    }
-
-    @Test
-    public void update_syncReferences_one_added()
-        throws Exception
-    {
-        // setup
-        DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
-
-        RootDataSet existingContentData = new RootDataSet();
-        existingContentData.add(
-            Data.newData().name( "myRelated1" ).type( DataTypes.CONTENT_REFERENCE ).value( ContentId.from( "111" ) ).build() );
-        existingContentData.add(
-            Data.newData().name( "myRelated2" ).type( DataTypes.CONTENT_REFERENCE ).value( ContentId.from( "222" ) ).build() );
-
-        Content existingContent = createContent( existingContentData );
-
-        Mockito.when( contentDao.select( Mockito.eq( existingContent.getPath() ), Mockito.any( Session.class ) ) ).thenReturn(
-            existingContent );
-
-        RootDataSet changedContentData = new RootDataSet();
-        changedContentData.add(
-            Data.newData().name( "myRelated1" ).type( DataTypes.CONTENT_REFERENCE ).value( ContentId.from( "111" ) ).build() );
-        changedContentData.add(
-            Data.newData().name( "myRelated2" ).type( DataTypes.CONTENT_REFERENCE ).value( ContentId.from( "222" ) ).build() );
-        changedContentData.add(
-            Data.newData().name( "myRelated3" ).type( DataTypes.CONTENT_REFERENCE ).value( ContentId.from( "333" ) ).build() );
-
-        UpdateContent command = new UpdateContent().
-            modifier( AccountKey.superUser() ).
-            selector( existingContent.getPath() ).
-            editor( ContentEditors.setContentData( changedContentData ) );
-
-        // exercise
-        handler.handle( context, command );
-
-        // verify
-        Relationship createdRelationship = Relationship.newRelationship().
-            creator( AccountKey.anonymous() ).
-            createdTime( UPDATED_TIME ).
-            type( QualifiedRelationshipTypeName.DEFAULT ).
-            fromContent( ContentId.from( "1" ) ).
-            toContent( ContentId.from( "333" ) ).
-            managed( EntryPath.from( "myRelated3" ) ).
-            build();
-        Mockito.verify( relationshipDao, Mockito.times( 1 ) ).create( Mockito.refEq( createdRelationship ), Mockito.any( Session.class ) );
     }
 
     private Content createContent( final RootDataSet rootDataSet )

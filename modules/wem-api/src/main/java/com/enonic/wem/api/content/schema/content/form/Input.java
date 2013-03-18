@@ -230,7 +230,7 @@ public final class Input
             return this;
         }
 
-        public Builder type( BaseInputType value )
+        public Builder inputType( BaseInputType value )
         {
             inputType = value;
             return this;

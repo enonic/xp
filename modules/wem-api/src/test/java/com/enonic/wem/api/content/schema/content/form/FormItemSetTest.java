@@ -17,7 +17,7 @@ public class FormItemSetTest
     {
         // setup
         FormItemSet formItemSet = newFormItemSet().name( "mySet" ).label( "Label" ).multiple( true ).build();
-        formItemSet.add( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         // exercise
 
@@ -65,7 +65,7 @@ public class FormItemSetTest
     {
         // exercise
         FormItemSet parent = newFormItemSet().name( "parent" ).label( "Parent" ).build();
-        parent.add( newInput().name( "child" ).type( InputTypes.TEXT_LINE ).build() );
+        parent.add( newInput().name( "child" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         // verify
         assertEquals( "parent.child", parent.getInput( "child" ).getPath().toString() );
@@ -76,7 +76,7 @@ public class FormItemSetTest
     {
 
         FormItemSet parent = newFormItemSet().name( "parent" ).label( "Parent" ).build();
-        parent.add( newInput().name( "child" ).type( InputTypes.TEXT_LINE ).build() );
+        parent.add( newInput().name( "child" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         // exercise
         FormItemSet newParent = newFormItemSet().name( "newParent" ).label( "New Parent" ).build();
@@ -109,7 +109,7 @@ public class FormItemSetTest
     public void toFormItemSet_given_FormItem_of_type_Input_then_exception_is_thrown()
     {
         // setup
-        FormItem formItem = newInput().name( "myFieldSet" ).type( InputTypes.DATE ).label( "My label" ).build();
+        FormItem formItem = newInput().name( "myFieldSet" ).inputType( InputTypes.DATE ).label( "My label" ).build();
 
         // exercise
         try
@@ -129,7 +129,7 @@ public class FormItemSetTest
     {
         // setup
         FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).label( "Label" ).multiple( true ).build();
-        formItemSet.add( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "myField" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         // exercise
         FormItemSet copy = formItemSet.copy();

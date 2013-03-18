@@ -28,7 +28,7 @@
         {
             "Input": {
                 "name": "myRelation",
-                "label": "A single relation to another content",
+                "label": "A single DEFAULT relation to another content",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
@@ -43,7 +43,7 @@
                     "builtIn": true,
                     "config": {
                         "allowContentTypes": [ ],
-                        "relationshipType": null
+                        "relationshipType": "System:default"
                     }
                 }
             }
@@ -51,7 +51,7 @@
         {
             "Input": {
                 "name": "myRelations",
-                "label": "Multiple relations to other content",
+                "label": "Multiple DEFAULT relations to other content",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
@@ -66,7 +66,7 @@
                     "builtIn": true,
                     "config": {
                         "allowContentTypes": [ ],
-                        "relationshipType": null
+                        "relationshipType": "System:default"
                     }
                 }
             }

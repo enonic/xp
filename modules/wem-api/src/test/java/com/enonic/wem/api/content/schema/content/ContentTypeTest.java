@@ -22,7 +22,7 @@ public class ContentTypeTest
         FieldSet layout = FieldSet.newFieldSet().
             label( "Personalia" ).
             name( "personalia" ).
-            add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).
+            add( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
         contentType.form().addFormItem( layout );
@@ -38,7 +38,7 @@ public class ContentTypeTest
         FieldSet layout = FieldSet.newFieldSet().
             label( "Personalia" ).
             name( "personalia" ).
-            add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).
+            add( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
         FormItemSet myFormItemSet = newFormItemSet().name( "mySet" ).addFormItem( layout ).build();
@@ -51,15 +51,15 @@ public class ContentTypeTest
     public void address()
     {
         FormItemSet formItemSet = newFormItemSet().name( "address" ).build();
-        formItemSet.add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         ContentType contentType = newContentType().
             name( "test" ).
             module( ModuleName.from( "myModule" ) ).
-            addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( formItemSet ).
             build();
 
@@ -73,10 +73,10 @@ public class ContentTypeTest
     @Test
     public void formItemSet_in_formItemSet()
     {
-        FormItemSet formItemSet =
-            newFormItemSet().name( "top-set" ).addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).addFormItem(
-                newFormItemSet().name( "inner-set" ).addFormItem(
-                    newInput().name( "myInnerInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
+        FormItemSet formItemSet = newFormItemSet().name( "top-set" ).addFormItem(
+            newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
+            newFormItemSet().name( "inner-set" ).addFormItem(
+                newInput().name( "myInnerInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
         ContentType contentType = newContentType().
             name( "test" ).
             module( ModuleName.from( "myModule" ) ).

@@ -54,7 +54,7 @@ public class UpdateMixinsHandlerTest
         final Mixin existingMixin = newMixin().
             displayName( "Age" ).
             module( module ).
-            formItem( newInput().name( "age" ).type( InputTypes.TEXT_LINE ).build() ).
+            formItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         Mockito.when(
             mixinDao.select( Mockito.eq( QualifiedMixinNames.from( "myModule:age" ) ), Mockito.any( Session.class ) ) ).thenReturn(
@@ -63,7 +63,7 @@ public class UpdateMixinsHandlerTest
         final Mixins mixins = Mixins.from( existingMixin );
         Mockito.when( mixinDao.select( isA( QualifiedMixinNames.class ), any( Session.class ) ) ).thenReturn( mixins );
 
-        final FormItem formItemToSet = newInput().name( "age" ).type( InputTypes.WHOLE_NUMBER ).build();
+        final FormItem formItemToSet = newInput().name( "age" ).inputType( InputTypes.WHOLE_NUMBER ).build();
         final UpdateMixins command = Commands.mixin().update().
             qualifiedNames( QualifiedMixinNames.from( "myModule:age" ) ).editor( SetMixinEditor.newSetMixinEditor().
             displayName( "age2" ).

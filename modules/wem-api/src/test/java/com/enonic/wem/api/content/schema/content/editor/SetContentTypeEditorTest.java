@@ -28,10 +28,10 @@ public class SetContentTypeEditorTest
         throws Exception
     {
         final FormItemSet formItemSet = newFormItemSet().name( "address" ).build();
-        formItemSet.add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         final ContentType contentType = newContentType().
             name( "test" ).
@@ -43,7 +43,7 @@ public class SetContentTypeEditorTest
             setFinal( false ).
             createdTime( TIME1 ).
             modifiedTime( TIME2 ).
-            addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( formItemSet ).
             icon( Icon.from( "imgdata".getBytes(), "image/png" ) ).
             build();
@@ -66,10 +66,10 @@ public class SetContentTypeEditorTest
         throws Exception
     {
         final FormItemSet formItemSet = newFormItemSet().name( "address" ).build();
-        formItemSet.add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         final ContentType contentType = newContentType().
             name( "test" ).
@@ -80,7 +80,7 @@ public class SetContentTypeEditorTest
             setFinal( true ).
             createdTime( TIME1 ).
             modifiedTime( TIME2 ).
-            addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
         final SetContentTypeEditor.Builder editorBuilder = SetContentTypeEditor.newSetContentTypeEditor();

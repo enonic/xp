@@ -115,7 +115,7 @@ public class InputJsonSerializer
         if ( inputTypeNode != null )
         {
             final BaseInputType inputType = inputTypeSerializer.parse( inputTypeNode );
-            builder.type( inputType );
+            builder.inputType( inputType );
             if ( inputTypeNode.has( CONFIG ) )
             {
                 builder.inputTypeConfig( inputTypeConfigSerializer.parse( inputTypeNode.get( CONFIG ), inputType.getClass() ) );

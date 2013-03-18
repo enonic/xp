@@ -54,7 +54,7 @@ public class GetMixinsHandlerTest
         final Mixin mixin = newMixin().
             displayName( "Age" ).
             module( module ).
-            formItem( newInput().name( "age" ).type( InputTypes.TEXT_LINE ).build() ).
+            formItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         final Mixins mixins = Mixins.from( mixin );
         Mockito.when( mixinDao.select( isA( QualifiedMixinNames.class ), any( Session.class ) ) ).thenReturn( mixins );
@@ -78,12 +78,12 @@ public class GetMixinsHandlerTest
         final Mixin mixin = newMixin().
             displayName( "Age" ).
             module( module ).
-            formItem( newInput().name( "age" ).type( InputTypes.TEXT_LINE ).build() ).
+            formItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         final Mixin mixin2 = newMixin().
             displayName( "Gender" ).
             module( module ).
-            formItem( newInput().name( "gender" ).type( InputTypes.TEXT_LINE ).build() ).
+            formItem( newInput().name( "gender" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         final Mixins mixins = Mixins.from( mixin, mixin2 );
         Mockito.when( mixinDao.selectAll( any( Session.class ) ) ).thenReturn( mixins );

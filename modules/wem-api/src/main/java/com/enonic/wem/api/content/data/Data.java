@@ -255,6 +255,11 @@ public class Data
         return new Date.DateBuilder();
     }
 
+    public static ContentReference.Builder newContentReference()
+    {
+        return ContentReference.newContentReferenceBuilder();
+    }
+
     public static HtmlPart.HtmlPartBuilder newHtmlPart()
     {
         return new HtmlPart.HtmlPartBuilder();

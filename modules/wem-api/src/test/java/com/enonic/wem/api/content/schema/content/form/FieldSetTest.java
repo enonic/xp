@@ -16,7 +16,7 @@ public class FieldSetTest
         FieldSet myFieldSet = FieldSet.newFieldSet().
             label( "My FieldSet" ).
             name( "myFieldSet" ).
-            add( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).
+            add( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
         assertEquals( "myInput", myFieldSet.getInput( "myInput" ).getPath().toString() );
@@ -27,7 +27,7 @@ public class FieldSetTest
             add( FieldSet.newFieldSet().
                 label( "My inner FieldSet" ).
                 name( "myInnerFieldSet" ).
-                add( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).
+                add( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).
             build();
 
         assertEquals( "myInput", myOuterFieldSet.getInput( "myInput" ).getPath().toString() );

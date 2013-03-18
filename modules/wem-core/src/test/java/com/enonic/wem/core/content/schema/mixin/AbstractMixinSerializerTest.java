@@ -41,7 +41,7 @@ public abstract class AbstractMixinSerializerTest
         Input.Builder inputBuilder = newInput();
         inputBuilder.name( "myInput" );
         inputBuilder.label( "My input" );
-        inputBuilder.type( InputTypes.TEXT_LINE );
+        inputBuilder.inputType( InputTypes.TEXT_LINE );
         inputBuilder.immutable( true );
         inputBuilder.minimumOccurrences( 1 );
         inputBuilder.maximumOccurrences( 3 );
@@ -64,7 +64,7 @@ public abstract class AbstractMixinSerializerTest
         Input.Builder inputBuilder = newInput();
         inputBuilder.name( "myInput" );
         inputBuilder.label( "My input" );
-        inputBuilder.type( InputTypes.TEXT_LINE );
+        inputBuilder.inputType( InputTypes.TEXT_LINE );
         Input myInput = inputBuilder.build();
 
         FormItemSet.Builder formItemSetBuilder = FormItemSet.newFormItemSet();
@@ -118,7 +118,7 @@ public abstract class AbstractMixinSerializerTest
         Input.Builder inputBuilder = newInput();
         inputBuilder.name( "myInput" );
         inputBuilder.label( "My input" );
-        inputBuilder.type( InputTypes.TEXT_LINE );
+        inputBuilder.inputType( InputTypes.TEXT_LINE );
         Input myInput = inputBuilder.build();
 
         FormItemSet.Builder formItemSetBuilder = FormItemSet.newFormItemSet();
@@ -130,7 +130,7 @@ public abstract class AbstractMixinSerializerTest
         formItemSetBuilder.customText( "Custom text" );
         formItemSetBuilder.addFormItem( myInput );
         formItemSetBuilder.addFormItem(
-            Input.newInput().name( "myOtherInput" ).label( "My other input" ).type( InputTypes.TEXT_LINE ).build() );
+            Input.newInput().name( "myOtherInput" ).label( "My other input" ).inputType( InputTypes.TEXT_LINE ).build() );
         FormItemSet myFormItemSet = formItemSetBuilder.build();
 
         Mixin myFormItemSetMixin = Mixin.newMixin().displayName( "My Mixin" ).module( myModule ).formItem( myFormItemSet ).build();
@@ -152,7 +152,7 @@ public abstract class AbstractMixinSerializerTest
         Input.Builder inputBuilder = newInput();
         inputBuilder.name( "myInput" );
         inputBuilder.label( "My input" );
-        inputBuilder.type( InputTypes.TEXT_LINE );
+        inputBuilder.inputType( InputTypes.TEXT_LINE );
         inputBuilder.immutable( true );
         inputBuilder.minimumOccurrences( 1 );
         inputBuilder.maximumOccurrences( 3 );

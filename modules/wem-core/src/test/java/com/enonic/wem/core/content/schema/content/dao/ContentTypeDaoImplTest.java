@@ -205,11 +205,11 @@ public class ContentTypeDaoImplTest
     private ContentType addContentTypeFormItems( final ContentType.Builder contentTypeBuilder )
     {
         final FormItemSet formItemSet = newFormItemSet().name( "address" ).build();
-        formItemSet.add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
-        contentTypeBuilder.addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() );
         contentTypeBuilder.addFormItem( formItemSet );
         return contentTypeBuilder.build();
     }
