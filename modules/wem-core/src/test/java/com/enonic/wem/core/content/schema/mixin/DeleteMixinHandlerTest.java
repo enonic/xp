@@ -6,13 +6,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Iterables;
-
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.schema.mixin.DeleteMixins;
-import com.enonic.wem.api.content.schema.mixin.MixinDeletionResult;
+import com.enonic.wem.api.command.content.schema.mixin.DeleteMixin;
+import com.enonic.wem.api.command.content.schema.mixin.DeleteMixinResult;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;
 import com.enonic.wem.api.exception.MixinNotFoundException;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.schema.mixin.dao.MixinDao;
@@ -24,10 +21,10 @@ import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 
-public class DeleteMixinsHandlerTest
+public class DeleteMixinHandlerTest
     extends AbstractCommandHandlerTest
 {
-    private DeleteMixinsHandler handler;
+    private DeleteMixinHandler handler;
 
     private MixinDao mixinDao;
 
@@ -40,7 +37,7 @@ public class DeleteMixinsHandlerTest
 
         mixinDao = Mockito.mock( MixinDao.class );
 
-        handler = new DeleteMixinsHandler();
+        handler = new DeleteMixinHandler();
         handler.setMixinDao( mixinDao );
     }
 
@@ -50,41 +47,35 @@ public class DeleteMixinsHandlerTest
         throws Exception
     {
         // exercise
-        final QualifiedMixinNames names = QualifiedMixinNames.from( "my:mixin" );
-        final DeleteMixins command = Commands.mixin().delete().names( names );
+        final QualifiedMixinName name = QualifiedMixinName.from( "my:mixin" );
+        final DeleteMixin command = Commands.mixin().delete().name( name );
         this.handler.handle( this.context, command );
 
         // verify
         Mockito.verify( mixinDao, only() ).delete( isA( QualifiedMixinName.class ), any( Session.class ) );
 
-        MixinDeletionResult result = command.getResult();
-        assertEquals( false, result.hasFailures() );
-        assertEquals( 1, Iterables.size( result.successes() ) );
+        final DeleteMixinResult result = command.getResult();
+        assertEquals( DeleteMixinResult.SUCCESS, result );
     }
 
     @Test
-    public void deleteMultipleMixins()
+    public void deleteMissingMixin()
         throws Exception
     {
         // exercise
-        final QualifiedMixinName existingName = QualifiedMixinName.from( "my:existingMixin" );
-        final QualifiedMixinName anotherExistingName = QualifiedMixinName.from( "my:anotherMixin" );
         final QualifiedMixinName notFoundName = QualifiedMixinName.from( "my:notFoundMixin" );
 
         Mockito.doThrow( new MixinNotFoundException( notFoundName ) ).
             when( mixinDao ).delete( eq( notFoundName ), any( Session.class ) );
 
-        final QualifiedMixinNames names = QualifiedMixinNames.from( existingName, notFoundName, anotherExistingName );
-        final DeleteMixins command = Commands.mixin().delete().names( names );
+        final DeleteMixin command = Commands.mixin().delete().name( notFoundName );
 
         this.handler.handle( this.context, command );
 
         // verify
-        Mockito.verify( mixinDao, times( 3 ) ).delete( isA( QualifiedMixinName.class ), any( Session.class ) );
+        Mockito.verify( mixinDao, times( 1 ) ).delete( isA( QualifiedMixinName.class ), any( Session.class ) );
 
-        MixinDeletionResult result = command.getResult();
-        assertEquals( true, result.hasFailures() );
-        assertEquals( 1, Iterables.size( result.failures() ) );
-        assertEquals( 2, Iterables.size( result.successes() ) );
+        DeleteMixinResult result = command.getResult();
+        assertEquals( DeleteMixinResult.NOT_FOUND, result );
     }
 }

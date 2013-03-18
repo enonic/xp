@@ -17,9 +17,9 @@ public final class MixinCommands
         return new UpdateMixins();
     }
 
-    public DeleteMixins delete()
+    public DeleteMixin delete()
     {
-        return new DeleteMixins();
+        return new DeleteMixin();
     }
 
 }
