@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content.schema.relationship;
+package com.enonic.wem.web.rest.rpc.content.schema.relationship;
 
 
 import java.util.List;
@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
-public final class RelationshipTypeDeletionResult
+final class RelationshipTypeDeletionResult
 {
     private List<QualifiedRelationshipTypeName> successes = Lists.newArrayList();
 
@@ -18,9 +18,9 @@ public final class RelationshipTypeDeletionResult
         successes.add( qualifiedName );
     }
 
-    public void failure( final QualifiedRelationshipTypeName qualifiedName, final Exception e )
+    public void failure( final QualifiedRelationshipTypeName qualifiedName, final String reason )
     {
-        failures.add( new Failure( qualifiedName, e, e.getMessage() ) );
+        failures.add( new Failure( qualifiedName, reason ) );
     }
 
     public Iterable<QualifiedRelationshipTypeName> successes()
@@ -30,7 +30,7 @@ public final class RelationshipTypeDeletionResult
 
     public boolean hasFailures()
     {
-        return failures.size() > 0;
+        return !failures.isEmpty();
     }
 
     public Iterable<Failure> failures()
@@ -42,14 +42,11 @@ public final class RelationshipTypeDeletionResult
     {
         public final QualifiedRelationshipTypeName relationshipTypeName;
 
-        public final Exception exception;
-
         public final String reason;
 
-        public Failure( final QualifiedRelationshipTypeName qualifiedName, final Exception exception, final String reason )
+        public Failure( final QualifiedRelationshipTypeName qualifiedName, final String reason )
         {
             this.relationshipTypeName = qualifiedName;
-            this.exception = exception;
             this.reason = reason;
         }
     }

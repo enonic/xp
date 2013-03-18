@@ -3,7 +3,6 @@ package com.enonic.wem.web.rest.rpc.content.schema.relationship;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.command.content.schema.relationship.RelationshipTypeDeletionResult;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.web.json.JsonResult;
 
