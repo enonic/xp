@@ -11,7 +11,8 @@ Ext.define('Admin.controller.contentManager.Controller', {
     views: [
         'Admin.view.contentManager.DeleteContentWindow',
         'Admin.view.contentManager.NewContentWindow',
-        'Admin.view.contentManager.LiveEditWindow'
+        'Admin.view.contentManager.LiveEditWindow',
+        'Admin.view.contentManager.wizard.ContentLiveEditPanel'
     ],
 
     init: function () {
@@ -80,7 +81,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 callback();
             }
             return {
-                xtype: 'contentWizardPanel',
+                xtype: 'contentLiveEditPanel',
                 title: response.content.displayName,
                 isLiveMode: me.getContentDetailPanel().isLiveMode,
                 data: {
@@ -178,7 +179,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                                     contentParent: treeGridSelection.length > 0 ? treeGridSelection[0].data : undefined
                                 };
                                 return {
-                                    xtype: 'contentWizardPanel',
+                                    xtype: 'contentLiveEditPanel',
                                     title: '[New ' + contentData.contentType.displayName + ']',
                                     data: contentData
                                 };

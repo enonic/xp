@@ -57,6 +57,8 @@ Ext.define('Admin.view.NewWizardPanel', {
             this.getHeaderPane(),
             {
                 xtype: 'container',
+                autoScroll: true,
+                padding: '10 0 0 0',
                 layout: 'border',
                 flex: 1,
                 items: [

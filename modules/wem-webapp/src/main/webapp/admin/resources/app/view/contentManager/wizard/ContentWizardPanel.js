@@ -1,17 +1,12 @@
 Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
-    extend: 'Ext.panel.Panel',
+    extend: 'Admin.view.NewWizardPanel',
     alias: 'widget.contentWizardPanel',
 
     requires: [
-        'Admin.view.WizardPanel',
         'Admin.view.WizardHeader',
         'Admin.view.contentManager.wizard.ContentWizardToolbar',
         'Admin.view.contentManager.wizard.ContentDataPanel'
     ],
-
-    layout: {
-        type: 'card'
-    },
 
     header: false,
 
@@ -19,27 +14,21 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     autoScroll: false,
     evaluateDisplayName: true,
 
-    isLiveMode: false,
-
     defaults: {
         border: false
     },
 
     listeners: {
-        afterrender: function () {
-            this.setLiveMode(this.isLiveMode);
-        },
         copyremoved: function (copy) {
-            console.log(copy.getValue());
-            var wizard = this.getWizardPanel();
-            var data = wizard.getData();
+            var me = this;
+            var data = this.getData();
             var copyData = copy.getValue();
             if (copyData instanceof Array) {
                 Ext.each(copyData, function (copyDataItem) {
-                    wizard.deleteData(copyDataItem.path);
+                    me.deleteData(copyDataItem.path);
                 });
             } else {
-                wizard.deleteData(copyData.path);
+                this.deleteData(copyData.path);
             }
         }
     },
@@ -49,100 +38,6 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
 
         this.evaluateDisplayName = this.isNewContent();
 
-        var evaluateFn = this.data && this.data.contentType && this.data.contentType.contentDisplayNameScript;
-
-        var headerData = this.prepareHeaderData(this.data);
-
-        me.tbar = Ext.createByAlias('widget.contentWizardToolbar', {
-            isLiveMode: me.isLiveMode
-        });
-
-        var wizardHeader = Ext.create('Admin.view.WizardHeader', {
-            xtype: 'wizardHeader',
-            nameConfig: {
-                readOnly: headerData.isRoot,
-                stripCharsRe: /[^a-z0-9\-\/]+/ig,
-                vtype: 'path'
-            },
-            displayNameConfig: {
-                autoFocus: !me.evaluateDisplayName || Ext.isEmpty(evaluateFn)
-            },
-            data: me.data,
-            prepareHeaderData: me.prepareHeaderData
-        });
-
-        var wizardPanel = {
-            flex: 1,
-            layout: 'column',
-            itemId: 'wizardPanel',
-            border: false,
-            autoScroll: true,
-
-            defaults: {
-                border: false
-            },
-            items: [
-                {
-                    width: 110,
-                    padding: 5,
-                    border: false,
-                    items: [
-                        {
-                            xtype: 'image',
-                            width: 100,
-                            height: 100,
-                            src: headerData.imageUrl,
-                            listeners: {
-                                render: function (cmp) {
-
-                                    var contentType = (me.data && me.data.contentType) ? me.data.contentType : undefined;
-                                    if (contentType) {
-                                        var toolText = '<strong>' + contentType.displayName + '</strong></br>' +
-                                                       contentType.module + ':' + contentType.name;
-
-                                        var tip = Ext.create('Ext.tip.ToolTip', {
-                                            target: cmp.el,
-                                            html: toolText,
-                                            padding: 10,
-                                            styleHtmlContent: true,
-                                            dismissDelay: 10000 // Hide after 10 seconds hover
-                                        });
-                                    }
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    columnWidth: 1,
-                    padding: '10 10 10 0',
-                    style: 'overflow: visible',
-                    bodyStyle: 'overflow: visible',
-                    defaults: {
-                        border: false
-                    },
-                    items: [
-                        wizardHeader,
-                        {
-                            xtype: 'wizardPanel',
-                            validateItems: [wizardHeader],
-                            showControls: true,
-                            items: me.getSteps()
-                        }
-                    ]
-                }
-            ]
-        };
-
-        var liveEdit = {
-            flex: 1,
-            itemId: 'livePreview',
-            xtype: 'contentLive',
-            border: false,
-            hidden: true
-        };
-
-        this.items = [wizardPanel, liveEdit];
         this.callParent(arguments);
 
     },
@@ -216,34 +111,60 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     },
 
     getWizardHeader: function () {
-        return this.down('wizardHeader');
+        var headerData = this.prepareHeaderData(this.data);
+        var evaluateFn = this.data && this.data.contentType && this.data.contentType.contentDisplayNameScript;
+        var wizardHeader = Ext.create('Admin.view.WizardHeader', {
+            xtype: 'wizardHeader',
+            nameConfig: {
+                readOnly: headerData.isRoot,
+                stripCharsRe: /[^a-z0-9\-\/]+/ig,
+                vtype: 'path'
+            },
+            displayNameConfig: {
+                autoFocus: !this.evaluateDisplayName || Ext.isEmpty(evaluateFn)
+            },
+            data: this.data,
+            prepareHeaderData: this.prepareHeaderData
+        });
+
+        return wizardHeader;
     },
 
-    getWizardPanel: function () {
-        return this.down('wizardPanel');
+    getIcon: function () {
+        var me = this;
+        var headerData = this.prepareHeaderData(this.data);
+        return {
+            xtype: 'image',
+            width: 100,
+            height: 100,
+            src: headerData.imageUrl,
+            listeners: {
+                render: function (cmp) {
+
+                    var contentType = (me.data && me.data.contentType) ? me.data.contentType : undefined;
+                    if (contentType) {
+                        var toolText = '<strong>' + contentType.displayName + '</strong></br>' +
+                                       contentType.module + ':' + contentType.name;
+
+                        var tip = Ext.create('Ext.tip.ToolTip', {
+                            target: cmp.el,
+                            html: toolText,
+                            padding: 10,
+                            styleHtmlContent: true,
+                            dismissDelay: 10000 // Hide after 10 seconds hover
+                        });
+                    }
+                }
+            }
+        };
     },
 
     getData: function () {
         var data = {
-            contentData: this.getWizardPanel().getData()
+            contentData: this.callParent()
         };
-        Ext.apply(data, this.getWizardHeader().getData());
+        Ext.apply(data, this.down('wizardHeader').getData());
         return data;
-    },
-
-    setLiveMode: function (mode) {
-        this.getLayout().setActiveItem(mode ? 1 : 0);
-
-        if (mode) {
-            var livePreview = this.down('#livePreview');
-            //TODO update urls when they are ready
-            livePreview.load('/dev/live-edit/page/page.jsp?edit=true');
-        }
-    },
-
-    toggleLive: function () {
-        this.isLiveMode = !this.isLiveMode;
-
-        this.setLiveMode(this.isLiveMode);
     }
+
 });
