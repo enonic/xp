@@ -1,4 +1,3 @@
 {
-    "allowContentTypes": ["System:audio", "System:image"],
     "relationshipType": "System:like"
 }

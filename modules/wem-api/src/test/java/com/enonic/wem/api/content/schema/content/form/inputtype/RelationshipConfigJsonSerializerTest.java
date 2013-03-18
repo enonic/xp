@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.JsonTestHelper;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
 import static com.enonic.wem.api.JsonTestHelper.assertJsonEquals;
@@ -33,8 +32,6 @@ public class RelationshipConfigJsonSerializerTest
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
         builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        builder.allowedContentType( QualifiedContentTypeName.audioFile() );
-        builder.allowedContentType( QualifiedContentTypeName.imageFile() );
         RelationshipConfig config = builder.build();
 
         // exercise
@@ -50,8 +47,6 @@ public class RelationshipConfigJsonSerializerTest
     {
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.allowedContentType( QualifiedContentTypeName.audioFile() );
-        builder.allowedContentType( QualifiedContentTypeName.imageFile() );
         RelationshipConfig config = builder.build();
 
         // exercise
@@ -65,8 +60,6 @@ public class RelationshipConfigJsonSerializerTest
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
         builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        builder.allowedContentType( QualifiedContentTypeName.audioFile() );
-        builder.allowedContentType( QualifiedContentTypeName.imageFile() );
         RelationshipConfig expected = builder.build();
 
         // exercise
@@ -74,95 +67,6 @@ public class RelationshipConfigJsonSerializerTest
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
-        assertEquals( expected.getAllowedContentTypes(), parsed.getAllowedContentTypes() );
-    }
-
-    @Test
-    public void parseConfig_with_allowedContentTypes_as_empty()
-        throws IOException
-    {
-        // setup
-        RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        RelationshipConfig expected = builder.build();
-
-        StringBuilder json = new StringBuilder();
-        json.append( "{\n" );
-        json.append( "\"allowContentTypes\": [],\n" );
-        json.append( "\"relationshipType\": \"System:like\"\n" );
-        json.append( "}\n" );
-
-        // exercise
-        RelationshipConfig parsed = serializer.parseConfig( jsonHelper.stringToJson( json.toString() ) );
-
-        // verify
-        assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
-        assertEquals( expected.getAllowedContentTypes(), parsed.getAllowedContentTypes() );
-    }
-
-    @Test
-    public void parseConfig_with_allowedContentTypes_as_null()
-        throws IOException
-    {
-        // setup
-        RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        RelationshipConfig expected = builder.build();
-
-        StringBuilder json = new StringBuilder();
-        json.append( "{\n" );
-        json.append( "\"allowContentTypes\": null,\n" );
-        json.append( "\"relationshipType\": \"System:like\"\n" );
-        json.append( "}\n" );
-
-        // exercise
-        RelationshipConfig parsed = serializer.parseConfig( jsonHelper.stringToJson( json.toString() ) );
-
-        // verify
-        assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
-        assertEquals( expected.getAllowedContentTypes(), parsed.getAllowedContentTypes() );
-    }
-
-    @Test
-    public void parseConfig_with_allowedContentTypes_not_existing()
-        throws IOException
-    {
-        // setup
-        RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        RelationshipConfig expected = builder.build();
-
-        StringBuilder json = new StringBuilder();
-        json.append( "{\n" );
-        json.append( "\"relationshipType\": \"System:like\"\n" );
-        json.append( "}\n" );
-
-        // exercise
-        RelationshipConfig parsed = serializer.parseConfig( jsonHelper.stringToJson( json.toString() ) );
-
-        // verify
-        assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
-        assertEquals( expected.getAllowedContentTypes(), parsed.getAllowedContentTypes() );
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void parseConfig_relationshipType_as_null()
-        throws IOException
-    {
-        // setup
-        RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.allowedContentType( QualifiedContentTypeName.audioFile() );
-        builder.allowedContentType( QualifiedContentTypeName.imageFile() );
-        RelationshipConfig expected = builder.build();
-
-        StringBuilder json = new StringBuilder();
-        json.append( "{\n" );
-        json.append( "\"allowContentTypes\": [\"System:audio\", \"System:image\"],\n" );
-        json.append( "\"relationshipType\": null\n" );
-        json.append( "}\n" );
-
-        // exercise
-        serializer.parseConfig( jsonHelper.stringToJson( json.toString() ) );
     }
 
     @Test(expected = NullPointerException.class)
@@ -170,11 +74,6 @@ public class RelationshipConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.allowedContentType( QualifiedContentTypeName.audioFile() );
-        builder.allowedContentType( QualifiedContentTypeName.imageFile() );
-        RelationshipConfig expected = builder.build();
-
         StringBuilder json = new StringBuilder();
         json.append( "{\n" );
         json.append( "\"allowContentTypes\": [\"System:audio\", \"System:image\"]\n" );

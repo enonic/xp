@@ -277,8 +277,6 @@ public abstract class AbstractContentTypeSerializerTest
             SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "myOption 1", "o1" ).addOption( "myOption 2",
                                                                                                                      "o2" ).build();
         RelationshipConfig relationshipConfig = RelationshipConfig.newRelationshipConfig().
-            allowedContentType( QualifiedContentTypeName.audioFile() ).
-            allowedContentType( QualifiedContentTypeName.imageFile() ).
             relationshipType( QualifiedRelationshipTypeName.LIKE ).
             build();
 

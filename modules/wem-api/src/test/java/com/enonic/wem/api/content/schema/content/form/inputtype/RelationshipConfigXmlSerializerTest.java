@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import com.enonic.wem.api.XmlTestHelper;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
 import static junit.framework.Assert.assertEquals;
@@ -34,8 +33,6 @@ public class RelationshipConfigXmlSerializerTest
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
         builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        builder.allowedContentType( QualifiedContentTypeName.audioFile() );
-        builder.allowedContentType( QualifiedContentTypeName.imageFile() );
         RelationshipConfig config = builder.build();
 
         // exercise
@@ -53,8 +50,6 @@ public class RelationshipConfigXmlSerializerTest
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
         builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        builder.allowedContentType( QualifiedContentTypeName.audioFile() );
-        builder.allowedContentType( QualifiedContentTypeName.imageFile() );
         RelationshipConfig expected = builder.build();
 
         // exercise
@@ -62,7 +57,6 @@ public class RelationshipConfigXmlSerializerTest
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
-        assertEquals( expected.getAllowedContentTypes(), parsed.getAllowedContentTypes() );
     }
 
 
@@ -86,31 +80,7 @@ public class RelationshipConfigXmlSerializerTest
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
-        assertEquals( expected.getAllowedContentTypes(), parsed.getAllowedContentTypes() );
     }
-
-    @Test
-    public void parseConfig_with_contentTypeFilter_not_existing()
-        throws IOException
-    {
-        // setup
-        RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        RelationshipConfig expected = builder.build();
-
-        StringBuilder xml = new StringBuilder();
-        xml.append( "<config>\n" );
-        xml.append( "<relationship-type>System:like</relationship-type>\n" );
-        xml.append( "</config>\n" );
-
-        // exercise
-        RelationshipConfig parsed = serializer.parseConfig( xmlHelper.parse( xml.toString() ).getRootElement() );
-
-        // verify
-        assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
-        assertEquals( expected.getAllowedContentTypes(), parsed.getAllowedContentTypes() );
-    }
-
 
     @Test(expected = NullPointerException.class)
     public void parseConfig_relationshipType_as_empty()
@@ -118,13 +88,10 @@ public class RelationshipConfigXmlSerializerTest
     {
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.allowedContentType( QualifiedContentTypeName.audioFile() );
-        builder.allowedContentType( QualifiedContentTypeName.imageFile() );
         RelationshipConfig expected = builder.build();
 
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
-        xml.append( "<content-type-filter><allow>System:audio</allow><allow>System:image</allow></content-type-filter>\n" );
         xml.append( "<relationship-type></relationship-type>" );
         xml.append( "</config>\n" );
 
@@ -133,7 +100,6 @@ public class RelationshipConfigXmlSerializerTest
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
-        assertEquals( expected.getAllowedContentTypes(), parsed.getAllowedContentTypes() );
     }
 
     @Test(expected = NullPointerException.class)
@@ -143,7 +109,6 @@ public class RelationshipConfigXmlSerializerTest
         // setup
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
-        xml.append( "<content-type-filter><allow>System:audio</allow><allow>System:image</allow></content-type-filter>\n" );
         xml.append( "</config>\n" );
 
         // exercise

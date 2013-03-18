@@ -42,7 +42,6 @@
                     "name": "Relationship",
                     "builtIn": true,
                     "config": {
-                        "allowContentTypes": [ ],
                         "relationshipType": "System:default"
                     }
                 }
@@ -65,7 +64,6 @@
                     "name": "Relationship",
                     "builtIn": true,
                     "config": {
-                        "allowContentTypes": [ ],
                         "relationshipType": "System:default"
                     }
                 }

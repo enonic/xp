@@ -285,7 +285,6 @@
                     "name": "Relationship",
                     "builtIn": true,
                     "config": {
-                        "allowContentTypes": [ "System:audio", "System:image" ],
                         "relationshipType": "System:like"
                     }
                 }
