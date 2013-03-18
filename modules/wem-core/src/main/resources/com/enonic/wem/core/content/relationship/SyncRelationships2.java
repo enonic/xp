@@ -28,7 +28,7 @@ import com.enonic.wem.api.content.schema.content.form.inputtype.RelationshipConf
 import static com.enonic.wem.api.content.relationship.RelationshipKey.newRelationshipKey;
 import static com.enonic.wem.core.content.relationship.RelationshipFactory.newRelationshipFactory;
 
-class SyncRelationships2
+public class SyncRelationships2
 {
     private final Form form;
 
@@ -46,8 +46,8 @@ class SyncRelationships2
 
     private ImmutableList<RelationshipKey> relationshipsToDelete;
 
-    SyncRelationships2( final Form form, final ContentId contentToUpdate, final RootDataSet contentBeforeEditing,
-                        final RootDataSet contentAfterEditing )
+    public SyncRelationships2( final Form form, final ContentId contentToUpdate, final RootDataSet contentBeforeEditing,
+                               final RootDataSet contentAfterEditing )
     {
         this.form = form;
         this.contentToUpdate = contentToUpdate;
@@ -63,7 +63,7 @@ class SyncRelationships2
         this.referencesAfterEditing = resolveReferences( contentAfterEditing );
     }
 
-    void invoke()
+    public void invoke()
     {
         deleteRemovedRelationships();
         createAddedReferences();
