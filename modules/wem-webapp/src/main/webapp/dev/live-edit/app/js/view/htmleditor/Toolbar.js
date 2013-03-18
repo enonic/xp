@@ -1,14 +1,10 @@
-/**
- * TODO: As ComponentTip has changed look'n feel this object may be obsolete and we may use ToolTip instead.
- */
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
+
 (function ($) {
     'use strict';
 
-    // Namespaces
-    AdminLiveEdit.view.componenttip = {};
-
     // Class definition (constructor function)
-    var tip = AdminLiveEdit.view.componenttip.Tip = function () {
+    var toolbar = AdminLiveEdit.view.htmleditor.Tip = function () {
         var me = this;
         me.$selectedComponent = null;
 
@@ -18,13 +14,13 @@
     };
 
     // Inherits ui.Base
-    tip.prototype = new AdminLiveEdit.view.Base();
+    toolbar.prototype = new AdminLiveEdit.view.Base();
 
     // Fix constructor as it now is Base
-    tip.constructor = tip;
+    toolbar.constructor = toolbar;
 
     // Shorthand ref to the prototype
-    var proto = tip.prototype;
+    var proto = toolbar.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;

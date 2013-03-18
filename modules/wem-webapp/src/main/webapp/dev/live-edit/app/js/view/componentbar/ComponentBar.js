@@ -1,3 +1,5 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
+
 (function ($) {
     'use strict';
 

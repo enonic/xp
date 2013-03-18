@@ -1,8 +1,7 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
+
 (function ($) {
     'use strict';
-
-    // Namespaces
-    AdminLiveEdit.model.component = {};
 
     AdminLiveEdit.model.component.Base = function () {
         this.cssSelector = '';

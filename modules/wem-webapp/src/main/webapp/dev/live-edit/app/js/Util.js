@@ -1,3 +1,5 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.Util');
+
 AdminLiveEdit.Util = (function () {
     'use strict';
 

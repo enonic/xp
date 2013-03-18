@@ -1,3 +1,5 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.MutationObserver');
+
 (function ($) {
     'use strict';
 

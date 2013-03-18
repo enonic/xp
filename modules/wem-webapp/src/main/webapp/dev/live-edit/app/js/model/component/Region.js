@@ -1,3 +1,5 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
+
 (function ($) {
     'use strict';
 

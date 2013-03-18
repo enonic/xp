@@ -1,3 +1,5 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
+
 (function ($) {
     // Class definition (constructor function)
     var shader = AdminLiveEdit.view.Shader = function () {

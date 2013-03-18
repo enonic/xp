@@ -1,4 +1,7 @@
-AdminLiveEdit.view.InPlaceEditor = (function ($) {
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
+
+
+AdminLiveEdit.view.htmleditor.InPlaceEditor = (function ($) {
     'use strict';
 
     function activate($paragraph) {

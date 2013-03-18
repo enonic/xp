@@ -1,3 +1,4 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.DragDropSort');
 /*
     TODO: Refactor to a dynamic object!
 */

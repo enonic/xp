@@ -1,9 +1,7 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
+
 (function ($) {
     'use strict';
-
-    // Namespaces
-    AdminLiveEdit.view.menu = {};
-
 
     // Class definition (constructor)
     var menu = AdminLiveEdit.view.menu.Menu = function () {
