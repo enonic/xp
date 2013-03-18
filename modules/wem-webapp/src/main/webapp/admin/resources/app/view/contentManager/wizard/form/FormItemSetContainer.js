@@ -2,6 +2,11 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSetContainer', {
     extend: 'Admin.view.contentManager.wizard.form.FormItemContainer',
     alias: 'widget.formItemSetContainer',
 
+
+    cls: 'admin-formitemset-container',
+    padding: '10 10 10 10',
+    margin: '0 0 10 0',
+
     updateControlsState: function () {
         var formItemsPanel = this.down('#formItemsPanel');
         var addButton = this.down('#addButton');

@@ -21,7 +21,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
 
     margin: '0 0 10 0',
     cls: 'admin-sortable admin-formitemset-block',
-    padding: '0 15 0 15',
+    padding: '0 10 0 10',
 
     initComponent: function () {
         var min = this.formItemSetConfig.occurrences.minimum;
