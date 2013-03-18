@@ -1,0 +1,528 @@
+Ext.define('Admin.view.NewWizardPanel', {
+    extend: 'Ext.panel.Panel',
+    alias: 'widget.wizardPanel',
+
+    requires: ['Admin.view.WizardLayout'],
+
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
+
+    cls: 'admin-wizard',
+
+    externalControls: undefined,
+    showControls: true,
+    data: undefined,
+    isNew: true,
+
+    // items common for all steps that shall be valid for step to be valid
+    validateItems: [],
+    // items common for all steps that shall be disabled if step is invalid
+    boundItems: [],
+
+    // private, for storing wizard validity and dirty state, to be able to fire change event
+    isWizardValid: undefined,
+    isWizardDirty: undefined,
+    // private, for tracking invalid and dirty items
+    dirtyItems: undefined,
+    invalidItems: undefined,
+    presentationMode: false,
+
+    initComponent: function () {
+        var me = this;
+        var events = [
+            "beforestepchanged",
+            "stepchanged",
+            "animationstarted",
+            "animationfinished",
+            'validitychange',
+            'dirtychange',
+            "finished"
+        ];
+        this.dirtyItems = [];
+        this.invalidItems = [];
+
+        this.cls += this.isNew ? ' admin-wizard-new' : ' admin-wizard-edit';
+
+        this.wizard = Ext.createByAlias('widget.container', {
+            region: 'center',
+            layout: {
+                type: 'wizard',
+                animation: 'none'
+            },
+            items: this.getSteps()
+        });
+        this.items = [
+            this.getHeaderPane(),
+            {
+                xtype: 'container',
+                layout: 'border',
+                flex: 1,
+                items: [
+                    {
+                        xtype: 'container',
+                        region: 'west',
+                        width: 110,
+                        layout: {
+                            type: 'hbox',
+                            align: 'middle'
+                        },
+                        items: [
+                            {
+                                xtype: 'button',
+                                itemId: 'prev',
+                                iconCls: 'icon-chevron-left icon-4x',
+                                margin: '0 5 0 0',
+                                cls: 'wizard-nav-button wizard-nav-button-left',
+                                height: 64,
+                                width: 64,
+                                handler: function (btn, evt) {
+                                    me.prev();
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        xtype: 'container',
+                        region: 'east',
+                        width: 110,
+                        layout: {
+                            type: 'hbox',
+                            align: 'middle'
+                        },
+                        items: [
+                            {
+                                xtype: 'button',
+                                itemId: 'next',
+                                iconAlign: 'right',
+                                margin: '0 0 0 5',
+                                cls: 'wizard-nav-button wizard-nav-button-right',
+                                formBind: true,
+                                iconCls: 'icon-chevron-right icon-4x',
+                                height: 64,
+                                width: 64,
+                                handler: function (btn, evt) {
+                                    me.next();
+                                }
+                            }
+                        ]
+                    },
+                    this.wizard
+                ]
+            }
+        ];
+        this.callParent(arguments);
+        this.addEvents(events);
+        this.wizard.addEvents(events);
+        this.wizard.enableBubble(events);
+        this.on({
+            animationstarted: this.onAnimationStarted,
+            animationfinished: this.onAnimationFinished
+        });
+
+        if (this.showControls) {
+            this.boundItems.push(this.down('#next'));
+        }
+        this.down('#progressBar').update(this.wizard.items.items);
+
+        // bind afterrender events
+        this.on('afterrender', this.bindItemListeners);
+    },
+
+    updateProgress: function (newStep) {
+        var progressBar = this.down('#progressBar');
+        progressBar.update(this.wizard.items.items);
+        var conditionsMet = this.isWizardValid && (this.isWizardDirty || this.isNew);
+        progressBar.setDisabled(this.isNew ? !this.isStepValid(newStep) : !conditionsMet);
+    },
+
+
+    bindItemListeners: function (cmp) {
+        Ext.each(cmp.validateItems, function (validateItem, i) {
+            if (validateItem) {
+                validateItem.on({
+                    'validitychange': cmp.handleValidityChange,
+                    'dirtychange': cmp.handleDirtyChange,
+                    scope: cmp
+                }, this);
+            }
+        });
+        var checkValidityFn = function (panel) {
+            panel.getForm().checkValidity();
+        };
+        cmp.wizard.items.each(function (item, i) {
+            if (i === 0) {
+                cmp.onAnimationFinished(item, null);
+            }
+            if ('editUserFormPanel' === item.getXType()) {
+                item.on('fieldsloaded', checkValidityFn);
+            }
+
+            var itemForm = Ext.isFunction(item.getForm) ? item.getForm() : undefined;
+            if (itemForm) {
+                Ext.apply(itemForm, {
+                    onValidityChange: cmp.formOnValidityChange,
+                    _boundItems: undefined
+                });
+                itemForm.on({
+                    'validitychange': cmp.handleValidityChange,
+                    'dirtychange': cmp.handleDirtyChange,
+                    scope: cmp
+                });
+                itemForm.checkValidity();
+            }
+        });
+
+    },
+
+    formOnValidityChange: function () {
+        var wizardPanel = this.owner.up('wizardPanel');
+        var boundItems = wizardPanel.getFormBoundItems(this);
+        if (boundItems && this.owner === wizardPanel.getActiveItem()) {
+            var valid = wizardPanel.isStepValid(this.owner);
+            boundItems.each(function (cmp) {
+                if (cmp.rendered && cmp.isHidden() === valid) {
+                    if (valid) {
+                        cmp.show();
+                    } else {
+                        cmp.hide();
+                    }
+                }
+            });
+        }
+    },
+
+    getFormBoundItems: function (form) {
+        var boundItems = form._boundItems;
+        if (!boundItems && form.owner.rendered) {
+            boundItems = form._boundItems = Ext.create('Ext.util.MixedCollection');
+            boundItems.addAll(form.owner.query('[formBind]'));
+            boundItems.addAll(this.boundItems);
+        }
+        return boundItems;
+    },
+
+    handleValidityChange: function (form, valid, opts) {
+
+        if (!valid) {
+            Ext.Array.include(this.invalidItems, form);
+        } else {
+            Ext.Array.remove(this.invalidItems, form);
+        }
+
+        this.updateProgress();
+
+        var isWizardValid = this.invalidItems.length === 0;
+        if (this.isWizardValid !== isWizardValid) {
+            // fire the wizard validity change event
+            this.isWizardValid = isWizardValid;
+            this.fireEvent('validitychange', this, isWizardValid);
+        }
+    },
+
+    handleDirtyChange: function (form, dirty, opts) {
+
+        if (dirty) {
+            Ext.Array.include(this.dirtyItems, form);
+        } else {
+            Ext.Array.remove(this.dirtyItems, form);
+        }
+
+        this.updateProgress();
+
+        var isWizardDirty = this.dirtyItems.length > 0;
+        if (this.isWizardDirty !== isWizardDirty) {
+            // fire the wizard dirty change event
+            this.isWizardDirty = isWizardDirty;
+            this.fireEvent('dirtychange', this, isWizardDirty);
+        }
+    },
+
+    isStepValid: function (step) {
+        var isStepValid = Ext.Array.intersect(this.invalidItems, this.validateItems).length === 0;
+        var activeStep = step || this.getActiveItem();
+        var activeForm;
+        if (activeStep && Ext.isFunction(activeStep.getForm)) {
+            activeForm = activeStep.getForm();
+        }
+        if (isStepValid && activeForm) {
+            isStepValid = isStepValid && !activeForm.hasInvalidField();
+        }
+        return isStepValid;
+    },
+
+    getProgressBar: function () {
+        return this.down('#progressBar');
+    },
+
+    getRibbon: function () {
+        var me = this;
+
+        return {
+            xtype: 'panel',
+            flex: 1,
+            cls: 'toolbar',
+            disabledCls: 'toolbar-disabled',
+            itemId: 'progressBar',
+            listeners: {
+                click: {
+                    fn: this.changeStep,
+                    element: 'body',
+                    scope: this
+                }
+            },
+            styleHtmlContent: true,
+            margin: 0,
+            tpl: new Ext.XTemplate(Templates.common.wizardPanelSteps, {
+
+                resolveClsName: function (index, total) {
+                    var activeIndex = me.wizard.items.indexOf(me.getActiveItem()) + 1;
+                    var clsName = '';
+
+                    if (index === 1) {
+                        clsName += 'first ';
+                    }
+
+                    if (index < activeIndex) {
+                        clsName += 'previous ';
+                    }
+
+                    if (index + 1 === activeIndex) {
+                        clsName += 'immediate ';
+                    }
+
+                    if (index === activeIndex) {
+                        clsName += 'current ';
+                    }
+
+                    if (index > activeIndex) {
+                        clsName += 'next ';
+                    }
+
+                    if (index - 1 === activeIndex) {
+                        clsName += 'immediate ';
+                    }
+
+                    if (index === total) {
+                        clsName += 'last ';
+                    }
+                    return clsName;
+                }
+            })
+        };
+    },
+
+    onAnimationStarted: function (newStep, oldStep) {
+        if (this.showControls) {
+            // disable internal controls if shown
+            this.updateButtons(this.wizard, true);
+        }
+        if (this.externalControls) {
+            // try to disable external controls
+            this.updateButtons(this.externalControls, true);
+        }
+    },
+
+    onAnimationFinished: function (newStep, oldStep) {
+        if (newStep) {
+            this.updateProgress(newStep);
+            this.focusFirstField(newStep);
+            this.fireEvent("stepchanged", this, oldStep, newStep);
+            if (this.showControls) {
+                // update internal controls if shown
+                this.updateButtons(this.wizard);
+            }
+            if (this.externalControls) {
+                // try to update external controls
+                this.updateButtons(this.externalControls);
+            }
+
+            // TODO: Review - should we do this when a step does not have form?
+            if (Ext.isFunction(newStep.getForm)) {
+                var newForm = newStep.getForm();
+                if (newForm) {
+                    newForm.onValidityChange(this.isStepValid(newStep));
+                }
+            }
+            this.doLayout();
+            return newStep;
+        }
+    },
+
+    focusFirstField: function (newStep) {
+        var activeItem = newStep || this.getActiveItem();
+        var firstField;
+        if (activeItem && (firstField = activeItem.down('field[disabled=false]'))) {
+            firstField.focus();
+        }
+    },
+
+    updateButtons: function (toolbar, disable) {
+        if (toolbar) {
+            var prev = this.down('#prev'),
+                next = this.down('#next');
+            var hasNext = this.getNext(),
+                hasPrev = this.getPrev();
+            if (prev) {
+                if (disable || !hasPrev) {
+                    prev.hide();
+                } else {
+                    prev.show();
+                }
+            }
+            if (next) {
+                if (disable || !hasNext) {
+                    next.hide();
+                } else {
+                    next.show();
+                }
+                next.removeCls('admin-prev-button');
+                next.removeCls('admin-button');
+                next.addCls(hasPrev ? 'admin-prev-button' : 'admin-button');
+            }
+        }
+    },
+
+    changeStep: function (event, target) {
+        var progressBar = this.down('#progressBar');
+        var isNew = this.isNew;
+        var isDisabled = progressBar.isDisabled();
+
+        var li = target && target.tagName === "LI" ? Ext.fly(target) : Ext.fly(target).up('li');
+
+        // allow click only the next immediate step in new mode
+        // or any step in edit mode when valid
+        // or any except the last in edit when not valid
+        // or all previous steps in any mode
+        if ((!isDisabled && isNew && li && li.hasCls('next') && li.hasCls('immediate'))
+                || (!isDisabled && !isNew)
+                || (isDisabled && !isNew && li && !li.hasCls('last'))
+            || (li && li.hasCls('previous'))) {
+            var step = Number(li.getAttribute('wizardStep'));
+            this.navigate(step - 1);
+        }
+        event.stopEvent();
+    },
+
+    getHeaderPane: function () {
+        var icon = this.getIcon();
+        return {
+            xtype: 'container',
+
+            layout: {
+                type: 'table',
+                columns: 2,
+                tableAttrs: {
+                    width: '100%'
+                }
+            },
+            items: [
+                Ext.applyIf(icon, {rowspan: 2}),
+                Ext.applyIf(this.getWizardHeader(), {tdAttrs: { width: '100%'}}),
+                this.getRibbon()
+            ]
+        }
+    },
+
+    next: function (btn) {
+        return this.navigate("next", btn);
+    },
+
+    prev: function (btn) {
+        return this.navigate("prev", btn);
+    },
+
+    finish: function () {
+        this.fireEvent("finished", this, this.getData());
+    },
+
+    getNext: function () {
+        return this.wizard.getLayout().getNext();
+    },
+
+    getPrev: function () {
+        return this.wizard.getLayout().getPrev();
+    },
+
+    getActiveItem: function () {
+        return this.wizard.getLayout().getActiveItem();
+    },
+
+    navigate: function (direction, btn) {
+        var oldStep = this.getActiveItem();
+        if (btn) {
+            this.externalControls = btn.up('toolbar');
+        }
+        if (this.fireEvent("beforestepchanged", this, oldStep) !== false) {
+            var newStep;
+            switch (direction) {
+            case "-1":
+            case "prev":
+                if (this.getPrev()) {
+                    newStep = this.wizard.getLayout().prev();
+                }
+                break;
+            case "+1":
+            case "next":
+                if (this.getNext()) {
+                    newStep = this.wizard.getLayout().next();
+                } else {
+                    this.finish();
+                }
+                break;
+            default:
+                newStep = this.wizard.getLayout().setActiveItem(direction);
+                break;
+            }
+        }
+    },
+
+    addData: function (newValues) {
+        if (Ext.isEmpty(this.data)) {
+            this.data = {};
+        }
+        Ext.merge(this.data, newValues);
+    },
+
+    deleteData: function (key) {
+        if (key) {
+            delete this.data[key];
+        }
+    },
+
+
+    getData: function () {
+        var me = this;
+        me.wizard.items.each(function (item) {
+            if (item.getData) {
+                me.addData(item.getData());
+            } else if (item.getForm) {
+                me.addData(item.getForm().getFieldValues());
+            }
+        });
+        return me.data;
+    },
+
+    /*
+     * This method should be implemented in child classes
+     */
+    getSteps: function () {
+
+    },
+
+    /*
+     * This method should be implemented in child classes
+     */
+    getIcon: function () {
+
+    },
+
+    /*
+     * This method should be implemented in child classes
+     */
+    getWizardHeader: function () {
+
+    }
+
+});
