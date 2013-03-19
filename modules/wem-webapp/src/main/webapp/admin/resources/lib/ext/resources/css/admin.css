@@ -2413,52 +2413,57 @@ td {
     background-color: #eeeeee;
 }
 
-/* line 154, ../sass/admin/css/_form.scss */
+/* line 153, ../sass/admin/css/_form.scss */
+.admin-formitemset-container > div > .x-panel.x-column {
+    width: 100%;
+}
+
+/* line 159, ../sass/admin/css/_form.scss */
 .admin-formitemset-block {
     background-color: #fff;
     border: 0;
     border-radius: 0;
 }
 
-/* line 160, ../sass/admin/css/_form.scss */
+/* line 165, ../sass/admin/css/_form.scss */
 .form-item-set {
     /* Sub form-item-sets needs to be padded */
 }
 
-/* line 161, ../sass/admin/css/_form.scss */
+/* line 166, ../sass/admin/css/_form.scss */
 .form-item-set .admin-formitemset-block {
     border: none !important;
     box-shadow: 0 0 4px #777777;
     border-radius: 0;
 }
 
-/* line 166, ../sass/admin/css/_form.scss */
+/* line 171, ../sass/admin/css/_form.scss */
 .form-item-set .admin-formitemset-block .header {
     border: none;
 }
 
-/* line 171, ../sass/admin/css/_form.scss */
+/* line 176, ../sass/admin/css/_form.scss */
 .form-item-set .icon-grey {
     color: #777777;
 }
 
-/* line 177, ../sass/admin/css/_form.scss */
+/* line 182, ../sass/admin/css/_form.scss */
 .form-item-set .form-item-set .admin-formitemset-block {
     background-color: #f9f9f9;
 }
 
-/* line 182, ../sass/admin/css/_form.scss */
+/* line 187, ../sass/admin/css/_form.scss */
 .form-item-set .form-item-set .form-item-set .admin-formitemset-block {
     background-color: #ffffff;
 }
 
-/* line 187, ../sass/admin/css/_form.scss */
+/* line 192, ../sass/admin/css/_form.scss */
 .form-item-set .form-item-set .form-item-set .form-item-set .admin-formitemset-block {
     background-color: #f9f9f9;
 }
 
 /* To allow box-shadow, we must override overflow: hidden on containing elements. */
-/* line 201, ../sass/admin/css/_form.scss */
+/* line 206, ../sass/admin/css/_form.scss */
 .admin-wizard .x-fieldset-body,
 .admin-wizard .x-panel-body,
 .admin-wizard .x-fit-item,
@@ -2467,7 +2472,7 @@ td {
 }
 
 /* Fix for fieldset/legend in Firefox (see CMS-1013). We should try to find a better workaround */
-/* line 207, ../sass/admin/css/_form.scss */
+/* line 212, ../sass/admin/css/_form.scss */
 body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     padding: 0;
 }
