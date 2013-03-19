@@ -17,6 +17,9 @@ AdminLiveEdit.view.htmleditor.InPlaceEditor = (function ($) {
 
 
     function init() {
+
+        var toolbar = new AdminLiveEdit.view.htmleditor.Toolbar();
+
         $(window).on('component:paragraph:edit:init', function (event, $paragraph) {
             activate($paragraph);
         });

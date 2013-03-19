@@ -4,7 +4,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
     'use strict';
 
     // Class definition (constructor function)
-    var toolbar = AdminLiveEdit.view.htmleditor.Tip = function () {
+    var toolbar = AdminLiveEdit.view.htmleditor.Toolbar = function () {
         var me = this;
         me.$selectedComponent = null;
 
@@ -30,29 +30,32 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
 
 
     proto.registerGlobalListeners = function () {
-        $(window).on('component:click:select', $.proxy(this.show, this));
-        $(window).on('component:click:deselect', $.proxy(this.hide, this));
+        $(window).on('component:paragraph:edit:init', $.proxy(this.show, this));
+        $(window).on('component:paragraph:edit:leave', $.proxy(this.hide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));
         $(window).on('component:sort:start', $.proxy(this.hide, this));
-        $(window).on('component:paragraph:edit:init', $.proxy(this.hide, this));
     };
 
 
     proto.addView = function () {
         var me = this;
 
-        var html = '<div class="live-edit-component-tip live-edit-component-tip-arrow-bottom" style="top:-5000px; left:-5000px;">' +
-                   '    <div class="live-edit-component-tip-left">' +
-                   '        <div title="Show Menu" class="live-edit-component-tip-icon-menu"></div>' +
-                   '    </div>' +
-                   '    <div class="live-edit-component-tip-center">' +
-                   '        <span class="live-edit-component-tip-name-text"></span>' +
-                   '        <span class="live-edit-component-tip-type-text"></span> ' +
-                   '    </div>' +
-                   '    <div class="live-edit-component-tip-right">' +
-                   '        <div title="Select parent component" class="live-edit-component-tip-icon-parent"></div>' +
-                   '        <div title="Deselect" class="live-edit-component-tip-icon-deselect" style="display: none"></div>' +
-                   '    </div>' +
+        var html = '<div class="live-edit-editor-toolbar live-edit-editor-toolbar-arrow-bottom" style="top:-5000px; left:-5000px;">' +
+                   '    <button data-tag="paste" class="live-edit-editor-button"></button>' +
+                   '    <button data-tag="insertUnorderedList" class="live-edit-editor-button"></button>' +
+                   '    <button data-tag="insertOrderedList" class="live-edit-editor-button"></button>' +
+                   '    <button data-tag="link" class="live-edit-editor-button"></button>' +
+                   '    <button data-tag="cut" class="live-edit-editor-button"></button>' +
+                   '    <button data-tag="strikeThrough" class="live-edit-editor-button"></button>' +
+                   '    <button data-tag="bold" class="live-edit-editor-button"></button>' +
+                   '    <button data-tag="underline" class="live-edit-editor-button"></button>' +
+                   '    <button data-tag="italic" class="live-edit-editor-button"></button>' +
+                   '    <button data-tag="superscript" class="live-edit-editor-button"></button>' +
+                   '    <button data-tag="subscript" class="live-edit-editor-button"></button>' +
+                   '    <button data-tag="justifyLeft" class="live-edit-editor-button"></button>' +
+                   '    <button data-tag="justifyCenter" class="live-edit-editor-button"></button>' +
+                   '    <button data-tag="justifyRight" class="live-edit-editor-button"></button>' +
+                   '    <button data-tag="justifyFull" class="live-edit-editor-button"></button>' +
                    '</div>';
 
         me.createElement(html);
@@ -62,22 +65,22 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
 
     proto.addEvents = function () {
         var me = this;
-
-        // Make sure component is not deselected when clicked.
         me.getEl().on('click', function (event) {
+
+            // Make sure component is not deselected when the toolbar is clicked.
             event.stopPropagation();
+
+            // Simple editor command implementation ;)
+            var tag = event.target.getAttribute('data-tag');
+            if (tag) {
+                document.execCommand(tag, false, null);
+            }
         });
 
-        me.getMenuButton().click(function () {
-            me.handleMenuButtonClick();
-        });
-
-        me.getParentButton().click(function () {
-            me.handleParentButtonClick();
-        });
-
-        me.getDeselectButton().click(function () {
-            $(window).trigger('component:click:deselect');
+        $(window).scroll(function () {
+            if (me.$selectedComponent) {
+                me.setPosition();
+            }
         });
     };
 
@@ -86,167 +89,78 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
         var me = this;
         me.$selectedComponent = $component;
 
-        // Set text first so width is calculated correctly.
-        // For page we'll use the key.
-        me.setText($component);
-
-        if (util.getComponentType($component) === 'page') {
-            me.showForPage($component);
-        } else {
-            me.showForComponent($component);
-        }
-    };
-
-
-    proto.showForPage = function ($pageComponent) {
-        var me = this;
-        me.toggleArrowTipPosition(true);
-        me.toggleRightSideButtons(true);
-        var componentBox = util.getBoxModel($pageComponent),
-            leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2);
-
-        me.getEl().css({
-            position: 'fixed',
-            top: '10px',
-            left: leftPos
-        });
-    };
-
-
-    proto.showForComponent = function ($component) {
-        var me = this;
         me.toggleArrowTipPosition(false);
-        me.toggleRightSideButtons(false);
-        var componentBox = util.getBoxModel($component),
-            leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2),
-            topPos = componentBox.top - me.getEl().height() - 10;
 
-        me.getEl().css({
-            position: 'absolute',
-            top: topPos,
-            left: leftPos
-        });
+        me.setPosition();
     };
 
 
     proto.hide = function () {
         var me = this;
-        this.$selectedComponent = null;
+        me.$selectedComponent = null;
 
-        this.getEl().css({
+        me.getEl().css({
             top: '-5000px',
             left: '-5000px'
         });
-
-        me.getMenuButton().removeClass('live-edit-component-tip-icon-menu-selected');
     };
 
 
-    proto.setText = function ($component) {
-        var $componentTip = this.getEl(),
-            componentInfo = util.getComponentInfo($component);
-        $componentTip.find('.live-edit-component-tip-name-text').text(componentInfo.name);
-        $componentTip.find('.live-edit-component-tip-type-text').text(componentInfo.type === 'page' ? componentInfo.key : componentInfo.type);
-    };
-
-
-
-    proto.handleMenuButtonClick = function () {
+    proto.toggleArrowTipPosition = function (showArrowAtTop) {
         var me = this;
-        var $menuButton = me.getMenuButton();
-        if (!me.menuButtonIsActive()) {
-            $menuButton.addClass('live-edit-component-tip-icon-menu-selected');
-            $menuButton.attr('title', 'Hide menu');
-            $menuButton.attr('alt', 'Hide menu');
+        if (showArrowAtTop) {
+            me.getEl().removeClass('live-edit-editor-toolbar-arrow-bottom').addClass('live-edit-editor-toolbar-arrow-top');
+        } else {
+            me.getEl().removeClass('live-edit-editor-toolbar-arrow-top').addClass('live-edit-editor-toolbar-arrow-bottom');
+        }
+    };
 
-            if (me.$selectedComponent) {
-                var bottomLeftPosition = me.getMenuButtonBottomLeftPosition();
 
-                var coordinates = {
-                    x: bottomLeftPosition.left,
-                    y: bottomLeftPosition.bottom
-                };
+    proto.setPosition = function () {
+        var me = this;
+        if (!me.$selectedComponent) {
+            return;
+        }
 
-                $(window).trigger('tip:menubutton:click:show', [me.$selectedComponent, coordinates]);
-            }
+        var defaultPosition = me.getDefaultPosition();
+
+        var stick = $(window).scrollTop() >= me.$selectedComponent.offset().top - 60;
+
+        var arrowTop = $(window).scrollTop() >= defaultPosition.bottom - 10;
+
+        if (stick) {
+            me.getEl().css({
+                position: 'fixed',
+                top: 10,
+                left: defaultPosition.left
+            });
 
         } else {
-            $menuButton.removeClass('live-edit-component-tip-icon-menu-selected');
-            $menuButton.attr('title', 'Show menu');
-            $menuButton.attr('alt', 'Show menu');
-
-            $(window).trigger('tip:menubutton:click:hide');
+            me.getEl().css({
+                position: 'absolute',
+                top: defaultPosition.top,
+                left: defaultPosition.left
+            });
         }
+
+        me.toggleArrowTipPosition(arrowTop);
     };
 
 
-    proto.handleParentButtonClick = function () {
+    // Rename
+    proto.getDefaultPosition = function () {
         var me = this;
-        var $parent = me.$selectedComponent.parents('[data-live-edit-type]');
-        if ($parent && $parent.length > 0) {
-
-            $(window).trigger('component:click:select', [$parent]);
-
-            var menuButtonBottomLeftPos = me.getMenuButtonBottomLeftPosition();
-
-            $(window).trigger('tip:parentbutton:click', [$parent, {
-                x: menuButtonBottomLeftPos.left,
-                y: menuButtonBottomLeftPos.bottom
-            }]);
-
-        }
-    };
-
-
-    proto.getMenuButtonBottomLeftPosition = function () {
-        var me = this;
-        var $menuButton = me.getMenuButton();
-        var offset = $menuButton.offset(),
-            height = $menuButton.outerHeight(),
-            bottom = offset.top + height;
+        var componentBox = util.getBoxModel(me.$selectedComponent),
+            leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2),
+            topPos = componentBox.top - me.getEl().height() - 25;
 
         return {
-            left: offset.left,
-            bottom: bottom
-        };
-    };
-
-
-    proto.toggleArrowTipPosition = function (isPageComponent) {
-        var me = this;
-        if (isPageComponent) {
-            me.getEl().removeClass('live-edit-component-tip-arrow-bottom').addClass('live-edit-component-tip-arrow-top');
-        } else {
-            me.getEl().removeClass('live-edit-component-tip-arrow-top').addClass('live-edit-component-tip-arrow-bottom');
+            left: leftPos,
+            top: topPos,
+            bottom: componentBox.top + componentBox.height
         }
+
     };
 
-
-    proto.toggleRightSideButtons = function (isPageComponent) {
-        var me = this;
-        me.getParentButton().css('display', isPageComponent ? 'none' : 'block');
-        me.getDeselectButton().css('display', isPageComponent ? 'block' : 'none');
-    };
-
-
-    proto.menuButtonIsActive = function () {
-        var me = this;
-        return me.getMenuButton().hasClass('live-edit-component-tip-icon-menu-selected');
-    };
-
-
-    proto.getMenuButton = function () {
-        return this.getEl().find('.live-edit-component-tip-icon-menu');
-    };
-
-
-    proto.getParentButton = function () {
-        return this.getEl().find('.live-edit-component-tip-icon-parent');
-    };
-
-
-    proto.getDeselectButton = function () {
-        return this.getEl().find('.live-edit-component-tip-icon-deselect');
-    };
 
 }($liveedit));
