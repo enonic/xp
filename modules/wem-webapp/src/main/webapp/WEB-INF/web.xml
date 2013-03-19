@@ -22,6 +22,16 @@
     <servlet-class>com.enonic.wem.web.ResourceServlet</servlet-class>
   </servlet>
 
+  <filter>
+    <filter-name>guice</filter-name>
+    <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>guice</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
   <servlet-mapping>
     <servlet-name>rest</servlet-name>
     <url-pattern>/admin/rest/*</url-pattern>

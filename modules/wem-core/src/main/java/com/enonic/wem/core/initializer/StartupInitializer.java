@@ -1,6 +1,6 @@
 package com.enonic.wem.core.initializer;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ public final class StartupInitializer
 {
     private JcrInitializer jcrInitializer;
 
-    private List<InitializerTask> tasks;
+    private Set<InitializerTask> tasks;
 
     @Inject
     public void setJcrInitializer( final JcrInitializer jcrInitializer )
@@ -23,7 +23,7 @@ public final class StartupInitializer
     }
 
     @Inject
-    public void setTasks( final List<InitializerTask> tasks )
+    public void setTasks( final Set<InitializerTask> tasks )
     {
         this.tasks = tasks;
     }
