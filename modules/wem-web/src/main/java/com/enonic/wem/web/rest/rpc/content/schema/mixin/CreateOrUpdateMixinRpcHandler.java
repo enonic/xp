@@ -1,12 +1,13 @@
 package com.enonic.wem.web.rest.rpc.content.schema.mixin;
 
 import javax.inject.Inject;
+
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.content.schema.mixin.CreateMixin;
 import com.enonic.wem.api.command.content.schema.mixin.GetMixins;
-import com.enonic.wem.api.command.content.schema.mixin.UpdateMixins;
+import com.enonic.wem.api.command.content.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;
@@ -21,6 +22,7 @@ import com.enonic.wem.web.rest.rpc.UploadedIconFetcher;
 import com.enonic.wem.web.rest.service.upload.UploadService;
 
 import static com.enonic.wem.api.command.Commands.mixin;
+import static com.enonic.wem.api.content.schema.mixin.editor.SetMixinEditor.newSetMixinEditor;
 
 @Component
 public class CreateOrUpdateMixinRpcHandler
@@ -65,19 +67,19 @@ public class CreateOrUpdateMixinRpcHandler
 
         if ( !mixinExists( mixin.getQualifiedName() ) )
         {
-            final CreateMixin createCommand = parseCreateMixinCommand( mixin, icon );
+            final CreateMixin createCommand = buildCreateMixinCommand( mixin, icon );
             client.execute( createCommand );
             context.setResult( CreateOrUpdateMixinJsonResult.created() );
         }
         else
         {
-            final UpdateMixins updateCommand = parseUpdateMixinsCommand( mixin, icon );
+            final UpdateMixin updateCommand = buildUpdateMixinCommand( mixin, icon );
             client.execute( updateCommand );
             context.setResult( CreateOrUpdateMixinJsonResult.updated() );
         }
     }
 
-    private CreateMixin parseCreateMixinCommand( final Mixin mixin, final Icon icon )
+    private CreateMixin buildCreateMixinCommand( final Mixin mixin, final Icon icon )
     {
         return mixin().create().
             displayName( mixin.getDisplayName() ).
@@ -86,16 +88,16 @@ public class CreateOrUpdateMixinRpcHandler
             icon( icon );
     }
 
-    private UpdateMixins parseUpdateMixinsCommand( final Mixin mixin, final Icon icon )
+    private UpdateMixin buildUpdateMixinCommand( final Mixin mixin, final Icon icon )
     {
-        final QualifiedMixinNames qualifiedNames = QualifiedMixinNames.from( mixin.getQualifiedName() );
+        final SetMixinEditor editor = newSetMixinEditor().
+            displayName( mixin.getDisplayName() ).
+            formItem( mixin.getFormItem() ).
+            icon( icon ).
+            build();
         return mixin().update().
-            qualifiedNames( qualifiedNames ).
-            editor( SetMixinEditor.newSetMixinEditor().
-                displayName( mixin.getDisplayName() ).
-                formItem( mixin.getFormItem() ).
-                icon( icon ).
-                build() );
+            qualifiedName( mixin.getQualifiedName() ).
+            editor( editor );
     }
 
     private boolean mixinExists( final QualifiedMixinName qualifiedName )

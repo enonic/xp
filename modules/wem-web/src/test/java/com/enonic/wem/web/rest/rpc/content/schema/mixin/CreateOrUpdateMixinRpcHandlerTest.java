@@ -13,7 +13,7 @@ import com.google.common.io.Files;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.schema.mixin.CreateMixin;
 import com.enonic.wem.api.command.content.schema.mixin.GetMixins;
-import com.enonic.wem.api.command.content.schema.mixin.UpdateMixins;
+import com.enonic.wem.api.command.content.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.content.schema.content.form.Input;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
@@ -85,7 +85,7 @@ public class CreateOrUpdateMixinRpcHandlerTest
         resultJson.put( "updated", true );
         testSuccess( "createOrUpdateMixin_param.json", resultJson );
 
-        verify( client, times( 1 ) ).execute( isA( UpdateMixins.class ) );
+        verify( client, times( 1 ) ).execute( isA( UpdateMixin.class ) );
     }
 
     @Test

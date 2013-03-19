@@ -4,32 +4,32 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;
+import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.schema.mixin.editor.MixinEditor;
 
-public final class UpdateMixins
-    extends Command<Integer>
+public final class UpdateMixin
+    extends Command<UpdateMixinResult>
 {
-    private QualifiedMixinNames qualifiedNames;
+    private QualifiedMixinName qualifiedName;
 
     private MixinEditor editor;
 
 
-    public UpdateMixins qualifiedNames( final QualifiedMixinNames qualifiedNames )
+    public UpdateMixin qualifiedName( final QualifiedMixinName qualifiedName )
     {
-        this.qualifiedNames = qualifiedNames;
+        this.qualifiedName = qualifiedName;
         return this;
     }
 
-    public UpdateMixins editor( final MixinEditor editor )
+    public UpdateMixin editor( final MixinEditor editor )
     {
         this.editor = editor;
         return this;
     }
 
-    public QualifiedMixinNames getQualifiedNames()
+    public QualifiedMixinName getQualifiedName()
     {
-        return qualifiedNames;
+        return qualifiedName;
     }
 
     public MixinEditor getEditor()
@@ -45,25 +45,25 @@ public final class UpdateMixins
             return true;
         }
 
-        if ( !( o instanceof UpdateMixins ) )
+        if ( !( o instanceof UpdateMixin ) )
         {
             return false;
         }
 
-        final UpdateMixins that = (UpdateMixins) o;
-        return Objects.equal( this.qualifiedNames, that.qualifiedNames ) && Objects.equal( this.editor, that.editor );
+        final UpdateMixin that = (UpdateMixin) o;
+        return Objects.equal( this.qualifiedName, that.qualifiedName ) && Objects.equal( this.editor, that.editor );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.qualifiedNames, this.editor );
+        return Objects.hashCode( this.qualifiedName, this.editor );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.qualifiedNames, "qualifiedNames cannot be null" );
+        Preconditions.checkNotNull( this.qualifiedName, "qualifiedName cannot be null" );
         Preconditions.checkNotNull( this.editor, "editor cannot be null" );
     }
 }

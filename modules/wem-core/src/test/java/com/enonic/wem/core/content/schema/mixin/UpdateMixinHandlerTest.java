@@ -7,11 +7,13 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.schema.mixin.UpdateMixins;
+import com.enonic.wem.api.command.content.schema.mixin.UpdateMixin;
+import com.enonic.wem.api.command.content.schema.mixin.UpdateMixinResult;
 import com.enonic.wem.api.content.schema.content.form.FormItem;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
+import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;
 import com.enonic.wem.api.content.schema.mixin.editor.SetMixinEditor;
 import com.enonic.wem.api.module.ModuleName;
@@ -24,12 +26,13 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-public class UpdateMixinsHandlerTest
+public class UpdateMixinHandlerTest
     extends AbstractCommandHandlerTest
 {
-    private UpdateMixinsHandler handler;
+    private UpdateMixinHandler handler;
 
     private MixinDao mixinDao;
 
@@ -41,7 +44,7 @@ public class UpdateMixinsHandlerTest
 
         mixinDao = Mockito.mock( MixinDao.class );
 
-        handler = new UpdateMixinsHandler();
+        handler = new UpdateMixinHandler();
         handler.setMixinDao( mixinDao );
     }
 
@@ -64,8 +67,8 @@ public class UpdateMixinsHandlerTest
         Mockito.when( mixinDao.select( isA( QualifiedMixinNames.class ), any( Session.class ) ) ).thenReturn( mixins );
 
         final FormItem formItemToSet = newInput().name( "age" ).inputType( InputTypes.WHOLE_NUMBER ).build();
-        final UpdateMixins command = Commands.mixin().update().
-            qualifiedNames( QualifiedMixinNames.from( "myModule:age" ) ).editor( SetMixinEditor.newSetMixinEditor().
+        final UpdateMixin command = Commands.mixin().update().
+            qualifiedName( QualifiedMixinName.from( "myModule:age" ) ).editor( SetMixinEditor.newSetMixinEditor().
             displayName( "age2" ).
             formItem( formItemToSet ).build() );
 
@@ -74,7 +77,28 @@ public class UpdateMixinsHandlerTest
 
         // verify
         verify( mixinDao, atLeastOnce() ).update( Mockito.isA( Mixin.class ), Mockito.any( Session.class ) );
-        assertEquals( (Integer) 1, command.getResult() );
+        assertEquals( UpdateMixinResult.SUCCESS, command.getResult() );
     }
 
+    @Test
+    public void updateMixinNotFound()
+        throws Exception
+    {
+        // setup
+        final Mixins mixins = Mixins.empty();
+        Mockito.when( mixinDao.select( isA( QualifiedMixinNames.class ), any( Session.class ) ) ).thenReturn( mixins );
+
+        final FormItem formItemToSet = newInput().name( "age" ).inputType( InputTypes.WHOLE_NUMBER ).build();
+        final UpdateMixin command = Commands.mixin().update().
+            qualifiedName( QualifiedMixinName.from( "myModule:age" ) ).editor( SetMixinEditor.newSetMixinEditor().
+            displayName( "age2" ).
+            formItem( formItemToSet ).build() );
+
+        // exercise
+        this.handler.handle( this.context, command );
+
+        // verify
+        verify( mixinDao, never() ).update( Mockito.isA( Mixin.class ), Mockito.any( Session.class ) );
+        assertEquals( UpdateMixinResult.NOT_FOUND, command.getResult() );
+    }
 }
