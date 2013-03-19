@@ -88,12 +88,12 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
             window.getSelection().removeAllRanges();
         }
 
-        var coordinates = {
+        var pagePosition = {
             x: event.pageX,
             y: event.pageY
         };
 
-        $(window).trigger('component:click:select', [me.$selectedParagraph, coordinates]);
+        $(window).trigger('component:click:select', [me.$selectedParagraph, pagePosition]);
         $(window).trigger('component:paragraph:select', [me.$selectedParagraph]);
     };
 

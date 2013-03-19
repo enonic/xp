@@ -32,7 +32,7 @@
 
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Base.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/HtmlElementReplacer.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/htmleditor/InPlaceEditor.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/htmleditor/Editor.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/htmleditor/Toolbar.js"></script>
 
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Shader.js"></script>

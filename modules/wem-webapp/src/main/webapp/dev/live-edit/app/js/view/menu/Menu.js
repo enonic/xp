@@ -42,7 +42,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     var html = '';
-    html += '<div class="live-edit-component-menu" style="display: none">';
+    html += '<div class="live-edit-component-menu live-edit-arrow-top" style="display: none">';
     html += '   <div class="live-edit-component-menu-title-bar">';
     html += '       <div class="live-edit-component-menu-title-icon"><div><!-- --></div></div>';
     html += '       <div class="live-edit-component-menu-title-text"><!-- populated --></div>';
@@ -76,12 +76,12 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         $(me.getEl()).draggable({ handle: '.live-edit-component-menu-title-bar' });
 
         me.getCloseButton().click(function () {
-            me.hide();
+            $(window).trigger('component:click:deselect');
         });
     };
 
 
-    proto.show = function (event, $component, coordinates) {
+    proto.show = function (event, $component, pagePosition) {
         var me = this,
             componentInfo = util.getComponentInfo($component);
 
@@ -89,7 +89,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
         me.updateTitleBar($component);
         me.updateMenuItemsForComponent($component);
-        me.moveToXY(coordinates.x, coordinates.y);
+        me.moveToXY(pagePosition.x, pagePosition.y);
         me.getEl().show();
 
         this.hidden = false;
@@ -97,7 +97,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
 
     proto.hide = function () {
-        this.getEl().css({ top: '-5000px', left: '-5000px', right: '' });
+        this.getEl().hide();
         this.hidden = true;
     };
 

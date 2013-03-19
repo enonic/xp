@@ -40,7 +40,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
     proto.addView = function () {
         var me = this;
 
-        var html = '<div class="live-edit-editor-toolbar live-edit-editor-toolbar-arrow-bottom" style="top:-5000px; left:-5000px;">' +
+        var html = '<div class="live-edit-editor-toolbar live-edit-arrow-bottom" style="display: none">' +
                    '    <button data-tag="paste" class="live-edit-editor-button"></button>' +
                    '    <button data-tag="insertUnorderedList" class="live-edit-editor-button"></button>' +
                    '    <button data-tag="insertOrderedList" class="live-edit-editor-button"></button>' +
@@ -73,13 +73,13 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
             // Simple editor command implementation ;)
             var tag = event.target.getAttribute('data-tag');
             if (tag) {
-                document.execCommand(tag, false, null);
+                $(window).trigger('editor:toolbar:button:click', [tag]);
             }
         });
 
         $(window).scroll(function () {
             if (me.$selectedComponent) {
-                me.setPosition();
+                me.updatePosition();
             }
         });
     };
@@ -89,34 +89,20 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
         var me = this;
         me.$selectedComponent = $component;
 
-        me.toggleArrowTipPosition(false);
-
-        me.setPosition();
+        me.getEl().show();
+        me.toggleArrowPosition(false);
+        me.updatePosition();
     };
 
 
     proto.hide = function () {
         var me = this;
         me.$selectedComponent = null;
-
-        me.getEl().css({
-            top: '-5000px',
-            left: '-5000px'
-        });
+        me.getEl().hide();
     };
 
 
-    proto.toggleArrowTipPosition = function (showArrowAtTop) {
-        var me = this;
-        if (showArrowAtTop) {
-            me.getEl().removeClass('live-edit-editor-toolbar-arrow-bottom').addClass('live-edit-editor-toolbar-arrow-top');
-        } else {
-            me.getEl().removeClass('live-edit-editor-toolbar-arrow-top').addClass('live-edit-editor-toolbar-arrow-bottom');
-        }
-    };
-
-
-    proto.setPosition = function () {
+    proto.updatePosition = function () {
         var me = this;
         if (!me.$selectedComponent) {
             return;
@@ -126,15 +112,12 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
 
         var stick = $(window).scrollTop() >= me.$selectedComponent.offset().top - 60;
 
-        var arrowTop = $(window).scrollTop() >= defaultPosition.bottom - 10;
-
         if (stick) {
             me.getEl().css({
                 position: 'fixed',
                 top: 10,
                 left: defaultPosition.left
             });
-
         } else {
             me.getEl().css({
                 position: 'absolute',
@@ -143,7 +126,18 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
             });
         }
 
-        me.toggleArrowTipPosition(arrowTop);
+        var placeArrowOnTop = $(window).scrollTop() >= defaultPosition.bottom - 10;
+        me.toggleArrowPosition(placeArrowOnTop);
+    };
+
+
+    proto.toggleArrowPosition = function (showArrowAtTop) {
+        var me = this;
+        if (showArrowAtTop) {
+            me.getEl().removeClass('live-edit-arrow-bottom').addClass('live-edit-arrow-top');
+        } else {
+            me.getEl().removeClass('live-edit-arrow-top').addClass('live-edit-arrow-bottom');
+        }
     };
 
 
@@ -158,9 +152,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
             left: leftPos,
             top: topPos,
             bottom: componentBox.top + componentBox.height
-        }
-
+        };
     };
-
 
 }($liveedit));

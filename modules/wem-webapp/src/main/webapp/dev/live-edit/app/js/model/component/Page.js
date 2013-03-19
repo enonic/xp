@@ -1,6 +1,6 @@
 AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
 
-(function () {
+(function ($) {
     'use strict';
 
     var page = AdminLiveEdit.model.component.Page = function () {
@@ -18,4 +18,4 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 
-}());
+}($liveedit));

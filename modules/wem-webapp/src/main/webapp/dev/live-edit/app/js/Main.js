@@ -14,14 +14,13 @@
         var outliner            = new AdminLiveEdit.view.Highlighter();
         var toolTip             = new AdminLiveEdit.view.ToolTip();
         var cursor              = new AdminLiveEdit.view.Cursor();
-        // var componentTip        = new AdminLiveEdit.view.componenttip.Tip();
         var menu                = new AdminLiveEdit.view.menu.Menu();
         var shader              = new AdminLiveEdit.view.Shader();
+        var htmleditor          = new AdminLiveEdit.view.htmleditor.Editor();
         var componentBar        = new AdminLiveEdit.view.componentbar.ComponentBar();
         var mutationObserver    = new AdminLiveEdit.MutationObserver();
 
         AdminLiveEdit.DragDropSort.initialize();
-        AdminLiveEdit.view.htmleditor.InPlaceEditor.initialize();
     });
 
     $(document).ready(function () {

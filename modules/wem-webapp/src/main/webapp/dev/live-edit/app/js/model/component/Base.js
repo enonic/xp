@@ -61,12 +61,12 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
                 } else {
 
                     // Used by eg. Menu
-                    var coordinates = {
+                    var pagePosition = {
                         x: event.pageX,
                         y: event.pageY
                     };
 
-                    $(window).trigger('component:click:select', [$component, coordinates]);
+                    $(window).trigger('component:click:select', [$component, pagePosition]);
                 }
             });
         },
