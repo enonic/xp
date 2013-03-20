@@ -16,17 +16,9 @@
             shadow: false
         },
         msg: undefined,
-        cls: 'admin-load-mask'
-    });
-
-    Ext.override(Ext.view.Table, {
-        loadingText: undefined,
-        loadingCls: 'x-mask-loading'
-    });
-
-    Ext.override(Ext.tree.View, {
-        loadingText: undefined,
-        loadingCls: 'x-mask-loading'
+        cls: 'admin-load-mask',
+        msgCls: 'admin-load-text',
+        maskCls: 'admin-mask-white'
     });
 
     // TODO: Refactor
