@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.schema.content.CreateContentType;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.ContentTypes;
@@ -17,6 +16,7 @@ import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
 
+import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
 
@@ -56,7 +56,16 @@ public class CreateContentTypeHandlerTest
             superType( QualifiedContentTypeName.structured() ).
             build();
 
-        CreateContentType command = Commands.contentType().create().contentType( contentType );
+        CreateContentType command = contentType().create().
+            name( contentType.getName() ).
+            displayName( contentType.getDisplayName() ).
+            superType( contentType.getSuperType() ).
+            setAbstract( contentType.isAbstract() ).
+            setFinal( contentType.isFinal() ).
+            moduleName( contentType.getModuleName() ).
+            form( contentType.form() ).
+            icon( contentType.getIcon() ).
+            contentDisplayNameScript( contentType.getContentDisplayNameScript() );
 
         // exercise
         this.handler.handle( this.context, command );
@@ -86,7 +95,17 @@ public class CreateContentTypeHandlerTest
             build();
 
         // exercise
-        this.handler.handle( this.context, Commands.contentType().create().contentType( contentType ) );
+        final CreateContentType createCommand = contentType().create().
+            name( contentType.getName() ).
+            displayName( contentType.getDisplayName() ).
+            superType( contentType.getSuperType() ).
+            setAbstract( contentType.isAbstract() ).
+            setFinal( contentType.isFinal() ).
+            moduleName( contentType.getModuleName() ).
+            form( contentType.form() ).
+            icon( contentType.getIcon() ).
+            contentDisplayNameScript( contentType.getContentDisplayNameScript() );
+        this.handler.handle( this.context, createCommand );
     }
 
 }
