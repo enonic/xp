@@ -24,7 +24,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
                 }
                 event.stopPropagation();
 
-                $(window).trigger('component:mouseover', [$component]);
+                $(window).trigger('component.mouseOver', [$component]);
             });
         },
 
@@ -36,7 +36,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
                 if (me.hasComponentSelected()) {
                     return;
                 }
-                $(window).trigger('component:mouseout');
+                $(window).trigger('component.mouseOut');
             });
         },
 
@@ -57,7 +57,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
                     pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
 
                 if (componentIsSelected || pageHasComponentSelected) {
-                    $(window).trigger('component:click:deselect');
+                    $(window).trigger('component.onDeSelect');
                 } else {
 
                     // Used by eg. Menu
@@ -66,7 +66,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
                         y: event.pageY
                     };
 
-                    $(window).trigger('component:click:select', [$component, pagePosition]);
+                    $(window).trigger('component.onSelect', [$component, pagePosition]);
                 }
             });
         },

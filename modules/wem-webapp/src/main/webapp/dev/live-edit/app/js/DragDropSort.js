@@ -123,7 +123,7 @@ AdminLiveEdit.DragDropSort = (function () {
 
 
     function handleSortUpdate(event, ui) {
-        $liveedit(window).trigger('component:sort:update', [event, ui]);
+        $liveedit(window).trigger('component.onSortUpdate', [event, ui]);
     }
 
 
@@ -131,7 +131,7 @@ AdminLiveEdit.DragDropSort = (function () {
         isDragging = false;
 
         if (AdminLiveEdit.Util.supportsTouch()) {
-            $liveedit(window).trigger('component:mouseout');
+            $liveedit(window).trigger('component.mouseOut');
         }
 
         var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
@@ -160,7 +160,7 @@ AdminLiveEdit.DragDropSort = (function () {
                 cache: false
             }).done(function (html) {
                 $component.replaceWith(html);
-                $liveedit(window).trigger('component:sort:update');
+                $liveedit(window).trigger('component.onSortUpdate');
             });
 
         }
@@ -170,27 +170,27 @@ AdminLiveEdit.DragDropSort = (function () {
     function registerGlobalListeners() {
         // The jQuery draggable() is not "live"/support delegates so we have to make sure the components in the component bar are always draggable
         // Make the components in the component bar draggable
-        $liveedit(window).on('componentBar:dataLoaded', function () {
+        $liveedit(window).on('componentBar.dataLoaded', function () {
             createComponentBarDraggables();
         });
 
-        $liveedit(window).on('component:click:select', function () {
+        $liveedit(window).on('component.onSelect', function () {
             if (AdminLiveEdit.Util.supportsTouch()) {
                 enableDragDrop();
             }
         });
 
-        $liveedit(window).on('component:click:deselect', function () {
+        $liveedit(window).on('component.onDeSelect', function () {
             if (AdminLiveEdit.Util.supportsTouch() && !isDragging) {
                 disableDragDrop();
             }
         });
 
-        $liveedit(window).on('component:paragraph:select', function () {
+        $liveedit(window).on('component.onParagraphSelect', function () {
             $liveedit(regionSelector).sortable('option', 'cancel', '[data-live-edit-type=paragraph]');
         });
 
-        $liveedit(window).on('component:paragraph:edit:leave', function () {
+        $liveedit(window).on('component.onParagraphEditLeave', function () {
             $liveedit(regionSelector).sortable('option', 'cancel', '');
         });
     }

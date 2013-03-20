@@ -23,11 +23,11 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.registerGlobalListeners = function () {
-        $(window).on('component:click:select', $.proxy(this.show, this));
-        $(window).on('component:click:deselect', $.proxy(this.hide, this));
-        $(window).on('component:remove', $.proxy(this.hide, this));
+        $(window).on('component.onSelect', $.proxy(this.show, this));
+        $(window).on('component.onDeSelect', $.proxy(this.hide, this));
+        $(window).on('component.remove', $.proxy(this.hide, this));
         $(window).on('component:sort:start', $.proxy(this.hide, this));
-        $(window).on('component:paragraph:edit:init', $.proxy(this.show, this));
+        $(window).on('component.onParagraphEdit', $.proxy(this.show, this));
     };
 
 
@@ -43,8 +43,8 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         $('.live-edit-shader').on('click contextmenu', function (event) {
             event.stopPropagation();
             event.preventDefault();
-            $(window).trigger('component:click:deselect');
-            $(window).trigger('shader:click');
+            $(window).trigger('component.onDeSelect');
+            $(window).trigger('shader.onClick');
         });
     };
 

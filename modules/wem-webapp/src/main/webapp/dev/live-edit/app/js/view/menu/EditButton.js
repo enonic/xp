@@ -33,7 +33,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
                 var $paragraph = me.menu.$selectedComponent;
                 if ($paragraph && $paragraph.length > 0) {
-                    $(window).trigger('component:paragraph:edit:init', [$paragraph]);
+                    $(window).trigger('component.onParagraphEdit', [$paragraph]);
                 }
             }
         });

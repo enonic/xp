@@ -30,9 +30,9 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
 
 
     proto.registerGlobalListeners = function () {
-        $(window).on('component:paragraph:edit:init', $.proxy(this.show, this));
-        $(window).on('component:paragraph:edit:leave', $.proxy(this.hide, this));
-        $(window).on('component:remove', $.proxy(this.hide, this));
+        $(window).on('component.onParagraphEdit', $.proxy(this.show, this));
+        $(window).on('component.onParagraphEditLeave', $.proxy(this.hide, this));
+        $(window).on('component.remove', $.proxy(this.hide, this));
         $(window).on('component:sort:start', $.proxy(this.hide, this));
     };
 
@@ -73,7 +73,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
             // Simple editor command implementation ;)
             var tag = event.target.getAttribute('data-tag');
             if (tag) {
-                $(window).trigger('editor:toolbar:button:click', [tag]);
+                $(window).trigger('editorToolbar.onButtonClick', [tag]);
             }
         });
 

@@ -31,7 +31,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
                 event.stopPropagation();
                 // For demo purposes
                 me.menu.$selectedComponent.remove();
-                $(window).trigger('component:remove');
+                $(window).trigger('component.remove');
             }
         });
 

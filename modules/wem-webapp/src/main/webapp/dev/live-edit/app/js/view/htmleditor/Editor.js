@@ -17,13 +17,13 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
 
     proto.registerGlobalListeners = function () {
         var me = this;
-        $(window).on('component:paragraph:edit:init', function (event, $paragraph) {
+        $(window).on('component.onParagraphEdit', function (event, $paragraph) {
             me.activate($paragraph);
         });
-        $(window).on('component:paragraph:edit:leave', function (event, $paragraph) {
+        $(window).on('component.onParagraphEditLeave', function (event, $paragraph) {
             me.deActivate($paragraph);
         });
-        $(window).on('editor:toolbar:button:click', function (event, tag) {
+        $(window).on('editorToolbar.onButtonClick', function (event, tag) {
             // Simplest implementation for now.
             document.execCommand(tag, false, null);
         });

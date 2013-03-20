@@ -74,13 +74,13 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
 
     proto.registerGlobalListeners = function () {
         var me = this;
-        $(window).on('component:click:select', $.proxy(me.fadeOut, me));
-        $(window).on('component:click:deselect', $.proxy(me.fadeIn, me));
+        $(window).on('component.onSelect', $.proxy(me.fadeOut, me));
+        $(window).on('component.onDeSelect', $.proxy(me.fadeIn, me));
         $(window).on('component:drag:start', $.proxy(me.fadeOut, me));
         $(window).on('component:drag:stop', $.proxy(me.fadeIn, me));
         $(window).on('component:sort:stop', $.proxy(me.fadeIn, me));
         $(window).on('component:sort:start', $.proxy(me.fadeOut, me));
-        $(window).on('component:sort:update', $.proxy(me.fadeIn, me));
+        $(window).on('component.onSortUpdate', $.proxy(me.fadeIn, me));
     };
 
 
@@ -105,7 +105,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
         var me = this;
         $.getJSON(me.getComponentsDataUrl(), null, function (data, textStatus, jqXHR) {
             me.renderComponents(data);
-            $(window).trigger('componentBar:dataLoaded');
+            $(window).trigger('componentBar.dataLoaded');
         });
     };
 
@@ -198,7 +198,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
 
 
     proto.fadeIn = function (event, triggerConfig) {
-        // componenttip/menu.js triggers a component:click:deselect event
+        // componenttip/menu.js triggers a component.onDeSelect event
         // which results in that the bar is faded in (see the listeners above)
         // The triggerConfig is a temporary workaround until we get this right.
         if (triggerConfig && triggerConfig.showComponentBar === false) {

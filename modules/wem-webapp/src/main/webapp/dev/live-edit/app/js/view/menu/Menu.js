@@ -54,11 +54,11 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
 
     proto.registerGlobalListeners = function () {
-        $(window).on('component:click:select', $.proxy(this.show, this));
-        $(window).on('component:click:deselect', $.proxy(this.hide, this));
+        $(window).on('component.onSelect', $.proxy(this.show, this));
+        $(window).on('component.onDeSelect', $.proxy(this.hide, this));
         $(window).on('component:sort:start', $.proxy(this.fadeOutAndHide, this));
-        $(window).on('component:remove', $.proxy(this.hide, this));
-        $(window).on('component:paragraph:edit:init', $.proxy(this.hide, this));
+        $(window).on('component.remove', $.proxy(this.hide, this));
+        $(window).on('component.onParagraphEdit', $.proxy(this.hide, this));
     };
 
 
@@ -76,7 +76,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         $(me.getEl()).draggable({ handle: '.live-edit-component-menu-title-bar' });
 
         me.getCloseButton().click(function () {
-            $(window).trigger('component:click:deselect');
+            $(window).trigger('component.onDeSelect');
         });
     };
 
@@ -106,7 +106,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         var me = this;
         me.getEl().fadeOut(500, function () {
             me.hide();
-            $(window).trigger('component:click:deselect', {showComponentBar: false});
+            $(window).trigger('component.onDeSelect', {showComponentBar: false});
         });
         me.$selectedComponent = null;
     };

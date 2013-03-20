@@ -21,13 +21,13 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.MutationObserver');
 
     proto.registerGlobalListeners = function () {
         var me = this;
-        /*$(window).on('component:mouseover', $.proxy(me.observe, me));
-        $(window).on('component:mouseout', $.proxy(me.disconnect, me));
-        $(window).on('component:click:select', $.proxy(me.observe, me));
-        $(window).on('component:click:deselect', $.proxy(me.disconnect, me));*/
+        /*$(window).on('component.mouseOver', $.proxy(me.observe, me));
+        $(window).on('component.mouseOut', $.proxy(me.disconnect, me));
+        $(window).on('component.onSelect', $.proxy(me.observe, me));
+        $(window).on('component.onDeSelect', $.proxy(me.disconnect, me));*/
 
-        $(window).on('component:paragraph:edit:init', $.proxy(me.observe, me));
-        $(window).on('shader:click', $.proxy(me.disconnect, me));
+        $(window).on('component.onParagraphEdit', $.proxy(me.observe, me));
+        $(window).on('shader.onClick', $.proxy(me.disconnect, me));
 
     };
 
@@ -58,15 +58,15 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.MutationObserver');
         if (summaries && summaries[0]) {
             var $targetComponent = $(summaries[0].target),
                 targetComponentIsSelected = $targetComponent.hasClass('live-edit-selected-component'),
-                componentIsNotSelectedAndMouseIsOver = !targetComponentIsSelected && event.type === 'component:mouseover',
+                componentIsNotSelectedAndMouseIsOver = !targetComponentIsSelected && event.type === 'component.mouseOver',
                 componentIsParagraphAndBeingEdited = $targetComponent.attr('contenteditable');
 
             if (componentIsParagraphAndBeingEdited) {
-                $(window).trigger('component:paragraph:edit:init', [$targetComponent]);
+                $(window).trigger('component.onParagraphEdit', [$targetComponent]);
             } else if (componentIsNotSelectedAndMouseIsOver) {
-                $(window).trigger('component:mouseover', [$targetComponent]);
+                $(window).trigger('component.mouseOver', [$targetComponent]);
             } else {
-                $(window).trigger('component:click:select', [$targetComponent]);
+                $(window).trigger('component.onSelect', [$targetComponent]);
             }
         }
     };
@@ -74,7 +74,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.MutationObserver');
 
     proto.disconnect = function (event) {
         var targetComponentIsSelected = (this.$observedComponent && this.$observedComponent.hasClass('live-edit-selected-component'));
-        var componentIsSelectedAndUserMouseOut = event.type === 'component:mouseout' && targetComponentIsSelected;
+        var componentIsSelectedAndUserMouseOut = event.type === 'component.mouseOut' && targetComponentIsSelected;
         if (componentIsSelectedAndUserMouseOut) {
             return;
         }

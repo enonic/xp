@@ -36,7 +36,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
                 if ($parent && $parent.length > 0) {
                     $parent = $($parent[0]);
 
-                    $(window).trigger('component:click:select', [$parent, {x: 0, y: 0}]);
+                    $(window).trigger('component.onSelect', [$parent, {x: 0, y: 0}]);
 
                     me.scrollComponentIntoView($parent);
 

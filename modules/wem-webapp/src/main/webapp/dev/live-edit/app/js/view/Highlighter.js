@@ -27,17 +27,17 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.registerGlobalListeners = function () {
-        $(window).on('component:mouseover', $.proxy(this.componentMouseOver, this));
-        $(window).on('component:mouseout', $.proxy(this.hide, this));
-        $(window).on('component:click:select', $.proxy(this.selectComponent, this));
-        $(window).on('component:click:deselect', $.proxy(this.deselect, this));
+        $(window).on('component.mouseOver', $.proxy(this.componentMouseOver, this));
+        $(window).on('component.mouseOut', $.proxy(this.hide, this));
+        $(window).on('component.onSelect', $.proxy(this.selectComponent, this));
+        $(window).on('component.onDeSelect', $.proxy(this.deselect, this));
         $(window).on('component:sort:start', $.proxy(this.hide, this));
-        $(window).on('component:remove', $.proxy(this.hide, this));
-        $(window).on('component:paragraph:edit:init', $.proxy(this.hide, this));
+        $(window).on('component.remove', $.proxy(this.hide, this));
+        $(window).on('component.onParagraphEdit', $.proxy(this.hide, this));
 
         $(window).on('component:sort:stop', function (event, uiEvent, ui, wasSelectedOnDragStart) {
             if (wasSelectedOnDragStart) {
-                $(window).trigger('component:click:select', [ui.item]);
+                $(window).trigger('component.onSelect', [ui.item]);
             }
         });
     };
