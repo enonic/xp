@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
@@ -46,7 +47,7 @@ public class DataSetValidatorTest
             newInput().name( "mySingleSelector" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "mySingleSelector", "nonExistingOption" );
+        content.getRootDataSet().setData( "mySingleSelector", new Value.Text( "nonExistingOption" ) );
 
         // exercise & verify
         DataSetValidator validator = new DataSetValidator( contentType );
@@ -68,8 +69,8 @@ public class DataSetValidatorTest
             singleSelectorConfig ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "mySingleSelector1", "nonExistingOption" );
-        content.getRootDataSet().setData( "mySingleSelector2", "nonExistingOption" );
+        content.getRootDataSet().setData( "mySingleSelector1", new Value.Text( "nonExistingOption" ) );
+        content.getRootDataSet().setData( "mySingleSelector2", new Value.Text( "nonExistingOption" ) );
 
         // exercise & verify
         DataSetValidator validator = new DataSetValidator( contentType );
@@ -99,10 +100,10 @@ public class DataSetValidatorTest
         contentType.form().addFormItem( newInput().name( "myXml" ).inputType( InputTypes.XML ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "myDate", new DateMidnight( 2012, 9, 11 ) );
-        content.getRootDataSet().setData( "myDecimalNumber", 12.34 );
-        content.getRootDataSet().setData( "mySingleSelector", "o1" );
-        content.getRootDataSet().setData( "myHtmlArea", "<h1>Hello world</h1>" );
+        content.getRootDataSet().setData( "myDate", new Value.Date( new DateMidnight( 2012, 9, 11 ) ) );
+        content.getRootDataSet().setData( "myDecimalNumber", new Value.DecimalNumber( 12.34 ) );
+        content.getRootDataSet().setData( "mySingleSelector", new Value.Text( "o1" ) );
+        content.getRootDataSet().setData( "myHtmlArea", new Value.HtmlPart( "<h1>Hello world</h1>" ) );
 
         // exercise
         DataSetValidator validator = new DataSetValidator( contentType );
@@ -115,13 +116,13 @@ public class DataSetValidatorTest
     {
         // setup
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setData( "name", "Thomas" );
-        rootDataSet.setData( "personalia.eyeColour", "Blue" );
-        rootDataSet.setData( "personalia.hairColour", "Blonde" );
-        rootDataSet.setData( "crimes[0].description", "Stole tomatoes from neighbour" );
-        rootDataSet.setData( "crimes[0].year", "1989" );
-        rootDataSet.setData( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
-        rootDataSet.setData( "crimes[1].year", "1990" );
+        rootDataSet.setData( "name", new Value.Text( "Thomas" ) );
+        rootDataSet.setData( "personalia.eyeColour", new Value.Text( "Blue" ) );
+        rootDataSet.setData( "personalia.hairColour", new Value.Text( "Blonde" ) );
+        rootDataSet.setData( "crimes[0].description", new Value.Text( "Stole tomatoes from neighbour" ) );
+        rootDataSet.setData( "crimes[0].year", new Value.Text( "1989" ) );
+        rootDataSet.setData( "crimes[1].description", new Value.Text( "Stole a chocolate from the Matbua shop" ) );
+        rootDataSet.setData( "crimes[1].year", new Value.Text( "1990" ) );
 
         assertEquals( DataTypes.TEXT, rootDataSet.getData( "personalia.eyeColour" ).getType() );
         Assert.assertEquals( "Blue", rootDataSet.getData( "personalia.eyeColour" ).getObject() );

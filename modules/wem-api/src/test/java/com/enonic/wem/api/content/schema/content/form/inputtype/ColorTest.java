@@ -7,6 +7,7 @@ import org.junit.Test;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
@@ -29,9 +30,9 @@ public class ColorTest
     {
         Content content = newContent().build();
         RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "myColor.red", 40l );
-        rootDataSet.setData( "myColor.green", 40l );
-        rootDataSet.setData( "myColor.blue", 40l );
+        rootDataSet.setData( "myColor.red", new Value.WholeNumber( 40 ) );
+        rootDataSet.setData( "myColor.green", new Value.WholeNumber( 40 ) );
+        rootDataSet.setData( "myColor.blue", new Value.WholeNumber( 40 ) );
 
         Data myColor = rootDataSet.getData( "myColor" );
 
@@ -44,8 +45,8 @@ public class ColorTest
     {
         Content content = newContent().build();
         RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "myColor.green", 40l );
-        rootDataSet.setData( "myColor.blue", 40l );
+        rootDataSet.setData( "myColor.green", new Value.WholeNumber( 40l ) );
+        rootDataSet.setData( "myColor.blue", new Value.WholeNumber( 40l ) );
 
         Data myColor = rootDataSet.getData( "myColor" );
 
@@ -70,9 +71,9 @@ public class ColorTest
     {
         Content content = newContent().build();
         RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "myColor.red", 256l );
-        rootDataSet.setData( "myColor.green", 40l );
-        rootDataSet.setData( "myColor.blue", 40l );
+        rootDataSet.setData( "myColor.red", new Value.WholeNumber( 256 ) );
+        rootDataSet.setData( "myColor.green", new Value.WholeNumber( 40 ) );
+        rootDataSet.setData( "myColor.blue", new Value.WholeNumber( 40 ) );
 
         Data myColor = rootDataSet.getData( "myColor" );
 

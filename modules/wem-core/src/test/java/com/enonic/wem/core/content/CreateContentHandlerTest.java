@@ -17,7 +17,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.module.ModuleName;
@@ -79,9 +79,9 @@ public class CreateContentHandlerTest
         command.owner( UserKey.from( "myStore:myUser" ) );
         command.contentType( new QualifiedContentTypeName( ModuleName.SYSTEM, "MyContentType" ) );
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setData( "myText", "abc" );
-        rootDataSet.setData( "myReference", DataTypes.CONTENT_REFERENCE, ContentId.from( "123" ) );
-        rootDataSet.setData( "mySet.myRelatedContent", DataTypes.CONTENT_REFERENCE, ContentId.from( "124" ) );
+        rootDataSet.setData( "myText", new Value.Text( "abc" ) );
+        rootDataSet.setData( "myReference", new Value.ContentReference( ContentId.from( "123" ) ) );
+        rootDataSet.setData( "mySet.myRelatedContent", new Value.ContentReference( ContentId.from( "124" ) ) );
         command.rootDataSet( rootDataSet );
 
         // exercise

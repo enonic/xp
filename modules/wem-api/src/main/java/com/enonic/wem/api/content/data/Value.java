@@ -9,13 +9,14 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.type.BaseDataType;
+import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
 import com.enonic.wem.api.content.data.type.JavaType;
 
 /**
  * A generic holder for the value of a Data.
  */
-public final class Value
+public class Value
 {
     private final BaseDataType type;
 
@@ -188,6 +189,97 @@ public final class Value
         public BaseDataType getType()
         {
             return type;
+        }
+    }
+
+    public static final class Date
+        extends Value
+    {
+        public Date( DateMidnight value )
+        {
+            super( newValue().type( DataTypes.DATE_MIDNIGHT ).value( value ) );
+        }
+    }
+
+    public static final class WholeNumber
+        extends Value
+    {
+        public WholeNumber( Long value )
+        {
+            super( newValue().type( DataTypes.WHOLE_NUMBER ).value( value ) );
+        }
+
+        public WholeNumber( Integer value )
+        {
+            super( newValue().type( DataTypes.WHOLE_NUMBER ).value( Long.valueOf( value ) ) );
+        }
+
+        public WholeNumber( Short value )
+        {
+            super( newValue().type( DataTypes.WHOLE_NUMBER ).value( Long.valueOf( value ) ) );
+        }
+    }
+
+    public static final class DecimalNumber
+        extends Value
+    {
+        public DecimalNumber( Double value )
+        {
+            super( newValue().type( DataTypes.DECIMAL_NUMBER ).value( value ) );
+        }
+    }
+
+    public static final class Text
+        extends Value
+    {
+        public Text( String value )
+        {
+            super( newValue().type( DataTypes.TEXT ).value( value ) );
+        }
+    }
+
+    public static final class Xml
+        extends Value
+    {
+        public Xml( String value )
+        {
+            super( newValue().type( DataTypes.XML ).value( value ) );
+        }
+    }
+
+    public static final class HtmlPart
+        extends Value
+    {
+        public HtmlPart( String value )
+        {
+            super( newValue().type( DataTypes.HTML_PART ).value( value ) );
+        }
+    }
+
+    public static final class GeographicCoordinate
+        extends Value
+    {
+        public GeographicCoordinate( String value )
+        {
+            super( newValue().type( DataTypes.GEOGRAPHIC_COORDINATE ).value( value ) );
+        }
+    }
+
+    public static final class ContentReference
+        extends Value
+    {
+        public ContentReference( ContentId value )
+        {
+            super( newValue().type( DataTypes.CONTENT_REFERENCE ).value( value ) );
+        }
+    }
+
+    public static final class BinaryReference
+        extends Value
+    {
+        public BinaryReference( BlobKey value )
+        {
+            super( newValue().type( DataTypes.BINARY_REFERENCE ).value( value ) );
         }
     }
 }

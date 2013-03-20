@@ -16,6 +16,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
@@ -50,8 +51,8 @@ public class GetContentRpcHandlerTest
         throws Exception
     {
         final RootDataSet rootDataSet = DataSet.newRootDataSet();
-        rootDataSet.setData( EntryPath.from( "field1" ), "value1" );
-        rootDataSet.setData( EntryPath.from( "field2" ), "value2" );
+        rootDataSet.setData( EntryPath.from( "field1" ), new Value.Text( "value1" ) );
+        rootDataSet.setData( EntryPath.from( "field2" ), new Value.Text( "value2" ) );
 
         final Content content1 = Content.newContent().
             path( ContentPath.from( "/MySite/MyContent" ) ).

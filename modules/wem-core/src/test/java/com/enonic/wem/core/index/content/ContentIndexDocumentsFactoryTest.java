@@ -11,6 +11,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.core.index.indexdocument.IndexDocument;
 import com.enonic.wem.core.index.indexdocument.IndexDocumentEntry;
 
@@ -44,12 +45,12 @@ public class ContentIndexDocumentsFactoryTest
     {
         Content content = createContentWithMetadata();
 
-        content.getRootDataSet().setData( "mydata.value1", 1.0 );
-        content.getRootDataSet().setData( "mydata.value2", DateMidnight.now() );
-        content.getRootDataSet().setData( "mydata.value2[1]", DateMidnight.now() );
-        content.getRootDataSet().setData( "mydata.value3.subvalue1", "value3.1" );
-        content.getRootDataSet().setData( "mydata.value3.subvalue2", "value3.2" );
-        content.getRootDataSet().setData( "mydata.value3.subvalue3", "value3.3" );
+        content.getRootDataSet().setData( "mydata.value1", new Value.DecimalNumber( 1.0 ) );
+        content.getRootDataSet().setData( "mydata.value2", new Value.Date( DateMidnight.now() ) );
+        content.getRootDataSet().setData( "mydata.value2[1]", new Value.Date( DateMidnight.now() ) );
+        content.getRootDataSet().setData( "mydata.value3.subvalue1", new Value.Text( "value3.1" ) );
+        content.getRootDataSet().setData( "mydata.value3.subvalue2", new Value.Text( "value3.2" ) );
+        content.getRootDataSet().setData( "mydata.value3.subvalue3", new Value.Text( "value3.3" ) );
 
         final Collection<IndexDocument> indexDocuments = ContentIndexDocumentsFactory.create( content );
 

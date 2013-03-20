@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.ContentTypes;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
@@ -91,7 +92,7 @@ public class ValidateRootDataSetHandlerTest
             ContentTypes.from( contentType ) );
 
         final Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "mySet.myInput", "thing" );
+        content.getRootDataSet().setData( "mySet.myInput", new Value.Text( "thing" ) );
 
         // exercise
         final ValidateRootDataSet command =

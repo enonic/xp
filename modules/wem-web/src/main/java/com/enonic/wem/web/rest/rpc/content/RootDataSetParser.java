@@ -50,7 +50,7 @@ final class RootDataSetParser
                 }
                 else
                 {
-                    rootDataSet.setData( path, fieldValue );
+                    rootDataSet.setData( path, new Value.Text( fieldValue ) );
                 }
             }
         }

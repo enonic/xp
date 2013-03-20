@@ -17,6 +17,7 @@ import com.enonic.wem.api.content.data.DataSetArray;
 import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.MockContentTypeFetcher;
@@ -57,7 +58,7 @@ public abstract class AbstractContentSerializerTest
     public void data()
     {
         Content content = newContent().build();
-        content.getRootDataSet().setData( "myInput", "A value" );
+        content.getRootDataSet().setData( "myInput", new Value.Text( "A value" ) );
 
         String serialized = toString( content );
 
@@ -77,8 +78,8 @@ public abstract class AbstractContentSerializerTest
     public void set()
     {
         Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
-        content.getRootDataSet().setData( "mySet.myInput", "1" );
-        content.getRootDataSet().setData( "mySet.myOtherInput", "2" );
+        content.getRootDataSet().setData( "mySet.myInput", new Value.Text( "1" ) );
+        content.getRootDataSet().setData( "mySet.myOtherInput", new Value.Text( "2" ) );
 
         String serialized = toString( content );
 
@@ -101,8 +102,8 @@ public abstract class AbstractContentSerializerTest
     public void array_of_values()
     {
         Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
-        content.getRootDataSet().setData( "myArray[0]", "1" );
-        content.getRootDataSet().setData( "myArray[1]", "2" );
+        content.getRootDataSet().setData( "myArray[0]", new Value.Text( "1" ) );
+        content.getRootDataSet().setData( "myArray[1]", new Value.Text( "2" ) );
 
         String serialized = toString( content );
 
@@ -125,8 +126,8 @@ public abstract class AbstractContentSerializerTest
     public void array_within_set()
     {
         Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
-        content.getRootDataSet().setData( "mySet.myArray[0]", "1" );
-        content.getRootDataSet().setData( "mySet.myArray[1]", "2" );
+        content.getRootDataSet().setData( "mySet.myArray[0]", new Value.Text( "1" ) );
+        content.getRootDataSet().setData( "mySet.myArray[1]", new Value.Text( "2" ) );
 
         String serialized = toString( content );
 
@@ -164,10 +165,10 @@ public abstract class AbstractContentSerializerTest
     public void array_of_set()
     {
         Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
-        content.getRootDataSet().setData( "mySet[0].myInput", "1" );
-        content.getRootDataSet().setData( "mySet[0].myOtherInput", "a" );
-        content.getRootDataSet().setData( "mySet[1].myInput", "2" );
-        content.getRootDataSet().setData( "mySet[1].myOtherInput", "b" );
+        content.getRootDataSet().setData( "mySet[0].myInput", new Value.Text( "1" ) );
+        content.getRootDataSet().setData( "mySet[0].myOtherInput", new Value.Text( "a" ) );
+        content.getRootDataSet().setData( "mySet[1].myInput", new Value.Text( "2" ) );
+        content.getRootDataSet().setData( "mySet[1].myOtherInput", new Value.Text( "b" ) );
 
         assertEquals( "mySet[1].myInput", content.getRootDataSet().getData( "mySet[1].myInput" ).getPath().toString() );
         assertEquals( "mySet[0].myInput", content.getRootDataSet().getData( "mySet[0].myInput" ).getPath().toString() );
@@ -197,11 +198,11 @@ public abstract class AbstractContentSerializerTest
     public void insertion_order_of_entries_within_a_DataSet_is_preserved()
     {
         Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
-        content.getRootDataSet().setData( "mySet.myArray[0]", "1" );
-        content.getRootDataSet().setData( "mySet.myInput", "a" );
-        content.getRootDataSet().setData( "mySet.myArray[1]", "2" );
-        content.getRootDataSet().setData( "mySet.myOtherInput", "b" );
-        content.getRootDataSet().setData( "mySet.myArray[2]", "3" );
+        content.getRootDataSet().setData( "mySet.myArray[0]", new Value.Text( "1" ) );
+        content.getRootDataSet().setData( "mySet.myInput", new Value.Text( "a" ) );
+        content.getRootDataSet().setData( "mySet.myArray[1]", new Value.Text( "2" ) );
+        content.getRootDataSet().setData( "mySet.myOtherInput", new Value.Text( "b" ) );
+        content.getRootDataSet().setData( "mySet.myArray[2]", new Value.Text( "3" ) );
 
         String serialized = toString( content );
 
@@ -222,10 +223,10 @@ public abstract class AbstractContentSerializerTest
     public void array_within_array()
     {
         Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
-        content.getRootDataSet().setData( "mySet[0].myArray[0]", "1" );
-        content.getRootDataSet().setData( "mySet[0].myArray[1]", "2" );
-        content.getRootDataSet().setData( "mySet[1].myArray[0]", "3" );
-        content.getRootDataSet().setData( "mySet[1].myArray[1]", "4" );
+        content.getRootDataSet().setData( "mySet[0].myArray[0]", new Value.Text( "1" ) );
+        content.getRootDataSet().setData( "mySet[0].myArray[1]", new Value.Text( "2" ) );
+        content.getRootDataSet().setData( "mySet[1].myArray[0]", new Value.Text( "3" ) );
+        content.getRootDataSet().setData( "mySet[1].myArray[1]", new Value.Text( "4" ) );
 
         String serialized = toString( content );
 
@@ -297,8 +298,8 @@ public abstract class AbstractContentSerializerTest
         contentTypeFetcher.add( contentType );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "myText", "A value" );
-        content.getRootDataSet().setData( "formItemSet.myText", "A another value" );
+        content.getRootDataSet().setData( "myText", new Value.Text( "A value" ) );
+        content.getRootDataSet().setData( "formItemSet.myText", new Value.Text( "A another value" ) );
 
         String serialized = toString( content );
 
@@ -327,8 +328,8 @@ public abstract class AbstractContentSerializerTest
         contentTypeFetcher.add( contentType );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "formItemSet[0].myText", "Value 1" );
-        content.getRootDataSet().setData( "formItemSet[1].myText", "Value 2" );
+        content.getRootDataSet().setData( "formItemSet[0].myText", new Value.Text( "Value 1" ) );
+        content.getRootDataSet().setData( "formItemSet[1].myText", new Value.Text( "Value 2" ) );
 
         String serialized = toString( content );
 
@@ -357,7 +358,7 @@ public abstract class AbstractContentSerializerTest
             build();
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "myText", "A value" );
+        content.getRootDataSet().setData( "myText", new Value.Text( "A value" ) );
 
         String serialized = toString( content );
 
@@ -374,9 +375,9 @@ public abstract class AbstractContentSerializerTest
     public void unstructured_with_arrays()
     {
         Content content = newContent().build();
-        content.getRootDataSet().setData( "names[0]", "Thomas" );
-        content.getRootDataSet().setData( "names[1]", "Sten Roger" );
-        content.getRootDataSet().setData( "names[2]", "Alex" );
+        content.getRootDataSet().setData( "names[0]", new Value.Text( "Thomas" ) );
+        content.getRootDataSet().setData( "names[1]", new Value.Text( "Sten Roger" ) );
+        content.getRootDataSet().setData( "names[2]", new Value.Text( "Alex" ) );
 
         String serialized = toString( content );
 
@@ -404,10 +405,10 @@ public abstract class AbstractContentSerializerTest
             displayName( "My content" ).
             path( ContentPath.from( "site1/mycontent" ) ).
             build();
-        content.getRootDataSet().setData( "mySet[0].myArray[0]", "1" );
-        content.getRootDataSet().setData( "mySet[0].myArray[1]", "2" );
-        content.getRootDataSet().setData( "mySet[1].myArray[0]", "3" );
-        content.getRootDataSet().setData( "mySet[1].myArray[1]", "4" );
+        content.getRootDataSet().setData( "mySet[0].myArray[0]", new Value.Text( "1" ) );
+        content.getRootDataSet().setData( "mySet[0].myArray[1]", new Value.Text( "2" ) );
+        content.getRootDataSet().setData( "mySet[1].myArray[0]", new Value.Text( "3" ) );
+        content.getRootDataSet().setData( "mySet[1].myArray[1]", new Value.Text( "4" ) );
 
         final String serialized = toString( content );
 

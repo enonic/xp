@@ -10,17 +10,14 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateMidnight;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.data.type.BaseDataType;
-import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 
 import static com.enonic.wem.api.content.data.Data.newData;
-import static com.enonic.wem.api.content.data.Value.newValue;
 
 public class DataSet
     extends Entry
@@ -70,29 +67,9 @@ public class DataSet
         entryById.put( entry.getEntryId(), entry );
     }
 
-    public final void setData( final String path, final String... values )
+    public final void setData( final String path, final Value... values )
     {
-        setData( EntryPath.from( path ), DataTypes.TEXT, values );
-    }
-
-    public final void setData( final EntryPath path, final String... values )
-    {
-        setData( path, DataTypes.TEXT, values );
-    }
-
-    public final void setData( final String path, final Long... values )
-    {
-        setData( EntryPath.from( path ), DataTypes.WHOLE_NUMBER, values );
-    }
-
-    public final void setData( final String path, final Double... values )
-    {
-        setData( EntryPath.from( path ), DataTypes.DECIMAL_NUMBER, values );
-    }
-
-    public final void setData( final String path, final DateMidnight... values )
-    {
-        setData( EntryPath.from( path ), DataTypes.DATE_MIDNIGHT, values );
+        setData( EntryPath.from( path ), values );
     }
 
     public final void setData( final EntryPath path, final Value... values )
@@ -123,27 +100,6 @@ public class DataSet
                 }
             }
         }
-    }
-
-    public final void setData( final String path, final BaseDataType dataType, final Object... valueObjects )
-        throws InvalidDataException
-    {
-        setData( EntryPath.from( path ), dataType, valueObjects );
-    }
-
-    public final void setData( final EntryPath path, final BaseDataType dataType, final Object... valueObjects )
-        throws InvalidDataException
-    {
-        Preconditions.checkNotNull( path, "path cannot be null" );
-        Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
-
-        Value[] values = new Value[valueObjects.length];
-        for ( int i = 0; i < valueObjects.length; i++ )
-        {
-            values[i] = newValue().type( dataType ).value( valueObjects[i] ).build();
-        }
-
-        setData( path, values );
     }
 
     private void doSetData( final EntryId entryId, final Value value )
