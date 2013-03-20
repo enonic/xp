@@ -1,6 +1,6 @@
 package com.enonic.wem.migrate;
 
-import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ public final class DataMigrator
 {
     private final static Logger LOG = LoggerFactory.getLogger( DataMigrator.class );
 
-    private List<MigrateTask> tasks;
+    private Set<MigrateTask> tasks;
 
     private final DriverManagerDataSource dataSource;
 
@@ -45,7 +45,7 @@ public final class DataMigrator
     }
 
     @Inject
-    public void setTasks( final List<MigrateTask> tasks )
+    public void setTasks( final Set<MigrateTask> tasks )
     {
         this.tasks = tasks;
     }

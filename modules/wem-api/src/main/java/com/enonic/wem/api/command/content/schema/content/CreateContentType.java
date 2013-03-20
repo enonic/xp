@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.form.Form;
 import com.enonic.wem.api.module.ModuleName;
@@ -31,23 +30,15 @@ public final class CreateContentType
 
     private String contentDisplayNameScript;
 
-    public CreateContentType contentType( final ContentType contentType )
-    {
-        this.name = contentType.getName();
-        this.displayName = contentType.getDisplayName();
-        this.superType = contentType.getSuperType();
-        this.isAbstract = contentType.isAbstract();
-        this.isFinal = contentType.isFinal();
-        this.moduleName = contentType.getModuleName();
-        this.form = contentType.form();
-        this.icon = contentType.getIcon();
-        this.contentDisplayNameScript = contentType.getContentDisplayNameScript();
-        return this;
-    }
-
     public String getName()
     {
         return name;
+    }
+
+    public CreateContentType name( final String name )
+    {
+        this.name = name;
+        return this;
     }
 
     public String getDisplayName()
@@ -55,9 +46,21 @@ public final class CreateContentType
         return displayName;
     }
 
+    public CreateContentType displayName( final String displayName )
+    {
+        this.displayName = displayName;
+        return this;
+    }
+
     public QualifiedContentTypeName getSuperType()
     {
         return superType;
+    }
+
+    public CreateContentType superType( final QualifiedContentTypeName superType )
+    {
+        this.superType = superType;
+        return this;
     }
 
     public boolean isAbstract()
@@ -65,9 +68,21 @@ public final class CreateContentType
         return isAbstract;
     }
 
+    public CreateContentType setAbstract( final boolean isAbstract )
+    {
+        this.isAbstract = isAbstract;
+        return this;
+    }
+
     public boolean isFinal()
     {
         return isFinal;
+    }
+
+    public CreateContentType setFinal( final boolean isFinal )
+    {
+        this.isFinal = isFinal;
+        return this;
     }
 
     public ModuleName getModuleName()
@@ -75,9 +90,21 @@ public final class CreateContentType
         return moduleName;
     }
 
+    public CreateContentType moduleName( final ModuleName moduleName )
+    {
+        this.moduleName = moduleName;
+        return this;
+    }
+
     public Form getForm()
     {
         return form;
+    }
+
+    public CreateContentType form( final Form form )
+    {
+        this.form = form;
+        return this;
     }
 
     public Icon getIcon()
@@ -85,9 +112,21 @@ public final class CreateContentType
         return icon;
     }
 
+    public CreateContentType icon( final Icon icon )
+    {
+        this.icon = icon;
+        return this;
+    }
+
     public String getContentDisplayNameScript()
     {
         return contentDisplayNameScript;
+    }
+
+    public CreateContentType contentDisplayNameScript( final String contentDisplayNameScript )
+    {
+        this.contentDisplayNameScript = contentDisplayNameScript;
+        return this;
     }
 
     @Override

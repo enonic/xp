@@ -59,7 +59,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
                 fields: ['key', 'title'],
                 proxy: {
                     type: 'ajax',
-                    url: 'related-content.json',
+                    url: '../dev/content/related-content.json',
                     reader: {
                         type: 'json',
                         root: 'content'
@@ -166,6 +166,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
      * @private
      */
     updateHiddenValue: function () {
+        var me = this;
         var keys = [];
         if (this.items) {
             Ext.Array.each(me.selectedContentStore.data.items, function (item) {

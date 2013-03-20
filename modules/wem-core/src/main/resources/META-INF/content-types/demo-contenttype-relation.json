@@ -49,6 +49,28 @@
         },
         {
             "Input": {
+                "name": "myLikeRelation",
+                "label": "A single LIKE relation to another content",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Relationship",
+                    "builtIn": true,
+                    "config": {
+                        "relationshipType": "System:like"
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
                 "name": "myRelations",
                 "label": "Multiple DEFAULT relations to other content",
                 "immutable": false,

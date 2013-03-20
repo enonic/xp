@@ -1,6 +1,7 @@
 package com.enonic.wem.core.command;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import org.springframework.stereotype.Component;
@@ -53,7 +54,7 @@ public final class CommandInvokerImpl
     }
 
     @Inject
-    public void setHandlers( final CommandHandler... handlers )
+    public void setHandlers( final Set<CommandHandler> handlers )
     {
         for ( final CommandHandler handler : handlers )
         {
