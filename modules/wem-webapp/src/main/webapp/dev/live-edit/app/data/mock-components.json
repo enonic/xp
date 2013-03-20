@@ -39,6 +39,12 @@
                     "name": "Vision and Values (doc)",
                     "subtitle": "Subtitle",
                     "icon": "../app/images/srs.jpeg"
+                },
+                {
+                    "key": "10011",
+                    "name": "Big banner",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/srs.jpeg"
                 }
             ]
         },
@@ -60,6 +66,12 @@
                 {
                     "key": "10006",
                     "name": "Twitranett",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/srs.jpeg"
+                },
+                {
+                    "key": "10012",
+                    "name": "Carousel",
                     "subtitle": "Subtitle",
                     "icon": "../app/images/srs.jpeg"
                 }
