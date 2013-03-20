@@ -45,6 +45,12 @@
                     "name": "Big banner",
                     "subtitle": "Subtitle",
                     "icon": "../app/images/srs.jpeg"
+                },
+                {
+                    "key": "10013",
+                    "name": "Sub menu",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/srs.jpeg"
                 }
             ]
         },

@@ -200,18 +200,7 @@
   <hr>
 
   <div id="south" data-live-edit-type="region" data-live-edit-key="90" data-live-edit-name="South">
-    <div data-live-edit-type="part" data-live-edit-key="10013" data-live-edit-name="Sub Menu">
-      <ul class="nav nav-list">
-        <li class="nav-header">Home</li>
-        <li><a href="#">Enonic CMS</a></li>
-        <li><a href="#">Pricing</a></li>
-        <li><a href="#">Training</a></li>
-        <li><a href="#">Service and support</a></li>
-        <li><a href="#">Customers</a></li>
-        <li><a href="#">Company</a></li>
-        <li><a href="#">Partners</a></li>
-      </ul>
-    </div>
+
 
   </div>
 
