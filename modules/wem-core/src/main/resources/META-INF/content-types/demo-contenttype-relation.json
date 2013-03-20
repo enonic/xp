@@ -49,7 +49,7 @@
         },
         {
             "Input": {
-                "name": "myRelation",
+                "name": "myLikeRelation",
                 "label": "A single LIKE relation to another content",
                 "immutable": false,
                 "occurrences": {
