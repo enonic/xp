@@ -15,6 +15,8 @@ import com.enonic.wem.api.query.DateHistogramFacetResultEntry;
 import com.enonic.wem.api.query.DateHistogramFacetResultSet;
 import com.enonic.wem.api.query.FacetResultSet;
 import com.enonic.wem.api.query.FacetsResultSet;
+import com.enonic.wem.api.query.RangeFacetResultEntry;
+import com.enonic.wem.api.query.RangeFacetResultSet;
 import com.enonic.wem.api.query.TermsFacetResultSet;
 import com.enonic.wem.web.json.JsonResult;
 
@@ -54,6 +56,10 @@ public class FindContentJsonResult
                 {
                     serializeFacet( facets.addObject(), (DateHistogramFacetResultSet) facetResultSet );
                 }
+                else if ( facetResultSet instanceof RangeFacetResultSet )
+                {
+                    serializeFacet( facets.addObject(), (RangeFacetResultSet) facetResultSet );
+                }
             }
         }
     }
@@ -61,6 +67,7 @@ public class FindContentJsonResult
     private void serializeFacet( final ObjectNode json, final DateHistogramFacetResultSet dateHistogramFacetResultSet )
     {
         json.put( "name", dateHistogramFacetResultSet.getName() );
+        json.put( "_type", "dateHistogram" );
 
         final ArrayNode terms = json.putArray( "terms" );
 
@@ -75,9 +82,29 @@ public class FindContentJsonResult
         }
     }
 
+    private void serializeFacet( final ObjectNode json, final RangeFacetResultSet rangeFacetResultSet )
+    {
+        json.put( "name", rangeFacetResultSet.getName() );
+        json.put( "_type", "range" );
+
+        final ArrayNode terms = json.putArray( "ranges" );
+
+        final Set<RangeFacetResultEntry> resultEntries = rangeFacetResultSet.getResultEntries();
+
+        for ( RangeFacetResultEntry entry : resultEntries )
+        {
+            ObjectNode facetObject = terms.addObject();
+            facetObject.put( "from", entry.getFrom() );
+            facetObject.put( "to", entry.getTo() );
+            facetObject.put( "total_count", entry.getCount() );
+        }
+    }
+
+
     private void serializeFacet( final ObjectNode json, final TermsFacetResultSet termsFacetResultSet )
     {
         json.put( "name", termsFacetResultSet.getName() );
+        json.put( "_type", "terms" );
 
         final ArrayNode terms = json.putArray( "terms" );
 

@@ -18,6 +18,8 @@ public class ElasticsearchFormatter
 
     private final static SimpleDateFormat ELASTICSEARCH_FULL_DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss:SSS" );
 
+    public final static SimpleDateFormat ELASTICSEARCH_WITHOUT_ISO_DATE_FORMAT_WITHOUT_MS = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss" );
+
     private final static DateTimeFormatter ELASTICSEARCH_DATE_OPTIONAL_TIME_FORMAT = ISODateTimeFormat.dateOptionalTimeParser();
 
     public static String formatDateAsStringFull( final Date date )

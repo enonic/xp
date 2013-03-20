@@ -10,6 +10,7 @@ import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.facet.FacetBuilders;
+import org.elasticsearch.search.facet.terms.TermsFacet;
 import org.elasticsearch.search.facet.terms.TermsFacetBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
@@ -61,10 +62,13 @@ public final class AccountQueryTranslator
         if ( query.isIncludeFacets() )
         {
             final TermsFacetBuilder typeFacet =
-                FacetBuilders.termsFacet( "type" ).field( AccountIndexField.TYPE_FIELD.id() ).allTerms( true );
+                FacetBuilders.termsFacet( "type" ).field( AccountIndexField.TYPE_FIELD.id() ).allTerms( true ).order(
+                    TermsFacet.ComparatorType.TERM );
 
             final TermsFacetBuilder userStoreFacet =
-                FacetBuilders.termsFacet( "userstore" ).field( AccountIndexField.USERSTORE_FIELD.notAnalyzedId() ).allTerms( true );
+                FacetBuilders.termsFacet( "userstore" ).field( AccountIndexField.USERSTORE_FIELD.notAnalyzedId() ).allTerms( true ).order(
+                    TermsFacet.ComparatorType.TERM );
+            ;
 
             builder.facet( typeFacet ).facet( userStoreFacet );
         }

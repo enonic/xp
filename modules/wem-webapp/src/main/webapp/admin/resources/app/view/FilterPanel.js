@@ -26,11 +26,6 @@ Ext.define('Admin.view.FilterPanel', {
     facetTpl: undefined,
     facetData: undefined,
 
-    facetSortFn: function (a, b) {
-        // alpha compare checkbox names
-        return a['name'].localeCompare(b['name']);
-    },
-
     initComponent: function () {
         var me = this;
 
@@ -47,7 +42,7 @@ Ext.define('Admin.view.FilterPanel', {
                 '<tpl for="terms">',
                 '<tpl if="this.shouldShowTerm(values, parent)">',
                 '<div class="admin-facet {[values.selected ? \'checked\' : \'\']}">',
-                '<input type="checkbox" id="facet-{name}" value="{name}" class="admin-facet-cb" name="{parent.name}" {[values.selected ? \'checked="true"\' : \'\']} />' +
+                '<input type="checkbox" id="facet-{term}" value="{name}" class="admin-facet-cb" name="{parent.name}" {[values.selected ? \'checked="true"\' : \'\']} />' +
                 '<label for="facet-{key}" class="admin-facet-lbl"> {name} ({[this.getTermCount(values)]})</label>' +
                 '</div>',
                 '</tpl>',
@@ -80,10 +75,6 @@ Ext.define('Admin.view.FilterPanel', {
                 }
             )
         });
-
-        if (this.facetData) {
-            this.sortValues(this.facetData);
-        }
 
         this.facetContainer = Ext.create('Ext.Component', {
             xtype: 'component',
@@ -127,7 +118,6 @@ Ext.define('Admin.view.FilterPanel', {
         this.callParent(arguments);
         this.addEvents('search');
     },
-
 
     onKeyPressed: function (field, event, opts) {
         if (this.suspendEvents !== true) {
@@ -180,12 +170,10 @@ Ext.define('Admin.view.FilterPanel', {
     updateFacets: function (facets) {
         if (facets) {
             this.selectedValues = this.getValues();
-            this.sortValues(facets);
             this.down('#facetContainer').update(facets);
             this.setValues(this.selectedValues);
         }
     },
-
 
     getValues: function () {
         var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
@@ -247,17 +235,6 @@ Ext.define('Admin.view.FilterPanel', {
             }
         }
         return false;
-    },
-
-    sortValues: function (values) {
-        var me = this;
-        if (Ext.isFunction(me.facetSortFn)) {
-            Ext.Array.each(values, function (value) {
-                if (Ext.isArray(value.terms)) {
-                    value.terms.sort(me.facetSortFn);
-                }
-            });
-        }
     },
 
     isDirty: function () {

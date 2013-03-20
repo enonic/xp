@@ -6,7 +6,7 @@ public class ContentIndexQuery
 
     private boolean includeFacets = false;
 
-    private String interval;
+    private String facets;
 
     public void setFullTextSearchString( final String fullTextSearchString )
     {
@@ -28,13 +28,13 @@ public class ContentIndexQuery
         this.includeFacets = includeFacets;
     }
 
-    public void setInterval( final String interval )
+    public void setFacets( final String facets )
     {
-        this.interval = interval;
+        this.facets = facets;
     }
 
-    public String getInterval()
+    public String getFacets()
     {
-        return interval;
+        return facets;
     }
 }
