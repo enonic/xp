@@ -1,46 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" metadata-complete="true">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0"
+         metadata-complete="true">
 
   <listener>
     <listener-class>com.enonic.wem.web.boot.BootContextListener</listener-class>
   </listener>
-
-  <listener>
-    <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
-  </listener>
-
-  <servlet>
-    <servlet-name>rest</servlet-name>
-    <servlet-class>com.enonic.wem.web.rest.JaxRsServlet</servlet-class>
-    <load-on-startup>2</load-on-startup>
-  </servlet>
-
-  <servlet>
-    <servlet-name>resource</servlet-name>
-    <servlet-class>com.enonic.wem.web.ResourceServlet</servlet-class>
-  </servlet>
-
-  <filter>
-    <filter-name>guice</filter-name>
-    <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
-  </filter>
-
-  <filter-mapping>
-    <filter-name>guice</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <servlet-mapping>
-    <servlet-name>rest</servlet-name>
-    <url-pattern>/admin/rest/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>resource</servlet-name>
-    <url-pattern>/</url-pattern>
-  </servlet-mapping>
 
   <mime-mapping>
     <extension>json</extension>
