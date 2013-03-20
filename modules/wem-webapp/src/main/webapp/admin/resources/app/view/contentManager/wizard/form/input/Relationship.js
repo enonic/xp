@@ -2,6 +2,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     extend: 'Admin.view.contentManager.wizard.form.input.Base',
     alias: 'widget.Relationship',
     fieldLabel: 'Relationship',
+    requires: [
+        'Admin.store.contentManager.ContentStore'
+    ],
 
     initComponent: function () {
 
@@ -49,23 +52,14 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             forceSelection: true,
             minChars: 1,
             queryMode: 'remote',
+            queryParam: 'fulltext',
             autoSelect: false,
 
-            displayField: 'title',
-            valueField: 'key',
+            displayField: 'displayName',
+            valueField: 'id',
 
             // Hardcode the store for now.
-            store: Ext.create('Ext.data.Store', {
-                fields: ['key', 'title'],
-                proxy: {
-                    type: 'ajax',
-                    url: '../dev/content/related-content.json',
-                    reader: {
-                        type: 'json',
-                        root: 'content'
-                    }
-                }
-            }),
+            store: new Admin.store.contentManager.ContentStore(),
             listeners: {
                 select: function (combo, records) {
                     combo.setValue('');
