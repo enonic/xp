@@ -35,7 +35,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
 
     proto.registerGlobalListeners = function () {
         $(window).on('shader.onClick', $.proxy(this.leaveEditMode, this));
-        $(window).on('component.onDeSelect', $.proxy(this.leaveEditMode, this));
+        $(window).on('component.onDeselect', $.proxy(this.leaveEditMode, this));
     };
 
 

@@ -24,7 +24,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.MutationObserver');
         /*$(window).on('component.mouseOver', $.proxy(me.observe, me));
         $(window).on('component.mouseOut', $.proxy(me.disconnect, me));
         $(window).on('component.onSelect', $.proxy(me.observe, me));
-        $(window).on('component.onDeSelect', $.proxy(me.disconnect, me));*/
+        $(window).on('component.onDeselect', $.proxy(me.disconnect, me));*/
 
         $(window).on('component.onParagraphEdit', $.proxy(me.observe, me));
         $(window).on('shader.onClick', $.proxy(me.disconnect, me));

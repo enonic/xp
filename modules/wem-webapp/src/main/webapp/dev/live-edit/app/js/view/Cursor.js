@@ -33,6 +33,9 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         case 'part':
             cursor = 'move';
             break;
+        case 'layout':
+            cursor = 'move';
+            break;
         case 'paragraph':
             cursor = 'move';
             break;

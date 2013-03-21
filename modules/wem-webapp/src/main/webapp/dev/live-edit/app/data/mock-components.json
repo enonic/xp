@@ -5,14 +5,14 @@
             "name": "Parts",
             "components": [
                 {
-                    "key": "10010",
-                    "name": "Page Banner: Service",
-                    "subtitle": "950px banner",
+                    "key": "10007",
+                    "name": "Lorem Ipsum",
+                    "subtitle": "Filler text",
                     "icon": "../app/images/srs.jpeg"
                 },
                 {
-                    "key": "10007",
-                    "name": "Page Banner: Training",
+                    "key": "10010",
+                    "name": "Page Banner: Service",
                     "subtitle": "950px banner",
                     "icon": "../app/images/srs.jpeg"
                 },

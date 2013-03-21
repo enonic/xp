@@ -8,11 +8,12 @@ AdminLiveEdit.DragDropSort = (function () {
     var util = AdminLiveEdit.Util;
 
     var isDragging = false;
-    var cursorAt = AdminLiveEdit.Util.supportsTouch() ? {left: 15, top: 70} : {left: -15, top: -20};
+
+    var cursorAt = AdminLiveEdit.Util.supportsTouch() ? {left: 15, top: 70} : {left: -10, top: -15};
 
     var regionSelector = '[data-live-edit-type=region]';
-    var itemsToSort = '[data-live-edit-type=part], [data-live-edit-type=paragraph]';
-    // var itemsToSort = '[data-live-edit-type=part]';
+
+    var itemsToSortSelector = '[data-live-edit-type=layout], [data-live-edit-type=part], [data-live-edit-type=paragraph]';
 
 
     function enableDragDrop() {
@@ -59,12 +60,12 @@ AdminLiveEdit.DragDropSort = (function () {
                 return getHelperHtml('');
             },
             start: function (event, ui) {
-                $liveedit(window).trigger('component:drag:start', [event, ui]);
+                $liveedit(window).trigger('component.onDragStart', [event, ui]);
                 setHelperText($liveedit(event.target).data('live-edit-component-name'));
                 isDragging = true;
             },
             stop: function (event, ui) {
-                $liveedit(window).trigger('component:drag:stop', [event, ui]);
+                $liveedit(window).trigger('component.onDragStop', [event, ui]);
                 isDragging = false;
             }
         };
@@ -99,7 +100,7 @@ AdminLiveEdit.DragDropSort = (function () {
         ui.placeholder.text('Drop component here');
         refresh();
 
-        $liveedit(window).trigger('component:sort:start', [event, ui]);
+        $liveedit(window).trigger('component.onSortStart', [event, ui]);
     }
 
 
@@ -136,7 +137,7 @@ AdminLiveEdit.DragDropSort = (function () {
 
         var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
 
-        $liveedit(window).trigger('component:sort:stop', [event, ui, wasSelectedOnDragStart]);
+        $liveedit(window).trigger('component.onSortStop', [event, ui, wasSelectedOnDragStart]);
 
         ui.item.removeData('live-edit-selected-on-drag-start');
     }
@@ -180,7 +181,7 @@ AdminLiveEdit.DragDropSort = (function () {
             }
         });
 
-        $liveedit(window).on('component.onDeSelect', function () {
+        $liveedit(window).on('component.onDeselect', function () {
             if (AdminLiveEdit.Util.supportsTouch() && !isDragging) {
                 disableDragDrop();
             }
@@ -200,7 +201,7 @@ AdminLiveEdit.DragDropSort = (function () {
         $liveedit(regionSelector).sortable({
             revert              : 1000,
             connectWith         : regionSelector,   // Sortable elements.
-            items               : itemsToSort,   // Elements to sort.
+            items               : itemsToSortSelector,   // Elements to sort.
             distance            : 1,
             delay               : 150,
             tolerance           : 'pointer',

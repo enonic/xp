@@ -57,7 +57,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
                     pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
 
                 if (componentIsSelected || pageHasComponentSelected) {
-                    $(window).trigger('component.onDeSelect');
+                    $(window).trigger('component.onDeselect');
                 } else {
 
                     // Used by eg. Menu

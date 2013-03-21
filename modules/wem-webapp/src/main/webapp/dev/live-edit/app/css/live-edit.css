@@ -13,6 +13,9 @@ svg.live-edit-highlight-border,
 .live-edit-tool-tip,
 .live-edit-component-menu,
 .live-edit-components-container,
+.live-edit-component,
+live-edit-component-text-name,
+live-edit-component-text-subtitle,
 .live-edit-loader-splash-content,
 .live-edit-shader,
 #live-edit-page-shader,
@@ -52,6 +55,7 @@ svg.live-edit-highlight-border rect,
 .live-edit-html-element-placeholder
 .live-edit-object {
     border: 0;
+    outline: 0;
     color: #000;
     font-size: 11px;
     font-family: Tahoma, Geneva, sans-serif;
@@ -59,6 +63,8 @@ svg.live-edit-highlight-border rect,
     margin: 0;
     padding: 0;
     vertical-align: baseline;
+    line-height: 1.2;
+
 }
 
 /** Misc */
@@ -457,23 +463,23 @@ svg.live-edit-highlight-border rect {
 }
 
 .live-edit-component-menu-page-icon {
-    background: transparent url("../images/file.png") center center no-repeat;
+    background: transparent url("../images/component-types/file.png") center center no-repeat;
 }
 
 .live-edit-component-menu-region-icon {
-    background: transparent url("../images/compass.png") center center no-repeat;
+    background: transparent url("../images/component-types/compass.png") center center no-repeat;
 }
 
 .live-edit-component-menu-part-icon {
-    background: transparent url("../images/puzzle.png") center center no-repeat;
+    background: transparent url("../images/component-types/puzzle.png") center center no-repeat;
 }
 
 .live-edit-component-menu-paragraph-icon {
-    background: transparent url("../images/text-color.png") center center no-repeat;
+    background: transparent url("../images/component-types/text-color.png") center center no-repeat;
 }
 
-.live-edit-component-menu-content-icon {
-    /*TBI*/
+.live-edit-component-menu-layout-icon {
+    background: transparent url("../images/component-types/insert-template.png") center center no-repeat;
 }
 
 .live-edit-component-menu-title-text {
@@ -526,7 +532,6 @@ svg.live-edit-highlight-border rect {
 
 /*** Component bar */
 
-/* TODO: rename classes to components bar */
 .live-edit-components-container {
     opacity: 1;
     position: fixed;
@@ -635,16 +640,12 @@ svg.live-edit-highlight-border rect {
     margin-right: 5px;
 }
 
-.live-edit-component .text {
-    float: left;
+.live-edit-component-text-name {
+    font-size: 14px;
+    margin-bottom: 2px;;
 }
 
-.live-edit-component span {
-    display: block;
-}
-
-.live-edit-component small {
-    display: block;
+.live-edit-component-text-subtitle {
 }
 
 /*** Button */
@@ -662,7 +663,7 @@ svg.live-edit-highlight-border rect {
 #live-edit-drag-helper {
     border: 1px solid #c6c6c6;
     padding: 6px 8px 6px 8px;
-    box-shadow: 2px 2px 2px 0 #888888;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     background-color: #fff;
     font-size: 11px;
     overflow: hidden;

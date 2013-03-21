@@ -6,6 +6,7 @@
 
         var page                = new AdminLiveEdit.model.component.Page();
         var regions             = new AdminLiveEdit.model.component.Region();
+        var layout              = new AdminLiveEdit.model.component.Layout();
         var parts               = new AdminLiveEdit.model.component.Part();
         var contents            = new AdminLiveEdit.model.component.Content();
         var paragraphs          = new AdminLiveEdit.model.component.Paragraph();

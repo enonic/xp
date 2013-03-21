@@ -13,6 +13,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         me.buttonConfig = {
             'page': ['settings', 'reset'],
             'region': ['parent', 'settings', 'reset', 'clear'],
+            'layout': ['parent', 'settings'],
             'part': ['parent', 'settings', 'details', 'remove'],
             'content': ['parent', 'view', 'edit'],
             'paragraph': ['parent', 'edit']
@@ -55,9 +56,9 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
     proto.registerGlobalListeners = function () {
         $(window).on('component.onSelect', $.proxy(this.show, this));
-        $(window).on('component.onDeSelect', $.proxy(this.hide, this));
-        $(window).on('component:sort:start', $.proxy(this.fadeOutAndHide, this));
-        $(window).on('component.remove', $.proxy(this.hide, this));
+        $(window).on('component.onDeselect', $.proxy(this.hide, this));
+        $(window).on('component.onSortStart', $.proxy(this.fadeOutAndHide, this));
+        $(window).on('component.onRemove', $.proxy(this.hide, this));
         $(window).on('component.onParagraphEdit', $.proxy(this.hide, this));
     };
 
@@ -76,7 +77,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         $(me.getEl()).draggable({ handle: '.live-edit-component-menu-title-bar' });
 
         me.getCloseButton().click(function () {
-            $(window).trigger('component.onDeSelect');
+            $(window).trigger('component.onDeselect');
         });
     };
 
@@ -88,8 +89,12 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         me.$selectedComponent = $component;
 
         me.updateTitleBar($component);
+
         me.updateMenuItemsForComponent($component);
-        me.moveToXY(pagePosition.x, pagePosition.y);
+
+        var pageXPosition = pagePosition.x + 5; // add 5 so the menu is not directly beneath the mouse pointer
+        me.moveToXY(pageXPosition, pagePosition.y);
+
         me.getEl().show();
 
         this.hidden = false;
@@ -106,7 +111,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         var me = this;
         me.getEl().fadeOut(500, function () {
             me.hide();
-            $(window).trigger('component.onDeSelect', {showComponentBar: false});
+            $(window).trigger('component.onDeselect', {showComponentBar: false});
         });
         me.$selectedComponent = null;
     };
@@ -163,8 +168,8 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
     proto.updateTitleBar = function ($component) {
         var componentInfo = util.getComponentInfo($component);
-        this.setTitle(componentInfo.name);
         this.setIcon(componentInfo.type);
+        this.setTitle(componentInfo.name);
     };
 
 
@@ -191,6 +196,10 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
         case 'region':
             iconCls = 'live-edit-component-menu-region-icon';
+            break;
+
+        case 'layout':
+            iconCls = 'live-edit-component-menu-layout-icon';
             break;
 
         case 'part':

@@ -23,6 +23,9 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
     // Shorthand ref to the prototype
     var proto = regions.prototype;
 
+    // uses
+    var util = AdminLiveEdit.Util;
+
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -30,7 +33,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
     proto.registerGlobalListeners = function () {
         $(window).on('component.onSortUpdate', $.proxy(this.renderEmptyPlaceholders, this));
         $(window).on('component:sort:over', $.proxy(this.renderEmptyPlaceholders, this));
-        $(window).on('component.remove', $.proxy(this.renderEmptyPlaceholders, this));
+        $(window).on('component.onRemove', $.proxy(this.renderEmptyPlaceholders, this));
     };
 
 
@@ -49,9 +52,11 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
 
 
     proto.appendEmptyPlaceholder = function ($region) {
+        var html = '<div>Drag components here</div>';
+        html += '<div style="font-size: 10px;">' + util.getComponentName($region) + '</div>';
         var $placeholder = $('<div/>', {
             'class': 'live-edit-empty-region-placeholder',
-            'html': '<div>Drag components here</div><div style="font-size: 10px;">#' + $region.data('live-edit-name') + '</div>'
+            'html': html
         });
         $region.append($placeholder);
     };

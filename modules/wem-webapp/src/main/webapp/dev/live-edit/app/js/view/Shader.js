@@ -24,9 +24,9 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
     proto.registerGlobalListeners = function () {
         $(window).on('component.onSelect', $.proxy(this.show, this));
-        $(window).on('component.onDeSelect', $.proxy(this.hide, this));
-        $(window).on('component.remove', $.proxy(this.hide, this));
-        $(window).on('component:sort:start', $.proxy(this.hide, this));
+        $(window).on('component.onDeselect', $.proxy(this.hide, this));
+        $(window).on('component.onRemove', $.proxy(this.hide, this));
+        $(window).on('component.onSortStart', $.proxy(this.hide, this));
         $(window).on('component.onParagraphEdit', $.proxy(this.show, this));
     };
 
@@ -43,7 +43,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         $('.live-edit-shader').on('click contextmenu', function (event) {
             event.stopPropagation();
             event.preventDefault();
-            $(window).trigger('component.onDeSelect');
+            $(window).trigger('component.onDeselect');
             $(window).trigger('shader.onClick');
         });
     };

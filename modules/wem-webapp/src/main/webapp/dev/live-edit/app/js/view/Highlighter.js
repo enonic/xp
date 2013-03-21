@@ -30,12 +30,12 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         $(window).on('component.mouseOver', $.proxy(this.componentMouseOver, this));
         $(window).on('component.mouseOut', $.proxy(this.hide, this));
         $(window).on('component.onSelect', $.proxy(this.selectComponent, this));
-        $(window).on('component.onDeSelect', $.proxy(this.deselect, this));
-        $(window).on('component:sort:start', $.proxy(this.hide, this));
-        $(window).on('component.remove', $.proxy(this.hide, this));
+        $(window).on('component.onDeselect', $.proxy(this.deselect, this));
+        $(window).on('component.onSortStart', $.proxy(this.hide, this));
+        $(window).on('component.onRemove', $.proxy(this.hide, this));
         $(window).on('component.onParagraphEdit', $.proxy(this.hide, this));
 
-        $(window).on('component:sort:stop', function (event, uiEvent, ui, wasSelectedOnDragStart) {
+        $(window).on('component.onSortStop', function (event, uiEvent, ui, wasSelectedOnDragStart) {
             if (wasSelectedOnDragStart) {
                 $(window).trigger('component.onSelect', [ui.item]);
             }
@@ -150,8 +150,20 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
             fillColor = 'rgba(255,255,255,0)';
             break;
 
+        case 'layout':
+            strokeColor = 'rgba(255,165,0,1)';
+            strokeDashArray = '5 5';
+            fillColor = 'rgba(255,165,0,0)';
+            break;
+
         case 'part':
             strokeColor = 'rgba(68,68,68,1)';
+            strokeDashArray = '5 5';
+            fillColor = 'rgba(255,255,255,0)';
+            break;
+
+        case 'paragraph':
+            strokeColor = 'rgba(85,85,255,1)';
             strokeDashArray = '5 5';
             fillColor = 'rgba(255,255,255,0)';
             break;
@@ -160,12 +172,6 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
             strokeColor = '';
             strokeDashArray = '';
             fillColor = 'rgba(0,108,255,.25)';
-            break;
-
-        case 'paragraph':
-            strokeColor = 'rgba(85,85,255,1)';
-            strokeDashArray = '5 5';
-            fillColor = 'rgba(255,255,255,0)';
             break;
 
         default:
