@@ -4,19 +4,20 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     'use strict';
 
     // Class definition (constructor function)
-    var settingsButton = AdminLiveEdit.view.menu.SettingsButton = function (menu) {
+    var openContentButton = AdminLiveEdit.view.menu.OpenContentButton = function (menu) {
         this.menu = menu;
         this.init();
     };
 
     // Inherits ui.Button
-    settingsButton.prototype = new AdminLiveEdit.view.menu.BaseButton();
+    openContentButton.prototype = new AdminLiveEdit.view.menu.BaseButton();
 
     // Fix constructor as it now is Button
-    settingsButton.constructor = settingsButton;
+    openContentButton.constructor = openContentButton;
 
     // Shorthand ref to the prototype
-    var proto = settingsButton.prototype;
+    var proto = openContentButton.prototype;
+
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -24,12 +25,12 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         var me = this;
 
         var $button = me.createButton({
-            text: 'Settings',
-            id: 'live-edit-button-settings',
+            text: 'Open in new tab',
+            id: 'live-edit-button-opencontent',
             cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
-                window.parent.Admin.MessageBus.showLiveEditTestSettingsWindow({});
+                window.parent.Admin.MessageBus.liveEditOpenContent({});
             }
         });
 

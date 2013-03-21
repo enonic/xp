@@ -15,7 +15,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
             'region': ['parent', 'settings', 'reset', 'clear'],
             'layout': ['parent', 'settings'],
             'part': ['parent', 'settings', 'details', 'remove'],
-            'content': ['parent', 'view', 'edit'],
+            'content': ['parent', 'opencontent', 'view', 'edit'],
             'paragraph': ['parent', 'edit']
         };
 
@@ -133,6 +133,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         var insertButton = new AdminLiveEdit.view.menu.InsertButton(me);
         var resetButton = new AdminLiveEdit.view.menu.ResetButton(me);
         var clearButton = new AdminLiveEdit.view.menu.ClearButton(me);
+        var openContentButton = new AdminLiveEdit.view.menu.OpenContentButton(me);
         var viewButton = new AdminLiveEdit.view.menu.ViewButton(me);
         var editButton = new AdminLiveEdit.view.menu.EditButton(me);
         var removeButton = new AdminLiveEdit.view.menu.RemoveButton(me);

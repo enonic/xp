@@ -21,7 +21,12 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
         me.application.on({});
 
-        Admin.MessageBus.on('liveEditWindow.show', function () {
+        Admin.MessageBus.on('liveEdit.openContent', function () {
+            alert('CMS-1182\n\nTODO: Implement code to open an existing content in a new TabPanel tab');
+        }, me);
+
+        // For prototype testing purposes
+        Admin.MessageBus.on('liveEdit.showTestSettingsWindow', function () {
             me.getLiveEditWindow().doShow();
         }, me);
     },

@@ -49,6 +49,7 @@
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/menu/Menu.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/menu/BaseButton.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/menu/ParentButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/menu/OpenContentButton.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/menu/InsertButton.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/menu/DetailsButton.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/menu/EditButton.js"></script>
