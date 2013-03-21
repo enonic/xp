@@ -237,9 +237,9 @@ public class Data
         return new Builder();
     }
 
-    public static Builder newData( final String name )
+    public static TypeBuilder newData( final String name )
     {
-        return new Builder().name( name );
+        return new NameBuilder().name( name );
     }
 
     public static Text.TextBuilder newText()
@@ -275,6 +275,59 @@ public class Data
     public static Xml.XmlBuilder newXml()
     {
         return new Xml.XmlBuilder();
+    }
+
+    public static class NameBuilder
+    {
+        private final Builder builder = new Builder();
+
+        private NameBuilder()
+        {
+
+        }
+
+        public TypeBuilder name( final String name )
+        {
+            builder.name( name );
+            return new TypeBuilder( builder );
+        }
+    }
+
+    public static class TypeBuilder
+    {
+        private final Builder builder;
+
+        private TypeBuilder( final Builder builder )
+        {
+            this.builder = builder;
+        }
+
+        public ValueBuilder type( BaseDataType value )
+        {
+            builder.type( value );
+            return new ValueBuilder( builder );
+        }
+    }
+
+    public static class ValueBuilder
+    {
+        private final Builder builder;
+
+        private ValueBuilder( final Builder builder )
+        {
+            this.builder = builder;
+        }
+
+        public ValueBuilder value( Object value )
+        {
+            builder.value( value );
+            return this;
+        }
+
+        public Data build()
+        {
+            return new Data( builder );
+        }
     }
 
     public static class Builder
