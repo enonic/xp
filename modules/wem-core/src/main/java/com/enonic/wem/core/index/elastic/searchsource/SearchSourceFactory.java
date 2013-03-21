@@ -30,10 +30,12 @@ public class SearchSourceFactory
 
         if ( contentIndexQuery.isIncludeFacets() )
         {
-
             final String facetsDefinition = contentIndexQuery.getFacets();
 
-            searchSourceBuilder.facets( facetsDefinition.getBytes() );
+            if ( !Strings.isNullOrEmpty( facetsDefinition ) )
+            {
+                searchSourceBuilder.facets( facetsDefinition.getBytes() );
+            }
         }
 
         return searchSourceBuilder;
