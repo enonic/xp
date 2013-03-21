@@ -62,11 +62,11 @@ public class Content_usageTest
         DataSet dataSet = new RootDataSet();
 
         // exercise
-        dataSet.add( newData().name( "myText" ).value( "abc" ).type( TEXT ).build() );
-        dataSet.add( newData().name( "myNum" ).value( 123L ).type( WHOLE_NUMBER ).build() );
-        dataSet.add( newData().name( "myDec" ).value( 123.123 ).type( DECIMAL_NUMBER ).build() );
-        dataSet.add( newData().name( "myDate" ).value( new DateMidnight( 2013, 1, 13 ) ).type( DATE_MIDNIGHT ).build() );
-        dataSet.add( newData().name( "myHtml" ).value( "<p>abc</p>" ).type( HTML_PART ).build() );
+        dataSet.add( newData( "myText" ).value( "abc" ).type( TEXT ).build() );
+        dataSet.add( newData( "myNum" ).value( 123L ).type( WHOLE_NUMBER ).build() );
+        dataSet.add( newData( "myDec" ).value( 123.123 ).type( DECIMAL_NUMBER ).build() );
+        dataSet.add( newData( "myDate" ).value( new DateMidnight( 2013, 1, 13 ) ).type( DATE_MIDNIGHT ).build() );
+        dataSet.add( newData( "myHtml" ).value( "<p>abc</p>" ).type( HTML_PART ).build() );
 
         // verify
         assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
@@ -150,11 +150,11 @@ public class Content_usageTest
     public void data_getValue()
     {
         DataSet dataSet = new RootDataSet();
-        dataSet.add( newData().name( "myText" ).value( "abc" ).type( TEXT ).build() );
-        dataSet.add( newData().name( "myNum" ).value( 123L ).type( WHOLE_NUMBER ).build() );
-        dataSet.add( newData().name( "myDec" ).value( 123.123 ).type( DECIMAL_NUMBER ).build() );
-        dataSet.add( newData().name( "myDate" ).value( new DateMidnight( 2013, 1, 13 ) ).type( DATE_MIDNIGHT ).build() );
-        dataSet.add( newData().name( "myHtml" ).value( "<p>abc</p>" ).type( HTML_PART ).build() );
+        dataSet.add( newData( "myText" ).value( "abc" ).type( TEXT ).build() );
+        dataSet.add( newData( "myNum" ).value( 123L ).type( WHOLE_NUMBER ).build() );
+        dataSet.add( newData( "myDec" ).value( 123.123 ).type( DECIMAL_NUMBER ).build() );
+        dataSet.add( newData( "myDate" ).value( new DateMidnight( 2013, 1, 13 ) ).type( DATE_MIDNIGHT ).build() );
+        dataSet.add( newData( "myHtml" ).value( "<p>abc</p>" ).type( HTML_PART ).build() );
 
         // exercise & verify
         assertEquals( "abc", dataSet.getData( "myText" ).getString() );
@@ -170,9 +170,9 @@ public class Content_usageTest
         DataSet dataSet = new RootDataSet();
 
         // exercise
-        dataSet.add( newData().name( "myText" ).value( "a" ).type( TEXT ).build() );
-        dataSet.add( newData().name( "myText" ).value( "b" ).type( TEXT ).build() );
-        dataSet.add( newData().name( "myText" ).value( "c" ).type( TEXT ).build() );
+        dataSet.add( newData( "myText" ).value( "a" ).type( TEXT ).build() );
+        dataSet.add( newData( "myText" ).value( "b" ).type( TEXT ).build() );
+        dataSet.add( newData( "myText" ).value( "c" ).type( TEXT ).build() );
 
         // verify
         assertEquals( "a", dataSet.getData( "myText" ).getString( 0 ) );
@@ -205,15 +205,14 @@ public class Content_usageTest
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.add(
-            Data.newData().name( "invoiceDate" ).value( invoice.invoiceDate.toDateMidnight() ).type( DataTypes.DATE_MIDNIGHT ).build() );
-        rootDataSet.add( Data.newData().name( "recipient" ).value( invoice.recipient ).type( DataTypes.TEXT ).build() );
+        rootDataSet.add( newData( "invoiceDate" ).value( invoice.invoiceDate.toDateMidnight() ).type( DataTypes.DATE_MIDNIGHT ).build() );
+        rootDataSet.add( newData( "recipient" ).value( invoice.recipient ).type( DataTypes.TEXT ).build() );
 
         for ( InvoiceLine line : invoice.lines )
         {
             DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
-            invoiceLine.add( newData().name( "text" ).value( line.text ).type( DataTypes.TEXT ).build() );
-            invoiceLine.add( newData().name( "money" ).value( line.money ).type( resolveType( line.money ) ).build() );
+            invoiceLine.add( newData( "text" ).value( line.text ).type( DataTypes.TEXT ).build() );
+            invoiceLine.add( newData( "money" ).value( line.money ).type( resolveType( line.money ) ).build() );
 
             rootDataSet.add( invoiceLine );
         }
@@ -247,7 +246,7 @@ public class Content_usageTest
             DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
             invoiceLine.add( newText().name( "text" ).value( line.text ).build() );
 
-            invoiceLine.add( newData().name( "money" ).value( line.money ).type( resolveType( line.money ) ).build() );
+            invoiceLine.add( newData( "money" ).value( line.money ).type( resolveType( line.money ) ).build() );
             invoiceLine.add( myNewData( "money", line.money ) );
 
             rootDataSet.add( invoiceLine );

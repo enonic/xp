@@ -237,6 +237,11 @@ public class Data
         return new Builder();
     }
 
+    public static Builder newData( final String name )
+    {
+        return new Builder().name( name );
+    }
+
     public static Text.TextBuilder newText()
     {
         return new Text.TextBuilder();

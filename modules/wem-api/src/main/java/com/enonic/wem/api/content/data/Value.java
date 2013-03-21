@@ -175,6 +175,7 @@ public class Value
 
         public Builder value( Object value )
         {
+            Preconditions.checkNotNull( value, "value cannot be null" );
             Preconditions.checkArgument( !( value instanceof Builder ), "The value of a Value cannot be: " + value.getClass() );
             Preconditions.checkArgument( !( value instanceof Value ), "The value of a Value cannot be: " + value.getClass() );
             this.value = value;
