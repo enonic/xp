@@ -25,5 +25,6 @@ public final class IndexModule
         bind( Node.class ).toProvider( ElasticNodeFactory.class ).in( Scopes.SINGLETON );
         bind( Client.class ).toProvider( ElasticClientFactory.class ).in( Scopes.SINGLETON );
         bind( ElasticsearchIndexService.class ).to( ElasticsearchIndexServiceImpl.class ).in( Scopes.SINGLETON );
+        bind( IndexService.class ).in( Scopes.SINGLETON );
     }
 }

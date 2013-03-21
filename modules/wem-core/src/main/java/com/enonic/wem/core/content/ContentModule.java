@@ -8,6 +8,8 @@ import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.dao.ContentDaoImpl;
 import com.enonic.wem.core.content.relationship.CreateRelationshipHandler;
 import com.enonic.wem.core.content.relationship.DeleteRelationshipHandler;
+import com.enonic.wem.core.content.relationship.RelationshipService;
+import com.enonic.wem.core.content.relationship.RelationshipServiceImpl;
 import com.enonic.wem.core.content.relationship.UpdateRelationshipHandler;
 import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
 import com.enonic.wem.core.content.relationship.dao.RelationshipDaoImpl;
@@ -52,6 +54,7 @@ public final class ContentModule
         bind( RelationshipTypeDao.class ).to( RelationshipTypeDaoImpl.class ).in( Scopes.SINGLETON );
         bind( MixinDao.class ).to( MixinDaoImpl.class ).in( Scopes.SINGLETON );
         bind( ContentTypeDao.class ).to( ContentTypeDaoImpl.class ).in( Scopes.SINGLETON );
+        bind( RelationshipService.class ).to( RelationshipServiceImpl.class ).in( Scopes.SINGLETON );
 
         commands.add( CreateContentHandler.class );
         commands.add( DeleteContentHandler.class );
