@@ -51,7 +51,14 @@
                     "name": "Sub menu",
                     "subtitle": "Subtitle",
                     "icon": "../app/images/srs.jpeg"
+                },
+                {
+                    "key": "10014",
+                    "name": "Operating message",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/srs.jpeg"
                 }
+
             ]
         },
         {
@@ -78,6 +85,12 @@
                 {
                     "key": "10012",
                     "name": "Carousel",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/srs.jpeg"
+                },
+                {
+                    "key": "10015",
+                    "name": "Contact Form",
                     "subtitle": "Subtitle",
                     "icon": "../app/images/srs.jpeg"
                 }
