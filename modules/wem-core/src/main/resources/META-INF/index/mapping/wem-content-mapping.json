@@ -13,7 +13,7 @@
             "displayname": {
                 "type": "multi_field",
                 "fields": {
-                    "title": {
+                    "displayname": {
                         "include_in_all": true,
                         "type": "string",
                         "index": "analyzed",
@@ -95,7 +95,8 @@
                     "mapping": {
                         "type": "string",
                         "store": "no",
-                        "index": "analyzed"
+                        "index": "analyzed",
+                        "include_in_all": false
                     }
                 }
             }
