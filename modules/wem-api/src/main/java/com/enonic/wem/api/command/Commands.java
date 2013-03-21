@@ -2,6 +2,7 @@ package com.enonic.wem.api.command;
 
 import com.enonic.wem.api.command.account.AccountCommands;
 import com.enonic.wem.api.command.content.ContentCommands;
+import com.enonic.wem.api.command.content.binary.BinaryCommands;
 import com.enonic.wem.api.command.content.relationship.RelationshipCommands;
 import com.enonic.wem.api.command.content.schema.SchemaCommands;
 import com.enonic.wem.api.command.content.schema.content.ContentTypeCommands;
@@ -29,6 +30,8 @@ public final class Commands
     private static final MixinCommands MIXIN_COMMANDS = new MixinCommands();
 
     private static final RelationshipTypeCommands RELATIONSHIP_TYPE_COMMANDS = new RelationshipTypeCommands();
+
+    private static final BinaryCommands BINARY_COMMANDS = new BinaryCommands();
 
     private Commands()
     {
@@ -77,5 +80,10 @@ public final class Commands
     public static SpaceCommands space()
     {
         return SPACE_COMMANDS;
+    }
+
+    public static BinaryCommands binary()
+    {
+        return BINARY_COMMANDS;
     }
 }
