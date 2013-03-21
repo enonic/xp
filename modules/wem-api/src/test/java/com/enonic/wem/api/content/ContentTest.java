@@ -8,7 +8,6 @@ import org.junit.Test;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.data.Text;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
@@ -482,9 +481,9 @@ public class ContentTest
     {
         RootDataSet rootDataSet = DataSet.newRootDataSet();
 
-        rootDataSet.add( new Text( "myData", "1" ) );
-        rootDataSet.add( new Text( "myArray", "1" ) );
-        rootDataSet.add( new Text( "myArray", "2" ) );
+        rootDataSet.add( new Data.Text( "myData", "1" ) );
+        rootDataSet.add( new Data.Text( "myArray", "1" ) );
+        rootDataSet.add( new Data.Text( "myArray", "2" ) );
         //rootDataSet.add( new Xml( "myXml", "<root></root>" ) );
 
         Content content = newContent().name( "myContent" ).rootDataSet( rootDataSet ).build();

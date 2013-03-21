@@ -4,7 +4,7 @@ package com.enonic.wem.core.content.relationship;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.ContentReference;
+import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
@@ -39,7 +39,7 @@ public class SyncRelationshipsTest
             newInput().name( "myRelated" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( RELATIONSHIP_CONFIG_LIKE ).build() );
 
         RootDataSet after = new RootDataSet();
-        after.add( new ContentReference( "myRelated", CONTENT_ID_201 ) );
+        after.add( new Data.ContentReference( "myRelated", CONTENT_ID_201 ) );
 
         // exercise
         SyncRelationships syncRelationships = new SyncRelationships( form, CONTENT_TO_UPDATE, null, after );
@@ -70,7 +70,7 @@ public class SyncRelationshipsTest
 
         RootDataSet before = new RootDataSet();
         RootDataSet after = new RootDataSet();
-        after.add( new ContentReference( "myRelated", CONTENT_ID_201 ) );
+        after.add( new Data.ContentReference( "myRelated", CONTENT_ID_201 ) );
 
         // exercise
         SyncRelationships syncRelationships = new SyncRelationships( form, CONTENT_TO_UPDATE, before, after );
@@ -104,7 +104,7 @@ public class SyncRelationshipsTest
         RootDataSet before = new RootDataSet();
         RootDataSet after = new RootDataSet();
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
-        mySet.add( new ContentReference( "myRelated", CONTENT_ID_201 ) );
+        mySet.add( new Data.ContentReference( "myRelated", CONTENT_ID_201 ) );
         after.add( mySet );
 
         // exercise
@@ -136,7 +136,7 @@ public class SyncRelationshipsTest
 
         RootDataSet before = new RootDataSet();
         RootDataSet after = new RootDataSet();
-        before.add( new ContentReference( "myRelated", CONTENT_ID_201 ) );
+        before.add( new Data.ContentReference( "myRelated", CONTENT_ID_201 ) );
 
         // exercise
         SyncRelationships syncRelationships = new SyncRelationships( form, CONTENT_TO_UPDATE, before, after );

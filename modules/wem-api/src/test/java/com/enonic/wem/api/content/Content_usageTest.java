@@ -11,14 +11,9 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.Date;
-import com.enonic.wem.api.content.data.DecimalNumber;
 import com.enonic.wem.api.content.data.Entry;
-import com.enonic.wem.api.content.data.HtmlPart;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.data.Text;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.data.WholeNumber;
 import com.enonic.wem.api.content.data.type.BaseDataType;
 import com.enonic.wem.api.content.data.type.DataTypes;
 
@@ -80,11 +75,11 @@ public class Content_usageTest
         assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
         assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
 
-        assertFalse( dataSet.getData( "myText" ) instanceof Text );
-        assertFalse( dataSet.getData( "myNum" ) instanceof WholeNumber );
-        assertFalse( dataSet.getData( "myDec" ) instanceof DecimalNumber );
-        assertFalse( dataSet.getData( "myDate" ) instanceof Date );
-        assertFalse( dataSet.getData( "myHtml" ) instanceof HtmlPart );
+        assertFalse( dataSet.getData( "myText" ) instanceof Data.Text );
+        assertFalse( dataSet.getData( "myNum" ) instanceof Data.WholeNumber );
+        assertFalse( dataSet.getData( "myDec" ) instanceof Data.DecimalNumber );
+        assertFalse( dataSet.getData( "myDate" ) instanceof Data.Date );
+        assertFalse( dataSet.getData( "myHtml" ) instanceof Data.HtmlPart );
     }
 
     @Test
@@ -106,11 +101,11 @@ public class Content_usageTest
         assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
         assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
 
-        assertTrue( dataSet.getData( "myText" ) instanceof Text );
-        assertTrue( dataSet.getData( "myNum" ) instanceof WholeNumber );
-        assertTrue( dataSet.getData( "myDec" ) instanceof DecimalNumber );
-        assertTrue( dataSet.getData( "myDate" ) instanceof Date );
-        assertTrue( dataSet.getData( "myHtml" ) instanceof HtmlPart );
+        assertTrue( dataSet.getData( "myText" ) instanceof Data.Text );
+        assertTrue( dataSet.getData( "myNum" ) instanceof Data.WholeNumber );
+        assertTrue( dataSet.getData( "myDec" ) instanceof Data.DecimalNumber );
+        assertTrue( dataSet.getData( "myDate" ) instanceof Data.Date );
+        assertTrue( dataSet.getData( "myHtml" ) instanceof Data.HtmlPart );
     }
 
     @Test
@@ -119,11 +114,11 @@ public class Content_usageTest
         DataSet dataSet = new RootDataSet();
 
         // exercise
-        dataSet.add( new Text( "myText", "abc" ) );
-        dataSet.add( new WholeNumber( "myNum", 123L ) );
-        dataSet.add( new DecimalNumber( "myDec", 123.123 ) );
-        dataSet.add( new Date( "myDate", new DateMidnight( 2013, 1, 13 ) ) );
-        dataSet.add( new HtmlPart( "myHtml", "<p>abc</p>" ) );
+        dataSet.add( new Data.Text( "myText", "abc" ) );
+        dataSet.add( new Data.WholeNumber( "myNum", 123L ) );
+        dataSet.add( new Data.DecimalNumber( "myDec", 123.123 ) );
+        dataSet.add( new Data.Date( "myDate", new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.add( new Data.HtmlPart( "myHtml", "<p>abc</p>" ) );
 
         // verify
         assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
@@ -132,11 +127,11 @@ public class Content_usageTest
         assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
         assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
 
-        assertTrue( dataSet.getData( "myText" ) instanceof Text );
-        assertTrue( dataSet.getData( "myNum" ) instanceof WholeNumber );
-        assertTrue( dataSet.getData( "myDec" ) instanceof DecimalNumber );
-        assertTrue( dataSet.getData( "myDate" ) instanceof Date );
-        assertTrue( dataSet.getData( "myHtml" ) instanceof HtmlPart );
+        assertTrue( dataSet.getData( "myText" ) instanceof Data.Text );
+        assertTrue( dataSet.getData( "myNum" ) instanceof Data.WholeNumber );
+        assertTrue( dataSet.getData( "myDec" ) instanceof Data.DecimalNumber );
+        assertTrue( dataSet.getData( "myDate" ) instanceof Data.Date );
+        assertTrue( dataSet.getData( "myHtml" ) instanceof Data.HtmlPart );
     }
 
     @Test
@@ -279,13 +274,13 @@ public class Content_usageTest
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.add( new Date( "invoiceDate", invoice.invoiceDate.toDateMidnight() ) );
-        rootDataSet.add( new Text( "recipient", invoice.recipient ) );
+        rootDataSet.add( new Data.Date( "invoiceDate", invoice.invoiceDate.toDateMidnight() ) );
+        rootDataSet.add( new Data.Text( "recipient", invoice.recipient ) );
 
         for ( InvoiceLine line : invoice.lines )
         {
             DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
-            invoiceLine.add( new Text( "text", line.text ) );
+            invoiceLine.add( new Data.Text( "text", line.text ) );
             invoiceLine.add( myNewData( "money", line.money ) );
             rootDataSet.add( invoiceLine );
         }
