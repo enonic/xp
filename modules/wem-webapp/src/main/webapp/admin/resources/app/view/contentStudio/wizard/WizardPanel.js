@@ -1,14 +1,12 @@
 Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
-    extend: 'Ext.panel.Panel',
+    extend: 'Admin.view.NewWizardPanel',
     alias: 'widget.contentStudioWizardPanel',
     requires: [
-        'Admin.view.WizardPanel',
         'Admin.view.contentStudio.wizard.ConfigPanel',
         'Admin.view.SummaryTreePanel',
         'Admin.plugin.fileupload.PhotoUploadButton',
         'Admin.view.contentStudio.wizard.Toolbar'
     ],
-    layout: 'column',
     border: 0,
     autoScroll: true,
     defaults: {
@@ -17,92 +15,9 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
 
     initComponent: function () {
         var me = this;
-        var steps = me.getSteps();
         var isNew = me.isNewMode();
 
-        var headerData = this.resolveHeaderData(this.data);
-
         me.tbar = this.getToolbar();
-
-        var wizardHeader = Ext.create('Admin.view.WizardHeader', {
-            xtype: 'wizardHeader',
-            pathConfig: {
-                hidden: true
-            },
-            nameConfig: {
-                hidden: true
-            },
-            data: me.data
-        });
-
-        me.items = [
-            {
-                width: 121,
-                padding: 9,
-                items: [
-                    {
-                        xtype: 'photoUploadButton',
-                        width: 111,
-                        height: 111,
-                        photoUrl: headerData.iconUrl,
-                        title: "Content",
-                        style: {
-                            margin: '1px'
-                        },
-                        progressBarHeight: 6,
-                        listeners: {
-                            mouseenter: function () {
-                                var imageToolTip = me.down('#imageToolTip');
-                                imageToolTip.show();
-                            },
-                            mouseleave: function () {
-                                var imageToolTip = me.down('#imageToolTip');
-                                imageToolTip.hide();
-                            }
-                        }
-                    },
-                    {
-                        styleHtmlContent: true,
-                        height: 50,
-                        border: 0,
-                        itemId: 'imageToolTip',
-                        style: {
-                            top: '141px',
-                            left: '10px'
-                        },
-                        cls: 'admin-image-upload-button-image-tip',
-                        html: '<div class="x-tip x-tip-default x-layer" role="tooltip">' +
-                              '<div class="x-tip-anchor x-tip-anchor-top"></div>' +
-                              '<div class="x-tip-body  x-tip-body-default x-tip-body-default">' +
-                              'Click to upload icon</div></div>',
-                        listeners: {
-                            afterrender: function (cmp) {
-                                Ext.Function.defer(function () {
-                                    cmp.hide();
-                                }, 10000);
-                            }
-                        }
-                    }
-                ]
-            },
-            {
-                columnWidth: 1,
-                padding: '10 10 10 0',
-                defaults: {
-                    border: false
-                },
-                items: [
-                    wizardHeader,
-                    {
-                        xtype: 'wizardPanel',
-                        validateItems: [wizardHeader],
-                        showControls: false,
-                        isNew: isNew,
-                        items: steps
-                    }
-                ]
-            }
-        ];
 
         this.callParent(arguments);
 
@@ -112,7 +27,71 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
 
 
     getWizardHeader: function () {
-        return this.down('wizardHeader');
+        return Ext.create('Admin.view.WizardHeader', {
+            xtype: 'wizardHeader',
+            pathConfig: {
+                hidden: true
+            },
+            nameConfig: {
+                hidden: true
+            },
+            data: this.data
+        });
+    },
+
+    getIcon: function () {
+        var me = this;
+        var headerData = this.resolveHeaderData(this.data);
+
+        return {
+            width: 100,
+            height: 100,
+            items: [
+                {
+                    xtype: 'photoUploadButton',
+                    width: 100,
+                    height: 100,
+                    photoUrl: headerData.iconUrl,
+                    title: "Content",
+                    style: {
+                        margin: '1px'
+                    },
+                    progressBarHeight: 6,
+                    listeners: {
+                        mouseenter: function () {
+                            var imageToolTip = me.down('#imageToolTip');
+                            imageToolTip.show();
+                        },
+                        mouseleave: function () {
+                            var imageToolTip = me.down('#imageToolTip');
+                            imageToolTip.hide();
+                        }
+                    }
+                },
+                {
+                    styleHtmlContent: true,
+                    height: 50,
+                    border: 0,
+                    itemId: 'imageToolTip',
+                    style: {
+                        zIndex: 1001,
+                        top: '0'
+                    },
+                    cls: 'admin-image-upload-button-image-tip',
+                    html: '<div class="x-tip x-tip-default x-layer" role="tooltip">' +
+                          '<div class="x-tip-anchor x-tip-anchor-top"></div>' +
+                          '<div class="x-tip-body  x-tip-body-default x-tip-body-default">' +
+                          'Click to upload icon</div></div>',
+                    listeners: {
+                        afterrender: function (cmp) {
+                            Ext.Function.defer(function () {
+                                cmp.hide();
+                            }, 10000);
+                        }
+                    }
+                }
+            ]
+        };
     },
 
     getToolbar: function () {
@@ -161,13 +140,12 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
 
 
     getData: function () {
-        return Ext.apply(this.getWizardPanel().getData(), this.getWizardHeader().getData());
+        return Ext.apply(this.callParent(), this.down('wizardHeader').getData());
     },
 
     photoUploaded: function (photoUploadButton, response) {
-        var wizard = this.down('wizardPanel'),
-            iconRef = response.items && response.items.length > 0 && response.items[0].id;
-        wizard.addData({iconRef: iconRef});
+        var iconRef = response.items && response.items.length > 0 && response.items[0].id;
+        this.addData({iconRef: iconRef});
     }
 
 });

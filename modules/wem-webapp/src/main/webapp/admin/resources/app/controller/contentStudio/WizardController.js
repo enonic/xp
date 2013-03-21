@@ -22,7 +22,7 @@ Ext.define('Admin.controller.contentStudio.WizardController', {
                     me.saveSchema(button.up('contentStudioWizardPanel'), false, button.schema);
                 }
             },
-            'contentStudioWizardPanel wizardPanel': {
+            'contentStudioWizardPanel': {
                 finished: function (wizard, data) {
                     me.saveSchema(wizard.up('contentStudioWizardPanel'), true);
                 }
@@ -38,7 +38,7 @@ Ext.define('Admin.controller.contentStudio.WizardController', {
     closeWizard: function (el, e) {
         var tab = this.getWizardTab();
         var schemaWizard = this.getWizardPanel();
-        if (schemaWizard.getWizardPanel().isWizardDirty) {
+        if (schemaWizard.isWizardDirty) {
             Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?',
                 function (answer) {
                     if ('yes' === answer) {
