@@ -75,13 +75,13 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     /**
      * @private
      */
-    onSelectContent: function (records) {
-        var isAlreadyAdded = this.selectedContentStore.findRecord('key', records[0].raw.key);
+    onSelectContent: function (contentModels) {
+        var isAlreadyAdded = this.selectedContentStore.findRecord('key', contentModels[0].raw.key);
         if (isAlreadyAdded) {
-            this.alertContentIsAdded(records);
+            this.alertContentIsAdded(contentModels);
             return;
         }
-        this.selectedContentStore.add(records[0].raw);
+        this.selectedContentStore.add(contentModels[0].raw);
     },
 
 
@@ -92,7 +92,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
         var me = this;
 
         return Ext.create('Ext.data.Store', {
-            fields: ['key', 'icon', 'title', 'path'],
+            model: 'Admin.model.contentManager.ContentModel',
             data: [],
             listeners: {
                 datachanged: function (store) {
@@ -119,12 +119,12 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
         var template = new Ext.XTemplate(
             '<tpl for=".">',
             '   <div class="admin-related-item">',
-            '       <img src="{icon}" alt="{title}"/>',
-            '       <div class="center-column">',
-            '           <h6>{title}</h6>',
-            '           <div style="color: #666">{path}</div>',
-            '       </div>',
-            '       <div class="right-column"><a href="javascript:;" class="remove-related-item-button">Remove</a></div>',
+            '       <img src="{iconUrl}" alt="{displayName}" width="32" height="32"/>',
+            '       <span class="center-column">',
+            '           {displayName}',
+            '           <span style="color: #666">{path}</span>',
+            '       </span>',
+            '       <span class="right-column"><a href="javascript:;" class="remove-related-item-button">Remove</a></span>',
             '   </div>',
             '</tpl>'
         );
@@ -136,10 +136,10 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             emptyText: 'No items selected',
             deferEmptyText: false,
             listeners: {
-                itemclick: function (view, record, item, index, e) {
+                itemclick: function (view, contentModel, item, index, e) {
                     var clickedElement = Ext.fly(e.target);
                     if (clickedElement.hasCls('remove-related-item-button')) {
-                        me.selectedContentStore.remove(record);
+                        me.selectedContentStore.remove(contentModel);
                     }
                 }
             }
