@@ -312,16 +312,6 @@ svg.live-edit-highlight-border rect {
     text-align: center;
 }
 
-.live-edit-empty-column-placeholder {
-    background-color: #fff;
-    border: 2px dashed #add8e6;
-    clear: both;
-    color: #add8e6;
-    font-size: 20px;
-    padding: 28px;
-    text-align: center;
-}
-
 .live-edit-empty-part-placeholder {
     border: 1px dashed #aaa;
     clear: both;

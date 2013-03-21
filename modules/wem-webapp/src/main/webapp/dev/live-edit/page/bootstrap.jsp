@@ -168,7 +168,7 @@
   <div id="center" data-live-edit-type="region" data-live-edit-key="80" data-live-edit-name="Center">
     <div class="row-fluid" data-live-edit-type="layout" data-live-edit-key="010101" data-live-edit-name="Triboxes">
 
-      <div class="span4" data-live-edit-type="column">
+      <div class="span4" data-live-edit-type="region">
         <div data-live-edit-type="part" data-live-edit-key="010201" data-live-edit-name="OpenSource">
           <h2>Open source</h2>
 
@@ -178,7 +178,7 @@
         </div>
       </div>
 
-      <div class="span4" data-live-edit-type="column">
+      <div class="span4" data-live-edit-type="region">
         <div data-live-edit-type="part" data-live-edit-key="010201" data-live-edit-name="Webagility">
           <h2>Webagility</h2>
 
@@ -188,10 +188,9 @@
         </div>
       </div>
 
-      <div class="span4" data-live-edit-type="column">
-        <div class="live-edit-empty-column-placeholder">
-          Drag parts here
-        </div>
+      <div class="span4" data-live-edit-type="region">
+
+
       </div>
 
     </div>
