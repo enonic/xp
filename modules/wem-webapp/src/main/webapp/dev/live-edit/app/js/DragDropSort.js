@@ -1,6 +1,7 @@
 AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.DragDropSort');
 /*
-    TODO: Refactor to a dynamic object!
+    This code contains a lot of prototype coding at the moment.
+    A clean up should be done when Live Edit is specked
 */
 AdminLiveEdit.DragDropSort = (function () {
     'use strict';
@@ -94,6 +95,7 @@ AdminLiveEdit.DragDropSort = (function () {
 
         // Temporary store the selection info during the drag drop lifecycle.
         // Data is nullified on drag stop.
+
         var componentIsSelected = ui.item.hasClass('live-edit-selected-component');
         ui.item.data('live-edit-selected-on-sort-start', componentIsSelected);
 
@@ -175,10 +177,28 @@ AdminLiveEdit.DragDropSort = (function () {
             createComponentBarDraggables();
         });
 
-        $liveedit(window).on('component.onSelect', function () {
-            if (AdminLiveEdit.Util.supportsTouch()) {
-                enableDragDrop();
+        $liveedit(window).on('component.onSelect', function (event, $component) {
+            /*
+             if (AdminLiveEdit.Util.supportsTouch()) {
+             enableDragDrop();
+             }
+             */
+
+            /*
+            // When a Layout component is selected it should not be possible to drag any
+            // child components in the layout.
+            // jQuery UI starts dragging the component closest to the mouse target.
+            // Ideally we should update the "items" (to sort) option, but this is unfortunately buggy at the moment(http://bugs.jqueryui.com/ticket/8532)
+
+            // This is a hack workaround (destroy and re-create sortables) until 8532 is fixed.
+            if (AdminLiveEdit.Util.getComponentType($component) === 'layout') {
+                $liveedit(regionSelector).sortable('destroy');
+                createSortable('[data-live-edit-type=layout]');
+            } else {
+                createSortable(itemsToSortSelector);
             }
+            */
+
         });
 
         $liveedit(window).on('component.onDeselect', function () {
@@ -197,11 +217,11 @@ AdminLiveEdit.DragDropSort = (function () {
     }
 
 
-    function createSortable () {
+    function createSortable (items) {
         $liveedit(regionSelector).sortable({
             revert              : 1000,
             connectWith         : regionSelector,   // Sortable elements.
-            items               : itemsToSortSelector,   // Elements to sort.
+            items               : items,   // Elements to sort.
             distance            : 1,
             delay               : 150,
             tolerance           : 'pointer',
@@ -224,7 +244,7 @@ AdminLiveEdit.DragDropSort = (function () {
 
 
     function init() {
-        createSortable();
+        createSortable(itemsToSortSelector);
         registerGlobalListeners();
     }
 

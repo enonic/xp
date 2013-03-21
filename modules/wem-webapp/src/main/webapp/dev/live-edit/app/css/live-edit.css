@@ -442,8 +442,12 @@ svg.live-edit-highlight-border rect {
 
 .live-edit-component-menu-title-bar {
     overflow: hidden;
-    cursor: move;
     margin-bottom: 2px;
+    cursor: hand;
+    cursor: grab !important;
+    cursor: -moz-grab;
+    cursor: url(../images/cursor-grab.png), pointer !important;
+    cursor: -webkit-grab;
 }
 
 .live-edit-component-menu-title-icon,
