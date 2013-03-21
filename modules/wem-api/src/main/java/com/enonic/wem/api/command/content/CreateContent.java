@@ -5,16 +5,13 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 
 public final class CreateContent
-    extends Command<ContentId>
+    extends Command<CreateContentResult>
 {
-    private ContentPath contentPath;
-
     private RootDataSet rootDataSet;
 
     private QualifiedContentTypeName contentType;
@@ -23,19 +20,21 @@ public final class CreateContent
 
     private String displayName;
 
-    public CreateContent contentPath( ContentPath value )
-    {
-        this.contentPath = value;
-        return this;
-    }
+    private ContentPath parentContentPath;
 
-    public CreateContent contentType( QualifiedContentTypeName value )
+    public CreateContent contentType( final QualifiedContentTypeName value )
     {
         this.contentType = value;
         return this;
     }
 
-    public CreateContent rootDataSet( RootDataSet value )
+    public CreateContent parentContentPath( final ContentPath parentContentPath )
+    {
+        this.parentContentPath = parentContentPath;
+        return this;
+    }
+
+    public CreateContent rootDataSet( final RootDataSet value )
     {
         this.rootDataSet = value;
         return this;
@@ -53,17 +52,17 @@ public final class CreateContent
         return this;
     }
 
+    public ContentPath getParentContentPath()
+    {
+        return parentContentPath;
+    }
+
     @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.rootDataSet, "rootDataSet cannot be null" );
-        Preconditions.checkNotNull( this.contentPath, "contentPath cannot be null" );
-        Preconditions.checkArgument( this.contentPath.isAbsolute(), "contentPath must be an absolute path and include the space" );
-    }
-
-    public ContentPath getContentPath()
-    {
-        return contentPath;
+        Preconditions.checkNotNull( this.parentContentPath, "parentContentPath cannot be null" );
+        Preconditions.checkNotNull( this.displayName, "displayname cannot be null" );
     }
 
     public QualifiedContentTypeName getContentType()

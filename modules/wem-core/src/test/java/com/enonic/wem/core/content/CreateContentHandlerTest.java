@@ -12,6 +12,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -27,6 +28,7 @@ import com.enonic.wem.core.content.relationship.RelationshipService;
 import com.enonic.wem.core.content.relationship.SyncRelationshipsCommand;
 import com.enonic.wem.core.index.IndexService;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 public class CreateContentHandlerTest
@@ -75,7 +77,7 @@ public class CreateContentHandlerTest
 
         CreateContent command = Commands.content().create();
         command.displayName( "My Content" );
-        command.contentPath( ContentPath.from( "myContent" ) );
+        command.parentContentPath( ContentPath.from( "/" ) );
         command.owner( UserKey.from( "myStore:myUser" ) );
         command.contentType( new QualifiedContentTypeName( ModuleName.SYSTEM, "MyContentType" ) );
         RootDataSet rootDataSet = new RootDataSet();
@@ -92,8 +94,41 @@ public class CreateContentHandlerTest
         Mockito.verify( indexService, Mockito.times( 1 ) ).indexContent( Mockito.isA( Content.class ) );
         Mockito.verify( relationshipService, Mockito.times( 1 ) ).syncRelationships( Mockito.isA( SyncRelationshipsCommand.class ) );
 
-        ContentId contentId = command.getResult();
-        assertNotNull( contentId );
+        final CreateContentResult result = command.getResult();
+        assertNotNull( result );
     }
+
+    @Test
+    public void createContent_generated_path()
+        throws Exception
+    {
+        // setup
+        DateTimeUtils.setCurrentMillisFixed( CREATED_TIME.getMillis() );
+
+        Mockito.when( contentDao.create( Mockito.isA( Content.class ), Mockito.any( Session.class ) ) ).thenReturn(
+            ContentId.from( "100" ) );
+
+        CreateContent command = Commands.content().create();
+        final String displayName = "My Content";
+        command.displayName( displayName );
+        final String rootPath = "/rootcontent";
+        command.parentContentPath( ContentPath.from( rootPath ) );
+        command.owner( UserKey.from( "myStore:myUser" ) );
+        command.contentType( new QualifiedContentTypeName( ModuleName.SYSTEM, "MyContentType" ) );
+
+        // exercise
+        this.handler.handle( this.context, command );
+
+        // verify
+        Mockito.verify( contentDao, Mockito.times( 1 ) ).create( Mockito.isA( Content.class ), Mockito.any( Session.class ) );
+        Mockito.verify( indexService, Mockito.times( 1 ) ).indexContent( Mockito.isA( Content.class ) );
+        Mockito.verify( relationshipService, Mockito.times( 1 ) ).syncRelationships( Mockito.isA( SyncRelationshipsCommand.class ) );
+
+        final CreateContentResult result = command.getResult();
+        assertNotNull( result );
+        assertEquals( "/rootcontent/" + new ContentPathNameGenerator().generatePathName( displayName ),
+                      result.getContentPath().toString() );
+    }
+
 
 }

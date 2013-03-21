@@ -11,9 +11,11 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.CommandContext;
@@ -27,6 +29,8 @@ import com.enonic.wem.core.index.IndexService;
 public class CreateContentHandler
     extends CommandHandler<CreateContent>
 {
+    private static final ContentPathNameGenerator CONTENT_PATH_NAME_GENERATOR = new ContentPathNameGenerator();
+
     private ContentDao contentDao;
 
     private RelationshipService relationshipService;
@@ -44,11 +48,15 @@ public class CreateContentHandler
     public void handle( final CommandContext context, final CreateContent command )
         throws Exception
     {
+        final Session session = context.getJcrSession();
+
         final Content.Builder builder = Content.newContent();
-        builder.path( command.getContentPath() );
+        final String displayName = command.getDisplayName();
+        final ContentPath contentPath = resolvePathForNewContent( command.getParentContentPath(), displayName, session );
+        builder.path( contentPath );
+        builder.displayName( displayName );
         builder.rootDataSet( command.getRootDataSet() );
         builder.type( command.getContentType() );
-        builder.displayName( command.getDisplayName() );
         builder.createdTime( DateTime.now() );
         builder.modifiedTime( DateTime.now() );
         builder.owner( command.getOwner() );
@@ -56,7 +64,6 @@ public class CreateContentHandler
 
         final Content content = builder.build();
 
-        final Session session = context.getJcrSession();
         final ContentId contentId = contentDao.create( content, session );
         session.save();
 
@@ -64,7 +71,7 @@ public class CreateContentHandler
 
         relationshipService.syncRelationships( new SyncRelationshipsCommand().
             client( context.getClient() ).
-            jcrSession( context.getJcrSession() ).
+            jcrSession( session ).
             contentType( content.getType() ).
             contentToUpdate( content.getId() ).
             contentAfterEditing( content.getRootDataSet() ) );
@@ -80,8 +87,27 @@ public class CreateContentHandler
             LOG.error( "Index content failed", e );
         }
 
-        command.setResult( contentId );
+        command.setResult( new CreateContentResult( contentId, contentPath ) );
     }
+
+    private ContentPath resolvePathForNewContent( final ContentPath parentPath, final String displayName, final Session session )
+    {
+        ContentPath possibleNewPath = ContentPath.from( parentPath, CONTENT_PATH_NAME_GENERATOR.generatePathName( displayName ) );
+        int i = 1;
+        while ( contentExists( possibleNewPath, session ) )
+        {
+            i++;
+            possibleNewPath = ContentPath.from( parentPath, CONTENT_PATH_NAME_GENERATOR.generatePathName( displayName + "-" + i ) );
+        }
+        return possibleNewPath;
+    }
+
+    private boolean contentExists( final ContentPath contentPath, final Session session )
+    {
+        final Content content = contentDao.select( contentPath, session );
+        return content != null;
+    }
+
 
     private void validateContentData( final Client client, final Content content )
     {
