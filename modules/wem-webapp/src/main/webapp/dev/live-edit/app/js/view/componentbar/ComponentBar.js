@@ -81,6 +81,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
         $(window).on('component:sort:stop', $.proxy(me.fadeIn, me));
         $(window).on('component:sort:start', $.proxy(me.fadeOut, me));
         $(window).on('component.onSortUpdate', $.proxy(me.fadeIn, me));
+        $(window).on('component.remove', $.proxy(me.fadeIn, me));
     };
 
 
