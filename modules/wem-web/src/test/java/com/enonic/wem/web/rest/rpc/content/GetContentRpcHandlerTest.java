@@ -11,6 +11,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.DataSet;
@@ -47,15 +48,37 @@ public class GetContentRpcHandlerTest
     }
 
     @Test
-    public void get()
+    public void get_by_path()
         throws Exception
     {
-        final RootDataSet rootDataSet = DataSet.newRootDataSet();
-        rootDataSet.setData( EntryPath.from( "field1" ), new Value.Text( "value1" ) );
-        rootDataSet.setData( EntryPath.from( "field2" ), new Value.Text( "value2" ) );
+        final Content myContent = createContent( "abc", "myContent" );
 
-        final Content content1 = Content.newContent().
-            path( ContentPath.from( "/MySite/MyContent" ) ).
+        Mockito.when( client.execute( Mockito.any( Commands.content().get().getClass() ) ) ).thenReturn( Contents.from( myContent ) );
+
+        testSuccess( "getContent_byPath_param.json", "getContent_byPath_result.json" );
+    }
+
+    @Test
+    public void get_by_id()
+        throws Exception
+    {
+        final Content aaaContent = createContent( "aaa", "myAContent" );
+        final Content bbbContent = createContent( "bbb", "myBContent" );
+
+        Mockito.when( client.execute( Mockito.any( Commands.content().get().getClass() ) ) ).thenReturn(
+            Contents.from( aaaContent, bbbContent ) );
+
+        testSuccess( "getContent_by_contentIds_param.json", "getContent_by_contentIds_result.json" );
+    }
+
+    private Content createContent( final String id, final String name )
+    {
+        final RootDataSet rootDataSet = DataSet.newRootDataSet();
+        rootDataSet.setData( EntryPath.from( "myData" ), new Value.Text( "value1" ) );
+
+        return Content.newContent().
+            id( ContentId.from( id ) ).
+            path( ContentPath.from( name ) ).
             createdTime( DateTime.now() ).
             owner( UserKey.from( "myStore:me" ) ).
             displayName( "My Content" ).
@@ -64,10 +87,6 @@ public class GetContentRpcHandlerTest
             type( new QualifiedContentTypeName( "myModule:myType" ) ).
             rootDataSet( rootDataSet ).
             build();
-
-        Mockito.when( client.execute( Mockito.any( Commands.content().get().getClass() ) ) ).thenReturn( Contents.from( content1 ) );
-
-        testSuccess( "getContent_param.json", "getContent_result.json" );
     }
 
 }

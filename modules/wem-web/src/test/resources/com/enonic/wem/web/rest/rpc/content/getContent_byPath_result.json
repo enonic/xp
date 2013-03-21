@@ -1,9 +1,9 @@
 {
     "success": true,
     "content": {
-        "id": null,
-        "path": "/MySite/MyContent",
-        "name": "MyContent",
+        "id": "abc",
+        "path": "/myContent",
+        "name": "myContent",
         "type": "myModule:myType",
         "displayName": "My Content",
         "owner": "user:myStore:me",
@@ -13,16 +13,10 @@
         "createdTime": "2000-01-01T12:00:00.000Z",
         "data": [
             {
-                "name": "field1",
-                "path": "field1",
+                "name": "myData",
+                "path": "myData",
                 "type": "Text",
                 "value": "value1"
-            },
-            {
-                "name": "field2",
-                "path": "field2",
-                "type": "Text",
-                "value": "value2"
             }
         ],
         "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:myModule:myType"

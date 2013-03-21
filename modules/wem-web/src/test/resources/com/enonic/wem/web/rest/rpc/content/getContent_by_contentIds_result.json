@@ -1,0 +1,47 @@
+{
+    "success": true,
+    "content": [
+        {
+            "id": "aaa",
+            "path": "/myAContent",
+            "name": "myAContent",
+            "type": "myModule:myType",
+            "displayName": "My Content",
+            "owner": "user:myStore:me",
+            "modifier": "user:system:admin",
+            "isRoot": false,
+            "modifiedTime": "2000-01-01T12:00:00.000Z",
+            "createdTime": "2000-01-01T12:00:00.000Z",
+            "data": [
+                {
+                    "name": "myData",
+                    "path": "myData",
+                    "type": "Text",
+                    "value": "value1"
+                }
+            ],
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:myModule:myType"
+        },
+        {
+            "id": "bbb",
+            "path": "/myBContent",
+            "name": "myBContent",
+            "type": "myModule:myType",
+            "displayName": "My Content",
+            "owner": "user:myStore:me",
+            "modifier": "user:system:admin",
+            "isRoot": false,
+            "modifiedTime": "2000-01-01T12:00:00.000Z",
+            "createdTime": "2000-01-01T12:00:00.000Z",
+            "data": [
+                {
+                    "name": "myData",
+                    "path": "myData",
+                    "type": "Text",
+                    "value": "value1"
+                }
+            ],
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:myModule:myType"
+        }
+    ]
+}

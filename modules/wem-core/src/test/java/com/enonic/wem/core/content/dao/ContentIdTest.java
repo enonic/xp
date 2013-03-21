@@ -11,9 +11,8 @@ import com.enonic.wem.api.content.ContentId;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
-public class ContentIdImplTest
+public class ContentIdTest
 {
-
     @Test
     public void contentId_create_instance()
         throws Exception
