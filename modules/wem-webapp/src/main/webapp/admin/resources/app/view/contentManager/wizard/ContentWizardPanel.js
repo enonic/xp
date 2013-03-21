@@ -237,7 +237,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         if (mode) {
             var livePreview = this.down('#livePreview');
             //TODO update urls when they are ready
-            livePreview.load('/dev/live-edit/page/page.jsp?edit=true');
+            livePreview.load('/dev/live-edit/page/bootstrap.jsp?edit=true');
         }
     },
 
