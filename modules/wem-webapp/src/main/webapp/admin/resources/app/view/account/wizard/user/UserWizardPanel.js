@@ -218,6 +218,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
                 {
                     styleHtmlContent: true,
                     style: {
+                        top: 0,
                         zIndex: 1001
                     },
                     height: 50,

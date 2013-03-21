@@ -6,6 +6,14 @@ Ext.define('Admin.view.spaceAdmin.wizard.SpaceStepPanel', {
     data: undefined,
 
     initComponent: function () {
+        var templates = Ext.create('Ext.data.Store', {
+            fields: ['code', 'name'],
+            data: [
+                {"code": "1", "name": "Tpl1"},
+                {"code": "2", "name": "Tpl2"},
+                {"code": "3", "name": "Tpl3"}
+            ]
+        });
         this.items = [
             {
                 xtype: 'fieldset',
@@ -17,7 +25,10 @@ Ext.define('Admin.view.spaceAdmin.wizard.SpaceStepPanel', {
                 items: [
                     {
                         xtype: 'combo',
-                        fieldLabel: 'Space Template'
+                        fieldLabel: 'Space Template',
+                        displayField: 'name',
+                        valueField: 'code',
+                        store: templates
                     }
                 ]
             }
