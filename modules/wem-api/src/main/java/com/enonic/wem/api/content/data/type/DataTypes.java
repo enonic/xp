@@ -13,7 +13,7 @@ public final class DataTypes
 
     public static final Text TEXT = new Text( 1 );
 
-    public static final BinaryReference BINARY_REFERENCE = new BinaryReference( 2 );
+    public static final BinaryId BINARY_ID = new BinaryId( 2 );
 
     public static final HtmlPart HTML_PART = new HtmlPart( 3 );
 
@@ -37,7 +37,7 @@ public final class DataTypes
     {
         register( SET );
         register( TEXT );
-        register( BINARY_REFERENCE );
+        register( BINARY_ID );
         register( HTML_PART );
         register( XML );
         register( DATE_MIDNIGHT );

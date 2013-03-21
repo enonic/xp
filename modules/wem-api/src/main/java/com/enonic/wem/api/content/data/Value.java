@@ -6,8 +6,8 @@ import org.joda.time.DateMidnight;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.content.data.type.BaseDataType;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
@@ -116,13 +116,13 @@ public class Value
         return converted;
     }
 
-    public BlobKey asBlobKey()
+    public BinaryId asBinaryId()
         throws InconvertibleValueException
     {
-        final BlobKey converted = JavaType.BLOB_KEY.convertFrom( object );
+        final BinaryId converted = JavaType.BINARY_ID.convertFrom( object );
         if ( object != null && converted == null )
         {
-            throw new InconvertibleValueException( object, JavaType.BLOB_KEY );
+            throw new InconvertibleValueException( object, JavaType.BINARY_ID );
         }
         return converted;
     }
@@ -277,9 +277,9 @@ public class Value
     public static final class BinaryReference
         extends Value
     {
-        public BinaryReference( BlobKey value )
+        public BinaryReference( BinaryId value )
         {
-            super( newValue().type( DataTypes.BINARY_REFERENCE ).value( value ) );
+            super( newValue().type( DataTypes.BINARY_ID ).value( value ) );
         }
     }
 }

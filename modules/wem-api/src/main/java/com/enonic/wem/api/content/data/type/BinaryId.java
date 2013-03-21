@@ -3,12 +3,12 @@ package com.enonic.wem.api.content.data.type;
 
 import com.enonic.wem.api.content.data.Value;
 
-public class BinaryReference
+public class BinaryId
     extends BaseDataType
 {
-    BinaryReference( int key )
+    BinaryId( int key )
     {
-        super( key, JavaType.BLOB_KEY );
+        super( key, JavaType.BINARY_ID );
     }
 
     private Value toString( final Value value )

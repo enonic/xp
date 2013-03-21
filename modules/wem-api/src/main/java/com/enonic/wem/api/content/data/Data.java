@@ -5,8 +5,8 @@ import org.joda.time.DateMidnight;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.content.data.type.BaseDataType;
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
@@ -163,10 +163,10 @@ public class Data
         return getArray().getValue( arrayIndex ).asDate();
     }
 
-    public BlobKey getBlobKey()
+    public BinaryId getBinaryId()
         throws InconvertibleValueException
     {
-        return value.asBlobKey();
+        return value.asBinaryId();
     }
 
     /**
@@ -174,10 +174,10 @@ public class Data
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a BlobKey.
      */
-    public BlobKey getBlobKey( final int arrayIndex )
+    public BinaryId getBinaryId( final int arrayIndex )
         throws InconvertibleValueException
     {
-        return getArray().getValue( arrayIndex ).asBlobKey();
+        return getArray().getValue( arrayIndex ).asBinaryId();
     }
 
     public void checkDataTypeValidity()

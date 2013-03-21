@@ -5,6 +5,7 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
+import com.enonic.wem.api.content.data.type.JavaType;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
@@ -19,7 +20,7 @@ public class EmbeddedImage
     public void checkValidity( final Data data )
         throws InvalidValueTypeException, InvalidValueException
     {
-        DataTypes.BINARY_REFERENCE.checkValidity( data );
+        DataTypes.BINARY_ID.checkValidity( data );
     }
 
     @Override
@@ -32,7 +33,7 @@ public class EmbeddedImage
     @Override
     public Value newValue( final String value )
     {
-        return Value.newValue().type( DataTypes.BINARY_REFERENCE ).value( value ).build();
+        return Value.newValue().type( DataTypes.BINARY_ID ).value( JavaType.BINARY_ID.convertFrom( value ) ).build();
     }
 
 }

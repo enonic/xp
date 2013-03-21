@@ -9,6 +9,7 @@ import org.joda.time.DateMidnight;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
@@ -26,6 +27,8 @@ import static org.junit.Assert.*;
 
 public class RootDataSetParserTest
 {
+    private static final String BINARY_ID = "edda7c84-d1ef-4d4b-b79e-71b696a716df";
+
     @Test
     public void parse_simple_types()
         throws IOException
@@ -71,6 +74,32 @@ public class RootDataSetParserTest
         assertEquals( 1L, parsedRootDataSet.getData( EntryPath.from( "myWholeNumber" ) ).getObject() );
         assertEquals( 1.1, parsedRootDataSet.getData( EntryPath.from( "myDecimalNumber" ) ).getObject() );
         assertEquals( "Inner line", parsedRootDataSet.getData( EntryPath.from( "mySet.myTextLine" ) ).getObject() );
+    }
+
+    @Test
+    public void parse_EmbeddedImage()
+        throws IOException
+    {
+        final ContentType contentType = newContentType().
+            module( ModuleName.from( "myModule" ) ).
+            name( "myContentType" ).
+            addFormItem( newInput().name( "myEmbeddedImage" ).inputType( InputTypes.EMBEDDED_IMAGE ).build() ).
+            build();
+
+        StringBuilder json = new StringBuilder();
+        json.append( "{" ).append( "\n" );
+        json.append( "\"myEmbeddedImage\": \"" + BINARY_ID + "\"" ).append( "\n" );
+        json.append( "}" );
+
+        ObjectMapper objectMapper = ObjectMapperHelper.create();
+        ObjectNode objectNode = objectMapper.readValue( json.toString(), ObjectNode.class );
+
+        // exercise
+        RootDataSetParser rootDataSetParser = new RootDataSetParser( contentType );
+        DataSet parsedContentData = rootDataSetParser.parse( objectNode );
+
+        // verify
+        assertEquals( BinaryId.from( BINARY_ID ), parsedContentData.getData( EntryPath.from( "myEmbeddedImage" ) ).getObject() );
     }
 
     @Test
