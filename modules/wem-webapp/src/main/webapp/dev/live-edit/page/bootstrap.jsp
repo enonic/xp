@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,129 +9,8 @@
   <meta name="author" content="">
 
   <link href="css/bootstrap.css" rel="stylesheet">
-  <style type="text/css">
-    body {
-      padding-top: 20px;
-      padding-bottom: 60px;
-    }
+  <link href="css/main.css" rel="stylesheet">
 
-    .container {
-      margin: 0 auto;
-      max-width: 1000px;
-    }
-
-    .container > hr {
-      margin: 60px 0;
-    }
-
-    .jumbotron {
-      margin: 80px 0;
-      text-align: center;
-    }
-
-    .jumbotron h1 {
-      font-size: 100px;
-      line-height: 1;
-    }
-
-    .jumbotron .lead {
-      font-size: 24px;
-      line-height: 1.25;
-    }
-
-    .jumbotron .btn {
-      font-size: 21px;
-      padding: 14px 24px;
-    }
-
-    .navbar .navbar-inner {
-      padding: 0;
-    }
-
-    .navbar .nav {
-      margin: 0;
-      display: table;
-      width: 100%;
-    }
-
-    .navbar .nav li {
-      display: table-cell;
-      width: 1%;
-      float: none;
-    }
-
-    .navbar .nav li a {
-      font-weight: bold;
-      text-align: center;
-      border-left: 1px solid rgba(255, 255, 255, .75);
-      border-right: 1px solid rgba(0, 0, 0, .1);
-    }
-
-    .navbar .nav li:first-child a {
-      border-left: 0;
-      border-radius: 3px 0 0 3px;
-    }
-
-    .navbar .nav li:last-child a {
-      border-right: 0;
-      border-radius: 0 3px 3px 0;
-    }
-
-      /* CUSTOMIZE THE CAROUSEL
-   -------------------------------------------------- */
-
-      /* Carousel base class */
-    .carousel {
-      margin-bottom: 60px;
-    }
-
-    .carousel .container {
-      position: relative;
-      z-index: 9;
-    }
-
-    .carousel-control {
-      height: 80px;
-      margin-top: 0;
-      font-size: 120px;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, .4);
-      background-color: transparent;
-      border: 0;
-      z-index: 10;
-    }
-
-    .carousel .item {
-      height: 500px;
-    }
-
-    .carousel img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      min-width: 100%;
-      height: 500px;
-    }
-
-    .carousel-caption {
-      background-color: transparent;
-      position: static;
-      max-width: 550px;
-      padding: 0 20px;
-      margin-top: 200px;
-    }
-
-    .carousel-caption h1,
-    .carousel-caption .lead {
-      margin: 0;
-      line-height: 1.25;
-      color: #fff;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, .4);
-    }
-
-    .carousel-caption .btn {
-      margin-top: 10px;
-    }
-  </style>
   <link href="css/bootstrap-responsive.css" rel="stylesheet">
   <%@ include file="live-edit/css.jsp" %>
 </head>
@@ -170,6 +50,8 @@
 
       <div class="span4" data-live-edit-type="region">
         <div data-live-edit-type="part" data-live-edit-key="010201" data-live-edit-name="OpenSource">
+          <img src="img/geek.png" class="img-circle"/>
+
           <h2>Open source</h2>
 
           <p>Enonic CMS Community Edition is based on Java and open for developers at github.com.</p>
@@ -180,6 +62,8 @@
 
       <div class="span4" data-live-edit-type="region">
         <div data-live-edit-type="part" data-live-edit-key="010201" data-live-edit-name="Webagility">
+          <img src="img/webagil.png" class="img-circle"/>
+
           <h2>Webagility</h2>
 
           <p>Outperform your competition and adapt change! Enonic CMS unleashes your agility.</p>
