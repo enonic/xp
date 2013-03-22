@@ -15,7 +15,7 @@ public class PhoneTest
         new Phone().checkBreaksRequiredContract( Data.newData().name( "myText" ).type( DataTypes.TEXT ).value( "" ).build() );
     }
 
-    @Test
+    @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_blank_throws_exception()
     {
         new Phone().checkBreaksRequiredContract( Data.newData().name( "myText" ).type( DataTypes.TEXT ).value( " " ).build() );
