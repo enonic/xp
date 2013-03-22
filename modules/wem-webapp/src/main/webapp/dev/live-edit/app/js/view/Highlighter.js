@@ -64,6 +64,10 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         me.$selectedComponent = $component;
         var componentType = util.getComponentType($component);
 
+        // TODO: Move class manipulation to model base
+        $('.live-edit-selected-component').removeClass('live-edit-selected-component');
+        $component.addClass('live-edit-selected-component');
+
         // Highlighter should not be shown when type page is selected
         if (componentType === 'page') {
             me.hide();
@@ -73,9 +77,6 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         me.paintBorder($component);
         me.show();
 
-        // TODO: Move class manipulation to model base
-        $('.live-edit-selected-component').removeClass('live-edit-selected-component');
-        $component.addClass('live-edit-selected-component');
     };
 
 

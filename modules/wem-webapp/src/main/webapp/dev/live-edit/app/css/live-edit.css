@@ -98,11 +98,6 @@ a {
     pointer-events: none;
 }
 
-.live-edit-arrow-bottom:after,
-.live-edit-arrow-bottom:before {
-    top: 100%;
-}
-
 .live-edit-arrow-top:after,
 .live-edit-arrow-top:before {
     bottom: 100%;
@@ -112,7 +107,7 @@ a {
     border-color: rgba(255, 249, 203, 0);
     border-bottom-color: #f6f5f7;
     border-width: 8px;
-    left: 20px;
+    left: 50%;
     margin-left: -8px;
 }
 
@@ -120,15 +115,20 @@ a {
     border-color: rgba(152, 152, 152, 0);
     border-bottom-color: #aaa;
     border-width: 9px;
-    left: 20px;
+    left: 50%;
     margin-left: -9px;
+}
+
+.live-edit-arrow-bottom:after,
+.live-edit-arrow-bottom:before {
+    top: 100%;
 }
 
 .live-edit-arrow-bottom:after {
     border-color: rgba(255, 249, 203, 0);
     border-top-color: #f6f5f7;
     border-width: 8px;
-    left: 20px;
+    left: 50%;
     margin-left: -8px;
 }
 
@@ -136,20 +136,9 @@ a {
     border-color: rgba(152, 152, 152, 0);
     border-top-color: #aaa;
     border-width: 9px;
-    left: 20px;
+    left: 50%;
     margin-left: -9px;
 }
-
-/*
-    Center arrow for editor toolbar
-*/
-.live-edit-editor-toolbar.live-edit-arrow-top:before,
-.live-edit-editor-toolbar.live-edit-arrow-top:after,
-.live-edit-editor-toolbar.live-edit-arrow-bottom:after,
-.live-edit-editor-toolbar.live-edit-arrow-bottom:after {
-    left: 50%;;
-}
-
 
 /** z-indexes */
 

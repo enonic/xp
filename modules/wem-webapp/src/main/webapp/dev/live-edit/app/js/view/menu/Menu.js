@@ -95,7 +95,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
         me.updateMenuItemsForComponent($component);
 
-        var pageXPosition = pagePosition.x - 20,
+        var pageXPosition = pagePosition.x - me.getEl().width() / 2,
             pageYPosition = pagePosition.y + 15;
         me.moveToXY(pageXPosition, pageYPosition);
 
