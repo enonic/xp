@@ -10,7 +10,7 @@ Ext.define('Admin.view.contentStudio.wizard.RelationshipTypeWizardPanel', {
         });
     },
 
-    getSteps: function () {
+    createSteps: function () {
         var me = this;
 
         var configStep = {

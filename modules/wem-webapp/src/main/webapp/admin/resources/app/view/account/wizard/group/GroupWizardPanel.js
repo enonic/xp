@@ -1,9 +1,8 @@
 Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
-    extend: 'Admin.view.NewWizardPanel',
+    extend: 'Admin.view.WizardPanel',
     alias: 'widget.groupWizardPanel',
 
     requires: [
-        'Admin.view.WizardPanel',
         'Admin.view.WizardHeader',
         'Admin.view.account.wizard.group.GroupWizardToolbar',
         'Admin.view.account.wizard.group.WizardStepGeneralPanel',
@@ -44,7 +43,7 @@ Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
 
     },
 
-    getSteps: function () {
+    createSteps: function () {
         var me = this;
         var isRole = me.isRole();
 
@@ -97,11 +96,15 @@ Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
         return this.data && this.data.type === 'role';
     },
 
-    getData: function () {
-        return Ext.apply(this.callParent(), this.down('wizardHeader').getData());
+    getWizardHeader: function () {
+        return this.down('wizardHeader');
     },
 
-    getIcon: function () {
+    getData: function () {
+        return Ext.apply(this.callParent(), this.getWizardHeader().getData());
+    },
+
+    createIcon: function () {
         var headerData = this.resolveHeaderData(this.data);
         return  {
             xtype: 'image',
@@ -122,7 +125,7 @@ Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
         };
     },
 
-    getWizardHeader: function () {
+    createWizardHeader: function () {
         return {
             xtype: 'wizardHeader',
             pathConfig: {
@@ -138,6 +141,14 @@ Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
                 vtype: 'qualifiedName'
             },
             data: this.data
+        };
+    },
+
+    createActionButton: function () {
+        return {
+            xtype: 'button',
+            text: 'Save',
+            action: 'saveGroup'
         };
     }
 });

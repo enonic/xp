@@ -5,24 +5,15 @@ Ext.define('Admin.view.WizardPanel', {
     requires: ['Admin.view.WizardLayout'],
 
     layout: {
-        type: 'wizard',
-        animation: 'none'
+        type: 'vbox',
+        align: 'stretch'
     },
+
     cls: 'admin-wizard',
-    autoHeight: true,
-    defaults: {
-        border: false,
-        frame: false,
-        autoHeight: true
-    },
-    bodyPadding: 10,
-    minWidth: 500,
-    minHeight: 500,
-    style: 'overflow: visible',
 
     externalControls: undefined,
     showControls: true,
-    data: {},
+    data: undefined,
     isNew: true,
 
     // items common for all steps that shall be valid for step to be valid
@@ -38,124 +29,9 @@ Ext.define('Admin.view.WizardPanel', {
     invalidItems: undefined,
     presentationMode: false,
 
-
     initComponent: function () {
-        var wizard = this;
-        this.data = {};
-        this.dirtyItems = [];
-        this.invalidItems = [];
-
-        this.cls += this.isNew ? ' admin-wizard-new' : ' admin-wizard-edit';
-
-        if (this.showControls) {
-            wizard.bbar = {
-                xtype: 'container',
-                margin: '10 0 0 5',
-                height: 40,
-                itemId: 'controls',
-                defaults: {
-                    xtype: 'button'
-                },
-                items: [
-                    {
-                        itemId: 'prev',
-                        iconCls: 'icon-chevron-left icon-4x',
-                        margin: '0 5 0 0',
-                        cls: 'wizard-nav-button wizard-nav-button-left',
-                        /*hideMode: 'display',*/
-                        height: 72,
-                        width: 72,
-                        handler: function (btn, evt) {
-                            wizard.prev();
-                        }
-                    },
-                    {
-                        itemId: 'next',
-                        iconAlign: 'right',
-                        margin: '0 0 0 5',
-                        cls: 'wizard-nav-button wizard-nav-button-right',
-                        formBind: true,
-                        iconCls: 'icon-chevron-right icon-4x',
-                        height: 72,
-                        width: 72,
-                        handler: function (btn, evt) {
-                            wizard.next();
-                        }
-                    },
-                    {
-                        text: 'Save and Close',
-                        itemId: 'finish',
-                        margin: '0 0 0 5',
-                        iconCls: 'icon-save-24',
-                        hidden: true,
-                        handler: function (btn, evt) {
-                            wizard.finish();
-                        }
-                    }
-                ]
-            };
-
-        }
-
-        this.dockedItems = [
-            {
-                xtype: 'panel',
-                dock: 'top',
-                cls: 'toolbar',
-                disabledCls: 'toolbar-disabled',
-                itemId: 'progressBar',
-                listeners: {
-                    click: {
-                        fn: wizard.changeStep,
-                        element: 'body',
-                        scope: wizard
-                    }
-                },
-                styleHtmlContent: true,
-                margin: 0,
-                tpl: new Ext.XTemplate(Templates.common.wizardPanelSteps, {
-
-                    resolveClsName: function (index, total) {
-                        var activeIndex = wizard.items.indexOf(wizard.getLayout().getActiveItem()) + 1;
-                        var clsName = '';
-
-                        if (index === 1) {
-                            clsName += 'first ';
-                        }
-
-                        if (index < activeIndex) {
-                            clsName += 'previous ';
-                        }
-
-                        if (index + 1 === activeIndex) {
-                            clsName += 'immediate ';
-                        }
-
-                        if (index === activeIndex) {
-                            clsName += 'current ';
-                        }
-
-                        if (index > activeIndex) {
-                            clsName += 'next ';
-                        }
-
-                        if (index - 1 === activeIndex) {
-                            clsName += 'immediate ';
-                        }
-
-                        if (index === total) {
-                            clsName += 'last ';
-                        }
-
-                        return clsName;
-                    }
-                })
-            }
-        ];
-
-        this.callParent(arguments);
-        this.updateProgress();
-        this.addEvents(
+        var me = this;
+        var events = [
             "beforestepchanged",
             "stepchanged",
             "animationstarted",
@@ -163,26 +39,106 @@ Ext.define('Admin.view.WizardPanel', {
             'validitychange',
             'dirtychange',
             "finished"
-        );
+        ];
+        this.dirtyItems = [];
+        this.invalidItems = [];
+        this.boundItems = [];
+        this.cls += this.isNew ? ' admin-wizard-new' : ' admin-wizard-edit';
+
+        this.wizard = Ext.createByAlias('widget.container', {
+            region: 'center',
+            layout: {
+                type: 'wizard',
+                animation: 'none'
+            },
+            items: this.createSteps()
+        });
+        this.items = [
+            this.createHeaderPane(),
+            {
+                xtype: 'container',
+                autoScroll: true,
+                padding: '20 0 0 0',
+                layout: 'border',
+                flex: 1,
+                items: [
+                    {
+                        xtype: 'container',
+                        region: 'west',
+                        width: 110,
+                        layout: {
+                            type: 'hbox',
+                            align: 'middle'
+                        },
+                        items: [
+                            {
+                                xtype: 'button',
+                                itemId: 'prev',
+                                iconCls: 'icon-chevron-left icon-4x',
+                                cls: 'wizard-nav-button wizard-nav-button-left',
+                                height: 64,
+                                width: 64,
+                                handler: function (btn, evt) {
+                                    me.prev();
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        xtype: 'container',
+                        region: 'east',
+                        width: 110,
+                        layout: {
+                            type: 'hbox',
+                            align: 'middle'
+                        },
+                        items: [
+                            {
+                                xtype: 'button',
+                                itemId: 'next',
+                                iconAlign: 'right',
+                                cls: 'wizard-nav-button wizard-nav-button-right',
+                                formBind: true,
+                                iconCls: 'icon-chevron-right icon-4x',
+                                height: 64,
+                                width: 64,
+                                handler: function (btn, evt) {
+                                    me.next();
+                                }
+                            }
+                        ]
+                    },
+                    this.wizard
+                ]
+            }
+        ];
+        this.callParent(arguments);
+        this.addEvents(events);
+        this.wizard.addEvents(events);
+        this.wizard.enableBubble(events);
         this.on({
             animationstarted: this.onAnimationStarted,
             animationfinished: this.onAnimationFinished
         });
-
-        if (this.showControls) {
-            var controls = this.getDockedComponent('controls');
-            this.boundItems.push(controls.down('#next'));
+        if (this.getActionButton()) {
+            this.boundItems.push(this.getActionButton());
         }
+        this.down('#progressBar').update(this.wizard.items.items);
 
         // bind afterrender events
         this.on('afterrender', this.bindItemListeners);
-
     },
 
+    updateProgress: function (newStep) {
+        var progressBar = this.down('#progressBar');
+        progressBar.update(this.wizard.items.items);
+        var conditionsMet = this.isWizardValid && (this.isWizardDirty || this.isNew);
+        progressBar.setDisabled(this.isNew ? !this.isStepValid(newStep) : !conditionsMet);
+    },
+
+
     bindItemListeners: function (cmp) {
-        var i;
-        for (i = 0; i < cmp.validateItems.length; i++) {
-            var validateItem = cmp.validateItems[i];
+        Ext.each(cmp.validateItems, function (validateItem, i) {
             if (validateItem) {
                 validateItem.on({
                     'validitychange': cmp.handleValidityChange,
@@ -190,12 +146,11 @@ Ext.define('Admin.view.WizardPanel', {
                     scope: cmp
                 }, this);
             }
-        }
+        });
         var checkValidityFn = function (panel) {
             panel.getForm().checkValidity();
         };
-        for (i = 0; i < cmp.items.items.length; i++) {
-            var item = cmp.items.items[i];
+        cmp.wizard.items.each(function (item, i) {
             if (i === 0) {
                 cmp.onAnimationFinished(item, null);
             }
@@ -216,15 +171,15 @@ Ext.define('Admin.view.WizardPanel', {
                 });
                 itemForm.checkValidity();
             }
-        }
+        });
 
     },
 
     formOnValidityChange: function () {
-        var wizard = this.owner.up('wizardPanel');
-        var boundItems = wizard.getFormBoundItems(this);
-        if (boundItems && this.owner === wizard.getLayout().getActiveItem()) {
-            var valid = wizard.isStepValid(this.owner);
+        var wizardPanel = this.owner.up('wizardPanel');
+        var boundItems = wizardPanel.getFormBoundItems(this);
+        if (boundItems && this.owner === wizardPanel.getActiveItem()) {
+            var valid = wizardPanel.isStepValid(this.owner);
             boundItems.each(function (cmp) {
                 if (cmp.rendered && cmp.isHidden() === valid) {
                     if (valid) {
@@ -261,6 +216,10 @@ Ext.define('Admin.view.WizardPanel', {
         if (this.isWizardValid !== isWizardValid) {
             // fire the wizard validity change event
             this.isWizardValid = isWizardValid;
+            var actionButton = this.getActionButton();
+            if (actionButton) {
+                actionButton.setVisible(isWizardValid);
+            }
             this.fireEvent('validitychange', this, isWizardValid);
         }
     },
@@ -283,81 +242,85 @@ Ext.define('Admin.view.WizardPanel', {
         }
     },
 
-
-    changeStep: function (event, target) {
-        var progressBar = this.dockedItems.items[0];
-        var isNew = this.isNew;
-        var isDisabled = progressBar.isDisabled();
-
-        var li = target && target.tagName === "LI" ? Ext.fly(target) : Ext.fly(target).up('li');
-
-        // allow click only the next immediate step in new mode
-        // or any step in edit mode when valid
-        // or any except the last in edit when not valid
-        // or all previous steps in any mode
-        if ((!isDisabled && isNew && li && li.hasCls('next') && li.hasCls('immediate'))
-                || (!isDisabled && !isNew)
-                || (isDisabled && !isNew && li && !li.hasCls('last'))
-            || (li && li.hasCls('previous'))) {
-            var step = Number(li.getAttribute('wizardStep'));
-            this.navigate(step - 1);
+    isStepValid: function (step) {
+        var isStepValid = Ext.Array.intersect(this.invalidItems, this.validateItems).length === 0;
+        var activeStep = step || this.getActiveItem();
+        var activeForm;
+        if (activeStep && Ext.isFunction(activeStep.getForm)) {
+            activeForm = activeStep.getForm();
         }
-        event.stopEvent();
-    },
-
-    next: function (btn) {
-        return this.navigate("next", btn);
-    },
-
-    prev: function (btn) {
-        return this.navigate("prev", btn);
-    },
-
-    finish: function () {
-        this.fireEvent("finished", this, this.getData());
-    },
-
-    getNext: function () {
-        return this.getLayout().getNext();
-    },
-
-    getPrev: function () {
-        return this.getLayout().getPrev();
-    },
-
-    navigate: function (direction, btn) {
-        var oldStep = this.getLayout().getActiveItem();
-        if (btn) {
-            this.externalControls = btn.up('toolbar');
+        if (isStepValid && activeForm) {
+            isStepValid = isStepValid && !activeForm.hasInvalidField();
         }
-        if (this.fireEvent("beforestepchanged", this, oldStep) !== false) {
-            var newStep;
-            switch (direction) {
-            case "-1":
-            case "prev":
-                if (this.getPrev()) {
-                    newStep = this.getLayout().prev();
+        return isStepValid;
+    },
+
+    getProgressBar: function () {
+        return this.down('#progressBar');
+    },
+
+    createRibbon: function () {
+        var me = this;
+
+        return {
+            xtype: 'component',
+            flex: 1,
+            cls: 'toolbar',
+            disabledCls: 'toolbar-disabled',
+            itemId: 'progressBar',
+            width: '100%',
+            listeners: {
+                click: {
+                    fn: this.changeStep,
+                    element: 'body',
+                    scope: this
                 }
-                break;
-            case "+1":
-            case "next":
-                if (this.getNext()) {
-                    newStep = this.getLayout().next();
-                } else {
-                    this.finish();
+            },
+            styleHtmlContent: true,
+            margin: 0,
+            tpl: new Ext.XTemplate(Templates.common.wizardPanelSteps, {
+
+                resolveClsName: function (index, total) {
+                    var activeIndex = me.wizard.items.indexOf(me.getActiveItem()) + 1;
+                    var clsName = '';
+
+                    if (index === 1) {
+                        clsName += 'first ';
+                    }
+
+                    if (index < activeIndex) {
+                        clsName += 'previous ';
+                    }
+
+                    if (index + 1 === activeIndex) {
+                        clsName += 'immediate ';
+                    }
+
+                    if (index === activeIndex) {
+                        clsName += 'current ';
+                    }
+
+                    if (index > activeIndex) {
+                        clsName += 'next ';
+                    }
+
+                    if (index - 1 === activeIndex) {
+                        clsName += 'immediate ';
+                    }
+
+                    if (index === total) {
+                        clsName += 'last ';
+                    }
+                    return clsName;
                 }
-                break;
-            default:
-                newStep = this.getLayout().setActiveItem(direction);
-                break;
-            }
-        }
+            })
+        };
     },
 
     onAnimationStarted: function (newStep, oldStep) {
         if (this.showControls) {
             // disable internal controls if shown
-            this.updateButtons(this.getDockedComponent('controls'), true);
+            this.updateButtons(this.wizard, true);
         }
         if (this.externalControls) {
             // try to disable external controls
@@ -372,7 +335,7 @@ Ext.define('Admin.view.WizardPanel', {
             this.fireEvent("stepchanged", this, oldStep, newStep);
             if (this.showControls) {
                 // update internal controls if shown
-                this.updateButtons(this.getDockedComponent('controls'));
+                this.updateButtons(this.wizard);
             }
             if (this.externalControls) {
                 // try to update external controls
@@ -391,30 +354,18 @@ Ext.define('Admin.view.WizardPanel', {
         }
     },
 
-    updateProgress: function (newStep) {
-        var progressBar = this.dockedItems.items[0];
-        progressBar.update(this.items.items);
-        var conditionsMet = this.isWizardValid && (this.isWizardDirty || this.isNew);
-        progressBar.setDisabled(this.isNew ? !this.isStepValid(newStep) : !conditionsMet);
-    },
-
-    isStepValid: function (step) {
-        var isStepValid = Ext.Array.intersect(this.invalidItems, this.validateItems).length === 0;
-        var activeStep = step || this.getLayout().getActiveItem();
-        var activeForm;
-        if (activeStep && Ext.isFunction(activeStep.getForm)) {
-            activeForm = activeStep.getForm();
+    focusFirstField: function (newStep) {
+        var activeItem = newStep || this.getActiveItem();
+        var firstField;
+        if (activeItem && (firstField = activeItem.down('field[disabled=false]'))) {
+            firstField.focus();
         }
-        if (isStepValid && activeForm) {
-            isStepValid = isStepValid && !activeForm.hasInvalidField();
-        }
-        return isStepValid;
     },
 
     updateButtons: function (toolbar, disable) {
         if (toolbar) {
-            var prev = toolbar.down('#prev'),
-                next = toolbar.down('#next');
+            var prev = this.down('#prev'),
+                next = this.down('#next');
             var hasNext = this.getNext(),
                 hasPrev = this.getPrev();
             if (prev) {
@@ -437,15 +388,128 @@ Ext.define('Admin.view.WizardPanel', {
         }
     },
 
-    focusFirstField: function (newStep) {
-        var activeItem = newStep || this.getLayout().getActiveItem();
-        var firstField;
-        if (activeItem && (firstField = activeItem.down('field[disabled=false]'))) {
-            firstField.focus();
+    changeStep: function (event, target) {
+        var progressBar = this.down('#progressBar');
+        var isNew = this.isNew;
+        var isDisabled = progressBar.isDisabled();
+
+        var li = target && target.tagName === "LI" ? Ext.fly(target) : Ext.fly(target).up('li');
+
+        // allow click only the next immediate step in new mode
+        // or any step in edit mode when valid
+        // or any except the last in edit when not valid
+        // or all previous steps in any mode
+        if ((!isDisabled && isNew && li && li.hasCls('next') && li.hasCls('immediate'))
+                || (!isDisabled && !isNew)
+                || (isDisabled && !isNew && li && !li.hasCls('last'))
+            || (li && li.hasCls('previous'))) {
+            var step = Number(li.getAttribute('wizardStep'));
+            this.navigate(step - 1);
+        }
+        event.stopEvent();
+    },
+
+    createHeaderPane: function () {
+        var icon = this.createIcon();
+        return {
+            xtype: 'container',
+
+            padding: '10 10 0 10',
+            layout: {
+                type: 'table',
+                columns: 2,
+                tableAttrs: {
+                    width: '100%'
+                }
+            },
+            items: [
+                Ext.applyIf(icon, {rowspan: 2}),
+                Ext.applyIf(this.createWizardHeader(), {
+                    tdAttrs: { width: '100%'}
+                }),
+                {
+                    xtype: 'container',
+                    layout: 'hbox',
+                    style: {
+                        backgroundColor: '#EEEEEE'
+                    },
+                    items: [
+                        Ext.applyIf(this.createRibbon(), {
+                            flex: 1
+                        }),
+                        Ext.apply(this.createActionButton(), {
+                            itemId: 'actionButton',
+                            ui: 'green',
+                            margin: '0 30 0 0'
+                        })
+                    ]
+                }
+
+            ]
+        };
+    },
+
+    getActionButton: function () {
+        return this.down('#actionButton');
+    },
+
+    next: function (btn) {
+        return this.navigate("next", btn);
+    },
+
+    prev: function (btn) {
+        return this.navigate("prev", btn);
+    },
+
+    finish: function () {
+        this.fireEvent("finished", this, this.getData());
+    },
+
+    getNext: function () {
+        return this.wizard.getLayout().getNext();
+    },
+
+    getPrev: function () {
+        return this.wizard.getLayout().getPrev();
+    },
+
+    getActiveItem: function () {
+        return this.wizard.getLayout().getActiveItem();
+    },
+
+    navigate: function (direction, btn) {
+        var oldStep = this.getActiveItem();
+        if (btn) {
+            this.externalControls = btn.up('toolbar');
+        }
+        if (this.fireEvent("beforestepchanged", this, oldStep) !== false) {
+            var newStep;
+            switch (direction) {
+            case "-1":
+            case "prev":
+                if (this.getPrev()) {
+                    newStep = this.wizard.getLayout().prev();
+                }
+                break;
+            case "+1":
+            case "next":
+                if (this.getNext()) {
+                    newStep = this.wizard.getLayout().next();
+                } else {
+                    this.finish();
+                }
+                break;
+            default:
+                newStep = this.wizard.getLayout().setActiveItem(direction);
+                break;
+            }
         }
     },
 
     addData: function (newValues) {
+        if (Ext.isEmpty(this.data)) {
+            this.data = {};
+        }
         Ext.merge(this.data, newValues);
     },
 
@@ -458,7 +522,7 @@ Ext.define('Admin.view.WizardPanel', {
 
     getData: function () {
         var me = this;
-        me.items.each(function (item) {
+        me.wizard.items.each(function (item) {
             if (item.getData) {
                 me.addData(item.getData());
             } else if (item.getForm) {
@@ -468,8 +532,29 @@ Ext.define('Admin.view.WizardPanel', {
         return me.data;
     },
 
-    getProgressBar: function () {
-        return this.dockedItems.items[0];
+    /*
+     * This method should be implemented in child classes
+     */
+    createSteps: function () {
+
+    },
+
+    /*
+     * This method should be implemented in child classes
+     */
+    createIcon: function () {
+
+    },
+
+    /*
+     * This method should be implemented in child classes
+     */
+    createWizardHeader: function () {
+
+    },
+
+    createActionButton: function () {
+
     }
 
 });

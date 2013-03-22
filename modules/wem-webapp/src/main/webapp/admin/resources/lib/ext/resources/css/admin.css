@@ -121,8 +121,8 @@ ul.icons li [class^="icon-"], ul.icons li [class*=" icon-"] {
 
 /* line 33, ../sass/admin/css/_font-awesome.scss */
 .icon-border {
-    border: solid 1px #eeeeee;
-    padding: 0.2em 0.25em 0.15em;
+    border: solid 1px #eee;
+    padding: .2em .25em .15em;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
@@ -1711,7 +1711,7 @@ td {
 
 /* line 6, ../sass/admin/css/_window.scss */
 .admin-window .delete-container {
-    box-shadow: 0 0 5px #777777;
+    box-shadow: 0 0 5px #777;
     padding: 10px;
     max-height: 150px;
     overflow-y: auto;
@@ -1751,7 +1751,7 @@ td {
 
 /* line 43, ../sass/admin/css/_window.scss */
 .admin-window-header h1 {
-    color: white !important;
+    color: #fff !important;
     font-size: 18px !important;
     margin: 0 !important;
     padding: 0 0 0 28px !important;
@@ -1780,7 +1780,7 @@ td {
 
 /* line 19, ../sass/admin/css/_panel.scss */
 .admin-filter .admin-facet-group h2 {
-    color: black !important;
+    color: #000000 !important;
     font-size: 15px !important;
     padding: 0 !important;
     text-transform: capitalize;
@@ -1788,31 +1788,44 @@ td {
 
 /* line 26, ../sass/admin/css/_panel.scss */
 .admin-filter .admin-facet-group .admin-facet {
-    padding-left: 10px;
+    /*      padding-left: 10px;*/
 }
 
 /* line 29, ../sass/admin/css/_panel.scss */
+.admin-filter .admin-facet-group .admin-facet input[type="checkbox"] {
+    display: none;
+}
+
+/* line 33, ../sass/admin/css/_panel.scss */
 .admin-filter .admin-facet-group .admin-facet label {
-    color: #777777 !important;
+    color: #777 !important;
+    background-image: url("../themes/images/default/grid/admin-unchecked.gif");
+    background-repeat: no-repeat;
+    padding-left: 20px;
 }
 
-/* line 35, ../sass/admin/css/_panel.scss */
+/* line 40, ../sass/admin/css/_panel.scss */
+.admin-filter .admin-facet-group .admin-facet input[type="checkbox"]:checked + label {
+    background-image: url("../themes/images/default/grid/admin-checked.gif");
+}
+
+/* line 46, ../sass/admin/css/_panel.scss */
 .admin-filter .admin-facet-group .admin-facet.checked label {
-    color: #333333 !important;
+    color: #333 !important;
 }
 
-/* line 48, ../sass/admin/css/_panel.scss */
+/* line 59, ../sass/admin/css/_panel.scss */
 .admin-detail .x-panel-body {
     border: none !important;
 }
 
-/* line 54, ../sass/admin/css/_panel.scss */
+/* line 65, ../sass/admin/css/_panel.scss */
 .admin-box {
     padding: 10px;
     background-color: #ebebeb;
 }
 
-/* line 59, ../sass/admin/css/_panel.scss */
+/* line 70, ../sass/admin/css/_panel.scss */
 .admin-box .x-panel-header-default {
     background-color: transparent;
     -webkit-box-shadow: transparent 0px 0px 0px;
@@ -1820,7 +1833,7 @@ td {
     box-shadow: transparent 0px 0px 0px;
 }
 
-/* line 64, ../sass/admin/css/_panel.scss */
+/* line 75, ../sass/admin/css/_panel.scss */
 .admin-box .x-panel-header-text-default {
     color: #000;
     font-weight: normal;
@@ -1828,18 +1841,18 @@ td {
     line-height: 20px;
 }
 
-/* line 71, ../sass/admin/css/_panel.scss */
+/* line 82, ../sass/admin/css/_panel.scss */
 .admin-box .x-panel-body-default {
     border: 0 none;
     background-color: transparent;
 }
 
-/* line 76, ../sass/admin/css/_panel.scss */
+/* line 87, ../sass/admin/css/_panel.scss */
 .admin-box .admin-data-view {
     background-color: transparent;
 }
 
-/* line 82, ../sass/admin/css/_panel.scss */
+/* line 93, ../sass/admin/css/_panel.scss */
 .admin-box .admin-data-view .admin-data-view-row.x-item-over {
     background-color: #fff;
 }
@@ -1917,7 +1930,7 @@ td {
 /* line 4, ../sass/admin/css/_grid.scss */
 .x-grid-row .x-grid-cell {
     font-size: 11px !important;
-    color: black !important;
+    color: #000 !important;
     vertical-align: middle !important;
     border: none !important;
 }
@@ -2009,7 +2022,7 @@ td {
 
 /* line 86, ../sass/admin/css/_grid.scss */
 .admin-grid .x-grid-row-selected .admin-grid-name-renderer .admin-grid-name-renderer-path {
-    color: white !important;
+    color: #fff !important;
 }
 
 /**
@@ -2095,7 +2108,7 @@ td {
 
 /* line 1, ../sass/admin/css/_mega-menu.scss */
 .admin-mega-menu {
-    background-color: white !important;
+    background-color: #fff !important;
 }
 
 /* line 5, ../sass/admin/css/_mega-menu.scss */
@@ -2182,7 +2195,7 @@ td {
 
 /* line 15, ../sass/admin/css/_toolbar.scss */
 .admin-white-toolbar {
-    background-color: white !important;
+    background-color: #ffffff !important;
     padding: 6px 12px !important;
 }
 
@@ -2190,7 +2203,7 @@ td {
 .x-toolbar.admin-white-toolbar,
 .x-toolbar.admin-white-toolbar .x-toolbar-text {
     font-size: 12px !important;
-    color: black !important;
+    color: #000000 !important;
 }
 
 /* line 1, ../sass/admin/css/_splitter.scss */
@@ -2361,7 +2374,7 @@ td {
  */
 /* line 106, ../sass/admin/css/_form.scss */
 .x-datepicker-header {
-    background-color: white !important;
+    background-color: #fff !important;
     background-image: none !important;
 }
 
@@ -2375,7 +2388,7 @@ td {
  */
 /* line 118, ../sass/admin/css/_form.scss */
 .x-form-text, textarea.x-form-field {
-    background: none white !important;
+    background: none #fff !important;
 }
 
 /**
@@ -2389,12 +2402,10 @@ td {
 /**
 * Content Manager Form Components
 */
-/* line 132, ../sass/admin/css/_form.scss */
-.admin-formitemset-block {
-    border: 1px solid #eeeeee !important;
+/*.admin-formitemset-block {
+    border: 1px solid $admin-light-grey !important;
     border-radius: 3px;
-}
-
+}*/
 /* line 137, ../sass/admin/css/_form.scss */
 .admin-formitemset-block .header {
     border-bottom: 1px solid #eeeeee;
@@ -2410,45 +2421,62 @@ td {
 /**
 * Form item set
 */
-/* line 151, ../sass/admin/css/_form.scss */
+/* line 150, ../sass/admin/css/_form.scss */
+.admin-formitemset-container {
+    background-color: #eeeeee;
+}
+
+/* line 153, ../sass/admin/css/_form.scss */
+.admin-formitemset-container > div > .x-panel.x-column {
+    width: 100%;
+}
+
+/* line 159, ../sass/admin/css/_form.scss */
+.admin-formitemset-block {
+    background-color: #fff;
+    border: 0;
+    border-radius: 0;
+}
+
+/* line 165, ../sass/admin/css/_form.scss */
 .form-item-set {
     /* Sub form-item-sets needs to be padded */
 }
 
-/* line 152, ../sass/admin/css/_form.scss */
+/* line 166, ../sass/admin/css/_form.scss */
 .form-item-set .admin-formitemset-block {
     border: none !important;
-    box-shadow: 0 0 4px #777777;
+    box-shadow: 0 0 4px #777;
     border-radius: 0;
 }
 
-/* line 157, ../sass/admin/css/_form.scss */
+/* line 171, ../sass/admin/css/_form.scss */
 .form-item-set .admin-formitemset-block .header {
     border: none;
 }
 
-/* line 162, ../sass/admin/css/_form.scss */
+/* line 176, ../sass/admin/css/_form.scss */
 .form-item-set .icon-grey {
     color: #777777;
 }
 
-/* line 168, ../sass/admin/css/_form.scss */
+/* line 182, ../sass/admin/css/_form.scss */
 .form-item-set .form-item-set .admin-formitemset-block {
     background-color: #f9f9f9;
 }
 
-/* line 173, ../sass/admin/css/_form.scss */
+/* line 187, ../sass/admin/css/_form.scss */
 .form-item-set .form-item-set .form-item-set .admin-formitemset-block {
     background-color: #ffffff;
 }
 
-/* line 178, ../sass/admin/css/_form.scss */
+/* line 192, ../sass/admin/css/_form.scss */
 .form-item-set .form-item-set .form-item-set .form-item-set .admin-formitemset-block {
     background-color: #f9f9f9;
 }
 
 /* To allow box-shadow, we must override overflow: hidden on containing elements. */
-/* line 192, ../sass/admin/css/_form.scss */
+/* line 206, ../sass/admin/css/_form.scss */
 .admin-wizard .x-fieldset-body,
 .admin-wizard .x-panel-body,
 .admin-wizard .x-fit-item,
@@ -2457,7 +2485,7 @@ td {
 }
 
 /* Fix for fieldset/legend in Firefox (see CMS-1013). We should try to find a better workaround */
-/* line 198, ../sass/admin/css/_form.scss */
+/* line 212, ../sass/admin/css/_form.scss */
 body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     padding: 0;
 }
@@ -2529,7 +2557,7 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
 .admin-selected-item-box .center {
     float: left;
     border: 0 none !important;
-    border-right: 1px solid #f0f0f0 !important;
+    border-right: 1px solid #F0F0F0 !important;
 }
 
 /* line 23, ../sass/admin/css/_selected-grid-item.scss */
@@ -2737,7 +2765,7 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     border-top: 50px solid transparent;
     /* Go big on the size, and let overflow hide */
     border-bottom: 50px solid transparent;
-    border-left: 30px solid #eeeeee;
+    border-left: 30px solid #eee;
     position: absolute;
     top: 50%;
     margin-top: -50px;
@@ -2754,7 +2782,7 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     border-top: 50px solid transparent;
     /* Go big on the size, and let overflow hide */
     border-bottom: 50px solid transparent;
-    border-left: 28px solid #cccccc;
+    border-left: 28px solid #ccc;
     position: absolute;
     top: 50%;
     margin-top: -50px;
@@ -2770,12 +2798,12 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
 
 /* line 66, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current:after {
-    border-left: 30px solid white;
+    border-left: 30px solid #fff;
 }
 
 /* line 70, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current:before {
-    border-left: 30px solid white;
+    border-left: 30px solid #fff;
 }
 
 /* line 74, ../sass/admin/css/_wizard.scss */
@@ -2796,18 +2824,17 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
 
 /* line 87, ../sass/admin/css/_wizard.scss */
 .admin-wizard div.navigation-container {
-    padding: 7px 12px 0 6px;
     background-color: #fff;
 }
 
-/* line 91, ../sass/admin/css/_wizard.scss */
+/* line 90, ../sass/admin/css/_wizard.scss */
 .admin-wizard div.navigation-container-sticky {
     position: fixed;
     top: 89px;
     width: 100%;
 }
 
-/* line 101, ../sass/admin/css/_wizard.scss */
+/* line 100, ../sass/admin/css/_wizard.scss */
 .admin-wizard-edit ul.navigation a.next,
 .admin-wizard-edit ul.navigation a.next.immediate,
 .admin-wizard-edit ul.navigation a.next.last {
@@ -2815,31 +2842,31 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     cursor: pointer;
 }
 
-/* line 106, ../sass/admin/css/_wizard.scss */
+/* line 105, ../sass/admin/css/_wizard.scss */
 .admin-wizard-edit .toolbar-disabled ul.navigation a.next.last {
     color: #acacac;
     cursor: default;
 }
 
-/* line 113, ../sass/admin/css/_wizard.scss */
+/* line 112, ../sass/admin/css/_wizard.scss */
 .admin-wizard-new ul.navigation li a.next {
     color: #acacac;
     cursor: default;
 }
 
-/* line 118, ../sass/admin/css/_wizard.scss */
+/* line 117, ../sass/admin/css/_wizard.scss */
 .admin-wizard-new ul.navigation li a.next.immediate {
     /*        color: #222;*/
     cursor: pointer;
 }
 
-/* line 125, ../sass/admin/css/_wizard.scss */
+/* line 124, ../sass/admin/css/_wizard.scss */
 .admin-wizard-new .toolbar-diabled ul.navigation a.next, .admin-wizard-new .toolbar-diabled ul.navigation a.next.immidiate, .admin-wizard-new .toolbar-diabled ul.navigation a.next.last {
     color: #acacac;
     cursor: default;
 }
 
-/* line 136, ../sass/admin/css/_wizard.scss */
+/* line 135, ../sass/admin/css/_wizard.scss */
 .admin-wizard > div > .x-panel-body,
 .admin-glowing-item .x-panel-body,
 .admin-validation-label div,
@@ -2850,19 +2877,19 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
 /*
 *   Styles used in Admin.view.WizardHeader
 */
-/* line 182, ../sass/admin/css/_wizard.scss */
+/* line 181, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container {
     margin: 0 10px 3px 5px;
     font-size: 12px;
 }
 
-/* line 186, ../sass/admin/css/_wizard.scss */
+/* line 185, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-display-name {
     margin: 0;
     width: 100%;
 }
 
-/* line 149, ../sass/admin/css/_wizard.scss */
+/* line 148, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-display-name input,
 .admin-wizard-header-container .admin-display-name .x-form-display-field {
     border: 1px solid transparent;
@@ -2874,30 +2901,30 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     background: white none;
 }
 
-/* line 163, ../sass/admin/css/_wizard.scss */
+/* line 162, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-display-name:not(.x-form-readonly):not(.x-form-display-field) .x-form-item-body {
     padding: 3px;
 }
 
-/* line 167, ../sass/admin/css/_wizard.scss */
+/* line 166, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-display-name:not(.x-form-readonly):not(.x-form-display-field) input:hover {
     border: 1px solid #98c9f2;
     box-shadow: 0 0 3px #98c9f2;
 }
 
-/* line 171, ../sass/admin/css/_wizard.scss */
+/* line 170, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-display-name:not(.x-form-readonly):not(.x-form-display-field) input:focus {
     color: #000;
-    border: 1px solid #99bce8;
+    border: 1px solid #99BCE8;
 }
 
-/* line 176, ../sass/admin/css/_wizard.scss */
+/* line 175, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-display-name:not(.x-form-readonly):not(.x-form-display-field) input.x-form-invalid-field {
-    border: 1px solid #cc3300;
+    border: 1px solid #CC3300;
     box-shadow: 0 0 0 transparent;
 }
 
-/* line 194, ../sass/admin/css/_wizard.scss */
+/* line 193, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-display-name input,
 .admin-wizard-header-container .admin-display-name .x-form-display-field {
     font-size: 26px;
@@ -2905,12 +2932,12 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     height: 36px !important;
 }
 
-/* line 201, ../sass/admin/css/_wizard.scss */
+/* line 200, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-path {
     margin: 0;
 }
 
-/* line 149, ../sass/admin/css/_wizard.scss */
+/* line 148, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-path input,
 .admin-wizard-header-container .admin-path .x-form-display-field {
     border: 1px solid transparent;
@@ -2922,22 +2949,22 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     background: white none;
 }
 
-/* line 205, ../sass/admin/css/_wizard.scss */
+/* line 204, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-path input,
 .admin-wizard-header-container .admin-path .x-form-display-field {
-    color: #aaaaaa !important;
+    color: #AAA !important;
     font-size: 16px;
     line-height: 26px !important;
     height: 26px !important;
     white-space: nowrap;
 }
 
-/* line 214, ../sass/admin/css/_wizard.scss */
+/* line 213, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-name {
     margin: 0;
 }
 
-/* line 149, ../sass/admin/css/_wizard.scss */
+/* line 148, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-name input,
 .admin-wizard-header-container .admin-name .x-form-display-field {
     border: 1px solid transparent;
@@ -2949,30 +2976,30 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     background: white none;
 }
 
-/* line 163, ../sass/admin/css/_wizard.scss */
+/* line 162, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-name:not(.x-form-readonly):not(.x-form-display-field) .x-form-item-body {
     padding: 3px;
 }
 
-/* line 167, ../sass/admin/css/_wizard.scss */
+/* line 166, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-name:not(.x-form-readonly):not(.x-form-display-field) input:hover {
     border: 1px solid #98c9f2;
     box-shadow: 0 0 3px #98c9f2;
 }
 
-/* line 171, ../sass/admin/css/_wizard.scss */
+/* line 170, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-name:not(.x-form-readonly):not(.x-form-display-field) input:focus {
     color: #000;
-    border: 1px solid #99bce8;
+    border: 1px solid #99BCE8;
 }
 
-/* line 176, ../sass/admin/css/_wizard.scss */
+/* line 175, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-name:not(.x-form-readonly):not(.x-form-display-field) input.x-form-invalid-field {
-    border: 1px solid #cc3300;
+    border: 1px solid #CC3300;
     box-shadow: 0 0 0 transparent;
 }
 
-/* line 221, ../sass/admin/css/_wizard.scss */
+/* line 220, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-name input,
 .admin-wizard-header-container .admin-name .x-form-display-field {
     font-size: 16px;
@@ -2993,7 +3020,7 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
 .admin-image-upload-button-container .admin-image-upload-button-progress-bar-container {
     visibility: hidden;
     position: absolute;
-    border: 1px solid #555555;
+    border: 1px solid #555;
     background-color: #555;
     bottom: 1px;
     left: 1px;
@@ -3156,16 +3183,6 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     display: block;
 }
 
-/* line 63, ../sass/admin/css/_admin-toolbar-popup.scss */
-.admin-image-button {
-    padding: 0;
-}
-
-/* line 66, ../sass/admin/css/_admin-toolbar-popup.scss */
-.admin-image-button .x-btn-icon {
-    background-size: 32px 32px;
-}
-
 /* line 1, ../sass/admin/css/_feedback-box.scss */
 .admin-feedback-box {
     opacity: 0.9;
@@ -3203,32 +3220,36 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
 /* line 1, ../sass/admin/css/_load-mask.scss */
 div.admin-load-mask {
     border: none;
-    padding: 0;
-    width: 16px;
-    height: 16px;
-    border: none;
-}
-
-/* line 3, ../sass/admin/css/_load-mask.scss */
-div.admin-load-mask div.x-mask-loading {
-    background-position: center;
+    padding: 4px;
+    border: 0 none;
     background-color: #ffffff;
-    border: none;
-    padding: 0;
-    width: 16px;
+}
+
+/* line 7, ../sass/admin/css/_load-mask.scss */
+div.admin-load-mask .admin-load-text {
+    background-position: left;
+    padding: 0 0 0 20px;
+    background-color: transparent;
+    border: 0 none;
     height: 16px;
 }
 
-/*
-div.x-mask {
-  background-color: #fff;
+/* line 18, ../sass/admin/css/_load-mask.scss */
+.x-mask {
+    background-color: #000 !important;
 }
-*/
+
+/* line 24, ../sass/admin/css/_load-mask.scss */
+.admin-mask-white {
+    background-color: #fff !important;
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity = 50);
+    opacity: 0.5;
+}
+
 /* line 22, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel {
     color: #eee;
     font-size: 14px;
-    padding: 6px;
     background: black;
     /* for non-css3 browsers */
     filter: progid:DXImageTransform.Microsoft.gradient(gradientType = 1, startColorstr = '#000000', endColorstr = '#4B4A4C');
@@ -3239,20 +3260,24 @@ div.x-mask {
     /* for firefox 3.6+ */
     /*      Start button        */
     /*      Title button        */
+    /*    Separator   */
     /*    Home button   */
+    /*    Image button   */
 }
 
-/* line 34, ../sass/admin/css/_top-bar.scss */
+/* line 33, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .start-button {
     padding: 0;
     border: 0 none;
-    background: url("../themes/images/default/leopard-home-button_128x128.png") center no-repeat;
-    background-size: 32px;
+    background-image: url("../themes/images/default/home-button.svg");
+    background-color: transparent;
+    background-size: 32px 32px;
+    background-position: top left;
     width: 32px;
     height: 32px;
 }
 
-/* line 45, ../sass/admin/css/_top-bar.scss */
+/* line 46, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .title-button {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
@@ -3276,31 +3301,38 @@ div.x-mask {
     font-size: 14px;
 }
 
-/* line 48, ../sass/admin/css/_top-bar.scss */
+/* line 49, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .title-button button {
     overflow: visible;
 }
 
-/* line 51, ../sass/admin/css/_top-bar.scss */
+/* line 52, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .title-button button .x-btn-icon {
     width: 32px;
     height: 32px;
     top: -6px;
 }
 
-/* line 57, ../sass/admin/css/_top-bar.scss */
+/* line 58, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .title-button button .x-btn-inner {
     padding-left: 40px;
 }
 
-/* line 60, ../sass/admin/css/_top-bar.scss */
+/* line 61, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .title-button button .x-btn-inner .count {
     padding: 4px;
     margin-left: 8px;
     background: red;
 }
 
-/* line 71, ../sass/admin/css/_top-bar.scss */
+/* line 72, ../sass/admin/css/_top-bar.scss */
+.x-toolbar.admin-topbar-panel .x-toolbar-separator {
+    height: 32px;
+    width: 1px;
+    background-color: #555;
+}
+
+/* line 80, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .home-button {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
@@ -3325,20 +3357,53 @@ div.x-mask {
     font-size: 14px;
 }
 
+/* line 84, ../sass/admin/css/_top-bar.scss */
+.x-toolbar.admin-topbar-panel .home-button .x-btn-inner {
+    font-weight: bold;
+}
+
+/* line 91, ../sass/admin/css/_top-bar.scss */
+.x-toolbar.admin-topbar-panel .admin-image-button {
+    padding: 0px;
+    border: 0 none;
+}
+
+/* line 95, ../sass/admin/css/_top-bar.scss */
+.x-toolbar.admin-topbar-panel .admin-image-button button {
+    height: 44px;
+    line-height: 44px;
+    padding: 0 0 0 44px;
+}
+
+/* line 100, ../sass/admin/css/_top-bar.scss */
+.x-toolbar.admin-topbar-panel .admin-image-button button .x-btn-inner {
+    width: auto;
+    height: 44px;
+    line-height: 44px;
+    display: none;
+}
+
+/* line 107, ../sass/admin/css/_top-bar.scss */
+.x-toolbar.admin-topbar-panel .admin-image-button button .x-btn-icon {
+    height: 44px;
+    width: 44px;
+    background-size: 44px;
+}
+
 /*  Tab menu  */
-/* line 80, ../sass/admin/css/_top-bar.scss */
+/* line 119, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu {
     overflow: visible !important;
 }
 
-/* line 83, ../sass/admin/css/_top-bar.scss */
+/* line 122, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .x-menu-body {
-    background: white !important;
+    background: #FFF !important;
     padding: 0 !important;
-    border: 1px solid #cccccc !important;
+    border: 1px solid #ccc !important;
 }
 
-/* line 89, ../sass/admin/css/_top-bar.scss */
+/* line 128, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .balloon-tip {
     position: absolute;
     width: 100%;
@@ -3347,9 +3412,9 @@ div.x-mask {
     background: url("../themes/images/default/ballon-tips.png") bottom center no-repeat;
 }
 
-/* line 97, ../sass/admin/css/_top-bar.scss */
+/* line 136, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .title {
-    border-bottom: 1px solid #cccccc;
+    border-bottom: 1px solid #ccc;
     font-size: 11px;
     color: #0066cc;
     text-align: center;
@@ -3357,7 +3422,7 @@ div.x-mask {
     margin-bottom: 12px;
 }
 
-/* line 105, ../sass/admin/css/_top-bar.scss */
+/* line 144, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .title span {
     position: relative;
     bottom: -6px;
@@ -3365,29 +3430,29 @@ div.x-mask {
     background: #FFF;
 }
 
-/* line 113, ../sass/admin/css/_top-bar.scss */
+/* line 152, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item {
     padding: 6px 12px;
     font-size: 13px;
 }
 
-/* line 117, ../sass/admin/css/_top-bar.scss */
+/* line 156, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.current-tab {
     background-color: #eeeeee;
 }
 
-/* line 121, ../sass/admin/css/_top-bar.scss */
+/* line 160, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.active {
     background: #4294DE;
     color: #FFF;
 }
 
-/* line 125, ../sass/admin/css/_top-bar.scss */
+/* line 164, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.active a.close-button {
     background: url("../themes/images/default/navigate_cross-16px.png") 0 -16px no-repeat;
 }
 
-/* line 130, ../sass/admin/css/_top-bar.scss */
+/* line 169, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item a.close-button {
     background: url("../themes/images/default/navigate_cross-16px.png") 0 0 no-repeat;
     border: 1px solid transparent;
@@ -3396,7 +3461,7 @@ div.x-mask {
     cursor: pointer;
 }
 
-/* line 139, ../sass/admin/css/_top-bar.scss */
+/* line 178, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu em {
     position: relative;
     top: -2px;
@@ -3427,12 +3492,12 @@ div.x-mask {
 .admin-context-menu {
     border-width: 2px;
     border-style: solid;
-    border-color: #cccccc !important;
+    border-color: #ccc !important;
 }
 
 /* line 6, ../sass/admin/css/_context-menu.scss */
 .admin-context-menu .x-menu-body {
-    background: white !important;
+    background: #fff !important;
 }
 
 /* line 10, ../sass/admin/css/_context-menu.scss */
@@ -4158,7 +4223,7 @@ tr.x-container:before {
     color: #000;
     font: normal 11px "Open Sans", sans-serif;
     border: 1px solid;
-    border-color: #dddddd #bbbbbb #bbbbbb #dddddd;
+    border-color: #ddd #bbb #bbb #ddd;
     background-color: #fff;
 }
 
@@ -5427,19 +5492,19 @@ tr.x-container:before {
 /* line 48, ../themes/stylesheets/ext4/default/widgets/_html.scss */
 .x-html h1 {
     font-size: 2em;
-    margin: 0.67em 0;
+    margin: .67em 0;
 }
 
 /* line 49, ../themes/stylesheets/ext4/default/widgets/_html.scss */
 .x-html h2 {
     font-size: 1.5em;
-    margin: 0.75em 0;
+    margin: .75em 0;
 }
 
 /* line 50, ../themes/stylesheets/ext4/default/widgets/_html.scss */
 .x-html h3 {
     font-size: 1.17em;
-    margin: 0.83em 0;
+    margin: .83em 0;
 }
 
 /* line 60, ../themes/stylesheets/ext4/default/widgets/_html.scss */
@@ -7828,6 +7893,1101 @@ tr.x-container:before {
 .x-nlg .x-btn-grey-large-disabled {
     background-repeat: repeat-x;
     background-image: url('../themes/images/default/btn/btn-grey-large-disabled-bg.gif');
+}
+
+/* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small {
+    border-color: #669c34;
+}
+
+/* line 69, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-btn-green-small {
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    padding: 6px 16px 6px 16px;
+    border-width: 1px;
+    border-style: solid;
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nlg .x-btn-green-small-mc {
+    background-image: url('../themes/images/default/btn/btn-green-small-bg.gif');
+    background-color: #669c34;
+}
+
+/* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-small {
+    padding: 0 !important;
+    border-width: 0 !important;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    -o-border-radius: 0px;
+    border-radius: 0px;
+    background-color: transparent;
+    background-position: 1100000px 1000000px;
+}
+
+/* line 147, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-small-tl,
+.x-nbr .x-btn-green-small-bl,
+.x-nbr .x-btn-green-small-tr,
+.x-nbr .x-btn-green-small-br,
+.x-nbr .x-btn-green-small-tc,
+.x-nbr .x-btn-green-small-bc,
+.x-nbr .x-btn-green-small-ml,
+.x-nbr .x-btn-green-small-mr {
+    zoom: 1;
+    background-image: url('../themes/images/default/btn/btn-green-small-corners.gif');
+}
+
+/* line 168, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-small-ml,
+.x-nbr .x-btn-green-small-mr {
+    zoom: 1;
+    background-image: url('../themes/images/default/btn/btn-green-small-sides.gif');
+    background-position: 0 0;
+}
+
+/* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-small-mc {
+    padding: 7px 17px 7px 17px;
+}
+
+/* line 210, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-strict .x-ie7 .x-btn-green-small-tl,
+.x-strict .x-ie7 .x-btn-green-small-bl {
+    position: relative;
+    right: 0;
+}
+
+/* line 639, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small .x-btn-inner {
+    font-size: 12px;
+    font-weight: normal;
+    font-family: "Open Sans", sans-serif;
+    color: white;
+    background-repeat: no-repeat;
+    padding: 0 4px;
+}
+
+/* line 652, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-icon button,
+.x-btn-green-small-icon a,
+.x-btn-green-small-icon .x-btn-inner,
+.x-btn-green-small-noicon button,
+.x-btn-green-small-noicon a,
+.x-btn-green-small-noicon .x-btn-inner {
+    height: 16px;
+    line-height: 16px;
+}
+
+/* line 661, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-icon button,
+.x-btn-green-small-icon a {
+    padding: 0;
+}
+
+/* line 665, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-icon .x-btn-inner {
+    /* even though there is no text we set a width and padding as buttons shrink-wrap around this element */
+    width: 16px;
+    padding: 0;
+}
+
+/* line 671, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-icon .x-btn-icon {
+    width: 16px;
+    height: 16px;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 683, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-icon-text-left button,
+.x-btn-green-small-icon-text-left a {
+    height: 16px;
+}
+
+/* line 686, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-icon-text-left .x-btn-inner {
+    height: 16px;
+    line-height: 16px;
+    padding-left: 20px;
+}
+
+/* line 692, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-icon-text-left .x-btn-icon {
+    width: 16px;
+    height: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: auto;
+}
+
+/* line 701, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-small-icon-text-left .x-btn-icon, .x-quirks .x-btn-green-small-icon-text-left .x-btn-icon {
+    height: 16px;
+}
+
+/* line 709, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-icon-text-right button,
+.x-btn-green-small-icon-text-right a {
+    height: 16px;
+}
+
+/* line 712, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-icon-text-right .x-btn-inner {
+    height: 16px;
+    line-height: 16px;
+    padding-right: 20px !important;
+}
+
+/* line 718, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-icon-text-right .x-btn-icon {
+    width: 16px;
+    height: auto;
+    top: 0;
+    left: auto;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 727, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-small-icon-text-right .x-btn-icon, .x-quirks .x-btn-green-small-icon-text-right .x-btn-icon {
+    height: 16px;
+}
+
+/* line 734, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-icon-text-top .x-btn-inner {
+    padding-top: 20px;
+}
+
+/* line 738, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-icon-text-top .x-btn-icon {
+    width: auto;
+    height: 16px;
+    top: 0;
+    left: 0;
+    bottom: auto;
+    right: 0;
+}
+
+/* line 747, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-small-icon-text-top .x-btn-icon, .x-quirks .x-ie .x-btn-green-small-icon-text-top .x-btn-icon {
+    width: 16px;
+}
+
+/* line 754, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-icon-text-bottom .x-btn-inner {
+    padding-bottom: 20px;
+}
+
+/* line 758, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-icon-text-bottom .x-btn-icon {
+    width: auto;
+    height: 16px;
+    top: auto;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 767, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-small-icon-text-bottom .x-btn-icon, .x-quirks .x-ie .x-btn-green-small-icon-text-bottom .x-btn-icon {
+    width: 16px;
+}
+
+/* line 773, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-over {
+    border-color: #7fc043;
+    background-image: none;
+    background-color: #7fc043;
+}
+
+/* line 797, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-focus {
+    background-image: none;
+    background-color: #7fc043;
+}
+
+/* line 822, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-menu-active,
+.x-btn-green-small-pressed {
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-small-disabled {
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-small-over .x-frame-tl,
+.x-nbr .x-btn-green-small-over .x-frame-bl,
+.x-nbr .x-btn-green-small-over .x-frame-tr,
+.x-nbr .x-btn-green-small-over .x-frame-br,
+.x-nbr .x-btn-green-small-over .x-frame-tc,
+.x-nbr .x-btn-green-small-over .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-small-over-corners.gif');
+}
+
+/* line 898, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-small-over .x-frame-ml,
+.x-nbr .x-btn-green-small-over .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-small-over-sides.gif');
+}
+
+/* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-small-over .x-frame-mc {
+    background-color: #7fc043;
+    background-image: url('../themes/images/default/btn/btn-green-small-over-bg.gif');
+}
+
+/* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-small-focus .x-frame-tl,
+.x-nbr .x-btn-green-small-focus .x-frame-bl,
+.x-nbr .x-btn-green-small-focus .x-frame-tr,
+.x-nbr .x-btn-green-small-focus .x-frame-br,
+.x-nbr .x-btn-green-small-focus .x-frame-tc,
+.x-nbr .x-btn-green-small-focus .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-small-focus-corners.gif');
+}
+
+/* line 919, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-small-focus .x-frame-ml,
+.x-nbr .x-btn-green-small-focus .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-small-focus-sides.gif');
+}
+
+/* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-small-focus .x-frame-mc {
+    background-color: #7fc043;
+    background-image: url('../themes/images/default/btn/btn-green-small-focus-bg.gif');
+}
+
+/* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-small-menu-active .x-frame-tl,
+.x-nbr .x-btn-green-small-menu-active .x-frame-bl,
+.x-nbr .x-btn-green-small-menu-active .x-frame-tr,
+.x-nbr .x-btn-green-small-menu-active .x-frame-br,
+.x-nbr .x-btn-green-small-menu-active .x-frame-tc,
+.x-nbr .x-btn-green-small-menu-active .x-frame-bc,
+.x-nbr .x-btn-green-small-pressed .x-frame-tl,
+.x-nbr .x-btn-green-small-pressed .x-frame-bl,
+.x-nbr .x-btn-green-small-pressed .x-frame-tr,
+.x-nbr .x-btn-green-small-pressed .x-frame-br,
+.x-nbr .x-btn-green-small-pressed .x-frame-tc,
+.x-nbr .x-btn-green-small-pressed .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-small-pressed-corners.gif');
+}
+
+/* line 941, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-small-menu-active .x-frame-ml,
+.x-nbr .x-btn-green-small-menu-active .x-frame-mr,
+.x-nbr .x-btn-green-small-pressed .x-frame-ml,
+.x-nbr .x-btn-green-small-pressed .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-small-pressed-sides.gif');
+}
+
+/* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-small-menu-active .x-frame-mc,
+.x-nbr .x-btn-green-small-pressed .x-frame-mc {
+    background-color: #669c34;
+    background-image: url('../themes/images/default/btn/btn-green-small-pressed-bg.gif');
+}
+
+/* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-small-disabled .x-frame-tl,
+.x-nbr .x-btn-green-small-disabled .x-frame-bl,
+.x-nbr .x-btn-green-small-disabled .x-frame-tr,
+.x-nbr .x-btn-green-small-disabled .x-frame-br,
+.x-nbr .x-btn-green-small-disabled .x-frame-tc,
+.x-nbr .x-btn-green-small-disabled .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-small-disabled-corners.gif');
+}
+
+/* line 962, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-small-disabled .x-frame-ml,
+.x-nbr .x-btn-green-small-disabled .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-small-disabled-sides.gif');
+}
+
+/* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-small-disabled .x-frame-mc {
+    background-color: #669c34;
+    background-image: url('../themes/images/default/btn/btn-green-small-disabled-bg.gif');
+}
+
+/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-small {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-small-bg.gif');
+}
+
+/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-small-over {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-small-over-bg.gif');
+}
+
+/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-small-focus {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-small-focus-bg.gif');
+}
+
+/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-small-menu-active,
+.x-nlg .x-btn-green-small-pressed {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-small-pressed-bg.gif');
+}
+
+/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-small-disabled {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-small-disabled-bg.gif');
+}
+
+/* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium {
+    border-color: #669c34;
+}
+
+/* line 69, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-btn-green-medium {
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    padding: 6px 12px 6px 12px;
+    border-width: 1px;
+    border-style: solid;
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nlg .x-btn-green-medium-mc {
+    background-image: url('../themes/images/default/btn/btn-green-medium-bg.gif');
+    background-color: #669c34;
+}
+
+/* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-medium {
+    padding: 0 !important;
+    border-width: 0 !important;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    -o-border-radius: 0px;
+    border-radius: 0px;
+    background-color: transparent;
+    background-position: 1100000px 1000000px;
+}
+
+/* line 147, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-medium-tl,
+.x-nbr .x-btn-green-medium-bl,
+.x-nbr .x-btn-green-medium-tr,
+.x-nbr .x-btn-green-medium-br,
+.x-nbr .x-btn-green-medium-tc,
+.x-nbr .x-btn-green-medium-bc,
+.x-nbr .x-btn-green-medium-ml,
+.x-nbr .x-btn-green-medium-mr {
+    zoom: 1;
+    background-image: url('../themes/images/default/btn/btn-green-medium-corners.gif');
+}
+
+/* line 168, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-medium-ml,
+.x-nbr .x-btn-green-medium-mr {
+    zoom: 1;
+    background-image: url('../themes/images/default/btn/btn-green-medium-sides.gif');
+    background-position: 0 0;
+}
+
+/* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-medium-mc {
+    padding: 7px 13px 7px 13px;
+}
+
+/* line 210, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-strict .x-ie7 .x-btn-green-medium-tl,
+.x-strict .x-ie7 .x-btn-green-medium-bl {
+    position: relative;
+    right: 0;
+}
+
+/* line 639, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium .x-btn-inner {
+    font-size: 14px;
+    font-weight: normal;
+    font-family: "Open Sans", sans-serif;
+    color: white;
+    background-repeat: no-repeat;
+    padding: 0 3px;
+}
+
+/* line 652, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-icon button,
+.x-btn-green-medium-icon a,
+.x-btn-green-medium-icon .x-btn-inner,
+.x-btn-green-medium-noicon button,
+.x-btn-green-medium-noicon a,
+.x-btn-green-medium-noicon .x-btn-inner {
+    height: 24px;
+    line-height: 24px;
+}
+
+/* line 661, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-icon button,
+.x-btn-green-medium-icon a {
+    padding: 0;
+}
+
+/* line 665, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-icon .x-btn-inner {
+    /* even though there is no text we set a width and padding as buttons shrink-wrap around this element */
+    width: 24px;
+    padding: 0;
+}
+
+/* line 671, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-icon .x-btn-icon {
+    width: 24px;
+    height: 24px;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 683, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-icon-text-left button,
+.x-btn-green-medium-icon-text-left a {
+    height: 24px;
+}
+
+/* line 686, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-icon-text-left .x-btn-inner {
+    height: 24px;
+    line-height: 24px;
+    padding-left: 28px;
+}
+
+/* line 692, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-icon-text-left .x-btn-icon {
+    width: 24px;
+    height: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: auto;
+}
+
+/* line 701, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-medium-icon-text-left .x-btn-icon, .x-quirks .x-btn-green-medium-icon-text-left .x-btn-icon {
+    height: 24px;
+}
+
+/* line 709, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-icon-text-right button,
+.x-btn-green-medium-icon-text-right a {
+    height: 24px;
+}
+
+/* line 712, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-icon-text-right .x-btn-inner {
+    height: 24px;
+    line-height: 24px;
+    padding-right: 28px !important;
+}
+
+/* line 718, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-icon-text-right .x-btn-icon {
+    width: 24px;
+    height: auto;
+    top: 0;
+    left: auto;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 727, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-medium-icon-text-right .x-btn-icon, .x-quirks .x-btn-green-medium-icon-text-right .x-btn-icon {
+    height: 24px;
+}
+
+/* line 734, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-icon-text-top .x-btn-inner {
+    padding-top: 28px;
+}
+
+/* line 738, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-icon-text-top .x-btn-icon {
+    width: auto;
+    height: 24px;
+    top: 0;
+    left: 0;
+    bottom: auto;
+    right: 0;
+}
+
+/* line 747, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-medium-icon-text-top .x-btn-icon, .x-quirks .x-ie .x-btn-green-medium-icon-text-top .x-btn-icon {
+    width: 24px;
+}
+
+/* line 754, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-icon-text-bottom .x-btn-inner {
+    padding-bottom: 28px;
+}
+
+/* line 758, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-icon-text-bottom .x-btn-icon {
+    width: auto;
+    height: 24px;
+    top: auto;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 767, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-medium-icon-text-bottom .x-btn-icon, .x-quirks .x-ie .x-btn-green-medium-icon-text-bottom .x-btn-icon {
+    width: 24px;
+}
+
+/* line 773, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-over {
+    border-color: #7fc043;
+    background-image: none;
+    background-color: #7fc043;
+}
+
+/* line 797, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-focus {
+    background-image: none;
+    background-color: #7fc043;
+}
+
+/* line 822, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-menu-active,
+.x-btn-green-medium-pressed {
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-medium-disabled {
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-medium-over .x-frame-tl,
+.x-nbr .x-btn-green-medium-over .x-frame-bl,
+.x-nbr .x-btn-green-medium-over .x-frame-tr,
+.x-nbr .x-btn-green-medium-over .x-frame-br,
+.x-nbr .x-btn-green-medium-over .x-frame-tc,
+.x-nbr .x-btn-green-medium-over .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-medium-over-corners.gif');
+}
+
+/* line 898, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-medium-over .x-frame-ml,
+.x-nbr .x-btn-green-medium-over .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-medium-over-sides.gif');
+}
+
+/* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-medium-over .x-frame-mc {
+    background-color: #7fc043;
+    background-image: url('../themes/images/default/btn/btn-green-medium-over-bg.gif');
+}
+
+/* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-medium-focus .x-frame-tl,
+.x-nbr .x-btn-green-medium-focus .x-frame-bl,
+.x-nbr .x-btn-green-medium-focus .x-frame-tr,
+.x-nbr .x-btn-green-medium-focus .x-frame-br,
+.x-nbr .x-btn-green-medium-focus .x-frame-tc,
+.x-nbr .x-btn-green-medium-focus .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-medium-focus-corners.gif');
+}
+
+/* line 919, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-medium-focus .x-frame-ml,
+.x-nbr .x-btn-green-medium-focus .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-medium-focus-sides.gif');
+}
+
+/* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-medium-focus .x-frame-mc {
+    background-color: #7fc043;
+    background-image: url('../themes/images/default/btn/btn-green-medium-focus-bg.gif');
+}
+
+/* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-medium-menu-active .x-frame-tl,
+.x-nbr .x-btn-green-medium-menu-active .x-frame-bl,
+.x-nbr .x-btn-green-medium-menu-active .x-frame-tr,
+.x-nbr .x-btn-green-medium-menu-active .x-frame-br,
+.x-nbr .x-btn-green-medium-menu-active .x-frame-tc,
+.x-nbr .x-btn-green-medium-menu-active .x-frame-bc,
+.x-nbr .x-btn-green-medium-pressed .x-frame-tl,
+.x-nbr .x-btn-green-medium-pressed .x-frame-bl,
+.x-nbr .x-btn-green-medium-pressed .x-frame-tr,
+.x-nbr .x-btn-green-medium-pressed .x-frame-br,
+.x-nbr .x-btn-green-medium-pressed .x-frame-tc,
+.x-nbr .x-btn-green-medium-pressed .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-medium-pressed-corners.gif');
+}
+
+/* line 941, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-medium-menu-active .x-frame-ml,
+.x-nbr .x-btn-green-medium-menu-active .x-frame-mr,
+.x-nbr .x-btn-green-medium-pressed .x-frame-ml,
+.x-nbr .x-btn-green-medium-pressed .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-medium-pressed-sides.gif');
+}
+
+/* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-medium-menu-active .x-frame-mc,
+.x-nbr .x-btn-green-medium-pressed .x-frame-mc {
+    background-color: #669c34;
+    background-image: url('../themes/images/default/btn/btn-green-medium-pressed-bg.gif');
+}
+
+/* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-medium-disabled .x-frame-tl,
+.x-nbr .x-btn-green-medium-disabled .x-frame-bl,
+.x-nbr .x-btn-green-medium-disabled .x-frame-tr,
+.x-nbr .x-btn-green-medium-disabled .x-frame-br,
+.x-nbr .x-btn-green-medium-disabled .x-frame-tc,
+.x-nbr .x-btn-green-medium-disabled .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-medium-disabled-corners.gif');
+}
+
+/* line 962, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-medium-disabled .x-frame-ml,
+.x-nbr .x-btn-green-medium-disabled .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-medium-disabled-sides.gif');
+}
+
+/* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-medium-disabled .x-frame-mc {
+    background-color: #669c34;
+    background-image: url('../themes/images/default/btn/btn-green-medium-disabled-bg.gif');
+}
+
+/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-medium {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-medium-bg.gif');
+}
+
+/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-medium-over {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-medium-over-bg.gif');
+}
+
+/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-medium-focus {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-medium-focus-bg.gif');
+}
+
+/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-medium-menu-active,
+.x-nlg .x-btn-green-medium-pressed {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-medium-pressed-bg.gif');
+}
+
+/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-medium-disabled {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-medium-disabled-bg.gif');
+}
+
+/* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large {
+    border-color: #669c34;
+}
+
+/* line 69, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-btn-green-large {
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    padding: 6px 12px 6px 12px;
+    border-width: 1px;
+    border-style: solid;
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nlg .x-btn-green-large-mc {
+    background-image: url('../themes/images/default/btn/btn-green-large-bg.gif');
+    background-color: #669c34;
+}
+
+/* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-large {
+    padding: 0 !important;
+    border-width: 0 !important;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    -o-border-radius: 0px;
+    border-radius: 0px;
+    background-color: transparent;
+    background-position: 1100000px 1000000px;
+}
+
+/* line 147, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-large-tl,
+.x-nbr .x-btn-green-large-bl,
+.x-nbr .x-btn-green-large-tr,
+.x-nbr .x-btn-green-large-br,
+.x-nbr .x-btn-green-large-tc,
+.x-nbr .x-btn-green-large-bc,
+.x-nbr .x-btn-green-large-ml,
+.x-nbr .x-btn-green-large-mr {
+    zoom: 1;
+    background-image: url('../themes/images/default/btn/btn-green-large-corners.gif');
+}
+
+/* line 168, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-large-ml,
+.x-nbr .x-btn-green-large-mr {
+    zoom: 1;
+    background-image: url('../themes/images/default/btn/btn-green-large-sides.gif');
+    background-position: 0 0;
+}
+
+/* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-large-mc {
+    padding: 7px 13px 7px 13px;
+}
+
+/* line 210, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-strict .x-ie7 .x-btn-green-large-tl,
+.x-strict .x-ie7 .x-btn-green-large-bl {
+    position: relative;
+    right: 0;
+}
+
+/* line 639, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large .x-btn-inner {
+    font-size: 14px;
+    font-weight: normal;
+    font-family: "Open Sans", sans-serif;
+    color: white;
+    background-repeat: no-repeat;
+    padding: 0 3px;
+}
+
+/* line 652, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-icon button,
+.x-btn-green-large-icon a,
+.x-btn-green-large-icon .x-btn-inner,
+.x-btn-green-large-noicon button,
+.x-btn-green-large-noicon a,
+.x-btn-green-large-noicon .x-btn-inner {
+    height: 32px;
+    line-height: 32px;
+}
+
+/* line 661, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-icon button,
+.x-btn-green-large-icon a {
+    padding: 0;
+}
+
+/* line 665, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-icon .x-btn-inner {
+    /* even though there is no text we set a width and padding as buttons shrink-wrap around this element */
+    width: 32px;
+    padding: 0;
+}
+
+/* line 671, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-icon .x-btn-icon {
+    width: 32px;
+    height: 32px;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 683, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-icon-text-left button,
+.x-btn-green-large-icon-text-left a {
+    height: 32px;
+}
+
+/* line 686, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-icon-text-left .x-btn-inner {
+    height: 32px;
+    line-height: 32px;
+    padding-left: 36px;
+}
+
+/* line 692, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-icon-text-left .x-btn-icon {
+    width: 32px;
+    height: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: auto;
+}
+
+/* line 701, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-large-icon-text-left .x-btn-icon, .x-quirks .x-btn-green-large-icon-text-left .x-btn-icon {
+    height: 32px;
+}
+
+/* line 709, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-icon-text-right button,
+.x-btn-green-large-icon-text-right a {
+    height: 32px;
+}
+
+/* line 712, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-icon-text-right .x-btn-inner {
+    height: 32px;
+    line-height: 32px;
+    padding-right: 36px !important;
+}
+
+/* line 718, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-icon-text-right .x-btn-icon {
+    width: 32px;
+    height: auto;
+    top: 0;
+    left: auto;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 727, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-large-icon-text-right .x-btn-icon, .x-quirks .x-btn-green-large-icon-text-right .x-btn-icon {
+    height: 32px;
+}
+
+/* line 734, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-icon-text-top .x-btn-inner {
+    padding-top: 36px;
+}
+
+/* line 738, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-icon-text-top .x-btn-icon {
+    width: auto;
+    height: 32px;
+    top: 0;
+    left: 0;
+    bottom: auto;
+    right: 0;
+}
+
+/* line 747, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-large-icon-text-top .x-btn-icon, .x-quirks .x-ie .x-btn-green-large-icon-text-top .x-btn-icon {
+    width: 32px;
+}
+
+/* line 754, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-icon-text-bottom .x-btn-inner {
+    padding-bottom: 36px;
+}
+
+/* line 758, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-icon-text-bottom .x-btn-icon {
+    width: auto;
+    height: 32px;
+    top: auto;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 767, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-large-icon-text-bottom .x-btn-icon, .x-quirks .x-ie .x-btn-green-large-icon-text-bottom .x-btn-icon {
+    width: 32px;
+}
+
+/* line 773, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-over {
+    border-color: #7fc043;
+    background-image: none;
+    background-color: #7fc043;
+}
+
+/* line 797, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-focus {
+    background-image: none;
+    background-color: #7fc043;
+}
+
+/* line 822, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-menu-active,
+.x-btn-green-large-pressed {
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-large-disabled {
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-large-over .x-frame-tl,
+.x-nbr .x-btn-green-large-over .x-frame-bl,
+.x-nbr .x-btn-green-large-over .x-frame-tr,
+.x-nbr .x-btn-green-large-over .x-frame-br,
+.x-nbr .x-btn-green-large-over .x-frame-tc,
+.x-nbr .x-btn-green-large-over .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-large-over-corners.gif');
+}
+
+/* line 898, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-large-over .x-frame-ml,
+.x-nbr .x-btn-green-large-over .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-large-over-sides.gif');
+}
+
+/* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-large-over .x-frame-mc {
+    background-color: #7fc043;
+    background-image: url('../themes/images/default/btn/btn-green-large-over-bg.gif');
+}
+
+/* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-large-focus .x-frame-tl,
+.x-nbr .x-btn-green-large-focus .x-frame-bl,
+.x-nbr .x-btn-green-large-focus .x-frame-tr,
+.x-nbr .x-btn-green-large-focus .x-frame-br,
+.x-nbr .x-btn-green-large-focus .x-frame-tc,
+.x-nbr .x-btn-green-large-focus .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-large-focus-corners.gif');
+}
+
+/* line 919, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-large-focus .x-frame-ml,
+.x-nbr .x-btn-green-large-focus .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-large-focus-sides.gif');
+}
+
+/* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-large-focus .x-frame-mc {
+    background-color: #7fc043;
+    background-image: url('../themes/images/default/btn/btn-green-large-focus-bg.gif');
+}
+
+/* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-large-menu-active .x-frame-tl,
+.x-nbr .x-btn-green-large-menu-active .x-frame-bl,
+.x-nbr .x-btn-green-large-menu-active .x-frame-tr,
+.x-nbr .x-btn-green-large-menu-active .x-frame-br,
+.x-nbr .x-btn-green-large-menu-active .x-frame-tc,
+.x-nbr .x-btn-green-large-menu-active .x-frame-bc,
+.x-nbr .x-btn-green-large-pressed .x-frame-tl,
+.x-nbr .x-btn-green-large-pressed .x-frame-bl,
+.x-nbr .x-btn-green-large-pressed .x-frame-tr,
+.x-nbr .x-btn-green-large-pressed .x-frame-br,
+.x-nbr .x-btn-green-large-pressed .x-frame-tc,
+.x-nbr .x-btn-green-large-pressed .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-large-pressed-corners.gif');
+}
+
+/* line 941, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-large-menu-active .x-frame-ml,
+.x-nbr .x-btn-green-large-menu-active .x-frame-mr,
+.x-nbr .x-btn-green-large-pressed .x-frame-ml,
+.x-nbr .x-btn-green-large-pressed .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-large-pressed-sides.gif');
+}
+
+/* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-large-menu-active .x-frame-mc,
+.x-nbr .x-btn-green-large-pressed .x-frame-mc {
+    background-color: #669c34;
+    background-image: url('../themes/images/default/btn/btn-green-large-pressed-bg.gif');
+}
+
+/* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-large-disabled .x-frame-tl,
+.x-nbr .x-btn-green-large-disabled .x-frame-bl,
+.x-nbr .x-btn-green-large-disabled .x-frame-tr,
+.x-nbr .x-btn-green-large-disabled .x-frame-br,
+.x-nbr .x-btn-green-large-disabled .x-frame-tc,
+.x-nbr .x-btn-green-large-disabled .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-large-disabled-corners.gif');
+}
+
+/* line 962, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-large-disabled .x-frame-ml,
+.x-nbr .x-btn-green-large-disabled .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-large-disabled-sides.gif');
+}
+
+/* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-large-disabled .x-frame-mc {
+    background-color: #669c34;
+    background-image: url('../themes/images/default/btn/btn-green-large-disabled-bg.gif');
+}
+
+/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-large {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-large-bg.gif');
+}
+
+/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-large-over {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-large-over-bg.gif');
+}
+
+/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-large-focus {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-large-focus-bg.gif');
+}
+
+/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-large-menu-active,
+.x-nlg .x-btn-green-large-pressed {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-large-pressed-bg.gif');
+}
+
+/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-large-disabled {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-large-disabled-bg.gif');
 }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
@@ -11115,6 +12275,1101 @@ tr.x-container:before {
     background-image: url('../themes/images/default/btn/btn-grey-toolbar-large-disabled-bg.gif');
 }
 
+/* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small {
+    border-color: #669c34;
+}
+
+/* line 69, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-btn-green-toolbar-small {
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    padding: 6px 16px 6px 16px;
+    border-width: 1px;
+    border-style: solid;
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nlg .x-btn-green-toolbar-small-mc {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-bg.gif');
+    background-color: #669c34;
+}
+
+/* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-toolbar-small {
+    padding: 0 !important;
+    border-width: 0 !important;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    -o-border-radius: 0px;
+    border-radius: 0px;
+    background-color: transparent;
+    background-position: 1100000px 1000000px;
+}
+
+/* line 147, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-toolbar-small-tl,
+.x-nbr .x-btn-green-toolbar-small-bl,
+.x-nbr .x-btn-green-toolbar-small-tr,
+.x-nbr .x-btn-green-toolbar-small-br,
+.x-nbr .x-btn-green-toolbar-small-tc,
+.x-nbr .x-btn-green-toolbar-small-bc,
+.x-nbr .x-btn-green-toolbar-small-ml,
+.x-nbr .x-btn-green-toolbar-small-mr {
+    zoom: 1;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-corners.gif');
+}
+
+/* line 168, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-toolbar-small-ml,
+.x-nbr .x-btn-green-toolbar-small-mr {
+    zoom: 1;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-sides.gif');
+    background-position: 0 0;
+}
+
+/* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-toolbar-small-mc {
+    padding: 7px 17px 7px 17px;
+}
+
+/* line 210, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-strict .x-ie7 .x-btn-green-toolbar-small-tl,
+.x-strict .x-ie7 .x-btn-green-toolbar-small-bl {
+    position: relative;
+    right: 0;
+}
+
+/* line 639, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small .x-btn-inner {
+    font-size: 12px;
+    font-weight: normal;
+    font-family: "Open Sans", sans-serif;
+    color: white;
+    background-repeat: no-repeat;
+    padding: 0 4px;
+}
+
+/* line 652, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-icon button,
+.x-btn-green-toolbar-small-icon a,
+.x-btn-green-toolbar-small-icon .x-btn-inner,
+.x-btn-green-toolbar-small-noicon button,
+.x-btn-green-toolbar-small-noicon a,
+.x-btn-green-toolbar-small-noicon .x-btn-inner {
+    height: 16px;
+    line-height: 16px;
+}
+
+/* line 661, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-icon button,
+.x-btn-green-toolbar-small-icon a {
+    padding: 0;
+}
+
+/* line 665, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-icon .x-btn-inner {
+    /* even though there is no text we set a width and padding as buttons shrink-wrap around this element */
+    width: 16px;
+    padding: 0;
+}
+
+/* line 671, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-icon .x-btn-icon {
+    width: 16px;
+    height: 16px;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 683, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-icon-text-left button,
+.x-btn-green-toolbar-small-icon-text-left a {
+    height: 16px;
+}
+
+/* line 686, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-icon-text-left .x-btn-inner {
+    height: 16px;
+    line-height: 16px;
+    padding-left: 20px;
+}
+
+/* line 692, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-icon-text-left .x-btn-icon {
+    width: 16px;
+    height: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: auto;
+}
+
+/* line 701, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-toolbar-small-icon-text-left .x-btn-icon, .x-quirks .x-btn-green-toolbar-small-icon-text-left .x-btn-icon {
+    height: 16px;
+}
+
+/* line 709, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-icon-text-right button,
+.x-btn-green-toolbar-small-icon-text-right a {
+    height: 16px;
+}
+
+/* line 712, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-icon-text-right .x-btn-inner {
+    height: 16px;
+    line-height: 16px;
+    padding-right: 20px !important;
+}
+
+/* line 718, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-icon-text-right .x-btn-icon {
+    width: 16px;
+    height: auto;
+    top: 0;
+    left: auto;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 727, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-toolbar-small-icon-text-right .x-btn-icon, .x-quirks .x-btn-green-toolbar-small-icon-text-right .x-btn-icon {
+    height: 16px;
+}
+
+/* line 734, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-icon-text-top .x-btn-inner {
+    padding-top: 20px;
+}
+
+/* line 738, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-icon-text-top .x-btn-icon {
+    width: auto;
+    height: 16px;
+    top: 0;
+    left: 0;
+    bottom: auto;
+    right: 0;
+}
+
+/* line 747, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-toolbar-small-icon-text-top .x-btn-icon, .x-quirks .x-ie .x-btn-green-toolbar-small-icon-text-top .x-btn-icon {
+    width: 16px;
+}
+
+/* line 754, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-icon-text-bottom .x-btn-inner {
+    padding-bottom: 20px;
+}
+
+/* line 758, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-icon-text-bottom .x-btn-icon {
+    width: auto;
+    height: 16px;
+    top: auto;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 767, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-toolbar-small-icon-text-bottom .x-btn-icon, .x-quirks .x-ie .x-btn-green-toolbar-small-icon-text-bottom .x-btn-icon {
+    width: 16px;
+}
+
+/* line 773, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-over {
+    border-color: #7fc043;
+    background-image: none;
+    background-color: #7fc043;
+}
+
+/* line 797, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-focus {
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 822, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-menu-active,
+.x-btn-green-toolbar-small-pressed {
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-small-disabled {
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-small-over .x-frame-tl,
+.x-nbr .x-btn-green-toolbar-small-over .x-frame-bl,
+.x-nbr .x-btn-green-toolbar-small-over .x-frame-tr,
+.x-nbr .x-btn-green-toolbar-small-over .x-frame-br,
+.x-nbr .x-btn-green-toolbar-small-over .x-frame-tc,
+.x-nbr .x-btn-green-toolbar-small-over .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-over-corners.gif');
+}
+
+/* line 898, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-small-over .x-frame-ml,
+.x-nbr .x-btn-green-toolbar-small-over .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-over-sides.gif');
+}
+
+/* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-small-over .x-frame-mc {
+    background-color: #7fc043;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-over-bg.gif');
+}
+
+/* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-small-focus .x-frame-tl,
+.x-nbr .x-btn-green-toolbar-small-focus .x-frame-bl,
+.x-nbr .x-btn-green-toolbar-small-focus .x-frame-tr,
+.x-nbr .x-btn-green-toolbar-small-focus .x-frame-br,
+.x-nbr .x-btn-green-toolbar-small-focus .x-frame-tc,
+.x-nbr .x-btn-green-toolbar-small-focus .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-focus-corners.gif');
+}
+
+/* line 919, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-small-focus .x-frame-ml,
+.x-nbr .x-btn-green-toolbar-small-focus .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-focus-sides.gif');
+}
+
+/* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-small-focus .x-frame-mc {
+    background-color: #669c34;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-focus-bg.gif');
+}
+
+/* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-small-menu-active .x-frame-tl,
+.x-nbr .x-btn-green-toolbar-small-menu-active .x-frame-bl,
+.x-nbr .x-btn-green-toolbar-small-menu-active .x-frame-tr,
+.x-nbr .x-btn-green-toolbar-small-menu-active .x-frame-br,
+.x-nbr .x-btn-green-toolbar-small-menu-active .x-frame-tc,
+.x-nbr .x-btn-green-toolbar-small-menu-active .x-frame-bc,
+.x-nbr .x-btn-green-toolbar-small-pressed .x-frame-tl,
+.x-nbr .x-btn-green-toolbar-small-pressed .x-frame-bl,
+.x-nbr .x-btn-green-toolbar-small-pressed .x-frame-tr,
+.x-nbr .x-btn-green-toolbar-small-pressed .x-frame-br,
+.x-nbr .x-btn-green-toolbar-small-pressed .x-frame-tc,
+.x-nbr .x-btn-green-toolbar-small-pressed .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-pressed-corners.gif');
+}
+
+/* line 941, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-small-menu-active .x-frame-ml,
+.x-nbr .x-btn-green-toolbar-small-menu-active .x-frame-mr,
+.x-nbr .x-btn-green-toolbar-small-pressed .x-frame-ml,
+.x-nbr .x-btn-green-toolbar-small-pressed .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-pressed-sides.gif');
+}
+
+/* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-small-menu-active .x-frame-mc,
+.x-nbr .x-btn-green-toolbar-small-pressed .x-frame-mc {
+    background-color: #669c34;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-pressed-bg.gif');
+}
+
+/* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-small-disabled .x-frame-tl,
+.x-nbr .x-btn-green-toolbar-small-disabled .x-frame-bl,
+.x-nbr .x-btn-green-toolbar-small-disabled .x-frame-tr,
+.x-nbr .x-btn-green-toolbar-small-disabled .x-frame-br,
+.x-nbr .x-btn-green-toolbar-small-disabled .x-frame-tc,
+.x-nbr .x-btn-green-toolbar-small-disabled .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-disabled-corners.gif');
+}
+
+/* line 962, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-small-disabled .x-frame-ml,
+.x-nbr .x-btn-green-toolbar-small-disabled .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-disabled-sides.gif');
+}
+
+/* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-small-disabled .x-frame-mc {
+    background-color: #669c34;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-disabled-bg.gif');
+}
+
+/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-toolbar-small {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-bg.gif');
+}
+
+/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-toolbar-small-over {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-over-bg.gif');
+}
+
+/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-toolbar-small-focus {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-focus-bg.gif');
+}
+
+/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-toolbar-small-menu-active,
+.x-nlg .x-btn-green-toolbar-small-pressed {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-pressed-bg.gif');
+}
+
+/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-toolbar-small-disabled {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-small-disabled-bg.gif');
+}
+
+/* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium {
+    border-color: #669c34;
+}
+
+/* line 69, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-btn-green-toolbar-medium {
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    padding: 6px 12px 6px 12px;
+    border-width: 1px;
+    border-style: solid;
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nlg .x-btn-green-toolbar-medium-mc {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-bg.gif');
+    background-color: #669c34;
+}
+
+/* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-toolbar-medium {
+    padding: 0 !important;
+    border-width: 0 !important;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    -o-border-radius: 0px;
+    border-radius: 0px;
+    background-color: transparent;
+    background-position: 1100000px 1000000px;
+}
+
+/* line 147, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-toolbar-medium-tl,
+.x-nbr .x-btn-green-toolbar-medium-bl,
+.x-nbr .x-btn-green-toolbar-medium-tr,
+.x-nbr .x-btn-green-toolbar-medium-br,
+.x-nbr .x-btn-green-toolbar-medium-tc,
+.x-nbr .x-btn-green-toolbar-medium-bc,
+.x-nbr .x-btn-green-toolbar-medium-ml,
+.x-nbr .x-btn-green-toolbar-medium-mr {
+    zoom: 1;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-corners.gif');
+}
+
+/* line 168, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-toolbar-medium-ml,
+.x-nbr .x-btn-green-toolbar-medium-mr {
+    zoom: 1;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-sides.gif');
+    background-position: 0 0;
+}
+
+/* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-toolbar-medium-mc {
+    padding: 7px 13px 7px 13px;
+}
+
+/* line 210, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-strict .x-ie7 .x-btn-green-toolbar-medium-tl,
+.x-strict .x-ie7 .x-btn-green-toolbar-medium-bl {
+    position: relative;
+    right: 0;
+}
+
+/* line 639, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium .x-btn-inner {
+    font-size: 14px;
+    font-weight: normal;
+    font-family: "Open Sans", sans-serif;
+    color: white;
+    background-repeat: no-repeat;
+    padding: 0 3px;
+}
+
+/* line 652, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-icon button,
+.x-btn-green-toolbar-medium-icon a,
+.x-btn-green-toolbar-medium-icon .x-btn-inner,
+.x-btn-green-toolbar-medium-noicon button,
+.x-btn-green-toolbar-medium-noicon a,
+.x-btn-green-toolbar-medium-noicon .x-btn-inner {
+    height: 24px;
+    line-height: 24px;
+}
+
+/* line 661, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-icon button,
+.x-btn-green-toolbar-medium-icon a {
+    padding: 0;
+}
+
+/* line 665, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-icon .x-btn-inner {
+    /* even though there is no text we set a width and padding as buttons shrink-wrap around this element */
+    width: 24px;
+    padding: 0;
+}
+
+/* line 671, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-icon .x-btn-icon {
+    width: 24px;
+    height: 24px;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 683, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-icon-text-left button,
+.x-btn-green-toolbar-medium-icon-text-left a {
+    height: 24px;
+}
+
+/* line 686, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-icon-text-left .x-btn-inner {
+    height: 24px;
+    line-height: 24px;
+    padding-left: 28px;
+}
+
+/* line 692, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-icon-text-left .x-btn-icon {
+    width: 24px;
+    height: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: auto;
+}
+
+/* line 701, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-toolbar-medium-icon-text-left .x-btn-icon, .x-quirks .x-btn-green-toolbar-medium-icon-text-left .x-btn-icon {
+    height: 24px;
+}
+
+/* line 709, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-icon-text-right button,
+.x-btn-green-toolbar-medium-icon-text-right a {
+    height: 24px;
+}
+
+/* line 712, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-icon-text-right .x-btn-inner {
+    height: 24px;
+    line-height: 24px;
+    padding-right: 28px !important;
+}
+
+/* line 718, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-icon-text-right .x-btn-icon {
+    width: 24px;
+    height: auto;
+    top: 0;
+    left: auto;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 727, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-toolbar-medium-icon-text-right .x-btn-icon, .x-quirks .x-btn-green-toolbar-medium-icon-text-right .x-btn-icon {
+    height: 24px;
+}
+
+/* line 734, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-icon-text-top .x-btn-inner {
+    padding-top: 28px;
+}
+
+/* line 738, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-icon-text-top .x-btn-icon {
+    width: auto;
+    height: 24px;
+    top: 0;
+    left: 0;
+    bottom: auto;
+    right: 0;
+}
+
+/* line 747, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-toolbar-medium-icon-text-top .x-btn-icon, .x-quirks .x-ie .x-btn-green-toolbar-medium-icon-text-top .x-btn-icon {
+    width: 24px;
+}
+
+/* line 754, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-icon-text-bottom .x-btn-inner {
+    padding-bottom: 28px;
+}
+
+/* line 758, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-icon-text-bottom .x-btn-icon {
+    width: auto;
+    height: 24px;
+    top: auto;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 767, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-toolbar-medium-icon-text-bottom .x-btn-icon, .x-quirks .x-ie .x-btn-green-toolbar-medium-icon-text-bottom .x-btn-icon {
+    width: 24px;
+}
+
+/* line 773, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-over {
+    border-color: #7fc043;
+    background-image: none;
+    background-color: #7fc043;
+}
+
+/* line 797, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-focus {
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 822, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-menu-active,
+.x-btn-green-toolbar-medium-pressed {
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-medium-disabled {
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-medium-over .x-frame-tl,
+.x-nbr .x-btn-green-toolbar-medium-over .x-frame-bl,
+.x-nbr .x-btn-green-toolbar-medium-over .x-frame-tr,
+.x-nbr .x-btn-green-toolbar-medium-over .x-frame-br,
+.x-nbr .x-btn-green-toolbar-medium-over .x-frame-tc,
+.x-nbr .x-btn-green-toolbar-medium-over .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-over-corners.gif');
+}
+
+/* line 898, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-medium-over .x-frame-ml,
+.x-nbr .x-btn-green-toolbar-medium-over .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-over-sides.gif');
+}
+
+/* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-medium-over .x-frame-mc {
+    background-color: #7fc043;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-over-bg.gif');
+}
+
+/* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-medium-focus .x-frame-tl,
+.x-nbr .x-btn-green-toolbar-medium-focus .x-frame-bl,
+.x-nbr .x-btn-green-toolbar-medium-focus .x-frame-tr,
+.x-nbr .x-btn-green-toolbar-medium-focus .x-frame-br,
+.x-nbr .x-btn-green-toolbar-medium-focus .x-frame-tc,
+.x-nbr .x-btn-green-toolbar-medium-focus .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-focus-corners.gif');
+}
+
+/* line 919, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-medium-focus .x-frame-ml,
+.x-nbr .x-btn-green-toolbar-medium-focus .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-focus-sides.gif');
+}
+
+/* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-medium-focus .x-frame-mc {
+    background-color: #669c34;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-focus-bg.gif');
+}
+
+/* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-medium-menu-active .x-frame-tl,
+.x-nbr .x-btn-green-toolbar-medium-menu-active .x-frame-bl,
+.x-nbr .x-btn-green-toolbar-medium-menu-active .x-frame-tr,
+.x-nbr .x-btn-green-toolbar-medium-menu-active .x-frame-br,
+.x-nbr .x-btn-green-toolbar-medium-menu-active .x-frame-tc,
+.x-nbr .x-btn-green-toolbar-medium-menu-active .x-frame-bc,
+.x-nbr .x-btn-green-toolbar-medium-pressed .x-frame-tl,
+.x-nbr .x-btn-green-toolbar-medium-pressed .x-frame-bl,
+.x-nbr .x-btn-green-toolbar-medium-pressed .x-frame-tr,
+.x-nbr .x-btn-green-toolbar-medium-pressed .x-frame-br,
+.x-nbr .x-btn-green-toolbar-medium-pressed .x-frame-tc,
+.x-nbr .x-btn-green-toolbar-medium-pressed .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-pressed-corners.gif');
+}
+
+/* line 941, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-medium-menu-active .x-frame-ml,
+.x-nbr .x-btn-green-toolbar-medium-menu-active .x-frame-mr,
+.x-nbr .x-btn-green-toolbar-medium-pressed .x-frame-ml,
+.x-nbr .x-btn-green-toolbar-medium-pressed .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-pressed-sides.gif');
+}
+
+/* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-medium-menu-active .x-frame-mc,
+.x-nbr .x-btn-green-toolbar-medium-pressed .x-frame-mc {
+    background-color: #669c34;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-pressed-bg.gif');
+}
+
+/* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-medium-disabled .x-frame-tl,
+.x-nbr .x-btn-green-toolbar-medium-disabled .x-frame-bl,
+.x-nbr .x-btn-green-toolbar-medium-disabled .x-frame-tr,
+.x-nbr .x-btn-green-toolbar-medium-disabled .x-frame-br,
+.x-nbr .x-btn-green-toolbar-medium-disabled .x-frame-tc,
+.x-nbr .x-btn-green-toolbar-medium-disabled .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-disabled-corners.gif');
+}
+
+/* line 962, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-medium-disabled .x-frame-ml,
+.x-nbr .x-btn-green-toolbar-medium-disabled .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-disabled-sides.gif');
+}
+
+/* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-medium-disabled .x-frame-mc {
+    background-color: #669c34;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-disabled-bg.gif');
+}
+
+/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-toolbar-medium {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-bg.gif');
+}
+
+/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-toolbar-medium-over {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-over-bg.gif');
+}
+
+/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-toolbar-medium-focus {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-focus-bg.gif');
+}
+
+/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-toolbar-medium-menu-active,
+.x-nlg .x-btn-green-toolbar-medium-pressed {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-pressed-bg.gif');
+}
+
+/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-toolbar-medium-disabled {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-medium-disabled-bg.gif');
+}
+
+/* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large {
+    border-color: #669c34;
+}
+
+/* line 69, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-btn-green-toolbar-large {
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    padding: 6px 12px 6px 12px;
+    border-width: 1px;
+    border-style: solid;
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nlg .x-btn-green-toolbar-large-mc {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-bg.gif');
+    background-color: #669c34;
+}
+
+/* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-toolbar-large {
+    padding: 0 !important;
+    border-width: 0 !important;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    -o-border-radius: 0px;
+    border-radius: 0px;
+    background-color: transparent;
+    background-position: 1100000px 1000000px;
+}
+
+/* line 147, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-toolbar-large-tl,
+.x-nbr .x-btn-green-toolbar-large-bl,
+.x-nbr .x-btn-green-toolbar-large-tr,
+.x-nbr .x-btn-green-toolbar-large-br,
+.x-nbr .x-btn-green-toolbar-large-tc,
+.x-nbr .x-btn-green-toolbar-large-bc,
+.x-nbr .x-btn-green-toolbar-large-ml,
+.x-nbr .x-btn-green-toolbar-large-mr {
+    zoom: 1;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-corners.gif');
+}
+
+/* line 168, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-toolbar-large-ml,
+.x-nbr .x-btn-green-toolbar-large-mr {
+    zoom: 1;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-sides.gif');
+    background-position: 0 0;
+}
+
+/* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-nbr .x-btn-green-toolbar-large-mc {
+    padding: 7px 13px 7px 13px;
+}
+
+/* line 210, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
+.x-strict .x-ie7 .x-btn-green-toolbar-large-tl,
+.x-strict .x-ie7 .x-btn-green-toolbar-large-bl {
+    position: relative;
+    right: 0;
+}
+
+/* line 639, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large .x-btn-inner {
+    font-size: 14px;
+    font-weight: normal;
+    font-family: "Open Sans", sans-serif;
+    color: white;
+    background-repeat: no-repeat;
+    padding: 0 3px;
+}
+
+/* line 652, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-icon button,
+.x-btn-green-toolbar-large-icon a,
+.x-btn-green-toolbar-large-icon .x-btn-inner,
+.x-btn-green-toolbar-large-noicon button,
+.x-btn-green-toolbar-large-noicon a,
+.x-btn-green-toolbar-large-noicon .x-btn-inner {
+    height: 32px;
+    line-height: 32px;
+}
+
+/* line 661, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-icon button,
+.x-btn-green-toolbar-large-icon a {
+    padding: 0;
+}
+
+/* line 665, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-icon .x-btn-inner {
+    /* even though there is no text we set a width and padding as buttons shrink-wrap around this element */
+    width: 32px;
+    padding: 0;
+}
+
+/* line 671, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-icon .x-btn-icon {
+    width: 32px;
+    height: 32px;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 683, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-icon-text-left button,
+.x-btn-green-toolbar-large-icon-text-left a {
+    height: 32px;
+}
+
+/* line 686, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-icon-text-left .x-btn-inner {
+    height: 32px;
+    line-height: 32px;
+    padding-left: 36px;
+}
+
+/* line 692, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-icon-text-left .x-btn-icon {
+    width: 32px;
+    height: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: auto;
+}
+
+/* line 701, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-toolbar-large-icon-text-left .x-btn-icon, .x-quirks .x-btn-green-toolbar-large-icon-text-left .x-btn-icon {
+    height: 32px;
+}
+
+/* line 709, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-icon-text-right button,
+.x-btn-green-toolbar-large-icon-text-right a {
+    height: 32px;
+}
+
+/* line 712, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-icon-text-right .x-btn-inner {
+    height: 32px;
+    line-height: 32px;
+    padding-right: 36px !important;
+}
+
+/* line 718, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-icon-text-right .x-btn-icon {
+    width: 32px;
+    height: auto;
+    top: 0;
+    left: auto;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 727, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-toolbar-large-icon-text-right .x-btn-icon, .x-quirks .x-btn-green-toolbar-large-icon-text-right .x-btn-icon {
+    height: 32px;
+}
+
+/* line 734, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-icon-text-top .x-btn-inner {
+    padding-top: 36px;
+}
+
+/* line 738, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-icon-text-top .x-btn-icon {
+    width: auto;
+    height: 32px;
+    top: 0;
+    left: 0;
+    bottom: auto;
+    right: 0;
+}
+
+/* line 747, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-toolbar-large-icon-text-top .x-btn-icon, .x-quirks .x-ie .x-btn-green-toolbar-large-icon-text-top .x-btn-icon {
+    width: 32px;
+}
+
+/* line 754, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-icon-text-bottom .x-btn-inner {
+    padding-bottom: 36px;
+}
+
+/* line 758, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-icon-text-bottom .x-btn-icon {
+    width: auto;
+    height: 32px;
+    top: auto;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* line 767, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-ie6 .x-btn-green-toolbar-large-icon-text-bottom .x-btn-icon, .x-quirks .x-ie .x-btn-green-toolbar-large-icon-text-bottom .x-btn-icon {
+    width: 32px;
+}
+
+/* line 773, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-over {
+    border-color: #7fc043;
+    background-image: none;
+    background-color: #7fc043;
+}
+
+/* line 797, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-focus {
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 822, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-menu-active,
+.x-btn-green-toolbar-large-pressed {
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-btn-green-toolbar-large-disabled {
+    background-image: none;
+    background-color: #669c34;
+}
+
+/* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-large-over .x-frame-tl,
+.x-nbr .x-btn-green-toolbar-large-over .x-frame-bl,
+.x-nbr .x-btn-green-toolbar-large-over .x-frame-tr,
+.x-nbr .x-btn-green-toolbar-large-over .x-frame-br,
+.x-nbr .x-btn-green-toolbar-large-over .x-frame-tc,
+.x-nbr .x-btn-green-toolbar-large-over .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-over-corners.gif');
+}
+
+/* line 898, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-large-over .x-frame-ml,
+.x-nbr .x-btn-green-toolbar-large-over .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-over-sides.gif');
+}
+
+/* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-large-over .x-frame-mc {
+    background-color: #7fc043;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-over-bg.gif');
+}
+
+/* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-large-focus .x-frame-tl,
+.x-nbr .x-btn-green-toolbar-large-focus .x-frame-bl,
+.x-nbr .x-btn-green-toolbar-large-focus .x-frame-tr,
+.x-nbr .x-btn-green-toolbar-large-focus .x-frame-br,
+.x-nbr .x-btn-green-toolbar-large-focus .x-frame-tc,
+.x-nbr .x-btn-green-toolbar-large-focus .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-focus-corners.gif');
+}
+
+/* line 919, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-large-focus .x-frame-ml,
+.x-nbr .x-btn-green-toolbar-large-focus .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-focus-sides.gif');
+}
+
+/* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-large-focus .x-frame-mc {
+    background-color: #669c34;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-focus-bg.gif');
+}
+
+/* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-large-menu-active .x-frame-tl,
+.x-nbr .x-btn-green-toolbar-large-menu-active .x-frame-bl,
+.x-nbr .x-btn-green-toolbar-large-menu-active .x-frame-tr,
+.x-nbr .x-btn-green-toolbar-large-menu-active .x-frame-br,
+.x-nbr .x-btn-green-toolbar-large-menu-active .x-frame-tc,
+.x-nbr .x-btn-green-toolbar-large-menu-active .x-frame-bc,
+.x-nbr .x-btn-green-toolbar-large-pressed .x-frame-tl,
+.x-nbr .x-btn-green-toolbar-large-pressed .x-frame-bl,
+.x-nbr .x-btn-green-toolbar-large-pressed .x-frame-tr,
+.x-nbr .x-btn-green-toolbar-large-pressed .x-frame-br,
+.x-nbr .x-btn-green-toolbar-large-pressed .x-frame-tc,
+.x-nbr .x-btn-green-toolbar-large-pressed .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-pressed-corners.gif');
+}
+
+/* line 941, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-large-menu-active .x-frame-ml,
+.x-nbr .x-btn-green-toolbar-large-menu-active .x-frame-mr,
+.x-nbr .x-btn-green-toolbar-large-pressed .x-frame-ml,
+.x-nbr .x-btn-green-toolbar-large-pressed .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-pressed-sides.gif');
+}
+
+/* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-large-menu-active .x-frame-mc,
+.x-nbr .x-btn-green-toolbar-large-pressed .x-frame-mc {
+    background-color: #669c34;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-pressed-bg.gif');
+}
+
+/* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-large-disabled .x-frame-tl,
+.x-nbr .x-btn-green-toolbar-large-disabled .x-frame-bl,
+.x-nbr .x-btn-green-toolbar-large-disabled .x-frame-tr,
+.x-nbr .x-btn-green-toolbar-large-disabled .x-frame-br,
+.x-nbr .x-btn-green-toolbar-large-disabled .x-frame-tc,
+.x-nbr .x-btn-green-toolbar-large-disabled .x-frame-bc {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-disabled-corners.gif');
+}
+
+/* line 962, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-large-disabled .x-frame-ml,
+.x-nbr .x-btn-green-toolbar-large-disabled .x-frame-mr {
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-disabled-sides.gif');
+}
+
+/* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nbr .x-btn-green-toolbar-large-disabled .x-frame-mc {
+    background-color: #669c34;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-disabled-bg.gif');
+}
+
+/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-toolbar-large {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-bg.gif');
+}
+
+/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-toolbar-large-over {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-over-bg.gif');
+}
+
+/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-toolbar-large-focus {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-focus-bg.gif');
+}
+
+/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-toolbar-large-menu-active,
+.x-nlg .x-btn-green-toolbar-large-pressed {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-pressed-bg.gif');
+}
+
+/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
+.x-nlg .x-btn-green-toolbar-large-disabled {
+    background-repeat: repeat-x;
+    background-image: url('../themes/images/default/btn/btn-green-toolbar-large-disabled-bg.gif');
+}
+
 /* line 2, ../themes/stylesheets/ext4/default/widgets/_boundlist.scss */
 .x-boundlist {
     border-width: 1px;
@@ -13916,7 +16171,7 @@ tr.x-container:before {
 
 /* line 104, ../themes/stylesheets/ext4/default/widgets/_datepicker.scss */
 .x-datepicker-month span {
-    color: white !important;
+    color: #fff !important;
 }
 
 /* line 108, ../themes/stylesheets/ext4/default/widgets/_datepicker.scss */
@@ -14238,7 +16493,7 @@ table.x-datepicker-inner .x-datepicker-disabled a {
 
 /* line 8, ../themes/stylesheets/ext4/default/widgets/_colorpicker.scss */
 .x-color-picker a {
-    border: 1px solid white;
+    border: 1px solid #fff;
     float: left;
     padding: 2px;
     text-decoration: none;
@@ -14847,7 +17102,7 @@ browsers will do whacky things with it.
 
 /* line 339, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
 .x-grid-cell-selected {
-    background-color: #b8cfee !important;
+    background-color: #B8CFEE !important;
 }
 
 /* line 345, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
@@ -15951,7 +18206,7 @@ textarea.x-form-invalid-field {
 
 /* line 8, ../themes/stylesheets/ext4/default/widgets/form/_checkboxgroup.scss */
 .x-form-invalid .x-form-checkboxgroup-body {
-    border: 1px solid #cc3300;
+    border: 1px solid #c30;
     background: transparent repeat-x bottom;
     background-image: url('../themes/images/default/grid/invalid_line.gif');
     padding: 0 3px 0 3px;
@@ -15967,7 +18222,7 @@ textarea.x-form-invalid-field {
 /* line 23, ../themes/stylesheets/ext4/default/widgets/form/_checkboxgroup.scss */
 .x-form-check-group-label {
     color: #333;
-    border-bottom: 1px solid #333333;
+    border-bottom: 1px solid #333;
     margin: 0 30px 5px 0;
     padding: 2px;
 }

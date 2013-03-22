@@ -1,5 +1,5 @@
 Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
-    extend: 'Admin.view.NewWizardPanel',
+    extend: 'Admin.view.WizardPanel',
     alias: 'widget.spaceAdminWizardPanel',
     requires: [
         'Admin.view.WizardHeader',
@@ -48,7 +48,7 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
         };
     },
 
-    getSteps: function () {
+    createSteps: function () {
 
         return [
             {
@@ -73,17 +73,19 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
         ];
     },
 
-    getWizardHeader: function () {
-        return Ext.create('Admin.view.WizardHeader', {
+    createWizardHeader: function () {
+        var wizardHeader = Ext.create('Admin.view.WizardHeader', {
             xtype: 'wizardHeader',
             pathConfig: {
                 hidden: true
             },
             data: this.data
         });
+        this.validateItems.push(wizardHeader);
+        return wizardHeader;
     },
 
-    getIcon: function () {
+    createIcon: function () {
         var me = this;
         var headerData = me.resolveHeaderData(me.data);
 
@@ -91,7 +93,6 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
             xtype: 'container',
             width: 100,
             height: 100,
-            padding: 5,
             items: [
                 {
                     xtype: 'photoUploadButton',
@@ -140,10 +141,21 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
         };
     },
 
+    createActionButton: function () {
+        return {
+            xtype: 'button',
+            text: 'Save',
+            action: 'saveSpace'
+        };
+    },
+
+    getWizardHeader: function () {
+        return this.down('wizardHeader');
+    },
 
     getData: function () {
         var data = this.callParent();
-        var headerData = this.down('wizardHeader').getData();
+        var headerData = this.getWizardHeader().getData();
 
         return Ext.apply(data, {
             displayName: headerData.displayName,

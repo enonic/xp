@@ -1,5 +1,5 @@
 Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
-    extend: 'Admin.view.NewWizardPanel',
+    extend: 'Admin.view.WizardPanel',
     alias: 'widget.contentWizardPanel',
 
     requires: [
@@ -82,7 +82,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         };
     },
 
-    getSteps: function () {
+    createSteps: function () {
         var dataStep = {
             stepTitle: ( this.data && this.data.contentType ) ? this.data.contentType.displayName : "Data",
             xtype: 'contentDataPanel',
@@ -110,7 +110,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         return !this.data || !this.data.content || Ext.isEmpty(this.data.content.path);
     },
 
-    getWizardHeader: function () {
+    createWizardHeader: function () {
         var headerData = this.prepareHeaderData(this.data);
         var evaluateFn = this.data && this.data.contentType && this.data.contentType.contentDisplayNameScript;
         var wizardHeader = Ext.create('Admin.view.WizardHeader', {
@@ -126,11 +126,18 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             data: this.data,
             prepareHeaderData: this.prepareHeaderData
         });
-
+        this.validateItems.push(wizardHeader);
         return wizardHeader;
     },
 
-    getIcon: function () {
+    createActionButton: function () {
+        return {
+            xtype: 'button',
+            text: 'Publish'
+        };
+    },
+
+    createIcon: function () {
         var me = this;
         var headerData = this.prepareHeaderData(this.data);
         return {
@@ -159,11 +166,15 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         };
     },
 
+    getWizardHeader: function () {
+        return this.down('wizardHeader');
+    },
+
     getData: function () {
         var data = {
             contentData: this.callParent()
         };
-        Ext.apply(data, this.down('wizardHeader').getData());
+        Ext.apply(data, this.getWizardHeader().getData());
         return data;
     }
 

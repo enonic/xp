@@ -1,8 +1,7 @@
 Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
-    extend: 'Admin.view.NewWizardPanel',
+    extend: 'Admin.view.WizardPanel',
     alias: 'widget.userWizardPanel',
     requires: [
-        'Admin.view.WizardPanel',
         'Admin.view.account.wizard.user.UserStoreListPanel',
         'Admin.view.account.wizard.user.UserWizardToolbar',
         'Admin.view.account.EditUserFormPanel',
@@ -127,8 +126,12 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
         return Ext.isEmpty(this.data);
     },
 
+    getWizardHeader: function () {
+        return this.down('wizardHeader');
+    },
+
     getData: function () {
-        var data = Ext.apply(this.callParent(), this.down('wizardHeader').getData());
+        var data = Ext.apply(this.callParent(), this.getWizardHeader().getData());
         if (this.data) {
             data.key = this.data.key;
         }
@@ -140,7 +143,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
         this.addData({imageRef: photoRef});
     },
 
-    getSteps: function () {
+    createSteps: function () {
         return [
             {
                 stepTitle: "Profile",
@@ -188,14 +191,13 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
         ];
     },
 
-    getIcon: function () {
+    createIcon: function () {
         var me = this;
 
         return {
             xtype: 'container',
             width: 100,
             height: 100,
-            padding: 5,
             items: [
                 {
                     xtype: 'photoUploadButton',
@@ -241,7 +243,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
         };
     },
 
-    getWizardHeader: function () {
+    createWizardHeader: function () {
         var wizardHeader = Ext.create('Admin.view.WizardHeader', {
             xtype: 'wizardHeader',
             pathConfig: {
@@ -257,6 +259,14 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
         });
         return wizardHeader;
 
+    },
+
+    createActionButton: function () {
+        return {
+            xtype: 'button',
+            text: 'Save',
+            action: 'saveUser'
+        };
     }
 
 });

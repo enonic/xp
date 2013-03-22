@@ -1,5 +1,5 @@
 Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
-    extend: 'Admin.view.NewWizardPanel',
+    extend: 'Admin.view.WizardPanel',
     alias: 'widget.contentStudioWizardPanel',
     requires: [
         'Admin.view.contentStudio.wizard.ConfigPanel',
@@ -26,8 +26,8 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
     },
 
 
-    getWizardHeader: function () {
-        return Ext.create('Admin.view.WizardHeader', {
+    createWizardHeader: function () {
+        var wizardHeader = Ext.create('Admin.view.WizardHeader', {
             xtype: 'wizardHeader',
             pathConfig: {
                 hidden: true
@@ -37,9 +37,20 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
             },
             data: this.data
         });
+
+        this.validateItems.push(wizardHeader);
+
+        return wizardHeader;
     },
 
-    getIcon: function () {
+    createActionButton: function () {
+        return {
+            xtype: 'button',
+            text: 'Save'
+        };
+    },
+
+    createIcon: function () {
         var me = this;
         var headerData = this.resolveHeaderData(this.data);
 
@@ -102,11 +113,6 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
         });
     },
 
-    getSteps: function () {
-        // override to add steps
-        return [];
-    },
-
     resolveHeaderData: function (data) {
         var iconUrl = 'resources/images/icons/128x128/cubes.png';
         var displayNameValue = 'Display Name';
@@ -133,14 +139,12 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
         return Ext.isDefined(this.isNew) ? this.isNew : Ext.isEmpty(this.data);
     },
 
-
-    getWizardPanel: function () {
-        return this.down('wizardPanel');
+    getWizardHeader: function () {
+        return this.down('wizardHeader');
     },
 
-
     getData: function () {
-        return Ext.apply(this.callParent(), this.down('wizardHeader').getData());
+        return Ext.apply(this.callParent(), this.getWizardHeader().getData());
     },
 
     photoUploaded: function (photoUploadButton, response) {
