@@ -30,7 +30,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
             handler: function (event) {
                 event.stopPropagation();
                 // For demo purposes
-                me.menu.$selectedcomponent.onRemove();
+                me.menu.$selectedComponent.remove();
                 $(window).trigger('component.onRemove');
             }
         });
