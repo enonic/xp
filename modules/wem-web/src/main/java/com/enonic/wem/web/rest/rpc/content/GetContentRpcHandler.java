@@ -1,11 +1,13 @@
 package com.enonic.wem.web.rest.rpc.content;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.GetContentVersion;
 import com.enonic.wem.api.command.content.GetContents;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
@@ -28,16 +30,32 @@ public class GetContentRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final String path = context.param( "path" ).required().asString();
-        final Integer version = context.param( "version" ).asInteger();
-        final Content content;
-        if ( version == null )
+        final String path = context.param( "path" ).asString();
+        final String[] stringOfPathIds = context.param( "contentIds" ).asStringArray();
+
+        if ( StringUtils.isNotEmpty( path ) )
         {
-            content = findContent( ContentPath.from( path ) );
+            final ContentPath contentPath = ContentPath.from( path );
+            handleGetContentByPath( contentPath, context );
         }
         else
         {
-            content = findContentVersion( ContentPath.from( path ), ContentVersionId.of( version ) );
+            handleGetContentByIds( ContentIds.from( stringOfPathIds ), context );
+        }
+    }
+
+    private void handleGetContentByPath( final ContentPath contentPath, final JsonRpcContext context )
+    {
+        final Integer version = context.param( "version" ).asInteger();
+        final Content content;
+
+        if ( version == null )
+        {
+            content = findContent( contentPath );
+        }
+        else
+        {
+            content = findContentVersion( contentPath, ContentVersionId.of( version ) );
         }
 
         if ( content != null )
@@ -46,16 +64,16 @@ public class GetContentRpcHandler
         }
         else
         {
-            context.setResult( new JsonErrorResult( "Content [{0}] was not found", path ) );
+            context.setResult( new JsonErrorResult( "Content [{0}] was not found", contentPath ) );
         }
     }
 
     private Content findContent( final ContentPath contentPath )
     {
-        final GetContents getContent = Commands.content().get();
-        getContent.selectors( ContentPaths.from( contentPath ) );
+        final GetContents getContents = Commands.content().get();
+        getContents.selectors( ContentPaths.from( contentPath ) );
 
-        final Contents contents = client.execute( getContent );
+        final Contents contents = client.execute( getContents );
         return contents.isNotEmpty() ? contents.first() : null;
     }
 
@@ -64,5 +82,20 @@ public class GetContentRpcHandler
         final GetContentVersion getContentVersion = Commands.content().getVersion();
         getContentVersion.selector( contentPath ).version( versionId );
         return client.execute( getContentVersion );
+    }
+
+    private void handleGetContentByIds( final ContentIds ids, final JsonRpcContext context )
+    {
+        final GetContents getContents = Commands.content().get();
+        getContents.selectors( ids );
+        final Contents contents = client.execute( getContents );
+        if ( contents.isNotEmpty() )
+        {
+            context.setResult( new GetContentJsonResult( contents ) );
+        }
+        else
+        {
+            context.setResult( new JsonErrorResult( "Content [{0}] was not found", ids ) );
+        }
     }
 }

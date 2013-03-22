@@ -257,4 +257,9 @@ public final class QualifiedContentTypeName
         return new QualifiedContentTypeName( qualifiedContentTypeName );
     }
 
+    public static QualifiedContentTypeName from( ModuleName module, final String name )
+    {
+        return new QualifiedContentTypeName( module, name );
+    }
+
 }

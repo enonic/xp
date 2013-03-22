@@ -137,7 +137,18 @@ Ext.define('Admin.view.DetailPanel', {
             defaults: {
                 border: 0
             },
-            autoScroll: true,
+            overflowX: 'hidden',
+            overflowY: 'hidden',
+            // Attempt to get livePreview to re-render when scaling the detail window. Currently not working
+            /*listeners: {
+             resize: function (component) {
+
+             var livePreview = component.down('#center').down('#livePreview');
+             if (livePreview) {
+             livePreview.doComponentLayout();
+             }
+             }
+             },*/
             items: [
                 {
                     xtype: 'container',
@@ -354,6 +365,17 @@ Ext.define('Admin.view.DetailPanel', {
 
     /*--------*/
     changeTab: function (selectedTab) {
-        this.down('#center').update(this.singleSelection.tabData[selectedTab].html);
+        var currentTab = this.singleSelection.tabData[selectedTab];
+        var target = this.down('#center');
+        // This clears the center everytime we click. This might not be the fastest solution.
+        target.remove(target.child());
+        target.update('');
+        if (currentTab.html) {
+            target.update(currentTab.html);
+        } else if (currentTab.item) {
+            target.add(currentTab.item);
+            currentTab.callback(target);
+        }
+
     }
 });

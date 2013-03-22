@@ -1,3 +1,5 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
+
 (function () {
     'use strict';
 

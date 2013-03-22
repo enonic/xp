@@ -13,7 +13,7 @@ public class FormItemTest
     public void setParent()
     {
         FormItemSet myParent = FormItemSet.newFormItemSet().name( "myParent" ).build();
-        Input input = newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build();
+        Input input = newInput().name( "myField" ).inputType( InputTypes.TEXT_LINE ).build();
         myParent.add( input );
         assertEquals( "myParent.myField", input.getPath().toString() );
     }

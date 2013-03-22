@@ -170,6 +170,16 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         return this.down('wizardHeader');
     },
 
+    setLiveMode: function (mode) {
+        this.getLayout().setActiveItem(mode ? 1 : 0);
+
+        if (mode) {
+            var livePreview = this.down('#livePreview');
+            //TODO update urls when they are ready
+            livePreview.load('/dev/live-edit/page/bootstrap.jsp?edit=true');
+        }
+    },
+
     getData: function () {
         var data = {
             contentData: this.callParent()

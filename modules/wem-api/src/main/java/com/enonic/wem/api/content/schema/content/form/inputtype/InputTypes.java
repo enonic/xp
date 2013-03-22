@@ -16,6 +16,8 @@ public final class InputTypes
 
     public static final DecimalNumber DECIMAL_NUMBER = new DecimalNumber();
 
+    public static final EmbeddedImage EMBEDDED_IMAGE = new EmbeddedImage();
+
     public static final GeoLocation GEO_LOCATION = new GeoLocation();
 
     public static final HtmlArea HTML_AREA = new HtmlArea();
@@ -47,6 +49,7 @@ public final class InputTypes
         register( COLOR );
         register( DATE );
         register( DECIMAL_NUMBER );
+        register( EMBEDDED_IMAGE );
         register( GEO_LOCATION );
         register( HTML_AREA );
         register( MONEY );

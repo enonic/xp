@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import com.enonic.wem.api.XmlTestHelper;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
 import static junit.framework.Assert.assertEquals;
@@ -34,8 +33,6 @@ public class RelationshipConfigXmlSerializerTest
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
         builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        builder.allowedContentType( QualifiedContentTypeName.audioFile() );
-        builder.allowedContentType( QualifiedContentTypeName.imageFile() );
         RelationshipConfig config = builder.build();
 
         // exercise
@@ -47,41 +44,12 @@ public class RelationshipConfigXmlSerializerTest
     }
 
     @Test
-    public void serializeConfig_with_no_relationShipType()
-        throws IOException, SAXException
-    {
-        // setup
-        RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.allowedContentType( QualifiedContentTypeName.audioFile() );
-        builder.allowedContentType( QualifiedContentTypeName.imageFile() );
-        RelationshipConfig config = builder.build();
-
-        // exercise
-        Element configEl = new Element( "config" );
-        serializer.serializeConfig( config, configEl );
-
-        // verify
-        StringBuilder expectedXml = new StringBuilder();
-        expectedXml.append( "<config>\n" );
-        expectedXml.append( "<content-type-filter>\n" );
-        expectedXml.append( "<allow>System:audio</allow>\n" );
-        expectedXml.append( "<allow>System:image</allow>\n" );
-        expectedXml.append( "</content-type-filter>\n" );
-        expectedXml.append( "<relationship-type />\n" );
-        expectedXml.append( "</config>\n" );
-        String actualXml = xmlHelper.serialize( configEl, true );
-        assertXMLEqual( xmlHelper.parseNSerialize( expectedXml.toString(), true ), actualXml );
-    }
-
-    @Test
     public void parseConfig()
         throws IOException
     {
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
         builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        builder.allowedContentType( QualifiedContentTypeName.audioFile() );
-        builder.allowedContentType( QualifiedContentTypeName.imageFile() );
         RelationshipConfig expected = builder.build();
 
         // exercise
@@ -89,7 +57,6 @@ public class RelationshipConfigXmlSerializerTest
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
-        assertEquals( expected.getAllowedContentTypes(), parsed.getAllowedContentTypes() );
     }
 
 
@@ -113,45 +80,18 @@ public class RelationshipConfigXmlSerializerTest
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
-        assertEquals( expected.getAllowedContentTypes(), parsed.getAllowedContentTypes() );
     }
 
-    @Test
-    public void parseConfig_with_contentTypeFilter_not_existing()
-        throws IOException
-    {
-        // setup
-        RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        RelationshipConfig expected = builder.build();
-
-        StringBuilder xml = new StringBuilder();
-        xml.append( "<config>\n" );
-        xml.append( "<relationship-type>System:like</relationship-type>\n" );
-        xml.append( "</config>\n" );
-
-        // exercise
-        RelationshipConfig parsed = serializer.parseConfig( xmlHelper.parse( xml.toString() ).getRootElement() );
-
-        // verify
-        assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
-        assertEquals( expected.getAllowedContentTypes(), parsed.getAllowedContentTypes() );
-    }
-
-
-    @Test
+    @Test(expected = NullPointerException.class)
     public void parseConfig_relationshipType_as_empty()
         throws IOException
     {
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.allowedContentType( QualifiedContentTypeName.audioFile() );
-        builder.allowedContentType( QualifiedContentTypeName.imageFile() );
         RelationshipConfig expected = builder.build();
 
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
-        xml.append( "<content-type-filter><allow>System:audio</allow><allow>System:image</allow></content-type-filter>\n" );
         xml.append( "<relationship-type></relationship-type>" );
         xml.append( "</config>\n" );
 
@@ -160,29 +100,18 @@ public class RelationshipConfigXmlSerializerTest
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
-        assertEquals( expected.getAllowedContentTypes(), parsed.getAllowedContentTypes() );
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void parseConfig_relationshipType_not_existing()
         throws IOException
     {
         // setup
-        RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.allowedContentType( QualifiedContentTypeName.audioFile() );
-        builder.allowedContentType( QualifiedContentTypeName.imageFile() );
-        RelationshipConfig expected = builder.build();
-
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
-        xml.append( "<content-type-filter><allow>System:audio</allow><allow>System:image</allow></content-type-filter>\n" );
         xml.append( "</config>\n" );
 
         // exercise
-        RelationshipConfig parsed = serializer.parseConfig( xmlHelper.parse( xml.toString() ).getRootElement() );
-
-        // verify
-        assertEquals( null, parsed.getRelationshipType() );
-        assertEquals( expected.getAllowedContentTypes(), parsed.getAllowedContentTypes() );
+        serializer.parseConfig( xmlHelper.parse( xml.toString() ).getRootElement() );
     }
 }

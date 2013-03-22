@@ -20,7 +20,7 @@ public final class JavaType
 
     public static final ContentId CONTENT_ID = new ContentId();
 
-    public static final BlobKey BLOB_KEY = new BlobKey();
+    public static final BinaryId BINARY_ID = new BinaryId();
 
     public static final DataSet DATA_SET = new DataSet();
 
@@ -29,7 +29,7 @@ public final class JavaType
     static
     {
         INSTANCES.put( DATA_SET.getType(), DATA_SET );
-        INSTANCES.put( BLOB_KEY.getType(), BLOB_KEY );
+        INSTANCES.put( BINARY_ID.getType(), BINARY_ID );
         INSTANCES.put( STRING.getType(), STRING );
         INSTANCES.put( DOUBLE.getType(), DOUBLE );
         INSTANCES.put( LONG.getType(), LONG );
@@ -96,7 +96,7 @@ public final class JavaType
             {
                 return value.toString();
             }
-            else if ( value instanceof com.enonic.wem.api.blob.BlobKey )
+            else if ( value instanceof com.enonic.wem.api.content.binary.BinaryId )
             {
                 return value.toString();
             }
@@ -233,24 +233,29 @@ public final class JavaType
         }
     }
 
-    public final static class BlobKey
+    public final static class BinaryId
         extends BaseType
     {
-        BlobKey()
+        BinaryId()
         {
-            super( com.enonic.wem.api.blob.BlobKey.class );
+            super( com.enonic.wem.api.content.binary.BinaryId.class );
         }
 
-        public com.enonic.wem.api.blob.BlobKey convertFrom( Object value )
+        public com.enonic.wem.api.content.binary.BinaryId convertFrom( Object value )
         {
-            if ( value instanceof com.enonic.wem.api.blob.BlobKey )
+            if ( value instanceof com.enonic.wem.api.content.binary.BinaryId )
             {
-                return (com.enonic.wem.api.blob.BlobKey) value;
+                return (com.enonic.wem.api.content.binary.BinaryId) value;
             }
             else
             {
                 return null;
             }
+        }
+
+        public com.enonic.wem.api.content.binary.BinaryId convertFrom( final java.lang.String value )
+        {
+            return com.enonic.wem.api.content.binary.BinaryId.from( value );
         }
     }
 

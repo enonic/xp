@@ -1,3 +1,5 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
+
 (function ($) {
     'use strict';
 
@@ -32,8 +34,8 @@
 
 
     proto.registerGlobalListeners = function () {
-        $(window).on('shader:click', $.proxy(this.leaveEditMode, this));
-        $(window).on('component:click:deselect', $.proxy(this.leaveEditMode, this));
+        $(window).on('shader.onClick', $.proxy(this.leaveEditMode, this));
+        $(window).on('component.onDeselect', $.proxy(this.leaveEditMode, this));
     };
 
 
@@ -86,13 +88,13 @@
             window.getSelection().removeAllRanges();
         }
 
-        var coordinates = {
+        var pagePosition = {
             x: event.pageX,
             y: event.pageY
         };
 
-        $(window).trigger('component:click:select', [me.$selectedParagraph, coordinates]);
-        $(window).trigger('component:paragraph:select', [me.$selectedParagraph]);
+        $(window).trigger('component.onSelect', [me.$selectedParagraph, pagePosition]);
+        $(window).trigger('component.onParagraphSelect', [me.$selectedParagraph]);
     };
 
 
@@ -107,7 +109,7 @@
         };
         */
 
-        $(window).trigger('component:paragraph:edit:init', [me.$selectedParagraph]);
+        $(window).trigger('component.onParagraphEdit', [me.$selectedParagraph]);
 
         $paragraph.css('cursor', 'text');
         $paragraph.addClass('live-edit-edited-paragraph');
@@ -122,7 +124,7 @@
         if ($paragraph === null) {
             return;
         }
-        $(window).trigger('component:paragraph:edit:leave', [me.$selectedParagraph]);
+        $(window).trigger('component.onParagraphEditLeave', [me.$selectedParagraph]);
 
         $paragraph.css('cursor', '');
         $paragraph.removeClass('live-edit-edited-paragraph');

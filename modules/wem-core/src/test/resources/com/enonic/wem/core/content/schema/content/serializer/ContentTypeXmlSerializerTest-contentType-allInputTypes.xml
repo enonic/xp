@@ -133,10 +133,6 @@
       <helpText/>
       <occurrences minimum="0" maximum="1"/>
       <config>
-        <content-type-filter>
-          <allow>System:audio</allow>
-          <allow>System:image</allow>
-        </content-type-filter>
         <relationship-type>System:like</relationship-type>
       </config>
     </input>

@@ -193,7 +193,7 @@
             <!-- Region -->
             <div class="column clear clearfix screen" id="west" data-live-edit-type="region" data-live-edit-key="49" data-live-edit-name="West">
 
-              <!--%@ include file="includes/window-upcomming-training.html" %-->
+              <%@ include file="includes/window-upcomming-training.html" %>
 
               <!--%@ include file="includes/window-twitranet.html" %-->
 

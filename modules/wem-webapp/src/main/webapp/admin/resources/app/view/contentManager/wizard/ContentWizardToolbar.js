@@ -27,6 +27,11 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
                 action: 'saveContent'
             },
             {
+                text: 'Preview',
+                itemId: 'preview',
+                action: 'previewContent'
+            },
+            {
                 text: 'Publish',
                 itemId: 'publish',
                 action: 'publishContent'
@@ -48,18 +53,6 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
                 itemId: 'move',
                 action: 'moveContent'
             },
-
-            {
-                text: 'Relations',
-                itemId: 'relations',
-                action: 'contentRelations'
-            },
-            {
-                text: 'History',
-                itemId: 'history',
-                action: 'contentHistory'
-            },
-
             {
                 text: 'Export',
                 itemId: 'export',

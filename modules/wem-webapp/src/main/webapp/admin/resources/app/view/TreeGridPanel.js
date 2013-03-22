@@ -86,6 +86,7 @@ Ext.define('Admin.view.TreeGridPanel', {
             gridPanel: grid,
             plugins: ['gridToolbarPlugin']
         });
+        grid.getStore().on('datachanged', this.fireUpdateEvent, this);
 
         var tree = this.down('#tree');
         tree.addDocked({
@@ -96,6 +97,12 @@ Ext.define('Admin.view.TreeGridPanel', {
             gridPanel: tree,
             plugins: ['gridToolbarPlugin']
         });
+
+        this.addEvents('datachanged');
+    },
+
+    fireUpdateEvent: function (values) {
+        this.fireEvent('datachanged', values);
     },
 
     // possible values : 0,1,tree,grid
@@ -179,6 +186,12 @@ Ext.define('Admin.view.TreeGridPanel', {
                 }
             }
         }
+    },
+
+    setFilter : function (params) {
+        var activeList = this.getActiveList();
+        var currentStore = activeList.store;
+        currentStore.getProxy().extraParams = params;
     },
 
     refresh: function () {

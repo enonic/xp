@@ -15,6 +15,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.core.AbstractJcrTest;
@@ -40,7 +41,7 @@ public class ContentDaoImplTest
     {
         // setup
         Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
-        content.getRootDataSet().setData( "myData", "myValue" );
+        content.getRootDataSet().setData( "myData", new Value.Text( "myValue" ) );
 
         // exercise
         contentDao.create( content, session );
@@ -57,7 +58,7 @@ public class ContentDaoImplTest
     {
         // setup
         Content content = newContent().path( ContentPath.from( "otherspace:/" ) ).build();
-        content.getRootDataSet().setData( "myData", "myValue" );
+        content.getRootDataSet().setData( "myData", new Value.Text( "myValue" ) );
 
         // exercise
         contentDao.create( content, session );
@@ -95,7 +96,7 @@ public class ContentDaoImplTest
         contentDao.create( createContent( "myspace:/" ), session );
 
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getRootDataSet().setData( "myData", "myValue" );
+        content.getRootDataSet().setData( "myData", new Value.Text( "myValue" ) );
 
         // exercise
         contentDao.create( content, session );
@@ -114,10 +115,10 @@ public class ContentDaoImplTest
         contentDao.create( createContent( "myspace:/" ), session );
 
         Content rootContent = newContent().path( ContentPath.from( "myspace:rootContent" ) ).build();
-        rootContent.getRootDataSet().setData( "myData", "myValue" );
+        rootContent.getRootDataSet().setData( "myData", new Value.Text( "myValue" ) );
 
         Content belowRootContent = newContent().path( ContentPath.from( "myspace:rootContent/belowRootContent" ) ).build();
-        belowRootContent.getRootDataSet().setData( "myData", "myValue" );
+        belowRootContent.getRootDataSet().setData( "myData", new Value.Text( "myValue" ) );
 
         // exercise
         contentDao.create( rootContent, session );
@@ -140,9 +141,9 @@ public class ContentDaoImplTest
         contentDao.create( createContent( "myspace:/" ), session );
 
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getRootDataSet().setData( "myData", "1" );
-        content.getRootDataSet().setData( "mySet.myData", "2" );
-        content.getRootDataSet().setData( "mySet.myOtherData", "3" );
+        content.getRootDataSet().setData( "myData", new Value.Text( "1" ) );
+        content.getRootDataSet().setData( "mySet.myData", new Value.Text( "2" ) );
+        content.getRootDataSet().setData( "mySet.myOtherData", new Value.Text( "3" ) );
 
         // exercise
         contentDao.create( content, session );
@@ -184,14 +185,14 @@ public class ContentDaoImplTest
         contentDao.create( createContent( "myspace:/" ), session );
 
         Content newContent = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        newContent.getRootDataSet().setData( "myData", "initial value" );
+        newContent.getRootDataSet().setData( "myData", new Value.Text( "initial value" ) );
 
         // setup: create content to update
         contentDao.create( newContent, session );
         commit();
 
         Content updateContent = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        updateContent.getRootDataSet().setData( "myData", "changed value" );
+        updateContent.getRootDataSet().setData( "myData", new Value.Text( "changed value" ) );
 
         // exercise
         contentDao.update( updateContent, true, session );
@@ -211,7 +212,7 @@ public class ContentDaoImplTest
         contentDao.create( createContent( "myspace:/" ), session );
 
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getRootDataSet().setData( "myData", "myValue" );
+        content.getRootDataSet().setData( "myData", new Value.Text( "myValue" ) );
 
         contentDao.create( content, session );
         commit();
@@ -293,8 +294,8 @@ public class ContentDaoImplTest
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getRootDataSet().setData( "myData", "myValue" );
-        content.getRootDataSet().setData( "mySet.myData", "myOtherValue" );
+        content.getRootDataSet().setData( "myData", new Value.Text( "myValue" ) );
+        content.getRootDataSet().setData( "mySet.myData", new Value.Text( "myOtherValue" ) );
         contentDao.create( content, session );
         commit();
 
@@ -317,13 +318,13 @@ public class ContentDaoImplTest
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getRootDataSet().setData( "myData", "myValue" );
-        content.getRootDataSet().setData( "mySet.myData", "myOtherValue" );
+        content.getRootDataSet().setData( "myData", new Value.Text( "myValue" ) );
+        content.getRootDataSet().setData( "mySet.myData", new Value.Text( "myOtherValue" ) );
         contentDao.create( content, session );
 
         Content content2 = newContent().path( ContentPath.from( "myspace:myContent2" ) ).build();
-        content2.getRootDataSet().setData( "myData", "myValue2" );
-        content2.getRootDataSet().setData( "mySet.myData", "myOtherValue2" );
+        content2.getRootDataSet().setData( "myData", new Value.Text( "myValue2" ) );
+        content2.getRootDataSet().setData( "mySet.myData", new Value.Text( "myOtherValue2" ) );
         contentDao.create( content2, session );
         commit();
 
@@ -352,13 +353,13 @@ public class ContentDaoImplTest
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getRootDataSet().setData( "myData", "myValue" );
-        content.getRootDataSet().setData( "mySet.myData", "myOtherValue" );
+        content.getRootDataSet().setData( "myData", new Value.Text( "myValue" ) );
+        content.getRootDataSet().setData( "mySet.myData", new Value.Text( "myOtherValue" ) );
         ContentId contentId1 = contentDao.create( content, session );
 
         Content content2 = newContent().path( ContentPath.from( "myspace:myContent2" ) ).build();
-        content2.getRootDataSet().setData( "myData", "myValue2" );
-        content2.getRootDataSet().setData( "mySet.myData", "myOtherValue2" );
+        content2.getRootDataSet().setData( "myData", new Value.Text( "myValue2" ) );
+        content2.getRootDataSet().setData( "mySet.myData", new Value.Text( "myOtherValue2" ) );
         ContentId contentId2 = contentDao.create( content2, session );
         commit();
 
@@ -387,8 +388,8 @@ public class ContentDaoImplTest
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getRootDataSet().setData( "myData", "myValue" );
-        content.getRootDataSet().setData( "mySet.myData", "myOtherValue" );
+        content.getRootDataSet().setData( "myData", new Value.Text( "myValue" ) );
+        content.getRootDataSet().setData( "mySet.myData", new Value.Text( "myOtherValue" ) );
         ContentId contentId = contentDao.create( content, session );
         commit();
 
@@ -456,8 +457,8 @@ public class ContentDaoImplTest
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getRootDataSet().setData( "myData", "myValue" );
-        content.getRootDataSet().setData( "mySet.myData", "myOtherValue" );
+        content.getRootDataSet().setData( "myData", new Value.Text( "myValue" ) );
+        content.getRootDataSet().setData( "mySet.myData", new Value.Text( "myOtherValue" ) );
         ContentId contentId = contentDao.create( content, session );
         commit();
 
@@ -481,13 +482,13 @@ public class ContentDaoImplTest
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
         Content existingContent = newContent().path( ContentPath.from( "myspace:myExistingContent" ) ).build();
-        existingContent.getRootDataSet().setData( "myData", "myValue" );
-        existingContent.getRootDataSet().setData( "mySet.myData", "myOtherValue" );
+        existingContent.getRootDataSet().setData( "myData", new Value.Text( "myValue" ) );
+        existingContent.getRootDataSet().setData( "mySet.myData", new Value.Text( "myOtherValue" ) );
         contentDao.create( existingContent, session );
 
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getRootDataSet().setData( "myData", "myValue" );
-        content.getRootDataSet().setData( "mySet.myData", "myOtherValue" );
+        content.getRootDataSet().setData( "myData", new Value.Text( "myValue" ) );
+        content.getRootDataSet().setData( "mySet.myData", new Value.Text( "myOtherValue" ) );
         ContentId contentId = contentDao.create( content, session );
         commit();
 

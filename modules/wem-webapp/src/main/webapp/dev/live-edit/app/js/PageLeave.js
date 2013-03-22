@@ -1,3 +1,5 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.PageLeave');
+
 AdminLiveEdit.PageLeave = (function () {
     'use strict';
 

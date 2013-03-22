@@ -3,7 +3,6 @@ package com.enonic.wem.web.rest.rpc.content.schema.mixin;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.content.schema.mixin.MixinDeletionResult;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.web.json.JsonResult;
 

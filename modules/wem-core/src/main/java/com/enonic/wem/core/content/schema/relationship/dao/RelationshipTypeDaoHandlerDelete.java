@@ -5,7 +5,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.exception.SystemException;
+import com.enonic.wem.api.exception.RelationshipTypeNotFoundException;
 
 final class RelationshipTypeDaoHandlerDelete
     extends AbstractRelationshipTypeDaoHandler
@@ -31,7 +31,7 @@ final class RelationshipTypeDaoHandlerDelete
 
         if ( relationshipTypeNode == null )
         {
-            throw new SystemException( "RelationshipType [{0}] was not found", qualifiedRelationshipTypeName );
+            throw new RelationshipTypeNotFoundException( qualifiedRelationshipTypeName );
         }
 
         relationshipTypeNode.remove();

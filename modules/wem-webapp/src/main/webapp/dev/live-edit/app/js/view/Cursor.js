@@ -1,3 +1,5 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
+
 (function ($) {
     'use strict';
 
@@ -13,9 +15,9 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.registerGlobalListeners = function () {
-        $(window).on('component:mouseover', $.proxy(this.updateCursor, this));
-        $(window).on('component:mouseout', $.proxy(this.resetCursor, this));
-        $(window).on('component:click:select', $.proxy(this.updateCursor, this));
+        $(window).on('component.mouseOver', $.proxy(this.updateCursor, this));
+        $(window).on('component.mouseOut', $.proxy(this.resetCursor, this));
+        $(window).on('component.onSelect', $.proxy(this.updateCursor, this));
     };
 
 
@@ -29,6 +31,9 @@
             cursor = 'pointer';
             break;
         case 'part':
+            cursor = 'move';
+            break;
+        case 'layout':
             cursor = 'move';
             break;
         case 'paragraph':

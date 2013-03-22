@@ -9,7 +9,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.schema.mixin.CreateMixin;
 import com.enonic.wem.api.command.content.schema.mixin.GetMixins;
-import com.enonic.wem.api.command.content.schema.mixin.UpdateMixins;
+import com.enonic.wem.api.command.content.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;
@@ -63,14 +63,14 @@ public class MixinsInitializer
         }
         else
         {
-            final UpdateMixins updateMixins = Commands.mixin().update();
-            updateMixins.qualifiedNames( QualifiedMixinNames.from( mixin.getQualifiedName() ) );
-            updateMixins.editor( SetMixinEditor.newSetMixinEditor().
+            final UpdateMixin updateMixin = Commands.mixin().update();
+            updateMixin.qualifiedName( mixin.getQualifiedName() );
+            updateMixin.editor( SetMixinEditor.newSetMixinEditor().
                 displayName( mixin.getDisplayName() ).
                 formItem( mixin.getFormItem() ).
                 icon( mixin.getIcon() ).
                 build() );
-            client.execute( updateMixins );
+            client.execute( updateMixin );
         }
     }
 

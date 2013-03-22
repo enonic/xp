@@ -112,7 +112,6 @@ public final class ContentPaths
         return ImmutableSet.copyOf( pathList );
     }
 
-
     private final static class ParseFunction
         implements Function<String, ContentPath>
     {

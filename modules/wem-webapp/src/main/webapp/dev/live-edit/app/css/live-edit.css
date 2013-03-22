@@ -10,10 +10,12 @@ svg.live-edit-highlight-border,
 #live-edit-shader-south,
 #live-edit-shader-west,
 #live-edit-page-shader,
-.live-edit-component-tip,
 .live-edit-tool-tip,
 .live-edit-component-menu,
 .live-edit-components-container,
+.live-edit-component,
+live-edit-component-text-name,
+live-edit-component-text-subtitle,
 .live-edit-loader-splash-content,
 .live-edit-shader,
 #live-edit-page-shader,
@@ -25,23 +27,9 @@ svg.live-edit-highlight-border rect,
 .live-edit-tool-tip-name-text,
 .live-edit-tool-tip-type-text,
 .live-edit-tool-tip-name-text,
-.live-edit-component-tip,
-.live-edit-component-tip-arrow-bottom,
-.live-edit-component-tip-arrow-top,
-.live-edit-component-tip-left,
-.live-edit-component-tip-center,
-.live-edit-component-tip-right,
-.live-edit-component-tip-left,
-.live-edit-component-tip-center,
-.live-edit-component-tip-right,
-.live-edit-component-tip-icon-menu,
-.live-edit-component-tip-icon-parent,
-.live-edit-component-tip-icon-deselect,
-.live-edit-component-tip-icon-parent,
-.live-edit-component-tip-icon-menu,
-.live-edit-component-tip-icon-menu-selected,
-.live-edit-component-tip-icon-deselect,
-.live-edit-component-tip-type-text,
+.live-edit-editor-toolbar,
+.live-edit-editor-toolbar-arrow-bottom,
+.live-edit-editor-toolbar-arrow-top,
 .live-edit-component-menu,
 .live-edit-component-menu-title-bar,
 .live-edit-component-menu-title-icon,
@@ -67,6 +55,7 @@ svg.live-edit-highlight-border rect,
 .live-edit-html-element-placeholder
 .live-edit-object {
     border: 0;
+    outline: 0;
     color: #000;
     font-size: 11px;
     font-family: Tahoma, Geneva, sans-serif;
@@ -74,6 +63,8 @@ svg.live-edit-highlight-border rect,
     margin: 0;
     padding: 0;
     vertical-align: baseline;
+    line-height: 1.2;
+
 }
 
 /** Misc */
@@ -90,6 +81,63 @@ svg.live-edit-highlight-border rect,
 */
 a {
     pointer-events: none;
+}
+
+/** Arrow */
+
+/* Arrow (cssarrowplease.com/) */
+.live-edit-arrow-bottom:after,
+.live-edit-arrow-bottom:before,
+.live-edit-arrow-top:after,
+.live-edit-arrow-top:before {
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.live-edit-arrow-bottom:after,
+.live-edit-arrow-bottom:before {
+    top: 100%;
+}
+
+.live-edit-arrow-top:after,
+.live-edit-arrow-top:before {
+    bottom: 100%;
+}
+
+.live-edit-arrow-bottom:after {
+    border-color: rgba(255, 249, 203, 0);
+    border-top-color: #f6f5f7;
+    border-width: 8px;
+    left: 50%;
+    margin-left: -8px;
+}
+
+.live-edit-arrow-bottom:before {
+    border-color: rgba(152, 152, 152, 0);
+    border-top-color: #aaa;
+    border-width: 9px;
+    left: 50%;
+    margin-left: -9px;
+}
+
+.live-edit-arrow-top:after {
+    border-color: rgba(255, 249, 203, 0);
+    border-bottom-color: #f6f5f7;
+    border-width: 8px;
+    left: 50%;
+    margin-left: -8px;
+}
+
+.live-edit-arrow-top:before {
+    border-color: rgba(152, 152, 152, 0);
+    border-bottom-color: #aaa;
+    border-width: 9px;
+    left: 50%;
+    margin-left: -9px;
 }
 
 /** z-indexes */
@@ -126,7 +174,7 @@ svg.live-edit-highlight-border {
     z-index: 1000090;
 }
 
-.live-edit-component-tip {
+.live-edit-editor-toolbar {
     z-index: 1000100;
 }
 
@@ -243,7 +291,7 @@ svg.live-edit-highlight-border {
     position: fixed !important;
 }
 
-/*** Outliner */
+/*** Highlighter */
 
 .live-edit-selected-component {
     position: relative;
@@ -298,128 +346,87 @@ svg.live-edit-highlight-border rect {
     font-weight: bold;
 }
 
-/*** Component tip ***/
+/*** Editor Toolbar ***/
 
-.live-edit-component-tip {
-    position: absolute;
-    background-color: #fff9cb;
-    cursor: default;
+.live-edit-editor-toolbar {
+    background-color: #f6f5f7;
     border: 1px solid #aaa;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    cursor: default;
+    padding: 5px;
 }
 
-/* Arrow (cssarrowplease.com/) */
-.live-edit-component-tip-arrow-bottom:after,
-.live-edit-component-tip-arrow-bottom:before,
-.live-edit-component-tip-arrow-top:after,
-.live-edit-component-tip-arrow-top:before {
-    border: solid transparent;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-}
-
-.live-edit-component-tip-arrow-bottom:after,
-.live-edit-component-tip-arrow-bottom:before {
-    top: 100%;
-}
-
-.live-edit-component-tip-arrow-top:after,
-.live-edit-component-tip-arrow-top:before {
-    bottom: 100%;
-}
-
-.live-edit-component-tip-arrow-bottom:after {
-    border-color: rgba(255, 249, 203, 0);
-    border-top-color: #fff9cb;
-    border-width: 8px;
-    left: 50%;
-    margin-left: -8px;
-}
-
-.live-edit-component-tip-arrow-bottom:before {
-    border-color: rgba(152, 152, 152, 0);
-    border-top-color: #aaa;
-    border-width: 9px;
-    left: 50%;
-    margin-left: -9px;
-}
-
-.live-edit-component-tip-arrow-top:after {
-    border-color: rgba(255, 249, 203, 0);
-    border-bottom-color: #fff9cb;
-    border-width: 8px;
-    left: 50%;
-    margin-left: -8px;
-}
-
-.live-edit-component-tip-arrow-top:before {
-    border-color: rgba(152, 152, 152, 0);
-    border-bottom-color: #aaa;
-    border-width: 9px;
-    left: 50%;
-    margin-left: -9px;
-}
-
-.live-edit-component-tip-left,
-.live-edit-component-tip-center,
-.live-edit-component-tip-right {
-    line-height: 9px; /* In case user CSS sets this */
-}
-
-.live-edit-component-tip-left {
-    float: left;
-    text-align: center;
-    border-right: 1px solid #aaa;
-}
-
-.live-edit-component-tip-center {
-    float: left;
-    text-align: center;
-    min-width: 80px;
-    padding: 8px 10px 0 10px;
-}
-
-.live-edit-component-tip-right {
-    float: right;
-    border-left: 1px solid #aaa;
-}
-
-.live-edit-component-tip-icon-menu,
-.live-edit-component-tip-icon-parent,
-.live-edit-component-tip-icon-deselect {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    padding: 15px;
+.live-edit-editor-button {
+    border: 1px solid transparent;
+    background-color: #f6f5f7;
+    width: 30px;
+    height: 30px;
     cursor: pointer;
+
 }
 
-.live-edit-component-tip-icon-parent {
-    background: url("../images/arrow-up.png") no-repeat scroll 50% 50% transparent;
+.live-edit-editor-button:hover {
+    border: 1px solid #ccc;
 }
 
-.live-edit-component-tip-icon-menu {
-    background: url("../images/menu-button.png") no-repeat scroll 50% 50% transparent;
+.live-edit-editor-button[data-tag=paste] {
+    background: url("../images/htmleditor/paste.png") center center no-repeat;
 }
 
-.live-edit-component-tip-icon-menu-selected {
-    background: url("../images/menu-button-active.png") no-repeat scroll 50% 50% #444;
+.live-edit-editor-button[data-tag=insertUnorderedList] {
+    background: url("../images/htmleditor/list.png") center center no-repeat;
 }
 
-.live-edit-component-tip-icon-deselect {
-    background: url("../images/close.png") no-repeat scroll 50% 50% transparent;
+.live-edit-editor-button[data-tag=insertOrderedList] {
+    background: url("../images/htmleditor/numbered-list.png") center center no-repeat;
 }
 
-.live-edit-component-tip-type-text,
-.live-edit-component-tip-name-text {
-    display: block;
-    color: #444;
+.live-edit-editor-button[data-tag=link] {
+    background: url("../images/htmleditor/link.png") center center no-repeat;
 }
 
-.live-edit-component-tip-name-text {
-    font-weight: bold;
+.live-edit-editor-button[data-tag=cut] {
+    background: url("../images/htmleditor/scissors.png") center center no-repeat;
+}
+
+.live-edit-editor-button[data-tag=strikeThrough] {
+    background: url("../images/htmleditor/strikethrough.png") center center no-repeat;
+}
+
+.live-edit-editor-button[data-tag=bold] {
+    background: url("../images/htmleditor/bold.png") center center no-repeat;
+}
+
+.live-edit-editor-button[data-tag=underline] {
+    background: url("../images/htmleditor/underline.png") center center no-repeat;
+}
+
+.live-edit-editor-button[data-tag=italic] {
+    background: url("../images/htmleditor/italic.png") center center no-repeat;
+}
+
+.live-edit-editor-button[data-tag=superscript] {
+    background: url("../images/htmleditor/superscript.png") center center no-repeat;
+}
+
+.live-edit-editor-button[data-tag=subscript] {
+    background: url("../images/htmleditor/subscript.png") center center no-repeat;
+}
+
+.live-edit-editor-button[data-tag=justifyLeft] {
+    background: url("../images/htmleditor/paragraph-left.png") center center no-repeat;
+}
+
+.live-edit-editor-button[data-tag=justifyCenter] {
+    background: url("../images/htmleditor/paragraph-center.png") center center no-repeat;
+}
+
+.live-edit-editor-button[data-tag=justifyRight] {
+    background: url("../images/htmleditor/paragraph-right.png") center center no-repeat;
+}
+
+.live-edit-editor-button[data-tag=justifyFull] {
+    background: url("../images/htmleditor/paragraph-justify.png") center center no-repeat;
 }
 
 /*** Component menu */
@@ -435,8 +442,12 @@ svg.live-edit-highlight-border rect {
 
 .live-edit-component-menu-title-bar {
     overflow: hidden;
-    cursor: move;
     margin-bottom: 2px;
+    cursor: hand;
+    cursor: grab !important;
+    cursor: -moz-grab;
+    cursor: url(../images/cursor-grab.png), pointer !important;
+    cursor: -webkit-grab;
 }
 
 .live-edit-component-menu-title-icon,
@@ -456,23 +467,23 @@ svg.live-edit-highlight-border rect {
 }
 
 .live-edit-component-menu-page-icon {
-    background: transparent url("../images/file.png") center center no-repeat;
+    background: transparent url("../images/component-types/file.png") center center no-repeat;
 }
 
 .live-edit-component-menu-region-icon {
-    background: transparent url("../images/compass.png") center center no-repeat;
+    background: transparent url("../images/component-types/compass.png") center center no-repeat;
 }
 
 .live-edit-component-menu-part-icon {
-    background: transparent url("../images/puzzle.png") center center no-repeat;
+    background: transparent url("../images/component-types/puzzle.png") center center no-repeat;
 }
 
 .live-edit-component-menu-paragraph-icon {
-    background: transparent url("../images/text-color.png") center center no-repeat;
+    background: transparent url("../images/component-types/text-color.png") center center no-repeat;
 }
 
-.live-edit-component-menu-content-icon {
-    /*TBI*/
+.live-edit-component-menu-layout-icon {
+    background: transparent url("../images/component-types/insert-template.png") center center no-repeat;
 }
 
 .live-edit-component-menu-title-text {
@@ -525,7 +536,6 @@ svg.live-edit-highlight-border rect {
 
 /*** Component bar */
 
-/* TODO: rename classes to components bar */
 .live-edit-components-container {
     opacity: 1;
     position: fixed;
@@ -634,16 +644,12 @@ svg.live-edit-highlight-border rect {
     margin-right: 5px;
 }
 
-.live-edit-component .text {
-    float: left;
+.live-edit-component-text-name {
+    font-size: 14px;
+    margin-bottom: 2px;;
 }
 
-.live-edit-component span {
-    display: block;
-}
-
-.live-edit-component small {
-    display: block;
+.live-edit-component-text-subtitle {
 }
 
 /*** Button */
@@ -661,7 +667,7 @@ svg.live-edit-highlight-border rect {
 #live-edit-drag-helper {
     border: 1px solid #c6c6c6;
     padding: 6px 8px 6px 8px;
-    box-shadow: 2px 2px 2px 0 #888888;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     background-color: #fff;
     font-size: 11px;
     overflow: hidden;

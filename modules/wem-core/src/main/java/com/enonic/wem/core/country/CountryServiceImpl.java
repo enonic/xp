@@ -1,6 +1,7 @@
 package com.enonic.wem.core.country;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,13 +11,10 @@ import javax.inject.Inject;
 import org.jdom.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.core.lifecycle.InitializingBean;
 import com.enonic.wem.core.support.util.JdomHelper;
 
 /**
@@ -51,37 +49,33 @@ public final class CountryServiceImpl
     public void afterPropertiesSet()
         throws Exception
     {
-        final Resource res = findCountryResource();
-        for ( final Country country : readCountries( res ) )
+        final URL url = findCountryResource();
+        for ( final Country country : readCountries( url ) )
         {
             this.countriesMapByCode.put( country.getCode(), country );
         }
     }
 
-    private Resource findCountryResource()
+    private URL findCountryResource()
+        throws Exception
     {
         final File countryFile = new File( this.systemConfig.getConfigDir(), "countries.xml" );
         if ( countryFile.exists() && countryFile.isFile() )
         {
-            return new FileSystemResource( countryFile );
+            return countryFile.toURI().toURL();
         }
         else
         {
-            return new ClassPathResource( "countries.xml", getClass() );
+            return getClass().getResource( "countries.xml" );
         }
     }
 
-    private List<Country> readCountries( Resource resource )
+    private List<Country> readCountries( final URL url )
         throws Exception
     {
-        if ( !resource.exists() )
-        {
-            throw new IllegalArgumentException( "Country code resource [" + resource.getDescription() + "] was not found" );
-        }
-
-        Document doc = new JdomHelper().parse( resource.getInputStream() );
-        List<Country> list = CountryXmlParser.parseCountriesXml( doc );
-        LOG.info( "Loaded country codes from [" + resource.getDescription() + "]" );
+        final Document doc = new JdomHelper().parse( url );
+        final List<Country> list = CountryXmlParser.parseCountriesXml( doc );
+        LOG.info( "Loaded country codes from [" + url.toExternalForm() + "]" );
         return list;
     }
 

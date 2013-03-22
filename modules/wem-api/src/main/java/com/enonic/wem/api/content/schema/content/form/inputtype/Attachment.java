@@ -19,7 +19,7 @@ public class Attachment
     public void checkValidity( final Data data )
         throws InvalidValueTypeException, InvalidValueException
     {
-        DataTypes.BINARY_REFERENCE.checkValidity( data );
+        DataTypes.BINARY_ID.checkValidity( data );
     }
 
     @Override
@@ -32,7 +32,7 @@ public class Attachment
     @Override
     public Value newValue( final String value )
     {
-        return Value.newValue().type( DataTypes.BINARY_REFERENCE ).value( value ).build();
+        return Value.newValue().type( DataTypes.BINARY_ID ).value( value ).build();
     }
 }
 

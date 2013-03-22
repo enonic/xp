@@ -32,6 +32,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
         this.defaults = {
             width: 450
         };
+
         if (this.copyNo > this.inputConfig.occurrences.minimum && this.copyNo > 1) {
             this.items.push(this.createDeleteButton());
         }

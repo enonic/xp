@@ -12,14 +12,14 @@ public final class MixinCommands
         return new CreateMixin();
     }
 
-    public UpdateMixins update()
+    public UpdateMixin update()
     {
-        return new UpdateMixins();
+        return new UpdateMixin();
     }
 
-    public DeleteMixins delete()
+    public DeleteMixin delete()
     {
-        return new DeleteMixins();
+        return new DeleteMixin();
     }
 
 }

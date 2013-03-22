@@ -12,7 +12,7 @@
         },
         {
             "qualifiedMixinName": "my:beingUsedMixin",
-            "reason": "Unable to delete Mixin [my:beingUsedMixin]: Mixin is being used"
+            "reason": "Unable to delete Mixin [my:beingUsedMixin]"
         }
     ]
 }

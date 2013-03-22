@@ -9,6 +9,7 @@ import com.google.common.base.Strings;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.command.content.RenameContent;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.UpdateContentResult;
@@ -17,13 +18,10 @@ import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.ContentPaths;
-import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
-import com.enonic.wem.core.content.ContentPathNameGenerator;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
@@ -37,7 +35,6 @@ import static com.enonic.wem.api.content.editor.ContentEditors.setContentDisplay
 public final class CreateOrUpdateContentRpcHandler
     extends AbstractDataRpcHandler
 {
-    private static final ContentPathNameGenerator CONTENT_PATH_NAME_GENERATOR = new ContentPathNameGenerator();
 
     public CreateOrUpdateContentRpcHandler()
     {
@@ -113,17 +110,16 @@ public final class CreateOrUpdateContentRpcHandler
         {
             try
             {
-                final ContentPath newContentPath = resolvePathForNewContent( parentContentPath, displayName );
-
                 final CreateContent createContent = content().create();
-                createContent.contentPath( newContentPath );
+                createContent.parentContentPath( parentContentPath );
                 createContent.contentType( qualifiedContentTypeName );
                 createContent.rootDataSet( rootDataSet );
                 createContent.displayName( displayName );
                 createContent.owner( AccountKey.anonymous() );
-                final ContentId newContentId = client.execute( createContent );
+                final CreateContentResult createContentResult = client.execute( createContent );
 
-                context.setResult( CreateOrUpdateContentJsonResult.created( newContentId, newContentPath ) );
+                context.setResult(
+                    CreateOrUpdateContentJsonResult.created( createContentResult.getContentId(), createContentResult.getContentPath() ) );
             }
             catch ( ContentNotFoundException e )
             {
@@ -131,18 +127,6 @@ public final class CreateOrUpdateContentRpcHandler
             }
         }
 
-        // TODO: This logic possibly belongs in CreateContentHandler, since not only RPC API would benefit from this
-        private ContentPath resolvePathForNewContent( final ContentPath parentPath, final String displayName )
-        {
-            ContentPath possibleNewPath = ContentPath.from( parentPath, CONTENT_PATH_NAME_GENERATOR.generatePathName( displayName ) );
-            int i = 1;
-            while ( contentExists( possibleNewPath ) )
-            {
-                i++;
-                possibleNewPath = ContentPath.from( parentPath, CONTENT_PATH_NAME_GENERATOR.generatePathName( displayName + "-" + i ) );
-            }
-            return possibleNewPath;
-        }
 
     }
 
@@ -171,11 +155,6 @@ public final class CreateOrUpdateContentRpcHandler
         return contentType;
     }
 
-    private boolean contentExists( final ContentPath contentPath )
-    {
-        final Contents contents = client.execute( content().get().selectors( ContentPaths.from( contentPath ) ) );
-        return contents.isNotEmpty();
-    }
 
     private ContentId contentIdOrNull( final String value )
     {

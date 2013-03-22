@@ -1,0 +1,65 @@
+{
+    "analysis": {
+        "filter": {
+            "fulltext_ngrams": {
+                "side": "front",
+                "max_gram": 10,
+                "min_gram": 1,
+                "type": "edgeNGram"
+            }
+        },
+        "analyzer": {
+            "default_index": {
+                "tokenizer": "keyword",
+                "filter": ["lowercase", "asciifolding"]
+            },
+            "default_search": {
+                "tokenizer": "keyword",
+                "filter": ["lowercase", "asciifolding"]
+            },
+            "keywordlowercase": {
+                "type": "custom",
+                "tokenizer": "keyword",
+                "filter": ["lowercase", "asciifolding"]
+            },
+            "fulltext_index": {
+                "type": "custom",
+                "filter": [
+                    "standard",
+                    "lowercase",
+                    "asciifolding",
+                    "fulltext_ngrams"
+                ],
+                "type": "custom",
+                "tokenizer": "standard"
+            },
+            "fulltext_search": {
+                "type": "custom",
+                "filter": [
+                    "standard",
+                    "lowercase",
+                    "asciifolding"
+                ],
+                "type": "custom",
+                "tokenizer": "standard"
+            },
+            "all_field_analyzer": {
+                "type": "custom",
+                "filter": [
+                    "standard",
+                    "lowercase",
+                    "asciifolding",
+                    "fulltext_ngrams"
+                ],
+                "type": "custom",
+                "tokenizer": "standard"
+            }
+        }
+
+    }
+}
+
+
+
+
+

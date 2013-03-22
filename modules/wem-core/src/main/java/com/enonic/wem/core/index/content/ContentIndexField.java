@@ -26,5 +26,5 @@ public class ContentIndexField
 
     public final static String SPACE = "space";
 
-
+    public static final String NAME = "name";
 }

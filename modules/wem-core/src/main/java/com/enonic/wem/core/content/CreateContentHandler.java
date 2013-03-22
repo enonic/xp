@@ -1,8 +1,5 @@
 package com.enonic.wem.core.content;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.jcr.Session;
 
@@ -12,36 +9,31 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.data.DataVisitor;
-import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.data.type.DataTypes;
-import com.enonic.wem.api.content.relationship.Relationship;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
-import com.enonic.wem.core.content.relationship.RelationshipFactory;
-import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
+import com.enonic.wem.core.content.relationship.RelationshipService;
+import com.enonic.wem.core.content.relationship.SyncRelationshipsCommand;
 import com.enonic.wem.core.index.IndexService;
-
-import static com.enonic.wem.core.content.relationship.RelationshipFactory.newRelationshipFactory;
 
 @Component
 public class CreateContentHandler
     extends CommandHandler<CreateContent>
 {
+    private static final ContentPathNameGenerator CONTENT_PATH_NAME_GENERATOR = new ContentPathNameGenerator();
+
     private ContentDao contentDao;
 
-    private RelationshipDao relationshipDao;
+    private RelationshipService relationshipService;
 
     private IndexService indexService;
 
@@ -56,11 +48,15 @@ public class CreateContentHandler
     public void handle( final CommandContext context, final CreateContent command )
         throws Exception
     {
+        final Session session = context.getJcrSession();
+
         final Content.Builder builder = Content.newContent();
-        builder.path( command.getContentPath() );
+        final String displayName = command.getDisplayName();
+        final ContentPath contentPath = resolvePathForNewContent( command.getParentContentPath(), displayName, session );
+        builder.path( contentPath );
+        builder.displayName( displayName );
         builder.rootDataSet( command.getRootDataSet() );
         builder.type( command.getContentType() );
-        builder.displayName( command.getDisplayName() );
         builder.createdTime( DateTime.now() );
         builder.modifiedTime( DateTime.now() );
         builder.owner( command.getOwner() );
@@ -68,15 +64,17 @@ public class CreateContentHandler
 
         final Content content = builder.build();
 
-        final Session session = context.getJcrSession();
         final ContentId contentId = contentDao.create( content, session );
         session.save();
 
-        final List<Data> references = resolveReferences( content.getRootDataSet() );
-
         validateContentData( context.getClient(), content );
 
-        createRelationships( context, contentId, references );
+        relationshipService.syncRelationships( new SyncRelationshipsCommand().
+            client( context.getClient() ).
+            jcrSession( session ).
+            contentType( content.getType() ).
+            contentToUpdate( content.getId() ).
+            contentAfterEditing( content.getRootDataSet() ) );
 
         try
         {
@@ -89,24 +87,27 @@ public class CreateContentHandler
             LOG.error( "Index content failed", e );
         }
 
-        command.setResult( contentId );
+        command.setResult( new CreateContentResult( contentId, contentPath ) );
     }
 
-    private void createRelationships( final CommandContext context, final ContentId contentId, final List<Data> references )
+    private ContentPath resolvePathForNewContent( final ContentPath parentPath, final String displayName, final Session session )
     {
-        final RelationshipFactory relationshipFactory = newRelationshipFactory().
-            creator( AccountKey.anonymous() ).
-            createdTime( DateTime.now() ).
-            fromContent( contentId ).
-            type( QualifiedRelationshipTypeName.DEFAULT ).
-            build();
-
-        for ( Data reference : references )
+        ContentPath possibleNewPath = ContentPath.from( parentPath, CONTENT_PATH_NAME_GENERATOR.generatePathName( displayName ) );
+        int i = 1;
+        while ( contentExists( possibleNewPath, session ) )
         {
-            final Relationship relationship = relationshipFactory.create( reference );
-            relationshipDao.create( relationship, context.getJcrSession() );
+            i++;
+            possibleNewPath = ContentPath.from( parentPath, CONTENT_PATH_NAME_GENERATOR.generatePathName( displayName + "-" + i ) );
         }
+        return possibleNewPath;
     }
+
+    private boolean contentExists( final ContentPath contentPath, final Session session )
+    {
+        final Content content = contentDao.select( contentPath, session );
+        return content != null;
+    }
+
 
     private void validateContentData( final Client client, final Content content )
     {
@@ -122,22 +123,6 @@ public class CreateContentHandler
         }
     }
 
-    private List<Data> resolveReferences( final RootDataSet rootDataSet )
-    {
-        final List<Data> references = new ArrayList<>();
-        final DataVisitor dataVisitor = new DataVisitor()
-        {
-            @Override
-            public void visit( final Data reference )
-            {
-                references.add( reference );
-            }
-        };
-        dataVisitor.restrictType( DataTypes.CONTENT_REFERENCE );
-        dataVisitor.traverse( rootDataSet );
-        return references;
-    }
-
     @Inject
     public void setContentDao( final ContentDao contentDao )
     {
@@ -145,11 +130,10 @@ public class CreateContentHandler
     }
 
     @Inject
-    public void setRelationshipDao( final RelationshipDao relationshipDao )
+    public void setRelationshipService( final RelationshipService relationshipService )
     {
-        this.relationshipDao = relationshipDao;
+        this.relationshipService = relationshipService;
     }
-
 
     @Inject
     public void setIndexService( final IndexService indexService )

@@ -53,7 +53,7 @@ public class FormItemJsonSerializerTest
     {
         // setup
         Input.Builder builder = newInput();
-        builder.type( InputTypes.TEXT_LINE );
+        builder.inputType( InputTypes.TEXT_LINE );
         builder.name( "myTextLine" );
         builder.required( true );
         builder.immutable( true );
@@ -92,7 +92,7 @@ public class FormItemJsonSerializerTest
     {
         // setup
         Input.Builder builder = newInput();
-        builder.type( InputTypes.SINGLE_SELECTOR );
+        builder.inputType( InputTypes.SINGLE_SELECTOR );
         builder.name( "mySingleSelector" );
         builder.label( "My SingleSelector" );
         builder.inputTypeConfig(

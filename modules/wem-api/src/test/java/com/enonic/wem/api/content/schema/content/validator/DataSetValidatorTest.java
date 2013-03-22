@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
@@ -43,10 +44,10 @@ public class DataSetValidatorTest
             SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "Option 1", "o1" ).build();
 
         contentType.form().addFormItem(
-            newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
+            newInput().name( "mySingleSelector" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "mySingleSelector", "nonExistingOption" );
+        content.getRootDataSet().setData( "mySingleSelector", new Value.Text( "nonExistingOption" ) );
 
         // exercise & verify
         DataSetValidator validator = new DataSetValidator( contentType );
@@ -62,14 +63,14 @@ public class DataSetValidatorTest
         SingleSelectorConfig singleSelectorConfig =
             SingleSelectorConfig.newSingleSelectorConfig().typeRadio().addOption( "Option 1", "o1" ).build();
 
-        contentType.form().addFormItem(
-            newInput().name( "mySingleSelector1" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
-        contentType.form().addFormItem(
-            newInput().name( "mySingleSelector2" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
+        contentType.form().addFormItem( newInput().name( "mySingleSelector1" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig(
+            singleSelectorConfig ).build() );
+        contentType.form().addFormItem( newInput().name( "mySingleSelector2" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig(
+            singleSelectorConfig ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "mySingleSelector1", "nonExistingOption" );
-        content.getRootDataSet().setData( "mySingleSelector2", "nonExistingOption" );
+        content.getRootDataSet().setData( "mySingleSelector1", new Value.Text( "nonExistingOption" ) );
+        content.getRootDataSet().setData( "mySingleSelector2", new Value.Text( "nonExistingOption" ) );
 
         // exercise & verify
         DataSetValidator validator = new DataSetValidator( contentType );
@@ -86,23 +87,23 @@ public class DataSetValidatorTest
             SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "Option 1", "o1" ).build();
         HtmlAreaConfig htmlAreaConfig = HtmlAreaConfig.newHtmlAreaConfig().build();
 
-        contentType.form().addFormItem( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
-        contentType.form().addFormItem( newInput().name( "myDecimalNumber" ).type( InputTypes.DECIMAL_NUMBER ).build() );
+        contentType.form().addFormItem( newInput().name( "myDate" ).inputType( InputTypes.DATE ).build() );
+        contentType.form().addFormItem( newInput().name( "myDecimalNumber" ).inputType( InputTypes.DECIMAL_NUMBER ).build() );
         contentType.form().addFormItem(
-            newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
+            newInput().name( "mySingleSelector" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
         contentType.form().addFormItem(
-            newInput().name( "myHtmlArea" ).type( InputTypes.HTML_AREA ).inputTypeConfig( htmlAreaConfig ).build() );
-        contentType.form().addFormItem( newInput().name( "myPhone" ).type( InputTypes.PHONE ).build() );
-        contentType.form().addFormItem( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
-        contentType.form().addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.form().addFormItem( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
-        contentType.form().addFormItem( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
+            newInput().name( "myHtmlArea" ).inputType( InputTypes.HTML_AREA ).inputTypeConfig( htmlAreaConfig ).build() );
+        contentType.form().addFormItem( newInput().name( "myPhone" ).inputType( InputTypes.PHONE ).build() );
+        contentType.form().addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).build() );
+        contentType.form().addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
+        contentType.form().addFormItem( newInput().name( "myWholeNumber" ).inputType( InputTypes.WHOLE_NUMBER ).build() );
+        contentType.form().addFormItem( newInput().name( "myXml" ).inputType( InputTypes.XML ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "myDate", new DateMidnight( 2012, 9, 11 ) );
-        content.getRootDataSet().setData( "myDecimalNumber", 12.34 );
-        content.getRootDataSet().setData( "mySingleSelector", "o1" );
-        content.getRootDataSet().setData( "myHtmlArea", "<h1>Hello world</h1>" );
+        content.getRootDataSet().setData( "myDate", new Value.Date( new DateMidnight( 2012, 9, 11 ) ) );
+        content.getRootDataSet().setData( "myDecimalNumber", new Value.DecimalNumber( 12.34 ) );
+        content.getRootDataSet().setData( "mySingleSelector", new Value.Text( "o1" ) );
+        content.getRootDataSet().setData( "myHtmlArea", new Value.HtmlPart( "<h1>Hello world</h1>" ) );
 
         // exercise
         DataSetValidator validator = new DataSetValidator( contentType );
@@ -115,28 +116,28 @@ public class DataSetValidatorTest
     {
         // setup
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setData( "name", "Thomas" );
-        rootDataSet.setData( "personalia.eyeColour", "Blue" );
-        rootDataSet.setData( "personalia.hairColour", "Blonde" );
-        rootDataSet.setData( "crimes[0].description", "Stole tomatoes from neighbour" );
-        rootDataSet.setData( "crimes[0].year", "1989" );
-        rootDataSet.setData( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
-        rootDataSet.setData( "crimes[1].year", "1990" );
+        rootDataSet.setData( "name", new Value.Text( "Thomas" ) );
+        rootDataSet.setData( "personalia.eyeColour", new Value.Text( "Blue" ) );
+        rootDataSet.setData( "personalia.hairColour", new Value.Text( "Blonde" ) );
+        rootDataSet.setData( "crimes[0].description", new Value.Text( "Stole tomatoes from neighbour" ) );
+        rootDataSet.setData( "crimes[0].year", new Value.Text( "1989" ) );
+        rootDataSet.setData( "crimes[1].description", new Value.Text( "Stole a chocolate from the Matbua shop" ) );
+        rootDataSet.setData( "crimes[1].year", new Value.Text( "1990" ) );
 
         assertEquals( DataTypes.TEXT, rootDataSet.getData( "personalia.eyeColour" ).getType() );
         Assert.assertEquals( "Blue", rootDataSet.getData( "personalia.eyeColour" ).getObject() );
         Assert.assertEquals( "personalia.eyeColour", rootDataSet.getData( "personalia.eyeColour" ).getPath().toString() );
 
         // exercise
-        contentType.form().addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.form().addFormItem( newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() );
         FormItemSet personalia = newFormItemSet().name( "personalia" ).multiple( false ).build();
         contentType.form().addFormItem( personalia );
-        personalia.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        personalia.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        personalia.add( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() );
+        personalia.add( newInput().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() );
         FormItemSet crimes = newFormItemSet().name( "crimes" ).multiple( true ).build();
         contentType.form().addFormItem( crimes );
-        crimes.add( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
-        crimes.add( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
+        crimes.add( newInput().name( "description" ).inputType( InputTypes.TEXT_LINE ).build() );
+        crimes.add( newInput().name( "year" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         assertEquals( DataTypes.TEXT, rootDataSet.getData( "personalia.eyeColour" ).getType() );
         Assert.assertEquals( "Blue", rootDataSet.getData( "personalia.eyeColour" ).getObject() );

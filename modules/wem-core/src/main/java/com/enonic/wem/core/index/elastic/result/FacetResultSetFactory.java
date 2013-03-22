@@ -6,18 +6,13 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.facet.Facet;
 import org.elasticsearch.search.facet.Facets;
 import org.elasticsearch.search.facet.datehistogram.DateHistogramFacet;
+import org.elasticsearch.search.facet.range.RangeFacet;
 import org.elasticsearch.search.facet.terms.TermsFacet;
 
 import com.enonic.wem.api.query.FacetsResultSet;
 
 public class FacetResultSetFactory
 {
-
-    // private final RangeFacetResultSetCreator rangeFacetResultSetCreator = new RangeFacetResultSetCreator();
-
-    //  private final HistogramFacetResultSetCreator histogramFacetResultSetCreator = new HistogramFacetResultSetCreator();
-
-    //  private final TermsStatsFacetResultSetCreator termsStatsFacetResultSetCreator = new TermsStatsFacetResultSetCreator();
 
     public static FacetsResultSet create( final SearchResponse searchResponse )
     {
@@ -45,11 +40,12 @@ public class FacetResultSetFactory
             {
                 facetsResultSet.addFacetResultSet( DateHistogramFacetResultSetFactory.create( facetName, (DateHistogramFacet) facet ) );
             }
-             /*
-                else if ( facet instanceof RangeFacet )
-                {
-                    facetsResultSet.addFacetResultSet( rangeFacetResultSetCreator.create( facetName, (RangeFacet) facet ) );
-                }
+
+            else if ( facet instanceof RangeFacet )
+            {
+                facetsResultSet.addFacetResultSet( RangeFacetResultSetFactory.create( facetName, (RangeFacet) facet ) );
+            }
+            /*
                 else if ( facet instanceof HistogramFacet )
                 {
                     facetsResultSet.addFacetResultSet( histogramFacetResultSetCreator.create( facetName, (HistogramFacet) facet ) );

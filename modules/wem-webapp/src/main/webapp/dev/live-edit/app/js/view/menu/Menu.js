@@ -1,9 +1,7 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
+
 (function ($) {
     'use strict';
-
-    // Namespaces
-    AdminLiveEdit.view.menu = {};
-
 
     // Class definition (constructor)
     var menu = AdminLiveEdit.view.menu.Menu = function () {
@@ -15,8 +13,9 @@
         me.buttonConfig = {
             'page': ['settings', 'reset'],
             'region': ['parent', 'settings', 'reset', 'clear'],
+            'layout': ['parent', 'settings'],
             'part': ['parent', 'settings', 'details', 'remove'],
-            'content': ['parent', 'view', 'edit'],
+            'content': ['parent', 'opencontent', 'view', 'edit'],
             'paragraph': ['parent', 'edit']
         };
 
@@ -44,7 +43,7 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     var html = '';
-    html += '<div class="live-edit-component-menu" style="display: none">';
+    html += '<div class="live-edit-component-menu live-edit-arrow-top" style="display: none">';
     html += '   <div class="live-edit-component-menu-title-bar">';
     html += '       <div class="live-edit-component-menu-title-icon"><div><!-- --></div></div>';
     html += '       <div class="live-edit-component-menu-title-text"><!-- populated --></div>';
@@ -56,11 +55,11 @@
 
 
     proto.registerGlobalListeners = function () {
-        $(window).on('component:click:select', $.proxy(this.show, this));
-        $(window).on('component:click:deselect', $.proxy(this.hide, this));
-        $(window).on('component:sort:start', $.proxy(this.fadeOutAndHide, this));
-        $(window).on('component:remove', $.proxy(this.hide, this));
-        $(window).on('component:paragraph:edit:init', $.proxy(this.hide, this));
+        $(window).on('component.onSelect', $.proxy(this.show, this));
+        $(window).on('component.onDeselect', $.proxy(this.hide, this));
+        $(window).on('component.onSortStart', $.proxy(this.fadeOutAndHide, this));
+        $(window).on('component.onRemove', $.proxy(this.hide, this));
+        $(window).on('component.onParagraphEdit', $.proxy(this.hide, this));
     };
 
 
@@ -78,20 +77,24 @@
         $(me.getEl()).draggable({ handle: '.live-edit-component-menu-title-bar' });
 
         me.getCloseButton().click(function () {
-            me.hide();
+            $(window).trigger('component.onDeselect');
         });
     };
 
 
-    proto.show = function (event, $component, coordinates) {
+    proto.show = function (event, $component, pagePosition) {
         var me = this,
             componentInfo = util.getComponentInfo($component);
 
         me.$selectedComponent = $component;
 
         me.updateTitleBar($component);
+
         me.updateMenuItemsForComponent($component);
-        me.moveToXY(coordinates.x, coordinates.y);
+
+        var pageXPosition = pagePosition.x + 5; // add 5 so the menu is not directly beneath the mouse pointer
+        me.moveToXY(pageXPosition, pagePosition.y);
+
         me.getEl().show();
 
         this.hidden = false;
@@ -99,7 +102,7 @@
 
 
     proto.hide = function () {
-        this.getEl().css({ top: '-5000px', left: '-5000px', right: '' });
+        this.getEl().hide();
         this.hidden = true;
     };
 
@@ -108,7 +111,7 @@
         var me = this;
         me.getEl().fadeOut(500, function () {
             me.hide();
-            $(window).trigger('component:click:deselect', {showComponentBar: false});
+            $(window).trigger('component.onDeselect', {showComponentBar: false});
         });
         me.$selectedComponent = null;
     };
@@ -130,6 +133,7 @@
         var insertButton = new AdminLiveEdit.view.menu.InsertButton(me);
         var resetButton = new AdminLiveEdit.view.menu.ResetButton(me);
         var clearButton = new AdminLiveEdit.view.menu.ClearButton(me);
+        var openContentButton = new AdminLiveEdit.view.menu.OpenContentButton(me);
         var viewButton = new AdminLiveEdit.view.menu.ViewButton(me);
         var editButton = new AdminLiveEdit.view.menu.EditButton(me);
         var removeButton = new AdminLiveEdit.view.menu.RemoveButton(me);
@@ -165,8 +169,8 @@
 
     proto.updateTitleBar = function ($component) {
         var componentInfo = util.getComponentInfo($component);
-        this.setTitle(componentInfo.name);
         this.setIcon(componentInfo.type);
+        this.setTitle(componentInfo.name);
     };
 
 
@@ -193,6 +197,10 @@
 
         case 'region':
             iconCls = 'live-edit-component-menu-region-icon';
+            break;
+
+        case 'layout':
+            iconCls = 'live-edit-component-menu-layout-icon';
             break;
 
         case 'part':

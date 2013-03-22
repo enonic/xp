@@ -10,8 +10,15 @@ Ext.define('Admin.MessageBus', {
         this.fireEvent('feedbackBox.show', config);
     },
 
-    showLiveEdit: function (config) {
-        this.fireEvent('liveEditWindow.show', config);
+
+    liveEditOpenContent: function (config) {
+        this.fireEvent('liveEdit.openContent', config);
+    },
+
+
+    // Just for prototyping purposes
+    showLiveEditTestSettingsWindow: function (config) {
+        this.fireEvent('liveEdit.showTestSettingsWindow', config);
     }
 
 });

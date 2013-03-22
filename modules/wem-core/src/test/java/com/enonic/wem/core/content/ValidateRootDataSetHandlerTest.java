@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.ContentTypes;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
@@ -54,7 +55,7 @@ public class ValidateRootDataSetHandlerTest
             name( "MyType" ).
             addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
                 newFormItemSet().name( "mySet" ).required( true ).addFormItem(
-                    newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build() ).
+                    newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build() ).
             build();
 
         Mockito.when( contentTypeDao.select( Mockito.any( QualifiedContentTypeNames.class ), Mockito.any( Session.class ) ) ).thenReturn(
@@ -80,7 +81,7 @@ public class ValidateRootDataSetHandlerTest
         // setup
         final FieldSet fieldSet = newFieldSet().label( "My layout" ).name( "myLayout" ).add(
             newFormItemSet().name( "mySet" ).required( true ).addFormItem(
-                newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
+                newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
         final ContentType contentType = ContentType.newContentType().
             module( Module.SYSTEM.getName() ).
             name( "MyType" ).
@@ -91,7 +92,7 @@ public class ValidateRootDataSetHandlerTest
             ContentTypes.from( contentType ) );
 
         final Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "mySet.myInput", "thing" );
+        content.getRootDataSet().setData( "mySet.myInput", new Value.Text( "thing" ) );
 
         // exercise
         final ValidateRootDataSet command =

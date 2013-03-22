@@ -76,7 +76,16 @@ public class CreateOrUpdateContentTypeRpcHandler
 
         if ( !contentTypeExists( contentType.getQualifiedName() ) )
         {
-            final CreateContentType createCommand = contentType().create().contentType( contentType );
+            final CreateContentType createCommand = contentType().create().
+                name( contentType.getName() ).
+                displayName( contentType.getDisplayName() ).
+                superType( contentType.getSuperType() ).
+                setAbstract( contentType.isAbstract() ).
+                setFinal( contentType.isFinal() ).
+                moduleName( contentType.getModuleName() ).
+                form( contentType.form() ).
+                icon( contentType.getIcon() ).
+                contentDisplayNameScript( contentType.getContentDisplayNameScript() );
             client.execute( createCommand );
 
             context.setResult( CreateOrUpdateContentTypeJsonResult.created() );

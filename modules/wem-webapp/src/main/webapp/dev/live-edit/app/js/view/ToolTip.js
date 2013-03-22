@@ -1,3 +1,5 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
+
 (function ($) {
     'use strict';
 
@@ -26,7 +28,7 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.registerGlobalListeners = function () {
-        $(window).on('component:click:select', $.proxy(this.hide, this));
+        $(window).on('component.onSelect', $.proxy(this.hide, this));
     };
 
 

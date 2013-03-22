@@ -1,3 +1,5 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.Util');
+
 AdminLiveEdit.Util = (function () {
     'use strict';
 
@@ -113,17 +115,17 @@ AdminLiveEdit.Util = (function () {
 
 
         getComponentType: function ($component) {
-            return $component[0].getAttribute('data-live-edit-type');
+            return $component.data('live-edit-type');
         },
 
 
         getComponentKey: function ($component) {
-            return $component[0].getAttribute('data-live-edit-key');
+            return $component.data('live-edit-key');
         },
 
 
         getComponentName: function ($component) {
-            return $component[0].getAttribute('data-live-edit-name');
+            return $component.data('live-edit-name') || '[No Name]';
         },
 
 

@@ -4,6 +4,7 @@ import org.apache.commons.lang.WordUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.api.command.content.schema.content.CreateContentType;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
@@ -141,7 +142,17 @@ public class ContentTypesInitializer
         final boolean contentTypeExists = !client.execute( contentType().get().qualifiedNames( qualifiedNames ) ).isEmpty();
         if ( !contentTypeExists )
         {
-            client.execute( contentType().create().contentType( contentType ) );
+            final CreateContentType createCommand = contentType().create().
+                name( contentType.getName() ).
+                displayName( contentType.getDisplayName() ).
+                superType( contentType.getSuperType() ).
+                setAbstract( contentType.isAbstract() ).
+                setFinal( contentType.isFinal() ).
+                moduleName( contentType.getModuleName() ).
+                form( contentType.form() ).
+                icon( contentType.getIcon() ).
+                contentDisplayNameScript( contentType.getContentDisplayNameScript() );
+            client.execute( createCommand );
         }
         else
         {

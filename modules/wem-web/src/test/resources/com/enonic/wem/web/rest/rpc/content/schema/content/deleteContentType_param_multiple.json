@@ -1,0 +1,3 @@
+{
+    "qualifiedContentTypeNames": ["my:existingContentType", "my:notFoundContentType", "my:beingUsedContentType"]
+}

@@ -1,3 +1,5 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
+
 (function ($) {
     'use strict';
 
@@ -27,7 +29,7 @@
             cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
-                window.parent.Admin.MessageBus.showLiveEdit({});
+                window.parent.Admin.MessageBus.showLiveEditTestSettingsWindow({});
             }
         });
 

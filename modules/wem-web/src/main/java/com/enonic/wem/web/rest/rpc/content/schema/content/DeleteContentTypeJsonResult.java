@@ -3,7 +3,6 @@ package com.enonic.wem.web.rest.rpc.content.schema.content;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.content.schema.content.ContentTypeDeletionResult;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.web.json.JsonResult;
 

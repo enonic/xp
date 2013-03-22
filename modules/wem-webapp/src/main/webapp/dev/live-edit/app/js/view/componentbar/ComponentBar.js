@@ -1,3 +1,5 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
+
 (function ($) {
     'use strict';
 
@@ -72,13 +74,14 @@
 
     proto.registerGlobalListeners = function () {
         var me = this;
-        $(window).on('component:click:select', $.proxy(me.fadeOut, me));
-        $(window).on('component:click:deselect', $.proxy(me.fadeIn, me));
-        $(window).on('component:drag:start', $.proxy(me.fadeOut, me));
-        $(window).on('component:drag:stop', $.proxy(me.fadeIn, me));
-        $(window).on('component:sort:stop', $.proxy(me.fadeIn, me));
-        $(window).on('component:sort:start', $.proxy(me.fadeOut, me));
-        $(window).on('component:sort:update', $.proxy(me.fadeIn, me));
+        $(window).on('component.onSelect', $.proxy(me.fadeOut, me));
+        $(window).on('component.onDeselect', $.proxy(me.fadeIn, me));
+        $(window).on('component.onDragStart', $.proxy(me.fadeOut, me));
+        $(window).on('component.onDragStop', $.proxy(me.fadeIn, me));
+        $(window).on('component.onSortStop', $.proxy(me.fadeIn, me));
+        $(window).on('component.onSortStart', $.proxy(me.fadeOut, me));
+        $(window).on('component.onSortUpdate', $.proxy(me.fadeIn, me));
+        $(window).on('component.onRemove', $.proxy(me.fadeIn, me));
     };
 
 
@@ -103,7 +106,7 @@
         var me = this;
         $.getJSON(me.getComponentsDataUrl(), null, function (data, textStatus, jqXHR) {
             me.renderComponents(data);
-            $(window).trigger('componentBar:dataLoaded');
+            $(window).trigger('componentBar.dataLoaded');
         });
     };
 
@@ -147,8 +150,8 @@
         html += '<li class="live-edit-component" data-live-edit-component-key="' + component.key + '" data-live-edit-component-name="' + component.name + '">';
         html += '    <img src="../app/images/srs.jpeg"/>';
         html += '    <div class="live-edit-component-text">';
-        html += '        <span>' + component.name + '</span>';
-        html += '        <small>' + component.subtitle + '</small>';
+        html += '        <div class="live-edit-component-text-name">' + component.name + '</div>';
+        html += '        <div class="live-edit-component-text-subtitle">' + component.subtitle + '</div>';
         html += '    </div>';
         html += '</li>';
 
@@ -196,7 +199,7 @@
 
 
     proto.fadeIn = function (event, triggerConfig) {
-        // componenttip/menu.js triggers a component:click:deselect event
+        // componenttip/menu.js triggers a component.onDeselect event
         // which results in that the bar is faded in (see the listeners above)
         // The triggerConfig is a temporary workaround until we get this right.
         if (triggerConfig && triggerConfig.showComponentBar === false) {

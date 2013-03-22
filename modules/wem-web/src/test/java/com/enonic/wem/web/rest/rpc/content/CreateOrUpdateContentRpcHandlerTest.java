@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.command.content.GetContents;
 import com.enonic.wem.api.command.content.RenameContent;
 import com.enonic.wem.api.command.content.UpdateContent;
@@ -54,9 +55,11 @@ public class CreateOrUpdateContentRpcHandlerTest
             module( ModuleName.from( "myModule" ) ).
             build();
 
+        CreateContentResult createContentResult = new CreateContentResult( contentId, ContentPath.from( "/myContent/my-child-content" ) );
+
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
         Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
-        Mockito.when( client.execute( isA( CreateContent.class ) ) ).thenReturn( contentId );
+        Mockito.when( client.execute( isA( CreateContent.class ) ) ).thenReturn( createContentResult );
 
         ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );
@@ -79,11 +82,13 @@ public class CreateOrUpdateContentRpcHandlerTest
             module( ModuleName.from( "myModule" ) ).
             build();
 
+        CreateContentResult createContentResult = new CreateContentResult( contentId, ContentPath.from( "/myContent/my-child-content-2" ) );
+
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
         final Contents contents =
             Contents.from( Content.newContent().name( "my-child-content" ).type( QualifiedContentTypeName.unstructured() ).build() );
         Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( contents ).thenReturn( Contents.empty() );
-        Mockito.when( client.execute( isA( CreateContent.class ) ) ).thenReturn( contentId );
+        Mockito.when( client.execute( isA( CreateContent.class ) ) ).thenReturn( createContentResult );
 
         ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );

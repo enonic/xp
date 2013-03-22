@@ -17,9 +17,9 @@ public final class ContentTypeCommands
         return new UpdateContentType();
     }
 
-    public DeleteContentTypes delete()
+    public DeleteContentType delete()
     {
-        return new DeleteContentTypes();
+        return new DeleteContentType();
     }
 
     public GetContentTypeTree getTree()

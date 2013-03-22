@@ -13,9 +13,9 @@ Ext.define('Admin.controller.contentManager.DetailToolbarController', {
     init: function () {
 
         this.control({
-            'contentDetailToolbar *[action=publishContent]': {
+            'contentDetailToolbar *[action=newContent]': {
                 click: function (el, e) {
-
+                    this.getNewContentWindow().doShow();
                 }
             },
             'contentDetailToolbar *[action=editContent]': {

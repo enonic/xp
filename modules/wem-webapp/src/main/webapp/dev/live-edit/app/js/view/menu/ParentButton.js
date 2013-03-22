@@ -1,3 +1,5 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
+
 (function ($) {
     'use strict';
 
@@ -33,16 +35,33 @@
                 var $parent = me.menu.$selectedComponent.parents('[data-live-edit-type]');
                 if ($parent && $parent.length > 0) {
                     $parent = $($parent[0]);
-                    // The menu should stay at the same position when selecting parent
-                    var offset = me.menu.getEl().offset(),
-                        coordinates = {x: offset.left, y: offset.top};
-                    $(window).trigger('component:click:select', [$parent, coordinates]);
+
+                    $(window).trigger('component.onSelect', [$parent, {x: 0, y: 0}]);
+
+                    me.scrollComponentIntoView($parent);
+
+                    // Force position of the menu after component is selected.
+                    // We could move this code to menu show.
+                    // The position needs to be updated after menu is updated with info in order to get the right dimensions (width) of the menu.
+                    var menuWidth = me.menu.getEl().outerWidth();
+                    var componentBox = util.getBoxModel($parent),
+                        newMenuPosition = {x: componentBox.left + (componentBox.width / 2) - (menuWidth / 2), y: componentBox.top + 10};
+
+                    me.menu.moveToXY(newMenuPosition.x, newMenuPosition.y);
                 }
             }
         });
 
         me.appendTo(this.menu.getEl());
         me.menu.buttons.push(me);
+    };
+
+
+    proto.scrollComponentIntoView = function ($component) {
+        var componentTopPosition = util.getPagePositionForComponent($component).top;
+        if (componentTopPosition <= window.pageYOffset) {
+            $('html, body').animate({scrollTop: componentTopPosition - 10}, 200);
+        }
     };
 
 }($liveedit));

@@ -2,9 +2,11 @@ package com.enonic.wem.core.jcr;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.jcr.Binary;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -56,6 +58,24 @@ public final class JcrHelper
         }
     }
 
+    public static Node getNodeById( final Session session, final String id )
+        throws RepositoryException
+    {
+        try
+        {
+            return session.getNodeByIdentifier( id );
+        }
+        catch ( ItemNotFoundException e )
+        {
+            return null;
+        }
+        catch ( java.lang.IllegalArgumentException e )
+        {
+            // invalid id format for Oak
+            return null;
+        }
+    }
+
     public static void removeNodes( final NodeIterator nodes )
         throws RepositoryException
     {
@@ -83,6 +103,13 @@ public final class JcrHelper
         throws RepositoryException
     {
         final Binary binaryValue = node.getSession().getValueFactory().createBinary( new ByteArrayInputStream( value ) );
+        node.setProperty( propertyName, binaryValue );
+    }
+
+    public static void setPropertyBinary( final Node node, final String propertyName, final InputStream inputStream )
+        throws RepositoryException
+    {
+        final Binary binaryValue = node.getSession().getValueFactory().createBinary( inputStream );
         node.setProperty( propertyName, binaryValue );
     }
 
@@ -182,6 +209,21 @@ public final class JcrHelper
             {
                 throw new RuntimeException( e );
             }
+        }
+    }
+
+    public static InputStream getPropertyBinaryAsInputStream( final Node node, final String propertyName )
+        throws RepositoryException
+    {
+        Property property = getInternalProperty( node, propertyName );
+        if ( property == null )
+        {
+            return null;
+        }
+        else
+        {
+            final Binary binaryValue = property.getValue().getBinary();
+            return binaryValue.getStream();
         }
     }
 

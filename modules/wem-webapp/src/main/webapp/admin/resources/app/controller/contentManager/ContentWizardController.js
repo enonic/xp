@@ -20,6 +20,11 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                     me.saveContent(this.getContentWizardPanel(), false);
                 }
             },
+            'contentWizardPanel *[action=previewContent]': {
+                click: function (el, e) {
+
+                }
+            },
             'contentWizardPanel': {
                 finished: function (wizard, data) {
                     me.saveContent(this.getContentWizardPanel(), true);

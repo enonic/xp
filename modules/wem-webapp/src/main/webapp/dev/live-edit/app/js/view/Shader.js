@@ -1,3 +1,5 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
+
 (function ($) {
     // Class definition (constructor function)
     var shader = AdminLiveEdit.view.Shader = function () {
@@ -21,11 +23,11 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.registerGlobalListeners = function () {
-        $(window).on('component:click:select', $.proxy(this.show, this));
-        $(window).on('component:click:deselect', $.proxy(this.hide, this));
-        $(window).on('component:remove', $.proxy(this.hide, this));
-        $(window).on('component:sort:start', $.proxy(this.hide, this));
-        $(window).on('component:paragraph:edit:init', $.proxy(this.show, this));
+        $(window).on('component.onSelect', $.proxy(this.show, this));
+        $(window).on('component.onDeselect', $.proxy(this.hide, this));
+        $(window).on('component.onRemove', $.proxy(this.hide, this));
+        $(window).on('component.onSortStart', $.proxy(this.hide, this));
+        $(window).on('component.onParagraphEdit', $.proxy(this.show, this));
     };
 
 
@@ -41,8 +43,8 @@
         $('.live-edit-shader').on('click contextmenu', function (event) {
             event.stopPropagation();
             event.preventDefault();
-            $(window).trigger('component:click:deselect');
-            $(window).trigger('shader:click');
+            $(window).trigger('component.onDeselect');
+            $(window).trigger('shader.onClick');
         });
     };
 

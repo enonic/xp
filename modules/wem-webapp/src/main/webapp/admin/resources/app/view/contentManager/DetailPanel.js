@@ -9,9 +9,10 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         'Ext.ux.toggleslide.ToggleSlide'
     ],
 
-    isLiveMode: true,
+    isLiveMode: false,
 
     initComponent: function () {
+        var me = this;
         this.activeItem = this.resolveActiveItem(this.data);
 
         this.singleSelection.tabs = [
@@ -26,6 +27,10 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             {
                 displayName: 'Meta',
                 tab: 'meta'
+            },
+            {
+                displayName: 'Live',
+                tab: 'live'
             }
         ];
 
@@ -38,6 +43,10 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             },
             graph: {
                 html: '<h1>Graph</h1>'
+            },
+            live: {
+                item: me.createLivePreview(),
+                callback: me.loadLivePreview
             }
         };
 
@@ -62,7 +71,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
                 //TODO update urls when they are ready
-                livePreview.load('/dev/live-edit/page/page.jsp');
+                livePreview.load('/dev/live-edit/page/bootstrap.jsp');
             }
         }, this);
 
@@ -70,9 +79,8 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
             if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
-
                 //TODO update urls when they are ready
-                livePreview.load('/dev/live-edit/page/page.jsp');
+                livePreview.load('/dev/live-edit/page/bootstrap.jsp');
             }
         };
 
@@ -86,6 +94,12 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
         this.callParent(arguments);
         this.addEvents('deselectrecord');
+    },
+
+    loadLivePreview: function (item) {
+        var livePreview = item.down('#livePreview');
+        //TODO update urls when they are ready
+        livePreview.load('/dev/live-edit/page/bootstrap.jsp');
     },
 
 

@@ -17,5 +17,6 @@
   <node name="contentTypes" type="nt:unstructured"/>
   <node name="mixins" type="nt:unstructured"/>
   <node name="relationshipTypes" type="nt:unstructured"/>
+  <node name="binaries" type="nt:unstructured"/>
 
 </node>

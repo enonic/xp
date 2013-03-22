@@ -5,10 +5,8 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.content.schema.mixin.MixinDeletionResult;
+import com.enonic.wem.api.command.content.schema.mixin.DeleteMixinResult;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.api.exception.MixinNotFoundException;
-import com.enonic.wem.api.exception.UnableToDeleteMixinException;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
@@ -31,18 +29,13 @@ public class DeleteMixinRpcHandlerTest
     public void deleteSingleMixin()
         throws Exception
     {
-        final QualifiedMixinName existingName = new QualifiedMixinName( "my:existingMixin" );
-
-        MixinDeletionResult mixinDeletionResult = new MixinDeletionResult();
-        mixinDeletionResult.success( existingName );
-
-        Mockito.when( client.execute( Mockito.any( Commands.mixin().delete().getClass() ) ) ).thenReturn( mixinDeletionResult );
+        Mockito.when( client.execute( Mockito.any( Commands.mixin().delete().getClass() ) ) ).thenReturn( DeleteMixinResult.SUCCESS );
 
         testSuccess( "deleteMixin_param.json", "deleteMixin_success_result.json" );
     }
 
     @Test
-    public void deleteVariousMixins()
+    public void deleteMultipleMixins()
         throws Exception
     {
         final QualifiedMixinName existingName = new QualifiedMixinName( "my:existingMixin" );
@@ -51,12 +44,15 @@ public class DeleteMixinRpcHandlerTest
 
         MixinDeletionResult mixinDeletionResult = new MixinDeletionResult();
         mixinDeletionResult.success( existingName );
-        mixinDeletionResult.failure( notFoundName, new MixinNotFoundException( notFoundName ) );
-        mixinDeletionResult.failure( beingUsedName, new UnableToDeleteMixinException( beingUsedName, "Mixin is being used" ) );
+        mixinDeletionResult.failure( notFoundName, "Mixin [my:notFoundMixin] was not found" );
+        mixinDeletionResult.failure( beingUsedName, "Mixin is being used" );
 
-        Mockito.when( client.execute( Mockito.any( Commands.mixin().delete().getClass() ) ) ).thenReturn( mixinDeletionResult );
+        Mockito.when( client.execute( Mockito.any( Commands.mixin().delete().getClass() ) ) ).
+            thenReturn( DeleteMixinResult.SUCCESS ).
+            thenReturn( DeleteMixinResult.NOT_FOUND ).
+            thenReturn( DeleteMixinResult.UNABLE_TO_DELETE );
 
-        testSuccess( "deleteMixin_param.json", "deleteMixin_error_result.json" );
+        testSuccess( "deleteMixin_param_multiple.json", "deleteMixin_error_result.json" );
     }
 
 }

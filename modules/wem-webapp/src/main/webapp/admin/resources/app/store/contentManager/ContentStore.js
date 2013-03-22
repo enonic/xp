@@ -3,16 +3,14 @@ Ext.define('Admin.store.contentManager.ContentStore', {
 
     model: 'Admin.model.contentManager.ContentModel',
 
-    autoLoad: true,
-
     proxy: {
-        type: 'ajax',
-        url: Admin.lib.UriHelper.getContentManagerSearchUri(),
+        type: 'direct',
+        directFn: Admin.lib.RemoteService.content_find,
         simpleSortMode: true,
         reader: {
             type: 'json',
-            root: 'result.contents',
-            totalProperty: 'result.total'
+            root: 'contents',
+            totalProperty: 'total'
         }
     }
 });

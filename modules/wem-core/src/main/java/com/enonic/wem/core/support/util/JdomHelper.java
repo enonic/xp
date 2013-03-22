@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.net.URL;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -37,6 +38,12 @@ public final class JdomHelper
         throws IOException, JDOMException
     {
         return this.saxBuilder.build( in );
+    }
+
+    public Document parse( final URL url )
+        throws IOException, JDOMException
+    {
+        return this.saxBuilder.build( url );
     }
 
     public String serialize( final Document node, final boolean prettyPrint )

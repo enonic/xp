@@ -1,0 +1,14 @@
+{
+    "success": false,
+    "successes": [
+        {
+            "qualifiedRelationshipTypeName": "company:partner"
+        }
+    ],
+    "failures": [
+        {
+            "qualifiedRelationshipTypeName": "company:client",
+            "reason": "Relationship Type [company:client] was not found"
+        }
+    ]
+}

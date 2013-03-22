@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.data.Text;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.form.FieldSet;
@@ -47,7 +47,7 @@ public class ContentTest
     public void array_getting_entry_from_array_of_size_one()
     {
         DataSet dataSet = new RootDataSet();
-        dataSet.setData( "array[0]", "First" );
+        dataSet.setData( "array[0]", new Value.Text( "First" ) );
 
         assertEquals( "First", dataSet.getData( "array" ).getObject() );
         assertEquals( "First", dataSet.getData( "array[0]" ).getObject() );
@@ -57,8 +57,8 @@ public class ContentTest
     public void array_getting_entries_from_array_of_size_two()
     {
         RootDataSet rootDataSet = newRootDataSet();
-        rootDataSet.setData( "array[0]", "First" );
-        rootDataSet.setData( "array[1]", "Second" );
+        rootDataSet.setData( "array[0]", new Value.Text( "First" ) );
+        rootDataSet.setData( "array[1]", new Value.Text( "Second" ) );
 
         Data array = rootDataSet.getData( "array" );
         assertEquals( "First", array.getObject() );
@@ -92,9 +92,9 @@ public class ContentTest
     public void array_getting_entries_from_array_of_size_three()
     {
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setData( "array[0]", "First" );
-        rootDataSet.setData( "array[1]", "Second" );
-        rootDataSet.setData( "array[2]", "Third" );
+        rootDataSet.setData( "array[0]", new Value.Text( "First" ) );
+        rootDataSet.setData( "array[1]", new Value.Text( "Second" ) );
+        rootDataSet.setData( "array[2]", new Value.Text( "Third" ) );
 
         assertEquals( "First", rootDataSet.getData( "array" ).getObject() );
         assertEquals( "First", rootDataSet.getData( "array[0]" ).getObject() );
@@ -108,9 +108,9 @@ public class ContentTest
     public void array_overwriting_does_not_create_array()
     {
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setData( "noArray", "First" );
-        rootDataSet.setData( "noArray", "Second" );
-        rootDataSet.setData( "noArray", "Third" );
+        rootDataSet.setData( "noArray", new Value.Text( "First" ) );
+        rootDataSet.setData( "noArray", new Value.Text( "Second" ) );
+        rootDataSet.setData( "noArray", new Value.Text( "Third" ) );
 
         assertEquals( "Third", rootDataSet.getData( "noArray" ).getObject() );
     }
@@ -119,9 +119,9 @@ public class ContentTest
     public void array_setData_assigning_same_array_element_a_second_time_ovewrites_the_first_value()
     {
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setData( "array[0]", "First" );
-        rootDataSet.setData( "array[1]", "Second" );
-        rootDataSet.setData( "array[1]", "Second again" );
+        rootDataSet.setData( "array[0]", new Value.Text( "First" ) );
+        rootDataSet.setData( "array[1]", new Value.Text( "Second" ) );
+        rootDataSet.setData( "array[1]", new Value.Text( "Second again" ) );
 
         assertEquals( "First", rootDataSet.getData( "array[0]" ).getObject() );
         assertEquals( "Second again", rootDataSet.getData( "array[1]" ).getObject() );
@@ -132,8 +132,8 @@ public class ContentTest
     public void array_setData_setting_second_data_with_same_path_at_index_1_creates_array_of_size_2()
     {
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setData( "myArray", "First" );
-        rootDataSet.setData( "myArray[1]", "Second" );
+        rootDataSet.setData( "myArray", new Value.Text( "First" ) );
+        rootDataSet.setData( "myArray[1]", new Value.Text( "Second" ) );
 
         assertEquals( true, rootDataSet.getData( "myArray" ).isArray() );
         assertEquals( 2, rootDataSet.getData( "myArray" ).getArray().size() );
@@ -146,8 +146,8 @@ public class ContentTest
     public void array_setData_array_within_set()
     {
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setData( "set.myArray[0]", "First" );
-        rootDataSet.setData( "set.myArray[1]", "Second" );
+        rootDataSet.setData( "set.myArray[0]", new Value.Text( "First" ) );
+        rootDataSet.setData( "set.myArray[1]", new Value.Text( "Second" ) );
 
         assertEquals( "First", rootDataSet.getData( "set.myArray[0]" ).getObject() );
         assertEquals( "Second", rootDataSet.getData( "set.myArray[1]" ).getObject() );
@@ -160,8 +160,8 @@ public class ContentTest
     public void array_setData_array_of_set_within_set()
     {
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setData( "company.address[0].street", "Kirkegata 1-3" );
-        rootDataSet.setData( "company.address[1].street", "Sonsteli" );
+        rootDataSet.setData( "company.address[0].street", new Value.Text( "Kirkegata 1-3" ) );
+        rootDataSet.setData( "company.address[1].street", new Value.Text( "Sonsteli" ) );
 
         assertEquals( "Kirkegata 1-3", rootDataSet.getData( "company.address[0].street" ).getString() );
         assertEquals( "Sonsteli", rootDataSet.getData( "company.address[1].street" ).getString() );
@@ -194,8 +194,8 @@ public class ContentTest
     public void array_set()
     {
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setData( "set[0].myText", "First" );
-        rootDataSet.setData( "set[1].myText", "Second" );
+        rootDataSet.setData( "set[0].myText", new Value.Text( "First" ) );
+        rootDataSet.setData( "set[1].myText", new Value.Text( "Second" ) );
 
         assertEquals( "First", rootDataSet.getData( "set.myText" ).getObject() );
         assertEquals( "First", rootDataSet.getData( "set[0].myText" ).getObject() );
@@ -215,10 +215,10 @@ public class ContentTest
     public void array_set2()
     {
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setData( "set[0].myText", "First" );
-        rootDataSet.setData( "set[0].myOther", "First other" );
-        rootDataSet.setData( "set[1].myText", "Second" );
-        rootDataSet.setData( "set[1].myOther", "Second other" );
+        rootDataSet.setData( "set[0].myText", new Value.Text( "First" ) );
+        rootDataSet.setData( "set[0].myOther", new Value.Text( "First other" ) );
+        rootDataSet.setData( "set[1].myText", new Value.Text( "Second" ) );
+        rootDataSet.setData( "set[1].myOther", new Value.Text( "Second other" ) );
 
         assertEquals( "First", rootDataSet.getData( "set[0].myText" ).getObject() );
         assertEquals( "First other", rootDataSet.getData( "set[0].myOther" ).getObject() );
@@ -235,11 +235,11 @@ public class ContentTest
     @Test
     public void tags()
     {
-        contentType.form().addFormItem( newInput().name( "myTags" ).type( InputTypes.TAGS ).build() );
+        contentType.form().addFormItem( newInput().name( "myTags" ).inputType( InputTypes.TAGS ).build() );
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "myTags", "A line of text" );
+        content.getRootDataSet().setData( "myTags", new Value.Text( "A line of text" ) );
 
         assertEquals( "A line of text", content.getRootDataSet().getData( "myTags" ).getObject() );
     }
@@ -247,10 +247,10 @@ public class ContentTest
     @Test
     public void phone()
     {
-        contentType.form().addFormItem( newInput().name( "myPhone" ).type( InputTypes.PHONE ).required( true ).build() );
+        contentType.form().addFormItem( newInput().name( "myPhone" ).inputType( InputTypes.PHONE ).required( true ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "myPhone", "98327891" );
+        content.getRootDataSet().setData( "myPhone", new Value.Text( "98327891" ) );
 
         assertEquals( "98327891", content.getRootDataSet().getData( "myPhone" ).getObject() );
     }
@@ -258,18 +258,18 @@ public class ContentTest
     @Test
     public void formItemSet()
     {
-        contentType.form().addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        contentType.form().addFormItem( newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() );
 
         FormItemSet formItemSet = newFormItemSet().name( "personalia" ).build();
         contentType.form().addFormItem( formItemSet );
-        formItemSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "name", "Ola Nordmann" );
-        rootDataSet.setData( "personalia.eyeColour", "Blue" );
-        rootDataSet.setData( "personalia.hairColour", "Blonde" );
+        rootDataSet.setData( "name", new Value.Text( "Ola Nordmann" ) );
+        rootDataSet.setData( "personalia.eyeColour", new Value.Text( "Blue" ) );
+        rootDataSet.setData( "personalia.hairColour", new Value.Text( "Blonde" ) );
 
         assertEquals( "Ola Nordmann", rootDataSet.getData( "name" ).getObject() );
         assertEquals( "Blue", rootDataSet.getData( "personalia.eyeColour" ).getObject() );
@@ -279,24 +279,24 @@ public class ContentTest
     @Test
     public void multiple_mixin()
     {
-        Input nameInput = newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build();
+        Input nameInput = newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).required( true ).build();
         contentType.form().addFormItem( nameInput );
 
         FormItemSet formItemSet = newFormItemSet().name( "personalia" ).multiple( true ).build();
         contentType.form().addFormItem( formItemSet );
-        formItemSet.add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "name", "Norske" );
-        rootDataSet.setData( "personalia[0].name", "Ola Nordmann" );
-        rootDataSet.setData( "personalia[0].eyeColour", "Blue" );
-        rootDataSet.setData( "personalia[0].hairColour", "Blonde" );
-        rootDataSet.setData( "personalia[1].name", "Kari Trestakk" );
-        rootDataSet.setData( "personalia[1].eyeColour", "Green" );
-        rootDataSet.setData( "personalia[1].hairColour", "Brown" );
+        rootDataSet.setData( "name", new Value.Text( "Norske" ) );
+        rootDataSet.setData( "personalia[0].name", new Value.Text( "Ola Nordmann" ) );
+        rootDataSet.setData( "personalia[0].eyeColour", new Value.Text( "Blue" ) );
+        rootDataSet.setData( "personalia[0].hairColour", new Value.Text( "Blonde" ) );
+        rootDataSet.setData( "personalia[1].name", new Value.Text( "Kari Trestakk" ) );
+        rootDataSet.setData( "personalia[1].eyeColour", new Value.Text( "Green" ) );
+        rootDataSet.setData( "personalia[1].hairColour", new Value.Text( "Brown" ) );
 
         assertEquals( "Norske", rootDataSet.getData( "name" ).getObject() );
         assertEquals( "Ola Nordmann", rootDataSet.getData( "personalia[0].name" ).getObject() );
@@ -312,16 +312,16 @@ public class ContentTest
     {
         Content content = newContent().build();
         RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "firstName", DataTypes.TEXT, "Thomas" );
-        rootDataSet.setData( "description", DataTypes.HTML_PART, "Grew up in Noetteveien" );
-        rootDataSet.setData( "child[0].name", "Joachim" );
-        rootDataSet.setData( "child[0].age", "9" );
-        rootDataSet.setData( "child[0].features.eyeColour", "Blue" );
-        rootDataSet.setData( "child[0].features.hairColour", "Blonde" );
-        rootDataSet.setData( "child[1].name", "Madeleine" );
-        rootDataSet.setData( "child[1].age", "7" );
-        rootDataSet.setData( "child[1].features.eyeColour", "Brown" );
-        rootDataSet.setData( "child[1].features.hairColour", "Black" );
+        rootDataSet.setData( "firstName", new Value.Text( "Thomas" ) );
+        rootDataSet.setData( "description", new Value.HtmlPart( "Grew up in Noetteveien" ) );
+        rootDataSet.setData( "child[0].name", new Value.Text( "Joachim" ) );
+        rootDataSet.setData( "child[0].age", new Value.Text( "9" ) );
+        rootDataSet.setData( "child[0].features.eyeColour", new Value.Text( "Blue" ) );
+        rootDataSet.setData( "child[0].features.hairColour", new Value.Text( "Blonde" ) );
+        rootDataSet.setData( "child[1].name", new Value.Text( "Madeleine" ) );
+        rootDataSet.setData( "child[1].age", new Value.Text( "7" ) );
+        rootDataSet.setData( "child[1].features.eyeColour", new Value.Text( "Brown" ) );
+        rootDataSet.setData( "child[1].features.hairColour", new Value.Text( "Black" ) );
 
         assertEquals( "Thomas", rootDataSet.getData( "firstName" ).getObject() );
         assertEquals( DataTypes.TEXT, rootDataSet.getData( "firstName" ).getType() );
@@ -341,14 +341,14 @@ public class ContentTest
     {
         Content content = newContent().build();
         RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "child[0].name", "Joachim" );
-        rootDataSet.setData( "child[0].age", "9" );
-        rootDataSet.setData( "child[0].features.eyeColour", "Blue" );
-        rootDataSet.setData( "child[0].features.hairColour", "Blonde" );
-        rootDataSet.setData( "child[1].name", "Madeleine" );
-        rootDataSet.setData( "child[1].age", "7" );
-        rootDataSet.setData( "child[1].features.eyeColour", "Brown" );
-        rootDataSet.setData( "child[1].features.hairColour", "Black" );
+        rootDataSet.setData( "child[0].name", new Value.Text( "Joachim" ) );
+        rootDataSet.setData( "child[0].age", new Value.Text( "9" ) );
+        rootDataSet.setData( "child[0].features.eyeColour", new Value.Text( "Blue" ) );
+        rootDataSet.setData( "child[0].features.hairColour", new Value.Text( "Blonde" ) );
+        rootDataSet.setData( "child[1].name", new Value.Text( "Madeleine" ) );
+        rootDataSet.setData( "child[1].age", new Value.Text( "7" ) );
+        rootDataSet.setData( "child[1].features.eyeColour", new Value.Text( "Brown" ) );
+        rootDataSet.setData( "child[1].features.hairColour", new Value.Text( "Black" ) );
 
         DataSet child0 = rootDataSet.getEntry( "child[0]" ).toDataSet();
         assertEquals( "Joachim", child0.getData( "name" ).getObject() );
@@ -365,24 +365,24 @@ public class ContentTest
     public void structured_getEntries()
     {
         FormItemSet child = newFormItemSet().name( "child" ).multiple( true ).build();
-        child.add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
-        child.add( newInput().name( "age" ).type( InputTypes.TEXT_LINE ).build() );
+        child.add( newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() );
+        child.add( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() );
         FormItemSet features = newFormItemSet().name( "features" ).multiple( false ).build();
-        features.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        features.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        features.add( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() );
+        features.add( newInput().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() );
         child.add( features );
         contentType.form().addFormItem( child );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "child[0].name", "Joachim" );
-        rootDataSet.setData( "child[0].age", "9" );
-        rootDataSet.setData( "child[0].features.eyeColour", "Blue" );
-        rootDataSet.setData( "child[0].features.hairColour", "Blonde" );
-        rootDataSet.setData( "child[1].name", "Madeleine" );
-        rootDataSet.setData( "child[1].age", "7" );
-        rootDataSet.setData( "child[1].features.eyeColour", "Brown" );
-        rootDataSet.setData( "child[1].features.hairColour", "Black" );
+        rootDataSet.setData( "child[0].name", new Value.Text( "Joachim" ) );
+        rootDataSet.setData( "child[0].age", new Value.Text( "9" ) );
+        rootDataSet.setData( "child[0].features.eyeColour", new Value.Text( "Blue" ) );
+        rootDataSet.setData( "child[0].features.hairColour", new Value.Text( "Blonde" ) );
+        rootDataSet.setData( "child[1].name", new Value.Text( "Madeleine" ) );
+        rootDataSet.setData( "child[1].age", new Value.Text( "7" ) );
+        rootDataSet.setData( "child[1].features.eyeColour", new Value.Text( "Brown" ) );
+        rootDataSet.setData( "child[1].features.hairColour", new Value.Text( "Black" ) );
 
         DataSet child0 = rootDataSet.getEntry( "child[0]" ).toDataSet();
         assertEquals( "Joachim", child0.getData( "name" ).getObject() );
@@ -401,9 +401,9 @@ public class ContentTest
         // setup
         Content content = newContent().build();
         RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "name", "Thomas" );
-        rootDataSet.setData( "personalia.eyeColour", DataTypes.TEXT, "Blue" );
-        rootDataSet.setData( "personalia.hairColour", "Blonde" );
+        rootDataSet.setData( "name", new Value.Text( "Thomas" ) );
+        rootDataSet.setData( "personalia.eyeColour", new Value.Text( "Blue" ) );
+        rootDataSet.setData( "personalia.hairColour", new Value.Text( "Blonde" ) );
 
         assertEquals( DataTypes.TEXT, rootDataSet.getData( "personalia.eyeColour" ).getType() );
         assertEquals( "Blue", rootDataSet.getData( "personalia.eyeColour" ).getObject() );
@@ -414,13 +414,13 @@ public class ContentTest
     public void layout()
     {
         // setup
-        contentType.form().addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.form().addFormItem( newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() );
         FieldSet personalia = newFieldSet().label( "Personalia" ).name( "personalia" ).add(
-            newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).add(
-            newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
+            newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).add(
+            newInput().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         FieldSet tatoos = newFieldSet().label( "Characteristics" ).name( "characteristics" ).add(
-            newInput().name( "tattoo" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() ).add(
-            newInput().name( "scar" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() ).build();
+            newInput().name( "tattoo" ).inputType( InputTypes.TEXT_LINE ).multiple( true ).build() ).add(
+            newInput().name( "scar" ).inputType( InputTypes.TEXT_LINE ).multiple( true ).build() ).build();
         personalia.addFormItem( tatoos );
         contentType.form().addFormItem( personalia );
 
@@ -428,12 +428,12 @@ public class ContentTest
 
         // exercise
         RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "name", "Ola Norman" );
-        rootDataSet.setData( "eyeColour", "Blue" );
-        rootDataSet.setData( "hairColour", "Blonde" );
-        rootDataSet.setData( "tattoo[0]", "Skull on left arm" );
-        rootDataSet.setData( "tattoo[1]", "Mothers name on right arm" );
-        rootDataSet.setData( "scar[0]", "Chin" );
+        rootDataSet.setData( "name", new Value.Text( "Ola Norman" ) );
+        rootDataSet.setData( "eyeColour", new Value.Text( "Blue" ) );
+        rootDataSet.setData( "hairColour", new Value.Text( "Blonde" ) );
+        rootDataSet.setData( "tattoo[0]", new Value.Text( "Skull on left arm" ) );
+        rootDataSet.setData( "tattoo[1]", new Value.Text( "Mothers name on right arm" ) );
+        rootDataSet.setData( "scar[0]", new Value.Text( "Chin" ) );
 
         // verify
         assertEquals( "Ola Norman", rootDataSet.getData( "name" ).getString() );
@@ -449,12 +449,12 @@ public class ContentTest
     {
         // setup
         Content content = newContent().build();
-        content.getRootDataSet().setData( "myData", DataTypes.TEXT, "Value 1" );
+        content.getRootDataSet().setData( "myData", new Value.Text( "Value 1" ) );
 
         // exercise
         try
         {
-            content.getRootDataSet().setData( "myData[1]", DataTypes.DATE_MIDNIGHT, new DateMidnight( 2000, 1, 1 ) );
+            content.getRootDataSet().setData( "myData[1]", new Value.Date( new DateMidnight( 2000, 1, 1 ) ) );
             fail( "Expected exception" );
         }
         catch ( Exception e )
@@ -481,9 +481,9 @@ public class ContentTest
     {
         RootDataSet rootDataSet = DataSet.newRootDataSet();
 
-        rootDataSet.add( new Text( "myData", "1" ) );
-        rootDataSet.add( new Text( "myArray", "1" ) );
-        rootDataSet.add( new Text( "myArray", "2" ) );
+        rootDataSet.add( new Data.Text( "myData", "1" ) );
+        rootDataSet.add( new Data.Text( "myArray", "1" ) );
+        rootDataSet.add( new Data.Text( "myArray", "2" ) );
         //rootDataSet.add( new Xml( "myXml", "<root></root>" ) );
 
         Content content = newContent().name( "myContent" ).rootDataSet( rootDataSet ).build();

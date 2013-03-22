@@ -25,13 +25,21 @@ public class FindContentRpcHandler
     {
         final String fulltext = context.param( "fulltext" ).asString( "" );
         final boolean includeFacets = context.param( "include" ).asBoolean( true );
-        final String interval = context.param( "interval" ).asString( "day" );
 
         ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
 
         contentIndexQuery.setFullTextSearchString( fulltext );
         contentIndexQuery.setIncludeFacets( includeFacets );
-        contentIndexQuery.setInterval( interval );
+
+        if ( includeFacets )
+        {
+            Object facetDef = context.param( "facets" ).asObject();
+
+            if ( facetDef != null )
+            {
+                contentIndexQuery.setFacets( facetDef.toString() );
+            }
+        }
 
         final ContentIndexQueryResult contentIndexQueryResult = this.client.execute( Commands.content().find().query( contentIndexQuery ) );
 

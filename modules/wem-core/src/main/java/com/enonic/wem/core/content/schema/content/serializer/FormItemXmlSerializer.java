@@ -271,7 +271,7 @@ public class FormItemXmlSerializer
         final String inputTypeName = formItemEl.getAttributeValue( TYPE );
         final boolean builtIn = Boolean.valueOf( formItemEl.getAttributeValue( BUILT_IN ) );
         final BaseInputType inputType = InputTypeFactory.instantiate( inputTypeName, builtIn );
-        builder.type( inputType );
+        builder.inputType( inputType );
         builder.inputTypeConfig( inputTypeConfigSerializer.parse( formItemEl, inputType.getClass() ) );
     }
 

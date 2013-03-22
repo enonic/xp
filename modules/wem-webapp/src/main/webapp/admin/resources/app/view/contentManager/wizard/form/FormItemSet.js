@@ -21,7 +21,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
 
     margin: '0 0 10 0',
     cls: 'admin-sortable admin-formitemset-block',
-    padding: '0 15 0 15',
+    padding: '0 10 0 10',
 
     initComponent: function () {
         var min = this.formItemSetConfig.occurrences.minimum;
@@ -58,6 +58,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
             iconCls: 'icon-remove icon-2x icon-grey',
             itemId: 'remove-block-button',
             cls: 'nobg',
+            padding: 0,
             scale: 'medium',
             handler: function (btn) {
                 me.removeCopy();
@@ -66,7 +67,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
         var items = closable ? [label, removeBtn] : [label];
         return {
             xtype: 'container',
-            margin: '10 0 15 0',
+            margin: '10 0 10 0',
             padding: '0 0 5 0',
             dock: 'top',
             cls: 'header',

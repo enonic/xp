@@ -1,8 +1,7 @@
+AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
+
 (function ($) {
     'use strict';
-
-    // Namespaces
-    AdminLiveEdit.model.component = {};
 
     AdminLiveEdit.model.component.Base = function () {
         this.cssSelector = '';
@@ -25,7 +24,7 @@
                 }
                 event.stopPropagation();
 
-                $(window).trigger('component:mouseover', [$component]);
+                $(window).trigger('component.mouseOver', [$component]);
             });
         },
 
@@ -37,7 +36,7 @@
                 if (me.hasComponentSelected()) {
                     return;
                 }
-                $(window).trigger('component:mouseout');
+                $(window).trigger('component.mouseOut');
             });
         },
 
@@ -58,16 +57,16 @@
                     pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
 
                 if (componentIsSelected || pageHasComponentSelected) {
-                    $(window).trigger('component:click:deselect');
+                    $(window).trigger('component.onDeselect');
                 } else {
 
                     // Used by eg. Menu
-                    var coordinates = {
+                    var pagePosition = {
                         x: event.pageX,
                         y: event.pageY
                     };
 
-                    $(window).trigger('component:click:select', [$component, coordinates]);
+                    $(window).trigger('component.onSelect', [$component, pagePosition]);
                 }
             });
         },

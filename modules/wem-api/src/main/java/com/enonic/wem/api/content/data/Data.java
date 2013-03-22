@@ -5,11 +5,13 @@ import org.joda.time.DateMidnight;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.content.data.type.BaseDataType;
+import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
+import com.enonic.wem.api.content.data.type.JavaType;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
@@ -163,10 +165,10 @@ public class Data
         return getArray().getValue( arrayIndex ).asDate();
     }
 
-    public BlobKey getBlobKey()
+    public BinaryId getBinaryId()
         throws InconvertibleValueException
     {
-        return value.asBlobKey();
+        return value.asBinaryId();
     }
 
     /**
@@ -174,10 +176,10 @@ public class Data
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a BlobKey.
      */
-    public BlobKey getBlobKey( final int arrayIndex )
+    public BinaryId getBinaryId( final int arrayIndex )
         throws InconvertibleValueException
     {
-        return getArray().getValue( arrayIndex ).asBlobKey();
+        return getArray().getValue( arrayIndex ).asBinaryId();
     }
 
     public void checkDataTypeValidity()
@@ -235,6 +237,11 @@ public class Data
         return new Builder();
     }
 
+    public static TypeBuilder newData( final String name )
+    {
+        return new NameBuilder().name( name );
+    }
+
     public static Text.TextBuilder newText()
     {
         return new Text.TextBuilder();
@@ -255,6 +262,11 @@ public class Data
         return new Date.DateBuilder();
     }
 
+    public static ContentReference.Builder newContentReference()
+    {
+        return ContentReference.newContentReferenceBuilder();
+    }
+
     public static HtmlPart.HtmlPartBuilder newHtmlPart()
     {
         return new HtmlPart.HtmlPartBuilder();
@@ -263,6 +275,59 @@ public class Data
     public static Xml.XmlBuilder newXml()
     {
         return new Xml.XmlBuilder();
+    }
+
+    public static class NameBuilder
+    {
+        private final Builder builder = new Builder();
+
+        private NameBuilder()
+        {
+
+        }
+
+        public TypeBuilder name( final String name )
+        {
+            builder.name( name );
+            return new TypeBuilder( builder );
+        }
+    }
+
+    public static class TypeBuilder
+    {
+        private final Builder builder;
+
+        private TypeBuilder( final Builder builder )
+        {
+            this.builder = builder;
+        }
+
+        public ValueBuilder type( BaseDataType value )
+        {
+            builder.type( value );
+            return new ValueBuilder( builder );
+        }
+    }
+
+    public static class ValueBuilder
+    {
+        private final Builder builder;
+
+        private ValueBuilder( final Builder builder )
+        {
+            this.builder = builder;
+        }
+
+        public ValueBuilder value( Object value )
+        {
+            builder.value( value );
+            return this;
+        }
+
+        public Data build()
+        {
+            return new Data( builder );
+        }
     }
 
     public static class Builder
@@ -340,5 +405,304 @@ public class Data
         }
 
         public abstract Data build();
+    }
+
+    public final static class ContentReference
+        extends Data
+    {
+        public ContentReference( final String name, final ContentId value )
+        {
+            super( newContentReferenceBuilder().name( name ).value( value ) );
+        }
+
+        ContentReference( final Builder builder )
+        {
+            super( builder );
+        }
+
+        public static Builder newContentReferenceBuilder()
+        {
+            return new Builder();
+        }
+
+
+        public static class Builder
+            extends BaseBuilder<Builder>
+        {
+            public Builder()
+            {
+                setType( DataTypes.CONTENT_REFERENCE );
+            }
+
+            public Builder value( final ContentId value )
+            {
+                setValue( value );
+                return this;
+            }
+
+            public Builder value( final String value )
+            {
+                setValue( JavaType.CONTENT_ID.convertFrom( value ) );
+                return this;
+            }
+
+            @Override
+            public ContentReference build()
+            {
+                return new ContentReference( this );
+            }
+        }
+    }
+
+
+    public final static class Date
+        extends Data
+    {
+        public Date( final String name, final DateMidnight value )
+        {
+            super( newDate().name( name ).value( value ) );
+        }
+
+        public Date( final String name, final String value )
+        {
+            super( newDate().name( name ).value( value ) );
+        }
+
+        Date( final DateBuilder dateBuilder )
+        {
+            super( dateBuilder );
+        }
+
+        public static DateBuilder newDate()
+        {
+            return new DateBuilder();
+        }
+
+        public static class DateBuilder
+            extends BaseBuilder<DateBuilder>
+        {
+            public DateBuilder()
+            {
+                setType( DataTypes.DATE_MIDNIGHT );
+            }
+
+            public DateBuilder value( final DateMidnight value )
+            {
+                setValue( value );
+                return this;
+            }
+
+            public DateBuilder value( final String value )
+            {
+                setValue( JavaType.DATE_MIDNIGHT.convertFrom( value ) );
+                return this;
+            }
+
+            @Override
+            public Date build()
+            {
+                return new Date( this );
+            }
+        }
+    }
+
+    public final static class DecimalNumber
+        extends Data
+    {
+        public DecimalNumber( final String name, final Double value )
+        {
+            super( newDecimalNumber().name( name ).value( value ) );
+        }
+
+        DecimalNumber( final DecimalNumberBuilder decimalNumberBuilder )
+        {
+            super( decimalNumberBuilder );
+        }
+
+        public static DecimalNumberBuilder newDecimalNumber()
+        {
+            return new DecimalNumberBuilder();
+        }
+
+        public static class DecimalNumberBuilder
+            extends BaseBuilder<DecimalNumberBuilder>
+        {
+            public DecimalNumberBuilder()
+            {
+                setType( DataTypes.DECIMAL_NUMBER );
+            }
+
+            public DecimalNumberBuilder value( final Double value )
+            {
+                setValue( value );
+                return this;
+            }
+
+            @Override
+            public DecimalNumber build()
+            {
+                return new DecimalNumber( this );
+            }
+        }
+    }
+
+    public static final class HtmlPart
+        extends Data
+    {
+        public HtmlPart( final String name, final String value )
+        {
+            super( newHtmlPart().name( name ).value( value ) );
+        }
+
+        public HtmlPart( final HtmlPartBuilder builder )
+        {
+            super( builder );
+        }
+
+        public static HtmlPartBuilder newHtmlPart()
+        {
+            return new HtmlPartBuilder();
+        }
+
+        public static class HtmlPartBuilder
+            extends BaseBuilder<HtmlPartBuilder>
+        {
+            public HtmlPartBuilder()
+            {
+                setType( DataTypes.HTML_PART );
+            }
+
+            public HtmlPartBuilder value( final String value )
+            {
+                setValue( value );
+                return this;
+            }
+
+            @Override
+            public Data build()
+            {
+                return new HtmlPart( this );
+            }
+        }
+    }
+
+    public final static class Text
+        extends Data
+    {
+        public Text( final String name, final String value )
+        {
+            super( newText().name( name ).value( value ) );
+        }
+
+        public Text( final TextBuilder builder )
+        {
+            super( builder );
+        }
+
+        public static TextBuilder newText()
+        {
+            return new TextBuilder();
+        }
+
+        public static class TextBuilder
+            extends BaseBuilder<TextBuilder>
+        {
+            public TextBuilder()
+            {
+                setType( DataTypes.TEXT );
+            }
+
+            public TextBuilder value( final String value )
+            {
+                setValue( value );
+                return this;
+            }
+
+            @Override
+            public Data build()
+            {
+                return new Text( this );
+            }
+        }
+    }
+
+    public final static class WholeNumber
+        extends Data
+    {
+        public WholeNumber( final String name, final Long value )
+        {
+            super( newWholeNumber().name( name ).value( value ) );
+        }
+
+        public WholeNumber( final WholeNumberBuilder builder )
+        {
+            super( builder );
+        }
+
+        public static WholeNumberBuilder newWholeNumber()
+        {
+            return new WholeNumberBuilder();
+        }
+
+        public static class WholeNumberBuilder
+            extends BaseBuilder<WholeNumberBuilder>
+        {
+            public WholeNumberBuilder()
+            {
+                setType( DataTypes.WHOLE_NUMBER );
+            }
+
+            public WholeNumberBuilder value( final Long value )
+            {
+                setValue( value );
+                return this;
+            }
+
+            @Override
+            public Data build()
+            {
+                return new WholeNumber( this );
+            }
+        }
+    }
+
+    public static final class Xml
+        extends Data
+    {
+        public Xml( final String name, final String value )
+        {
+            super( newXml().name( name ).value( value ) );
+        }
+
+        public Xml( final XmlBuilder builder )
+        {
+            super( builder );
+        }
+
+        public static XmlBuilder newXml()
+        {
+            return new XmlBuilder();
+        }
+
+        public static class XmlBuilder
+            extends BaseBuilder<XmlBuilder>
+        {
+            public XmlBuilder()
+            {
+                setType( DataTypes.XML );
+            }
+
+            public XmlBuilder value( final String value )
+            {
+                setValue( value );
+                return this;
+            }
+
+            @Override
+            public Data build()
+            {
+                return new Xml( this );
+            }
+        }
     }
 }
