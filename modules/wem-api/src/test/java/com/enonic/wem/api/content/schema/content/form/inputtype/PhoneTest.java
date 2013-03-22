@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractExce
 
 public class PhoneTest
 {
-    @Test(expected = BreaksRequiredContractException.class)
+    @Test
     public void breaksRequiredContract_textLine_which_is_empty_throws_exception()
     {
         new Phone().checkBreaksRequiredContract( Data.newData().name( "myText" ).type( DataTypes.TEXT ).value( "" ).build() );
