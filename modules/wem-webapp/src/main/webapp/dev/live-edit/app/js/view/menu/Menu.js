@@ -74,7 +74,10 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
     proto.registerEvents = function () {
         var me = this;
-        $(me.getEl()).draggable({ handle: '.live-edit-component-menu-title-bar' });
+        $(me.getEl()).draggable({
+            handle: '.live-edit-component-menu-title-bar',
+            addClasses: false
+        });
 
         me.getCloseButton().click(function () {
             $(window).trigger('component.onDeselect');
@@ -92,8 +95,9 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
         me.updateMenuItemsForComponent($component);
 
-        var pageXPosition = pagePosition.x + 5; // add 5 so the menu is not directly beneath the mouse pointer
-        me.moveToXY(pageXPosition, pagePosition.y);
+        var pageXPosition = pagePosition.x - 20,
+            pageYPosition = pagePosition.y + 15;
+        me.moveToXY(pageXPosition, pageYPosition);
 
         me.getEl().show();
 
