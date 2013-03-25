@@ -272,7 +272,7 @@ Ext.define('Admin.view.WizardPanel', {
             listeners: {
                 click: {
                     fn: this.changeStep,
-                    element: 'body',
+                    element: 'el',
                     scope: this
                 }
             },
