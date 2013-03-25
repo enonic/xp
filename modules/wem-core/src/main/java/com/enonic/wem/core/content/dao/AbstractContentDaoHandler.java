@@ -101,7 +101,7 @@ public abstract class AbstractContentDaoHandler
         {
             return session.getNodeByIdentifier( contentId.toString() );
         }
-        catch ( ItemNotFoundException e )
+        catch ( ItemNotFoundException | IllegalArgumentException e )
         {
             return null;
         }

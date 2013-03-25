@@ -1,21 +1,16 @@
 package com.enonic.wem.web.rest.resource.account;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 import org.elasticsearch.common.collect.Maps;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.UserAccount;
-
-import com.enonic.wem.core.image.filter.effect.ScaleSquareFilter;
+import com.enonic.wem.web.rest.resource.BaseImageHelper;
 
 final class AccountImageHelper
+    extends BaseImageHelper
 {
     private final Map<String, BufferedImage> cache;
 
@@ -33,19 +28,7 @@ final class AccountImageHelper
     private void populate( final String name )
         throws Exception
     {
-        this.cache.put( name, loadImage( name + ".png" ) );
-    }
-
-    private BufferedImage loadImage( final String name )
-        throws Exception
-    {
-        final InputStream in = getClass().getResourceAsStream( name );
-        if ( in == null )
-        {
-            throw new IOException( "Image [" + name + "] not found" );
-        }
-
-        return ImageIO.read( in );
+        this.cache.put( name, loadDefaultImage( name ) );
     }
 
     public BufferedImage getDefaultImage( final String key, final int size )
@@ -58,12 +41,6 @@ final class AccountImageHelper
         }
 
         return resizeImage( image, size );
-    }
-
-    private BufferedImage resizeImage( final BufferedImage image, final int size )
-        throws Exception
-    {
-        return new ScaleSquareFilter( size ).filter( image );
     }
 
     public BufferedImage getAccountImage( final Account account, final int size )
@@ -89,9 +66,4 @@ final class AccountImageHelper
         return resizeImage( image, size );
     }
 
-    private BufferedImage toBufferedImage( final byte[] data )
-        throws Exception
-    {
-        return ImageIO.read( new ByteArrayInputStream( data ) );
-    }
 }

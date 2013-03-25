@@ -49,3 +49,4 @@
 
 [wem:relationship] > wem:base, nt:unstructured, mix:referenceable
 
+[wem:binaryContent] > wem:base, nt:unstructured, mix:referenceable

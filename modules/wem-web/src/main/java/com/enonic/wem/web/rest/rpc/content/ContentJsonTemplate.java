@@ -5,6 +5,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
+import com.enonic.wem.web.rest.resource.content.ContentImageUriResolver;
 import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
 
 final class ContentJsonTemplate
@@ -25,6 +26,13 @@ final class ContentJsonTemplate
         JsonSerializerUtil.setDateTimeValue( "modifiedTime", content.getModifiedTime(), contentNode );
         contentNode.put( "editable", true );
         contentNode.put( "deletable", !content.getPath().isRoot() );
-        contentNode.put( "iconUrl", SchemaImageUriResolver.resolve( content.getType() ) );
+        if ( content.getId() == null )
+        {
+            contentNode.put( "iconUrl", SchemaImageUriResolver.resolve( content.getType() ) );
+        }
+        else
+        {
+            contentNode.put( "iconUrl", ContentImageUriResolver.resolve( content ) );
+        }
     }
 }
