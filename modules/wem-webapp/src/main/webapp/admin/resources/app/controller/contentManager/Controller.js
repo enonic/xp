@@ -268,12 +268,14 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
     updateToolbarButtons: function (selected) {
         var toolbar = this.getContentBrowseToolbar();
+        var contextMenu = this.getContentManagerContextMenu();
         var newContentButton = toolbar.down('*[action=newContent]');
         newContentButton.setDisabled(Ext.isEmpty(selected) || selected.length !== 1);
 
         var deleteContentButton = toolbar.down('*[action=deleteContent]');
         var disabled = false;
 
+        var i;
         for (i = 0; i < selected.length; i++) {
             var deletable = selected[i].get('deletable');
             if (!deletable) {
@@ -281,6 +283,8 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 break;
             }
         }
+        deleteContentButton.setDisabled(disabled);
+        deleteContentButton = contextMenu.down('*[action=deleteContent]');
         deleteContentButton.setDisabled(disabled);
     },
 
@@ -339,6 +343,14 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
     getContentBrowseToolbar: function () {
         return this.getContentShowPanel().down('browseToolbar');
+    },
+
+    getContentManagerContextMenu: function () {
+        var menu = Ext.ComponentQuery.query('contentManagerContextMenu')[0];
+        if (!menu) {
+            menu = Ext.create('widget.contentManagerContextMenu');
+        }
+        return menu;
     },
 
     getContentTreeGridPanel: function () {

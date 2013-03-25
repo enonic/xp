@@ -2,17 +2,22 @@ Ext.define('Admin.view.contentManager.ContextMenu', {
     extend: 'Admin.view.BaseContextMenu',
     alias: 'widget.contentManagerContextMenu',
 
+
     items: [
         {
+            text: ' New',
+            icon: undefined,
+            action: 'newContent',
+            disableOnMultipleSelection: true
+        },
+        {
             text: 'Edit',
-            //iconCls: 'icon-edit',
             icon: undefined,
             action: 'editContent',
             disableOnMultipleSelection: false
         },
         {
             text: 'Open',
-            //iconCls: 'icon-view',
             icon: undefined,
             action: 'viewContent',
             disableOnMultipleSelection: false
@@ -20,8 +25,18 @@ Ext.define('Admin.view.contentManager.ContextMenu', {
         {
             text: 'Delete',
             icon: undefined,
-            //iconCls: 'icon-delete',
             action: 'deleteContent'
+        },
+        {
+            text: 'Duplicate',
+            icon: undefined,
+            action: 'duplicateContent'
+        },
+        {
+            text: 'Move',
+            icon: undefined,
+            disabled: true,
+            action: 'moveContent'
         }
     ]
 });

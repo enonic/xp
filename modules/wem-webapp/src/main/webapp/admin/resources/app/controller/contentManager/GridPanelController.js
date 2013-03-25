@@ -51,17 +51,6 @@ Ext.define('Admin.controller.contentManager.GridPanelController', {
         e.stopEvent();
         this.getContentManagerContextMenu().showAt(e.getXY());
         return false;
-    },
-
-
-    /*      Getters     */
-
-    getContentManagerContextMenu: function () {
-        var menu = Ext.ComponentQuery.query('contentManagerContextMenu')[0];
-        if (!menu) {
-            menu = Ext.create('widget.contentManagerContextMenu');
-        }
-        return menu;
     }
 
 });
