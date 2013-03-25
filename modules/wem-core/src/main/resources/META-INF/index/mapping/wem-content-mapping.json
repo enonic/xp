@@ -74,6 +74,7 @@
                             "{name}": {
                                 "type": "string",
                                 "index": "analyzed",
+                                "analyzer": "keywordlowercase",
                                 "store": "no",
                                 "include_in_all": true
                             },

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.GetContentTree;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
@@ -24,6 +25,14 @@ public final class GetContentTreeRpcHandler
         throws Exception
     {
         final GetContentTree getContentTree = Commands.content().getTree();
+
+        final String[] contentIds = context.param( "contentIds" ).asStringArray();
+
+        if ( contentIds != null && contentIds.length > 0 )
+        {
+            getContentTree.selectors( ContentIds.from( contentIds ) );
+        }
+
         final Tree<Content> contentTree = client.execute( getContentTree );
         context.setResult( new ContentTreeJsonResult( contentTree ) );
     }
