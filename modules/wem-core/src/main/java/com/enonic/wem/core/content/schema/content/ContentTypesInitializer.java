@@ -99,7 +99,8 @@ public class ContentTypesInitializer
     private static final String[] DEMO_CONTENT_TYPES =
         {"demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json", "demo-contenttype-set.json", "demo-contenttype-blog.json",
             "demo-contenttype-article1.json", "demo-contenttype-article2.json", "demo-contenttype-relation.json",
-            "demo-contenttype-occurrences.json", "demo-contenttype-contentDisplayNameScript.json", "demo-contenttype-mixin.json"};
+            "demo-contenttype-occurrences.json", "demo-contenttype-contentDisplayNameScript.json", "demo-contenttype-mixin.json",
+            "demo-contenttype-image.json"};
 
     private final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer();
 
