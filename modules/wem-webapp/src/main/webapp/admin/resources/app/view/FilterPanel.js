@@ -42,8 +42,8 @@ Ext.define('Admin.view.FilterPanel', {
                 '<tpl for="terms">',
                 '<tpl if="this.shouldShowTerm(values, parent)">',
                 '<div class="admin-facet {[values.selected ? \'checked\' : \'\']}">',
-                '<input type="checkbox" id="facet-{term}" value="{name}" class="admin-facet-cb" name="{parent.name}" {[values.selected ? \'checked="true"\' : \'\']} />' +
-                '<label for="facet-{key}" class="admin-facet-lbl"> {name} ({[this.getTermCount(values)]})</label>' +
+                '<input type="checkbox" id="facet-{term}" value="{name}" class="admin-facet-cb" name="{parent.name}" {[values.selected ? \'checked="true"\' : \'\']} />',
+                '<label for="facet-{key}" class="admin-facet-lbl"> {name} ({[this.getTermCount(values)]})</label>',
                 '</div>',
                 '</tpl>',
                 '</tpl>',
@@ -89,6 +89,24 @@ Ext.define('Admin.view.FilterPanel', {
         });
         this.items.unshift(this.facetContainer);
 
+        this.items.unshift(Ext.create('Ext.Component', {
+            xtype: 'component',
+            html: '<a href="javascript:;">Clear filter</a>',
+            listeners: {
+                click: {
+                    element: 'el',
+                    fn: function () {
+                        var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', me.facetContainer.el.dom);
+                        var i;
+                        for (i = 0; i < selectedCheckboxes.length; i++) {
+                            selectedCheckboxes[i].checked = false;
+                            selectedCheckboxes[i].parentElement.className =
+                            selectedCheckboxes[i].parentElement.className.replace(new RegExp('\\b' + 'checked' + '\\b'), '');
+                        }
+                    }
+                }
+            }
+        }));
         if (this.includeSearch) {
 
             this.searchField = Ext.create('Ext.form.field.Text', {
