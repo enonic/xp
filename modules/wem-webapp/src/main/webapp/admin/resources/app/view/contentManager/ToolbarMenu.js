@@ -9,11 +9,6 @@ Ext.define('Admin.view.contentManager.ToolbarMenu', {
             text: undefined,
             icon: undefined,
             action: 'moveDetailPanel'
-        },
-        {
-            text: 'Toogle View',
-            icon: undefined,
-            action: 'toggleDetailPanel'
         }
     ]
 });

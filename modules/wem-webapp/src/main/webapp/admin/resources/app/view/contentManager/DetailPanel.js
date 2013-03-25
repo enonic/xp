@@ -27,10 +27,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             {
                 displayName: 'Meta',
                 tab: 'meta'
-            },
-            {
-                displayName: 'Live',
-                tab: 'live'
             }
         ];
 
@@ -43,10 +39,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             },
             graph: {
                 html: '<h1>Graph</h1>'
-            },
-            live: {
-                item: me.createLivePreview(),
-                callback: me.loadLivePreview
             }
         };
 

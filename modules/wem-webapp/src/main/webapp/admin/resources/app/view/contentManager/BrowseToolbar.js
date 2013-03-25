@@ -2,6 +2,10 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.browseToolbar',
 
+    requires: [
+        'Ext.ux.toggleslide.ToggleSlide'
+    ],
+
     cls: 'admin-toolbar',
     border: true,
 
@@ -42,9 +46,17 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
             },
             '->',
             {
+                xtype: 'toggleslide',
+                onText: 'Preview',
+                offText: 'Details',
+                action: 'toggleLive',
+                state: this.isLiveMode
+            },
+            {
                 iconCls: 'icon-toolbar-settings',
                 action: 'showToolbarMenu',
-                minWidth: 48
+                minWidth: 42,
+                padding: '6 8 6 12'
             }
         ];
 
