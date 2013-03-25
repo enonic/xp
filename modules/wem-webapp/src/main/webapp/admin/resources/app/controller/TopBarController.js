@@ -41,14 +41,14 @@ Ext.define('Admin.controller.TopBarController', {
         this.loadApplication(defaultItem);
     },
 
-    loadApplication: function (selectedMenuItem) {
+    loadApplication: function (appModel) {
         var me = this,
             parent = this.getParentFrame(),
             iframes = parent.Ext.DomQuery.select('iframe');
 
         var iframeExist = false;
         Ext.each(iframes, function (iframe, index, allIFrames) {
-            if (iframe.id === 'iframe-' + selectedMenuItem.id) {
+            if (iframe.id === 'iframe-' + appModel.id) {
                 iframeExist = true;
                 iframe.style.display = 'block';
             } else {
@@ -57,11 +57,11 @@ Ext.define('Admin.controller.TopBarController', {
         });
 
         if (!iframeExist) {
-            me.appendIframe(parent, selectedMenuItem);
+            me.appendIframe(parent, appModel);
             me.showLoadMask();
         }
 
-        me.setStartButton(selectedMenuItem);
+        me.setStartButton(appModel);
     },
 
 
@@ -72,12 +72,12 @@ Ext.define('Admin.controller.TopBarController', {
     },
 
 
-    appendIframe: function (parent, selectedMenuItem) {
+    appendIframe: function (parent, appModel) {
 
         var iframe = parent.Ext.core.DomHelper.append('appFrames', {
             tag: 'iframe',
-            src: selectedMenuItem.appUrl,
-            id: 'iframe-' + selectedMenuItem.id,
+            src: appModel.appUrl + '?appId=' + appModel.id,
+            id: 'iframe-' + appModel.id,
             style: 'width: 100%; height: 100%; border: 0'
         }, false);
     },

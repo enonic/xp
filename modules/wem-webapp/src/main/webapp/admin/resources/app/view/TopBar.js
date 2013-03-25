@@ -192,6 +192,13 @@ Ext.define('Admin.view.TopBar', {
             // show dropdown button when any tab is open or text when nothing is open
             this.titleButton.setVisible(tabCount > 0);
             this.titleButton.setCount(tabCount);
+
+            var urlParamsString = document.URL.split('?'),
+                urlParams = Ext.urlDecode(urlParamsString[urlParamsString.length - 1]);
+            Admin.MessageBus.updateHomeScreenTabCount({
+                appId: urlParams.appId,
+                tabCount: tabCount
+            });
         }
     },
 

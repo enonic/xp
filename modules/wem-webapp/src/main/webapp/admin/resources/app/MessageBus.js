@@ -11,6 +11,20 @@ Ext.define('Admin.MessageBus', {
     },
 
 
+    /**
+     * Updates tab count in homescreen tiles
+     * @param config {appId, tabCount}
+     */
+    updateHomeScreenTabCount: function (config) {
+        var eventName = 'topBar.onAppTabCountUpdate';
+        // Make sure the MessageBus in main.jsp gets the event.
+        if (window.parent) {
+            window.parent.Admin.MessageBus.fireEvent(eventName, config);
+        }
+        this.fireEvent(eventName, config);
+    },
+
+
     liveEditOpenContent: function (config) {
         this.fireEvent('liveEdit.openContent', config);
     },

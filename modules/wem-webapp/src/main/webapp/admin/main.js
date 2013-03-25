@@ -8,6 +8,7 @@ Ext.onReady(function () {
 
         requires: [
             'Admin.lib.Ping',
+            'Admin.MessageBus',
             'Admin.lib.UriHelper'
         ],
 

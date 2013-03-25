@@ -4,20 +4,25 @@ Ext.define('Admin.view.homescreen.AppSelector', {
 
     itemId: 'appSelectorList',
     renderTo: 'admin-home-app-tiles-placeholder',
-    tpl: Templates.homescreen.appTile,
-    itemSelector: 'div.admin-home-app-tile',
+    tpl: '<tpl for=".">' +
+         '  <div data-tile-id="{id}" class="admin-home-app-tile">' +
+         '      <div class="img-container">' +
+         '          <img src="{icon}" alt=""/>' +
+         '      </div>' +
+         '      <div class="name-container">{name}</div>' +
+         '      <div class="tab-count-container" style="display:none">0</div>' +
+         '  </div>' +
+         '</tpl>',
 
+    itemSelector: 'div.admin-home-app-tile',
+    emptyText: 'No application found',
     trackOver: true,
     overItemCls: 'admin-home-app-tile-over',
-
-    emptyText: 'No application found',
-
     searchTextField: undefined,
 
     initComponent: function () {
         var me = this;
         me.store = Ext.data.StoreManager.lookup('Admin.store.homescreen.Apps');
-
         me.addFilterTextField();
 
         me.callParent(arguments);
@@ -25,9 +30,7 @@ Ext.define('Admin.view.homescreen.AppSelector', {
 
 
     addFilterTextField: function () {
-        var me = this;
-
-        me.searchTextField = Ext.create('Ext.form.field.Text', {
+        this.searchTextField = Ext.create('Ext.form.field.Text', {
             renderTo: 'admin-home-app-selector-search-input-container',
             id: 'admin-home-app-selector-search',
             emptyText: 'Application Filter',
@@ -38,7 +41,6 @@ Ext.define('Admin.view.homescreen.AppSelector', {
 
     getSearchTextField: function () {
         return Ext.getCmp('admin-home-app-selector-search');
-
     }
 
 });

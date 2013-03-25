@@ -19,6 +19,10 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
     init: function () {
         var me = this;
 
+        Admin.MessageBus.on('topBar.onAppTabCountUpdate', function (config) {
+            me.onAppTabCountUpdate(config);
+        }, me);
+
         me.application.on({
             displayAppSelector: this.display,
             scope: this
@@ -193,6 +197,22 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
 
         Ext.fly('admin-home-app-info-name').setHTML(name);
         Ext.fly('admin-home-app-info-description').setHTML(description);
+    },
+
+
+    onAppTabCountUpdate: function (info) {
+        var dq = Ext.dom.Query;
+        var tileNode = dq.selectNode('[data-tile-id=' + info.appId + ']'),
+            countNode = dq.selectNode('.tab-count-container', tileNode),
+            countElement = Ext.fly(countNode);
+
+        countElement.setVisibilityMode(Ext.Element.DISPLAY);
+
+        if (info.tabCount > 0) {
+            countElement.setHTML(info.tabCount).show();
+        } else {
+            countElement.setHTML(0).hide();
+        }
     }
 
 });

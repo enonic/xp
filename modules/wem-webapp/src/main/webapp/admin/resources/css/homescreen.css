@@ -192,7 +192,6 @@
 .admin-home-app-tile {
     cursor: pointer;
     position: relative;
-    overflow: hidden;
     background-color: #1c59af;
     float: left;
     width: 110px;
@@ -217,6 +216,17 @@
     bottom: 10px;
     width: 100%;
     text-align: center;
+}
+
+.admin-home-app-tile > .tab-count-container {
+    background-color: red;
+    color: #FFFFFF;
+    font-size: 13px;
+    padding: 2px 7px;
+    position: absolute;
+    right: -5px;
+    text-align: center;
+    top: -5px;
 }
 
 .admin-home-app-tile-over {

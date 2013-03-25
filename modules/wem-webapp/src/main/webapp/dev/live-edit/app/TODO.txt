@@ -1,10 +1,5 @@
-- Create drag drop package?
+jQuery UI 1.9.2 bugs
+====================
 
-CSS
-* live-edit-component - the text should not break
-* It is difficult to make the whole "margin" clickable. Create table like layout for Component in component menu. left cell for image, right cell for text
-* Toggle should have an arrow (see sketches)
-* It should be possible to change position -> discuss with TSI
-* Scrolling in component bar
-* The toggle bar collapses if eg. component title is too large
-
+Sortable:
+- Items cannot be removed with the option method, http://bugs.jqueryui.com/ticket/8532
