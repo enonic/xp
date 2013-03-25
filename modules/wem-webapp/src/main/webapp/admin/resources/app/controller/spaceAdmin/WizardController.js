@@ -32,7 +32,7 @@ Ext.define('Admin.controller.spaceAdmin.WizardController', {
                     this.getTopBar().setTitleButtonText(newVal);
                 }
             },
-            'spaceAdminWizardPanel wizardPanel': {
+            'spaceAdminWizardPanel': {
                 'validitychange': function (wizard, isValid) {
                     this.updateWizardToolbarButtons(wizard.isWizardDirty, isValid);
                 },
@@ -52,7 +52,7 @@ Ext.define('Admin.controller.spaceAdmin.WizardController', {
     closeWizard: function (el, e) {
         var tab = this.getWizardTab();
         var spaceWizard = this.getWizardPanel();
-        if (spaceWizard.getWizardPanel().isWizardDirty) {
+        if (spaceWizard.isWizardDirty) {
             Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?',
                 function (answer) {
                     if ('yes' === answer) {
@@ -72,7 +72,7 @@ Ext.define('Admin.controller.spaceAdmin.WizardController', {
         var iconReference = spaceWizardData.iconRef;
 
         var spaceModel = spaceWizard.data;
-        var originalSpaceName = spaceModel && spaceModel.get('name');
+        var originalSpaceName = spaceModel && spaceModel.get ? spaceModel.get('name') : spaceModel.name;
 
         var spaceParams = {
             spaceName: originalSpaceName || spaceName,

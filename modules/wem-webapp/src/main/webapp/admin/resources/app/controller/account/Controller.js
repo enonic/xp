@@ -236,7 +236,7 @@ Ext.define('Admin.controller.account.Controller', {
                 autoScroll: true
             };
             var tabCmp = Ext.widget(tab.xtype, tab);
-            var wizardPanel = tabCmp.down('wizardPanel');
+            var wizardPanel = tabCmp;
 
             var data = me.userInfoToWizardData(response);
             wizardPanel.addData(data);

@@ -12,12 +12,12 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
     init: function () {
         var me = this;
         me.control({
-            'contentWizardPanel *[action=closeWizard]': {
+            'contentLiveEditPanel *[action=closeWizard]': {
                 click: me.closeWizard
             },
-            'contentWizardPanel *[action=saveContent]': {
+            'contentLiveEditPanel *[action=saveContent]': {
                 click: function (el, e) {
-                    me.saveContent(el.up('contentWizardPanel'), false);
+                    me.saveContent(this.getContentWizardPanel(), false);
                 }
             },
             'contentWizardPanel *[action=previewContent]': {
@@ -25,9 +25,9 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
 
                 }
             },
-            'contentWizardPanel wizardPanel': {
+            'contentWizardPanel': {
                 finished: function (wizard, data) {
-                    me.saveContent(wizard.up('contentWizardPanel'), true);
+                    me.saveContent(this.getContentWizardPanel(), true);
                 }
             },
             'contentWizardToolbar *[action=duplicateContent]': {
@@ -87,13 +87,13 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
     },
 
     toggleLiveWizard: function (enabled) {
-        this.getContentWizardPanel().toggleLive();
+        this.getContentLiveEditPanel().toggleLive();
     },
 
     closeWizard: function (el, e) {
         var tab = this.getContentWizardTab();
         var contentWizard = this.getContentWizardPanel();
-        if (contentWizard.getWizardPanel().isWizardDirty) {
+        if (contentWizard.isWizardDirty) {
             Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?',
                 function (answer) {
                     if ('yes' === answer) {
@@ -162,6 +162,10 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
 
     getContentWizardPanel: function () {
         return this.getContentWizardTab().down('contentWizardPanel');
+    },
+
+    getContentLiveEditPanel: function () {
+        return this.getContentWizardTab().down('contentLiveEditPanel');
     }
 
 });
