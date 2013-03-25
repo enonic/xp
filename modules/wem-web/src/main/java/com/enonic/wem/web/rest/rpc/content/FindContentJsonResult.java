@@ -15,6 +15,7 @@ import com.enonic.wem.api.query.DateHistogramFacetResultEntry;
 import com.enonic.wem.api.query.DateHistogramFacetResultSet;
 import com.enonic.wem.api.query.FacetResultSet;
 import com.enonic.wem.api.query.FacetsResultSet;
+import com.enonic.wem.api.query.QueryFacetResultSet;
 import com.enonic.wem.api.query.RangeFacetResultEntry;
 import com.enonic.wem.api.query.RangeFacetResultSet;
 import com.enonic.wem.api.query.TermsFacetResultSet;
@@ -59,6 +60,10 @@ public class FindContentJsonResult
                 else if ( facetResultSet instanceof RangeFacetResultSet )
                 {
                     serializeFacet( facets.addObject(), (RangeFacetResultSet) facetResultSet );
+                }
+                else if ( facetResultSet instanceof QueryFacetResultSet )
+                {
+                    serializeFacet( facets.addObject(), (QueryFacetResultSet) facetResultSet );
                 }
             }
         }
@@ -116,6 +121,14 @@ public class FindContentJsonResult
             facetObject.put( "name", term );
             facetObject.put( "count", results.get( term ) );
         }
+    }
+
+    private void serializeFacet( final ObjectNode json, final QueryFacetResultSet queryFacetResultSet )
+    {
+        json.put( "name", queryFacetResultSet.getName() );
+        json.put( "_type", "query" );
+
+        json.put( "count", queryFacetResultSet.getCount() );
     }
 
     private JsonNode serialize( final List<Content> list )

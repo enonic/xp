@@ -6,6 +6,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.facet.Facet;
 import org.elasticsearch.search.facet.Facets;
 import org.elasticsearch.search.facet.datehistogram.DateHistogramFacet;
+import org.elasticsearch.search.facet.query.QueryFacet;
 import org.elasticsearch.search.facet.range.RangeFacet;
 import org.elasticsearch.search.facet.terms.TermsFacet;
 
@@ -44,6 +45,10 @@ public class FacetResultSetFactory
             else if ( facet instanceof RangeFacet )
             {
                 facetsResultSet.addFacetResultSet( RangeFacetResultSetFactory.create( facetName, (RangeFacet) facet ) );
+            }
+            else if ( facet instanceof QueryFacet )
+            {
+                facetsResultSet.addFacetResultSet( QueryFacetResultSetFactory.create( facetName, (QueryFacet) facet ) );
             }
             /*
                 else if ( facet instanceof HistogramFacet )

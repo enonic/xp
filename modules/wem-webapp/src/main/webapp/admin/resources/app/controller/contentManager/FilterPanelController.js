@@ -60,20 +60,34 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
                         "order": "term"
                     }
                 },
-                "modified": {
-                    "range": {
-                        "field": "lastModified.date",
-                        "ranges": [
-                            {
-                                "from": oneDayAgo
-                            },
-                            {
-                                "from": oneWeekAgo
-                            },
-                            {
-                                "from": oneHourAgo
+                ">1 day": {
+                    "query": {
+                        "range": {
+                            "lastModified.date": {
+                                "from": oneDayAgo,
+                                "include_lower": true
                             }
-                        ]
+                        }
+                    }
+                },
+                ">1 hour": {
+                    "query": {
+                        "range": {
+                            "lastModified.date": {
+                                "from": oneHourAgo,
+                                "include_lower": true
+                            }
+                        }
+                    }
+                },
+                ">1 week": {
+                    "query": {
+                        "range": {
+                            "lastModified.date": {
+                                "from": oneWeekAgo,
+                                "include_lower": true
+                            }
+                        }
                     }
                 }
             }
