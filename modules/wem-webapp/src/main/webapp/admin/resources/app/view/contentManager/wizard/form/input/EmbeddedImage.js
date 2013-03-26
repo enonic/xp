@@ -26,7 +26,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
         if (value && Ext.isString(value)) {
             value = value.split(',');
         } else {
-            return null;
+            return [];
         }
 
         var valueList = [];
@@ -41,7 +41,19 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
     },
 
     setValue: function (value) {
-        console.log(value);
+        var me = this;
+        var getContentCommand = {
+            contentIds: value
+        };
+        // retrieve image contents by contentId
+        Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
+            if (getContentResponse && getContentResponse.success) {
+                Ext.each(getContentResponse.content, function (contentData) {
+                    var contentModel = new Admin.model.contentManager.ContentModel(contentData);
+                    me.selectedContentStore.add(contentModel);
+                });
+            }
+        });
     },
 
     /**
