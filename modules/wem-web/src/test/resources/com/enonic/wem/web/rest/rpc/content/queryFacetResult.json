@@ -1,0 +1,7 @@
+{"success": true, "total": 0, "contents": [], "facets": [
+    {
+        "name": "myQueryFacet",
+        "_type": "query",
+        "count": 10
+    }
+]}
