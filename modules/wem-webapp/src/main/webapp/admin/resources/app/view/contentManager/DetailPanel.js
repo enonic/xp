@@ -108,7 +108,8 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     createLivePreview: function (data) {
         return {
             itemId: 'livePreview',
-            xtype: 'contentLive'
+            xtype: 'contentLive',
+            actionButton: this.getActionButton()
         };
     },
 
