@@ -52,6 +52,7 @@
 
   <!-- Third party plugins -->
 
+  <script type="text/javascript" src="resources/lib/plupload/js/plupload.full.js"></script>
   <script type="text/javascript" src="resources/lib/jit/jit-yc.js"></script>
 
   <!-- Application -->

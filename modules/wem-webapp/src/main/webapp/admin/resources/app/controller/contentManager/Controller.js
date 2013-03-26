@@ -10,7 +10,6 @@ Ext.define('Admin.controller.contentManager.Controller', {
     models: [],
     views: [
         'Admin.view.contentManager.DeleteContentWindow',
-        'Admin.view.contentManager.NewContentWindow',
         'Admin.view.contentManager.LiveEditWindow',
         'Admin.view.contentManager.wizard.ContentLiveEditPanel'
     ],
@@ -289,49 +288,6 @@ Ext.define('Admin.controller.contentManager.Controller', {
         deleteContentButton.setDisabled(disabled);
     },
 
-    showToolbarMenu: function (button, event) {
-        event.stopEvent();
-
-        var menu = this.getContentManagerToolbarMenu();
-        var contentDetail = Ext.ComponentQuery.query('contentDetail');
-        var vertical = contentDetail[0].isVisible();
-        menu.items.items[0].setText('Details Pane ' + ( vertical ? 'Right' : 'Bottom' ));
-        menu.showAt(event.getX(), button.getEl().getY() + button.getEl().getHeight());
-    },
-
-    getContentManagerToolbarMenu: function () {
-        var menu = Ext.ComponentQuery.query('contentManagerToolbarMenu')[0];
-        if (!menu) {
-            menu = Ext.create('widget.contentManagerToolbarMenu');
-        }
-        return menu;
-    },
-
-    moveDetailPanel: function () {
-        var contentDetail = Ext.ComponentQuery.query('contentDetail');
-        var vertical = contentDetail[0].isVisible();
-
-        var toHide = contentDetail[vertical ? 0 : 1];
-        var toShow = contentDetail[vertical ? 1 : 0];
-
-        toHide.setVisible(false);
-        toShow.setVisible(true);
-
-        if (toShow.isLiveMode != toHide.isLiveMode) {
-            toShow.toggleLive();
-        }
-
-        var showPanel = this.getContentTreeGridPanel();
-        var selected = showPanel.getSelection();
-
-        this.updateDetailPanel(selected);
-        this.updateToolbarButtons(selected);
-    },
-
-    toggleDetailPanel: function () {
-        this.getContentDetailPanel().toggleLive();
-    },
-
     /*      Getters     */
 
     getContentFilter: function () {
@@ -372,14 +328,6 @@ Ext.define('Admin.controller.contentManager.Controller', {
         var win = Ext.ComponentQuery.query('deleteContentWindow')[0];
         if (!win) {
             win = Ext.create('widget.deleteContentWindow');
-        }
-        return win;
-    },
-
-    getNewContentWindow: function () {
-        var win = Ext.ComponentQuery.query('newContentWindow')[0];
-        if (!win) {
-            win = Ext.create('widget.newContentWindow');
         }
         return win;
     },

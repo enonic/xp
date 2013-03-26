@@ -7,7 +7,9 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
     ],
     models: [
     ],
-    views: [],
+    views: [
+        'Admin.view.contentManager.wizard.ContentWizardPanel'
+    ],
 
     init: function () {
         var me = this;

@@ -44,6 +44,10 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
                 disabled: true,
                 action: 'moveContent'
             },
+            {
+                text: 'Upload Window Test',
+                action: 'uploadContent'
+            },
             '->',
             {
                 xtype: 'toggleslide',
@@ -61,39 +65,6 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
         ];
 
         this.callParent(arguments);
-    },
-
-    loadContentTypesMenu: function () {
-        var menu = this;
-        Admin.lib.RemoteService.contentType_list({}, function (rpcResponse) {
-            var menuItems = [], contentTypes, menuSection;
-            if (!rpcResponse || !rpcResponse.success) {
-                return;
-            }
-            contentTypes = rpcResponse.contentTypes;
-
-            var i;
-            var sectionItems = [];
-            for (i = 0; i < contentTypes.length; i++) {
-                var contentType = contentTypes[i];
-                sectionItems.push(menu.createMenuItem({
-                    "text": contentType.name,
-                    "action": "newContent",
-                    "icon": contentType.iconUrl,
-                    "qualifiedContentType": contentType.qualifiedName
-                }));
-            }
-            menuSection = menu.createMenuSection('Content Types', sectionItems);
-            menuSection.minWidth = 160;
-            menuItems.push(menuSection);
-
-            var itemSection = menu.down('#itemSection');
-            if (menuItems.length > 0 && itemSection) {
-                itemSection.layout.columns = 1;
-                itemSection.removeAll(true);
-                itemSection.add(menuItems);
-            }
-        });
     }
 
 });
