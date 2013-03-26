@@ -70,17 +70,34 @@ Ext.define('Admin.view.WizardPanel', {
                             type: 'hbox',
                             align: 'middle'
                         },
+                        listeners: {
+                            click: {
+                                element: 'el',
+                                fn: function () {
+                                    me.prev();
+                                }
+                            },
+                            mouseover: {
+                                element: 'el',
+                                fn: function (event, element) {
+                                    me.updateNavButton(element, '#000000');
+                                }
+                            },
+                            mouseout: {
+                                element: 'el',
+                                fn: function (event, element) {
+                                    me.updateNavButton(element, '#777777');
+                                }
+                            }
+                        },
                         items: [
                             {
                                 xtype: 'button',
                                 itemId: 'prev',
-                                iconCls: 'icon-chevron-left icon-4x',
+                                iconCls: 'wizard-nav-icon icon-chevron-left icon-4x',
                                 cls: 'wizard-nav-button wizard-nav-button-left',
                                 height: 64,
-                                width: 64,
-                                handler: function (btn, evt) {
-                                    me.prev();
-                                }
+                                width: 64
                             }
                         ]
                     },
@@ -92,6 +109,27 @@ Ext.define('Admin.view.WizardPanel', {
                             type: 'hbox',
                             align: 'middle'
                         },
+                        listeners: {
+                            click: {
+                                element: 'el',
+                                fn: function () {
+                                    me.next();
+                                }
+                            },
+                            mouseover: {
+                                element: 'el',
+                                fn: function (event, element) {
+                                    me.updateNavButton(element, '#000000');
+                                }
+                            },
+                            mouseout: {
+                                element: 'el',
+                                fn: function (event, element) {
+                                    me.updateNavButton(element, '#777777');
+                                }
+                            }
+
+                        },
                         items: [
                             {
                                 xtype: 'button',
@@ -99,12 +137,9 @@ Ext.define('Admin.view.WizardPanel', {
                                 iconAlign: 'right',
                                 cls: 'wizard-nav-button wizard-nav-button-right',
                                 formBind: true,
-                                iconCls: 'icon-chevron-right icon-4x',
+                                iconCls: 'wizard-nav-icon icon-chevron-right icon-4x',
                                 height: 64,
-                                width: 64,
-                                handler: function (btn, evt) {
-                                    me.next();
-                                }
+                                width: 64
                             }
                         ]
                     },
@@ -127,6 +162,16 @@ Ext.define('Admin.view.WizardPanel', {
 
         // bind afterrender events
         this.on('afterrender', this.bindItemListeners);
+    },
+
+    updateNavButton: function (element, color) {
+        var btn = Ext.get(element);
+        if (!btn.hasCls('wizard-nav-icon')) {
+            btn = btn.down('.wizard-nav-icon');
+        } else if (btn.hasCls('x-btn-inner')) {
+            btn = btn.next('.x-btn-icon');
+        }
+        btn.setStyle('color', color);
     },
 
     updateProgress: function (newStep) {
