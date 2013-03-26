@@ -1,5 +1,5 @@
 Ext.define('Admin.view.contentManager.LivePreview', {
-    extend: 'Ext.Component',
+    extend: 'Ext.panel.Panel',
     alias: 'widget.contentLive',
 
     html: '<iframe style="border: 0 none; width: 100%; height: 100%;"></iframe>',
@@ -7,8 +7,24 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     styleHtmlContent: true,
     layout: 'fit',
 
-    initComponent: function () {
+    actionButton: undefined,
 
+    initComponent: function () {
+        this.dockedItems = [
+            {
+                xtype: 'panel',
+                layout: 'hbox',
+                margin: '5 20 0 0',
+                border: 0,
+                dock: 'top',
+                items: [
+                    {
+                        xtype: 'tbfill'
+                    },
+                    Ext.apply(this.actionButton, {border: 0})
+                ]
+            }
+        ];
         this.callParent(arguments);
 
     },
