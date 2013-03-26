@@ -2,6 +2,7 @@ package com.enonic.wem.api.content.schema.content;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -98,6 +99,17 @@ public final class QualifiedContentTypeNames
         return ImmutableSet.copyOf( contentTypeNameList );
     }
 
+    public Set<String> getAsStringSet()
+    {
+        Set<String> contentTypeNamesAsStrings = Sets.newHashSet();
+
+        for ( QualifiedContentTypeName qualifiedContentTypeName : this.getSet() )
+        {
+            contentTypeNamesAsStrings.add( qualifiedContentTypeName.toString() );
+        }
+
+        return contentTypeNamesAsStrings;
+    }
 
     private final static class ParseFunction
         implements Function<String, QualifiedContentTypeName>

@@ -7,6 +7,7 @@ import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
+import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
@@ -25,11 +26,13 @@ public class FindContentRpcHandler
     {
         final String fulltext = context.param( "fulltext" ).asString( "" );
         final boolean includeFacets = context.param( "include" ).asBoolean( true );
+        final String[] contentTypes = context.param( "contentTypes" ).asStringArray();
 
         ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
 
         contentIndexQuery.setFullTextSearchString( fulltext );
         contentIndexQuery.setIncludeFacets( includeFacets );
+        contentIndexQuery.setContentTypeNames( QualifiedContentTypeNames.from( contentTypes ) );
 
         if ( includeFacets )
         {

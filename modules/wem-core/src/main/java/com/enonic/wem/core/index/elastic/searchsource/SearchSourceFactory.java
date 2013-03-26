@@ -1,12 +1,15 @@
 package com.enonic.wem.core.index.elastic.searchsource;
 
+import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
+import org.elasticsearch.index.query.TermsFilterBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import com.google.common.base.Strings;
 
 import com.enonic.wem.api.content.query.ContentIndexQuery;
+import com.enonic.wem.core.index.content.ContentIndexField;
 
 public class SearchSourceFactory
 {
@@ -26,6 +29,14 @@ public class SearchSourceFactory
             fulltextQuery.lenient( true );
 
             searchSourceBuilder.query( fulltextQuery );
+        }
+
+        if ( contentIndexQuery.getContentTypeNames() != null && contentIndexQuery.getContentTypeNames().isNotEmpty() )
+        {
+            FilterBuilder filterBuilder =
+                new TermsFilterBuilder( ContentIndexField.CONTENT_TYPE, contentIndexQuery.getContentTypeNames().getAsStringSet() );
+
+            searchSourceBuilder.filter( filterBuilder );
         }
 
         if ( contentIndexQuery.isIncludeFacets() )

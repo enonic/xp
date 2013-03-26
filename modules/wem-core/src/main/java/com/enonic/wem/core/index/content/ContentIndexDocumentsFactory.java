@@ -49,7 +49,7 @@ public class ContentIndexDocumentsFactory
         addIfNotNull( indexDocument, ContentIndexField.KEY, content.getId() != null ? content.getId().toString() : null, false, true );
         addIfNotNull( indexDocument, ContentIndexField.CREATED, content.getCreatedTime(), false, true );
         addIfNotNull( indexDocument, ContentIndexField.LAST_MODIFIED, content.getModifiedTime(), false, true );
-        addIfNotNull( indexDocument, ContentIndexField.CONTENT_TYPE, content.getType().getContentTypeName(), false, true );
+        addIfNotNull( indexDocument, ContentIndexField.CONTENT_TYPE, content.getType().toString(), false, true );
         addIfNotNull( indexDocument, ContentIndexField.OWNER, content.getOwner() != null ? content.getOwner().getQualifiedName() : null,
                       false, true );
         addIfNotNull( indexDocument, ContentIndexField.MODIFIER,
