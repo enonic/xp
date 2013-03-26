@@ -17,6 +17,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
+import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.space.dao.SpaceDao;
 
 import static org.junit.Assert.*;
@@ -37,6 +38,8 @@ public class CreateSpaceHandlerTest
 
     private final DateTime CURRENT_TIME = DateTime.now();
 
+    private IndexService indexService;
+
     @Before
     public void setUp()
         throws Exception
@@ -45,9 +48,11 @@ public class CreateSpaceHandlerTest
 
         spaceDao = Mockito.mock( SpaceDao.class );
         contentDao = Mockito.mock( ContentDao.class );
+        indexService = Mockito.mock( IndexService.class );
         handler = new CreateSpaceHandler();
         handler.setSpaceDao( spaceDao );
         handler.setContentDao( contentDao );
+        handler.setIndexService( indexService );
         DateTimeUtils.setCurrentMillisFixed( CURRENT_TIME.getMillis() );
     }
 
