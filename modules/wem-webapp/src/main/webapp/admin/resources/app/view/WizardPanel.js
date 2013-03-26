@@ -94,10 +94,12 @@ Ext.define('Admin.view.WizardPanel', {
                             {
                                 xtype: 'button',
                                 itemId: 'prev',
-                                iconCls: 'wizard-nav-icon icon-chevron-left icon-4x',
+                                iconCls: 'wizard-nav-icon icon-chevron-left icon-6x',
                                 cls: 'wizard-nav-button wizard-nav-button-left',
                                 height: 64,
-                                width: 64
+                                width: 64,
+                                padding: 0,
+                                margin: '0 0 0 40'
                             }
                         ]
                     },
@@ -137,9 +139,10 @@ Ext.define('Admin.view.WizardPanel', {
                                 iconAlign: 'right',
                                 cls: 'wizard-nav-button wizard-nav-button-right',
                                 formBind: true,
-                                iconCls: 'wizard-nav-icon icon-chevron-right icon-4x',
+                                iconCls: 'wizard-nav-icon icon-chevron-right icon-6x',
                                 height: 64,
-                                width: 64
+                                width: 64,
+                                padding: 0
                             }
                         ]
                     },
