@@ -193,13 +193,18 @@ Ext.define('Admin.view.TopBar', {
             this.titleButton.setVisible(tabCount > 0);
             this.titleButton.setCount(tabCount);
 
-            var urlParamsString = document.URL.split('?'),
-                urlParams = Ext.urlDecode(urlParamsString[urlParamsString.length - 1]);
             Admin.MessageBus.updateAppTabCount({
-                appId: urlParams.appId,
+                appId: this.getApplicationId(),
                 tabCount: tabCount
             });
         }
+    },
+
+    getApplicationId: function () {
+        var urlParamsString = document.URL.split('?'),
+            urlParams = Ext.urlDecode(urlParamsString[urlParamsString.length - 1]);
+
+        return urlParams.appId;
     },
 
     getMenuItemIcon: function (card) {
