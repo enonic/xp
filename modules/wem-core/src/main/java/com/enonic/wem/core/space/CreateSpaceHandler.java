@@ -1,9 +1,9 @@
 package com.enonic.wem.core.space;
 
+import javax.inject.Inject;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.space.CreateSpace;
@@ -15,6 +15,7 @@ import com.enonic.wem.api.space.Space;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
+import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.space.dao.SpaceDao;
 
 import static com.enonic.wem.api.content.Content.newContent;
@@ -27,6 +28,8 @@ public final class CreateSpaceHandler
     private SpaceDao spaceDao;
 
     private ContentDao contentDao;
+
+    private IndexService indexService;
 
     public CreateSpaceHandler()
     {
@@ -58,6 +61,8 @@ public final class CreateSpaceHandler
         final ContentId rootContentId = contentDao.create( rootContent, session );
         session.save();
 
+        indexService.indexContent( contentDao.select( rootContentId, session ) );
+
         final Space createdSpace = newSpace( space ).rootContent( rootContentId ).build();
 
         command.setResult( createdSpace );
@@ -73,5 +78,11 @@ public final class CreateSpaceHandler
     public void setContentDao( final ContentDao contentDao )
     {
         this.contentDao = contentDao;
+    }
+
+    @Inject
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
     }
 }

@@ -76,16 +76,8 @@ public class CreateContentHandler
             contentToUpdate( content.getId() ).
             contentAfterEditing( content.getRootDataSet() ) );
 
-        try
-        {
-            // TODO: Temporary easy solution to get Id. The index logic should eventually not be here anyway
-            final Content storedContent = builder.id( contentId ).build();
-            indexService.indexContent( storedContent );
-        }
-        catch ( Exception e )
-        {
-            LOG.error( "Index content failed", e );
-        }
+        final Content storedContent = builder.id( contentId ).build();
+        indexService.indexContent( storedContent );
 
         command.setResult( new CreateContentResult( contentId, contentPath ) );
     }
