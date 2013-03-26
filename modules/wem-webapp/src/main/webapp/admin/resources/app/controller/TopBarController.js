@@ -73,7 +73,6 @@ Ext.define('Admin.controller.TopBarController', {
 
 
     appendIframe: function (parent, appModel) {
-
         var iframe = parent.Ext.core.DomHelper.append('appFrames', {
             tag: 'iframe',
             src: appModel.appUrl + '?appId=' + appModel.id,

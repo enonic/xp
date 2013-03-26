@@ -195,7 +195,7 @@ Ext.define('Admin.view.TopBar', {
 
             var urlParamsString = document.URL.split('?'),
                 urlParams = Ext.urlDecode(urlParamsString[urlParamsString.length - 1]);
-            Admin.MessageBus.updateHomeScreenTabCount({
+            Admin.MessageBus.updateAppTabCount({
                 appId: urlParams.appId,
                 tabCount: tabCount
             });

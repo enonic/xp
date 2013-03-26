@@ -58,7 +58,7 @@
 <h2>Apps</h2>
 <ul class="links">
   <li>
-    <a href="main.jsp">Main</a>
+    <a href="home.jsp">Home</a>
   </li>
   <li>
     <a href="app-space-admin.jsp">Space Admin</a>

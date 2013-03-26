@@ -19,8 +19,8 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
     init: function () {
         var me = this;
 
-        Admin.MessageBus.on('topBar.onAppTabCountUpdate', function (config) {
-            me.onAppTabCountUpdate(config);
+        Admin.MessageBus.on('topBar.onUpdateAppTabCount', function (config) {
+            me.setAppTabCountInTile(config);
         }, me);
 
         me.application.on({
@@ -200,18 +200,21 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
     },
 
 
-    onAppTabCountUpdate: function (info) {
-        var dq = Ext.dom.Query;
-        var tileNode = dq.selectNode('[data-tile-id=' + info.appId + ']'),
-            countNode = dq.selectNode('.tab-count-container', tileNode),
-            countElement = Ext.fly(countNode);
+    setAppTabCountInTile: function (config) {
+        var dom = Ext.dom.Query,
+            tileNode = dom.selectNode('[data-tile-id=' + config.appId + ']');
 
-        countElement.setVisibilityMode(Ext.Element.DISPLAY);
+        if (tileNode) {
+            var countNode = dom.selectNode('.tab-count-container', tileNode),
+                countElement = Ext.fly(countNode);
 
-        if (info.tabCount > 0) {
-            countElement.setHTML(info.tabCount).show();
-        } else {
-            countElement.setHTML(0).hide();
+            countElement.setVisibilityMode(Ext.Element.DISPLAY);
+
+            if (config.tabCount > 0) {
+                countElement.setHTML(config.tabCount).show();
+            } else {
+                countElement.setHTML(0).hide();
+            }
         }
     }
 

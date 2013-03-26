@@ -15,9 +15,9 @@ Ext.define('Admin.MessageBus', {
      * Updates tab count in homescreen tiles
      * @param config {appId, tabCount}
      */
-    updateHomeScreenTabCount: function (config) {
-        var eventName = 'topBar.onAppTabCountUpdate';
-        // Make sure the MessageBus in main.jsp gets the event.
+    updateAppTabCount: function (config) {
+        var eventName = 'topBar.onUpdateAppTabCount';
+        // Make sure the MessageBus in the home frame gets the event.
         if (window.parent) {
             window.parent.Admin.MessageBus.fireEvent(eventName, config);
         }
