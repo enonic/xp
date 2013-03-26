@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.DateTimeZone;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -39,6 +40,12 @@ public class FindContentRpcHandlerTest
         handler.setClient( client );
 
         return handler;
+    }
+
+    @AfterClass
+    public static void tearDown()
+    {
+        DateTimeUtils.setCurrentMillisSystem();
     }
 
     @Test
