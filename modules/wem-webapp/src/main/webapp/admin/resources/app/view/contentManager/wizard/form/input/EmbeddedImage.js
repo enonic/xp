@@ -22,9 +22,27 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
 
 
     getValue: function () {
-        return this.getComponent(this.name).getValue();
+        var value = this.items.items[0].getValue();
+        if (value && Ext.isString(value)) {
+            value = value.split(',');
+        } else {
+            return null;
+        }
+
+        var valueList = [];
+        for (var i = 0; i < value.length; i++) {
+            var currentItemValue = {
+                'path': this.name.concat('[', i, ']'),
+                'value': value[i]
+            };
+            valueList.push(currentItemValue);
+        }
+        return valueList;
     },
 
+    setValue: function (value) {
+        console.log(value);
+    },
 
     /**
      * @private
@@ -74,7 +92,6 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
             valueField: 'id',
             tpl: template,
 
-            // Hardcode the store for now.
             store: new Admin.store.contentManager.ContentStore(),
             listeners: {
                 select: function (combo, records) {
@@ -92,12 +109,13 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
      * @private
      */
     onSelectContent: function (contentModels) {
-        var isAlreadyAdded = this.selectedContentStore.findRecord('key', contentModels[0].raw.key);
+        var contentModel = contentModels[0];
+        var isAlreadyAdded = this.selectedContentStore.findRecord('id', contentModel.getId());
         if (isAlreadyAdded) {
-            this.alertContentIsAdded(contentModels);
+            this.alertContentIsAdded(contentModel);
             return;
         }
-        this.selectedContentStore.add(contentModels[0].raw);
+        this.selectedContentStore.add(contentModel);
     },
 
 
@@ -116,10 +134,10 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
                     try {
                         me.down('combobox').setDisabled(me.selectedContentStore.getCount() ===
                                                         me.contentTypeItemConfig.occurrences.maximum);
-                }
+                    }
                     catch (exception) {
                         /**/
-            }
+                    }
                 }
             }
         });
@@ -180,8 +198,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
     /**
      * @private
      */
-    alertContentIsAdded: function (records) {
-        alert('Temporary alert! Can not have duplicates in Image input\n"' + records[0].raw.title + '" has already been added');
+    alertContentIsAdded: function (contentModel) {
+        console.log('Temporary alert! Can not have duplicates in Image input\n"' + contentModel.get('path') + '" has already been added');
         this.down('combobox').focus('');
     },
 
@@ -191,12 +209,12 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
      */
     updateHiddenValue: function () {
         var me = this;
-        var keys = [];
+        var ids = [];
         if (this.items) {
             Ext.Array.each(me.selectedContentStore.data.items, function (item) {
-                keys.push(item.data.key);
+                ids.push(item.data.id);
             });
-            this.getComponent(this.name).setValue(keys);
+            this.getComponent(this.name).setValue(ids);
         }
     }
 
