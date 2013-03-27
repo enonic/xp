@@ -15,7 +15,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
             'region': ['parent', 'settings', 'reset', 'clear'],
             'layout': ['parent', 'settings'],
             'part': ['parent', 'settings', 'details', 'remove'],
-            'content': ['parent', 'opencontent', 'view', 'edit'],
+            'content': ['parent', 'opencontent', 'view'],
             'paragraph': ['parent', 'edit']
         };
 
