@@ -186,19 +186,19 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
 
     proto.show = function () {
         var me = this;
-        var bar = me.getBar();
-        bar.css('right', '0');
+        var $bar = me.getBar();
+        $bar.css('right', '0');
         me.getToggleTextContainer().text('');
-        bar.removeClass('live-edit-collapsed');
+        $bar.removeClass('live-edit-collapsed');
     };
 
 
     proto.hide = function () {
         var me = this;
-        var bar = me.getBar();
-        bar.css('right', '-' + INNER_WIDTH + 'px');
+        var $bar = me.getBar();
+        $bar.css('right', '-' + INNER_WIDTH + 'px');
         me.getToggleTextContainer().text('Toolbar');
-        bar.addClass('live-edit-collapsed');
+        $bar.addClass('live-edit-collapsed');
     };
 
 
