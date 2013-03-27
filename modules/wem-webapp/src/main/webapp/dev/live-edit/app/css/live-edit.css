@@ -542,8 +542,21 @@ svg.live-edit-highlight-border rect {
     position: fixed;
     top: 0;
     bottom: 0;
-    background-color: #fff;
     font: 14px Tahoma, sans-serif;
+}
+
+.live-edit-components-container.live-edit-collapsed .live-edit-toggle-components-container {
+    background-image: url("../images/arrow-left.png");
+    background-repeat: no-repeat;
+    background-position: center 10px;
+    height: 100px;
+}
+
+.live-edit-components-container .live-edit-toggle-components-container {
+    background-image: url("../images/arrow-right.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    height: 50px;
 }
 
 .live-edit-components-container {
@@ -557,32 +570,33 @@ svg.live-edit-highlight-border rect {
 
 .live-edit-toggle-components-container {
     cursor: pointer;
-    position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
-    background-color: #eee;
+    background-color: #2e70FA;
+    height: 100px;
+    box-shadow: 0 0 10px #777777;
 }
 
 .live-edit-toggle-text-container {
     display: block;
-    position: absolute;
-    width: 150px;
-    top: 50%;
-    margin-left: -8px;
     -webkit-transform: rotate(90deg) translateY(0);
     transform: rotate(90deg) translateY(0);
-    left: -50px;
+    padding-left: 45px;
+    padding-top: 10px;
+    font-weight: bold;
+    color: #ffffff;
 }
 
 .live-edit-components {
     right: 0;
-    background-color: #fff;
+    background-color: #eeeeee;
     position: absolute;
     bottom: 0;
     top: 0;
     min-width: 205px;
     z-index: -2;
+    box-shadow: 0 0 10px #777777;
 }
 
 .live-edit-components input {
@@ -621,7 +635,7 @@ svg.live-edit-highlight-border rect {
 }
 
 .live-edit-component-list-header span {
-    background-color: #fff;
+    background-color: #eeeeee;
     padding: 0 8px;
     color: #4a87e5;
 }

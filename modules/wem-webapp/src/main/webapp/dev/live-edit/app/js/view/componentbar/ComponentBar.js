@@ -44,8 +44,8 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     var html = '';
-    html += '<div class="live-edit-components-container" style="width:' + BAR_WIDTH + 'px; right: -' + INNER_WIDTH + 'px">';
-    html += '    <div class="live-edit-toggle-components-container" style="width:' + TOGGLE_WIDTH + 'px"><span class="live-edit-toggle-text-container">Show Components</span></div>';
+    html += '<div class="live-edit-components-container live-edit-collapsed" style="width:' + BAR_WIDTH + 'px; right: -' + INNER_WIDTH + 'px">';
+    html += '    <div class="live-edit-toggle-components-container" style="width:' + TOGGLE_WIDTH + 'px"><span class="live-edit-toggle-text-container">Toolbar</span></div>';
     html += '        <div class="live-edit-components">';
     html += '            <div class="live-edit-form-container">';
     html += '               <form>';
@@ -186,15 +186,19 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
 
     proto.show = function () {
         var me = this;
-        me.getBar().css('right', '0');
-        me.getToggleTextContainer().text('Hide Components');
+        var bar = me.getBar();
+        bar.css('right', '0');
+        me.getToggleTextContainer().text('');
+        bar.removeClass('live-edit-collapsed');
     };
 
 
     proto.hide = function () {
         var me = this;
-        me.getBar().css('right', '-' + INNER_WIDTH + 'px');
-        me.getToggleTextContainer().text('Show Components');
+        var bar = me.getBar();
+        bar.css('right', '-' + INNER_WIDTH + 'px');
+        me.getToggleTextContainer().text('Toolbar');
+        bar.addClass('live-edit-collapsed');
     };
 
 
