@@ -7,7 +7,7 @@
     },
     "filter": {
         "terms": {
-            "contentType": [ "contentTypes:myContentType1", "contentTypes:myContentType2" ]
+            "contentType": [ "contenttypes:mycontenttype1", "contenttypes:mycontenttype2" ]
         }
     }
 }
