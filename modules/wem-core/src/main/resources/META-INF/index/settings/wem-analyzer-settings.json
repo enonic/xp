@@ -3,9 +3,10 @@
         "filter": {
             "fulltext_ngrams": {
                 "side": "front",
-                "max_gram": 10,
-                "min_gram": 1,
-                "type": "edgeNGram"
+                "max_gram": 15,
+                "min_gram": 2,
+                "type": "edgeNGram",
+                "side": "front"
             }
         },
         "analyzer": {
