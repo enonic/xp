@@ -34,6 +34,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         $(window).on('component.onSortStart', $.proxy(this.hide, this));
         $(window).on('component.onRemove', $.proxy(this.hide, this));
         $(window).on('component.onParagraphEdit', $.proxy(this.hide, this));
+        $(window).on('liveEdit.onWindowResize', $.proxy(this.handleWindowResize, this));
 
         $(window).on('component.onSortStop', function (event, uiEvent, ui, wasSelectedOnDragStart) {
             if (wasSelectedOnDragStart) {
@@ -64,9 +65,13 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         me.$selectedComponent = $component;
         var componentType = util.getComponentType($component);
 
-        // TODO: Move class manipulation to model base
+        // Move CSS class manipulation to model base
         $('.live-edit-selected-component').removeClass('live-edit-selected-component');
+
         $component.addClass('live-edit-selected-component');
+
+        // jQuery can not use addClass on a SVG element.
+        me.getEl().attr('class', me.getEl().attr('class') + ' live-edit-animatable');
 
         // Highlighter should not be shown when type page is selected
         if (componentType === 'page') {
@@ -76,12 +81,13 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
         me.paintBorder($component);
         me.show();
-
     };
 
 
     proto.deselect = function () {
         var me = this;
+
+        me.getEl().attr('class', me.getEl().attr('class').replace(/ live-edit-animatable/g, ''));
 
         me.$selectedComponent = null;
 
@@ -96,7 +102,6 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         me.resizeBorderToComponent($component);
 
         var style = me.getStyleForComponent($component);
-
         $border.css('stroke', style.strokeColor);
         $border.css('fill', style.fillColor);
         $border.css('stroke-dasharray', style.strokeDashArray);
@@ -186,6 +191,13 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
             strokeDashArray: strokeDashArray,
             fillColor: fillColor
         };
+    };
+
+
+    proto.handleWindowResize = function (event) {
+        if (this.$selectedComponent) {
+            this.paintBorder(this.$selectedComponent);
+        }
     };
 
 }($liveedit));

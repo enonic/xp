@@ -30,7 +30,9 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
             cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
-                window.parent.Admin.MessageBus.liveEditOpenContent({});
+                if (window.parent.Admin && window.parent.Admin.MessageBus) {
+                    window.parent.Admin.MessageBus.liveEditOpenContent({});
+                }
             }
         });
 

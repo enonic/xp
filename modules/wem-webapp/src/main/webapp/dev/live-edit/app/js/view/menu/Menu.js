@@ -7,6 +7,8 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     var menu = AdminLiveEdit.view.menu.Menu = function () {
         var me = this;
         me.$selectedComponent = null;
+        me.previousPageSizes = null;
+        me.previousPagePositions = null;
         me.hidden = true;
         me.buttons = [];
 
@@ -60,6 +62,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         $(window).on('component.onSortStart', $.proxy(this.fadeOutAndHide, this));
         $(window).on('component.onRemove', $.proxy(this.hide, this));
         $(window).on('component.onParagraphEdit', $.proxy(this.hide, this));
+        // $(window).on('liveEdit.onWindowResize', $.proxy(this.handleWindowResize, this));
     };
 
 
@@ -90,6 +93,8 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
             componentInfo = util.getComponentInfo($component);
 
         me.$selectedComponent = $component;
+        me.previousPagePositions = pagePosition;
+        me.previousPageSizes = util.getViewPortSize();
 
         me.updateTitleBar($component);
 
@@ -106,6 +111,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
 
     proto.hide = function () {
+        this.$selectedComponent = null;
         this.getEl().hide();
         this.hidden = true;
     };
@@ -249,6 +255,18 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
     proto.getMenuItemsPlaceholderElement = function () {
         return $('.live-edit-component-menu-items', this.getEl());
+    };
+
+
+    proto.handleWindowResize = function (event) {
+        if (this.$selectedComponent) {
+            var x = this.previousPagePositions.x,
+                y = this.previousPagePositions.y;
+
+            x = x - (this.previousPageSizes.width - util.getViewPortSize().width);
+
+            this.moveToXY(x, y);
+        }
     };
 
 }($liveedit));

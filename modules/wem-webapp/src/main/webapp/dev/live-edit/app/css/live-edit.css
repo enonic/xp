@@ -280,8 +280,9 @@ svg.live-edit-highlight-border {
 
 .live-edit-shader {
     position: absolute;
-    top: -15000px;
-    left: -15000px;
+    display: none;
+    top: 0;
+    left: 0;
     background-color: #000;
     opacity: .3;
     cursor: default !important;
@@ -730,4 +731,9 @@ svg.live-edit-highlight-border rect {
 
 .live-edit-html-element-placeholder .live-edit-object {
     background: transparent url("../images/plug.png") no-repeat;
+}
+
+.live-edit-animatable {
+    -webkit-transition: all 100ms linear;
+    transition: all 100ms linear;
 }

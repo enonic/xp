@@ -22,6 +22,10 @@
         var mutationObserver    = new AdminLiveEdit.MutationObserver();
 
         AdminLiveEdit.DragDropSort.initialize();
+
+        $(window).resize(function () {
+            $(window).trigger('liveEdit.onWindowResize');
+        });
     });
 
     $(document).ready(function () {
