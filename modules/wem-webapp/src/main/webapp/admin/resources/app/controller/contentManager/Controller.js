@@ -67,16 +67,16 @@ Ext.define('Admin.controller.contentManager.Controller', {
         }
     },
 
-    editContent: function (content, callback) {
+    editContent: function (contentModel, callback) {
 
         var me = this;
 
-        if (!content) {
+        if (!contentModel) {
             var showPanel = this.getContentTreeGridPanel();
-            content = showPanel.getSelection();
+            contentModel = showPanel.getSelection();
         }
         else {
-            content = [].concat(content);
+            contentModel = [].concat(contentModel);
         }
         var tabs = this.getCmsTabPanel();
 
@@ -129,7 +129,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 createTabFromResponse: createContentTabFn
             };
             var tabItem = {
-                id: me.generateTabId(content[i], true),
+                id: me.generateTabId(contentModel[i], true),
                 title: selectedContent.get('displayName'),
                 data: selectedContent,
                 closable: true,
@@ -148,8 +148,8 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
         var i;
         if (tabs) {
-            for (i = 0; i < content.length; i += 1) {
-                var data = content[i];
+            for (i = 0; i < contentModel.length; i += 1) {
+                var data = contentModel[i];
                 //TODO: implement when content specification will be developed
                 openEditContentTabFn(data);
             }
