@@ -76,7 +76,7 @@ public final class SetMixinEditor
 
         if ( this.icon != null )
         {
-            builder.icon( Icon.copyOf( this.icon ) );
+            builder.icon( this.icon );
         }
 
         return builder.build();

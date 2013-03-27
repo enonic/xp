@@ -142,7 +142,7 @@ public final class Space
             this.createdTime = space.createdTime;
             this.modifiedTime = space.modifiedTime;
             this.rootContent = space.rootContent;
-            this.icon = space.icon == null ? null : Icon.copyOf( space.icon );
+            this.icon = space.icon;
         }
 
         public Builder displayName( final String displayName )

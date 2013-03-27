@@ -128,7 +128,7 @@ public class Mixin
             this.createdTime = mixin.createdTime;
             this.modifiedTime = mixin.modifiedTime;
             this.formItem = mixin.formItem;
-            this.icon = mixin.icon == null ? null : Icon.copyOf( mixin.icon );
+            this.icon = mixin.icon;
         }
 
         public Builder displayName( String value )

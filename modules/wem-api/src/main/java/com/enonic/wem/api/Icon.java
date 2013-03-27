@@ -1,9 +1,13 @@
 package com.enonic.wem.api;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.io.ByteStreams;
 
 public final class Icon
 {
@@ -20,10 +24,14 @@ public final class Icon
         this.mimeType = mimeType;
     }
 
-    public byte[] getData()
+    public byte[] toByteArray()
     {
-        // TODO return copy, and avoid copying Icon in other places?
-        return iconData;
+        return Arrays.copyOf( iconData, iconData.length );
+    }
+
+    public InputStream asInputStream()
+    {
+        return new ByteArrayInputStream( this.iconData );
     }
 
     public String getMimeType()
@@ -74,8 +82,16 @@ public final class Icon
         return new Icon( iconData, mimeType );
     }
 
-    public static Icon copyOf( final Icon icon )
+    public static Icon from( final InputStream data, final String mimeType )
     {
-        return new Icon( Arrays.copyOf( icon.iconData, icon.iconData.length ), icon.mimeType );
+        Preconditions.checkNotNull( data, "data is mandatory" );
+        try
+        {
+            return new Icon( ByteStreams.toByteArray( data ), mimeType );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( "Failed to load icon from input stream", e );
+        }
     }
 }

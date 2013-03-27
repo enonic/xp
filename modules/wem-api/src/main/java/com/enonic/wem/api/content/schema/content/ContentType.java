@@ -199,7 +199,7 @@ public final class ContentType
             this.createdTime = source.createdTime;
             this.modifiedTime = source.modifiedTime;
             this.contentDisplayNameScript = source.contentDisplayNameScript;
-            this.icon = source.icon == null ? null : Icon.copyOf( source.icon );
+            this.icon = source.icon;
         }
 
         public Builder qualifiedName( final QualifiedContentTypeName qualifiedContentTypeName )

@@ -17,9 +17,8 @@ final class SetSpaceIconEditor
     public Space edit( final Space space )
         throws Exception
     {
-        final Icon iconToSet = ( this.icon == null ) ? null : Icon.copyOf( this.icon );
         final Space updated = Space.newSpace( space ).
-            icon( iconToSet ).
+            icon( this.icon ).
             build();
         return updated;
     }

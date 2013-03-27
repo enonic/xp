@@ -100,7 +100,7 @@ public final class SetRelationshipTypeEditor
         final RelationshipType.Builder builder = newRelationshipType( relationshipType );
         if ( this.icon != null )
         {
-            builder.icon( Icon.copyOf( this.icon ) );
+            builder.icon( this.icon );
         }
         if ( displayName != null )
         {

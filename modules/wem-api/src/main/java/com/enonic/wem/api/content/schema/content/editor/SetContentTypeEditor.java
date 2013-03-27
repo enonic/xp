@@ -156,10 +156,9 @@ public final class SetContentTypeEditor
             builder.contentDisplayNameScript( this.contentDisplayNameScript );
         }
 
-        final Icon iconToSet = ( this.icon == null ) ? null : Icon.copyOf( icon );
-        if ( iconToSet != null )
+        if ( this.icon != null )
         {
-            builder.icon( iconToSet );
+            builder.icon( this.icon );
         }
 
         return builder.build();

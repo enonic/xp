@@ -213,7 +213,7 @@ public final class RelationshipType
             this.toSemantic = relationshipType.toSemantic;
             this.allowedFromTypes = Lists.newArrayList( relationshipType.allowedFromTypes );
             this.allowedToTypes = Lists.newArrayList( relationshipType.allowedToTypes );
-            this.icon = relationshipType.icon == null ? null : Icon.copyOf( relationshipType.icon );
+            this.icon = relationshipType.icon;
         }
 
         public Builder module( ModuleName value )

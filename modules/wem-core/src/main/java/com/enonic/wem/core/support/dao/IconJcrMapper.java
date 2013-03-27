@@ -21,7 +21,7 @@ public final class IconJcrMapper
     {
         if ( icon != null )
         {
-            JcrHelper.setPropertyBinary( targetNode, ICON_PROPERTY, icon.getData() );
+            JcrHelper.setPropertyBinary( targetNode, ICON_PROPERTY, icon.asInputStream() );
             targetNode.setProperty( ICON_MIME_TYPE_PROPERTY, icon.getMimeType() );
         }
         else

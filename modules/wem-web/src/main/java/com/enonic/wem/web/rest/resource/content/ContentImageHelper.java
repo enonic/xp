@@ -20,7 +20,7 @@ final class ContentImageHelper
             return null;
         }
 
-        final BufferedImage image = toBufferedImage( binary.toByteArray() );
+        final BufferedImage image = toBufferedImage( binary.asInputStream() );
         return resizeImage( image, size );
     }
 }

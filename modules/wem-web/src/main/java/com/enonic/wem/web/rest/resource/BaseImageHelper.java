@@ -18,6 +18,12 @@ public abstract class BaseImageHelper
         return ImageIO.read( new ByteArrayInputStream( data ) );
     }
 
+    protected BufferedImage toBufferedImage( final InputStream dataStream )
+        throws Exception
+    {
+        return ImageIO.read( dataStream );
+    }
+
     protected BufferedImage resizeImage( final BufferedImage image, final int size )
         throws Exception
     {
@@ -44,7 +50,7 @@ public abstract class BaseImageHelper
             return null;
         }
 
-        final BufferedImage image = toBufferedImage( icon.getData() );
+        final BufferedImage image = toBufferedImage( icon.asInputStream() );
         return resizeImage( image, size );
     }
 }
