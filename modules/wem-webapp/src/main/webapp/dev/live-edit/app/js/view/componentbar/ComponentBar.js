@@ -147,7 +147,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
     proto.addComponent = function (component) {
         var me = this,
             html = '';
-        html += '<li class="live-edit-component" data-live-edit-component-key="' + component.key + '" data-live-edit-component-name="' + component.name + '">';
+        html += '<li class="live-edit-component" data-live-edit-component-key="' + component.key + '" data-live-edit-component-name="' + component.name + '" data-live-edit-component-type="' + component.type + '">';
         html += '    <img src="../app/images/srs.jpeg"/>';
         html += '    <div class="live-edit-component-text">';
         html += '        <div class="live-edit-component-text-name">' + component.name + '</div>';

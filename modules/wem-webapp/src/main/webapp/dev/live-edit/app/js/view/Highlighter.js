@@ -154,7 +154,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         case 'layout':
             strokeColor = 'rgba(255,165,0,1)';
             strokeDashArray = '5 5';
-            fillColor = 'rgba(255,165,0,0)';
+            fillColor = 'rgba(100,12,36,0)';
             break;
 
         case 'part':

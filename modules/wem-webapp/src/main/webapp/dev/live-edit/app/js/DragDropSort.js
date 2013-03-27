@@ -1,8 +1,8 @@
 AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.DragDropSort');
 /*
-    This code contains a lot of prototype coding at the moment.
-    A clean up should be done when Live Edit is specked
-*/
+ This code contains a lot of prototype coding at the moment.
+ A clean up should be done when Live Edit is specked
+ */
 AdminLiveEdit.DragDropSort = (function () {
     'use strict';
 
@@ -27,7 +27,7 @@ AdminLiveEdit.DragDropSort = (function () {
     }
 
 
-    function getHelperHtml(text) {
+    function getDragHelperHtml(text) {
         // Override jQueryUi inline width/height
         return '<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' +
                '    <img id="live-edit-drag-helper-status-icon" src="../app/images/drop-no.gif"/>' +
@@ -36,14 +36,13 @@ AdminLiveEdit.DragDropSort = (function () {
     }
 
 
-    function setHelperText(text) {
+    function setDragHelperText(text) {
         $liveedit('#live-edit-drag-helper-text').text(text);
     }
 
 
     function createComponentBarDraggables() {
         var $componentBarComponents = $liveedit('.live-edit-component');
-
         var draggableOptions = {
             connectToSortable: regionSelector,
             addClasses: false,
@@ -58,11 +57,11 @@ AdminLiveEdit.DragDropSort = (function () {
             },
             cursorAt: cursorAt,
             helper: function () {
-                return getHelperHtml('');
+                return getDragHelperHtml('');
             },
             start: function (event, ui) {
                 $liveedit(window).trigger('component.onDragStart', [event, ui]);
-                setHelperText($liveedit(event.target).data('live-edit-component-name'));
+                setDragHelperText($liveedit(event.target).data('live-edit-component-name'));
                 isDragging = true;
             },
             stop: function (event, ui) {
@@ -70,17 +69,16 @@ AdminLiveEdit.DragDropSort = (function () {
                 isDragging = false;
             }
         };
-
         $componentBarComponents.draggable(draggableOptions);
     }
 
 
     function createDragHelper(event, helper) {
-        return $liveedit(getHelperHtml(util.getComponentName(helper)));
+        return $liveedit(getDragHelperHtml(util.getComponentName(helper)));
     }
 
 
-    function refresh() {
+    function refreshSortable() {
         $liveedit(regionSelector).sortable('refresh');
     }
 
@@ -100,7 +98,7 @@ AdminLiveEdit.DragDropSort = (function () {
         ui.item.data('live-edit-selected-on-sort-start', componentIsSelected);
 
         ui.placeholder.text('Drop component here');
-        refresh();
+        refreshSortable();
 
         $liveedit(window).trigger('component.onSortStart', [event, ui]);
     }
@@ -151,21 +149,31 @@ AdminLiveEdit.DragDropSort = (function () {
 
 
     function handleReceive(event, ui) {
+
         if (itemIsDraggedFromComponentBar(ui.item)) {
-            var $component = $liveedit(this).children('.live-edit-component');
-            var componentKey = $component.data('live-edit-component-key');
+            var $componentBarComponent = $liveedit(this).children('.live-edit-component');
+            var componentKey = $componentBarComponent.data('live-edit-component-key');
+            var componentType = $componentBarComponent.data('live-edit-component-type');
             var url = '../app/data/mock-component-' + componentKey + '.html';
 
-            $component.hide();
+            $componentBarComponent.hide();
 
             $liveedit.ajax({
                 url: url,
                 cache: false
             }).done(function (html) {
-                $component.replaceWith(html);
-                $liveedit(window).trigger('component.onSortUpdate');
-            });
 
+                    $componentBarComponent.replaceWith(html);
+
+                    // It seems like it is not possible to add new sortables (region in layout) to the existing sortable
+                    // So we have to create it again.
+                    // Ideally we should destroy the existing sortable first before creating.
+                    if (componentType === 'layout') {
+                        createSortable();
+                    }
+
+                    $liveedit(window).trigger('component.onSortUpdate');
+                });
         }
     }
 
@@ -185,19 +193,19 @@ AdminLiveEdit.DragDropSort = (function () {
              */
 
             /*
-            // When a Layout component is selected it should not be possible to drag any
-            // child components in the layout.
-            // jQuery UI starts dragging the component closest to the mouse target.
-            // Ideally we should update the "items" (to sort) option, but this is unfortunately buggy at the moment(http://bugs.jqueryui.com/ticket/8532)
+             // When a Layout component is selected it should not be possible to drag any
+             // child components in the layout.
+             // jQuery UI starts dragging the component closest to the mouse target.
+             // Ideally we should update the "items" (to sort) option, but this is unfortunately buggy at the moment(http://bugs.jqueryui.com/ticket/8532)
 
-            // This is a hack workaround (destroy and re-create sortables) until 8532 is fixed.
-            if (AdminLiveEdit.Util.getComponentType($component) === 'layout') {
-                $liveedit(regionSelector).sortable('destroy');
-                createSortable('[data-live-edit-type=layout]');
-            } else {
-                createSortable(itemsToSortSelector);
-            }
-            */
+             // This is a hack workaround (destroy and re-create sortables) until 8532 is fixed.
+             if (AdminLiveEdit.Util.getComponentType($component) === 'layout') {
+             $liveedit(regionSelector).sortable('destroy');
+             createSortable('[data-live-edit-type=layout]');
+             } else {
+             createSortable(itemsToSortSelector);
+             }
+             */
 
         });
 
@@ -217,34 +225,34 @@ AdminLiveEdit.DragDropSort = (function () {
     }
 
 
-    function createSortable (items) {
+    function createSortable() {
         $liveedit(regionSelector).sortable({
-            revert              : 1000,
-            connectWith         : regionSelector,   // Sortable elements.
-            items               : items,   // Elements to sort.
-            distance            : 1,
-            delay               : 150,
-            tolerance           : 'pointer',
-            cursor              : 'move',
-            cursorAt            : cursorAt,
-            scrollSensitivity   : Math.round(AdminLiveEdit.Util.getViewPortSize().height / 8),
-            placeholder         : 'live-edit-drop-target-placeholder',
-            helper              : createDragHelper,
-            zIndex              : 1001000,
-            start               : handleSortStart,  // This event is triggered when sorting starts.
-            over                : handleDragOver,   // This event is triggered when a sortable item is moved into a connected list.
-            out                 : handleDragOut,    // This event is triggered when a sortable item is moved away from a connected list.
-            change              : handleSortChange, // This event is triggered during sorting, but only when the DOM position has changed.
-            receive             : handleReceive,
-            update              : handleSortUpdate, // This event is triggered when the user stopped sorting and the DOM position has changed.
-            stop                : handleSortStop    // This event is triggered when sorting has stopped.
+            revert: 1000,
+            connectWith: regionSelector,   // Sortable elements.
+            items: itemsToSortSelector,   // Elements to sort.
+            distance: 1,
+            delay: 150,
+            tolerance: 'pointer',
+            cursor: 'move',
+            cursorAt: cursorAt,
+            scrollSensitivity: Math.round(AdminLiveEdit.Util.getViewPortSize().height / 8),
+            placeholder: 'live-edit-drop-target-placeholder',
+            helper: createDragHelper,
+            zIndex: 1001000,
+            start: handleSortStart,  // This event is triggered when sorting starts.
+            over: handleDragOver,   // This event is triggered when a sortable item is moved into a connected list.
+            out: handleDragOut,    // This event is triggered when a sortable item is moved away from a connected list.
+            change: handleSortChange, // This event is triggered during sorting, but only when the DOM position has changed.
+            receive: handleReceive,
+            update: handleSortUpdate, // This event is triggered when the user stopped sorting and the DOM position has changed.
+            stop: handleSortStop    // This event is triggered when sorting has stopped.
         });
         // }).disableSelection(); // will not make contenteditable work.
     }
 
 
     function init() {
-        createSortable(itemsToSortSelector);
+        createSortable();
         registerGlobalListeners();
     }
 
@@ -253,19 +261,12 @@ AdminLiveEdit.DragDropSort = (function () {
     // Define public methods
 
     return {
-
         initialize: init,
-
-        refresh: refresh,
-
         enable: enableDragDrop,
-
         disable: disableDragDrop,
-
         isDragging: function () {
             return isDragging;
         }
-
     };
 
 }());

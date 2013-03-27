@@ -2,4 +2,6 @@ jQuery UI 1.9.2 bugs
 ====================
 
 Sortable:
+- Is it possible to add sortables to an existing sortable (region) ???
+  Now we have to create a new one each time a region (in layout) is added.
 - Items cannot be removed with the option method, http://bugs.jqueryui.com/ticket/8532

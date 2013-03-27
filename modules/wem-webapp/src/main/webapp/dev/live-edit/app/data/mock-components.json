@@ -5,92 +5,77 @@
             "name": "Parts",
             "components": [
                 {
-                    "key": "10007",
-                    "name": "Lorem Ipsum",
-                    "subtitle": "Filler text",
+                    "key": "10016",
+                    "type": "layout",
+                    "name": "2 Column Layout",
+                    "subtitle": "Layout",
                     "icon": "../app/images/srs.jpeg"
                 },
                 {
-                    "key": "10010",
-                    "name": "Page Banner: Service",
-                    "subtitle": "950px banner",
-                    "icon": "../app/images/srs.jpeg"
-                },
-                {
-                    "key": "10002",
-                    "name": "Tags",
+                    "key": "10011",
+                    "type": "part",
+                    "name": "Big banner",
                     "subtitle": "Subtitle",
                     "icon": "../app/images/srs.jpeg"
                 },
                 {
-                    "key": "10008",
-                    "name": "Upcomming Training",
+                    "key": "10007",
+                    "type": "paragraph",
+                    "name": "Lorem Ipsum Paragraph",
+                    "subtitle": "Filler text",
+                    "icon": "../app/images/srs.jpeg"
+                },
+                {
+                    "key": "10014",
+                    "type": "part",
+                    "name": "Operating message",
                     "subtitle": "Subtitle",
                     "icon": "../app/images/srs.jpeg"
                 },
                 {
                     "key": "10001",
+                    "type": "part",
                     "name": "Video",
                     "subtitle": "Subtitle",
                     "icon": "../app/images/srs.jpeg"
                 },
                 {
                     "key": "10003",
+                    "type": "part",
                     "name": "Vision and Values (doc)",
                     "subtitle": "Subtitle",
                     "icon": "../app/images/srs.jpeg"
                 },
                 {
-                    "key": "10011",
-                    "name": "Big banner",
-                    "subtitle": "Subtitle",
-                    "icon": "../app/images/srs.jpeg"
-                },
-                {
                     "key": "10013",
+                    "type": "part",
                     "name": "Sub menu",
                     "subtitle": "Subtitle",
                     "icon": "../app/images/srs.jpeg"
-                },
-                {
-                    "key": "10014",
-                    "name": "Operating message",
-                    "subtitle": "Subtitle",
-                    "icon": "../app/images/srs.jpeg"
                 }
-
             ]
         },
         {
             "name": "Advanced",
             "components": [
                 {
+                    "key": "10012",
+                    "type": "part",
+                    "name": "Carousel",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/srs.jpeg"
+                },
+                {
                     "key": "10004",
+                    "type": "part",
                     "name": "Contact Form",
                     "subtitle": "Subtitle",
                     "icon": "../app/images/srs.jpeg"
                 },
                 {
                     "key": "10005",
+                    "type": "part",
                     "name": "Press Release List",
-                    "subtitle": "Subtitle",
-                    "icon": "../app/images/srs.jpeg"
-                },
-                {
-                    "key": "10006",
-                    "name": "Twitranett",
-                    "subtitle": "Subtitle",
-                    "icon": "../app/images/srs.jpeg"
-                },
-                {
-                    "key": "10012",
-                    "name": "Carousel",
-                    "subtitle": "Subtitle",
-                    "icon": "../app/images/srs.jpeg"
-                },
-                {
-                    "key": "10015",
-                    "name": "Contact Form",
                     "subtitle": "Subtitle",
                     "icon": "../app/images/srs.jpeg"
                 }
