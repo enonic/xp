@@ -40,10 +40,11 @@ Ext.define('Admin.view.FileUploadWindow', {
                     me.close();
                 }
             })
-        ]
-        ;
+        ];
 
         this.callParent(arguments);
+
+        this.addEvents('uploadcomplete');
     },
 
     plupload: function () {
@@ -99,7 +100,7 @@ Ext.define('Admin.view.FileUploadWindow', {
     },
 
     onPluploadAfterrender: function (container) {
-
+        var me = this;
         var dropZoneEl = container.down('#dropZone').el;
 
         dropZoneEl.on('mouseenter', this.onDropZoneOver);
@@ -109,9 +110,8 @@ Ext.define('Admin.view.FileUploadWindow', {
             runtimes: 'gears,html5,flash',
             browse_button: dropZoneEl.dom.id,
             url: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/upload'),
-            uploadpath: '/Root/files',
             autoStart: false,
-            max_file_size: '2020mb',
+            max_file_size: '100mb',
             drop_element: dropZoneEl.dom.id,
             statusQueuedText: 'Ready to upload',
             statusUploadingText: 'Uploading ({0}%)',
@@ -153,15 +153,26 @@ Ext.define('Admin.view.FileUploadWindow', {
             container.down('#progressForm').update(up.total);
         });
 
+        this.uploader.bind('FileUploaded', function (up, file, response) {
+
+            // save server response to file
+            if (response && response.response) {
+                var json = Ext.JSON.decode(response.response);
+                if (json.success && json.items && json.items.length == 1) {
+                    file.response = json.items[0];
+                }
+            }
+
+        });
+
         this.uploader.bind('UploadComplete', function (up, files) {
             // resets counters
             up.total.reset();
             // remove uploaded files
-            for (var i = 0; i < files.length; i++) {
-                up.removeFile(files[i]);
-            }
+            var uploaded = up.splice();
 
             container.getLayout().setActiveItem('uploadForm');
+            me.fireEvent('uploadcomplete', me, uploaded);
         });
 
         this.uploader.init();

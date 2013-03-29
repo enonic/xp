@@ -59,13 +59,6 @@ Ext.define('Admin.controller.contentManager.BrowseToolbarController', {
                 change: function (slider, state) {
                     this.getContentDetailPanel().toggleLive();
                 }
-            },
-
-            // for test only
-            'browseToolbar *[action=uploadContent]': {
-                click: function (button, event) {
-                    this.getFileUploadWindow().show();
-                }
             }
         });
     },
@@ -117,15 +110,6 @@ Ext.define('Admin.controller.contentManager.BrowseToolbarController', {
         var win = Ext.ComponentQuery.query('newContentWindow')[0];
         if (!win) {
             win = Ext.create('widget.newContentWindow');
-        }
-        return win;
-    },
-
-    // for test only
-    getFileUploadWindow: function () {
-        var win = Ext.ComponentQuery.query('fileUploadWindow')[0];
-        if (!win) {
-            win = Ext.create('widget.fileUploadWindow');
         }
         return win;
     }

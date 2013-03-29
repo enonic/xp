@@ -44,10 +44,6 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
                 disabled: true,
                 action: 'moveContent'
             },
-            {
-                text: 'Upload Window Test',
-                action: 'uploadContent'
-            },
             '->',
             {
                 xtype: 'toggleslide',

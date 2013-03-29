@@ -1,10 +1,13 @@
 Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
     extend: 'Admin.view.contentManager.wizard.form.input.Base',
     alias: 'widget.EmbeddedImage',
-    fieldLabel: 'EmbeddedImage',
+
     requires: [
-        'Admin.store.contentManager.ContentStore'
+        'Admin.store.contentManager.ContentStore',
+        'Admin.view.FileUploadWindow'
     ],
+
+    fieldLabel: 'Embedded Image',
 
     initComponent: function () {
 
@@ -16,6 +19,14 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
             this.createUploadButton(),
             this.createViewForSelectedContent()
         ];
+
+        if (this.inputConfig && this.inputConfig.type) {
+            //TODO: use qualified name
+            var getRelationshipTypeCommand = {
+                qualifiedRelationshipTypeName: 'System:' + this.inputConfig.type.name
+            };
+            Admin.lib.RemoteService.relationshipType_get(getRelationshipTypeCommand, this.onRelationshipTypeReceived);
+        }
 
         this.callParent(arguments);
     },
@@ -56,80 +67,19 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
         });
     },
 
-    /**
-     * @private
-     */
-    createHiddenInput: function () {
-        return {
-            xtype: 'hiddenfield',
-            name: this.name,
-            itemId: this.name, // TODO: Is this unique enough?
-            value: ''
-        };
-    },
-
 
     /**
      * @private
      */
-    createComboBox: function () {
-        var me = this;
-
-        var template = new Ext.XTemplate(
-            '<tpl for=".">',
-            '   <div class="x-boundlist-item">',
-            '       <div>',
-            '           <img src="{iconUrl}?size=32" alt="{displayName}" style="float:left; padding-right: 5px;"/>',
-            '           <div>',
-            '               <h5>{displayName}</h5>',
-            '               <div style="color: #666">{path}</div>',
-            '           </div>',
-            '       </div>',
-            '   </div>',
-            '</tpl>'
-        );
-
-        var combo = {
-            xtype: 'combo',
-            emptyText: 'Start typing',
-            submitValue: false,
-            hideTrigger: true,
-            forceSelection: true,
-            minChars: 1,
-            queryMode: 'remote',
-            queryParam: 'fulltext',
-            autoSelect: false,
-
-            displayField: 'displayName',
-            valueField: 'id',
-            tpl: template,
-
-            store: new Admin.store.contentManager.ContentStore(),
-            listeners: {
-                select: function (combo, records) {
-                    combo.setValue('');
-                    me.onSelectContent(records);
-                }
+    onRelationshipTypeReceived: function (response) {
+        if (response && response.success) {
+            if (this.rendered) {
+                this.el.down('.admin-image-type').attr('src', response.iconUrl);
+            } else {
+                this.relationshipTypeIconUrl = response.iconUrl;
             }
-        };
-
-        return combo;
-    },
-
-
-    /**
-     * @private
-     */
-    onSelectContent: function (contentModels) {
-        var contentModel = contentModels[0];
-        var isAlreadyAdded = this.selectedContentStore.findRecord('id', contentModel.getId());
-        if (isAlreadyAdded) {
-            this.alertContentIsAdded(contentModel);
-            return;
         }
-        this.selectedContentStore.add(contentModel);
     },
-
 
     /**
      * @private
@@ -155,6 +105,111 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
         });
     },
 
+    /**
+     * @private
+     */
+    createHiddenInput: function () {
+        return {
+            xtype: 'hiddenfield',
+            name: this.name,
+            itemId: this.name, // TODO: Is this unique enough?
+            value: ''
+        };
+    },
+
+    /**
+     * @private
+     */
+    createComboBox: function () {
+        var me = this;
+
+        // default template with icon and library link added
+        var fieldTpl = [
+            '<div class="{hiddenDataCls}" role="presentation"></div>',
+            '<input id="{id}" type="{type}" {inputAttrTpl} class="{fieldCls} {typeCls} {editableCls}" autocomplete="off"',
+            '<tpl if="value"> value="{[Ext.util.Format.htmlEncode(values.value)]}"</tpl>',
+            '<tpl if="name"> name="{name}"</tpl>',
+            '<tpl if="placeholder"> placeholder="{placeholder}"</tpl>',
+            '<tpl if="size"> size="{size}"</tpl>',
+            '<tpl if="maxLength !== undefined"> maxlength="{maxLength}"</tpl>',
+            '<tpl if="readOnly"> readonly="readonly"</tpl>',
+            '<tpl if="disabled"> disabled="disabled"</tpl>',
+            '<tpl if="tabIdx"> tabIndex="{tabIdx}"</tpl>',
+            '<tpl if="fieldStyle"> style="{fieldStyle}"</tpl>',
+            '/>',
+            '<img src="{relationshipTypeIconUrl}" class="admin-image-icon"/>',
+            '<a href="#" class="admin-library-button">Open Library</a>',
+            {compiled: true, disableFormats: true}
+        ];
+
+        var listItemTpl = [
+            '<tpl for=".">',
+            '   <div class="x-boundlist-item">',
+            '       <div>',
+            '           <img src="{iconUrl}?size=48" alt="{displayName}"/>',
+            '           <div class="info">',
+            '               <h6>{displayName}</h6>',
+            '               <div style="color: #666">{path}</div>',
+            '           </div>',
+            '       </div>',
+            '   </div>',
+            '</tpl>'
+        ];
+
+        var combo = {
+            xtype: 'combo',
+            emptyText: 'Start typing',
+            submitValue: false,
+            hideTrigger: true,
+            forceSelection: true,
+            minChars: 1,
+            queryMode: 'remote',
+            queryParam: 'fulltext',
+            autoSelect: false,
+
+            displayField: 'displayName',
+            valueField: 'id',
+            tpl: listItemTpl,
+            fieldSubTpl: fieldTpl,
+            cls: 'admin-embedded-image-combo',
+            listConfig: {
+                cls: 'admin-embedded-image-list',
+                emptyText: 'No matching items'
+            },
+
+            store: new Admin.store.contentManager.ContentStore(),
+            listeners: {
+                select: function (combo, records) {
+                    combo.setValue('');
+                    me.onContentSelected(records);
+                },
+                afterrender: function (cmp) {
+                    cmp.el.on('click', me.onLibraryButtonClicked, me, {
+                        delegate: 'a.admin-library-button'
+                    });
+                }
+            }
+        };
+
+        return combo;
+    },
+
+    /**
+     * @private
+     */
+    createUploadButton: function () {
+        var me = this;
+        return {
+            xtype: 'button',
+            itemId: 'uploadButton',
+            text: 'Upload image',
+            maxWidth: 140,
+            margin: '5 0',
+            handler: function () {
+                me.getFileUploadWindow().show();
+            }
+        };
+    },
 
     /**
      * @private
@@ -164,12 +219,11 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
 
         var template = new Ext.XTemplate(
             '<tpl for=".">',
-            '   <div class="admin-related-item" style="padding-top:3px">',
-            '       <img src="{iconUrl}" alt="{displayName}"/>',
-            '       <div class="center-column">',
+            '   <div class="admin-embedded-image" style="background-image: url({iconUrl})">',
+            '       <div class="top-bar"><a href="javascript:;" class="admin-remove-button">Remove</a></div>',
+            '       <div class="bottom-bar">',
             '           <h6>{displayName}</h6>',
             '       </div>',
-            '       <div class="right-column"><a href="javascript:;" class="remove-related-item-button">Remove</a></div>',
             '   </div>',
             '</tpl>'
         );
@@ -177,13 +231,15 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
         return Ext.create('Ext.view.View', {
             store: me.selectedContentStore,
             tpl: template,
-            itemSelector: 'div.admin-related-item',
+            itemSelector: 'div.admin-embedded-image',
             emptyText: 'No items selected',
+            trackOver: true,
+            overItemCls: 'over',
             deferEmptyText: false,
             listeners: {
                 itemclick: function (view, contentModel, item, index, e) {
                     var clickedElement = Ext.fly(e.target);
-                    if (clickedElement.hasCls('remove-related-item-button')) {
+                    if (clickedElement.hasCls('admin-remove-button')) {
                         me.selectedContentStore.remove(contentModel);
                     }
                 }
@@ -191,21 +247,6 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
         });
     },
 
-    /**
-     * @private
-     */
-    createUploadButton: function () {
-        var uploadButton = {
-            xtype: 'button',
-            itemId: 'uploadButton',
-            text: 'Upload image',
-            maxWidth: 150,
-            handler: function () {
-                console.log('TODO: show image uploader');
-            }
-        };
-        return uploadButton;
-    },
 
     /**
      * @private
@@ -214,7 +255,6 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
         console.log('Temporary alert! Can not have duplicates in Image input\n"' + contentModel.get('path') + '" has already been added');
         this.down('combobox').focus('');
     },
-
 
     /**
      * @private
@@ -228,6 +268,55 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
             });
             this.getComponent(this.name).setValue(ids);
         }
+    },
+
+
+    /**
+     * @private
+     */
+    onContentSelected: function (contentModels) {
+        var contentModel = contentModels[0];
+        var isAlreadyAdded = this.selectedContentStore.findRecord('id', contentModel.getId());
+        if (isAlreadyAdded) {
+            this.alertContentIsAdded(contentModel);
+            return;
+        }
+        this.selectedContentStore.add(contentModel);
+    },
+
+    /**
+     * @private
+     */
+    onLibraryButtonClicked: function (event, target) {
+        alert('Open library now');
+    },
+
+    /**
+     * @private
+     */
+    onFilesUploaded: function (win, files) {
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            var contentModel = Ext.create('Admin.model.contentManager.ContentModel', {
+                displayName: file.response.name,
+                iconUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/upload/' + file.response.id)
+            });
+            this.selectedContentStore.add(contentModel);
+        }
+        win.close();
+    },
+
+
+    /**
+     * @private
+     */
+    getFileUploadWindow: function () {
+        var win = Ext.ComponentQuery.query('fileUploadWindow')[0];
+        if (!win) {
+            win = Ext.create('widget.fileUploadWindow');
+            win.on('uploadcomplete', this.onFilesUploaded, this);
+        }
+        return win;
     }
 
 });
