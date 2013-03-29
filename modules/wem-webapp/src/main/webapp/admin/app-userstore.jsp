@@ -53,7 +53,7 @@
 
       requires: [
         'Admin.MessageBus',
-        'Admin.view.FeedbackBox',
+        'Admin.NotificationManager',
         'Admin.view.TabPanel',
         'Admin.lib.UriHelper',
         'Admin.lib.RemoteService'
