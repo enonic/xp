@@ -9,6 +9,7 @@ import org.joda.time.DateMidnight;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
@@ -17,12 +18,15 @@ import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.content.schema.content.form.inputtype.RelationshipConfig;
+import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.web.json.ObjectMapperHelper;
 
 import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
 import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.content.schema.content.form.inputtype.RelationshipConfig.newRelationshipConfig;
 import static org.junit.Assert.*;
 
 public class RootDataSetParserTest
@@ -33,7 +37,9 @@ public class RootDataSetParserTest
     public void parse_simple_types()
         throws IOException
     {
-        final FormItemSet mySet = newFormItemSet().name( "mySet" ).build();
+        RelationshipConfig relationshipConfig = newRelationshipConfig().relationshipType( QualifiedRelationshipTypeName.LIKE ).build();
+
+        FormItemSet mySet = newFormItemSet().name( "mySet" ).build();
         mySet.add( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         final ContentType contentType = newContentType().
@@ -45,6 +51,8 @@ public class RootDataSetParserTest
             addFormItem( newInput().name( "myDate" ).inputType( InputTypes.DATE ).build() ).
             addFormItem( newInput().name( "myWholeNumber" ).inputType( InputTypes.WHOLE_NUMBER ).build() ).
             addFormItem( newInput().name( "myDecimalNumber" ).inputType( InputTypes.DECIMAL_NUMBER ).build() ).
+            addFormItem(
+                newInput().name( "myRelationship" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( relationshipConfig ).build() ).
             addFormItem( mySet ).
             build();
 
@@ -56,6 +64,7 @@ public class RootDataSetParserTest
         json.append( "\"myDate\": \"2012-08-31\"," ).append( "\n" );
         json.append( "\"myWholeNumber\": \"1\"," ).append( "\n" );
         json.append( "\"myDecimalNumber\": \"1.1\"," ).append( "\n" );
+        json.append( "\"myRelationship\": \"ABCDEF\"," ).append( "\n" );
         json.append( "\"mySet.myTextLine\": \"Inner line\"" ).append( "\n" );
         json.append( "}" );
 
@@ -73,6 +82,7 @@ public class RootDataSetParserTest
         assertEquals( "<root>XML</root>", parsedRootDataSet.getData( EntryPath.from( "myXml" ) ).getObject() );
         assertEquals( 1L, parsedRootDataSet.getData( EntryPath.from( "myWholeNumber" ) ).getObject() );
         assertEquals( 1.1, parsedRootDataSet.getData( EntryPath.from( "myDecimalNumber" ) ).getObject() );
+        assertEquals( ContentId.from( "ABCDEF" ), parsedRootDataSet.getData( EntryPath.from( "myRelationship" ) ).getObject() );
         assertEquals( "Inner line", parsedRootDataSet.getData( EntryPath.from( "mySet.myTextLine" ) ).getObject() );
     }
 
