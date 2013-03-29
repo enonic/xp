@@ -208,6 +208,10 @@ Ext.define('Admin.view.WizardPanel', {
 
             var itemForm = Ext.isFunction(item.getForm) ? item.getForm() : undefined;
             if (itemForm) {
+                if (Ext.isFunction(cmp.washDirtyForm)) {
+                    cmp.washDirtyForm(itemForm);  // after load
+                }
+
                 Ext.apply(itemForm, {
                     onValidityChange: cmp.formOnValidityChange,
                     _boundItems: undefined
