@@ -8,25 +8,6 @@
     "form": [
         {
             "Input": {
-                "name": "title",
-                "label": "Title",
-                "immutable": false,
-                "occurrences": {
-                    "minimum": 1,
-                    "maximum": 1
-                },
-                "indexed": false,
-                "customText": null,
-                "validationRegexp": null,
-                "helpText": "Article title",
-                "type": {
-                    "name": "TextLine",
-                    "builtIn": true
-                }
-            }
-        },
-        {
-            "Input": {
                 "name": "htmlarea_text",
                 "label": "HTML Area",
                 "immutable": false,
