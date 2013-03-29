@@ -42,6 +42,11 @@ final class RootDataSetParser
             if ( valueNode.isValueNode() )
             {
                 final String fieldValue = valueNode.getTextValue();
+                if ( fieldValue == null )
+                {
+                    continue;
+                }
+
                 final Input input = contentType.form().getInput( FormItemPath.from( path.resolvePathElementNames() ) );
                 if ( input != null )
                 {
