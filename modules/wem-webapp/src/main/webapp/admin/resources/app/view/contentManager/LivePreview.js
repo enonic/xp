@@ -14,7 +14,6 @@ Ext.define('Admin.view.contentManager.LivePreview', {
             {
                 xtype: 'panel',
                 layout: 'hbox',
-                margin: '5 20 0 0',
                 border: 0,
                 dock: 'top',
                 items: [
