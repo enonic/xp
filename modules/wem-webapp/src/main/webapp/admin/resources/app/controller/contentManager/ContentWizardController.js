@@ -149,6 +149,10 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                     opts: {}
                 });
 
+                if (Ext.isFunction(contentWizard.washDirtyForms)) {
+                    contentWizard.washDirtyForms();
+                }
+
                 me.getContentTreeGridPanel().refresh();
             }
         };
