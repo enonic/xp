@@ -225,7 +225,6 @@ public class Content_usageTest
             DataSet invoiceLineDS = invoiceLine.toDataSet();
             System.out.println( invoiceLineDS.getData( "text" ).getString() + ": " + invoiceLineDS.getData( "money" ).getString() );
         }
-
     }
 
     @Test
@@ -238,8 +237,8 @@ public class Content_usageTest
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.add( newDate().name( "invoiceDate" ).value( invoice.invoiceDate.toDateMidnight() ).build() );
-        rootDataSet.add( newText().name( "recipient" ).value( invoice.recipient ).build() );
+        rootDataSet.add( newDate( "invoiceDate" ).value( invoice.invoiceDate.toDateMidnight() ) );
+        rootDataSet.add( newText( "recipient" ).value( invoice.recipient ) );
 
         for ( InvoiceLine line : invoice.lines )
         {
