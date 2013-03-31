@@ -22,7 +22,7 @@ public class Data
 {
     private Value value;
 
-    Data( final BaseBuilder builder )
+    Data( final AbstractBaseBuilder builder )
     {
         super( builder.name );
         if ( builder.value == null )
@@ -242,41 +242,6 @@ public class Data
         return new NameBuilder().name( name );
     }
 
-    public static Text.TextBuilder newText()
-    {
-        return new Text.TextBuilder();
-    }
-
-    public static WholeNumber.WholeNumberBuilder newWholeNumber()
-    {
-        return new WholeNumber.WholeNumberBuilder();
-    }
-
-    public static DecimalNumber.DecimalNumberBuilder newDecimalNumber()
-    {
-        return new DecimalNumber.DecimalNumberBuilder();
-    }
-
-    public static Date.DateBuilder newDate()
-    {
-        return new Date.DateBuilder();
-    }
-
-    public static ContentReference.Builder newContentReference()
-    {
-        return ContentReference.newContentReferenceBuilder();
-    }
-
-    public static HtmlPart.HtmlPartBuilder newHtmlPart()
-    {
-        return new HtmlPart.HtmlPartBuilder();
-    }
-
-    public static Xml.XmlBuilder newXml()
-    {
-        return new Xml.XmlBuilder();
-    }
-
     public static class NameBuilder
     {
         private final Builder builder = new Builder();
@@ -331,11 +296,12 @@ public class Data
     }
 
     public static class Builder
-        extends BaseBuilder<Builder>
+        extends AbstractNameBuilder<Builder>
     {
         public Builder type( BaseDataType value )
         {
-            return super.setType( value );
+            super.setType( value );
+            return this;
         }
 
         @Override
@@ -362,15 +328,10 @@ public class Data
         }
     }
 
-    public abstract static class BaseBuilder<T extends BaseBuilder>
+    public abstract static class AbstractNameBuilder<T extends AbstractNameBuilder>
+        extends AbstractBaseBuilder
     {
-        private String name;
-
-        private Value.Builder valueBuilder = Value.newValue();
-
-        private Value value;
-
-        public BaseBuilder()
+        public AbstractNameBuilder()
         {
         }
 
@@ -382,29 +343,44 @@ public class Data
 
         public T name( final String value )
         {
-            this.name = value;
-            return getThis();
-        }
-
-        T setType( final BaseDataType value )
-        {
-            this.valueBuilder.type( value );
-            return getThis();
-        }
-
-        T setValue( final Object value )
-        {
-            this.valueBuilder.value( value );
-            return getThis();
-        }
-
-        T setValue( final Value value )
-        {
-            this.value = value;
+            setName( value );
             return getThis();
         }
 
         public abstract Data build();
+    }
+
+    public abstract static class AbstractBaseBuilder
+    {
+        private String name;
+
+        private Value.Builder valueBuilder = Value.newValue();
+
+        private Value value;
+
+        AbstractBaseBuilder()
+        {
+        }
+
+        void setName( final String value )
+        {
+            this.name = value;
+        }
+
+        void setType( final BaseDataType value )
+        {
+            this.valueBuilder.type( value );
+        }
+
+        void setValue( final Object value )
+        {
+            this.valueBuilder.value( value );
+        }
+
+        void setValue( final Value value )
+        {
+            this.value = value;
+        }
     }
 
     public final static class ContentReference
@@ -415,7 +391,7 @@ public class Data
             super( newContentReferenceBuilder().name( name ).value( value ) );
         }
 
-        ContentReference( final Builder builder )
+        private ContentReference( final AbstractBaseBuilder builder )
         {
             super( builder );
         }
@@ -427,7 +403,7 @@ public class Data
 
 
         public static class Builder
-            extends BaseBuilder<Builder>
+            extends AbstractNameBuilder<Builder>
         {
             public Builder()
             {
@@ -468,9 +444,9 @@ public class Data
             super( newDate().name( name ).value( value ) );
         }
 
-        Date( final DateBuilder dateBuilder )
+        private Date( final AbstractBaseBuilder builder )
         {
-            super( dateBuilder );
+            super( builder );
         }
 
         public static DateBuilder newDate()
@@ -479,7 +455,7 @@ public class Data
         }
 
         public static class DateBuilder
-            extends BaseBuilder<DateBuilder>
+            extends AbstractNameBuilder<DateBuilder>
         {
             public DateBuilder()
             {
@@ -504,6 +480,33 @@ public class Data
                 return new Date( this );
             }
         }
+
+        public static DateValueBuilder newDate( final String name )
+        {
+            return new DateValueBuilder( name );
+        }
+
+        public static class DateValueBuilder
+            extends AbstractBaseBuilder
+        {
+            private DateValueBuilder( final String name )
+            {
+                setType( DataTypes.DATE_MIDNIGHT );
+                setName( name );
+            }
+
+            public Date value( final DateMidnight value )
+            {
+                setValue( value );
+                return new Date( this );
+            }
+
+            public Date value( final String value )
+            {
+                setValue( JavaType.DATE_MIDNIGHT.convertFrom( value ) );
+                return new Date( this );
+            }
+        }
     }
 
     public final static class DecimalNumber
@@ -514,9 +517,9 @@ public class Data
             super( newDecimalNumber().name( name ).value( value ) );
         }
 
-        DecimalNumber( final DecimalNumberBuilder decimalNumberBuilder )
+        private DecimalNumber( final AbstractBaseBuilder builder )
         {
-            super( decimalNumberBuilder );
+            super( builder );
         }
 
         public static DecimalNumberBuilder newDecimalNumber()
@@ -525,11 +528,17 @@ public class Data
         }
 
         public static class DecimalNumberBuilder
-            extends BaseBuilder<DecimalNumberBuilder>
+            extends AbstractNameBuilder<DecimalNumberBuilder>
         {
-            public DecimalNumberBuilder()
+            private DecimalNumberBuilder()
             {
                 setType( DataTypes.DECIMAL_NUMBER );
+            }
+
+            public DecimalNumberBuilder( final String name )
+            {
+                setType( DataTypes.DECIMAL_NUMBER );
+                setName( name );
             }
 
             public DecimalNumberBuilder value( final Double value )
@@ -544,6 +553,27 @@ public class Data
                 return new DecimalNumber( this );
             }
         }
+
+        public static DecimalNumberValueBuilder newDecimalNumber( final String name )
+        {
+            return new DecimalNumberValueBuilder( name );
+        }
+
+        public static class DecimalNumberValueBuilder
+            extends AbstractBaseBuilder
+        {
+            private DecimalNumberValueBuilder( final String name )
+            {
+                setType( DataTypes.DECIMAL_NUMBER );
+                setName( name );
+            }
+
+            public DecimalNumber value( final Double value )
+            {
+                setValue( value );
+                return new DecimalNumber( this );
+            }
+        }
     }
 
     public static final class HtmlPart
@@ -554,7 +584,7 @@ public class Data
             super( newHtmlPart().name( name ).value( value ) );
         }
 
-        public HtmlPart( final HtmlPartBuilder builder )
+        private HtmlPart( final AbstractBaseBuilder builder )
         {
             super( builder );
         }
@@ -565,7 +595,7 @@ public class Data
         }
 
         public static class HtmlPartBuilder
-            extends BaseBuilder<HtmlPartBuilder>
+            extends AbstractNameBuilder<HtmlPartBuilder>
         {
             public HtmlPartBuilder()
             {
@@ -584,6 +614,27 @@ public class Data
                 return new HtmlPart( this );
             }
         }
+
+        public static HtmlPartValueBuilder newHtmlPart( final String name )
+        {
+            return new HtmlPartValueBuilder( name );
+        }
+
+        public static class HtmlPartValueBuilder
+            extends AbstractBaseBuilder
+        {
+            private HtmlPartValueBuilder( final String name )
+            {
+                setType( DataTypes.HTML_PART );
+                setName( name );
+            }
+
+            public HtmlPart value( final String value )
+            {
+                setValue( value );
+                return new HtmlPart( this );
+            }
+        }
     }
 
     public final static class Text
@@ -594,7 +645,7 @@ public class Data
             super( newText().name( name ).value( value ) );
         }
 
-        public Text( final TextBuilder builder )
+        private Text( final AbstractBaseBuilder builder )
         {
             super( builder );
         }
@@ -605,7 +656,7 @@ public class Data
         }
 
         public static class TextBuilder
-            extends BaseBuilder<TextBuilder>
+            extends AbstractNameBuilder<TextBuilder>
         {
             public TextBuilder()
             {
@@ -624,6 +675,27 @@ public class Data
                 return new Text( this );
             }
         }
+
+        public static TextValueBuilder newText( final String name )
+        {
+            return new TextValueBuilder( name );
+        }
+
+        public static class TextValueBuilder
+            extends AbstractBaseBuilder
+        {
+            private TextValueBuilder( final String name )
+            {
+                setType( DataTypes.TEXT );
+                setName( name );
+            }
+
+            public Text value( final String value )
+            {
+                setValue( value );
+                return new Text( this );
+            }
+        }
     }
 
     public final static class WholeNumber
@@ -634,7 +706,7 @@ public class Data
             super( newWholeNumber().name( name ).value( value ) );
         }
 
-        public WholeNumber( final WholeNumberBuilder builder )
+        private WholeNumber( final AbstractBaseBuilder builder )
         {
             super( builder );
         }
@@ -645,9 +717,9 @@ public class Data
         }
 
         public static class WholeNumberBuilder
-            extends BaseBuilder<WholeNumberBuilder>
+            extends AbstractNameBuilder<WholeNumberBuilder>
         {
-            public WholeNumberBuilder()
+            private WholeNumberBuilder()
             {
                 setType( DataTypes.WHOLE_NUMBER );
             }
@@ -664,6 +736,27 @@ public class Data
                 return new WholeNumber( this );
             }
         }
+
+        public static WholeNumberValueBuilder newWholeNumber( final String name )
+        {
+            return new WholeNumberValueBuilder( name );
+        }
+
+        public static class WholeNumberValueBuilder
+            extends AbstractBaseBuilder
+        {
+            private WholeNumberValueBuilder( final String name )
+            {
+                setType( DataTypes.WHOLE_NUMBER );
+                setName( name );
+            }
+
+            public WholeNumber value( final Long value )
+            {
+                setValue( value );
+                return new WholeNumber( this );
+            }
+        }
     }
 
     public static final class Xml
@@ -674,7 +767,7 @@ public class Data
             super( newXml().name( name ).value( value ) );
         }
 
-        public Xml( final XmlBuilder builder )
+        private Xml( final AbstractBaseBuilder builder )
         {
             super( builder );
         }
@@ -685,7 +778,7 @@ public class Data
         }
 
         public static class XmlBuilder
-            extends BaseBuilder<XmlBuilder>
+            extends AbstractNameBuilder<XmlBuilder>
         {
             public XmlBuilder()
             {
@@ -701,6 +794,28 @@ public class Data
             @Override
             public Data build()
             {
+                return new Xml( this );
+            }
+        }
+
+
+        public static XmlValueBuilder newXml( final String name )
+        {
+            return new XmlValueBuilder( name );
+        }
+
+        public static class XmlValueBuilder
+            extends AbstractBaseBuilder
+        {
+            private XmlValueBuilder( final String name )
+            {
+                setType( DataTypes.XML );
+                setName( name );
+            }
+
+            public Xml value( final String value )
+            {
+                setValue( value );
                 return new Xml( this );
             }
         }

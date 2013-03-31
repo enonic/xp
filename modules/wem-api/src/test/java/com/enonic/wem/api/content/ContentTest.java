@@ -18,9 +18,9 @@ import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.Content.newContent;
+import static com.enonic.wem.api.content.data.Data.Text.newText;
+import static com.enonic.wem.api.content.data.Data.Xml.newXml;
 import static com.enonic.wem.api.content.data.Data.newData;
-import static com.enonic.wem.api.content.data.Data.newText;
-import static com.enonic.wem.api.content.data.Data.newXml;
 import static com.enonic.wem.api.content.data.DataSet.newDataSet;
 import static com.enonic.wem.api.content.data.DataSet.newRootDataSet;
 import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;

@@ -17,12 +17,12 @@ import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.BaseDataType;
 import com.enonic.wem.api.content.data.type.DataTypes;
 
+import static com.enonic.wem.api.content.data.Data.Date.newDate;
+import static com.enonic.wem.api.content.data.Data.DecimalNumber.newDecimalNumber;
+import static com.enonic.wem.api.content.data.Data.HtmlPart.newHtmlPart;
+import static com.enonic.wem.api.content.data.Data.Text.newText;
+import static com.enonic.wem.api.content.data.Data.WholeNumber.newWholeNumber;
 import static com.enonic.wem.api.content.data.Data.newData;
-import static com.enonic.wem.api.content.data.Data.newDate;
-import static com.enonic.wem.api.content.data.Data.newDecimalNumber;
-import static com.enonic.wem.api.content.data.Data.newHtmlPart;
-import static com.enonic.wem.api.content.data.Data.newText;
-import static com.enonic.wem.api.content.data.Data.newWholeNumber;
 import static com.enonic.wem.api.content.data.DataSet.newDataSet;
 import static com.enonic.wem.api.content.data.type.DataTypes.DATE_MIDNIGHT;
 import static com.enonic.wem.api.content.data.type.DataTypes.DECIMAL_NUMBER;
@@ -88,11 +88,11 @@ public class Content_usageTest
         DataSet dataSet = new RootDataSet();
 
         // exercise
-        dataSet.add( newText().name( "myText" ).value( "abc" ).build() );
-        dataSet.add( newWholeNumber().name( "myNum" ).value( 123L ).build() );
-        dataSet.add( newDecimalNumber().name( "myDec" ).value( 123.123 ).build() );
-        dataSet.add( newDate().name( "myDate" ).value( new DateMidnight( 2013, 1, 13 ) ).build() );
-        dataSet.add( newHtmlPart().name( "myHtml" ).value( "<p>abc</p>" ).build() );
+        dataSet.add( newText( "myText" ).value( "abc" ) );
+        dataSet.add( newWholeNumber( "myNum" ).value( 123L ) );
+        dataSet.add( newDecimalNumber( "myDec" ).value( 123.123 ) );
+        dataSet.add( newDate( "myDate" ).value( new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.add( newHtmlPart( "myHtml" ).value( "<p>abc</p>" ) );
 
         // verify
         assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
