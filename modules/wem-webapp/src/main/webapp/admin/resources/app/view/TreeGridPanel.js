@@ -188,7 +188,7 @@ Ext.define('Admin.view.TreeGridPanel', {
         }
     },
 
-    setFilter : function (params) {
+    setContentSearchParams : function (params) {
         var activeList = this.getActiveList();
         var currentStore = activeList.store;
         currentStore.getProxy().extraParams = params;
