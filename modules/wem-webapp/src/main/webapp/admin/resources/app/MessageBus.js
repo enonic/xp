@@ -7,7 +7,27 @@ Ext.define('Admin.MessageBus', {
      * @param config {title, message, opts}
      */
     showFeedback: function (config) {
-        this.fireEvent('feedbackBox.show', config);
+        return window.top.Admin.NotificationManager.notify(config);
+    },
+
+
+    showError: function (message) {
+        return window.top.Admin.NotificationManager.error(message);
+    },
+
+
+    showGeneral: function (contentName, resultCallback, publishCallback) {
+        return window.top.Admin.NotificationManager.general(contentName, resultCallback, publishCallback);
+    },
+
+
+    showPublish: function (contentName, publishCallback, closeCallback) {
+        return window.top.Admin.NotificationManager.publish(contentName, publishCallback, closeCallback);
+    },
+
+
+    removeNotification: function (notificationId) {
+        window.top.Admin.NotificationManager.remove(notificationId);
     },
 
 
@@ -33,6 +53,7 @@ Ext.define('Admin.MessageBus', {
     // Just for prototyping purposes
     showLiveEditTestSettingsWindow: function (config) {
         this.fireEvent('liveEdit.showTestSettingsWindow', config);
+
     }
 
 });

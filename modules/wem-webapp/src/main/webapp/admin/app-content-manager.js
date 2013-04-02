@@ -17,7 +17,7 @@ Ext.application({
 
     requires: [
         'Admin.MessageBus',
-        'Admin.view.FeedbackBox',
+        'Admin.NotificationManager',
         'Admin.view.TabPanel'
     ],
 
