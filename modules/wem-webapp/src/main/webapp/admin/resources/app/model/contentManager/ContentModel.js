@@ -1,5 +1,6 @@
 Ext.define('Admin.model.contentManager.ContentModel', {
     extend: 'Ext.data.Model',
+    requires: ['Ext.data.UuidGenerator'],
 
     fields: [
         'id', 'path', 'name', 'type', 'displayName', 'owner', 'modifier', 'iconUrl',
@@ -17,5 +18,6 @@ Ext.define('Admin.model.contentManager.ContentModel', {
         }
     ],
 
-    idProperty: 'id'
+    idProperty: 'idgen',
+    idgen: 'uuid'
 });

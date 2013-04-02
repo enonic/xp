@@ -8,6 +8,8 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
+import com.google.common.collect.Lists;
+
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
@@ -47,6 +49,8 @@ public class FindContentJsonResult
         {
             final ArrayNode facets = json.putArray( "facets" );
 
+            final List<QueryFacetResultSet> queries = Lists.newArrayList();
+
             for ( FacetResultSet facetResultSet : facetsResultSet )
             {
                 if ( facetResultSet instanceof TermsFacetResultSet )
@@ -63,9 +67,11 @@ public class FindContentJsonResult
                 }
                 else if ( facetResultSet instanceof QueryFacetResultSet )
                 {
-                    serializeFacet( facets.addObject(), (QueryFacetResultSet) facetResultSet );
+                    queries.add( (QueryFacetResultSet) facetResultSet );
                 }
             }
+
+            serializeFacet( facets.addObject(), queries  );
         }
     }
 
@@ -123,12 +129,20 @@ public class FindContentJsonResult
         }
     }
 
-    private void serializeFacet( final ObjectNode json, final QueryFacetResultSet queryFacetResultSet )
+    private void serializeFacet( final ObjectNode json, final List<QueryFacetResultSet> queries )
     {
-        json.put( "name", queryFacetResultSet.getName() );
-        json.put( "_type", "query" );
+        json.put( "name", "ranges" );
+        json.put( "_type", "terms" );
 
-        json.put( "count", queryFacetResultSet.getCount() );
+        final ArrayNode terms = json.putArray( "terms" );
+
+        for ( final QueryFacetResultSet queryFacetResultSet : queries )
+        {
+            final ObjectNode facetObject = terms.addObject();
+            facetObject.put( "name", queryFacetResultSet.getName() );
+            facetObject.put( "_type", "query" );
+            facetObject.put( "count", queryFacetResultSet.getCount() );
+        }
     }
 
     private JsonNode serialize( final List<Content> list )

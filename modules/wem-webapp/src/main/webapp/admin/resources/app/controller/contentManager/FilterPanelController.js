@@ -33,77 +33,92 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
     },
 
     doSearch: function (values) {
+        var now = new Date();
+        var oneDayAgo = new Date();
+        var oneWeekAgo = new Date();
+        var oneHourAgo = new Date();
+        oneDayAgo.setDate(now.getDate() - 1);
+        oneWeekAgo.setDate(now.getDate() - 7);
+        Admin.lib.DateHelper.addHours(oneHourAgo, -1);
 
-        function generateFacetsDef() {
-            var now = new Date();
-            var oneDayAgo = new Date();
-            var oneWeekAgo = new Date();
-            var oneHourAgo = new Date();
-            oneDayAgo.setDate(now.getDate() - 1);
-            oneWeekAgo.setDate(now.getDate() - 7);
-            Admin.lib.DateHelper.addHours(oneHourAgo, -1);
-
-            var facetDef = {
-                "space": {
-                    "terms": {
-                        "field": "space",
-                        "size": 10,
-                        "all_terms": true,
-                        "order": "term"
-                    }
-                },
-                "type": {
-                    "terms": {
-                        "field": "contentType",
-                        "size": 10,
-                        "all_terms": true,
-                        "order": "term"
-                    }
-                },
-                ">1 day": {
-                    "query": {
-                        "range": {
-                            "lastModified.date": {
-                                "from": oneDayAgo,
-                                "include_lower": true
-                            }
+        var facetDef = {
+            "space": {
+                "terms": {
+                    "field": "space",
+                    "size": 10,
+                    "all_terms": true,
+                    "order": "term"
+                }
+            },
+            "type": {
+                "terms": {
+                    "field": "contentType",
+                    "size": 10,
+                    "all_terms": true,
+                    "order": "term"
+                }
+            },
+            ">1 day": {
+                "query": {
+                    "range": {
+                        "lastModified.date": {
+                            "from": oneDayAgo,
+                            "include_lower": true
                         }
                     }
-                },
-                ">1 hour": {
-                    "query": {
-                        "range": {
-                            "lastModified.date": {
-                                "from": oneHourAgo,
-                                "include_lower": true
-                            }
+                }
+            },
+            ">1 hour": {
+                "query": {
+                    "range": {
+                        "lastModified.date": {
+                            "from": oneHourAgo,
+                            "include_lower": true
                         }
                     }
-                },
-                ">1 week": {
-                    "query": {
-                        "range": {
-                            "lastModified.date": {
-                                "from": oneWeekAgo,
-                                "include_lower": true
-                            }
+                }
+            },
+            ">1 week": {
+                "query": {
+                    "range": {
+                        "lastModified.date": {
+                            "from": oneWeekAgo,
+                            "include_lower": true
                         }
                     }
                 }
             }
-            return facetDef;
-        }
+        };
 
         // set browse tab active
         this.getCmsTabPanel().setActiveTab(0);
 
+        var params = { fulltext: values.query, include: true, facets: facetDef };
+        var treeGridPanel = this.getContentTreeGridPanel();
         var filterPanel = this.getContentFilter();
 
-        // set the list mode
-        var treeGridPanel = this.getContentTreeGridPanel();
-        treeGridPanel.setActiveList(filterPanel.isDirty() ? 'grid' : 'tree');
-        treeGridPanel.setFilter({ fulltext: values.query, include: true, facets: generateFacetsDef() });
-        treeGridPanel.refresh();
+        if ( values.query ) {
+            Admin.lib.RemoteService.content_find( params, function ( rpcResp ) {
+                if ( rpcResp.success ) {
+                    filterPanel.updateFacets(rpcResp.facets);
+
+                    var i, ids = [],
+                        contents = rpcResp.contents,
+                        length = contents.length;
+
+                    for ( i = 0; i < length; i++ ) {
+                        ids.push( contents[i].id );
+                    }
+                    treeGridPanel.setContentSearchParams({ search : true, contentIds: ids });
+                    treeGridPanel.refresh();
+                }
+            } );
+        } else {
+            treeGridPanel.setContentSearchParams( { search : false } );
+            treeGridPanel.refresh();
+        }
+
+
     }
 
 });
