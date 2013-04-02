@@ -109,12 +109,12 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
                     for (i = 0; i < length; i++) {
                         ids.push(contents[i].id);
                     }
-                    treeGridPanel.setContentSearchParams({ search: true, contentIds: ids });
+                    treeGridPanel.setContentSearchParams({ contentIds: ids });
                     treeGridPanel.refresh();
                 }
             });
         } else {
-            treeGridPanel.setContentSearchParams({ search: false });
+            treeGridPanel.setContentSearchParams({ });
             treeGridPanel.refresh();
         }
 
