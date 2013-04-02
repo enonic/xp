@@ -23,7 +23,7 @@ Ext.application({
         'Admin.view.spaceAdmin.TreeGridPanel',
         'Admin.view.spaceAdmin.DetailPanel',
         'Admin.MessageBus',
-        'Admin.view.FeedbackBox',
+        'Admin.NotificationManager',
         'Admin.view.TabPanel'
     ],
 

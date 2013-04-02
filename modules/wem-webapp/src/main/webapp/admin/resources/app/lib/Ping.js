@@ -4,13 +4,7 @@ Ext.define('Admin.lib.Ping', {
     pingUrl: 'ping.jsp',
     intervalId: -1,
     pollIntervalMs: 5000,
-    errorBoxDomId: 'admin-server-status-error-box',
-    errorMessageHtml: '<div>Status: {0} - {1}. Could not get a valid response from the server! Please contact srs@enonic.com</div>',
-
-
-    constructor: function () {
-        this.addErrorMessageBox();
-    },
+    errorMessageId: null,
 
 
     startPolling: function () {
@@ -49,39 +43,16 @@ Ext.define('Admin.lib.Ping', {
 
 
     showErrorMessage: function (response) {
-        var me = this;
-        var messageBox = Ext.fly(me.errorBoxDomId);
-        if (messageBox.isVisible()) {
-            return;
+        if (!this.errorMessageId) {
+            this.errorMessageId = Admin.MessageBus.showError({ lifetime: -1 });
         }
-        var messageHtml = Ext.String.format(me.errorMessageHtml, response.status, response.statusText);
-        messageBox.setHTML(messageHtml).show();
     },
 
 
     hideErrorMessage: function (response) {
-        var me = this;
-        Ext.fly(me.errorBoxDomId).hide();
-    },
-
-
-    /**
-     * @private
-     */
-    addErrorMessageBox: function () {
-        var me = this,
-            dh = Ext.DomHelper;
-
-        var spec = {
-            id: me.errorBoxDomId,
-            tag: 'div',
-            cls: 'admin-server-status-error-box',
-            // This is safe as long as the ping runs from the main.html.
-            // Ideally we should find the element with the highest z-index in <body> and up it by 1
-            style: 'z-index: 500000',
-            html: 'Server is running'
-        };
-        dh.append(Ext.getBody(), spec, true).hide();
+        if (this.errorMessageId) {
+            Admin.MessageBus.removeNotification(this.errorMessageId);
+            this.errorMessageId = null;
+        }
     }
-
 });
