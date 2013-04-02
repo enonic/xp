@@ -1,4 +1,3 @@
-@charset "IBM437";
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 
 /*
@@ -3105,31 +3104,16 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
 
 /* line 8, ../sass/admin/css/_sortable.scss */
 .admin-drop-indicator {
-    position: absolute;
     height: 1px;
     line-height: 0;
     overflow: visible;
-    border-bottom: 2px solid green;
-}
-
-/* line 23, ../sass/admin/css/_sortable.scss */
-.admin-drop-indicator:before {
-    content: '•';
-    font-size: 16px;
-    color: green;
-    position: absolute;
-    left: -8px;
-    top: -1px;
-}
-
-/* line 29, ../sass/admin/css/_sortable.scss */
-.admin-drop-indicator:after {
-    content: '•';
-    font-size: 16px;
-    color: green;
-    position: absolute;
-    right: -8px;
-    top: -1px;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 200px;
+    height: 200px;
+    font-size: 20px;
+    border: 4px dashed gray;
 }
 
 /* line 1, ../sass/admin/css/_admin-toolbar-popup.scss */
@@ -3485,50 +3469,23 @@ div.admin-load-mask .admin-load-text {
     font-style: normal;
 }
 
-/* line 1, ../sass/admin/css/_notification-manager.scss */
-.admin-notification-container {
-    position: fixed;
-    z-index: 500000;
+/* line 1, ../sass/admin/css/_server-status-error-box.scss */
+.admin-server-status-error-box {
     width: 100%;
-}
-
-/* line 7, ../sass/admin/css/_notification-manager.scss */
-.admin-notification-wrapper {
-    margin: auto;
-    width: 500px;
-}
-
-/* line 12, ../sass/admin/css/_notification-manager.scss */
-.admin-notification {
-    overflow: hidden;
-    color: white;
-    font-size: 1.2em;
-}
-
-/* line 18, ../sass/admin/css/_notification-manager.scss */
-.admin-notification-inner {
-    padding: 10px;
-    background-color: #008197;
-}
-
-/* line 22, ../sass/admin/css/_notification-manager.scss */
-.admin-notification-inner a {
-    color: white;
-}
-
-/* line 27, ../sass/admin/css/_notification-manager.scss */
-.admin-notification-remove {
-    float: right;
-    width: 10px;
     text-align: center;
-    text-decoration: none;
-    font-weight: bolder;
-    color: white;
+    position: absolute;
+    color: #fff;
+    font-weight: bold;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* line 36, ../sass/admin/css/_notification-manager.scss */
-.admin-notification-content {
-    margin-right: 20px;
+/* line 10, ../sass/admin/css/_server-status-error-box.scss */
+.admin-server-status-error-box div {
+    width: 50%;
+    margin: 0px auto;
+    background-color: #f00;
+    padding: 10px 0;
 }
 
 /* line 1, ../sass/admin/css/_context-menu.scss */

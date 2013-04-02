@@ -9,19 +9,21 @@ Ext.define('Admin.lib.Sortable', {
         me.parentComponent = parentComponent;
         me.id = Ext.id();
         me.group = me.config.group || '' + me.id;
-        me.indicatorEl = me._createDDIndicator();
-
-        me._initDragZone();
-        me._initDropZone();
+        me.indicatorEl = me.createDDIndicator(config.name);
+        Ext.dd.ScrollManager.register(this.parentComponent.el);
+        me.initDragZone();
+        me.initDropZone();
     },
 
 
-    _initDragZone: function () {
+    initDragZone: function () {
         var sortable = this;
-
         var dragZone = new Ext.dd.DragZone(sortable.parentComponent.getEl(), {
             ddGroup: sortable.group,
             containerScroll: true,
+
+            proxy: new Ext.dd.StatusProxy({}),
+
             getDragData: function (e) {
                 var sourceElement = e.getTarget('.admin-sortable');
                 if (!sourceElement) {
@@ -29,19 +31,25 @@ Ext.define('Admin.lib.Sortable', {
                 }
 
                 // If a handle is configured and anything else than the handle is pressed, return.
-                if (sortable.config.handle && Ext.fly(sourceElement).down(sortable.config.handle).dom !== e.getTarget()) {
+                if (sortable.config.handle && !Ext.fly(sourceElement).down(sortable.config.handle).contains(Ext.fly(e.getTarget()))) {
                     return;
                 }
 
-                var dragProxyElement = sortable._createDragProxy(sourceElement);
-
-                Ext.fly(sourceElement).setStyle('opacity', '.2');
-
                 return {
-                    ddel: dragProxyElement,
+                    ddel: sortable.createDragProxy(sourceElement),
                     sourceElement: sourceElement,
                     repairXY: Ext.fly(sourceElement).getXY()
                 };
+            },
+
+            onInitDrag: function (x, y) {
+                this.proxy.update(this.dragData.ddel.cloneNode(true));
+                this.onStartDrag(x, y);
+                return true;
+            },
+
+            beforeDragOver: function () {
+                return true;
             },
 
             onMouseUp: function (e) {
@@ -49,7 +57,7 @@ Ext.define('Admin.lib.Sortable', {
             },
 
             afterInvalidDrop: function (e, id) {
-                sortable._hideIndicator();
+                sortable.hideIndicator();
             },
 
             getRepairXY: function () {
@@ -59,7 +67,7 @@ Ext.define('Admin.lib.Sortable', {
     },
 
 
-    _initDropZone: function () {
+    initDropZone: function () {
         var sortable = this;
 
         var dropZone = new Ext.dd.DropZone(sortable.parentComponent.getEl(), {
@@ -74,33 +82,25 @@ Ext.define('Admin.lib.Sortable', {
                 if (!cmpNode) {
                     return;
                 }
-
                 if (target === data.sourceElement) {
-                    // return;
-                }
-
-                var mouseYPos = e.getY();
-
-                var cmpArea = cmpNode.getEl().getPageBox();
-
-                var nodeMiddle = cmpArea.top + cmpArea.height / 2;
-
-                if (mouseYPos < nodeMiddle) {
-                    sortable.currentPos = 'above';
-                } else {
-                    sortable.currentPos = 'below';
-                }
-
-                sortable._showIndicator(cmpArea, sortable.currentPos);
-
-                return Ext.dd.DropZone.prototype.dropAllowed;
-            },
-
-            onNodeOut: function (nodeData, source, e, data) {
-                if (e.getTarget().className.indexOf('admin-drop-indicator') > -1) {
                     return;
                 }
-                sortable._hideIndicator();
+
+                if (!cmpNode.hasCls('admin-drop-indicator')) {
+                    var mouseYPos = e.getY();
+
+                    var cmpArea = cmpNode.getEl().getPageBox();
+
+                    var nodeMiddle = cmpArea.top + cmpArea.height / 2;
+                    if (mouseYPos < nodeMiddle) {
+                        sortable.currentPos = 'above';
+                    } else {
+                        sortable.currentPos = 'below';
+                    }
+
+                    sortable.showIndicator(cmpNode, sortable.currentPos);
+                }
+                return Ext.dd.DropZone.prototype.dropAllowed;
             },
 
             onNodeDrop: function (target, dd, e, data) {
@@ -114,9 +114,8 @@ Ext.define('Admin.lib.Sortable', {
                 draggedCmp.getEl().setStyle('opacity', 1);
 
                 if (targetCmp) {
-                    var targetCmpIndex = sortable._getIndexOfComponent(targetCmp);
-                    var draggedCmpOrgIndex = sortable._getIndexOfComponent(draggedCmp);
-
+                    var targetCmpIndex = sortable.getIndexOfComponent(targetCmp);
+                    var draggedCmpOrgIndex = sortable.getIndexOfComponent(draggedCmp);
                     if (sortable.currentPos === 'below') {
                         targetCmpIndex = targetCmpIndex + 1;
                         if (draggedCmpOrgIndex < targetCmpIndex) {
@@ -130,7 +129,7 @@ Ext.define('Admin.lib.Sortable', {
                     draggedCmp.getEl().highlight();
                 }
 
-                sortable._hideIndicator();
+                sortable.hideIndicator();
 
                 return true;
             }
@@ -139,58 +138,52 @@ Ext.define('Admin.lib.Sortable', {
     },
 
 
-    _createDDIndicator: function () {
+    createDDIndicator: function (name) {
         var me = this,
             indicatorEl,
             arrowLeft;
 
-        indicatorEl = Ext.get(document.createElement('div'));
-        indicatorEl.addCls('admin-drop-indicator');
-        indicatorEl.setStyle('display', 'none');
-        indicatorEl.setStyle('width', '500px');
-        indicatorEl.setStyle('top', '10px');
-        indicatorEl.setStyle('left', '10px');
-        indicatorEl.appendTo(Ext.getBody());
+        indicatorEl = Ext.create('widget.component', {
+            html: '<div>Drop ' + name + ' here </div>',
+            cls: 'admin-drop-indicator admin-sortable'
+        });
 
         return indicatorEl;
     },
 
 
-    _showIndicator: function (area, position) {
-        var me = this,
-            top;
+    showIndicator: function (area, position) {
+        this.indicatorEl.show();
+        var index = this.getIndexOfComponent(area);
 
-        me.indicatorEl.show();
+        if (index > -1) {
+            var insertPoint = position === 'above' ? index : index + 1;
+            this.parentComponent.insert(insertPoint, this.indicatorEl);
+        }
 
-        top = position === 'above' ? area.top : area.bottom;
-
-        me.indicatorEl.setStyle('width', area.width + 'px');
-        me.indicatorEl.setStyle('top', top + 'px');
-        me.indicatorEl.setStyle('left', area.left + 'px');
     },
 
 
-    _hideIndicator: function () {
+    hideIndicator: function () {
         this.indicatorEl.hide();
+        this.parentComponent.remove(this.indicatorEl, false);
     },
 
 
-    _createDragProxy: function (sourceElement) {
-        var me = this,
-            proxyEl;
+    createDragProxy: function (sourceElement) {
+        var proxyEl;
 
-        if (me.config.proxyHtml) {
+        if (this.config.proxyHtml) {
             proxyEl = Ext.get(document.createElement('div'));
-            proxyEl.setHTML(me.config.proxyHtml);
+            proxyEl.setHTML(this.config.proxyHtml);
             proxyEl = proxyEl.dom;
         } else { // If no proxy is configured we'll clone the source element
             proxyEl = sourceElement.cloneNode(true);
         }
-
         return proxyEl;
     },
 
-    _getIndexOfComponent: function (cmp) {
+    getIndexOfComponent: function (cmp) {
         return this.parentComponent.items.indexOf(cmp);
     }
 

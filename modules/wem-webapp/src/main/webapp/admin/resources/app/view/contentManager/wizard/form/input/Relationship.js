@@ -20,9 +20,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     },
 
 
-    getValue: function () {
-        return this.getComponent(this.name).getValue();
-    },
+    //getValue: function () {
+    //return this.getComponent(this.name).getValue();
+    //},
 
 
     /**
@@ -85,6 +85,16 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     },
 
 
+    getValue: function () {
+        var value = this.items.items[0].getValue();
+        if (Ext.isArray(value)) {
+            value = value.join(',');
+        }
+        return {
+            path: this.name.concat('[', this.copyNo - 1, ']'),
+            value: value
+        };
+    },
     /**
      * @private
      */
@@ -163,8 +173,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
         var me = this;
         var keys = [];
         if (this.items) {
-            Ext.Array.each(me.selectedContentStore.data.items, function (item) {
-                keys.push(item.data.key);
+            Ext.Array.each(me.selectedContentStore.getRange(), function (item) {
+                keys.push(item.get('id'));
             });
             this.getComponent(this.name).setValue(keys);
         }
