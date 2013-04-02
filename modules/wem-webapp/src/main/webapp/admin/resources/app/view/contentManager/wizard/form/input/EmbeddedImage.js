@@ -7,8 +7,6 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
         'Admin.view.FileUploadWindow'
     ],
 
-    fieldLabel: 'Embedded Image',
-
     initComponent: function () {
 
         this.selectedContentStore = this.createSelectedContentStore();

@@ -1,7 +1,6 @@
 Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     extend: 'Admin.view.contentManager.wizard.form.input.Base',
     alias: 'widget.Relationship',
-    fieldLabel: 'Relationship',
     requires: [
         'Admin.store.contentManager.ContentStore'
     ],
