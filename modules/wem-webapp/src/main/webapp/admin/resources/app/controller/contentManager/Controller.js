@@ -21,8 +21,46 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
         me.application.on({});
 
-        Admin.MessageBus.on('liveEdit.openContent', function () {
-            alert('CMS-1182\n\nTODO: Implement code to open an existing content in a new TabPanel tab');
+        Admin.MessageBus.on('liveEdit.openContent', function (contentModel) {
+            var cm = new Admin.model.contentManager.ContentModel({
+                "id": "d26e0eb3-0df3-4524-b874-3590db54293e",
+                "path": "default:/",
+                "name": null,
+                "type": "System:space",
+                "displayName": "Default space",
+                "owner": null,
+                "modifier": null,
+                "iconUrl": "http://localhost:8080/admin/rest/content/image/d26e0eb3-0df3-4524-b874-3590db54293e",
+                "modifiedTime": "2013-03-26T10:59:22.842Z",
+                "createdTime": "2013-03-26T10:59:22.842Z",
+                "editable": true,
+                "deletable": false,
+                "hasChildren": true,
+                "parentId": "root",
+                "index": 0,
+                "depth": 1,
+                "expanded": false,
+                "expandable": true,
+                "checked": null,
+                "cls": "",
+                "iconCls": "",
+                "icon": "",
+                "root": false,
+                "isLast": false,
+                "isFirst": true,
+                "allowDrop": true,
+                "allowDrag": true,
+                "loaded": true,
+                "loading": false,
+                "href": "",
+                "hrefTarget": "",
+                "qtip": "",
+                "qtitle": "",
+                "children": null,
+                "leaf": false
+            });
+
+            me.editContent(cm);
         }, me);
 
         // For prototype testing purposes
