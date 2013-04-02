@@ -10,7 +10,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
@@ -32,7 +31,7 @@ import static org.junit.Assert.*;
 
 public class RootDataSetParserTest
 {
-    private static final String BINARY_ID = "edda7c84-d1ef-4d4b-b79e-71b696a716df";
+    private static final String CONTENT_ID = "edda7c84-d1ef-4d4b-b79e-71b696a716df";
 
     @Test
     public void parse_simple_types()
@@ -102,7 +101,7 @@ public class RootDataSetParserTest
 
         StringBuilder json = new StringBuilder();
         json.append( "{" ).append( "\n" );
-        json.append( "\"myEmbeddedImage\": \"" + BINARY_ID + "\"" ).append( "\n" );
+        json.append( "\"myEmbeddedImage\": \"" + CONTENT_ID + "\"" ).append( "\n" );
         json.append( "}" );
 
         ObjectMapper objectMapper = ObjectMapperHelper.create();
@@ -113,7 +112,7 @@ public class RootDataSetParserTest
         DataSet parsedContentData = rootDataSetParser.parse( objectNode );
 
         // verify
-        assertEquals( BinaryId.from( BINARY_ID ), parsedContentData.getData( EntryPath.from( "myEmbeddedImage" ) ).getObject() );
+        assertEquals( ContentId.from( CONTENT_ID ), parsedContentData.getData( EntryPath.from( "myEmbeddedImage" ) ).getObject() );
     }
 
     @Test
