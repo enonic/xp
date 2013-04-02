@@ -6,12 +6,12 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
-public class EmbeddedImageConfig
+public class ImageConfig
     implements InputTypeConfig
 {
     private final QualifiedRelationshipTypeName relationshipType;
 
-    private EmbeddedImageConfig( final Builder builder )
+    private ImageConfig( final Builder builder )
     {
         Preconditions.checkNotNull( builder.relationshipType, "relationshipType cannot be null" );
         this.relationshipType = builder.relationshipType;
@@ -29,7 +29,7 @@ public class EmbeddedImageConfig
 
     }
 
-    public static Builder newEmbeddedImageConfig()
+    public static Builder newImageConfig()
     {
         return new Builder();
     }
@@ -49,9 +49,9 @@ public class EmbeddedImageConfig
             return this;
         }
 
-        public EmbeddedImageConfig build()
+        public ImageConfig build()
         {
-            return new EmbeddedImageConfig( this );
+            return new ImageConfig( this );
         }
     }
 

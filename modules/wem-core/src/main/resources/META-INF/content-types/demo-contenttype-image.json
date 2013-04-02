@@ -1,7 +1,7 @@
 {
-    "name": "EmbeddedImage",
+    "name": "Image",
     "module": "Demo",
-    "displayName": "Demo: Embedded Image",
+    "displayName": "Demo: Image",
     "superType": "System:structured",
     "isAbstract": false,
     "isFinal": true,
@@ -20,7 +20,7 @@
                 "validationRegexp": null,
                 "helpText": "Select image",
                 "type": {
-                    "name": "EmbeddedImage",
+                    "name": "Image",
                     "builtIn": true,
                     "config": {
                         "relationshipType": "System:default"

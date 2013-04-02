@@ -292,7 +292,7 @@
         },
         {
             "Input": {
-                "name": "myEmbeddedImage",
+                "name": "myImage",
                 "label": null,
                 "immutable": false,
                 "occurrences": {
@@ -304,7 +304,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "EmbeddedImage",
+                    "name": "Image",
                     "builtIn": true,
                     "config": {
                         "relationshipType": "System:default"

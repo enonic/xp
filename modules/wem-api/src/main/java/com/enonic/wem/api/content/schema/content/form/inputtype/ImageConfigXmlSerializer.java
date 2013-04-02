@@ -6,14 +6,14 @@ import org.jdom.Element;
 
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
-import static com.enonic.wem.api.content.schema.content.form.inputtype.EmbeddedImageConfig.newEmbeddedImageConfig;
+import static com.enonic.wem.api.content.schema.content.form.inputtype.ImageConfig.newImageConfig;
 
-public class EmbeddedImageConfigXmlSerializer
-    extends AbstractInputTypeConfigXmlSerializer<EmbeddedImageConfig>
+public class ImageConfigXmlSerializer
+    extends AbstractInputTypeConfigXmlSerializer<ImageConfig>
 {
-    public static final EmbeddedImageConfigXmlSerializer DEFAULT = new EmbeddedImageConfigXmlSerializer();
+    public static final ImageConfigXmlSerializer DEFAULT = new ImageConfigXmlSerializer();
 
-    public void serializeConfig( final EmbeddedImageConfig relationshipConfig, final Element inputTypeConfigEl )
+    public void serializeConfig( final ImageConfig relationshipConfig, final Element inputTypeConfigEl )
     {
         if ( relationshipConfig.getRelationshipType() != null )
         {
@@ -27,9 +27,9 @@ public class EmbeddedImageConfigXmlSerializer
     }
 
     @Override
-    public EmbeddedImageConfig parseConfig( final Element inputTypeConfigEl )
+    public ImageConfig parseConfig( final Element inputTypeConfigEl )
     {
-        final EmbeddedImageConfig.Builder builder = newEmbeddedImageConfig();
+        final ImageConfig.Builder builder = newImageConfig();
         final Element relationshipTypeEl = inputTypeConfigEl.getChild( "relationship-type" );
         if ( relationshipTypeEl != null && StringUtils.isNotBlank( relationshipTypeEl.getText() ) )
         {

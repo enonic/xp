@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.schema.content.form.FormItemSet;
 import com.enonic.wem.api.content.schema.content.form.Input;
 import com.enonic.wem.api.content.schema.content.form.Layout;
 import com.enonic.wem.api.content.schema.content.form.MixinReference;
-import com.enonic.wem.api.content.schema.content.form.inputtype.EmbeddedImageConfig;
+import com.enonic.wem.api.content.schema.content.form.inputtype.ImageConfig;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.schema.content.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.content.schema.content.form.inputtype.SingleSelectorConfig;
@@ -26,7 +26,7 @@ import static com.enonic.wem.api.content.schema.content.form.FieldSet.newFieldSe
 import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
 import static com.enonic.wem.api.content.schema.content.form.MixinReference.newMixinReference;
-import static com.enonic.wem.api.content.schema.content.form.inputtype.EmbeddedImageConfig.newEmbeddedImageConfig;
+import static com.enonic.wem.api.content.schema.content.form.inputtype.ImageConfig.newImageConfig;
 import static com.enonic.wem.api.content.schema.content.form.inputtype.RelationshipConfig.newRelationshipConfig;
 import static com.enonic.wem.api.content.schema.mixin.Mixin.newMixin;
 import static com.enonic.wem.api.module.Module.newModule;
@@ -108,7 +108,7 @@ public abstract class AbstractContentTypeSerializerTest
         assertNotNull( actualContentType.form().getFormItem( "myColor" ) );
         assertNotNull( actualContentType.form().getFormItem( "myDate" ) );
         assertNotNull( actualContentType.form().getFormItem( "myDecimalNumber" ) );
-        assertNotNull( actualContentType.form().getFormItem( "myEmbeddedImage" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myImage" ) );
         assertNotNull( actualContentType.form().getFormItem( "myGeoLocation" ) );
         assertNotNull( actualContentType.form().getFormItem( "myHtmlArea" ) );
         assertNotNull( actualContentType.form().getFormItem( "myMoney" ) );
@@ -285,7 +285,7 @@ public abstract class AbstractContentTypeSerializerTest
             relationshipType( QualifiedRelationshipTypeName.LIKE ).
             build();
 
-        EmbeddedImageConfig embeddedImageConfig = newEmbeddedImageConfig().
+        ImageConfig imageConfig = newImageConfig().
             relationshipType( QualifiedRelationshipTypeName.DEFAULT ).
             build();
 
@@ -313,8 +313,7 @@ public abstract class AbstractContentTypeSerializerTest
         contentTypeBuilder.addFormItem( newInput().name( "myXml" ).inputType( InputTypes.XML ).build() );
         contentTypeBuilder.addFormItem(
             newInput().name( "myRelationship" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( relationshipConfig ).build() );
-        contentTypeBuilder.addFormItem(
-            newInput().name( "myEmbeddedImage" ).inputType( InputTypes.EMBEDDED_IMAGE ).inputTypeConfig( embeddedImageConfig ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myImage" ).inputType( InputTypes.IMAGE ).inputTypeConfig( imageConfig ).build() );
 
         return contentTypeBuilder.build();
     }

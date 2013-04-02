@@ -13,11 +13,11 @@ import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeN
 import static com.enonic.wem.api.JsonTestHelper.assertJsonEquals;
 import static junit.framework.Assert.assertEquals;
 
-public class EmbeddedImageConfigJsonSerializerTest
+public class ImageConfigJsonSerializerTest
 {
     private JsonTestHelper jsonHelper;
 
-    private EmbeddedImageConfigJsonSerializer serializer = new EmbeddedImageConfigJsonSerializer();
+    private ImageConfigJsonSerializer serializer = new ImageConfigJsonSerializer();
 
     @Before
     public void before()
@@ -30,9 +30,9 @@ public class EmbeddedImageConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        EmbeddedImageConfig.Builder builder = EmbeddedImageConfig.newEmbeddedImageConfig();
+        ImageConfig.Builder builder = ImageConfig.newImageConfig();
         builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        EmbeddedImageConfig config = builder.build();
+        ImageConfig config = builder.build();
 
         // exercise
         JsonNode json = serializer.serializeConfig( config, jsonHelper.objectMapper() );
@@ -46,8 +46,8 @@ public class EmbeddedImageConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        EmbeddedImageConfig.Builder builder = EmbeddedImageConfig.newEmbeddedImageConfig();
-        EmbeddedImageConfig config = builder.build();
+        ImageConfig.Builder builder = ImageConfig.newImageConfig();
+        ImageConfig config = builder.build();
 
         // exercise
         serializer.serializeConfig( config, jsonHelper.objectMapper() );
@@ -58,12 +58,12 @@ public class EmbeddedImageConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        EmbeddedImageConfig.Builder builder = EmbeddedImageConfig.newEmbeddedImageConfig();
+        ImageConfig.Builder builder = ImageConfig.newImageConfig();
         builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        EmbeddedImageConfig expected = builder.build();
+        ImageConfig expected = builder.build();
 
         // exercise
-        EmbeddedImageConfig parsed = serializer.parseConfig( jsonHelper.loadTestJson( "parseConfig.json" ) );
+        ImageConfig parsed = serializer.parseConfig( jsonHelper.loadTestJson( "parseConfig.json" ) );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );

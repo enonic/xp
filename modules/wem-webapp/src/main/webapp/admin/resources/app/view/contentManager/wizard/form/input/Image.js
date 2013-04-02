@@ -1,6 +1,6 @@
-Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
+Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
     extend: 'Admin.view.contentManager.wizard.form.input.Base',
-    alias: 'widget.EmbeddedImage',
+    alias: 'widget.Image',
 
     requires: [
         'Admin.store.contentManager.ContentStore',

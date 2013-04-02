@@ -11,15 +11,15 @@ import org.xml.sax.SAXException;
 import com.enonic.wem.api.XmlTestHelper;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
-import static com.enonic.wem.api.content.schema.content.form.inputtype.EmbeddedImageConfig.newEmbeddedImageConfig;
+import static com.enonic.wem.api.content.schema.content.form.inputtype.ImageConfig.newImageConfig;
 import static junit.framework.Assert.assertEquals;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 
-public class EmbeddedImageConfigXmlSerializerTest
+public class ImageConfigXmlSerializerTest
 {
     private XmlTestHelper xmlHelper;
 
-    private EmbeddedImageConfigXmlSerializer serializer = new EmbeddedImageConfigXmlSerializer();
+    private ImageConfigXmlSerializer serializer = new ImageConfigXmlSerializer();
 
     @Before
     public void before()
@@ -32,9 +32,9 @@ public class EmbeddedImageConfigXmlSerializerTest
         throws IOException, SAXException
     {
         // setup
-        EmbeddedImageConfig.Builder builder = newEmbeddedImageConfig();
+        ImageConfig.Builder builder = newImageConfig();
         builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        EmbeddedImageConfig config = builder.build();
+        ImageConfig config = builder.build();
 
         // exercise
         Element configEl = new Element( "config" );
@@ -49,12 +49,12 @@ public class EmbeddedImageConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        EmbeddedImageConfig.Builder builder = newEmbeddedImageConfig();
+        ImageConfig.Builder builder = newImageConfig();
         builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        EmbeddedImageConfig expected = builder.build();
+        ImageConfig expected = builder.build();
 
         // exercise
-        EmbeddedImageConfig parsed = serializer.parseConfig( xmlHelper.loadXml( "parseConfig.xml" ).getRootElement() );
+        ImageConfig parsed = serializer.parseConfig( xmlHelper.loadXml( "parseConfig.xml" ).getRootElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -66,9 +66,9 @@ public class EmbeddedImageConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        EmbeddedImageConfig.Builder builder = newEmbeddedImageConfig();
+        ImageConfig.Builder builder = newImageConfig();
         builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        EmbeddedImageConfig expected = builder.build();
+        ImageConfig expected = builder.build();
 
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
@@ -77,7 +77,7 @@ public class EmbeddedImageConfigXmlSerializerTest
         xml.append( "</config>\n" );
 
         // exercise
-        EmbeddedImageConfig parsed = serializer.parseConfig( xmlHelper.parse( xml.toString() ).getRootElement() );
+        ImageConfig parsed = serializer.parseConfig( xmlHelper.parse( xml.toString() ).getRootElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -88,8 +88,8 @@ public class EmbeddedImageConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        EmbeddedImageConfig.Builder builder = EmbeddedImageConfig.newEmbeddedImageConfig();
-        EmbeddedImageConfig expected = builder.build();
+        ImageConfig.Builder builder = ImageConfig.newImageConfig();
+        ImageConfig expected = builder.build();
 
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
@@ -97,7 +97,7 @@ public class EmbeddedImageConfigXmlSerializerTest
         xml.append( "</config>\n" );
 
         // exercise
-        EmbeddedImageConfig parsed = serializer.parseConfig( xmlHelper.parse( xml.toString() ).getRootElement() );
+        ImageConfig parsed = serializer.parseConfig( xmlHelper.parse( xml.toString() ).getRootElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );

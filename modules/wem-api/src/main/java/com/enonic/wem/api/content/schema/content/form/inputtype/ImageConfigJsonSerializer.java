@@ -7,16 +7,16 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
-import static com.enonic.wem.api.content.schema.content.form.inputtype.EmbeddedImageConfig.newEmbeddedImageConfig;
+import static com.enonic.wem.api.content.schema.content.form.inputtype.ImageConfig.newImageConfig;
 
 
-public class EmbeddedImageConfigJsonSerializer
-    extends AbstractInputTypeConfigJsonSerializer<EmbeddedImageConfig>
+public class ImageConfigJsonSerializer
+    extends AbstractInputTypeConfigJsonSerializer<ImageConfig>
 {
-    public static final EmbeddedImageConfigJsonSerializer DEFAULT = new EmbeddedImageConfigJsonSerializer();
+    public static final ImageConfigJsonSerializer DEFAULT = new ImageConfigJsonSerializer();
 
     @Override
-    public JsonNode serializeConfig( final EmbeddedImageConfig config, final ObjectMapper objectMapper )
+    public JsonNode serializeConfig( final ImageConfig config, final ObjectMapper objectMapper )
     {
         final ObjectNode jsonConfig = objectMapper.createObjectNode();
         if ( config.getRelationshipType() != null )
@@ -31,9 +31,9 @@ public class EmbeddedImageConfigJsonSerializer
     }
 
     @Override
-    public EmbeddedImageConfig parseConfig( final JsonNode inputTypeConfigNode )
+    public ImageConfig parseConfig( final JsonNode inputTypeConfigNode )
     {
-        final EmbeddedImageConfig.Builder builder = newEmbeddedImageConfig();
+        final ImageConfig.Builder builder = newImageConfig();
         final JsonNode relationshipTypeNode = inputTypeConfigNode.get( "relationshipType" );
         if ( relationshipTypeNode != null && !relationshipTypeNode.isNull() )
         {

@@ -136,7 +136,7 @@
         <relationship-type>System:like</relationship-type>
       </config>
     </input>
-    <input type="EmbeddedImage" built-in="true" name="myEmbeddedImage">
+    <input type="Image" built-in="true" name="myImage">
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>

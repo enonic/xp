@@ -9,23 +9,23 @@ import com.enonic.wem.api.content.data.type.JavaType;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
-public class EmbeddedImage
+public class Image
     extends BaseInputType
 {
-    public EmbeddedImage()
+    public Image()
     {
-        super( EmbeddedImageConfig.class );
+        super( ImageConfig.class );
     }
 
     public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonGenerator()
     {
-        return EmbeddedImageConfigJsonSerializer.DEFAULT;
+        return ImageConfigJsonSerializer.DEFAULT;
     }
 
     @Override
     public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlGenerator()
     {
-        return EmbeddedImageConfigXmlSerializer.DEFAULT;
+        return ImageConfigXmlSerializer.DEFAULT;
     }
 
     @Override
