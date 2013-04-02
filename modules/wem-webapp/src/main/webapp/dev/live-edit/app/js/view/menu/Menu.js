@@ -15,7 +15,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         me.buttonConfig = {
             'page': ['settings', 'reset'],
             'region': ['parent', 'settings', 'reset', 'clear'],
-            'layout': ['parent', 'settings'],
+            'layout': ['parent', 'settings', 'remove'],
             'part': ['parent', 'settings', 'details', 'remove'],
             'content': ['parent', 'opencontent', 'view'],
             'paragraph': ['parent', 'edit']
