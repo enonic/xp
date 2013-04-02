@@ -9,6 +9,9 @@ import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.schema.content.editor.ContentTypeEditor;
+import com.enonic.wem.api.content.schema.content.form.Form;
+import com.enonic.wem.api.content.schema.content.form.Input;
+import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.content.schema.content.serializer.ContentTypeJsonSerializer;
 import com.enonic.wem.core.initializer.InitializerTask;
@@ -62,7 +65,7 @@ public class ContentTypesInitializer
 
     static final ContentType FILE_IMAGE =
         createSystemType( QualifiedContentTypeName.imageFile() ).superType( QualifiedContentTypeName.file() ).
-            setFinal( true ).setAbstract( false ).build();
+            setFinal( true ).setAbstract( false ).form( createFileImageForm() ).build();
 
     static final ContentType FILE_VECTOR =
         createSystemType( QualifiedContentTypeName.vectorFile() ).superType( QualifiedContentTypeName.file() ).
@@ -107,6 +110,14 @@ public class ContentTypesInitializer
     protected ContentTypesInitializer()
     {
         super( "content-types" );
+    }
+
+    private static Form createFileImageForm()
+    {
+        return Form.newForm().
+            addFormItem( Input.newInput().name( "binaryId" ).inputType( InputTypes.TEXT_LINE ).label( "Binary Id" ).build() ).
+            addFormItem( Input.newInput().name( "mimeType" ).inputType( InputTypes.TEXT_LINE ).label( "Mime type" ).build() ).
+            build();
     }
 
     @Override

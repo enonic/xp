@@ -73,7 +73,7 @@ public class CreateContentHandler
             client( context.getClient() ).
             jcrSession( session ).
             contentType( content.getType() ).
-            contentToUpdate( content.getId() ).
+            contentToUpdate( contentId ).
             contentAfterEditing( content.getRootDataSet() ) );
 
         final Content storedContent = builder.id( contentId ).build();
