@@ -136,6 +136,17 @@
         <relationship-type>System:like</relationship-type>
       </config>
     </input>
+    <input type="EmbeddedImage" built-in="true" name="myEmbeddedImage">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+      <config>
+        <relationship-type>System:default</relationship-type>
+      </config>
+    </input>
   </form>
 </type>
 

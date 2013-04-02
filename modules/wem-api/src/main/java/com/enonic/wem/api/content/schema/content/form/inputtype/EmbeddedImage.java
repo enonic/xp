@@ -14,6 +14,18 @@ public class EmbeddedImage
 {
     public EmbeddedImage()
     {
+        super( EmbeddedImageConfig.class );
+    }
+
+    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonGenerator()
+    {
+        return EmbeddedImageConfigJsonSerializer.DEFAULT;
+    }
+
+    @Override
+    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlGenerator()
+    {
+        return EmbeddedImageConfigXmlSerializer.DEFAULT;
     }
 
     @Override

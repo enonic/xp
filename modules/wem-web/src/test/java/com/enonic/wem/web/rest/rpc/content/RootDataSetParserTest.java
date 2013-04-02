@@ -26,6 +26,7 @@ import com.enonic.wem.web.json.ObjectMapperHelper;
 import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
 import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.content.schema.content.form.inputtype.EmbeddedImageConfig.newEmbeddedImageConfig;
 import static com.enonic.wem.api.content.schema.content.form.inputtype.RelationshipConfig.newRelationshipConfig;
 import static org.junit.Assert.*;
 
@@ -93,7 +94,10 @@ public class RootDataSetParserTest
         final ContentType contentType = newContentType().
             module( ModuleName.from( "myModule" ) ).
             name( "myContentType" ).
-            addFormItem( newInput().name( "myEmbeddedImage" ).inputType( InputTypes.EMBEDDED_IMAGE ).build() ).
+            addFormItem(
+                newInput().name( "myEmbeddedImage" ).inputType( InputTypes.EMBEDDED_IMAGE ).inputTypeConfig( newEmbeddedImageConfig().
+                    relationshipType( QualifiedRelationshipTypeName.DEFAULT ).
+                    build() ).build() ).
             build();
 
         StringBuilder json = new StringBuilder();
