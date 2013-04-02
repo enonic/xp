@@ -88,7 +88,7 @@ Ext.define('Admin.view.account.GridPanel', {
         };
 
         me.viewConfig = {
-            trackOver: false,
+            trackOver: true,
             stripeRows: true,
             loadMask: {
                 store: me.store
