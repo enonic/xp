@@ -46,7 +46,7 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
                 "terms": {
                     "field": "space",
                     "size": 10,
-                    "all_terms": true,
+                    "all_terms": false,
                     "order": "term"
                 }
             },
@@ -54,7 +54,7 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
                 "terms": {
                     "field": "contentType",
                     "size": 10,
-                    "all_terms": true,
+                    "all_terms": false,
                     "order": "term"
                 }
             },
@@ -97,24 +97,24 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
         var treeGridPanel = this.getContentTreeGridPanel();
         var filterPanel = this.getContentFilter();
 
-        if ( values.query ) {
-            Admin.lib.RemoteService.content_find( params, function ( rpcResp ) {
-                if ( rpcResp.success ) {
+        if (values.query) {
+            Admin.lib.RemoteService.content_find(params, function (rpcResp) {
+                if (rpcResp.success) {
                     filterPanel.updateFacets(rpcResp.facets);
 
                     var i, ids = [],
                         contents = rpcResp.contents,
                         length = contents.length;
 
-                    for ( i = 0; i < length; i++ ) {
-                        ids.push( contents[i].id );
+                    for (i = 0; i < length; i++) {
+                        ids.push(contents[i].id);
                     }
-                    treeGridPanel.setContentSearchParams({ search : true, contentIds: ids });
+                    treeGridPanel.setContentSearchParams({ search: true, contentIds: ids });
                     treeGridPanel.refresh();
                 }
-            } );
+            });
         } else {
-            treeGridPanel.setContentSearchParams( { search : false } );
+            treeGridPanel.setContentSearchParams({ search: false });
             treeGridPanel.refresh();
         }
 
