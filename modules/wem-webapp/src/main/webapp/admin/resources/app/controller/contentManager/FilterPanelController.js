@@ -62,7 +62,7 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
                 "query": {
                     "range": {
                         "lastModified.date": {
-                            "from": oneDayAgo,
+                            "from": oneDayAgo.toISOString(),
                             "include_lower": true
                         }
                     }
@@ -72,7 +72,7 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
                 "query": {
                     "range": {
                         "lastModified.date": {
-                            "from": oneHourAgo,
+                            "from": oneHourAgo.toISOString(),
                             "include_lower": true
                         }
                     }
@@ -82,7 +82,7 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
                 "query": {
                     "range": {
                         "lastModified.date": {
-                            "from": oneWeekAgo,
+                            "from": oneWeekAgo.toISOString(),
                             "include_lower": true
                         }
                     }
