@@ -19,6 +19,6 @@
                 "value": "value1"
             }
         ],
-        "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:myModule:myType"
+        "iconUrl": "http://localhost/admin/rest/content/image/abc"
     }
 }
