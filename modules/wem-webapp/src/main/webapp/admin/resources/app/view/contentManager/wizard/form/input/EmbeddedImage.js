@@ -156,6 +156,11 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
             '</tpl>'
         ];
 
+        var contentStore = new Admin.store.contentManager.ContentStore();
+        contentStore.proxy.extraParams = {
+            contentTypes: ['System:image']
+        };
+
         var combo = {
             xtype: 'combo',
             emptyText: 'Start typing',
@@ -177,7 +182,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.EmbeddedImage', {
                 emptyText: 'No matching items'
             },
 
-            store: new Admin.store.contentManager.ContentStore(),
+            store: contentStore,
             listeners: {
                 select: function (combo, records) {
                     combo.setValue('');
