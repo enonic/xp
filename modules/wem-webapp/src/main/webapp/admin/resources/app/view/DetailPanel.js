@@ -210,7 +210,20 @@ Ext.define('Admin.view.DetailPanel', {
     largeBoxTemplate: '<tpl for=".">' +
                       '<div id="selected-item-box-{data.key}" class="admin-selected-item-box large clearfix">' +
                       '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>' +
-                      '<div class="center"><h6>{data.displayName}</h6><p>{data.description}</p></div>' +
+                      '<div class="center"><h6>{data.displayName}</h6>' +
+
+                      // 18th of April solution!
+                      // We should refactor this class so the selection views always gets one data spec
+                      '<tpl if="data.description">' +
+                      '<p>{data.description}</p></div>' +
+                      '</tpl>' +
+                      '<tpl if="data.path">' +
+                      '<p>{data.path}</p></div>' +
+                      '</tpl>' +
+                      '<tpl if="data.name">' +
+                      '<p>{data.name}</p></div>' +
+                      '</tpl>' +
+
                       '<div class="right">' +
                       '<a id="remove-from-selection-button:{internalId}" class="deselect" href="javascript:;"></a>' +
                       '</div>' +
