@@ -50,12 +50,13 @@ public final class CreateOrUpdateContentRpcHandler
         final ContentType contentType = getContentType( qualifiedContentTypeName );
         final RootDataSet rootDataSet = new RootDataSetParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
         final String displayName = context.param( "displayName" ).notBlank().asString();
+        final boolean temporary = context.param( "temporary" ).asBoolean( false );
 
         final ContentId contentId = contentIdOrNull( context.param( "contentId" ).asString() );
         if ( contentId == null )
         {
             final ContentPath parentContentPath = contentPathOrNull( context.param( "parentContentPath" ).asString() );
-            if ( parentContentPath == null )
+            if ( parentContentPath == null && !temporary )
             {
                 context.setResult( new JsonErrorResult( "Missing parameter [contentId] or [parentContentPath]" ) );
                 return;
@@ -65,6 +66,7 @@ public final class CreateOrUpdateContentRpcHandler
             handleCreateContent.context = context;
             handleCreateContent.parentContentPath = parentContentPath;
             handleCreateContent.qualifiedContentTypeName = qualifiedContentTypeName;
+            handleCreateContent.temporary = temporary;
             handleCreateContent.handleCreateContent( displayName, rootDataSet );
         }
         else
@@ -106,16 +108,19 @@ public final class CreateOrUpdateContentRpcHandler
 
         private QualifiedContentTypeName qualifiedContentTypeName;
 
+        private boolean temporary;
+
         private void handleCreateContent( final String displayName, final RootDataSet rootDataSet )
         {
             try
             {
-                final CreateContent createContent = content().create();
-                createContent.parentContentPath( parentContentPath );
-                createContent.contentType( qualifiedContentTypeName );
-                createContent.rootDataSet( rootDataSet );
-                createContent.displayName( displayName );
-                createContent.owner( AccountKey.anonymous() );
+                final CreateContent createContent = content().create().
+                    parentContentPath( parentContentPath ).
+                    contentType( qualifiedContentTypeName ).
+                    rootDataSet( rootDataSet ).
+                    displayName( displayName ).
+                    owner( AccountKey.anonymous() ).
+                    temporary( temporary );
                 final CreateContentResult createContentResult = client.execute( createContent );
 
                 context.setResult(

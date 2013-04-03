@@ -18,6 +18,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
@@ -29,6 +30,8 @@ import com.enonic.wem.core.index.IndexService;
 public class CreateContentHandler
     extends CommandHandler<CreateContent>
 {
+    private static final ContentPath TEMPORARY_PARENT_PATH = ContentPath.rootOf( SpaceName.temporary() );
+
     private static final ContentPathNameGenerator CONTENT_PATH_NAME_GENERATOR = new ContentPathNameGenerator();
 
     private ContentDao contentDao;
@@ -52,7 +55,8 @@ public class CreateContentHandler
 
         final Content.Builder builder = Content.newContent();
         final String displayName = command.getDisplayName();
-        final ContentPath contentPath = resolvePathForNewContent( command.getParentContentPath(), displayName, session );
+        final ContentPath parentContentPath = command.isTemporary() ? TEMPORARY_PARENT_PATH : command.getParentContentPath();
+        final ContentPath contentPath = resolvePathForNewContent( parentContentPath, displayName, session );
 
         // walk trough Content Data
         // if DataType == ContentId

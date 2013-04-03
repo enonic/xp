@@ -73,6 +73,10 @@ public abstract class AbstractContentDaoHandler
             while ( spaceNodesIterator.hasNext() )
             {
                 final Node spaceNode = spaceNodesIterator.nextNode();
+                if ( SpaceName.temporary().name().equals( spaceNode.getName() ) )
+                {
+                    continue; // skip space for temporary content
+                }
                 topNodes.add( spaceNode.getNode( SPACE_CONTENT_ROOT_NODE ) );
             }
         }

@@ -43,7 +43,7 @@ final class SpaceDaoHandlerGet
         {
             final Node spaceNode = spaceNodes.nextNode();
             final Space space = buildSpace( spaceNode );
-            if ( space != null )
+            if ( space != null && !space.getName().isTemporary() )
             {
                 spaceList.add( space );
             }
