@@ -184,7 +184,7 @@ AdminLiveEdit.DragDropSort = (function () {
 
 
     function addPaddingToLayoutComponent($component) {
-        $liveedit(event.target).closest('[data-live-edit-type=layout]').addClass('live-edit-component-padding');
+        $component.closest('[data-live-edit-type=layout]').addClass('live-edit-component-padding');
     }
 
 
