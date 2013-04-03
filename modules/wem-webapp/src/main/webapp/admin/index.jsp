@@ -43,18 +43,6 @@
 <body>
 <h1>Enonic WEM - Admin Console</h1>
 
-<h2>Tools</h2>
-<ul class="links">
-  <li>
-    <a href="../tests/">Tests</a>
-  </li>
-  <li>
-    <a href="http://versiontest/5-0/docs/">Docs</a> (Move to leela?)
-  </li>
-</ul>
-
-<hr/>
-
 <h2>Apps</h2>
 <ul class="links">
   <li>
