@@ -1,12 +1,19 @@
-package com.enonic.wem.core.jcr;
+package com.enonic.wem.web.rest.resource.jcr;
 
+import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
@@ -23,41 +30,61 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 
-import com.enonic.wem.api.command.jcr.GetNodes;
-import com.enonic.wem.core.command.CommandContext;
-import com.enonic.wem.core.command.CommandHandler;
+import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
 
 @Component
-public class GetNodesHandler
-    extends CommandHandler<GetNodes>
+@Path("tools/jcr")
+@Produces("application/json")
+public class GetNodesResource
 {
-    private final JsonNodeFactory jsonNodeFactory;
+    private JcrSessionProvider jcrSessionProvider;
 
-    public GetNodesHandler()
-    {
-        super( GetNodes.class );
-        jsonNodeFactory = JsonNodeFactory.instance;
-    }
-
-    @Override
-    public void handle( final CommandContext context, final GetNodes command )
+    @GET
+    public ObjectNode getNodes( @QueryParam("path") @DefaultValue("/") final String path,
+                                @QueryParam("depth") @DefaultValue("3") final int depth )
         throws Exception
     {
-        final Node root = context.getJcrSession().getRootNode();
-        final String path = StringUtils.removeStart( Strings.nullToEmpty( command.getPath() ), "/" );
+        final Session session = this.jcrSessionProvider.login();
+
+        try
+        {
+            return getNodes( session, path, depth );
+        }
+        finally
+        {
+            session.logout();
+        }
+    }
+
+    private ObjectNode getNodes( final Session session, final String path, final int depth )
+        throws Exception
+    {
+        final Node root = session.getRootNode();
+        final String relPath = StringUtils.removeStart( Strings.nullToEmpty( path ), "/" );
+
         final Node baseNode;
-        if ( path.isEmpty() )
+        if ( relPath.isEmpty() )
         {
             baseNode = root;
         }
         else
         {
-            baseNode = root.getNode( path );
+            baseNode = root.getNode( relPath );
         }
-        final ObjectNode rootJson = buildTree( baseNode, command.getDepth() );
+
+        final ObjectNode rootJson = buildTree( baseNode, depth );
         final ArrayNode nodesJson = arrayNode();
         nodesJson.add( rootJson );
-        command.setResult( nodesJson );
+
+        final ObjectNode result = objectNode();
+        result.put( "nodes", nodesJson );
+        return result;
+    }
+
+    @Inject
+    public void setJcrSessionProvider( final JcrSessionProvider jcrSessionProvider )
+    {
+        this.jcrSessionProvider = jcrSessionProvider;
     }
 
     private ObjectNode buildTree( final Node parent, final int depth )
@@ -172,11 +199,11 @@ public class GetNodesHandler
 
     private ObjectNode objectNode()
     {
-        return jsonNodeFactory.objectNode();
+        return JsonNodeFactory.instance.objectNode();
     }
 
     private ArrayNode arrayNode()
     {
-        return jsonNodeFactory.arrayNode();
+        return JsonNodeFactory.instance.arrayNode();
     }
 }

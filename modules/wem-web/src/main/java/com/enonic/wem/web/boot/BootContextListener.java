@@ -39,6 +39,7 @@ public final class BootContextListener
         final ServletRegistration.Dynamic restServlet = context.addServlet( "rest", new JaxRsServlet() );
         restServlet.setLoadOnStartup( 1 );
         restServlet.addMapping( "/admin/rest/*" );
+        restServlet.addMapping( "/dev/rest/*" );
 
         final ServletRegistration.Dynamic resourceServlet = context.addServlet( "resource", new ResourceServlet() );
         restServlet.setLoadOnStartup( 2 );

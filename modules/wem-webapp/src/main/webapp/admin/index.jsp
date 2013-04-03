@@ -116,7 +116,7 @@
     <a href="../dev/content/form.jsp">Content form, dynamic</a>
   </li>
   <li>
-    <a href="jcr.jsp">JCR browse</a>
+    <a href="../dev/jcr-browser/index.jsp">JCR browse</a>
   </li>
   <li>
     <a href="../dev/sortable/">Sortable</a>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <title>Enonic WEM - JCR Browser</title>
-  <link rel="stylesheet" type="text/css" href="../dev/jcr-tree/lib/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css">
   <style type="text/css">
     .treepanel {
       background: #FFFFFF none repeat scroll 0 0;
@@ -42,10 +42,10 @@
       position: relative;
     }
   </style>
-  <script type="text/javascript" src="resources/lib/jquery/jquery-1.8.3.min.js"></script>
-  <script type="text/javascript" src="../dev/jcr-tree/lib/jquery.hotkeys.js"></script>
-  <script type="text/javascript" src="../dev/jcr-tree/lib/bootstrap/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="../dev/jcr-tree/lib/jstree/jquery.jstree.js"></script>
+  <script type="text/javascript" src="lib/jquery-1.8.3.min.js"></script>
+  <script type="text/javascript" src="lib/jquery.hotkeys.js"></script>
+  <script type="text/javascript" src="lib/bootstrap/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="lib/jstree/jquery.jstree.js"></script>
   <script>
     var allNodesPath = [];
     var allNodesPathSet = {};
@@ -149,8 +149,8 @@
 
     var loadTree = function loadTree() {
       lazyLoadingDepth = 1;
-      $.getJSON('rest/jsonrpc/jcr_get', function (data) {
-        var nodeRoot = data.result.nodes[0];
+      $.getJSON('../rest/tools/jcr', function (data) {
+        var nodeRoot = data.nodes[0];
         nodeRoot = jcrNodesToJstree(nodeRoot, 2);
 
         $("#jcrtree").jstree({
@@ -163,8 +163,8 @@
                 callback([nodeRoot]); // root node
               } else {
                 var path = JSON.parse(node.attr("path"));
-                $.getJSON('rest/jsonrpc/jcr_get', {'path': path.join('/'), 'depth': lazyLoadingDepth}, function (data) {
-                  var node = data.result.nodes[0];
+                $.getJSON('../rest/tools/jcr', {'path': path.join('/'), 'depth': lazyLoadingDepth}, function (data) {
+                  var node = data.nodes[0];
                   path.pop();
                   node = jcrNodesToJstree(node, 0, 0, path);
                   callback(node.children);
