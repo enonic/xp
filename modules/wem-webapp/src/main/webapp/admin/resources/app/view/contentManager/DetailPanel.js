@@ -42,20 +42,41 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             }
         };
 
+        //Handlers for this items put in the Admin.controller.contentManager.Controller
         this.actionButtonItems = [
             {
-                text: 'Open',
-                action: 'viewContentType'
+                text: ' New',
+                icon: undefined,
+                action: 'newContent',
+                disableOnMultipleSelection: true
             },
             {
                 text: 'Edit',
-                action: 'editSchema'
+                icon: undefined,
+                action: 'editContent',
+                disableOnMultipleSelection: false
             },
             {
-                text: 'Duplicate'
+                text: 'Open',
+                icon: undefined,
+                action: 'viewContent',
+                disableOnMultipleSelection: false
             },
             {
-                text: 'Move'
+                text: 'Delete',
+                icon: undefined,
+                action: 'deleteContent'
+            },
+            {
+                text: 'Duplicate',
+                icon: undefined,
+                action: 'duplicateContent'
+            },
+            {
+                text: 'Move',
+                icon: undefined,
+                disabled: true,
+                action: 'moveContent'
             }
         ];
 

@@ -17,7 +17,33 @@ Ext.define('Admin.controller.contentManager.Controller', {
     init: function () {
         var me = this;
 
-        me.control({});
+        me.control({
+            'browseToolbar *[action=newContent], contentManagerContextMenu *[action=newContent], contentDetail *[action=newContent]': {
+                click: function (button, event) {
+                    this.getNewContentWindow().doShow();
+                }
+            },
+            'browseToolbar *[action=viewContent], contentManagerContextMenu *[action=viewContent], contentDetail *[action=viewContent]': {
+                click: function (button, event) {
+                    this.viewContent();
+                }
+            },
+            'browseToolbar *[action=editContent], contentManagerContextMenu *[action=editContent], contentDetail *[action=editContent]': {
+                click: function (button, event) {
+                    this.editContent();
+                }
+            },
+            'browseToolbar *[action=deleteContent], contentManagerContextMenu *[action=deleteContent], contentDetail *[action=deleteContent]': {
+                click: function (button, event) {
+                    this.deleteContent();
+                }
+            },
+            'browseToolbar *[action=duplicateContent], contentManagerContextMenu *[action=duplicateContent], contentDetail *[action=duplicateContent]': {
+                click: function (button, event) {
+                    this.duplicateContent();
+                }
+            }
+        });
 
         me.application.on({});
 

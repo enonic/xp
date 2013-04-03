@@ -28,21 +28,6 @@ Ext.define('Admin.controller.contentManager.GridPanelController', {
                 itemdblclick: function (grid, record, el, index, event, opts) {
                     this.editContent(record);
                 }
-            },
-            'contentManagerContextMenu *[action=deleteContent]': {
-                click: function (el, e) {
-                    this.deleteContent();
-                }
-            },
-            'contentManagerContextMenu *[action=editContent]': {
-                click: function (el, e) {
-                    this.editContent();
-                }
-            },
-            'contentManagerContextMenu *[action=viewContent]': {
-                click: function (el, e) {
-                    this.viewContent();
-                }
             }
         });
     },
