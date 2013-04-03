@@ -201,12 +201,22 @@ public final class ContentPath
 
     private LinkedList<String> newListOfParentElements()
     {
-        final LinkedList<String> newElements = Lists.newLinkedList( this.elements );
-        if ( !newElements.isEmpty() )
+        if ( isPathToEmbeddedContent() )
         {
+            final LinkedList<String> newElements = Lists.newLinkedList( this.elements );
             newElements.removeLast();
+            newElements.removeLast();
+            return newElements;
         }
-        return newElements;
+        else
+        {
+            final LinkedList<String> newElements = Lists.newLinkedList( this.elements );
+            if ( !newElements.isEmpty() )
+            {
+                newElements.removeLast();
+            }
+            return newElements;
+        }
     }
 
     public static ContentPath from( final String path )

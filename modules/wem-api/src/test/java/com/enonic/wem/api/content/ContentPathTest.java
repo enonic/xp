@@ -66,6 +66,15 @@ public class ContentPathTest
     }
 
     @Test
+    public void getParentPath_when_embedded()
+        throws Exception
+    {
+        assertEquals( ContentPath.from( "mySpace:/parent" ), ContentPath.from( "mySpace:/parent/_embedded/myEmbedded" ).getParentPath() );
+        assertEquals( ContentPath.from( "mySpace:/parent/parent" ),
+                      ContentPath.from( "mySpace:/parent/parent/_embedded/myEmbedded" ).getParentPath() );
+    }
+
+    @Test
     public void isRoot()
         throws Exception
     {
