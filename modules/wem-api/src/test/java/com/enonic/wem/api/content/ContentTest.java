@@ -44,6 +44,13 @@ public class ContentTest
     }
 
     @Test
+    public void isEmbedded()
+    {
+        Content content = Content.newContent().path( ContentPath.from( "mySite:myParent/_embedded/myEmbedded" ) ).build();
+        assertEquals( true, content.isEmbedded() );
+    }
+
+    @Test
     public void array_getting_entry_from_array_of_size_one()
     {
         DataSet dataSet = new RootDataSet();

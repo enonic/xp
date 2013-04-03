@@ -29,6 +29,10 @@ public final class ContentPath
 
     private final SpaceName spaceName;
 
+    private static final String EMBEDDED = "_embedded";
+
+    private final boolean pathToEmbeddedContent;
+
     private ContentPath( final Builder builder )
     {
         Preconditions.checkNotNull( builder.elements );
@@ -45,6 +49,35 @@ public final class ContentPath
             this.elements.addAll( builder.elements );
             this.refString = spacePrefix + ELEMENT_DIVIDER + Joiner.on( ELEMENT_DIVIDER ).join( elements );
         }
+        pathToEmbeddedContent = resolveIsPathToEmbeddedContent();
+    }
+
+    private boolean resolveIsPathToEmbeddedContent()
+    {
+        for ( int i = 0; i < elements.size(); i++ )
+        {
+            final String pathElement = elements.get( i );
+            if ( EMBEDDED.equals( pathElement ) )
+            {
+                final boolean lastElement = i == elements.size() - 1;
+                if ( lastElement )
+                {
+                    throw new IllegalArgumentException( "Missing name of embedded Content: " + refString );
+                }
+                final boolean firstElement = i == 0;
+                if ( firstElement )
+                {
+                    throw new IllegalArgumentException( "Expected a path to a Content before the embedded marker: " + refString );
+                }
+                final boolean notSecondToLastElement = i != elements.size() - 2;
+                if ( notSecondToLastElement )
+                {
+                    throw new IllegalArgumentException( "Expected only one element after the embedded marker: " + refString );
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getElement( final int index )
@@ -65,6 +98,11 @@ public final class ContentPath
     public boolean isRelative()
     {
         return this.spaceName == null;
+    }
+
+    public boolean isPathToEmbeddedContent()
+    {
+        return pathToEmbeddedContent;
     }
 
     public SpaceName getSpace()
