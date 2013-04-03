@@ -8,7 +8,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
     ],
 
     initComponent: function () {
-
+        var me = this;
         this.selectedContentStore = this.createSelectedContentStore();
 
         this.items = [
@@ -18,12 +18,21 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             this.createViewForSelectedContent()
         ];
 
-        if (this.inputConfig && this.inputConfig.type) {
-            //TODO: use qualified name
+        if (this.inputConfig && this.inputConfig.type && this.inputConfig.type.config) {
             var getRelationshipTypeCommand = {
-                qualifiedRelationshipTypeName: 'System:' + this.inputConfig.type.name
+                qualifiedRelationshipTypeName: this.inputConfig.type.config.relationshipType,
+                format: 'JSON'
             };
-            Admin.lib.RemoteService.relationshipType_get(getRelationshipTypeCommand, this.onRelationshipTypeReceived);
+            Admin.lib.RemoteService.relationshipType_get(getRelationshipTypeCommand, function (response) {
+                if (response && response.success) {
+                    var iconUrl = response.relationshipType.iconUrl;
+                    if (me.rendered) {
+                        me.el.down('.admin-image-icon').set({'src': iconUrl});
+                    } else {
+                        me.relationshipTypeIconUrl = iconUrl;
+                    }
+                }
+            });
         }
 
         this.callParent(arguments);
@@ -65,19 +74,6 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         });
     },
 
-
-    /**
-     * @private
-     */
-    onRelationshipTypeReceived: function (response) {
-        if (response && response.success) {
-            if (this.rendered) {
-                this.el.down('.admin-image-type').attr('src', response.iconUrl);
-            } else {
-                this.relationshipTypeIconUrl = response.iconUrl;
-            }
-        }
-    },
 
     /**
      * @private
