@@ -341,6 +341,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
     updateToolbarButtons: function (selected) {
         var toolbar = this.getContentBrowseToolbar();
         var contextMenu = this.getContentManagerContextMenu();
+        var detailPanel = this.getContentDetailPanel();
         var newContentButton = toolbar.down('*[action=newContent]');
         newContentButton.setDisabled(Ext.isEmpty(selected) || selected.length !== 1);
 
@@ -358,6 +359,10 @@ Ext.define('Admin.controller.contentManager.Controller', {
         deleteContentButton.setDisabled(disabled);
         deleteContentButton = contextMenu.down('*[action=deleteContent]');
         deleteContentButton.setDisabled(disabled);
+        deleteContentButton = detailPanel.down('*[action=deleteContent]');
+        if (deleteContentButton) {
+            deleteContentButton.setDisabled(disabled);
+        }
     },
 
     /*      Getters     */
