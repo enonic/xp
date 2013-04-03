@@ -73,7 +73,7 @@ public class CreateContentHandlerTest
         DateTimeUtils.setCurrentMillisFixed( CREATED_TIME.getMillis() );
 
         Mockito.when( contentDao.create( Mockito.isA( Content.class ), Mockito.any( Session.class ) ) ).thenReturn(
-            ContentId.from( "100" ) );
+            com.enonic.wem.api.content.ContentId.from( "100" ) );
 
         CreateContent command = Commands.content().create();
         command.displayName( "My Content" );
@@ -82,8 +82,8 @@ public class CreateContentHandlerTest
         command.contentType( new QualifiedContentTypeName( ModuleName.SYSTEM, "MyContentType" ) );
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setData( "myText", new Value.Text( "abc" ) );
-        rootDataSet.setData( "myReference", new Value.ContentReference( ContentId.from( "123" ) ) );
-        rootDataSet.setData( "mySet.myRelatedContent", new Value.ContentReference( ContentId.from( "124" ) ) );
+        rootDataSet.setData( "myReference", new Value.ContentId( ContentId.from( "123" ) ) );
+        rootDataSet.setData( "mySet.myRelatedContent", new Value.ContentId( ContentId.from( "124" ) ) );
         command.rootDataSet( rootDataSet );
 
         // exercise
@@ -106,7 +106,7 @@ public class CreateContentHandlerTest
         DateTimeUtils.setCurrentMillisFixed( CREATED_TIME.getMillis() );
 
         Mockito.when( contentDao.create( Mockito.isA( Content.class ), Mockito.any( Session.class ) ) ).thenReturn(
-            ContentId.from( "100" ) );
+            com.enonic.wem.api.content.ContentId.from( "100" ) );
 
         CreateContent command = Commands.content().create();
         final String displayName = "My Content";

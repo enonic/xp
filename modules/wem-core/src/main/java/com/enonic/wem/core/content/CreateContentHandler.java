@@ -53,6 +53,11 @@ public class CreateContentHandler
         final Content.Builder builder = Content.newContent();
         final String displayName = command.getDisplayName();
         final ContentPath contentPath = resolvePathForNewContent( command.getParentContentPath(), displayName, session );
+
+        // walk trough Content Data
+        // if DataType == ContentId
+        //  check if ContentId exists in temporary space
+
         builder.path( contentPath );
         builder.displayName( displayName );
         builder.rootDataSet( command.getRootDataSet() );
@@ -68,6 +73,10 @@ public class CreateContentHandler
         session.save();
 
         validateContentData( context.getClient(), content );
+
+        // createEmbeddedContent( temporaryEmbeddedContents )
+        //   for each temporaryContent:
+        //     move from temporary space to this space under <this content>/_embedded
 
         relationshipService.syncRelationships( new SyncRelationshipsCommand().
             client( context.getClient() ).

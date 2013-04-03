@@ -21,7 +21,7 @@ public final class DataTypes
 
     public static final DateMidnight DATE_MIDNIGHT = new DateMidnight( 5 );
 
-    public static final ContentReference CONTENT_REFERENCE = new ContentReference( 6 );
+    public static final ContentId CONTENT_ID = new ContentId( 6 );
 
     public static final WholeNumber WHOLE_NUMBER = new WholeNumber( 7 );
 
@@ -29,9 +29,9 @@ public final class DataTypes
 
     public static final GeographicCoordinate GEOGRAPHIC_COORDINATE = new GeographicCoordinate( 9 );
 
-    private static final Map<Integer, DataType> typesByKey = new HashMap<Integer, DataType>();
+    private static final Map<Integer, DataType> typesByKey = new HashMap<>();
 
-    private static final Map<String, DataType> typesByName = new HashMap<String, DataType>();
+    private static final Map<String, DataType> typesByName = new HashMap<>();
 
     static
     {
@@ -41,7 +41,7 @@ public final class DataTypes
         register( HTML_PART );
         register( XML );
         register( DATE_MIDNIGHT );
-        register( CONTENT_REFERENCE );
+        register( CONTENT_ID );
         register( WHOLE_NUMBER );
         register( DECIMAL_NUMBER );
         register( GEOGRAPHIC_COORDINATE );

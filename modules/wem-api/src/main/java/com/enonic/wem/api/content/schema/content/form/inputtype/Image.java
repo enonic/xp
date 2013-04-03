@@ -32,7 +32,7 @@ public class Image
     public void checkValidity( final Data data )
         throws InvalidValueTypeException, InvalidValueException
     {
-        DataTypes.CONTENT_REFERENCE.checkValidity( data );
+        DataTypes.CONTENT_ID.checkValidity( data );
     }
 
     @Override
@@ -45,7 +45,7 @@ public class Image
     @Override
     public Value newValue( final String value )
     {
-        return Value.newValue().type( DataTypes.CONTENT_REFERENCE ).value( JavaType.CONTENT_ID.convertFrom( value ) ).build();
+        return Value.newValue().type( DataTypes.CONTENT_ID ).value( JavaType.CONTENT_ID.convertFrom( value ) ).build();
     }
 
 }

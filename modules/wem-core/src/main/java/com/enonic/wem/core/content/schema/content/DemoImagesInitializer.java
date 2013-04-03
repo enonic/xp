@@ -46,7 +46,7 @@ public class DemoImagesInitializer
 
         final RootDataSet dataSet = RootDataSet.newRootDataSet();
         dataSet.add( Data.newData( "mimeType" ).type( DataTypes.TEXT ).value( "image/png" ).build() );
-        dataSet.add( Data.newData( "binaryId" ).type( DataTypes.TEXT ).value( binaryId.toString() ).build() );
+        dataSet.add( Data.newData( "binary" ).type( DataTypes.BINARY_ID ).value( binaryId ).build() );
 
         final CreateContent createContent = Commands.content().create().
             contentType( QualifiedContentTypeName.imageFile() ).

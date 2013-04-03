@@ -1,9 +1,9 @@
 package com.enonic.wem.api.content.data.type;
 
-public class ContentReference
+public class ContentId
     extends BaseDataType
 {
-    ContentReference( int key )
+    ContentId( int key )
     {
         super( key, JavaType.CONTENT_ID );
     }

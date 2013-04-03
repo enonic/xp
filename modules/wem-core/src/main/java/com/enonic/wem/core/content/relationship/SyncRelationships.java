@@ -157,7 +157,7 @@ class SyncRelationships
                 references.put( reference.getPath(), reference );
             }
         };
-        dataVisitor.restrictType( DataTypes.CONTENT_REFERENCE );
+        dataVisitor.restrictType( DataTypes.CONTENT_ID );
         dataVisitor.traverse( rootDataSet );
         return references;
     }
