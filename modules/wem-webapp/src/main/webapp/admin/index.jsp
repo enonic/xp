@@ -63,16 +63,7 @@
   <li>
     <a href="app-dashboard.jsp">Dashboard</a>
   </li>
-  <li>
-    <a href="app-system.jsp">System</a>
-    <ul>
-      <li><a href="about.jsp">About</a></li>
-      <li><a href="app-property.jsp">Properties</a></li>
-      <li><a href="app-system-cache.jsp">Cache</a></li>
-      <li><a href="app-userstore.jsp">Userstore</a></li>
-      <li><a href="app-language.jsp">Languages</a></li>
-    </ul>
-  </li>
+  <li><a href="app-userstore.jsp">Userstore</a></li>
 </ul>
 
 <hr/>
@@ -108,9 +99,6 @@
   </li>
   <li>
     <a href="../dev/examples/topbar.html">Top Bar ( with tiled start menu )</a>
-  </li>
-  <li>
-    <a href="content-test.jsp">Content form, static</a>
   </li>
   <li>
     <a href="../dev/content/form.jsp">Content form, dynamic</a>
