@@ -201,7 +201,7 @@ svg.live-edit-highlight-border {
     }
 }
 
-@-webkit-keyframes spin {
+@-webkit-keyframes live-edit-spinner {
     0% {
         -webkit-transform: rotate(0deg);
     }
@@ -210,7 +210,7 @@ svg.live-edit-highlight-border {
     }
 }
 
-@-ms-keyframes spin {
+@-ms-keyframes live-edit-spinner {
     0% {
         -ms-transform: rotate(0deg);
     }
@@ -219,7 +219,7 @@ svg.live-edit-highlight-border {
     }
 }
 
-@-o-keyframes spin {
+@-o-keyframes live-edit-spinner {
     0% {
         -o-transform: rotate(0deg);
     }
@@ -228,7 +228,7 @@ svg.live-edit-highlight-border {
     }
 }
 
-@keyframes spin {
+@keyframes live-edit-spinner {
     0% {
         transform: rotate(0deg);
     }
@@ -261,8 +261,8 @@ svg.live-edit-highlight-border {
 }
 
 .live-edit-loader-splash-content img {
-    width: 72px;
-    height: 72px;
+    width: 88px;
+    height: 88px;
     border: none;
     -moz-animation: live-edit-spinner .5s infinite linear;
     -webkit-animation: live-edit-spinner .5s infinite linear;

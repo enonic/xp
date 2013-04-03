@@ -2,7 +2,9 @@
     'use strict';
 
     $(window).load(function () {
-        $('.live-edit-loader-splash-container').remove();
+        setTimeout(function () {
+            $('.live-edit-loader-splash-container').remove();
+        }, 500);
 
         var page                = new AdminLiveEdit.model.component.Page();
         var regions             = new AdminLiveEdit.model.component.Region();
