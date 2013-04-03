@@ -108,26 +108,9 @@ Ext.define('Admin.view.DetailPanel', {
     singleSelection: {
         /* Example k - should be set in app*/
         tabs: [
-            {
-                displayName: 'Traffic',
-                tab: 'traffic'
-            },
-            {
-                displayName: 'Meta',
-                tab: 'meta'
-            }
         ],
         /* Example tabData - should be set in app*/
         tabData: {
-            traffic: {
-                html: '<h1>Traffic</h1>'
-            },
-            meta: {
-                html: '<h1>Meta</h1>'
-            },
-            graph: {
-                html: '<h1>Graph</h1>'
-            }
         }
     },
 
