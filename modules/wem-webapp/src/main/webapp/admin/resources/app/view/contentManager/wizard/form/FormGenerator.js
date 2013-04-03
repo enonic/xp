@@ -66,7 +66,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
             return;
         }
 
-        var field = Ext.create({
+        var inputComponent = Ext.create({
             xclass: classAlias,
             name: inputConfig.name,
             copyNo: inputConfig.copyNo || 1,
@@ -76,7 +76,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
         return Ext.create({
             xclass: 'widget.inputContainer',
             label: this.createInputLabel(inputConfig),
-            field: field
+            field: inputComponent
         });
 
     },
