@@ -95,6 +95,14 @@ Ext.define('Admin.controller.contentManager.Controller', {
         }, me);
     },
 
+    getNewContentWindow: function () {
+        var win = Ext.ComponentQuery.query('newContentWindow')[0];
+        if (!win) {
+            win = Ext.create('widget.newContentWindow');
+        }
+        return win;
+    },
+
     generateTabId: function (content, isEdit) {
         return 'tab-' + ( isEdit ? 'edit' : 'preview') + '-content-' + content.get('path');
     },

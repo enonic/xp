@@ -79,14 +79,8 @@ Ext.define('Admin.controller.contentManager.BrowseToolbarController', {
             menu = Ext.create('widget.contentManagerToolbarMenu');
         }
         return menu;
-    },
-
-    getNewContentWindow: function () {
-        var win = Ext.ComponentQuery.query('newContentWindow')[0];
-        if (!win) {
-            win = Ext.create('widget.newContentWindow');
-        }
-        return win;
     }
+
+
 
 });
