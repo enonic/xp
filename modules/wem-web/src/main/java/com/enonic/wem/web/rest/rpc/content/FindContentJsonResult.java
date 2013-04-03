@@ -10,9 +10,8 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
+import com.enonic.wem.api.content.query.ContentQueryHit;
 import com.enonic.wem.api.query.DateHistogramFacetResultEntry;
 import com.enonic.wem.api.query.DateHistogramFacetResultSet;
 import com.enonic.wem.api.query.FacetResultSet;
@@ -26,22 +25,19 @@ import com.enonic.wem.web.json.JsonResult;
 public class FindContentJsonResult
     extends JsonResult
 {
-    private final Contents contents;
-
     private final ContentIndexQueryResult contentIndexQueryResult;
 
-    FindContentJsonResult( final Contents contents, final ContentIndexQueryResult contentIndexQueryResult )
+    FindContentJsonResult( final ContentIndexQueryResult contentIndexQueryResult )
     {
         this.contentIndexQueryResult = contentIndexQueryResult;
-        this.contents = contents;
     }
 
     @Override
     protected void serialize( final ObjectNode json )
     {
         json.put( "success", true );
-        json.put( "total", contents.getSize() );
-        json.put( "contents", serialize( contents.getList() ) );
+        json.put( "total", contentIndexQueryResult.getContentIds().size() );
+        json.put( "contents", serialize( contentIndexQueryResult.getContentQueryHits() ) );
 
         final FacetsResultSet facetsResultSet = contentIndexQueryResult.getFacetsResultSet();
 
@@ -71,7 +67,7 @@ public class FindContentJsonResult
                 }
             }
 
-            serializeFacet( facets.addObject(), queries  );
+            serializeFacet( facets.addObject(), queries );
         }
     }
 
@@ -145,13 +141,17 @@ public class FindContentJsonResult
         }
     }
 
-    private JsonNode serialize( final List<Content> list )
+    private JsonNode serialize( final Set<ContentQueryHit> contentQueryHits )
     {
         final ArrayNode contentsNode = arrayNode();
-        for ( Content content : list )
+
+        int i = 1;
+        for ( ContentQueryHit contentQueryHit : contentQueryHits )
         {
             final ObjectNode contentJson = contentsNode.addObject();
-            ContentJsonTemplate.forContentListing( contentJson, content );
+            contentJson.put( "order", i++ );
+            contentJson.put( "id", contentQueryHit.getContentId().toString() );
+            contentJson.put( "score", contentQueryHit.getScore() );
         }
         return contentsNode;
     }

@@ -20,7 +20,7 @@ public class ContentSearchResults
     {
         this.total = total;
         this.from = from;
-        this.hits = Sets.newHashSet();
+        this.hits = Sets.newLinkedHashSet();
     }
 
     public void add( final ContentSearchHit hit )

@@ -197,8 +197,6 @@ public class ElasticsearchIndexServiceImpl
 
     private ClusterHealthResponse getClusterHealth( String indexName, boolean waitForYellow )
     {
-        LOG.debug( "Testing debug logging level here!" );
-
         ClusterHealthRequest request = new ClusterHealthRequest( indexName );
 
         if ( waitForYellow )

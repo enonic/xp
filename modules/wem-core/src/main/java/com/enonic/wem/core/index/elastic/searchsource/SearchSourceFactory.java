@@ -31,7 +31,6 @@ public class SearchSourceFactory
         {
             final QueryStringQueryBuilder fulltextQuery = QueryBuilders.queryString( fullTextQuery );
             fulltextQuery.lenient( true );
-
             searchSourceBuilder.query( fulltextQuery );
         }
 
