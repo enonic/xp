@@ -32,6 +32,9 @@ Ext.define('Admin.view.DetailPanel', {
                     actionsButton.setVisible(false);
                 }
             }
+            if (this.singleSelection.tabs.length > 0) {
+                this.changeTab(this.singleSelection.tabs[0].tab);
+            }
         }
     },
 
@@ -103,7 +106,7 @@ Ext.define('Admin.view.DetailPanel', {
     },
 
     singleSelection: {
-        /* Example tabs - should be set in app*/
+        /* Example k - should be set in app*/
         tabs: [
             {
                 displayName: 'Traffic',
@@ -205,11 +208,6 @@ Ext.define('Admin.view.DetailPanel', {
                         click: {
                             element: 'el', //bind to the underlying el property on the panel
                             fn: function (evt, element) {
-                                var children = element.parentElement.children;
-                                for (var i = 0; i < children.length; i++) {
-                                    children[i].className = '';
-                                }
-                                element.className = 'active';
                                 var tab = element.attributes['data-tab'].value;
                                 me.changeTab(tab);
                             }
@@ -376,6 +374,13 @@ Ext.define('Admin.view.DetailPanel', {
             target.add(currentTab.item);
             currentTab.callback(target);
         }
+
+        var element = Ext.dom.Query.select('*[data-tab=' + selectedTab + ']')[0];
+        var children = element.parentElement.children;
+        for (var i = 0; i < children.length; i++) {
+            children[i].className = '';
+        }
+        element.className = 'active';
 
     }
 });
