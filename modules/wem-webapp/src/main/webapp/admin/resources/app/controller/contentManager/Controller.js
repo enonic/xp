@@ -47,7 +47,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
         me.application.on({});
 
-        Admin.MessageBus.on('liveEdit.openContent', function (contentModel) {
+        Admin.MessageBus.on('liveEdit.openContent', function () {
             var cm = new Admin.model.contentManager.ContentModel({
                 "id": "d26e0eb3-0df3-4524-b874-3590db54293e",
                 "path": "default:/",
