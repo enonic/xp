@@ -16,6 +16,7 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
     },
 
     initComponent: function () {
+        //Handlers for this items put in the Admin.controller.contentManager.Controller
         this.items = [
 
             {
