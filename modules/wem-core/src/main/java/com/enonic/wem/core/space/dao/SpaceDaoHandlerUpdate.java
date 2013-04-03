@@ -20,7 +20,7 @@ public class SpaceDaoHandlerUpdate
     public void handle( final Space space )
         throws RepositoryException
     {
-        Preconditions.checkArgument( !space.getName().isTemporary(), "Temporary space cannot be updated" );
+        Preconditions.checkArgument( !space.isTemporary(), "Temporary space cannot be updated" );
         final Node spaceNode = getSpaceNode( space.getName() );
         if ( spaceNode == null )
         {
