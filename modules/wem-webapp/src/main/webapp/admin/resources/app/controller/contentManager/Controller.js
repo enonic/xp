@@ -48,15 +48,16 @@ Ext.define('Admin.controller.contentManager.Controller', {
         me.application.on({});
 
         Admin.MessageBus.on('liveEdit.openContent', function () {
+            var contentImageService = Admin.lib.UriHelper.getAbsoluteUri('admin/rest/content/image');
             var cm = new Admin.model.contentManager.ContentModel({
-                "id": "d26e0eb3-0df3-4524-b874-3590db54293e",
+                "id": "56bf6229-b5f8-4085-9bd2-58eb103e367b",
                 "path": "default:/",
                 "name": null,
                 "type": "System:space",
                 "displayName": "Default space",
                 "owner": null,
                 "modifier": null,
-                "iconUrl": "http://localhost:8080/admin/rest/content/image/d26e0eb3-0df3-4524-b874-3590db54293e",
+                "iconUrl": contentImageService + "/56bf6229-b5f8-4085-9bd2-58eb103e367b",
                 "modifiedTime": "2013-03-26T10:59:22.842Z",
                 "createdTime": "2013-03-26T10:59:22.842Z",
                 "editable": true,
@@ -86,7 +87,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 "leaf": false
             });
 
-            me.editContent(cm);
+            me.viewContent(cm);
         }, me);
 
         // For prototype testing purposes
