@@ -1,32 +1,13 @@
 package com.enonic.wem.api.content.schema.content.form.inputtype;
 
-import com.google.common.base.Preconditions;
-
-import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
 public class ImageConfig
-    implements InputTypeConfig
+    extends RelationshipConfig
 {
-    private final QualifiedRelationshipTypeName relationshipType;
-
     private ImageConfig( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.relationshipType, "relationshipType cannot be null" );
-        this.relationshipType = builder.relationshipType;
-    }
-
-    public QualifiedRelationshipTypeName getRelationshipType()
-    {
-        return relationshipType;
-    }
-
-    @Override
-    public void checkValidity( final Data data )
-        throws InvalidValueException
-    {
-
+        super( builder );
     }
 
     public static Builder newImageConfig()
@@ -35,8 +16,8 @@ public class ImageConfig
     }
 
     public static class Builder
+        extends RelationshipConfig.Builder
     {
-        private QualifiedRelationshipTypeName relationshipType;
 
         Builder()
         {
@@ -45,7 +26,7 @@ public class ImageConfig
 
         public Builder relationshipType( final QualifiedRelationshipTypeName value )
         {
-            relationshipType = value;
+            super.relationshipType( value );
             return this;
         }
 

@@ -11,7 +11,7 @@ public class RelationshipConfig
 {
     private final QualifiedRelationshipTypeName relationshipType;
 
-    private RelationshipConfig( final Builder builder )
+    RelationshipConfig( final Builder builder )
     {
         Preconditions.checkNotNull( builder.relationshipType, "relationshipType cannot be null" );
         this.relationshipType = builder.relationshipType;
