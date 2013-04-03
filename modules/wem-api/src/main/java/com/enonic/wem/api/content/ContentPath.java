@@ -247,6 +247,11 @@ public final class ContentPath
         return newPath().spaceName( parent.spaceName ).elements( parent.elements ).addElement( name ).build();
     }
 
+    public static ContentPath createPathToEmbeddedContent( final ContentPath parent, final String name )
+    {
+        return newPath().spaceName( parent.spaceName ).elements( parent.elements ).addElement( EMBEDDED ).addElement( name ).build();
+    }
+
     public static ContentPath rootOf( final SpaceName spaceName )
     {
         return newPath().spaceName( spaceName ).build();

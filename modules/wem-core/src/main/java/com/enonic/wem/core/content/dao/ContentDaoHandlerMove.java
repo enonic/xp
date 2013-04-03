@@ -7,16 +7,17 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
+import com.enonic.wem.api.content.ContentPath;
 
-class ContentDaoHandlerRename
+class ContentDaoHandlerMove
     extends AbstractContentDaoHandler
 {
-    ContentDaoHandlerRename( final Session session )
+    ContentDaoHandlerMove( final Session session )
     {
         super( session );
     }
 
-    boolean handle( ContentId content, String newName )
+    void handle( ContentId content, ContentPath newPath )
         throws RepositoryException
     {
         final Node contentNode = doGetContentNode( content );
@@ -26,7 +27,7 @@ class ContentDaoHandlerRename
         }
 
         final String srcPath = contentNode.getPath();
-        final String dstPath = contentNode.getParent().getPath() + "/" + newName;
-        return moveContentNode( srcPath, dstPath );
+        final String dstPath = "/" + resolveNodePath( newPath );
+        moveContentNode( srcPath, dstPath );
     }
 }

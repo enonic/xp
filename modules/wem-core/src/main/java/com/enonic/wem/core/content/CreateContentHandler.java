@@ -1,5 +1,8 @@
 package com.enonic.wem.core.content;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.jcr.Session;
 
@@ -16,6 +19,9 @@ import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.DataVisitor;
+import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.space.SpaceName;
@@ -58,9 +64,7 @@ public class CreateContentHandler
         final ContentPath parentContentPath = command.isTemporary() ? TEMPORARY_PARENT_PATH : command.getParentContentPath();
         final ContentPath contentPath = resolvePathForNewContent( parentContentPath, displayName, session );
 
-        // walk trough Content Data
-        // if DataType == ContentId
-        //  check if ContentId exists in temporary space
+        final List<Content> temporaryContents = resolveTemporaryContents( command, session );
 
         builder.path( contentPath );
         builder.displayName( displayName );
@@ -78,9 +82,12 @@ public class CreateContentHandler
 
         validateContentData( context.getClient(), content );
 
-        // createEmbeddedContent( temporaryEmbeddedContents )
-        //   for each temporaryContent:
-        //     move from temporary space to this space under <this content>/_embedded
+        for ( Content tempContent : temporaryContents )
+        {
+            final ContentPath pathToEmbeddedContent = ContentPath.createPathToEmbeddedContent( contentPath, tempContent.getName() );
+            contentDao.moveContent( tempContent.getId(), pathToEmbeddedContent, session );
+            session.save();
+        }
 
         relationshipService.syncRelationships( new SyncRelationshipsCommand().
             client( context.getClient() ).
@@ -93,6 +100,32 @@ public class CreateContentHandler
         indexService.indexContent( storedContent );
 
         command.setResult( new CreateContentResult( contentId, contentPath ) );
+    }
+
+    private List<Content> resolveTemporaryContents( final CreateContent command, final Session session )
+    {
+        final List<Content> temporaryContents = new ArrayList<>();
+        if ( command.getRootDataSet() == null )
+        {
+            return temporaryContents;
+        }
+        final DataVisitor dataVisitor = new DataVisitor()
+        {
+            @Override
+            public void visit( final Data data )
+            {
+                final Content content = contentDao.select( data.getContentId(), session );
+                if ( content != null )
+                {
+                    if ( content.getPath().getSpace().isTemporary() )
+                    {
+                        temporaryContents.add( content );
+                    }
+                }
+            }
+        }.restrictType( DataTypes.CONTENT_ID );
+        dataVisitor.traverse( command.getRootDataSet() );
+        return temporaryContents;
     }
 
     private ContentPath resolvePathForNewContent( final ContentPath parentPath, final String displayName, final Session session )

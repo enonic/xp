@@ -46,6 +46,8 @@ public interface ContentDao
 
     boolean renameContent( ContentId contentId, String newName, Session session );
 
+    void moveContent( ContentId contentId, ContentPath newPath, Session session );
+
     List<ContentVersion> getContentVersions( ContentSelector contentSelector, Session session );
 
     Contents findChildContent( ContentPath parentPath, Session session );
@@ -57,4 +59,5 @@ public interface ContentDao
     int countContentTypeUsage( QualifiedContentTypeName qualifiedContentTypeName, Session session );
 
     Content getContentVersion( ContentSelector contentSelector, ContentVersionId versionId, Session session );
+
 }

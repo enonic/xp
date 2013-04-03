@@ -481,20 +481,38 @@ public class ContentDaoImplTest
     {
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
-        Content existingContent = newContent().path( ContentPath.from( "myspace:myExistingContent" ) ).build();
-        existingContent.getRootDataSet().setData( "myData", new Value.Text( "myValue" ) );
-        existingContent.getRootDataSet().setData( "mySet.myData", new Value.Text( "myOtherValue" ) );
-        contentDao.create( existingContent, session );
+        contentDao.create( newContent().path( ContentPath.from( "myspace:myExistingContent" ) ).build(), session );
 
-        Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getRootDataSet().setData( "myData", new Value.Text( "myValue" ) );
-        content.getRootDataSet().setData( "mySet.myData", new Value.Text( "myOtherValue" ) );
-        ContentId contentId = contentDao.create( content, session );
+        ContentId contentId = contentDao.create( newContent().path( ContentPath.from( "myspace:myContent" ) ).build(), session );
         commit();
 
         // exercise
         contentDao.renameContent( contentId, "myExistingContent", session );
         commit();
+    }
+
+    @Test
+    public void moveContent()
+        throws Exception
+    {
+        // setup
+        contentDao.create( createContent( "myspace:/" ), session );
+        contentDao.create( createContent( "myspace:/parentA" ), session );
+        ContentId contentToMove = contentDao.create( createContent( "myspace:parentA/contentToMove" ), session );
+        contentDao.create( createContent( "myspace:/parentB" ), session );
+        commit();
+
+        // exercise
+        contentDao.moveContent( contentToMove, ContentPath.from( "myspace:/parentB/contentToMove" ), session );
+        commit();
+
+        // verify
+        Content storedContent = contentDao.select( contentToMove, session );
+        assertNotNull( storedContent );
+        assertEquals( ContentPath.from( "myspace:/parentB/contentToMove" ), storedContent.getPath() );
+
+        Content contentNotFound = contentDao.select( ContentPath.from( "myspace:/parentA/contentToMove" ), session );
+        assertNull( contentNotFound );
     }
 
     private Content createContent( String path )
