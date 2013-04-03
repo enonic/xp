@@ -18,7 +18,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
             'layout': ['parent', 'settings', 'remove'],
             'part': ['parent', 'settings', 'details', 'remove'],
             'content': ['parent', 'opencontent', 'view'],
-            'paragraph': ['parent', 'edit']
+            'paragraph': ['parent', 'edit', 'remove']
         };
 
         me.addView();
