@@ -7,6 +7,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.space.SpaceName;
@@ -23,7 +24,7 @@ public final class ContentPath
 
     private static final String SPACE_PREFIX_DIVIDER = ":";
 
-    private final LinkedList<String> elements;
+    private final ImmutableList<String> elements;
 
     private final String refString;
 
@@ -37,18 +38,21 @@ public final class ContentPath
     {
         Preconditions.checkNotNull( builder.elements );
         this.spaceName = builder.spaceName;
-        this.elements = Lists.newLinkedList();
 
         final String spacePrefix = spaceName == null ? "" : spaceName.name() + SPACE_PREFIX_DIVIDER;
         if ( builder.elements.isEmpty() )
         {
             refString = spacePrefix + ELEMENT_DIVIDER;
+            this.elements = ImmutableList.of();
         }
         else
         {
-            this.elements.addAll( builder.elements );
+            final ImmutableList.Builder<String> elementsBuilder = ImmutableList.builder();
+            elementsBuilder.addAll( builder.elements );
+            this.elements = elementsBuilder.build();
             this.refString = spacePrefix + ELEMENT_DIVIDER + Joiner.on( ELEMENT_DIVIDER ).join( elements );
         }
+
         pathToEmbeddedContent = resolveIsPathToEmbeddedContent();
     }
 
@@ -145,7 +149,7 @@ public final class ContentPath
 
     public final String getName()
     {
-        return elements.getLast();
+        return elements.size() == 0 ? null : elements.get( elements.size() - 1 );
     }
 
     public boolean isChildOf( final ContentPath possibleParentPath )

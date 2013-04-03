@@ -137,6 +137,15 @@ public class ContentPathTest
     }
 
     @Test
+    public void getName()
+        throws Exception
+    {
+        assertEquals( "parent", ContentPath.from( "myspace:/parent" ).getName() );
+        assertEquals( "child", ContentPath.from( "myspace:/parent/child" ).getName() );
+        assertEquals( null, ContentPath.from( "myspace:/" ).getName() );
+    }
+
+    @Test
     public void isPathToEmbeddedContent()
         throws Exception
     {
