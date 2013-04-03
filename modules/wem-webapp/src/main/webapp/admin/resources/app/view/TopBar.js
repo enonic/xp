@@ -138,7 +138,7 @@ Ext.define('Admin.view.TopBar', {
         var iconClass;
 
         if ('tab-browse' === card.id) {
-            buttonText = '[ Select ]';
+            buttonText = 'Open Tabs';
         } else if (card.tab.iconClass) {
             iconClass = card.tab.iconClass;
         } else if (card.tab.editing) {
