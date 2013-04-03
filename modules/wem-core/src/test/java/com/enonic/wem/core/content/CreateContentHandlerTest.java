@@ -4,6 +4,7 @@ import javax.jcr.Session;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -22,6 +23,7 @@ import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.relationship.RelationshipService;
@@ -63,6 +65,14 @@ public class CreateContentHandlerTest
         handler.setIndexService( indexService );
 
         Mockito.when( super.client.execute( Mockito.isA( ValidateRootDataSet.class ) ) ).thenReturn( DataValidationErrors.empty() );
+
+        DateTimeUtils.setCurrentMillisFixed( CREATED_TIME.getMillis() );
+    }
+
+    @AfterClass
+    public static void tearDown()
+    {
+        DateTimeUtils.setCurrentMillisSystem();
     }
 
     @Test
@@ -70,8 +80,6 @@ public class CreateContentHandlerTest
         throws Exception
     {
         // setup
-        DateTimeUtils.setCurrentMillisFixed( CREATED_TIME.getMillis() );
-
         Mockito.when( contentDao.create( Mockito.isA( Content.class ), Mockito.any( Session.class ) ) ).thenReturn(
             com.enonic.wem.api.content.ContentId.from( "100" ) );
 
@@ -103,8 +111,6 @@ public class CreateContentHandlerTest
         throws Exception
     {
         // setup
-        DateTimeUtils.setCurrentMillisFixed( CREATED_TIME.getMillis() );
-
         Mockito.when( contentDao.create( Mockito.isA( Content.class ), Mockito.any( Session.class ) ) ).thenReturn(
             com.enonic.wem.api.content.ContentId.from( "100" ) );
 
@@ -130,5 +136,35 @@ public class CreateContentHandlerTest
                       result.getContentPath().toString() );
     }
 
+    @Test
+    public void createContent_temporary()
+        throws Exception
+    {
+        // setup
+        Mockito.when( contentDao.create( Mockito.isA( Content.class ), Mockito.any( Session.class ) ) ).thenReturn(
+            com.enonic.wem.api.content.ContentId.from( "100" ) );
+
+        CreateContent command = Commands.content().create();
+        final String displayName = "My Content";
+        command.displayName( displayName );
+        command.owner( UserKey.from( "myStore:myUser" ) );
+        command.contentType( new QualifiedContentTypeName( ModuleName.SYSTEM, "MyContentType" ) );
+        command.temporary();
+
+        // exercise
+        this.handler.handle( this.context, command );
+
+        // verify
+        Mockito.verify( contentDao, Mockito.times( 1 ) ).create( Mockito.isA( Content.class ), Mockito.any( Session.class ) );
+        Mockito.verify( indexService, Mockito.times( 1 ) ).indexContent( Mockito.isA( Content.class ) );
+        Mockito.verify( relationshipService, Mockito.times( 1 ) ).syncRelationships( Mockito.isA( SyncRelationshipsCommand.class ) );
+
+        final CreateContentResult result = command.getResult();
+        assertNotNull( result );
+        assertNotNull( result.getContentId() );
+        final String generatedContentName = new ContentPathNameGenerator().generatePathName( displayName );
+        final ContentPath expectedPath = ContentPath.from( ContentPath.rootOf( SpaceName.temporary() ), generatedContentName );
+        assertEquals( expectedPath, result.getContentPath() );
+    }
 
 }

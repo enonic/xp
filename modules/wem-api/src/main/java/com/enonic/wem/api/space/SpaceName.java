@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 
 public final class SpaceName
 {
+    private static final SpaceName TEMPORARY_SPACE = new SpaceName( "_temporary" );
+
     private final String name;
 
     private SpaceName( final String name )
@@ -16,6 +18,11 @@ public final class SpaceName
     public String name()
     {
         return this.name;
+    }
+
+    public boolean isTemporary()
+    {
+        return TEMPORARY_SPACE.equals( this );
     }
 
     @Override
@@ -44,6 +51,11 @@ public final class SpaceName
     public String toString()
     {
         return name;
+    }
+
+    public static SpaceName temporary()
+    {
+        return TEMPORARY_SPACE;
     }
 
     public static SpaceName from( final String spaceName )

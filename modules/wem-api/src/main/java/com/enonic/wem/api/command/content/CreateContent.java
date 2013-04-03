@@ -22,6 +22,8 @@ public final class CreateContent
 
     private ContentPath parentContentPath;
 
+    private boolean temporary;
+
     public CreateContent contentType( final QualifiedContentTypeName value )
     {
         this.contentType = value;
@@ -52,17 +54,21 @@ public final class CreateContent
         return this;
     }
 
+    public CreateContent temporary()
+    {
+        this.temporary = true;
+        return this;
+    }
+
+    public CreateContent temporary( final boolean createTemporaryContent )
+    {
+        this.temporary = createTemporaryContent;
+        return this;
+    }
+
     public ContentPath getParentContentPath()
     {
         return parentContentPath;
-    }
-
-    @Override
-    public void validate()
-    {
-        Preconditions.checkNotNull( this.rootDataSet, "rootDataSet cannot be null" );
-        Preconditions.checkNotNull( this.parentContentPath, "parentContentPath cannot be null" );
-        Preconditions.checkNotNull( this.displayName, "displayname cannot be null" );
     }
 
     public QualifiedContentTypeName getContentType()
@@ -83,5 +89,18 @@ public final class CreateContent
     public String getDisplayName()
     {
         return displayName;
+    }
+
+    public boolean isTemporary()
+    {
+        return temporary;
+    }
+
+    @Override
+    public void validate()
+    {
+        Preconditions.checkNotNull( this.rootDataSet, "rootDataSet cannot be null" );
+        Preconditions.checkArgument( temporary || this.parentContentPath != null, "parentContentPath cannot be null" );
+        Preconditions.checkNotNull( this.displayName, "displayname cannot be null" );
     }
 }

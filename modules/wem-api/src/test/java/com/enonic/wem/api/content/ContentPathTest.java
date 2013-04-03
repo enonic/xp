@@ -66,6 +66,15 @@ public class ContentPathTest
     }
 
     @Test
+    public void getParentPath_when_embedded()
+        throws Exception
+    {
+        assertEquals( ContentPath.from( "mySpace:/parent" ), ContentPath.from( "mySpace:/parent/_embedded/myEmbedded" ).getParentPath() );
+        assertEquals( ContentPath.from( "mySpace:/parent/parent" ),
+                      ContentPath.from( "mySpace:/parent/parent/_embedded/myEmbedded" ).getParentPath() );
+    }
+
+    @Test
     public void isRoot()
         throws Exception
     {
@@ -125,6 +134,15 @@ public class ContentPathTest
         assertEquals( SpaceName.from( "myspace" ), ContentPath.from( "myspace:/path" ).getSpace() );
         assertEquals( SpaceName.from( "myspace" ), ContentPath.from( "myspace:/path/child" ).getSpace() );
         assertEquals( SpaceName.from( "myspace" ), ContentPath.from( "myspace:path/child" ).getSpace() );
+    }
+
+    @Test
+    public void getName()
+        throws Exception
+    {
+        assertEquals( "parent", ContentPath.from( "myspace:/parent" ).getName() );
+        assertEquals( "child", ContentPath.from( "myspace:/parent/child" ).getName() );
+        assertEquals( null, ContentPath.from( "myspace:/" ).getName() );
     }
 
     @Test
