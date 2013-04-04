@@ -17,6 +17,7 @@ import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.Data;
@@ -74,7 +75,7 @@ public class UpdateContentHandler
 
                 validateContentData( context, edited );
 
-                final List<Content> embeddedContentsToKeep = new ArrayList<>();
+                final List<ContentId> embeddedContentsToKeep = new ArrayList<>();
                 final List<Content> temporaryContents = new ArrayList<>();
                 new DataVisitor()
                 {
@@ -90,28 +91,11 @@ public class UpdateContentHandler
                             }
                             else if ( content.isEmbedded() )
                             {
-                                embeddedContentsToKeep.add( content );
+                                embeddedContentsToKeep.add( content.getId() );
                             }
                         }
                     }
                 }.restrictType( DataTypes.CONTENT_ID ).traverse( edited.getRootDataSet() );
-
-                // walk trough edited.ContentData
-                // if value is ContentId
-                // if contentId exists as TemporaryEmbeddedContent
-                //    temporaryEmbeddedContents.add( contentId )
-                // else if contentId exists as persisted embedded content
-                //    embeddedContentToKeep.add( contentId )
-
-                // find embeddedContentsToDelete: persistedEmbeddedContent not in embeddedContentToKeep
-
-                // createEmbeddedContent( temporaryEmbeddedContents, parent )
-                //    new path for embedded content: <parentPath>/__embedded/<name>
-                //    move content under parent under node "__embedded"
-                //
-
-                //
-                // deleteEmbeddedContent( embeddedContentsToDelete )
 
                 relationshipService.syncRelationships( new SyncRelationshipsCommand().
                     client( context.getClient() ).
@@ -134,7 +118,7 @@ public class UpdateContentHandler
                 // delete embedded contents not longer to keep
                 for ( Content embeddedContentBeforeEdit : embeddedContentsBeforeEdit )
                 {
-                    if ( !embeddedContentsToKeep.contains( embeddedContentBeforeEdit ) )
+                    if ( !embeddedContentsToKeep.contains( embeddedContentBeforeEdit.getId() ) )
                     {
                         contentDao.delete( embeddedContentBeforeEdit.getId(), session );
                         session.save();
