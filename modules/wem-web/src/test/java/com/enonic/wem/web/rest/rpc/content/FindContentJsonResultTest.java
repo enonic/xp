@@ -24,7 +24,7 @@ public class FindContentJsonResultTest
 
         ContentIndexQueryResult contentIndexQueryResult = new ContentIndexQueryResult( 10 );
 
-        FindContentJsonResult result = new FindContentJsonResult( contentIndexQueryResult );
+        FindContentJsonResult result = new FindContentJsonResult( contents, contentIndexQueryResult );
 
         assertNotNull( result.toJson() );
     }
@@ -48,7 +48,7 @@ public class FindContentJsonResultTest
 
         contentIndexQueryResult.setFacetsResultSet( facetsResultSet );
 
-        FindContentJsonResult result = new FindContentJsonResult( contentIndexQueryResult );
+        FindContentJsonResult result = new FindContentJsonResult( contents, contentIndexQueryResult );
 
         final JsonNode jsonNode = parseJson( "termsFacetResult.json" );
 
@@ -71,7 +71,7 @@ public class FindContentJsonResultTest
 
         contentIndexQueryResult.setFacetsResultSet( facetsResultSet );
 
-        FindContentJsonResult result = new FindContentJsonResult( contentIndexQueryResult );
+        FindContentJsonResult result = new FindContentJsonResult( contents, contentIndexQueryResult );
 
         final JsonNode jsonNode = parseJson( "queryFacetResult.json" );
 
