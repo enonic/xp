@@ -294,17 +294,68 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
      * @private
      */
     onFilesUploaded: function (win, files) {
-        for (var i = 0; i < files.length; i++) {
-            var file = files[i];
-            var contentModel = Ext.create('Admin.model.contentManager.ContentModel', {
-                displayName: file.response.name,
-                iconUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/upload/' + file.response.id)
+        var me = this;
+        Ext.each(files, function (file) {
+            me.createTemporaryImageContent(file.response, function (contentId) {
+                var contentModel = Ext.create('Admin.model.contentManager.ContentModel', {
+                    displayName: file.response.name,
+                    iconUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/upload/' + file.response.id),
+                    id: contentId
+                });
+                me.selectedContentStore.add(contentModel);
             });
-            this.selectedContentStore.add(contentModel);
-        }
+        });
         win.close();
     },
 
+    /**
+     * @private
+     */
+    createTemporaryImageContent: function (file, callback) {
+        var me = this;
+        this.remoteCreateBinary(file.id, function (binaryId) {
+            me.remoteCreateImageContent(file.name, file.mimeType, binaryId, function (contentId) {
+                callback(contentId);
+            });
+        });
+    },
+
+    /**
+     * @private
+     */
+    remoteCreateBinary: function (fileUploadId, callback) {
+        var createBinaryCommand = {'uploadFileId': fileUploadId};
+        Admin.lib.RemoteService.binary_create(createBinaryCommand, function (response) {
+            if (response && response.success) {
+                callback(response.binaryId);
+            } else {
+                Ext.Msg.alert("Error", response ? response.error : "Unable to create binary content.");
+            }
+        });
+    },
+
+    /**
+     * @private
+     */
+    remoteCreateImageContent: function (displayName, mimeType, binaryId, callback) {
+        var createContentCommand = {
+            "contentData": {
+                "mimeType": mimeType,
+                "binary": binaryId
+            },
+            "qualifiedContentTypeName": 'System:image',
+            "displayName": displayName,
+            "temporary": true
+        };
+
+        Admin.lib.RemoteService.content_createOrUpdate(createContentCommand, function (response) {
+            if (response && response.success) {
+                callback(response.contentId);
+            } else {
+                Ext.Msg.alert("Error", response ? response.error : "Unable to create image content.");
+            }
+        });
+    },
 
     /**
      * @private
