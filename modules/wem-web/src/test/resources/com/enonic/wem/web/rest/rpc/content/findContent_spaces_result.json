@@ -1,0 +1,70 @@
+{
+    "success": true,
+    "total": 4,
+    "contents": [
+        {
+            "order": 1,
+            "score": 1.0,
+            "id": "a1/c1",
+            "path": "/a1/c1",
+            "name": "c1",
+            "type": "System:unstructured",
+            "displayName": "C1",
+            "owner": "user:enonic:user1",
+            "createdTime": "2000-01-01T12:00:00.000Z",
+            "modifier": "user:system:admin",
+            "modifiedTime": "2000-01-01T12:00:00.000Z",
+            "editable": true,
+            "deletable": true,
+            "iconUrl": "http://localhost/admin/rest/content/image/a1/c1"
+        },
+        {
+            "order": 2,
+            "score": 2.0,
+            "id": "a1/c2",
+            "path": "/a1/c2",
+            "name": "c2",
+            "type": "System:unstructured",
+            "displayName": "C2",
+            "owner": "user:enonic:user1",
+            "createdTime": "2000-01-01T12:00:00.000Z",
+            "modifier": "user:system:admin",
+            "modifiedTime": "2000-01-01T12:00:00.000Z",
+            "editable": true,
+            "deletable": true,
+            "iconUrl": "http://localhost/admin/rest/content/image/a1/c2"
+        },
+        {
+            "order": 3,
+            "score": 3.0,
+            "id": "a1/c3",
+            "path": "/a1/c3",
+            "name": "c3",
+            "type": "System:unstructured",
+            "displayName": "C3",
+            "owner": "user:enonic:user1",
+            "createdTime": "2000-01-01T12:00:00.000Z",
+            "modifier": "user:system:admin",
+            "modifiedTime": "2000-01-01T12:00:00.000Z",
+            "editable": true,
+            "deletable": true,
+            "iconUrl": "http://localhost/admin/rest/content/image/a1/c3"
+        },
+        {
+            "order": 4,
+            "score": 4.0,
+            "id": "a1/c4",
+            "path": "/a1/c4",
+            "name": "c4",
+            "type": "System:unstructured",
+            "displayName": "C4",
+            "owner": "user:enonic:user1",
+            "createdTime": "2000-01-01T12:00:00.000Z",
+            "modifier": "user:system:admin",
+            "modifiedTime": "2000-01-01T12:00:00.000Z",
+            "editable": true,
+            "deletable": true,
+            "iconUrl": "http://localhost/admin/rest/content/image/a1/c4"
+        }
+    ]
+}

@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content.query;
 
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.space.SpaceNames;
 
 public class ContentIndexQuery
 {
@@ -11,6 +12,8 @@ public class ContentIndexQuery
     private String facets;
 
     private QualifiedContentTypeNames contentTypeNames;
+
+    private SpaceNames spaceNames;
 
     public void setFullTextSearchString( final String fullTextSearchString )
     {
@@ -50,5 +53,15 @@ public class ContentIndexQuery
     public void setContentTypeNames( final QualifiedContentTypeNames contentTypeNames )
     {
         this.contentTypeNames = contentTypeNames;
+    }
+
+    public SpaceNames getSpaceNames()
+    {
+        return spaceNames;
+    }
+
+    public void setSpaceNames( final SpaceNames spaceNames )
+    {
+        this.spaceNames = spaceNames;
     }
 }

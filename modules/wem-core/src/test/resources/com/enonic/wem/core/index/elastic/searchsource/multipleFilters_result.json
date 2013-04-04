@@ -1,0 +1,22 @@
+{
+    "query": {
+        "query_string": {
+            "query": "test",
+            "lenient": true
+        }
+    },
+    "filter": {
+        "bool": {
+            "must": {
+                "terms": {
+                    "contentType": [ "contenttypes:mycontenttype1", "contenttypes:mycontenttype2" ]
+                }
+            },
+            "must": {
+                "terms": {
+                    "space": [ "myspace2", "myspace1" ]
+                }
+            }
+        }
+    }
+}

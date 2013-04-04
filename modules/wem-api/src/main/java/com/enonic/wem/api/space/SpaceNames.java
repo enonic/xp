@@ -1,11 +1,13 @@
 package com.enonic.wem.api.space;
 
 import java.util.Collection;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 
@@ -72,4 +74,17 @@ public final class SpaceNames
             return SpaceName.from( value );
         }
     }
+
+    public Set<String> getAsStringSet()
+    {
+        Set<String> spaceNamesAsStrings = Sets.newHashSet();
+
+        for ( SpaceName spaceName : this.getSet() )
+        {
+            spaceNamesAsStrings.add( spaceName.toString() );
+        }
+
+        return spaceNamesAsStrings;
+    }
+
 }

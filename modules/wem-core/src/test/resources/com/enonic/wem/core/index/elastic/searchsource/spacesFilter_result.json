@@ -1,0 +1,13 @@
+{
+    "query": {
+        "query_string": {
+            "query": "test",
+            "lenient": true
+        }
+    },
+    "filter": {
+        "terms": {
+            "space": [ "myspace2", "myspace1" ]
+        }
+    }
+}
