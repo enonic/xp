@@ -66,6 +66,10 @@ Ext.define('Admin.view.WizardPanel', {
                         xtype: 'container',
                         region: 'west',
                         width: 110,
+                        style: {
+                            position: 'fixed !important',
+                            top: '210px !important'
+                        },
                         layout: {
                             type: 'hbox',
                             align: 'middle'
@@ -107,6 +111,10 @@ Ext.define('Admin.view.WizardPanel', {
                         xtype: 'container',
                         region: 'east',
                         width: 110,
+                        style: {
+                            position: 'fixed !important',
+                            top: '210px !important'
+                        },
                         layout: {
                             type: 'hbox',
                             align: 'middle'
