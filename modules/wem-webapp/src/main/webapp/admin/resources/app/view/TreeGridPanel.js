@@ -84,6 +84,7 @@ Ext.define('Admin.view.TreeGridPanel', {
             dock: 'top',
             store: this.store,
             gridPanel: grid,
+            showResultCount: false,
             plugins: ['gridToolbarPlugin']
         });
         grid.getStore().on('datachanged', this.fireUpdateEvent, this);
@@ -95,6 +96,7 @@ Ext.define('Admin.view.TreeGridPanel', {
             dock: 'top',
             store: this.treeStore,
             gridPanel: tree,
+            showResultCount: false,
             plugins: ['gridToolbarPlugin']
         });
 
@@ -188,10 +190,19 @@ Ext.define('Admin.view.TreeGridPanel', {
         }
     },
 
-    setContentSearchParams : function (params) {
+    setRemoteSearchParams : function (params) {
         var activeList = this.getActiveList();
         var currentStore = activeList.store;
         currentStore.getProxy().extraParams = params;
+    },
+
+    removeAll: function() {
+        var activeList = this.getActiveList();
+        if(activeList.xtype === 'treepanel') {
+            activeList.getRootNode().removeAll();
+        } else {
+            activeList.removeAll();
+        }
     },
 
     refresh: function () {

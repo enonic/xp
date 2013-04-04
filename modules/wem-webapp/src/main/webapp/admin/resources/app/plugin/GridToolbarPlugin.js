@@ -12,7 +12,9 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         var me = this;
 
         me.toolbar = toolbar;
-        me.resultTextItem = Ext.create('Ext.toolbar.TextItem', {text: ''});
+        if (me.toolbar.showResultCount !== false) {
+            me.resultTextItem = Ext.create('Ext.toolbar.TextItem', {text: ''});
+        }
         me.selectAllButton = me.createSelectAllButton();
         me.clearSelectionButton = me.createClearSelectionButton();
         me.tbFill = Ext.create('Ext.toolbar.Fill');
@@ -25,7 +27,9 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             me.toolbar.store = Ext.StoreManager.lookup(me.toolbar.store);
         }
 
-        me.toolbar.insert(0, me.resultTextItem);
+        if (me.toolbar.showResultCount !== false) {
+            me.toolbar.insert(0, me.resultTextItem);
+        }
         me.toolbar.insert(1, me.selectAllButton);
         me.toolbar.insert(2, Ext.create('Ext.toolbar.TextItem', {text: ' | '}));
         me.toolbar.insert(3, me.clearSelectionButton);
@@ -154,7 +158,9 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     },
 
     updateResultCount: function (count) {
-        this.resultTextItem.setText(count + ' results - ');
+        if (this.toolbar.showResultCount !== false) {
+            this.resultTextItem.setText(count + ' results - ');
+        }
     },
 
     updateSelectAll: function (selected) {

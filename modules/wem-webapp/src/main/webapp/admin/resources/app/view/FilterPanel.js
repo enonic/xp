@@ -91,20 +91,20 @@ Ext.define('Admin.view.FilterPanel', {
         });
         this.items.unshift(this.facetContainer);
 
-        this.items.unshift(Ext.create('Ext.Component', {
+        this.clearLink = Ext.create('Ext.Component', {
             xtype: 'component',
+            hidden: true,
             html: '<a href="javascript:;">Clear filter</a>',
             listeners: {
                 click: {
                     element: 'el',
-                    fn: function () {
-                        if (me.fireEvent('reset', me.isDirty()) !== false) {
-                            me.reset();
-                        }
-                    }
+                    fn: me.reset,
+                    scope: me
                 }
             }
-        }));
+        });
+
+        this.items.unshift(this.clearLink);
 
         if (this.includeSearch) {
 
@@ -155,7 +155,7 @@ Ext.define('Admin.view.FilterPanel', {
                     if (me.includeEmptyFacets == 'last') {
                         me.lastFacetName = undefined;
                     }
-                    me.fireEvent('search', me.getValues());
+                    me.search();
                 }, 500);
             }
         }
@@ -182,7 +182,7 @@ Ext.define('Admin.view.FilterPanel', {
                 this.lastFacetName = group.getAttribute('name');
             }
 
-            this.fireEvent('search', this.getValues());
+            this.search();
         }
 
         event.stopEvent();
@@ -267,15 +267,29 @@ Ext.define('Admin.view.FilterPanel', {
 
     reset: function () {
 
-        if (this.searchField) {
-            this.searchField.reset();
+        if (this.fireEvent('reset', this.isDirty()) !== false) {
+
+            if (this.searchField) {
+                this.searchField.reset();
+            }
+
+            var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
+            Ext.Array.each(selectedCheckboxes, function (cb) {
+                cb.removeAttribute('checked');
+                Ext.fly(cb).up('.admin-facet').removeCls('checked');
+            });
+
+            this.clearLink.setVisible(false);
         }
 
-        var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
-        Ext.Array.each(selectedCheckboxes, function (cb) {
-            cb.removeAttribute('checked');
-            Ext.fly(cb).up('.admin-facet').removeCls('checked');
-        });
+    },
+
+    search: function () {
+
+        if (this.fireEvent('search', this.getValues()) !== false) {
+            this.clearLink.setVisible(this.isDirty());
+        }
+
     }
 
 });

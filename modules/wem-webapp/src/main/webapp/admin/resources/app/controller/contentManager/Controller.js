@@ -366,6 +366,120 @@ Ext.define('Admin.controller.contentManager.Controller', {
         }
     },
 
+    /**
+     * @param values to use for load, pass {} - to reset, pass undefined - to reload
+     */
+    loadContentAndFacets: function (values) {
+
+        var me = this,
+            filter = this.getContentFilter(),
+            params = this.createLoadContentParams(values || filter.getValues());
+
+        Admin.lib.RemoteService.content_find(params, function (response) {
+            if (response && response.success) {
+
+                // set facet data
+                me.getContentFilter().updateFacets(response.facets);
+
+                // set tree data
+                var ids = Ext.Array.pluck(response.contents, 'id'),
+                    treeGridPanel = me.getContentTreeGridPanel(),
+                    filterDirty = filter.isDirty();
+
+                var store = treeGridPanel.getActiveList().getStore();
+
+                if (!filterDirty) {
+                    // show everything even if we have ids returned because no filter set
+                    treeGridPanel.setRemoteSearchParams({});
+                    treeGridPanel.refresh();
+                    console.log('show all');
+                } else {
+                    if (ids.length > 0) {
+                        // show  ids
+                        treeGridPanel.setRemoteSearchParams({ contentIds: ids });
+                        treeGridPanel.refresh();
+                        console.log('show ids', ids);
+                    } else {
+                        // show none
+                        treeGridPanel.removeAll();
+                        console.log('show none');
+                    }
+                }
+            }
+        })
+
+    },
+
+    /**
+     * @private
+     */
+    createLoadContentParams: function (values) {
+
+        var now = new Date();
+        var oneDayAgo = new Date();
+        var oneWeekAgo = new Date();
+        var oneHourAgo = new Date();
+        oneDayAgo.setDate(now.getDate() - 1);
+        oneWeekAgo.setDate(now.getDate() - 7);
+        Admin.lib.DateHelper.addHours(oneHourAgo, -1);
+
+        var facets = {
+            "space": {
+                "terms": {
+                    "field": "space",
+                    "size": 10,
+                    "all_terms": false,
+                    "order": "term"
+                }
+            },
+            "type": {
+                "terms": {
+                    "field": "contentType",
+                    "size": 10,
+                    "all_terms": false,
+                    "order": "term"
+                }
+            },
+            ">1 day": {
+                "query": {
+                    "range": {
+                        "lastModified.date": {
+                            "from": oneDayAgo.toISOString(),
+                            "include_lower": true
+                        }
+                    }
+                }
+            },
+            ">1 hour": {
+                "query": {
+                    "range": {
+                        "lastModified.date": {
+                            "from": oneHourAgo.toISOString(),
+                            "include_lower": true
+                        }
+                    }
+                }
+            },
+            ">1 week": {
+                "query": {
+                    "range": {
+                        "lastModified.date": {
+                            "from": oneWeekAgo.toISOString(),
+                            "include_lower": true
+                        }
+                    }
+                }
+            }
+        };
+
+        return {
+            fulltext: values && values.query || undefined,
+            include: true,
+            facets: facets
+        };
+    },
+
+
     /*      Getters     */
 
     getContentFilter: function () {

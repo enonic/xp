@@ -162,7 +162,7 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                     contentWizard.washDirtyForms();
                 }
 
-                me.getContentTreeGridPanel().refresh();
+                me.loadContentAndFacets();
             }
         };
         this.remoteCreateOrUpdateContent(contentParams, onUpdateContentSuccess);
