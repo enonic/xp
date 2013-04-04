@@ -4,6 +4,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.core.jcr.JcrConstants;
@@ -44,14 +45,32 @@ final class RelationshipDaoHandlerCreate
         final Node relationshipTypeNameNode = JcrHelper.getOrAddNode( moduleNode, relationship.getType().getLocalName() );
         if ( relationship.getManagingData() != null )
         {
-            final Node entryPathNode = JcrHelper.getOrAddNode( relationshipTypeNameNode, relationship.getManagingData().toString() );
-            return entryPathNode.addNode( RelationshipDao.TO_CONTENT_NODE_PREFIX + relationship.getToContent().toString(),
-                                          JcrConstants.RELATIONSHIP_NODETYPE );
+            final Node managingDataNode = createManagingDataNode( relationship.getManagingData(), relationshipTypeNameNode );
+            return managingDataNode.addNode( RelationshipDao.TO_CONTENT_NODE_PREFIX + relationship.getToContent().toString(),
+                                             JcrConstants.RELATIONSHIP_NODETYPE );
         }
         else
         {
             return relationshipTypeNameNode.addNode( RelationshipDao.TO_CONTENT_NODE_PREFIX + relationship.getToContent().toString(),
                                                      JcrConstants.RELATIONSHIP_NODETYPE );
+        }
+    }
+
+    private Node createManagingDataNode( final EntryPath entryPath, final Node parentNode )
+        throws RepositoryException
+    {
+        final EntryPath.Element firstElement = entryPath.getFirstElement();
+        Node childNode = JcrHelper.getOrAddNode( parentNode, firstElement.getName() );
+        final int index = firstElement.hasIndex() ? firstElement.getIndex() : 0;
+        childNode = JcrHelper.getOrAddNode( childNode, "__index-" + index );
+
+        if ( entryPath.elementCount() == 1 )
+        {
+            return childNode;
+        }
+        else
+        {
+            return createManagingDataNode( entryPath.asNewWithoutFirstPathElement(), childNode );
         }
     }
 }

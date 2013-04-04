@@ -137,6 +137,33 @@ public class RelationshipDaoImplTest
         assertEquals( EntryPath.from( "myData" ), storedRelationship.getManagingData() );
     }
 
+    @Test
+    public void given_persisted_relationship_with_managingData_with_more_than_one_path_element_when_select_by_matching_key_then_relationship_is_returned()
+        throws Exception
+    {
+        // setup
+        contentDao.create( createContent( "myspace:/" ), session );
+        ContentId contentA = contentDao.create( createContent( "myspace:a" ), session );
+        ContentId contentB = contentDao.create( createContent( "myspace:b" ), session );
+        commit();
+
+        relationshipDao.create( createRelationship( contentA, contentB, PARENT, EntryPath.from( "myParent[3].myData[1]" ) ), session );
+        commit();
+
+        // exercise
+        Relationship storedRelationship = relationshipDao.select( newRelationshipKey().
+            type( PARENT ).
+            fromContent( contentA ).
+            toContent( contentB ).
+            managingData( EntryPath.from( "myParent[3].myData[1]" ) ).build(), session );
+
+        // verify
+        assertEquals( contentA, storedRelationship.getFromContent() );
+        assertEquals( contentB, storedRelationship.getToContent() );
+        assertEquals( PARENT, storedRelationship.getType() );
+        assertEquals( EntryPath.from( "myParent[3].myData[1]" ), storedRelationship.getManagingData() );
+    }
+
     private Relationship createRelationship( final ContentId contentA, final ContentId contentB, final QualifiedRelationshipTypeName type )
     {
         return createRelationship( contentA, contentB, type, null );

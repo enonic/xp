@@ -5,6 +5,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
 import com.enonic.wem.core.content.dao.AbstractContentDaoHandler;
@@ -68,12 +69,30 @@ abstract class AbstractRelationshipDaoHandler<T>
 
         if ( relationshipKey.getManagingData() != null )
         {
-            final Node entryPathNode = relationshipTypeNameNode.getNode( relationshipKey.getManagingData().toString() );
-            return entryPathNode.getNode( RelationshipDao.TO_CONTENT_NODE_PREFIX + relationshipKey.getToContent().toString() );
+            final Node managingDataNode = getManagingDataNode( relationshipKey.getManagingData(), relationshipTypeNameNode );
+            return managingDataNode.getNode( RelationshipDao.TO_CONTENT_NODE_PREFIX + relationshipKey.getToContent().toString() );
         }
         else
         {
             return relationshipTypeNameNode.getNode( RelationshipDao.TO_CONTENT_NODE_PREFIX + relationshipKey.getToContent().toString() );
+        }
+    }
+
+    private Node getManagingDataNode( final EntryPath entryPath, final Node parentNode )
+        throws RepositoryException
+    {
+        final EntryPath.Element firstElement = entryPath.getFirstElement();
+        Node childNode = JcrHelper.getNodeOrNull( parentNode, firstElement.getName() );
+        final int index = firstElement.hasIndex() ? firstElement.getIndex() : 0;
+        childNode = JcrHelper.getNodeOrNull( childNode, "__index-" + index );
+
+        if ( entryPath.elementCount() == 1 )
+        {
+            return childNode;
+        }
+        else
+        {
+            return getManagingDataNode( entryPath.asNewWithoutFirstPathElement(), childNode );
         }
     }
 
