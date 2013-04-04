@@ -27,6 +27,11 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
 
                 }
             },
+            'contentWizardPanel *[action=publishContent]': {
+                click: function (el, e) {
+                    me.publishContent(this.getContentWizardPanel(), false);
+                }
+            },
             'contentWizardPanel': {
                 finished: function (wizard, data) {
                     me.saveContent(this.getContentWizardPanel(), true);
@@ -143,11 +148,15 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
 
                 var path = contentParams.contentPath ? contentParams.contentPath : contentPath;
 
-                Admin.MessageBus.showFeedback({
-                    title: 'Content was saved',
-                    message: 'Content with path: ' + path + ' was saved',
-                    opts: {}
-                });
+                Admin.MessageBus.showGeneral(
+                    path,
+                    function () {
+                        alert('publish link callback');
+                    },
+                    function () {
+                        alert('close link callback');
+                    }
+                );
 
                 if (Ext.isFunction(contentWizard.washDirtyForms)) {
                     contentWizard.washDirtyForms();
@@ -157,6 +166,20 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
             }
         };
         this.remoteCreateOrUpdateContent(contentParams, onUpdateContentSuccess);
+    },
+
+
+    publishContent: function (contentWizard, closeWizard) {
+        var contentPath = contentWizard.data.content.path;
+        Admin.MessageBus.showPublish(
+            contentPath,
+            function () {
+                alert('result link callback');
+            },
+            function () {
+                alert('publish link callback');
+            }
+        );
     },
 
 

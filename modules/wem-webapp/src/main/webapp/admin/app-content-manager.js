@@ -1,5 +1,7 @@
 Ext.application({
-    name: 'App',
+    name: 'CM',
+
+    appFolder: 'resources/app',
 
     controllers: [
         'Admin.controller.Controller',
@@ -58,8 +60,5 @@ Ext.application({
                 }
             ]
         });
-
-        Ext.create('widget.feedbackBox');
-
     }
 });

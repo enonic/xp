@@ -121,8 +121,8 @@ ul.icons li [class^="icon-"], ul.icons li [class*=" icon-"] {
 
 /* line 33, ../sass/admin/css/_font-awesome.scss */
 .icon-border {
-    border: solid 1px #eeeeee;
-    padding: 0.2em 0.25em 0.15em;
+    border: solid 1px #eee;
+    padding: .2em .25em .15em;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
@@ -1721,7 +1721,7 @@ td {
 
 /* line 6, ../sass/admin/css/_window.scss */
 .admin-window .delete-container {
-    box-shadow: 0 0 5px #777777;
+    box-shadow: 0 0 5px #777;
     padding: 10px;
     max-height: 150px;
     overflow-y: auto;
@@ -1761,7 +1761,7 @@ td {
 
 /* line 43, ../sass/admin/css/_window.scss */
 .admin-window-header h1 {
-    color: white !important;
+    color: #fff !important;
     font-size: 18px !important;
     margin: 0 !important;
     padding: 0 0 0 28px !important;
@@ -1790,7 +1790,7 @@ td {
 
 /* line 19, ../sass/admin/css/_panel.scss */
 .admin-filter .admin-facet-group h2 {
-    color: black !important;
+    color: #000000 !important;
     font-size: 15px !important;
     padding: 0 !important;
     text-transform: capitalize;
@@ -1803,7 +1803,7 @@ td {
 
 /* line 30, ../sass/admin/css/_panel.scss */
 .admin-filter .admin-facet-group .admin-facet:hover label {
-    color: black !important;
+    color: #000 !important;
 }
 
 /* line 35, ../sass/admin/css/_panel.scss */
@@ -1813,7 +1813,7 @@ td {
 
 /* line 39, ../sass/admin/css/_panel.scss */
 .admin-filter .admin-facet-group .admin-facet label {
-    color: #777777 !important;
+    color: #777 !important;
     background-image: url("../themes/images/default/grid/admin-unchecked.gif");
     background-repeat: no-repeat;
     padding-left: 20px;
@@ -1826,7 +1826,7 @@ td {
 
 /* line 52, ../sass/admin/css/_panel.scss */
 .admin-filter .admin-facet-group .admin-facet.checked label {
-    color: #333333 !important;
+    color: #333 !important;
 }
 
 /* line 65, ../sass/admin/css/_panel.scss */
@@ -1945,7 +1945,7 @@ td {
 /* line 4, ../sass/admin/css/_grid.scss */
 .x-grid-row .x-grid-cell {
     font-size: 11px !important;
-    color: black !important;
+    color: #000 !important;
     vertical-align: middle !important;
     border: none !important;
 }
@@ -2037,7 +2037,7 @@ td {
 
 /* line 86, ../sass/admin/css/_grid.scss */
 .admin-grid .x-grid-row-selected .admin-grid-name-renderer .admin-grid-name-renderer-path {
-    color: white !important;
+    color: #fff !important;
 }
 
 /**
@@ -2124,12 +2124,12 @@ td {
 
 /* line 63, ../sass/admin/css/_tree.scss */
 .admin-tree .x-grid-row-selected .admin-tree-description p {
-    color: white !important;
+    color: #fff !important;
 }
 
 /* line 1, ../sass/admin/css/_mega-menu.scss */
 .admin-mega-menu {
-    background-color: white !important;
+    background-color: #fff !important;
 }
 
 /* line 5, ../sass/admin/css/_mega-menu.scss */
@@ -2216,7 +2216,7 @@ td {
 
 /* line 15, ../sass/admin/css/_toolbar.scss */
 .admin-white-toolbar {
-    background-color: white !important;
+    background-color: #ffffff !important;
     padding: 6px 12px !important;
 }
 
@@ -2224,7 +2224,7 @@ td {
 .x-toolbar.admin-white-toolbar,
 .x-toolbar.admin-white-toolbar .x-toolbar-text {
     font-size: 12px !important;
-    color: black !important;
+    color: #000000 !important;
 }
 
 /* line 1, ../sass/admin/css/_splitter.scss */
@@ -2395,7 +2395,7 @@ td {
  */
 /* line 106, ../sass/admin/css/_form.scss */
 .x-datepicker-header {
-    background-color: white !important;
+    background-color: #fff !important;
     background-image: none !important;
 }
 
@@ -2409,7 +2409,7 @@ td {
  */
 /* line 118, ../sass/admin/css/_form.scss */
 .x-form-text, textarea.x-form-field {
-    background: none white !important;
+    background: none #fff !important;
 }
 
 /**
@@ -2467,7 +2467,7 @@ td {
 /* line 166, ../sass/admin/css/_form.scss */
 .form-item-set .admin-formitemset-block {
     border: none !important;
-    box-shadow: 0 0 4px #777777;
+    box-shadow: 0 0 4px #777;
     border-radius: 0;
 }
 
@@ -2578,7 +2578,7 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
 .admin-selected-item-box .center {
     float: left;
     border: 0 none !important;
-    border-right: 1px solid #f0f0f0 !important;
+    border-right: 1px solid #F0F0F0 !important;
 }
 
 /* line 23, ../sass/admin/css/_selected-grid-item.scss */
@@ -2786,7 +2786,7 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     border-top: 50px solid transparent;
     /* Go big on the size, and let overflow hide */
     border-bottom: 50px solid transparent;
-    border-left: 30px solid #eeeeee;
+    border-left: 30px solid #eee;
     position: absolute;
     top: 50%;
     margin-top: -50px;
@@ -2803,7 +2803,7 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     border-top: 50px solid transparent;
     /* Go big on the size, and let overflow hide */
     border-bottom: 50px solid transparent;
-    border-left: 28px solid #cccccc;
+    border-left: 28px solid #ccc;
     position: absolute;
     top: 50%;
     margin-top: -50px;
@@ -2819,12 +2819,12 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
 
 /* line 66, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current:after {
-    border-left: 30px solid white;
+    border-left: 30px solid #fff;
 }
 
 /* line 70, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current:before {
-    border-left: 30px solid white;
+    border-left: 30px solid #fff;
 }
 
 /* line 74, ../sass/admin/css/_wizard.scss */
@@ -2936,12 +2936,12 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
 /* line 170, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-display-name:not(.x-form-readonly):not(.x-form-display-field) input:focus {
     color: #000;
-    border: 1px solid #99bce8;
+    border: 1px solid #99BCE8;
 }
 
 /* line 175, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-display-name:not(.x-form-readonly):not(.x-form-display-field) input.x-form-invalid-field {
-    border: 1px solid #cc3300;
+    border: 1px solid #CC3300;
     box-shadow: 0 0 0 transparent;
 }
 
@@ -2973,7 +2973,7 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
 /* line 204, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-path input,
 .admin-wizard-header-container .admin-path .x-form-display-field {
-    color: #aaaaaa !important;
+    color: #AAA !important;
     font-size: 16px;
     line-height: 26px !important;
     height: 26px !important;
@@ -3011,12 +3011,12 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
 /* line 170, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-name:not(.x-form-readonly):not(.x-form-display-field) input:focus {
     color: #000;
-    border: 1px solid #99bce8;
+    border: 1px solid #99BCE8;
 }
 
 /* line 175, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-name:not(.x-form-readonly):not(.x-form-display-field) input.x-form-invalid-field {
-    border: 1px solid #cc3300;
+    border: 1px solid #CC3300;
     box-shadow: 0 0 0 transparent;
 }
 
@@ -3041,7 +3041,7 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
 .admin-image-upload-button-container .admin-image-upload-button-progress-bar-container {
     visibility: hidden;
     position: absolute;
-    border: 1px solid #555555;
+    border: 1px solid #555;
     background-color: #555;
     bottom: 1px;
     left: 1px;
@@ -3242,12 +3242,12 @@ div.admin-load-mask .admin-load-text {
 
 /* line 18, ../sass/admin/css/_load-mask.scss */
 .x-mask {
-    background-color: black !important;
+    background-color: #000 !important;
 }
 
 /* line 24, ../sass/admin/css/_load-mask.scss */
 .admin-mask-white {
-    background-color: white !important;
+    background-color: #fff !important;
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity = 50);
     opacity: 0.5;
 }
@@ -3407,9 +3407,9 @@ div.admin-load-mask .admin-load-text {
 
 /* line 125, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .x-menu-body {
-    background: white !important;
+    background: #FFF !important;
     padding: 0 !important;
-    border: 1px solid #cccccc !important;
+    border: 1px solid #ccc !important;
 }
 
 /* line 131, ../sass/admin/css/_top-bar.scss */
@@ -3423,7 +3423,7 @@ div.admin-load-mask .admin-load-text {
 
 /* line 139, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .title {
-    border-bottom: 1px solid #cccccc;
+    border-bottom: 1px solid #ccc;
     font-size: 11px;
     color: #0066cc;
     text-align: center;
@@ -3530,12 +3530,12 @@ div.admin-load-mask .admin-load-text {
 .admin-context-menu {
     border-width: 2px;
     border-style: solid;
-    border-color: #cccccc !important;
+    border-color: #ccc !important;
 }
 
 /* line 6, ../sass/admin/css/_context-menu.scss */
 .admin-context-menu .x-menu-body {
-    background: white !important;
+    background: #fff !important;
 }
 
 /* line 10, ../sass/admin/css/_context-menu.scss */
@@ -3611,7 +3611,7 @@ div.admin-load-mask .admin-load-text {
 
 /* line 3, ../sass/admin/css/_upload-window.scss */
 .admin-upload-form .admin-drop-zone {
-    border: 6px dashed #cccccc !important;
+    border: 6px dashed #ccc !important;
     background-color: #fff;
 }
 
@@ -4461,7 +4461,7 @@ tr.x-container:before {
     color: #000;
     font: normal 11px "Open Sans", sans-serif;
     border: 1px solid;
-    border-color: #dddddd #bbbbbb #bbbbbb #dddddd;
+    border-color: #ddd #bbb #bbb #ddd;
     background-color: #fff;
 }
 
@@ -5730,19 +5730,19 @@ tr.x-container:before {
 /* line 48, ../themes/stylesheets/ext4/default/widgets/_html.scss */
 .x-html h1 {
     font-size: 2em;
-    margin: 0.67em 0;
+    margin: .67em 0;
 }
 
 /* line 49, ../themes/stylesheets/ext4/default/widgets/_html.scss */
 .x-html h2 {
     font-size: 1.5em;
-    margin: 0.75em 0;
+    margin: .75em 0;
 }
 
 /* line 50, ../themes/stylesheets/ext4/default/widgets/_html.scss */
 .x-html h3 {
     font-size: 1.17em;
-    margin: 0.83em 0;
+    margin: .83em 0;
 }
 
 /* line 60, ../themes/stylesheets/ext4/default/widgets/_html.scss */
@@ -16409,7 +16409,7 @@ tr.x-container:before {
 
 /* line 104, ../themes/stylesheets/ext4/default/widgets/_datepicker.scss */
 .x-datepicker-month span {
-    color: white !important;
+    color: #fff !important;
 }
 
 /* line 108, ../themes/stylesheets/ext4/default/widgets/_datepicker.scss */
@@ -16731,7 +16731,7 @@ table.x-datepicker-inner .x-datepicker-disabled a {
 
 /* line 8, ../themes/stylesheets/ext4/default/widgets/_colorpicker.scss */
 .x-color-picker a {
-    border: 1px solid white;
+    border: 1px solid #fff;
     float: left;
     padding: 2px;
     text-decoration: none;
@@ -17340,7 +17340,7 @@ browsers will do whacky things with it.
 
 /* line 339, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
 .x-grid-cell-selected {
-    background-color: #b8cfee !important;
+    background-color: #B8CFEE !important;
 }
 
 /* line 345, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
@@ -18444,7 +18444,7 @@ textarea.x-form-invalid-field {
 
 /* line 8, ../themes/stylesheets/ext4/default/widgets/form/_checkboxgroup.scss */
 .x-form-invalid .x-form-checkboxgroup-body {
-    border: 1px solid #cc3300;
+    border: 1px solid #c30;
     background: transparent repeat-x bottom;
     background-image: url('../themes/images/default/grid/invalid_line.gif');
     padding: 0 3px 0 3px;
@@ -18460,7 +18460,7 @@ textarea.x-form-invalid-field {
 /* line 23, ../themes/stylesheets/ext4/default/widgets/form/_checkboxgroup.scss */
 .x-form-check-group-label {
     color: #333;
-    border-bottom: 1px solid #333333;
+    border-bottom: 1px solid #333;
     margin: 0 30px 5px 0;
     padding: 2px;
 }
