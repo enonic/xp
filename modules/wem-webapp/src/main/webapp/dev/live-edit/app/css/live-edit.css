@@ -247,8 +247,7 @@ svg.live-edit-highlight-border {
     right: 0;
     bottom: 0;
     left: 0;
-    opacity: 0.9;
-    background-color: #141414;
+    background-color: rgba(255,255,255, .9);
 }
 
 .live-edit-loader-splash-content {
@@ -272,7 +271,7 @@ svg.live-edit-highlight-border {
 }
 
 .live-edit-loader-splash-content div {
-    color: #bbb;
+    color: #000;
     margin-top: .7em;
 }
 
