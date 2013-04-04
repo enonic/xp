@@ -96,8 +96,11 @@ public class CreateContentHandler
             contentToUpdate( contentId ).
             contentAfterEditing( content.getRootDataSet() ) );
 
-        final Content storedContent = builder.id( contentId ).build();
-        indexService.indexContent( storedContent );
+        if ( !command.isTemporary() )
+        {
+            final Content storedContent = builder.id( contentId ).build();
+            indexService.indexContent( storedContent );
+        }
 
         command.setResult( new CreateContentResult( contentId, contentPath ) );
     }
