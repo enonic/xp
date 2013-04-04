@@ -14,8 +14,13 @@ AdminLiveEdit.DragDropSort = (function () {
 
     var regionSelector = '[data-live-edit-type=region]';
 
-    var itemsToSortSelector = '[data-live-edit-type=layout], [data-live-edit-type=part], [data-live-edit-type=paragraph]';
+    var layoutSelector = '[data-live-edit-type=layout]';
 
+    var partSelector = '[data-live-edit-type=part]';
+
+    var paragraphSelector = '[data-live-edit-type=paragraph]';
+
+    var itemsToSortSelector = layoutSelector + ',' + partSelector + ',' + paragraphSelector;
 
     function enableDragDrop() {
         $liveedit('').sortable('enable');
@@ -184,7 +189,7 @@ AdminLiveEdit.DragDropSort = (function () {
 
 
     function addPaddingToLayoutComponent($component) {
-        $component.closest('[data-live-edit-type=layout]').addClass('live-edit-component-padding');
+        $component.closest(layoutSelector).addClass('live-edit-component-padding');
     }
 
 
@@ -216,7 +221,7 @@ AdminLiveEdit.DragDropSort = (function () {
              // This is a hack workaround (destroy and re-create sortables) until 8532 is fixed.
              if (AdminLiveEdit.Util.getComponentType($component) === 'layout') {
              $liveedit(regionSelector).sortable('destroy');
-             createSortable('[data-live-edit-type=layout]');
+             createSortable(layoutSelector);
              } else {
              createSortable(itemsToSortSelector);
              }
