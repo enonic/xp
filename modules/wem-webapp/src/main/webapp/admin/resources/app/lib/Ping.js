@@ -43,16 +43,11 @@ Ext.define('Admin.lib.Ping', {
 
 
     showErrorMessage: function (response) {
-        if (!this.errorMessageId) {
-            this.errorMessageId = Admin.MessageBus.showError({ lifetime: -1 });
-        }
+        Admin.MessageBus.showError({ mark: 'serverError', single: true, lifetime: -1 });
     },
 
 
-    hideErrorMessage: function (response) {
-        if (this.errorMessageId) {
-            Admin.MessageBus.removeNotification(this.errorMessageId);
-            this.errorMessageId = null;
-        }
+    hideErrorMessage: function () {
+        Admin.MessageBus.removeNotification('serverError');
     }
 });

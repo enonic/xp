@@ -7,27 +7,35 @@ Ext.define('Admin.MessageBus', {
      * @param config {title, message, opts}
      */
     showFeedback: function (config) {
-        return window.top.Admin.NotificationManager.notify(config);
+        window.top.Admin.MessageBus.fireEvent('showNotification', 'notify', config);
     },
 
 
     showError: function (message) {
-        return window.top.Admin.NotificationManager.error(message);
+        window.top.Admin.MessageBus.fireEvent('showNotification', 'error', message);
     },
 
 
     showGeneral: function (contentName, resultCallback, publishCallback) {
-        return window.top.Admin.NotificationManager.general(contentName, resultCallback, publishCallback);
+        window.top.Admin.MessageBus.fireEvent('showNotification', 'general', {
+            contentName: contentName,
+            resultCallback: resultCallback,
+            publishCallback: publishCallback
+        });
     },
 
 
     showPublish: function (contentName, publishCallback, closeCallback) {
-        return window.top.Admin.NotificationManager.publish(contentName, publishCallback, closeCallback);
+        window.top.Admin.MessageBus.fireEvent('showNotification', 'publish', {
+            contentName: contentName,
+            publishCallback: publishCallback,
+            closeCallback: closeCallback
+        });
     },
 
 
-    removeNotification: function (notificationId) {
-        window.top.Admin.NotificationManager.remove(notificationId);
+    removeNotification: function (mark) {
+        window.top.Admin.MessageBus.fireEvent('removeNotification', mark);
     },
 
 

@@ -86,8 +86,6 @@ Ext.application({
                 }
             ]
         });
-
-        Ext.create('widget.feedbackBox');
     }
 
 });

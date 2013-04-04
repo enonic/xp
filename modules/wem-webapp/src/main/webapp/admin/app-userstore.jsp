@@ -79,9 +79,6 @@
             }
           ]
         });
-
-        Ext.create('widget.feedbackBox');
-
       }
     });
 
