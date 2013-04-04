@@ -41,7 +41,8 @@ Ext.define('Admin.view.contentManager.ShowPanel', {
                 xtype: 'contentDetail',
                 showToolbar: false,
                 flex: 1,
-                hidden: true
+                hidden: true,
+                isVertical: true
             }
         ];
 

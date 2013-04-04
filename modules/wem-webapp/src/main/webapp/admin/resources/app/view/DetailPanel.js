@@ -12,6 +12,9 @@ Ext.define('Admin.view.DetailPanel', {
 
     showToolbar: true,
 
+    isVertical: false,
+    isFullPage: false,
+
     listeners: {
         afterrender: function (detail) {
             detail.el.on('click', function (event, target, opts) {
@@ -37,8 +40,6 @@ Ext.define('Admin.view.DetailPanel', {
             }
         }
     },
-
-    isFullPage: false,
 
     initComponent: function () {
         if (this.showToolbar) {
@@ -100,7 +101,7 @@ Ext.define('Admin.view.DetailPanel', {
      * */
     singleTemplate: {
 
-        photo: '<img src="{data.iconUrl}?size=80" style="width: 80px;" alt="{name}"/>',
+        photo: '<img src="{data.iconUrl}?size=80" style="width: 64px;" alt="{name}"/>',
 
         header: '<h1>{data.displayName}</h1><span>{data.key}{data.path}</span>'
     },
@@ -125,23 +126,13 @@ Ext.define('Admin.view.DetailPanel', {
             },
             overflowX: 'hidden',
             overflowY: 'hidden',
-            // Attempt to get livePreview to re-render when scaling the detail window. Currently not working
-            /*listeners: {
-             resize: function (component) {
-
-             var livePreview = component.down('#center').down('#livePreview');
-             if (livePreview) {
-             livePreview.doComponentLayout();
-             }
-             }
-             },*/
             items: [
                 {
                     xtype: 'container',
                     region: 'north',
                     cls: 'north',
                     margin: '5 0',
-                    height: 100,
+                    height: (me.isVertical ? 100 : 64),
                     layout: {
                         type: 'table',
                         tableAttrs: {
@@ -152,19 +143,19 @@ Ext.define('Admin.view.DetailPanel', {
                         columns: 3
                     },
                     defaults: {
-                        height: 100,
+                        height: 64,
                         border: 0
                     },
                     items: [
                         {
                             xtype: 'component',
-                            width: 80,
+                            width: 64,
                             itemId: 'previewPhoto',
                             tpl: me.singleTemplate.photo,
                             data: data,
                             margin: '0 5 0 5',
                             tdAttrs: {
-                                width: 100
+                                width: 80
                             }
                         },
                         {
@@ -173,30 +164,11 @@ Ext.define('Admin.view.DetailPanel', {
                             tpl: me.singleTemplate.header,
                             data: data
                         },
-                        me.getActionButton()
+                        me.getActionButton(),
+                        me.renderTabNavigation(me.isVertical)
                     ]
                 },
-                {
-                    xtype: 'container',
-                    region: 'west',
-                    cls: 'west',
-                    width: 200,
-                    tpl: Ext.create('Ext.XTemplate', '<ul class="admin-detail-nav">' +
-                                                     '<tpl for=".">' +
-                                                     '<li data-tab="{tab}">{displayName}</li>' +
-                                                     '</tpl>' +
-                                                     '</ul>'),
-                    data: me.singleSelection.tabs,
-                    listeners: {
-                        click: {
-                            element: 'el', //bind to the underlying el property on the panel
-                            fn: function (evt, element) {
-                                var tab = element.attributes['data-tab'].value;
-                                me.changeTab(tab);
-                            }
-                        }
-                    }
-                },
+                me.renderWestContainer(),
                 {
                     region: 'center',
                     cls: 'center',
@@ -204,6 +176,55 @@ Ext.define('Admin.view.DetailPanel', {
                     itemId: 'center'
                 }
             ]
+        };
+    },
+
+    renderWestContainer: function () {
+        var me = this;
+        if (me.isVertical) {
+            return {};
+        }
+
+        return {
+            xtype: 'container',
+            region: 'west',
+            cls: 'west',
+            width: 200,
+            items: [
+                me.renderTabNavigation(true)
+            ]
+        };
+    },
+
+    renderTabNavigation: function (doRender) {
+        var me = this;
+
+        if (!doRender) {
+            return {};
+        }
+
+        return {
+            xtype: 'component',
+            cls: (me.isVertical ? 'vertical' : 'horizontal'),
+            colspan: 3,
+            tpl: Ext.create('Ext.XTemplate', '<ul class="admin-detail-nav">' +
+                                             '<tpl for=".">' +
+                                             '<li data-tab="{tab}">{displayName}</li>' +
+                                             '</tpl>' +
+                                             '</ul>'),
+            data: me.singleSelection.tabs,
+            listeners: {
+                click: {
+                    element: 'el', //bind to the underlying el property on the panel
+                    fn: function (evt, element) {
+                        var tab = element.attributes['data-tab'].value;
+                        var panels = Ext.ComponentQuery.query('contentDetail');
+                        for (var i = 0; i < panels.length; i++) {
+                            panels[i].changeTab(tab);
+                        }
+                    }
+                }
+            }
         };
     },
 
@@ -371,12 +392,14 @@ Ext.define('Admin.view.DetailPanel', {
             currentTab.callback(target);
         }
 
-        var element = Ext.dom.Query.select('*[data-tab=' + selectedTab + ']')[0];
-        var children = element.parentElement.children;
-        for (var i = 0; i < children.length; i++) {
-            children[i].className = '';
+        var elements = Ext.dom.Query.select('*[data-tab=' + selectedTab + ']');
+        for (var i = 0; i < elements.length; i++) {
+            var children = elements[i].parentElement.children;
+            for (var j = 0; j < children.length; j++) {
+                children[j].className = '';
+            }
+            elements[i].className = 'active';
         }
-        element.className = 'active';
 
     }
 });
