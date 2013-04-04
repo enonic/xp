@@ -156,7 +156,7 @@ public class CreateContentHandlerTest
 
         // verify
         Mockito.verify( contentDao, Mockito.times( 1 ) ).create( Mockito.isA( Content.class ), Mockito.any( Session.class ) );
-        Mockito.verify( indexService, Mockito.times( 1 ) ).indexContent( Mockito.isA( Content.class ) );
+        Mockito.verify( indexService, Mockito.never() ).indexContent( Mockito.isA( Content.class ) );
         Mockito.verify( relationshipService, Mockito.times( 1 ) ).syncRelationships( Mockito.isA( SyncRelationshipsCommand.class ) );
 
         final CreateContentResult result = command.getResult();
