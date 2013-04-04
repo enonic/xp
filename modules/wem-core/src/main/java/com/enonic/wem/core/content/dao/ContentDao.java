@@ -44,6 +44,9 @@ public interface ContentDao
     void delete( ContentSelector contentSelector, Session session )
         throws ContentNotFoundException, UnableToDeleteContentException;
 
+    void forceDelete( ContentId contentId, Session session )
+        throws ContentNotFoundException;
+
     Contents select( ContentSelectors contentSelectors, Session session );
 
     Content select( ContentSelector contentSelector, Session session );

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
+import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentSelector;
@@ -82,6 +83,20 @@ public class ContentDaoImpl
             {
                 throw new IllegalArgumentException( "Unsupported content selector: " + contentSelector.getClass().getCanonicalName() );
             }
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    @Override
+    public void forceDelete( final ContentId contentId, final Session session )
+        throws ContentNotFoundException
+    {
+        try
+        {
+            new ContentDaoHandlerDelete( session ).force( true ).ignoreContentNotFound( true ).deleteContentById( contentId );
         }
         catch ( RepositoryException e )
         {

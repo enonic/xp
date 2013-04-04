@@ -83,18 +83,29 @@ public class CreateContentHandler
         final ContentId contentId = contentDao.create( content, session );
         session.save();
 
-        for ( Content tempContent : temporaryContents )
+        try
         {
-            final ContentPath pathToEmbeddedContent = ContentPath.createPathToEmbeddedContent( contentPath, tempContent.getName() );
-            createEmbeddedContent( tempContent, pathToEmbeddedContent, session );
-        }
 
-        relationshipService.syncRelationships( new SyncRelationshipsCommand().
-            client( context.getClient() ).
-            jcrSession( session ).
-            contentType( content.getType() ).
-            contentToUpdate( contentId ).
-            contentAfterEditing( content.getRootDataSet() ) );
+            for ( Content tempContent : temporaryContents )
+            {
+                final ContentPath pathToEmbeddedContent = ContentPath.createPathToEmbeddedContent( contentPath, tempContent.getName() );
+                createEmbeddedContent( tempContent, pathToEmbeddedContent, session );
+            }
+
+            relationshipService.syncRelationships( new SyncRelationshipsCommand().
+                client( context.getClient() ).
+                jcrSession( session ).
+                contentType( content.getType() ).
+                contentToUpdate( contentId ).
+                contentAfterEditing( content.getRootDataSet() ) );
+        }
+        catch ( Exception e )
+        {
+            // Temporary way of rollback: try delete content if any failure
+            contentDao.forceDelete( contentId, session );
+            session.save();
+            throw e;
+        }
 
         if ( !command.isTemporary() )
         {
