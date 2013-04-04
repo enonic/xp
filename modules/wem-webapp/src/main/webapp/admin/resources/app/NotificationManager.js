@@ -156,7 +156,7 @@ Ext.define('Admin.NotificationManager', {
      */
     general: function (opts) {
         var notificationOpts = {
-            message: this.tpl.general.apply(opts.contentName),
+            message: this.tpl.general.apply(opts),
             backgroundColor: 'green',
             listeners: []
         };
@@ -188,7 +188,7 @@ Ext.define('Admin.NotificationManager', {
      */
     publish: function (opts) {
         var notificationOpts = {
-            message: this.tpl.publish.apply(opts.contentName),
+            message: this.tpl.publish.apply(opts),
             backgroundColor: 'blue',
             listeners: []
         };
