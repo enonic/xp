@@ -47,8 +47,13 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
         me.application.on({});
 
+        /* For 18/4 demo */
+
         Admin.MessageBus.on('liveEdit.openContent', function () {
+
             var contentImageService = Admin.lib.UriHelper.getAbsoluteUri('admin/rest/content/image');
+
+            // We should use a content/space from the demo server
             var cm = new Admin.model.contentManager.ContentModel({
                 "id": "56bf6229-b5f8-4085-9bd2-58eb103e367b",
                 "path": "default:/",
@@ -90,7 +95,8 @@ Ext.define('Admin.controller.contentManager.Controller', {
             me.viewContent(cm);
         }, me);
 
-        // For prototype testing purposes
+
+        /* For 18/4 demo */
         Admin.MessageBus.on('liveEdit.showTestSettingsWindow', function () {
             me.getLiveEditWindow().doShow();
         }, me);

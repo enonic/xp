@@ -72,7 +72,7 @@ Ext.define('Admin.controller.homescreen.Login', {
 
     handleLoginSubmit: function () {
         var me = this,
-            loginFormPanel = me.getLoginFormPanel();
+            loginFormPanel = me.getLoginFormPanelView();
 
         loginFormPanel.getForm().submit({
             url: 'dummy-login-response.jsp',

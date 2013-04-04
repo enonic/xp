@@ -28,6 +28,15 @@ Ext.define('Admin.controller.contentManager.GridPanelController', {
                 itemdblclick: function (grid, record, el, index, event, opts) {
                     this.editContent(record);
                 }
+            },
+            'contentShow': {
+                afterrender: function () {
+
+                    /* For 18/4 demo */
+                    if (document.location.href.indexOf('editPage') > -1) {
+                        Admin.MessageBus.liveEditOpenContent();
+                    }
+                }
             }
         });
     },

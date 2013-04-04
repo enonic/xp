@@ -38,29 +38,39 @@ Ext.define('Admin.view.homescreen.Homescreen', {
 
 
     toggleShowHide: function () {
-        var me = this;
-        var el = me.getEl();
-        var show = !me.isVisible();
+        var me = this,
+            el = me.getEl(),
+            show = !me.isVisible();
 
         if (show) {
-            me.setVisible(true);
-            el.removeCls('hide-home').addCls('show-home');
+            me.showScreen();
         } else {
-            el.removeCls('show-home').addCls('hide-home');
+            me.hideScreen();
         }
     },
 
 
+    showScreen: function () {
+        this.setVisible(true);
+        this.getEl().removeCls('hide-home').addCls('show-home');
+    },
+
+    hideScreen: function () {
+        this.getEl().removeCls('show-home').addCls('hide-home');
+    },
+
+
+    /* Refactor to a helper? */
     prefixedEvent: function (element, type, callback) {
-        var pfx = ['webkit', 'moz', 'MS', 'o', ''];
+        var prefixes = ['webkit', 'moz', 'MS', 'o', ''];
         var i;
 
-        for (i = 0; i < pfx.length; i++) {
-            if (!pfx[i]) {
+        for (i = 0; i < prefixes.length; i++) {
+            if (!prefixes[i]) {
                 type = type.toLowerCase();
             }
 
-            element.addEventListener(pfx[i] + type, callback, false);
+            element.addEventListener(prefixes[i] + type, callback, false);
         }
     },
 

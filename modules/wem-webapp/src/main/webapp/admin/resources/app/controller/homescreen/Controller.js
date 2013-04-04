@@ -19,12 +19,20 @@ Ext.define('Admin.controller.homescreen.Controller', {
 
         me.control({
             '#mainViewport': {
-                afterrender: me.initHomescreen
+                afterrender: me.initHomeScreen
             },
 
             'homescreen': {
                 afterrender: function (view) {
                     if (me.isUserLoggedIn()) {
+
+                        /* For 18/4 demo */
+
+                        // Can we move this higher up in order avoid seeing the background
+                        if (me.getEditPageKey() !== undefined) {
+                            me.openPageInContentManager(me.getEditPageKey());
+                        }
+
                         me.application.fireEvent('displayAppSelector');
                     } else {
                         me.application.fireEvent('displayLogin');
@@ -48,7 +56,7 @@ Ext.define('Admin.controller.homescreen.Controller', {
     },
 
 
-    initHomescreen: function () {
+    initHomeScreen: function () {
         var me = this;
         Ext.create('Admin.view.homescreen.Homescreen', {
             userIsLoggedIn: me.isUserLoggedIn()
@@ -62,10 +70,10 @@ Ext.define('Admin.controller.homescreen.Controller', {
     },
 
 
-    openApp: function (appModel) {
+    openApp: function (appModel, extraParams) {
         var me = this;
-        me.getHomeScreen().toggleShowHide();
-        me.application.fireEvent('loadApplication', appModel.data);
+        me.getHomeScreenView().hideScreen();
+        me.application.fireEvent('loadApplication', appModel.data, extraParams);
     },
 
 
@@ -74,12 +82,38 @@ Ext.define('Admin.controller.homescreen.Controller', {
     },
 
 
-    getHomeScreen: function () {
+    /* For 18/4 demo */
+
+    openPageInContentManager: function (pageKey) {
+        var me = this;
+        var contentManagerAppData = {
+            "id": "app-10",
+            "name": "Content Manager",
+            "description": "Vel eius tation id, duo principes inciderint mediocritatem ut. Utroque ponderum duo ei. Cu cum choro delenit, est elitr utroque scripserit te. Mea ad lorem munere epicuri, clita omnes evertitur sed an. Eu aliquid ornatus principes vel. An eam justo malis debitis, ignota vocibus periculis in sit, alia adolescens ei has.",
+            "appUrl": "app-content-manager.jsp",
+            "icon": "resources/images/icons/metro/48x48/data.png"
+        };
+        var contentManagerAppModel = new Admin.model.homescreen.Apps(contentManagerAppData),
+            urlParams = {editPage: pageKey};
+
+        me.openApp(contentManagerAppModel, urlParams);
+    },
+
+
+    getEditPageKey: function () {
+        var urlParamsString = document.URL.split('?'),
+            urlParams = Ext.urlDecode(urlParamsString[urlParamsString.length - 1]);
+
+        return urlParams.editPage;
+    },
+
+
+    getHomeScreenView: function () {
         return Ext.ComponentQuery.query('homescreen')[0];
     },
 
 
-    getLoginFormPanel: function () {
+    getLoginFormPanelView: function () {
         return Ext.ComponentQuery.query('loginPanel')[0];
     },
 

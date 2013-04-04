@@ -11,15 +11,7 @@ Ext.define('Admin.controller.TopBarController', {
     ],
 
     init: function () {
-        this.control({
-            '#mainViewport': {
-                afterrender: {
-                    fn: this.loadDefaultApplication,
-                    delay: 10
-                }
-            }
-        });
-
+        // Custom event listeners
         this.application.on({
             loadApplication: {
                 fn: this.loadApplication,
@@ -41,27 +33,27 @@ Ext.define('Admin.controller.TopBarController', {
         this.loadApplication(defaultItem);
     },
 
-    loadApplication: function (appModel) {
+    loadApplication: function (appData, urlParams) {
         var me = this,
             parent = this.getParentFrame(),
-            iframes = parent.Ext.DomQuery.select('iframe');
+            iFrames = parent.Ext.DomQuery.select('iframe');
 
-        var iframeExist = false;
-        Ext.each(iframes, function (iframe, index, allIFrames) {
-            if (iframe.id === 'iframe-' + appModel.id) {
-                iframeExist = true;
+        var iFrameExist = false;
+        Ext.each(iFrames, function (iframe, index, allIFrames) {
+            if (iframe.id === 'iframe-' + appData.id) {
+                iFrameExist = true;
                 iframe.style.display = 'block';
             } else {
                 iframe.style.display = 'none';
             }
         });
 
-        if (!iframeExist) {
-            me.appendIframe(parent, appModel);
+        if (!iFrameExist) {
+            me.appendIframe(parent, appData, urlParams);
             me.showLoadMask();
         }
 
-        me.setStartButton(appModel);
+        me.setStartButton(appData);
     },
 
 
@@ -72,11 +64,16 @@ Ext.define('Admin.controller.TopBarController', {
     },
 
 
-    appendIframe: function (parent, appModel) {
-        var iframe = parent.Ext.core.DomHelper.append('appFrames', {
+    appendIframe: function (parent, appData, urlParams) {
+        var url = appData.appUrl + '?appId=' + appData.id;
+        if (urlParams) {
+            url += '&' + Ext.urlEncode(urlParams)
+        }
+
+        var iFrameSpec = parent.Ext.core.DomHelper.append('appFrames', {
             tag: 'iframe',
-            src: appModel.appUrl + '?appId=' + appModel.id,
-            id: 'iframe-' + appModel.id,
+            src: url,
+            id: 'iframe-' + appData.id,
             style: 'width: 100%; height: 100%; border: 0'
         }, false);
     },
