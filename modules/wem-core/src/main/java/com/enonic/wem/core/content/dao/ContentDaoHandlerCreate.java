@@ -90,7 +90,10 @@ final class ContentDaoHandlerCreate
         final Node contentVersionHistoryNode = createContentVersionHistory( content, newContentNode );
         addContentVersion( content, contentVersionHistoryNode );
 
-        newContentNode.addNode( CONTENT_EMBEDDED_NODE, NT_UNSTRUCTURED );
+        if ( !content.isEmbedded() )
+        {
+            newContentNode.addNode( CONTENT_EMBEDDED_NODE, NT_UNSTRUCTURED );
+        }
 
         return ContentIdFactory.from( newContentNode );
     }
