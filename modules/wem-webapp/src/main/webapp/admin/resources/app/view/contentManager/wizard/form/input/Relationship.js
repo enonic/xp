@@ -5,10 +5,11 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
         'Admin.store.contentManager.ContentStore'
     ],
 
+    defaultOccurrencesHandling: false,
+
     initComponent: function () {
 
         this.selectedContentStore = this.createSelectedContentStore();
-
         this.items = [
             this.createHiddenInput(),
             this.createComboBox(),

@@ -14,9 +14,13 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
         formItemOccurrencesHandler: 'Admin.view.contentManager.wizard.form.FormItemOccurrencesHandler'
     },
 
+    defaultOccurrencesHandling: true,
+
     listeners: {
         beforerender: function () {
-            this.handleOccurrences(this.inputConfig.occurrences.minimum);
+            if (this.defaultOccurrencesHandling) {
+                this.handleOccurrences(this.inputConfig.occurrences.minimum);
+            }
         },
         copyadded: function () {
             this.updateButtonState();
@@ -33,7 +37,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
             width: 450
         };
 
-        if (this.copyNo > this.inputConfig.occurrences.minimum && this.copyNo > 1) {
+        if (this.defaultOccurrencesHandling && this.copyNo > this.inputConfig.occurrences.minimum && this.copyNo > 1) {
             this.items.push(this.createDeleteButton());
         }
         this.callParent(arguments);
