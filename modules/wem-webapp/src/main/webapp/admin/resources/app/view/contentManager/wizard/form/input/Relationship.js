@@ -8,15 +8,34 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     defaultOccurrencesHandling: false,
 
     initComponent: function () {
+        var me = this;
 
-        this.selectedContentStore = this.createSelectedContentStore();
-        this.items = [
-            this.createHiddenInput(),
-            this.createComboBox(),
-            this.createViewForSelectedContent()
+        me.selectedContentStore = me.createSelectedContentStore();
+
+        me.items = [
+            me.createHiddenInput(),
+            me.createComboBox(),
+            me.createViewForSelectedContent()
         ];
 
-        this.callParent(arguments);
+        if (me.inputConfig && me.inputConfig.type && me.inputConfig.type.config) {
+            var getRelationshipTypeCommand = {
+                qualifiedRelationshipTypeName: me.inputConfig.type.config.relationshipType,
+                format: 'JSON'
+            };
+            Admin.lib.RemoteService.relationshipType_get(getRelationshipTypeCommand, function (response) {
+                if (response && response.success) {
+                    var iconUrl = response.relationshipType.iconUrl;
+                    if (me.rendered) {
+                        me.el.down('.admin-image-icon').set({'src': iconUrl});
+                    } else {
+                        me.relationshipTypeIconUrl = iconUrl;
+                    }
+                }
+            });
+        }
+
+        me.callParent(arguments);
     },
 
 
@@ -44,6 +63,37 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     createComboBox: function () {
         var me = this;
 
+        var fieldTpl = [
+            '<div class="{hiddenDataCls}" role="presentation"></div>',
+            '<input id="{id}" type="{type}" {inputAttrTpl} class="{fieldCls} {typeCls} {editableCls}" autocomplete="off"',
+            '<tpl if="value"> value="{[Ext.util.Format.htmlEncode(values.value)]}"</tpl>',
+            '<tpl if="name"> name="{name}"</tpl>',
+            '<tpl if="placeholder"> placeholder="{placeholder}"</tpl>',
+            '<tpl if="size"> size="{size}"</tpl>',
+            '<tpl if="maxLength !== undefined"> maxlength="{maxLength}"</tpl>',
+            '<tpl if="readOnly"> readonly="readonly"</tpl>',
+            '<tpl if="disabled"> disabled="disabled"</tpl>',
+            '<tpl if="tabIdx"> tabIndex="{tabIdx}"</tpl>',
+            '<tpl if="fieldStyle"> style="{fieldStyle}"</tpl>',
+            '/>',
+            '<img src="{relationshipTypeIconUrl}" class="admin-image-icon"/>',
+            '<a href="#" class="admin-library-button">Open Library</a>',
+            {compiled: true, disableFormats: true}
+        ];
+
+        var listItemTpl = [
+            '<tpl for=".">',
+            '   <div role="option" class="x-boundlist-item">',
+            '       <img src="{iconUrl}?size=48" alt="{displayName}" width="32" height="32"/>',
+            '       <div class="info">',
+            '           <h6>{displayName}</h6>',
+            '           <div style="color: #666">{path}</div>',
+            '       </div>',
+            '       <div class="x-clear"></div>',
+            '   </div>',
+            '</tpl>'
+        ];
+
         var combo = {
             xtype: 'combo',
             name: '_system_relation_combo',
@@ -57,6 +107,21 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
 
             displayField: 'displayName',
             valueField: 'id',
+
+            emptyText: 'Start typing',
+            fieldSubTpl: fieldTpl,
+            tpl: listItemTpl,
+            cls: 'admin-embedded-image-combo',
+            listConfig: {
+                cls: 'admin-embedded-image-list',
+                emptyText: 'No matching items'
+            },
+
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '{displayName}',
+                '</tpl>'
+            ),
 
             // Hardcode the store for now.
             store: new Admin.store.contentManager.ContentStore(),
