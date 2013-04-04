@@ -14,21 +14,21 @@ Ext.define('Admin.NotificationManager', {
     space: 3,
 
     lifetime: 5000,
-    slideDuration: 500,
+    slideDuration: 1000,
 
     tpl: {
         manager: new Ext.Template(
             '<div class="admin-notification-container">',
-            '<div class="admin-notification-wrapper"></div>',
-            '</di>'
+            '   <div class="admin-notification-wrapper"></div>',
+            '</div>'
         ),
 
         notification: new Ext.Template(
             '<div class="admin-notification" style="height: 0; opacity: 0;">',
-            '<div class="admin-notification-inner">',
-            '<a class="admin-notification-remove" href="#">X</a>',
-            '<div class="admin-notification-content">{message}</div>',
-            '</div>',
+            '   <div class="admin-notification-inner">',
+            '       <a class="admin-notification-remove" href="#">X</a>',
+            '       <div class="admin-notification-content">{message}</div>',
+            '   </div>',
             '</div>'
         ),
 
@@ -37,12 +37,12 @@ Ext.define('Admin.NotificationManager', {
         ),
 
         general: new Ext.Template(
-            '<span style="float: right; margin-left: 20px;"><a href="#" class="admin-notification-result">See result</a> or <a href="#" class="admin-notification-publish">Publish to other locations</a></span>',
+            '<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-result">See result</a> or <a href="#" class="admin-notification-publish">Publish to other locations</a></span>',
             '<span style="line-height: 1.5em;">Content "{contentName}" published successfully!</span> '
         ),
 
         publish: new Ext.Template(
-            '<span style="float: right; margin-left: 20px;"><a href="#" class="admin-notification-publish">Publish</a> or <a href="#" class="admin-notification-close">Close</a></span>',
+            '<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-publish">Publish</a> or <a href="#" class="admin-notification-close">Close</a></span>',
             '<span style="line-height: 1.5em;">Content "{contentName}" saved successfully!</span> '
         )
     },
@@ -52,12 +52,18 @@ Ext.define('Admin.NotificationManager', {
         this.timers = {};
 
         this.render();
+
+        Admin.MessageBus.on({
+            showNotification: { fn: this.showNotification, scope: this },
+            removeNotification: { fn: this.removeNotification, scope: this }
+        });
     },
 
     render: function () {
         var me = this,
             node,
             pos = me.position;
+
         // render manager template to document body
         node = me.tpl.manager.append(Ext.getBody());
         me.el = Ext.get(node);
@@ -70,21 +76,19 @@ Ext.define('Admin.NotificationManager', {
         me.getWrapperEl().setStyle((pos[1] != 'r') ? (pos[1] == 'l') ? { marginLeft: 0 } : { margin: 'auto' } : { marginRight: 0 });
     },
 
-    getEl: function () {
-        return this.el;
+    showNotification: function (type, args, opts) {
+        var me = this;
+
+        me[type] ? me[type](args) : me.notify();
     },
 
-    getWrapperEl: function () {
-        return this.el.first('.admin-notification-wrapper');
-    },
+    removeNotification: function (mark) {
+        var me = this,
+            notifications = Ext.select('.admin-notification[data-mark=' + mark + ']');
 
-    getInnerEl: function (notificationEl) {
-        return notificationEl.down('.admin-notification-inner');
-    },
-
-    getNotificationEl: function (node) {
-        Ext.isElement(node) || (node = window.top.Ext.get(node));
-        return node.up('.admin-notification', this.getEl());
+        notifications.each(function (notificationEl) {
+            me.remove(notificationEl);
+        });
     },
 
     /**
@@ -92,8 +96,9 @@ Ext.define('Admin.NotificationManager', {
      *    message
      *    backgroundColor - css color
      *    listeners - object or array of objects passed to Ext.Element.addListener,
-     *    onRemove - callback function called on notification removing,
-     *  lifetime
+     *    lifetime - milliseconds or negative for permanent notification
+     *    mark - to identify this notification
+     *    single - if true only one notification with specified mark will be created
      *
      *  Returns notification id
      */
@@ -101,6 +106,10 @@ Ext.define('Admin.NotificationManager', {
         var me = this,
             notificationEl,
             height;
+
+        if (me.isRendered(nOpts)) {
+            return;
+        }
 
         notificationEl = me.renderNotification(nOpts);
         me.setNotificationListeners(notificationEl, nOpts);
@@ -118,90 +127,101 @@ Ext.define('Admin.NotificationManager', {
                 }
 
                 me.timers[notificationEl.id] = {
-                    remainingTime: (nOpts.lifetime || me.lifetime),
-                    callback: nOpts.onRemove
+                    remainingTime: (nOpts.lifetime || me.lifetime)
                 };
                 me.startTimer(notificationEl);
             }
         });
-
-        return notificationEl.id;
     },
 
     /**
      *     Returns notification Id
      */
     error: function (message) {
-        var opts = {
-            message: this.tpl.error.apply({message: message || 'Lost connection to server - Please wait until connection restorred'}),
-            backgroundColor: 'red'
-        };
+        var defaultMessage = 'Lost connection to server - Please wait until connection restorred',
+            opts;
 
-        return this.notify(opts);
+        opts = Ext.apply({
+            message: defaultMessage,
+            backgroundColor: 'red'
+        }, Ext.isString(message) ? { message: message } : message);
+
+        opts.message = this.tpl.error.apply(opts);
+
+        this.notify(opts);
     },
 
     /**
      *     Returns notification id
      */
-    general: function (contentName, resultCallback, publishCallback) {
-        var opts = {
-            message: this.tpl.general.apply(contentName),
+    general: function (opts) {
+        var notificationOpts = {
+            message: this.tpl.general.apply(opts.contentName),
             backgroundColor: 'green',
             listeners: []
         };
 
-        if (Ext.isFunction(resultCallback)) {
-            opts.listeners.push({
+        if (Ext.isFunction(opts.resultCallback)) {
+            notificationOpts.listeners.push({
                 click: {
-                    fn: resultCallback,
+                    fn: opts.resultCallback,
                     delegate: '.admin-notification-result',
                     stopEvent: true
                 }
             });
         }
-        if (Ext.isFunction(publishCallback)) {
-            opts.listeners.push({
+        if (Ext.isFunction(opts.publishCallback)) {
+            notificationOpts.listeners.push({
                 click: {
-                    fn: publishCallback,
+                    fn: opts.publishCallback,
                     delegate: '.admin-notification-publish',
                     stopEvent: true
                 }
             });
         }
 
-        return this.notify(opts);
+        this.notify(notificationOpts);
     },
 
     /**
      *  Returns notification id
      */
-    publish: function (contentName, publishCallback, closeCallback) {
-        var opts = {
-            message: this.tpl.publish.apply(contentName),
+    publish: function (opts) {
+        var notificationOpts = {
+            message: this.tpl.publish.apply(opts.contentName),
             backgroundColor: 'blue',
             listeners: []
         };
 
-        if (Ext.isFunction(publishCallback)) {
-            opts.listeners.push({
+        if (Ext.isFunction(opts.publishCallback)) {
+            notificationOpts.listeners.push({
                 click: {
-                    fn: publishCallback,
+                    fn: opts.publishCallback,
                     delegate: '.admin-notification-publish',
                     stopEvent: true
                 }
             });
         }
-        if (Ext.isFunction(closeCallback)) {
-            opts.listeners.push({
+        if (Ext.isFunction(opts.closeCallback)) {
+            notificationOpts.listeners.push({
                 click: {
-                    fn: closeCallback,
+                    fn: opts.closeCallback,
                     delegate: '.admin-notification-close',
                     stopEvent: true
                 }
             });
         }
 
-        return this.notify(opts);
+        this.notify(notificationOpts);
+    },
+
+    isRendered: function (nOpts) {
+        if (nOpts.single && nOpts.mark
+            && this.getEl().select('.admin-notification[data-mark=' + nOpts.mark + ']').getCount() > 0) {
+            return true;
+        }
+
+        return false;
     },
 
     renderNotification: function (nOpts) {
@@ -222,6 +242,11 @@ Ext.define('Admin.NotificationManager', {
             : (style.marginTop = me.space + 'px');
         me.getInnerEl(notificationEl).setStyle(style);
 
+        // set mark to identify this notification
+        if (nOpts.mark) {
+            notificationEl.set({ 'data-mark': nOpts.mark });
+        }
+
         return notificationEl;
     },
 
@@ -232,7 +257,7 @@ Ext.define('Admin.NotificationManager', {
         notificationEl.on({
             click: {
                 fn: function () {
-                    me.remove(notificationEl, nOpts.onRemove);
+                    me.remove(notificationEl);
                 },
                 delegate: '.admin-notification-remove',
                 stopEvent: true
@@ -252,7 +277,7 @@ Ext.define('Admin.NotificationManager', {
         }
     },
 
-    remove: function (notificationEl, callback) {
+    remove: function (notificationEl) {
         var me = this;
 
         Ext.isElement(notificationEl) || (notificationEl = Ext.get(notificationEl));
@@ -269,9 +294,6 @@ Ext.define('Admin.NotificationManager', {
             },
             callback: function () {
                 Ext.removeNode(notificationEl.dom);
-                if (callback) {
-                    callback(notificationEl);
-                }
             }
         });
 
@@ -306,5 +328,22 @@ Ext.define('Admin.NotificationManager', {
         clearTimeout(timer.id);
 
         timer.remainingTime -= Date.now() - timer.startTime;
+    },
+
+    getEl: function () {
+        return this.el;
+    },
+
+    getWrapperEl: function () {
+        return this.el.first('.admin-notification-wrapper');
+    },
+
+    getInnerEl: function (notificationEl) {
+        return notificationEl.down('.admin-notification-inner');
+    },
+
+    getNotificationEl: function (node) {
+        Ext.isElement(node) || (node = window.top.Ext.get(node));
+        return node.up('.admin-notification', this.getEl());
     }
 });

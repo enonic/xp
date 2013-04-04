@@ -110,17 +110,17 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         return !this.data || !this.data.content || Ext.isEmpty(this.data.content.path);
     },
 
-    washDirtyForms : function () {
-        for ( var i = this.dirtyItems.length - 1; i >= 0; i-- ) { // dirtyForms
-            this.washDirtyForm( this.dirtyItems[i] );
+    washDirtyForms: function () {
+        for (var i = this.dirtyItems.length - 1; i >= 0; i--) { // dirtyForms
+            this.washDirtyForm(this.dirtyItems[i]);
         }
         this.dirtyItems = [];
         this.isWizardDirty = false;
     },
 
-    washDirtyForm : function (dirtyForm) {
+    washDirtyForm: function (dirtyForm) {
         if (dirtyForm.isDirty()) {
-            dirtyForm.getFields().each(function(me){
+            dirtyForm.getFields().each(function (me) {
                 me.originalValue = me.getValue();
                 me.checkDirty();
             });
@@ -150,7 +150,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     createActionButton: function () {
         return {
             xtype: 'button',
-            text: 'Publish'
+            text: 'Publish',
+            action: 'publishContent'
         };
     },
 
