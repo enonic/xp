@@ -73,11 +73,18 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
             inputConfig: inputConfig,
             value: inputData
         });
-        return Ext.create({
-            xclass: 'widget.inputContainer',
-            label: this.createInputLabel(inputConfig),
-            field: inputComponent
-        });
+
+        if (!inputComponent.defaultOccurrencesHandling) {
+            inputComponent.setFieldLabel(this.generateLabelHTML(inputConfig));
+            return inputComponent;
+        } else {
+            var fieldLabel = this.createInputLabel(inputConfig);
+            return Ext.create({
+                xclass: 'widget.inputContainer',
+                label: fieldLabel,
+                field: inputComponent
+            });
+        }
 
     },
 
@@ -86,16 +93,23 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
      * @param inputConfig
      */
     createInputLabel: function (inputConfig) {
-        var label = inputConfig.label + ':';
-        if (inputConfig.occurrences.minimum > 0) {
-            label += ' <sup style="color: #E32400">' + inputConfig.occurrences.minimum + '</sup>';
-        }
+        var label = this.generateLabelHTML(inputConfig);
+        label += ':';
         return Ext.create({
             xclass: 'widget.label',
             width: 100,
             styleHtmlContent: true,
             html: label
         });
+    },
+
+    generateLabelHTML: function (inputConfig) {
+        var label = inputConfig.label;
+        if (inputConfig.occurrences.minimum > 0) {
+            label += ' <sup style="color: #E32400">' + inputConfig.occurrences.minimum + '</sup>';
+        }
+
+        return label;
     },
 
     /**

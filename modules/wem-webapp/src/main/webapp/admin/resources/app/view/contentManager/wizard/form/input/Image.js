@@ -7,6 +7,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         'Admin.view.FileUploadWindow'
     ],
 
+    defaultOccurrencesHandling: false,
+
     initComponent: function () {
         var me = this;
         this.selectedContentStore = this.createSelectedContentStore();
@@ -36,6 +38,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         }
 
         this.callParent(arguments);
+        this.setValue(this.value);
     },
 
 
@@ -58,10 +61,10 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         return valueList;
     },
 
-    setValue: function (value) {
+    setValue: function (values) {
         var me = this;
         var getContentCommand = {
-            contentIds: value
+            contentIds: Ext.Array.pluck(values, 'value')
         };
         // retrieve image contents by contentId
         Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
