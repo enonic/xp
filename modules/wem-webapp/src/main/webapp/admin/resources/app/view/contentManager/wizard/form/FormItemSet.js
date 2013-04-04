@@ -48,6 +48,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
         var me = this;
         var label = {
             xtype: 'component',
+            cls: 'admin-drag-handle',
             html: '<h6>' + (me.formItemSetConfig.label || '{No label}') + ': </h6>'
         };
         var removeBtn = {
@@ -86,9 +87,11 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
      * @private
      */
     initSortable: function () {
-        new Admin.lib.Sortable(this,
+        new Admin.lib.Sortable(this.up(),
             {
                 proxyHtml: '<div><img src="../../admin/resources/images/icons/128x128/form_blue.png"/></div>',
+                group: this.name,
+                name: this.formItemSetConfig.label,
                 handle: '.admin-drag-handle'
             });
     },

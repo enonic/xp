@@ -25,6 +25,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemContainer', {
             {
                 xtype: 'panel',
                 itemId: 'formItemsPanel',
+                cls: 'admin-droppable',
                 layout: 'anchor',
                 minWidth: 100,
                 bodyStyle: {
