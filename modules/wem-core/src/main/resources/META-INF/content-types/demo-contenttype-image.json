@@ -9,11 +9,11 @@
         {
             "Input": {
                 "name": "image",
-                "label": "Image",
+                "label": "Image, max 1",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
-                    "maximum": 10
+                    "maximum": 1
                 },
                 "indexed": false,
                 "customText": null,
@@ -26,6 +26,113 @@
                         "relationshipType": "System:default"
                     }
                 }
+            }
+        }
+        ,
+        {
+            "Input": {
+                "name": "requiredImage",
+                "label": "Required image",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "Select image",
+                "type": {
+                    "name": "Image",
+                    "builtIn": true,
+                    "config": {
+                        "relationshipType": "System:like"
+                    }
+                }
+            }
+        }
+        ,
+        {
+            "Input": {
+                "name": "unlimitedImages",
+                "label": "Unlimited images",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "Select image",
+                "type": {
+                    "name": "Image",
+                    "builtIn": true,
+                    "config": {
+                        "relationshipType": "System:like"
+                    }
+                }
+            }
+        },
+        {
+            "FormItemSet": {
+                "name": "imageSet",
+                "label": "Image set, unlimited",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "customText": null,
+                "helpText": null,
+                "items": [
+                    {
+                        "Input": {
+                            "name": "defaultImage",
+                            "label": "Default Image, max 1",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Select image",
+                            "type": {
+                                "name": "Image",
+                                "builtIn": true,
+                                "config": {
+                                    "relationshipType": "System:default"
+                                }
+                            }
+                        }
+                    }
+                    ,
+                    {
+                        "Input": {
+                            "name": "likeImage",
+                            "label": "Like Image, max 1",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Select image",
+                            "type": {
+                                "name": "Image",
+                                "builtIn": true,
+                                "config": {
+                                    "relationshipType": "System:like"
+                                }
+                            }
+                        }
+                    }
+
+                ]
             }
         }
     ]
