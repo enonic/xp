@@ -141,14 +141,13 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
 
         var listItemTpl = [
             '<tpl for=".">',
-            '   <div class="x-boundlist-item">',
-            '       <div>',
-            '           <img src="{iconUrl}?size=48" alt="{displayName}"/>',
-            '           <div class="info">',
-            '               <h6>{displayName}</h6>',
-            '               <div style="color: #666">{path}</div>',
-            '           </div>',
+            '   <div role="option" class="x-boundlist-item">',
+            '       <img src="{iconUrl}?size=48" alt="{displayName}" width="32" height="32"/>',
+            '       <div class="info">',
+            '           <h6>{displayName}</h6>',
+            '           <div style="color: #666">{path}</div>',
             '       </div>',
+            '       <div class="x-clear"></div>',
             '   </div>',
             '</tpl>'
         ];
