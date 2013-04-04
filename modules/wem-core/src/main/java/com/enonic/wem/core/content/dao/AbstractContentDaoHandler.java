@@ -122,10 +122,15 @@ public abstract class AbstractContentDaoHandler
             return null;
         }
 
+        return nodeToContent( contentNode );
+    }
+
+    protected Content nodeToContent( final Node contentNode )
+        throws RepositoryException
+    {
         final Content.Builder contentBuilder = newContent();
         contentJcrMapper.toContent( contentNode, contentBuilder );
         return contentBuilder.build();
-
     }
 
     protected final Content doFindContent( final ContentId contentId )
@@ -137,10 +142,7 @@ public abstract class AbstractContentDaoHandler
             return null;
         }
 
-        final Content.Builder contentBuilder = newContent();
-        contentJcrMapper.toContent( contentNode, contentBuilder );
-        return contentBuilder.build();
-
+        return nodeToContent( contentNode );
     }
 
     protected String resolveNodePath( final ContentPath contentPath )

@@ -6,6 +6,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
@@ -14,21 +15,38 @@ import com.enonic.wem.api.content.UnableToDeleteContentException;
 final class ContentDaoHandlerDelete
     extends AbstractContentDaoHandler
 {
+    private boolean ignoreContentNotFound = false;
+
+    private boolean force = false;
+
     ContentDaoHandlerDelete( final Session session )
     {
         super( session );
+    }
+
+    ContentDaoHandlerDelete force( final boolean force )
+    {
+        this.force = force;
+        return this;
+    }
+
+    ContentDaoHandlerDelete ignoreContentNotFound( final boolean ignoreContentNotFound )
+    {
+        this.ignoreContentNotFound = ignoreContentNotFound;
+        return this;
     }
 
     void deleteContentByPath( final ContentPath pathToContent )
         throws RepositoryException
     {
         final Node contentNode = doGetContentNode( pathToContent );
-        if ( contentNode == null )
+
+        if ( !ignoreContentNotFound && contentNode == null )
         {
             throw new ContentNotFoundException( pathToContent );
         }
 
-        if ( hasContentChildrenNodes( contentNode ) )
+        if ( !force && hasContentChildrenNodes( contentNode ) )
         {
             throw new UnableToDeleteContentException( pathToContent, "Content has child content." );
         }
@@ -40,12 +58,12 @@ final class ContentDaoHandlerDelete
         throws RepositoryException
     {
         final Node contentNode = doGetContentNode( contentId );
-        if ( contentNode == null )
+        if ( !ignoreContentNotFound && contentNode == null )
         {
             throw new ContentNotFoundException( contentId );
         }
 
-        if ( hasContentChildrenNodes( contentNode ) )
+        if ( !force && hasContentChildrenNodes( contentNode ) )
         {
             throw new UnableToDeleteContentException( contentId, "Content has child content." );
         }
@@ -64,7 +82,12 @@ final class ContentDaoHandlerDelete
                 final Node child = nodeIte.nextNode();
                 if ( !isNonContentNode( child ) )
                 {
-                    return true;
+                    final Content content = nodeToContent( child );
+                    if ( !content.isEmbedded() )
+                    {
+                        // allow deletion if child content is embedded
+                        return true;
+                    }
                 }
             }
         }
