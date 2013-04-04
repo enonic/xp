@@ -68,8 +68,7 @@ public class ContentImageResource
         if ( contentType.isImageFile() )
         {
             final RootDataSet contentData = content.getRootDataSet();
-            final String binaryIdValue = contentData.getData( "binaryId" ).getString();
-            final Binary binary = findBinary( BinaryId.from( binaryIdValue ) );
+            final Binary binary = findBinary( contentData.getData( "binary" ).getBinaryId() );
             contentImage = helper.getImageFromBinary( binary, size );
             mimeType = contentData.getData( "mimeType" ).getString();
         }

@@ -26,12 +26,9 @@ public final class GetContentTreeRpcHandler
     {
         final GetContentTree getContentTree = Commands.content().getTree();
 
-        final Boolean search = context.param( "search" ).asBoolean();
-
-        final String[] contentIds = context.param( "contentIds" ).asStringArray();
-
-        if ( search != null && search )
+        if ( context.hasParam( "contentIds" ) )
         {
+            final String[] contentIds = context.param( "contentIds" ).asStringArray();
             getContentTree.selectors( ContentIds.from( contentIds ) );
         }
 

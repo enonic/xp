@@ -43,18 +43,6 @@
 <body>
 <h1>Enonic WEM - Admin Console</h1>
 
-<h2>Tools</h2>
-<ul class="links">
-  <li>
-    <a href="../tests/">Tests</a>
-  </li>
-  <li>
-    <a href="http://versiontest/5-0/docs/">Docs</a> (Move to leela?)
-  </li>
-</ul>
-
-<hr/>
-
 <h2>Apps</h2>
 <ul class="links">
   <li>
@@ -75,16 +63,7 @@
   <li>
     <a href="app-dashboard.jsp">Dashboard</a>
   </li>
-  <li>
-    <a href="app-system.jsp">System</a>
-    <ul>
-      <li><a href="about.jsp">About</a></li>
-      <li><a href="app-property.jsp">Properties</a></li>
-      <li><a href="app-system-cache.jsp">Cache</a></li>
-      <li><a href="app-userstore.jsp">Userstore</a></li>
-      <li><a href="app-language.jsp">Languages</a></li>
-    </ul>
-  </li>
+  <li><a href="app-userstore.jsp">Userstore</a></li>
 </ul>
 
 <hr/>
@@ -122,13 +101,10 @@
     <a href="../dev/examples/topbar.html">Top Bar ( with tiled start menu )</a>
   </li>
   <li>
-    <a href="content-test.jsp">Content form, static</a>
-  </li>
-  <li>
     <a href="../dev/content/form.jsp">Content form, dynamic</a>
   </li>
   <li>
-    <a href="jcr.jsp">JCR browse</a>
+    <a href="../dev/jcr-browser/index.jsp">JCR browse</a>
   </li>
   <li>
     <a href="../dev/sortable/">Sortable</a>

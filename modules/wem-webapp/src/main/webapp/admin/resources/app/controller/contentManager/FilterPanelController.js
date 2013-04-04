@@ -13,26 +13,66 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
     ],
 
     init: function () {
+
         this.control({
             'contentFilter': {
-                search: this.doSearch
-            },
-            'treeGridPanel': {
-                datachanged: this.doContentFilterUpdate
+                afterrender: function (cmp) {
+                    this.loadContentAndFacets();
+                },
+                search: this.doSearch,
+                reset: this.doReset
             }
         });
 
     },
 
 
-    // update contentFilter
-    doContentFilterUpdate: function (store) {
-        var rawData = store.getProxy().getReader().jsonData;
-        var filterPanel = this.getContentFilter();
-        filterPanel.updateFacets(rawData.facets);
+    doSearch: function (values) {
+
+        // set browse tab active
+        this.getCmsTabPanel().setActiveTab(0);
+
+        this.loadContentAndFacets(values);
+
     },
 
-    doSearch: function (values) {
+
+    doReset: function (dirty) {
+
+        if (!dirty) {
+            // prevent reset if the filter is not dirty
+            return false;
+        }
+
+        this.loadContentAndFacets();
+    },
+
+
+    loadContentAndFacets: function (values) {
+        var me = this;
+
+        var params = this.createLoadContentParams(values);
+
+        Admin.lib.RemoteService.content_find(params, function (response) {
+            if (response && response.success) {
+
+                // set facet data
+                me.getContentFilter().updateFacets(response.facets);
+
+                // set tree data
+                var ids = Ext.Array.pluck(response.contents, 'id'),
+                    treeGridPanel = me.getContentTreeGridPanel();
+
+                treeGridPanel.setContentSearchParams({ contentIds: ids });
+                treeGridPanel.refresh();
+            }
+        })
+
+    },
+
+
+    createLoadContentParams: function (values) {
+
         var now = new Date();
         var oneDayAgo = new Date();
         var oneWeekAgo = new Date();
@@ -41,12 +81,12 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
         oneWeekAgo.setDate(now.getDate() - 7);
         Admin.lib.DateHelper.addHours(oneHourAgo, -1);
 
-        var facetDef = {
+        var facets = {
             "space": {
                 "terms": {
                     "field": "space",
                     "size": 10,
-                    "all_terms": true,
+                    "all_terms": false,
                     "order": "term"
                 }
             },
@@ -54,7 +94,7 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
                 "terms": {
                     "field": "contentType",
                     "size": 10,
-                    "all_terms": true,
+                    "all_terms": false,
                     "order": "term"
                 }
             },
@@ -62,7 +102,7 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
                 "query": {
                     "range": {
                         "lastModified.date": {
-                            "from": oneDayAgo,
+                            "from": oneDayAgo.toISOString(),
                             "include_lower": true
                         }
                     }
@@ -72,7 +112,7 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
                 "query": {
                     "range": {
                         "lastModified.date": {
-                            "from": oneHourAgo,
+                            "from": oneHourAgo.toISOString(),
                             "include_lower": true
                         }
                     }
@@ -82,7 +122,7 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
                 "query": {
                     "range": {
                         "lastModified.date": {
-                            "from": oneWeekAgo,
+                            "from": oneWeekAgo.toISOString(),
                             "include_lower": true
                         }
                     }
@@ -90,35 +130,11 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
             }
         };
 
-        // set browse tab active
-        this.getCmsTabPanel().setActiveTab(0);
-
-        var params = { fulltext: values.query, include: true, facets: facetDef };
-        var treeGridPanel = this.getContentTreeGridPanel();
-        var filterPanel = this.getContentFilter();
-
-        if ( values.query ) {
-            Admin.lib.RemoteService.content_find( params, function ( rpcResp ) {
-                if ( rpcResp.success ) {
-                    filterPanel.updateFacets(rpcResp.facets);
-
-                    var i, ids = [],
-                        contents = rpcResp.contents,
-                        length = contents.length;
-
-                    for ( i = 0; i < length; i++ ) {
-                        ids.push( contents[i].id );
-                    }
-                    treeGridPanel.setContentSearchParams({ search : true, contentIds: ids });
-                    treeGridPanel.refresh();
-                }
-            } );
-        } else {
-            treeGridPanel.setContentSearchParams( { search : false } );
-            treeGridPanel.refresh();
-        }
-
-
+        return {
+            fulltext: values ? values.query : undefined,
+            include: true,
+            facets: facets
+        };
     }
 
 });

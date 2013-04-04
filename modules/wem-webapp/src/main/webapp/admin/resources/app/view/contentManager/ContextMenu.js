@@ -2,7 +2,7 @@ Ext.define('Admin.view.contentManager.ContextMenu', {
     extend: 'Admin.view.BaseContextMenu',
     alias: 'widget.contentManagerContextMenu',
 
-
+    //Handlers for this items put in the Admin.controller.contentManager.Controller
     items: [
         {
             text: ' New',

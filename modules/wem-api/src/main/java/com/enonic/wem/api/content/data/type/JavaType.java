@@ -48,7 +48,7 @@ public final class JavaType
         return null;
     }
 
-    static class BaseType
+    public static abstract class BaseType<T>
     {
         Class type;
 
@@ -66,6 +66,10 @@ public final class JavaType
         {
             return type.isInstance( value );
         }
+
+        public abstract T convertFrom( Object value );
+
+        public abstract T convertFrom( java.lang.String value );
 
         @Override
         public java.lang.String toString()
@@ -100,15 +104,25 @@ public final class JavaType
             {
                 return value.toString();
             }
+            else if ( value instanceof com.enonic.wem.api.content.ContentId )
+            {
+                return value.toString();
+            }
             else
             {
                 return null;
             }
         }
+
+        @Override
+        public java.lang.String convertFrom( final java.lang.String value )
+        {
+            return value;
+        }
     }
 
     public final static class Long
-        extends BaseType
+        extends BaseType<java.lang.Long>
     {
         Long()
         {
@@ -134,10 +148,16 @@ public final class JavaType
                 return null;
             }
         }
+
+        @Override
+        public java.lang.Long convertFrom( final java.lang.String value )
+        {
+            return new java.lang.Long( value );
+        }
     }
 
     public final static class Double
-        extends BaseType
+        extends BaseType<java.lang.Double>
     {
         Double()
         {
@@ -164,10 +184,16 @@ public final class JavaType
             }
         }
 
+        @Override
+        public java.lang.Double convertFrom( final java.lang.String value )
+        {
+            return new java.lang.Double( value );
+        }
+
     }
 
     public final static class DateMidnight
-        extends BaseType
+        extends BaseType<org.joda.time.DateMidnight>
     {
         private final static DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder().
             appendYear( 4, 4 ).appendLiteral( "-" ).appendMonthOfYear( 2 ).appendLiteral( "-" ).appendDayOfMonth( 2 ).toFormatter();
@@ -204,7 +230,7 @@ public final class JavaType
     }
 
     public final static class ContentId
-        extends BaseType
+        extends BaseType<com.enonic.wem.api.content.ContentId>
     {
         ContentId()
         {
@@ -234,7 +260,7 @@ public final class JavaType
     }
 
     public final static class BinaryId
-        extends BaseType
+        extends BaseType<com.enonic.wem.api.content.binary.BinaryId>
     {
         BinaryId()
         {
@@ -246,6 +272,10 @@ public final class JavaType
             if ( value instanceof com.enonic.wem.api.content.binary.BinaryId )
             {
                 return (com.enonic.wem.api.content.binary.BinaryId) value;
+            }
+            else if ( value instanceof java.lang.String )
+            {
+                return com.enonic.wem.api.content.binary.BinaryId.from( (java.lang.String) value );
             }
             else
             {
@@ -261,7 +291,7 @@ public final class JavaType
 
 
     public final static class DataSet
-        extends BaseType
+        extends BaseType<com.enonic.wem.api.content.data.DataSet>
     {
         DataSet()
         {
@@ -278,6 +308,12 @@ public final class JavaType
             {
                 return null;
             }
+        }
+
+        @Override
+        public com.enonic.wem.api.content.data.DataSet convertFrom( final java.lang.String value )
+        {
+            throw new UnsupportedOperationException( "A DataSet cannot be converted from a String" );
         }
     }
 }

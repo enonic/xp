@@ -1,7 +1,6 @@
 Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     extend: 'Admin.view.contentManager.wizard.form.input.Base',
     alias: 'widget.Relationship',
-    fieldLabel: 'Relationship',
     requires: [
         'Admin.store.contentManager.ContentStore'
     ],
@@ -134,7 +133,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             '           {displayName}',
             '           <span style="color: #666">{path}</span>',
             '       </span>',
-            '       <span class="right-column"><a href="javascript:;" class="remove-related-item-button">Remove</a></span>',
+            '       <span class="right-column"><a href="javascript:;" class="remove-related-item-button"></a></span>',
             '   </div>',
             '</tpl>'
         );

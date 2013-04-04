@@ -35,7 +35,7 @@ public class Relationship
     public void checkValidity( final Data data )
         throws InvalidValueTypeException, InvalidValueException
     {
-        DataTool.checkDataType( data, DataTypes.CONTENT_REFERENCE );
+        DataTool.checkDataType( data, DataTypes.CONTENT_ID );
     }
 
     @Override
@@ -52,7 +52,7 @@ public class Relationship
     @Override
     public Value newValue( final String value )
     {
-        return Value.newValue().type( DataTypes.CONTENT_REFERENCE ).value( JavaType.CONTENT_ID.convertFrom( value ) ).build();
+        return Value.newValue().type( DataTypes.CONTENT_ID ).value( JavaType.CONTENT_ID.convertFrom( value ) ).build();
     }
 
 }

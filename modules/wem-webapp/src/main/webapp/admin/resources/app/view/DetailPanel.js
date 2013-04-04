@@ -32,6 +32,9 @@ Ext.define('Admin.view.DetailPanel', {
                     actionsButton.setVisible(false);
                 }
             }
+            if (this.singleSelection.tabs.length > 0) {
+                this.changeTab(this.singleSelection.tabs[0].tab);
+            }
         }
     },
 
@@ -103,28 +106,11 @@ Ext.define('Admin.view.DetailPanel', {
     },
 
     singleSelection: {
-        /* Example tabs - should be set in app*/
+        /* Example k - should be set in app*/
         tabs: [
-            {
-                displayName: 'Traffic',
-                tab: 'traffic'
-            },
-            {
-                displayName: 'Meta',
-                tab: 'meta'
-            }
         ],
         /* Example tabData - should be set in app*/
         tabData: {
-            traffic: {
-                html: '<h1>Traffic</h1>'
-            },
-            meta: {
-                html: '<h1>Meta</h1>'
-            },
-            graph: {
-                html: '<h1>Graph</h1>'
-            }
         }
     },
 
@@ -205,11 +191,6 @@ Ext.define('Admin.view.DetailPanel', {
                         click: {
                             element: 'el', //bind to the underlying el property on the panel
                             fn: function (evt, element) {
-                                var children = element.parentElement.children;
-                                for (var i = 0; i < children.length; i++) {
-                                    children[i].className = '';
-                                }
-                                element.className = 'active';
                                 var tab = element.attributes['data-tab'].value;
                                 me.changeTab(tab);
                             }
@@ -229,7 +210,20 @@ Ext.define('Admin.view.DetailPanel', {
     largeBoxTemplate: '<tpl for=".">' +
                       '<div id="selected-item-box-{data.key}" class="admin-selected-item-box large clearfix">' +
                       '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>' +
-                      '<div class="center"><h6>{data.displayName}</h6><p>{data.description}</p></div>' +
+                      '<div class="center"><h6>{data.displayName}</h6>' +
+
+                      // 18th of April solution!
+                      // We should refactor this class so the selection views always gets one data spec
+                      '<tpl if="data.description">' +
+                      '<p>{data.description}</p></div>' +
+                      '</tpl>' +
+                      '<tpl if="data.path">' +
+                      '<p>{data.path}</p></div>' +
+                      '</tpl>' +
+                      '<tpl if="data.name">' +
+                      '<p>{data.name}</p></div>' +
+                      '</tpl>' +
+
                       '<div class="right">' +
                       '<a id="remove-from-selection-button:{internalId}" class="deselect" href="javascript:;"></a>' +
                       '</div>' +
@@ -376,6 +370,13 @@ Ext.define('Admin.view.DetailPanel', {
             target.add(currentTab.item);
             currentTab.callback(target);
         }
+
+        var element = Ext.dom.Query.select('*[data-tab=' + selectedTab + ']')[0];
+        var children = element.parentElement.children;
+        for (var i = 0; i < children.length; i++) {
+            children[i].className = '';
+        }
+        element.className = 'active';
 
     }
 });

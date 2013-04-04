@@ -83,7 +83,9 @@ Ext.define('Admin.view.FilterPanel', {
             data: me.facetData,
             listeners: {
                 afterrender: function (cmp) {
-                    cmp.el.on('click', me.onFacetClicked, me);
+                    cmp.el.on('click', me.onFacetClicked, me, {
+                        delegate: '.admin-facet'
+                    });
                 }
             }
         });
@@ -96,17 +98,14 @@ Ext.define('Admin.view.FilterPanel', {
                 click: {
                     element: 'el',
                     fn: function () {
-                        var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', me.facetContainer.el.dom);
-                        var i;
-                        for (i = 0; i < selectedCheckboxes.length; i++) {
-                            selectedCheckboxes[i].checked = false;
-                            selectedCheckboxes[i].parentElement.className =
-                            selectedCheckboxes[i].parentElement.className.replace(new RegExp('\\b' + 'checked' + '\\b'), '');
+                        if (me.fireEvent('reset', me.isDirty()) !== false) {
+                            me.reset();
                         }
                     }
                 }
             }
         }));
+
         if (this.includeSearch) {
 
             this.searchField = Ext.create('Ext.form.field.Text', {
@@ -134,13 +133,15 @@ Ext.define('Admin.view.FilterPanel', {
 
         this.facetCountMap = [];
         this.callParent(arguments);
-        this.addEvents('search');
+        this.addEvents('search', 'reset');
     },
 
     onKeyPressed: function (field, event, opts) {
         if (this.suspendEvents !== true) {
             if (event.getKey() === event.ENTER) {
-                this.fireEvent('search', this.getValues());
+                if (event.type === "keydown") {
+                    this.fireEvent('search', this.getValues());
+                }
             } else {
                 var me = this;
                 if (this.searchFilterTypingTimer !== null) {
@@ -183,6 +184,9 @@ Ext.define('Admin.view.FilterPanel', {
 
             this.fireEvent('search', this.getValues());
         }
+
+        event.stopEvent();
+        return true;
     },
 
     updateFacets: function (facets) {
@@ -259,7 +263,19 @@ Ext.define('Admin.view.FilterPanel', {
         var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
         var query = Ext.String.trim(this.searchField.getValue());
         return selectedCheckboxes.length > 0 || query.length > 0;
+    },
+
+    reset: function () {
+
+        if (this.searchField) {
+            this.searchField.reset();
+        }
+
+        var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
+        Ext.Array.each(selectedCheckboxes, function (cb) {
+            cb.removeAttribute('checked');
+            Ext.fly(cb).up('.admin-facet').removeCls('checked');
+        });
     }
 
-})
-;
+});

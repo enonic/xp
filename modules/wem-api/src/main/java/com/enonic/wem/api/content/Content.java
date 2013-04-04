@@ -56,6 +56,11 @@ public final class Content
         return path;
     }
 
+    public boolean isEmbedded()
+    {
+        return path.isPathToEmbeddedContent();
+    }
+
     public QualifiedContentTypeName getType()
     {
         return type;

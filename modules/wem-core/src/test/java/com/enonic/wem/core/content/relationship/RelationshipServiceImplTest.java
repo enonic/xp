@@ -78,14 +78,14 @@ public class RelationshipServiceImplTest
 
         // setup: content before editing
         RootDataSet dataBefore = new RootDataSet();
-        dataBefore.add( Data.newData().name( "myRelated1" ).type( DataTypes.CONTENT_REFERENCE ).value( ContentId.from( "111" ) ).build() );
-        dataBefore.add( Data.newData().name( "myRelated2" ).type( DataTypes.CONTENT_REFERENCE ).value( ContentId.from( "222" ) ).build() );
+        dataBefore.add( Data.newData().name( "myRelated1" ).type( DataTypes.CONTENT_ID ).value( ContentId.from( "111" ) ).build() );
+        dataBefore.add( Data.newData().name( "myRelated2" ).type( DataTypes.CONTENT_ID ).value( ContentId.from( "222" ) ).build() );
 
         // setup: content after editing
         RootDataSet dataAfter = new RootDataSet();
-        dataAfter.add( Data.newData().name( "myRelated1" ).type( DataTypes.CONTENT_REFERENCE ).value( ContentId.from( "111" ) ).build() );
-        dataAfter.add( Data.newData().name( "myRelated2" ).type( DataTypes.CONTENT_REFERENCE ).value( ContentId.from( "222" ) ).build() );
-        dataAfter.add( Data.newData().name( "myRelated3" ).type( DataTypes.CONTENT_REFERENCE ).value( ContentId.from( "333" ) ).build() );
+        dataAfter.add( Data.newData().name( "myRelated1" ).type( DataTypes.CONTENT_ID ).value( ContentId.from( "111" ) ).build() );
+        dataAfter.add( Data.newData().name( "myRelated2" ).type( DataTypes.CONTENT_ID ).value( ContentId.from( "222" ) ).build() );
+        dataAfter.add( Data.newData().name( "myRelated3" ).type( DataTypes.CONTENT_ID ).value( ContentId.from( "333" ) ).build() );
 
         // exercise
         SyncRelationshipsCommand command = new SyncRelationshipsCommand();

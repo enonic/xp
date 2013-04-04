@@ -7,6 +7,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.space.SpaceName;
@@ -23,28 +24,64 @@ public final class ContentPath
 
     private static final String SPACE_PREFIX_DIVIDER = ":";
 
-    private final LinkedList<String> elements;
+    private final ImmutableList<String> elements;
 
     private final String refString;
 
     private final SpaceName spaceName;
 
+    private static final String EMBEDDED = "_embedded";
+
+    private final boolean pathToEmbeddedContent;
+
     private ContentPath( final Builder builder )
     {
         Preconditions.checkNotNull( builder.elements );
         this.spaceName = builder.spaceName;
-        this.elements = Lists.newLinkedList();
 
         final String spacePrefix = spaceName == null ? "" : spaceName.name() + SPACE_PREFIX_DIVIDER;
         if ( builder.elements.isEmpty() )
         {
             refString = spacePrefix + ELEMENT_DIVIDER;
+            this.elements = ImmutableList.of();
         }
         else
         {
-            this.elements.addAll( builder.elements );
+            final ImmutableList.Builder<String> elementsBuilder = ImmutableList.builder();
+            elementsBuilder.addAll( builder.elements );
+            this.elements = elementsBuilder.build();
             this.refString = spacePrefix + ELEMENT_DIVIDER + Joiner.on( ELEMENT_DIVIDER ).join( elements );
         }
+
+        pathToEmbeddedContent = resolveIsPathToEmbeddedContent();
+    }
+
+    private boolean resolveIsPathToEmbeddedContent()
+    {
+        for ( int i = 0; i < elements.size(); i++ )
+        {
+            final String pathElement = elements.get( i );
+            if ( EMBEDDED.equals( pathElement ) )
+            {
+                final boolean lastElement = i == elements.size() - 1;
+                if ( lastElement )
+                {
+                    throw new IllegalArgumentException( "Missing name of embedded Content: " + refString );
+                }
+                final boolean firstElement = i == 0;
+                if ( firstElement )
+                {
+                    throw new IllegalArgumentException( "Expected a path to a Content before the embedded marker: " + refString );
+                }
+                final boolean notSecondToLastElement = i != elements.size() - 2;
+                if ( notSecondToLastElement )
+                {
+                    throw new IllegalArgumentException( "Expected only one element after the embedded marker: " + refString );
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getElement( final int index )
@@ -65,6 +102,11 @@ public final class ContentPath
     public boolean isRelative()
     {
         return this.spaceName == null;
+    }
+
+    public boolean isPathToEmbeddedContent()
+    {
+        return pathToEmbeddedContent;
     }
 
     public SpaceName getSpace()
@@ -107,7 +149,7 @@ public final class ContentPath
 
     public final String getName()
     {
-        return elements.getLast();
+        return elements.size() == 0 ? null : elements.get( elements.size() - 1 );
     }
 
     public boolean isChildOf( final ContentPath possibleParentPath )
@@ -163,12 +205,22 @@ public final class ContentPath
 
     private LinkedList<String> newListOfParentElements()
     {
-        final LinkedList<String> newElements = Lists.newLinkedList( this.elements );
-        if ( !newElements.isEmpty() )
+        if ( isPathToEmbeddedContent() )
         {
+            final LinkedList<String> newElements = Lists.newLinkedList( this.elements );
             newElements.removeLast();
+            newElements.removeLast();
+            return newElements;
         }
-        return newElements;
+        else
+        {
+            final LinkedList<String> newElements = Lists.newLinkedList( this.elements );
+            if ( !newElements.isEmpty() )
+            {
+                newElements.removeLast();
+            }
+            return newElements;
+        }
     }
 
     public static ContentPath from( final String path )
@@ -193,6 +245,11 @@ public final class ContentPath
     public static ContentPath from( final ContentPath parent, final String name )
     {
         return newPath().spaceName( parent.spaceName ).elements( parent.elements ).addElement( name ).build();
+    }
+
+    public static ContentPath createPathToEmbeddedContent( final ContentPath parent, final String name )
+    {
+        return newPath().spaceName( parent.spaceName ).elements( parent.elements ).addElement( EMBEDDED ).addElement( name ).build();
     }
 
     public static ContentPath rootOf( final SpaceName spaceName )

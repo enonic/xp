@@ -70,8 +70,6 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
         me.$selectedComponent = $component;
 
-        //me.hide();
-
         if (util.getComponentType($component) === 'page') {
             me.showForPage($component);
         } else {
@@ -81,6 +79,8 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
 
     proto.showForPage = function ($component) {
+        this.hide();
+
         $('#live-edit-page-shader').css({
             top: 0,
             right: 0,

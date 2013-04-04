@@ -1,5 +1,8 @@
 package com.enonic.wem.core.content;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.jcr.Session;
 
@@ -16,8 +19,12 @@ import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.DataVisitor;
+import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
@@ -29,6 +36,8 @@ import com.enonic.wem.core.index.IndexService;
 public class CreateContentHandler
     extends CommandHandler<CreateContent>
 {
+    private static final ContentPath TEMPORARY_PARENT_PATH = ContentPath.rootOf( SpaceName.temporary() );
+
     private static final ContentPathNameGenerator CONTENT_PATH_NAME_GENERATOR = new ContentPathNameGenerator();
 
     private ContentDao contentDao;
@@ -52,7 +61,11 @@ public class CreateContentHandler
 
         final Content.Builder builder = Content.newContent();
         final String displayName = command.getDisplayName();
-        final ContentPath contentPath = resolvePathForNewContent( command.getParentContentPath(), displayName, session );
+        final ContentPath parentContentPath = command.isTemporary() ? TEMPORARY_PARENT_PATH : command.getParentContentPath();
+        final ContentPath contentPath = resolvePathForNewContent( parentContentPath, displayName, session );
+
+        final List<Content> temporaryContents = resolveTemporaryContents( command, session );
+
         builder.path( contentPath );
         builder.displayName( displayName );
         builder.rootDataSet( command.getRootDataSet() );
@@ -69,17 +82,53 @@ public class CreateContentHandler
 
         validateContentData( context.getClient(), content );
 
+        for ( Content tempContent : temporaryContents )
+        {
+            final ContentPath pathToEmbeddedContent = ContentPath.createPathToEmbeddedContent( contentPath, tempContent.getName() );
+            contentDao.moveContent( tempContent.getId(), pathToEmbeddedContent, session );
+            session.save();
+        }
+
         relationshipService.syncRelationships( new SyncRelationshipsCommand().
             client( context.getClient() ).
             jcrSession( session ).
             contentType( content.getType() ).
-            contentToUpdate( content.getId() ).
+            contentToUpdate( contentId ).
             contentAfterEditing( content.getRootDataSet() ) );
 
-        final Content storedContent = builder.id( contentId ).build();
-        indexService.indexContent( storedContent );
+        if ( !command.isTemporary() )
+        {
+            final Content storedContent = builder.id( contentId ).build();
+            indexService.indexContent( storedContent );
+        }
 
         command.setResult( new CreateContentResult( contentId, contentPath ) );
+    }
+
+    private List<Content> resolveTemporaryContents( final CreateContent command, final Session session )
+    {
+        final List<Content> temporaryContents = new ArrayList<>();
+        if ( command.getRootDataSet() == null )
+        {
+            return temporaryContents;
+        }
+        final DataVisitor dataVisitor = new DataVisitor()
+        {
+            @Override
+            public void visit( final Data data )
+            {
+                final Content content = contentDao.select( data.getContentId(), session );
+                if ( content != null )
+                {
+                    if ( content.getPath().getSpace().isTemporary() )
+                    {
+                        temporaryContents.add( content );
+                    }
+                }
+            }
+        }.restrictType( DataTypes.CONTENT_ID );
+        dataVisitor.traverse( command.getRootDataSet() );
+        return temporaryContents;
     }
 
     private ContentPath resolvePathForNewContent( final ContentPath parentPath, final String displayName, final Session session )

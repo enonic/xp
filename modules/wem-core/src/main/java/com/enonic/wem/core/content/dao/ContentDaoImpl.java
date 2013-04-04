@@ -103,6 +103,19 @@ public class ContentDaoImpl
     }
 
     @Override
+    public void moveContent( final ContentId contentId, final ContentPath newPath, final Session session )
+    {
+        try
+        {
+            new ContentDaoHandlerMove( session ).handle( contentId, newPath );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    @Override
     public Content select( final ContentSelector contentSelector, final Session session )
     {
         try

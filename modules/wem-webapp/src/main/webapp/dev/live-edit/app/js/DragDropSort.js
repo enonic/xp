@@ -88,6 +88,11 @@ AdminLiveEdit.DragDropSort = (function () {
     }
 
 
+    function targetIsPlaceholder($target) {
+        return $target.hasClass('live-edit-drop-target-placeholder')
+    }
+
+
     function handleSortStart(event, ui) {
         isDragging = true;
 
@@ -103,30 +108,30 @@ AdminLiveEdit.DragDropSort = (function () {
         $liveedit(window).trigger('component.onSortStart', [event, ui]);
     }
 
-
     function handleDragOver(event, ui) {
         updateHelperStatusIcon('yes');
         $liveedit(window).trigger('component:sort:over', [event, ui]);
     }
 
-
     function handleDragOut(event, ui) {
+        if (targetIsPlaceholder($liveedit(event.srcElement))) {
+            removePaddingFromLayoutComponent();
+        }
+
         updateHelperStatusIcon('no');
         $liveedit(window).trigger('component:sort:out', [event, ui]);
     }
 
-
     function handleSortChange(event, ui) {
+        addPaddingToLayoutComponent($(event.target));
         updateHelperStatusIcon('yes');
         ui.placeholder.show();
         $liveedit(window).trigger('component:sort:change', [event, ui]);
     }
 
-
     function handleSortUpdate(event, ui) {
         $liveedit(window).trigger('component.onSortUpdate', [event, ui]);
     }
-
 
     function handleSortStop(event, ui) {
         isDragging = false;
@@ -175,6 +180,16 @@ AdminLiveEdit.DragDropSort = (function () {
                     $liveedit(window).trigger('component.onSortUpdate');
                 });
         }
+    }
+
+
+    function addPaddingToLayoutComponent($component) {
+        $component.closest('[data-live-edit-type=layout]').addClass('live-edit-component-padding');
+    }
+
+
+    function removePaddingFromLayoutComponent() {
+        $liveedit('.live-edit-component-padding').removeClass('live-edit-component-padding');
     }
 
 
@@ -227,7 +242,7 @@ AdminLiveEdit.DragDropSort = (function () {
 
     function createSortable() {
         $liveedit(regionSelector).sortable({
-            revert: 1000,
+            revert: false,
             connectWith: regionSelector,   // Sortable elements.
             items: itemsToSortSelector,   // Elements to sort.
             distance: 1,

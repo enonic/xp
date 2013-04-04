@@ -5,6 +5,7 @@ import org.joda.time.DateMidnight;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.AbstractEqualsTest;
+import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.content.data.type.DataTypes;
 
 import static com.enonic.wem.api.content.data.Data.newData;
@@ -87,5 +88,12 @@ public class DataTest
     {
         Data data = newData().name( "myText" ).type( DataTypes.TEXT ).value( "1" ).build();
         assertEquals( new Long( 1 ), data.getLong() );
+    }
+
+    @Test
+    public void xxx()
+    {
+        Data data = newData().name( "myBinary" ).type( DataTypes.BINARY_ID ).value( "217482f4-b89a-4286-9111-5120d11da6c2" ).build();
+        assertEquals( BinaryId.from( "217482f4-b89a-4286-9111-5120d11da6c2" ), data.getBinaryId() );
     }
 }

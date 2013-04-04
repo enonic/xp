@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -13,6 +14,7 @@ import javax.jcr.Session;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.space.SpaceName;
@@ -73,6 +75,10 @@ public abstract class AbstractContentDaoHandler
             while ( spaceNodesIterator.hasNext() )
             {
                 final Node spaceNode = spaceNodesIterator.nextNode();
+                if ( SpaceName.temporary().name().equals( spaceNode.getName() ) )
+                {
+                    continue; // skip space for temporary content
+                }
                 topNodes.add( spaceNode.getNode( SPACE_CONTENT_ROOT_NODE ) );
             }
         }
@@ -89,7 +95,7 @@ public abstract class AbstractContentDaoHandler
     protected final Node doGetContentNode( final ContentPath contentPath )
         throws RepositoryException
     {
-        final String path = getNodePath( contentPath );
+        final String path = resolveNodePath( contentPath );
         final Node rootNode = session.getRootNode();
         return getNodeOrNull( rootNode, path );
     }
@@ -137,7 +143,7 @@ public abstract class AbstractContentDaoHandler
 
     }
 
-    private String getNodePath( final ContentPath contentPath )
+    protected String resolveNodePath( final ContentPath contentPath )
     {
         if ( contentPath.isRoot() )
         {
@@ -177,6 +183,26 @@ public abstract class AbstractContentDaoHandler
         final Node contentVersionNode = contentVersionParent.addNode( nodeVersionName, JcrConstants.CONTENT_NODETYPE );
         contentJcrMapper.toJcr( content, contentVersionNode );
         return contentVersionNode;
+    }
+
+    protected boolean moveContentNode( final String srcPath, final String dstPath )
+        throws RepositoryException
+    {
+        if ( srcPath.equals( dstPath ) )
+        {
+            return false;
+        }
+
+        try
+        {
+            session.move( srcPath, dstPath );
+            return true;
+        }
+        catch ( ItemExistsException e )
+        {
+            final ContentPath path = getContentPathFromNode( session.getNode( dstPath ) );
+            throw new ContentAlreadyExistException( path );
+        }
     }
 
     class ContentAndNode

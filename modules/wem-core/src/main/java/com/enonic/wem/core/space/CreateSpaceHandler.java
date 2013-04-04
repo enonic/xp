@@ -61,7 +61,10 @@ public final class CreateSpaceHandler
         final ContentId rootContentId = contentDao.create( rootContent, session );
         session.save();
 
-        indexService.indexContent( contentDao.select( rootContentId, session ) );
+        if ( !space.isTemporary() )
+        {
+            indexService.indexContent( contentDao.select( rootContentId, session ) );
+        }
 
         final Space createdSpace = newSpace( space ).rootContent( rootContentId ).build();
 

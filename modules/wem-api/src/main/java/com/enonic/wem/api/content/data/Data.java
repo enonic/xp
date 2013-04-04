@@ -5,7 +5,6 @@ import org.joda.time.DateMidnight;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.content.data.type.BaseDataType;
 import com.enonic.wem.api.content.data.type.DataTypes;
@@ -91,7 +90,7 @@ public class Data
         return value.asString();
     }
 
-    public ContentId getContentId()
+    public com.enonic.wem.api.content.ContentId getContentId()
         throws InconvertibleValueException
     {
         return value.asContentId();
@@ -108,7 +107,7 @@ public class Data
         return getArray().getValue( arrayIndex ).asString();
     }
 
-    public ContentId getContentId( final int arrayIndex )
+    public com.enonic.wem.api.content.ContentId getContentId( final int arrayIndex )
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asContentId();
@@ -383,20 +382,20 @@ public class Data
         }
     }
 
-    public final static class ContentReference
+    public final static class ContentId
         extends Data
     {
-        public ContentReference( final String name, final ContentId value )
+        public ContentId( final String name, final com.enonic.wem.api.content.ContentId value )
         {
-            super( newContentReferenceBuilder().name( name ).value( value ) );
+            super( newContentIdBuilder().name( name ).value( value ) );
         }
 
-        private ContentReference( final AbstractBaseBuilder builder )
+        private ContentId( final AbstractBaseBuilder builder )
         {
             super( builder );
         }
 
-        public static Builder newContentReferenceBuilder()
+        public static Builder newContentIdBuilder()
         {
             return new Builder();
         }
@@ -407,10 +406,10 @@ public class Data
         {
             public Builder()
             {
-                setType( DataTypes.CONTENT_REFERENCE );
+                setType( DataTypes.CONTENT_ID );
             }
 
-            public Builder value( final ContentId value )
+            public Builder value( final com.enonic.wem.api.content.ContentId value )
             {
                 setValue( value );
                 return this;
@@ -423,9 +422,9 @@ public class Data
             }
 
             @Override
-            public ContentReference build()
+            public ContentId build()
             {
-                return new ContentReference( this );
+                return new ContentId( this );
             }
         }
     }

@@ -62,6 +62,23 @@ public class UpdateContentHandler
 
                 validateContentData( context, edited );
 
+                // walk trough edited.ContentData
+                // if value is ContentId
+                // if contentId exists as TemporaryEmbeddedContent
+                //    temporaryEmbeddedContents.add( contentId )
+                // else if contentId exists as persisted embedded content
+                //    embeddedContentToKeep.add( contentId )
+
+                // find embeddedContentsToDelete: persistedEmbeddedContent not in embeddedContentToKeep
+
+                // createEmbeddedContent( temporaryEmbeddedContents, parent )
+                //    new path for embedded content: <parentPath>/_embedded/<name>
+                //    move content under parent under node "_embedded"
+                //
+
+                //
+                // deleteEmbeddedContent( embeddedContentsToDelete )
+
                 relationshipService.syncRelationships( new SyncRelationshipsCommand().
                     client( context.getClient() ).
                     jcrSession( context.getJcrSession() ).

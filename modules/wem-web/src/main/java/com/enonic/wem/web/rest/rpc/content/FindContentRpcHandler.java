@@ -3,8 +3,6 @@ package com.enonic.wem.web.rest.rpc.content;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.content.ContentIds;
-import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
@@ -28,8 +26,7 @@ public class FindContentRpcHandler
         final boolean includeFacets = context.param( "include" ).asBoolean( true );
         final String[] contentTypes = context.param( "contentTypes" ).asStringArray();
 
-        ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
-
+        final ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
         contentIndexQuery.setFullTextSearchString( fulltext );
         contentIndexQuery.setIncludeFacets( includeFacets );
         contentIndexQuery.setContentTypeNames( QualifiedContentTypeNames.from( contentTypes ) );
@@ -46,10 +43,7 @@ public class FindContentRpcHandler
 
         final ContentIndexQueryResult contentIndexQueryResult = this.client.execute( Commands.content().find().query( contentIndexQuery ) );
 
-        final Contents contents =
-            this.client.execute( Commands.content().get().selectors( ContentIds.from( contentIndexQueryResult.getContentIds() ) ) );
-
-        final FindContentJsonResult json = new FindContentJsonResult( contents, contentIndexQueryResult );
+        final FindContentJsonResult json = new FindContentJsonResult( contentIndexQueryResult );
 
         context.setResult( json );
     }

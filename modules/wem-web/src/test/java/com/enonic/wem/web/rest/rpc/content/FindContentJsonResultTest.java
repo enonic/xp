@@ -24,12 +24,12 @@ public class FindContentJsonResultTest
 
         ContentIndexQueryResult contentIndexQueryResult = new ContentIndexQueryResult( 10 );
 
-        FindContentJsonResult result = new FindContentJsonResult( contents, contentIndexQueryResult );
+        FindContentJsonResult result = new FindContentJsonResult( contentIndexQueryResult );
 
         assertNotNull( result.toJson() );
     }
 
-    @Ignore // Test failing because of strange results in json, ignore for now
+    @Ignore // Test failing because of strange mapping of query-facets. We'll let this be for now, and fix after 18/04-2013
     @Test
     public void testTermsFacet()
         throws Exception
@@ -48,14 +48,14 @@ public class FindContentJsonResultTest
 
         contentIndexQueryResult.setFacetsResultSet( facetsResultSet );
 
-        FindContentJsonResult result = new FindContentJsonResult( contents, contentIndexQueryResult );
+        FindContentJsonResult result = new FindContentJsonResult( contentIndexQueryResult );
 
         final JsonNode jsonNode = parseJson( "termsFacetResult.json" );
 
         assertJson( jsonNode, result.toJson() );
     }
 
-    @Ignore // Test failing because of strange results in json, ignore for now
+    @Ignore // Test failing because of strange mapping of query-facets. We'll let this be for now, and fix after  18/04-2013
     @Test
     public void testQueryFacet()
         throws Exception
@@ -71,7 +71,7 @@ public class FindContentJsonResultTest
 
         contentIndexQueryResult.setFacetsResultSet( facetsResultSet );
 
-        FindContentJsonResult result = new FindContentJsonResult( contents, contentIndexQueryResult );
+        FindContentJsonResult result = new FindContentJsonResult( contentIndexQueryResult );
 
         final JsonNode jsonNode = parseJson( "queryFacetResult.json" );
 

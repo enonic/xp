@@ -6,8 +6,6 @@ import org.joda.time.DateMidnight;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.content.data.type.BaseDataType;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
@@ -30,10 +28,21 @@ public class Value
         Preconditions.checkArgument( !( builder.value instanceof Value ), "The value of a Value cannot be: " + builder.value.getClass() );
 
         type = builder.type;
-        object = builder.value;
 
-        Preconditions.checkArgument( type.isValueOfExpectedJavaClass( object ), "Object expected to be of type [%s]: %s",
-                                     type.getJavaType(), object.getClass().getSimpleName() );
+        final boolean valueIsOfExpectedJavaClass = type.isValueOfExpectedJavaClass( builder.value );
+        if ( !valueIsOfExpectedJavaClass )
+        {
+            final Object converted = type.getJavaType().convertFrom( builder.value );
+            if ( converted == null )
+            {
+                throw new InconvertibleValueException( builder.value, type.getJavaType() );
+            }
+            object = converted;
+        }
+        else
+        {
+            object = builder.value;
+        }
     }
 
     public boolean isJavaType( Class javaType )
@@ -72,10 +81,10 @@ public class Value
         return converted;
     }
 
-    public ContentId asContentId()
+    public com.enonic.wem.api.content.ContentId asContentId()
         throws InconvertibleValueException
     {
-        final ContentId converted = JavaType.CONTENT_ID.convertFrom( object );
+        final com.enonic.wem.api.content.ContentId converted = JavaType.CONTENT_ID.convertFrom( object );
         if ( object != null && converted == null )
         {
             throw new InconvertibleValueException( object, JavaType.CONTENT_ID );
@@ -116,10 +125,10 @@ public class Value
         return converted;
     }
 
-    public BinaryId asBinaryId()
+    public com.enonic.wem.api.content.binary.BinaryId asBinaryId()
         throws InconvertibleValueException
     {
-        final BinaryId converted = JavaType.BINARY_ID.convertFrom( object );
+        final com.enonic.wem.api.content.binary.BinaryId converted = JavaType.BINARY_ID.convertFrom( object );
         if ( object != null && converted == null )
         {
             throw new InconvertibleValueException( object, JavaType.BINARY_ID );
@@ -266,19 +275,19 @@ public class Value
         }
     }
 
-    public static final class ContentReference
+    public static final class ContentId
         extends Value
     {
-        public ContentReference( ContentId value )
+        public ContentId( com.enonic.wem.api.content.ContentId value )
         {
-            super( newValue().type( DataTypes.CONTENT_REFERENCE ).value( value ) );
+            super( newValue().type( DataTypes.CONTENT_ID ).value( value ) );
         }
     }
 
-    public static final class BinaryReference
+    public static final class BinaryId
         extends Value
     {
-        public BinaryReference( BinaryId value )
+        public BinaryId( com.enonic.wem.api.content.binary.BinaryId value )
         {
             super( newValue().type( DataTypes.BINARY_ID ).value( value ) );
         }

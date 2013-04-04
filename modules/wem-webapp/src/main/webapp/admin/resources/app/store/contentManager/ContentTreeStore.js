@@ -4,6 +4,7 @@ Ext.define('Admin.store.contentManager.ContentTreeStore', {
     model: 'Admin.model.contentManager.ContentModel',
 
     folderSort: true,
+    autoLoad: false,
 
     proxy: {
         type: 'direct',
