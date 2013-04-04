@@ -7,11 +7,14 @@ import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.relationship.RelationshipIds;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
 import com.enonic.wem.api.content.relationship.RelationshipNotFoundException;
+import com.enonic.wem.core.content.dao.ContentDao;
 
 
 public interface RelationshipDao
 {
-    public static final String RELATIONSHIPS_NODE = "relationships";
+    public static final String RELATIONSHIPS_NODE = ContentDao.NON_CONTENT_NODE_PREFIX + "relationships";
+
+    public static final String TO_CONTENT_NODE_PREFIX = "toContent_";
 
     public RelationshipId create( final Relationship relationship, final Session session );
 

@@ -45,11 +45,13 @@ final class RelationshipDaoHandlerCreate
         if ( relationship.getManagingData() != null )
         {
             final Node entryPathNode = JcrHelper.getOrAddNode( relationshipTypeNameNode, relationship.getManagingData().toString() );
-            return entryPathNode.addNode( relationship.getToContent().toString(), JcrConstants.RELATIONSHIP_NODETYPE );
+            return entryPathNode.addNode( RelationshipDao.TO_CONTENT_NODE_PREFIX + relationship.getToContent().toString(),
+                                          JcrConstants.RELATIONSHIP_NODETYPE );
         }
         else
         {
-            return relationshipTypeNameNode.addNode( relationship.getToContent().toString(), JcrConstants.RELATIONSHIP_NODETYPE );
+            return relationshipTypeNameNode.addNode( RelationshipDao.TO_CONTENT_NODE_PREFIX + relationship.getToContent().toString(),
+                                                     JcrConstants.RELATIONSHIP_NODETYPE );
         }
     }
 }

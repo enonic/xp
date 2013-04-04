@@ -98,6 +98,7 @@ public class CreateContentHandler
                 contentType( content.getType() ).
                 contentToUpdate( contentId ).
                 contentAfterEditing( content.getRootDataSet() ) );
+            session.save();
         }
         catch ( Exception e )
         {

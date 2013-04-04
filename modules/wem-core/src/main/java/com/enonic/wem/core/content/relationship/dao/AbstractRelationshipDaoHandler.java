@@ -69,11 +69,11 @@ abstract class AbstractRelationshipDaoHandler<T>
         if ( relationshipKey.getManagingData() != null )
         {
             final Node entryPathNode = relationshipTypeNameNode.getNode( relationshipKey.getManagingData().toString() );
-            return entryPathNode.getNode( relationshipKey.getToContent().toString() );
+            return entryPathNode.getNode( RelationshipDao.TO_CONTENT_NODE_PREFIX + relationshipKey.getToContent().toString() );
         }
         else
         {
-            return relationshipTypeNameNode.getNode( relationshipKey.getToContent().toString() );
+            return relationshipTypeNameNode.getNode( RelationshipDao.TO_CONTENT_NODE_PREFIX + relationshipKey.getToContent().toString() );
         }
     }
 
