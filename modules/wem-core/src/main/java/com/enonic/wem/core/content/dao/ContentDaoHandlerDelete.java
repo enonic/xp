@@ -11,8 +11,6 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 
-import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_HISTORY_NODE;
-
 final class ContentDaoHandlerDelete
     extends AbstractContentDaoHandler
 {
@@ -64,7 +62,7 @@ final class ContentDaoHandlerDelete
             while ( nodeIte.hasNext() )
             {
                 final Node child = nodeIte.nextNode();
-                if ( !child.getName().equals( CONTENT_VERSION_HISTORY_NODE ) )
+                if ( !isNonContentNode( child ) )
                 {
                     return true;
                 }

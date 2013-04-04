@@ -51,6 +51,11 @@ public final class Content
         this.versionId = builder.versionId;
     }
 
+    public boolean isTemporary()
+    {
+        return getPath().getSpace().isTemporary();
+    }
+
     public ContentPath getPath()
     {
         return path;

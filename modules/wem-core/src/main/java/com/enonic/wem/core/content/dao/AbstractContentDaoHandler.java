@@ -48,7 +48,7 @@ public abstract class AbstractContentDaoHandler
         while ( nodeIterator.hasNext() )
         {
             final Node contentNode = nodeIterator.next();
-            if ( contentNode.getName().equals( CONTENT_VERSION_HISTORY_NODE ) )
+            if ( isNonContentNode( contentNode ) )
             {
                 continue;
             }
@@ -176,11 +176,11 @@ public abstract class AbstractContentDaoHandler
         return contentNode.getNode( CONTENT_VERSION_HISTORY_NODE );
     }
 
-    protected Node addContentVersion( final Content content, final Node contentVersionParent )
+    protected Node addContentVersion( final Content content, final Node contentVersionHistoryNode )
         throws RepositoryException
     {
         final String nodeVersionName = CONTENT_VERSION_PREFIX + content.getVersionId().id();
-        final Node contentVersionNode = contentVersionParent.addNode( nodeVersionName, JcrConstants.CONTENT_NODETYPE );
+        final Node contentVersionNode = contentVersionHistoryNode.addNode( nodeVersionName, JcrConstants.CONTENT_NODETYPE );
         contentJcrMapper.toJcr( content, contentVersionNode );
         return contentVersionNode;
     }
@@ -203,6 +203,12 @@ public abstract class AbstractContentDaoHandler
             final ContentPath path = getContentPathFromNode( session.getNode( dstPath ) );
             throw new ContentAlreadyExistException( path );
         }
+    }
+
+    protected boolean isNonContentNode( Node node )
+        throws RepositoryException
+    {
+        return node.getName().startsWith( ContentDao.NON_CONTENT_NODE_PREFIX );
     }
 
     class ContentAndNode

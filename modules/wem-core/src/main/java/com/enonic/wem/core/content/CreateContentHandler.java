@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
@@ -77,16 +78,15 @@ public class CreateContentHandler
 
         final Content content = builder.build();
 
+        validateContentData( context.getClient(), content );
+
         final ContentId contentId = contentDao.create( content, session );
         session.save();
-
-        validateContentData( context.getClient(), content );
 
         for ( Content tempContent : temporaryContents )
         {
             final ContentPath pathToEmbeddedContent = ContentPath.createPathToEmbeddedContent( contentPath, tempContent.getName() );
-            contentDao.moveContent( tempContent.getId(), pathToEmbeddedContent, session );
-            session.save();
+            createEmbeddedContent( tempContent, pathToEmbeddedContent, session );
         }
 
         relationshipService.syncRelationships( new SyncRelationshipsCommand().
@@ -105,6 +105,13 @@ public class CreateContentHandler
         command.setResult( new CreateContentResult( contentId, contentPath ) );
     }
 
+    private void createEmbeddedContent( final Content tempContent, final ContentPath pathToEmbeddedContent, final Session session )
+        throws RepositoryException
+    {
+        contentDao.moveContent( tempContent.getId(), pathToEmbeddedContent, session );
+        session.save();
+    }
+
     private List<Content> resolveTemporaryContents( final CreateContent command, final Session session )
     {
         final List<Content> temporaryContents = new ArrayList<>();
@@ -120,7 +127,7 @@ public class CreateContentHandler
                 final Content content = contentDao.select( data.getContentId(), session );
                 if ( content != null )
                 {
-                    if ( content.getPath().getSpace().isTemporary() )
+                    if ( content.isTemporary() )
                     {
                         temporaryContents.add( content );
                     }

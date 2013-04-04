@@ -46,7 +46,7 @@ public class ContentTest
     @Test
     public void isEmbedded()
     {
-        Content content = Content.newContent().path( ContentPath.from( "mySite:myParent/_embedded/myEmbedded" ) ).build();
+        Content content = Content.newContent().path( ContentPath.from( "mySite:myParent/__embedded/myEmbedded" ) ).build();
         assertEquals( true, content.isEmbedded() );
     }
 

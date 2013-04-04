@@ -26,14 +26,14 @@ final class ContentDaoHandlerFindChild
         final NodeIterator nodeIterator = parentContentNode.getNodes();
         while ( nodeIterator.hasNext() )
         {
-            final Node contentNode = nodeIterator.nextNode();
-            if ( contentNode.getName().equals( ContentDao.CONTENT_VERSION_HISTORY_NODE ) )
+            final Node childNode = nodeIterator.nextNode();
+            if ( isNonContentNode( childNode ) )
             {
                 continue;
             }
-            final ContentPath childPath = ContentPath.from( parentPath, contentNode.getName() );
+            final ContentPath childPath = ContentPath.from( parentPath, childNode.getName() );
             final Content.Builder contentBuilder = Content.newContent().path( childPath );
-            contentJcrMapper.toContent( contentNode, contentBuilder );
+            contentJcrMapper.toContent( childNode, contentBuilder );
             contentsBuilder.add( contentBuilder.build() );
         }
 

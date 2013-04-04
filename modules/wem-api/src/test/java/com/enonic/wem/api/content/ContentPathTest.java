@@ -69,9 +69,9 @@ public class ContentPathTest
     public void getParentPath_when_embedded()
         throws Exception
     {
-        assertEquals( ContentPath.from( "mySpace:/parent" ), ContentPath.from( "mySpace:/parent/_embedded/myEmbedded" ).getParentPath() );
+        assertEquals( ContentPath.from( "mySpace:/parent" ), ContentPath.from( "mySpace:/parent/__embedded/myEmbedded" ).getParentPath() );
         assertEquals( ContentPath.from( "mySpace:/parent/parent" ),
-                      ContentPath.from( "mySpace:/parent/parent/_embedded/myEmbedded" ).getParentPath() );
+                      ContentPath.from( "mySpace:/parent/parent/__embedded/myEmbedded" ).getParentPath() );
     }
 
     @Test
@@ -149,7 +149,7 @@ public class ContentPathTest
     public void isPathToEmbeddedContent()
         throws Exception
     {
-        assertEquals( true, ContentPath.from( "myspace:/parent/_embedded/myEmbedded" ).isPathToEmbeddedContent() );
+        assertEquals( true, ContentPath.from( "myspace:/parent/__embedded/myEmbedded" ).isPathToEmbeddedContent() );
         assertEquals( false, ContentPath.from( "myspace:/parent/child" ).isPathToEmbeddedContent() );
     }
 
@@ -157,20 +157,20 @@ public class ContentPathTest
     public void given_no_name_for_embedded_content_then_exception_is_thrown()
         throws Exception
     {
-        ContentPath.from( "myspace:/parent/_embedded/" ).isPathToEmbeddedContent();
+        ContentPath.from( "myspace:/parent/__embedded/" ).isPathToEmbeddedContent();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void isPathToEmbeddedContent_given_more_than_one_element_after_embedded_marker_then_exception_is_thrown()
         throws Exception
     {
-        ContentPath.from( "myspace:/parent/_embedded/one/two" );
+        ContentPath.from( "myspace:/parent/__embedded/one/two" );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void isPathToEmbeddedContent_given_no_content_before_embedded_marker_then_exception_is_thrown()
         throws Exception
     {
-        ContentPath.from( "myspace:/_embedded/one/two" );
+        ContentPath.from( "myspace:/__embedded/one/two" );
     }
 }
