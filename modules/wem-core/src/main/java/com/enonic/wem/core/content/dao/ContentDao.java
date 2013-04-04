@@ -27,9 +27,13 @@ public interface ContentDao
 
     public static final String SPACE_CONTENT_ROOT_NODE = "root";
 
-    public static final String CONTENT_VERSION_HISTORY_NODE = "__contentsVersionHistory";
+    public static final String NON_CONTENT_NODE_PREFIX = "__";
 
-    public static final String CONTENT_VERSION_PREFIX = "__contentVersion";
+    public static final String CONTENT_VERSION_HISTORY_NODE = NON_CONTENT_NODE_PREFIX + "contentsVersionHistory";
+
+    public static final String CONTENT_VERSION_PREFIX = NON_CONTENT_NODE_PREFIX + "contentVersion";
+
+    public static final String CONTENT_EMBEDDED_NODE = NON_CONTENT_NODE_PREFIX + "embedded";
 
     public static final String CONTENT_NEXT_VERSION_PROPERTY = "nextVersion";
 

@@ -30,7 +30,7 @@ public final class ContentPath
 
     private final SpaceName spaceName;
 
-    private static final String EMBEDDED = "_embedded";
+    private static final String EMBEDDED = "__embedded";
 
     private final boolean pathToEmbeddedContent;
 

@@ -16,6 +16,7 @@ import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
+import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_EMBEDDED_NODE;
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_NEXT_VERSION_PROPERTY;
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_HISTORY_NODE;
 import static com.enonic.wem.core.content.dao.ContentDao.SPACES_PATH;
@@ -86,8 +87,11 @@ final class ContentDaoHandlerCreate
             }
             newContentNode = addContentToJcr( content, parentContentNode );
         }
-        final Node contentVersionHistoryParent = createContentVersionHistory( content, newContentNode );
-        addContentVersion( content, contentVersionHistoryParent );
+        final Node contentVersionHistoryNode = createContentVersionHistory( content, newContentNode );
+        addContentVersion( content, contentVersionHistoryNode );
+
+        newContentNode.addNode( CONTENT_EMBEDDED_NODE, NT_UNSTRUCTURED );
+
         return ContentIdFactory.from( newContentNode );
     }
 
