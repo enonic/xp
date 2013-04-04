@@ -1,6 +1,11 @@
 package com.enonic.wem.core.content;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -13,6 +18,10 @@ import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
+import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.DataVisitor;
+import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
@@ -49,11 +58,14 @@ public class UpdateContentHandler
     {
         try
         {
-            final Content persistedContent = contentDao.select( command.getSelector(), context.getJcrSession() );
+            final Session session = context.getJcrSession();
+            final Content persistedContent = contentDao.select( command.getSelector(), session );
             if ( persistedContent == null )
             {
                 throw new ContentNotFoundException( command.getSelector() );
             }
+
+            final List<Content> embeddedContentsBeforeEdit = resolveEmbeddedContent( session, persistedContent );
 
             Content edited = command.getEditor().edit( persistedContent );
             if ( edited != null )
@@ -61,6 +73,28 @@ public class UpdateContentHandler
                 persistedContent.checkIllegalEdit( edited );
 
                 validateContentData( context, edited );
+
+                final List<Content> embeddedContentsToKeep = new ArrayList<>();
+                final List<Content> temporaryContents = new ArrayList<>();
+                new DataVisitor()
+                {
+                    @Override
+                    public void visit( final Data data )
+                    {
+                        final Content content = contentDao.select( data.getContentId(), session );
+                        if ( content != null )
+                        {
+                            if ( content.isTemporary() )
+                            {
+                                temporaryContents.add( content );
+                            }
+                            else if ( content.isEmbedded() )
+                            {
+                                embeddedContentsToKeep.add( content );
+                            }
+                        }
+                    }
+                }.restrictType( DataTypes.CONTENT_ID ).traverse( edited.getRootDataSet() );
 
                 // walk trough edited.ContentData
                 // if value is ContentId
@@ -72,8 +106,8 @@ public class UpdateContentHandler
                 // find embeddedContentsToDelete: persistedEmbeddedContent not in embeddedContentToKeep
 
                 // createEmbeddedContent( temporaryEmbeddedContents, parent )
-                //    new path for embedded content: <parentPath>/_embedded/<name>
-                //    move content under parent under node "_embedded"
+                //    new path for embedded content: <parentPath>/__embedded/<name>
+                //    move content under parent under node "__embedded"
                 //
 
                 //
@@ -81,7 +115,7 @@ public class UpdateContentHandler
 
                 relationshipService.syncRelationships( new SyncRelationshipsCommand().
                     client( context.getClient() ).
-                    jcrSession( context.getJcrSession() ).
+                    jcrSession( session ).
                     contentType( persistedContent.getType() ).
                     contentToUpdate( persistedContent.getId() ).
                     contentBeforeEditing( persistedContent.getRootDataSet() ).
@@ -92,8 +126,20 @@ public class UpdateContentHandler
                     modifier( command.getModifier() ).build();
 
                 final boolean createNewVersion = true;
-                contentDao.update( edited, createNewVersion, context.getJcrSession() );
-                context.getJcrSession().save();
+                contentDao.update( edited, createNewVersion, session );
+                session.save();
+
+                createEmbeddedContents( session, edited, temporaryContents );
+
+                // delete embedded contents not longer to keep
+                for ( Content embeddedContentBeforeEdit : embeddedContentsBeforeEdit )
+                {
+                    if ( !embeddedContentsToKeep.contains( embeddedContentBeforeEdit ) )
+                    {
+                        contentDao.delete( embeddedContentBeforeEdit.getId(), session );
+                        session.save();
+                    }
+                }
 
                 try
                 {
@@ -111,6 +157,44 @@ public class UpdateContentHandler
         {
             command.setResult( UpdateContentResult.from( e ) );
         }
+    }
+
+    private void createEmbeddedContents( final Session session, final Content edited, final List<Content> temporaryContents )
+        throws RepositoryException
+    {
+        for ( Content tempContent : temporaryContents )
+        {
+            final ContentPath pathToEmbeddedContent = ContentPath.createPathToEmbeddedContent( edited.getPath(), tempContent.getName() );
+            createEmbeddedContent( tempContent, pathToEmbeddedContent, session );
+        }
+    }
+
+    private void createEmbeddedContent( final Content tempContent, final ContentPath pathToEmbeddedContent, final Session session )
+        throws RepositoryException
+    {
+        contentDao.moveContent( tempContent.getId(), pathToEmbeddedContent, session );
+        session.save();
+    }
+
+    private List<Content> resolveEmbeddedContent( final Session session, final Content persistedContent )
+    {
+        final List<Content> embeddedContent = new ArrayList<>();
+        new DataVisitor()
+        {
+            @Override
+            public void visit( final Data data )
+            {
+                final Content content = contentDao.select( data.getContentId(), session );
+                if ( content != null )
+                {
+                    if ( content.isEmbedded() )
+                    {
+                        embeddedContent.add( content );
+                    }
+                }
+            }
+        }.restrictType( DataTypes.CONTENT_ID ).traverse( persistedContent.getRootDataSet() );
+        return embeddedContent;
     }
 
     private void validateContentData( final CommandContext context, final Content modifiedContent )
