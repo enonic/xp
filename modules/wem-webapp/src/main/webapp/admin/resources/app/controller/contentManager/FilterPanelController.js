@@ -52,6 +52,7 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
         var me = this;
 
         var params = this.createLoadContentParams(values);
+        var filterDirty = values && Object.getOwnPropertyNames(values).length > 0;
 
         Admin.lib.RemoteService.content_find(params, function (response) {
             if (response && response.success) {
@@ -63,7 +64,7 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
                 var ids = Ext.Array.pluck(response.contents, 'id'),
                     treeGridPanel = me.getContentTreeGridPanel();
 
-                treeGridPanel.setContentSearchParams({ contentIds: ids });
+                treeGridPanel.setContentSearchParams(filterDirty && ids.length > 0 ? { contentIds: ids } : {});
                 treeGridPanel.refresh();
             }
         })
@@ -131,7 +132,7 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
         };
 
         return {
-            fulltext: values ? values.query : undefined,
+            fulltext: values && values.query || undefined,
             include: true,
             facets: facets
         };
