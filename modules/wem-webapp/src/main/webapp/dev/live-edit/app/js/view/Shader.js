@@ -58,7 +58,6 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         $('.live-edit-shader').on('click contextmenu', function (event) {
             event.stopPropagation();
             event.preventDefault();
-            console.log(123);
             $(window).trigger('component.onDeselect');
             $(window).trigger('shader.onClick');
         });

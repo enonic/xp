@@ -1,5 +1,5 @@
 <%
-  if ( !"false".equals( request.getParameter( "edit" ) ) )
+  if ( "true".equals( request.getParameter( "edit" ) ) )
   {
 %>
 <!-- Namespace -->

@@ -84,7 +84,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
                 //TODO update urls when they are ready
-                livePreview.load('/dev/live-edit/page/bootstrap.jsp');
+                livePreview.load('/dev/live-edit/page/bootstrap.jsp', false);
             }
         }, this);
 
@@ -93,7 +93,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
                 //TODO update urls when they are ready
-                livePreview.load('/dev/live-edit/page/bootstrap.jsp');
+                livePreview.load('/dev/live-edit/page/bootstrap.jsp', false);
             }
         };
 
@@ -112,7 +112,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     loadLivePreview: function (item) {
         var livePreview = item.down('#livePreview');
         //TODO update urls when they are ready
-        livePreview.load('/dev/live-edit/page/bootstrap.jsp');
+        livePreview.load('/dev/live-edit/page/bootstrap.jsp', true);
     },
 
 

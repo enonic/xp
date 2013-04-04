@@ -22,6 +22,7 @@
 <div class="container">
 
   <div class="masthead">
+
     <h3 class="muted">Enonic CMS</h3>
 
     <div class="navbar">
@@ -98,6 +99,7 @@
 
 <%@ include file="live-edit/scripts.jsp" %>
 
+<%@ include file="live-edit/admin-link.jsp" %>
 
 </body>
 </html>
