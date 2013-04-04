@@ -37,23 +37,30 @@ public class DemoImagesInitializer
 
     private void createImages()
     {
-        final Binary binary = loadBinary( "enonic-logo.png" );
-        if ( binary == null )
-        {
-            return;
-        }
+        createImageContent( loadBinary( "enonic-logo.png" ), "Enonic logo" );
+        createImageContent( loadBinary( "haakon.png" ), "Haakon" );
+    }
+
+    private void createImageContent( final Binary binary, final String displayName )
+    {
         final BinaryId binaryId = client.execute( Commands.binary().create().binary( binary ) );
 
-        final RootDataSet dataSet = RootDataSet.newRootDataSet();
-        dataSet.add( Data.newData( "mimeType" ).type( DataTypes.TEXT ).value( "image/png" ).build() );
-        dataSet.add( Data.newData( "binary" ).type( DataTypes.BINARY_ID ).value( binaryId ).build() );
+        final RootDataSet dataSet = createContentData( binaryId );
 
         final CreateContent createContent = Commands.content().create().
             contentType( QualifiedContentTypeName.imageFile() ).
-            displayName( "Enonic logo" ).
+            displayName( displayName ).
             parentContentPath( ContentPath.from( "default:/" ) ).
             rootDataSet( dataSet );
         client.execute( createContent );
+    }
+
+    private RootDataSet createContentData( final BinaryId binaryId )
+    {
+        final RootDataSet dataSet = RootDataSet.newRootDataSet();
+        dataSet.add( Data.newData( "mimeType" ).type( DataTypes.TEXT ).value( "image/png" ).build() );
+        dataSet.add( Data.newData( "binary" ).type( DataTypes.BINARY_ID ).value( binaryId ).build() );
+        return dataSet;
     }
 
     protected Binary loadBinary( final String fileName )
