@@ -6,6 +6,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     ],
 
     defaultOccurrencesHandling: false,
+    contentStore: null,
 
     initComponent: function () {
         var me = this;
@@ -91,6 +92,18 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             '</tpl>'
         ];
 
+        me.contentStore = new Admin.store.contentManager.ContentStore();
+
+        var relationshipTypeName = me.inputConfig.type.config.relationshipType;
+        me.remoteGetRelationshipType(relationshipTypeName, function (relationshipType) {
+            var allowedContentTypes = relationshipType.allowedToTypes;
+            if (!Ext.isEmpty(allowedContentTypes)) {
+                me.contentStore.proxy.extraParams = {
+                    'contentTypes': allowedContentTypes
+                }
+            }
+        });
+
         var combo = {
             xtype: 'combo',
             itemId: 'relationshipCombo',
@@ -121,8 +134,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
                 '</tpl>'
             ),
 
-            // Hardcode the store for now.
-            store: new Admin.store.contentManager.ContentStore(),
+            store: me.contentStore,
             listeners: {
                 select: function (combo, records) {
                     combo.setValue('');
@@ -276,6 +288,25 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             });
             this.getComponent(this.name).setValue(keys);
         }
+    },
+
+    /**
+     * @private
+     */
+    remoteGetRelationshipType: function (relationshipTypeName, callback) {
+        var getRelationshipTypeCommand = {
+            'qualifiedRelationshipTypeName': relationshipTypeName,
+            'format': 'JSON'
+        };
+
+        Admin.lib.RemoteService.relationshipType_get(getRelationshipTypeCommand, function (response) {
+            if (response && response.success) {
+                callback(response.relationshipType);
+            } else {
+                Ext.Msg.alert("Error", response ? response.error : "Unable to load relationship type");
+            }
+        });
     }
 
-});
+})
+;
