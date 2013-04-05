@@ -398,7 +398,6 @@ Ext.define('Admin.controller.contentManager.Controller', {
                     // show everything even if we have ids returned because no filter set
                     treeGridPanel.setRemoteSearchParams({});
                     treeGridPanel.refresh();
-                    console.log('show all');
                 } else {
                     if (ids.length > 0) {
                         // show  ids

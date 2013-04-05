@@ -201,11 +201,12 @@ Ext.define('Admin.view.TopBar', {
         }
     },
 
+    /* For 18/4 demo */
     getApplicationId: function () {
         var urlParamsString = document.URL.split('?'),
             urlParams = Ext.urlDecode(urlParamsString[urlParamsString.length - 1]);
 
-        return urlParams.appId;
+        return urlParams.appId.split('#')[0];
     },
 
     getMenuItemIcon: function (card) {
