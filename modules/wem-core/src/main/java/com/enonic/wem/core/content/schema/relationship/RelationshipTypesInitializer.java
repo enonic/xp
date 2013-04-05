@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.schema.relationship.CreateRelationshipType;
 import com.enonic.wem.api.command.content.schema.relationship.UpdateRelationshipType;
+import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.schema.relationship.RelationshipType;
@@ -33,7 +34,11 @@ public class RelationshipTypesInitializer
 
     private static final RelationshipType LIKE = createRelationshipType( QualifiedRelationshipTypeName.LIKE, "Like", "likes", "liked by" );
 
-    private static final RelationshipType[] SYSTEM_TYPES = {DEFAULT, PARENT, LINK, LIKE};
+    private static final RelationshipType CITATION =
+        createRelationshipType( QualifiedRelationshipTypeName.from( "Demo:citation" ), "Citation", "citation in", "cited by",
+                                QualifiedContentTypeNames.from( "News:article" ) );
+
+    private static final RelationshipType[] SYSTEM_TYPES = {DEFAULT, PARENT, LINK, LIKE, CITATION};
 
     protected RelationshipTypesInitializer()
     {
@@ -91,6 +96,13 @@ public class RelationshipTypesInitializer
     private static RelationshipType createRelationshipType( final QualifiedRelationshipTypeName qualifiedName, final String displayName,
                                                             final String fromSemantic, final String toSemantic )
     {
+        return createRelationshipType( qualifiedName, displayName, fromSemantic, toSemantic, QualifiedContentTypeNames.empty() );
+    }
+
+    private static RelationshipType createRelationshipType( final QualifiedRelationshipTypeName qualifiedName, final String displayName,
+                                                            final String fromSemantic, final String toSemantic,
+                                                            final QualifiedContentTypeNames toContentTypes )
+    {
         return newRelationshipType().
             name( qualifiedName.getLocalName() ).
             module( ModuleName.SYSTEM ).
@@ -98,6 +110,7 @@ public class RelationshipTypesInitializer
             fromSemantic( fromSemantic ).
             toSemantic( toSemantic ).
             module( qualifiedName.getModuleName() ).
+            addAllowedToTypes( toContentTypes ).
             build();
     }
 }

@@ -1,0 +1,32 @@
+{
+    "name": "Relationship test 2",
+    "module": "Demo",
+    "displayName": "Demo: Relationship test with limited allowed-to-types",
+    "superType": "System:structured",
+    "isAbstract": false,
+    "isFinal": true,
+    "form": [
+        {
+            "Input": {
+                "name": "myRelation",
+                "label": "A relation to an article",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 3
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Relationship",
+                    "builtIn": true,
+                    "config": {
+                        "relationshipType": "Demo:citation"
+                    }
+                }
+            }
+        }
+    ]
+}
