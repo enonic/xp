@@ -93,6 +93,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
 
         var combo = {
             xtype: 'combo',
+            itemId: 'relationshipCombo',
             name: '_system_relation_combo',
             submitValue: false,
             hideTrigger: true,
@@ -188,6 +189,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
      */
     createSelectedContentStore: function () {
         var me = this;
+        var max = this.inputConfig.occurrences.maximum;
+        var min = this.inputConfig.occurrences.minimum;
 
         return Ext.create('Ext.data.Store', {
             model: 'Admin.model.contentManager.ContentModel',
@@ -196,11 +199,17 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
                 datachanged: function (store) {
                     me.updateHiddenValue();
                     try {
-                        me.down('combobox').setDisabled(me.selectedContentStore.getCount() ===
-                                                        me.contentTypeItemConfig.occurrences.maximum);
+                        if (max > 0) {
+                            me.down('#relationshipCombo').setDisabled(store.getCount() === max);
+                        }
+                        if (store.getCount() <= min) {
+                            me.down('#relationshipView').addCls('admin-related-item-disabled');
+                        } else {
+                            me.down('#relationshipView').removeCls('admin-related-item-disabled');
+                        }
                     }
                     catch (exception) {
-                        /**/
+                        //
                     }
                 }
             }
@@ -213,7 +222,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
      */
     createViewForSelectedContent: function () {
         var me = this;
-
+        var min = this.inputConfig.occurrences.minimum;
         var template = new Ext.XTemplate(
             '<tpl for=".">',
             '   <div class="admin-related-item">',
@@ -229,6 +238,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
 
         return Ext.create('Ext.view.View', {
             store: me.selectedContentStore,
+            itemId: 'relationshipView',
             tpl: template,
             itemSelector: 'div.admin-related-item',
             emptyText: 'No items selected',
@@ -236,7 +246,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             listeners: {
                 itemclick: function (view, contentModel, item, index, e) {
                     var clickedElement = Ext.fly(e.target);
-                    if (clickedElement.hasCls('remove-related-item-button')) {
+                    if (clickedElement.hasCls('remove-related-item-button') && me.selectedContentStore.getCount() > min) {
                         me.selectedContentStore.remove(contentModel);
                     }
                 }
