@@ -6,6 +6,8 @@ import java.util.Set;
 
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.FilteredQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.index.query.TermsFilterBuilder;
@@ -25,20 +27,32 @@ public class SearchSourceFactory
     {
         final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
-        final String fullTextQuery = contentIndexQuery.getFullTextSearchString();
+        final String fullTextSearchString = contentIndexQuery.getFullTextSearchString();
 
-        if ( Strings.isNullOrEmpty( fullTextQuery ) )
+        QueryBuilder query = null;
+
+        if ( Strings.isNullOrEmpty( fullTextSearchString ) )
         {
-            searchSourceBuilder.query( QueryBuilders.matchAllQuery() );
+            query = QueryBuilders.matchAllQuery();
         }
         else
         {
-            final QueryStringQueryBuilder fulltextQuery = QueryBuilders.queryString( fullTextQuery );
+            final QueryStringQueryBuilder fulltextQuery = QueryBuilders.queryString( fullTextSearchString );
             fulltextQuery.lenient( true );
-            searchSourceBuilder.query( fulltextQuery );
+
+            query = fulltextQuery;
         }
 
-        buildFilters( contentIndexQuery, searchSourceBuilder );
+        final FilterBuilder filterBuilder = buildFilters( contentIndexQuery );
+
+        if ( filterBuilder != null )
+        {
+            searchSourceBuilder.query( new FilteredQueryBuilder( query, filterBuilder ) );
+        }
+        else
+        {
+            searchSourceBuilder.query( query );
+        }
 
         if ( contentIndexQuery.isIncludeFacets() )
         {
@@ -53,7 +67,7 @@ public class SearchSourceFactory
         return searchSourceBuilder;
     }
 
-    private static void buildFilters( final ContentIndexQuery contentIndexQuery, final SearchSourceBuilder searchSourceBuilder )
+    private static FilterBuilder buildFilters( final ContentIndexQuery contentIndexQuery )
     {
         Set<FilterBuilder> filtersToApply = Sets.newHashSet();
 
@@ -62,20 +76,18 @@ public class SearchSourceFactory
 
         if ( filtersToApply.isEmpty() )
         {
-            return;
+            return null;
         }
 
         if ( filtersToApply.size() == 1 )
         {
-            searchSourceBuilder.filter( filtersToApply.iterator().next() );
-            return;
+            return filtersToApply.iterator().next();
         }
 
-        wrapAllFiltersInBooleanFilterAndAdd( searchSourceBuilder, filtersToApply );
+        return createFilteredQuery( filtersToApply );
     }
 
-    private static void wrapAllFiltersInBooleanFilterAndAdd( final SearchSourceBuilder searchSourceBuilder,
-                                                             final Set<FilterBuilder> filtersToApply )
+    private static FilterBuilder createFilteredQuery( final Set<FilterBuilder> filtersToApply )
     {
         BoolFilterBuilder boolFilterBuilder = new BoolFilterBuilder();
 
@@ -86,7 +98,7 @@ public class SearchSourceFactory
             boolFilterBuilder.must( filterIterator.next() );
         }
 
-        searchSourceBuilder.filter( boolFilterBuilder );
+        return boolFilterBuilder;
     }
 
     private static void createAndAddSpacesFilterIfApplicable( final ContentIndexQuery contentIndexQuery,
