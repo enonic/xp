@@ -2,6 +2,8 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     extend: 'Object',
     alias: 'plugin.gridToolbarPlugin',
 
+    pluginId: 'gridToolbarPlugin',
+
     constructor: function (config) {
         if (config) {
             Ext.apply(this, config);
@@ -12,9 +14,11 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         var me = this;
 
         me.toolbar = toolbar;
-        if (me.toolbar.showResultCount !== false) {
-            me.resultTextItem = Ext.create('Ext.toolbar.TextItem', {text: ''});
-        }
+
+        me.resultTextItem = Ext.create('Ext.toolbar.TextItem', {
+            text: '',
+            hidden: !!me.toolbar.resultCountHidden
+        });
         me.selectAllButton = me.createSelectAllButton();
         me.clearSelectionButton = me.createClearSelectionButton();
         me.tbFill = Ext.create('Ext.toolbar.Fill');
@@ -27,9 +31,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             me.toolbar.store = Ext.StoreManager.lookup(me.toolbar.store);
         }
 
-        if (me.toolbar.showResultCount !== false) {
-            me.toolbar.insert(0, me.resultTextItem);
-        }
+        me.toolbar.insert(0, me.resultTextItem);
         me.toolbar.insert(1, me.selectAllButton);
         me.toolbar.insert(2, Ext.create('Ext.toolbar.TextItem', {text: ' | '}));
         me.toolbar.insert(3, me.clearSelectionButton);
@@ -158,9 +160,11 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     },
 
     updateResultCount: function (count) {
-        if (this.toolbar.showResultCount !== false) {
-            this.resultTextItem.setText(count + ' results - ');
-        }
+        this.resultTextItem.setText(count + ' result(s) - ');
+    },
+
+    setResultCountVisible: function (visible) {
+        this.resultTextItem.setVisible(visible);
     },
 
     updateSelectAll: function (selected) {
@@ -199,13 +203,15 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     },
 
     countTreeNodes: function (node) {
-        if (Ext.isEmpty(node.childNodes)) {
-            return 1;
+        if (this.toolbar.countTopLevelOnly) {
+            return Ext.isEmpty(node.childNodes) ? 1 : 1 + node.childNodes.length;
         } else {
             var count = 1;
-            node.eachChild(function (child) {
-                count += this.countTreeNodes(child);
-            }, this);
+            if (!Ext.isEmpty(node.childNodes)) {
+                node.eachChild(function (child) {
+                    count += this.countTreeNodes(child);
+                }, this);
+            }
             return count;
         }
     }

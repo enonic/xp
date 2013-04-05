@@ -53,7 +53,8 @@ Ext.define('Admin.view.FilterPanel', {
                     shouldShowTerm: function (term, facet) {
                         //update term count if needed
                         if (me.updateFacetCount === 'always' ||
-                            (me.updateFacetCount === 'query' && me.queryDirty) || !Ext.isDefined(me.facetCountMap[term.name])) {
+                            (me.updateFacetCount === 'query' && me.queryDirty) ||
+                            !Ext.isDefined(me.facetCountMap[term.name])) {
 
                             me.facetCountMap[term.name] = term.count;
                         }
@@ -93,13 +94,17 @@ Ext.define('Admin.view.FilterPanel', {
 
         this.clearLink = Ext.create('Ext.Component', {
             xtype: 'component',
-            hidden: true,
             html: '<a href="javascript:;">Clear filter</a>',
             listeners: {
                 click: {
                     element: 'el',
                     fn: me.reset,
                     scope: me
+                },
+                afterrender: function(cmp) {
+                    // hiding() with hideMode: 'visibility' doesn't retain components space
+                    // so we manually operate el.visibility
+                    cmp.el.setStyle('visibility', 'hidden');
                 }
             }
         });
@@ -114,7 +119,7 @@ Ext.define('Admin.view.FilterPanel', {
                 enableKeyEvents: true,
                 bubbleEvents: ['specialkey'],
                 itemId: 'filterText',
-                margin: '0 0 20 0',
+                margin: '0 0 10 0',
                 name: 'query',
                 emptyText: 'Search',
                 listeners: {
@@ -279,7 +284,7 @@ Ext.define('Admin.view.FilterPanel', {
                 Ext.fly(cb).up('.admin-facet').removeCls('checked');
             });
 
-            this.clearLink.setVisible(false);
+            this.clearLink.el.setStyle('visibility', 'hidden');
         }
 
     },
@@ -287,7 +292,7 @@ Ext.define('Admin.view.FilterPanel', {
     search: function () {
 
         if (this.fireEvent('search', this.getValues()) !== false) {
-            this.clearLink.setVisible(this.isDirty());
+            this.clearLink.el.setStyle('visibility', this.isDirty() ? 'visible' : 'hidden');
         }
 
     }
