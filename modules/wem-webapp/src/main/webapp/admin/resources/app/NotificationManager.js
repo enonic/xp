@@ -1,5 +1,6 @@
 Ext.define('Admin.NotificationManager', {
     singleton: true,
+    requires: ['Admin.MessageBus'],
 
     /**
      * Position inside document body.
