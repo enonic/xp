@@ -79,6 +79,13 @@ Ext.define('Admin.controller.homescreen.Login', {
             success: function (form, action) {
                 Ext.util.Cookies.set('dummy_userIsLoggedIn', 'true');
 
+                /* For 18/4 demo */
+
+                // Can we move this higher up in order avoid seeing the background
+                if (me.getUrlHash() !== '') {
+                    me.openPageInContentManager(me.getUrlHash());
+                }
+
                 loginFormPanel.animate({
                     duration: 500,
                     to: {

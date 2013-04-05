@@ -25,16 +25,17 @@ Ext.define('Admin.controller.homescreen.Controller', {
             'homescreen': {
                 afterrender: function (view) {
                     if (me.isUserLoggedIn()) {
+
                         me.application.fireEvent('displayAppSelector');
+
+                        /* For 18/4 demo */
+
+                        // Can we move this higher up in order avoid seeing the background
+                        if (me.getUrlHash() !== '') {
+                            me.openPageInContentManager(me.getUrlHash());
+                        }
                     } else {
                         me.application.fireEvent('displayLogin');
-                    }
-
-                    /* For 18/4 demo */
-
-                    // Can we move this higher up in order avoid seeing the background
-                    if (me.getUrlHash() !== '') {
-                        me.openPageInContentManager(me.getUrlHash());
                     }
 
                     Admin.lib.RemoteService.system_getSystemInfo({}, function (r) {
