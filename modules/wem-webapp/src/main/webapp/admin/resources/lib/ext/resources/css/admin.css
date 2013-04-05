@@ -3291,7 +3291,7 @@ div.admin-load-mask .admin-load-text {
     -ms-border-radius: 0;
     -khtml-border-radius: 0;
     border-radius: 0;
-    padding: 6px 16px;
+    padding: 4px 16px;
     border: 0 none;
     background-color: transparent;
 }
@@ -3316,7 +3316,7 @@ div.admin-load-mask .admin-load-text {
 .x-toolbar.admin-topbar-panel .title-button button .x-btn-icon {
     width: 32px;
     height: 32px;
-    top: -6px;
+    top: -4px;
 }
 
 /* line 58, ../sass/admin/css/_top-bar.scss */
@@ -3332,16 +3332,17 @@ div.admin-load-mask .admin-load-text {
     margin-left: 8px;
     background: #DC143C;
     color: #fff;
+    border-radius: 50%;
 }
 
-/* line 75, ../sass/admin/css/_top-bar.scss */
+/* line 76, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .x-toolbar-separator {
     height: 32px;
     width: 1px;
     background-color: #555;
 }
 
-/* line 83, ../sass/admin/css/_top-bar.scss */
+/* line 84, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .home-button {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
@@ -3349,7 +3350,7 @@ div.admin-load-mask .admin-load-text {
     -ms-border-radius: 0;
     -khtml-border-radius: 0;
     border-radius: 0;
-    padding: 6px 16px;
+    padding: 4px 16px;
     border: 0 none;
     background-color: transparent;
     padding: 6px;
@@ -3366,25 +3367,25 @@ div.admin-load-mask .admin-load-text {
     font-size: 14px;
 }
 
-/* line 87, ../sass/admin/css/_top-bar.scss */
+/* line 88, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .home-button .x-btn-inner {
     font-weight: bold;
 }
 
-/* line 94, ../sass/admin/css/_top-bar.scss */
+/* line 95, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .admin-image-button {
     padding: 0px;
     border: 0 none;
 }
 
-/* line 98, ../sass/admin/css/_top-bar.scss */
+/* line 99, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .admin-image-button button {
     height: 44px;
     line-height: 44px;
     padding: 0 0 0 44px;
 }
 
-/* line 103, ../sass/admin/css/_top-bar.scss */
+/* line 104, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .admin-image-button button .x-btn-inner {
     width: auto;
     height: 44px;
@@ -3392,7 +3393,7 @@ div.admin-load-mask .admin-load-text {
     display: none;
 }
 
-/* line 110, ../sass/admin/css/_top-bar.scss */
+/* line 111, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .admin-image-button button .x-btn-icon {
     height: 44px;
     width: 44px;
@@ -3400,19 +3401,19 @@ div.admin-load-mask .admin-load-text {
 }
 
 /*  Tab menu  */
-/* line 122, ../sass/admin/css/_top-bar.scss */
+/* line 123, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu {
     overflow: visible !important;
 }
 
-/* line 125, ../sass/admin/css/_top-bar.scss */
+/* line 126, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .x-menu-body {
     background: #FFF !important;
     padding: 0 !important;
     border: 1px solid #ccc !important;
 }
 
-/* line 131, ../sass/admin/css/_top-bar.scss */
+/* line 132, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .balloon-tip {
     position: absolute;
     width: 100%;
@@ -3421,7 +3422,7 @@ div.admin-load-mask .admin-load-text {
     background: url("../themes/images/default/ballon-tips.png") bottom center no-repeat;
 }
 
-/* line 139, ../sass/admin/css/_top-bar.scss */
+/* line 140, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .title {
     border-bottom: 1px solid #ccc;
     font-size: 11px;
@@ -3431,7 +3432,7 @@ div.admin-load-mask .admin-load-text {
     margin-bottom: 12px;
 }
 
-/* line 147, ../sass/admin/css/_top-bar.scss */
+/* line 148, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .title span {
     position: relative;
     bottom: -6px;
@@ -3439,29 +3440,29 @@ div.admin-load-mask .admin-load-text {
     background: #FFF;
 }
 
-/* line 155, ../sass/admin/css/_top-bar.scss */
+/* line 156, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item {
     padding: 6px 12px;
     font-size: 13px;
 }
 
-/* line 159, ../sass/admin/css/_top-bar.scss */
+/* line 160, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.current-tab {
     background-color: #eeeeee;
 }
 
-/* line 163, ../sass/admin/css/_top-bar.scss */
+/* line 164, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.active {
     background: #4294DE;
     color: #FFF;
 }
 
-/* line 167, ../sass/admin/css/_top-bar.scss */
+/* line 168, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.active a.close-button {
     background: url("../themes/images/default/navigate_cross-16px.png") 0 -16px no-repeat;
 }
 
-/* line 172, ../sass/admin/css/_top-bar.scss */
+/* line 173, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item a.close-button {
     background: url("../themes/images/default/navigate_cross-16px.png") 0 0 no-repeat;
     border: 1px solid transparent;
@@ -3470,7 +3471,7 @@ div.admin-load-mask .admin-load-text {
     cursor: pointer;
 }
 
-/* line 181, ../sass/admin/css/_top-bar.scss */
+/* line 182, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu em {
     position: relative;
     top: -2px;
@@ -3702,14 +3703,11 @@ div.admin-load-mask .admin-load-text {
 }
 
 /* line 24, ../sass/admin/css/_relationship.scss */
-.admin-related-item .right-column a.remove-related-item-button {
-    width: 24px;
-    height: 24px;
-    display: block;
-    background: transparent url(../themes/images/default/navigate_cross-24px.png) no-repeat 0 0;
+.admin-related-item .right-column a {
+    color: black;
 }
 
-/* line 34, ../sass/admin/css/_relationship.scss */
+/* line 31, ../sass/admin/css/_relationship.scss */
 .admin-related-item-disabled .right-column {
     opacity: 0.5;
 }
@@ -3737,27 +3735,25 @@ div.admin-load-mask .admin-load-text {
 
 /* line 35, ../sass/admin/css/_embedded-image.scss */
 .admin-embedded-image-list .x-boundlist-item {
-    padding: 0 0 5px 0;
+    padding: 8px;
 }
 
 /* line 38, ../sass/admin/css/_embedded-image.scss */
 .admin-embedded-image-list .x-boundlist-item img {
-    width: 48px;
     float: left;
 }
 
-/* line 43, ../sass/admin/css/_embedded-image.scss */
+/* line 42, ../sass/admin/css/_embedded-image.scss */
 .admin-embedded-image-list .x-boundlist-item .info {
-    margin-left: 48px;
-    padding: 8px;
+    margin-left: 42px;
 }
 
-/* line 47, ../sass/admin/css/_embedded-image.scss */
+/* line 45, ../sass/admin/css/_embedded-image.scss */
 .admin-embedded-image-list .x-boundlist-item .info p {
     margin: 0;
 }
 
-/* line 55, ../sass/admin/css/_embedded-image.scss */
+/* line 53, ../sass/admin/css/_embedded-image.scss */
 .admin-embedded-image {
     position: relative;
     margin: 0 10px 10px 0;
@@ -3770,7 +3766,7 @@ div.admin-load-mask .admin-load-text {
     background-color: #ccc;
 }
 
-/* line 66, ../sass/admin/css/_embedded-image.scss */
+/* line 64, ../sass/admin/css/_embedded-image.scss */
 .admin-embedded-image .top-bar {
     position: absolute;
     overflow: hidden;
@@ -3784,7 +3780,7 @@ div.admin-load-mask .admin-load-text {
     text-align: right;
 }
 
-/* line 72, ../sass/admin/css/_embedded-image.scss */
+/* line 70, ../sass/admin/css/_embedded-image.scss */
 .admin-embedded-image .bottom-bar {
     position: absolute;
     overflow: hidden;
@@ -3797,13 +3793,13 @@ div.admin-load-mask .admin-load-text {
     bottom: 0;
 }
 
-/* line 76, ../sass/admin/css/_embedded-image.scss */
+/* line 74, ../sass/admin/css/_embedded-image.scss */
 .admin-embedded-image .bottom-bar h6 {
     font-size: 11px !important;
     line-height: 14px;
 }
 
-/* line 85, ../sass/admin/css/_embedded-image.scss */
+/* line 83, ../sass/admin/css/_embedded-image.scss */
 .admin-embedded-image.over .top-bar,
 .admin-embedded-image.over .bottom-bar {
     display: block;
