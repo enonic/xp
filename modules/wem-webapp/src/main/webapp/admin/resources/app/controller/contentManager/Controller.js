@@ -387,13 +387,14 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 // set facet data
                 me.getContentFilter().updateFacets(response.facets);
 
-                // set tree data
                 var ids = Ext.Array.pluck(response.contents, 'id'),
                     treeGridPanel = me.getContentTreeGridPanel(),
                     filterDirty = filter.isDirty();
 
-                var store = treeGridPanel.getActiveList().getStore();
+                // show/hide result count in toolbar
+                treeGridPanel.setResultCountVisible(filterDirty);
 
+                // set tree data
                 if (!filterDirty) {
                     // show everything even if we have ids returned because no filter set
                     treeGridPanel.setRemoteSearchParams({});
@@ -403,11 +404,10 @@ Ext.define('Admin.controller.contentManager.Controller', {
                         // show  ids
                         treeGridPanel.setRemoteSearchParams({ contentIds: ids });
                         treeGridPanel.refresh();
-                        console.log('show ids', ids);
                     } else {
                         // show none
                         treeGridPanel.removeAll();
-                        console.log('show none');
+                        treeGridPanel.updateResultCount(0);
                     }
                 }
             }
@@ -433,7 +433,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 "terms": {
                     "field": "space",
                     "size": 10,
-                    "all_terms": false,
+                    "all_terms": true,
                     "order": "term"
                 }
             },
@@ -441,7 +441,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 "terms": {
                     "field": "contentType",
                     "size": 10,
-                    "all_terms": false,
+                    "all_terms": true,
                     "order": "term"
                 }
             },
@@ -478,9 +478,11 @@ Ext.define('Admin.controller.contentManager.Controller', {
         };
 
         return {
-            fulltext: values && values.query || undefined,
-            include: true,
-            facets: facets
+            fulltext: values.query || '',
+            contentTypes: values.type || [],
+            spaces: values.space || [],
+            facets: facets,
+            include: true
         };
     },
 

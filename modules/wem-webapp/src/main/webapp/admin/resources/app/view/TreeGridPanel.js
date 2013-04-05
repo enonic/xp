@@ -80,11 +80,12 @@ Ext.define('Admin.view.TreeGridPanel', {
         var grid = this.down('#grid');
         grid.addDocked({
             xtype: 'toolbar',
+            itemId: 'selectionToolbar',
             cls: 'admin-white-toolbar',
             dock: 'top',
             store: this.store,
             gridPanel: grid,
-            showResultCount: false,
+            resultCountHidden: true,
             plugins: ['gridToolbarPlugin']
         });
         grid.getStore().on('datachanged', this.fireUpdateEvent, this);
@@ -92,11 +93,13 @@ Ext.define('Admin.view.TreeGridPanel', {
         var tree = this.down('#tree');
         tree.addDocked({
             xtype: 'toolbar',
+            itemId: 'selectionToolbar',
             cls: 'admin-white-toolbar',
             dock: 'top',
             store: this.treeStore,
             gridPanel: tree,
-            showResultCount: false,
+            resultCountHidden: true,
+            countTopLevelOnly: true,
             plugins: ['gridToolbarPlugin']
         });
 
@@ -190,15 +193,23 @@ Ext.define('Admin.view.TreeGridPanel', {
         }
     },
 
-    setRemoteSearchParams : function (params) {
+    setRemoteSearchParams: function (params) {
         var activeList = this.getActiveList();
         var currentStore = activeList.store;
         currentStore.getProxy().extraParams = params;
     },
 
-    removeAll: function() {
+    setResultCountVisible: function (visible) {
+        this.getActiveList().getDockedComponent('selectionToolbar').getPlugin('gridToolbarPlugin').setResultCountVisible(visible);
+    },
+
+    updateResultCount: function (count) {
+        this.getActiveList().getDockedComponent('selectionToolbar').getPlugin('gridToolbarPlugin').updateResultCount(count);
+    },
+
+    removeAll: function () {
         var activeList = this.getActiveList();
-        if(activeList.xtype === 'treepanel') {
+        if (activeList.xtype === 'treepanel') {
             activeList.getRootNode().removeAll();
         } else {
             activeList.removeAll();
