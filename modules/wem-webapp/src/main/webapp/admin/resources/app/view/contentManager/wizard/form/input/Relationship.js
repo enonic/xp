@@ -36,12 +36,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
         }
 
         me.callParent(arguments);
+
+        this.setValue(this.value);
     },
-
-
-    //getValue: function () {
-    //return this.getComponent(this.name).getValue();
-    //},
 
 
     /**
@@ -119,7 +116,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
 
             displayTpl: Ext.create('Ext.XTemplate',
                 '<tpl for=".">',
-                    '{displayName}',
+                '{displayName}',
                 '</tpl>'
             ),
 
@@ -152,14 +149,40 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
 
     getValue: function () {
         var value = this.items.items[0].getValue();
-        if (Ext.isArray(value)) {
-            value = value.join(',');
+        if (value && Ext.isString(value)) {
+            value = value.split(',');
+        } else {
+            return [];
         }
-        return {
-            path: this.name.concat('[', this.copyNo - 1, ']'),
-            value: value
-        };
+
+        var valueList = [];
+        var i;
+        for (i = 0; i < value.length; i++) {
+            var currentItemValue = {
+                'path': this.name.concat('[', i, ']'),
+                'value': value[i]
+            };
+            valueList.push(currentItemValue);
+        }
+        return valueList;
     },
+
+    setValue: function (values) {
+        var me = this;
+        var getContentCommand = {
+            contentIds: Ext.Array.pluck(values, 'value')
+        };
+        // retrieve image contents by contentId
+        Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
+            if (getContentResponse && getContentResponse.success) {
+                Ext.each(getContentResponse.content, function (contentData) {
+                    var contentModel = new Admin.model.contentManager.ContentModel(contentData);
+                    me.selectedContentStore.add(contentModel);
+                });
+            }
+        });
+    },
+
     /**
      * @private
      */
