@@ -6,6 +6,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     ],
 
     defaultOccurrencesHandling: false,
+    contentStore: null,
 
     initComponent: function () {
         var me = this;
@@ -36,12 +37,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
         }
 
         me.callParent(arguments);
+
+        this.setValue(this.value);
     },
-
-
-    //getValue: function () {
-    //return this.getComponent(this.name).getValue();
-    //},
 
 
     /**
@@ -94,8 +92,21 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             '</tpl>'
         ];
 
+        me.contentStore = new Admin.store.contentManager.ContentStore();
+
+        var relationshipTypeName = me.inputConfig.type.config.relationshipType;
+        me.remoteGetRelationshipType(relationshipTypeName, function (relationshipType) {
+            var allowedContentTypes = relationshipType.allowedToTypes;
+            if (!Ext.isEmpty(allowedContentTypes)) {
+                me.contentStore.proxy.extraParams = {
+                    'contentTypes': allowedContentTypes
+                }
+            }
+        });
+
         var combo = {
             xtype: 'combo',
+            itemId: 'relationshipCombo',
             name: '_system_relation_combo',
             submitValue: false,
             hideTrigger: true,
@@ -119,12 +130,11 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
 
             displayTpl: Ext.create('Ext.XTemplate',
                 '<tpl for=".">',
-                    '{displayName}',
+                '{displayName}',
                 '</tpl>'
             ),
 
-            // Hardcode the store for now.
-            store: new Admin.store.contentManager.ContentStore(),
+            store: me.contentStore,
             listeners: {
                 select: function (combo, records) {
                     combo.setValue('');
@@ -152,19 +162,47 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
 
     getValue: function () {
         var value = this.items.items[0].getValue();
-        if (Ext.isArray(value)) {
-            value = value.join(',');
+        if (value && Ext.isString(value)) {
+            value = value.split(',');
+        } else {
+            return [];
         }
-        return {
-            path: this.name.concat('[', this.copyNo - 1, ']'),
-            value: value
-        };
+
+        var valueList = [];
+        var i;
+        for (i = 0; i < value.length; i++) {
+            var currentItemValue = {
+                'path': this.name.concat('[', i, ']'),
+                'value': value[i]
+            };
+            valueList.push(currentItemValue);
+        }
+        return valueList;
     },
+
+    setValue: function (values) {
+        var me = this;
+        var getContentCommand = {
+            contentIds: Ext.Array.pluck(values, 'value')
+        };
+        // retrieve image contents by contentId
+        Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
+            if (getContentResponse && getContentResponse.success) {
+                Ext.each(getContentResponse.content, function (contentData) {
+                    var contentModel = new Admin.model.contentManager.ContentModel(contentData);
+                    me.selectedContentStore.add(contentModel);
+                });
+            }
+        });
+    },
+
     /**
      * @private
      */
     createSelectedContentStore: function () {
         var me = this;
+        var max = this.inputConfig.occurrences.maximum;
+        var min = this.inputConfig.occurrences.minimum;
 
         return Ext.create('Ext.data.Store', {
             model: 'Admin.model.contentManager.ContentModel',
@@ -173,11 +211,17 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
                 datachanged: function (store) {
                     me.updateHiddenValue();
                     try {
-                        me.down('combobox').setDisabled(me.selectedContentStore.getCount() ===
-                                                        me.contentTypeItemConfig.occurrences.maximum);
+                        if (max > 0) {
+                            me.down('#relationshipCombo').setDisabled(store.getCount() === max);
+                        }
+                        if (store.getCount() <= min) {
+                            me.down('#relationshipView').addCls('admin-related-item-disabled');
+                        } else {
+                            me.down('#relationshipView').removeCls('admin-related-item-disabled');
+                        }
                     }
                     catch (exception) {
-                        /**/
+                        //
                     }
                 }
             }
@@ -190,7 +234,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
      */
     createViewForSelectedContent: function () {
         var me = this;
-
+        var min = this.inputConfig.occurrences.minimum;
         var template = new Ext.XTemplate(
             '<tpl for=".">',
             '   <div class="admin-related-item">',
@@ -206,6 +250,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
 
         return Ext.create('Ext.view.View', {
             store: me.selectedContentStore,
+            itemId: 'relationshipView',
             tpl: template,
             itemSelector: 'div.admin-related-item',
             emptyText: 'No items selected',
@@ -213,7 +258,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             listeners: {
                 itemclick: function (view, contentModel, item, index, e) {
                     var clickedElement = Ext.fly(e.target);
-                    if (clickedElement.hasCls('remove-related-item-button')) {
+                    if (clickedElement.hasCls('remove-related-item-button') && me.selectedContentStore.getCount() > min) {
                         me.selectedContentStore.remove(contentModel);
                     }
                 }
@@ -243,6 +288,25 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             });
             this.getComponent(this.name).setValue(keys);
         }
+    },
+
+    /**
+     * @private
+     */
+    remoteGetRelationshipType: function (relationshipTypeName, callback) {
+        var getRelationshipTypeCommand = {
+            'qualifiedRelationshipTypeName': relationshipTypeName,
+            'format': 'JSON'
+        };
+
+        Admin.lib.RemoteService.relationshipType_get(getRelationshipTypeCommand, function (response) {
+            if (response && response.success) {
+                callback(response.relationshipType);
+            } else {
+                Ext.Msg.alert("Error", response ? response.error : "Unable to load relationship type");
+            }
+        });
     }
 
-});
+})
+;

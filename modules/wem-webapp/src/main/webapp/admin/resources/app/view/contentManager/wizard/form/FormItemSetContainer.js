@@ -60,12 +60,12 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSetContainer', {
                             item.setCollapsed(me.isCollapsed);
                         });
                         me.isCollapsed = !me.isCollapsed;
-                        this.setHTML(me.isCollapsed ? 'Expand All' : 'Collapse All');
+                        this.setHTML(me.isCollapsed ? 'Expand' : 'Collapse');
 
                     }
                 }
             },
-            html: '<span class="admin-text-button admin-collapse-all-button" href="javascript:;">Collapse All</span>'
+            html: '<span class="admin-text-button admin-collapse-all-button" href="javascript:;">Collapse</span>'
         };
         if ((this.maxFields > 1 && this.minFields !== this.maxFields) || (this.maxFields === 0)) {
             return [addButton, collapseButton];

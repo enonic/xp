@@ -1,13 +1,17 @@
 {
     "query": {
-        "query_string": {
-            "query": "test",
-            "lenient": true
-        }
-    },
-    "filter": {
-        "terms": {
-            "contentType": [ "contenttypes:mycontenttype1", "contenttypes:mycontenttype2" ]
+        "filtered": {
+            "query": {
+                "query_string": {
+                    "query": "test",
+                    "lenient": true
+                }
+            },
+            "filter": {
+                "terms": {
+                    "contentType": [ "contenttypes:mycontenttype1", "contenttypes:mycontenttype2" ]
+                }
+            }
         }
     }
 }
