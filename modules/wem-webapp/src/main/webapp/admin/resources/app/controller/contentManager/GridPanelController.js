@@ -33,7 +33,7 @@ Ext.define('Admin.controller.contentManager.GridPanelController', {
                 afterrender: function () {
 
                     /* For 18/4 demo */
-                    if (document.location.href.indexOf('editPage') > -1) {
+                    if (document.location.hash.indexOf('edit/') > -1) {
                         Admin.MessageBus.liveEditOpenContent();
                     }
                 }

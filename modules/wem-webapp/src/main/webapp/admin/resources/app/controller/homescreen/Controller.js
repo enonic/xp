@@ -29,8 +29,8 @@ Ext.define('Admin.controller.homescreen.Controller', {
                         /* For 18/4 demo */
 
                         // Can we move this higher up in order avoid seeing the background
-                        if (me.getEditPageKey() !== undefined) {
-                            me.openPageInContentManager(me.getEditPageKey());
+                        if (me.getUrlHash() !== undefined) {
+                            me.openPageInContentManager(me.getUrlHash());
                         }
 
                         me.application.fireEvent('displayAppSelector');
@@ -70,10 +70,10 @@ Ext.define('Admin.controller.homescreen.Controller', {
     },
 
 
-    openApp: function (appModel, extraParams) {
+    openApp: function (appModel, urlHash) {
         var me = this;
         me.getHomeScreenView().hideScreen();
-        me.application.fireEvent('loadApplication', appModel.data, extraParams);
+        me.application.fireEvent('loadApplication', appModel.data, urlHash);
     },
 
 
@@ -84,8 +84,7 @@ Ext.define('Admin.controller.homescreen.Controller', {
 
     /* For 18/4 demo */
 
-    openPageInContentManager: function (pageKey) {
-        var me = this;
+    openPageInContentManager: function (urlHash) {
         var contentManagerAppData = {
             "id": "app-10",
             "name": "Content Manager",
@@ -93,18 +92,14 @@ Ext.define('Admin.controller.homescreen.Controller', {
             "appUrl": "app-content-manager.jsp",
             "icon": "resources/images/icons/metro/48x48/data.png"
         };
-        var contentManagerAppModel = new Admin.model.homescreen.Apps(contentManagerAppData),
-            urlParams = {editPage: pageKey};
+        var contentManagerAppModel = new Admin.model.homescreen.Apps(contentManagerAppData);
 
-        me.openApp(contentManagerAppModel, urlParams);
+        this.openApp(contentManagerAppModel, urlHash);
     },
 
 
-    getEditPageKey: function () {
-        var urlParamsString = document.URL.split('?'),
-            urlParams = Ext.urlDecode(urlParamsString[urlParamsString.length - 1]);
-
-        return urlParams.editPage;
+    getUrlHash: function () {
+        return document.location.hash;
     },
 
 

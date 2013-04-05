@@ -33,7 +33,7 @@ Ext.define('Admin.controller.TopBarController', {
         this.loadApplication(defaultItem);
     },
 
-    loadApplication: function (appData, urlParams) {
+    loadApplication: function (appData, urlHash) {
         var me = this,
             parent = this.getParentFrame(),
             iFrames = parent.Ext.DomQuery.select('iframe');
@@ -49,7 +49,7 @@ Ext.define('Admin.controller.TopBarController', {
         });
 
         if (!iFrameExist) {
-            me.appendIframe(parent, appData, urlParams);
+            me.appendIframe(parent, appData, urlHash);
             me.showLoadMask();
         }
 
@@ -64,10 +64,10 @@ Ext.define('Admin.controller.TopBarController', {
     },
 
 
-    appendIframe: function (parent, appData, urlParams) {
+    appendIframe: function (parent, appData, urlHash) {
         var url = appData.appUrl + '?appId=' + appData.id;
-        if (urlParams) {
-            url += '&' + Ext.urlEncode(urlParams)
+        if (urlHash) {
+            url += urlHash;
         }
 
         var iFrameSpec = parent.Ext.core.DomHelper.append('appFrames', {
