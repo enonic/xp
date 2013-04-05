@@ -20,32 +20,32 @@ public final class QualifiedContentTypeName
 
     private static final QualifiedContentTypeName SHORTCUT = new QualifiedContentTypeName( Module.SYSTEM.getName(), "shortcut" );
 
-    private static final QualifiedContentTypeName FILE = new QualifiedContentTypeName( Module.SYSTEM.getName(), "file" );
+    private static final QualifiedContentTypeName MEDIA = new QualifiedContentTypeName( Module.SYSTEM.getName(), "media" );
 
-    private static final QualifiedContentTypeName FILE_TEXT = new QualifiedContentTypeName( Module.SYSTEM.getName(), "text" );
+    private static final QualifiedContentTypeName MEDIA_TEXT = new QualifiedContentTypeName( Module.SYSTEM.getName(), "text" );
 
-    private static final QualifiedContentTypeName FILE_DATA = new QualifiedContentTypeName( Module.SYSTEM.getName(), "data" );
+    private static final QualifiedContentTypeName MEDIA_DATA = new QualifiedContentTypeName( Module.SYSTEM.getName(), "data" );
 
-    private static final QualifiedContentTypeName FILE_AUDIO = new QualifiedContentTypeName( Module.SYSTEM.getName(), "audio" );
+    private static final QualifiedContentTypeName MEDIA_AUDIO = new QualifiedContentTypeName( Module.SYSTEM.getName(), "audio" );
 
-    private static final QualifiedContentTypeName FILE_VIDEO = new QualifiedContentTypeName( Module.SYSTEM.getName(), "video" );
+    private static final QualifiedContentTypeName MEDIA_VIDEO = new QualifiedContentTypeName( Module.SYSTEM.getName(), "video" );
 
-    private static final QualifiedContentTypeName FILE_IMAGE = new QualifiedContentTypeName( Module.SYSTEM.getName(), "image" );
+    private static final QualifiedContentTypeName MEDIA_IMAGE = new QualifiedContentTypeName( Module.SYSTEM.getName(), "image" );
 
-    private static final QualifiedContentTypeName FILE_VECTOR = new QualifiedContentTypeName( Module.SYSTEM.getName(), "vector" );
+    private static final QualifiedContentTypeName MEDIA_VECTOR = new QualifiedContentTypeName( Module.SYSTEM.getName(), "vector" );
 
-    private static final QualifiedContentTypeName FILE_ARCHIVE = new QualifiedContentTypeName( Module.SYSTEM.getName(), "archive" );
+    private static final QualifiedContentTypeName MEDIA_ARCHIVE = new QualifiedContentTypeName( Module.SYSTEM.getName(), "archive" );
 
-    private static final QualifiedContentTypeName FILE_DOCUMENT = new QualifiedContentTypeName( Module.SYSTEM.getName(), "document" );
+    private static final QualifiedContentTypeName MEDIA_DOCUMENT = new QualifiedContentTypeName( Module.SYSTEM.getName(), "document" );
 
-    private static final QualifiedContentTypeName FILE_SPREADSHEET = new QualifiedContentTypeName( Module.SYSTEM.getName(), "spreadsheet" );
+    private static final QualifiedContentTypeName MEDIA_SPREADSHEET = new QualifiedContentTypeName( Module.SYSTEM.getName(), "spreadsheet" );
 
-    private static final QualifiedContentTypeName FILE_PRESENTATION =
+    private static final QualifiedContentTypeName MEDIA_PRESENTATION =
         new QualifiedContentTypeName( Module.SYSTEM.getName(), "presentation" );
 
-    private static final QualifiedContentTypeName FILE_CODE = new QualifiedContentTypeName( Module.SYSTEM.getName(), "code" );
+    private static final QualifiedContentTypeName MEDIA_CODE = new QualifiedContentTypeName( Module.SYSTEM.getName(), "code" );
 
-    private static final QualifiedContentTypeName FILE_EXECUTABLE = new QualifiedContentTypeName( Module.SYSTEM.getName(), "executable" );
+    private static final QualifiedContentTypeName MEDIA_EXECUTABLE = new QualifiedContentTypeName( Module.SYSTEM.getName(), "executable" );
 
     public QualifiedContentTypeName( final String qualifiedName )
     {
@@ -92,69 +92,69 @@ public final class QualifiedContentTypeName
         return SHORTCUT.equals( this );
     }
 
-    public boolean isFile()
+    public boolean isMedia()
     {
-        return FILE.equals( this );
+        return MEDIA.equals( this );
     }
 
-    public boolean isTextFile()
+    public boolean isTextMedia()
     {
-        return FILE_TEXT.equals( this );
+        return MEDIA_TEXT.equals( this );
     }
 
-    public boolean isDataFile()
+    public boolean isDataMedia()
     {
-        return FILE_DATA.equals( this );
+        return MEDIA_DATA.equals( this );
     }
 
-    public boolean isAudioFile()
+    public boolean isAudioMedia()
     {
-        return FILE_AUDIO.equals( this );
+        return MEDIA_AUDIO.equals( this );
     }
 
-    public boolean isVideoFile()
+    public boolean isVideoMedia()
     {
-        return FILE_VIDEO.equals( this );
+        return MEDIA_VIDEO.equals( this );
     }
 
-    public boolean isImageFile()
+    public boolean isImageMedia()
     {
-        return FILE_IMAGE.equals( this );
+        return MEDIA_IMAGE.equals( this );
     }
 
-    public boolean isVectorFile()
+    public boolean isVectorMedia()
     {
-        return FILE_VECTOR.equals( this );
+        return MEDIA_VECTOR.equals( this );
     }
 
-    public boolean isArchiveFile()
+    public boolean isArchiveMedia()
     {
-        return FILE_ARCHIVE.equals( this );
+        return MEDIA_ARCHIVE.equals( this );
     }
 
-    public boolean isDocumentFile()
+    public boolean isDocumentMedia()
     {
-        return FILE_DOCUMENT.equals( this );
+        return MEDIA_DOCUMENT.equals( this );
     }
 
-    public boolean isSpreadsheetFile()
+    public boolean isSpreadsheetMedia()
     {
-        return FILE_SPREADSHEET.equals( this );
+        return MEDIA_SPREADSHEET.equals( this );
     }
 
-    public boolean isPresentationFile()
+    public boolean isPresentationMedia()
     {
-        return FILE_PRESENTATION.equals( this );
+        return MEDIA_PRESENTATION.equals( this );
     }
 
-    public boolean isCodeFile()
+    public boolean isCodeMedia()
     {
-        return FILE_CODE.equals( this );
+        return MEDIA_CODE.equals( this );
     }
 
-    public boolean isExecutableFile()
+    public boolean isExecutableMedia()
     {
-        return FILE_EXECUTABLE.equals( this );
+        return MEDIA_EXECUTABLE.equals( this );
     }
 
     public static QualifiedContentTypeName space()
@@ -187,69 +187,69 @@ public final class QualifiedContentTypeName
         return SHORTCUT;
     }
 
-    public static QualifiedContentTypeName file()
+    public static QualifiedContentTypeName media()
     {
-        return FILE;
+        return MEDIA;
     }
 
-    public static QualifiedContentTypeName textFile()
+    public static QualifiedContentTypeName textMedia()
     {
-        return FILE_TEXT;
+        return MEDIA_TEXT;
     }
 
-    public static QualifiedContentTypeName dataFile()
+    public static QualifiedContentTypeName dataMedia()
     {
-        return FILE_DATA;
+        return MEDIA_DATA;
     }
 
-    public static QualifiedContentTypeName audioFile()
+    public static QualifiedContentTypeName audioMedia()
     {
-        return FILE_AUDIO;
+        return MEDIA_AUDIO;
     }
 
-    public static QualifiedContentTypeName videoFile()
+    public static QualifiedContentTypeName videoMedia()
     {
-        return FILE_VIDEO;
+        return MEDIA_VIDEO;
     }
 
-    public static QualifiedContentTypeName imageFile()
+    public static QualifiedContentTypeName imageMedia()
     {
-        return FILE_IMAGE;
+        return MEDIA_IMAGE;
     }
 
-    public static QualifiedContentTypeName vectorFile()
+    public static QualifiedContentTypeName vectorMedia()
     {
-        return FILE_VECTOR;
+        return MEDIA_VECTOR;
     }
 
-    public static QualifiedContentTypeName archiveFile()
+    public static QualifiedContentTypeName archiveMedia()
     {
-        return FILE_ARCHIVE;
+        return MEDIA_ARCHIVE;
     }
 
-    public static QualifiedContentTypeName documentFile()
+    public static QualifiedContentTypeName documentMedia()
     {
-        return FILE_DOCUMENT;
+        return MEDIA_DOCUMENT;
     }
 
-    public static QualifiedContentTypeName spreadsheetFile()
+    public static QualifiedContentTypeName spreadsheetMedia()
     {
-        return FILE_SPREADSHEET;
+        return MEDIA_SPREADSHEET;
     }
 
-    public static QualifiedContentTypeName presentationFile()
+    public static QualifiedContentTypeName presentationMedia()
     {
-        return FILE_PRESENTATION;
+        return MEDIA_PRESENTATION;
     }
 
-    public static QualifiedContentTypeName codeFile()
+    public static QualifiedContentTypeName codeMedia()
     {
-        return FILE_CODE;
+        return MEDIA_CODE;
     }
 
-    public static QualifiedContentTypeName executableFile()
+    public static QualifiedContentTypeName executableMedia()
     {
-        return FILE_EXECUTABLE;
+        return MEDIA_EXECUTABLE;
     }
 
     public static QualifiedContentTypeName from( String qualifiedContentTypeName )

@@ -44,60 +44,60 @@ public class ContentTypesInitializer
     static final ContentType SHORTCUT = createSystemType( QualifiedContentTypeName.shortcut() ).
         setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType FILE = createSystemType( QualifiedContentTypeName.file() ).
+    static final ContentType MEDIA = createSystemType( QualifiedContentTypeName.media() ).
         setFinal( false ).setAbstract( false ).build();
 
-    static final ContentType FILE_TEXT =
-        createSystemType( QualifiedContentTypeName.textFile() ).superType( QualifiedContentTypeName.file() ).
+    static final ContentType MEDIA_TEXT =
+        createSystemType( QualifiedContentTypeName.textMedia() ).superType( QualifiedContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType FILE_DATA =
-        createSystemType( QualifiedContentTypeName.dataFile() ).superType( QualifiedContentTypeName.file() ).
+    static final ContentType MEDIA_DATA =
+        createSystemType( QualifiedContentTypeName.dataMedia() ).superType( QualifiedContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType FILE_AUDIO =
-        createSystemType( QualifiedContentTypeName.audioFile() ).superType( QualifiedContentTypeName.file() ).
+    static final ContentType MEDIA_AUDIO =
+        createSystemType( QualifiedContentTypeName.audioMedia() ).superType( QualifiedContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType FILE_VIDEO =
-        createSystemType( QualifiedContentTypeName.videoFile() ).superType( QualifiedContentTypeName.file() ).
+    static final ContentType MEDIA_VIDEO =
+        createSystemType( QualifiedContentTypeName.videoMedia() ).superType( QualifiedContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType FILE_IMAGE =
-        createSystemType( QualifiedContentTypeName.imageFile() ).superType( QualifiedContentTypeName.file() ).
+    static final ContentType MEDIA_IMAGE =
+        createSystemType( QualifiedContentTypeName.imageMedia() ).superType( QualifiedContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).form( createFileImageForm() ).build();
 
-    static final ContentType FILE_VECTOR =
-        createSystemType( QualifiedContentTypeName.vectorFile() ).superType( QualifiedContentTypeName.file() ).
+    static final ContentType MEDIA_VECTOR =
+        createSystemType( QualifiedContentTypeName.vectorMedia() ).superType( QualifiedContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType FILE_ARCHIVE =
-        createSystemType( QualifiedContentTypeName.archiveFile() ).superType( QualifiedContentTypeName.file() ).
+    static final ContentType MEDIA_ARCHIVE =
+        createSystemType( QualifiedContentTypeName.archiveMedia() ).superType( QualifiedContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType FILE_DOCUMENT =
-        createSystemType( QualifiedContentTypeName.documentFile() ).superType( QualifiedContentTypeName.file() ).
+    static final ContentType MEDIA_DOCUMENT =
+        createSystemType( QualifiedContentTypeName.documentMedia() ).superType( QualifiedContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType FILE_SPREADSHEET =
-        createSystemType( QualifiedContentTypeName.spreadsheetFile() ).superType( QualifiedContentTypeName.file() ).
+    static final ContentType MEDIA_SPREADSHEET =
+        createSystemType( QualifiedContentTypeName.spreadsheetMedia() ).superType( QualifiedContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType FILE_PRESENTATION =
-        createSystemType( QualifiedContentTypeName.presentationFile() ).superType( QualifiedContentTypeName.file() ).
+    static final ContentType MEDIA_PRESENTATION =
+        createSystemType( QualifiedContentTypeName.presentationMedia() ).superType( QualifiedContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType FILE_CODE =
-        createSystemType( QualifiedContentTypeName.codeFile() ).superType( QualifiedContentTypeName.file() ).
+    static final ContentType MEDIA_CODE =
+        createSystemType( QualifiedContentTypeName.codeMedia() ).superType( QualifiedContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType FILE_EXECUTABLE =
-        createSystemType( QualifiedContentTypeName.executableFile() ).superType( QualifiedContentTypeName.file() ).
+    static final ContentType MEDIA_EXECUTABLE =
+        createSystemType( QualifiedContentTypeName.executableMedia() ).superType( QualifiedContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).build();
 
     private static final ContentType[] SYSTEM_TYPES =
-        {SPACE, STRUCTURED, UNSTRUCTURED, FOLDER, PAGE, SHORTCUT, FILE, FILE_TEXT, FILE_DATA, FILE_AUDIO, FILE_VIDEO, FILE_IMAGE,
-            FILE_VECTOR, FILE_ARCHIVE, FILE_DOCUMENT, FILE_SPREADSHEET, FILE_PRESENTATION, FILE_CODE, FILE_EXECUTABLE};
+        {SPACE, STRUCTURED, UNSTRUCTURED, FOLDER, PAGE, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE,
+            MEDIA_VECTOR, MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE};
 
     private static final String[] DEMO_CONTENT_TYPES =
         {"demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json", "demo-contenttype-set.json", "demo-contenttype-blog.json",

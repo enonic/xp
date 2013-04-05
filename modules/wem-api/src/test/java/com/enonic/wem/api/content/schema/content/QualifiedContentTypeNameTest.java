@@ -45,7 +45,7 @@ public class QualifiedContentTypeNameTest
     @Test
     public void testPredefinedTypes()
     {
-        assertTrue( QualifiedContentTypeName.file().isFile() );
+        assertTrue( QualifiedContentTypeName.media().isMedia() );
         assertTrue( QualifiedContentTypeName.folder().isFolder() );
         assertTrue( QualifiedContentTypeName.page().isPage() );
         assertTrue( QualifiedContentTypeName.shortcut().isShortcut() );
@@ -53,20 +53,20 @@ public class QualifiedContentTypeNameTest
         assertTrue( QualifiedContentTypeName.structured().isStructured() );
         assertTrue( QualifiedContentTypeName.unstructured().isUnstructured() );
 
-        assertTrue( QualifiedContentTypeName.textFile().isTextFile() );
-        assertTrue( QualifiedContentTypeName.dataFile().isDataFile() );
-        assertTrue( QualifiedContentTypeName.audioFile().isAudioFile() );
-        assertTrue( QualifiedContentTypeName.videoFile().isVideoFile() );
-        assertTrue( QualifiedContentTypeName.imageFile().isImageFile() );
-        assertTrue( QualifiedContentTypeName.vectorFile().isVectorFile() );
-        assertTrue( QualifiedContentTypeName.archiveFile().isArchiveFile() );
-        assertTrue( QualifiedContentTypeName.documentFile().isDocumentFile() );
-        assertTrue( QualifiedContentTypeName.spreadsheetFile().isSpreadsheetFile() );
-        assertTrue( QualifiedContentTypeName.presentationFile().isPresentationFile() );
-        assertTrue( QualifiedContentTypeName.codeFile().isCodeFile() );
-        assertTrue( QualifiedContentTypeName.executableFile().isExecutableFile() );
+        assertTrue( QualifiedContentTypeName.textMedia().isTextMedia() );
+        assertTrue( QualifiedContentTypeName.dataMedia().isDataMedia() );
+        assertTrue( QualifiedContentTypeName.audioMedia().isAudioMedia() );
+        assertTrue( QualifiedContentTypeName.videoMedia().isVideoMedia() );
+        assertTrue( QualifiedContentTypeName.imageMedia().isImageMedia() );
+        assertTrue( QualifiedContentTypeName.vectorMedia().isVectorMedia() );
+        assertTrue( QualifiedContentTypeName.archiveMedia().isArchiveMedia() );
+        assertTrue( QualifiedContentTypeName.documentMedia().isDocumentMedia() );
+        assertTrue( QualifiedContentTypeName.spreadsheetMedia().isSpreadsheetMedia() );
+        assertTrue( QualifiedContentTypeName.presentationMedia().isPresentationMedia() );
+        assertTrue( QualifiedContentTypeName.codeMedia().isCodeMedia() );
+        assertTrue( QualifiedContentTypeName.executableMedia().isExecutableMedia() );
 
-        assertEquals( "file", QualifiedContentTypeName.file().getContentTypeName() );
+        assertEquals( "media", QualifiedContentTypeName.media().getContentTypeName() );
         assertEquals( "folder", QualifiedContentTypeName.folder().getContentTypeName() );
         assertEquals( "page", QualifiedContentTypeName.page().getContentTypeName() );
         assertEquals( "shortcut", QualifiedContentTypeName.shortcut().getContentTypeName() );
@@ -74,17 +74,17 @@ public class QualifiedContentTypeNameTest
         assertEquals( "structured", QualifiedContentTypeName.structured().getContentTypeName() );
         assertEquals( "unstructured", QualifiedContentTypeName.unstructured().getContentTypeName() );
 
-        assertEquals( "text", QualifiedContentTypeName.textFile().getContentTypeName() );
-        assertEquals( "data", QualifiedContentTypeName.dataFile().getContentTypeName() );
-        assertEquals( "audio", QualifiedContentTypeName.audioFile().getContentTypeName() );
-        assertEquals( "video", QualifiedContentTypeName.videoFile().getContentTypeName() );
-        assertEquals( "image", QualifiedContentTypeName.imageFile().getContentTypeName() );
-        assertEquals( "vector", QualifiedContentTypeName.vectorFile().getContentTypeName() );
-        assertEquals( "archive", QualifiedContentTypeName.archiveFile().getContentTypeName() );
-        assertEquals( "document", QualifiedContentTypeName.documentFile().getContentTypeName() );
-        assertEquals( "spreadsheet", QualifiedContentTypeName.spreadsheetFile().getContentTypeName() );
-        assertEquals( "presentation", QualifiedContentTypeName.presentationFile().getContentTypeName() );
-        assertEquals( "code", QualifiedContentTypeName.codeFile().getContentTypeName() );
-        assertEquals( "executable", QualifiedContentTypeName.executableFile().getContentTypeName() );
+        assertEquals( "text", QualifiedContentTypeName.textMedia().getContentTypeName() );
+        assertEquals( "data", QualifiedContentTypeName.dataMedia().getContentTypeName() );
+        assertEquals( "audio", QualifiedContentTypeName.audioMedia().getContentTypeName() );
+        assertEquals( "video", QualifiedContentTypeName.videoMedia().getContentTypeName() );
+        assertEquals( "image", QualifiedContentTypeName.imageMedia().getContentTypeName() );
+        assertEquals( "vector", QualifiedContentTypeName.vectorMedia().getContentTypeName() );
+        assertEquals( "archive", QualifiedContentTypeName.archiveMedia().getContentTypeName() );
+        assertEquals( "document", QualifiedContentTypeName.documentMedia().getContentTypeName() );
+        assertEquals( "spreadsheet", QualifiedContentTypeName.spreadsheetMedia().getContentTypeName() );
+        assertEquals( "presentation", QualifiedContentTypeName.presentationMedia().getContentTypeName() );
+        assertEquals( "code", QualifiedContentTypeName.codeMedia().getContentTypeName() );
+        assertEquals( "executable", QualifiedContentTypeName.executableMedia().getContentTypeName() );
     }
 }

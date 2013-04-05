@@ -65,7 +65,7 @@ public class ContentImageResource
 
         final String mimeType;
         final BufferedImage contentImage;
-        if ( contentType.isImageFile() )
+        if ( contentType.isImageMedia() )
         {
             final RootDataSet contentData = content.getRootDataSet();
             final Binary binary = findBinary( contentData.getData( "binary" ).getBinaryId() );
