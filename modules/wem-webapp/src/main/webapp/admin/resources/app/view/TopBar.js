@@ -86,6 +86,7 @@ Ext.define('Admin.view.TopBar', {
                 cls: 'title-button',
                 menuAlign: 't-b?',
                 menu: me.tabMenu,
+                scale: 'medium',
                 styleHtmlContent: true,
                 text: '<span class="title">Title</span><span class="count">0</span>',
 

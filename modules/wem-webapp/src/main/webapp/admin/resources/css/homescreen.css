@@ -33,6 +33,7 @@
     -webkit-animation: animation-show-home 300ms ease both;
     -webkit-animation-play-state: running;
 }
+
 #admin-home-main-container.hide-home {
     animation: animation-hide-home 300ms ease both;
     animation-play-state: running;
@@ -49,6 +50,7 @@
         opacity: 1;
     }
 }
+
 @-webkit-keyframes animation-hide-home {
     0% {
         opacity: 1;
@@ -66,6 +68,7 @@
         opacity: 1;
     }
 }
+
 @keyframes animation-hide-home {
     0% {
         opacity: 1;
@@ -74,7 +77,6 @@
         opacity: 0;
     }
 }
-
 
 /** Branding */
 
@@ -227,6 +229,11 @@
     right: -5px;
     text-align: center;
     top: -5px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+    border-radius: 50%;
 }
 
 .admin-home-app-tile-over {
