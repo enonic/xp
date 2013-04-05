@@ -12,9 +12,10 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     initComponent: function () {
         this.dockedItems = [
             {
-                xtype: 'panel',
+                xtype: 'container',
                 layout: 'hbox',
                 border: 0,
+                padding: '5 20 0',
                 dock: 'top',
                 items: [
                     {
