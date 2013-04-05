@@ -119,6 +119,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             displayField: 'displayName',
             valueField: 'id',
 
+            fieldCls: 'admin-embedded-image-input',
             emptyText: 'Start typing',
             fieldSubTpl: fieldTpl,
             tpl: listItemTpl,

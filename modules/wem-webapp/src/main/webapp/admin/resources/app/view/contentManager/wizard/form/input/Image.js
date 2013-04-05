@@ -168,6 +168,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             queryParam: 'fulltext',
             autoSelect: false,
 
+            fieldCls: 'admin-embedded-image-input',
             displayField: 'displayName',
             valueField: 'id',
             tpl: listItemTpl,
