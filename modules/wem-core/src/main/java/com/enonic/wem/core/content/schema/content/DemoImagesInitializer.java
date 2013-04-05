@@ -48,7 +48,7 @@ public class DemoImagesInitializer
         final RootDataSet dataSet = createContentData( binaryId );
 
         final CreateContent createContent = Commands.content().create().
-            contentType( QualifiedContentTypeName.imageFile() ).
+            contentType( QualifiedContentTypeName.imageMedia() ).
             displayName( displayName ).
             parentContentPath( ContentPath.from( "default:/" ) ).
             rootDataSet( dataSet );

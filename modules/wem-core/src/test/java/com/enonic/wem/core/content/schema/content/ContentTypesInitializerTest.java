@@ -36,12 +36,12 @@ public class ContentTypesInitializerTest
         assertEquals( false, ContentTypesInitializer.UNSTRUCTURED.isAbstract() );
         assertEquals( null, ContentTypesInitializer.UNSTRUCTURED.getSuperType() );
 
-        assertEquals( false, ContentTypesInitializer.FILE.isFinal() );
-        assertEquals( false, ContentTypesInitializer.FILE.isAbstract() );
-        assertEquals( null, ContentTypesInitializer.FILE.getSuperType() );
+        assertEquals( false, ContentTypesInitializer.MEDIA.isFinal() );
+        assertEquals( false, ContentTypesInitializer.MEDIA.isAbstract() );
+        assertEquals( null, ContentTypesInitializer.MEDIA.getSuperType() );
 
-        assertEquals( true, ContentTypesInitializer.FILE_TEXT.isFinal() );
-        assertEquals( false, ContentTypesInitializer.FILE_TEXT.isAbstract() );
-        assertEquals( QualifiedContentTypeName.file(), ContentTypesInitializer.FILE_TEXT.getSuperType() );
+        assertEquals( true, ContentTypesInitializer.MEDIA_TEXT.isFinal() );
+        assertEquals( false, ContentTypesInitializer.MEDIA_TEXT.isAbstract() );
+        assertEquals( QualifiedContentTypeName.media(), ContentTypesInitializer.MEDIA_TEXT.getSuperType() );
     }
 }
