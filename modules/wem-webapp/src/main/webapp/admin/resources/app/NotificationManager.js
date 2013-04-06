@@ -139,7 +139,7 @@ Ext.define('Admin.NotificationManager', {
      *     Returns notification Id
      */
     error: function (message) {
-        var defaultMessage = 'Lost connection to server - Please wait until connection restorred',
+        var defaultMessage = 'Lost connection to server - Please wait until connection is restored',
             opts;
 
         opts = Ext.apply({

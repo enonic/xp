@@ -206,7 +206,7 @@ Ext.define('Admin.view.TopBar', {
         var urlParamsString = document.URL.split('?'),
             urlParams = Ext.urlDecode(urlParamsString[urlParamsString.length - 1]);
 
-        return urlParams.appId.split('#')[0];
+        return urlParams.appId ? urlParams.appId.split('#')[0] : null;
     },
 
     getMenuItemIcon: function (card) {
