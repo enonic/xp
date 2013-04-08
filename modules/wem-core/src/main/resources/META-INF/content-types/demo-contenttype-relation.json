@@ -52,12 +52,127 @@
         },
         {
             "Input": {
-                "name": "myRelations",
-                "label": "Multiple DEFAULT relations to other content",
+                "name": "myUnrequiredUnlimitedRelationship",
+                "label": "Unrequired, maximum allowed",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
                     "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Relationship",
+                    "builtIn": true,
+                    "config": {
+                        "relationshipType": "System:default"
+                    }
+                }
+            }
+        }
+        ,
+        {
+            "Input": {
+                "name": "myUnrequiredMax3Relationship",
+                "label": "Unrequired, maximum 3",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 3
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Relationship",
+                    "builtIn": true,
+                    "config": {
+                        "relationshipType": "System:default"
+                    }
+                }
+            }
+        }
+        ,
+        {
+            "Input": {
+                "name": "myRequiredUnlimitedRelationship",
+                "label": "Required, maximum allowed relations",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Relationship",
+                    "builtIn": true,
+                    "config": {
+                        "relationshipType": "System:default"
+                    }
+                }
+            }
+        }
+        ,
+        {
+            "Input": {
+                "name": "myRequiredRelationship",
+                "label": "Required, maximum 1",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Relationship",
+                    "builtIn": true,
+                    "config": {
+                        "relationshipType": "System:default"
+                    }
+                }
+            }
+        }
+        ,
+        {
+            "Input": {
+                "name": "myRequiredMax2Relationship",
+                "label": "Required, maximum 2",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 2
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Relationship",
+                    "builtIn": true,
+                    "config": {
+                        "relationshipType": "System:default"
+                    }
+                }
+            }
+        }
+        ,
+        {
+            "Input": {
+                "name": "myRequiredMax3Relationship",
+                "label": "Required, maximum 3",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 2
                 },
                 "indexed": false,
                 "customText": null,
