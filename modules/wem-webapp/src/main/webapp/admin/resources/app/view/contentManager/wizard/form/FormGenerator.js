@@ -106,7 +106,9 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
     generateLabelHTML: function (inputConfig) {
         var label = inputConfig.label;
         if (inputConfig.occurrences.minimum > 0) {
-            label += ' <sup style="color: #E32400" title="' + inputConfig.occurrences.minimum + '">*</sup>';
+            var requiredTitle = "Minimum " + inputConfig.occurrences.minimum + ' ' +
+                                (inputConfig.occurrences.minimum == 1 ? 'occurrence is' : 'occurrences are') + ' required';
+            label += ' <sup style="color: #E32400" title="' + requiredTitle + '">*</sup>';
         }
 
         return label;
