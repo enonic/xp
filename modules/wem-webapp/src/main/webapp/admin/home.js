@@ -31,6 +31,7 @@ Ext.onReady(function () {
                     {
                         region: 'center',
                         bodyCls: 'main-viewport-center-body',
+                        border: 0,
                         html: '<div id="appFrames" style="height: 100%; width: 100%;"></div>'
                     }
                 ]
