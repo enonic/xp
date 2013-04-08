@@ -2,6 +2,8 @@ package com.enonic.wem.core.index.elastic.searchsource;
 
 import org.codehaus.jackson.JsonNode;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -52,6 +54,50 @@ public class SearchSourceFactoryTest
 
         assertJson( "spacesFilter_result.json", searchSourceBuilder );
     }
+
+    @Test
+    public void testSingleLowerRangeFilter()
+        throws Exception
+    {
+        ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
+        contentIndexQuery.setFullTextSearchString( "test" );
+        contentIndexQuery.addRange( new DateTime( 2013, 1, 1, 1, 1, DateTimeZone.UTC ), null );
+
+        final SearchSourceBuilder searchSourceBuilder = SearchSourceFactory.create( contentIndexQuery );
+
+        assertJson( "singleLowerRangeFilter_result.json", searchSourceBuilder );
+    }
+
+    @Test
+    public void testMultipleLowerRangeFilters()
+        throws Exception
+    {
+        ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
+        contentIndexQuery.setFullTextSearchString( "test" );
+        contentIndexQuery.addRange( new DateTime( 2013, 1, 1, 1, 1, DateTimeZone.UTC ), null );
+        contentIndexQuery.addRange( new DateTime( 2014, 1, 1, 1, 1, DateTimeZone.UTC ), null );
+
+        final SearchSourceBuilder searchSourceBuilder = SearchSourceFactory.create( contentIndexQuery );
+
+        assertJson( "multipleLowerRangeFilters_result.json", searchSourceBuilder );
+    }
+
+
+    @Test
+    public void testSingleUpperRangeFilter()
+        throws Exception
+    {
+        ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
+        contentIndexQuery.setFullTextSearchString( "test" );
+        contentIndexQuery.addRange( null, new DateTime( 2013, 1, 1, 1, 1, DateTimeZone.UTC ) );
+
+        final SearchSourceBuilder searchSourceBuilder = SearchSourceFactory.create( contentIndexQuery );
+
+        assertJson( "singleUpperRangeFilter_result.json", searchSourceBuilder );
+
+
+    }
+
 
     // Warning: Because of Elasticsearch generating a strange JSON, this test will actually nerf all but the last
     // filter when doing the compare both for source file and searchSourceBuilder, making it difficult to test

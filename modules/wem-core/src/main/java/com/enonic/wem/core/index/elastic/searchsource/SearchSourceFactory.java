@@ -10,6 +10,7 @@ import org.elasticsearch.index.query.FilteredQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
+import org.elasticsearch.index.query.RangeFilterBuilder;
 import org.elasticsearch.index.query.TermsFilterBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
@@ -73,6 +74,7 @@ public class SearchSourceFactory
 
         createAndAddContentTypeFilterIfApplicable( contentIndexQuery, filtersToApply );
         createAndAddSpacesFilterIfApplicable( contentIndexQuery, filtersToApply );
+        createAndAddRangeFilterIfApplicable( contentIndexQuery, filtersToApply );
 
         if ( filtersToApply.isEmpty() )
         {
@@ -101,13 +103,55 @@ public class SearchSourceFactory
         return boolFilterBuilder;
     }
 
+    private static void createAndAddRangeFilterIfApplicable( final ContentIndexQuery contentIndexQuery,
+                                                             final Set<FilterBuilder> filtersToApply )
+    {
+        final Set<ContentIndexQuery.Range> ranges = contentIndexQuery.getRanges();
+
+        if ( ranges.isEmpty() )
+        {
+            return;
+        }
+
+        final Set<RangeFilterBuilder> rangeFilters = Sets.newHashSet();
+
+        for ( ContentIndexQuery.Range range : ranges )
+        {
+
+            RangeFilterBuilder rangeFilterBuilder = new RangeFilterBuilder( ContentIndexField.LAST_MODIFIED + ".date" );
+            rangeFilterBuilder.
+                from( range.getLower() ).
+                to( range.getUpper() ).
+                includeLower( range.isIncludeLower() ).
+                includeUpper( range.isIncludeUpper() );
+
+            rangeFilters.add( rangeFilterBuilder );
+        }
+
+        if ( rangeFilters.size() == 1 )
+        {
+            filtersToApply.add( rangeFilters.iterator().next() );
+        }
+        else if ( rangeFilters.size() > 1 )
+        {
+            BoolFilterBuilder boolFilterBuilder = new BoolFilterBuilder();
+
+            for ( RangeFilterBuilder rangeFilter : rangeFilters )
+            {
+                boolFilterBuilder.should( rangeFilter );
+            }
+
+            filtersToApply.add( boolFilterBuilder );
+        }
+    }
+
     private static void createAndAddSpacesFilterIfApplicable( final ContentIndexQuery contentIndexQuery,
                                                               final Set<FilterBuilder> filtersToApply )
     {
         if ( contentIndexQuery.getSpaceNames() != null && contentIndexQuery.getSpaceNames().isNotEmpty() )
         {
             Collection<String> spaceNames = getCollectionAsLowercase( contentIndexQuery.getSpaceNames().getAsStringSet() );
-            filtersToApply.add( createFilter( spaceNames, ContentIndexField.SPACE ) );
+            filtersToApply.add( createTermsFilter( spaceNames, ContentIndexField.SPACE ) );
         }
     }
 
@@ -117,12 +161,12 @@ public class SearchSourceFactory
         if ( contentIndexQuery.getContentTypeNames() != null && contentIndexQuery.getContentTypeNames().isNotEmpty() )
         {
             Collection<String> contentTypeNames = getCollectionAsLowercase( contentIndexQuery.getContentTypeNames().getAsStringSet() );
-            final FilterBuilder contentTypeFilter = createFilter( contentTypeNames, ContentIndexField.CONTENT_TYPE );
+            final FilterBuilder contentTypeFilter = createTermsFilter( contentTypeNames, ContentIndexField.CONTENT_TYPE );
             filtersToApply.add( contentTypeFilter );
         }
     }
 
-    private static FilterBuilder createFilter( final Collection<String> filterElementNames, final String fieldName )
+    private static FilterBuilder createTermsFilter( final Collection<String> filterElementNames, final String fieldName )
     {
         return new TermsFilterBuilder( fieldName, filterElementNames );
     }

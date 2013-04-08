@@ -1,6 +1,10 @@
 package com.enonic.wem.web.rest.rpc.content;
 
+import org.codehaus.jackson.node.ObjectNode;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
+
+import com.google.common.base.Strings;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.ContentIds;
@@ -36,14 +40,19 @@ public class FindContentRpcHandler
         contentIndexQuery.setContentTypeNames( QualifiedContentTypeNames.from( contentTypes ) );
         contentIndexQuery.setSpaceNames( SpaceNames.from( spaces ) );
 
+        final ObjectNode[] rangesJson = context.param( "ranges" ).asObjectArray();
+
+        String test =
+            " \"ranges\" : [{\"lower\" : \"2010-01-01T10:00\", \"upper\" : null},{ \"lower\" : null, \"upper\" : \"2013-01-01T10:00\"}],";
+
+        if ( rangesJson != null && rangesJson.length > 0 )
+        {
+            addRanges( contentIndexQuery, rangesJson );
+        }
+
         if ( includeFacets )
         {
-            Object facetDef = context.param( "facets" ).asObject();
-
-            if ( facetDef != null )
-            {
-                contentIndexQuery.setFacets( facetDef.toString() );
-            }
+            addFacetes( context, contentIndexQuery );
         }
 
         final ContentIndexQueryResult contentIndexQueryResult = this.client.execute( Commands.content().find().query( contentIndexQuery ) );
@@ -55,4 +64,42 @@ public class FindContentRpcHandler
 
         context.setResult( json );
     }
+
+    private void addFacetes( final JsonRpcContext context, final ContentIndexQuery contentIndexQuery )
+    {
+        Object facetDef = context.param( "facets" ).asObject();
+
+        if ( facetDef != null )
+        {
+            contentIndexQuery.setFacets( facetDef.toString() );
+        }
+    }
+
+    private void addRanges( final ContentIndexQuery contentIndexQuery, final ObjectNode[] rangesJson )
+    {
+        for ( ObjectNode range : rangesJson )
+        {
+            contentIndexQuery.addRange( parseDateTimeParameter( range.get( "lower" ).asText() ),
+                                        parseDateTimeParameter( range.get( "upper" ).asText() ) );
+        }
+    }
+
+
+    private DateTime parseDateTimeParameter( final String dateTimeAsString )
+    {
+        if ( Strings.isNullOrEmpty( dateTimeAsString ) )
+        {
+            return null;
+        }
+
+        try
+        {
+            return DateTime.parse( dateTimeAsString );
+        }
+        catch ( Exception e )
+        {
+            return null;
+        }
+    }
+
 }

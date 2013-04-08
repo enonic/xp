@@ -73,6 +73,29 @@ public class FindContentRpcHandlerTest
         testSuccess( "findContent_spaces_param.json", "findContent_spaces_result.json" );
     }
 
+    @Test
+    public void testFindContent_rangeParameter()
+        throws Exception
+    {
+        final Content c1 = createContent( "a1/c1" );
+        final Content c2 = createContent( "a1/c2" );
+        final Content c3 = createContent( "a1/c3" );
+        final Content c4 = createContent( "a1/c4" );
+
+        final Contents contents = Contents.from( c1, c2, c3, c4 );
+
+        final ContentIndexQueryResult contentIndexQueryResult = new ContentIndexQueryResult( 10 );
+        contentIndexQueryResult.addContentHit( c1.getId(), 1f );
+        contentIndexQueryResult.addContentHit( c2.getId(), 2f );
+        contentIndexQueryResult.addContentHit( c3.getId(), 3f );
+        contentIndexQueryResult.addContentHit( c4.getId(), 4f );
+
+        Mockito.when( client.execute( isA( FindContent.class ) ) ).thenReturn( contentIndexQueryResult );
+        Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( contents );
+
+        testSuccess( "findContent_range_param.json", "findContent_spaces_result.json" );
+    }
+
 
     @Ignore // Test failing because of strange results in json, ignore for now
     @Test

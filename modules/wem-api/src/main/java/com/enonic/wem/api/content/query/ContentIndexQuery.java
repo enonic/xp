@@ -1,6 +1,10 @@
 package com.enonic.wem.api.content.query;
 
+import java.util.Set;
+
 import org.joda.time.DateTime;
+
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.space.SpaceNames;
@@ -17,9 +21,17 @@ public class ContentIndexQuery
 
     private SpaceNames spaceNames;
 
-    private DateTime rangeLower;
+    private Set<Range> ranges = Sets.newHashSet();
 
-    private DateTime rangeUpper;
+    public void addRange( final DateTime lower, final DateTime upper )
+    {
+        ranges.add( new Range( lower, upper ) );
+    }
+
+    public Set<Range> getRanges()
+    {
+        return ranges;
+    }
 
     public void setFullTextSearchString( final String fullTextSearchString )
     {
@@ -71,23 +83,52 @@ public class ContentIndexQuery
         this.spaceNames = spaceNames;
     }
 
-    public void setRangeLower( final DateTime rangeLower )
+
+    public class Range
     {
-        this.rangeLower = rangeLower;
+        DateTime lower;
+
+        DateTime upper;
+
+        boolean includeLower = true;
+
+        boolean includeUpper = true;
+
+        private Range( final DateTime lower, final DateTime upper )
+        {
+            this.lower = lower;
+            this.upper = upper;
+        }
+
+        public DateTime getLower()
+        {
+            return lower;
+        }
+
+        public DateTime getUpper()
+        {
+            return upper;
+        }
+
+        public boolean isIncludeLower()
+        {
+            return includeLower;
+        }
+
+        public boolean isIncludeUpper()
+        {
+            return includeUpper;
+        }
+
+        public void setIncludeLower( final boolean includeLower )
+        {
+            this.includeLower = includeLower;
+        }
+
+        public void setIncludeUpper( final boolean includeUpper )
+        {
+            this.includeUpper = includeUpper;
+        }
     }
 
-    public void setRangeUpper( final DateTime rangeUpper )
-    {
-        this.rangeUpper = rangeUpper;
-    }
-
-    public DateTime getRangeLower()
-    {
-        return rangeLower;
-    }
-
-    public DateTime getRangeUpper()
-    {
-        return rangeUpper;
-    }
 }

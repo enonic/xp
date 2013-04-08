@@ -1,0 +1,26 @@
+{
+    "query": {
+        "filtered": {
+            "query": {
+                "query_string": {
+                    "query": "test",
+                    "lenient": true
+                }
+            },
+            "filter": {
+                "bool": {
+                    "should": {
+                        "range": {
+                            "lastModified.date": {
+                                "from": "2013-01-01T01:01:00.000Z",
+                                "to": null,
+                                "include_lower": true,
+                                "include_upper": true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
