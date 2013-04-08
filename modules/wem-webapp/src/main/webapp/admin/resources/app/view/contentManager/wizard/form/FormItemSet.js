@@ -46,10 +46,11 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
      */
     createFormItemSetHeader: function (closable) {
         var me = this;
+        var requiredMark = this.formItemSetConfig.occurrences.minimum > 0 ? '<sub>*</sub>' : '';
         var label = {
             xtype: 'component',
             cls: 'admin-drag-handle',
-            html: '<h6>' + (me.formItemSetConfig.label || '{No label}') + ': </h6>'
+            html: '<h6>' + (me.formItemSetConfig.label || '{No label}') + ': ' + requiredMark + '</h6>'
         };
         var removeBtn = {
             tdAttrs: {
