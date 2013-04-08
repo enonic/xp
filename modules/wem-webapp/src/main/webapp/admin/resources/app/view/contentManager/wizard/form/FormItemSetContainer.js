@@ -30,6 +30,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSetContainer', {
             style: {
                 float: 'left'
             },
+            disabled: this.maxFields === 1,
             text: 'Add ' + this.field.formItemSetConfig.label,
             handler: function () {
                 var formItemsPanel = me.down('#formItemsPanel');
@@ -67,7 +68,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSetContainer', {
             },
             html: '<span class="admin-text-button admin-collapse-all-button" href="javascript:;">Collapse</span>'
         };
-        if ((this.maxFields > 1 && this.minFields !== this.maxFields) || (this.maxFields === 0)) {
+        if ((this.minFields !== this.maxFields) || (this.maxFields === 0)) {
             return [addButton, collapseButton];
         } else {
             return [collapseButton];
