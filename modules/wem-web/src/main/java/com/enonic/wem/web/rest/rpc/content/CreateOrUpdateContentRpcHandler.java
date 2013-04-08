@@ -16,8 +16,9 @@ import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.CreateContentException;
+import com.enonic.wem.api.content.UpdateContentException;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
@@ -71,9 +72,18 @@ public final class CreateOrUpdateContentRpcHandler
         }
         else
         {
-            HandleUpdateContent handleUpdateContent = new HandleUpdateContent();
-            handleUpdateContent.contentId = contentId;
-            UpdateContentResult result = handleUpdateContent.updateContent( displayName, rootDataSet );
+            try
+            {
+                HandleUpdateContent handleUpdateContent = new HandleUpdateContent();
+                handleUpdateContent.contentId = contentId;
+                UpdateContentResult result = handleUpdateContent.updateContent( displayName, rootDataSet );
+                context.setResult( CreateOrUpdateContentJsonResult.from( result ) );
+            }
+            catch ( UpdateContentException e )
+            {
+                context.setResult( new JsonErrorResult( e.getMessage() ) );
+                return;
+            }
 
             final String newContentName = context.param( "contentName" ).asString();
             final boolean renameContent = !Strings.isNullOrEmpty( newContentName );
@@ -87,10 +97,8 @@ public final class CreateOrUpdateContentRpcHandler
                 {
                     context.setResult(
                         new JsonErrorResult( "Unable to rename content. Content with path [{0}] already exists.", e.getContentPath() ) );
-                    return;
                 }
             }
-            context.setResult( CreateOrUpdateContentJsonResult.from( result ) );
         }
     }
 
@@ -126,13 +134,11 @@ public final class CreateOrUpdateContentRpcHandler
                 context.setResult(
                     CreateOrUpdateContentJsonResult.created( createContentResult.getContentId(), createContentResult.getContentPath() ) );
             }
-            catch ( ContentNotFoundException e )
+            catch ( CreateContentException e )
             {
-                context.setResult( new JsonErrorResult( "Unable to create content. Path [{0}] does not exist", parentContentPath ) );
+                context.setResult( new JsonErrorResult( e.getMessage(), parentContentPath ) );
             }
         }
-
-
     }
 
     private class HandleUpdateContent

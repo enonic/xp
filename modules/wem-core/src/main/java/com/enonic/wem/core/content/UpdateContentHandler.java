@@ -17,9 +17,11 @@ import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.UpdateContentException;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataVisitor;
 import com.enonic.wem.api.content.data.type.DataTypes;
@@ -141,6 +143,11 @@ public class UpdateContentHandler
         {
             command.setResult( UpdateContentResult.from( e ) );
         }
+        catch ( Exception e )
+        {
+            throw new UpdateContentException( "Failed to update content [" + command.getSelector() + "]: " +
+                                                  e.getMessage(), e );
+        }
     }
 
     private void createEmbeddedContents( final Session session, final Content edited, final List<Content> temporaryContents )
@@ -190,7 +197,10 @@ public class UpdateContentHandler
         for ( DataValidationError error : dataValidationErrors )
         {
             LOG.info( "*** DataValidationError: " + error.getErrorMessage() );
-            // TODO: Throw exception or return rich result instead when GUI can display error message
+        }
+        if ( dataValidationErrors.hasErrors() )
+        {
+            throw new ContentDataValidationException( dataValidationErrors.getFirst().getErrorMessage() );
         }
     }
 

@@ -2,8 +2,10 @@ package com.enonic.wem.api.content;
 
 import java.text.MessageFormat;
 
+import com.enonic.wem.api.exception.BaseException;
+
 public final class ContentNotFoundException
-    extends RuntimeException
+    extends BaseException
 {
     public ContentNotFoundException( final ContentPath path )
     {

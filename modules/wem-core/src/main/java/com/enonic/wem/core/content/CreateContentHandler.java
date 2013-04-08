@@ -18,8 +18,10 @@ import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.CreateContentException;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataVisitor;
 import com.enonic.wem.api.content.data.type.DataTypes;
@@ -63,67 +65,76 @@ public class CreateContentHandler
     public void handle( final CommandContext context, final CreateContent command )
         throws Exception
     {
-        final Session session = context.getJcrSession();
-
-        final Content.Builder builder = Content.newContent();
-        final String displayName = command.getDisplayName();
-        final ContentPath parentContentPath = command.isTemporary() ? TEMPORARY_PARENT_PATH : command.getParentContentPath();
-        final ContentPath contentPath = resolvePathForNewContent( parentContentPath, displayName, session );
-        if ( !command.isTemporary() )
-        {
-            checkParentContentAllowsChildren( parentContentPath, session );
-        }
-
-        final List<Content> temporaryContents = resolveTemporaryContents( command, session );
-
-        builder.path( contentPath );
-        builder.displayName( displayName );
-        builder.rootDataSet( command.getRootDataSet() );
-        builder.type( command.getContentType() );
-        builder.createdTime( DateTime.now() );
-        builder.modifiedTime( DateTime.now() );
-        builder.owner( command.getOwner() );
-        builder.modifier( command.getOwner() );
-
-        final Content content = builder.build();
-
-        validateContentData( context.getClient(), content );
-
-        final ContentId contentId = contentDao.create( content, session );
-        session.save();
-
         try
         {
+            final Session session = context.getJcrSession();
 
-            for ( Content tempContent : temporaryContents )
+            final Content.Builder builder = Content.newContent();
+            final String displayName = command.getDisplayName();
+            final ContentPath parentContentPath = command.isTemporary() ? TEMPORARY_PARENT_PATH : command.getParentContentPath();
+            final ContentPath contentPath = resolvePathForNewContent( parentContentPath, displayName, session );
+            if ( !command.isTemporary() )
             {
-                final ContentPath pathToEmbeddedContent = ContentPath.createPathToEmbeddedContent( contentPath, tempContent.getName() );
-                createEmbeddedContent( tempContent, pathToEmbeddedContent, session );
+                checkParentContentAllowsChildren( parentContentPath, session );
             }
 
-            relationshipService.syncRelationships( new SyncRelationshipsCommand().
-                client( context.getClient() ).
-                jcrSession( session ).
-                contentType( content.getType() ).
-                contentToUpdate( contentId ).
-                contentAfterEditing( content.getRootDataSet() ) );
-            session.save();
-        }
-        catch ( Exception e )
-        {
-            // Temporary way of rollback: try delete content if any failure
-            contentDao.forceDelete( contentId, session );
-            session.save();
-            throw e;
-        }
+            final List<Content> temporaryContents = resolveTemporaryContents( command, session );
 
-        if ( !command.isTemporary() )
-        {
-            final Content storedContent = builder.id( contentId ).build();
-            indexService.indexContent( storedContent );
-        }
+            builder.path( contentPath );
+            builder.displayName( displayName );
+            builder.rootDataSet( command.getRootDataSet() );
+            builder.type( command.getContentType() );
+            builder.createdTime( DateTime.now() );
+            builder.modifiedTime( DateTime.now() );
+            builder.owner( command.getOwner() );
+            builder.modifier( command.getOwner() );
 
-        command.setResult( new CreateContentResult( contentId, contentPath ) );
+            final Content content = builder.build();
+
+            validateContentData( context.getClient(), content );
+
+            final ContentId contentId = contentDao.create( content, session );
+            session.save();
+
+            try
+            {
+
+                for ( Content tempContent : temporaryContents )
+                {
+                    final ContentPath pathToEmbeddedContent = ContentPath.createPathToEmbeddedContent( contentPath, tempContent.getName() );
+                    createEmbeddedContent( tempContent, pathToEmbeddedContent, session );
+                }
+
+                relationshipService.syncRelationships( new SyncRelationshipsCommand().
+                    client( context.getClient() ).
+                    jcrSession( session ).
+                    contentType( content.getType() ).
+                    contentToUpdate( contentId ).
+                    contentAfterEditing( content.getRootDataSet() ) );
+                session.save();
+            }
+            catch ( Exception e )
+            {
+                // Temporary way of rollback: try delete content if any failure
+                contentDao.forceDelete( contentId, session );
+                session.save();
+                throw e;
+            }
+
+            if ( !command.isTemporary() )
+            {
+                final Content storedContent = builder.id( contentId ).build();
+                indexService.indexContent( storedContent );
+            }
+
+            command.setResult( new CreateContentResult( contentId, contentPath ) );
+        }
+        catch ( final Exception e )
+        {
+            throw new CreateContentException(
+                "Failed to create content [" + command.getDisplayName() + "] at path [" + command.getParentContentPath() + "]: " +
+                    e.getMessage(), e );
+        }
     }
 
     private void checkParentContentAllowsChildren( final ContentPath parentContentPath, final Session session )
@@ -202,7 +213,10 @@ public class CreateContentHandler
         for ( DataValidationError error : dataValidationErrors )
         {
             LOG.info( "*** DataValidationError: " + error.getErrorMessage() );
-            // TODO: Throw exception or return rich result instead when GUI can display error message
+        }
+        if ( dataValidationErrors.hasErrors() )
+        {
+            throw new ContentDataValidationException( dataValidationErrors.getFirst().getErrorMessage() );
         }
     }
 
