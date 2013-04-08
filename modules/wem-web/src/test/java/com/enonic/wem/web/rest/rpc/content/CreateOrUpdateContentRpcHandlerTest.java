@@ -18,6 +18,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.CreateContentException;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.ContentTypes;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
@@ -124,7 +125,7 @@ public class CreateOrUpdateContentRpcHandlerTest
     }
 
     @Test
-    public void createContent_parent_not_found()
+    public void createContent_failed_to_create_content()
         throws Exception
     {
         ContentType contentType = ContentType.newContentType().
@@ -135,11 +136,12 @@ public class CreateOrUpdateContentRpcHandlerTest
 
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
         Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
-        Mockito.when( client.execute( isA( CreateContent.class ) ) ).thenThrow( new ContentNotFoundException( parentContentPath ) );
+        Mockito.when( client.execute( isA( CreateContent.class ) ) ).thenThrow(
+            new CreateContentException( "Failed to create content", new ContentNotFoundException( parentContentPath ) ) );
 
         ObjectNode expectedJson = objectNode();
         expectedJson.put( "success", false );
-        expectedJson.put( "error", "Unable to create content. Path [/myContent] does not exist" );
+        expectedJson.put( "error", "Failed to create content" );
 
         // exercise & verify
         testSuccess( "createOrUpdateContent_create_param.json", expectedJson );
