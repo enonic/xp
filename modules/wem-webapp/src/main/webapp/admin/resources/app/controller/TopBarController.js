@@ -70,7 +70,7 @@ Ext.define('Admin.controller.TopBarController', {
             url += urlHash;
         }
 
-        var iFrameSpec = parent.Ext.core.DomHelper.append('appFrames', {
+        var iFrameSpec = parent.Ext.core.DomHelper.append('admin-application-frames', {
             tag: 'iframe',
             src: url,
             id: 'iframe-' + appData.id,
