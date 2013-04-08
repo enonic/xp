@@ -51,7 +51,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
         if (this.formItemSetConfig.occurrences.minimum > 0) {
             requiredTitle = "Minimum " + this.formItemSetConfig.occurrences.minimum + ' ' +
                             (this.formItemSetConfig.occurrences.minimum == 1 ? 'occurrence is' : 'occurrences are') + ' required';
-            requiredMark = '<sub style="color: #E32400" title="' + requiredTitle + '">*</sub>';
+            requiredMark = '<sub title="' + requiredTitle + '">*</sub>';
         }
         var label = {
             xtype: 'component',
