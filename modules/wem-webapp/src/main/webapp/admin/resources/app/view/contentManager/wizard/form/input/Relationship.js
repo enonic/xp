@@ -243,7 +243,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             '           {displayName}',
             '           <span style="color: #666">{path}</span>',
             '       </span>',
-            '       <span class="right-column"><a href="javascript:;" class="remove-related-item-button"></a></span>',
+            '       <span class="right-column"><a href="javascript:;" class="icon-remove icon-2x"></a></span>',
             '   </div>',
             '</tpl>'
         );
@@ -258,7 +258,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             listeners: {
                 itemclick: function (view, contentModel, item, index, e) {
                     var clickedElement = Ext.fly(e.target);
-                    if (clickedElement.hasCls('remove-related-item-button') && me.selectedContentStore.getCount() > min) {
+                    if (clickedElement.hasCls('icon-remove')) {
                         me.selectedContentStore.remove(contentModel);
                     }
                 }
