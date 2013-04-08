@@ -168,14 +168,14 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             queryParam: 'fulltext',
             autoSelect: false,
 
-            fieldCls: 'admin-embedded-image-input',
+            fieldCls: 'admin-relationship-input',
             displayField: 'displayName',
             valueField: 'id',
             tpl: listItemTpl,
             fieldSubTpl: fieldTpl,
-            cls: 'admin-embedded-image-combo',
+            cls: 'admin-relationship-combo',
             listConfig: {
-                cls: 'admin-embedded-image-list',
+                cls: 'admin-relationship-list',
                 emptyText: 'No matching items'
             },
 
@@ -221,7 +221,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
 
         var template = new Ext.XTemplate(
             '<tpl for=".">',
-            '   <div class="admin-embedded-image" style="background-image: url({iconUrl})">',
+            '   <div class="admin-relationship" style="background-image: url({iconUrl})">',
             '       <div class="top-bar"><a href="javascript:;" class="admin-remove-button">Remove</a></div>',
             '       <div class="bottom-bar">',
             '           <h6>{displayName}</h6>',
@@ -233,7 +233,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         return Ext.create('Ext.view.View', {
             store: me.selectedContentStore,
             tpl: template,
-            itemSelector: 'div.admin-embedded-image',
+            itemSelector: 'div.admin-relationship',
             emptyText: 'No items selected',
             trackOver: true,
             overItemCls: 'over',
