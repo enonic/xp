@@ -99,7 +99,7 @@
 
 <%@ include file="live-edit/scripts.jsp" %>
 
-<%@ include file="live-edit/admin-link.jsp" %>
+<%@ include file="live-edit/admin-links.jsp" %>
 
 </body>
 </html>
