@@ -34,6 +34,7 @@ public class ContentIndexDocumentsFactory
     private static IndexDocument createContentIndexDocument( final Content content )
     {
         IndexDocument indexDocument = new IndexDocument( content.getId().toString(), IndexType.CONTENT, IndexConstants.WEM_INDEX );
+        indexDocument.setRefreshOnStore( true );
 
         addContentMetaData( content, indexDocument );
         addContentData( content, indexDocument );

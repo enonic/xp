@@ -17,6 +17,8 @@ public class IndexDocument
 
     private final Set<IndexDocumentEntry> indexDocumentEntries = Sets.newHashSet();
 
+    private boolean refreshOnStore = false;
+
     public IndexDocument( final String id, final IndexType indexType, final String index )
     {
         this.id = id;
@@ -47,5 +49,15 @@ public class IndexDocument
     public Set<IndexDocumentEntry> getIndexDocumentEntries()
     {
         return indexDocumentEntries;
+    }
+
+    public boolean doRefreshOnStore()
+    {
+        return refreshOnStore;
+    }
+
+    public void setRefreshOnStore( final boolean refreshOnStore )
+    {
+        this.refreshOnStore = refreshOnStore;
     }
 }

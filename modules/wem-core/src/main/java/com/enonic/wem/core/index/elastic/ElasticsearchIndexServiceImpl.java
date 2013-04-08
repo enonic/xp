@@ -91,7 +91,8 @@ public class ElasticsearchIndexServiceImpl
             final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexSource );
 
             final IndexRequest req =
-                Requests.indexRequest().id( id ).index( indexName ).type( indexType.getIndexTypeName() ).source( xContentBuilder );
+                Requests.indexRequest().id( id ).index( indexName ).type( indexType.getIndexTypeName() ).source( xContentBuilder ).refresh(
+                    indexDocument.doRefreshOnStore() );
 
             this.client.index( req ).actionGet();
         }
