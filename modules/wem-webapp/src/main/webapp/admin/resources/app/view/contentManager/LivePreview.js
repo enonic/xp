@@ -7,6 +7,8 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     styleHtmlContent: true,
     layout: 'fit',
 
+    loaded: false,
+
     actionButton: undefined,
 
     initComponent: function () {
