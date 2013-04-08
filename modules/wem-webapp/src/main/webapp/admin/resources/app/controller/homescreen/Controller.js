@@ -30,8 +30,9 @@ Ext.define('Admin.controller.homescreen.Controller', {
 
                         /* For 18/4 demo */
 
-                        if (me.getUrlHash().length > 0) {
-                            me.openPageInContentManager(me.getUrlHash());
+                        var urlFragment = me.getUrlFragment();
+                        if (urlFragment.indexOf('/cm/open/') > -1) {
+                            me.openPageInContentManager(urlFragment);
                         }
 
                     } else {
@@ -79,7 +80,7 @@ Ext.define('Admin.controller.homescreen.Controller', {
 
         // Make sure that the home screen is not displayed when opening a content directly from home.jsp
         // Using css/display, hs.show/hide etc. should not be used as ExtJS Component uses these for api show/hide
-        if (me.getUrlHash().length > 0) {
+        if (me.getUrlFragment().length > 0) {
             hs.getEl().setStyle('height', '0');
         }
     },
@@ -119,7 +120,7 @@ Ext.define('Admin.controller.homescreen.Controller', {
     },
 
 
-    getUrlHash: function () {
+    getUrlFragment: function () {
         return document.location.hash;
     },
 

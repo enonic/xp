@@ -82,8 +82,9 @@ Ext.define('Admin.controller.homescreen.Login', {
                 /* For 18/4 demo */
 
                 // Can we move this higher up in order avoid seeing the background
-                if (me.getUrlHash() !== '') {
-                    me.openPageInContentManager(me.getUrlHash());
+                var urlFragment = me.getUrlFragment();
+                if (urlFragment.indexOf('/cm/open/') > -1) {
+                    me.openPageInContentManager(urlFragment);
                 }
 
                 loginFormPanel.animate({
