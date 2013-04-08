@@ -30,10 +30,10 @@ Ext.define('Admin.controller.homescreen.Controller', {
 
                         /* For 18/4 demo */
 
-                        // Can we move this higher up in order avoid seeing the background
-                        if (me.getUrlHash() !== '') {
+                        if (me.getUrlHash().length > 0) {
                             me.openPageInContentManager(me.getUrlHash());
                         }
+
                     } else {
                         me.application.fireEvent('displayLogin');
                     }
@@ -47,20 +47,41 @@ Ext.define('Admin.controller.homescreen.Controller', {
                     view.setLicensedToText('Licensed to Large Customer');
                 },
                 beforeshow: function () {
-                    // Make sure window/frame has focus in order to get the keyboard navigation to work.
-                    // Focus the filter text input as it is not possible to cross platform focus a window or element.
-                    Ext.getCmp('admin-home-app-selector-search').focus(false, 10);
+                    me.onBeforeShowHomeScreen();
                 }
             }
         });
     },
 
 
+    onBeforeShowHomeScreen: function () {
+        var me = this;
+
+        // Make sure window/frame has focus in order to get the keyboard navigation to work.
+        // Focus the filter text input as it is not possible to cross platform focus a window or element.
+        Ext.getCmp('admin-home-app-selector-search').focus(false, 10);
+
+        /* For 18/4 demo */
+
+        // See this.initHomeScreen()
+        me.getHomeScreenView().getEl().setStyle('height', '');
+        me.getHomeScreenView().getEl().setStyle('top', '0');
+    },
+
+
     initHomeScreen: function () {
         var me = this;
-        Ext.create('Admin.view.homescreen.Homescreen', {
+        var hs = Ext.create('Admin.view.homescreen.Homescreen', {
             userIsLoggedIn: me.isUserLoggedIn()
         });
+
+        /* For 18/4 demo */
+
+        // Make sure that the home screen is not displayed when opening a content directly from home.jsp
+        // Using css/display, hs.show/hide etc. should not be used as ExtJS Component uses these for api show/hide
+        if (me.getUrlHash().length > 0) {
+            hs.getEl().setStyle('height', '0');
+        }
     },
 
 
