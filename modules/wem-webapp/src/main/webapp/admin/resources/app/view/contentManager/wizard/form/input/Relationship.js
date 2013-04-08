@@ -151,11 +151,12 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
      * @private
      */
     onSelectContent: function (contentModels) {
-        var isAlreadyAdded = this.selectedContentStore.findRecord('key', contentModels[0].raw.key);
-        if (isAlreadyAdded) {
-            this.alertContentIsAdded(contentModels);
-            return;
-        }
+        var me = this;
+        /*var isAlreadyAdded = this.selectedContentStore.findRecord('id', contentModels[0].raw.id);
+         if (isAlreadyAdded) {
+         this.alertContentIsAdded(contentModels);
+         return;
+         }*/
         this.selectedContentStore.add(contentModels[0].raw);
     },
 
@@ -210,14 +211,15 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             listeners: {
                 datachanged: function (store) {
                     me.updateHiddenValue();
+                    if (me.contentStore) {
+                        me.contentStore.clearFilter(true);
+                        me.contentStore.filterBy(function (content) {
+                            return !me.selectedContentStore.findRecord('id', content.get('id'));
+                        });
+                    }
                     try {
                         if (max > 0) {
                             me.down('#relationshipCombo').setDisabled(store.getCount() === max);
-                        }
-                        if (store.getCount() <= min) {
-                            me.down('#relationshipView').addCls('admin-related-item-disabled');
-                        } else {
-                            me.down('#relationshipView').removeCls('admin-related-item-disabled');
                         }
                     }
                     catch (exception) {
