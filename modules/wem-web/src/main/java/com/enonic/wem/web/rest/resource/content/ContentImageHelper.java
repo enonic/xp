@@ -3,7 +3,7 @@ package com.enonic.wem.web.rest.resource.content;
 import java.awt.image.BufferedImage;
 
 import com.enonic.wem.api.content.binary.Binary;
-import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
+import com.enonic.wem.core.image.filter.effect.ScaleSquareFilter;
 import com.enonic.wem.web.rest.resource.BaseImageHelper;
 
 final class ContentImageHelper
@@ -22,6 +22,6 @@ final class ContentImageHelper
         }
 
         final BufferedImage image = toBufferedImage( binary.asInputStream() );
-        return new ScaleMaxFilter( size ).filter( image );
+        return new ScaleSquareFilter( size ).filter( image );
     }
 }
