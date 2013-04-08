@@ -4,10 +4,6 @@ Ext.define('Admin.view.WizardHeader', {
 
     cls: 'admin-wizard-header-container',
 
-    layout: 'anchor',
-    defaults: {
-        anchor: '100%'
-    },
     border: false,
 
     displayNameProperty: 'displayName',
@@ -51,7 +47,8 @@ Ext.define('Admin.view.WizardHeader', {
 
         this.displayNameField = Ext.create('Ext.form.field.Text', Ext.apply({
             xtype: 'textfield',
-            flex: 1,
+            grow: true,
+            growMin: 200,
             name: this.displayNameProperty,
             value: headerData[this.displayNameProperty],
             cls: 'admin-display-name',
@@ -75,7 +72,8 @@ Ext.define('Admin.view.WizardHeader', {
 
         this.nameField = Ext.create('Ext.form.field.Text', Ext.apply({
             xtype: 'textfield',
-            flex: 1,
+            grow: true,
+            growMin: 60,
             cls: 'admin-name',
             dirtyCls: 'admin-name-dirty',
             name: this.nameProperty,
@@ -133,6 +131,9 @@ Ext.define('Admin.view.WizardHeader', {
             var processedValue = this.nameField.processRawValue(this.preProcessName(newVal));
             this.nameField.setValue(processedValue);
         }
+
+        this.nameField.growMax = this.el.getWidth() - 100;
+        this.nameField.doComponentLayout();
     },
 
     onNameKey: function (field, event, opts) {
