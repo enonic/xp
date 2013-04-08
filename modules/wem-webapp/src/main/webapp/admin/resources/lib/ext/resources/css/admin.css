@@ -2497,16 +2497,14 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
 
 /* line 8, ../sass/admin/css/_sortable.scss */
 .admin-drop-indicator {
-    height: 1px;
-    line-height: 0;
-    overflow: visible;
-    font-weight: bold;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 200px;
-    height: 200px;
+    clear: both;
+    border: 2px dashed #000;
+    padding: 28px;
+    color: #000;
     font-size: 20px;
-    border: 4px dashed gray; }
+    text-align: center;
+    background-color: #eee;
+    margin: 1px 0 10px 0; }
 
 /* line 1, ../sass/admin/css/_admin-toolbar-popup.scss */
 .admin-toolbar-popup {
@@ -2927,68 +2925,44 @@ div.admin-load-mask .admin-load-text {
     background-image: linear-gradient(top, #a7d200, #8db800);
     height: 32px; }
 
-/* line 1, ../sass/admin/css/_relationship.scss */
-.admin-related-item {
-    display: table;
-    margin: 5px 0;
-    width: 100%; }
-/* line 6, ../sass/admin/css/_relationship.scss */
-.admin-related-item img {
-    display: table-cell;
-    vertical-align: top;
-    padding-right: 10px;
-    width: 42px; }
-/* line 13, ../sass/admin/css/_relationship.scss */
-.admin-related-item .center-column {
-    display: table-cell;
-    vertical-align: middle;
-    width: 100%; }
-/* line 19, ../sass/admin/css/_relationship.scss */
-.admin-related-item .right-column {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: right; }
-/* line 24, ../sass/admin/css/_relationship.scss */
-.admin-related-item .right-column a {
-    color: black; }
-
-/* line 31, ../sass/admin/css/_relationship.scss */
-.admin-related-item-disabled .right-column {
-    opacity: 0.5; }
-
-/* line 13, ../sass/admin/css/_embedded-image.scss */
-.admin-embedded-image-combo input {
-    padding: 4px 90px 4px 34px; }
-/* line 17, ../sass/admin/css/_embedded-image.scss */
-.admin-embedded-image-combo .admin-image-icon {
+/* line 11, ../sass/admin/css/_relationship.scss */
+.admin-relationship-combo {
+    position: relative; }
+/* line 14, ../sass/admin/css/_relationship.scss */
+.admin-relationship-combo input.admin-relationship-input {
+    height: 36px;
+    padding: 4px 90px 4px 58px;
+    font-size: 15px;
+    line-height: 16px; }
+/* line 21, ../sass/admin/css/_relationship.scss */
+.admin-relationship-combo .admin-image-icon {
     position: absolute;
-    left: 9px;
+    left: 13px;
     top: 5px;
-    width: 16px;
-    height: 16px; }
-/* line 25, ../sass/admin/css/_embedded-image.scss */
-.admin-embedded-image-combo .admin-library-button {
+    width: 25px;
+    height: 25px; }
+/* line 29, ../sass/admin/css/_relationship.scss */
+.admin-relationship-combo .admin-library-button {
     position: absolute;
-    right: 9px;
-    top: 4px; }
+    right: 10px;
+    top: 9px;
+    text-decoration: none; }
 
-/* line 35, ../sass/admin/css/_embedded-image.scss */
-.admin-embedded-image-list .x-boundlist-item {
-    padding: 0 0 5px 0; }
-/* line 38, ../sass/admin/css/_embedded-image.scss */
-.admin-embedded-image-list .x-boundlist-item img {
-    width: 48px;
-    float: left; }
-/* line 43, ../sass/admin/css/_embedded-image.scss */
-.admin-embedded-image-list .x-boundlist-item .info {
-    margin-left: 48px;
+/* line 40, ../sass/admin/css/_relationship.scss */
+.admin-relationship-list .x-boundlist-item {
     padding: 8px; }
-/* line 47, ../sass/admin/css/_embedded-image.scss */
-.admin-embedded-image-list .x-boundlist-item .info p {
+/* line 43, ../sass/admin/css/_relationship.scss */
+.admin-relationship-list .x-boundlist-item img {
+    float: left; }
+/* line 47, ../sass/admin/css/_relationship.scss */
+.admin-relationship-list .x-boundlist-item .info {
+    margin-left: 42px; }
+/* line 50, ../sass/admin/css/_relationship.scss */
+.admin-relationship-list .x-boundlist-item .info p {
     margin: 0; }
 
-/* line 55, ../sass/admin/css/_embedded-image.scss */
-.admin-embedded-image {
+/* line 58, ../sass/admin/css/_relationship.scss */
+.admin-relationship {
     position: relative;
     margin: 0 10px 10px 0;
     float: left;
@@ -2998,8 +2972,8 @@ div.admin-load-mask .admin-load-text {
     background-repeat: no-repeat;
     background-size: contain;
     background-color: #ccc; }
-/* line 66, ../sass/admin/css/_embedded-image.scss */
-.admin-embedded-image .top-bar {
+/* line 69, ../sass/admin/css/_relationship.scss */
+.admin-relationship .top-bar {
     position: absolute;
     overflow: hidden;
     background-color: #fff;
@@ -3010,8 +2984,8 @@ div.admin-load-mask .admin-load-text {
     display: none;
     top: 0;
     text-align: right; }
-/* line 72, ../sass/admin/css/_embedded-image.scss */
-.admin-embedded-image .bottom-bar {
+/* line 75, ../sass/admin/css/_relationship.scss */
+.admin-relationship .bottom-bar {
     position: absolute;
     overflow: hidden;
     background-color: #fff;
@@ -3021,14 +2995,43 @@ div.admin-load-mask .admin-load-text {
     padding: 3px;
     display: none;
     bottom: 0; }
-/* line 76, ../sass/admin/css/_embedded-image.scss */
-.admin-embedded-image .bottom-bar h6 {
+/* line 79, ../sass/admin/css/_relationship.scss */
+.admin-relationship .bottom-bar h6 {
     font-size: 11px !important;
     line-height: 14px; }
-/* line 85, ../sass/admin/css/_embedded-image.scss */
-.admin-embedded-image.over .top-bar,
-.admin-embedded-image.over .bottom-bar {
+/* line 88, ../sass/admin/css/_relationship.scss */
+.admin-relationship.over .top-bar,
+.admin-relationship.over .bottom-bar {
     display: block; }
+
+/* line 94, ../sass/admin/css/_relationship.scss */
+.admin-related-item {
+    display: table;
+    margin: 5px 0;
+    width: 100%; }
+/* line 99, ../sass/admin/css/_relationship.scss */
+.admin-related-item img {
+    display: table-cell;
+    vertical-align: top;
+    padding-right: 10px;
+    width: 42px; }
+/* line 106, ../sass/admin/css/_relationship.scss */
+.admin-related-item .center-column {
+    display: table-cell;
+    vertical-align: middle;
+    width: 100%; }
+/* line 112, ../sass/admin/css/_relationship.scss */
+.admin-related-item .right-column {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: right; }
+/* line 117, ../sass/admin/css/_relationship.scss */
+.admin-related-item .right-column a {
+    color: black; }
+
+/* line 124, ../sass/admin/css/_relationship.scss */
+.admin-related-item-disabled .right-column {
+    opacity: 0.5; }
 
 /**
  * @var {string} $prefix 

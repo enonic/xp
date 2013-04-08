@@ -125,8 +125,6 @@ Ext.define('Admin.lib.Sortable', {
 
                     sortable.parentComponent.insert(targetCmpIndex, draggedCmp);
                     sortable.parentComponent.doLayout();
-
-                    draggedCmp.getEl().highlight();
                 }
 
                 sortable.hideIndicator();
