@@ -68,6 +68,10 @@ public class SearchSourceFactoryTest
         assertJson( "singleLowerRangeFilter_result.json", searchSourceBuilder );
     }
 
+    // Warning: Because of Elasticsearch generating a strange JSON, this test will actually nerf all but the last
+    // filter when doing the compare both for source file and searchSourceBuilder, making it difficult to test
+    // Hoping for ES fix of this issue
+    @Ignore
     @Test
     public void testMultipleLowerRangeFilters()
         throws Exception
