@@ -11,6 +11,7 @@
             "superType": null,
             "isAbstract": false,
             "isFinal": false,
+            "allowChildren" : true,
             "form": [ ],
             "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:System:Root",
             "contentTypes": [
@@ -23,6 +24,7 @@
                     "superType": "System:Root",
                     "isAbstract": false,
                     "isFinal": false,
+                    "allowChildren" : true,
                     "form": [
                         {
                             "Input": {
@@ -93,6 +95,7 @@
                             "superType": "myModule:myType",
                             "isAbstract": false,
                             "isFinal": false,
+                            "allowChildren" : true,
                             "form": [ ],
                             "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:myModule:subType",
                             "contentTypes": [ ],

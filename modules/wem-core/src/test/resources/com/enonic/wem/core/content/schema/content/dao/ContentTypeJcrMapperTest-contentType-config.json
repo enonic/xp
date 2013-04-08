@@ -6,5 +6,6 @@
     "superType": "System:unstructured",
     "isAbstract": false,
     "isFinal": true,
+    "allowChildren": true,
     "form": []
 }

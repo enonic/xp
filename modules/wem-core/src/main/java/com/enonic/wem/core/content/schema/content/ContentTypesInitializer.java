@@ -45,55 +45,55 @@ public class ContentTypesInitializer
         setFinal( true ).setAbstract( false ).build();
 
     static final ContentType MEDIA = createSystemType( QualifiedContentTypeName.media() ).
-        setFinal( false ).setAbstract( false ).build();
+        setFinal( false ).setAbstract( false ).allowChildren( false ).build();
 
     static final ContentType MEDIA_TEXT =
         createSystemType( QualifiedContentTypeName.textMedia() ).superType( QualifiedContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).build();
+            setFinal( true ).setAbstract( false ).allowChildren( false ).build();
 
     static final ContentType MEDIA_DATA =
         createSystemType( QualifiedContentTypeName.dataMedia() ).superType( QualifiedContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).build();
+            setFinal( true ).setAbstract( false ).allowChildren( false ).build();
 
     static final ContentType MEDIA_AUDIO =
         createSystemType( QualifiedContentTypeName.audioMedia() ).superType( QualifiedContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).build();
+            setFinal( true ).setAbstract( false ).allowChildren( false ).build();
 
     static final ContentType MEDIA_VIDEO =
         createSystemType( QualifiedContentTypeName.videoMedia() ).superType( QualifiedContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).build();
+            setFinal( true ).setAbstract( false ).allowChildren( false ).build();
 
     static final ContentType MEDIA_IMAGE =
         createSystemType( QualifiedContentTypeName.imageMedia() ).superType( QualifiedContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).form( createFileImageForm() ).build();
+            setFinal( true ).setAbstract( false ).allowChildren( false ).form( createMediaImageForm() ).build();
 
     static final ContentType MEDIA_VECTOR =
         createSystemType( QualifiedContentTypeName.vectorMedia() ).superType( QualifiedContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).build();
+            setFinal( true ).setAbstract( false ).allowChildren( false ).build();
 
     static final ContentType MEDIA_ARCHIVE =
         createSystemType( QualifiedContentTypeName.archiveMedia() ).superType( QualifiedContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).build();
+            setFinal( true ).setAbstract( false ).allowChildren( false ).build();
 
     static final ContentType MEDIA_DOCUMENT =
         createSystemType( QualifiedContentTypeName.documentMedia() ).superType( QualifiedContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).build();
+            setFinal( true ).setAbstract( false ).allowChildren( false ).build();
 
     static final ContentType MEDIA_SPREADSHEET =
         createSystemType( QualifiedContentTypeName.spreadsheetMedia() ).superType( QualifiedContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).build();
+            setFinal( true ).setAbstract( false ).allowChildren( false ).build();
 
     static final ContentType MEDIA_PRESENTATION =
         createSystemType( QualifiedContentTypeName.presentationMedia() ).superType( QualifiedContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).build();
+            setFinal( true ).setAbstract( false ).allowChildren( false ).build();
 
     static final ContentType MEDIA_CODE =
         createSystemType( QualifiedContentTypeName.codeMedia() ).superType( QualifiedContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).build();
+            setFinal( true ).setAbstract( false ).allowChildren( false ).build();
 
     static final ContentType MEDIA_EXECUTABLE =
         createSystemType( QualifiedContentTypeName.executableMedia() ).superType( QualifiedContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).build();
+            setFinal( true ).setAbstract( false ).allowChildren( false ).build();
 
     private static final ContentType[] SYSTEM_TYPES =
         {SPACE, STRUCTURED, UNSTRUCTURED, FOLDER, PAGE, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE,
@@ -112,7 +112,7 @@ public class ContentTypesInitializer
         super( "content-types" );
     }
 
-    private static Form createFileImageForm()
+    private static Form createMediaImageForm()
     {
         return Form.newForm().
             addFormItem( Input.newInput().name( "binary" ).inputType( InputTypes.IMAGE_UPLOAD ).label( "Binary" ).build() ).
@@ -160,6 +160,7 @@ public class ContentTypesInitializer
                 superType( contentType.getSuperType() ).
                 setAbstract( contentType.isAbstract() ).
                 setFinal( contentType.isFinal() ).
+                allowChildren( contentType.allowChildren() ).
                 moduleName( contentType.getModuleName() ).
                 form( contentType.form() ).
                 icon( contentType.getIcon() ).

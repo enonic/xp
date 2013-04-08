@@ -1,7 +1,7 @@
 {
     "name": "Relationship test 2",
     "module": "Demo",
-    "displayName": "Demo: Relationship test with limited allowed-to-types",
+    "displayName": "Demo: Relationship limited allowed-to-types",
     "superType": "System:structured",
     "isAbstract": false,
     "isFinal": true,

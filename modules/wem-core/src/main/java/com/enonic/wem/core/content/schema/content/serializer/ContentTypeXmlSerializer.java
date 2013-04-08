@@ -52,6 +52,7 @@ public class ContentTypeXmlSerializer
         typeEl.addContent( new Element( "super-type" ).setText( type.getSuperType() != null ? type.getSuperType().toString() : null ) );
         typeEl.addContent( new Element( "is-abstract" ).setText( Boolean.toString( type.isAbstract() ) ) );
         typeEl.addContent( new Element( "is-final" ).setText( Boolean.toString( type.isFinal() ) ) );
+        typeEl.addContent( new Element( "allow-children" ).setText( Boolean.toString( type.allowChildren() ) ) );
 
         final Element formEl = new Element( "form" );
         typeEl.addContent( formEl );
@@ -87,6 +88,8 @@ public class ContentTypeXmlSerializer
         final QualifiedContentTypeName superType = superTypeString != null ? new QualifiedContentTypeName( superTypeString ) : null;
         final boolean isAbstract = Boolean.parseBoolean( contentTypeEl.getChildText( "is-abstract" ) );
         final boolean isFinal = Boolean.parseBoolean( contentTypeEl.getChildText( "is-final" ) );
+        final String allowChildrenValue = contentTypeEl.getChildText( "allow-children" );
+        final boolean allowChildren = StringUtils.isBlank( allowChildrenValue ) || Boolean.parseBoolean( allowChildrenValue );
 
         final ContentType.Builder contentTypeBuilder = newContentType().
             name( name ).
@@ -95,7 +98,8 @@ public class ContentTypeXmlSerializer
             contentDisplayNameScript( displayNameScript ).
             superType( superType ).
             setAbstract( isAbstract ).
-            setFinal( isFinal );
+            setFinal( isFinal ).
+            allowChildren( allowChildren );
 
         try
         {

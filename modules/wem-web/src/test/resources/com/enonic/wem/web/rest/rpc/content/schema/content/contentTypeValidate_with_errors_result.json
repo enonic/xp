@@ -18,6 +18,7 @@
         "superType": "System:unstructured",
         "isAbstract": false,
         "isFinal": false,
+        "allowChildren" : true,
         "form": [
             {
                 "Input": {

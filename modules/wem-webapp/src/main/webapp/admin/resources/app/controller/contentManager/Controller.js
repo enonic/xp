@@ -350,7 +350,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
         var contextMenu = this.getContentManagerContextMenu();
         var detailPanel = this.getContentDetailPanel();
         var newContentButton = toolbar.down('*[action=newContent]');
-        newContentButton.setDisabled(Ext.isEmpty(selected) || selected.length !== 1);
+        newContentButton.setDisabled(Ext.isEmpty(selected) || selected.length !== 1 || (!selected[0].get('allowsChildren')));
 
         var deleteContentButton = toolbar.down('*[action=deleteContent]');
         var disabled = false;

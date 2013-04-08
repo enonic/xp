@@ -29,6 +29,8 @@ public final class ContentType
 
     private final boolean isFinal;
 
+    private final boolean allowChildren;
+
     private final ModuleName moduleName;
 
     private final Form form;
@@ -50,6 +52,7 @@ public final class ContentType
         this.superType = builder.superType;
         this.isAbstract = builder.isAbstract;
         this.isFinal = builder.isFinal;
+        this.allowChildren = builder.allowChildren;
         this.moduleName = builder.moduleName;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
@@ -89,6 +92,10 @@ public final class ContentType
     public boolean isFinal()
     {
         return isFinal;
+    }
+
+    public boolean allowChildren() {
+        return allowChildren;
     }
 
     @Override
@@ -140,6 +147,7 @@ public final class ContentType
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
         s.add( "isFinal", isFinal );
+        s.add( "allowChildren",allowChildren );
         s.add( "form", form );
         s.add( "icon", icon );
         return s.toString();
@@ -167,6 +175,8 @@ public final class ContentType
 
         private boolean isFinal;
 
+        private boolean allowChildren;
+
         private Form.Builder formBuilder = newForm();
 
         private QualifiedContentTypeName superType;
@@ -182,6 +192,7 @@ public final class ContentType
         private Builder()
         {
             formBuilder = newForm();
+            allowChildren = true;
         }
 
         private Builder( final ContentType source )
@@ -191,6 +202,7 @@ public final class ContentType
             this.displayName = source.getDisplayName();
             this.isAbstract = source.isAbstract();
             this.isFinal = source.isFinal();
+            this.allowChildren = source.allowChildren();
             this.superType = source.getSuperType();
             if ( source.form() != null )
             {
@@ -248,6 +260,12 @@ public final class ContentType
         public Builder setFinal()
         {
             isFinal = true;
+            return this;
+        }
+
+        public Builder allowChildren( final boolean allowChildren )
+        {
+            this.allowChildren = allowChildren;
             return this;
         }
 

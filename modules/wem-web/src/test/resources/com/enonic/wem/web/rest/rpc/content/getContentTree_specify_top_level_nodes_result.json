@@ -14,6 +14,7 @@
             "modifiedTime": null,
             "editable": true,
             "deletable": true,
+            "allowsChildren" : true,
             "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:System:unstructured",
             "hasChildren": true,
             "contents": [
@@ -29,6 +30,7 @@
                     "modifiedTime": null,
                     "editable": true,
                     "deletable": true,
+                    "allowsChildren" : true,
                     "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:System:unstructured",
                     "hasChildren": true,
                     "contents": [
@@ -44,6 +46,7 @@
                             "modifiedTime": null,
                             "editable": true,
                             "deletable": true,
+                            "allowsChildren" : true,
                             "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:System:unstructured",
                             "hasChildren": false,
                             "contents": [ ]
@@ -62,6 +65,7 @@
                     "modifiedTime": null,
                     "editable": true,
                     "deletable": true,
+                    "allowsChildren" : true,
                     "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:System:unstructured",
                     "hasChildren": false,
                     "contents": [ ]

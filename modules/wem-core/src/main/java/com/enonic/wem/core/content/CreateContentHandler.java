@@ -23,14 +23,17 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataVisitor;
 import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.relationship.RelationshipService;
 import com.enonic.wem.core.content.relationship.SyncRelationshipsCommand;
+import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
 import com.enonic.wem.core.index.IndexService;
 
 @Component
@@ -42,6 +45,8 @@ public class CreateContentHandler
     private static final ContentPathNameGenerator CONTENT_PATH_NAME_GENERATOR = new ContentPathNameGenerator();
 
     private ContentDao contentDao;
+
+    private ContentTypeDao contentTypeDao;
 
     private RelationshipService relationshipService;
 
@@ -64,6 +69,10 @@ public class CreateContentHandler
         final String displayName = command.getDisplayName();
         final ContentPath parentContentPath = command.isTemporary() ? TEMPORARY_PARENT_PATH : command.getParentContentPath();
         final ContentPath contentPath = resolvePathForNewContent( parentContentPath, displayName, session );
+        if ( !command.isTemporary() )
+        {
+            checkParentContentAllowsChildren( parentContentPath, session );
+        }
 
         final List<Content> temporaryContents = resolveTemporaryContents( command, session );
 
@@ -115,6 +124,20 @@ public class CreateContentHandler
         }
 
         command.setResult( new CreateContentResult( contentId, contentPath ) );
+    }
+
+    private void checkParentContentAllowsChildren( final ContentPath parentContentPath, final Session session )
+    {
+        final Content content = contentDao.select( parentContentPath, session );
+        if ( content != null )
+        {
+            final ContentType contentType = contentTypeDao.select( content.getType(), session );
+            if ( !contentType.allowChildren() )
+            {
+                throw new SystemException( "Content [{0}] of type [{1}] does not allow children", parentContentPath,
+                                           contentType.getQualifiedName() );
+            }
+        }
     }
 
     private void createEmbeddedContent( final Content tempContent, final ContentPath pathToEmbeddedContent, final Session session )
@@ -187,6 +210,12 @@ public class CreateContentHandler
     public void setContentDao( final ContentDao contentDao )
     {
         this.contentDao = contentDao;
+    }
+
+    @Inject
+    public void setContentTypeDao( final ContentTypeDao contentTypeDao )
+    {
+        this.contentTypeDao = contentTypeDao;
     }
 
     @Inject

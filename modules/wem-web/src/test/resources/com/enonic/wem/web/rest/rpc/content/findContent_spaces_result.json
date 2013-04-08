@@ -16,6 +16,7 @@
             "modifiedTime": "2000-01-01T12:00:00.000Z",
             "editable": true,
             "deletable": true,
+            "allowsChildren" : true,
             "iconUrl": "http://localhost/admin/rest/content/image/a1/c1"
         },
         {
@@ -32,6 +33,7 @@
             "modifiedTime": "2000-01-01T12:00:00.000Z",
             "editable": true,
             "deletable": true,
+            "allowsChildren" : true,
             "iconUrl": "http://localhost/admin/rest/content/image/a1/c2"
         },
         {
@@ -48,6 +50,7 @@
             "modifiedTime": "2000-01-01T12:00:00.000Z",
             "editable": true,
             "deletable": true,
+            "allowsChildren" : true,
             "iconUrl": "http://localhost/admin/rest/content/image/a1/c3"
         },
         {
@@ -64,6 +67,7 @@
             "modifiedTime": "2000-01-01T12:00:00.000Z",
             "editable": true,
             "deletable": true,
+            "allowsChildren" : true,
             "iconUrl": "http://localhost/admin/rest/content/image/a1/c4"
         }
     ]

@@ -4,6 +4,7 @@ package com.enonic.wem.web.rest.rpc.content;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 import com.enonic.wem.web.rest.resource.content.ContentImageUriResolver;
 import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
@@ -26,6 +27,7 @@ final class ContentJsonTemplate
         JsonSerializerUtil.setDateTimeValue( "modifiedTime", content.getModifiedTime(), contentNode );
         contentNode.put( "editable", true );
         contentNode.put( "deletable", !content.getPath().isRoot() );
+        contentNode.put( "allowsChildren", contentTypeAllowsChildren( content.getType() ) );
         if ( content.getId() == null )
         {
             contentNode.put( "iconUrl", SchemaImageUriResolver.resolve( content.getType() ) );
@@ -34,5 +36,16 @@ final class ContentJsonTemplate
         {
             contentNode.put( "iconUrl", ContentImageUriResolver.resolve( content ) );
         }
+    }
+
+    private static boolean contentTypeAllowsChildren( QualifiedContentTypeName contentTypeName )
+    {
+        // quick hack to avoid refactoring ContentJsonTemplate and related classes before 18/04
+        // TODO retrieve content type and check value of allow-children flag
+        return !( contentTypeName.isImageMedia() || contentTypeName.isArchiveMedia() || contentTypeName.isAudioMedia() ||
+            contentTypeName.isCodeMedia() || contentTypeName.isDataMedia() || contentTypeName.isDocumentMedia() ||
+            contentTypeName.isExecutableMedia() || contentTypeName.isMedia() || contentTypeName.isSpreadsheetMedia() ||
+            contentTypeName.isPresentationMedia() || contentTypeName.isTextMedia() || contentTypeName.isVectorMedia() ||
+            contentTypeName.isVideoMedia() );
     }
 }
