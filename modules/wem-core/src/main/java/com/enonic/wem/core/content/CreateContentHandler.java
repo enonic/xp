@@ -121,11 +121,8 @@ public class CreateContentHandler
                 throw e;
             }
 
-            if ( !command.isTemporary() )
-            {
-                final Content storedContent = builder.id( contentId ).build();
-                indexService.indexContent( storedContent );
-            }
+            final Content storedContent = builder.id( contentId ).build();
+            indexService.indexContent( storedContent );
 
             command.setResult( new CreateContentResult( contentId, contentPath ) );
         }

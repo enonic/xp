@@ -89,7 +89,10 @@ public class IndexService
     {
         final Collection<IndexDocument> indexDocuments = ContentIndexDocumentsFactory.create( content );
 
-        elasticsearchIndexService.index( indexDocuments );
+        if ( !content.isTemporary() )
+        {
+            elasticsearchIndexService.index( indexDocuments );
+        }
     }
 
 
