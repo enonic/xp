@@ -90,6 +90,14 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             listeners: {
                 datachanged: function (store) {
                     me.updateHiddenValue();
+                    if (me.contentStore) {
+                        me.contentStore.filter(
+                            {
+                                filterFn: function (content) {
+                                    return !me.selectedContentStore.findRecord('id', content.get('id'));
+                                }
+                            });
+                    }
                     try {
                         me.down('combobox').setDisabled(me.selectedContentStore.getCount() ===
                                                         me.contentTypeItemConfig.occurrences.maximum);
@@ -152,8 +160,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             '</tpl>'
         ];
 
-        var contentStore = new Admin.store.contentManager.ContentStore();
-        contentStore.proxy.extraParams = {
+        this.contentStore = new Admin.store.contentManager.ContentStore();
+        this.contentStore.proxy.extraParams = {
             contentTypes: ['System:image']
         };
 
@@ -179,7 +187,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                 emptyText: 'No matching items'
             },
 
-            store: contentStore,
+            store: this.contentStore,
             listeners: {
                 select: function (combo, records) {
                     combo.setValue('');
