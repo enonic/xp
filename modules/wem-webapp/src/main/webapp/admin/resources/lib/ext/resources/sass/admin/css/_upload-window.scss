@@ -1,32 +1,24 @@
 .admin-upload-form {
+  padding: 30px 20px 50px;
 
   .admin-drop-zone {
-    border: 6px dashed #ccc !important;
-    background-color: #fff;
+    border: 3px dashed #a8c6fe !important;
+    background-color: #f1f5fe;
 
     h4 {
       font-weight: bold !important;
-      color: #ccc;
+      color: #555;
       text-align: center;
-      margin-top: 150px !important;
+      margin-top: 105px !important;
     }
-
-    &.over {
-      border-color: #a8c6fe !important;
-      background-color: #f1f5fe;
-
-      h4 {
-        color: #555;
-      }
-    }
-
   }
-
 }
 
 .admin-upload-progress {
   padding-top: 120px;
-
+  padding-left: 20px;
+  padding-right: 20px;
+  
   h4 {
     text-align: center;
   }
@@ -47,7 +39,4 @@
       height: 32px;
     }
   }
-
 }
-
-
