@@ -16,12 +16,39 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
     appSelectorKeyMap: undefined,
     currentTileIndex: -1,
 
+    appTabCount: [],
+
     init: function () {
         var me = this;
 
         Admin.MessageBus.on('topBar.onUpdateAppTabCount', function (config) {
+            /* For 18/4 */
+
+            // TODO: Check if config exists
+            me.appTabCount.push(config);
+
             me.setAppTabCountInTile(config);
         }, me);
+
+        /*
+        me.getAppsStore().on('datachanged', function (store) {
+            store.each(function (record) {
+
+                Ext.Array.each(me.appTabCount, function (app, i) {
+                    if (app.appId === record.raw.id) {
+                        console.log('match');
+                        me.setAppTabCountInTile(app);
+
+                    }
+
+                });
+
+            });
+
+        });
+        */
+
+
 
         me.application.on({
             displayAppSelector: this.display,
@@ -53,6 +80,11 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
                 itemmouseleave: function () {
                     me.currentTileIndex = -1;
                     me.updateAppInfoText(null);
+                },
+                refresh: function (view) {
+
+                    me.updateAppTabCountInTiles();
+
                 }
             }
         });
@@ -197,6 +229,18 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
 
         Ext.fly('admin-home-app-info-name').setHTML(name);
         Ext.fly('admin-home-app-info-description').setHTML(description);
+    },
+
+
+    updateAppTabCountInTiles: function () {
+        var me = this;
+        me.getAppsStore().each(function (record) {
+            Ext.Array.each(me.appTabCount, function (app, i) {
+                if (app.appId === record.raw.id) {
+                    me.setAppTabCountInTile(app);
+                }
+            });
+        });
     },
 
 
