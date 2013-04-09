@@ -59,8 +59,5 @@ Ext.define('Admin.view.spaceAdmin.DetailPanel', {
         ];
 
         this.callParent(arguments);
-        this.addEvents('deselect', 'clearselection');
-
     }
-
 });

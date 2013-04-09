@@ -103,13 +103,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         ];
 
         this.callParent(arguments);
-        this.addEvents('deselectrecord');
     },
-
-
-    /*
-     * Toolbar
-     */
 
     createToolBar: function () {
         return Ext.createByAlias('widget.contentDetailToolbar', {
