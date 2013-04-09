@@ -1,0 +1,107 @@
+.admin-panel {
+    padding: 20px;
+}
+
+// Filter panel
+.admin-filter {
+
+    .x-panel-body {
+        padding: 20px;
+        background-color: $admin-light-grey !important;
+        border-style: none;
+    }
+
+    .admin-facet-group {
+        border: none !important;
+        padding: 0 !important;
+        margin-bottom: 15px !important;
+
+        h2 {
+            color: #000000 !important;
+            font-size: 15px !important;
+            padding: 0 !important;
+            text-transform: capitalize;
+        }
+
+        .admin-facet {
+            /*      padding-left: 10px;*/
+
+            &:hover {
+                label {
+                    color: #000 !important;
+                }
+            }
+
+            input[type="checkbox"] {
+                display:none;
+            }
+
+            label {
+                color: #777 !important;
+                background-image: url("../themes/images/default/grid/admin-unchecked.gif");
+                background-repeat: no-repeat;
+                padding-left: 20px;
+            }
+
+            input[type="checkbox"]:checked + label {
+                background-image: url("../themes/images/default/grid/admin-checked.gif");
+            }
+
+            &.checked {
+
+                label {
+                    color: #333 !important;
+                }
+            }
+
+        }
+
+    }
+
+}
+
+.admin-detail {
+
+    .x-panel-body {
+        border: none !important;
+    }
+
+}
+
+.admin-box {
+
+    padding: 10px;
+    background-color: #ebebeb;
+
+    .x-panel-header-default {
+        background-color: transparent;
+        @include box-shadow(transparent 0px 0px 0px);
+    }
+
+    .x-panel-header-text-default {
+        color: #000;
+        font-weight: normal;
+        font-size: $admin-font-size-3 !important;
+        line-height: 20px;
+    }
+
+    .x-panel-body-default {
+        border: 0 none;
+        background-color: transparent;
+    }
+
+    .admin-data-view {
+        background-color: transparent;
+
+        .admin-data-view-row {
+
+            // over
+            &.x-item-over {
+                background-color: #fff;
+            }
+
+        }
+
+    }
+
+}

@@ -1,0 +1,112 @@
+// Unless you want to include all components, you must set $include-default to false
+// IF you set this to true, you can also remove lines 10 to 38 of this file
+$include-default: false;
+
+@import "compass";
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+@import "admin/css/_font-awesome";
+// Insert your custom variables here.
+@import "admin/variables/core";
+@import "admin/variables/panel";
+@import "admin/variables/button";
+@import "admin/variables/grid";
+@import "admin/variables/toolbar";
+@import "admin/variables/form";
+@import "admin/variables/boundlist";
+
+@import "admin/css/core";
+@import "admin/css/window";
+@import "admin/css/panel";
+@import "admin/css/button";
+@import "admin/css/grid";
+@import "admin/css/tree";
+@import "admin/css/mega-menu";
+@import "admin/css/toolbar";
+@import "admin/css/splitter";
+@import "admin/css/form";
+@import "admin/css/confirmation-dialog";
+@import "admin/css/boundlist";
+@import "admin/css/selected-grid-item";
+@import "admin/css/data-view";
+@import "admin/css/wizard";
+@import "admin/css/image-upload-button";
+@import "admin/css/sortable.scss";
+@import "admin/css/admin-toolbar-popup";
+@import "admin/css/feedback-box";
+@import "admin/css/load-mask";
+@import "admin/css/top-bar";
+@import "admin/css/notification-manager";
+@import "admin/css/context-menu";
+@import "admin/css/detail";
+@import "admin/css/dropdown-button";
+@import "admin/css/upload-window";
+@import "admin/css/relationship";
+
+@import 'ext4/default/all';
+
+@import "admin/widgets/button/red-small";
+@import "admin/widgets/button/red-medium";
+@import "admin/widgets/button/red-large";
+
+@import "admin/widgets/button/grey-small";
+@import "admin/widgets/button/grey-medium";
+@import "admin/widgets/button/grey-large";
+
+@import "admin/widgets/button/green-small";
+@import "admin/widgets/button/green-medium";
+@import "admin/widgets/button/green-large";
+
+@import "admin/widgets/button/blue-toolbar-small";
+@import "admin/widgets/button/blue-toolbar-medium";
+@import "admin/widgets/button/blue-toolbar-large";
+
+@import "admin/widgets/button/red-toolbar-small";
+@import "admin/widgets/button/red-toolbar-medium";
+@import "admin/widgets/button/red-toolbar-large";
+
+@import "admin/widgets/button/grey-toolbar-small";
+@import "admin/widgets/button/grey-toolbar-medium";
+@import "admin/widgets/button/grey-toolbar-large";
+
+@import "admin/widgets/button/green-toolbar-small";
+@import "admin/widgets/button/green-toolbar-medium";
+@import "admin/widgets/button/green-toolbar-large";
+
+// You may remove any of the following modules that you
+// do not use in order to create a smaller css file.
+@include extjs-boundlist;
+@include extjs-button;
+@include extjs-btn-group;
+@include extjs-datepicker;
+@include extjs-colorpicker;
+@include extjs-menu;
+@include extjs-grid;
+@include extjs-form;
+@include extjs-form-field;
+@include extjs-form-fieldset;
+@include extjs-form-file;
+@include extjs-form-checkboxfield;
+@include extjs-form-checkboxgroup;
+@include extjs-form-triggerfield;
+@include extjs-form-htmleditor;
+@include extjs-panel;
+@include extjs-qtip;
+@include extjs-slider;
+@include extjs-progress;
+@include extjs-toolbar;
+@include extjs-window;
+@include extjs-messagebox;
+@include extjs-tabbar;
+@include extjs-tab;
+@include extjs-tree;
+@include extjs-drawcomponent;
+@include extjs-viewport;
+@include extjs-splitter;
+
+// This line changes the location of your images when creating UIs to be relative instead of within the ExtJS directory.
+// You MUST set this to true/string value if you are creating new UIs + supporting legacy browsers.
+// This only applies to new UIs. It does not apply to default component images (i.e. when changing $base-color)
+// The value can either be true, in which case the image path will be "../images/"
+// or a string, of where the path is
+$relative-image-path-for-uis: true;
+// defaults to "../images/" when true

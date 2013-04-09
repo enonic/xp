@@ -1,0 +1,53 @@
+.admin-upload-form {
+
+  .admin-drop-zone {
+    border: 6px dashed #ccc !important;
+    background-color: #fff;
+
+    h4 {
+      font-weight: bold !important;
+      color: #ccc;
+      text-align: center;
+      margin-top: 150px !important;
+    }
+
+    &.over {
+      border-color: #a8c6fe !important;
+      background-color: #f1f5fe;
+
+      h4 {
+        color: #555;
+      }
+    }
+
+  }
+
+}
+
+.admin-upload-progress {
+  padding-top: 120px;
+
+  h4 {
+    text-align: center;
+  }
+
+  p {
+    text-align: right;
+    color: #999;
+  }
+
+  .admin-progress-bar {
+    background-color: #444;
+    margin: 10px 0;
+    @include background-image(linear-gradient(top, #444, #666));
+
+    .admin-progress {
+      background-color: #8db800;
+      @include background-image(linear-gradient(top, #a7d200, #8db800));
+      height: 32px;
+    }
+  }
+
+}
+
+

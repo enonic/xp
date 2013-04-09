@@ -1,0 +1,80 @@
+@import "../variables/core";
+
+$button-split-size: 28px !default;
+
+// Default color
+$admin-button-default-background-color: #2C76E9;
+// Alternative colors
+$admin-button-red: #e36500;
+$admin-button-grey: #cccccc;
+$admin-button-green: #669C34;
+// Small
+$button-small-border-radius: 0 !default;
+$button-small-padding: 6px 16px !default;
+$button-small-font-size: $admin-font-size-default !default;
+$button-small-font-weight: normal !default;
+
+// Medium
+$button-medium-border-radius: 0 !default;
+$button-medium-padding: 6px 12px !default;
+$button-medium-font-size: $admin-font-size-1 !default;
+$button-medium-font-weight: normal !default;
+
+// Large
+$button-large-border-radius: 0 !default;
+$button-large-padding: 6px 12px !default;
+$button-large-font-size: $admin-font-size-1 !default;
+$button-large-font-weight: normal !default;
+
+
+// Defaults
+$button-over-color: lighten($admin-button-default-background-color, 10);
+$button-disabled-color: lighten($admin-button-default-background-color, 20);
+
+$button-default-color: #ffffff !default;
+$button-default-base-color-over: $button-over-color !default;
+$button-default-base-color-focus: $button-default-base-color-over !default;
+$button-default-base-color-pressed: $button-default-base-color-over !default;
+$button-default-base-color-disabled: $button-disabled-color !default; //F7F7F7
+
+$button-default-border-color: $admin-button-default-background-color !default;
+$button-default-border-color-over: $button-over-color !default;
+$button-default-border-color-focus: $admin-button-default-background-color !default;
+$button-default-border-color-pressed: $admin-button-default-background-color !default;
+$button-default-border-color-disabled: $button-disabled-color !default; //F7F7F7
+
+$button-default-background-color: $admin-button-default-background-color !default;
+$button-default-background-color-over: $button-default-base-color-over !default;
+$button-default-background-color-focus: $button-default-background-color-over !default;
+$button-default-background-color-pressed: $button-default-base-color-pressed !default;
+$button-default-background-color-disabled: $button-default-base-color-pressed !default;
+
+$button-default-background-gradient: '';
+$button-default-background-gradient-over: '' !default;
+$button-default-background-gradient-focus: '' !default;
+$button-default-background-gradient-pressed: '' !default;
+$button-default-background-gradient-disabled: '' !default;
+
+// Toolbar button
+$button-toolbar-base-color: $admin-light-grey;
+
+$button-toolbar-color: #777 !default;
+$button-toolbar-color-over: #333 !default;
+
+$button-toolbar-border-color-over: $admin-light-grey !default;
+$button-toolbar-border-color-pressed: $admin-light-grey !default;
+
+$button-toolbar-background-color-over: $admin-light-grey !default;
+$button-toolbar-background-color-pressed: $admin-light-grey !default;
+
+/*
+$button-toolbar-color-focus: $button-toolbar-color-over;
+$button-toolbar-color-pressed: $button-toolbar-color !default;
+$button-toolbar-color-disabled: lighten($button-toolbar-color, 35) !default;
+*/
+
+$button-toolbar-background-gradient: '' !default;
+$button-toolbar-background-gradient-over: '' !default;
+$button-toolbar-background-gradient-focus: '';
+$button-toolbar-background-gradient-pressed: '' !default;
+$button-toolbar-background-gradient-disabled: null !default;

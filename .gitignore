@@ -8,4 +8,4 @@ target/
 *.iml
 *.ipr
 .idea
-
+.sass-cache
