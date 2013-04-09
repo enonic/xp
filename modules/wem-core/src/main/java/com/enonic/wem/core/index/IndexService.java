@@ -87,10 +87,9 @@ public class IndexService
 
     public void indexContent( final Content content )
     {
-        final Collection<IndexDocument> indexDocuments = ContentIndexDocumentsFactory.create( content );
-
         if ( !content.isTemporary() )
         {
+            final Collection<IndexDocument> indexDocuments = ContentIndexDocumentsFactory.create( content );
             elasticsearchIndexService.index( indexDocuments );
         }
     }
