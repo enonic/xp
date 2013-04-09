@@ -3,7 +3,8 @@ Ext.define('Admin.view.DetailPanel', {
     alias: 'widget.detailPanel',
     requires: [
         'Admin.view.DropDownButton',
-        'Admin.view.BaseContextMenu'
+        'Admin.view.BaseContextMenu',
+        'Admin.view.IframeContainer'
     ],
 
     layout: 'card',
@@ -36,7 +37,7 @@ Ext.define('Admin.view.DetailPanel', {
                 }
             }
             if (this.singleSelection.tabs.length > 0) {
-                this.changeTab(this.singleSelection.tabs[0].tab);
+                this.changeTab(this.singleSelection.tabs[0].name);
             }
         }
     },
@@ -44,6 +45,10 @@ Ext.define('Admin.view.DetailPanel', {
     initComponent: function () {
         if (this.showToolbar) {
             this.tbar = this.createToolBar();
+        }
+
+        if (this.isVertical) {
+            this.cls = this.cls + 'admin-detail-vertical';
         }
 
         this.callParent(arguments);
@@ -209,7 +214,7 @@ Ext.define('Admin.view.DetailPanel', {
             colspan: 3,
             tpl: Ext.create('Ext.XTemplate', '<ul class="admin-detail-nav">' +
                                              '<tpl for=".">' +
-                                             '<li data-tab="{tab}">{displayName}</li>' +
+                                             '<li data-tab="{name}">{displayName}</li>' +
                                              '</tpl>' +
                                              '</ul>'),
             data: me.singleSelection.tabs,
@@ -233,8 +238,8 @@ Ext.define('Admin.view.DetailPanel', {
                       '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>' +
                       '<div class="center"><h6>{data.displayName}</h6>' +
 
-                      // 18th of April solution!
-                      // We should refactor this class so the selection views always gets one data spec
+                          // 18th of April solution!
+                          // We should refactor this class so the selection views always gets one data spec
                       '<tpl if="data.description">' +
                       '<p>{data.description}</p></div>' +
                       '</tpl>' +
@@ -355,6 +360,10 @@ Ext.define('Admin.view.DetailPanel', {
 
             var previewPhoto = item.down('#previewPhoto');
             previewPhoto.update(data);
+
+            //Refresh iframe just for the xperience
+            this.changeTab('traffic');
+
         } else if ('largeBoxSelection' === item.itemId || 'smallBoxSelection' === item.itemId) {
             item.update(data);
         }
@@ -378,28 +387,38 @@ Ext.define('Admin.view.DetailPanel', {
         return this.data;
     },
 
+    getTab: function (name) {
+        var tabs = this.singleSelection.tabs;
+        for (var tab in tabs) {
+            if (tabs[tab].name === name) {
+                return tabs[tab];
+            }
+        }
+        return null;
+    },
+
     /*--------*/
     changeTab: function (selectedTab) {
-        var currentTab = this.singleSelection.tabData[selectedTab];
-        var target = this.down('#center');
-        // This clears the center everytime we click. This might not be the fastest solution.
-        target.remove(target.child());
-        target.update('');
-        if (currentTab.html) {
-            target.update(currentTab.html);
-        } else if (currentTab.item) {
-            target.add(currentTab.item);
-            currentTab.callback(target);
-        }
-
-        var elements = Ext.dom.Query.select('*[data-tab=' + selectedTab + ']');
-        for (var i = 0; i < elements.length; i++) {
-            var children = elements[i].parentElement.children;
-            for (var j = 0; j < children.length; j++) {
-                children[j].className = '';
+        var currentTab = this.getTab(selectedTab);
+        if (currentTab) {
+            var target = this.down('#center');
+            // This clears the center everytime we click. This might not be the fastest solution.
+            target.remove(target.child());
+            if (currentTab.items) {
+                target.add(currentTab.items);
+                if (currentTab.callback) {
+                    currentTab.callback(target);
+                }
             }
-            elements[i].className = 'active';
-        }
 
+            var elements = Ext.dom.Query.select('*[data-tab=' + selectedTab + ']');
+            for (var i = 0; i < elements.length; i++) {
+                var children = elements[i].parentElement.children;
+                for (var j = 0; j < children.length; j++) {
+                    children[j].className = '';
+                }
+                elements[i].className = 'active';
+            }
+        }
     }
 });

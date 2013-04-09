@@ -32,7 +32,6 @@
             <li class="active"><a href="#">Home</a></li>
             <li><a href="#">Community</a></li>
             <li><a href="#">Try now</a></li>
-            <li><a href="#">Documentation</a></li>
             <li><a href="#">Support</a></li>
             <li><a href="#">Contact us</a></li>
           </ul>

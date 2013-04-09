@@ -18,29 +18,26 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         this.singleSelection.tabs = [
             {
                 displayName: 'Traffic',
-                tab: 'traffic'
+                name: 'traffic',
+                items: [
+                    {xtype: 'iframe', url: '/dev/detailpanel/analytics.jsp', iFrameCls: (me.isVertical ? 'admin-detail-vertical' : '') }
+                ]
             },
             {
                 displayName: 'Graph',
-                tab: 'graph'
+                name: 'graph',
+                items: [
+                    {xtype: 'component', html: '<h1>Graph</h1>'}
+                ]
             },
             {
                 displayName: 'Meta',
-                tab: 'meta'
+                name: 'meta',
+                items: [
+                    {xtype: 'component', html: '<h1>Meta</h1>'}
+                ]
             }
         ];
-
-        this.singleSelection.tabData = {
-            traffic: {
-                html: '<h1>Traffic</h1>'
-            },
-            meta: {
-                html: '<h1>Meta</h1>'
-            },
-            graph: {
-                html: '<h1>Graph</h1>'
-            }
-        };
 
         //Handlers for this items put in the Admin.controller.contentManager.Controller
         this.actionButtonItems = [
@@ -107,12 +104,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
         this.callParent(arguments);
         this.addEvents('deselectrecord');
-    },
-
-    loadLivePreview: function (item) {
-        var livePreview = item.down('#livePreview');
-        //TODO update urls when they are ready
-        livePreview.load('/dev/live-edit/page/bootstrap.jsp', true);
     },
 
 
