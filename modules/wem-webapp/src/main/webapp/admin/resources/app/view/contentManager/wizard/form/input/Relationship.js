@@ -219,6 +219,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
                 datachanged: function (store) {
                     me.updateHiddenValue();
                     if (me.contentStore) {
+                        me.contentStore.clearFilter(true);
                         me.contentStore.filter({
                             filterFn: function (content) {
                                 return !me.selectedContentStore.findRecord('id', content.get('id'));
