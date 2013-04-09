@@ -56,6 +56,7 @@ Ext.define('Admin.view.WizardPanel', {
         this.items = [
             this.createHeaderPane(),
             {
+                itemId : 'bottomPanel',
                 xtype: 'container',
                 autoScroll: true,
                 padding: '20 0 0 0',
@@ -155,9 +156,22 @@ Ext.define('Admin.view.WizardPanel', {
                         ]
                     },
                     this.wizard
-                ]
+                ],
+                listeners : {
+                    scroll: {
+                             element: 'el',
+                             fn: function() {
+                                 me.updateShadow(me);
+                             }
+                    }
+                }
             }
         ];
+
+        Ext.EventManager.onWindowResize(function () {
+            me.updateShadow(me);
+        });
+
         this.callParent(arguments);
         this.addEvents(events);
         this.wizard.addEvents(events);
@@ -173,6 +187,22 @@ Ext.define('Admin.view.WizardPanel', {
 
         // bind afterrender events
         this.on('afterrender', this.bindItemListeners);
+
+        me.updateShadow(me);
+    },
+
+    updateShadow : function (me) {
+        var bottomPanel = me.down('#bottomPanel' ).getEl();
+        if (bottomPanel) {
+            var hasScroll = bottomPanel.dom.scrollHeight > bottomPanel.dom.clientHeight;
+            var positionPanel = me.down('#positionPanel' ).getEl();
+            console.log();
+            if (hasScroll && bottomPanel.dom.scrollTop != 0) {
+                positionPanel.applyStyles({ boxShadow : '0 10px 10px -6px #898989' });
+            } else {
+                positionPanel.applyStyles({ boxShadow : undefined });
+            }
+        }
     },
 
     updateNavButton: function (element, color) {
@@ -488,11 +518,13 @@ Ext.define('Admin.view.WizardPanel', {
                     tdAttrs: { width: '100%'}
                 }),
                 {
+                    itemId : 'positionPanel',
                     xtype: 'container',
-                    layout: 'hbox',
                     style: {
-                        backgroundColor: '#EEEEEE'
+                        backgroundColor: '#EEEEEE',
+                        marginBottom: '10px'
                     },
+                    layout: 'hbox',
                     items: [
                         Ext.applyIf(this.createRibbon(), {
                             flex: 1
