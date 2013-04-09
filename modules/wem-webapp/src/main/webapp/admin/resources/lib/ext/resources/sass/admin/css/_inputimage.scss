@@ -1,0 +1,92 @@
+@mixin admin-inputimage-bar {
+    position: absolute;
+    overflow: hidden;
+    background-color: #fff;
+    @include opacity(0.8);
+    width: 100%;
+    padding: 3px;
+    display: none;
+}
+
+.admin-inputimage-combo {
+    position: relative;
+
+    input.admin-inputimage-input {
+        height: 36px;
+        padding: 4px 90px 4px 58px;
+        font-size: 15px;
+        line-height: 16px;
+    }
+
+    .admin-image-icon {
+        position: absolute;
+        left: 13px;
+        top: 5px;
+        width: 25px;
+        height: 25px;
+    }
+
+    .admin-library-button {
+        position: absolute;
+        right: 10px;
+        top: 9px;
+        text-decoration: none;
+    }
+
+}
+
+.admin-inputimage-list {
+
+    .x-boundlist-item {
+        padding: 8px;
+
+        img {
+            float: left;
+        }
+
+        .info {
+            margin-left: 42px;
+
+            p {
+                margin: 0;
+            }
+        }
+    }
+
+}
+
+.admin-inputimage {
+    position: relative;
+    margin: 0 30px 30px 0;
+    float: left;
+    min-width: 140px;
+    min-height: 140px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: #ccc;
+
+    .top-bar {
+        @include admin-inputimage-bar();
+        top: 0;
+        text-align: right;
+    }
+
+    .bottom-bar {
+        @include admin-inputimage-bar();
+        bottom: 0;
+
+        h6 {
+            font-size: 11px !important;
+            line-height: 14px;
+        }
+    }
+
+    &.over {
+
+        .top-bar,
+        .bottom-bar {
+            display: block;
+        }
+    }
+}

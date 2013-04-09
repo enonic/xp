@@ -177,14 +177,14 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             queryParam: 'fulltext',
             autoSelect: false,
 
-            fieldCls: 'admin-relationship-input',
+            fieldCls: 'admin-inputimage-input',
             displayField: 'displayName',
             valueField: 'id',
             tpl: listItemTpl,
             fieldSubTpl: fieldTpl,
-            cls: 'admin-relationship-combo',
+            cls: 'admin-inputimage-combo',
             listConfig: {
-                cls: 'admin-relationship-list',
+                cls: 'admin-inputimage-list',
                 emptyText: 'No matching items'
             },
 
@@ -230,8 +230,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
 
         var template = new Ext.XTemplate(
             '<tpl for=".">',
-            '   <div class="admin-relationship" style="background-image: url({iconUrl})">',
-            '       <div class="top-bar"><a href="javascript:;" class="admin-remove-button">Remove</a></div>',
+            '   <div class="admin-inputimage" style="background-image: url({iconUrl})">',
+//            '       <div class="top-bar"><a href="javascript:;" class="admin-remove-button">Remove</a></div>',
             '       <div class="bottom-bar">',
             '           <h6>{displayName}</h6>',
             '       </div>',
@@ -242,16 +242,18 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         return Ext.create('Ext.view.View', {
             store: me.selectedContentStore,
             tpl: template,
-            itemSelector: 'div.admin-relationship',
+            itemSelector: 'div.admin-inputimage',
             emptyText: 'No items selected',
             trackOver: true,
             overItemCls: 'over',
             deferEmptyText: false,
+            width: 520,
             listeners: {
                 itemclick: function (view, contentModel, item, index, e) {
                     var clickedElement = Ext.fly(e.target);
-                    if (clickedElement.hasCls('admin-remove-button')) {
-                        me.selectedContentStore.remove(contentModel);
+                    if (clickedElement.hasCls('admin-inputimage')) {
+                        // me.selectedContentStore.remove(contentModel);
+                        // show edit/remove panel
                     }
                 }
             }
