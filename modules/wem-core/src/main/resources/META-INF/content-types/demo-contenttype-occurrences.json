@@ -89,7 +89,7 @@
                 "label": "Set with min 0 and max 1",
                 "immutable": false,
                 "occurrences": {
-                    "minimum": 1,
+                    "minimum": 0,
                     "maximum": 1
                 },
                 "customText": null,
