@@ -477,11 +477,37 @@ Ext.define('Admin.controller.contentManager.Controller', {
             }
         };
 
+        var ranges = [];
+        if (values.ranges) {
+            for (var i = 0; i < values.ranges.length; i++) {
+                var lower;
+                switch (values.ranges[i]) {
+                case '>1 day':
+                    lower = oneDayAgo;
+                    break;
+                case '>1 hour':
+                    lower = oneHourAgo;
+                    break;
+                case '>1 week':
+                    lower = oneWeekAgo;
+                    break;
+                default:
+                    lower = null;
+                    break;
+                }
+                ranges.push({
+                    lower: lower,
+                    upper: null
+                })
+            }
+        }
+
         return {
             fulltext: values.query || '',
             contentTypes: values.type || [],
             spaces: values.space || [],
-            facets: facets,
+            ranges: ranges || [],
+            facets: facets || {},
             include: true
         };
     },

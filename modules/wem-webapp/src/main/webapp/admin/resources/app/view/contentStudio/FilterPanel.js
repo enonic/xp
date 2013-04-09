@@ -2,8 +2,6 @@ Ext.define('Admin.view.contentStudio.FilterPanel', {
     extend: 'Admin.view.FilterPanel',
     alias: 'widget.contentStudioFilter',
 
-    includeSearch: true,
-    updateFacetCount: 'query',
     facetData: [
         {
             "name": "Type",
