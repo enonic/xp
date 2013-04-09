@@ -2897,35 +2897,33 @@ div.admin-load-mask {
   .x-btn.admin-dropdown-button .x-btn-inner {
     font-size: 14px; }
 
-/* line 3, ../sass/admin/css/_upload-window.scss */
-.admin-upload-form .admin-drop-zone {
-  border: 6px dashed #ccc !important;
-  background-color: #fff; }
-  /* line 7, ../sass/admin/css/_upload-window.scss */
-  .admin-upload-form .admin-drop-zone h4 {
-    font-weight: bold !important;
-    color: #ccc;
-    text-align: center;
-    margin-top: 150px !important; }
-  /* line 14, ../sass/admin/css/_upload-window.scss */
-  .admin-upload-form .admin-drop-zone.over {
-    border-color: #a8c6fe !important;
+/* line 1, ../sass/admin/css/_upload-window.scss */
+.admin-upload-form {
+  padding: 30px 20px 50px; }
+  /* line 4, ../sass/admin/css/_upload-window.scss */
+  .admin-upload-form .admin-drop-zone {
+    border: 3px dashed #a8c6fe !important;
     background-color: #f1f5fe; }
-    /* line 18, ../sass/admin/css/_upload-window.scss */
-    .admin-upload-form .admin-drop-zone.over h4 {
-      color: #555; }
+    /* line 8, ../sass/admin/css/_upload-window.scss */
+    .admin-upload-form .admin-drop-zone h4 {
+      font-weight: bold !important;
+      color: #555;
+      text-align: center;
+      margin-top: 105px !important; }
 
-/* line 27, ../sass/admin/css/_upload-window.scss */
+/* line 17, ../sass/admin/css/_upload-window.scss */
 .admin-upload-progress {
-  padding-top: 120px; }
-  /* line 30, ../sass/admin/css/_upload-window.scss */
+  padding-top: 120px;
+  padding-left: 20px;
+  padding-right: 20px; }
+  /* line 22, ../sass/admin/css/_upload-window.scss */
   .admin-upload-progress h4 {
     text-align: center; }
-  /* line 34, ../sass/admin/css/_upload-window.scss */
+  /* line 26, ../sass/admin/css/_upload-window.scss */
   .admin-upload-progress p {
     text-align: right;
     color: #999; }
-  /* line 39, ../sass/admin/css/_upload-window.scss */
+  /* line 31, ../sass/admin/css/_upload-window.scss */
   .admin-upload-progress .admin-progress-bar {
     background-color: #444;
     margin: 10px 0;
@@ -2934,7 +2932,7 @@ div.admin-load-mask {
     background-image: -moz-linear-gradient(top, #444444, #666666);
     background-image: -o-linear-gradient(top, #444444, #666666);
     background-image: linear-gradient(top, #444444, #666666); }
-    /* line 44, ../sass/admin/css/_upload-window.scss */
+    /* line 36, ../sass/admin/css/_upload-window.scss */
     .admin-upload-progress .admin-progress-bar .admin-progress {
       background-color: #8db800;
       background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #a7d200), color-stop(100%, #8db800));
