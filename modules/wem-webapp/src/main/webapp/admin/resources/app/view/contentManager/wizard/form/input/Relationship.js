@@ -92,7 +92,13 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             '</tpl>'
         ];
 
-        me.contentStore = new Admin.store.contentManager.ContentStore();
+        me.contentStore = new Admin.store.contentManager.ContentStore({
+            filters: [
+                function (content) {
+                    return !me.selectedContentStore.findRecord('id', content.get('id'));
+                }
+            ]
+        });
 
         var relationshipTypeName = me.inputConfig.type.config.relationshipType;
         me.remoteGetRelationshipType(relationshipTypeName, function (relationshipType) {
@@ -213,9 +219,10 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
                 datachanged: function (store) {
                     me.updateHiddenValue();
                     if (me.contentStore) {
-                        me.contentStore.clearFilter(true);
-                        me.contentStore.filterBy(function (content) {
-                            return !me.selectedContentStore.findRecord('id', content.get('id'));
+                        me.contentStore.filter({
+                            filterFn: function (content) {
+                                return !me.selectedContentStore.findRecord('id', content.get('id'));
+                            }
                         });
                     }
                     try {
