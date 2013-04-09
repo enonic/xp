@@ -4,7 +4,8 @@ Ext.define('Admin.view.TopBar', {
 
     requires: [
         'Admin.view.TopBarMenu',
-        'Admin.view.AdminImageButton'
+        'Admin.view.AdminImageButton',
+        'Admin.lib.UriHelper'
     ],
 
     buttonAlign: 'center',
@@ -62,11 +63,11 @@ Ext.define('Admin.view.TopBar', {
             items: [
                 {
                     xtype: 'adminImageButton',
-                    icon: "rest/account/image/default/user",
+                    icon: Admin.lib.UriHelper.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
                     popupTpl: Templates.common.userPopUp,
                     popupData: {
                         userName: "Thomas Lund Sigdestad",
-                        photoUrl: "rest/account/image/default/user",
+                        photoUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
                         qName: 'system/tsi'
                     }
                 }
