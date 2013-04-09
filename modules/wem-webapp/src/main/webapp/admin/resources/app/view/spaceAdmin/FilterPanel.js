@@ -2,8 +2,6 @@ Ext.define('Admin.view.spaceAdmin.FilterPanel', {
     extend: 'Admin.view.FilterPanel',
     alias: 'widget.spaceFilter',
 
-    includeSearch: true,
-    updateFacetCount: 'query',
     facetData: [
         {
             "name": 'Space',

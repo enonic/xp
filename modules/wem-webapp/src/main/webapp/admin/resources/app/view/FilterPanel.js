@@ -13,15 +13,28 @@ Ext.define('Admin.view.FilterPanel', {
 
     includeSearch: true,
 
-    // all - always show empty facets,
-    // last - show empty facets only for last modified group,
-    // none - hide empty facets
-    includeEmptyFacets: 'all',
+    /**
+     * @param includeEmptyFacets defines whether facets with 0 count should be shown
+     * all - always show empty facets,
+     * last - show empty facets only for last modified group,
+     * none - hide empty facets
+     */
+    includeEmptyFacets: 'none',
 
-    // always - update count every time the filter is changed
-    // query - update when query is made only
-    // never - set counts just once on start
-    updateFacetCount: 'always',
+    /**
+     * @param updateCountCriteria defines when to update facet count
+     * always - update count every time the filter is changed
+     * query - update when query is made only
+     * never - set counts just once on start
+     */
+    updateCountCriteria: 'always',
+
+    /**
+     * @param updateCountStrategy defines what facet counts should be updated
+     * all - update counts in all groups
+     * notlast - update counts for all except the last modified group
+     */
+    updateCountStrategy: 'notlast',
 
     facetTpl: undefined,
     facetData: undefined,
@@ -39,33 +52,46 @@ Ext.define('Admin.view.FilterPanel', {
                 '<tpl for=".">',
                 '<div class="admin-facet-group" name="{name}">',
                 '<h2>{name}</h2>',
-                '<tpl for="terms">',
+                '<tpl for="terms">{[this.updateFacetCount(values, parent)]}',
                 '<tpl if="this.shouldShowTerm(values, parent)">',
                 '<div class="admin-facet {[values.selected ? \'checked\' : \'\']}">',
                 '<input type="checkbox" id="facet-{term}" value="{name}" class="admin-facet-cb" name="{parent.name}" {[values.selected ? \'checked="true"\' : \'\']} />',
-                '<label for="facet-{key}" class="admin-facet-lbl"> {name} ({[this.getTermCount(values)]})</label>',
+                '<label for="facet-{key}" class="admin-facet-lbl"> {[values.displayName || values.name]} ({[this.getTermCount(values)]})</label>',
                 '</div>',
                 '</tpl>',
                 '</tpl>',
                 '</div>',
                 '</tpl>',
                 {
-                    shouldShowTerm: function (term, facet) {
-                        //update term count if needed
-                        if (me.updateFacetCount === 'always' ||
-                            (me.updateFacetCount === 'query' && me.queryDirty) ||
-                            !Ext.isDefined(me.facetCountMap[term.name])) {
+                    updateFacetCount: function (term, facet) {
+
+                        // when to update
+                        var isCriteria = me.updateCountCriteria == 'always' || (me.updateCountCriteria == 'query' && me.queryDirty);
+
+                        // what to update
+                        var isStrategy = me.updateCountStrategy == 'all' ||
+                                         (me.updateCountStrategy == 'notlast' && me.lastFacetName != facet.name);
+
+                        var isDefined = Ext.isDefined(me.facetCountMap[term.name]);
+
+                        if (!me.isDirty() || !isDefined || ( isCriteria && isStrategy )) {
 
                             me.facetCountMap[term.name] = term.count;
                         }
+                    },
+
+                    shouldShowTerm: function (term, facet) {
+
                         // decide if it should be shown
                         return me.includeEmptyFacets == 'all' ||
-                               (me.includeEmptyFacets == 'last' && me.lastFacetName == facet.name) ||
-                               term.count > 0 || term.selected || this.isSelected(term, facet);
+                               (me.includeEmptyFacets == 'last' && (!me.lastFacetName || me.lastFacetName == facet.name)) ||
+                               me.facetCountMap[term.name] > 0 || term.selected || this.isSelected(term, facet);
                     },
+
                     getTermCount: function (term) {
                         return me.facetCountMap[term.name];
                     },
+
                     isSelected: function (term, facet) {
                         var terms = me.selectedValues[facet.name];
                         if (terms) {
@@ -101,7 +127,7 @@ Ext.define('Admin.view.FilterPanel', {
                     fn: me.reset,
                     scope: me
                 },
-                afterrender: function(cmp) {
+                afterrender: function (cmp) {
                     // hiding() with hideMode: 'visibility' doesn't retain components space
                     // so we manually operate el.visibility
                     cmp.el.setStyle('visibility', 'hidden');
@@ -154,7 +180,7 @@ Ext.define('Admin.view.FilterPanel', {
                     this.searchFilterTypingTimer = null;
                 }
                 this.searchFilterTypingTimer = window.setTimeout(function () {
-                    if (me.updateFacetCount === 'query') {
+                    if (me.updateCountCriteria === 'query') {
                         me.queryDirty = true;
                     }
                     if (me.includeEmptyFacets == 'last') {
@@ -244,7 +270,7 @@ Ext.define('Admin.view.FilterPanel', {
             }
         });
 
-        if (this.updateFacetCount == 'query' && this.queryDirty && checkedCount === 0) {
+        if (this.updateCountCriteria == 'query' && this.queryDirty && checkedCount === 0) {
             this.queryDirty = false;
         }
 
@@ -285,6 +311,10 @@ Ext.define('Admin.view.FilterPanel', {
             });
 
             this.clearLink.el.setStyle('visibility', 'hidden');
+
+            if (this.includeEmptyFacets == 'last') {
+                this.lastFacetName = undefined;
+            }
         }
 
     },
