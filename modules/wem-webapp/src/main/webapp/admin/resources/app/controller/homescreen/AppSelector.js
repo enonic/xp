@@ -23,31 +23,11 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
 
         Admin.MessageBus.on('topBar.onUpdateAppTabCount', function (config) {
             /* For 18/4 */
-
             // TODO: Check if config exists
             me.appTabCount.push(config);
 
-            me.setAppTabCountInTile(config);
+            me.updateTabCountInTile(config);
         }, me);
-
-        /*
-        me.getAppsStore().on('datachanged', function (store) {
-            store.each(function (record) {
-
-                Ext.Array.each(me.appTabCount, function (app, i) {
-                    if (app.appId === record.raw.id) {
-                        console.log('match');
-                        me.setAppTabCountInTile(app);
-
-                    }
-
-                });
-
-            });
-
-        });
-        */
-
 
 
         me.application.on({
@@ -65,7 +45,7 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
         });
 
         me.control({
-            '#appSelectorList': {
+            '#appSelectorListView': {
                 afterrender: function (view) {
                     me.registerAppSelectorKeyBindings();
                     view.getSearchTextField().on('change', me.onFilterTextFieldChange, me);
@@ -82,9 +62,7 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
                     me.updateAppInfoText(null);
                 },
                 refresh: function (view) {
-
-                    me.updateAppTabCountInTiles();
-
+                    me.refreshTabCountInTiles();
                 }
             }
         });
@@ -104,7 +82,6 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
         Ext.Array.forEach(appSelectorElements, function (el) {
             Ext.fly(el).setStyle('display', 'block');
         });
-
 
         me.focusFilterTextField();
 
@@ -232,19 +209,19 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
     },
 
 
-    updateAppTabCountInTiles: function () {
+    refreshTabCountInTiles: function () {
         var me = this;
         me.getAppsStore().each(function (record) {
             Ext.Array.each(me.appTabCount, function (app, i) {
                 if (app.appId === record.raw.id) {
-                    me.setAppTabCountInTile(app);
+                    me.updateTabCountInTile(app);
                 }
             });
         });
     },
 
 
-    setAppTabCountInTile: function (config) {
+    updateTabCountInTile: function (config) {
         var dom = Ext.dom.Query,
             tileNode = dom.selectNode('[data-tile-id=' + config.appId + ']');
 
@@ -256,6 +233,7 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
 
             if (config.tabCount > 0) {
                 countElement.setHTML(config.tabCount).show();
+                countElement.set({title: config.tabCount + ' tab(s) open'});
             } else {
                 countElement.setHTML(0).hide();
             }

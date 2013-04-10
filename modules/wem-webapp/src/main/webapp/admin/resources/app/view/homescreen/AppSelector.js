@@ -2,7 +2,7 @@ Ext.define('Admin.view.homescreen.AppSelector', {
     extend: 'Ext.view.View',
     alias: 'widget.appSelector',
 
-    itemId: 'appSelectorList',
+    itemId: 'appSelectorListView',
     renderTo: 'admin-home-app-tiles-placeholder',
     tpl: '<tpl for=".">' +
          '  <div data-tile-id="{id}" class="admin-home-app-tile">' +
