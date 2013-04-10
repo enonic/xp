@@ -13,11 +13,11 @@
         "name": "all_types",
         "module": "mymodule",
         "qualifiedName": "mymodule:all_types",
-        "displayName": null,
+        "displayName": "All the Types",
         "contentDisplayNameScript": null,
-        "superType": "system:unstructured",
+        "superType": "system:content",
         "isAbstract": false,
-        "isFinal": false,
+        "isFinal": true,
         "allowChildren": true,
         "form": [
             {

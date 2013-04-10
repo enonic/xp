@@ -32,13 +32,13 @@ public class FormItemXmlSerializer
 
     public static final String INDEXED = "indexed";
 
-    public static final String CUSTOM_TEXT = "customText";
+    public static final String CUSTOM_TEXT = "custom-text";
 
-    public static final String HELP_TEXT = "helpText";
+    public static final String HELP_TEXT = "help-text";
 
     public static final String REFERENCE = "reference";
 
-    public static final String VALIDATION_REGEX = "validationRegex";
+    public static final String VALIDATION_REGEX = "validation-regex";
 
     private final InputTypeConfigXmlSerializer inputTypeConfigSerializer = new InputTypeConfigXmlSerializer();
 

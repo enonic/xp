@@ -7,8 +7,8 @@
     <label>My input</label>
     <immutable>true</immutable>
     <indexed>true</indexed>
-    <customText>Custom text</customText>
-    <helpText>Help text</helpText>
+    <custom-text>Custom text</custom-text>
+    <help-text>Help text</help-text>
     <occurrences minimum="1" maximum="3"/>
   </input>
 </mixin>

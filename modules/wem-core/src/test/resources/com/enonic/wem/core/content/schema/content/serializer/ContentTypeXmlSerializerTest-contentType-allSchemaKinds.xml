@@ -12,8 +12,8 @@
     <form-item-set name="mySet">
       <label/>
       <immutable>false</immutable>
-      <customText/>
-      <helpText/>
+      <custom-text/>
+      <help-text/>
       <occurrences minimum="0" maximum="1"/>
       <items>
         <layout name="myFieldSet" type="FieldSet">
@@ -23,8 +23,8 @@
               <label/>
               <immutable>false</immutable>
               <indexed>false</indexed>
-              <customText/>
-              <helpText/>
+              <custom-text/>
+              <help-text/>
               <occurrences minimum="0" maximum="1"/>
             </input>
           </items>

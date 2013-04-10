@@ -13,64 +13,64 @@
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText/>
-      <helpText/>
+      <custom-text/>
+      <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="Date" built-in="true" name="myDate">
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText/>
-      <helpText/>
+      <custom-text/>
+      <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="DecimalNumber" built-in="true" name="myDecimalNumber">
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText/>
-      <helpText/>
+      <custom-text/>
+      <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="GeoLocation" built-in="true" name="myGeoLocation">
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText/>
-      <helpText/>
+      <custom-text/>
+      <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="HtmlArea" built-in="true" name="myHtmlArea">
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText/>
-      <helpText/>
+      <custom-text/>
+      <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="Money" built-in="true" name="myMoney">
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText/>
-      <helpText/>
+      <custom-text/>
+      <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="Phone" built-in="true" name="myPhone">
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText/>
-      <helpText/>
+      <custom-text/>
+      <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="SingleSelector" built-in="true" name="mySingleSelector">
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText/>
-      <helpText/>
+      <custom-text/>
+      <help-text/>
       <occurrences minimum="0" maximum="1"/>
       <config>
         <options>
@@ -90,48 +90,48 @@
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText/>
-      <helpText/>
+      <custom-text/>
+      <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="TextLine" built-in="true" name="myTextLine">
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText/>
-      <helpText/>
+      <custom-text/>
+      <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="TextArea" built-in="true" name="myTextArea">
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText/>
-      <helpText/>
+      <custom-text/>
+      <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="WholeNumber" built-in="true" name="myWholeNumber">
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText/>
-      <helpText/>
+      <custom-text/>
+      <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="Xml" built-in="true" name="myXml">
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText/>
-      <helpText/>
+      <custom-text/>
+      <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="Relationship" built-in="true" name="myRelationship">
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText/>
-      <helpText/>
+      <custom-text/>
+      <help-text/>
       <occurrences minimum="0" maximum="1"/>
       <config>
         <relationship-type>system:like</relationship-type>
@@ -141,8 +141,8 @@
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText/>
-      <helpText/>
+      <custom-text/>
+      <help-text/>
       <occurrences minimum="0" maximum="1"/>
       <config>
         <relationship-type>system:default</relationship-type>
