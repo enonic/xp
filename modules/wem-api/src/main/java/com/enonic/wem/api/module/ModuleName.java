@@ -14,7 +14,9 @@ public final class ModuleName
         Preconditions.checkNotNull( name, "module name cannot be null" );
         Preconditions.checkArgument( !name.trim().isEmpty(), "module name cannot be empty" );
         Preconditions.checkArgument( !name.trim().isEmpty(), "module name cannot be empty" );
-        Preconditions.checkArgument( name.matches( "\\p{javaLowerCase}*" ), "module name must be in lower case: " + name );
+        Preconditions.checkArgument( name.matches( "[_a-z]([a-z0-9_\\-\\.])*" ),
+                                     "module name can only start with characters from a-z, and further consist letters a-z, digits or the following special chars: _-." +
+                                         name );
         this.name = name;
     }
 
