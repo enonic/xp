@@ -12,6 +12,7 @@ import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;
 import com.enonic.wem.api.content.schema.mixin.editor.SetMixinEditor;
+import com.enonic.wem.api.exception.BaseException;
 import com.enonic.wem.core.content.schema.mixin.MixinXmlSerializer;
 import com.enonic.wem.core.support.serializer.ParsingException;
 import com.enonic.wem.web.json.JsonErrorResult;
@@ -67,37 +68,51 @@ public class CreateOrUpdateMixinRpcHandler
 
         if ( !mixinExists( mixin.getQualifiedName() ) )
         {
-            final CreateMixin createCommand = buildCreateMixinCommand( mixin, icon );
-            client.execute( createCommand );
-            context.setResult( CreateOrUpdateMixinJsonResult.created() );
+            createMixin( context, mixin, icon );
         }
         else
         {
-            final UpdateMixin updateCommand = buildUpdateMixinCommand( mixin, icon );
-            client.execute( updateCommand );
-            context.setResult( CreateOrUpdateMixinJsonResult.updated() );
+            updateMixin( context, mixin, icon );
         }
     }
 
-    private CreateMixin buildCreateMixinCommand( final Mixin mixin, final Icon icon )
-    {
-        return mixin().create().
-            displayName( mixin.getDisplayName() ).
-            formItem( mixin.getFormItem() ).
-            moduleName( mixin.getModuleName() ).
-            icon( icon );
-    }
-
-    private UpdateMixin buildUpdateMixinCommand( final Mixin mixin, final Icon icon )
+    private void updateMixin( final JsonRpcContext context, final Mixin mixin, final Icon icon )
     {
         final SetMixinEditor editor = newSetMixinEditor().
             displayName( mixin.getDisplayName() ).
             formItem( mixin.getFormItem() ).
             icon( icon ).
             build();
-        return mixin().update().
+        final UpdateMixin updateCommand = mixin().update().
             qualifiedName( mixin.getQualifiedName() ).
             editor( editor );
+        try
+        {
+            client.execute( updateCommand );
+            context.setResult( CreateOrUpdateMixinJsonResult.updated() );
+        }
+        catch ( BaseException e )
+        {
+            context.setResult( new JsonErrorResult( e.getMessage() ) );
+        }
+    }
+
+    private void createMixin( final JsonRpcContext context, final Mixin mixin, final Icon icon )
+    {
+        final CreateMixin createCommand = mixin().create().
+            displayName( mixin.getDisplayName() ).
+            formItem( mixin.getFormItem() ).
+            moduleName( mixin.getModuleName() ).
+            icon( icon );
+        try
+        {
+            client.execute( createCommand );
+            context.setResult( CreateOrUpdateMixinJsonResult.created() );
+        }
+        catch ( BaseException e )
+        {
+            context.setResult( new JsonErrorResult( e.getMessage() ) );
+        }
     }
 
     private boolean mixinExists( final QualifiedMixinName qualifiedName )

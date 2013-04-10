@@ -2,6 +2,7 @@ package com.enonic.wem.web.rest.rpc.content.schema.relationship;
 
 
 import javax.inject.Inject;
+
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Icon;
@@ -14,6 +15,7 @@ import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeN
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.schema.relationship.RelationshipType;
 import com.enonic.wem.api.content.schema.relationship.editor.SetRelationshipTypeEditor;
+import com.enonic.wem.api.exception.BaseException;
 import com.enonic.wem.core.content.schema.relationship.RelationshipTypeXmlSerializer;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.web.json.JsonErrorResult;
@@ -69,35 +71,59 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
 
         if ( !exists( relationshipType.getQualifiedName() ) )
         {
-            final CreateRelationshipType createCommand = Commands.relationshipType().create();
-            createCommand.
-                module( relationshipType.getModuleName() ).
-                name( relationshipType.getName() ).
-                displayName( relationshipType.getDisplayName() ).
-                fromSemantic( relationshipType.getFromSemantic() ).
-                toSemantic( relationshipType.getToSemantic() ).
-                allowedFromTypes( relationshipType.getAllowedFromTypes() ).
-                allowedToTypes( relationshipType.getAllowedToTypes() ).
-                icon( icon );
-            client.execute( createCommand );
-            context.setResult( CreateOrUpdateRelationshipTypeJsonResult.created() );
+            createRelationshipType( context, relationshipType, icon );
         }
         else
         {
-            final UpdateRelationshipType updateCommand = Commands.relationshipType().update();
-            updateCommand.selector( relationshipType.getQualifiedName() );
-            updateCommand.editor( SetRelationshipTypeEditor.newSetRelationshipTypeEditor().
-                displayName( relationshipType.getDisplayName() ).
-                fromSemantic( relationshipType.getFromSemantic() ).
-                toSemantic( relationshipType.getToSemantic() ).
-                allowedFromTypes( relationshipType.getAllowedFromTypes() ).
-                allowedToTypes( relationshipType.getAllowedToTypes() ).
-                icon( icon ).
-                build() );
+            updateRelationshipType( context, relationshipType, icon );
+        }
+    }
 
+    private void updateRelationshipType( final JsonRpcContext context, final RelationshipType relationshipType, final Icon icon )
+    {
+        final UpdateRelationshipType updateCommand = Commands.relationshipType().update();
+        updateCommand.selector( relationshipType.getQualifiedName() );
+        updateCommand.editor( SetRelationshipTypeEditor.newSetRelationshipTypeEditor().
+            displayName( relationshipType.getDisplayName() ).
+            fromSemantic( relationshipType.getFromSemantic() ).
+            toSemantic( relationshipType.getToSemantic() ).
+            allowedFromTypes( relationshipType.getAllowedFromTypes() ).
+            allowedToTypes( relationshipType.getAllowedToTypes() ).
+            icon( icon ).
+            build() );
+
+        try
+        {
             client.execute( updateCommand );
-
             context.setResult( CreateOrUpdateRelationshipTypeJsonResult.updated() );
+        }
+        catch ( BaseException e )
+        {
+            context.setResult( new JsonErrorResult( e.getMessage() ) );
+        }
+    }
+
+    private void createRelationshipType( final JsonRpcContext context, final RelationshipType relationshipType, final Icon icon )
+    {
+        final CreateRelationshipType createCommand = Commands.relationshipType().create();
+        createCommand.
+            module( relationshipType.getModuleName() ).
+            name( relationshipType.getName() ).
+            displayName( relationshipType.getDisplayName() ).
+            fromSemantic( relationshipType.getFromSemantic() ).
+            toSemantic( relationshipType.getToSemantic() ).
+            allowedFromTypes( relationshipType.getAllowedFromTypes() ).
+            allowedToTypes( relationshipType.getAllowedToTypes() ).
+            icon( icon );
+
+        try
+        {
+            client.execute( createCommand );
+            context.setResult( CreateOrUpdateRelationshipTypeJsonResult.created() );
+        }
+        catch ( BaseException e )
+        {
+            context.setResult( new JsonErrorResult( e.getMessage() ) );
         }
     }
 

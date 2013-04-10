@@ -13,6 +13,8 @@ import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.schema.content.editor.ContentTypeEditor;
+import com.enonic.wem.api.content.schema.content.validator.InvalidContentTypeException;
+import com.enonic.wem.api.exception.BaseException;
 import com.enonic.wem.core.content.schema.content.serializer.ContentTypeXmlSerializer;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.web.json.JsonErrorResult;
@@ -76,36 +78,66 @@ public class CreateOrUpdateContentTypeRpcHandler
 
         if ( !contentTypeExists( contentType.getQualifiedName() ) )
         {
-            final CreateContentType createCommand = contentType().create().
-                name( contentType.getName() ).
-                displayName( contentType.getDisplayName() ).
-                superType( contentType.getSuperType() ).
-                setAbstract( contentType.isAbstract() ).
-                setFinal( contentType.isFinal() ).
-                moduleName( contentType.getModuleName() ).
-                form( contentType.form() ).
-                icon( contentType.getIcon() ).
-                contentDisplayNameScript( contentType.getContentDisplayNameScript() );
-            client.execute( createCommand );
-
-            context.setResult( CreateOrUpdateContentTypeJsonResult.created() );
+            createContentType( context, contentType );
         }
         else
         {
-            final ContentTypeEditor editor = newSetContentTypeEditor().
-                displayName( contentType.getDisplayName() ).
-                icon( contentType.getIcon() ).
-                superType( contentType.getSuperType() ).
-                setAbstract( contentType.isAbstract() ).
-                setFinal( contentType.isFinal() ).
-                contentDisplayNameScript( contentType.getContentDisplayNameScript() ).
-                form( contentType.form() ).
-                build();
-            final UpdateContentType updateCommand = contentType().update().qualifiedName( contentType.getQualifiedName() ).editor( editor );
+            updateContentType( context, contentType );
+        }
+    }
 
+    private void updateContentType( final JsonRpcContext context, final ContentType contentType )
+    {
+        final ContentTypeEditor editor = newSetContentTypeEditor().
+            displayName( contentType.getDisplayName() ).
+            icon( contentType.getIcon() ).
+            superType( contentType.getSuperType() ).
+            setAbstract( contentType.isAbstract() ).
+            setFinal( contentType.isFinal() ).
+            contentDisplayNameScript( contentType.getContentDisplayNameScript() ).
+            form( contentType.form() ).
+            build();
+        final UpdateContentType updateCommand = contentType().update().qualifiedName( contentType.getQualifiedName() ).editor( editor );
+
+        try
+        {
             UpdateContentTypeResult result = client.execute( updateCommand );
-
             context.setResult( CreateOrUpdateContentTypeJsonResult.from( result ) );
+        }
+        catch ( InvalidContentTypeException e )
+        {
+            context.setResult( new JsonErrorResult( e.getValidationMessage() ) );
+        }
+        catch ( BaseException e )
+        {
+            context.setResult( new JsonErrorResult( e.getMessage() ) );
+        }
+    }
+
+    private void createContentType( final JsonRpcContext context, final ContentType contentType )
+    {
+        final CreateContentType createCommand = contentType().create().
+            name( contentType.getName() ).
+            displayName( contentType.getDisplayName() ).
+            superType( contentType.getSuperType() ).
+            setAbstract( contentType.isAbstract() ).
+            setFinal( contentType.isFinal() ).
+            moduleName( contentType.getModuleName() ).
+            form( contentType.form() ).
+            icon( contentType.getIcon() ).
+            contentDisplayNameScript( contentType.getContentDisplayNameScript() );
+        try
+        {
+            client.execute( createCommand );
+            context.setResult( CreateOrUpdateContentTypeJsonResult.created() );
+        }
+        catch ( InvalidContentTypeException e )
+        {
+            context.setResult( new JsonErrorResult( e.getValidationMessage() ) );
+        }
+        catch ( BaseException e )
+        {
+            context.setResult( new JsonErrorResult( e.getMessage() ) );
         }
     }
 
