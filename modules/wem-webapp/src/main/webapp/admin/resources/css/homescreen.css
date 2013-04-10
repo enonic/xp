@@ -27,18 +27,18 @@
 }
 
 #admin-home-main-container.show-home {
-    animation: animation-show-home 300ms ease both;
+    animation: animation-show-home 100ms ease both;
     animation-play-state: running;
 
-    -webkit-animation: animation-show-home 300ms ease both;
+    -webkit-animation: animation-show-home 100ms ease both;
     -webkit-animation-play-state: running;
 }
 
 #admin-home-main-container.hide-home {
-    animation: animation-hide-home 300ms ease both;
+    animation: animation-hide-home 100ms ease both;
     animation-play-state: running;
 
-    -webkit-animation: animation-hide-home 300ms ease both;
+    -webkit-animation: animation-hide-home 100ms ease both;
     -webkit-animation-play-state: running;
 }
 
