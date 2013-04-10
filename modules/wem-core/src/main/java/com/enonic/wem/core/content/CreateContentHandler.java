@@ -128,9 +128,7 @@ public class CreateContentHandler
         }
         catch ( final Exception e )
         {
-            throw new CreateContentException(
-                "Failed to create content [" + command.getDisplayName() + "] at path [" + command.getParentContentPath() + "]: " +
-                    e.getMessage(), e );
+            throw new CreateContentException( command, e );
         }
     }
 

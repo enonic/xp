@@ -10,14 +10,13 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.CreateContentResult;
-import com.enonic.wem.api.command.content.RenameContent;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
-import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentException;
+import com.enonic.wem.api.content.RenameContentException;
 import com.enonic.wem.api.content.UpdateContentException;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.schema.content.ContentType;
@@ -25,6 +24,7 @@ import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
+import com.enonic.wem.web.json.rpc.JsonRpcException;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
 import static com.enonic.wem.api.command.Commands.content;
@@ -46,82 +46,47 @@ public final class CreateOrUpdateContentRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final QualifiedContentTypeName qualifiedContentTypeName =
-            new QualifiedContentTypeName( context.param( "qualifiedContentTypeName" ).required().asString() );
-        final ContentType contentType = getContentType( qualifiedContentTypeName );
-        final RootDataSet rootDataSet = new RootDataSetParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
-        final String displayName = context.param( "displayName" ).notBlank().asString();
-        final boolean temporary = context.param( "temporary" ).asBoolean( false );
-
         final ContentId contentId = contentIdOrNull( context.param( "contentId" ).asString() );
         if ( contentId == null )
         {
-            final ContentPath parentContentPath = contentPathOrNull( context.param( "parentContentPath" ).asString() );
-            if ( parentContentPath == null && !temporary )
-            {
-                context.setResult( new JsonErrorResult( "Missing parameter [contentId] or [parentContentPath]" ) );
-                return;
-            }
-
             HandleCreateContent handleCreateContent = new HandleCreateContent();
             handleCreateContent.context = context;
-            handleCreateContent.parentContentPath = parentContentPath;
-            handleCreateContent.qualifiedContentTypeName = qualifiedContentTypeName;
-            handleCreateContent.temporary = temporary;
-            handleCreateContent.handleCreateContent( displayName, rootDataSet );
+            handleCreateContent.handleCreateContent();
         }
         else
         {
-            try
-            {
-                HandleUpdateContent handleUpdateContent = new HandleUpdateContent();
-                handleUpdateContent.contentId = contentId;
-                UpdateContentResult result = handleUpdateContent.updateContent( displayName, rootDataSet );
-                context.setResult( CreateOrUpdateContentJsonResult.from( result ) );
-            }
-            catch ( UpdateContentException e )
-            {
-                context.setResult( new JsonErrorResult( e.getMessage() ) );
-                return;
-            }
 
-            final String newContentName = context.param( "contentName" ).asString();
-            final boolean renameContent = !Strings.isNullOrEmpty( newContentName );
-            if ( renameContent )
-            {
-                try
-                {
-                    renameContent( contentId, newContentName );
-                }
-                catch ( ContentAlreadyExistException e )
-                {
-                    context.setResult(
-                        new JsonErrorResult( "Unable to rename content. Content with path [{0}] already exists.", e.getContentPath() ) );
-                }
-            }
+            HandleUpdateContent handleUpdateContent = new HandleUpdateContent();
+            handleUpdateContent.context = context;
+            handleUpdateContent.contentId = contentId;
+            handleUpdateContent.updateContent();
         }
-    }
-
-    private void renameContent( final ContentId contentId, final String newContentName )
-    {
-        final RenameContent renameContent = content().rename().contentId( contentId ).newName( newContentName );
-        client.execute( renameContent );
     }
 
     private class HandleCreateContent
     {
         private JsonRpcContext context;
 
-        private ContentPath parentContentPath;
-
-        private QualifiedContentTypeName qualifiedContentTypeName;
-
-        private boolean temporary;
-
-        private void handleCreateContent( final String displayName, final RootDataSet rootDataSet )
+        private void handleCreateContent()
         {
+            ContentPath parentContentPath;
             try
             {
+                final boolean temporary = context.param( "temporary" ).asBoolean( false );
+                parentContentPath = contentPathOrNull( context.param( "parentContentPath" ).asString() );
+                if ( parentContentPath == null && !temporary )
+                {
+                    context.setResult( new JsonErrorResult( "Missing parameter [contentId] or [parentContentPath]" ) );
+                    return;
+                }
+
+                final QualifiedContentTypeName qualifiedContentTypeName =
+                    new QualifiedContentTypeName( context.param( "qualifiedContentTypeName" ).required().asString() );
+                final ContentType contentType = getContentType( qualifiedContentTypeName );
+                final RootDataSet rootDataSet =
+                    new RootDataSetParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
+                final String displayName = context.param( "displayName" ).notBlank().asString();
+
                 final CreateContent createContent = content().create().
                     parentContentPath( parentContentPath ).
                     contentType( qualifiedContentTypeName ).
@@ -134,25 +99,49 @@ public final class CreateOrUpdateContentRpcHandler
                 context.setResult(
                     CreateOrUpdateContentJsonResult.created( createContentResult.getContentId(), createContentResult.getContentPath() ) );
             }
-            catch ( CreateContentException e )
+            catch ( CreateContentException | JsonRpcException e )
             {
-                context.setResult( new JsonErrorResult( e.getMessage(), parentContentPath ) );
+                context.setResult( new JsonErrorResult( e.getMessage() ) );
             }
         }
     }
 
     private class HandleUpdateContent
     {
+        private JsonRpcContext context;
+
         private ContentId contentId;
 
-        private UpdateContentResult updateContent( final String displayName, final RootDataSet rootDataSet )
+        private void updateContent()
         {
-            final UpdateContent updateContent = content().update();
-            updateContent.selector( contentId );
-            updateContent.editor( composite( setContentData( rootDataSet ), setContentDisplayName( displayName ) ) );
-            updateContent.modifier( AccountKey.anonymous() );
+            try
+            {
+                final String displayName = context.param( "displayName" ).notBlank().asString();
+                final QualifiedContentTypeName qualifiedContentTypeName =
+                    new QualifiedContentTypeName( context.param( "qualifiedContentTypeName" ).required().asString() );
+                final ContentType contentType = getContentType( qualifiedContentTypeName );
+                final RootDataSet rootDataSet =
+                    new RootDataSetParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
 
-            return client.execute( updateContent );
+                final UpdateContent updateContent = content().update();
+                updateContent.selector( contentId );
+                updateContent.editor( composite( setContentData( rootDataSet ), setContentDisplayName( displayName ) ) );
+                updateContent.modifier( AccountKey.anonymous() );
+
+                final UpdateContentResult result = client.execute( updateContent );
+                context.setResult( CreateOrUpdateContentJsonResult.from( result ) );
+
+                final String newContentName = context.param( "contentName" ).asString();
+                final boolean renameContent = !Strings.isNullOrEmpty( newContentName );
+                if ( renameContent )
+                {
+                    client.execute( content().rename().contentId( contentId ).newName( newContentName ) );
+                }
+            }
+            catch ( UpdateContentException | RenameContentException | JsonRpcException e )
+            {
+                context.setResult( new JsonErrorResult( e.getMessage() ) );
+            }
         }
     }
 

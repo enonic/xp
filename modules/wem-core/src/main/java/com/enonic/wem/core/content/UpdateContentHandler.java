@@ -145,8 +145,7 @@ public class UpdateContentHandler
         }
         catch ( Exception e )
         {
-            throw new UpdateContentException( "Failed to update content [" + command.getSelector() + "]: " +
-                                                  e.getMessage(), e );
+            throw new UpdateContentException( command, e );
         }
     }
 

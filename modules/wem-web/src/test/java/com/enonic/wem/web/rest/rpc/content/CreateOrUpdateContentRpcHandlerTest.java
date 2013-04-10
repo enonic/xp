@@ -19,6 +19,7 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentException;
+import com.enonic.wem.api.content.RenameContentException;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.ContentTypes;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
@@ -134,14 +135,16 @@ public class CreateOrUpdateContentRpcHandlerTest
             build();
         ContentPath parentContentPath = ContentPath.from( "/myContent/childContent" ).getParentPath();
 
+        CreateContent createContent = new CreateContent().displayName( "Child content" ).parentContentPath( parentContentPath );
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
         Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
         Mockito.when( client.execute( isA( CreateContent.class ) ) ).thenThrow(
-            new CreateContentException( "Failed to create content", new ContentNotFoundException( parentContentPath ) ) );
+            new CreateContentException( createContent, new ContentNotFoundException( parentContentPath ) ) );
 
         ObjectNode expectedJson = objectNode();
         expectedJson.put( "success", false );
-        expectedJson.put( "error", "Failed to create content" );
+        expectedJson.put( "error",
+                          "Failed to create content [Child content] at path [/myContent]: Content with path [/myContent] was not found" );
 
         // exercise & verify
         testSuccess( "createOrUpdateContent_create_param.json", expectedJson );
@@ -177,16 +180,21 @@ public class CreateOrUpdateContentRpcHandlerTest
             name( "my_content_type" ).
             module( ModuleName.from( "mymodule" ) ).
             build();
+        RenameContent renameContent =
+            new RenameContent().contentId( ContentId.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).newName( "newName" );
 
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
         Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
         Mockito.when( client.execute( isA( UpdateContent.class ) ) ).thenReturn( UpdateContentResult.SUCCESS );
-        Mockito.when( client.execute( isA( RenameContent.class ) ) ).thenThrow(
-            new ContentAlreadyExistException( ContentPath.from( "mysite:/existingContent" ) ) );
+        Mockito.when( client.execute( isA( RenameContent.class ) ) ).thenThrow( new RenameContentException( renameContent,
+                                                                                                            new ContentAlreadyExistException(
+                                                                                                                ContentPath.from(
+                                                                                                                    "mysite:/existingContent" ) ) ) );
 
         ObjectNode expectedJson = objectNode();
         expectedJson.put( "success", false );
-        expectedJson.put( "error", "Unable to rename content. Content with path [mysite:/existingContent] already exists." );
+        expectedJson.put( "error",
+                          "Failed to rename content [1fad493a-6a72-41a3-bac4-88aba3d83bcc] to newName: Content at path [mysite:/existingContent] already exist" );
 
         // exercise & verify
         testSuccess( "createOrUpdateContent_rename_param.json", expectedJson );
