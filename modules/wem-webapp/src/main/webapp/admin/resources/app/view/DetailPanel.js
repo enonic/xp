@@ -108,7 +108,7 @@ Ext.define('Admin.view.DetailPanel', {
 
         photo: '<img src="{data.iconUrl}?size=80" style="width: 64px;" alt="{name}"/>',
 
-        header: '<h1>{data.displayName}</h1><span>{data.path}</span>'
+        header: '<h1>{data.displayName}</h1><span class="path">{data.path}</span>'
     },
 
     singleSelection: {

@@ -27,6 +27,11 @@
     font-size: 11px;
 }
 
+.admin-preview-panel .path {
+    font-size: 14px;
+    color: #777;
+}
+
 .admin-preview-panel h1 {
     margin-bottom: 4px;
     font-size: 26px;
