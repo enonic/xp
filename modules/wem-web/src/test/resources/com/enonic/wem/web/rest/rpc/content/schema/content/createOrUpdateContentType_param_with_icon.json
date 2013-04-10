@@ -1,5 +1,5 @@
 {
-    "contentType": "<type>\n  <name>AllTypes</name>\n  <module>mymodule</module>\n  <qualifiedName>mymodule:AllTypes</qualifiedName>\n  <displayName>All the Types</displayName>\n  <superType>system:content</superType>\n  <isAbstract>false</isAbstract>\n  <isFinal>true</isFinal>\n  <form><input type=\"TextLine\" built-in=\"true\" name=\"myTextLine\"> <label /> <immutable>false</immutable> <indexed>false</indexed> <customText /><helpText /><occurrences minimum=\"0\" maximum=\"1\" /></input></form>\n</type>",
+    "contentType": "<type>\n  <name>all_types</name>\n  <module>mymodule</module>\n  <qualifiedName>mymodule:all_types</qualifiedName>\n  <displayName>All the Types</displayName>\n  <superType>system:content</superType>\n  <isAbstract>false</isAbstract>\n  <isFinal>true</isFinal>\n  <form><input type=\"TextLine\" built-in=\"true\" name=\"myTextLine\"> <label /> <immutable>false</immutable> <indexed>false</indexed> <customText /><helpText /><occurrences minimum=\"0\" maximum=\"1\" /></input></form>\n</type>",
     "iconReference": "edc1af66-ecb4-4f8a-8df4-0738418f84fc"
 }
 

@@ -2,9 +2,9 @@
     "success": true,
     "contentTypes": [
         {
-            "name": "myCtype",
+            "name": "my_type",
             "module": "mymodule",
-            "qualifiedName": "mymodule:myCtype",
+            "qualifiedName": "mymodule:my_type",
             "displayName": null,
             "contentDisplayNameScript": null,
             "superType": "system:unstructured",
@@ -70,12 +70,12 @@
                     }
                 }
             ],
-            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:mymodule:myCtype"
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:mymodule:my_type"
         },
         {
-            "name": "theContentType",
+            "name": "the_content_type",
             "module": "othermodule",
-            "qualifiedName": "othermodule:theContentType",
+            "qualifiedName": "othermodule:the_content_type",
             "displayName": null,
             "contentDisplayNameScript": null,
             "superType": "system:unstructured",
@@ -103,7 +103,7 @@
                     }
                 }
             ],
-            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:othermodule:theContentType"
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:othermodule:the_content_type"
         }
     ]
 }

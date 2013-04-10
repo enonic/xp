@@ -1,13 +1,13 @@
 {
     "success": true,
     "relationshipType": {
-        "name": "theRelationshipType",
+        "name": "the_relationship_type",
         "displayName": null,
         "module": "mymodule",
         "fromSemantic": null,
         "toSemantic": null,
         "allowedFromTypes": [ ],
         "allowedToTypes": [ ],
-        "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:mymodule:theRelationshipType"
+        "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:mymodule:the_relationship_type"
     }
 }

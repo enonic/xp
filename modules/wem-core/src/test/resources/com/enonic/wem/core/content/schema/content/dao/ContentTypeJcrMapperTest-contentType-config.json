@@ -1,5 +1,5 @@
 {
-    "name": "myContentType",
+    "name": "my_content_type",
     "module": "mymodule",
     "displayName": "My module",
     "contentDisplayNameScript": "$('firstName') + ' ' +  $('lastName')",

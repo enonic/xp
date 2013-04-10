@@ -32,7 +32,7 @@ public class DataSetValidatorTest
     {
         contentType = newContentType().
             module( Module.SYSTEM.getName() ).
-            name( "MyType" ).
+            name( "my_type" ).
             build();
     }
 

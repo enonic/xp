@@ -39,7 +39,7 @@ public abstract class AbstractMixinSerializerTest
         throws Exception
     {
         Input.Builder inputBuilder = newInput();
-        inputBuilder.name( "myInput" );
+        inputBuilder.name( "my_input" );
         inputBuilder.label( "My input" );
         inputBuilder.inputType( InputTypes.TEXT_LINE );
         inputBuilder.immutable( true );
@@ -62,13 +62,13 @@ public abstract class AbstractMixinSerializerTest
         throws Exception
     {
         Input.Builder inputBuilder = newInput();
-        inputBuilder.name( "myInput" );
+        inputBuilder.name( "my_input" );
         inputBuilder.label( "My input" );
         inputBuilder.inputType( InputTypes.TEXT_LINE );
         Input myInput = inputBuilder.build();
 
         FormItemSet.Builder formItemSetBuilder = FormItemSet.newFormItemSet();
-        formItemSetBuilder.name( "mySet" );
+        formItemSetBuilder.name( "my_set" );
         formItemSetBuilder.label( "My set" );
         formItemSetBuilder.minimumOccurrences( 1 );
         formItemSetBuilder.maximumOccurrences( 3 );
@@ -116,13 +116,13 @@ public abstract class AbstractMixinSerializerTest
     public void mixin_serialize_parse_serialize_formSet_roundTrip()
     {
         Input.Builder inputBuilder = newInput();
-        inputBuilder.name( "myInput" );
+        inputBuilder.name( "my_input" );
         inputBuilder.label( "My input" );
         inputBuilder.inputType( InputTypes.TEXT_LINE );
         Input myInput = inputBuilder.build();
 
         FormItemSet.Builder formItemSetBuilder = FormItemSet.newFormItemSet();
-        formItemSetBuilder.name( "mySet" );
+        formItemSetBuilder.name( "my_set" );
         formItemSetBuilder.label( "My set" );
         formItemSetBuilder.minimumOccurrences( 1 );
         formItemSetBuilder.maximumOccurrences( 3 );
@@ -150,7 +150,7 @@ public abstract class AbstractMixinSerializerTest
     public void mixin_serialize_parse_serialize_input_roundTrip()
     {
         Input.Builder inputBuilder = newInput();
-        inputBuilder.name( "myInput" );
+        inputBuilder.name( "my_input" );
         inputBuilder.label( "My input" );
         inputBuilder.inputType( InputTypes.TEXT_LINE );
         inputBuilder.immutable( true );

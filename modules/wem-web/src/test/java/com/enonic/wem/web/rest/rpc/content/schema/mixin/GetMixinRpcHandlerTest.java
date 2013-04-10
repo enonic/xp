@@ -41,7 +41,7 @@ public class GetMixinRpcHandlerTest
     public void testRequestGetMixin_existing_asJson()
         throws Exception
     {
-        Input inputText1 = newInput().name( "inputText1" ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+        Input inputText1 = newInput().name( "input_text1" ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
             "Help text line 1" ).required( true ).build();
         Mixin mixin = Mixin.newMixin().
             module( ModuleName.from( "mymodule" ) ).
@@ -59,7 +59,7 @@ public class GetMixinRpcHandlerTest
     public void testRequestGetMixin_existing_asXml()
         throws Exception
     {
-        Input inputText1 = newInput().name( "inputText1" ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+        Input inputText1 = newInput().name( "input_text1" ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
             "Help text line 1" ).required( true ).build();
         Mixin mixin = Mixin.newMixin().
             module( ModuleName.from( "mymodule" ) ).

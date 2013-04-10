@@ -1,7 +1,7 @@
 {
-    "name": "AllInputTypes",
+    "name": "all_input_types",
     "module": "mymodule",
-    "qualifiedName": "mymodule:AllInputTypes",
+    "qualifiedName": "mymodule:all_input_types",
     "displayName": "All the Input Types",
     "contentDisplayNameScript": null,
     "superType": "system:content",

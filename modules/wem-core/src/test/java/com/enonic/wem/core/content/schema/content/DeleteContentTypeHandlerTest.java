@@ -49,7 +49,7 @@ public class DeleteContentTypeHandlerTest
         throws Exception
     {
         // exercise
-        final QualifiedContentTypeName names = new QualifiedContentTypeName( "my:contentType" );
+        final QualifiedContentTypeName names = new QualifiedContentTypeName( "my:my_content_type" );
         final DeleteContentType command = Commands.contentType().delete().name( names );
         this.handler.handle( this.context, command );
 
@@ -65,7 +65,7 @@ public class DeleteContentTypeHandlerTest
         throws Exception
     {
         // exercise
-        final QualifiedContentTypeName inUsedName = new QualifiedContentTypeName( "my:inUseContentType" );
+        final QualifiedContentTypeName inUsedName = new QualifiedContentTypeName( "my:in_use_content_type" );
 
         Mockito.doReturn( 1 ).when( contentDao ).countContentTypeUsage( eq( inUsedName ), any( Session.class ) );
 
@@ -85,7 +85,7 @@ public class DeleteContentTypeHandlerTest
         throws Exception
     {
         // exercise
-        final QualifiedContentTypeName notFoundName = new QualifiedContentTypeName( "my:notFoundContentType" );
+        final QualifiedContentTypeName notFoundName = new QualifiedContentTypeName( "my:not_found_content_type" );
 
         Mockito.doThrow( new ContentTypeNotFoundException( notFoundName ) ).when( contentTypeDao ).delete( eq( notFoundName ),
                                                                                                            any( Session.class ) );

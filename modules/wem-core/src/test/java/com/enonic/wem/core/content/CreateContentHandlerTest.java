@@ -86,7 +86,7 @@ public class CreateContentHandlerTest
         command.displayName( "My Content" );
         command.parentContentPath( ContentPath.from( "/" ) );
         command.owner( UserKey.from( "myStore:myUser" ) );
-        command.contentType( new QualifiedContentTypeName( ModuleName.SYSTEM, "MyContentType" ) );
+        command.contentType( new QualifiedContentTypeName( ModuleName.SYSTEM, "my_content_type" ) );
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setData( "myText", new Value.Text( "abc" ) );
         rootDataSet.setData( "myReference", new Value.ContentId( ContentId.from( "123" ) ) );
@@ -119,7 +119,7 @@ public class CreateContentHandlerTest
         final String rootPath = "/rootcontent";
         command.parentContentPath( ContentPath.from( rootPath ) );
         command.owner( UserKey.from( "myStore:myUser" ) );
-        command.contentType( new QualifiedContentTypeName( ModuleName.SYSTEM, "MyContentType" ) );
+        command.contentType( new QualifiedContentTypeName( ModuleName.SYSTEM, "my_content_type" ) );
 
         // exercise
         this.handler.handle( this.context, command );

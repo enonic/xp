@@ -35,7 +35,7 @@ public class SearchSourceFactoryTest
         ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
         contentIndexQuery.setFullTextSearchString( "test" );
         contentIndexQuery.setContentTypeNames(
-            QualifiedContentTypeNames.from( "contenttypes:myContentType1", "contenttypes:myContentType2" ) );
+            QualifiedContentTypeNames.from( "contenttypes:my_content_type_1", "contenttypes:my_content_type_2" ) );
 
         final SearchSourceBuilder searchSourceBuilder = SearchSourceFactory.create( contentIndexQuery );
 

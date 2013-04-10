@@ -1,5 +1,5 @@
 {
-    "name": "relationship test 2",
+    "name": "relationship-limited-allowed-to-types",
     "module": "demo",
     "displayName": "Demo: Relationship limited allowed-to-types",
     "superType": "system:structured",

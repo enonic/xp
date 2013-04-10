@@ -1,9 +1,9 @@
 {
     "success": true,
     "contentType": {
-        "name": "myCtype",
+        "name": "my_type",
         "module": "mymodule",
-        "qualifiedName": "mymodule:myCtype",
+        "qualifiedName": "mymodule:my_type",
         "displayName": null,
         "contentDisplayNameScript": null,
         "superType": "system:unstructured",
@@ -70,5 +70,5 @@
             }
         ]
     },
-    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:mymodule:myCtype"
+    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:mymodule:my_type"
 }

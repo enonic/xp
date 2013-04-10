@@ -65,7 +65,7 @@ public class GetSchemasHandlerTest
     {
         // setup
         final ContentType contentType = newContentType().
-            name( "myContentType" ).
+            name( "my_content_type" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             setAbstract( false ).

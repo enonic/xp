@@ -52,7 +52,7 @@ public class CreateOrUpdateContentRpcHandlerTest
     {
         ContentId contentId = ContentId.from( "123" );
         ContentType contentType = ContentType.newContentType().
-            name( "myContentType" ).
+            name( "my_content_type" ).
             module( ModuleName.from( "mymodule" ) ).
             build();
 
@@ -79,7 +79,7 @@ public class CreateOrUpdateContentRpcHandlerTest
     {
         ContentId contentId = ContentId.from( "123" );
         ContentType contentType = ContentType.newContentType().
-            name( "myContentType" ).
+            name( "my_content_type" ).
             module( ModuleName.from( "mymodule" ) ).
             build();
 
@@ -107,7 +107,7 @@ public class CreateOrUpdateContentRpcHandlerTest
         throws Exception
     {
         ContentType contentType = ContentType.newContentType().
-            name( "myContentType" ).
+            name( "my_content_type" ).
             module( ModuleName.from( "mymodule" ) ).
             build();
 
@@ -129,7 +129,7 @@ public class CreateOrUpdateContentRpcHandlerTest
         throws Exception
     {
         ContentType contentType = ContentType.newContentType().
-            name( "myContentType" ).
+            name( "my_content_type" ).
             module( ModuleName.from( "mymodule" ) ).
             build();
         ContentPath parentContentPath = ContentPath.from( "/myContent/childContent" ).getParentPath();
@@ -152,7 +152,7 @@ public class CreateOrUpdateContentRpcHandlerTest
         throws Exception
     {
         ContentType contentType = ContentType.newContentType().
-            name( "myContentType" ).
+            name( "my_content_type" ).
             module( ModuleName.from( "mymodule" ) ).
             build();
 
@@ -174,7 +174,7 @@ public class CreateOrUpdateContentRpcHandlerTest
         throws Exception
     {
         ContentType contentType = ContentType.newContentType().
-            name( "myContentType" ).
+            name( "my_content_type" ).
             module( ModuleName.from( "mymodule" ) ).
             build();
 

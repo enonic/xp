@@ -72,7 +72,7 @@ public class GetSchemaTreeHandlerTest
             build();
 
         final ContentType contentType = newContentType().
-            name( "myContentType" ).
+            name( "my_content_type" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             setAbstract( false ).

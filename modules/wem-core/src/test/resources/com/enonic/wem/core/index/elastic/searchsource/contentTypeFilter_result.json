@@ -9,7 +9,7 @@
             },
             "filter": {
                 "terms": {
-                    "contentType": [ "contenttypes:mycontenttype1", "contenttypes:mycontenttype2" ]
+                    "contentType": [ "contenttypes:my_content_type_2", "contenttypes:my_content_type_1" ]
                 }
             }
         }

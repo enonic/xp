@@ -140,7 +140,7 @@ public class ContentTypeDaoImplTest
         // setup
         final ContentType.Builder contentTypeBuilder = newContentType().
             module( ModuleName.from( "mymodule" ) ).
-            name( "myContentType" ).
+            name( "my_content_type" ).
             setAbstract( true ).
             displayName( "My content type" );
         final ContentType contentType = addContentTypeFormItems( contentTypeBuilder );
@@ -148,7 +148,7 @@ public class ContentTypeDaoImplTest
 
         // exercise
         final ContentTypes contentTypesAfterCreate =
-            contentTypeDao.select( QualifiedContentTypeNames.from( "mymodule:myContentType" ), session );
+            contentTypeDao.select( QualifiedContentTypeNames.from( "mymodule:my_content_type" ), session );
         assertNotNull( contentTypesAfterCreate );
         assertEquals( 1, contentTypesAfterCreate.getSize() );
 
@@ -162,11 +162,11 @@ public class ContentTypeDaoImplTest
 
         // verify
         final ContentTypes contentTypesAfterUpdate =
-            contentTypeDao.select( QualifiedContentTypeNames.from( "mymodule:myContentType" ), session );
+            contentTypeDao.select( QualifiedContentTypeNames.from( "mymodule:my_content_type" ), session );
         assertNotNull( contentTypesAfterUpdate );
         assertEquals( 1, contentTypesAfterUpdate.getSize() );
         final ContentType contentType1 = contentTypesAfterUpdate.first();
-        assertEquals( "myContentType", contentType1.getName() );
+        assertEquals( "my_content_type", contentType1.getName() );
         assertEquals( "mymodule", contentType1.getModuleName().toString() );
         assertEquals( false, contentType1.isAbstract() );
         assertEquals( "My content type-UPDATED", contentType1.getDisplayName() );
@@ -180,7 +180,7 @@ public class ContentTypeDaoImplTest
         // setup
         final ContentType.Builder contentTypeBuilder = newContentType().
             module( ModuleName.from( "mymodule" ) ).
-            name( "myContentType" ).
+            name( "my_content_type" ).
             setAbstract( true ).
             displayName( "My content type" );
         final ContentType contentType = addContentTypeFormItems( contentTypeBuilder );
@@ -188,7 +188,7 @@ public class ContentTypeDaoImplTest
 
         // exercise
         final ContentTypes contentTypesAfterCreate =
-            contentTypeDao.select( QualifiedContentTypeNames.from( "mymodule:myContentType" ), session );
+            contentTypeDao.select( QualifiedContentTypeNames.from( "mymodule:my_content_type" ), session );
         assertNotNull( contentTypesAfterCreate );
         assertEquals( 1, contentTypesAfterCreate.getSize() );
 
@@ -197,7 +197,7 @@ public class ContentTypeDaoImplTest
 
         // verify
         final ContentTypes contentTypesAfterDelete =
-            contentTypeDao.select( QualifiedContentTypeNames.from( "mymodule:myContentType" ), session );
+            contentTypeDao.select( QualifiedContentTypeNames.from( "mymodule:my_content_type" ), session );
         assertNotNull( contentTypesAfterDelete );
         assertTrue( contentTypesAfterDelete.isEmpty() );
     }

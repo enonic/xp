@@ -1,5 +1,5 @@
 {
-    "name": "labs blog",
+    "name": "labs_blog",
     "module": "demo",
     "displayName": "Demo: Labs Blog",
     "superType": "system:structured",

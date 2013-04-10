@@ -50,7 +50,7 @@ public class ListContentTypesRpcHandlerTest
 
         final ContentType contentType1 = newContentType().
             module( ModuleName.from( "mymodule" ) ).
-            name( "myCtype" ).
+            name( "my_type" ).
             addFormItem( inputText1 ).
             addFormItem( inputText2 ).
             addFormItem( textArea1 ).
@@ -61,7 +61,7 @@ public class ListContentTypesRpcHandlerTest
                 "Help text line 1" ).required( true ).build();
         final ContentType contentType2 = newContentType().
             module( ModuleName.from( "othermodule" ) ).
-            name( "theContentType" ).
+            name( "the_content_type" ).
             addFormItem( inputTextCty2 ).
             build();
         final ContentTypes contentTypes = ContentTypes.from( contentType1, contentType2 );

@@ -2,11 +2,11 @@
     "success": true,
     "mixins": [
         {
-            "name": "inputText1",
+            "name": "input_text1",
             "module": "mymodule",
             "displayName": null,
             "Input": {
-                "name": "inputText1",
+                "name": "input_text1",
                 "label": "Line Text 1",
                 "immutable": false,
                 "occurrences": {
@@ -22,14 +22,14 @@
                     "builtIn": true
                 }
             },
-            "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:mymodule:inputText1"
+            "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:mymodule:input_text1"
         },
         {
-            "name": "textArea1",
+            "name": "text_area_1",
             "module": "othermodule",
             "displayName": null,
             "Input": {
-                "name": "textArea1",
+                "name": "text_area_1",
                 "label": "Text Area",
                 "immutable": false,
                 "occurrences": {
@@ -45,7 +45,7 @@
                     "builtIn": true
                 }
             },
-            "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:othermodule:textArea1"
+            "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:othermodule:text_area_1"
         }
     ]
 }

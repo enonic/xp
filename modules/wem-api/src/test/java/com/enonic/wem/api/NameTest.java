@@ -1,10 +1,11 @@
-package com.enonic.wem.api.content.schema.mixin;
+package com.enonic.wem.api;
+
 
 import org.junit.Test;
 
 import com.enonic.wem.api.content.AbstractEqualsTest;
 
-public class QualifiedMixinNameTest
+public class NameTest
 {
     @Test
     public void equals()
@@ -14,26 +15,25 @@ public class QualifiedMixinNameTest
             @Override
             public Object getObjectX()
             {
-                return new QualifiedMixinName( "mymodule:my_mixin" );
+                return new Name( "name" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{new QualifiedMixinName( "mymodule:my_other_mixin" ),
-                    new QualifiedMixinName( "myothermodule:my_mixin" )};
+                return new Object[]{new Name( "other" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return new QualifiedMixinName( "mymodule:my_mixin" );
+                return new Name( "name" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return new QualifiedMixinName( "mymodule:my_mixin" );
+                return new Name( "name" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();

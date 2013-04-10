@@ -2,7 +2,7 @@
     "success": true,
     "successes": [
         {
-            "qualifiedMixinName": "my:existingMixin"
+            "qualifiedMixinName": "my:existing_mixin"
         }
     ],
     "failures": [ ]

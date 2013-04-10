@@ -39,7 +39,7 @@ public class ContentTest
     {
         contentType = newContentType().
             module( Module.SYSTEM.getName() ).
-            name( "MyType" ).
+            name( "mytype" ).
             build();
     }
 

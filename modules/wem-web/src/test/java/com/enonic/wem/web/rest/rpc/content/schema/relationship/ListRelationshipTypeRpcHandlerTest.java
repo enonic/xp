@@ -35,12 +35,12 @@ public class ListRelationshipTypeRpcHandlerTest
     {
         final RelationshipType relationshipType1 = newRelationshipType().
             module( ModuleName.from( "mymodule" ) ).
-            name( "theRelationshipType" ).
+            name( "the_relationship_type" ).
             build();
 
         final RelationshipType relationshipType2 = newRelationshipType().
             module( ModuleName.from( "othermodule" ) ).
-            name( "theRelationshipType" ).
+            name( "the_relationship_type" ).
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType1, relationshipType2 );

@@ -56,7 +56,7 @@ public class UpdateContentTypeHandlerTest
             ContentTypes.from( ContentTypesInitializer.STRUCTURED ) );
 
         ContentType existingContentType = newContentType().
-            name( "myContentType" ).
+            name( "my_content_type" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             setAbstract( false ).
@@ -68,7 +68,7 @@ public class UpdateContentTypeHandlerTest
             existingContentType );
 
         UpdateContentType command =
-            Commands.contentType().update().qualifiedName( QualifiedContentTypeName.from( "mymodule:myContentType" ) );
+            Commands.contentType().update().qualifiedName( QualifiedContentTypeName.from( "mymodule:my_content_type" ) );
         final ContentTypeEditor editor = newSetContentTypeEditor().
             displayName( "Changed" ).
             setAbstract( false ).
@@ -95,7 +95,7 @@ public class UpdateContentTypeHandlerTest
             ContentTypes.from( ContentTypesInitializer.SHORTCUT ) );
 
         ContentType existingContentType = newContentType().
-            name( "myContentType" ).
+            name( "my_content_type" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             setAbstract( false ).
@@ -103,11 +103,11 @@ public class UpdateContentTypeHandlerTest
             build();
 
         Mockito.when(
-            contentTypeDao.select( eq( QualifiedContentTypeName.from( "mymodule:myContentType" ) ), any( Session.class ) ) ).thenReturn(
+            contentTypeDao.select( eq( QualifiedContentTypeName.from( "mymodule:my_content_type" ) ), any( Session.class ) ) ).thenReturn(
             existingContentType );
 
         UpdateContentType command =
-            Commands.contentType().update().qualifiedName( QualifiedContentTypeName.from( "mymodule:myContentType" ) );
+            Commands.contentType().update().qualifiedName( QualifiedContentTypeName.from( "mymodule:my_content_type" ) );
         final ContentTypeEditor editor = newSetContentTypeEditor().
             displayName( "Changed" ).
             setAbstract( false ).

@@ -5,16 +5,16 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.Name;
 import com.enonic.wem.api.module.ModuleName;
 
 public abstract class ModuleBasedQualifiedName
 {
     private final ModuleName moduleName;
 
-    private final String localName;
+    private final Name localName;
 
-    private final String qualifiedName;
-
+    private final String refString;
 
     public ModuleBasedQualifiedName( final String qualifiedName )
     {
@@ -27,15 +27,22 @@ public abstract class ModuleBasedQualifiedName
         Preconditions.checkArgument( colonPos < qualifiedName.length() - 1, "QualifiedName is missing local name: " + qualifiedName );
 
         this.moduleName = ModuleName.from( qualifiedName.substring( 0, colonPos ) );
-        this.localName = qualifiedName.substring( colonPos + 1, qualifiedName.length() );
-        this.qualifiedName = qualifiedName;
+        this.localName = Name.from( qualifiedName.substring( colonPos + 1, qualifiedName.length() ) );
+        this.refString = qualifiedName;
     }
 
     public ModuleBasedQualifiedName( final ModuleName moduleName, final String localName )
     {
         this.moduleName = moduleName;
+        this.localName = Name.from( localName );
+        this.refString = moduleName + ":" + localName;
+    }
+
+    public ModuleBasedQualifiedName( final ModuleName moduleName, final Name localName )
+    {
+        this.moduleName = moduleName;
         this.localName = localName;
-        this.qualifiedName = moduleName + ":" + localName;
+        this.refString = moduleName + ":" + localName;
     }
 
     public ModuleName getModuleName()
@@ -45,12 +52,12 @@ public abstract class ModuleBasedQualifiedName
 
     public String getLocalName()
     {
-        return localName;
+        return localName.toString();
     }
 
     public String toString()
     {
-        return qualifiedName;
+        return refString;
     }
 
     @Override
@@ -67,12 +74,12 @@ public abstract class ModuleBasedQualifiedName
 
         final ModuleBasedQualifiedName that = (ModuleBasedQualifiedName) o;
 
-        return qualifiedName.equals( that.qualifiedName );
+        return refString.equals( that.refString );
     }
 
     @Override
     public int hashCode()
     {
-        return qualifiedName.hashCode();
+        return refString.hashCode();
     }
 }

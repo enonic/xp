@@ -1,4 +1,4 @@
 {
     "format": "json",
-    "contentType": "mymodule:myCtype"
+    "contentType": "mymodule:my_type"
 }

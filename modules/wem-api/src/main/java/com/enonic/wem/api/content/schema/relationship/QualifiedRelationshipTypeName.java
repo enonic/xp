@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content.schema.relationship;
 
 
+import com.enonic.wem.api.Name;
 import com.enonic.wem.api.content.ModuleBasedQualifiedName;
 import com.enonic.wem.api.module.ModuleName;
 
@@ -16,6 +17,11 @@ public final class QualifiedRelationshipTypeName
     public static final QualifiedRelationshipTypeName LIKE = new QualifiedRelationshipTypeName( ModuleName.SYSTEM, "like" );
 
     public QualifiedRelationshipTypeName( final ModuleName moduleName, final String name )
+    {
+        super( moduleName, name );
+    }
+
+    public QualifiedRelationshipTypeName( final ModuleName moduleName, final Name name )
     {
         super( moduleName, name );
     }

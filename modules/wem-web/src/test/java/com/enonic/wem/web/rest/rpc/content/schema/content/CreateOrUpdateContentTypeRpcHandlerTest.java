@@ -70,7 +70,7 @@ public class CreateOrUpdateContentTypeRpcHandlerTest
     public void update_ContentType()
         throws Exception
     {
-        ContentType existingContentType = ContentType.newContentType().name( "aType" ).module( Module.SYSTEM.getName() ).build();
+        ContentType existingContentType = ContentType.newContentType().name( "a_type" ).module( Module.SYSTEM.getName() ).build();
         ContentTypes contentTypes = ContentTypes.from( existingContentType );
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( contentTypes );
         Mockito.when( client.execute( isA( UpdateContentType.class ) ) ).thenReturn( UpdateContentTypeResult.SUCCESS );
@@ -88,7 +88,7 @@ public class CreateOrUpdateContentTypeRpcHandlerTest
     public void update_ContentType_with_failure()
         throws Exception
     {
-        ContentType existingContentType = ContentType.newContentType().name( "aType" ).module( Module.SYSTEM.getName() ).build();
+        ContentType existingContentType = ContentType.newContentType().name( "a_type" ).module( Module.SYSTEM.getName() ).build();
         ContentTypes contentTypes = ContentTypes.from( existingContentType );
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( contentTypes );
         Mockito.when( client.execute( isA( UpdateContentType.class ) ) ).thenReturn( UpdateContentTypeResult.NOT_FOUND );

@@ -1,9 +1,9 @@
 {
-    "name": "myInput",
+    "name": "my_input",
     "module": "mymodule",
     "displayName": "My Mixin",
     "Input": {
-        "name": "myInput",
+        "name": "my_input",
         "label": "My input",
         "immutable": true,
         "occurrences": {

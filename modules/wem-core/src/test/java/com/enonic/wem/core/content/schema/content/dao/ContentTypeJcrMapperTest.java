@@ -44,10 +44,10 @@ public class ContentTypeJcrMapperTest
     {
         ContentTypeJcrMapper mapper = new ContentTypeJcrMapper();
 
-        Node myContentType = session.getRootNode().addNode( "myContentType" );
+        Node my_content_type = session.getRootNode().addNode( "my_content_type" );
 
         mapper.toJcr( ContentType.newContentType().
-            name( "myContentType" ).
+            name( "my_content_type" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My module" ).
             superType( QualifiedContentTypeName.structured() ).
@@ -58,14 +58,14 @@ public class ContentTypeJcrMapperTest
             modifiedTime( MODIFIED_TIME ).
             icon( Icon.from( new byte[]{123}, "image/gif" ) ).
             contentDisplayNameScript( "$('firstName') + ' ' +  $('lastName')" ).
-            build(), myContentType );
+            build(), my_content_type );
 
-        assertEquals( "2013-01-01T12:00:00.000Z", myContentType.getProperty( "createdTime" ).getString() );
-        assertEquals( "2013-01-01T13:00:00.000Z", myContentType.getProperty( "modifiedTime" ).getString() );
-        assertEquals( "image/gif", myContentType.getProperty( "iconMimeType" ).getString() );
-        assertArrayEquals( new byte[]{123}, JcrHelper.getPropertyBinary( myContentType, "icon" ) );
+        assertEquals( "2013-01-01T12:00:00.000Z", my_content_type.getProperty( "createdTime" ).getString() );
+        assertEquals( "2013-01-01T13:00:00.000Z", my_content_type.getProperty( "modifiedTime" ).getString() );
+        assertEquals( "image/gif", my_content_type.getProperty( "iconMimeType" ).getString() );
+        assertArrayEquals( new byte[]{123}, JcrHelper.getPropertyBinary( my_content_type, "icon" ) );
         assertEquals( getJsonFileAsJson( "contentType-config.json" ),
-                      stringToJson( myContentType.getProperty( ContentTypeJcrMapper.CONTENT_TYPE ).getString() ) );
+                      stringToJson( my_content_type.getProperty( ContentTypeJcrMapper.CONTENT_TYPE ).getString() ) );
     }
 
     @Test
@@ -75,10 +75,10 @@ public class ContentTypeJcrMapperTest
         // setup
         ContentTypeJcrMapper mapper = new ContentTypeJcrMapper();
 
-        Node relationshipNode = session.getRootNode().addNode( "myContentType" );
+        Node relationshipNode = session.getRootNode().addNode( "my_content_type" );
 
         mapper.toJcr( ContentType.newContentType().
-            name( "myContentType" ).
+            name( "my_content_type" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My module" ).
             superType( QualifiedContentTypeName.structured() ).
@@ -96,7 +96,7 @@ public class ContentTypeJcrMapperTest
         // verify
         assertEquals( CREATED_TIME, contentType.getCreatedTime() );
         assertEquals( MODIFIED_TIME, contentType.getModifiedTime() );
-        assertEquals( "myContentType", contentType.getName() );
+        assertEquals( "my_content_type", contentType.getName() );
         assertEquals( ModuleName.from( "mymodule" ), contentType.getModuleName() );
         assertEquals( "My module", contentType.getDisplayName() );
         assertEquals( QualifiedContentTypeName.structured(), contentType.getSuperType() );

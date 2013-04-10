@@ -11,6 +11,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.Name;
 import com.enonic.wem.api.content.schema.Schema;
 import com.enonic.wem.api.content.schema.SchemaKey;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
@@ -24,7 +25,7 @@ public final class RelationshipType
 {
     private final ModuleName module;
 
-    private final String name;
+    private final Name name;
 
     private final String displayName;
 
@@ -62,7 +63,7 @@ public final class RelationshipType
     @Override
     public String getName()
     {
-        return name;
+        return name.toString();
     }
 
     @Override
@@ -179,7 +180,7 @@ public final class RelationshipType
     {
         private ModuleName module;
 
-        private String name;
+        private Name name;
 
         private String displayName;
 
@@ -224,7 +225,7 @@ public final class RelationshipType
 
         public Builder name( String value )
         {
-            this.name = value;
+            this.name = Name.from( value );
             return this;
         }
 

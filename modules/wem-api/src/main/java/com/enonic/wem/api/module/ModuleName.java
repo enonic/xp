@@ -1,41 +1,28 @@
 package com.enonic.wem.api.module;
 
 
-import com.google.common.base.Preconditions;
+import com.enonic.wem.api.Name;
 
 public final class ModuleName
+    extends Name
 {
     public static final ModuleName SYSTEM = new ModuleName( "system" );
 
-    private final String name;
-
     private ModuleName( final String name )
     {
-        Preconditions.checkNotNull( name, "module name cannot be null" );
-        Preconditions.checkArgument( !name.trim().isEmpty(), "module name cannot be empty" );
-        Preconditions.checkArgument( !name.trim().isEmpty(), "module name cannot be empty" );
-        Preconditions.checkArgument( name.matches( "[_a-z]([a-z0-9_\\-\\.])*" ),
-                                     "module name can only start with characters from a-z, and further consist letters a-z, digits or the following special chars: _-." +
-                                         name );
-        this.name = name;
-    }
-
-    @Override
-    public String toString()
-    {
-        return name;
+        super( name );
     }
 
     @Override
     public boolean equals( final Object o )
     {
-        return ( o instanceof ModuleName ) && ( (ModuleName) o ).name.equals( this.name );
+        return ( o instanceof ModuleName ) && super.equals( o );
     }
 
     @Override
     public int hashCode()
     {
-        return name.hashCode();
+        return super.hashCode();
     }
 
     public static ModuleName from( String name )

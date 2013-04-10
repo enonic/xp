@@ -31,7 +31,7 @@ public class OccurrenceValidatorTest
     {
         contentType = newContentType().
             module( Module.SYSTEM.getName() ).
-            name( "MyType" ).
+            name( "my_type" ).
             build();
     }
 

@@ -26,7 +26,7 @@ public class MixinReferencesToFormItemsTransformerTest
     {
         // setup
         Mixin mixin = Mixin.newMixin().module( ModuleName.from( "mymodule" ) ).formItem(
-            newInput().name( "personalNumber" ).inputType( InputTypes.TEXT_LINE ).helpText(
+            newInput().name( "personal_number" ).inputType( InputTypes.TEXT_LINE ).helpText(
                 "Type in your personal number" ).build() ).build();
 
         Form form = newForm().

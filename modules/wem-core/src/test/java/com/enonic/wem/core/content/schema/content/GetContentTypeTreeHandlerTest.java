@@ -50,16 +50,16 @@ public class GetContentTypeTreeHandlerTest
             displayName( "Some root content type" ).
             build();
         final ContentType contentType2 = newContentType().
-            name( "myType" ).
+            name( "my_type" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             superType( contentType1.getQualifiedName() ).
             build();
         final ContentType contentType3 = newContentType().
-            name( "subType" ).
+            name( "sub_type" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My sub-content type" ).
-            superType( new QualifiedContentTypeName( "mymodule:myType" ) ).
+            superType( new QualifiedContentTypeName( "mymodule:my_type" ) ).
             build();
         final ContentTypes contentTypes = ContentTypes.from( contentType1, contentType2, contentType3 );
         Mockito.when( contentTypeDao.selectAll( any( Session.class ) ) ).thenReturn( contentTypes );
@@ -74,8 +74,8 @@ public class GetContentTypeTreeHandlerTest
         assertEquals( 1, tree.size() );
         assertEquals( 3, tree.deepSize() );
         assertEquals( "system:unstructured", tree.getRootNode( 0 ).getObject().getQualifiedName().toString() );
-        assertEquals( "mymodule:myType", tree.getRootNode( 0 ).getChild( 0 ).getObject().getQualifiedName().toString() );
-        assertEquals( "mymodule:subType", tree.getRootNode( 0 ).getChild( 0 ).getChild( 0 ).getObject().getQualifiedName().toString() );
+        assertEquals( "mymodule:my_type", tree.getRootNode( 0 ).getChild( 0 ).getObject().getQualifiedName().toString() );
+        assertEquals( "mymodule:sub_type", tree.getRootNode( 0 ).getChild( 0 ).getChild( 0 ).getObject().getQualifiedName().toString() );
 
     }
 }

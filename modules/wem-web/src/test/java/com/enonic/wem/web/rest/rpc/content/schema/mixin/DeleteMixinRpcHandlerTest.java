@@ -38,13 +38,13 @@ public class DeleteMixinRpcHandlerTest
     public void deleteMultipleMixins()
         throws Exception
     {
-        final QualifiedMixinName existingName = new QualifiedMixinName( "my:existingMixin" );
-        final QualifiedMixinName notFoundName = new QualifiedMixinName( "my:notFoundMixin" );
-        final QualifiedMixinName beingUsedName = new QualifiedMixinName( "my:beingUsedMixin" );
+        final QualifiedMixinName existingName = new QualifiedMixinName( "my:existing_mixin" );
+        final QualifiedMixinName notFoundName = new QualifiedMixinName( "my:not_found_mixin" );
+        final QualifiedMixinName beingUsedName = new QualifiedMixinName( "my:being_used_mixin" );
 
         MixinDeletionResult mixinDeletionResult = new MixinDeletionResult();
         mixinDeletionResult.success( existingName );
-        mixinDeletionResult.failure( notFoundName, "Mixin [my:notFoundMixin] was not found" );
+        mixinDeletionResult.failure( notFoundName, "Mixin [my:not_found_mixin] was not found" );
         mixinDeletionResult.failure( beingUsedName, "Mixin is being used" );
 
         Mockito.when( client.execute( Mockito.any( Commands.mixin().delete().getClass() ) ) ).

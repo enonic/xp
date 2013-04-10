@@ -2,7 +2,7 @@
     "success": true,
     "successes": [
         {
-            "qualifiedContentTypeName": "my:existingContentType"
+            "qualifiedContentTypeName": "my:existing_content_type"
         }
     ],
     "failures": [ ]

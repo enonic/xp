@@ -7,6 +7,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.Name;
 import com.enonic.wem.api.content.schema.Schema;
 import com.enonic.wem.api.content.schema.SchemaKey;
 import com.enonic.wem.api.content.schema.content.form.Form;
@@ -19,7 +20,7 @@ import static com.enonic.wem.api.content.schema.content.form.Form.newForm;
 public final class ContentType
     implements Schema
 {
-    private final String name;
+    private final Name name;
 
     private final String displayName;
 
@@ -64,7 +65,7 @@ public final class ContentType
     @Override
     public String getName()
     {
-        return name;
+        return name.toString();
     }
 
     @Override
@@ -94,7 +95,8 @@ public final class ContentType
         return isFinal;
     }
 
-    public boolean allowChildren() {
+    public boolean allowChildren()
+    {
         return allowChildren;
     }
 
@@ -147,7 +149,7 @@ public final class ContentType
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
         s.add( "isFinal", isFinal );
-        s.add( "allowChildren",allowChildren );
+        s.add( "allowChildren", allowChildren );
         s.add( "form", form );
         s.add( "icon", icon );
         return s.toString();
@@ -165,7 +167,7 @@ public final class ContentType
 
     public static class Builder
     {
-        private String name;
+        private Name name;
 
         private ModuleName moduleName;
 
@@ -197,7 +199,7 @@ public final class ContentType
 
         private Builder( final ContentType source )
         {
-            this.name = source.getName();
+            this.name = Name.from( source.getName() );
             this.moduleName = source.getModuleName();
             this.displayName = source.getDisplayName();
             this.isAbstract = source.isAbstract();
@@ -216,14 +218,14 @@ public final class ContentType
 
         public Builder qualifiedName( final QualifiedContentTypeName qualifiedContentTypeName )
         {
-            this.name = qualifiedContentTypeName.getContentTypeName();
+            this.name = Name.from( qualifiedContentTypeName.getContentTypeName() );
             this.moduleName = qualifiedContentTypeName.getModuleName();
             return this;
         }
 
         public Builder name( final String name )
         {
-            this.name = name;
+            this.name = Name.from( name );
             return this;
         }
 

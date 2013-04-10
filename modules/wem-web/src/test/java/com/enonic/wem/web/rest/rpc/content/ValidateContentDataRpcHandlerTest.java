@@ -47,7 +47,7 @@ public class ValidateContentDataRpcHandlerTest
         // setup
         final ContentType contentType = newContentType().
             module( Module.SYSTEM.getName() ).
-            name( "MyType" ).
+            name( "my_type" ).
             addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
                 newFormItemSet().name( "mySet" ).required( true ).addFormItem(
                     newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build() ).
@@ -66,10 +66,10 @@ public class ValidateContentDataRpcHandlerTest
         throws Exception
     {
         // setup
-        final Input myInput = newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).minimumOccurrences( 1 ).build();
+        final Input myInput = newInput().name( "my_input" ).inputType( InputTypes.TEXT_LINE ).minimumOccurrences( 1 ).build();
         final ContentType contentType = newContentType().
             module( Module.SYSTEM.getName() ).
-            name( "MyType" ).
+            name( "my_type" ).
             addFormItem( myInput ).
             build();
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );

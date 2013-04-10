@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <type>
-  <name>AllInputTypes</name>
+  <name>all_input_types</name>
   <module>mymodule</module>
   <display-name>All the Input Types</display-name>
   <content-display-name-script/>

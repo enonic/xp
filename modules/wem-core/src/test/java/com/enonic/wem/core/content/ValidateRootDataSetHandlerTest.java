@@ -52,7 +52,7 @@ public class ValidateRootDataSetHandlerTest
         // setup
         final ContentType contentType = newContentType().
             module( Module.SYSTEM.getName() ).
-            name( "MyType" ).
+            name( "my_type" ).
             addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
                 newFormItemSet().name( "mySet" ).required( true ).addFormItem(
                     newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build() ).
@@ -84,7 +84,7 @@ public class ValidateRootDataSetHandlerTest
                 newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
         final ContentType contentType = ContentType.newContentType().
             module( Module.SYSTEM.getName() ).
-            name( "MyType" ).
+            name( "my_type" ).
             addFormItem( fieldSet ).
             build();
 

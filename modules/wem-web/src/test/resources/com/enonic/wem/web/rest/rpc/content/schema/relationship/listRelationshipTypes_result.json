@@ -3,24 +3,24 @@
     "total": 2,
     "relationshipTypes": [
         {
-            "name": "theRelationshipType",
+            "name": "the_relationship_type",
             "displayName": null,
             "module": "mymodule",
             "fromSemantic": null,
             "toSemantic": null,
             "allowedFromTypes": [ ],
             "allowedToTypes": [ ],
-            "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:mymodule:theRelationshipType"
+            "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:mymodule:the_relationship_type"
         },
         {
-            "name": "theRelationshipType",
+            "name": "the_relationship_type",
             "displayName": null,
             "module": "othermodule",
             "fromSemantic": null,
             "toSemantic": null,
             "allowedFromTypes": [ ],
             "allowedToTypes": [ ],
-            "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:othermodule:theRelationshipType"
+            "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:othermodule:the_relationship_type"
         }
     ]
 }

@@ -3,8 +3,8 @@
     "hasErrors": true,
     "errors": [
         {
-            "path": "myInput",
-            "message": "Input [myInput] requires minimum 1 occurrence: 0"
+            "path": "my_input",
+            "message": "Input [my_input] requires minimum 1 occurrence: 0"
         }
     ]
 }

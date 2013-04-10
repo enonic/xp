@@ -4,5 +4,5 @@
         "myTextLine2": "value2",
         "myFormItemSet.myTextLine1": "value3"
     },
-    "qualifiedContentTypeName": "mymodule:myContentType"
+    "qualifiedContentTypeName": "mymodule:my_content_type"
 }

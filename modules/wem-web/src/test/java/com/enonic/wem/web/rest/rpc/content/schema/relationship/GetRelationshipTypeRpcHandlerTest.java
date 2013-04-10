@@ -40,12 +40,12 @@ public class GetRelationshipTypeRpcHandlerTest
     {
         final RelationshipType relationshipType = newRelationshipType().
             module( ModuleName.from( "mymodule" ) ).
-            name( "theRelationshipType" ).
+            name( "the_relationship_type" ).
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
         final QualifiedRelationshipTypeNames names =
-            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "mymodule:theRelationshipType" ) );
+            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "mymodule:the_relationship_type" ) );
         Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
         testSuccess( "getRelationshipTypeJson_param.json", "getRelationshipTypeJson_result.json" );
@@ -57,12 +57,12 @@ public class GetRelationshipTypeRpcHandlerTest
     {
         final RelationshipType relationshipType = newRelationshipType().
             module( ModuleName.from( "mymodule" ) ).
-            name( "theRelationshipType" ).
+            name( "the_relationship_type" ).
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
         final QualifiedRelationshipTypeNames names =
-            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "mymodule:theRelationshipType" ) );
+            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "mymodule:the_relationship_type" ) );
         Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
         testSuccess( "getRelationshipTypeXml_param.json", "getRelationshipTypeXml_result.json" );
@@ -76,7 +76,7 @@ public class GetRelationshipTypeRpcHandlerTest
 
         final ObjectNode resultJson = objectNode();
         resultJson.put( "success", false );
-        resultJson.put( "error", "RelationshipType [[mymodule:theRelationshipType]] was not found" );
+        resultJson.put( "error", "RelationshipType [[mymodule:the_relationship_type]] was not found" );
         testSuccess( "getRelationshipTypeJson_param.json", resultJson );
     }
 }

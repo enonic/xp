@@ -2,9 +2,9 @@
     "success": true,
     "content": {
         "id": "abc",
-        "path": "/myContent",
-        "name": "myContent",
-        "type": "mymodule:myType",
+        "path": "/my_content",
+        "name": "my_content",
+        "type": "mymodule:my_type",
         "displayName": "My Content",
         "owner": "user:myStore:me",
         "modifier": "user:system:admin",

@@ -46,7 +46,7 @@ public class GetContentTypesHandlerTest
     {
         // setup
         final ContentType contentType = newContentType().
-            name( "myContentType" ).
+            name( "my_content_type" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             setAbstract( false ).
@@ -55,7 +55,7 @@ public class GetContentTypesHandlerTest
         Mockito.when( contentTypeDao.select( isA( QualifiedContentTypeNames.class ), any( Session.class ) ) ).thenReturn( contentTypes );
 
         // exercise
-        final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( "mymodule:myContentType" );
+        final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( "mymodule:my_content_type" );
         final GetContentTypes command = Commands.contentType().get().qualifiedNames( names );
         this.handler.handle( this.context, command );
 

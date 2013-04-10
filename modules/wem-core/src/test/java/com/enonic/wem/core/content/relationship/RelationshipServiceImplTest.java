@@ -72,7 +72,7 @@ public class RelationshipServiceImplTest
             addFormItem( newInput().name( "myRelated2" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( inputTypeConfig ).build() ).
             addFormItem(
                 newInput().name( "myRelated3" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( inputTypeConfig ).build() ).build();
-        ContentType contentType = newContentType().name( "myType" ).module( ModuleName.SYSTEM ).form( form ).build();
+        ContentType contentType = newContentType().name( "my_type" ).module( ModuleName.SYSTEM ).form( form ).build();
 
         Mockito.when( client.execute( Mockito.any( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
@@ -91,7 +91,7 @@ public class RelationshipServiceImplTest
         SyncRelationshipsCommand command = new SyncRelationshipsCommand();
         command.client( client );
         command.jcrSession( jcrSession );
-        command.contentType( QualifiedContentTypeName.from( ModuleName.SYSTEM, "myRelations" ) );
+        command.contentType( QualifiedContentTypeName.from( ModuleName.SYSTEM, "my_relations" ) );
         command.contentToUpdate( ContentId.from( "1" ) );
         command.contentBeforeEditing( dataBefore );
         command.contentAfterEditing( dataAfter );

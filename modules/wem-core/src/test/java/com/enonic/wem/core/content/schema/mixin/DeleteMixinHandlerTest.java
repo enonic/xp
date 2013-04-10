@@ -63,7 +63,7 @@ public class DeleteMixinHandlerTest
         throws Exception
     {
         // exercise
-        final QualifiedMixinName notFoundName = QualifiedMixinName.from( "my:notFoundMixin" );
+        final QualifiedMixinName notFoundName = QualifiedMixinName.from( "my:not_found_mixin" );
 
         Mockito.doThrow( new MixinNotFoundException( notFoundName ) ).
             when( mixinDao ).delete( eq( notFoundName ), any( Session.class ) );

@@ -1,5 +1,5 @@
 {
-    "name": "contact (set in set)",
+    "name": "contact_set-in-set",
     "module": "demo",
     "displayName": "Demo: FormItemSet",
     "superType": "system:structured",

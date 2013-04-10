@@ -3,9 +3,9 @@
     "content": [
         {
             "id": "aaa",
-            "path": "/myAContent",
-            "name": "myAContent",
-            "type": "mymodule:myType",
+            "path": "/my_a_content",
+            "name": "my_a_content",
+            "type": "mymodule:my_type",
             "displayName": "My Content",
             "owner": "user:myStore:me",
             "modifier": "user:system:admin",
@@ -24,9 +24,9 @@
         },
         {
             "id": "bbb",
-            "path": "/myBContent",
-            "name": "myBContent",
-            "type": "mymodule:myType",
+            "path": "/my_b_content",
+            "name": "my_b_content",
+            "type": "mymodule:my_type",
             "displayName": "My Content",
             "owner": "user:myStore:me",
             "modifier": "user:system:admin",

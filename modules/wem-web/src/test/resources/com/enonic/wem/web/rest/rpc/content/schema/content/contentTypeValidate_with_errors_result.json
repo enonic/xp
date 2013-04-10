@@ -3,16 +3,16 @@
     "hasErrors": true,
     "errors": [
         {
-            "message": "Invalid content type: [mymodule:contentType]: Validation error message 1"
+            "message": "Invalid content type: [mymodule:content_type]: Validation error message 1"
         },
         {
-            "message": "Invalid content type: [mymodule:my type2]: Validation error message 2"
+            "message": "Invalid content type: [mymodule:my_type2]: Validation error message 2"
         }
     ],
     "contentType": {
-        "name": "AllTypes",
+        "name": "all_types",
         "module": "mymodule",
-        "qualifiedName": "mymodule:AllTypes",
+        "qualifiedName": "mymodule:all_types",
         "displayName": null,
         "contentDisplayNameScript": null,
         "superType": "system:unstructured",

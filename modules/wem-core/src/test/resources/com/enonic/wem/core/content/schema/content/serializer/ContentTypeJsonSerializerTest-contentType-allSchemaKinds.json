@@ -1,7 +1,7 @@
 {
-    "name": "AllSchemas",
+    "name": "all_schemas",
     "module": "mymodule",
-    "qualifiedName": "mymodule:AllSchemas",
+    "qualifiedName": "mymodule:all_schemas",
     "displayName": "All the Base Types",
     "contentDisplayNameScript": "$('firstName') + ' ' + $('lastName')",
     "superType": "system:content",
@@ -52,7 +52,7 @@
                     {
                         "MixinReference": {
                             "name": "myCommonInput",
-                            "reference": "system:mySharedInput",
+                            "reference": "system:my_shared_input",
                             "type": "Input"
                         }
                     }

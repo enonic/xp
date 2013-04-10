@@ -44,7 +44,7 @@ public class RootDataSetParserTest
 
         final ContentType contentType = newContentType().
             module( ModuleName.from( "mymodule" ) ).
-            name( "myContentType" ).
+            name( "my_content_type" ).
             addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).build() ).
             addFormItem( newInput().name( "myXml" ).inputType( InputTypes.XML ).build() ).
@@ -92,7 +92,7 @@ public class RootDataSetParserTest
     {
         final ContentType contentType = newContentType().
             module( ModuleName.from( "mymodule" ) ).
-            name( "myContentType" ).
+            name( "my_content_type" ).
             addFormItem( newInput().name( "myImage" ).inputType( InputTypes.IMAGE ).inputTypeConfig( newImageConfig().
                 relationshipType( QualifiedRelationshipTypeName.DEFAULT ).
                 build() ).build() ).
@@ -124,7 +124,7 @@ public class RootDataSetParserTest
 
         final ContentType contentType = newContentType().
             module( ModuleName.from( "mymodule" ) ).
-            name( "myContentType" ).
+            name( "my_content_type" ).
             addFormItem( newInput().name( "myGeoLocation" ).inputType( InputTypes.GEO_LOCATION ).build() ).
             addFormItem( newInput().name( "myColor" ).inputType( InputTypes.COLOR ).build() ).
             addFormItem( mySet ).
@@ -164,9 +164,9 @@ public class RootDataSetParserTest
     {
         final FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).build();
         formItemSet.add( newInput().name( "myWholeNumber" ).inputType( InputTypes.WHOLE_NUMBER ).build() );
-        final ContentType myContentType = newContentType().
+        final ContentType my_content_type = newContentType().
             module( ModuleName.from( "mymodule" ) ).
-            name( "myContentType" ).
+            name( "my_content_type" ).
             addFormItem( formItemSet ).
             build();
 
@@ -178,7 +178,7 @@ public class RootDataSetParserTest
         ObjectNode objectNode = objectMapper.readValue( json.toString(), ObjectNode.class );
 
         // exercise
-        RootDataSetParser rootDataSetParser = new RootDataSetParser( myContentType );
+        RootDataSetParser rootDataSetParser = new RootDataSetParser( my_content_type );
         DataSet parsedContentData = rootDataSetParser.parse( objectNode );
 
         // verify
@@ -191,7 +191,7 @@ public class RootDataSetParserTest
     {
         final ContentType contentType = newContentType().
             module( ModuleName.from( "mymodule" ) ).
-            name( "myContentType" ).
+            name( "my_content_type" ).
             addFormItem( newInput().name( "myGeoLocation" ).inputType( InputTypes.GEO_LOCATION ).build() ).build();
 
         StringBuilder json = new StringBuilder();
@@ -218,7 +218,7 @@ public class RootDataSetParserTest
     {
         final ContentType contentType = newContentType().
             module( ModuleName.from( "mymodule" ) ).
-            name( "myContentType" ).
+            name( "my_content_type" ).
             addFormItem( newInput().name( "myColor" ).inputType( InputTypes.COLOR ).required( true ).build() ).build();
 
         StringBuilder json = new StringBuilder();
@@ -251,7 +251,7 @@ public class RootDataSetParserTest
         formItemSet.add( newInput().name( "myColor" ).inputType( InputTypes.COLOR ).required( true ).build() );
         final ContentType contentType = newContentType().
             module( ModuleName.from( "mymodule" ) ).
-            name( "myContentType" ).
+            name( "my_content_type" ).
             addFormItem( formItemSet ).
             build();
 

@@ -53,14 +53,14 @@ public class GetContentTypeRpcHandlerTest
 
         final ContentType contentType = newContentType().
             module( ModuleName.from( "mymodule" ) ).
-            name( "myCtype" ).
+            name( "my_type" ).
             addFormItem( inputText1 ).
             addFormItem( inputText2 ).
             addFormItem( textArea1 ).
             build();
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
-        final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( new QualifiedContentTypeName( "mymodule:myCtype" ) );
+        final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( new QualifiedContentTypeName( "mymodule:my_type" ) );
         Mockito.when( client.execute( Commands.contentType().get().qualifiedNames( names ) ) ).thenReturn( contentTypes );
 
         testSuccess( "getContentTypeJson_param.json", "getContentTypeJson_result.json" );
@@ -80,14 +80,14 @@ public class GetContentTypeRpcHandlerTest
 
         final ContentType contentType = newContentType().
             module( ModuleName.from( "mymodule" ) ).
-            name( "myCtype" ).
+            name( "my_type" ).
             addFormItem( inputText1 ).
             addFormItem( inputText2 ).
             addFormItem( textArea1 ).
             build();
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
-        final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( new QualifiedContentTypeName( "mymodule:myCtype" ) );
+        final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( new QualifiedContentTypeName( "mymodule:my_type" ) );
         Mockito.when( client.execute( Commands.contentType().get().qualifiedNames( names ) ) ).thenReturn( contentTypes );
 
         testSuccess( "getContentTypeXml_param.json", "getContentTypeXml_result.json" );
@@ -101,7 +101,7 @@ public class GetContentTypeRpcHandlerTest
 
         final ObjectNode resultJson = objectNode();
         resultJson.put( "success", false );
-        resultJson.put( "error", "ContentType [mymodule:myCtype] was not found" );
+        resultJson.put( "error", "ContentType [mymodule:my_type] was not found" );
         testSuccess( "getContentTypeJson_param.json", resultJson );
     }
 
@@ -113,7 +113,7 @@ public class GetContentTypeRpcHandlerTest
 
         final ObjectNode resultJson = objectNode();
         resultJson.put( "success", false );
-        resultJson.put( "error", "ContentType [mymodule:myCtype] was not found" );
+        resultJson.put( "error", "ContentType [mymodule:my_type] was not found" );
         testSuccess( "getContentTypeXml_param.json", resultJson );
     }
 }

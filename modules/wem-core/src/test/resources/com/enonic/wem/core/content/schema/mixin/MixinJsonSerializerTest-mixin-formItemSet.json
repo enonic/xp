@@ -1,9 +1,9 @@
 {
-    "name": "mySet",
+    "name": "my_set",
     "module": "mymodule",
     "displayName": "My Mixin",
     "FormItemSet": {
-        "name": "mySet",
+        "name": "my_set",
         "label": "My set",
         "immutable": false,
         "occurrences": {
@@ -15,7 +15,7 @@
         "items": [
             {
                 "Input": {
-                    "name": "myInput",
+                    "name": "my_input",
                     "label": "My input",
                     "immutable": false,
                     "occurrences": {

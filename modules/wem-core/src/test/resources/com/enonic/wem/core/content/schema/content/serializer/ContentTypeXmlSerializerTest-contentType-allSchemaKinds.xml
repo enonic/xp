@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <type>
-  <name>AllSchemas</name>
+  <name>all_schemas</name>
   <module>mymodule</module>
   <display-name>All the Base Types</display-name>
   <content-display-name-script>$('firstName') + ' ' + $('lastName')</content-display-name-script>
@@ -31,7 +31,7 @@
         </layout>
         <mixin-reference name="myCommonInput">
           <name>myCommonInput</name>
-          <reference>system:mySharedInput</reference>
+          <reference>system:my_shared_input</reference>
           <type>Input</type>
         </mixin-reference>
       </items>

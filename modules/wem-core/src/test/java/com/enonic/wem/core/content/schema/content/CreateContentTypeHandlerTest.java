@@ -49,7 +49,7 @@ public class CreateContentTypeHandlerTest
             ContentTypes.from( ContentTypesInitializer.STRUCTURED ) );
 
         ContentType contentType = newContentType().
-            name( "myContentType" ).
+            name( "my_content_type" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             setAbstract( false ).
@@ -74,7 +74,7 @@ public class CreateContentTypeHandlerTest
         Mockito.verify( contentTypeDao, Mockito.atLeastOnce() ).create( Mockito.isA( ContentType.class ), Mockito.any( Session.class ) );
         QualifiedContentTypeName contentTypeName = command.getResult();
         assertNotNull( contentTypeName );
-        assertEquals( "mymodule:myContentType", contentTypeName.toString() );
+        assertEquals( "mymodule:my_content_type", contentTypeName.toString() );
     }
 
     @Test(expected = InvalidContentTypeException.class)
@@ -87,7 +87,7 @@ public class CreateContentTypeHandlerTest
             ContentTypes.from( ContentTypesInitializer.SHORTCUT ) );
 
         ContentType contentType = newContentType().
-            name( "myContentType" ).
+            name( "my_content_type" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "Inheriting a final ContentType" ).
             setAbstract( false ).

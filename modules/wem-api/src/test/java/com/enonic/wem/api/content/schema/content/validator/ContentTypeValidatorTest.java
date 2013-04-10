@@ -23,7 +23,7 @@ public class ContentTypeValidatorTest
     {
         contentType = ContentType.newContentType().
             module( ModuleName.from( "test" ) ).
-            name( "MyType" ).build();
+            name( "my_type" ).build();
         fetcher = Mockito.mock( ContentTypeFetcher.class );
 
         recordedValidator = ContentTypeValidator.
@@ -36,7 +36,7 @@ public class ContentTypeValidatorTest
     {
         ContentType child = ContentType.newContentType().
             module( ModuleName.from( "test" ) ).
-            name( "MyType" ).
+            name( "my_type" ).
             superType( contentType.getQualifiedName() ).build();
         Mockito.when( fetcher.getContentType( child.getSuperType() ) ).thenReturn( contentType );
         recordedValidator.validate( child );
@@ -46,13 +46,13 @@ public class ContentTypeValidatorTest
     @Test
     public void recorded_content_type_with_final_super_type()
     {
-        ContentType parent = ContentType.newContentType().name( "MyFinalParent" ).module( ModuleName.from( "test" ) ).setFinal().build();
-        ContentType child = ContentType.newContentType().name( "MyChild" ).module( ModuleName.from( "test" ) ).superType(
+        ContentType parent = ContentType.newContentType().name( "my_final_parent" ).module( ModuleName.from( "test" ) ).setFinal().build();
+        ContentType child = ContentType.newContentType().name( "my_child" ).module( ModuleName.from( "test" ) ).superType(
             parent.getQualifiedName() ).build();
         Mockito.when( fetcher.getContentType( child.getSuperType() ) ).thenReturn( parent );
         recordedValidator.validate( child );
         assertTrue( recordedValidator.getResult().hasErrors() );
-        assertEquals( "Invalid content type: [test:MyChild]: Cannot inherit from a final ContentType: test:MyFinalParent",
+        assertEquals( "Invalid content type: [test:my_child]: Cannot inherit from a final ContentType: test:my_final_parent",
                       recordedValidator.getResult().getFirst().getErrorMessage() );
     }
 

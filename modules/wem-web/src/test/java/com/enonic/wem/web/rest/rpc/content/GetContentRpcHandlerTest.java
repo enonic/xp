@@ -51,7 +51,7 @@ public class GetContentRpcHandlerTest
     public void get_by_path()
         throws Exception
     {
-        final Content myContent = createContent( "abc", "myContent" );
+        final Content myContent = createContent( "abc", "my_content" );
 
         Mockito.when( client.execute( Mockito.any( Commands.content().get().getClass() ) ) ).thenReturn( Contents.from( myContent ) );
 
@@ -62,8 +62,8 @@ public class GetContentRpcHandlerTest
     public void get_by_id()
         throws Exception
     {
-        final Content aaaContent = createContent( "aaa", "myAContent" );
-        final Content bbbContent = createContent( "bbb", "myBContent" );
+        final Content aaaContent = createContent( "aaa", "my_a_content" );
+        final Content bbbContent = createContent( "bbb", "my_b_content" );
 
         Mockito.when( client.execute( Mockito.any( Commands.content().get().getClass() ) ) ).thenReturn(
             Contents.from( aaaContent, bbbContent ) );
@@ -84,7 +84,7 @@ public class GetContentRpcHandlerTest
             displayName( "My Content" ).
             modifiedTime( DateTime.now() ).
             modifier( UserKey.superUser() ).
-            type( new QualifiedContentTypeName( "mymodule:myType" ) ).
+            type( new QualifiedContentTypeName( "mymodule:my_type" ) ).
             rootDataSet( rootDataSet ).
             build();
     }

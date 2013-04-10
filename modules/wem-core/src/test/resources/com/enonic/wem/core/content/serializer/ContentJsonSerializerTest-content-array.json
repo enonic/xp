@@ -2,7 +2,7 @@
     "id": null,
     "path": "/",
     "name": null,
-    "type": "mymodule:myType",
+    "type": "mymodule:my_type",
     "displayName": null,
     "owner": null,
     "modifier": null,

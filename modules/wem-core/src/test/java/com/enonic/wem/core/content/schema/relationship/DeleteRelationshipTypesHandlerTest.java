@@ -43,7 +43,7 @@ public class DeleteRelationshipTypesHandlerTest
         throws Exception
     {
         // exercise
-        final QualifiedRelationshipTypeName names = QualifiedRelationshipTypeName.from( "my:relationshipType" );
+        final QualifiedRelationshipTypeName names = QualifiedRelationshipTypeName.from( "my:relationship_type" );
         final DeleteRelationshipType command = Commands.relationshipType().delete().qualifiedName( names );
         this.handler.handle( this.context, command );
 
@@ -59,7 +59,7 @@ public class DeleteRelationshipTypesHandlerTest
         throws Exception
     {
         // exercise
-        final QualifiedRelationshipTypeName notFoundName = QualifiedRelationshipTypeName.from( "my:notFoundRelationshipType" );
+        final QualifiedRelationshipTypeName notFoundName = QualifiedRelationshipTypeName.from( "my:not_found_relationship_type" );
 
         Mockito.doThrow( new RelationshipTypeNotFoundException( notFoundName ) ).
             when( relationshipTypeDao ).delete( eq( notFoundName ), any( Session.class ) );

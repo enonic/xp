@@ -72,7 +72,7 @@ Ext.define('Admin.view.content.ContentPanel', {
     },
 
     getQualifiedContentTypeName: function () {
-        return "mymodule:myContentType";
+        return "mymodule:my_content_type";
     },
 
     getContentPath: function () {

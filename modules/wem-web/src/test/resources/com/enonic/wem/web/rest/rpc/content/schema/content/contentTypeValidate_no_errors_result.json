@@ -3,9 +3,9 @@
     "hasErrors": false,
     "errors": [ ],
     "contentType": {
-        "name": "AllTypes",
+        "name": "all_types",
         "module": "mymodule",
-        "qualifiedName": "mymodule:AllTypes",
+        "qualifiedName": "mymodule:all_types",
         "displayName": null,
         "contentDisplayNameScript": null,
         "superType": "system:unstructured",

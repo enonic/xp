@@ -61,7 +61,7 @@ public class GetContentTypeTreeRpcHandlerTest
             displayName( "Some root content type" ).
             build();
         final ContentType contentType2 = newContentType().
-            name( "myType" ).
+            name( "my_type" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             superType( new QualifiedContentTypeName( "system:root" ) ).
@@ -70,10 +70,10 @@ public class GetContentTypeTreeRpcHandlerTest
             addFormItem( textArea1 ).
             build();
         final ContentType contentType3 = newContentType().
-            name( "subType" ).
+            name( "sub_type" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My sub-content type" ).
-            superType( new QualifiedContentTypeName( "mymodule:myType" ) ).
+            superType( new QualifiedContentTypeName( "mymodule:my_type" ) ).
             build();
 
         final Tree<ContentType> contentTypeTree = new Tree<ContentType>( Lists.newArrayList( contentType1 ) );

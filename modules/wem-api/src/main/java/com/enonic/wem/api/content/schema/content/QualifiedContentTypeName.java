@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content.schema.content;
 
 
+import com.enonic.wem.api.Name;
 import com.enonic.wem.api.content.ModuleBasedQualifiedName;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleName;
@@ -38,7 +39,8 @@ public final class QualifiedContentTypeName
 
     private static final QualifiedContentTypeName MEDIA_DOCUMENT = new QualifiedContentTypeName( Module.SYSTEM.getName(), "document" );
 
-    private static final QualifiedContentTypeName MEDIA_SPREADSHEET = new QualifiedContentTypeName( Module.SYSTEM.getName(), "spreadsheet" );
+    private static final QualifiedContentTypeName MEDIA_SPREADSHEET =
+        new QualifiedContentTypeName( Module.SYSTEM.getName(), "spreadsheet" );
 
     private static final QualifiedContentTypeName MEDIA_PRESENTATION =
         new QualifiedContentTypeName( Module.SYSTEM.getName(), "presentation" );
@@ -53,6 +55,11 @@ public final class QualifiedContentTypeName
     }
 
     public QualifiedContentTypeName( final ModuleName moduleName, final String contentTypeName )
+    {
+        super( moduleName, contentTypeName );
+    }
+
+    public QualifiedContentTypeName( final ModuleName moduleName, final Name contentTypeName )
     {
         super( moduleName, contentTypeName );
     }
