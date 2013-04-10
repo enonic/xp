@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 public abstract class AbstractMixinSerializerTest
     extends AbstractSerializerTest
 {
-    private static final ModuleName myModule = ModuleName.from( "myModule" );
+    private static final ModuleName myModule = ModuleName.from( "mymodule" );
 
     private MixinSerializer serializer;
 

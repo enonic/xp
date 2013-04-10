@@ -46,7 +46,7 @@ public class CreateMixinHandlerTest
         // setup
         final Input age = newInput().name( "age" ).
             inputType( InputTypes.TEXT_LINE ).build();
-        CreateMixin command = Commands.mixin().create().moduleName( ModuleName.from( "myModule" ) ).formItem( age ).displayName( "Age" );
+        CreateMixin command = Commands.mixin().create().moduleName( ModuleName.from( "mymodule" ) ).formItem( age ).displayName( "Age" );
 
         // exercise
         this.handler.handle( this.context, command );
@@ -55,7 +55,7 @@ public class CreateMixinHandlerTest
         Mockito.verify( mixinDao, Mockito.atLeastOnce() ).create( Mockito.isA( Mixin.class ), Mockito.any( Session.class ) );
         QualifiedMixinName mixinName = command.getResult();
         assertNotNull( mixinName );
-        assertEquals( "myModule:age", mixinName.toString() );
+        assertEquals( "mymodule:age", mixinName.toString() );
     }
 
 }

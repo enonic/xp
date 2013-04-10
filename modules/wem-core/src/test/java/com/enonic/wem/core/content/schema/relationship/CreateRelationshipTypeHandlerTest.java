@@ -45,18 +45,18 @@ public class CreateRelationshipTypeHandlerTest
         final CreateRelationshipType command = Commands.relationshipType().create();
         command.name( "like" );
         command.displayName( "Like" );
-        command.module( ModuleName.from( "myModule" ) );
+        command.module( ModuleName.from( "mymodule" ) );
         command.fromSemantic( "likes" );
         command.toSemantic( "liked by" );
-        command.allowedFromTypes( QualifiedContentTypeNames.from( "myModule:person" ) );
-        command.allowedToTypes( QualifiedContentTypeNames.from( "myModule:person" ) );
+        command.allowedFromTypes( QualifiedContentTypeNames.from( "mymodule:person" ) );
+        command.allowedToTypes( QualifiedContentTypeNames.from( "mymodule:person" ) );
         this.handler.handle( this.context, command );
 
         // verify
         verify( relationshipTypeDao, atLeastOnce() ).create( Mockito.isA( RelationshipType.class ), Mockito.any( Session.class ) );
         final QualifiedRelationshipTypeName relationshipTypeName = command.getResult();
         assertNotNull( relationshipTypeName );
-        assertEquals( "myModule:like", relationshipTypeName.toString() );
+        assertEquals( "mymodule:like", relationshipTypeName.toString() );
     }
 
 }

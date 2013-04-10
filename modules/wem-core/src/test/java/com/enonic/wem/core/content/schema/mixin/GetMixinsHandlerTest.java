@@ -50,7 +50,7 @@ public class GetMixinsHandlerTest
         throws Exception
     {
         // setup
-        final ModuleName module = ModuleName.from( "myModule" );
+        final ModuleName module = ModuleName.from( "mymodule" );
         final Mixin mixin = newMixin().
             displayName( "Age" ).
             module( module ).
@@ -60,7 +60,7 @@ public class GetMixinsHandlerTest
         Mockito.when( mixinDao.select( isA( QualifiedMixinNames.class ), any( Session.class ) ) ).thenReturn( mixins );
 
         // exercise
-        final QualifiedMixinNames names = QualifiedMixinNames.from( "myModule:like" );
+        final QualifiedMixinNames names = QualifiedMixinNames.from( "mymodule:like" );
         final GetMixins command = Commands.mixin().get().names( names );
         this.handler.handle( this.context, command );
 
@@ -74,7 +74,7 @@ public class GetMixinsHandlerTest
         throws Exception
     {
         // setup
-        final ModuleName module = ModuleName.from( "myModule" );
+        final ModuleName module = ModuleName.from( "mymodule" );
         final Mixin mixin = newMixin().
             displayName( "Age" ).
             module( module ).

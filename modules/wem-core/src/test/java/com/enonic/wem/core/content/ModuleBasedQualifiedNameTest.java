@@ -12,18 +12,18 @@ public class ModuleBasedQualifiedNameTest
     @Test
     public void contructor()
     {
-        ModuleBasedQualifiedName tqn = new ModuleBasedQualifiedName( "myModule:myLocalName" )
+        ModuleBasedQualifiedName tqn = new ModuleBasedQualifiedName( "mymodule:myLocalName" )
         {
 
         };
-        assertEquals( "myModule", tqn.getModuleName().toString() );
+        assertEquals( "mymodule", tqn.getModuleName().toString() );
         assertEquals( "myLocalName", tqn.getLocalName() );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void contructor_throws_exception_when_missing_colon()
     {
-        new ModuleBasedQualifiedName( "myModule" )
+        new ModuleBasedQualifiedName( "mymodule" )
         {
 
         };
@@ -32,7 +32,7 @@ public class ModuleBasedQualifiedNameTest
     @Test(expected = IllegalArgumentException.class)
     public void contructor_throws_exception_when_missing_local_name()
     {
-        new ModuleBasedQualifiedName( "myModule:" )
+        new ModuleBasedQualifiedName( "mymodule:" )
         {
 
         };

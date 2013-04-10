@@ -6,7 +6,7 @@
             "id": null,
             "path": "/a1/c1",
             "name": "c1",
-            "type": "System:unstructured",
+            "type": "system:unstructured",
             "displayName": "C1",
             "owner": "user:enonic:user1",
             "createdTime": "2000-01-01T12:00:00.000Z",
@@ -14,14 +14,14 @@
             "modifiedTime": "2000-01-01T12:00:00.000Z",
             "editable": true,
             "deletable": true,
-            "allowsChildren" : true,
-            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:System:unstructured"
+            "allowsChildren": true,
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:system:unstructured"
         },
         {
             "id": null,
             "path": "/a1/c2",
             "name": "c2",
-            "type": "System:unstructured",
+            "type": "system:unstructured",
             "displayName": "C2",
             "owner": "user:enonic:user1",
             "createdTime": "2000-01-01T12:00:00.000Z",
@@ -29,14 +29,14 @@
             "modifiedTime": "2000-01-01T12:00:00.000Z",
             "editable": true,
             "deletable": true,
-            "allowsChildren" : true,
-            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:System:unstructured"
+            "allowsChildren": true,
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:system:unstructured"
         },
         {
             "id": null,
             "path": "/a1/c3",
             "name": "c3",
-            "type": "System:unstructured",
+            "type": "system:unstructured",
             "displayName": "C3",
             "owner": "user:enonic:user1",
             "createdTime": "2000-01-01T12:00:00.000Z",
@@ -44,14 +44,14 @@
             "modifiedTime": "2000-01-01T12:00:00.000Z",
             "editable": true,
             "deletable": true,
-            "allowsChildren" : true,
-            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:System:unstructured"
+            "allowsChildren": true,
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:system:unstructured"
         },
         {
             "id": null,
             "path": "/a1/c4",
             "name": "c4",
-            "type": "System:unstructured",
+            "type": "system:unstructured",
             "displayName": "C4",
             "owner": "user:enonic:user1",
             "createdTime": "2000-01-01T12:00:00.000Z",
@@ -59,8 +59,8 @@
             "modifiedTime": "2000-01-01T12:00:00.000Z",
             "editable": true,
             "deletable": true,
-            "allowsChildren" : true,
-            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:System:unstructured"
+            "allowsChildren": true,
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:system:unstructured"
         }
     ],
     "facets": [

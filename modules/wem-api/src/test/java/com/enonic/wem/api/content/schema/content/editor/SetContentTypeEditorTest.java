@@ -35,7 +35,7 @@ public class SetContentTypeEditorTest
 
         final ContentType contentType = newContentType().
             name( "test" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             displayName( "test" ).
             contentDisplayNameScript( "myScript()" ).
             superType( QualifiedContentTypeName.unstructured() ).
@@ -73,7 +73,7 @@ public class SetContentTypeEditorTest
 
         final ContentType contentType = newContentType().
             name( "test" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             contentDisplayNameScript( "myScript()" ).
             superType( QualifiedContentTypeName.unstructured() ).
             setAbstract( true ).

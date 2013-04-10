@@ -76,11 +76,11 @@ Ext.application({
                                     store: Ext.create('Ext.data.Store', {
                                         fields: ['file', 'qualifiedName'],
                                         data: [
-                                            {file: 'mock-contenttype-htmlarea.json', qualifiedName: 'Demo:HtmlArea'},
-                                            {file: 'mock-contenttype-relation.json', qualifiedName: 'Demo:Relation'},
-                                            {file: 'mock-contenttype-textarea.json', qualifiedName: 'Demo:TextArea'},
-                                            {file: 'mock-contenttype-set.json', qualifiedName: 'Demo:FormItemSet'},
-                                            {file: 'mock-contenttype-performance.json', qualifiedName: 'Demo:Performance'}
+                                            {file: 'mock-contenttype-htmlarea.json', qualifiedName: 'demo:hmlarea'},
+                                            {file: 'mock-contenttype-relation.json', qualifiedName: 'demo:relation'},
+                                            {file: 'mock-contenttype-textarea.json', qualifiedName: 'demo:textArea'},
+                                            {file: 'mock-contenttype-set.json', qualifiedName: 'demo:formitemset'},
+                                            {file: 'mock-contenttype-performance.json', qualifiedName: 'demo:performance'}
                                         ]
                                     }),
                                     queryMode: 'local',

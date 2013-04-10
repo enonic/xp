@@ -1,13 +1,13 @@
 {
     "name": "AllInputTypes",
-    "module": "myModule",
-    "qualifiedName": "myModule:AllInputTypes",
+    "module": "mymodule",
+    "qualifiedName": "mymodule:AllInputTypes",
     "displayName": "All the Input Types",
     "contentDisplayNameScript": null,
-    "superType": "System:Content",
+    "superType": "system:content",
     "isAbstract": false,
     "isFinal": true,
-    "allowChildren" : true,
+    "allowChildren": true,
     "form": [
         {
             "Input": {
@@ -286,7 +286,7 @@
                     "name": "Relationship",
                     "builtIn": true,
                     "config": {
-                        "relationshipType": "System:like"
+                        "relationshipType": "system:like"
                     }
                 }
             }
@@ -308,7 +308,7 @@
                     "name": "Image",
                     "builtIn": true,
                     "config": {
-                        "relationshipType": "System:default"
+                        "relationshipType": "system:default"
                     }
                 }
             }

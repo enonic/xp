@@ -5,6 +5,6 @@
         "myTextLine2": "value2",
         "myFormItemSet.myTextLine1": "value3"
     },
-    "qualifiedContentTypeName": "myModule:myContentType",
+    "qualifiedContentTypeName": "mymodule:myContentType",
     "parentContentPath": "/myContent"
 }

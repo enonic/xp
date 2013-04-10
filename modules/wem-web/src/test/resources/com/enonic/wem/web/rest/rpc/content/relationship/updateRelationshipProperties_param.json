@@ -2,7 +2,7 @@
     "relationshipKey": {
         "fromContent": "123",
         "toContent": "321",
-        "type": "System:like"
+        "type": "system:like"
     },
     "add": {
         "addA": "1",

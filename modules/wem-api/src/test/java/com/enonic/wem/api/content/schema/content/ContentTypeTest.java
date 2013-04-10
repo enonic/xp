@@ -15,10 +15,12 @@ import static org.junit.Assert.*;
 
 public class ContentTypeTest
 {
+    private static final ModuleName MY_MODULE_NAME = ModuleName.from( "mymodule" );
+
     @Test
     public void layout()
     {
-        ContentType contentType = newContentType().name( "test" ).module( ModuleName.from( "myModule" ) ).build();
+        ContentType contentType = newContentType().name( "test" ).module( MY_MODULE_NAME ).build();
         FieldSet layout = FieldSet.newFieldSet().
             label( "Personalia" ).
             name( "personalia" ).
@@ -33,7 +35,7 @@ public class ContentTypeTest
     @Test
     public void layout_inside_formItemSet()
     {
-        ContentType contentType = newContentType().name( "test" ).module( ModuleName.from( "myModule" ) ).build();
+        ContentType contentType = newContentType().name( "test" ).module( MY_MODULE_NAME ).build();
 
         FieldSet layout = FieldSet.newFieldSet().
             label( "Personalia" ).
@@ -58,7 +60,7 @@ public class ContentTypeTest
 
         ContentType contentType = newContentType().
             name( "test" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( MY_MODULE_NAME ).
             addFormItem( newInput().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( formItemSet ).
             build();
@@ -79,7 +81,7 @@ public class ContentTypeTest
                 newInput().name( "myInnerInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
         ContentType contentType = newContentType().
             name( "test" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( MY_MODULE_NAME ).
             addFormItem( formItemSet ).
             build();
 

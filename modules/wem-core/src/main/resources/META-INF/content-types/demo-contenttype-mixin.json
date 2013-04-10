@@ -1,15 +1,15 @@
 {
-    "name": "Mixin",
-    "module": "Demo",
+    "name": "mixin",
+    "module": "demo",
     "displayName": "Demo: Mixin",
-    "superType": "System:structured",
+    "superType": "system:structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [
         {
             "MixinReference": {
                 "name": "address",
-                "reference": "Demo:address",
+                "reference": "demo:address",
                 "type": "FormItemSet"
             }
         }

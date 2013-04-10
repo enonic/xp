@@ -55,12 +55,12 @@ public class UpdateRelationshipTypeHandlerTest
     {
         // setup
         RelationshipType relationshipType = RelationshipType.newRelationshipType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:person" ) ).
+            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedToType( new QualifiedContentTypeName( "mymodule:person" ) ).
             createdTime( DateTime.now() ).
             modifiedTime( DateTime.now() ).
             build();
@@ -69,7 +69,7 @@ public class UpdateRelationshipTypeHandlerTest
 
         // exercise
         UpdateRelationshipType command = Commands.relationshipType().update().
-            selector( QualifiedRelationshipTypeName.from( "myModule:like" ) ).
+            selector( QualifiedRelationshipTypeName.from( "mymodule:like" ) ).
             editor( new RelationshipTypeEditor()
             {
                 @Override

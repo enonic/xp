@@ -1,8 +1,8 @@
 {
-    "name": "Relationship",
-    "module": "Demo",
+    "name": "relationship",
+    "module": "demo",
     "displayName": "Demo: Relationship",
-    "superType": "System:structured",
+    "superType": "system:structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [
@@ -23,7 +23,7 @@
                     "name": "Relationship",
                     "builtIn": true,
                     "config": {
-                        "relationshipType": "System:default"
+                        "relationshipType": "system:default"
                     }
                 }
             }
@@ -45,7 +45,7 @@
                     "name": "Relationship",
                     "builtIn": true,
                     "config": {
-                        "relationshipType": "System:like"
+                        "relationshipType": "system:like"
                     }
                 }
             }
@@ -67,7 +67,7 @@
                     "name": "Relationship",
                     "builtIn": true,
                     "config": {
-                        "relationshipType": "System:default"
+                        "relationshipType": "system:default"
                     }
                 }
             }
@@ -90,7 +90,7 @@
                     "name": "Relationship",
                     "builtIn": true,
                     "config": {
-                        "relationshipType": "System:default"
+                        "relationshipType": "system:default"
                     }
                 }
             }
@@ -113,7 +113,7 @@
                     "name": "Relationship",
                     "builtIn": true,
                     "config": {
-                        "relationshipType": "System:default"
+                        "relationshipType": "system:default"
                     }
                 }
             }
@@ -136,7 +136,7 @@
                     "name": "Relationship",
                     "builtIn": true,
                     "config": {
-                        "relationshipType": "System:default"
+                        "relationshipType": "system:default"
                     }
                 }
             }
@@ -159,7 +159,7 @@
                     "name": "Relationship",
                     "builtIn": true,
                     "config": {
-                        "relationshipType": "System:default"
+                        "relationshipType": "system:default"
                     }
                 }
             }
@@ -182,7 +182,7 @@
                     "name": "Relationship",
                     "builtIn": true,
                     "config": {
-                        "relationshipType": "System:default"
+                        "relationshipType": "system:default"
                     }
                 }
             }

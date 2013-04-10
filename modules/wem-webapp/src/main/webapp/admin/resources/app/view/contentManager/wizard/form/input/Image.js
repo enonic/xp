@@ -163,7 +163,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
 
         this.contentStore = new Admin.store.contentManager.ContentStore();
         this.contentStore.proxy.extraParams = {
-            contentTypes: ['System:image']
+            contentTypes: ['system:image']
         };
 
         var combo = {
@@ -361,7 +361,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                 "mimeType": mimeType,
                 "binary": binaryId
             },
-            "qualifiedContentTypeName": 'System:image',
+            "qualifiedContentTypeName": 'system:image',
             "displayName": displayName,
             "temporary": true
         };

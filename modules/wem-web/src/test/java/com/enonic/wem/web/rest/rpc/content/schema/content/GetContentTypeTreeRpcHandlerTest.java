@@ -56,24 +56,24 @@ public class GetContentTypeTreeRpcHandlerTest
             "Help text area" ).required( true ).build();
 
         final ContentType contentType1 = newContentType().
-            name( "Root" ).
+            name( "root" ).
             module( Module.SYSTEM.getName() ).
             displayName( "Some root content type" ).
             build();
         final ContentType contentType2 = newContentType().
             name( "myType" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
-            superType( new QualifiedContentTypeName( "System:Root" ) ).
+            superType( new QualifiedContentTypeName( "system:root" ) ).
             addFormItem( inputText1 ).
             addFormItem( inputText2 ).
             addFormItem( textArea1 ).
             build();
         final ContentType contentType3 = newContentType().
             name( "subType" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             displayName( "My sub-content type" ).
-            superType( new QualifiedContentTypeName( "myModule:myType" ) ).
+            superType( new QualifiedContentTypeName( "mymodule:myType" ) ).
             build();
 
         final Tree<ContentType> contentTypeTree = new Tree<ContentType>( Lists.newArrayList( contentType1 ) );

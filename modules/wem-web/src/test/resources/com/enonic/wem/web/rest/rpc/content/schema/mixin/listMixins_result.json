@@ -3,7 +3,7 @@
     "mixins": [
         {
             "name": "inputText1",
-            "module": "myModule",
+            "module": "mymodule",
             "displayName": null,
             "Input": {
                 "name": "inputText1",
@@ -22,11 +22,11 @@
                     "builtIn": true
                 }
             },
-            "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:myModule:inputText1"
+            "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:mymodule:inputText1"
         },
         {
             "name": "textArea1",
-            "module": "otherModule",
+            "module": "othermodule",
             "displayName": null,
             "Input": {
                 "name": "textArea1",
@@ -45,7 +45,7 @@
                     "builtIn": true
                 }
             },
-            "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:otherModule:textArea1"
+            "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:othermodule:textArea1"
         }
     ]
 }

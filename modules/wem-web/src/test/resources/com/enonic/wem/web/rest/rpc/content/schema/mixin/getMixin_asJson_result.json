@@ -2,7 +2,7 @@
     "success": true,
     "mixin": {
         "name": "inputText1",
-        "module": "myModule",
+        "module": "mymodule",
         "displayName": null,
         "Input": {
             "name": "inputText1",
@@ -21,6 +21,6 @@
                 "builtIn": true
             }
         },
-        "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:myModule:inputText1"
+        "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:mymodule:inputText1"
     }
 }

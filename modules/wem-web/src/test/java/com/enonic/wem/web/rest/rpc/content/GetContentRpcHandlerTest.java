@@ -84,7 +84,7 @@ public class GetContentRpcHandlerTest
             displayName( "My Content" ).
             modifiedTime( DateTime.now() ).
             modifier( UserKey.superUser() ).
-            type( new QualifiedContentTypeName( "myModule:myType" ) ).
+            type( new QualifiedContentTypeName( "mymodule:myType" ) ).
             rootDataSet( rootDataSet ).
             build();
     }

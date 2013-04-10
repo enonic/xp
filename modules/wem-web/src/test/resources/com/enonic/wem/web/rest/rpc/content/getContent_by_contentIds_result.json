@@ -5,7 +5,7 @@
             "id": "aaa",
             "path": "/myAContent",
             "name": "myAContent",
-            "type": "myModule:myType",
+            "type": "mymodule:myType",
             "displayName": "My Content",
             "owner": "user:myStore:me",
             "modifier": "user:system:admin",
@@ -20,13 +20,13 @@
                     "value": "value1"
                 }
             ],
-            "iconUrl" : "http://localhost/admin/rest/content/image/aaa"
+            "iconUrl": "http://localhost/admin/rest/content/image/aaa"
         },
         {
             "id": "bbb",
             "path": "/myBContent",
             "name": "myBContent",
-            "type": "myModule:myType",
+            "type": "mymodule:myType",
             "displayName": "My Content",
             "owner": "user:myStore:me",
             "modifier": "user:system:admin",
@@ -41,7 +41,7 @@
                     "value": "value1"
                 }
             ],
-            "iconUrl" : "http://localhost/admin/rest/content/image/bbb"
+            "iconUrl": "http://localhost/admin/rest/content/image/bbb"
         }
     ]
 }

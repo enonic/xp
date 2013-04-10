@@ -1,8 +1,8 @@
 {
-    "name": "Article2",
-    "module": "News",
+    "name": "article2",
+    "module": "news",
     "displayName": "Demo: Article2",
-    "superType": "System:structured",
+    "superType": "system:structured",
     "isAbstract": false,
     "isFinal": false,
     "form": [

@@ -33,12 +33,12 @@ public class RelationshipTypeDaoImplTest
     {
         // setup
         RelationshipType like = RelationshipType.newRelationshipType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:person" ) ).
+            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedToType( new QualifiedContentTypeName( "mymodule:person" ) ).
             build();
 
         // exercise
@@ -46,7 +46,7 @@ public class RelationshipTypeDaoImplTest
         commit();
 
         // verify
-        Node relationshipTypeNode = session.getNode( "/" + RelationshipTypeDao.RELATIONSHIP_TYPES_PATH + "myModule/like" );
+        Node relationshipTypeNode = session.getNode( "/" + RelationshipTypeDao.RELATIONSHIP_TYPES_PATH + "mymodule/like" );
         assertNotNull( relationshipTypeNode );
     }
 
@@ -56,27 +56,27 @@ public class RelationshipTypeDaoImplTest
     {
         // setup
         RelationshipType like = RelationshipType.newRelationshipType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:person" ) ).
+            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedToType( new QualifiedContentTypeName( "mymodule:person" ) ).
             build();
         relationshipTypeDao.create( like, session );
 
         RelationshipType hates = RelationshipType.newRelationshipType().
-            module( ModuleName.from( "otherModule" ) ).
+            module( ModuleName.from( "othermodule" ) ).
             name( "hate" ).
             fromSemantic( "hates" ).
             toSemantic( "hated by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:thing" ) ).
+            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedToType( new QualifiedContentTypeName( "mymodule:thing" ) ).
             build();
         relationshipTypeDao.create( hates, session );
 
         // exercise
-        RelationshipTypes relationshipTypes = relationshipTypeDao.select( QualifiedRelationshipTypeNames.from( "myModule:like" ), session );
+        RelationshipTypes relationshipTypes = relationshipTypeDao.select( QualifiedRelationshipTypeNames.from( "mymodule:like" ), session );
         commit();
 
         // verify
@@ -84,7 +84,7 @@ public class RelationshipTypeDaoImplTest
         assertEquals( 1, relationshipTypes.getSize() );
         RelationshipType createdRelationshipType = relationshipTypes.first();
         assertEquals( "like", createdRelationshipType.getName() );
-        assertEquals( "myModule", createdRelationshipType.getModuleName().toString() );
+        assertEquals( "mymodule", createdRelationshipType.getModuleName().toString() );
         assertEquals( like, createdRelationshipType );
     }
 
@@ -94,22 +94,22 @@ public class RelationshipTypeDaoImplTest
     {
         // setup
         RelationshipType like = RelationshipType.newRelationshipType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:thing" ) ).
+            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedToType( new QualifiedContentTypeName( "mymodule:thing" ) ).
             build();
         relationshipTypeDao.create( like, session );
 
         RelationshipType hates = RelationshipType.newRelationshipType().
-            module( ModuleName.from( "otherModule" ) ).
+            module( ModuleName.from( "othermodule" ) ).
             name( "hate" ).
             fromSemantic( "hates" ).
             toSemantic( "hated by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:thing" ) ).
+            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedToType( new QualifiedContentTypeName( "mymodule:thing" ) ).
             build();
         relationshipTypeDao.create( hates, session );
 
@@ -120,14 +120,14 @@ public class RelationshipTypeDaoImplTest
         // verify
         assertNotNull( relationshipTypes );
         assertEquals( 2, relationshipTypes.getSize() );
-        RelationshipType retrievedRelationshipType1 = relationshipTypes.get( QualifiedRelationshipTypeName.from( "myModule:like" ) );
-        RelationshipType retrievedRelationshipType2 = relationshipTypes.get( QualifiedRelationshipTypeName.from( "otherModule:hate" ) );
+        RelationshipType retrievedRelationshipType1 = relationshipTypes.get( QualifiedRelationshipTypeName.from( "mymodule:like" ) );
+        RelationshipType retrievedRelationshipType2 = relationshipTypes.get( QualifiedRelationshipTypeName.from( "othermodule:hate" ) );
 
         assertEquals( "like", retrievedRelationshipType1.getName() );
-        assertEquals( "myModule", retrievedRelationshipType1.getModuleName().toString() );
+        assertEquals( "mymodule", retrievedRelationshipType1.getModuleName().toString() );
         assertEquals( like, retrievedRelationshipType1 );
         assertEquals( "hate", retrievedRelationshipType2.getName() );
-        assertEquals( "otherModule", retrievedRelationshipType2.getModuleName().toString() );
+        assertEquals( "othermodule", retrievedRelationshipType2.getModuleName().toString() );
         assertEquals( hates, retrievedRelationshipType2 );
     }
 
@@ -137,41 +137,41 @@ public class RelationshipTypeDaoImplTest
     {
         // setup
         RelationshipType like = RelationshipType.newRelationshipType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:thing" ) ).
+            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedToType( new QualifiedContentTypeName( "mymodule:thing" ) ).
             build();
         relationshipTypeDao.create( like, session );
 
         RelationshipType hates = RelationshipType.newRelationshipType().
-            module( ModuleName.from( "otherModule" ) ).
+            module( ModuleName.from( "othermodule" ) ).
             name( "hate" ).
             fromSemantic( "hates" ).
             toSemantic( "hated by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:thing" ) ).
+            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedToType( new QualifiedContentTypeName( "mymodule:thing" ) ).
             build();
         relationshipTypeDao.create( hates, session );
 
         // exercise
-        QualifiedRelationshipTypeNames names = QualifiedRelationshipTypeNames.from( "myModule:like", "otherModule:hate" );
+        QualifiedRelationshipTypeNames names = QualifiedRelationshipTypeNames.from( "mymodule:like", "othermodule:hate" );
         RelationshipTypes relationshipTypes = relationshipTypeDao.select( names, session );
         commit();
 
         // verify
         assertNotNull( relationshipTypes );
         assertEquals( 2, relationshipTypes.getSize() );
-        RelationshipType retrievedRelationshipType1 = relationshipTypes.get( QualifiedRelationshipTypeName.from( "myModule:like" ) );
-        RelationshipType retrievedRelationshipType2 = relationshipTypes.get( QualifiedRelationshipTypeName.from( "otherModule:hate" ) );
+        RelationshipType retrievedRelationshipType1 = relationshipTypes.get( QualifiedRelationshipTypeName.from( "mymodule:like" ) );
+        RelationshipType retrievedRelationshipType2 = relationshipTypes.get( QualifiedRelationshipTypeName.from( "othermodule:hate" ) );
 
         assertEquals( "like", retrievedRelationshipType1.getName() );
-        assertEquals( "myModule", retrievedRelationshipType1.getModuleName().toString() );
+        assertEquals( "mymodule", retrievedRelationshipType1.getModuleName().toString() );
         assertEquals( like, retrievedRelationshipType1 );
         assertEquals( "hate", retrievedRelationshipType2.getName() );
-        assertEquals( "otherModule", retrievedRelationshipType2.getModuleName().toString() );
+        assertEquals( "othermodule", retrievedRelationshipType2.getModuleName().toString() );
         assertEquals( hates, retrievedRelationshipType2 );
     }
 
@@ -181,17 +181,17 @@ public class RelationshipTypeDaoImplTest
     {
         // setup
         RelationshipType like = RelationshipType.newRelationshipType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:thing" ) ).
+            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedToType( new QualifiedContentTypeName( "mymodule:thing" ) ).
             build();
         relationshipTypeDao.create( like, session );
 
         // exercise
-        QualifiedRelationshipTypeNames name = QualifiedRelationshipTypeNames.from( "myModule:like" );
+        QualifiedRelationshipTypeNames name = QualifiedRelationshipTypeNames.from( "mymodule:like" );
         RelationshipTypes relationshipTypesAfterCreate = relationshipTypeDao.select( name, session );
         assertNotNull( relationshipTypesAfterCreate );
         assertEquals( 1, relationshipTypesAfterCreate.getSize() );
@@ -199,24 +199,24 @@ public class RelationshipTypeDaoImplTest
         RelationshipType relationshipTypeUpdate = newRelationshipType( like ).
             fromSemantic( "accepts" ).
             toSemantic( "accepted by" ).
-            setAllowedFromTypes( QualifiedContentTypeNames.from( "myModule:worker" ) ).
-            setAllowedToTypes( QualifiedContentTypeNames.from( "myModule:task" ) ).
+            setAllowedFromTypes( QualifiedContentTypeNames.from( "mymodule:worker" ) ).
+            setAllowedToTypes( QualifiedContentTypeNames.from( "mymodule:task" ) ).
             build();
         relationshipTypeDao.update( relationshipTypeUpdate, session );
         commit();
 
         // verify
         RelationshipTypes relationshipTypesAfterUpdate =
-            relationshipTypeDao.select( QualifiedRelationshipTypeNames.from( "myModule:like" ), session );
+            relationshipTypeDao.select( QualifiedRelationshipTypeNames.from( "mymodule:like" ), session );
         assertNotNull( relationshipTypesAfterUpdate );
         assertEquals( 1, relationshipTypesAfterUpdate.getSize() );
         RelationshipType relationshipType1 = relationshipTypesAfterUpdate.first();
         assertEquals( "like", relationshipType1.getName() );
-        assertEquals( "myModule", relationshipType1.getModuleName().toString() );
+        assertEquals( "mymodule", relationshipType1.getModuleName().toString() );
         assertEquals( "accepts", relationshipType1.getFromSemantic() );
         assertEquals( "accepted by", relationshipType1.getToSemantic() );
-        assertEquals( QualifiedContentTypeNames.from( "myModule:worker" ), relationshipType1.getAllowedFromTypes() );
-        assertEquals( QualifiedContentTypeNames.from( "myModule:task" ), relationshipType1.getAllowedToTypes() );
+        assertEquals( QualifiedContentTypeNames.from( "mymodule:worker" ), relationshipType1.getAllowedFromTypes() );
+        assertEquals( QualifiedContentTypeNames.from( "mymodule:task" ), relationshipType1.getAllowedToTypes() );
     }
 
     @Test
@@ -225,22 +225,22 @@ public class RelationshipTypeDaoImplTest
     {
         // setup
         RelationshipType like = RelationshipType.newRelationshipType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:thing" ) ).
+            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedToType( new QualifiedContentTypeName( "mymodule:thing" ) ).
             build();
         relationshipTypeDao.create( like, session );
 
         // exercise
-        QualifiedRelationshipTypeNames name = QualifiedRelationshipTypeNames.from( "myModule:like" );
+        QualifiedRelationshipTypeNames name = QualifiedRelationshipTypeNames.from( "mymodule:like" );
         RelationshipTypes relationshipTypesAfterCreate = relationshipTypeDao.select( name, session );
         assertNotNull( relationshipTypesAfterCreate );
         assertEquals( 1, relationshipTypesAfterCreate.getSize() );
 
-        relationshipTypeDao.delete( QualifiedRelationshipTypeName.from( "myModule:like" ), session );
+        relationshipTypeDao.delete( QualifiedRelationshipTypeName.from( "mymodule:like" ), session );
         commit();
 
         // verify

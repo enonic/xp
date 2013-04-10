@@ -43,7 +43,7 @@ public class RootDataSetParserTest
         mySet.add( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         final ContentType contentType = newContentType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "myContentType" ).
             addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).build() ).
@@ -91,7 +91,7 @@ public class RootDataSetParserTest
         throws IOException
     {
         final ContentType contentType = newContentType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "myContentType" ).
             addFormItem( newInput().name( "myImage" ).inputType( InputTypes.IMAGE ).inputTypeConfig( newImageConfig().
                 relationshipType( QualifiedRelationshipTypeName.DEFAULT ).
@@ -123,7 +123,7 @@ public class RootDataSetParserTest
         mySet.add( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         final ContentType contentType = newContentType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "myContentType" ).
             addFormItem( newInput().name( "myGeoLocation" ).inputType( InputTypes.GEO_LOCATION ).build() ).
             addFormItem( newInput().name( "myColor" ).inputType( InputTypes.COLOR ).build() ).
@@ -165,7 +165,7 @@ public class RootDataSetParserTest
         final FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).build();
         formItemSet.add( newInput().name( "myWholeNumber" ).inputType( InputTypes.WHOLE_NUMBER ).build() );
         final ContentType myContentType = newContentType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "myContentType" ).
             addFormItem( formItemSet ).
             build();
@@ -190,7 +190,7 @@ public class RootDataSetParserTest
         throws IOException
     {
         final ContentType contentType = newContentType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "myContentType" ).
             addFormItem( newInput().name( "myGeoLocation" ).inputType( InputTypes.GEO_LOCATION ).build() ).build();
 
@@ -217,7 +217,7 @@ public class RootDataSetParserTest
         throws IOException
     {
         final ContentType contentType = newContentType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "myContentType" ).
             addFormItem( newInput().name( "myColor" ).inputType( InputTypes.COLOR ).required( true ).build() ).build();
 
@@ -250,7 +250,7 @@ public class RootDataSetParserTest
         final FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).build();
         formItemSet.add( newInput().name( "myColor" ).inputType( InputTypes.COLOR ).required( true ).build() );
         final ContentType contentType = newContentType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "myContentType" ).
             addFormItem( formItemSet ).
             build();

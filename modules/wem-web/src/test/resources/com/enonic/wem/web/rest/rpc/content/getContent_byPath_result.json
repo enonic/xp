@@ -4,7 +4,7 @@
         "id": "abc",
         "path": "/myContent",
         "name": "myContent",
-        "type": "myModule:myType",
+        "type": "mymodule:myType",
         "displayName": "My Content",
         "owner": "user:myStore:me",
         "modifier": "user:system:admin",

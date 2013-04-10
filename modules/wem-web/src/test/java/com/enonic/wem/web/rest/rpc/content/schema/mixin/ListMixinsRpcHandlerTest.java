@@ -42,14 +42,14 @@ public class ListMixinsRpcHandlerTest
         Input inputText1 = newInput().name( "inputText1" ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
             "Help text line 1" ).required( true ).build();
         Mixin mixin1 = Mixin.newMixin().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             formItem( inputText1 ).
             build();
 
         Input textArea1 = newInput().name( "textArea1" ).inputType( TEXT_AREA ).label( "Text Area" ).required( true ).helpText(
             "Help text area" ).required( true ).build();
         Mixin mixin2 = Mixin.newMixin().
-            module( ModuleName.from( "otherModule" ) ).
+            module( ModuleName.from( "othermodule" ) ).
             formItem( textArea1 ).
             build();
 

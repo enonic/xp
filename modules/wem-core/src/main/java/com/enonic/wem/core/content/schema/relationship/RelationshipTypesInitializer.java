@@ -35,8 +35,8 @@ public class RelationshipTypesInitializer
     private static final RelationshipType LIKE = createRelationshipType( QualifiedRelationshipTypeName.LIKE, "Like", "likes", "liked by" );
 
     private static final RelationshipType CITATION =
-        createRelationshipType( QualifiedRelationshipTypeName.from( "Demo:citation" ), "Citation", "citation in", "cited by",
-                                QualifiedContentTypeNames.from( "News:article" ) );
+        createRelationshipType( QualifiedRelationshipTypeName.from( "demo:citation" ), "Citation", "citation in", "cited by",
+                                QualifiedContentTypeNames.from( "news:article" ) );
 
     private static final RelationshipType[] SYSTEM_TYPES = {DEFAULT, PARENT, LINK, LIKE, CITATION};
 

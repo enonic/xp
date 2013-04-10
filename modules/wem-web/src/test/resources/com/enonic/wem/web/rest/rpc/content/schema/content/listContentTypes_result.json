@@ -3,14 +3,14 @@
     "contentTypes": [
         {
             "name": "myCtype",
-            "module": "myModule",
-            "qualifiedName": "myModule:myCtype",
+            "module": "mymodule",
+            "qualifiedName": "mymodule:myCtype",
             "displayName": null,
             "contentDisplayNameScript": null,
-            "superType": "System:unstructured",
+            "superType": "system:unstructured",
             "isAbstract": false,
             "isFinal": false,
-            "allowChildren" : true,
+            "allowChildren": true,
             "form": [
                 {
                     "Input": {
@@ -70,18 +70,18 @@
                     }
                 }
             ],
-            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:myModule:myCtype"
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:mymodule:myCtype"
         },
         {
             "name": "theContentType",
-            "module": "otherModule",
-            "qualifiedName": "otherModule:theContentType",
+            "module": "othermodule",
+            "qualifiedName": "othermodule:theContentType",
             "displayName": null,
             "contentDisplayNameScript": null,
-            "superType": "System:unstructured",
+            "superType": "system:unstructured",
             "isAbstract": false,
             "isFinal": false,
-            "allowChildren" : true,
+            "allowChildren": true,
             "form": [
                 {
                     "Input": {
@@ -103,7 +103,7 @@
                     }
                 }
             ],
-            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:otherModule:theContentType"
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:othermodule:theContentType"
         }
     ]
 }

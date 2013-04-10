@@ -53,14 +53,14 @@ public class UpdateMixinHandlerTest
         throws Exception
     {
         // setup
-        final ModuleName module = ModuleName.from( "myModule" );
+        final ModuleName module = ModuleName.from( "mymodule" );
         final Mixin existingMixin = newMixin().
             displayName( "Age" ).
             module( module ).
             formItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         Mockito.when(
-            mixinDao.select( Mockito.eq( QualifiedMixinNames.from( "myModule:age" ) ), Mockito.any( Session.class ) ) ).thenReturn(
+            mixinDao.select( Mockito.eq( QualifiedMixinNames.from( "mymodule:age" ) ), Mockito.any( Session.class ) ) ).thenReturn(
             Mixins.from( existingMixin ) );
 
         final Mixins mixins = Mixins.from( existingMixin );
@@ -68,7 +68,7 @@ public class UpdateMixinHandlerTest
 
         final FormItem formItemToSet = newInput().name( "age" ).inputType( InputTypes.WHOLE_NUMBER ).build();
         final UpdateMixin command = Commands.mixin().update().
-            qualifiedName( QualifiedMixinName.from( "myModule:age" ) ).editor( SetMixinEditor.newSetMixinEditor().
+            qualifiedName( QualifiedMixinName.from( "mymodule:age" ) ).editor( SetMixinEditor.newSetMixinEditor().
             displayName( "age2" ).
             formItem( formItemToSet ).build() );
 
@@ -90,7 +90,7 @@ public class UpdateMixinHandlerTest
 
         final FormItem formItemToSet = newInput().name( "age" ).inputType( InputTypes.WHOLE_NUMBER ).build();
         final UpdateMixin command = Commands.mixin().update().
-            qualifiedName( QualifiedMixinName.from( "myModule:age" ) ).editor( SetMixinEditor.newSetMixinEditor().
+            qualifiedName( QualifiedMixinName.from( "mymodule:age" ) ).editor( SetMixinEditor.newSetMixinEditor().
             displayName( "age2" ).
             formItem( formItemToSet ).build() );
 

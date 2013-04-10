@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <type>
   <name>AllSchemas</name>
-  <module>myModule</module>
+  <module>mymodule</module>
   <display-name>All the Base Types</display-name>
   <content-display-name-script>$('firstName') + ' ' + $('lastName')</content-display-name-script>
-  <super-type>System:Content</super-type>
+  <super-type>system:content</super-type>
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>
   <allow-children>true</allow-children>
@@ -31,7 +31,7 @@
         </layout>
         <mixin-reference name="myCommonInput">
           <name>myCommonInput</name>
-          <reference>System:mySharedInput</reference>
+          <reference>system:mySharedInput</reference>
           <type>Input</type>
         </mixin-reference>
       </items>

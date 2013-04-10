@@ -53,7 +53,7 @@ public class CreateOrUpdateContentRpcHandlerTest
         ContentId contentId = ContentId.from( "123" );
         ContentType contentType = ContentType.newContentType().
             name( "myContentType" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             build();
 
         CreateContentResult createContentResult = new CreateContentResult( contentId, ContentPath.from( "/myContent/my-child-content" ) );
@@ -80,7 +80,7 @@ public class CreateOrUpdateContentRpcHandlerTest
         ContentId contentId = ContentId.from( "123" );
         ContentType contentType = ContentType.newContentType().
             name( "myContentType" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             build();
 
         CreateContentResult createContentResult = new CreateContentResult( contentId, ContentPath.from( "/myContent/my-child-content-2" ) );
@@ -108,7 +108,7 @@ public class CreateOrUpdateContentRpcHandlerTest
     {
         ContentType contentType = ContentType.newContentType().
             name( "myContentType" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             build();
 
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
@@ -130,7 +130,7 @@ public class CreateOrUpdateContentRpcHandlerTest
     {
         ContentType contentType = ContentType.newContentType().
             name( "myContentType" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             build();
         ContentPath parentContentPath = ContentPath.from( "/myContent/childContent" ).getParentPath();
 
@@ -153,7 +153,7 @@ public class CreateOrUpdateContentRpcHandlerTest
     {
         ContentType contentType = ContentType.newContentType().
             name( "myContentType" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             build();
 
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
@@ -175,7 +175,7 @@ public class CreateOrUpdateContentRpcHandlerTest
     {
         ContentType contentType = ContentType.newContentType().
             name( "myContentType" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             build();
 
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );

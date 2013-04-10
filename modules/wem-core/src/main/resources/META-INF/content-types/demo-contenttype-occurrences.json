@@ -1,8 +1,8 @@
 {
     "name": "occurrences",
-    "module": "Demo",
+    "module": "demo",
     "displayName": "Demo: Occurrences",
-    "superType": "System:structured",
+    "superType": "system:structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [

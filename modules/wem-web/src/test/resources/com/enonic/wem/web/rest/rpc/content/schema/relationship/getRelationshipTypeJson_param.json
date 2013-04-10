@@ -1,4 +1,4 @@
 {
-    "qualifiedRelationshipTypeName": "myModule:theRelationshipType",
+    "qualifiedRelationshipTypeName": "mymodule:theRelationshipType",
     "format": "json"
 }

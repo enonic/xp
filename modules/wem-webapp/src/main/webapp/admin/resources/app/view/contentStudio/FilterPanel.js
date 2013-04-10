@@ -14,8 +14,8 @@ Ext.define('Admin.view.contentStudio.FilterPanel', {
         {
             "name": "Module",
             "terms": [
-                { "name": "System", "count": 4 },
-                { "name": "Demo", "count": 7 },
+                { "name": "system", "count": 4 },
+                { "name": "demo", "count": 7 },
                 { "name": "B", "count": 1 },
                 { "name": "C", "count": 3 }
             ]

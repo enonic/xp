@@ -76,7 +76,7 @@ public class ImageConfigJsonSerializerTest
         // setup
         StringBuilder json = new StringBuilder();
         json.append( "{\n" );
-        json.append( "\"allowContentTypes\": [\"System:audio\", \"System:image\"]\n" );
+        json.append( "\"allowContentTypes\": [\"system:audio\", \"system:image\"]\n" );
         json.append( "}\n" );
 
         // exercise

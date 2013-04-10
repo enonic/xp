@@ -60,15 +60,15 @@ public class SchemaImageResourceTest
 
         final ContentType contentType = ContentType.newContentType().
             name( "myContentType" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
-            superType( new QualifiedContentTypeName( "System:unstructured" ) ).
+            superType( new QualifiedContentTypeName( "system:unstructured" ) ).
             icon( icon ).
             build();
         setupContentType( contentType );
 
         // exercise
-        final Response response = this.controller.getSchemaIcon( "ContentType:myModule:myContentType", 20 );
+        final Response response = this.controller.getSchemaIcon( "ContentType:mymodule:myContentType", 20 );
         final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -84,7 +84,7 @@ public class SchemaImageResourceTest
 
         final ContentType systemContentType = ContentType.newContentType().
             name( "unstructured" ).
-            module( ModuleName.from( "System" ) ).
+            module( ModuleName.SYSTEM ).
             displayName( "Unstructured" ).
             icon( icon ).
             build();
@@ -92,14 +92,14 @@ public class SchemaImageResourceTest
 
         final ContentType contentType = ContentType.newContentType().
             name( "myContentType" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             superType( systemContentType.getQualifiedName() ).
             build();
         setupContentType( contentType );
 
         // exercise
-        final Response response = this.controller.getSchemaIcon( "ContentType:myModule:myContentType", 20 );
+        final Response response = this.controller.getSchemaIcon( "ContentType:mymodule:myContentType", 20 );
         final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -116,7 +116,7 @@ public class SchemaImageResourceTest
         try
         {
             // exercise
-            final Response response = this.controller.getSchemaIcon( "ContentType:myModule:myContentType", 10 );
+            final Response response = this.controller.getSchemaIcon( "ContentType:mymodule:myContentType", 10 );
             final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
         }
         catch ( WebApplicationException e )
@@ -135,7 +135,7 @@ public class SchemaImageResourceTest
         final Icon icon = Icon.from( data, "image/png" );
 
         Mixin mixin = newMixin().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             icon( icon ).
             formItem( newInput().name( "postalCode" ).inputType( InputTypes.TEXT_LINE ).build() ).
@@ -143,7 +143,7 @@ public class SchemaImageResourceTest
         setupMixin( mixin );
 
         // exercise
-        final Response response = this.controller.getSchemaIcon( "Mixin:myModule:postalCode", 20 );
+        final Response response = this.controller.getSchemaIcon( "Mixin:mymodule:postalCode", 20 );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -155,14 +155,14 @@ public class SchemaImageResourceTest
         throws Exception
     {
         Mixin mixin = newMixin().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             formItem( newInput().name( "postalCode" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         setupMixin( mixin );
 
         // exercise
-        final Response response = this.controller.getSchemaIcon( "Mixin:myModule:postalCode", 20 );
+        final Response response = this.controller.getSchemaIcon( "Mixin:mymodule:postalCode", 20 );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -177,18 +177,18 @@ public class SchemaImageResourceTest
         final Icon icon = Icon.from( data, "image/png" );
 
         RelationshipType relationshipType = newRelationshipType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:person" ) ).
+            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedToType( new QualifiedContentTypeName( "mymodule:person" ) ).
             icon( icon ).
             build();
         setupRelationshipType( relationshipType );
 
         // exercise
-        final Response response = this.controller.getSchemaIcon( "RelationshipType:myModule:like", 20 );
+        final Response response = this.controller.getSchemaIcon( "RelationshipType:mymodule:like", 20 );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -200,17 +200,17 @@ public class SchemaImageResourceTest
         throws Exception
     {
         RelationshipType relationshipType = newRelationshipType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:person" ) ).
+            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedToType( new QualifiedContentTypeName( "mymodule:person" ) ).
             build();
         setupRelationshipType( relationshipType );
 
         // exercise
-        final Response response = this.controller.getSchemaIcon( "RelationshipType:myModule:like", 20 );
+        final Response response = this.controller.getSchemaIcon( "RelationshipType:mymodule:like", 20 );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify

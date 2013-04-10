@@ -1,8 +1,8 @@
 {
-    "name": "Image",
-    "module": "Demo",
+    "name": "image",
+    "module": "demo",
     "displayName": "Demo: Image",
-    "superType": "System:structured",
+    "superType": "system:structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [
@@ -23,7 +23,7 @@
                     "name": "Image",
                     "builtIn": true,
                     "config": {
-                        "relationshipType": "System:default"
+                        "relationshipType": "system:default"
                     }
                 }
             }
@@ -46,7 +46,7 @@
                     "name": "Image",
                     "builtIn": true,
                     "config": {
-                        "relationshipType": "System:like"
+                        "relationshipType": "system:like"
                     }
                 }
             }
@@ -69,7 +69,7 @@
                     "name": "Image",
                     "builtIn": true,
                     "config": {
-                        "relationshipType": "System:like"
+                        "relationshipType": "system:like"
                     }
                 }
             }
@@ -103,7 +103,7 @@
                                 "name": "Image",
                                 "builtIn": true,
                                 "config": {
-                                    "relationshipType": "System:default"
+                                    "relationshipType": "system:default"
                                 }
                             }
                         }
@@ -126,7 +126,7 @@
                                 "name": "Image",
                                 "builtIn": true,
                                 "config": {
-                                    "relationshipType": "System:like"
+                                    "relationshipType": "system:like"
                                 }
                             }
                         }

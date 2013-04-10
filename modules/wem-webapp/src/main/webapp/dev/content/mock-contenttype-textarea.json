@@ -1,9 +1,9 @@
 {
-    "name": "Article",
-    "module": "Demo",
-    "qualifiedName": "Demo:Article",
+    "name": "article",
+    "module": "demo",
+    "qualifiedName": "demo:article",
     "displayName": "Text Area Demo",
-    "superType": "System:Content",
+    "superType": "system:content",
     "isAbstract": false,
     "isFinal": true,
     "form": [

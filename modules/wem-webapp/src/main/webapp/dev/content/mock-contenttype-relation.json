@@ -1,9 +1,9 @@
 {
-    "name": "RelatedContent",
-    "module": "Demo",
-    "qualifiedName": "Demo:RelatedContent",
+    "name": "relatedcontent",
+    "module": "demo",
+    "qualifiedName": "demo:relatedContent",
     "displayName": "Relationship Field Demo",
-    "superType": "System:Content",
+    "superType": "system:content",
     "isAbstract": false,
     "isFinal": true,
     "form": [

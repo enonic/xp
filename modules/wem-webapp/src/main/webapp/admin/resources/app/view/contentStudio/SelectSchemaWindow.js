@@ -44,7 +44,7 @@ Ext.define('Admin.view.contentStudio.SelectSchemaWindow', {
             data: [
                 {
                     name: 'ContentType',
-                    iconUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/schema/image/ContentType:System:structured')
+                    iconUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/schema/image/ContentType:system:structured')
                 },
                 {
                     name: 'RelationshipType',

@@ -1,4 +1,4 @@
 {
     "format": "xml",
-    "mixin": "myModule:mymixin"
+    "mixin": "mymodule:mymixin"
 }

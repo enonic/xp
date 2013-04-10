@@ -1,8 +1,8 @@
 {
-    "name": "Relationship test 2",
-    "module": "Demo",
+    "name": "relationship test 2",
+    "module": "demo",
     "displayName": "Demo: Relationship limited allowed-to-types",
-    "superType": "System:structured",
+    "superType": "system:structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [
@@ -23,7 +23,7 @@
                     "name": "Relationship",
                     "builtIn": true,
                     "config": {
-                        "relationshipType": "Demo:citation"
+                        "relationshipType": "demo:citation"
                     }
                 }
             }

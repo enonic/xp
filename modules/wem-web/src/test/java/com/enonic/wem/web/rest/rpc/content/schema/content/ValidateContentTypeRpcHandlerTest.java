@@ -61,7 +61,7 @@ public class ValidateContentTypeRpcHandlerTest
         throws Exception
     {
         // setup
-        final ContentType contentType1 = ContentType.newContentType().module( ModuleName.from( "myModule" ) ).name( "contentType" ).build();
+        final ContentType contentType1 = ContentType.newContentType().module( ModuleName.from( "mymodule" ) ).name( "contentType" ).build();
         final ContentType contentType2 = ContentType.newContentType( contentType1 ).name( "my type2" ).build();
         final ContentTypeValidationError error1 = new ContentTypeValidationError( "Validation error message 1", contentType1 );
         final ContentTypeValidationError error2 = new ContentTypeValidationError( "Validation error message 2", contentType2 );

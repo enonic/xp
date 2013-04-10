@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
 public abstract class AbstractContentSerializerTest
     extends AbstractSerializerTest
 {
-    private Module myModule = Module.newModule().name( "myModule" ).build();
+    private Module myModule = Module.newModule().name( "mymodule" ).build();
 
     protected MockContentTypeFetcher contentTypeFetcher = new MockContentTypeFetcher();
 
@@ -77,7 +77,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void set()
     {
-        Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
+        Content content = newContent().type( new QualifiedContentTypeName( "mymodule:myType" ) ).build();
         content.getRootDataSet().setData( "mySet.myInput", new Value.Text( "1" ) );
         content.getRootDataSet().setData( "mySet.myOtherInput", new Value.Text( "2" ) );
 
@@ -101,7 +101,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_of_values()
     {
-        Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
+        Content content = newContent().type( new QualifiedContentTypeName( "mymodule:myType" ) ).build();
         content.getRootDataSet().setData( "myArray[0]", new Value.Text( "1" ) );
         content.getRootDataSet().setData( "myArray[1]", new Value.Text( "2" ) );
 
@@ -125,7 +125,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_within_set()
     {
-        Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
+        Content content = newContent().type( new QualifiedContentTypeName( "mymodule:myType" ) ).build();
         content.getRootDataSet().setData( "mySet.myArray[0]", new Value.Text( "1" ) );
         content.getRootDataSet().setData( "mySet.myArray[1]", new Value.Text( "2" ) );
 
@@ -164,7 +164,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_of_set()
     {
-        Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
+        Content content = newContent().type( new QualifiedContentTypeName( "mymodule:myType" ) ).build();
         content.getRootDataSet().setData( "mySet[0].myInput", new Value.Text( "1" ) );
         content.getRootDataSet().setData( "mySet[0].myOtherInput", new Value.Text( "a" ) );
         content.getRootDataSet().setData( "mySet[1].myInput", new Value.Text( "2" ) );
@@ -197,7 +197,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void insertion_order_of_entries_within_a_DataSet_is_preserved()
     {
-        Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
+        Content content = newContent().type( new QualifiedContentTypeName( "mymodule:myType" ) ).build();
         content.getRootDataSet().setData( "mySet.myArray[0]", new Value.Text( "1" ) );
         content.getRootDataSet().setData( "mySet.myInput", new Value.Text( "a" ) );
         content.getRootDataSet().setData( "mySet.myArray[1]", new Value.Text( "2" ) );
@@ -222,7 +222,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_within_array()
     {
-        Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
+        Content content = newContent().type( new QualifiedContentTypeName( "mymodule:myType" ) ).build();
         content.getRootDataSet().setData( "mySet[0].myArray[0]", new Value.Text( "1" ) );
         content.getRootDataSet().setData( "mySet[0].myArray[1]", new Value.Text( "2" ) );
         content.getRootDataSet().setData( "mySet[1].myArray[0]", new Value.Text( "3" ) );
@@ -397,7 +397,7 @@ public abstract class AbstractContentSerializerTest
     {
         final DateTime time = DateTime.now();
         final Content content = newContent().
-            type( new QualifiedContentTypeName( "myModule:myType" ) ).
+            type( new QualifiedContentTypeName( "mymodule:myType" ) ).
             createdTime( time ).
             modifiedTime( time ).
             owner( AccountKey.superUser() ).

@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 
 public final class ModuleName
 {
-    public static final ModuleName SYSTEM = new ModuleName( "System" );
+    public static final ModuleName SYSTEM = new ModuleName( "system" );
 
     private final String name;
 
@@ -13,6 +13,8 @@ public final class ModuleName
     {
         Preconditions.checkNotNull( name, "module name cannot be null" );
         Preconditions.checkArgument( !name.trim().isEmpty(), "module name cannot be empty" );
+        Preconditions.checkArgument( !name.trim().isEmpty(), "module name cannot be empty" );
+        Preconditions.checkArgument( name.matches( "\\p{javaLowerCase}*" ), "module name must be in lower case: " + name );
         this.name = name;
     }
 

@@ -1,5 +1,5 @@
 {
     "success": true,
-    "relationshipTypeXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<relationship-type>\r\n  <name>theRelationshipType</name>\r\n  <display-name />\r\n  <module>myModule</module>\r\n  <from-semantic />\r\n  <to-semantic />\r\n  <allowed-from-types />\r\n  <allowed-to-types />\r\n</relationship-type>\r\n\r\n",
-    "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:myModule:theRelationshipType"
+    "relationshipTypeXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<relationship-type>\r\n  <name>theRelationshipType</name>\r\n  <display-name />\r\n  <module>mymodule</module>\r\n  <from-semantic />\r\n  <to-semantic />\r\n  <allowed-from-types />\r\n  <allowed-to-types />\r\n</relationship-type>\r\n\r\n",
+    "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:mymodule:theRelationshipType"
 }

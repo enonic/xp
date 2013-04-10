@@ -1,9 +1,9 @@
 {
     "name": "myContentType",
-    "module": "myModule",
+    "module": "mymodule",
     "displayName": "My module",
     "contentDisplayNameScript": "$('firstName') + ' ' +  $('lastName')",
-    "superType": "System:unstructured",
+    "superType": "system:unstructured",
     "isAbstract": false,
     "isFinal": true,
     "allowChildren": true,

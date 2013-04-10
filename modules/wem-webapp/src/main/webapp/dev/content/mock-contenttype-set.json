@@ -1,9 +1,9 @@
 {
-    "name": "Set",
-    "module": "Demo",
-    "qualifiedName": "Demo:Set",
+    "name": "set",
+    "module": "demo",
+    "qualifiedName": "demo:set",
     "displayName": "Form Item Set Demo",
-    "superType": "System:Content",
+    "superType": "system:content",
     "isAbstract": false,
     "isFinal": true,
     "form": [

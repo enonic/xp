@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 public abstract class AbstractContentTypeSerializerTest
     extends AbstractSerializerTest
 {
-    private static final Module myModule = newModule().name( "myModule" ).build();
+    private static final Module myModule = newModule().name( "mymodule" ).build();
 
     private ContentTypeSerializer serializer;
 
@@ -69,7 +69,7 @@ public abstract class AbstractContentTypeSerializerTest
         contentTypeBuilder.addFormItem( set );
         contentTypeBuilder.displayName( "All the Base Types" );
         contentTypeBuilder.contentDisplayNameScript( "$('firstName') + ' ' + $('lastName')" );
-        contentTypeBuilder.superType( new QualifiedContentTypeName( "System:Content" ) );
+        contentTypeBuilder.superType( new QualifiedContentTypeName( "system:content" ) );
         contentTypeBuilder.setAbstract( false );
         contentTypeBuilder.setFinal( true );
 
@@ -173,7 +173,7 @@ public abstract class AbstractContentTypeSerializerTest
     public void parse_mixin()
     {
         // setup
-        Mixin mixin = newMixin().module( ModuleName.from( "myModule" ) ).formItem( newFormItemSet().name( "address" ).addFormItem(
+        Mixin mixin = newMixin().module( ModuleName.from( "mymodule" ) ).formItem( newFormItemSet().name( "address" ).addFormItem(
             newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
             newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
             newInput().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
@@ -293,7 +293,7 @@ public abstract class AbstractContentTypeSerializerTest
             name( "AllInputTypes" ).
             module( myModule.getName() ).
             displayName( "All the Input Types" ).
-            superType( new QualifiedContentTypeName( "System:Content" ) ).
+            superType( new QualifiedContentTypeName( "system:content" ) ).
             setAbstract( false ).
             setFinal( true );
 

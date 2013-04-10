@@ -34,12 +34,12 @@ public class ListRelationshipTypeRpcHandlerTest
         throws Exception
     {
         final RelationshipType relationshipType1 = newRelationshipType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "theRelationshipType" ).
             build();
 
         final RelationshipType relationshipType2 = newRelationshipType().
-            module( ModuleName.from( "otherModule" ) ).
+            module( ModuleName.from( "othermodule" ) ).
             name( "theRelationshipType" ).
             build();
 

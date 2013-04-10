@@ -48,7 +48,7 @@ public class ContentTypeJcrMapperTest
 
         mapper.toJcr( ContentType.newContentType().
             name( "myContentType" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             displayName( "My module" ).
             superType( QualifiedContentTypeName.structured() ).
             setAbstract( false ).
@@ -79,7 +79,7 @@ public class ContentTypeJcrMapperTest
 
         mapper.toJcr( ContentType.newContentType().
             name( "myContentType" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             displayName( "My module" ).
             superType( QualifiedContentTypeName.structured() ).
             setAbstract( false ).
@@ -97,7 +97,7 @@ public class ContentTypeJcrMapperTest
         assertEquals( CREATED_TIME, contentType.getCreatedTime() );
         assertEquals( MODIFIED_TIME, contentType.getModifiedTime() );
         assertEquals( "myContentType", contentType.getName() );
-        assertEquals( ModuleName.from( "myModule" ), contentType.getModuleName() );
+        assertEquals( ModuleName.from( "mymodule" ), contentType.getModuleName() );
         assertEquals( "My module", contentType.getDisplayName() );
         assertEquals( QualifiedContentTypeName.structured(), contentType.getSuperType() );
         assertEquals( false, contentType.isAbstract() );

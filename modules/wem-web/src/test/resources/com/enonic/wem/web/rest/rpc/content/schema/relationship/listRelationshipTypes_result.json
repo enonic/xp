@@ -5,22 +5,22 @@
         {
             "name": "theRelationshipType",
             "displayName": null,
-            "module": "myModule",
+            "module": "mymodule",
             "fromSemantic": null,
             "toSemantic": null,
             "allowedFromTypes": [ ],
             "allowedToTypes": [ ],
-            "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:myModule:theRelationshipType"
+            "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:mymodule:theRelationshipType"
         },
         {
             "name": "theRelationshipType",
             "displayName": null,
-            "module": "otherModule",
+            "module": "othermodule",
             "fromSemantic": null,
             "toSemantic": null,
             "allowedFromTypes": [ ],
             "allowedToTypes": [ ],
-            "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:otherModule:theRelationshipType"
+            "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:othermodule:theRelationshipType"
         }
     ]
 }

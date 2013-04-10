@@ -1,8 +1,8 @@
 {
-    "name": "Contact (Set in Set)",
-    "module": "Demo",
+    "name": "contact (set in set)",
+    "module": "demo",
     "displayName": "Demo: FormItemSet",
-    "superType": "System:structured",
+    "superType": "system:structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [

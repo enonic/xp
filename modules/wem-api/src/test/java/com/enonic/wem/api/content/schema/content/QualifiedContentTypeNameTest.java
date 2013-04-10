@@ -17,26 +17,26 @@ public class QualifiedContentTypeNameTest
             @Override
             public Object getObjectX()
             {
-                return new QualifiedContentTypeName( "myModule:myContentType" );
+                return new QualifiedContentTypeName( "mymodule:mycontenttype" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{new QualifiedContentTypeName( "myModule:myOtherContentType" ),
-                    new QualifiedContentTypeName( "myOtherModule:myContentType" )};
+                return new Object[]{new QualifiedContentTypeName( "mymodule:myothercontenttype" ),
+                    new QualifiedContentTypeName( "myuthermodule:mycontenttype" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return new QualifiedContentTypeName( "myModule:myContentType" );
+                return new QualifiedContentTypeName( "mymodule:mycontenttype" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return new QualifiedContentTypeName( "myModule:myContentType" );
+                return new QualifiedContentTypeName( "mymodule:mycontenttype" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();

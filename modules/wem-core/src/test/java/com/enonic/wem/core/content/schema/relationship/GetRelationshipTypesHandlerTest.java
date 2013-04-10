@@ -46,19 +46,19 @@ public class GetRelationshipTypesHandlerTest
     {
         // setup
         final RelationshipType relationshipType = RelationshipType.newRelationshipType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:person" ) ).
+            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedToType( new QualifiedContentTypeName( "mymodule:person" ) ).
             build();
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
         Mockito.when( relationshipTypeDao.select( isA( QualifiedRelationshipTypeNames.class ), any( Session.class ) ) ).thenReturn(
             relationshipTypes );
 
         // exercise
-        final QualifiedRelationshipTypeNames names = QualifiedRelationshipTypeNames.from( "myModule:like" );
+        final QualifiedRelationshipTypeNames names = QualifiedRelationshipTypeNames.from( "mymodule:like" );
         final GetRelationshipTypes command = Commands.relationshipType().get().qualifiedNames( names );
         this.handler.handle( this.context, command );
 
@@ -74,20 +74,20 @@ public class GetRelationshipTypesHandlerTest
     {
         // setup
         final RelationshipType relationshipType = RelationshipType.newRelationshipType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:person" ) ).
+            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedToType( new QualifiedContentTypeName( "mymodule:person" ) ).
             build();
         final RelationshipType relationshipType2 = RelationshipType.newRelationshipType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "hate" ).
             fromSemantic( "hates" ).
             toSemantic( "hated by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:person" ) ).
+            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedToType( new QualifiedContentTypeName( "mymodule:person" ) ).
             build();
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType, relationshipType2 );
         Mockito.when( relationshipTypeDao.selectAll( any( Session.class ) ) ).thenReturn( relationshipTypes );

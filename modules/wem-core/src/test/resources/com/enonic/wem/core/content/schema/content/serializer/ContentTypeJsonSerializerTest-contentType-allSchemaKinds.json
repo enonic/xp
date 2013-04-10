@@ -1,13 +1,13 @@
 {
     "name": "AllSchemas",
-    "module": "myModule",
-    "qualifiedName": "myModule:AllSchemas",
+    "module": "mymodule",
+    "qualifiedName": "mymodule:AllSchemas",
     "displayName": "All the Base Types",
     "contentDisplayNameScript": "$('firstName') + ' ' + $('lastName')",
-    "superType": "System:Content",
+    "superType": "system:content",
     "isAbstract": false,
     "isFinal": true,
-    "allowChildren" : true,
+    "allowChildren": true,
     "form": [
         {
             "FormItemSet": {
@@ -52,7 +52,7 @@
                     {
                         "MixinReference": {
                             "name": "myCommonInput",
-                            "reference": "System:mySharedInput",
+                            "reference": "system:mySharedInput",
                             "type": "Input"
                         }
                     }

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <type>
   <name>AllInputTypes</name>
-  <module>myModule</module>
+  <module>mymodule</module>
   <display-name>All the Input Types</display-name>
   <content-display-name-script/>
-  <super-type>System:Content</super-type>
+  <super-type>system:content</super-type>
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>
   <allow-children>true</allow-children>
@@ -134,7 +134,7 @@
       <helpText/>
       <occurrences minimum="0" maximum="1"/>
       <config>
-        <relationship-type>System:like</relationship-type>
+        <relationship-type>system:like</relationship-type>
       </config>
     </input>
     <input type="Image" built-in="true" name="myImage">
@@ -145,7 +145,7 @@
       <helpText/>
       <occurrences minimum="0" maximum="1"/>
       <config>
-        <relationship-type>System:default</relationship-type>
+        <relationship-type>system:default</relationship-type>
       </config>
     </input>
   </form>

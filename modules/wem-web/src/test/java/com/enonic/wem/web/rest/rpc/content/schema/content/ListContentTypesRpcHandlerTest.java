@@ -49,7 +49,7 @@ public class ListContentTypesRpcHandlerTest
             "Help text area" ).required( true ).build();
 
         final ContentType contentType1 = newContentType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "myCtype" ).
             addFormItem( inputText1 ).
             addFormItem( inputText2 ).
@@ -60,7 +60,7 @@ public class ListContentTypesRpcHandlerTest
             newInput().name( "inputText_1" ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build();
         final ContentType contentType2 = newContentType().
-            module( ModuleName.from( "otherModule" ) ).
+            module( ModuleName.from( "othermodule" ) ).
             name( "theContentType" ).
             addFormItem( inputTextCty2 ).
             build();

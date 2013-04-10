@@ -3,28 +3,28 @@
     "total": 3,
     "contentTypes": [
         {
-            "name": "Root",
-            "module": "System",
-            "qualifiedName": "System:Root",
+            "name": "root",
+            "module": "system",
+            "qualifiedName": "system:root",
             "displayName": "Some root content type",
             "contentDisplayNameScript": null,
             "superType": null,
             "isAbstract": false,
             "isFinal": false,
-            "allowChildren" : true,
+            "allowChildren": true,
             "form": [ ],
-            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:System:Root",
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:system:root",
             "contentTypes": [
                 {
                     "name": "myType",
-                    "module": "myModule",
-                    "qualifiedName": "myModule:myType",
+                    "module": "mymodule",
+                    "qualifiedName": "mymodule:myType",
                     "displayName": "My content type",
                     "contentDisplayNameScript": null,
-                    "superType": "System:Root",
+                    "superType": "system:root",
                     "isAbstract": false,
                     "isFinal": false,
-                    "allowChildren" : true,
+                    "allowChildren": true,
                     "form": [
                         {
                             "Input": {
@@ -84,20 +84,20 @@
                             }
                         }
                     ],
-                    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:myModule:myType",
+                    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:mymodule:myType",
                     "contentTypes": [
                         {
                             "name": "subType",
-                            "module": "myModule",
-                            "qualifiedName": "myModule:subType",
+                            "module": "mymodule",
+                            "qualifiedName": "mymodule:subType",
                             "displayName": "My sub-content type",
                             "contentDisplayNameScript": null,
-                            "superType": "myModule:myType",
+                            "superType": "mymodule:myType",
                             "isAbstract": false,
                             "isFinal": false,
-                            "allowChildren" : true,
+                            "allowChildren": true,
                             "form": [ ],
-                            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:myModule:subType",
+                            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:mymodule:subType",
                             "contentTypes": [ ],
                             "hasChildren": false
                         }

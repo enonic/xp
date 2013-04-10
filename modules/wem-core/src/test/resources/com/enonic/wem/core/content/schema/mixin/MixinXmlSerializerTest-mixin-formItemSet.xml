@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mixin>
   <name>mySet</name>
-  <module>myModule</module>
+  <module>mymodule</module>
   <display-name>My Mixin</display-name>
   <form-item-set name="mySet">
     <label>My set</label>

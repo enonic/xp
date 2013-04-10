@@ -1,6 +1,6 @@
 {
     "name": "address",
-    "module": "Demo",
+    "module": "demo",
     "displayName": "Demo: Address Mixin",
     "FormItemSet": {
         "name": "address",

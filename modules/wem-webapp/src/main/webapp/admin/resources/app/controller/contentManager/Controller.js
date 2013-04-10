@@ -58,7 +58,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 "id": "56bf6229-b5f8-4085-9bd2-58eb103e367b",
                 "path": "default:/",
                 "name": null,
-                "type": "System:space",
+                "type": "system:space",
                 "displayName": "Default space",
                 "owner": null,
                 "modifier": null,

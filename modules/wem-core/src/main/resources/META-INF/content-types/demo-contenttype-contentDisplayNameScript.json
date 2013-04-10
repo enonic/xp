@@ -1,8 +1,8 @@
 {
-    "name": "ContentDisplayNameScript",
-    "module": "Demo",
+    "name": "contentdisplaynamescript",
+    "module": "demo",
     "displayName": "Demo: Content Display name script",
-    "superType": "System:structured",
+    "superType": "system:structured",
     "isAbstract": false,
     "isFinal": true,
     "contentDisplayNameScript": "$('firstName') + ' ' + $('middleName') + ' ' + $('lastName')",

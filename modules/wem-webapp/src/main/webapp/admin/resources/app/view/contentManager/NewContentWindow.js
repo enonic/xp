@@ -71,7 +71,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
         var recommendedContentTypesStore = Ext.create('Ext.data.Store', {
             model: 'Admin.model.contentStudio.ContentTypeModel',
             data: [
-                { iconUrl: '/enonic/admin/rest/schema/image/ContentType:System:structured', name: 'Advanced Data', qualifiedName: 'path/1' }
+                { iconUrl: '/enonic/admin/rest/schema/image/ContentType:system:structured', name: 'Advanced Data', qualifiedName: 'path/1' }
             ],
             autoLoad: true
         });

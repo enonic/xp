@@ -57,7 +57,7 @@ public class UpdateContentTypeHandlerTest
 
         ContentType existingContentType = newContentType().
             name( "myContentType" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             setAbstract( false ).
             superType( QualifiedContentTypeName.structured() ).
@@ -68,7 +68,7 @@ public class UpdateContentTypeHandlerTest
             existingContentType );
 
         UpdateContentType command =
-            Commands.contentType().update().qualifiedName( QualifiedContentTypeName.from( "myModule:myContentType" ) );
+            Commands.contentType().update().qualifiedName( QualifiedContentTypeName.from( "mymodule:myContentType" ) );
         final ContentTypeEditor editor = newSetContentTypeEditor().
             displayName( "Changed" ).
             setAbstract( false ).
@@ -96,18 +96,18 @@ public class UpdateContentTypeHandlerTest
 
         ContentType existingContentType = newContentType().
             name( "myContentType" ).
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             setAbstract( false ).
             superType( QualifiedContentTypeName.structured() ).
             build();
 
         Mockito.when(
-            contentTypeDao.select( eq( QualifiedContentTypeName.from( "myModule:myContentType" ) ), any( Session.class ) ) ).thenReturn(
+            contentTypeDao.select( eq( QualifiedContentTypeName.from( "mymodule:myContentType" ) ), any( Session.class ) ) ).thenReturn(
             existingContentType );
 
         UpdateContentType command =
-            Commands.contentType().update().qualifiedName( QualifiedContentTypeName.from( "myModule:myContentType" ) );
+            Commands.contentType().update().qualifiedName( QualifiedContentTypeName.from( "mymodule:myContentType" ) );
         final ContentTypeEditor editor = newSetContentTypeEditor().
             displayName( "Changed" ).
             setAbstract( false ).

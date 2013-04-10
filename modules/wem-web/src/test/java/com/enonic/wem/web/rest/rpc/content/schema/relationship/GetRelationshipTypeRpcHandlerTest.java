@@ -39,13 +39,13 @@ public class GetRelationshipTypeRpcHandlerTest
         throws Exception
     {
         final RelationshipType relationshipType = newRelationshipType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "theRelationshipType" ).
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
         final QualifiedRelationshipTypeNames names =
-            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "myModule:theRelationshipType" ) );
+            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "mymodule:theRelationshipType" ) );
         Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
         testSuccess( "getRelationshipTypeJson_param.json", "getRelationshipTypeJson_result.json" );
@@ -56,13 +56,13 @@ public class GetRelationshipTypeRpcHandlerTest
         throws Exception
     {
         final RelationshipType relationshipType = newRelationshipType().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             name( "theRelationshipType" ).
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
         final QualifiedRelationshipTypeNames names =
-            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "myModule:theRelationshipType" ) );
+            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "mymodule:theRelationshipType" ) );
         Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
         testSuccess( "getRelationshipTypeXml_param.json", "getRelationshipTypeXml_result.json" );
@@ -76,7 +76,7 @@ public class GetRelationshipTypeRpcHandlerTest
 
         final ObjectNode resultJson = objectNode();
         resultJson.put( "success", false );
-        resultJson.put( "error", "RelationshipType [[myModule:theRelationshipType]] was not found" );
+        resultJson.put( "error", "RelationshipType [[mymodule:theRelationshipType]] was not found" );
         testSuccess( "getRelationshipTypeJson_param.json", resultJson );
     }
 }

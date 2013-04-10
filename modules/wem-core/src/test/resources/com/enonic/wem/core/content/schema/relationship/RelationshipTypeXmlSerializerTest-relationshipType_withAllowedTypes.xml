@@ -1,14 +1,14 @@
 <relationship-type>
   <name>love</name>
   <display-name>Love</display-name>
-  <module>System</module>
+  <module>system</module>
   <from-semantic>loves</from-semantic>
   <to-semantic>loved by</to-semantic>
   <allowed-from-types>
-    <content-type>System:person</content-type>
-    <content-type>System:animal</content-type>
+    <content-type>system:person</content-type>
+    <content-type>system:animal</content-type>
   </allowed-from-types>
   <allowed-to-types>
-    <content-type>System:person</content-type>
+    <content-type>system:person</content-type>
   </allowed-to-types>
 </relationship-type>

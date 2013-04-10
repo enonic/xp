@@ -19,7 +19,7 @@ public class MixinTest
     @Test
     public void adding_a_formItemSetMixin_to_another_formItemSetMixin_throws_exception()
     {
-        ModuleName module = ModuleName.from( "myModule" );
+        ModuleName module = ModuleName.from( "mymodule" );
 
         Mixin ageMixin = newMixin().module( module ).formItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
@@ -47,7 +47,7 @@ public class MixinTest
     @Test
     public void tags()
     {
-        ModuleName module = ModuleName.from( "myModule" );
+        ModuleName module = ModuleName.from( "mymodule" );
         Input input = newInput().name( "tags" ).label( "Tags" ).inputType( InputTypes.TEXT_LINE ).multiple( true ).build();
         Mixin inputMixin = Mixin.newMixin().module( module ).formItem( input ).build();
     }

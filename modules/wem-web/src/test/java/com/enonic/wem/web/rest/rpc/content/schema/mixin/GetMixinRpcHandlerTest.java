@@ -44,12 +44,12 @@ public class GetMixinRpcHandlerTest
         Input inputText1 = newInput().name( "inputText1" ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
             "Help text line 1" ).required( true ).build();
         Mixin mixin = Mixin.newMixin().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             formItem( inputText1 ).
             build();
 
         Mixins mixins = Mixins.from( mixin );
-        QualifiedMixinNames names = QualifiedMixinNames.from( new QualifiedMixinName( "myModule:mymixin" ) );
+        QualifiedMixinNames names = QualifiedMixinNames.from( new QualifiedMixinName( "mymodule:mymixin" ) );
         Mockito.when( client.execute( mixin().get().names( names ) ) ).thenReturn( mixins );
 
         testSuccess( "getMixin_asJson_param.json", "getMixin_asJson_result.json" );
@@ -62,12 +62,12 @@ public class GetMixinRpcHandlerTest
         Input inputText1 = newInput().name( "inputText1" ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
             "Help text line 1" ).required( true ).build();
         Mixin mixin = Mixin.newMixin().
-            module( ModuleName.from( "myModule" ) ).
+            module( ModuleName.from( "mymodule" ) ).
             formItem( inputText1 ).
             build();
 
         Mixins mixins = Mixins.from( mixin );
-        QualifiedMixinNames names = QualifiedMixinNames.from( new QualifiedMixinName( "myModule:mymixin" ) );
+        QualifiedMixinNames names = QualifiedMixinNames.from( new QualifiedMixinName( "mymodule:mymixin" ) );
         Mockito.when( client.execute( mixin().get().names( names ) ) ).thenReturn( mixins );
 
         testSuccess( "getMixin_asXml_param.json", "getMixin_asXml_result.json" );
@@ -81,7 +81,7 @@ public class GetMixinRpcHandlerTest
 
         ObjectNode resultJson = objectNode();
         resultJson.put( "success", false );
-        resultJson.put( "error", "Mixin [myModule:mymixin] was not found" );
+        resultJson.put( "error", "Mixin [mymodule:mymixin] was not found" );
         testSuccess( "getMixin_asJson_param.json", resultJson );
     }
 }

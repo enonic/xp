@@ -1,6 +1,6 @@
 {
     "name": "myInput",
-    "module": "myModule",
+    "module": "mymodule",
     "displayName": "My Mixin",
     "Input": {
         "name": "myInput",
