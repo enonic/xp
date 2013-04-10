@@ -230,7 +230,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
 
         var template = new Ext.XTemplate(
             '<tpl for=".">',
-            '   <div class="admin-inputimage" style="background-image: url({iconUrl})">',
+            '   <div class="admin-inputimage" style="background-image: url({iconUrl}?size=140&thumbnail=false)">',
 //            '       <div class="top-bar"><a href="javascript:;" class="admin-remove-button">Remove</a></div>',
             '       <div class="bottom-bar">',
             '           <h6>{displayName}</h6>',
@@ -310,12 +310,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
     onFilesUploaded: function (win, files) {
         var me = this;
         Ext.each(files, function (file) {
-            me.createTemporaryImageContent(file.response, function (contentId) {
-                var contentModel = Ext.create('Admin.model.contentManager.ContentModel', {
-                    displayName: file.response.name,
-                    iconUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/upload/' + file.response.id),
-                    id: contentId
-                });
+            me.createTemporaryImageContent(file.response, function (contentModel) {
                 me.selectedContentStore.add(contentModel);
             });
         });
@@ -329,7 +324,16 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         var me = this;
         this.remoteCreateBinary(file.id, function (binaryId) {
             me.remoteCreateImageContent(file.name, file.mimeType, binaryId, function (contentId) {
-                callback(contentId);
+                var getContentCommand = {
+                    contentIds: [contentId]
+                };
+                Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
+                    if (getContentResponse && getContentResponse.success) {
+                        var contentData = getContentResponse.content[0];
+                        var contentModel = new Admin.model.contentManager.ContentModel(contentData);
+                        callback(contentModel);
+                    }
+                });
             });
         });
     },

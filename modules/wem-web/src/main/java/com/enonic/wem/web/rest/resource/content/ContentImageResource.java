@@ -28,6 +28,8 @@ import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 
 import static com.enonic.wem.api.command.Commands.contentType;
+import static com.enonic.wem.web.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
+import static com.enonic.wem.web.rest.resource.content.ContentImageHelper.ImageFilter.ScaleSquareFilter;
 
 @Component
 @Path("content/image")
@@ -46,7 +48,8 @@ public class ContentImageResource
     @GET
     @Path("{contentId}")
     public Response getContentImage( @PathParam("contentId") final String contentId,
-                                     @QueryParam("size") @DefaultValue("128") final int size )
+                                     @QueryParam("size") @DefaultValue("128") final int size,
+                                     @QueryParam("thumbnail") @DefaultValue("true") final boolean thumbnail )
         throws Exception
     {
         if ( contentId == null )
@@ -69,7 +72,14 @@ public class ContentImageResource
         {
             final RootDataSet contentData = content.getRootDataSet();
             final Binary binary = findBinary( contentData.getData( "binary" ).getBinaryId() );
-            contentImage = helper.getImageFromBinary( binary, size );
+            if ( thumbnail )
+            {
+                contentImage = helper.getImageFromBinary( binary, size, ScaleSquareFilter );
+            }
+            else
+            {
+                contentImage = helper.getImageFromBinary( binary, size, ScaleMax );
+            }
             mimeType = contentData.getData( "mimeType" ).getString();
         }
         else

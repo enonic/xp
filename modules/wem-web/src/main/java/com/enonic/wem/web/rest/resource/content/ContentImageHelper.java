@@ -3,17 +3,24 @@ package com.enonic.wem.web.rest.resource.content;
 import java.awt.image.BufferedImage;
 
 import com.enonic.wem.api.content.binary.Binary;
+import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
 import com.enonic.wem.core.image.filter.effect.ScaleSquareFilter;
 import com.enonic.wem.web.rest.resource.BaseImageHelper;
 
 final class ContentImageHelper
     extends BaseImageHelper
 {
+    public enum ImageFilter
+    {
+        ScaleSquareFilter,
+        ScaleMax
+    }
+
     public ContentImageHelper()
     {
     }
 
-    public BufferedImage getImageFromBinary( final Binary binary, final int size )
+    public BufferedImage getImageFromBinary( final Binary binary, final int size, final ImageFilter imageFilter )
         throws Exception
     {
         if ( binary == null )
@@ -22,6 +29,16 @@ final class ContentImageHelper
         }
 
         final BufferedImage image = toBufferedImage( binary.asInputStream() );
-        return new ScaleSquareFilter( size ).filter( image );
+        switch ( imageFilter )
+        {
+            case ScaleSquareFilter:
+                return new ScaleSquareFilter( size ).filter( image );
+
+            case ScaleMax:
+                return new ScaleMaxFilter( size ).filter( image );
+
+            default:
+                throw new IllegalArgumentException( "Invalid image filter: " + imageFilter );
+        }
     }
 }
