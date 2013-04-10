@@ -140,13 +140,11 @@ Ext.define('Admin.view.TopBar', {
         var iconClass;
 
         if ('tab-browse' === card.id) {
-            buttonText = 'Open Tabs';
+            buttonText = '';
         } else if (card.tab.iconClass) {
             iconClass = card.tab.iconClass;
         } else if (card.tab.editing) {
             iconClass = 'icon-icomoon-pencil-32';
-        } else {
-            iconClass = 'icon-icomoon-eye-32';
         }
 
         this.titleButton.setIconCls(iconClass);
