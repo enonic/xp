@@ -54,7 +54,7 @@ Ext.define('Admin.view.WizardPanel', {
             items: this.createSteps()
         });
         this.items = [
-            this.createHeaderPane(),
+            this.createHeaderPanel(),
             {
                 itemId : 'bottomPanel',
                 xtype: 'container',
@@ -191,16 +191,18 @@ Ext.define('Admin.view.WizardPanel', {
         me.updateShadow(me);
     },
 
-    updateShadow : function (me) {
-        var bottomPanel = me.down('#bottomPanel' ).getEl();
+    updateShadow: function (me) {
+        var bottomPanel = me.down('#bottomPanel').getEl();
+
         if (bottomPanel) {
             var hasScroll = bottomPanel.dom.scrollHeight > bottomPanel.dom.clientHeight;
-            var positionPanel = me.down('#positionPanel' ).getEl();
-            console.log();
-            if (hasScroll && bottomPanel.dom.scrollTop != 0) {
-                positionPanel.applyStyles({ boxShadow : '0 10px 10px -6px #898989' });
+            var wizardHeaderPanel = me.down('#wizardHeaderPanel').getEl();
+
+            if (hasScroll && bottomPanel.dom.scrollTop !== 0) {
+                // 0 4px 10px -6px
+                wizardHeaderPanel.applyStyles({ boxShadow: '-40px -55px 40px 40px rgba(137, 137, 137, 1)' });
             } else {
-                positionPanel.applyStyles({ boxShadow : undefined });
+                wizardHeaderPanel.applyStyles({ boxShadow: undefined });
             }
         }
     },
@@ -499,12 +501,13 @@ Ext.define('Admin.view.WizardPanel', {
         event.stopEvent();
     },
 
-    createHeaderPane: function () {
+    createHeaderPanel: function () {
         var icon = this.createIcon();
         return {
             xtype: 'container',
-
+            itemId: 'wizardHeaderPanel',
             padding: '10 10 0 10',
+            margin: '0 0 10 0',
             layout: {
                 type: 'table',
                 columns: 2,
