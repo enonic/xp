@@ -7,6 +7,7 @@ Ext.define('Admin.view.IframeContainer', {
     autoScroll: false,
     styleHtmlContent: true,
     iFrameCls: undefined,
+    minHeight: 420,
 
     listeners: {
         afterrender: function (panel) {

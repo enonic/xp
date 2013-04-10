@@ -17,8 +17,8 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
         this.singleSelection.tabs = [
             {
-                displayName: 'Traffic',
-                name: 'traffic',
+                displayName: 'Analytics',
+                name: 'analytics',
                 items: [
                     {xtype: 'iframe', url: '/dev/detailpanel/analytics.jsp', iFrameCls: (me.isVertical ? 'admin-detail-vertical' : '') }
                 ]
