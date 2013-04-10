@@ -112,10 +112,11 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     },
 
     createLivePreview: function (data) {
+        var me = this;
         return {
             itemId: 'livePreview',
             xtype: 'contentLive',
-            actionButton: this.getActionButton()
+            actionButton: (me.isFullPage ? undefined : me.getActionButton())
         };
     },
 

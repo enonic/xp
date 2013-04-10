@@ -12,7 +12,32 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     actionButton: undefined,
 
     initComponent: function () {
+        var me = this;
+        this.dockedItems = [
+            me.getActionButtonContainer()
+        ];
+
+
         this.callParent(arguments);
+    },
+
+    getActionButtonContainer: function () {
+        if (this.actionButton) {
+            return {
+                xtype: 'container',
+                layout: 'hbox',
+                border: 0,
+                padding: '5 20 0',
+                dock: 'top',
+                items: [
+                    {
+                        xtype: 'tbfill'
+                    },
+                    Ext.apply(this.actionButton, {border: 0})
+                ]
+            };
+        }
+        return {};
     },
 
     load: function (url, isEdit) {

@@ -31,10 +31,7 @@ Ext.define('Admin.view.DetailPanel', {
             });
 
             if (this.isFullPage) {
-                var actionsButton = this.down('dropDownButton');
-                if (actionsButton) {
-                    actionsButton.setVisible(false);
-                }
+                this.hideActionButton();
             }
             if (this.singleSelection.tabs.length > 0) {
                 this.changeTab(this.singleSelection.tabs[0].name);
@@ -71,6 +68,14 @@ Ext.define('Admin.view.DetailPanel', {
     /*
      * Actions button
      * */
+    hideActionButton: function () {
+        var actionsButton = this.down('dropDownButton');
+        if (actionsButton) {
+            console.log(actionsButton);
+            actionsButton.setVisible(false);
+        }
+    },
+
     actionButtonItems: [],
 
     getActionItems: function () {
