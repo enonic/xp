@@ -22,14 +22,14 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                     me.saveContent(this.getContentWizardPanel(), false);
                 }
             },
+            'contentLiveEditPanel *[action=publishContent]': {
+                click: function (el, e) {
+                    me.publishContent(this.getContentWizardPanel(), false);
+                }
+            },
             'contentWizardPanel *[action=previewContent]': {
                 click: function (el, e) {
 
-                }
-            },
-            'contentWizardPanel *[action=publishContent]': {
-                click: function (el, e) {
-                    me.publishContent(this.getContentWizardPanel(), false);
                 }
             },
             'contentWizardPanel': {
@@ -146,10 +146,8 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                     me.getContentWizardTab().close();
                 }
 
-                var path = contentParams.contentPath ? contentParams.contentPath : contentPath;
-
                 Admin.MessageBus.showGeneral(
-                    path,
+                    contentParams.displayName,
                     function () {
                         alert('publish link callback');
                     },
@@ -170,9 +168,8 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
 
 
     publishContent: function (contentWizard, closeWizard) {
-        var contentPath = contentWizard.data.content.path;
         Admin.MessageBus.showPublish(
-            contentPath,
+            contentWizard.getData().displayName,
             function () {
                 alert('result link callback');
             },
