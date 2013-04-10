@@ -70,7 +70,30 @@ Ext.define('Admin.view.account.DetailPanel', {
         };
     },
 
-    largeBoxTemplate: Ext.Template(Templates.account.selectedAccountLarge),
+    largeBoxTemplate: '<tpl for="users">' +
+                      '<div class="admin-selected-item-box large clearfix" id="selected-item-box:{key}">' +
+                      '<div class="left">' +
+                      '<img alt={displayName} src="{image_url}"/>' +
+                      '</div>' +
+                      '<div class="center">' +
+                      '<h6>{displayName}</h6>' +
+                      '<p>{userStore}\\\\{name}</p>' +
+                      '</div>' +
+                      '<div class="right">' +
+                      '<a href="javascript:;" class="deselect" id="remove-from-selection-button:{key}"></a>' +
+                      '</div>' +
+                      '</div>' +
+                      '</tpl>',
 
-    smallBoxTemplate: Ext.Template(Templates.account.selectedAccountSmall)
+    smallBoxTemplate: '<tpl for="users">' +
+                      '<div id="selected-item-box:{key}" class="admin-selected-item-box small clearfix">' +
+                      '<div class="left">' +
+                      '<img src="{image_url}" alt="{displayName}"/>' +
+                      '</div>' +
+                      '<div class="center">{displayName}</div>' +
+                      '<div class="right">' +
+                      '<a href="javascript:;" class="deselect" id="remove-from-selection-button:{key}"></a>' +
+                      '</div>' +
+                      '</div>' +
+                      '</tpl>'
 });
