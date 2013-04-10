@@ -34,6 +34,11 @@ public class ContentTypeValidator
         if ( contentType.getSuperType() != null )
         {
             ContentType superType = contentTypeFetcher.getContentType( contentType.getSuperType() );
+            if ( superType == null )
+            {
+                registerError( new ContentTypeValidationError( "SuperType not found: " + contentType.getSuperType(), contentType ) );
+                return;
+            }
             if ( superType.isFinal() )
             {
                 registerError( new ContentTypeValidationError( "Cannot inherit from a final ContentType: " + superType.getQualifiedName(),

@@ -5,6 +5,11 @@ import java.text.MessageFormat;
 public abstract class BaseException
     extends RuntimeException
 {
+    public BaseException( final String message )
+    {
+        super( message );
+    }
+
     public BaseException( final String message, final Object... args )
     {
         this( null, message, args );
