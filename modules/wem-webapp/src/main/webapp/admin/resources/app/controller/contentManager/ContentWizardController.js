@@ -22,9 +22,10 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                     me.saveContent(this.getContentWizardPanel(), false);
                 }
             },
-            'contentWizardPanel *[action=previewContent]': {
+            'contentLiveEditPanel *[action=previewContent]': {
                 click: function (el, e) {
-
+                    console.log('clicked preview content');
+                    me.previewContent();
                 }
             },
             'contentWizardPanel *[action=publishContent]': {
@@ -166,6 +167,11 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
             }
         };
         this.remoteCreateOrUpdateContent(contentParams, onUpdateContentSuccess);
+    },
+
+    previewContent: function () {
+        console.log("previewing content");
+        window.open(Admin.lib.UriHelper.getAbsoluteUri('/dev/live-edit/page/bootstrap.jsp'));
     },
 
 
