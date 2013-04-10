@@ -48,7 +48,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
     html += '    <div class="live-edit-toggle-components-container" style="width:' + TOGGLE_WIDTH + 'px"><span class="live-edit-toggle-text-container">Toolbar</span></div>';
     html += '        <div class="live-edit-components">';
     html += '            <div class="live-edit-form-container">';
-    html += '               <form>';
+    html += '               <form onsubmit="return false;">';
     html += '                   <input type="text" placeholder="Filter" name="filter"/>';
     html += '               </form>';
     html += '            </div>';
