@@ -180,7 +180,7 @@ Ext.define('Admin.view.TreeGridPanel', {
                 for (i = 0; i < selNodes.length; i++) {
                     var selNode = selNodes[i];
                     // need to use == instead of === because of 6 == "6" while 6 !== "6"
-                    if (key == selNode.get(this.keyField)) {
+                    if (key == selNode.internalId) {
                         selModel.deselect(selNode);
                     }
                 }
