@@ -23,7 +23,7 @@ Ext.define('Admin.controller.account.GridPanelController', {
             {
                 'accountGrid': {
                     selectionchange: function () {
-                        this.updateDetailsPanel();
+                        this.updateDetailPanel();
                         this.updateActionItems();
                     },
                     itemcontextmenu: this.popupMenu,
@@ -66,7 +66,7 @@ Ext.define('Admin.controller.account.GridPanelController', {
         this.showPreviewAccountPanel();
     },
 
-    updateDetailsPanel: function () {
+    updateDetailPanel: function () {
         var detailPanel = this.getAccountDetailPanel();
         var persistentGridSelectionPlugin = this.getPersistentGridSelectionPlugin();
         var persistentSelection = persistentGridSelectionPlugin.getSelection();
@@ -82,7 +82,6 @@ Ext.define('Admin.controller.account.GridPanelController', {
             var accountData = persistentSelection[0].raw;
             Admin.lib.RemoteService.account_get({ key: accountData.key }, function (response) {
                     if (response.success) {
-                        detailPanel.setCurrentAccount(response);
                         detailPanel.showAccountPreview(response);
                     } else {
                         detailPanel.showNoneSelection();

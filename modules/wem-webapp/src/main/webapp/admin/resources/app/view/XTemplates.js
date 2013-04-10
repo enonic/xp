@@ -96,7 +96,7 @@ Templates.account = {
     noUserSelected:
 		'<div>No account selected</div>',
 
-    selectedUserLarge:
+    selectedAccountLarge:
 		'<tpl for="users">' + 
 		    '<div class="admin-selected-item-box large clearfix" id="selected-item-box:{key}">' + 
 		        '<div class="left">' + 
@@ -107,12 +107,12 @@ Templates.account = {
 		            '<p>{userStore}\\\\{name}</p>' + 
 		        '</div>' + 
 		        '<div class="right">' + 
-		            '<a href="javascript:;" class="remove-selection" id="remove-from-selection-button:{key}"></a>' + 
+		            '<a href="javascript:;" class="deselect" id="remove-from-selection-button:{key}"></a>' + 
 		        '</div>' + 
 		    '</div>' + 
 		'</tpl>',
 
-    selectedUserSmall:
+    selectedAccountSmall:
 		'<tpl for="users">' + 
 		    '<div id="selected-item-box:{key}" class="admin-selected-item-box small clearfix">' + 
 		        '<div class="left">' + 
@@ -120,7 +120,7 @@ Templates.account = {
 		        '</div>' + 
 		        '<div class="center">{displayName}</div>' + 
 		        '<div class="right">' + 
-		            '<a id="remove-from-selection-button:{key}" class="remove-selection" href="javascript:;"></a>' + 
+		            '<a href="javascript:;" class="deselect" id="remove-from-selection-button:{key}"></a>' + 
 		        '</div>' + 
 		    '</div>' + 
 		'</tpl>',

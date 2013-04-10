@@ -108,7 +108,7 @@ Ext.define('Admin.view.DetailPanel', {
 
         photo: '<img src="{data.iconUrl}?size=80" style="width: 64px;" alt="{name}"/>',
 
-        header: '<h1>{data.displayName}</h1><span>{data.key}{data.path}</span>'
+        header: '<h1>{data.displayName}</h1><span>{data.path}</span>'
     },
 
     singleSelection: {
@@ -234,7 +234,7 @@ Ext.define('Admin.view.DetailPanel', {
     },
 
     largeBoxTemplate: '<tpl for=".">' +
-                      '<div id="selected-item-box-{data.key}" class="admin-selected-item-box large clearfix">' +
+                      '<div id="selected-item-box-{internalId}" class="admin-selected-item-box large clearfix">' +
                       '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>' +
                       '<div class="center"><h6>{data.displayName}</h6>' +
 
@@ -266,24 +266,17 @@ Ext.define('Admin.view.DetailPanel', {
                 border: 'none'
             },
             autoScroll: true,
-            listeners: {
-                click: {
-                    element: 'body',
-                    fn: this.deselectItem,
-                    scope: this
-                }
-            },
             tpl: this.largeBoxTemplate,
             data: data
         };
     },
 
     smallBoxTemplate: '<tpl for=".">' +
-                      '<div id="selected-item-box-{data.key}" class="admin-selected-item-box small clearfix">' +
+                      '<div id="selected-item-box-{internalId}" class="admin-selected-item-box small clearfix">' +
                       '<div class="left"><img src="{data.iconUrl}?size=20" alt="{data.name}"/></div>' +
                       '<div class="center">{data.displayName}</div>' +
                       '<div class="right">' +
-                      '<a id="remove-from-selection-button:{data.key}" class="deselect" href="javascript:;"></a>' +
+                      '<a id="remove-from-selection-button:{internalId}" class="deselect" href="javascript:;"></a>' +
                       '</div>' +
                       '</div>' +
                       '</tpl>',
