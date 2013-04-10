@@ -56,14 +56,10 @@ Ext.define('Admin.view.contentManager.wizard.ContentLiveEditPanel', {
         this.getLayout().setActiveItem(mode ? 1 : 0);
 
         if (mode) {
-            var livePreview = this.down('#livePreview');
-
-            if (!livePreview.loaded) {
-                //TODO update urls when they are ready
-                livePreview.load('/dev/live-edit/page/bootstrap.jsp', true);
+            var livePreviewPanel = this.down('#livePreview');
+            if (!livePreviewPanel.iFrameLoaded) {
+                livePreviewPanel.load('/dev/live-edit/page/bootstrap.jsp', true);
             }
-
-            livePreview.loaded = true;
         }
     },
 

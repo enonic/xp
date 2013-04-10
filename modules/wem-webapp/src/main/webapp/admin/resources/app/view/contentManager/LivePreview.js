@@ -7,28 +7,12 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     styleHtmlContent: true,
     layout: 'fit',
 
-    loaded: false,
+    iFrameLoaded: false,
 
     actionButton: undefined,
 
     initComponent: function () {
-        /*        this.dockedItems = [
-         {
-         xtype: 'container',
-         layout: 'hbox',
-         border: 0,
-         padding: '5 20 0',
-         dock: 'top',
-         items: [
-         {
-         xtype: 'tbfill'
-         },
-         Ext.apply(this.actionButton, {border: 0})
-         ]
-         }
-         ];*/
         this.callParent(arguments);
-
     },
 
     load: function (url, isEdit) {
@@ -36,6 +20,7 @@ Ext.define('Admin.view.contentManager.LivePreview', {
         isEdit = isEdit || false;
         if (!Ext.isEmpty(url)) {
             iframe.dom.src = Admin.lib.UriHelper.getAbsoluteUri(url + "?edit=" + isEdit);
+            this.iFrameLoaded = true;
         } else {
             iframe.update("<h2 class='message'>Page can't be found.</h2>");
         }
