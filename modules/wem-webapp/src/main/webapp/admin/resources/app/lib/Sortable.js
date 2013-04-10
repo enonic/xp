@@ -24,26 +24,29 @@ Ext.define('Admin.lib.Sortable', {
 
             proxy: new Ext.dd.StatusProxy({}),
 
-            getDragData: function (e) {
-                var sourceElement = e.getTarget('.admin-sortable');
-                if (!sourceElement) {
+            getDragData: function (event) {
+                var sourceDomEl = event.getTarget('.admin-sortable');
+                if (!sourceDomEl) {
                     return;
                 }
 
-                // If a handle is configured and anything else than the handle is pressed, return.
-                if (sortable.config.handle && !Ext.fly(sourceElement).down(sortable.config.handle).contains(Ext.fly(e.getTarget()))) {
+                // If a handle is configured and anything else than the handle is pressed, cancel drag.
+                if (sortable.config.handle && !Ext.fly(sourceDomEl).down(sortable.config.handle).contains(Ext.fly(event.getTarget()))) {
                     return;
                 }
 
                 return {
-                    ddel: sortable.createDragProxy(sourceElement),
-                    sourceElement: sourceElement,
-                    repairXY: Ext.fly(sourceElement).getXY()
+                    ddel: sortable.createDragProxy(sourceDomEl),
+                    sourceElement: sourceDomEl,
+                    repairXY: Ext.fly(sourceDomEl).getXY()
                 };
             },
 
             onInitDrag: function (x, y) {
                 this.proxy.update(this.dragData.ddel.cloneNode(true));
+
+                Ext.fly(this.dragData.sourceElement).hide();
+
                 this.onStartDrag(x, y);
                 return true;
             },
@@ -52,11 +55,15 @@ Ext.define('Admin.lib.Sortable', {
                 return true;
             },
 
-            onMouseUp: function (e) {
+            onMouseUp: function (event) {
                 Ext.fly(this.dragData.sourceElement).setStyle('opacity', '1');
             },
 
-            afterInvalidDrop: function (e, id) {
+            beforeInvalidDrop: function (event, id) {
+                Ext.fly(this.dragData.sourceElement).show();
+            },
+
+            afterInvalidDrop: function (event, id) {
                 sortable.hideIndicator();
             },
 
@@ -77,7 +84,7 @@ Ext.define('Admin.lib.Sortable', {
                 return e.getTarget('.admin-sortable');
             },
 
-            onNodeOver: function (target, dd, e, data) {
+            onNodeOver: function (target, dd, event, data) {
                 var cmpNode = Ext.getCmp(target.id);
                 if (!cmpNode) {
                     return;
@@ -87,11 +94,11 @@ Ext.define('Admin.lib.Sortable', {
                 }
 
                 if (!cmpNode.hasCls('admin-drop-indicator')) {
-                    var mouseYPos = e.getY();
+                    var mouseYPos = event.getY();
 
-                    var cmpArea = cmpNode.getEl().getPageBox();
+                    var componentElementBox = cmpNode.getEl().getPageBox();
 
-                    var nodeMiddle = cmpArea.top + cmpArea.height / 2;
+                    var nodeMiddle = componentElementBox.top + componentElementBox.height / 2;
                     if (mouseYPos < nodeMiddle) {
                         sortable.currentPos = 'above';
                     } else {
@@ -103,7 +110,7 @@ Ext.define('Admin.lib.Sortable', {
                 return Ext.dd.DropZone.prototype.dropAllowed;
             },
 
-            onNodeDrop: function (target, dd, e, data) {
+            onNodeDrop: function (target, dd, event, data) {
                 var draggedCmp = Ext.getCmp(data.sourceElement.id);
                 var targetCmp = Ext.getCmp(target.id);
 
@@ -126,6 +133,8 @@ Ext.define('Admin.lib.Sortable', {
                     sortable.parentComponent.insert(targetCmpIndex, draggedCmp);
                     sortable.parentComponent.doLayout();
                 }
+
+                draggedCmp.getEl().show();
 
                 sortable.hideIndicator();
 
