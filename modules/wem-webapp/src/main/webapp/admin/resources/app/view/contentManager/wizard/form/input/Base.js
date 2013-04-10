@@ -34,7 +34,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
     initComponent: function () {
 
         this.defaults = {
-            width: 450
+            width: 500
         };
 
         if (this.defaultOccurrencesHandling && this.copyNo > this.inputConfig.occurrences.minimum && this.copyNo > 1) {

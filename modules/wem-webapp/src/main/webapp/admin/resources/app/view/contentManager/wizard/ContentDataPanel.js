@@ -16,7 +16,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     mixins: {
         formGenerator: 'Admin.view.contentManager.wizard.form.FormGenerator'
     },
-    maxWidth: 630,
+    maxWidth: 680,
     contentType: undefined,
 
     content: null, // content to be edited
