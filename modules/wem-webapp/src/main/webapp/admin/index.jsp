@@ -114,6 +114,16 @@
   </li>
 </ul>
 
+<h2>System</h2>
+<ul class="links">
+  <li>
+    <a href="system/reIndexData.jsp">ReIndex all data</a>
+  </li>
+  <li>
+    <a href="system/cleanData.jsp">Clean, import and index all data</a>
+  </li>
+</ul>
+
 <hr/>
 <h2>CVS (Git)</h2>
 

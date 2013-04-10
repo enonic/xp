@@ -24,4 +24,5 @@ public interface ElasticsearchIndexService
 
     public ContentSearchResults search( final ContentIndexQuery contentIndexQuery );
 
+    public void deleteIndex( final String indexName );
 }

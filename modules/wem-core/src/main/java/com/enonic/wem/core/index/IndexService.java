@@ -44,9 +44,7 @@ public class IndexService
     {
         elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX, true );
 
-        final boolean indexExists = elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX );
-
-        if ( !indexExists )
+        if ( !indexExists() )
         {
             createIndex();
 
@@ -56,6 +54,11 @@ public class IndexService
                 reindexService.reindexAccounts();
             }
         }
+    }
+
+    private boolean indexExists()
+    {
+        return elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX );
     }
 
     private void createIndex()
@@ -76,6 +79,11 @@ public class IndexService
         {
             elasticsearchIndexService.putMapping( indexMapping );
         }
+    }
+
+    private void deleteIndex()
+    {
+        elasticsearchIndexService.deleteIndex( IndexConstants.WEM_INDEX );
     }
 
     public void indexAccount( final Account account )
@@ -135,4 +143,15 @@ public class IndexService
         this.reindexService = reindexService;
     }
 
+    public void reIndex()
+        throws Exception
+    {
+        if (!indexExists()) {
+            return;
+        }
+
+        deleteIndex();
+        this.reindexService.reindexContent();
+        this.reindexService.reindexAccounts();
+    }
 }

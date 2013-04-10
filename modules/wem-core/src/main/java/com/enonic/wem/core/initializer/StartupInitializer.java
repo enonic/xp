@@ -40,10 +40,7 @@ public final class StartupInitializer
     public void afterPropertiesSet()
         throws Exception
     {
-        if ( this.jcrInitializer.initialize() )
-        {
-            initializeTasks();
-        }
+        initialize( false );
     }
 
     private void initializeTasks()
@@ -52,6 +49,15 @@ public final class StartupInitializer
         for ( final InitializerTask task : this.tasks )
         {
             task.initialize();
+        }
+    }
+
+    public void initialize( final boolean reInit )
+        throws Exception
+    {
+        if ( this.jcrInitializer.initialize( reInit ) )
+        {
+            initializeTasks();
         }
     }
 }

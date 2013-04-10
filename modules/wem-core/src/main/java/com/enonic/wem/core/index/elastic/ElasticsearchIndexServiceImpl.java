@@ -8,6 +8,7 @@ import org.elasticsearch.ElasticSearchException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
@@ -237,4 +238,17 @@ public class ElasticsearchIndexServiceImpl
         this.indexSettingsBuilder = indexSettingsBuilder;
     }
 
+    public void deleteIndex( final String indexName )
+    {
+        final DeleteIndexRequest req = new DeleteIndexRequest( indexName );
+
+        try
+        {
+            client.admin().indices().delete( req ).actionGet();
+        }
+        catch ( ElasticSearchException e )
+        {
+            throw new IndexException( "Failed to delete index:" + indexName, e );
+        }
+    }
 }

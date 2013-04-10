@@ -4,16 +4,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import javax.annotation.PostConstruct;
 import javax.jcr.NamespaceRegistry;
+import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 
 import org.apache.jackrabbit.commons.cnd.CndImporter;
+
 import javax.inject.Inject;
+
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.jcr.JcrConstants;
+import com.enonic.wem.core.jcr.JcrHelper;
 import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
 
 @Component
@@ -31,7 +34,18 @@ public final class JcrInitializer
     public boolean initialize()
         throws Exception
     {
+        return initialize( false );
+    }
+
+    public boolean initialize( final boolean reInit )
+        throws Exception
+    {
         final Session session = this.jcrSessionProvider.loginAdmin();
+
+        if ( reInit )
+        {
+            removeData( session );
+        }
 
         try
         {
@@ -86,5 +100,16 @@ public final class JcrInitializer
     {
         final InputStream in = getClass().getResourceAsStream( resource );
         new JcrXmlLoader( session ).importContent( in );
+    }
+
+    private void removeData( final Session session )
+        throws Exception
+    {
+        final Node node = JcrHelper.getNodeOrNull( session.getRootNode(), "wem" );
+        if ( node != null )
+        {
+            node.remove();
+            session.save();
+        }
     }
 }
