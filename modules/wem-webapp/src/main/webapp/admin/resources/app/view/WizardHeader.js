@@ -8,7 +8,6 @@ Ext.define('Admin.view.WizardHeader', {
 
     displayNameProperty: 'displayName',
     displayNameConfig: {
-        allowBlank: false,
         emptyText: 'Display Name',
         enableKeyEvents: true,
         hideLabel: true,
