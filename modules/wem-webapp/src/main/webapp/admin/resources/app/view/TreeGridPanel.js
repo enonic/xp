@@ -140,17 +140,27 @@ Ext.define('Admin.view.TreeGridPanel', {
     select: function (key, keepExisting) {
         var activeList = this.getActiveList();
         var selModel = activeList.getSelectionModel();
+        var keys = [].concat(key);
+        var i;
 
         if (activeList.xtype === 'treepanel') {
-            var node = activeList.getRootNode().findChild(this.keyField, key);
-            if (node) {
-                selModel.select(node, keepExisting);
+            var rootNode = activeList.getRootNode(),
+                node;
+            for (i = 0; i < keys.length; i++) {
+                node = rootNode.findChild(this.keyField, keys[i]);
+                if (node) {
+                    selModel.select(node, keepExisting);
+                }
             }
         }
         else if (activeList.xtype === 'grid') {
-            var record = activeList.getStore().findRecord(this.keyField, key);
-            if (record) {
-                selModel.select(record, keepExisting);
+            var store = activeList.getStore(),
+                record;
+            for (i = 0; i < keys.length; i++) {
+                record = store.findRecord(this.keyField, keys[i]);
+                if (record) {
+                    selModel.select(record, keepExisting);
+                }
             }
         }
     },
@@ -217,9 +227,33 @@ Ext.define('Admin.view.TreeGridPanel', {
     },
 
     refresh: function () {
+        var me = this;
+
+        //save selection
+        var selection = this.getSelection();
+
         var activeList = this.getActiveList();
         var currentStore = activeList.store;
+
         if (!currentStore.loading) {
+
+            // restore selection after load
+            currentStore.on(
+                currentStore.buffered ? 'prefetch' : 'load',
+                function () {
+                    var keys = [];
+                    Ext.Array.each(selection, function (selected) {
+                        keys.push(selected.get(me.keyField));
+                    });
+                    if (keys.length > 0) {
+                        me.select(keys, true);
+                    }
+                },
+                me,
+                {
+                    single: true
+                });
+
             if (activeList.xtype === 'treepanel') {
                 currentStore.load();
             }

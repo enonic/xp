@@ -73,9 +73,9 @@ Ext.define('Admin.view.FilterPanel', {
                                          (me.updateCountStrategy == 'notlast' && me.lastFacetName != facet.name);
 
                         var isDefined = Ext.isDefined(me.facetCountMap[term.name]);
+                        var isDirty = me.isDirty();
 
-                        if (!me.isDirty() || !isDefined || ( isCriteria && isStrategy )) {
-
+                        if (!isDirty || !isDefined || ( isCriteria && isStrategy )) {
                             me.facetCountMap[term.name] = term.count;
                         }
                     },
@@ -291,8 +291,14 @@ Ext.define('Admin.view.FilterPanel', {
     },
 
     isDirty: function () {
-        var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
-        var query = Ext.String.trim(this.searchField.getValue());
+        var selectedCheckboxes = [];
+        var query = '';
+        if (this.facetContainer && this.facetContainer.el) {
+            selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
+        }
+        if (this.searchField) {
+            query = Ext.String.trim(this.searchField.getValue());
+        }
         return selectedCheckboxes.length > 0 || query.length > 0;
     },
 
