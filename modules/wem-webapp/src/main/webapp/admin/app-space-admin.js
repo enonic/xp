@@ -52,14 +52,12 @@ Ext.application({
                                 {
                                     region: 'west',
                                     xtype: 'spaceFilter',
-                                    width: 200,
-                                    html: 'west'
+                                    width: 200
                                 },
                                 {
                                     region: 'center',
                                     xtype: 'container',
                                     layout: 'border',
-                                    html: 'center',
                                     items: [
                                         {
                                             region: 'north',
