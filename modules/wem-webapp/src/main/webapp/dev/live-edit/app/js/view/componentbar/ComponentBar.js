@@ -148,7 +148,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
         var me = this,
             html = '';
         html += '<li class="live-edit-component" data-live-edit-component-key="' + component.key + '" data-live-edit-component-name="' + component.name + '" data-live-edit-component-type="' + component.type + '">';
-        html += '    <img src="../app/images/srs.jpeg"/>';
+        html += '    <img src="' + component.icon + '"/>';
         html += '    <div class="live-edit-component-text">';
         html += '        <div class="live-edit-component-text-name">' + component.name + '</div>';
         html += '        <div class="live-edit-component-text-subtitle">' + component.subtitle + '</div>';
