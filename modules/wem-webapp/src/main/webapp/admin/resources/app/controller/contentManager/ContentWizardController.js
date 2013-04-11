@@ -175,7 +175,6 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
 
 
     previewContent: function () {
-        console.log("previewing content");
         window.open(Admin.lib.UriHelper.getAbsoluteUri('/dev/live-edit/page/bootstrap.jsp'));
     },
 
