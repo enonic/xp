@@ -4,7 +4,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
 
     inputConfig: undefined,
 
-    labelWidth: 105,
+    labelWidth: 110,
+    labelPad: 0, // default in Ext.form.Labelable is 5
 
     layout: {
         type: 'column'

@@ -97,7 +97,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
         label += ':';
         return Ext.create({
             xclass: 'widget.label',
-            width: 110, // TODO fix this. Should be the same as in input.Base labelWidth. Now there is an extra padding.
+            width: 110,
             styleHtmlContent: true,
             html: label
         });
