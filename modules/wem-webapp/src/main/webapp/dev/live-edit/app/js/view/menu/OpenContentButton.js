@@ -31,9 +31,6 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
             handler: function (event) {
                 event.stopPropagation();
                 if (window.parent.Admin && window.parent.Admin.MessageBus) {
-
-                    var id = me.menu.$selectedComponent[0].id;
-
                     // @TODO: [RYA] Should content in format (ContentModel.js) present here. Way to receive it: get by ID
                     window.parent.Admin.MessageBus.liveEditOpenContent();
                 }
