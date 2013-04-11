@@ -8,7 +8,6 @@ Ext.define('Admin.controller.contentManager.ContentPreviewController', {
     views: [],
 
     init: function () {
-
         this.control({
             'contentDetailToolbar *[action=duplicateContent]': {
                 click: function (el, e) {
@@ -23,6 +22,14 @@ Ext.define('Admin.controller.contentManager.ContentPreviewController', {
             'contentDetailToolbar toggleslide': {
                 change: this.toggleLiveDetail
             }
+        });
+
+        this.application.on({
+            toggleDeviceContext: function (device) {
+                var previewPanel = this.getContentPreviewPanel().down('#livePreview');
+                previewPanel.resizeIframe(this.getDimensionsForDevice(device));
+            },
+            scope: this
         });
     },
 
