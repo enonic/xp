@@ -71,7 +71,6 @@ Ext.define('Admin.view.DetailPanel', {
     hideActionButton: function () {
         var actionsButton = this.down('dropDownButton');
         if (actionsButton) {
-            console.log(actionsButton);
             actionsButton.setVisible(false);
         }
     },

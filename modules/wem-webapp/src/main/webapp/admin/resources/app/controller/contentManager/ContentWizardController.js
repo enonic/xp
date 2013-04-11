@@ -24,13 +24,17 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
             },
             'contentLiveEditPanel *[action=previewContent]': {
                 click: function (el, e) {
-                    console.log('clicked preview content');
                     me.previewContent();
                 }
             },
-            'contentWizardPanel *[action=previewContent]': {
+            'contentWizardPanel *[action=publishContent]': {
                 click: function (el, e) {
-
+                    me.publishContent(this.getContentWizardPanel(), true);
+                }
+            },
+            'contentWizardToolbar *[action=publishContent]': {
+                click: function (el, e) {
+                    me.publishContent(this.getContentWizardPanel(), false);
                 }
             },
             'contentWizardPanel': {
@@ -147,7 +151,7 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                     me.getContentWizardTab().close();
                 }
 
-                var path = contentParams.contentPath ? contentParams.contentPath : contentPath;
+                var path = contentParams.contentPath || contentPath;
 
                 Admin.MessageBus.showGeneral(
                     path,
@@ -170,8 +174,18 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
     },
 
 
+    previewContent: function () {
+        console.log("previewing content");
+        window.open(Admin.lib.UriHelper.getAbsoluteUri('/dev/live-edit/page/bootstrap.jsp'));
+    },
+
+
     publishContent: function (contentWizard, closeWizard) {
+        var me = this;
         var contentPath = contentWizard.data.content.path;
+        if (closeWizard) {
+            me.getContentWizardTab().close();
+        }
         Admin.MessageBus.showPublish(
             contentPath,
             function () {

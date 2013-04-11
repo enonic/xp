@@ -37,14 +37,14 @@ Ext.define('Admin.NotificationManager', {
             '<span>{message}</span>'
         ),
 
-        general: new Ext.XTemplate(
+        publish: new Ext.XTemplate(
             '<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-result">See result</a> or <a href="#" class="admin-notification-publish">Publish to other locations</a></span>',
             '<span style="line-height: 1.5em;">',
             'Content<tpl if="contentName"> "{contentName}"</tpl> published successfully!',
             '</span> '
         ),
 
-        publish: new Ext.XTemplate(
+        general: new Ext.XTemplate(
             '<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-publish">Publish</a> or <a href="#" class="admin-notification-close">Close</a></span>',
             '<span style="line-height: 1.5em;">',
             'Content<tpl if="contentName"> "{contentName}"</tpl> saved successfully!',
@@ -162,7 +162,7 @@ Ext.define('Admin.NotificationManager', {
     general: function (opts) {
         var notificationOpts = {
             message: this.tpl.general.apply(opts),
-            backgroundColor: '#669c34',
+            backgroundColor: '#4294de',
             listeners: []
         };
 
@@ -194,7 +194,7 @@ Ext.define('Admin.NotificationManager', {
     publish: function (opts) {
         var notificationOpts = {
             message: this.tpl.publish.apply(opts),
-            backgroundColor: '#4294de',
+            backgroundColor: '#669c34',
             listeners: []
         };
 
