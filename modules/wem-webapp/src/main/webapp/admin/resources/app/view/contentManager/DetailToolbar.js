@@ -4,6 +4,8 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
 
     cls: 'admin-toolbar',
 
+    isLiveMode: false,
+
     requires: [
         'Ext.ux.toggleslide.ToggleSlide'
     ],
@@ -47,18 +49,18 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
                 onText: 'Preview',
                 offText: 'Details',
                 action: 'toggleLive',
-                state: this.isLiveMode,
+                state: me.isLiveMode,
                 listeners: {
                     change: function (toggle, state) {
                         me.isLiveMode = state;
                     }
+
                 }
             },
             {
                 text: 'Close',
                 action: 'closeContent'
             }
-
         ];
 
         this.callParent(arguments);

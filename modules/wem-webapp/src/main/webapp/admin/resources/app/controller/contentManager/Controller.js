@@ -54,7 +54,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
             var contentImageService = Admin.lib.UriHelper.getAbsoluteUri('admin/rest/content/image');
 
             // We should use a content/space from the demo server
-            var cm = new Admin.model.contentManager.ContentModel({
+            var contentModel = new Admin.model.contentManager.ContentModel({
                 "id": "56bf6229-b5f8-4085-9bd2-58eb103e367b",
                 "path": "default:/",
                 "name": null,
@@ -92,7 +92,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 "leaf": false
             });
 
-            me.viewContent(cm);
+            me.viewContent(contentModel, null, true);
         }, me);
 
 
@@ -114,30 +114,33 @@ Ext.define('Admin.controller.contentManager.Controller', {
         return 'tab-' + ( isEdit ? 'edit' : 'preview') + '-content-' + content.get('path');
     },
 
-    viewContent: function (content, callback) {
+    viewContent: function (contentModels, callback, contentOpenedFromLiveEdit) {
         var me = this;
 
-        if (!content) {
+        if (!contentModels) {
             var showPanel = this.getContentTreeGridPanel();
-            content = showPanel.getSelection();
+            contentModels = showPanel.getSelection();
         } else {
-            content = [].concat(content);
+            contentModels = [].concat(contentModels);
         }
 
         var tabs = this.getCmsTabPanel();
         var i;
         if (tabs) {
-            for (i = 0; i < content.length; i += 1) {
+            for (i = 0; i < contentModels.length; i += 1) {
 
-                var activeTab = tabs.setActiveTab(me.generateTabId(content[i], true));
+                var activeTab = tabs.setActiveTab(me.generateTabId(contentModels[i], true));
 
                 if (!activeTab) {
                     var tabItem = {
                         xtype: 'contentDetail',
-                        id: me.generateTabId(content[i], false),
-                        isLiveMode: me.getContentDetailPanel().isLiveMode,
-                        data: content[i],
-                        title: content[i].get('displayName'),
+                        id: me.generateTabId(contentModels[i], false),
+
+                        /* For 18/4 */
+                        isLiveMode: contentOpenedFromLiveEdit || me.getContentDetailPanel().isLiveMode,
+
+                        data: contentModels[i],
+                        title: contentModels[i].get('displayName'),
                         isFullPage: true
                     };
                     tabs.addTab(tabItem);
@@ -437,7 +440,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                     "order": "term"
                 }
             },
-            "type": {
+            "contentType": {
                 "terms": {
                     "field": "contentType",
                     "size": 10,
@@ -445,7 +448,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                     "order": "term"
                 }
             },
-            ">1 day": {
+            "< 1 day": {
                 "query": {
                     "range": {
                         "lastModified.date": {
@@ -455,7 +458,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                     }
                 }
             },
-            ">1 hour": {
+            "< 1 hour": {
                 "query": {
                     "range": {
                         "lastModified.date": {
@@ -465,7 +468,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                     }
                 }
             },
-            ">1 week": {
+            "< 1 week": {
                 "query": {
                     "range": {
                         "lastModified.date": {
@@ -504,7 +507,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
         return {
             fulltext: values.query || '',
-            contentTypes: values.type || [],
+            contentTypes: values.contentType || [],
             spaces: values.space || [],
             ranges: ranges || [],
             facets: facets || {},

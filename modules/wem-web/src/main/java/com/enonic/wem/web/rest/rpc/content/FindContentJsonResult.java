@@ -1,7 +1,6 @@
 package com.enonic.wem.web.rest.rpc.content;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.codehaus.jackson.JsonNode;
@@ -120,18 +119,20 @@ public class FindContentJsonResult
 
     private void serializeFacet( final ObjectNode json, final TermsFacetResultSet termsFacetResultSet )
     {
-        json.put( "name", termsFacetResultSet.getName() );
+        final String facetName = termsFacetResultSet.getName();
+        json.put( "name", facetName );
         json.put( "_type", "terms" );
 
         final ArrayNode terms = json.putArray( "terms" );
 
-        final Map<String, Integer> results = termsFacetResultSet.getResults();
+        final Set<TermsFacetResultSet.TermFacetResult> results = termsFacetResultSet.getResults();
 
-        for ( String term : results.keySet() )
+        for ( TermsFacetResultSet.TermFacetResult result : results )
         {
             ObjectNode facetObject = terms.addObject();
-            facetObject.put( "name", term );
-            facetObject.put( "count", results.get( term ) );
+            facetObject.put( "name", result.getTerm() );
+            facetObject.put( "displayName", result.getDisplayName() );
+            facetObject.put( "count", result.getCount() );
         }
     }
 

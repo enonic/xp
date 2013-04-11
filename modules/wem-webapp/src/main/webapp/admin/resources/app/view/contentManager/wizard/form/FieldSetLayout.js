@@ -10,6 +10,8 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldSetLayout', {
 
     content: null, // Blocks
 
+    padding: '0 0 0 0',
+
     listeners: {
         render: function () {
             this.initLayout();

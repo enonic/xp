@@ -37,14 +37,18 @@ Ext.define('Admin.NotificationManager', {
             '<span>{message}</span>'
         ),
 
-        general: new Ext.Template(
+        publish: new Ext.XTemplate(
             '<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-result">See result</a> or <a href="#" class="admin-notification-publish">Publish to other locations</a></span>',
-            '<span style="line-height: 1.5em;">Content "{contentName}" published successfully!</span> '
+            '<span style="line-height: 1.5em;">',
+            'Content<tpl if="contentName"> "{contentName}"</tpl> published successfully!',
+            '</span> '
         ),
 
-        publish: new Ext.Template(
+        general: new Ext.XTemplate(
             '<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-publish">Publish</a> or <a href="#" class="admin-notification-close">Close</a></span>',
-            '<span style="line-height: 1.5em;">Content "{contentName}" saved successfully!</span> '
+            '<span style="line-height: 1.5em;">',
+            'Content<tpl if="contentName"> "{contentName}"</tpl> saved successfully!',
+            '</span> '
         )
     },
 
@@ -158,7 +162,7 @@ Ext.define('Admin.NotificationManager', {
     general: function (opts) {
         var notificationOpts = {
             message: this.tpl.general.apply(opts),
-            backgroundColor: 'green',
+            backgroundColor: '#4294de',
             listeners: []
         };
 
@@ -190,7 +194,7 @@ Ext.define('Admin.NotificationManager', {
     publish: function (opts) {
         var notificationOpts = {
             message: this.tpl.publish.apply(opts),
-            backgroundColor: 'blue',
+            backgroundColor: '#669c34',
             listeners: []
         };
 
@@ -311,7 +315,7 @@ Ext.define('Admin.NotificationManager', {
 
         timer.id = setTimeout(
             function () {
-                me.remove(notificationEl, timer.callback);
+                me.remove(notificationEl);
             },
             timer.remainingTime
         );
@@ -322,12 +326,12 @@ Ext.define('Admin.NotificationManager', {
     stopTimer: function (notificationEl) {
         var timer = this.timers[notificationEl.id];
 
-        if (!timer) {
+        if (!timer || !timer.id) {
             return;
         }
 
         clearTimeout(timer.id);
-
+        timer.id = null;
         timer.remainingTime -= Date.now() - timer.startTime;
     },
 

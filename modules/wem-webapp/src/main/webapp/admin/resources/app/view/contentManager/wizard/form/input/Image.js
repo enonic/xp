@@ -180,7 +180,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             queryParam: 'fulltext',
             autoSelect: false,
 
-            width: 450,
+            width: 435,
             fieldCls: 'admin-inputimage-input',
             displayField: 'displayName',
             valueField: 'id',
