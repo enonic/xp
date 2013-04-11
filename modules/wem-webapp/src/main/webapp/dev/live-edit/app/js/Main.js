@@ -2,35 +2,36 @@
     'use strict';
 
     $(window).load(function () {
+        // Timeout for 18/4
         setTimeout(function () {
             $('.live-edit-loader-splash-container').fadeOut('fast', function () {
                 $(this).remove();
+                var page                = new AdminLiveEdit.model.component.Page();
+                var regions             = new AdminLiveEdit.model.component.Region();
+                var layout              = new AdminLiveEdit.model.component.Layout();
+                var parts               = new AdminLiveEdit.model.component.Part();
+                var contents            = new AdminLiveEdit.model.component.Content();
+                var paragraphs          = new AdminLiveEdit.model.component.Paragraph();
+
+                var htmlElementReplacer = new AdminLiveEdit.view.HtmlElementReplacer();
+                var outliner            = new AdminLiveEdit.view.Highlighter();
+                var toolTip             = new AdminLiveEdit.view.ToolTip();
+                var cursor              = new AdminLiveEdit.view.Cursor();
+                var menu                = new AdminLiveEdit.view.menu.Menu();
+                var shader              = new AdminLiveEdit.view.Shader();
+                var htmleditor          = new AdminLiveEdit.view.htmleditor.Editor();
+                var componentBar        = new AdminLiveEdit.view.componentbar.ComponentBar();
+                var mutationObserver    = new AdminLiveEdit.MutationObserver();
+
+                AdminLiveEdit.DragDropSort.initialize();
+
+                $(window).resize(function () {
+                    $(window).trigger('liveEdit.onWindowResize');
+                });
             });
-        }, 500);
-
-        var page                = new AdminLiveEdit.model.component.Page();
-        var regions             = new AdminLiveEdit.model.component.Region();
-        var layout              = new AdminLiveEdit.model.component.Layout();
-        var parts               = new AdminLiveEdit.model.component.Part();
-        var contents            = new AdminLiveEdit.model.component.Content();
-        var paragraphs          = new AdminLiveEdit.model.component.Paragraph();
-
-        var htmlElementReplacer = new AdminLiveEdit.view.HtmlElementReplacer();
-        var outliner            = new AdminLiveEdit.view.Highlighter();
-        var toolTip             = new AdminLiveEdit.view.ToolTip();
-        var cursor              = new AdminLiveEdit.view.Cursor();
-        var menu                = new AdminLiveEdit.view.menu.Menu();
-        var shader              = new AdminLiveEdit.view.Shader();
-        var htmleditor          = new AdminLiveEdit.view.htmleditor.Editor();
-        var componentBar        = new AdminLiveEdit.view.componentbar.ComponentBar();
-        var mutationObserver    = new AdminLiveEdit.MutationObserver();
-
-        AdminLiveEdit.DragDropSort.initialize();
+        }, 300);
 
 
-        $(window).resize(function () {
-            $(window).trigger('liveEdit.onWindowResize');
-        });
     });
 
     $(document).ready(function () {
