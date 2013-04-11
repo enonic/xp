@@ -5,6 +5,9 @@ $include-default: false;
 @import "compass";
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 @import "admin/css/_font-awesome";
+
+@import "admin/mixins/animations";
+
 // Insert your custom variables here.
 @import "admin/variables/core";
 @import "admin/variables/panel";
