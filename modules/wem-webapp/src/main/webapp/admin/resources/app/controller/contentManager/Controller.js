@@ -54,7 +54,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
             var contentImageService = Admin.lib.UriHelper.getAbsoluteUri('admin/rest/content/image');
 
             // We should use a content/space from the demo server
-            var cm = new Admin.model.contentManager.ContentModel({
+            var contentModel = new Admin.model.contentManager.ContentModel({
                 "id": "56bf6229-b5f8-4085-9bd2-58eb103e367b",
                 "path": "default:/",
                 "name": null,
@@ -92,7 +92,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 "leaf": false
             });
 
-            me.viewContent(cm);
+            me.viewContent(contentModel);
         }, me);
 
 
@@ -114,30 +114,31 @@ Ext.define('Admin.controller.contentManager.Controller', {
         return 'tab-' + ( isEdit ? 'edit' : 'preview') + '-content-' + content.get('path');
     },
 
-    viewContent: function (content, callback) {
+    viewContent: function (contentModels, callback) {
         var me = this;
 
-        if (!content) {
+        if (!contentModels) {
             var showPanel = this.getContentTreeGridPanel();
-            content = showPanel.getSelection();
+            contentModels = showPanel.getSelection();
         } else {
-            content = [].concat(content);
+            contentModels = [].concat(contentModels);
         }
 
         var tabs = this.getCmsTabPanel();
         var i;
         if (tabs) {
-            for (i = 0; i < content.length; i += 1) {
+            for (i = 0; i < contentModels.length; i += 1) {
 
-                var activeTab = tabs.setActiveTab(me.generateTabId(content[i], true));
+                var activeTab = tabs.setActiveTab(me.generateTabId(contentModels[i], true));
 
                 if (!activeTab) {
                     var tabItem = {
                         xtype: 'contentDetail',
-                        id: me.generateTabId(content[i], false),
+                        id: me.generateTabId(contentModels[i], false),
+                        previewModeOnInit: true,
                         isLiveMode: me.getContentDetailPanel().isLiveMode,
-                        data: content[i],
-                        title: content[i].get('displayName'),
+                        data: contentModels[i],
+                        title: contentModels[i].get('displayName'),
                         isFullPage: true
                     };
                     tabs.addTab(tabItem);
