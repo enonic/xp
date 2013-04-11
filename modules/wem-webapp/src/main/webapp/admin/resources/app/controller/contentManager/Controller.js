@@ -437,7 +437,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                     "order": "term"
                 }
             },
-            "type": {
+            "contentType": {
                 "terms": {
                     "field": "contentType",
                     "size": 10,
@@ -445,7 +445,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                     "order": "term"
                 }
             },
-            ">1 day": {
+            "< 1 day": {
                 "query": {
                     "range": {
                         "lastModified.date": {
@@ -455,7 +455,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                     }
                 }
             },
-            ">1 hour": {
+            "< 1 hour": {
                 "query": {
                     "range": {
                         "lastModified.date": {
@@ -465,7 +465,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                     }
                 }
             },
-            ">1 week": {
+            "< 1 week": {
                 "query": {
                     "range": {
                         "lastModified.date": {
@@ -504,7 +504,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
         return {
             fulltext: values.query || '',
-            contentTypes: values.type || [],
+            contentTypes: values.contentType || [],
             spaces: values.space || [],
             ranges: ranges || [],
             facets: facets || {},

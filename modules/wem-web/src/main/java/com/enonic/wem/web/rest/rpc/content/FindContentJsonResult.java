@@ -1,7 +1,6 @@
 package com.enonic.wem.web.rest.rpc.content;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.codehaus.jackson.JsonNode;
@@ -9,6 +8,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -23,11 +23,16 @@ import com.enonic.wem.api.query.QueryFacetResultSet;
 import com.enonic.wem.api.query.RangeFacetResultEntry;
 import com.enonic.wem.api.query.RangeFacetResultSet;
 import com.enonic.wem.api.query.TermsFacetResultSet;
+import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
 import com.enonic.wem.web.json.JsonResult;
 
 public class FindContentJsonResult
     extends JsonResult
 {
+
+
+    @Inject
+    private ContentTypeDao contentTypeDao;
 
     // This is temporary until 18/4. The findContent should not render content json
     private final Contents contents;
@@ -120,18 +125,20 @@ public class FindContentJsonResult
 
     private void serializeFacet( final ObjectNode json, final TermsFacetResultSet termsFacetResultSet )
     {
-        json.put( "name", termsFacetResultSet.getName() );
+        final String facetName = termsFacetResultSet.getName();
+        json.put( "name", facetName );
         json.put( "_type", "terms" );
 
         final ArrayNode terms = json.putArray( "terms" );
 
-        final Map<String, Integer> results = termsFacetResultSet.getResults();
+        final Set<TermsFacetResultSet.TermFacetResult> results = termsFacetResultSet.getResults();
 
-        for ( String term : results.keySet() )
+        for ( TermsFacetResultSet.TermFacetResult result : results )
         {
             ObjectNode facetObject = terms.addObject();
-            facetObject.put( "name", term );
-            facetObject.put( "count", results.get( term ) );
+            facetObject.put( "name", result.getTerm() );
+            facetObject.put( "displayName", result.getDisplayName() );
+            facetObject.put( "count", result.getCount() );
         }
     }
 

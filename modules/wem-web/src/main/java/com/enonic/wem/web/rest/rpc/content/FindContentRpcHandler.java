@@ -42,9 +42,6 @@ public class FindContentRpcHandler
 
         final ObjectNode[] rangesJson = context.param( "ranges" ).asObjectArray();
 
-        String test =
-            " \"ranges\" : [{\"lower\" : \"2010-01-01T10:00\", \"upper\" : null},{ \"lower\" : null, \"upper\" : \"2013-01-01T10:00\"}],";
-
         if ( rangesJson != null && rangesJson.length > 0 )
         {
             addRanges( contentIndexQuery, rangesJson );
@@ -56,6 +53,8 @@ public class FindContentRpcHandler
         }
 
         final ContentIndexQueryResult contentIndexQueryResult = this.client.execute( Commands.content().find().query( contentIndexQuery ) );
+
+        FacetResultSetEnricher.enrichFacetResult( contentIndexQueryResult.getFacetsResultSet(), this.client );
 
         final Contents contents =
             this.client.execute( Commands.content().get().selectors( ContentIds.from( contentIndexQueryResult.getContentIds() ) ) );
