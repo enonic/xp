@@ -1,6 +1,7 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 
 /*** Reset */
+/* TODO: Generate new */
 
 .live-edit-loader-splash-container,
 .live-edit-loader-splash-content,
@@ -314,7 +315,7 @@ svg.live-edit-highlight-border rect {
     clear: both;
     color: #add8e6;
     font-size: 20px;
-    padding: 28px;
+    padding: 28px 10px;
     text-align: center;
 }
 
