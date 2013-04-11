@@ -96,7 +96,6 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
      */
     initSortable: function () {
         var proxyIconPath = Admin.lib.UriHelper.getAbsoluteUri('admin/resources/images/icons/128x128/form_blue.png');
-        console.log(proxyIconPath);
         new Admin.lib.Sortable(this.up(),
             {
                 proxyHtml: '<div><img src="' + proxyIconPath + '"/></div>',
