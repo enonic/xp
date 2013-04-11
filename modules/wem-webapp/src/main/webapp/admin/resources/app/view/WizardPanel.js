@@ -196,13 +196,15 @@ Ext.define('Admin.view.WizardPanel', {
 
         if (bottomPanel) {
             var hasScroll = bottomPanel.dom.scrollHeight > bottomPanel.dom.clientHeight;
-            var wizardHeaderPanel = me.down('#wizardHeaderPanel').getEl();
+            var wizardHeaderPanelEl = me.down('#wizardHeaderPanel').getEl();
 
             if (hasScroll && bottomPanel.dom.scrollTop !== 0) {
                 // 0 4px 10px -6px
-                wizardHeaderPanel.applyStyles({ boxShadow: '-40px -55px 40px 40px rgba(137, 137, 137, 1)' });
+                var cssShadowValue = Ext.isGecko ? '-46px -60px 32px 36px rgba(0, 0, 0, 1)' : '-40px -55px 40px 40px rgba(0, 0, 0, 0.7)';
+                wizardHeaderPanelEl.applyStyles({ boxShadow: cssShadowValue });
+
             } else {
-                wizardHeaderPanel.applyStyles({ boxShadow: undefined });
+                wizardHeaderPanelEl.applyStyles({ boxShadow: undefined });
             }
         }
     },
@@ -506,7 +508,8 @@ Ext.define('Admin.view.WizardPanel', {
         return {
             xtype: 'container',
             itemId: 'wizardHeaderPanel',
-            padding: '10 10 0 10',
+            cls: 'admin-wizard-panel',
+            padding: '10 0 0 10',
             margin: '0 0 10 0',
             layout: {
                 type: 'table',
@@ -524,8 +527,7 @@ Ext.define('Admin.view.WizardPanel', {
                     itemId : 'positionPanel',
                     xtype: 'container',
                     style: {
-                        backgroundColor: '#EEEEEE',
-                        marginBottom: '10px'
+                        backgroundColor: '#EEEEEE'
                     },
                     layout: 'hbox',
                     items: [
