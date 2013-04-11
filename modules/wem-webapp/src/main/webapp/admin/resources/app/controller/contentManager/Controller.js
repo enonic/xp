@@ -92,7 +92,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 "leaf": false
             });
 
-            me.viewContent(contentModel);
+            me.viewContent(contentModel, null, true);
         }, me);
 
 
@@ -114,7 +114,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
         return 'tab-' + ( isEdit ? 'edit' : 'preview') + '-content-' + content.get('path');
     },
 
-    viewContent: function (contentModels, callback) {
+    viewContent: function (contentModels, callback, contentOpenedFromLiveEdit) {
         var me = this;
 
         if (!contentModels) {
@@ -135,8 +135,10 @@ Ext.define('Admin.controller.contentManager.Controller', {
                     var tabItem = {
                         xtype: 'contentDetail',
                         id: me.generateTabId(contentModels[i], false),
-                        previewModeOnInit: true,
-                        isLiveMode: me.getContentDetailPanel().isLiveMode,
+
+                        /* For 18/4 */
+                        isLiveMode: contentOpenedFromLiveEdit || me.getContentDetailPanel().isLiveMode,
+
                         data: contentModels[i],
                         title: contentModels[i].get('displayName'),
                         isFullPage: true

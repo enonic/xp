@@ -86,7 +86,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         }, this);
 
         this.setDataCallback = function (data) {
-
             if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
                 //TODO update urls when they are ready
@@ -106,8 +105,9 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     },
 
     createToolBar: function () {
+        var me = this;
         return Ext.createByAlias('widget.contentDetailToolbar', {
-            isLiveMode: this.isLiveMode
+            isLiveMode: me.isLiveMode
         });
     },
 
