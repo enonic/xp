@@ -53,8 +53,8 @@ Ext.define('Admin.MessageBus', {
     },
 
 
-    liveEditOpenContent: function (contentModel) {
-        this.fireEvent('liveEdit.openContent', contentModel);
+    liveEditOpenContent: function () {
+        this.fireEvent('liveEdit.openContent');
     },
 
 
