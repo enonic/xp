@@ -3513,7 +3513,7 @@ div.admin-load-mask .admin-load-text {
 /* line 7, ../sass/admin/css/_notification-manager.scss */
 .admin-notification-wrapper {
     margin: auto;
-    width: 600px;
+    width: 800px;
 }
 
 /* line 12, ../sass/admin/css/_notification-manager.scss */
@@ -3951,16 +3951,27 @@ div.admin-load-mask .admin-load-text {
 }
 
 /* line 108, ../sass/admin/css/_inputimage.scss */
+.admin-inputimage-dlg {
+    background-color: #EBEBEB;
+    clear: both;
+}
+
+/* line 112, ../sass/admin/css/_inputimage.scss */
+.admin-inputimage-dlg div.x-btn span {
+    font-weight: bold;
+}
+
+/* line 117, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-library-icon {
     background: url("../../../../../resources/images/folder-open.png") no-repeat;
 }
 
-/* line 112, ../sass/admin/css/_inputimage.scss */
+/* line 121, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-upload-icon {
     background: url("../../../../../resources/images/upload.png") no-repeat;
 }
 
-/* line 116, ../sass/admin/css/_inputimage.scss */
+/* line 125, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-selected .admin-zoom {
     display: block !important;
 }

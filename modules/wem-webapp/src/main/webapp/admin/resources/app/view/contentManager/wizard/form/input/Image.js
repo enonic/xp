@@ -279,7 +279,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                     if (clickedElement.hasCls('admin-zoom')) {
                         view.getSelectionModel().deselectAll();
                         return false;
-                    } else if (clickedElement.hasCls('admin-inputimage')) {
+                    } else {
 
 
                         var offset = (index + 1) % 3 > 0 ? 3 - (index + 1) % 3 : 0
@@ -290,8 +290,6 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                         } else {
                             picker.getEl().insertAfter(viewEl.last());
                         }
-
-                        // show edit/remove panel
                     }
                 },
                 itemadd: function () {
@@ -439,13 +437,26 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
     },
 
     createImageDialog: function (view, model) {
+        var me = this;
         if (this.dialog) {
-            this.dialog.updateTpl(model.raw);
+            this.dialog.updateTpl(model.data);
             return this.dialog;
         } else {
             this.dialog = Ext.create('widget.imagePopupDialog', {
                 renderTo: view.getEl(),
-                data: model.raw
+                data: model.data,
+                removeHandler: function () {
+                    var selectionModel = view.getSelectionModel();
+                    var selection = selectionModel.getSelection();
+                    if (selection.length > 0) {
+                        selectionModel.deselectAll();
+                        me.selectedContentStore.remove(selection[0]);
+                    }
+
+                },
+                editHandler: function () {
+                    alert('TODO: Implement Edit functionality');
+                }
             });
             return this.dialog;
         }

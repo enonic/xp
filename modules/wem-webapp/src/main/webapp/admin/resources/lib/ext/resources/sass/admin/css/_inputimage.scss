@@ -105,6 +105,15 @@
 
 }
 
+.admin-inputimage-dlg {
+  background-color: #EBEBEB;
+  clear: both;
+
+  div.x-btn span {
+    font-weight: bold;
+  }
+}
+
 .admin-inputimage-library-icon {
   background: url("../../../../../resources/images/folder-open.png") no-repeat;
 }
