@@ -56,7 +56,7 @@ public class CreateOrUpdateContentTypeRpcHandler
         }
         catch ( XmlParsingException e )
         {
-            context.setResult( new JsonErrorResult( "Invalid content type format" ) );
+            context.setResult( new JsonErrorResult( "Invalid content type format: " + e.getMessage() ) );
             return;
         }
 

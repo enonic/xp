@@ -8,13 +8,10 @@ import org.jdom.Element;
 
 import com.enonic.wem.api.content.schema.content.form.FormItem;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
-import com.enonic.wem.core.support.util.JdomHelper;
 
 public final class FormItemsXmlSerializer
 {
     private FormItemXmlSerializer formItemSerializer = new FormItemXmlSerializer( this );
-
-    private final JdomHelper jdomHelper = new JdomHelper();
 
     public void serialize( final Iterable<FormItem> formItems, final Element parentEl )
     {
@@ -48,7 +45,7 @@ public final class FormItemsXmlSerializer
             }
             catch ( Exception e )
             {
-                throw new XmlParsingException( "Failed to parse FormItem: " + this.jdomHelper.serialize( formItemEl, false ), e );
+                throw new XmlParsingException( "Failed to parse FormItem: " + e.getMessage(), e );
             }
         }
 
