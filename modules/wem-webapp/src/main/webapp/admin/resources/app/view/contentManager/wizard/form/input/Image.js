@@ -4,7 +4,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
 
     requires: [
         'Admin.store.contentManager.ContentStore',
-        'Admin.view.FileUploadWindow'
+        'Admin.view.FileUploadWindow',
+        'Admin.view.contentManager.wizard.form.ImagePopupDialog'
     ],
 
     defaultOccurrencesHandling: false,
@@ -252,10 +253,10 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         var template = new Ext.XTemplate(
             '<tpl for=".">',
             '   <div class="admin-inputimage" style="background-image: url({iconUrl}?size=140&thumbnail=false)">',
-//            '       <div class="top-bar"><a href="javascript:;" class="admin-remove-button">Remove</a></div>',
             '       <div class="bottom-bar">',
             '           <h6>{displayName}</h6>',
             '       </div>',
+            '       <div class="admin-zoom" style="background-image: url({iconUrl}?size=140&thumbnail=false);"></div>',
             '   </div>',
             '</tpl>'
         );
@@ -264,6 +265,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             store: me.selectedContentStore,
             tpl: template,
             itemSelector: 'div.admin-inputimage',
+            selectedItemCls: 'admin-inputimage-selected',
+            itemId: 'selectionView',
             emptyText: 'No items selected',
             trackOver: true,
             overItemCls: 'over',
@@ -272,9 +275,36 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             listeners: {
                 itemclick: function (view, contentModel, item, index, e) {
                     var clickedElement = Ext.fly(e.target);
-                    if (clickedElement.hasCls('admin-inputimage')) {
-                        // me.selectedContentStore.remove(contentModel);
+                    var viewEl = view.getEl();
+                    if (clickedElement.hasCls('admin-zoom')) {
+                        view.getSelectionModel().deselectAll();
+                        return false;
+                    } else if (clickedElement.hasCls('admin-inputimage')) {
+
+
+                        var offset = (index + 1) % 3 > 0 ? 3 - (index + 1) % 3 : 0
+                        var insertPoint = viewEl.query('.admin-inputimage')[index + offset];
+                        var picker = me.createImageDialog(view, contentModel);
+                        if (insertPoint) {
+                            picker.getEl().insertAfter(insertPoint);
+                        } else {
+                            picker.getEl().insertAfter(viewEl.last());
+                        }
+
                         // show edit/remove panel
+                    }
+                },
+                itemadd: function () {
+                    this.getSelectionModel().deselectAll();
+                },
+                deselect: function () {
+                    if (me.getImageDialog()) {
+                        me.getImageDialog().hide();
+                    }
+                },
+                select: function () {
+                    if (me.getImageDialog()) {
+                        me.getImageDialog().show();
                     }
                 }
             }
@@ -406,6 +436,23 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             win.on('uploadcomplete', this.onFilesUploaded, this);
         }
         return win;
+    },
+
+    createImageDialog: function (view, model) {
+        if (this.dialog) {
+            this.dialog.updateTpl(model.raw);
+            return this.dialog;
+        } else {
+            this.dialog = Ext.create('widget.imagePopupDialog', {
+                renderTo: view.getEl(),
+                data: model.raw
+            });
+            return this.dialog;
+        }
+    },
+
+    getImageDialog: function () {
+        return this.dialog;
     }
 
 });
