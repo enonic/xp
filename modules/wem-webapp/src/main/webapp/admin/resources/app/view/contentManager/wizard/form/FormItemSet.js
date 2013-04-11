@@ -3,7 +3,8 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
     alias: 'widget.FormItemSet',
 
     requires: [
-        'Admin.lib.Sortable'
+        'Admin.lib.Sortable',
+        'Admin.lib.UriHelper'
     ],
 
     mixins: {
@@ -94,9 +95,11 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
      * @private
      */
     initSortable: function () {
+        var proxyIconPath = Admin.lib.UriHelper.getAbsoluteUri('admin/resources/images/icons/128x128/form_blue.png');
+        console.log(proxyIconPath);
         new Admin.lib.Sortable(this.up(),
             {
-                proxyHtml: '<div><img src="../../admin/resources/images/icons/128x128/form_blue.png"/></div>',
+                proxyHtml: '<div><img src="' + proxyIconPath + '"/></div>',
                 group: this.name,
                 name: this.formItemSetConfig.label,
                 handle: '.admin-drag-handle'
