@@ -67,11 +67,7 @@ public class ContentTypeXmlSerializer
             final Document document = this.jdomHelper.parse( xml );
             return parse( document.getRootElement() );
         }
-        catch ( JDOMException e )
-        {
-            throw new XmlParsingException( "Failed to read XML", e );
-        }
-        catch ( IOException e )
+        catch ( JDOMException | IOException e )
         {
             throw new XmlParsingException( "Failed to read XML", e );
         }
@@ -111,8 +107,7 @@ public class ContentTypeXmlSerializer
         }
         catch ( Exception e )
         {
-            throw new XmlParsingException( "Failed to parse content type: " + this.jdomHelper.serialize( contentTypeEl, this.prettyPrint ),
-                                           e );
+            throw new XmlParsingException( "Failed to parse ContentType: " + e.getMessage(), e );
         }
 
         return contentTypeBuilder.build();

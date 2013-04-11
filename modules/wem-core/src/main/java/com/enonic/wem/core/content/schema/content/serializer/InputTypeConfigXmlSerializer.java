@@ -6,7 +6,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.schema.content.form.inputtype.AbstractInputTypeConfigXmlSerializer;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypeConfig;
-import com.enonic.wem.core.support.serializer.XmlParsingException;
 
 public class InputTypeConfigXmlSerializer
 {
@@ -37,7 +36,7 @@ public class InputTypeConfigXmlSerializer
         }
         catch ( ClassNotFoundException | InstantiationException | IllegalAccessException e )
         {
-            throw new XmlParsingException( "Failed to instantiate AbstractInputTypeConfigXmlSerializer", e );
+            throw new IllegalArgumentException( "Failed to instantiate AbstractInputTypeConfigXmlSerializer: " + className, e );
         }
     }
 }

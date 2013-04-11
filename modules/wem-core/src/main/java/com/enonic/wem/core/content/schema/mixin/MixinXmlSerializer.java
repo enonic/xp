@@ -68,11 +68,7 @@ public class MixinXmlSerializer
             final Document document = this.jdomHelper.parse( xml );
             return parse( document.getRootElement() );
         }
-        catch ( JDOMException e )
-        {
-            throw new XmlParsingException( "Failed to read XML", e );
-        }
-        catch ( IOException e )
+        catch ( JDOMException | IOException e )
         {
             throw new XmlParsingException( "Failed to read XML", e );
         }

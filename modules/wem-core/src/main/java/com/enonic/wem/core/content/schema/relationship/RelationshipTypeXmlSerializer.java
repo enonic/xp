@@ -72,13 +72,9 @@ public class RelationshipTypeXmlSerializer
             final Document document = this.jdomHelper.parse( xml );
             return parse( document.getRootElement() );
         }
-        catch ( JDOMException e )
+        catch ( JDOMException | IOException e )
         {
-            throw new XmlParsingException( "Failed to read XML (JDOMException)", e );
-        }
-        catch ( IOException e )
-        {
-            throw new XmlParsingException( "Failed to read XML (IOException)", e );
+            throw new XmlParsingException( "Failed to read XML", e );
         }
     }
 
