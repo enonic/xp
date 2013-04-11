@@ -12,7 +12,7 @@ Templates.account = {
 
     gridPanelNameRenderer:
 		'<div class="admin-grid-thumbnail">' + 
-		    '<img src="{0}" alt="{1}"/>' + 
+		    '<img src="{0}?size=32" alt="{1}"/>' + 
 		'</div>' + 
 		'<div class="admin-grid-description">' + 
 		    '<h6>{1}</h6>' + 
@@ -100,7 +100,7 @@ Templates.account = {
 		'<tpl for="users">' + 
 		    '<div class="admin-selected-item-box large clearfix" id="selected-item-box:{key}">' + 
 		        '<div class="left">' + 
-		            '<img alt={displayName} src="{image_url}"/>' + 
+		            '<img alt={displayName} src="{image_url}?size=100"/>' + 
 		        '</div>' + 
 		        '<div class="center">' + 
 		            '<h6>{displayName}</h6>' + 
@@ -116,7 +116,7 @@ Templates.account = {
 		'<tpl for="users">' + 
 		    '<div id="selected-item-box:{key}" class="admin-selected-item-box small clearfix">' + 
 		        '<div class="left">' + 
-		            '<img src="{image_url}" alt="{displayName}"/>' + 
+		            '<img src="{image_url}?size=32" alt="{displayName}"/>' + 
 		        '</div>' + 
 		        '<div class="center">{displayName}</div>' + 
 		        '<div class="right">' + 
@@ -235,7 +235,7 @@ Templates.account = {
     userPreviewPhoto:
 		'<div class="admin-user-photo west admin-left">' + 
 		    '<div class="photo-placeholder">' + 
-		        '<img src="{[values.image_url]}" alt="{name}"/>' + 
+		        '<img src="{[values.image_url]}?size=100" alt="{name}"/>' + 
 		    '</div>' + 
 		'</div>',
 
@@ -374,7 +374,7 @@ Templates.common = {
 		    '<div class="admin-user-info clearfix">' + 
 		        '<div class="admin-user-photo west admin-left">' + 
 		            '<div class="photo-placeholder">' + 
-		                '<img src="{[values.image_url]}" alt="{name}"/>' + 
+		                '<img src="{[values.image_url]}?size=100" alt="{name}"/>' + 
 		            '</div>' + 
 		        '</div>' + 
 		        '<div class="admin-left">' + 
