@@ -8,7 +8,6 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.google.common.collect.Lists;
-import com.google.inject.Inject;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -23,16 +22,11 @@ import com.enonic.wem.api.query.QueryFacetResultSet;
 import com.enonic.wem.api.query.RangeFacetResultEntry;
 import com.enonic.wem.api.query.RangeFacetResultSet;
 import com.enonic.wem.api.query.TermsFacetResultSet;
-import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
 import com.enonic.wem.web.json.JsonResult;
 
 public class FindContentJsonResult
     extends JsonResult
 {
-
-
-    @Inject
-    private ContentTypeDao contentTypeDao;
 
     // This is temporary until 18/4. The findContent should not render content json
     private final Contents contents;
