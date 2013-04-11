@@ -16,6 +16,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         this.items = [
             this.createHiddenInput(),
             this.createComboBox(),
+            this.createOpenLibraryButton(),
             this.createUploadButton(),
             this.createViewForSelectedContent()
         ];
@@ -29,7 +30,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                 if (response && response.success) {
                     var iconUrl = response.relationshipType.iconUrl;
                     if (me.rendered) {
-                        me.el.down('.admin-image-icon').set({'src': iconUrl});
+                        var relationshipTypeIcon = me.el.down('.admin-image-icon');
+                        relationshipTypeIcon.set({'src': iconUrl});
+                        relationshipTypeIcon.setOpacity(0.5);
                     } else {
                         me.relationshipTypeIconUrl = iconUrl;
                     }
@@ -144,7 +147,6 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             '<tpl if="fieldStyle"> style="{fieldStyle}"</tpl>',
             '/>',
             '<img src="{relationshipTypeIconUrl}" class="admin-image-icon"/>',
-            '<a href="#" class="admin-library-button">Open Library</a>',
             {compiled: true, disableFormats: true}
         ];
 
@@ -177,6 +179,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             queryParam: 'fulltext',
             autoSelect: false,
 
+            width: 450,
             fieldCls: 'admin-inputimage-input',
             displayField: 'displayName',
             valueField: 'id',
@@ -193,11 +196,6 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                 select: function (combo, records) {
                     combo.setValue('');
                     me.onContentSelected(records);
-                },
-                afterrender: function (cmp) {
-                    cmp.el.on('click', me.onLibraryButtonClicked, me, {
-                        delegate: 'a.admin-library-button'
-                    });
                 }
             }
         };
@@ -213,11 +211,34 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         return {
             xtype: 'button',
             itemId: 'uploadButton',
-            text: 'Upload image',
-            maxWidth: 140,
-            margin: '5 0',
+            tooltip: 'Upload image',
+            iconCls: 'admin-inputimage-upload-icon',
+            cls: 'nobg icon-button',
+            scale: 'medium',
+            width: '24',
+            margin: '5 5',
             handler: function () {
                 me.getFileUploadWindow().show();
+            }
+        };
+    },
+
+    /**
+     * @private
+     */
+    createOpenLibraryButton: function () {
+        var me = this;
+        return {
+            xtype: 'button',
+            itemId: 'openLibraryButton',
+            tooltip: 'Open Library',
+            iconCls: 'admin-inputimage-library-icon',
+            cls: 'nobg icon-button',
+            scale: 'medium',
+            width: '24',
+            margin: '5 5',
+            handler: function () {
+                me.onLibraryButtonClicked();
             }
         };
     },
@@ -300,7 +321,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
     /**
      * @private
      */
-    onLibraryButtonClicked: function (event, target) {
+    onLibraryButtonClicked: function () {
         alert('Open library now');
     },
 

@@ -57,7 +57,7 @@
 
 .admin-inputimage {
     position: relative;
-    margin: 0 30px 30px 0;
+    margin: 10px 30px 20px 0;
     float: left;
     min-width: 140px;
     min-height: 140px;
@@ -89,4 +89,12 @@
             display: block;
         }
     }
+}
+
+.admin-inputimage-library-icon {
+  background: url("../../../../../resources/images/folder-open.png") no-repeat;
+}
+
+.admin-inputimage-upload-icon {
+  background: url("../../../../../resources/images/upload.png") no-repeat;
 }
