@@ -61,6 +61,7 @@
   position: relative;
   margin: 10px 30px 20px 0;
   float: left;
+
   background-color: #ccc;
   min-width: 140px;
   min-height: 140px;
@@ -109,6 +110,29 @@
       display: block;
     }
   }
+
+  .admin-zoom {
+    left: -20px;
+    top: -10px;
+    width: 180px;
+    height: 190px;
+    display: none;
+    background-repeat: no-repeat;
+    position: absolute;
+    background-size: contain;
+    background-color: #CCC;
+    background-position: center;
+  }
+
+}
+
+.admin-inputimage-dlg {
+  background-color: #EBEBEB;
+  clear: both;
+
+  div.x-btn span {
+    font-weight: bold;
+  }
 }
 
 .admin-inputimage-library-icon {
@@ -117,4 +141,8 @@
 
 .admin-inputimage-upload-icon {
   background: url("../../../../../resources/images/upload.png") no-repeat;
+}
+
+.admin-inputimage-selected .admin-zoom {
+  display: block !important;
 }
