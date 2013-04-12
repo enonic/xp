@@ -391,7 +391,7 @@ public class Data
     {
         public ContentId( final String name, final com.enonic.wem.api.content.ContentId value )
         {
-            super( newContentId().name( name ).value( value ) );
+            super( name, new Value.ContentId( value ) );
         }
 
         private ContentId( final AbstractBaseBuilder builder )
@@ -443,7 +443,7 @@ public class Data
     {
         public BinaryId( final String name, final com.enonic.wem.api.content.binary.BinaryId value )
         {
-            super( newBinaryId().name( name ).value( value ) );
+            super( name, new Value.BinaryId( value ) );
         }
 
         public BinaryId( final String name, final Value value )
@@ -496,12 +496,12 @@ public class Data
     {
         public Date( final String name, final DateMidnight value )
         {
-            super( newDate().name( name ).value( value ) );
+            super( name, new Value.Date( value ) );
         }
 
         public Date( final String name, final String value )
         {
-            super( newDate().name( name ).value( value ) );
+            super( name, new Value.Date( value ) );
         }
 
         private Date( final AbstractBaseBuilder builder )
@@ -579,7 +579,7 @@ public class Data
     {
         public DecimalNumber( final String name, final Double value )
         {
-            super( newDecimalNumber().name( name ).value( value ) );
+            super( name, new Value.DecimalNumber( value ) );
         }
 
         private DecimalNumber( final AbstractBaseBuilder builder )
@@ -651,7 +651,7 @@ public class Data
     {
         public HtmlPart( final String name, final String value )
         {
-            super( newHtmlPart().name( name ).value( value ) );
+            super( name, new Value.HtmlPart( value ) );
         }
 
         private HtmlPart( final AbstractBaseBuilder builder )
@@ -717,7 +717,7 @@ public class Data
     {
         public Text( final String name, final String value )
         {
-            super( newText().name( name ).value( value ) );
+            super( name, new Value.Text( value ) );
         }
 
         private Text( final AbstractBaseBuilder builder )
@@ -783,7 +783,7 @@ public class Data
     {
         public WholeNumber( final String name, final Long value )
         {
-            super( newWholeNumber().name( name ).value( value ) );
+            super( name, new Value.WholeNumber( value ) );
         }
 
         private WholeNumber( final AbstractBaseBuilder builder )
@@ -849,7 +849,7 @@ public class Data
     {
         public Xml( final String name, final String value )
         {
-            super( newXml().name( name ).value( value ) );
+            super( name, new Value.Xml( value ) );
         }
 
         private Xml( final AbstractBaseBuilder builder )

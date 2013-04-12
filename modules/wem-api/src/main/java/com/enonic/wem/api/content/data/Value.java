@@ -244,6 +244,11 @@ public class Value
             super( DataTypes.DATE_MIDNIGHT, value );
         }
 
+        public Date( final String value )
+        {
+            super( DataTypes.DATE_MIDNIGHT, JavaType.DATE_MIDNIGHT.convertFrom( value ) );
+        }
+
         public static class ValueBuilder
             extends AbstractValueBuilder<Date, org.joda.time.DateMidnight>
         {
