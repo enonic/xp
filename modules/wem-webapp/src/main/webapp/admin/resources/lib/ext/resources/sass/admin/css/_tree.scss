@@ -49,8 +49,12 @@
     }
 
     .admin-tree-description {
-        float: left;
         margin-top: 3px;
+        overflow: hidden;
+
+        h6, p {
+          @include ellipsis();
+        }
 
         p {
             margin: 0 !important;
