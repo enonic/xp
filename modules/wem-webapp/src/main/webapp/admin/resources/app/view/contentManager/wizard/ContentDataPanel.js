@@ -25,6 +25,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
 
     autoDestroy: true,
 
+    margin: '0 0 0 120',
+
     initComponent: function () {
         this.items = [];
         var contentData = !Ext.isEmpty(this.content) ? this.content.data : undefined;
