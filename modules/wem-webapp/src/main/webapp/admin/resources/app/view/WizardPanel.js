@@ -529,7 +529,10 @@ Ext.define('Admin.view.WizardPanel', {
                     style: {
                         backgroundColor: '#EEEEEE'
                     },
-                    layout: 'hbox',
+                    layout: {
+                        type: 'hbox',
+                        align: 'stretch'
+                    },
                     items: [
                         Ext.applyIf(this.createRibbon(), {
                             flex: 1
@@ -537,7 +540,8 @@ Ext.define('Admin.view.WizardPanel', {
                         Ext.apply(this.createActionButton(), {
                             itemId: 'actionButton',
                             ui: 'green',
-                            margin: '0 30 0 0'
+                            margin: '0 30 0 0',
+                            scale: 'large'
                         })
                     ]
                 }

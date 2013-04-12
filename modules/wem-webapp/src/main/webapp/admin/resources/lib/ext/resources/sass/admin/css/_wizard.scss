@@ -11,12 +11,15 @@
 
     .navigation li {
         float: left;
+        font-size: $admin-font-size-1;
     }
 
     .navigation li a {
         color: #222;
         text-decoration: none !important;
-        padding: 8px 0 8px 48px;
+        padding: 0 0 0 48px;
+        height: 45px;
+        line-height: 45px;
         background-color: #eee;
         position: relative;
         display: block;
@@ -187,8 +190,7 @@
 }
 
 .admin-wizard-header-container {
-    margin: 0 10px 3px 5px;
-    font-size: 12px;
+    font-size: $admin-font-size-1;
 
     .admin-display-name {
         @include admin-wizard-header-field();
@@ -221,6 +223,10 @@
         @include admin-wizard-header-field();
         &:not(.x-form-readonly):not(.x-form-display-field) {
             @include admin-wizard-header-field-events();
+            input,
+            .x-form-display-field {
+                padding-top: 0;
+            }
         }
 
         input,
@@ -228,6 +234,7 @@
             font-size: 16px;
             line-height: 26px !important;
             height: 26px !important;
+            padding-top: 8px;
         }
 
     }

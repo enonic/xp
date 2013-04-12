@@ -732,7 +732,9 @@ div.admin-wizard-navigation-container-sticky {
 .admin-wizard-navigation li a {
     color: #222;
     text-decoration: none !important;
-    padding: 8px 0 8px 48px;
+    padding: 0 0 0 48px;
+    height: 45px;
+    line-height: 45px;
     background-color: #eee;
     position: relative;
     display: block;
@@ -845,7 +847,6 @@ div.admin-wizard-navigation-container-sticky {
     Wizard header
 */
 .admin-wizard-header-container {
-    margin: 0 10px 3px 5px;
     font-size: 12px;
 }
 
@@ -956,13 +957,13 @@ div.admin-wizard-navigation-container-sticky {
 
 .admin-image-upload-button-image-tip .x-tip {
     left: 0;
-    width: 102px;
+    width: 111px;
     height: 38px;
 }
 
 .admin-image-upload-button-image-tip .x-tip-anchor {
     z-index: 1;
-    left: 44px;
+    left: 49px;
     top: -10px;
 }
 
