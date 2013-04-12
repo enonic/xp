@@ -120,6 +120,9 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
     getDataForConfig: function (formItemConfig, dataSet) {
         var key, data = [];
 
+        if (formItemConfig.type === 'FieldSet') {
+            return dataSet;
+        }
         for (key in dataSet) {
             if (dataSet.hasOwnProperty(key)) {
                 if (formItemConfig.name === dataSet[key].name) {
