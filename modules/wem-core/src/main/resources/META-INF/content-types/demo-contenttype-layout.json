@@ -1,0 +1,176 @@
+{
+    "name": "layout",
+    "module": "demo",
+    "displayName": "Demo: Layout",
+    "superType": "system:structured",
+    "isAbstract": false,
+    "isFinal": true,
+    "form": [
+        {
+            "Layout": {
+                "type": "FieldSet",
+                "label": "A FieldSet around an Input",
+                "name": "nameOfLayoutDoesNotAffectPathOfChildFormItems",
+                "items": [
+                    {
+                        "Input": {
+                            "name": "myInputWithPathUnaffectedByLayout",
+                            "label": "FormItem paths within layouts are not be affected by layout",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": true,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "Input": {
+                "name": "anInputNextToALayout",
+                "label": "An Input after a layout",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            }
+        },
+        {
+            "Layout": {
+                "type": "FieldSet",
+                "label": "A FieldSet around a FormItemSet",
+                "name": "aFieldSetAroundAFormItemSet",
+                "items": [
+                    {
+                        "FormItemSet": {
+                            "name": "address",
+                            "label": "Address",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "customText": null,
+                            "helpText": null,
+                            "items": [
+                                {
+                                    "Input": {
+                                        "name": "label",
+                                        "label": "Label",
+                                        "immutable": false,
+                                        "occurrences": {
+                                            "minimum": 0,
+                                            "maximum": 1
+                                        },
+                                        "indexed": false,
+                                        "customText": null,
+                                        "validationRegexp": null,
+                                        "helpText": "Give this address a label",
+                                        "type": {
+                                            "name": "TextLine",
+                                            "builtIn": true
+                                        }
+                                    }
+                                },
+                                {
+                                    "Input": {
+                                        "name": "street",
+                                        "label": "Street",
+                                        "immutable": false,
+                                        "occurrences": {
+                                            "minimum": 0,
+                                            "maximum": 1
+                                        },
+                                        "indexed": false,
+                                        "customText": null,
+                                        "validationRegexp": null,
+                                        "helpText": "Street",
+                                        "type": {
+                                            "name": "TextLine",
+                                            "builtIn": true
+                                        }
+                                    }
+                                },
+                                {
+                                    "Input": {
+                                        "name": "postal_code",
+                                        "label": "Postal Code",
+                                        "immutable": false,
+                                        "occurrences": {
+                                            "minimum": 0,
+                                            "maximum": 1
+                                        },
+                                        "indexed": false,
+                                        "customText": null,
+                                        "validationRegexp": null,
+                                        "helpText": "Postal Code",
+                                        "type": {
+                                            "name": "TextLine",
+                                            "builtIn": true
+                                        }
+                                    }
+                                },
+                                {
+                                    "Input": {
+                                        "name": "postal_address",
+                                        "label": "Postal Address ",
+                                        "immutable": false,
+                                        "occurrences": {
+                                            "minimum": 0,
+                                            "maximum": 1
+                                        },
+                                        "indexed": false,
+                                        "customText": null,
+                                        "validationRegexp": null,
+                                        "helpText": "Postal Address",
+                                        "type": {
+                                            "name": "TextLine",
+                                            "builtIn": true
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "Input": {
+                "name": "anotherInputNextToALayout",
+                "label": "Another Input after a layout",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            }
+        }
+    ]
+}
