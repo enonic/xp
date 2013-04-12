@@ -357,6 +357,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             return;
         }
         this.selectedContentStore.add(contentModel);
+        this.hideLoaderOnImageLoad(contentModel);
     },
 
     /**
