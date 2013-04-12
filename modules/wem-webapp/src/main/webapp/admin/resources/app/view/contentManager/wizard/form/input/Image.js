@@ -13,13 +13,14 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
     initComponent: function () {
         var me = this;
         this.selectedContentStore = this.createSelectedContentStore();
+        this.selectedDataView = this.createViewForSelectedContent();
 
         this.items = [
             this.createHiddenInput(),
             this.createComboBox(),
             this.createOpenLibraryButton(),
             this.createUploadButton(),
-            this.createViewForSelectedContent()
+            this.selectedDataView
         ];
 
         if (this.inputConfig && this.inputConfig.type && this.inputConfig.type.config) {
@@ -204,7 +205,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                     combo.setValue('');
                     me.onContentSelected(records);
                 },
-                beforeselect: function(combo, record, index) {
+                beforeselect: function (combo, record, index) {
                     return record.data['grayedOutComboItem'];
                 }
             }
@@ -262,8 +263,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         var template = new Ext.XTemplate(
             '<tpl for=".">',
             '   <div class="admin-inputimage">',
+            '       <img class="image" src="{iconUrl}?size=140&thumbnail=false"/>',
             '       <div class="loader"></div>',
-            '       <div class="image" style="background-image: url({iconUrl}?size=140&thumbnail=false);"></div>',
+//            '       <div class="top-bar"><a href="javascript:;" class="admin-remove-button">Remove</a></div>',
             '       <div class="bottom-bar">',
             '           <h6>{displayName}</h6>',
             '       </div>',
@@ -372,9 +374,27 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         Ext.each(files, function (file) {
             me.createTemporaryImageContent(file.response, function (contentModel) {
                 me.selectedContentStore.add(contentModel);
+                me.hideLoaderOnImageLoad(contentModel);
             });
         });
         win.close();
+    },
+
+
+    /**
+     * @private
+     */
+    hideLoaderOnImageLoad: function (contentModel) {
+        if (this.selectedDataView) {
+            // need to do it here instead of 'itemadd' event of dataview
+            // because it is not being thrown for the first added item
+            var node = this.selectedDataView.getNode(contentModel);
+            if (node) {
+                Ext.fly(node).down('img').on('load', function (event, target, opts) {
+                    Ext.fly(target).next('.loader').destroy();
+                })
+            }
+        }
     },
 
     /**

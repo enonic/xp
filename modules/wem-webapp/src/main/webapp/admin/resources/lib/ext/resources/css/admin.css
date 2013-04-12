@@ -3104,7 +3104,7 @@ div.admin-load-mask {
     .admin-inputimage-list .x-boundlist-item .info p {
       margin: 0; }
 
-@-moz-keyframes image-loader-anim {
+@-moz-keyframes image-loader-animation {
   /* line 3, ../sass/admin/mixins/_animations.scss */
   0% {
     -moz-transform: rotate(0deg); }
@@ -3113,7 +3113,7 @@ div.admin-load-mask {
   100% {
     -moz-transform: rotate(360deg); } }
 
-@-webkit-keyframes image-loader-anim {
+@-webkit-keyframes image-loader-animation {
   /* line 3, ../sass/admin/mixins/_animations.scss */
   0% {
     -webkit-transform: rotate(0deg); }
@@ -3122,7 +3122,7 @@ div.admin-load-mask {
   100% {
     -webkit-transform: rotate(360deg); } }
 
-@-ms-keyframes image-loader-anim {
+@-ms-keyframes image-loader-animation {
   /* line 3, ../sass/admin/mixins/_animations.scss */
   0% {
     -ms-transform: rotate(0deg); }
@@ -3131,7 +3131,7 @@ div.admin-load-mask {
   100% {
     -ms-transform: rotate(360deg); } }
 
-@-o-keyframes image-loader-anim {
+@-o-keyframes image-loader-animation {
   /* line 3, ../sass/admin/mixins/_animations.scss */
   0% {
     -o-transform: rotate(0deg); }
@@ -3140,7 +3140,7 @@ div.admin-load-mask {
   100% {
     -o-transform: rotate(360deg); } }
 
-@keyframes image-loader-anim {
+@keyframes image-loader-animation {
   /* line 3, ../sass/admin/mixins/_animations.scss */
   0% {
     transform: rotate(0deg); }
@@ -3155,31 +3155,33 @@ div.admin-load-mask {
   margin: 10px 30px 20px 0;
   float: left;
   background-color: #ccc;
-  min-width: 140px;
-  min-height: 140px; }
-  /* line 79, ../sass/admin/css/_inputimage.scss */
+  width: 140px;
+  height: 140px;
+  text-align: center;
+  line-height: 140px; }
+  /* line 80, ../sass/admin/css/_inputimage.scss */
+  .admin-inputimage img.image {
+    margin-top: -2px;
+    vertical-align: middle; }
+  /* line 85, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage .loader {
     background-image: url("../../../../../resources/images/icons/spinner.png");
     background-position: center;
     background-repeat: no-repeat;
     background-size: 24;
     position: absolute;
-    width: 100%;
-    height: 100%;
-    -moz-animation: image-loader-anim 1s infinite linear;
-    -webkit-animation: image-loader-anim 1s infinite linear;
-    -ms-animation: image-loader-anim 1s infinite linear;
-    -o-animation: image-loader-anim 1s infinite linear;
-    animation: image-loader-anim 1s infinite linear; }
-  /* line 91, ../sass/admin/css/_inputimage.scss */
-  .admin-inputimage .image {
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    position: absolute;
-    width: 100%;
-    height: 100%; }
-  /* line 100, ../sass/admin/css/_inputimage.scss */
+    width: 24px;
+    height: 24px;
+    top: 50%;
+    left: 50%;
+    margin-top: -12px;
+    margin-left: -12px;
+    -moz-animation: image-loader-animation 1s infinite linear;
+    -webkit-animation: image-loader-animation 1s infinite linear;
+    -ms-animation: image-loader-animation 1s infinite linear;
+    -o-animation: image-loader-animation 1s infinite linear;
+    animation: image-loader-animation 1s infinite linear; }
+  /* line 101, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage .top-bar {
     position: absolute;
     overflow: hidden;
@@ -3191,7 +3193,7 @@ div.admin-load-mask {
     display: none;
     top: 0;
     text-align: right; }
-  /* line 106, ../sass/admin/css/_inputimage.scss */
+  /* line 107, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage .bottom-bar {
     position: absolute;
     overflow: hidden;
@@ -3202,15 +3204,15 @@ div.admin-load-mask {
     padding: 3px;
     display: none;
     bottom: 0; }
-    /* line 110, ../sass/admin/css/_inputimage.scss */
+    /* line 111, ../sass/admin/css/_inputimage.scss */
     .admin-inputimage .bottom-bar h6 {
       font-size: 11px !important;
       line-height: 14px; }
-  /* line 119, ../sass/admin/css/_inputimage.scss */
+  /* line 120, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage.over .top-bar,
   .admin-inputimage.over .bottom-bar {
     display: block; }
-  /* line 124, ../sass/admin/css/_inputimage.scss */
+  /* line 125, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage .admin-zoom {
     left: -20px;
     top: -10px;
@@ -3223,23 +3225,23 @@ div.admin-load-mask {
     background-color: #CCC;
     background-position: center; }
 
-/* line 139, ../sass/admin/css/_inputimage.scss */
+/* line 140, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-dlg {
   background-color: #EBEBEB;
   clear: both; }
-  /* line 143, ../sass/admin/css/_inputimage.scss */
+  /* line 144, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage-dlg div.x-btn span {
     font-weight: bold; }
 
-/* line 148, ../sass/admin/css/_inputimage.scss */
+/* line 149, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-library-icon {
   background: url("../../../../../resources/images/folder-open.png") no-repeat; }
 
-/* line 152, ../sass/admin/css/_inputimage.scss */
+/* line 153, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-upload-icon {
   background: url("../../../../../resources/images/upload.png") no-repeat; }
 
-/* line 156, ../sass/admin/css/_inputimage.scss */
+/* line 157, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-selected .admin-zoom {
   display: block !important; }
 
@@ -3499,14 +3501,14 @@ input, textarea, select {
 .x-hide-offsets {
   display: block !important;
   visibility: hidden !important;
-  position: absolute !important;
+  position: absolute!important;
   left: -10000px !important;
   top: -10000px !important; }
 
 /* line 74, ../sass/ext4/core/_core.scss */
 .x-hide-nosize {
-  height: 0 !important;
-  width: 0 !important; }
+  height: 0!important;
+  width: 0!important; }
 
 /* line 79, ../sass/ext4/core/_core.scss */
 .x-masked-relative {
@@ -3804,7 +3806,7 @@ tr.x-container:before {
  */
 /* line 3, ../sass/ext4/util/_dragdrop.scss */
 .x-dd-drag-proxy {
-  z-index: 1000000 !important; }
+  z-index: 1000000!important; }
 
 /* line 8, ../sass/ext4/util/_dragdrop.scss */
 .x-dd-drag-repair .x-dd-drag-ghost {
@@ -11213,7 +11215,7 @@ tr.x-container:before {
 /* IE9 shows scrollbars in a button unless this is set  */
 /* line 112, ../sass/ext4/widgets/_button.scss */
 .x-ie9 .x-btn button {
-  overflow: visible !important; }
+  overflow: visible!important; }
 
 /* line 117, ../sass/ext4/widgets/_button.scss */
 * html .x-ie .x-btn button {
@@ -13800,7 +13802,7 @@ table.x-datepicker-inner {
 /* line 41, ../sass/ext4/widgets/_grid.scss */
 .x-autowidth-table table.x-grid-table {
   table-layout: auto;
-  width: auto !important; }
+  width: auto!important; }
 
 /* line 46, ../sass/ext4/widgets/_grid.scss */
 .x-grid-row .x-grid-table {
@@ -13828,7 +13830,7 @@ table.x-datepicker-inner {
 
 /* line 69, ../sass/ext4/widgets/_grid.scss */
 .x-accordion-item .x-grid-header-ct {
-  border-width: 0 0 1px 0 !important; }
+  border-width: 0 0 1px 0!important; }
 
 /* line 73, ../sass/ext4/widgets/_grid.scss */
 .x-column-header {
@@ -18230,7 +18232,7 @@ a.x-tab-close-btn:hover {
 /* line 5, ../sass/ext4/widgets/_tree.scss */
 .x-autowidth-table table.x-grid-table {
   table-layout: auto;
-  width: auto !important; }
+  width: auto!important; }
 
 /* line 10, ../sass/ext4/widgets/_tree.scss */
 .x-tree-no-lines .x-tree-elbow {

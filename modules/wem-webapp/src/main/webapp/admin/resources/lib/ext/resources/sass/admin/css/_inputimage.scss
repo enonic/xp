@@ -65,16 +65,22 @@
 
 }
 
-@include rotation(image-loader-anim);
+@include rotation(image-loader-animation);
 
 .admin-inputimage {
   position: relative;
   margin: 10px 30px 20px 0;
   float: left;
-
   background-color: #ccc;
-  min-width: 140px;
-  min-height: 140px;
+  width: 140px;
+  height: 140px;
+  text-align: center;   // for centerin image horizontally
+  line-height: 140px;   // and vertically
+
+  img.image {
+    margin-top: -2px;
+    vertical-align: middle;
+  }
 
   .loader {
     background-image: url("../../../../../resources/images/icons/spinner.png");
@@ -82,19 +88,14 @@
     background-repeat: no-repeat;
     background-size: 24;
     position: absolute;
-    width: 100%;
-    height: 100%;
+    width: 24px;
+    height: 24px;
+    top: 50%;
+    left: 50%;
+    margin-top: -12px;
+    margin-left: -12px;
 
-    @include animate(image-loader-anim);
-  }
-
-  .image {
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    position: absolute;
-    width: 100%;
-    height: 100%;
+    @include animate(image-loader-animation);
   }
 
   .top-bar {
