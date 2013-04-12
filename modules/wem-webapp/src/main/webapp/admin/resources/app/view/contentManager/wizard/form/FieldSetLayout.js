@@ -27,8 +27,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldSetLayout', {
 
 
     initLayout: function () {
-        var contentData = !Ext.isEmpty(this.content) ? this.content[0].value : undefined;
-        this.addComponentsBasedOnContentType(this.fieldSetLayoutConfig.items, this, contentData);
+        this.addComponentsBasedOnContentType(this.fieldSetLayoutConfig.items, this, this.content);
     },
 
     getValue: function () {
