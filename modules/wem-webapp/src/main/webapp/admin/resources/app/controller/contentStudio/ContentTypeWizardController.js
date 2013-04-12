@@ -8,17 +8,17 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
     ],
     models: [
     ],
-    views: [],
+    views: [
+        'Admin.view.contentStudio.wizard.ContentTypeWizardPanel'
+    ],
 
 
     init: function () {
         var me = this;
         me.control({
-            'contentStudioContentTypeWizardPanel textfield#displayName': {
-                keyup: function (field, event) {
-                    var text = Ext.String.trim(field.getValue());
-                    me.getTopBar().setTitleButtonText(text);
-                }
+            'contentStudioContentTypeWizardPanel wizardHeader': {
+                displaynamechange: this.onDisplayNameChanged,
+                scope: this
             }
         });
 
@@ -32,6 +32,10 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
                 scope: this
             }
         });
+    },
+
+    onDisplayNameChanged: function (newName, oldName) {
+        this.getTopBar().setTitleButtonText(newName);
     },
 
     saveType: function (wizard, closeWizard) {
