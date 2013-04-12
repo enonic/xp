@@ -138,7 +138,7 @@ public class FindContentJsonResult
 
     private void serializeFacet( final ObjectNode json, final List<QueryFacetResultSet> queries )
     {
-        json.put( "name", "ranges" );
+        json.put( "name", "Last Modified" );
         json.put( "_type", "terms" );
 
         final ArrayNode terms = json.putArray( "terms" );

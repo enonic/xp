@@ -146,11 +146,15 @@ public class IndexService
     public void reIndex()
         throws Exception
     {
-        if (!indexExists()) {
+        if ( !indexExists() )
+        {
             return;
         }
 
         deleteIndex();
+        elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX, true );
+        createIndex();
+        elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX, true );
         this.reindexService.reindexContent();
         this.reindexService.reindexAccounts();
     }
