@@ -244,16 +244,15 @@ Ext.define('Admin.view.DetailPanel', {
 
                           // 18th of April solution!
                           // We should refactor this class so the selection views always gets one data spec
-                      '<tpl if="data.description">' +
-                      '<p>{data.description}</p></div>' +
-                      '</tpl>' +
                       '<tpl if="data.path">' +
-                      '<p>{data.path}</p></div>' +
-                      '</tpl>' +
-                      '<tpl if="data.name">' +
-                      '<p>{data.name}</p></div>' +
+                      '<p>{data.path}</p>' +
+                      '<tpl elseif="data.description">' +
+                      '<p>{data.description}</p>' +
+                      '<tpl elseif="data.name">' +
+                      '<p>{data.name}</p>' +
                       '</tpl>' +
 
+                      '</div>' +
                       '<div class="right">' +
                       '<a id="remove-from-selection-button:{internalId}" class="deselect" href="javascript:;"></a>' +
                       '</div>' +
