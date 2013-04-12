@@ -13,7 +13,7 @@
 
     input.admin-relationship-input {
         height: 36px;
-        padding: 4px 90px 4px 58px;
+        padding: 4px 4px 4px 58px;
         font-size: 15px;
         line-height: 16px;
     }
@@ -24,6 +24,7 @@
         top: 5px;
         width: 25px;
         height: 25px;
+        @include opacity(0.5);
     }
 
     .admin-library-button {
@@ -91,15 +92,14 @@
     }
 }
 
-
 .admin-relationship-combo-grayed-out-item {
-  color: lightgray;
-  font-style: italic;
-  cursor: default !important;
+    color: lightgray;
+    font-style: italic;
+    cursor: default !important;
 
-  img {
-    opacity: 0.5;
-  }
+    img {
+        opacity: 0.5;
+    }
 }
 
 .admin-related-item {
@@ -129,6 +129,10 @@
             color: black;
         }
     }
+}
+
+.admin-relationship-library-icon {
+    background: url("../../../../../resources/images/folder-open.png") no-repeat;
 }
 
 .admin-related-item-disabled {

@@ -16,6 +16,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
         me.items = [
             me.createHiddenInput(),
             me.createComboBox(),
+            me.createOpenLibraryButton(),
             me.createViewForSelectedContent()
         ];
 
@@ -75,7 +76,6 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             '<tpl if="fieldStyle"> style="{fieldStyle}"</tpl>',
             '/>',
             '<img src="{relationshipTypeIconUrl}" class="admin-image-icon"/>',
-            '<a href="#" class="admin-library-button">Open Library</a>',
             {compiled: true, disableFormats: true}
         ];
 
@@ -125,6 +125,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             displayField: 'displayName',
             valueField: 'id',
 
+            width: 460,
             fieldCls: 'admin-relationship-input',
             emptyText: 'Start typing',
             fieldSubTpl: fieldTpl,
@@ -147,7 +148,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
                     combo.setValue('');
                     me.onSelectContent(records);
                 },
-                beforeselect: function(combo, record, index) {
+                beforeselect: function (combo, record, index) {
                     return record.data['grayedOutComboItem'];
                 }
             }
@@ -252,6 +253,27 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     /**
      * @private
      */
+    createOpenLibraryButton: function () {
+        var me = this;
+        return {
+            xtype: 'button',
+            itemId: 'openLibraryButton',
+            tooltip: 'Open Library',
+            iconCls: 'admin-relationship-library-icon',
+            cls: 'nobg icon-button',
+            scale: 'medium',
+            width: '24',
+            margin: '6',
+            handler: function () {
+                me.onLibraryButtonClicked();
+            }
+        };
+    },
+
+
+    /**
+     * @private
+     */
     createViewForSelectedContent: function () {
         var me = this;
         var min = this.inputConfig.occurrences.minimum;
@@ -290,8 +312,17 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     /**
      * @private
      */
+    onLibraryButtonClicked: function () {
+        alert('Open library now');
+    },
+
+
+    /**
+     * @private
+     */
     alertContentIsAdded: function (contentModel) {
-        console.log('Temporary alert! Can not have duplicates in Relationship input\n"' + contentModel.get('path') + '" has already been added');
+        console.log('Temporary alert! Can not have duplicates in Relationship input\n"' + contentModel.get('path') +
+                    '" has already been added');
         this.down('combobox').focus('');
     },
 
