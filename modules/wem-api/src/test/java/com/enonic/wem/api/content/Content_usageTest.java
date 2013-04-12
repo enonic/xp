@@ -24,6 +24,7 @@ import static com.enonic.wem.api.content.data.Data.Text.newText;
 import static com.enonic.wem.api.content.data.Data.WholeNumber.newWholeNumber;
 import static com.enonic.wem.api.content.data.Data.newData;
 import static com.enonic.wem.api.content.data.DataSet.newDataSet;
+import static com.enonic.wem.api.content.data.Value.newValue;
 import static com.enonic.wem.api.content.data.type.DataTypes.DATE_MIDNIGHT;
 import static com.enonic.wem.api.content.data.type.DataTypes.DECIMAL_NUMBER;
 import static com.enonic.wem.api.content.data.type.DataTypes.HTML_PART;
@@ -119,6 +120,58 @@ public class Content_usageTest
         dataSet.add( new Data.DecimalNumber( "myDec", 123.123 ) );
         dataSet.add( new Data.Date( "myDate", new DateMidnight( 2013, 1, 13 ) ) );
         dataSet.add( new Data.HtmlPart( "myHtml", "<p>abc</p>" ) );
+
+        // verify
+        assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
+        assertEquals( WHOLE_NUMBER, dataSet.getData( "myNum" ).getType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getData( "myDate" ).getType() );
+        assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
+        assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
+
+        assertTrue( dataSet.getData( "myText" ) instanceof Data.Text );
+        assertTrue( dataSet.getData( "myNum" ) instanceof Data.WholeNumber );
+        assertTrue( dataSet.getData( "myDec" ) instanceof Data.DecimalNumber );
+        assertTrue( dataSet.getData( "myDate" ) instanceof Data.Date );
+        assertTrue( dataSet.getData( "myHtml" ) instanceof Data.HtmlPart );
+    }
+
+    @Test
+    public void dataSet_add_Data_using_new_ValueType()
+    {
+        DataSet dataSet = new RootDataSet();
+
+        // exercise
+        dataSet.addData( "myText", new Value.Text( "abc" ) );
+        dataSet.addData( "myNum", new Value.WholeNumber( 123 ) );
+        dataSet.addData( "myDec", new Value.DecimalNumber( 123.123 ) );
+        dataSet.addData( "myDate", new Value.Date( new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.addData( "myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
+
+        // verify
+        assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
+        assertEquals( WHOLE_NUMBER, dataSet.getData( "myNum" ).getType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getData( "myDate" ).getType() );
+        assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
+        assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
+
+        assertTrue( dataSet.getData( "myText" ) instanceof Data.Text );
+        assertTrue( dataSet.getData( "myNum" ) instanceof Data.WholeNumber );
+        assertTrue( dataSet.getData( "myDec" ) instanceof Data.DecimalNumber );
+        assertTrue( dataSet.getData( "myDate" ) instanceof Data.Date );
+        assertTrue( dataSet.getData( "myHtml" ) instanceof Data.HtmlPart );
+    }
+
+    @Test
+    public void dataSet_add_Data_using_newValue()
+    {
+        DataSet dataSet = new RootDataSet();
+
+        // exercise
+        dataSet.addData( "myText", newValue().type( DataTypes.TEXT ).value( "abc" ) );
+        dataSet.addData( "myNum", newValue().type( DataTypes.WHOLE_NUMBER ).value( 123L ) );
+        dataSet.addData( "myDec", newValue().type( DataTypes.DECIMAL_NUMBER ).value( 123.123 ) );
+        dataSet.addData( "myDate", newValue().type( DataTypes.DATE_MIDNIGHT ).value( new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.addData( "myHtml", newValue().type( DataTypes.HTML_PART ).value( "<p>abc</p>" ) );
 
         // verify
         assertEquals( TEXT, dataSet.getData( "myText" ).getType() );

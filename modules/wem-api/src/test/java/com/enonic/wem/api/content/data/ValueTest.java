@@ -5,7 +5,6 @@ import org.joda.time.DateMidnight;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.AbstractEqualsTest;
-import com.enonic.wem.api.content.data.type.DataTypes;
 
 import static junit.framework.Assert.assertTrue;
 
@@ -19,26 +18,25 @@ public class ValueTest
             @Override
             public Object getObjectX()
             {
-                return Value.newValue().type( DataTypes.TEXT ).value( "aaa" ).build();
+                return new Value.Text( "aaa" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{Value.newValue().type( DataTypes.TEXT ).value( "bbb" ).build(),
-                    Value.newValue().type( DataTypes.HTML_PART ).value( "aaa" ).build(),};
+                return new Object[]{new Value.Text( "bbb" ), new Value.HtmlPart( "aaa" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return Value.newValue().type( DataTypes.TEXT ).value( "aaa" ).build();
+                return new Value.Text( "aaa" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return Value.newValue().type( DataTypes.TEXT ).value( "aaa" ).build();
+                return new Value.Text( "aaa" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();
@@ -47,7 +45,7 @@ public class ValueTest
     @Test
     public void isJavaType()
     {
-        assertTrue( Value.newValue().type( DataTypes.TEXT ).value( "Some text" ).build().isJavaType( String.class ) );
-        assertTrue( Value.newValue().type( DataTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build().isJavaType( DateMidnight.class ) );
+        assertTrue( new Value.Text( "Some text" ).isJavaType( String.class ) );
+        assertTrue( new Value.Date( DateMidnight.now() ).isJavaType( DateMidnight.class ) );
     }
 }

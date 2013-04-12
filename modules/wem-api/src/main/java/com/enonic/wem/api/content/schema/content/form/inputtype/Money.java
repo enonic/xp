@@ -7,6 +7,7 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
+import com.enonic.wem.api.content.data.type.JavaType;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
@@ -37,7 +38,7 @@ public class Money
     @Override
     public Value newValue( final String value )
     {
-        return Value.newValue().type( DataTypes.DECIMAL_NUMBER ).value( value ).build();
+        return new Value.DecimalNumber( JavaType.DOUBLE.convertFrom( value ) );
     }
 
 }

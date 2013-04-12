@@ -2,8 +2,6 @@ package com.enonic.wem.api.content.data;
 
 import java.util.Objects;
 
-import org.joda.time.DateMidnight;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.type.BaseDataType;
@@ -19,6 +17,30 @@ public class Value
     private final BaseDataType type;
 
     private final Object object;
+
+    private Value( final BaseDataType type, final Object value )
+    {
+        Preconditions.checkNotNull( type, "type cannot be null" );
+        Preconditions.checkNotNull( value, "value cannot be null" );
+        Preconditions.checkArgument( !( value instanceof Builder ), "The value of a Value cannot be: " + value.getClass() );
+        Preconditions.checkArgument( !( value instanceof Value ), "The value of a Value cannot be: " + value.getClass() );
+
+        this.type = type;
+        final boolean valueIsOfExpectedJavaClass = type.isValueOfExpectedJavaClass( value );
+        if ( !valueIsOfExpectedJavaClass )
+        {
+            final Object converted = type.getJavaType().convertFrom( value );
+            if ( converted == null )
+            {
+                throw new InconvertibleValueException( value, type.getJavaType() );
+            }
+            object = converted;
+        }
+        else
+        {
+            object = value;
+        }
+    }
 
     private Value( final Builder builder )
     {
@@ -114,10 +136,10 @@ public class Value
         return converted;
     }
 
-    public DateMidnight asDate()
+    public org.joda.time.DateMidnight asDate()
         throws InconvertibleValueException
     {
-        final DateMidnight converted = JavaType.DATE_MIDNIGHT.convertFrom( object );
+        final org.joda.time.DateMidnight converted = JavaType.DATE_MIDNIGHT.convertFrom( object );
         if ( object != null && converted == null )
         {
             throw new InconvertibleValueException( object, JavaType.DATE_MIDNIGHT );
@@ -170,25 +192,32 @@ public class Value
         return new Builder();
     }
 
+    public Data newData( final String name )
+    {
+        return getType().newData( name, this );
+    }
+
     public static class Builder
+        extends AbstractValueBuilder
     {
         private BaseDataType type;
 
         private Object value;
 
-        public Builder type( BaseDataType value )
+        public <T> AbstractValueBuilder type( BaseDataType type )
         {
-            this.type = value;
-            return this;
+            this.type = type;
+            return type.newValueBuilder();
         }
 
-        public Builder value( Object value )
+        public Value value( Object value )
         {
+            Preconditions.checkNotNull( type, "type must be set before value" );
             Preconditions.checkNotNull( value, "value cannot be null" );
             Preconditions.checkArgument( !( value instanceof Builder ), "The value of a Value cannot be: " + value.getClass() );
             Preconditions.checkArgument( !( value instanceof Value ), "The value of a Value cannot be: " + value.getClass() );
             this.value = value;
-            return this;
+            return this.build();
         }
 
         public Value build()
@@ -202,12 +231,26 @@ public class Value
         }
     }
 
+    public abstract static class AbstractValueBuilder<T extends Value, O>
+    {
+        public abstract T value( final O value );
+    }
+
     public static final class Date
         extends Value
     {
-        public Date( DateMidnight value )
+        public Date( org.joda.time.DateMidnight value )
         {
-            super( newValue().type( DataTypes.DATE_MIDNIGHT ).value( value ) );
+            super( DataTypes.DATE_MIDNIGHT, value );
+        }
+
+        public static class ValueBuilder
+            extends AbstractValueBuilder<Date, org.joda.time.DateMidnight>
+        {
+            public Date value( final org.joda.time.DateMidnight value )
+            {
+                return new Date( value );
+            }
         }
     }
 
@@ -216,17 +259,26 @@ public class Value
     {
         public WholeNumber( Long value )
         {
-            super( newValue().type( DataTypes.WHOLE_NUMBER ).value( value ) );
+            super( DataTypes.WHOLE_NUMBER, value );
         }
 
         public WholeNumber( Integer value )
         {
-            super( newValue().type( DataTypes.WHOLE_NUMBER ).value( Long.valueOf( value ) ) );
+            super( DataTypes.WHOLE_NUMBER, Long.valueOf( value ) );
         }
 
         public WholeNumber( Short value )
         {
-            super( newValue().type( DataTypes.WHOLE_NUMBER ).value( Long.valueOf( value ) ) );
+            super( DataTypes.WHOLE_NUMBER, Long.valueOf( value ) );
+        }
+
+        public static class ValueBuilder
+            extends AbstractValueBuilder<WholeNumber, Long>
+        {
+            public WholeNumber value( final Long value )
+            {
+                return new WholeNumber( value );
+            }
         }
     }
 
@@ -235,7 +287,16 @@ public class Value
     {
         public DecimalNumber( Double value )
         {
-            super( newValue().type( DataTypes.DECIMAL_NUMBER ).value( value ) );
+            super( DataTypes.DECIMAL_NUMBER, value );
+        }
+
+        public static class ValueBuilder
+            extends AbstractValueBuilder<DecimalNumber, Double>
+        {
+            public DecimalNumber value( final Double value )
+            {
+                return new DecimalNumber( value );
+            }
         }
     }
 
@@ -244,7 +305,16 @@ public class Value
     {
         public Text( String value )
         {
-            super( newValue().type( DataTypes.TEXT ).value( value ) );
+            super( DataTypes.TEXT, value );
+        }
+
+        public static class ValueBuilder
+            extends AbstractValueBuilder<Text, String>
+        {
+            public Text value( final String value )
+            {
+                return new Text( value );
+            }
         }
     }
 
@@ -253,7 +323,16 @@ public class Value
     {
         public Xml( String value )
         {
-            super( newValue().type( DataTypes.XML ).value( value ) );
+            super( DataTypes.XML, value );
+        }
+
+        public static class ValueBuilder
+            extends AbstractValueBuilder<Xml, java.lang.String>
+        {
+            public Xml value( final java.lang.String value )
+            {
+                return new Xml( value );
+            }
         }
     }
 
@@ -262,7 +341,16 @@ public class Value
     {
         public HtmlPart( String value )
         {
-            super( newValue().type( DataTypes.HTML_PART ).value( value ) );
+            super( DataTypes.HTML_PART, value );
+        }
+
+        public static class ValueBuilder
+            extends AbstractValueBuilder<HtmlPart, java.lang.String>
+        {
+            public HtmlPart value( final java.lang.String value )
+            {
+                return new HtmlPart( value );
+            }
         }
     }
 
@@ -271,7 +359,16 @@ public class Value
     {
         public GeographicCoordinate( String value )
         {
-            super( newValue().type( DataTypes.GEOGRAPHIC_COORDINATE ).value( value ) );
+            super( DataTypes.GEOGRAPHIC_COORDINATE, value );
+        }
+
+        public static class ValueBuilder
+            extends AbstractValueBuilder<GeographicCoordinate, java.lang.String>
+        {
+            public GeographicCoordinate value( final java.lang.String value )
+            {
+                return new GeographicCoordinate( value );
+            }
         }
     }
 
@@ -280,7 +377,16 @@ public class Value
     {
         public ContentId( com.enonic.wem.api.content.ContentId value )
         {
-            super( newValue().type( DataTypes.CONTENT_ID ).value( value ) );
+            super( DataTypes.CONTENT_ID, value );
+        }
+
+        public static class ValueBuilder
+            extends AbstractValueBuilder<ContentId, com.enonic.wem.api.content.ContentId>
+        {
+            public ContentId value( final com.enonic.wem.api.content.ContentId value )
+            {
+                return new ContentId( value );
+            }
         }
     }
 
@@ -289,7 +395,16 @@ public class Value
     {
         public BinaryId( com.enonic.wem.api.content.binary.BinaryId value )
         {
-            super( newValue().type( DataTypes.BINARY_ID ).value( value ) );
+            super( DataTypes.BINARY_ID, value );
+        }
+
+        public static class ValueBuilder
+            extends AbstractValueBuilder<BinaryId, com.enonic.wem.api.content.binary.BinaryId>
+        {
+            public BinaryId value( final com.enonic.wem.api.content.binary.BinaryId value )
+            {
+                return new BinaryId( value );
+            }
         }
     }
 }

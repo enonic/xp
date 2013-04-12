@@ -33,7 +33,7 @@ public class Date
     @Override
     public Value newValue( final String value )
     {
-        return Value.newValue().type( DataTypes.DATE_MIDNIGHT ).value( JavaType.DATE_MIDNIGHT.convertFrom( value ) ).build();
+        return new Value.Date( JavaType.DATE_MIDNIGHT.convertFrom( value ) );
     }
 }
 

@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content.data.type;
 
 
+import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.Value;
 
 public class Xml
@@ -11,15 +12,21 @@ public class Xml
         super( key, JavaType.STRING );
     }
 
-    public Value toXml( final Value value )
+    @Override
+    public Value newValue( final Object value )
     {
-        if ( isValueOfExpectedJavaClass( value ) )
-        {
-            return value;
-        }
-        else
-        {
-            throw new InconvertibleValueException( value, this );
-        }
+        return new Value.Xml( JavaType.STRING.convertFrom( value ) );
+    }
+
+    @Override
+    public Value.AbstractValueBuilder newValueBuilder()
+    {
+        return new Value.Xml.ValueBuilder();
+    }
+
+    @Override
+    public Data newData( final String name, final Value value )
+    {
+        return new Data.Xml( name, value );
     }
 }

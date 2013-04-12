@@ -24,6 +24,24 @@ public class GeographicCoordinate
     }
 
     @Override
+    public Value newValue( final Object value )
+    {
+        return new Value.GeographicCoordinate( JavaType.STRING.convertFrom( value ) );
+    }
+
+    @Override
+    public Value.AbstractValueBuilder<Value.GeographicCoordinate, String> newValueBuilder()
+    {
+        return new Value.GeographicCoordinate.ValueBuilder();
+    }
+
+    @Override
+    public Data newData( final String name, final Value value )
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void checkValidity( final Data data )
         throws InvalidValueTypeException, InvalidValueException
     {

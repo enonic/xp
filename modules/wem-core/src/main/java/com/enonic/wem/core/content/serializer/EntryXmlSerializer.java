@@ -83,7 +83,7 @@ public final class EntryXmlSerializer
         }
         else
         {
-            parentDataSet.add( Data.newData().name( name ).type( type ).value( entryEl.getText() ).build() );
+            parentDataSet.add( type.newData( name, entryEl.getText() ) );
         }
     }
 }

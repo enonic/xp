@@ -37,7 +37,7 @@ public class GeoLocation
     @Override
     public Value newValue( final String value )
     {
-        return Value.newValue().type( DataTypes.GEOGRAPHIC_COORDINATE ).value( value ).build();
+        return new Value.GeographicCoordinate( value );
     }
 
 }

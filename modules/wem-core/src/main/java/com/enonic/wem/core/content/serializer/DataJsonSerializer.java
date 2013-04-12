@@ -12,7 +12,6 @@ import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
-import static com.enonic.wem.api.content.data.Data.newData;
 import static com.enonic.wem.core.content.serializer.EntryJsonSerializer.ENTRY_NAME;
 import static com.enonic.wem.core.content.serializer.EntryJsonSerializer.ENTRY_PATH;
 import static com.enonic.wem.core.content.serializer.EntryJsonSerializer.ENTRY_TYPE;
@@ -63,11 +62,6 @@ public class DataJsonSerializer
 
         final JsonNode valueNode = dataNode.get( ENTRY_VALUE );
 
-        final Data.Builder dataBuilder = newData();
-        dataBuilder.name( name );
-        dataBuilder.type( dataType );
-        dataBuilder.value( valueNode.getTextValue() );
-        Data data = dataBuilder.build();
-        return data;
+        return dataType.newData( name, valueNode.getTextValue() );
     }
 }

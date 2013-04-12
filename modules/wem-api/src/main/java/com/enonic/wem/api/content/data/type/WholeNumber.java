@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content.data.type;
 
 
+import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.Value;
 
 public class WholeNumber
@@ -11,39 +12,21 @@ public class WholeNumber
         super( key, JavaType.LONG );
     }
 
-
-    private Value toWholeNumber( final Value value )
+    @Override
+    public Value newValue( final Object value )
     {
-        if ( isValueOfExpectedJavaClass( value ) )
-        {
-            return value;
-        }
-        else if ( value.isJavaType( String.class ) )
-        {
-            try
-            {
-                return newValue( new Long( (String) value.getObject() ) );
-            }
-            catch ( NumberFormatException e )
-            {
-                throw new InconvertibleValueException( value, this, e );
-            }
-        }
-        else if ( value.isJavaType( Integer.class ) )
-        {
-            return newValue( ( (Integer) value.getObject() ).longValue() );
-        }
-        else if ( value.isJavaType( Double.class ) )
-        {
-            return newValue( ( (Double) value.getObject() ).longValue() );
-        }
-        else if ( value.isJavaType( Float.class ) )
-        {
-            return newValue( ( (Float) value.getObject() ).longValue() );
-        }
-        else
-        {
-            throw new InconvertibleValueException( value, this );
-        }
+        return new Value.WholeNumber( JavaType.LONG.convertFrom( value ) );
+    }
+
+    @Override
+    public Value.AbstractValueBuilder<Value.WholeNumber, Long> newValueBuilder()
+    {
+        return new Value.WholeNumber.ValueBuilder();
+    }
+
+    @Override
+    public Data newData( final String name, final Value value )
+    {
+        return new Data.WholeNumber( name, value );
     }
 }

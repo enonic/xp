@@ -45,7 +45,7 @@ public class Image
     @Override
     public Value newValue( final String value )
     {
-        return Value.newValue().type( DataTypes.CONTENT_ID ).value( JavaType.CONTENT_ID.convertFrom( value ) ).build();
+        return new Value.ContentId( JavaType.CONTENT_ID.convertFrom( value ) );
     }
 
 }

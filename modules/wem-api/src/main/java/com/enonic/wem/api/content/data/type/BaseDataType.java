@@ -105,9 +105,15 @@ public abstract class BaseDataType
         }
     }
 
-    Value newValue( Object value )
-    {
-        return Value.newValue().type( this ).value( value ).build();
-    }
+    public abstract Value newValue( Object value );
 
+    public abstract Value.AbstractValueBuilder newValueBuilder();
+
+    public abstract Data newData( final String name, final Value value );
+
+    public Data newData( final String name, final Object valueObj )
+    {
+        final Value value = newValue( valueObj );
+        return newData( name, value );
+    }
 }

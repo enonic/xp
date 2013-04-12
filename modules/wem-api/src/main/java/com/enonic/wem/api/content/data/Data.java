@@ -5,7 +5,6 @@ import org.joda.time.DateMidnight;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.content.data.type.BaseDataType;
 import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
@@ -14,12 +13,17 @@ import com.enonic.wem.api.content.data.type.JavaType;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
-import static com.enonic.wem.api.content.data.Value.newValue;
-
 public class Data
     extends Entry
 {
     private Value value;
+
+    Data( final String name, final Value value )
+    {
+        super( name );
+        Preconditions.checkNotNull( value, "value cannot be null" );
+        this.value = value;
+    }
 
     Data( final AbstractBaseBuilder builder )
     {
@@ -53,7 +57,7 @@ public class Data
     {
         Preconditions.checkNotNull( value, "A Data cannot have a null value" );
         Preconditions.checkArgument( !( value instanceof DataSet ), "A Data cannot have a DataSet as value" );
-        this.value = newValue().type( dataType ).value( value ).build();
+        this.value = dataType.newValue( value );
     }
 
     public void setValue( final Value value )
@@ -164,7 +168,7 @@ public class Data
         return getArray().getValue( arrayIndex ).asDate();
     }
 
-    public BinaryId getBinaryId()
+    public com.enonic.wem.api.content.binary.BinaryId getBinaryId()
         throws InconvertibleValueException
     {
         return value.asBinaryId();
@@ -175,7 +179,7 @@ public class Data
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a BlobKey.
      */
-    public BinaryId getBinaryId( final int arrayIndex )
+    public com.enonic.wem.api.content.binary.BinaryId getBinaryId( final int arrayIndex )
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asBinaryId();
@@ -387,7 +391,7 @@ public class Data
     {
         public ContentId( final String name, final com.enonic.wem.api.content.ContentId value )
         {
-            super( newContentIdBuilder().name( name ).value( value ) );
+            super( newContentId().name( name ).value( value ) );
         }
 
         private ContentId( final AbstractBaseBuilder builder )
@@ -395,7 +399,12 @@ public class Data
             super( builder );
         }
 
-        public static Builder newContentIdBuilder()
+        public ContentId( final String name, final Value value )
+        {
+            super( name, value );
+        }
+
+        public static Builder newContentId()
         {
             return new Builder();
         }
@@ -429,6 +438,58 @@ public class Data
         }
     }
 
+    public final static class BinaryId
+        extends Data
+    {
+        public BinaryId( final String name, final com.enonic.wem.api.content.binary.BinaryId value )
+        {
+            super( newBinaryId().name( name ).value( value ) );
+        }
+
+        public BinaryId( final String name, final Value value )
+        {
+            super( name, value );
+        }
+
+        private BinaryId( final AbstractBaseBuilder builder )
+        {
+            super( builder );
+        }
+
+        public static Builder newBinaryId()
+        {
+            return new Builder();
+        }
+
+
+        public static class Builder
+            extends AbstractNameBuilder<Builder>
+        {
+            public Builder()
+            {
+                setType( DataTypes.BINARY_ID );
+            }
+
+            public Builder value( final com.enonic.wem.api.content.binary.BinaryId value )
+            {
+                setValue( value );
+                return this;
+            }
+
+            public Builder value( final String value )
+            {
+                setValue( JavaType.BINARY_ID.convertFrom( value ) );
+                return this;
+            }
+
+            @Override
+            public BinaryId build()
+            {
+                return new BinaryId( this );
+            }
+        }
+    }
+
 
     public final static class Date
         extends Data
@@ -446,6 +507,11 @@ public class Data
         private Date( final AbstractBaseBuilder builder )
         {
             super( builder );
+        }
+
+        public Date( final String name, final Value value )
+        {
+            super( name, value );
         }
 
         public static DateBuilder newDate()
@@ -521,6 +587,11 @@ public class Data
             super( builder );
         }
 
+        public DecimalNumber( final String name, final Value value )
+        {
+            super( name, value );
+        }
+
         public static DecimalNumberBuilder newDecimalNumber()
         {
             return new DecimalNumberBuilder();
@@ -588,6 +659,11 @@ public class Data
             super( builder );
         }
 
+        public HtmlPart( final String name, final Value value )
+        {
+            super( name, value );
+        }
+
         public static HtmlPartBuilder newHtmlPart()
         {
             return new HtmlPartBuilder();
@@ -647,6 +723,11 @@ public class Data
         private Text( final AbstractBaseBuilder builder )
         {
             super( builder );
+        }
+
+        public Text( final String name, final Value value )
+        {
+            super( name, value );
         }
 
         public static TextBuilder newText()
@@ -710,6 +791,11 @@ public class Data
             super( builder );
         }
 
+        public WholeNumber( final String name, final Value value )
+        {
+            super( name, value );
+        }
+
         public static WholeNumberBuilder newWholeNumber()
         {
             return new WholeNumberBuilder();
@@ -769,6 +855,11 @@ public class Data
         private Xml( final AbstractBaseBuilder builder )
         {
             super( builder );
+        }
+
+        public Xml( final String name, final Value value )
+        {
+            super( name, value );
         }
 
         public static XmlBuilder newXml()
