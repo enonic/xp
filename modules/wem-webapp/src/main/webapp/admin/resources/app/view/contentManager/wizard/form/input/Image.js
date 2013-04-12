@@ -99,7 +99,13 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                         me.contentStore.filter(
                             {
                                 filterFn: function (content) {
-                                    return !me.selectedContentStore.findRecord('id', content.get('id'));
+                                    var existing = me.selectedContentStore.findRecord('id', content.get('id'));
+                                    if (existing) {
+                                        content.set('grayedOutComboItem', 'admin-inputimage-combo-grayed-out-item');
+                                    } else {
+                                        content.set('grayedOutComboItem', '');
+                                    }
+                                    return true;
                                 }
                             });
                     }
@@ -153,8 +159,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
 
         var listItemTpl = [
             '<tpl for=".">',
-            '   <div role="option" class="x-boundlist-item">',
-            '       <img src="{iconUrl}?size=48" alt="{displayName}" width="48" height="48"/>',
+            '   <div role="option" class="x-boundlist-item {grayedOutComboItem}">',
+            '       <img src="{iconUrl}?size=32" alt="{displayName}" width="32" height="32"/>',
             '       <div class="info">',
             '           <h6>{displayName}</h6>',
             '           <div style="color: #666">{path}</div>',
@@ -197,6 +203,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                 select: function (combo, records) {
                     combo.setValue('');
                     me.onContentSelected(records);
+                },
+                beforeselect: function(combo, record, index) {
+                    return record.data['grayedOutComboItem'];
                 }
             }
         };
@@ -340,7 +349,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
      */
     onContentSelected: function (contentModels) {
         var contentModel = contentModels[0];
-        var isAlreadyAdded = this.selectedContentStore.findRecord('id', contentModel.getId());
+        var isAlreadyAdded = this.selectedContentStore.findRecord('id', contentModel.get('id'));
         if (isAlreadyAdded) {
             this.alertContentIsAdded(contentModel);
             return;

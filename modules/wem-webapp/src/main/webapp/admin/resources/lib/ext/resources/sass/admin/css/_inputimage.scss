@@ -35,6 +35,16 @@
 
 }
 
+.admin-inputimage-combo-grayed-out-item {
+  color: lightgray;
+  font-style: italic;
+  cursor: default !important;
+
+  img {
+    opacity: 0.5;
+  }
+}
+
 .admin-inputimage-list {
 
   .x-boundlist-item {

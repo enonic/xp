@@ -91,6 +91,17 @@
     }
 }
 
+
+.admin-relationship-combo-grayed-out-item {
+  color: lightgray;
+  font-style: italic;
+  cursor: default !important;
+
+  img {
+    opacity: 0.5;
+  }
+}
+
 .admin-related-item {
     display: table;
     margin: 5px 0;
