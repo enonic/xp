@@ -39,7 +39,7 @@ public class Address
     @Override
     public Value newValue( final String value )
     {
-        return Value.newValue().type( DataTypes.SET ).value( value ).build();
+        throw new UnsupportedOperationException();
     }
 }
 

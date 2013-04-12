@@ -252,7 +252,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
 
         var template = new Ext.XTemplate(
             '<tpl for=".">',
-            '   <div class="admin-inputimage" style="background-image: url({iconUrl}?size=140&thumbnail=false)">',
+            '   <div class="admin-inputimage">',
+            '       <div class="loader"></div>',
+            '       <div class="image" style="background-image: url({iconUrl}?size=140&thumbnail=false);"></div>',
             '       <div class="bottom-bar">',
             '           <h6>{displayName}</h6>',
             '       </div>',

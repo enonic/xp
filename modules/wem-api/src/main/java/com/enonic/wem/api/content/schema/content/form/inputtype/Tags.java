@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
@@ -40,7 +39,7 @@ public class Tags
     @Override
     public Value newValue( final String value )
     {
-        return Value.newValue().type( DataTypes.TEXT ).value( value ).build();
+        return new Value.Text( value );
     }
 
 }

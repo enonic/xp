@@ -17,8 +17,6 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.content.data.type.BaseDataType;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 
-import static com.enonic.wem.api.content.data.Data.newData;
-
 public class DataSet
     extends Entry
     implements Iterable<Entry>
@@ -55,6 +53,31 @@ public class DataSet
         doAdd( entry );
     }
 
+    /**
+     * Adds the given Data.
+     */
+    public final void addData( final String path, final Value value )
+    {
+        addData( EntryPath.from( path ), value );
+    }
+
+    /**
+     * Adds the given Data.
+     */
+    public final void addData( final EntryPath path, final Value value )
+    {
+        if ( path.elementCount() > 1 )
+        {
+            final DataSet dataSet = findOrCreateDataSet( EntryId.from( path.getFirstElement() ) );
+            dataSet.addData( path.asNewWithoutFirstPathElement(), value );
+        }
+        else
+        {
+            final Data data = value.newData( path.getFirstElement().getName() );
+            doAdd( data );
+        }
+    }
+
     private void doAdd( final Entry entry )
     {
         if ( entry.getParent() != null )
@@ -77,7 +100,8 @@ public class DataSet
     {
         if ( path.elementCount() > 1 )
         {
-            forwardSetDataToDataSet( path, values );
+            final DataSet dataSet = findOrCreateDataSet( EntryId.from( path.getFirstElement() ) );
+            dataSet.setData( path.asNewWithoutFirstPathElement(), values );
         }
         else
         {
@@ -109,7 +133,7 @@ public class DataSet
 
         if ( exEntry == null )
         {
-            final Data newData = newData().name( entryId.getName() ).value( value ).build();
+            final Data newData = value.newData( entryId.getName() );
             newData.setParent( this );
             registerArray( newData );
             entryById.put( entryId, newData );
@@ -120,12 +144,6 @@ public class DataSet
             EntryArray array = arrayByEntryName.get( exEntry.getName() );
             array.set( exEntry.getArrayIndex(), exEntry );
         }
-    }
-
-    private void forwardSetDataToDataSet( final EntryPath path, final Value... values )
-    {
-        final DataSet dataSet = findOrCreateDataSet( EntryId.from( path.getFirstElement() ) );
-        dataSet.setData( path.asNewWithoutFirstPathElement(), values );
     }
 
     private DataSet findOrCreateDataSet( final EntryId entryId )
@@ -471,7 +489,7 @@ public class DataSet
 
         public Builder set( final String name, final Object value, final BaseDataType dataType )
         {
-            dataList.add( newData().name( name ).value( value ).type( dataType ).build() );
+            dataList.add( dataType.newData( name, value ) );
             return this;
         }
 

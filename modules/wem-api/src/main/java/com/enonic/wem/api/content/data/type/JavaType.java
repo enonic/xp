@@ -139,6 +139,10 @@ public final class JavaType
             {
                 return new java.lang.Long( (java.lang.String) value );
             }
+            else if ( value instanceof java.lang.Integer )
+            {
+                return java.lang.Long.valueOf( (java.lang.Integer) value );
+            }
             else if ( value instanceof java.lang.Double )
             {
                 return ( (java.lang.Double) value ).longValue();

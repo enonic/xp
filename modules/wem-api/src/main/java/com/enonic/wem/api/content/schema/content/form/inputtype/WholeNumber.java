@@ -38,7 +38,7 @@ public class WholeNumber
     @Override
     public Value newValue( final String value )
     {
-        return Value.newValue().type( DataTypes.WHOLE_NUMBER ).value( JavaType.LONG.convertFrom( value ) ).build();
+        return new Value.WholeNumber( JavaType.LONG.convertFrom( value ) );
     }
 
 }

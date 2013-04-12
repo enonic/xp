@@ -61,7 +61,60 @@
   position: relative;
   margin: 10px 30px 20px 0;
   float: left;
+<<<<<<< HEAD
+  min-width: 140px;
+  min-height: 140px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-color: #ccc;
 
+  .top-bar {
+    @include admin-inputimage-bar();
+    top: 0;
+    text-align: right;
+  }
+
+  .bottom-bar {
+    @include admin-inputimage-bar();
+    bottom: 0;
+
+    h6 {
+      font-size: 11px !important;
+      line-height: 14px;
+    }
+  }
+
+  &.over {
+
+    .top-bar,
+    .bottom-bar {
+      display: block;
+    }
+  }
+
+  .admin-zoom {
+    left: -20px;
+    top: -10px;
+    width: 180px;
+    height: 190px;
+    display: none;
+    background-repeat: no-repeat;
+    position: absolute;
+    background-size: contain;
+    background-color: #CCC;
+    background-position: center;
+  }
+
+}
+
+.admin-inputimage-dlg {
+  background-color: #EBEBEB;
+  clear: both;
+
+  div.x-btn span {
+    font-weight: bold;
+=======
   background-color: #ccc;
   min-width: 140px;
   min-height: 140px;
@@ -109,29 +162,7 @@
     .bottom-bar {
       display: block;
     }
-  }
-
-  .admin-zoom {
-    left: -20px;
-    top: -10px;
-    width: 180px;
-    height: 190px;
-    display: none;
-    background-repeat: no-repeat;
-    position: absolute;
-    background-size: contain;
-    background-color: #CCC;
-    background-position: center;
-  }
-
-}
-
-.admin-inputimage-dlg {
-  background-color: #EBEBEB;
-  clear: both;
-
-  div.x-btn span {
-    font-weight: bold;
+>>>>>>> 9661c095bc102f6364eeac8b204ddbddb92b6bad
   }
 }
 

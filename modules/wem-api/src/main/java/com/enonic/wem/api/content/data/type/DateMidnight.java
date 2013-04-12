@@ -1,47 +1,32 @@
 package com.enonic.wem.api.content.data.type;
 
 
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
-
+import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.Value;
 
 public class DateMidnight
     extends BaseDataType
 {
-    private final static DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder().
-        appendYear( 4, 4 ).appendLiteral( "-" ).appendMonthOfYear( 2 ).appendLiteral( "-" ).appendDayOfMonth( 2 ).toFormatter();
-
     DateMidnight( int key )
     {
         super( key, JavaType.DATE_MIDNIGHT );
     }
 
-    public Value toDate( final Value value )
+    @Override
+    public Value newValue( final Object value )
     {
-        if ( isValueOfExpectedJavaClass( value ) )
-        {
-            return value;
-        }
-        else if ( value.isJavaType( String.class ) )
-        {
-            try
-            {
-                return newValue( FORMATTER.parseDateTime( (String) value.getObject() ).toDateMidnight() );
-            }
-            catch ( Exception e )
-            {
-                throw new InconvertibleValueException( value, this, e );
-            }
-        }
-        else if ( value.isJavaType( Long.class ) )
-        {
-            final Long longValue = (Long) value.getObject();
-            return newValue( new org.joda.time.DateMidnight( longValue ) );
-        }
-        else
-        {
-            throw new InconvertibleValueException( value, this );
-        }
+        return new Value.Date( JavaType.DATE_MIDNIGHT.convertFrom( value ) );
+    }
+
+    @Override
+    public Value.AbstractValueBuilder<Value.Date, org.joda.time.DateMidnight> newValueBuilder()
+    {
+        return new Value.Date.ValueBuilder();
+    }
+
+    @Override
+    public Data newData( final String name, final Value value )
+    {
+        return new Data.Date( name, value );
     }
 }

@@ -186,6 +186,7 @@ public class RootDataSetParserTest
     }
 
     @Test
+    @Ignore
     public void geoLocation()
         throws IOException
     {

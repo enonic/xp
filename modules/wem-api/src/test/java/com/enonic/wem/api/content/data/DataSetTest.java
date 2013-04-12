@@ -159,8 +159,8 @@ public class DataSetTest
     @Test
     public void add_given_two_data_added_with_same_path_then_array_is_created()
     {
-        Data myArray1 = Data.newData().name( "myArray" ).value( "1" ).type( DataTypes.TEXT ).build();
-        Data myArray2 = Data.newData().name( "myArray" ).value( "2" ).type( DataTypes.TEXT ).build();
+        Data myArray1 = Data.newData().name( "myArray" ).type( DataTypes.TEXT ).value( "1" ).build();
+        Data myArray2 = Data.newData().name( "myArray" ).type( DataTypes.TEXT ).value( "2" ).build();
 
         DataSet dataSet = DataSet.newRootDataSet();
         dataSet.add( myArray1 );
@@ -247,7 +247,7 @@ public class DataSetTest
     public void getValue()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.add( Data.newData().name( "myData" ).value( "1" ).type( DataTypes.TEXT ).build() );
+        dataSet.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "1" ).build() );
 
         assertEquals( "1", dataSet.getValue( "myData" ).getObject() );
         assertEquals( "1", dataSet.getValue( EntryPath.from( "myData" ) ).getObject() );
@@ -328,7 +328,7 @@ public class DataSetTest
     public void setData_given_one_data_added_and_a_second_data_with_same_name_set_at_index_one_then_array_is_created()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.add( Data.newData().name( "myArray" ).value( "1" ).type( DataTypes.TEXT ).build() );
+        dataSet.add( Data.newData().name( "myArray" ).type( DataTypes.TEXT ).value( "1" ).build() );
         dataSet.setData( EntryPath.from( "myArray[1]" ), new Value.Text( "2" ) );
 
         assertEquals( "1", dataSet.getValue( "myArray[0]" ).getObject() );
@@ -339,7 +339,7 @@ public class DataSetTest
     public void setData_given_array_index_set_twice_then_value_of_last_is_returned()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.add( Data.newData().name( "myArray" ).value( "1" ).type( DataTypes.TEXT ).build() );
+        dataSet.add( Data.newData().name( "myArray" ).type( DataTypes.TEXT ).value( "1" ).build() );
 
         // exercise
         dataSet.setData( EntryPath.from( "myArray[1]" ), new Value.Text( "2a" ) );

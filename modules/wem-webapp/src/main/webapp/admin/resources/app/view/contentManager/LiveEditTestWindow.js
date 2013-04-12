@@ -1,6 +1,6 @@
-Ext.define('Admin.view.contentManager.LiveEditWindow', {
+Ext.define('Admin.view.contentManager.LiveEditTestWindow', {
     extend: 'Admin.view.BaseDialogWindow',
-    alias: 'widget.liveEditWindow',
+    alias: 'widget.liveEditTestWindow',
 
     dialogTitle: undefined,
     dialogSubTitle: undefined,
@@ -53,10 +53,8 @@ Ext.define('Admin.view.contentManager.LiveEditWindow', {
                 ]
             }
         ];
-
         this.callParent(arguments);
     }
-
 
 });
 

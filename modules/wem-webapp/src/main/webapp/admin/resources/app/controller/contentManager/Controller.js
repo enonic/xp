@@ -10,7 +10,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
     models: [],
     views: [
         'Admin.view.contentManager.DeleteContentWindow',
-        'Admin.view.contentManager.LiveEditWindow',
+        'Admin.view.contentManager.LiveEditTestWindow',
         'Admin.view.contentManager.wizard.ContentLiveEditPanel'
     ],
 
@@ -98,7 +98,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
         /* For 18/4 demo */
         Admin.MessageBus.on('liveEdit.showTestSettingsWindow', function () {
-            me.getLiveEditWindow().doShow();
+            me.getLiveTestEditWindow().doShow();
         }, me);
     },
 
@@ -418,6 +418,36 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
     },
 
+    /* For 18/4 */
+
+    getDimensionsForDevice: function (device) {
+        var dimensions;
+
+        switch (device) {
+        case 'DESKTOP':
+            dimensions = {width: '100%', height: '100%'};
+            break;
+        case 'IPHONE_5':
+            dimensions = {width: '320px', height: '568px'};
+            break;
+        case 'GALAXY_S3':
+            dimensions = {width: '360px', height: '640px'};
+            break;
+        case 'IPAD_3':
+            dimensions = {width: '768px', height: '1024px'};
+            break;
+        case 'KINDLE_FIRE_HD7':
+            dimensions = {width: '600px', height: '1024px'};
+            break;
+        case '1080_P_TELEVISION':
+            dimensions = {width: '1920px', height: '1080px'};
+            break;
+        default:
+            dimensions = {width: '100%', height: '100%'};
+        }
+        return dimensions;
+    },
+
     /**
      * @private
      */
@@ -560,13 +590,12 @@ Ext.define('Admin.controller.contentManager.Controller', {
         return win;
     },
 
-    getLiveEditWindow: function () {
-        var win = Ext.ComponentQuery.query('liveEditWindow')[0];
+    getLiveEditTestWindow: function () {
+        var win = Ext.ComponentQuery.query('liveEditTestWindow')[0];
         if (!win) {
-            win = Ext.create('widget.liveEditWindow');
+            win = Ext.create('widget.liveEditTestWindow');
         }
         return win;
     }
-
 
 });

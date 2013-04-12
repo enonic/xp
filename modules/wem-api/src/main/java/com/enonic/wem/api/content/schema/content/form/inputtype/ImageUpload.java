@@ -34,7 +34,7 @@ public class ImageUpload
     @Override
     public Value newValue( final String value )
     {
-        return Value.newValue().type( DataTypes.BINARY_ID ).value( JavaType.BINARY_ID.convertFrom( value ) ).build();
+        return new Value.BinaryId( JavaType.BINARY_ID.convertFrom( value ) );
     }
 
 }

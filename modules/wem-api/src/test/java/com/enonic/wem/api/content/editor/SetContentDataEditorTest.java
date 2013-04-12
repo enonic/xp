@@ -20,10 +20,10 @@ public class SetContentDataEditorTest
     {
         // setup
         RootDataSet originalRootDataSet = new RootDataSet();
-        originalRootDataSet.add( Data.newData().name( "myData" ).value( "abc" ).type( DataTypes.TEXT ).build() );
+        originalRootDataSet.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "abc" ).build() );
 
         RootDataSet unchangedRootDataSet = new RootDataSet();
-        unchangedRootDataSet.add( Data.newData().name( "myData" ).value( "abc" ).type( DataTypes.TEXT ).build() );
+        unchangedRootDataSet.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "abc" ).build() );
 
         SetContentDataEditor editor = new SetContentDataEditor( unchangedRootDataSet );
         Content toBeEdited = Content.newContent().name( "myContent" ).rootDataSet( originalRootDataSet ).build();
@@ -41,10 +41,10 @@ public class SetContentDataEditorTest
     {
         // setup
         RootDataSet originalRootDataSet = new RootDataSet();
-        originalRootDataSet.add( Data.newData().name( "myData" ).value( "abc" ).type( DataTypes.TEXT ).build() );
+        originalRootDataSet.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "abc" ).build() );
 
         RootDataSet changedRootDataSet = new RootDataSet();
-        changedRootDataSet.add( Data.newData().name( "myData" ).value( "123" ).type( DataTypes.TEXT ).build() );
+        changedRootDataSet.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "123" ).build() );
 
         SetContentDataEditor editor = new SetContentDataEditor( changedRootDataSet );
         Content toBeEdited = Content.newContent().name( "myContent" ).rootDataSet( originalRootDataSet ).build();

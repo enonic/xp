@@ -37,7 +37,7 @@ public class TextArea
     @Override
     public Value newValue( final String value )
     {
-        return Value.newValue().type( DataTypes.TEXT ).value( value ).build();
+        return new Value.Text( value );
     }
 
 }

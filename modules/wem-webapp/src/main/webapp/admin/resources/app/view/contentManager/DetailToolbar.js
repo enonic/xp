@@ -45,6 +45,42 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
             },
             '->',
             {
+                xtype: 'cycle',
+                itemId: 'deviceCycle',
+                disabled: true,
+                showText: true,
+                prependText: 'Device: ',
+                menu: {
+                    items: [
+                        {
+                            text: 'Desktop',
+                            checked: true,
+                            device: 'DESKTOP'
+                        },
+                        {
+                            text: 'iPhone 5',
+                            device: 'IPHONE_5'
+                        },
+                        {
+                            text: 'Galaxy SIII',
+                            device: 'GALAXY_S3'
+                        },
+                        {
+                            text: 'iPad 3',
+                            device: 'IPAD_3'
+                        },
+                        {
+                            text: 'Kindle Fire HD 7"',
+                            device: 'KINDLE_FIRE_HD7'
+                        },
+                        {
+                            text: '1080p Television',
+                            device: '1080_P_TELEVISION'
+                        }
+                    ]
+                }
+            },
+            {
                 xtype: 'toggleslide',
                 onText: 'Preview',
                 offText: 'Details',
@@ -54,7 +90,6 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
                     change: function (toggle, state) {
                         me.isLiveMode = state;
                     }
-
                 }
             },
             {

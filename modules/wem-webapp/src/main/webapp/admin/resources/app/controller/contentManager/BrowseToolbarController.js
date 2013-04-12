@@ -25,14 +25,14 @@ Ext.define('Admin.controller.contentManager.BrowseToolbarController', {
                     this.showToolbarMenu(button, event);
                 }
             },
-            'contentManagerToolbarMenu *[action=moveDetailPanel]': {
-                click: function (button, event) {
-                    this.moveDetailPanel(button, event);
-                }
-            },
             'browseToolbar *[action=toggleLive]': {
                 change: function (slider, state) {
                     this.getContentDetailPanel().toggleLive();
+                }
+            },
+            'contentManagerToolbarMenu *[action=moveDetailPanel]': {
+                click: function (button, event) {
+                    this.moveDetailPanel(button, event);
                 }
             }
         });
@@ -48,6 +48,7 @@ Ext.define('Admin.controller.contentManager.BrowseToolbarController', {
         menu.items.items[0].setText('Details Pane ' + ( vertical ? 'Right' : 'Bottom' ));
         menu.showAt(event.getX(), button.getEl().getY() + button.getEl().getHeight());
     },
+
 
     moveDetailPanel: function (button, event) {
         var contentDetail = Ext.ComponentQuery.query('contentDetail');
@@ -80,7 +81,5 @@ Ext.define('Admin.controller.contentManager.BrowseToolbarController', {
         }
         return menu;
     }
-
-
 
 });

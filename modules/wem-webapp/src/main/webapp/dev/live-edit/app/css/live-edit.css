@@ -1,6 +1,7 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 
 /*** Reset */
+/* TODO: Generate new */
 
 .live-edit-loader-splash-container,
 .live-edit-loader-splash-content,
@@ -247,7 +248,7 @@ svg.live-edit-highlight-border {
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: rgba(255,255,255, .9);
+    background-color: rgba(255, 255, 255, .9);
 }
 
 .live-edit-loader-splash-content {
@@ -314,7 +315,7 @@ svg.live-edit-highlight-border rect {
     clear: both;
     color: #add8e6;
     font-size: 20px;
-    padding: 28px;
+    padding: 28px 10px;
     text-align: center;
 }
 
@@ -467,23 +468,23 @@ svg.live-edit-highlight-border rect {
 }
 
 .live-edit-component-menu-page-icon {
-    background: transparent url("../images/component-types/file.png") center center no-repeat;
+    background: transparent url("../images/component-types/22/file.png") center center no-repeat;
 }
 
 .live-edit-component-menu-region-icon {
-    background: transparent url("../images/component-types/compass.png") center center no-repeat;
+    background: transparent url("../images/component-types/22/compass.png") center center no-repeat;
 }
 
 .live-edit-component-menu-part-icon {
-    background: transparent url("../images/component-types/puzzle.png") center center no-repeat;
+    background: transparent url("../images/component-types/22/puzzle.png") center center no-repeat;
 }
 
 .live-edit-component-menu-paragraph-icon {
-    background: transparent url("../images/component-types/text-color.png") center center no-repeat;
+    background: transparent url("../images/component-types/22/text-color.png") center center no-repeat;
 }
 
 .live-edit-component-menu-layout-icon {
-    background: transparent url("../images/component-types/insert-template.png") center center no-repeat;
+    background: transparent url("../images/component-types/22/insert-template.png") center center no-repeat;
 }
 
 .live-edit-component-menu-title-text {

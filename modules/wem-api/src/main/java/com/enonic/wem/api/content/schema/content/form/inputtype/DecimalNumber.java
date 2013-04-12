@@ -38,7 +38,7 @@ public class DecimalNumber
     @Override
     public Value newValue( final String value )
     {
-        return Value.newValue().type( DataTypes.DECIMAL_NUMBER ).value( JavaType.DOUBLE.convertFrom( value ) ).build();
+        return new Value.DecimalNumber( JavaType.DOUBLE.convertFrom( value ) );
     }
 
 }

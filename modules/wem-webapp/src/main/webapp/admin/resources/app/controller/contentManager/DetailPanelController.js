@@ -26,4 +26,5 @@ Ext.define('Admin.controller.contentManager.DetailPanelController', {
         this.getContentTreeGridPanel().deselect(-1);
     }
 
+
 });
