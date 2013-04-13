@@ -58,24 +58,20 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
                             device: 'DESKTOP'
                         },
                         {
-                            text: 'iPhone 5',
-                            device: 'IPHONE_5'
+                            text: 'iPhone 5 Vertical',
+                            device: 'IPHONE_5_VERTICAL'
                         },
                         {
-                            text: 'Galaxy SIII',
-                            device: 'GALAXY_S3'
+                            text: 'iPhone 5 Horizontal',
+                            device: 'IPHONE_5_HORIZONTAL'
                         },
                         {
-                            text: 'iPad 3',
-                            device: 'IPAD_3'
+                            text: 'iPad 3 Vertical',
+                            device: 'IPAD_3_VERTICAL'
                         },
                         {
-                            text: 'Kindle Fire HD 7"',
-                            device: 'KINDLE_FIRE_HD7'
-                        },
-                        {
-                            text: '1080p Television',
-                            device: '1080_P_TELEVISION'
+                            text: 'iPad 3 Horizontal',
+                            device: 'IPAD_3_HORIZONTAL'
                         }
                     ]
                 }

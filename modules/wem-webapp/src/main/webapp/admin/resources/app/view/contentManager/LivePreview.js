@@ -3,10 +3,11 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     alias: 'widget.contentLive', // Post 18/4 rename livePreview
 
     bodyStyle: {
-        backgroundColor: '#212121'
+        backgroundColor: '#ccc'
     },
 
-    html: '<div style="height: 100%; width: 100%;text-align:center"><iframe style="border: 0 none; width: 100%; height: 100%;"></iframe></div>',
+    // For 18/4. todo: create CSS classes for the elements.
+    html: '<div style="display:table; height:100%; width: 100%;"><div style="display:table-row"><div style="display:table-cell; height:100%; vertical-align: middle; text-align:center;"><iframe style="border: 0 none; width: 100%; height: 100%; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2)"></iframe></div></div></div>',
 
     autoScroll: false,
     styleHtmlContent: true,
@@ -38,10 +39,10 @@ Ext.define('Admin.view.contentManager.LivePreview', {
             height = heightHasPercentUnit ? this.getHeight() : dimmensions.height;
 
         var animation = iFrame.animate({
-            duration: 260,
+            duration: 210,
             to: {
                 width: width,
-                height: dimmensions.height
+                height: height
             },
             listeners: {
                 afteranimate: function () {

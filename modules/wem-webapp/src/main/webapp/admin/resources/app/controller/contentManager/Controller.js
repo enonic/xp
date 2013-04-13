@@ -427,20 +427,17 @@ Ext.define('Admin.controller.contentManager.Controller', {
         case 'DESKTOP':
             dimensions = {width: '100%', height: '100%'};
             break;
-        case 'IPHONE_5':
+        case 'IPHONE_5_VERTICAL':
             dimensions = {width: '320px', height: '568px'};
             break;
-        case 'GALAXY_S3':
-            dimensions = {width: '360px', height: '640px'};
+        case 'IPHONE_5_HORIZONTAL':
+            dimensions = {width: '568px', height: '320px'};
             break;
-        case 'IPAD_3':
+        case 'IPAD_3_VERTICAL':
             dimensions = {width: '768px', height: '1024px'};
             break;
-        case 'KINDLE_FIRE_HD7':
-            dimensions = {width: '600px', height: '1024px'};
-            break;
-        case '1080_P_TELEVISION':
-            dimensions = {width: '1920px', height: '1080px'};
+        case 'IPAD_3_HORIZONTAL':
+            dimensions = {width: '1024px', height: '768px'};
             break;
         default:
             dimensions = {width: '100%', height: '100%'};
