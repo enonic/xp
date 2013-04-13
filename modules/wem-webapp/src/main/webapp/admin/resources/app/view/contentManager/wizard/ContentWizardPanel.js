@@ -134,7 +134,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             xtype: 'wizardHeader',
             nameConfig: {
                 readOnly: headerData.isRoot,
-                stripCharsRe: /[^a-z0-9\-\/]+/ig,
+                stripCharsRe: /[^a-z0-9\-_]+/ig,
                 vtype: 'path'
             },
             displayNameConfig: {

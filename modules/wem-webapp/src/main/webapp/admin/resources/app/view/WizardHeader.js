@@ -12,6 +12,9 @@ Ext.define('Admin.view.WizardHeader', {
         enableKeyEvents: true,
         hideLabel: true,
         autoFocus: true
+        // TODO: What is max length?
+        //maxLength: 255,
+        //enforceMaxLength: true
     },
 
     pathProperty: 'path',
@@ -31,6 +34,9 @@ Ext.define('Admin.view.WizardHeader', {
         hideLabel: true,
         vtype: 'name',
         stripCharsRe: /[^a-z0-9\-]+/ig
+        // TODO: What is max length?
+        //maxLength: 255,
+        //enforceMaxLength: true
     },
 
 
@@ -76,7 +82,13 @@ Ext.define('Admin.view.WizardHeader', {
             cls: 'admin-name',
             dirtyCls: 'admin-name-dirty',
             name: this.nameProperty,
-            value: headerData[this.nameProperty]
+            value: headerData[this.nameProperty],
+            listeners: {
+                change: function (textfield, newValue) {
+                    textfield.setValue(textfield.processRawValue(this.preProcessName(newValue)));
+                }, scope: this
+            }
+
         }, me.nameConfig, Admin.view.WizardHeader.prototype.nameConfig));
 
         // add listeners separately so they don't get overridden by config
@@ -173,7 +185,7 @@ Ext.define('Admin.view.WizardHeader', {
     },
 
     preProcessName: function (displayName) {
-        return !Ext.isEmpty(displayName) ? displayName.replace(/\s+/ig, '-').toLowerCase() : '';
+        return !Ext.isEmpty(displayName) ? displayName.replace(/\s+/ig, '-').replace(/-{2,}/g, '-').toLowerCase() : '';
     },
 
     prepareHeaderData: function (data) {
