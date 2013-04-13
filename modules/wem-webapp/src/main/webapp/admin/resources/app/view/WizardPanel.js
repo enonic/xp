@@ -195,16 +195,28 @@ Ext.define('Admin.view.WizardPanel', {
         var bottomPanel = me.down('#bottomPanel').getEl();
 
         if (bottomPanel) {
-            var hasScroll = bottomPanel.dom.scrollHeight > bottomPanel.dom.clientHeight;
-            var wizardHeaderPanelEl = me.down('#wizardHeaderPanel').getEl();
+            var hasScroll = bottomPanel.dom.scrollHeight > bottomPanel.dom.clientHeight,
+                positionPanelEl = me.down('#positionPanel').getEl(),
+                wizardHeaderPanelHeight = me.down('#wizardHeaderPanel').getEl().getHeight(),
+                headerShadowEl = Ext.fly('admin-wizard-header-shadow');
 
             if (hasScroll && bottomPanel.dom.scrollTop !== 0) {
-                // 0 4px 10px -6px
-                var cssShadowValue = Ext.isGecko ? '-46px -60px 32px 36px rgba(0, 0, 0, 1)' : '-40px -55px 40px 40px rgba(0, 0, 0, 0.7)';
-                wizardHeaderPanelEl.applyStyles({ boxShadow: cssShadowValue });
+                if (!headerShadowEl) {
+                    var dh = Ext.DomHelper,
+                        boxShadowOffsets = Ext.isGecko ? '0 5px 6px -3px' : '0 5px 10px -3px';
+
+                    var shadowDomSpec = {
+                        id: 'admin-wizard-header-shadow',
+                        tag: 'div',
+                        style: 'position:absolute; top:' + wizardHeaderPanelHeight + 'px; left:0px; z-index:10000000; height:10px; background:transparent; width:100%; box-shadow:' + boxShadowOffsets + '#888 inset'
+                    };
+
+                    dh.append(positionPanelEl, shadowDomSpec);
+                    Ext.fly('admin-wizard-header-shadow').show(true);
+                }
 
             } else {
-                wizardHeaderPanelEl.applyStyles({ boxShadow: undefined });
+                headerShadowEl.remove();
             }
         }
     },
@@ -510,7 +522,7 @@ Ext.define('Admin.view.WizardPanel', {
             itemId: 'wizardHeaderPanel',
             cls: 'admin-wizard-panel',
             padding: '10 0 0 10',
-            margin: '0 0 10 0',
+            margin: '0 0 0 0',
             layout: {
                 type: 'table',
                 columns: 2,

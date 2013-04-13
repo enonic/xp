@@ -8,6 +8,10 @@ Ext.define('Admin.view.account.wizard.user.UserWizardToolbar', {
 
     isNewUser: true,
 
+    defaults: {
+        scale: 'medium'
+    },
+
     initComponent: function () {
 
         var leftGrp = [
