@@ -2948,7 +2948,7 @@ div.admin-load-mask {
   /* line 14, ../sass/admin/css/_relationship.scss */
   .admin-relationship-combo input.admin-relationship-input {
     height: 36px;
-    padding: 4px 90px 4px 58px;
+    padding: 4px 4px 4px 58px;
     font-size: 15px;
     line-height: 16px; }
   /* line 21, ../sass/admin/css/_relationship.scss */
@@ -2957,28 +2957,30 @@ div.admin-load-mask {
     left: 13px;
     top: 5px;
     width: 25px;
-    height: 25px; }
-  /* line 29, ../sass/admin/css/_relationship.scss */
+    height: 25px;
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+    opacity: 0.5; }
+  /* line 30, ../sass/admin/css/_relationship.scss */
   .admin-relationship-combo .admin-library-button {
     position: absolute;
     right: 10px;
     top: 9px;
     text-decoration: none; }
 
-/* line 40, ../sass/admin/css/_relationship.scss */
+/* line 41, ../sass/admin/css/_relationship.scss */
 .admin-relationship-list .x-boundlist-item {
   padding: 8px; }
-  /* line 43, ../sass/admin/css/_relationship.scss */
+  /* line 44, ../sass/admin/css/_relationship.scss */
   .admin-relationship-list .x-boundlist-item img {
     float: left; }
-  /* line 47, ../sass/admin/css/_relationship.scss */
+  /* line 48, ../sass/admin/css/_relationship.scss */
   .admin-relationship-list .x-boundlist-item .info {
     margin-left: 42px; }
-    /* line 50, ../sass/admin/css/_relationship.scss */
+    /* line 51, ../sass/admin/css/_relationship.scss */
     .admin-relationship-list .x-boundlist-item .info p {
       margin: 0; }
 
-/* line 58, ../sass/admin/css/_relationship.scss */
+/* line 59, ../sass/admin/css/_relationship.scss */
 .admin-relationship {
   position: relative;
   margin: 0 10px 10px 0;
@@ -2989,7 +2991,7 @@ div.admin-load-mask {
   background-repeat: no-repeat;
   background-size: contain;
   background-color: #ccc; }
-  /* line 69, ../sass/admin/css/_relationship.scss */
+  /* line 70, ../sass/admin/css/_relationship.scss */
   .admin-relationship .top-bar {
     position: absolute;
     overflow: hidden;
@@ -3001,7 +3003,7 @@ div.admin-load-mask {
     display: none;
     top: 0;
     text-align: right; }
-  /* line 75, ../sass/admin/css/_relationship.scss */
+  /* line 76, ../sass/admin/css/_relationship.scss */
   .admin-relationship .bottom-bar {
     position: absolute;
     overflow: hidden;
@@ -3012,11 +3014,11 @@ div.admin-load-mask {
     padding: 3px;
     display: none;
     bottom: 0; }
-    /* line 79, ../sass/admin/css/_relationship.scss */
+    /* line 80, ../sass/admin/css/_relationship.scss */
     .admin-relationship .bottom-bar h6 {
       font-size: 11px !important;
       line-height: 14px; }
-  /* line 88, ../sass/admin/css/_relationship.scss */
+  /* line 89, ../sass/admin/css/_relationship.scss */
   .admin-relationship.over .top-bar,
   .admin-relationship.over .bottom-bar {
     display: block; }
@@ -3055,7 +3057,11 @@ div.admin-load-mask {
     .admin-related-item .right-column a {
       color: black; }
 
-/* line 135, ../sass/admin/css/_relationship.scss */
+/* line 134, ../sass/admin/css/_relationship.scss */
+.admin-relationship-library-icon {
+  background: url("../../../../../resources/images/folder-open.png") no-repeat; }
+
+/* line 139, ../sass/admin/css/_relationship.scss */
 .admin-related-item-disabled .right-column {
   opacity: 0.5; }
 
@@ -3501,14 +3507,14 @@ input, textarea, select {
 .x-hide-offsets {
   display: block !important;
   visibility: hidden !important;
-  position: absolute!important;
+  position: absolute !important;
   left: -10000px !important;
   top: -10000px !important; }
 
 /* line 74, ../sass/ext4/core/_core.scss */
 .x-hide-nosize {
-  height: 0!important;
-  width: 0!important; }
+  height: 0 !important;
+  width: 0 !important; }
 
 /* line 79, ../sass/ext4/core/_core.scss */
 .x-masked-relative {
@@ -3806,7 +3812,7 @@ tr.x-container:before {
  */
 /* line 3, ../sass/ext4/util/_dragdrop.scss */
 .x-dd-drag-proxy {
-  z-index: 1000000!important; }
+  z-index: 1000000 !important; }
 
 /* line 8, ../sass/ext4/util/_dragdrop.scss */
 .x-dd-drag-repair .x-dd-drag-ghost {
@@ -11215,7 +11221,7 @@ tr.x-container:before {
 /* IE9 shows scrollbars in a button unless this is set  */
 /* line 112, ../sass/ext4/widgets/_button.scss */
 .x-ie9 .x-btn button {
-  overflow: visible!important; }
+  overflow: visible !important; }
 
 /* line 117, ../sass/ext4/widgets/_button.scss */
 * html .x-ie .x-btn button {
@@ -13802,7 +13808,7 @@ table.x-datepicker-inner {
 /* line 41, ../sass/ext4/widgets/_grid.scss */
 .x-autowidth-table table.x-grid-table {
   table-layout: auto;
-  width: auto!important; }
+  width: auto !important; }
 
 /* line 46, ../sass/ext4/widgets/_grid.scss */
 .x-grid-row .x-grid-table {
@@ -13830,7 +13836,7 @@ table.x-datepicker-inner {
 
 /* line 69, ../sass/ext4/widgets/_grid.scss */
 .x-accordion-item .x-grid-header-ct {
-  border-width: 0 0 1px 0!important; }
+  border-width: 0 0 1px 0 !important; }
 
 /* line 73, ../sass/ext4/widgets/_grid.scss */
 .x-column-header {
@@ -18232,7 +18238,7 @@ a.x-tab-close-btn:hover {
 /* line 5, ../sass/ext4/widgets/_tree.scss */
 .x-autowidth-table table.x-grid-table {
   table-layout: auto;
-  width: auto!important; }
+  width: auto !important; }
 
 /* line 10, ../sass/ext4/widgets/_tree.scss */
 .x-tree-no-lines .x-tree-elbow {
