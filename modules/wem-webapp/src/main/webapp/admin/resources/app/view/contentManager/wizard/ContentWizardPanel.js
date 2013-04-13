@@ -162,7 +162,6 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             xtype: 'image',
             width: 110,
             height: 110,
-            margin: '0 10 0 0',
             src: headerData.imageUrl,
             listeners: {
                 render: function (cmp) {

@@ -111,7 +111,6 @@ Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
             plain: true,
             width: 110,
             height: 110,
-            margin: '0 10 0 0',
             src: headerData.iconUrl,
             listeners: {
                 render: function (cmp) {

@@ -93,7 +93,6 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
             xtype: 'container',
             width: 110,
             height: 110,
-            margin: '0 10 0 0',
             items: [
                 {
                     xtype: 'photoUploadButton',
