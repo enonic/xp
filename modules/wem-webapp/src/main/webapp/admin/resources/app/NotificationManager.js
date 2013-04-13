@@ -40,14 +40,14 @@ Ext.define('Admin.NotificationManager', {
         publish: new Ext.XTemplate(
             '<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-result">See result</a> or <a href="#" class="admin-notification-publish">Publish to other locations</a></span>',
             '<span style="line-height: 1.5em;">',
-            'Content<tpl if="contentName"> "{contentName}"</tpl> published successfully!',
+            '<tpl if="contentName"> "{contentName}"</tpl> published successfully!',
             '</span> '
         ),
 
         general: new Ext.XTemplate(
             '<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-publish">Publish</a> or <a href="#" class="admin-notification-close">Close</a></span>',
             '<span style="line-height: 1.5em;">',
-            'Content<tpl if="contentName"> "{contentName}"</tpl> saved successfully!',
+            '<tpl if="contentName"> "{contentName}"</tpl> saved successfully!',
             '</span> '
         )
     },

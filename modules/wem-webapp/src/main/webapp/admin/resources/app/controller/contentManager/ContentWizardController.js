@@ -151,10 +151,10 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                     me.getContentWizardTab().close();
                 }
 
-                var path = contentParams.contentPath || contentPath;
+                var displayName = contentParams.displayName || displayName;
 
                 Admin.MessageBus.showGeneral(
-                    path,
+                    displayName,
                     function () {
                         alert('publish link callback');
                     },
@@ -181,12 +181,12 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
 
     publishContent: function (contentWizard, closeWizard) {
         var me = this;
-        var contentPath = contentWizard.data.content.path;
+        var displayName = contentWizard.data.content.displayName;
         if (closeWizard) {
             me.getContentWizardTab().close();
         }
         Admin.MessageBus.showPublish(
-            contentPath,
+            displayName,
             function () {
                 alert('result link callback');
             },
