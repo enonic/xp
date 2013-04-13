@@ -98,7 +98,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
         /* For 18/4 demo */
         Admin.MessageBus.on('liveEdit.showTestSettingsWindow', function () {
-            me.getLiveTestEditWindow().doShow();
+            me.getLiveEditTestWindow().doShow();
         }, me);
     },
 
