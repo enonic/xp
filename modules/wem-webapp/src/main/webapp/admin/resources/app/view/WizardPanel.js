@@ -53,7 +53,89 @@ Ext.define('Admin.view.WizardPanel', {
             },
             items: this.createSteps()
         });
-        this.items = [
+
+        var wizardPanel = [
+            {
+                xtype: 'container',
+                region: 'west',
+                width: 110,
+                layout: 'anchor',
+                listeners: {
+                    click: {
+                        element: 'el',
+                        fn: function () {
+                            me.prev();
+                        }
+                    },
+                    mouseover: {
+                        element: 'el',
+                        fn: function (event, element) {
+                            me.updateNavButton(element, '#000000');
+                        }
+                    },
+                    mouseout: {
+                        element: 'el',
+                        fn: function (event, element) {
+                            me.updateNavButton(element, '#777777');
+                        }
+                    }
+                },
+                items: [
+                    {
+                        xtype: 'button',
+                        itemId: 'prev',
+                        iconCls: 'wizard-nav-icon icon-chevron-left icon-6x',
+                        cls: 'wizard-nav-button wizard-nav-button-left',
+                        height: 80,
+                        width: 60,
+                        padding: 0
+                    }
+                ]
+            },
+            {
+                xtype: 'container',
+                region: 'east',
+                width: 110,
+                layout: 'anchor',
+                listeners: {
+                    click: {
+                        element: 'el',
+                        fn: function () {
+                            me.next();
+                        }
+                    },
+                    mouseover: {
+                        element: 'el',
+                        fn: function (event, element) {
+                            me.updateNavButton(element, '#000000');
+                        }
+                    },
+                    mouseout: {
+                        element: 'el',
+                        fn: function (event, element) {
+                            me.updateNavButton(element, '#777777');
+                        }
+                    }
+
+                },
+                items: [
+                    {
+                        xtype: 'button',
+                        itemId: 'next',
+                        iconAlign: 'right',
+                        cls: 'wizard-nav-button wizard-nav-button-right',
+                        formBind: true,
+                        iconCls: 'wizard-nav-icon icon-chevron-right icon-6x',
+                        height: 80,
+                        width: 60,
+                        padding: 0
+                    }
+                ]
+            },
+            this.wizard
+        ];
+
+        var bottomPanel = [
             this.createHeaderPanel(),
             {
                 itemId : 'bottomPanel',
@@ -61,102 +143,7 @@ Ext.define('Admin.view.WizardPanel', {
                 autoScroll: true,
                 padding: '20 0 0 0',
                 layout: 'border',
-                flex: 1,
-                items: [
-                    {
-                        xtype: 'container',
-                        region: 'west',
-                        width: 110,
-                        style: {
-                            position: 'fixed !important',
-                            top: '210px !important'
-                        },
-                        layout: {
-                            type: 'hbox',
-                            align: 'middle'
-                        },
-                        listeners: {
-                            click: {
-                                element: 'el',
-                                fn: function () {
-                                    me.prev();
-                                }
-                            },
-                            mouseover: {
-                                element: 'el',
-                                fn: function (event, element) {
-                                    me.updateNavButton(element, '#000000');
-                                }
-                            },
-                            mouseout: {
-                                element: 'el',
-                                fn: function (event, element) {
-                                    me.updateNavButton(element, '#777777');
-                                }
-                            }
-                        },
-                        items: [
-                            {
-                                xtype: 'button',
-                                itemId: 'prev',
-                                iconCls: 'wizard-nav-icon icon-chevron-left icon-6x',
-                                cls: 'wizard-nav-button wizard-nav-button-left',
-                                height: 64,
-                                width: 64,
-                                padding: 0,
-                                margin: '0 0 0 40'
-                            }
-                        ]
-                    },
-                    {
-                        xtype: 'container',
-                        region: 'east',
-                        width: 110,
-                        style: {
-                            position: 'fixed !important',
-                            top: '210px !important'
-                        },
-                        layout: {
-                            type: 'hbox',
-                            align: 'middle'
-                        },
-                        listeners: {
-                            click: {
-                                element: 'el',
-                                fn: function () {
-                                    me.next();
-                                }
-                            },
-                            mouseover: {
-                                element: 'el',
-                                fn: function (event, element) {
-                                    me.updateNavButton(element, '#000000');
-                                }
-                            },
-                            mouseout: {
-                                element: 'el',
-                                fn: function (event, element) {
-                                    me.updateNavButton(element, '#777777');
-                                }
-                            }
-
-                        },
-                        items: [
-                            {
-                                xtype: 'button',
-                                itemId: 'next',
-                                iconAlign: 'right',
-                                cls: 'wizard-nav-button wizard-nav-button-right',
-                                formBind: true,
-                                iconCls: 'wizard-nav-icon icon-chevron-right icon-6x',
-                                height: 64,
-                                width: 64,
-                                padding: 0
-                            }
-                        ]
-                    },
-                    this.wizard
-                ],
+                items: wizardPanel,
                 listeners : {
                     scroll: {
                              element: 'el',
@@ -165,6 +152,17 @@ Ext.define('Admin.view.WizardPanel', {
                              }
                     }
                 }
+            }
+        ];
+
+        this.items = [
+            this.createHeaderPanel(),
+            {
+                xtype: 'container',
+                padding: '20 0 0 0',
+                layout: 'border',
+                flex: 1,
+                items: bottomPanel
             }
         ];
 
@@ -192,9 +190,10 @@ Ext.define('Admin.view.WizardPanel', {
     },
 
     updateShadow: function (me) {
-        var bottomPanel = me.down('#bottomPanel').getEl();
+        var bottomPanelComponent = me.down('#bottomPanel');
 
-        if (bottomPanel) {
+        if (bottomPanelComponent && bottomPanelComponent.getEl()) {
+            var bottomPanel = bottomPanelComponent.getEl();
             var hasScroll = bottomPanel.dom.scrollHeight > bottomPanel.dom.clientHeight;
             var wizardHeaderPanelEl = me.down('#wizardHeaderPanel').getEl();
 
