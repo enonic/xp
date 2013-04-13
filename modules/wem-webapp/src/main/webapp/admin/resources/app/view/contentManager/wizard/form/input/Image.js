@@ -303,6 +303,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                         } else {
                             picker.getEl().insertAfter(viewEl.last());
                         }
+
                     }
                 },
                 itemadd: function () {
@@ -311,11 +312,19 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                 deselect: function () {
                     if (me.getImageDialog()) {
                         me.getImageDialog().hide();
+                        var parent = me.up();
+                        if (Ext.isFunction(parent.doComponentLayout)) {
+                            parent.doComponentLayout();
+                        }
                     }
                 },
                 select: function () {
                     if (me.getImageDialog()) {
                         me.getImageDialog().show();
+                        var parent = me.up();
+                        if (Ext.isFunction(parent.doComponentLayout)) {
+                            parent.doComponentLayout();
+                        }
                     }
                 }
             }
