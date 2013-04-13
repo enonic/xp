@@ -209,12 +209,12 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
         if (triggerConfig && triggerConfig.showComponentBar === false) {
             return;
         }
-        this.getBar().css('opacity', '1');
+        this.getBar().fadeIn(120);
     };
 
 
     proto.fadeOut = function (event) {
-        this.getBar().css('opacity', '0');
+        this.getBar().fadeOut(120);
     };
 
 
