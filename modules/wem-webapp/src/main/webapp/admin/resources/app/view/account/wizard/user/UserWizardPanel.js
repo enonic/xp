@@ -196,13 +196,14 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
 
         return {
             xtype: 'container',
-            width: 100,
-            height: 100,
+            width: 110,
+            height: 110,
+            margin: '0 10 0 0',
             items: [
                 {
                     xtype: 'photoUploadButton',
-                    width: 100,
-                    height: 100,
+                    width: 110,
+                    height: 110,
                     photoUrl: this.headerData.photoUrl,
                     title: "User",
                     progressBarHeight: 6,
@@ -220,7 +221,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
                 {
                     styleHtmlContent: true,
                     style: {
-                        top: 0,
+                        top: '5px',
                         zIndex: 1001
                     },
                     height: 50,

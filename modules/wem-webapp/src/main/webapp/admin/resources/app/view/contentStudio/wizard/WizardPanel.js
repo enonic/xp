@@ -55,13 +55,14 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
         var headerData = this.resolveHeaderData(this.data);
 
         return {
-            width: 100,
-            height: 100,
+            width: 110,
+            height: 110,
+            margin: '0 10 0 0',
             items: [
                 {
                     xtype: 'photoUploadButton',
-                    width: 100,
-                    height: 100,
+                    width: 110,
+                    height: 110,
                     photoUrl: headerData.iconUrl,
                     title: "Content",
                     style: {
@@ -86,7 +87,7 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
                     itemId: 'imageToolTip',
                     style: {
                         zIndex: 1001,
-                        top: '0'
+                        top: '5px'
                     },
                     cls: 'admin-image-upload-button-image-tip',
                     html: '<div class="x-tip x-tip-default x-layer" role="tooltip">' +

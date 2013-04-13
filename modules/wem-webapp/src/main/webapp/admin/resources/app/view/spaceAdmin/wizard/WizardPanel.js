@@ -91,13 +91,14 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
 
         return {
             xtype: 'container',
-            width: 100,
-            height: 100,
+            width: 110,
+            height: 110,
+            margin: '0 10 0 0',
             items: [
                 {
                     xtype: 'photoUploadButton',
-                    width: 100,
-                    height: 100,
+                    width: 110,
+                    height: 110,
                     photoUrl: headerData.iconUrl,
                     title: "Space",
                     style: {
@@ -121,7 +122,7 @@ Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
                     border: 0,
                     itemId: 'imageToolTip',
                     style: {
-                        top: '0px',
+                        top: '5px',
                         zIndex: 1001
                     },
                     cls: 'admin-image-upload-button-image-tip',
