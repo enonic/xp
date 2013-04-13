@@ -533,6 +533,9 @@ Ext.define('Admin.view.WizardPanel', {
                         type: 'hbox',
                         align: 'stretch'
                     },
+                    tdAttrs: {
+                        style: 'vertical-align: bottom;'
+                    },
                     items: [
                         Ext.applyIf(this.createRibbon(), {
                             flex: 1
