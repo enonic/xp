@@ -18,9 +18,11 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     initComponent: function () {
         var me = this;
 
-        this.dockedItems = [
-            me.getActionButtonContainer()
-        ];
+        me.on('afterrender', function () {
+            if (me.actionButton) {
+                me.renderActionButton();
+            }
+        });
 
         this.callParent(arguments);
     },
@@ -58,23 +60,24 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     },
 
 
-    getActionButtonContainer: function () {
-        if (this.actionButton) {
-            return {
-                xtype: 'container',
-                layout: 'hbox',
-                border: 0,
-                padding: '5 20 0',
-                dock: 'top',
-                items: [
-                    {
-                        xtype: 'tbfill'
-                    },
-                    Ext.apply(this.actionButton, {border: 0})
-                ]
-            };
-        }
-        return {};
+    renderActionButton: function () {
+        var me = this;
+
+        Ext.create('widget.container', {
+            renderTo: me.getEl(),
+            floating: true,
+            shadow: false,
+            padding: '5 20 0',
+            // Can we find a more ExtJS way to align the button to the right?
+            style:'width: 100%; text-align: right',
+            border: 0,
+            items: [
+                {
+                    xtype: 'tbfill'
+                },
+                Ext.apply(me.actionButton, {border: 0})
+            ]
+        });
     },
 
 
