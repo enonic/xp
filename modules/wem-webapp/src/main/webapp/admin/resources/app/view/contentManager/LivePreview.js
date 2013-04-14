@@ -41,7 +41,7 @@ Ext.define('Admin.view.contentManager.LivePreview', {
             height = heightHasPercentUnit ? this.getHeight() : dimmensions.height;
 
         var animation = iFrame.animate({
-            duration: 210,
+            duration: 300,
             to: {
                 width: width,
                 height: height
