@@ -19,6 +19,7 @@ Ext.define('Admin.view.contentManager.wizard.form.InputContainer', {
                 {
                     xtype: 'button',
                     itemId: 'addButton',
+                    ui: 'dark-grey',
                     text: 'Add',
                     listeners: {
                         click: function () {

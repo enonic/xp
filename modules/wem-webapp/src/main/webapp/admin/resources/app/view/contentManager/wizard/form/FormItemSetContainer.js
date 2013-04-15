@@ -32,6 +32,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSetContainer', {
             },
             disabled: this.maxFields === 1,
             text: 'Add ' + this.field.formItemSetConfig.label,
+            ui: 'dark-grey',
             handler: function () {
                 var formItemsPanel = me.down('#formItemsPanel');
                 var last = formItemsPanel.items.last();
