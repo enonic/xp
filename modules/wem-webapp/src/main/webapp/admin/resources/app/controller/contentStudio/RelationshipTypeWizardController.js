@@ -51,8 +51,8 @@ Ext.define('Admin.controller.contentStudio.RelationshipTypeWizardController', {
                 }
 
                 Admin.MessageBus.showFeedback({
-                    title: 'Relationship Type was saved',
-                    message: 'Relationship Type was saved',
+                    title: data.displayName + ' was saved',
+                    message: data.displayName + ' was saved',
                     opts: {}
                 });
 
