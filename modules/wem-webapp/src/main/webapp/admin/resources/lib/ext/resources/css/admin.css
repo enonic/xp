@@ -3179,7 +3179,7 @@ div.admin-load-mask {
 /* line 70, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage {
   position: relative;
-  margin: 10px 30px 20px 0;
+  margin: 10px 40px 20px 0;
   float: left;
   background-color: #ccc;
   width: 140px;
@@ -3253,22 +3253,26 @@ div.admin-load-mask {
     background-position: center; }
 
 /* line 140, ../sass/admin/css/_inputimage.scss */
+.admin-inputimage-last {
+  margin-right: 0; }
+
+/* line 144, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-dlg {
   background-color: #EBEBEB;
   clear: both; }
-  /* line 144, ../sass/admin/css/_inputimage.scss */
+  /* line 148, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage-dlg div.x-btn span {
     font-weight: bold; }
 
-/* line 149, ../sass/admin/css/_inputimage.scss */
+/* line 153, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-library-icon {
   background: url("../../../../../resources/images/folder-open.png") no-repeat; }
 
-/* line 153, ../sass/admin/css/_inputimage.scss */
+/* line 157, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-upload-icon {
   background: url("../../../../../resources/images/upload.png") no-repeat; }
 
-/* line 157, ../sass/admin/css/_inputimage.scss */
+/* line 161, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-selected .admin-zoom {
   display: block !important; }
 
