@@ -185,7 +185,10 @@ Ext.define('Admin.view.WizardHeader', {
     },
 
     preProcessName: function (displayName) {
-        return !Ext.isEmpty(displayName) ? displayName.replace(/[\s+\./]/ig, '-').replace(/-{2,}/g, '-').toLowerCase() : '';
+        return !Ext.isEmpty(displayName) ? displayName.replace(/[\s+\./]/ig, '-')
+            .replace(/-{2,}/g, '-')
+            .replace(/^-|-$/g, '')
+            .toLowerCase() : '';
     },
 
     prepareHeaderData: function (data) {
