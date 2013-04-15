@@ -43,7 +43,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         }
 
         this.callParent(arguments);
-        this.setValue(this.value);
+        this.selectedDataView.on('viewready', function () {
+            me.setValue(me.value);
+        });
     },
 
 
@@ -77,6 +79,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                 Ext.each(getContentResponse.content, function (contentData) {
                     var contentModel = new Admin.model.contentManager.ContentModel(contentData);
                     me.selectedContentStore.add(contentModel);
+                    me.hideLoaderOnImageLoad(contentModel);
                 });
             }
         });
@@ -284,7 +287,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             trackOver: true,
             overItemCls: 'over',
             deferEmptyText: false,
-            width: 520,
+            deferInitialRefresh: false,
+            width: 500,
             listeners: {
                 itemclick: function (view, contentModel, item, index, e) {
                     var clickedElement = Ext.fly(e.target);
@@ -303,25 +307,58 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                         } else {
                             picker.getEl().insertAfter(viewEl.last());
                         }
+
                     }
                 },
-                itemadd: function () {
+                itemadd: function (contentModel, index, htmlElements) {
                     this.getSelectionModel().deselectAll();
+                    if ((index+1) % 3 === 0) {
+                        Ext.fly(htmlElements[0]).addCls('admin-inputimage-last');
+                    }
+                },
+                itemupdate: function () {
+                    me.refreshListLayout();
+                },
+                itemremove: function () {
+                    me.refreshListLayout();
                 },
                 deselect: function () {
                     if (me.getImageDialog()) {
                         me.getImageDialog().hide();
+                        var parent = me.up();
+                        if (Ext.isFunction(parent.doComponentLayout)) {
+                            parent.doComponentLayout();
+                        }
                     }
                 },
                 select: function () {
                     if (me.getImageDialog()) {
                         me.getImageDialog().show();
+                        var parent = me.up();
+                        if (Ext.isFunction(parent.doComponentLayout)) {
+                            parent.doComponentLayout();
+                        }
                     }
+                },
+                refresh: function () {
+                    me.refreshListLayout();
                 }
             }
         });
     },
 
+    /**
+     * @private
+     */
+    refreshListLayout: function () {
+        var imageItems = this.selectedDataView.getEl().query('.admin-inputimage');
+        Ext.each(imageItems, function (imageItem, index) {
+            Ext.fly(imageItem).removeCls('admin-inputimage-last');
+            if ((index + 1) % 3 === 0) {
+                Ext.fly(imageItem).addCls('admin-inputimage-last');
+            }
+        });
+    },
 
     /**
      * @private

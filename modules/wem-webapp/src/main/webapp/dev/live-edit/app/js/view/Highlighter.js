@@ -70,7 +70,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
         $component.addClass('live-edit-selected-component');
 
-        // jQuery can not use addClass on a SVG element.
+        // jQuery.addClass does not work for SVG elements.
         me.getEl().attr('class', me.getEl().attr('class') + ' live-edit-animatable');
 
         // Highlighter should not be shown when type page is selected
@@ -89,9 +89,9 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
         me.getEl().attr('class', me.getEl().attr('class').replace(/ live-edit-animatable/g, ''));
 
-        me.$selectedComponent = null;
-
         $('.live-edit-selected-component').removeClass('live-edit-selected-component');
+
+        me.$selectedComponent = null;
     };
 
 
@@ -139,6 +139,9 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
     proto.hide = function () {
         this.getEl().hide();
+
+        var $el = this.getEl();
+        $el.attr('class', $el.attr('class').replace(/ live-edit-animatable/g, ''));
     };
 
 

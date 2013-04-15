@@ -8,6 +8,7 @@ $admin-button-default-background-color: #2C76E9;
 $admin-button-red: #e36500;
 $admin-button-grey: #cccccc;
 $admin-button-green: #669C34;
+$admin-button-dark-grey: #555555;
 // Small
 $button-small-border-radius: 0 !default;
 $button-small-padding: 6px 16px !default;
@@ -26,7 +27,6 @@ $button-large-padding: 6px 12px !default;
 $button-large-font-size: $admin-font-size-1 !default;
 $button-large-font-weight: normal !default;
 
-
 // Defaults
 $button-over-color: lighten($admin-button-default-background-color, 10);
 $button-disabled-color: lighten($admin-button-default-background-color, 20);
@@ -35,13 +35,15 @@ $button-default-color: #ffffff !default;
 $button-default-base-color-over: $button-over-color !default;
 $button-default-base-color-focus: $button-default-base-color-over !default;
 $button-default-base-color-pressed: $button-default-base-color-over !default;
-$button-default-base-color-disabled: $button-disabled-color !default; //F7F7F7
+$button-default-base-color-disabled: $button-disabled-color !default;
+//F7F7F7
 
 $button-default-border-color: $admin-button-default-background-color !default;
 $button-default-border-color-over: $button-over-color !default;
 $button-default-border-color-focus: $admin-button-default-background-color !default;
 $button-default-border-color-pressed: $admin-button-default-background-color !default;
-$button-default-border-color-disabled: $button-disabled-color !default; //F7F7F7
+$button-default-border-color-disabled: $button-disabled-color !default;
+//F7F7F7
 
 $button-default-background-color: $admin-button-default-background-color !default;
 $button-default-background-color-over: $button-default-base-color-over !default;

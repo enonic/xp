@@ -1,6 +1,6 @@
 // Unless you want to include all components, you must set $include-default to false
 // IF you set this to true, you can also remove lines 10 to 38 of this file
-$include-default: false;
+$include-default: false;  
 
 @import "compass";
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
@@ -60,6 +60,10 @@ $include-default: false;
 @import "admin/widgets/button/green-medium";
 @import "admin/widgets/button/green-large";
 
+@import "admin/widgets/button/dark-grey-small";
+@import "admin/widgets/button/dark-grey-medium";
+@import "admin/widgets/button/dark-grey-large";
+
 @import "admin/widgets/button/blue-toolbar-small";
 @import "admin/widgets/button/blue-toolbar-medium";
 @import "admin/widgets/button/blue-toolbar-large";
@@ -75,6 +79,10 @@ $include-default: false;
 @import "admin/widgets/button/green-toolbar-small";
 @import "admin/widgets/button/green-toolbar-medium";
 @import "admin/widgets/button/green-toolbar-large";
+
+@import "admin/widgets/button/dark-grey-toolbar-small";
+@import "admin/widgets/button/dark-grey-toolbar-medium";
+@import "admin/widgets/button/dark-grey-toolbar-large";
 
 // You may remove any of the following modules that you
 // do not use in order to create a smaller css file.
