@@ -69,7 +69,7 @@
 
 .admin-inputimage {
   position: relative;
-  margin: 10px 30px 20px 0;
+  margin: 10px 40px 20px 0;
   float: left;
   background-color: #ccc;
   width: 140px;
@@ -135,6 +135,10 @@
     background-position: center;
   }
 
+}
+
+.admin-inputimage-last {
+  margin-right: 0;
 }
 
 .admin-inputimage-dlg {
