@@ -55,8 +55,8 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
                 }
 
                 Admin.MessageBus.showFeedback({
-                    title: 'Content Type was saved',
-                    message: 'Content Type was saved',
+                    title: data.displayName + ' was saved',
+                    message: data.displayName + ' was saved',
                     opts: {}
                 });
 
