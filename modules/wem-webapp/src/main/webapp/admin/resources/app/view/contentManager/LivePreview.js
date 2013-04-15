@@ -3,10 +3,11 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     alias: 'widget.contentLive', // Post 18/4 rename livePreview
 
     bodyStyle: {
-        backgroundColor: '#212121'
+        backgroundColor: '#ccc'
     },
 
-    html: '<div style="height: 100%; width: 100%;text-align:center"><iframe style="border: 0 none; width: 100%; height: 100%;"></iframe></div>',
+    // For 18/4. todo: create CSS classes for the elements.
+    html: '<div style="display:table; height:100%; width: 100%;"><div style="display:table-row"><div style="display:table-cell; height:100%; vertical-align: middle; text-align:center;"><iframe style="border: 0 none; width: 100%; height: 100%; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2)"></iframe></div></div></div>',
 
     autoScroll: false,
     styleHtmlContent: true,
@@ -17,9 +18,11 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     initComponent: function () {
         var me = this;
 
-        this.dockedItems = [
-            me.getActionButtonContainer()
-        ];
+        me.on('afterrender', function () {
+            if (me.actionButton) {
+                me.renderActionButton();
+            }
+        });
 
         this.callParent(arguments);
     },
@@ -38,10 +41,10 @@ Ext.define('Admin.view.contentManager.LivePreview', {
             height = heightHasPercentUnit ? this.getHeight() : dimmensions.height;
 
         var animation = iFrame.animate({
-            duration: 260,
+            duration: 300,
             to: {
                 width: width,
-                height: dimmensions.height
+                height: height
             },
             listeners: {
                 afteranimate: function () {
@@ -57,23 +60,24 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     },
 
 
-    getActionButtonContainer: function () {
-        if (this.actionButton) {
-            return {
-                xtype: 'container',
-                layout: 'hbox',
-                border: 0,
-                padding: '5 20 0',
-                dock: 'top',
-                items: [
-                    {
-                        xtype: 'tbfill'
-                    },
-                    Ext.apply(this.actionButton, {border: 0})
-                ]
-            };
-        }
-        return {};
+    renderActionButton: function () {
+        var me = this;
+
+        Ext.create('widget.container', {
+            renderTo: me.getEl(),
+            floating: true,
+            shadow: false,
+            padding: '5 20 0',
+            // Can we find a more ExtJS way to align the button to the right?
+            style:'width: 100%; text-align: right',
+            border: 0,
+            items: [
+                {
+                    xtype: 'tbfill'
+                },
+                Ext.apply(me.actionButton, {border: 0})
+            ]
+        });
     },
 
 

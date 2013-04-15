@@ -10,7 +10,8 @@ Ext.define('Admin.controller.spaceAdmin.FilterPanelController', {
     init: function () {
         this.control({
             'spaceFilter': {
-                search: this.doSearch
+                search: this.doSearch,
+                reset: this.doReset
             }
         });
     },
@@ -21,18 +22,33 @@ Ext.define('Admin.controller.spaceAdmin.FilterPanelController', {
         // set browse tab active
         this.getCmsTabPanel().setActiveTab(0);
 
-        var filterPanel = this.getSpaceFilterPanel();
+        // cast the filter params on the store
+        var treeGrid = this.getSpaceTreeGridPanel();
+        treeGrid.setRemoteSearchParams(this.getStoreParamsFromFilter(values));
+        treeGrid.refresh();
 
-        //TODO: submit the search
-
-        // set the list mode
-        var treeGridPanel = this.getSpaceTreeGridPanel();
-        treeGridPanel.setActiveList(filterPanel.isDirty() ? 'grid' : 'tree');
-
-        var selection = treeGridPanel.getSelection();
+        var selection = treeGrid.getSelection();
 
         this.updateDetailPanel(selection);
         this.updateToolbarButtons(selection);
+    },
+
+    doReset: function (dirty) {
+        if (!dirty) {
+            // prevent reset if the filter is not dirty
+            return false;
+        }
+
+        var treeGrid = this.getSpaceTreeGridPanel();
+        treeGrid.setRemoteSearchParams({});
+        treeGrid.refresh();
+
+        return true;
+    },
+
+    getStoreParamsFromFilter: function (values) {
+        // TODO: return params for the store
+        return {};
     }
 
 

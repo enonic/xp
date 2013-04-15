@@ -16,31 +16,45 @@ Ext.define('Admin.controller.account.FilterPanelController', {
 
         this.control({
             'accountFilter': {
-                search: this.doSearch
+                search: this.doSearch,
+                reset: this.doReset
             }
         });
     },
 
     doSearch: function (values) {
 
-        var lastQuery = this.buildAccountSearchQuery(values);
+        var params = this.getStoreParamsFromFilter(values);
 
         // set browse tab active
         this.getCmsTabPanel().setActiveTab(0);
 
         // save the search
         var filterPanel = this.getAccountFilter();
-        filterPanel.lastQuery = lastQuery;
+        filterPanel.lastQuery = params;
 
         // submit query
         var gridStore = this.getAccountGridPanel().getStore();
         gridStore.clearFilter();
-        gridStore.getProxy().extraParams = lastQuery;
+        gridStore.getProxy().extraParams = params;
         gridStore.loadPage(1);
 
     },
 
-    buildAccountSearchQuery: function (values) {
+    doReset: function (dirty) {
+        if (!dirty) {
+            // prevent reset if the filter is not dirty
+            return false;
+        }
+
+        var store = this.getAccountGridPanel().getStore();
+        delete store.getProxy().extraParams;
+        store.loadPage(1);
+
+        return true;
+    },
+
+    getStoreParamsFromFilter: function (values) {
         var query = {
             query: values.query || ""
         };

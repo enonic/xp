@@ -183,9 +183,7 @@ Ext.define('Admin.view.FilterPanel', {
                     if (me.updateCountCriteria === 'query') {
                         me.queryDirty = true;
                     }
-                    if (me.includeEmptyFacets == 'last') {
-                        me.lastFacetName = undefined;
-                    }
+                    me.lastFacetName = undefined;
                     me.search();
                 }, 500);
             }
@@ -318,9 +316,7 @@ Ext.define('Admin.view.FilterPanel', {
 
             this.clearLink.el.setStyle('visibility', 'hidden');
 
-            if (this.includeEmptyFacets == 'last') {
-                this.lastFacetName = undefined;
-            }
+            this.lastFacetName = undefined;
         }
 
     },

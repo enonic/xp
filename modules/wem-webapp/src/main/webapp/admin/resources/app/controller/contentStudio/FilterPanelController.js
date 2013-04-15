@@ -12,7 +12,8 @@ Ext.define('Admin.controller.contentStudio.FilterPanelController', {
     init: function () {
         this.control({
             'contentStudioFilter': {
-                search: this.doSearch
+                search: this.doSearch,
+                reset: this.doReset
             }
         });
     },
@@ -32,18 +33,25 @@ Ext.define('Admin.controller.contentStudio.FilterPanelController', {
         var treeGridPanel = this.getTreeGridPanel();
         treeGridPanel.setActiveList(viewMode);
 
-        var gridStore = this.getTreeGridPanel().getActiveList().store;
-        gridStore.clearFilter();
-        gridStore.getProxy().extraParams = this.getStoreParamsFromFilter(values);
-        if (viewMode === 'grid') {
-            gridStore.loadPage(1);
-        } else if (viewMode === 'tree') {
-            gridStore.load();
-        }
+        treeGridPanel.setRemoteSearchParams(this.getStoreParamsFromFilter(values));
+        treeGridPanel.refresh();
 
         // update details to current selection
         var detailPanel = this.getDetailPanel();
         detailPanel.setData(treeGridPanel.getSelection());
+    },
+
+    doReset: function(dirty) {
+        if (!dirty) {
+            // prevent reset if the filter is not dirty
+            return false;
+        }
+
+        var treeGrid = this.getTreeGridPanel();
+        treeGrid.setRemoteSearchParams({});
+        treeGrid.refresh();
+
+        return true;
     },
 
     getStoreParamsFromFilter: function (filterPanelValues) {

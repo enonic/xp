@@ -33,7 +33,9 @@ ul.admin-wizard-navigation li.last {
 
 ul.admin-wizard-navigation li a {
     display: block;
-    padding: 8px 15px 8px 15px;
+    padding: 0 15px 0 15px;
+    height: 45px;
+    line-height: 45px;
     margin-right: 2px;
     text-decoration: none !important;
     background-color: #eee;

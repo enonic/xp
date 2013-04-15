@@ -8,6 +8,10 @@ Ext.define('Admin.view.account.wizard.group.GroupWizardToolbar', {
 
     isNewGroup: true,
 
+    defaults: {
+        scale: 'medium'
+    },
+
     initComponent: function () {
 
         var leftGrp = [

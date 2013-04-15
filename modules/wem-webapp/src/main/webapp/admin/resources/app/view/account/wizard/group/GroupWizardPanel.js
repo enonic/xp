@@ -109,15 +109,16 @@ Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
         return  {
             xtype: 'image',
             plain: true,
-            width: 100,
-            height: 100,
+            width: 110,
+            height: 110,
+            margin: '0 10 0 0',
             src: headerData.iconUrl,
             listeners: {
                 render: function (cmp) {
                     Ext.tip.QuickTipManager.register({
                         target: cmp.el,
                         text: headerData.tipText,
-                        width: 100,
+                        width: 110,
                         dismissDelay: 10000 // Hide after 10 seconds hover
                     });
                 }

@@ -134,7 +134,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             xtype: 'wizardHeader',
             nameConfig: {
                 readOnly: headerData.isRoot,
-                stripCharsRe: /[^a-z0-9\-\/]+/ig,
+                stripCharsRe: /[^a-z0-9\-_]+/ig,
                 vtype: 'path'
             },
             displayNameConfig: {
@@ -160,8 +160,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         var headerData = this.prepareHeaderData(this.data);
         return {
             xtype: 'image',
-            width: 100,
-            height: 100,
+            width: 110,
+            height: 110,
+            margin: '0 10 0 0',
             src: headerData.imageUrl,
             listeners: {
                 render: function (cmp) {

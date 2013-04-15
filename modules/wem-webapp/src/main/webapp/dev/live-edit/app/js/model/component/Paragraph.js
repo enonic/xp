@@ -102,13 +102,6 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
         var me = this,
             $paragraph = me.$selectedParagraph;
 
-        /*
-        var config = {
-            x: event.pageX,
-            y: event.pageY
-        };
-        */
-
         $(window).trigger('component.onParagraphEdit', [me.$selectedParagraph]);
 
         $paragraph.css('cursor', 'text');

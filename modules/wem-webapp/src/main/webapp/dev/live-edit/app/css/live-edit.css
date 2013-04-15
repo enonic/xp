@@ -14,6 +14,7 @@ svg.live-edit-highlight-border,
 .live-edit-tool-tip,
 .live-edit-component-menu,
 .live-edit-components-container,
+.live-edit-components-container form,
 .live-edit-component,
 live-edit-component-text-name,
 live-edit-component-text-subtitle,
@@ -560,8 +561,8 @@ svg.live-edit-highlight-border rect {
 }
 
 .live-edit-components-container {
-    -webkit-transition: right 100ms ease-in, opacity 50ms linear;
-    transition: right 100ms ease-in, opacity 50ms linear;
+    -webkit-transition: right 100ms ease-in;
+    transition: right 100ms ease-in;
 }
 
 .live-edit-form-container {

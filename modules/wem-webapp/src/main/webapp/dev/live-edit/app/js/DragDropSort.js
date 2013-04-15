@@ -3,7 +3,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.DragDropSort');
  This code contains a lot of prototype coding at the moment.
  A clean up should be done when Live Edit is specked
  */
-AdminLiveEdit.DragDropSort = (function () {
+AdminLiveEdit.DragDropSort = (function ($) {
     'use strict';
 
     var util = AdminLiveEdit.Util;
@@ -23,12 +23,12 @@ AdminLiveEdit.DragDropSort = (function () {
     var itemsToSortSelector = layoutSelector + ',' + partSelector + ',' + paragraphSelector;
 
     function enableDragDrop() {
-        $liveedit('').sortable('enable');
+        $(regionSelector).sortable('enable');
     }
 
 
     function disableDragDrop() {
-        $liveedit(regionSelector).sortable('disable');
+        $(regionSelector).sortable('disable');
     }
 
 
@@ -42,12 +42,12 @@ AdminLiveEdit.DragDropSort = (function () {
 
 
     function setDragHelperText(text) {
-        $liveedit('#live-edit-drag-helper-text').text(text);
+        $('#live-edit-drag-helper-text').text(text);
     }
 
 
     function createComponentBarDraggables() {
-        var $componentBarComponents = $liveedit('.live-edit-component');
+        var $componentBarComponents = $('.live-edit-component');
         var draggableOptions = {
             connectToSortable: regionSelector,
             addClasses: false,
@@ -57,7 +57,6 @@ AdminLiveEdit.DragDropSort = (function () {
             // The revert property seems buggy and undocumented.
             // When setting it to 'invalid' the dragged element sometimes reverts when the drop was valid
             // It is possible to use a function that gets a "valid-drop" argument and create your own logic, but the dragged element still reverts
-
             revert: function (validDrop) {
             },
             cursorAt: cursorAt,
@@ -65,12 +64,12 @@ AdminLiveEdit.DragDropSort = (function () {
                 return getDragHelperHtml('');
             },
             start: function (event, ui) {
-                $liveedit(window).trigger('component.onDragStart', [event, ui]);
-                setDragHelperText($liveedit(event.target).data('live-edit-component-name'));
+                $(window).trigger('component.onDragStart', [event, ui]);
+                setDragHelperText($(event.target).data('live-edit-component-name'));
                 isDragging = true;
             },
             stop: function (event, ui) {
-                $liveedit(window).trigger('component.onDragStop', [event, ui]);
+                $(window).trigger('component.onDragStop', [event, ui]);
                 isDragging = false;
             }
         };
@@ -79,17 +78,17 @@ AdminLiveEdit.DragDropSort = (function () {
 
 
     function createDragHelper(event, helper) {
-        return $liveedit(getDragHelperHtml(util.getComponentName(helper)));
+        return $(getDragHelperHtml(util.getComponentName(helper)));
     }
 
 
     function refreshSortable() {
-        $liveedit(regionSelector).sortable('refresh');
+        $(regionSelector).sortable('refresh');
     }
 
 
     function updateHelperStatusIcon(status) {
-        $liveedit('#live-edit-drag-helper-status-icon').attr('src', '../app/images/drop-' + status + '.gif');
+        $('#live-edit-drag-helper-status-icon').attr('src', '../app/images/drop-' + status + '.gif');
     }
 
 
@@ -103,51 +102,75 @@ AdminLiveEdit.DragDropSort = (function () {
 
         // Temporary store the selection info during the drag drop lifecycle.
         // Data is nullified on drag stop.
-
         var componentIsSelected = ui.item.hasClass('live-edit-selected-component');
         ui.item.data('live-edit-selected-on-sort-start', componentIsSelected);
 
-        ui.placeholder.text('Drop component here');
+        var targetComponentName = AdminLiveEdit.Util.getComponentName($(event.target));
+        ui.placeholder.html('Drop component here' + '<div style="font-size: 10px;">' + targetComponentName + '</div>');
+
         refreshSortable();
 
-        $liveedit(window).trigger('component.onSortStart', [event, ui]);
+        $(window).trigger('component.onSortStart', [event, ui]);
     }
 
     function handleDragOver(event, ui) {
-        updateHelperStatusIcon('yes');
-        $liveedit(window).trigger('component:sort:over', [event, ui]);
+        event.stopPropagation();
+
+        // todo: Items in component should have the same @data-live-edit-* structure
+        var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' || ui.item.data('live-edit-type') === 'layout',
+            isDraggingOverLayoutComponent = ui.placeholder.closest(layoutSelector).length > 0;
+
+        if (draggedItemIsLayoutComponent && isDraggingOverLayoutComponent) {
+            updateHelperStatusIcon('no');
+            ui.placeholder.hide();
+        } else {
+            updateHelperStatusIcon('yes');
+            $(window).trigger('component.onSortOver', [event, ui]);
+        }
     }
 
     function handleDragOut(event, ui) {
-        if (targetIsPlaceholder($liveedit(event.srcElement))) {
+        if (targetIsPlaceholder($(event.srcElement))) {
             removePaddingFromLayoutComponent();
         }
 
         updateHelperStatusIcon('no');
-        $liveedit(window).trigger('component:sort:out', [event, ui]);
+        $(window).trigger('component.onSortOut', [event, ui]);
     }
 
     function handleSortChange(event, ui) {
+        removePaddingFromLayoutComponent();
         addPaddingToLayoutComponent($(event.target));
         updateHelperStatusIcon('yes');
         ui.placeholder.show();
-        $liveedit(window).trigger('component:sort:change', [event, ui]);
+        $(window).trigger('component.onSortChange', [event, ui]);
     }
 
     function handleSortUpdate(event, ui) {
-        $liveedit(window).trigger('component.onSortUpdate', [event, ui]);
+        $(window).trigger('component.onSortUpdate', [event, ui]);
     }
 
     function handleSortStop(event, ui) {
         isDragging = false;
 
+        removePaddingFromLayoutComponent();
+
+        // todo: Items in component should have the same @data-live-edit-* structure
+        var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' || ui.item.data('live-edit-type') === 'layout',
+            targetIsInLayoutComponent = $(event.target).closest(layoutSelector).length > 0;
+
+        if (draggedItemIsLayoutComponent && targetIsInLayoutComponent) {
+            ui.item.remove()
+        }
+
+
         if (AdminLiveEdit.Util.supportsTouch()) {
-            $liveedit(window).trigger('component.mouseOut');
+            $(window).trigger('component.mouseOut');
         }
 
         var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
 
-        $liveedit(window).trigger('component.onSortStop', [event, ui, wasSelectedOnDragStart]);
+        $(window).trigger('component.onSortStop', [event, ui, wasSelectedOnDragStart]);
 
         ui.item.removeData('live-edit-selected-on-drag-start');
     }
@@ -159,16 +182,15 @@ AdminLiveEdit.DragDropSort = (function () {
 
 
     function handleReceive(event, ui) {
-
         if (itemIsDraggedFromComponentBar(ui.item)) {
-            var $componentBarComponent = $liveedit(this).children('.live-edit-component');
+            var $componentBarComponent = $(this).children('.live-edit-component');
             var componentKey = $componentBarComponent.data('live-edit-component-key');
             var componentType = $componentBarComponent.data('live-edit-component-type');
             var url = '../app/data/mock-component-' + componentKey + '.html';
 
             $componentBarComponent.hide();
 
-            $liveedit.ajax({
+            $.ajax({
                 url: url,
                 cache: false
             }).done(function (html) {
@@ -182,7 +204,7 @@ AdminLiveEdit.DragDropSort = (function () {
                         createSortable();
                     }
 
-                    $liveedit(window).trigger('component.onSortUpdate');
+                    $(window).trigger('component.onSortUpdate');
                 });
         }
     }
@@ -194,18 +216,18 @@ AdminLiveEdit.DragDropSort = (function () {
 
 
     function removePaddingFromLayoutComponent() {
-        $liveedit('.live-edit-component-padding').removeClass('live-edit-component-padding');
+        $('.live-edit-component-padding').removeClass('live-edit-component-padding');
     }
 
 
     function registerGlobalListeners() {
         // The jQuery draggable() is not "live"/support delegates so we have to make sure the components in the component bar are always draggable
         // Make the components in the component bar draggable
-        $liveedit(window).on('componentBar.dataLoaded', function () {
+        $(window).on('componentBar.dataLoaded', function () {
             createComponentBarDraggables();
         });
 
-        $liveedit(window).on('component.onSelect', function (event, $component) {
+        $(window).on('component.onSelect', function (event, $component) {
             /*
              if (AdminLiveEdit.Util.supportsTouch()) {
              enableDragDrop();
@@ -220,7 +242,7 @@ AdminLiveEdit.DragDropSort = (function () {
 
              // This is a hack workaround (destroy and re-create sortables) until 8532 is fixed.
              if (AdminLiveEdit.Util.getComponentType($component) === 'layout') {
-             $liveedit(regionSelector).sortable('destroy');
+             $(regionSelector).sortable('destroy');
              createSortable(layoutSelector);
              } else {
              createSortable(itemsToSortSelector);
@@ -229,24 +251,24 @@ AdminLiveEdit.DragDropSort = (function () {
 
         });
 
-        $liveedit(window).on('component.onDeselect', function () {
+        $(window).on('component.onDeselect', function () {
             if (AdminLiveEdit.Util.supportsTouch() && !isDragging) {
                 disableDragDrop();
             }
         });
 
-        $liveedit(window).on('component.onParagraphSelect', function () {
-            $liveedit(regionSelector).sortable('option', 'cancel', '[data-live-edit-type=paragraph]');
+        $(window).on('component.onParagraphSelect', function () {
+            $(regionSelector).sortable('option', 'cancel', '[data-live-edit-type=paragraph]');
         });
 
-        $liveedit(window).on('component.onParagraphEditLeave', function () {
-            $liveedit(regionSelector).sortable('option', 'cancel', '');
+        $(window).on('component.onParagraphEditLeave', function () {
+            $(regionSelector).sortable('option', 'cancel', '');
         });
     }
 
 
     function createSortable() {
-        $liveedit(regionSelector).sortable({
+        $(regionSelector).sortable({
             revert: false,
             connectWith: regionSelector,   // Sortable elements.
             items: itemsToSortSelector,   // Elements to sort.
@@ -289,4 +311,4 @@ AdminLiveEdit.DragDropSort = (function () {
         }
     };
 
-}());
+}($liveedit));

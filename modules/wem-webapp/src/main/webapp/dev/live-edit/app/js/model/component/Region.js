@@ -32,7 +32,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
 
     proto.registerGlobalListeners = function () {
         $(window).on('component.onSortUpdate', $.proxy(this.renderEmptyPlaceholders, this));
-        $(window).on('component:sort:over', $.proxy(this.renderEmptyPlaceholders, this));
+        $(window).on('component.onSortOver', $.proxy(this.renderEmptyPlaceholders, this));
         $(window).on('component.onRemove', $.proxy(this.renderEmptyPlaceholders, this));
     };
 

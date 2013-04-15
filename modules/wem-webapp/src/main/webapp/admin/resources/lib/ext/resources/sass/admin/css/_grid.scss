@@ -74,8 +74,12 @@
   }
 
   .admin-grid-description {
-    float: left;
+    overflow: hidden;
     margin-top: 3px;
+
+    h6, p  {
+      @include ellipsis();
+    }
 
     p {
       margin: 0 !important;
