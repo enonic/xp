@@ -81,9 +81,12 @@ svg.live-edit-highlight-border rect,
     Disable pointer events for A elements ("disables CSS hover selectors on links")
     Can we find a better cross browser solution that includes IE?
 */
-a {
+
+/*
+a, select {
     pointer-events: none;
 }
+*/
 
 /** Arrow */
 

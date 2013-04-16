@@ -36,9 +36,12 @@
 
     $(document).ready(function () {
 
+        $(document).on('mousedown', 'btn, a, select', function (event) {
+            event.preventDefault();
+            return false;
+        });
         // *******************************************************************************************************************************//
         // Experiment: Simple replace all A href's on page in order to not navigate if a link is clicked.
-        //$('a').attr('href', '#');
         // *******************************************************************************************************************************//
         // Experiment: Move all scripts without @src to the body element in order to prevent script elements to be dragged.
         // TODO: Update CSS selector to only include page components.
