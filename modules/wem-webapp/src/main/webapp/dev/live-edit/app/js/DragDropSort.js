@@ -139,7 +139,6 @@ AdminLiveEdit.DragDropSort = (function ($) {
     }
 
     function handleSortChange(event, ui) {
-        removePaddingFromLayoutComponent();
         addPaddingToLayoutComponent($(event.target));
         updateHelperStatusIcon('yes');
         ui.placeholder.show();
