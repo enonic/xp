@@ -17,8 +17,6 @@ Ext.define('Admin.view.contentManager.wizard.form.input.HtmlArea', {
     initComponent: function() {
         var me = this;
 
-        me.fieldLabel = me.inputConfig.label;
-
         me.items = [
             me.createContentEditableDiv(),
             me.createHiddenInput()
@@ -128,6 +126,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.HtmlArea', {
             xtype: 'hiddenfield',
             name: this.name,
             itemId: this.name, // TODO: Is this unique enough?
+            hidden: true,
             value: ''
         };
     }
