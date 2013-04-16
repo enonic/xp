@@ -1,0 +1,49 @@
+<div class="row" data-live-edit-type="part" data-live-edit-key="10017" data-live-edit-name="Trampoline - Show Variants">
+    <div class="span8">
+        <img id="bounce-image" src="img/Frogger_00.jpg" alt="">
+    </div>
+    <div class="span4">
+        <h3>Trampoline Champion</h3>
+
+        <select id="bounce-selector">
+            <option value="Frogger_00.jpg" selected="selected">Velg modell</option>
+            <option value="Jumping-Jack-Frogger-Plain.jpg">3,3m</option>
+            <option value="Jumping-Jack-Frogger-ladder.jpg">3,8m m/stige</option>
+            <option value="Jumping-Jack-Frogger-Ladder-Tattoo.jpg">4,5m m/trykk</option>
+        </select>
+        <br/>
+        <br/>
+
+        <p>
+            <i class="icon-ok-sign"></i> På lager<br/>
+            <i class="icon-ok-sign"></i> Leveres
+        </p>
+        <br/>
+        <br/>
+
+        <div class="well well-small">
+            <div class="row">
+                <div class="span1">
+                    <h3>3990,-
+                        <small>Inkl. mva</small>
+                    </h3>
+
+                </div>
+                <div class="span2 pull-right">
+                    <br/>
+                    <btn class="btn btn-large btn-warning">Kjøp nå</btn>
+                </div>
+            </div>
+            <hr/>
+            <p>Kjøp nå, og få Enonic WEM med på kjøpet</p>
+        </div>
+        <script type="text/javascript">
+            $(function () {
+                $('#bounce-selector').on('change', function () {
+                    var src = 'img/' + this.value;
+                    $('#bounce-image').attr('src', src);
+                });
+            });
+        </script>
+    </div>
+</div>

@@ -23,77 +23,52 @@
 
   <div class="masthead">
 
-    <h3 class="muted">Enonic CMS</h3>
+    <h3 class="muted">Springfield Trampolines</h3>
 
     <div class="navbar">
       <div class="navbar-inner">
         <div class="container">
           <ul class="nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#">Community</a></li>
-            <li><a href="#">Try now</a></li>
-            <li><a href="#">Support</a></li>
-            <li><a href="#">Contact us</a></li>
+            <li><a href="#">Forside</a></li>
+            <li class="active"><a href="#">Trampoline</a></li>
+            <li><a href="#">Kjøpeguide</a></li>
+            <li><a href="#">Kundeservice</a></li>
           </ul>
         </div>
       </div>
     </div>
   </div>
-  <div id="north" data-live-edit-type="region" data-live-edit-key="70" data-live-edit-name="North">
 
-  </div>
+  <div id="main" data-live-edit-type="region" data-live-edit-key="80" data-live-edit-name="Main">
+    <%@ include file="../app/data/mock-component-10022.html" %>
 
-  <hr>
+    <%@ include file="../app/data/mock-component-10023.html" %>
 
-  <div id="center" data-live-edit-type="region" data-live-edit-key="80" data-live-edit-name="Center">
-    <div class="row-fluid" data-live-edit-type="layout" data-live-edit-key="010101" data-live-edit-name="Triboxes">
 
-      <div class="span4" data-live-edit-type="region">
-        <div data-live-edit-type="part" data-live-edit-key="010201" data-live-edit-name="OpenSource">
-          <img src="img/geek.png" class="img-circle"/>
+    <div class="row-fluid" data-live-edit-type="layout" data-live-edit-key="010101" data-live-edit-name="Layout 70-30">
 
-          <h2>Open source</h2>
+      <div class="span8" data-live-edit-type="region">
+        <%@ include file="../app/data/mock-component-10024.html" %>
 
-          <p>Enonic CMS Community Edition is based on Java and open for developers at github.com.</p>
-
-          <p><a class="btn" href="#">Download now &raquo;</a></p>
-        </div>
-      </div>
-
-      <div class="span4" data-live-edit-type="region">
-        <div data-live-edit-type="part" data-live-edit-key="010201" data-live-edit-name="Webagility">
-          <img src="img/webagil.png" class="img-circle"/>
-
-          <h2>Webagility</h2>
-
-          <p>Outperform your competition and adapt change! Enonic CMS unleashes your agility.</p>
-
-          <p><a class="btn" href="#">Experience Enonic CMS &raquo;</a></p>
-        </div>
-      </div>
-
-      <div class="span4" data-live-edit-type="region">
-
+        <%@ include file="../app/data/mock-component-10025.html" %>
 
       </div>
+      <div class="span4" data-live-edit-type="region">
 
+      </div>
     </div>
-  </div>
-
-  <hr>
-
-  <div id="south" data-live-edit-type="region" data-live-edit-key="90" data-live-edit-name="South">
 
 
   </div>
-
   <hr>
 
   <div class="footer">
-    <p>&copy; Enonic 2013</p>
+    <small class="pull-right">Demo site made by Enonic 2013</small>
   </div>
 
 </div>
+
+
 <script src="js/bootstrap.js"></script>
 
 <%@ include file="live-edit/scripts.jsp" %>
