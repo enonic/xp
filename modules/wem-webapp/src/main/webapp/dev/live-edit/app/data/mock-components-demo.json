@@ -1,0 +1,83 @@
+{
+    "totalCount": 1000,
+    "componentGroups": [
+        {
+            "name": "Layouts",
+            "components": [
+                {
+                    "key": "10017",
+                    "type": "layout",
+                    "name": "70/30 Column Layout",
+                    "subtitle": "Layout",
+                    "icon": "../app/images/component-types/32/insert-template.png"
+                }
+            ]
+        },
+        {
+            "name": "Paragraphs",
+            "components": [
+                {
+                    "key": "10019",
+                    "type": "paragraph",
+                    "name": "Blank Paragraph",
+                    "subtitle": "Filler text",
+                    "icon": "../app/images/component-types/32/text-color.png"
+                },
+                {
+                    "key": "10007",
+                    "type": "paragraph",
+                    "name": "Lorem Ipsum Paragraph",
+                    "subtitle": "Filler text",
+                    "icon": "../app/images/component-types/32/text-color.png"
+                }
+            ]
+        },
+        {
+            "name": "Parts",
+            "components": [
+                {
+                    "key": "10022",
+                    "type": "part",
+                    "name": "Trampoline - Show Variants",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/component-types/32/puzzle.png"
+                },
+                {
+                    "key": "10023",
+                    "type": "part",
+                    "name": "Trampoline - Image Gallery",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/component-types/32/puzzle.png"
+                },
+                {
+                    "key": "10024",
+                    "type": "part",
+                    "name": "Trampoline - Show Description",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/component-types/32/puzzle.png"
+                },
+                {
+                    "key": "10025",
+                    "type": "part",
+                    "name": "Trampoline - Show Accessories",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/component-types/32/puzzle.png"
+                },
+                {
+                    "key": "10026",
+                    "type": "part",
+                    "name": "Trampoline - Comments",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/component-types/32/puzzle.png"
+                },
+                {
+                    "key": "10027",
+                    "type": "part",
+                    "name": "Upsale Teaser - Big Bounce",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/component-types/32/puzzle.png"
+                }
+            ]
+        }
+    ]
+}
