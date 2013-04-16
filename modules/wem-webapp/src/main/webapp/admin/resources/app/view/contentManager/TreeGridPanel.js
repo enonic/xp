@@ -34,11 +34,6 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
                 renderer: this.statusRenderer
             },
             {
-                text: 'Owner',
-                dataIndex: 'owner',
-                sortable: true
-            },
-            {
                 text: 'Modified',
                 dataIndex: 'modifiedTime',
                 renderer: this.prettyDateRenderer,
