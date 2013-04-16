@@ -52,7 +52,7 @@
     <a href="app-space-admin.jsp">Space Admin</a>
   </li>
   <li>
-    <a href="app-content-studio.jsp">Content Studio</a>
+    <a href="app-content-studio.jsp">Schema Manager</a>
   </li>
   <li>
     <a href="app-content-manager.jsp">Content Manager</a>

@@ -31,7 +31,7 @@ Ext.application({
                 {
                     region: 'center',
                     xtype: 'cmsTabPanel',
-                    appName: 'Content Studio',
+                    appName: 'Schema Manager',
                     appIconCls: 'icon-metro-content-studio-24',
                     items: [
                         {
