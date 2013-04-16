@@ -2971,8 +2971,9 @@ div.admin-load-mask {
     height: 36px;
     padding: 4px 4px 4px 58px;
     font-size: 15px;
-    line-height: 16px; }
-  /* line 21, ../sass/admin/css/_relationship.scss */
+    line-height: 16px;
+    margin-bottom: 10px; }
+  /* line 22, ../sass/admin/css/_relationship.scss */
   .admin-relationship-combo .admin-image-icon {
     position: absolute;
     left: 13px;
@@ -2981,27 +2982,27 @@ div.admin-load-mask {
     height: 25px;
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
     opacity: 0.5; }
-  /* line 30, ../sass/admin/css/_relationship.scss */
+  /* line 31, ../sass/admin/css/_relationship.scss */
   .admin-relationship-combo .admin-library-button {
     position: absolute;
     right: 10px;
     top: 9px;
     text-decoration: none; }
 
-/* line 41, ../sass/admin/css/_relationship.scss */
+/* line 42, ../sass/admin/css/_relationship.scss */
 .admin-relationship-list .x-boundlist-item {
   padding: 8px; }
-  /* line 44, ../sass/admin/css/_relationship.scss */
+  /* line 45, ../sass/admin/css/_relationship.scss */
   .admin-relationship-list .x-boundlist-item img {
     float: left; }
-  /* line 48, ../sass/admin/css/_relationship.scss */
+  /* line 49, ../sass/admin/css/_relationship.scss */
   .admin-relationship-list .x-boundlist-item .info {
     margin-left: 42px; }
-    /* line 51, ../sass/admin/css/_relationship.scss */
+    /* line 52, ../sass/admin/css/_relationship.scss */
     .admin-relationship-list .x-boundlist-item .info p {
       margin: 0; }
 
-/* line 59, ../sass/admin/css/_relationship.scss */
+/* line 60, ../sass/admin/css/_relationship.scss */
 .admin-relationship {
   position: relative;
   margin: 0 10px 10px 0;
@@ -3012,7 +3013,7 @@ div.admin-load-mask {
   background-repeat: no-repeat;
   background-size: contain;
   background-color: #ccc; }
-  /* line 70, ../sass/admin/css/_relationship.scss */
+  /* line 71, ../sass/admin/css/_relationship.scss */
   .admin-relationship .top-bar {
     position: absolute;
     overflow: hidden;
@@ -3024,7 +3025,7 @@ div.admin-load-mask {
     display: none;
     top: 0;
     text-align: right; }
-  /* line 76, ../sass/admin/css/_relationship.scss */
+  /* line 77, ../sass/admin/css/_relationship.scss */
   .admin-relationship .bottom-bar {
     position: absolute;
     overflow: hidden;
@@ -3035,54 +3036,54 @@ div.admin-load-mask {
     padding: 3px;
     display: none;
     bottom: 0; }
-    /* line 80, ../sass/admin/css/_relationship.scss */
+    /* line 81, ../sass/admin/css/_relationship.scss */
     .admin-relationship .bottom-bar h6 {
       font-size: 11px !important;
       line-height: 14px; }
-  /* line 89, ../sass/admin/css/_relationship.scss */
+  /* line 90, ../sass/admin/css/_relationship.scss */
   .admin-relationship.over .top-bar,
   .admin-relationship.over .bottom-bar {
     display: block; }
 
-/* line 95, ../sass/admin/css/_relationship.scss */
+/* line 96, ../sass/admin/css/_relationship.scss */
 .admin-relationship-combo-grayed-out-item {
   color: lightgray;
   font-style: italic;
   cursor: default !important; }
-  /* line 100, ../sass/admin/css/_relationship.scss */
+  /* line 101, ../sass/admin/css/_relationship.scss */
   .admin-relationship-combo-grayed-out-item img {
     opacity: 0.5; }
 
-/* line 105, ../sass/admin/css/_relationship.scss */
+/* line 106, ../sass/admin/css/_relationship.scss */
 .admin-related-item {
   display: table;
   margin: 5px 0;
   width: 100%; }
-  /* line 110, ../sass/admin/css/_relationship.scss */
+  /* line 111, ../sass/admin/css/_relationship.scss */
   .admin-related-item img {
     display: table-cell;
     vertical-align: top;
     padding-right: 10px;
     width: 42px; }
-  /* line 117, ../sass/admin/css/_relationship.scss */
+  /* line 118, ../sass/admin/css/_relationship.scss */
   .admin-related-item .center-column {
     display: table-cell;
     vertical-align: middle;
     width: 100%; }
-  /* line 123, ../sass/admin/css/_relationship.scss */
+  /* line 124, ../sass/admin/css/_relationship.scss */
   .admin-related-item .right-column {
     display: table-cell;
     vertical-align: middle;
     text-align: right; }
-    /* line 128, ../sass/admin/css/_relationship.scss */
+    /* line 129, ../sass/admin/css/_relationship.scss */
     .admin-related-item .right-column a {
       color: black; }
 
-/* line 134, ../sass/admin/css/_relationship.scss */
+/* line 135, ../sass/admin/css/_relationship.scss */
 .admin-relationship-library-icon {
   background: url("../../../../../resources/images/folder-open.png") no-repeat; }
 
-/* line 139, ../sass/admin/css/_relationship.scss */
+/* line 140, ../sass/admin/css/_relationship.scss */
 .admin-related-item-disabled .right-column {
   opacity: 0.5; }
 
@@ -3094,40 +3095,41 @@ div.admin-load-mask {
     height: 36px;
     padding: 4px 90px 4px 58px;
     font-size: 15px;
-    line-height: 16px; }
-  /* line 21, ../sass/admin/css/_inputimage.scss */
+    line-height: 16px;
+    margin-bottom: 10px; }
+  /* line 22, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage-combo .admin-image-icon {
     position: absolute;
     left: 13px;
     top: 5px;
     width: 25px;
     height: 25px; }
-  /* line 29, ../sass/admin/css/_inputimage.scss */
+  /* line 30, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage-combo .admin-library-button {
     position: absolute;
     right: 10px;
     top: 9px;
     text-decoration: none; }
 
-/* line 38, ../sass/admin/css/_inputimage.scss */
+/* line 39, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-combo-grayed-out-item {
   color: lightgray;
   font-style: italic;
   cursor: default !important; }
-  /* line 43, ../sass/admin/css/_inputimage.scss */
+  /* line 44, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage-combo-grayed-out-item img {
     opacity: 0.5; }
 
-/* line 50, ../sass/admin/css/_inputimage.scss */
+/* line 51, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-list .x-boundlist-item {
   padding: 8px; }
-  /* line 53, ../sass/admin/css/_inputimage.scss */
+  /* line 54, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage-list .x-boundlist-item img {
     float: left; }
-  /* line 57, ../sass/admin/css/_inputimage.scss */
+  /* line 58, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage-list .x-boundlist-item .info {
     margin-left: 42px; }
-    /* line 60, ../sass/admin/css/_inputimage.scss */
+    /* line 61, ../sass/admin/css/_inputimage.scss */
     .admin-inputimage-list .x-boundlist-item .info p {
       margin: 0; }
 
@@ -3176,7 +3178,7 @@ div.admin-load-mask {
   100% {
     transform: rotate(360deg); } }
 
-/* line 70, ../sass/admin/css/_inputimage.scss */
+/* line 71, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage {
   position: relative;
   margin: 10px 40px 20px 0;
@@ -3186,11 +3188,11 @@ div.admin-load-mask {
   height: 140px;
   text-align: center;
   line-height: 140px; }
-  /* line 80, ../sass/admin/css/_inputimage.scss */
+  /* line 81, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage img.image {
     margin-top: -2px;
     vertical-align: middle; }
-  /* line 85, ../sass/admin/css/_inputimage.scss */
+  /* line 86, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage .loader {
     background-image: url("../../../../../resources/images/icons/spinner.png");
     background-position: center;
@@ -3208,7 +3210,7 @@ div.admin-load-mask {
     -ms-animation: image-loader-animation 1s infinite linear;
     -o-animation: image-loader-animation 1s infinite linear;
     animation: image-loader-animation 1s infinite linear; }
-  /* line 101, ../sass/admin/css/_inputimage.scss */
+  /* line 102, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage .top-bar {
     position: absolute;
     overflow: hidden;
@@ -3220,7 +3222,7 @@ div.admin-load-mask {
     display: none;
     top: 0;
     text-align: right; }
-  /* line 107, ../sass/admin/css/_inputimage.scss */
+  /* line 108, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage .bottom-bar {
     position: absolute;
     overflow: hidden;
@@ -3231,15 +3233,15 @@ div.admin-load-mask {
     padding: 3px;
     display: none;
     bottom: 0; }
-    /* line 111, ../sass/admin/css/_inputimage.scss */
+    /* line 112, ../sass/admin/css/_inputimage.scss */
     .admin-inputimage .bottom-bar h6 {
       font-size: 11px !important;
       line-height: 14px; }
-  /* line 120, ../sass/admin/css/_inputimage.scss */
+  /* line 121, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage.over .top-bar,
   .admin-inputimage.over .bottom-bar {
     display: block; }
-  /* line 125, ../sass/admin/css/_inputimage.scss */
+  /* line 126, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage .admin-zoom {
     left: -20px;
     top: -10px;
@@ -3252,27 +3254,28 @@ div.admin-load-mask {
     background-color: #CCC;
     background-position: center; }
 
-/* line 140, ../sass/admin/css/_inputimage.scss */
+/* line 141, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-last {
   margin-right: 0; }
 
-/* line 144, ../sass/admin/css/_inputimage.scss */
+/* line 145, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-dlg {
   background-color: #EBEBEB;
-  clear: both; }
-  /* line 148, ../sass/admin/css/_inputimage.scss */
+  clear: both;
+  margin-bottom: 10px; }
+  /* line 150, ../sass/admin/css/_inputimage.scss */
   .admin-inputimage-dlg div.x-btn span {
     font-weight: bold; }
 
-/* line 153, ../sass/admin/css/_inputimage.scss */
+/* line 155, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-library-icon {
   background: url("../../../../../resources/images/folder-open.png") no-repeat; }
 
-/* line 157, ../sass/admin/css/_inputimage.scss */
+/* line 159, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-upload-icon {
   background: url("../../../../../resources/images/upload.png") no-repeat; }
 
-/* line 161, ../sass/admin/css/_inputimage.scss */
+/* line 163, ../sass/admin/css/_inputimage.scss */
 .admin-inputimage-selected .admin-zoom {
   display: block !important; }
 
@@ -3532,14 +3535,14 @@ input, textarea, select {
 .x-hide-offsets {
   display: block !important;
   visibility: hidden !important;
-  position: absolute!important;
+  position: absolute !important;
   left: -10000px !important;
   top: -10000px !important; }
 
 /* line 74, ../sass/ext4/core/_core.scss */
 .x-hide-nosize {
-  height: 0!important;
-  width: 0!important; }
+  height: 0 !important;
+  width: 0 !important; }
 
 /* line 79, ../sass/ext4/core/_core.scss */
 .x-masked-relative {
@@ -3837,7 +3840,7 @@ tr.x-container:before {
  */
 /* line 3, ../sass/ext4/util/_dragdrop.scss */
 .x-dd-drag-proxy {
-  z-index: 1000000!important; }
+  z-index: 1000000 !important; }
 
 /* line 8, ../sass/ext4/util/_dragdrop.scss */
 .x-dd-drag-repair .x-dd-drag-ghost {
@@ -12992,7 +12995,7 @@ tr.x-container:before {
 /* IE9 shows scrollbars in a button unless this is set  */
 /* line 112, ../sass/ext4/widgets/_button.scss */
 .x-ie9 .x-btn button {
-  overflow: visible!important; }
+  overflow: visible !important; }
 
 /* line 117, ../sass/ext4/widgets/_button.scss */
 * html .x-ie .x-btn button {
@@ -15579,7 +15582,7 @@ table.x-datepicker-inner {
 /* line 41, ../sass/ext4/widgets/_grid.scss */
 .x-autowidth-table table.x-grid-table {
   table-layout: auto;
-  width: auto!important; }
+  width: auto !important; }
 
 /* line 46, ../sass/ext4/widgets/_grid.scss */
 .x-grid-row .x-grid-table {
@@ -15607,7 +15610,7 @@ table.x-datepicker-inner {
 
 /* line 69, ../sass/ext4/widgets/_grid.scss */
 .x-accordion-item .x-grid-header-ct {
-  border-width: 0 0 1px 0!important; }
+  border-width: 0 0 1px 0 !important; }
 
 /* line 73, ../sass/ext4/widgets/_grid.scss */
 .x-column-header {
@@ -20009,7 +20012,7 @@ a.x-tab-close-btn:hover {
 /* line 5, ../sass/ext4/widgets/_tree.scss */
 .x-autowidth-table table.x-grid-table {
   table-layout: auto;
-  width: auto!important; }
+  width: auto !important; }
 
 /* line 10, ../sass/ext4/widgets/_tree.scss */
 .x-tree-no-lines .x-tree-elbow {

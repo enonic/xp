@@ -283,7 +283,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             itemSelector: 'div.admin-inputimage',
             selectedItemCls: 'admin-inputimage-selected',
             itemId: 'selectionView',
-            emptyText: 'No items selected',
+            emptyText: '',
             trackOver: true,
             overItemCls: 'over',
             deferEmptyText: false,
