@@ -101,7 +101,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.HtmlArea', {
             currentHeight: 100,
             listeners: {
                 render: function (component) {
-                    component.el.on('DOMSubtreeModified', function (event) {
+                    component.el.on('keydown', function (event) {
                         var height = component.getHeight();
 
                         // Make sure doComponentLayout is only fired when the height changes
