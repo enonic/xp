@@ -8,6 +8,8 @@ Ext.define('Admin.view.spaceAdmin.DetailPanel', {
 
     showToolbar: false,
 
+    keyField: 'name',
+
     initComponent: function () {
         var data = this.resolveActiveData(this.data);
 

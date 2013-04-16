@@ -304,11 +304,11 @@ Templates.common = {
     notifyUserMessage: 'Hi {0}! Your username is {1}.\n If required, please choose userstore: {2} when logging in. \nRegards, {3}.',
 
     photoUploadButton: '<div id="{id}" title="{title}" class="admin-image-upload-button-container" style="width:{width}px;height:{height}px; margin: 0">' +
-        '<img src="{photoUrl}" class="admin-image-upload-button-image" style="width:{width - 2}px;height:{height - 2}px"/>' +
-        '<div class="admin-image-upload-button-progress-bar-container" style="width:{width - 3}px">' +
-        '<div class="admin-image-upload-button-progress-bar" style="height:{progressBarHeight}px"><!-- --></div>' +
-        '</div>' +
-        '</div>',
+                       '<img src="{photoUrl}" class="admin-image-upload-button-image" style="width:{width - 2}px;height:{height - 2}px"/>' +
+                       '<div class="admin-image-upload-button-progress-bar-container" style="width:{width - 3}px">' +
+                       '<div class="admin-image-upload-button-progress-bar" style="height:{progressBarHeight}px"><!-- --></div>' +
+                       '</div>' +
+                       '</div>',
 
     summaryToolbar: '<div class="admin-left">' +
                     '<span>Modified fields are displayed below</span>' +

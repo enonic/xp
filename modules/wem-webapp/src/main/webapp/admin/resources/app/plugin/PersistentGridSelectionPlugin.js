@@ -2,7 +2,8 @@
  * PersistentGridSelectionPlugin
  * Based on joeri's RowSelectionPaging post,2009-02-26
  *
- * Only tested on grids using a plain Ext.selection.CheckboxModel
+ * Works on grids and trees using a plain Ext.selection.CheckboxModel
+ *
  */
 Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
 
@@ -10,17 +11,19 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
     pluginId: 'persistentGridSelection',
     alias: 'plugin.persistentGridSelection',
 
-    init: function (grid) {
-        this.grid = grid;
+    keyField: 'id',
+
+    init: function (panel) {
+        this.panel = panel;
         this.selections = [];
         this.selected = {};
         this.ignoreSelectionChanges = '';
 
-        grid.on('render', function () {
+        panel.on('render', function () {
             // attach an interceptor for the selModel's onRefresh handler
-            this.grid.view.un('refresh', this.grid.selModel.refresh, this.grid.selModel);
-            this.grid.view.on('refresh', this.onViewRefresh, this);
-            this.grid.view.on('beforeitemmousedown', function (view, record, item, index, event, eOpts) {
+            this.panel.view.un('refresh', this.panel.selModel.refresh, this.panel.selModel);
+            this.panel.view.on('refresh', this.onViewRefresh, this);
+            this.panel.view.on('beforeitemmousedown', function (view, record, item, index, event, eOpts) {
                 // It is not possible to check the checkbox in CheckboxModel when left clicking the column.
                 // Not sure if this is a bug since right clicking the column does check the checkbox (or shift/ctrl + left click).
                 // Forum thread: http://www.sencha.com/forum/showthread.php?173519-Grid-and-checkbox-column-click
@@ -34,12 +37,12 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
                         return;
                     }
 
-                    var isChecked = this.selected[record.internalId];
+                    var isChecked = this.selected[record.get(this.keyField)];
                     if (!isChecked) {
-                        this.grid.selModel.select(index, true, false);
+                        this.panel.selModel.select(index, true, false);
                     }
                     else {
-                        this.grid.selModel.deselect(index);
+                        this.panel.selModel.deselect(index);
                     }
 
                     return false;
@@ -48,15 +51,18 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
                 this.clearSelectionOnRowClick(view, record, item, index, event, eOpts);
                 this.cancelItemContextClickWhenSelectionIsMultiple(view, record, item, index, event, eOpts);
             }, this);
-            this.grid.view.headerCt.on('headerclick', this.onHeaderClick, this);
+            this.panel.view.headerCt.on('headerclick', this.onHeaderClick, this);
             // add a handler to detect when the user changes the selection
-            this.grid.selModel.on('select', this.onRowSelect, this);
-            this.grid.selModel.on('deselect', this.onRowDeselect, this);
-            this.grid.getStore().on('beforeload', function () {
+            this.panel.selModel.on('select', this.onRowSelect, this);
+            this.panel.selModel.on('deselect', this.onRowDeselect, this);
+            this.panel.getStore().on('beforeload', function () {
                 this.ignoreSelectionChanges = true;
             }, this);
 
-            var pagingToolbar = this.grid.down('pagingtoolbar');
+            // additional tree events
+            this.panel.view.on('itemadd', this.onViewRefresh, this);
+
+            var pagingToolbar = this.panel.down('pagingtoolbar');
             if (pagingToolbar !== null) {
                 pagingToolbar.on('beforechange', this.pagingOnBeforeChange, this);
             }
@@ -84,12 +90,12 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
      * @param {Ext.data.Model} record The selected record
      */
     deselect: function (record) {
-        this.onRowDeselect(this.grid.selModel, record);
+        this.onRowDeselect(this.panel.selModel, record);
 
         // If the deselected item is on the current page we need to programmatically deselect it.
         // First get the item object from the store (the record argument in this method is not the same object since the page has been refreshed)
-        var storeRecord = this.grid.getStore().getById(record.internalId);
-        this.grid.selModel.deselect(storeRecord);
+        var storeRecord = this.panel.getStore().getById(record.get(this.keyField));
+        this.panel.selModel.deselect(storeRecord);
 
         // Tell the selection model about a change.
         this.notifySelectionModelAboutSelectionChange();
@@ -100,7 +106,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
      * Be very careful using this on very large datasets
      */
     selectAll: function () {
-        this.grid.selModel.selectAll();
+        this.panel.selModel.selectAll();
     },
 
     /**
@@ -109,7 +115,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
     clearSelection: function () {
         this.selections = [];
         this.selected = {};
-        this.grid.selModel.deselectAll();
+        this.panel.selModel.deselectAll();
         this.onViewRefresh();
         this.notifySelectionModelAboutSelectionChange();
     },
@@ -120,14 +126,35 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
     onViewRefresh: function () {
         this.ignoreSelectionChanges = true;
         // explicitly refresh the selection model
-        this.grid.selModel.refresh();
+        this.panel.selModel.refresh();
         // selection changed from view updates, restore full selection
-        var ds = this.grid.getStore();
+
         var i;
-        // TODO: Optimize.
-        for (i = ds.getCount() - 1; i >= 0; i--) {
-            if (this.selected[ds.getAt(i).internalId]) {
-                this.grid.selModel.select(i, true, false);
+        var sm = this.panel.getSelectionModel();
+
+        if (this.panel instanceof Ext.tree.Panel) {
+            var rootNode = this.panel.getRootNode(),
+                node;
+
+            for (var selectedItem in this.selected) {
+                if (this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
+                    node = rootNode.findChild(this.keyField, selectedItem, true);
+                    if (node) {
+                        sm.select(node, true);
+                    }
+                }
+            }
+        } else if (this.panel instanceof Ext.grid.Panel) {
+            var store = this.panel.getStore(),
+                record;
+
+            for (var selectedItem in this.selected) {
+                if (this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
+                    record = store.findRecord(this.keyField, selectedItem);
+                    if (record) {
+                        sm.select(record, true);
+                    }
+                }
             }
         }
         this.ignoreSelectionChanges = false;
@@ -157,9 +184,9 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
      */
     onRowSelect: function (sm, rec, i, o) {
         if (!this.ignoreSelectionChanges) {
-            if (!this.selected[rec.internalId]) {
+            if (!this.selected[rec.get(this.keyField)]) {
                 this.selections.push(rec);
-                this.selected[rec.internalId] = true;
+                this.selected[rec.get(this.keyField)] = true;
             }
 
         }
@@ -175,7 +202,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
             if (isChecked) {
                 this.clearSelection();
             } else {
-                this.grid.selModel.selectAll();
+                this.panel.selModel.selectAll();
             }
         }
 
@@ -187,11 +214,11 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
      */
     onRowDeselect: function (rowModel, record, index, eOpts) {
         if (!this.ignoreSelectionChanges) {
-            if (this.selected[record.internalId]) {
+            if (this.selected[record.get(this.keyField)]) {
                 for (var j = this.selections.length - 1; j >= 0; j--) {
-                    if (this.selections[j].internalId == record.internalId) {
+                    if (this.selections[j].get(this.keyField) == record.get(this.keyField)) {
                         this.selections.splice(j, 1);
-                        this.selected[record.internalId] = false;
+                        this.selected[record.get(this.keyField)] = false;
                         break;
                     }
                 }
@@ -203,7 +230,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
      * @private
      */
     notifySelectionModelAboutSelectionChange: function () {
-        this.grid.selModel.fireEvent("selectionchange", this.grid.selModel, this.selections);
+        this.panel.selModel.fireEvent("selectionchange", this.panel.selModel, this.selections);
     },
 
     /**
@@ -211,7 +238,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
      */
     cancelItemContextClickWhenSelectionIsMultiple: function (view, record, item, index, event, eOpts) {
         var isRightClick = event.button === 2;
-        var recordIsSelected = this.selected[record.internalId];
+        var recordIsSelected = this.selected[record.get(this.keyField)];
         var cancel = isRightClick && recordIsSelected && this.getSelectionCount() > 1;
 
         if (cancel) {
