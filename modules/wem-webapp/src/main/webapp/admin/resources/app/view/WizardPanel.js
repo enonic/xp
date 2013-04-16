@@ -56,7 +56,7 @@ Ext.define('Admin.view.WizardPanel', {
         this.items = [
             this.createHeaderPanel(),
             {
-                itemId : 'bottomPanel',
+                itemId: 'bottomPanel',
                 xtype: 'container',
                 autoScroll: true,
                 padding: '20 0 0 0',
@@ -66,7 +66,8 @@ Ext.define('Admin.view.WizardPanel', {
                     {
                         xtype: 'container',
                         region: 'west',
-                        width: 110,
+                        padding: 10,
+                        width: 130,
                         style: {
                             position: 'fixed !important',
                             top: '210px !important'
@@ -111,7 +112,8 @@ Ext.define('Admin.view.WizardPanel', {
                     {
                         xtype: 'container',
                         region: 'east',
-                        width: 110,
+                        padding: 10,
+                        width: 130,
                         style: {
                             position: 'fixed !important',
                             top: '210px !important'
@@ -157,12 +159,12 @@ Ext.define('Admin.view.WizardPanel', {
                     },
                     this.wizard
                 ],
-                listeners : {
+                listeners: {
                     scroll: {
-                             element: 'el',
-                             fn: function() {
-                                 me.updateShadow(me);
-                             }
+                        element: 'el',
+                        fn: function () {
+                            me.updateShadow(me);
+                        }
                     }
                 }
             }
@@ -531,12 +533,17 @@ Ext.define('Admin.view.WizardPanel', {
                 }
             },
             items: [
-                Ext.applyIf(icon, {rowspan: 2}),
+                Ext.applyIf(icon, {
+                    rowspan: 2,
+                    tdAttrs: {
+                        style: 'padding-right: 10px'
+                    }
+                }),
                 Ext.applyIf(this.createWizardHeader(), {
                     tdAttrs: { width: '100%'}
                 }),
                 {
-                    itemId : 'positionPanel',
+                    itemId: 'positionPanel',
                     xtype: 'container',
                     style: {
                         backgroundColor: '#EEEEEE'

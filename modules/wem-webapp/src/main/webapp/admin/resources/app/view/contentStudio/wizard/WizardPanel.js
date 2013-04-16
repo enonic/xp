@@ -57,7 +57,6 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
         return {
             width: 110,
             height: 110,
-            margin: '0 10 0 0',
             items: [
                 {
                     xtype: 'photoUploadButton',
