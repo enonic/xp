@@ -19,11 +19,20 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     maxWidth: 680,
     contentType: undefined,
 
+    bodyPadding: '0 0 100 0',
+
     content: null, // content to be edited
 
     jsonSubmit: true,
 
     autoDestroy: true,
+
+    listeners: {
+        afterlayout: function () {
+            //Set height to auto manually, so we have bottom padding. For some reason you can't set it through config
+            this.setBodyStyle('height', 'auto');
+        }
+    },
 
     initComponent: function () {
         this.items = [];
