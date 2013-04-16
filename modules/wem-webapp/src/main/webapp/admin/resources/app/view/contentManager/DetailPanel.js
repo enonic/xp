@@ -24,17 +24,24 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                 ]
             },
             {
-                displayName: 'Graph',
-                name: 'graph',
+                displayName: 'Sales',
+                name: 'sales',
                 items: [
-                    {xtype: 'component', html: '<h1>Graph</h1>'}
+                    {xtype: 'component', html: '<h1>Sales</h1>'}
                 ]
             },
             {
-                displayName: 'Meta',
-                name: 'meta',
+                displayName: 'Scorecard',
+                name: 'scorecard',
                 items: [
-                    {xtype: 'component', html: '<h1>Meta</h1>'}
+                    {xtype: 'component', html: '<h1>Scorecard</h1>'}
+                ]
+            },
+            {
+                displayName: 'History',
+                name: 'history',
+                items: [
+                    {xtype: 'component', html: '<h1>History</h1>'}
                 ]
             }
         ];
