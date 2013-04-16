@@ -45,7 +45,7 @@ Ext.define('Admin.controller.homescreen.Controller', {
                     });
 
                     view.setBackgroundImage('rest/ui/background.jpg');
-                    view.setLicensedToText('Licensed to Large Customer');
+                    view.setLicensedToText('Licensed to Enonic');
                 },
                 beforeshow: function () {
                     me.onBeforeShowHomeScreen();
