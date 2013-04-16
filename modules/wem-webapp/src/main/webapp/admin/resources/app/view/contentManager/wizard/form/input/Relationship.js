@@ -283,7 +283,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             '       <img src="{iconUrl}" alt="{displayName}" width="32" height="32"/>',
             '       <span class="center-column">',
             '           {displayName}',
-            '           <span style="color: #666">{path}</span>',
+            '           <p style="color: #666">{path}</p>',
             '       </span>',
             '       <span class="right-column"><a href="javascript:;" class="icon-remove icon-2x"></a></span>',
             '   </div>',
@@ -295,7 +295,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             itemId: 'relationshipView',
             tpl: template,
             itemSelector: 'div.admin-related-item',
-            emptyText: 'No items selected',
+            emptyText: '',
             deferEmptyText: false,
             listeners: {
                 itemclick: function (view, contentModel, item, index, e) {

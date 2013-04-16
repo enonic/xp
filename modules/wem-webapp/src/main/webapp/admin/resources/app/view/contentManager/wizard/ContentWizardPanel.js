@@ -93,6 +93,10 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             stepTitle: 'Meta',
             xtype: 'panel'
         };
+        var pageStep = {
+            stepTitle: 'Page',
+            xtype: 'panel'
+        };
         var securityStep = {
             stepTitle: 'Security',
             xtype: 'panel'
@@ -102,8 +106,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             xtype: 'panel'
         };
 
-        return [dataStep, metaStep, securityStep, summaryStep];
-
+        return [dataStep, metaStep, pageStep, securityStep, summaryStep];
     },
 
     isNewContent: function () {
