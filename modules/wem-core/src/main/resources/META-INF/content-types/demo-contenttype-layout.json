@@ -1,7 +1,7 @@
 {
     "name": "layout",
     "module": "demo",
-    "displayName": "Demo: Layout",
+    "displayName": "Layout",
     "superType": "system:structured",
     "isAbstract": false,
     "isFinal": true,

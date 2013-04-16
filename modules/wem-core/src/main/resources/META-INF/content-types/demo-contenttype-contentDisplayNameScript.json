@@ -1,7 +1,7 @@
 {
     "name": "content_display_name_script",
     "module": "demo",
-    "displayName": "Demo: Content Display name script",
+    "displayName": "Content Display name script",
     "superType": "system:structured",
     "isAbstract": false,
     "isFinal": true,

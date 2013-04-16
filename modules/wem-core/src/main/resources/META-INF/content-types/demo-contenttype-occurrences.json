@@ -1,7 +1,7 @@
 {
     "name": "occurrences",
     "module": "demo",
-    "displayName": "Demo: Occurrences",
+    "displayName": "Occurrences",
     "superType": "system:structured",
     "isAbstract": false,
     "isFinal": true,

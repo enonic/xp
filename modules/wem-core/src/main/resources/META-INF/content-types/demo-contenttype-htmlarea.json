@@ -1,7 +1,7 @@
 {
     "name": "htmlarea",
     "module": "demo",
-    "displayName": "Demo: HTML Area",
+    "displayName": "HTML Area",
     "superType": "system:structured",
     "isAbstract": false,
     "isFinal": true,
