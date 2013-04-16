@@ -3326,9 +3326,10 @@ div.admin-load-mask {
  */
 /* line 4, ../sass/admin/css/_dummy-htmlarea.scss */
 .admin-htmlarea-dummy-toolbar {
-  border-width: 1px 1px 0 1px;
+  /*border-width: 1px 1px 0 1px;
   border-style: solid;
-  border-color: #aaaaaa;
+  border-color: $admin-field-border-color;
+  */
   background: url("../../../../../resources/images/dummy-htmlarea-toolbar.png") no-repeat; }
 
 /**
