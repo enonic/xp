@@ -3280,6 +3280,58 @@ div.admin-load-mask {
   display: block !important; }
 
 /**
+ * @var {color} $base-color
+ * The base color to be used throughout the theme.
+ */
+/**
+ * Admin Colors
+ */
+/*1B58B8*/
+/**
+ * Admin Font Sizes
+ */
+/**
+ * @var {string} $font-family 
+ * The default font-family to be used throughout the theme.
+ */
+/**
+ * @var {color} $base-color
+ * The base color to be used throughout the theme.
+ */
+/**
+ * Admin Colors
+ */
+/*1B58B8*/
+/**
+ * Admin Font Sizes
+ */
+/**
+ * @var {string} $font-family 
+ * The default font-family to be used throughout the theme.
+ */
+/**
+ * Fieldsets
+ */
+/**
+ * @class Ext.form.field.Base
+ */
+/**
+ * @class Ext.form.field.Checkbox
+ */
+/**
+ * @class Ext.form.field.Radio
+ */
+/**
+ * Trigger Field
+ */
+/* line 4, ../sass/admin/css/_dummy-htmlarea.scss */
+.admin-htmlarea-dummy-toolbar {
+  border-width: 1px 1px 0 1px;
+  border-style: solid;
+  border-color: #aaaaaa;
+  background: url("../../../../../resources/images/dummy-htmlarea-toolbar.png") no-repeat; }
+
+/**
  * @var {string} $prefix 
  * The prefix to be applied to all CSS selectors. If this is changed, it must also be changed in your 
  * JavaScript application.

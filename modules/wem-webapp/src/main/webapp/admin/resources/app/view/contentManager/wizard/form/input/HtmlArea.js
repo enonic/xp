@@ -6,7 +6,7 @@
    * Not tested with FormItemSet
 
  TODO:
- * Ta bort ekstra field label
+   * Width / height
 
  */
 
@@ -18,7 +18,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.HtmlArea', {
         var me = this;
 
         me.items = [
-            me.createContentEditableDiv(),
+            me.createEditor(),
             me.createHiddenInput()
         ];
 
@@ -85,6 +85,35 @@ Ext.define('Admin.view.contentManager.wizard.form.input.HtmlArea', {
     /**
      * @private
      */
+    createEditor: function () {
+        var me = this;
+        return {
+            xtype: 'container',
+            layout:'vbox',
+            items: [
+                me.createToolbar(),
+                me.createContentEditableDiv()
+            ]
+        }
+    },
+
+    /**
+     * @private
+     */
+    createToolbar: function () {
+        var ne = this;
+        return {
+            xtype: 'component',
+            layout:'vbox',
+            width: 500,
+            height: 40,
+            cls: 'admin-htmlarea-dummy-toolbar'
+        }
+    },
+
+    /**
+     * @private
+     */
     createContentEditableDiv: function () {
         var me = this;
         return {
@@ -101,7 +130,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.HtmlArea', {
             currentHeight: 100,
             listeners: {
                 render: function (component) {
-                    component.el.on('keydown', function (event) {
+                    component.el.on('DOMSubtreeModified', function (event) {
                         var height = component.getHeight();
 
                         // Make sure doComponentLayout is only fired when the height changes
