@@ -48,7 +48,8 @@ Ext.define('Admin.view.TopBar', {
             items: [
                 me.startButton,
                 {
-                    xtype: "tbseparator"
+                    xtype: "tbseparator",
+                    width: '2px'
                 },
                 me.homeButton
             ]
