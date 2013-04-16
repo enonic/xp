@@ -51,7 +51,7 @@ Ext.define('Admin.view.FilterPanel', {
             facetTpl: new Ext.XTemplate(
                 '<tpl for=".">',
                 '<div class="admin-facet-group" name="{name}">',
-                '<h2>{name}</h2>',
+                '<h2>{[values.displayName || values.name]}</h2>',
                 '<tpl for="terms">{[this.updateFacetCount(values, parent)]}',
                 '<tpl if="this.shouldShowTerm(values, parent)">',
                 '<div class="admin-facet {[values.selected ? \'checked\' : \'\']}">',
