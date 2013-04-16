@@ -175,8 +175,8 @@ Ext.define('Admin.view.TreeGridPanel', {
     deselect: function (key) {
 
         var activeList = this.getActiveList(),
-            selModel = activeList.getSelectionModel(),
-            plugin = activeList.getPlugin('persistentGridSelection');
+            plugin = activeList.getPlugin('persistentGridSelection'),
+            selModel = plugin ? plugin : activeList.getSelectionModel();
 
         if (!key || key === -1) {
 

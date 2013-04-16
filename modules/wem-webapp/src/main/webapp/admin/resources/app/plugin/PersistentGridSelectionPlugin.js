@@ -94,7 +94,14 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
 
         // If the deselected item is on the current page we need to programmatically deselect it.
         // First get the item object from the store (the record argument in this method is not the same object since the page has been refreshed)
-        var storeRecord = this.panel.getStore().getById(record.get(this.keyField));
+        var storeRecord;
+        var key = record.get(this.keyField);
+        if (this.panel instanceof Ext.tree.Panel) {
+            storeRecord = this.panel.getRootNode().findChild(this.keyField, key);
+        } else if (this.panel instanceof Ext.grid.Panel) {
+            storeRecord = this.panel.getStore().findRecord(this.keyField, key);
+        }
+
         this.panel.selModel.deselect(storeRecord);
 
         // Tell the selection model about a change.
