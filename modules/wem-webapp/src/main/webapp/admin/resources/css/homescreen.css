@@ -204,13 +204,13 @@
 .admin-home-app-tile > .img-container {
     position: absolute;
     width: 100%;
-    margin-top: 10px;
+    margin-top: 16px;
     text-align: center;
 }
 
 .admin-home-app-tile > .img-container > img {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
 }
 
 .admin-home-app-tile > .name-container {
