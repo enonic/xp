@@ -23,7 +23,7 @@
 
   <div class="masthead">
 
-    <h3 class="muted">Springfield Trampolines</h3>
+    <h3 class="muted">Bluman Trampoliner</h3>
 
     <div class="navbar">
       <div class="navbar-inner">
@@ -40,21 +40,28 @@
   </div>
 
   <div id="main" data-live-edit-type="region" data-live-edit-key="80" data-live-edit-name="Main">
+    <!-- Product show -->
     <%@ include file="../app/data/mock-component-10022.html" %>
-
-    <%@ include file="../app/data/mock-component-10023.html" %>
-
 
     <div class="row-fluid" data-live-edit-type="layout" data-live-edit-key="010101" data-live-edit-name="Layout 70-30">
 
       <div class="span8" data-live-edit-type="region">
+        <!-- Description -->
         <%@ include file="../app/data/mock-component-10024.html" %>
 
-        <%@ include file="../app/data/mock-component-10025.html" %>
+        <!-- Gallery -->
+        <%@ include file="../app/data/mock-component-10023.html" %>
+
+        <!-- Comments -->
+        <%@ include file="../app/data/mock-component-10026.html" %>
 
       </div>
       <div class="span4" data-live-edit-type="region">
+        <!-- Accessories -->
+        <%@ include file="../app/data/mock-component-10025.html" %>
 
+        <!-- Banner -->
+        <%@ include file="../app/data/mock-component-10027.html" %>
       </div>
     </div>
 
