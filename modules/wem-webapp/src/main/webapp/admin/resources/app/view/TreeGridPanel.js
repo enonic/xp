@@ -5,7 +5,8 @@ Ext.define('Admin.view.TreeGridPanel', {
     layout: 'card',
 
     requires: [
-        'Admin.plugin.PersistentGridSelectionPlugin', 'Admin.plugin.GridToolbarPlugin'
+        'Admin.plugin.PersistentGridSelectionPlugin',
+        'Admin.plugin.GridToolbarPlugin'
     ],
 
     treeConf: {},
@@ -34,6 +35,10 @@ Ext.define('Admin.view.TreeGridPanel', {
         // We don't need renderer for tree column
         //delete treeColumns[0].renderer;
 
+        var treeSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
+            keyField: me.keyField
+        });
+
         var treePanel = {
             xtype: 'treepanel',
             cls: 'admin-tree',
@@ -51,9 +56,14 @@ Ext.define('Admin.view.TreeGridPanel', {
                 }
             },
             store: this.treeStore,
-            columns: treeColumns
+            columns: treeColumns,
+            plugins: [treeSelectionPlugin]
         };
         treePanel = Ext.apply(treePanel, me.treeConf);
+
+        var gridSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
+            keyField: me.keyField
+        });
 
         var gridPanel = {
             xtype: 'grid',
@@ -61,7 +71,6 @@ Ext.define('Admin.view.TreeGridPanel', {
             cls: 'admin-grid',
             border: false,
             hideHeaders: true,
-            plugins: [],
             viewConfig: {
                 trackOver: true,
                 stripeRows: true,
@@ -70,7 +79,8 @@ Ext.define('Admin.view.TreeGridPanel', {
                 }
             },
             store: this.store,
-            columns: this.columns
+            columns: this.columns,
+            plugins: [gridSelectionPlugin]
         };
         gridPanel = Ext.apply(gridPanel, me.gridConf);
 
@@ -120,20 +130,16 @@ Ext.define('Admin.view.TreeGridPanel', {
     },
 
     getSelection: function () {
-        var selection = [];
-        var activeList = this.getActiveList();
-        if (activeList.xtype === 'treepanel') {
+        var selection = [],
+            activeList = this.getActiveList(),
+            plugin = activeList.getPlugin('persistentGridSelection');
+
+        if (plugin) {
+            selection = plugin.getSelection();
+        } else {
             selection = activeList.getSelectionModel().getSelection();
         }
-        else if (activeList.xtype === 'grid') {
-            var plugin = activeList.getPlugin('persistentGridSelection');
-            if (plugin) {
-                selection = plugin.getSelection();
-            }
-            else {
-                selection = activeList.getSelectionModel().getSelection();
-            }
-        }
+
         return selection;
     },
 
@@ -147,7 +153,7 @@ Ext.define('Admin.view.TreeGridPanel', {
             var rootNode = activeList.getRootNode(),
                 node;
             for (i = 0; i < keys.length; i++) {
-                node = rootNode.findChild(this.keyField, keys[i]);
+                node = rootNode.findChild(this.keyField, keys[i], true);
                 if (node) {
                     selModel.select(node, keepExisting);
                 }
@@ -167,21 +173,17 @@ Ext.define('Admin.view.TreeGridPanel', {
 
     // -1 deselects all
     deselect: function (key) {
-        console.log(key);
-        console.log(this.keyField);
-        var activeList = this.getActiveList();
-        var selModel = activeList.getSelectionModel();
+
+        var activeList = this.getActiveList(),
+            selModel = activeList.getSelectionModel(),
+            plugin = activeList.getPlugin('persistentGridSelection');
 
         if (!key || key === -1) {
-            if (activeList.xtype === 'treepanel') {
+
+            if (plugin) {
+                plugin.clearSelection();
+            } else {
                 selModel.deselectAll();
-            } else if (activeList.xtype === 'grid') {
-                var plugin = activeList.getPlugin('persistentGridSelection');
-                if (plugin) {
-                    plugin.clearSelection();
-                } else {
-                    selModel.deselectAll();
-                }
             }
         } else {
             if (activeList.xtype === 'treepanel') {
@@ -190,7 +192,7 @@ Ext.define('Admin.view.TreeGridPanel', {
                 for (i = 0; i < selNodes.length; i++) {
                     var selNode = selNodes[i];
                     // need to use == instead of === because of 6 == "6" while 6 !== "6"
-                    if (key == selNode.internalId) {
+                    if (key == selNode.get(this.keyField)) {
                         selModel.deselect(selNode);
                     }
                 }
@@ -227,32 +229,11 @@ Ext.define('Admin.view.TreeGridPanel', {
     },
 
     refresh: function () {
-        var me = this;
-
-        //save selection
-        var selection = this.getSelection();
 
         var activeList = this.getActiveList();
         var currentStore = activeList.store;
 
         if (!currentStore.loading) {
-
-            // restore selection after load
-            currentStore.on(
-                currentStore.buffered ? 'prefetch' : 'load',
-                function () {
-                    var keys = [];
-                    Ext.Array.each(selection, function (selected) {
-                        keys.push(selected.get(me.keyField));
-                    });
-                    if (keys.length > 0) {
-                        me.select(keys, true);
-                    }
-                },
-                me,
-                {
-                    single: true
-                });
 
             if (activeList.xtype === 'treepanel') {
                 currentStore.load();

@@ -11,6 +11,8 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
     isLiveMode: false,
 
+    keyField: 'path',
+
     initComponent: function () {
         var me = this;
         this.activeItem = this.resolveActiveItem(this.data);

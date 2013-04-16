@@ -9,9 +9,10 @@ Ext.define('Admin.view.spaceAdmin.TreeGridPanel', {
 
     keyField: 'name',
 
+    activeItem: 'grid',
+
     gridConf: {
-        selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36}),
-        plugins: [ 'persistentGridSelection' ]
+        selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36})
     },
 
     treeConf: {
@@ -48,7 +49,6 @@ Ext.define('Admin.view.spaceAdmin.TreeGridPanel', {
             }
         ];
         this.callParent(arguments);
-        this.setActiveList('grid'); // show as grid (not as tree) by default
     },
 
 

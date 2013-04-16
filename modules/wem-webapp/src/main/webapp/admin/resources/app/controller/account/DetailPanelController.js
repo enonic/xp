@@ -11,11 +11,11 @@ Ext.define('Admin.controller.account.DetailPanelController', {
 
     init: function () {
         this.control({
-                'accountDetail': {
-                    deselect: this.deselectRecord,
-                    clearselection: this.clearSelection
-                }
-            });
+            'accountDetail': {
+                deselect: this.deselectRecord,
+                clearselection: this.clearSelection
+            }
+        });
     },
 
     deselectRecord: function (key) {
@@ -27,13 +27,17 @@ Ext.define('Admin.controller.account.DetailPanelController', {
 
         Ext.each(selection, function (item) {
             if (item.get('key') === key) {
-                Ext.get('selected-item-box:' + key).remove();
                 selModel.deselect(item);
             }
         });
     },
 
     clearSelection: function () {
-        this.getContentTreeGridPanel().deselect(-1);
+        var grid = this.getAccountGridPanel();
+
+        var plugin = grid.getPlugin('persistentGridSelection');
+        var selModel = plugin ? plugin : grid.getSelectionModel();
+
+        selModel.deselectAll();
     }
 });

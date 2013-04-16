@@ -344,8 +344,11 @@ Ext.define('Admin.controller.contentManager.Controller', {
     },
 
     updateDetailPanel: function (selected) {
-        var detailPanel = this.getContentDetailPanel();
-        detailPanel.setData(selected);
+
+        // need to use this methods to preserve persistent selection
+        var selection = this.getContentTreeGridPanel().getSelection();
+
+        this.getContentDetailPanel().setData(selection);
     },
 
     updateToolbarButtons: function (selected) {

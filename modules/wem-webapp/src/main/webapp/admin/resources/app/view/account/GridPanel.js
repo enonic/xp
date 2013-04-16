@@ -6,7 +6,6 @@ Ext.define('Admin.view.account.GridPanel', {
         'Admin.plugin.PersistentGridSelectionPlugin',
         'Admin.plugin.GridToolbarPlugin'
     ],
-    plugins: ['persistentGridSelection'],
 
     cls: 'admin-grid',
     layout: 'fit',
@@ -99,6 +98,12 @@ Ext.define('Admin.view.account.GridPanel', {
             headerWidth: 36
         });
 
+        me.plugins = [
+            new Admin.plugin.PersistentGridSelectionPlugin({
+                keyField: 'key'
+            })
+        ];
+
         me.callParent(arguments);
 
         if (me.verticalScroller) {
@@ -121,7 +126,8 @@ Ext.define('Admin.view.account.GridPanel', {
             } else {
                 return value;
             }
-        } catch (e) {
+        }
+        catch (e) {
             return value;
         }
     },

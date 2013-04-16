@@ -16,6 +16,11 @@ Ext.define('Admin.view.DetailPanel', {
     isVertical: false,
     isFullPage: false,
 
+    /**
+     * @param keyField tells which property should be used as an id in case internalId is auto generated
+     */
+    keyField: 'id',
+
     listeners: {
         afterrender: function (detail) {
             detail.el.on('click', function (event, target, opts) {
@@ -218,10 +223,10 @@ Ext.define('Admin.view.DetailPanel', {
             margin: (me.isVertical ? '0' : '20 0 0'),
             colspan: 3,
             tpl: Ext.create('Ext.XTemplate', '<ul class="admin-detail-nav">' +
-                '<tpl for=".">' +
-                '<li data-tab="{name}">{displayName}</li>' +
-                '</tpl>' +
-                '</ul>'),
+                                             '<tpl for=".">' +
+                                             '<li data-tab="{name}">{displayName}</li>' +
+                                             '</tpl>' +
+                                             '</ul>'),
             data: me.singleSelection.tabs,
             listeners: {
                 click: {
@@ -238,27 +243,31 @@ Ext.define('Admin.view.DetailPanel', {
         };
     },
 
-    largeBoxTemplate: '<tpl for=".">' +
-        '<div id="selected-item-box-{internalId}" class="admin-selected-item-box large clearfix">' +
-        '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>' +
-        '<div class="center"><h6>{data.displayName}</h6>' +
+    getLargeBoxTemplate: function () {
+        return [
+            '<tpl for=".">' +
+            '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box large clearfix">',
+            '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>',
+            '<div class="center"><h6>{data.displayName}</h6>',
 
-        // 18th of April solution!
-        // We should refactor this class so the selection views always gets one data spec
-        '<tpl if="data.path">' +
-        '<p>{data.path}</p>' +
-        '<tpl elseif="data.description">' +
-        '<p>{data.description}</p>' +
-        '<tpl elseif="data.name">' +
-        '<p>{data.name}</p>' +
-        '</tpl>' +
+            // 18th of April solution!
+            // We should refactor this class so the selection views always gets one data spec
+            '<tpl if="data.path">',
+            '<p>{data.path}</p>',
+            '<tpl elseif="data.description">',
+            '<p>{data.description}</p>',
+            '<tpl elseif="data.name">',
+            '<p>{data.name}</p>',
+            '</tpl>',
 
-        '</div>' +
-        '<div class="right">' +
-        '<a id="remove-from-selection-button:{internalId}" class="deselect" href="javascript:;"></a>' +
-        '</div>' +
-        '</div>' +
-        '</tpl>',
+            '</div>',
+            '<div class="right">',
+            '<a id="remove-from-selection-button:{data.' + this.keyField + '}" class="deselect" href="javascript:;"></a>',
+            '</div>',
+            '</div>',
+            '</tpl>'
+        ]
+    },
 
     createLargeBoxSelection: function (data) {
         return {
@@ -270,20 +279,25 @@ Ext.define('Admin.view.DetailPanel', {
                 border: 'none'
             },
             autoScroll: true,
-            tpl: this.largeBoxTemplate,
+            tpl: this.getLargeBoxTemplate(),
             data: data
         };
     },
 
-    smallBoxTemplate: '<tpl for=".">' +
-        '<div id="selected-item-box-{internalId}" class="admin-selected-item-box small clearfix">' +
-        '<div class="left"><img src="{data.iconUrl}?size=20" alt="{data.name}"/></div>' +
-        '<div class="center">{data.displayName}</div>' +
-        '<div class="right">' +
-        '<a id="remove-from-selection-button:{internalId}" class="deselect" href="javascript:;"></a>' +
-        '</div>' +
-        '</div>' +
-        '</tpl>',
+
+    getSmallBoxTemplate: function () {
+        return [
+            '<tpl for=".">',
+            '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box small clearfix">',
+            '<div class="left"><img src="{data.iconUrl}?size=20" alt="{data.name}"/></div>',
+            '<div class="center">{data.displayName}</div>',
+            '<div class="right">',
+            '<a id="remove-from-selection-button:{data.' + this.keyField + '}" class="deselect" href="javascript:;"></a>',
+            '</div>',
+            '</div>',
+            '</tpl>'
+        ]
+    },
 
     createSmallBoxSelection: function (data) {
         return {
@@ -295,7 +309,7 @@ Ext.define('Admin.view.DetailPanel', {
             bodyStyle: {
                 border: 'none'
             },
-            tpl: this.smallBoxTemplate,
+            tpl: this.getSmallBoxTemplate(),
             data: data
         };
     },
