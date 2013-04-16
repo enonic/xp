@@ -21,10 +21,15 @@ Ext.define('Admin.view.contentManager.LiveEditTestWindow', {
                 xtype: 'component',
                 tpl: '<h2>{title}</h2><p>{subtitle}</p>',
                 data: {
-                    title: 'Live edit window',
-                    subtitle: 'this is live editing'
+                    title: 'Upsale Teaser',
+                    subtitle: 'enonic:upsale-teaser'
                 },
-                margin: '0 0 20 0'
+                margin: '0 0 0 0'
+            },
+            {
+                region: 'center',
+                border: 0,
+                html: '<img src="resources/images/dummy-settings.png"/>'
             },
             {
                 region: 'south',
@@ -46,6 +51,7 @@ Ext.define('Admin.view.contentManager.LiveEditTestWindow', {
                     {
                         xtype: 'button',
                         text: 'Cancel',
+                        ui: 'dark-grey',
                         handler: function (btn, evt) {
                             me.close();
                         }

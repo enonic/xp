@@ -36,7 +36,7 @@
 
     $(document).ready(function () {
 
-        $(document).on('mousedown', 'btn, a, select', function (event) {
+        $(document).on('mousedown', 'btn, button, a, select', function (event) {
             event.preventDefault();
             return false;
         });
