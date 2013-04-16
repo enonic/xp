@@ -6,6 +6,8 @@ public abstract class AbstractFacetResultSet
 
     private String name;
 
+    private String displayName;
+
     public String getName()
     {
         return name;
@@ -14,5 +16,15 @@ public abstract class AbstractFacetResultSet
     public void setName( final String name )
     {
         this.name = name;
+    }
+
+    public String getDisplayName()
+    {
+        return displayName;
+    }
+
+    public void setDisplayName( final String displayName )
+    {
+        this.displayName = displayName;
     }
 }

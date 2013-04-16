@@ -512,13 +512,13 @@ Ext.define('Admin.controller.contentManager.Controller', {
             for (var i = 0; i < values.ranges.length; i++) {
                 var lower;
                 switch (values.ranges[i]) {
-                case '>1 day':
+                case '< 1 day':
                     lower = oneDayAgo;
                     break;
-                case '>1 hour':
+                case '< 1 hour':
                     lower = oneHourAgo;
                     break;
-                case '>1 week':
+                case '< 1 week':
                     lower = oneWeekAgo;
                     break;
                 default:

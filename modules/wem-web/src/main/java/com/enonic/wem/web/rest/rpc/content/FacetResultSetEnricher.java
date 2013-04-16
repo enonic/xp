@@ -47,9 +47,9 @@ public class FacetResultSetEnricher
         }
     }
 
-    private static void enrichSpaceFacetWithDisplayName( final Client client, final TermsFacetResultSet next )
+    private static void enrichSpaceFacetWithDisplayName( final Client client, final TermsFacetResultSet termsFacetResultSet )
     {
-        TermsFacetResultSet termsFacetResultSet = (TermsFacetResultSet) next;
+        termsFacetResultSet.setDisplayName( "Space" );
 
         for ( TermsFacetResultSet.TermFacetResult resultSet : termsFacetResultSet.getResults() )
         {
@@ -68,9 +68,9 @@ public class FacetResultSetEnricher
         }
     }
 
-    private static void enrichContentTypeFacetWithDisplayName( final Client client, final TermsFacetResultSet next )
+    private static void enrichContentTypeFacetWithDisplayName( final Client client, final TermsFacetResultSet termsFacetResultSet )
     {
-        TermsFacetResultSet termsFacetResultSet = (TermsFacetResultSet) next;
+        termsFacetResultSet.setDisplayName( "Content Type" );
 
         for ( TermsFacetResultSet.TermFacetResult resultSet : termsFacetResultSet.getResults() )
         {

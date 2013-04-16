@@ -83,6 +83,7 @@ public class FindContentJsonResult
     private void serializeFacet( final ObjectNode json, final DateHistogramFacetResultSet dateHistogramFacetResultSet )
     {
         json.put( "name", dateHistogramFacetResultSet.getName() );
+        json.put( "displayName", dateHistogramFacetResultSet.getDisplayName() );
         json.put( "_type", "dateHistogram" );
 
         final ArrayNode terms = json.putArray( "terms" );
@@ -101,6 +102,7 @@ public class FindContentJsonResult
     private void serializeFacet( final ObjectNode json, final RangeFacetResultSet rangeFacetResultSet )
     {
         json.put( "name", rangeFacetResultSet.getName() );
+        json.put( "displayName", rangeFacetResultSet.getDisplayName() );
         json.put( "_type", "range" );
 
         final ArrayNode terms = json.putArray( "ranges" );
@@ -121,6 +123,7 @@ public class FindContentJsonResult
     {
         final String facetName = termsFacetResultSet.getName();
         json.put( "name", facetName );
+        json.put( "displayName", termsFacetResultSet.getDisplayName() );
         json.put( "_type", "terms" );
 
         final ArrayNode terms = json.putArray( "terms" );
@@ -138,7 +141,8 @@ public class FindContentJsonResult
 
     private void serializeFacet( final ObjectNode json, final List<QueryFacetResultSet> queries )
     {
-        json.put( "name", "Last Modified" );
+        json.put( "name", "ranges" );
+        json.put( "displayName", "Last Modified" );
         json.put( "_type", "terms" );
 
         final ArrayNode terms = json.putArray( "terms" );
