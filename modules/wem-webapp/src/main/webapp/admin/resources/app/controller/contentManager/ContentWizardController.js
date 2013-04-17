@@ -175,8 +175,9 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
 
 
     previewContent: function (panel) {
-        var previewUrl = panel.data.content.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp'
-            : '/dev/live-edit/page/bootstrap.jsp';
+        /*        var previewUrl = panel.data.content.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp'
+         : '/dev/live-edit/page/bootstrap.jsp';*/
+        var previewUrl = '/dev/live-edit/page/frogger.jsp';
         window.open(Admin.lib.UriHelper.getAbsoluteUri(previewUrl));
     },
 
