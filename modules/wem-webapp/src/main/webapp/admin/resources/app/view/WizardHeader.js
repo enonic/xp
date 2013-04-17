@@ -85,7 +85,7 @@ Ext.define('Admin.view.WizardHeader', {
             value: headerData[this.nameProperty],
             listeners: {
                 change: function (textfield, newValue) {
-                    textfield.setValue(textfield.processRawValue(this.preProcessName(newValue)));
+                    textfield.setValue(textfield.processRawValue(newValue));
                 }, scope: this
             }
 
