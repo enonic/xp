@@ -210,7 +210,9 @@ Ext.define('Admin.view.WizardPanel', {
                     var shadowDomSpec = {
                         id: 'admin-wizard-header-shadow',
                         tag: 'div',
-                        style: 'position:absolute; top:' + wizardHeaderPanelHeight + 'px; left:0px; z-index:1000; height:10px; background:transparent; width:100%; box-shadow:' + boxShadowOffsets + '#888 inset'
+                        style: 'position:absolute; top:' + wizardHeaderPanelHeight +
+                               'px; left:0px; z-index:1000; height:10px; background:transparent; width:100%; box-shadow:' +
+                               boxShadowOffsets + '#888 inset'
                     };
 
                     dh.append(positionPanelEl, shadowDomSpec);
@@ -218,7 +220,9 @@ Ext.define('Admin.view.WizardPanel', {
                 }
 
             } else {
-                headerShadowEl.remove();
+                if (headerShadowEl) {
+                    headerShadowEl.remove();
+                }
             }
         }
     },

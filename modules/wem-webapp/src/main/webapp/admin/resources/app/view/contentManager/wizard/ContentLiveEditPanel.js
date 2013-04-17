@@ -54,7 +54,6 @@ Ext.define('Admin.view.contentManager.wizard.ContentLiveEditPanel', {
 
     setLiveMode: function (mode) {
         this.getLayout().setActiveItem(mode ? 1 : 0);
-
         if (mode) {
             var livePreviewPanel = this.down('#livePreview');
             if (!livePreviewPanel.iFrameLoaded) {
@@ -64,11 +63,16 @@ Ext.define('Admin.view.contentManager.wizard.ContentLiveEditPanel', {
     },
 
     getLiveUrl: function (data) {
+        var str = '';
         if (data) {
-            return data.content.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp'
-                : '/dev/live-edit/page/bootstrap.jsp';
+            if (data.content.displayName) {
+                str = data.content.displayName;
+            } else if (data.content.path) {
+                str = data.content.path;
+            }
         }
-        return '/dev/live-edit/page/bootstrap.jsp';
+        return str.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp'
+            : '/dev/live-edit/page/bootstrap.jsp';
     },
 
     toggleLive: function () {
