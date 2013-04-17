@@ -38,7 +38,7 @@ public class SpacesInitializer
     private void createDefaultSpaces()
     {
         createOrUpdate( SpaceName.temporary().name(), "Temporary content space" );
-        createOrUpdate( "blueman trapoliner", "Blueman Trapoliner" );
+        createOrUpdate( "blueman trampoliner", "Blueman Trampoliner" );
         createOrUpdate( "blueman intranett", "Blueman Intranett" );
         createOrUpdate( "bildearkiv", "Bildearkiv" );
     }
