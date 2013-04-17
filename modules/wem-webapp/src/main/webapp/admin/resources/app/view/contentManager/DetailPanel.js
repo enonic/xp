@@ -90,7 +90,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
                 //TODO update urls when they are ready
-                livePreview.load('/dev/live-edit/page/bootstrap.jsp', false);
+                livePreview.load(this.getLiveUrl(this.data), false);
             }
         }, this);
 
@@ -98,7 +98,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
                 //TODO update urls when they are ready
-                livePreview.load('/dev/live-edit/page/bootstrap.jsp', false);
+                livePreview.load(this.getLiveUrl(data), false);
             }
         };
 
@@ -111,6 +111,19 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         ];
 
         this.callParent(arguments);
+    },
+
+    getLiveUrl: function (data) {
+        if (data) {
+            if (data.length > 0) {
+                return data[0].data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp'
+                    : '/dev/live-edit/page/bootstrap.jsp';
+            } else if (data.data) {
+                return data.data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp'
+                    : '/dev/live-edit/page/bootstrap.jsp';
+            }
+        }
+        return '/dev/live-edit/page/bootstrap.jsp';
     },
 
     createToolBar: function () {

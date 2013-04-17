@@ -71,7 +71,8 @@
 <h2>R&amp;D</h2>
 <ul class="links">
   <li><a href="http://enonic.github.com/projects/wem-extjs-theme/">WEM ExtJS Theme</a></li>
-  <li><a href="../dev/live-edit/page/bootstrap.jsp">Live Edit - Bootstrap</a></li>
+  <li><a href="../dev/live-edit/page/bootstrap.jsp">Live Edit - Big Bounce</a></li>
+  <li><a href="../dev/live-edit/page/frogger.jsp">Live Edit - Frogger</a></li>
   <!--li><a href="../dev/live-edit/page/page.jsp?edit=true">Live Edit - Enonic</a></li>
   <li><a href="../dev/html-templates/live-edit-components.html">Live Edit: Component Bar HTML</a></li>
   <li><a href="../dev/live-edit/page/plug-ins.jsp">Live Edit: with draggables containing plugins</a></li>

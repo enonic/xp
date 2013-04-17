@@ -24,7 +24,7 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
             },
             'contentLiveEditPanel *[action=previewContent]': {
                 click: function (el, e) {
-                    me.previewContent();
+                    me.previewContent(this.getContentWizardPanel());
                 }
             },
             'contentWizardPanel *[action=publishContent]': {
@@ -174,8 +174,10 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
     },
 
 
-    previewContent: function () {
-        window.open(Admin.lib.UriHelper.getAbsoluteUri('/dev/live-edit/page/bootstrap.jsp'));
+    previewContent: function (panel) {
+        var previewUrl = panel.data.content.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp'
+            : '/dev/live-edit/page/bootstrap.jsp';
+        window.open(Admin.lib.UriHelper.getAbsoluteUri(previewUrl));
     },
 
 

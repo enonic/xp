@@ -20,7 +20,9 @@ Ext.define('Admin.controller.contentManager.GridPanelController', {
 
         this.control({
             'contentTreeGridPanel treepanel, grid': {
+                //This event is called 2-3 times when changing selection. This must be fixed!
                 selectionchange: function (panel, selected, opts) {
+                    console.log("Fire selection change");
                     this.updateDetailPanel(selected);
                     this.updateToolbarButtons(selected);
                 },

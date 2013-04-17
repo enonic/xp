@@ -347,7 +347,6 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
         // need to use this methods to preserve persistent selection
         var selection = this.getContentTreeGridPanel().getSelection();
-
         this.getContentDetailPanel().setData(selection);
     },
 

@@ -58,9 +58,17 @@ Ext.define('Admin.view.contentManager.wizard.ContentLiveEditPanel', {
         if (mode) {
             var livePreviewPanel = this.down('#livePreview');
             if (!livePreviewPanel.iFrameLoaded) {
-                livePreviewPanel.load('/dev/live-edit/page/bootstrap.jsp', true);
+                livePreviewPanel.load(this.getLiveUrl(this.data), true);
             }
         }
+    },
+
+    getLiveUrl: function (data) {
+        if (data) {
+            return data.content.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp'
+                : '/dev/live-edit/page/bootstrap.jsp';
+        }
+        return '/dev/live-edit/page/bootstrap.jsp';
     },
 
     toggleLive: function () {
