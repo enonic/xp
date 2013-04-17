@@ -15,8 +15,7 @@ public final class Version
     private Version()
     {
         final String value = getClass().getPackage().getImplementationVersion();
-//        this.version = value != null ? value : "x.x.x";
-        this.version = "5.0.0"; // TODO To be removed after 18/04, hard-coded for demo.
+        this.version = value != null ? value : "x.x.x";
     }
 
     public String getName()
