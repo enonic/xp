@@ -117,7 +117,7 @@ Ext.define('Admin.view.DetailPanel', {
 
         photo: '<img src="{data.iconUrl}?size=80" style="width: 64px;" alt="{name}"/>',
 
-        header: '<h1>{data.displayName}</h1><span class="path">{data.path}</span>'
+        header: '<h1 title="{data.displayName}">{data.displayName}</h1><span class="path" title="{data.path}">{data.path}</span>'
     },
 
     singleSelection: {
@@ -151,6 +151,7 @@ Ext.define('Admin.view.DetailPanel', {
                         type: 'table',
                         tableAttrs: {
                             style: {
+                                tableLayout: 'fixed',
                                 width: '100%'
                             }
                         },
@@ -176,7 +177,8 @@ Ext.define('Admin.view.DetailPanel', {
                             xtype: 'component',
                             itemId: 'previewHeader',
                             tpl: me.singleTemplate.header,
-                            data: data
+                            data: data,
+                            cls: 'admin-detail-header'
                         },
                         me.getActionButton(),
                         me.renderTabNavigation(me.isVertical)
@@ -223,10 +225,10 @@ Ext.define('Admin.view.DetailPanel', {
             margin: (me.isVertical ? '0' : '20 0 0'),
             colspan: 3,
             tpl: Ext.create('Ext.XTemplate', '<ul class="admin-detail-nav">' +
-                                             '<tpl for=".">' +
-                                             '<li data-tab="{name}">{displayName}</li>' +
-                                             '</tpl>' +
-                                             '</ul>'),
+                '<tpl for=".">' +
+                '<li data-tab="{name}">{displayName}</li>' +
+                '</tpl>' +
+                '</ul>'),
             data: me.singleSelection.tabs,
             listeners: {
                 click: {
@@ -246,7 +248,7 @@ Ext.define('Admin.view.DetailPanel', {
     getLargeBoxTemplate: function () {
         return [
             '<tpl for=".">' +
-            '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box large clearfix">',
+                '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box large clearfix">',
             '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>',
             '<div class="center"><h6>{data.displayName}</h6>',
 
