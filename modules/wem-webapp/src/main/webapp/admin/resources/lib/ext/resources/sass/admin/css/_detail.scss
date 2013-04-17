@@ -1,17 +1,27 @@
 .admin-detail-nav {
-    .vertical & li {
-        float:left;
+  .vertical & li {
+    float: left;
+  }
+  li {
+    font-size: 15px;
+    padding: 10px 20px;
+    cursor: pointer;
+    &.active {
+      font-weight: bold;
     }
-    li {
-        font-size: 15px;
-        padding: 10px 20px;
-        cursor: pointer;
-        &.active {
-            font-weight: bold;
-        }
 
-        &:hover {
-            color: #333;
-        }
+    &:hover {
+      color: #333;
     }
+  }
+}
+
+.admin-detail-header {
+  overflow: hidden;
+
+  h1, span.path {
+    display: block;
+    @include ellipsis();
+  }
+
 }
