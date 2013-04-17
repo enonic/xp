@@ -2652,7 +2652,8 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     height: 24px;
     display: block;
     border: 1px solid transparent;
-    background: transparent url(../themes/images/default/navigate_cross-24px.png) no-repeat -2px 0;
+    text-align: center;
+    text-decoration: none;
 }
 
 /* line 4, ../sass/admin/css/_selected-grid-item.scss */
@@ -2660,47 +2661,56 @@ body:not(:-moz-handler-blocked) .x-fieldset-header .x-fieldset-header-text {
     border: 1px solid #d1d1d1;
 }
 
+/* line 76, ../sass/admin/css/_selected-grid-item.scss */
+.admin-selected-item-box.large .right a.icon-remove {
+    line-height: 1em;
+}
+
 /*    Small     */
-/* line 81, ../sass/admin/css/_selected-grid-item.scss */
+/* line 86, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.small {
     margin: 0 7px 7px 0;
     padding: 5px;
 }
 
-/* line 87, ../sass/admin/css/_selected-grid-item.scss */
+/* line 92, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.small .left img {
     width: 20px;
     height: 20px;
 }
 
-/* line 93, ../sass/admin/css/_selected-grid-item.scss */
+/* line 98, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.small .center {
     margin-right: 5px;
     padding: 1px 6px;
 }
 
-/* line 97, ../sass/admin/css/_selected-grid-item.scss */
+/* line 102, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.small .center p {
     margin: 0;
 }
 
-/* line 102, ../sass/admin/css/_selected-grid-item.scss */
+/* line 107, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.small .right {
-    margin: 2px 3px 0 0;
+    margin: 3px 3px 0 0;
 }
 
-/* line 105, ../sass/admin/css/_selected-grid-item.scss */
+/* line 110, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.small .right a {
-    width: 16px;
-    height: 16px;
     display: block;
     border: 1px solid transparent;
-    background: transparent url(../themes/images/default/navigate_cross-16px.png) no-repeat -1px 0;
+    text-align: center;
+    text-decoration: none;
 }
 
 /* line 4, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.small .right a:hover {
     border: 1px solid #d1d1d1;
+}
+
+/* line 118, ../sass/admin/css/_selected-grid-item.scss */
+.admin-selected-item-box.small .right a.icon-remove {
+    line-height: 1em;
 }
 
 /**
@@ -3510,19 +3520,16 @@ div.admin-load-mask .admin-load-text {
 
 /* line 168, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.active a.close-button {
-    background: url("../themes/images/default/navigate_cross-16px.png") 0 -16px no-repeat;
+    color: white;
 }
 
 /* line 173, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item a.close-button {
-    background: url("../themes/images/default/navigate_cross-16px.png") 0 0 no-repeat;
-    border: 1px solid transparent;
-    width: 16px;
-    height: 16px;
+    line-height: 1em;
     cursor: pointer;
 }
 
-/* line 182, ../sass/admin/css/_top-bar.scss */
+/* line 179, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu em {
     position: relative;
     top: -2px;
@@ -3879,19 +3886,15 @@ div.admin-load-mask .admin-load-text {
     display: table-cell;
     vertical-align: middle;
     text-align: right;
+    padding: 0 4px 0 10px;
 }
 
-/* line 129, ../sass/admin/css/_relationship.scss */
-.admin-related-item .right-column a {
-    color: black;
-}
-
-/* line 135, ../sass/admin/css/_relationship.scss */
+/* line 132, ../sass/admin/css/_relationship.scss */
 .admin-relationship-library-icon {
     background: url("../../../../../resources/images/folder-open.png") no-repeat;
 }
 
-/* line 140, ../sass/admin/css/_relationship.scss */
+/* line 137, ../sass/admin/css/_relationship.scss */
 .admin-related-item-disabled .right-column {
     opacity: 0.5;
 }
@@ -4189,11 +4192,12 @@ div.admin-load-mask .admin-load-text {
  */
 /* line 4, ../sass/admin/css/_dummy-htmlarea.scss */
 .admin-htmlarea-dummy-toolbar {
-    /*border-width: 1px 1px 0 1px;
-  border-style: solid;
-  border-color: $admin-field-border-color;
-  */
     background: url("../../../../../resources/images/dummy-htmlarea-toolbar.png") no-repeat;
+}
+
+/* line 1, ../sass/admin/css/_icon.scss */
+.icon-remove {
+    color: #555;
 }
 
 /**

@@ -264,7 +264,7 @@ Ext.define('Admin.view.DetailPanel', {
 
             '</div>',
             '<div class="right">',
-            '<a id="remove-from-selection-button:{data.' + this.keyField + '}" class="deselect" href="javascript:;"></a>',
+            '<a id="remove-from-selection-button:{data.' + this.keyField + '}" class="deselect icon-remove icon-2x" href="javascript:;"></a>',
             '</div>',
             '</div>',
             '</tpl>'
@@ -294,7 +294,7 @@ Ext.define('Admin.view.DetailPanel', {
             '<div class="left"><img src="{data.iconUrl}?size=20" alt="{data.name}"/></div>',
             '<div class="center">{data.displayName}</div>',
             '<div class="right">',
-            '<a id="remove-from-selection-button:{data.' + this.keyField + '}" class="deselect" href="javascript:;"></a>',
+            '<a id="remove-from-selection-button:{data.' + this.keyField + '}" class="deselect icon-remove icon-large" href="javascript:;"></a>',
             '</div>',
             '</div>',
             '</tpl>'
