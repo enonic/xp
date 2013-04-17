@@ -38,8 +38,9 @@ public class SpacesInitializer
     private void createDefaultSpaces()
     {
         createOrUpdate( SpaceName.temporary().name(), "Temporary content space" );
-        createOrUpdate( "default", "Default space" );
-        createOrUpdate( "blueman", "Blueman Travels" );
+        createOrUpdate( "blueman trapoliner", "Blueman Trapoliner" );
+        createOrUpdate( "blueman intranett", "Blueman Intranett" );
+        createOrUpdate( "bildearkiv", "Bildearkiv" );
     }
 
     private void createOrUpdate( final String name, final String displayName )

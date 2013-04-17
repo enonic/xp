@@ -72,7 +72,10 @@ public class CreateContentHandler
             final Content.Builder builder = Content.newContent();
             final String displayName = command.getDisplayName();
             final ContentPath parentContentPath = command.isTemporary() ? TEMPORARY_PARENT_PATH : command.getParentContentPath();
-            final ContentPath contentPath = resolvePathForNewContent( parentContentPath, displayName, session );
+            final String name = command.getName();
+            final ContentPath contentPath = name == null
+                ? resolvePathForNewContent( parentContentPath, displayName, session )
+                : ContentPath.from( parentContentPath, name );
             if ( !command.isTemporary() )
             {
                 checkParentContentAllowsChildren( parentContentPath, session );

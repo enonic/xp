@@ -1,0 +1,253 @@
+{
+    "name": "trampoline",
+    "module": "enonic",
+    "displayName": "Trampoline",
+    "contentDisplayNameScript": "$('vendor') + ' - ' + $('name')",
+    "superType": "system:structured",
+    "isAbstract": false,
+    "isFinal": true,
+    "allowChildren": true,
+    "form": [
+        {
+            "Layout": {
+                "type": "FieldSet",
+                "label": "Basic information",
+                "name": "basic",
+                "items": [
+                    {
+                        "Input": {
+                            "name": "vendor",
+                            "label": "Vendor",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 1
+                            },
+                            "indexed": true,
+                            "customText": "",
+                            "validationRegexp": null,
+                            "helpText": "",
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "name",
+                            "label": "Product Name",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 1
+                            },
+                            "indexed": true,
+                            "customText": "",
+                            "validationRegexp": null,
+                            "helpText": "",
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "description",
+                            "label": "Description",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 1
+                            },
+                            "indexed": true,
+                            "customText": "",
+                            "validationRegexp": null,
+                            "helpText": "",
+                            "type": {
+                                "name": "HtmlArea",
+                                "builtIn": true
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "Layout": {
+                "type": "FieldSet",
+                "label": "Details",
+                "name": "details",
+                "items": [
+                    {
+                        "Input": {
+                            "name": "features",
+                            "label": "Features",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 0
+                            },
+                            "indexed": true,
+                            "customText": "",
+                            "validationRegexp": null,
+                            "helpText": "Provide key selling points",
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "image",
+                            "label": "Image Gallery",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 0
+                            },
+                            "indexed": false,
+                            "customText": "",
+                            "validationRegexp": null,
+                            "helpText": "",
+                            "type": {
+                                "name": "Image",
+                                "builtIn": true,
+                                "config": {
+                                    "relationshipType": "system:default"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "Input": {
+                "name": "accessories",
+                "label": "Accessories",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": "",
+                "validationRegexp": null,
+                "helpText": "",
+                "type": {
+                    "name": "Relationship",
+                    "builtIn": true,
+                    "config": {
+                        "relationshipType": "system:like"
+                    }
+                }
+            }
+        },
+        {
+            "Layout": {
+                "type": "FieldSet",
+                "label": "Trampoline variants",
+                "name": "variants",
+                "items": [
+                    {
+                        "FormItemSet": {
+                            "name": "variant",
+                            "label": "Variant",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 0
+                            },
+                            "customText": "",
+                            "helpText": "",
+                            "items": [
+                                {
+                                    "Input": {
+                                        "name": "id",
+                                        "label": "Variant ID",
+                                        "immutable": false,
+                                        "occurrences": {
+                                            "minimum": 1,
+                                            "maximum": 1
+                                        },
+                                        "indexed": false,
+                                        "customText": "",
+                                        "validationRegexp": null,
+                                        "helpText": "",
+                                        "type": {
+                                            "name": "TextLine",
+                                            "builtIn": true
+                                        }
+                                    }
+                                },
+                                {
+                                    "Input": {
+                                        "name": "sku",
+                                        "label": "SKU",
+                                        "immutable": false,
+                                        "occurrences": {
+                                            "minimum": 1,
+                                            "maximum": 1
+                                        },
+                                        "indexed": true,
+                                        "customText": "",
+                                        "validationRegexp": null,
+                                        "helpText": "",
+                                        "type": {
+                                            "name": "TextLine",
+                                            "builtIn": true
+                                        }
+                                    }
+                                },
+                                {
+                                    "Input": {
+                                        "name": "price",
+                                        "label": "Price",
+                                        "immutable": false,
+                                        "occurrences": {
+                                            "minimum": 1,
+                                            "maximum": 1
+                                        },
+                                        "indexed": true,
+                                        "customText": "",
+                                        "validationRegexp": null,
+                                        "helpText": "",
+                                        "type": {
+                                            "name": "TextLine",
+                                            "builtIn": true
+                                        }
+                                    }
+                                },
+                                {
+                                    "Input": {
+                                        "name": "image",
+                                        "label": "Variant Image",
+                                        "immutable": false,
+                                        "occurrences": {
+                                            "minimum": 1,
+                                            "maximum": 1
+                                        },
+                                        "indexed": false,
+                                        "customText": "",
+                                        "validationRegexp": null,
+                                        "helpText": "",
+                                        "type": {
+                                            "name": "Image",
+                                            "builtIn": true,
+                                            "config": {
+                                                "relationshipType": "system:default"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

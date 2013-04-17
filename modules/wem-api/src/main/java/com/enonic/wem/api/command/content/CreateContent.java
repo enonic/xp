@@ -20,6 +20,8 @@ public final class CreateContent
 
     private String displayName;
 
+    private String name;
+
     private ContentPath parentContentPath;
 
     private boolean temporary;
@@ -51,6 +53,12 @@ public final class CreateContent
     public CreateContent displayName( final String displayName )
     {
         this.displayName = displayName;
+        return this;
+    }
+
+    public CreateContent name( final String name )
+    {
+        this.name = name;
         return this;
     }
 
@@ -89,6 +97,11 @@ public final class CreateContent
     public String getDisplayName()
     {
         return displayName;
+    }
+
+    public String getName()
+    {
+        return name;
     }
 
     public boolean isTemporary()

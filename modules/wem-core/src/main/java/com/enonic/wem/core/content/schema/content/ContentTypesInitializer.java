@@ -103,7 +103,8 @@ public class ContentTypesInitializer
         {"demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json", "demo-contenttype-set.json", "demo-contenttype-blog.json",
             "demo-contenttype-article1.json", "demo-contenttype-article2.json", "demo-contenttype-relation.json",
             "demo-contenttype-occurrences.json", "demo-contenttype-contentDisplayNameScript.json", "demo-contenttype-mixin.json",
-            "demo-contenttype-image.json", "demo-contenttype-relation-article.json", "demo-contenttype-layout.json"};
+            "demo-contenttype-image.json", "demo-contenttype-relation-article.json", "demo-contenttype-layout.json",
+            "demo-contenttype-trampoline.json"};
 
     private final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer();
 
