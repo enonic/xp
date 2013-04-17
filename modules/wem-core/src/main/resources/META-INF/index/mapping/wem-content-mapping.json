@@ -11,27 +11,6 @@
         "date_detection": false,
         "numeric_detection": false,
         "properties": {
-            "displayname": {
-                "type": "multi_field",
-                "fields": {
-                    "displayname": {
-                        "include_in_all": true,
-                        "type": "string",
-                        "index": "analyzed",
-                        "analyzer": "keywordlowercase",
-                        "store": "no",
-                        "boost": "1.1"
-                    },
-                    "fulltext": {
-                        "include_in_all": false,
-                        "type": "string",
-                        "index": "analyzed",
-                        "search_analyzer": "fulltext_search",
-                        "index_analyzer": "fulltext_index",
-                        "store": "no"
-                    }
-                }
-            },
             "name": {
                 "type": "multi_field",
                 "fields": {
@@ -55,6 +34,43 @@
             }
         },
         "dynamic_templates": [
+            {
+                "template_displayname": {
+                    "match": "displayName",
+                    "mapping": {
+                        "type": "multi_field",
+                        "fields": {
+                            "{name}": {
+                                "type": "string",
+                                "index": "analyzed",
+                                "analyzer": "keywordlowercase",
+                                "store": "no",
+                                "include_in_all": true
+                            },
+                            "fulltext": {
+                                "include_in_all": false,
+                                "type": "string",
+                                "index": "analyzed",
+                                "search_analyzer": "fulltext_search",
+                                "index_analyzer": "fulltext_index",
+                                "store": "no"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "template_key": {
+                    "match": "key",
+                    "mapping": {
+                        "type": "string",
+                        "store": "no",
+                        "index": "analyzed",
+                        "analyzer": "keywordlowercase",
+                        "include_in_all": false
+                    }
+                }
+            },
             {
                 "template_userdata_orderby": {
                     "match": "*.orderby",
