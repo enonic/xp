@@ -27,17 +27,17 @@ Ext.define('Admin.controller.contentStudio.DialogWindowController', {
         var win = this.getSchemaWindow();
 
         switch (win.data.get('type')) {
-        case 'ContentType':
-            this.deleteContentType(win);
-            break;
-        case 'Mixin':
-            this.deleteMixin(win);
-            break;
-        case 'RelationshipType':
-            this.deleteRelationshipType(win);
-            break;
-        default:
-            break;
+            case 'ContentType':
+                this.deleteContentType(win);
+                break;
+            case 'Mixin':
+                this.deleteMixin(win);
+                break;
+            case 'RelationshipType':
+                this.deleteRelationshipType(win);
+                break;
+            default:
+                break;
         }
 
     },
@@ -53,7 +53,7 @@ Ext.define('Admin.controller.contentStudio.DialogWindowController', {
                 Admin.MessageBus.showFeedback({
                     title: 'Content Type was deleted',
                     message: Ext.isArray(contentType) && contentType.length > 1 ?
-                             contentType.length + ' content types were deleted' : '1 content type was deleted',
+                        contentType.length + ' content types were deleted' : '1 content type was deleted',
                     opts: {}
                 });
 
@@ -87,7 +87,7 @@ Ext.define('Admin.controller.contentStudio.DialogWindowController', {
 
                 Admin.MessageBus.showFeedback({
                     title: 'Mixin was deleted',
-                    message: mixin.get('displayName') + ' was deleted',
+                    message: '"' + mixin.get('displayName') + '" was deleted',
                     opts: {}
                 });
 
@@ -121,7 +121,7 @@ Ext.define('Admin.controller.contentStudio.DialogWindowController', {
 
                 Admin.MessageBus.showFeedback({
                     title: 'Relationship Type was deleted',
-                    message: relationshipType.get('displayName') + ' was deleted',
+                    message: '"' + relationshipType.get('displayName') + '" was deleted',
                     opts: {}
                 });
 
