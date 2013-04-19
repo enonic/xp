@@ -124,7 +124,9 @@ Ext.define('Admin.view.WizardHeader', {
 
     onDisplayNameAfterrender: function (field) {
         if (!field.readOnly && field.autoFocus) {
-            field.getFocusEl().focus(100);
+            field.focus(false, 100);
+            // Deselect text, for unknown reason text is always selected when focus is gained
+            field.selectText(0, 0);
         }
     },
 
@@ -142,7 +144,6 @@ Ext.define('Admin.view.WizardHeader', {
             var processedValue = this.nameField.processRawValue(this.preProcessName(newVal));
             this.nameField.setValue(processedValue);
         }
-
         this.nameField.growMax = this.el.getWidth() - 100;
         this.nameField.doComponentLayout();
     },
