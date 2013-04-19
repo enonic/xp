@@ -78,7 +78,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             displayName: (data && data.content) ? data.content.displayName : 'New Content',
             path: contentPath,
             name: contentName,
-            isRoot: isRoot
+            isRoot: isRoot,
+            isNew: isNew
         };
     },
 
@@ -141,7 +142,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
                 vtype: 'path'
             },
             displayNameConfig: {
-                autoFocus: !this.evaluateDisplayName || Ext.isEmpty(evaluateFn)
+                autoFocus: headerData.isNew && Ext.isEmpty(evaluateFn)
             },
             data: this.data,
             prepareHeaderData: this.prepareHeaderData
