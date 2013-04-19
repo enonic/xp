@@ -472,7 +472,7 @@ Ext.define('Admin.view.WizardPanel', {
         if (activeItem && (firstField = activeItem.down('field[disabled=false]'))) {
             firstField.focus(false);
             // Deselect text, for unknown reason text is always selected when focus is gained
-            if (firstField.selectText) {
+            if (firstField.rendered && firstField.selectText) {
                 firstField.selectText(0, 0);
             }
         }
