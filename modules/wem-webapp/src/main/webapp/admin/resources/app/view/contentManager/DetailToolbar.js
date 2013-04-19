@@ -47,7 +47,7 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
             {
                 xtype: 'cycle',
                 itemId: 'deviceCycle',
-                disabled: true,
+                disabled: !me.isLiveMode,
                 showText: true,
                 prependText: 'Device: ',
                 menu: {
