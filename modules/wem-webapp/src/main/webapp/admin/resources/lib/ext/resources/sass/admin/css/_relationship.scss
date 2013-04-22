@@ -1,143 +1,140 @@
 @mixin admin-relationship-bar {
-    position: absolute;
-    overflow: hidden;
-    background-color: #fff;
-    @include opacity(0.8);
-    width: 100%;
-    padding: 3px;
-    display: none;
+  position: absolute;
+  overflow: hidden;
+  background-color: #fff;
+  @include opacity(0.8);
+  width: 100%;
+  padding: 3px;
+  display: none;
 }
 
 .admin-relationship-combo {
-    position: relative;
+  position: relative;
 
-    input.admin-relationship-input {
-        height: 36px;
-        padding: 4px 4px 4px 58px;
-        font-size: 15px;
-        line-height: 16px;
-        margin-bottom: 10px;
-    }
+  input.admin-relationship-input {
+    height: 36px;
+    padding: 4px 4px 4px 58px;
+    font-size: 15px;
+    line-height: 16px;
+    margin-bottom: 10px;
+  }
 
-    .admin-image-icon {
-        position: absolute;
-        left: 13px;
-        top: 5px;
-        width: 25px;
-        height: 25px;
-        @include opacity(0.5);
-    }
+  .admin-image-icon {
+    position: absolute;
+    left: 13px;
+    top: 5px;
+    width: 25px;
+    height: 25px;
+    @include opacity(0.5);
+  }
 
-    .admin-library-button {
-        position: absolute;
-        right: 10px;
-        top: 9px;
-        text-decoration: none;
-    }
+  .admin-library-button {
+    position: absolute;
+    right: 10px;
+    top: 9px;
+    text-decoration: none;
+  }
 
 }
 
 .admin-relationship-list {
 
-    .x-boundlist-item {
-        padding: 8px;
+  .x-boundlist-item {
+    padding: 8px;
 
-        img {
-            float: left;
-        }
-
-        .info {
-            margin-left: 42px;
-
-            p {
-                margin: 0;
-            }
-        }
+    img {
+      float: left;
     }
+
+    .info {
+      margin-left: 42px;
+
+      p {
+        margin: 0;
+      }
+    }
+  }
 
 }
 
 .admin-relationship {
-    position: relative;
-    margin: 0 10px 10px 0;
-    float: left;
-    width: 140px;
-    height: 140px;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-color: #ccc;
+  position: relative;
+  margin: 0 10px 10px 0;
+  float: left;
+  width: 140px;
+  height: 140px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-color: #ccc;
 
-    .top-bar {
-        @include admin-relationship-bar();
-        top: 0;
-        text-align: right;
+  .top-bar {
+    @include admin-relationship-bar();
+    top: 0;
+    text-align: right;
+  }
+
+  .bottom-bar {
+    @include admin-relationship-bar();
+    bottom: 0;
+
+    h6 {
+      font-size: 11px !important;
+      line-height: 14px;
     }
+  }
 
+  &.over {
+
+    .top-bar,
     .bottom-bar {
-        @include admin-relationship-bar();
-        bottom: 0;
-
-        h6 {
-            font-size: 11px !important;
-            line-height: 14px;
-        }
+      display: block;
     }
-
-    &.over {
-
-        .top-bar,
-        .bottom-bar {
-            display: block;
-        }
-    }
+  }
 }
 
 .admin-relationship-combo-grayed-out-item {
-    color: lightgray;
-    font-style: italic;
-    cursor: default !important;
+  color: lightgray;
+  font-style: italic;
+  cursor: default !important;
 
-    img {
-        opacity: 0.5;
-    }
+  img {
+    opacity: 0.5;
+  }
 }
 
 .admin-related-item {
-    display: table;
-    margin: 5px 0;
+  display: table;
+  margin: 5px 0;
+  width: 100%;
+
+  img {
+    display: table-cell;
+    vertical-align: top;
+    padding-right: 10px;
+    width: 42px;
+  }
+
+  .center-column {
+    display: table-cell;
+    vertical-align: middle;
     width: 100%;
+  }
 
-    img {
-        display: table-cell;
-        vertical-align: top;
-        padding-right: 10px;
-        width: 42px;
-    }
-
-    .center-column {
-        display: table-cell;
-        vertical-align: middle;
-        width: 100%
-    }
-
-    .right-column {
-        display: table-cell;
-        vertical-align: middle;
-        text-align: right;
-
-        a {
-            color: black;
-        }
-    }
+  .right-column {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: right;
+    padding: 0 4px 0 10px;
+  }
 }
 
 .admin-relationship-library-icon {
-    background: url("../../../../../resources/images/folder-open.png") no-repeat;
+  background: url("../../../../../resources/images/folder-open.png") no-repeat;
 }
 
 .admin-related-item-disabled {
-    .right-column {
-        opacity: 0.5;
-    }
+  .right-column {
+    opacity: 0.5;
+  }
 }

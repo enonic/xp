@@ -22,42 +22,42 @@ Ext.define('Admin.view.TopBarMenuItem', {
         this.items = [];
         if (this.iconCls || this.iconSrc) {
             this.items.push({
-                                xtype: 'image',
-                                width: 32,
-                                height: 32,
-                                margin: '0 12px 0 0',
-                                cls: this.iconCls,
-                                src: this.iconSrc
-                            });
+                xtype: 'image',
+                width: 32,
+                height: 32,
+                margin: '0 12px 0 0',
+                cls: this.iconCls,
+                src: this.iconSrc
+            });
         }
         if (this.text1 || this.text2) {
             this.items.push({
-                                xtype: 'component',
-                                flex: 1,
-                                itemId: 'titleContainer',
-                                styleHtmlContent: true,
-                                tpl: '<strong>{text1}</strong><tpl if="text2"><br/><em>{text2}</em></tpl>',
-                                data: {
-                                    text1: this.text1,
-                                    text2: this.text2
-                                }
-                            });
+                xtype: 'component',
+                flex: 1,
+                itemId: 'titleContainer',
+                styleHtmlContent: true,
+                tpl: '<strong>{text1}</strong><tpl if="text2"><br/><em>{text2}</em></tpl>',
+                data: {
+                    text1: this.text1,
+                    text2: this.text2
+                }
+            });
         }
         if (this.closable !== false) {
             this.items.push({
-                                xtype: 'component',
-                                autoEl: 'a',
-                                cls: 'close-button',
-                                margins: '0 0 0 12px',
-                                listeners: {
-                                    afterrender: function (cmp) {
-                                        cmp.el.on('click', function () {
-                                            me.deactivate();
-                                            me.fireEvent('closeMenuItem', me);
-                                        });
-                                    }
-                                }
-                            });
+                xtype: 'component',
+                autoEl: 'a',
+                cls: 'close-button icon-remove icon-large',
+                margins: '0 0 0 12px',
+                listeners: {
+                    afterrender: function (cmp) {
+                        cmp.el.on('click', function () {
+                            me.deactivate();
+                            me.fireEvent('closeMenuItem', me);
+                        });
+                    }
+                }
+            });
         }
         this.callParent(arguments);
         this.addEvents('activate', 'deactivate', 'click', 'closeMenuItem');
@@ -108,8 +108,8 @@ Ext.define('Admin.view.TopBarMenuItem', {
 
     updateTitleContainer: function () {
         this.down('#titleContainer').update({
-                                                text1: this.text1,
-                                                text2: this.text2
-                                            });
+            text1: this.text1,
+            text2: this.text2
+        });
     }
 });
