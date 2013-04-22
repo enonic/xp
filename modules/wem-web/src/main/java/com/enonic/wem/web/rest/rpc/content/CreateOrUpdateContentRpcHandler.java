@@ -73,6 +73,7 @@ public final class CreateOrUpdateContentRpcHandler
             try
             {
                 final boolean temporary = context.param( "temporary" ).asBoolean( false );
+                final String contentName = context.param( "contentName" ).asString();
                 parentContentPath = contentPathOrNull( context.param( "parentContentPath" ).asString() );
                 if ( parentContentPath == null && !temporary )
                 {
@@ -89,6 +90,7 @@ public final class CreateOrUpdateContentRpcHandler
 
                 final CreateContent createContent = content().create().
                     parentContentPath( parentContentPath ).
+                    name( contentName ).
                     contentType( qualifiedContentTypeName ).
                     rootDataSet( rootDataSet ).
                     displayName( displayName ).

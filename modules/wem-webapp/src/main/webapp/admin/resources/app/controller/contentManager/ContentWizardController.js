@@ -58,6 +58,7 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
             'contentWizardPanel wizardHeader': {
                 displaynamechange: this.onDisplayNameChanged,
                 displaynameoverride: this.onDisplayNameOverriden,
+                nameoverride: this.onNameOverridden,
                 scope: this
             },
             'contentWizardPanel *[displayNameSource]': {
@@ -75,6 +76,11 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
     onDisplayNameOverriden: function (overriden) {
         var wizard = this.getContentWizardPanel();
         wizard.evaluateDisplayName = wizard.isNewContent() && !overriden;
+    },
+
+    onNameOverridden: function (overridden) {
+        var wizard = this.getContentWizardPanel();
+        wizard.contentNameOverridden = overridden;
     },
 
     onDisplayNameSourceChanged: function (field, event, opts) {
@@ -126,8 +132,9 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         var contentWizardData = contentWizard.getData();
         var contentData = contentWizardData.contentData;
         var displayName = contentWizardData.displayName;
-        var contentName = contentWizardData.name;
         var isNewContent = !content.path;
+        // if content name is not overridden on creation, it should be auto-generated in the server based on the displayname
+        var contentName = !isNewContent || contentWizard.contentNameOverridden ? contentWizardData.name : null;
 
         var contentParams = {
             contentData: contentData,
@@ -140,7 +147,16 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         };
 
         var onUpdateContentSuccess = function (created, updated, contentPath, contentId) {
+            var lastSlashIndex, contentName;
             if (contentPath) {
+                if (content.path !== contentPath) {
+                    // update content name, actually saved, in header (might be auto-generated in the server)
+                    lastSlashIndex = contentPath.lastIndexOf('/');
+                    if (lastSlashIndex >= 0) {
+                        contentName = contentPath.substring(lastSlashIndex + 1);
+                        contentWizard.getWizardHeader().setName(contentName);
+                    }
+                }
                 content.path = contentPath;
             }
             if (contentId) {

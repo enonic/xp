@@ -13,6 +13,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     border: 0,
     autoScroll: false,
     evaluateDisplayName: true,
+    contentNameOverridden: false,
 
     defaults: {
         border: false

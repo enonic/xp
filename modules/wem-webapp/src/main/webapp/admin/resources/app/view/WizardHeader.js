@@ -211,6 +211,10 @@ Ext.define('Admin.view.WizardHeader', {
 
     setDisplayName: function (displayName) {
         this.displayNameField.setValue(displayName);
+    },
+
+    setName: function (name) {
+        this.nameField.setValue(name);
     }
 
 });
