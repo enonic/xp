@@ -68,9 +68,14 @@
       height: 24px;
       display: block;
       border: 1px solid transparent;
-      background: transparent url(../themes/images/default/navigate_cross-24px.png) no-repeat -2px 0;
+      text-align: center;
+      text-decoration: none;
 
       @include a_hover;
+
+      &.icon-remove {
+        line-height: 1em;
+      }
     }
   }
 
@@ -100,16 +105,19 @@
   }
 
   .right {
-    margin: 2px 3px 0 0;
+    margin: 3px 3px 0 0;
 
     a {
-      width: 16px;
-      height: 16px;
       display: block;
       border: 1px solid transparent;
-      background: transparent url(../themes/images/default/navigate_cross-16px.png) no-repeat -1px 0;
+      text-align: center;
+      text-decoration: none;
 
       @include a_hover;
+
+      &.icon-remove {
+        line-height: 1em;
+      }
     }
   }
 
