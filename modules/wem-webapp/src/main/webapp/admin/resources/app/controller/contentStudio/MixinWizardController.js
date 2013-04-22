@@ -51,8 +51,8 @@ Ext.define('Admin.controller.contentStudio.MixinWizardController', {
                 }
 
                 Admin.MessageBus.showFeedback({
-                    title: data.displayName + ' was saved',
-                    message: data.displayName + ' was saved',
+                    title: '"' + data.displayName + '" was saved',
+                    message: '"' + data.displayName + '" was saved',
                     opts: {}
                 });
 
