@@ -89,7 +89,7 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
             me.appSelectorKeyMap.enable();
         }
 
-        appSelectorContainer.addCls('fade-in');
+        appSelectorContainer.addCls('fade-in-and-scale-up');
     },
 
 

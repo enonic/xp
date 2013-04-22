@@ -470,7 +470,11 @@ Ext.define('Admin.view.WizardPanel', {
         var activeItem = newStep || this.getActiveItem();
         var firstField;
         if (activeItem && (firstField = activeItem.down('field[disabled=false]'))) {
-            firstField.focus();
+            firstField.focus(false);
+            // Deselect text, for unknown reason text is always selected when focus is gained
+            if (firstField.rendered && firstField.selectText) {
+                firstField.selectText(0, 0);
+            }
         }
     },
 

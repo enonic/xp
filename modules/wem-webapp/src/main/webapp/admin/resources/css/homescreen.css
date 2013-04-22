@@ -168,11 +168,11 @@
     transition: all 300ms ease-out;
     -webkit-transition: all 300ms ease-out;
 
-    transform: scale(.9);
-    -webkit-transform: scale(.9);
+    transform: scale(.25);
+    -webkit-transform: scale(.25);
 }
 
-#admin-home-app-selector.fade-in {
+#admin-home-app-selector.fade-in-and-scale-up {
     opacity: 1 !important;
 
     transform: scale(1) !important;

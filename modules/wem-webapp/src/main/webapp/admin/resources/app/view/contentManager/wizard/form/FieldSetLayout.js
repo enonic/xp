@@ -12,17 +12,11 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldSetLayout', {
 
     padding: '0 0 0 0',
 
-    listeners: {
-        render: function () {
-            this.initLayout();
-        }
-    },
-
-
     initComponent: function () {
         this.title = this.fieldSetLayoutConfig.label;
 
         this.callParent(arguments);
+        this.initLayout();
     },
 
 
