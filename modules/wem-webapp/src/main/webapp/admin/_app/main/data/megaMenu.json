@@ -84,12 +84,12 @@
                 "menu": {
                     "items": [
                         {
-                            "text": "Content Studio",
+                            "text": "Schema Manager",
                             "id": "app-300",
                             "cms": {
-                                "appUrl": "app-content-studio.jsp"
+                                "appUrl": "app-schema-manager.jsp"
                             },
-                            "iconCls": "icon-content-studio-24"
+                            "iconCls": "icon-schema-manager-24"
                         },
                         {
                             "text": "Modules",

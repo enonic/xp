@@ -3,8 +3,8 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
     alias: 'widget.newContentWindow',
 
     requires: [
-        'Admin.model.contentStudio.ContentTypeModel',
-        'Admin.store.contentStudio.ContentTypeTreeStore'
+        'Admin.model.schemaManager.ContentTypeModel',
+        'Admin.store.schemaManager.ContentTypeTreeStore'
     ],
 
     dialogTitle: undefined,
@@ -57,7 +57,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
 
         // Recent section
         var recentContentTypesStore = Ext.create('Ext.data.Store', {
-            model: 'Admin.model.contentStudio.ContentTypeModel'
+            model: 'Admin.model.schemaManager.ContentTypeModel'
         });
 
         this.updateRecentItems(recentContentTypesStore);
@@ -69,7 +69,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
 
         // Recommended section
         var recommendedContentTypesStore = Ext.create('Ext.data.Store', {
-            model: 'Admin.model.contentStudio.ContentTypeModel',
+            model: 'Admin.model.schemaManager.ContentTypeModel',
             data: [
                 { iconUrl: '/enonic/admin/rest/schema/image/ContentType:system:structured', name: 'Advanced Data', qualifiedName: 'path/1' }
             ],
@@ -84,7 +84,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
         }, baseDataViewConfig);
 
         // All section
-        var allContentTypesStore = Ext.create('Admin.store.contentStudio.ContentTypeStore', {
+        var allContentTypesStore = Ext.create('Admin.store.schemaManager.ContentTypeStore', {
             remoteSort: false,
             sorters: [
                 {
@@ -255,7 +255,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
 
     parseContentType: function (string) {
         var json = Ext.JSON.decode(string, true);
-        return Ext.create('Admin.model.contentStudio.ContentTypeModel', json);
+        return Ext.create('Admin.model.schemaManager.ContentTypeModel', json);
     }
 
 });
