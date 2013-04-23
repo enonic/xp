@@ -1,6 +1,6 @@
 /*---- 16 px icons -----*/
 
-.icon-content-studio-16 {
+.icon-schema-manager-16 {
     background: transparent url("../images/icons/16x16/cubes.png") 0 0 no-repeat !important;
 }
 
@@ -13,7 +13,6 @@
     background-image: url("../images/eye32.png") !important;
     background-size: 100% auto;
 }
-
 
 /*---- 24 px icons -----*/
 
@@ -29,7 +28,7 @@
     background: transparent url("../images/icons/24x24/data_blue.png") 0 0 no-repeat !important;
 }
 
-.icon-content-studio-24 {
+.icon-schema-manager-24 {
     background: transparent url("../images/icons/24x24/cubes.png") 0 0 no-repeat !important;
 }
 
@@ -281,21 +280,19 @@
     background: transparent url("../images/icons/128x128/userstore.png") 0 0 no-repeat !important;
 }
 
-.icon-content-studio-128 {
+.icon-schema-manager-128 {
     background: transparent url("../images/icons/128x128/cubes.png") 0 0 no-repeat !important;
 }
 
-.icon-toolbar-settings
-{
+.icon-toolbar-settings {
     background-image: url("../images/icons/cog.svg") !important;
     background-size: 24px;
     background-repeat: no-repeat;
     opacity: 0.4;
-    filter: alpha(opacity=40); /* For IE8 and earlier */
+    filter: alpha(opacity = 40); /* For IE8 and earlier */
 }
 
-.icon-toolbar-settings:hover
-{
+.icon-toolbar-settings:hover {
     opacity: 0.6;
-    filter: alpha(opacity=60); /* For IE8 and earlier */
+    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }

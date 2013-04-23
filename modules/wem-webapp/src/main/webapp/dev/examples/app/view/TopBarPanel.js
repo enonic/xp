@@ -130,8 +130,8 @@ Ext.define('Admin.view.TopBarPanel', {
                     cls: 'span2 administrators'
                 },
                 {
-                    title: 'Content Studio',
-                    cls: 'content-studio'
+                    title: 'Schema Manager',
+                    cls: 'schema-manager'
                 },
                 {
                     title: 'Live Trace',
