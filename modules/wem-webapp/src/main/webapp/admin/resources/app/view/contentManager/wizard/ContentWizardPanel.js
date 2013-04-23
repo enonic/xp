@@ -47,20 +47,20 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         var isRoot = false;
         var isNew = true;
 
-        if (data.content) {
-            if (!Ext.isEmpty(data.content.path)) {
-                contentPath = data.content.path;
+        if (this.content) {
+            if (!Ext.isEmpty(this.content.path)) {
+                contentPath = this.content.path;
                 isNew = false;
             }
-            if (Ext.isDefined(data.content.isRoot)) {
-                isRoot = data.content.isRoot;
+            if (Ext.isDefined(this.content.isRoot)) {
+                isRoot = this.content.isRoot;
             }
         }
-        if (isNew && data.contentParent) {
-            if (!Ext.isEmpty(data.contentParent.path)) {
+        if (isNew && this.contentParent) {
+            if (!Ext.isEmpty(this.contentParent.path)) {
                 // content is deletable if not root
-                var isParentRoot = !data.contentParent.deletable || false;
-                contentPath = data.contentParent.path + (isParentRoot ? '' : '/');
+                var isParentRoot = !this.contentParent.deletable || false;
+                contentPath = this.contentParent.path + (isParentRoot ? '' : '/');
             }
         }
 
@@ -74,8 +74,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         }
 
         return {
-            imageUrl: (data && data.content) ? data.content.iconUrl : undefined,
-            displayName: (data && data.content) ? data.content.displayName : 'New Content',
+            imageUrl: this.content ? this.content.iconUrl : undefined,
+            displayName: this.content ? this.content.displayName : 'New Content',
             path: contentPath,
             name: contentName,
             isRoot: isRoot,
@@ -85,10 +85,10 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
 
     createSteps: function () {
         var dataStep = {
-            stepTitle: ( this.data && this.data.contentType ) ? this.data.contentType.displayName : "Data",
+            stepTitle: this.contentType ? this.contentType.displayName : "Data",
             xtype: 'contentDataPanel',
-            contentType: this.data ? this.data.contentType : undefined,
-            content: this.data ? this.data.content : null
+            contentType: this.contentType,
+            content: this.content
         };
         var metaStep = {
             stepTitle: 'Meta',
@@ -111,7 +111,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     },
 
     isNewContent: function () {
-        return !this.data || !this.data.content || Ext.isEmpty(this.data.content.path);
+        return !this.data || !this.content || Ext.isEmpty(this.content.path);
     },
 
     washDirtyForms: function () {
@@ -133,7 +133,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
 
     createWizardHeader: function () {
         var headerData = this.prepareHeaderData(this.data);
-        var evaluateFn = this.data && this.data.contentType && this.data.contentType.contentDisplayNameScript;
+        var evaluateFn = this.data && this.contentType && this.contentType.contentDisplayNameScript;
         var wizardHeader = Ext.create('Admin.view.WizardHeader', {
             xtype: 'wizardHeader',
             nameConfig: {
@@ -170,7 +170,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             listeners: {
                 render: function (cmp) {
 
-                    var contentType = (me.data && me.data.contentType) ? me.data.contentType : undefined;
+                    var contentType = (me.data && me.contentType) ? me.contentType : undefined;
                     if (contentType) {
                         var toolText = '<strong>' + contentType.displayName + '</strong></br>' +
                                        contentType.module + ':' + contentType.name;
