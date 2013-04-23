@@ -13,6 +13,10 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
         'Admin.view.homescreen.AppSelector'
     ],
 
+    requires: [
+        'Admin.MessageBus'
+    ],
+
     appSelectorKeyMap: undefined,
     currentTileIndex: -1,
 
