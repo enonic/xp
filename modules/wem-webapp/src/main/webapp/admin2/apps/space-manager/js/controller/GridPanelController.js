@@ -1,13 +1,13 @@
-Ext.define('Admin.controller.spaceAdmin.GridPanelController', {
-    extend: 'Admin.controller.spaceAdmin.Controller',
+Ext.define('Admin.controller.GridPanelController', {
+    extend: 'Admin.controller.Controller',
 
     stores: [],
 
     models: [],
 
     views: [
-        'Admin.view.spaceAdmin.TreeGridPanel',
-        'Admin.view.spaceAdmin.ContextMenu'
+        'Admin.view.TreeGridPanel',
+        'Admin.view.ContextMenu'
     ],
 
     init: function () {

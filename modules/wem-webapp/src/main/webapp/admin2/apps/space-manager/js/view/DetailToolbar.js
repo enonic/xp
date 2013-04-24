@@ -1,4 +1,4 @@
-Ext.define('Admin.view.spaceAdmin.DetailToolbar', {
+Ext.define('Admin.view.DetailToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.spaceDetailToolbar',
 

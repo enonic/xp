@@ -1,11 +1,11 @@
-Ext.define('Admin.view.spaceAdmin.wizard.WizardPanel', {
+Ext.define('Admin.view.wizard.WizardPanel', {
     extend: 'Admin.view.WizardPanel',
     alias: 'widget.spaceAdminWizardPanel',
     requires: [
         'Admin.view.WizardHeader',
-        'Admin.view.spaceAdmin.wizard.Toolbar',
+        'Admin.view.wizard.Toolbar',
         'Admin.plugin.fileupload.PhotoUploadButton',
-        'Admin.view.spaceAdmin.wizard.SpaceStepPanel'
+        'Admin.view.wizard.SpaceStepPanel'
     ],
     border: 0,
     autoScroll: true,

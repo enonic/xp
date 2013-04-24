@@ -1,4 +1,4 @@
-Ext.define('Admin.view.spaceAdmin.ContextMenu', {
+Ext.define('Admin.view.ContextMenu', {
     extend: 'Admin.view.BaseContextMenu',
     alias: 'widget.spaceContextMenu',
 

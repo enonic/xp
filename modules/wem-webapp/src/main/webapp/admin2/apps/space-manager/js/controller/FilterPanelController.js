@@ -1,5 +1,5 @@
-Ext.define('Admin.controller.spaceAdmin.FilterPanelController', {
-    extend: 'Admin.controller.spaceAdmin.Controller',
+Ext.define('Admin.controller.FilterPanelController', {
+    extend: 'Admin.controller.Controller',
 
     /*      Controller for handling filter panel UI events       */
 

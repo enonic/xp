@@ -1,7 +1,7 @@
-Ext.define('Admin.store.spaceAdmin.SpaceStore', {
+Ext.define('Admin.store.SpaceStore', {
     extend: 'Ext.data.Store',
 
-    model: 'Admin.model.spaceAdmin.SpaceModel',
+    model: 'Admin.model.SpaceModel',
 
     pageSize: 100,
     autoLoad: true,

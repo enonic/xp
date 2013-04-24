@@ -1,4 +1,4 @@
-Ext.define('Admin.view.spaceAdmin.wizard.SpaceStepPanel', {
+Ext.define('Admin.view.wizard.SpaceStepPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.spaceStepPanel',
 

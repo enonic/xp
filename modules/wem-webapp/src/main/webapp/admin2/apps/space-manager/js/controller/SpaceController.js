@@ -1,5 +1,5 @@
-Ext.define('Admin.controller.spaceAdmin.SpaceController', {
-    extend: 'Admin.controller.spaceAdmin.Controller',
+Ext.define('Admin.controller.SpaceController', {
+    extend: 'Admin.controller.Controller',
 
     /*      Base controller for Space model     */
 
@@ -25,7 +25,7 @@ Ext.define('Admin.controller.spaceAdmin.SpaceController', {
 
     remoteDeleteSpace: function (spaces, callback) {
         var me = this;
-        var spaceNames = Ext.Array.map([].concat(spaces), function(item) {
+        var spaceNames = Ext.Array.map([].concat(spaces), function (item) {
             return item.get('name');
         });
         Admin.lib.RemoteService.space_delete({"spaceName": spaceNames}, function (r) {

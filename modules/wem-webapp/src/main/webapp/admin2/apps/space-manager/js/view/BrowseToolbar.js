@@ -1,4 +1,4 @@
-Ext.define('Admin.view.spaceAdmin.BrowseToolbar', {
+Ext.define('Admin.view.BrowseToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.spaceBrowseToolbar',
 

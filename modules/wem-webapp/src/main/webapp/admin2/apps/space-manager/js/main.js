@@ -2,26 +2,26 @@ Ext.application({
     name: 'spaceAdmin',
 
     controllers: [
-        'Admin.controller.spaceAdmin.FilterPanelController',
-        'Admin.controller.spaceAdmin.GridPanelController',
-        'Admin.controller.spaceAdmin.BrowseToolbarController',
-        'Admin.controller.spaceAdmin.DetailPanelController',
-        'Admin.controller.spaceAdmin.DetailToolbarController',
-        'Admin.controller.spaceAdmin.DialogWindowController',
-        'Admin.controller.spaceAdmin.WizardController'
+        'Admin.controller.FilterPanelController',
+        'Admin.controller.GridPanelController',
+        'Admin.controller.BrowseToolbarController',
+        'Admin.controller.DetailPanelController',
+        'Admin.controller.DetailToolbarController',
+        'Admin.controller.DialogWindowController',
+        'Admin.controller.WizardController'
     ],
 
     stores: [
-        'Admin.store.spaceAdmin.SpaceStore',
-        'Admin.store.spaceAdmin.SpaceTreeStore'
+        'Admin.store.SpaceStore',
+        'Admin.store.SpaceTreeStore'
     ],
 
     requires: [
         'Admin.view.TabPanel',
-        'Admin.view.spaceAdmin.FilterPanel',
-        'Admin.view.spaceAdmin.BrowseToolbar',
-        'Admin.view.spaceAdmin.TreeGridPanel',
-        'Admin.view.spaceAdmin.DetailPanel',
+        'Admin.view.FilterPanel',
+        'Admin.view.BrowseToolbar',
+        'Admin.view.TreeGridPanel',
+        'Admin.view.DetailPanel',
         'Admin.MessageBus',
         'Admin.NotificationManager',
         'Admin.view.TabPanel'

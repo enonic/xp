@@ -1,7 +1,7 @@
-Ext.define('Admin.store.spaceAdmin.SpaceTreeStore', {
+Ext.define('Admin.store.SpaceTreeStore', {
     extend: 'Ext.data.TreeStore',
 
-    model: 'Admin.model.spaceAdmin.SpaceModel',
+    model: 'Admin.model.SpaceModel',
 
     proxy: {
         type: 'ajax',

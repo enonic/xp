@@ -1,4 +1,4 @@
-Ext.define('Admin.view.spaceAdmin.DeleteSpaceWindow', {
+Ext.define('Admin.view.DeleteSpaceWindow', {
     extend: 'Admin.view.BaseDialogWindow',
     alias: 'widget.deleteSpaceWindow',
 

@@ -1,10 +1,10 @@
-Ext.define('Admin.controller.spaceAdmin.DialogWindowController', {
-    extend: 'Admin.controller.spaceAdmin.SpaceController',
+Ext.define('Admin.controller.DialogWindowController', {
+    extend: 'Admin.controller.SpaceController',
 
     stores: [],
     models: [],
     views: [
-        'Admin.view.spaceAdmin.DeleteSpaceWindow'
+        'Admin.view.DeleteSpaceWindow'
     ],
 
 

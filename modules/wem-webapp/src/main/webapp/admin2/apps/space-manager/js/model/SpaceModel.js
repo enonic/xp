@@ -1,4 +1,4 @@
-Ext.define('Admin.model.spaceAdmin.SpaceModel', {
+Ext.define('Admin.model.SpaceModel', {
     extend: 'Ext.data.Model',
 
     fields: [

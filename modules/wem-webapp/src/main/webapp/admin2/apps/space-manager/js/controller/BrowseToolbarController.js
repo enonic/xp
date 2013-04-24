@@ -1,12 +1,12 @@
-Ext.define('Admin.controller.spaceAdmin.BrowseToolbarController', {
-    extend: 'Admin.controller.spaceAdmin.Controller',
+Ext.define('Admin.controller.BrowseToolbarController', {
+    extend: 'Admin.controller.Controller',
 
     /*      Controller for handling Toolbar UI events       */
 
     stores: [],
     models: [],
     views: [
-        'Admin.view.spaceAdmin.wizard.WizardPanel'
+        'Admin.view.wizard.WizardPanel'
     ],
 
     init: function () {

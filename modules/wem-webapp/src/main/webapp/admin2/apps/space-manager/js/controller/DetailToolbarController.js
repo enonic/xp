@@ -1,5 +1,5 @@
-Ext.define('Admin.controller.spaceAdmin.DetailToolbarController', {
-    extend: 'Admin.controller.spaceAdmin.Controller',
+Ext.define('Admin.controller.DetailToolbarController', {
+    extend: 'Admin.controller.Controller',
 
     stores: [
     ],
@@ -7,7 +7,7 @@ Ext.define('Admin.controller.spaceAdmin.DetailToolbarController', {
     models: [
     ],
     views: [
-        'Admin.view.spaceAdmin.DetailToolbar'
+        'Admin.view.DetailToolbar'
     ],
 
     init: function () {

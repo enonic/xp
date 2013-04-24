@@ -1,5 +1,5 @@
-Ext.define('Admin.controller.spaceAdmin.WizardController', {
-    extend: 'Admin.controller.spaceAdmin.SpaceController',
+Ext.define('Admin.controller.WizardController', {
+    extend: 'Admin.controller.SpaceController',
 
     /*      Controller for handling Space Wizard UI events       */
 

@@ -1,12 +1,12 @@
-Ext.define('Admin.controller.spaceAdmin.DetailPanelController', {
-    extend: 'Admin.controller.spaceAdmin.Controller',
+Ext.define('Admin.controller.DetailPanelController', {
+    extend: 'Admin.controller.Controller',
 
     /*      Controller for handling detail panel UI events       */
 
     stores: [],
     models: [],
     views: [
-        'Admin.view.spaceAdmin.DetailPanel'
+        'Admin.view.DetailPanel'
     ],
 
     init: function () {
