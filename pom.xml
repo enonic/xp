@@ -26,7 +26,8 @@
     <module>modules/wem-core</module>
     <module>modules/wem-migrate</module>
     <module>modules/wem-web</module>
-    <module>modules/wem-taglib</module>
+    <module>modules/wem-portal</module>
+    <module>modules/wem-admin</module>
     <module>modules/wem-webapp</module>
     <module>modules/wem-itest</module>
   </modules>
