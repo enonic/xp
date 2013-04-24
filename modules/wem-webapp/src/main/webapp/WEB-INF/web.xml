@@ -22,4 +22,15 @@
     </jsp-property-group>
   </jsp-config>
 
+  <servlet>
+    <servlet-name>site</servlet-name>
+    <servlet-class>com.enonic.wem.portal.servlet.PortalServlet</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>site</servlet-name>
+    <url-pattern>/site/*</url-pattern>
+  </servlet-mapping>
+
 </web-app>
