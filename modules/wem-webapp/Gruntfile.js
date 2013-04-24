@@ -7,15 +7,15 @@ module.exports = function(grunt) {
     grunt.initConfig({
 
 		typescript: {
-        	/*api: {
-            	src: ['src/api/Main.ts'],
-            	dest: 'target/api.js',
+        	api: {
+            	src: ['src/main/webapp/admin2/api/js/main.ts'],
+            	dest: 'src/main/webapp/admin2/api/js/all.js',
             	options: {
               		target: 'es5',
 				  	sourcemap: true,
 				  	declaration: true 
             	}
-          	},*/
+          	},
         	space_manager: {
             	src: ['src/main/webapp/admin2/apps/space-manager/js/main.ts'],
             	dest: 'src/main/webapp/admin2/apps/space-manager/js/all.js',
