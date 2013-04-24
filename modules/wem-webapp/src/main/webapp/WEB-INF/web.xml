@@ -12,6 +12,11 @@
     <mime-type>application/json</mime-type>
   </mime-mapping>
 
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+
   <jsp-config>
     <jsp-property-group>
       <description>Property group for common configuration for all the JSP's</description>
@@ -21,5 +26,6 @@
       <page-encoding>UTF-8</page-encoding>
     </jsp-property-group>
   </jsp-config>
+
 
 </web-app>
