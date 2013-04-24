@@ -3,7 +3,6 @@ Ext.define('Admin.view.TreeGridPanel', {
     alias: 'widget.spaceTreeGrid',
 
     store: 'Admin.store.SpaceStore',
-    treeStore: 'Admin.store.SpaceTreeStore',
 
     border: false,
 

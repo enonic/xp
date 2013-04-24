@@ -2,8 +2,7 @@ Ext.define('Admin.controller.Controller', {
     extend: 'Ext.app.Controller',
 
     stores: [
-        'Admin.store.SpaceStore',
-        'Admin.store.SpaceTreeStore'
+        'Admin.store.SpaceStore'
     ],
 
     models: [

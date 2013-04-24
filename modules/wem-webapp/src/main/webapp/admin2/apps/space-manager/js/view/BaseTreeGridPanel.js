@@ -26,41 +26,6 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
     initComponent: function () {
         var me = this;
 
-        var treeColumns = Ext.clone(this.columns);
-        if (Ext.isEmpty(treeColumns)) {
-            throw "this.columns can't be null";
-        }
-
-        treeColumns[0].xtype = 'treecolumn';
-        // We don't need renderer for tree column
-        //delete treeColumns[0].renderer;
-
-        var treeSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
-            keyField: me.keyField
-        });
-
-        var treePanel = {
-            xtype: 'treepanel',
-            cls: 'admin-tree',
-            hideHeaders: true,
-            itemId: 'tree',
-            useArrows: true,
-            border: false,
-            rootVisible: false,
-
-            viewConfig: {
-                trackOver: true,
-                stripeRows: true,
-                loadMask: {
-                    store: me.treeStore
-                }
-            },
-            store: this.treeStore,
-            columns: treeColumns,
-            plugins: [treeSelectionPlugin]
-        };
-        treePanel = Ext.apply(treePanel, me.treeConf);
-
         var gridSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
             keyField: me.keyField
         });
@@ -84,7 +49,7 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
         };
         gridPanel = Ext.apply(gridPanel, me.gridConf);
 
-        this.items = [treePanel, gridPanel];
+        this.items = [gridPanel];
         this.callParent(arguments);
 
         var grid = this.down('#grid');
@@ -99,19 +64,6 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
             plugins: ['gridToolbarPlugin']
         });
         grid.getStore().on('datachanged', this.fireUpdateEvent, this);
-
-        var tree = this.down('#tree');
-        tree.addDocked({
-            xtype: 'toolbar',
-            itemId: 'selectionToolbar',
-            cls: 'admin-white-toolbar',
-            dock: 'top',
-            store: this.treeStore,
-            gridPanel: tree,
-            resultCountHidden: true,
-            countTopLevelOnly: true,
-            plugins: ['gridToolbarPlugin']
-        });
 
         this.addEvents('datachanged');
     },
@@ -149,17 +101,7 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
         var keys = [].concat(key);
         var i;
 
-        if (activeList.xtype === 'treepanel') {
-            var rootNode = activeList.getRootNode(),
-                node;
-            for (i = 0; i < keys.length; i++) {
-                node = rootNode.findChild(this.keyField, keys[i], true);
-                if (node) {
-                    selModel.select(node, keepExisting);
-                }
-            }
-        }
-        else if (activeList.xtype === 'grid') {
+        if (activeList.xtype === 'grid') {
             var store = activeList.getStore(),
                 record;
             for (i = 0; i < keys.length; i++) {
@@ -186,17 +128,7 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
                 selModel.deselectAll();
             }
         } else {
-            if (activeList.xtype === 'treepanel') {
-                var selNodes = selModel.getSelection();
-                var i;
-                for (i = 0; i < selNodes.length; i++) {
-                    var selNode = selNodes[i];
-                    // need to use == instead of === because of 6 == "6" while 6 !== "6"
-                    if (key == selNode.get(this.keyField)) {
-                        selModel.deselect(selNode);
-                    }
-                }
-            } else if (activeList.xtype === 'grid') {
+            if (activeList.xtype === 'grid') {
                 var record = activeList.getStore().findRecord(this.keyField, key);
                 if (record) {
                     selModel.deselect(record);
@@ -221,11 +153,8 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
 
     removeAll: function () {
         var activeList = this.getActiveList();
-        if (activeList.xtype === 'treepanel') {
-            activeList.getRootNode().removeAll();
-        } else {
-            activeList.removeAll();
-        }
+
+        activeList.removeAll();
     },
 
     refresh: function () {
@@ -235,10 +164,7 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
 
         if (!currentStore.loading) {
 
-            if (activeList.xtype === 'treepanel') {
-                currentStore.load();
-            }
-            else if (activeList.xtype === 'grid') {
+            if (activeList.xtype === 'grid') {
                 currentStore.loadPage(currentStore.currentPage);
             }
         }

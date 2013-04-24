@@ -3,8 +3,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     alias: 'widget.detailPanel',
     requires: [
         'Admin.view.DropDownButton',
-        'Admin.view.BaseContextMenu',
-        'Admin.view.IframeContainer'
+        'Admin.view.BaseContextMenu'
     ],
 
     layout: 'card',

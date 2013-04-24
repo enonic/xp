@@ -12,8 +12,7 @@ Ext.application({
     ],
 
     stores: [
-        'Admin.store.SpaceStore',
-        'Admin.store.SpaceTreeStore'
+        'Admin.store.SpaceStore'
     ],
 
     requires: [
