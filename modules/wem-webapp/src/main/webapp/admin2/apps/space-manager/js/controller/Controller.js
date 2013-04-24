@@ -19,7 +19,6 @@ Ext.define('Admin.controller.Controller', {
         'Admin.lib.RemoteService'
     ],
 
-
     init: function () {
         var me = this;
 

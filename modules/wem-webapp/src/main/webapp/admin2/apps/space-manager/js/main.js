@@ -15,17 +15,6 @@ Ext.application({
         'Admin.store.SpaceStore'
     ],
 
-    requires: [
-        'Admin.view.TabPanel',
-        'Admin.view.FilterPanel',
-        'Admin.view.BrowseToolbar',
-        'Admin.view.TreeGridPanel',
-        'Admin.view.DetailPanel',
-        'Admin.MessageBus',
-        'Admin.NotificationManager',
-        'Admin.view.TabPanel'
-    ],
-
     launch: function () {
 
         Ext.create('Ext.container.Viewport', {
