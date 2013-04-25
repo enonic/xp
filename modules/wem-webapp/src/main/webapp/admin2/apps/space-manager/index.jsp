@@ -75,32 +75,32 @@
 <script type="text/javascript" src="js/view/WizardHeader.js"></script>
 <script type="text/javascript" src="js/view/WizardPanel.js"></script>
 
-<script type="text/javascript" src="js/view/BaseContextMenu.js"></script>
-<script type="text/javascript" src="js/view/DropDownButton.js"></script>
-<script type="text/javascript" src="js/view/BaseDetailPanel.js"></script>
-<script type="text/javascript" src="js/view/DetailToolbar.js"></script>
-<script type="text/javascript" src="js/view/DetailPanel.js"></script>
+<script type="text/javascript" src="js/view/BaseContextMenu.ts"></script>
+<script type="text/javascript" src="js/view/DropDownButton.ts"></script>
+<script type="text/javascript" src="js/view/BaseDetailPanel.ts"></script>
+<script type="text/javascript" src="js/view/DetailToolbar.ts"></script>
+<script type="text/javascript" src="js/view/DetailPanel.ts"></script>
 
-<script type="text/javascript" src="js/view/BaseDialogWindow.js"></script>
-<script type="text/javascript" src="js/view/DeleteSpaceWindow.js"></script>
+<script type="text/javascript" src="js/view/BaseDialogWindow.ts"></script>
+<script type="text/javascript" src="js/view/DeleteSpaceWindow.ts"></script>
 
-<script type="text/javascript" src="js/view/BaseTreeGridPanel.js"></script>
-<script type="text/javascript" src="js/view/TreeGridPanel.js"></script>
+<script type="text/javascript" src="js/view/BaseTreeGridPanel.ts"></script>
+<script type="text/javascript" src="js/view/TreeGridPanel.ts"></script>
 
-<script type="text/javascript" src="js/view/ContextMenu.js"></script>
+<script type="text/javascript" src="js/view/ContextMenu.ts"></script>
 
-<script type="text/javascript" src="js/view/wizard/Toolbar.js"></script>
-<script type="text/javascript" src="js/view/wizard/SpaceStepPanel.js"></script>
-<script type="text/javascript" src="js/view/wizard/WizardPanel.js"></script>
+<script type="text/javascript" src="js/view/wizard/Toolbar.ts"></script>
+<script type="text/javascript" src="js/view/wizard/SpaceStepPanel.ts"></script>
+<script type="text/javascript" src="js/view/wizard/WizardPanel.ts"></script>
 
-<script type="text/javascript" src="js/view/AdminImageButton.js"></script>
+<script type="text/javascript" src="js/view/AdminImageButton.ts"></script>
 <script type="text/javascript" src="js/view/TopBarMenuItem.js"></script>
-<script type="text/javascript" src="js/view/TopBarMenu.js"></script>
-<script type="text/javascript" src="js/view/TopBar.js"></script>
-<script type="text/javascript" src="js/view/TabPanel.js"></script>
-<script type="text/javascript" src="js/view/BaseFilterPanel.js"></script>
-<script type="text/javascript" src="js/view/FilterPanel.js"></script>
-<script type="text/javascript" src="js/view/BrowseToolbar.js"></script>
+<script type="text/javascript" src="js/view/TopBarMenu.ts"></script>
+<script type="text/javascript" src="js/view/TopBar.ts"></script>
+<script type="text/javascript" src="js/view/TabPanel.ts"></script>
+<script type="text/javascript" src="js/view/BaseFilterPanel.ts"></script>
+<script type="text/javascript" src="js/view/FilterPanel.ts"></script>
+<script type="text/javascript" src="js/view/BrowseToolbar.ts"></script>
 
 <script type="text/javascript" src="js/controller/Controller.js"></script>
 <script type="text/javascript" src="js/controller/SpaceController.js"></script>
