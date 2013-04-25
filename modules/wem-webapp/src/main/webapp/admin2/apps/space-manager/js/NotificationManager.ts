@@ -76,7 +76,7 @@ Ext.define('Admin.NotificationManager', {
         // check position or set to default
         (pos[0] == 't') || (pos[0] == 'b') || (me.position = pos = 'b');
         // align verticaly
-        me.getEl().setStyle((pos[0] == 't') ? { top: 0 } : { bottom: 0 });
+        me.getEl().setStyle(((pos[0] == 't') ? 'top' : 'bottom'), 0);
         // align horizontaly
         me.getWrapperEl().setStyle((pos[1] != 'r') ? (pos[1] == 'l') ? { marginLeft: 0 } : { margin: 'auto' } : { marginRight: 0 });
     },
