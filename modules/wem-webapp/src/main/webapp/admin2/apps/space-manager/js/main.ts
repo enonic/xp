@@ -1,3 +1,5 @@
+///<reference path='../../../api/js/api.d.ts' />
+
 ///<reference path='lib/Ping.ts' />
 
 ///<reference path='lib/UriHelper.ts' />

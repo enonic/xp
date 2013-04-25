@@ -9,7 +9,7 @@ module.exports = function (grunt) {
         typescript: {
             api: {
                 src: ['src/main/webapp/admin2/api/js/main.ts'],
-                dest: 'src/main/webapp/admin2/api/js/all.js',
+                dest: 'src/main/webapp/admin2/api/js/api.js',
                 options: {
                     // target: 'es5',
                     sourcemap: true,

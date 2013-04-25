@@ -1,4 +1,4 @@
 var admin;
 (function (admin) {
     })(admin || (admin = {}));
-//@ sourceMappingURL=all.js.map
+//@ sourceMappingURL=api.js.map
