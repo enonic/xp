@@ -46,13 +46,12 @@
 
 
 <!-- TODO: Inline everything. -->
-<script type="text/javascript" src="../../../admin/resources/app/view/XTemplates.js"></script>
+<!--script type="text/javascript" src="../../../admin/resources/app/view/XTemplates.js"></script-->
 
 <!-- Third party plugins -->
 <script type="text/javascript" src="../../../admin/resources/lib/plupload/js/plupload.full.js"></script>
 
-
-<script type="text/javascript" src="js/lib/Ping.js"></script>
+<!--script type="text/javascript" src="js/lib/Ping.js"></script>
 
 <script type="text/javascript" src="js/lib/UriHelper.js"></script>
 <script type="text/javascript" src="js/lib/JsonRpcProvider.js"></script>
@@ -113,7 +112,9 @@
 <script type="text/javascript" src="js/controller/DialogWindowController.js"></script>
 <script type="text/javascript" src="js/controller/WizardController.js"></script>
 
-<!-- Application -->
-<script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript" src="js/main.js"></script-->
+
+<script type="text/javascript" src="js/all.js"></script>
+
 </body>
 </html>
