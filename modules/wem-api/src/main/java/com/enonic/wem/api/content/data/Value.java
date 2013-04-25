@@ -194,7 +194,7 @@ public class Value
 
     public Property newData( final String name )
     {
-        return getType().newData( name, this );
+        return getType().newProperty( name, this );
     }
 
     public static class Builder

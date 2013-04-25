@@ -25,7 +25,7 @@ public class WholeNumber
     }
 
     @Override
-    public Property newData( final String name, final Value value )
+    public Property newProperty( final String name, final Value value )
     {
         return new Property.WholeNumber( name, value );
     }

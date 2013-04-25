@@ -26,7 +26,7 @@ public class HtmlPart
     }
 
     @Override
-    public Property newData( final String name, final Value value )
+    public Property newProperty( final String name, final Value value )
     {
         return new Property.HtmlPart( name, value );
     }
