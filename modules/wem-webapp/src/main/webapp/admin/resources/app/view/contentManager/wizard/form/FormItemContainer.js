@@ -8,7 +8,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemContainer', {
 
     field: undefined,
 
-    padding: '0 0 5 0',
+    padding: '0 0 10 0',
 
     listeners: {
         afterrender: function () {
@@ -35,7 +35,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemContainer', {
                 dockedItems: [
                     {
                         xtype: 'container',
-                        padding: '5px 5px 0 0',
+                        padding: '0 5px 0 0',
                         dock: 'bottom',
                         items: this.createControls()
                     }
