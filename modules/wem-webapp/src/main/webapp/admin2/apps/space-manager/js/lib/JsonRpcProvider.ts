@@ -3,7 +3,7 @@ Ext.define('Admin.lib.JsonRpcProvider', {
     alias: 'direct.jsonrpcprovider',
     extend: 'Ext.direct.RemotingProvider',
 
-    initAPI : function(){
+    initAPI: function () {
         var methods = this.methods;
         var namespace = this.namespace;
 
@@ -27,7 +27,7 @@ Ext.define('Admin.lib.JsonRpcProvider', {
         };
     },
 
-    createEvent: function(response){
+    createEvent: function (response) {
         var error = response.error ? true : false;
 
         response.tid = response.id;
