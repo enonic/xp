@@ -7,7 +7,7 @@ Ext.define('Admin.lib.UriHelper', {
     },
 
     getAbsoluteUri: function (uri) {
-        return window.CONFIG.baseUrl + '/' + uri;
+        return CONFIG.baseUrl + '/' + uri;
     }
 
 });

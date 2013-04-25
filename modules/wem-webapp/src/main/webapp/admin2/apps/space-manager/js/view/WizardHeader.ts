@@ -186,10 +186,11 @@ Ext.define('Admin.view.WizardHeader', {
     },
 
     preProcessName: function (displayName) {
-        return !Ext.isEmpty(displayName) ? displayName.replace(/[\s+\./]/ig, '-')
-            .replace(/-{2,}/g, '-')
-            .replace(/^-|-$/g, '')
-            .toLowerCase() : '';
+        // FIXME: TypeScript bitches on this. Commented out for now
+        /*
+        return !Ext.isEmpty(displayName) ? displayName.replace(/[\s+\./]/ig, '-').replace(/-{2,}/g, '-').replace(/^-|-$/g, '').toLowerCase() : '';
+        */
+        return displayName;
     },
 
     prepareHeaderData: function (data) {
