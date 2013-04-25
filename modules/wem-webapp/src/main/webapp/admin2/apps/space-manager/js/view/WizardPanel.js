@@ -373,7 +373,15 @@ Ext.define('Admin.view.WizardPanel', {
 
     createRibbon: function () {
         var me = this;
-
+        var stepsTpl = '<div class="navigation-container">' +
+                       '<ul class="navigation clearfix">' +
+                       '<tpl for=".">' +
+                       '<li class="{[ this.resolveClsName( xindex, xcount ) ]}" wizardStep="{[xindex]}">' +
+                       '<a href="javascript:;" class="step {[ this.resolveClsName( xindex, xcount ) ]}">{[' +
+                       '(values.stepTitle || values.title) ]}</a></li>' +
+                       '</tpl>' +
+                       '</ul>' +
+                       '</div>';
         return {
             xtype: 'component',
             flex: 1,
@@ -390,7 +398,7 @@ Ext.define('Admin.view.WizardPanel', {
             },
             styleHtmlContent: true,
             margin: 0,
-            tpl: new Ext.XTemplate(Templates.common.wizardPanelSteps, {
+            tpl: new Ext.XTemplate(stepsTpl, {
 
                 resolveClsName: function (index, total) {
                     var activeIndex = me.wizard.items.indexOf(me.getActiveItem()) + 1;
