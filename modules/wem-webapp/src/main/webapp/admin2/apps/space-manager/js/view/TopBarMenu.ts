@@ -16,7 +16,7 @@ Ext.define('Admin.view.TopBarMenu', {
         align: 'stretchmax'
     },
 
-    items: [
+    items: <any[]>[
         {
             xtype: 'container',
             itemId: 'nonClosableItems',

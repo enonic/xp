@@ -11,7 +11,7 @@ module.exports = function (grunt) {
                 src: ['src/main/webapp/admin2/api/js/main.ts'],
                 dest: 'src/main/webapp/admin2/api/js/all.js',
                 options: {
-                    target: 'es5',
+                    // target: 'es5',
                     sourcemap: true,
                     declaration: true
                 }
@@ -20,7 +20,7 @@ module.exports = function (grunt) {
                 src: ['src/main/webapp/admin2/apps/space-manager/js/main.ts'],
                 dest: 'src/main/webapp/admin2/apps/space-manager/js/all.js',
                 options: {
-                    target: 'es5',
+                    // target: 'es5',
                     sourcemap: true
                 }
             }

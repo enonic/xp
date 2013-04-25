@@ -20,7 +20,7 @@ Ext.define('Admin.view.TreeGridPanel', {
 
     initComponent: function () {
         var me = this;
-        this.columns = [
+        this.columns = <any[]>[
             {
                 text: 'Display Name',
                 dataIndex: 'displayName',
@@ -63,8 +63,8 @@ Ext.define('Admin.view.TreeGridPanel', {
 
     prettyDateRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
         try {
-            if (parent && Ext.isFunction(parent.humane_date)) {
-                return parent.humane_date(value);
+            if (parent && Ext.isFunction(parent['humane_date'])) {
+                return parent['humane_date'](value);
             } else {
                 return value;
             }

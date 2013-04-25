@@ -50,7 +50,7 @@ Ext.define('Admin.view.wizard.WizardPanel', {
 
     createSteps: function () {
 
-        return [
+        return <any[]>[
             {
                 xtype: 'spaceStepPanel',
                 data: this.data
@@ -93,7 +93,7 @@ Ext.define('Admin.view.wizard.WizardPanel', {
             xtype: 'container',
             width: 110,
             height: 110,
-            items: [
+            items: <any[]>[
                 {
                     xtype: 'photoUploadButton',
                     width: 110,

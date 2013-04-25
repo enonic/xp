@@ -25,7 +25,7 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
     initComponent: function () {
         var me = this;
 
-        var uploadButton = {
+        var uploadButton:Object = {
             xtype: 'filefield',
             name: 'photo',
             buttonOnly: true,
@@ -40,7 +40,7 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
             }
         };
 
-        var cancelButton = {
+        var cancelButton:Object = {
             xtype: 'button',
             text: 'Cancel',
             handler: function () {
@@ -56,7 +56,7 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
             }
         };
 
-        var previewContainer = {
+        var previewContainer:Object = {
             xtype: 'component',
             itemId: 'preview-frame',
             autoEl: {
@@ -138,7 +138,7 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
                 dd.resetConstraints();
             };
         });
-        previewImage.set({src: window.URL.createObjectURL(file)});
+        previewImage.set({src: URL.createObjectURL(file)});
     },
 
     setInitialPhotoSize: function () {

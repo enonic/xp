@@ -1,3 +1,6 @@
+
+declare var plupload;
+
 Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.fileUploadGrid',
@@ -5,7 +8,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     height: 150,
 
     initComponent: function () {
-        if (!window.plupload) {
+        if (!window['plupload']) {
             alert('FileUploadGrid requires Plupload!');
         }
 

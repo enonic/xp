@@ -78,7 +78,10 @@ Ext.define('Admin.NotificationManager', {
         // align verticaly
         me.getEl().setStyle(((pos[0] == 't') ? 'top' : 'bottom'), 0);
         // align horizontaly
-        me.getWrapperEl().setStyle((pos[1] != 'r') ? (pos[1] == 'l') ? { marginLeft: 0 } : { margin: 'auto' } : { marginRight: 0 });
+
+        me.getWrapperEl().setStyle({ margin: 'auto' });
+
+        // me.getWrapperEl().setStyle((pos[1] != 'r') ? (pos[1] == 'l') ? { marginLeft: 0 } : { margin: 'auto' } : { marginRight: 0 });
     },
 
     showNotification: function (type, args, opts) {
@@ -241,10 +244,14 @@ Ext.define('Admin.NotificationManager', {
             : tpl.append(me.getWrapperEl(), nOpts, true);
 
         // set notification style
-        nOpts.backgroundColor && (style.backgroundColor = nOpts.backgroundColor);
+        if (nOpts.backgroundColor) {
+            style['backgroundColor'] = nOpts.backgroundColor;
+        }
+
+        // nOpts.backgroundColor && (style.backgroundColor = nOpts.backgroundColor);
         (me.position[0] == 't')
-            ? (style.marginBottom = me.space + 'px')
-            : (style.marginTop = me.space + 'px');
+            ? (style['marginBottom'] = me.space + 'px')
+            : (style['marginTop'] = me.space + 'px');
         me.getInnerEl(notificationEl).setStyle(style);
 
         // set mark to identify this notification
@@ -348,7 +355,7 @@ Ext.define('Admin.NotificationManager', {
     },
 
     getNotificationEl: function (node) {
-        Ext.isElement(node) || (node = window.top.Ext.get(node));
+        Ext.isElement(node) || (node = Ext.get(node));
         return node.up('.admin-notification', this.getEl());
     }
 });

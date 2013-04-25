@@ -13,7 +13,7 @@ Ext.define('Admin.view.wizard.Toolbar', {
     },
 
     initComponent: function () {
-        this.items = [
+        this.items = <any[]>[
             {
                 text: 'Save',
                 action: 'saveSpace',

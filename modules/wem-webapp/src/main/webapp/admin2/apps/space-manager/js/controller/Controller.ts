@@ -170,7 +170,7 @@ Ext.define('Admin.controller.Controller', {
 
     getMainViewport: function () {
         var parent = window.parent || window;
-        return parent.Ext.ComponentQuery.query('#mainViewport')[0];
+        return parent['Ext'].ComponentQuery.query('#mainViewport')[0];
     }
 
 

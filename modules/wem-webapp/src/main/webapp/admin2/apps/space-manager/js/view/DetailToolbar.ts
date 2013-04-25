@@ -10,7 +10,7 @@ Ext.define('Admin.view.DetailToolbar', {
 
     initComponent: function () {
 
-        this.items = [
+        this.items = <any[]>[
 
             {
                 text: 'Edit',

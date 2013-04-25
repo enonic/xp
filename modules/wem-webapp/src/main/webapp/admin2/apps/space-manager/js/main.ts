@@ -101,7 +101,7 @@ Ext.application({
                             tabConfig: {
                                 hidden: true
                             },
-                            items: [
+                            items: <any[]>[
                                 {
                                     region: 'west',
                                     xtype: 'spaceFilter',

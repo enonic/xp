@@ -129,7 +129,7 @@ Ext.define('Admin.view.TopBar', {
     toggleHomeScreen: function () {
         var isInsideIframe = window.top !== window.self;
         if (isInsideIframe) {
-            window.parent.Ext.getCmp('admin-home-main-container').toggleShowHide();
+            window.parent['Ext'].getCmp('admin-home-main-container').toggleShowHide();
         } else {
             console.error('Can not toggle home screen. Document must be loaded inside the main window');
         }
