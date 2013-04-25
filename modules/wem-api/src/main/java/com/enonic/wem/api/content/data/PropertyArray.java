@@ -7,14 +7,14 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.data.type.BasePropertyType;
 
 
-public class DataArray
+public class PropertyArray
     extends EntryArray
 {
     private final BasePropertyType type;
 
     private final ArrayList<Value> valueList = new ArrayList<Value>();
 
-    private DataArray( final Builder builder )
+    private PropertyArray( final Builder builder )
     {
         super( builder.parent, builder.name );
 
@@ -69,7 +69,7 @@ public class DataArray
         }
     }
 
-    public static Builder newDataArray()
+    public static Builder newPropertyArray()
     {
         return new Builder();
     }
@@ -100,9 +100,9 @@ public class DataArray
             return this;
         }
 
-        public DataArray build()
+        public PropertyArray build()
         {
-            return new DataArray( this );
+            return new PropertyArray( this );
         }
     }
 }

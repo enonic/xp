@@ -169,7 +169,8 @@ public class DataSet
             if ( newEntry.isData() )
             {
                 final Property newProperty = newEntry.toData();
-                array = DataArray.newDataArray().name( newEntry.getName() ).dataType( newProperty.getType() ).parent( this ).build();
+                array =
+                    PropertyArray.newPropertyArray().name( newEntry.getName() ).dataType( newProperty.getType() ).parent( this ).build();
             }
             else
             {

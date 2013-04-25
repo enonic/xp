@@ -10,12 +10,12 @@ import org.junit.Test;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.data.DataArray;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.DataSetArray;
 import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.Property;
+import com.enonic.wem.api.content.data.PropertyArray;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.PropertyTypes;
@@ -153,7 +153,7 @@ public abstract class AbstractContentSerializerTest
         assertEquals( PropertyTypes.TEXT, mySet_myArray.getType() );
         assertEquals( "mySet.myArray[0]", mySet_myArray.getPath().toString() );
 
-        DataArray mySet_myArray_Array = mySet_myArray.getArray();
+        PropertyArray mySet_myArray_Array = mySet_myArray.getArray();
         assertEquals( PropertyTypes.TEXT, mySet_myArray_Array.getType() );
         assertEquals( "1", mySet_myArray_Array.getValue( 0 ).asString() );
         assertEquals( "2", mySet_myArray_Array.getValue( 1 ).asString() );
@@ -257,7 +257,7 @@ public abstract class AbstractContentSerializerTest
         assertEquals( true, mySet_0_myArray.isArray() );
         assertEquals( "mySet[0].myArray[0]", mySet_0_myArray.getPath().toString() );
 
-        DataArray mySet_0_myArray_array = mySet_0_myArray.getArray();
+        PropertyArray mySet_0_myArray_array = mySet_0_myArray.getArray();
         assertEquals( PropertyTypes.TEXT, mySet_0_myArray_array.getType() );
         assertEquals( "1", mySet_0_myArray_array.getValue( 0 ).asString() );
         assertEquals( "2", mySet_0_myArray_array.getValue( 1 ).asString() );
@@ -273,7 +273,7 @@ public abstract class AbstractContentSerializerTest
         assertEquals( true, mySet_1_myArray_1.isArray() );
         assertEquals( "mySet[1].myArray[1]", mySet_1_myArray_1.getPath().toString() );
 
-        DataArray mySet_1_myArray_array = mySet_1_myArray.getArray();
+        PropertyArray mySet_1_myArray_array = mySet_1_myArray.getArray();
         assertEquals( PropertyTypes.TEXT, mySet_1_myArray_array.getType() );
         assertEquals( "3", mySet_1_myArray_array.getValue( 0 ).asString() );
         assertEquals( "4", mySet_1_myArray_array.getValue( 1 ).asString() );

@@ -67,9 +67,9 @@ public class Property
     }
 
     @Override
-    public DataArray getArray()
+    public PropertyArray getArray()
     {
-        return (DataArray) super.getArray();
+        return (PropertyArray) super.getArray();
     }
 
     public Value getValue()
@@ -79,7 +79,7 @@ public class Property
 
     public Value getValue( final int arrayIndex )
     {
-        final DataArray array = getArray();
+        final PropertyArray array = getArray();
         return array.getValue( arrayIndex );
     }
 
