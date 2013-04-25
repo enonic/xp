@@ -16,7 +16,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.CreateContentResult;
-import com.enonic.wem.api.command.content.ValidateRootDataSet;
+import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
@@ -85,7 +85,7 @@ public class CreateContentHandler
 
             builder.path( contentPath );
             builder.displayName( displayName );
-            builder.rootDataSet( command.getRootDataSet() );
+            builder.contentData( command.getContentData() );
             builder.type( command.getContentType() );
             builder.createdTime( DateTime.now() );
             builder.modifiedTime( DateTime.now() );
@@ -113,7 +113,7 @@ public class CreateContentHandler
                     jcrSession( session ).
                     contentType( content.getType() ).
                     contentToUpdate( contentId ).
-                    contentAfterEditing( content.getRootDataSet() ) );
+                    contentAfterEditing( content.getContentData() ) );
                 session.save();
             }
             catch ( Exception e )
@@ -159,7 +159,7 @@ public class CreateContentHandler
     private List<Content> resolveTemporaryContents( final CreateContent command, final Session session )
     {
         final List<Content> temporaryContents = new ArrayList<>();
-        if ( command.getRootDataSet() == null )
+        if ( command.getContentData() == null )
         {
             return temporaryContents;
         }
@@ -178,7 +178,7 @@ public class CreateContentHandler
                 }
             }
         }.restrictType( ValueTypes.CONTENT_ID );
-        propertyVisitor.traverse( command.getRootDataSet() );
+        propertyVisitor.traverse( command.getContentData() );
         return temporaryContents;
     }
 
@@ -203,10 +203,10 @@ public class CreateContentHandler
 
     private void validateContentData( final Client client, final Content content )
     {
-        final ValidateRootDataSet validateRootDataSet = Commands.content().validate();
-        validateRootDataSet.contentType( content.getType() );
-        validateRootDataSet.rootDataSet( content.getRootDataSet() );
-        final DataValidationErrors dataValidationErrors = client.execute( validateRootDataSet );
+        final ValidateContentData validateContentData = Commands.content().validate();
+        validateContentData.contentType( content.getType() );
+        validateContentData.contentData( content.getContentData() );
+        final DataValidationErrors dataValidationErrors = client.execute( validateContentData );
 
         for ( DataValidationError error : dataValidationErrors )
         {

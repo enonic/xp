@@ -4,10 +4,10 @@ package com.enonic.wem.core.content.relationship;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
 import com.enonic.wem.api.content.schema.content.form.Form;
@@ -38,7 +38,7 @@ public class SyncRelationshipsTest
         form.addFormItem(
             newInput().name( "myRelated" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( RELATIONSHIP_CONFIG_LIKE ).build() );
 
-        RootDataSet after = new RootDataSet();
+        ContentData after = new ContentData();
         after.add( new Property.ContentId( "myRelated", CONTENT_ID_201 ) );
 
         // exercise
@@ -68,8 +68,8 @@ public class SyncRelationshipsTest
         form.addFormItem(
             newInput().name( "myRelated" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( RELATIONSHIP_CONFIG_LIKE ).build() );
 
-        RootDataSet before = new RootDataSet();
-        RootDataSet after = new RootDataSet();
+        ContentData before = new ContentData();
+        ContentData after = new ContentData();
         after.add( new Property.ContentId( "myRelated", CONTENT_ID_201 ) );
 
         // exercise
@@ -101,8 +101,8 @@ public class SyncRelationshipsTest
             newInput().name( "myRelated" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( RELATIONSHIP_CONFIG_LIKE ).build() );
         form.addFormItem( myFormItemSet );
 
-        RootDataSet before = new RootDataSet();
-        RootDataSet after = new RootDataSet();
+        ContentData before = new ContentData();
+        ContentData after = new ContentData();
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
         mySet.add( new Property.ContentId( "myRelated", CONTENT_ID_201 ) );
         after.add( mySet );
@@ -134,8 +134,8 @@ public class SyncRelationshipsTest
         form.addFormItem(
             newInput().name( "myRelated" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( RELATIONSHIP_CONFIG_LIKE ).build() );
 
-        RootDataSet before = new RootDataSet();
-        RootDataSet after = new RootDataSet();
+        ContentData before = new ContentData();
+        ContentData after = new ContentData();
         before.add( new Property.ContentId( "myRelated", CONTENT_ID_201 ) );
 
         // exercise

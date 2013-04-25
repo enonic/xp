@@ -8,8 +8,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.core.support.util.JdomHelper;
 
@@ -58,7 +57,7 @@ public class ContentXmlSerializer
         }
         final Element dataEl = new Element( "data" );
         contentEl.addContent( dataEl );
-        dataSerializer.generateRootDataSet( dataEl, content.getRootDataSet() );
+        dataSerializer.generateContentData( dataEl, content.getContentData() );
     }
 
     public Content toContent( final String xml )
@@ -94,9 +93,9 @@ public class ContentXmlSerializer
             contentBuilder.type( qualifiedContentTypeName );
         }
 
-        final RootDataSet rootDataSet = DataSet.newRootDataSet();
-        dataSerializer.parse( contentEl.getChild( "data" ), rootDataSet );
-        contentBuilder.rootDataSet( rootDataSet );
+        final ContentData contentData = new ContentData();
+        dataSerializer.parse( contentEl.getChild( "data" ), contentData );
+        contentBuilder.contentData( contentData );
 
         return contentBuilder.build();
     }

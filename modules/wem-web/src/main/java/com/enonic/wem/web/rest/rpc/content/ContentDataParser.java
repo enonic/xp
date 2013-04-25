@@ -6,30 +6,29 @@ import java.util.Iterator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.DataPath;
-import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.form.FormItemPath;
 import com.enonic.wem.api.content.schema.content.form.Input;
 
-final class RootDataSetParser
+final class ContentDataParser
 {
     private ContentType contentType;
 
-    RootDataSetParser( final ContentType contentType )
+    ContentDataParser( final ContentType contentType )
     {
         this.contentType = contentType;
     }
 
-    RootDataSetParser()
+    ContentDataParser()
     {
     }
 
-    RootDataSet parse( final ObjectNode data )
+    ContentData parse( final ObjectNode data )
     {
-        final RootDataSet rootDataSet = DataSet.newRootDataSet();
+        final ContentData contentData = new ContentData();
 
         final Iterator<String> fieldNames = data.getFieldNames();
         while ( fieldNames.hasNext() )
@@ -51,16 +50,16 @@ final class RootDataSetParser
                 if ( input != null )
                 {
                     final Value value = input.getInputType().newValue( fieldValue );
-                    rootDataSet.setProperty( path, value );
+                    contentData.setProperty( path, value );
                 }
                 else
                 {
-                    rootDataSet.setProperty( path, new Value.Text( fieldValue ) );
+                    contentData.setProperty( path, new Value.Text( fieldValue ) );
                 }
             }
         }
 
-        return rootDataSet;
+        return contentData;
     }
 
 }

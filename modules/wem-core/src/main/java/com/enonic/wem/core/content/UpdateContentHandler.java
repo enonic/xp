@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.UpdateContentResult;
-import com.enonic.wem.api.command.content.ValidateRootDataSet;
+import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
@@ -97,15 +97,15 @@ public class UpdateContentHandler
                             }
                         }
                     }
-                }.restrictType( ValueTypes.CONTENT_ID ).traverse( edited.getRootDataSet() );
+                }.restrictType( ValueTypes.CONTENT_ID ).traverse( edited.getContentData() );
 
                 relationshipService.syncRelationships( new SyncRelationshipsCommand().
                     client( context.getClient() ).
                     jcrSession( session ).
                     contentType( persistedContent.getType() ).
                     contentToUpdate( persistedContent.getId() ).
-                    contentBeforeEditing( persistedContent.getRootDataSet() ).
-                    contentAfterEditing( edited.getRootDataSet() ) );
+                    contentBeforeEditing( persistedContent.getContentData() ).
+                    contentAfterEditing( edited.getContentData() ) );
 
                 edited = newContent( edited ).
                     modifiedTime( DateTime.now() ).
@@ -183,16 +183,16 @@ public class UpdateContentHandler
                     }
                 }
             }
-        }.restrictType( ValueTypes.CONTENT_ID ).traverse( persistedContent.getRootDataSet() );
+        }.restrictType( ValueTypes.CONTENT_ID ).traverse( persistedContent.getContentData() );
         return embeddedContent;
     }
 
     private void validateContentData( final CommandContext context, final Content modifiedContent )
     {
-        final ValidateRootDataSet validateRootDataSet = Commands.content().validate();
-        validateRootDataSet.contentType( modifiedContent.getType() );
-        validateRootDataSet.rootDataSet( modifiedContent.getRootDataSet() );
-        final DataValidationErrors dataValidationErrors = context.getClient().execute( validateRootDataSet );
+        final ValidateContentData validateContentData = Commands.content().validate();
+        validateContentData.contentType( modifiedContent.getType() );
+        validateContentData.contentData( modifiedContent.getContentData() );
+        final DataValidationErrors dataValidationErrors = context.getClient().execute( validateContentData );
         for ( DataValidationError error : dataValidationErrors )
         {
             LOG.info( "*** DataValidationError: " + error.getErrorMessage() );

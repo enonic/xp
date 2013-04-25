@@ -4,8 +4,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 
@@ -33,11 +33,11 @@ public class GeographicCoordinateTest
     {
         // setup
         Content content = newContent().build();
-        RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setProperty( "myGeographicCoordinate", new Value.DecimalNumber( 1.1 ) );
+        ContentData contentData = content.getContentData();
+        contentData.setProperty( "myGeographicCoordinate", new Value.DecimalNumber( 1.1 ) );
 
         GeographicCoordinate geographicCoordinate = ValueTypes.GEOGRAPHIC_COORDINATE;
-        Property property = rootDataSet.getProperty( "myGeographicCoordinate" );
+        Property property = contentData.getProperty( "myGeographicCoordinate" );
 
         // exercise
         geographicCoordinate.checkValidity( property );
@@ -49,12 +49,12 @@ public class GeographicCoordinateTest
         throws Exception
     {
         // exercise
-        RootDataSet rootDataSet = new RootDataSet();
+        ContentData contentData = new ContentData();
 
         // exercise
         try
         {
-            rootDataSet.setProperty( "myGeographicCoordinate", new Value.GeographicCoordinate( "90.0,180.2" ) );
+            contentData.setProperty( "myGeographicCoordinate", new Value.GeographicCoordinate( "90.0,180.2" ) );
             fail( "Expected Exception" );
         }
         catch ( Exception e )

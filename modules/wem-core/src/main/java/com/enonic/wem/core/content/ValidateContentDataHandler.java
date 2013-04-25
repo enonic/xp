@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.command.content.ValidateRootDataSet;
-import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.command.content.ValidateContentData;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
@@ -18,21 +18,21 @@ import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
 
 @Component
-public final class ValidateRootDataSetHandler
-    extends CommandHandler<ValidateRootDataSet>
+public final class ValidateContentDataHandler
+    extends CommandHandler<ValidateContentData>
 {
     private ContentTypeDao contentTypeDao;
 
-    public ValidateRootDataSetHandler()
+    public ValidateContentDataHandler()
     {
-        super( ValidateRootDataSet.class );
+        super( ValidateContentData.class );
     }
 
     @Override
-    public void handle( final CommandContext context, final ValidateRootDataSet command )
+    public void handle( final CommandContext context, final ValidateContentData command )
         throws Exception
     {
-        final RootDataSet rootDataSet = command.getRootDataSet();
+        final ContentData contentData = command.getContentData();
         final QualifiedContentTypeName qualifiedContentTypeName = command.getContentType();
         final ContentType contentType =
             contentTypeDao.select( QualifiedContentTypeNames.from( qualifiedContentTypeName ), context.getJcrSession() ).first();
@@ -40,7 +40,7 @@ public final class ValidateRootDataSetHandler
 
         final OccurrenceValidator occurrenceValidator = new OccurrenceValidator( contentType );
 
-        final DataValidationErrors validationErrors = occurrenceValidator.validate( rootDataSet );
+        final DataValidationErrors validationErrors = occurrenceValidator.validate( contentData );
         command.setResult( validationErrors );
     }
 

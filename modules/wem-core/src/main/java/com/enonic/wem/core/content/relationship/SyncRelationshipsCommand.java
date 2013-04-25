@@ -5,7 +5,7 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 
 public class SyncRelationshipsCommand
@@ -18,9 +18,9 @@ public class SyncRelationshipsCommand
 
     private ContentId contentToUpdate;
 
-    private RootDataSet contentBeforeEditing;
+    private ContentData contentBeforeEditing;
 
-    private RootDataSet contentAfterEditing;
+    private ContentData contentAfterEditing;
 
     public SyncRelationshipsCommand client( final Client value )
     {
@@ -46,13 +46,13 @@ public class SyncRelationshipsCommand
         return this;
     }
 
-    public SyncRelationshipsCommand contentBeforeEditing( final RootDataSet value )
+    public SyncRelationshipsCommand contentBeforeEditing( final ContentData value )
     {
         this.contentBeforeEditing = value;
         return this;
     }
 
-    public SyncRelationshipsCommand contentAfterEditing( final RootDataSet value )
+    public SyncRelationshipsCommand contentAfterEditing( final ContentData value )
     {
         this.contentAfterEditing = value;
         return this;
@@ -78,12 +78,12 @@ public class SyncRelationshipsCommand
         return contentToUpdate;
     }
 
-    public RootDataSet getContentBeforeEditing()
+    public ContentData getContentBeforeEditing()
     {
         return contentBeforeEditing;
     }
 
-    public RootDataSet getContentAfterEditing()
+    public ContentData getContentAfterEditing()
     {
         return contentAfterEditing;
     }

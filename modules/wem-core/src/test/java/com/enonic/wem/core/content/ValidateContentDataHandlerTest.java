@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.ValidateRootDataSet;
+import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.ContentType;
@@ -27,10 +27,10 @@ import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newForm
 import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
 import static org.junit.Assert.*;
 
-public class ValidateRootDataSetHandlerTest
+public class ValidateContentDataHandlerTest
     extends AbstractCommandHandlerTest
 {
-    private ValidateRootDataSetHandler handler;
+    private ValidateContentDataHandler handler;
 
     private ContentTypeDao contentTypeDao;
 
@@ -41,7 +41,7 @@ public class ValidateRootDataSetHandlerTest
         super.initialize();
 
         contentTypeDao = Mockito.mock( ContentTypeDao.class );
-        handler = new ValidateRootDataSetHandler();
+        handler = new ValidateContentDataHandler();
         handler.setContentTypeDao( contentTypeDao );
     }
 
@@ -64,8 +64,8 @@ public class ValidateRootDataSetHandlerTest
         final Content content = newContent().type( contentType.getQualifiedName() ).build();
 
         // exercise
-        final ValidateRootDataSet command =
-            Commands.content().validate().rootDataSet( content.getRootDataSet() ).contentType( contentType.getQualifiedName() );
+        final ValidateContentData command =
+            Commands.content().validate().contentData( content.getContentData() ).contentType( contentType.getQualifiedName() );
         this.handler.handle( this.context, command );
 
         // test
@@ -92,11 +92,11 @@ public class ValidateRootDataSetHandlerTest
             ContentTypes.from( contentType ) );
 
         final Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setProperty( "mySet.myInput", new Value.Text( "thing" ) );
+        content.getContentData().setProperty( "mySet.myInput", new Value.Text( "thing" ) );
 
         // exercise
-        final ValidateRootDataSet command =
-            Commands.content().validate().rootDataSet( content.getRootDataSet() ).contentType( contentType.getQualifiedName() );
+        final ValidateContentData command =
+            Commands.content().validate().contentData( content.getContentData() ).contentType( contentType.getQualifiedName() );
         this.handler.handle( this.context, command );
 
         // test

@@ -6,8 +6,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
@@ -25,7 +24,7 @@ public final class Content
 
     private final ContentId id;
 
-    private final RootDataSet rootDataSet;
+    private final ContentData contentData;
 
     private final DateTime createdTime;
 
@@ -43,7 +42,7 @@ public final class Content
         this.type = builder.type;
         this.path = builder.path;
         this.id = builder.contentId;
-        this.rootDataSet = builder.rootDataSet;
+        this.contentData = builder.contentData;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.owner = builder.owner;
@@ -108,9 +107,9 @@ public final class Content
         return owner;
     }
 
-    public RootDataSet getRootDataSet()
+    public ContentData getContentData()
     {
-        return rootDataSet;
+        return contentData;
     }
 
     public ContentId getId()
@@ -170,7 +169,7 @@ public final class Content
 
         private QualifiedContentTypeName type;
 
-        private RootDataSet rootDataSet;
+        private ContentData contentData;
 
         private String displayName;
 
@@ -189,7 +188,7 @@ public final class Content
             this.contentId = null;
             this.path = ContentPath.ROOT;
             this.type = null;
-            this.rootDataSet = DataSet.newRootDataSet();
+            this.contentData = new ContentData();
             this.displayName = null;
             this.owner = null;
             this.createdTime = null;
@@ -203,7 +202,7 @@ public final class Content
             this.contentId = content.id;
             this.path = content.path;
             this.type = content.type;
-            this.rootDataSet = content.rootDataSet; // TODO make DataSet immutable, or make copy
+            this.contentData = content.contentData; // TODO make DataSet immutable, or make copy
             this.displayName = content.displayName;
             this.owner = content.owner;
             this.createdTime = content.createdTime;
@@ -234,9 +233,9 @@ public final class Content
             return this;
         }
 
-        public Builder rootDataSet( final RootDataSet dataSet )
+        public Builder contentData( final ContentData contentData )
         {
-            this.rootDataSet = dataSet;
+            this.contentData = contentData;
             return this;
         }
 

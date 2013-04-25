@@ -71,7 +71,7 @@ public class ContentIndexDocumentsFactory
 
     private static void addContentData( final Content content, final IndexDocument indexDocument )
     {
-        final DataSet dataSet = content.getRootDataSet();
+        final DataSet dataSet = content.getContentData();
 
         traverseDataSet( dataSet, indexDocument );
     }

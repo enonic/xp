@@ -472,12 +472,6 @@ public class DataSet
         return new Builder();
     }
 
-    // TODO: Remove and make RootDataSet constructor public instead
-    public static RootDataSet newRootDataSet()
-    {
-        return new RootDataSet();
-    }
-
     public static class Builder
     {
         private String name;

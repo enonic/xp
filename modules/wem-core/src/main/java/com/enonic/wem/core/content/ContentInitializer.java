@@ -8,7 +8,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.core.initializer.InitializerTask;
@@ -46,7 +46,7 @@ public class ContentInitializer
             displayName( displayName ).
             parentContentPath( parent ).
             owner( AccountKey.anonymous() ).
-            rootDataSet( RootDataSet.newRootDataSet() );
+            contentData( new ContentData() );
         CreateContentResult createContentResult = client.execute( createContent );
         return createContentResult.getContentPath();
     }

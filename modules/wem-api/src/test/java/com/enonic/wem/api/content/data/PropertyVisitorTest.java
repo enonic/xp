@@ -27,16 +27,16 @@ public class PropertyVisitorTest
                 hits.add( reference );
             }
         };
-        RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.add( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
-        rootDataSet.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        ContentData contentData = new ContentData();
+        contentData.add( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
+        contentData.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
         mySet.add( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
         mySet.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
-        rootDataSet.add( mySet );
+        contentData.add( mySet );
 
-        propertyVisitor.traverse( rootDataSet );
+        propertyVisitor.traverse( contentData );
 
         assertEquals( 4, hits.size() );
         assertEquals( "myText", hits.get( 0 ).getPath().toString() );
@@ -60,16 +60,16 @@ public class PropertyVisitorTest
         };
         propertyVisitor.restrictType( ValueTypes.TEXT );
 
-        RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.add( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
-        rootDataSet.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        ContentData contentData = new ContentData();
+        contentData.add( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
+        contentData.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
         mySet.add( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
         mySet.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
-        rootDataSet.add( mySet );
+        contentData.add( mySet );
 
-        propertyVisitor.traverse( rootDataSet );
+        propertyVisitor.traverse( contentData );
 
         assertEquals( 2, hits.size() );
         assertEquals( "myText", hits.get( 0 ).getPath().toString() );

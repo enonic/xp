@@ -18,7 +18,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentException;
 import com.enonic.wem.api.content.RenameContentException;
 import com.enonic.wem.api.content.UpdateContentException;
-import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
@@ -84,15 +84,15 @@ public final class CreateOrUpdateContentRpcHandler
                 final QualifiedContentTypeName qualifiedContentTypeName =
                     new QualifiedContentTypeName( context.param( "qualifiedContentTypeName" ).required().asString() );
                 final ContentType contentType = getContentType( qualifiedContentTypeName );
-                final RootDataSet rootDataSet =
-                    new RootDataSetParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
+                final ContentData contentData =
+                    new ContentDataParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
                 final String displayName = context.param( "displayName" ).notBlank().asString();
 
                 final CreateContent createContent = content().create().
                     parentContentPath( parentContentPath ).
                     name( contentName ).
                     contentType( qualifiedContentTypeName ).
-                    rootDataSet( rootDataSet ).
+                    contentData( contentData ).
                     displayName( displayName ).
                     owner( AccountKey.anonymous() ).
                     temporary( temporary );
@@ -122,12 +122,12 @@ public final class CreateOrUpdateContentRpcHandler
                 final QualifiedContentTypeName qualifiedContentTypeName =
                     new QualifiedContentTypeName( context.param( "qualifiedContentTypeName" ).required().asString() );
                 final ContentType contentType = getContentType( qualifiedContentTypeName );
-                final RootDataSet rootDataSet =
-                    new RootDataSetParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
+                final ContentData contentData =
+                    new ContentDataParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
 
                 final UpdateContent updateContent = content().update();
                 updateContent.selector( contentId );
-                updateContent.editor( composite( setContentData( rootDataSet ), setContentDisplayName( displayName ) ) );
+                updateContent.editor( composite( setContentData( contentData ), setContentDisplayName( displayName ) ) );
                 updateContent.modifier( AccountKey.anonymous() );
 
                 final UpdateContentResult result = client.execute( updateContent );

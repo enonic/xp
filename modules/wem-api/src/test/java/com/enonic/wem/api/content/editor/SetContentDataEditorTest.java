@@ -4,8 +4,8 @@ package com.enonic.wem.api.content.editor;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 
 import static junit.framework.Assert.assertEquals;
@@ -19,14 +19,14 @@ public class SetContentDataEditorTest
         throws Exception
     {
         // setup
-        RootDataSet originalRootDataSet = new RootDataSet();
-        originalRootDataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
+        ContentData originalContentData = new ContentData();
+        originalContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
 
-        RootDataSet unchangedRootDataSet = new RootDataSet();
-        unchangedRootDataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
+        ContentData unchangedContentData = new ContentData();
+        unchangedContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
 
-        SetContentDataEditor editor = new SetContentDataEditor( unchangedRootDataSet );
-        Content toBeEdited = Content.newContent().name( "myContent" ).rootDataSet( originalRootDataSet ).build();
+        SetContentDataEditor editor = new SetContentDataEditor( unchangedContentData );
+        Content toBeEdited = Content.newContent().name( "myContent" ).contentData( originalContentData ).build();
 
         // exercise
         Content updatedContent = editor.edit( toBeEdited );
@@ -40,21 +40,21 @@ public class SetContentDataEditorTest
         throws Exception
     {
         // setup
-        RootDataSet originalRootDataSet = new RootDataSet();
-        originalRootDataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
+        ContentData originalContentData = new ContentData();
+        originalContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
 
-        RootDataSet changedRootDataSet = new RootDataSet();
-        changedRootDataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "123" ).build() );
+        ContentData changedContentData = new ContentData();
+        changedContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "123" ).build() );
 
-        SetContentDataEditor editor = new SetContentDataEditor( changedRootDataSet );
-        Content toBeEdited = Content.newContent().name( "myContent" ).rootDataSet( originalRootDataSet ).build();
+        SetContentDataEditor editor = new SetContentDataEditor( changedContentData );
+        Content toBeEdited = Content.newContent().name( "myContent" ).contentData( originalContentData ).build();
 
         // exercise
         Content updatedContent = editor.edit( toBeEdited );
 
         // verify
         assertNotNull( updatedContent );
-        assertEquals( "123", updatedContent.getRootDataSet().getProperty( "myData" ).getString() );
+        assertEquals( "123", updatedContent.getContentData().getProperty( "myData" ).getString() );
     }
 
 }

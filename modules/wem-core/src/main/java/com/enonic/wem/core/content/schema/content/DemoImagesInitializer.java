@@ -10,8 +10,8 @@ import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.content.binary.BinaryId;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.core.initializer.InitializerTask;
@@ -69,20 +69,20 @@ public class DemoImagesInitializer
         }
         final BinaryId binaryId = client.execute( Commands.binary().create().binary( binary ) );
 
-        final RootDataSet dataSet = createContentData( binaryId );
+        final ContentData dataSet = createContentData( binaryId );
 
         final CreateContent createContent = Commands.content().create().
             contentType( QualifiedContentTypeName.imageMedia() ).
             displayName( displayName ).
             name( fileName ).
             parentContentPath( parent ).
-            rootDataSet( dataSet );
+            contentData( dataSet );
         client.execute( createContent );
     }
 
-    private RootDataSet createContentData( final BinaryId binaryId )
+    private ContentData createContentData( final BinaryId binaryId )
     {
-        final RootDataSet dataSet = RootDataSet.newRootDataSet();
+        final ContentData dataSet = new ContentData();
         dataSet.add( Property.newProperty( "mimeType" ).type( ValueTypes.TEXT ).value( "image/png" ).build() );
         dataSet.add( Property.newProperty( "binary" ).type( ValueTypes.BINARY_ID ).value( binaryId ).build() );
         return dataSet;

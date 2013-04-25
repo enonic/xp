@@ -45,12 +45,12 @@ public class ContentIndexDocumentsFactoryTest
     {
         Content content = createContentWithMetadata();
 
-        content.getRootDataSet().setProperty( "mydata.value1", new Value.DecimalNumber( 1.0 ) );
-        content.getRootDataSet().setProperty( "mydata.value2", new Value.Date( DateMidnight.now() ) );
-        content.getRootDataSet().setProperty( "mydata.value2[1]", new Value.Date( DateMidnight.now() ) );
-        content.getRootDataSet().setProperty( "mydata.value3.subvalue1", new Value.Text( "value3.1" ) );
-        content.getRootDataSet().setProperty( "mydata.value3.subvalue2", new Value.Text( "value3.2" ) );
-        content.getRootDataSet().setProperty( "mydata.value3.subvalue3", new Value.Text( "value3.3" ) );
+        content.getContentData().setProperty( "mydata.value1", new Value.DecimalNumber( 1.0 ) );
+        content.getContentData().setProperty( "mydata.value2", new Value.Date( DateMidnight.now() ) );
+        content.getContentData().setProperty( "mydata.value2[1]", new Value.Date( DateMidnight.now() ) );
+        content.getContentData().setProperty( "mydata.value3.subvalue1", new Value.Text( "value3.1" ) );
+        content.getContentData().setProperty( "mydata.value3.subvalue2", new Value.Text( "value3.2" ) );
+        content.getContentData().setProperty( "mydata.value3.subvalue3", new Value.Text( "value3.3" ) );
 
         final Collection<IndexDocument> indexDocuments = ContentIndexDocumentsFactory.create( content );
 

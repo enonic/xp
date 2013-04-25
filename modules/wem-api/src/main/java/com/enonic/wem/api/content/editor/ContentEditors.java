@@ -1,6 +1,6 @@
 package com.enonic.wem.api.content.editor;
 
-import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.ContentData;
 
 public abstract class ContentEditors
 {
@@ -9,9 +9,9 @@ public abstract class ContentEditors
         return new CompositeEditor( editors );
     }
 
-    public static ContentEditor setContentData( final RootDataSet rootDataSet )
+    public static ContentEditor setContentData( final ContentData contentData )
     {
-        return new SetContentDataEditor( rootDataSet );
+        return new SetContentDataEditor( contentData );
     }
 
     public static ContentEditor setContentName( final String name )

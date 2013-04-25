@@ -1,31 +1,31 @@
 package com.enonic.wem.api.content.editor;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.ContentData;
 
 import static com.enonic.wem.api.content.Content.newContent;
 
 final class SetContentDataEditor
     implements ContentEditor
 {
-    protected final RootDataSet rootDataSet;
+    protected final ContentData contentData;
 
-    SetContentDataEditor( final RootDataSet rootDataSet )
+    SetContentDataEditor( final ContentData contentData )
     {
-        this.rootDataSet = rootDataSet;
+        this.contentData = contentData;
     }
 
     @Override
     public Content edit( final Content toBeEdited )
         throws Exception
     {
-        if ( toBeEdited.getRootDataSet().equals( rootDataSet ) )
+        if ( toBeEdited.getContentData().equals( contentData ) )
         {
             return null;
         }
 
         return newContent( toBeEdited ).
-            rootDataSet( rootDataSet ).
+            contentData( contentData ).
             build();
     }
 

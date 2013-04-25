@@ -6,13 +6,13 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 
 public final class CreateContent
     extends Command<CreateContentResult>
 {
-    private RootDataSet rootDataSet;
+    private ContentData contentData;
 
     private QualifiedContentTypeName contentType;
 
@@ -38,9 +38,9 @@ public final class CreateContent
         return this;
     }
 
-    public CreateContent rootDataSet( final RootDataSet value )
+    public CreateContent contentData( final ContentData value )
     {
-        this.rootDataSet = value;
+        this.contentData = value;
         return this;
     }
 
@@ -84,9 +84,9 @@ public final class CreateContent
         return contentType;
     }
 
-    public RootDataSet getRootDataSet()
+    public ContentData getContentData()
     {
-        return rootDataSet;
+        return contentData;
     }
 
     public UserKey getOwner()
@@ -112,8 +112,8 @@ public final class CreateContent
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.rootDataSet, "rootDataSet cannot be null" );
+        Preconditions.checkNotNull( this.contentData, "contentData cannot be null" );
         Preconditions.checkArgument( temporary || this.parentContentPath != null, "parentContentPath cannot be null" );
-        Preconditions.checkNotNull( this.displayName, "displayname cannot be null" );
+        Preconditions.checkNotNull( this.displayName, "displayName cannot be null" );
     }
 }

@@ -13,9 +13,9 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.schema.content.ContentType;
@@ -77,14 +77,14 @@ public class RelationshipServiceImplTest
         Mockito.when( client.execute( Mockito.any( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         // setup: content before editing
-        RootDataSet dataBefore = new RootDataSet();
+        ContentData dataBefore = new ContentData();
         dataBefore.add(
             Property.newProperty().name( "myRelated1" ).type( ValueTypes.CONTENT_ID ).value( ContentId.from( "111" ) ).build() );
         dataBefore.add(
             Property.newProperty().name( "myRelated2" ).type( ValueTypes.CONTENT_ID ).value( ContentId.from( "222" ) ).build() );
 
         // setup: content after editing
-        RootDataSet dataAfter = new RootDataSet();
+        ContentData dataAfter = new ContentData();
         dataAfter.add( Property.newProperty().name( "myRelated1" ).type( ValueTypes.CONTENT_ID ).value( ContentId.from( "111" ) ).build() );
         dataAfter.add( Property.newProperty().name( "myRelated2" ).type( ValueTypes.CONTENT_ID ).value( ContentId.from( "222" ) ).build() );
         dataAfter.add( Property.newProperty().name( "myRelated3" ).type( ValueTypes.CONTENT_ID ).value( ContentId.from( "333" ) ).build() );

@@ -9,10 +9,10 @@ import org.joda.time.DateTime;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.BaseValueType;
 import com.enonic.wem.api.content.data.type.ValueTypes;
@@ -40,7 +40,7 @@ public class Content_usageTest
     @Test
     public void dataSet_setData()
     {
-        DataSet dataSet = new RootDataSet();
+        DataSet dataSet = new ContentData();
 
         // exercise
         dataSet.setProperty( "myText", new Value.Text( "abc" ) );
@@ -60,7 +60,7 @@ public class Content_usageTest
     @Test
     public void dataSet_add_Data_using_newProperty()
     {
-        DataSet dataSet = new RootDataSet();
+        DataSet dataSet = new ContentData();
 
         // exercise
         dataSet.add( newProperty( "myText" ).type( TEXT ).value( "abc" ).build() );
@@ -86,7 +86,7 @@ public class Content_usageTest
     @Test
     public void dataSet_add_Data_using_newPropertyType()
     {
-        DataSet dataSet = new RootDataSet();
+        DataSet dataSet = new ContentData();
 
         // exercise
         dataSet.add( newText( "myText" ).value( "abc" ) );
@@ -112,7 +112,7 @@ public class Content_usageTest
     @Test
     public void dataSet_add_Data_using_new_PropertyType()
     {
-        DataSet dataSet = new RootDataSet();
+        DataSet dataSet = new ContentData();
 
         // exercise
         dataSet.add( new Property.Text( "myText", "abc" ) );
@@ -138,7 +138,7 @@ public class Content_usageTest
     @Test
     public void dataSet_add_Data_using_new_ValueType()
     {
-        DataSet dataSet = new RootDataSet();
+        DataSet dataSet = new ContentData();
 
         // exercise
         dataSet.addProperty( "myText", new Value.Text( "abc" ) );
@@ -164,7 +164,7 @@ public class Content_usageTest
     @Test
     public void dataSet_add_Data_using_newValue()
     {
-        DataSet dataSet = new RootDataSet();
+        DataSet dataSet = new ContentData();
 
         // exercise
         dataSet.addProperty( "myText", newValue().type( ValueTypes.TEXT ).value( "abc" ) );
@@ -190,7 +190,7 @@ public class Content_usageTest
     @Test
     public void dataSet_add_DataSet()
     {
-        DataSet parentDataSet = DataSet.newRootDataSet();
+        DataSet parentDataSet = new ContentData();
 
         // exercise
         parentDataSet.add( newDataSet().name( "mySet" ).build() );
@@ -202,7 +202,7 @@ public class Content_usageTest
     @Test
     public void data_getValue()
     {
-        DataSet dataSet = new RootDataSet();
+        DataSet dataSet = new ContentData();
         dataSet.add( newProperty( "myText" ).type( TEXT ).value( "abc" ).build() );
         dataSet.add( newProperty( "myNum" ).type( WHOLE_NUMBER ).value( 123L ).build() );
         dataSet.add( newProperty( "myDec" ).type( DECIMAL_NUMBER ).value( 123.123 ).build() );
@@ -220,7 +220,7 @@ public class Content_usageTest
     @Test
     public void dataSet_add_Data_array()
     {
-        DataSet dataSet = new RootDataSet();
+        DataSet dataSet = new ContentData();
 
         // exercise
         dataSet.add( newProperty( "myText" ).type( TEXT ).value( "a" ).build() );
@@ -237,7 +237,7 @@ public class Content_usageTest
     @Ignore
     public void dataSet_setData_array()
     {
-        DataSet dataSet = new RootDataSet();
+        DataSet dataSet = new ContentData();
 
         // exercise
         //TODO dataSet.setData( "myText", "a", "b", "c" );
@@ -257,10 +257,10 @@ public class Content_usageTest
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 4mm", 120.00 ) );
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
-        RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.add(
+        ContentData contentData = new ContentData();
+        contentData.add(
             newProperty( "invoiceDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( invoice.invoiceDate.toDateMidnight() ).build() );
-        rootDataSet.add( newProperty( "recipient" ).type( ValueTypes.TEXT ).value( invoice.recipient ).build() );
+        contentData.add( newProperty( "recipient" ).type( ValueTypes.TEXT ).value( invoice.recipient ).build() );
 
         for ( InvoiceLine line : invoice.lines )
         {
@@ -268,13 +268,13 @@ public class Content_usageTest
             invoiceLine.add( newProperty( "text" ).type( ValueTypes.TEXT ).value( line.text ).build() );
             invoiceLine.add( newProperty( "money" ).type( resolveType( line.money ) ).value( line.money ).build() );
 
-            rootDataSet.add( invoiceLine );
+            contentData.add( invoiceLine );
         }
 
         // print out
-        System.out.println( rootDataSet.getProperty( "invoiceDate" ).getDate() );
-        System.out.println( rootDataSet.getProperty( "recipient" ).getString() );
-        for ( Data invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
+        System.out.println( contentData.getProperty( "invoiceDate" ).getDate() );
+        System.out.println( contentData.getProperty( "recipient" ).getString() );
+        for ( Data invoiceLine : contentData.getDataSet( "invoiceLine" ).getArray() )
         {
             DataSet invoiceLineDS = invoiceLine.toDataSet();
             System.out.println( invoiceLineDS.getProperty( "text" ).getString() + ": " + invoiceLineDS.getProperty( "money" ).getString() );
@@ -290,9 +290,9 @@ public class Content_usageTest
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 4mm", 120.00 ) );
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
-        RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.add( newDate( "invoiceDate" ).value( invoice.invoiceDate.toDateMidnight() ) );
-        rootDataSet.add( newText( "recipient" ).value( invoice.recipient ) );
+        ContentData contentData = new ContentData();
+        contentData.add( newDate( "invoiceDate" ).value( invoice.invoiceDate.toDateMidnight() ) );
+        contentData.add( newText( "recipient" ).value( invoice.recipient ) );
 
         for ( InvoiceLine line : invoice.lines )
         {
@@ -302,13 +302,13 @@ public class Content_usageTest
             invoiceLine.add( newProperty( "money" ).type( resolveType( line.money ) ).value( line.money ).build() );
             invoiceLine.add( myNewProperty( "money", line.money ) );
 
-            rootDataSet.add( invoiceLine );
+            contentData.add( invoiceLine );
         }
 
         // print out
-        System.out.println( rootDataSet.getProperty( "invoiceDate" ).getDate() );
-        System.out.println( rootDataSet.getProperty( "recipient" ).getString() );
-        for ( Data invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
+        System.out.println( contentData.getProperty( "invoiceDate" ).getDate() );
+        System.out.println( contentData.getProperty( "recipient" ).getString() );
+        for ( Data invoiceLine : contentData.getDataSet( "invoiceLine" ).getArray() )
         {
             DataSet invoiceLineDS = invoiceLine.toDataSet();
             System.out.println( invoiceLineDS.getProperty( "text" ).getString() + ": " + invoiceLineDS.getProperty( "money" ).getString() );
@@ -325,22 +325,22 @@ public class Content_usageTest
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 4mm", 120.00 ) );
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
-        RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.add( new Property.Date( "invoiceDate", invoice.invoiceDate.toDateMidnight() ) );
-        rootDataSet.add( new Property.Text( "recipient", invoice.recipient ) );
+        ContentData contentData = new ContentData();
+        contentData.add( new Property.Date( "invoiceDate", invoice.invoiceDate.toDateMidnight() ) );
+        contentData.add( new Property.Text( "recipient", invoice.recipient ) );
 
         for ( InvoiceLine line : invoice.lines )
         {
             DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
             invoiceLine.add( new Property.Text( "text", line.text ) );
             invoiceLine.add( myNewProperty( "money", line.money ) );
-            rootDataSet.add( invoiceLine );
+            contentData.add( invoiceLine );
         }
 
         // print out
-        System.out.println( rootDataSet.getProperty( "invoiceDate" ).getDate() );
-        System.out.println( rootDataSet.getProperty( "recipient" ).getString() );
-        for ( Data invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
+        System.out.println( contentData.getProperty( "invoiceDate" ).getDate() );
+        System.out.println( contentData.getProperty( "recipient" ).getString() );
+        for ( Data invoiceLine : contentData.getDataSet( "invoiceLine" ).getArray() )
         {
             DataSet invoiceLineDS = invoiceLine.toDataSet();
             System.out.println( invoiceLineDS.getProperty( "text" ).getString() + ": " + invoiceLineDS.getProperty( "money" ).getString() );
@@ -357,22 +357,22 @@ public class Content_usageTest
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 4mm", 120.00 ) );
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
-        RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( "invoiceDate", new Value.Date( invoice.invoiceDate.toDateMidnight() ) );
-        rootDataSet.setProperty( "recipient", new Value.Text( invoice.recipient ) );
+        ContentData contentData = new ContentData();
+        contentData.setProperty( "invoiceDate", new Value.Date( invoice.invoiceDate.toDateMidnight() ) );
+        contentData.setProperty( "recipient", new Value.Text( invoice.recipient ) );
 
         for ( InvoiceLine line : invoice.lines )
         {
             DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
             invoiceLine.setProperty( "text", new Value.Text( line.text ) );
             invoiceLine.setProperty( "money", myNewValue( line.money ) );
-            rootDataSet.add( invoiceLine );
+            contentData.add( invoiceLine );
         }
 
         // print out
-        System.out.println( rootDataSet.getProperty( "invoiceDate" ).getDate() );
-        System.out.println( rootDataSet.getProperty( "recipient" ).getString() );
-        for ( Data invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
+        System.out.println( contentData.getProperty( "invoiceDate" ).getDate() );
+        System.out.println( contentData.getProperty( "recipient" ).getString() );
+        for ( Data invoiceLine : contentData.getDataSet( "invoiceLine" ).getArray() )
         {
             DataSet invoiceLineDS = invoiceLine.toDataSet();
             System.out.println( invoiceLineDS.getProperty( "text" ).getString() + ": " + invoiceLineDS.getProperty( "money" ).getString() );

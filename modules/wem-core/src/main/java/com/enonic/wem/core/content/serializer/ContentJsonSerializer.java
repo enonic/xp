@@ -13,7 +13,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.core.content.JsonFactoryHolder;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
@@ -27,17 +27,17 @@ public class ContentJsonSerializer
     extends AbstractJsonSerializer<Content>
     implements ContentSerializer
 {
-    private RootDataSetJsonSerializer rootDataSetSerializer;
+    private ContentDataJsonSerializer contentDataSerializer;
 
     public ContentJsonSerializer()
     {
-        this.rootDataSetSerializer = new RootDataSetJsonSerializer( objectMapper() );
+        this.contentDataSerializer = new ContentDataJsonSerializer( objectMapper() );
     }
 
     public ContentJsonSerializer( final ObjectMapper objectMapper )
     {
         super( objectMapper );
-        this.rootDataSetSerializer = new RootDataSetJsonSerializer( objectMapper );
+        this.contentDataSerializer = new ContentDataJsonSerializer( objectMapper );
     }
 
     @Override
@@ -56,7 +56,7 @@ public class ContentJsonSerializer
         setDateTimeValue( "modifiedTime", content.getModifiedTime(), jsonContent );
         setDateTimeValue( "createdTime", content.getCreatedTime(), jsonContent );
 
-        jsonContent.put( "data", rootDataSetSerializer.serialize( content.getRootDataSet() ) );
+        jsonContent.put( "data", contentDataSerializer.serialize( content.getContentData() ) );
         return jsonContent;
     }
 
@@ -114,8 +114,8 @@ public class ContentJsonSerializer
         contentBuilder.modifiedTime( getDateTimeValue( "modifiedTime", contentNode ) );
         contentBuilder.createdTime( getDateTimeValue( "createdTime", contentNode ) );
 
-        final RootDataSet rootDataSet = rootDataSetSerializer.parse( contentNode.get( "data" ) );
-        contentBuilder.rootDataSet( rootDataSet );
+        final ContentData contentData = contentDataSerializer.parse( contentNode.get( "data" ) );
+        contentBuilder.contentData( contentData );
 
         return contentBuilder.build();
     }

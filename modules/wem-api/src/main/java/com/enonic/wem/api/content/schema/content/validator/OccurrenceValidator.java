@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.schema.content.ContentType;
 
 public final class OccurrenceValidator
@@ -19,16 +19,16 @@ public final class OccurrenceValidator
         this.contentType = contentType;
     }
 
-    public DataValidationErrors validate( final RootDataSet rootDataSet )
+    public DataValidationErrors validate( final ContentData contentData )
     {
         final List<DataValidationError> validationErrors = Lists.newArrayList();
 
         final MinimumOccurrencesValidator minimum = new MinimumOccurrencesValidator();
-        minimum.validate( contentType.form(), rootDataSet );
+        minimum.validate( contentType.form(), contentData );
         validationErrors.addAll( minimum.validationErrors() );
 
         final MaximumOccurrencesValidator maximum = new MaximumOccurrencesValidator( contentType );
-        maximum.validate( rootDataSet );
+        maximum.validate( contentData );
         validationErrors.addAll( maximum.validationErrors() );
 
         return DataValidationErrors.from( validationErrors );

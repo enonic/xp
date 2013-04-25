@@ -5,8 +5,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
@@ -29,12 +29,12 @@ public class ColorTest
         throws InvalidValueTypeException, InvalidValueException
     {
         Content content = newContent().build();
-        RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setProperty( "myColor.red", new Value.WholeNumber( 40 ) );
-        rootDataSet.setProperty( "myColor.green", new Value.WholeNumber( 40 ) );
-        rootDataSet.setProperty( "myColor.blue", new Value.WholeNumber( 40 ) );
+        ContentData contentData = content.getContentData();
+        contentData.setProperty( "myColor.red", new Value.WholeNumber( 40 ) );
+        contentData.setProperty( "myColor.green", new Value.WholeNumber( 40 ) );
+        contentData.setProperty( "myColor.blue", new Value.WholeNumber( 40 ) );
 
-        Property myColor = rootDataSet.getProperty( "myColor" );
+        Property myColor = contentData.getProperty( "myColor" );
 
         InputTypes.COLOR.checkValidity( myColor );
     }
@@ -44,11 +44,11 @@ public class ColorTest
     public void given_data_missing_red_checkValidity_throws_InvalidDataException()
     {
         Content content = newContent().build();
-        RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setProperty( "myColor.green", new Value.WholeNumber( 40l ) );
-        rootDataSet.setProperty( "myColor.blue", new Value.WholeNumber( 40l ) );
+        ContentData contentData = content.getContentData();
+        contentData.setProperty( "myColor.green", new Value.WholeNumber( 40l ) );
+        contentData.setProperty( "myColor.blue", new Value.WholeNumber( 40l ) );
 
-        Property myColor = rootDataSet.getProperty( "myColor" );
+        Property myColor = contentData.getProperty( "myColor" );
 
         try
         {
@@ -70,12 +70,12 @@ public class ColorTest
     public void given_data_with_illegal_red_checkValidity_throws_InvalidDataException()
     {
         Content content = newContent().build();
-        RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setProperty( "myColor.red", new Value.WholeNumber( 256 ) );
-        rootDataSet.setProperty( "myColor.green", new Value.WholeNumber( 40 ) );
-        rootDataSet.setProperty( "myColor.blue", new Value.WholeNumber( 40 ) );
+        ContentData contentData = content.getContentData();
+        contentData.setProperty( "myColor.red", new Value.WholeNumber( 256 ) );
+        contentData.setProperty( "myColor.green", new Value.WholeNumber( 40 ) );
+        contentData.setProperty( "myColor.blue", new Value.WholeNumber( 40 ) );
 
-        Property myColor = rootDataSet.getProperty( "myColor" );
+        Property myColor = contentData.getProperty( "myColor" );
 
         try
         {

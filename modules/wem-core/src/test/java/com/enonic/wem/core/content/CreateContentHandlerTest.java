@@ -14,11 +14,11 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.CreateContentResult;
-import com.enonic.wem.api.command.content.ValidateRootDataSet;
+import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
@@ -63,7 +63,7 @@ public class CreateContentHandlerTest
         handler.setRelationshipService( relationshipService );
         handler.setIndexService( indexService );
 
-        Mockito.when( super.client.execute( Mockito.isA( ValidateRootDataSet.class ) ) ).thenReturn( DataValidationErrors.empty() );
+        Mockito.when( super.client.execute( Mockito.isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
 
         DateTimeUtils.setCurrentMillisFixed( CREATED_TIME.getMillis() );
     }
@@ -87,11 +87,11 @@ public class CreateContentHandlerTest
         command.parentContentPath( ContentPath.from( "/" ) );
         command.owner( UserKey.from( "myStore:myUser" ) );
         command.contentType( new QualifiedContentTypeName( ModuleName.SYSTEM, "my_content_type" ) );
-        RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( "myText", new Value.Text( "abc" ) );
-        rootDataSet.setProperty( "myReference", new Value.ContentId( ContentId.from( "123" ) ) );
-        rootDataSet.setProperty( "mySet.myRelatedContent", new Value.ContentId( ContentId.from( "124" ) ) );
-        command.rootDataSet( rootDataSet );
+        ContentData contentData = new ContentData();
+        contentData.setProperty( "myText", new Value.Text( "abc" ) );
+        contentData.setProperty( "myReference", new Value.ContentId( ContentId.from( "123" ) ) );
+        contentData.setProperty( "mySet.myRelatedContent", new Value.ContentId( ContentId.from( "124" ) ) );
+        command.contentData( contentData );
 
         // exercise
         this.handler.handle( this.context, command );

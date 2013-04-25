@@ -3,26 +3,26 @@ package com.enonic.wem.api.command.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 
-public class ValidateRootDataSet
+public class ValidateContentData
     extends Command<DataValidationErrors>
 
 {
-    private RootDataSet rootDataSet;
+    private ContentData contentData;
 
     private QualifiedContentTypeName contentType;
 
-    public RootDataSet getRootDataSet()
+    public ContentData getContentData()
     {
-        return rootDataSet;
+        return contentData;
     }
 
-    public ValidateRootDataSet rootDataSet( final RootDataSet rootDataSet )
+    public ValidateContentData contentData( final ContentData contentData )
     {
-        this.rootDataSet = rootDataSet;
+        this.contentData = contentData;
         return this;
     }
 
@@ -31,7 +31,7 @@ public class ValidateRootDataSet
         return contentType;
     }
 
-    public ValidateRootDataSet contentType( final QualifiedContentTypeName contentType )
+    public ValidateContentData contentType( final QualifiedContentTypeName contentType )
     {
         this.contentType = contentType;
         return this;
@@ -40,7 +40,7 @@ public class ValidateRootDataSet
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( rootDataSet, "rootDataSet cannot be null" );
+        Preconditions.checkNotNull( contentData, "contentData cannot be null" );
         Preconditions.checkNotNull( contentType, "contentType cannot be null" );
     }
 }

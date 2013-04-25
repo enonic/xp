@@ -5,38 +5,37 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 
-import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 
-public class RootDataSetJsonSerializer
-    extends AbstractJsonSerializer<RootDataSet>
+public class ContentDataJsonSerializer
+    extends AbstractJsonSerializer<ContentData>
 {
     private DataSetJsonSerializer dataSetSerializer;
 
-    public RootDataSetJsonSerializer( final ObjectMapper objectMapper )
+    public ContentDataJsonSerializer( final ObjectMapper objectMapper )
     {
         super( objectMapper );
         dataSetSerializer = new DataSetJsonSerializer( objectMapper );
     }
 
-    public RootDataSetJsonSerializer()
+    public ContentDataJsonSerializer()
     {
         dataSetSerializer = new DataSetJsonSerializer( objectMapper() );
     }
 
     @Override
-    public JsonNode serialize( final RootDataSet dataSet )
+    public JsonNode serialize( final ContentData dataSet )
     {
         return dataSetSerializer.serializeEntries( dataSet );
     }
 
 
     @Override
-    public RootDataSet parse( final JsonNode arrayNode )
+    public ContentData parse( final JsonNode arrayNode )
     {
-        final RootDataSet rootDataSet = DataSet.newRootDataSet();
-        dataSetSerializer.parseEntries( (ArrayNode) arrayNode, rootDataSet );
-        return rootDataSet;
+        final ContentData contentData = new ContentData();
+        dataSetSerializer.parseEntries( (ArrayNode) arrayNode, contentData );
+        return contentData;
     }
 }

@@ -10,6 +10,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
@@ -66,11 +67,11 @@ public class DataSetJsonSerializer
     {
         Preconditions.checkNotNull( dataSetNode, "dataSetNode cannot be null" );
 
-        final DataSet rootDataSet = DataSet.newRootDataSet();
+        final DataSet contentData = new ContentData();
         final ArrayNode arrayNode = (ArrayNode) dataSetNode.get( DATA_VALUE );
 
-        parseEntries( arrayNode, rootDataSet );
-        return rootDataSet;
+        parseEntries( arrayNode, contentData );
+        return contentData;
     }
 
     DataSet parseDataSet( final JsonNode dataSetNode )

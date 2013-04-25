@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
@@ -47,11 +47,11 @@ public class DataSetValidatorTest
             newInput().name( "mySingleSelector" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setProperty( "mySingleSelector", new Value.Text( "nonExistingOption" ) );
+        content.getContentData().setProperty( "mySingleSelector", new Value.Text( "nonExistingOption" ) );
 
         // exercise & verify
         DataSetValidator validator = new DataSetValidator( contentType );
-        DataValidationErrors validationErrors = validator.validate( content.getRootDataSet() );
+        DataValidationErrors validationErrors = validator.validate( content.getContentData() );
         assertTrue( validationErrors.hasErrors() );
         assertEquals( "mySingleSelector", validationErrors.getFirst().getPath().toString() );
     }
@@ -69,12 +69,12 @@ public class DataSetValidatorTest
             singleSelectorConfig ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setProperty( "mySingleSelector1", new Value.Text( "nonExistingOption" ) );
-        content.getRootDataSet().setProperty( "mySingleSelector2", new Value.Text( "nonExistingOption" ) );
+        content.getContentData().setProperty( "mySingleSelector1", new Value.Text( "nonExistingOption" ) );
+        content.getContentData().setProperty( "mySingleSelector2", new Value.Text( "nonExistingOption" ) );
 
         // exercise & verify
         DataSetValidator validator = new DataSetValidator( contentType );
-        DataValidationErrors validationErrors = validator.validate( content.getRootDataSet() );
+        DataValidationErrors validationErrors = validator.validate( content.getContentData() );
         assertTrue( validationErrors.hasErrors() );
         assertEquals( 2, validationErrors.size() );
     }
@@ -100,14 +100,14 @@ public class DataSetValidatorTest
         contentType.form().addFormItem( newInput().name( "myXml" ).inputType( InputTypes.XML ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setProperty( "myDate", new Value.Date( new DateMidnight( 2012, 9, 11 ) ) );
-        content.getRootDataSet().setProperty( "myDecimalNumber", new Value.DecimalNumber( 12.34 ) );
-        content.getRootDataSet().setProperty( "mySingleSelector", new Value.Text( "o1" ) );
-        content.getRootDataSet().setProperty( "myHtmlArea", new Value.HtmlPart( "<h1>Hello world</h1>" ) );
+        content.getContentData().setProperty( "myDate", new Value.Date( new DateMidnight( 2012, 9, 11 ) ) );
+        content.getContentData().setProperty( "myDecimalNumber", new Value.DecimalNumber( 12.34 ) );
+        content.getContentData().setProperty( "mySingleSelector", new Value.Text( "o1" ) );
+        content.getContentData().setProperty( "myHtmlArea", new Value.HtmlPart( "<h1>Hello world</h1>" ) );
 
         // exercise
         DataSetValidator validator = new DataSetValidator( contentType );
-        DataValidationErrors validationErrors = validator.validate( content.getRootDataSet() );
+        DataValidationErrors validationErrors = validator.validate( content.getContentData() );
         assertFalse( validationErrors.hasErrors() );
     }
 
@@ -115,18 +115,18 @@ public class DataSetValidatorTest
     public void given_untyped_content_when_setting_type_that_fits_then_everything_validates()
     {
         // setup
-        RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( "name", new Value.Text( "Thomas" ) );
-        rootDataSet.setProperty( "personalia.eyeColour", new Value.Text( "Blue" ) );
-        rootDataSet.setProperty( "personalia.hairColour", new Value.Text( "Blonde" ) );
-        rootDataSet.setProperty( "crimes[0].description", new Value.Text( "Stole tomatoes from neighbour" ) );
-        rootDataSet.setProperty( "crimes[0].year", new Value.Text( "1989" ) );
-        rootDataSet.setProperty( "crimes[1].description", new Value.Text( "Stole a chocolate from the Matbua shop" ) );
-        rootDataSet.setProperty( "crimes[1].year", new Value.Text( "1990" ) );
+        ContentData contentData = new ContentData();
+        contentData.setProperty( "name", new Value.Text( "Thomas" ) );
+        contentData.setProperty( "personalia.eyeColour", new Value.Text( "Blue" ) );
+        contentData.setProperty( "personalia.hairColour", new Value.Text( "Blonde" ) );
+        contentData.setProperty( "crimes[0].description", new Value.Text( "Stole tomatoes from neighbour" ) );
+        contentData.setProperty( "crimes[0].year", new Value.Text( "1989" ) );
+        contentData.setProperty( "crimes[1].description", new Value.Text( "Stole a chocolate from the Matbua shop" ) );
+        contentData.setProperty( "crimes[1].year", new Value.Text( "1990" ) );
 
-        assertEquals( ValueTypes.TEXT, rootDataSet.getProperty( "personalia.eyeColour" ).getType() );
-        Assert.assertEquals( "Blue", rootDataSet.getProperty( "personalia.eyeColour" ).getObject() );
-        Assert.assertEquals( "personalia.eyeColour", rootDataSet.getProperty( "personalia.eyeColour" ).getPath().toString() );
+        assertEquals( ValueTypes.TEXT, contentData.getProperty( "personalia.eyeColour" ).getType() );
+        Assert.assertEquals( "Blue", contentData.getProperty( "personalia.eyeColour" ).getObject() );
+        Assert.assertEquals( "personalia.eyeColour", contentData.getProperty( "personalia.eyeColour" ).getPath().toString() );
 
         // exercise
         contentType.form().addFormItem( newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() );
@@ -139,12 +139,12 @@ public class DataSetValidatorTest
         crimes.add( newInput().name( "description" ).inputType( InputTypes.TEXT_LINE ).build() );
         crimes.add( newInput().name( "year" ).inputType( InputTypes.TEXT_LINE ).build() );
 
-        assertEquals( ValueTypes.TEXT, rootDataSet.getProperty( "personalia.eyeColour" ).getType() );
-        Assert.assertEquals( "Blue", rootDataSet.getProperty( "personalia.eyeColour" ).getObject() );
+        assertEquals( ValueTypes.TEXT, contentData.getProperty( "personalia.eyeColour" ).getType() );
+        Assert.assertEquals( "Blue", contentData.getProperty( "personalia.eyeColour" ).getObject() );
 
         // verify
         DataSetValidator validator = new DataSetValidator( contentType );
-        DataValidationErrors validationErrors = validator.validate( rootDataSet );
+        DataValidationErrors validationErrors = validator.validate( contentData );
         assertFalse( validationErrors.hasErrors() );
     }
 

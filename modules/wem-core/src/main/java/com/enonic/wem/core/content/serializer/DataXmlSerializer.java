@@ -6,6 +6,7 @@ import org.jdom.Element;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Property;
@@ -29,9 +30,9 @@ public final class DataXmlSerializer
         }
     }
 
-    void generateRootDataSet( final Element dataEl, final DataSet dataSet )
+    void generateContentData( final Element dataEl, final ContentData contentData )
     {
-        for ( final Data data : dataSet )
+        for ( final Data data : contentData )
         {
             generate( dataEl, data );
         }

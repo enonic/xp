@@ -14,9 +14,8 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.DataPath;
-import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
@@ -73,8 +72,8 @@ public class GetContentRpcHandlerTest
 
     private Content createContent( final String id, final String name )
     {
-        final RootDataSet rootDataSet = DataSet.newRootDataSet();
-        rootDataSet.setProperty( DataPath.from( "myData" ), new Value.Text( "value1" ) );
+        final ContentData contentData = new ContentData();
+        contentData.setProperty( DataPath.from( "myData" ), new Value.Text( "value1" ) );
 
         return Content.newContent().
             id( ContentId.from( id ) ).
@@ -85,7 +84,7 @@ public class GetContentRpcHandlerTest
             modifiedTime( DateTime.now() ).
             modifier( UserKey.superUser() ).
             type( new QualifiedContentTypeName( "mymodule:my_type" ) ).
-            rootDataSet( rootDataSet ).
+            contentData( contentData ).
             build();
     }
 

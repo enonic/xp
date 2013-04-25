@@ -1,9 +1,14 @@
 package com.enonic.wem.api.content.data;
 
 
-public final class RootDataSet
+public final class ContentData
     extends DataSet
 {
+    public ContentData()
+    {
+        // default
+    }
+
     @Override
     public boolean isRoot()
     {
@@ -19,6 +24,6 @@ public final class RootDataSet
     @Override
     void setParent( final DataSet entries )
     {
-        throw new UnsupportedOperationException( "A RootDataSet cannot have a parent" );
+        throw new UnsupportedOperationException( "A ContentData cannot have a parent" );
     }
 }

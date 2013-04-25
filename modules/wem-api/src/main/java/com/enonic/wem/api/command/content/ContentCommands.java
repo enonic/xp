@@ -33,9 +33,9 @@ public final class ContentCommands
         return new GetContentTree();
     }
 
-    public ValidateRootDataSet validate()
+    public ValidateContentData validate()
     {
-        return new ValidateRootDataSet();
+        return new ValidateContentData();
     }
 
     public GetContentVersionHistory getVersionHistory()

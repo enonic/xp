@@ -22,7 +22,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.content.binary.BinaryId;
-import com.enonic.wem.api.content.data.RootDataSet;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
@@ -70,7 +70,7 @@ public class ContentImageResource
         final BufferedImage contentImage;
         if ( contentType.isImageMedia() )
         {
-            final RootDataSet contentData = content.getRootDataSet();
+            final ContentData contentData = content.getContentData();
             final Binary binary = findBinary( contentData.getProperty( "binary" ).getBinaryId() );
             if ( thumbnail )
             {

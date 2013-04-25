@@ -13,10 +13,10 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.PropertyVisitor;
-import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
@@ -46,8 +46,8 @@ class SyncRelationships
 
     private ImmutableList<RelationshipKey> relationshipsToDelete;
 
-    SyncRelationships( final Form form, final ContentId contentToUpdate, final RootDataSet contentBeforeEditing,
-                       final RootDataSet contentAfterEditing )
+    SyncRelationships( final Form form, final ContentId contentToUpdate, final ContentData contentBeforeEditing,
+                       final ContentData contentAfterEditing )
     {
         this.form = form;
         this.contentToUpdate = contentToUpdate;
@@ -146,7 +146,7 @@ class SyncRelationships
         return removedReferences;
     }
 
-    private Map<DataPath, Property> resolveReferences( final RootDataSet rootDataSet )
+    private Map<DataPath, Property> resolveReferences( final ContentData contentData )
     {
         final Map<DataPath, Property> references = new LinkedHashMap<>();
         final PropertyVisitor propertyVisitor = new PropertyVisitor()
@@ -158,7 +158,7 @@ class SyncRelationships
             }
         };
         propertyVisitor.restrictType( ValueTypes.CONTENT_ID );
-        propertyVisitor.traverse( rootDataSet );
+        propertyVisitor.traverse( contentData );
         return references;
     }
 }

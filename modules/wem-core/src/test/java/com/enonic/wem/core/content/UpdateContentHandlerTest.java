@@ -14,12 +14,12 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.UpdateContentResult;
-import com.enonic.wem.api.command.content.ValidateRootDataSet;
+import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.editor.ContentEditors;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
@@ -59,7 +59,7 @@ public class UpdateContentHandlerTest
         handler.setRelationshipService( relationshipService );
         handler.setIndexService( indexService );
 
-        Mockito.when( super.client.execute( Mockito.isA( ValidateRootDataSet.class ) ) ).thenReturn( DataValidationErrors.empty() );
+        Mockito.when( super.client.execute( Mockito.isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
     }
 
     @Test
@@ -69,12 +69,12 @@ public class UpdateContentHandlerTest
         // setup
         DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
 
-        RootDataSet existingContentData = new RootDataSet();
+        ContentData existingContentData = new ContentData();
         existingContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "aaa" ).build() );
 
         Mockito.when( contentDao.select( Mockito.eq( ContentPath.from( "myContent" ) ), Mockito.any( Session.class ) ) ).thenReturn( null );
 
-        RootDataSet unchangedContentData = new RootDataSet();
+        ContentData unchangedContentData = new ContentData();
         unchangedContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "aaa" ).build() );
 
         UpdateContent command = new UpdateContent().
@@ -99,7 +99,7 @@ public class UpdateContentHandlerTest
         // setup
         DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
 
-        RootDataSet existingContentData = new RootDataSet();
+        ContentData existingContentData = new ContentData();
         existingContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "aaa" ).build() );
 
         Content existingContent = createContent( existingContentData );
@@ -107,7 +107,7 @@ public class UpdateContentHandlerTest
         Mockito.when( contentDao.select( Mockito.eq( existingContent.getPath() ), Mockito.any( Session.class ) ) ).thenReturn(
             existingContent );
 
-        RootDataSet unchangedContentData = new RootDataSet();
+        ContentData unchangedContentData = new ContentData();
         unchangedContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "aaa" ).build() );
 
         UpdateContent command = new UpdateContent().
@@ -130,7 +130,7 @@ public class UpdateContentHandlerTest
         // setup
         DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
 
-        RootDataSet existingContentData = new RootDataSet();
+        ContentData existingContentData = new ContentData();
         existingContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "aaa" ).build() );
 
         Content existingContent = createContent( existingContentData );
@@ -138,7 +138,7 @@ public class UpdateContentHandlerTest
         Mockito.when( contentDao.select( Mockito.eq( existingContent.getPath() ), Mockito.any( Session.class ) ) ).thenReturn(
             existingContent );
 
-        RootDataSet changedContentData = new RootDataSet();
+        ContentData changedContentData = new ContentData();
         changedContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "bbb" ).build() );
 
         UpdateContent command = new UpdateContent().
@@ -153,13 +153,13 @@ public class UpdateContentHandlerTest
         Content storedContent = Content.newContent( createContent( existingContentData ) ).
             modifiedTime( UPDATED_TIME ).
             modifier( AccountKey.superUser() ).
-            rootDataSet( changedContentData ).
+            contentData( changedContentData ).
             build();
         Mockito.verify( contentDao, Mockito.times( 1 ) ).update( Mockito.refEq( storedContent ), Mockito.eq( true ),
                                                                  Mockito.any( Session.class ) );
     }
 
-    private Content createContent( final RootDataSet rootDataSet )
+    private Content createContent( final ContentData contentData )
     {
         return Content.newContent().
             id( ContentId.from( "1" ) ).
@@ -167,7 +167,7 @@ public class UpdateContentHandlerTest
             createdTime( CREATED_TIME ).
             displayName( "MyContent" ).
             owner( UserKey.superUser() ).
-            rootDataSet( rootDataSet ).
+            contentData( contentData ).
             build();
     }
 }
