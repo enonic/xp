@@ -24,21 +24,3 @@ module admin.api.message {
     }
 
 }
-
-Ext.define('Admin.MessageBus', {
-    extend: 'Ext.util.Observable',
-    singleton: true,
-
-
-    liveEditOpenContent: function () {
-        this.fireEvent('liveEdit.openContent');
-    },
-
-
-    // Just for prototyping purposes
-    showLiveEditTestSettingsWindow: function (config) {
-        this.fireEvent('liveEdit.showTestSettingsWindow', config);
-
-    }
-
-});

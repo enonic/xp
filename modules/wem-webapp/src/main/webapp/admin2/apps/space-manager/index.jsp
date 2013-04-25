@@ -44,75 +44,8 @@
 
 </script>
 
-
-<!-- TODO: Inline everything. -->
-<!--script type="text/javascript" src="../../../admin/resources/app/view/XTemplates.js"></script-->
-
 <!-- Third party plugins -->
 <script type="text/javascript" src="../../../admin/resources/lib/plupload/js/plupload.full.js"></script>
-
-<!--script type="text/javascript" src="js/lib/Ping.js"></script>
-
-<script type="text/javascript" src="js/lib/UriHelper.js"></script>
-<script type="text/javascript" src="js/lib/JsonRpcProvider.js"></script>
-<script type="text/javascript" src="js/lib/RemoteService.js"></script>
-
-<script type="text/javascript" src="js/MessageBus.js"></script>
-<script type="text/javascript" src="js/NotificationManager.js"></script>
-
-<script type="text/javascript" src="js/plugin/PersistentGridSelectionPlugin.js"></script>
-<script type="text/javascript" src="js/plugin/GridToolbarPlugin.js"></script>
-<script type="text/javascript" src="js/plugin/fileupload/FileUploadGrid.js"></script>
-<script type="text/javascript" src="js/plugin/fileupload/PhotoUploadButton.js"></script>
-<script type="text/javascript" src="js/plugin/fileupload/PhotoUploadWindow.js"></script>
-
-<script type="text/javascript" src="js/model/SpaceModel.js"></script>
-
-<script type="text/javascript" src="js/store/SpaceStore.js"></script>
-
-<script type="text/javascript" src="js/view/WizardLayout.js"></script>
-<script type="text/javascript" src="js/view/WizardHeader.js"></script>
-<script type="text/javascript" src="js/view/WizardPanel.js"></script>
-
-<script type="text/javascript" src="js/view/BaseContextMenu.ts"></script>
-<script type="text/javascript" src="js/view/DropDownButton.ts"></script>
-<script type="text/javascript" src="js/view/BaseDetailPanel.ts"></script>
-<script type="text/javascript" src="js/view/DetailToolbar.ts"></script>
-<script type="text/javascript" src="js/view/DetailPanel.ts"></script>
-
-<script type="text/javascript" src="js/view/BaseDialogWindow.ts"></script>
-<script type="text/javascript" src="js/view/DeleteSpaceWindow.ts"></script>
-
-<script type="text/javascript" src="js/view/BaseTreeGridPanel.ts"></script>
-<script type="text/javascript" src="js/view/TreeGridPanel.ts"></script>
-
-<script type="text/javascript" src="js/view/ContextMenu.ts"></script>
-
-<script type="text/javascript" src="js/view/wizard/Toolbar.ts"></script>
-<script type="text/javascript" src="js/view/wizard/SpaceStepPanel.ts"></script>
-<script type="text/javascript" src="js/view/wizard/WizardPanel.ts"></script>
-
-<script type="text/javascript" src="js/view/AdminImageButton.ts"></script>
-<script type="text/javascript" src="js/view/TopBarMenuItem.js"></script>
-<script type="text/javascript" src="js/view/TopBarMenu.ts"></script>
-<script type="text/javascript" src="js/view/TopBar.ts"></script>
-<script type="text/javascript" src="js/view/TabPanel.ts"></script>
-<script type="text/javascript" src="js/view/BaseFilterPanel.ts"></script>
-<script type="text/javascript" src="js/view/FilterPanel.ts"></script>
-<script type="text/javascript" src="js/view/BrowseToolbar.ts"></script>
-
-<script type="text/javascript" src="js/controller/Controller.js"></script>
-<script type="text/javascript" src="js/controller/SpaceController.js"></script>
-
-<script type="text/javascript" src="js/controller/FilterPanelController.js"></script>
-<script type="text/javascript" src="js/controller/GridPanelController.js"></script>
-<script type="text/javascript" src="js/controller/BrowseToolbarController.js"></script>
-<script type="text/javascript" src="js/controller/DetailPanelController.js"></script>
-<script type="text/javascript" src="js/controller/DetailToolbarController.js"></script>
-<script type="text/javascript" src="js/controller/DialogWindowController.js"></script>
-<script type="text/javascript" src="js/controller/WizardController.js"></script>
-
-<script type="text/javascript" src="js/main.js"></script-->
 
 <script type="text/javascript" src="../../api/js/api.js"></script>
 <script type="text/javascript" src="js/all.js"></script>

@@ -3,6 +3,7 @@
  */
 
 ///<reference path='notify/MessageBus.ts' />
+///<reference path='notify/NotificationManager.ts' />
 
 declare var Ext;
 declare var Admin;
