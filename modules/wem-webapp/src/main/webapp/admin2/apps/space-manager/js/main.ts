@@ -59,6 +59,10 @@
 ///<reference path='controller/DialogWindowController.ts' />
 ///<reference path='controller/WizardController.ts' />
 
+declare var Ext;
+declare var Admin;
+declare var CONFIG;
+
 Ext.application({
     name: 'spaceAdmin',
 
