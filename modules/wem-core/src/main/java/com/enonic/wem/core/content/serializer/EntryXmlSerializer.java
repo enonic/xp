@@ -23,7 +23,7 @@ public final class EntryXmlSerializer
         }
         else
         {
-            generateData( parentDataSetEl, entry.toProperty() );
+            generateProperty( parentDataSetEl, entry.toProperty() );
         }
     }
 
@@ -46,7 +46,7 @@ public final class EntryXmlSerializer
         }
     }
 
-    private void generateData( final Element parentDataEl, final Property property )
+    private void generateProperty( final Element parentDataEl, final Property property )
     {
         final String name = property.getPath().getLastElement().getName();
 
@@ -83,7 +83,7 @@ public final class EntryXmlSerializer
         }
         else
         {
-            parentDataSet.add( type.newData( name, entryEl.getText() ) );
+            parentDataSet.add( type.newProperty( name, entryEl.getText() ) );
         }
     }
 }

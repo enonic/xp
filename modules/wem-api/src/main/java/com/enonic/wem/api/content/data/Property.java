@@ -53,11 +53,11 @@ public class Property
         return value.getType();
     }
 
-    public void setValue( final Object value, final BasePropertyType dataType )
+    public void setValue( final Object value, final BasePropertyType type )
     {
         Preconditions.checkNotNull( value, "A Property cannot have a null value" );
         Preconditions.checkArgument( !( value instanceof DataSet ), "A Property cannot have a DataSet as value" );
-        this.value = dataType.newValue( value );
+        this.value = type.newValue( value );
     }
 
     public void setValue( final Value value )
@@ -185,7 +185,7 @@ public class Property
         return getArray().getValue( arrayIndex ).asBinaryId();
     }
 
-    public void checkDataTypeValidity()
+    public void checkPropertyTypeValidity()
         throws InvalidDataException
     {
         try
@@ -235,12 +235,12 @@ public class Property
         return s.toString();
     }
 
-    public static Builder newData()
+    public static Builder newProperty()
     {
         return new Builder();
     }
 
-    public static TypeBuilder newData( final String name )
+    public static TypeBuilder newProperty( final String name )
     {
         return new NameBuilder().name( name );
     }

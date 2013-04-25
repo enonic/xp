@@ -12,9 +12,9 @@ import com.enonic.wem.api.content.data.type.PropertyTypes;
 
 import static junit.framework.Assert.assertEquals;
 
-public class DataJsonSerializerTest
+public class PopertyJsonSerializerTest
 {
-    private DataJsonSerializer serializer = new DataJsonSerializer();
+    private PopertyJsonSerializer serializer = new PopertyJsonSerializer();
 
     private JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
 

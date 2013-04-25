@@ -18,15 +18,15 @@ import static com.enonic.wem.core.content.serializer.EntryJsonSerializer.ENTRY_T
 import static com.enonic.wem.core.content.serializer.EntryJsonSerializer.ENTRY_VALUE;
 
 
-public class DataJsonSerializer
+public class PopertyJsonSerializer
     extends AbstractJsonSerializer<Property>
 {
-    public DataJsonSerializer()
+    public PopertyJsonSerializer()
     {
         // default
     }
 
-    public DataJsonSerializer( final ObjectMapper objectMapper )
+    public PopertyJsonSerializer( final ObjectMapper objectMapper )
     {
         super( objectMapper );
     }
@@ -49,10 +49,10 @@ public class DataJsonSerializer
     @Override
     protected Property parse( final JsonNode node )
     {
-        return parseData( node );
+        return parseProperty( node );
     }
 
-    Property parseData( final JsonNode dataNode )
+    Property parseProperty( final JsonNode dataNode )
     {
         final String name = JsonSerializerUtil.getStringValue( ENTRY_NAME, dataNode );
 
@@ -62,6 +62,6 @@ public class DataJsonSerializer
 
         final JsonNode valueNode = dataNode.get( ENTRY_VALUE );
 
-        return dataType.newData( name, valueNode.getTextValue() );
+        return dataType.newProperty( name, valueNode.getTextValue() );
     }
 }

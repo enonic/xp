@@ -494,7 +494,7 @@ public class DataSet
 
         public Builder set( final String name, final Object value, final BasePropertyType propertyType )
         {
-            propertyList.add( propertyType.newData( name, value ) );
+            propertyList.add( propertyType.newProperty( name, value ) );
             return this;
         }
 

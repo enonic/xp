@@ -88,7 +88,7 @@ class SyncRelationships
         for ( Property removedReference : removedReferences )
         {
             final Input relationshipInput = form.getInput( FormItemPath.from( removedReference.getPath().resolvePathElementNames() ) );
-            Preconditions.checkNotNull( relationshipInput, "No Input found for data: %s ", removedReference.getPath() );
+            Preconditions.checkNotNull( relationshipInput, "No Input found for Property: %s ", removedReference.getPath() );
             final RelationshipConfig relationshipConfig = (RelationshipConfig) relationshipInput.getInputTypeConfig();
 
             final RelationshipKey relationshipKey = newRelationshipKey().
@@ -113,7 +113,7 @@ class SyncRelationships
         for ( Property addedReference : addedReferences )
         {
             final Input relationshipInput = form.getInput( FormItemPath.from( addedReference.getPath().resolvePathElementNames() ) );
-            Preconditions.checkNotNull( relationshipInput, "No Input found for data: %s ", addedReference.getPath() );
+            Preconditions.checkNotNull( relationshipInput, "No Input found for Property: %s ", addedReference.getPath() );
             final RelationshipConfig relationshipConfig = (RelationshipConfig) relationshipInput.getInputTypeConfig();
             final Relationship relationship = relationshipFactory.create( addedReference, relationshipConfig.getRelationshipType() );
             relationshipsToAddBuilder.add( relationship );

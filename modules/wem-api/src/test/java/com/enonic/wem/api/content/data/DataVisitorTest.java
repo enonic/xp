@@ -28,12 +28,12 @@ public class DataVisitorTest
             }
         };
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.add( Property.newData().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
-        rootDataSet.add( Property.newData().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        rootDataSet.add( Property.newProperty().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
+        rootDataSet.add( Property.newProperty().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
-        mySet.add( Property.newData().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
-        mySet.add( Property.newData().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        mySet.add( Property.newProperty().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
+        mySet.add( Property.newProperty().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
         rootDataSet.add( mySet );
 
         dataVisitor.traverse( rootDataSet );
@@ -61,12 +61,12 @@ public class DataVisitorTest
         dataVisitor.restrictType( PropertyTypes.TEXT );
 
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.add( Property.newData().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
-        rootDataSet.add( Property.newData().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        rootDataSet.add( Property.newProperty().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
+        rootDataSet.add( Property.newProperty().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
-        mySet.add( Property.newData().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
-        mySet.add( Property.newData().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        mySet.add( Property.newProperty().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
+        mySet.add( Property.newProperty().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
         rootDataSet.add( mySet );
 
         dataVisitor.traverse( rootDataSet );

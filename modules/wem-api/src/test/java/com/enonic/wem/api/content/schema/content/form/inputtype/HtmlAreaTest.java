@@ -13,13 +13,13 @@ public class HtmlAreaTest
     public void breaksRequiredContract_textLine_which_is_empty_throws_exception()
     {
         new HtmlArea().checkBreaksRequiredContract(
-            Property.newData().name( "myHtml" ).type( PropertyTypes.HTML_PART ).value( "" ).build() );
+            Property.newProperty().name( "myHtml" ).type( PropertyTypes.HTML_PART ).value( "" ).build() );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_blank_throws_exception()
     {
         new HtmlArea().checkBreaksRequiredContract(
-            Property.newData().name( "myHtml" ).type( PropertyTypes.HTML_PART ).value( " " ).build() );
+            Property.newProperty().name( "myHtml" ).type( PropertyTypes.HTML_PART ).value( " " ).build() );
     }
 }

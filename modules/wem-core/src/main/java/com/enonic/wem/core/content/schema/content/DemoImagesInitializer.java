@@ -83,8 +83,8 @@ public class DemoImagesInitializer
     private RootDataSet createContentData( final BinaryId binaryId )
     {
         final RootDataSet dataSet = RootDataSet.newRootDataSet();
-        dataSet.add( Property.newData( "mimeType" ).type( PropertyTypes.TEXT ).value( "image/png" ).build() );
-        dataSet.add( Property.newData( "binary" ).type( PropertyTypes.BINARY_ID ).value( binaryId ).build() );
+        dataSet.add( Property.newProperty( "mimeType" ).type( PropertyTypes.TEXT ).value( "image/png" ).build() );
+        dataSet.add( Property.newProperty( "binary" ).type( PropertyTypes.BINARY_ID ).value( binaryId ).build() );
         return dataSet;
     }
 

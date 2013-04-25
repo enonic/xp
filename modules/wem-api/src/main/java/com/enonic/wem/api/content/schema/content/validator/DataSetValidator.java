@@ -104,7 +104,7 @@ public final class DataSetValidator
     {
         try
         {
-            property.checkDataTypeValidity();
+            property.checkPropertyTypeValidity();
         }
         catch ( InvalidDataException e )
         {

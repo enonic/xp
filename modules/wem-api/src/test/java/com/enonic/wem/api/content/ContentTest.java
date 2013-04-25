@@ -22,7 +22,6 @@ import static com.enonic.wem.api.content.data.DataSet.newDataSet;
 import static com.enonic.wem.api.content.data.DataSet.newRootDataSet;
 import static com.enonic.wem.api.content.data.Property.Text.newText;
 import static com.enonic.wem.api.content.data.Property.Xml.newXml;
-import static com.enonic.wem.api.content.data.Property.newData;
 import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
 import static com.enonic.wem.api.content.schema.content.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newFormItemSet;
@@ -79,8 +78,8 @@ public class ContentTest
     @Test
     public void array()
     {
-        Property first = newData().name( "array" ).type( PropertyTypes.TEXT ).value( "First" ).build();
-        Property second = newData().name( "array" ).type( PropertyTypes.TEXT ).value( "Second" ).build();
+        Property first = Property.newProperty().name( "array" ).type( PropertyTypes.TEXT ).value( "First" ).build();
+        Property second = Property.newProperty().name( "array" ).type( PropertyTypes.TEXT ).value( "Second" ).build();
 
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.add( first );
@@ -180,10 +179,10 @@ public class ContentTest
     public void add_array_of_set_within_set()
     {
         DataSet address1 = newDataSet().name( "address" ).build();
-        address1.add( newData().name( "street" ).type( PropertyTypes.TEXT ).value( "Kirkegata 1-3" ).build() );
+        address1.add( Property.newProperty().name( "street" ).type( PropertyTypes.TEXT ).value( "Kirkegata 1-3" ).build() );
 
         DataSet address2 = newDataSet().name( "address" ).build();
-        address2.add( newData().name( "street" ).type( PropertyTypes.TEXT ).value( "Sonsteli" ).build() );
+        address2.add( Property.newProperty().name( "street" ).type( PropertyTypes.TEXT ).value( "Sonsteli" ).build() );
 
         DataSet company = newDataSet().name( "company" ).build();
         company.add( address1 );
@@ -475,7 +474,7 @@ public class ContentTest
     public void new_way()
     {
         RootDataSet rootDataSet = DataSet.newRootDataSet();
-        rootDataSet.add( newData().type( PropertyTypes.TEXT ).name( "myData" ).value( "1" ).build() );
+        rootDataSet.add( Property.newProperty().type( PropertyTypes.TEXT ).name( "myData" ).value( "1" ).build() );
         rootDataSet.add( newText().name( "myData" ).value( "1" ).build() );
         rootDataSet.add( newXml().name( "myXml" ).value( "<root/>" ).build() );
 

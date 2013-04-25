@@ -21,19 +21,19 @@ public final class EntryJsonSerializer
 
     private final DataSetJsonSerializer dataSetSerializer;
 
-    private final DataJsonSerializer dataSerializer;
+    private final PopertyJsonSerializer dataSerializer;
 
     public EntryJsonSerializer( final ObjectMapper objectMapper, final DataSetJsonSerializer dataSetSerializer )
     {
         super( objectMapper );
         this.dataSetSerializer = dataSetSerializer;
-        this.dataSerializer = new DataJsonSerializer( objectMapper );
+        this.dataSerializer = new PopertyJsonSerializer( objectMapper );
     }
 
     public EntryJsonSerializer()
     {
         dataSetSerializer = new DataSetJsonSerializer( objectMapper() );
-        dataSerializer = new DataJsonSerializer( objectMapper() );
+        dataSerializer = new PopertyJsonSerializer( objectMapper() );
     }
 
     public final JsonNode serialize( final Entry entry )
@@ -62,7 +62,7 @@ public final class EntryJsonSerializer
         }
         else
         {
-            return dataSerializer.parseData( entryNode );
+            return dataSerializer.parseProperty( entryNode );
         }
     }
 

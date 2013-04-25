@@ -23,7 +23,7 @@ import static com.enonic.wem.api.content.data.Property.DecimalNumber.newDecimalN
 import static com.enonic.wem.api.content.data.Property.HtmlPart.newHtmlPart;
 import static com.enonic.wem.api.content.data.Property.Text.newText;
 import static com.enonic.wem.api.content.data.Property.WholeNumber.newWholeNumber;
-import static com.enonic.wem.api.content.data.Property.newData;
+import static com.enonic.wem.api.content.data.Property.newProperty;
 import static com.enonic.wem.api.content.data.Value.newValue;
 import static com.enonic.wem.api.content.data.type.PropertyTypes.DATE_MIDNIGHT;
 import static com.enonic.wem.api.content.data.type.PropertyTypes.DECIMAL_NUMBER;
@@ -58,16 +58,16 @@ public class Content_usageTest
     }
 
     @Test
-    public void dataSet_add_Data_using_newData()
+    public void dataSet_add_Data_using_newProperty()
     {
         DataSet dataSet = new RootDataSet();
 
         // exercise
-        dataSet.add( newData( "myText" ).type( TEXT ).value( "abc" ).build() );
-        dataSet.add( newData( "myNum" ).type( WHOLE_NUMBER ).value( 123L ).build() );
-        dataSet.add( newData( "myDec" ).type( DECIMAL_NUMBER ).value( 123.123 ).build() );
-        dataSet.add( newData( "myDate" ).type( DATE_MIDNIGHT ).value( new DateMidnight( 2013, 1, 13 ) ).build() );
-        dataSet.add( newData( "myHtml" ).type( HTML_PART ).value( "<p>abc</p>" ).build() );
+        dataSet.add( newProperty( "myText" ).type( TEXT ).value( "abc" ).build() );
+        dataSet.add( newProperty( "myNum" ).type( WHOLE_NUMBER ).value( 123L ).build() );
+        dataSet.add( newProperty( "myDec" ).type( DECIMAL_NUMBER ).value( 123.123 ).build() );
+        dataSet.add( newProperty( "myDate" ).type( DATE_MIDNIGHT ).value( new DateMidnight( 2013, 1, 13 ) ).build() );
+        dataSet.add( newProperty( "myHtml" ).type( HTML_PART ).value( "<p>abc</p>" ).build() );
 
         // verify
         assertEquals( TEXT, dataSet.getProperty( "myText" ).getType() );
@@ -84,7 +84,7 @@ public class Content_usageTest
     }
 
     @Test
-    public void dataSet_add_Data_using_newDataType()
+    public void dataSet_add_Data_using_newPropertyType()
     {
         DataSet dataSet = new RootDataSet();
 
@@ -110,7 +110,7 @@ public class Content_usageTest
     }
 
     @Test
-    public void dataSet_add_Data_using_new_DataType()
+    public void dataSet_add_Data_using_new_PropertyType()
     {
         DataSet dataSet = new RootDataSet();
 
@@ -203,11 +203,11 @@ public class Content_usageTest
     public void data_getValue()
     {
         DataSet dataSet = new RootDataSet();
-        dataSet.add( newData( "myText" ).type( TEXT ).value( "abc" ).build() );
-        dataSet.add( newData( "myNum" ).type( WHOLE_NUMBER ).value( 123L ).build() );
-        dataSet.add( newData( "myDec" ).type( DECIMAL_NUMBER ).value( 123.123 ).build() );
-        dataSet.add( newData( "myDate" ).type( DATE_MIDNIGHT ).value( new DateMidnight( 2013, 1, 13 ) ).build() );
-        dataSet.add( newData( "myHtml" ).type( HTML_PART ).value( "<p>abc</p>" ).build() );
+        dataSet.add( newProperty( "myText" ).type( TEXT ).value( "abc" ).build() );
+        dataSet.add( newProperty( "myNum" ).type( WHOLE_NUMBER ).value( 123L ).build() );
+        dataSet.add( newProperty( "myDec" ).type( DECIMAL_NUMBER ).value( 123.123 ).build() );
+        dataSet.add( newProperty( "myDate" ).type( DATE_MIDNIGHT ).value( new DateMidnight( 2013, 1, 13 ) ).build() );
+        dataSet.add( newProperty( "myHtml" ).type( HTML_PART ).value( "<p>abc</p>" ).build() );
 
         // exercise & verify
         assertEquals( "abc", dataSet.getProperty( "myText" ).getString() );
@@ -223,9 +223,9 @@ public class Content_usageTest
         DataSet dataSet = new RootDataSet();
 
         // exercise
-        dataSet.add( newData( "myText" ).type( TEXT ).value( "a" ).build() );
-        dataSet.add( newData( "myText" ).type( TEXT ).value( "b" ).build() );
-        dataSet.add( newData( "myText" ).type( TEXT ).value( "c" ).build() );
+        dataSet.add( newProperty( "myText" ).type( TEXT ).value( "a" ).build() );
+        dataSet.add( newProperty( "myText" ).type( TEXT ).value( "b" ).build() );
+        dataSet.add( newProperty( "myText" ).type( TEXT ).value( "c" ).build() );
 
         // verify
         assertEquals( "a", dataSet.getProperty( "myText" ).getString( 0 ) );
@@ -249,7 +249,7 @@ public class Content_usageTest
     }
 
     @Test
-    public void invoice_newData()
+    public void invoice_newProperty()
     {
         Invoice invoice = new Invoice();
         invoice.invoiceDate = DateTime.now();
@@ -259,14 +259,14 @@ public class Content_usageTest
 
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.add(
-            newData( "invoiceDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( invoice.invoiceDate.toDateMidnight() ).build() );
-        rootDataSet.add( newData( "recipient" ).type( PropertyTypes.TEXT ).value( invoice.recipient ).build() );
+            newProperty( "invoiceDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( invoice.invoiceDate.toDateMidnight() ).build() );
+        rootDataSet.add( newProperty( "recipient" ).type( PropertyTypes.TEXT ).value( invoice.recipient ).build() );
 
         for ( InvoiceLine line : invoice.lines )
         {
             DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
-            invoiceLine.add( newData( "text" ).type( PropertyTypes.TEXT ).value( line.text ).build() );
-            invoiceLine.add( newData( "money" ).type( resolveType( line.money ) ).value( line.money ).build() );
+            invoiceLine.add( newProperty( "text" ).type( PropertyTypes.TEXT ).value( line.text ).build() );
+            invoiceLine.add( newProperty( "money" ).type( resolveType( line.money ) ).value( line.money ).build() );
 
             rootDataSet.add( invoiceLine );
         }
@@ -299,8 +299,8 @@ public class Content_usageTest
             DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
             invoiceLine.add( newText().name( "text" ).value( line.text ).build() );
 
-            invoiceLine.add( newData( "money" ).type( resolveType( line.money ) ).value( line.money ).build() );
-            invoiceLine.add( myNewData( "money", line.money ) );
+            invoiceLine.add( newProperty( "money" ).type( resolveType( line.money ) ).value( line.money ).build() );
+            invoiceLine.add( myNewProperty( "money", line.money ) );
 
             rootDataSet.add( invoiceLine );
         }
@@ -333,7 +333,7 @@ public class Content_usageTest
         {
             DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
             invoiceLine.add( new Property.Text( "text", line.text ) );
-            invoiceLine.add( myNewData( "money", line.money ) );
+            invoiceLine.add( myNewProperty( "money", line.money ) );
             rootDataSet.add( invoiceLine );
         }
 
@@ -392,7 +392,7 @@ public class Content_usageTest
         }
     }
 
-    private Entry myNewData( final String text, final Object value )
+    private Entry myNewProperty( final String text, final Object value )
     {
         if ( value instanceof Double )
         {

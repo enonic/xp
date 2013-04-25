@@ -111,7 +111,7 @@ public abstract class BasePropertyType
 
     public abstract Property newProperty( final String name, final Value value );
 
-    public Property newData( final String name, final Object valueObj )
+    public Property newProperty( final String name, final Object valueObj )
     {
         final Value value = newValue( valueObj );
         return newProperty( name, value );

@@ -12,12 +12,14 @@ public class TextAreaTest
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_empty_throws_exception()
     {
-        new TextArea().checkBreaksRequiredContract( Property.newData().name( "myText" ).type( PropertyTypes.TEXT ).value( "" ).build() );
+        new TextArea().checkBreaksRequiredContract(
+            Property.newProperty().name( "myText" ).type( PropertyTypes.TEXT ).value( "" ).build() );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_blank_throws_exception()
     {
-        new TextArea().checkBreaksRequiredContract( Property.newData().name( "myText" ).type( PropertyTypes.TEXT ).value( " " ).build() );
+        new TextArea().checkBreaksRequiredContract(
+            Property.newProperty().name( "myText" ).type( PropertyTypes.TEXT ).value( " " ).build() );
     }
 }
