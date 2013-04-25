@@ -13,9 +13,9 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.DataVisitor;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.Property;
+import com.enonic.wem.api.content.data.PropertyVisitor;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.type.PropertyTypes;
 import com.enonic.wem.api.content.relationship.Relationship;
@@ -149,7 +149,7 @@ class SyncRelationships
     private Map<EntryPath, Property> resolveReferences( final RootDataSet rootDataSet )
     {
         final Map<EntryPath, Property> references = new LinkedHashMap<>();
-        final DataVisitor dataVisitor = new DataVisitor()
+        final PropertyVisitor propertyVisitor = new PropertyVisitor()
         {
             @Override
             public void visit( final Property reference )
@@ -157,8 +157,8 @@ class SyncRelationships
                 references.put( reference.getPath(), reference );
             }
         };
-        dataVisitor.restrictType( PropertyTypes.CONTENT_ID );
-        dataVisitor.traverse( rootDataSet );
+        propertyVisitor.restrictType( PropertyTypes.CONTENT_ID );
+        propertyVisitor.traverse( rootDataSet );
         return references;
     }
 }

@@ -11,7 +11,7 @@ import com.enonic.wem.api.content.data.type.PropertyTypes;
 
 import static junit.framework.Assert.assertEquals;
 
-public class DataVisitorTest
+public class PropertyVisitorTest
 {
 
     @Test
@@ -19,7 +19,7 @@ public class DataVisitorTest
     {
         final List<Property> hits = new ArrayList<>();
 
-        final DataVisitor dataVisitor = new DataVisitor()
+        final PropertyVisitor propertyVisitor = new PropertyVisitor()
         {
             @Override
             public void visit( final Property reference )
@@ -36,7 +36,7 @@ public class DataVisitorTest
         mySet.add( Property.newProperty().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
         rootDataSet.add( mySet );
 
-        dataVisitor.traverse( rootDataSet );
+        propertyVisitor.traverse( rootDataSet );
 
         assertEquals( 4, hits.size() );
         assertEquals( "myText", hits.get( 0 ).getPath().toString() );
@@ -50,7 +50,7 @@ public class DataVisitorTest
     {
         final List<Property> hits = new ArrayList<>();
 
-        final DataVisitor dataVisitor = new DataVisitor()
+        final PropertyVisitor propertyVisitor = new PropertyVisitor()
         {
             @Override
             public void visit( final Property reference )
@@ -58,7 +58,7 @@ public class DataVisitorTest
                 hits.add( reference );
             }
         };
-        dataVisitor.restrictType( PropertyTypes.TEXT );
+        propertyVisitor.restrictType( PropertyTypes.TEXT );
 
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.add( Property.newProperty().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
@@ -69,7 +69,7 @@ public class DataVisitorTest
         mySet.add( Property.newProperty().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
         rootDataSet.add( mySet );
 
-        dataVisitor.traverse( rootDataSet );
+        propertyVisitor.traverse( rootDataSet );
 
         assertEquals( 2, hits.size() );
         assertEquals( "myText", hits.get( 0 ).getPath().toString() );

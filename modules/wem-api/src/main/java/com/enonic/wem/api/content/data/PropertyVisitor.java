@@ -2,11 +2,11 @@ package com.enonic.wem.api.content.data;
 
 import com.enonic.wem.api.content.data.type.PropertyType;
 
-public abstract class DataVisitor
+public abstract class PropertyVisitor
 {
     private PropertyType propertyType;
 
-    public DataVisitor restrictType( PropertyType propertyType )
+    public PropertyVisitor restrictType( PropertyType propertyType )
     {
         this.propertyType = propertyType;
         return this;

@@ -22,8 +22,8 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.UpdateContentException;
-import com.enonic.wem.api.content.data.DataVisitor;
 import com.enonic.wem.api.content.data.Property;
+import com.enonic.wem.api.content.data.PropertyVisitor;
 import com.enonic.wem.api.content.data.type.PropertyTypes;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
@@ -79,7 +79,7 @@ public class UpdateContentHandler
 
                 final List<ContentId> embeddedContentsToKeep = new ArrayList<>();
                 final List<Content> temporaryContents = new ArrayList<>();
-                new DataVisitor()
+                new PropertyVisitor()
                 {
                     @Override
                     public void visit( final Property property )
@@ -169,7 +169,7 @@ public class UpdateContentHandler
     private List<Content> resolveEmbeddedContent( final Session session, final Content persistedContent )
     {
         final List<Content> embeddedContent = new ArrayList<>();
-        new DataVisitor()
+        new PropertyVisitor()
         {
             @Override
             public void visit( final Property property )
