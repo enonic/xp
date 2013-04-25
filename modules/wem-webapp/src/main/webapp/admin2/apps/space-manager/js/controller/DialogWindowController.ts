@@ -26,19 +26,12 @@ Ext.define('Admin.controller.DialogWindowController', {
             win.close();
             if (success && details.deleted) {
 
-                Admin.MessageBus.showFeedback({
-                    title: 'Space deleted',
-                    message: Ext.isArray(space) && space.length > 1 ? space.length + ' spaces were deleted' : '1 space was deleted',
-                    opts: {}
-                });
+                admin.api.message.showFeedback(Ext.isArray(space) && space.length > 1 ? space.length + ' spaces were deleted'
+                    : '1 space was deleted');
 
             } else {
-                var message = details.reason;
-                Admin.MessageBus.showFeedback({
-                    title: 'Space could not be deleted',
-                    message: message,
-                    opts: {}
-                });
+                var message:String = details.reason;
+                admin.api.message.showFeedback(message);
 
             }
             me.getSpaceTreeGridPanel().refresh();

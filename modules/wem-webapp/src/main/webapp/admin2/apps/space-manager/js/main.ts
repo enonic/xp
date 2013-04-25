@@ -1,12 +1,9 @@
 ///<reference path='../../../api/js/api.d.ts' />
 
-///<reference path='lib/Ping.ts' />
-
 ///<reference path='lib/UriHelper.ts' />
 ///<reference path='lib/JsonRpcProvider.ts' />
 ///<reference path='lib/RemoteService.ts' />
 
-///<reference path='lib/MessageBus.ts' />
 ///<reference path='lib/NotificationManager.ts' />
 
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />

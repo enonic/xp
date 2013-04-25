@@ -1,6 +1,5 @@
 Ext.define('Admin.NotificationManager', {
     singleton: true,
-    requires: ['Admin.MessageBus'],
 
     /**
      * Position inside document body.
@@ -57,11 +56,9 @@ Ext.define('Admin.NotificationManager', {
         this.timers = {};
 
         this.render();
-
-        Admin.MessageBus.on({
-            showNotification: { fn: this.showNotification, scope: this },
-            removeNotification: { fn: this.removeNotification, scope: this }
-        });
+        var me = this;
+        admin.api.message.addListener('showNotification', me.showNotification, me);
+        admin.api.message.addListener('removeNotification', me.removeNotification, me);
     },
 
     render: function () {

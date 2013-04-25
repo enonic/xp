@@ -86,12 +86,7 @@ Ext.define('Admin.controller.WizardController', {
                 if (closeWizard) {
                     me.getWizardTab().close();
                 }
-
-                Admin.MessageBus.showFeedback({
-                    title: 'Space saved',
-                    message: 'Space "' + spaceName + '" was saved',
-                    opts: {}
-                });
+                admin.api.message.showFeedback('Space "' + spaceName + '" was saved');
 
                 me.getSpaceTreeGridPanel().refresh();
             }
@@ -106,11 +101,7 @@ Ext.define('Admin.controller.WizardController', {
         var onDeleteSpaceSuccess = function (success, failures) {
             if (success) {
                 wizard.close();
-                Admin.MessageBus.showFeedback({
-                    title: 'Space deleted',
-                    message: 'Space was deleted',
-                    opts: {}
-                });
+                admin.api.message.showFeedback('Space was deleted');
             }
         };
 

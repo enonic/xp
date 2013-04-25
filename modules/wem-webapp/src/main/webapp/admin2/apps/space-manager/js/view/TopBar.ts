@@ -206,10 +206,7 @@ Ext.define('Admin.view.TopBar', {
             this.titleButton.setVisible(tabCount > 0);
             this.titleButton.setCount(tabCount);
 
-            Admin.MessageBus.updateAppTabCount({
-                appId: this.getApplicationId(),
-                tabCount: tabCount
-            });
+            admin.api.message.updateAppTabCount(this.getApplicationId(), tabCount);
         }
     },
 

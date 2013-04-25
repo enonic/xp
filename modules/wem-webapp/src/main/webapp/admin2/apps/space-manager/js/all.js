@@ -1,48 +1,3 @@
-Ext.define('Admin.lib.Ping', {
-    singleton: true,
-    pingUrl: 'ping.jsp',
-    intervalId: -1,
-    pollIntervalMs: 5000,
-    errorMessageId: null,
-    startPolling: function () {
-        var me = this;
-        me.stopPolling();
-        me.doPoll();
-        me.intervalId = setInterval(function () {
-            me.doPoll();
-        }, me.pollIntervalMs);
-    },
-    stopPolling: function () {
-        var me = this;
-        clearInterval(me.intervalId);
-    },
-    doPoll: function () {
-        var me = this;
-        Ext.Ajax.request({
-            url: me.pingUrl,
-            success: function (response) {
-                if(response.status < 400) {
-                    me.hideErrorMessage();
-                } else {
-                    me.showErrorMessage(response);
-                }
-            },
-            failure: function (response) {
-                me.showErrorMessage(response);
-            }
-        });
-    },
-    showErrorMessage: function (response) {
-        Admin.MessageBus.showError({
-            mark: 'serverError',
-            single: true,
-            lifetime: -1
-        });
-    },
-    hideErrorMessage: function () {
-        Admin.MessageBus.removeNotification('serverError');
-    }
-});
 Ext.define('Admin.lib.UriHelper', {
     singleton: true,
     getContentManagerSearchUri: function () {
@@ -58,7 +13,7 @@ Ext.define('Admin.lib.JsonRpcProvider', {
     initAPI: function () {
         var methods = this.methods;
         var namespace = this.namespace;
-        for(var i = 0; i < methods.length; i++) {
+        for (var i = 0; i < methods.length; i++) {
             var def = {
                 name: methods[i],
                 len: 1
@@ -79,7 +34,7 @@ Ext.define('Admin.lib.JsonRpcProvider', {
         var error = response.error ? true : false;
         response.tid = response.id;
         response.type = error ? 'exception' : 'rpc';
-        if(error) {
+        if (error) {
             response.message = response.error.message;
         }
         return Ext.create('direct.' + response.type, response);
@@ -87,7 +42,7 @@ Ext.define('Admin.lib.JsonRpcProvider', {
 });
 Ext.define('Admin.lib.RemoteService', {
     requires: [
-        'Admin.lib.UriHelper', 
+        'Admin.lib.UriHelper',
         'Admin.lib.JsonRpcProvider'
     ],
     singleton: true,
@@ -99,47 +54,47 @@ Ext.define('Admin.lib.RemoteService', {
             "type": "jsonrpc",
             "namespace": "Admin.lib.RemoteService",
             "methods": [
-                "account_find", 
-                "account_getGraph", 
-                "account_changePassword", 
-                "account_verifyUniqueEmail", 
-                "account_suggestUserName", 
-                "account_createOrUpdate", 
-                "account_delete", 
-                "account_get", 
-                "util_getCountries", 
-                "util_getLocales", 
-                "util_getTimeZones", 
-                "userstore_getAll", 
-                "userstore_get", 
-                "userstore_getConnectors", 
-                "userstore_createOrUpdate", 
-                "userstore_delete", 
-                "content_createOrUpdate", 
-                "content_list", 
-                "contentType_get", 
-                "content_tree", 
-                "content_get", 
-                "contentType_list", 
-                "content_delete", 
-                "content_validate", 
-                "content_find", 
-                "contentType_createOrUpdate", 
-                "contentType_delete", 
-                "contentType_tree", 
-                "schema_list", 
-                "schema_tree", 
-                "system_getSystemInfo", 
-                "mixin_get", 
-                "mixin_createOrUpdate", 
-                "mixin_delete", 
-                "relationshipType_get", 
-                "relationshipType_createOrUpdate", 
-                "relationshipType_delete", 
-                "space_list", 
-                "space_get", 
-                "space_delete", 
-                "space_createOrUpdate", 
+                "account_find",
+                "account_getGraph",
+                "account_changePassword",
+                "account_verifyUniqueEmail",
+                "account_suggestUserName",
+                "account_createOrUpdate",
+                "account_delete",
+                "account_get",
+                "util_getCountries",
+                "util_getLocales",
+                "util_getTimeZones",
+                "userstore_getAll",
+                "userstore_get",
+                "userstore_getConnectors",
+                "userstore_createOrUpdate",
+                "userstore_delete",
+                "content_createOrUpdate",
+                "content_list",
+                "contentType_get",
+                "content_tree",
+                "content_get",
+                "contentType_list",
+                "content_delete",
+                "content_validate",
+                "content_find",
+                "contentType_createOrUpdate",
+                "contentType_delete",
+                "contentType_tree",
+                "schema_list",
+                "schema_tree",
+                "system_getSystemInfo",
+                "mixin_get",
+                "mixin_createOrUpdate",
+                "mixin_delete",
+                "relationshipType_get",
+                "relationshipType_createOrUpdate",
+                "relationshipType_delete",
+                "space_list",
+                "space_get",
+                "space_delete",
+                "space_createOrUpdate",
                 "binary_create"
             ]
         };
@@ -274,7 +229,7 @@ Ext.define('Admin.lib.RemoteService', {
     },
     getMethod: function (name) {
         var handler = this.handlerCache[name];
-        if(handler) {
+        if (handler) {
             return handler;
         }
         var method = new Ext.direct.RemotingMethod({
@@ -292,76 +247,31 @@ Ext.define('Admin.lib.RemoteService', {
 }, function () {
     this.init();
 });
-Ext.define('Admin.MessageBus', {
-    extend: 'Ext.util.Observable',
-    singleton: true,
-    showFeedback: function (config) {
-        Admin.MessageBus.fireEvent('showNotification', 'notify', config);
-    },
-    showError: function (message) {
-        Admin.MessageBus.fireEvent('showNotification', 'error', message);
-    },
-    showGeneral: function (contentName, resultCallback, publishCallback) {
-        Admin.MessageBus.fireEvent('showNotification', 'general', {
-            contentName: contentName,
-            resultCallback: resultCallback,
-            publishCallback: publishCallback
-        });
-    },
-    showPublish: function (contentName, publishCallback, closeCallback) {
-        Admin.MessageBus.fireEvent('showNotification', 'publish', {
-            contentName: contentName,
-            publishCallback: publishCallback,
-            closeCallback: closeCallback
-        });
-    },
-    removeNotification: function (mark) {
-        Admin.MessageBus.fireEvent('removeNotification', mark);
-    },
-    updateAppTabCount: function (config) {
-        var eventName = 'topBar.onUpdateAppTabCount';
-        if(window.parent) {
-            window.parent['Admin'].MessageBus.fireEvent(eventName, config);
-        }
-        this.fireEvent(eventName, config);
-    },
-    liveEditOpenContent: function () {
-        this.fireEvent('liveEdit.openContent');
-    },
-    showLiveEditTestSettingsWindow: function (config) {
-        this.fireEvent('liveEdit.showTestSettingsWindow', config);
-    }
-});
 Ext.define('Admin.NotificationManager', {
     singleton: true,
-    requires: [
-        'Admin.MessageBus'
-    ],
     position: 'b',
     space: 3,
     lifetime: 5000,
     slideDuration: 1000,
     tpl: {
-        manager: new Ext.Template('<div class="admin-notification-container">', '   <div class="admin-notification-wrapper"></div>', '</div>'),
-        notification: new Ext.Template('<div class="admin-notification" style="height: 0; opacity: 0;">', '   <div class="admin-notification-inner">', '       <a class="admin-notification-remove" href="#">X</a>', '       <div class="admin-notification-content">{message}</div>', '   </div>', '</div>'),
+        manager: new Ext.Template('<div class="admin-notification-container">', '   <div class="admin-notification-wrapper"></div>',
+            '</div>'),
+        notification: new Ext.Template('<div class="admin-notification" style="height: 0; opacity: 0;">',
+            '   <div class="admin-notification-inner">', '       <a class="admin-notification-remove" href="#">X</a>',
+            '       <div class="admin-notification-content">{message}</div>', '   </div>', '</div>'),
         error: new Ext.Template('<span>{message}</span>'),
-        publish: new Ext.XTemplate('<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-result">See result</a> or <a href="#" class="admin-notification-publish">Publish to other locations</a></span>', '<span style="line-height: 1.5em;">', '<tpl if="contentName"> "{contentName}"</tpl> published successfully!', '</span> '),
-        general: new Ext.XTemplate('<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-publish">Publish</a> or <a href="#" class="admin-notification-close">Close</a></span>', '<span style="line-height: 1.5em;">', '<tpl if="contentName"> "{contentName}"</tpl> saved successfully!', '</span> ')
+        publish: new Ext.XTemplate('<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-result">See result</a> or <a href="#" class="admin-notification-publish">Publish to other locations</a></span>',
+            '<span style="line-height: 1.5em;">', '<tpl if="contentName"> "{contentName}"</tpl> published successfully!', '</span> '),
+        general: new Ext.XTemplate('<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-publish">Publish</a> or <a href="#" class="admin-notification-close">Close</a></span>',
+            '<span style="line-height: 1.5em;">', '<tpl if="contentName"> "{contentName}"</tpl> saved successfully!', '</span> ')
     },
     constructor: function (config) {
         this.timers = {
         };
         this.render();
-        Admin.MessageBus.on({
-            showNotification: {
-                fn: this.showNotification,
-                scope: this
-            },
-            removeNotification: {
-                fn: this.removeNotification,
-                scope: this
-            }
-        });
+        var me = this;
+        admin.api.message.addListener('showNotification', me.showNotification, me);
+        admin.api.message.addListener('removeNotification', me.removeNotification, me);
     },
     render: function () {
         var me = this, node, pos = me.position;
@@ -385,7 +295,7 @@ Ext.define('Admin.NotificationManager', {
     },
     notify: function (nOpts) {
         var me = this, notificationEl, height;
-        if(me.isRendered(nOpts)) {
+        if (me.isRendered(nOpts)) {
             return;
         }
         notificationEl = me.renderNotification(nOpts);
@@ -398,7 +308,7 @@ Ext.define('Admin.NotificationManager', {
                 opacity: 1
             },
             callback: function () {
-                if(nOpts.lifetime < 0) {
+                if (nOpts.lifetime < 0) {
                     return;
                 }
                 me.timers[notificationEl.id] = {
@@ -425,7 +335,7 @@ Ext.define('Admin.NotificationManager', {
             backgroundColor: '#4294de',
             listeners: []
         };
-        if(Ext.isFunction(opts.resultCallback)) {
+        if (Ext.isFunction(opts.resultCallback)) {
             notificationOpts.listeners.push({
                 click: {
                     fn: opts.resultCallback,
@@ -434,7 +344,7 @@ Ext.define('Admin.NotificationManager', {
                 }
             });
         }
-        if(Ext.isFunction(opts.publishCallback)) {
+        if (Ext.isFunction(opts.publishCallback)) {
             notificationOpts.listeners.push({
                 click: {
                     fn: opts.publishCallback,
@@ -451,7 +361,7 @@ Ext.define('Admin.NotificationManager', {
             backgroundColor: '#669c34',
             listeners: []
         };
-        if(Ext.isFunction(opts.publishCallback)) {
+        if (Ext.isFunction(opts.publishCallback)) {
             notificationOpts.listeners.push({
                 click: {
                     fn: opts.publishCallback,
@@ -460,7 +370,7 @@ Ext.define('Admin.NotificationManager', {
                 }
             });
         }
-        if(Ext.isFunction(opts.closeCallback)) {
+        if (Ext.isFunction(opts.closeCallback)) {
             notificationOpts.listeners.push({
                 click: {
                     fn: opts.closeCallback,
@@ -472,7 +382,7 @@ Ext.define('Admin.NotificationManager', {
         this.notify(notificationOpts);
     },
     isRendered: function (nOpts) {
-        if(nOpts.single && nOpts.mark && this.getEl().select('.admin-notification[data-mark=' + nOpts.mark + ']').getCount() > 0) {
+        if (nOpts.single && nOpts.mark && this.getEl().select('.admin-notification[data-mark=' + nOpts.mark + ']').getCount() > 0) {
             return true;
         }
         return false;
@@ -480,13 +390,14 @@ Ext.define('Admin.NotificationManager', {
     renderNotification: function (nOpts) {
         var me = this, tpl = me.tpl.notification, style = {
         }, notificationEl;
-        notificationEl = (me.position[0] == 't') ? tpl.insertFirst(me.getWrapperEl(), nOpts, true) : tpl.append(me.getWrapperEl(), nOpts, true);
-        if(nOpts.backgroundColor) {
+        notificationEl =
+        (me.position[0] == 't') ? tpl.insertFirst(me.getWrapperEl(), nOpts, true) : tpl.append(me.getWrapperEl(), nOpts, true);
+        if (nOpts.backgroundColor) {
             style['backgroundColor'] = nOpts.backgroundColor;
         }
         (me.position[0] == 't') ? (style['marginBottom'] = me.space + 'px') : (style['marginTop'] = me.space + 'px');
         me.getInnerEl(notificationEl).setStyle(style);
-        if(nOpts.mark) {
+        if (nOpts.mark) {
             notificationEl.set({
                 'data-mark': nOpts.mark
             });
@@ -510,7 +421,7 @@ Ext.define('Admin.NotificationManager', {
                 me.startTimer(notificationEl);
             }
         });
-        if(nOpts.listeners) {
+        if (nOpts.listeners) {
             Ext.each(nOpts.listeners, function (listener) {
                 notificationEl.on(listener);
             });
@@ -519,7 +430,7 @@ Ext.define('Admin.NotificationManager', {
     remove: function (notificationEl) {
         var me = this;
         Ext.isElement(notificationEl) || (notificationEl = Ext.get(notificationEl));
-        if(!notificationEl) {
+        if (!notificationEl) {
             return;
         }
         notificationEl.animate({
@@ -536,7 +447,7 @@ Ext.define('Admin.NotificationManager', {
     },
     startTimer: function (notificationEl) {
         var me = this, timer = me.timers[notificationEl.id];
-        if(!timer) {
+        if (!timer) {
             return;
         }
         timer.id = setTimeout(function () {
@@ -546,7 +457,7 @@ Ext.define('Admin.NotificationManager', {
     },
     stopTimer: function (notificationEl) {
         var timer = this.timers[notificationEl.id];
-        if(!timer || !timer.id) {
+        if (!timer || !timer.id) {
             return;
         }
         clearTimeout(timer.id);
@@ -584,14 +495,14 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
             this.panel.view.on('beforeitemmousedown', function (view, record, item, index, event, eOpts) {
                 var targetElement = new Ext.Element(event.target);
                 var isCheckboxColumnIsClicked = targetElement.findParent('td.x-grid-cell-first') !== null;
-                if(isCheckboxColumnIsClicked) {
+                if (isCheckboxColumnIsClicked) {
                     var isShiftKeyPressed = event.shiftKey === true;
                     var isCtrlKeyPressed = event.ctrlKey === true;
-                    if(isShiftKeyPressed || isCtrlKeyPressed) {
+                    if (isShiftKeyPressed || isCtrlKeyPressed) {
                         return;
                     }
                     var isChecked = this.selected[record.get(this.keyField)];
-                    if(!isChecked) {
+                    if (!isChecked) {
                         this.panel.selModel.select(index, true, false);
                     } else {
                         this.panel.selModel.deselect(index);
@@ -609,7 +520,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
             }, this);
             this.panel.view.on('itemadd', this.onViewRefresh, this);
             var pagingToolbar = this.panel.down('pagingtoolbar');
-            if(pagingToolbar !== null) {
+            if (pagingToolbar !== null) {
                 pagingToolbar.on('beforechange', this.pagingOnBeforeChange, this);
             }
         }, this);
@@ -624,9 +535,9 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         this.onRowDeselect(this.panel.selModel, record);
         var storeRecord;
         var key = record.get(this.keyField);
-        if(this.panel instanceof Ext.tree.Panel) {
+        if (this.panel instanceof Ext.tree.Panel) {
             storeRecord = this.panel.getRootNode().findChild(this.keyField, key);
-        } else if(this.panel instanceof Ext.grid.Panel) {
+        } else if (this.panel instanceof Ext.grid.Panel) {
             storeRecord = this.panel.getStore().findRecord(this.keyField, key);
         }
         this.panel.selModel.deselect(storeRecord);
@@ -648,22 +559,22 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         this.panel.selModel.refresh();
         var i;
         var sm = this.panel.getSelectionModel();
-        if(this.panel instanceof Ext.tree.Panel) {
+        if (this.panel instanceof Ext.tree.Panel) {
             var rootNode = this.panel.getRootNode(), node;
-            for(var selectedItem in this.selected) {
-                if(this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
+            for (var selectedItem in this.selected) {
+                if (this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
                     node = rootNode.findChild(this.keyField, selectedItem, true);
-                    if(node) {
+                    if (node) {
                         sm.select(node, true);
                     }
                 }
             }
-        } else if(this.panel instanceof Ext.grid.Panel) {
+        } else if (this.panel instanceof Ext.grid.Panel) {
             var store = this.panel.getStore(), record;
-            for(var selectedItem in this.selected) {
-                if(this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
+            for (var selectedItem in this.selected) {
+                if (this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
                     record = store.findRecord(this.keyField, selectedItem);
-                    if(record) {
+                    if (record) {
                         sm.select(record, true);
                     }
                 }
@@ -675,25 +586,25 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         this.ignoreSelectionChanges = true;
     },
     onSelectionClear: function () {
-        if(!this.ignoreSelectionChanges) {
+        if (!this.ignoreSelectionChanges) {
             this.selections = [];
             this.selected = {
             };
         }
     },
     onRowSelect: function (sm, rec, i, o) {
-        if(!this.ignoreSelectionChanges) {
-            if(!this.selected[rec.get(this.keyField)]) {
+        if (!this.ignoreSelectionChanges) {
+            if (!this.selected[rec.get(this.keyField)]) {
                 this.selections.push(rec);
                 this.selected[rec.get(this.keyField)] = true;
             }
         }
     },
     onHeaderClick: function (headerCt, header, e) {
-        if(header.isCheckerHd) {
+        if (header.isCheckerHd) {
             e.stopEvent();
             var isChecked = header.el.hasCls(Ext.baseCSSPrefix + 'grid-hd-checker-on');
-            if(isChecked) {
+            if (isChecked) {
                 this.clearSelection();
             } else {
                 this.panel.selModel.selectAll();
@@ -702,10 +613,10 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         return false;
     },
     onRowDeselect: function (rowModel, record, index, eOpts) {
-        if(!this.ignoreSelectionChanges) {
-            if(this.selected[record.get(this.keyField)]) {
-                for(var j = this.selections.length - 1; j >= 0; j--) {
-                    if(this.selections[j].get(this.keyField) == record.get(this.keyField)) {
+        if (!this.ignoreSelectionChanges) {
+            if (this.selected[record.get(this.keyField)]) {
+                for (var j = this.selections.length - 1; j >= 0; j--) {
+                    if (this.selections[j].get(this.keyField) == record.get(this.keyField)) {
                         this.selections.splice(j, 1);
                         this.selected[record.get(this.keyField)] = false;
                         break;
@@ -721,7 +632,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         var isRightClick = event.button === 2;
         var recordIsSelected = this.selected[record.get(this.keyField)];
         var cancel = isRightClick && recordIsSelected && this.getSelectionCount() > 1;
-        if(cancel) {
+        if (cancel) {
             return false;
         }
         return true;
@@ -730,7 +641,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         var targetElement = event.target;
         var isLeftClick = event.button === 0;
         var isCheckbox = targetElement.className && targetElement.className.indexOf('x-grid-row-checker') > -1;
-        if(isLeftClick && !isCheckbox) {
+        if (isLeftClick && !isCheckbox) {
             this.clearSelection();
         }
     }
@@ -740,7 +651,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     alias: 'plugin.gridToolbarPlugin',
     pluginId: 'gridToolbarPlugin',
     constructor: function (config) {
-        if(config) {
+        if (config) {
             Ext.apply(this, config);
         }
     },
@@ -756,9 +667,9 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         me.tbFill = Ext.create('Ext.toolbar.Fill');
         me.orderByButton = me.createOrderByButton();
         me.orderByDirectionButton = me.createOrderByDirectionButton();
-        if(Ext.isFunction(me.toolbar.store.getCount)) {
+        if (Ext.isFunction(me.toolbar.store.getCount)) {
             me.updateResultCount(me.getCount(me.toolbar.store));
-        } else if(Ext.isString(me.toolbar.store)) {
+        } else if (Ext.isString(me.toolbar.store)) {
             me.toolbar.store = Ext.StoreManager.lookup(me.toolbar.store);
         }
         me.toolbar.insert(0, me.resultTextItem);
@@ -767,7 +678,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             text: ' | '
         }));
         me.toolbar.insert(3, me.clearSelectionButton);
-        if(!(me.toolbar.store instanceof Ext.data.TreeStore)) {
+        if (!(me.toolbar.store instanceof Ext.data.TreeStore)) {
             me.toolbar.insert(4, me.tbFill);
             me.toolbar.insert(5, me.orderByButton);
             me.toolbar.insert(6, me.orderByDirectionButton);
@@ -778,13 +689,13 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         me.orderByDirectionButton.addListener('change', function () {
             me.doSort();
         });
-        if(me.toolbar.store) {
+        if (me.toolbar.store) {
             var loadEventName = me.toolbar.store.buffered ? 'prefetch' : 'load';
             me.toolbar.store.on(loadEventName, function (store) {
                 me.updateResultCount(me.getCount(store));
             });
         }
-        if(me.toolbar.gridPanel) {
+        if (me.toolbar.gridPanel) {
             me.toolbar.gridPanel.getSelectionModel().on('selectionchange', function (model, selected, eOpts) {
                 me.updateSelectAll(selected);
                 me.updateClearSelection(selected);
@@ -803,7 +714,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             listeners: {
                 render: function (cmp) {
                     cmp.el.on('click', function () {
-                        if(cmp.el.hasCls('admin-grid-toolbar-btn-none-selected')) {
+                        if (cmp.el.hasCls('admin-grid-toolbar-btn-none-selected')) {
                             me.toolbar.gridPanel.getSelectionModel().selectAll();
                         } else {
                             me.toolbar.gridPanel.getSelectionModel().deselectAll();
@@ -825,7 +736,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             listeners: {
                 render: function (cmp) {
                     cmp.el.on('click', function () {
-                        if(cmp.el.hasCls('admin-grid-toolbar-btn-clear-selection')) {
+                        if (cmp.el.hasCls('admin-grid-toolbar-btn-clear-selection')) {
                             me.toolbar.gridPanel.getSelectionModel().deselectAll();
                         }
                     });
@@ -852,7 +763,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
                 items: [
                     {
                         text: 'ASC'
-                    }, 
+                    },
                     {
                         text: 'DESC'
                     }
@@ -864,7 +775,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         var me = this;
         var gridColumns = me.toolbar.gridPanel.columns;
         var menuItems = [];
-        for(var i = 0; i < gridColumns.length; i++) {
+        for (var i = 0; i < gridColumns.length; i++) {
             menuItems.push({
                 text: gridColumns[i].text,
                 dataIndex: gridColumns[i].dataIndex
@@ -888,10 +799,10 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         var btn = this.selectAllButton;
         var isSelectMode = btn.el.hasCls('admin-grid-toolbar-btn-none-selected');
         var areAllRecordsSelected = !Ext.isEmpty(selected) && this.getCount(this.toolbar.store) == selected.length;
-        if(areAllRecordsSelected && isSelectMode) {
+        if (areAllRecordsSelected && isSelectMode) {
             btn.update('Deselect all');
             btn.el.removeCls('admin-grid-toolbar-btn-none-selected');
-        } else if(!areAllRecordsSelected && !isSelectMode) {
+        } else if (!areAllRecordsSelected && !isSelectMode) {
             btn.update('Select all');
             btn.el.addCls('admin-grid-toolbar-btn-none-selected');
         }
@@ -899,27 +810,27 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     updateClearSelection: function (selected) {
         var btn = this.clearSelectionButton;
         var count = selected.length;
-        if(count > 0) {
+        if (count > 0) {
             btn.update('Clear selection (' + selected.length + ')');
         } else {
             btn.update('Clear selection');
         }
     },
     getCount: function (store) {
-        if(store instanceof Ext.data.Store) {
+        if (store instanceof Ext.data.Store) {
             return store.getTotalCount();
-        } else if(store instanceof Ext.data.TreeStore) {
+        } else if (store instanceof Ext.data.TreeStore) {
             return this.countTreeNodes(store.getRootNode()) - 1;
         } else {
             return undefined;
         }
     },
     countTreeNodes: function (node) {
-        if(this.toolbar.countTopLevelOnly) {
+        if (this.toolbar.countTopLevelOnly) {
             return Ext.isEmpty(node.childNodes) ? 1 : 1 + node.childNodes.length;
         } else {
             var count = 1;
-            if(!Ext.isEmpty(node.childNodes)) {
+            if (!Ext.isEmpty(node.childNodes)) {
                 node.eachChild(function (child) {
                     count += this.countTreeNodes(child);
                 }, this);
@@ -934,7 +845,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     width: 300,
     height: 150,
     initComponent: function () {
-        if(!window['plupload']) {
+        if (!window['plupload']) {
             alert('FileUploadGrid requires Plupload!');
         }
         this.createStore();
@@ -944,7 +855,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
                 header: 'Name',
                 dataIndex: 'fileName',
                 flex: 2
-            }, 
+            },
             {
                 header: 'Size',
                 dataIndex: 'fileSize',
@@ -968,7 +879,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
                     text: 'Browse...',
                     iconCls: 'icon-browse',
                     itemId: 'browseButton'
-                }, 
+                },
                 {
                     xtype: 'button',
                     text: 'Upload',
@@ -978,7 +889,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
                     handler: function () {
                         Ext.Msg.alert('TODO', 'Upload');
                     }
-                }, 
+                },
                 {
                     xtype: 'button',
                     text: 'Remove',
@@ -1017,7 +928,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
         this.uploader.bind('FilesAdded', function (up, files) {
             var file = null;
             var i;
-            for(i = 0; i < files.length; i += 1) {
+            for (i = 0; i < files.length; i += 1) {
                 file = files[i];
                 store.add({
                     'fileId': file.id,
@@ -1037,7 +948,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     removeSelectedFiles: function (selected) {
         var store = this.getStore(), fileRecord = null;
         var i;
-        for(i = 0; i < selected.length; i += 1) {
+        for (i = 0; i < selected.length; i += 1) {
             fileRecord = selected[i];
             store.remove(fileRecord);
             this.removeFileFromUploaderQueue(fileRecord.data);
@@ -1046,8 +957,8 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     removeFileFromUploaderQueue: function (recordData) {
         var uploaderFiles = this.uploader.files;
         var j;
-        for(j = 0; j < uploaderFiles.length; j += 1) {
-            if(uploaderFiles[j].id === recordData.fileId) {
+        for (j = 0; j < uploaderFiles.length; j += 1) {
+            if (uploaderFiles[j].id === recordData.fileId) {
                 this.uploader.removeFile(uploaderFiles[j]);
             }
         }
@@ -1055,8 +966,8 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     createStore: function () {
         this.store = Ext.create('Ext.data.Store', {
             fields: [
-                'fileName', 
-                'fileSize', 
+                'fileName',
+                'fileSize',
                 'fileId'
             ],
             data: {
@@ -1082,18 +993,22 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     addBodyListeners: function () {
         var bodyElement = Ext.getBody();
         var gridHtmlElement = this.getEl();
+
         function cancelEvent(event) {
-            if(event.preventDefault) {
+            if (event.preventDefault) {
                 event.preventDefault();
             }
             return false;
         }
+
         function addDragOverCls() {
             gridHtmlElement.addCls('admin-file-upload-drop-target');
         }
+
         function removeDragOverCls() {
             gridHtmlElement.removeCls('admin-file-upload-drop-target');
         }
+
         bodyElement.on('dragover', function (event) {
             addDragOverCls();
             cancelEvent(event);
@@ -1123,9 +1038,13 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
     height: 132,
     uploadUrl: 'rest/upload',
     progressBarHeight: 8,
-    tpl: new Ext.XTemplate('<div id="{id}" title="{title}" class="admin-image-upload-button-container" style="width:{width}px;height:{height}px; margin: 0">' + '<img src="{photoUrl}" class="admin-image-upload-button-image" style="width:{width - 2}px;height:{height - 2}px"/>' + '<div class="admin-image-upload-button-progress-bar-container" style="width:{width - 3}px">' + '<div class="admin-image-upload-button-progress-bar" style="height:{progressBarHeight}px"><!-- --></div>' + '</div>' + '</div>'),
+    tpl: new Ext.XTemplate('<div id="{id}" title="{title}" class="admin-image-upload-button-container" style="width:{width}px;height:{height}px; margin: 0">' +
+                           '<img src="{photoUrl}" class="admin-image-upload-button-image" style="width:{width - 2}px;height:{height - 2}px"/>' +
+                           '<div class="admin-image-upload-button-progress-bar-container" style="width:{width - 3}px">' +
+                           '<div class="admin-image-upload-button-progress-bar" style="height:{progressBarHeight}px"><!-- --></div>' +
+                           '</div>' + '</div>'),
     initComponent: function () {
-        if(!window['plupload']) {
+        if (!window['plupload']) {
             alert('ImageUploadButton requires Plupload!');
         }
         var me = this;
@@ -1190,9 +1109,10 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
         });
         uploader.bind('FileUploaded', function (up, file, response) {
             var responseObj, uploadedResUrl;
-            if(response && response.status === 200) {
+            if (response && response.status === 200) {
                 responseObj = Ext.decode(response.response);
-                uploadedResUrl = (responseObj.items && responseObj.items.length > 0) ? 'rest/upload/' + responseObj.items[0].id : 'resources/images/x-user-photo.png';
+                uploadedResUrl = (responseObj.items && responseObj.items.length > 0) ? 'rest/upload/' + responseObj.items[0].id
+                    : 'resources/images/x-user-photo.png';
                 uploadButton.updateImage(uploadedResUrl);
             }
             uploadButton.hideProgressBar();
@@ -1234,18 +1154,22 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
         var bodyElement = Ext.getBody();
         var dropTarget = Ext.get(this.buttonElementId);
         var border = Ext.get(this.buttonElementId + '-over-border');
+
         function cancelEvent(event) {
-            if(event.preventDefault) {
+            if (event.preventDefault) {
                 event.preventDefault();
             }
             return false;
         }
+
         function highlightDropTarget() {
             dropTarget.addCls('admin-file-upload-drop-target');
         }
+
         function removeHighlightFromDropTarget() {
             dropTarget.dom.className = dropTarget.dom.className.replace(/ admin-file-upload-drop-target/, '');
         }
+
         dropTarget.on('mouseenter', function (event) {
             highlightDropTarget();
             me.fireEvent('mouseenter');
@@ -1373,13 +1297,13 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
             }
         };
         this.tbar = [
-            uploadButton, 
-            '->', 
-            cancelButton, 
+            uploadButton,
+            '->',
+            cancelButton,
             setButton
         ];
         this.items = [
-            previewContainer, 
+            previewContainer,
             slider
         ];
         this.callParent(arguments);
@@ -1419,13 +1343,13 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
         var ih = image.getHeight();
         image.setWidth('');
         image.setHeight('');
-        if(iw > fw && ih > fh) {
-            if(ih > iw) {
+        if (iw > fw && ih > fh) {
+            if (ih > iw) {
                 image.setWidth(frame.getWidth() + 20);
             } else {
                 image.setHeight(frame.getHeight() + 20);
             }
-        } else if(ih > fh) {
+        } else if (ih > fh) {
             image.setHeight(frame.getHeight());
         } else {
             image.setWidth(frame.getWidth());
@@ -1458,7 +1382,7 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
         return this.down('slider');
     },
     displayImage: function (show) {
-        if(show) {
+        if (show) {
             this.getImage().show();
         } else {
             this.getImage().hide();
@@ -1474,15 +1398,15 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
 Ext.define('Admin.model.SpaceModel', {
     extend: 'Ext.data.Model',
     fields: [
-        'name', 
-        'displayName', 
-        'iconUrl', 
-        'rootContentId', 
+        'name',
+        'displayName',
+        'iconUrl',
+        'rootContentId',
         {
             name: 'createdTime',
             type: 'date',
             default: new Date()
-        }, 
+        },
         {
             name: 'modifiedTime',
             type: 'date',
@@ -1524,75 +1448,75 @@ Ext.define('Admin.view.WizardLayout', {
         var oldIndex = owner.items.indexOf(oldCard);
         var newCard = this.parseActiveItem(item);
         var newIndex = owner.items.indexOf(newCard);
-        if(oldCard !== newCard) {
+        if (oldCard !== newCard) {
             owner.fireEvent("animationstarted", newCard, oldCard);
-            if(newCard.rendered && this.animation && this.animation !== "none") {
+            if (newCard.rendered && this.animation && this.animation !== "none") {
                 this.syncFx();
                 var target = this.getRenderTarget();
                 newCard.setWidth(target.getWidth() - target.getPadding("lr") - Ext.getScrollBarWidth());
-                switch(this.animation) {
-                    case 'fade':
-                        newCard.el.setStyle({
-                            position: 'absolute',
-                            opacity: 0,
-                            top: this.getRenderTarget().getPadding('t') + 'px'
-                        });
-                        newCard.show();
-                        if(oldCard) {
-                            oldCard.el.fadeOut({
-                                useDisplay: true,
-                                duration: this.duration,
-                                callback: function () {
-                                    this.hide();
-                                },
-                                scope: this.activeItem
-                            });
-                        }
-                        owner.doLayout();
-                        newCard.el.fadeIn({
+                switch (this.animation) {
+                case 'fade':
+                    newCard.el.setStyle({
+                        position: 'absolute',
+                        opacity: 0,
+                        top: this.getRenderTarget().getPadding('t') + 'px'
+                    });
+                    newCard.show();
+                    if (oldCard) {
+                        oldCard.el.fadeOut({
                             useDisplay: true,
                             duration: this.duration,
                             callback: function () {
-                                newCard.el.setStyle({
-                                    position: ''
-                                });
-                                owner.fireEvent("animationfinished", newCard, oldCard);
+                                this.hide();
                             },
-                            scope: this
+                            scope: this.activeItem
                         });
-                        break;
-                    case 'slide':
-                        newCard.el.setStyle({
-                            position: 'absolute',
-                            visibility: 'hidden',
-                            width: this.getRenderTarget().getWidth(),
-                            top: this.getRenderTarget().getPadding('t') + 'px'
-                        });
-                        newCard.show();
-                        if(oldCard) {
-                            oldCard.el.slideOut(newIndex > oldIndex ? "l" : "r", {
-                                duration: this.duration,
-                                easing: this.easing,
-                                remove: false,
-                                scope: this.activeItem,
-                                callback: function () {
-                                    this.hide();
-                                }
+                    }
+                    owner.doLayout();
+                    newCard.el.fadeIn({
+                        useDisplay: true,
+                        duration: this.duration,
+                        callback: function () {
+                            newCard.el.setStyle({
+                                position: ''
                             });
-                        }
-                        owner.doLayout();
-                        newCard.el.slideIn(newIndex > oldIndex ? "r" : "l", {
+                            owner.fireEvent("animationfinished", newCard, oldCard);
+                        },
+                        scope: this
+                    });
+                    break;
+                case 'slide':
+                    newCard.el.setStyle({
+                        position: 'absolute',
+                        visibility: 'hidden',
+                        width: this.getRenderTarget().getWidth(),
+                        top: this.getRenderTarget().getPadding('t') + 'px'
+                    });
+                    newCard.show();
+                    if (oldCard) {
+                        oldCard.el.slideOut(newIndex > oldIndex ? "l" : "r", {
                             duration: this.duration,
                             easing: this.easing,
-                            scope: this,
+                            remove: false,
+                            scope: this.activeItem,
                             callback: function () {
-                                newCard.el.setStyle({
-                                    position: ''
-                                });
-                                owner.fireEvent("animationfinished", newCard, oldCard);
+                                this.hide();
                             }
                         });
-                        break;
+                    }
+                    owner.doLayout();
+                    newCard.el.slideIn(newIndex > oldIndex ? "r" : "l", {
+                        duration: this.duration,
+                        easing: this.easing,
+                        scope: this,
+                        callback: function () {
+                            newCard.el.setStyle({
+                                position: ''
+                            });
+                            owner.fireEvent("animationfinished", newCard, oldCard);
+                        }
+                    });
+                    break;
                 }
                 this.activeItem = newCard;
                 this.sequenceFx();
@@ -1684,26 +1608,26 @@ Ext.define('Admin.view.WizardHeader', {
         this.items = [
             me.displayNameField
         ];
-        if(!me.pathField.hidden && !me.nameField.hidden) {
+        if (!me.pathField.hidden && !me.nameField.hidden) {
             this.items.push({
                 xtype: 'fieldcontainer',
                 hideLabel: true,
                 layout: 'hbox',
                 items: [
-                    me.pathField, 
+                    me.pathField,
                     me.nameField
                 ]
             });
-        } else if(!me.pathField.hidden) {
+        } else if (!me.pathField.hidden) {
             this.items.push(me.pathField);
-        } else if(!me.nameField.hidden) {
+        } else if (!me.nameField.hidden) {
             this.items.push(me.nameField);
         }
         this.callParent(arguments);
         this.addEvents('displaynamechange', 'displaynameoverride', 'namechange', 'nameoverride');
     },
     onDisplayNameAfterrender: function (field) {
-        if(!field.readOnly && field.autoFocus) {
+        if (!field.readOnly && field.autoFocus) {
             field.focus(false, 100);
             field.selectText(0, 0);
         }
@@ -1711,13 +1635,13 @@ Ext.define('Admin.view.WizardHeader', {
     onDisplayNameKey: function (field, event, opts) {
         var wasAutoGenerate = this.autogenerateDisplayName;
         var autoGenerate = Ext.isEmpty(field.getValue());
-        if(wasAutoGenerate != autoGenerate) {
+        if (wasAutoGenerate != autoGenerate) {
             this.fireEvent('displaynameoverride', !autoGenerate);
         }
         this.autogenerateDisplayName = autoGenerate;
     },
     onDisplayNameChanged: function (field, newVal, oldVal, opts) {
-        if(this.fireEvent('displaynamechange', newVal, oldVal) !== false && this.autogenerateName) {
+        if (this.fireEvent('displaynamechange', newVal, oldVal) !== false && this.autogenerateName) {
             var processedValue = this.nameField.processRawValue(this.preProcessName(newVal));
             this.nameField.setValue(processedValue);
         }
@@ -1727,7 +1651,7 @@ Ext.define('Admin.view.WizardHeader', {
     onNameKey: function (field, event, opts) {
         var wasAutoGenerate = this.autogenerateName;
         var autoGenerate = Ext.isEmpty(field.getValue());
-        if(wasAutoGenerate != autoGenerate) {
+        if (wasAutoGenerate != autoGenerate) {
             this.fireEvent('nameoverride', !autoGenerate);
         }
         this.autogenerateName = autoGenerate;
@@ -1807,12 +1731,12 @@ Ext.define('Admin.view.WizardPanel', {
     initComponent: function () {
         var me = this;
         var events = [
-            "beforestepchanged", 
-            "stepchanged", 
-            "animationstarted", 
-            "animationfinished", 
-            'validitychange', 
-            'dirtychange', 
+            "beforestepchanged",
+            "stepchanged",
+            "animationstarted",
+            "animationfinished",
+            'validitychange',
+            'dirtychange',
             "finished"
         ];
         this.dirtyItems = [];
@@ -1828,7 +1752,7 @@ Ext.define('Admin.view.WizardPanel', {
             items: this.createSteps()
         });
         this.items = [
-            this.createHeaderPanel(), 
+            this.createHeaderPanel(),
             {
                 itemId: 'bottomPanel',
                 xtype: 'container',
@@ -1882,7 +1806,7 @@ Ext.define('Admin.view.WizardPanel', {
                                 margin: '0 0 0 40'
                             }
                         ]
-                    }, 
+                    },
                     {
                         xtype: 'container',
                         region: 'east',
@@ -1929,7 +1853,7 @@ Ext.define('Admin.view.WizardPanel', {
                                 padding: 0
                             }
                         ]
-                    }, 
+                    },
                     this.wizard
                 ],
                 listeners: {
@@ -1953,7 +1877,7 @@ Ext.define('Admin.view.WizardPanel', {
             animationstarted: this.onAnimationStarted,
             animationfinished: this.onAnimationFinished
         });
-        if(this.getActionButton()) {
+        if (this.getActionButton()) {
             this.boundItems.push(this.getActionButton());
         }
         this.down('#progressBar').update(this.wizard.items.items);
@@ -1962,21 +1886,24 @@ Ext.define('Admin.view.WizardPanel', {
     },
     updateShadow: function (me) {
         var bottomPanel = me.down('#bottomPanel').getEl();
-        if(bottomPanel) {
-            var hasScroll = bottomPanel.dom.scrollHeight > bottomPanel.dom.clientHeight, positionPanelEl = me.down('#positionPanel').getEl(), wizardHeaderPanelHeight = me.down('#wizardHeaderPanel').getEl().getHeight(), headerShadowEl = Ext.fly('admin-wizard-header-shadow');
-            if(hasScroll && bottomPanel.dom.scrollTop !== 0) {
-                if(!headerShadowEl) {
+        if (bottomPanel) {
+            var hasScroll = bottomPanel.dom.scrollHeight >
+                            bottomPanel.dom.clientHeight, positionPanelEl = me.down('#positionPanel').getEl(), wizardHeaderPanelHeight = me.down('#wizardHeaderPanel').getEl().getHeight(), headerShadowEl = Ext.fly('admin-wizard-header-shadow');
+            if (hasScroll && bottomPanel.dom.scrollTop !== 0) {
+                if (!headerShadowEl) {
                     var dh = Ext.DomHelper, boxShadowOffsets = Ext.isGecko ? '0 5px 6px -3px' : '0 5px 10px -3px';
                     var shadowDomSpec = {
                         id: 'admin-wizard-header-shadow',
                         tag: 'div',
-                        style: 'position:absolute; top:' + wizardHeaderPanelHeight + 'px; left:0px; z-index:1000; height:10px; background:transparent; width:100%; box-shadow:' + boxShadowOffsets + '#888 inset'
+                        style: 'position:absolute; top:' + wizardHeaderPanelHeight +
+                               'px; left:0px; z-index:1000; height:10px; background:transparent; width:100%; box-shadow:' +
+                               boxShadowOffsets + '#888 inset'
                     };
                     dh.append(positionPanelEl, shadowDomSpec);
                     Ext.fly('admin-wizard-header-shadow').show(true);
                 }
             } else {
-                if(headerShadowEl) {
+                if (headerShadowEl) {
                     headerShadowEl.remove();
                 }
             }
@@ -1984,9 +1911,9 @@ Ext.define('Admin.view.WizardPanel', {
     },
     updateNavButton: function (element, color) {
         var btn = Ext.get(element);
-        if(!btn.hasCls('wizard-nav-icon')) {
+        if (!btn.hasCls('wizard-nav-icon')) {
             btn = btn.down('.wizard-nav-icon');
-        } else if(btn.hasCls('x-btn-inner')) {
+        } else if (btn.hasCls('x-btn-inner')) {
             btn = btn.next('.x-btn-icon');
         }
         btn.setStyle('color', color);
@@ -1999,7 +1926,7 @@ Ext.define('Admin.view.WizardPanel', {
     },
     bindItemListeners: function (cmp) {
         Ext.each(cmp.validateItems, function (validateItem, i) {
-            if(validateItem) {
+            if (validateItem) {
                 validateItem.on({
                     'validitychange': cmp.handleValidityChange,
                     'dirtychange': cmp.handleDirtyChange,
@@ -2011,15 +1938,15 @@ Ext.define('Admin.view.WizardPanel', {
             panel.getForm().checkValidity();
         };
         cmp.wizard.items.each(function (item, i) {
-            if(i === 0) {
+            if (i === 0) {
                 cmp.onAnimationFinished(item, null);
             }
-            if('editUserFormPanel' === item.getXType()) {
+            if ('editUserFormPanel' === item.getXType()) {
                 item.on('fieldsloaded', checkValidityFn);
             }
             var itemForm = Ext.isFunction(item.getForm) ? item.getForm() : undefined;
-            if(itemForm) {
-                if(Ext.isFunction(cmp.washDirtyForm)) {
+            if (itemForm) {
+                if (Ext.isFunction(cmp.washDirtyForm)) {
                     cmp.washDirtyForm(itemForm);
                 }
                 Ext.apply(itemForm, {
@@ -2038,11 +1965,11 @@ Ext.define('Admin.view.WizardPanel', {
     formOnValidityChange: function () {
         var wizardPanel = this.owner.up('wizardPanel');
         var boundItems = wizardPanel.getFormBoundItems(this);
-        if(boundItems && this.owner === wizardPanel.getActiveItem()) {
+        if (boundItems && this.owner === wizardPanel.getActiveItem()) {
             var valid = wizardPanel.isStepValid(this.owner);
             boundItems.each(function (cmp) {
-                if(cmp.rendered && cmp.isHidden() === valid) {
-                    if(valid) {
+                if (cmp.rendered && cmp.isHidden() === valid) {
+                    if (valid) {
                         cmp.show();
                     } else {
                         cmp.hide();
@@ -2053,7 +1980,7 @@ Ext.define('Admin.view.WizardPanel', {
     },
     getFormBoundItems: function (form) {
         var boundItems = form._boundItems;
-        if(!boundItems && form.owner.rendered) {
+        if (!boundItems && form.owner.rendered) {
             boundItems = form._boundItems = Ext.create('Ext.util.MixedCollection');
             boundItems.addAll(form.owner.query('[formBind]'));
             boundItems.addAll(this.boundItems);
@@ -2061,31 +1988,31 @@ Ext.define('Admin.view.WizardPanel', {
         return boundItems;
     },
     handleValidityChange: function (form, valid, opts) {
-        if(!valid) {
+        if (!valid) {
             Ext.Array.include(this.invalidItems, form);
         } else {
             Ext.Array.remove(this.invalidItems, form);
         }
         this.updateProgress();
         var isWizardValid = this.invalidItems.length === 0;
-        if(this.isWizardValid !== isWizardValid) {
+        if (this.isWizardValid !== isWizardValid) {
             this.isWizardValid = isWizardValid;
             var actionButton = this.getActionButton();
-            if(actionButton) {
+            if (actionButton) {
                 actionButton.setVisible(isWizardValid);
             }
             this.fireEvent('validitychange', this, isWizardValid);
         }
     },
     handleDirtyChange: function (form, dirty, opts) {
-        if(dirty) {
+        if (dirty) {
             Ext.Array.include(this.dirtyItems, form);
         } else {
             Ext.Array.remove(this.dirtyItems, form);
         }
         this.updateProgress();
         var isWizardDirty = this.dirtyItems.length > 0;
-        if(this.isWizardDirty !== isWizardDirty) {
+        if (this.isWizardDirty !== isWizardDirty) {
             this.isWizardDirty = isWizardDirty;
             this.fireEvent('dirtychange', this, isWizardDirty);
         }
@@ -2094,10 +2021,10 @@ Ext.define('Admin.view.WizardPanel', {
         var isStepValid = Ext.Array.intersect(this.invalidItems, this.validateItems).length === 0;
         var activeStep = step || this.getActiveItem();
         var activeForm;
-        if(activeStep && Ext.isFunction(activeStep.getForm)) {
+        if (activeStep && Ext.isFunction(activeStep.getForm)) {
             activeForm = activeStep.getForm();
         }
-        if(isStepValid && activeForm) {
+        if (isStepValid && activeForm) {
             isStepValid = isStepValid && !activeForm.hasInvalidField();
         }
         return isStepValid;
@@ -2107,7 +2034,10 @@ Ext.define('Admin.view.WizardPanel', {
     },
     createRibbon: function () {
         var me = this;
-        var stepsTpl = '<div class="navigation-container">' + '<ul class="navigation clearfix">' + '<tpl for=".">' + '<li class="{[ this.resolveClsName( xindex, xcount ) ]}" wizardStep="{[xindex]}">' + '<a href="javascript:;" class="step {[ this.resolveClsName( xindex, xcount ) ]}">{[' + '(values.stepTitle || values.title) ]}</a></li>' + '</tpl>' + '</ul>' + '</div>';
+        var stepsTpl = '<div class="navigation-container">' + '<ul class="navigation clearfix">' + '<tpl for=".">' +
+                       '<li class="{[ this.resolveClsName( xindex, xcount ) ]}" wizardStep="{[xindex]}">' +
+                       '<a href="javascript:;" class="step {[ this.resolveClsName( xindex, xcount ) ]}">{[' +
+                       '(values.stepTitle || values.title) ]}</a></li>' + '</tpl>' + '</ul>' + '</div>';
         return {
             xtype: 'component',
             flex: 1,
@@ -2128,25 +2058,25 @@ Ext.define('Admin.view.WizardPanel', {
                 resolveClsName: function (index, total) {
                     var activeIndex = me.wizard.items.indexOf(me.getActiveItem()) + 1;
                     var clsName = '';
-                    if(index === 1) {
+                    if (index === 1) {
                         clsName += 'first ';
                     }
-                    if(index < activeIndex) {
+                    if (index < activeIndex) {
                         clsName += 'previous ';
                     }
-                    if(index + 1 === activeIndex) {
+                    if (index + 1 === activeIndex) {
                         clsName += 'immediate ';
                     }
-                    if(index === activeIndex) {
+                    if (index === activeIndex) {
                         clsName += 'current ';
                     }
-                    if(index > activeIndex) {
+                    if (index > activeIndex) {
                         clsName += 'next ';
                     }
-                    if(index - 1 === activeIndex) {
+                    if (index - 1 === activeIndex) {
                         clsName += 'immediate ';
                     }
-                    if(index === total) {
+                    if (index === total) {
                         clsName += 'last ';
                     }
                     return clsName;
@@ -2155,27 +2085,27 @@ Ext.define('Admin.view.WizardPanel', {
         };
     },
     onAnimationStarted: function (newStep, oldStep) {
-        if(this.showControls) {
+        if (this.showControls) {
             this.updateButtons(this.wizard, true);
         }
-        if(this.externalControls) {
+        if (this.externalControls) {
             this.updateButtons(this.externalControls, true);
         }
     },
     onAnimationFinished: function (newStep, oldStep) {
-        if(newStep) {
+        if (newStep) {
             this.updateProgress(newStep);
             this.focusFirstField(newStep);
             this.fireEvent("stepchanged", this, oldStep, newStep);
-            if(this.showControls) {
+            if (this.showControls) {
                 this.updateButtons(this.wizard);
             }
-            if(this.externalControls) {
+            if (this.externalControls) {
                 this.updateButtons(this.externalControls);
             }
-            if(Ext.isFunction(newStep.getForm)) {
+            if (Ext.isFunction(newStep.getForm)) {
                 var newForm = newStep.getForm();
-                if(newForm) {
+                if (newForm) {
                     newForm.onValidityChange(this.isStepValid(newStep));
                 }
             }
@@ -2186,26 +2116,26 @@ Ext.define('Admin.view.WizardPanel', {
     focusFirstField: function (newStep) {
         var activeItem = newStep || this.getActiveItem();
         var firstField;
-        if(activeItem && (firstField = activeItem.down('field[disabled=false]'))) {
+        if (activeItem && (firstField = activeItem.down('field[disabled=false]'))) {
             firstField.focus(false);
-            if(firstField.rendered && firstField.selectText) {
+            if (firstField.rendered && firstField.selectText) {
                 firstField.selectText(0, 0);
             }
         }
     },
     updateButtons: function (toolbar, disable) {
-        if(toolbar) {
+        if (toolbar) {
             var prev = this.down('#prev'), next = this.down('#next');
             var hasNext = this.getNext(), hasPrev = this.getPrev();
-            if(prev) {
-                if(disable || !hasPrev) {
+            if (prev) {
+                if (disable || !hasPrev) {
                     prev.hide();
                 } else {
                     prev.show();
                 }
             }
-            if(next) {
-                if(disable || !hasNext) {
+            if (next) {
+                if (disable || !hasNext) {
                     next.hide();
                 } else {
                     next.show();
@@ -2221,7 +2151,8 @@ Ext.define('Admin.view.WizardPanel', {
         var isNew = this.isNew;
         var isDisabled = progressBar.isDisabled();
         var li = target && target.tagName === "LI" ? Ext.fly(target) : Ext.fly(target).up('li');
-        if((!isDisabled && isNew && li && li.hasCls('next') && li.hasCls('immediate')) || (!isDisabled && !isNew) || (isDisabled && !isNew && li && !li.hasCls('last')) || (li && li.hasCls('previous'))) {
+        if ((!isDisabled && isNew && li && li.hasCls('next') && li.hasCls('immediate')) || (!isDisabled && !isNew) ||
+            (isDisabled && !isNew && li && !li.hasCls('last')) || (li && li.hasCls('previous'))) {
             var step = Number(li.getAttribute('wizardStep'));
             this.navigate(step - 1);
         }
@@ -2248,12 +2179,12 @@ Ext.define('Admin.view.WizardPanel', {
                     tdAttrs: {
                         style: 'padding-right: 10px'
                     }
-                }), 
+                }),
                 Ext.applyIf(this.createWizardHeader(), {
                     tdAttrs: {
                         width: '100%'
                     }
-                }), 
+                }),
                 {
                     itemId: 'positionPanel',
                     xtype: 'container',
@@ -2270,7 +2201,7 @@ Ext.define('Admin.view.WizardPanel', {
                     items: [
                         Ext.applyIf(this.createRibbon(), {
                             flex: 1
-                        }), 
+                        }),
                         Ext.apply(this.createActionButton(), {
                             itemId: 'actionButton',
                             ui: 'green',
@@ -2305,50 +2236,50 @@ Ext.define('Admin.view.WizardPanel', {
     },
     navigate: function (direction, btn) {
         var oldStep = this.getActiveItem();
-        if(btn) {
+        if (btn) {
             this.externalControls = btn.up('toolbar');
         }
-        if(this.fireEvent("beforestepchanged", this, oldStep) !== false) {
+        if (this.fireEvent("beforestepchanged", this, oldStep) !== false) {
             var newStep;
-            switch(direction) {
-                case "-1":
-                case "prev":
-                    if(this.getPrev()) {
-                        newStep = this.wizard.getLayout().prev();
-                    }
-                    break;
-                case "+1":
-                case "next":
-                    if(this.getNext()) {
-                        newStep = this.wizard.getLayout().next();
-                    } else {
-                        this.finish();
-                    }
-                    break;
-                default:
-                    newStep = this.wizard.getLayout().setActiveItem(direction);
-                    break;
+            switch (direction) {
+            case "-1":
+            case "prev":
+                if (this.getPrev()) {
+                    newStep = this.wizard.getLayout().prev();
+                }
+                break;
+            case "+1":
+            case "next":
+                if (this.getNext()) {
+                    newStep = this.wizard.getLayout().next();
+                } else {
+                    this.finish();
+                }
+                break;
+            default:
+                newStep = this.wizard.getLayout().setActiveItem(direction);
+                break;
             }
         }
     },
     addData: function (newValues) {
-        if(Ext.isEmpty(this.data)) {
+        if (Ext.isEmpty(this.data)) {
             this.data = {
             };
         }
         Ext.merge(this.data, newValues);
     },
     deleteData: function (key) {
-        if(key) {
+        if (key) {
             delete this.data[key];
         }
     },
     getData: function () {
         var me = this;
         me.wizard.items.each(function (item) {
-            if(item.getData) {
+            if (item.getData) {
                 me.addData(item.getData());
-            } else if(item.getForm) {
+            } else if (item.getForm) {
                 me.addData(item.getForm().getFieldValues());
             }
         });
@@ -2393,7 +2324,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.detailPanel',
     requires: [
-        'Admin.view.DropDownButton', 
+        'Admin.view.DropDownButton',
         'Admin.view.BaseContextMenu'
     ],
     layout: 'card',
@@ -2416,19 +2347,19 @@ Ext.define('Admin.view.BaseDetailPanel', {
             }, this, {
                 delegate: '.clearSelection'
             });
-            if(this.isFullPage) {
+            if (this.isFullPage) {
                 this.hideActionButton();
             }
-            if(this.singleSelection.tabs.length > 0) {
+            if (this.singleSelection.tabs.length > 0) {
                 this.changeTab(this.singleSelection.tabs[0].name);
             }
         }
     },
     initComponent: function () {
-        if(this.showToolbar) {
+        if (this.showToolbar) {
             this.tbar = this.createToolBar();
         }
-        if(this.isVertical) {
+        if (this.isVertical) {
             this.cls = this.cls + 'admin-detail-vertical';
         }
         this.callParent(arguments);
@@ -2447,7 +2378,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     hideActionButton: function () {
         var actionsButton = this.down('dropDownButton');
-        if(actionsButton) {
+        if (actionsButton) {
             actionsButton.setVisible(false);
         }
     },
@@ -2457,7 +2388,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     getActionButton: function () {
         var me = this;
-        if(this.actionButtonItems.length < 1) {
+        if (this.actionButtonItems.length < 1) {
             return {
             };
         }
@@ -2529,19 +2460,19 @@ Ext.define('Admin.view.BaseDetailPanel', {
                             tdAttrs: {
                                 width: 80
                             }
-                        }, 
+                        },
                         {
                             xtype: 'component',
                             itemId: 'previewHeader',
                             tpl: me.singleTemplate.header,
                             data: data,
                             cls: 'admin-detail-header'
-                        }, 
-                        me.getActionButton(), 
+                        },
+                        me.getActionButton(),
                         me.renderTabNavigation(me.isVertical)
                     ]
-                }, 
-                me.renderWestContainer(), 
+                },
+                me.renderWestContainer(),
                 {
                     region: 'center',
                     cls: 'center',
@@ -2553,7 +2484,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     renderWestContainer: function () {
         var me = this;
-        if(me.isVertical) {
+        if (me.isVertical) {
             return {
             };
         }
@@ -2569,7 +2500,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     renderTabNavigation: function (doRender) {
         var me = this;
-        if(!doRender) {
+        if (!doRender) {
             return {
             };
         }
@@ -2578,7 +2509,8 @@ Ext.define('Admin.view.BaseDetailPanel', {
             cls: (me.isVertical ? 'vertical' : 'horizontal'),
             margin: (me.isVertical ? '0' : '20 0 0'),
             colspan: 3,
-            tpl: Ext.create('Ext.XTemplate', '<ul class="admin-detail-nav">' + '<tpl for=".">' + '<li data-tab="{name}">{displayName}</li>' + '</tpl>' + '</ul>'),
+            tpl: Ext.create('Ext.XTemplate',
+                '<ul class="admin-detail-nav">' + '<tpl for=".">' + '<li data-tab="{name}">{displayName}</li>' + '</tpl>' + '</ul>'),
             data: me.singleSelection.tabs,
             listeners: {
                 click: {
@@ -2586,7 +2518,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
                     fn: function (evt, element) {
                         var tab = element.attributes['data-tab'].value;
                         var panels = Ext.ComponentQuery.query('contentDetail');
-                        for(var i = 0; i < panels.length; i++) {
+                        for (var i = 0; i < panels.length; i++) {
                             panels[i].changeTab(tab);
                         }
                     }
@@ -2596,21 +2528,22 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     getLargeBoxTemplate: function () {
         return [
-            '<tpl for=".">' + '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box large clearfix">', 
-            '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>', 
-            '<div class="center"><h6>{data.displayName}</h6>', 
-            '<tpl if="data.path">', 
-            '<p>{data.path}</p>', 
-            '<tpl elseif="data.description">', 
-            '<p>{data.description}</p>', 
-            '<tpl elseif="data.name">', 
-            '<p>{data.name}</p>', 
-            '</tpl>', 
-            '</div>', 
-            '<div class="right">', 
-            '<a id="remove-from-selection-button:{data.' + this.keyField + '}" class="deselect icon-remove icon-2x" href="javascript:;"></a>', 
-            '</div>', 
-            '</div>', 
+            '<tpl for=".">' + '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box large clearfix">',
+            '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>',
+            '<div class="center"><h6>{data.displayName}</h6>',
+            '<tpl if="data.path">',
+            '<p>{data.path}</p>',
+            '<tpl elseif="data.description">',
+            '<p>{data.description}</p>',
+            '<tpl elseif="data.name">',
+            '<p>{data.name}</p>',
+            '</tpl>',
+            '</div>',
+            '<div class="right">',
+            '<a id="remove-from-selection-button:{data.' + this.keyField +
+            '}" class="deselect icon-remove icon-2x" href="javascript:;"></a>',
+            '</div>',
+            '</div>',
             '</tpl>'
         ];
     },
@@ -2630,14 +2563,15 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     getSmallBoxTemplate: function () {
         return [
-            '<tpl for=".">', 
-            '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box small clearfix">', 
-            '<div class="left"><img src="{data.iconUrl}?size=20" alt="{data.name}"/></div>', 
-            '<div class="center">{data.displayName}</div>', 
-            '<div class="right">', 
-            '<a id="remove-from-selection-button:{data.' + this.keyField + '}" class="deselect icon-remove icon-large" href="javascript:;"></a>', 
-            '</div>', 
-            '</div>', 
+            '<tpl for=".">',
+            '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box small clearfix">',
+            '<div class="left"><img src="{data.iconUrl}?size=20" alt="{data.name}"/></div>',
+            '<div class="center">{data.displayName}</div>',
+            '<div class="right">',
+            '<a id="remove-from-selection-button:{data.' + this.keyField +
+            '}" class="deselect icon-remove icon-large" href="javascript:;"></a>',
+            '</div>',
+            '</div>',
             '</tpl>'
         ];
     },
@@ -2673,11 +2607,11 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     resolveActiveItem: function (data) {
         var activeItem;
-        if(Ext.isEmpty(this.data)) {
+        if (Ext.isEmpty(this.data)) {
             activeItem = 'noSelection';
-        } else if(Ext.isObject(this.data) || this.data.length === 1) {
+        } else if (Ext.isObject(this.data) || this.data.length === 1) {
             activeItem = 'singleSelection';
-        } else if(this.data.length > 1 && this.data.length <= 10) {
+        } else if (this.data.length > 1 && this.data.length <= 10) {
             activeItem = 'largeBoxSelection';
         } else {
             activeItem = 'smallBoxSelection';
@@ -2686,7 +2620,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     resolveActiveData: function (data) {
         var activeData;
-        if(Ext.isArray(data) && data.length === 1) {
+        if (Ext.isArray(data) && data.length === 1) {
             activeData = data[0];
         } else {
             activeData = data;
@@ -2695,13 +2629,13 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     updateActiveItem: function (data, item) {
         item = item || this.getLayout().getActiveItem();
-        if('singleSelection' === item.itemId) {
+        if ('singleSelection' === item.itemId) {
             var previewHeader = item.down('#previewHeader');
             previewHeader.update(data);
             var previewPhoto = item.down('#previewPhoto');
             previewPhoto.update(data);
             this.changeTab('traffic');
-        } else if('largeBoxSelection' === item.itemId || 'smallBoxSelection' === item.itemId) {
+        } else if ('largeBoxSelection' === item.itemId || 'smallBoxSelection' === item.itemId) {
             item.update(data);
         }
     },
@@ -2709,10 +2643,10 @@ Ext.define('Admin.view.BaseDetailPanel', {
         this.data = data;
         var toActivate = this.resolveActiveItem(data);
         var active = this.getLayout().getActiveItem();
-        if(active.itemId !== toActivate) {
+        if (active.itemId !== toActivate) {
             active = this.getLayout().setActiveItem(toActivate);
         }
-        if(active) {
+        if (active) {
             var activeData = this.resolveActiveData(data);
             this.updateActiveItem(activeData, active);
         }
@@ -2723,8 +2657,8 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     getTab: function (name) {
         var tabs = this.singleSelection.tabs;
-        for(var tab in tabs) {
-            if(tabs[tab].name === name) {
+        for (var tab in tabs) {
+            if (tabs[tab].name === name) {
                 return tabs[tab];
             }
         }
@@ -2732,19 +2666,19 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     changeTab: function (selectedTab) {
         var currentTab = this.getTab(selectedTab);
-        if(currentTab) {
+        if (currentTab) {
             var target = this.down('#center');
             target.remove(target.child());
-            if(currentTab.items) {
+            if (currentTab.items) {
                 target.add(currentTab.items);
-                if(currentTab.callback) {
+                if (currentTab.callback) {
                     currentTab.callback(target);
                 }
             }
             var elements = Ext.dom.Query.select('*[data-tab=' + selectedTab + ']');
-            for(var i = 0; i < elements.length; i++) {
+            for (var i = 0; i < elements.length; i++) {
                 var children = elements[i].parentElement.children;
-                for(var j = 0; j < children.length; j++) {
+                for (var j = 0; j < children.length; j++) {
                     children[j].className = '';
                 }
                 elements[i].className = 'active';
@@ -2764,12 +2698,12 @@ Ext.define('Admin.view.DetailToolbar', {
             {
                 text: 'Edit',
                 action: 'editSpace'
-            }, 
+            },
             {
                 text: 'Delete',
                 action: 'deleteSpace'
-            }, 
-            '->', 
+            },
+            '->',
             {
                 text: 'Close',
                 action: 'closeSpace'
@@ -2793,11 +2727,11 @@ Ext.define('Admin.view.DetailPanel', {
             {
                 displayName: 'Traffic',
                 tab: 'traffic'
-            }, 
+            },
             {
                 displayName: 'Graph',
                 tab: 'graph'
-            }, 
+            },
             {
                 displayName: 'Meta',
                 tab: 'meta'
@@ -2818,16 +2752,16 @@ Ext.define('Admin.view.DetailPanel', {
             {
                 text: 'Open',
                 action: 'viewSpace'
-            }, 
+            },
             {
                 text: 'Edit',
                 action: 'editSpace'
             }
         ];
         this.items = [
-            this.createNoSelection(), 
-            this.createSingleSelection(data), 
-            this.createSmallBoxSelection(data), 
+            this.createNoSelection(),
+            this.createSingleSelection(data),
+            this.createSmallBoxSelection(data),
             this.createLargeBoxSelection(data)
         ];
         this.callParent(arguments);
@@ -2850,14 +2784,17 @@ Ext.define('Admin.view.BaseDialogWindow', {
     modelData: undefined,
     dialogTitle: 'Base dialog',
     dialogSubTitle: '',
-    dialogInfoTpl: '<div>' + '<div class="admin-user-info clearfix">' + '<div class="admin-user-photo west admin-left">' + '<div class="photo-placeholder">' + '<img src="{[values.image_url]}?size=100" alt="{name}"/>' + '</div>' + '</div>' + '<div class="admin-left">' + '<h2>{displayName}</h2>({qualifiedName})<br/>' + '<a href="mailto:{email}:">{email}</a>' + '</div>' + '</div>' + '</div>',
+    dialogInfoTpl: '<div>' + '<div class="admin-user-info clearfix">' + '<div class="admin-user-photo west admin-left">' +
+                   '<div class="photo-placeholder">' + '<img src="{[values.image_url]}?size=100" alt="{name}"/>' + '</div>' + '</div>' +
+                   '<div class="admin-left">' + '<h2>{displayName}</h2>({qualifiedName})<br/>' + '<a href="mailto:{email}:">{email}</a>' +
+                   '</div>' + '</div>' + '</div>',
     buttonItems: [],
     buttonRow: function () {
         var i;
-        if(arguments.length !== 0) {
+        if (arguments.length !== 0) {
             this.buttonItems = [];
         }
-        for(i = 0; i < arguments.length; i++) {
+        for (i = 0; i < arguments.length; i++) {
             this.buttonItems.push(arguments[i]);
         }
         return {
@@ -2890,17 +2827,17 @@ Ext.define('Admin.view.BaseDialogWindow', {
     listeners: {
         show: function (cmp) {
             var form = cmp.down('form');
-            if(form) {
+            if (form) {
                 form.getForm().reset();
                 form.doLayout();
                 var firstField = form.down('field');
-                if(firstField) {
+                if (firstField) {
                     firstField.focus();
                 }
             }
         },
         resize: function (window) {
-            if(this.getHeight() > this.maxHeight) {
+            if (this.getHeight() > this.maxHeight) {
                 this.setHeight(this.maxHeight);
             }
             this.center();
@@ -2908,7 +2845,7 @@ Ext.define('Admin.view.BaseDialogWindow', {
     },
     initComponent: function () {
         var me = this;
-        if(!this.dockedItems) {
+        if (!this.dockedItems) {
             this.dockedItems = [];
         }
         Ext.Array.insert(this.dockedItems, 0, [
@@ -2933,16 +2870,16 @@ Ext.define('Admin.view.BaseDialogWindow', {
                 ]
             }
         ]);
-        if(!this.items) {
+        if (!this.items) {
             this.items = [];
         }
-        if(this.dialogTitle) {
+        if (this.dialogTitle) {
             this.setDialogHeader(this.dialogTitle);
         }
-        if(this.dialogSubTitle) {
+        if (this.dialogSubTitle) {
             this.setDialogSubHeader(this.dialogSubTitle);
         }
-        if(this.dialogInfoTpl) {
+        if (this.dialogInfoTpl) {
             this.setDialogInfo(this.dialogInfoTpl);
         }
         this.callParent(arguments);
@@ -2993,10 +2930,10 @@ Ext.define('Admin.view.BaseDialogWindow', {
     },
     setDialogInfo: function (tpl) {
         var i = 0;
-        if(this.dialogTitle) {
+        if (this.dialogTitle) {
             i++;
         }
-        if(this.dialogSubTitle) {
+        if (this.dialogSubTitle) {
             i++;
         }
         this.items = this.filterItem('dialogInfo');
@@ -3014,18 +2951,18 @@ Ext.define('Admin.view.BaseDialogWindow', {
     },
     setDialogInfoTpl: function (tpl) {
         var dialogInfo = this.down('#dialogInfo');
-        if(dialogInfo) {
+        if (dialogInfo) {
             dialogInfo.tpl = new Ext.XTemplate(tpl);
         } else {
             this.setDialogInfo(tpl);
         }
     },
     setDialogInfoData: function (model) {
-        if(model) {
+        if (model) {
             this.data = model;
             this.modelData = model.data;
             var info = this.down('#dialogInfo');
-            if(info) {
+            if (info) {
                 info.update(this.modelData);
             }
         }
@@ -3067,14 +3004,19 @@ Ext.define('Admin.view.BaseDialogWindow', {
 Ext.define('Admin.view.DeleteSpaceWindow', {
     extend: 'Admin.view.BaseDialogWindow',
     alias: 'widget.deleteSpaceWindow',
-    multipleTemplate: '<div class="admin-delete-user-confirmation-message">' + '<div class="icon-question-mark-32 admin-left" style="width:32px; height:32px; margin-right: 10px"><!-- --></div>' + '<div class="admin-left" style="margin-top:5px">Are you sure you want to delete {selectionLength} item(s)?</div>' + '</div>',
-    singleTemplate: '<div>' + '<div class="admin-content-info clearfix">' + '<div class="admin-content-photo west admin-left">' + '<div class="photo-placeholder"><img src="{iconUrl}" alt="{name}"/></div>' + '</div>' + '<div class="admin-left">' + '<h2>{displayName}</h2>' + '<p>{description}</p>' + '</div>' + '</div>' + '</div>',
+    multipleTemplate: '<div class="admin-delete-user-confirmation-message">' +
+                      '<div class="icon-question-mark-32 admin-left" style="width:32px; height:32px; margin-right: 10px"><!-- --></div>' +
+                      '<div class="admin-left" style="margin-top:5px">Are you sure you want to delete {selectionLength} item(s)?</div>' +
+                      '</div>',
+    singleTemplate: '<div>' + '<div class="admin-content-info clearfix">' + '<div class="admin-content-photo west admin-left">' +
+                    '<div class="photo-placeholder"><img src="{iconUrl}" alt="{name}"/></div>' + '</div>' + '<div class="admin-left">' +
+                    '<h2>{displayName}</h2>' + '<p>{description}</p>' + '</div>' + '</div>' + '</div>',
     dialogTitle: undefined,
     dialogSubTitle: undefined,
     initComponent: function () {
         var me = this;
         this.items = [
-            me.header('Delete Space(s)'), 
+            me.header('Delete Space(s)'),
             {
                 region: 'center',
                 layout: {
@@ -3091,7 +3033,7 @@ Ext.define('Admin.view.DeleteSpaceWindow', {
                     styleHtmlContent: true,
                     tpl: me.deleteTemplate
                 }
-            }, 
+            },
             me.buttonRow({
                 text: 'Delete',
                 action: 'deleteSpace'
@@ -3104,15 +3046,17 @@ Ext.define('Admin.view.DeleteSpaceWindow', {
         ];
         this.callParent(arguments);
     },
-    deleteTemplate: '<div class="delete-container">' + '<tpl for=".">' + '<div class="delete-item">' + '<img class="icon" src="{data.iconUrl}"/>' + '<h4>{data.displayName}</h4>' + '<p>{data.type}</p>' + '</div>' + '</tpl>' + '</div>',
+    deleteTemplate: '<div class="delete-container">' + '<tpl for=".">' + '<div class="delete-item">' +
+                    '<img class="icon" src="{data.iconUrl}"/>' + '<h4>{data.displayName}</h4>' + '<p>{data.type}</p>' + '</div>' +
+                    '</tpl>' + '</div>',
     setModalDialogData: function (model) {
         console.log("Model");
         console.log(model);
         this.data = model;
         this.modelData = model[0].data;
-        if(model) {
+        if (model) {
             var info = this.down('#modalDialog');
-            if(info) {
+            if (info) {
                 info.update(model);
             }
         }
@@ -3127,7 +3071,7 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
     alias: 'widget.treeGridPanel',
     layout: 'card',
     requires: [
-        'Admin.plugin.PersistentGridSelectionPlugin', 
+        'Admin.plugin.PersistentGridSelectionPlugin',
         'Admin.plugin.GridToolbarPlugin'
     ],
     treeConf: {
@@ -3135,7 +3079,8 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
     gridConf: {
     },
     keyField: 'key',
-    nameTemplate: '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>',
+    nameTemplate: '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' +
+                  '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>',
     initComponent: function () {
         var me = this;
         var gridSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
@@ -3192,7 +3137,7 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
     },
     getSelection: function () {
         var selection = [], activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection');
-        if(plugin) {
+        if (plugin) {
             selection = plugin.getSelection();
         } else {
             selection = activeList.getSelectionModel().getSelection();
@@ -3204,28 +3149,29 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
         var selModel = activeList.getSelectionModel();
         var keys = [].concat(key);
         var i;
-        if(activeList.xtype === 'grid') {
+        if (activeList.xtype === 'grid') {
             var store = activeList.getStore(), record;
-            for(i = 0; i < keys.length; i++) {
+            for (i = 0; i < keys.length; i++) {
                 record = store.findRecord(this.keyField, keys[i]);
-                if(record) {
+                if (record) {
                     selModel.select(record, keepExisting);
                 }
             }
         }
     },
     deselect: function (key) {
-        var activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection'), selModel = plugin ? plugin : activeList.getSelectionModel();
-        if(!key || key === -1) {
-            if(plugin) {
+        var activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection'), selModel = plugin ? plugin
+            : activeList.getSelectionModel();
+        if (!key || key === -1) {
+            if (plugin) {
                 plugin.clearSelection();
             } else {
                 selModel.deselectAll();
             }
         } else {
-            if(activeList.xtype === 'grid') {
+            if (activeList.xtype === 'grid') {
                 var record = activeList.getStore().findRecord(this.keyField, key);
-                if(record) {
+                if (record) {
                     selModel.deselect(record);
                 }
             }
@@ -3249,8 +3195,8 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
     refresh: function () {
         var activeList = this.getActiveList();
         var currentStore = activeList.store;
-        if(!currentStore.loading) {
-            if(activeList.xtype === 'grid') {
+        if (!currentStore.loading) {
+            if (activeList.xtype === 'grid') {
                 currentStore.loadPage(currentStore.currentPage);
             }
         }
@@ -3283,16 +3229,16 @@ Ext.define('Admin.view.TreeGridPanel', {
                 renderer: this.nameRenderer,
                 scope: me,
                 flex: 1
-            }, 
+            },
             {
                 text: 'Status',
                 renderer: this.statusRenderer
-            }, 
+            },
             {
                 text: 'Owner',
                 dataIndex: 'owner',
                 sortable: true
-            }, 
+            },
             {
                 text: 'Modified',
                 dataIndex: 'modifiedTime',
@@ -3312,13 +3258,14 @@ Ext.define('Admin.view.TreeGridPanel', {
         return "Online";
     },
     prettyDateRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
-        try  {
-            if(parent && Ext.isFunction(parent['humane_date'])) {
+        try {
+            if (parent && Ext.isFunction(parent['humane_date'])) {
                 return parent['humane_date'](value);
             } else {
                 return value;
             }
-        } catch (e) {
+        }
+        catch (e) {
             return value;
         }
     }
@@ -3331,12 +3278,12 @@ Ext.define('Admin.view.ContextMenu', {
             text: 'Edit',
             iconCls: 'icon-edit',
             action: 'editSpace'
-        }, 
+        },
         {
             text: 'Open',
             iconCls: 'icon-view',
             action: 'viewSpace'
-        }, 
+        },
         {
             text: 'Delete',
             iconCls: 'icon-delete',
@@ -3360,17 +3307,17 @@ Ext.define('Admin.view.wizard.Toolbar', {
                 action: 'saveSpace',
                 itemId: 'save',
                 disabled: true
-            }, 
+            },
             {
                 text: 'Delete',
                 disabled: this.isNew,
                 action: 'deleteSpace'
-            }, 
+            },
             {
                 text: 'Duplicate',
                 disabled: this.isNew
-            }, 
-            '->', 
+            },
+            '->',
             {
                 text: 'Close',
                 action: 'closeWizard'
@@ -3387,18 +3334,18 @@ Ext.define('Admin.view.wizard.SpaceStepPanel', {
     initComponent: function () {
         var templates = Ext.create('Ext.data.Store', {
             fields: [
-                'code', 
+                'code',
                 'name'
             ],
             data: [
                 {
                     "code": "1",
                     "name": "Tpl1"
-                }, 
+                },
                 {
                     "code": "2",
                     "name": "Tpl2"
-                }, 
+                },
                 {
                     "code": "3",
                     "name": "Tpl3"
@@ -3431,9 +3378,9 @@ Ext.define('Admin.view.wizard.WizardPanel', {
     extend: 'Admin.view.WizardPanel',
     alias: 'widget.spaceAdminWizardPanel',
     requires: [
-        'Admin.view.WizardHeader', 
-        'Admin.view.wizard.Toolbar', 
-        'Admin.plugin.fileupload.PhotoUploadButton', 
+        'Admin.view.WizardHeader',
+        'Admin.view.wizard.Toolbar',
+        'Admin.plugin.fileupload.PhotoUploadButton',
         'Admin.view.wizard.SpaceStepPanel'
     ],
     border: 0,
@@ -3456,7 +3403,7 @@ Ext.define('Admin.view.wizard.WizardPanel', {
         var iconUrl = 'resources/images/icons/128x128/default_space.png';
         var displayNameValue = '';
         var spaceName = '';
-        if(data) {
+        if (data) {
             displayNameValue = me.data.get('displayName') || '';
             spaceName = me.data.get('name') || '';
             iconUrl = me.data.get('iconUrl');
@@ -3473,19 +3420,19 @@ Ext.define('Admin.view.wizard.WizardPanel', {
             {
                 xtype: 'spaceStepPanel',
                 data: this.data
-            }, 
+            },
             {
                 stepTitle: 'Schemas'
-            }, 
+            },
             {
                 stepTitle: 'Modules'
-            }, 
+            },
             {
                 stepTitle: 'Templates'
-            }, 
+            },
             {
                 stepTitle: 'Security'
-            }, 
+            },
             {
                 stepTitle: 'Summary'
             }
@@ -3530,7 +3477,7 @@ Ext.define('Admin.view.wizard.WizardPanel', {
                             imageToolTip.hide();
                         }
                     }
-                }, 
+                },
                 {
                     styleHtmlContent: true,
                     height: 50,
@@ -3541,7 +3488,8 @@ Ext.define('Admin.view.wizard.WizardPanel', {
                         zIndex: 1001
                     },
                     cls: 'admin-image-upload-button-image-tip',
-                    html: '<div class="x-tip x-tip-default x-layer" role="tooltip">' + '<div class="x-tip-anchor x-tip-anchor-top"></div>' + '<div class="x-tip-body  x-tip-body-default x-tip-body-default">' + 'Click to upload icon</div></div>',
+                    html: '<div class="x-tip x-tip-default x-layer" role="tooltip">' + '<div class="x-tip-anchor x-tip-anchor-top"></div>' +
+                          '<div class="x-tip-body  x-tip-body-default x-tip-body-default">' + 'Click to upload icon</div></div>',
                     listeners: {
                         afterrender: function (cmp) {
                             Ext.Function.defer(function () {
@@ -3587,7 +3535,7 @@ Ext.define('Admin.view.AdminImageButton', {
     popupData: undefined,
     listeners: {
         click: function (item) {
-            if(!item.popupPanel) {
+            if (!item.popupPanel) {
                 item.popupPanel = Ext.create("Ext.panel.Panel", {
                     floating: true,
                     cls: 'admin-toolbar-popup',
@@ -3604,7 +3552,7 @@ Ext.define('Admin.view.AdminImageButton', {
                     }
                 });
             } else {
-                if(item.popupPanel.isHidden()) {
+                if (item.popupPanel.isHidden()) {
                     item.popupPanel.show();
                 } else {
                     item.popupPanel.hide();
@@ -3630,7 +3578,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
     initComponent: function () {
         var me = this;
         this.items = [];
-        if(this.iconCls || this.iconSrc) {
+        if (this.iconCls || this.iconSrc) {
             this.items.push({
                 xtype: 'image',
                 width: 32,
@@ -3640,7 +3588,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
                 src: this.iconSrc
             });
         }
-        if(this.text1 || this.text2) {
+        if (this.text1 || this.text2) {
             this.items.push({
                 xtype: 'component',
                 flex: 1,
@@ -3653,7 +3601,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
                 }
             });
         }
-        if(this.closable !== false) {
+        if (this.closable !== false) {
             this.items.push({
                 xtype: 'component',
                 autoEl: 'a',
@@ -3674,7 +3622,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
     },
     activate: function () {
         var me = this;
-        if(!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
+        if (!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
             me.el.addCls(me.activeCls);
             me.focus();
             me.activated = true;
@@ -3683,7 +3631,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
     },
     deactivate: function () {
         var me = this;
-        if(me.activated) {
+        if (me.activated) {
             me.el.removeCls(me.activeCls);
             me.blur();
             me.activated = false;
@@ -3692,18 +3640,18 @@ Ext.define('Admin.view.TopBarMenuItem', {
     },
     onClick: function (e) {
         var me = this;
-        if(!me.href) {
+        if (!me.href) {
             e.stopEvent();
         }
-        if(me.disabled) {
+        if (me.disabled) {
             return;
         }
         Ext.callback(me.handler, me.scope || me, [
-            me, 
+            me,
             e
         ]);
         me.fireEvent('click', me, e);
-        if(!me.hideOnClick) {
+        if (!me.hideOnClick) {
             me.focus();
         }
         return Ext.isEmpty(Ext.fly(e.getTarget()).findParent('.close-button'));
@@ -3736,31 +3684,31 @@ Ext.define('Admin.view.TopBarMenu', {
             xtype: 'container',
             itemId: 'nonClosableItems',
             defaultType: 'topBarMenuItem'
-        }, 
+        },
         {
             xtype: 'component',
             cls: 'title',
             itemId: 'editTitle',
             hidden: true,
             html: '<span>Editing</span>'
-        }, 
+        },
         {
             xtype: 'container',
             itemId: 'editItems',
             defaultType: 'topBarMenuItem'
-        }, 
+        },
         {
             xtype: 'component',
             cls: 'title',
             itemId: 'viewTitle',
             hidden: true,
             html: '<span>Viewing</span>'
-        }, 
+        },
         {
             xtype: 'container',
             itemId: 'viewItems',
             defaultType: 'topBarMenuItem'
-        }, 
+        },
         {
             xtype: 'component',
             cls: 'info',
@@ -3782,13 +3730,13 @@ Ext.define('Admin.view.TopBarMenu', {
     },
     onClick: function (e) {
         var me = this, item;
-        if(me.disabled) {
+        if (me.disabled) {
             e.stopEvent();
             return;
         }
         item = (e.type === 'click') ? me.getItemFromEvent(e) : me.activeItem;
-        if(item && item.isMenuItem && item.onClick(e) !== false) {
-            if(me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
+        if (item && item.isMenuItem && item.onClick(e) !== false) {
+            if (me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
                 this.tabPanel.setActiveTab(item.card);
             }
             this.hide();
@@ -3796,7 +3744,7 @@ Ext.define('Admin.view.TopBarMenu', {
     },
     onShow: function () {
         this.callParent(arguments);
-        if(this.activeTab) {
+        if (this.activeTab) {
             this.markActiveTab(this.activeTab);
         }
     },
@@ -3808,24 +3756,24 @@ Ext.define('Admin.view.TopBarMenu', {
         this.callParent(arguments);
     },
     onCloseMenuItem: function (item) {
-        if(this.tabPanel) {
+        if (this.tabPanel) {
             this.tabPanel.remove(item.card);
         }
-        if(this.getAllItems(false).length === 0) {
+        if (this.getAllItems(false).length === 0) {
             this.hide();
         }
     },
     markActiveTab: function (item) {
         var me = this;
         var menuItem;
-        if(me.isVisible()) {
+        if (me.isVisible()) {
             menuItem = me.el.down('.current-tab');
-            if(menuItem) {
+            if (menuItem) {
                 menuItem.removeCls('current-tab');
             }
-            if(item) {
+            if (item) {
                 menuItem = me.down('#' + item.id);
-                if(menuItem && menuItem.el) {
+                if (menuItem && menuItem.el) {
                     menuItem.el.addCls('current-tab');
                 }
             }
@@ -3836,12 +3784,13 @@ Ext.define('Admin.view.TopBarMenu', {
         var item = this;
         do {
             item = item.getChildByElement(e.getTarget());
-        }while(item && Ext.isDefined(item.getChildByElement) && item.getXType() !== 'topBarMenuItem');
+        }
+        while (item && Ext.isDefined(item.getChildByElement) && item.getXType() !== 'topBarMenuItem');
         return item;
     },
     getAllItems: function (includeNonClosable) {
         var items = [];
-        if(includeNonClosable === false) {
+        if (includeNonClosable === false) {
             items = items.concat(this.down('#editItems').query('topBarMenuItem'));
             items = items.concat(this.down('#viewItems').query('topBarMenuItem'));
         } else {
@@ -3850,9 +3799,9 @@ Ext.define('Admin.view.TopBarMenu', {
         return items;
     },
     addItems: function (items) {
-        if(Ext.isEmpty(items)) {
+        if (Ext.isEmpty(items)) {
             return;
-        } else if(Ext.isObject(items)) {
+        } else if (Ext.isObject(items)) {
             items = [].concat(items);
         }
         this.saveScrollState();
@@ -3860,22 +3809,22 @@ Ext.define('Admin.view.TopBarMenu', {
         var viewItems = [];
         var nonClosableItems = [];
         Ext.Array.each(items, function (item) {
-            if(item.closable === false) {
+            if (item.closable === false) {
                 nonClosableItems.push(item);
-            } else if(item.editing) {
+            } else if (item.editing) {
                 editItems.push(item);
             } else {
                 viewItems.push(item);
             }
         });
         var added = [];
-        if(nonClosableItems.length > 0) {
+        if (nonClosableItems.length > 0) {
             added = added.concat(this.down("#nonClosableItems").add(nonClosableItems));
         }
-        if(editItems.length > 0) {
+        if (editItems.length > 0) {
             added = added.concat(this.down('#editItems').add(editItems));
         }
-        if(viewItems.length > 0) {
+        if (viewItems.length > 0) {
             added = added.concat(this.down('#viewItems').add(viewItems));
         }
         this.updateTitles();
@@ -3887,19 +3836,19 @@ Ext.define('Admin.view.TopBarMenu', {
         var viewItems = this.down('#viewItems');
         var removed = [];
         Ext.Array.each(editItems.items.items, function (item) {
-            if(item && item.closable !== false) {
+            if (item && item.closable !== false) {
                 removed.push(editItems.remove(item));
             }
         });
         Ext.Array.each(viewItems.items.items, function (item) {
-            if(item && item.closable !== false) {
+            if (item && item.closable !== false) {
                 removed.push(viewItems.remove(item));
             }
         });
-        if(includeNonClosable) {
+        if (includeNonClosable) {
             var nonClosableItems = this.down('#nonClosableItems');
             Ext.Array.each(nonClosableItems.items.items, function (item) {
-                if(item && item.closable !== false) {
+                if (item && item.closable !== false) {
                     removed.push(nonClosableItems.remove(item));
                 }
             });
@@ -3908,9 +3857,9 @@ Ext.define('Admin.view.TopBarMenu', {
         return removed;
     },
     removeItems: function (items) {
-        if(Ext.isEmpty(items)) {
+        if (Ext.isEmpty(items)) {
             return;
-        } else if(Ext.isObject(items)) {
+        } else if (Ext.isObject(items)) {
             items = [].concat(items);
         }
         this.saveScrollState();
@@ -3919,7 +3868,7 @@ Ext.define('Admin.view.TopBarMenu', {
         var nonClosableItems = this.down('#nonClosableItems');
         var removed = [];
         Ext.Array.each(items, function (item) {
-            if(item && item.closable !== false) {
+            if (item && item.closable !== false) {
                 removed.push(editItems.remove(item));
                 removed.push(viewItems.remove(item));
                 removed.push(nonClosableItems.remove(item));
@@ -3942,10 +3891,10 @@ Ext.define('Admin.view.TopBarMenu', {
     show: function () {
         var me = this, parentEl, viewHeight;
         me.maxWas = me.maxHeight;
-        if(!me.rendered) {
+        if (!me.rendered) {
             me.doAutoRender();
         }
-        if(me.floating) {
+        if (me.floating) {
             parentEl = Ext.fly(me.el.getScopeParent());
             viewHeight = parentEl.getViewSize().height;
             me.maxHeight = Math.min(me.maxWas || viewHeight - 50, viewHeight - 50);
@@ -3961,14 +3910,14 @@ Ext.define('Admin.view.TopBarMenu', {
     setVerticalPosition: function () {
     },
     saveScrollState: function () {
-        if(this.rendered && !this.hidden) {
+        if (this.rendered && !this.hidden) {
             var dom = this.body.dom, state = this.scrollState;
             state.left = dom.scrollLeft;
             state.top = dom.scrollTop;
         }
     },
     restoreScrollState: function () {
-        if(this.rendered && !this.hidden) {
+        if (this.rendered && !this.hidden) {
             var dom = this.body.dom, state = this.scrollState;
             dom.scrollLeft = state.left;
             dom.scrollTop = state.top;
@@ -3979,8 +3928,8 @@ Ext.define('Admin.view.TopBar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.topBar',
     requires: [
-        'Admin.view.TopBarMenu', 
-        'Admin.view.AdminImageButton', 
+        'Admin.view.TopBarMenu',
+        'Admin.view.AdminImageButton',
         'Admin.lib.UriHelper'
     ],
     buttonAlign: 'center',
@@ -4003,7 +3952,7 @@ Ext.define('Admin.view.TopBar', {
             text: me.appName || '&lt; app name &gt;',
             cls: 'home-button',
             handler: function (btn, evt) {
-                if(me.tabPanel) {
+                if (me.tabPanel) {
                     me.tabPanel.setActiveTab(0);
                 }
             }
@@ -4016,11 +3965,11 @@ Ext.define('Admin.view.TopBar', {
                 align: 'middle'
             },
             items: [
-                me.startButton, 
+                me.startButton,
                 {
                     xtype: "tbseparator",
                     width: '2px'
-                }, 
+                },
                 me.homeButton
             ]
         });
@@ -4035,7 +3984,10 @@ Ext.define('Admin.view.TopBar', {
                 {
                     xtype: 'adminImageButton',
                     icon: Admin.lib.UriHelper.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
-                    popupTpl: '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' + '<div class="content">' + '<div class="column"><img src="{photoUrl}"/>' + '<button class="x-btn-red-small">Log Out</button>' + '</div>' + '<div class="column">' + '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' + '<a href="#">Change User</a>' + '</div>' + '</div>',
+                    popupTpl: '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' + '<div class="content">' +
+                              '<div class="column"><img src="{photoUrl}"/>' + '<button class="x-btn-red-small">Log Out</button>' +
+                              '</div>' + '<div class="column">' + '<span>{qName}</span>' + '<a href="#">View Profile</a>' +
+                              '<a href="#">Edit Profile</a>' + '<a href="#">Change User</a>' + '</div>' + '</div>',
                     popupData: {
                         userName: "Thomas Lund Sigdestad",
                         photoUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
@@ -4045,10 +3997,10 @@ Ext.define('Admin.view.TopBar', {
             ]
         });
         this.items = [
-            me.leftContainer, 
+            me.leftContainer,
             me.rightContainer
         ];
-        if(this.tabPanel) {
+        if (this.tabPanel) {
             this.tabMenu = Ext.create('Admin.view.TopBarMenu', {
                 tabPanel: me.tabPanel
             });
@@ -4060,12 +4012,12 @@ Ext.define('Admin.view.TopBar', {
                 styleHtmlContent: true,
                 text: '<span class="title">Title</span><span class="count">0</span>',
                 setTitle: function (title) {
-                    if(this.el) {
+                    if (this.el) {
                         this.el.down('.title').setHTML(title);
                     }
                 },
                 setCount: function (count) {
-                    if(this.el) {
+                    if (this.el) {
                         this.el.down('.count').setHTML(count);
                     }
                 }
@@ -4079,7 +4031,7 @@ Ext.define('Admin.view.TopBar', {
     },
     toggleHomeScreen: function () {
         var isInsideIframe = window.top !== window.self;
-        if(isInsideIframe) {
+        if (isInsideIframe) {
             window.parent['Ext'].getCmp('admin-home-main-container').toggleShowHide();
         } else {
             console.error('Can not toggle home screen. Document must be loaded inside the main window');
@@ -4095,11 +4047,11 @@ Ext.define('Admin.view.TopBar', {
         var card = tab.card;
         var buttonText = tab.text1;
         var iconClass;
-        if('tab-browse' === card.id) {
+        if ('tab-browse' === card.id) {
             buttonText = '';
-        } else if(card.tab.iconClass) {
+        } else if (card.tab.iconClass) {
             iconClass = card.tab.iconClass;
-        } else if(card.tab.editing) {
+        } else if (card.tab.editing) {
             iconClass = 'icon-icomoon-pencil-32';
         }
         this.titleButton.setIconCls(iconClass);
@@ -4111,7 +4063,7 @@ Ext.define('Admin.view.TopBar', {
         return removed;
     },
     findNextActivatable: function (tab) {
-        if(this.tabPanel) {
+        if (this.tabPanel) {
             return this.tabPanel.items.get(0);
         }
     },
@@ -4132,14 +4084,11 @@ Ext.define('Admin.view.TopBar', {
         };
     },
     syncTabCount: function () {
-        if(this.tabMenu && this.titleButton) {
+        if (this.tabMenu && this.titleButton) {
             var tabCount = this.tabMenu.getAllItems(false).length;
             this.titleButton.setVisible(tabCount > 0);
             this.titleButton.setCount(tabCount);
-            Admin.MessageBus.updateAppTabCount({
-                appId: this.getApplicationId(),
-                tabCount: tabCount
-            });
+            admin.api.message.updateAppTabCount(this.getApplicationId(), tabCount);
         }
     },
     getApplicationId: function () {
@@ -4148,27 +4097,27 @@ Ext.define('Admin.view.TopBar', {
     },
     getMenuItemIcon: function (card) {
         var icon;
-        if(card.data && card.data instanceof Ext.data.Model) {
+        if (card.data && card.data instanceof Ext.data.Model) {
             icon = card.data.get('iconUrl') || card.data.get('image_url');
         }
         return icon;
     },
     getMenuItemDescription: function (card) {
         var desc;
-        if(!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+        if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
             desc = card.data.get('path') || card.data.get('qualifiedName') || card.data.get('displayName');
         }
-        if(!desc) {
+        if (!desc) {
             desc = card.title;
         }
         return desc;
     },
     getMenuItemDisplayName: function (card) {
         var desc;
-        if(!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+        if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
             desc = card.data.get('displayName') || card.data.get('name');
         }
-        if(!desc) {
+        if (!desc) {
             desc = card.title;
         }
         return desc;
@@ -4176,7 +4125,7 @@ Ext.define('Admin.view.TopBar', {
     setTitleButtonText: function (text) {
         this.titleButton.setTitle(text);
         var activeTab = this.titleButton.menu.activeTab;
-        if(activeTab) {
+        if (activeTab) {
             activeTab.text1 = text;
             activeTab.updateTitleContainer();
         }
@@ -4219,7 +4168,7 @@ Ext.define('Admin.view.TabPanel', {
         me.addEvents('beforetabchange', 'tabchange');
         me.superclass.superclass.initComponent.apply(me, arguments);
         me.activeTab = me.getComponent(activeTab);
-        if(me.activeTab) {
+        if (me.activeTab) {
             me.activeTab.tab.activate(true);
             me.tabBar.setActiveTab(me.activeTab.tab);
         }
@@ -4227,9 +4176,9 @@ Ext.define('Admin.view.TabPanel', {
     addTab: function (item, index, requestConfig) {
         var me = this;
         var tab = this.getTabById(item.id);
-        if(!tab) {
+        if (!tab) {
             tab = this.insert(index || this.items.length, item);
-            if(requestConfig) {
+            if (requestConfig) {
                 this.setActiveTab(tab);
                 var mask = new Ext.LoadMask(tab, {
                     msg: "Please wait..."
@@ -4258,7 +4207,7 @@ Ext.define('Admin.view.TabPanel', {
     removeAllOpenTabs: function () {
         var all = this.items.items;
         var last = all[this.getTabCount() - 1];
-        while(this.getTabCount() > 1) {
+        while (this.getTabCount() > 1) {
             this.remove(last);
             last = this.items.items[this.getTabCount() - 1];
         }
@@ -4280,28 +4229,28 @@ Ext.define('Admin.view.TabPanel', {
             iconclschange: me.onItemIconClsChange,
             titlechange: me.onItemTitleChange
         });
-        if(item.isPanel) {
-            if(me.removePanelHeader) {
-                if(item.rendered) {
-                    if(item.header) {
+        if (item.isPanel) {
+            if (me.removePanelHeader) {
+                if (item.rendered) {
+                    if (item.header) {
                         item.header.hide();
                     }
                 } else {
                     item.header = false;
                 }
             }
-            if(item.isPanel && me.border) {
+            if (item.isPanel && me.border) {
                 item.setBorder(false);
             }
         }
     },
     doRemove: function (item, autoDestroy) {
         var me = this;
-        if(me.destroying || me.items.getCount() === 1) {
+        if (me.destroying || me.items.getCount() === 1) {
             me.activeTab = null;
-        } else if(me.activeTab === item) {
+        } else if (me.activeTab === item) {
             var toActivate = me.tabBar.findNextActivatable(item.tab);
-            if(toActivate) {
+            if (toActivate) {
                 me.setActiveTab(toActivate);
             }
         }
@@ -4315,7 +4264,7 @@ Ext.define('Admin.view.TabPanel', {
             disable: me.onItemDisable,
             beforeshow: me.onItemBeforeShow
         });
-        if(!me.destroying) {
+        if (!me.destroying) {
             me.tabBar.remove(item.tab);
         }
     }
@@ -4339,35 +4288,43 @@ Ext.define('Admin.view.BaseFilterPanel', {
     facetData: undefined,
     initComponent: function () {
         var me = this;
-        if(!Ext.isEmpty(this.title)) {
+        if (!Ext.isEmpty(this.title)) {
             this.originalTitle = this.title;
         }
         Ext.applyIf(this, {
             items: [],
-            facetTpl: new Ext.XTemplate('<tpl for=".">', '<div class="admin-facet-group" name="{name}">', '<h2>{[values.displayName || values.name]}</h2>', '<tpl for="terms">{[this.updateFacetCount(values, parent)]}', '<tpl if="this.shouldShowTerm(values, parent)">', '<div class="admin-facet {[values.selected ? \'checked\' : \'\']}">', '<input type="checkbox" id="facet-{term}" value="{name}" class="admin-facet-cb" name="{parent.name}" {[values.selected ? \'checked="true"\' : \'\']} />', '<label for="facet-{key}" class="admin-facet-lbl"> {[values.displayName || values.name]} ({[this.getTermCount(values)]})</label>', '</div>', '</tpl>', '</tpl>', '</div>', '</tpl>', {
-                updateFacetCount: function (term, facet) {
-                    var isCriteria = me.updateCountCriteria == 'always' || (me.updateCountCriteria == 'query' && me.queryDirty);
-                    var isStrategy = me.updateCountStrategy == 'all' || (me.updateCountStrategy == 'notlast' && me.lastFacetName != facet.name);
-                    var isDefined = Ext.isDefined(me.facetCountMap[term.name]);
-                    var isDirty = me.isDirty();
-                    if(!isDirty || !isDefined || (isCriteria && isStrategy)) {
-                        me.facetCountMap[term.name] = term.count;
+            facetTpl: new Ext.XTemplate('<tpl for=".">', '<div class="admin-facet-group" name="{name}">',
+                '<h2>{[values.displayName || values.name]}</h2>', '<tpl for="terms">{[this.updateFacetCount(values, parent)]}',
+                '<tpl if="this.shouldShowTerm(values, parent)">', '<div class="admin-facet {[values.selected ? \'checked\' : \'\']}">',
+                '<input type="checkbox" id="facet-{term}" value="{name}" class="admin-facet-cb" name="{parent.name}" {[values.selected ? \'checked="true"\' : \'\']} />',
+                '<label for="facet-{key}" class="admin-facet-lbl"> {[values.displayName || values.name]} ({[this.getTermCount(values)]})</label>',
+                '</div>', '</tpl>', '</tpl>', '</div>', '</tpl>', {
+                    updateFacetCount: function (term, facet) {
+                        var isCriteria = me.updateCountCriteria == 'always' || (me.updateCountCriteria == 'query' && me.queryDirty);
+                        var isStrategy = me.updateCountStrategy == 'all' ||
+                                         (me.updateCountStrategy == 'notlast' && me.lastFacetName != facet.name);
+                        var isDefined = Ext.isDefined(me.facetCountMap[term.name]);
+                        var isDirty = me.isDirty();
+                        if (!isDirty || !isDefined || (isCriteria && isStrategy)) {
+                            me.facetCountMap[term.name] = term.count;
+                        }
+                    },
+                    shouldShowTerm: function (term, facet) {
+                        return me.includeEmptyFacets == 'all' ||
+                               (me.includeEmptyFacets == 'last' && (!me.lastFacetName || me.lastFacetName == facet.name)) ||
+                               me.facetCountMap[term.name] > 0 || term.selected || this.isSelected(term, facet);
+                    },
+                    getTermCount: function (term) {
+                        return me.facetCountMap[term.name];
+                    },
+                    isSelected: function (term, facet) {
+                        var terms = me.selectedValues[facet.name];
+                        if (terms) {
+                            return Ext.Array.contains(terms, term.name);
+                        }
+                        return false;
                     }
-                },
-                shouldShowTerm: function (term, facet) {
-                    return me.includeEmptyFacets == 'all' || (me.includeEmptyFacets == 'last' && (!me.lastFacetName || me.lastFacetName == facet.name)) || me.facetCountMap[term.name] > 0 || term.selected || this.isSelected(term, facet);
-                },
-                getTermCount: function (term) {
-                    return me.facetCountMap[term.name];
-                },
-                isSelected: function (term, facet) {
-                    var terms = me.selectedValues[facet.name];
-                    if(terms) {
-                        return Ext.Array.contains(terms, term.name);
-                    }
-                    return false;
-                }
-            })
+                })
         });
         this.facetContainer = Ext.create('Ext.Component', {
             xtype: 'component',
@@ -4398,7 +4355,7 @@ Ext.define('Admin.view.BaseFilterPanel', {
             }
         });
         this.items.unshift(this.clearLink);
-        if(this.includeSearch) {
+        if (this.includeSearch) {
             this.searchField = Ext.create('Ext.form.field.Text', {
                 xtype: 'textfield',
                 cls: 'admin-search-trigger',
@@ -4428,19 +4385,19 @@ Ext.define('Admin.view.BaseFilterPanel', {
         this.addEvents('search', 'reset');
     },
     onKeyPressed: function (field, event, opts) {
-        if(this.suspendEvents !== true) {
-            if(event.getKey() === event.ENTER) {
-                if(event.type === "keydown") {
+        if (this.suspendEvents !== true) {
+            if (event.getKey() === event.ENTER) {
+                if (event.type === "keydown") {
                     this.fireEvent('search', this.getValues());
                 }
             } else {
                 var me = this;
-                if(this.searchFilterTypingTimer !== null) {
+                if (this.searchFilterTypingTimer !== null) {
                     window.clearTimeout(this.searchFilterTypingTimer);
                     this.searchFilterTypingTimer = null;
                 }
                 this.searchFilterTypingTimer = window.setTimeout(function () {
-                    if(me.updateCountCriteria === 'query') {
+                    if (me.updateCountCriteria === 'query') {
                         me.queryDirty = true;
                     }
                     me.lastFacetName = undefined;
@@ -4452,10 +4409,10 @@ Ext.define('Admin.view.BaseFilterPanel', {
     onFacetClicked: function (event, target, opts) {
         target = Ext.fly(target);
         var facet = target.hasCls('admin-facet') ? target : target.up('.admin-facet');
-        if(facet) {
+        if (facet) {
             var cb = facet.down('input[type=checkbox]', true);
             var checked = cb.hasAttribute("checked");
-            if(checked) {
+            if (checked) {
                 cb.removeAttribute("checked");
                 facet.removeCls("checked");
             } else {
@@ -4463,7 +4420,7 @@ Ext.define('Admin.view.BaseFilterPanel', {
                 facet.addCls("checked");
             }
             var group = facet.up('.admin-facet-group', true);
-            if(group) {
+            if (group) {
                 this.lastFacetName = group.getAttribute('name');
             }
             this.search();
@@ -4472,7 +4429,7 @@ Ext.define('Admin.view.BaseFilterPanel', {
         return true;
     },
     updateFacets: function (facets) {
-        if(facets) {
+        if (facets) {
             this.selectedValues = this.getValues();
             this.down('#facetContainer').update(facets);
             this.setValues(this.selectedValues);
@@ -4482,15 +4439,15 @@ Ext.define('Admin.view.BaseFilterPanel', {
         var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
         var values = {
         };
-        if(this.searchField) {
+        if (this.searchField) {
             var query = this.searchField.getValue();
-            if(Ext.String.trim(query).length > 0) {
+            if (Ext.String.trim(query).length > 0) {
                 values[this.searchField.name] = query;
             }
         }
         Ext.Array.each(selectedCheckboxes, function (cb) {
             var oldValue = values[cb.name];
-            if(Ext.isArray(oldValue)) {
+            if (Ext.isArray(oldValue)) {
                 oldValue.push(cb.value);
             } else {
                 values[cb.name] = [
@@ -4502,14 +4459,14 @@ Ext.define('Admin.view.BaseFilterPanel', {
     },
     setValues: function (values) {
         var me = this;
-        if(this.searchField) {
+        if (this.searchField) {
             this.searchField.setValue(values[this.searchField.name]);
         }
         var checkboxes = Ext.query('.admin-facet-group input[type=checkbox]', this.facetContainer.el.dom);
         var checkedCount = 0, facet;
         Ext.Array.each(checkboxes, function (cb) {
             var facet = Ext.fly(cb).up('.admin-facet');
-            if(me.isValueChecked(cb.value, values)) {
+            if (me.isValueChecked(cb.value, values)) {
                 checkedCount++;
                 cb.setAttribute('checked', 'true');
                 facet.addCls('checked');
@@ -4518,16 +4475,16 @@ Ext.define('Admin.view.BaseFilterPanel', {
                 facet.removeCls('checked');
             }
         });
-        if(this.updateCountCriteria == 'query' && this.queryDirty && checkedCount === 0) {
+        if (this.updateCountCriteria == 'query' && this.queryDirty && checkedCount === 0) {
             this.queryDirty = false;
         }
     },
     isValueChecked: function (value, values) {
-        for(var facet in values) {
-            if(values.hasOwnProperty(facet)) {
+        for (var facet in values) {
+            if (values.hasOwnProperty(facet)) {
                 var terms = [].concat(values[facet]);
-                for(var i = 0; i < terms.length; i++) {
-                    if(terms[i] === value) {
+                for (var i = 0; i < terms.length; i++) {
+                    if (terms[i] === value) {
                         return true;
                     }
                 }
@@ -4538,17 +4495,17 @@ Ext.define('Admin.view.BaseFilterPanel', {
     isDirty: function () {
         var selectedCheckboxes = [];
         var query = '';
-        if(this.facetContainer && this.facetContainer.el) {
+        if (this.facetContainer && this.facetContainer.el) {
             selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
         }
-        if(this.searchField) {
+        if (this.searchField) {
             query = Ext.String.trim(this.searchField.getValue());
         }
         return selectedCheckboxes.length > 0 || query.length > 0;
     },
     reset: function () {
-        if(this.fireEvent('reset', this.isDirty()) !== false) {
-            if(this.searchField) {
+        if (this.fireEvent('reset', this.isDirty()) !== false) {
+            if (this.searchField) {
                 this.searchField.reset();
             }
             var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
@@ -4561,7 +4518,7 @@ Ext.define('Admin.view.BaseFilterPanel', {
         }
     },
     search: function () {
-        if(this.fireEvent('search', this.getValues()) !== false) {
+        if (this.fireEvent('search', this.getValues()) !== false) {
             this.clearLink.el.setStyle('visibility', this.isDirty() ? 'visible' : 'hidden');
         }
     }
@@ -4577,14 +4534,14 @@ Ext.define('Admin.view.FilterPanel', {
                     "name": 'Public Web',
                     "key": 'public',
                     "count": 8
-                }, 
+                },
                 {
                     "name": 'Intranet',
                     "key": 'intra',
                     "count": 20
                 }
             ]
-        }, 
+        },
         {
             "name": "Type",
             "terms": [
@@ -4592,19 +4549,19 @@ Ext.define('Admin.view.FilterPanel', {
                     "name": "Space",
                     "key": "space",
                     "count": 10
-                }, 
+                },
                 {
                     "name": "Part",
                     "key": "part",
                     "count": 80
-                }, 
+                },
                 {
                     "name": "Page Template",
                     "key": "template",
                     "count": 7
                 }
             ]
-        }, 
+        },
         {
             "name": "Module",
             "terms": [
@@ -4612,12 +4569,12 @@ Ext.define('Admin.view.FilterPanel', {
                     "name": "Twitter Bootrstrap",
                     "key": "twitter",
                     "count": 0
-                }, 
+                },
                 {
                     "name": "Enonic",
                     "key": "enonic",
                     "count": 3
-                }, 
+                },
                 {
                     "name": "Foo",
                     "key": "foo",
@@ -4641,17 +4598,17 @@ Ext.define('Admin.view.BrowseToolbar', {
         {
             text: ' New',
             action: 'newSpace'
-        }, 
+        },
         {
             text: 'Edit',
             disabled: true,
             action: 'editSpace'
-        }, 
+        },
         {
             text: 'Open',
             disabled: true,
             action: 'viewSpace'
-        }, 
+        },
         {
             text: 'Delete',
             disabled: true,
@@ -4671,11 +4628,11 @@ Ext.define('Admin.controller.Controller', {
         'Admin.model.SpaceModel'
     ],
     views: [
-        'Admin.view.DetailPanel', 
+        'Admin.view.DetailPanel',
         'Admin.view.DeleteSpaceWindow'
     ],
     requires: [
-        'Admin.lib.UriHelper', 
+        'Admin.lib.UriHelper',
         'Admin.lib.RemoteService'
     ],
     init: function () {
@@ -4701,7 +4658,7 @@ Ext.define('Admin.controller.Controller', {
         var me = this;
         var tabs = this.getCmsTabPanel();
         var activeTab = tabs.setActiveTab(me.generateTabId(space, true));
-        if(!activeTab) {
+        if (!activeTab) {
             var tabItem = {
                 id: me.generateTabId(space, false),
                 xtype: 'spaceDetail',
@@ -4724,7 +4681,7 @@ Ext.define('Admin.controller.Controller', {
             ]
         }, function (r) {
             tabs.el.unmask();
-            if(r) {
+            if (r) {
                 var tabItem = {
                     id: me.generateTabId(space, true),
                     editing: true,
@@ -4733,7 +4690,7 @@ Ext.define('Admin.controller.Controller', {
                     title: space.get('displayName')
                 };
                 var index = tabs.items.indexOfKey(me.generateTabId(space, false));
-                if(index >= 0) {
+                if (index >= 0) {
                     tabs.remove(index);
                 }
                 tabs.addTab(tabItem, index >= 0 ? index : undefined, undefined);
@@ -4751,7 +4708,7 @@ Ext.define('Admin.controller.Controller', {
         win.doShow(spaceArray);
     },
     validateSpace: function (space) {
-        if(!space) {
+        if (!space) {
             var showPanel = this.getSpaceTreeGridPanel();
             return showPanel.getSelection()[0];
         }
@@ -4763,7 +4720,8 @@ Ext.define('Admin.controller.Controller', {
     updateToolbarButtons: function (selected) {
         var enable = selected && selected.length > 0;
         var toolbar = this.getSpaceBrowseToolbar();
-        var buttons = Ext.ComponentQuery.query('button[action=viewSpace], ' + 'button[action=editSpace], ' + 'button[action=deleteSpace]', toolbar);
+        var buttons = Ext.ComponentQuery.query('button[action=viewSpace], ' + 'button[action=editSpace], ' + 'button[action=deleteSpace]',
+            toolbar);
         Ext.Array.each(buttons, function (button) {
             button.setDisabled(!enable);
         });
@@ -4782,7 +4740,7 @@ Ext.define('Admin.controller.Controller', {
     },
     getDeleteSpaceWindow: function () {
         var win = Ext.ComponentQuery.query('deleteSpaceWindow')[0];
-        if(!win) {
+        if (!win) {
             win = Ext.create('widget.deleteSpaceWindow');
         }
         return win;
@@ -4807,7 +4765,7 @@ Ext.define('Admin.controller.SpaceController', {
     },
     remoteCreateOrUpdateSpace: function (spaceParams, callback) {
         Admin.lib.RemoteService.space_createOrUpdate(spaceParams, function (r) {
-            if(r && r.success) {
+            if (r && r.success) {
                 callback(r.created, r.updated);
             } else {
                 Ext.Msg.alert("Error", r ? r.error : "An unexpected error occurred.");
@@ -4822,7 +4780,7 @@ Ext.define('Admin.controller.SpaceController', {
         Admin.lib.RemoteService.space_delete({
             "spaceName": spaceNames
         }, function (r) {
-            if(r) {
+            if (r) {
                 callback.call(me, r.success, r);
             } else {
                 Ext.Msg.alert("Error", r ? r.error : "Unable to delete space.");
@@ -4853,7 +4811,7 @@ Ext.define('Admin.controller.FilterPanelController', {
         this.updateToolbarButtons(selection);
     },
     doReset: function (dirty) {
-        if(!dirty) {
+        if (!dirty) {
             return false;
         }
         var treeGrid = this.getSpaceTreeGridPanel();
@@ -4872,7 +4830,7 @@ Ext.define('Admin.controller.GridPanelController', {
     stores: [],
     models: [],
     views: [
-        'Admin.view.TreeGridPanel', 
+        'Admin.view.TreeGridPanel',
         'Admin.view.ContextMenu'
     ],
     init: function () {
@@ -4912,7 +4870,7 @@ Ext.define('Admin.controller.GridPanelController', {
     },
     getContextMenu: function () {
         var menu = Ext.ComponentQuery.query('spaceContextMenu')[0];
-        if(!menu) {
+        if (!menu) {
             menu = Ext.create('widget.spaceContextMenu');
         }
         return menu;
@@ -4951,13 +4909,13 @@ Ext.define('Admin.controller.BrowseToolbarController', {
     },
     viewSelectedSpaces: function () {
         var selection = this.getSpaceTreeGridPanel().getSelection();
-        for(var i = 0; i < selection.length; i++) {
+        for (var i = 0; i < selection.length; i++) {
             this.viewSpace(selection[i]);
         }
     },
     editSelectedSpaces: function () {
         var selection = this.getSpaceTreeGridPanel().getSelection();
-        for(var i = 0; i < selection.length; i++) {
+        for (var i = 0; i < selection.length; i++) {
             this.editSpace(selection[i]);
         }
     },
@@ -5035,21 +4993,12 @@ Ext.define('Admin.controller.DialogWindowController', {
         var win = this.getDeleteSpaceWindow(), space = win.data, me = this;
         var onDelete = function (success, details) {
             win.close();
-            if(success && details.deleted) {
-                Admin.MessageBus.showFeedback({
-                    title: 'Space deleted',
-                    message: Ext.isArray(space) && space.length > 1 ? space.length + ' spaces were deleted' : '1 space was deleted',
-                    opts: {
-                    }
-                });
+            if (success && details.deleted) {
+                admin.api.message.showFeedback(Ext.isArray(space) && space.length > 1 ? space.length + ' spaces were deleted'
+                    : '1 space was deleted');
             } else {
                 var message = details.reason;
-                Admin.MessageBus.showFeedback({
-                    title: 'Space could not be deleted',
-                    message: message,
-                    opts: {
-                    }
-                });
+                admin.api.message.showFeedback(message);
             }
             me.getSpaceTreeGridPanel().refresh();
         };
@@ -5100,9 +5049,9 @@ Ext.define('Admin.controller.WizardController', {
     closeWizard: function (el, e) {
         var tab = this.getWizardTab();
         var spaceWizard = this.getWizardPanel();
-        if(spaceWizard.isWizardDirty) {
+        if (spaceWizard.isWizardDirty) {
             Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?', function (answer) {
-                if('yes' === answer) {
+                if ('yes' === answer) {
                     tab.close();
                 }
             });
@@ -5125,16 +5074,11 @@ Ext.define('Admin.controller.WizardController', {
             newSpaceName: (originalSpaceName !== spaceName) ? spaceName : undefined
         };
         var onUpdateSpaceSuccess = function (created, updated) {
-            if(created || updated) {
-                if(closeWizard) {
+            if (created || updated) {
+                if (closeWizard) {
                     me.getWizardTab().close();
                 }
-                Admin.MessageBus.showFeedback({
-                    title: 'Space saved',
-                    message: 'Space "' + spaceName + '" was saved',
-                    opts: {
-                    }
-                });
+                admin.api.message.showFeedback('Space "' + spaceName + '" was saved');
                 me.getSpaceTreeGridPanel().refresh();
             }
         };
@@ -5144,14 +5088,9 @@ Ext.define('Admin.controller.WizardController', {
         var me = this;
         var space = wizard.data;
         var onDeleteSpaceSuccess = function (success, failures) {
-            if(success) {
+            if (success) {
                 wizard.close();
-                Admin.MessageBus.showFeedback({
-                    title: 'Space deleted',
-                    message: 'Space was deleted',
-                    opts: {
-                    }
-                });
+                admin.api.message.showFeedback('Space was deleted');
             }
         };
         this.remoteDeleteSpace(space, onDeleteSpaceSuccess);
@@ -5169,12 +5108,12 @@ Ext.define('Admin.controller.WizardController', {
 Ext.application({
     name: 'spaceAdmin',
     controllers: [
-        'Admin.controller.FilterPanelController', 
-        'Admin.controller.GridPanelController', 
-        'Admin.controller.BrowseToolbarController', 
-        'Admin.controller.DetailPanelController', 
-        'Admin.controller.DetailToolbarController', 
-        'Admin.controller.DialogWindowController', 
+        'Admin.controller.FilterPanelController',
+        'Admin.controller.GridPanelController',
+        'Admin.controller.BrowseToolbarController',
+        'Admin.controller.DetailPanelController',
+        'Admin.controller.DetailToolbarController',
+        'Admin.controller.DialogWindowController',
         'Admin.controller.WizardController'
     ],
     stores: [
@@ -5205,7 +5144,7 @@ Ext.application({
                                     region: 'west',
                                     xtype: 'spaceFilter',
                                     width: 200
-                                }, 
+                                },
                                 {
                                     region: 'center',
                                     xtype: 'container',
@@ -5214,12 +5153,12 @@ Ext.application({
                                         {
                                             region: 'north',
                                             xtype: 'spaceBrowseToolbar'
-                                        }, 
+                                        },
                                         {
                                             region: 'center',
                                             xtype: 'spaceTreeGrid',
                                             flex: 1
-                                        }, 
+                                        },
                                         {
                                             region: 'south',
                                             split: true,
