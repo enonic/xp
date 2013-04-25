@@ -57,14 +57,14 @@ public final class DataSetValidator
         }
         else
         {
-            checkDataTypeValidity( entry.toData(), validationErrors );
+            checkDataTypeValidity( entry.toProperty(), validationErrors );
 
             final FormItem formItem = contentType.form().getFormItem( FormItemPath.from( entry.getPath().resolvePathElementNames() ) );
             if ( formItem != null )
             {
                 if ( formItem instanceof Input )
                 {
-                    checkInputValidity( entry.toData(), (Input) formItem, validationErrors );
+                    checkInputValidity( entry.toProperty(), (Input) formItem, validationErrors );
                 }
             }
         }
@@ -84,7 +84,7 @@ public final class DataSetValidator
                         contentType.form().getFormItem( FormItemPath.from( entry.getPath().resolvePathElementNames() ) );
                     if ( subFormItem instanceof Input )
                     {
-                        checkInputValidity( entry.toData(), (Input) subFormItem, validationErrors );
+                        checkInputValidity( entry.toProperty(), (Input) subFormItem, validationErrors );
                     }
                 }
             }

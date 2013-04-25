@@ -30,11 +30,11 @@ public class ColorTest
     {
         Content content = newContent().build();
         RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "myColor.red", new Value.WholeNumber( 40 ) );
-        rootDataSet.setData( "myColor.green", new Value.WholeNumber( 40 ) );
-        rootDataSet.setData( "myColor.blue", new Value.WholeNumber( 40 ) );
+        rootDataSet.setProperty( "myColor.red", new Value.WholeNumber( 40 ) );
+        rootDataSet.setProperty( "myColor.green", new Value.WholeNumber( 40 ) );
+        rootDataSet.setProperty( "myColor.blue", new Value.WholeNumber( 40 ) );
 
-        Property myColor = rootDataSet.getData( "myColor" );
+        Property myColor = rootDataSet.getProperty( "myColor" );
 
         InputTypes.COLOR.checkValidity( myColor );
     }
@@ -45,10 +45,10 @@ public class ColorTest
     {
         Content content = newContent().build();
         RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "myColor.green", new Value.WholeNumber( 40l ) );
-        rootDataSet.setData( "myColor.blue", new Value.WholeNumber( 40l ) );
+        rootDataSet.setProperty( "myColor.green", new Value.WholeNumber( 40l ) );
+        rootDataSet.setProperty( "myColor.blue", new Value.WholeNumber( 40l ) );
 
-        Property myColor = rootDataSet.getData( "myColor" );
+        Property myColor = rootDataSet.getProperty( "myColor" );
 
         try
         {
@@ -71,11 +71,11 @@ public class ColorTest
     {
         Content content = newContent().build();
         RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "myColor.red", new Value.WholeNumber( 256 ) );
-        rootDataSet.setData( "myColor.green", new Value.WholeNumber( 40 ) );
-        rootDataSet.setData( "myColor.blue", new Value.WholeNumber( 40 ) );
+        rootDataSet.setProperty( "myColor.red", new Value.WholeNumber( 256 ) );
+        rootDataSet.setProperty( "myColor.green", new Value.WholeNumber( 40 ) );
+        rootDataSet.setProperty( "myColor.blue", new Value.WholeNumber( 40 ) );
 
-        Property myColor = rootDataSet.getData( "myColor" );
+        Property myColor = rootDataSet.getProperty( "myColor" );
 
         try
         {

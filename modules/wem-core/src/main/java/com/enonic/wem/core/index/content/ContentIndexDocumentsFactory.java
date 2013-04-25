@@ -84,9 +84,9 @@ public class ContentIndexDocumentsFactory
         {
             final Entry entry = dataSetIterator.next();
 
-            if ( entry.isData() )
+            if ( entry.isProperty() )
             {
-                final Property property = entry.toData();
+                final Property property = entry.toProperty();
 
                 final Value dataValue = property.getValue();
                 final Object value = dataValue.getObject();

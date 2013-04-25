@@ -16,9 +16,9 @@ public abstract class DataVisitor
     {
         for ( Entry entry : entryIterable )
         {
-            if ( entry.isData() )
+            if ( entry.isProperty() )
             {
-                final Property property = entry.toData();
+                final Property property = entry.toProperty();
                 if ( propertyType != null && !propertyType.equals( property.getType() ) )
                 {
                     continue;

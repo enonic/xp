@@ -71,7 +71,7 @@ public class ContentImageResource
         if ( contentType.isImageMedia() )
         {
             final RootDataSet contentData = content.getRootDataSet();
-            final Binary binary = findBinary( contentData.getData( "binary" ).getBinaryId() );
+            final Binary binary = findBinary( contentData.getProperty( "binary" ).getBinaryId() );
             if ( thumbnail )
             {
                 contentImage = helper.getImageFromBinary( binary, size, ScaleSquareFilter );
@@ -80,7 +80,7 @@ public class ContentImageResource
             {
                 contentImage = helper.getImageFromBinary( binary, size, ScaleMax );
             }
-            mimeType = contentData.getData( "mimeType" ).getString();
+            mimeType = contentData.getProperty( "mimeType" ).getString();
         }
         else
         {

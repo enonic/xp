@@ -40,8 +40,8 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).maximumOccurrences( 1 ).build() );
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "myInput[0]", new Value.Text( "1" ) );
-        content.getRootDataSet().setData( "myInput[1]", new Value.Text( "2" ) );
+        content.getRootDataSet().setProperty( "myInput[0]", new Value.Text( "1" ) );
+        content.getRootDataSet().setProperty( "myInput[1]", new Value.Text( "2" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getRootDataSet() );
@@ -55,9 +55,9 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).maximumOccurrences( 2 ).build() );
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "myInput[0]", new Value.Text( "1" ) );
-        content.getRootDataSet().setData( "myInput[1]", new Value.Text( "2" ) );
-        content.getRootDataSet().setData( "myInput[2]", new Value.Text( "3" ) );
+        content.getRootDataSet().setProperty( "myInput[0]", new Value.Text( "1" ) );
+        content.getRootDataSet().setProperty( "myInput[1]", new Value.Text( "2" ) );
+        content.getRootDataSet().setProperty( "myInput[2]", new Value.Text( "3" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getRootDataSet() );
@@ -71,7 +71,7 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() );
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "myInput", new Value.Text( "value" ) );
+        content.getRootDataSet().setProperty( "myInput", new Value.Text( "value" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getRootDataSet() );
@@ -94,7 +94,7 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).minimumOccurrences( 1 ).build() );
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "myInput", new Value.Text( "" ) );
+        content.getRootDataSet().setProperty( "myInput", new Value.Text( "" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getRootDataSet() );
@@ -107,7 +107,7 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).minimumOccurrences( 2 ).build() );
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "myInput", new Value.Text( "value" ) );
+        content.getRootDataSet().setProperty( "myInput", new Value.Text( "value" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getRootDataSet() );
@@ -121,8 +121,8 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).minimumOccurrences( 3 ).build() );
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "myInput[0]", new Value.Text( "value 1" ) );
-        content.getRootDataSet().setData( "myInput[1]", new Value.Text( "value 2" ) );
+        content.getRootDataSet().setProperty( "myInput[0]", new Value.Text( "value 1" ) );
+        content.getRootDataSet().setProperty( "myInput[1]", new Value.Text( "value 2" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getRootDataSet() );
@@ -136,8 +136,8 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).minimumOccurrences( 2 ).build() );
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "myInput[0]", new Value.Text( "value 1" ) );
-        content.getRootDataSet().setData( "myInput[1]", new Value.Text( "" ) );
+        content.getRootDataSet().setProperty( "myInput[0]", new Value.Text( "value 1" ) );
+        content.getRootDataSet().setProperty( "myInput[1]", new Value.Text( "" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getRootDataSet() );
@@ -182,7 +182,7 @@ public class OccurrenceValidatorTest
         FieldSet myLayout = newFieldSet().label( "My layout" ).name( "myLayout" ).add( mySet ).build();
         contentType.form().addFormItem( myLayout );
         Content content = newContent().build();
-        content.getRootDataSet().setData( "mySet.myInput", new Value.Text( "" ) );
+        content.getRootDataSet().setProperty( "mySet.myInput", new Value.Text( "" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getRootDataSet() );
@@ -197,7 +197,7 @@ public class OccurrenceValidatorTest
         FormItemSet mySet = newFormItemSet().name( "mySet" ).required( true ).addFormItem( myInput ).build();
         contentType.form().addFormItem( mySet );
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "mySet.myInput", new Value.Text( "" ) );
+        content.getRootDataSet().setProperty( "mySet.myInput", new Value.Text( "" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getRootDataSet() );
@@ -214,7 +214,7 @@ public class OccurrenceValidatorTest
 
         contentType.form().addFormItem( myRequiredSet );
         Content content = newContent().build();
-        content.getRootDataSet().setData( "mySet.myRequiredInput", new Value.Text( "" ) );
+        content.getRootDataSet().setProperty( "mySet.myRequiredInput", new Value.Text( "" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getRootDataSet() );
@@ -230,7 +230,7 @@ public class OccurrenceValidatorTest
         contentType.form().addFormItem( newFormItemSet().name( "mySet" ).required( true ).addFormItem(
             newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() );
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "mySet.myInput", new Value.Text( "value" ) );
+        content.getRootDataSet().setProperty( "mySet.myInput", new Value.Text( "value" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getRootDataSet() );
@@ -274,7 +274,7 @@ public class OccurrenceValidatorTest
         contentType.form().addFormItem(
             newInput().name( "myOtherRequiredInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() );
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "mySet.myUnrequiredData", new Value.Text( "1" ) );
+        content.getRootDataSet().setProperty( "mySet.myUnrequiredData", new Value.Text( "1" ) );
 
         assertEquals( "mySet.myRequiredInput", mySet.getInput( "myRequiredInput" ).getPath().toString() );
 
@@ -302,7 +302,7 @@ public class OccurrenceValidatorTest
         FormItemSet mySet = newFormItemSet().name( "mySet" ).required( false ).addFormItem( myInput ).build();
         contentType.form().addFormItem( mySet );
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "myData", new Value.Text( "1" ) );
+        content.getRootDataSet().setProperty( "myData", new Value.Text( "1" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getRootDataSet() );
@@ -317,8 +317,8 @@ public class OccurrenceValidatorTest
         FormItemSet mySet = newFormItemSet().name( "mySet" ).required( false ).multiple( true ).addFormItem( myInput ).build();
         contentType.form().addFormItem( mySet );
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "mySet[0].myRequiredInput", new Value.Text( "1" ) );
-        content.getRootDataSet().setData( "mySet[1].myRequiredInput", new Value.Text( "" ) );
+        content.getRootDataSet().setProperty( "mySet[0].myRequiredInput", new Value.Text( "1" ) );
+        content.getRootDataSet().setProperty( "mySet[1].myRequiredInput", new Value.Text( "" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getRootDataSet() );
@@ -344,11 +344,11 @@ public class OccurrenceValidatorTest
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
 
-        content.getRootDataSet().setData( "name", new Value.Text( "Thomas" ) );
-        content.getRootDataSet().setData( "crimes[0].description", new Value.Text( "Stole tomatoes from neighbour" ) );
-        content.getRootDataSet().setData( "crimes[0].year", new Value.Text( "1989" ) );
-        content.getRootDataSet().setData( "crimes[1].description", new Value.Text( "Stole a chocolate from the Matbua shop" ) );
-        content.getRootDataSet().setData( "crimes[1].year", new Value.Text( "1990" ) );
+        content.getRootDataSet().setProperty( "name", new Value.Text( "Thomas" ) );
+        content.getRootDataSet().setProperty( "crimes[0].description", new Value.Text( "Stole tomatoes from neighbour" ) );
+        content.getRootDataSet().setProperty( "crimes[0].year", new Value.Text( "1989" ) );
+        content.getRootDataSet().setProperty( "crimes[1].description", new Value.Text( "Stole a chocolate from the Matbua shop" ) );
+        content.getRootDataSet().setProperty( "crimes[1].year", new Value.Text( "1990" ) );
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getRootDataSet() );

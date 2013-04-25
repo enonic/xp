@@ -88,9 +88,9 @@ public class CreateContentHandlerTest
         command.owner( UserKey.from( "myStore:myUser" ) );
         command.contentType( new QualifiedContentTypeName( ModuleName.SYSTEM, "my_content_type" ) );
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setData( "myText", new Value.Text( "abc" ) );
-        rootDataSet.setData( "myReference", new Value.ContentId( ContentId.from( "123" ) ) );
-        rootDataSet.setData( "mySet.myRelatedContent", new Value.ContentId( ContentId.from( "124" ) ) );
+        rootDataSet.setProperty( "myText", new Value.Text( "abc" ) );
+        rootDataSet.setProperty( "myReference", new Value.ContentId( ContentId.from( "123" ) ) );
+        rootDataSet.setProperty( "mySet.myRelatedContent", new Value.ContentId( ContentId.from( "124" ) ) );
         command.rootDataSet( rootDataSet );
 
         // exercise

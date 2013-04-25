@@ -74,7 +74,7 @@ public class GetContentRpcHandlerTest
     private Content createContent( final String id, final String name )
     {
         final RootDataSet rootDataSet = DataSet.newRootDataSet();
-        rootDataSet.setData( EntryPath.from( "myData" ), new Value.Text( "value1" ) );
+        rootDataSet.setProperty( EntryPath.from( "myData" ), new Value.Text( "value1" ) );
 
         return Content.newContent().
             id( ContentId.from( id ) ).

@@ -54,7 +54,7 @@ public class SetContentDataEditorTest
 
         // verify
         assertNotNull( updatedContent );
-        assertEquals( "123", updatedContent.getRootDataSet().getData( "myData" ).getString() );
+        assertEquals( "123", updatedContent.getRootDataSet().getProperty( "myData" ).getString() );
     }
 
 }

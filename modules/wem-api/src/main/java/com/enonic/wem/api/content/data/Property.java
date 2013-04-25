@@ -55,14 +55,14 @@ public class Property
 
     public void setValue( final Object value, final BasePropertyType dataType )
     {
-        Preconditions.checkNotNull( value, "A Data cannot have a null value" );
-        Preconditions.checkArgument( !( value instanceof DataSet ), "A Data cannot have a DataSet as value" );
+        Preconditions.checkNotNull( value, "A Property cannot have a null value" );
+        Preconditions.checkArgument( !( value instanceof DataSet ), "A Property cannot have a DataSet as value" );
         this.value = dataType.newValue( value );
     }
 
     public void setValue( final Value value )
     {
-        Preconditions.checkNotNull( value, "A Data cannot have a null value" );
+        Preconditions.checkNotNull( value, "A Property cannot have a null value" );
         this.value = value;
     }
 
@@ -101,7 +101,7 @@ public class Property
     }
 
     /**
-     * Returns the value at of the data at the given array index as a String.
+     * Returns the value of the Property at the given array index as a String.
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a String.
      */
@@ -124,7 +124,7 @@ public class Property
     }
 
     /**
-     * Returns the value at of the data at the given array index as a Long.
+     * Returns the value at of the Property at the given array index as a Long.
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a Long.
      */
@@ -141,7 +141,7 @@ public class Property
     }
 
     /**
-     * Returns the value at of the data at the given array index as a Double.
+     * Returns the value at of the Property at the given array index as a Double.
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a Double.
      */
@@ -158,7 +158,7 @@ public class Property
     }
 
     /**
-     * Returns the value at of the data at the given array index as a DateMidnight.
+     * Returns the value at of the Property at the given array index as a DateMidnight.
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a org.joda.time.DateMidnight.
      */
@@ -175,7 +175,7 @@ public class Property
     }
 
     /**
-     * Returns the value at of the data at the given array index as a BlobKey.
+     * Returns the value at of the Property at the given array index as a BlobKey.
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a BlobKey.
      */

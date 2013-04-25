@@ -58,7 +58,7 @@ public abstract class AbstractContentSerializerTest
     public void data()
     {
         Content content = newContent().build();
-        content.getRootDataSet().setData( "myInput", new Value.Text( "A value" ) );
+        content.getRootDataSet().setProperty( "myInput", new Value.Text( "A value" ) );
 
         String serialized = toString( content );
 
@@ -70,16 +70,16 @@ public abstract class AbstractContentSerializerTest
 
         // verify
         RootDataSet parsedRootDataSet = parsedContent.getRootDataSet();
-        assertEquals( "A value", parsedRootDataSet.getData( "myInput" ).getObject() );
-        assertEquals( EntryPath.from( "myInput" ), parsedRootDataSet.getData( "myInput" ).getPath() );
+        assertEquals( "A value", parsedRootDataSet.getProperty( "myInput" ).getObject() );
+        assertEquals( EntryPath.from( "myInput" ), parsedRootDataSet.getProperty( "myInput" ).getPath() );
     }
 
     @Test
     public void set()
     {
         Content content = newContent().type( new QualifiedContentTypeName( "mymodule:my_type" ) ).build();
-        content.getRootDataSet().setData( "mySet.myInput", new Value.Text( "1" ) );
-        content.getRootDataSet().setData( "mySet.myOtherInput", new Value.Text( "2" ) );
+        content.getRootDataSet().setProperty( "mySet.myInput", new Value.Text( "1" ) );
+        content.getRootDataSet().setProperty( "mySet.myOtherInput", new Value.Text( "2" ) );
 
         String serialized = toString( content );
 
@@ -91,19 +91,19 @@ public abstract class AbstractContentSerializerTest
 
         // verify
         RootDataSet parsedRootDataSet = parsedContent.getRootDataSet();
-        assertEquals( "1", parsedRootDataSet.getData( "mySet.myInput" ).getObject() );
-        assertEquals( "2", parsedRootDataSet.getData( "mySet.myOtherInput" ).getObject() );
+        assertEquals( "1", parsedRootDataSet.getProperty( "mySet.myInput" ).getObject() );
+        assertEquals( "2", parsedRootDataSet.getProperty( "mySet.myOtherInput" ).getObject() );
 
-        assertEquals( "mySet.myInput", parsedRootDataSet.getData( "mySet.myInput" ).getPath().toString() );
-        assertEquals( "mySet.myOtherInput", parsedRootDataSet.getData( "mySet.myOtherInput" ).getPath().toString() );
+        assertEquals( "mySet.myInput", parsedRootDataSet.getProperty( "mySet.myInput" ).getPath().toString() );
+        assertEquals( "mySet.myOtherInput", parsedRootDataSet.getProperty( "mySet.myOtherInput" ).getPath().toString() );
     }
 
     @Test
     public void array_of_values()
     {
         Content content = newContent().type( new QualifiedContentTypeName( "mymodule:my_type" ) ).build();
-        content.getRootDataSet().setData( "myArray[0]", new Value.Text( "1" ) );
-        content.getRootDataSet().setData( "myArray[1]", new Value.Text( "2" ) );
+        content.getRootDataSet().setProperty( "myArray[0]", new Value.Text( "1" ) );
+        content.getRootDataSet().setProperty( "myArray[1]", new Value.Text( "2" ) );
 
         String serialized = toString( content );
 
@@ -115,19 +115,19 @@ public abstract class AbstractContentSerializerTest
 
         // verify
         RootDataSet parsedRootDataSet = parsedContent.getRootDataSet();
-        assertEquals( "1", parsedRootDataSet.getData( "myArray[0]" ).getObject() );
-        assertEquals( "2", parsedRootDataSet.getData( "myArray[1]" ).getObject() );
+        assertEquals( "1", parsedRootDataSet.getProperty( "myArray[0]" ).getObject() );
+        assertEquals( "2", parsedRootDataSet.getProperty( "myArray[1]" ).getObject() );
 
-        assertEquals( "myArray[0]", parsedRootDataSet.getData( "myArray[0]" ).getPath().toString() );
-        assertEquals( "myArray[1]", parsedRootDataSet.getData( "myArray[1]" ).getPath().toString() );
+        assertEquals( "myArray[0]", parsedRootDataSet.getProperty( "myArray[0]" ).getPath().toString() );
+        assertEquals( "myArray[1]", parsedRootDataSet.getProperty( "myArray[1]" ).getPath().toString() );
     }
 
     @Test
     public void array_within_set()
     {
         Content content = newContent().type( new QualifiedContentTypeName( "mymodule:my_type" ) ).build();
-        content.getRootDataSet().setData( "mySet.myArray[0]", new Value.Text( "1" ) );
-        content.getRootDataSet().setData( "mySet.myArray[1]", new Value.Text( "2" ) );
+        content.getRootDataSet().setProperty( "mySet.myArray[0]", new Value.Text( "1" ) );
+        content.getRootDataSet().setProperty( "mySet.myArray[1]", new Value.Text( "2" ) );
 
         String serialized = toString( content );
 
@@ -139,17 +139,17 @@ public abstract class AbstractContentSerializerTest
 
         // verify
         RootDataSet parsedRootDataSet = parsedContent.getRootDataSet();
-        assertEquals( "1", parsedRootDataSet.getData( "mySet.myArray[0]" ).getObject() );
-        assertEquals( "2", parsedRootDataSet.getData( "mySet.myArray[1]" ).getObject() );
+        assertEquals( "1", parsedRootDataSet.getProperty( "mySet.myArray[0]" ).getObject() );
+        assertEquals( "2", parsedRootDataSet.getProperty( "mySet.myArray[1]" ).getObject() );
 
-        assertEquals( "mySet.myArray[0]", parsedRootDataSet.getData( "mySet.myArray[0]" ).getPath().toString() );
-        assertEquals( "mySet.myArray[1]", parsedRootDataSet.getData( "mySet.myArray[1]" ).getPath().toString() );
+        assertEquals( "mySet.myArray[0]", parsedRootDataSet.getProperty( "mySet.myArray[0]" ).getPath().toString() );
+        assertEquals( "mySet.myArray[1]", parsedRootDataSet.getProperty( "mySet.myArray[1]" ).getPath().toString() );
 
         DataSet mySet = parsedRootDataSet.getEntry( "mySet" ).toDataSet();
         assertEquals( "mySet", mySet.toDataSet().getPath().toString() );
 
-        Property mySet_myArray = mySet.getData( "myArray" );
-        assertSame( mySet_myArray, parsedRootDataSet.getData( "mySet.myArray" ) );
+        Property mySet_myArray = mySet.getProperty( "myArray" );
+        assertSame( mySet_myArray, parsedRootDataSet.getProperty( "mySet.myArray" ) );
         assertEquals( PropertyTypes.TEXT, mySet_myArray.getType() );
         assertEquals( "mySet.myArray[0]", mySet_myArray.getPath().toString() );
 
@@ -165,13 +165,13 @@ public abstract class AbstractContentSerializerTest
     public void array_of_set()
     {
         Content content = newContent().type( new QualifiedContentTypeName( "mymodule:my_type" ) ).build();
-        content.getRootDataSet().setData( "mySet[0].myInput", new Value.Text( "1" ) );
-        content.getRootDataSet().setData( "mySet[0].myOtherInput", new Value.Text( "a" ) );
-        content.getRootDataSet().setData( "mySet[1].myInput", new Value.Text( "2" ) );
-        content.getRootDataSet().setData( "mySet[1].myOtherInput", new Value.Text( "b" ) );
+        content.getRootDataSet().setProperty( "mySet[0].myInput", new Value.Text( "1" ) );
+        content.getRootDataSet().setProperty( "mySet[0].myOtherInput", new Value.Text( "a" ) );
+        content.getRootDataSet().setProperty( "mySet[1].myInput", new Value.Text( "2" ) );
+        content.getRootDataSet().setProperty( "mySet[1].myOtherInput", new Value.Text( "b" ) );
 
-        assertEquals( "mySet[1].myInput", content.getRootDataSet().getData( "mySet[1].myInput" ).getPath().toString() );
-        assertEquals( "mySet[0].myInput", content.getRootDataSet().getData( "mySet[0].myInput" ).getPath().toString() );
+        assertEquals( "mySet[1].myInput", content.getRootDataSet().getProperty( "mySet[1].myInput" ).getPath().toString() );
+        assertEquals( "mySet[0].myInput", content.getRootDataSet().getProperty( "mySet[0].myInput" ).getPath().toString() );
 
         String serialized = toString( content );
 
@@ -183,26 +183,26 @@ public abstract class AbstractContentSerializerTest
 
         // verify
         RootDataSet parsedRootDataSet = parsedContent.getRootDataSet();
-        assertEquals( "1", parsedRootDataSet.getData( "mySet[0].myInput" ).getObject() );
-        assertEquals( "a", parsedRootDataSet.getData( "mySet[0].myOtherInput" ).getObject() );
-        assertEquals( "2", parsedRootDataSet.getData( "mySet[1].myInput" ).getObject() );
-        assertEquals( "b", parsedRootDataSet.getData( "mySet[1].myOtherInput" ).getObject() );
+        assertEquals( "1", parsedRootDataSet.getProperty( "mySet[0].myInput" ).getObject() );
+        assertEquals( "a", parsedRootDataSet.getProperty( "mySet[0].myOtherInput" ).getObject() );
+        assertEquals( "2", parsedRootDataSet.getProperty( "mySet[1].myInput" ).getObject() );
+        assertEquals( "b", parsedRootDataSet.getProperty( "mySet[1].myOtherInput" ).getObject() );
 
-        assertEquals( "mySet[0].myInput", parsedRootDataSet.getData( "mySet[0].myInput" ).getPath().toString() );
-        assertEquals( "mySet[0].myOtherInput", parsedRootDataSet.getData( "mySet[0].myOtherInput" ).getPath().toString() );
-        assertEquals( "mySet[1].myInput", parsedRootDataSet.getData( "mySet[1].myInput" ).getPath().toString() );
-        assertEquals( "mySet[1].myOtherInput", parsedRootDataSet.getData( "mySet[1].myOtherInput" ).getPath().toString() );
+        assertEquals( "mySet[0].myInput", parsedRootDataSet.getProperty( "mySet[0].myInput" ).getPath().toString() );
+        assertEquals( "mySet[0].myOtherInput", parsedRootDataSet.getProperty( "mySet[0].myOtherInput" ).getPath().toString() );
+        assertEquals( "mySet[1].myInput", parsedRootDataSet.getProperty( "mySet[1].myInput" ).getPath().toString() );
+        assertEquals( "mySet[1].myOtherInput", parsedRootDataSet.getProperty( "mySet[1].myOtherInput" ).getPath().toString() );
     }
 
     @Test
     public void insertion_order_of_entries_within_a_DataSet_is_preserved()
     {
         Content content = newContent().type( new QualifiedContentTypeName( "mymodule:my_type" ) ).build();
-        content.getRootDataSet().setData( "mySet.myArray[0]", new Value.Text( "1" ) );
-        content.getRootDataSet().setData( "mySet.myInput", new Value.Text( "a" ) );
-        content.getRootDataSet().setData( "mySet.myArray[1]", new Value.Text( "2" ) );
-        content.getRootDataSet().setData( "mySet.myOtherInput", new Value.Text( "b" ) );
-        content.getRootDataSet().setData( "mySet.myArray[2]", new Value.Text( "3" ) );
+        content.getRootDataSet().setProperty( "mySet.myArray[0]", new Value.Text( "1" ) );
+        content.getRootDataSet().setProperty( "mySet.myInput", new Value.Text( "a" ) );
+        content.getRootDataSet().setProperty( "mySet.myArray[1]", new Value.Text( "2" ) );
+        content.getRootDataSet().setProperty( "mySet.myOtherInput", new Value.Text( "b" ) );
+        content.getRootDataSet().setProperty( "mySet.myArray[2]", new Value.Text( "3" ) );
 
         String serialized = toString( content );
 
@@ -223,10 +223,10 @@ public abstract class AbstractContentSerializerTest
     public void array_within_array()
     {
         Content content = newContent().type( new QualifiedContentTypeName( "mymodule:my_type" ) ).build();
-        content.getRootDataSet().setData( "mySet[0].myArray[0]", new Value.Text( "1" ) );
-        content.getRootDataSet().setData( "mySet[0].myArray[1]", new Value.Text( "2" ) );
-        content.getRootDataSet().setData( "mySet[1].myArray[0]", new Value.Text( "3" ) );
-        content.getRootDataSet().setData( "mySet[1].myArray[1]", new Value.Text( "4" ) );
+        content.getRootDataSet().setProperty( "mySet[0].myArray[0]", new Value.Text( "1" ) );
+        content.getRootDataSet().setProperty( "mySet[0].myArray[1]", new Value.Text( "2" ) );
+        content.getRootDataSet().setProperty( "mySet[1].myArray[0]", new Value.Text( "3" ) );
+        content.getRootDataSet().setProperty( "mySet[1].myArray[1]", new Value.Text( "4" ) );
 
         String serialized = toString( content );
 
@@ -238,10 +238,10 @@ public abstract class AbstractContentSerializerTest
 
         // verify
         RootDataSet parsedRootDataSet = parsedContent.getRootDataSet();
-        assertEquals( "1", parsedRootDataSet.getData( "mySet[0].myArray[0]" ).getObject() );
-        assertEquals( "2", parsedRootDataSet.getData( "mySet[0].myArray[1]" ).getObject() );
-        assertEquals( "3", parsedRootDataSet.getData( "mySet[1].myArray[0]" ).getObject() );
-        assertEquals( "4", parsedRootDataSet.getData( "mySet[1].myArray[1]" ).getObject() );
+        assertEquals( "1", parsedRootDataSet.getProperty( "mySet[0].myArray[0]" ).getObject() );
+        assertEquals( "2", parsedRootDataSet.getProperty( "mySet[0].myArray[1]" ).getObject() );
+        assertEquals( "3", parsedRootDataSet.getProperty( "mySet[1].myArray[0]" ).getObject() );
+        assertEquals( "4", parsedRootDataSet.getProperty( "mySet[1].myArray[1]" ).getObject() );
 
         DataSet mySet = parsedRootDataSet.getDataSet( "mySet" );
 
@@ -253,7 +253,7 @@ public abstract class AbstractContentSerializerTest
         DataSet mySet_0 = mySet_array.getDataSet( 0 );
         assertEquals( "mySet[0]", mySet_0.getPath().toString() );
 
-        Property mySet_0_myArray = mySet_0.getData( "myArray" );
+        Property mySet_0_myArray = mySet_0.getProperty( "myArray" );
         assertEquals( true, mySet_0_myArray.isArray() );
         assertEquals( "mySet[0].myArray[0]", mySet_0_myArray.getPath().toString() );
 
@@ -265,11 +265,11 @@ public abstract class AbstractContentSerializerTest
         DataSet mySet_1 = mySet_array.getDataSet( 1 );
         assertEquals( "mySet[1]", mySet_1.getPath().toString() );
 
-        Property mySet_1_myArray = mySet_1.getData( "myArray" );
+        Property mySet_1_myArray = mySet_1.getProperty( "myArray" );
         assertEquals( true, mySet_1_myArray.isArray() );
         assertEquals( "mySet[1].myArray[0]", mySet_1_myArray.getPath().toString() );
 
-        Property mySet_1_myArray_1 = mySet_1.getData( "myArray[1]" );
+        Property mySet_1_myArray_1 = mySet_1.getProperty( "myArray[1]" );
         assertEquals( true, mySet_1_myArray_1.isArray() );
         assertEquals( "mySet[1].myArray[1]", mySet_1_myArray_1.getPath().toString() );
 
@@ -278,10 +278,10 @@ public abstract class AbstractContentSerializerTest
         assertEquals( "3", mySet_1_myArray_array.getValue( 0 ).asString() );
         assertEquals( "4", mySet_1_myArray_array.getValue( 1 ).asString() );
 
-        assertEquals( "mySet[0].myArray[0]", parsedRootDataSet.getData( "mySet[0].myArray[0]" ).getPath().toString() );
-        assertEquals( "mySet[0].myArray[1]", parsedRootDataSet.getData( "mySet[0].myArray[1]" ).getPath().toString() );
-        assertEquals( "mySet[1].myArray[0]", parsedRootDataSet.getData( "mySet[1].myArray[0]" ).getPath().toString() );
-        assertEquals( "mySet[1].myArray[1]", parsedRootDataSet.getData( "mySet[1].myArray[1]" ).getPath().toString() );
+        assertEquals( "mySet[0].myArray[0]", parsedRootDataSet.getProperty( "mySet[0].myArray[0]" ).getPath().toString() );
+        assertEquals( "mySet[0].myArray[1]", parsedRootDataSet.getProperty( "mySet[0].myArray[1]" ).getPath().toString() );
+        assertEquals( "mySet[1].myArray[0]", parsedRootDataSet.getProperty( "mySet[1].myArray[0]" ).getPath().toString() );
+        assertEquals( "mySet[1].myArray[1]", parsedRootDataSet.getProperty( "mySet[1].myArray[1]" ).getPath().toString() );
     }
 
     @Test
@@ -298,8 +298,8 @@ public abstract class AbstractContentSerializerTest
         contentTypeFetcher.add( contentType );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "myText", new Value.Text( "A value" ) );
-        content.getRootDataSet().setData( "formItemSet.myText", new Value.Text( "A another value" ) );
+        content.getRootDataSet().setProperty( "myText", new Value.Text( "A value" ) );
+        content.getRootDataSet().setProperty( "formItemSet.myText", new Value.Text( "A another value" ) );
 
         String serialized = toString( content );
 
@@ -308,10 +308,10 @@ public abstract class AbstractContentSerializerTest
 
         // verify
         RootDataSet actualRootContentSet = actualContent.getRootDataSet();
-        assertEquals( "myText", actualRootContentSet.getData( "myText" ).getPath().toString() );
-        assertEquals( "formItemSet.myText", actualRootContentSet.getData( "formItemSet.myText" ).getPath().toString() );
-        assertEquals( "A value", actualRootContentSet.getData( "myText" ).getObject() );
-        assertEquals( "A another value", actualRootContentSet.getData( "formItemSet.myText" ).getObject() );
+        assertEquals( "myText", actualRootContentSet.getProperty( "myText" ).getPath().toString() );
+        assertEquals( "formItemSet.myText", actualRootContentSet.getProperty( "formItemSet.myText" ).getPath().toString() );
+        assertEquals( "A value", actualRootContentSet.getProperty( "myText" ).getObject() );
+        assertEquals( "A another value", actualRootContentSet.getProperty( "formItemSet.myText" ).getObject() );
     }
 
     @Test
@@ -328,8 +328,8 @@ public abstract class AbstractContentSerializerTest
         contentTypeFetcher.add( contentType );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "formItemSet[0].myText", new Value.Text( "Value 1" ) );
-        content.getRootDataSet().setData( "formItemSet[1].myText", new Value.Text( "Value 2" ) );
+        content.getRootDataSet().setProperty( "formItemSet[0].myText", new Value.Text( "Value 1" ) );
+        content.getRootDataSet().setProperty( "formItemSet[1].myText", new Value.Text( "Value 2" ) );
 
         String serialized = toString( content );
 
@@ -338,10 +338,10 @@ public abstract class AbstractContentSerializerTest
 
         // verify
         RootDataSet parsedRootDataSet = parsedContent.getRootDataSet();
-        assertEquals( "formItemSet[0].myText", parsedRootDataSet.getData( "formItemSet[0].myText" ).getPath().toString() );
-        assertEquals( "formItemSet[1].myText", parsedRootDataSet.getData( "formItemSet[1].myText" ).getPath().toString() );
-        assertEquals( "Value 1", parsedRootDataSet.getData( "formItemSet[0].myText" ).getObject() );
-        assertEquals( "Value 2", parsedRootDataSet.getData( "formItemSet[1].myText" ).getObject() );
+        assertEquals( "formItemSet[0].myText", parsedRootDataSet.getProperty( "formItemSet[0].myText" ).getPath().toString() );
+        assertEquals( "formItemSet[1].myText", parsedRootDataSet.getProperty( "formItemSet[1].myText" ).getPath().toString() );
+        assertEquals( "Value 1", parsedRootDataSet.getProperty( "formItemSet[0].myText" ).getObject() );
+        assertEquals( "Value 2", parsedRootDataSet.getProperty( "formItemSet[1].myText" ).getObject() );
     }
 
     @Test
@@ -358,7 +358,7 @@ public abstract class AbstractContentSerializerTest
             build();
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "myText", new Value.Text( "A value" ) );
+        content.getRootDataSet().setProperty( "myText", new Value.Text( "A value" ) );
 
         String serialized = toString( content );
 
@@ -367,17 +367,17 @@ public abstract class AbstractContentSerializerTest
 
         // verify
         RootDataSet parsedRootDataSet = parsedContent.getRootDataSet();
-        assertEquals( "A value", parsedRootDataSet.getData( "myText" ).getString() );
-        assertEquals( "myText", parsedRootDataSet.getData( "myText" ).getPath().toString() );
+        assertEquals( "A value", parsedRootDataSet.getProperty( "myText" ).getString() );
+        assertEquals( "myText", parsedRootDataSet.getProperty( "myText" ).getPath().toString() );
     }
 
     @Test
     public void unstructured_with_arrays()
     {
         Content content = newContent().build();
-        content.getRootDataSet().setData( "names[0]", new Value.Text( "Thomas" ) );
-        content.getRootDataSet().setData( "names[1]", new Value.Text( "Sten Roger" ) );
-        content.getRootDataSet().setData( "names[2]", new Value.Text( "Alex" ) );
+        content.getRootDataSet().setProperty( "names[0]", new Value.Text( "Thomas" ) );
+        content.getRootDataSet().setProperty( "names[1]", new Value.Text( "Sten Roger" ) );
+        content.getRootDataSet().setProperty( "names[2]", new Value.Text( "Alex" ) );
 
         String serialized = toString( content );
 
@@ -386,10 +386,10 @@ public abstract class AbstractContentSerializerTest
 
         // verify
         RootDataSet parsedRootDataSet = parsedContent.getRootDataSet();
-        assertEquals( "Thomas", parsedRootDataSet.getData( "names[0]" ).getObject() );
-        assertEquals( PropertyTypes.TEXT, parsedRootDataSet.getData( "names[0]" ).getType() );
-        assertEquals( "Sten Roger", parsedRootDataSet.getData( "names[1]" ).getObject() );
-        assertEquals( "Alex", parsedRootDataSet.getData( "names[2]" ).getObject() );
+        assertEquals( "Thomas", parsedRootDataSet.getProperty( "names[0]" ).getObject() );
+        assertEquals( PropertyTypes.TEXT, parsedRootDataSet.getProperty( "names[0]" ).getType() );
+        assertEquals( "Sten Roger", parsedRootDataSet.getProperty( "names[1]" ).getObject() );
+        assertEquals( "Alex", parsedRootDataSet.getProperty( "names[2]" ).getObject() );
     }
 
     @Test
@@ -405,10 +405,10 @@ public abstract class AbstractContentSerializerTest
             displayName( "My content" ).
             path( ContentPath.from( "site1/mycontent" ) ).
             build();
-        content.getRootDataSet().setData( "mySet[0].myArray[0]", new Value.Text( "1" ) );
-        content.getRootDataSet().setData( "mySet[0].myArray[1]", new Value.Text( "2" ) );
-        content.getRootDataSet().setData( "mySet[1].myArray[0]", new Value.Text( "3" ) );
-        content.getRootDataSet().setData( "mySet[1].myArray[1]", new Value.Text( "4" ) );
+        content.getRootDataSet().setProperty( "mySet[0].myArray[0]", new Value.Text( "1" ) );
+        content.getRootDataSet().setProperty( "mySet[0].myArray[1]", new Value.Text( "2" ) );
+        content.getRootDataSet().setProperty( "mySet[1].myArray[0]", new Value.Text( "3" ) );
+        content.getRootDataSet().setProperty( "mySet[1].myArray[1]", new Value.Text( "4" ) );
 
         final String serialized = toString( content );
 

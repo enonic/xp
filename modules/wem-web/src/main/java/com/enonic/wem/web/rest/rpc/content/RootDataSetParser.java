@@ -51,11 +51,11 @@ final class RootDataSetParser
                 if ( input != null )
                 {
                     final Value value = input.getInputType().newValue( fieldValue );
-                    rootDataSet.setData( path, value );
+                    rootDataSet.setProperty( path, value );
                 }
                 else
                 {
-                    rootDataSet.setData( path, new Value.Text( fieldValue ) );
+                    rootDataSet.setProperty( path, new Value.Text( fieldValue ) );
                 }
             }
         }

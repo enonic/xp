@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.data.type.JavaType;
 import com.enonic.wem.api.content.data.type.PropertyTypes;
 
 /**
- * A generic holder for the value of a Data.
+ * A generic holder for the value of a Property.
  */
 public class Value
 {
@@ -192,7 +192,7 @@ public class Value
         return new Builder();
     }
 
-    public Property newData( final String name )
+    public Property newProperty( final String name )
     {
         return getType().newProperty( name, this );
     }

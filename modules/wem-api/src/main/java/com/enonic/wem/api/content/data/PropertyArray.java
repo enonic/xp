@@ -31,7 +31,7 @@ public class PropertyArray
     void add( final Entry entry )
     {
         super.add( entry );
-        valueList.add( entry.toData().getValue() );
+        valueList.add( entry.toProperty().getValue() );
     }
 
     @Override
@@ -40,11 +40,11 @@ public class PropertyArray
         super.set( index, entry );
         if ( overwritesExisting( index, valueList ) )
         {
-            valueList.set( index, entry.toData().getValue() );
+            valueList.set( index, entry.toProperty().getValue() );
         }
         else
         {
-            valueList.add( entry.toData().getValue() );
+            valueList.add( entry.toProperty().getValue() );
         }
     }
 
@@ -58,13 +58,13 @@ public class PropertyArray
         if ( !( entry instanceof Property ) )
         {
             throw new IllegalArgumentException(
-                "Unexpected type of entry for Data array at path [" + getPath() + "]: " + entry.getClass().getSimpleName() );
+                "Unexpected type of entry for Property array at path [" + getPath() + "]: " + entry.getClass().getSimpleName() );
         }
         final Property property = (Property) entry;
         if ( !getType().equals( property.getType() ) )
         {
             throw new IllegalArgumentException(
-                "Array [" + getPath() + "] expects Data of type [" + getType() + "]. Data [" + entry.getPath() + "] was of type: " +
+                "Array [" + getPath() + "] expects Property of type [" + getType() + "]. Property [" + entry.getPath() + "] was of type: " +
                     property.getType() );
         }
     }
@@ -82,7 +82,7 @@ public class PropertyArray
 
         private DataSet parent;
 
-        public Builder dataType( BasePropertyType value )
+        public Builder propertyType( BasePropertyType value )
         {
             this.dataType = value;
             return this;

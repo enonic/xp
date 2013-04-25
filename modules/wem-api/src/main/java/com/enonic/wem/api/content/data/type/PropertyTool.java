@@ -28,7 +28,7 @@ public class PropertyTool
     public static void checkPropertyType( final DataSet dataSet, final String path, final PropertyType propertyType )
         throws InvalidDataException
     {
-        final Property property = dataSet.getData( EntryPath.from( path ) );
+        final Property property = dataSet.getProperty( EntryPath.from( path ) );
         if ( property == null )
         {
             return;
@@ -128,7 +128,7 @@ public class PropertyTool
             }
             if ( rangeStart != null && rangeStop != null )
             {
-                final Property subProperty = property.toDataSet().getData( EntryPath.from( path ) );
+                final Property subProperty = property.toDataSet().getProperty( EntryPath.from( path ) );
                 checkRange( subProperty, rangeStart, rangeStop );
             }
         }

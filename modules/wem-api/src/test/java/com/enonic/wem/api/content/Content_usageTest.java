@@ -43,18 +43,18 @@ public class Content_usageTest
         DataSet dataSet = new RootDataSet();
 
         // exercise
-        dataSet.setData( "myText", new Value.Text( "abc" ) );
-        dataSet.setData( "myNum", new Value.WholeNumber( 123 ) );
-        dataSet.setData( "myDate", new Value.Date( new DateMidnight( 2013, 1, 13 ) ) );
-        dataSet.setData( "myDec", new Value.DecimalNumber( 123.123 ) );
-        dataSet.setData( "myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
+        dataSet.setProperty( "myText", new Value.Text( "abc" ) );
+        dataSet.setProperty( "myNum", new Value.WholeNumber( 123 ) );
+        dataSet.setProperty( "myDate", new Value.Date( new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.setProperty( "myDec", new Value.DecimalNumber( 123.123 ) );
+        dataSet.setProperty( "myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
 
         // verify
-        assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
-        assertEquals( WHOLE_NUMBER, dataSet.getData( "myNum" ).getType() );
-        assertEquals( DATE_MIDNIGHT, dataSet.getData( "myDate" ).getType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
-        assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
+        assertEquals( TEXT, dataSet.getProperty( "myText" ).getType() );
+        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getType() );
+        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getType() );
+        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getType() );
     }
 
     @Test
@@ -70,17 +70,17 @@ public class Content_usageTest
         dataSet.add( newData( "myHtml" ).type( HTML_PART ).value( "<p>abc</p>" ).build() );
 
         // verify
-        assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
-        assertEquals( WHOLE_NUMBER, dataSet.getData( "myNum" ).getType() );
-        assertEquals( DATE_MIDNIGHT, dataSet.getData( "myDate" ).getType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
-        assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
+        assertEquals( TEXT, dataSet.getProperty( "myText" ).getType() );
+        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getType() );
+        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getType() );
+        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getType() );
 
-        assertFalse( dataSet.getData( "myText" ) instanceof Property.Text );
-        assertFalse( dataSet.getData( "myNum" ) instanceof Property.WholeNumber );
-        assertFalse( dataSet.getData( "myDec" ) instanceof Property.DecimalNumber );
-        assertFalse( dataSet.getData( "myDate" ) instanceof Property.Date );
-        assertFalse( dataSet.getData( "myHtml" ) instanceof Property.HtmlPart );
+        assertFalse( dataSet.getProperty( "myText" ) instanceof Property.Text );
+        assertFalse( dataSet.getProperty( "myNum" ) instanceof Property.WholeNumber );
+        assertFalse( dataSet.getProperty( "myDec" ) instanceof Property.DecimalNumber );
+        assertFalse( dataSet.getProperty( "myDate" ) instanceof Property.Date );
+        assertFalse( dataSet.getProperty( "myHtml" ) instanceof Property.HtmlPart );
     }
 
     @Test
@@ -96,17 +96,17 @@ public class Content_usageTest
         dataSet.add( newHtmlPart( "myHtml" ).value( "<p>abc</p>" ) );
 
         // verify
-        assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
-        assertEquals( WHOLE_NUMBER, dataSet.getData( "myNum" ).getType() );
-        assertEquals( DATE_MIDNIGHT, dataSet.getData( "myDate" ).getType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
-        assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
+        assertEquals( TEXT, dataSet.getProperty( "myText" ).getType() );
+        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getType() );
+        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getType() );
+        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getType() );
 
-        assertTrue( dataSet.getData( "myText" ) instanceof Property.Text );
-        assertTrue( dataSet.getData( "myNum" ) instanceof Property.WholeNumber );
-        assertTrue( dataSet.getData( "myDec" ) instanceof Property.DecimalNumber );
-        assertTrue( dataSet.getData( "myDate" ) instanceof Property.Date );
-        assertTrue( dataSet.getData( "myHtml" ) instanceof Property.HtmlPart );
+        assertTrue( dataSet.getProperty( "myText" ) instanceof Property.Text );
+        assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.WholeNumber );
+        assertTrue( dataSet.getProperty( "myDec" ) instanceof Property.DecimalNumber );
+        assertTrue( dataSet.getProperty( "myDate" ) instanceof Property.Date );
+        assertTrue( dataSet.getProperty( "myHtml" ) instanceof Property.HtmlPart );
     }
 
     @Test
@@ -122,17 +122,17 @@ public class Content_usageTest
         dataSet.add( new Property.HtmlPart( "myHtml", "<p>abc</p>" ) );
 
         // verify
-        assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
-        assertEquals( WHOLE_NUMBER, dataSet.getData( "myNum" ).getType() );
-        assertEquals( DATE_MIDNIGHT, dataSet.getData( "myDate" ).getType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
-        assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
+        assertEquals( TEXT, dataSet.getProperty( "myText" ).getType() );
+        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getType() );
+        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getType() );
+        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getType() );
 
-        assertTrue( dataSet.getData( "myText" ) instanceof Property.Text );
-        assertTrue( dataSet.getData( "myNum" ) instanceof Property.WholeNumber );
-        assertTrue( dataSet.getData( "myDec" ) instanceof Property.DecimalNumber );
-        assertTrue( dataSet.getData( "myDate" ) instanceof Property.Date );
-        assertTrue( dataSet.getData( "myHtml" ) instanceof Property.HtmlPart );
+        assertTrue( dataSet.getProperty( "myText" ) instanceof Property.Text );
+        assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.WholeNumber );
+        assertTrue( dataSet.getProperty( "myDec" ) instanceof Property.DecimalNumber );
+        assertTrue( dataSet.getProperty( "myDate" ) instanceof Property.Date );
+        assertTrue( dataSet.getProperty( "myHtml" ) instanceof Property.HtmlPart );
     }
 
     @Test
@@ -141,24 +141,24 @@ public class Content_usageTest
         DataSet dataSet = new RootDataSet();
 
         // exercise
-        dataSet.addData( "myText", new Value.Text( "abc" ) );
-        dataSet.addData( "myNum", new Value.WholeNumber( 123 ) );
-        dataSet.addData( "myDec", new Value.DecimalNumber( 123.123 ) );
-        dataSet.addData( "myDate", new Value.Date( new DateMidnight( 2013, 1, 13 ) ) );
-        dataSet.addData( "myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
+        dataSet.addProperty( "myText", new Value.Text( "abc" ) );
+        dataSet.addProperty( "myNum", new Value.WholeNumber( 123 ) );
+        dataSet.addProperty( "myDec", new Value.DecimalNumber( 123.123 ) );
+        dataSet.addProperty( "myDate", new Value.Date( new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.addProperty( "myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
 
         // verify
-        assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
-        assertEquals( WHOLE_NUMBER, dataSet.getData( "myNum" ).getType() );
-        assertEquals( DATE_MIDNIGHT, dataSet.getData( "myDate" ).getType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
-        assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
+        assertEquals( TEXT, dataSet.getProperty( "myText" ).getType() );
+        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getType() );
+        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getType() );
+        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getType() );
 
-        assertTrue( dataSet.getData( "myText" ) instanceof Property.Text );
-        assertTrue( dataSet.getData( "myNum" ) instanceof Property.WholeNumber );
-        assertTrue( dataSet.getData( "myDec" ) instanceof Property.DecimalNumber );
-        assertTrue( dataSet.getData( "myDate" ) instanceof Property.Date );
-        assertTrue( dataSet.getData( "myHtml" ) instanceof Property.HtmlPart );
+        assertTrue( dataSet.getProperty( "myText" ) instanceof Property.Text );
+        assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.WholeNumber );
+        assertTrue( dataSet.getProperty( "myDec" ) instanceof Property.DecimalNumber );
+        assertTrue( dataSet.getProperty( "myDate" ) instanceof Property.Date );
+        assertTrue( dataSet.getProperty( "myHtml" ) instanceof Property.HtmlPart );
     }
 
     @Test
@@ -167,24 +167,24 @@ public class Content_usageTest
         DataSet dataSet = new RootDataSet();
 
         // exercise
-        dataSet.addData( "myText", newValue().type( PropertyTypes.TEXT ).value( "abc" ) );
-        dataSet.addData( "myNum", newValue().type( PropertyTypes.WHOLE_NUMBER ).value( 123L ) );
-        dataSet.addData( "myDec", newValue().type( PropertyTypes.DECIMAL_NUMBER ).value( 123.123 ) );
-        dataSet.addData( "myDate", newValue().type( PropertyTypes.DATE_MIDNIGHT ).value( new DateMidnight( 2013, 1, 13 ) ) );
-        dataSet.addData( "myHtml", newValue().type( PropertyTypes.HTML_PART ).value( "<p>abc</p>" ) );
+        dataSet.addProperty( "myText", newValue().type( PropertyTypes.TEXT ).value( "abc" ) );
+        dataSet.addProperty( "myNum", newValue().type( PropertyTypes.WHOLE_NUMBER ).value( 123L ) );
+        dataSet.addProperty( "myDec", newValue().type( PropertyTypes.DECIMAL_NUMBER ).value( 123.123 ) );
+        dataSet.addProperty( "myDate", newValue().type( PropertyTypes.DATE_MIDNIGHT ).value( new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.addProperty( "myHtml", newValue().type( PropertyTypes.HTML_PART ).value( "<p>abc</p>" ) );
 
         // verify
-        assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
-        assertEquals( WHOLE_NUMBER, dataSet.getData( "myNum" ).getType() );
-        assertEquals( DATE_MIDNIGHT, dataSet.getData( "myDate" ).getType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
-        assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
+        assertEquals( TEXT, dataSet.getProperty( "myText" ).getType() );
+        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getType() );
+        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getType() );
+        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getType() );
 
-        assertTrue( dataSet.getData( "myText" ) instanceof Property.Text );
-        assertTrue( dataSet.getData( "myNum" ) instanceof Property.WholeNumber );
-        assertTrue( dataSet.getData( "myDec" ) instanceof Property.DecimalNumber );
-        assertTrue( dataSet.getData( "myDate" ) instanceof Property.Date );
-        assertTrue( dataSet.getData( "myHtml" ) instanceof Property.HtmlPart );
+        assertTrue( dataSet.getProperty( "myText" ) instanceof Property.Text );
+        assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.WholeNumber );
+        assertTrue( dataSet.getProperty( "myDec" ) instanceof Property.DecimalNumber );
+        assertTrue( dataSet.getProperty( "myDate" ) instanceof Property.Date );
+        assertTrue( dataSet.getProperty( "myHtml" ) instanceof Property.HtmlPart );
     }
 
     @Test
@@ -210,11 +210,11 @@ public class Content_usageTest
         dataSet.add( newData( "myHtml" ).type( HTML_PART ).value( "<p>abc</p>" ).build() );
 
         // exercise & verify
-        assertEquals( "abc", dataSet.getData( "myText" ).getString() );
-        assertEquals( new Long( 123L ), dataSet.getData( "myNum" ).getLong() );
-        assertEquals( 123.123, dataSet.getData( "myDec" ).getDouble() );
-        assertEquals( new DateMidnight( 2013, 1, 13 ), dataSet.getData( "myDate" ).getDate() );
-        assertEquals( "<p>abc</p>", dataSet.getData( "myHtml" ).getString() );
+        assertEquals( "abc", dataSet.getProperty( "myText" ).getString() );
+        assertEquals( new Long( 123L ), dataSet.getProperty( "myNum" ).getLong() );
+        assertEquals( 123.123, dataSet.getProperty( "myDec" ).getDouble() );
+        assertEquals( new DateMidnight( 2013, 1, 13 ), dataSet.getProperty( "myDate" ).getDate() );
+        assertEquals( "<p>abc</p>", dataSet.getProperty( "myHtml" ).getString() );
     }
 
     @Test
@@ -228,9 +228,9 @@ public class Content_usageTest
         dataSet.add( newData( "myText" ).type( TEXT ).value( "c" ).build() );
 
         // verify
-        assertEquals( "a", dataSet.getData( "myText" ).getString( 0 ) );
-        assertEquals( "b", dataSet.getData( "myText" ).getString( 1 ) );
-        assertEquals( "c", dataSet.getData( "myText" ).getString( 2 ) );
+        assertEquals( "a", dataSet.getProperty( "myText" ).getString( 0 ) );
+        assertEquals( "b", dataSet.getProperty( "myText" ).getString( 1 ) );
+        assertEquals( "c", dataSet.getProperty( "myText" ).getString( 2 ) );
     }
 
     @Test
@@ -243,9 +243,9 @@ public class Content_usageTest
         //TODO dataSet.setData( "myText", "a", "b", "c" );
 
         // verify
-        assertEquals( "a", dataSet.getData( "myText" ).getString( 0 ) );
-        assertEquals( "b", dataSet.getData( "myText" ).getString( 1 ) );
-        assertEquals( "c", dataSet.getData( "myText" ).getString( 2 ) );
+        assertEquals( "a", dataSet.getProperty( "myText" ).getString( 0 ) );
+        assertEquals( "b", dataSet.getProperty( "myText" ).getString( 1 ) );
+        assertEquals( "c", dataSet.getProperty( "myText" ).getString( 2 ) );
     }
 
     @Test
@@ -272,12 +272,12 @@ public class Content_usageTest
         }
 
         // print out
-        System.out.println( rootDataSet.getData( "invoiceDate" ).getDate() );
-        System.out.println( rootDataSet.getData( "recipient" ).getString() );
+        System.out.println( rootDataSet.getProperty( "invoiceDate" ).getDate() );
+        System.out.println( rootDataSet.getProperty( "recipient" ).getString() );
         for ( Entry invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
         {
             DataSet invoiceLineDS = invoiceLine.toDataSet();
-            System.out.println( invoiceLineDS.getData( "text" ).getString() + ": " + invoiceLineDS.getData( "money" ).getString() );
+            System.out.println( invoiceLineDS.getProperty( "text" ).getString() + ": " + invoiceLineDS.getProperty( "money" ).getString() );
         }
     }
 
@@ -306,12 +306,12 @@ public class Content_usageTest
         }
 
         // print out
-        System.out.println( rootDataSet.getData( "invoiceDate" ).getDate() );
-        System.out.println( rootDataSet.getData( "recipient" ).getString() );
+        System.out.println( rootDataSet.getProperty( "invoiceDate" ).getDate() );
+        System.out.println( rootDataSet.getProperty( "recipient" ).getString() );
         for ( Entry invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
         {
             DataSet invoiceLineDS = invoiceLine.toDataSet();
-            System.out.println( invoiceLineDS.getData( "text" ).getString() + ": " + invoiceLineDS.getData( "money" ).getString() );
+            System.out.println( invoiceLineDS.getProperty( "text" ).getString() + ": " + invoiceLineDS.getProperty( "money" ).getString() );
         }
 
     }
@@ -338,12 +338,12 @@ public class Content_usageTest
         }
 
         // print out
-        System.out.println( rootDataSet.getData( "invoiceDate" ).getDate() );
-        System.out.println( rootDataSet.getData( "recipient" ).getString() );
+        System.out.println( rootDataSet.getProperty( "invoiceDate" ).getDate() );
+        System.out.println( rootDataSet.getProperty( "recipient" ).getString() );
         for ( Entry invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
         {
             DataSet invoiceLineDS = invoiceLine.toDataSet();
-            System.out.println( invoiceLineDS.getData( "text" ).getString() + ": " + invoiceLineDS.getData( "money" ).getString() );
+            System.out.println( invoiceLineDS.getProperty( "text" ).getString() + ": " + invoiceLineDS.getProperty( "money" ).getString() );
         }
 
     }
@@ -358,24 +358,24 @@ public class Content_usageTest
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setData( "invoiceDate", new Value.Date( invoice.invoiceDate.toDateMidnight() ) );
-        rootDataSet.setData( "recipient", new Value.Text( invoice.recipient ) );
+        rootDataSet.setProperty( "invoiceDate", new Value.Date( invoice.invoiceDate.toDateMidnight() ) );
+        rootDataSet.setProperty( "recipient", new Value.Text( invoice.recipient ) );
 
         for ( InvoiceLine line : invoice.lines )
         {
             DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
-            invoiceLine.setData( "text", new Value.Text( line.text ) );
-            invoiceLine.setData( "money", myNewValue( line.money ) );
+            invoiceLine.setProperty( "text", new Value.Text( line.text ) );
+            invoiceLine.setProperty( "money", myNewValue( line.money ) );
             rootDataSet.add( invoiceLine );
         }
 
         // print out
-        System.out.println( rootDataSet.getData( "invoiceDate" ).getDate() );
-        System.out.println( rootDataSet.getData( "recipient" ).getString() );
+        System.out.println( rootDataSet.getProperty( "invoiceDate" ).getDate() );
+        System.out.println( rootDataSet.getProperty( "recipient" ).getString() );
         for ( Entry invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
         {
             DataSet invoiceLineDS = invoiceLine.toDataSet();
-            System.out.println( invoiceLineDS.getData( "text" ).getString() + ": " + invoiceLineDS.getData( "money" ).getString() );
+            System.out.println( invoiceLineDS.getProperty( "text" ).getString() + ": " + invoiceLineDS.getProperty( "money" ).getString() );
         }
 
     }

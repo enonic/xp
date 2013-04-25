@@ -99,17 +99,17 @@ public abstract class Entry
         this.path = null;
     }
 
-    public boolean isData()
+    public boolean isProperty()
     {
         return this instanceof Property;
     }
 
-    public Property toData()
+    public Property toProperty()
     {
         if ( !( this instanceof Property ) )
         {
             throw new IllegalArgumentException(
-                "This Entry at path [" + getPath().toString() + "] is not a Data: " + this.getClass().getSimpleName() );
+                "This Entry at path [" + getPath().toString() + "] is not a Property: " + this.getClass().getSimpleName() );
         }
         return (Property) this;
     }

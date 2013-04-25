@@ -92,7 +92,7 @@ public class ValidateRootDataSetHandlerTest
             ContentTypes.from( contentType ) );
 
         final Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getRootDataSet().setData( "mySet.myInput", new Value.Text( "thing" ) );
+        content.getRootDataSet().setProperty( "mySet.myInput", new Value.Text( "thing" ) );
 
         // exercise
         final ValidateRootDataSet command =

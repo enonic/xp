@@ -17,6 +17,9 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.content.data.type.BasePropertyType;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 
+import static com.enonic.wem.api.content.data.DataSetArray.newDataSetArray;
+import static com.enonic.wem.api.content.data.PropertyArray.newPropertyArray;
+
 public class DataSet
     extends Entry
     implements Iterable<Entry>
@@ -54,26 +57,26 @@ public class DataSet
     }
 
     /**
-     * Adds the given Data.
+     * Adds the given Property.
      */
-    public final void addData( final String path, final Value value )
+    public final void addProperty( final String path, final Value value )
     {
-        addData( EntryPath.from( path ), value );
+        addProperty( EntryPath.from( path ), value );
     }
 
     /**
-     * Adds the given Data.
+     * Adds the given Property.
      */
-    public final void addData( final EntryPath path, final Value value )
+    public final void addProperty( final EntryPath path, final Value value )
     {
         if ( path.elementCount() > 1 )
         {
             final DataSet dataSet = findOrCreateDataSet( EntryId.from( path.getFirstElement() ) );
-            dataSet.addData( path.asNewWithoutFirstPathElement(), value );
+            dataSet.addProperty( path.asNewWithoutFirstPathElement(), value );
         }
         else
         {
-            final Property property = value.newData( path.getFirstElement().getName() );
+            final Property property = value.newProperty( path.getFirstElement().getName() );
             doAdd( property );
         }
     }
@@ -90,25 +93,25 @@ public class DataSet
         entryById.put( entry.getEntryId(), entry );
     }
 
-    public final void setData( final String path, final Value... values )
+    public final void setProperty( final String path, final Value... values )
     {
-        setData( EntryPath.from( path ), values );
+        setProperty( EntryPath.from( path ), values );
     }
 
-    public final void setData( final EntryPath path, final Value... values )
+    public final void setProperty( final EntryPath path, final Value... values )
         throws InvalidDataException
     {
         if ( path.elementCount() > 1 )
         {
             final DataSet dataSet = findOrCreateDataSet( EntryId.from( path.getFirstElement() ) );
-            dataSet.setData( path.asNewWithoutFirstPathElement(), values );
+            dataSet.setProperty( path.asNewWithoutFirstPathElement(), values );
         }
         else
         {
             Preconditions.checkArgument( values.length > 0, "No values given for path: %s", path.toString() );
             if ( values.length == 1 )
             {
-                doSetData( EntryId.from( path.getFirstElement() ), values[0] );
+                doSetProperty( EntryId.from( path.getFirstElement() ), values[0] );
             }
             else
             {
@@ -120,27 +123,27 @@ public class DataSet
 
                 for ( int i = 0; i < values.length; i++ )
                 {
-                    doSetData( EntryId.from( path.getFirstElement().getName(), i ), values[i] );
+                    doSetProperty( EntryId.from( path.getFirstElement().getName(), i ), values[i] );
                 }
             }
         }
     }
 
-    private void doSetData( final EntryId entryId, final Value value )
+    private void doSetProperty( final EntryId entryId, final Value value )
     {
         Preconditions.checkNotNull( value, "No value given for Entry: %s", entryId );
         final Entry exEntry = entryById.get( entryId );
 
         if ( exEntry == null )
         {
-            final Property newProperty = value.newData( entryId.getName() );
+            final Property newProperty = value.newProperty( entryId.getName() );
             newProperty.setParent( this );
             registerArray( newProperty );
             entryById.put( entryId, newProperty );
         }
         else
         {
-            exEntry.toData().setValue( value );
+            exEntry.toProperty().setValue( value );
             EntryArray array = arrayByEntryName.get( exEntry.getName() );
             array.set( exEntry.getArrayIndex(), exEntry );
         }
@@ -166,15 +169,14 @@ public class DataSet
         EntryArray array = arrayByEntryName.get( newEntry.getName() );
         if ( array == null )
         {
-            if ( newEntry.isData() )
+            if ( newEntry.isProperty() )
             {
-                final Property newProperty = newEntry.toData();
-                array =
-                    PropertyArray.newPropertyArray().name( newEntry.getName() ).dataType( newProperty.getType() ).parent( this ).build();
+                final Property newProperty = newEntry.toProperty();
+                array = newPropertyArray().name( newEntry.getName() ).propertyType( newProperty.getType() ).parent( this ).build();
             }
             else
             {
-                array = DataSetArray.newDataSetArray().name( newEntry.getName() ).parent( this ).build();
+                array = newDataSetArray().name( newEntry.getName() ).parent( this ).build();
             }
             arrayByEntryName.put( newEntry.getName(), array );
         }
@@ -257,23 +259,24 @@ public class DataSet
         return array.asList();
     }
 
-    public final Property getData( final String path )
+    public final Property getProperty( final String path )
     {
-        return getData( EntryPath.from( path ) );
+        return getProperty( EntryPath.from( path ) );
     }
 
-    public final Property getData( final EntryPath path )
+    public final Property getProperty( final EntryPath path )
     {
         Entry entry = getEntry( path );
         if ( entry == null )
         {
             return null;
         }
-        Preconditions.checkArgument( entry.isData(), "Entry at path [%s] is not a Data: %s", path, entry.getClass().getSimpleName() );
-        return entry.toData();
+        Preconditions.checkArgument( entry.isProperty(), "Entry at path [%s] is not a Property: %s", path,
+                                     entry.getClass().getSimpleName() );
+        return entry.toProperty();
     }
 
-    public final Property getData( final String name, final int arrayIndex )
+    public final Property getProperty( final String name, final int arrayIndex )
     {
         EntryPath.Element.checkName( name );
 
@@ -282,7 +285,7 @@ public class DataSet
         {
             return null;
         }
-        return entry.toData();
+        return entry.toProperty();
     }
 
     final Value getValue( final EntryPath path )
@@ -293,8 +296,9 @@ public class DataSet
             return null;
         }
 
-        Preconditions.checkArgument( entry.isData(), "Entry at path[%s] is not a Data: %s", path, entry.getClass().getSimpleName() );
-        final Property property = entry.toData();
+        Preconditions.checkArgument( entry.isProperty(), "Entry at path[%s] is not a Property: %s", path,
+                                     entry.getClass().getSimpleName() );
+        final Property property = entry.toProperty();
         if ( path.getLastElement().hasIndex() )
         {
             return property.getValue( path.getLastElement().getIndex() );
@@ -488,9 +492,9 @@ public class DataSet
             return this;
         }
 
-        public Builder set( final String name, final Object value, final BasePropertyType dataType )
+        public Builder set( final String name, final Object value, final BasePropertyType propertyType )
         {
-            propertyList.add( dataType.newData( name, value ) );
+            propertyList.add( propertyType.newData( name, value ) );
             return this;
         }
 

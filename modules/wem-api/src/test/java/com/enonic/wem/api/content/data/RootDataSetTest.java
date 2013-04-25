@@ -17,7 +17,7 @@ public class RootDataSetTest
 
         // is a DataSet
         assertEquals( true, rootDataSet.isDataSet() );
-        assertEquals( false, rootDataSet.isData() );
+        assertEquals( false, rootDataSet.isProperty() );
 
         // have no EntryId
         assertEquals( null, rootDataSet.getEntryId() );

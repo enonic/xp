@@ -90,8 +90,8 @@ public class DataSetTest
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
         dataSet.add( Property.newData().name( "myData" ).type( PropertyTypes.TEXT ).value( "A value" ).build() );
 
-        assertEquals( "mySet.myData", dataSet.getData( "myData" ).getPath().toString() );
-        assertEquals( "A value", dataSet.getData( "myData" ).getString() );
+        assertEquals( "mySet.myData", dataSet.getProperty( "myData" ).getPath().toString() );
+        assertEquals( "A value", dataSet.getProperty( "myData" ).getString() );
     }
 
     @Test
@@ -101,9 +101,9 @@ public class DataSetTest
         dataSet.add( Property.newData().name( "myData" ).type( PropertyTypes.TEXT ).value( "1" ).build() );
         dataSet.add( Property.newData().name( "myData" ).type( PropertyTypes.TEXT ).value( "2" ).build() );
 
-        assertEquals( "1", dataSet.getData( "myData" ).getString() );
-        assertEquals( "1", dataSet.getData( "myData[0]" ).getString() );
-        assertEquals( "2", dataSet.getData( "myData[1]" ).getString() );
+        assertEquals( "1", dataSet.getProperty( "myData" ).getString() );
+        assertEquals( "1", dataSet.getProperty( "myData[0]" ).getString() );
+        assertEquals( "2", dataSet.getProperty( "myData[1]" ).getString() );
     }
 
     @Test
@@ -166,8 +166,8 @@ public class DataSetTest
         dataSet.add( myArray1 );
         dataSet.add( myArray2 );
 
-        assertEquals( "1", dataSet.getData( "myArray[0]" ).getString() );
-        assertEquals( "2", dataSet.getData( "myArray[1]" ).getString() );
+        assertEquals( "1", dataSet.getProperty( "myArray[0]" ).getString() );
+        assertEquals( "2", dataSet.getProperty( "myArray[1]" ).getString() );
     }
 
     @Test
@@ -188,7 +188,7 @@ public class DataSetTest
     public void getEntry()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.setData( EntryPath.from( "myData" ), new Value.Text( "something" ) );
+        dataSet.setProperty( EntryPath.from( "myData" ), new Value.Text( "something" ) );
 
         assertNotNull( dataSet.getEntry( "myData" ) );
     }
@@ -197,7 +197,7 @@ public class DataSetTest
     public void getEntry_given_path_to_non_existing_entry_then_null_is_returned()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.setData( EntryPath.from( "myData" ), new Value.Text( "something" ) );
+        dataSet.setProperty( EntryPath.from( "myData" ), new Value.Text( "something" ) );
 
         assertNull( dataSet.getEntry( "notExisting" ) );
     }
@@ -206,7 +206,7 @@ public class DataSetTest
     public void getDataSet_given_path_to_non_existing_DataSet_then_null_is_returned()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.setData( EntryPath.from( "mySet.myData" ), new Value.Text( "something" ) );
+        dataSet.setProperty( EntryPath.from( "mySet.myData" ), new Value.Text( "something" ) );
 
         assertNull( dataSet.getDataSet( "notExisting" ) );
         assertNull( dataSet.getDataSet( "notExisting", 0 ) );
@@ -216,31 +216,31 @@ public class DataSetTest
     public void getData_given_path_to_non_existing_data_then_null_is_returned()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.setData( EntryPath.from( "myData" ), new Value.Text( "something" ) );
+        dataSet.setProperty( EntryPath.from( "myData" ), new Value.Text( "something" ) );
 
-        assertNull( dataSet.getData( "notExisting" ) );
-        assertNull( dataSet.getData( "notExisting", 0 ) );
+        assertNull( dataSet.getProperty( "notExisting" ) );
+        assertNull( dataSet.getProperty( "notExisting", 0 ) );
     }
 
     @Test
     public void getData_given_array_when_getting_with_index_then_expected_data_is_returned()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.setData( EntryPath.from( "myArray[0]" ), new Value.Text( "2a" ) );
-        dataSet.setData( EntryPath.from( "myArray[1]" ), new Value.Text( "2b" ) );
+        dataSet.setProperty( EntryPath.from( "myArray[0]" ), new Value.Text( "2a" ) );
+        dataSet.setProperty( EntryPath.from( "myArray[1]" ), new Value.Text( "2b" ) );
 
-        assertEquals( "2a", dataSet.getData( "myArray", 0 ).getString() );
-        assertEquals( "2b", dataSet.getData( "myArray", 1 ).getString() );
+        assertEquals( "2a", dataSet.getProperty( "myArray", 0 ).getString() );
+        assertEquals( "2b", dataSet.getProperty( "myArray", 1 ).getString() );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getData_given_name_with_index_then_exception_is_thrown()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.setData( EntryPath.from( "myData" ), new Value.Text( "1" ) );
+        dataSet.setProperty( EntryPath.from( "myData" ), new Value.Text( "1" ) );
 
         // exercise
-        dataSet.getData( "myData[0]", 1 );
+        dataSet.getProperty( "myData[0]", 1 );
     }
 
     @Test
@@ -257,26 +257,26 @@ public class DataSetTest
     public void getValue_when_having_array_of_set_within_single_set()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.setData( EntryPath.from( "personalia.crimes[0].description" ), new Value.Text( "Stole purse from old lady." ) );
-        dataSet.setData( EntryPath.from( "personalia.crimes[0].year" ), new Value.Text( "2011" ) );
-        dataSet.setData( EntryPath.from( "personalia.crimes[1].description" ), new Value.Text( "Drove car in 80 in 50 zone." ) );
-        dataSet.setData( EntryPath.from( "personalia.crimes[1].year" ), new Value.Text( "2012" ) );
+        dataSet.setProperty( EntryPath.from( "personalia.crimes[0].description" ), new Value.Text( "Stole purse from old lady." ) );
+        dataSet.setProperty( EntryPath.from( "personalia.crimes[0].year" ), new Value.Text( "2011" ) );
+        dataSet.setProperty( EntryPath.from( "personalia.crimes[1].description" ), new Value.Text( "Drove car in 80 in 50 zone." ) );
+        dataSet.setProperty( EntryPath.from( "personalia.crimes[1].year" ), new Value.Text( "2012" ) );
 
-        assertEquals( "Stole purse from old lady.", dataSet.getData( "personalia.crimes[0].description" ).getObject() );
-        assertEquals( "2011", dataSet.getData( "personalia.crimes[0].year" ).getObject() );
-        assertEquals( "Drove car in 80 in 50 zone.", dataSet.getData( "personalia.crimes[1].description" ).getObject() );
-        assertEquals( "2012", dataSet.getData( "personalia.crimes[1].year" ).getObject() );
+        assertEquals( "Stole purse from old lady.", dataSet.getProperty( "personalia.crimes[0].description" ).getObject() );
+        assertEquals( "2011", dataSet.getProperty( "personalia.crimes[0].year" ).getObject() );
+        assertEquals( "Drove car in 80 in 50 zone.", dataSet.getProperty( "personalia.crimes[1].description" ).getObject() );
+        assertEquals( "2012", dataSet.getProperty( "personalia.crimes[1].year" ).getObject() );
     }
 
     @Test
     public void getValue_when_having_multiple_mixin()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.setData( EntryPath.from( "persons[0].name" ), new Value.Text( "Arn" ) );
-        dataSet.setData( EntryPath.from( "persons[0].eyeColour" ), new Value.Text( "Brown" ) );
+        dataSet.setProperty( EntryPath.from( "persons[0].name" ), new Value.Text( "Arn" ) );
+        dataSet.setProperty( EntryPath.from( "persons[0].eyeColour" ), new Value.Text( "Brown" ) );
 
-        assertEquals( "Arn", dataSet.getData( "persons[0].name" ).getObject() );
-        assertEquals( "Brown", dataSet.getData( "persons[0].eyeColour" ).getObject() );
+        assertEquals( "Arn", dataSet.getProperty( "persons[0].name" ).getObject() );
+        assertEquals( "Brown", dataSet.getProperty( "persons[0].eyeColour" ).getObject() );
     }
 
     @Test
@@ -295,10 +295,10 @@ public class DataSetTest
     public void setData_root_set_with_one_entry()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.setData( EntryPath.from( "myData" ), new Value.Text( "1" ) );
+        dataSet.setProperty( EntryPath.from( "myData" ), new Value.Text( "1" ) );
 
-        assertEquals( "1", dataSet.getData( "myData" ).getString() );
-        assertEquals( "1", dataSet.getData( "myData" ).getValue( 0 ).asString() );
+        assertEquals( "1", dataSet.getProperty( "myData" ).getString() );
+        assertEquals( "1", dataSet.getProperty( "myData" ).getValue( 0 ).asString() );
         assertEquals( "1", dataSet.getValue( "myData" ).asString() );
     }
 
@@ -306,21 +306,21 @@ public class DataSetTest
     public void setData_root_set_with_two_entries()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.setData( EntryPath.from( "myData1" ), new Value.Text( "1" ) );
-        dataSet.setData( EntryPath.from( "myData2" ), new Value.Text( "2" ) );
+        dataSet.setProperty( EntryPath.from( "myData1" ), new Value.Text( "1" ) );
+        dataSet.setProperty( EntryPath.from( "myData2" ), new Value.Text( "2" ) );
 
-        assertEquals( "1", dataSet.getData( "myData1" ).getString() );
-        assertEquals( "2", dataSet.getData( "myData2" ).getString() );
+        assertEquals( "1", dataSet.getProperty( "myData1" ).getString() );
+        assertEquals( "2", dataSet.getProperty( "myData2" ).getString() );
     }
 
     @Test
     public void setData_subSet_with_two_entries()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.setData( EntryPath.from( "set.myData1" ), new Value.Text( "1" ) );
-        dataSet.setData( EntryPath.from( "set.myData2" ), new Value.Text( "2" ) );
+        dataSet.setProperty( EntryPath.from( "set.myData1" ), new Value.Text( "1" ) );
+        dataSet.setProperty( EntryPath.from( "set.myData2" ), new Value.Text( "2" ) );
 
-        assertEquals( "1", dataSet.getData( "set.myData1" ).getString() );
+        assertEquals( "1", dataSet.getProperty( "set.myData1" ).getString() );
         assertEquals( "2", dataSet.getValue( "set.myData2" ).asString() );
     }
 
@@ -329,7 +329,7 @@ public class DataSetTest
     {
         DataSet dataSet = DataSet.newRootDataSet();
         dataSet.add( Property.newData().name( "myArray" ).type( PropertyTypes.TEXT ).value( "1" ).build() );
-        dataSet.setData( EntryPath.from( "myArray[1]" ), new Value.Text( "2" ) );
+        dataSet.setProperty( EntryPath.from( "myArray[1]" ), new Value.Text( "2" ) );
 
         assertEquals( "1", dataSet.getValue( "myArray[0]" ).getObject() );
         assertEquals( "2", dataSet.getValue( "myArray[1]" ).getObject() );
@@ -342,11 +342,11 @@ public class DataSetTest
         dataSet.add( Property.newData().name( "myArray" ).type( PropertyTypes.TEXT ).value( "1" ).build() );
 
         // exercise
-        dataSet.setData( EntryPath.from( "myArray[1]" ), new Value.Text( "2a" ) );
-        dataSet.setData( EntryPath.from( "myArray[1]" ), new Value.Text( "2b" ) );
+        dataSet.setProperty( EntryPath.from( "myArray[1]" ), new Value.Text( "2a" ) );
+        dataSet.setProperty( EntryPath.from( "myArray[1]" ), new Value.Text( "2b" ) );
 
         // verify
-        assertEquals( "2b", dataSet.getData( "myArray", 1 ).getString() );
+        assertEquals( "2b", dataSet.getProperty( "myArray", 1 ).getString() );
     }
 
     @Test
@@ -355,20 +355,20 @@ public class DataSetTest
         DataSet dataSet = DataSet.newRootDataSet();
 
         // exercise
-        dataSet.setData( "myData", new Value.WholeNumber( 123 ) );
+        dataSet.setProperty( "myData", new Value.WholeNumber( 123 ) );
 
         // verify
-        assertEquals( new Long( 123 ), dataSet.getData( "myData" ).getLong() );
+        assertEquals( new Long( 123 ), dataSet.getProperty( "myData" ).getLong() );
     }
 
     @Test
     public void iterator_data_is_returned_in_inserted_order()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.setData( EntryPath.from( "myData1" ), new Value.Text( "1" ) );
-        dataSet.setData( EntryPath.from( "myArray[0]" ), new Value.Text( "a" ) );
-        dataSet.setData( EntryPath.from( "myData2" ), new Value.Text( "2" ) );
-        dataSet.setData( EntryPath.from( "myArray[1]" ), new Value.Text( "b" ) );
+        dataSet.setProperty( EntryPath.from( "myData1" ), new Value.Text( "1" ) );
+        dataSet.setProperty( EntryPath.from( "myArray[0]" ), new Value.Text( "a" ) );
+        dataSet.setProperty( EntryPath.from( "myData2" ), new Value.Text( "2" ) );
+        dataSet.setProperty( EntryPath.from( "myArray[1]" ), new Value.Text( "b" ) );
 
         Iterator<Entry> it = dataSet.iterator();
         assertEquals( EntryId.from( "myData1", 0 ), it.next().getEntryId() );
@@ -381,8 +381,8 @@ public class DataSetTest
     public void tostring_given_two_data()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.setData( EntryPath.from( "myData" ), new Value.Text( "1" ) );
-        dataSet.setData( EntryPath.from( "myOtherData" ), new Value.Text( "2" ) );
+        dataSet.setProperty( EntryPath.from( "myData" ), new Value.Text( "1" ) );
+        dataSet.setProperty( EntryPath.from( "myOtherData" ), new Value.Text( "2" ) );
 
         assertEquals( "{ myData, myOtherData }", dataSet.toString() );
     }
@@ -394,8 +394,8 @@ public class DataSetTest
         rootSet.add( DataSet.newDataSet().name( "mySet" ).build() );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
-        mySet.setData( EntryPath.from( "myData[0]" ), new Value.Text( "1" ) );
-        mySet.setData( EntryPath.from( "myData[1]" ), new Value.Text( "2" ) );
+        mySet.setProperty( EntryPath.from( "myData[0]" ), new Value.Text( "1" ) );
+        mySet.setProperty( EntryPath.from( "myData[1]" ), new Value.Text( "2" ) );
         rootSet.add( mySet );
 
         assertEquals( "mySet[1] { myData, myData[1] }", mySet.toString() );

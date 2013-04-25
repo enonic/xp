@@ -34,10 +34,10 @@ public class GeographicCoordinateTest
         // setup
         Content content = newContent().build();
         RootDataSet rootDataSet = content.getRootDataSet();
-        rootDataSet.setData( "myGeographicCoordinate", new Value.DecimalNumber( 1.1 ) );
+        rootDataSet.setProperty( "myGeographicCoordinate", new Value.DecimalNumber( 1.1 ) );
 
         GeographicCoordinate geographicCoordinate = PropertyTypes.GEOGRAPHIC_COORDINATE;
-        Property property = rootDataSet.getData( "myGeographicCoordinate" );
+        Property property = rootDataSet.getProperty( "myGeographicCoordinate" );
 
         // exercise
         geographicCoordinate.checkValidity( property );
@@ -54,7 +54,7 @@ public class GeographicCoordinateTest
         // exercise
         try
         {
-            rootDataSet.setData( "myGeographicCoordinate", new Value.GeographicCoordinate( "90.0,180.2" ) );
+            rootDataSet.setProperty( "myGeographicCoordinate", new Value.GeographicCoordinate( "90.0,180.2" ) );
             fail( "Expected Exception" );
         }
         catch ( Exception e )

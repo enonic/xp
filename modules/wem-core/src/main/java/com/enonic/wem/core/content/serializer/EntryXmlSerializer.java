@@ -23,7 +23,7 @@ public final class EntryXmlSerializer
         }
         else
         {
-            generateData( parentDataSetEl, entry.toData() );
+            generateData( parentDataSetEl, entry.toProperty() );
         }
     }
 

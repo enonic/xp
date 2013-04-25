@@ -62,7 +62,7 @@ final class MinimumOccurrencesValidator
                 final int occurrencesToCheck = Math.min( entryCount, input.getOccurrences().getMinimum() );
                 for ( int i = 0; i < occurrencesToCheck; i++ )
                 {
-                    final Property property = parentDataSet.getData( input.getName(), i );
+                    final Property property = parentDataSet.getProperty( input.getName(), i );
                     try
                     {
                         input.getInputType().checkBreaksRequiredContract( property );

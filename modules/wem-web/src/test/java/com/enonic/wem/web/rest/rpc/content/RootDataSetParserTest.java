@@ -76,14 +76,14 @@ public class RootDataSetParserTest
         DataSet parsedRootDataSet = rootDataSetParser.parse( objectNode );
 
         // verify
-        assertEquals( "Text line", parsedRootDataSet.getData( EntryPath.from( "myTextLine" ) ).getObject() );
-        assertEquals( "First line\n" + "Second line", parsedRootDataSet.getData( EntryPath.from( "myTextArea" ) ).getObject() );
-        assertEquals( new DateMidnight( 2012, 8, 31 ), parsedRootDataSet.getData( EntryPath.from( "myDate" ) ).getObject() );
-        assertEquals( "<root>XML</root>", parsedRootDataSet.getData( EntryPath.from( "myXml" ) ).getObject() );
-        assertEquals( 1L, parsedRootDataSet.getData( EntryPath.from( "myWholeNumber" ) ).getObject() );
-        assertEquals( 1.1, parsedRootDataSet.getData( EntryPath.from( "myDecimalNumber" ) ).getObject() );
-        assertEquals( ContentId.from( "ABCDEF" ), parsedRootDataSet.getData( EntryPath.from( "myRelationship" ) ).getObject() );
-        assertEquals( "Inner line", parsedRootDataSet.getData( EntryPath.from( "mySet.myTextLine" ) ).getObject() );
+        assertEquals( "Text line", parsedRootDataSet.getProperty( EntryPath.from( "myTextLine" ) ).getObject() );
+        assertEquals( "First line\n" + "Second line", parsedRootDataSet.getProperty( EntryPath.from( "myTextArea" ) ).getObject() );
+        assertEquals( new DateMidnight( 2012, 8, 31 ), parsedRootDataSet.getProperty( EntryPath.from( "myDate" ) ).getObject() );
+        assertEquals( "<root>XML</root>", parsedRootDataSet.getProperty( EntryPath.from( "myXml" ) ).getObject() );
+        assertEquals( 1L, parsedRootDataSet.getProperty( EntryPath.from( "myWholeNumber" ) ).getObject() );
+        assertEquals( 1.1, parsedRootDataSet.getProperty( EntryPath.from( "myDecimalNumber" ) ).getObject() );
+        assertEquals( ContentId.from( "ABCDEF" ), parsedRootDataSet.getProperty( EntryPath.from( "myRelationship" ) ).getObject() );
+        assertEquals( "Inner line", parsedRootDataSet.getProperty( EntryPath.from( "mySet.myTextLine" ) ).getObject() );
     }
 
     @Test
@@ -111,7 +111,7 @@ public class RootDataSetParserTest
         DataSet parsedContentData = rootDataSetParser.parse( objectNode );
 
         // verify
-        assertEquals( ContentId.from( CONTENT_ID ), parsedContentData.getData( EntryPath.from( "myImage" ) ).getObject() );
+        assertEquals( ContentId.from( CONTENT_ID ), parsedContentData.getProperty( EntryPath.from( "myImage" ) ).getObject() );
     }
 
     @Test
@@ -147,14 +147,14 @@ public class RootDataSetParserTest
         DataSet parsedContentData = rootDataSetParser.parse( objectNode );
 
         // verify
-        assertEquals( 90.0, parsedContentData.getData( EntryPath.from( "myGeoLocation.latitude" ) ).getObject() );
-        assertEquals( 180.0, parsedContentData.getData( EntryPath.from( "myGeoLocation.longitude" ) ).getObject() );
-        assertEquals( 40l, parsedContentData.getData( EntryPath.from( "myColor.red" ) ).getObject() );
-        assertEquals( 60l, parsedContentData.getData( EntryPath.from( "myColor.green" ) ).getObject() );
-        assertEquals( 80l, parsedContentData.getData( EntryPath.from( "myColor.blue" ) ).getObject() );
+        assertEquals( 90.0, parsedContentData.getProperty( EntryPath.from( "myGeoLocation.latitude" ) ).getObject() );
+        assertEquals( 180.0, parsedContentData.getProperty( EntryPath.from( "myGeoLocation.longitude" ) ).getObject() );
+        assertEquals( 40l, parsedContentData.getProperty( EntryPath.from( "myColor.red" ) ).getObject() );
+        assertEquals( 60l, parsedContentData.getProperty( EntryPath.from( "myColor.green" ) ).getObject() );
+        assertEquals( 80l, parsedContentData.getProperty( EntryPath.from( "myColor.blue" ) ).getObject() );
 
-        Property myColor = parsedContentData.getData( EntryPath.from( "myColor" ) );
-        Property myColorBlue = myColor.toDataSet().getData( "blue" );
+        Property myColor = parsedContentData.getProperty( EntryPath.from( "myColor" ) );
+        Property myColorBlue = myColor.toDataSet().getProperty( "blue" );
         assertEquals( 80l, myColorBlue.getObject() );
     }
 
@@ -182,7 +182,7 @@ public class RootDataSetParserTest
         DataSet parsedContentData = rootDataSetParser.parse( objectNode );
 
         // verify
-        assertEquals( 1l, parsedContentData.getData( EntryPath.from( "myFormItemSet.myWholeNumber" ) ).getObject() );
+        assertEquals( 1l, parsedContentData.getProperty( EntryPath.from( "myFormItemSet.myWholeNumber" ) ).getObject() );
     }
 
     @Test
@@ -208,8 +208,8 @@ public class RootDataSetParserTest
 
         // verify
 
-        assertEquals( "40.446195,-79.948862", parsedContentData.getData( "myGeoLocation" ).getString() );
-        assertEquals( PropertyTypes.GEOGRAPHIC_COORDINATE, parsedContentData.getData( "myGeoLocation" ).getType() );
+        assertEquals( "40.446195,-79.948862", parsedContentData.getProperty( "myGeoLocation" ).getString() );
+        assertEquals( PropertyTypes.GEOGRAPHIC_COORDINATE, parsedContentData.getProperty( "myGeoLocation" ).getType() );
     }
 
     @Test
@@ -238,9 +238,9 @@ public class RootDataSetParserTest
         DataSet parsedContentData = rootDataSetParser.parse( objectNode );
 
         // verify
-        assertEquals( 40l, parsedContentData.getData( EntryPath.from( "myColor.red" ) ).getObject() );
-        assertEquals( 60l, parsedContentData.getData( EntryPath.from( "myColor.green" ) ).getObject() );
-        assertEquals( 80l, parsedContentData.getData( EntryPath.from( "myColor.blue" ) ).getObject() );
+        assertEquals( 40l, parsedContentData.getProperty( EntryPath.from( "myColor.red" ) ).getObject() );
+        assertEquals( 60l, parsedContentData.getProperty( EntryPath.from( "myColor.green" ) ).getObject() );
+        assertEquals( 80l, parsedContentData.getProperty( EntryPath.from( "myColor.blue" ) ).getObject() );
     }
 
     @Test
@@ -272,8 +272,8 @@ public class RootDataSetParserTest
         DataSet parsedDataSet = rootDataSetParser.parse( objectNode );
 
         // verify
-        assertEquals( 40l, parsedDataSet.getData( EntryPath.from( "myFormItemSet.myColor.red" ) ).getObject() );
-        assertEquals( 60l, parsedDataSet.getData( EntryPath.from( "myFormItemSet.myColor.green" ) ).getObject() );
-        assertEquals( 80l, parsedDataSet.getData( EntryPath.from( "myFormItemSet.myColor.blue" ) ).getObject() );
+        assertEquals( 40l, parsedDataSet.getProperty( EntryPath.from( "myFormItemSet.myColor.red" ) ).getObject() );
+        assertEquals( 60l, parsedDataSet.getProperty( EntryPath.from( "myFormItemSet.myColor.green" ) ).getObject() );
+        assertEquals( 80l, parsedDataSet.getProperty( EntryPath.from( "myFormItemSet.myColor.blue" ) ).getObject() );
     }
 }

@@ -94,7 +94,7 @@ public abstract class EntryArray
             return null;
         }
 
-        return entry.toData();
+        return entry.toProperty();
     }
 
     public DataSet getDataSet( final int i )
