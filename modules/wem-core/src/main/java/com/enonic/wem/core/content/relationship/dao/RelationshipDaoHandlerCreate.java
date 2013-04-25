@@ -4,7 +4,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.core.jcr.JcrConstants;
@@ -57,21 +57,21 @@ final class RelationshipDaoHandlerCreate
         }
     }
 
-    private Node createManagingDataNode( final EntryPath entryPath, final Node parentNode )
+    private Node createManagingDataNode( final DataPath dataPath, final Node parentNode )
         throws RepositoryException
     {
-        final EntryPath.Element firstElement = entryPath.getFirstElement();
+        final DataPath.Element firstElement = dataPath.getFirstElement();
         Node childNode = JcrHelper.getOrAddNode( parentNode, firstElement.getName() );
         final int index = firstElement.hasIndex() ? firstElement.getIndex() : 0;
         childNode = JcrHelper.getOrAddNode( childNode, "__index-" + index );
 
-        if ( entryPath.elementCount() == 1 )
+        if ( dataPath.elementCount() == 1 )
         {
             return childNode;
         }
         else
         {
-            return createManagingDataNode( entryPath.asNewWithoutFirstPathElement(), childNode );
+            return createManagingDataNode( dataPath.asNewWithoutFirstPathElement(), childNode );
         }
     }
 }

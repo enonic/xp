@@ -9,7 +9,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
@@ -143,7 +143,7 @@ public class RelationshipJsonSerializer
         builder.toContent( ContentId.from( JsonSerializerUtil.getStringValue( "toContent", relationshipNode ) ) );
         if ( !relationshipNode.get( "managingData" ).isNull() )
         {
-            builder.managed( EntryPath.from( JsonSerializerUtil.getStringValue( "managingData", relationshipNode ) ) );
+            builder.managed( DataPath.from( JsonSerializerUtil.getStringValue( "managingData", relationshipNode ) ) );
         }
         if ( !relationshipNode.get( "properties" ).isNull() )
         {

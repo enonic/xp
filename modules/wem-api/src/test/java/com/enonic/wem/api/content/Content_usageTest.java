@@ -9,8 +9,8 @@ import org.joda.time.DateTime;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
@@ -274,7 +274,7 @@ public class Content_usageTest
         // print out
         System.out.println( rootDataSet.getProperty( "invoiceDate" ).getDate() );
         System.out.println( rootDataSet.getProperty( "recipient" ).getString() );
-        for ( Entry invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
+        for ( Data invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
         {
             DataSet invoiceLineDS = invoiceLine.toDataSet();
             System.out.println( invoiceLineDS.getProperty( "text" ).getString() + ": " + invoiceLineDS.getProperty( "money" ).getString() );
@@ -308,7 +308,7 @@ public class Content_usageTest
         // print out
         System.out.println( rootDataSet.getProperty( "invoiceDate" ).getDate() );
         System.out.println( rootDataSet.getProperty( "recipient" ).getString() );
-        for ( Entry invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
+        for ( Data invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
         {
             DataSet invoiceLineDS = invoiceLine.toDataSet();
             System.out.println( invoiceLineDS.getProperty( "text" ).getString() + ": " + invoiceLineDS.getProperty( "money" ).getString() );
@@ -340,7 +340,7 @@ public class Content_usageTest
         // print out
         System.out.println( rootDataSet.getProperty( "invoiceDate" ).getDate() );
         System.out.println( rootDataSet.getProperty( "recipient" ).getString() );
-        for ( Entry invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
+        for ( Data invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
         {
             DataSet invoiceLineDS = invoiceLine.toDataSet();
             System.out.println( invoiceLineDS.getProperty( "text" ).getString() + ": " + invoiceLineDS.getProperty( "money" ).getString() );
@@ -372,7 +372,7 @@ public class Content_usageTest
         // print out
         System.out.println( rootDataSet.getProperty( "invoiceDate" ).getDate() );
         System.out.println( rootDataSet.getProperty( "recipient" ).getString() );
-        for ( Entry invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
+        for ( Data invoiceLine : rootDataSet.getDataSet( "invoiceLine" ).getArray() )
         {
             DataSet invoiceLineDS = invoiceLine.toDataSet();
             System.out.println( invoiceLineDS.getProperty( "text" ).getString() + ": " + invoiceLineDS.getProperty( "money" ).getString() );
@@ -392,7 +392,7 @@ public class Content_usageTest
         }
     }
 
-    private Entry myNewProperty( final String text, final Object value )
+    private Data myNewProperty( final String text, final Object value )
     {
         if ( value instanceof Double )
         {

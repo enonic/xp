@@ -10,31 +10,31 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
-import static com.enonic.wem.core.content.serializer.EntryJsonSerializer.ENTRY_NAME;
-import static com.enonic.wem.core.content.serializer.EntryJsonSerializer.ENTRY_PATH;
-import static com.enonic.wem.core.content.serializer.EntryJsonSerializer.ENTRY_TYPE;
-import static com.enonic.wem.core.content.serializer.EntryJsonSerializer.ENTRY_VALUE;
+import static com.enonic.wem.core.content.serializer.DataJsonSerializer.DATA_NAME;
+import static com.enonic.wem.core.content.serializer.DataJsonSerializer.DATA_PATH;
+import static com.enonic.wem.core.content.serializer.DataJsonSerializer.DATA_TYPE;
+import static com.enonic.wem.core.content.serializer.DataJsonSerializer.DATA_VALUE;
 
 public class DataSetJsonSerializer
     extends AbstractJsonSerializer<DataSet>
 {
-    private EntryJsonSerializer entrySerializer;
+    private DataJsonSerializer dataSerializer;
 
     public DataSetJsonSerializer( final ObjectMapper objectMapper )
     {
         super( objectMapper );
-        entrySerializer = new EntryJsonSerializer( objectMapper, this );
+        dataSerializer = new DataJsonSerializer( objectMapper, this );
     }
 
     public DataSetJsonSerializer()
     {
-        entrySerializer = new EntryJsonSerializer( objectMapper(), this );
+        dataSerializer = new DataJsonSerializer( objectMapper(), this );
     }
 
     @Override
@@ -45,19 +45,19 @@ public class DataSetJsonSerializer
         final String name = dataSet.getName();
         final String path = dataSet.getPath().toString();
 
-        dataSetObj.put( ENTRY_NAME, name );
-        dataSetObj.put( ENTRY_PATH, path );
-        dataSetObj.put( ENTRY_TYPE, ValueTypes.SET.getName() );
-        dataSetObj.put( ENTRY_VALUE, serializeEntries( dataSet ) );
+        dataSetObj.put( DATA_NAME, name );
+        dataSetObj.put( DATA_PATH, path );
+        dataSetObj.put( DATA_TYPE, ValueTypes.SET.getName() );
+        dataSetObj.put( DATA_VALUE, serializeEntries( dataSet ) );
         return dataSetObj;
     }
 
     JsonNode serializeEntries( final DataSet dataSet )
     {
         final ArrayNode arrayNode = objectMapper().createArrayNode();
-        for ( Entry entry : dataSet )
+        for ( Data data : dataSet )
         {
-            arrayNode.add( entrySerializer.serialize( entry ) );
+            arrayNode.add( dataSerializer.serialize( data ) );
         }
         return arrayNode;
     }
@@ -68,7 +68,7 @@ public class DataSetJsonSerializer
         Preconditions.checkNotNull( dataSetNode, "dataSetNode cannot be null" );
 
         final DataSet rootDataSet = DataSet.newRootDataSet();
-        final ArrayNode arrayNode = (ArrayNode) dataSetNode.get( ENTRY_VALUE );
+        final ArrayNode arrayNode = (ArrayNode) dataSetNode.get( DATA_VALUE );
 
         parseEntries( arrayNode, rootDataSet );
         return rootDataSet;
@@ -76,9 +76,9 @@ public class DataSetJsonSerializer
 
     DataSet parseDataSet( final JsonNode dataSetNode )
     {
-        final String name = JsonSerializerUtil.getStringValue( ENTRY_NAME, dataSetNode );
+        final String name = JsonSerializerUtil.getStringValue( DATA_NAME, dataSetNode );
         final DataSet dataSet = DataSet.newDataSet().name( name ).build();
-        final ArrayNode entriesArray = (ArrayNode) dataSetNode.get( ENTRY_VALUE );
+        final ArrayNode entriesArray = (ArrayNode) dataSetNode.get( DATA_VALUE );
         parseEntries( entriesArray, dataSet );
         return dataSet;
     }
@@ -89,8 +89,8 @@ public class DataSetJsonSerializer
         while ( dataIt.hasNext() )
         {
             final JsonNode dataNode = dataIt.next();
-            final Entry entry = entrySerializer.parse( dataNode );
-            dataSet.add( entry );
+            final Data data = dataSerializer.parse( dataNode );
+            dataSet.add( data );
         }
     }
 }

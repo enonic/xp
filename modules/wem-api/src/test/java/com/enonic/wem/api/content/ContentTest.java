@@ -50,7 +50,7 @@ public class ContentTest
     }
 
     @Test
-    public void array_getting_entry_from_array_of_size_one()
+    public void array_getting_data_from_array_of_size_one()
     {
         DataSet dataSet = new RootDataSet();
         dataSet.setProperty( "array[0]", new Value.Text( "First" ) );
@@ -234,8 +234,8 @@ public class ContentTest
         assertEquals( "set[1].myText", rootDataSet.getProperty( "set[1].myText" ).getPath().toString() );
         assertEquals( "set[0]", rootDataSet.getDataSet( "set[0]" ).getPath().toString() );
         assertEquals( "set[1]", rootDataSet.getDataSet( "set[1]" ).getPath().toString() );
-        assertEquals( "First", rootDataSet.getEntry( "set[0]" ).toDataSet().getProperty( "myText" ).getString() );
-        assertEquals( "Second", rootDataSet.getEntry( "set[1]" ).toDataSet().getProperty( "myText" ).getString() );
+        assertEquals( "First", rootDataSet.getData( "set[0]" ).toDataSet().getProperty( "myText" ).getString() );
+        assertEquals( "Second", rootDataSet.getData( "set[1]" ).toDataSet().getProperty( "myText" ).getString() );
     }
 
     @Test
@@ -356,12 +356,12 @@ public class ContentTest
         rootDataSet.setProperty( "child[1].features.eyeColour", new Value.Text( "Brown" ) );
         rootDataSet.setProperty( "child[1].features.hairColour", new Value.Text( "Black" ) );
 
-        DataSet child0 = rootDataSet.getEntry( "child[0]" ).toDataSet();
+        DataSet child0 = rootDataSet.getData( "child[0]" ).toDataSet();
         assertEquals( "Joachim", child0.getProperty( "name" ).getObject() );
         assertEquals( "9", child0.getProperty( "age" ).getObject() );
         assertEquals( "Blue", child0.getProperty( "features.eyeColour" ).getObject() );
 
-        DataSet child1 = rootDataSet.getEntry( "child[1]" ).toDataSet();
+        DataSet child1 = rootDataSet.getData( "child[1]" ).toDataSet();
         assertEquals( "Madeleine", child1.getProperty( "name" ).getObject() );
         assertEquals( "7", child1.getProperty( "age" ).getObject() );
         assertEquals( "Brown", child1.getProperty( "features.eyeColour" ).getObject() );
@@ -390,12 +390,12 @@ public class ContentTest
         rootDataSet.setProperty( "child[1].features.eyeColour", new Value.Text( "Brown" ) );
         rootDataSet.setProperty( "child[1].features.hairColour", new Value.Text( "Black" ) );
 
-        DataSet child0 = rootDataSet.getEntry( "child[0]" ).toDataSet();
+        DataSet child0 = rootDataSet.getData( "child[0]" ).toDataSet();
         assertEquals( "Joachim", child0.getProperty( "name" ).getObject() );
         assertEquals( "9", child0.getProperty( "age" ).getObject() );
         assertEquals( "Blue", child0.getProperty( "features.eyeColour" ).getObject() );
 
-        DataSet child1 = rootDataSet.getEntry( "child[1]" ).toDataSet();
+        DataSet child1 = rootDataSet.getData( "child[1]" ).toDataSet();
         assertEquals( "Madeleine", child1.getProperty( "name" ).getObject() );
         assertEquals( "7", child1.getProperty( "age" ).getObject() );
         assertEquals( "Brown", child1.getProperty( "features.eyeColour" ).getObject() );
@@ -503,8 +503,8 @@ public class ContentTest
         assertEquals( 0, rootDataSet.getProperty( "myData" ).getArrayIndex() );
         assertEquals( 0, rootDataSet.getProperty( "myArray" ).getArrayIndex() );
         assertEquals( 1, rootDataSet.getProperty( "myArray[1]" ).getArrayIndex() );
-        assertEquals( 2, rootDataSet.entryCount( "myArray" ) );
-        assertEquals( 1, rootDataSet.entryCount( "myData" ) );
+        assertEquals( 2, rootDataSet.dataCount( "myArray" ) );
+        assertEquals( 1, rootDataSet.dataCount( "myData" ) );
 
         Property myArray = content.getRootDataSet().getProperty( "myArray" );
     }

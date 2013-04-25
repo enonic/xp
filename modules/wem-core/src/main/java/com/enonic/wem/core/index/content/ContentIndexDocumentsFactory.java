@@ -7,8 +7,8 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.core.index.IndexConstants;
@@ -78,34 +78,30 @@ public class ContentIndexDocumentsFactory
 
     private static void traverseDataSet( final DataSet dataSet, final IndexDocument indexDocument )
     {
-        final Iterator<Entry> dataSetIterator = dataSet.iterator();
+        final Iterator<Data> dataSetIterator = dataSet.iterator();
 
         while ( dataSetIterator.hasNext() )
         {
-            final Entry entry = dataSetIterator.next();
+            final Data data = dataSetIterator.next();
 
-            if ( entry.isProperty() )
+            if ( data.isProperty() )
             {
-                final Property property = entry.toProperty();
+                final Property property = data.toProperty();
 
                 final Value dataValue = property.getValue();
                 final Object value = dataValue.getObject();
 
-                final String fieldName = ContentIndexField.CONTENT_DATA_PREFIX + ContentIndexField.FIELD_SEPARATOR + getEntryPath( entry );
+                final String fieldName =
+                    ContentIndexField.CONTENT_DATA_PREFIX + ContentIndexField.FIELD_SEPARATOR + data.getPath().toString();
 
                 indexDocument.addDocumentEntry( fieldName, value, true, true );
             }
-            else if ( entry.isDataSet() )
+            else if ( data.isDataSet() )
             {
-                final DataSet entryDataSet = entry.toDataSet();
+                final DataSet entryDataSet = data.toDataSet();
                 traverseDataSet( entryDataSet, indexDocument );
             }
         }
-    }
-
-    protected static String getEntryPath( final Entry entry )
-    {
-        return entry.getPath().toString();
     }
 
 }

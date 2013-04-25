@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.form.FormItem;
@@ -40,31 +40,31 @@ public final class DataSetValidator
         return DataValidationErrors.from( validationErrors );
     }
 
-    private void validateEntries( final Iterable<Entry> entries, final List<DataValidationError> validationErrors )
+    private void validateEntries( final Iterable<Data> entries, final List<DataValidationError> validationErrors )
     {
-        for ( Entry data : entries )
+        for ( Data data : entries )
         {
             validateData( data, validationErrors );
         }
     }
 
-    private void validateData( final Entry entry, final List<DataValidationError> validationErrors )
+    private void validateData( final Data data, final List<DataValidationError> validationErrors )
         throws InvalidDataException
     {
-        if ( entry.isDataSet() )
+        if ( data.isDataSet() )
         {
-            validateDataSet( entry.toDataSet(), validationErrors );
+            validateDataSet( data.toDataSet(), validationErrors );
         }
         else
         {
-            checkDataTypeValidity( entry.toProperty(), validationErrors );
+            checkDataTypeValidity( data.toProperty(), validationErrors );
 
-            final FormItem formItem = contentType.form().getFormItem( FormItemPath.from( entry.getPath().resolvePathElementNames() ) );
+            final FormItem formItem = contentType.form().getFormItem( FormItemPath.from( data.getPath().resolvePathElementNames() ) );
             if ( formItem != null )
             {
                 if ( formItem instanceof Input )
                 {
-                    checkInputValidity( entry.toProperty(), (Input) formItem, validationErrors );
+                    checkInputValidity( data.toProperty(), (Input) formItem, validationErrors );
                 }
             }
         }
@@ -78,13 +78,13 @@ public final class DataSetValidator
         {
             if ( formItem instanceof FormItemSet )
             {
-                for ( final Entry entry : dataSet )
+                for ( final Data data : dataSet )
                 {
                     final FormItem subFormItem =
-                        contentType.form().getFormItem( FormItemPath.from( entry.getPath().resolvePathElementNames() ) );
+                        contentType.form().getFormItem( FormItemPath.from( data.getPath().resolvePathElementNames() ) );
                     if ( subFormItem instanceof Input )
                     {
-                        checkInputValidity( entry.toProperty(), (Input) subFormItem, validationErrors );
+                        checkInputValidity( data.toProperty(), (Input) subFormItem, validationErrors );
                     }
                 }
             }

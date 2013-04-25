@@ -2,7 +2,7 @@ package com.enonic.wem.api.content.data;
 
 import com.google.common.base.Preconditions;
 
-class EntryId
+class DataId
 {
     private final String name;
 
@@ -10,7 +10,7 @@ class EntryId
 
     private final String refString;
 
-    private EntryId( final String name, final int index )
+    private DataId( final String name, final int index )
     {
         Preconditions.checkNotNull( name, "name cannot be null" );
         Preconditions.checkArgument( index >= 0, "index must be zero or more" );
@@ -41,9 +41,9 @@ class EntryId
             return false;
         }
 
-        final EntryId entryId = (EntryId) o;
+        final DataId dataId = (DataId) o;
 
-        if ( !refString.equals( entryId.refString ) )
+        if ( !refString.equals( dataId.refString ) )
         {
             return false;
         }
@@ -74,13 +74,13 @@ class EntryId
         return s.toString();
     }
 
-    public static EntryId from( final String name, final int index )
+    public static DataId from( final String name, final int index )
     {
-        return new EntryId( name, index );
+        return new DataId( name, index );
     }
 
-    public static EntryId from( final EntryPath.Element pathElement )
+    public static DataId from( final DataPath.Element pathElement )
     {
-        return new EntryId( pathElement.getName(), pathElement.hasIndex() ? pathElement.getIndex() : 0 );
+        return new DataId( pathElement.getName(), pathElement.hasIndex() ? pathElement.getIndex() : 0 );
     }
 }

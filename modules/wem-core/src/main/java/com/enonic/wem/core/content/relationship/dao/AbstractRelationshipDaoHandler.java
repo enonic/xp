@@ -7,7 +7,7 @@ import javax.jcr.Session;
 import javax.jcr.util.TraversingItemVisitor;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
@@ -144,10 +144,10 @@ abstract class AbstractRelationshipDaoHandler<T>
         return relationships.build();
     }
 
-    private Node getManagingDataNode( final EntryPath entryPath, final Node parentNode )
+    private Node getManagingDataNode( final DataPath dataPath, final Node parentNode )
         throws RepositoryException
     {
-        final EntryPath.Element firstElement = entryPath.getFirstElement();
+        final DataPath.Element firstElement = dataPath.getFirstElement();
         Node pathElementNameNode = JcrHelper.getNodeOrNull( parentNode, firstElement.getName() );
         if ( pathElementNameNode == null )
         {
@@ -161,13 +161,13 @@ abstract class AbstractRelationshipDaoHandler<T>
             return null;
         }
 
-        if ( entryPath.elementCount() == 1 )
+        if ( dataPath.elementCount() == 1 )
         {
             return elementIndexNode;
         }
         else
         {
-            return getManagingDataNode( entryPath.asNewWithoutFirstPathElement(), elementIndexNode );
+            return getManagingDataNode( dataPath.asNewWithoutFirstPathElement(), elementIndexNode );
         }
     }
 

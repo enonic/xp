@@ -2,9 +2,9 @@ package com.enonic.wem.api.content.data.type;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.Entry;
-import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
@@ -28,7 +28,7 @@ public class PropertyTool
     public static void checkPropertyType( final DataSet dataSet, final String path, final ValueType valueType )
         throws InvalidDataException
     {
-        final Property property = dataSet.getProperty( EntryPath.from( path ) );
+        final Property property = dataSet.getProperty( DataPath.from( path ) );
         if ( property == null )
         {
             return;
@@ -49,10 +49,10 @@ public class PropertyTool
     public static void checkRequiredPath( final Property propertyContainingSet, String path )
     {
         final DataSet dataSet = propertyContainingSet.toDataSet();
-        final Entry entry = dataSet.getEntry( EntryPath.from( path ) );
-        if ( entry == null )
+        final Data data = dataSet.getData( DataPath.from( path ) );
+        if ( data == null )
         {
-            throw new InvalidDataException( propertyContainingSet, "entry required to have sub entry at path: " + path );
+            throw new InvalidDataException( propertyContainingSet, "Data required to have sub data at path: " + path );
         }
     }
 
@@ -128,7 +128,7 @@ public class PropertyTool
             }
             if ( rangeStart != null && rangeStop != null )
             {
-                final Property subProperty = property.toDataSet().getProperty( EntryPath.from( path ) );
+                final Property subProperty = property.toDataSet().getProperty( DataPath.from( path ) );
                 checkRange( subProperty, rangeStart, rangeStop );
             }
         }

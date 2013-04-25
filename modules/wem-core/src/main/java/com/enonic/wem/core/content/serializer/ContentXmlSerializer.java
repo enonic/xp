@@ -16,7 +16,7 @@ import com.enonic.wem.core.support.util.JdomHelper;
 public class ContentXmlSerializer
     implements ContentSerializer
 {
-    private EntryXmlSerializer entrySerializer = new EntryXmlSerializer();
+    private DataXmlSerializer dataSerializer = new DataXmlSerializer();
 
     private final JdomHelper jdomHelper = new JdomHelper();
 
@@ -33,7 +33,6 @@ public class ContentXmlSerializer
     }
 
     public String toString( Content content )
-        throws XmlSerializingException
     {
         return this.jdomHelper.serialize( toJDomDocument( content ), this.prettyPrint );
     }
@@ -59,7 +58,7 @@ public class ContentXmlSerializer
         }
         final Element dataEl = new Element( "data" );
         contentEl.addContent( dataEl );
-        entrySerializer.generateRootDataSet( dataEl, content.getRootDataSet() );
+        dataSerializer.generateRootDataSet( dataEl, content.getRootDataSet() );
     }
 
     public Content toContent( final String xml )
@@ -96,7 +95,7 @@ public class ContentXmlSerializer
         }
 
         final RootDataSet rootDataSet = DataSet.newRootDataSet();
-        entrySerializer.parse( contentEl.getChild( "data" ), rootDataSet );
+        dataSerializer.parse( contentEl.getChild( "data" ), rootDataSet );
         contentBuilder.rootDataSet( rootDataSet );
 
         return contentBuilder.build();

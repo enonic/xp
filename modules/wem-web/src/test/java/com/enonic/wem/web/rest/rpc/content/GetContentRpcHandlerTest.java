@@ -14,8 +14,8 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
@@ -74,7 +74,7 @@ public class GetContentRpcHandlerTest
     private Content createContent( final String id, final String name )
     {
         final RootDataSet rootDataSet = DataSet.newRootDataSet();
-        rootDataSet.setProperty( EntryPath.from( "myData" ), new Value.Text( "value1" ) );
+        rootDataSet.setProperty( DataPath.from( "myData" ), new Value.Text( "value1" ) );
 
         return Content.newContent().
             id( ContentId.from( id ) ).

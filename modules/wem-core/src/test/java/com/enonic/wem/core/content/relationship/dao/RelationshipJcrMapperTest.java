@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.AbstractJcrTest;
@@ -49,7 +49,7 @@ public class RelationshipJcrMapperTest
             type( QualifiedRelationshipTypeName.LINK ).
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
-            managed( EntryPath.from( "mySet.myData" ) ).
+            managed( DataPath.from( "mySet.myData" ) ).
             property( "stars", "5" ).
             property( "stripes", "3" ).
             creator( AccountKey.superUser() ).

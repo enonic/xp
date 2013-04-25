@@ -34,7 +34,7 @@ class MaximumOccurrencesValidator
 
     void validate( final RootDataSet dataSet )
     {
-        for ( final String entryName : dataSet.entryNames() )
+        for ( final String entryName : dataSet.dataNames() )
         {
             final FormItemPath parentFormItemPath = FormItemPath.from( dataSet.getPath().resolvePathElementNames() );
             final FormItemPath path = FormItemPath.from( parentFormItemPath, entryName );
@@ -56,7 +56,7 @@ class MaximumOccurrencesValidator
         final int maxOccurrences = formItemSet.getOccurrences().getMaximum();
         if ( maxOccurrences > 0 )
         {
-            final int size = parentDataSet.entryCount( formItemSet.getName() );
+            final int size = parentDataSet.dataCount( formItemSet.getName() );
             if ( size > maxOccurrences )
             {
                 validationErrors.add( new MaximumOccurrencesValidationError( formItemSet, size ) );
@@ -69,7 +69,7 @@ class MaximumOccurrencesValidator
         final int maxOccurrences = input.getOccurrences().getMaximum();
         if ( maxOccurrences > 0 )
         {
-            final int size = parentDataSet.entryCount( input.getName() );
+            final int size = parentDataSet.dataCount( input.getName() );
             if ( size > maxOccurrences )
             {
                 validationErrors.add( new MaximumOccurrencesValidationError( input, size ) );

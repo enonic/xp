@@ -11,7 +11,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
@@ -41,7 +41,7 @@ public final class Relationship
     /**
      * Path to the Data in the fromContent that is managing this Relationship.
      */
-    private final EntryPath managingData;
+    private final DataPath managingData;
 
     public Relationship( final Builder builder )
     {
@@ -117,7 +117,7 @@ public final class Relationship
         return managingData != null;
     }
 
-    public EntryPath getManagingData()
+    public DataPath getManagingData()
     {
         return managingData;
     }
@@ -161,7 +161,7 @@ public final class Relationship
 
         private Map<String, String> properties = Maps.newLinkedHashMap();
 
-        private EntryPath managingData;
+        private DataPath managingData;
 
         private UserKey modifier;
 
@@ -247,7 +247,7 @@ public final class Relationship
             return this;
         }
 
-        public Builder managed( EntryPath managingData )
+        public Builder managed( DataPath managingData )
         {
             this.managingData = managingData;
             return this;

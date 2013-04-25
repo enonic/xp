@@ -14,10 +14,10 @@ import com.google.common.collect.Lists;
 /**
  * Immutable
  */
-public final class EntryPath
-    implements Iterable<EntryPath.Element>
+public final class DataPath
+    implements Iterable<DataPath.Element>
 {
-    public final static EntryPath ROOT = new EntryPath();
+    public final static DataPath ROOT = new DataPath();
 
     public final static String ELEMENT_DIVIDER = ".";
 
@@ -27,42 +27,42 @@ public final class EntryPath
 
     private final String refString;
 
-    private final EntryPath parentPath;
+    private final DataPath parentPath;
 
-    public static EntryPath from( final EntryPath parentPath, final String element )
+    public static DataPath from( final DataPath parentPath, final String element )
     {
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
         Preconditions.checkNotNull( parentPath, "element cannot be null" );
-        return new EntryPath( parentPath, new Element( element ) );
+        return new DataPath( parentPath, new Element( element ) );
     }
 
-    public static EntryPath from( final EntryPath parentPath, final Element element )
+    public static DataPath from( final DataPath parentPath, final Element element )
     {
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
         Preconditions.checkNotNull( element, "element cannot be null" );
 
-        return new EntryPath( parentPath, element );
+        return new DataPath( parentPath, element );
     }
 
-    public static EntryPath from( final Iterable<Element> pathElements )
+    public static DataPath from( final Iterable<Element> pathElements )
     {
         Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
-        return new EntryPath( ImmutableList.copyOf( pathElements ) );
+        return new DataPath( ImmutableList.copyOf( pathElements ) );
     }
 
-    public static EntryPath from( final String path )
+    public static DataPath from( final String path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
-        return new EntryPath( splitPathIntoElements( path ) );
+        return new DataPath( splitPathIntoElements( path ) );
     }
 
-    public static EntryPath from( final Element... pathElements )
+    public static DataPath from( final Element... pathElements )
     {
         Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
-        return new EntryPath( ImmutableList.copyOf( pathElements ) );
+        return new DataPath( ImmutableList.copyOf( pathElements ) );
     }
 
-    private EntryPath()
+    private DataPath()
     {
         this.elements = ImmutableList.of();
         this.refString = "";
@@ -70,7 +70,7 @@ public final class EntryPath
         this.parentPath = null;
     }
 
-    public EntryPath( final ImmutableList<Element> pathElements )
+    public DataPath( final ImmutableList<Element> pathElements )
     {
         Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
         this.elements = pathElements;
@@ -85,10 +85,10 @@ public final class EntryPath
                 parentPathElements.add( this.elements.get( i ) );
             }
         }
-        this.parentPath = parentPathElements.size() > 0 ? EntryPath.from( parentPathElements ) : null;
+        this.parentPath = parentPathElements.size() > 0 ? DataPath.from( parentPathElements ) : null;
     }
 
-    private EntryPath( final EntryPath parentPath, final Element element )
+    private DataPath( final DataPath parentPath, final Element element )
     {
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
         Preconditions.checkNotNull( element, "element cannot be null" );
@@ -101,7 +101,7 @@ public final class EntryPath
         this.refString = toString( elements );
     }
 
-    public EntryPath getParent()
+    public DataPath getParent()
     {
         return parentPath;
     }
@@ -146,7 +146,7 @@ public final class EntryPath
         return elements.get( elements.size() - 1 );
     }
 
-    public boolean startsWith( final EntryPath path )
+    public boolean startsWith( final DataPath path )
     {
         if ( path.elements.size() > this.elements.size() )
         {
@@ -171,7 +171,7 @@ public final class EntryPath
         return true;
     }
 
-    public EntryPath asNewWithoutFirstPathElement()
+    public DataPath asNewWithoutFirstPathElement()
     {
         final ImmutableList.Builder<Element> builder = ImmutableList.builder();
         for ( int i = 0; i < elements.size(); i++ )
@@ -181,7 +181,7 @@ public final class EntryPath
                 builder.add( elements.get( i ) );
             }
         }
-        return new EntryPath( builder.build() );
+        return new DataPath( builder.build() );
     }
 
     @Override
@@ -196,7 +196,7 @@ public final class EntryPath
             return false;
         }
 
-        final EntryPath other = (EntryPath) o;
+        final DataPath other = (DataPath) o;
         return refString.equals( other.refString );
     }
 
@@ -293,14 +293,14 @@ public final class EntryPath
                 }
                 else
                 {
-                    throw new IllegalArgumentException( "Invalid EntryPath element: " + element );
+                    throw new IllegalArgumentException( "Invalid DataPath element: " + element );
                 }
             }
             else
             {
                 if ( indexStop >= 0 )
                 {
-                    throw new IllegalArgumentException( "Invalid EntryPath element: " + element );
+                    throw new IllegalArgumentException( "Invalid DataPath element: " + element );
                 }
 
                 this.name = element;
@@ -375,8 +375,8 @@ public final class EntryPath
         public static void checkName( final String name )
         {
             Preconditions.checkArgument( !StringUtils.isBlank( name ), "A name cannot be blank: %s", name );
-            Preconditions.checkArgument( !name.contains( EntryPath.ELEMENT_DIVIDER ), "A name cannot contain %s: %s",
-                                         EntryPath.ELEMENT_DIVIDER, name );
+            Preconditions.checkArgument( !name.contains( DataPath.ELEMENT_DIVIDER ), "A name cannot contain %s: %s",
+                                         DataPath.ELEMENT_DIVIDER, name );
             Preconditions.checkArgument( !name.contains( INDEX_START_MARKER ), "A name cannot contain array index value. Found %s: %s",
                                          INDEX_START_MARKER, name );
             Preconditions.checkArgument( !name.contains( INDEX_STOP_MARKER ), "A name cannot contain array index value. Found %s: %s",

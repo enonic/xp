@@ -13,8 +13,8 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.api.support.tree.Tree;
@@ -307,8 +307,8 @@ public class ContentDaoImplTest
         assertEquals( "myspace:/myContent", content.getPath().toString() );
 
         DataSet rootDataSet = actualContent.getRootDataSet();
-        assertEquals( "myValue", rootDataSet.getProperty( EntryPath.from( "myData" ) ).getString() );
-        assertEquals( "myOtherValue", rootDataSet.getProperty( EntryPath.from( "mySet.myData" ) ).getString() );
+        assertEquals( "myValue", rootDataSet.getProperty( DataPath.from( "myData" ) ).getString() );
+        assertEquals( "myOtherValue", rootDataSet.getProperty( DataPath.from( "mySet.myData" ) ).getString() );
     }
 
     @Test
@@ -338,12 +338,12 @@ public class ContentDaoImplTest
         assertEquals( "myspace:/myContent2", actualContents.last().getPath().toString() );
 
         DataSet rootDataSet1 = actualContents.first().getRootDataSet();
-        assertEquals( "myValue", rootDataSet1.getProperty( EntryPath.from( "myData" ) ).getString() );
-        assertEquals( "myOtherValue", rootDataSet1.getProperty( EntryPath.from( "mySet.myData" ) ).getString() );
+        assertEquals( "myValue", rootDataSet1.getProperty( DataPath.from( "myData" ) ).getString() );
+        assertEquals( "myOtherValue", rootDataSet1.getProperty( DataPath.from( "mySet.myData" ) ).getString() );
 
         DataSet rootDataSet2 = actualContents.last().getRootDataSet();
-        assertEquals( "myValue2", rootDataSet2.getProperty( EntryPath.from( "myData" ) ).getString() );
-        assertEquals( "myOtherValue2", rootDataSet2.getProperty( EntryPath.from( "mySet.myData" ) ).getString() );
+        assertEquals( "myValue2", rootDataSet2.getProperty( DataPath.from( "myData" ) ).getString() );
+        assertEquals( "myOtherValue2", rootDataSet2.getProperty( DataPath.from( "mySet.myData" ) ).getString() );
     }
 
     @Test
@@ -373,12 +373,12 @@ public class ContentDaoImplTest
         assertEquals( "myspace:/myContent2", actualContents.last().getPath().toString() );
 
         DataSet rootDataSet1 = actualContents.first().getRootDataSet();
-        assertEquals( "myValue", rootDataSet1.getProperty( EntryPath.from( "myData" ) ).getString() );
-        assertEquals( "myOtherValue", rootDataSet1.getProperty( EntryPath.from( "mySet.myData" ) ).getString() );
+        assertEquals( "myValue", rootDataSet1.getProperty( DataPath.from( "myData" ) ).getString() );
+        assertEquals( "myOtherValue", rootDataSet1.getProperty( DataPath.from( "mySet.myData" ) ).getString() );
 
         DataSet rootDataSet2 = actualContents.last().getRootDataSet();
-        assertEquals( "myValue2", rootDataSet2.getProperty( EntryPath.from( "myData" ) ).getString() );
-        assertEquals( "myOtherValue2", rootDataSet2.getProperty( EntryPath.from( "mySet.myData" ) ).getString() );
+        assertEquals( "myValue2", rootDataSet2.getProperty( DataPath.from( "myData" ) ).getString() );
+        assertEquals( "myOtherValue2", rootDataSet2.getProperty( DataPath.from( "mySet.myData" ) ).getString() );
     }
 
     @Test
@@ -401,8 +401,8 @@ public class ContentDaoImplTest
         assertEquals( "myspace:/myContent", content.getPath().toString() );
 
         DataSet rootDataSet = actualContent.getRootDataSet();
-        assertEquals( "myValue", rootDataSet.getProperty( EntryPath.from( "myData" ) ).getString() );
-        assertEquals( "myOtherValue", rootDataSet.getProperty( EntryPath.from( "mySet.myData" ) ).getString() );
+        assertEquals( "myValue", rootDataSet.getProperty( DataPath.from( "myData" ) ).getString() );
+        assertEquals( "myOtherValue", rootDataSet.getProperty( DataPath.from( "mySet.myData" ) ).getString() );
     }
 
     @Test

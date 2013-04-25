@@ -6,8 +6,8 @@ import java.util.Iterator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.ContentType;
@@ -35,7 +35,7 @@ final class RootDataSetParser
         while ( fieldNames.hasNext() )
         {
             final String fieldName = fieldNames.next();
-            final EntryPath path = EntryPath.from( fieldName );
+            final DataPath path = DataPath.from( fieldName );
 
             final JsonNode valueNode = data.get( fieldName );
 

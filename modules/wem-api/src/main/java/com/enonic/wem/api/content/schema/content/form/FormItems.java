@@ -137,9 +137,9 @@ class FormItems
         final StringBuilder s = new StringBuilder();
         int index = 0;
         final int size = formItemByName.size();
-        for ( FormItem entry : formItemByName.values() )
+        for ( FormItem formItem : formItemByName.values() )
         {
-            s.append( entry.getName() );
+            s.append( formItem.getName() );
             if ( index < size - 1 )
             {
                 s.append( ", " );

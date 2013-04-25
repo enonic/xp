@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.AbstractEqualsTest;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
 public class RelationshipKeyTest
@@ -22,7 +22,7 @@ public class RelationshipKeyTest
                     type( QualifiedRelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
-                    managingData( EntryPath.from( "myInput" ) ).
+                    managingData( DataPath.from( "myInput" ) ).
                     build();
             }
 
@@ -33,22 +33,22 @@ public class RelationshipKeyTest
                     type( QualifiedRelationshipTypeName.LINK ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
-                    managingData( EntryPath.from( "myInput" ) ).
+                    managingData( DataPath.from( "myInput" ) ).
                     build(), RelationshipKey.newRelationshipKey().
                     type( QualifiedRelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "333" ) ).
                     toContent( ContentId.from( "222" ) ).
-                    managingData( EntryPath.from( "myInput" ) ).
+                    managingData( DataPath.from( "myInput" ) ).
                     build(), RelationshipKey.newRelationshipKey().
                     type( QualifiedRelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "444" ) ).
-                    managingData( EntryPath.from( "myInput" ) ).
+                    managingData( DataPath.from( "myInput" ) ).
                     build(), RelationshipKey.newRelationshipKey().
                     type( QualifiedRelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
-                    managingData( EntryPath.from( "myOtherInput" ) ).
+                    managingData( DataPath.from( "myOtherInput" ) ).
                     build(), RelationshipKey.newRelationshipKey().
                     type( QualifiedRelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
@@ -63,7 +63,7 @@ public class RelationshipKeyTest
                     type( QualifiedRelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
-                    managingData( EntryPath.from( "myInput" ) ).
+                    managingData( DataPath.from( "myInput" ) ).
                     build();
             }
 
@@ -74,7 +74,7 @@ public class RelationshipKeyTest
                     type( QualifiedRelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
-                    managingData( EntryPath.from( "myInput" ) ).
+                    managingData( DataPath.from( "myInput" ) ).
                     build();
             }
         };

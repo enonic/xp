@@ -14,7 +14,7 @@ import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
 public class Property
-    extends Entry
+    extends Data
 {
     private Value value;
 

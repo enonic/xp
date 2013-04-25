@@ -11,7 +11,7 @@ public final class RootDataSet
     }
 
     @Override
-    EntryId getEntryId()
+    DataId getDataId()
     {
         return null;
     }

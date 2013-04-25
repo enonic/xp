@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.PropertyVisitor;
 import com.enonic.wem.api.content.data.RootDataSet;
@@ -34,9 +34,9 @@ class SyncRelationships
 
     private final ContentId contentToUpdate;
 
-    private final Map<EntryPath, Property> referencesBeforeEditing;
+    private final Map<DataPath, Property> referencesBeforeEditing;
 
-    private final Map<EntryPath, Property> referencesAfterEditing;
+    private final Map<DataPath, Property> referencesAfterEditing;
 
     private final ImmutableList.Builder<Relationship> relationshipsToAddBuilder = ImmutableList.builder();
 
@@ -123,7 +123,7 @@ class SyncRelationships
     private List<Property> resolveAddedReferences()
     {
         final List<Property> addedReferences = new ArrayList<>();
-        for ( Map.Entry<EntryPath, Property> referenceAfterEditing : referencesAfterEditing.entrySet() )
+        for ( Map.Entry<DataPath, Property> referenceAfterEditing : referencesAfterEditing.entrySet() )
         {
             if ( !referencesBeforeEditing.containsKey( referenceAfterEditing.getKey() ) )
             {
@@ -136,7 +136,7 @@ class SyncRelationships
     private List<Property> resolveRemovedReferences()
     {
         final List<Property> removedReferences = new ArrayList<>();
-        for ( Map.Entry<EntryPath, Property> referenceBeforeEditing : referencesBeforeEditing.entrySet() )
+        for ( Map.Entry<DataPath, Property> referenceBeforeEditing : referencesBeforeEditing.entrySet() )
         {
             if ( !referencesAfterEditing.containsKey( referenceBeforeEditing.getKey() ) )
             {
@@ -146,9 +146,9 @@ class SyncRelationships
         return removedReferences;
     }
 
-    private Map<EntryPath, Property> resolveReferences( final RootDataSet rootDataSet )
+    private Map<DataPath, Property> resolveReferences( final RootDataSet rootDataSet )
     {
-        final Map<EntryPath, Property> references = new LinkedHashMap<>();
+        final Map<DataPath, Property> references = new LinkedHashMap<>();
         final PropertyVisitor propertyVisitor = new PropertyVisitor()
         {
             @Override

@@ -10,10 +10,10 @@ import org.junit.Test;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.DataSetArray;
-import com.enonic.wem.api.content.data.Entry;
-import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.PropertyArray;
 import com.enonic.wem.api.content.data.RootDataSet;
@@ -71,7 +71,7 @@ public abstract class AbstractContentSerializerTest
         // verify
         RootDataSet parsedRootDataSet = parsedContent.getRootDataSet();
         assertEquals( "A value", parsedRootDataSet.getProperty( "myInput" ).getObject() );
-        assertEquals( EntryPath.from( "myInput" ), parsedRootDataSet.getProperty( "myInput" ).getPath() );
+        assertEquals( DataPath.from( "myInput" ), parsedRootDataSet.getProperty( "myInput" ).getPath() );
     }
 
     @Test
@@ -145,7 +145,7 @@ public abstract class AbstractContentSerializerTest
         assertEquals( "mySet.myArray[0]", parsedRootDataSet.getProperty( "mySet.myArray[0]" ).getPath().toString() );
         assertEquals( "mySet.myArray[1]", parsedRootDataSet.getProperty( "mySet.myArray[1]" ).getPath().toString() );
 
-        DataSet mySet = parsedRootDataSet.getEntry( "mySet" ).toDataSet();
+        DataSet mySet = parsedRootDataSet.getData( "mySet" ).toDataSet();
         assertEquals( "mySet", mySet.toDataSet().getPath().toString() );
 
         Property mySet_myArray = mySet.getProperty( "myArray" );
@@ -157,8 +157,8 @@ public abstract class AbstractContentSerializerTest
         assertEquals( ValueTypes.TEXT, mySet_myArray_Array.getType() );
         assertEquals( "1", mySet_myArray_Array.getValue( 0 ).asString() );
         assertEquals( "2", mySet_myArray_Array.getValue( 1 ).asString() );
-        assertEquals( "mySet.myArray[0]", mySet_myArray_Array.getData( 0 ).getPath().toString() );
-        assertEquals( "mySet.myArray[1]", mySet_myArray_Array.getData( 1 ).getPath().toString() );
+        assertEquals( "mySet.myArray[0]", mySet_myArray_Array.getProperty( 0 ).getPath().toString() );
+        assertEquals( "mySet.myArray[1]", mySet_myArray_Array.getProperty( 1 ).getPath().toString() );
     }
 
     @Test
@@ -211,7 +211,7 @@ public abstract class AbstractContentSerializerTest
 
         // verify
         DataSet mySet = parsedContent.getRootDataSet().getDataSet( "mySet" );
-        Iterator<Entry> entries = mySet.iterator();
+        Iterator<Data> entries = mySet.iterator();
         assertEquals( "mySet.myArray[0]", entries.next().getPath().toString() );
         assertEquals( "mySet.myInput", entries.next().getPath().toString() );
         assertEquals( "mySet.myArray[1]", entries.next().getPath().toString() );

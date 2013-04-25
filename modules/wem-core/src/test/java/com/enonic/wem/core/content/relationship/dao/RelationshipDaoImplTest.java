@@ -9,7 +9,7 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.relationship.Relationships;
@@ -122,7 +122,7 @@ public class RelationshipDaoImplTest
         commit();
 
         relationshipDao.create( createRelationship( contentA, contentB, PARENT ), session );
-        relationshipDao.create( createRelationship( contentA, contentB, PARENT, EntryPath.from( "myData" ) ), session );
+        relationshipDao.create( createRelationship( contentA, contentB, PARENT, DataPath.from( "myData" ) ), session );
         commit();
 
         // exercise
@@ -130,13 +130,13 @@ public class RelationshipDaoImplTest
             type( PARENT ).
             fromContent( contentA ).
             toContent( contentB ).
-            managingData( EntryPath.from( "myData" ) ).build(), session );
+            managingData( DataPath.from( "myData" ) ).build(), session );
 
         // verify
         assertEquals( contentA, storedRelationship.getFromContent() );
         assertEquals( contentB, storedRelationship.getToContent() );
         assertEquals( PARENT, storedRelationship.getType() );
-        assertEquals( EntryPath.from( "myData" ), storedRelationship.getManagingData() );
+        assertEquals( DataPath.from( "myData" ), storedRelationship.getManagingData() );
     }
 
     @Test
@@ -149,7 +149,7 @@ public class RelationshipDaoImplTest
         ContentId contentB = contentDao.create( createContent( "myspace:b" ), session );
         commit();
 
-        relationshipDao.create( createRelationship( contentA, contentB, PARENT, EntryPath.from( "myParent[3].myData[1]" ) ), session );
+        relationshipDao.create( createRelationship( contentA, contentB, PARENT, DataPath.from( "myParent[3].myData[1]" ) ), session );
         commit();
 
         // exercise
@@ -157,13 +157,13 @@ public class RelationshipDaoImplTest
             type( PARENT ).
             fromContent( contentA ).
             toContent( contentB ).
-            managingData( EntryPath.from( "myParent[3].myData[1]" ) ).build(), session );
+            managingData( DataPath.from( "myParent[3].myData[1]" ) ).build(), session );
 
         // verify
         assertEquals( contentA, storedRelationship.getFromContent() );
         assertEquals( contentB, storedRelationship.getToContent() );
         assertEquals( PARENT, storedRelationship.getType() );
-        assertEquals( EntryPath.from( "myParent[3].myData[1]" ), storedRelationship.getManagingData() );
+        assertEquals( DataPath.from( "myParent[3].myData[1]" ), storedRelationship.getManagingData() );
     }
 
     @Test
@@ -178,7 +178,7 @@ public class RelationshipDaoImplTest
         ContentId contentIdD = contentDao.create( createContent( "myspace:d" ), session );
         commit();
 
-        relationshipDao.create( createRelationship( contentIdA, contentIdB, PARENT, EntryPath.from( "myParent[3].myData[1]" ) ), session );
+        relationshipDao.create( createRelationship( contentIdA, contentIdB, PARENT, DataPath.from( "myParent[3].myData[1]" ) ), session );
         relationshipDao.create( createRelationship( contentIdA, contentIdC, PARENT ), session );
         relationshipDao.create( createRelationship( contentIdA, contentIdC, LIKE ), session );
         relationshipDao.create( createRelationship( contentIdD, contentIdB, PARENT ), session );
@@ -192,7 +192,7 @@ public class RelationshipDaoImplTest
 
         Relationship parentRelationshipToB = storedRelationships.get( 0 );
         assertEquals( contentIdB, parentRelationshipToB.getToContent() );
-        assertEquals( EntryPath.from( "myParent[3].myData[1]" ), parentRelationshipToB.getManagingData() );
+        assertEquals( DataPath.from( "myParent[3].myData[1]" ), parentRelationshipToB.getManagingData() );
         assertEquals( PARENT, parentRelationshipToB.getType() );
 
         Relationship parentRelationshipToC = storedRelationships.get( 1 );
@@ -212,7 +212,7 @@ public class RelationshipDaoImplTest
     }
 
     private Relationship createRelationship( final ContentId contentA, final ContentId contentB, final QualifiedRelationshipTypeName type,
-                                             final EntryPath managingData )
+                                             final DataPath managingData )
     {
         return Relationship.newRelationship().
             type( type ).

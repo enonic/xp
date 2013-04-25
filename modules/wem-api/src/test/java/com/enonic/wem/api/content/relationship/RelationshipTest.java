@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
 import static junit.framework.Assert.assertEquals;
@@ -49,7 +49,7 @@ public class RelationshipTest
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
         relationBuilder.type( QualifiedRelationshipTypeName.from( "system:like" ) );
-        relationBuilder.managed( EntryPath.from( "myData" ) );
+        relationBuilder.managed( DataPath.from( "myData" ) );
 
         // exercise
         Relationship relationship = relationBuilder.build();

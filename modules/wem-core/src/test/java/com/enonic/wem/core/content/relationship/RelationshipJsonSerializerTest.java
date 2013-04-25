@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.AbstractSerializerTest;
@@ -66,7 +66,7 @@ public class RelationshipJsonSerializerTest
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
             type( QualifiedRelationshipTypeName.PARENT ).
-            managed( EntryPath.from( "mySet.myData" ) ).
+            managed( DataPath.from( "mySet.myData" ) ).
             createdTime( NOW ).
             creator( AccountKey.superUser() ).
             build();
@@ -134,7 +134,7 @@ public class RelationshipJsonSerializerTest
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
             type( QualifiedRelationshipTypeName.PARENT ).
-            managed( EntryPath.from( "mySet.myData" ) ).
+            managed( DataPath.from( "mySet.myData" ) ).
             property( "stars", "4" ).
             property( "stripes", "3" ).
             createdTime( NOW ).
@@ -156,7 +156,7 @@ public class RelationshipJsonSerializerTest
         assertEquals( ContentId.from( "222" ), parsedRelationship.getToContent() );
         assertEquals( QualifiedRelationshipTypeName.PARENT, parsedRelationship.getType() );
         assertEquals( true, parsedRelationship.isManaged() );
-        assertEquals( EntryPath.from( "mySet.myData" ), parsedRelationship.getManagingData() );
+        assertEquals( DataPath.from( "mySet.myData" ), parsedRelationship.getManagingData() );
         assertEquals( "4", parsedRelationship.getProperty( "stars" ) );
         assertEquals( "3", parsedRelationship.getProperty( "stripes" ) );
         assertEquals( NOW, parsedRelationship.getCreatedTime() );

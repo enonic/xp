@@ -58,7 +58,7 @@ final class MinimumOccurrencesValidator
         {
             for ( DataSet parentDataSet : parentDataSets )
             {
-                final int entryCount = parentDataSet.entryCount( input.getName() );
+                final int entryCount = parentDataSet.dataCount( input.getName() );
                 final int occurrencesToCheck = Math.min( entryCount, input.getOccurrences().getMinimum() );
                 for ( int i = 0; i < occurrencesToCheck; i++ )
                 {
@@ -87,10 +87,10 @@ final class MinimumOccurrencesValidator
         {
             for ( final DataSet parentDataSet : parentDataSets )
             {
-                final int entryCount = parentDataSet.entryCount( formItemSet.getName() );
+                final int entryCount = parentDataSet.dataCount( formItemSet.getName() );
                 if ( entryCount < formItemSet.getOccurrences().getMinimum() )
                 {
-                    // TODO: include information about missing entry path?
+                    // TODO: include information about missing DataPath?
                     validationErrors.add( new MinimumOccurrencesValidationError( formItemSet, entryCount ) );
                 }
             }

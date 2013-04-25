@@ -8,7 +8,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
 /**
@@ -22,10 +22,10 @@ public final class RelationshipKey
 
     private final ContentId toContent;
 
-    private final EntryPath managingData;
+    private final DataPath managingData;
 
     private RelationshipKey( final QualifiedRelationshipTypeName type, final ContentId fromContent, final ContentId toContent,
-                             final EntryPath managingData )
+                             final DataPath managingData )
     {
         this.type = type;
         this.fromContent = fromContent;
@@ -51,7 +51,7 @@ public final class RelationshipKey
         return fromContent;
     }
 
-    public EntryPath getManagingData()
+    public DataPath getManagingData()
     {
         return managingData;
     }
@@ -103,7 +103,7 @@ public final class RelationshipKey
         return new RelationshipKey( type, fromContent, toContent, null );
     }
 
-    public static RelationshipKey from( final QualifiedRelationshipTypeName type, final ContentId fromContent, final EntryPath managingData,
+    public static RelationshipKey from( final QualifiedRelationshipTypeName type, final ContentId fromContent, final DataPath managingData,
                                         final ContentId toContent )
     {
         return new RelationshipKey( type, fromContent, toContent, managingData );
@@ -136,7 +136,7 @@ public final class RelationshipKey
 
         private ContentId toContent;
 
-        private EntryPath managingData;
+        private DataPath managingData;
 
         public Builder type( QualifiedRelationshipTypeName relationshipType )
         {
@@ -156,9 +156,9 @@ public final class RelationshipKey
             return this;
         }
 
-        public Builder managingData( EntryPath entryPath )
+        public Builder managingData( DataPath dataPath )
         {
-            this.managingData = entryPath;
+            this.managingData = dataPath;
             return this;
         }
 

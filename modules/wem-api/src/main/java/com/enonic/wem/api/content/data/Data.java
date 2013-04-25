@@ -5,30 +5,30 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
 
-public abstract class Entry
+public abstract class Data
 {
     private final String name;
 
     /**
-     * Null if this Entry have no parent yet.
+     * Null if this Data have no parent yet.
      */
     private DataSet parent;
 
     /**
-     * Cached path to this entry.
+     * Cached path to this Data.
      */
-    private volatile EntryPath path;
+    private volatile DataPath path;
 
-    Entry( final String name )
+    Data( final String name )
     {
-        EntryPath.Element.checkName( name );
+        DataPath.Element.checkName( name );
         this.name = name;
     }
 
     /**
-     * Creates a root Entry.
+     * Creates a root Data.
      */
-    Entry()
+    Data()
     {
         this.name = "";
     }
@@ -48,12 +48,12 @@ public abstract class Entry
         return name;
     }
 
-    EntryId getEntryId()
+    DataId getDataId()
     {
-        return EntryId.from( name, getArrayIndex() );
+        return DataId.from( name, getArrayIndex() );
     }
 
-    public EntryPath getPath()
+    public DataPath getPath()
     {
         if ( this.path == null )
         {
@@ -62,33 +62,33 @@ public abstract class Entry
         return this.path;
     }
 
-    private EntryPath resolvePath()
+    private DataPath resolvePath()
     {
         if ( parent == null && StringUtils.isEmpty( this.name ) )
         {
-            return EntryPath.ROOT;
+            return DataPath.ROOT;
         }
 
-        final EntryPath.Element pathElement;
+        final DataPath.Element pathElement;
         final int arrayIndex = getArrayIndex();
         if ( arrayIndex > -1 && isArray() )
         {
-            pathElement = EntryPath.Element.from( this.name, arrayIndex );
+            pathElement = DataPath.Element.from( this.name, arrayIndex );
         }
         else
         {
-            pathElement = EntryPath.Element.from( this.name );
+            pathElement = DataPath.Element.from( this.name );
         }
 
-        final EntryPath newPath;
+        final DataPath newPath;
         if ( parent != null )
         {
-            final EntryPath parentPath = parent.getPath();
-            newPath = EntryPath.from( parentPath, pathElement );
+            final DataPath parentPath = parent.getPath();
+            newPath = DataPath.from( parentPath, pathElement );
         }
         else
         {
-            newPath = EntryPath.from( pathElement );
+            newPath = DataPath.from( pathElement );
         }
 
         return newPath;
@@ -109,7 +109,7 @@ public abstract class Entry
         if ( !( this instanceof Property ) )
         {
             throw new IllegalArgumentException(
-                "This Entry at path [" + getPath().toString() + "] is not a Property: " + this.getClass().getSimpleName() );
+                "This Data at path [" + getPath().toString() + "] is not a Property: " + this.getClass().getSimpleName() );
         }
         return (Property) this;
     }
@@ -121,7 +121,7 @@ public abstract class Entry
 
     public DataSet toDataSet()
     {
-        Preconditions.checkArgument( isDataSet(), "This Entry at path [%s] not a DataSet: " + this.getClass().getSimpleName(),
+        Preconditions.checkArgument( isDataSet(), "This Data at path [%s] not a DataSet: " + this.getClass().getSimpleName(),
                                      getPath().toString() );
         return (DataSet) this;
     }
@@ -140,7 +140,7 @@ public abstract class Entry
         return parent.getArrayIndex( this );
     }
 
-    EntryArray getArray()
+    DataArray getArray()
     {
         if ( parent == null )
         {

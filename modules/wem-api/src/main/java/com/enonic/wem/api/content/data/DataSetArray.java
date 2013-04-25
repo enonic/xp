@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 
 
 public class DataSetArray
-    extends EntryArray
+    extends DataArray
 {
     private DataSetArray( final Builder builder )
     {
@@ -12,15 +12,15 @@ public class DataSetArray
     }
 
     @Override
-    public DataSet getEntry( final int i )
+    public DataSet getData( final int i )
     {
-        return (DataSet) super.getEntry( i );
+        return (DataSet) super.getData( i );
     }
 
-    void checkType( Entry entry )
+    void checkType( Data data )
     {
-        Preconditions.checkArgument( entry instanceof DataSet,
-                                     "Unexpected type of entry for DataSet array at path [%s]: " + entry.getClass().getSimpleName(),
+        Preconditions.checkArgument( data instanceof DataSet,
+                                     "Unexpected type of Data for DataSet array at path [%s]: " + data.getClass().getSimpleName(),
                                      getPath() );
     }
 

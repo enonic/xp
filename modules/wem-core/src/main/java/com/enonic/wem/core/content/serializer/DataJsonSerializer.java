@@ -3,60 +3,60 @@ package com.enonic.wem.core.content.serializer;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 
-public final class EntryJsonSerializer
-    extends AbstractJsonSerializer<Entry>
+public final class DataJsonSerializer
+    extends AbstractJsonSerializer<Data>
 {
-    static final String ENTRY_NAME = "name";
+    static final String DATA_NAME = "name";
 
-    static final String ENTRY_VALUE = "value";
+    static final String DATA_VALUE = "value";
 
-    static final String ENTRY_TYPE = "type";
+    static final String DATA_TYPE = "type";
 
-    static final String ENTRY_PATH = "path";
+    static final String DATA_PATH = "path";
 
     private final DataSetJsonSerializer dataSetSerializer;
 
     private final PopertyJsonSerializer dataSerializer;
 
-    public EntryJsonSerializer( final ObjectMapper objectMapper, final DataSetJsonSerializer dataSetSerializer )
+    public DataJsonSerializer( final ObjectMapper objectMapper, final DataSetJsonSerializer dataSetSerializer )
     {
         super( objectMapper );
         this.dataSetSerializer = dataSetSerializer;
         this.dataSerializer = new PopertyJsonSerializer( objectMapper );
     }
 
-    public EntryJsonSerializer()
+    public DataJsonSerializer()
     {
         dataSetSerializer = new DataSetJsonSerializer( objectMapper() );
         dataSerializer = new PopertyJsonSerializer( objectMapper() );
     }
 
-    public final JsonNode serialize( final Entry entry )
+    public final JsonNode serialize( final Data data )
     {
-        if ( entry instanceof Property )
+        if ( data instanceof Property )
         {
-            final Property property = (Property) entry;
+            final Property property = (Property) data;
             return dataSerializer.serialize( property );
         }
-        else if ( entry instanceof DataSet )
+        else if ( data instanceof DataSet )
         {
-            final DataSet dataSet = (DataSet) entry;
+            final DataSet dataSet = (DataSet) data;
             return dataSetSerializer.serialize( dataSet );
         }
         else
         {
-            throw new IllegalArgumentException( "Unknown type of entry: " + entry.getClass().getSimpleName() );
+            throw new IllegalArgumentException( "Unknown type of Data: " + data.getClass().getSimpleName() );
         }
     }
 
-    protected final Entry parse( final JsonNode entryNode )
+    protected final Data parse( final JsonNode entryNode )
     {
-        if ( entryNode.get( ENTRY_VALUE ).isArray() )
+        if ( entryNode.get( DATA_VALUE ).isArray() )
         {
             return dataSetSerializer.parseDataSet( entryNode );
         }
@@ -65,6 +65,4 @@ public final class EntryJsonSerializer
             return dataSerializer.parseProperty( entryNode );
         }
     }
-
-
 }

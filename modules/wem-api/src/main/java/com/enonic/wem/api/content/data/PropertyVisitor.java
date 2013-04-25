@@ -12,22 +12,22 @@ public abstract class PropertyVisitor
         return this;
     }
 
-    public void traverse( final Iterable<Entry> entryIterable )
+    public void traverse( final Iterable<Data> entryIterable )
     {
-        for ( Entry entry : entryIterable )
+        for ( Data data : entryIterable )
         {
-            if ( entry.isProperty() )
+            if ( data.isProperty() )
             {
-                final Property property = entry.toProperty();
+                final Property property = data.toProperty();
                 if ( valueType != null && !valueType.equals( property.getType() ) )
                 {
                     continue;
                 }
                 visit( property );
             }
-            else if ( entry.isDataSet() )
+            else if ( data.isDataSet() )
             {
-                traverse( entry.toDataSet() );
+                traverse( data.toDataSet() );
             }
         }
     }

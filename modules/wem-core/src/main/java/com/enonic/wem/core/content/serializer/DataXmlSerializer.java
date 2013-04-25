@@ -6,32 +6,34 @@ import org.jdom.Element;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.type.BaseValueType;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 
+import static com.enonic.wem.api.content.data.DataSet.newDataSet;
 
-public final class EntryXmlSerializer
+
+public final class DataXmlSerializer
 {
-    public final void generate( final Element parentDataSetEl, final Entry entry )
+    public final void generate( final Element parentDataSetEl, final Data data )
     {
-        if ( entry.isDataSet() )
+        if ( data.isDataSet() )
         {
-            generateDataSet( parentDataSetEl, entry.toDataSet() );
+            generateDataSet( parentDataSetEl, data.toDataSet() );
         }
         else
         {
-            generateProperty( parentDataSetEl, entry.toProperty() );
+            generateProperty( parentDataSetEl, data.toProperty() );
         }
     }
 
     void generateRootDataSet( final Element dataEl, final DataSet dataSet )
     {
-        for ( final Entry entry : dataSet )
+        for ( final Data data : dataSet )
         {
-            generate( dataEl, entry );
+            generate( dataEl, data );
         }
     }
 
@@ -40,9 +42,9 @@ public final class EntryXmlSerializer
         final String name = dataSet.getPath().getLastElement().getName();
         final Element entryEl = new Element( name ).setAttribute( "type", ValueTypes.SET.getName() );
         parentDataEl.addContent( entryEl );
-        for ( final Entry subEntry : dataSet )
+        for ( final Data subData : dataSet )
         {
-            generate( entryEl, subEntry );
+            generate( entryEl, subData );
         }
     }
 
@@ -61,29 +63,29 @@ public final class EntryXmlSerializer
         while ( dataIt.hasNext() )
         {
             final Element dataEl = dataIt.next();
-            parseEntry( parentDataSet, dataEl );
+            parseData( parentDataSet, dataEl );
         }
     }
 
-    final void parseEntry( final DataSet parentDataSet, final Element entryEl )
+    final void parseData( final DataSet parentDataSet, final Element dataEl )
     {
-        final String name = entryEl.getName();
-        final BaseValueType type = (BaseValueType) ValueTypes.parseByName( entryEl.getAttributeValue( "type" ) );
+        final String name = dataEl.getName();
+        final BaseValueType type = (BaseValueType) ValueTypes.parseByName( dataEl.getAttributeValue( "type" ) );
         Preconditions.checkNotNull( type, "type was null" );
 
         if ( type.equals( ValueTypes.SET ) )
         {
-            final DataSet dataSet = DataSet.newDataSet().name( name ).build();
+            final DataSet dataSet = newDataSet().name( name ).build();
             parentDataSet.add( dataSet );
-            final Iterator<Element> dataIt = entryEl.getChildren().iterator();
+            final Iterator<Element> dataIt = dataEl.getChildren().iterator();
             while ( dataIt.hasNext() )
             {
-                parseEntry( dataSet, dataIt.next() );
+                parseData( dataSet, dataIt.next() );
             }
         }
         else
         {
-            parentDataSet.add( type.newProperty( name, entryEl.getText() ) );
+            parentDataSet.add( type.newProperty( name, dataEl.getText() ) );
         }
     }
 }

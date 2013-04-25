@@ -13,7 +13,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.type.ValueTypes;
@@ -106,7 +106,7 @@ public class RelationshipServiceImplTest
             type( QualifiedRelationshipTypeName.DEFAULT ).
             fromContent( ContentId.from( "1" ) ).
             toContent( ContentId.from( "333" ) ).
-            managed( EntryPath.from( "myRelated3" ) ).
+            managed( DataPath.from( "myRelated3" ) ).
             build();
         Mockito.verify( relationshipDao, Mockito.times( 1 ) ).create( Mockito.refEq( createdRelationship ), Mockito.any( Session.class ) );
     }
