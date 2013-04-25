@@ -4,8 +4,8 @@
 ///<reference path='lib/JsonRpcProvider.ts' />
 ///<reference path='lib/RemoteService.ts' />
 
-///<reference path='MessageBus.ts' />
-///<reference path='NotificationManager.ts' />
+///<reference path='lib/MessageBus.ts' />
+///<reference path='lib/NotificationManager.ts' />
 
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
