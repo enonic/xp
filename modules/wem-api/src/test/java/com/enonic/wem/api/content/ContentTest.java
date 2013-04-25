@@ -467,7 +467,7 @@ public class ContentTest
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "Array [myData] expects Data of type [Text]. Data [myData] was of type: DateMidnight", e.getMessage() );
+            assertEquals( "Array [myData] expects Property of type [Text]. Property [myData] was of type: DateMidnight", e.getMessage() );
         }
     }
 

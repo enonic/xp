@@ -122,7 +122,8 @@ public class DataSetTest
         {
             // verify
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "Array [mySet.myData] expects Data of type [Text]. Data [mySet.myData] was of type: HtmlPart", e.getMessage() );
+            assertEquals( "Array [mySet.myData] expects Property of type [Text]. Property [mySet.myData] was of type: HtmlPart",
+                          e.getMessage() );
         }
     }
 
