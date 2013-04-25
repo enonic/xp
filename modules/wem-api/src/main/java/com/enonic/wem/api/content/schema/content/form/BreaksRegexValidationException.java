@@ -1,25 +1,25 @@
 package com.enonic.wem.api.content.schema.content.form;
 
 
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 
 public class BreaksRegexValidationException
     extends Exception
 {
-    private Data data;
+    private Property property;
 
     private String regex;
 
-    public BreaksRegexValidationException( final Data data, final String regex )
+    public BreaksRegexValidationException( final Property property, final String regex )
     {
-        super( buildMessage( data, regex ) );
-        this.data = data;
+        super( buildMessage( property, regex ) );
+        this.property = property;
         this.regex = regex;
     }
 
-    public Data getData()
+    public Property getProperty()
     {
-        return data;
+        return property;
     }
 
     public String getRegex()
@@ -27,8 +27,8 @@ public class BreaksRegexValidationException
         return regex;
     }
 
-    private static String buildMessage( final Data data, final String regex )
+    private static String buildMessage( final Property property, final String regex )
     {
-        return "Data [" + data + "] breaks regexp [" + regex + "]";
+        return "Data [" + property + "] breaks regexp [" + regex + "]";
     }
 }

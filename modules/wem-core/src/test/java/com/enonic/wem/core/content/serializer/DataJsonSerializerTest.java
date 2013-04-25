@@ -7,8 +7,8 @@ import org.junit.Test;
 
 import com.enonic.wem.api.JsonTestHelper;
 import com.enonic.wem.api.content.binary.BinaryId;
-import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.Property;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -33,10 +33,10 @@ public class DataJsonSerializerTest
         dataObj.put( "type", "Text" );
         dataObj.put( "value", "A value" );
 
-        Data data = serializer.parse( dataObj );
-        assertEquals( "myData", data.getName() );
-        assertEquals( DataTypes.TEXT, data.getType() );
-        assertEquals( "A value", data.getObject() );
+        Property property = serializer.parse( dataObj );
+        assertEquals( "myData", property.getName() );
+        assertEquals( PropertyTypes.TEXT, property.getType() );
+        assertEquals( "A value", property.getObject() );
     }
 
     @Test
@@ -48,9 +48,9 @@ public class DataJsonSerializerTest
         dataObj.put( "type", "BinaryId" );
         dataObj.put( "value", "217482f4-b89a-4286-9111-5120d11da6c2" );
 
-        Data data = serializer.parse( dataObj );
-        assertEquals( "myData", data.getName() );
-        assertEquals( DataTypes.BINARY_ID, data.getType() );
-        assertEquals( BinaryId.from( "217482f4-b89a-4286-9111-5120d11da6c2" ), data.getObject() );
+        Property property = serializer.parse( dataObj );
+        assertEquals( "myData", property.getName() );
+        assertEquals( PropertyTypes.BINARY_ID, property.getType() );
+        assertEquals( BinaryId.from( "217482f4-b89a-4286-9111-5120d11da6c2" ), property.getObject() );
     }
 }

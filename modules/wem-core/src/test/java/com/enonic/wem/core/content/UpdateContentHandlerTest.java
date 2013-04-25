@@ -18,9 +18,9 @@ import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 import com.enonic.wem.api.content.editor.ContentEditors;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
@@ -70,12 +70,12 @@ public class UpdateContentHandlerTest
         DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
 
         RootDataSet existingContentData = new RootDataSet();
-        existingContentData.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "aaa" ).build() );
+        existingContentData.add( Property.newData().name( "myData" ).type( PropertyTypes.TEXT ).value( "aaa" ).build() );
 
         Mockito.when( contentDao.select( Mockito.eq( ContentPath.from( "myContent" ) ), Mockito.any( Session.class ) ) ).thenReturn( null );
 
         RootDataSet unchangedContentData = new RootDataSet();
-        unchangedContentData.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "aaa" ).build() );
+        unchangedContentData.add( Property.newData().name( "myData" ).type( PropertyTypes.TEXT ).value( "aaa" ).build() );
 
         UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).
@@ -100,7 +100,7 @@ public class UpdateContentHandlerTest
         DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
 
         RootDataSet existingContentData = new RootDataSet();
-        existingContentData.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "aaa" ).build() );
+        existingContentData.add( Property.newData().name( "myData" ).type( PropertyTypes.TEXT ).value( "aaa" ).build() );
 
         Content existingContent = createContent( existingContentData );
 
@@ -108,7 +108,7 @@ public class UpdateContentHandlerTest
             existingContent );
 
         RootDataSet unchangedContentData = new RootDataSet();
-        unchangedContentData.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "aaa" ).build() );
+        unchangedContentData.add( Property.newData().name( "myData" ).type( PropertyTypes.TEXT ).value( "aaa" ).build() );
 
         UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).
@@ -131,7 +131,7 @@ public class UpdateContentHandlerTest
         DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
 
         RootDataSet existingContentData = new RootDataSet();
-        existingContentData.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "aaa" ).build() );
+        existingContentData.add( Property.newData().name( "myData" ).type( PropertyTypes.TEXT ).value( "aaa" ).build() );
 
         Content existingContent = createContent( existingContentData );
 
@@ -139,7 +139,7 @@ public class UpdateContentHandlerTest
             existingContent );
 
         RootDataSet changedContentData = new RootDataSet();
-        changedContentData.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "bbb" ).build() );
+        changedContentData.add( Property.newData().name( "myData" ).type( PropertyTypes.TEXT ).value( "bbb" ).build() );
 
         UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).

@@ -4,21 +4,21 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.type.BaseDataType;
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.type.BasePropertyType;
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
 import com.enonic.wem.api.content.data.type.JavaType;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 
 /**
  * A generic holder for the value of a Data.
  */
 public class Value
 {
-    private final BaseDataType type;
+    private final BasePropertyType type;
 
     private final Object object;
 
-    private Value( final BaseDataType type, final Object value )
+    private Value( final BasePropertyType type, final Object value )
     {
         Preconditions.checkNotNull( type, "type cannot be null" );
         Preconditions.checkNotNull( value, "value cannot be null" );
@@ -72,7 +72,7 @@ public class Value
         return javaType.isInstance( object );
     }
 
-    public BaseDataType getType()
+    public BasePropertyType getType()
     {
         return type;
     }
@@ -192,7 +192,7 @@ public class Value
         return new Builder();
     }
 
-    public Data newData( final String name )
+    public Property newData( final String name )
     {
         return getType().newData( name, this );
     }
@@ -200,11 +200,11 @@ public class Value
     public static class Builder
         extends AbstractValueBuilder
     {
-        private BaseDataType type;
+        private BasePropertyType type;
 
         private Object value;
 
-        public <T> AbstractValueBuilder type( BaseDataType type )
+        public <T> AbstractValueBuilder type( BasePropertyType type )
         {
             this.type = type;
             return type.newValueBuilder();
@@ -225,7 +225,7 @@ public class Value
             return new Value( this );
         }
 
-        public BaseDataType getType()
+        public BasePropertyType getType()
         {
             return type;
         }
@@ -241,12 +241,12 @@ public class Value
     {
         public Date( org.joda.time.DateMidnight value )
         {
-            super( DataTypes.DATE_MIDNIGHT, value );
+            super( PropertyTypes.DATE_MIDNIGHT, value );
         }
 
         public Date( final String value )
         {
-            super( DataTypes.DATE_MIDNIGHT, JavaType.DATE_MIDNIGHT.convertFrom( value ) );
+            super( PropertyTypes.DATE_MIDNIGHT, JavaType.DATE_MIDNIGHT.convertFrom( value ) );
         }
 
         public static class ValueBuilder
@@ -264,17 +264,17 @@ public class Value
     {
         public WholeNumber( Long value )
         {
-            super( DataTypes.WHOLE_NUMBER, value );
+            super( PropertyTypes.WHOLE_NUMBER, value );
         }
 
         public WholeNumber( Integer value )
         {
-            super( DataTypes.WHOLE_NUMBER, Long.valueOf( value ) );
+            super( PropertyTypes.WHOLE_NUMBER, Long.valueOf( value ) );
         }
 
         public WholeNumber( Short value )
         {
-            super( DataTypes.WHOLE_NUMBER, Long.valueOf( value ) );
+            super( PropertyTypes.WHOLE_NUMBER, Long.valueOf( value ) );
         }
 
         public static class ValueBuilder
@@ -292,7 +292,7 @@ public class Value
     {
         public DecimalNumber( Double value )
         {
-            super( DataTypes.DECIMAL_NUMBER, value );
+            super( PropertyTypes.DECIMAL_NUMBER, value );
         }
 
         public static class ValueBuilder
@@ -310,7 +310,7 @@ public class Value
     {
         public Text( String value )
         {
-            super( DataTypes.TEXT, value );
+            super( PropertyTypes.TEXT, value );
         }
 
         public static class ValueBuilder
@@ -328,7 +328,7 @@ public class Value
     {
         public Xml( String value )
         {
-            super( DataTypes.XML, value );
+            super( PropertyTypes.XML, value );
         }
 
         public static class ValueBuilder
@@ -346,7 +346,7 @@ public class Value
     {
         public HtmlPart( String value )
         {
-            super( DataTypes.HTML_PART, value );
+            super( PropertyTypes.HTML_PART, value );
         }
 
         public static class ValueBuilder
@@ -364,7 +364,7 @@ public class Value
     {
         public GeographicCoordinate( String value )
         {
-            super( DataTypes.GEOGRAPHIC_COORDINATE, value );
+            super( PropertyTypes.GEOGRAPHIC_COORDINATE, value );
         }
 
         public static class ValueBuilder
@@ -382,7 +382,7 @@ public class Value
     {
         public ContentId( com.enonic.wem.api.content.ContentId value )
         {
-            super( DataTypes.CONTENT_ID, value );
+            super( PropertyTypes.CONTENT_ID, value );
         }
 
         public static class ValueBuilder
@@ -400,7 +400,7 @@ public class Value
     {
         public BinaryId( com.enonic.wem.api.content.binary.BinaryId value )
         {
-            super( DataTypes.BINARY_ID, value );
+            super( PropertyTypes.BINARY_ID, value );
         }
 
         public static class ValueBuilder

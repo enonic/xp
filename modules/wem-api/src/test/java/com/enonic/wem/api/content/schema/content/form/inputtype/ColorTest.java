@@ -5,7 +5,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
@@ -34,7 +34,7 @@ public class ColorTest
         rootDataSet.setData( "myColor.green", new Value.WholeNumber( 40 ) );
         rootDataSet.setData( "myColor.blue", new Value.WholeNumber( 40 ) );
 
-        Data myColor = rootDataSet.getData( "myColor" );
+        Property myColor = rootDataSet.getData( "myColor" );
 
         InputTypes.COLOR.checkValidity( myColor );
     }
@@ -48,7 +48,7 @@ public class ColorTest
         rootDataSet.setData( "myColor.green", new Value.WholeNumber( 40l ) );
         rootDataSet.setData( "myColor.blue", new Value.WholeNumber( 40l ) );
 
-        Data myColor = rootDataSet.getData( "myColor" );
+        Property myColor = rootDataSet.getData( "myColor" );
 
         try
         {
@@ -75,7 +75,7 @@ public class ColorTest
         rootDataSet.setData( "myColor.green", new Value.WholeNumber( 40 ) );
         rootDataSet.setData( "myColor.blue", new Value.WholeNumber( 40 ) );
 
-        Data myColor = rootDataSet.getData( "myColor" );
+        Property myColor = rootDataSet.getData( "myColor" );
 
         try
         {

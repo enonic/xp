@@ -3,9 +3,9 @@ package com.enonic.wem.core.content.serializer;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Entry;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 
 public final class EntryJsonSerializer
@@ -38,10 +38,10 @@ public final class EntryJsonSerializer
 
     public final JsonNode serialize( final Entry entry )
     {
-        if ( entry instanceof Data )
+        if ( entry instanceof Property )
         {
-            final Data data = (Data) entry;
-            return dataSerializer.serialize( data );
+            final Property property = (Property) entry;
+            return dataSerializer.serialize( property );
         }
         else if ( entry instanceof DataSet )
         {

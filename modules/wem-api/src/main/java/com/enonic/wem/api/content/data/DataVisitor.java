@@ -1,14 +1,14 @@
 package com.enonic.wem.api.content.data;
 
-import com.enonic.wem.api.content.data.type.DataType;
+import com.enonic.wem.api.content.data.type.PropertyType;
 
 public abstract class DataVisitor
 {
-    private DataType dataType;
+    private PropertyType propertyType;
 
-    public DataVisitor restrictType( DataType dataType )
+    public DataVisitor restrictType( PropertyType propertyType )
     {
-        this.dataType = dataType;
+        this.propertyType = propertyType;
         return this;
     }
 
@@ -18,12 +18,12 @@ public abstract class DataVisitor
         {
             if ( entry.isData() )
             {
-                final Data data = entry.toData();
-                if ( dataType != null && !dataType.equals( data.getType() ) )
+                final Property property = entry.toData();
+                if ( propertyType != null && !propertyType.equals( property.getType() ) )
                 {
                     continue;
                 }
-                visit( data );
+                visit( property );
             }
             else if ( entry.isDataSet() )
             {
@@ -32,5 +32,5 @@ public abstract class DataVisitor
         }
     }
 
-    public abstract void visit( Data data );
+    public abstract void visit( Property property );
 }

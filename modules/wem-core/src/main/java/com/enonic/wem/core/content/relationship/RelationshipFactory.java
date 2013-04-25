@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
@@ -32,7 +32,7 @@ class RelationshipFactory
         this.fromContent = builder.fromContent;
     }
 
-    Relationship create( final Data toContent, final QualifiedRelationshipTypeName type )
+    Relationship create( final Property toContent, final QualifiedRelationshipTypeName type )
     {
         final Relationship.Builder builder = newRelationship();
         builder.creator( creator );

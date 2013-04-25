@@ -5,27 +5,27 @@ import org.joda.time.DateMidnight;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.type.BaseDataType;
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.type.BasePropertyType;
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.data.type.JavaType;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
-public class Data
+public class Property
     extends Entry
 {
     private Value value;
 
-    Data( final String name, final Value value )
+    Property( final String name, final Value value )
     {
         super( name );
         Preconditions.checkNotNull( value, "value cannot be null" );
         this.value = value;
     }
 
-    Data( final AbstractBaseBuilder builder )
+    Property( final AbstractBaseBuilder builder )
     {
         super( builder.name );
         if ( builder.value == null )
@@ -48,12 +48,12 @@ public class Data
         }
     }
 
-    public BaseDataType getType()
+    public BasePropertyType getType()
     {
         return value.getType();
     }
 
-    public void setValue( final Object value, final BaseDataType dataType )
+    public void setValue( final Object value, final BasePropertyType dataType )
     {
         Preconditions.checkNotNull( value, "A Data cannot have a null value" );
         Preconditions.checkArgument( !( value instanceof DataSet ), "A Data cannot have a DataSet as value" );
@@ -214,9 +214,9 @@ public class Data
             return false;
         }
 
-        final Data data = (Data) o;
+        final Property property = (Property) o;
 
-        return Objects.equal( getName(), data.getName() ) && Objects.equal( value, data.value );
+        return Objects.equal( getName(), property.getName() ) && Objects.equal( value, property.value );
     }
 
     @Override
@@ -270,7 +270,7 @@ public class Data
             this.builder = builder;
         }
 
-        public ValueBuilder type( BaseDataType value )
+        public ValueBuilder type( BasePropertyType value )
         {
             builder.type( value );
             return new ValueBuilder( builder );
@@ -292,25 +292,25 @@ public class Data
             return this;
         }
 
-        public Data build()
+        public Property build()
         {
-            return new Data( builder );
+            return new Property( builder );
         }
     }
 
     public static class Builder
         extends AbstractNameBuilder<Builder>
     {
-        public Builder type( BaseDataType value )
+        public Builder type( BasePropertyType value )
         {
             super.setType( value );
             return this;
         }
 
         @Override
-        public Data build()
+        public Property build()
         {
-            return new Data( this );
+            return new Property( this );
         }
 
         public Builder value( Object value )
@@ -350,7 +350,7 @@ public class Data
             return getThis();
         }
 
-        public abstract Data build();
+        public abstract Property build();
     }
 
     public abstract static class AbstractBaseBuilder
@@ -370,7 +370,7 @@ public class Data
             this.name = value;
         }
 
-        void setType( final BaseDataType value )
+        void setType( final BasePropertyType value )
         {
             this.valueBuilder.type( value );
         }
@@ -387,7 +387,7 @@ public class Data
     }
 
     public final static class ContentId
-        extends Data
+        extends Property
     {
         public ContentId( final String name, final com.enonic.wem.api.content.ContentId value )
         {
@@ -415,7 +415,7 @@ public class Data
         {
             public Builder()
             {
-                setType( DataTypes.CONTENT_ID );
+                setType( PropertyTypes.CONTENT_ID );
             }
 
             public Builder value( final com.enonic.wem.api.content.ContentId value )
@@ -439,7 +439,7 @@ public class Data
     }
 
     public final static class BinaryId
-        extends Data
+        extends Property
     {
         public BinaryId( final String name, final com.enonic.wem.api.content.binary.BinaryId value )
         {
@@ -467,7 +467,7 @@ public class Data
         {
             public Builder()
             {
-                setType( DataTypes.BINARY_ID );
+                setType( PropertyTypes.BINARY_ID );
             }
 
             public Builder value( final com.enonic.wem.api.content.binary.BinaryId value )
@@ -492,7 +492,7 @@ public class Data
 
 
     public final static class Date
-        extends Data
+        extends Property
     {
         public Date( final String name, final DateMidnight value )
         {
@@ -524,7 +524,7 @@ public class Data
         {
             public DateBuilder()
             {
-                setType( DataTypes.DATE_MIDNIGHT );
+                setType( PropertyTypes.DATE_MIDNIGHT );
             }
 
             public DateBuilder value( final DateMidnight value )
@@ -556,7 +556,7 @@ public class Data
         {
             private DateValueBuilder( final String name )
             {
-                setType( DataTypes.DATE_MIDNIGHT );
+                setType( PropertyTypes.DATE_MIDNIGHT );
                 setName( name );
             }
 
@@ -575,7 +575,7 @@ public class Data
     }
 
     public final static class DecimalNumber
-        extends Data
+        extends Property
     {
         public DecimalNumber( final String name, final Double value )
         {
@@ -602,12 +602,12 @@ public class Data
         {
             private DecimalNumberBuilder()
             {
-                setType( DataTypes.DECIMAL_NUMBER );
+                setType( PropertyTypes.DECIMAL_NUMBER );
             }
 
             public DecimalNumberBuilder( final String name )
             {
-                setType( DataTypes.DECIMAL_NUMBER );
+                setType( PropertyTypes.DECIMAL_NUMBER );
                 setName( name );
             }
 
@@ -634,7 +634,7 @@ public class Data
         {
             private DecimalNumberValueBuilder( final String name )
             {
-                setType( DataTypes.DECIMAL_NUMBER );
+                setType( PropertyTypes.DECIMAL_NUMBER );
                 setName( name );
             }
 
@@ -647,7 +647,7 @@ public class Data
     }
 
     public static final class HtmlPart
-        extends Data
+        extends Property
     {
         public HtmlPart( final String name, final String value )
         {
@@ -674,7 +674,7 @@ public class Data
         {
             public HtmlPartBuilder()
             {
-                setType( DataTypes.HTML_PART );
+                setType( PropertyTypes.HTML_PART );
             }
 
             public HtmlPartBuilder value( final String value )
@@ -684,7 +684,7 @@ public class Data
             }
 
             @Override
-            public Data build()
+            public Property build()
             {
                 return new HtmlPart( this );
             }
@@ -700,7 +700,7 @@ public class Data
         {
             private HtmlPartValueBuilder( final String name )
             {
-                setType( DataTypes.HTML_PART );
+                setType( PropertyTypes.HTML_PART );
                 setName( name );
             }
 
@@ -713,7 +713,7 @@ public class Data
     }
 
     public final static class Text
-        extends Data
+        extends Property
     {
         public Text( final String name, final String value )
         {
@@ -740,7 +740,7 @@ public class Data
         {
             public TextBuilder()
             {
-                setType( DataTypes.TEXT );
+                setType( PropertyTypes.TEXT );
             }
 
             public TextBuilder value( final String value )
@@ -750,7 +750,7 @@ public class Data
             }
 
             @Override
-            public Data build()
+            public Property build()
             {
                 return new Text( this );
             }
@@ -766,7 +766,7 @@ public class Data
         {
             private TextValueBuilder( final String name )
             {
-                setType( DataTypes.TEXT );
+                setType( PropertyTypes.TEXT );
                 setName( name );
             }
 
@@ -779,7 +779,7 @@ public class Data
     }
 
     public final static class WholeNumber
-        extends Data
+        extends Property
     {
         public WholeNumber( final String name, final Long value )
         {
@@ -806,7 +806,7 @@ public class Data
         {
             private WholeNumberBuilder()
             {
-                setType( DataTypes.WHOLE_NUMBER );
+                setType( PropertyTypes.WHOLE_NUMBER );
             }
 
             public WholeNumberBuilder value( final Long value )
@@ -816,7 +816,7 @@ public class Data
             }
 
             @Override
-            public Data build()
+            public Property build()
             {
                 return new WholeNumber( this );
             }
@@ -832,7 +832,7 @@ public class Data
         {
             private WholeNumberValueBuilder( final String name )
             {
-                setType( DataTypes.WHOLE_NUMBER );
+                setType( PropertyTypes.WHOLE_NUMBER );
                 setName( name );
             }
 
@@ -845,7 +845,7 @@ public class Data
     }
 
     public static final class Xml
-        extends Data
+        extends Property
     {
         public Xml( final String name, final String value )
         {
@@ -872,7 +872,7 @@ public class Data
         {
             public XmlBuilder()
             {
-                setType( DataTypes.XML );
+                setType( PropertyTypes.XML );
             }
 
             public XmlBuilder value( final String value )
@@ -882,7 +882,7 @@ public class Data
             }
 
             @Override
-            public Data build()
+            public Property build()
             {
                 return new Xml( this );
             }
@@ -899,7 +899,7 @@ public class Data
         {
             private XmlValueBuilder( final String name )
             {
-                setType( DataTypes.XML );
+                setType( PropertyTypes.XML );
                 setName( name );
             }
 

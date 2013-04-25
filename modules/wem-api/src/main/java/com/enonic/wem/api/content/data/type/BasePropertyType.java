@@ -3,12 +3,12 @@ package com.enonic.wem.api.content.data.type;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
-public abstract class BaseDataType
-    implements DataType
+public abstract class BasePropertyType
+    implements PropertyType
 {
     private final int key;
 
@@ -16,7 +16,7 @@ public abstract class BaseDataType
 
     private JavaType.BaseType javaType;
 
-    public BaseDataType( int key, JavaType.BaseType javaType )
+    public BasePropertyType( int key, JavaType.BaseType javaType )
     {
         this.key = key;
         this.name = this.getClass().getSimpleName();
@@ -42,17 +42,17 @@ public abstract class BaseDataType
     }
 
     /**
-     * Checks by default if given data's value is of correct Java class.
+     * Checks by default if given property's value is of correct Java class.
      * Can be overridden by concrete classes to do extensive validation.
      *
-     * @param data the data to check the validity of
+     * @param property the property to check the validity of
      * @throws InvalidValueTypeException
      */
     @Override
-    public void checkValidity( final Data data )
+    public void checkValidity( final Property property )
         throws InvalidValueTypeException, InvalidValueException
     {
-        checkValueIsOfExpectedJavaClass( data );
+        checkValueIsOfExpectedJavaClass( property );
     }
 
 
@@ -63,12 +63,12 @@ public abstract class BaseDataType
         {
             return true;
         }
-        if ( !( o instanceof BaseDataType ) )
+        if ( !( o instanceof BasePropertyType ) )
         {
             return false;
         }
 
-        final BaseDataType that = (BaseDataType) o;
+        final BasePropertyType that = (BasePropertyType) o;
         return key == that.key;
     }
 
@@ -96,12 +96,12 @@ public abstract class BaseDataType
         return javaType.isInstance( value.getObject() );
     }
 
-    void checkValueIsOfExpectedJavaClass( Data data )
+    void checkValueIsOfExpectedJavaClass( Property property )
         throws InvalidValueTypeException
     {
-        if ( !isValueOfExpectedJavaClass( ( data.getObject() ) ) )
+        if ( !isValueOfExpectedJavaClass( ( property.getObject() ) ) )
         {
-            throw new InvalidValueTypeException( javaType, data );
+            throw new InvalidValueTypeException( javaType, property );
         }
     }
 
@@ -109,9 +109,9 @@ public abstract class BaseDataType
 
     public abstract Value.AbstractValueBuilder newValueBuilder();
 
-    public abstract Data newData( final String name, final Value value );
+    public abstract Property newData( final String name, final Value value );
 
-    public Data newData( final String name, final Object valueObj )
+    public Property newData( final String name, final Object valueObj )
     {
         final Value value = newValue( valueObj );
         return newData( name, value );

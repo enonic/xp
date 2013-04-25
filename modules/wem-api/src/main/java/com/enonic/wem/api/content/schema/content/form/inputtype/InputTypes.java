@@ -5,8 +5,8 @@ import java.util.LinkedHashMap;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.type.DataType;
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.type.PropertyType;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 
 public final class InputTypes
 {
@@ -64,11 +64,11 @@ public final class InputTypes
         register( WHOLE_NUMBER );
         register( XML );
 
-        registerDefaultInputType( DataTypes.DATE_MIDNIGHT, DATE );
-        registerDefaultInputType( DataTypes.TEXT, TEXT_AREA );
-        registerDefaultInputType( DataTypes.XML, XML );
-        registerDefaultInputType( DataTypes.WHOLE_NUMBER, WHOLE_NUMBER );
-        registerDefaultInputType( DataTypes.DECIMAL_NUMBER, DECIMAL_NUMBER );
+        registerDefaultInputType( PropertyTypes.DATE_MIDNIGHT, DATE );
+        registerDefaultInputType( PropertyTypes.TEXT, TEXT_AREA );
+        registerDefaultInputType( PropertyTypes.XML, XML );
+        registerDefaultInputType( PropertyTypes.WHOLE_NUMBER, WHOLE_NUMBER );
+        registerDefaultInputType( PropertyTypes.DECIMAL_NUMBER, DECIMAL_NUMBER );
     }
 
     private static void register( BaseInputType inputType )
@@ -77,10 +77,10 @@ public final class InputTypes
         Preconditions.checkState( previous == null, "InputType already registered: " + inputType.getName() );
     }
 
-    private static void registerDefaultInputType( DataType dataType, BaseInputType inputType )
+    private static void registerDefaultInputType( PropertyType propertyType, BaseInputType inputType )
     {
-        Object previousDataType = inputTypeByDataTypeKey.put( dataType.getKey(), inputType );
-        Preconditions.checkState( previousDataType == null, "Default InputType already registered for DataType: " + dataType );
+        Object previousDataType = inputTypeByDataTypeKey.put( propertyType.getKey(), inputType );
+        Preconditions.checkState( previousDataType == null, "Default InputType already registered for PropertyType: " + propertyType );
     }
 
     public static int size()

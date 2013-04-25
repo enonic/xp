@@ -14,7 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.data.type.BaseDataType;
+import com.enonic.wem.api.content.data.type.BasePropertyType;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 
 public class DataSet
@@ -34,9 +34,9 @@ public class DataSet
     {
         super( builder.name );
 
-        for ( Data data : builder.dataList )
+        for ( Property property : builder.propertyList )
         {
-            add( data );
+            add( property );
         }
     }
 
@@ -73,8 +73,8 @@ public class DataSet
         }
         else
         {
-            final Data data = value.newData( path.getFirstElement().getName() );
-            doAdd( data );
+            final Property property = value.newData( path.getFirstElement().getName() );
+            doAdd( property );
         }
     }
 
@@ -133,10 +133,10 @@ public class DataSet
 
         if ( exEntry == null )
         {
-            final Data newData = value.newData( entryId.getName() );
-            newData.setParent( this );
-            registerArray( newData );
-            entryById.put( entryId, newData );
+            final Property newProperty = value.newData( entryId.getName() );
+            newProperty.setParent( this );
+            registerArray( newProperty );
+            entryById.put( entryId, newProperty );
         }
         else
         {
@@ -168,8 +168,8 @@ public class DataSet
         {
             if ( newEntry.isData() )
             {
-                final Data newData = newEntry.toData();
-                array = DataArray.newDataArray().name( newEntry.getName() ).dataType( newData.getType() ).parent( this ).build();
+                final Property newProperty = newEntry.toData();
+                array = DataArray.newDataArray().name( newEntry.getName() ).dataType( newProperty.getType() ).parent( this ).build();
             }
             else
             {
@@ -256,12 +256,12 @@ public class DataSet
         return array.asList();
     }
 
-    public final Data getData( final String path )
+    public final Property getData( final String path )
     {
         return getData( EntryPath.from( path ) );
     }
 
-    public final Data getData( final EntryPath path )
+    public final Property getData( final EntryPath path )
     {
         Entry entry = getEntry( path );
         if ( entry == null )
@@ -272,7 +272,7 @@ public class DataSet
         return entry.toData();
     }
 
-    public final Data getData( final String name, final int arrayIndex )
+    public final Property getData( final String name, final int arrayIndex )
     {
         EntryPath.Element.checkName( name );
 
@@ -293,14 +293,14 @@ public class DataSet
         }
 
         Preconditions.checkArgument( entry.isData(), "Entry at path[%s] is not a Data: %s", path, entry.getClass().getSimpleName() );
-        final Data data = entry.toData();
+        final Property property = entry.toData();
         if ( path.getLastElement().hasIndex() )
         {
-            return data.getValue( path.getLastElement().getIndex() );
+            return property.getValue( path.getLastElement().getIndex() );
         }
         else
         {
-            return data.getValue( 0 );
+            return property.getValue( 0 );
         }
     }
 
@@ -479,7 +479,7 @@ public class DataSet
     {
         private String name;
 
-        private List<Data> dataList = new ArrayList<>();
+        private List<Property> propertyList = new ArrayList<>();
 
         public Builder name( final String value )
         {
@@ -487,9 +487,9 @@ public class DataSet
             return this;
         }
 
-        public Builder set( final String name, final Object value, final BaseDataType dataType )
+        public Builder set( final String name, final Object value, final BasePropertyType dataType )
         {
-            dataList.add( dataType.newData( name, value ) );
+            propertyList.add( dataType.newData( name, value ) );
             return this;
         }
 

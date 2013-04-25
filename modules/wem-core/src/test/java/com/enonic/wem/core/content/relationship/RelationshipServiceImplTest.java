@@ -13,10 +13,10 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.ContentTypes;
@@ -78,14 +78,14 @@ public class RelationshipServiceImplTest
 
         // setup: content before editing
         RootDataSet dataBefore = new RootDataSet();
-        dataBefore.add( Data.newData().name( "myRelated1" ).type( DataTypes.CONTENT_ID ).value( ContentId.from( "111" ) ).build() );
-        dataBefore.add( Data.newData().name( "myRelated2" ).type( DataTypes.CONTENT_ID ).value( ContentId.from( "222" ) ).build() );
+        dataBefore.add( Property.newData().name( "myRelated1" ).type( PropertyTypes.CONTENT_ID ).value( ContentId.from( "111" ) ).build() );
+        dataBefore.add( Property.newData().name( "myRelated2" ).type( PropertyTypes.CONTENT_ID ).value( ContentId.from( "222" ) ).build() );
 
         // setup: content after editing
         RootDataSet dataAfter = new RootDataSet();
-        dataAfter.add( Data.newData().name( "myRelated1" ).type( DataTypes.CONTENT_ID ).value( ContentId.from( "111" ) ).build() );
-        dataAfter.add( Data.newData().name( "myRelated2" ).type( DataTypes.CONTENT_ID ).value( ContentId.from( "222" ) ).build() );
-        dataAfter.add( Data.newData().name( "myRelated3" ).type( DataTypes.CONTENT_ID ).value( ContentId.from( "333" ) ).build() );
+        dataAfter.add( Property.newData().name( "myRelated1" ).type( PropertyTypes.CONTENT_ID ).value( ContentId.from( "111" ) ).build() );
+        dataAfter.add( Property.newData().name( "myRelated2" ).type( PropertyTypes.CONTENT_ID ).value( ContentId.from( "222" ) ).build() );
+        dataAfter.add( Property.newData().name( "myRelated3" ).type( PropertyTypes.CONTENT_ID ).value( ContentId.from( "333" ) ).build() );
 
         // exercise
         SyncRelationshipsCommand command = new SyncRelationshipsCommand();

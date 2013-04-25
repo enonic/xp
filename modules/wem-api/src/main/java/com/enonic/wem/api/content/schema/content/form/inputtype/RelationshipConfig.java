@@ -2,7 +2,7 @@ package com.enonic.wem.api.content.schema.content.form.inputtype;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
@@ -23,7 +23,7 @@ public class RelationshipConfig
     }
 
     @Override
-    public void checkValidity( final Data data )
+    public void checkValidity( final Property property )
         throws InvalidValueException
     {
 

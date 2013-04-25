@@ -1,14 +1,14 @@
 package com.enonic.wem.api.content.schema.content.validator;
 
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.schema.content.form.Input;
 
 public final class MissingRequiredValueValidationError
     extends DataValidationError
 {
-    public MissingRequiredValueValidationError( final Input input, final Data data )
+    public MissingRequiredValueValidationError( final Input input, final Property property )
     {
         super( input.getPath(), "Missing required value for input [{0}] of type [{1}]: {2}", input.getPath(), input.getInputType(),
-               data.getObject() );
+               property.getObject() );
     }
 }

@@ -22,9 +22,9 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.UpdateContentException;
-import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataVisitor;
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.Property;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
@@ -82,9 +82,9 @@ public class UpdateContentHandler
                 new DataVisitor()
                 {
                     @Override
-                    public void visit( final Data data )
+                    public void visit( final Property property )
                     {
-                        final Content content = contentDao.select( data.getContentId(), session );
+                        final Content content = contentDao.select( property.getContentId(), session );
                         if ( content != null )
                         {
                             if ( content.isTemporary() )
@@ -97,7 +97,7 @@ public class UpdateContentHandler
                             }
                         }
                     }
-                }.restrictType( DataTypes.CONTENT_ID ).traverse( edited.getRootDataSet() );
+                }.restrictType( PropertyTypes.CONTENT_ID ).traverse( edited.getRootDataSet() );
 
                 relationshipService.syncRelationships( new SyncRelationshipsCommand().
                     client( context.getClient() ).
@@ -172,9 +172,9 @@ public class UpdateContentHandler
         new DataVisitor()
         {
             @Override
-            public void visit( final Data data )
+            public void visit( final Property property )
             {
-                final Content content = contentDao.select( data.getContentId(), session );
+                final Content content = contentDao.select( property.getContentId(), session );
                 if ( content != null )
                 {
                     if ( content.isEmbedded() )
@@ -183,7 +183,7 @@ public class UpdateContentHandler
                     }
                 }
             }
-        }.restrictType( DataTypes.CONTENT_ID ).traverse( persistedContent.getRootDataSet() );
+        }.restrictType( PropertyTypes.CONTENT_ID ).traverse( persistedContent.getRootDataSet() );
         return embeddedContent;
     }
 

@@ -10,10 +10,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.Property;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
@@ -153,8 +153,8 @@ public class RootDataSetParserTest
         assertEquals( 60l, parsedContentData.getData( EntryPath.from( "myColor.green" ) ).getObject() );
         assertEquals( 80l, parsedContentData.getData( EntryPath.from( "myColor.blue" ) ).getObject() );
 
-        Data myColor = parsedContentData.getData( EntryPath.from( "myColor" ) );
-        Data myColorBlue = myColor.toDataSet().getData( "blue" );
+        Property myColor = parsedContentData.getData( EntryPath.from( "myColor" ) );
+        Property myColorBlue = myColor.toDataSet().getData( "blue" );
         assertEquals( 80l, myColorBlue.getObject() );
     }
 
@@ -209,7 +209,7 @@ public class RootDataSetParserTest
         // verify
 
         assertEquals( "40.446195,-79.948862", parsedContentData.getData( "myGeoLocation" ).getString() );
-        assertEquals( DataTypes.GEOGRAPHIC_COORDINATE, parsedContentData.getData( "myGeoLocation" ).getType() );
+        assertEquals( PropertyTypes.GEOGRAPHIC_COORDINATE, parsedContentData.getData( "myGeoLocation" ).getType() );
     }
 
     @Test

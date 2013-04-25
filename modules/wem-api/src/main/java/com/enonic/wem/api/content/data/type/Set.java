@@ -1,11 +1,11 @@
 package com.enonic.wem.api.content.data.type;
 
 
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class Set
-    extends BaseDataType
+    extends BasePropertyType
 {
     Set( int key )
     {
@@ -25,7 +25,7 @@ public class Set
     }
 
     @Override
-    public Data newData( final String name, final Value value )
+    public Property newData( final String name, final Value value )
     {
         throw new UnsupportedOperationException();
     }

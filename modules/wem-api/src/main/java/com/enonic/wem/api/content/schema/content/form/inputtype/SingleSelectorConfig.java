@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
 public class SingleSelectorConfig
@@ -29,13 +29,13 @@ public class SingleSelectorConfig
     }
 
     @Override
-    public void checkValidity( final Data data )
+    public void checkValidity( final Property property )
         throws InvalidValueException
     {
-        final String valueAsString = data.getString();
+        final String valueAsString = property.getString();
         if ( !optionsAsMap.containsKey( valueAsString ) )
         {
-            throw new InvalidValueException( data,
+            throw new InvalidValueException( property,
                                              "Value can only be of one the following strings: " + optionValuesAsCommaSeparatedString() );
         }
     }

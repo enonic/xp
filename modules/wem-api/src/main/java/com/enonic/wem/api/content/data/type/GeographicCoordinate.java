@@ -3,12 +3,12 @@ package com.enonic.wem.api.content.data.type;
 
 import java.util.StringTokenizer;
 
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
 public class GeographicCoordinate
-    extends BaseDataType
+    extends BasePropertyType
 {
     private static final double LATITUDE_RANGE_START = -90.0;
 
@@ -36,28 +36,30 @@ public class GeographicCoordinate
     }
 
     @Override
-    public Data newData( final String name, final Value value )
+    public Property newData( final String name, final Value value )
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void checkValidity( final Data data )
+    public void checkValidity( final Property property )
         throws InvalidValueTypeException, InvalidValueException
     {
-        checkValueIsOfExpectedJavaClass( data );
+        checkValueIsOfExpectedJavaClass( property );
 
-        final Value value = data.getValue();
+        final Value value = property.getValue();
 
         final ValueHolder valueHolder = parse( value.getString() );
         if ( valueHolder.latitude < LATITUDE_RANGE_START || valueHolder.latitude > LATITUDE_RANGE_END )
         {
-            throw new InvalidValueException( data, "Value not within range from " + LATITUDE_RANGE_START + " to " + LATITUDE_RANGE_END );
+            throw new InvalidValueException( property,
+                                             "Value not within range from " + LATITUDE_RANGE_START + " to " + LATITUDE_RANGE_END );
         }
 
         if ( valueHolder.longitude < LONGITUDE_RANGE_START || valueHolder.longitude > LONGITUDE_RANGE_END )
         {
-            throw new InvalidValueException( data, "Value not within range from " + LONGITUDE_RANGE_START + " to " + LONGITUDE_RANGE_END );
+            throw new InvalidValueException( property,
+                                             "Value not within range from " + LONGITUDE_RANGE_START + " to " + LONGITUDE_RANGE_END );
         }
     }
 

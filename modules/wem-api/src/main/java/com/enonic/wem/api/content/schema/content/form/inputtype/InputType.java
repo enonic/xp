@@ -1,7 +1,7 @@
 package com.enonic.wem.api.content.schema.content.form.inputtype;
 
 
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
 
@@ -22,7 +22,7 @@ public interface InputType
 
     AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlGenerator();
 
-    void checkBreaksRequiredContract( Data data )
+    void checkBreaksRequiredContract( Property property )
         throws BreaksRequiredContractException;
 
     Value newValue( String value );

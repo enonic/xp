@@ -12,7 +12,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Entry;
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
@@ -47,7 +47,7 @@ public class DataSetJsonSerializer
 
         dataSetObj.put( ENTRY_NAME, name );
         dataSetObj.put( ENTRY_PATH, path );
-        dataSetObj.put( ENTRY_TYPE, DataTypes.SET.getName() );
+        dataSetObj.put( ENTRY_TYPE, PropertyTypes.SET.getName() );
         dataSetObj.put( ENTRY_VALUE, serializeEntries( dataSet ) );
         return dataSetObj;
     }

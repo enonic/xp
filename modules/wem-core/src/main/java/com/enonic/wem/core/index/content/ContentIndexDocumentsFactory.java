@@ -7,9 +7,9 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Entry;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexType;
@@ -86,9 +86,9 @@ public class ContentIndexDocumentsFactory
 
             if ( entry.isData() )
             {
-                final Data data = entry.toData();
+                final Property property = entry.toData();
 
-                final Value dataValue = data.getValue();
+                final Value dataValue = property.getValue();
                 final Object value = dataValue.getObject();
 
                 final String fieldName = ContentIndexField.CONTENT_DATA_PREFIX + ContentIndexField.FIELD_SEPARATOR + getEntryPath( entry );

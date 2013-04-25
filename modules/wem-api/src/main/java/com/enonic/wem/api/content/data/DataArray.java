@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.type.BaseDataType;
+import com.enonic.wem.api.content.data.type.BasePropertyType;
 
 
 public class DataArray
     extends EntryArray
 {
-    private final BaseDataType type;
+    private final BasePropertyType type;
 
     private final ArrayList<Value> valueList = new ArrayList<Value>();
 
@@ -22,7 +22,7 @@ public class DataArray
         this.type = builder.dataType;
     }
 
-    public BaseDataType getType()
+    public BasePropertyType getType()
     {
         return type;
     }
@@ -55,17 +55,17 @@ public class DataArray
 
     void checkType( Entry entry )
     {
-        if ( !( entry instanceof Data ) )
+        if ( !( entry instanceof Property ) )
         {
             throw new IllegalArgumentException(
                 "Unexpected type of entry for Data array at path [" + getPath() + "]: " + entry.getClass().getSimpleName() );
         }
-        final Data data = (Data) entry;
-        if ( !getType().equals( data.getType() ) )
+        final Property property = (Property) entry;
+        if ( !getType().equals( property.getType() ) )
         {
             throw new IllegalArgumentException(
                 "Array [" + getPath() + "] expects Data of type [" + getType() + "]. Data [" + entry.getPath() + "] was of type: " +
-                    data.getType() );
+                    property.getType() );
         }
     }
 
@@ -76,13 +76,13 @@ public class DataArray
 
     public static class Builder
     {
-        private BaseDataType dataType;
+        private BasePropertyType dataType;
 
         private String name;
 
         private DataSet parent;
 
-        public Builder dataType( BaseDataType value )
+        public Builder dataType( BasePropertyType value )
         {
             this.dataType = value;
             return this;

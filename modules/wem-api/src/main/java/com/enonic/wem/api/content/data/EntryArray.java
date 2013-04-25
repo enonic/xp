@@ -86,7 +86,7 @@ public abstract class EntryArray
         return list.get( i );
     }
 
-    public Data getData( final int i )
+    public Property getData( final int i )
     {
         Entry entry = getEntry( i );
         if ( entry == null )

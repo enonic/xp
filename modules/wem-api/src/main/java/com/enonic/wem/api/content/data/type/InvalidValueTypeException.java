@@ -1,18 +1,19 @@
 package com.enonic.wem.api.content.data.type;
 
 
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 
 public class InvalidValueTypeException
     extends Exception
 {
-    public InvalidValueTypeException( final JavaType.BaseType javaType, final Data data )
+    public InvalidValueTypeException( final JavaType.BaseType javaType, final Property property )
     {
-        super( buildMessage( javaType, data ) );
+        super( buildMessage( javaType, property ) );
     }
 
-    private static String buildMessage( final JavaType.BaseType javaType, final Data data )
+    private static String buildMessage( final JavaType.BaseType javaType, final Property property )
     {
-        return "Invalid value type at path [" + data.getPath() + "] " + data.getObject().getClass() + ", expected " + javaType.getType();
+        return "Invalid value type at path [" + property.getPath() + "] " + property.getObject().getClass() + ", expected " +
+            javaType.getType();
     }
 }

@@ -1,14 +1,13 @@
 package com.enonic.wem.api.content.schema.content.form.inputtype;
 
 
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
+import com.enonic.wem.api.content.data.type.PropertyTool;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
-
-import static com.enonic.wem.api.content.data.type.DataTool.checkDataType;
 
 public class Address
     extends BaseInputType
@@ -18,18 +17,18 @@ public class Address
     }
 
     @Override
-    public void checkValidity( final Data data )
+    public void checkValidity( final Property property )
         throws InvalidValueTypeException, InvalidValueException
     {
-        checkDataType( data, "street", DataTypes.TEXT );
-        checkDataType( data, "postalCode", DataTypes.TEXT );
-        checkDataType( data, "postalPlace", DataTypes.TEXT );
-        checkDataType( data, "region", DataTypes.TEXT );
-        checkDataType( data, "country", DataTypes.TEXT );
+        PropertyTool.checkPropertyType( property, "street", PropertyTypes.TEXT );
+        PropertyTool.checkPropertyType( property, "postalCode", PropertyTypes.TEXT );
+        PropertyTool.checkPropertyType( property, "postalPlace", PropertyTypes.TEXT );
+        PropertyTool.checkPropertyType( property, "region", PropertyTypes.TEXT );
+        PropertyTool.checkPropertyType( property, "country", PropertyTypes.TEXT );
     }
 
     @Override
-    public void checkBreaksRequiredContract( final Data data )
+    public void checkBreaksRequiredContract( final Property property )
         throws BreaksRequiredContractException
     {
 

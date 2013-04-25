@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.schema.content.form;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.type.JavaType;
 
 public class ValidationRegex
@@ -19,18 +19,18 @@ public class ValidationRegex
         this.string = pattern;
     }
 
-    public void checkValidity( final Data data )
+    public void checkValidity( final Property property )
         throws BreaksRegexValidationException
     {
-        if ( data.getType().getJavaType() != JavaType.STRING )
+        if ( property.getType().getJavaType() != JavaType.STRING )
         {
             return;
         }
 
-        final Matcher matcher = pattern.matcher( data.getString() );
+        final Matcher matcher = pattern.matcher( property.getString() );
         if ( !matcher.matches() )
         {
-            throw new BreaksRegexValidationException( data, pattern.toString() );
+            throw new BreaksRegexValidationException( property, pattern.toString() );
         }
     }
 

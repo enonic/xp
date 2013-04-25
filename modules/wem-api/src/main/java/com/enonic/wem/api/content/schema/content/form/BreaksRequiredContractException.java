@@ -1,18 +1,18 @@
 package com.enonic.wem.api.content.schema.content.form;
 
 
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputType;
 
 public class BreaksRequiredContractException
     extends RuntimeException
 {
-    private Data data;
+    private Property property;
 
-    public BreaksRequiredContractException( final Data data, final InputType inputType )
+    public BreaksRequiredContractException( final Property property, final InputType inputType )
     {
-        super( buildMessage( data, inputType ) );
-        this.data = data;
+        super( buildMessage( property, inputType ) );
+        this.property = property;
     }
 
     public BreaksRequiredContractException( final Input missingInput )
@@ -25,15 +25,15 @@ public class BreaksRequiredContractException
         super( buildMessage( missingFormItemSet ) );
     }
 
-    public Data getData()
+    public Property getProperty()
     {
-        return data;
+        return property;
     }
 
-    private static String buildMessage( final Data data, final InputType inputType )
+    private static String buildMessage( final Property property, final InputType inputType )
     {
-        return "Required contract for Data [" + data.getPath() + "] is broken of type " + inputType + " , value was: " +
-            data.getObject();
+        return "Required contract for Data [" + property.getPath() + "] is broken of type " + inputType + " , value was: " +
+            property.getObject();
     }
 
     private static String buildMessage( final Input input )

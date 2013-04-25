@@ -13,11 +13,11 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataVisitor;
 import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
 import com.enonic.wem.api.content.schema.content.form.Form;
@@ -34,9 +34,9 @@ class SyncRelationships
 
     private final ContentId contentToUpdate;
 
-    private final Map<EntryPath, Data> referencesBeforeEditing;
+    private final Map<EntryPath, Property> referencesBeforeEditing;
 
-    private final Map<EntryPath, Data> referencesAfterEditing;
+    private final Map<EntryPath, Property> referencesAfterEditing;
 
     private final ImmutableList.Builder<Relationship> relationshipsToAddBuilder = ImmutableList.builder();
 
@@ -84,8 +84,8 @@ class SyncRelationships
 
     private void deleteRemovedRelationships()
     {
-        final List<Data> removedReferences = resolveRemovedReferences();
-        for ( Data removedReference : removedReferences )
+        final List<Property> removedReferences = resolveRemovedReferences();
+        for ( Property removedReference : removedReferences )
         {
             final Input relationshipInput = form.getInput( FormItemPath.from( removedReference.getPath().resolvePathElementNames() ) );
             Preconditions.checkNotNull( relationshipInput, "No Input found for data: %s ", removedReference.getPath() );
@@ -109,8 +109,8 @@ class SyncRelationships
             fromContent( contentToUpdate ).
             build();
 
-        final List<Data> addedReferences = resolveAddedReferences();
-        for ( Data addedReference : addedReferences )
+        final List<Property> addedReferences = resolveAddedReferences();
+        for ( Property addedReference : addedReferences )
         {
             final Input relationshipInput = form.getInput( FormItemPath.from( addedReference.getPath().resolvePathElementNames() ) );
             Preconditions.checkNotNull( relationshipInput, "No Input found for data: %s ", addedReference.getPath() );
@@ -120,10 +120,10 @@ class SyncRelationships
         }
     }
 
-    private List<Data> resolveAddedReferences()
+    private List<Property> resolveAddedReferences()
     {
-        final List<Data> addedReferences = new ArrayList<>();
-        for ( Map.Entry<EntryPath, Data> referenceAfterEditing : referencesAfterEditing.entrySet() )
+        final List<Property> addedReferences = new ArrayList<>();
+        for ( Map.Entry<EntryPath, Property> referenceAfterEditing : referencesAfterEditing.entrySet() )
         {
             if ( !referencesBeforeEditing.containsKey( referenceAfterEditing.getKey() ) )
             {
@@ -133,10 +133,10 @@ class SyncRelationships
         return addedReferences;
     }
 
-    private List<Data> resolveRemovedReferences()
+    private List<Property> resolveRemovedReferences()
     {
-        final List<Data> removedReferences = new ArrayList<>();
-        for ( Map.Entry<EntryPath, Data> referenceBeforeEditing : referencesBeforeEditing.entrySet() )
+        final List<Property> removedReferences = new ArrayList<>();
+        for ( Map.Entry<EntryPath, Property> referenceBeforeEditing : referencesBeforeEditing.entrySet() )
         {
             if ( !referencesAfterEditing.containsKey( referenceBeforeEditing.getKey() ) )
             {
@@ -146,18 +146,18 @@ class SyncRelationships
         return removedReferences;
     }
 
-    private Map<EntryPath, Data> resolveReferences( final RootDataSet rootDataSet )
+    private Map<EntryPath, Property> resolveReferences( final RootDataSet rootDataSet )
     {
-        final Map<EntryPath, Data> references = new LinkedHashMap<>();
+        final Map<EntryPath, Property> references = new LinkedHashMap<>();
         final DataVisitor dataVisitor = new DataVisitor()
         {
             @Override
-            public void visit( final Data reference )
+            public void visit( final Property reference )
             {
                 references.put( reference.getPath(), reference );
             }
         };
-        dataVisitor.restrictType( DataTypes.CONTENT_ID );
+        dataVisitor.restrictType( PropertyTypes.CONTENT_ID );
         dataVisitor.traverse( rootDataSet );
         return references;
     }

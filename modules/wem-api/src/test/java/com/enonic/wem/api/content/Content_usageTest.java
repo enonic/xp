@@ -9,27 +9,27 @@ import org.joda.time.DateTime;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Entry;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.data.type.BaseDataType;
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.type.BasePropertyType;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 
-import static com.enonic.wem.api.content.data.Data.Date.newDate;
-import static com.enonic.wem.api.content.data.Data.DecimalNumber.newDecimalNumber;
-import static com.enonic.wem.api.content.data.Data.HtmlPart.newHtmlPart;
-import static com.enonic.wem.api.content.data.Data.Text.newText;
-import static com.enonic.wem.api.content.data.Data.WholeNumber.newWholeNumber;
-import static com.enonic.wem.api.content.data.Data.newData;
 import static com.enonic.wem.api.content.data.DataSet.newDataSet;
+import static com.enonic.wem.api.content.data.Property.Date.newDate;
+import static com.enonic.wem.api.content.data.Property.DecimalNumber.newDecimalNumber;
+import static com.enonic.wem.api.content.data.Property.HtmlPart.newHtmlPart;
+import static com.enonic.wem.api.content.data.Property.Text.newText;
+import static com.enonic.wem.api.content.data.Property.WholeNumber.newWholeNumber;
+import static com.enonic.wem.api.content.data.Property.newData;
 import static com.enonic.wem.api.content.data.Value.newValue;
-import static com.enonic.wem.api.content.data.type.DataTypes.DATE_MIDNIGHT;
-import static com.enonic.wem.api.content.data.type.DataTypes.DECIMAL_NUMBER;
-import static com.enonic.wem.api.content.data.type.DataTypes.HTML_PART;
-import static com.enonic.wem.api.content.data.type.DataTypes.TEXT;
-import static com.enonic.wem.api.content.data.type.DataTypes.WHOLE_NUMBER;
+import static com.enonic.wem.api.content.data.type.PropertyTypes.DATE_MIDNIGHT;
+import static com.enonic.wem.api.content.data.type.PropertyTypes.DECIMAL_NUMBER;
+import static com.enonic.wem.api.content.data.type.PropertyTypes.HTML_PART;
+import static com.enonic.wem.api.content.data.type.PropertyTypes.TEXT;
+import static com.enonic.wem.api.content.data.type.PropertyTypes.WHOLE_NUMBER;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
@@ -76,11 +76,11 @@ public class Content_usageTest
         assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
         assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
 
-        assertFalse( dataSet.getData( "myText" ) instanceof Data.Text );
-        assertFalse( dataSet.getData( "myNum" ) instanceof Data.WholeNumber );
-        assertFalse( dataSet.getData( "myDec" ) instanceof Data.DecimalNumber );
-        assertFalse( dataSet.getData( "myDate" ) instanceof Data.Date );
-        assertFalse( dataSet.getData( "myHtml" ) instanceof Data.HtmlPart );
+        assertFalse( dataSet.getData( "myText" ) instanceof Property.Text );
+        assertFalse( dataSet.getData( "myNum" ) instanceof Property.WholeNumber );
+        assertFalse( dataSet.getData( "myDec" ) instanceof Property.DecimalNumber );
+        assertFalse( dataSet.getData( "myDate" ) instanceof Property.Date );
+        assertFalse( dataSet.getData( "myHtml" ) instanceof Property.HtmlPart );
     }
 
     @Test
@@ -102,11 +102,11 @@ public class Content_usageTest
         assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
         assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
 
-        assertTrue( dataSet.getData( "myText" ) instanceof Data.Text );
-        assertTrue( dataSet.getData( "myNum" ) instanceof Data.WholeNumber );
-        assertTrue( dataSet.getData( "myDec" ) instanceof Data.DecimalNumber );
-        assertTrue( dataSet.getData( "myDate" ) instanceof Data.Date );
-        assertTrue( dataSet.getData( "myHtml" ) instanceof Data.HtmlPart );
+        assertTrue( dataSet.getData( "myText" ) instanceof Property.Text );
+        assertTrue( dataSet.getData( "myNum" ) instanceof Property.WholeNumber );
+        assertTrue( dataSet.getData( "myDec" ) instanceof Property.DecimalNumber );
+        assertTrue( dataSet.getData( "myDate" ) instanceof Property.Date );
+        assertTrue( dataSet.getData( "myHtml" ) instanceof Property.HtmlPart );
     }
 
     @Test
@@ -115,11 +115,11 @@ public class Content_usageTest
         DataSet dataSet = new RootDataSet();
 
         // exercise
-        dataSet.add( new Data.Text( "myText", "abc" ) );
-        dataSet.add( new Data.WholeNumber( "myNum", 123L ) );
-        dataSet.add( new Data.DecimalNumber( "myDec", 123.123 ) );
-        dataSet.add( new Data.Date( "myDate", new DateMidnight( 2013, 1, 13 ) ) );
-        dataSet.add( new Data.HtmlPart( "myHtml", "<p>abc</p>" ) );
+        dataSet.add( new Property.Text( "myText", "abc" ) );
+        dataSet.add( new Property.WholeNumber( "myNum", 123L ) );
+        dataSet.add( new Property.DecimalNumber( "myDec", 123.123 ) );
+        dataSet.add( new Property.Date( "myDate", new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.add( new Property.HtmlPart( "myHtml", "<p>abc</p>" ) );
 
         // verify
         assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
@@ -128,11 +128,11 @@ public class Content_usageTest
         assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
         assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
 
-        assertTrue( dataSet.getData( "myText" ) instanceof Data.Text );
-        assertTrue( dataSet.getData( "myNum" ) instanceof Data.WholeNumber );
-        assertTrue( dataSet.getData( "myDec" ) instanceof Data.DecimalNumber );
-        assertTrue( dataSet.getData( "myDate" ) instanceof Data.Date );
-        assertTrue( dataSet.getData( "myHtml" ) instanceof Data.HtmlPart );
+        assertTrue( dataSet.getData( "myText" ) instanceof Property.Text );
+        assertTrue( dataSet.getData( "myNum" ) instanceof Property.WholeNumber );
+        assertTrue( dataSet.getData( "myDec" ) instanceof Property.DecimalNumber );
+        assertTrue( dataSet.getData( "myDate" ) instanceof Property.Date );
+        assertTrue( dataSet.getData( "myHtml" ) instanceof Property.HtmlPart );
     }
 
     @Test
@@ -154,11 +154,11 @@ public class Content_usageTest
         assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
         assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
 
-        assertTrue( dataSet.getData( "myText" ) instanceof Data.Text );
-        assertTrue( dataSet.getData( "myNum" ) instanceof Data.WholeNumber );
-        assertTrue( dataSet.getData( "myDec" ) instanceof Data.DecimalNumber );
-        assertTrue( dataSet.getData( "myDate" ) instanceof Data.Date );
-        assertTrue( dataSet.getData( "myHtml" ) instanceof Data.HtmlPart );
+        assertTrue( dataSet.getData( "myText" ) instanceof Property.Text );
+        assertTrue( dataSet.getData( "myNum" ) instanceof Property.WholeNumber );
+        assertTrue( dataSet.getData( "myDec" ) instanceof Property.DecimalNumber );
+        assertTrue( dataSet.getData( "myDate" ) instanceof Property.Date );
+        assertTrue( dataSet.getData( "myHtml" ) instanceof Property.HtmlPart );
     }
 
     @Test
@@ -167,11 +167,11 @@ public class Content_usageTest
         DataSet dataSet = new RootDataSet();
 
         // exercise
-        dataSet.addData( "myText", newValue().type( DataTypes.TEXT ).value( "abc" ) );
-        dataSet.addData( "myNum", newValue().type( DataTypes.WHOLE_NUMBER ).value( 123L ) );
-        dataSet.addData( "myDec", newValue().type( DataTypes.DECIMAL_NUMBER ).value( 123.123 ) );
-        dataSet.addData( "myDate", newValue().type( DataTypes.DATE_MIDNIGHT ).value( new DateMidnight( 2013, 1, 13 ) ) );
-        dataSet.addData( "myHtml", newValue().type( DataTypes.HTML_PART ).value( "<p>abc</p>" ) );
+        dataSet.addData( "myText", newValue().type( PropertyTypes.TEXT ).value( "abc" ) );
+        dataSet.addData( "myNum", newValue().type( PropertyTypes.WHOLE_NUMBER ).value( 123L ) );
+        dataSet.addData( "myDec", newValue().type( PropertyTypes.DECIMAL_NUMBER ).value( 123.123 ) );
+        dataSet.addData( "myDate", newValue().type( PropertyTypes.DATE_MIDNIGHT ).value( new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.addData( "myHtml", newValue().type( PropertyTypes.HTML_PART ).value( "<p>abc</p>" ) );
 
         // verify
         assertEquals( TEXT, dataSet.getData( "myText" ).getType() );
@@ -180,11 +180,11 @@ public class Content_usageTest
         assertEquals( DECIMAL_NUMBER, dataSet.getData( "myDec" ).getType() );
         assertEquals( HTML_PART, dataSet.getData( "myHtml" ).getType() );
 
-        assertTrue( dataSet.getData( "myText" ) instanceof Data.Text );
-        assertTrue( dataSet.getData( "myNum" ) instanceof Data.WholeNumber );
-        assertTrue( dataSet.getData( "myDec" ) instanceof Data.DecimalNumber );
-        assertTrue( dataSet.getData( "myDate" ) instanceof Data.Date );
-        assertTrue( dataSet.getData( "myHtml" ) instanceof Data.HtmlPart );
+        assertTrue( dataSet.getData( "myText" ) instanceof Property.Text );
+        assertTrue( dataSet.getData( "myNum" ) instanceof Property.WholeNumber );
+        assertTrue( dataSet.getData( "myDec" ) instanceof Property.DecimalNumber );
+        assertTrue( dataSet.getData( "myDate" ) instanceof Property.Date );
+        assertTrue( dataSet.getData( "myHtml" ) instanceof Property.HtmlPart );
     }
 
     @Test
@@ -258,13 +258,14 @@ public class Content_usageTest
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.add( newData( "invoiceDate" ).type( DataTypes.DATE_MIDNIGHT ).value( invoice.invoiceDate.toDateMidnight() ).build() );
-        rootDataSet.add( newData( "recipient" ).type( DataTypes.TEXT ).value( invoice.recipient ).build() );
+        rootDataSet.add(
+            newData( "invoiceDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( invoice.invoiceDate.toDateMidnight() ).build() );
+        rootDataSet.add( newData( "recipient" ).type( PropertyTypes.TEXT ).value( invoice.recipient ).build() );
 
         for ( InvoiceLine line : invoice.lines )
         {
             DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
-            invoiceLine.add( newData( "text" ).type( DataTypes.TEXT ).value( line.text ).build() );
+            invoiceLine.add( newData( "text" ).type( PropertyTypes.TEXT ).value( line.text ).build() );
             invoiceLine.add( newData( "money" ).type( resolveType( line.money ) ).value( line.money ).build() );
 
             rootDataSet.add( invoiceLine );
@@ -325,13 +326,13 @@ public class Content_usageTest
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.add( new Data.Date( "invoiceDate", invoice.invoiceDate.toDateMidnight() ) );
-        rootDataSet.add( new Data.Text( "recipient", invoice.recipient ) );
+        rootDataSet.add( new Property.Date( "invoiceDate", invoice.invoiceDate.toDateMidnight() ) );
+        rootDataSet.add( new Property.Text( "recipient", invoice.recipient ) );
 
         for ( InvoiceLine line : invoice.lines )
         {
             DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
-            invoiceLine.add( new Data.Text( "text", line.text ) );
+            invoiceLine.add( new Property.Text( "text", line.text ) );
             invoiceLine.add( myNewData( "money", line.money ) );
             rootDataSet.add( invoiceLine );
         }
@@ -379,11 +380,11 @@ public class Content_usageTest
 
     }
 
-    private BaseDataType resolveType( final Object value )
+    private BasePropertyType resolveType( final Object value )
     {
         if ( value instanceof Double )
         {
-            return DataTypes.DECIMAL_NUMBER;
+            return PropertyTypes.DECIMAL_NUMBER;
         }
         else
         {

@@ -1,61 +1,61 @@
 package com.enonic.wem.api.content.schema.content.form;
 
 
-import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.data.type.InvalidDataTypeException;
+import com.enonic.wem.api.content.data.Property;
+import com.enonic.wem.api.content.data.type.InvalidPropertyTypeException;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 
 public class InvalidDataException
     extends RuntimeException
 {
-    private Data data;
+    private Property property;
 
-    public InvalidDataException( final Data data, final InvalidDataTypeException e )
+    public InvalidDataException( final Property property, final InvalidPropertyTypeException e )
     {
-        super( buildMessage( data ), e );
-        this.data = data;
+        super( buildMessage( property ), e );
+        this.property = property;
     }
 
-    public InvalidDataException( final Data data, final InvalidValueTypeException e )
+    public InvalidDataException( final Property property, final InvalidValueTypeException e )
     {
-        super( buildMessage( data ), e );
-        this.data = data;
+        super( buildMessage( property ), e );
+        this.property = property;
     }
 
-    public InvalidDataException( final Data data, final BreaksRegexValidationException e )
+    public InvalidDataException( final Property property, final BreaksRegexValidationException e )
     {
-        super( buildMessage( data ), e );
-        this.data = data;
+        super( buildMessage( property ), e );
+        this.property = property;
     }
 
-    public InvalidDataException( final Data data, final InvalidValueException e )
+    public InvalidDataException( final Property property, final InvalidValueException e )
     {
-        super( buildMessage( data ), e );
-        this.data = data;
+        super( buildMessage( property ), e );
+        this.property = property;
     }
 
-    public InvalidDataException( final Data data, final String message )
+    public InvalidDataException( final Property property, final String message )
     {
-        super( buildMessage( data, message ) );
-        this.data = data;
+        super( buildMessage( property, message ) );
+        this.property = property;
     }
 
-    public Data getData()
+    public Property getProperty()
     {
-        return data;
+        return property;
     }
 
-    private static String buildMessage( final Data data )
+    private static String buildMessage( final Property property )
     {
         StringBuilder s = new StringBuilder();
-        s.append( "Invalid data: " ).append( data );
+        s.append( "Invalid data: " ).append( property );
         return s.toString();
     }
 
-    private static String buildMessage( final Data data, final String message )
+    private static String buildMessage( final Property property, final String message )
     {
         StringBuilder s = new StringBuilder();
-        s.append( "Invalid data [" ).append( data ).append( "]: " ).append( message );
+        s.append( "Invalid data [" ).append( property ).append( "]: " ).append( message );
         return s.toString();
     }
 }

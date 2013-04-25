@@ -1,10 +1,10 @@
 package com.enonic.wem.api.content.data.type;
 
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class ContentId
-    extends BaseDataType
+    extends BasePropertyType
 {
     ContentId( int key )
     {
@@ -24,8 +24,8 @@ public class ContentId
     }
 
     @Override
-    public Data newData( final String name, final Value value )
+    public Property newData( final String name, final Value value )
     {
-        return new Data.ContentId( name, value );
+        return new Property.ContentId( name, value );
     }
 }

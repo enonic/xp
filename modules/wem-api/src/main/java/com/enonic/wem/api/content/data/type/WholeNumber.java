@@ -1,11 +1,11 @@
 package com.enonic.wem.api.content.data.type;
 
 
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class WholeNumber
-    extends BaseDataType
+    extends BasePropertyType
 {
     WholeNumber( int key )
     {
@@ -25,8 +25,8 @@ public class WholeNumber
     }
 
     @Override
-    public Data newData( final String name, final Value value )
+    public Property newData( final String name, final Value value )
     {
-        return new Data.WholeNumber( name, value );
+        return new Property.WholeNumber( name, value );
     }
 }

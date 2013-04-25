@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.content.schema.content.form.FieldSet;
@@ -62,14 +62,14 @@ final class MinimumOccurrencesValidator
                 final int occurrencesToCheck = Math.min( entryCount, input.getOccurrences().getMinimum() );
                 for ( int i = 0; i < occurrencesToCheck; i++ )
                 {
-                    final Data data = parentDataSet.getData( input.getName(), i );
+                    final Property property = parentDataSet.getData( input.getName(), i );
                     try
                     {
-                        input.getInputType().checkBreaksRequiredContract( data );
+                        input.getInputType().checkBreaksRequiredContract( property );
                     }
                     catch ( BreaksRequiredContractException e )
                     {
-                        validationErrors.add( new MissingRequiredValueValidationError( input, e.getData() ) );
+                        validationErrors.add( new MissingRequiredValueValidationError( input, e.getProperty() ) );
                     }
                 }
 

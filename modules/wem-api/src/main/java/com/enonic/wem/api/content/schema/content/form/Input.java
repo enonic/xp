@@ -3,8 +3,8 @@ package com.enonic.wem.api.content.schema.content.form;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.data.type.InvalidDataTypeException;
+import com.enonic.wem.api.content.data.Property;
+import com.enonic.wem.api.content.data.type.InvalidPropertyTypeException;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.schema.content.form.inputtype.BaseInputType;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputType;
@@ -118,52 +118,52 @@ public final class Input
         return inputTypeConfig;
     }
 
-    public void checkValidityAccordingToInputTypeConfig( final Data data )
+    public void checkValidityAccordingToInputTypeConfig( final Property property )
         throws InvalidValueException
     {
         if ( inputTypeConfig != null )
         {
-            inputTypeConfig.checkValidity( data );
+            inputTypeConfig.checkValidity( property );
         }
     }
 
-    public void checkValidationRegexp( final Data data )
+    public void checkValidationRegexp( final Property property )
         throws InvalidDataException
     {
         try
         {
-            validationRegexp.checkValidity( data );
+            validationRegexp.checkValidity( property );
         }
         catch ( BreaksRegexValidationException e )
         {
-            throw new InvalidDataException( data, e );
+            throw new InvalidDataException( property, e );
         }
     }
 
-    public void checkValidity( final Data data )
+    public void checkValidity( final Property property )
         throws InvalidDataException
     {
         try
         {
-            if ( data == null )
+            if ( property == null )
             {
                 return;
             }
 
-            checkValidityAccordingToInputTypeConfig( data );
-            type.checkValidity( data );
+            checkValidityAccordingToInputTypeConfig( property );
+            type.checkValidity( property );
         }
         catch ( InvalidValueException e )
         {
-            throw new InvalidDataException( data, e );
+            throw new InvalidDataException( property, e );
         }
-        catch ( InvalidDataTypeException e )
+        catch ( InvalidPropertyTypeException e )
         {
-            throw new InvalidDataException( data, e );
+            throw new InvalidDataException( property, e );
         }
         catch ( InvalidValueTypeException e )
         {
-            throw new InvalidDataException( data, e );
+            throw new InvalidDataException( property, e );
         }
     }
 

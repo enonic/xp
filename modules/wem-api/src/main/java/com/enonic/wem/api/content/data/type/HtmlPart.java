@@ -1,12 +1,12 @@
 package com.enonic.wem.api.content.data.type;
 
 
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class HtmlPart
-    extends BaseDataType
-    implements DataType
+    extends BasePropertyType
+    implements PropertyType
 {
     HtmlPart( int key )
     {
@@ -26,8 +26,8 @@ public class HtmlPart
     }
 
     @Override
-    public Data newData( final String name, final Value value )
+    public Property newData( final String name, final Value value )
     {
-        return new Data.HtmlPart( name, value );
+        return new Property.HtmlPart( name, value );
     }
 }

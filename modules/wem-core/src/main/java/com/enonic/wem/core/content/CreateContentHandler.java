@@ -22,9 +22,9 @@ import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentException;
-import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataVisitor;
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.Property;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
@@ -166,7 +166,7 @@ public class CreateContentHandler
         final DataVisitor dataVisitor = new DataVisitor()
         {
             @Override
-            public void visit( final Data data )
+            public void visit( final Property data )
             {
                 final Content content = contentDao.select( data.getContentId(), session );
                 if ( content != null )
@@ -177,7 +177,7 @@ public class CreateContentHandler
                     }
                 }
             }
-        }.restrictType( DataTypes.CONTENT_ID );
+        }.restrictType( PropertyTypes.CONTENT_ID );
         dataVisitor.traverse( command.getRootDataSet() );
         return temporaryContents;
     }

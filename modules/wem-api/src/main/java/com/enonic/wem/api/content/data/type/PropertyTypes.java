@@ -7,7 +7,7 @@ import java.util.Map;
 import com.google.common.base.Preconditions;
 
 
-public final class DataTypes
+public final class PropertyTypes
 {
     public static final Set SET = new Set( 0 );
 
@@ -29,9 +29,9 @@ public final class DataTypes
 
     public static final GeographicCoordinate GEOGRAPHIC_COORDINATE = new GeographicCoordinate( 9 );
 
-    private static final Map<Integer, DataType> typesByKey = new HashMap<>();
+    private static final Map<Integer, PropertyType> typesByKey = new HashMap<>();
 
-    private static final Map<String, DataType> typesByName = new HashMap<>();
+    private static final Map<String, PropertyType> typesByName = new HashMap<>();
 
     static
     {
@@ -47,21 +47,21 @@ public final class DataTypes
         register( GEOGRAPHIC_COORDINATE );
     }
 
-    private static void register( DataType dataType )
+    private static void register( PropertyType propertyType )
     {
-        Object previous = typesByKey.put( dataType.getKey(), dataType );
-        Preconditions.checkState( previous == null, "DataType already registered: " + dataType.getKey() );
+        Object previous = typesByKey.put( propertyType.getKey(), propertyType );
+        Preconditions.checkState( previous == null, "PropertyType already registered: " + propertyType.getKey() );
 
-        previous = typesByName.put( dataType.getName(), dataType );
-        Preconditions.checkState( previous == null, "DataType already registered: " + dataType.getName() );
+        previous = typesByName.put( propertyType.getName(), propertyType );
+        Preconditions.checkState( previous == null, "PropertyType already registered: " + propertyType.getName() );
     }
 
-    public static DataType parseByKey( int key )
+    public static PropertyType parseByKey( int key )
     {
         return typesByKey.get( key );
     }
 
-    public static DataType parseByName( String name )
+    public static PropertyType parseByName( String name )
     {
         return typesByName.get( name );
     }

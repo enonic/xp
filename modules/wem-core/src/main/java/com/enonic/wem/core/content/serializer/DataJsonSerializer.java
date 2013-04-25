@@ -6,9 +6,9 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.data.type.BaseDataType;
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.Property;
+import com.enonic.wem.api.content.data.type.BasePropertyType;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
@@ -19,7 +19,7 @@ import static com.enonic.wem.core.content.serializer.EntryJsonSerializer.ENTRY_V
 
 
 public class DataJsonSerializer
-    extends AbstractJsonSerializer<Data>
+    extends AbstractJsonSerializer<Property>
 {
     public DataJsonSerializer()
     {
@@ -32,32 +32,32 @@ public class DataJsonSerializer
     }
 
     @Override
-    protected JsonNode serialize( final Data data )
+    protected JsonNode serialize( final Property property )
     {
         final ObjectNode dataObj = objectMapper().createObjectNode();
 
-        final String name = data.getName();
-        final String path = data.getPath().toString();
+        final String name = property.getName();
+        final String path = property.getPath().toString();
 
         dataObj.put( ENTRY_NAME, name );
         dataObj.put( ENTRY_PATH, path );
-        dataObj.put( ENTRY_TYPE, data.getType().getName() );
-        dataObj.put( ENTRY_VALUE, data.getString() );
+        dataObj.put( ENTRY_TYPE, property.getType().getName() );
+        dataObj.put( ENTRY_VALUE, property.getString() );
         return dataObj;
     }
 
     @Override
-    protected Data parse( final JsonNode node )
+    protected Property parse( final JsonNode node )
     {
         return parseData( node );
     }
 
-    Data parseData( final JsonNode dataNode )
+    Property parseData( final JsonNode dataNode )
     {
         final String name = JsonSerializerUtil.getStringValue( ENTRY_NAME, dataNode );
 
-        final BaseDataType dataType =
-            (BaseDataType) DataTypes.parseByName( JsonSerializerUtil.getStringValue( ENTRY_TYPE, dataNode, null ) );
+        final BasePropertyType dataType =
+            (BasePropertyType) PropertyTypes.parseByName( JsonSerializerUtil.getStringValue( ENTRY_TYPE, dataNode, null ) );
         Preconditions.checkNotNull( dataType, "dataType was null" );
 
         final JsonNode valueNode = dataNode.get( ENTRY_VALUE );

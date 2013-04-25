@@ -4,7 +4,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
@@ -36,11 +36,11 @@ public class GeographicCoordinateTest
         RootDataSet rootDataSet = content.getRootDataSet();
         rootDataSet.setData( "myGeographicCoordinate", new Value.DecimalNumber( 1.1 ) );
 
-        GeographicCoordinate geographicCoordinate = DataTypes.GEOGRAPHIC_COORDINATE;
-        Data data = rootDataSet.getData( "myGeographicCoordinate" );
+        GeographicCoordinate geographicCoordinate = PropertyTypes.GEOGRAPHIC_COORDINATE;
+        Property property = rootDataSet.getData( "myGeographicCoordinate" );
 
         // exercise
-        geographicCoordinate.checkValidity( data );
+        geographicCoordinate.checkValidity( property );
     }
 
     @Test

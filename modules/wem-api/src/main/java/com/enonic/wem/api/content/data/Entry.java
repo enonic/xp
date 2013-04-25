@@ -101,17 +101,17 @@ public abstract class Entry
 
     public boolean isData()
     {
-        return this instanceof Data;
+        return this instanceof Property;
     }
 
-    public Data toData()
+    public Property toData()
     {
-        if ( !( this instanceof Data ) )
+        if ( !( this instanceof Property ) )
         {
             throw new IllegalArgumentException(
                 "This Entry at path [" + getPath().toString() + "] is not a Data: " + this.getClass().getSimpleName() );
         }
-        return (Data) this;
+        return (Property) this;
     }
 
     public boolean isDataSet()

@@ -6,9 +6,9 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Entry;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.form.FormItem;
 import com.enonic.wem.api.content.schema.content.form.FormItemPath;
@@ -100,11 +100,11 @@ public final class DataSetValidator
         }
     }
 
-    private void checkDataTypeValidity( final Data data, final List<DataValidationError> validationErrors )
+    private void checkDataTypeValidity( final Property property, final List<DataValidationError> validationErrors )
     {
         try
         {
-            data.checkDataTypeValidity();
+            property.checkDataTypeValidity();
         }
         catch ( InvalidDataException e )
         {
@@ -112,11 +112,11 @@ public final class DataSetValidator
         }
     }
 
-    private void checkInputValidity( final Data data, final Input input, final List<DataValidationError> validationErrors )
+    private void checkInputValidity( final Property property, final Input input, final List<DataValidationError> validationErrors )
     {
         try
         {
-            input.checkValidity( data );
+            input.checkValidity( property );
         }
         catch ( InvalidDataException e )
         {
@@ -127,7 +127,7 @@ public final class DataSetValidator
         {
             if ( input.getValidationRegexp() != null )
             {
-                input.checkValidationRegexp( data );
+                input.checkValidationRegexp( property );
             }
         }
         catch ( InvalidDataException e )
@@ -138,7 +138,7 @@ public final class DataSetValidator
 
     private DataValidationError translateInvalidDataException( final InvalidDataException invalidDataException )
     {
-        return new DataValidationError( FormItemPath.from( invalidDataException.getData().getPath().resolvePathElementNames() ),
+        return new DataValidationError( FormItemPath.from( invalidDataException.getProperty().getPath().resolvePathElementNames() ),
                                         invalidDataException.getMessage() );
     }
 

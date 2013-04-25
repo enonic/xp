@@ -7,7 +7,7 @@ import java.util.List;
 import org.joda.time.DateMidnight;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -17,23 +17,23 @@ public class DataVisitorTest
     @Test
     public void traverse()
     {
-        final List<Data> hits = new ArrayList<>();
+        final List<Property> hits = new ArrayList<>();
 
         final DataVisitor dataVisitor = new DataVisitor()
         {
             @Override
-            public void visit( final Data reference )
+            public void visit( final Property reference )
             {
                 hits.add( reference );
             }
         };
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.add( Data.newData().name( "myText" ).type( DataTypes.TEXT ).value( "abc" ).build() );
-        rootDataSet.add( Data.newData().name( "myDate" ).type( DataTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        rootDataSet.add( Property.newData().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
+        rootDataSet.add( Property.newData().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
-        mySet.add( Data.newData().name( "myText" ).type( DataTypes.TEXT ).value( "abc" ).build() );
-        mySet.add( Data.newData().name( "myDate" ).type( DataTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        mySet.add( Property.newData().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
+        mySet.add( Property.newData().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
         rootDataSet.add( mySet );
 
         dataVisitor.traverse( rootDataSet );
@@ -48,25 +48,25 @@ public class DataVisitorTest
     @Test
     public void traverse_with_restriction_on_DataType()
     {
-        final List<Data> hits = new ArrayList<>();
+        final List<Property> hits = new ArrayList<>();
 
         final DataVisitor dataVisitor = new DataVisitor()
         {
             @Override
-            public void visit( final Data reference )
+            public void visit( final Property reference )
             {
                 hits.add( reference );
             }
         };
-        dataVisitor.restrictType( DataTypes.TEXT );
+        dataVisitor.restrictType( PropertyTypes.TEXT );
 
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.add( Data.newData().name( "myText" ).type( DataTypes.TEXT ).value( "abc" ).build() );
-        rootDataSet.add( Data.newData().name( "myDate" ).type( DataTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        rootDataSet.add( Property.newData().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
+        rootDataSet.add( Property.newData().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
-        mySet.add( Data.newData().name( "myText" ).type( DataTypes.TEXT ).value( "abc" ).build() );
-        mySet.add( Data.newData().name( "myDate" ).type( DataTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        mySet.add( Property.newData().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
+        mySet.add( Property.newData().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
         rootDataSet.add( mySet );
 
         dataVisitor.traverse( rootDataSet );

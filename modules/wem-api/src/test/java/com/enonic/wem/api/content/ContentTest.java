@@ -5,11 +5,11 @@ import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.form.FieldSet;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
@@ -18,11 +18,11 @@ import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.api.content.data.Data.Text.newText;
-import static com.enonic.wem.api.content.data.Data.Xml.newXml;
-import static com.enonic.wem.api.content.data.Data.newData;
 import static com.enonic.wem.api.content.data.DataSet.newDataSet;
 import static com.enonic.wem.api.content.data.DataSet.newRootDataSet;
+import static com.enonic.wem.api.content.data.Property.Text.newText;
+import static com.enonic.wem.api.content.data.Property.Xml.newXml;
+import static com.enonic.wem.api.content.data.Property.newData;
 import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
 import static com.enonic.wem.api.content.schema.content.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newFormItemSet;
@@ -67,7 +67,7 @@ public class ContentTest
         rootDataSet.setData( "array[0]", new Value.Text( "First" ) );
         rootDataSet.setData( "array[1]", new Value.Text( "Second" ) );
 
-        Data array = rootDataSet.getData( "array" );
+        Property array = rootDataSet.getData( "array" );
         assertEquals( "First", array.getObject() );
         assertEquals( "First", rootDataSet.getData( "array" ).getString( 0 ) );
         assertEquals( "First", rootDataSet.getData( "array[0]" ).getString() );
@@ -79,14 +79,14 @@ public class ContentTest
     @Test
     public void array()
     {
-        Data first = newData().name( "array" ).type( DataTypes.TEXT ).value( "First" ).build();
-        Data second = newData().name( "array" ).type( DataTypes.TEXT ).value( "Second" ).build();
+        Property first = newData().name( "array" ).type( PropertyTypes.TEXT ).value( "First" ).build();
+        Property second = newData().name( "array" ).type( PropertyTypes.TEXT ).value( "Second" ).build();
 
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.add( first );
         rootDataSet.add( second );
 
-        Data array = rootDataSet.getData( "array" );
+        Property array = rootDataSet.getData( "array" );
         assertEquals( "First", array.getObject() );
         assertEquals( "First", rootDataSet.getData( "array" ).getString( 0 ) );
         assertEquals( "First", rootDataSet.getData( "array[0]" ).getObject() );
@@ -180,10 +180,10 @@ public class ContentTest
     public void add_array_of_set_within_set()
     {
         DataSet address1 = newDataSet().name( "address" ).build();
-        address1.add( newData().name( "street" ).type( DataTypes.TEXT ).value( "Kirkegata 1-3" ).build() );
+        address1.add( newData().name( "street" ).type( PropertyTypes.TEXT ).value( "Kirkegata 1-3" ).build() );
 
         DataSet address2 = newDataSet().name( "address" ).build();
-        address2.add( newData().name( "street" ).type( DataTypes.TEXT ).value( "Sonsteli" ).build() );
+        address2.add( newData().name( "street" ).type( PropertyTypes.TEXT ).value( "Sonsteli" ).build() );
 
         DataSet company = newDataSet().name( "company" ).build();
         company.add( address1 );
@@ -331,8 +331,8 @@ public class ContentTest
         rootDataSet.setData( "child[1].features.hairColour", new Value.Text( "Black" ) );
 
         assertEquals( "Thomas", rootDataSet.getData( "firstName" ).getObject() );
-        assertEquals( DataTypes.TEXT, rootDataSet.getData( "firstName" ).getType() );
-        assertEquals( DataTypes.HTML_PART, rootDataSet.getData( "description" ).getType() );
+        assertEquals( PropertyTypes.TEXT, rootDataSet.getData( "firstName" ).getType() );
+        assertEquals( PropertyTypes.HTML_PART, rootDataSet.getData( "description" ).getType() );
         assertEquals( "Joachim", rootDataSet.getData( "child[0].name" ).getObject() );
         assertEquals( "9", rootDataSet.getData( "child[0].age" ).getObject() );
         assertEquals( "Blue", rootDataSet.getData( "child[0].features.eyeColour" ).getObject() );
@@ -412,7 +412,7 @@ public class ContentTest
         rootDataSet.setData( "personalia.eyeColour", new Value.Text( "Blue" ) );
         rootDataSet.setData( "personalia.hairColour", new Value.Text( "Blonde" ) );
 
-        assertEquals( DataTypes.TEXT, rootDataSet.getData( "personalia.eyeColour" ).getType() );
+        assertEquals( PropertyTypes.TEXT, rootDataSet.getData( "personalia.eyeColour" ).getType() );
         assertEquals( "Blue", rootDataSet.getData( "personalia.eyeColour" ).getObject() );
         assertEquals( "personalia.eyeColour", rootDataSet.getData( "personalia.eyeColour" ).getPath().toString() );
     }
@@ -475,7 +475,7 @@ public class ContentTest
     public void new_way()
     {
         RootDataSet rootDataSet = DataSet.newRootDataSet();
-        rootDataSet.add( newData().type( DataTypes.TEXT ).name( "myData" ).value( "1" ).build() );
+        rootDataSet.add( newData().type( PropertyTypes.TEXT ).name( "myData" ).value( "1" ).build() );
         rootDataSet.add( newText().name( "myData" ).value( "1" ).build() );
         rootDataSet.add( newXml().name( "myXml" ).value( "<root/>" ).build() );
 
@@ -488,9 +488,9 @@ public class ContentTest
     {
         RootDataSet rootDataSet = DataSet.newRootDataSet();
 
-        rootDataSet.add( new Data.Text( "myData", "1" ) );
-        rootDataSet.add( new Data.Text( "myArray", "1" ) );
-        rootDataSet.add( new Data.Text( "myArray", "2" ) );
+        rootDataSet.add( new Property.Text( "myData", "1" ) );
+        rootDataSet.add( new Property.Text( "myArray", "1" ) );
+        rootDataSet.add( new Property.Text( "myArray", "2" ) );
         //rootDataSet.add( new Xml( "myXml", "<root></root>" ) );
 
         Content content = newContent().name( "myContent" ).rootDataSet( rootDataSet ).build();
@@ -507,6 +507,6 @@ public class ContentTest
         assertEquals( 2, rootDataSet.entryCount( "myArray" ) );
         assertEquals( 1, rootDataSet.entryCount( "myData" ) );
 
-        Data myArray = content.getRootDataSet().getData( "myArray" );
+        Property myArray = content.getRootDataSet().getData( "myArray" );
     }
 }

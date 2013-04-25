@@ -10,15 +10,15 @@ import org.junit.Test;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataArray;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.DataSetArray;
 import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.type.PropertyTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.MockContentTypeFetcher;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
@@ -148,13 +148,13 @@ public abstract class AbstractContentSerializerTest
         DataSet mySet = parsedRootDataSet.getEntry( "mySet" ).toDataSet();
         assertEquals( "mySet", mySet.toDataSet().getPath().toString() );
 
-        Data mySet_myArray = mySet.getData( "myArray" );
+        Property mySet_myArray = mySet.getData( "myArray" );
         assertSame( mySet_myArray, parsedRootDataSet.getData( "mySet.myArray" ) );
-        assertEquals( DataTypes.TEXT, mySet_myArray.getType() );
+        assertEquals( PropertyTypes.TEXT, mySet_myArray.getType() );
         assertEquals( "mySet.myArray[0]", mySet_myArray.getPath().toString() );
 
         DataArray mySet_myArray_Array = mySet_myArray.getArray();
-        assertEquals( DataTypes.TEXT, mySet_myArray_Array.getType() );
+        assertEquals( PropertyTypes.TEXT, mySet_myArray_Array.getType() );
         assertEquals( "1", mySet_myArray_Array.getValue( 0 ).asString() );
         assertEquals( "2", mySet_myArray_Array.getValue( 1 ).asString() );
         assertEquals( "mySet.myArray[0]", mySet_myArray_Array.getData( 0 ).getPath().toString() );
@@ -253,28 +253,28 @@ public abstract class AbstractContentSerializerTest
         DataSet mySet_0 = mySet_array.getDataSet( 0 );
         assertEquals( "mySet[0]", mySet_0.getPath().toString() );
 
-        Data mySet_0_myArray = mySet_0.getData( "myArray" );
+        Property mySet_0_myArray = mySet_0.getData( "myArray" );
         assertEquals( true, mySet_0_myArray.isArray() );
         assertEquals( "mySet[0].myArray[0]", mySet_0_myArray.getPath().toString() );
 
         DataArray mySet_0_myArray_array = mySet_0_myArray.getArray();
-        assertEquals( DataTypes.TEXT, mySet_0_myArray_array.getType() );
+        assertEquals( PropertyTypes.TEXT, mySet_0_myArray_array.getType() );
         assertEquals( "1", mySet_0_myArray_array.getValue( 0 ).asString() );
         assertEquals( "2", mySet_0_myArray_array.getValue( 1 ).asString() );
 
         DataSet mySet_1 = mySet_array.getDataSet( 1 );
         assertEquals( "mySet[1]", mySet_1.getPath().toString() );
 
-        Data mySet_1_myArray = mySet_1.getData( "myArray" );
+        Property mySet_1_myArray = mySet_1.getData( "myArray" );
         assertEquals( true, mySet_1_myArray.isArray() );
         assertEquals( "mySet[1].myArray[0]", mySet_1_myArray.getPath().toString() );
 
-        Data mySet_1_myArray_1 = mySet_1.getData( "myArray[1]" );
+        Property mySet_1_myArray_1 = mySet_1.getData( "myArray[1]" );
         assertEquals( true, mySet_1_myArray_1.isArray() );
         assertEquals( "mySet[1].myArray[1]", mySet_1_myArray_1.getPath().toString() );
 
         DataArray mySet_1_myArray_array = mySet_1_myArray.getArray();
-        assertEquals( DataTypes.TEXT, mySet_1_myArray_array.getType() );
+        assertEquals( PropertyTypes.TEXT, mySet_1_myArray_array.getType() );
         assertEquals( "3", mySet_1_myArray_array.getValue( 0 ).asString() );
         assertEquals( "4", mySet_1_myArray_array.getValue( 1 ).asString() );
 
@@ -387,7 +387,7 @@ public abstract class AbstractContentSerializerTest
         // verify
         RootDataSet parsedRootDataSet = parsedContent.getRootDataSet();
         assertEquals( "Thomas", parsedRootDataSet.getData( "names[0]" ).getObject() );
-        assertEquals( DataTypes.TEXT, parsedRootDataSet.getData( "names[0]" ).getType() );
+        assertEquals( PropertyTypes.TEXT, parsedRootDataSet.getData( "names[0]" ).getType() );
         assertEquals( "Sten Roger", parsedRootDataSet.getData( "names[1]" ).getObject() );
         assertEquals( "Alex", parsedRootDataSet.getData( "names[2]" ).getObject() );
     }
