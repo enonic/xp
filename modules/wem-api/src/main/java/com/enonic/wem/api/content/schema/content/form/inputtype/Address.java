@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.data.type.PropertyTool;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
@@ -20,11 +20,11 @@ public class Address
     public void checkValidity( final Property property )
         throws InvalidValueTypeException, InvalidValueException
     {
-        PropertyTool.checkPropertyType( property, "street", PropertyTypes.TEXT );
-        PropertyTool.checkPropertyType( property, "postalCode", PropertyTypes.TEXT );
-        PropertyTool.checkPropertyType( property, "postalPlace", PropertyTypes.TEXT );
-        PropertyTool.checkPropertyType( property, "region", PropertyTypes.TEXT );
-        PropertyTool.checkPropertyType( property, "country", PropertyTypes.TEXT );
+        PropertyTool.checkPropertyType( property, "street", ValueTypes.TEXT );
+        PropertyTool.checkPropertyType( property, "postalCode", ValueTypes.TEXT );
+        PropertyTool.checkPropertyType( property, "postalPlace", ValueTypes.TEXT );
+        PropertyTool.checkPropertyType( property, "region", ValueTypes.TEXT );
+        PropertyTool.checkPropertyType( property, "country", ValueTypes.TEXT );
     }
 
     @Override

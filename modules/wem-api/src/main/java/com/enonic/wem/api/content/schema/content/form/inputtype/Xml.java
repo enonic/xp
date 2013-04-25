@@ -5,7 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
@@ -20,7 +20,7 @@ public class Xml
     public void checkValidity( final Property property )
         throws InvalidValueTypeException, InvalidValueException
     {
-        PropertyTypes.XML.checkValidity( property );
+        ValueTypes.XML.checkValidity( property );
     }
 
     @Override

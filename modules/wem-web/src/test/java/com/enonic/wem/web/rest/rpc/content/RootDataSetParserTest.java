@@ -13,7 +13,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
@@ -209,7 +209,7 @@ public class RootDataSetParserTest
         // verify
 
         assertEquals( "40.446195,-79.948862", parsedContentData.getProperty( "myGeoLocation" ).getString() );
-        assertEquals( PropertyTypes.GEOGRAPHIC_COORDINATE, parsedContentData.getProperty( "myGeoLocation" ).getType() );
+        assertEquals( ValueTypes.GEOGRAPHIC_COORDINATE, parsedContentData.getProperty( "myGeoLocation" ).getType() );
     }
 
     @Test

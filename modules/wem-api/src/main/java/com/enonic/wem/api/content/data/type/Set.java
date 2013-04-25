@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class Set
-    extends BasePropertyType
+    extends BaseValueType
 {
     Set( int key )
     {

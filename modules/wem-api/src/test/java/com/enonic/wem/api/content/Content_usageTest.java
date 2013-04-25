@@ -14,8 +14,8 @@ import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.data.type.BasePropertyType;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.BaseValueType;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 
 import static com.enonic.wem.api.content.data.DataSet.newDataSet;
 import static com.enonic.wem.api.content.data.Property.Date.newDate;
@@ -25,11 +25,11 @@ import static com.enonic.wem.api.content.data.Property.Text.newText;
 import static com.enonic.wem.api.content.data.Property.WholeNumber.newWholeNumber;
 import static com.enonic.wem.api.content.data.Property.newProperty;
 import static com.enonic.wem.api.content.data.Value.newValue;
-import static com.enonic.wem.api.content.data.type.PropertyTypes.DATE_MIDNIGHT;
-import static com.enonic.wem.api.content.data.type.PropertyTypes.DECIMAL_NUMBER;
-import static com.enonic.wem.api.content.data.type.PropertyTypes.HTML_PART;
-import static com.enonic.wem.api.content.data.type.PropertyTypes.TEXT;
-import static com.enonic.wem.api.content.data.type.PropertyTypes.WHOLE_NUMBER;
+import static com.enonic.wem.api.content.data.type.ValueTypes.DATE_MIDNIGHT;
+import static com.enonic.wem.api.content.data.type.ValueTypes.DECIMAL_NUMBER;
+import static com.enonic.wem.api.content.data.type.ValueTypes.HTML_PART;
+import static com.enonic.wem.api.content.data.type.ValueTypes.TEXT;
+import static com.enonic.wem.api.content.data.type.ValueTypes.WHOLE_NUMBER;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
@@ -167,11 +167,11 @@ public class Content_usageTest
         DataSet dataSet = new RootDataSet();
 
         // exercise
-        dataSet.addProperty( "myText", newValue().type( PropertyTypes.TEXT ).value( "abc" ) );
-        dataSet.addProperty( "myNum", newValue().type( PropertyTypes.WHOLE_NUMBER ).value( 123L ) );
-        dataSet.addProperty( "myDec", newValue().type( PropertyTypes.DECIMAL_NUMBER ).value( 123.123 ) );
-        dataSet.addProperty( "myDate", newValue().type( PropertyTypes.DATE_MIDNIGHT ).value( new DateMidnight( 2013, 1, 13 ) ) );
-        dataSet.addProperty( "myHtml", newValue().type( PropertyTypes.HTML_PART ).value( "<p>abc</p>" ) );
+        dataSet.addProperty( "myText", newValue().type( ValueTypes.TEXT ).value( "abc" ) );
+        dataSet.addProperty( "myNum", newValue().type( ValueTypes.WHOLE_NUMBER ).value( 123L ) );
+        dataSet.addProperty( "myDec", newValue().type( ValueTypes.DECIMAL_NUMBER ).value( 123.123 ) );
+        dataSet.addProperty( "myDate", newValue().type( ValueTypes.DATE_MIDNIGHT ).value( new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.addProperty( "myHtml", newValue().type( ValueTypes.HTML_PART ).value( "<p>abc</p>" ) );
 
         // verify
         assertEquals( TEXT, dataSet.getProperty( "myText" ).getType() );
@@ -259,13 +259,13 @@ public class Content_usageTest
 
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.add(
-            newProperty( "invoiceDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( invoice.invoiceDate.toDateMidnight() ).build() );
-        rootDataSet.add( newProperty( "recipient" ).type( PropertyTypes.TEXT ).value( invoice.recipient ).build() );
+            newProperty( "invoiceDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( invoice.invoiceDate.toDateMidnight() ).build() );
+        rootDataSet.add( newProperty( "recipient" ).type( ValueTypes.TEXT ).value( invoice.recipient ).build() );
 
         for ( InvoiceLine line : invoice.lines )
         {
             DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
-            invoiceLine.add( newProperty( "text" ).type( PropertyTypes.TEXT ).value( line.text ).build() );
+            invoiceLine.add( newProperty( "text" ).type( ValueTypes.TEXT ).value( line.text ).build() );
             invoiceLine.add( newProperty( "money" ).type( resolveType( line.money ) ).value( line.money ).build() );
 
             rootDataSet.add( invoiceLine );
@@ -380,11 +380,11 @@ public class Content_usageTest
 
     }
 
-    private BasePropertyType resolveType( final Object value )
+    private BaseValueType resolveType( final Object value )
     {
         if ( value instanceof Double )
         {
-            return PropertyTypes.DECIMAL_NUMBER;
+            return ValueTypes.DECIMAL_NUMBER;
         }
         else
         {

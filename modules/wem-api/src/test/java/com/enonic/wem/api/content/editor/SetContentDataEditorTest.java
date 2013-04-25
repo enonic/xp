@@ -6,7 +6,7 @@ import org.junit.Test;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -20,10 +20,10 @@ public class SetContentDataEditorTest
     {
         // setup
         RootDataSet originalRootDataSet = new RootDataSet();
-        originalRootDataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
+        originalRootDataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
 
         RootDataSet unchangedRootDataSet = new RootDataSet();
-        unchangedRootDataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
+        unchangedRootDataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
 
         SetContentDataEditor editor = new SetContentDataEditor( unchangedRootDataSet );
         Content toBeEdited = Content.newContent().name( "myContent" ).rootDataSet( originalRootDataSet ).build();
@@ -41,10 +41,10 @@ public class SetContentDataEditorTest
     {
         // setup
         RootDataSet originalRootDataSet = new RootDataSet();
-        originalRootDataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
+        originalRootDataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
 
         RootDataSet changedRootDataSet = new RootDataSet();
-        changedRootDataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.TEXT ).value( "123" ).build() );
+        changedRootDataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "123" ).build() );
 
         SetContentDataEditor editor = new SetContentDataEditor( changedRootDataSet );
         Content toBeEdited = Content.newContent().name( "myContent" ).rootDataSet( originalRootDataSet ).build();

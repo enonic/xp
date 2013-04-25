@@ -6,7 +6,7 @@ import java.util.Iterator;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.AbstractEqualsTest;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 
 import static org.junit.Assert.*;
 
@@ -23,8 +23,8 @@ public class DataSetTest
             {
                 return DataSet.newDataSet().
                     name( "mySet" ).
-                    set( "myData1", "aaa", PropertyTypes.TEXT ).
-                    set( "myData2", "bbb", PropertyTypes.TEXT ).
+                    set( "myData1", "aaa", ValueTypes.TEXT ).
+                    set( "myData2", "bbb", ValueTypes.TEXT ).
                     build();
             }
 
@@ -33,16 +33,16 @@ public class DataSetTest
             {
                 return new Object[]{DataSet.newDataSet().
                     name( "mySet" ).
-                    set( "myData1", "aaa", PropertyTypes.TEXT ).
+                    set( "myData1", "aaa", ValueTypes.TEXT ).
                     build(), DataSet.newDataSet().
                     name( "mySet" ).
-                    set( "myData1", "aaa", PropertyTypes.TEXT ).
-                    set( "myData2", "bbb", PropertyTypes.TEXT ).
-                    set( "myData3", "bbb", PropertyTypes.TEXT ).
+                    set( "myData1", "aaa", ValueTypes.TEXT ).
+                    set( "myData2", "bbb", ValueTypes.TEXT ).
+                    set( "myData3", "bbb", ValueTypes.TEXT ).
                     build(), DataSet.newDataSet().
                     name( "mySet" ).
-                    set( "myData1", "111", PropertyTypes.TEXT ).
-                    set( "myData2", "222", PropertyTypes.TEXT ).
+                    set( "myData1", "111", ValueTypes.TEXT ).
+                    set( "myData2", "222", ValueTypes.TEXT ).
                     build()};
             }
 
@@ -51,8 +51,8 @@ public class DataSetTest
             {
                 return DataSet.newDataSet().
                     name( "mySet" ).
-                    set( "myData1", "aaa", PropertyTypes.TEXT ).
-                    set( "myData2", "bbb", PropertyTypes.TEXT ).
+                    set( "myData1", "aaa", ValueTypes.TEXT ).
+                    set( "myData2", "bbb", ValueTypes.TEXT ).
                     build();
             }
 
@@ -61,8 +61,8 @@ public class DataSetTest
             {
                 return DataSet.newDataSet().
                     name( "mySet" ).
-                    set( "myData1", "aaa", PropertyTypes.TEXT ).
-                    set( "myData2", "bbb", PropertyTypes.TEXT ).
+                    set( "myData1", "aaa", ValueTypes.TEXT ).
+                    set( "myData2", "bbb", ValueTypes.TEXT ).
                     build();
             }
         };
@@ -88,7 +88,7 @@ public class DataSetTest
     public void add()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
-        dataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.TEXT ).value( "A value" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "A value" ).build() );
 
         assertEquals( "mySet.myData", dataSet.getProperty( "myData" ).getPath().toString() );
         assertEquals( "A value", dataSet.getProperty( "myData" ).getString() );
@@ -98,8 +98,8 @@ public class DataSetTest
     public void add_more()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
-        dataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.TEXT ).value( "1" ).build() );
-        dataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.TEXT ).value( "2" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "1" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "2" ).build() );
 
         assertEquals( "1", dataSet.getProperty( "myData" ).getString() );
         assertEquals( "1", dataSet.getProperty( "myData[0]" ).getString() );
@@ -110,12 +110,12 @@ public class DataSetTest
     public void add_given_data_of_type_text_when_adding_data_of_other_type_with_same_name_then_exception_is_thrown()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
-        dataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.TEXT ).value( "A value" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "A value" ).build() );
 
         // exercise
         try
         {
-            dataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.HTML_PART ).value( "A value" ).build() );
+            dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.HTML_PART ).value( "A value" ).build() );
             fail( "Expected exception" );
         }
         catch ( Exception e )
@@ -131,8 +131,8 @@ public class DataSetTest
     public void size()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
-        dataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.TEXT ).value( "1" ).build() );
-        dataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.TEXT ).value( "2" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "1" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "2" ).build() );
 
         assertEquals( 2, dataSet.size() );
     }
@@ -141,9 +141,9 @@ public class DataSetTest
     public void entryCount()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
-        dataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.TEXT ).value( "1" ).build() );
-        dataSet.add( Property.newProperty().name( "myOtherData" ).type( PropertyTypes.TEXT ).value( "A" ).build() );
-        dataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.TEXT ).value( "2" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "1" ).build() );
+        dataSet.add( Property.newProperty().name( "myOtherData" ).type( ValueTypes.TEXT ).value( "A" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "2" ).build() );
 
         assertEquals( 2, dataSet.entryCount( "myData" ) );
     }
@@ -152,7 +152,7 @@ public class DataSetTest
     public void entryCount_given_non_existing_entry_then_0_is_returned()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
-        dataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.TEXT ).value( "2" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "2" ).build() );
 
         assertEquals( 0, dataSet.entryCount( "nonExistingEntry" ) );
     }
@@ -160,8 +160,8 @@ public class DataSetTest
     @Test
     public void add_given_two_data_added_with_same_path_then_array_is_created()
     {
-        Property myArray1 = Property.newProperty().name( "myArray" ).type( PropertyTypes.TEXT ).value( "1" ).build();
-        Property myArray2 = Property.newProperty().name( "myArray" ).type( PropertyTypes.TEXT ).value( "2" ).build();
+        Property myArray1 = Property.newProperty().name( "myArray" ).type( ValueTypes.TEXT ).value( "1" ).build();
+        Property myArray2 = Property.newProperty().name( "myArray" ).type( ValueTypes.TEXT ).value( "2" ).build();
 
         DataSet dataSet = DataSet.newRootDataSet();
         dataSet.add( myArray1 );
@@ -175,9 +175,9 @@ public class DataSetTest
     public void entryNames()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
-        dataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.TEXT ).value( "1" ).build() );
-        dataSet.add( Property.newProperty().name( "myOtherData" ).type( PropertyTypes.TEXT ).value( "A" ).build() );
-        dataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.TEXT ).value( "2" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "1" ).build() );
+        dataSet.add( Property.newProperty().name( "myOtherData" ).type( ValueTypes.TEXT ).value( "A" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "2" ).build() );
 
         Iterator<String> entryNames = dataSet.entryNames().iterator();
         assertEquals( "myData", entryNames.next() );
@@ -248,7 +248,7 @@ public class DataSetTest
     public void getValue()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.add( Property.newProperty().name( "myData" ).type( PropertyTypes.TEXT ).value( "1" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "1" ).build() );
 
         assertEquals( "1", dataSet.getValue( "myData" ).getObject() );
         assertEquals( "1", dataSet.getValue( EntryPath.from( "myData" ) ).getObject() );
@@ -329,7 +329,7 @@ public class DataSetTest
     public void setData_given_one_data_added_and_a_second_data_with_same_name_set_at_index_one_then_array_is_created()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.add( Property.newProperty().name( "myArray" ).type( PropertyTypes.TEXT ).value( "1" ).build() );
+        dataSet.add( Property.newProperty().name( "myArray" ).type( ValueTypes.TEXT ).value( "1" ).build() );
         dataSet.setProperty( EntryPath.from( "myArray[1]" ), new Value.Text( "2" ) );
 
         assertEquals( "1", dataSet.getValue( "myArray[0]" ).getObject() );
@@ -340,7 +340,7 @@ public class DataSetTest
     public void setData_given_array_index_set_twice_then_value_of_last_is_returned()
     {
         DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.add( Property.newProperty().name( "myArray" ).type( PropertyTypes.TEXT ).value( "1" ).build() );
+        dataSet.add( Property.newProperty().name( "myArray" ).type( ValueTypes.TEXT ).value( "1" ).build() );
 
         // exercise
         dataSet.setProperty( EntryPath.from( "myArray[1]" ), new Value.Text( "2a" ) );

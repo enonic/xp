@@ -7,8 +7,8 @@ import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
-public abstract class BasePropertyType
-    implements PropertyType
+public abstract class BaseValueType
+    implements ValueType
 {
     private final int key;
 
@@ -16,7 +16,7 @@ public abstract class BasePropertyType
 
     private JavaType.BaseType javaType;
 
-    public BasePropertyType( int key, JavaType.BaseType javaType )
+    public BaseValueType( int key, JavaType.BaseType javaType )
     {
         this.key = key;
         this.name = this.getClass().getSimpleName();
@@ -63,12 +63,12 @@ public abstract class BasePropertyType
         {
             return true;
         }
-        if ( !( o instanceof BasePropertyType ) )
+        if ( !( o instanceof BaseValueType ) )
         {
             return false;
         }
 
-        final BasePropertyType that = (BasePropertyType) o;
+        final BaseValueType that = (BaseValueType) o;
         return key == that.key;
     }
 

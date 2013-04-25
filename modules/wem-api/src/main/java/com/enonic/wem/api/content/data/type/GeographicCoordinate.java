@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
 public class GeographicCoordinate
-    extends BasePropertyType
+    extends BaseValueType
 {
     private static final double LATITUDE_RANGE_START = -90.0;
 

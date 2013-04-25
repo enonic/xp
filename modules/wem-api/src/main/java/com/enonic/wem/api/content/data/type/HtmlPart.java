@@ -5,8 +5,8 @@ import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class HtmlPart
-    extends BasePropertyType
-    implements PropertyType
+    extends BaseValueType
+    implements ValueType
 {
     HtmlPart( int key )
     {

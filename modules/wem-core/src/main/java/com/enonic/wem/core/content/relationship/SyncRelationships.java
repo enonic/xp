@@ -17,7 +17,7 @@ import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.PropertyVisitor;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
 import com.enonic.wem.api.content.schema.content.form.Form;
@@ -157,7 +157,7 @@ class SyncRelationships
                 references.put( reference.getPath(), reference );
             }
         };
-        propertyVisitor.restrictType( PropertyTypes.CONTENT_ID );
+        propertyVisitor.restrictType( ValueTypes.CONTENT_ID );
         propertyVisitor.traverse( rootDataSet );
         return references;
     }

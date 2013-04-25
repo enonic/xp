@@ -4,7 +4,7 @@ import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class ContentId
-    extends BasePropertyType
+    extends BaseValueType
 {
     ContentId( int key )
     {

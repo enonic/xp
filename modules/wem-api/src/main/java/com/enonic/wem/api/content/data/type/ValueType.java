@@ -5,11 +5,11 @@ import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
 /**
- * PropertyTypes should only be created when:
+ * ValueTypes should only be created when:
  * * the type can give something more when indexed
  * * needs validation.
  */
-public interface PropertyType
+public interface ValueType
 {
     int getKey();
 

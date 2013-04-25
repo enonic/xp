@@ -7,8 +7,8 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.type.BasePropertyType;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.BaseValueType;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
@@ -56,8 +56,8 @@ public class PopertyJsonSerializer
     {
         final String name = JsonSerializerUtil.getStringValue( ENTRY_NAME, dataNode );
 
-        final BasePropertyType dataType =
-            (BasePropertyType) PropertyTypes.parseByName( JsonSerializerUtil.getStringValue( ENTRY_TYPE, dataNode, null ) );
+        final BaseValueType dataType =
+            (BaseValueType) ValueTypes.parseByName( JsonSerializerUtil.getStringValue( ENTRY_TYPE, dataNode, null ) );
         Preconditions.checkNotNull( dataType, "dataType was null" );
 
         final JsonNode valueNode = dataNode.get( ENTRY_VALUE );

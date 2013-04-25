@@ -5,8 +5,8 @@ import java.util.LinkedHashMap;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.type.PropertyType;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.ValueType;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 
 public final class InputTypes
 {
@@ -64,11 +64,11 @@ public final class InputTypes
         register( WHOLE_NUMBER );
         register( XML );
 
-        registerDefaultInputType( PropertyTypes.DATE_MIDNIGHT, DATE );
-        registerDefaultInputType( PropertyTypes.TEXT, TEXT_AREA );
-        registerDefaultInputType( PropertyTypes.XML, XML );
-        registerDefaultInputType( PropertyTypes.WHOLE_NUMBER, WHOLE_NUMBER );
-        registerDefaultInputType( PropertyTypes.DECIMAL_NUMBER, DECIMAL_NUMBER );
+        registerDefaultInputType( ValueTypes.DATE_MIDNIGHT, DATE );
+        registerDefaultInputType( ValueTypes.TEXT, TEXT_AREA );
+        registerDefaultInputType( ValueTypes.XML, XML );
+        registerDefaultInputType( ValueTypes.WHOLE_NUMBER, WHOLE_NUMBER );
+        registerDefaultInputType( ValueTypes.DECIMAL_NUMBER, DECIMAL_NUMBER );
     }
 
     private static void register( BaseInputType inputType )
@@ -77,10 +77,10 @@ public final class InputTypes
         Preconditions.checkState( previous == null, "InputType already registered: " + inputType.getName() );
     }
 
-    private static void registerDefaultInputType( PropertyType propertyType, BaseInputType inputType )
+    private static void registerDefaultInputType( ValueType valueType, BaseInputType inputType )
     {
-        Object previousDataType = inputTypeByDataTypeKey.put( propertyType.getKey(), inputType );
-        Preconditions.checkState( previousDataType == null, "Default InputType already registered for PropertyType: " + propertyType );
+        Object previousDataType = inputTypeByDataTypeKey.put( valueType.getKey(), inputType );
+        Preconditions.checkState( previousDataType == null, "Default InputType already registered for ValueType: " + valueType );
     }
 
     public static int size()

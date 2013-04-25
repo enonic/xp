@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
 import com.enonic.wem.api.content.schema.content.form.inputtype.HtmlAreaConfig;
@@ -124,7 +124,7 @@ public class DataSetValidatorTest
         rootDataSet.setProperty( "crimes[1].description", new Value.Text( "Stole a chocolate from the Matbua shop" ) );
         rootDataSet.setProperty( "crimes[1].year", new Value.Text( "1990" ) );
 
-        assertEquals( PropertyTypes.TEXT, rootDataSet.getProperty( "personalia.eyeColour" ).getType() );
+        assertEquals( ValueTypes.TEXT, rootDataSet.getProperty( "personalia.eyeColour" ).getType() );
         Assert.assertEquals( "Blue", rootDataSet.getProperty( "personalia.eyeColour" ).getObject() );
         Assert.assertEquals( "personalia.eyeColour", rootDataSet.getProperty( "personalia.eyeColour" ).getPath().toString() );
 
@@ -139,7 +139,7 @@ public class DataSetValidatorTest
         crimes.add( newInput().name( "description" ).inputType( InputTypes.TEXT_LINE ).build() );
         crimes.add( newInput().name( "year" ).inputType( InputTypes.TEXT_LINE ).build() );
 
-        assertEquals( PropertyTypes.TEXT, rootDataSet.getProperty( "personalia.eyeColour" ).getType() );
+        assertEquals( ValueTypes.TEXT, rootDataSet.getProperty( "personalia.eyeColour" ).getType() );
         Assert.assertEquals( "Blue", rootDataSet.getProperty( "personalia.eyeColour" ).getObject() );
 
         // verify

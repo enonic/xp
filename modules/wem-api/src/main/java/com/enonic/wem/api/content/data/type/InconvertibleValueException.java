@@ -3,9 +3,9 @@ package com.enonic.wem.api.content.data.type;
 public class InconvertibleValueException
     extends RuntimeException
 {
-    public InconvertibleValueException( final Object value, final PropertyType propertyType )
+    public InconvertibleValueException( final Object value, final ValueType valueType )
     {
-        super( buildMessage( value, propertyType.getJavaType() ) );
+        super( buildMessage( value, valueType.getJavaType() ) );
     }
 
     public InconvertibleValueException( final Object value, final JavaType.BaseType javaType )
@@ -13,9 +13,9 @@ public class InconvertibleValueException
         super( buildMessage( value, javaType ) );
     }
 
-    public InconvertibleValueException( final Object value, final PropertyType propertyType, final Exception e )
+    public InconvertibleValueException( final Object value, final ValueType valueType, final Exception e )
     {
-        super( buildMessage( value, propertyType.getJavaType() ), e );
+        super( buildMessage( value, valueType.getJavaType() ), e );
     }
 
     private static String buildMessage( final Object value, final JavaType.BaseType javaType )

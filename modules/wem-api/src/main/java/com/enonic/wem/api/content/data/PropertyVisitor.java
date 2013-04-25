@@ -1,14 +1,14 @@
 package com.enonic.wem.api.content.data;
 
-import com.enonic.wem.api.content.data.type.PropertyType;
+import com.enonic.wem.api.content.data.type.ValueType;
 
 public abstract class PropertyVisitor
 {
-    private PropertyType propertyType;
+    private ValueType valueType;
 
-    public PropertyVisitor restrictType( PropertyType propertyType )
+    public PropertyVisitor restrictType( ValueType valueType )
     {
-        this.propertyType = propertyType;
+        this.valueType = valueType;
         return this;
     }
 
@@ -19,7 +19,7 @@ public abstract class PropertyVisitor
             if ( entry.isProperty() )
             {
                 final Property property = entry.toProperty();
-                if ( propertyType != null && !propertyType.equals( property.getType() ) )
+                if ( valueType != null && !valueType.equals( property.getType() ) )
                 {
                     continue;
                 }

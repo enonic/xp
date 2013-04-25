@@ -7,7 +7,7 @@ import java.util.List;
 import org.joda.time.DateMidnight;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -28,12 +28,12 @@ public class PropertyVisitorTest
             }
         };
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.add( Property.newProperty().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
-        rootDataSet.add( Property.newProperty().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        rootDataSet.add( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
+        rootDataSet.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
-        mySet.add( Property.newProperty().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
-        mySet.add( Property.newProperty().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        mySet.add( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
+        mySet.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
         rootDataSet.add( mySet );
 
         propertyVisitor.traverse( rootDataSet );
@@ -58,15 +58,15 @@ public class PropertyVisitorTest
                 hits.add( reference );
             }
         };
-        propertyVisitor.restrictType( PropertyTypes.TEXT );
+        propertyVisitor.restrictType( ValueTypes.TEXT );
 
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.add( Property.newProperty().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
-        rootDataSet.add( Property.newProperty().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        rootDataSet.add( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
+        rootDataSet.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
-        mySet.add( Property.newProperty().name( "myText" ).type( PropertyTypes.TEXT ).value( "abc" ).build() );
-        mySet.add( Property.newProperty().name( "myDate" ).type( PropertyTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        mySet.add( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
+        mySet.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
         rootDataSet.add( mySet );
 
         propertyVisitor.traverse( rootDataSet );

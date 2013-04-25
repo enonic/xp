@@ -24,7 +24,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.UpdateContentException;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.PropertyVisitor;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
@@ -97,7 +97,7 @@ public class UpdateContentHandler
                             }
                         }
                     }
-                }.restrictType( PropertyTypes.CONTENT_ID ).traverse( edited.getRootDataSet() );
+                }.restrictType( ValueTypes.CONTENT_ID ).traverse( edited.getRootDataSet() );
 
                 relationshipService.syncRelationships( new SyncRelationshipsCommand().
                     client( context.getClient() ).
@@ -183,7 +183,7 @@ public class UpdateContentHandler
                     }
                 }
             }
-        }.restrictType( PropertyTypes.CONTENT_ID ).traverse( persistedContent.getRootDataSet() );
+        }.restrictType( ValueTypes.CONTENT_ID ).traverse( persistedContent.getRootDataSet() );
         return embeddedContent;
     }
 

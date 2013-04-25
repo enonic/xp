@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.type.BasePropertyType;
+import com.enonic.wem.api.content.data.type.BaseValueType;
 
 
 public class PropertyArray
     extends EntryArray
 {
-    private final BasePropertyType type;
+    private final BaseValueType type;
 
     private final ArrayList<Value> valueList = new ArrayList<Value>();
 
@@ -22,7 +22,7 @@ public class PropertyArray
         this.type = builder.dataType;
     }
 
-    public BasePropertyType getType()
+    public BaseValueType getType()
     {
         return type;
     }
@@ -76,13 +76,13 @@ public class PropertyArray
 
     public static class Builder
     {
-        private BasePropertyType dataType;
+        private BaseValueType dataType;
 
         private String name;
 
         private DataSet parent;
 
-        public Builder propertyType( BasePropertyType value )
+        public Builder propertyType( BaseValueType value )
         {
             this.dataType = value;
             return this;

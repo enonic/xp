@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class WholeNumber
-    extends BasePropertyType
+    extends BaseValueType
 {
     WholeNumber( int key )
     {

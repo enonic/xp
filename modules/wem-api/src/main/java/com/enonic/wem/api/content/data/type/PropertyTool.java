@@ -16,16 +16,16 @@ public class PropertyTool
      *
      * @param propertyContainingSet
      * @param path
-     * @param propertyType
+     * @param valueType
      */
-    public static void checkPropertyType( final Property propertyContainingSet, final String path, final PropertyType propertyType )
+    public static void checkPropertyType( final Property propertyContainingSet, final String path, final ValueType valueType )
         throws InvalidDataException
     {
         final DataSet dataSet = propertyContainingSet.toDataSet();
-        checkPropertyType( dataSet, path, propertyType );
+        checkPropertyType( dataSet, path, valueType );
     }
 
-    public static void checkPropertyType( final DataSet dataSet, final String path, final PropertyType propertyType )
+    public static void checkPropertyType( final DataSet dataSet, final String path, final ValueType valueType )
         throws InvalidDataException
     {
         final Property property = dataSet.getProperty( EntryPath.from( path ) );
@@ -34,15 +34,15 @@ public class PropertyTool
             return;
         }
 
-        checkPropertyType( property, propertyType );
+        checkPropertyType( property, valueType );
     }
 
-    public static void checkPropertyType( final Property property, final PropertyType propertyType )
+    public static void checkPropertyType( final Property property, final ValueType valueType )
         throws InvalidDataException
     {
-        if ( !property.getType().equals( propertyType ) )
+        if ( !property.getType().equals( valueType ) )
         {
-            throw new InvalidPropertyTypeException( property, propertyType );
+            throw new InvalidPropertyTypeException( property, valueType );
         }
     }
 
@@ -59,9 +59,9 @@ public class PropertyTool
     public static void checkRange( final Property property, final Number rangeStart, final Number rangeStop )
         throws InvalidValueException
     {
-        Preconditions.checkArgument( property.getType() == PropertyTypes.WHOLE_NUMBER || property.getType() == PropertyTypes.DECIMAL_NUMBER,
-                                     "range checking can only be done for types: [" + PropertyTypes.WHOLE_NUMBER + ", " +
-                                         PropertyTypes.DECIMAL_NUMBER + "]" );
+        Preconditions.checkArgument( property.getType() == ValueTypes.WHOLE_NUMBER || property.getType() == ValueTypes.DECIMAL_NUMBER,
+                                     "range checking can only be done for types: [" + ValueTypes.WHOLE_NUMBER + ", " +
+                                         ValueTypes.DECIMAL_NUMBER + "]" );
 
         double value = property.getDouble();
         if ( value < rangeStart.doubleValue() || value > rangeStop.doubleValue() )
@@ -81,7 +81,7 @@ public class PropertyTool
 
         private boolean pathRequired = false;
 
-        private PropertyType checkType;
+        private ValueType checkType;
 
         private Number rangeStart;
 
@@ -100,7 +100,7 @@ public class PropertyTool
             return this;
         }
 
-        public Checker type( PropertyType type )
+        public Checker type( ValueType type )
         {
             this.checkType = type;
             return this;

@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class Xml
-    extends BasePropertyType
+    extends BaseValueType
 {
     Xml( int key )
     {

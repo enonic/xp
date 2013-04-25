@@ -9,8 +9,8 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.type.BasePropertyType;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.BaseValueType;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 
 
 public final class EntryXmlSerializer
@@ -38,7 +38,7 @@ public final class EntryXmlSerializer
     private void generateDataSet( final Element parentDataEl, final DataSet dataSet )
     {
         final String name = dataSet.getPath().getLastElement().getName();
-        final Element entryEl = new Element( name ).setAttribute( "type", PropertyTypes.SET.getName() );
+        final Element entryEl = new Element( name ).setAttribute( "type", ValueTypes.SET.getName() );
         parentDataEl.addContent( entryEl );
         for ( final Entry subEntry : dataSet )
         {
@@ -68,10 +68,10 @@ public final class EntryXmlSerializer
     final void parseEntry( final DataSet parentDataSet, final Element entryEl )
     {
         final String name = entryEl.getName();
-        final BasePropertyType type = (BasePropertyType) PropertyTypes.parseByName( entryEl.getAttributeValue( "type" ) );
+        final BaseValueType type = (BaseValueType) ValueTypes.parseByName( entryEl.getAttributeValue( "type" ) );
         Preconditions.checkNotNull( type, "type was null" );
 
-        if ( type.equals( PropertyTypes.SET ) )
+        if ( type.equals( ValueTypes.SET ) )
         {
             final DataSet dataSet = DataSet.newDataSet().name( name ).build();
             parentDataSet.add( dataSet );

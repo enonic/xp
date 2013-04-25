@@ -24,7 +24,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentException;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.PropertyVisitor;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
@@ -177,7 +177,7 @@ public class CreateContentHandler
                     }
                 }
             }
-        }.restrictType( PropertyTypes.CONTENT_ID );
+        }.restrictType( ValueTypes.CONTENT_ID );
         propertyVisitor.traverse( command.getRootDataSet() );
         return temporaryContents;
     }

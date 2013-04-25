@@ -36,7 +36,7 @@ public class GeographicCoordinateTest
         RootDataSet rootDataSet = content.getRootDataSet();
         rootDataSet.setProperty( "myGeographicCoordinate", new Value.DecimalNumber( 1.1 ) );
 
-        GeographicCoordinate geographicCoordinate = PropertyTypes.GEOGRAPHIC_COORDINATE;
+        GeographicCoordinate geographicCoordinate = ValueTypes.GEOGRAPHIC_COORDINATE;
         Property property = rootDataSet.getProperty( "myGeographicCoordinate" );
 
         // exercise

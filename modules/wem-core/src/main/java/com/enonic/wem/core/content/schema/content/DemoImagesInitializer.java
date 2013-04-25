@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.core.initializer.InitializerTask;
 import com.enonic.wem.core.support.BaseInitializer;
@@ -83,8 +83,8 @@ public class DemoImagesInitializer
     private RootDataSet createContentData( final BinaryId binaryId )
     {
         final RootDataSet dataSet = RootDataSet.newRootDataSet();
-        dataSet.add( Property.newProperty( "mimeType" ).type( PropertyTypes.TEXT ).value( "image/png" ).build() );
-        dataSet.add( Property.newProperty( "binary" ).type( PropertyTypes.BINARY_ID ).value( binaryId ).build() );
+        dataSet.add( Property.newProperty( "mimeType" ).type( ValueTypes.TEXT ).value( "image/png" ).build() );
+        dataSet.add( Property.newProperty( "binary" ).type( ValueTypes.BINARY_ID ).value( binaryId ).build() );
         return dataSet;
     }
 

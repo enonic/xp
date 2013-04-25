@@ -5,11 +5,11 @@ import org.joda.time.DateMidnight;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.type.BasePropertyType;
+import com.enonic.wem.api.content.data.type.BaseValueType;
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.data.type.JavaType;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
@@ -48,12 +48,12 @@ public class Property
         }
     }
 
-    public BasePropertyType getType()
+    public BaseValueType getType()
     {
         return value.getType();
     }
 
-    public void setValue( final Object value, final BasePropertyType type )
+    public void setValue( final Object value, final BaseValueType type )
     {
         Preconditions.checkNotNull( value, "A Property cannot have a null value" );
         Preconditions.checkArgument( !( value instanceof DataSet ), "A Property cannot have a DataSet as value" );
@@ -270,7 +270,7 @@ public class Property
             this.builder = builder;
         }
 
-        public ValueBuilder type( BasePropertyType value )
+        public ValueBuilder type( BaseValueType value )
         {
             builder.type( value );
             return new ValueBuilder( builder );
@@ -301,7 +301,7 @@ public class Property
     public static class Builder
         extends AbstractNameBuilder<Builder>
     {
-        public Builder type( BasePropertyType value )
+        public Builder type( BaseValueType value )
         {
             super.setType( value );
             return this;
@@ -370,7 +370,7 @@ public class Property
             this.name = value;
         }
 
-        void setType( final BasePropertyType value )
+        void setType( final BaseValueType value )
         {
             this.valueBuilder.type( value );
         }
@@ -415,7 +415,7 @@ public class Property
         {
             public Builder()
             {
-                setType( PropertyTypes.CONTENT_ID );
+                setType( ValueTypes.CONTENT_ID );
             }
 
             public Builder value( final com.enonic.wem.api.content.ContentId value )
@@ -467,7 +467,7 @@ public class Property
         {
             public Builder()
             {
-                setType( PropertyTypes.BINARY_ID );
+                setType( ValueTypes.BINARY_ID );
             }
 
             public Builder value( final com.enonic.wem.api.content.binary.BinaryId value )
@@ -524,7 +524,7 @@ public class Property
         {
             public DateBuilder()
             {
-                setType( PropertyTypes.DATE_MIDNIGHT );
+                setType( ValueTypes.DATE_MIDNIGHT );
             }
 
             public DateBuilder value( final DateMidnight value )
@@ -556,7 +556,7 @@ public class Property
         {
             private DateValueBuilder( final String name )
             {
-                setType( PropertyTypes.DATE_MIDNIGHT );
+                setType( ValueTypes.DATE_MIDNIGHT );
                 setName( name );
             }
 
@@ -602,12 +602,12 @@ public class Property
         {
             private DecimalNumberBuilder()
             {
-                setType( PropertyTypes.DECIMAL_NUMBER );
+                setType( ValueTypes.DECIMAL_NUMBER );
             }
 
             public DecimalNumberBuilder( final String name )
             {
-                setType( PropertyTypes.DECIMAL_NUMBER );
+                setType( ValueTypes.DECIMAL_NUMBER );
                 setName( name );
             }
 
@@ -634,7 +634,7 @@ public class Property
         {
             private DecimalNumberValueBuilder( final String name )
             {
-                setType( PropertyTypes.DECIMAL_NUMBER );
+                setType( ValueTypes.DECIMAL_NUMBER );
                 setName( name );
             }
 
@@ -674,7 +674,7 @@ public class Property
         {
             public HtmlPartBuilder()
             {
-                setType( PropertyTypes.HTML_PART );
+                setType( ValueTypes.HTML_PART );
             }
 
             public HtmlPartBuilder value( final String value )
@@ -700,7 +700,7 @@ public class Property
         {
             private HtmlPartValueBuilder( final String name )
             {
-                setType( PropertyTypes.HTML_PART );
+                setType( ValueTypes.HTML_PART );
                 setName( name );
             }
 
@@ -740,7 +740,7 @@ public class Property
         {
             public TextBuilder()
             {
-                setType( PropertyTypes.TEXT );
+                setType( ValueTypes.TEXT );
             }
 
             public TextBuilder value( final String value )
@@ -766,7 +766,7 @@ public class Property
         {
             private TextValueBuilder( final String name )
             {
-                setType( PropertyTypes.TEXT );
+                setType( ValueTypes.TEXT );
                 setName( name );
             }
 
@@ -806,7 +806,7 @@ public class Property
         {
             private WholeNumberBuilder()
             {
-                setType( PropertyTypes.WHOLE_NUMBER );
+                setType( ValueTypes.WHOLE_NUMBER );
             }
 
             public WholeNumberBuilder value( final Long value )
@@ -832,7 +832,7 @@ public class Property
         {
             private WholeNumberValueBuilder( final String name )
             {
-                setType( PropertyTypes.WHOLE_NUMBER );
+                setType( ValueTypes.WHOLE_NUMBER );
                 setName( name );
             }
 
@@ -872,7 +872,7 @@ public class Property
         {
             public XmlBuilder()
             {
-                setType( PropertyTypes.XML );
+                setType( ValueTypes.XML );
             }
 
             public XmlBuilder value( final String value )
@@ -899,7 +899,7 @@ public class Property
         {
             private XmlValueBuilder( final String name )
             {
-                setType( PropertyTypes.XML );
+                setType( ValueTypes.XML );
                 setName( name );
             }
 

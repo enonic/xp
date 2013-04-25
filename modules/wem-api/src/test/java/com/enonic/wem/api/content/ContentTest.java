@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.form.FieldSet;
 import com.enonic.wem.api.content.schema.content.form.FormItemSet;
@@ -78,8 +78,8 @@ public class ContentTest
     @Test
     public void array()
     {
-        Property first = Property.newProperty().name( "array" ).type( PropertyTypes.TEXT ).value( "First" ).build();
-        Property second = Property.newProperty().name( "array" ).type( PropertyTypes.TEXT ).value( "Second" ).build();
+        Property first = Property.newProperty().name( "array" ).type( ValueTypes.TEXT ).value( "First" ).build();
+        Property second = Property.newProperty().name( "array" ).type( ValueTypes.TEXT ).value( "Second" ).build();
 
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.add( first );
@@ -179,10 +179,10 @@ public class ContentTest
     public void add_array_of_set_within_set()
     {
         DataSet address1 = newDataSet().name( "address" ).build();
-        address1.add( Property.newProperty().name( "street" ).type( PropertyTypes.TEXT ).value( "Kirkegata 1-3" ).build() );
+        address1.add( Property.newProperty().name( "street" ).type( ValueTypes.TEXT ).value( "Kirkegata 1-3" ).build() );
 
         DataSet address2 = newDataSet().name( "address" ).build();
-        address2.add( Property.newProperty().name( "street" ).type( PropertyTypes.TEXT ).value( "Sonsteli" ).build() );
+        address2.add( Property.newProperty().name( "street" ).type( ValueTypes.TEXT ).value( "Sonsteli" ).build() );
 
         DataSet company = newDataSet().name( "company" ).build();
         company.add( address1 );
@@ -330,8 +330,8 @@ public class ContentTest
         rootDataSet.setProperty( "child[1].features.hairColour", new Value.Text( "Black" ) );
 
         assertEquals( "Thomas", rootDataSet.getProperty( "firstName" ).getObject() );
-        assertEquals( PropertyTypes.TEXT, rootDataSet.getProperty( "firstName" ).getType() );
-        assertEquals( PropertyTypes.HTML_PART, rootDataSet.getProperty( "description" ).getType() );
+        assertEquals( ValueTypes.TEXT, rootDataSet.getProperty( "firstName" ).getType() );
+        assertEquals( ValueTypes.HTML_PART, rootDataSet.getProperty( "description" ).getType() );
         assertEquals( "Joachim", rootDataSet.getProperty( "child[0].name" ).getObject() );
         assertEquals( "9", rootDataSet.getProperty( "child[0].age" ).getObject() );
         assertEquals( "Blue", rootDataSet.getProperty( "child[0].features.eyeColour" ).getObject() );
@@ -411,7 +411,7 @@ public class ContentTest
         rootDataSet.setProperty( "personalia.eyeColour", new Value.Text( "Blue" ) );
         rootDataSet.setProperty( "personalia.hairColour", new Value.Text( "Blonde" ) );
 
-        assertEquals( PropertyTypes.TEXT, rootDataSet.getProperty( "personalia.eyeColour" ).getType() );
+        assertEquals( ValueTypes.TEXT, rootDataSet.getProperty( "personalia.eyeColour" ).getType() );
         assertEquals( "Blue", rootDataSet.getProperty( "personalia.eyeColour" ).getObject() );
         assertEquals( "personalia.eyeColour", rootDataSet.getProperty( "personalia.eyeColour" ).getPath().toString() );
     }
@@ -474,7 +474,7 @@ public class ContentTest
     public void new_way()
     {
         RootDataSet rootDataSet = DataSet.newRootDataSet();
-        rootDataSet.add( Property.newProperty().type( PropertyTypes.TEXT ).name( "myData" ).value( "1" ).build() );
+        rootDataSet.add( Property.newProperty().type( ValueTypes.TEXT ).name( "myData" ).value( "1" ).build() );
         rootDataSet.add( newText().name( "myData" ).value( "1" ).build() );
         rootDataSet.add( newXml().name( "myXml" ).value( "<root/>" ).build() );
 

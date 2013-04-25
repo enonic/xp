@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.enonic.wem.api.JsonTestHelper;
 import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.type.PropertyTypes;
+import com.enonic.wem.api.content.data.type.ValueTypes;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -35,7 +35,7 @@ public class PopertyJsonSerializerTest
 
         Property property = serializer.parse( dataObj );
         assertEquals( "myData", property.getName() );
-        assertEquals( PropertyTypes.TEXT, property.getType() );
+        assertEquals( ValueTypes.TEXT, property.getType() );
         assertEquals( "A value", property.getObject() );
     }
 
@@ -50,7 +50,7 @@ public class PopertyJsonSerializerTest
 
         Property property = serializer.parse( dataObj );
         assertEquals( "myData", property.getName() );
-        assertEquals( PropertyTypes.BINARY_ID, property.getType() );
+        assertEquals( ValueTypes.BINARY_ID, property.getType() );
         assertEquals( BinaryId.from( "217482f4-b89a-4286-9111-5120d11da6c2" ), property.getObject() );
     }
 }
