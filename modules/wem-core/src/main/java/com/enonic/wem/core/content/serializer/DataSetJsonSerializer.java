@@ -12,7 +12,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
@@ -47,7 +46,7 @@ public class DataSetJsonSerializer
 
         dataSetObj.put( DATA_NAME, name );
         dataSetObj.put( DATA_PATH, path );
-        dataSetObj.put( DATA_TYPE, ValueTypes.SET.getName() );
+        dataSetObj.put( DATA_TYPE, DataSet.class.getSimpleName() );
         dataSetObj.put( DATA_VALUE, serializeEntries( dataSet ) );
         return dataSetObj;
     }

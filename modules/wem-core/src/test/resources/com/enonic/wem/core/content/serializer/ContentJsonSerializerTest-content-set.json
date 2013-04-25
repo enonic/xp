@@ -13,7 +13,7 @@
         {
             "name": "mySet",
             "path": "mySet",
-            "type": "Set",
+            "type": "DataSet",
             "value": [
                 {
                     "name": "myInput",

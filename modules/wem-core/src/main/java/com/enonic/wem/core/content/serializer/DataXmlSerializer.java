@@ -40,7 +40,7 @@ public final class DataXmlSerializer
     private void generateDataSet( final Element parentDataEl, final DataSet dataSet )
     {
         final String name = dataSet.getPath().getLastElement().getName();
-        final Element entryEl = new Element( name ).setAttribute( "type", ValueTypes.SET.getName() );
+        final Element entryEl = new Element( name ).setAttribute( "type", DataSet.class.getSimpleName() );
         parentDataEl.addContent( entryEl );
         for ( final Data subData : dataSet )
         {
@@ -70,21 +70,20 @@ public final class DataXmlSerializer
     final void parseData( final DataSet parentDataSet, final Element dataEl )
     {
         final String name = dataEl.getName();
-        final BaseValueType type = (BaseValueType) ValueTypes.parseByName( dataEl.getAttributeValue( "type" ) );
-        Preconditions.checkNotNull( type, "type was null" );
-
-        if ( type.equals( ValueTypes.SET ) )
+        final String typeAsString = dataEl.getAttributeValue( "type" );
+        if ( typeAsString.equals( DataSet.class.getSimpleName() ) )
         {
             final DataSet dataSet = newDataSet().name( name ).build();
             parentDataSet.add( dataSet );
-            final Iterator<Element> dataIt = dataEl.getChildren().iterator();
-            while ( dataIt.hasNext() )
+            for ( final Object element : dataEl.getChildren() )
             {
-                parseData( dataSet, dataIt.next() );
+                parseData( dataSet, (Element) element );
             }
         }
         else
         {
+            final BaseValueType type = (BaseValueType) ValueTypes.parseByName( typeAsString );
+            Preconditions.checkNotNull( type, "type was null" );
             parentDataSet.add( type.newProperty( name, dataEl.getText() ) );
         }
     }

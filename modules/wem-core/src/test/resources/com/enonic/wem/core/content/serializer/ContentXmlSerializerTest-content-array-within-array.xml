@@ -3,11 +3,11 @@
   <name/>
   <type>mymodule:my_type</type>
   <data>
-    <mySet type="Set">
+    <mySet type="DataSet">
       <myArray type="Text">1</myArray>
       <myArray type="Text">2</myArray>
     </mySet>
-    <mySet type="Set">
+    <mySet type="DataSet">
       <myArray type="Text">3</myArray>
       <myArray type="Text">4</myArray>
     </mySet>

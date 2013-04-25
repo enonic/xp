@@ -13,7 +13,7 @@
         {
             "name": "mySet",
             "path": "mySet[0]",
-            "type": "Set",
+            "type": "DataSet",
             "value": [
                 {
                     "name": "myInput",
@@ -33,7 +33,7 @@
         {
             "name": "mySet",
             "path": "mySet[1]",
-            "type": "Set",
+            "type": "DataSet",
             "value": [
                 {
                     "name": "myInput",
