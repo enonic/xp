@@ -45,9 +45,10 @@ final class RelationshipDaoHandlerCreate
         final Node relationshipTypeNameNode = JcrHelper.getOrAddNode( moduleNode, relationship.getType().getLocalName() );
         if ( relationship.getManagingData() != null )
         {
-            final Node managingDataNode = createManagingDataNode( relationship.getManagingData(), relationshipTypeNameNode );
-            return managingDataNode.addNode( RelationshipDao.TO_CONTENT_NODE_PREFIX + relationship.getToContent().toString(),
-                                             JcrConstants.RELATIONSHIP_NODETYPE );
+            final Node managingDataNode = JcrHelper.getOrAddNode( relationshipTypeNameNode, RelationshipDao.MANAGING_DATA_NODE );
+            final Node lastPathElementNode = createManagingDataNode( relationship.getManagingData(), managingDataNode );
+            return lastPathElementNode.addNode( RelationshipDao.TO_CONTENT_NODE_PREFIX + relationship.getToContent().toString(),
+                                                JcrConstants.RELATIONSHIP_NODETYPE );
         }
         else
         {

@@ -12,6 +12,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
+import com.enonic.wem.api.content.relationship.Relationships;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.AbstractJcrTest;
 import com.enonic.wem.core.content.dao.ContentDao;
@@ -19,6 +20,7 @@ import com.enonic.wem.core.content.dao.ContentDaoImpl;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.relationship.RelationshipKey.newRelationshipKey;
+import static com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName.LIKE;
 import static com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName.LINK;
 import static com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName.PARENT;
 import static org.junit.Assert.*;
@@ -162,6 +164,46 @@ public class RelationshipDaoImplTest
         assertEquals( contentB, storedRelationship.getToContent() );
         assertEquals( PARENT, storedRelationship.getType() );
         assertEquals( EntryPath.from( "myParent[3].myData[1]" ), storedRelationship.getManagingData() );
+    }
+
+    @Test
+    public void given_two_persisted_relationships_from_same_content_when_selectFromContent_then_two_relationships_are_returned()
+        throws Exception
+    {
+        // setup
+        contentDao.create( createContent( "myspace:/" ), session );
+        ContentId contentIdA = contentDao.create( createContent( "myspace:a" ), session );
+        ContentId contentIdB = contentDao.create( createContent( "myspace:b" ), session );
+        ContentId contentIdC = contentDao.create( createContent( "myspace:c" ), session );
+        ContentId contentIdD = contentDao.create( createContent( "myspace:d" ), session );
+        commit();
+
+        relationshipDao.create( createRelationship( contentIdA, contentIdB, PARENT, EntryPath.from( "myParent[3].myData[1]" ) ), session );
+        relationshipDao.create( createRelationship( contentIdA, contentIdC, PARENT ), session );
+        relationshipDao.create( createRelationship( contentIdA, contentIdC, LIKE ), session );
+        relationshipDao.create( createRelationship( contentIdD, contentIdB, PARENT ), session );
+        commit();
+
+        // exercise
+        Relationships storedRelationships = relationshipDao.selectFromContent( contentIdA, session );
+
+        // verify
+        assertEquals( 3, storedRelationships.getSize() );
+
+        Relationship parentRelationshipToB = storedRelationships.get( 0 );
+        assertEquals( contentIdB, parentRelationshipToB.getToContent() );
+        assertEquals( EntryPath.from( "myParent[3].myData[1]" ), parentRelationshipToB.getManagingData() );
+        assertEquals( PARENT, parentRelationshipToB.getType() );
+
+        Relationship parentRelationshipToC = storedRelationships.get( 1 );
+        assertEquals( contentIdC, parentRelationshipToC.getToContent() );
+        assertEquals( null, parentRelationshipToC.getManagingData() );
+        assertEquals( PARENT, parentRelationshipToC.getType() );
+
+        Relationship likeRelationshipToC = storedRelationships.get( 2 );
+        assertEquals( contentIdC, likeRelationshipToC.getToContent() );
+        assertEquals( null, likeRelationshipToC.getManagingData() );
+        assertEquals( LIKE, likeRelationshipToC.getType() );
     }
 
     private Relationship createRelationship( final ContentId contentA, final ContentId contentB, final QualifiedRelationshipTypeName type )

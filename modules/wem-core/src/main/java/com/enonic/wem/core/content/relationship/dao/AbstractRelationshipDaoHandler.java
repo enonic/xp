@@ -1,13 +1,17 @@
 package com.enonic.wem.core.content.relationship.dao;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.util.TraversingItemVisitor;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
+import com.enonic.wem.api.content.relationship.Relationships;
 import com.enonic.wem.core.content.dao.AbstractContentDaoHandler;
 import com.enonic.wem.core.jcr.JcrHelper;
 import com.enonic.wem.core.support.dao.AbstractDaoHandler;
@@ -69,8 +73,9 @@ abstract class AbstractRelationshipDaoHandler<T>
 
         if ( relationshipKey.getManagingData() != null )
         {
-            final Node managingDataNode = getManagingDataNode( relationshipKey.getManagingData(), relationshipTypeNameNode );
-            return managingDataNode.getNode( RelationshipDao.TO_CONTENT_NODE_PREFIX + relationshipKey.getToContent().toString() );
+            final Node managingDataNode = JcrHelper.getNodeOrNull( relationshipTypeNameNode, RelationshipDao.MANAGING_DATA_NODE );
+            final Node lastPathElementNode = getManagingDataNode( relationshipKey.getManagingData(), managingDataNode );
+            return lastPathElementNode.getNode( RelationshipDao.TO_CONTENT_NODE_PREFIX + relationshipKey.getToContent().toString() );
         }
         else
         {
@@ -78,21 +83,91 @@ abstract class AbstractRelationshipDaoHandler<T>
         }
     }
 
+    protected final Relationships getRelationships( final ContentId fromContent )
+        throws RepositoryException
+    {
+        final Relationships.Builder relationships = Relationships.newRelationships();
+        final Node fromContentNode = contentDaoHandler.getContentNode( fromContent );
+        if ( fromContentNode == null )
+        {
+            return relationships.build();
+        }
+
+        final Node relationshipsNode = JcrHelper.getNodeOrNull( fromContentNode, RelationshipDao.RELATIONSHIPS_NODE );
+        if ( relationshipsNode == null )
+        {
+            return relationships.build();
+        }
+
+        final NodeIterator moduleNodeIterator = relationshipsNode.getNodes();
+        while ( moduleNodeIterator.hasNext() )
+        {
+            final Node moduleNode = moduleNodeIterator.nextNode();
+
+            final NodeIterator relationshipTypeNameIterator = moduleNode.getNodes();
+            while ( relationshipTypeNameIterator.hasNext() )
+            {
+                final Node relationshipTypeNameNode = relationshipTypeNameIterator.nextNode();
+
+                final NodeIterator nodeIterator = relationshipTypeNameNode.getNodes();
+                while ( nodeIterator.hasNext() )
+                {
+                    final Node node = nodeIterator.nextNode();
+                    if ( node.getName().startsWith( RelationshipDao.TO_CONTENT_NODE_PREFIX ) )
+                    {
+                        final Relationship relationship = relationshipJcrMapper.toRelationship( node );
+                        relationships.add( relationship );
+                    }
+                    else if ( node.getName().equals( RelationshipDao.MANAGING_DATA_NODE ) )
+                    {
+                        TraversingItemVisitor visitor = new TraversingItemVisitor.Default()
+                        {
+                            @Override
+                            protected void entering( final Node node, final int level )
+                                throws RepositoryException
+                            {
+
+                                if ( node.getName().startsWith( RelationshipDao.TO_CONTENT_NODE_PREFIX ) )
+                                {
+                                    final Relationship relationship = relationshipJcrMapper.toRelationship( node );
+                                    relationships.add( relationship );
+                                }
+                            }
+                        };
+                        visitor.visit( node );
+
+                    }
+                }
+            }
+        }
+
+        return relationships.build();
+    }
+
     private Node getManagingDataNode( final EntryPath entryPath, final Node parentNode )
         throws RepositoryException
     {
         final EntryPath.Element firstElement = entryPath.getFirstElement();
-        Node childNode = JcrHelper.getNodeOrNull( parentNode, firstElement.getName() );
+        Node pathElementNameNode = JcrHelper.getNodeOrNull( parentNode, firstElement.getName() );
+        if ( pathElementNameNode == null )
+        {
+            return null;
+        }
         final int index = firstElement.hasIndex() ? firstElement.getIndex() : 0;
-        childNode = JcrHelper.getNodeOrNull( childNode, "__index-" + index );
+        Node elementIndexNode = JcrHelper.getNodeOrNull( pathElementNameNode, "__index-" + index );
+
+        if ( elementIndexNode == null )
+        {
+            return null;
+        }
 
         if ( entryPath.elementCount() == 1 )
         {
-            return childNode;
+            return elementIndexNode;
         }
         else
         {
-            return getManagingDataNode( entryPath.asNewWithoutFirstPathElement(), childNode );
+            return getManagingDataNode( entryPath.asNewWithoutFirstPathElement(), elementIndexNode );
         }
     }
 

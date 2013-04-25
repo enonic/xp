@@ -42,6 +42,7 @@ public abstract class JsonResult
 
     protected abstract void serialize( ObjectNode json );
 
+
     @Override
     public final JsonNode toJson()
     {

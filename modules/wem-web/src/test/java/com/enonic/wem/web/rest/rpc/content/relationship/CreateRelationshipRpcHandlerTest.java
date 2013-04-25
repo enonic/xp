@@ -48,7 +48,7 @@ public class CreateRelationshipRpcHandlerTest
         relationshipKeyObj.put( "type", QualifiedRelationshipTypeName.LIKE.toString() );
 
         // exercise & verify
-        testSuccess( "createRelationship_create_param.json", resultJson );
+        testSuccess( "createRelationship_param.json", resultJson );
     }
 
 }

@@ -15,7 +15,9 @@ class RelationshipJcrMapper
 
     private final RelationshipJsonSerializer jsonSerializer = new RelationshipJsonSerializer().
         includeCreatedTime( false ).
-        includeCreator( false );
+        includeCreator( false ).
+        includeModifier( false ).
+        includeModifiedTime( false );
 
     void toJcr( final Relationship relationship, final Node relationshipNode )
         throws RepositoryException

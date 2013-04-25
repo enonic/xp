@@ -5,10 +5,12 @@ import javax.jcr.Session;
 
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.relationship.RelationshipIds;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
+import com.enonic.wem.api.content.relationship.Relationships;
 
 /**
  * A Relationship is stored on the following path:
@@ -66,6 +68,15 @@ public class RelationshipDaoImpl
     {
         final RelationshipDaoHandlerSelectByKey handler = new RelationshipDaoHandlerSelectByKey( session );
         handler.relationshipKey( relationshipKey );
+        handler.handle();
+        return handler.getResult();
+    }
+
+    @Override
+    public Relationships selectFromContent( final ContentId fromContent, final Session session )
+    {
+        final RelationshipDaoHandlerSelectByFromContent handler = new RelationshipDaoHandlerSelectByFromContent( session );
+        handler.fromContent( fromContent );
         handler.handle();
         return handler.getResult();
     }
