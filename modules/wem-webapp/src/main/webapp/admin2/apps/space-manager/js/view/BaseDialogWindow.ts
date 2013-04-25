@@ -18,7 +18,19 @@ Ext.define('Admin.view.BaseDialogWindow', {
     // Title and subtitle deprecated. Use header() instead
     dialogTitle: 'Base dialog',
     dialogSubTitle: '',
-    dialogInfoTpl: Templates.common.userInfo,
+    dialogInfoTpl: '<div>' +
+                   '<div class="admin-user-info clearfix">' +
+                   '<div class="admin-user-photo west admin-left">' +
+                   '<div class="photo-placeholder">' +
+                   '<img src="{[values.image_url]}?size=100" alt="{name}"/>' +
+                   '</div>' +
+                   '</div>' +
+                   '<div class="admin-left">' +
+                   '<h2>{displayName}</h2>({qualifiedName})<br/>' +
+                   '<a href="mailto:{email}:">{email}</a>' +
+                   '</div>' +
+                   '</div>' +
+                   '</div>',
 
     buttonItems: [],
 
