@@ -42,7 +42,6 @@ var admin;
                         publish: new Ext.XTemplate('<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-result">See result</a> or <a href="#" class="admin-notification-publish">Publish to other locations</a></span>', '<span style="line-height: 1.5em;">', '<tpl if="contentName"> "{contentName}"</tpl> published successfully!', '</span> '),
                         general: new Ext.XTemplate('<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-publish">Publish</a> or <a href="#" class="admin-notification-close">Close</a></span>', '<span style="line-height: 1.5em;">', '<tpl if="contentName"> "{contentName}"</tpl> saved successfully!', '</span> ')
                     };
-                    console.log('notification manager construct');
                     this.timers = {
                     };
                     this.render();
@@ -60,8 +59,7 @@ var admin;
                     });
                 };
                 NotificationManager.prototype.showNotification = function (type, args, opts) {
-                    var me = this;
-                    me[type] ? me[type](args) : me.notify({
+                    this[type] ? this[type](args) : this.notify({
                     });
                 };
                 NotificationManager.prototype.removeNotification = function (mark) {
@@ -78,6 +76,7 @@ var admin;
                     notificationEl = me.renderNotification(nOpts);
                     me.setNotificationListeners(notificationEl, nOpts);
                     height = me.getInnerEl(notificationEl).getHeight();
+                    console.log(me.space);
                     notificationEl.animate({
                         duration: me.slideDuration,
                         to: {

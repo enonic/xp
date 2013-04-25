@@ -54,9 +54,6 @@ module admin.api.notify {
         el:any;
 
         constructor() {
-
-            console.log('notification manager construct');
-
             // hash stored timers for active notifications
             this.timers = {};
 
@@ -64,13 +61,6 @@ module admin.api.notify {
 
             admin.api.message.addListener('showNotification', this.showNotification, this);
             admin.api.message.addListener('removeNotification', this.removeNotification, this);
-
-            /*
-            Admin.MessageBus.on({
-                showNotification: { fn: this.showNotification, scope: this },
-                removeNotification: { fn: this.removeNotification, scope: this }
-            });
-            */
         }
 
 
@@ -97,8 +87,7 @@ module admin.api.notify {
 
 
         showNotification(type, args, opts) {
-            var me = this;
-            me[type] ? me[type](args) : me.notify({});
+            this[type] ? this[type](args) : this.notify({});
         }
 
 
@@ -136,6 +125,7 @@ module admin.api.notify {
             me.setNotificationListeners(notificationEl, nOpts);
 
             height = me.getInnerEl(notificationEl).getHeight();
+
             notificationEl.animate({
                 duration: me.slideDuration,
                 to: {
