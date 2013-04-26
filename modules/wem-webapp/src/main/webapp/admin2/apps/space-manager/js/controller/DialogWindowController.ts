@@ -3,9 +3,7 @@ Ext.define('Admin.controller.DialogWindowController', {
 
     stores: [],
     models: [],
-    views: [
-        'Admin.view.DeleteSpaceWindow'
-    ],
+    views: [],
 
 
     init: function () {

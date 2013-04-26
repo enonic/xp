@@ -10,8 +10,7 @@ Ext.define('Admin.controller.Controller', {
     ],
 
     views: [
-        'Admin.view.DetailPanel',
-        'Admin.view.DeleteSpaceWindow'
+        'Admin.view.DetailPanel'
     ],
 
     requires: [
@@ -103,7 +102,8 @@ Ext.define('Admin.controller.Controller', {
 
     showDeleteSpaceWindow: function (spaceArray) {
         var win = this.getDeleteSpaceWindow();
-        win.doShow(spaceArray);
+        win.setModel(spaceArray);
+        win.doShow();
     },
 
     validateSpace: function (space) {
@@ -149,10 +149,12 @@ Ext.define('Admin.controller.Controller', {
         return Ext.ComponentQuery.query('spaceDetail')[0];
     },
 
+    deleteSpaceWindow: null,
+
     getDeleteSpaceWindow: function () {
-        var win = Ext.ComponentQuery.query('deleteSpaceWindow')[0];
+        var win = this.deleteSpaceWindow;
         if (!win) {
-            win = Ext.create('widget.deleteSpaceWindow');
+            win = new admin.ui.DeleteSpaceWindow();
         }
         return win;
     },

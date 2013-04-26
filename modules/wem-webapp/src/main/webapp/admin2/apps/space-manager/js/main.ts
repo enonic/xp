@@ -13,6 +13,7 @@
 
 ///<reference path='store/SpaceStore.ts' />
 
+///<reference path='handler/DeleteSpacesHandler.ts' />
 ///<reference path='view/WizardLayout.ts' />
 ///<reference path='view/WizardHeader.ts' />
 ///<reference path='view/WizardPanel.ts' />
@@ -23,7 +24,6 @@
 ///<reference path='view/DetailToolbar.ts' />
 ///<reference path='view/DetailPanel.ts' />
 
-///<reference path='../../../api/js/window/BaseDialogWindow.ts' />
 ///<reference path='view/DeleteSpaceWindow.ts' />
 
 ///<reference path='view/BaseTreeGridPanel.ts' />

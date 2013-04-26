@@ -1,89 +1,116 @@
-Ext.define('Admin.view.DeleteSpaceWindow', {
-    extend: 'Admin.view.BaseDialogWindow',
-    alias: 'widget.deleteSpaceWindow',
+module admin.ui {
 
-    //dialogTitle: 'Delete Space(s)',
+    export class DeleteSpaceWindow {
 
-    multipleTemplate: '<div class="admin-delete-user-confirmation-message">' +
-                      '<div class="icon-question-mark-32 admin-left" style="width:32px; height:32px; margin-right: 10px"><!-- --></div>' +
-                      '<div class="admin-left" style="margin-top:5px">Are you sure you want to delete {selectionLength} item(s)?</div>' +
-                      '</div>',
+        private container;
+        private data;
+        private title:String = "Delete space(s)";
+        private deleteHandler = new admin.app.handler.DeleteSpacesHandler();
 
-    singleTemplate: '<div>' +
-                    '<div class="admin-content-info clearfix">' +
-                    '<div class="admin-content-photo west admin-left">' +
-                    '<div class="photo-placeholder"><img src="{iconUrl}" alt="{name}"/></div>' +
-                    '</div>' +
-                    '<div class="admin-left">' +
-                    '<h2>{displayName}</h2>' +
-                    '<p>{description}</p>' +
-                    '</div>' +
-                    '</div>' +
-                    '</div>',
+        private template = '<div class="delete-container">' +
+                           '<tpl for=".">' +
+                           '<div class="delete-item">' +
+                           '<img class="icon" src="{data.iconUrl}"/>' +
+                           '<h4>{data.displayName}</h4>' +
+                           '<p>{data.type}</p>' +
+                           '</div>' +
+                           '</tpl>' +
+                           '</div>';
 
-    dialogTitle: undefined,
-    dialogSubTitle: undefined,
-
-    initComponent: function () {
-        var me = this;
-        this.items = [
-            me.header('Delete Space(s)'),
-            {
-                region: 'center',
-                layout: {
-                    type: 'vbox',
-                    align: 'stretch'
-                },
-                border: false,
-                items: {
-                    itemId: 'modalDialog',
-                    cls: 'dialog-info',
-                    xtype: 'component',
+        constructor() {
+            var me = this;
+            var deleteCallback = (obj, success, result) => {
+                this.container.hide();
+                //TODO: Fire event
+            };
+            this.container = Ext.create('Ext.container.Container', {
                     border: false,
-                    height: 150,
-                    styleHtmlContent: true,
-                    tpl: me.deleteTemplate
+                    floating: true,
+                    shadow: false,
+                    width: 500,
+                    modal: true,
+                    autoHeight: true,
+                    maxHeight: 600,
+                    cls: 'admin-window',
+                    closeAction: 'hide',
+                    padding: 20,
+                    items: <any[]>[
+                        {
+                            region: 'north',
+                            xtype: 'component',
+                            tpl: '<h2>{title}</h2><tpl if="subtitle != undefined"><p>{subtitle}</p></tpl>',
+                            data: {
+                                title: me.title
+                            },
+                            margin: '0 0 20 0'
+                        },
+                        {
+                            region: 'center',
+                            layout: {
+                                type: 'vbox',
+                                align: 'stretch'
+                            },
+                            border: false,
+                            items: {
+                                itemId: 'modalDialog',
+                                cls: 'dialog-info',
+                                xtype: 'component',
+                                border: false,
+                                height: 150,
+                                styleHtmlContent: true,
+                                tpl: me.template
+                            }
+                        },
+                        {
+                            region: 'south',
+                            margin: '20 0 0 0',
+                            border: false,
+                            layout: {
+                                type: 'hbox',
+                                pack: 'end'
+                            },
+                            defaults: {
+                                xtype: 'button',
+                                margin: '0 0 0 10'
+                            },
+                            items: <any[]>[
+                                {
+                                    text: 'Delete',
+                                    handler: (btn, evt) => {
+                                        btn.disable();
+                                        this.deleteHandler.doDelete(this.data, deleteCallback);
+                                    }
+                                },
+                                {
+                                    text: 'Cancel',
+                                    handler: function (btn, evt) {
+                                        me.container.hide();
+                                    }
+                                }
+                            ]
+                        }
+                    ]
                 }
-            },
-            me.buttonRow({
-                text: 'Delete',
-                action: 'deleteSpace'
-            }, {
-                text: 'Cancel',
-                handler: function (btn, evt) {
-                    me.close();
-                }
-            })
-        ];
-        this.callParent(arguments);
-    },
 
-    deleteTemplate: '<div class="delete-container">' +
-                    '<tpl for=".">' +
-                    '<div class="delete-item">' +
-                    '<img class="icon" src="{data.iconUrl}"/>' +
-                    '<h4>{data.displayName}</h4>' +
-                    '<p>{data.type}</p>' +
-                    '</div>' +
-                    '</tpl>' +
-                    '</div>',
-
-    setModalDialogData: function (model) {
-        console.log("Model");
-        console.log(model);
-        this.data = model;
-        this.modelData = model[0].data;
-        if (model) {
-            var info = this.down('#modalDialog');
-            if (info) {
-                info.update(model);
-            }
-
+            );
         }
-    },
 
-    doShow: function (selection) {
-        this.setModalDialogData(selection);
-        this.show();
+    ;
+
+
+        setModel(model) {
+            this.data = model;
+            if (model) {
+                var info = this.container.down('#modalDialog');
+                if (info) {
+                    info.update(model);
+                }
+
+            }
+        }
+
+        doShow() {
+            this.container.show();
+        }
     }
-});
+}
