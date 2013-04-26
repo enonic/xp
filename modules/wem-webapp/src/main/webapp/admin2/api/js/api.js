@@ -3,11 +3,9 @@ var admin;
     (function (api) {
         (function (message) {
             var messageBus = Ext.create('Ext.util.Observable');
-
             function showFeedback(message) {
                 messageBus.fireEvent('showNotification', 'notify', message);
             }
-
             message.showFeedback = showFeedback;
             function updateAppTabCount(appId, tabCount) {
                 var eventName = 'topBar.onUpdateAppTabCount';
@@ -17,12 +15,10 @@ var admin;
                 };
                 messageBus.fireEvent(eventName, config);
             }
-
             message.updateAppTabCount = updateAppTabCount;
             function addListener(name, func, scope) {
                 messageBus.addListener(name, func, scope);
             }
-
             message.addListener = addListener;
         })(api.message || (api.message = {}));
         var message = api.message;
@@ -40,18 +36,11 @@ var admin;
                     this.lifetime = 5000;
                     this.slideDuration = 1000;
                     this.tpl = {
-                        manager: new Ext.Template('<div class="admin-notification-container">',
-                            '   <div class="admin-notification-wrapper"></div>', '</div>'),
-                        notification: new Ext.Template('<div class="admin-notification" style="height: 0; opacity: 0;">',
-                            '   <div class="admin-notification-inner">', '       <a class="admin-notification-remove" href="#">X</a>',
-                            '       <div class="admin-notification-content">{message}</div>', '   </div>', '</div>'),
+                        manager: new Ext.Template('<div class="admin-notification-container">', '   <div class="admin-notification-wrapper"></div>', '</div>'),
+                        notification: new Ext.Template('<div class="admin-notification" style="height: 0; opacity: 0;">', '   <div class="admin-notification-inner">', '       <a class="admin-notification-remove" href="#">X</a>', '       <div class="admin-notification-content">{message}</div>', '   </div>', '</div>'),
                         error: new Ext.Template('<span>{message}</span>'),
-                        publish: new Ext.XTemplate('<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-result">See result</a> or <a href="#" class="admin-notification-publish">Publish to other locations</a></span>',
-                            '<span style="line-height: 1.5em;">', '<tpl if="contentName"> "{contentName}"</tpl> published successfully!',
-                            '</span> '),
-                        general: new Ext.XTemplate('<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-publish">Publish</a> or <a href="#" class="admin-notification-close">Close</a></span>',
-                            '<span style="line-height: 1.5em;">', '<tpl if="contentName"> "{contentName}"</tpl> saved successfully!',
-                            '</span> ')
+                        publish: new Ext.XTemplate('<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-result">See result</a> or <a href="#" class="admin-notification-publish">Publish to other locations</a></span>', '<span style="line-height: 1.5em;">', '<tpl if="contentName"> "{contentName}"</tpl> published successfully!', '</span> '),
+                        general: new Ext.XTemplate('<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-publish">Publish</a> or <a href="#" class="admin-notification-close">Close</a></span>', '<span style="line-height: 1.5em;">', '<tpl if="contentName"> "{contentName}"</tpl> saved successfully!', '</span> ')
                     };
                     this.timers = {
                     };
@@ -59,7 +48,6 @@ var admin;
                     admin.api.message.addListener('showNotification', this.showNotification, this);
                     admin.api.message.addListener('removeNotification', this.removeNotification, this);
                 }
-
                 NotificationManager.prototype.render = function () {
                     var me = this, node, pos = this.position;
                     node = this.tpl.manager.append(Ext.getBody());
@@ -82,7 +70,7 @@ var admin;
                 };
                 NotificationManager.prototype.notify = function (nOpts) {
                     var me = this, notificationEl, height;
-                    if (me.isRendered(nOpts)) {
+                    if(me.isRendered(nOpts)) {
                         return;
                     }
                     notificationEl = me.renderNotification(nOpts);
@@ -95,7 +83,7 @@ var admin;
                             opacity: 1
                         },
                         callback: function () {
-                            if (nOpts.lifetime < 0) {
+                            if(nOpts.lifetime < 0) {
                                 return;
                             }
                             me.timers[notificationEl.id] = {
@@ -122,7 +110,7 @@ var admin;
                         backgroundColor: '#4294de',
                         listeners: []
                     };
-                    if (Ext.isFunction(opts.resultCallback)) {
+                    if(Ext.isFunction(opts.resultCallback)) {
                         notificationOpts.listeners.push({
                             click: {
                                 fn: opts.resultCallback,
@@ -131,7 +119,7 @@ var admin;
                             }
                         });
                     }
-                    if (Ext.isFunction(opts.publishCallback)) {
+                    if(Ext.isFunction(opts.publishCallback)) {
                         notificationOpts.listeners.push({
                             click: {
                                 fn: opts.publishCallback,
@@ -148,7 +136,7 @@ var admin;
                         backgroundColor: '#669c34',
                         listeners: []
                     };
-                    if (Ext.isFunction(opts.publishCallback)) {
+                    if(Ext.isFunction(opts.publishCallback)) {
                         notificationOpts.listeners.push({
                             click: {
                                 fn: opts.publishCallback,
@@ -157,7 +145,7 @@ var admin;
                             }
                         });
                     }
-                    if (Ext.isFunction(opts.closeCallback)) {
+                    if(Ext.isFunction(opts.closeCallback)) {
                         notificationOpts.listeners.push({
                             click: {
                                 fn: opts.closeCallback,
@@ -169,8 +157,7 @@ var admin;
                     this.notify(notificationOpts);
                 };
                 NotificationManager.prototype.isRendered = function (nOpts) {
-                    if (nOpts.single && nOpts.mark &&
-                        this.getEl().select('.admin-notification[data-mark=' + nOpts.mark + ']').getCount() > 0) {
+                    if(nOpts.single && nOpts.mark && this.getEl().select('.admin-notification[data-mark=' + nOpts.mark + ']').getCount() > 0) {
                         return true;
                     }
                     return false;
@@ -178,14 +165,13 @@ var admin;
                 NotificationManager.prototype.renderNotification = function (nOpts) {
                     var me = this, tpl = me.tpl.notification, style = {
                     }, notificationEl;
-                    notificationEl =
-                    (me.position[0] == 't') ? tpl.insertFirst(me.getWrapperEl(), nOpts, true) : tpl.append(me.getWrapperEl(), nOpts, true);
-                    if (nOpts.backgroundColor) {
+                    notificationEl = (me.position[0] == 't') ? tpl.insertFirst(me.getWrapperEl(), nOpts, true) : tpl.append(me.getWrapperEl(), nOpts, true);
+                    if(nOpts.backgroundColor) {
                         style['backgroundColor'] = nOpts.backgroundColor;
                     }
                     (me.position[0] == 't') ? (style['marginBottom'] = me.space + 'px') : (style['marginTop'] = me.space + 'px');
                     me.getInnerEl(notificationEl).setStyle(style);
-                    if (nOpts.mark) {
+                    if(nOpts.mark) {
                         notificationEl.set({
                             'data-mark': nOpts.mark
                         });
@@ -209,7 +195,7 @@ var admin;
                             me.startTimer(notificationEl);
                         }
                     });
-                    if (nOpts.listeners) {
+                    if(nOpts.listeners) {
                         Ext.each(nOpts.listeners, function (listener) {
                             notificationEl.on(listener);
                         });
@@ -218,7 +204,7 @@ var admin;
                 NotificationManager.prototype.remove = function (notificationEl) {
                     var me = this;
                     Ext.isElement(notificationEl) || (notificationEl = Ext.get(notificationEl));
-                    if (!notificationEl) {
+                    if(!notificationEl) {
                         return;
                     }
                     notificationEl.animate({
@@ -235,7 +221,7 @@ var admin;
                 };
                 NotificationManager.prototype.startTimer = function (notificationEl) {
                     var me = this, timer = me.timers[notificationEl.id];
-                    if (!timer) {
+                    if(!timer) {
                         return;
                     }
                     timer.id = setTimeout(function () {
@@ -245,7 +231,7 @@ var admin;
                 };
                 NotificationManager.prototype.stopTimer = function (notificationEl) {
                     var timer = this.timers[notificationEl.id];
-                    if (!timer || !timer.id) {
+                    if(!timer || !timer.id) {
                         return;
                     }
                     clearTimeout(timer.id);
@@ -266,7 +252,7 @@ var admin;
                     return node.up('.admin-notification', this.getEl());
                 };
                 return NotificationManager;
-            })();
+            })();            
             var manager = new NotificationManager();
         })(api.notify || (api.notify = {}));
         var notify = api.notify;
@@ -280,7 +266,6 @@ var admin;
             function getAbsoluteUri(uri) {
                 return CONFIG.baseUrl + '/' + uri;
             }
-
             uri.getAbsoluteUri = getAbsoluteUri;
         })(lib.uri || (lib.uri = {}));
         var uri = lib.uri;
@@ -289,5 +274,5 @@ var admin;
 })(admin || (admin = {}));
 var admin;
 (function (admin) {
-})(admin || (admin = {}));
+    })(admin || (admin = {}));
 //@ sourceMappingURL=api.js.map

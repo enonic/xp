@@ -23,7 +23,7 @@
 ///<reference path='view/DetailToolbar.ts' />
 ///<reference path='view/DetailPanel.ts' />
 
-///<reference path='view/BaseDialogWindow.ts' />
+///<reference path='../../../api/js/window/BaseDialogWindow.ts' />
 ///<reference path='view/DeleteSpaceWindow.ts' />
 
 ///<reference path='view/BaseTreeGridPanel.ts' />
