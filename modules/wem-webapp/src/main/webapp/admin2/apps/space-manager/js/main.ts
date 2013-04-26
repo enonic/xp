@@ -1,6 +1,5 @@
 ///<reference path='../../../api/js/api.d.ts' />
 
-///<reference path='lib/UriHelper.ts' />
 ///<reference path='lib/JsonRpcProvider.ts' />
 ///<reference path='lib/RemoteService.ts' />
 

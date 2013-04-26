@@ -15,7 +15,6 @@ Ext.define('Admin.controller.Controller', {
     ],
 
     requires: [
-        'Admin.lib.UriHelper',
         'Admin.lib.RemoteService'
     ],
 

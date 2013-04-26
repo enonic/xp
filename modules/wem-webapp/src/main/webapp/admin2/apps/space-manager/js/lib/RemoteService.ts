@@ -1,6 +1,6 @@
 Ext.define('Admin.lib.RemoteService', {
 
-    requires: ['Admin.lib.UriHelper', 'Admin.lib.JsonRpcProvider'],
+    requires: ['Admin.lib.JsonRpcProvider'],
 
     singleton: true,
 
@@ -8,7 +8,7 @@ Ext.define('Admin.lib.RemoteService', {
 
     init: function () {
         var config = {
-            "url": Admin.lib.UriHelper.getAbsoluteUri("admin/rest/jsonrpc"),
+            "url": admin.lib.uri.getAbsoluteUri("admin/rest/jsonrpc"),
             "type": "jsonrpc",
             "namespace": "Admin.lib.RemoteService",
             "methods": [

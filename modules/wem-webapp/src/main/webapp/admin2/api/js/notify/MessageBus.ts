@@ -2,11 +2,11 @@ module admin.api.message {
 
     var messageBus = Ext.create('Ext.util.Observable');
 
-    export function showFeedback(message:String) {
+    export function showFeedback(message:String):void {
         messageBus.fireEvent('showNotification', 'notify', message);
     }
 
-    export function updateAppTabCount(appId, tabCount:Number) {
+    export function updateAppTabCount(appId, tabCount:Number):void {
         var eventName = 'topBar.onUpdateAppTabCount';
         var config = {
             appId: appId,
@@ -19,7 +19,7 @@ module admin.api.message {
         messageBus.fireEvent(eventName, config);
     }
 
-    export function addListener(name:String, func:Function, scope:any) {
+    export function addListener(name:String, func:Function, scope:any):void {
         messageBus.addListener(name, func, scope);
     }
 
