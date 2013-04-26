@@ -50,5 +50,21 @@
 <script type="text/javascript" src="../../api/js/api.js"></script>
 <script type="text/javascript" src="js/all.js"></script>
 
+
+<p>
+  <button id="open-delete-content-window-btn">Open Window</button>
+</p>
+
+
+<script type="text/javascript">
+  Ext.onReady(function () {
+    Ext.fly('open-delete-content-window-btn').on('click', function () {
+      var win = new admin.ui.DeleteContentWindow();
+      win.setModel([]);
+      win.doShow();
+    });
+  })
+</script>
+
 </body>
 </html>
