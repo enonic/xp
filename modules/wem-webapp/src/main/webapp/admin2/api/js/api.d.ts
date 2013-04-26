@@ -6,7 +6,6 @@ module admin.api.message {
 module admin.api.notify {
 }
 module admin.lib.uri {
+    var baseUrl: String;
     function getAbsoluteUri(uri: String): String;
-}
-module admin.api {
 }

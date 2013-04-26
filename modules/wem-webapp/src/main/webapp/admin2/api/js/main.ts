@@ -9,8 +9,19 @@
 
 declare var Ext;
 declare var Admin;
-declare var CONFIG;
 
-module admin.api {
+Ext.Loader.setConfig({
+    enabled: false,
+    disableCaching: false
+});
 
-}
+Ext.override(Ext.LoadMask, {
+    floating: {
+        shadow: false
+    },
+    msg: undefined,
+    cls: 'admin-load-mask',
+    msgCls: 'admin-load-text',
+    maskCls: 'admin-mask-white'
+});
+

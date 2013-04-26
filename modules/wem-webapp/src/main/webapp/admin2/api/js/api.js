@@ -263,8 +263,9 @@ var admin;
 (function (admin) {
     (function (lib) {
         (function (uri) {
+            uri.baseUrl;
             function getAbsoluteUri(uri) {
-                return CONFIG.baseUrl + '/' + uri;
+                return this.baseUrl + '/' + uri;
             }
             uri.getAbsoluteUri = getAbsoluteUri;
         })(lib.uri || (lib.uri = {}));
@@ -272,7 +273,17 @@ var admin;
     })(admin.lib || (admin.lib = {}));
     var lib = admin.lib;
 })(admin || (admin = {}));
-var admin;
-(function (admin) {
-    })(admin || (admin = {}));
+Ext.Loader.setConfig({
+    enabled: false,
+    disableCaching: false
+});
+Ext.override(Ext.LoadMask, {
+    floating: {
+        shadow: false
+    },
+    msg: undefined,
+    cls: 'admin-load-mask',
+    msgCls: 'admin-load-text',
+    maskCls: 'admin-mask-white'
+});
 //@ sourceMappingURL=api.js.map

@@ -20,34 +20,19 @@
 <script type="text/javascript" src="../../../admin/resources/lib/ext/ext-all-debug.js"></script>
 
 
-<!-- Configuration -->
-<script type="text/javascript">
-
-  window.CONFIG = {
-    baseUrl: '<%= helper.getBaseUrl() %>'
-  };
-
-  Ext.Loader.setConfig({
-    enabled: false,
-    disableCaching: false
-  });
-
-  Ext.override(Ext.LoadMask, {
-    floating: {
-      shadow: false
-    },
-    msg: undefined,
-    cls: 'admin-load-mask',
-    msgCls: 'admin-load-text',
-    maskCls: 'admin-mask-white'
-  });
-
-</script>
-
 <!-- Third party plugins -->
 <script type="text/javascript" src="../../../admin/resources/lib/plupload/js/plupload.full.js"></script>
 
 <script type="text/javascript" src="../../api/js/api.js"></script>
+
+<!-- Configuration -->
+<script type="text/javascript">
+
+  admin.lib.uri.baseUrl = '<%= helper.getBaseUrl() %>';
+
+</script>
+
+
 <script type="text/javascript" src="js/all.js"></script>
 
 </body>
