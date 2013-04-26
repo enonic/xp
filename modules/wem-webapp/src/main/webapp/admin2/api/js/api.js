@@ -263,9 +263,9 @@ var admin;
 (function (admin) {
     (function (lib) {
         (function (uri) {
-            uri.baseUrl;
+            uri.baseUri;
             function getAbsoluteUri(uri) {
-                return this.baseUrl + '/' + uri;
+                return this.baseUri + '/' + uri;
             }
             uri.getAbsoluteUri = getAbsoluteUri;
         })(lib.uri || (lib.uri = {}));
