@@ -23,8 +23,15 @@ module.exports = function (grunt) {
                     // target: 'es5',
                     sourcemap: true
                 }
+            },
+            content_manager: {
+                src: ['src/main/webapp/admin2/apps/content-manager/js/main.ts'],
+                dest: 'src/main/webapp/admin2/apps/content-manager/js/all.js',
+                options: {
+                    // target: 'es5',
+                    sourcemap: true
+                }
             }
-
         },
 
         watch: {
