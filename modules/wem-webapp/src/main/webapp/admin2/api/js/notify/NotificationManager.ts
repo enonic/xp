@@ -5,18 +5,18 @@ module admin.api.notify {
         // Position inside document body.
         // Available: 'tl', 't', 'tr', 'bl', 'b', 'br'.
         // Default is 'b'.
-        position:String = 'b';
+        private position:String = 'b';
+
         // Space between notification items
+        private space:Number = 3;
 
-        space:Number = 3;
+        private lifetime:Number = 5000;
 
-        lifetime:Number = 5000;
+        private slideDuration:Number = 1000;
 
-        slideDuration:Number = 1000;
+        private timers:Object;
 
-        timers:Object;
-
-        el:any;
+        private el:any;
 
         tpl:any = {
             manager: new Ext.Template(
@@ -89,12 +89,8 @@ module admin.api.notify {
 
 
         removeNotification(mark):void {
-            var me = this,
-                notifications = Ext.select('.admin-notification[data-mark=' + mark + ']');
-
-            notifications.each(function (notificationEl) {
-                me.remove(notificationEl);
-            });
+            var notifications = Ext.select('.admin-notification[data-mark=' + mark + ']');
+            notifications.each((notificationEl) => this.remove(notificationEl));
         }
 
 
@@ -108,34 +104,34 @@ module admin.api.notify {
          *    single - if true only one notification with specified mark will be created
          */
         notify(nOpts):void {
-            var me = this,
-                notificationEl,
+            var notificationEl,
                 height;
 
-            if (me.isRendered(nOpts)) {
+            if (this.isRendered(nOpts)) {
                 return;
             }
 
-            notificationEl = me.renderNotification(nOpts);
-            me.setNotificationListeners(notificationEl, nOpts);
+            notificationEl = this.renderNotification(nOpts);
+            this.setNotificationListeners(notificationEl, nOpts);
 
-            height = me.getInnerEl(notificationEl).getHeight();
+            height = this.getInnerEl(notificationEl).getHeight();
 
             notificationEl.animate({
-                duration: me.slideDuration,
+                duration: this.slideDuration,
                 to: {
-                    height: height + me.space,
+                    height: height + this.space,
                     opacity: 1
                 },
-                callback: function () {
+                callback: () => {
                     if (nOpts.lifetime < 0) {
                         return;
                     }
 
-                    me.timers[notificationEl.id] = {
-                        remainingTime: (nOpts.lifetime || me.lifetime)
+                    this.timers[notificationEl.id] = {
+                        remainingTime: (nOpts.lifetime || this.lifetime)
                     };
-                    me.startTimer(notificationEl);
+
+                    this.startTimer(notificationEl);
                 }
             });
         }
@@ -225,15 +221,14 @@ module admin.api.notify {
 
 
         renderNotification(nOpts):any {
-            var me = this,
-                tpl = me.tpl.notification,
+            var tpl = this.tpl.notification,
                 style = {},
                 notificationEl;
 
             // create notification DOM element
-            notificationEl = (me.position[0] == 't')
-                ? tpl.insertFirst(me.getWrapperEl(), nOpts, true)
-                : tpl.append(me.getWrapperEl(), nOpts, true);
+            notificationEl = (this.position[0] == 't')
+                ? tpl.insertFirst(this.getWrapperEl(), nOpts, true)
+                : tpl.append(this.getWrapperEl(), nOpts, true);
 
             // set notification style
             if (nOpts.backgroundColor) {
@@ -241,10 +236,10 @@ module admin.api.notify {
             }
 
             // nOpts.backgroundColor && (style.backgroundColor = nOpts.backgroundColor);
-            (me.position[0] == 't')
-                ? (style['marginBottom'] = me.space + 'px')
-                : (style['marginTop'] = me.space + 'px');
-            me.getInnerEl(notificationEl).setStyle(style);
+            (this.position[0] == 't')
+                ? (style['marginBottom'] = this.space + 'px')
+                : (style['marginTop'] = this.space + 'px');
+            this.getInnerEl(notificationEl).setStyle(style);
 
             // set mark to identify this notification
             if (nOpts.mark) {
@@ -284,8 +279,6 @@ module admin.api.notify {
 
 
         remove(notificationEl):void {
-            var me = this;
-
             Ext.isElement(notificationEl) || (notificationEl = Ext.get(notificationEl));
 
             if (!notificationEl) {
@@ -293,7 +286,7 @@ module admin.api.notify {
             }
 
             notificationEl.animate({
-                duration: me.slideDuration,
+                duration: this.slideDuration,
                 to: {
                     height: 0,
                     opacity: 0
@@ -303,21 +296,19 @@ module admin.api.notify {
                 }
             });
 
-            delete me.timers[notificationEl.id];
+            delete this.timers[notificationEl.id];
         }
 
 
         startTimer(notificationEl):void {
-            var me = this,
-                timer = me.timers[notificationEl.id];
+            var timer = this.timers[notificationEl.id];
 
             if (!timer) {
                 return;
             }
 
-            timer.id = setTimeout(
-                function () {
-                    me.remove(notificationEl);
+            timer.id = setTimeout(() => {
+                    this.remove(notificationEl);
                 },
                 timer.remainingTime
             );
@@ -359,7 +350,6 @@ module admin.api.notify {
         }
 
     }
-
 
     var manager = new NotificationManager();
 }

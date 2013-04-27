@@ -59,39 +59,39 @@ var admin;
                     });
                 };
                 NotificationManager.prototype.showNotification = function (type, args, opts) {
-                    console.log(type);
-                    console.log(args);
                     this[type] ? this[type](args) : this.notify({
                     });
                 };
                 NotificationManager.prototype.removeNotification = function (mark) {
-                    var me = this, notifications = Ext.select('.admin-notification[data-mark=' + mark + ']');
+                    var _this = this;
+                    var notifications = Ext.select('.admin-notification[data-mark=' + mark + ']');
                     notifications.each(function (notificationEl) {
-                        me.remove(notificationEl);
+                        return _this.remove(notificationEl);
                     });
                 };
                 NotificationManager.prototype.notify = function (nOpts) {
-                    var me = this, notificationEl, height;
-                    if(me.isRendered(nOpts)) {
+                    var _this = this;
+                    var notificationEl, height;
+                    if(this.isRendered(nOpts)) {
                         return;
                     }
-                    notificationEl = me.renderNotification(nOpts);
-                    me.setNotificationListeners(notificationEl, nOpts);
-                    height = me.getInnerEl(notificationEl).getHeight();
+                    notificationEl = this.renderNotification(nOpts);
+                    this.setNotificationListeners(notificationEl, nOpts);
+                    height = this.getInnerEl(notificationEl).getHeight();
                     notificationEl.animate({
-                        duration: me.slideDuration,
+                        duration: this.slideDuration,
                         to: {
-                            height: height + me.space,
+                            height: height + this.space,
                             opacity: 1
                         },
                         callback: function () {
                             if(nOpts.lifetime < 0) {
                                 return;
                             }
-                            me.timers[notificationEl.id] = {
-                                remainingTime: (nOpts.lifetime || me.lifetime)
+                            _this.timers[notificationEl.id] = {
+                                remainingTime: (nOpts.lifetime || _this.lifetime)
                             };
-                            me.startTimer(notificationEl);
+                            _this.startTimer(notificationEl);
                         }
                     });
                 };
@@ -162,14 +162,15 @@ var admin;
                     return nOpts.single && nOpts.mark && this.getEl().select('.admin-notification[data-mark=' + nOpts.mark + ']').getCount() > 0;
                 };
                 NotificationManager.prototype.renderNotification = function (nOpts) {
-                    var me = this, tpl = me.tpl.notification, style = {
+                    var tpl = this.tpl.notification, style = {
                     }, notificationEl;
-                    notificationEl = (me.position[0] == 't') ? tpl.insertFirst(me.getWrapperEl(), nOpts, true) : tpl.append(me.getWrapperEl(), nOpts, true);
+                    console.log(this.tpl.notification);
+                    notificationEl = (this.position[0] == 't') ? tpl.insertFirst(this.getWrapperEl(), nOpts, true) : tpl.append(this.getWrapperEl(), nOpts, true);
                     if(nOpts.backgroundColor) {
                         style['backgroundColor'] = nOpts.backgroundColor;
                     }
-                    (me.position[0] == 't') ? (style['marginBottom'] = me.space + 'px') : (style['marginTop'] = me.space + 'px');
-                    me.getInnerEl(notificationEl).setStyle(style);
+                    (this.position[0] == 't') ? (style['marginBottom'] = this.space + 'px') : (style['marginTop'] = this.space + 'px');
+                    this.getInnerEl(notificationEl).setStyle(style);
                     if(nOpts.mark) {
                         notificationEl.set({
                             'data-mark': nOpts.mark
@@ -201,13 +202,12 @@ var admin;
                     }
                 };
                 NotificationManager.prototype.remove = function (notificationEl) {
-                    var me = this;
                     Ext.isElement(notificationEl) || (notificationEl = Ext.get(notificationEl));
                     if(!notificationEl) {
                         return;
                     }
                     notificationEl.animate({
-                        duration: me.slideDuration,
+                        duration: this.slideDuration,
                         to: {
                             height: 0,
                             opacity: 0
@@ -216,15 +216,16 @@ var admin;
                             Ext.removeNode(notificationEl.dom);
                         }
                     });
-                    delete me.timers[notificationEl.id];
+                    delete this.timers[notificationEl.id];
                 };
                 NotificationManager.prototype.startTimer = function (notificationEl) {
-                    var me = this, timer = me.timers[notificationEl.id];
+                    var _this = this;
+                    var timer = this.timers[notificationEl.id];
                     if(!timer) {
                         return;
                     }
                     timer.id = setTimeout(function () {
-                        me.remove(notificationEl);
+                        _this.remove(notificationEl);
                     }, timer.remainingTime);
                     timer.startTime = Date.now();
                 };
