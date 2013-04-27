@@ -4,10 +4,10 @@ var admin;
         (function (handler) {
             var DeleteContentHandler = (function () {
                 function DeleteContentHandler() { }
-                DeleteContentHandler.prototype.doDelete = function (spaces, callback) {
+                DeleteContentHandler.prototype.doDelete = function (contentModels, callback) {
                     var me = this;
-                    var spaceNames = Ext.Array.map([].concat(spaces), function (item) {
-                        return item.get('name');
+                    var contentKeys = Ext.Array.map([].concat(contentModels), function (item) {
+                        return item.get('key');
                     });
                 };
                 return DeleteContentHandler;

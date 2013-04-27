@@ -6,21 +6,24 @@ module admin.api.notify {
         // Available: 'tl', 't', 'tr', 'bl', 'b', 'br'.
         // Default is 'b'.
         position:String = 'b';
-
         // Space between notification items
+
         space:Number = 3;
 
         lifetime:Number = 5000;
 
         slideDuration:Number = 1000;
 
-        tpl = {
+        timers:Object;
+
+        el:any;
+
+        tpl:any = {
             manager: new Ext.Template(
                 '<div class="admin-notification-container">',
                 '   <div class="admin-notification-wrapper"></div>',
                 '</div>'
             ),
-
             notification: new Ext.Template(
                 '<div class="admin-notification" style="height: 0; opacity: 0;">',
                 '   <div class="admin-notification-inner">',
@@ -29,18 +32,15 @@ module admin.api.notify {
                 '   </div>',
                 '</div>'
             ),
-
             error: new Ext.Template(
                 '<span>{message}</span>'
             ),
-
             publish: new Ext.XTemplate(
                 '<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-result">See result</a> or <a href="#" class="admin-notification-publish">Publish to other locations</a></span>',
                 '<span style="line-height: 1.5em;">',
                 '<tpl if="contentName"> "{contentName}"</tpl> published successfully!',
                 '</span> '
             ),
-
             general: new Ext.XTemplate(
                 '<span style="float: right; margin-left: 30px;"><a href="#" class="admin-notification-publish">Publish</a> or <a href="#" class="admin-notification-close">Close</a></span>',
                 '<span style="line-height: 1.5em;">',
@@ -49,9 +49,6 @@ module admin.api.notify {
             )
         };
 
-        timers:Object;
-
-        el:any;
 
         constructor() {
             // hash stored timers for active notifications
@@ -64,7 +61,7 @@ module admin.api.notify {
         }
 
 
-        render() {
+        render():void {
             var me = this,
                 node,
                 pos = this.position;
@@ -86,12 +83,12 @@ module admin.api.notify {
         }
 
 
-        showNotification(type, args, opts) {
+        showNotification(type, args, opts):void {
             this[type] ? this[type](args) : this.notify({});
         }
 
 
-        removeNotification(mark) {
+        removeNotification(mark):void {
             var me = this,
                 notifications = Ext.select('.admin-notification[data-mark=' + mark + ']');
 
@@ -109,10 +106,8 @@ module admin.api.notify {
          *    lifetime - milliseconds or negative for permanent notification
          *    mark - to identify this notification
          *    single - if true only one notification with specified mark will be created
-         *
-         *  Returns notification id
          */
-        notify(nOpts) {
+        notify(nOpts):void {
             var me = this,
                 notificationEl,
                 height;
@@ -146,10 +141,7 @@ module admin.api.notify {
         }
 
 
-        /**
-         *     Returns notification Id
-         */
-        error(message) {
+        error(message):void {
             var defaultMessage = 'Lost connection to server - Please wait until connection is restored',
                 opts;
 
@@ -163,10 +155,8 @@ module admin.api.notify {
             this.notify(opts);
         }
 
-        /**
-         *     Returns notification id
-         */
-        general(opts) {
+
+        general(opts):void {
             var notificationOpts = {
                 message: this.tpl.general.apply(opts),
                 backgroundColor: '#4294de',
@@ -198,7 +188,7 @@ module admin.api.notify {
         /**
          *  Returns notification id
          */
-        publish(opts) {
+        publish(opts):void {
             var notificationOpts = {
                 message: this.tpl.publish.apply(opts),
                 backgroundColor: '#669c34',
@@ -228,16 +218,13 @@ module admin.api.notify {
         }
 
 
-        isRendered(nOpts) {
-            if (nOpts.single && nOpts.mark
-                && this.getEl().select('.admin-notification[data-mark=' + nOpts.mark + ']').getCount() > 0) {
-                return true;
-            }
-
-            return false;
+        isRendered(nOpts):Boolean {
+            return nOpts.single && nOpts.mark
+                && this.getEl().select('.admin-notification[data-mark=' + nOpts.mark + ']').getCount() > 0;
         }
 
-        renderNotification(nOpts) {
+
+        renderNotification(nOpts):any {
             var me = this,
                 tpl = me.tpl.notification,
                 style = {},
@@ -268,7 +255,7 @@ module admin.api.notify {
         }
 
 
-        setNotificationListeners(notificationEl, nOpts) {
+        setNotificationListeners(notificationEl, nOpts):void {
             var me = this;
 
             // set default listeners
@@ -295,7 +282,8 @@ module admin.api.notify {
             }
         }
 
-        remove(notificationEl) {
+
+        remove(notificationEl):void {
             var me = this;
 
             Ext.isElement(notificationEl) || (notificationEl = Ext.get(notificationEl));
@@ -318,7 +306,8 @@ module admin.api.notify {
             delete me.timers[notificationEl.id];
         }
 
-        startTimer(notificationEl) {
+
+        startTimer(notificationEl):void {
             var me = this,
                 timer = me.timers[notificationEl.id];
 
@@ -336,7 +325,8 @@ module admin.api.notify {
             timer.startTime = Date.now();
         }
 
-        stopTimer(notificationEl) {
+
+        stopTimer(notificationEl):void {
             var timer = this.timers[notificationEl.id];
 
             if (!timer || !timer.id) {
@@ -348,25 +338,28 @@ module admin.api.notify {
             timer.remainingTime -= Date.now() - timer.startTime;
         }
 
-        getEl() {
+
+        getEl():any {
             return this.el;
         }
 
-        getWrapperEl() {
+
+        getWrapperEl():any {
             return this.el.first('.admin-notification-wrapper');
         }
 
-        getInnerEl(notificationEl) {
+
+        getInnerEl(notificationEl):any {
             return notificationEl.down('.admin-notification-inner');
         }
 
-        getNotificationEl(node) {
+        getNotificationEl(node):any {
             Ext.isElement(node) || (node = Ext.get(node));
             return node.up('.admin-notification', this.getEl());
         }
 
     }
 
-    var manager = new NotificationManager();
 
+    var manager = new NotificationManager();
 }

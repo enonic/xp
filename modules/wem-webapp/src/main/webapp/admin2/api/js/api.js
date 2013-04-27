@@ -59,6 +59,8 @@ var admin;
                     });
                 };
                 NotificationManager.prototype.showNotification = function (type, args, opts) {
+                    console.log(type);
+                    console.log(args);
                     this[type] ? this[type](args) : this.notify({
                     });
                 };
@@ -157,10 +159,7 @@ var admin;
                     this.notify(notificationOpts);
                 };
                 NotificationManager.prototype.isRendered = function (nOpts) {
-                    if(nOpts.single && nOpts.mark && this.getEl().select('.admin-notification[data-mark=' + nOpts.mark + ']').getCount() > 0) {
-                        return true;
-                    }
-                    return false;
+                    return nOpts.single && nOpts.mark && this.getEl().select('.admin-notification[data-mark=' + nOpts.mark + ']').getCount() > 0;
                 };
                 NotificationManager.prototype.renderNotification = function (nOpts) {
                     var me = this, tpl = me.tpl.notification, style = {
