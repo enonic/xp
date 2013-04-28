@@ -12,18 +12,6 @@ public class Text
         super( key, JavaType.STRING );
     }
 
-    public Value toString( final Value value )
-    {
-        if ( isValueOfExpectedJavaClass( value ) )
-        {
-            return value;
-        }
-        else
-        {
-            throw new InconvertibleValueException( value, this );
-        }
-    }
-
     @Override
     public Value newValue( final Object value )
     {
