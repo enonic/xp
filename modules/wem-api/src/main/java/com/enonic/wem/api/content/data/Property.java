@@ -36,7 +36,7 @@ public class Property
 
         try
         {
-            getType().checkValidity( this );
+            getValueType().checkValidity( this );
         }
         catch ( InvalidValueTypeException e )
         {
@@ -48,7 +48,7 @@ public class Property
         }
     }
 
-    public BaseValueType getType()
+    public BaseValueType getValueType()
     {
         return value.getType();
     }
@@ -190,7 +190,7 @@ public class Property
     {
         try
         {
-            getType().checkValidity( this );
+            getValueType().checkValidity( this );
         }
         catch ( InvalidValueTypeException e )
         {
@@ -230,7 +230,7 @@ public class Property
     {
         final Objects.ToStringHelper s = Objects.toStringHelper( this );
         s.add( "name", getName() );
-        s.add( "type", getType() );
+        s.add( "type", getValueType() );
         s.add( "value", value.getObject() );
         return s.toString();
     }

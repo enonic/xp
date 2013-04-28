@@ -124,7 +124,7 @@ public class DataSetValidatorTest
         contentData.setProperty( "crimes[1].description", new Value.Text( "Stole a chocolate from the Matbua shop" ) );
         contentData.setProperty( "crimes[1].year", new Value.Text( "1990" ) );
 
-        assertEquals( ValueTypes.TEXT, contentData.getProperty( "personalia.eyeColour" ).getType() );
+        assertEquals( ValueTypes.TEXT, contentData.getProperty( "personalia.eyeColour" ).getValueType() );
         Assert.assertEquals( "Blue", contentData.getProperty( "personalia.eyeColour" ).getObject() );
         Assert.assertEquals( "personalia.eyeColour", contentData.getProperty( "personalia.eyeColour" ).getPath().toString() );
 
@@ -139,7 +139,7 @@ public class DataSetValidatorTest
         crimes.add( newInput().name( "description" ).inputType( InputTypes.TEXT_LINE ).build() );
         crimes.add( newInput().name( "year" ).inputType( InputTypes.TEXT_LINE ).build() );
 
-        assertEquals( ValueTypes.TEXT, contentData.getProperty( "personalia.eyeColour" ).getType() );
+        assertEquals( ValueTypes.TEXT, contentData.getProperty( "personalia.eyeColour" ).getValueType() );
         Assert.assertEquals( "Blue", contentData.getProperty( "personalia.eyeColour" ).getObject() );
 
         // verify

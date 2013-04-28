@@ -35,7 +35,7 @@ public class PopertyJsonSerializerTest
 
         Property property = serializer.parse( dataObj );
         assertEquals( "myData", property.getName() );
-        assertEquals( ValueTypes.TEXT, property.getType() );
+        assertEquals( ValueTypes.TEXT, property.getValueType() );
         assertEquals( "A value", property.getObject() );
     }
 
@@ -50,7 +50,7 @@ public class PopertyJsonSerializerTest
 
         Property property = serializer.parse( dataObj );
         assertEquals( "myData", property.getName() );
-        assertEquals( ValueTypes.BINARY_ID, property.getType() );
+        assertEquals( ValueTypes.BINARY_ID, property.getValueType() );
         assertEquals( BinaryId.from( "217482f4-b89a-4286-9111-5120d11da6c2" ), property.getObject() );
     }
 }

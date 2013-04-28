@@ -172,7 +172,7 @@ public class DataSet
             if ( newData.isProperty() )
             {
                 final Property newProperty = newData.toProperty();
-                array = newPropertyArray().name( newData.getName() ).propertyType( newProperty.getType() ).parent( this ).build();
+                array = newPropertyArray().name( newData.getName() ).propertyType( newProperty.getValueType() ).parent( this ).build();
             }
             else
             {

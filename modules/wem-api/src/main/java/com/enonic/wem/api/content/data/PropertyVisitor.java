@@ -19,7 +19,7 @@ public abstract class PropertyVisitor
             if ( data.isProperty() )
             {
                 final Property property = data.toProperty();
-                if ( valueType != null && !valueType.equals( property.getType() ) )
+                if ( valueType != null && !valueType.equals( property.getValueType() ) )
                 {
                     continue;
                 }

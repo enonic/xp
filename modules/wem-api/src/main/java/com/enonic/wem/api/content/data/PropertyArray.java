@@ -61,11 +61,11 @@ public class PropertyArray
                 "Unexpected type of Data for Property array at path [" + getPath() + "]: " + data.getClass().getSimpleName() );
         }
         final Property property = (Property) data;
-        if ( !getType().equals( property.getType() ) )
+        if ( !getType().equals( property.getValueType() ) )
         {
             throw new IllegalArgumentException(
                 "Array [" + getPath() + "] expects Property of type [" + getType() + "]. Property [" + data.getPath() + "] was of type: " +
-                    property.getType() );
+                    property.getValueType() );
         }
     }
 

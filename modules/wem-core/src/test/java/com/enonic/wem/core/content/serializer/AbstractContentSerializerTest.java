@@ -150,7 +150,7 @@ public abstract class AbstractContentSerializerTest
 
         Property mySet_myArray = mySet.getProperty( "myArray" );
         assertSame( mySet_myArray, parsedContentData.getProperty( "mySet.myArray" ) );
-        assertEquals( ValueTypes.TEXT, mySet_myArray.getType() );
+        assertEquals( ValueTypes.TEXT, mySet_myArray.getValueType() );
         assertEquals( "mySet.myArray[0]", mySet_myArray.getPath().toString() );
 
         PropertyArray mySet_myArray_Array = mySet_myArray.getArray();
@@ -387,7 +387,7 @@ public abstract class AbstractContentSerializerTest
         // verify
         ContentData parsedContentData = parsedContent.getContentData();
         assertEquals( "Thomas", parsedContentData.getProperty( "names[0]" ).getObject() );
-        assertEquals( ValueTypes.TEXT, parsedContentData.getProperty( "names[0]" ).getType() );
+        assertEquals( ValueTypes.TEXT, parsedContentData.getProperty( "names[0]" ).getValueType() );
         assertEquals( "Sten Roger", parsedContentData.getProperty( "names[1]" ).getObject() );
         assertEquals( "Alex", parsedContentData.getProperty( "names[2]" ).getObject() );
     }

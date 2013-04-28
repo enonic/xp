@@ -53,7 +53,7 @@ public final class DataXmlSerializer
     {
         final String name = property.getPath().getLastElement().getName();
 
-        final Element dataEl = new Element( name ).setAttribute( "type", property.getType().getName() );
+        final Element dataEl = new Element( name ).setAttribute( "type", property.getValueType().getName() );
         parentDataEl.addContent( dataEl );
         dataEl.addContent( property.getString() );
     }

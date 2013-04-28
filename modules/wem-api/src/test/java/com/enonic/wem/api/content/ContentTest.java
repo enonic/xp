@@ -330,8 +330,8 @@ public class ContentTest
         contentData.setProperty( "child[1].features.hairColour", new Value.Text( "Black" ) );
 
         assertEquals( "Thomas", contentData.getProperty( "firstName" ).getObject() );
-        assertEquals( ValueTypes.TEXT, contentData.getProperty( "firstName" ).getType() );
-        assertEquals( ValueTypes.HTML_PART, contentData.getProperty( "description" ).getType() );
+        assertEquals( ValueTypes.TEXT, contentData.getProperty( "firstName" ).getValueType() );
+        assertEquals( ValueTypes.HTML_PART, contentData.getProperty( "description" ).getValueType() );
         assertEquals( "Joachim", contentData.getProperty( "child[0].name" ).getObject() );
         assertEquals( "9", contentData.getProperty( "child[0].age" ).getObject() );
         assertEquals( "Blue", contentData.getProperty( "child[0].features.eyeColour" ).getObject() );
@@ -411,7 +411,7 @@ public class ContentTest
         contentData.setProperty( "personalia.eyeColour", new Value.Text( "Blue" ) );
         contentData.setProperty( "personalia.hairColour", new Value.Text( "Blonde" ) );
 
-        assertEquals( ValueTypes.TEXT, contentData.getProperty( "personalia.eyeColour" ).getType() );
+        assertEquals( ValueTypes.TEXT, contentData.getProperty( "personalia.eyeColour" ).getValueType() );
         assertEquals( "Blue", contentData.getProperty( "personalia.eyeColour" ).getObject() );
         assertEquals( "personalia.eyeColour", contentData.getProperty( "personalia.eyeColour" ).getPath().toString() );
     }

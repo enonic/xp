@@ -41,7 +41,7 @@ public class PopertyJsonSerializer
 
         dataObj.put( DATA_NAME, name );
         dataObj.put( DATA_PATH, path );
-        dataObj.put( DATA_TYPE, property.getType().getName() );
+        dataObj.put( DATA_TYPE, property.getValueType().getName() );
         dataObj.put( DATA_VALUE, property.getString() );
         return dataObj;
     }

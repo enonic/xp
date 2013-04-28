@@ -40,7 +40,7 @@ public class PropertyTool
     public static void checkPropertyType( final Property property, final ValueType valueType )
         throws InvalidDataException
     {
-        if ( !property.getType().equals( valueType ) )
+        if ( !property.getValueType().equals( valueType ) )
         {
             throw new InvalidPropertyTypeException( property, valueType );
         }
@@ -59,9 +59,10 @@ public class PropertyTool
     public static void checkRange( final Property property, final Number rangeStart, final Number rangeStop )
         throws InvalidValueException
     {
-        Preconditions.checkArgument( property.getType() == ValueTypes.WHOLE_NUMBER || property.getType() == ValueTypes.DECIMAL_NUMBER,
-                                     "range checking can only be done for types: [" + ValueTypes.WHOLE_NUMBER + ", " +
-                                         ValueTypes.DECIMAL_NUMBER + "]" );
+        Preconditions.checkArgument(
+            property.getValueType() == ValueTypes.WHOLE_NUMBER || property.getValueType() == ValueTypes.DECIMAL_NUMBER,
+            "range checking can only be done for types: [" + ValueTypes.WHOLE_NUMBER + ", " +
+                ValueTypes.DECIMAL_NUMBER + "]" );
 
         double value = property.getDouble();
         if ( value < rangeStart.doubleValue() || value > rangeStop.doubleValue() )

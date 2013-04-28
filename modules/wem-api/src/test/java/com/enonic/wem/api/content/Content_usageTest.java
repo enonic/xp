@@ -50,11 +50,11 @@ public class Content_usageTest
         dataSet.setProperty( "myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
 
         // verify
-        assertEquals( TEXT, dataSet.getProperty( "myText" ).getType() );
-        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getType() );
-        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getType() );
-        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getType() );
+        assertEquals( TEXT, dataSet.getProperty( "myText" ).getValueType() );
+        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getValueType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getValueType() );
+        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getValueType() );
+        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
     }
 
     @Test
@@ -70,11 +70,11 @@ public class Content_usageTest
         dataSet.add( newProperty( "myHtml" ).type( HTML_PART ).value( "<p>abc</p>" ).build() );
 
         // verify
-        assertEquals( TEXT, dataSet.getProperty( "myText" ).getType() );
-        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getType() );
-        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getType() );
-        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getType() );
+        assertEquals( TEXT, dataSet.getProperty( "myText" ).getValueType() );
+        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getValueType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getValueType() );
+        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getValueType() );
+        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
 
         assertFalse( dataSet.getProperty( "myText" ) instanceof Property.Text );
         assertFalse( dataSet.getProperty( "myNum" ) instanceof Property.WholeNumber );
@@ -96,11 +96,11 @@ public class Content_usageTest
         dataSet.add( newHtmlPart( "myHtml" ).value( "<p>abc</p>" ) );
 
         // verify
-        assertEquals( TEXT, dataSet.getProperty( "myText" ).getType() );
-        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getType() );
-        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getType() );
-        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getType() );
+        assertEquals( TEXT, dataSet.getProperty( "myText" ).getValueType() );
+        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getValueType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getValueType() );
+        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getValueType() );
+        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
 
         assertTrue( dataSet.getProperty( "myText" ) instanceof Property.Text );
         assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.WholeNumber );
@@ -122,11 +122,11 @@ public class Content_usageTest
         dataSet.add( new Property.HtmlPart( "myHtml", "<p>abc</p>" ) );
 
         // verify
-        assertEquals( TEXT, dataSet.getProperty( "myText" ).getType() );
-        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getType() );
-        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getType() );
-        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getType() );
+        assertEquals( TEXT, dataSet.getProperty( "myText" ).getValueType() );
+        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getValueType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getValueType() );
+        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getValueType() );
+        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
 
         assertTrue( dataSet.getProperty( "myText" ) instanceof Property.Text );
         assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.WholeNumber );
@@ -148,11 +148,11 @@ public class Content_usageTest
         dataSet.addProperty( "myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
 
         // verify
-        assertEquals( TEXT, dataSet.getProperty( "myText" ).getType() );
-        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getType() );
-        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getType() );
-        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getType() );
+        assertEquals( TEXT, dataSet.getProperty( "myText" ).getValueType() );
+        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getValueType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getValueType() );
+        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getValueType() );
+        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
 
         assertTrue( dataSet.getProperty( "myText" ) instanceof Property.Text );
         assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.WholeNumber );
@@ -174,11 +174,11 @@ public class Content_usageTest
         dataSet.addProperty( "myHtml", newValue().type( ValueTypes.HTML_PART ).value( "<p>abc</p>" ) );
 
         // verify
-        assertEquals( TEXT, dataSet.getProperty( "myText" ).getType() );
-        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getType() );
-        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getType() );
-        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getType() );
+        assertEquals( TEXT, dataSet.getProperty( "myText" ).getValueType() );
+        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getValueType() );
+        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getValueType() );
+        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getValueType() );
+        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
 
         assertTrue( dataSet.getProperty( "myText" ) instanceof Property.Text );
         assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.WholeNumber );
