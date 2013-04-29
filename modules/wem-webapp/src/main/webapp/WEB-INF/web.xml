@@ -12,6 +12,11 @@
     <mime-type>application/json</mime-type>
   </mime-mapping>
 
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+
   <jsp-config>
     <jsp-property-group>
       <description>Property group for common configuration for all the JSP's</description>
@@ -22,6 +27,7 @@
     </jsp-property-group>
   </jsp-config>
 
+<<<<<<< HEAD
   <servlet>
     <servlet-name>site</servlet-name>
     <servlet-class>com.enonic.wem.portal.servlet.PortalServlet</servlet-class>
@@ -32,5 +38,7 @@
     <servlet-name>site</servlet-name>
     <url-pattern>/site/*</url-pattern>
   </servlet-mapping>
+=======
+>>>>>>> remotes/origin/typescript
 
 </web-app>
