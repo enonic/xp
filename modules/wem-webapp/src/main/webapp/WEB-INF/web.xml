@@ -27,7 +27,6 @@
     </jsp-property-group>
   </jsp-config>
 
-<<<<<<< HEAD
   <servlet>
     <servlet-name>site</servlet-name>
     <servlet-class>com.enonic.wem.portal.servlet.PortalServlet</servlet-class>
@@ -38,7 +37,5 @@
     <servlet-name>site</servlet-name>
     <url-pattern>/site/*</url-pattern>
   </servlet-mapping>
-=======
->>>>>>> remotes/origin/typescript
 
 </web-app>

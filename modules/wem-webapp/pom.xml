@@ -15,24 +15,10 @@
   <packaging>war</packaging>
   <name>Enonic WEM WebApp</name>
 
-<<<<<<< HEAD
-    <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wem-admin</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wem-migrate</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
-=======
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>wem-taglib</artifactId>
+      <artifactId>wem-admin</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -41,7 +27,6 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
->>>>>>> remotes/origin/typescript
 
   <build>
     <plugins>
@@ -61,14 +46,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>9.0.2.v20130417</version>
-        <configuration>
-          <scanIntervalSeconds>10</scanIntervalSeconds>
-        </configuration>
       </plugin>
     </plugins>
   </build>
