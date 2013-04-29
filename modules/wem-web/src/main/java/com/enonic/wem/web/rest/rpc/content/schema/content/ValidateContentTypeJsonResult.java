@@ -28,7 +28,6 @@ final class ValidateContentTypeJsonResult
     @Override
     protected void serialize( final ObjectNode json )
     {
-        json.put( "success", true );
         json.put( "hasErrors", contentTypeValidationResult.hasErrors() );
         final ArrayNode errorItems = json.putArray( "errors" );
         for ( ContentTypeValidationError validationError : contentTypeValidationResult )

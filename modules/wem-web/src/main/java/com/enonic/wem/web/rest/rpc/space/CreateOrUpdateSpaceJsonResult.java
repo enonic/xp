@@ -28,7 +28,6 @@ final class CreateOrUpdateSpaceJsonResult
     @Override
     protected void serialize( final ObjectNode json )
     {
-        json.put( "success", true );
         json.put( "created", created );
         json.put( "updated", !created );
     }

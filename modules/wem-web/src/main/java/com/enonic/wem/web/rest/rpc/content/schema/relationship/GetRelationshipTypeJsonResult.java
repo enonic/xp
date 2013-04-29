@@ -27,7 +27,6 @@ class GetRelationshipTypeJsonResult
     @Override
     protected void serialize( final ObjectNode json )
     {
-        json.put( "success", true );
         final ObjectNode relationshipTypeJson = (ObjectNode) relationshipTypeJsonSerializer.serialize( relationshipType );
         relationshipTypeJson.put( "iconUrl", SchemaImageUriResolver.resolve( relationshipType.getSchemaKey() ) );
         json.put( "relationshipType", relationshipTypeJson );

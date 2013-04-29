@@ -28,7 +28,6 @@ final class DeleteContentJsonResult
     @Override
     protected void serialize( final ObjectNode json )
     {
-        json.put( "success", failures.isEmpty() );
         json.put( "successes", serializeSuccesses() );
         json.put( "failures", serializeFailures() );
     }
