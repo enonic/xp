@@ -1186,6 +1186,9 @@ var admin;
                 DeleteSpacesHandler.prototype.doDelete = function (spaces, callback) {
                     var me = this;
                     var spaceNames = Ext.Array.map([].concat(spaces), function (item) {
+                        if(!item) {
+                            console.error('No spaces selected');
+                        }
                         return item.get('name');
                     });
                     Admin.lib.RemoteService.space_delete({
@@ -2541,7 +2544,6 @@ var admin;
                 this.title = "Delete space(s)";
                 this.deleteHandler = new admin.app.handler.DeleteSpacesHandler();
                 this.template = '<div class="delete-container">' + '<tpl for=".">' + '<div class="delete-item">' + '<img class="icon" src="{data.iconUrl}"/>' + '<h4>{data.displayName}</h4>' + '<p>{data.type}</p>' + '</div>' + '</tpl>' + '</div>';
-                var me = this;
                 var deleteCallback = function (obj, success, result) {
                     _this.container.hide();
                 };
@@ -2564,6 +2566,7 @@ var admin;
                 header.margin = '0 0 20 0';
                 c.add(header);
                 var content = new Ext.Component();
+                content.region = 'center';
                 content.itemId = 'modalDialog';
                 content.cls = 'dialog-info';
                 content.border = false;
@@ -2571,6 +2574,26 @@ var admin;
                 content.styleHtmlContent = true;
                 content.tpl = this.template;
                 c.add(content);
+                var buttonRow = new Ext.container.Container();
+                buttonRow.layout = {
+                    type: 'hbox',
+                    pack: 'end'
+                };
+                var deleteButton = new Ext.button.Button();
+                deleteButton.text = 'Delete';
+                deleteButton.margin = '0 0 0 10';
+                deleteButton.setHandler(function (btn, evt) {
+                    _this.deleteHandler.doDelete(_this.data, deleteCallback);
+                });
+                buttonRow.add(deleteButton);
+                var cancelButton = new Ext.button.Button();
+                cancelButton.text = 'Cancel';
+                cancelButton.margin = '0 0 0 10';
+                cancelButton.setHandler(function (btn, evt) {
+                    c.hide();
+                });
+                buttonRow.add(cancelButton);
+                c.add(buttonRow);
                 this.container = c;
             }
             DeleteSpaceWindow.prototype.setModel = function (model) {

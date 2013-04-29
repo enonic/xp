@@ -18,7 +18,6 @@ module admin.ui {
                            '</div>';
 
         constructor() {
-            var me = this;
             var deleteCallback = (obj, success, result) => {
                 this.container.hide();
                 //TODO: Fire event
@@ -44,6 +43,7 @@ module admin.ui {
             c.add(header);
 
             var content = new Ext.Component();
+            content.region = 'center';
             content.itemId = 'modalDialog';
             content.cls = 'dialog-info';
             content.border = false;
@@ -53,79 +53,35 @@ module admin.ui {
 
             c.add(content);
 
+            var buttonRow = new Ext.container.Container();
+            buttonRow.layout = {type: 'hbox', pack: 'end'};
+
+            var deleteButton = new Ext.button.Button();
+            deleteButton.text = 'Delete';
+            deleteButton.margin = '0 0 0 10';
+            deleteButton.setHandler(
+                (btn, evt) => {
+                    this.deleteHandler.doDelete(this.data, deleteCallback);
+                }
+            );
+
+            buttonRow.add(deleteButton);
+
+            var cancelButton = new Ext.button.Button();
+            cancelButton.text = 'Cancel';
+            cancelButton.margin = '0 0 0 10';
+            cancelButton.setHandler(
+                (btn, evt) => {
+                    c.hide();
+                }
+            );
+
+            buttonRow.add(cancelButton);
+
+            c.add(buttonRow);
+
 
             this.container = c;
-
-            /*this.container = Ext.create('Ext.container.Container', {
-             border: false,
-             floating: true,
-             shadow: false,
-             width: 500,
-             modal: true,
-             autoHeight: true,
-             maxHeight: 600,
-             cls: 'admin-window',
-             closeAction: 'hide',
-             padding: 20,
-             items: <any[]>[
-             {
-             region: 'north',
-             xtype: 'component',
-             tpl: '<h2>{title}</h2><tpl if="subtitle != undefined"><p>{subtitle}</p></tpl>',
-             data: {
-             title: me.title
-             },
-             margin: '0 0 20 0'
-             },
-             {
-             region: 'center',
-             layout: {
-             type: 'vbox',
-             align: 'stretch'
-             },
-             border: false,
-             items: {
-             itemId: 'modalDialog',
-             cls: 'dialog-info',
-             xtype: 'component',
-             border: false,
-             height: 150,
-             styleHtmlContent: true,
-             tpl: me.template
-             }
-             },
-             {
-             region: 'south',
-             margin: '20 0 0 0',
-             border: false,
-             layout: {
-             type: 'hbox',
-             pack: 'end'
-             },
-             defaults: {
-             xtype: 'button',
-             margin: '0 0 0 10'
-             },
-             items: <any[]>[
-             {
-             text: 'Delete',
-             handler: (btn, evt) => {
-             btn.disable();
-             this.deleteHandler.doDelete(this.data, deleteCallback);
-             }
-             },
-             {
-             text: 'Cancel',
-             handler: function (btn, evt) {
-             me.container.hide();
-             }
-             }
-             ]
-             }
-             ]
-             }
-
-             );*/
         }
 
     ;
