@@ -3,7 +3,9 @@ var admin;
     (function (app) {
         (function (handler) {
             var DeleteContentHandler = (function () {
-                function DeleteContentHandler() { }
+                function DeleteContentHandler() {
+                }
+
                 DeleteContentHandler.prototype.doDelete = function (contentModels, callback) {
                     var me = this;
                     var contentKeys = Ext.Array.map([].concat(contentModels), function (item) {
@@ -12,7 +14,7 @@ var admin;
                 };
                 return DeleteContentHandler;
             })();
-            handler.DeleteContentHandler = DeleteContentHandler;            
+            handler.DeleteContentHandler = DeleteContentHandler;
         })(app.handler || (app.handler = {}));
         var handler = app.handler;
     })(admin.app || (admin.app = {}));
@@ -26,8 +28,9 @@ var admin;
                 var _this = this;
                 this.title = "Delete content(s)";
                 this.deleteHandler = new admin.app.handler.DeleteContentHandler();
-                this.headerTemplate = '<h2>{title}</h2><tpl if="subtitle != undefined"><p>{subtitle}</p></tpl>';
-                this.listTemplate = '<div class="delete-container">' + '    <tpl for=".">' + '        <div class="delete-item">' + '            <img class="icon" src="{data.iconUrl}"/>' + '            <h4>{data.displayName}</h4>' + '            <p>{data.type}</p>' + '        </div>' + '    </tpl>' + '</div>';
+                this.template = '<div class="delete-container">' + '<tpl for=".">' + '<div class="delete-item">' +
+                                '<img class="icon" src="{data.iconUrl}"/>' + '<h4>{data.displayName}</h4>' + '<p>{data.type}</p>' +
+                                '</div>' + '</tpl>' + '</div>';
                 var deleteCallback = function (obj, success, result) {
                     _this.container.hide();
                 };
@@ -43,27 +46,47 @@ var admin;
                 ct.padding = 20;
                 var header = new Ext.Component();
                 header.region = 'north';
-                header.tpl = this.headerTemplate;
+                header.tpl = '<h2>{title}</h2><tpl if="subtitle != undefined"><p>{subtitle}</p></tpl>';
                 header.data = {
                     title: this.title
                 };
                 header.margin = '0 0 20 0';
                 ct.add(header);
-                var content = new Ext.Component();
-                content.itemId = 'modalDialog';
+                var content = this.content = new Ext.Component();
+                content.region = 'center';
                 content.cls = 'dialog-info';
                 content.border = false;
                 content.height = 150;
                 content.styleHtmlContent = true;
-                content.tpl = this.listTemplate;
+                content.tpl = this.template;
                 ct.add(content);
+                var buttonRow = new Ext.container.Container();
+                buttonRow.layout = {
+                    type: 'hbox',
+                    pack: 'end'
+                };
+                var deleteButton = new Ext.button.Button();
+                deleteButton.text = 'Delete';
+                deleteButton.margin = '0 0 0 10';
+                deleteButton.handler = function (btn, evt) {
+                    _this.deleteHandler.doDelete(_this.data, deleteCallback);
+                };
+                buttonRow.add(deleteButton);
+                var cancelButton = new Ext.button.Button();
+                cancelButton.text = 'Cancel';
+                cancelButton.margin = '0 0 0 10';
+                cancelButton.handler = function (btn, evt) {
+                    ct.hide();
+                };
+                buttonRow.add(cancelButton);
+                ct.add(buttonRow);
             }
+
             DeleteContentWindow.prototype.setModel = function (model) {
                 this.data = model;
-                if(model) {
-                    var info = this.container.down('#modalDialog');
-                    if(info) {
-                        info.update(model);
+                if (model) {
+                    if (this.content) {
+                        this.content.update(model);
                     }
                 }
             };
@@ -72,7 +95,7 @@ var admin;
             };
             return DeleteContentWindow;
         })();
-        ui.DeleteContentWindow = DeleteContentWindow;        
+        ui.DeleteContentWindow = DeleteContentWindow;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
