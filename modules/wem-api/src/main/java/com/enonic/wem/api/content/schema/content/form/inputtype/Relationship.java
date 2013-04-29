@@ -35,7 +35,7 @@ public class Relationship
     public void checkValidity( final Property property )
         throws InvalidValueTypeException, InvalidValueException
     {
-        PropertyTool.checkPropertyType( property, ValueTypes.CONTENT_ID );
+        PropertyTool.checkValueType( property, ValueTypes.CONTENT_ID );
     }
 
     @Override
