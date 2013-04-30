@@ -19,12 +19,6 @@ public class Xml
     }
 
     @Override
-    public Value.AbstractValueBuilder newValueBuilder()
-    {
-        return new Value.Xml.ValueBuilder();
-    }
-
-    @Override
     public Property newProperty( final String name, final Value value )
     {
         return new Property.Xml( name, value );

@@ -24,7 +24,6 @@ import static com.enonic.wem.api.content.data.Property.HtmlPart.newHtmlPart;
 import static com.enonic.wem.api.content.data.Property.Text.newText;
 import static com.enonic.wem.api.content.data.Property.WholeNumber.newWholeNumber;
 import static com.enonic.wem.api.content.data.Property.newProperty;
-import static com.enonic.wem.api.content.data.Value.newValue;
 import static com.enonic.wem.api.content.data.type.ValueTypes.DATE_MIDNIGHT;
 import static com.enonic.wem.api.content.data.type.ValueTypes.DECIMAL_NUMBER;
 import static com.enonic.wem.api.content.data.type.ValueTypes.HTML_PART;
@@ -146,32 +145,6 @@ public class Content_usageTest
         dataSet.addProperty( "myDec", new Value.DecimalNumber( 123.123 ) );
         dataSet.addProperty( "myDate", new Value.Date( new DateMidnight( 2013, 1, 13 ) ) );
         dataSet.addProperty( "myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
-
-        // verify
-        assertEquals( TEXT, dataSet.getProperty( "myText" ).getValueType() );
-        assertEquals( WHOLE_NUMBER, dataSet.getProperty( "myNum" ).getValueType() );
-        assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getValueType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getValueType() );
-        assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
-
-        assertTrue( dataSet.getProperty( "myText" ) instanceof Property.Text );
-        assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.WholeNumber );
-        assertTrue( dataSet.getProperty( "myDec" ) instanceof Property.DecimalNumber );
-        assertTrue( dataSet.getProperty( "myDate" ) instanceof Property.Date );
-        assertTrue( dataSet.getProperty( "myHtml" ) instanceof Property.HtmlPart );
-    }
-
-    @Test
-    public void dataSet_add_Data_using_newValue()
-    {
-        DataSet dataSet = new ContentData();
-
-        // exercise
-        dataSet.addProperty( "myText", newValue().type( ValueTypes.TEXT ).value( "abc" ) );
-        dataSet.addProperty( "myNum", newValue().type( ValueTypes.WHOLE_NUMBER ).value( 123L ) );
-        dataSet.addProperty( "myDec", newValue().type( ValueTypes.DECIMAL_NUMBER ).value( 123.123 ) );
-        dataSet.addProperty( "myDate", newValue().type( ValueTypes.DATE_MIDNIGHT ).value( new DateMidnight( 2013, 1, 13 ) ) );
-        dataSet.addProperty( "myHtml", newValue().type( ValueTypes.HTML_PART ).value( "<p>abc</p>" ) );
 
         // verify
         assertEquals( TEXT, dataSet.getProperty( "myText" ).getValueType() );

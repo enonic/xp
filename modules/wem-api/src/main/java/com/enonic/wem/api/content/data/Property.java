@@ -30,9 +30,12 @@ public class Property
         super( builder.name );
         if ( builder.value == null )
         {
-            builder.value = builder.valueBuilder.build();
+            this.value = builder.valueType.newValue( builder.rawValue );
         }
-        this.value = builder.value;
+        else
+        {
+            this.value = builder.value;
+        }
 
         try
         {
@@ -312,10 +315,6 @@ public class Property
             {
                 super.setValue( (Value) value );
             }
-            else if ( value instanceof Value.Builder )
-            {
-                super.setValue( ( (Value.Builder) value ).build() );
-            }
             else
             {
                 super.setValue( value );
@@ -350,9 +349,11 @@ public class Property
     {
         private String name;
 
-        private Value.Builder valueBuilder = Value.newValue();
-
         private Value value;
+
+        private Object rawValue;
+
+        private BaseValueType valueType;
 
         AbstractBaseBuilder()
         {
@@ -365,12 +366,12 @@ public class Property
 
         void setType( final BaseValueType value )
         {
-            this.valueBuilder.type( value );
+            this.valueType = value;
         }
 
         void setValue( final Object value )
         {
-            this.valueBuilder.value( value );
+            this.rawValue = value;
         }
 
         void setValue( final Value value )

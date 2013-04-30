@@ -20,12 +20,6 @@ public class HtmlPart
     }
 
     @Override
-    public Value.HtmlPart.ValueBuilder newValueBuilder()
-    {
-        return new Value.HtmlPart.ValueBuilder();
-    }
-
-    @Override
     public Property newProperty( final String name, final Value value )
     {
         return new Property.HtmlPart( name, value );

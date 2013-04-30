@@ -18,12 +18,6 @@ public class DecimalNumber
     }
 
     @Override
-    public Value.AbstractValueBuilder<Value.DecimalNumber, Double> newValueBuilder()
-    {
-        return new Value.DecimalNumber.ValueBuilder();
-    }
-
-    @Override
     public Property newProperty( final String name, final Value value )
     {
         return new Property.DecimalNumber( name, value );

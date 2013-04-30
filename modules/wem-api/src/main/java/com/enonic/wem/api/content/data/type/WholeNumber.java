@@ -19,12 +19,6 @@ public class WholeNumber
     }
 
     @Override
-    public Value.AbstractValueBuilder<Value.WholeNumber, Long> newValueBuilder()
-    {
-        return new Value.WholeNumber.ValueBuilder();
-    }
-
-    @Override
     public Property newProperty( final String name, final Value value )
     {
         return new Property.WholeNumber( name, value );

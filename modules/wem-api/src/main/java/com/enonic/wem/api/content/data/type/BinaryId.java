@@ -19,12 +19,6 @@ public class BinaryId
     }
 
     @Override
-    public Value.AbstractValueBuilder<Value.BinaryId, com.enonic.wem.api.content.binary.BinaryId> newValueBuilder()
-    {
-        return new Value.BinaryId.ValueBuilder();
-    }
-
-    @Override
     public Property newProperty( final String name, final Value value )
     {
         return new Property.BinaryId( name, value );

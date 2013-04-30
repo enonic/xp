@@ -19,12 +19,6 @@ public class Text
     }
 
     @Override
-    public Value.Text.ValueBuilder newValueBuilder()
-    {
-        return new Value.Text.ValueBuilder();
-    }
-
-    @Override
     public Property newProperty( final String name, final Value value )
     {
         return new Property.Text( name, value );

@@ -30,12 +30,6 @@ public class GeographicCoordinate
     }
 
     @Override
-    public Value.AbstractValueBuilder<Value.GeographicCoordinate, String> newValueBuilder()
-    {
-        return new Value.GeographicCoordinate.ValueBuilder();
-    }
-
-    @Override
     public Property newProperty( final String name, final Value value )
     {
         return new Property.GeographicCoordinate( name, value );

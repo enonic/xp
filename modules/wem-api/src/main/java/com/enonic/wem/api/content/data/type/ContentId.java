@@ -18,12 +18,6 @@ public class ContentId
     }
 
     @Override
-    public Value.AbstractValueBuilder<Value.ContentId, com.enonic.wem.api.content.ContentId> newValueBuilder()
-    {
-        return new Value.ContentId.ValueBuilder();
-    }
-
-    @Override
     public Property newProperty( final String name, final Value value )
     {
         return new Property.ContentId( name, value );

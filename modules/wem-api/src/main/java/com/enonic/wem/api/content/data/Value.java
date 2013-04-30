@@ -22,7 +22,6 @@ public class Value<T>
     {
         Preconditions.checkNotNull( type, "type cannot be null" );
         Preconditions.checkNotNull( value, "value cannot be null" );
-        Preconditions.checkArgument( !( value instanceof Builder ), "The value of a Value cannot be: " + value.getClass() );
         Preconditions.checkArgument( !( value instanceof Value ), "The value of a Value cannot be: " + value.getClass() );
 
         this.type = type;
@@ -35,31 +34,6 @@ public class Value<T>
 
         object = value;
         type.checkValidity( this );
-    }
-
-    private Value( final Builder builder )
-    {
-        Preconditions.checkNotNull( builder.type, "type cannot be null" );
-        Preconditions.checkNotNull( builder.value, "value cannot be null" );
-        Preconditions.checkArgument( !( builder.value instanceof Builder ), "The value of a Value cannot be: " + builder.value.getClass() );
-        Preconditions.checkArgument( !( builder.value instanceof Value ), "The value of a Value cannot be: " + builder.value.getClass() );
-
-        type = builder.type;
-
-        final boolean valueIsOfExpectedJavaClass = type.isValueOfExpectedJavaClass( builder.value );
-        if ( !valueIsOfExpectedJavaClass )
-        {
-            final Object converted = type.getJavaType().convertFrom( builder.value );
-            if ( converted == null )
-            {
-                throw new InconvertibleValueException( builder.value, type.getJavaType() );
-            }
-            object = converted;
-        }
-        else
-        {
-            object = builder.value;
-        }
     }
 
     public boolean isJavaType( Class javaType )
@@ -182,48 +156,9 @@ public class Value<T>
         return String.valueOf( object );
     }
 
-    public static Builder newValue()
-    {
-        return new Builder();
-    }
-
     public Property newProperty( final String name )
     {
         return getType().newProperty( name, this );
-    }
-
-    public static class Builder
-        extends AbstractValueBuilder
-    {
-        private BaseValueType type;
-
-        private Object value;
-
-        public <T> AbstractValueBuilder type( final BaseValueType type )
-        {
-            this.type = type;
-            return type.newValueBuilder();
-        }
-
-        public Value value( final Object value )
-        {
-            Preconditions.checkNotNull( type, "type must be set before value" );
-            Preconditions.checkNotNull( value, "value cannot be null" );
-            Preconditions.checkArgument( !( value instanceof Builder ), "The value of a Value cannot be: " + value.getClass() );
-            Preconditions.checkArgument( !( value instanceof Value ), "The value of a Value cannot be: " + value.getClass() );
-            this.value = value;
-            return this.build();
-        }
-
-        public Value build()
-        {
-            return new Value( this );
-        }
-
-        public BaseValueType getType()
-        {
-            return type;
-        }
     }
 
     public abstract static class AbstractValueBuilder<T extends Value, O>

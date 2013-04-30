@@ -130,8 +130,6 @@ public abstract class BaseValueType
 
     public abstract Value newValue( Object value );
 
-    public abstract Value.AbstractValueBuilder newValueBuilder();
-
     public abstract Property newProperty( final String name, final Value value );
 
     public Property newProperty( final String name, final Object valueObj )

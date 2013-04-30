@@ -19,12 +19,6 @@ public class DateMidnight
     }
 
     @Override
-    public Value.AbstractValueBuilder<Value.Date, org.joda.time.DateMidnight> newValueBuilder()
-    {
-        return new Value.Date.ValueBuilder();
-    }
-
-    @Override
     public Property newProperty( final String name, final Value value )
     {
         return new Property.Date( name, value );
