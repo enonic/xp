@@ -187,7 +187,6 @@ public class ContentDataParserTest
     }
 
     @Test
-    @Ignore
     public void geoLocation()
         throws IOException
     {
@@ -214,7 +213,6 @@ public class ContentDataParserTest
     }
 
     @Test
-    @Ignore
     public void parse_color()
         throws IOException
     {
@@ -225,11 +223,7 @@ public class ContentDataParserTest
 
         StringBuilder json = new StringBuilder();
         json.append( "{" ).append( "\n" );
-        json.append( "\"myColor\": {" ).append( "\n" );
-        json.append( "  \"red\": \"40\"," ).append( "\n" );
-        json.append( "  \"green\": \"60\"," ).append( "\n" );
-        json.append( "  \"blue\": \"80\"" ).append( "\n" );
-        json.append( "  }" ).append( "\n" );
+        json.append( "\"myColor\": \"40;60;80\"" ).append( "\n" );
         json.append( "}" );
         ObjectMapper objectMapper = ObjectMapperHelper.create();
         ObjectNode objectNode = objectMapper.readValue( json.toString(), ObjectNode.class );
@@ -239,9 +233,7 @@ public class ContentDataParserTest
         DataSet parsedContentData = contentDataParser.parse( objectNode );
 
         // verify
-        assertEquals( 40l, parsedContentData.getProperty( DataPath.from( "myColor.red" ) ).getObject() );
-        assertEquals( 60l, parsedContentData.getProperty( DataPath.from( "myColor.green" ) ).getObject() );
-        assertEquals( 80l, parsedContentData.getProperty( DataPath.from( "myColor.blue" ) ).getObject() );
+        assertEquals( "40;60;80", parsedContentData.getProperty( DataPath.from( "myColor" ) ).getObject() );
     }
 
     @Test

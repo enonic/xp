@@ -12,13 +12,13 @@ import com.enonic.wem.api.content.data.type.ValueTypes;
 /**
  * A generic holder for the value of a Property.
  */
-public class Value
+public class Value<T>
 {
     private final BaseValueType type;
 
     private final Object object;
 
-    private Value( final BaseValueType type, final Object value )
+    private Value( final BaseValueType type, final T value )
     {
         Preconditions.checkNotNull( type, "type cannot be null" );
         Preconditions.checkNotNull( value, "value cannot be null" );
@@ -29,17 +29,12 @@ public class Value
         final boolean valueIsOfExpectedJavaClass = type.isValueOfExpectedJavaClass( value );
         if ( !valueIsOfExpectedJavaClass )
         {
-            final Object converted = type.getJavaType().convertFrom( value );
-            if ( converted == null )
-            {
-                throw new InconvertibleValueException( value, type.getJavaType() );
-            }
-            object = converted;
+            throw new IllegalArgumentException(
+                "Value expected to be of Java type [" + type.getJavaType().getType() + "]: " + value.getClass() );
         }
-        else
-        {
-            object = value;
-        }
+
+        object = value;
+        type.checkValidity( this );
     }
 
     private Value( final Builder builder )
@@ -204,13 +199,13 @@ public class Value
 
         private Object value;
 
-        public <T> AbstractValueBuilder type( BaseValueType type )
+        public <T> AbstractValueBuilder type( final BaseValueType type )
         {
             this.type = type;
             return type.newValueBuilder();
         }
 
-        public Value value( Object value )
+        public Value value( final Object value )
         {
             Preconditions.checkNotNull( type, "type must be set before value" );
             Preconditions.checkNotNull( value, "value cannot be null" );
@@ -237,9 +232,9 @@ public class Value
     }
 
     public static final class Date
-        extends Value
+        extends Value<org.joda.time.DateMidnight>
     {
-        public Date( org.joda.time.DateMidnight value )
+        public Date( final org.joda.time.DateMidnight value )
         {
             super( ValueTypes.DATE_MIDNIGHT, value );
         }
@@ -260,19 +255,19 @@ public class Value
     }
 
     public static final class WholeNumber
-        extends Value
+        extends Value<Long>
     {
-        public WholeNumber( Long value )
+        public WholeNumber( final Long value )
         {
             super( ValueTypes.WHOLE_NUMBER, value );
         }
 
-        public WholeNumber( Integer value )
+        public WholeNumber( final Integer value )
         {
             super( ValueTypes.WHOLE_NUMBER, Long.valueOf( value ) );
         }
 
-        public WholeNumber( Short value )
+        public WholeNumber( final Short value )
         {
             super( ValueTypes.WHOLE_NUMBER, Long.valueOf( value ) );
         }
@@ -288,9 +283,9 @@ public class Value
     }
 
     public static final class DecimalNumber
-        extends Value
+        extends Value<Double>
     {
-        public DecimalNumber( Double value )
+        public DecimalNumber( final Double value )
         {
             super( ValueTypes.DECIMAL_NUMBER, value );
         }
@@ -306,9 +301,9 @@ public class Value
     }
 
     public static final class Text
-        extends Value
+        extends Value<String>
     {
-        public Text( String value )
+        public Text( final String value )
         {
             super( ValueTypes.TEXT, value );
         }
@@ -324,9 +319,9 @@ public class Value
     }
 
     public static final class Xml
-        extends Value
+        extends Value<String>
     {
-        public Xml( String value )
+        public Xml( final String value )
         {
             super( ValueTypes.XML, value );
         }
@@ -342,9 +337,9 @@ public class Value
     }
 
     public static final class HtmlPart
-        extends Value
+        extends Value<String>
     {
-        public HtmlPart( String value )
+        public HtmlPart( final String value )
         {
             super( ValueTypes.HTML_PART, value );
         }
@@ -360,7 +355,7 @@ public class Value
     }
 
     public static final class GeographicCoordinate
-        extends Value
+        extends Value<String>
     {
         public GeographicCoordinate( String value )
         {
@@ -378,7 +373,7 @@ public class Value
     }
 
     public static final class ContentId
-        extends Value
+        extends Value<com.enonic.wem.api.content.ContentId>
     {
         public ContentId( com.enonic.wem.api.content.ContentId value )
         {
@@ -396,7 +391,7 @@ public class Value
     }
 
     public static final class BinaryId
-        extends Value
+        extends Value<com.enonic.wem.api.content.binary.BinaryId>
     {
         public BinaryId( com.enonic.wem.api.content.binary.BinaryId value )
         {

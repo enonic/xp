@@ -50,7 +50,7 @@ public class Color
     @Override
     public Value newValue( final String value )
     {
-        throw new UnsupportedOperationException();
+        return new Value.Text( value );
     }
 
     private static ValueHolder parse( final String str )

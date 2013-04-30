@@ -38,7 +38,27 @@ public class GeographicCoordinate
     @Override
     public Property newProperty( final String name, final Value value )
     {
-        throw new UnsupportedOperationException();
+        return new Property.GeographicCoordinate( name, value );
+    }
+
+    @Override
+    public void checkValidity( final Value value )
+        throws InvalidValueTypeException, InvalidValueException
+    {
+        super.checkValidity( value );
+
+        final ValueHolder valueHolder = parse( value.getString() );
+        if ( valueHolder.latitude < LATITUDE_RANGE_START || valueHolder.latitude > LATITUDE_RANGE_END )
+        {
+            throw new InvalidValueException( value,
+                                             "latitude not within range from " + LATITUDE_RANGE_START + " to " + LATITUDE_RANGE_END );
+        }
+
+        if ( valueHolder.longitude < LONGITUDE_RANGE_START || valueHolder.longitude > LONGITUDE_RANGE_END )
+        {
+            throw new InvalidValueException( value,
+                                             "longitude not within range from " + LONGITUDE_RANGE_START + " to " + LONGITUDE_RANGE_END );
+        }
     }
 
     @Override
@@ -53,13 +73,13 @@ public class GeographicCoordinate
         if ( valueHolder.latitude < LATITUDE_RANGE_START || valueHolder.latitude > LATITUDE_RANGE_END )
         {
             throw new InvalidValueException( property,
-                                             "Value not within range from " + LATITUDE_RANGE_START + " to " + LATITUDE_RANGE_END );
+                                             "latitude not within range from " + LATITUDE_RANGE_START + " to " + LATITUDE_RANGE_END );
         }
 
         if ( valueHolder.longitude < LONGITUDE_RANGE_START || valueHolder.longitude > LONGITUDE_RANGE_END )
         {
             throw new InvalidValueException( property,
-                                             "Value not within range from " + LONGITUDE_RANGE_START + " to " + LONGITUDE_RANGE_END );
+                                             "longitude not within range from " + LONGITUDE_RANGE_START + " to " + LONGITUDE_RANGE_END );
         }
     }
 

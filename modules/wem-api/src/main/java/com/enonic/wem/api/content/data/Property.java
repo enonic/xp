@@ -53,13 +53,6 @@ public class Property
         return value.getType();
     }
 
-    public void setValue( final Object value, final BaseValueType type )
-    {
-        Preconditions.checkNotNull( value, "A Property cannot have a null value" );
-        Preconditions.checkArgument( !( value instanceof DataSet ), "A Property cannot have a DataSet as value" );
-        this.value = type.newValue( value );
-    }
-
     public void setValue( final Value value )
     {
         Preconditions.checkNotNull( value, "A Property cannot have a null value" );
@@ -185,7 +178,7 @@ public class Property
         return getArray().getValue( arrayIndex ).asBinaryId();
     }
 
-    public void checkPropertyTypeValidity()
+    public void checkValueTypeValidity()
         throws InvalidDataException
     {
         try
@@ -486,6 +479,72 @@ public class Property
             public BinaryId build()
             {
                 return new BinaryId( this );
+            }
+        }
+    }
+
+    public static class GeographicCoordinate
+        extends Property
+    {
+        public GeographicCoordinate( final String name, final Value value )
+        {
+            super( name, value );
+        }
+
+        public GeographicCoordinate( final String name, final String value )
+        {
+            super( name, new Value.GeographicCoordinate( value ) );
+        }
+
+        public GeographicCoordinate( final AbstractBaseBuilder builder )
+        {
+            super( builder );
+        }
+
+        public static GeographicCoordinateBuilder newGeographicCoordinate()
+        {
+            return new GeographicCoordinateBuilder();
+        }
+
+        public static class GeographicCoordinateBuilder
+            extends AbstractNameBuilder<GeographicCoordinateBuilder>
+        {
+            public GeographicCoordinateBuilder()
+            {
+                setType( ValueTypes.GEOGRAPHIC_COORDINATE );
+            }
+
+            public GeographicCoordinateBuilder value( final String value )
+            {
+                setValue( value );
+                return this;
+            }
+
+            @Override
+            public GeographicCoordinate build()
+            {
+                return new GeographicCoordinate( this );
+            }
+        }
+
+        public static GeographicCoordinateValueBuilder newGeographicCoordinate( final String name )
+        {
+            return new GeographicCoordinateValueBuilder( name );
+        }
+
+        public static class GeographicCoordinateValueBuilder
+            extends AbstractBaseBuilder
+        {
+            private GeographicCoordinateValueBuilder( final String name )
+            {
+                setType( ValueTypes.GEOGRAPHIC_COORDINATE );
+                setName( name );
+            }
+
+            public GeographicCoordinate value( final String value )
+            {
+                setValue( value );
+                return new GeographicCoordinate( this );
             }
         }
     }

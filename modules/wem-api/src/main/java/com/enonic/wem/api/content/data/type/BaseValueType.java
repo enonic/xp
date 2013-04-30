@@ -55,6 +55,20 @@ public abstract class BaseValueType
         checkValueIsOfExpectedJavaClass( property );
     }
 
+    /**
+     * Checks by default if given property's value is of correct Java class.
+     * Can be overridden by concrete classes to do extensive validation.
+     *
+     * @param value the value to check the validity of
+     * @throws InvalidValueTypeException
+     */
+    @Override
+    public void checkValidity( final Value value )
+        throws InvalidJavaTypeException, InvalidValueException
+    {
+        checkValueIsOfExpectedJavaClass( value );
+    }
+
 
     @Override
     public boolean equals( final Object o )
@@ -84,24 +98,33 @@ public abstract class BaseValueType
         return name;
     }
 
-    public boolean isValueOfExpectedJavaClass( Object value )
+    public boolean isValueOfExpectedJavaClass( final Object value )
     {
         Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
         return javaType.isInstance( value );
     }
 
-    public boolean isValueOfExpectedJavaClass( Value value )
+    public boolean isValueOfExpectedJavaClass( final Value value )
     {
         Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
         return javaType.isInstance( value.getObject() );
     }
 
-    void checkValueIsOfExpectedJavaClass( Property property )
+    void checkValueIsOfExpectedJavaClass( final Property property )
         throws InvalidValueTypeException
     {
         if ( !isValueOfExpectedJavaClass( ( property.getObject() ) ) )
         {
             throw new InvalidValueTypeException( javaType, property );
+        }
+    }
+
+    void checkValueIsOfExpectedJavaClass( final Value value )
+        throws InvalidJavaTypeException
+    {
+        if ( !isValueOfExpectedJavaClass( value ) )
+        {
+            throw new InvalidJavaTypeException( javaType, value );
         }
     }
 

@@ -1,13 +1,12 @@
 package com.enonic.wem.api.content.data.type;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
+import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static org.junit.Assert.*;
@@ -44,7 +43,6 @@ public class GeographicCoordinateTest
     }
 
     @Test
-    @Ignore
     public void given_data_with_value_of_correct_type_but_illegal_value_then_checkValidity_throws_InvalidValueTypeException()
         throws Exception
     {
@@ -60,8 +58,8 @@ public class GeographicCoordinateTest
         catch ( Exception e )
         {
             e.printStackTrace();
-            assertTrue( "Expected InvalidDataException, got: " + e.getClass().getSimpleName(), e instanceof InvalidDataException );
-            assertEquals( "Invalid data: Data{name=myGeographicCoordinate, type=GeographicCoordinate, value=90.0,180.2}", e.getMessage() );
+            assertTrue( "Expected InvalidValueException, got: " + e.getClass().getSimpleName(), e instanceof InvalidValueException );
+            assertEquals( "Invalid value: longitude not within range from -180.0 to 180.0: 90.0,180.2", e.getMessage() );
         }
     }
 

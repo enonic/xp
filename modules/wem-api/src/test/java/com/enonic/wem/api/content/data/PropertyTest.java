@@ -8,6 +8,8 @@ import com.enonic.wem.api.content.AbstractEqualsTest;
 import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 
+import static com.enonic.wem.api.content.data.Property.GeographicCoordinate.newGeographicCoordinate;
+import static com.enonic.wem.api.content.data.Property.newProperty;
 import static junit.framework.Assert.assertEquals;
 
 public class PropertyTest
@@ -20,27 +22,27 @@ public class PropertyTest
             @Override
             public Object getObjectX()
             {
-                return Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "aaa" ).build();
+                return newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "aaa" ).build();
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "bbb" ).build(),
-                    Property.newProperty().name( "myOtherData" ).type( ValueTypes.TEXT ).value( "aaa" ).build(),
-                    Property.newProperty().name( "myData" ).type( ValueTypes.HTML_PART ).value( "aaa" ).build()};
+                return new Object[]{newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "bbb" ).build(),
+                    newProperty().name( "myOtherData" ).type( ValueTypes.TEXT ).value( "aaa" ).build(),
+                    newProperty().name( "myData" ).type( ValueTypes.HTML_PART ).value( "aaa" ).build()};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "aaa" ).build();
+                return newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "aaa" ).build();
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "aaa" ).build();
+                return newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "aaa" ).build();
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();
@@ -49,7 +51,7 @@ public class PropertyTest
     @Test
     public void getDate_given_value_as_string()
     {
-        Property property = Property.newProperty().name( "myDate" ).type( ValueTypes.TEXT ).value( "2012-08-31" ).build();
+        Property property = newProperty().name( "myDate" ).type( ValueTypes.TEXT ).value( "2012-08-31" ).build();
         assertEquals( DateMidnight.class, property.getDate().getClass() );
         assertEquals( new DateMidnight( 2012, 8, 31 ), property.getDate() );
     }
@@ -57,7 +59,7 @@ public class PropertyTest
     @Test
     public void getDouble_given_value_as_long()
     {
-        Property property = Property.newProperty().name( "myNumber" ).type( ValueTypes.WHOLE_NUMBER ).value( (long) 2 ).build();
+        Property property = newProperty().name( "myNumber" ).type( ValueTypes.WHOLE_NUMBER ).value( (long) 2 ).build();
         assertEquals( Double.class, property.getDouble().getClass() );
         assertEquals( 2.0, property.getDouble() );
     }
@@ -65,35 +67,44 @@ public class PropertyTest
     @Test(expected = IllegalArgumentException.class)
     public void given_invalid_value_when_build_then_exception_is_thrown()
     {
-        Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( "2012.31.08" ).build();
+        newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( "2012.31.08" ).build();
     }
 
     @Test
     public void getLong_given_value_as_long()
     {
-        Property property = Property.newProperty().name( "myNumber" ).type( ValueTypes.WHOLE_NUMBER ).value( 1l ).build();
+        Property property = newProperty().name( "myNumber" ).type( ValueTypes.WHOLE_NUMBER ).value( 1l ).build();
         assertEquals( new Long( 1 ), property.getLong() );
     }
 
     @Test
     public void getLong_given_value_as_decimal_number()
     {
-        Property property = Property.newProperty().name( "myNumber" ).type( ValueTypes.DECIMAL_NUMBER ).value( 1.1 ).build();
+        Property property = newProperty().name( "myNumber" ).type( ValueTypes.DECIMAL_NUMBER ).value( 1.1 ).build();
         assertEquals( new Long( 1 ), property.getLong() );
     }
 
     @Test
     public void getLong_given_value_as_string()
     {
-        Property property = Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "1" ).build();
+        Property property = newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "1" ).build();
         assertEquals( new Long( 1 ), property.getLong() );
     }
 
     @Test
-    public void xxx()
+    public void getBinaryId_given_value_as_string()
     {
         Property property =
-            Property.newProperty().name( "myBinary" ).type( ValueTypes.BINARY_ID ).value( "217482f4-b89a-4286-9111-5120d11da6c2" ).build();
+            newProperty().name( "myBinary" ).type( ValueTypes.BINARY_ID ).value( "217482f4-b89a-4286-9111-5120d11da6c2" ).build();
         assertEquals( BinaryId.from( "217482f4-b89a-4286-9111-5120d11da6c2" ), property.getBinaryId() );
+    }
+
+    @Test
+    public void geographicalCoordinate()
+    {
+        assertEquals( "90,123", newProperty( "myGeo" ).type( ValueTypes.GEOGRAPHIC_COORDINATE ).value( "90,123" ).build().getString() );
+        assertEquals( "90,123", newGeographicCoordinate( "myGeo" ).value( "90,123" ).getString() );
+        assertEquals( "90,123", newGeographicCoordinate().name( "myGeo" ).value( "90,123" ).build().getString() );
+        assertEquals( "90,123", new Property.GeographicCoordinate( "myGeo", "90,123" ).getString() );
     }
 }
