@@ -161,11 +161,6 @@ public class Value<T>
         return getType().newProperty( name, this );
     }
 
-    public abstract static class AbstractValueBuilder<T extends Value, O>
-    {
-        public abstract T value( final O value );
-    }
-
     public static final class Date
         extends Value<org.joda.time.DateMidnight>
     {
@@ -177,15 +172,6 @@ public class Value<T>
         public Date( final String value )
         {
             super( ValueTypes.DATE_MIDNIGHT, JavaType.DATE_MIDNIGHT.convertFrom( value ) );
-        }
-
-        public static class ValueBuilder
-            extends AbstractValueBuilder<Date, org.joda.time.DateMidnight>
-        {
-            public Date value( final org.joda.time.DateMidnight value )
-            {
-                return new Date( value );
-            }
         }
     }
 
@@ -207,14 +193,6 @@ public class Value<T>
             super( ValueTypes.WHOLE_NUMBER, Long.valueOf( value ) );
         }
 
-        public static class ValueBuilder
-            extends AbstractValueBuilder<WholeNumber, Long>
-        {
-            public WholeNumber value( final Long value )
-            {
-                return new WholeNumber( value );
-            }
-        }
     }
 
     public static final class DecimalNumber
@@ -223,15 +201,6 @@ public class Value<T>
         public DecimalNumber( final Double value )
         {
             super( ValueTypes.DECIMAL_NUMBER, value );
-        }
-
-        public static class ValueBuilder
-            extends AbstractValueBuilder<DecimalNumber, Double>
-        {
-            public DecimalNumber value( final Double value )
-            {
-                return new DecimalNumber( value );
-            }
         }
     }
 
@@ -242,15 +211,6 @@ public class Value<T>
         {
             super( ValueTypes.TEXT, value );
         }
-
-        public static class ValueBuilder
-            extends AbstractValueBuilder<Text, String>
-        {
-            public Text value( final String value )
-            {
-                return new Text( value );
-            }
-        }
     }
 
     public static final class Xml
@@ -259,15 +219,6 @@ public class Value<T>
         public Xml( final String value )
         {
             super( ValueTypes.XML, value );
-        }
-
-        public static class ValueBuilder
-            extends AbstractValueBuilder<Xml, java.lang.String>
-        {
-            public Xml value( final java.lang.String value )
-            {
-                return new Xml( value );
-            }
         }
     }
 
@@ -278,15 +229,6 @@ public class Value<T>
         {
             super( ValueTypes.HTML_PART, value );
         }
-
-        public static class ValueBuilder
-            extends AbstractValueBuilder<HtmlPart, java.lang.String>
-        {
-            public HtmlPart value( final java.lang.String value )
-            {
-                return new HtmlPart( value );
-            }
-        }
     }
 
     public static final class GeographicCoordinate
@@ -295,15 +237,6 @@ public class Value<T>
         public GeographicCoordinate( String value )
         {
             super( ValueTypes.GEOGRAPHIC_COORDINATE, value );
-        }
-
-        public static class ValueBuilder
-            extends AbstractValueBuilder<GeographicCoordinate, java.lang.String>
-        {
-            public GeographicCoordinate value( final java.lang.String value )
-            {
-                return new GeographicCoordinate( value );
-            }
         }
     }
 
@@ -314,15 +247,6 @@ public class Value<T>
         {
             super( ValueTypes.CONTENT_ID, value );
         }
-
-        public static class ValueBuilder
-            extends AbstractValueBuilder<ContentId, com.enonic.wem.api.content.ContentId>
-        {
-            public ContentId value( final com.enonic.wem.api.content.ContentId value )
-            {
-                return new ContentId( value );
-            }
-        }
     }
 
     public static final class BinaryId
@@ -331,15 +255,6 @@ public class Value<T>
         public BinaryId( com.enonic.wem.api.content.binary.BinaryId value )
         {
             super( ValueTypes.BINARY_ID, value );
-        }
-
-        public static class ValueBuilder
-            extends AbstractValueBuilder<BinaryId, com.enonic.wem.api.content.binary.BinaryId>
-        {
-            public BinaryId value( final com.enonic.wem.api.content.binary.BinaryId value )
-            {
-                return new BinaryId( value );
-            }
         }
     }
 }
