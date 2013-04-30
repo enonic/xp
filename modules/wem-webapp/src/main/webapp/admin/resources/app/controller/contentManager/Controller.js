@@ -170,10 +170,9 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 xtype: 'contentLiveEditPanel',
                 title: response.content.displayName,
                 isLiveMode: me.getContentDetailPanel().isLiveMode,
-                data: {
-                    contentType: response.contentType,
-                    content: response.content
-                }
+                contentType: response.contentType,
+                content: response.content,
+                data: {}
             };
         };
 
@@ -256,18 +255,15 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
                             //This is stub, logic for new content creation will be added later
                             var createContentTabFn = function (response) {
-                                var contentData = {
+                                return {
+                                    xtype: 'contentLiveEditPanel',
+                                    title: '[New ' + response.contentType.displayName + ']',
                                     content: {
                                         iconUrl: response.iconUrl
                                     },
                                     contentType: response.contentType,
-                                    // use first selected record as parent for new content
-                                    contentParent: treeGridSelection.length > 0 ? treeGridSelection[0].data : undefined
-                                };
-                                return {
-                                    xtype: 'contentLiveEditPanel',
-                                    title: '[New ' + contentData.contentType.displayName + ']',
-                                    data: contentData
+                                    contentParent: treeGridSelection.length > 0 ? treeGridSelection[0].data : undefined,
+                                    data: {}
                                 };
                             };
 
