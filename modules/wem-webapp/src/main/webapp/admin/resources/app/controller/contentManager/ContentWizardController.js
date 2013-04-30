@@ -85,7 +85,7 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
 
     onDisplayNameSourceChanged: function (field, event, opts) {
         var wizard = this.getContentWizardPanel();
-        var evaluateFn = wizard.data && wizard.data.contentType && wizard.data.contentType.contentDisplayNameScript;
+        var evaluateFn = wizard.data && wizard.contentType && wizard.contentType.contentDisplayNameScript;
 
         if (wizard.evaluateDisplayName && !Ext.isEmpty(evaluateFn)) {
 
@@ -125,9 +125,9 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
 
     saveContent: function (contentWizard, closeWizard) {
         var me = this;
-        var contentType = contentWizard.data.contentType;
-        var content = contentWizard.data.content;
-        var contentParent = contentWizard.data.contentParent;
+        var contentType = contentWizard.contentType;
+        var content = contentWizard.content;
+        var contentParent = contentWizard.contentParent;
 
         var contentWizardData = contentWizard.getData();
         var contentData = contentWizardData.contentData;
@@ -200,7 +200,7 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
 
     publishContent: function (contentWizard, closeWizard) {
         var me = this;
-        var displayName = contentWizard.data.content.displayName;
+        var displayName = contentWizard.content.displayName;
         if (closeWizard) {
             me.getContentWizardTab().close();
         }

@@ -36,6 +36,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentLiveEditPanel', {
         });
         var wizardPanel = {
             xtype: 'contentWizardPanel',
+            content: this.content,
+            contentType: this.contentType,
+            contentParent: this.contentParent,
             data: this.data
         };
 
@@ -64,11 +67,11 @@ Ext.define('Admin.view.contentManager.wizard.ContentLiveEditPanel', {
 
     getLiveUrl: function (data) {
         var str = '';
-        if (data) {
-            if (data.content.displayName) {
-                str = data.content.displayName;
-            } else if (data.content.path) {
-                str = data.content.path;
+        if (this.content) {
+            if (this.content.displayName) {
+                str = this.content.displayName;
+            } else if (this.content.path) {
+                str = this.content.path;
             }
         }
         return str.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp'
