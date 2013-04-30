@@ -1198,21 +1198,20 @@ var admin;
                 function DeleteSpacesHandler() {
                 }
 
-                DeleteSpacesHandler.prototype.doDelete = function (spaces, callback) {
-                    var me = this;
-                    var spaceNames = Ext.Array.map([].concat(spaces), function (item) {
+                DeleteSpacesHandler.prototype.doDelete = function (spaceModels, callback) {
+                    var spaceNames = Ext.Array.map([].concat(spaceModels), function (item) {
                         if (!item) {
                             console.error('No spaces selected');
                         }
                         return item.get('name');
                     });
                     Admin.lib.RemoteService.space_delete({
-                        "spaceName": spaceNames
-                    }, function (r) {
-                        if (r) {
-                            callback(me, r.success, r);
+                        'spaceName': spaceNames
+                    }, function (response) {
+                        if (response) {
+                            callback.call(this, response.success, response);
                         } else {
-                            Ext.Msg.alert("Error", r ? r.error : "Unable to delete space.");
+                            Ext.Msg.alert('Error', response ? response.error : 'Unable to delete space.');
                         }
                     });
                 };
@@ -4156,41 +4155,60 @@ Ext.define('Admin.view.FilterPanel', {
         }
     ]
 });
-Ext.define('Admin.view.BrowseToolbar', {
-    extend: 'Ext.toolbar.Toolbar',
-    alias: 'widget.spaceBrowseToolbar',
-    cls: 'admin-toolbar',
-    border: true,
-    defaults: {
-        scale: 'medium',
-        iconAlign: 'top',
-        minWidth: 64
-    },
-    items: [
-        {
-            text: ' New',
-            action: 'newSpace'
-        },
-        {
-            text: 'Edit',
-            disabled: true,
-            action: 'editSpace'
-        },
-        {
-            text: 'Open',
-            disabled: true,
-            action: 'viewSpace'
-        },
-        {
-            text: 'Delete',
-            disabled: true,
-            action: 'deleteSpace'
-        }
-    ],
-    initComponent: function () {
-        this.callParent(arguments);
-    }
-});
+var admin;
+(function (admin) {
+    (function (ui) {
+        var BrowseToolbar = (function () {
+            function BrowseToolbar(region) {
+                var tb = this.toolbar = new Ext.toolbar.Toolbar();
+                tb.cls = 'admin-toolbar';
+                tb.border = true;
+                if (region) {
+                    tb.region = region;
+                }
+                var newButton = new Ext.button.Button();
+                newButton.text = 'New';
+                newButton.action = 'newSpace';
+                newButton.scale = 'medium';
+                newButton.iconAlign = 'top';
+                newButton.minWidth = 64;
+                tb.add(newButton);
+                var editButton = new Ext.button.Button();
+                editButton.text = 'Edit';
+                editButton.disabled = true;
+                editButton.action = 'editSpace';
+                editButton.scale = 'medium';
+                editButton.iconAlign = 'top';
+                editButton.minWidth = 64;
+                tb.add(editButton);
+                var openButton = new Ext.button.Button();
+                openButton.text = 'Open';
+                openButton.disabled = true;
+                openButton.action = 'viewSpace';
+                openButton.scale = 'medium';
+                openButton.iconAlign = 'top';
+                openButton.minWidth = 64;
+                tb.add(openButton);
+                var deleteButton = new Ext.button.Button();
+                deleteButton.text = 'Delete';
+                deleteButton.disabled = true;
+                deleteButton.action = 'deleteSpace';
+                deleteButton.scale = 'medium';
+                deleteButton.iconAlign = 'top';
+                deleteButton.minWidth = 64;
+                tb.add(deleteButton);
+                return this.toolbar;
+            }
+
+            BrowseToolbar.prototype.getToolbar = function () {
+                return this.toolbar;
+            };
+            return BrowseToolbar;
+        })();
+        ui.BrowseToolbar = BrowseToolbar;
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
 Ext.define('Admin.controller.Controller', {
     extend: 'Ext.app.Controller',
     stores: [
@@ -4690,61 +4708,44 @@ Ext.application({
         'Admin.store.SpaceStore'
     ],
     launch: function () {
-        Ext.create('Ext.container.Viewport', {
-            layout: 'fit',
-            cls: 'admin-viewport',
-            items: [
-                {
-                    xtype: 'cmsTabPanel',
-                    appName: 'Space Admin',
-                    appIconCls: 'icon-metro-space-admin-24',
-                    items: [
-                        {
-                            id: 'tab-browse',
-                            title: 'Browse',
-                            closable: false,
-                            border: false,
-                            xtype: 'panel',
-                            layout: 'border',
-                            tabConfig: {
-                                hidden: true
-                            },
-                            items: [
-                                {
-                                    region: 'west',
-                                    xtype: 'spaceFilter',
-                                    width: 200
-                                },
-                                {
-                                    region: 'center',
-                                    xtype: 'container',
-                                    layout: 'border',
-                                    items: [
-                                        {
-                                            region: 'north',
-                                            xtype: 'spaceBrowseToolbar'
-                                        },
-                                        {
-                                            region: 'center',
-                                            xtype: 'spaceTreeGrid',
-                                            flex: 1
-                                        },
-                                        {
-                                            region: 'south',
-                                            split: true,
-                                            collapsible: true,
-                                            header: false,
-                                            xtype: 'spaceDetail',
-                                            flex: 1
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        });
+        var wp = new Ext.container.Viewport();
+        wp.layout = 'fit';
+        wp.cls = 'admin-viewport';
+        var tabPanel = new Admin.view.TabPanel();
+        tabPanel.appName = 'Space Admin';
+        tabPanel.appIconCls = 'icon-metro-space-admin-24';
+        var p = new Ext.panel.Panel();
+        p.id = 'tab-browse';
+        p.title = 'Browse';
+        p.closable = false;
+        p.border = false;
+        p.layout = 'border';
+        p.tabConfig = {
+            hidden: true
+        };
+        var west = new Admin.view.FilterPanel();
+        west.region = 'west';
+        west.width = 200;
+        p.add(west);
+        var center = new Ext.container.Container();
+        center.region = 'center';
+        center.layout = 'border';
+        var toolbar = new admin.ui.BrowseToolbar('north');
+        center.add(toolbar);
+        var grid = new Admin.view.TreeGridPanel();
+        grid.region = 'center';
+        grid.flex = 1;
+        center.add(grid);
+        var detail = new Admin.view.DetailPanel();
+        detail.region = 'south';
+        detail.split = true;
+        detail.collapsible = true;
+        detail.header = false;
+        detail.flex = 1;
+        center.add(detail);
+        p.add(center);
+        tabPanel.add(p);
+        wp.add(tabPanel);
     }
 });
 //@ sourceMappingURL=all.js.map

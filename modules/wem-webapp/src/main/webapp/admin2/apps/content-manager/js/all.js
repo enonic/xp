@@ -7,9 +7,18 @@ var admin;
                 }
 
                 DeleteContentHandler.prototype.doDelete = function (contentModels, callback) {
-                    var me = this;
-                    var contentKeys = Ext.Array.map([].concat(contentModels), function (item) {
-                        return item.get('key');
+                    var _this = this;
+                    var contentPaths = Ext.Array.map([].concat(contentModels), function (item) {
+                        return item.get('path');
+                    });
+                    Admin.lib.RemoteService.content_delete({
+                        'contentPaths': contentPaths
+                    }, function (response) {
+                        if (response) {
+                            callback.call(_this, response.success, response.failures);
+                        } else {
+                            Ext.Msg.alert('Error', response ? response.error : 'Internal error occured.');
+                        }
                     });
                 };
                 return DeleteContentHandler;

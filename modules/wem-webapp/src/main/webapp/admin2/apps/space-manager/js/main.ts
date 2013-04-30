@@ -78,61 +78,113 @@ Ext.application({
 
     launch: function () {
 
-        Ext.create('Ext.container.Viewport', {
-            layout: 'fit',
-            cls: 'admin-viewport',
-            items: [
-                {
-                    xtype: 'cmsTabPanel',
-                    appName: 'Space Admin',
-                    appIconCls: 'icon-metro-space-admin-24',
-                    items: [
-                        {
-                            id: 'tab-browse',
-                            title: 'Browse',
-                            closable: false,
-                            border: false,
-                            xtype: 'panel',
-                            layout: 'border',
-                            tabConfig: {
-                                hidden: true
-                            },
-                            items: <any[]>[
-                                {
-                                    region: 'west',
-                                    xtype: 'spaceFilter',
-                                    width: 200
-                                },
-                                {
-                                    region: 'center',
-                                    xtype: 'container',
-                                    layout: 'border',
-                                    items: [
-                                        {
-                                            region: 'north',
-                                            xtype: 'spaceBrowseToolbar'
-                                        },
-                                        {
-                                            region: 'center',
-                                            xtype: 'spaceTreeGrid',
-                                            flex: 1
-                                        },
-                                        {
-                                            region: 'south',
-                                            split: true,
-                                            collapsible: true,
-                                            header: false,
-                                            xtype: 'spaceDetail',
-                                            flex: 1
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        });
+        var wp = new Ext.container.Viewport();
+        wp.layout = 'fit';
+        wp.cls = 'admin-viewport';
+
+        var tabPanel = new Admin.view.TabPanel();
+        tabPanel.appName = 'Space Admin';
+        tabPanel.appIconCls = 'icon-metro-space-admin-24';
+
+        var p = new Ext.panel.Panel();
+        p.id = 'tab-browse';
+        p.title = 'Browse';
+        p.closable = false;
+        p.border = false;
+        p.layout = 'border';
+        p.tabConfig = { hidden: true };
+
+        var west = new Admin.view.FilterPanel();
+        west.region = 'west';
+        west.width = 200;
+
+        p.add(west);
+
+        var center = new Ext.container.Container();
+        center.region = 'center';
+        center.layout = 'border';
+
+        var toolbar = new admin.ui.BrowseToolbar('north');
+
+        center.add(toolbar);
+
+        var grid = new Admin.view.TreeGridPanel();
+        grid.region = 'center';
+        grid.flex = 1;
+
+        center.add(grid);
+
+        var detail = new Admin.view.DetailPanel();
+        detail.region = 'south';
+        detail.split = true;
+        detail.collapsible = true;
+        detail.header = false;
+        detail.flex = 1;
+
+        center.add(detail);
+
+        p.add(center);
+
+        tabPanel.add(p);
+
+        wp.add(tabPanel);
+
+
+        /*        Ext.create('Ext.container.Viewport', {
+         layout: 'fit',
+         cls: 'admin-viewport',
+         items: [
+         {
+         xtype: 'cmsTabPanel',
+         appName: 'Space Admin',
+         appIconCls: 'icon-metro-space-admin-24',
+         items: [
+         {
+         id: 'tab-browse',
+         title: 'Browse',
+         closable: false,
+         border: false,
+         xtype: 'panel',
+         layout: 'border',
+         tabConfig: {
+         hidden: true
+         },
+         items: <any[]>[
+         {
+         region: 'west',
+         xtype: 'spaceFilter',
+         width: 200
+         },
+         {
+         region: 'center',
+         xtype: 'container',
+         layout: 'border',
+         items: [
+         {
+         region: 'north',
+         xtype: 'spaceBrowseToolbar'
+         },
+         {
+         region: 'center',
+         xtype: 'spaceTreeGrid',
+         flex: 1
+         },
+         {
+         region: 'south',
+         split: true,
+         collapsible: true,
+         header: false,
+         xtype: 'spaceDetail',
+         flex: 1
+         }
+         ]
+         }
+         ]
+         }
+         ]
+         }
+         ]
+         });*/
     }
 
 });
