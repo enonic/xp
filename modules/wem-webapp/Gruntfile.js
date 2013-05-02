@@ -31,6 +31,14 @@ module.exports = function (grunt) {
                     // target: 'es5',
                     sourcemap: true
                 }
+            },
+            live_edit: {
+                src: ['src/main/webapp/admin2/live-edit/js/Main.ts'],
+                dest: 'src/main/webapp/admin2/live-edit/js/all.js',
+                options: {
+                    // target: 'es5',
+                    sourcemap: true
+                }
             }
         },
 
