@@ -1,12 +1,13 @@
 module admin.ui {
     export class BrowseToolbar {
-        private toolbar;
+        ext;
 
         constructor(region?:String) {
 
-            var tb = this.toolbar = new Ext.toolbar.Toolbar();
+            var tb = this.ext = new Ext.toolbar.Toolbar();
             tb.cls = 'admin-toolbar';
             tb.border = true;
+            tb.itemId = 'spaceBrowseToolbar';
             if (region) {
                 tb.region = region;
             }
@@ -49,12 +50,6 @@ module admin.ui {
             deleteButton.minWidth = 64;
 
             tb.add(deleteButton);
-
-            return this.toolbar;
-        }
-
-        getToolbar() {
-            return this.toolbar;
         }
     }
 }

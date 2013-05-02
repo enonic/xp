@@ -4160,9 +4160,10 @@ var admin;
     (function (ui) {
         var BrowseToolbar = (function () {
             function BrowseToolbar(region) {
-                var tb = this.toolbar = new Ext.toolbar.Toolbar();
+                var tb = this.ext = new Ext.toolbar.Toolbar();
                 tb.cls = 'admin-toolbar';
                 tb.border = true;
+                tb.itemId = 'spaceBrowseToolbar';
                 if (region) {
                     tb.region = region;
                 }
@@ -4197,12 +4198,8 @@ var admin;
                 deleteButton.iconAlign = 'top';
                 deleteButton.minWidth = 64;
                 tb.add(deleteButton);
-                return this.toolbar;
             }
 
-            BrowseToolbar.prototype.getToolbar = function () {
-                return this.toolbar;
-            };
             return BrowseToolbar;
         })();
         ui.BrowseToolbar = BrowseToolbar;
@@ -4475,22 +4472,22 @@ Ext.define('Admin.controller.BrowseToolbarController', {
     ],
     init: function () {
         this.control({
-            'spaceBrowseToolbar *[action=newSpace]': {
+            '#spaceBrowseToolbar *[action=newSpace]': {
                 click: function (button, event) {
                     this.showNewSpaceWindow();
                 }
             },
-            'spaceBrowseToolbar *[action=viewSpace]': {
+            '#spaceBrowseToolbar *[action=viewSpace]': {
                 click: function (button, event) {
                     this.viewSelectedSpaces();
                 }
             },
-            'spaceBrowseToolbar *[action=editSpace]': {
+            '#spaceBrowseToolbar *[action=editSpace]': {
                 click: function (button, event) {
                     this.editSelectedSpaces();
                 }
             },
-            'spaceBrowseToolbar *[action=deleteSpace]': {
+            '#spaceBrowseToolbar *[action=deleteSpace]': {
                 click: function (button, event) {
                     this.deleteSelectedSpaces();
                 }
@@ -4708,12 +4705,25 @@ Ext.application({
         'Admin.store.SpaceStore'
     ],
     launch: function () {
-        var wp = new Ext.container.Viewport();
-        wp.layout = 'fit';
-        wp.cls = 'admin-viewport';
-        var tabPanel = new Admin.view.TabPanel();
-        tabPanel.appName = 'Space Admin';
-        tabPanel.appIconCls = 'icon-metro-space-admin-24';
+        var toolbar = new admin.ui.BrowseToolbar('north');
+        var grid = new Admin.view.TreeGridPanel();
+        grid.region = 'center';
+        grid.flex = 1;
+        var detail = new Admin.view.DetailPanel();
+        detail.region = 'south';
+        detail.split = true;
+        detail.collapsible = true;
+        detail.header = false;
+        detail.flex = 1;
+        var center = new Ext.container.Container();
+        center.region = 'center';
+        center.layout = 'border';
+        center.add(detail);
+        center.add(grid);
+        center.add(toolbar.ext);
+        var west = new Admin.view.FilterPanel();
+        west.region = 'west';
+        west.width = 200;
         var p = new Ext.panel.Panel();
         p.id = 'tab-browse';
         p.title = 'Browse';
@@ -4723,28 +4733,15 @@ Ext.application({
         p.tabConfig = {
             hidden: true
         };
-        var west = new Admin.view.FilterPanel();
-        west.region = 'west';
-        west.width = 200;
-        p.add(west);
-        var center = new Ext.container.Container();
-        center.region = 'center';
-        center.layout = 'border';
-        var toolbar = new admin.ui.BrowseToolbar('north');
-        center.add(toolbar);
-        var grid = new Admin.view.TreeGridPanel();
-        grid.region = 'center';
-        grid.flex = 1;
-        center.add(grid);
-        var detail = new Admin.view.DetailPanel();
-        detail.region = 'south';
-        detail.split = true;
-        detail.collapsible = true;
-        detail.header = false;
-        detail.flex = 1;
-        center.add(detail);
         p.add(center);
+        p.add(west);
+        var tabPanel = new Admin.view.TabPanel();
+        tabPanel.appName = 'Space Admin';
+        tabPanel.appIconCls = 'icon-metro-space-admin-24';
         tabPanel.add(p);
+        var wp = new Ext.container.Viewport();
+        wp.layout = 'fit';
+        wp.cls = 'admin-viewport';
         wp.add(tabPanel);
     }
 });

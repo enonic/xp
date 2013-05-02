@@ -78,13 +78,30 @@ Ext.application({
 
     launch: function () {
 
-        var wp = new Ext.container.Viewport();
-        wp.layout = 'fit';
-        wp.cls = 'admin-viewport';
+        var toolbar = new admin.ui.BrowseToolbar('north');
 
-        var tabPanel = new Admin.view.TabPanel();
-        tabPanel.appName = 'Space Admin';
-        tabPanel.appIconCls = 'icon-metro-space-admin-24';
+        var grid = new Admin.view.TreeGridPanel();
+        grid.region = 'center';
+        grid.flex = 1;
+
+        var detail = new Admin.view.DetailPanel();
+        detail.region = 'south';
+        detail.split = true;
+        detail.collapsible = true;
+        detail.header = false;
+        detail.flex = 1;
+
+        var center = new Ext.container.Container();
+        center.region = 'center';
+        center.layout = 'border';
+
+        center.add(detail);
+        center.add(grid);
+        center.add(toolbar.ext);
+
+        var west = new Admin.view.FilterPanel();
+        west.region = 'west';
+        west.width = 200;
 
         var p = new Ext.panel.Panel();
         p.id = 'tab-browse';
@@ -94,38 +111,18 @@ Ext.application({
         p.layout = 'border';
         p.tabConfig = { hidden: true };
 
-        var west = new Admin.view.FilterPanel();
-        west.region = 'west';
-        west.width = 200;
-
+        p.add(center);
         p.add(west);
 
-        var center = new Ext.container.Container();
-        center.region = 'center';
-        center.layout = 'border';
-
-        var toolbar = new admin.ui.BrowseToolbar('north');
-
-        center.add(toolbar);
-
-        var grid = new Admin.view.TreeGridPanel();
-        grid.region = 'center';
-        grid.flex = 1;
-
-        center.add(grid);
-
-        var detail = new Admin.view.DetailPanel();
-        detail.region = 'south';
-        detail.split = true;
-        detail.collapsible = true;
-        detail.header = false;
-        detail.flex = 1;
-
-        center.add(detail);
-
-        p.add(center);
+        var tabPanel = new Admin.view.TabPanel();
+        tabPanel.appName = 'Space Admin';
+        tabPanel.appIconCls = 'icon-metro-space-admin-24';
 
         tabPanel.add(p);
+
+        var wp = new Ext.container.Viewport();
+        wp.layout = 'fit';
+        wp.cls = 'admin-viewport';
 
         wp.add(tabPanel);
 
