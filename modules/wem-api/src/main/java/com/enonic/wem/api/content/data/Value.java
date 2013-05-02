@@ -260,7 +260,7 @@ public abstract class Value<T>
 
         public Date( final String value )
         {
-            super( ValueTypes.DATE_MIDNIGHT, JavaTypeConverter.DateMidnight.GET.convertFrom( value ) );
+            super( ValueTypes.DATE_MIDNIGHT, JavaTypeConverter.DateMidnight.GET.convertFromString( value ) );
         }
     }
 

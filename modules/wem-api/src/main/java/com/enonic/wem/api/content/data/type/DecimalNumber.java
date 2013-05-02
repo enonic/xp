@@ -4,7 +4,7 @@ import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class DecimalNumber
-    extends ValueType
+    extends ValueType<Double>
 {
     DecimalNumber( int key )
     {
@@ -14,7 +14,7 @@ public class DecimalNumber
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.DecimalNumber( JavaTypeConverter.Double.GET.convertFrom( value ) );
+        return new Value.DecimalNumber( convert( value ) );
     }
 
     @Override

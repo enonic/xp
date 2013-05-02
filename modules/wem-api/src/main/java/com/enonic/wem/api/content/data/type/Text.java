@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class Text
-    extends ValueType
+    extends ValueType<String>
 {
     Text( int key )
     {
@@ -15,7 +15,7 @@ public class Text
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.Text( JavaTypeConverter.String.GET.convertFrom( value ) );
+        return new Value.Text( convert( value ) );
     }
 
     @Override
