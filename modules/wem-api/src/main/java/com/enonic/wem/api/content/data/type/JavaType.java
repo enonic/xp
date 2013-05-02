@@ -22,13 +22,10 @@ public final class JavaType
 
     public static final BinaryId BINARY_ID = new BinaryId();
 
-    public static final DataSet DATA_SET = new DataSet();
-
     public static final Map<java.lang.Class, BaseType> INSTANCES = new LinkedHashMap<>();
 
     static
     {
-        INSTANCES.put( DATA_SET.getType(), DATA_SET );
         INSTANCES.put( BINARY_ID.getType(), BINARY_ID );
         INSTANCES.put( STRING.getType(), STRING );
         INSTANCES.put( DOUBLE.getType(), DOUBLE );
@@ -293,31 +290,4 @@ public final class JavaType
         }
     }
 
-
-    public final static class DataSet
-        extends BaseType<com.enonic.wem.api.content.data.DataSet>
-    {
-        DataSet()
-        {
-            super( com.enonic.wem.api.content.data.DataSet.class );
-        }
-
-        public com.enonic.wem.api.content.data.DataSet convertFrom( Object value )
-        {
-            if ( value instanceof com.enonic.wem.api.content.data.DataSet )
-            {
-                return (com.enonic.wem.api.content.data.DataSet) value;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        @Override
-        public com.enonic.wem.api.content.data.DataSet convertFrom( final java.lang.String value )
-        {
-            throw new UnsupportedOperationException( "A DataSet cannot be converted from a String" );
-        }
-    }
 }
