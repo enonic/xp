@@ -6,9 +6,10 @@ Ext.define('Admin.controller.GridPanelController', {
     models: [],
 
     views: [
-        'Admin.view.TreeGridPanel',
-        'Admin.view.ContextMenu'
+        'Admin.view.TreeGridPanel'
     ],
+
+    contextMenu: null,
 
     init: function () {
 
@@ -20,17 +21,17 @@ Ext.define('Admin.controller.GridPanelController', {
                     this.editSpace(record);
                 }
             },
-            'spaceContextMenu *[action=deleteSpace]': {
+            '#spaceContextMenu *[action=deleteSpace]': {
                 click: function (el, e) {
                     this.deleteSpace();
                 }
             },
-            'spaceContextMenu *[action=editSpace]': {
+            '#spaceContextMenu *[action=editSpace]': {
                 click: function (el, e) {
                     this.editSpace();
                 }
             },
-            'spaceContextMenu *[action=viewSpace]': {
+            '#spaceContextMenu *[action=viewSpace]': {
                 click: function (el, e) {
                     this.viewSpace();
                 }
@@ -45,16 +46,16 @@ Ext.define('Admin.controller.GridPanelController', {
 
     showContextMenu: function (view, rec, node, index, e) {
         e.stopEvent();
-        this.getContextMenu().showAt(e.getXY());
+        var xy = e.getXY();
+        this.getContextMenu().showAt(xy[0], xy[1]);
         return false;
     },
 
     getContextMenu: function () {
-        var menu = Ext.ComponentQuery.query('spaceContextMenu')[0];
-        if (!menu) {
-            menu = Ext.create('widget.spaceContextMenu');
+        if (!this.contextMenu) {
+            this.contextMenu = new admin.ui.ContextMenu();
         }
-        return menu;
+        return this.contextMenu;
     }
 
 });
