@@ -14,7 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.data.type.BaseValueType;
+import com.enonic.wem.api.content.data.type.ValueType;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 
 import static com.enonic.wem.api.content.data.DataSetArray.newDataSetArray;
@@ -484,7 +484,7 @@ public class DataSet
             return this;
         }
 
-        public Builder set( final String name, final Object value, final BaseValueType propertyType )
+        public Builder set( final String name, final Object value, final ValueType propertyType )
         {
             propertyList.add( propertyType.newProperty( name, value ) );
             return this;

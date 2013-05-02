@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.type.BaseValueType;
+import com.enonic.wem.api.content.data.type.ValueType;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 
 import static com.enonic.wem.api.content.data.DataSet.newDataSet;
@@ -83,7 +83,7 @@ public final class DataXmlSerializer
         }
         else
         {
-            final BaseValueType type = (BaseValueType) ValueTypes.parseByName( typeAsString );
+            final ValueType type = ValueTypes.parseByName( typeAsString );
             Preconditions.checkNotNull( type, "type was null" );
             parentDataSet.add( type.newProperty( name, dataEl.getText() ) );
         }

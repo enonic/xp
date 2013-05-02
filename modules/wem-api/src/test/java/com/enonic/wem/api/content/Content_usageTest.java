@@ -14,7 +14,7 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.data.type.BaseValueType;
+import com.enonic.wem.api.content.data.type.ValueType;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 
 import static com.enonic.wem.api.content.data.DataSet.newDataSet;
@@ -353,7 +353,7 @@ public class Content_usageTest
 
     }
 
-    private BaseValueType resolveType( final Object value )
+    private ValueType resolveType( final Object value )
     {
         if ( value instanceof Double )
         {

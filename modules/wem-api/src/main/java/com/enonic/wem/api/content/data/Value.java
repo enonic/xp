@@ -4,9 +4,9 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.type.BaseValueType;
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
 import com.enonic.wem.api.content.data.type.JavaType;
+import com.enonic.wem.api.content.data.type.ValueType;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 
 /**
@@ -14,11 +14,11 @@ import com.enonic.wem.api.content.data.type.ValueTypes;
  */
 public abstract class Value<T>
 {
-    private final BaseValueType type;
+    private final ValueType type;
 
     private final Object object;
 
-    private Value( final BaseValueType type, final T value )
+    private Value( final ValueType type, final T value )
     {
         Preconditions.checkNotNull( type, "type cannot be null" );
         Preconditions.checkNotNull( value, "value cannot be null" );
@@ -41,7 +41,7 @@ public abstract class Value<T>
         return javaType.isInstance( object );
     }
 
-    public BaseValueType getType()
+    public ValueType getType()
     {
         return type;
     }

@@ -5,10 +5,10 @@ import org.joda.time.DateMidnight;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.type.BaseValueType;
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.data.type.JavaType;
+import com.enonic.wem.api.content.data.type.ValueType;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
@@ -51,7 +51,7 @@ public class Property
         }
     }
 
-    public BaseValueType getValueType()
+    public ValueType getValueType()
     {
         return value.getType();
     }
@@ -266,7 +266,7 @@ public class Property
             this.builder = builder;
         }
 
-        public ValueBuilder type( BaseValueType value )
+        public ValueBuilder type( ValueType value )
         {
             builder.type( value );
             return new ValueBuilder( builder );
@@ -297,7 +297,7 @@ public class Property
     public static class Builder
         extends AbstractNameBuilder<Builder>
     {
-        public Builder type( BaseValueType value )
+        public Builder type( ValueType value )
         {
             super.setType( value );
             return this;
@@ -353,7 +353,7 @@ public class Property
 
         private Object rawValue;
 
-        private BaseValueType valueType;
+        private ValueType valueType;
 
         AbstractBaseBuilder()
         {
@@ -364,7 +364,7 @@ public class Property
             this.name = value;
         }
 
-        void setType( final BaseValueType value )
+        void setType( final ValueType value )
         {
             this.valueType = value;
         }

@@ -4,7 +4,7 @@ import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class DecimalNumber
-    extends BaseValueType
+    extends ValueType
 {
     DecimalNumber( int key )
     {
