@@ -8,11 +8,11 @@ import com.enonic.wem.api.content.data.type.ValueType;
 
 
 public class PropertyArray
-    extends DataArray
+    extends DataArray<Property>
 {
     private final ValueType type;
 
-    private final ArrayList<Value> valueList = new ArrayList<Value>();
+    private final ArrayList<Value> valueList = new ArrayList<>();
 
     private PropertyArray( final Builder builder )
     {
@@ -28,23 +28,23 @@ public class PropertyArray
     }
 
     @Override
-    void add( final Data data )
+    void add( final Property property )
     {
-        super.add( data );
-        valueList.add( data.toProperty().getValue() );
+        super.add( property );
+        valueList.add( property.getValue() );
     }
 
     @Override
-    void set( final int index, final Data data )
+    void set( final int index, final Property property )
     {
-        super.set( index, data );
+        super.set( index, property );
         if ( overwritesExisting( index, valueList ) )
         {
-            valueList.set( index, data.toProperty().getValue() );
+            valueList.set( index, property.getValue() );
         }
         else
         {
-            valueList.add( data.toProperty().getValue() );
+            valueList.add( property.getValue() );
         }
     }
 
@@ -53,18 +53,13 @@ public class PropertyArray
         return valueList.get( index );
     }
 
-    void checkType( Data data )
+    void checkType( Property property )
     {
-        if ( !( data instanceof Property ) )
-        {
-            throw new IllegalArgumentException(
-                "Unexpected type of Data for Property array at path [" + getPath() + "]: " + data.getClass().getSimpleName() );
-        }
-        final Property property = (Property) data;
         if ( !getType().equals( property.getValueType() ) )
         {
             throw new IllegalArgumentException(
-                "Array [" + getPath() + "] expects Property of type [" + getType() + "]. Property [" + data.getPath() + "] was of type: " +
+                "Array [" + getPath() + "] expects Property of type [" + getType() + "]. Property [" + property.getPath() +
+                    "] was of type: " +
                     property.getValueType() );
         }
     }

@@ -8,14 +8,14 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-public abstract class DataArray
-    implements Iterable<Data>
+public abstract class DataArray<T extends Data>
+    implements Iterable<T>
 {
     private DataSet parent;
 
     private String name;
 
-    private final ArrayList<Data> list = new ArrayList<Data>();
+    private final ArrayList<T> list = new ArrayList<>();
 
     DataArray( final DataSet parent, final String name )
     {
@@ -41,7 +41,7 @@ public abstract class DataArray
         return name;
     }
 
-    void add( final Data data )
+    void add( final T data )
     {
         checkType( data );
         checkParent( data );
@@ -61,7 +61,7 @@ public abstract class DataArray
         }
     }
 
-    void set( final int index, final Data data )
+    void set( final int index, final T data )
     {
         checkType( data );
         checkParent( data );
@@ -77,7 +77,17 @@ public abstract class DataArray
         }
     }
 
-    public Data getData( final int i )
+    abstract void checkType( T data );
+
+    private void checkParent( final Data data )
+    {
+        if ( !data.getParent().equals( parent ) )
+        {
+            throw new IllegalArgumentException( "Data added to array [" + getPath() + "] does not have same parent: " + data.getParent() );
+        }
+    }
+
+    public T getData( final int i )
     {
         if ( i > list.size() - 1 )
         {
@@ -86,35 +96,13 @@ public abstract class DataArray
         return list.get( i );
     }
 
-    public Property getProperty( final int i )
-    {
-        Data data = getData( i );
-        if ( data == null )
-        {
-            return null;
-        }
-
-        return data.toProperty();
-    }
-
-    public DataSet getDataSet( final int i )
-    {
-        Data data = getData( i );
-        if ( data == null )
-        {
-            return null;
-        }
-
-        return data.toDataSet();
-    }
-
     public int size()
     {
         return list.size();
     }
 
     @Override
-    public Iterator<Data> iterator()
+    public Iterator<T> iterator()
     {
         return list.iterator();
     }
@@ -138,18 +126,7 @@ public abstract class DataArray
         return s.toString();
     }
 
-
-    abstract void checkType( Data data );
-
-    private void checkParent( final Data data )
-    {
-        if ( !data.getParent().equals( parent ) )
-        {
-            throw new IllegalArgumentException( "Data added to array [" + getPath() + "] does not have same parent: " + data.getParent() );
-        }
-    }
-
-    void checkIndexIsSuccessive( final int index, final Data data )
+    private void checkIndexIsSuccessive( final int index, final Data data )
     {
         Preconditions.checkArgument( index == list.size(),
                                      "Data [%s] not added successively to array [%s] with size %s. Data had unexpected index: %s", data,
@@ -174,7 +151,7 @@ public abstract class DataArray
         return -1;
     }
 
-    public List<Data> asList()
+    public List<T> asList()
     {
         return Lists.newArrayList( list );
     }

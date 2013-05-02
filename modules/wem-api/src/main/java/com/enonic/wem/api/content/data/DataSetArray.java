@@ -1,27 +1,16 @@
 package com.enonic.wem.api.content.data;
 
-import com.google.common.base.Preconditions;
-
-
 public class DataSetArray
-    extends DataArray
+    extends DataArray<DataSet>
 {
     private DataSetArray( final Builder builder )
     {
         super( builder.parent, builder.name );
     }
 
-    @Override
-    public DataSet getData( final int i )
+    void checkType( final DataSet dataSet )
     {
-        return (DataSet) super.getData( i );
-    }
-
-    void checkType( Data data )
-    {
-        Preconditions.checkArgument( data instanceof DataSet,
-                                     "Unexpected type of Data for DataSet array at path [%s]: " + data.getClass().getSimpleName(),
-                                     getPath() );
+        // nothing to check for DataSet
     }
 
     public static Builder newDataSetArray()

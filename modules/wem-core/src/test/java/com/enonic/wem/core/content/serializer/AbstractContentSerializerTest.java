@@ -157,8 +157,8 @@ public abstract class AbstractContentSerializerTest
         assertEquals( ValueTypes.TEXT, mySet_myArray_Array.getType() );
         assertEquals( "1", mySet_myArray_Array.getValue( 0 ).asString() );
         assertEquals( "2", mySet_myArray_Array.getValue( 1 ).asString() );
-        assertEquals( "mySet.myArray[0]", mySet_myArray_Array.getProperty( 0 ).getPath().toString() );
-        assertEquals( "mySet.myArray[1]", mySet_myArray_Array.getProperty( 1 ).getPath().toString() );
+        assertEquals( "mySet.myArray[0]", mySet_myArray_Array.getData( 0 ).getPath().toString() );
+        assertEquals( "mySet.myArray[1]", mySet_myArray_Array.getData( 1 ).getPath().toString() );
     }
 
     @Test
@@ -250,7 +250,7 @@ public abstract class AbstractContentSerializerTest
 
         assertEquals( "mySet", mySet_array.getPath().toString() );
 
-        DataSet mySet_0 = mySet_array.getDataSet( 0 );
+        DataSet mySet_0 = mySet_array.getData( 0 );
         assertEquals( "mySet[0]", mySet_0.getPath().toString() );
 
         Property mySet_0_myArray = mySet_0.getProperty( "myArray" );
@@ -262,7 +262,7 @@ public abstract class AbstractContentSerializerTest
         assertEquals( "1", mySet_0_myArray_array.getValue( 0 ).asString() );
         assertEquals( "2", mySet_0_myArray_array.getValue( 1 ).asString() );
 
-        DataSet mySet_1 = mySet_array.getDataSet( 1 );
+        DataSet mySet_1 = mySet_array.getData( 1 );
         assertEquals( "mySet[1]", mySet_1.getPath().toString() );
 
         Property mySet_1_myArray = mySet_1.getProperty( "myArray" );
