@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.data.type.ValueTypes;
 /**
  * A generic holder for the value of a Property.
  */
-public class Value<T>
+public abstract class Value<T>
 {
     private final BaseValueType type;
 
@@ -46,21 +46,85 @@ public class Value<T>
         return type;
     }
 
+    /**
+     * Returns value as Object.
+     */
     public Object getObject()
     {
         return object;
     }
 
+    /**
+     * Attempts to return value as String using casting.
+     *
+     * @throws ClassCastException if value is not of type String.
+     */
     public String getString()
+        throws ClassCastException
     {
         return (String) object;
     }
 
+    /**
+     * Attempts to return value as Long using casting.
+     *
+     * @throws ClassCastException if value is not of type Long.
+     */
     public Long getLong()
+        throws ClassCastException
     {
         return (Long) object;
     }
 
+    /**
+     * Attempts to return value as Double using casting.
+     *
+     * @throws ClassCastException if value is not of type Double.
+     */
+    public Double getDouble()
+        throws ClassCastException
+    {
+        return (Double) object;
+    }
+
+    /**
+     * Attempts to return value as org.joda.time.DateMidnight using casting.
+     *
+     * @throws ClassCastException if value is not of type org.joda.time.DateMidnight.
+     */
+    public org.joda.time.DateMidnight getDate()
+        throws ClassCastException
+    {
+        return (org.joda.time.DateMidnight) object;
+    }
+
+    /**
+     * Attempts to return value as com.enonic.wem.api.content.binary.BinaryId using casting.
+     *
+     * @throws ClassCastException if value is not of type com.enonic.wem.api.content.binary.BinaryId.
+     */
+    public com.enonic.wem.api.content.binary.BinaryId getBinaryId()
+        throws ClassCastException
+    {
+        return (com.enonic.wem.api.content.binary.BinaryId) object;
+    }
+
+    /**
+     * Attempts to return value as com.enonic.wem.api.content.ContentId using casting.
+     *
+     * @throws ClassCastException if value is not of type com.enonic.wem.api.content.ContentId.
+     */
+    public com.enonic.wem.api.content.ContentId getContentId()
+        throws ClassCastException
+    {
+        return (com.enonic.wem.api.content.ContentId) object;
+    }
+
+    /**
+     * Attempts to return value as String, using best effort converting if value is not of type String.
+     *
+     * @throws InconvertibleValueException if value is not convertible to String.
+     */
     public String asString()
         throws InconvertibleValueException
     {
@@ -72,6 +136,11 @@ public class Value<T>
         return converted;
     }
 
+    /**
+     * Attempts to return value as com.enonic.wem.api.content.ContentId, using best effort converting if value is not of type com.enonic.wem.api.content.ContentId.
+     *
+     * @throws InconvertibleValueException if value is not convertible to com.enonic.wem.api.content.ContentId.
+     */
     public com.enonic.wem.api.content.ContentId asContentId()
         throws InconvertibleValueException
     {
@@ -83,6 +152,11 @@ public class Value<T>
         return converted;
     }
 
+    /**
+     * Attempts to return value as Long, using best effort converting if value is not of type Long.
+     *
+     * @throws InconvertibleValueException if value is not convertible to Long.
+     */
     public Long asLong()
         throws InconvertibleValueException
     {
@@ -94,6 +168,11 @@ public class Value<T>
         return converted;
     }
 
+    /**
+     * Attempts to return value as Double, using best effort converting if value is not of type Double.
+     *
+     * @throws InconvertibleValueException if value is not convertible to Double.
+     */
     public Double asDouble()
         throws InconvertibleValueException
     {
@@ -105,6 +184,11 @@ public class Value<T>
         return converted;
     }
 
+    /**
+     * Attempts to return value as org.joda.time.DateMidnight, using best effort converting if value is not of type org.joda.time.DateMidnight.
+     *
+     * @throws InconvertibleValueException if value is not convertible to org.joda.time.DateMidnight.
+     */
     public org.joda.time.DateMidnight asDate()
         throws InconvertibleValueException
     {
@@ -116,6 +200,11 @@ public class Value<T>
         return converted;
     }
 
+    /**
+     * Attempts to return value as com.enonic.wem.api.content.binary.BinaryId, using best effort converting if value is not of type com.enonic.wem.api.content.binary.BinaryId.
+     *
+     * @throws InconvertibleValueException if value is not convertible to com.enonic.wem.api.content.binary.BinaryId.
+     */
     public com.enonic.wem.api.content.binary.BinaryId asBinaryId()
         throws InconvertibleValueException
     {
