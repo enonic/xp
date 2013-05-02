@@ -258,6 +258,11 @@ public abstract class Value<T>
             super( ValueTypes.DATE_MIDNIGHT, value );
         }
 
+        public Date( final org.joda.time.DateTime value )
+        {
+            super( ValueTypes.DATE_MIDNIGHT, value.toDateMidnight() );
+        }
+
         public Date( final String value )
         {
             super( ValueTypes.DATE_MIDNIGHT, JavaTypeConverter.DateMidnight.GET.convertFromString( value ) );
@@ -291,6 +296,11 @@ public abstract class Value<T>
         {
             super( ValueTypes.DECIMAL_NUMBER, value );
         }
+
+        public DecimalNumber( final Float value )
+        {
+            super( ValueTypes.DECIMAL_NUMBER, Double.valueOf( value ) );
+        }
     }
 
     public static final class Text
@@ -323,7 +333,7 @@ public abstract class Value<T>
     public static final class GeographicCoordinate
         extends Value<String>
     {
-        public GeographicCoordinate( String value )
+        public GeographicCoordinate( final String value )
         {
             super( ValueTypes.GEOGRAPHIC_COORDINATE, value );
         }
@@ -332,18 +342,28 @@ public abstract class Value<T>
     public static final class ContentId
         extends Value<com.enonic.wem.api.content.ContentId>
     {
-        public ContentId( com.enonic.wem.api.content.ContentId value )
+        public ContentId( final com.enonic.wem.api.content.ContentId value )
         {
             super( ValueTypes.CONTENT_ID, value );
+        }
+
+        public ContentId( final String value )
+        {
+            super( ValueTypes.CONTENT_ID, com.enonic.wem.api.content.ContentId.from( value ) );
         }
     }
 
     public static final class BinaryId
         extends Value<com.enonic.wem.api.content.binary.BinaryId>
     {
-        public BinaryId( com.enonic.wem.api.content.binary.BinaryId value )
+        public BinaryId( final com.enonic.wem.api.content.binary.BinaryId value )
         {
             super( ValueTypes.BINARY_ID, value );
+        }
+
+        public BinaryId( final String value )
+        {
+            super( ValueTypes.BINARY_ID, com.enonic.wem.api.content.binary.BinaryId.from( value ) );
         }
     }
 }
