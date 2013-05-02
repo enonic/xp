@@ -9,13 +9,13 @@ public class DateMidnight
 {
     DateMidnight( int key )
     {
-        super( key, JavaType.DATE_MIDNIGHT );
+        super( key, JavaTypeConverters.DATE_MIDNIGHT_CONVERTER );
     }
 
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.Date( JavaType.DATE_MIDNIGHT.convertFrom( value ) );
+        return new Value.Date( JavaTypeConverters.DATE_MIDNIGHT_CONVERTER.convertFrom( value ) );
     }
 
     @Override

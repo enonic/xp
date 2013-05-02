@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
-import com.enonic.wem.api.content.data.type.JavaType;
+import com.enonic.wem.api.content.data.type.JavaTypeConverters;
 import com.enonic.wem.api.content.data.type.PropertyTool;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
@@ -52,7 +52,7 @@ public class Relationship
     @Override
     public Value newValue( final String value )
     {
-        return new Value.ContentId( JavaType.CONTENT_ID.convertFrom( value ) );
+        return new Value.ContentId( JavaTypeConverters.CONTENT_ID_CONVERTER.convertFrom( value ) );
     }
 
 }

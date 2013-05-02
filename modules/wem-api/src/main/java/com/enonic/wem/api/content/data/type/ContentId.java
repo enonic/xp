@@ -8,13 +8,13 @@ public class ContentId
 {
     ContentId( int key )
     {
-        super( key, JavaType.CONTENT_ID );
+        super( key, JavaTypeConverters.CONTENT_ID_CONVERTER );
     }
 
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.ContentId( JavaType.CONTENT_ID.convertFrom( value ) );
+        return new Value.ContentId( JavaTypeConverters.CONTENT_ID_CONVERTER.convertFrom( value ) );
     }
 
     @Override

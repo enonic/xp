@@ -8,13 +8,13 @@ public class DecimalNumber
 {
     DecimalNumber( int key )
     {
-        super( key, JavaType.DOUBLE );
+        super( key, JavaTypeConverters.DOUBLE_CONVERTER );
     }
 
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.DecimalNumber( JavaType.DOUBLE.convertFrom( value ) );
+        return new Value.DecimalNumber( JavaTypeConverters.DOUBLE_CONVERTER.convertFrom( value ) );
     }
 
     @Override

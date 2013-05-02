@@ -9,13 +9,13 @@ public class Text
 {
     Text( int key )
     {
-        super( key, JavaType.STRING );
+        super( key, JavaTypeConverters.STRING_CONVERTER );
     }
 
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.Text( JavaType.STRING.convertFrom( value ) );
+        return new Value.Text( JavaTypeConverters.STRING_CONVERTER.convertFrom( value ) );
     }
 
     @Override

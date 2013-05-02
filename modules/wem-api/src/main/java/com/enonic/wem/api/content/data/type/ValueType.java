@@ -18,9 +18,9 @@ public abstract class ValueType
 
     private final String name;
 
-    private JavaType.BaseType javaType;
+    private JavaTypeConverters.JavaTypeConverter javaType;
 
-    public ValueType( final int key, final JavaType.BaseType javaType )
+    public ValueType( final int key, final JavaTypeConverters.JavaTypeConverter javaType )
     {
         this.key = key;
         this.name = this.getClass().getSimpleName();
@@ -37,7 +37,7 @@ public abstract class ValueType
         return name;
     }
 
-    public JavaType.BaseType getJavaType()
+    public JavaTypeConverters.JavaTypeConverter getJavaType()
     {
         return this.javaType;
     }

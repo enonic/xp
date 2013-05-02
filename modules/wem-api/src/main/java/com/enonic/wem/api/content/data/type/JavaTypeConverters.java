@@ -8,34 +8,34 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
 
-public final class JavaType
+public final class JavaTypeConverters
 {
-    public static final String STRING = new String();
+    public static final StringConverter STRING_CONVERTER = new StringConverter();
 
-    public static final Double DOUBLE = new Double();
+    public static final DoubleConverter DOUBLE_CONVERTER = new DoubleConverter();
 
-    public static final Long LONG = new Long();
+    public static final LongConverter LONG_CONVERTER = new LongConverter();
 
-    public static final DateMidnight DATE_MIDNIGHT = new DateMidnight();
+    public static final DateMidnightConverter DATE_MIDNIGHT_CONVERTER = new DateMidnightConverter();
 
-    public static final ContentId CONTENT_ID = new ContentId();
+    public static final ContentIdConverter CONTENT_ID_CONVERTER = new ContentIdConverter();
 
-    public static final BinaryId BINARY_ID = new BinaryId();
+    public static final BinaryIdConverter BINARY_ID_CONVERTER = new BinaryIdConverter();
 
-    public static final Map<java.lang.Class, BaseType> INSTANCES = new LinkedHashMap<>();
+    public static final Map<java.lang.Class, JavaTypeConverter> INSTANCES = new LinkedHashMap<>();
 
     static
     {
-        INSTANCES.put( BINARY_ID.getType(), BINARY_ID );
-        INSTANCES.put( STRING.getType(), STRING );
-        INSTANCES.put( DOUBLE.getType(), DOUBLE );
-        INSTANCES.put( LONG.getType(), LONG );
-        INSTANCES.put( DATE_MIDNIGHT.getType(), DATE_MIDNIGHT );
+        INSTANCES.put( BINARY_ID_CONVERTER.getType(), BINARY_ID_CONVERTER );
+        INSTANCES.put( STRING_CONVERTER.getType(), STRING_CONVERTER );
+        INSTANCES.put( DOUBLE_CONVERTER.getType(), DOUBLE_CONVERTER );
+        INSTANCES.put( LONG_CONVERTER.getType(), LONG_CONVERTER );
+        INSTANCES.put( DATE_MIDNIGHT_CONVERTER.getType(), DATE_MIDNIGHT_CONVERTER );
     }
 
-    public static BaseType resolveType( Object o )
+    public static JavaTypeConverter resolveConverter( Object o )
     {
-        for ( BaseType type : INSTANCES.values() )
+        for ( JavaTypeConverter type : INSTANCES.values() )
         {
             if ( type.getType().isInstance( o ) )
             {
@@ -45,11 +45,11 @@ public final class JavaType
         return null;
     }
 
-    public static abstract class BaseType<T>
+    public static abstract class JavaTypeConverter<T>
     {
         Class type;
 
-        BaseType( final Class type )
+        JavaTypeConverter( final Class type )
         {
             this.type = type;
         }
@@ -75,10 +75,10 @@ public final class JavaType
         }
     }
 
-    public final static class String
-        extends BaseType
+    public final static class StringConverter
+        extends JavaTypeConverter
     {
-        String()
+        StringConverter()
         {
             super( java.lang.String.class );
         }
@@ -118,10 +118,10 @@ public final class JavaType
         }
     }
 
-    public final static class Long
-        extends BaseType<java.lang.Long>
+    public final static class LongConverter
+        extends JavaTypeConverter<java.lang.Long>
     {
-        Long()
+        LongConverter()
         {
             super( java.lang.Long.class );
         }
@@ -157,10 +157,10 @@ public final class JavaType
         }
     }
 
-    public final static class Double
-        extends BaseType<java.lang.Double>
+    public final static class DoubleConverter
+        extends JavaTypeConverter<java.lang.Double>
     {
-        Double()
+        DoubleConverter()
         {
             super( java.lang.Double.class );
         }
@@ -193,13 +193,13 @@ public final class JavaType
 
     }
 
-    public final static class DateMidnight
-        extends BaseType<org.joda.time.DateMidnight>
+    public final static class DateMidnightConverter
+        extends JavaTypeConverter<org.joda.time.DateMidnight>
     {
         private final static DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder().
             appendYear( 4, 4 ).appendLiteral( "-" ).appendMonthOfYear( 2 ).appendLiteral( "-" ).appendDayOfMonth( 2 ).toFormatter();
 
-        DateMidnight()
+        DateMidnightConverter()
         {
             super( org.joda.time.DateMidnight.class );
         }
@@ -230,10 +230,10 @@ public final class JavaType
         }
     }
 
-    public final static class ContentId
-        extends BaseType<com.enonic.wem.api.content.ContentId>
+    public final static class ContentIdConverter
+        extends JavaTypeConverter<com.enonic.wem.api.content.ContentId>
     {
-        ContentId()
+        ContentIdConverter()
         {
             super( com.enonic.wem.api.content.ContentId.class );
         }
@@ -260,10 +260,10 @@ public final class JavaType
         }
     }
 
-    public final static class BinaryId
-        extends BaseType<com.enonic.wem.api.content.binary.BinaryId>
+    public final static class BinaryIdConverter
+        extends JavaTypeConverter<com.enonic.wem.api.content.binary.BinaryId>
     {
-        BinaryId()
+        BinaryIdConverter()
         {
             super( com.enonic.wem.api.content.binary.BinaryId.class );
         }

@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
-import com.enonic.wem.api.content.data.type.JavaType;
+import com.enonic.wem.api.content.data.type.JavaTypeConverters;
 import com.enonic.wem.api.content.data.type.ValueType;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 
@@ -128,10 +128,10 @@ public abstract class Value<T>
     public String asString()
         throws InconvertibleValueException
     {
-        final String converted = JavaType.STRING.convertFrom( object );
+        final String converted = JavaTypeConverters.STRING_CONVERTER.convertFrom( object );
         if ( object != null && converted == null )
         {
-            throw new InconvertibleValueException( object, JavaType.STRING );
+            throw new InconvertibleValueException( object, JavaTypeConverters.STRING_CONVERTER );
         }
         return converted;
     }
@@ -144,10 +144,10 @@ public abstract class Value<T>
     public com.enonic.wem.api.content.ContentId asContentId()
         throws InconvertibleValueException
     {
-        final com.enonic.wem.api.content.ContentId converted = JavaType.CONTENT_ID.convertFrom( object );
+        final com.enonic.wem.api.content.ContentId converted = JavaTypeConverters.CONTENT_ID_CONVERTER.convertFrom( object );
         if ( object != null && converted == null )
         {
-            throw new InconvertibleValueException( object, JavaType.CONTENT_ID );
+            throw new InconvertibleValueException( object, JavaTypeConverters.CONTENT_ID_CONVERTER );
         }
         return converted;
     }
@@ -160,10 +160,10 @@ public abstract class Value<T>
     public Long asLong()
         throws InconvertibleValueException
     {
-        final Long converted = JavaType.LONG.convertFrom( object );
+        final Long converted = JavaTypeConverters.LONG_CONVERTER.convertFrom( object );
         if ( object != null && converted == null )
         {
-            throw new InconvertibleValueException( object, JavaType.LONG );
+            throw new InconvertibleValueException( object, JavaTypeConverters.LONG_CONVERTER );
         }
         return converted;
     }
@@ -176,10 +176,10 @@ public abstract class Value<T>
     public Double asDouble()
         throws InconvertibleValueException
     {
-        final Double converted = JavaType.DOUBLE.convertFrom( object );
+        final Double converted = JavaTypeConverters.DOUBLE_CONVERTER.convertFrom( object );
         if ( object != null && converted == null )
         {
-            throw new InconvertibleValueException( object, JavaType.DOUBLE );
+            throw new InconvertibleValueException( object, JavaTypeConverters.DOUBLE_CONVERTER );
         }
         return converted;
     }
@@ -192,10 +192,10 @@ public abstract class Value<T>
     public org.joda.time.DateMidnight asDate()
         throws InconvertibleValueException
     {
-        final org.joda.time.DateMidnight converted = JavaType.DATE_MIDNIGHT.convertFrom( object );
+        final org.joda.time.DateMidnight converted = JavaTypeConverters.DATE_MIDNIGHT_CONVERTER.convertFrom( object );
         if ( object != null && converted == null )
         {
-            throw new InconvertibleValueException( object, JavaType.DATE_MIDNIGHT );
+            throw new InconvertibleValueException( object, JavaTypeConverters.DATE_MIDNIGHT_CONVERTER );
         }
         return converted;
     }
@@ -208,10 +208,10 @@ public abstract class Value<T>
     public com.enonic.wem.api.content.binary.BinaryId asBinaryId()
         throws InconvertibleValueException
     {
-        final com.enonic.wem.api.content.binary.BinaryId converted = JavaType.BINARY_ID.convertFrom( object );
+        final com.enonic.wem.api.content.binary.BinaryId converted = JavaTypeConverters.BINARY_ID_CONVERTER.convertFrom( object );
         if ( object != null && converted == null )
         {
-            throw new InconvertibleValueException( object, JavaType.BINARY_ID );
+            throw new InconvertibleValueException( object, JavaTypeConverters.BINARY_ID_CONVERTER );
         }
         return converted;
     }
@@ -260,7 +260,7 @@ public abstract class Value<T>
 
         public Date( final String value )
         {
-            super( ValueTypes.DATE_MIDNIGHT, JavaType.DATE_MIDNIGHT.convertFrom( value ) );
+            super( ValueTypes.DATE_MIDNIGHT, JavaTypeConverters.DATE_MIDNIGHT_CONVERTER.convertFrom( value ) );
         }
     }
 

@@ -9,13 +9,13 @@ public class HtmlPart
 {
     HtmlPart( int key )
     {
-        super( key, JavaType.STRING );
+        super( key, JavaTypeConverters.STRING_CONVERTER );
     }
 
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.HtmlPart( JavaType.STRING.convertFrom( value ) );
+        return new Value.HtmlPart( JavaTypeConverters.STRING_CONVERTER.convertFrom( value ) );
     }
 
     @Override
