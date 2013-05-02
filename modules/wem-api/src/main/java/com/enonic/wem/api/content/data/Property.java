@@ -420,7 +420,7 @@ public class Property
 
             public Builder value( final String value )
             {
-                setValue( JavaTypeConverter.ContentId.GET.convertFrom( value ) );
+                setValue( JavaTypeConverter.ContentId.GET.convertFromString( value ) );
                 return this;
             }
 
@@ -472,7 +472,7 @@ public class Property
 
             public Builder value( final String value )
             {
-                setValue( JavaTypeConverter.BinaryId.GET.convertFrom( value ) );
+                setValue( JavaTypeConverter.BinaryId.GET.convertFromString( value ) );
                 return this;
             }
 
@@ -595,7 +595,7 @@ public class Property
 
             public DateBuilder value( final String value )
             {
-                setValue( JavaTypeConverter.DateMidnight.GET.convertFrom( value ) );
+                setValue( JavaTypeConverter.DateMidnight.GET.convertFromString( value ) );
                 return this;
             }
 
@@ -628,7 +628,7 @@ public class Property
 
             public Date value( final String value )
             {
-                setValue( JavaTypeConverter.DateMidnight.GET.convertFrom( value ) );
+                setValue( JavaTypeConverter.DateMidnight.GET.convertFromString( value ) );
                 return new Date( this );
             }
         }

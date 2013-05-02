@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class BinaryId
-    extends ValueType
+    extends ValueType<com.enonic.wem.api.content.binary.BinaryId>
 {
     BinaryId( int key )
     {
@@ -15,7 +15,7 @@ public class BinaryId
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.BinaryId( JavaTypeConverter.BinaryId.GET.convertFrom( value ) );
+        return new Value.BinaryId( convert( value ) );
     }
 
     @Override

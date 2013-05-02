@@ -3,9 +3,7 @@ var admin;
     (function (app) {
         (function (handler) {
             var DeleteContentHandler = (function () {
-                function DeleteContentHandler() {
-                }
-
+                function DeleteContentHandler() { }
                 DeleteContentHandler.prototype.doDelete = function (contentModels, callback) {
                     var _this = this;
                     var contentPaths = Ext.Array.map([].concat(contentModels), function (item) {
@@ -14,7 +12,7 @@ var admin;
                     Admin.lib.RemoteService.content_delete({
                         'contentPaths': contentPaths
                     }, function (response) {
-                        if (response) {
+                        if(response) {
                             callback.call(_this, response.success, response.failures);
                         } else {
                             Ext.Msg.alert('Error', response ? response.error : 'Internal error occured.');
@@ -23,7 +21,7 @@ var admin;
                 };
                 return DeleteContentHandler;
             })();
-            handler.DeleteContentHandler = DeleteContentHandler;
+            handler.DeleteContentHandler = DeleteContentHandler;            
         })(app.handler || (app.handler = {}));
         var handler = app.handler;
     })(admin.app || (admin.app = {}));
@@ -37,9 +35,7 @@ var admin;
                 var _this = this;
                 this.title = "Delete content(s)";
                 this.deleteHandler = new admin.app.handler.DeleteContentHandler();
-                this.template = '<div class="delete-container">' + '<tpl for=".">' + '<div class="delete-item">' +
-                                '<img class="icon" src="{data.iconUrl}"/>' + '<h4>{data.displayName}</h4>' + '<p>{data.type}</p>' +
-                                '</div>' + '</tpl>' + '</div>';
+                this.template = '<div class="delete-container">' + '<tpl for=".">' + '<div class="delete-item">' + '<img class="icon" src="{data.iconUrl}"/>' + '<h4>{data.displayName}</h4>' + '<p>{data.type}</p>' + '</div>' + '</tpl>' + '</div>';
                 var deleteCallback = function (obj, success, result) {
                     _this.container.hide();
                 };
@@ -90,11 +86,10 @@ var admin;
                 buttonRow.add(cancelButton);
                 ct.add(buttonRow);
             }
-
             DeleteContentWindow.prototype.setModel = function (model) {
                 this.data = model;
-                if (model) {
-                    if (this.content) {
+                if(model) {
+                    if(this.content) {
                         this.content.update(model);
                     }
                 }
@@ -104,7 +99,7 @@ var admin;
             };
             return DeleteContentWindow;
         })();
-        ui.DeleteContentWindow = DeleteContentWindow;
+        ui.DeleteContentWindow = DeleteContentWindow;        
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));

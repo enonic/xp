@@ -23,9 +23,16 @@ public abstract class JavaTypeConverter<T>
         return type.isInstance( value );
     }
 
+    /**
+     * Attempts to convert given object to this type.
+     */
     public abstract T convertFrom( Object value );
 
-    public abstract T convertFrom( java.lang.String value );
+
+    /**
+     * Attempts to convert given String to this type.
+     */
+    public abstract T convertFromString( java.lang.String value );
 
     @Override
     public java.lang.String toString()
@@ -34,7 +41,7 @@ public abstract class JavaTypeConverter<T>
     }
 
     public static final class String
-        extends JavaTypeConverter
+        extends JavaTypeConverter<java.lang.String>
     {
 
         public static final String GET = new String();
@@ -73,7 +80,7 @@ public abstract class JavaTypeConverter<T>
         }
 
         @Override
-        public java.lang.String convertFrom( final java.lang.String value )
+        public java.lang.String convertFromString( final java.lang.String value )
         {
             return value;
         }
@@ -114,7 +121,7 @@ public abstract class JavaTypeConverter<T>
         }
 
         @Override
-        public java.lang.Long convertFrom( final java.lang.String value )
+        public java.lang.Long convertFromString( final java.lang.String value )
         {
             return new java.lang.Long( value );
         }
@@ -151,7 +158,7 @@ public abstract class JavaTypeConverter<T>
         }
 
         @Override
-        public java.lang.Double convertFrom( final java.lang.String value )
+        public java.lang.Double convertFromString( final java.lang.String value )
         {
             return new java.lang.Double( value );
         }
@@ -191,7 +198,7 @@ public abstract class JavaTypeConverter<T>
             }
         }
 
-        public org.joda.time.DateMidnight convertFrom( final java.lang.String value )
+        public org.joda.time.DateMidnight convertFromString( final java.lang.String value )
         {
             return FORMATTER.parseDateTime( value ).toDateMidnight();
         }
@@ -223,7 +230,7 @@ public abstract class JavaTypeConverter<T>
             }
         }
 
-        public com.enonic.wem.api.content.ContentId convertFrom( final java.lang.String value )
+        public com.enonic.wem.api.content.ContentId convertFromString( final java.lang.String value )
         {
             return com.enonic.wem.api.content.ContentId.from( value );
         }
@@ -255,7 +262,7 @@ public abstract class JavaTypeConverter<T>
             }
         }
 
-        public com.enonic.wem.api.content.binary.BinaryId convertFrom( final java.lang.String value )
+        public com.enonic.wem.api.content.binary.BinaryId convertFromString( final java.lang.String value )
         {
             return com.enonic.wem.api.content.binary.BinaryId.from( value );
         }

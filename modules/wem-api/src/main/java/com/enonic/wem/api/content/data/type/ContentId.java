@@ -4,7 +4,7 @@ import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class ContentId
-    extends ValueType
+    extends ValueType<com.enonic.wem.api.content.ContentId>
 {
     ContentId( int key )
     {
@@ -14,7 +14,7 @@ public class ContentId
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.ContentId( JavaTypeConverter.ContentId.GET.convertFrom( value ) );
+        return new Value.ContentId( convert( value ) );
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.servlet;
+package com.enonic.wem.portal;
 
 
 import java.io.IOException;

@@ -1,23 +1,38 @@
-Ext.define('Admin.view.ContextMenu', {
-    extend: 'Admin.view.BaseContextMenu',
-    alias: 'widget.spaceContextMenu',
+module admin.ui {
 
-    items: [
-        {
-            text: 'Edit',
-            iconCls: 'icon-edit',
-            action: 'editSpace'
-        },
-        {
-            text: 'Open',
-            iconCls: 'icon-view',
-            action: 'viewSpace'
-        },
-        {
-            text: 'Delete',
-            iconCls: 'icon-delete',
-            action: 'deleteSpace'
+    export class ContextMenu {
+        ext;
+
+        constructor() {
+            var menu = new Ext.menu.Menu();
+            menu.addCls('admin-context-menu');
+            menu.border = false;
+            menu.shadow = false;
+            menu.itemId = 'spaceContextMenu';
+
+            var menuItemEdit = new Ext.menu.Item();
+            menuItemEdit.text = 'Edit';
+            menuItemEdit.iconCls = 'icon-edit';
+            menuItemEdit.action = 'editSpace';
+            menu.add(menuItemEdit);
+
+            var menuItemOpen = new Ext.menu.Item();
+            menuItemOpen.text = 'Open';
+            menuItemOpen.iconCls = 'icon-view';
+            menuItemOpen.action = 'viewSpace';
+            menu.add(menuItemOpen);
+
+            var menuItemDelete = new Ext.menu.Item();
+            menuItemDelete.text = 'Delete';
+            menuItemDelete.iconCls = 'icon-delete';
+            menuItemDelete.action = 'deleteSpace';
+            menu.add(menuItemDelete);
+
+            this.ext = menu;
         }
-    ]
-});
 
+        showAt(x:Number, y:Number) {
+            this.ext.showAt(x, y);
+        }
+    }
+}

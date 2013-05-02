@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class WholeNumber
-    extends ValueType
+    extends ValueType<Long>
 {
     WholeNumber( int key )
     {
@@ -15,7 +15,7 @@ public class WholeNumber
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.WholeNumber( JavaTypeConverter.Long.GET.convertFrom( value ) );
+        return new Value.WholeNumber( convert( value ) );
     }
 
     @Override

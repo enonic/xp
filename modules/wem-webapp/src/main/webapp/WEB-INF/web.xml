@@ -29,7 +29,7 @@
 
   <servlet>
     <servlet-name>site</servlet-name>
-    <servlet-class>com.enonic.wem.portal.servlet.PortalServlet</servlet-class>
+    <servlet-class>com.enonic.wem.portal.PortalServlet</servlet-class>
     <load-on-startup>2</load-on-startup>
   </servlet>
 

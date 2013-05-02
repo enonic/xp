@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class DateMidnight
-    extends ValueType
+    extends ValueType<org.joda.time.DateMidnight>
 {
     DateMidnight( int key )
     {
@@ -15,7 +15,7 @@ public class DateMidnight
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.Date( JavaTypeConverter.DateMidnight.GET.convertFrom( value ) );
+        return new Value.Date( convert( value ) );
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 
 public class Xml
-    extends ValueType
+    extends ValueType<String>
 {
     Xml( int key )
     {
@@ -15,7 +15,7 @@ public class Xml
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.Xml( JavaTypeConverter.String.GET.convertFrom( value ) );
+        return new Value.Xml( convert( value ) );
     }
 
     @Override

@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
  * * the type can give something more when indexed
  * * needs validation.
  */
-public abstract class ValueType
+public abstract class ValueType<T>
 {
     private final int key;
 
@@ -20,9 +20,9 @@ public abstract class ValueType
 
     private final Class classType;
 
-    private JavaTypeConverter javaTypeConverter;
+    private JavaTypeConverter<T> javaTypeConverter;
 
-    public ValueType( final int key, final JavaTypeConverter javaTypeConverter )
+    public ValueType( final int key, final JavaTypeConverter<T> javaTypeConverter )
     {
         this.key = key;
         this.name = this.getClass().getSimpleName();
@@ -133,6 +133,22 @@ public abstract class ValueType
         {
             throw new InvalidJavaTypeConverterException( javaTypeConverter, value );
         }
+    }
+
+    /**
+     * Attempts to convert given object to this type.
+     */
+    public T convert( final Object object )
+    {
+        return javaTypeConverter.convertFrom( object );
+    }
+
+    /**
+     * Attempts to convert given String to this type.
+     */
+    public T convert( final String object )
+    {
+        return javaTypeConverter.convertFromString( object );
     }
 
     public Property newProperty( final String name, final Object valueObj )
