@@ -9,13 +9,13 @@ public class WholeNumber
 {
     WholeNumber( int key )
     {
-        super( key, JavaTypeConverters.LONG_CONVERTER );
+        super( key, JavaTypeConverter.Long.GET );
     }
 
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.WholeNumber( JavaTypeConverters.LONG_CONVERTER.convertFrom( value ) );
+        return new Value.WholeNumber( JavaTypeConverter.Long.GET.convertFrom( value ) );
     }
 
     @Override

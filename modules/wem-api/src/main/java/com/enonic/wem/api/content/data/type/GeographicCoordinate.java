@@ -20,13 +20,13 @@ public class GeographicCoordinate
 
     GeographicCoordinate( int key )
     {
-        super( key, JavaTypeConverters.STRING_CONVERTER );
+        super( key, JavaTypeConverter.String.GET );
     }
 
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.GeographicCoordinate( JavaTypeConverters.STRING_CONVERTER.convertFrom( value ) );
+        return new Value.GeographicCoordinate( JavaTypeConverter.String.GET.convertFrom( value ) );
     }
 
     @Override

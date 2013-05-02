@@ -9,13 +9,13 @@ public class BinaryId
 {
     BinaryId( int key )
     {
-        super( key, JavaTypeConverters.BINARY_ID_CONVERTER );
+        super( key, JavaTypeConverter.BinaryId.GET );
     }
 
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.BinaryId( JavaTypeConverters.BINARY_ID_CONVERTER.convertFrom( value ) );
+        return new Value.BinaryId( JavaTypeConverter.BinaryId.GET.convertFrom( value ) );
     }
 
     @Override

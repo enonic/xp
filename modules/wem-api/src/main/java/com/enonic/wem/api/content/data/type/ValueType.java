@@ -18,13 +18,16 @@ public abstract class ValueType
 
     private final String name;
 
-    private JavaTypeConverters.JavaTypeConverter javaType;
+    private final Class classType;
 
-    public ValueType( final int key, final JavaTypeConverters.JavaTypeConverter javaType )
+    private JavaTypeConverter javaTypeConverter;
+
+    public ValueType( final int key, final JavaTypeConverter javaTypeConverter )
     {
         this.key = key;
         this.name = this.getClass().getSimpleName();
-        this.javaType = javaType;
+        this.classType = javaTypeConverter.getClass();
+        this.javaTypeConverter = javaTypeConverter;
     }
 
     public int getKey()
@@ -37,9 +40,14 @@ public abstract class ValueType
         return name;
     }
 
-    public JavaTypeConverters.JavaTypeConverter getJavaType()
+    public Class getClassType()
     {
-        return this.javaType;
+        return classType;
+    }
+
+    public JavaTypeConverter getJavaTypeConverter()
+    {
+        return this.javaTypeConverter;
     }
 
     /**
@@ -63,7 +71,7 @@ public abstract class ValueType
      * @throws InvalidValueTypeException
      */
     public void checkValidity( final Value value )
-        throws InvalidJavaTypeException, InvalidValueException
+        throws InvalidJavaTypeConverterException, InvalidValueException
     {
         checkValueIsOfExpectedJavaClass( value );
     }
@@ -100,13 +108,13 @@ public abstract class ValueType
     public boolean isValueOfExpectedJavaClass( final Object value )
     {
         Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
-        return javaType.isInstance( value );
+        return javaTypeConverter.isInstance( value );
     }
 
     public boolean isValueOfExpectedJavaClass( final Value value )
     {
         Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
-        return javaType.isInstance( value.getObject() );
+        return javaTypeConverter.isInstance( value.getObject() );
     }
 
     void checkValueIsOfExpectedJavaClass( final Property property )
@@ -114,16 +122,16 @@ public abstract class ValueType
     {
         if ( !isValueOfExpectedJavaClass( ( property.getObject() ) ) )
         {
-            throw new InvalidValueTypeException( javaType, property );
+            throw new InvalidValueTypeException( javaTypeConverter, property );
         }
     }
 
     void checkValueIsOfExpectedJavaClass( final Value value )
-        throws InvalidJavaTypeException
+        throws InvalidJavaTypeConverterException
     {
         if ( !isValueOfExpectedJavaClass( value ) )
         {
-            throw new InvalidJavaTypeException( javaType, value );
+            throw new InvalidJavaTypeConverterException( javaTypeConverter, value );
         }
     }
 

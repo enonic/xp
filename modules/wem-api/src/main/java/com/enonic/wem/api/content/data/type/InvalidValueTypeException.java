@@ -7,24 +7,24 @@ import com.enonic.wem.api.content.data.Value;
 public class InvalidValueTypeException
     extends RuntimeException
 {
-    public InvalidValueTypeException( final JavaTypeConverters.JavaTypeConverter javaType, final Property property )
+    public InvalidValueTypeException( final JavaTypeConverter javaTypeConverter, final Property property )
     {
-        super( buildMessage( javaType, property ) );
+        super( buildMessage( javaTypeConverter, property ) );
     }
 
-    public InvalidValueTypeException( final JavaTypeConverters.JavaTypeConverter javaType, final Value value )
+    public InvalidValueTypeException( final JavaTypeConverter javaTypeConverter, final Value value )
     {
-        super( buildMessage( javaType, value ) );
+        super( buildMessage( javaTypeConverter, value ) );
     }
 
-    private static String buildMessage( final JavaTypeConverters.JavaTypeConverter javaType, final Property property )
+    private static String buildMessage( final JavaTypeConverter javaTypeConverter, final Property property )
     {
         return "Invalid ValueType at path [" + property.getPath() + "] " + property.getObject().getClass() + ", expected " +
-            javaType.getType();
+            javaTypeConverter.getType();
     }
 
-    private static String buildMessage( final JavaTypeConverters.JavaTypeConverter javaType, final Value value )
+    private static String buildMessage( final JavaTypeConverter javaTypeConverter, final Value value )
     {
-        return "Expected Value of type " + javaType + ": " + value.getType().getJavaType();
+        return "Expected Value of type " + javaTypeConverter + ": " + value.getType().getJavaTypeConverter();
     }
 }

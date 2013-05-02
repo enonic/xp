@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.type.InconvertibleValueException;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
-import com.enonic.wem.api.content.data.type.JavaTypeConverters;
+import com.enonic.wem.api.content.data.type.JavaTypeConverter;
 import com.enonic.wem.api.content.data.type.ValueType;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
@@ -420,7 +420,7 @@ public class Property
 
             public Builder value( final String value )
             {
-                setValue( JavaTypeConverters.CONTENT_ID_CONVERTER.convertFrom( value ) );
+                setValue( JavaTypeConverter.ContentId.GET.convertFrom( value ) );
                 return this;
             }
 
@@ -472,7 +472,7 @@ public class Property
 
             public Builder value( final String value )
             {
-                setValue( JavaTypeConverters.BINARY_ID_CONVERTER.convertFrom( value ) );
+                setValue( JavaTypeConverter.BinaryId.GET.convertFrom( value ) );
                 return this;
             }
 
@@ -595,7 +595,7 @@ public class Property
 
             public DateBuilder value( final String value )
             {
-                setValue( JavaTypeConverters.DATE_MIDNIGHT_CONVERTER.convertFrom( value ) );
+                setValue( JavaTypeConverter.DateMidnight.GET.convertFrom( value ) );
                 return this;
             }
 
@@ -628,7 +628,7 @@ public class Property
 
             public Date value( final String value )
             {
-                setValue( JavaTypeConverters.DATE_MIDNIGHT_CONVERTER.convertFrom( value ) );
+                setValue( JavaTypeConverter.DateMidnight.GET.convertFrom( value ) );
                 return new Date( this );
             }
         }
@@ -947,7 +947,6 @@ public class Property
                 return new Xml( this );
             }
         }
-
 
         public static XmlValueBuilder newXml( final String name )
         {

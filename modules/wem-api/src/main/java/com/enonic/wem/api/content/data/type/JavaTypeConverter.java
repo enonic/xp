@@ -1,84 +1,45 @@
 package com.enonic.wem.api.content.data.type;
 
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
-
-public final class JavaTypeConverters
+public abstract class JavaTypeConverter<T>
 {
-    public static final StringConverter STRING_CONVERTER = new StringConverter();
+    Class type;
 
-    public static final DoubleConverter DOUBLE_CONVERTER = new DoubleConverter();
-
-    public static final LongConverter LONG_CONVERTER = new LongConverter();
-
-    public static final DateMidnightConverter DATE_MIDNIGHT_CONVERTER = new DateMidnightConverter();
-
-    public static final ContentIdConverter CONTENT_ID_CONVERTER = new ContentIdConverter();
-
-    public static final BinaryIdConverter BINARY_ID_CONVERTER = new BinaryIdConverter();
-
-    public static final Map<java.lang.Class, JavaTypeConverter> INSTANCES = new LinkedHashMap<>();
-
-    static
+    JavaTypeConverter( final Class type )
     {
-        INSTANCES.put( BINARY_ID_CONVERTER.getType(), BINARY_ID_CONVERTER );
-        INSTANCES.put( STRING_CONVERTER.getType(), STRING_CONVERTER );
-        INSTANCES.put( DOUBLE_CONVERTER.getType(), DOUBLE_CONVERTER );
-        INSTANCES.put( LONG_CONVERTER.getType(), LONG_CONVERTER );
-        INSTANCES.put( DATE_MIDNIGHT_CONVERTER.getType(), DATE_MIDNIGHT_CONVERTER );
+        this.type = type;
     }
 
-    public static JavaTypeConverter resolveConverter( Object o )
+    public Class getType()
     {
-        for ( JavaTypeConverter type : INSTANCES.values() )
-        {
-            if ( type.getType().isInstance( o ) )
-            {
-                return type;
-            }
-        }
-        return null;
+        return type;
     }
 
-    public static abstract class JavaTypeConverter<T>
+    public boolean isInstance( final Object value )
     {
-        Class type;
-
-        JavaTypeConverter( final Class type )
-        {
-            this.type = type;
-        }
-
-        public Class getType()
-        {
-            return type;
-        }
-
-        public boolean isInstance( final Object value )
-        {
-            return type.isInstance( value );
-        }
-
-        public abstract T convertFrom( Object value );
-
-        public abstract T convertFrom( java.lang.String value );
-
-        @Override
-        public java.lang.String toString()
-        {
-            return type.getSimpleName();
-        }
+        return type.isInstance( value );
     }
 
-    public final static class StringConverter
+    public abstract T convertFrom( Object value );
+
+    public abstract T convertFrom( java.lang.String value );
+
+    @Override
+    public java.lang.String toString()
+    {
+        return type.getSimpleName();
+    }
+
+    public static final class String
         extends JavaTypeConverter
     {
-        StringConverter()
+
+        public static final String GET = new String();
+
+        private String()
         {
             super( java.lang.String.class );
         }
@@ -118,10 +79,12 @@ public final class JavaTypeConverters
         }
     }
 
-    public final static class LongConverter
+    public static final class Long
         extends JavaTypeConverter<java.lang.Long>
     {
-        LongConverter()
+        public static final Long GET = new Long();
+
+        private Long()
         {
             super( java.lang.Long.class );
         }
@@ -157,10 +120,12 @@ public final class JavaTypeConverters
         }
     }
 
-    public final static class DoubleConverter
+    public static final class Double
         extends JavaTypeConverter<java.lang.Double>
     {
-        DoubleConverter()
+        public static final Double GET = new Double();
+
+        private Double()
         {
             super( java.lang.Double.class );
         }
@@ -193,13 +158,15 @@ public final class JavaTypeConverters
 
     }
 
-    public final static class DateMidnightConverter
+    public static final class DateMidnight
         extends JavaTypeConverter<org.joda.time.DateMidnight>
     {
         private final static DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder().
             appendYear( 4, 4 ).appendLiteral( "-" ).appendMonthOfYear( 2 ).appendLiteral( "-" ).appendDayOfMonth( 2 ).toFormatter();
 
-        DateMidnightConverter()
+        public static final DateMidnight GET = new DateMidnight();
+
+        private DateMidnight()
         {
             super( org.joda.time.DateMidnight.class );
         }
@@ -230,10 +197,12 @@ public final class JavaTypeConverters
         }
     }
 
-    public final static class ContentIdConverter
+    public static final class ContentId
         extends JavaTypeConverter<com.enonic.wem.api.content.ContentId>
     {
-        ContentIdConverter()
+        public static final ContentId GET = new ContentId();
+
+        private ContentId()
         {
             super( com.enonic.wem.api.content.ContentId.class );
         }
@@ -260,10 +229,12 @@ public final class JavaTypeConverters
         }
     }
 
-    public final static class BinaryIdConverter
+    public static final class BinaryId
         extends JavaTypeConverter<com.enonic.wem.api.content.binary.BinaryId>
     {
-        BinaryIdConverter()
+        public static final BinaryId GET = new BinaryId();
+
+        private BinaryId()
         {
             super( com.enonic.wem.api.content.binary.BinaryId.class );
         }
@@ -289,5 +260,4 @@ public final class JavaTypeConverters
             return com.enonic.wem.api.content.binary.BinaryId.from( value );
         }
     }
-
 }
