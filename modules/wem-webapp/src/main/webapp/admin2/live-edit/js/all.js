@@ -57,11 +57,11 @@ var liveedit;
 })(liveedit || (liveedit = {}));
 var liveedit;
 (function (liveedit) {
-    var Helper = (function () {
-        function Helper() { }
-        Helper.$ = $liveedit;
-        Helper.getBoxModel = function getBoxModel(component) {
-            var el = Helper.$(component);
+    var ComponentHelper = (function () {
+        function ComponentHelper() { }
+        ComponentHelper.$ = $liveedit;
+        ComponentHelper.getBoxModel = function getBoxModel(component) {
+            var el = ComponentHelper.$(component);
             var offset = el.offset();
             var top = offset.top;
             var left = offset.left;
@@ -90,35 +90,35 @@ var liveedit;
                 paddingLeft: pl
             };
         };
-        Helper.getPagePositionForComponent = function getPagePositionForComponent(component) {
-            return Helper.$(component).position();
+        ComponentHelper.getPagePositionForComponent = function getPagePositionForComponent(component) {
+            return ComponentHelper.$(component).position();
         };
-        Helper.getComponentInfo = function getComponentInfo(component) {
+        ComponentHelper.getComponentInfo = function getComponentInfo(component) {
             return {
-                type: Helper.getComponentType(component),
-                key: Helper.getComponentKey(component),
-                name: Helper.getComponentName(component),
-                tagName: Helper.getTagNameForComponent(component)
+                type: ComponentHelper.getComponentType(component),
+                key: ComponentHelper.getComponentKey(component),
+                name: ComponentHelper.getComponentName(component),
+                tagName: ComponentHelper.getTagNameForComponent(component)
             };
         };
-        Helper.getComponentType = function getComponentType(component) {
+        ComponentHelper.getComponentType = function getComponentType(component) {
             return component.data('live-edit-type');
         };
-        Helper.getComponentKey = function getComponentKey(component) {
+        ComponentHelper.getComponentKey = function getComponentKey(component) {
             return component.data('live-edit-key');
         };
-        Helper.getComponentName = function getComponentName(component) {
+        ComponentHelper.getComponentName = function getComponentName(component) {
             return component.data('live-edit-name') || '[No Name]';
         };
-        Helper.getTagNameForComponent = function getTagNameForComponent(component) {
+        ComponentHelper.getTagNameForComponent = function getTagNameForComponent(component) {
             return component[0].tagName.toLowerCase();
         };
-        Helper.supportsTouch = function supportsTouch() {
+        ComponentHelper.supportsTouch = function supportsTouch() {
             return document.hasOwnProperty('ontouchend');
         };
-        return Helper;
+        return ComponentHelper;
     })();
-    liveedit.Helper = Helper;    
+    liveedit.ComponentHelper = ComponentHelper;    
 })(liveedit || (liveedit = {}));
 AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.MutationObserver');
 ((function ($) {
@@ -188,9 +188,9 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.MutationObserver');
 AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.DragDropSort');
 AdminLiveEdit.DragDropSort = ((function ($) {
     'use strict';
-    var util = liveedit.Helper;
+    var componentHelper = liveedit.ComponentHelper;
     var isDragging = false;
-    var cursorAt = liveedit.Helper.supportsTouch() ? {
+    var cursorAt = liveedit.ComponentHelper.supportsTouch() ? {
         left: 15,
         top: 70
     } : {
@@ -247,7 +247,7 @@ AdminLiveEdit.DragDropSort = ((function ($) {
         $componentBarComponents.draggable(draggableOptions);
     }
     function createDragHelper(event, helper) {
-        return $(getDragHelperHtml(util.getComponentName(helper)));
+        return $(getDragHelperHtml(componentHelper.getComponentName(helper)));
     }
     function refreshSortable() {
         $(regionSelector).sortable('refresh');
@@ -262,7 +262,7 @@ AdminLiveEdit.DragDropSort = ((function ($) {
         isDragging = true;
         var componentIsSelected = ui.item.hasClass('live-edit-selected-component');
         ui.item.data('live-edit-selected-on-sort-start', componentIsSelected);
-        var targetComponentName = liveedit.Helper.getComponentName($(event.target));
+        var targetComponentName = liveedit.ComponentHelper.getComponentName($(event.target));
         ui.placeholder.html('Drop component here' + '<div style="font-size: 10px;">' + targetComponentName + '</div>');
         refreshSortable();
         $(window).trigger('component.onSortStart', [
@@ -316,7 +316,7 @@ AdminLiveEdit.DragDropSort = ((function ($) {
         if(draggedItemIsLayoutComponent && targetIsInLayoutComponent) {
             ui.item.remove();
         }
-        if(liveedit.Helper.supportsTouch()) {
+        if(liveedit.ComponentHelper.supportsTouch()) {
             $(window).trigger('component.mouseOut');
         }
         var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
@@ -362,7 +362,7 @@ AdminLiveEdit.DragDropSort = ((function ($) {
         $(window).on('component.onSelect', function (event, $component) {
         });
         $(window).on('component.onDeselect', function () {
-            if(liveedit.Helper.supportsTouch() && !isDragging) {
+            if(liveedit.ComponentHelper.supportsTouch() && !isDragging) {
                 disableDragDrop();
             }
         });
@@ -497,7 +497,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
     };
     regions.prototype = new AdminLiveEdit.model.component.Base();
     var proto = regions.prototype;
-    var util = liveedit.Helper;
+    var componentHelper = liveedit.ComponentHelper;
     proto.registerGlobalListeners = function () {
         $(window).on('component.onSortUpdate', $.proxy(this.renderEmptyPlaceholders, this));
         $(window).on('component.onSortOver', $.proxy(this.renderEmptyPlaceholders, this));
@@ -517,7 +517,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
     };
     proto.appendEmptyPlaceholder = function ($region) {
         var html = '<div>Drag components here</div>';
-        html += '<div style="font-size: 10px;">' + util.getComponentName($region) + '</div>';
+        html += '<div style="font-size: 10px;">' + componentHelper.getComponentName($region) + '</div>';
         var $placeholder = $('<div/>', {
             'class': 'live-edit-empty-region-placeholder',
             'html': html
@@ -820,7 +820,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
     };
     toolbar.prototype = new AdminLiveEdit.view.Base();
     var proto = toolbar.prototype;
-    var util = liveedit.Helper;
+    var componentHelper = liveedit.ComponentHelper;
     proto.registerGlobalListeners = function () {
         $(window).on('component.onParagraphEdit', $.proxy(this.show, this));
         $(window).on('component.onParagraphEditLeave', $.proxy(this.hide, this));
@@ -895,7 +895,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
     };
     proto.getDefaultPosition = function () {
         var me = this;
-        var componentBox = util.getBoxModel(me.$selectedComponent), leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2), topPos = componentBox.top - me.getEl().height() - 25;
+        var componentBox = componentHelper.getBoxModel(me.$selectedComponent), leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2), topPos = componentBox.top - me.getEl().height() - 25;
         return {
             left: leftPos,
             top: topPos,
@@ -913,7 +913,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     };
     shader.prototype = new AdminLiveEdit.view.Base();
     var proto = shader.prototype;
-    var util = liveedit.Helper;
+    var componentHelper = liveedit.ComponentHelper;
     proto.registerGlobalListeners = function () {
         $(window).on('component.onSelect', $.proxy(this.show, this));
         $(window).on('component.onDeselect', $.proxy(this.hide, this));
@@ -945,7 +945,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     proto.show = function (event, $component) {
         var me = this;
         me.$selectedComponent = $component;
-        if(util.getComponentType($component) === 'page') {
+        if(componentHelper.getComponentType($component) === 'page') {
             me.showForPage($component);
         } else {
             me.showForComponent($component);
@@ -964,7 +964,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         var me = this;
         $('.live-edit-shader').addClass('live-edit-animatable');
         var documentSize = liveedit.DomHelper.getDocumentSize(), docWidth = documentSize.width, docHeight = documentSize.height;
-        var boxModel = util.getBoxModel($component), x = boxModel.left, y = boxModel.top, w = boxModel.width, h = boxModel.height;
+        var boxModel = componentHelper.getBoxModel($component), x = boxModel.left, y = boxModel.top, w = boxModel.width, h = boxModel.height;
         me.$northShader.css({
             top: 0,
             left: 0,
@@ -1015,7 +1015,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         $(window).on('component.onSelect', $.proxy(this.updateCursor, this));
     };
     proto.updateCursor = function (event, $component) {
-        var componentType = liveedit.Helper.getComponentType($component);
+        var componentType = liveedit.ComponentHelper.getComponentType($component);
         var $body = $('body');
         var cursor = 'default';
         switch(componentType) {
@@ -1050,7 +1050,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     };
     highlighter.prototype = new AdminLiveEdit.view.Base();
     var proto = highlighter.prototype;
-    var util = liveedit.Helper;
+    var componentHelper = liveedit.ComponentHelper;
     proto.registerGlobalListeners = function () {
         $(window).on('component.mouseOver', $.proxy(this.componentMouseOver, this));
         $(window).on('component.mouseOut', $.proxy(this.hide, this));
@@ -1081,7 +1081,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     proto.selectComponent = function (event, $component) {
         var me = this;
         me.$selectedComponent = $component;
-        var componentType = util.getComponentType($component);
+        var componentType = componentHelper.getComponentType($component);
         $('.live-edit-selected-component').removeClass('live-edit-selected-component');
         $component.addClass('live-edit-selected-component');
         me.getEl().attr('class', me.getEl().attr('class') + ' live-edit-animatable');
@@ -1108,9 +1108,9 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     };
     proto.resizeBorderToComponent = function ($component) {
         var me = this;
-        var componentType = util.getComponentType($component);
-        var componentTagName = util.getTagNameForComponent($component);
-        var componentBoxModel = util.getBoxModel($component);
+        var componentType = componentHelper.getComponentType($component);
+        var componentTagName = componentHelper.getTagNameForComponent($component);
+        var componentBoxModel = componentHelper.getBoxModel($component);
         var w = Math.round(componentBoxModel.width);
         var h = Math.round(componentBoxModel.height);
         var top = Math.round(componentBoxModel.top);
@@ -1135,7 +1135,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         $el.attr('class', $el.attr('class').replace(/ live-edit-animatable/g, ''));
     };
     proto.getStyleForComponent = function ($component) {
-        var componentType = util.getComponentType($component);
+        var componentType = componentHelper.getComponentType($component);
         var strokeColor, strokeDashArray, fillColor;
         switch(componentType) {
             case 'region':
@@ -1192,7 +1192,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     };
     toolTip.prototype = new AdminLiveEdit.view.Base();
     var proto = toolTip.prototype;
-    var util = liveedit.Helper;
+    var componentHelper = liveedit.ComponentHelper;
     proto.registerGlobalListeners = function () {
         $(window).on('component.onSelect', $.proxy(this.hide, this));
     };
@@ -1217,7 +1217,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
                 return;
             }
             var $component = $(event.target).closest('[data-live-edit-type]');
-            var componentInfo = util.getComponentInfo($component);
+            var componentInfo = componentHelper.getComponentInfo($component);
             var pos = me.getPosition(event);
             me.getEl().css({
                 top: pos.y,
@@ -1312,7 +1312,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     };
     menu.prototype = new AdminLiveEdit.view.Base();
     var proto = menu.prototype;
-    var util = liveedit.Helper;
+    var componentHelper = liveedit.ComponentHelper;
     var html = '';
     html += '<div class="live-edit-component-menu live-edit-arrow-top" style="display: none">';
     html += '   <div class="live-edit-component-menu-title-bar">';
@@ -1347,7 +1347,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         });
     };
     proto.show = function (event, $component, pagePosition) {
-        var me = this, componentInfo = util.getComponentInfo($component);
+        var me = this, componentInfo = componentHelper.getComponentInfo($component);
         me.$selectedComponent = $component;
         me.previousPagePositions = pagePosition;
         me.previousPageSizes = liveedit.DomHelper.getViewPortSize();
@@ -1397,7 +1397,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         }
     };
     proto.updateMenuItemsForComponent = function ($component) {
-        var componentType = util.getComponentType($component);
+        var componentType = componentHelper.getComponentType($component);
         if(this.buttonConfig.hasOwnProperty(componentType)) {
             var buttonArray = this.getConfigForButton(componentType);
             var buttons = this.getButtons();
@@ -1415,7 +1415,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         }
     };
     proto.updateTitleBar = function ($component) {
-        var componentInfo = util.getComponentInfo($component);
+        var componentInfo = componentHelper.getComponentInfo($component);
         this.setIcon(componentInfo.type);
         this.setTitle(componentInfo.name);
     };
@@ -1514,7 +1514,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     };
     parentButton.prototype = new AdminLiveEdit.view.menu.BaseButton();
     var proto = parentButton.prototype;
-    var util = liveedit.Helper;
+    var componentHelper = liveedit.ComponentHelper;
     proto.init = function () {
         var me = this;
         var $button = me.createButton({
@@ -1535,7 +1535,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
                     ]);
                     me.scrollComponentIntoView($parent);
                     var menuWidth = me.menu.getEl().outerWidth();
-                    var componentBox = util.getBoxModel($parent), newMenuPosition = {
+                    var componentBox = componentHelper.getBoxModel($parent), newMenuPosition = {
                         x: componentBox.left + (componentBox.width / 2) - (menuWidth / 2),
                         y: componentBox.top + 10
                     };
@@ -1547,7 +1547,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         me.menu.buttons.push(me);
     };
     proto.scrollComponentIntoView = function ($component) {
-        var componentTopPosition = util.getPagePositionForComponent($component).top;
+        var componentTopPosition = componentHelper.getPagePositionForComponent($component).top;
         if(componentTopPosition <= window.pageYOffset) {
             $('html, body').animate({
                 scrollTop: componentTopPosition - 10

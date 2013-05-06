@@ -21,7 +21,7 @@ interface ComponentInfo {
 }
 
 module liveedit {
-    export class Helper {
+    export class ComponentHelper {
 
         static $ = $liveedit;
 

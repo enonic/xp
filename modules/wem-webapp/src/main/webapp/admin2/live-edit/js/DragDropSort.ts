@@ -6,11 +6,11 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.DragDropSort');
 AdminLiveEdit.DragDropSort = (function ($) {
     'use strict';
 
-    var util = liveedit.Helper;
+    var componentHelper = liveedit.ComponentHelper;
 
     var isDragging = false;
 
-    var cursorAt = liveedit.Helper.supportsTouch() ? {left: 15, top: 70} : {left: -10, top: -15};
+    var cursorAt = liveedit.ComponentHelper.supportsTouch() ? {left: 15, top: 70} : {left: -10, top: -15};
 
     var regionSelector = '[data-live-edit-type=region]';
 
@@ -78,7 +78,7 @@ AdminLiveEdit.DragDropSort = (function ($) {
 
 
     function createDragHelper(event, helper) {
-        return $(getDragHelperHtml(util.getComponentName(helper)));
+        return $(getDragHelperHtml(componentHelper.getComponentName(helper)));
     }
 
 
@@ -105,7 +105,7 @@ AdminLiveEdit.DragDropSort = (function ($) {
         var componentIsSelected = ui.item.hasClass('live-edit-selected-component');
         ui.item.data('live-edit-selected-on-sort-start', componentIsSelected);
 
-        var targetComponentName = liveedit.Helper.getComponentName($(event.target));
+        var targetComponentName = liveedit.ComponentHelper.getComponentName($(event.target));
         ui.placeholder.html('Drop component here' + '<div style="font-size: 10px;">' + targetComponentName + '</div>');
 
         refreshSortable();
@@ -163,7 +163,7 @@ AdminLiveEdit.DragDropSort = (function ($) {
         }
 
 
-        if (liveedit.Helper.supportsTouch()) {
+        if (liveedit.ComponentHelper.supportsTouch()) {
             $(window).trigger('component.mouseOut');
         }
 
@@ -228,7 +228,7 @@ AdminLiveEdit.DragDropSort = (function ($) {
 
         $(window).on('component.onSelect', function (event, $component) {
             /*
-             if (liveedit.Helper.supportsTouch()) {
+             if (liveedit.ComponentHelper.supportsTouch()) {
              enableDragDrop();
              }
              */
@@ -240,7 +240,7 @@ AdminLiveEdit.DragDropSort = (function ($) {
              // Ideally we should update the "items" (to sort) option, but this is unfortunately buggy at the moment(http://bugs.jqueryui.com/ticket/8532)
 
              // This is a hack workaround (destroy and re-create sortables) until 8532 is fixed.
-             if (liveedit.Helper.getComponentType($component) === 'layout') {
+             if (liveedit.ComponentHelper.getComponentType($component) === 'layout') {
              $(regionSelector).sortable('destroy');
              createSortable(layoutSelector);
              } else {
@@ -251,7 +251,7 @@ AdminLiveEdit.DragDropSort = (function ($) {
         });
 
         $(window).on('component.onDeselect', function () {
-            if (liveedit.Helper.supportsTouch() && !isDragging) {
+            if (liveedit.ComponentHelper.supportsTouch() && !isDragging) {
                 disableDragDrop();
             }
         });

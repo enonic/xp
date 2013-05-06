@@ -22,7 +22,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
 
     proto.updateCursor = function (event, $component) {
-        var componentType = liveedit.Helper.getComponentType($component);
+        var componentType = liveedit.ComponentHelper.getComponentType($component);
         var $body = $('body');
         var cursor = 'default';
 

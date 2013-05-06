@@ -22,7 +22,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     var proto = toolTip.prototype;
 
     // Uses
-    var util = liveedit.Helper;
+    var componentHelper = liveedit.ComponentHelper;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -66,7 +66,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
             }
 
             var $component = $(event.target).closest('[data-live-edit-type]');
-            var componentInfo = util.getComponentInfo($component);
+            var componentInfo = componentHelper.getComponentInfo($component);
             var pos = me.getPosition(event);
 
             me.getEl().css({

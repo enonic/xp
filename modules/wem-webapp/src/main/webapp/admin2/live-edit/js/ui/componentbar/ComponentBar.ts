@@ -37,9 +37,6 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
     // Shorthand ref to the prototype
     var proto = componentBar.prototype;
 
-    // Uses
-    // var util = liveedit.Helper;
-
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
