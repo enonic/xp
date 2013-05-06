@@ -138,19 +138,6 @@ public abstract class DataArray<T extends Data>
         return index < list.size();
     }
 
-    public int getIndex( final Data data )
-    {
-        for ( int i = 0; i < list.size(); i++ )
-        {
-            final Data currData = list.get( i );
-            if ( data.equals( currData ) )
-            {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     public List<T> asList()
     {
         return Lists.newArrayList( list );

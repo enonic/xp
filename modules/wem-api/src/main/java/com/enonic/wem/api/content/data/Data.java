@@ -9,6 +9,8 @@ public abstract class Data
 {
     private final String name;
 
+    private int arrayIndex;
+
     /**
      * Null if this Data have no parent yet.
      */
@@ -38,6 +40,11 @@ public abstract class Data
         this.parent = parent;
     }
 
+    void setArrayIndex( final int arrayIndex )
+    {
+        this.arrayIndex = arrayIndex;
+    }
+
     public DataSet getParent()
     {
         return parent;
@@ -50,7 +57,7 @@ public abstract class Data
 
     DataId getDataId()
     {
-        return DataId.from( name, getArrayIndex() );
+        return DataId.from( name, arrayIndex );
     }
 
     public DataPath getPath()
@@ -133,11 +140,7 @@ public abstract class Data
 
     public int getArrayIndex()
     {
-        if ( parent == null )
-        {
-            return -1;
-        }
-        return parent.getArrayIndex( this );
+        return arrayIndex;
     }
 
     DataArray getArray()

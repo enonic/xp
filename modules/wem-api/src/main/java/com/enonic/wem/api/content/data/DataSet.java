@@ -83,12 +83,14 @@ public class DataSet
 
     private void doAdd( final Data data )
     {
+        System.out.println( "*** doAdd - dataId: " + data.getDataId().getIndex() );
         if ( data.getParent() != null )
         {
             throw new IllegalArgumentException(
                 "Data [" + data.getName() + "] already added to another parent: " + data.getParent().getPath().toString() );
         }
         data.setParent( this );
+        data.setArrayIndex( dataCount( data.getName() ) );
         registerArray( data );
         dataById.put( data.getDataId(), data );
     }
@@ -136,16 +138,28 @@ public class DataSet
 
         if ( exData == null )
         {
+            final int expectedIndex = dataCount( dataId.getName() );
+            if ( dataId.getIndex() != expectedIndex )
+            {
+                throw new IllegalArgumentException(
+                    "Property [" + dataId + "] expected to be given a successive index [" + expectedIndex + "]: " +
+                        dataId.getIndex() );
+            }
+
             final Property newProperty = value.newProperty( dataId.getName() );
             newProperty.setParent( this );
+            newProperty.setArrayIndex( dataId.getIndex() );
+
             registerArray( newProperty );
+
             dataById.put( dataId, newProperty );
         }
         else
         {
-            exData.toProperty().setValue( value );
-            DataArray array = arrayByDataName.get( exData.getName() );
-            array.set( exData.getArrayIndex(), exData );
+            final Property existingProperty = exData.toProperty();
+            existingProperty.setValue( value );
+            final DataArray array = arrayByDataName.get( exData.getName() );
+            array.set( exData.getArrayIndex(), existingProperty );
         }
     }
 
@@ -389,16 +403,6 @@ public class DataSet
     {
         final DataArray dataArray = arrayByDataName.get( data.getName() );
         return dataArray.size() > 1;
-    }
-
-    public final int getArrayIndex( final Data data )
-    {
-        final DataArray dataArray = arrayByDataName.get( data.getName() );
-        if ( dataArray == null )
-        {
-            return -1;
-        }
-        return dataArray.getIndex( data );
     }
 
     public final DataArray getArray( final Data data )

@@ -26,4 +26,10 @@ public final class ContentData
     {
         throw new UnsupportedOperationException( "A ContentData cannot have a parent" );
     }
+
+    @Override
+    public int getArrayIndex()
+    {
+        return -1;
+    }
 }
