@@ -10,7 +10,6 @@ declare var AdminLiveEdit;
 ///<reference path='Util.ts' />
 ///<reference path='MutationObserver.ts' />
 ///<reference path='DragDropSort.ts' />
-///<reference path='PageLeave.ts' />
 
 ///<reference path='model/component/Base.ts' />
 ///<reference path='model/component/Page.ts' />
@@ -19,28 +18,28 @@ declare var AdminLiveEdit;
 ///<reference path='model/component/Part.ts' />
 ///<reference path='model/component/Content.ts' />
 ///<reference path='model/component/Paragraph.ts' />
-///<reference path='view/Base.ts' />
-///<reference path='view/HtmlElementReplacer.ts' />
-///<reference path='view/htmleditor/Editor.ts' />
-///<reference path='view/htmleditor/Toolbar.ts' />
-///<reference path='view/Shader.ts' />
-///<reference path='view/Cursor.ts' />
+///<reference path='ui/Base.ts' />
+///<reference path='ui/HtmlElementReplacer.ts' />
+///<reference path='ui/htmleditor/Editor.ts' />
+///<reference path='ui/htmleditor/Toolbar.ts' />
+///<reference path='ui/Shader.ts' />
+///<reference path='ui/Cursor.ts' />
 
-///<reference path='view/Highlighter.ts' />
-///<reference path='view/ToolTip.ts' />
-///<reference path='view/menu/Menu.ts' />
-///<reference path='view/menu/BaseButton.ts' />
-///<reference path='view/menu/ParentButton.ts' />
-///<reference path='view/menu/OpenContentButton.ts' />
-///<reference path='view/menu/InsertButton.ts' />
-///<reference path='view/menu/DetailsButton.ts' />
-///<reference path='view/menu/EditButton.ts' />
-///<reference path='view/menu/ResetButton.ts' />
-///<reference path='view/menu/ClearButton.ts' />
-///<reference path='view/menu/ViewButton.ts' />
-///<reference path='view/menu/SettingsButton.ts' />
-///<reference path='view/menu/RemoveButton.ts' />
-///<reference path='view/componentbar/ComponentBar.ts' />
+///<reference path='ui/Highlighter.ts' />
+///<reference path='ui/ToolTip.ts' />
+///<reference path='ui/menu/Menu.ts' />
+///<reference path='ui/menu/BaseButton.ts' />
+///<reference path='ui/menu/ParentButton.ts' />
+///<reference path='ui/menu/OpenContentButton.ts' />
+///<reference path='ui/menu/InsertButton.ts' />
+///<reference path='ui/menu/DetailsButton.ts' />
+///<reference path='ui/menu/EditButton.ts' />
+///<reference path='ui/menu/ResetButton.ts' />
+///<reference path='ui/menu/ClearButton.ts' />
+///<reference path='ui/menu/ViewButton.ts' />
+///<reference path='ui/menu/SettingsButton.ts' />
+///<reference path='ui/menu/RemoveButton.ts' />
+///<reference path='ui/componentbar/ComponentBar.ts' />
 
 (function ($) {
     'use strict';

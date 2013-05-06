@@ -428,15 +428,6 @@ AdminLiveEdit.DragDropSort = ((function ($) {
         }
     };
 })($liveedit));
-AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.PageLeave');
-AdminLiveEdit.PageLeave = ((function () {
-    'use strict';
-    function init() {
-    }
-    return {
-        init: init
-    };
-})());
 AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
 ((function ($) {
     'use strict';
