@@ -7,6 +7,13 @@ import static org.junit.Assert.*;
 
 public class ContentDataTest
 {
+    @Test(expected = UnsupportedOperationException.class)
+    public void setParent_throws_exception()
+    {
+        ContentData contentData = new ContentData();
+        contentData.setParent( DataSet.newDataSet().name( "myDataSet" ).build() );
+    }
+
     @Test
     public void root()
     {
