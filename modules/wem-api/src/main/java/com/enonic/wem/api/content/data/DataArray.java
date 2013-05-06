@@ -36,11 +36,6 @@ public abstract class DataArray<T extends Data>
         }
     }
 
-    public String getName()
-    {
-        return name;
-    }
-
     void add( final T data )
     {
         checkType( data );
@@ -58,22 +53,6 @@ public abstract class DataArray<T extends Data>
         for ( Data currData : list )
         {
             currData.invalidatePath();
-        }
-    }
-
-    void set( final int index, final T data )
-    {
-        checkType( data );
-        checkParent( data );
-
-        if ( overwritesExisting( index, list ) )
-        {
-            list.set( index, data );
-        }
-        else
-        {
-            checkIndexIsSuccessive( index, data );
-            list.add( data );
         }
     }
 
@@ -131,11 +110,6 @@ public abstract class DataArray<T extends Data>
         Preconditions.checkArgument( index == list.size(),
                                      "Data [%s] not added successively to array [%s] with size %s. Data had unexpected index: %s", data,
                                      getPath(), list.size(), index );
-    }
-
-    boolean overwritesExisting( final int index, final List list )
-    {
-        return index < list.size();
     }
 
     public List<T> asList()
