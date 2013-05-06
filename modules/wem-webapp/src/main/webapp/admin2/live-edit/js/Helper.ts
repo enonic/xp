@@ -100,12 +100,11 @@ module liveedit {
 
 
         static getComponentInfo(component:JQuery):ComponentInfo {
-            var t = this;
             return {
-                type: t.getComponentType(component),
-                key: t.getComponentKey(component),
-                name: t.getComponentName(component),
-                tagName: t.getTagNameForComponent(component)
+                type: getComponentType(component),
+                key: getComponentKey(component),
+                name: getComponentName(component),
+                tagName: getTagNameForComponent(component)
             };
         }
 

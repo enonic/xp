@@ -51,8 +51,8 @@ var liveedit;
         Helper.getDocumentScrollTop = function getDocumentScrollTop() {
             return Helper.$(document).scrollTop();
         };
-        Helper.getBoxModel = function getBoxModel(element) {
-            var el = Helper.$(element);
+        Helper.getBoxModel = function getBoxModel(component) {
+            var el = Helper.$(component);
             var offset = el.offset();
             var top = offset.top;
             var left = offset.left;
@@ -85,25 +85,24 @@ var liveedit;
             return Helper.$(component).position();
         };
         Helper.getComponentInfo = function getComponentInfo(component) {
-            var t = this;
             return {
-                type: t.getComponentType(component),
-                key: t.getComponentKey(component),
-                name: t.getComponentName(component),
-                tagName: t.getTagNameForComponent(component)
+                type: Helper.getComponentType(component),
+                key: Helper.getComponentKey(component),
+                name: Helper.getComponentName(component),
+                tagName: Helper.getTagNameForComponent(component)
             };
         };
-        Helper.getComponentType = function getComponentType($component) {
-            return $component.data('live-edit-type');
+        Helper.getComponentType = function getComponentType(component) {
+            return component.data('live-edit-type');
         };
-        Helper.getComponentKey = function getComponentKey($component) {
-            return $component.data('live-edit-key');
+        Helper.getComponentKey = function getComponentKey(component) {
+            return component.data('live-edit-key');
         };
-        Helper.getComponentName = function getComponentName($component) {
-            return $component.data('live-edit-name') || '[No Name]';
+        Helper.getComponentName = function getComponentName(component) {
+            return component.data('live-edit-name') || '[No Name]';
         };
-        Helper.getTagNameForComponent = function getTagNameForComponent($component) {
-            return $component[0].tagName.toLowerCase();
+        Helper.getTagNameForComponent = function getTagNameForComponent(component) {
+            return component[0].tagName.toLowerCase();
         };
         Helper.supportsTouch = function supportsTouch() {
             return document.hasOwnProperty('ontouchend');
@@ -1211,6 +1210,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
             var $component = $(event.target).closest('[data-live-edit-type]');
             var componentInfo = util.getComponentInfo($component);
             var pos = me.getPosition(event);
+            console.log(componentInfo);
             me.getEl().css({
                 top: pos.y,
                 left: pos.x
