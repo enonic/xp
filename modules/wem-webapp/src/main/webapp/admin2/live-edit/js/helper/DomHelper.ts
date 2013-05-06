@@ -14,7 +14,7 @@ module liveedit {
 
         static $ = $liveedit;
 
-        static getDocumentSize():DocumentSize {
+        public static getDocumentSize():DocumentSize {
             var $document = $(document);
             return {
                 width: $document.width(),
@@ -23,7 +23,7 @@ module liveedit {
         }
 
 
-        static getViewPortSize():ViewPortSize {
+        public static getViewPortSize():ViewPortSize {
             var $window = $(window);
             return {
                 width: $window.width(),
@@ -32,7 +32,7 @@ module liveedit {
         }
 
 
-        static getDocumentScrollTop():number {
+        public static getDocumentScrollTop():number {
             return $(document).scrollTop();
         }
 

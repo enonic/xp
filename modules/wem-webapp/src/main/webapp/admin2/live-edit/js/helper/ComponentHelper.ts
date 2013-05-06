@@ -1,4 +1,4 @@
-interface BoxModel {
+interface ComponentBoxModel {
     top: number;
     left: number;
     width: number;
@@ -20,12 +20,17 @@ interface ComponentInfo {
     tagName: String;
 }
 
+interface ComponentPagePosition {
+    top: number;
+    left: number;
+}
+
 module liveedit {
     export class ComponentHelper {
 
         static $ = $liveedit;
 
-        static getBoxModel(component:JQuery):BoxModel {
+        public static getBoxModel(component:JQuery):ComponentBoxModel {
             var el = $(component);
             var offset = el.offset();
             var top = offset.top;
@@ -60,13 +65,16 @@ module liveedit {
         }
 
 
-        // TODO: Check for interface for $.position()
-        static getPagePositionForComponent(component:JQuery):any {
-            return $(component).position();
+        public static getPagePositionForComponent(component:JQuery):ComponentPagePosition {
+            var pos = $(component).position();
+            return {
+                top: pos.top,
+                left: pos.left
+            };
         }
 
 
-        static getComponentInfo(component:JQuery):ComponentInfo {
+        public static getComponentInfo(component:JQuery):ComponentInfo {
             return {
                 type: getComponentType(component),
                 key: getComponentKey(component),
@@ -76,27 +84,27 @@ module liveedit {
         }
 
 
-        static getComponentType(component:JQuery):String {
+        public static getComponentType(component:JQuery):String {
             return component.data('live-edit-type');
         }
 
 
-        static getComponentKey(component:JQuery):String {
+        public static getComponentKey(component:JQuery):String {
             return component.data('live-edit-key');
         }
 
 
-        static getComponentName(component:JQuery):String {
+        public static getComponentName(component:JQuery):String {
             return component.data('live-edit-name') || '[No Name]';
         }
 
 
-        static getTagNameForComponent(component:JQuery):String {
+        public static getTagNameForComponent(component:JQuery):String {
             return component[0].tagName.toLowerCase();
         }
 
 
-        static supportsTouch():Boolean {
+        public static supportsTouch():Boolean {
             return document.hasOwnProperty('ontouchend');
         }
 
