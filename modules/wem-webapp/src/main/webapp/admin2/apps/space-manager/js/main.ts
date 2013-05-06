@@ -99,7 +99,7 @@ Ext.application({
         center.add(grid);
         center.add(toolbar.ext);
 
-        var west = new Admin.view.FilterPanel();
+        var west = new admin.ui.FilterPanel().getExtEl();
         west.region = 'west';
         west.width = 200;
 
