@@ -1,6 +1,8 @@
 package com.enonic.wem.api.command.content.relationship;
 
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
@@ -33,5 +35,28 @@ public class DeleteRelationship
         {
             throw new IllegalArgumentException( "A managed Relationship [" + relationshipKey + "] cannot be deleted directly" );
         }
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final DeleteRelationship that = (DeleteRelationship) o;
+
+        return Objects.equals( relationshipKey, that.relationshipKey );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( relationshipKey );
     }
 }
