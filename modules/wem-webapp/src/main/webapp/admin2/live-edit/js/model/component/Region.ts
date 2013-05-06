@@ -24,7 +24,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
     var proto = regions.prototype;
 
     // uses
-    var util = AdminLiveEdit.Util;
+    var util = liveedit.Helper;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

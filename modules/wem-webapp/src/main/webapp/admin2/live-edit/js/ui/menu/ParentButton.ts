@@ -19,7 +19,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     var proto = parentButton.prototype;
 
     // Uses
-    var util = AdminLiveEdit.Util;
+    var util = liveedit.Helper;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

@@ -39,7 +39,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     var proto = menu.prototype;
 
     // Uses
-    var util = AdminLiveEdit.Util;
+    var util = liveedit.Helper;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -160,7 +160,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     proto.updateMenuItemsForComponent = function ($component) {
         var componentType = util.getComponentType($component);
         if (this.buttonConfig.hasOwnProperty(componentType)) {
-            var buttonArray = this.buttonConfig[componentType];
+            var buttonArray = this.getConfigForButton(componentType);
             var buttons = this.getButtons();
 
             var i;
@@ -236,6 +236,11 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
     proto.getButtons = function () {
         return this.buttons;
+    };
+
+
+    proto.getConfigForButton = function (componentType) {
+        return this.buttonConfig[componentType];
     };
 
 

@@ -23,7 +23,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
     var proto = toolbar.prototype;
 
     // Uses
-    var util = AdminLiveEdit.Util;
+    var util = liveedit.Helper;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

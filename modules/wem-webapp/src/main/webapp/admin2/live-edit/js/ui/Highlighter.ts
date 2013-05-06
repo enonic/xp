@@ -21,7 +21,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     var proto = highlighter.prototype;
 
     // Uses
-    var util = AdminLiveEdit.Util;
+    var util = liveedit.Helper;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

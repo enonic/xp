@@ -22,7 +22,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     var proto = toolTip.prototype;
 
     // Uses
-    var util = AdminLiveEdit.Util;
+    var util = liveedit.Helper;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -103,6 +103,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         if (x + toolTipWidth > (viewPortSize.width - t.OFFSET_X * 2) - 50) {
             x = pageX - toolTipWidth - (t.OFFSET_X * 2);
         }
+
         if (y + toolTipHeight > (viewPortSize.height + scrollTop - t.OFFSET_Y * 2)) {
             y = pageY - toolTipHeight - (t.OFFSET_Y * 2);
         }

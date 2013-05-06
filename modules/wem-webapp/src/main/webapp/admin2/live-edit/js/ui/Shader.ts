@@ -20,7 +20,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     var proto = shader.prototype;
 
     // Uses
-    var util = AdminLiveEdit.Util;
+    var util = liveedit.Helper;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

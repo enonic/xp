@@ -6,11 +6,11 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.DragDropSort');
 AdminLiveEdit.DragDropSort = (function ($) {
     'use strict';
 
-    var util = AdminLiveEdit.Util;
+    var util = liveedit.Helper;
 
     var isDragging = false;
 
-    var cursorAt = AdminLiveEdit.Util.supportsTouch() ? {left: 15, top: 70} : {left: -10, top: -15};
+    var cursorAt = liveedit.Helper.supportsTouch() ? {left: 15, top: 70} : {left: -10, top: -15};
 
     var regionSelector = '[data-live-edit-type=region]';
 
@@ -105,7 +105,7 @@ AdminLiveEdit.DragDropSort = (function ($) {
         var componentIsSelected = ui.item.hasClass('live-edit-selected-component');
         ui.item.data('live-edit-selected-on-sort-start', componentIsSelected);
 
-        var targetComponentName = AdminLiveEdit.Util.getComponentName($(event.target));
+        var targetComponentName = liveedit.Helper.getComponentName($(event.target));
         ui.placeholder.html('Drop component here' + '<div style="font-size: 10px;">' + targetComponentName + '</div>');
 
         refreshSortable();
@@ -163,7 +163,7 @@ AdminLiveEdit.DragDropSort = (function ($) {
         }
 
 
-        if (AdminLiveEdit.Util.supportsTouch()) {
+        if (liveedit.Helper.supportsTouch()) {
             $(window).trigger('component.mouseOut');
         }
 
@@ -228,7 +228,7 @@ AdminLiveEdit.DragDropSort = (function ($) {
 
         $(window).on('component.onSelect', function (event, $component) {
             /*
-             if (AdminLiveEdit.Util.supportsTouch()) {
+             if (liveedit.Helper.supportsTouch()) {
              enableDragDrop();
              }
              */
@@ -240,7 +240,7 @@ AdminLiveEdit.DragDropSort = (function ($) {
              // Ideally we should update the "items" (to sort) option, but this is unfortunately buggy at the moment(http://bugs.jqueryui.com/ticket/8532)
 
              // This is a hack workaround (destroy and re-create sortables) until 8532 is fixed.
-             if (AdminLiveEdit.Util.getComponentType($component) === 'layout') {
+             if (liveedit.Helper.getComponentType($component) === 'layout') {
              $(regionSelector).sortable('destroy');
              createSortable(layoutSelector);
              } else {
@@ -251,7 +251,7 @@ AdminLiveEdit.DragDropSort = (function ($) {
         });
 
         $(window).on('component.onDeselect', function () {
-            if (AdminLiveEdit.Util.supportsTouch() && !isDragging) {
+            if (liveedit.Helper.supportsTouch() && !isDragging) {
                 disableDragDrop();
             }
         });
@@ -276,7 +276,7 @@ AdminLiveEdit.DragDropSort = (function ($) {
             tolerance: 'pointer',
             cursor: 'move',
             cursorAt: cursorAt,
-            scrollSensitivity: Math.round(AdminLiveEdit.Util.getViewPortSize().height / 8),
+            scrollSensitivity: Math.round(liveedit.Helper.getViewPortSize().height / 8),
             placeholder: 'live-edit-drop-target-placeholder',
             helper: createDragHelper,
             zIndex: 1001000,
