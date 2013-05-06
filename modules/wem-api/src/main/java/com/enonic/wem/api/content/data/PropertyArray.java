@@ -1,7 +1,5 @@
 package com.enonic.wem.api.content.data;
 
-import java.util.ArrayList;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.type.ValueType;
@@ -11,8 +9,6 @@ public class PropertyArray
     extends DataArray<Property>
 {
     private final ValueType type;
-
-    private final ArrayList<Value> valueList = new ArrayList<>();
 
     private PropertyArray( final Builder builder )
     {
@@ -31,26 +27,11 @@ public class PropertyArray
     void add( final Property property )
     {
         super.add( property );
-        valueList.add( property.getValue() );
-    }
-
-    @Override
-    void set( final int index, final Property property )
-    {
-        super.set( index, property );
-        if ( overwritesExisting( index, valueList ) )
-        {
-            valueList.set( index, property.getValue() );
-        }
-        else
-        {
-            valueList.add( property.getValue() );
-        }
     }
 
     public Value getValue( final int index )
     {
-        return valueList.get( index );
+        return getData( index ).getValue();
     }
 
     void checkType( Property property )

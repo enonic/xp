@@ -157,8 +157,6 @@ public class DataSet
         {
             final Property existingProperty = exData.toProperty();
             existingProperty.setValue( value );
-            final DataArray array = arrayByDataName.get( exData.getName() );
-            array.set( exData.getArrayIndex(), existingProperty );
         }
     }
 
