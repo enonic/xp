@@ -95,7 +95,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
         me.$selectedComponent = $component;
         me.previousPagePositions = pagePosition;
-        me.previousPageSizes = util.getViewPortSize();
+        me.previousPageSizes = liveedit.DomHelper.getViewPortSize();
 
         me.updateTitleBar($component);
 
@@ -269,7 +269,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
             var x = this.previousPagePositions.x,
                 y = this.previousPagePositions.y;
 
-            x = x - (this.previousPageSizes.width - util.getViewPortSize().width);
+            x = x - (this.previousPageSizes.width - liveedit.DomHelper.getViewPortSize().width);
 
             this.moveToXY(x, y);
         }

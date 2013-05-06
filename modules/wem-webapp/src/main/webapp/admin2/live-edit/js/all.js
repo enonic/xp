@@ -31,26 +31,35 @@ AdminLiveEdit.namespace.useNamespace = function (namespace, container) {
 };
 var liveedit;
 (function (liveedit) {
-    var Helper = (function () {
-        function Helper() { }
-        Helper.$ = $liveedit;
-        Helper.getDocumentSize = function getDocumentSize() {
-            var $document = Helper.$(document);
+    var DomHelper = (function () {
+        function DomHelper() { }
+        DomHelper.$ = $liveedit;
+        DomHelper.getDocumentSize = function getDocumentSize() {
+            var $document = DomHelper.$(document);
             return {
                 width: $document.width(),
                 height: $document.height()
             };
         };
-        Helper.getViewPortSize = function getViewPortSize() {
-            var $window = Helper.$(window);
+        DomHelper.getViewPortSize = function getViewPortSize() {
+            var $window = DomHelper.$(window);
             return {
                 width: $window.width(),
                 height: $window.height()
             };
         };
-        Helper.getDocumentScrollTop = function getDocumentScrollTop() {
-            return Helper.$(document).scrollTop();
+        DomHelper.getDocumentScrollTop = function getDocumentScrollTop() {
+            return DomHelper.$(document).scrollTop();
         };
+        return DomHelper;
+    })();
+    liveedit.DomHelper = DomHelper;    
+})(liveedit || (liveedit = {}));
+var liveedit;
+(function (liveedit) {
+    var Helper = (function () {
+        function Helper() { }
+        Helper.$ = $liveedit;
         Helper.getBoxModel = function getBoxModel(component) {
             var el = Helper.$(component);
             var offset = el.offset();
@@ -374,7 +383,7 @@ AdminLiveEdit.DragDropSort = ((function ($) {
             tolerance: 'pointer',
             cursor: 'move',
             cursorAt: cursorAt,
-            scrollSensitivity: Math.round(liveedit.Helper.getViewPortSize().height / 8),
+            scrollSensitivity: Math.round(liveedit.DomHelper.getViewPortSize().height / 8),
             placeholder: 'live-edit-drop-target-placeholder',
             helper: createDragHelper,
             zIndex: 1001000,
@@ -954,7 +963,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     proto.showForComponent = function ($component) {
         var me = this;
         $('.live-edit-shader').addClass('live-edit-animatable');
-        var documentSize = util.getDocumentSize(), docWidth = documentSize.width, docHeight = documentSize.height;
+        var documentSize = liveedit.DomHelper.getDocumentSize(), docWidth = documentSize.width, docHeight = documentSize.height;
         var boxModel = util.getBoxModel($component), x = boxModel.left, y = boxModel.top, w = boxModel.width, h = boxModel.height;
         me.$northShader.css({
             top: 0,
@@ -1210,7 +1219,6 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
             var $component = $(event.target).closest('[data-live-edit-type]');
             var componentInfo = util.getComponentInfo($component);
             var pos = me.getPosition(event);
-            console.log(componentInfo);
             me.getEl().css({
                 top: pos.y,
                 left: pos.x
@@ -1228,12 +1236,13 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     };
     proto.getPosition = function (event) {
         var t = this;
+        var domHelper = liveedit.DomHelper;
         var pageX = event.pageX;
         var pageY = event.pageY;
         var x = pageX + t.OFFSET_X;
         var y = pageY + t.OFFSET_Y;
-        var viewPortSize = util.getViewPortSize();
-        var scrollTop = util.getDocumentScrollTop();
+        var viewPortSize = domHelper.getViewPortSize();
+        var scrollTop = domHelper.getDocumentScrollTop();
         var toolTipWidth = t.getEl().width();
         var toolTipHeight = t.getEl().height();
         if(x + toolTipWidth > (viewPortSize.width - t.OFFSET_X * 2) - 50) {
@@ -1341,7 +1350,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         var me = this, componentInfo = util.getComponentInfo($component);
         me.$selectedComponent = $component;
         me.previousPagePositions = pagePosition;
-        me.previousPageSizes = util.getViewPortSize();
+        me.previousPageSizes = liveedit.DomHelper.getViewPortSize();
         me.updateTitleBar($component);
         me.updateMenuItemsForComponent($component);
         var pageXPosition = pagePosition.x - me.getEl().width() / 2, pageYPosition = pagePosition.y + 15;
@@ -1465,7 +1474,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     proto.handleWindowResize = function (event) {
         if(this.$selectedComponent) {
             var x = this.previousPagePositions.x, y = this.previousPagePositions.y;
-            x = x - (this.previousPageSizes.width - util.getViewPortSize().width);
+            x = x - (this.previousPageSizes.width - liveedit.DomHelper.getViewPortSize().width);
             this.moveToXY(x, y);
         }
     };

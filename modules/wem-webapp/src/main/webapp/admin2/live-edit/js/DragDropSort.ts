@@ -276,7 +276,7 @@ AdminLiveEdit.DragDropSort = (function ($) {
             tolerance: 'pointer',
             cursor: 'move',
             cursorAt: cursorAt,
-            scrollSensitivity: Math.round(liveedit.Helper.getViewPortSize().height / 8),
+            scrollSensitivity: Math.round(liveedit.DomHelper.getViewPortSize().height / 8),
             placeholder: 'live-edit-drop-target-placeholder',
             helper: createDragHelper,
             zIndex: 1001000,

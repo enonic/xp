@@ -7,7 +7,8 @@ declare var AdminLiveEdit;
 ///<reference path='../lib/jqueryui.d.ts' />
 
 ///<reference path='namespace.ts' />
-///<reference path='Helper.ts' />
+///<reference path='helper/DomHelper.ts' />
+///<reference path='helper/ComponentHelper.ts' />
 ///<reference path='MutationObserver.ts' />
 ///<reference path='DragDropSort.ts' />
 

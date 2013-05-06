@@ -94,7 +94,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
         $('.live-edit-shader').addClass('live-edit-animatable');
 
-        var documentSize = util.getDocumentSize(),
+        var documentSize = liveedit.DomHelper.getDocumentSize(),
             docWidth = documentSize.width,
             docHeight = documentSize.height;
 

@@ -13,16 +13,6 @@ interface BoxModel {
     paddingLeft: number;
 }
 
-interface DocumentSize {
-    width: number;
-    height: number;
-}
-
-interface ViewportSize {
-    width: number;
-    height: number;
-}
-
 interface ComponentInfo {
     type: String;
     key: String;
@@ -34,30 +24,6 @@ module liveedit {
     export class Helper {
 
         static $ = $liveedit;
-
-
-        static getDocumentSize():DocumentSize {
-            var $document = $(document);
-            return {
-                width: $document.width(),
-                height: $document.height()
-            };
-        }
-
-
-        static getViewPortSize():ViewportSize {
-            var $window = $(window);
-            return {
-                width: $window.width(),
-                height: $window.height()
-            };
-        }
-
-
-        static getDocumentScrollTop():number {
-            return $(document).scrollTop();
-        }
-
 
         static getBoxModel(component:JQuery):BoxModel {
             var el = $(component);
@@ -94,6 +60,7 @@ module liveedit {
         }
 
 
+        // TODO: Check for interface for $.position()
         static getPagePositionForComponent(component:JQuery):any {
             return $(component).position();
         }

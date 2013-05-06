@@ -91,12 +91,13 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
     proto.getPosition = function (event) {
         var t = this;
+        var domHelper = liveedit.DomHelper;
         var pageX = event.pageX;
         var pageY = event.pageY;
         var x = pageX + t.OFFSET_X;
         var y = pageY + t.OFFSET_Y;
-        var viewPortSize = util.getViewPortSize();
-        var scrollTop = util.getDocumentScrollTop();
+        var viewPortSize = domHelper.getViewPortSize();
+        var scrollTop = domHelper.getDocumentScrollTop();
         var toolTipWidth = t.getEl().width();
         var toolTipHeight = t.getEl().height();
 
