@@ -57,27 +57,47 @@ public class DataSet
     }
 
     /**
-     * Adds the given Property.
+     * Adds the given Value at given path. If the dataPath contains DataSet, then it will be created if not already existing.
+     *
+     * @return the added Property.
      */
-    public final void addProperty( final String path, final Value value )
+    public final Property addProperty( final String dataPath, final Value value )
     {
-        addProperty( DataPath.from( path ), value );
+        return addProperty( DataPath.from( dataPath ), value );
     }
 
     /**
-     * Adds the given Property.
+     * Adds the given Value at given path. If the dataPath contains DataSet, then it will be created if not already existing.
+     *
+     * @return the added Property.
      */
-    public final void addProperty( final DataPath path, final Value value )
+    public final Property addProperty( final DataPath dataPath, final Value value )
     {
-        if ( path.elementCount() > 1 )
+        if ( dataPath.elementCount() > 1 )
         {
-            final DataSet dataSet = findOrCreateDataSet( DataId.from( path.getFirstElement() ) );
-            dataSet.addProperty( path.asNewWithoutFirstPathElement(), value );
+            final DataSet dataSet = findOrCreateDataSet( DataId.from( dataPath.getFirstElement() ) );
+            return dataSet.addProperty( dataPath.asNewWithoutFirstPathElement(), value );
         }
         else
         {
-            final Property property = value.newProperty( path.getFirstElement().getName() );
+            final Property property = value.newProperty( dataPath.getFirstElement().getName() );
             doAdd( property );
+            return property;
+        }
+    }
+
+    private DataSet findOrCreateDataSet( final DataId dataId )
+    {
+        final Data exData = dataById.get( dataId );
+        if ( exData == null )
+        {
+            final DataSet dataSet = newDataSet().name( dataId.getName() ).build();
+            doAdd( dataSet );
+            return dataSet;
+        }
+        else
+        {
+            return exData.toDataSet();
         }
     }
 
@@ -94,25 +114,26 @@ public class DataSet
         dataById.put( data.getDataId(), data );
     }
 
-    public final void setProperty( final String path, final Value... values )
+    public final Property[] setProperty( final String path, final Value... values )
     {
-        setProperty( DataPath.from( path ), values );
+        return setProperty( DataPath.from( path ), values );
     }
 
-    public final void setProperty( final DataPath path, final Value... values )
+    public final Property[] setProperty( final DataPath path, final Value... values )
         throws InvalidDataException
     {
         if ( path.elementCount() > 1 )
         {
             final DataSet dataSet = findOrCreateDataSet( DataId.from( path.getFirstElement() ) );
-            dataSet.setProperty( path.asNewWithoutFirstPathElement(), values );
+            return dataSet.setProperty( path.asNewWithoutFirstPathElement(), values );
         }
         else
         {
+            Property[] properties = new Property[values.length];
             Preconditions.checkArgument( values.length > 0, "No values given for path: %s", path.toString() );
             if ( values.length == 1 )
             {
-                doSetProperty( DataId.from( path.getFirstElement() ), values[0] );
+                properties[0] = doSetProperty( DataId.from( path.getFirstElement() ), values[0] );
             }
             else
             {
@@ -124,13 +145,14 @@ public class DataSet
 
                 for ( int i = 0; i < values.length; i++ )
                 {
-                    doSetProperty( DataId.from( path.getFirstElement().getName(), i ), values[i] );
+                    properties[i] = doSetProperty( DataId.from( path.getFirstElement().getName(), i ), values[i] );
                 }
             }
+            return properties;
         }
     }
 
-    private void doSetProperty( final DataId dataId, final Value value )
+    private Property doSetProperty( final DataId dataId, final Value value )
     {
         Preconditions.checkNotNull( value, "No value given for Data: %s", dataId );
         final Data exData = dataById.get( dataId );
@@ -152,26 +174,13 @@ public class DataSet
             registerArray( newProperty );
 
             dataById.put( dataId, newProperty );
+            return newProperty;
         }
         else
         {
             final Property existingProperty = exData.toProperty();
             existingProperty.setValue( value );
-        }
-    }
-
-    private DataSet findOrCreateDataSet( final DataId dataId )
-    {
-        final Data exData = dataById.get( dataId );
-        if ( exData == null )
-        {
-            final DataSet dataSet = newDataSet().name( dataId.getName() ).build();
-            doAdd( dataSet );
-            return dataSet;
-        }
-        else
-        {
-            return exData.toDataSet();
+            return existingProperty;
         }
     }
 

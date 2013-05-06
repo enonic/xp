@@ -85,13 +85,30 @@ public class DataSetTest
     }
 
     @Test
-    public void add()
+    public void add_Property()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
         dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "A value" ).build() );
 
         assertEquals( "mySet.myData", dataSet.getProperty( "myData" ).getPath().toString() );
         assertEquals( "A value", dataSet.getProperty( "myData" ).getString() );
+    }
+
+    @Test
+    public void addProperty()
+    {
+        ContentData contentData = new ContentData();
+        Property addedPropertyA = contentData.addProperty( "propA", new Value.Text( "A value" ) );
+        Property addedPropertyB = contentData.addProperty( "mySet.propB", new Value.Text( "A second value" ) );
+
+        assertSame( addedPropertyA, contentData.getProperty( "propA" ) );
+        assertEquals( "propA", contentData.getProperty( "propA" ).getPath().toString() );
+        assertEquals( "A value", contentData.getProperty( "propA" ).getString() );
+
+        assertSame( addedPropertyB, contentData.getProperty( "mySet.propB" ) );
+        assertEquals( "mySet.propB", contentData.getProperty( "mySet.propB" ).getPath().toString() );
+        assertEquals( "A second value", contentData.getProperty( "mySet.propB" ).getString() );
+
     }
 
     @Test
