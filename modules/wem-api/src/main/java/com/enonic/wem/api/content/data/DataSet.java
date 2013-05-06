@@ -83,7 +83,6 @@ public class DataSet
 
     private void doAdd( final Data data )
     {
-        System.out.println( "*** doAdd - dataId: " + data.getDataId().getIndex() );
         if ( data.getParent() != null )
         {
             throw new IllegalArgumentException(
