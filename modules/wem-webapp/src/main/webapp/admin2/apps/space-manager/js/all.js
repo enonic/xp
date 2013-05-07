@@ -4893,7 +4893,7 @@ var app;
         })(api.event.Event);
         event.DeletedEvent = DeletedEvent;        
         function onDeleted(handler) {
-            api.event.on(DELETED, handler);
+            api.event.onEvent(DELETED, handler);
         }
         event.onDeleted = onDeleted;
     })(app.event || (app.event = {}));
@@ -4912,7 +4912,7 @@ var app;
         })(api.event.Event);
         event.DeletePromptEvent = DeletePromptEvent;        
         function onDeletePrompt(handler) {
-            api.event.on(DELETE_PROMPT, handler);
+            api.event.onEvent(DELETE_PROMPT, handler);
         }
         event.onDeletePrompt = onDeletePrompt;
     })(app.event || (app.event = {}));

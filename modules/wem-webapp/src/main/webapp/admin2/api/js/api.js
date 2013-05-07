@@ -282,6 +282,9 @@ var api;
             Event.prototype.getName = function () {
                 return this.name;
             };
+            Event.prototype.fire = function () {
+                event.fireEvent(this);
+            };
             return Event;
         })();
         event.Event = Event;        
@@ -293,14 +296,14 @@ var api;
     (function (event) {
         var bus = new Ext.util.Observable({
         });
-        function on(name, handler) {
+        function onEvent(name, handler) {
             bus.on(name, handler);
         }
-        event.on = on;
-        function fire(event) {
+        event.onEvent = onEvent;
+        function fireEvent(event) {
             bus.fireEvent(event.getName(), event);
         }
-        event.fire = fire;
+        event.fireEvent = fireEvent;
     })(api.event || (api.event = {}));
     var event = api.event;
 })(api || (api = {}));

@@ -14,9 +14,10 @@ module api.event {
         private name;
         constructor(name: string);
         public getName(): string;
+        public fire(): void;
     }
 }
 module api.event {
-    function on(name: string, handler: (event: Event) => void): void;
-    function fire(event: Event): void;
+    function onEvent(name: string, handler: (event: Event) => void): void;
+    function fireEvent(event: Event): void;
 }
