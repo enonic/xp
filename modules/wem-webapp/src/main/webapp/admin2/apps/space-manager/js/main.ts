@@ -63,6 +63,13 @@ declare var Ext;
 declare var Admin;
 declare var CONFIG;
 
+module APP {
+
+    // Application id for uniquely identifying app
+    export var id = 'space-manager';
+
+}
+
 module components {
     export var detailPanel:admin.ui.SpaceDetailPanel;
     export var gridPanel;
