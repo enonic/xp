@@ -1,4 +1,4 @@
-module admin.api.notify {
+module API.notify {
 
     class NotificationManager {
 
@@ -56,8 +56,8 @@ module admin.api.notify {
 
             this.render();
 
-            admin.api.message.addListener('showNotification', this.showNotification, this);
-            admin.api.message.addListener('removeNotification', this.removeNotification, this);
+            addListener('showNotification', this.showNotification, this);
+            addListener('removeNotification', this.removeNotification, this);
         }
 
 

@@ -1,4 +1,4 @@
-module admin.api.message {
+module API.notify {
 
     var messageBus = Ext.create('Ext.util.Observable');
 

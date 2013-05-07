@@ -1,15 +1,15 @@
-module admin.api.message {
+module API.notify {
     function showFeedback(message: String): void;
     function updateAppTabCount(appId, tabCount: Number): void;
     function addListener(name: String, func: Function, scope: any): void;
 }
-module admin.api.notify {
+module API.notify {
 }
-module admin.lib.uri {
+module API.util {
     var baseUri: String;
     function getAbsoluteUri(uri: String): String;
 }
-module api.event {
+module API.event {
     class Event {
         private name;
         constructor(name: string);
@@ -17,7 +17,7 @@ module api.event {
         public fire(): void;
     }
 }
-module api.event {
+module API.event {
     function onEvent(name: string, handler: (event: Event) => void): void;
     function fireEvent(event: Event): void;
 }

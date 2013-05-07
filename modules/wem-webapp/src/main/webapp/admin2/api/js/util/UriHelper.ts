@@ -1,4 +1,4 @@
-module admin.lib.uri {
+module API.util {
 
     /**
      * Base URI for administration console. Set from the initializing html page.

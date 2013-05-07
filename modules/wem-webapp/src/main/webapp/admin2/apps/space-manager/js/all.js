@@ -40,7 +40,7 @@ Ext.define('Admin.lib.RemoteService', {
     },
     init: function () {
         var config = {
-            "url": admin.lib.uri.getAbsoluteUri("admin/rest/jsonrpc"),
+            "url": API.util.getAbsoluteUri("admin/rest/jsonrpc"),
             "type": "jsonrpc",
             "namespace": "Admin.lib.RemoteService",
             "methods": [
@@ -237,6 +237,49 @@ Ext.define('Admin.lib.RemoteService', {
 }, function () {
     this.init();
 });
+var __extends = this.__extends || function (d, b) {
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var APP;
+(function (APP) {
+    (function (event) {
+        var DELETED = 'deleted';
+        var DeletedEvent = (function (_super) {
+            __extends(DeletedEvent, _super);
+            function DeletedEvent() {
+                        _super.call(this, DELETED);
+            }
+            return DeletedEvent;
+        })(API.event.Event);
+        event.DeletedEvent = DeletedEvent;        
+        function onDeleted(handler) {
+            API.event.onEvent(DELETED, handler);
+        }
+        event.onDeleted = onDeleted;
+    })(APP.event || (APP.event = {}));
+    var event = APP.event;
+})(APP || (APP = {}));
+var APP;
+(function (APP) {
+    (function (event) {
+        var DELETE_PROMPT = 'deletePrompt';
+        var DeletePromptEvent = (function (_super) {
+            __extends(DeletePromptEvent, _super);
+            function DeletePromptEvent() {
+                        _super.call(this, DELETE_PROMPT);
+            }
+            return DeletePromptEvent;
+        })(API.event.Event);
+        event.DeletePromptEvent = DeletePromptEvent;        
+        function onDeletePrompt(handler) {
+            API.event.onEvent(DELETE_PROMPT, handler);
+        }
+        event.onDeletePrompt = onDeletePrompt;
+    })(APP.event || (APP.event = {}));
+    var event = APP.event;
+})(APP || (APP = {}));
 Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
     extend: 'Ext.util.Observable',
     pluginId: 'persistentGridSelection',
@@ -3766,11 +3809,11 @@ Ext.define('Admin.view.TopBar', {
             items: [
                 {
                     xtype: 'adminImageButton',
-                    icon: admin.lib.uri.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                    icon: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
                     popupTpl: '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' + '<div class="content">' + '<div class="column"><img src="{photoUrl}"/>' + '<button class="x-btn-red-small">Log Out</button>' + '</div>' + '<div class="column">' + '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' + '<a href="#">Change User</a>' + '</div>' + '</div>',
                     popupData: {
                         userName: "Thomas Lund Sigdestad",
-                        photoUrl: admin.lib.uri.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                        photoUrl: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
                         qName: 'system/tsi'
                     }
                 }
@@ -3868,7 +3911,7 @@ Ext.define('Admin.view.TopBar', {
             var tabCount = this.tabMenu.getAllItems(false).length;
             this.titleButton.setVisible(tabCount > 0);
             this.titleButton.setCount(tabCount);
-            admin.api.message.updateAppTabCount(this.getApplicationId(), tabCount);
+            API.notify.updateAppTabCount(this.getApplicationId(), tabCount);
         }
     },
     getApplicationId: function () {
@@ -4399,6 +4442,7 @@ var admin;
                 deleteButton.iconAlign = 'top';
                 deleteButton.minWidth = 64;
                 tb.add(deleteButton);
+                new APP.event.DeletedEvent().fire();
             }
             return BrowseToolbar;
         })();
@@ -4765,10 +4809,10 @@ Ext.define('Admin.controller.DialogWindowController', {
         var onDelete = function (success, details) {
             win.close();
             if(success && details.deleted) {
-                admin.api.message.showFeedback(Ext.isArray(space) && space.length > 1 ? space.length + ' spaces were deleted' : '1 space was deleted');
+                API.notify.showFeedback(Ext.isArray(space) && space.length > 1 ? space.length + ' spaces were deleted' : '1 space was deleted');
             } else {
                 var message = details.reason;
-                admin.api.message.showFeedback(message);
+                API.notify.showFeedback(message);
             }
             me.getSpaceTreeGridPanel().refresh();
         };
@@ -4848,7 +4892,7 @@ Ext.define('Admin.controller.WizardController', {
                 if(closeWizard) {
                     me.getWizardTab().close();
                 }
-                admin.api.message.showFeedback('Space "' + spaceName + '" was saved');
+                API.notify.showFeedback('Space "' + spaceName + '" was saved');
                 me.getSpaceTreeGridPanel().refresh();
             }
         };
@@ -4860,7 +4904,7 @@ Ext.define('Admin.controller.WizardController', {
         var onDeleteSpaceSuccess = function (success, failures) {
             if(success) {
                 wizard.close();
-                admin.api.message.showFeedback('Space was deleted');
+                API.notify.showFeedback('Space was deleted');
             }
         };
         this.remoteDeleteSpace(space, onDeleteSpaceSuccess);
@@ -4875,49 +4919,6 @@ Ext.define('Admin.controller.WizardController', {
         return Ext.ComponentQuery.query('spaceAdminWizardToolbar', this.getWizardTab())[0];
     }
 });
-var __extends = this.__extends || function (d, b) {
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var app;
-(function (app) {
-    (function (event) {
-        var DELETED = 'deleted';
-        var DeletedEvent = (function (_super) {
-            __extends(DeletedEvent, _super);
-            function DeletedEvent() {
-                        _super.call(this, DELETED);
-            }
-            return DeletedEvent;
-        })(api.event.Event);
-        event.DeletedEvent = DeletedEvent;        
-        function onDeleted(handler) {
-            api.event.onEvent(DELETED, handler);
-        }
-        event.onDeleted = onDeleted;
-    })(app.event || (app.event = {}));
-    var event = app.event;
-})(app || (app = {}));
-var app;
-(function (app) {
-    (function (event) {
-        var DELETE_PROMPT = 'deletePrompt';
-        var DeletePromptEvent = (function (_super) {
-            __extends(DeletePromptEvent, _super);
-            function DeletePromptEvent() {
-                        _super.call(this, DELETE_PROMPT);
-            }
-            return DeletePromptEvent;
-        })(api.event.Event);
-        event.DeletePromptEvent = DeletePromptEvent;        
-        function onDeletePrompt(handler) {
-            api.event.onEvent(DELETE_PROMPT, handler);
-        }
-        event.onDeletePrompt = onDeletePrompt;
-    })(app.event || (app.event = {}));
-    var event = app.event;
-})(app || (app = {}));
 var components;
 (function (components) {
     components.detailPanel;

@@ -1,4 +1,4 @@
-module admin.api.handler {
+module API.handler {
 
     /**
      * This interface defines the contract between UI components and the actual delete operation.

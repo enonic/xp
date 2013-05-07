@@ -5,9 +5,10 @@
 ///<reference path='notify/MessageBus.ts' />
 ///<reference path='notify/NotificationManager.ts' />
 
-///<reference path='lib/UriHelper.ts' />
+///<reference path='util/UriHelper.ts' />
 
-///<reference path='event/module.ts' />
+///<reference path='event/Event.ts' />
+///<reference path='event/EventBus.ts' />
 
 
 declare var Ext;

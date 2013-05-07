@@ -3,6 +3,9 @@
 ///<reference path='lib/JsonRpcProvider.ts' />
 ///<reference path='lib/RemoteService.ts' />
 
+///<reference path='event/DeletedEvent.ts' />
+///<reference path='event/DeletePromptEvent.ts' />
+
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
 ///<reference path='plugin/fileupload/FileUploadGrid.ts' />
@@ -55,11 +58,11 @@
 ///<reference path='controller/DialogWindowController.ts' />
 ///<reference path='controller/WizardController.ts' />
 
-///<reference path='event/module.ts' />
 
 declare var Ext;
 declare var Admin;
 declare var CONFIG;
+
 
 module components {
     export var detailPanel:admin.ui.SpaceDetailPanel;
