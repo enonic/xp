@@ -1,23 +1,15 @@
-AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
+module liveedit.model {
+    var $ = $liveedit;
 
-(function ($) {
-    'use strict';
+    export class Content extends liveedit.model.Base {
+        constructor() {
+            super();
+            this.cssSelector = '[data-live-edit-type=content]';
+            this.attachMouseOverEvent();
+            this.attachMouseOutEvent();
+            this.attachClickEvent();
 
-    var contents = AdminLiveEdit.model.component.Content = function () {
-        this.cssSelector = '[data-live-edit-type=content]';
-        this.attachMouseOverEvent();
-        this.attachMouseOutEvent();
-        this.attachClickEvent();
-    };
-    // Inherit from Base prototype
-    contents.prototype = new AdminLiveEdit.model.component.Base();
-
-    // Fix constructor as it now is Base
-    // contents.constructor = contents;
-
-    var proto = contents.prototype;
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-
-}($liveedit));
+            console.log('Content model instantiated. Using jQuery ' + $().jquery);
+        }
+    }
+}

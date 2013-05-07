@@ -1,76 +1,143 @@
-AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
-
-(function ($) {
-    'use strict';
-
-    var regions = AdminLiveEdit.model.component.Region = function () {
-        this.cssSelector = '[data-live-edit-type=region]';
-        this.renderEmptyPlaceholders();
-
-        this.attachMouseOverEvent();
-        this.attachMouseOutEvent();
-        this.attachClickEvent();
-
-        this.registerGlobalListeners();
-    };
-
-    // Inherit from Base prototype
-    regions.prototype = new AdminLiveEdit.model.component.Base();
-
-    // Fix constructor as it now is Base
-    // regions.constructor = regions;
-
-    // Shorthand ref to the prototype
-    var proto = regions.prototype;
-
-    // uses
+module liveedit.model {
+    var $ = $liveedit;
     var componentHelper = liveedit.ComponentHelper;
 
+    export class Region extends liveedit.model.Base {
+        constructor() {
+            super();
 
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+            this.cssSelector = '[data-live-edit-type=region]';
+            this.renderEmptyPlaceholders();
+            this.attachMouseOverEvent();
+            this.attachMouseOutEvent();
+            this.attachClickEvent();
+            this.registerGlobalListeners();
 
-
-    proto.registerGlobalListeners = function () {
-        $(window).on('component.onSortUpdate', $.proxy(this.renderEmptyPlaceholders, this));
-        $(window).on('component.onSortOver', $.proxy(this.renderEmptyPlaceholders, this));
-        $(window).on('component.onRemove', $.proxy(this.renderEmptyPlaceholders, this));
-    };
-
-
-    proto.renderEmptyPlaceholders = function () {
-        var me = this;
-        me.removeAllRegionPlaceholders();
-        var $regions = me.getAll();
-        $regions.each(function (index) {
-            var $region = $(this);
-            var regionIsEmpty = me.isRegionEmpty.call(me, $region);
-            if (regionIsEmpty) {
-                me.appendEmptyPlaceholder.call(me, $region);
-            }
-        });
-    };
+            console.log('Region model instantiated. Using jQuery ' + $().jquery);
+        }
 
 
-    proto.appendEmptyPlaceholder = function ($region) {
-        var html = '<div>Drag components here</div>';
-        html += '<div style="font-size: 10px;">' + componentHelper.getComponentName($region) + '</div>';
-        var $placeholder = $('<div/>', {
-            'class': 'live-edit-empty-region-placeholder',
-            'html': html
-        });
-        $region.append($placeholder);
-    };
+        private registerGlobalListeners() {
+            $(window).on('component.onSortUpdate', $.proxy(this.renderEmptyPlaceholders, this));
+            $(window).on('component.onSortOver', $.proxy(this.renderEmptyPlaceholders, this));
+            $(window).on('component.onRemove', $.proxy(this.renderEmptyPlaceholders, this));
+        }
 
 
-    proto.isRegionEmpty = function ($region) {
-        var hasNotParts = $region.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
-        var hasNotDropTargetPlaceholder = $region.children('.live-edit-drop-target-placeholder').length === 0;
-        return hasNotParts && hasNotDropTargetPlaceholder;
-    };
+        private renderEmptyPlaceholders() {
+            var me = this;
+            me.removeAllRegionPlaceholders();
+            var $regions = me.getAll();
+            $regions.each(function (index) {
+                var $region = $(this);
+                var regionIsEmpty = me.isRegionEmpty.call(me, $region);
+                if (regionIsEmpty) {
+                    me.appendEmptyPlaceholder.call(me, $region);
+                }
+            });
+        }
 
 
-    proto.removeAllRegionPlaceholders = function () {
-        $('.live-edit-empty-region-placeholder').remove();
-    };
+        private appendEmptyPlaceholder($region) {
+            var html = '<div>Drag components here</div>';
+            html += '<div style="font-size: 10px;">' + componentHelper.getComponentName($region) + '</div>';
+            var $placeholder = $('<div/>', {
+                'class': 'live-edit-empty-region-placeholder',
+                'html': html
+            });
+            $region.append($placeholder);
+        }
 
-}($liveedit));
+
+        private isRegionEmpty($region) {
+            var hasNotParts = $region.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
+            var hasNotDropTargetPlaceholder = $region.children('.live-edit-drop-target-placeholder').length === 0;
+            return hasNotParts && hasNotDropTargetPlaceholder;
+        }
+
+
+        private removeAllRegionPlaceholders() {
+            $('.live-edit-empty-region-placeholder').remove();
+        }
+
+    }
+}
+
+/*
+ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
+
+ (function ($) {
+ 'use strict';
+
+ var regions = AdminLiveEdit.model.component.Region = function () {
+ this.cssSelector = '[data-live-edit-type=region]';
+ this.renderEmptyPlaceholders();
+
+ this.attachMouseOverEvent();
+ this.attachMouseOutEvent();
+ this.attachClickEvent();
+
+ this.registerGlobalListeners();
+ };
+
+ // Inherit from Base prototype
+ regions.prototype = new AdminLiveEdit.model.component.Base();
+
+ // Fix constructor as it now is Base
+ // regions.constructor = regions;
+
+ // Shorthand ref to the prototype
+ var proto = regions.prototype;
+
+ // uses
+ var componentHelper = liveedit.ComponentHelper;
+
+
+ // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+
+ proto.registerGlobalListeners = function () {
+ $(window).on('component.onSortUpdate', $.proxy(this.renderEmptyPlaceholders, this));
+ $(window).on('component.onSortOver', $.proxy(this.renderEmptyPlaceholders, this));
+ $(window).on('component.onRemove', $.proxy(this.renderEmptyPlaceholders, this));
+ };
+
+
+ proto.renderEmptyPlaceholders = function () {
+ var me = this;
+ me.removeAllRegionPlaceholders();
+ var $regions = me.getAll();
+ $regions.each(function (index) {
+ var $region = $(this);
+ var regionIsEmpty = me.isRegionEmpty.call(me, $region);
+ if (regionIsEmpty) {
+ me.appendEmptyPlaceholder.call(me, $region);
+ }
+ });
+ };
+
+
+ proto.appendEmptyPlaceholder = function ($region) {
+ var html = '<div>Drag components here</div>';
+ html += '<div style="font-size: 10px;">' + componentHelper.getComponentName($region) + '</div>';
+ var $placeholder = $('<div/>', {
+ 'class': 'live-edit-empty-region-placeholder',
+ 'html': html
+ });
+ $region.append($placeholder);
+ };
+
+
+ proto.isRegionEmpty = function ($region) {
+ var hasNotParts = $region.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
+ var hasNotDropTargetPlaceholder = $region.children('.live-edit-drop-target-placeholder').length === 0;
+ return hasNotParts && hasNotDropTargetPlaceholder;
+ };
+
+
+ proto.removeAllRegionPlaceholders = function () {
+ $('.live-edit-empty-region-placeholder').remove();
+ };
+
+ }($liveedit));
+ */

@@ -9,7 +9,11 @@ declare var AdminLiveEdit;
 ///<reference path='namespace.ts' />
 ///<reference path='helper/DomHelper.ts' />
 ///<reference path='helper/ComponentHelper.ts' />
+
+/*
 ///<reference path='MutationObserver.ts' />
+*/
+
 ///<reference path='DragDropSort.ts' />
 
 ///<reference path='model/component/Base.ts' />
@@ -19,15 +23,16 @@ declare var AdminLiveEdit;
 ///<reference path='model/component/Part.ts' />
 ///<reference path='model/component/Content.ts' />
 ///<reference path='model/component/Paragraph.ts' />
+
 ///<reference path='ui/Base.ts' />
 ///<reference path='ui/HtmlElementReplacer.ts' />
 ///<reference path='ui/htmleditor/Editor.ts' />
-///<reference path='ui/htmleditor/Toolbar.ts' />
+///<reference path='ui/htmleditor/EditorToolbar.ts' />
 ///<reference path='ui/Shader.ts' />
 ///<reference path='ui/Cursor.ts' />
-
 ///<reference path='ui/Highlighter.ts' />
 ///<reference path='ui/ToolTip.ts' />
+
 ///<reference path='ui/menu/Menu.ts' />
 ///<reference path='ui/menu/BaseButton.ts' />
 ///<reference path='ui/menu/ParentButton.ts' />
@@ -40,7 +45,9 @@ declare var AdminLiveEdit;
 ///<reference path='ui/menu/ViewButton.ts' />
 ///<reference path='ui/menu/SettingsButton.ts' />
 ///<reference path='ui/menu/RemoveButton.ts' />
+
 ///<reference path='ui/componentbar/ComponentBar.ts' />
+
 
 (function ($) {
     'use strict';
@@ -50,22 +57,21 @@ declare var AdminLiveEdit;
         $('.live-edit-loader-splash-container').fadeOut('fast', function () {
             $(this).remove();
 
-            new AdminLiveEdit.model.component.Page();
-            new AdminLiveEdit.model.component.Region();
-            new AdminLiveEdit.model.component.Layout();
-            new AdminLiveEdit.model.component.Part();
-            new AdminLiveEdit.model.component.Content();
-            new AdminLiveEdit.model.component.Paragraph();
+            new liveedit.model.Page();
+            new liveedit.model.Region();
+            new liveedit.model.Layout();
+            new liveedit.model.Part();
+            new liveedit.model.Paragraph();
+            new liveedit.model.Content();
 
-            new AdminLiveEdit.view.HtmlElementReplacer();
-            new AdminLiveEdit.view.Highlighter();
-            new AdminLiveEdit.view.ToolTip();
-            new AdminLiveEdit.view.Cursor();
-            new AdminLiveEdit.view.menu.Menu();
-            new AdminLiveEdit.view.Shader();
-            new AdminLiveEdit.view.htmleditor.Editor();
-            new AdminLiveEdit.view.componentbar.ComponentBar();
-            new AdminLiveEdit.MutationObserver();
+            new liveedit.ui.HtmlElementReplacer();
+            new liveedit.ui.Highlighter();
+            new liveedit.ui.ToolTip();
+            new liveedit.ui.Cursor();
+            new liveedit.ui.Menu();
+            new liveedit.ui.Shader();
+            new liveedit.ui.Editor();
+            new liveedit.ui.ComponentBar();
 
             AdminLiveEdit.DragDropSort.initialize();
 

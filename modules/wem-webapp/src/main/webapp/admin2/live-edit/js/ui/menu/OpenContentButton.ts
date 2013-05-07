@@ -1,3 +1,43 @@
+module liveedit.ui {
+    var $ = $liveedit;
+
+    export class OpenContentButton extends liveedit.ui.BaseButton {
+
+        private menu = null;
+
+        constructor(menu) {
+            super();
+
+            this.menu = menu;
+            this.init();
+        }
+
+        init() {
+
+            var me = this;
+
+            var $button = me.createButton({
+                text: 'Open in new tab',
+                id: 'live-edit-button-opencontent',
+                cls: 'live-edit-component-menu-button',
+                handler: function (event) {
+                    event.stopPropagation();
+
+                    /*
+                     if (window.parent.Admin && window.parent.Admin.MessageBus) {
+                     // @TODO: [RYA] Should content in format (ContentModel.js) present here. Way to receive it: get by ID
+                     window.parent.Admin.MessageBus.liveEditOpenContent();
+                     }
+                     */
+                }
+            });
+
+            me.appendTo(me.menu.getEl());
+            me.menu.buttons.push(me);
+        }
+    }
+}
+/*
 AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
 (function ($) {
@@ -31,12 +71,6 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
             handler: function (event) {
                 event.stopPropagation();
 
-                /*
-                if (window.parent.Admin && window.parent.Admin.MessageBus) {
-                    // @TODO: [RYA] Should content in format (ContentModel.js) present here. Way to receive it: get by ID
-                    window.parent.Admin.MessageBus.liveEditOpenContent();
-                }
-                */
             }
         });
 
@@ -45,3 +79,4 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     };
 
 }($liveedit));
+*/
