@@ -57,95 +57,32 @@ public class DataSet
     }
 
     /**
-     * Adds the given Property.
+     * Adds the given Value at given path. If the dataPath contains DataSet, then it will be created if not already existing.
+     *
+     * @return the added Property.
      */
-    public final void addProperty( final String path, final Value value )
+    public final Property addProperty( final String dataPath, final Value value )
     {
-        addProperty( DataPath.from( path ), value );
+        return addProperty( DataPath.from( dataPath ), value );
     }
 
     /**
-     * Adds the given Property.
+     * Adds the given Value at given path. If the dataPath contains DataSet, then it will be created if not already existing.
+     *
+     * @return the added Property.
      */
-    public final void addProperty( final DataPath path, final Value value )
+    public final Property addProperty( final DataPath dataPath, final Value value )
     {
-        if ( path.elementCount() > 1 )
+        if ( dataPath.elementCount() > 1 )
         {
-            final DataSet dataSet = findOrCreateDataSet( DataId.from( path.getFirstElement() ) );
-            dataSet.addProperty( path.asNewWithoutFirstPathElement(), value );
+            final DataSet dataSet = findOrCreateDataSet( DataId.from( dataPath.getFirstElement() ) );
+            return dataSet.addProperty( dataPath.asNewWithoutFirstPathElement(), value );
         }
         else
         {
-            final Property property = value.newProperty( path.getFirstElement().getName() );
+            final Property property = value.newProperty( dataPath.getFirstElement().getName() );
             doAdd( property );
-        }
-    }
-
-    private void doAdd( final Data data )
-    {
-        if ( data.getParent() != null )
-        {
-            throw new IllegalArgumentException(
-                "Data [" + data.getName() + "] already added to another parent: " + data.getParent().getPath().toString() );
-        }
-        data.setParent( this );
-        registerArray( data );
-        dataById.put( data.getDataId(), data );
-    }
-
-    public final void setProperty( final String path, final Value... values )
-    {
-        setProperty( DataPath.from( path ), values );
-    }
-
-    public final void setProperty( final DataPath path, final Value... values )
-        throws InvalidDataException
-    {
-        if ( path.elementCount() > 1 )
-        {
-            final DataSet dataSet = findOrCreateDataSet( DataId.from( path.getFirstElement() ) );
-            dataSet.setProperty( path.asNewWithoutFirstPathElement(), values );
-        }
-        else
-        {
-            Preconditions.checkArgument( values.length > 0, "No values given for path: %s", path.toString() );
-            if ( values.length == 1 )
-            {
-                doSetProperty( DataId.from( path.getFirstElement() ), values[0] );
-            }
-            else
-            {
-                if ( path.getFirstElement().hasIndex() )
-                {
-                    Preconditions.checkArgument( path.getFirstElement().getIndex() > 0,
-                                                 "Cannot set array at to another starting index than zero: %s", path.toString() );
-                }
-
-                for ( int i = 0; i < values.length; i++ )
-                {
-                    doSetProperty( DataId.from( path.getFirstElement().getName(), i ), values[i] );
-                }
-            }
-        }
-    }
-
-    private void doSetProperty( final DataId dataId, final Value value )
-    {
-        Preconditions.checkNotNull( value, "No value given for Data: %s", dataId );
-        final Data exData = dataById.get( dataId );
-
-        if ( exData == null )
-        {
-            final Property newProperty = value.newProperty( dataId.getName() );
-            newProperty.setParent( this );
-            registerArray( newProperty );
-            dataById.put( dataId, newProperty );
-        }
-        else
-        {
-            exData.toProperty().setValue( value );
-            DataArray array = arrayByDataName.get( exData.getName() );
-            array.set( exData.getArrayIndex(), exData );
+            return property;
         }
     }
 
@@ -161,6 +98,89 @@ public class DataSet
         else
         {
             return exData.toDataSet();
+        }
+    }
+
+    private void doAdd( final Data data )
+    {
+        if ( data.getParent() != null )
+        {
+            throw new IllegalArgumentException(
+                "Data [" + data.getName() + "] already added to another parent: " + data.getParent().getPath().toString() );
+        }
+        data.setParent( this );
+        data.setArrayIndex( dataCount( data.getName() ) );
+        registerArray( data );
+        dataById.put( data.getDataId(), data );
+    }
+
+    public final Property[] setProperty( final String path, final Value... values )
+    {
+        return setProperty( DataPath.from( path ), values );
+    }
+
+    public final Property[] setProperty( final DataPath path, final Value... values )
+        throws InvalidDataException
+    {
+        if ( path.elementCount() > 1 )
+        {
+            final DataSet dataSet = findOrCreateDataSet( DataId.from( path.getFirstElement() ) );
+            return dataSet.setProperty( path.asNewWithoutFirstPathElement(), values );
+        }
+        else
+        {
+            Property[] properties = new Property[values.length];
+            Preconditions.checkArgument( values.length > 0, "No values given for path: %s", path.toString() );
+            if ( values.length == 1 )
+            {
+                properties[0] = doSetProperty( DataId.from( path.getFirstElement() ), values[0] );
+            }
+            else
+            {
+                if ( path.getFirstElement().hasIndex() )
+                {
+                    Preconditions.checkArgument( path.getFirstElement().getIndex() > 0,
+                                                 "Cannot set array at to another starting index than zero: %s", path.toString() );
+                }
+
+                for ( int i = 0; i < values.length; i++ )
+                {
+                    properties[i] = doSetProperty( DataId.from( path.getFirstElement().getName(), i ), values[i] );
+                }
+            }
+            return properties;
+        }
+    }
+
+    private Property doSetProperty( final DataId dataId, final Value value )
+    {
+        Preconditions.checkNotNull( value, "No value given for Data: %s", dataId );
+        final Data exData = dataById.get( dataId );
+
+        if ( exData == null )
+        {
+            final int expectedIndex = dataCount( dataId.getName() );
+            if ( dataId.getIndex() != expectedIndex )
+            {
+                throw new IllegalArgumentException(
+                    "Property [" + dataId + "] expected to be given a successive index [" + expectedIndex + "]: " +
+                        dataId.getIndex() );
+            }
+
+            final Property newProperty = value.newProperty( dataId.getName() );
+            newProperty.setParent( this );
+            newProperty.setArrayIndex( dataId.getIndex() );
+
+            registerArray( newProperty );
+
+            dataById.put( dataId, newProperty );
+            return newProperty;
+        }
+        else
+        {
+            final Property existingProperty = exData.toProperty();
+            existingProperty.setValue( value );
+            return existingProperty;
         }
     }
 
@@ -389,16 +409,6 @@ public class DataSet
     {
         final DataArray dataArray = arrayByDataName.get( data.getName() );
         return dataArray.size() > 1;
-    }
-
-    public final int getArrayIndex( final Data data )
-    {
-        final DataArray dataArray = arrayByDataName.get( data.getName() );
-        if ( dataArray == null )
-        {
-            return -1;
-        }
-        return dataArray.getIndex( data );
     }
 
     public final DataArray getArray( final Data data )

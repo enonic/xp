@@ -20,7 +20,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     var proto = shader.prototype;
 
     // Uses
-    var util = AdminLiveEdit.Util;
+    var componentHelper = liveedit.ComponentHelper;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -69,7 +69,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
         me.$selectedComponent = $component;
 
-        if (util.getComponentType($component) === 'page') {
+        if (componentHelper.getComponentType($component) === 'page') {
             me.showForPage($component);
         } else {
             me.showForComponent($component);
@@ -94,11 +94,11 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
         $('.live-edit-shader').addClass('live-edit-animatable');
 
-        var documentSize = util.getDocumentSize(),
+        var documentSize = liveedit.DomHelper.getDocumentSize(),
             docWidth = documentSize.width,
             docHeight = documentSize.height;
 
-        var boxModel = util.getBoxModel($component),
+        var boxModel = componentHelper.getBoxModel($component),
             x = boxModel.left,
             y = boxModel.top,
             w = boxModel.width,

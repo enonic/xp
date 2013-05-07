@@ -23,7 +23,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
     var proto = toolbar.prototype;
 
     // Uses
-    var util = AdminLiveEdit.Util;
+    var componentHelper = liveedit.ComponentHelper;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -144,7 +144,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
     // Rename
     proto.getDefaultPosition = function () {
         var me = this;
-        var componentBox = util.getBoxModel(me.$selectedComponent),
+        var componentBox = componentHelper.getBoxModel(me.$selectedComponent),
             leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2),
             topPos = componentBox.top - me.getEl().height() - 25;
 

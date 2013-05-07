@@ -39,7 +39,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     var proto = menu.prototype;
 
     // Uses
-    var util = AdminLiveEdit.Util;
+    var componentHelper = liveedit.ComponentHelper;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -91,11 +91,11 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
     proto.show = function (event, $component, pagePosition) {
         var me = this,
-            componentInfo = util.getComponentInfo($component);
+            componentInfo = componentHelper.getComponentInfo($component);
 
         me.$selectedComponent = $component;
         me.previousPagePositions = pagePosition;
-        me.previousPageSizes = util.getViewPortSize();
+        me.previousPageSizes = liveedit.DomHelper.getViewPortSize();
 
         me.updateTitleBar($component);
 
@@ -158,9 +158,9 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
 
     proto.updateMenuItemsForComponent = function ($component) {
-        var componentType = util.getComponentType($component);
+        var componentType = componentHelper.getComponentType($component);
         if (this.buttonConfig.hasOwnProperty(componentType)) {
-            var buttonArray = this.buttonConfig[componentType];
+            var buttonArray = this.getConfigForButton(componentType);
             var buttons = this.getButtons();
 
             var i;
@@ -179,7 +179,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
 
     proto.updateTitleBar = function ($component) {
-        var componentInfo = util.getComponentInfo($component);
+        var componentInfo = componentHelper.getComponentInfo($component);
         this.setIcon(componentInfo.type);
         this.setTitle(componentInfo.name);
     };
@@ -239,6 +239,11 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     };
 
 
+    proto.getConfigForButton = function (componentType) {
+        return this.buttonConfig[componentType];
+    };
+
+
     proto.getIconElement = function () {
         return $('.live-edit-component-menu-title-icon', this.getEl());
     };
@@ -264,7 +269,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
             var x = this.previousPagePositions.x,
                 y = this.previousPagePositions.y;
 
-            x = x - (this.previousPageSizes.width - util.getViewPortSize().width);
+            x = x - (this.previousPageSizes.width - liveedit.DomHelper.getViewPortSize().width);
 
             this.moveToXY(x, y);
         }

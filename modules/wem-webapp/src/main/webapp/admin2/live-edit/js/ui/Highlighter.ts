@@ -21,7 +21,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     var proto = highlighter.prototype;
 
     // Uses
-    var util = AdminLiveEdit.Util;
+    var componentHelper = liveedit.ComponentHelper;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -63,7 +63,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     proto.selectComponent = function (event, $component) {
         var me = this;
         me.$selectedComponent = $component;
-        var componentType = util.getComponentType($component);
+        var componentType = componentHelper.getComponentType($component);
 
         // Move CSS class manipulation to model base
         $('.live-edit-selected-component').removeClass('live-edit-selected-component');
@@ -110,9 +110,9 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
     proto.resizeBorderToComponent = function ($component) {
         var me = this;
-        var componentType = util.getComponentType($component);
-        var componentTagName = util.getTagNameForComponent($component);
-        var componentBoxModel = util.getBoxModel($component);
+        var componentType = componentHelper.getComponentType($component);
+        var componentTagName = componentHelper.getTagNameForComponent($component);
+        var componentBoxModel = componentHelper.getBoxModel($component);
         var w       = Math.round(componentBoxModel.width);
         var h       = Math.round(componentBoxModel.height);
         var top     = Math.round(componentBoxModel.top);
@@ -146,7 +146,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
 
     proto.getStyleForComponent = function ($component) {
-        var componentType = util.getComponentType($component);
+        var componentType = componentHelper.getComponentType($component);
 
         var strokeColor,
             strokeDashArray,

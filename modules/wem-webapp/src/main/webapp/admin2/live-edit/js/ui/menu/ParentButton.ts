@@ -19,7 +19,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     var proto = parentButton.prototype;
 
     // Uses
-    var util = AdminLiveEdit.Util;
+    var componentHelper = liveedit.ComponentHelper;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -44,7 +44,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
                     // We could move this code to menu show.
                     // The position needs to be updated after menu is updated with info in order to get the right dimensions (width) of the menu.
                     var menuWidth = me.menu.getEl().outerWidth();
-                    var componentBox = util.getBoxModel($parent),
+                    var componentBox = componentHelper.getBoxModel($parent),
                         newMenuPosition = {x: componentBox.left + (componentBox.width / 2) - (menuWidth / 2), y: componentBox.top + 10};
 
                     me.menu.moveToXY(newMenuPosition.x, newMenuPosition.y);
@@ -58,7 +58,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
 
     proto.scrollComponentIntoView = function ($component) {
-        var componentTopPosition = util.getPagePositionForComponent($component).top;
+        var componentTopPosition = componentHelper.getPagePositionForComponent($component).top;
         if (componentTopPosition <= window.pageYOffset) {
             $('html, body').animate({scrollTop: componentTopPosition - 10}, 200);
         }

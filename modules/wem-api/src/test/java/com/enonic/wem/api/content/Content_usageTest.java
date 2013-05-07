@@ -37,7 +37,7 @@ import static junit.framework.Assert.assertTrue;
 public class Content_usageTest
 {
     @Test
-    public void dataSet_setData()
+    public void dataSet_setProperty()
     {
         DataSet dataSet = new ContentData();
 
@@ -54,6 +54,40 @@ public class Content_usageTest
         assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getValueType() );
         assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getValueType() );
         assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
+    }
+
+    @Test
+    public void dataSet_setProperty_with_array_of_Values()
+    {
+        DataSet dataSet = new ContentData();
+
+        // exercise
+        dataSet.setProperty( "myText", new Value.Text( "aaa" ), new Value.Text( "bbb" ), new Value.Text( "ccc" ) );
+
+        // verify
+        assertEquals( "aaa", dataSet.getProperty( "myText" ).getString( 0 ) );
+        assertEquals( "bbb", dataSet.getProperty( "myText" ).getString( 1 ) );
+        assertEquals( "ccc", dataSet.getProperty( "myText" ).getString( 2 ) );
+    }
+
+    @Test
+    public void dataSet_setProperty_with_DataPath_containing_DataSet()
+    {
+        DataSet dataSet = new ContentData();
+
+        // exercise
+        dataSet.setProperty( "mySet.myText", new Value.Text( "abc" ) );
+        dataSet.setProperty( "mySet.myNum", new Value.WholeNumber( 123 ) );
+        dataSet.setProperty( "mySet.myDate", new Value.Date( new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.setProperty( "mySet.myDec", new Value.DecimalNumber( 123.123 ) );
+        dataSet.setProperty( "mySet.myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
+
+        // verify
+        assertEquals( "mySet.myText", dataSet.getProperty( "mySet.myText" ).getPath().toString() );
+        assertEquals( "mySet.myNum", dataSet.getProperty( "mySet.myNum" ).getPath().toString() );
+        assertEquals( "mySet.myDate", dataSet.getProperty( "mySet.myDate" ).getPath().toString() );
+        assertEquals( "mySet.myDec", dataSet.getProperty( "mySet.myDec" ).getPath().toString() );
+        assertEquals( "mySet.myHtml", dataSet.getProperty( "mySet.myHtml" ).getPath().toString() );
     }
 
     @Test

@@ -22,7 +22,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     var proto = toolTip.prototype;
 
     // Uses
-    var util = AdminLiveEdit.Util;
+    var componentHelper = liveedit.ComponentHelper;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -66,7 +66,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
             }
 
             var $component = $(event.target).closest('[data-live-edit-type]');
-            var componentInfo = util.getComponentInfo($component);
+            var componentInfo = componentHelper.getComponentInfo($component);
             var pos = me.getPosition(event);
 
             me.getEl().css({
@@ -91,18 +91,20 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
     proto.getPosition = function (event) {
         var t = this;
+        var domHelper = liveedit.DomHelper;
         var pageX = event.pageX;
         var pageY = event.pageY;
         var x = pageX + t.OFFSET_X;
         var y = pageY + t.OFFSET_Y;
-        var viewPortSize = util.getViewPortSize();
-        var scrollTop = util.getDocumentScrollTop();
+        var viewPortSize = domHelper.getViewPortSize();
+        var scrollTop = domHelper.getDocumentScrollTop();
         var toolTipWidth = t.getEl().width();
         var toolTipHeight = t.getEl().height();
 
         if (x + toolTipWidth > (viewPortSize.width - t.OFFSET_X * 2) - 50) {
             x = pageX - toolTipWidth - (t.OFFSET_X * 2);
         }
+
         if (y + toolTipHeight > (viewPortSize.height + scrollTop - t.OFFSET_Y * 2)) {
             y = pageY - toolTipHeight - (t.OFFSET_Y * 2);
         }

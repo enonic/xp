@@ -59,6 +59,10 @@ declare var Ext;
 declare var Admin;
 declare var CONFIG;
 
+module components {
+    export var detailPanel:admin.ui.SpaceDetailPanel;
+}
+
 Ext.application({
     name: 'spaceAdmin',
 
@@ -84,18 +88,13 @@ Ext.application({
         grid.region = 'center';
         grid.flex = 1;
 
-        var detail = new Admin.view.DetailPanel();
-        detail.region = 'south';
-        detail.split = true;
-        detail.collapsible = true;
-        detail.header = false;
-        detail.flex = 1;
+        var detail = components.detailPanel = new admin.ui.SpaceDetailPanel('south');
 
         var center = new Ext.container.Container();
         center.region = 'center';
         center.layout = 'border';
 
-        center.add(detail);
+        center.add(detail.ext);
         center.add(grid);
         center.add(toolbar.ext);
 
@@ -125,63 +124,6 @@ Ext.application({
         wp.cls = 'admin-viewport';
 
         wp.add(tabPanel);
-
-
-        /*        Ext.create('Ext.container.Viewport', {
-         layout: 'fit',
-         cls: 'admin-viewport',
-         items: [
-         {
-         xtype: 'cmsTabPanel',
-         appName: 'Space Admin',
-         appIconCls: 'icon-metro-space-admin-24',
-         items: [
-         {
-         id: 'tab-browse',
-         title: 'Browse',
-         closable: false,
-         border: false,
-         xtype: 'panel',
-         layout: 'border',
-         tabConfig: {
-         hidden: true
-         },
-         items: <any[]>[
-         {
-         region: 'west',
-         xtype: 'spaceFilter',
-         width: 200
-         },
-         {
-         region: 'center',
-         xtype: 'container',
-         layout: 'border',
-         items: [
-         {
-         region: 'north',
-         xtype: 'spaceBrowseToolbar'
-         },
-         {
-         region: 'center',
-         xtype: 'spaceTreeGrid',
-         flex: 1
-         },
-         {
-         region: 'south',
-         split: true,
-         collapsible: true,
-         header: false,
-         xtype: 'spaceDetail',
-         flex: 1
-         }
-         ]
-         }
-         ]
-         }
-         ]
-         }
-         ]
-         });*/
     }
 
 });

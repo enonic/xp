@@ -85,13 +85,30 @@ public class DataSetTest
     }
 
     @Test
-    public void add()
+    public void add_Property()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
         dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "A value" ).build() );
 
         assertEquals( "mySet.myData", dataSet.getProperty( "myData" ).getPath().toString() );
         assertEquals( "A value", dataSet.getProperty( "myData" ).getString() );
+    }
+
+    @Test
+    public void addProperty()
+    {
+        ContentData contentData = new ContentData();
+        Property addedPropertyA = contentData.addProperty( "propA", new Value.Text( "A value" ) );
+        Property addedPropertyB = contentData.addProperty( "mySet.propB", new Value.Text( "A second value" ) );
+
+        assertSame( addedPropertyA, contentData.getProperty( "propA" ) );
+        assertEquals( "propA", contentData.getProperty( "propA" ).getPath().toString() );
+        assertEquals( "A value", contentData.getProperty( "propA" ).getString() );
+
+        assertSame( addedPropertyB, contentData.getProperty( "mySet.propB" ) );
+        assertEquals( "mySet.propB", contentData.getProperty( "mySet.propB" ).getPath().toString() );
+        assertEquals( "A second value", contentData.getProperty( "mySet.propB" ).getString() );
+
     }
 
     @Test
@@ -284,7 +301,7 @@ public class DataSetTest
     }
 
     @Test
-    public void setData_root_set_with_one_data()
+    public void setProperty_root_set_with_one_data()
     {
         DataSet dataSet = new ContentData();
         dataSet.setProperty( DataPath.from( "myData" ), new Value.Text( "1" ) );
@@ -295,7 +312,7 @@ public class DataSetTest
     }
 
     @Test
-    public void setData_root_set_with_two_entries()
+    public void setProperty_root_set_with_two_entries()
     {
         DataSet dataSet = new ContentData();
         dataSet.setProperty( DataPath.from( "myData1" ), new Value.Text( "1" ) );
@@ -306,7 +323,7 @@ public class DataSetTest
     }
 
     @Test
-    public void setData_subSet_with_two_entries()
+    public void setProperty_subSet_with_two_entries()
     {
         DataSet dataSet = new ContentData();
         dataSet.setProperty( DataPath.from( "set.myData1" ), new Value.Text( "1" ) );
@@ -317,7 +334,7 @@ public class DataSetTest
     }
 
     @Test
-    public void setData_given_one_data_added_and_a_second_data_with_same_name_set_at_index_one_then_array_is_created()
+    public void setProperty_given_one_data_added_and_a_second_data_with_same_name_set_at_index_one_then_array_is_created()
     {
         DataSet dataSet = new ContentData();
         dataSet.add( Property.newProperty().name( "myArray" ).type( ValueTypes.TEXT ).value( "1" ).build() );
@@ -328,7 +345,7 @@ public class DataSetTest
     }
 
     @Test
-    public void setData_given_array_index_set_twice_then_value_of_last_is_returned()
+    public void setProperty_given_array_index_set_twice_then_value_of_last_is_returned()
     {
         DataSet dataSet = new ContentData();
         dataSet.add( Property.newProperty().name( "myArray" ).type( ValueTypes.TEXT ).value( "1" ).build() );
@@ -342,7 +359,7 @@ public class DataSetTest
     }
 
     @Test
-    public void setData_xx()
+    public void setProperty_xx()
     {
         DataSet dataSet = new ContentData();
 
@@ -351,6 +368,36 @@ public class DataSetTest
 
         // verify
         assertEquals( new Long( 123 ), dataSet.getProperty( "myData" ).getLong() );
+    }
+
+    @Test
+    public void setProperty_given_unsuccessive_index_then_IllegalArgumentException_is_thrown()
+    {
+        DataSet rootSet = new ContentData();
+        rootSet.setProperty( "myText[0]", new Value.Text( "My value 1" ) );
+        try
+        {
+            rootSet.setProperty( "myText[2]", new Value.Text( "My value 2" ) );
+            fail( "Expected exception" );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( e instanceof IllegalArgumentException );
+            assertEquals( "Property [myText[2]] expected to be given a successive index [1]: 2", e.getMessage() );
+        }
+    }
+
+    @Test
+    public void getProperty_given_equal_values_at_successive_indexes_then_property_has_successive_indexes()
+    {
+        DataSet dataSet = new ContentData();
+        Value.WholeNumber value1 = new Value.WholeNumber( 0 );
+        Value.WholeNumber value2 = new Value.WholeNumber( 0 );
+        dataSet.setProperty( "mySet.prop", value1 );
+        dataSet.setProperty( "mySet.prop[1]", value2 );
+
+        assertEquals( 0, dataSet.getProperty( "mySet.prop[0]" ).getArrayIndex() );
+        assertEquals( 1, dataSet.getProperty( "mySet.prop[1]" ).getArrayIndex() );
     }
 
     @Test
