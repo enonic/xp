@@ -9,7 +9,7 @@ module app.event {
     }
 
     export function onDeleted(handler:(event:DeletedEvent) => void) {
-        api.event.on(DELETED, handler);
+        api.event.onEvent(DELETED, handler);
     }
 
 }

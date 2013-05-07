@@ -8,8 +8,9 @@ module app.event {
         }
     }
 
-    export function onDeletePrompt(handler:(event:DeletedEvent) => void) {
-        api.event.on(DELETE_PROMPT, handler);
+    export function onDeletePrompt(handler:(event:DeletePromptEvent) => void) {
+        api.event.onEvent(DELETE_PROMPT, handler);
     }
 
 }
+

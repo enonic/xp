@@ -10,6 +10,10 @@ module api.event {
         getName():string {
             return this.name;
         }
+
+        fire() {
+            fireEvent(this);
+        }
     }
 
 }
