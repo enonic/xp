@@ -1,4 +1,3 @@
-
 module APP.event {
 
     var DELETED:string = 'deleted';

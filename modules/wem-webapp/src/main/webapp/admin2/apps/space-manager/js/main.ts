@@ -63,9 +63,9 @@ declare var Ext;
 declare var Admin;
 declare var CONFIG;
 
-
 module components {
     export var detailPanel:admin.ui.SpaceDetailPanel;
+    export var gridPanel;
 }
 
 Ext.application({
@@ -89,7 +89,7 @@ Ext.application({
 
         var toolbar = new admin.ui.BrowseToolbar('north');
 
-        var grid = new Admin.view.TreeGridPanel();
+        var grid = components.gridPanel = new Admin.view.TreeGridPanel();
         grid.region = 'center';
         grid.flex = 1;
 
@@ -129,6 +129,8 @@ Ext.application({
         wp.cls = 'admin-viewport';
 
         wp.add(tabPanel);
+
+        new admin.ui.DeleteSpaceWindow();
     }
 
 });

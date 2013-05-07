@@ -302,7 +302,6 @@ module admin.ui {
 
         private changeTab(selectedTab) {
             var currentTab = this.getTab(selectedTab);
-            console.log(currentTab);
             if (currentTab) {
                 var target = this.center;
                 // This clears the center everytime we click. This might not be the fastest solution.

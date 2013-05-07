@@ -19,6 +19,15 @@ module admin.ui {
                            '</div>';
 
         constructor() {
+            this.initComponent();
+
+            APP.event.onDeletePrompt((event) => {
+                this.setModel(event.getModel());
+                this.doShow();
+            });
+        }
+
+        private initComponent() {
             var deleteCallback = (obj, success, result) => {
                 this.container.hide();
                 //TODO: Fire event
@@ -59,25 +68,23 @@ module admin.ui {
             var deleteButton = new Ext.button.Button();
             deleteButton.text = 'Delete';
             deleteButton.margin = '0 0 0 10';
-            deleteButton.handler = (btn, evt) => {
+            deleteButton.setHandler((btn, evt) => {
                 this.deleteHandler.doDelete(this.data, deleteCallback);
-            };
+            });
 
             buttonRow.add(deleteButton);
 
             var cancelButton = new Ext.button.Button();
             cancelButton.text = 'Cancel';
             cancelButton.margin = '0 0 0 10';
-            cancelButton.handler = (btn, evt) => {
+            cancelButton.setHandler(() => {
                 ct.hide();
-            };
+            });
 
             buttonRow.add(cancelButton);
 
             ct.add(buttonRow);
         }
-
-    ;
 
 
         setModel(model) {
