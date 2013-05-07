@@ -10,8 +10,6 @@ Ext.define('Admin.view.BaseDetailPanel', {
     cls: 'admin-preview-panel admin-detail',
     border: false,
 
-    showToolbar: true,
-
     isVertical: false,
     isFullPage: false,
 
@@ -44,9 +42,6 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
 
     initComponent: function () {
-        if (this.showToolbar) {
-            this.tbar = this.createToolBar();
-        }
 
         if (this.isVertical) {
             this.cls = this.cls + 'admin-detail-vertical';
@@ -314,25 +309,6 @@ Ext.define('Admin.view.BaseDetailPanel', {
             },
             tpl: this.getSmallBoxTemplate(),
             data: data
-        };
-    },
-
-    /*
-     * Toolbar
-     */
-
-    createToolBar: function () {
-        return {
-            xtype: 'toolbar',
-            itemId: 'defaultToolbar',
-            cls: 'admin-white-toolbar',
-            items: [
-                {
-                    xtype: 'tbtext',
-                    itemId: 'selectionTxt',
-                    text: 'Stub text'
-                }
-            ]
         };
     },
 

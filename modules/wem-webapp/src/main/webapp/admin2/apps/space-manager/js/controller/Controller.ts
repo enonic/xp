@@ -9,10 +9,6 @@ Ext.define('Admin.controller.Controller', {
         'Admin.model.SpaceModel'
     ],
 
-    views: [
-        'Admin.view.DetailPanel'
-    ],
-
     requires: [
         'Admin.lib.RemoteService'
     ],
@@ -51,14 +47,16 @@ Ext.define('Admin.controller.Controller', {
         var activeTab = tabs.setActiveTab(me.generateTabId(space, true));
 
         if (!activeTab) {
-            var tabItem = {
-                id: me.generateTabId(space, false),
-                xtype: 'spaceDetail',
-                showToolbar: false,
-                data: space,
-                title: space.get('displayName'),
-                isFullPage: true
-            };
+            var tabItem = new admin.ui.SpaceDetailPanel();
+
+            /*    {
+             id: me.generateTabId(space, false),
+             xtype: 'spaceDetail',
+             showToolbar: false,
+             data: space,
+             title: space.get('displayName'),
+             isFullPage: true
+             };*/
             tabs.addTab(tabItem);
         }
     },
@@ -146,7 +144,7 @@ Ext.define('Admin.controller.Controller', {
     },
 
     getSpaceDetailPanel: function () {
-        return Ext.ComponentQuery.query('spaceDetail')[0];
+        return components.detailPanel;
     },
 
     deleteSpaceWindow: null,
