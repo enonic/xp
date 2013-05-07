@@ -1,5 +1,3 @@
-/* Test */
-
 /**
  * Copyright (c) 2011 Tapasvi Moturu, http://code.google.com/p/namespace-js/
  *
