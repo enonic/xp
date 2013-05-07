@@ -2,13 +2,15 @@
  * Main file for all admin API classes and methods.
  */
 
-///<reference path='notify/MessageBus.ts' />
-///<reference path='notify/NotificationManager.ts' />
-
 ///<reference path='util/UriHelper.ts' />
 
 ///<reference path='event/Event.ts' />
 ///<reference path='event/EventBus.ts' />
+
+///<reference path='notify/Message.ts' />
+///<reference path='notify/NotifyManager.ts' />
+///<reference path='notify/NotifyOpts.ts' />
+///<reference path='notify/MessageBus.ts' />
 
 
 declare var Ext;

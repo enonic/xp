@@ -28,7 +28,7 @@ Ext.define('Admin.controller.DialogWindowController', {
                     : '1 space was deleted');
 
             } else {
-                var message:String = details.reason;
+                var message:string = details.reason;
                 API.notify.showFeedback(message);
 
             }
