@@ -9,3 +9,14 @@ module admin.lib.uri {
     var baseUri: String;
     function getAbsoluteUri(uri: String): String;
 }
+module api.event {
+    class Event {
+        private name;
+        constructor(name: string);
+        public getName(): string;
+    }
+}
+module api.event {
+    function on(name: string, handler: (event: Event) => void): void;
+    function fire(event: Event): void;
+}

@@ -7,6 +7,9 @@
 
 ///<reference path='lib/UriHelper.ts' />
 
+///<reference path='event/module.ts' />
+
+
 declare var Ext;
 declare var Admin;
 

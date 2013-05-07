@@ -272,6 +272,38 @@ var admin;
     })(admin.lib || (admin.lib = {}));
     var lib = admin.lib;
 })(admin || (admin = {}));
+var api;
+(function (api) {
+    (function (event) {
+        var Event = (function () {
+            function Event(name) {
+                this.name = name;
+            }
+            Event.prototype.getName = function () {
+                return this.name;
+            };
+            return Event;
+        })();
+        event.Event = Event;        
+    })(api.event || (api.event = {}));
+    var event = api.event;
+})(api || (api = {}));
+var api;
+(function (api) {
+    (function (event) {
+        var bus = new Ext.util.Observable({
+        });
+        function on(name, handler) {
+            bus.on(name, handler);
+        }
+        event.on = on;
+        function fire(event) {
+            bus.fireEvent(event.getName(), event);
+        }
+        event.fire = fire;
+    })(api.event || (api.event = {}));
+    var event = api.event;
+})(api || (api = {}));
 Ext.Loader.setConfig({
     enabled: false,
     disableCaching: false

@@ -55,6 +55,8 @@
 ///<reference path='controller/DialogWindowController.ts' />
 ///<reference path='controller/WizardController.ts' />
 
+///<reference path='event/module.ts' />
+
 declare var Ext;
 declare var Admin;
 declare var CONFIG;

@@ -4,7 +4,7 @@ AdminLiveEdit.namespace = AdminLiveEdit.namespace || function () {
 };
 AdminLiveEdit.namespace.prototype.constructor = new AdminLiveEdit();
 AdminLiveEdit.namespace.useNamespace = function (namespace, container) {
-    if (namespace === undefined || namespace === '') {
+    if(namespace === undefined || namespace === '') {
         return;
     }
     var separator = '.';
@@ -12,16 +12,16 @@ AdminLiveEdit.namespace.useNamespace = function (namespace, container) {
     var o = container || window;
     var i;
     var len;
-    if (ns.length > 0) {
+    if(ns.length > 0) {
         o[ns[0]] = o[ns[0]] || function () {
         };
-        if (o[ns[0]].prototype.constructor == undefined) {
+        if(o[ns[0]].prototype.constructor == undefined) {
             o[ns[0]].prototype.constructor = new o();
         }
     }
     var remainingNs = '';
-    for (i = 1 , len = ns.length; i < len; i++) {
-        if (i === 1) {
+    for(i = 1 , len = ns.length; i < len; i++) {
+        if(i === 1) {
             remainingNs = ns[1];
         } else {
             remainingNs = remainingNs + separator + ns[i];
@@ -32,9 +32,7 @@ AdminLiveEdit.namespace.useNamespace = function (namespace, container) {
 var liveedit;
 (function (liveedit) {
     var DomHelper = (function () {
-        function DomHelper() {
-        }
-
+        function DomHelper() { }
         DomHelper.$ = $liveedit;
         DomHelper.getDocumentSize = function getDocumentSize() {
             var $document = DomHelper.$(document);
@@ -55,14 +53,12 @@ var liveedit;
         };
         return DomHelper;
     })();
-    liveedit.DomHelper = DomHelper;
+    liveedit.DomHelper = DomHelper;    
 })(liveedit || (liveedit = {}));
 var liveedit;
 (function (liveedit) {
     var ComponentHelper = (function () {
-        function ComponentHelper() {
-        }
-
+        function ComponentHelper() { }
         ComponentHelper.$ = $liveedit;
         ComponentHelper.getBoxModel = function getBoxModel(component) {
             var el = ComponentHelper.$(component);
@@ -126,7 +122,7 @@ var liveedit;
         };
         return ComponentHelper;
     })();
-    liveedit.ComponentHelper = ComponentHelper;
+    liveedit.ComponentHelper = ComponentHelper;    
 })(liveedit || (liveedit = {}));
 AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.MutationObserver');
 ((function ($) {
@@ -145,7 +141,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.MutationObserver');
     proto.observe = function (event, $component) {
         var me = this;
         var isAlreadyObserved = me.$observedComponent && me.$observedComponent[0] === $component[0];
-        if (isAlreadyObserved) {
+        if(isAlreadyObserved) {
             return;
         }
         me.disconnect(event);
@@ -163,15 +159,13 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.MutationObserver');
         });
     };
     proto.onMutate = function (summaries, event) {
-        if (summaries && summaries[0]) {
-            var $targetComponent = $(summaries[0].target), targetComponentIsSelected = $targetComponent.hasClass('live-edit-selected-component'), componentIsNotSelectedAndMouseIsOver = !targetComponentIsSelected &&
-                                                                                                                                                                                         event.type ===
-                                                                                                                                                                                         'component.mouseOver', componentIsParagraphAndBeingEdited = $targetComponent.attr('contenteditable');
-            if (componentIsParagraphAndBeingEdited) {
+        if(summaries && summaries[0]) {
+            var $targetComponent = $(summaries[0].target), targetComponentIsSelected = $targetComponent.hasClass('live-edit-selected-component'), componentIsNotSelectedAndMouseIsOver = !targetComponentIsSelected && event.type === 'component.mouseOver', componentIsParagraphAndBeingEdited = $targetComponent.attr('contenteditable');
+            if(componentIsParagraphAndBeingEdited) {
                 $(window).trigger('component.onParagraphEdit', [
                     $targetComponent
                 ]);
-            } else if (componentIsNotSelectedAndMouseIsOver) {
+            } else if(componentIsNotSelectedAndMouseIsOver) {
                 $(window).trigger('component.mouseOver', [
                     $targetComponent
                 ]);
@@ -185,11 +179,11 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.MutationObserver');
     proto.disconnect = function (event) {
         var targetComponentIsSelected = (this.$observedComponent && this.$observedComponent.hasClass('live-edit-selected-component'));
         var componentIsSelectedAndUserMouseOut = event.type === 'component.mouseOut' && targetComponentIsSelected;
-        if (componentIsSelectedAndUserMouseOut) {
+        if(componentIsSelectedAndUserMouseOut) {
             return;
         }
         this.$observedComponent = null;
-        if (this.mutationObserver) {
+        if(this.mutationObserver) {
             this.mutationObserver.disconnect();
             this.mutationObserver = null;
         }
@@ -212,25 +206,18 @@ AdminLiveEdit.DragDropSort = ((function ($) {
     var partSelector = '[data-live-edit-type=part]';
     var paragraphSelector = '[data-live-edit-type=paragraph]';
     var itemsToSortSelector = layoutSelector + ',' + partSelector + ',' + paragraphSelector;
-
     function enableDragDrop() {
         $(regionSelector).sortable('enable');
     }
-
     function disableDragDrop() {
         $(regionSelector).sortable('disable');
     }
-
     function getDragHelperHtml(text) {
-        return '<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' +
-               '    <img id="live-edit-drag-helper-status-icon" src="../../../admin2/live-edit/images/drop-no.gif"/>' +
-               '    <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' + '</div>';
+        return '<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' + '    <img id="live-edit-drag-helper-status-icon" src="../../../admin2/live-edit/images/drop-no.gif"/>' + '    <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' + '</div>';
     }
-
     function setDragHelperText(text) {
         $('#live-edit-drag-helper-text').text(text);
     }
-
     function createComponentBarDraggables() {
         var $componentBarComponents = $('.live-edit-component');
         var draggableOptions = {
@@ -247,7 +234,7 @@ AdminLiveEdit.DragDropSort = ((function ($) {
             },
             start: function (event, ui) {
                 $(window).trigger('component.onDragStart', [
-                    event,
+                    event, 
                     ui
                 ]);
                 setDragHelperText($(event.target).data('live-edit-component-name'));
@@ -255,7 +242,7 @@ AdminLiveEdit.DragDropSort = ((function ($) {
             },
             stop: function (event, ui) {
                 $(window).trigger('component.onDragStop', [
-                    event,
+                    event, 
                     ui
                 ]);
                 isDragging = false;
@@ -263,23 +250,18 @@ AdminLiveEdit.DragDropSort = ((function ($) {
         };
         $componentBarComponents.draggable(draggableOptions);
     }
-
     function createDragHelper(event, helper) {
         return $(getDragHelperHtml(componentHelper.getComponentName(helper)));
     }
-
     function refreshSortable() {
         $(regionSelector).sortable('refresh');
     }
-
     function updateHelperStatusIcon(status) {
         $('#live-edit-drag-helper-status-icon').attr('src', '../../../admin2/live-edit/images/drop-' + status + '.gif');
     }
-
     function targetIsPlaceholder($target) {
         return $target.hasClass('live-edit-drop-target-placeholder');
     }
-
     function handleSortStart(event, ui) {
         isDragging = true;
         var componentIsSelected = ui.item.hasClass('live-edit-selected-component');
@@ -288,83 +270,72 @@ AdminLiveEdit.DragDropSort = ((function ($) {
         ui.placeholder.html('Drop component here' + '<div style="font-size: 10px;">' + targetComponentName + '</div>');
         refreshSortable();
         $(window).trigger('component.onSortStart', [
-            event,
+            event, 
             ui
         ]);
     }
-
     function handleDragOver(event, ui) {
         event.stopPropagation();
-        var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' || ui.item.data('live-edit-type') ===
-                                                                                                    'layout', isDraggingOverLayoutComponent = ui.placeholder.closest(layoutSelector).length >
-                                                                                                                                              0;
-        if (draggedItemIsLayoutComponent && isDraggingOverLayoutComponent) {
+        var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' || ui.item.data('live-edit-type') === 'layout', isDraggingOverLayoutComponent = ui.placeholder.closest(layoutSelector).length > 0;
+        if(draggedItemIsLayoutComponent && isDraggingOverLayoutComponent) {
             updateHelperStatusIcon('no');
             ui.placeholder.hide();
         } else {
             updateHelperStatusIcon('yes');
             $(window).trigger('component.onSortOver', [
-                event,
+                event, 
                 ui
             ]);
         }
     }
-
     function handleDragOut(event, ui) {
-        if (targetIsPlaceholder($(event.srcElement))) {
+        if(targetIsPlaceholder($(event.srcElement))) {
             removePaddingFromLayoutComponent();
         }
         updateHelperStatusIcon('no');
         $(window).trigger('component.onSortOut', [
-            event,
+            event, 
             ui
         ]);
     }
-
     function handleSortChange(event, ui) {
         addPaddingToLayoutComponent($(event.target));
         updateHelperStatusIcon('yes');
         ui.placeholder.show();
         $(window).trigger('component.onSortChange', [
-            event,
+            event, 
             ui
         ]);
     }
-
     function handleSortUpdate(event, ui) {
         $(window).trigger('component.onSortUpdate', [
-            event,
+            event, 
             ui
         ]);
     }
-
     function handleSortStop(event, ui) {
         isDragging = false;
         removePaddingFromLayoutComponent();
-        var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' || ui.item.data('live-edit-type') ===
-                                                                                                    'layout', targetIsInLayoutComponent = $(event.target).closest(layoutSelector).length >
-                                                                                                                                          0;
-        if (draggedItemIsLayoutComponent && targetIsInLayoutComponent) {
+        var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' || ui.item.data('live-edit-type') === 'layout', targetIsInLayoutComponent = $(event.target).closest(layoutSelector).length > 0;
+        if(draggedItemIsLayoutComponent && targetIsInLayoutComponent) {
             ui.item.remove();
         }
-        if (liveedit.ComponentHelper.supportsTouch()) {
+        if(liveedit.ComponentHelper.supportsTouch()) {
             $(window).trigger('component.mouseOut');
         }
         var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
         $(window).trigger('component.onSortStop', [
-            event,
-            ui,
+            event, 
+            ui, 
             wasSelectedOnDragStart
         ]);
         ui.item.removeData('live-edit-selected-on-drag-start');
     }
-
     function itemIsDraggedFromComponentBar(item) {
         return item.hasClass('live-edit-component');
     }
-
     function handleReceive(event, ui) {
-        if (itemIsDraggedFromComponentBar(ui.item)) {
+        if(itemIsDraggedFromComponentBar(ui.item)) {
             var $componentBarComponent = $(this).children('.live-edit-component');
             var componentKey = $componentBarComponent.data('live-edit-component-key');
             var componentType = $componentBarComponent.data('live-edit-component-type');
@@ -374,23 +345,20 @@ AdminLiveEdit.DragDropSort = ((function ($) {
                 url: url,
                 cache: false
             }).done(function (html) {
-                    $componentBarComponent.replaceWith(html);
-                    if (componentType === 'layout') {
-                        createSortable();
-                    }
-                    $(window).trigger('component.onSortUpdate');
-                });
+                $componentBarComponent.replaceWith(html);
+                if(componentType === 'layout') {
+                    createSortable();
+                }
+                $(window).trigger('component.onSortUpdate');
+            });
         }
     }
-
     function addPaddingToLayoutComponent($component) {
         $component.closest(layoutSelector).addClass('live-edit-component-padding');
     }
-
     function removePaddingFromLayoutComponent() {
         $('.live-edit-component-padding').removeClass('live-edit-component-padding');
     }
-
     function registerGlobalListeners() {
         $(window).on('componentBar.dataLoaded', function () {
             createComponentBarDraggables();
@@ -398,7 +366,7 @@ AdminLiveEdit.DragDropSort = ((function ($) {
         $(window).on('component.onSelect', function (event, $component) {
         });
         $(window).on('component.onDeselect', function () {
-            if (liveedit.ComponentHelper.supportsTouch() && !isDragging) {
+            if(liveedit.ComponentHelper.supportsTouch() && !isDragging) {
                 disableDragDrop();
             }
         });
@@ -409,7 +377,6 @@ AdminLiveEdit.DragDropSort = ((function ($) {
             $(regionSelector).sortable('option', 'cancel', '');
         });
     }
-
     function createSortable() {
         $(regionSelector).sortable({
             revert: false,
@@ -433,12 +400,10 @@ AdminLiveEdit.DragDropSort = ((function ($) {
             stop: handleSortStop
         });
     }
-
     function init() {
         createSortable();
         registerGlobalListeners();
     }
-
     return {
         initialize: init,
         enable: enableDragDrop,
@@ -461,7 +426,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
                 var $component = $(this);
                 var targetIsUiComponent = me.isLiveEditUiComponent($(event.target));
                 var cancelEvents = targetIsUiComponent || me.hasComponentSelected() || AdminLiveEdit.DragDropSort.isDragging();
-                if (cancelEvents) {
+                if(cancelEvents) {
                     return;
                 }
                 event.stopPropagation();
@@ -473,7 +438,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
         attachMouseOutEvent: function () {
             var me = this;
             $(document).on('mouseout', function () {
-                if (me.hasComponentSelected()) {
+                if(me.hasComponentSelected()) {
                     return;
                 }
                 $(window).trigger('component.mouseOut');
@@ -482,14 +447,13 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
         attachClickEvent: function () {
             var me = this;
             $(document).on('click contextmenu touchstart', me.cssSelector, function (event) {
-                if (me.isLiveEditUiComponent($(event.target))) {
+                if(me.isLiveEditUiComponent($(event.target))) {
                     return;
                 }
                 event.stopPropagation();
                 event.preventDefault();
-                var $component = $(event.currentTarget), componentIsSelected = $component.hasClass('live-edit-selected-component'), pageHasComponentSelected = $('.live-edit-selected-component').length >
-                                                                                                                                                               0;
-                if (componentIsSelected || pageHasComponentSelected) {
+                var $component = $(event.currentTarget), componentIsSelected = $component.hasClass('live-edit-selected-component'), pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
+                if(componentIsSelected || pageHasComponentSelected) {
                     $(window).trigger('component.onDeselect');
                 } else {
                     var pagePosition = {
@@ -497,7 +461,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
                         y: event.pageY
                     };
                     $(window).trigger('component.onSelect', [
-                        $component,
+                        $component, 
                         pagePosition
                     ]);
                 }
@@ -550,7 +514,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
         $regions.each(function (index) {
             var $region = $(this);
             var regionIsEmpty = me.isRegionEmpty.call(me, $region);
-            if (regionIsEmpty) {
+            if(regionIsEmpty) {
                 me.appendEmptyPlaceholder.call(me, $region);
             }
         });
@@ -612,7 +576,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
         this.getAll().each(function (index) {
             var $part = $(this);
             var partIsEmpty = t.isPartEmpty($part);
-            if (partIsEmpty) {
+            if(partIsEmpty) {
                 t.appendEmptyPlaceholder($part);
             }
         });
@@ -664,17 +628,17 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
         var me = this;
         event.stopPropagation();
         event.preventDefault();
-        if (me.$selectedParagraph && !(me.currentMode === me.modes.EDIT)) {
+        if(me.$selectedParagraph && !(me.currentMode === me.modes.EDIT)) {
             me.$selectedParagraph.css('cursor', '');
         }
         var $paragraph = $(event.currentTarget);
-        if (!$paragraph.is(me.$selectedParagraph)) {
+        if(!$paragraph.is(me.$selectedParagraph)) {
             me.currentMode = me.modes.UNSELECTED;
         }
         me.$selectedParagraph = $paragraph;
-        if (me.currentMode === me.modes.UNSELECTED) {
+        if(me.currentMode === me.modes.UNSELECTED) {
             me.setSelectMode(event);
-        } else if (me.currentMode === me.modes.SELECTED) {
+        } else if(me.currentMode === me.modes.SELECTED) {
             me.setEditMode(event);
         } else {
         }
@@ -683,7 +647,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
         var me = this;
         me.$selectedParagraph.css('cursor', 'url(../../../admin2/live-edit/images/pencil.png) 0 40, text');
         me.currentMode = me.modes.SELECTED;
-        if (window.getSelection) {
+        if(window.getSelection) {
             window.getSelection().removeAllRanges();
         }
         var pagePosition = {
@@ -691,7 +655,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
             y: event.pageY
         };
         $(window).trigger('component.onSelect', [
-            me.$selectedParagraph,
+            me.$selectedParagraph, 
             pagePosition
         ]);
         $(window).trigger('component.onParagraphSelect', [
@@ -709,7 +673,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
     };
     proto.leaveEditMode = function (event) {
         var me = this, $paragraph = me.$selectedParagraph;
-        if ($paragraph === null) {
+        if($paragraph === null) {
             return;
         }
         $(window).trigger('component.onParagraphEditLeave', [
@@ -738,7 +702,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
             return this.$element;
         },
         appendTo: function ($parent) {
-            if ($parent.length > 0 && this.$element.length > 0) {
+            if($parent.length > 0 && this.$element.length > 0) {
                 $parent.append(this.$element);
             }
         },
@@ -752,7 +716,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     'use strict';
     var htmlElementReplacer = AdminLiveEdit.view.HtmlElementReplacer = function () {
         this.elements = [
-            'iframe',
+            'iframe', 
             'object'
         ];
         this.replaceElementsWithPlaceholders();
@@ -790,14 +754,14 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     };
     proto.getElementWidth = function ($element) {
         var attrWidth = $element.attr('width');
-        if (!attrWidth) {
+        if(!attrWidth) {
             return $element.width() - 2;
         }
         return attrWidth;
     };
     proto.getElementHeight = function ($element) {
         var attrHeight = $element.attr('height');
-        if (!attrHeight) {
+        if(!attrHeight) {
             return $element.height() - 2;
         }
         return attrHeight;
@@ -811,7 +775,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     proto.resolveIconCssClass = function ($element) {
         var tagName = $element[0].tagName.toLowerCase();
         var clsName = '';
-        if (tagName === 'iframe') {
+        if(tagName === 'iframe') {
             clsName = 'live-edit-iframe';
         } else {
             clsName = 'live-edit-object';
@@ -869,22 +833,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
     };
     proto.addView = function () {
         var me = this;
-        var html = '<div class="live-edit-editor-toolbar live-edit-arrow-bottom" style="display: none">' +
-                   '    <button data-tag="paste" class="live-edit-editor-button"></button>' +
-                   '    <button data-tag="insertUnorderedList" class="live-edit-editor-button"></button>' +
-                   '    <button data-tag="insertOrderedList" class="live-edit-editor-button"></button>' +
-                   '    <button data-tag="link" class="live-edit-editor-button"></button>' +
-                   '    <button data-tag="cut" class="live-edit-editor-button"></button>' +
-                   '    <button data-tag="strikeThrough" class="live-edit-editor-button"></button>' +
-                   '    <button data-tag="bold" class="live-edit-editor-button"></button>' +
-                   '    <button data-tag="underline" class="live-edit-editor-button"></button>' +
-                   '    <button data-tag="italic" class="live-edit-editor-button"></button>' +
-                   '    <button data-tag="superscript" class="live-edit-editor-button"></button>' +
-                   '    <button data-tag="subscript" class="live-edit-editor-button"></button>' +
-                   '    <button data-tag="justifyLeft" class="live-edit-editor-button"></button>' +
-                   '    <button data-tag="justifyCenter" class="live-edit-editor-button"></button>' +
-                   '    <button data-tag="justifyRight" class="live-edit-editor-button"></button>' +
-                   '    <button data-tag="justifyFull" class="live-edit-editor-button"></button>' + '</div>';
+        var html = '<div class="live-edit-editor-toolbar live-edit-arrow-bottom" style="display: none">' + '    <button data-tag="paste" class="live-edit-editor-button"></button>' + '    <button data-tag="insertUnorderedList" class="live-edit-editor-button"></button>' + '    <button data-tag="insertOrderedList" class="live-edit-editor-button"></button>' + '    <button data-tag="link" class="live-edit-editor-button"></button>' + '    <button data-tag="cut" class="live-edit-editor-button"></button>' + '    <button data-tag="strikeThrough" class="live-edit-editor-button"></button>' + '    <button data-tag="bold" class="live-edit-editor-button"></button>' + '    <button data-tag="underline" class="live-edit-editor-button"></button>' + '    <button data-tag="italic" class="live-edit-editor-button"></button>' + '    <button data-tag="superscript" class="live-edit-editor-button"></button>' + '    <button data-tag="subscript" class="live-edit-editor-button"></button>' + '    <button data-tag="justifyLeft" class="live-edit-editor-button"></button>' + '    <button data-tag="justifyCenter" class="live-edit-editor-button"></button>' + '    <button data-tag="justifyRight" class="live-edit-editor-button"></button>' + '    <button data-tag="justifyFull" class="live-edit-editor-button"></button>' + '</div>';
         me.createElement(html);
         me.appendTo($('body'));
     };
@@ -893,14 +842,14 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
         me.getEl().on('click', function (event) {
             event.stopPropagation();
             var tag = event.target.getAttribute('data-tag');
-            if (tag) {
+            if(tag) {
                 $(window).trigger('editorToolbar.onButtonClick', [
                     tag
                 ]);
             }
         });
         $(window).scroll(function () {
-            if (me.$selectedComponent) {
+            if(me.$selectedComponent) {
                 me.updatePosition();
             }
         });
@@ -919,12 +868,12 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
     };
     proto.updatePosition = function () {
         var me = this;
-        if (!me.$selectedComponent) {
+        if(!me.$selectedComponent) {
             return;
         }
         var defaultPosition = me.getDefaultPosition();
         var stick = $(window).scrollTop() >= me.$selectedComponent.offset().top - 60;
-        if (stick) {
+        if(stick) {
             me.getEl().css({
                 position: 'fixed',
                 top: 10,
@@ -942,7 +891,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
     };
     proto.toggleArrowPosition = function (showArrowAtTop) {
         var me = this;
-        if (showArrowAtTop) {
+        if(showArrowAtTop) {
             me.getEl().removeClass('live-edit-arrow-bottom').addClass('live-edit-arrow-top');
         } else {
             me.getEl().removeClass('live-edit-arrow-top').addClass('live-edit-arrow-bottom');
@@ -950,11 +899,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.htmleditor');
     };
     proto.getDefaultPosition = function () {
         var me = this;
-        var componentBox = componentHelper.getBoxModel(me.$selectedComponent), leftPos = componentBox.left + (componentBox.width / 2 -
-                                                                                                              me.getEl().outerWidth() /
-                                                                                                              2), topPos = componentBox.top -
-                                                                                                                           me.getEl().height() -
-                                                                                                                           25;
+        var componentBox = componentHelper.getBoxModel(me.$selectedComponent), leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2), topPos = componentBox.top - me.getEl().height() - 25;
         return {
             left: leftPos,
             top: topPos,
@@ -1004,7 +949,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     proto.show = function (event, $component) {
         var me = this;
         me.$selectedComponent = $component;
-        if (componentHelper.getComponentType($component) === 'page') {
+        if(componentHelper.getComponentType($component) === 'page') {
             me.showForPage($component);
         } else {
             me.showForComponent($component);
@@ -1056,7 +1001,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         $shaders.hide();
     };
     proto.handleWindowResize = function (event) {
-        if (this.$selectedComponent) {
+        if(this.$selectedComponent) {
             this.show(event, this.$selectedComponent);
         }
     };
@@ -1077,21 +1022,21 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         var componentType = liveedit.ComponentHelper.getComponentType($component);
         var $body = $('body');
         var cursor = 'default';
-        switch (componentType) {
-        case 'region':
-            cursor = 'pointer';
-            break;
-        case 'part':
-            cursor = 'move';
-            break;
-        case 'layout':
-            cursor = 'move';
-            break;
-        case 'paragraph':
-            cursor = 'move';
-            break;
-        default:
-            cursor = 'default';
+        switch(componentType) {
+            case 'region':
+                cursor = 'pointer';
+                break;
+            case 'part':
+                cursor = 'move';
+                break;
+            case 'layout':
+                cursor = 'move';
+                break;
+            case 'paragraph':
+                cursor = 'move';
+                break;
+            default:
+                cursor = 'default';
         }
         $body.css('cursor', cursor);
     };
@@ -1120,7 +1065,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         $(window).on('component.onParagraphEdit', $.proxy(this.hide, this));
         $(window).on('liveEdit.onWindowResize', $.proxy(this.handleWindowResize, this));
         $(window).on('component.onSortStop', function (event, uiEvent, ui, wasSelectedOnDragStart) {
-            if (wasSelectedOnDragStart) {
+            if(wasSelectedOnDragStart) {
                 $(window).trigger('component.onSelect', [
                     ui.item
                 ]);
@@ -1128,8 +1073,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         });
     };
     proto.addView = function () {
-        var html = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlight-border" style="top:-5000px;left:-5000px">' +
-                   '    <rect width="150" height="150"/>' + '</svg>';
+        var html = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlight-border" style="top:-5000px;left:-5000px">' + '    <rect width="150" height="150"/>' + '</svg>';
         this.createElement(html);
         this.appendTo($('body'));
     };
@@ -1145,7 +1089,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         $('.live-edit-selected-component').removeClass('live-edit-selected-component');
         $component.addClass('live-edit-selected-component');
         me.getEl().attr('class', me.getEl().attr('class') + ' live-edit-animatable');
-        if (componentType === 'page') {
+        if(componentType === 'page') {
             me.hide();
             return;
         }
@@ -1197,36 +1141,36 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     proto.getStyleForComponent = function ($component) {
         var componentType = componentHelper.getComponentType($component);
         var strokeColor, strokeDashArray, fillColor;
-        switch (componentType) {
-        case 'region':
-            strokeColor = 'rgba(20,20,20,1)';
-            strokeDashArray = '';
-            fillColor = 'rgba(255,255,255,0)';
-            break;
-        case 'layout':
-            strokeColor = 'rgba(255,165,0,1)';
-            strokeDashArray = '5 5';
-            fillColor = 'rgba(100,12,36,0)';
-            break;
-        case 'part':
-            strokeColor = 'rgba(68,68,68,1)';
-            strokeDashArray = '5 5';
-            fillColor = 'rgba(255,255,255,0)';
-            break;
-        case 'paragraph':
-            strokeColor = 'rgba(85,85,255,1)';
-            strokeDashArray = '5 5';
-            fillColor = 'rgba(255,255,255,0)';
-            break;
-        case 'content':
-            strokeColor = '';
-            strokeDashArray = '';
-            fillColor = 'rgba(0,108,255,.25)';
-            break;
-        default:
-            strokeColor = 'rgba(20,20,20,1)';
-            strokeDashArray = '';
-            fillColor = 'rgba(255,255,255,0)';
+        switch(componentType) {
+            case 'region':
+                strokeColor = 'rgba(20,20,20,1)';
+                strokeDashArray = '';
+                fillColor = 'rgba(255,255,255,0)';
+                break;
+            case 'layout':
+                strokeColor = 'rgba(255,165,0,1)';
+                strokeDashArray = '5 5';
+                fillColor = 'rgba(100,12,36,0)';
+                break;
+            case 'part':
+                strokeColor = 'rgba(68,68,68,1)';
+                strokeDashArray = '5 5';
+                fillColor = 'rgba(255,255,255,0)';
+                break;
+            case 'paragraph':
+                strokeColor = 'rgba(85,85,255,1)';
+                strokeDashArray = '5 5';
+                fillColor = 'rgba(255,255,255,0)';
+                break;
+            case 'content':
+                strokeColor = '';
+                strokeDashArray = '';
+                fillColor = 'rgba(0,108,255,.25)';
+                break;
+            default:
+                strokeColor = 'rgba(20,20,20,1)';
+                strokeDashArray = '';
+                fillColor = 'rgba(255,255,255,0)';
         }
         return {
             strokeColor: strokeColor,
@@ -1235,7 +1179,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         };
     };
     proto.handleWindowResize = function (event) {
-        if (this.$selectedComponent) {
+        if(this.$selectedComponent) {
             this.paintBorder(this.$selectedComponent);
         }
     };
@@ -1258,9 +1202,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     };
     proto.addView = function () {
         var me = this;
-        var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
-                   '    <span class="live-edit-tool-tip-name-text"></span>' + '    <span class="live-edit-tool-tip-type-text"></span> ' +
-                   '</div>';
+        var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' + '    <span class="live-edit-tool-tip-name-text"></span>' + '    <span class="live-edit-tool-tip-type-text"></span> ' + '</div>';
         me.createElement(html);
         me.appendTo($('body'));
     };
@@ -1272,10 +1214,9 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     proto.attachEventListeners = function () {
         var me = this;
         $(document).on('mousemove', '[data-live-edit-type]', function (event) {
-            var targetIsUiComponent = $(event.target).is('[id*=live-edit-ui-cmp]') ||
-                                      $(event.target).parents('[id*=live-edit-ui-cmp]').length > 0;
+            var targetIsUiComponent = $(event.target).is('[id*=live-edit-ui-cmp]') || $(event.target).parents('[id*=live-edit-ui-cmp]').length > 0;
             var pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
-            if (targetIsUiComponent || pageHasComponentSelected || AdminLiveEdit.DragDropSort.isDragging()) {
+            if(targetIsUiComponent || pageHasComponentSelected || AdminLiveEdit.DragDropSort.isDragging()) {
                 me.hide();
                 return;
             }
@@ -1289,7 +1230,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
             me.setText(componentInfo.type, componentInfo.name);
         });
         $(document).on('hover', '[data-live-edit-type]', function (event) {
-            if (event.type === 'mouseenter') {
+            if(event.type === 'mouseenter') {
                 me.getEl().hide().fadeIn(300);
             }
         });
@@ -1308,10 +1249,10 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
         var scrollTop = domHelper.getDocumentScrollTop();
         var toolTipWidth = t.getEl().width();
         var toolTipHeight = t.getEl().height();
-        if (x + toolTipWidth > (viewPortSize.width - t.OFFSET_X * 2) - 50) {
+        if(x + toolTipWidth > (viewPortSize.width - t.OFFSET_X * 2) - 50) {
             x = pageX - toolTipWidth - (t.OFFSET_X * 2);
         }
-        if (y + toolTipHeight > (viewPortSize.height + scrollTop - t.OFFSET_Y * 2)) {
+        if(y + toolTipHeight > (viewPortSize.height + scrollTop - t.OFFSET_Y * 2)) {
             y = pageY - toolTipHeight - (t.OFFSET_Y * 2);
         }
         return {
@@ -1338,34 +1279,34 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         me.buttons = [];
         me.buttonConfig = {
             'page': [
-                'settings',
+                'settings', 
                 'reset'
             ],
             'region': [
-                'parent',
-                'settings',
-                'reset',
+                'parent', 
+                'settings', 
+                'reset', 
                 'clear'
             ],
             'layout': [
-                'parent',
-                'settings',
+                'parent', 
+                'settings', 
                 'remove'
             ],
             'part': [
-                'parent',
-                'settings',
-                'details',
+                'parent', 
+                'settings', 
+                'details', 
                 'remove'
             ],
             'content': [
-                'parent',
-                'opencontent',
+                'parent', 
+                'opencontent', 
                 'view'
             ],
             'paragraph': [
-                'parent',
-                'edit',
+                'parent', 
+                'edit', 
                 'remove'
             ]
         };
@@ -1455,21 +1396,21 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         var editButton = new AdminLiveEdit.view.menu.EditButton(me);
         var removeButton = new AdminLiveEdit.view.menu.RemoveButton(me);
         var i, $menuItemsPlaceholder = me.getMenuItemsPlaceholderElement();
-        for (i = 0; i < me.buttons.length; i++) {
+        for(i = 0; i < me.buttons.length; i++) {
             me.buttons[i].appendTo($menuItemsPlaceholder);
         }
     };
     proto.updateMenuItemsForComponent = function ($component) {
         var componentType = componentHelper.getComponentType($component);
-        if (this.buttonConfig.hasOwnProperty(componentType)) {
+        if(this.buttonConfig.hasOwnProperty(componentType)) {
             var buttonArray = this.getConfigForButton(componentType);
             var buttons = this.getButtons();
             var i;
-            for (i = 0; i < buttons.length; i++) {
+            for(i = 0; i < buttons.length; i++) {
                 var $button = buttons[i].getEl();
                 var id = $button.attr('data-live-edit-ui-cmp-id');
                 var subStr = id.substring(id.lastIndexOf('-') + 1, id.length);
-                if (buttonArray.indexOf(subStr) > -1) {
+                if(buttonArray.indexOf(subStr) > -1) {
                     $button.show();
                 } else {
                     $button.hide();
@@ -1492,27 +1433,27 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     };
     proto.resolveCssClassForComponentType = function (componentType) {
         var iconCls;
-        switch (componentType) {
-        case 'page':
-            iconCls = 'live-edit-component-menu-page-icon';
-            break;
-        case 'region':
-            iconCls = 'live-edit-component-menu-region-icon';
-            break;
-        case 'layout':
-            iconCls = 'live-edit-component-menu-layout-icon';
-            break;
-        case 'part':
-            iconCls = 'live-edit-component-menu-part-icon';
-            break;
-        case 'content':
-            iconCls = 'live-edit-component-menu-content-icon';
-            break;
-        case 'paragraph':
-            iconCls = 'live-edit-component-menu-paragraph-icon';
-            break;
-        default:
-            iconCls = '';
+        switch(componentType) {
+            case 'page':
+                iconCls = 'live-edit-component-menu-page-icon';
+                break;
+            case 'region':
+                iconCls = 'live-edit-component-menu-region-icon';
+                break;
+            case 'layout':
+                iconCls = 'live-edit-component-menu-layout-icon';
+                break;
+            case 'part':
+                iconCls = 'live-edit-component-menu-part-icon';
+                break;
+            case 'content':
+                iconCls = 'live-edit-component-menu-content-icon';
+                break;
+            case 'paragraph':
+                iconCls = 'live-edit-component-menu-paragraph-icon';
+                break;
+            default:
+                iconCls = '';
         }
         return iconCls;
     };
@@ -1535,7 +1476,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         return $('.live-edit-component-menu-items', this.getEl());
     };
     proto.handleWindowResize = function (event) {
-        if (this.$selectedComponent) {
+        if(this.$selectedComponent) {
             var x = this.previousPagePositions.x, y = this.previousPagePositions.y;
             x = x - (this.previousPageSizes.width - liveedit.DomHelper.getViewPortSize().width);
             this.moveToXY(x, y);
@@ -1555,12 +1496,12 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
         var cls = config.cls || '';
         var iconCls = config.iconCls || '';
         var html = '<div data-live-edit-ui-cmp-id="' + id + '" class="live-edit-button ' + cls + '">';
-        if (iconCls !== '') {
+        if(iconCls !== '') {
             html += '<span class="live-edit-button-icon ' + iconCls + '"></span>';
         }
         html += '<span class="live-edit-button-text">' + text + '</span></div>';
         var $button = this.createElement(html);
-        if (config.handler) {
+        if(config.handler) {
             $button.on('click', function (event) {
                 config.handler.call(this, event);
             });
@@ -1587,10 +1528,10 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
             handler: function (event) {
                 event.stopPropagation();
                 var $parent = me.menu.$selectedComponent.parents('[data-live-edit-type]');
-                if ($parent && $parent.length > 0) {
+                if($parent && $parent.length > 0) {
                     $parent = $($parent[0]);
                     $(window).trigger('component.onSelect', [
-                        $parent,
+                        $parent, 
                         {
                             x: 0,
                             y: 0
@@ -1611,7 +1552,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     };
     proto.scrollComponentIntoView = function ($component) {
         var componentTopPosition = componentHelper.getPagePositionForComponent($component).top;
-        if (componentTopPosition <= window.pageYOffset) {
+        if(componentTopPosition <= window.pageYOffset) {
             $('html, body').animate({
                 scrollTop: componentTopPosition - 10
             }, 200);
@@ -1705,7 +1646,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
             handler: function (event) {
                 event.stopPropagation();
                 var $paragraph = me.menu.$selectedComponent;
-                if ($paragraph && $paragraph.length > 0) {
+                if($paragraph && $paragraph.length > 0) {
                     $(window).trigger('component.onParagraphEdit', [
                         $paragraph
                     ]);
@@ -1852,10 +1793,8 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
     componentBar.prototype = new AdminLiveEdit.view.Base();
     var proto = componentBar.prototype;
     var html = '';
-    html +=
-    '<div class="live-edit-components-container live-edit-collapsed" style="width:' + BAR_WIDTH + 'px; right: -' + INNER_WIDTH + 'px">';
-    html += '    <div class="live-edit-toggle-components-container" style="width:' + TOGGLE_WIDTH +
-            'px"><span class="live-edit-toggle-text-container">Toolbar</span></div>';
+    html += '<div class="live-edit-components-container live-edit-collapsed" style="width:' + BAR_WIDTH + 'px; right: -' + INNER_WIDTH + 'px">';
+    html += '    <div class="live-edit-toggle-components-container" style="width:' + TOGGLE_WIDTH + 'px"><span class="live-edit-toggle-text-container">Toolbar</span></div>';
     html += '        <div class="live-edit-components">';
     html += '            <div class="live-edit-form-container">';
     html += '               <form onsubmit="return false;">';
@@ -1909,7 +1848,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
         var me = this, $container = me.getComponentsContainer(), groups = jsonData.componentGroups;
         $.each(groups, function (index, group) {
             me.addHeader(group);
-            if (group.components) {
+            if(group.components) {
                 me.addComponentsToGroup(group.components);
             }
         });
@@ -1929,8 +1868,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
     };
     proto.addComponent = function (component) {
         var me = this, html = '';
-        html += '<li class="live-edit-component" data-live-edit-component-key="' + component.key + '" data-live-edit-component-name="' +
-                component.name + '" data-live-edit-component-type="' + component.type + '">';
+        html += '<li class="live-edit-component" data-live-edit-component-key="' + component.key + '" data-live-edit-component-name="' + component.name + '" data-live-edit-component-type="' + component.type + '">';
         html += '    <img src="' + component.icon + '"/>';
         html += '    <div class="live-edit-component-text">';
         html += '        <div class="live-edit-component-text-name">' + component.name + '</div>';
@@ -1949,7 +1887,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
     };
     proto.toggle = function () {
         var me = this;
-        if (me.hidden) {
+        if(me.hidden) {
             me.show();
             me.hidden = false;
         } else {
@@ -1972,7 +1910,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.componentbar');
         $bar.addClass('live-edit-collapsed');
     };
     proto.fadeIn = function (event, triggerConfig) {
-        if (triggerConfig && triggerConfig.showComponentBar === false) {
+        if(triggerConfig && triggerConfig.showComponentBar === false) {
             return;
         }
         this.getBar().fadeIn(120);
