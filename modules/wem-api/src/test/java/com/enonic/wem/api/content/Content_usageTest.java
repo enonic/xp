@@ -342,7 +342,7 @@ public class Content_usageTest
 
         for ( InvoiceLine line : invoice.lines )
         {
-            DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
+            DataSet invoiceLine = DataSet.newDataSet( "invoiceLine" ).build();
             invoiceLine.add( new Property.Text( "text", line.text ) );
             invoiceLine.add( myNewProperty( "money", line.money ) );
             contentData.add( invoiceLine );
@@ -374,7 +374,7 @@ public class Content_usageTest
 
         for ( InvoiceLine line : invoice.lines )
         {
-            DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
+            DataSet invoiceLine = new DataSet( "invoiceLine" );
             invoiceLine.setProperty( "text", new Value.Text( line.text ) );
             invoiceLine.setProperty( "money", myNewValue( line.money ) );
             contentData.add( invoiceLine );
