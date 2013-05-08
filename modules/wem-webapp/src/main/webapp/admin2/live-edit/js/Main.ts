@@ -9,10 +9,7 @@ declare var AdminLiveEdit;
 ///<reference path='namespace.ts' />
 ///<reference path='helper/DomHelper.ts' />
 ///<reference path='helper/ComponentHelper.ts' />
-
-/*
-///<reference path='MutationObserver.ts' />
-*/
+///<reference path='helper/MutationObserver.ts' />
 
 ///<reference path='DragDropSort.ts' />
 
@@ -72,6 +69,7 @@ declare var AdminLiveEdit;
             new liveedit.ui.Shader();
             new liveedit.ui.Editor();
             new liveedit.ui.ComponentBar();
+            new liveedit.MutationObserver();
 
             AdminLiveEdit.DragDropSort.initialize();
 

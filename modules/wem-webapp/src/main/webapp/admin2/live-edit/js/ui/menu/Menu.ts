@@ -22,6 +22,8 @@ module liveedit.ui {
             this.addView();
             this.registerEvents();
             this.registerGlobalListeners();
+
+            console.log('Menu instantiated. Using jQuery ' + $().jquery);
         }
 
 

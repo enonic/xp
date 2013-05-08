@@ -124,6 +124,76 @@ var liveedit;
     })();
     liveedit.ComponentHelper = ComponentHelper;    
 })(liveedit || (liveedit = {}));
+var liveedit;
+(function (liveedit) {
+    var $ = $liveedit;
+    var MutationObserver = (function () {
+        function MutationObserver() {
+            this.mutationSummary = null;
+            this.observedComponent = null;
+            this.registerGlobalListeners();
+        }
+        MutationObserver.prototype.registerGlobalListeners = function () {
+            var me = this;
+            $(window).on('component.onParagraphEdit', $.proxy(me.observe, me));
+            $(window).on('shader.onClick', $.proxy(me.disconnect, me));
+        };
+        MutationObserver.prototype.observe = function (event, $component) {
+            var me = this;
+            var isAlreadyObserved = me.observedComponent && me.observedComponent[0] === $component[0];
+            if(isAlreadyObserved) {
+                return;
+            }
+            me.disconnect(event);
+            me.observedComponent = $component;
+            me.mutationSummary = new LiveEditMutationSummary({
+                callback: function (summaries) {
+                    me.onMutate(summaries, event);
+                },
+                rootNode: $component[0],
+                queries: [
+                    {
+                        all: true
+                    }
+                ]
+            });
+            console.log('MutationObserver: start observing component', $component);
+        };
+        MutationObserver.prototype.onMutate = function (summaries, event) {
+            if(summaries && summaries[0]) {
+                var $targetComponent = $(summaries[0].target), targetComponentIsSelected = $targetComponent.hasClass('live-edit-selected-component'), componentIsNotSelectedAndMouseIsOver = !targetComponentIsSelected && event.type === 'component.mouseOver', componentIsParagraphAndBeingEdited = $targetComponent.attr('contenteditable');
+                if(componentIsParagraphAndBeingEdited) {
+                    $(window).trigger('component.onParagraphEdit', [
+                        $targetComponent
+                    ]);
+                } else if(componentIsNotSelectedAndMouseIsOver) {
+                    $(window).trigger('component.mouseOver', [
+                        $targetComponent
+                    ]);
+                } else {
+                    $(window).trigger('component.onSelect', [
+                        $targetComponent
+                    ]);
+                }
+            }
+        };
+        MutationObserver.prototype.disconnect = function (event) {
+            var targetComponentIsSelected = (this.observedComponent && this.observedComponent.hasClass('live-edit-selected-component'));
+            var componentIsSelectedAndUserMouseOut = event.type === 'component.mouseOut' && targetComponentIsSelected;
+            if(componentIsSelectedAndUserMouseOut) {
+                return;
+            }
+            this.observedComponent = null;
+            if(this.mutationSummary) {
+                this.mutationSummary.disconnect();
+                this.mutationSummary = null;
+                console.log('MutationObserver: disconnect');
+            }
+        };
+        return MutationObserver;
+    })();
+    liveedit.MutationObserver = MutationObserver;    
+})(liveedit || (liveedit = {}));
 AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.DragDropSort');
 AdminLiveEdit.DragDropSort = ((function ($) {
     'use strict';
@@ -1371,6 +1441,7 @@ var liveedit;
                 this.addView();
                 this.registerEvents();
                 this.registerGlobalListeners();
+                console.log('Menu instantiated. Using jQuery ' + $().jquery);
             }
             Menu.prototype.registerGlobalListeners = function () {
                 $(window).on('component.onSelect', $.proxy(this.show, this));
@@ -2114,6 +2185,7 @@ var liveedit;
             new liveedit.ui.Shader();
             new liveedit.ui.Editor();
             new liveedit.ui.ComponentBar();
+            new liveedit.MutationObserver();
             AdminLiveEdit.DragDropSort.initialize();
             $(window).resize(function () {
                 $(window).trigger('liveEdit.onWindowResize');
