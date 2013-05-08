@@ -22,11 +22,11 @@ module liveedit.ui {
                 handler: function (event) {
                     event.stopPropagation();
 
-                    /*
-                     if (window.parent.Admin && window.parent.Admin.MessageBus) {
-                     window.parent.Admin.MessageBus.showLiveEditTestSettingsWindow({});
-                     }
-                     */
+                    // Temporary workaround until we get a firm messaging system
+                    var parentWindow = window['parent'];
+                    if (parentWindow && parentWindow['Admin'].MessageBus) {
+                        parentWindow['Admin'].MessageBus.showLiveEditTestSettingsWindow({});
+                    }
                 }
             });
 

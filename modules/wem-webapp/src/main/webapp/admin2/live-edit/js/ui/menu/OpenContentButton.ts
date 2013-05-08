@@ -23,12 +23,12 @@ module liveedit.ui {
                 handler: function (event) {
                     event.stopPropagation();
 
-                    /*
-                     if (window.parent.Admin && window.parent.Admin.MessageBus) {
-                     // @TODO: [RYA] Should content in format (ContentModel.js) present here. Way to receive it: get by ID
-                     window.parent.Admin.MessageBus.liveEditOpenContent();
-                     }
-                     */
+                    // Temporary workaround until we get a firm messaging system
+                    var parentWindow = window['parent'];
+                    if (parentWindow && parentWindow['Admin'].MessageBus) {
+                        // @TODO: [RYA] Should content in format (ContentModel.js) present here. Way to receive it: get by ID
+                        parentWindow['Admin'].MessageBus.liveEditOpenContent();
+                    }
                 }
             });
 

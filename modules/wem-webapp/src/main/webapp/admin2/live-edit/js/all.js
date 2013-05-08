@@ -1651,6 +1651,10 @@ var liveedit;
                     cls: 'live-edit-component-menu-button',
                     handler: function (event) {
                         event.stopPropagation();
+                        var parentWindow = window['parent'];
+                        if(parentWindow && parentWindow['Admin'].MessageBus) {
+                            parentWindow['Admin'].MessageBus.liveEditOpenContent();
+                        }
                     }
                 });
                 me.appendTo(me.menu.getEl());
@@ -1874,6 +1878,11 @@ var liveedit;
                     cls: 'live-edit-component-menu-button',
                     handler: function (event) {
                         event.stopPropagation();
+                        var parentWindow = window['parent'];
+                        if(parentWindow && parentWindow['Admin'].MessageBus) {
+                            parentWindow['Admin'].MessageBus.showLiveEditTestSettingsWindow({
+                            });
+                        }
                     }
                 });
                 me.appendTo(me.menu.getEl());
