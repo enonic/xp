@@ -28,25 +28,25 @@ interface ComponentPagePosition {
 module liveedit {
     export class ComponentHelper {
 
-        static $ = $liveedit;
+        static $:JQuery = $liveedit;
 
         public static getBoxModel(component:JQuery):ComponentBoxModel {
-            var el = $(component);
-            var offset = el.offset();
+            var cmp:JQuery = component;
+            var offset = cmp.offset();
             var top = offset.top;
             var left = offset.left;
-            var width = el.outerWidth();
-            var height = el.outerHeight();
+            var width = cmp.outerWidth();
+            var height = cmp.outerHeight();
 
-            var bt = parseInt(el.css('borderTopWidth'), 10);
-            var br = parseInt(el.css('borderRightWidth'), 10);
-            var bb = parseInt(el.css('borderBottomWidth'), 10);
-            var bl = parseInt(el.css('borderLeftWidth'), 10);
+            var bt = parseInt(cmp.css('borderTopWidth'), 10);
+            var br = parseInt(cmp.css('borderRightWidth'), 10);
+            var bb = parseInt(cmp.css('borderBottomWidth'), 10);
+            var bl = parseInt(cmp.css('borderLeftWidth'), 10);
 
-            var pt = parseInt(el.css('paddingTop'), 10);
-            var pr = parseInt(el.css('paddingRight'), 10);
-            var pb = parseInt(el.css('paddingBottom'), 10);
-            var pl = parseInt(el.css('paddingLeft'), 10);
+            var pt = parseInt(cmp.css('paddingTop'), 10);
+            var pr = parseInt(cmp.css('paddingRight'), 10);
+            var pb = parseInt(cmp.css('paddingBottom'), 10);
+            var pl = parseInt(cmp.css('paddingLeft'), 10);
 
             return {
                 top: top,
@@ -66,7 +66,7 @@ module liveedit {
 
 
         public static getPagePositionForComponent(component:JQuery):ComponentPagePosition {
-            var pos = $(component).position();
+            var pos = component.position();
             return {
                 top: pos.top,
                 left: pos.left
