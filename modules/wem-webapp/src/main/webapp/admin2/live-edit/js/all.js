@@ -1,34 +1,3 @@
-var AdminLiveEdit = AdminLiveEdit || function () {
-};
-AdminLiveEdit.namespace = AdminLiveEdit.namespace || function () {
-};
-AdminLiveEdit.namespace.prototype.constructor = new AdminLiveEdit();
-AdminLiveEdit.namespace.useNamespace = function (namespace, container) {
-    if(namespace === undefined || namespace === '') {
-        return;
-    }
-    var separator = '.';
-    var ns = namespace.split(separator);
-    var o = container || window;
-    var i;
-    var len;
-    if(ns.length > 0) {
-        o[ns[0]] = o[ns[0]] || function () {
-        };
-        if(o[ns[0]].prototype.constructor == undefined) {
-            o[ns[0]].prototype.constructor = new o();
-        }
-    }
-    var remainingNs = '';
-    for(i = 1 , len = ns.length; i < len; i++) {
-        if(i === 1) {
-            remainingNs = ns[1];
-        } else {
-            remainingNs = remainingNs + separator + ns[i];
-        }
-    }
-    return AdminLiveEdit.namespace.useNamespace(remainingNs, o[ns[0]]);
-};
 var LiveEdit;
 (function (LiveEdit) {
     var DomHelper = (function () {

@@ -6,7 +6,6 @@ declare var AdminLiveEdit;
 ///<reference path='../lib/jquery-1.8.3.d.ts' />
 ///<reference path='../lib/jqueryui.d.ts' />
 
-///<reference path='namespace.ts' />
 ///<reference path='helper/DomHelper.ts' />
 ///<reference path='helper/ComponentHelper.ts' />
 ///<reference path='helper/MutationObserver.ts' />
@@ -42,7 +41,6 @@ declare var AdminLiveEdit;
 ///<reference path='ui/menu/ViewButton.ts' />
 ///<reference path='ui/menu/SettingsButton.ts' />
 ///<reference path='ui/menu/RemoveButton.ts' />
-
 ///<reference path='ui/componentbar/ComponentBar.ts' />
 
 
