@@ -1,24 +1,42 @@
-Ext.define('Admin.view.DropDownButton', {
-    extend: 'Ext.button.Button',
-    alias: 'widget.dropDownButton',
+module admin.ui {
 
-    cls: 'admin-dropdown-button',
-    width: 120,
-    padding: 5,
-    menuItems: [],
+    export class DropDownButton {
 
-    initComponent: function () {
+        ext;
 
-        this.menu = this.createMenu();
+        constructor() {
 
-        this.callParent(arguments);
-    },
+            var menu = new Ext.menu.Menu();
+            menu.cls = 'admin-context-menu';
+            menu.border = false;
+            menu.shadow = false;
+            //menu.width = 120;
 
-    createMenu: function () {
-        var me = this;
-        return Ext.create('Admin.view.BaseContextMenu', {
-            width: 120,
-            items: this.menuItems
-        });
+            var menuItemOpen = new Ext.menu.Item();
+            menuItemOpen.text = 'Open';
+            menuItemOpen.action = 'viewSpace';
+            menu.add(menuItemOpen);
+
+            var menuItemEdit = new Ext.menu.Item();
+            menuItemEdit.text = 'Edit';
+            menuItemEdit.action = 'editSpace';
+            menu.add(menuItemEdit);
+
+            this.ext = new Ext.button.Button({
+                menu: menu,
+                cls: 'admin-dropdown-button',
+                width: 120,
+                padding: 5,
+                text: 'Actions',
+                height: 30,
+                itemId: 'dropdown',
+                tdAttr: {
+                    width: 120,
+                    valign: 'top',
+                    style: {
+                        padding: '0 20px 0 0'
+                    }}
+            });
+        }
     }
-});
+}

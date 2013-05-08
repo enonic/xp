@@ -21,7 +21,6 @@
 ///<reference path='view/WizardHeader.ts' />
 ///<reference path='view/WizardPanel.ts' />
 
-///<reference path='view/BaseContextMenu.ts' />
 ///<reference path='view/DropDownButton.ts' />
 ///<reference path='view/BaseDetailPanel.ts' />
 ///<reference path='view/DetailToolbar.ts' />

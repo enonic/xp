@@ -139,7 +139,7 @@ module admin.ui {
                         width: '100%'
                     }
                 },
-                columns: 2
+                columns: 3
             };
 
             if (this.isVertical) {
@@ -165,7 +165,8 @@ module admin.ui {
 
             north.add(header);
 
-            //TODO: Add actionbutton (dropdownButton)
+            north.add(new admin.ui.DropDownButton().ext)
+
 
             c.add(north);
 

@@ -1,10 +1,7 @@
 Ext.define('Admin.view.BaseDetailPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.detailPanel',
-    requires: [
-        'Admin.view.DropDownButton',
-        'Admin.view.BaseContextMenu'
-    ],
+    requires: [],
 
     layout: 'card',
     cls: 'admin-preview-panel admin-detail',
