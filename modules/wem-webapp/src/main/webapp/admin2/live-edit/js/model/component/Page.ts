@@ -1,21 +1,14 @@
-AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.model.component');
+module liveedit.model {
+    var $ = $liveedit;
 
-(function ($) {
-    'use strict';
+    export class Page extends liveedit.model.Base {
+        constructor() {
+            super();
 
-    var page = AdminLiveEdit.model.component.Page = function () {
-        this.cssSelector = '[data-live-edit-type=page]';
-        this.attachClickEvent();
-    };
-    // Inherit from Base prototype
-    page.prototype = new AdminLiveEdit.model.component.Base();
+            this.cssSelector = '[data-live-edit-type=page]';
+            this.attachClickEvent();
 
-    // Fix constructor as it now is Base
-    // page.constructor = page;
-
-    var proto = page.prototype;
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-
-}($liveedit));
+            console.log('Page model instantiated. Using jQuery ' + $().jquery);
+        }
+    }
+}

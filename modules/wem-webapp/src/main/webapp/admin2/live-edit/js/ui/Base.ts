@@ -1,3 +1,36 @@
+module liveedit.ui {
+    var $ = $liveedit;
+    var componentCount:number = 0;
+
+    export class Base {
+
+        private element:JQuery;
+
+        constructor() {
+        }
+
+        public createElement(htmlString:string):JQuery {
+            var id = componentCount++;
+
+            this.element = $(htmlString);
+            this.element.attr('id', 'live-edit-ui-cmp-' + id);
+
+            return this.element;
+        }
+
+        public appendTo(parent:JQuery):void {
+            if (parent.length > 0 && this.element.length > 0) {
+                parent.append(this.element);
+            }
+        }
+
+        public getEl():JQuery {
+            return this.element;
+        }
+    }
+}
+
+/*
 AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
 (function ($) {
@@ -38,3 +71,4 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
     };
 
 }($liveedit));
+*/

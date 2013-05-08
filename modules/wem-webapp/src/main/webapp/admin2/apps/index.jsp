@@ -26,7 +26,7 @@
 <!-- Configuration -->
 <script type="text/javascript">
 
-  admin.lib.uri.baseUri = '<%= helper.getBaseUrl() %>';
+  API.util.baseUri = '<%= helper.getBaseUrl() %>';
 
 </script>
 

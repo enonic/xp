@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.data.ContentData;
@@ -169,7 +168,7 @@ public class Content_usageTest
     }
 
     @Test
-    public void dataSet_add_Data_using_new_ValueType()
+    public void dataSet_addProperty()
     {
         DataSet dataSet = new ContentData();
 
@@ -195,15 +194,35 @@ public class Content_usageTest
     }
 
     @Test
-    public void dataSet_add_DataSet()
+    public void dataSet_addProperty_with_DataPath_containing_DataSet()
     {
-        DataSet parentDataSet = new ContentData();
+        ContentData contentData = new ContentData();
 
         // exercise
-        parentDataSet.add( newDataSet().name( "mySet" ).build() );
+        contentData.addProperty( "mySet.myText", new Value.Text( "abc" ) );
+        contentData.addProperty( "mySet.myNum", new Value.WholeNumber( 123 ) );
+        contentData.addProperty( "mySet.myDec", new Value.DecimalNumber( 123.123 ) );
+        contentData.addProperty( "mySet.myDate", new Value.Date( new DateMidnight( 2013, 1, 13 ) ) );
+        contentData.addProperty( "mySet.myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
 
         // verify
-        assertNotNull( parentDataSet.getDataSet( "mySet" ) );
+        assertEquals( "mySet.myText", contentData.getProperty( "mySet.myText" ).getPath().toString() );
+        assertEquals( "mySet.myNum", contentData.getProperty( "mySet.myNum" ).getPath().toString() );
+        assertEquals( "mySet.myDate", contentData.getProperty( "mySet.myDate" ).getPath().toString() );
+        assertEquals( "mySet.myDec", contentData.getProperty( "mySet.myDec" ).getPath().toString() );
+        assertEquals( "mySet.myHtml", contentData.getProperty( "mySet.myHtml" ).getPath().toString() );
+    }
+
+    @Test
+    public void dataSet_add_DataSet()
+    {
+        DataSet contentData = new ContentData();
+
+        // exercise
+        contentData.add( newDataSet().name( "mySet" ).build() );
+
+        // verify
+        assertNotNull( contentData.getDataSet( "mySet" ) );
     }
 
     @Test
@@ -233,21 +252,6 @@ public class Content_usageTest
         dataSet.add( newProperty( "myText" ).type( TEXT ).value( "a" ).build() );
         dataSet.add( newProperty( "myText" ).type( TEXT ).value( "b" ).build() );
         dataSet.add( newProperty( "myText" ).type( TEXT ).value( "c" ).build() );
-
-        // verify
-        assertEquals( "a", dataSet.getProperty( "myText" ).getString( 0 ) );
-        assertEquals( "b", dataSet.getProperty( "myText" ).getString( 1 ) );
-        assertEquals( "c", dataSet.getProperty( "myText" ).getString( 2 ) );
-    }
-
-    @Test
-    @Ignore
-    public void dataSet_setData_array()
-    {
-        DataSet dataSet = new ContentData();
-
-        // exercise
-        //TODO dataSet.setData( "myText", "a", "b", "c" );
 
         // verify
         assertEquals( "a", dataSet.getProperty( "myText" ).getString( 0 ) );
@@ -338,7 +342,7 @@ public class Content_usageTest
 
         for ( InvoiceLine line : invoice.lines )
         {
-            DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
+            DataSet invoiceLine = DataSet.newDataSet( "invoiceLine" ).build();
             invoiceLine.add( new Property.Text( "text", line.text ) );
             invoiceLine.add( myNewProperty( "money", line.money ) );
             contentData.add( invoiceLine );
@@ -370,7 +374,7 @@ public class Content_usageTest
 
         for ( InvoiceLine line : invoice.lines )
         {
-            DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
+            DataSet invoiceLine = new DataSet( "invoiceLine" );
             invoiceLine.setProperty( "text", new Value.Text( line.text ) );
             invoiceLine.setProperty( "money", myNewValue( line.money ) );
             contentData.add( invoiceLine );

@@ -40,7 +40,7 @@ Ext.define('Admin.lib.RemoteService', {
     },
     init: function () {
         var config = {
-            "url": admin.lib.uri.getAbsoluteUri("admin/rest/jsonrpc"),
+            "url": API.util.getAbsoluteUri("admin/rest/jsonrpc"),
             "type": "jsonrpc",
             "namespace": "Admin.lib.RemoteService",
             "methods": [
@@ -237,6 +237,53 @@ Ext.define('Admin.lib.RemoteService', {
 }, function () {
     this.init();
 });
+var __extends = this.__extends || function (d, b) {
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var APP;
+(function (APP) {
+    (function (event) {
+        var DELETED = 'deleted';
+        var DeletedEvent = (function (_super) {
+            __extends(DeletedEvent, _super);
+            function DeletedEvent() {
+                        _super.call(this, DELETED);
+            }
+            return DeletedEvent;
+        })(API.event.Event);
+        event.DeletedEvent = DeletedEvent;        
+        function onDeleted(handler) {
+            API.event.onEvent(DELETED, handler);
+        }
+        event.onDeleted = onDeleted;
+    })(APP.event || (APP.event = {}));
+    var event = APP.event;
+})(APP || (APP = {}));
+var APP;
+(function (APP) {
+    (function (event) {
+        var DELETE_PROMPT = 'deletePrompt';
+        var DeletePromptEvent = (function (_super) {
+            __extends(DeletePromptEvent, _super);
+            function DeletePromptEvent(model) {
+                this.model = model;
+                        _super.call(this, DELETE_PROMPT);
+            }
+            DeletePromptEvent.prototype.getModel = function () {
+                return this.model;
+            };
+            return DeletePromptEvent;
+        })(API.event.Event);
+        event.DeletePromptEvent = DeletePromptEvent;        
+        function onDeletePrompt(handler) {
+            API.event.onEvent(DELETE_PROMPT, handler);
+        }
+        event.onDeletePrompt = onDeletePrompt;
+    })(APP.event || (APP.event = {}));
+    var event = APP.event;
+})(APP || (APP = {}));
 Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
     extend: 'Ext.util.Observable',
     pluginId: 'persistentGridSelection',
@@ -2725,7 +2772,6 @@ var admin;
             };
             SpaceDetailPanel.prototype.changeTab = function (selectedTab) {
                 var currentTab = this.getTab(selectedTab);
-                console.log(currentTab);
                 if(currentTab) {
                     var target = this.center;
                     target.remove(target.child());
@@ -2773,6 +2819,14 @@ var admin;
                 this.title = "Delete space(s)";
                 this.deleteHandler = new admin.app.handler.DeleteSpacesHandler();
                 this.template = '<div class="delete-container">' + '<tpl for=".">' + '<div class="delete-item">' + '<img class="icon" src="{data.iconUrl}"/>' + '<h4>{data.displayName}</h4>' + '<p>{data.type}</p>' + '</div>' + '</tpl>' + '</div>';
+                this.initComponent();
+                APP.event.onDeletePrompt(function (event) {
+                    _this.setModel(event.getModel());
+                    _this.doShow();
+                });
+            }
+            DeleteSpaceWindow.prototype.initComponent = function () {
+                var _this = this;
                 var deleteCallback = function (obj, success, result) {
                     _this.container.hide();
                 };
@@ -2810,19 +2864,19 @@ var admin;
                 var deleteButton = new Ext.button.Button();
                 deleteButton.text = 'Delete';
                 deleteButton.margin = '0 0 0 10';
-                deleteButton.handler = function (btn, evt) {
+                deleteButton.setHandler(function (btn, evt) {
                     _this.deleteHandler.doDelete(_this.data, deleteCallback);
-                };
+                });
                 buttonRow.add(deleteButton);
                 var cancelButton = new Ext.button.Button();
                 cancelButton.text = 'Cancel';
                 cancelButton.margin = '0 0 0 10';
-                cancelButton.handler = function (btn, evt) {
+                cancelButton.setHandler(function () {
                     ct.hide();
-                };
+                });
                 buttonRow.add(cancelButton);
                 ct.add(buttonRow);
-            }
+            };
             DeleteSpaceWindow.prototype.setModel = function (model) {
                 this.data = model;
                 if(model) {
@@ -3766,11 +3820,11 @@ Ext.define('Admin.view.TopBar', {
             items: [
                 {
                     xtype: 'adminImageButton',
-                    icon: admin.lib.uri.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                    icon: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
                     popupTpl: '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' + '<div class="content">' + '<div class="column"><img src="{photoUrl}"/>' + '<button class="x-btn-red-small">Log Out</button>' + '</div>' + '<div class="column">' + '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' + '<a href="#">Change User</a>' + '</div>' + '</div>',
                     popupData: {
                         userName: "Thomas Lund Sigdestad",
-                        photoUrl: admin.lib.uri.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                        photoUrl: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
                         qName: 'system/tsi'
                     }
                 }
@@ -3868,7 +3922,7 @@ Ext.define('Admin.view.TopBar', {
             var tabCount = this.tabMenu.getAllItems(false).length;
             this.titleButton.setVisible(tabCount > 0);
             this.titleButton.setCount(tabCount);
-            admin.api.message.updateAppTabCount(this.getApplicationId(), tabCount);
+            API.notify.updateAppTabCount(this.getApplicationId(), tabCount);
         }
     },
     getApplicationId: function () {
@@ -4636,6 +4690,9 @@ var admin;
                 deleteButton.scale = 'medium';
                 deleteButton.iconAlign = 'top';
                 deleteButton.minWidth = 64;
+                deleteButton.setHandler(function () {
+                    new APP.event.DeletePromptEvent(components.gridPanel.getSelection()).fire();
+                });
                 tb.add(deleteButton);
             }
             return BrowseToolbar;
@@ -4898,28 +4955,6 @@ Ext.define('Admin.controller.BrowseToolbarController', {
         'Admin.view.wizard.WizardPanel'
     ],
     init: function () {
-        this.control({
-            '#spaceBrowseToolbar *[action=newSpace]': {
-                click: function (button, event) {
-                    this.showNewSpaceWindow();
-                }
-            },
-            '#spaceBrowseToolbar *[action=viewSpace]': {
-                click: function (button, event) {
-                    this.viewSelectedSpaces();
-                }
-            },
-            '#spaceBrowseToolbar *[action=editSpace]': {
-                click: function (button, event) {
-                    this.editSelectedSpaces();
-                }
-            },
-            '#spaceBrowseToolbar *[action=deleteSpace]': {
-                click: function (button, event) {
-                    this.deleteSelectedSpaces();
-                }
-            }
-        });
     },
     viewSelectedSpaces: function () {
         var selection = this.getSpaceTreeGridPanel().getSelection();
@@ -5003,10 +5038,10 @@ Ext.define('Admin.controller.DialogWindowController', {
         var onDelete = function (success, details) {
             win.close();
             if(success && details.deleted) {
-                admin.api.message.showFeedback(Ext.isArray(space) && space.length > 1 ? space.length + ' spaces were deleted' : '1 space was deleted');
+                API.notify.showFeedback(Ext.isArray(space) && space.length > 1 ? space.length + ' spaces were deleted' : '1 space was deleted');
             } else {
                 var message = details.reason;
-                admin.api.message.showFeedback(message);
+                API.notify.showFeedback(message);
             }
             me.getSpaceTreeGridPanel().refresh();
         };
@@ -5086,7 +5121,7 @@ Ext.define('Admin.controller.WizardController', {
                 if(closeWizard) {
                     me.getWizardTab().close();
                 }
-                admin.api.message.showFeedback('Space "' + spaceName + '" was saved');
+                API.notify.showFeedback('Space "' + spaceName + '" was saved');
                 me.getSpaceTreeGridPanel().refresh();
             }
         };
@@ -5098,7 +5133,7 @@ Ext.define('Admin.controller.WizardController', {
         var onDeleteSpaceSuccess = function (success, failures) {
             if(success) {
                 wizard.close();
-                admin.api.message.showFeedback('Space was deleted');
+                API.notify.showFeedback('Space was deleted');
             }
         };
         this.remoteDeleteSpace(space, onDeleteSpaceSuccess);
@@ -5113,9 +5148,14 @@ Ext.define('Admin.controller.WizardController', {
         return Ext.ComponentQuery.query('spaceAdminWizardToolbar', this.getWizardTab())[0];
     }
 });
+var APP;
+(function (APP) {
+    APP.id = 'space-manager';
+})(APP || (APP = {}));
 var components;
 (function (components) {
     components.detailPanel;
+    components.gridPanel;
 })(components || (components = {}));
 Ext.application({
     name: 'spaceAdmin',
@@ -5133,7 +5173,7 @@ Ext.application({
     ],
     launch: function () {
         var toolbar = new admin.ui.BrowseToolbar('north');
-        var grid = new Admin.view.TreeGridPanel();
+        var grid = components.gridPanel = new Admin.view.TreeGridPanel();
         grid.region = 'center';
         grid.flex = 1;
         var detail = components.detailPanel = new admin.ui.SpaceDetailPanel('south');
@@ -5165,6 +5205,7 @@ Ext.application({
         wp.layout = 'fit';
         wp.cls = 'admin-viewport';
         wp.add(tabPanel);
+        new admin.ui.DeleteSpaceWindow();
     }
 });
 //@ sourceMappingURL=all.js.map

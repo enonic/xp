@@ -63,7 +63,7 @@ Ext.define('Admin.view.TopBar', {
             items: [
                 {
                     xtype: 'adminImageButton',
-                    icon: admin.lib.uri.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                    icon: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
                     popupTpl: '<div class="title">User</div>' +
                               '<div class="user-name">{userName}</div>' +
                               '<div class="content">' +
@@ -79,7 +79,7 @@ Ext.define('Admin.view.TopBar', {
                               '</div>',
                     popupData: {
                         userName: "Thomas Lund Sigdestad",
-                        photoUrl: admin.lib.uri.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                        photoUrl: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
                         qName: 'system/tsi'
                     }
                 }
@@ -205,7 +205,7 @@ Ext.define('Admin.view.TopBar', {
             this.titleButton.setVisible(tabCount > 0);
             this.titleButton.setCount(tabCount);
 
-            admin.api.message.updateAppTabCount(this.getApplicationId(), tabCount);
+            API.notify.updateAppTabCount(this.getApplicationId(), tabCount);
         }
     },
 

@@ -48,6 +48,9 @@ module admin.ui {
             deleteButton.scale = 'medium';
             deleteButton.iconAlign = 'top';
             deleteButton.minWidth = 64;
+            deleteButton.setHandler(() => {
+                new APP.event.DeletePromptEvent(components.gridPanel.getSelection()).fire();
+            });
 
             tb.add(deleteButton);
         }

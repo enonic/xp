@@ -1,3 +1,41 @@
+module liveedit.ui {
+    var $ = $liveedit;
+
+    export class SettingsButton extends liveedit.ui.BaseButton {
+
+        private menu = null;
+
+        constructor(menu) {
+            super();
+
+            this.menu = menu;
+            this.init();
+        }
+
+        init() {
+            var me = this;
+
+            var $button = me.createButton({
+                text: 'Settings',
+                id: 'live-edit-button-settings',
+                cls: 'live-edit-component-menu-button',
+                handler: function (event) {
+                    event.stopPropagation();
+
+                    // Temporary workaround until we get a firm messaging system
+                    var parentWindow = window['parent'];
+                    if (parentWindow && parentWindow['Admin'].MessageBus) {
+                        parentWindow['Admin'].MessageBus.showLiveEditTestSettingsWindow({});
+                    }
+                }
+            });
+
+            me.appendTo(me.menu.getEl());
+            me.menu.buttons.push(me);
+        }
+    }
+}
+/*
 AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
 (function ($) {
@@ -30,11 +68,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
             handler: function (event) {
                 event.stopPropagation();
 
-                /*
-                if (window.parent.Admin && window.parent.Admin.MessageBus) {
-                    window.parent.Admin.MessageBus.showLiveEditTestSettingsWindow({});
-                }
-                */
+
             }
         });
 
@@ -43,3 +77,4 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     };
 
 }($liveedit));
+*/

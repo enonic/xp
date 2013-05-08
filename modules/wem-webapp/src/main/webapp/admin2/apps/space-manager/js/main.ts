@@ -3,6 +3,9 @@
 ///<reference path='lib/JsonRpcProvider.ts' />
 ///<reference path='lib/RemoteService.ts' />
 
+///<reference path='event/DeletedEvent.ts' />
+///<reference path='event/DeletePromptEvent.ts' />
+
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
 ///<reference path='plugin/fileupload/FileUploadGrid.ts' />
@@ -55,12 +58,21 @@
 ///<reference path='controller/DialogWindowController.ts' />
 ///<reference path='controller/WizardController.ts' />
 
+
 declare var Ext;
 declare var Admin;
 declare var CONFIG;
 
+module APP {
+
+    // Application id for uniquely identifying app
+    export var id = 'space-manager';
+
+}
+
 module components {
     export var detailPanel:admin.ui.SpaceDetailPanel;
+    export var gridPanel;
 }
 
 Ext.application({
@@ -84,7 +96,7 @@ Ext.application({
 
         var toolbar = new admin.ui.BrowseToolbar('north');
 
-        var grid = new Admin.view.TreeGridPanel();
+        var grid = components.gridPanel = new Admin.view.TreeGridPanel();
         grid.region = 'center';
         grid.flex = 1;
 
@@ -124,6 +136,8 @@ Ext.application({
         wp.cls = 'admin-viewport';
 
         wp.add(tabPanel);
+
+        new admin.ui.DeleteSpaceWindow();
     }
 
 });

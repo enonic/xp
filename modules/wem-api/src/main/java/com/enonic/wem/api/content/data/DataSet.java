@@ -33,6 +33,11 @@ public class DataSet
         // Creates a root DataSet
     }
 
+    public DataSet( final String name )
+    {
+        super( name );
+    }
+
     private DataSet( final Builder builder )
     {
         super( builder.name );
@@ -480,6 +485,13 @@ public class DataSet
     public static Builder newDataSet()
     {
         return new Builder();
+    }
+
+    public static Builder newDataSet( final String name )
+    {
+        final Builder builder = new Builder();
+        builder.name( name );
+        return builder;
     }
 
     public static class Builder
