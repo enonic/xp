@@ -2153,17 +2153,17 @@ var admin;
         var ActionMenu = (function (_super) {
             __extends(ActionMenu, _super);
             function ActionMenu() {
+                var openMenuItem = new Ext.menu.Item();
+                openMenuItem.text = 'Open';
+                openMenuItem.action = 'viewSpace';
+                var editMenuItem = new Ext.menu.Item();
+                editMenuItem.text = 'Edit';
+                editMenuItem.action = 'editSpace';
                         _super.call(this, [
-            this.createMenuItem('Open', 'viewSpace'), 
-            this.createMenuItem('Edit', 'editSpace')
+            openMenuItem, 
+            editMenuItem
         ]);
             }
-            ActionMenu.prototype.createMenuItem = function (text, action) {
-                var menuItem = new Ext.menu.Item();
-                menuItem.text = text;
-                menuItem.action = action;
-                return menuItem;
-            };
             return ActionMenu;
         })(ui.BaseActionMenu);
         ui.ActionMenu = ActionMenu;        
