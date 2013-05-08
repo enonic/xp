@@ -11,7 +11,7 @@ declare var AdminLiveEdit;
 ///<reference path='helper/ComponentHelper.ts' />
 ///<reference path='helper/MutationObserver.ts' />
 
-///<reference path='DragDropSort.ts' />
+///<reference path='ui/DragDropSort.ts' />
 
 ///<reference path='model/component/Base.ts' />
 ///<reference path='model/component/Page.ts' />
