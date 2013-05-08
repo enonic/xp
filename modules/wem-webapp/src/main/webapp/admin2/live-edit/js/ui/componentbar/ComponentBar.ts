@@ -1,4 +1,20 @@
-interface ComponentsJson {}
+interface ComponentsJson {
+    totalCount:number;
+    componentGroups:ComponentGroup[];
+}
+
+interface ComponentGroup {
+    name:string;
+    components:Component[];
+}
+
+interface Component {
+    key:string;
+    type:string;
+    name:string;
+    subtitle:string;
+    icon:string;
+}
 
 module LiveEdit.ui {
     var $ = $liveedit;
@@ -93,12 +109,12 @@ module LiveEdit.ui {
         }
 
 
-        renderComponents(jsonData) {
+        renderComponents(jsonData:ComponentsJson) {
             var me = this,
                 $container = me.getComponentsContainer(),
                 groups = jsonData.componentGroups;
 
-            $.each(groups, function (index, group:any) {
+            $.each(groups, function (index, group:ComponentGroup) {
                 me.addHeader(group);
                 if (group.components) {
                     me.addComponentsToGroup(group.components)
@@ -107,7 +123,7 @@ module LiveEdit.ui {
         }
 
 
-        addHeader(componentGroup:any) {
+        addHeader(componentGroup:ComponentGroup) {
             var me = this,
                 html = '';
             html += '<li class="live-edit-component-list-header">';
@@ -118,15 +134,15 @@ module LiveEdit.ui {
         }
 
 
-        addComponentsToGroup(components:any) {
+        addComponentsToGroup(components:Component[]) {
             var me = this;
-            $.each(components, function (index, component:any) {
+            $.each(components, function (index, component:Component) {
                 me.addComponent(component);
             });
         }
 
 
-        addComponent(component:any) {
+        addComponent(component:Component) {
             var me = this,
                 html = '';
             html += '<li class="live-edit-component" data-live-edit-component-key="' + component.key + '" data-live-edit-component-name="' + component.name + '" data-live-edit-component-type="' + component.type + '">';
