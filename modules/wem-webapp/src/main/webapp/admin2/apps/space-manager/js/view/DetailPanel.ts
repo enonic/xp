@@ -165,8 +165,7 @@ module admin.ui {
 
             north.add(header);
 
-            north.add(new admin.ui.DropDownButton().ext)
-
+            north.add(new admin.ui.ActionMenu().ext);
 
             c.add(north);
 

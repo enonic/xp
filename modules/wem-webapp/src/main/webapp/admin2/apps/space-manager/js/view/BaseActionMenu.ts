@@ -1,26 +1,23 @@
 module admin.ui {
 
-    export class DropDownButton {
+    /**
+     * Candidate to be shared between applications.
+     */
+    export class BaseActionMenu {
 
         ext;
 
-        constructor() {
+        constructor(menuItems:any[]) {
 
             var menu = new Ext.menu.Menu();
             menu.cls = 'admin-context-menu';
             menu.border = false;
             menu.shadow = false;
-            //menu.width = 120;
+            menu.width = 120;
 
-            var menuItemOpen = new Ext.menu.Item();
-            menuItemOpen.text = 'Open';
-            menuItemOpen.action = 'viewSpace';
-            menu.add(menuItemOpen);
-
-            var menuItemEdit = new Ext.menu.Item();
-            menuItemEdit.text = 'Edit';
-            menuItemEdit.action = 'editSpace';
-            menu.add(menuItemEdit);
+            for (var i in menuItems) {
+                menu.add(menuItems[i]);
+            }
 
             this.ext = new Ext.button.Button({
                 menu: menu,

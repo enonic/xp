@@ -2143,40 +2143,61 @@ Ext.define('Admin.view.WizardPanel', {
 var admin;
 (function (admin) {
     (function (ui) {
-        var DropDownButton = (function () {
-            function DropDownButton() {
-                var dropDownButton = this.ext = new Ext.button.Button();
-                dropDownButton.cls = 'admin-dropdown-button';
-                dropDownButton.width = 120;
-                dropDownButton.padding = 5;
-                dropDownButton.text = 'Actions';
-                dropDownButton.height = 30;
-                dropDownButton.itemId = 'dropdown';
-                dropDownButton.tdAttrs = {
-                    width: 120,
-                    valign: 'top',
-                    style: {
-                        padding: '0 20px 0 0'
-                    }
-                };
+        var BaseActionMenu = (function () {
+            function BaseActionMenu(menuItems) {
                 var menu = new Ext.menu.Menu();
                 menu.cls = 'admin-context-menu';
                 menu.border = false;
                 menu.shadow = false;
-                var menuItemOpen = new Ext.menu.Item();
-                menuItemOpen.text = 'Open';
-                menuItemOpen.action = 'viewSpace';
-                menu.add(menuItemOpen);
-                var menuItemEdit = new Ext.menu.Item();
-                menuItemEdit.text = 'Edit';
-                menuItemEdit.action = 'editSpace';
-                menu.add(menuItemEdit);
-                dropDownButton.menu = menu;
+                menu.width = 120;
+                for (var i in menuItems) {
+                    menu.add(menuItems[i]);
+                }
+                this.ext = new Ext.button.Button({
+                    menu: menu,
+                    cls: 'admin-dropdown-button',
+                    width: 120,
+                    padding: 5,
+                    text: 'Actions',
+                    height: 30,
+                    itemId: 'dropdown',
+                    tdAttr: {
+                        width: 120,
+                        valign: 'top',
+                        style: {
+                            padding: '0 20px 0 0'
+                        }
+                    }
+                });
             }
 
-            return DropDownButton;
+            return BaseActionMenu;
         })();
-        ui.DropDownButton = DropDownButton;
+        ui.BaseActionMenu = BaseActionMenu;
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
+var admin;
+(function (admin) {
+    (function (ui) {
+        var ActionMenu = (function (_super) {
+            __extends(ActionMenu, _super);
+            function ActionMenu() {
+                _super.call(this, [
+                    this.createMenuItem('Open', 'viewSpace'),
+                    this.createMenuItem('Edit', 'editSpace')
+                ]);
+            }
+
+            ActionMenu.prototype.createMenuItem = function (text, action) {
+                var menuItem = new Ext.menu.Item();
+                menuItem.text = text;
+                menuItem.action = action;
+                return menuItem;
+            };
+            return ActionMenu;
+        })(ui.BaseActionMenu);
+        ui.ActionMenu = ActionMenu;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -2705,7 +2726,7 @@ var admin;
                 header.data = data;
                 header.cls = 'admin-detail-header';
                 north.add(header);
-                north.add(new admin.ui.DropDownButton().ext);
+                north.add(new admin.ui.ActionMenu().ext);
                 c.add(north);
                 var west = new Ext.container.Container();
                 west.region = 'west';
