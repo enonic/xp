@@ -1,3 +1,4 @@
+///<reference path='../../../api/js/ExtJs.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
 ///<reference path='lib/JsonRpcProvider.ts' />
