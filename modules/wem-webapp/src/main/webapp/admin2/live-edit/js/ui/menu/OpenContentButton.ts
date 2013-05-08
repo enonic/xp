@@ -1,7 +1,7 @@
-module liveedit.ui {
+module LiveEdit.ui {
     var $ = $liveedit;
 
-    export class OpenContentButton extends liveedit.ui.BaseButton {
+    export class OpenContentButton extends LiveEdit.ui.BaseButton {
 
         private menu = null;
 

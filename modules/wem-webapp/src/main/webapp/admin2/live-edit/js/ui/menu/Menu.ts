@@ -1,8 +1,8 @@
-module liveedit.ui {
+module LiveEdit.ui {
     var $ = $liveedit;
-    var componentHelper = liveedit.ComponentHelper;
+    var componentHelper = LiveEdit.ComponentHelper;
 
-    export class Menu extends liveedit.ui.Base {
+    export class Menu extends LiveEdit.ui.Base {
         private selectedComponent:JQuery;
         private previousPageSizes = null;
         private previousPagePositions = null;
@@ -73,7 +73,7 @@ module liveedit.ui {
 
             me.selectedComponent = $component;
             me.previousPagePositions = pagePosition;
-            me.previousPageSizes = liveedit.DomHelper.getViewPortSize();
+            me.previousPageSizes = LiveEdit.DomHelper.getViewPortSize();
 
             me.updateTitleBar($component);
 
@@ -116,16 +116,16 @@ module liveedit.ui {
 
         addButtons() {
             var me = this;
-            var parentButton = new liveedit.ui.ParentButton(me);
-            var settingsButton = new liveedit.ui.SettingsButton(me);
-            var detailsButton = new liveedit.ui.DetailsButton(me);
-            var insertButton = new liveedit.ui.InsertButton(me);
-            var resetButton = new liveedit.ui.ResetButton(me);
-            var clearButton = new liveedit.ui.ClearButton(me);
-            var openContentButton = new liveedit.ui.OpenContentButton(me);
-            var viewButton = new liveedit.ui.ViewButton(me);
-            var editButton = new liveedit.ui.EditButton(me);
-            var removeButton = new liveedit.ui.RemoveButton(me);
+            var parentButton = new LiveEdit.ui.ParentButton(me);
+            var settingsButton = new LiveEdit.ui.SettingsButton(me);
+            var detailsButton = new LiveEdit.ui.DetailsButton(me);
+            var insertButton = new LiveEdit.ui.InsertButton(me);
+            var resetButton = new LiveEdit.ui.ResetButton(me);
+            var clearButton = new LiveEdit.ui.ClearButton(me);
+            var openContentButton = new LiveEdit.ui.OpenContentButton(me);
+            var viewButton = new LiveEdit.ui.ViewButton(me);
+            var editButton = new LiveEdit.ui.EditButton(me);
+            var removeButton = new LiveEdit.ui.RemoveButton(me);
 
             var i,
                 $menuItemsPlaceholder = me.getMenuItemsPlaceholderElement();
@@ -245,7 +245,7 @@ module liveedit.ui {
             var x = this.previousPagePositions.x,
                 y = this.previousPagePositions.y;
 
-            x = x - (this.previousPageSizes.width - liveedit.DomHelper.getViewPortSize().width);
+            x = x - (this.previousPageSizes.width - LiveEdit.DomHelper.getViewPortSize().width);
 
             this.moveToXY(x, y);
         }
@@ -296,7 +296,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     var proto = menu.prototype;
 
     // Uses
-    var componentHelper = liveedit.ComponentHelper;
+    var componentHelper = LiveEdit.ComponentHelper;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -352,7 +352,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
 
         me.selectedComponent = $component;
         me.previousPagePositions = pagePosition;
-        me.previousPageSizes = liveedit.DomHelper.getViewPortSize();
+        me.previousPageSizes = LiveEdit.DomHelper.getViewPortSize();
 
         me.updateTitleBar($component);
 
@@ -526,7 +526,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
             var x = this.previousPagePositions.x,
                 y = this.previousPagePositions.y;
 
-            x = x - (this.previousPageSizes.width - liveedit.DomHelper.getViewPortSize().width);
+            x = x - (this.previousPageSizes.width - LiveEdit.DomHelper.getViewPortSize().width);
 
             this.moveToXY(x, y);
         }

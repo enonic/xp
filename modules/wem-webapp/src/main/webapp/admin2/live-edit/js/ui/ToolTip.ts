@@ -1,9 +1,9 @@
-module liveedit.ui {
+module LiveEdit.ui {
     var $ = $liveedit;
 
-    var componentHelper = liveedit.ComponentHelper;
+    var componentHelper = LiveEdit.ComponentHelper;
 
-    export class ToolTip extends liveedit.ui.Base {
+    export class ToolTip extends LiveEdit.ui.Base {
         private OFFSET_X = 0;
         private OFFSET_Y = 18;
 
@@ -80,7 +80,7 @@ module liveedit.ui {
 
         getPosition(event) {
             var t = this;
-            var domHelper = liveedit.DomHelper;
+            var domHelper = LiveEdit.DomHelper;
             var pageX = event.pageX;
             var pageY = event.pageY;
             var x = pageX + t.OFFSET_X;
@@ -141,7 +141,7 @@ module liveedit.ui {
  var proto = toolTip.prototype;
 
  // Uses
- var componentHelper = liveedit.ComponentHelper;
+ var componentHelper = LiveEdit.ComponentHelper;
 
 
  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -210,7 +210,7 @@ module liveedit.ui {
 
  proto.getPosition = function (event) {
  var t = this;
- var domHelper = liveedit.DomHelper;
+ var domHelper = LiveEdit.DomHelper;
  var pageX = event.pageX;
  var pageY = event.pageY;
  var x = pageX + t.OFFSET_X;

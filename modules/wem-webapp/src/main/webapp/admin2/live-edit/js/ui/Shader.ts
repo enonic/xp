@@ -1,9 +1,9 @@
-module liveedit.ui {
+module LiveEdit.ui {
     var $ = $liveedit;
 
-    var componentHelper = liveedit.ComponentHelper;
+    var componentHelper = LiveEdit.ComponentHelper;
 
-    export class Shader extends liveedit.ui.Base {
+    export class Shader extends LiveEdit.ui.Base {
         private selectedComponent:JQuery = null;
         private $pageShader:JQuery;
         private $northShader:JQuery;
@@ -90,7 +90,7 @@ module liveedit.ui {
 
             $('.live-edit-shader').addClass('live-edit-animatable');
 
-            var documentSize = liveedit.DomHelper.getDocumentSize(),
+            var documentSize = LiveEdit.DomHelper.getDocumentSize(),
                 docWidth = documentSize.width,
                 docHeight = documentSize.height;
 
@@ -171,7 +171,7 @@ module liveedit.ui {
  var proto = shader.prototype;
 
  // Uses
- var componentHelper = liveedit.ComponentHelper;
+ var componentHelper = LiveEdit.ComponentHelper;
 
 
  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -245,7 +245,7 @@ module liveedit.ui {
 
  $('.live-edit-shader').addClass('live-edit-animatable');
 
- var documentSize = liveedit.DomHelper.getDocumentSize(),
+ var documentSize = LiveEdit.DomHelper.getDocumentSize(),
  docWidth = documentSize.width,
  docHeight = documentSize.height;
 

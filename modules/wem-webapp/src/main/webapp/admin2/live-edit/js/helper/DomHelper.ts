@@ -9,7 +9,7 @@ interface ViewPortSize {
 }
 
 
-module liveedit {
+module LiveEdit {
     export class DomHelper {
 
         static $ = $liveedit;

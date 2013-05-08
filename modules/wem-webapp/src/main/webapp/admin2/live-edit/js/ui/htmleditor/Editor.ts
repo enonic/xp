@@ -1,14 +1,14 @@
-module liveedit.ui {
+module LiveEdit.ui {
     var $ = $liveedit;
 
-    export class Editor extends liveedit.ui.Base {
+    export class Editor extends LiveEdit.ui.Base {
 
         toolbar;
 
         constructor() {
             super();
 
-            this.toolbar = new liveedit.ui.EditorToolbar();
+            this.toolbar = new LiveEdit.ui.EditorToolbar();
             this.registerGlobalListeners();
 
             console.log('Editor instantiated. Using jQuery ' + $().jquery);

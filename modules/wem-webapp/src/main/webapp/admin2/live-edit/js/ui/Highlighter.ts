@@ -1,9 +1,9 @@
-module liveedit.ui {
+module LiveEdit.ui {
     var $ = $liveedit;
 
-    var componentHelper = liveedit.ComponentHelper;
+    var componentHelper = LiveEdit.ComponentHelper;
 
-    export class Highlighter extends liveedit.ui.Base {
+    export class Highlighter extends LiveEdit.ui.Base {
 
         private selectedComponent:JQuery = null;
 
@@ -213,7 +213,7 @@ module liveedit.ui {
  var proto = highlighter.prototype;
 
  // Uses
- var componentHelper = liveedit.ComponentHelper;
+ var componentHelper = LiveEdit.ComponentHelper;
 
 
  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

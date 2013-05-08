@@ -1,8 +1,8 @@
-module liveedit.ui {
+module LiveEdit.ui {
     var $ = $liveedit;
-    var componentHelper = liveedit.ComponentHelper;
+    var componentHelper = LiveEdit.ComponentHelper;
 
-    export class ParentButton extends liveedit.ui.BaseButton {
+    export class ParentButton extends LiveEdit.ui.BaseButton {
 
         private menu = null;
 
@@ -79,7 +79,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view.menu');
     var proto = parentButton.prototype;
 
     // Uses
-    var componentHelper = liveedit.ComponentHelper;
+    var componentHelper = LiveEdit.ComponentHelper;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

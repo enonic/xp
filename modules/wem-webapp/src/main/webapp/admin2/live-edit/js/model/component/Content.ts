@@ -1,7 +1,7 @@
-module liveedit.model {
+module LiveEdit.model {
     var $ = $liveedit;
 
-    export class Content extends liveedit.model.Base {
+    export class Content extends LiveEdit.model.Base {
         constructor() {
             super();
             this.cssSelector = '[data-live-edit-type=content]';

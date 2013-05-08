@@ -1,4 +1,4 @@
-module liveedit {
+module LiveEdit {
     var $ = $liveedit;
 
     export class MutationObserver {
@@ -21,7 +21,6 @@ module liveedit {
 
             $(window).on('component.onParagraphEdit', $.proxy(me.observe, me));
             $(window).on('shader.onClick', $.proxy(me.disconnect, me));
-
         }
 
 

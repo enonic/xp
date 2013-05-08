@@ -1,9 +1,9 @@
-module liveedit.ui {
+module LiveEdit.ui {
     var $ = $liveedit;
 
-    var componentHelper = liveedit.ComponentHelper;
+    var componentHelper = LiveEdit.ComponentHelper;
 
-    export class EditorToolbar extends liveedit.ui.Base {
+    export class EditorToolbar extends LiveEdit.ui.Base {
 
         private selectedComponent:JQuery = null;
 
@@ -174,7 +174,7 @@ module liveedit.ui {
  var proto = toolbar.prototype;
 
  // Uses
- var componentHelper = liveedit.ComponentHelper;
+ var componentHelper = LiveEdit.ComponentHelper;
 
 
  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

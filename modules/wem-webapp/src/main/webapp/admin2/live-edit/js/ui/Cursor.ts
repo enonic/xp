@@ -1,9 +1,9 @@
-module liveedit.ui {
+module LiveEdit.ui {
     var $ = $liveedit;
 
-    var componentHelper = liveedit.ComponentHelper;
+    var componentHelper = LiveEdit.ComponentHelper;
 
-    export class Cursor extends liveedit.ui.Base {
+    export class Cursor extends LiveEdit.ui.Base {
 
         constructor() {
             super();
@@ -19,7 +19,7 @@ module liveedit.ui {
 
 
         private updateCursor(event, $component) {
-            var componentType = liveedit.ComponentHelper.getComponentType($component);
+            var componentType = LiveEdit.ComponentHelper.getComponentType($component);
             var $body = $('body');
             var cursor = 'default';
 
@@ -76,7 +76,7 @@ AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.view');
 
 
     proto.updateCursor = function (event, $component) {
-        var componentType = liveedit.ComponentHelper.getComponentType($component);
+        var componentType = LiveEdit.ComponentHelper.getComponentType($component);
         var $body = $('body');
         var cursor = 'default';
 

@@ -1,7 +1,7 @@
-module liveedit.ui {
+module LiveEdit.ui {
     var $ = $liveedit;
 
-    export class ResetButton extends liveedit.ui.BaseButton {
+    export class ResetButton extends LiveEdit.ui.BaseButton {
 
         private menu = null;
 

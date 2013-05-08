@@ -1,9 +1,9 @@
 interface ComponentsJson {}
 
-module liveedit.ui {
+module LiveEdit.ui {
     var $ = $liveedit;
 
-    export class ComponentBar extends liveedit.ui.Base {
+    export class ComponentBar extends LiveEdit.ui.Base {
 
         private BAR_WIDTH:number;
         private TOGGLE_WIDTH:number;

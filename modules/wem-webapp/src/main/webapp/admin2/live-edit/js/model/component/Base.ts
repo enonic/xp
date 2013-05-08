@@ -1,4 +1,4 @@
-module liveedit.model {
+module LiveEdit.model {
     var $ = $liveedit;
 
     export class Base {

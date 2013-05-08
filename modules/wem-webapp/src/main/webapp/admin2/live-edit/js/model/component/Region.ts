@@ -1,8 +1,8 @@
-module liveedit.model {
+module LiveEdit.model {
     var $ = $liveedit;
-    var componentHelper = liveedit.ComponentHelper;
+    var componentHelper = LiveEdit.ComponentHelper;
 
-    export class Region extends liveedit.model.Base {
+    export class Region extends LiveEdit.model.Base {
         constructor() {
             super();
 
@@ -90,7 +90,7 @@ module liveedit.model {
  var proto = regions.prototype;
 
  // uses
- var componentHelper = liveedit.ComponentHelper;
+ var componentHelper = LiveEdit.ComponentHelper;
 
 
  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

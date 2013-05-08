@@ -29,8 +29,8 @@ AdminLiveEdit.namespace.useNamespace = function (namespace, container) {
     }
     return AdminLiveEdit.namespace.useNamespace(remainingNs, o[ns[0]]);
 };
-var liveedit;
-(function (liveedit) {
+var LiveEdit;
+(function (LiveEdit) {
     var DomHelper = (function () {
         function DomHelper() { }
         DomHelper.$ = $liveedit;
@@ -53,28 +53,28 @@ var liveedit;
         };
         return DomHelper;
     })();
-    liveedit.DomHelper = DomHelper;    
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    LiveEdit.DomHelper = DomHelper;    
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     var ComponentHelper = (function () {
         function ComponentHelper() { }
         ComponentHelper.$ = $liveedit;
         ComponentHelper.getBoxModel = function getBoxModel(component) {
-            var el = ComponentHelper.$(component);
-            var offset = el.offset();
+            var cmp = component;
+            var offset = cmp.offset();
             var top = offset.top;
             var left = offset.left;
-            var width = el.outerWidth();
-            var height = el.outerHeight();
-            var bt = parseInt(el.css('borderTopWidth'), 10);
-            var br = parseInt(el.css('borderRightWidth'), 10);
-            var bb = parseInt(el.css('borderBottomWidth'), 10);
-            var bl = parseInt(el.css('borderLeftWidth'), 10);
-            var pt = parseInt(el.css('paddingTop'), 10);
-            var pr = parseInt(el.css('paddingRight'), 10);
-            var pb = parseInt(el.css('paddingBottom'), 10);
-            var pl = parseInt(el.css('paddingLeft'), 10);
+            var width = cmp.outerWidth();
+            var height = cmp.outerHeight();
+            var bt = parseInt(cmp.css('borderTopWidth'), 10);
+            var br = parseInt(cmp.css('borderRightWidth'), 10);
+            var bb = parseInt(cmp.css('borderBottomWidth'), 10);
+            var bl = parseInt(cmp.css('borderLeftWidth'), 10);
+            var pt = parseInt(cmp.css('paddingTop'), 10);
+            var pr = parseInt(cmp.css('paddingRight'), 10);
+            var pb = parseInt(cmp.css('paddingBottom'), 10);
+            var pl = parseInt(cmp.css('paddingLeft'), 10);
             return {
                 top: top,
                 left: left,
@@ -91,7 +91,7 @@ var liveedit;
             };
         };
         ComponentHelper.getPagePositionForComponent = function getPagePositionForComponent(component) {
-            var pos = ComponentHelper.$(component).position();
+            var pos = component.position();
             return {
                 top: pos.top,
                 left: pos.left
@@ -122,10 +122,10 @@ var liveedit;
         };
         return ComponentHelper;
     })();
-    liveedit.ComponentHelper = ComponentHelper;    
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    LiveEdit.ComponentHelper = ComponentHelper;    
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     var $ = $liveedit;
     var MutationObserver = (function () {
         function MutationObserver() {
@@ -192,14 +192,14 @@ var liveedit;
         };
         return MutationObserver;
     })();
-    liveedit.MutationObserver = MutationObserver;    
-})(liveedit || (liveedit = {}));
+    LiveEdit.MutationObserver = MutationObserver;    
+})(LiveEdit || (LiveEdit = {}));
 AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.DragDropSort');
 AdminLiveEdit.DragDropSort = ((function ($) {
     'use strict';
-    var componentHelper = liveedit.ComponentHelper;
+    var componentHelper = LiveEdit.ComponentHelper;
     var isDragging = false;
-    var cursorAt = liveedit.ComponentHelper.supportsTouch() ? {
+    var cursorAt = LiveEdit.ComponentHelper.supportsTouch() ? {
         left: 15,
         top: 70
     } : {
@@ -271,7 +271,7 @@ AdminLiveEdit.DragDropSort = ((function ($) {
         isDragging = true;
         var componentIsSelected = ui.item.hasClass('live-edit-selected-component');
         ui.item.data('live-edit-selected-on-sort-start', componentIsSelected);
-        var targetComponentName = liveedit.ComponentHelper.getComponentName($(event.target));
+        var targetComponentName = LiveEdit.ComponentHelper.getComponentName($(event.target));
         ui.placeholder.html('Drop component here' + '<div style="font-size: 10px;">' + targetComponentName + '</div>');
         refreshSortable();
         $(window).trigger('component.onSortStart', [
@@ -325,7 +325,7 @@ AdminLiveEdit.DragDropSort = ((function ($) {
         if(draggedItemIsLayoutComponent && targetIsInLayoutComponent) {
             ui.item.remove();
         }
-        if(liveedit.ComponentHelper.supportsTouch()) {
+        if(LiveEdit.ComponentHelper.supportsTouch()) {
             $(window).trigger('component.mouseOut');
         }
         var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
@@ -371,7 +371,7 @@ AdminLiveEdit.DragDropSort = ((function ($) {
         $(window).on('component.onSelect', function (event, $component) {
         });
         $(window).on('component.onDeselect', function () {
-            if(liveedit.ComponentHelper.supportsTouch() && !isDragging) {
+            if(LiveEdit.ComponentHelper.supportsTouch() && !isDragging) {
                 disableDragDrop();
             }
         });
@@ -392,7 +392,7 @@ AdminLiveEdit.DragDropSort = ((function ($) {
             tolerance: 'pointer',
             cursor: 'move',
             cursorAt: cursorAt,
-            scrollSensitivity: Math.round(liveedit.DomHelper.getViewPortSize().height / 8),
+            scrollSensitivity: Math.round(LiveEdit.DomHelper.getViewPortSize().height / 8),
             placeholder: 'live-edit-drop-target-placeholder',
             helper: createDragHelper,
             zIndex: 1001000,
@@ -418,8 +418,8 @@ AdminLiveEdit.DragDropSort = ((function ($) {
         }
     };
 })($liveedit));
-var liveedit;
-(function (liveedit) {
+var LiveEdit;
+(function (LiveEdit) {
     (function (model) {
         var $ = $liveedit;
         var Base = (function () {
@@ -485,16 +485,16 @@ var liveedit;
             return Base;
         })();
         model.Base = Base;        
-    })(liveedit.model || (liveedit.model = {}));
-    var model = liveedit.model;
-})(liveedit || (liveedit = {}));
+    })(LiveEdit.model || (LiveEdit.model = {}));
+    var model = LiveEdit.model;
+})(LiveEdit || (LiveEdit = {}));
 var __extends = this.__extends || function (d, b) {
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var liveedit;
-(function (liveedit) {
+var LiveEdit;
+(function (LiveEdit) {
     (function (model) {
         var $ = $liveedit;
         var Page = (function (_super) {
@@ -506,16 +506,16 @@ var liveedit;
                 console.log('Page model instantiated. Using jQuery ' + $().jquery);
             }
             return Page;
-        })(liveedit.model.Base);
+        })(LiveEdit.model.Base);
         model.Page = Page;        
-    })(liveedit.model || (liveedit.model = {}));
-    var model = liveedit.model;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.model || (LiveEdit.model = {}));
+    var model = LiveEdit.model;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (model) {
         var $ = $liveedit;
-        var componentHelper = liveedit.ComponentHelper;
+        var componentHelper = LiveEdit.ComponentHelper;
         var Region = (function (_super) {
             __extends(Region, _super);
             function Region() {
@@ -563,13 +563,13 @@ var liveedit;
                 $('.live-edit-empty-region-placeholder').remove();
             };
             return Region;
-        })(liveedit.model.Base);
+        })(LiveEdit.model.Base);
         model.Region = Region;        
-    })(liveedit.model || (liveedit.model = {}));
-    var model = liveedit.model;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.model || (LiveEdit.model = {}));
+    var model = LiveEdit.model;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (model) {
         var $ = $liveedit;
         var Layout = (function (_super) {
@@ -583,13 +583,13 @@ var liveedit;
                 console.log('Layout model instantiated. Using jQuery ' + $().jquery);
             }
             return Layout;
-        })(liveedit.model.Base);
+        })(LiveEdit.model.Base);
         model.Layout = Layout;        
-    })(liveedit.model || (liveedit.model = {}));
-    var model = liveedit.model;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.model || (LiveEdit.model = {}));
+    var model = LiveEdit.model;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (model) {
         var $ = $liveedit;
         var Part = (function (_super) {
@@ -624,13 +624,13 @@ var liveedit;
                 });
             };
             return Part;
-        })(liveedit.model.Base);
+        })(LiveEdit.model.Base);
         model.Part = Part;        
-    })(liveedit.model || (liveedit.model = {}));
-    var model = liveedit.model;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.model || (LiveEdit.model = {}));
+    var model = LiveEdit.model;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (model) {
         var $ = $liveedit;
         var Content = (function (_super) {
@@ -644,13 +644,13 @@ var liveedit;
                 console.log('Content model instantiated. Using jQuery ' + $().jquery);
             }
             return Content;
-        })(liveedit.model.Base);
+        })(LiveEdit.model.Base);
         model.Content = Content;        
-    })(liveedit.model || (liveedit.model = {}));
-    var model = liveedit.model;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.model || (LiveEdit.model = {}));
+    var model = LiveEdit.model;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (model) {
         var $ = $liveedit;
         var Paragraph = (function (_super) {
@@ -745,13 +745,13 @@ var liveedit;
                 me.currentMode = me.modes.UNSELECTED;
             };
             return Paragraph;
-        })(liveedit.model.Base);
+        })(LiveEdit.model.Base);
         model.Paragraph = Paragraph;        
-    })(liveedit.model || (liveedit.model = {}));
-    var model = liveedit.model;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.model || (LiveEdit.model = {}));
+    var model = LiveEdit.model;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
         var componentCount = 0;
@@ -775,11 +775,11 @@ var liveedit;
             return Base;
         })();
         ui.Base = Base;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
         var HtmlElementReplacer = (function (_super) {
@@ -854,20 +854,20 @@ var liveedit;
                 return clsName;
             };
             return HtmlElementReplacer;
-        })(liveedit.ui.Base);
+        })(LiveEdit.ui.Base);
         ui.HtmlElementReplacer = HtmlElementReplacer;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
         var Editor = (function (_super) {
             __extends(Editor, _super);
             function Editor() {
                         _super.call(this);
-                this.toolbar = new liveedit.ui.EditorToolbar();
+                this.toolbar = new LiveEdit.ui.EditorToolbar();
                 this.registerGlobalListeners();
                 console.log('Editor instantiated. Using jQuery ' + $().jquery);
             }
@@ -892,16 +892,16 @@ var liveedit;
                 $paragraph.get(0).blur();
             };
             return Editor;
-        })(liveedit.ui.Base);
+        })(LiveEdit.ui.Base);
         ui.Editor = Editor;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
-        var componentHelper = liveedit.ComponentHelper;
+        var componentHelper = LiveEdit.ComponentHelper;
         var EditorToolbar = (function (_super) {
             __extends(EditorToolbar, _super);
             function EditorToolbar() {
@@ -996,16 +996,16 @@ var liveedit;
                 };
             };
             return EditorToolbar;
-        })(liveedit.ui.Base);
+        })(LiveEdit.ui.Base);
         ui.EditorToolbar = EditorToolbar;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
-        var componentHelper = liveedit.ComponentHelper;
+        var componentHelper = LiveEdit.ComponentHelper;
         var Shader = (function (_super) {
             __extends(Shader, _super);
             function Shader() {
@@ -1065,7 +1065,7 @@ var liveedit;
             Shader.prototype.showForComponent = function ($component) {
                 var me = this;
                 $('.live-edit-shader').addClass('live-edit-animatable');
-                var documentSize = liveedit.DomHelper.getDocumentSize(), docWidth = documentSize.width, docHeight = documentSize.height;
+                var documentSize = LiveEdit.DomHelper.getDocumentSize(), docWidth = documentSize.width, docHeight = documentSize.height;
                 var boxModel = componentHelper.getBoxModel($component), x = boxModel.left, y = boxModel.top, w = boxModel.width, h = boxModel.height;
                 me.$northShader.css({
                     top: 0,
@@ -1104,16 +1104,16 @@ var liveedit;
                 }
             };
             return Shader;
-        })(liveedit.ui.Base);
+        })(LiveEdit.ui.Base);
         ui.Shader = Shader;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
-        var componentHelper = liveedit.ComponentHelper;
+        var componentHelper = LiveEdit.ComponentHelper;
         var Cursor = (function (_super) {
             __extends(Cursor, _super);
             function Cursor() {
@@ -1126,7 +1126,7 @@ var liveedit;
                 $(window).on('component.onSelect', $.proxy(this.updateCursor, this));
             };
             Cursor.prototype.updateCursor = function (event, $component) {
-                var componentType = liveedit.ComponentHelper.getComponentType($component);
+                var componentType = LiveEdit.ComponentHelper.getComponentType($component);
                 var $body = $('body');
                 var cursor = 'default';
                 switch(componentType) {
@@ -1151,16 +1151,16 @@ var liveedit;
                 $('body').css('cursor', 'default');
             };
             return Cursor;
-        })(liveedit.ui.Base);
+        })(LiveEdit.ui.Base);
         ui.Cursor = Cursor;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
-        var componentHelper = liveedit.ComponentHelper;
+        var componentHelper = LiveEdit.ComponentHelper;
         var Highlighter = (function (_super) {
             __extends(Highlighter, _super);
             function Highlighter() {
@@ -1296,16 +1296,16 @@ var liveedit;
                 }
             };
             return Highlighter;
-        })(liveedit.ui.Base);
+        })(LiveEdit.ui.Base);
         ui.Highlighter = Highlighter;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
-        var componentHelper = liveedit.ComponentHelper;
+        var componentHelper = LiveEdit.ComponentHelper;
         var ToolTip = (function (_super) {
             __extends(ToolTip, _super);
             function ToolTip() {
@@ -1360,7 +1360,7 @@ var liveedit;
             };
             ToolTip.prototype.getPosition = function (event) {
                 var t = this;
-                var domHelper = liveedit.DomHelper;
+                var domHelper = LiveEdit.DomHelper;
                 var pageX = event.pageX;
                 var pageY = event.pageY;
                 var x = pageX + t.OFFSET_X;
@@ -1387,16 +1387,16 @@ var liveedit;
                 });
             };
             return ToolTip;
-        })(liveedit.ui.Base);
+        })(LiveEdit.ui.Base);
         ui.ToolTip = ToolTip;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
-        var componentHelper = liveedit.ComponentHelper;
+        var componentHelper = LiveEdit.ComponentHelper;
         var Menu = (function (_super) {
             __extends(Menu, _super);
             function Menu() {
@@ -1479,7 +1479,7 @@ var liveedit;
                 var me = this;
                 me.selectedComponent = $component;
                 me.previousPagePositions = pagePosition;
-                me.previousPageSizes = liveedit.DomHelper.getViewPortSize();
+                me.previousPageSizes = LiveEdit.DomHelper.getViewPortSize();
                 me.updateTitleBar($component);
                 me.updateMenuItemsForComponent($component);
                 var pageXPosition = pagePosition.x - me.getEl().width() / 2, pageYPosition = pagePosition.y + 15;
@@ -1510,16 +1510,16 @@ var liveedit;
             };
             Menu.prototype.addButtons = function () {
                 var me = this;
-                var parentButton = new liveedit.ui.ParentButton(me);
-                var settingsButton = new liveedit.ui.SettingsButton(me);
-                var detailsButton = new liveedit.ui.DetailsButton(me);
-                var insertButton = new liveedit.ui.InsertButton(me);
-                var resetButton = new liveedit.ui.ResetButton(me);
-                var clearButton = new liveedit.ui.ClearButton(me);
-                var openContentButton = new liveedit.ui.OpenContentButton(me);
-                var viewButton = new liveedit.ui.ViewButton(me);
-                var editButton = new liveedit.ui.EditButton(me);
-                var removeButton = new liveedit.ui.RemoveButton(me);
+                var parentButton = new LiveEdit.ui.ParentButton(me);
+                var settingsButton = new LiveEdit.ui.SettingsButton(me);
+                var detailsButton = new LiveEdit.ui.DetailsButton(me);
+                var insertButton = new LiveEdit.ui.InsertButton(me);
+                var resetButton = new LiveEdit.ui.ResetButton(me);
+                var clearButton = new LiveEdit.ui.ClearButton(me);
+                var openContentButton = new LiveEdit.ui.OpenContentButton(me);
+                var viewButton = new LiveEdit.ui.ViewButton(me);
+                var editButton = new LiveEdit.ui.EditButton(me);
+                var removeButton = new LiveEdit.ui.RemoveButton(me);
                 var i, $menuItemsPlaceholder = me.getMenuItemsPlaceholderElement();
                 for(i = 0; i < me.buttons.length; i++) {
                     me.buttons[i].appendTo($menuItemsPlaceholder);
@@ -1601,18 +1601,18 @@ var liveedit;
             Menu.prototype.handleWindowResize = function (event) {
                 if(this.selectedComponent) {
                     var x = this.previousPagePositions.x, y = this.previousPagePositions.y;
-                    x = x - (this.previousPageSizes.width - liveedit.DomHelper.getViewPortSize().width);
+                    x = x - (this.previousPageSizes.width - LiveEdit.DomHelper.getViewPortSize().width);
                     this.moveToXY(x, y);
                 }
             };
             return Menu;
-        })(liveedit.ui.Base);
+        })(LiveEdit.ui.Base);
         ui.Menu = Menu;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
         var BaseButton = (function (_super) {
@@ -1639,16 +1639,16 @@ var liveedit;
                 return $button;
             };
             return BaseButton;
-        })(liveedit.ui.Base);
+        })(LiveEdit.ui.Base);
         ui.BaseButton = BaseButton;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
-        var componentHelper = liveedit.ComponentHelper;
+        var componentHelper = LiveEdit.ComponentHelper;
         var ParentButton = (function (_super) {
             __extends(ParentButton, _super);
             function ParentButton(menu) {
@@ -1697,13 +1697,13 @@ var liveedit;
                 }
             };
             return ParentButton;
-        })(liveedit.ui.BaseButton);
+        })(LiveEdit.ui.BaseButton);
         ui.ParentButton = ParentButton;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
         var OpenContentButton = (function (_super) {
@@ -1732,13 +1732,13 @@ var liveedit;
                 me.menu.buttons.push(me);
             };
             return OpenContentButton;
-        })(liveedit.ui.BaseButton);
+        })(LiveEdit.ui.BaseButton);
         ui.OpenContentButton = OpenContentButton;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
         var InsertButton = (function (_super) {
@@ -1763,13 +1763,13 @@ var liveedit;
                 me.menu.buttons.push(me);
             };
             return InsertButton;
-        })(liveedit.ui.BaseButton);
+        })(LiveEdit.ui.BaseButton);
         ui.InsertButton = InsertButton;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
         var DetailsButton = (function (_super) {
@@ -1794,13 +1794,13 @@ var liveedit;
                 me.menu.buttons.push(me);
             };
             return DetailsButton;
-        })(liveedit.ui.BaseButton);
+        })(LiveEdit.ui.BaseButton);
         ui.DetailsButton = DetailsButton;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
         var EditButton = (function (_super) {
@@ -1831,13 +1831,13 @@ var liveedit;
                 me.menu.buttons.push(me);
             };
             return EditButton;
-        })(liveedit.ui.BaseButton);
+        })(LiveEdit.ui.BaseButton);
         ui.EditButton = EditButton;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
         var ResetButton = (function (_super) {
@@ -1862,13 +1862,13 @@ var liveedit;
                 me.menu.buttons.push(me);
             };
             return ResetButton;
-        })(liveedit.ui.BaseButton);
+        })(LiveEdit.ui.BaseButton);
         ui.ResetButton = ResetButton;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
         var ClearButton = (function (_super) {
@@ -1893,13 +1893,13 @@ var liveedit;
                 me.menu.buttons.push(me);
             };
             return ClearButton;
-        })(liveedit.ui.BaseButton);
+        })(LiveEdit.ui.BaseButton);
         ui.ClearButton = ClearButton;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
         var ViewButton = (function (_super) {
@@ -1924,13 +1924,13 @@ var liveedit;
                 me.menu.buttons.push(me);
             };
             return ViewButton;
-        })(liveedit.ui.BaseButton);
+        })(LiveEdit.ui.BaseButton);
         ui.ViewButton = ViewButton;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
         var SettingsButton = (function (_super) {
@@ -1960,13 +1960,13 @@ var liveedit;
                 me.menu.buttons.push(me);
             };
             return SettingsButton;
-        })(liveedit.ui.BaseButton);
+        })(LiveEdit.ui.BaseButton);
         ui.SettingsButton = SettingsButton;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
         var RemoveButton = (function (_super) {
@@ -1993,13 +1993,13 @@ var liveedit;
                 me.menu.buttons.push(me);
             };
             return RemoveButton;
-        })(liveedit.ui.BaseButton);
+        })(LiveEdit.ui.BaseButton);
         ui.RemoveButton = RemoveButton;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
-var liveedit;
-(function (liveedit) {
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
         var ComponentBar = (function (_super) {
@@ -2161,31 +2161,31 @@ var liveedit;
                 return $('.live-edit-toggle-text-container', this.getEl());
             };
             return ComponentBar;
-        })(liveedit.ui.Base);
+        })(LiveEdit.ui.Base);
         ui.ComponentBar = ComponentBar;        
-    })(liveedit.ui || (liveedit.ui = {}));
-    var ui = liveedit.ui;
-})(liveedit || (liveedit = {}));
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
 ((function ($) {
     'use strict';
     $(window).load(function () {
         $('.live-edit-loader-splash-container').fadeOut('fast', function () {
             $(this).remove();
-            new liveedit.model.Page();
-            new liveedit.model.Region();
-            new liveedit.model.Layout();
-            new liveedit.model.Part();
-            new liveedit.model.Paragraph();
-            new liveedit.model.Content();
-            new liveedit.ui.HtmlElementReplacer();
-            new liveedit.ui.Highlighter();
-            new liveedit.ui.ToolTip();
-            new liveedit.ui.Cursor();
-            new liveedit.ui.Menu();
-            new liveedit.ui.Shader();
-            new liveedit.ui.Editor();
-            new liveedit.ui.ComponentBar();
-            new liveedit.MutationObserver();
+            new LiveEdit.model.Page();
+            new LiveEdit.model.Region();
+            new LiveEdit.model.Layout();
+            new LiveEdit.model.Part();
+            new LiveEdit.model.Paragraph();
+            new LiveEdit.model.Content();
+            new LiveEdit.ui.HtmlElementReplacer();
+            new LiveEdit.ui.Highlighter();
+            new LiveEdit.ui.ToolTip();
+            new LiveEdit.ui.Cursor();
+            new LiveEdit.ui.Menu();
+            new LiveEdit.ui.Shader();
+            new LiveEdit.ui.Editor();
+            new LiveEdit.ui.ComponentBar();
+            new LiveEdit.MutationObserver();
             AdminLiveEdit.DragDropSort.initialize();
             $(window).resize(function () {
                 $(window).trigger('liveEdit.onWindowResize');

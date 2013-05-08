@@ -54,22 +54,22 @@ declare var AdminLiveEdit;
         $('.live-edit-loader-splash-container').fadeOut('fast', function () {
             $(this).remove();
 
-            new liveedit.model.Page();
-            new liveedit.model.Region();
-            new liveedit.model.Layout();
-            new liveedit.model.Part();
-            new liveedit.model.Paragraph();
-            new liveedit.model.Content();
+            new LiveEdit.model.Page();
+            new LiveEdit.model.Region();
+            new LiveEdit.model.Layout();
+            new LiveEdit.model.Part();
+            new LiveEdit.model.Paragraph();
+            new LiveEdit.model.Content();
 
-            new liveedit.ui.HtmlElementReplacer();
-            new liveedit.ui.Highlighter();
-            new liveedit.ui.ToolTip();
-            new liveedit.ui.Cursor();
-            new liveedit.ui.Menu();
-            new liveedit.ui.Shader();
-            new liveedit.ui.Editor();
-            new liveedit.ui.ComponentBar();
-            new liveedit.MutationObserver();
+            new LiveEdit.ui.HtmlElementReplacer();
+            new LiveEdit.ui.Highlighter();
+            new LiveEdit.ui.ToolTip();
+            new LiveEdit.ui.Cursor();
+            new LiveEdit.ui.Menu();
+            new LiveEdit.ui.Shader();
+            new LiveEdit.ui.Editor();
+            new LiveEdit.ui.ComponentBar();
+            new LiveEdit.MutationObserver();
 
             AdminLiveEdit.DragDropSort.initialize();
 

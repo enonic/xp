@@ -1,4 +1,4 @@
-module liveedit.ui {
+module LiveEdit.ui {
     var $ = $liveedit;
     var componentCount:number = 0;
 

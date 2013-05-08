@@ -1,7 +1,7 @@
-module liveedit.model {
+module LiveEdit.model {
     var $ = $liveedit;
 
-    export class Paragraph extends liveedit.model.Base {
+    export class Paragraph extends LiveEdit.model.Base {
 
         private selectedParagraph:JQuery = null;
         private modes:any = {};

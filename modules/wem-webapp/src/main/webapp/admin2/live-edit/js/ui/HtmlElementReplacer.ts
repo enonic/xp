@@ -1,7 +1,7 @@
-module liveedit.ui {
+module LiveEdit.ui {
     var $ = $liveedit;
 
-    export class HtmlElementReplacer extends liveedit.ui.Base {
+    export class HtmlElementReplacer extends LiveEdit.ui.Base {
         private elementsToReplace = ['iframe', 'object'];
 
         constructor() {

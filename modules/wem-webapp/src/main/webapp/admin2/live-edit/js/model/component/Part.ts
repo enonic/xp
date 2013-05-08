@@ -1,7 +1,7 @@
-module liveedit.model {
+module LiveEdit.model {
     var $ = $liveedit;
 
-    export class Part extends liveedit.model.Base {
+    export class Part extends LiveEdit.model.Base {
         constructor() {
             super();
 
