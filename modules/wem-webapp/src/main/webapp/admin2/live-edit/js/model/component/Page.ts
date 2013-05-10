@@ -6,6 +6,7 @@ module LiveEdit.model {
             super();
 
             this.cssSelector = '[data-live-edit-type=page]';
+
             this.attachClickEvent();
 
             console.log('Page model instantiated. Using jQuery ' + $().jquery);

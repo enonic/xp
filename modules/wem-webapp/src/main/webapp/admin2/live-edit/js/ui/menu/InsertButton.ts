@@ -13,19 +13,17 @@ module LiveEdit.ui {
         }
 
         init() {
-            var me = this;
-
-            var $button = me.createButton({
+            var $button = this.createButton({
                 text: 'Insert',
                 id: 'live-edit-button-insert',
                 cls: 'live-edit-component-menu-button',
-                handler: function (event) {
+                handler: (event) => {
                     event.stopPropagation();
                 }
             });
 
-            me.appendTo(me.menu.getEl());
-            me.menu.buttons.push(me);
+            this.appendTo(this.menu.getEl());
+            this.menu.buttons.push(this);
         }
     }
 }

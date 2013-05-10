@@ -20,7 +20,7 @@ module LiveEdit.ui {
             var $button = this.createElement(html);
 
             if (config.handler) {
-                $button.on('click', function (event) {
+                $button.on('click', (event) => {
                     config.handler.call(this, event);
                 });
             }

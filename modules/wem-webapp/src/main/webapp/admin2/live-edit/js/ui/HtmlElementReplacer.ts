@@ -2,7 +2,7 @@ module LiveEdit.ui {
     var $ = $liveedit;
 
     export class HtmlElementReplacer extends LiveEdit.ui.Base {
-        private elementsToReplace = ['iframe', 'object'];
+        private elementsToReplaceSpec = ['iframe', 'object'];
 
         constructor() {
             super();
@@ -17,9 +17,9 @@ module LiveEdit.ui {
 
 
         replaceElementsWithPlaceholders() {
-            var me = this;
-            me.getElements().each(function () {
-                me.replace($(this));
+            var elements = this.getElements();
+            elements.each((i) => {
+                this.replace(elements[i]);
             });
         }
 
@@ -36,14 +36,13 @@ module LiveEdit.ui {
 
 
         createPlaceholder($element) {
-            var me = this;
             var $placeholder = $('<div></div>');
             $placeholder.addClass('live-edit-html-element-placeholder');
-            $placeholder.width(me.getElementWidth($element));
-            $placeholder.height(me.getElementHeight($element));
+            $placeholder.width(this.getElementWidth($element));
+            $placeholder.height(this.getElementHeight($element));
 
             var $icon = $('<div/>');
-            $icon.addClass(me.resolveIconCssClass($element));
+            $icon.addClass(this.resolveIconCssClass($element));
             $icon.append('<div>' + $element[0].tagName.toLowerCase() + '</div>');
             $placeholder.append($icon);
 
@@ -52,7 +51,7 @@ module LiveEdit.ui {
 
 
         getElements() {
-            return $('[data-live-edit-type=part] > ' + this.elementsToReplace.toString());
+            return $('[data-live-edit-type=part] > ' + this.elementsToReplaceSpec.toString());
         }
 
 

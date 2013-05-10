@@ -5,16 +5,19 @@ module LiveEdit.ui {
 
         static constructedCount:number = 0;
 
+        private ID_PREFIX:string = 'live-edit-ui-cmp-';
+
+        private id:number;
+
         private element:JQuery;
 
         constructor() {
+            this.id = Base.constructedCount++;
         }
 
         public createElement(htmlString:string):JQuery {
-            var id:number = Base.constructedCount++;
-
             this.element = $(htmlString);
-            this.element.attr('id', 'live-edit-ui-cmp-' + id.toString());
+            this.element.attr('id', (this.ID_PREFIX + this.id.toString()));
 
             return this.element;
         }

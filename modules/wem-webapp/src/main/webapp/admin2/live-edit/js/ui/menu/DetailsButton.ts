@@ -1,5 +1,4 @@
 module LiveEdit.ui {
-    var $ = $liveedit;
 
     export class DetailsButton extends LiveEdit.ui.BaseButton {
 
@@ -13,19 +12,17 @@ module LiveEdit.ui {
         }
 
         init() {
-            var me = this;
-
-            var $button = me.createButton({
+            var $button = this.createButton({
                 text: 'Show Details',
                 id: 'live-edit-button-details',
                 cls: 'live-edit-component-menu-button',
-                handler: function (event) {
+                handler: (event) => {
                     event.stopPropagation();
                 }
             });
 
-            me.appendTo(me.menu.getEl());
-            me.menu.buttons.push(me);
+            this.appendTo(this.menu.getEl());
+            this.menu.buttons.push(this);
         }
     }
 }

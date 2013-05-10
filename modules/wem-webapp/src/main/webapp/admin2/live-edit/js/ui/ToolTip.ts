@@ -2,6 +2,7 @@ module LiveEdit.ui {
     var $ = $liveedit;
 
     var componentHelper = LiveEdit.ComponentHelper;
+    var domHelper = LiveEdit.DomHelper;
 
     export class ToolTip extends LiveEdit.ui.Base {
         private OFFSET_X = 0;
@@ -16,86 +17,83 @@ module LiveEdit.ui {
             console.log('ToolTip instantiated. Using jQuery ' + $().jquery);
         }
 
-        registerGlobalListeners() {
-            $(window).on('component.onSelect', $.proxy(this.hide, this));
+        private registerGlobalListeners() {
+            $(window).on('component.onSelect', () => {
+                this.hide();
+            });
         }
 
 
-        addView() {
-            var me = this;
+        private addView() {
             var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
                 '    <span class="live-edit-tool-tip-name-text"></span>' +
                 '    <span class="live-edit-tool-tip-type-text"></span> ' +
                 '</div>';
 
-            me.createElement(html);
-            me.appendTo($('body'));
+            this.createElement(html);
+            this.appendTo($('body'));
         }
 
 
-        setText(componentType, componentName) {
+        private  setText(componentType, componentName) {
             var $tooltip = this.getEl();
             $tooltip.children('.live-edit-tool-tip-type-text').text(componentType);
             $tooltip.children('.live-edit-tool-tip-name-text').text(componentName);
         }
 
 
-        attachEventListeners() {
-            var me = this;
+        private attachEventListeners() {
 
-            $(document).on('mousemove', '[data-live-edit-type]', function (event) {
+            $(document).on('mousemove', '[data-live-edit-type]', (event) => {
                 var targetIsUiComponent = $(event.target).is('[id*=live-edit-ui-cmp]') ||
                     $(event.target).parents('[id*=live-edit-ui-cmp]').length > 0;
 
                 // TODO: Use PubSub instead of calling DragDrop object.
                 var pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
                 if (targetIsUiComponent || pageHasComponentSelected || AdminLiveEdit.DragDropSort.isDragging()) {
-                    me.hide();
+                    this.hide();
                     return;
                 }
 
                 var $component = $(event.target).closest('[data-live-edit-type]');
                 var componentInfo = componentHelper.getComponentInfo($component);
-                var pos = me.getPosition(event);
+                var pos = this.getPosition(event);
 
-                me.getEl().css({
+                this.getEl().css({
                     top: pos.y,
                     left: pos.x
                 });
 
-                me.setText(componentInfo.type, componentInfo.name);
+                this.setText(componentInfo.type, componentInfo.name);
             });
 
-            $(document).on('hover', '[data-live-edit-type]', function (event) {
+            $(document).on('hover', '[data-live-edit-type]', (event) => {
                 if (event.type === 'mouseenter') {
-                    me.getEl().hide().fadeIn(300);
+                    this.getEl().hide().fadeIn(300);
                 }
             });
 
-            $(document).on('mouseout', function () {
-                me.hide.call(me);
+            $(document).on('mouseout', () => {
+                this.hide();
             });
         }
 
 
         getPosition(event) {
-            var t = this;
-            var domHelper = LiveEdit.DomHelper;
             var pageX = event.pageX;
             var pageY = event.pageY;
-            var x = pageX + t.OFFSET_X;
-            var y = pageY + t.OFFSET_Y;
+            var x = pageX + this.OFFSET_X;
+            var y = pageY + this.OFFSET_Y;
             var viewPortSize = domHelper.getViewPortSize();
             var scrollTop = domHelper.getDocumentScrollTop();
-            var toolTipWidth = t.getEl().width();
-            var toolTipHeight = t.getEl().height();
+            var toolTipWidth = this.getEl().width();
+            var toolTipHeight = this.getEl().height();
 
-            if (x + toolTipWidth > (viewPortSize.width - t.OFFSET_X * 2) - 50) {
-                x = pageX - toolTipWidth - (t.OFFSET_X * 2);
+            if (x + toolTipWidth > (viewPortSize.width - this.OFFSET_X * 2) - 50) {
+                x = pageX - toolTipWidth - (this.OFFSET_X * 2);
             }
-
-            if (y + toolTipHeight > (viewPortSize.height + scrollTop - t.OFFSET_Y * 2)) {
-                y = pageY - toolTipHeight - (t.OFFSET_Y * 2);
+            if (y + toolTipHeight > (viewPortSize.height + scrollTop - this.OFFSET_Y * 2)) {
+                y = pageY - toolTipHeight - (this.OFFSET_Y * 2);
             }
 
             return {

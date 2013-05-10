@@ -4,7 +4,9 @@ module LiveEdit.model {
     export class Content extends LiveEdit.model.Base {
         constructor() {
             super();
+
             this.cssSelector = '[data-live-edit-type=content]';
+
             this.attachMouseOverEvent();
             this.attachMouseOutEvent();
             this.attachClickEvent();

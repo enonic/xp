@@ -13,14 +13,11 @@ module LiveEdit.ui {
         }
 
         init() {
-
-            var me = this;
-
-            var $button = me.createButton({
+            var $button = this.createButton({
                 text: 'Open in new tab',
                 id: 'live-edit-button-opencontent',
                 cls: 'live-edit-component-menu-button',
-                handler: function (event) {
+                handler: (event) => {
                     event.stopPropagation();
 
                     // Temporary workaround until we get a firm messaging system
@@ -32,8 +29,8 @@ module LiveEdit.ui {
                 }
             });
 
-            me.appendTo(me.menu.getEl());
-            me.menu.buttons.push(me);
+            this.appendTo(this.menu.getEl());
+            this.menu.buttons.push(this);
         }
     }
 }

@@ -14,37 +14,36 @@ module LiveEdit.ui {
         }
 
         init() {
-            var me = this;
-            var $button = me.createButton({
+            var $button = this.createButton({
                 id: 'live-edit-button-parent',
                 text: 'Select Parent',
                 cls: 'live-edit-component-menu-button',
-                handler: function (event) {
+                handler: (event) => {
                     event.stopPropagation();
 
 
-                    var $parent = me.menu.selectedComponent.parents('[data-live-edit-type]');
+                    var $parent = this.menu.selectedComponent.parents('[data-live-edit-type]');
                     if ($parent && $parent.length > 0) {
                         $parent = $($parent[0]);
 
                         $(window).trigger('component.onSelect', [$parent, {x: 0, y: 0}]);
 
-                        me.scrollComponentIntoView($parent);
+                        this.scrollComponentIntoView($parent);
 
                         // Force position of the menu after component is selected.
                         // We could move this code to menu show.
                         // The position needs to be updated after menu is updated with info in order to get the right dimensions (width) of the menu.
-                        var menuWidth = me.menu.getEl().outerWidth();
+                        var menuWidth = this.menu.getEl().outerWidth();
                         var componentBox = componentHelper.getBoxModel($parent),
                             newMenuPosition = {x: componentBox.left + (componentBox.width / 2) - (menuWidth / 2), y: componentBox.top + 10};
 
-                        me.menu.moveToXY(newMenuPosition.x, newMenuPosition.y);
+                        this.menu.moveToXY(newMenuPosition.x, newMenuPosition.y);
                     }
                 }
             });
 
-            me.appendTo(this.menu.getEl());
-            me.menu.buttons.push(me);
+            this.appendTo(this.menu.getEl());
+            this.menu.buttons.push(this);
 
         }
 

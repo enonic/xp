@@ -17,16 +17,27 @@ module LiveEdit.ui {
 
 
         private registerGlobalListeners() {
-            $(window).on('component.mouseOver', $.proxy(this.componentMouseOver, this));
-            $(window).on('component.mouseOut', $.proxy(this.hide, this));
-            $(window).on('component.onSelect', $.proxy(this.selectComponent, this));
-            $(window).on('component.onDeselect', $.proxy(this.deselect, this));
-            $(window).on('component.onSortStart', $.proxy(this.hide, this));
-            $(window).on('component.onRemove', $.proxy(this.hide, this));
-            $(window).on('component.onParagraphEdit', $.proxy(this.hide, this));
-            $(window).on('liveEdit.onWindowResize', $.proxy(this.handleWindowResize, this));
+            $(window).on('component.mouseOver', (event, component) => {
+                this.componentMouseOver(event, component);
+            });
 
-            $(window).on('component.onSortStop', function (event, uiEvent, ui, wasSelectedOnDragStart) {
+            $(window).on('component.onSelect', (event, component) => {
+                this.selectComponent(event, component);
+            });
+
+            $(window).on('component.onDeselect', () => {
+                this.deselect();
+            });
+
+            $(window).on('component.mouseOut component.onSortStart component.onRemove component.onParagraphEdit', () => {
+                this.hide();
+            });
+
+            $(window).on('liveEdit.onWindowResize', (event:JQueryEventObject) => {
+                this.handleWindowResize(event)
+            });
+
+            $(window).on('component.onSortStop', (event, uiEvent, ui, wasSelectedOnDragStart) => {
                 if (wasSelectedOnDragStart) {
                     $(window).trigger('component.onSelect', [ui.item]);
                 }
@@ -93,17 +104,14 @@ module LiveEdit.ui {
 
 
         resizeBorderToComponent(component) {
-            var me = this;
-            var componentType = componentHelper.getComponentType(component);
-            var componentTagName = componentHelper.getTagNameForComponent(component);
             var componentBoxModel = componentHelper.getBoxModel(component);
-            var w = Math.round(componentBoxModel.width);
-            var h = Math.round(componentBoxModel.height);
-            var top = Math.round(componentBoxModel.top);
-            var left = Math.round(componentBoxModel.left);
+            var w = Math.round(componentBoxModel.width),
+                h = Math.round(componentBoxModel.height),
+                top = Math.round(componentBoxModel.top),
+                left = Math.round(componentBoxModel.left);
 
-            var $highlighter = me.getEl();
-            var $HighlighterRect = $highlighter.find('rect');
+            var $highlighter = this.getEl(),
+                $HighlighterRect = $highlighter.find('rect');
 
             $highlighter.width(w);
             $highlighter.height(h);

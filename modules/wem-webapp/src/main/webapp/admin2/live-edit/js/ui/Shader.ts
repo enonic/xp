@@ -22,30 +22,35 @@ module LiveEdit.ui {
 
 
         registerGlobalListeners() {
-            $(window).on('component.onSelect', $.proxy(this.show, this));
-            $(window).on('component.onDeselect', $.proxy(this.hide, this));
-            $(window).on('component.onRemove', $.proxy(this.hide, this));
-            $(window).on('component.onSortStart', $.proxy(this.hide, this));
-            $(window).on('component.onParagraphEdit', $.proxy(this.show, this));
-            $(window).on('liveEdit.onWindowResize', $.proxy(this.handleWindowResize, this));
+            $(window).on('component.onSelect component.onParagraphEdit', (event:JQueryEventObject, component:JQuery) => {
+                this.show(component);
+            });
+
+            $(window).on('component.onDeselect component.onRemove component.onSortStart', (event:JQueryEventObject, component:JQuery) => {
+                this.hide();
+            });
+
+            $(window).on('liveEdit.onWindowResize', () => {
+                this.handleWindowResize();
+            });
         }
 
 
         addView() {
             var $body = $('body');
 
-            this.$pageShader = $body.append('<div class="live-edit-shader" id="live-edit-page-shader"/>');
+            this.$pageShader = $body.append('<div class="live-edit-shader" id="live-edit-page-shader"><!-- --></div>');
 
-            this.$northShader = $('<div id="live-edit-shader-north" class="live-edit-shader"/>');
+            this.$northShader = $('<div id="live-edit-shader-north" class="live-edit-shader"><!-- --></div>');
             $body.append(this.$northShader);
 
-            this.$eastShader = $('<div id="live-edit-shader-east" class="live-edit-shader"/>');
+            this.$eastShader = $('<div id="live-edit-shader-east" class="live-edit-shader"><!-- --></div>');
             $body.append(this.$eastShader);
 
-            this.$southShader = $('<div id="live-edit-shader-south" class="live-edit-shader"/>');
+            this.$southShader = $('<div id="live-edit-shader-south" class="live-edit-shader"><!-- --></div>');
             $body.append(this.$southShader);
 
-            this.$westShader = $('<div id="live-edit-shader-west" class="live-edit-shader"/>');
+            this.$westShader = $('<div id="live-edit-shader-west" class="live-edit-shader"><!-- --></div>');
             $body.append(this.$westShader);
         }
 
@@ -60,15 +65,12 @@ module LiveEdit.ui {
         }
 
 
-        show(event, $component) {
-            var me = this;
-
-            me.selectedComponent = $component;
-
+        show($component) {
+            this.selectedComponent = $component;
             if (componentHelper.getComponentType($component) === 'page') {
-                me.showForPage($component);
+                this.showForPage($component);
             } else {
-                me.showForComponent($component);
+                this.showForComponent($component);
             }
         }
 
@@ -86,8 +88,6 @@ module LiveEdit.ui {
 
 
         showForComponent($component) {
-            var me = this;
-
             $('.live-edit-shader').addClass('live-edit-animatable');
 
             var documentSize = LiveEdit.DomHelper.getDocumentSize(),
@@ -100,28 +100,28 @@ module LiveEdit.ui {
                 w = boxModel.width,
                 h = boxModel.height;
 
-            me.$northShader.css({
+            this.$northShader.css({
                 top: 0,
                 left: 0,
                 width: docWidth,
                 height: y
             }).show();
 
-            me.$eastShader.css({
+            this.$eastShader.css({
                 top: y,
                 left: x + w,
                 width: docWidth - (x + w),
                 height: h
             }).show();
 
-            me.$southShader.css({
+            this.$southShader.css({
                 top: y + h,
                 left: 0,
                 width: docWidth,
                 height: docHeight - (y + h)
             }).show();
 
-            me.$westShader.css({
+            this.$westShader.css({
                 top: y,
                 left: 0,
                 width: x,
@@ -140,9 +140,9 @@ module LiveEdit.ui {
         }
 
 
-        handleWindowResize(event) {
+        handleWindowResize() {
             if (this.selectedComponent) {
-                this.show(event, this.selectedComponent)
+                this.show(this.selectedComponent)
             }
         }
 

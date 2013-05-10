@@ -3,7 +3,7 @@ module LiveEdit.ui {
 
     export class Editor extends LiveEdit.ui.Base {
 
-        toolbar;
+        toolbar:EditorToolbar;
 
         constructor() {
             super();
@@ -14,32 +14,29 @@ module LiveEdit.ui {
             console.log('Editor instantiated. Using jQuery ' + $().jquery);
         }
 
-
         registerGlobalListeners() {
-            var me = this;
-            $(window).on('component.onParagraphEdit', function (event, $paragraph) {
-                me.activate($paragraph);
+            $(window).on('component.onParagraphEdit', (event:JQueryEventObject, $paragraph:JQuery) => {
+                this.activate($paragraph);
             });
-            $(window).on('component.onParagraphEditLeave', function (event, $paragraph) {
-                me.deActivate($paragraph);
+
+            $(window).on('component.onParagraphEditLeave', (event:JQueryEventObject, $paragraph:JQuery) => {
+                this.deActivate($paragraph);
             });
-            $(window).on('editorToolbar.onButtonClick', function (event, tag) {
+
+            $(window).on('editorToolbar.onButtonClick', (event:JQueryEventObject, tag:string) => {
                 // Simplest implementation for now.
                 document.execCommand(tag, false, null);
             });
         }
 
-
-        activate($paragraph) {
-            $paragraph.get(0).contentEditable = true;
-            $paragraph.get(0).focus();
-
+        activate(paragraph:JQuery) {
+            paragraph.get(0).contentEditable = true;
+            paragraph.get(0).focus();
         }
 
-
-        deActivate($paragraph) {
-            $paragraph.get(0).contentEditable = false;
-            $paragraph.get(0).blur();
+        deActivate(paragraph:JQuery) {
+            paragraph.get(0).contentEditable = false;
+            paragraph.get(0).blur();
         }
 
     }

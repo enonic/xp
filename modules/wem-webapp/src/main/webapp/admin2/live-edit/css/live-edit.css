@@ -1,7 +1,12 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans);
-
 /*** Reset */
-/* TODO: Generate new */
+/*
+    We could probably make the reset more maintainable by only selecting the Live edit UI components
+
+    Eg.
+    [id^=live-edit-ui-cmp-], [id^=live-edit-ui-cmp-] *
+
+    Todo: create task for this
+*/
 
 .live-edit-loader-splash-container,
 .live-edit-loader-splash-content,

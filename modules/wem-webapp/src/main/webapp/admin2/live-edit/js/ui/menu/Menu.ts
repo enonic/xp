@@ -1,6 +1,7 @@
 module LiveEdit.ui {
     var $ = $liveedit;
     var componentHelper = LiveEdit.ComponentHelper;
+    var domHelper = LiveEdit.DomHelper;
 
     export class Menu extends LiveEdit.ui.Base {
         private selectedComponent:JQuery;
@@ -28,11 +29,17 @@ module LiveEdit.ui {
 
 
         registerGlobalListeners() {
-            $(window).on('component.onSelect', $.proxy(this.show, this));
-            $(window).on('component.onDeselect', $.proxy(this.hide, this));
-            $(window).on('component.onSortStart', $.proxy(this.fadeOutAndHide, this));
-            $(window).on('component.onRemove', $.proxy(this.hide, this));
-            $(window).on('component.onParagraphEdit', $.proxy(this.hide, this));
+            $(window).on('component.onSelect', (event, $component, pagePosition) => {
+                this.show(event, $component, pagePosition);
+            });
+
+            $(window).on('component.onDeselect component.onRemove component.onParagraphEdit', () => {
+                this.hide();
+            });
+
+            $(window).on('component.onSortStart', () => {
+                this.fadeOutAndHide();
+            });
         }
 
 
@@ -55,35 +62,31 @@ module LiveEdit.ui {
 
 
         registerEvents() {
-            var me = this;
-
-            me.getEl().draggable({
+            this.getEl().draggable({
                 handle: '.live-edit-component-menu-title-bar',
                 addClasses: false
             });
 
-            me.getCloseButton().click(function () {
+            this.getCloseButton().click(function () {
                 $(window).trigger('component.onDeselect');
             });
         }
 
 
         show(event, $component, pagePosition) {
-            var me = this;
+            this.selectedComponent = $component;
+            this.previousPagePositions = pagePosition;
+            this.previousPageSizes = domHelper.getViewPortSize();
 
-            me.selectedComponent = $component;
-            me.previousPagePositions = pagePosition;
-            me.previousPageSizes = LiveEdit.DomHelper.getViewPortSize();
+            this.updateTitleBar($component);
 
-            me.updateTitleBar($component);
+            this.updateMenuItemsForComponent($component);
 
-            me.updateMenuItemsForComponent($component);
-
-            var pageXPosition = pagePosition.x - me.getEl().width() / 2,
+            var pageXPosition = pagePosition.x - this.getEl().width() / 2,
                 pageYPosition = pagePosition.y + 15;
-            me.moveToXY(pageXPosition, pageYPosition);
+            this.moveToXY(pageXPosition, pageYPosition);
 
-            me.getEl().show();
+            this.getEl().show();
 
             this.hidden = false;
         }
@@ -97,12 +100,11 @@ module LiveEdit.ui {
 
 
         fadeOutAndHide() {
-            var me = this;
-            me.getEl().fadeOut(500, function () {
-                me.hide();
+            this.getEl().fadeOut(500, () => {
+                this.hide();
                 $(window).trigger('component.onDeselect', {showComponentBar: false});
             });
-            me.selectedComponent = null;
+            this.selectedComponent = null;
         }
 
 
@@ -115,22 +117,21 @@ module LiveEdit.ui {
 
 
         addButtons() {
-            var me = this;
-            var parentButton = new LiveEdit.ui.ParentButton(me);
-            var settingsButton = new LiveEdit.ui.SettingsButton(me);
-            var detailsButton = new LiveEdit.ui.DetailsButton(me);
-            var insertButton = new LiveEdit.ui.InsertButton(me);
-            var resetButton = new LiveEdit.ui.ResetButton(me);
-            var clearButton = new LiveEdit.ui.ClearButton(me);
-            var openContentButton = new LiveEdit.ui.OpenContentButton(me);
-            var viewButton = new LiveEdit.ui.ViewButton(me);
-            var editButton = new LiveEdit.ui.EditButton(me);
-            var removeButton = new LiveEdit.ui.RemoveButton(me);
+            var parentButton = new LiveEdit.ui.ParentButton(this);
+            var settingsButton = new LiveEdit.ui.SettingsButton(this);
+            var detailsButton = new LiveEdit.ui.DetailsButton(this);
+            var insertButton = new LiveEdit.ui.InsertButton(this);
+            var resetButton = new LiveEdit.ui.ResetButton(this);
+            var clearButton = new LiveEdit.ui.ClearButton(this);
+            var openContentButton = new LiveEdit.ui.OpenContentButton(this);
+            var viewButton = new LiveEdit.ui.ViewButton(this);
+            var editButton = new LiveEdit.ui.EditButton(this);
+            var removeButton = new LiveEdit.ui.RemoveButton(this);
 
             var i,
-                $menuItemsPlaceholder = me.getMenuItemsPlaceholderElement();
-            for (i = 0; i < me.buttons.length; i++) {
-                me.buttons[i].appendTo($menuItemsPlaceholder);
+                $menuItemsPlaceholder = this.getMenuItemsPlaceholderElement();
+            for (i = 0; i < this.buttons.length; i++) {
+                this.buttons[i].appendTo($menuItemsPlaceholder);
             }
         }
 
@@ -240,16 +241,16 @@ module LiveEdit.ui {
         }
 
 
-        handleWindowResize (event) {
-        if (this.selectedComponent) {
-            var x = this.previousPagePositions.x,
-                y = this.previousPagePositions.y;
+        handleWindowResize(event) {
+            if (this.selectedComponent) {
+                var x = this.previousPagePositions.x,
+                    y = this.previousPagePositions.y;
 
-            x = x - (this.previousPageSizes.width - LiveEdit.DomHelper.getViewPortSize().width);
+                x = x - (this.previousPageSizes.width - LiveEdit.DomHelper.getViewPortSize().width);
 
-            this.moveToXY(x, y);
+                this.moveToXY(x, y);
+            }
         }
-    }
 
     }
 }

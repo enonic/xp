@@ -14,10 +14,10 @@ interface ComponentBoxModel {
 }
 
 interface ComponentInfo {
-    type: String;
-    key: String;
-    name: String;
-    tagName: String;
+    type: string;
+    key: string;
+    name: string;
+    tagName: string;
 }
 
 interface ComponentPagePosition {
@@ -84,22 +84,22 @@ module LiveEdit {
         }
 
 
-        public static getComponentType(component:JQuery):String {
+        public static getComponentType(component:JQuery):string {
             return component.data('live-edit-type');
         }
 
 
-        public static getComponentKey(component:JQuery):String {
+        public static getComponentKey(component:JQuery):string {
             return component.data('live-edit-key');
         }
 
 
-        public static getComponentName(component:JQuery):String {
+        public static getComponentName(component:JQuery):string {
             return component.data('live-edit-name') || '[No Name]';
         }
 
 
-        public static getTagNameForComponent(component:JQuery):String {
+        public static getTagNameForComponent(component:JQuery):string {
             return component[0].tagName.toLowerCase();
         }
 

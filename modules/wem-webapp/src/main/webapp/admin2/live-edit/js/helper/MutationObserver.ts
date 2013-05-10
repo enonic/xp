@@ -3,8 +3,8 @@ module LiveEdit {
 
     export class MutationObserver {
 
-        private mutationSummary = null;
-        private observedComponent = null;
+        private mutationSummary:any = null;
+        private observedComponent:JQuery = null;
 
         constructor() {
             this.registerGlobalListeners();
@@ -12,63 +12,38 @@ module LiveEdit {
 
 
         private registerGlobalListeners() {
-            var me = this;
-
-            //$(window).on('component.mouseOver', $.proxy(me.observe, me));
-            //$(window).on('component.mouseOut', $.proxy(me.disconnect, me));
-            //$(window).on('component.onSelect', $.proxy(me.observe, me));
-            //$(window).on('component.onDeselect', $.proxy(me.disconnect, me));
-
-            $(window).on('component.onParagraphEdit', $.proxy(me.observe, me));
-            $(window).on('shader.onClick', $.proxy(me.disconnect, me));
+            $(window).on('component.onParagraphEdit', (event:JQueryEventObject, component:JQuery) => {
+                this.observe(event, component)
+            });
+            $(window).on('shader.onClick', (event:JQueryEventObject) => {
+                this.disconnect(event);
+            });
         }
 
 
-        private observe(event, $component) {
-            var me = this;
-
-            var isAlreadyObserved = me.observedComponent && me.observedComponent[0] === $component[0];
-            if (isAlreadyObserved) {
+        private observe(event:JQueryEventObject, component:JQuery) {
+            var isBeingObserved:Boolean = this.observedComponent && this.observedComponent[0] === component[0];
+            if (isBeingObserved) {
                 return;
             }
-            me.disconnect(event);
 
-            me.observedComponent = $component;
-
-            me.mutationSummary = new LiveEditMutationSummary({
-                callback: function (summaries) {
-                    me.onMutate(summaries, event);
+            this.disconnect(event);
+            this.observedComponent = component;
+            this.mutationSummary = new LiveEditMutationSummary({
+                callback: (summaries:any) => {
+                    this.onMutate(summaries, event);
                 },
-                rootNode: $component[0],
+                rootNode: component[0],
                 queries: [
                     { all: true}
                 ]
             });
 
-            console.log('MutationObserver: start observing component', $component);
+            console.log('MutationObserver: start observing component', component);
         }
 
 
-        // Called when the html in the observed component mutates
-        onMutate(summaries, event) {
-            if (summaries && summaries[0]) {
-                var $targetComponent = $(summaries[0].target),
-                    targetComponentIsSelected = $targetComponent.hasClass('live-edit-selected-component'),
-                    componentIsNotSelectedAndMouseIsOver = !targetComponentIsSelected && event.type === 'component.mouseOver',
-                    componentIsParagraphAndBeingEdited = $targetComponent.attr('contenteditable');
-
-                if (componentIsParagraphAndBeingEdited) {
-                    $(window).trigger('component.onParagraphEdit', [$targetComponent]);
-                } else if (componentIsNotSelectedAndMouseIsOver) {
-                    $(window).trigger('component.mouseOver', [$targetComponent]);
-                } else {
-                    $(window).trigger('component.onSelect', [$targetComponent]);
-                }
-            }
-        }
-
-
-        disconnect(event) {
+        private disconnect(event:JQueryEventObject) {
             var targetComponentIsSelected = (this.observedComponent && this.observedComponent.hasClass('live-edit-selected-component'));
             var componentIsSelectedAndUserMouseOut = event.type === 'component.mouseOut' && targetComponentIsSelected;
             if (componentIsSelectedAndUserMouseOut) {
@@ -80,7 +55,24 @@ module LiveEdit {
                 this.mutationSummary.disconnect();
                 this.mutationSummary = null;
 
-                console.log('MutationObserver: disconnect');
+                console.log('MutationObserver: disconnected');
+            }
+        }
+
+
+        private onMutate(summaries:any, event:JQueryEventObject) {
+            if (summaries && summaries[0]) {
+                var $targetComponent = $(summaries[0].target),
+                    targetComponentIsSelected = $targetComponent.hasClass('live-edit-selected-component'),
+                    componentIsNotSelectedAndMouseIsOver = !targetComponentIsSelected && event.type === 'component.mouseOver',
+                    componentIsParagraphAndBeingEdited = $targetComponent.attr('contenteditable');
+                if (componentIsParagraphAndBeingEdited) {
+                    $(window).trigger('component.onParagraphEdit', [$targetComponent]);
+                } else if (componentIsNotSelectedAndMouseIsOver) {
+                    $(window).trigger('component.mouseOver', [$targetComponent]);
+                } else {
+                    $(window).trigger('component.onSelect', [$targetComponent]);
+                }
             }
         }
 

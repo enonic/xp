@@ -47,10 +47,11 @@ declare var AdminLiveEdit;
 (function ($) {
     'use strict';
 
-    $(window).load(function () {
+    $(window).load(() => {
+        var loaderSplash:JQuery = $('.live-edit-loader-splash-container');
 
-        $('.live-edit-loader-splash-container').fadeOut('fast', function () {
-            $(this).remove();
+        loaderSplash.fadeOut('fast', function () {
+            loaderSplash.remove();
 
             new LiveEdit.model.Page();
             new LiveEdit.model.Region();
@@ -71,16 +72,16 @@ declare var AdminLiveEdit;
 
             AdminLiveEdit.DragDropSort.initialize();
 
-            $(window).resize(function () {
+            $(window).resize(() => {
                 $(window).trigger('liveEdit.onWindowResize');
             });
         });
-
     });
 
-    $(document).ready(function () {
-
-        $(document).on('mousedown', 'btn, button, a, select', function (event) {
+    // Prevent the user from clicking on things
+    // This needs more work as we want them to click on Live Edit ui stuff.
+    $(document).ready(() => {
+        $(document).on('mousedown', 'btn, button, a, select', (event) => {
             event.preventDefault();
             return false;
         });

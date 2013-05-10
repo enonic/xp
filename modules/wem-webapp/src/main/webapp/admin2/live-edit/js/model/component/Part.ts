@@ -6,6 +6,7 @@ module LiveEdit.model {
             super();
 
             this.cssSelector = '[data-live-edit-type=part]';
+
             this.renderEmptyPlaceholders();
             this.attachMouseOverEvent();
             this.attachMouseOutEvent();
@@ -14,30 +15,28 @@ module LiveEdit.model {
             console.log('Part model instantiated. Using jQuery ' + $().jquery);
         }
 
+        private renderEmptyPlaceholders() {
+            var parts = this.getAll(),
+                part:JQuery;
+            parts.each((i) => {
+                part = $(parts[i]);
+                if (this.isPartEmpty(part)) {
+                    this.appendEmptyPlaceholder(part);
+                }
+            });
+        }
 
-        appendEmptyPlaceholder($part) {
+        private appendEmptyPlaceholder(part:JQuery) {
             var $placeholder = $('<div/>', {
                 'class': 'live-edit-empty-part-placeholder',
                 'html': 'Empty Part'
             });
-            $part.append($placeholder);
+            part.append($placeholder);
         }
 
-
-        isPartEmpty($part) {
-            return $($part).children().length === 0;
+        private isPartEmpty(part:JQuery) {
+            return $(part).children().length === 0;
         }
 
-
-        renderEmptyPlaceholders() {
-            var t = this;
-            this.getAll().each(function (index) {
-                var $part = $(this);
-                var partIsEmpty = t.isPartEmpty($part);
-                if (partIsEmpty) {
-                    t.appendEmptyPlaceholder($part);
-                }
-            });
-        }
     }
 }

@@ -6,6 +6,7 @@ module LiveEdit.model {
             super();
 
             this.cssSelector = '[data-live-edit-type=layout]';
+
             this.attachMouseOverEvent();
             this.attachMouseOutEvent();
             this.attachClickEvent();

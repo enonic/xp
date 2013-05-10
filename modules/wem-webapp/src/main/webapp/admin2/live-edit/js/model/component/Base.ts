@@ -2,37 +2,32 @@ module LiveEdit.model {
     var $ = $liveedit;
 
     export class Base {
-
-        public cssSelector:String = '';
+        public cssSelector:string = '';
 
         constructor() {
         }
 
 
-        attachMouseOverEvent() {
-            var me = this;
+        attachMouseOverEvent():void {
 
-            $(document).on('mouseover', me.cssSelector, function (event) {
-
-                var $component = $(this);
-
-                var targetIsUiComponent = me.isLiveEditUiComponent($(event.target));
-                var cancelEvents = targetIsUiComponent || me.hasComponentSelected() || AdminLiveEdit.DragDropSort.isDragging();
+            $(document).on('mouseover', this.cssSelector, (event:JQueryEventObject) => {
+                var component:JQuery = $(event.currentTarget);
+                var targetIsUiComponent = this.isLiveEditUiComponent($(event.target));
+                var cancelEvents = targetIsUiComponent || this.hasComponentSelected() || AdminLiveEdit.DragDropSort.isDragging();
                 if (cancelEvents) {
                     return;
                 }
                 event.stopPropagation();
 
-                $(window).trigger('component.mouseOver', [$component]);
+                $(window).trigger('component.mouseOver', [component]);
             });
         }
 
 
-        attachMouseOutEvent() {
-            var me = this;
+        attachMouseOutEvent():void {
 
-            $(document).on('mouseout', function () {
-                if (me.hasComponentSelected()) {
+            $(document).on('mouseout', () => {
+                if (this.hasComponentSelected()) {
                     return;
                 }
                 $(window).trigger('component.mouseOut');
@@ -41,19 +36,17 @@ module LiveEdit.model {
 
 
         attachClickEvent() {
-            var me = this;
 
-            $(document).on('click contextmenu touchstart', me.cssSelector, function (event) {
-
-                if (me.isLiveEditUiComponent($(event.target))) {
+            $(document).on('click contextmenu touchstart', this.cssSelector, (event:JQueryEventObject) => {
+                // Is this needed? We are using $.on with a delegate so the target would always be a LE component
+                if (this.isLiveEditUiComponent($(event.target))) {
                     return;
                 }
-
                 event.stopPropagation();
                 event.preventDefault();
 
-                var $component = $(event.currentTarget),
-                    componentIsSelected = $component.hasClass('live-edit-selected-component'),
+                var component:JQuery = $(event.currentTarget),
+                    componentIsSelected = component.hasClass('live-edit-selected-component'),
                     pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
 
                 if (componentIsSelected || pageHasComponentSelected) {
@@ -61,12 +54,12 @@ module LiveEdit.model {
                 } else {
 
                     // Used by eg. Menu
-                    var pagePosition = {
+                    var pagePosition:any = {
                         x: event.pageX,
                         y: event.pageY
                     };
 
-                    $(window).trigger('component.onSelect', [$component, pagePosition]);
+                    $(window).trigger('component.onSelect', [component, pagePosition]);
                 }
             });
         }
@@ -77,15 +70,14 @@ module LiveEdit.model {
         }
 
 
-        isLiveEditUiComponent($target) {
-            return $target.is('[id*=live-edit-ui-cmp]') || $target.parents('[id*=live-edit-ui-cmp]').length > 0;
+        isLiveEditUiComponent(target:JQuery) {
+            return target.is('[id*=live-edit-ui-cmp]') || target.parents('[id*=live-edit-ui-cmp]').length > 0;
         }
 
 
         getAll() {
             return $(this.cssSelector);
         }
-
 
     }
 }

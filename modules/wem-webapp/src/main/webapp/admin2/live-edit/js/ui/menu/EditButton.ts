@@ -13,24 +13,22 @@ module LiveEdit.ui {
         }
 
         init() {
-            var me = this;
-
-            var $button = me.createButton({
+            var $button = this.createButton({
                 id: 'live-edit-button-edit',
                 text: 'Edit',
                 cls: 'live-edit-component-menu-button',
-                handler: function (event) {
+                handler: (event) => {
                     event.stopPropagation();
 
-                    var $paragraph = me.menu.selectedComponent;
+                    var $paragraph = this.menu.selectedComponent;
                     if ($paragraph && $paragraph.length > 0) {
                         $(window).trigger('component.onParagraphEdit', [$paragraph]);
                     }
                 }
             });
 
-            me.appendTo(me.menu.getEl());
-            me.menu.buttons.push(me);
+            this.appendTo(this.menu.getEl());
+            this.menu.buttons.push(this);
         }
     }
 }

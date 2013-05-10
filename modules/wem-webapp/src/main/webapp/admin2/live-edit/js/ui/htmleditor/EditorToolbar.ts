@@ -10,27 +10,25 @@ module LiveEdit.ui {
         constructor() {
             super();
 
-            var me = this;
-            me.selectedComponent = null;
+            this.selectedComponent = null;
 
-            me.addView();
-            me.addEvents();
-            me.registerGlobalListeners();
+            this.addView();
+            this.addEvents();
+            this.registerGlobalListeners();
 
             console.log('EditorToolbar instantiated. Using jQuery ' + $().jquery);
         }
 
-
         registerGlobalListeners() {
-            $(window).on('component.onParagraphEdit', $.proxy(this.show, this));
-            $(window).on('component.onParagraphEditLeave', $.proxy(this.hide, this));
-            $(window).on('component.onRemove', $.proxy(this.hide, this));
-            $(window).on('component.onSortStart', $.proxy(this.hide, this));
+            $(window).on('component.onParagraphEdit', (event:JQueryEventObject, component:JQuery) => {
+                this.show(component);
+            });
+            $(window).on('component.onParagraphEditLeave component.onRemove component.onSortStart', () => {
+                this.hide();
+            });
         }
 
-
         addView() {
-            var me = this;
             var html = '<div class="live-edit-editor-toolbar live-edit-arrow-bottom" style="display: none">' +
                 '    <button data-tag="paste" class="live-edit-editor-button"></button>' +
                 '    <button data-tag="insertUnorderedList" class="live-edit-editor-button"></button>' +
@@ -49,14 +47,13 @@ module LiveEdit.ui {
                 '    <button data-tag="justifyFull" class="live-edit-editor-button"></button>' +
                 '</div>';
 
-            me.createElement(html);
-            me.appendTo($('body'));
+            this.createElement(html);
+            this.appendTo($('body'));
         }
 
 
         addEvents() {
-            var me = this;
-            me.getEl().on('click', function (event) {
+            this.getEl().on('click', (event) => {
 
                 // Make sure component is not deselected when the toolbar is clicked.
                 event.stopPropagation();
@@ -68,49 +65,45 @@ module LiveEdit.ui {
                 }
             });
 
-            $(window).scroll(function () {
-                if (me.selectedComponent) {
-                    me.updatePosition();
+            $(window).scroll(() => {
+                if (this.selectedComponent) {
+                    this.updatePosition();
                 }
             });
         }
 
+        show($component) {
+            this.selectedComponent = $component;
 
-        show(event, $component) {
-            var me = this;
-            me.selectedComponent = $component;
-
-            me.getEl().show();
-            me.toggleArrowPosition(false);
-            me.updatePosition();
+            this.getEl().show();
+            this.toggleArrowPosition(false);
+            this.updatePosition();
         }
-
 
         hide() {
-            var me = this;
-            me.selectedComponent = null;
-            me.getEl().hide();
+            this.selectedComponent = null;
+            this.getEl().hide();
         }
 
-
         updatePosition() {
-            var me = this;
-            if (!me.selectedComponent) {
+            if (!this.selectedComponent) {
                 return;
             }
 
-            var defaultPosition = me.getDefaultPosition();
+            var defaultPosition = this.getDefaultPosition();
 
-            var stick = $(window).scrollTop() >= me.selectedComponent.offset().top - 60;
+            var stick = $(window).scrollTop() >= this.selectedComponent.offset().top - 60;
+
+            var el = this.getEl();
 
             if (stick) {
-                me.getEl().css({
+                el.css({
                     position: 'fixed',
                     top: 10,
                     left: defaultPosition.left
                 });
             } else {
-                me.getEl().css({
+                el.css({
                     position: 'absolute',
                     top: defaultPosition.top,
                     left: defaultPosition.left
@@ -118,26 +111,25 @@ module LiveEdit.ui {
             }
 
             var placeArrowOnTop = $(window).scrollTop() >= defaultPosition.bottom - 10;
-            me.toggleArrowPosition(placeArrowOnTop);
+
+            this.toggleArrowPosition(placeArrowOnTop);
         }
 
 
         toggleArrowPosition(showArrowAtTop) {
-            var me = this;
             if (showArrowAtTop) {
-                me.getEl().removeClass('live-edit-arrow-bottom').addClass('live-edit-arrow-top');
+                this.getEl().removeClass('live-edit-arrow-bottom').addClass('live-edit-arrow-top');
             } else {
-                me.getEl().removeClass('live-edit-arrow-top').addClass('live-edit-arrow-bottom');
+                this.getEl().removeClass('live-edit-arrow-top').addClass('live-edit-arrow-bottom');
             }
         }
 
 
         // Rename
         getDefaultPosition() {
-            var me = this;
-            var componentBox = componentHelper.getBoxModel(me.selectedComponent),
-                leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2),
-                topPos = componentBox.top - me.getEl().height() - 25;
+            var componentBox = componentHelper.getBoxModel(this.selectedComponent),
+                leftPos = componentBox.left + (componentBox.width / 2 - this.getEl().outerWidth() / 2),
+                topPos = componentBox.top - this.getEl().height() - 25;
 
             return {
                 left: leftPos,

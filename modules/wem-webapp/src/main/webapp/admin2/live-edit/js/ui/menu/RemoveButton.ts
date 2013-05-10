@@ -13,21 +13,20 @@ module LiveEdit.ui {
         }
 
         init() {
-            var me = this;
-            var $button = me.createButton({
+            var $button = this.createButton({
                 text: 'Remove',
                 id: 'live-edit-button-remove',
                 cls: 'live-edit-component-menu-button',
-                handler: function (event) {
+                handler: (event) => {
                     event.stopPropagation();
                     // For demo purposes
-                    me.menu.selectedComponent.remove();
+                    this.menu.selectedComponent.remove();
                     $(window).trigger('component.onRemove');
                 }
             });
 
-            me.appendTo(me.menu.getEl());
-            me.menu.buttons.push(me);
+            this.appendTo(this.menu.getEl());
+            this.menu.buttons.push(this);
         }
     }
 }

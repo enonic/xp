@@ -10,14 +10,13 @@ module LiveEdit.model {
         constructor() {
             super();
 
-            var me = this;
             this.cssSelector = '[data-live-edit-type=paragraph]';
             this.modes = {
                 UNSELECTED: 0,
                 SELECTED: 1,
                 EDIT: 2
             };
-            this.currentMode = me.modes.UNSELECTED;
+            this.currentMode = this.modes.UNSELECTED;
             this.attachMouseOverEvent();
             this.attachMouseOutEvent();
             this.attachClickEvent();
@@ -28,54 +27,52 @@ module LiveEdit.model {
 
 
         registerGlobalListeners() {
-            $(window).on('shader.onClick', $.proxy(this.leaveEditMode, this));
-            $(window).on('component.onDeselect', $.proxy(this.leaveEditMode, this));
+            $(window).on('shader.onClick component.onDeselect', (event:JQueryEventObject) => {
+                this.leaveEditMode();
+            });
         }
 
 
         // Override base attachClickEvent
         attachClickEvent() {
-            var me = this;
-            $(document).on('click contextmenu touchstart', me.cssSelector, function (event) {
-                me.handleClick(event);
+            $(document).on('click contextmenu touchstart', this.cssSelector, (event:JQueryEventObject) => {
+                this.handleClick(event);
             });
         }
 
 
         handleClick(event) {
-            var me = this;
             event.stopPropagation();
             event.preventDefault();
 
             // Remove the inlined css cursor when the mode is not EDIT.
-            if (me.selectedParagraph && !(me.currentMode === me.modes.EDIT)) {
-                me.selectedParagraph.css('cursor', '');
+            if (this.selectedParagraph && !(this.currentMode === this.modes.EDIT)) {
+                this.selectedParagraph.css('cursor', '');
             }
 
             var $paragraph = $(event.currentTarget);
 
             // Reset mode in case another paragraph is selected.
-            if (!$paragraph.is(me.selectedParagraph)) {
-                me.currentMode = me.modes.UNSELECTED;
+            if (!$paragraph.is(this.selectedParagraph)) {
+                this.currentMode = this.modes.UNSELECTED;
             }
 
-            me.selectedParagraph = $paragraph;
+            this.selectedParagraph = $paragraph;
 
-            if (me.currentMode === me.modes.UNSELECTED) {
-                me.setSelectMode(event);
-            } else if (me.currentMode === me.modes.SELECTED) {
-                me.setEditMode(event);
+            if (this.currentMode === this.modes.UNSELECTED) {
+                this.setSelectMode(event);
+            } else if (this.currentMode === this.modes.SELECTED) {
+                this.setEditMode();
             } else {
             }
 
         }
 
 
-        setSelectMode(event) {
-            var me = this;
-            me.selectedParagraph.css('cursor', 'url(../../../admin2/live-edit/images/pencil.png) 0 40, text');
+        setSelectMode(event:JQueryEventObject) {
+            this.selectedParagraph.css('cursor', 'url(../../../admin2/live-edit/images/pencil.png) 0 40, text');
 
-            me.currentMode = me.modes.SELECTED;
+            this.currentMode = this.modes.SELECTED;
 
             // Make sure Chrome does not selects the text on context click
             if (window.getSelection) {
@@ -87,37 +84,35 @@ module LiveEdit.model {
                 y: event.pageY
             };
 
-            $(window).trigger('component.onSelect', [me.selectedParagraph, pagePosition]);
-            $(window).trigger('component.onParagraphSelect', [me.selectedParagraph]);
+            $(window).trigger('component.onSelect', [this.selectedParagraph, pagePosition]);
+            $(window).trigger('component.onParagraphSelect', [this.selectedParagraph]);
         }
 
 
-        setEditMode(event) {
-            var me = this,
-                $paragraph = me.selectedParagraph;
+        setEditMode() {
+            var $paragraph = this.selectedParagraph;
 
-            $(window).trigger('component.onParagraphEdit', [me.selectedParagraph]);
+            $(window).trigger('component.onParagraphEdit', [this.selectedParagraph]);
 
             $paragraph.css('cursor', 'text');
             $paragraph.addClass('live-edit-edited-paragraph');
 
-            me.currentMode = me.modes.EDIT;
+            this.currentMode = this.modes.EDIT;
         }
 
 
-        leaveEditMode(event) {
-            var me = this,
-                $paragraph = me.selectedParagraph;
+        leaveEditMode() {
+            var $paragraph = this.selectedParagraph;
             if ($paragraph === null) {
                 return;
             }
-            $(window).trigger('component.onParagraphEditLeave', [me.selectedParagraph]);
+            $(window).trigger('component.onParagraphEditLeave', [this.selectedParagraph]);
 
             $paragraph.css('cursor', '');
             $paragraph.removeClass('live-edit-edited-paragraph');
-            me.selectedParagraph = null;
+            this.selectedParagraph = null;
 
-            me.currentMode = me.modes.UNSELECTED;
+            this.currentMode = this.modes.UNSELECTED;
         }
     }
 }

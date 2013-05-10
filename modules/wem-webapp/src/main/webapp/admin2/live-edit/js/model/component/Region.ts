@@ -7,6 +7,7 @@ module LiveEdit.model {
             super();
 
             this.cssSelector = '[data-live-edit-type=region]';
+
             this.renderEmptyPlaceholders();
             this.attachMouseOverEvent();
             this.attachMouseOutEvent();
@@ -18,21 +19,22 @@ module LiveEdit.model {
 
 
         private registerGlobalListeners() {
-            $(window).on('component.onSortUpdate', $.proxy(this.renderEmptyPlaceholders, this));
-            $(window).on('component.onSortOver', $.proxy(this.renderEmptyPlaceholders, this));
-            $(window).on('component.onRemove', $.proxy(this.renderEmptyPlaceholders, this));
+            $(window).on('component.onSortUpdate component.onSortOver component.onRemove', () => {
+                this.renderEmptyPlaceholders();
+            });
         }
 
 
         private renderEmptyPlaceholders() {
-            var me = this;
-            me.removeAllRegionPlaceholders();
-            var $regions = me.getAll();
-            $regions.each(function (index) {
-                var $region = $(this);
-                var regionIsEmpty = me.isRegionEmpty.call(me, $region);
+            this.removeAllRegionPlaceholders();
+            var regions = this.getAll(),
+                region:JQuery;
+
+            regions.each((i) => {
+                region = $(regions[i]);
+                var regionIsEmpty = this.isRegionEmpty(region);
                 if (regionIsEmpty) {
-                    me.appendEmptyPlaceholder.call(me, $region);
+                    this.appendEmptyPlaceholder(region);
                 }
             });
         }
