@@ -1,4 +1,4 @@
-///<reference path='../../../api/js/ExtJs.d.ts' />
+//  <reference path='../../../api/js/ExtJs.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
 ///<reference path='lib/JsonRpcProvider.ts' />
@@ -126,9 +126,9 @@ Ext.application({
         p.add(center);
         p.add(west);
 
-        var tabPanel = new Admin.view.TabPanel();
-        tabPanel.appName = 'Space Admin';
-        tabPanel.appIconCls = 'icon-metro-space-admin-24';
+        var tabPanel = new Admin.view.TabPanel({appName: 'Space Admin', appIconCls: 'icon-metro-space-admin-24'});
+//        tabPanel.appName = 'Space Admin';
+//        tabPanel.appIconCls = 'icon-metro-space-admin-24';
 
         tabPanel.add(p);
 

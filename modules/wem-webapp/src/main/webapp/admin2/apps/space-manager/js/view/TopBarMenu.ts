@@ -1,320 +1,383 @@
-Ext.define('Admin.view.TopBarMenu', {
-    extend: 'Ext.menu.Menu',
-    alias: 'widget.topBarMenu',
+module admin.ui {
 
-    requires: ['Admin.view.TopBarMenuItem'],
+    export class TopBarMenu {
+        ext;
 
-    cls: 'admin-topbar-menu',
+        private tabPanel:any;
+        private activeTab:any;
 
-    showSeparator: false,
-    styleHtmlContent: true,
-    overflowY: 'auto',
-    overflowX: 'hidden',
-    width: 300,
-    layout: {
-        type: 'vbox',
-        align: 'stretchmax'
-    },
+        private maxWas:any;
+        private nonClosableItems:any;
+        private editTitle:any;
+        private editItems:any;
+        private viewTitle:any;
+        private viewItems:any;
+        private emptyTitle:any;
 
-    items: <any[]>[
-        {
-            xtype: 'container',
-            itemId: 'nonClosableItems',
-            defaultType: 'topBarMenuItem'
-        },
-        {
-            xtype: 'component',
-            cls: 'title',
-            itemId: 'editTitle',
-            hidden: true,
-            html: '<span>Editing</span>'
-        },
-        {
-            xtype: 'container',
-            itemId: 'editItems',
-            defaultType: 'topBarMenuItem'
-        },
-        {
-            xtype: 'component',
-            cls: 'title',
-            itemId: 'viewTitle',
-            hidden: true,
-            html: '<span>Viewing</span>'
-        },
-        {
-            xtype: 'container',
-            itemId: 'viewItems',
-            defaultType: 'topBarMenuItem'
-        },
-        {
-            xtype: 'component',
-            cls: 'info',
-            itemId: 'emptyTitle',
-            hidden: false,
-            html: 'List is empty'
-        }
-    ],
+        constructor(tabPanel: any) {
+            var tbm = new Ext.menu.Menu({});
+            this.ext = tbm;
+            this.tabPanel = tabPanel;
+            tbm.itemId = 'topBarMenu';
+            tbm.addCls('admin-topbar-menu');
 
-    tabPanel: undefined,
-    activeTab: undefined,
+            tbm.showSeparator = false;
+            tbm.styleHtmlContent = true;
+            tbm.overflowY = 'auto';
+            tbm.overflowX = 'hidden';
+            tbm.width = 300;
 
-    initComponent: function () {
+            var layout = new Ext.layout.container.VBox();
+            layout.align = 'stretchmax';
+            tbm.layout = layout;
 
-        this.scrollState = { left: 0, top: 0 };
+            this.nonClosableItems = this.createNonClosableItems()
+            this.editTitle = this.createEditTitle();
+            this.editItems = this.createEditItems();
+            this.viewTitle = this.createViewTitle();
+            this.viewItems = this.createViewItems();
+            this.emptyTitle = this.createEmptyTitle();
 
-        this.callParent(arguments);
-        this.on('closeMenuItem', this.onCloseMenuItem);
-        this.on('resize', this.updatePosition);
-    },
+            tbm.add(this.nonClosableItems);
+            tbm.add(this.editTitle);
+            tbm.add(this.editItems);
+            tbm.add(this.viewTitle);
+            tbm.add(this.viewItems);
+            tbm.add(this.emptyTitle);
 
-    onClick: function (e) {
-        var me = this,
-            item;
+            tbm.onShow = this.onShow;
+            tbm.onBoxReady = this.onBoxReady;
+            tbm.show = this.show;
+            tbm.hide = this.hide;
+            tbm.setVerticalPosition = this.setVerticalPosition;
 
-        if (me.disabled) {
-            e.stopEvent();
-            return;
+            tbm.scrollState = { left: 0, top: 0 };
+            tbm.on('closeMenuItem', this.onCloseMenuItem);
+            tbm.on('resize', this.updatePosition);
         }
 
-        item = (e.type === 'click') ? me.getItemFromEvent(e) : me.activeItem;
-        if (item && item.isMenuItem && item.onClick(e) !== false) {
-            if (me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
-                this.tabPanel.setActiveTab(item.card);
-            }
-            this.hide();
+        private createNonClosableItems() {
+            var item = new Ext.container.Container({});
+            item.itemId = 'nonClosableItems';
+            item.defaultType = 'topBarMenuItem';
+            return item;
         }
-    },
 
-    onShow: function () {
-        this.callParent(arguments);
-
-        if (this.activeTab) {
-            this.markActiveTab(this.activeTab);
+        private createEditTitle() {
+            var item = new Ext.Component({});
+            item.addCls('title');
+            item.itemId = 'editTitle';
+            item.hide();
+            item.html = '<span>Editing</span>';
+            return item;
         }
-    },
 
-    onBoxReady: function () {
-        var tip = Ext.DomHelper.append(this.el, {
-            tag: 'div',
-            cls: 'balloon-tip'
-        }, true);
-        this.callParent(arguments);
-    },
-
-    onCloseMenuItem: function (item) {
-        if (this.tabPanel) {
-            this.tabPanel.remove(item.card);
+        private createEditItems() {
+            var item = new Ext.container.Container({});
+            item.itemId = 'editItems';
+            item.defaultType = 'topBarMenuItem';
+            return item;
         }
-        // hide menu if all closable items have been closed
-        if (this.getAllItems(false).length === 0) {
-            this.hide();
+
+        private createViewTitle() {
+            var item = new Ext.Component({});
+            item.addCls('title');
+            item.itemId = 'viewTitle';
+            item.hide();
+            item.html = '<span>Viewing</span>';
+            return item;
         }
-    },
 
-    markActiveTab: function (item) {
-        var me = this;
-        var menuItem;
+        private createViewItems() {
+            var item = new Ext.container.Container({});
+            item.itemId = 'viewItems';
+            item.defaultType = 'topBarMenuItem';
+            return item;
+        }
 
-        if (me.isVisible()) {
+        private createEmptyTitle() {
+            var item = new Ext.Component({});
+            item.addCls('info');
+            item.itemId = 'emptyTitle';
+            item.html = 'List is empty';
+            return item;
+        }
 
-            // deactivate
-            menuItem = me.el.down('.current-tab');
-            if (menuItem) {
-                menuItem.removeCls('current-tab')
+        onClick(e) {
+            var me = this.ext,
+                item;
+
+            if (me.disabled) {
+                e.stopEvent();
+                return;
             }
 
-            // activate
-            if (item) {
-                menuItem = me.down('#' + item.id);
-                if (menuItem && menuItem.el) {
-                    menuItem.el.addCls('current-tab')
+            item = (e.type === 'click') ? me.getItemFromEvent(e) : me.activeItem;
+            if (item && item.isMenuItem && item.onClick(e) !== false) {
+                if (me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
+                    this.tabPanel.setActiveTab(item.card);
                 }
+                this.hide();
+            }
+        }
+
+        onShow() {
+            this.ext.callParent(arguments);
+
+            if (this.activeTab) {
+                this.markActiveTab(this.activeTab);
+            }
+        }
+
+        onBoxReady() {
+            var tip = Ext.DomHelper.append(this.ext.el, {
+                tag: 'div',
+                cls: 'balloon-tip'
+            }, true);
+            this.ext.callParent(arguments);
+        }
+
+        onCloseMenuItem(item) {
+            if (this.tabPanel) {
+                this.tabPanel.remove(item.card);
+            }
+            // hide menu if all closable items have been closed
+            if (this.getAllItems(false).length === 0) {
+                this.hide();
+            }
+        }
+
+        markActiveTab(item) {
+            var me = this.ext;
+            var menuItem;
+
+            if (me.isVisible()) {
+
+                // deactivate
+                menuItem = me.el.down('.current-tab');
+                if (menuItem) {
+                    menuItem.removeCls('current-tab')
+                }
+
+                // activate
+                if (item) {
+                    menuItem = me.down('#' + item.id);
+                    if (menuItem && menuItem.el) {
+                        menuItem.el.addCls('current-tab')
+                    }
+                }
+
             }
 
+            this.activeTab = item;
         }
 
-        me.activeTab = item;
-    },
-
-    getItemFromEvent: function (e) {
-        var item = this;
-        do {
-            item = item.getChildByElement(e.getTarget());
-        }
-        while (item && Ext.isDefined(item.getChildByElement) && item.getXType() !== 'topBarMenuItem');
-        return item;
-    },
-
-    getAllItems: function (includeNonClosable) {
-        var items = [];
-        if (includeNonClosable === false) {
-            items = items.concat(this.down('#editItems').query('topBarMenuItem'));
-            items = items.concat(this.down('#viewItems').query('topBarMenuItem'))
-        } else {
-            items = items.concat(this.query('topBarMenuItem'));
-        }
-        return items;
-    },
-
-    addItems: function (items) {
-        if (Ext.isEmpty(items)) {
-            return;
-        } else if (Ext.isObject(items)) {
-            items = [].concat(items);
+        getItemFromEvent(e) {
+            var item = this.ext;
+            do {
+                item = item.getChildByElement(e.getTarget());
+            }
+            while (item && Ext.isDefined(item.getChildByElement) && item.getXType() !== 'topBarMenuItem');
+            return item;
         }
 
-        this.saveScrollState();
-
-        var editItems = [];
-        var viewItems = [];
-        var nonClosableItems = [];
-        Ext.Array.each(items, function (item) {
-            if (item.closable === false) {
-                nonClosableItems.push(item);
-            } else if (item.editing) {
-                editItems.push(item);
+        getAllItems(includeNonClosable) {
+            var items = [];
+            if (includeNonClosable === false) {
+                items = items.concat(this.editItems.query('topBarMenuItem'));
+                items = items.concat(this.viewItems.query('topBarMenuItem'))
             } else {
-                viewItems.push(item);
+                items = items.concat(this.ext.query('topBarMenuItem'));
             }
-        });
-        var added = [];
-        if (nonClosableItems.length > 0) {
-            added = added.concat(this.down("#nonClosableItems").add(nonClosableItems));
+            return items;
         }
-        if (editItems.length > 0) {
-            added = added.concat(this.down('#editItems').add(editItems));
-        }
-        if (viewItems.length > 0) {
-            added = added.concat(this.down('#viewItems').add(viewItems));
-        }
-        this.updateTitles();
 
-        this.restoreScrollState();
-
-        return added;
-    },
-
-    removeAllItems: function (includeNonClosable) {
-        var editItems = this.down('#editItems');
-        var viewItems = this.down('#viewItems');
-        var removed = [];
-        Ext.Array.each(editItems.items.items, function (item) {
-            if (item && item.closable !== false) {
-                removed.push(editItems.remove(item));
+        addItems(items) {
+            if (Ext.isEmpty(items)) {
+                return [];
+            } else if (Ext.isObject(items)) {
+                items = [].concat(items);
             }
-        });
-        Ext.Array.each(viewItems.items.items, function (item) {
-            if (item && item.closable !== false) {
-                removed.push(viewItems.remove(item));
+
+            this.saveScrollState();
+
+            var editItems = [];
+            var viewItems = [];
+            var nonClosableItems = [];
+            Ext.Array.each(items, function (item) {
+                if (item.closable === false) {
+                    nonClosableItems.push(item);
+                } else if (item.editing) {
+                    editItems.push(item);
+                } else {
+                    viewItems.push(item);
+                }
+            });
+            var added = [];
+            if (nonClosableItems.length > 0) {
+                added = added.concat(this.nonClosableItems.add(nonClosableItems));
             }
-        });
-        if (includeNonClosable) {
-            var nonClosableItems = this.down('#nonClosableItems');
-            Ext.Array.each(nonClosableItems.items.items, function (item) {
+            if (editItems.length > 0) {
+                added = added.concat(this.editItems.add(editItems));
+            }
+            if (viewItems.length > 0) {
+                var viewItemObjects = [];
+                Ext.Array.each(viewItems, function (viewItem) {
+                    if (!viewItem.xtype) {
+                        var tbmi = new admin.ui.TopBarMenuItem(viewItem.text1, viewItem.text2).ext;
+                        viewItemObjects.push(tbmi);
+                    } else {
+                        viewItemObjects.push(viewItem);
+                    }
+                });
+
+                added = added.concat(this.viewItems.add(viewItemObjects));
+            }
+            this.updateTitles();
+
+            this.restoreScrollState();
+
+            return added;
+        }
+
+        removeAllItems(includeNonClosable) {
+            var me = this.ext;
+            var editItems = this.editItems;
+            var viewItems = this.viewItems;
+            var removed = [];
+            Ext.Array.each(editItems.items.items, function (item) {
                 if (item && item.closable !== false) {
+                    removed.push(editItems.remove(item));
+                }
+            });
+            Ext.Array.each(viewItems.items.items, function (item) {
+                if (item && item.closable !== false) {
+                    removed.push(viewItems.remove(item));
+                }
+            });
+            if (includeNonClosable) {
+                var nonClosableItems = this.nonClosableItems;
+                Ext.Array.each(nonClosableItems.items.items, function (item) {
+                    if (item && item.closable !== false) {
+                        removed.push(nonClosableItems.remove(item));
+                    }
+                });
+            }
+            this.updateTitles();
+            return removed;
+        }
+
+        removeItems(items) {
+            if (Ext.isEmpty(items)) {
+                return;
+            } else if (Ext.isObject(items)) {
+                items = [].concat(items);
+            }
+
+            this.saveScrollState();
+
+            var me = this.ext;
+            var editItems = this.editItems;
+            var viewItems = this.viewItems;
+            var nonClosableItems = this.nonClosableItems;
+            var removed = [];
+
+            Ext.Array.each(items, function (item) {
+                if (item && item.closable !== false) {
+                    removed.push(editItems.remove(item));
+                    removed.push(viewItems.remove(item));
                     removed.push(nonClosableItems.remove(item));
                 }
             });
-        }
-        this.updateTitles();
-        return removed;
-    },
 
-    removeItems: function (items) {
-        if (Ext.isEmpty(items)) {
-            return;
-        } else if (Ext.isObject(items)) {
-            items = [].concat(items);
+            this.updateTitles();
+
+            this.restoreScrollState();
         }
 
-        this.saveScrollState();
-
-        var editItems = this.down('#editItems');
-        var viewItems = this.down('#viewItems');
-        var nonClosableItems = this.down('#nonClosableItems');
-        var removed = [];
-
-        Ext.Array.each(items, function (item) {
-            if (item && item.closable !== false) {
-                removed.push(editItems.remove(item));
-                removed.push(viewItems.remove(item));
-                removed.push(nonClosableItems.remove(item));
+        updateTitles() {
+            var me = this.ext;
+            var editCount = this.editItems.items.getCount();
+            var viewCount = this.viewItems.items.getCount();
+            var nonClosableCount = this.nonClosableItems.items.getCount();
+            if (editCount > 0) {
+                this.editTitle.show();
+            } else {
+                this.editTitle.hide();
             }
-        });
-
-        this.updateTitles();
-
-        this.restoreScrollState();
-    },
-
-    updateTitles: function () {
-        var editCount = this.down('#editItems').items.getCount();
-        var viewCount = this.down('#viewItems').items.getCount();
-        var nonClosableCount = this.down('#nonClosableItems').items.getCount();
-        this.down('#editTitle')[editCount > 0 ? 'show' : 'hide']();
-        this.down('#viewTitle')[viewCount > 0 ? 'show' : 'hide']();
-        this.down('#emptyTitle')[(viewCount || editCount || nonClosableCount) > 0 ? 'hide' : 'show']();
-    },
-
-    // Need in case of resize while center positioned
-    updatePosition: function (menu, width, height, oldWidth, oldHeight, opts) {
-        this.el.move('r', ((oldWidth - width) / 2), false);
-    },
-
-    show: function () {
-        var me = this,
-            parentEl, viewHeight;
-
-        me.maxWas = me.maxHeight;
-
-        // we need to get scope parent for height constraint
-        if (!me.rendered) {
-            me.doAutoRender();
+            if (viewCount > 0) {
+                this.viewTitle.show();
+            } else {
+                this.viewTitle.hide();
+            }
+            if ((viewCount || editCount || nonClosableCount) > 0) {
+                this.emptyTitle.hide();
+            } else {
+                this.emptyTitle.show();
+            }
         }
 
-        // constrain the height to the current viewable area
-        if (me.floating) {
-            //if our reset css is scoped, there will be a x-reset wrapper on this menu which we need to skip
-            parentEl = Ext.fly(me.el.getScopeParent());
-            viewHeight = parentEl.getViewSize().height;
-            me.maxHeight = Math.min(me.maxWas || viewHeight - 50, viewHeight - 50);
+        // Need in case of resize while center positioned
+        updatePosition(menu, width, height, oldWidth, oldHeight, opts) {
+            this.ext.el.move('r', ((oldWidth - width) / 2), false);
         }
 
-        me.callParent(arguments);
-        return me;
-    },
+        show() {
+            var me = this.ext,
+                parentEl, viewHeight;
 
-    hide: function () {
-        var me = this;
+            this.maxWas = me.maxHeight;
 
-        me.callParent();
+            // we need to get scope parent for height constraint
+            if (!me.rendered) {
+                me.doAutoRender();
+            }
 
-        //return back original value to calculate new height on show
-        me.maxHeight = me.maxWas;
-    },
+            // constrain the height to the current viewable area
+            if (me.floating) {
+                //if our reset css is scoped, there will be a x-reset wrapper on this menu which we need to skip
+                parentEl = Ext.fly(me.el.getScopeParent());
+                viewHeight = parentEl.getViewSize().height;
+                me.maxHeight = Math.min(this.maxWas || viewHeight - 50, viewHeight - 50);
+            }
 
-    setVerticalPosition: function () {
-        // disable position change as we adjust menu height
-    },
-
-    saveScrollState: function () {
-        if (this.rendered && !this.hidden) {
-            var dom = this.body.dom,
-                state = this.scrollState;
-
-            state.left = dom.scrollLeft;
-            state.top = dom.scrollTop;
+            this.ext.callParent(arguments);
+            return me;
         }
-    },
 
-    restoreScrollState: function () {
-        if (this.rendered && !this.hidden) {
-            var dom = this.body.dom,
-                state = this.scrollState;
+        hide() {
+            this.ext.callParent();
 
-            dom.scrollLeft = state.left;
-            dom.scrollTop = state.top;
+            //return back original value to calculate new height on show
+            this.ext.maxHeight = this.maxWas;
+        }
+
+        setVerticalPosition() {
+            // disable position change as we adjust menu height
+        }
+
+        saveScrollState() {
+            var me = this.ext;
+            if (me.rendered && !me.hidden) {
+                var dom = me.body.dom,
+                    state = me.scrollState;
+
+                state.left = dom.scrollLeft;
+                state.top = dom.scrollTop;
+            }
+        }
+
+        restoreScrollState() {
+            var me = this.ext;
+            if (me.rendered && !me.hidden) {
+                var dom = me.body.dom,
+                    state = me.scrollState;
+
+                dom.scrollLeft = state.left;
+                dom.scrollTop = state.top;
+            }
         }
     }
 
-});
+
+}

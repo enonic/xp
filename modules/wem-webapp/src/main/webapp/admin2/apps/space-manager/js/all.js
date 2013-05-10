@@ -3431,586 +3431,651 @@ Ext.define('Admin.view.AdminImageButton', {
         }
     }
 });
-Ext.define('Admin.view.TopBarMenuItem', {
-    extend: 'Ext.container.Container',
-    alias: 'widget.topBarMenuItem',
-    cls: 'admin-topbar-menu-item',
-    activeCls: 'active',
-    isMenuItem: true,
-    canActivate: true,
-    layout: {
-        type: 'hbox',
-        align: 'middle'
-    },
-    bubbleEvents: [
-        'closeMenuItem'
-    ],
-    initComponent: function () {
-        var me = this;
-        this.items = [];
-        if(this.iconCls || this.iconSrc) {
-            this.items.push({
-                xtype: 'image',
-                width: 32,
-                height: 32,
-                margin: '0 12px 0 0',
-                cls: this.iconCls,
-                src: this.iconSrc
-            });
-        }
-        if(this.text1 || this.text2) {
-            this.items.push({
-                xtype: 'component',
-                flex: 1,
-                itemId: 'titleContainer',
-                styleHtmlContent: true,
-                tpl: '<strong>{text1}</strong><tpl if="text2"><br/><em>{text2}</em></tpl>',
-                data: {
+var admin;
+(function (admin) {
+    (function (ui) {
+        var TopBarMenuItem = (function () {
+            function TopBarMenuItem(text1, text2) {
+                this.text1 = text1;
+                this.text2 = text2;
+                var tbmi = new Ext.container.Container({
+                });
+                this.ext = tbmi;
+                tbmi.itemId = 'topBarMenuItem';
+                tbmi.addCls('admin-topbar-menu-item');
+                tbmi.activeCls = 'active';
+                tbmi.isMenuItem = true;
+                tbmi.canActivate = true;
+                var layout = new Ext.layout.container.HBox();
+                layout.align = 'middle';
+                tbmi.layout = layout;
+                tbmi.enableBubble([
+                    'closeMenuItem'
+                ]);
+                this.initComponent(tbmi);
+            }
+            TopBarMenuItem.prototype.initComponent = function (topBarMenuItem) {
+                var items = [];
+                if(topBarMenuItem.iconCls || topBarMenuItem.iconSrc) {
+                    var image = new Ext.Img();
+                    image.width = 32;
+                    image.height = 32;
+                    image.margin = '0 12px 0 0';
+                    image.cls = topBarMenuItem.iconCls;
+                    image.src = topBarMenuItem.iconSrc;
+                    items.push(image);
+                }
+                if(this.text1 || this.text2) {
+                    var titleContainer = new Ext.Component();
+                    titleContainer.flex = 1;
+                    titleContainer.itemId = 'titleContainer';
+                    titleContainer.styleHtmlContent = true;
+                    titleContainer.tpl = '<strong>{text1}</strong><tpl if="text2"><br/><em>{text2}</em></tpl>';
+                    titleContainer.data = {
+                        text1: this.text1,
+                        text2: this.text2
+                    };
+                    items.push(titleContainer);
+                }
+                if(topBarMenuItem.closable !== false) {
+                    var closeButton = new Ext.Component();
+                    closeButton.autoEl = 'a';
+                    closeButton.cls = 'close-button icon-remove icon-large';
+                    closeButton.margins = '0 0 0 12px';
+                    closeButton.on('afterrender', function (cmp) {
+                        cmp.el.on('click', function () {
+                            this.deactivate();
+                            topBarMenuItem.fireEvent('closeMenuItem', topBarMenuItem);
+                        });
+                    });
+                    items.push(closeButton);
+                }
+                topBarMenuItem.add(items);
+                topBarMenuItem.addEvents('activate', 'deactivate', 'click', 'closeMenuItem');
+            };
+            TopBarMenuItem.prototype.activate = function () {
+                var me = this.ext;
+                if(!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
+                    me.el.addCls(me.activeCls);
+                    me.focus();
+                    me.activated = true;
+                    me.fireEvent('activate', me);
+                }
+            };
+            TopBarMenuItem.prototype.deactivate = function () {
+                var me = this.ext;
+                if(me.activated) {
+                    me.el.removeCls(me.activeCls);
+                    me.blur();
+                    me.activated = false;
+                    me.fireEvent('deactivate', me);
+                }
+            };
+            TopBarMenuItem.prototype.onClick = function (e) {
+                var me = this.ext;
+                if(!me.href) {
+                    e.stopEvent();
+                }
+                if(me.disabled) {
+                    return false;
+                }
+                Ext.callback(me.handler, me.scope || me, [
+                    me, 
+                    e
+                ]);
+                me.fireEvent('click', me, e);
+                if(!me.hideOnClick) {
+                    me.focus();
+                }
+                return Ext.isEmpty(Ext.fly(e.getTarget()).findParent('.close-button'));
+            };
+            TopBarMenuItem.prototype.updateTitleContainer = function () {
+                this.ext.down('#titleContainer').update({
                     text1: this.text1,
                     text2: this.text2
+                });
+            };
+            return TopBarMenuItem;
+        })();
+        ui.TopBarMenuItem = TopBarMenuItem;        
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
+var admin;
+(function (admin) {
+    (function (ui) {
+        var TopBarMenu = (function () {
+            function TopBarMenu(tabPanel) {
+                var tbm = new Ext.menu.Menu({
+                });
+                this.ext = tbm;
+                this.tabPanel = tabPanel;
+                tbm.itemId = 'topBarMenu';
+                tbm.addCls('admin-topbar-menu');
+                tbm.showSeparator = false;
+                tbm.styleHtmlContent = true;
+                tbm.overflowY = 'auto';
+                tbm.overflowX = 'hidden';
+                tbm.width = 300;
+                var layout = new Ext.layout.container.VBox();
+                layout.align = 'stretchmax';
+                tbm.layout = layout;
+                this.nonClosableItems = this.createNonClosableItems();
+                this.editTitle = this.createEditTitle();
+                this.editItems = this.createEditItems();
+                this.viewTitle = this.createViewTitle();
+                this.viewItems = this.createViewItems();
+                this.emptyTitle = this.createEmptyTitle();
+                tbm.add(this.nonClosableItems);
+                tbm.add(this.editTitle);
+                tbm.add(this.editItems);
+                tbm.add(this.viewTitle);
+                tbm.add(this.viewItems);
+                tbm.add(this.emptyTitle);
+                tbm.onShow = this.onShow;
+                tbm.onBoxReady = this.onBoxReady;
+                tbm.show = this.show;
+                tbm.hide = this.hide;
+                tbm.setVerticalPosition = this.setVerticalPosition;
+                tbm.scrollState = {
+                    left: 0,
+                    top: 0
+                };
+                tbm.on('closeMenuItem', this.onCloseMenuItem);
+                tbm.on('resize', this.updatePosition);
+            }
+            TopBarMenu.prototype.createNonClosableItems = function () {
+                var item = new Ext.container.Container({
+                });
+                item.itemId = 'nonClosableItems';
+                item.defaultType = 'topBarMenuItem';
+                return item;
+            };
+            TopBarMenu.prototype.createEditTitle = function () {
+                var item = new Ext.Component({
+                });
+                item.addCls('title');
+                item.itemId = 'editTitle';
+                item.hide();
+                item.html = '<span>Editing</span>';
+                return item;
+            };
+            TopBarMenu.prototype.createEditItems = function () {
+                var item = new Ext.container.Container({
+                });
+                item.itemId = 'editItems';
+                item.defaultType = 'topBarMenuItem';
+                return item;
+            };
+            TopBarMenu.prototype.createViewTitle = function () {
+                var item = new Ext.Component({
+                });
+                item.addCls('title');
+                item.itemId = 'viewTitle';
+                item.hide();
+                item.html = '<span>Viewing</span>';
+                return item;
+            };
+            TopBarMenu.prototype.createViewItems = function () {
+                var item = new Ext.container.Container({
+                });
+                item.itemId = 'viewItems';
+                item.defaultType = 'topBarMenuItem';
+                return item;
+            };
+            TopBarMenu.prototype.createEmptyTitle = function () {
+                var item = new Ext.Component({
+                });
+                item.addCls('info');
+                item.itemId = 'emptyTitle';
+                item.html = 'List is empty';
+                return item;
+            };
+            TopBarMenu.prototype.onClick = function (e) {
+                var me = this.ext, item;
+                if(me.disabled) {
+                    e.stopEvent();
+                    return;
                 }
-            });
-        }
-        if(this.closable !== false) {
-            this.items.push({
-                xtype: 'component',
-                autoEl: 'a',
-                cls: 'close-button icon-remove icon-large',
-                margins: '0 0 0 12px',
-                listeners: {
-                    afterrender: function (cmp) {
-                        cmp.el.on('click', function () {
-                            me.deactivate();
-                            me.fireEvent('closeMenuItem', me);
-                        });
+                item = (e.type === 'click') ? me.getItemFromEvent(e) : me.activeItem;
+                if(item && item.isMenuItem && item.onClick(e) !== false) {
+                    if(me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
+                        this.tabPanel.setActiveTab(item.card);
+                    }
+                    this.hide();
+                }
+            };
+            TopBarMenu.prototype.onShow = function () {
+                this.ext.callParent(arguments);
+                if(this.activeTab) {
+                    this.markActiveTab(this.activeTab);
+                }
+            };
+            TopBarMenu.prototype.onBoxReady = function () {
+                var tip = Ext.DomHelper.append(this.ext.el, {
+                    tag: 'div',
+                    cls: 'balloon-tip'
+                }, true);
+                this.ext.callParent(arguments);
+            };
+            TopBarMenu.prototype.onCloseMenuItem = function (item) {
+                if(this.tabPanel) {
+                    this.tabPanel.remove(item.card);
+                }
+                if(this.getAllItems(false).length === 0) {
+                    this.hide();
+                }
+            };
+            TopBarMenu.prototype.markActiveTab = function (item) {
+                var me = this.ext;
+                var menuItem;
+                if(me.isVisible()) {
+                    menuItem = me.el.down('.current-tab');
+                    if(menuItem) {
+                        menuItem.removeCls('current-tab');
+                    }
+                    if(item) {
+                        menuItem = me.down('#' + item.id);
+                        if(menuItem && menuItem.el) {
+                            menuItem.el.addCls('current-tab');
+                        }
                     }
                 }
-            });
-        }
-        this.callParent(arguments);
-        this.addEvents('activate', 'deactivate', 'click', 'closeMenuItem');
-    },
-    activate: function () {
-        var me = this;
-        if(!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
-            me.el.addCls(me.activeCls);
-            me.focus();
-            me.activated = true;
-            me.fireEvent('activate', me);
-        }
-    },
-    deactivate: function () {
-        var me = this;
-        if(me.activated) {
-            me.el.removeCls(me.activeCls);
-            me.blur();
-            me.activated = false;
-            me.fireEvent('deactivate', me);
-        }
-    },
-    onClick: function (e) {
-        var me = this;
-        if(!me.href) {
-            e.stopEvent();
-        }
-        if(me.disabled) {
-            return;
-        }
-        Ext.callback(me.handler, me.scope || me, [
-            me, 
-            e
-        ]);
-        me.fireEvent('click', me, e);
-        if(!me.hideOnClick) {
-            me.focus();
-        }
-        return Ext.isEmpty(Ext.fly(e.getTarget()).findParent('.close-button'));
-    },
-    updateTitleContainer: function () {
-        this.down('#titleContainer').update({
-            text1: this.text1,
-            text2: this.text2
-        });
-    }
-});
-Ext.define('Admin.view.TopBarMenu', {
-    extend: 'Ext.menu.Menu',
-    alias: 'widget.topBarMenu',
-    requires: [
-        'Admin.view.TopBarMenuItem'
-    ],
-    cls: 'admin-topbar-menu',
-    showSeparator: false,
-    styleHtmlContent: true,
-    overflowY: 'auto',
-    overflowX: 'hidden',
-    width: 300,
-    layout: {
-        type: 'vbox',
-        align: 'stretchmax'
-    },
-    items: [
-        {
-            xtype: 'container',
-            itemId: 'nonClosableItems',
-            defaultType: 'topBarMenuItem'
-        }, 
-        {
-            xtype: 'component',
-            cls: 'title',
-            itemId: 'editTitle',
-            hidden: true,
-            html: '<span>Editing</span>'
-        }, 
-        {
-            xtype: 'container',
-            itemId: 'editItems',
-            defaultType: 'topBarMenuItem'
-        }, 
-        {
-            xtype: 'component',
-            cls: 'title',
-            itemId: 'viewTitle',
-            hidden: true,
-            html: '<span>Viewing</span>'
-        }, 
-        {
-            xtype: 'container',
-            itemId: 'viewItems',
-            defaultType: 'topBarMenuItem'
-        }, 
-        {
-            xtype: 'component',
-            cls: 'info',
-            itemId: 'emptyTitle',
-            hidden: false,
-            html: 'List is empty'
-        }
-    ],
-    tabPanel: undefined,
-    activeTab: undefined,
-    initComponent: function () {
-        this.scrollState = {
-            left: 0,
-            top: 0
-        };
-        this.callParent(arguments);
-        this.on('closeMenuItem', this.onCloseMenuItem);
-        this.on('resize', this.updatePosition);
-    },
-    onClick: function (e) {
-        var me = this, item;
-        if(me.disabled) {
-            e.stopEvent();
-            return;
-        }
-        item = (e.type === 'click') ? me.getItemFromEvent(e) : me.activeItem;
-        if(item && item.isMenuItem && item.onClick(e) !== false) {
-            if(me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
-                this.tabPanel.setActiveTab(item.card);
-            }
-            this.hide();
-        }
-    },
-    onShow: function () {
-        this.callParent(arguments);
-        if(this.activeTab) {
-            this.markActiveTab(this.activeTab);
-        }
-    },
-    onBoxReady: function () {
-        var tip = Ext.DomHelper.append(this.el, {
-            tag: 'div',
-            cls: 'balloon-tip'
-        }, true);
-        this.callParent(arguments);
-    },
-    onCloseMenuItem: function (item) {
-        if(this.tabPanel) {
-            this.tabPanel.remove(item.card);
-        }
-        if(this.getAllItems(false).length === 0) {
-            this.hide();
-        }
-    },
-    markActiveTab: function (item) {
-        var me = this;
-        var menuItem;
-        if(me.isVisible()) {
-            menuItem = me.el.down('.current-tab');
-            if(menuItem) {
-                menuItem.removeCls('current-tab');
-            }
-            if(item) {
-                menuItem = me.down('#' + item.id);
-                if(menuItem && menuItem.el) {
-                    menuItem.el.addCls('current-tab');
+                this.activeTab = item;
+            };
+            TopBarMenu.prototype.getItemFromEvent = function (e) {
+                var item = this.ext;
+                do {
+                    item = item.getChildByElement(e.getTarget());
+                }while(item && Ext.isDefined(item.getChildByElement) && item.getXType() !== 'topBarMenuItem');
+                return item;
+            };
+            TopBarMenu.prototype.getAllItems = function (includeNonClosable) {
+                var items = [];
+                if(includeNonClosable === false) {
+                    items = items.concat(this.editItems.query('topBarMenuItem'));
+                    items = items.concat(this.viewItems.query('topBarMenuItem'));
+                } else {
+                    items = items.concat(this.ext.query('topBarMenuItem'));
                 }
-            }
-        }
-        me.activeTab = item;
-    },
-    getItemFromEvent: function (e) {
-        var item = this;
-        do {
-            item = item.getChildByElement(e.getTarget());
-        }while(item && Ext.isDefined(item.getChildByElement) && item.getXType() !== 'topBarMenuItem');
-        return item;
-    },
-    getAllItems: function (includeNonClosable) {
-        var items = [];
-        if(includeNonClosable === false) {
-            items = items.concat(this.down('#editItems').query('topBarMenuItem'));
-            items = items.concat(this.down('#viewItems').query('topBarMenuItem'));
-        } else {
-            items = items.concat(this.query('topBarMenuItem'));
-        }
-        return items;
-    },
-    addItems: function (items) {
-        if(Ext.isEmpty(items)) {
-            return;
-        } else if(Ext.isObject(items)) {
-            items = [].concat(items);
-        }
-        this.saveScrollState();
-        var editItems = [];
-        var viewItems = [];
-        var nonClosableItems = [];
-        Ext.Array.each(items, function (item) {
-            if(item.closable === false) {
-                nonClosableItems.push(item);
-            } else if(item.editing) {
-                editItems.push(item);
-            } else {
-                viewItems.push(item);
-            }
-        });
-        var added = [];
-        if(nonClosableItems.length > 0) {
-            added = added.concat(this.down("#nonClosableItems").add(nonClosableItems));
-        }
-        if(editItems.length > 0) {
-            added = added.concat(this.down('#editItems').add(editItems));
-        }
-        if(viewItems.length > 0) {
-            added = added.concat(this.down('#viewItems').add(viewItems));
-        }
-        this.updateTitles();
-        this.restoreScrollState();
-        return added;
-    },
-    removeAllItems: function (includeNonClosable) {
-        var editItems = this.down('#editItems');
-        var viewItems = this.down('#viewItems');
-        var removed = [];
-        Ext.Array.each(editItems.items.items, function (item) {
-            if(item && item.closable !== false) {
-                removed.push(editItems.remove(item));
-            }
-        });
-        Ext.Array.each(viewItems.items.items, function (item) {
-            if(item && item.closable !== false) {
-                removed.push(viewItems.remove(item));
-            }
-        });
-        if(includeNonClosable) {
-            var nonClosableItems = this.down('#nonClosableItems');
-            Ext.Array.each(nonClosableItems.items.items, function (item) {
-                if(item && item.closable !== false) {
-                    removed.push(nonClosableItems.remove(item));
+                return items;
+            };
+            TopBarMenu.prototype.addItems = function (items) {
+                if(Ext.isEmpty(items)) {
+                    return [];
+                } else if(Ext.isObject(items)) {
+                    items = [].concat(items);
                 }
-            });
-        }
-        this.updateTitles();
-        return removed;
-    },
-    removeItems: function (items) {
-        if(Ext.isEmpty(items)) {
-            return;
-        } else if(Ext.isObject(items)) {
-            items = [].concat(items);
-        }
-        this.saveScrollState();
-        var editItems = this.down('#editItems');
-        var viewItems = this.down('#viewItems');
-        var nonClosableItems = this.down('#nonClosableItems');
-        var removed = [];
-        Ext.Array.each(items, function (item) {
-            if(item && item.closable !== false) {
-                removed.push(editItems.remove(item));
-                removed.push(viewItems.remove(item));
-                removed.push(nonClosableItems.remove(item));
-            }
-        });
-        this.updateTitles();
-        this.restoreScrollState();
-    },
-    updateTitles: function () {
-        var editCount = this.down('#editItems').items.getCount();
-        var viewCount = this.down('#viewItems').items.getCount();
-        var nonClosableCount = this.down('#nonClosableItems').items.getCount();
-        this.down('#editTitle')[editCount > 0 ? 'show' : 'hide']();
-        this.down('#viewTitle')[viewCount > 0 ? 'show' : 'hide']();
-        this.down('#emptyTitle')[(viewCount || editCount || nonClosableCount) > 0 ? 'hide' : 'show']();
-    },
-    updatePosition: function (menu, width, height, oldWidth, oldHeight, opts) {
-        this.el.move('r', ((oldWidth - width) / 2), false);
-    },
-    show: function () {
-        var me = this, parentEl, viewHeight;
-        me.maxWas = me.maxHeight;
-        if(!me.rendered) {
-            me.doAutoRender();
-        }
-        if(me.floating) {
-            parentEl = Ext.fly(me.el.getScopeParent());
-            viewHeight = parentEl.getViewSize().height;
-            me.maxHeight = Math.min(me.maxWas || viewHeight - 50, viewHeight - 50);
-        }
-        me.callParent(arguments);
-        return me;
-    },
-    hide: function () {
-        var me = this;
-        me.callParent();
-        me.maxHeight = me.maxWas;
-    },
-    setVerticalPosition: function () {
-    },
-    saveScrollState: function () {
-        if(this.rendered && !this.hidden) {
-            var dom = this.body.dom, state = this.scrollState;
-            state.left = dom.scrollLeft;
-            state.top = dom.scrollTop;
-        }
-    },
-    restoreScrollState: function () {
-        if(this.rendered && !this.hidden) {
-            var dom = this.body.dom, state = this.scrollState;
-            dom.scrollLeft = state.left;
-            dom.scrollTop = state.top;
-        }
-    }
-});
-Ext.define('Admin.view.TopBar', {
-    extend: 'Ext.toolbar.Toolbar',
-    alias: 'widget.topBar',
-    requires: [
-        'Admin.view.TopBarMenu', 
-        'Admin.view.AdminImageButton'
-    ],
-    buttonAlign: 'center',
-    cls: 'admin-topbar-panel',
-    dock: 'top',
-    plain: true,
-    border: false,
-    initComponent: function () {
-        var me = this;
-        this.startButton = Ext.create('Ext.button.Button', {
-            xtype: 'button',
-            itemId: 'app-launcher-button',
-            margins: '0 8px 0 0',
-            cls: 'start-button',
-            handler: function (btn, evt) {
-                me.toggleHomeScreen();
-            }
-        });
-        this.homeButton = Ext.create('Ext.button.Button', {
-            text: me.appName || '&lt; app name &gt;',
-            cls: 'home-button',
-            handler: function (btn, evt) {
-                if(me.tabPanel) {
-                    me.tabPanel.setActiveTab(0);
-                }
-            }
-        });
-        this.leftContainer = Ext.create('Ext.Container', {
-            flex: 5,
-            padding: 6,
-            layout: {
-                type: 'hbox',
-                align: 'middle'
-            },
-            items: [
-                me.startButton, 
-                {
-                    xtype: "tbseparator",
-                    width: '2px'
-                }, 
-                me.homeButton
-            ]
-        });
-        this.rightContainer = Ext.create('Ext.Container', {
-            flex: 5,
-            layout: {
-                type: 'hbox',
-                align: 'middle',
-                pack: 'end'
-            },
-            items: [
-                {
-                    xtype: 'adminImageButton',
-                    icon: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
-                    popupTpl: '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' + '<div class="content">' + '<div class="column"><img src="{photoUrl}"/>' + '<button class="x-btn-red-small">Log Out</button>' + '</div>' + '<div class="column">' + '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' + '<a href="#">Change User</a>' + '</div>' + '</div>',
-                    popupData: {
-                        userName: "Thomas Lund Sigdestad",
-                        photoUrl: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
-                        qName: 'system/tsi'
+                this.saveScrollState();
+                var editItems = [];
+                var viewItems = [];
+                var nonClosableItems = [];
+                Ext.Array.each(items, function (item) {
+                    if(item.closable === false) {
+                        nonClosableItems.push(item);
+                    } else if(item.editing) {
+                        editItems.push(item);
+                    } else {
+                        viewItems.push(item);
                     }
+                });
+                var added = [];
+                if(nonClosableItems.length > 0) {
+                    added = added.concat(this.nonClosableItems.add(nonClosableItems));
                 }
-            ]
-        });
-        this.items = [
-            me.leftContainer, 
-            me.rightContainer
-        ];
-        if(this.tabPanel) {
-            this.tabMenu = Ext.create('Admin.view.TopBarMenu', {
-                tabPanel: me.tabPanel
-            });
-            this.titleButton = Ext.create('Ext.button.Button', {
-                cls: 'title-button',
-                menuAlign: 't-b?',
-                menu: me.tabMenu,
-                scale: 'medium',
-                styleHtmlContent: true,
-                text: '<span class="title">Title</span><span class="count">0</span>',
-                setTitle: function (title) {
-                    if(this.el) {
-                        this.el.down('.title').setHTML(title);
-                    }
-                },
-                setCount: function (count) {
-                    if(this.el) {
-                        this.el.down('.count').setHTML(count);
-                    }
+                if(editItems.length > 0) {
+                    added = added.concat(this.editItems.add(editItems));
                 }
-            });
-            Ext.Array.insert(me.items, 1, [
-                me.titleButton
-            ]);
-        }
-        this.callParent(arguments);
-        this.syncTabCount();
-    },
-    toggleHomeScreen: function () {
-        var isInsideIframe = window.top !== window.self;
-        if(isInsideIframe) {
-            window.parent['Ext'].getCmp('admin-home-main-container').toggleShowHide();
-        } else {
-            console.error('Can not toggle home screen. Document must be loaded inside the main window');
-        }
-    },
-    insert: function (index, cfg) {
-        var added = this.tabMenu.addItems(cfg);
-        this.syncTabCount();
-        return added.length === 1 ? added[0] : added;
-    },
-    setActiveTab: function (tab) {
-        this.tabMenu.markActiveTab(tab);
-        var card = tab.card;
-        var buttonText = tab.text1;
-        var iconClass;
-        if('tab-browse' === card.id) {
-            buttonText = '';
-        } else if(card.tab.iconClass) {
-            iconClass = card.tab.iconClass;
-        } else if(card.tab.editing) {
-            iconClass = 'icon-icomoon-pencil-32';
-        }
-        this.titleButton.setIconCls(iconClass);
-        this.setTitleButtonText(buttonText);
-    },
-    remove: function (tab) {
-        var removed = this.tabMenu.removeItems(tab);
-        this.syncTabCount();
-        return removed;
-    },
-    findNextActivatable: function (tab) {
-        if(this.tabPanel) {
-            return this.tabPanel.items.get(0);
-        }
-    },
-    createMenuItemFromTab: function (item) {
-        var me = this;
-        var cfg = item.initialConfig || item;
-        return {
-            tabBar: me,
-            card: item,
-            disabled: cfg.disabled,
-            closable: cfg.closable,
-            hidden: cfg.hidden && !item.hiddenByLayout,
-            iconSrc: me.getMenuItemIcon(item),
-            iconClass: cfg.iconClass,
-            editing: cfg.editing || false,
-            text1: Ext.String.ellipsis(me.getMenuItemDisplayName(item), 26),
-            text2: Ext.String.ellipsis(me.getMenuItemDescription(item), 38)
-        };
-    },
-    syncTabCount: function () {
-        if(this.tabMenu && this.titleButton) {
-            var tabCount = this.tabMenu.getAllItems(false).length;
-            this.titleButton.setVisible(tabCount > 0);
-            this.titleButton.setCount(tabCount);
-            API.notify.updateAppTabCount(this.getApplicationId(), tabCount);
-        }
-    },
-    getApplicationId: function () {
-        var urlParamsString = document.URL.split('?'), urlParams = Ext.urlDecode(urlParamsString[urlParamsString.length - 1]);
-        return urlParams.appId ? urlParams.appId.split('#')[0] : null;
-    },
-    getMenuItemIcon: function (card) {
-        var icon;
-        if(card.data && card.data instanceof Ext.data.Model) {
-            icon = card.data.get('iconUrl') || card.data.get('image_url');
-        }
-        return icon;
-    },
-    getMenuItemDescription: function (card) {
-        var desc;
-        if(!card.isNew && card.data && card.data instanceof Ext.data.Model) {
-            desc = card.data.get('path') || card.data.get('qualifiedName') || card.data.get('displayName');
-        }
-        if(!desc) {
-            desc = card.title;
-        }
-        return desc;
-    },
-    getMenuItemDisplayName: function (card) {
-        var desc;
-        if(!card.isNew && card.data && card.data instanceof Ext.data.Model) {
-            desc = card.data.get('displayName') || card.data.get('name');
-        }
-        if(!desc) {
-            desc = card.title;
-        }
-        return desc;
-    },
-    setTitleButtonText: function (text) {
-        this.titleButton.setTitle(text);
-        var activeTab = this.titleButton.menu.activeTab;
-        if(activeTab) {
-            activeTab.text1 = text;
-            activeTab.updateTitleContainer();
-        }
-    },
-    getStartButton: function () {
-        return this.startButton;
-    },
-    getLeftContainer: function () {
-        return this.leftContainer;
-    },
-    getRightContainer: function () {
-        return this.rightContainer;
-    }
-});
+                if(viewItems.length > 0) {
+                    var viewItemObjects = [];
+                    Ext.Array.each(viewItems, function (viewItem) {
+                        if(!viewItem.xtype) {
+                            var tbmi = new admin.ui.TopBarMenuItem(viewItem.text1, viewItem.text2).ext;
+                            viewItemObjects.push(tbmi);
+                        } else {
+                            viewItemObjects.push(viewItem);
+                        }
+                    });
+                    added = added.concat(this.viewItems.add(viewItemObjects));
+                }
+                this.updateTitles();
+                this.restoreScrollState();
+                return added;
+            };
+            TopBarMenu.prototype.removeAllItems = function (includeNonClosable) {
+                var me = this.ext;
+                var editItems = this.editItems;
+                var viewItems = this.viewItems;
+                var removed = [];
+                Ext.Array.each(editItems.items.items, function (item) {
+                    if(item && item.closable !== false) {
+                        removed.push(editItems.remove(item));
+                    }
+                });
+                Ext.Array.each(viewItems.items.items, function (item) {
+                    if(item && item.closable !== false) {
+                        removed.push(viewItems.remove(item));
+                    }
+                });
+                if(includeNonClosable) {
+                    var nonClosableItems = this.nonClosableItems;
+                    Ext.Array.each(nonClosableItems.items.items, function (item) {
+                        if(item && item.closable !== false) {
+                            removed.push(nonClosableItems.remove(item));
+                        }
+                    });
+                }
+                this.updateTitles();
+                return removed;
+            };
+            TopBarMenu.prototype.removeItems = function (items) {
+                if(Ext.isEmpty(items)) {
+                    return;
+                } else if(Ext.isObject(items)) {
+                    items = [].concat(items);
+                }
+                this.saveScrollState();
+                var me = this.ext;
+                var editItems = this.editItems;
+                var viewItems = this.viewItems;
+                var nonClosableItems = this.nonClosableItems;
+                var removed = [];
+                Ext.Array.each(items, function (item) {
+                    if(item && item.closable !== false) {
+                        removed.push(editItems.remove(item));
+                        removed.push(viewItems.remove(item));
+                        removed.push(nonClosableItems.remove(item));
+                    }
+                });
+                this.updateTitles();
+                this.restoreScrollState();
+            };
+            TopBarMenu.prototype.updateTitles = function () {
+                var me = this.ext;
+                var editCount = this.editItems.items.getCount();
+                var viewCount = this.viewItems.items.getCount();
+                var nonClosableCount = this.nonClosableItems.items.getCount();
+                if(editCount > 0) {
+                    this.editTitle.show();
+                } else {
+                    this.editTitle.hide();
+                }
+                if(viewCount > 0) {
+                    this.viewTitle.show();
+                } else {
+                    this.viewTitle.hide();
+                }
+                if((viewCount || editCount || nonClosableCount) > 0) {
+                    this.emptyTitle.hide();
+                } else {
+                    this.emptyTitle.show();
+                }
+            };
+            TopBarMenu.prototype.updatePosition = function (menu, width, height, oldWidth, oldHeight, opts) {
+                this.ext.el.move('r', ((oldWidth - width) / 2), false);
+            };
+            TopBarMenu.prototype.show = function () {
+                var me = this.ext, parentEl, viewHeight;
+                this.maxWas = me.maxHeight;
+                if(!me.rendered) {
+                    me.doAutoRender();
+                }
+                if(me.floating) {
+                    parentEl = Ext.fly(me.el.getScopeParent());
+                    viewHeight = parentEl.getViewSize().height;
+                    me.maxHeight = Math.min(this.maxWas || viewHeight - 50, viewHeight - 50);
+                }
+                this.ext.callParent(arguments);
+                return me;
+            };
+            TopBarMenu.prototype.hide = function () {
+                this.ext.callParent();
+                this.ext.maxHeight = this.maxWas;
+            };
+            TopBarMenu.prototype.setVerticalPosition = function () {
+            };
+            TopBarMenu.prototype.saveScrollState = function () {
+                var me = this.ext;
+                if(me.rendered && !me.hidden) {
+                    var dom = me.body.dom, state = me.scrollState;
+                    state.left = dom.scrollLeft;
+                    state.top = dom.scrollTop;
+                }
+            };
+            TopBarMenu.prototype.restoreScrollState = function () {
+                var me = this.ext;
+                if(me.rendered && !me.hidden) {
+                    var dom = me.body.dom, state = me.scrollState;
+                    dom.scrollLeft = state.left;
+                    dom.scrollTop = state.top;
+                }
+            };
+            return TopBarMenu;
+        })();
+        ui.TopBarMenu = TopBarMenu;        
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
+var admin;
+(function (admin) {
+    (function (ui) {
+        var TopBar = (function () {
+            function TopBar(appName, tabPanel) {
+                var tb = new Ext.toolbar.Toolbar({
+                });
+                this.ext = tb;
+                tb.itemId = 'topBar';
+                tb.buttonAlign = 'center';
+                tb.addCls('admin-topbar-panel');
+                tb.dock = 'top';
+                tb.plain = true;
+                tb.border = false;
+                this.appName = appName;
+                this.tabPanel = tabPanel;
+                this.initComponent();
+            }
+            TopBar.prototype.initComponent = function () {
+                var _this = this;
+                var me = this.ext;
+                this.startButton = Ext.create('Ext.button.Button', {
+                    xtype: 'button',
+                    itemId: 'app-launcher-button',
+                    margins: '0 8px 0 0',
+                    cls: 'start-button',
+                    handler: function (btn, evt) {
+                        _this.toggleHomeScreen();
+                    }
+                });
+                this.homeButton = Ext.create('Ext.button.Button', {
+                    text: this.appName || '&lt; app name &gt;',
+                    cls: 'home-button',
+                    handler: function (btn, evt) {
+                        if(_this.tabPanel) {
+                            _this.tabPanel.setActiveTab(0);
+                        }
+                    }
+                });
+                this.leftContainer = Ext.create('Ext.Container', {
+                    flex: 5,
+                    padding: 6,
+                    layout: {
+                        type: 'hbox',
+                        align: 'middle'
+                    },
+                    items: [
+                        this.startButton, 
+                        {
+                            xtype: "tbseparator",
+                            width: '2px'
+                        }, 
+                        this.homeButton
+                    ]
+                });
+                this.rightContainer = Ext.create('Ext.Container', {
+                    flex: 5,
+                    layout: {
+                        type: 'hbox',
+                        align: 'middle',
+                        pack: 'end'
+                    },
+                    items: [
+                        {
+                            xtype: 'adminImageButton',
+                            icon: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                            popupTpl: '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' + '<div class="content">' + '<div class="column"><img src="{photoUrl}"/>' + '<button class="x-btn-red-small">Log Out</button>' + '</div>' + '<div class="column">' + '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' + '<a href="#">Change User</a>' + '</div>' + '</div>',
+                            popupData: {
+                                userName: "Thomas Lund Sigdestad",
+                                photoUrl: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                                qName: 'system/tsi'
+                            }
+                        }
+                    ]
+                });
+                me.add(this.leftContainer);
+                me.add(this.rightContainer);
+                if(this.tabPanel) {
+                    this.tabMenu = new admin.ui.TopBarMenu(this.tabPanel);
+                    this.titleButton = Ext.create('Ext.button.Button', {
+                        cls: 'title-button',
+                        menuAlign: 't-b?',
+                        menu: this.tabMenu.ext,
+                        scale: 'medium',
+                        styleHtmlContent: true,
+                        text: '<span class="title">Title</span><span class="count">0</span>',
+                        setTitle: function (title) {
+                            if(this.el) {
+                                this.el.down('.title').setHTML(title);
+                            }
+                        },
+                        setCount: function (count) {
+                            if(this.el) {
+                                this.el.down('.count').setHTML(count);
+                            }
+                        }
+                    });
+                    me.insert(1, this.titleButton);
+                }
+                this.syncTabCount();
+            };
+            TopBar.prototype.toggleHomeScreen = function () {
+                var isInsideIframe = window.top !== window.self;
+                if(isInsideIframe) {
+                    window.parent['Ext'].getCmp('admin-home-main-container').toggleShowHide();
+                } else {
+                    console.error('Can not toggle home screen. Document must be loaded inside the main window');
+                }
+            };
+            TopBar.prototype.insert = function (index, cfg) {
+                var added = this.tabMenu.addItems(cfg);
+                this.syncTabCount();
+                return added.length === 1 ? added[0] : added;
+            };
+            TopBar.prototype.setActiveTab = function (tab) {
+                this.tabMenu.markActiveTab(tab);
+                var card = tab.card;
+                var buttonText = tab.text1;
+                var iconClass;
+                if('tab-browse' === card.id) {
+                    buttonText = '';
+                } else if(card.tab.iconClass) {
+                    iconClass = card.tab.iconClass;
+                } else if(card.tab.editing) {
+                    iconClass = 'icon-icomoon-pencil-32';
+                }
+                this.titleButton.setIconCls(iconClass);
+                this.setTitleButtonText(buttonText);
+            };
+            TopBar.prototype.remove = function (tab) {
+                var removed = this.tabMenu.removeItems(tab);
+                this.syncTabCount();
+                return removed;
+            };
+            TopBar.prototype.findNextActivatable = function (tab) {
+                if(this.tabPanel) {
+                    return this.tabPanel.items.get(0);
+                }
+                return null;
+            };
+            TopBar.prototype.createMenuItemFromTab = function (item) {
+                var cfg = item.initialConfig || item;
+                return {
+                    tabBar: this.ext,
+                    card: item,
+                    disabled: cfg.disabled,
+                    closable: cfg.closable,
+                    hidden: cfg.hidden && !item.hiddenByLayout,
+                    iconSrc: this.getMenuItemIcon(item),
+                    iconClass: cfg.iconClass,
+                    editing: cfg.editing || false,
+                    text1: Ext.String.ellipsis(this.getMenuItemDisplayName(item), 26),
+                    text2: Ext.String.ellipsis(this.getMenuItemDescription(item), 38)
+                };
+            };
+            TopBar.prototype.syncTabCount = function () {
+                if(this.tabMenu && this.titleButton) {
+                    var tabCount = this.tabMenu.getAllItems(false).length;
+                    this.titleButton.setVisible(tabCount > 0);
+                    this.titleButton.setCount(tabCount);
+                    API.notify.updateAppTabCount(this.getApplicationId(), tabCount);
+                }
+            };
+            TopBar.prototype.getApplicationId = function () {
+                var urlParamsString = document.URL.split('?'), urlParams = Ext.urlDecode(urlParamsString[urlParamsString.length - 1]);
+                return urlParams.appId ? urlParams.appId.split('#')[0] : null;
+            };
+            TopBar.prototype.getMenuItemIcon = function (card) {
+                var icon;
+                if(card.data && card.data instanceof Ext.data.Model) {
+                    icon = card.data.get('iconUrl') || card.data.get('image_url');
+                }
+                return icon;
+            };
+            TopBar.prototype.getMenuItemDescription = function (card) {
+                var desc;
+                if(!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+                    desc = card.data.get('path') || card.data.get('qualifiedName') || card.data.get('displayName');
+                }
+                if(!desc) {
+                    desc = card.title;
+                }
+                return desc;
+            };
+            TopBar.prototype.getMenuItemDisplayName = function (card) {
+                var desc;
+                if(!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+                    desc = card.data.get('displayName') || card.data.get('name');
+                }
+                if(!desc) {
+                    desc = card.title;
+                }
+                return desc;
+            };
+            TopBar.prototype.setTitleButtonText = function (text) {
+                this.titleButton.setTitle(text);
+                var activeTab = this.titleButton.menu.activeTab;
+                if(activeTab) {
+                    activeTab.text1 = text;
+                    activeTab.updateTitleContainer();
+                }
+            };
+            TopBar.prototype.getStartButton = function () {
+                return this.startButton;
+            };
+            TopBar.prototype.getLeftContainer = function () {
+                return this.leftContainer;
+            };
+            TopBar.prototype.getRightContainer = function () {
+                return this.rightContainer;
+            };
+            return TopBar;
+        })();
+        ui.TopBar = TopBar;        
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
 Ext.define('Admin.view.TabPanel', {
     extend: 'Ext.tab.Panel',
     alias: 'widget.cmsTabPanel',
-    requires: [
-        'Admin.view.TopBar'
-    ],
     border: false,
     defaults: {
         closable: true
@@ -4023,12 +4088,8 @@ Ext.define('Admin.view.TabPanel', {
             itemCls: me.itemCls,
             activeItem: me.activeTab
         }, me.layout));
-        this.tabBar = Ext.create('Admin.view.TopBar', Ext.apply({
-            appName: me.appName,
-            appIconCls: me.appIconCls,
-            tabPanel: me
-        }, me.tabBar));
-        dockedItems.push(me.tabBar);
+        this.tabBar = new admin.ui.TopBar(me.appName, me);
+        dockedItems.push(this.tabBar.ext);
         me.dockedItems = dockedItems;
         me.addEvents('beforetabchange', 'tabchange');
         me.superclass.superclass.initComponent.apply(me, arguments);
@@ -5228,9 +5289,10 @@ Ext.application({
         };
         p.add(center);
         p.add(west);
-        var tabPanel = new Admin.view.TabPanel();
-        tabPanel.appName = 'Space Admin';
-        tabPanel.appIconCls = 'icon-metro-space-admin-24';
+        var tabPanel = new Admin.view.TabPanel({
+            appName: 'Space Admin',
+            appIconCls: 'icon-metro-space-admin-24'
+        });
         tabPanel.add(p);
         var wp = new Ext.container.Viewport();
         wp.layout = 'fit';

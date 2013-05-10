@@ -6,9 +6,9 @@ Ext.define('Admin.view.TabPanel', {
     // TODO: Refactor "cmsTabPanel" -> "adminTabPanel"
     alias: 'widget.cmsTabPanel',
 
-    requires: [
-        'Admin.view.TopBar'
-    ],
+//    requires: [
+//        'Admin.view.TopBar'
+//    ],
 
     border: false,
     defaults: { closable: true },
@@ -28,13 +28,14 @@ Ext.define('Admin.view.TabPanel', {
         }, me.layout));
 
         // Custom tabBar is why we needed to override this
-        this.tabBar = Ext.create('Admin.view.TopBar', Ext.apply({
-            appName: me.appName,
-            appIconCls: me.appIconCls,
-            tabPanel: me
-        }, me.tabBar));
+        this.tabBar = new admin.ui.TopBar(me.appName, me);
+//        this.tabBar = Ext.create('Admin.view.TopBar', Ext.apply({
+//            appName: me.appName,
+//            appIconCls: me.appIconCls,
+//            tabPanel: me
+//        }, me.tabBar));
 
-        dockedItems.push(me.tabBar);
+        dockedItems.push(this.tabBar.ext);
         me.dockedItems = dockedItems;
 
         me.addEvents('beforetabchange', 'tabchange');

@@ -1,276 +1,286 @@
-Ext.define('Admin.view.TopBar', {
-    extend: 'Ext.toolbar.Toolbar',
-    alias: 'widget.topBar',
+module admin.ui {
 
-    requires: [
-        'Admin.view.TopBarMenu',
-        'Admin.view.AdminImageButton'
-    ],
+    export class TopBar {
+        ext;
+        private startButton;
+        private leftContainer;
+        private rightContainer;
+        private homeButton;
+        private tabPanel;
+        private tabMenu;
+        private titleButton;
+        private appName: string;
 
-    buttonAlign: 'center',
-    cls: 'admin-topbar-panel',
 
-    dock: 'top',
-    plain: true,
-    border: false,
+        constructor(appName: string, tabPanel?: any) {
+            var tb = new Ext.toolbar.Toolbar({});
+            this.ext = tb;
+            tb.itemId = 'topBar';
+            tb.buttonAlign = 'center';
+            tb.addCls('admin-topbar-panel')
+            tb.dock = 'top';
+            tb.plain = true;
+            tb.border = false;
+            this.appName = appName;
+            this.tabPanel = tabPanel;
 
-    initComponent: function () {
-        var me = this;
+            this.initComponent();
+        }
 
-        this.startButton = Ext.create('Ext.button.Button', {
-            xtype: 'button',
-            itemId: 'app-launcher-button',
-            margins: '0 8px 0 0',
-            cls: 'start-button',
-            handler: function (btn, evt) {
-                me.toggleHomeScreen();
-            }
-        });
+        initComponent() {
+            var me = this.ext;
 
-        this.homeButton = Ext.create('Ext.button.Button', {
-            text: me.appName || '&lt; app name &gt;',
-            cls: 'home-button',
-            handler: function (btn, evt) {
-                if (me.tabPanel) {
-                    me.tabPanel.setActiveTab(0);
+            this.startButton = Ext.create('Ext.button.Button', {
+                xtype: 'button',
+                itemId: 'app-launcher-button',
+                margins: '0 8px 0 0',
+                cls: 'start-button',
+                handler: (btn, evt) => {
+                    this.toggleHomeScreen();
                 }
-            }
-        });
-
-        this.leftContainer = Ext.create('Ext.Container', {
-            flex: 5,
-            padding: 6,
-            layout: {
-                type: 'hbox',
-                align: 'middle'
-            },
-            items: [
-                me.startButton,
-                {
-                    xtype: "tbseparator",
-                    width: '2px'
-                },
-                me.homeButton
-            ]
-        });
-        this.rightContainer = Ext.create('Ext.Container', {
-            flex: 5,
-            layout: {
-                type: 'hbox',
-                align: 'middle',
-                pack: 'end'
-            },
-            items: [
-                {
-                    xtype: 'adminImageButton',
-                    icon: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
-                    popupTpl: '<div class="title">User</div>' +
-                              '<div class="user-name">{userName}</div>' +
-                              '<div class="content">' +
-                              '<div class="column"><img src="{photoUrl}"/>' +
-                              '<button class="x-btn-red-small">Log Out</button>' +
-                              '</div>' +
-                              '<div class="column">' +
-                              '<span>{qName}</span>' +
-                              '<a href="#">View Profile</a>' +
-                              '<a href="#">Edit Profile</a>' +
-                              '<a href="#">Change User</a>' +
-                              '</div>' +
-                              '</div>',
-                    popupData: {
-                        userName: "Thomas Lund Sigdestad",
-                        photoUrl: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
-                        qName: 'system/tsi'
-                    }
-                }
-            ]
-        });
-
-        this.items = [
-            me.leftContainer,
-            me.rightContainer
-        ];
-
-        if (this.tabPanel) {
-            this.tabMenu = Ext.create('Admin.view.TopBarMenu', {
-                tabPanel: me.tabPanel
             });
-            this.titleButton = Ext.create('Ext.button.Button', {
-                cls: 'title-button',
-                menuAlign: 't-b?',
-                menu: me.tabMenu,
-                scale: 'medium',
-                styleHtmlContent: true,
-                text: '<span class="title">Title</span><span class="count">0</span>',
 
-                setTitle: function (title) {
-                    // update title only, without changing count
-                    if (this.el) {
-                        this.el.down('.title').setHTML(title);
-                    }
-                },
-
-                setCount: function (count) {
-                    // update count number only, without changing title
-                    if (this.el) {
-                        this.el.down('.count').setHTML(count);
+            this.homeButton = Ext.create('Ext.button.Button', {
+                text: this.appName || '&lt; app name &gt;',
+                cls: 'home-button',
+                handler: (btn, evt)  => {
+                    if (this.tabPanel) {
+                        this.tabPanel.setActiveTab(0);
                     }
                 }
             });
-            Ext.Array.insert(me.items, 1, [me.titleButton]);
+
+            this.leftContainer = Ext.create('Ext.Container', {
+                flex: 5,
+                padding: 6,
+                layout: {
+                    type: 'hbox',
+                    align: 'middle'
+                },
+                items: [
+                    this.startButton,
+                    {
+                        xtype: "tbseparator",
+                        width: '2px'
+                    },
+                    this.homeButton
+                ]
+            });
+            this.rightContainer = Ext.create('Ext.Container', {
+                flex: 5,
+                layout: {
+                    type: 'hbox',
+                    align: 'middle',
+                    pack: 'end'
+                },
+                items: [
+                    {
+                        xtype: 'adminImageButton',
+                        icon: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                        popupTpl: '<div class="title">User</div>' +
+                                  '<div class="user-name">{userName}</div>' +
+                                  '<div class="content">' +
+                                  '<div class="column"><img src="{photoUrl}"/>' +
+                                  '<button class="x-btn-red-small">Log Out</button>' +
+                                  '</div>' +
+                                  '<div class="column">' +
+                                  '<span>{qName}</span>' +
+                                  '<a href="#">View Profile</a>' +
+                                  '<a href="#">Edit Profile</a>' +
+                                  '<a href="#">Change User</a>' +
+                                  '</div>' +
+                                  '</div>',
+                        popupData: {
+                            userName: "Thomas Lund Sigdestad",
+                            photoUrl: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                            qName: 'system/tsi'
+                        }
+                    }
+                ]
+            });
+
+            me.add(this.leftContainer);
+            me.add(this.rightContainer);
+
+            if (this.tabPanel) {
+                this.tabMenu = new admin.ui.TopBarMenu(this.tabPanel);
+                this.titleButton = Ext.create('Ext.button.Button', {
+                    cls: 'title-button',
+                    menuAlign: 't-b?',
+                    menu: this.tabMenu.ext,
+                    scale: 'medium',
+                    styleHtmlContent: true,
+                    text: '<span class="title">Title</span><span class="count">0</span>',
+
+                    setTitle: function (title) {
+                        // update title only, without changing count
+                        if (this.el) {
+                            this.el.down('.title').setHTML(title);
+                        }
+                    },
+
+                    setCount: function (count) {
+                        // update count number only, without changing title
+                        if (this.el) {
+                            this.el.down('.count').setHTML(count);
+                        }
+                    }
+                });
+                me.insert( 1, this.titleButton);
+            }
+
+            this.syncTabCount();
         }
 
-        this.callParent(arguments);
-        this.syncTabCount();
-    },
 
-
-    toggleHomeScreen: function () {
-        var isInsideIframe = window.top !== window.self;
-        if (isInsideIframe) {
-            window.parent['Ext'].getCmp('admin-home-main-container').toggleShowHide();
-        } else {
-            console.error('Can not toggle home screen. Document must be loaded inside the main window');
-        }
-    },
-
-
-    /*  Methods for Admin.view.TabPanel integration */
-
-    insert: function (index, cfg) {
-        var added = this.tabMenu.addItems(cfg);
-        this.syncTabCount();
-
-        return added.length === 1 ? added[0] : added;
-    },
-
-    setActiveTab: function (tab) {
-        this.tabMenu.markActiveTab(tab);
-
-        var card = tab.card;
-        var buttonText = tab.text1;
-        var iconClass;
-
-        if ('tab-browse' === card.id) {
-            buttonText = '';
-        } else if (card.tab.iconClass) {
-            iconClass = card.tab.iconClass;
-        } else if (card.tab.editing) {
-            iconClass = 'icon-icomoon-pencil-32';
+        toggleHomeScreen() {
+            var isInsideIframe = window.top !== window.self;
+            if (isInsideIframe) {
+                window.parent['Ext'].getCmp('admin-home-main-container').toggleShowHide();
+            } else {
+                console.error('Can not toggle home screen. Document must be loaded inside the main window');
+            }
         }
 
-        this.titleButton.setIconCls(iconClass);
-        this.setTitleButtonText(buttonText);
-    },
 
-    remove: function (tab) {
+        /*  Methods for Admin.view.TabPanel integration */
 
-        var removed = this.tabMenu.removeItems(tab);
-        this.syncTabCount();
+        insert(index, cfg) {
+            var added = this.tabMenu.addItems(cfg);
+            this.syncTabCount();
 
-        return removed;
-    },
-
-    findNextActivatable: function (tab) {
-        if (this.tabPanel) {
-            // set first browse tab active
-            return this.tabPanel.items.get(0);
+            return added.length === 1 ? added[0] : added;
         }
-    },
 
-    createMenuItemFromTab: function (item) {
-        var me = this;
-        var cfg = item.initialConfig || item;
-        return {
-            tabBar: me,
-            card: item,
-            disabled: cfg.disabled,
-            closable: cfg.closable,
-            hidden: cfg.hidden && !item.hiddenByLayout, // only hide if it wasn't hidden by the layout itself
-            iconSrc: me.getMenuItemIcon(item),
-            iconClass: cfg.iconClass,
-            editing: cfg.editing || false,
-            text1: Ext.String.ellipsis(me.getMenuItemDisplayName(item), 26),
-            text2: Ext.String.ellipsis(me.getMenuItemDescription(item), 38)
-        };
-    },
+        setActiveTab(tab) {
+            this.tabMenu.markActiveTab(tab);
 
+            var card = tab.card;
+            var buttonText = tab.text1;
+            var iconClass;
 
-    /*  Private */
+            if ('tab-browse' === card.id) {
+                buttonText = '';
+            } else if (card.tab.iconClass) {
+                iconClass = card.tab.iconClass;
+            } else if (card.tab.editing) {
+                iconClass = 'icon-icomoon-pencil-32';
+            }
 
-    syncTabCount: function () {
-        if (this.tabMenu && this.titleButton) {
-            var tabCount = this.tabMenu.getAllItems(false).length;
-            // show dropdown button when any tab is open or text when nothing is open
-            this.titleButton.setVisible(tabCount > 0);
-            this.titleButton.setCount(tabCount);
-
-            API.notify.updateAppTabCount(this.getApplicationId(), tabCount);
+            this.titleButton.setIconCls(iconClass);
+            this.setTitleButtonText(buttonText);
         }
-    },
 
-    /* For 18/4 demo */
-    getApplicationId: function () {
-        var urlParamsString = document.URL.split('?'),
-            urlParams = Ext.urlDecode(urlParamsString[urlParamsString.length - 1]);
+        remove(tab) {
 
-        return urlParams.appId ? urlParams.appId.split('#')[0] : null;
-    },
+            var removed = this.tabMenu.removeItems(tab);
+            this.syncTabCount();
 
-    getMenuItemIcon: function (card) {
-        var icon;
-        if (card.data && card.data instanceof Ext.data.Model) {
-            icon = card.data.get('iconUrl') || card.data.get('image_url');
+            return removed;
         }
-        return icon;
-    },
 
-    getMenuItemDescription: function (card) {
-        var desc;
-        if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
-            desc = card.data.get('path') || card.data.get('qualifiedName') || card.data.get('displayName');
+        findNextActivatable(tab) {
+            if (this.tabPanel) {
+                // set first browse tab active
+                return this.tabPanel.items.get(0);
+            }
+            return null;
         }
-        if (!desc) {
-            // fall back to card title
-            desc = card.title;
+
+        createMenuItemFromTab(item) {
+            var cfg = item.initialConfig || item;
+            return {
+                tabBar: this.ext,
+                card: item,
+                disabled: cfg.disabled,
+                closable: cfg.closable,
+                hidden: cfg.hidden && !item.hiddenByLayout, // only hide if it wasn't hidden by the layout itself
+                iconSrc: this.getMenuItemIcon(item),
+                iconClass: cfg.iconClass,
+                editing: cfg.editing || false,
+                text1: Ext.String.ellipsis(this.getMenuItemDisplayName(item), 26),
+                text2: Ext.String.ellipsis(this.getMenuItemDescription(item), 38)
+            };
         }
-        return desc;
-    },
 
-    getMenuItemDisplayName: function (card) {
-        var desc;
-        if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
-            desc = card.data.get('displayName') || card.data.get('name');
+
+        /*  Private */
+
+        private syncTabCount() {
+            if (this.tabMenu && this.titleButton) {
+                var tabCount = this.tabMenu.getAllItems(false).length;
+                // show dropdown button when any tab is open or text when nothing is open
+                this.titleButton.setVisible(tabCount > 0);
+                this.titleButton.setCount(tabCount);
+
+                API.notify.updateAppTabCount(this.getApplicationId(), tabCount);
+            }
         }
-        if (!desc) {
-            // fall back to card title
-            desc = card.title;
+
+        /* For 18/4 demo */
+        private getApplicationId() {
+            var urlParamsString = document.URL.split('?'),
+                urlParams = Ext.urlDecode(urlParamsString[urlParamsString.length - 1]);
+
+            return urlParams.appId ? urlParams.appId.split('#')[0] : null;
         }
-        return desc;
-    },
 
-
-    /*  Public  */
-
-    setTitleButtonText: function (text) {
-        this.titleButton.setTitle(text);
-        var activeTab = this.titleButton.menu.activeTab;
-
-        if (activeTab) {
-            activeTab.text1 = text;
-            activeTab.updateTitleContainer();
+        private getMenuItemIcon(card) {
+            var icon;
+            if (card.data && card.data instanceof Ext.data.Model) {
+                icon = card.data.get('iconUrl') || card.data.get('image_url');
+            }
+            return icon;
         }
-    },
 
-    getStartButton: function () {
-        return this.startButton;
-    },
+        private getMenuItemDescription(card) {
+            var desc;
+            if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+                desc = card.data.get('path') || card.data.get('qualifiedName') || card.data.get('displayName');
+            }
+            if (!desc) {
+                // fall back to card title
+                desc = card.title;
+            }
+            return desc;
+        }
 
-    getLeftContainer: function () {
-        return this.leftContainer;
-    },
+        private getMenuItemDisplayName(card) {
+            var desc;
+            if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+                desc = card.data.get('displayName') || card.data.get('name');
+            }
+            if (!desc) {
+                // fall back to card title
+                desc = card.title;
+            }
+            return desc;
+        }
 
-    getRightContainer: function () {
-        return this.rightContainer;
+
+        /*  Public  */
+
+        setTitleButtonText(text) {
+            this.titleButton.setTitle(text);
+            var activeTab = this.titleButton.menu.activeTab;
+
+            if (activeTab) {
+                activeTab.text1 = text;
+                activeTab.updateTitleContainer();
+            }
+        }
+
+        getStartButton() {
+            return this.startButton;
+        }
+
+        getLeftContainer() {
+            return this.leftContainer;
+        }
+
+        getRightContainer() {
+            return this.rightContainer;
+        }
+
     }
-});
+}
