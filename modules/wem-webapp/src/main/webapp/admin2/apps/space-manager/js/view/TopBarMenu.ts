@@ -6,15 +6,15 @@ module admin.ui {
         private tabPanel:any;
         private activeTab:any;
 
-        private maxWas:any;
-        private nonClosableItems:any;
-        private editTitle:any;
-        private editItems:any;
-        private viewTitle:any;
-        private viewItems:any;
-        private emptyTitle:any;
+        private maxWas:number;
+        private nonClosableItems:any; // Ext.container.Container
+        private editTitle:any; // Ext.Component
+        private editItems:any; // Ext.container.Container
+        private viewTitle:any; // Ext.Component
+        private viewItems:any; // Ext.container.Container
+        private emptyTitle:any; // Ext.Component
 
-        constructor(tabPanel: any) {
+        constructor(tabPanel:any) {
             var tbm = new Ext.menu.Menu({});
             this.ext = tbm;
             this.tabPanel = tabPanel;
@@ -47,23 +47,29 @@ module admin.ui {
 
             tbm.onShow = this.onShow;
             tbm.onBoxReady = this.onBoxReady;
-            tbm.show = this.show;
-            tbm.hide = this.hide;
-            tbm.setVerticalPosition = this.setVerticalPosition;
+            tbm.show = () => {
+                this.show();
+            };
+            tbm.hide = () => {
+                this.hide;
+            };
+            tbm.setVerticalPosition = () => {
+                this.setVerticalPosition;
+            };
 
             tbm.scrollState = { left: 0, top: 0 };
             tbm.on('closeMenuItem', this.onCloseMenuItem);
             tbm.on('resize', this.updatePosition);
         }
 
-        private createNonClosableItems() {
+        private createNonClosableItems():any /* Ext.container.Container */ {
             var item = new Ext.container.Container({});
             item.itemId = 'nonClosableItems';
             item.defaultType = 'topBarMenuItem';
             return item;
         }
 
-        private createEditTitle() {
+        private createEditTitle():any /* Ext.Component */ {
             var item = new Ext.Component({});
             item.addCls('title');
             item.itemId = 'editTitle';
@@ -72,14 +78,14 @@ module admin.ui {
             return item;
         }
 
-        private createEditItems() {
+        private createEditItems():any /* Ext.container.Container */ {
             var item = new Ext.container.Container({});
             item.itemId = 'editItems';
             item.defaultType = 'topBarMenuItem';
             return item;
         }
 
-        private createViewTitle() {
+        private createViewTitle():any /* Ext.Component */ {
             var item = new Ext.Component({});
             item.addCls('title');
             item.itemId = 'viewTitle';
@@ -88,14 +94,14 @@ module admin.ui {
             return item;
         }
 
-        private createViewItems() {
+        private createViewItems():any /* Ext.container.Container */ {
             var item = new Ext.container.Container({});
             item.itemId = 'viewItems';
             item.defaultType = 'topBarMenuItem';
             return item;
         }
 
-        private createEmptyTitle() {
+        private createEmptyTitle():any /* Ext.Component */ {
             var item = new Ext.Component({});
             item.addCls('info');
             item.itemId = 'emptyTitle';
@@ -103,7 +109,7 @@ module admin.ui {
             return item;
         }
 
-        onClick(e) {
+        onClick(e):void {
             var me = this.ext,
                 item;
 
@@ -121,7 +127,7 @@ module admin.ui {
             }
         }
 
-        onShow() {
+        onShow():void {
             this.ext.callParent(arguments);
 
             if (this.activeTab) {
@@ -129,7 +135,7 @@ module admin.ui {
             }
         }
 
-        onBoxReady() {
+        onBoxReady():void {
             var tip = Ext.DomHelper.append(this.ext.el, {
                 tag: 'div',
                 cls: 'balloon-tip'
@@ -137,7 +143,7 @@ module admin.ui {
             this.ext.callParent(arguments);
         }
 
-        onCloseMenuItem(item) {
+        onCloseMenuItem(item):void {
             if (this.tabPanel) {
                 this.tabPanel.remove(item.card);
             }
@@ -147,7 +153,7 @@ module admin.ui {
             }
         }
 
-        markActiveTab(item) {
+        markActiveTab(item):void {
             var me = this.ext;
             var menuItem;
 
@@ -172,7 +178,7 @@ module admin.ui {
             this.activeTab = item;
         }
 
-        getItemFromEvent(e) {
+        getItemFromEvent(e):any /* Ext.Component */ {
             var item = this.ext;
             do {
                 item = item.getChildByElement(e.getTarget());
@@ -181,7 +187,7 @@ module admin.ui {
             return item;
         }
 
-        getAllItems(includeNonClosable) {
+        getAllItems(includeNonClosable):any[] /* Ext.Component[] */ {
             var items = [];
             if (includeNonClosable === false) {
                 items = items.concat(this.editItems.query('topBarMenuItem'));
@@ -192,7 +198,7 @@ module admin.ui {
             return items;
         }
 
-        addItems(items) {
+        addItems(items):any[] /* Ext.Component[] */ {
             if (Ext.isEmpty(items)) {
                 return [];
             } else if (Ext.isObject(items)) {
@@ -204,7 +210,7 @@ module admin.ui {
             var editItems = [];
             var viewItems = [];
             var nonClosableItems = [];
-            Ext.Array.each(items, function (item) {
+            Ext.Array.each(items, (item) => {
                 if (item.closable === false) {
                     nonClosableItems.push(item);
                 } else if (item.editing) {
@@ -222,7 +228,7 @@ module admin.ui {
             }
             if (viewItems.length > 0) {
                 var viewItemObjects = [];
-                Ext.Array.each(viewItems, function (viewItem) {
+                Ext.Array.each(viewItems, (viewItem) => {
                     if (!viewItem.xtype) {
                         var tbmi = new admin.ui.TopBarMenuItem(viewItem.text1, viewItem.text2).ext;
                         viewItemObjects.push(tbmi);
@@ -240,24 +246,24 @@ module admin.ui {
             return added;
         }
 
-        removeAllItems(includeNonClosable) {
+        removeAllItems(includeNonClosable):any[] /* Ext.Component[] */ {
             var me = this.ext;
             var editItems = this.editItems;
             var viewItems = this.viewItems;
             var removed = [];
-            Ext.Array.each(editItems.items.items, function (item) {
+            Ext.Array.each(editItems.items.items, (item) => {
                 if (item && item.closable !== false) {
                     removed.push(editItems.remove(item));
                 }
             });
-            Ext.Array.each(viewItems.items.items, function (item) {
+            Ext.Array.each(viewItems.items.items, (item) => {
                 if (item && item.closable !== false) {
                     removed.push(viewItems.remove(item));
                 }
             });
             if (includeNonClosable) {
                 var nonClosableItems = this.nonClosableItems;
-                Ext.Array.each(nonClosableItems.items.items, function (item) {
+                Ext.Array.each(nonClosableItems.items.items, (item) => {
                     if (item && item.closable !== false) {
                         removed.push(nonClosableItems.remove(item));
                     }
@@ -267,9 +273,9 @@ module admin.ui {
             return removed;
         }
 
-        removeItems(items) {
+        removeItems(items):any[] /* Ext.Component[] */ {
             if (Ext.isEmpty(items)) {
-                return;
+                return null;
             } else if (Ext.isObject(items)) {
                 items = [].concat(items);
             }
@@ -282,7 +288,7 @@ module admin.ui {
             var nonClosableItems = this.nonClosableItems;
             var removed = [];
 
-            Ext.Array.each(items, function (item) {
+            Ext.Array.each(items, (item) => {
                 if (item && item.closable !== false) {
                     removed.push(editItems.remove(item));
                     removed.push(viewItems.remove(item));
@@ -293,9 +299,10 @@ module admin.ui {
             this.updateTitles();
 
             this.restoreScrollState();
+            return removed;
         }
 
-        updateTitles() {
+        updateTitles():void {
             var me = this.ext;
             var editCount = this.editItems.items.getCount();
             var viewCount = this.viewItems.items.getCount();
@@ -322,7 +329,7 @@ module admin.ui {
             this.ext.el.move('r', ((oldWidth - width) / 2), false);
         }
 
-        show() {
+        show():any /* Ext.Component */ {
             var me = this.ext,
                 parentEl, viewHeight;
 
@@ -345,18 +352,18 @@ module admin.ui {
             return me;
         }
 
-        hide() {
+        hide():void {
             this.ext.callParent();
 
             //return back original value to calculate new height on show
             this.ext.maxHeight = this.maxWas;
         }
 
-        setVerticalPosition() {
+        setVerticalPosition():void {
             // disable position change as we adjust menu height
         }
 
-        saveScrollState() {
+        saveScrollState():void {
             var me = this.ext;
             if (me.rendered && !me.hidden) {
                 var dom = me.body.dom,
@@ -367,7 +374,7 @@ module admin.ui {
             }
         }
 
-        restoreScrollState() {
+        restoreScrollState():void {
             var me = this.ext;
             if (me.rendered && !me.hidden) {
                 var dom = me.body.dom,

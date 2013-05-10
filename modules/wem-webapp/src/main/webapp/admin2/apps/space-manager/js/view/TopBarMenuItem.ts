@@ -2,8 +2,13 @@ module admin.ui {
 
     export class TopBarMenuItem {
         ext;
+        private titleContainer:any; // Ext.Component
+        private text1:string;
+        private text2:string;
 
-        constructor(public text1: string, public text2: string) {
+        constructor(text1:string, text2:string) {
+            this.text1 = text1;
+            this.text2 = text2;
             var tbmi = new Ext.container.Container({});
             this.ext = tbmi;
             tbmi.itemId = 'topBarMenuItem';
@@ -20,7 +25,7 @@ module admin.ui {
             this.initComponent(tbmi);
         }
 
-        private initComponent(topBarMenuItem) {
+        private initComponent(topBarMenuItem):void {
             var items = [];
             if (topBarMenuItem.iconCls || topBarMenuItem.iconSrc) {
                 var image = new Ext.Img();
@@ -42,14 +47,15 @@ module admin.ui {
                     text2: this.text2
                 };
                 items.push(titleContainer);
+                this.titleContainer = titleContainer;
             }
             if (topBarMenuItem.closable !== false) {
                 var closeButton = new Ext.Component();
-                closeButton.autoEl= 'a';
-                closeButton.cls= 'close-button icon-remove icon-large';
-                closeButton.margins= '0 0 0 12px';
+                closeButton.autoEl = 'a';
+                closeButton.cls = 'close-button icon-remove icon-large';
+                closeButton.margins = '0 0 0 12px';
                 closeButton.on('afterrender', (cmp) => {
-                    cmp.el.on('click', function () {
+                    cmp.el.on('click', () => {
                         this.deactivate();
                         topBarMenuItem.fireEvent('closeMenuItem', topBarMenuItem);
                     });
@@ -58,11 +64,10 @@ module admin.ui {
             }
 
             topBarMenuItem.add(items);
-//            topBarMenuItem.callParent(arguments);
             topBarMenuItem.addEvents('activate', 'deactivate', 'click', 'closeMenuItem');
         }
 
-        private activate() {
+        private activate():void {
             var me = this.ext;
 
             if (!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
@@ -73,7 +78,7 @@ module admin.ui {
             }
         }
 
-        private deactivate() {
+        private deactivate():void {
             var me = this.ext;
 
             if (me.activated) {
@@ -84,7 +89,7 @@ module admin.ui {
             }
         }
 
-        public onClick(e) {
+        public onClick(e):bool {
             var me = this.ext;
 
             if (!me.href) {
@@ -105,8 +110,8 @@ module admin.ui {
             return Ext.isEmpty(Ext.fly(e.getTarget()).findParent('.close-button'));
         }
 
-        updateTitleContainer() {
-            this.ext.down('#titleContainer').update({
+        updateTitleContainer():void {
+            this.titleContainer.update({
                 text1: this.text1,
                 text2: this.text2
             });

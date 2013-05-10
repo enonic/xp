@@ -2,17 +2,17 @@ module admin.ui {
 
     export class TopBar {
         ext;
-        private startButton;
-        private leftContainer;
-        private rightContainer;
-        private homeButton;
-        private tabPanel;
-        private tabMenu;
-        private titleButton;
-        private appName: string;
+        private startButton:any; // Ext.button.Button
+        private homeButton:any; // Ext.button.Button
+        private leftContainer:any; // Ext.container.Container
+        private rightContainer:any; // Ext.container.Container
+        private tabPanel:any; // Admin.view.TabPanel?
+        private tabMenu:admin.ui.TopBarMenu;
+        private titleButton:any; // Ext.button.Button
+        private appName:string;
 
 
-        constructor(appName: string, tabPanel?: any) {
+        constructor(appName:string, tabPanel?:any) {
             var tb = new Ext.toolbar.Toolbar({});
             this.ext = tb;
             tb.itemId = 'topBar';
@@ -27,7 +27,7 @@ module admin.ui {
             this.initComponent();
         }
 
-        initComponent() {
+        initComponent():void {
             var me = this.ext;
 
             this.startButton = Ext.create('Ext.button.Button', {
@@ -126,14 +126,14 @@ module admin.ui {
                         }
                     }
                 });
-                me.insert( 1, this.titleButton);
+                me.insert(1, this.titleButton);
             }
 
             this.syncTabCount();
         }
 
 
-        toggleHomeScreen() {
+        toggleHomeScreen():void {
             var isInsideIframe = window.top !== window.self;
             if (isInsideIframe) {
                 window.parent['Ext'].getCmp('admin-home-main-container').toggleShowHide();
@@ -145,14 +145,14 @@ module admin.ui {
 
         /*  Methods for Admin.view.TabPanel integration */
 
-        insert(index, cfg) {
+        insert(index, cfg):any /* Ext.Component */ {
             var added = this.tabMenu.addItems(cfg);
             this.syncTabCount();
 
             return added.length === 1 ? added[0] : added;
         }
 
-        setActiveTab(tab) {
+        setActiveTab(tab):void {
             this.tabMenu.markActiveTab(tab);
 
             var card = tab.card;
@@ -171,7 +171,7 @@ module admin.ui {
             this.setTitleButtonText(buttonText);
         }
 
-        remove(tab) {
+        remove(tab):any /* Ext.Component */ {
 
             var removed = this.tabMenu.removeItems(tab);
             this.syncTabCount();
@@ -179,7 +179,7 @@ module admin.ui {
             return removed;
         }
 
-        findNextActivatable(tab) {
+        findNextActivatable():any /* TabPanel */ {
             if (this.tabPanel) {
                 // set first browse tab active
                 return this.tabPanel.items.get(0);
@@ -187,7 +187,7 @@ module admin.ui {
             return null;
         }
 
-        createMenuItemFromTab(item) {
+        createMenuItemFromTab(item):Object {
             var cfg = item.initialConfig || item;
             return {
                 tabBar: this.ext,
@@ -206,7 +206,7 @@ module admin.ui {
 
         /*  Private */
 
-        private syncTabCount() {
+        private syncTabCount():void {
             if (this.tabMenu && this.titleButton) {
                 var tabCount = this.tabMenu.getAllItems(false).length;
                 // show dropdown button when any tab is open or text when nothing is open
@@ -218,14 +218,14 @@ module admin.ui {
         }
 
         /* For 18/4 demo */
-        private getApplicationId() {
+        private getApplicationId():string {
             var urlParamsString = document.URL.split('?'),
                 urlParams = Ext.urlDecode(urlParamsString[urlParamsString.length - 1]);
 
             return urlParams.appId ? urlParams.appId.split('#')[0] : null;
         }
 
-        private getMenuItemIcon(card) {
+        private getMenuItemIcon(card):string {
             var icon;
             if (card.data && card.data instanceof Ext.data.Model) {
                 icon = card.data.get('iconUrl') || card.data.get('image_url');
@@ -233,7 +233,7 @@ module admin.ui {
             return icon;
         }
 
-        private getMenuItemDescription(card) {
+        private getMenuItemDescription(card):string {
             var desc;
             if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
                 desc = card.data.get('path') || card.data.get('qualifiedName') || card.data.get('displayName');
@@ -245,7 +245,7 @@ module admin.ui {
             return desc;
         }
 
-        private getMenuItemDisplayName(card) {
+        private getMenuItemDisplayName(card):string {
             var desc;
             if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
                 desc = card.data.get('displayName') || card.data.get('name');
@@ -260,7 +260,7 @@ module admin.ui {
 
         /*  Public  */
 
-        setTitleButtonText(text) {
+        setTitleButtonText(text):void {
             this.titleButton.setTitle(text);
             var activeTab = this.titleButton.menu.activeTab;
 
@@ -270,15 +270,15 @@ module admin.ui {
             }
         }
 
-        getStartButton() {
+        getStartButton():any /* Ext.button.Button */ {
             return this.startButton;
         }
 
-        getLeftContainer() {
+        getLeftContainer():any /* Ext.container.Container */ {
             return this.leftContainer;
         }
 
-        getRightContainer() {
+        getRightContainer():any /* Ext.container.Container */ {
             return this.rightContainer;
         }
 

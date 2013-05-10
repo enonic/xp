@@ -3455,6 +3455,7 @@ var admin;
                 this.initComponent(tbmi);
             }
             TopBarMenuItem.prototype.initComponent = function (topBarMenuItem) {
+                var _this = this;
                 var items = [];
                 if(topBarMenuItem.iconCls || topBarMenuItem.iconSrc) {
                     var image = new Ext.Img();
@@ -3476,6 +3477,7 @@ var admin;
                         text2: this.text2
                     };
                     items.push(titleContainer);
+                    this.titleContainer = titleContainer;
                 }
                 if(topBarMenuItem.closable !== false) {
                     var closeButton = new Ext.Component();
@@ -3484,7 +3486,7 @@ var admin;
                     closeButton.margins = '0 0 0 12px';
                     closeButton.on('afterrender', function (cmp) {
                         cmp.el.on('click', function () {
-                            this.deactivate();
+                            _this.deactivate();
                             topBarMenuItem.fireEvent('closeMenuItem', topBarMenuItem);
                         });
                     });
@@ -3530,7 +3532,7 @@ var admin;
                 return Ext.isEmpty(Ext.fly(e.getTarget()).findParent('.close-button'));
             };
             TopBarMenuItem.prototype.updateTitleContainer = function () {
-                this.ext.down('#titleContainer').update({
+                this.titleContainer.update({
                     text1: this.text1,
                     text2: this.text2
                 });
@@ -3546,6 +3548,7 @@ var admin;
     (function (ui) {
         var TopBarMenu = (function () {
             function TopBarMenu(tabPanel) {
+                var _this = this;
                 var tbm = new Ext.menu.Menu({
                 });
                 this.ext = tbm;
@@ -3574,9 +3577,15 @@ var admin;
                 tbm.add(this.emptyTitle);
                 tbm.onShow = this.onShow;
                 tbm.onBoxReady = this.onBoxReady;
-                tbm.show = this.show;
-                tbm.hide = this.hide;
-                tbm.setVerticalPosition = this.setVerticalPosition;
+                tbm.show = function () {
+                    _this.show();
+                };
+                tbm.hide = function () {
+                    _this.hide;
+                };
+                tbm.setVerticalPosition = function () {
+                    _this.setVerticalPosition;
+                };
                 tbm.scrollState = {
                     left: 0,
                     top: 0
@@ -3770,7 +3779,7 @@ var admin;
             };
             TopBarMenu.prototype.removeItems = function (items) {
                 if(Ext.isEmpty(items)) {
-                    return;
+                    return null;
                 } else if(Ext.isObject(items)) {
                     items = [].concat(items);
                 }
@@ -3789,6 +3798,7 @@ var admin;
                 });
                 this.updateTitles();
                 this.restoreScrollState();
+                return removed;
             };
             TopBarMenu.prototype.updateTitles = function () {
                 var me = this.ext;
@@ -3990,7 +4000,7 @@ var admin;
                 this.syncTabCount();
                 return removed;
             };
-            TopBar.prototype.findNextActivatable = function (tab) {
+            TopBar.prototype.findNextActivatable = function () {
                 if(this.tabPanel) {
                     return this.tabPanel.items.get(0);
                 }
