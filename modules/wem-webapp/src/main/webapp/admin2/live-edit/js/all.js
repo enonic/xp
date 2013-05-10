@@ -723,14 +723,14 @@ var LiveEdit;
 (function (LiveEdit) {
     (function (ui) {
         var $ = $liveedit;
-        var componentCount = 0;
         var Base = (function () {
             function Base() {
             }
+            Base.constructedCount = 0;
             Base.prototype.createElement = function (htmlString) {
-                var id = componentCount++;
+                var id = Base.constructedCount++;
                 this.element = $(htmlString);
-                this.element.attr('id', 'live-edit-ui-cmp-' + id);
+                this.element.attr('id', 'live-edit-ui-cmp-' + id.toString());
                 return this.element;
             };
             Base.prototype.appendTo = function (parent) {
