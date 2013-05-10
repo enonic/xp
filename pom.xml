@@ -29,6 +29,7 @@
     <module>modules/wem-webapp</module>
     <module>modules/wem-itest</module>
     <module>modules/tools</module>
+    <module>modules/plugins</module>
   </modules>
 
   <dependencies>
