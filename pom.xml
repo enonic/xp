@@ -24,7 +24,6 @@
   <modules>
     <module>modules/wem-api</module>
     <module>modules/wem-core</module>
-    <module>modules/wem-migrate</module>
     <module>modules/wem-web</module>
     <module>modules/wem-webapp</module>
     <module>modules/wem-itest</module>
