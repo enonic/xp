@@ -15,8 +15,6 @@
 
 ///<reference path='model/SpaceModel.ts' />
 
-///<reference path='store/SpaceStore.ts' />
-
 ///<reference path='handler/DeleteSpacesHandler.ts' />
 ///<reference path='view/WizardLayout.ts' />
 ///<reference path='view/WizardHeader.ts' />
