@@ -1,6 +1,5 @@
-<%@ taglib prefix="w" uri="uri:enonic.wem.taglib" %>
+<%@ page import="com.enonic.wem.web.jsp.JspHelper" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<w:helper var="helper"/>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -26,8 +25,8 @@
 </div>
 
 <%
-  String adminUrl = helper.createUrl( "admin" );
-  String davUrl = helper.createUrl( "dav" );
+  String adminUrl = JspHelper.createUrl( request, "admin" );
+  String davUrl = JspHelper.createUrl( request, "dav" );
 %>
 
 <div id="content-outer" class="clearfix">
@@ -40,7 +39,7 @@
         <span class="info left">
           <span class="name">Admin Console</span>
           <span>
-            <%= helper.ellipsis( adminUrl, 30 ) %>
+            <%= JspHelper.ellipsis( adminUrl, 30 ) %>
           </span>
         </span>
       </a>
@@ -52,7 +51,7 @@
         <span class="info left">
           <span class="name">WebDAV</span>
           <span>
-            <%= helper.ellipsis( davUrl, 30 ) %>
+            <%= JspHelper.ellipsis( davUrl, 30 ) %>
           </span>
         </span>
       </a>
@@ -130,26 +129,14 @@
   <div id="east">
     <div id="sites" class="box">
       <h2>Sites</h2>
-      <ul>
-        <w:siteList>
-          <%
-            String siteUrl = helper.createUrl( "site/" + site.getKey() );
-          %>
-          <li>
-            <a href="<%= siteUrl %>" title="<%= siteUrl %>">
-              <span class="name"><%= site.getName() %></span><br/>
-              <span><%= helper.ellipsis( siteUrl, 30 ) %></span>
-            </a>
-          </li>
-        </w:siteList>
-      </ul>
+      N / A
     </div>
   </div>
 </div>
 
 <div class="clearfix" id="footer">
   <div id="license" class="left">
-    <%= helper.getProductVersion() %> - Licensed under <a href="http://www.gnu.org/licenses/agpl.html" rel="external">AGPL 3.0</a>
+    <%= JspHelper.getProductVersion() %> - Licensed under <a href="http://www.gnu.org/licenses/agpl.html" rel="external">AGPL 3.0</a>
   </div>
   <div id="social" class="right">
     <a href="http://www.enonic.com/en/rss" rel="external">

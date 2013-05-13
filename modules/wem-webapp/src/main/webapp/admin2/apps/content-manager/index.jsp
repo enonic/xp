@@ -1,6 +1,5 @@
-<%@ taglib prefix="w" uri="uri:enonic.wem.taglib" %>
+<%@ page import="com.enonic.wem.web.jsp.JspHelper" %>
 <!DOCTYPE html>
-<w:helper var="helper"/>
 <html>
 <head>
 
@@ -24,7 +23,7 @@
 <script type="text/javascript">
 
   window.CONFIG = {
-    baseUrl: '<%= helper.getBaseUrl() %>'
+    baseUrl: '<%= JspHelper.getBaseUrl(request) %>'
   };
 
   Ext.Loader.setConfig({

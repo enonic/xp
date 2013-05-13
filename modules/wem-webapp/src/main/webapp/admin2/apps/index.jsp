@@ -1,6 +1,5 @@
-<%@ taglib prefix="w" uri="uri:enonic.wem.taglib" %>
+<%@ page import="com.enonic.wem.web.jsp.JspHelper" %>
 <!DOCTYPE html>
-<w:helper var="helper"/>
 <html>
 <head>
 
@@ -26,7 +25,7 @@
 <!-- Configuration -->
 <script type="text/javascript">
 
-  API.util.baseUri = '<%= helper.getBaseUrl() %>';
+  API.util.baseUri = '<%= JspHelper.getBaseUrl(request) %>';
 
 </script>
 

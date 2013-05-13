@@ -1,4 +1,4 @@
-package com.enonic.wem.taglib;
+package com.enonic.wem.web.jsp;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,27 +9,21 @@ import com.google.common.base.Strings;
 
 import com.enonic.wem.api.Version;
 
-final class JspHelperImpl
-    implements JspHelper
+public final class JspHelper
 {
-    private HttpServletRequest servletRequest;
-
-    @Override
-    public String getProductVersion()
+    public static String getProductVersion()
     {
         return Version.get().getNameAndVersion();
     }
 
-    @Override
-    public String getBaseUrl()
+    public static String getBaseUrl( final HttpServletRequest req )
     {
-        return createUrl( null );
+        return createUrl( req, null );
     }
 
-    @Override
-    public String createUrl( final String path )
+    public static String createUrl( final HttpServletRequest req, final String path )
     {
-        ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromContextPath( this.servletRequest );
+        ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromContextPath( req );
         if ( !Strings.isNullOrEmpty( path ) )
         {
             if ( '/' == path.charAt( 0 ) )
@@ -44,8 +38,7 @@ final class JspHelperImpl
         return builder.build().toString();
     }
 
-    @Override
-    public String ellipsis( final String text, final int length )
+    public static String ellipsis( final String text, final int length )
     {
         if ( text.length() <= length )
         {
@@ -56,10 +49,5 @@ final class JspHelperImpl
             final String outStr = Splitter.fixedLength( length ).split( text ).iterator().next();
             return outStr + "...";
         }
-    }
-
-    public void setServletRequest( final HttpServletRequest servletRequest )
-    {
-        this.servletRequest = servletRequest;
     }
 }
