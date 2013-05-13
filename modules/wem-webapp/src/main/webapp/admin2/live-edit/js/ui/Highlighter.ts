@@ -70,9 +70,6 @@ module LiveEdit.ui {
 
             component.addClass('live-edit-selected-component');
 
-            // jQuery.addClass does not work for SVG elements.
-            this.getEl().attr('class', this.getEl().attr('class') + ' live-edit-animatable');
-
             // Highlighter should not be shown when type page is selected
             if (componentType === 'page') {
                 this.hide();
@@ -85,7 +82,6 @@ module LiveEdit.ui {
 
 
         deselect() {
-            this.getEl().attr('class', this.getEl().attr('class').replace(/ live-edit-animatable/g, ''));
             $('.live-edit-selected-component').removeClass('live-edit-selected-component');
             this.selectedComponent = null;
         }
@@ -131,8 +127,6 @@ module LiveEdit.ui {
 
         hide() {
             this.getEl().hide();
-            var $el = this.getEl();
-            $el.attr('class', $el.attr('class').replace(/ live-edit-animatable/g, ''));
         }
 
 

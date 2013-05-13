@@ -1037,7 +1037,6 @@ var LiveEdit;
                 }).show();
             };
             Shader.prototype.showForComponent = function ($component) {
-                $('.live-edit-shader').addClass('live-edit-animatable');
                 var documentSize = LiveEdit.DomHelper.getDocumentSize(), docWidth = documentSize.width, docHeight = documentSize.height;
                 var boxModel = componentHelper.getBoxModel($component), x = boxModel.left, y = boxModel.top, w = boxModel.width, h = boxModel.height;
                 this.$northShader.css({
@@ -1068,7 +1067,6 @@ var LiveEdit;
             Shader.prototype.hide = function () {
                 this.selectedComponent = null;
                 var $shaders = $('.live-edit-shader');
-                $shaders.removeClass('live-edit-animatable');
                 $shaders.hide();
             };
             Shader.prototype.handleWindowResize = function () {
@@ -1185,7 +1183,6 @@ var LiveEdit;
                 var componentType = componentHelper.getComponentType(component);
                 $('.live-edit-selected-component').removeClass('live-edit-selected-component');
                 component.addClass('live-edit-selected-component');
-                this.getEl().attr('class', this.getEl().attr('class') + ' live-edit-animatable');
                 if(componentType === 'page') {
                     this.hide();
                     return;
@@ -1194,7 +1191,6 @@ var LiveEdit;
                 this.show();
             };
             Highlighter.prototype.deselect = function () {
-                this.getEl().attr('class', this.getEl().attr('class').replace(/ live-edit-animatable/g, ''));
                 $('.live-edit-selected-component').removeClass('live-edit-selected-component');
                 this.selectedComponent = null;
             };
@@ -1224,8 +1220,6 @@ var LiveEdit;
             };
             Highlighter.prototype.hide = function () {
                 this.getEl().hide();
-                var $el = this.getEl();
-                $el.attr('class', $el.attr('class').replace(/ live-edit-animatable/g, ''));
             };
             Highlighter.prototype.getStyleForComponent = function (component) {
                 var componentType = componentHelper.getComponentType(component);

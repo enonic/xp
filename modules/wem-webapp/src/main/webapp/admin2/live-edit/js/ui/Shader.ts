@@ -88,8 +88,6 @@ module LiveEdit.ui {
 
 
         showForComponent($component) {
-            $('.live-edit-shader').addClass('live-edit-animatable');
-
             var documentSize = LiveEdit.DomHelper.getDocumentSize(),
                 docWidth = documentSize.width,
                 docHeight = documentSize.height;
@@ -133,9 +131,6 @@ module LiveEdit.ui {
         hide() {
             this.selectedComponent = null;
             var $shaders = $('.live-edit-shader');
-
-            $shaders.removeClass('live-edit-animatable');
-
             $shaders.hide();
         }
 

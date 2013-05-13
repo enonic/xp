@@ -756,11 +756,6 @@ svg.live-edit-highlight-border rect {
     background: transparent url("../images/plug.png") no-repeat;
 }
 
-.live-edit-animatable {
-    -webkit-transition: all 100ms linear;
-    transition: all 100ms linear;
-}
-
 .live-edit-component-padding {
     padding-top: 10px !important;
     padding-bottom: 10px !important;
