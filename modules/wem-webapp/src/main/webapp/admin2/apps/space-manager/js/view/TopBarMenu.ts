@@ -51,10 +51,10 @@ module admin.ui {
                 this.show();
             };
             tbm.hide = () => {
-                this.hide;
+                this.hide();
             };
             tbm.setVerticalPosition = () => {
-                this.setVerticalPosition;
+                this.setVerticalPosition();
             };
 
             tbm.scrollState = { left: 0, top: 0 };

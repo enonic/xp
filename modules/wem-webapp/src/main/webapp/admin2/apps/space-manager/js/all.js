@@ -3581,10 +3581,10 @@ var admin;
                     _this.show();
                 };
                 tbm.hide = function () {
-                    _this.hide;
+                    _this.hide();
                 };
                 tbm.setVerticalPosition = function () {
-                    _this.setVerticalPosition;
+                    _this.setVerticalPosition();
                 };
                 tbm.scrollState = {
                     left: 0,
