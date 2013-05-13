@@ -22,7 +22,7 @@ module LiveEdit.ui {
                 }
             });
 
-            this.appendTo(this.menu.getEl());
+            this.appendTo(this.menu.getRootEl());
             this.menu.buttons.push(this);
         }
     }

@@ -28,7 +28,7 @@ module LiveEdit.ui {
             }
         }
 
-        public getEl():JQuery {
+        public getRootEl():JQuery {
             return this.element;
         }
 

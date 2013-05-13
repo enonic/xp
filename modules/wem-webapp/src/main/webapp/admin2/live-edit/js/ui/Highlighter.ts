@@ -88,7 +88,7 @@ module LiveEdit.ui {
 
 
         paintBorder(component) {
-            var border = this.getEl();
+            var border = this.getRootEl();
 
             this.resizeBorderToComponent(component);
 
@@ -106,7 +106,7 @@ module LiveEdit.ui {
                 top = Math.round(componentBoxModel.top),
                 left = Math.round(componentBoxModel.left);
 
-            var $highlighter = this.getEl(),
+            var $highlighter = this.getRootEl(),
                 $HighlighterRect = $highlighter.find('rect');
 
             $highlighter.width(w);
@@ -121,12 +121,12 @@ module LiveEdit.ui {
 
 
         show() {
-            this.getEl().show();
+            this.getRootEl().show();
         }
 
 
         hide() {
-            this.getEl().hide();
+            this.getRootEl().hide();
         }
 
 

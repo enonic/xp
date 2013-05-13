@@ -190,27 +190,27 @@ module LiveEdit.ui {
         }
 
         getBar() {
-            return this.getEl();
+            return this.getRootEl();
         }
 
         getToggle() {
-            return $('.live-edit-toggle-components-container', this.getEl());
+            return $('.live-edit-toggle-components-container', this.getRootEl());
         }
 
         getFilterInput() {
-            return $('.live-edit-form-container input[name=filter]', this.getEl());
+            return $('.live-edit-form-container input[name=filter]', this.getRootEl());
         }
 
         getComponentsContainer() {
-            return $('.live-edit-components ul', this.getEl());
+            return $('.live-edit-components ul', this.getRootEl());
         }
 
         getComponentList() {
-            return $('.live-edit-component', this.getEl());
+            return $('.live-edit-component', this.getRootEl());
         }
 
         getToggleTextContainer() {
-            return $('.live-edit-toggle-text-container', this.getEl());
+            return $('.live-edit-toggle-text-container', this.getRootEl());
         }
 
     }

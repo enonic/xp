@@ -33,7 +33,7 @@ module LiveEdit.ui {
                         // Force position of the menu after component is selected.
                         // We could move this code to menu show.
                         // The position needs to be updated after menu is updated with info in order to get the right dimensions (width) of the menu.
-                        var menuWidth = this.menu.getEl().outerWidth();
+                        var menuWidth = this.menu.getRootEl().outerWidth();
                         var componentBox = componentHelper.getBoxModel($parent),
                             newMenuPosition = {x: componentBox.left + (componentBox.width / 2) - (menuWidth / 2), y: componentBox.top + 10};
 
@@ -42,7 +42,7 @@ module LiveEdit.ui {
                 }
             });
 
-            this.appendTo(this.menu.getEl());
+            this.appendTo(this.menu.getRootEl());
             this.menu.buttons.push(this);
 
         }

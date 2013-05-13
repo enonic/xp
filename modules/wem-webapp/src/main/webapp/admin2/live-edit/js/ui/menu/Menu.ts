@@ -62,7 +62,7 @@ module LiveEdit.ui {
 
 
         registerEvents() {
-            this.getEl().draggable({
+            this.getRootEl().draggable({
                 handle: '.live-edit-component-menu-title-bar',
                 addClasses: false
             });
@@ -82,11 +82,11 @@ module LiveEdit.ui {
 
             this.updateMenuItemsForComponent($component);
 
-            var pageXPosition = pagePosition.x - this.getEl().width() / 2,
+            var pageXPosition = pagePosition.x - this.getRootEl().width() / 2,
                 pageYPosition = pagePosition.y + 15;
             this.moveToXY(pageXPosition, pageYPosition);
 
-            this.getEl().show();
+            this.getRootEl().show();
 
             this.hidden = false;
         }
@@ -94,13 +94,13 @@ module LiveEdit.ui {
 
         hide() {
             this.selectedComponent = null;
-            this.getEl().hide();
+            this.getRootEl().hide();
             this.hidden = true;
         }
 
 
         fadeOutAndHide() {
-            this.getEl().fadeOut(500, () => {
+            this.getRootEl().fadeOut(500, () => {
                 this.hide();
                 $(window).trigger('component.onDeselect', {showComponentBar: false});
             });
@@ -109,7 +109,7 @@ module LiveEdit.ui {
 
 
         moveToXY(x, y) {
-            this.getEl().css({
+            this.getRootEl().css({
                 left: x,
                 top: y
             });
@@ -143,7 +143,7 @@ module LiveEdit.ui {
 
             var i;
             for (i = 0; i < buttons.length; i++) {
-                var $button = buttons[i].getEl();
+                var $button = buttons[i].getRootEl();
                 var id = $button.attr('data-live-edit-ui-cmp-id');
                 var subStr = id.substring(id.lastIndexOf('-') + 1, id.length);
                 if (buttonArray.indexOf(subStr) > -1) {
@@ -222,22 +222,22 @@ module LiveEdit.ui {
 
 
         getIconElement() {
-            return $('.live-edit-component-menu-title-icon', this.getEl());
+            return $('.live-edit-component-menu-title-icon', this.getRootEl());
         }
 
 
         getTitleElement() {
-            return $('.live-edit-component-menu-title-text', this.getEl());
+            return $('.live-edit-component-menu-title-text', this.getRootEl());
         }
 
 
         getCloseButton() {
-            return $('.live-edit-component-menu-title-close-button', this.getEl());
+            return $('.live-edit-component-menu-title-close-button', this.getRootEl());
         }
 
 
         getMenuItemsPlaceholderElement() {
-            return $('.live-edit-component-menu-items', this.getEl());
+            return $('.live-edit-component-menu-items', this.getRootEl());
         }
 
 

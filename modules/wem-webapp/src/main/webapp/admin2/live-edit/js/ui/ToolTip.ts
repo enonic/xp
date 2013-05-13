@@ -36,7 +36,7 @@ module LiveEdit.ui {
 
 
         private  setText(componentType, componentName) {
-            var $tooltip = this.getEl();
+            var $tooltip = this.getRootEl();
             $tooltip.children('.live-edit-tool-tip-type-text').text(componentType);
             $tooltip.children('.live-edit-tool-tip-name-text').text(componentName);
         }
@@ -59,7 +59,7 @@ module LiveEdit.ui {
                 var componentInfo = componentHelper.getComponentInfo($component);
                 var pos = this.getPosition(event);
 
-                this.getEl().css({
+                this.getRootEl().css({
                     top: pos.y,
                     left: pos.x
                 });
@@ -69,7 +69,7 @@ module LiveEdit.ui {
 
             $(document).on('hover', '[data-live-edit-type]', (event) => {
                 if (event.type === 'mouseenter') {
-                    this.getEl().hide().fadeIn(300);
+                    this.getRootEl().hide().fadeIn(300);
                 }
             });
 
@@ -86,8 +86,8 @@ module LiveEdit.ui {
             var y = pageY + this.OFFSET_Y;
             var viewPortSize = domHelper.getViewPortSize();
             var scrollTop = domHelper.getDocumentScrollTop();
-            var toolTipWidth = this.getEl().width();
-            var toolTipHeight = this.getEl().height();
+            var toolTipWidth = this.getRootEl().width();
+            var toolTipHeight = this.getRootEl().height();
 
             if (x + toolTipWidth > (viewPortSize.width - this.OFFSET_X * 2) - 50) {
                 x = pageX - toolTipWidth - (this.OFFSET_X * 2);
@@ -104,7 +104,7 @@ module LiveEdit.ui {
 
 
         hide() {
-            this.getEl().css({
+            this.getRootEl().css({
                 top: '-5000px',
                 left: '-5000px'
             });

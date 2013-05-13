@@ -53,7 +53,7 @@ module LiveEdit.ui {
 
 
         addEvents() {
-            this.getEl().on('click', (event) => {
+            this.getRootEl().on('click', (event) => {
 
                 // Make sure component is not deselected when the toolbar is clicked.
                 event.stopPropagation();
@@ -75,14 +75,14 @@ module LiveEdit.ui {
         show($component) {
             this.selectedComponent = $component;
 
-            this.getEl().show();
+            this.getRootEl().show();
             this.toggleArrowPosition(false);
             this.updatePosition();
         }
 
         hide() {
             this.selectedComponent = null;
-            this.getEl().hide();
+            this.getRootEl().hide();
         }
 
         updatePosition() {
@@ -94,7 +94,7 @@ module LiveEdit.ui {
 
             var stick = $(window).scrollTop() >= this.selectedComponent.offset().top - 60;
 
-            var el = this.getEl();
+            var el = this.getRootEl();
 
             if (stick) {
                 el.css({
@@ -118,9 +118,9 @@ module LiveEdit.ui {
 
         toggleArrowPosition(showArrowAtTop) {
             if (showArrowAtTop) {
-                this.getEl().removeClass('live-edit-arrow-bottom').addClass('live-edit-arrow-top');
+                this.getRootEl().removeClass('live-edit-arrow-bottom').addClass('live-edit-arrow-top');
             } else {
-                this.getEl().removeClass('live-edit-arrow-top').addClass('live-edit-arrow-bottom');
+                this.getRootEl().removeClass('live-edit-arrow-top').addClass('live-edit-arrow-bottom');
             }
         }
 
@@ -128,8 +128,8 @@ module LiveEdit.ui {
         // Rename
         getDefaultPosition() {
             var componentBox = componentHelper.getBoxModel(this.selectedComponent),
-                leftPos = componentBox.left + (componentBox.width / 2 - this.getEl().outerWidth() / 2),
-                topPos = componentBox.top - this.getEl().height() - 25;
+                leftPos = componentBox.left + (componentBox.width / 2 - this.getRootEl().outerWidth() / 2),
+                topPos = componentBox.top - this.getRootEl().height() - 25;
 
             return {
                 left: leftPos,
