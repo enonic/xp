@@ -11,28 +11,28 @@ Ext.define('Admin.controller.BrowseToolbarController', {
 
     init: function () {
 
-        /*        this.control({
-         '#spaceBrowseToolbar *[action=newSpace]': {
-         click: function (button, event) {
-         this.showNewSpaceWindow();
-         }
-         },
-         '#spaceBrowseToolbar *[action=viewSpace]': {
-         click: function (button, event) {
-         this.viewSelectedSpaces();
-         }
-         },
-         '#spaceBrowseToolbar *[action=editSpace]': {
-         click: function (button, event) {
-         this.editSelectedSpaces();
-         }
-         },
-         '#spaceBrowseToolbar *[action=deleteSpace]': {
-         click: function (button, event) {
-         this.deleteSelectedSpaces();
-         }
-         }
-         });*/
+        this.control({
+            '#spaceBrowseToolbar *[action=newSpace]': {
+                click: function (button, event) {
+                    this.showNewSpaceWindow();
+                }
+            },
+            '#spaceBrowseToolbar *[action=viewSpace]': {
+                click: function (button, event) {
+                    this.viewSelectedSpaces();
+                }
+            },
+            '#spaceBrowseToolbar *[action=editSpace]': {
+                click: function (button, event) {
+                    this.editSelectedSpaces();
+                }
+            },
+            '#spaceBrowseToolbar *[action=deleteSpace]': {
+                click: function (button, event) {
+                    this.deleteSelectedSpaces();
+                }
+            }
+        });
     },
 
     viewSelectedSpaces: function () {
