@@ -5,7 +5,9 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletRegistration;
 
 import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextListener;
+import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import com.enonic.wem.web.ResourceServlet;
 import com.enonic.wem.web.rest.JaxRsServlet;
@@ -44,5 +46,14 @@ public final class BootContextListener
         final ServletRegistration.Dynamic resourceServlet = context.addServlet( "resource", new ResourceServlet() );
         restServlet.setLoadOnStartup( 2 );
         resourceServlet.addMapping( "/" );
+    }
+
+    @Override
+    protected WebApplicationContext createWebApplicationContext( final ServletContext sc )
+    {
+        final XmlWebApplicationContext context = new XmlWebApplicationContext();
+        context.setServletContext( sc );
+        context.setConfigLocation( "classpath:/META-INF/spring/web-context.xml" );
+        return context;
     }
 }
