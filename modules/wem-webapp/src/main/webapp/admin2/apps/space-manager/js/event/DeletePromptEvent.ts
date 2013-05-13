@@ -3,14 +3,14 @@ module APP.event {
     var DELETE_PROMPT:string = 'deletePrompt';
 
     export class DeletePromptEvent extends API.event.Event {
-        private model;
+        private model:APP.model.SpaceModel;
 
         constructor(model:any) {
             this.model = model;
             super(DELETE_PROMPT);
         }
 
-        getModel() {
+        getModel():APP.model.SpaceModel {
             return this.model;
         }
     }

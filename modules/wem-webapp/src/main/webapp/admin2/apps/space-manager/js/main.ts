@@ -69,6 +69,7 @@ module APP {
 module components {
     export var detailPanel:admin.ui.SpaceDetailPanel;
     export var gridPanel;
+    export var tabPanel;
 }
 
 Ext.application({
@@ -117,9 +118,7 @@ Ext.application({
         p.add(center);
         p.add(west);
 
-        var tabPanel = new Admin.view.TabPanel({appName: 'Space Admin', appIconCls: 'icon-metro-space-admin-24'});
-//        tabPanel.appName = 'Space Admin';
-//        tabPanel.appIconCls = 'icon-metro-space-admin-24';
+        var tabPanel = components.tabPanel = new Admin.view.TabPanel({appName: 'Space Admin', appIconCls: 'icon-metro-space-admin-24'});
 
         tabPanel.add(p);
 

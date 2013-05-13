@@ -87,7 +87,7 @@ module admin.ui {
         }
 
 
-        setModel(model) {
+        setModel(model:APP.model.SpaceModel) {
             this.data = model;
             if (model) {
                 if (this.content) {

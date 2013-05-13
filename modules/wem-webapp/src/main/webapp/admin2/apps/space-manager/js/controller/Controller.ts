@@ -159,7 +159,7 @@ Ext.define('Admin.controller.Controller', {
     /*  Getters */
 
     getCmsTabPanel: function () {
-        return Ext.ComponentQuery.query('cmsTabPanel')[0];
+        return components.tabPanel;
     },
 
     getTopBar: function () {

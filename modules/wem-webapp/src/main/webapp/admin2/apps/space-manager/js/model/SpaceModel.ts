@@ -9,3 +9,14 @@ Ext.define('Admin.model.SpaceModel', {
 
     idProperty: 'name'
 });
+
+module APP.model {
+    export interface SpaceModel {
+        name:String;
+        displayName:String;
+        iconUrl:String;
+        rootContentId:Number;
+        createdTime:Date;
+        modifiedTime:Date;
+    }
+}
