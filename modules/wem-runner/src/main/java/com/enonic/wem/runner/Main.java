@@ -1,4 +1,4 @@
-package com.enonic.wem.tools.runner;
+package com.enonic.wem.runner;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;

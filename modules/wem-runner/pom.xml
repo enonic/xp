@@ -16,11 +16,11 @@
   <name>Enonic WEM Runner</name>
 
   <dependencies>
-    <!--dependency>
-      <groupId>com.enonic.wem</groupId>
-      <artifactId>webapp</artifactId>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>wem-webapp</artifactId>
       <version>${project.version}</version>
-    </dependency-->
+    </dependency>
     <dependency>
       <groupId>org.eclipse.jetty.aggregate</groupId>
       <artifactId>jetty-servlet</artifactId>
