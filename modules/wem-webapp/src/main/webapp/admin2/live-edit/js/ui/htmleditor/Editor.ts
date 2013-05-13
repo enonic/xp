@@ -14,7 +14,7 @@ module LiveEdit.ui {
             console.log('Editor instantiated. Using jQuery ' + $().jquery);
         }
 
-        registerGlobalListeners() {
+        registerGlobalListeners():void {
             $(window).on('component.onParagraphEdit', (event:JQueryEventObject, $paragraph:JQuery) => {
                 this.activate($paragraph);
             });
@@ -29,12 +29,12 @@ module LiveEdit.ui {
             });
         }
 
-        activate(paragraph:JQuery) {
+        activate(paragraph:JQuery):void {
             paragraph.get(0).contentEditable = true;
             paragraph.get(0).focus();
         }
 
-        deActivate(paragraph:JQuery) {
+        deActivate(paragraph:JQuery):void {
             paragraph.get(0).contentEditable = false;
             paragraph.get(0).blur();
         }

@@ -12,7 +12,7 @@ module LiveEdit.ui {
             this.init();
         }
 
-        init() {
+        init():void {
             var $button = this.createButton({
                 text: 'View',
                 id: 'live-edit-button-view',

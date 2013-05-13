@@ -1,3 +1,10 @@
+
+interface ComponentStyle {
+    strokeColor: string;
+    strokeDashArray: string;
+    fillColor: string;
+}
+
 module LiveEdit.ui {
     var $ = $liveedit;
 
@@ -16,7 +23,7 @@ module LiveEdit.ui {
         }
 
 
-        private registerGlobalListeners() {
+        private registerGlobalListeners():void {
             $(window).on('component.mouseOver', (event, component) => {
                 this.componentMouseOver(event, component);
             });
@@ -45,7 +52,7 @@ module LiveEdit.ui {
         }
 
 
-        private addView() {
+        private addView():void {
             var html =  '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlight-border" style="top:-5000px;left:-5000px">' +
                         '    <rect width="150" height="150"/>' +
                         '</svg>';
@@ -55,13 +62,13 @@ module LiveEdit.ui {
         }
 
 
-        private componentMouseOver(event, component) {
+        private componentMouseOver(event, component):void {
             this.show();
             this.paintBorder(component);
         }
 
 
-        private selectComponent(event, component) {
+        private selectComponent(event, component):void {
             this.selectedComponent = component;
             var componentType = componentHelper.getComponentType(component);
 
@@ -81,13 +88,13 @@ module LiveEdit.ui {
         }
 
 
-        deselect() {
+        deselect():void {
             $('.live-edit-selected-component').removeClass('live-edit-selected-component');
             this.selectedComponent = null;
         }
 
 
-        paintBorder(component) {
+        paintBorder(component):void {
             var border = this.getRootEl();
 
             this.resizeBorderToComponent(component);
@@ -99,7 +106,7 @@ module LiveEdit.ui {
         }
 
 
-        resizeBorderToComponent(component) {
+        resizeBorderToComponent(component):void {
             var componentBoxModel = componentHelper.getBoxModel(component);
             var w = Math.round(componentBoxModel.width),
                 h = Math.round(componentBoxModel.height),
@@ -120,17 +127,17 @@ module LiveEdit.ui {
         }
 
 
-        show() {
+        show():void {
             this.getRootEl().show();
         }
 
 
-        hide() {
+        hide():void {
             this.getRootEl().hide();
         }
 
 
-        getStyleForComponent(component) {
+        getStyleForComponent(component):ComponentStyle {
             var componentType = componentHelper.getComponentType(component);
 
             var strokeColor,
@@ -182,7 +189,7 @@ module LiveEdit.ui {
         }
 
 
-        handleWindowResize(event) {
+        handleWindowResize(event):void {
             if (this.selectedComponent) {
                 this.paintBorder(this.selectedComponent);
             }

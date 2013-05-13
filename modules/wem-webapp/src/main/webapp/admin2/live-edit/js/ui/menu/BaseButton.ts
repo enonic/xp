@@ -7,7 +7,7 @@ module LiveEdit.ui {
         }
 
 
-        createButton(config) {
+        createButton(config):JQuery {
             var id = config.id || '';
             var text = config.text || '';
             var cls = config.cls || '';

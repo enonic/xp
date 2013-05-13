@@ -35,17 +35,17 @@ module LiveEdit {
         }
 
 
-        private enableDragDrop() {
+        private enableDragDrop():void {
             $(regionSelector).sortable('enable');
         }
 
 
-        private disableDragDrop() {
+        private disableDragDrop():void {
             $(regionSelector).sortable('disable');
         }
 
 
-        private getDragHelperHtml(text) {
+        private getDragHelperHtml(text):string {
             // Override jQueryUi inline width/height
             return '<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' +
                 '    <img id="live-edit-drag-helper-status-icon" src="../../../admin2/live-edit/images/drop-no.gif"/>' +
@@ -54,12 +54,12 @@ module LiveEdit {
         }
 
 
-        private setDragHelperText(text) {
+        private setDragHelperText(text):void {
             $('#live-edit-drag-helper-text').text(text);
         }
 
 
-        private createComponentBarDraggables() {
+        private createComponentBarDraggables():void {
             var $componentBarComponents = $('.live-edit-component');
             var draggableOptions = {
                 connectToSortable: regionSelector,
@@ -90,27 +90,27 @@ module LiveEdit {
         }
 
 
-        private createDragHelper(event, helper) {
+        private createDragHelper(event, helper):string {
             return $(this.getDragHelperHtml(componentHelper.getComponentName(helper)));
         }
 
 
-        private refreshSortable() {
+        private refreshSortable():void {
             $(regionSelector).sortable('refresh');
         }
 
 
-        private updateHelperStatusIcon(status) {
+        private updateHelperStatusIcon(status):void {
             $('#live-edit-drag-helper-status-icon').attr('src', '../../../admin2/live-edit/images/drop-' + status + '.gif');
         }
 
 
-        private targetIsPlaceholder($target) {
-            return $target.hasClass('live-edit-drop-target-placeholder')
+        private targetIsPlaceholder(target:JQuery):Boolean {
+            return target.hasClass('live-edit-drop-target-placeholder')
         }
 
 
-        private handleSortStart(event, ui) {
+        private handleSortStart(event, ui):void {
             _isDragging = true;
 
             // Temporary store the selection info during the drag drop lifecycle.
@@ -127,7 +127,7 @@ module LiveEdit {
         }
 
 
-        private handleDragOver(event, ui) {
+        private handleDragOver(event, ui):void {
             event.stopPropagation();
 
             // todo: Items in component should have the same @data-live-edit-* structure
@@ -143,7 +143,7 @@ module LiveEdit {
             }
         }
 
-        private handleDragOut(event, ui) {
+        private handleDragOut(event, ui):void {
             if (this.targetIsPlaceholder($(event.srcElement))) {
                 this.removePaddingFromLayoutComponent();
             }
@@ -152,18 +152,18 @@ module LiveEdit {
             $(window).trigger('component.onSortOut', [event, ui]);
         }
 
-        private handleSortChange(event, ui) {
+        private handleSortChange(event, ui):void {
             this.addPaddingToLayoutComponent($(event.target));
             this.updateHelperStatusIcon('yes');
             ui.placeholder.show();
             $(window).trigger('component.onSortChange', [event, ui]);
         }
 
-        private handleSortUpdate(event, ui) {
+        private handleSortUpdate(event, ui):void {
             $(window).trigger('component.onSortUpdate', [event, ui]);
         }
 
-        private handleSortStop(event, ui) {
+        private handleSortStop(event, ui):void {
             _isDragging = false;
 
             this.removePaddingFromLayoutComponent();
@@ -188,13 +188,7 @@ module LiveEdit {
             ui.item.removeData('live-edit-selected-on-drag-start');
         }
 
-
-        private itemIsDraggedFromComponentBar(item) {
-            return item.hasClass('live-edit-component');
-        }
-
-
-        private handleReceive(event, ui) {
+        private handleReceive(event, ui):void {
             if (this.itemIsDraggedFromComponentBar(ui.item)) {
                 var $componentBarComponent = $(event.target).children('.live-edit-component');
                 var componentKey = $componentBarComponent.data('live-edit-component-key');
@@ -223,17 +217,22 @@ module LiveEdit {
         }
 
 
-        private addPaddingToLayoutComponent($component) {
+        private itemIsDraggedFromComponentBar(item:JQuery):Boolean {
+            return item.hasClass('live-edit-component');
+        }
+
+
+        private addPaddingToLayoutComponent($component):void {
             $component.closest(layoutSelector).addClass('live-edit-component-padding');
         }
 
 
-        private removePaddingFromLayoutComponent() {
+        private removePaddingFromLayoutComponent():void {
             $('.live-edit-component-padding').removeClass('live-edit-component-padding');
         }
 
 
-        private registerGlobalListeners() {
+        private registerGlobalListeners():void {
             // The jQuery draggable() is not "live"/support delegates so we have to make sure the components in the component bar are always draggable
             // Make the components in the component bar draggable
             $(window).on('componentBar.dataLoaded', () => {
@@ -280,7 +279,7 @@ module LiveEdit {
         }
 
 
-        private createSortable() {
+        private createSortable():void {
             $(regionSelector).sortable({
                 revert: false,
                 connectWith: regionSelector,   // Sortable elements.

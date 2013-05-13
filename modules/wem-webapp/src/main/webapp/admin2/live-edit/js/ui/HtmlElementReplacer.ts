@@ -12,11 +12,7 @@ module LiveEdit.ui {
         }
 
 
-        registerGlobalListeners() {
-        }
-
-
-        replaceElementsWithPlaceholders() {
+        replaceElementsWithPlaceholders():void {
             var elements = this.getElements();
             elements.each((i) => {
                 this.replace(elements[i]);
@@ -24,18 +20,18 @@ module LiveEdit.ui {
         }
 
 
-        replace($element) {
+        replace($element):void {
             this.hideElement($element);
             this.addPlaceholder($element);
         }
 
 
-        addPlaceholder($element) {
+        addPlaceholder($element):void {
             this.createPlaceholder($element).insertAfter($element);
         }
 
 
-        createPlaceholder($element) {
+        createPlaceholder($element:JQuery):JQuery {
             var $placeholder = $('<div></div>');
             $placeholder.addClass('live-edit-html-element-placeholder');
             $placeholder.width(this.getElementWidth($element));
@@ -50,12 +46,12 @@ module LiveEdit.ui {
         }
 
 
-        getElements() {
+        getElements():JQuery {
             return $('[data-live-edit-type=part] > ' + this.elementsToReplaceSpec.toString());
         }
 
 
-        getElementWidth($element) {
+        getElementWidth($element):number {
             var attrWidth = $element.attr('width');
             if (!attrWidth) {
                 // Return computed style width (int/pixels);
@@ -66,7 +62,7 @@ module LiveEdit.ui {
         }
 
 
-        getElementHeight($element) {
+        getElementHeight($element):number {
             var attrHeight = $element.attr('height');
             if (!attrHeight) {
                 // Return computed style height (int/pixels);
@@ -77,17 +73,17 @@ module LiveEdit.ui {
         }
 
 
-        showElement($element) {
+        showElement($element):void {
             $element.show();
         }
 
 
-        hideElement($element) {
+        hideElement($element):void {
             $element.hide();
         }
 
 
-        resolveIconCssClass($element) {
+        resolveIconCssClass($element):string {
             var tagName = $element[0].tagName.toLowerCase();
             var clsName = '';
             if (tagName === 'iframe') {

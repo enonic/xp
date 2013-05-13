@@ -19,7 +19,7 @@ module LiveEdit.ui {
             console.log('EditorToolbar instantiated. Using jQuery ' + $().jquery);
         }
 
-        registerGlobalListeners() {
+        registerGlobalListeners():void {
             $(window).on('component.onParagraphEdit', (event:JQueryEventObject, component:JQuery) => {
                 this.show(component);
             });
@@ -28,7 +28,7 @@ module LiveEdit.ui {
             });
         }
 
-        addView() {
+        addView():void {
             var html = '<div class="live-edit-editor-toolbar live-edit-arrow-bottom" style="display: none">' +
                 '    <button data-tag="paste" class="live-edit-editor-button"></button>' +
                 '    <button data-tag="insertUnorderedList" class="live-edit-editor-button"></button>' +
@@ -52,7 +52,7 @@ module LiveEdit.ui {
         }
 
 
-        addEvents() {
+        addEvents():void {
             this.getRootEl().on('click', (event) => {
 
                 // Make sure component is not deselected when the toolbar is clicked.
@@ -72,25 +72,25 @@ module LiveEdit.ui {
             });
         }
 
-        show($component) {
-            this.selectedComponent = $component;
+        show(component:JQuery):void {
+            this.selectedComponent = component;
 
             this.getRootEl().show();
             this.toggleArrowPosition(false);
             this.updatePosition();
         }
 
-        hide() {
+        hide():void {
             this.selectedComponent = null;
             this.getRootEl().hide();
         }
 
-        updatePosition() {
+        updatePosition():void {
             if (!this.selectedComponent) {
                 return;
             }
 
-            var defaultPosition = this.getDefaultPosition();
+            var defaultPosition = this.getPositionRelativeToComponentTop();
 
             var stick = $(window).scrollTop() >= this.selectedComponent.offset().top - 60;
 
@@ -116,7 +116,7 @@ module LiveEdit.ui {
         }
 
 
-        toggleArrowPosition(showArrowAtTop) {
+        toggleArrowPosition(showArrowAtTop:Boolean):void {
             if (showArrowAtTop) {
                 this.getRootEl().removeClass('live-edit-arrow-bottom').addClass('live-edit-arrow-top');
             } else {
@@ -125,8 +125,7 @@ module LiveEdit.ui {
         }
 
 
-        // Rename
-        getDefaultPosition() {
+        getPositionRelativeToComponentTop():any {
             var componentBox = componentHelper.getBoxModel(this.selectedComponent),
                 leftPos = componentBox.left + (componentBox.width / 2 - this.getRootEl().outerWidth() / 2),
                 topPos = componentBox.top - this.getRootEl().height() - 25;

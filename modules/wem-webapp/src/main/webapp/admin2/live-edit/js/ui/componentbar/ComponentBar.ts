@@ -42,7 +42,7 @@ module LiveEdit.ui {
         }
 
 
-        getComponentsDataUrl() {
+        getComponentsDataUrl():string {
             return '../../../admin2/live-edit/data/mock-components.json';
         }
 
@@ -66,7 +66,7 @@ module LiveEdit.ui {
             this.appendTo($('body'));
         }
 
-        registerGlobalListeners() {
+        registerGlobalListeners():void {
             $(window).on('component.onSelect component.onDragStart component.onSortStart', () => {
                 this.fadeOut();
             });
@@ -76,7 +76,7 @@ module LiveEdit.ui {
             });
         }
 
-        registerEvents() {
+        registerEvents():void {
             this.getToggle().click(() => {
                 this.toggle();
             });
@@ -91,14 +91,14 @@ module LiveEdit.ui {
             });
         }
 
-        loadComponentsData() {
+        loadComponentsData():void {
             $.getJSON(this.getComponentsDataUrl(), null, (data, textStatus, jqXHR) => {
                 this.renderComponents(data);
                 $(window).trigger('componentBar.dataLoaded');
             });
         }
 
-        renderComponents(jsonData:ComponentsJson) {
+        renderComponents(jsonData:ComponentsJson):void {
             var groups = jsonData.componentGroups;
             $.each(groups, (index, group:ComponentGroup) => {
                 this.addHeader(group);
@@ -108,7 +108,7 @@ module LiveEdit.ui {
             });
         }
 
-        addHeader(componentGroup:ComponentGroup) {
+        addHeader(componentGroup:ComponentGroup):void {
             var html = '';
 
             html += '<li class="live-edit-component-list-header">';
@@ -123,7 +123,7 @@ module LiveEdit.ui {
             });
         }
 
-        addComponent(component:Component) {
+        addComponent(component:Component):void {
             var html = '';
 
             html += '<li class="live-edit-component" data-live-edit-component-key="' + component.key + '" data-live-edit-component-name="' + component.name + '" data-live-edit-component-type="' + component.type + '">';
@@ -136,7 +136,7 @@ module LiveEdit.ui {
             this.getComponentsContainer().append(html);
         }
 
-        filterList(value) {
+        filterList(value):void {
             var $element,
                 name,
                 valueLowerCased = value.toLowerCase();
@@ -150,7 +150,7 @@ module LiveEdit.ui {
             });
         }
 
-        toggle() {
+        toggle():void {
             if (this.hidden) {
                 this.show();
                 this.hidden = false;
@@ -160,14 +160,14 @@ module LiveEdit.ui {
             }
         }
 
-        show() {
+        show():void {
             var $bar = this.getBar();
             $bar.css('right', '0');
             this.getToggleTextContainer().text('');
             $bar.removeClass('live-edit-collapsed');
         }
 
-        hide() {
+        hide():void {
             var $bar = this.getBar();
             $bar.css('right', '-' + this.INNER_WIDTH + 'px');
             this.getToggleTextContainer().text('Toolbar');
@@ -175,7 +175,7 @@ module LiveEdit.ui {
         }
 
 
-        fadeIn(triggerConfig) {
+        fadeIn(triggerConfig):void {
             // componenttip/menu.js triggers a component.onDeselect event
             // which results in that the bar is faded in (see the listeners above)
             // The triggerConfig is a temporary workaround until we get this right.
@@ -185,31 +185,31 @@ module LiveEdit.ui {
             this.getBar().fadeIn(120);
         }
 
-        fadeOut() {
+        fadeOut():void {
             this.getBar().fadeOut(120);
         }
 
-        getBar() {
+        getBar():JQuery {
             return this.getRootEl();
         }
 
-        getToggle() {
+        getToggle():JQuery {
             return $('.live-edit-toggle-components-container', this.getRootEl());
         }
 
-        getFilterInput() {
+        getFilterInput():JQuery {
             return $('.live-edit-form-container input[name=filter]', this.getRootEl());
         }
 
-        getComponentsContainer() {
+        getComponentsContainer():JQuery {
             return $('.live-edit-components ul', this.getRootEl());
         }
 
-        getComponentList() {
+        getComponentList():JQuery {
             return $('.live-edit-component', this.getRootEl());
         }
 
-        getToggleTextContainer() {
+        getToggleTextContainer():JQuery {
             return $('.live-edit-toggle-text-container', this.getRootEl());
         }
 

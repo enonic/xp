@@ -12,7 +12,7 @@ module LiveEdit.ui {
             this.init();
         }
 
-        init() {
+        init():void {
             var $button = this.createButton({
                 text: 'Empty',
                 id: 'live-edit-button-clear',

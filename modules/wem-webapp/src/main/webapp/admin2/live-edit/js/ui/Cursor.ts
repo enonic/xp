@@ -7,7 +7,7 @@ module LiveEdit.ui {
             this.registerGlobalListeners();
         }
 
-        private registerGlobalListeners() {
+        private registerGlobalListeners():void {
             $(window).on('component.mouseOver component.onSelect', (event:JQueryEventObject, component:JQuery) => {
                 this.updateCursor(event, component);
             });
@@ -16,7 +16,7 @@ module LiveEdit.ui {
             });
         }
 
-        private updateCursor(event, component:JQuery) {
+        private updateCursor(event, component:JQuery):void {
             var componentType = LiveEdit.ComponentHelper.getComponentType(component);
             var $body = $('body');
             var cursor = 'default';
@@ -40,7 +40,7 @@ module LiveEdit.ui {
             $body.css('cursor', cursor);
         }
 
-        private resetCursor() {
+        private resetCursor():void {
             $('body').css('cursor', 'default');
         }
 

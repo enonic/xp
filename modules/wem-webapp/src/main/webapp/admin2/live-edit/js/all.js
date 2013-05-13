@@ -246,8 +246,8 @@ var LiveEdit;
         DragDropSort.prototype.updateHelperStatusIcon = function (status) {
             $('#live-edit-drag-helper-status-icon').attr('src', '../../../admin2/live-edit/images/drop-' + status + '.gif');
         };
-        DragDropSort.prototype.targetIsPlaceholder = function ($target) {
-            return $target.hasClass('live-edit-drop-target-placeholder');
+        DragDropSort.prototype.targetIsPlaceholder = function (target) {
+            return target.hasClass('live-edit-drop-target-placeholder');
         };
         DragDropSort.prototype.handleSortStart = function (event, ui) {
             _isDragging = true;
@@ -318,9 +318,6 @@ var LiveEdit;
             ]);
             ui.item.removeData('live-edit-selected-on-drag-start');
         };
-        DragDropSort.prototype.itemIsDraggedFromComponentBar = function (item) {
-            return item.hasClass('live-edit-component');
-        };
         DragDropSort.prototype.handleReceive = function (event, ui) {
             var _this = this;
             if(this.itemIsDraggedFromComponentBar(ui.item)) {
@@ -340,6 +337,9 @@ var LiveEdit;
                     $(window).trigger('component.onSortUpdate');
                 });
             }
+        };
+        DragDropSort.prototype.itemIsDraggedFromComponentBar = function (item) {
+            return item.hasClass('live-edit-component');
         };
         DragDropSort.prototype.addPaddingToLayoutComponent = function ($component) {
             $component.closest(layoutSelector).addClass('live-edit-component-padding');
@@ -786,8 +786,6 @@ var LiveEdit;
                 this.replaceElementsWithPlaceholders();
                 console.log('HtmlElementReplacer instantiated. Using jQuery ' + $().jquery);
             }
-            HtmlElementReplacer.prototype.registerGlobalListeners = function () {
-            };
             HtmlElementReplacer.prototype.replaceElementsWithPlaceholders = function () {
                 var _this = this;
                 var elements = this.getElements();
@@ -937,8 +935,8 @@ var LiveEdit;
                     }
                 });
             };
-            EditorToolbar.prototype.show = function ($component) {
-                this.selectedComponent = $component;
+            EditorToolbar.prototype.show = function (component) {
+                this.selectedComponent = component;
                 this.getRootEl().show();
                 this.toggleArrowPosition(false);
                 this.updatePosition();
@@ -951,7 +949,7 @@ var LiveEdit;
                 if(!this.selectedComponent) {
                     return;
                 }
-                var defaultPosition = this.getDefaultPosition();
+                var defaultPosition = this.getPositionRelativeToComponentTop();
                 var stick = $(window).scrollTop() >= this.selectedComponent.offset().top - 60;
                 var el = this.getRootEl();
                 if(stick) {
@@ -977,7 +975,7 @@ var LiveEdit;
                     this.getRootEl().removeClass('live-edit-arrow-top').addClass('live-edit-arrow-bottom');
                 }
             };
-            EditorToolbar.prototype.getDefaultPosition = function () {
+            EditorToolbar.prototype.getPositionRelativeToComponentTop = function () {
                 var componentBox = componentHelper.getBoxModel(this.selectedComponent), leftPos = componentBox.left + (componentBox.width / 2 - this.getRootEl().outerWidth() / 2), topPos = componentBox.top - this.getRootEl().height() - 25;
                 return {
                     left: leftPos,
@@ -1011,7 +1009,7 @@ var LiveEdit;
                 $(window).on('component.onSelect component.onParagraphEdit', function (event, component) {
                     _this.show(component);
                 });
-                $(window).on('component.onDeselect component.onRemove component.onSortStart', function (event, component) {
+                $(window).on('component.onDeselect component.onRemove component.onSortStart', function () {
                     _this.hide();
                 });
                 $(window).on('liveEdit.onWindowResize', function () {
@@ -1041,12 +1039,12 @@ var LiveEdit;
             Shader.prototype.show = function ($component) {
                 this.selectedComponent = $component;
                 if(componentHelper.getComponentType($component) === 'page') {
-                    this.showForPage($component);
+                    this.showForPage();
                 } else {
                     this.showForComponent($component);
                 }
             };
-            Shader.prototype.showForPage = function ($component) {
+            Shader.prototype.showForPage = function () {
                 this.hide();
                 $('#live-edit-page-shader').css({
                     top: 0,

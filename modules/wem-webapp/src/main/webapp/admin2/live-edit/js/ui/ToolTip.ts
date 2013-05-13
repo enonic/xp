@@ -1,3 +1,8 @@
+interface ToolTipPosition {
+    x: number;
+    y: number;
+}
+
 module LiveEdit.ui {
     var $ = $liveedit;
 
@@ -17,14 +22,14 @@ module LiveEdit.ui {
             console.log('ToolTip instantiated. Using jQuery ' + $().jquery);
         }
 
-        private registerGlobalListeners() {
+        private registerGlobalListeners():void {
             $(window).on('component.onSelect', () => {
                 this.hide();
             });
         }
 
 
-        private addView() {
+        private addView():void {
             var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
                 '    <span class="live-edit-tool-tip-name-text"></span>' +
                 '    <span class="live-edit-tool-tip-type-text"></span> ' +
@@ -35,14 +40,14 @@ module LiveEdit.ui {
         }
 
 
-        private  setText(componentType, componentName) {
+        private  setText(componentType, componentName):void {
             var $tooltip = this.getRootEl();
             $tooltip.children('.live-edit-tool-tip-type-text').text(componentType);
             $tooltip.children('.live-edit-tool-tip-name-text').text(componentName);
         }
 
 
-        private attachEventListeners() {
+        private attachEventListeners():void {
 
             $(document).on('mousemove', '[data-live-edit-type]', (event) => {
                 var targetIsUiComponent = $(event.target).is('[id*=live-edit-ui-cmp]') ||
@@ -79,7 +84,7 @@ module LiveEdit.ui {
         }
 
 
-        getPosition(event) {
+        getPosition(event):ToolTipPosition {
             var pageX = event.pageX;
             var pageY = event.pageY;
             var x = pageX + this.OFFSET_X;
@@ -95,7 +100,6 @@ module LiveEdit.ui {
             if (y + toolTipHeight > (viewPortSize.height + scrollTop - this.OFFSET_Y * 2)) {
                 y = pageY - toolTipHeight - (this.OFFSET_Y * 2);
             }
-
             return {
                 x: x,
                 y: y
@@ -103,7 +107,7 @@ module LiveEdit.ui {
         }
 
 
-        hide() {
+        hide():void {
             this.getRootEl().css({
                 top: '-5000px',
                 left: '-5000px'

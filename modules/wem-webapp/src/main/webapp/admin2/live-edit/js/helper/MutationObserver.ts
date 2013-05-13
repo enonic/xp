@@ -11,7 +11,7 @@ module LiveEdit {
         }
 
 
-        private registerGlobalListeners() {
+        private registerGlobalListeners():void {
             $(window).on('component.onParagraphEdit', (event:JQueryEventObject, component:JQuery) => {
                 this.observe(event, component)
             });
@@ -21,7 +21,7 @@ module LiveEdit {
         }
 
 
-        private observe(event:JQueryEventObject, component:JQuery) {
+        private observe(event:JQueryEventObject, component:JQuery):void {
             var isBeingObserved:Boolean = this.observedComponent && this.observedComponent[0] === component[0];
             if (isBeingObserved) {
                 return;
@@ -43,7 +43,7 @@ module LiveEdit {
         }
 
 
-        private disconnect(event:JQueryEventObject) {
+        private disconnect(event:JQueryEventObject):void {
             var targetComponentIsSelected = (this.observedComponent && this.observedComponent.hasClass('live-edit-selected-component'));
             var componentIsSelectedAndUserMouseOut = event.type === 'component.mouseOut' && targetComponentIsSelected;
             if (componentIsSelectedAndUserMouseOut) {
@@ -60,7 +60,7 @@ module LiveEdit {
         }
 
 
-        private onMutate(summaries:any, event:JQueryEventObject) {
+        private onMutate(summaries:any, event:JQueryEventObject):void {
             if (summaries && summaries[0]) {
                 var $targetComponent = $(summaries[0].target),
                     targetComponentIsSelected = $targetComponent.hasClass('live-edit-selected-component'),
@@ -75,7 +75,6 @@ module LiveEdit {
                 }
             }
         }
-
 
     }
 }

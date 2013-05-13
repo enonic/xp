@@ -18,14 +18,14 @@ module LiveEdit.model {
         }
 
 
-        private registerGlobalListeners() {
+        private registerGlobalListeners():void {
             $(window).on('component.onSortUpdate component.onSortOver component.onRemove', () => {
                 this.renderEmptyPlaceholders();
             });
         }
 
 
-        private renderEmptyPlaceholders() {
+        private renderEmptyPlaceholders():void {
             this.removeAllRegionPlaceholders();
             var regions = this.getAll(),
                 region:JQuery;
@@ -40,7 +40,7 @@ module LiveEdit.model {
         }
 
 
-        private appendEmptyPlaceholder($region) {
+        private appendEmptyPlaceholder($region):void {
             var html = '<div>Drag components here</div>';
             html += '<div style="font-size: 10px;">' + componentHelper.getComponentName($region) + '</div>';
             var $placeholder = $('<div/>', {
@@ -51,14 +51,14 @@ module LiveEdit.model {
         }
 
 
-        private isRegionEmpty($region) {
-            var hasNotParts = $region.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
-            var hasNotDropTargetPlaceholder = $region.children('.live-edit-drop-target-placeholder').length === 0;
+        private isRegionEmpty($region:JQuery):Boolean {
+            var hasNotParts:Boolean = $region.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
+            var hasNotDropTargetPlaceholder:Boolean = $region.children('.live-edit-drop-target-placeholder').length === 0;
             return hasNotParts && hasNotDropTargetPlaceholder;
         }
 
 
-        private removeAllRegionPlaceholders() {
+        private removeAllRegionPlaceholders():void {
             $('.live-edit-empty-region-placeholder').remove();
         }
 

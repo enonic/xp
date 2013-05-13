@@ -28,7 +28,7 @@ module LiveEdit.ui {
         }
 
 
-        registerGlobalListeners() {
+        registerGlobalListeners():void {
             $(window).on('component.onSelect', (event, $component, pagePosition) => {
                 this.show(event, $component, pagePosition);
             });
@@ -43,7 +43,7 @@ module LiveEdit.ui {
         }
 
 
-        addView() {
+        addView():void {
             var html = '';
             html += '<div class="live-edit-component-menu live-edit-arrow-top" style="display: none">';
             html += '   <div class="live-edit-component-menu-title-bar">';
@@ -61,7 +61,7 @@ module LiveEdit.ui {
         }
 
 
-        registerEvents() {
+        registerEvents():void {
             this.getRootEl().draggable({
                 handle: '.live-edit-component-menu-title-bar',
                 addClasses: false
@@ -73,7 +73,7 @@ module LiveEdit.ui {
         }
 
 
-        show(event, $component, pagePosition) {
+        show(event, $component, pagePosition):void {
             this.selectedComponent = $component;
             this.previousPagePositions = pagePosition;
             this.previousPageSizes = domHelper.getViewPortSize();
@@ -92,14 +92,14 @@ module LiveEdit.ui {
         }
 
 
-        hide() {
+        hide():void {
             this.selectedComponent = null;
             this.getRootEl().hide();
             this.hidden = true;
         }
 
 
-        fadeOutAndHide() {
+        fadeOutAndHide():void {
             this.getRootEl().fadeOut(500, () => {
                 this.hide();
                 $(window).trigger('component.onDeselect', {showComponentBar: false});
@@ -108,7 +108,7 @@ module LiveEdit.ui {
         }
 
 
-        moveToXY(x, y) {
+        moveToXY(x, y):void {
             this.getRootEl().css({
                 left: x,
                 top: y
@@ -116,7 +116,7 @@ module LiveEdit.ui {
         }
 
 
-        addButtons() {
+        addButtons():void {
             var parentButton = new LiveEdit.ui.ParentButton(this);
             var settingsButton = new LiveEdit.ui.SettingsButton(this);
             var detailsButton = new LiveEdit.ui.DetailsButton(this);
@@ -136,7 +136,7 @@ module LiveEdit.ui {
         }
 
 
-        updateMenuItemsForComponent($component) {
+        updateMenuItemsForComponent($component):void {
             var componentType = componentHelper.getComponentType($component);
             var buttonArray = this.getConfigForButton(componentType);
             var buttons = this.getButtons();
@@ -155,19 +155,19 @@ module LiveEdit.ui {
         }
 
 
-        updateTitleBar($component) {
+        updateTitleBar($component):void {
             var componentInfo = componentHelper.getComponentInfo($component);
             this.setIcon(componentInfo.type);
             this.setTitle(componentInfo.name);
         }
 
 
-        setTitle(titleText) {
+        setTitle(titleText):void {
             this.getTitleElement().text(titleText);
         }
 
 
-        setIcon(componentType) {
+        setIcon(componentType):void {
             var $iconCt = this.getIconElement(),
                 iconCls = this.resolveCssClassForComponentType(componentType);
             $iconCt.children('div').attr('class', iconCls);
@@ -175,8 +175,8 @@ module LiveEdit.ui {
         }
 
 
-        resolveCssClassForComponentType(componentType) {
-            var iconCls;
+        resolveCssClassForComponentType(componentType:string):string {
+            var iconCls:string;
 
             switch (componentType) {
                 case 'page':
@@ -211,37 +211,37 @@ module LiveEdit.ui {
         }
 
 
-        getButtons() {
+        getButtons():any[] {
             return this.buttons;
         }
 
 
-        getConfigForButton(componentType) {
+        getConfigForButton(componentType):any {
             return this.buttonConfig[componentType];
         }
 
 
-        getIconElement() {
+        getIconElement():JQuery {
             return $('.live-edit-component-menu-title-icon', this.getRootEl());
         }
 
 
-        getTitleElement() {
+        getTitleElement():JQuery {
             return $('.live-edit-component-menu-title-text', this.getRootEl());
         }
 
 
-        getCloseButton() {
+        getCloseButton():JQuery {
             return $('.live-edit-component-menu-title-close-button', this.getRootEl());
         }
 
 
-        getMenuItemsPlaceholderElement() {
+        getMenuItemsPlaceholderElement():JQuery {
             return $('.live-edit-component-menu-items', this.getRootEl());
         }
 
 
-        handleWindowResize(event) {
+        handleWindowResize(event):void {
             if (this.selectedComponent) {
                 var x = this.previousPagePositions.x,
                     y = this.previousPagePositions.y;

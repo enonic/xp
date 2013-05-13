@@ -13,7 +13,7 @@ module LiveEdit.ui {
             this.init();
         }
 
-        init() {
+        init():void {
             var $button = this.createButton({
                 id: 'live-edit-button-parent',
                 text: 'Select Parent',
@@ -48,7 +48,7 @@ module LiveEdit.ui {
         }
 
 
-        scrollComponentIntoView($component) {
+        scrollComponentIntoView($component):void {
             var componentTopPosition = componentHelper.getPagePositionForComponent($component).top;
             if (componentTopPosition <= window.pageYOffset) {
                 $('html, body').animate({scrollTop: componentTopPosition - 10}, 200);

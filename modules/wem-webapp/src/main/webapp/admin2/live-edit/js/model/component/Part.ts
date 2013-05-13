@@ -15,7 +15,7 @@ module LiveEdit.model {
             console.log('Part model instantiated. Using jQuery ' + $().jquery);
         }
 
-        private renderEmptyPlaceholders() {
+        private renderEmptyPlaceholders():void {
             var parts = this.getAll(),
                 part:JQuery;
             parts.each((i) => {
@@ -26,7 +26,7 @@ module LiveEdit.model {
             });
         }
 
-        private appendEmptyPlaceholder(part:JQuery) {
+        private appendEmptyPlaceholder(part:JQuery):void {
             var $placeholder = $('<div/>', {
                 'class': 'live-edit-empty-part-placeholder',
                 'html': 'Empty Part'
@@ -34,7 +34,7 @@ module LiveEdit.model {
             part.append($placeholder);
         }
 
-        private isPartEmpty(part:JQuery) {
+        private isPartEmpty(part:JQuery):Boolean {
             return $(part).children().length === 0;
         }
 

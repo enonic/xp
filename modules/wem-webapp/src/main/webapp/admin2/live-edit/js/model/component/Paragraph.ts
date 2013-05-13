@@ -26,7 +26,7 @@ module LiveEdit.model {
         }
 
 
-        registerGlobalListeners() {
+        registerGlobalListeners():void {
             $(window).on('shader.onClick component.onDeselect', (event:JQueryEventObject) => {
                 this.leaveEditMode();
             });
@@ -34,14 +34,14 @@ module LiveEdit.model {
 
 
         // Override base attachClickEvent
-        attachClickEvent() {
+        attachClickEvent():void {
             $(document).on('click contextmenu touchstart', this.cssSelector, (event:JQueryEventObject) => {
                 this.handleClick(event);
             });
         }
 
 
-        handleClick(event) {
+        handleClick(event):void {
             event.stopPropagation();
             event.preventDefault();
 
@@ -69,7 +69,7 @@ module LiveEdit.model {
         }
 
 
-        setSelectMode(event:JQueryEventObject) {
+        setSelectMode(event:JQueryEventObject):void {
             this.selectedParagraph.css('cursor', 'url(../../../admin2/live-edit/images/pencil.png) 0 40, text');
 
             this.currentMode = this.modes.SELECTED;
@@ -89,7 +89,7 @@ module LiveEdit.model {
         }
 
 
-        setEditMode() {
+        setEditMode():void {
             var $paragraph = this.selectedParagraph;
 
             $(window).trigger('component.onParagraphEdit', [this.selectedParagraph]);
@@ -101,7 +101,7 @@ module LiveEdit.model {
         }
 
 
-        leaveEditMode() {
+        leaveEditMode():void {
             var $paragraph = this.selectedParagraph;
             if ($paragraph === null) {
                 return;

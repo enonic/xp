@@ -21,12 +21,12 @@ module LiveEdit.ui {
         }
 
 
-        registerGlobalListeners() {
+        registerGlobalListeners():void {
             $(window).on('component.onSelect component.onParagraphEdit', (event:JQueryEventObject, component:JQuery) => {
                 this.show(component);
             });
 
-            $(window).on('component.onDeselect component.onRemove component.onSortStart', (event:JQueryEventObject, component:JQuery) => {
+            $(window).on('component.onDeselect component.onRemove component.onSortStart', () => {
                 this.hide();
             });
 
@@ -36,7 +36,7 @@ module LiveEdit.ui {
         }
 
 
-        addView() {
+        addView():void {
             var $body = $('body');
 
             this.$pageShader = $body.append('<div class="live-edit-shader" id="live-edit-page-shader"><!-- --></div>');
@@ -55,7 +55,7 @@ module LiveEdit.ui {
         }
 
 
-        addEvents() {
+        addEvents():void {
             $('.live-edit-shader').on('click contextmenu', function (event) {
                 event.stopPropagation();
                 event.preventDefault();
@@ -65,17 +65,17 @@ module LiveEdit.ui {
         }
 
 
-        show($component) {
+        show($component):void {
             this.selectedComponent = $component;
             if (componentHelper.getComponentType($component) === 'page') {
-                this.showForPage($component);
+                this.showForPage();
             } else {
                 this.showForComponent($component);
             }
         }
 
 
-        showForPage($component) {
+        showForPage():void {
             this.hide();
 
             $('#live-edit-page-shader').css({
@@ -87,7 +87,7 @@ module LiveEdit.ui {
         }
 
 
-        showForComponent($component) {
+        showForComponent($component):void {
             var documentSize = LiveEdit.DomHelper.getDocumentSize(),
                 docWidth = documentSize.width,
                 docHeight = documentSize.height;
@@ -128,14 +128,14 @@ module LiveEdit.ui {
         }
 
 
-        hide() {
+        hide():void {
             this.selectedComponent = null;
             var $shaders = $('.live-edit-shader');
             $shaders.hide();
         }
 
 
-        handleWindowResize() {
+        handleWindowResize():void {
             if (this.selectedComponent) {
                 this.show(this.selectedComponent)
             }

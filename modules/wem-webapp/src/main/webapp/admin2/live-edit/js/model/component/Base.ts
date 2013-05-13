@@ -35,7 +35,7 @@ module LiveEdit.model {
         }
 
 
-        attachClickEvent() {
+        attachClickEvent():void {
 
             $(document).on('click contextmenu touchstart', this.cssSelector, (event:JQueryEventObject) => {
                 // Is this needed? We are using $.on with a delegate so the target would always be a LE component
@@ -65,17 +65,17 @@ module LiveEdit.model {
         }
 
 
-        hasComponentSelected() {
+        hasComponentSelected():Boolean {
             return $('.live-edit-selected-component').length > 0;
         }
 
 
-        isLiveEditUiComponent(target:JQuery) {
+        isLiveEditUiComponent(target:JQuery):Boolean {
             return target.is('[id*=live-edit-ui-cmp]') || target.parents('[id*=live-edit-ui-cmp]').length > 0;
         }
 
 
-        getAll() {
+        getAll():JQuery {
             return $(this.cssSelector);
         }
 
