@@ -7,7 +7,6 @@ Ext.define('Admin.controller.DetailToolbarController', {
     models: [
     ],
     views: [
-        'Admin.view.DetailToolbar'
     ],
 
     init: function () {

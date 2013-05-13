@@ -1,34 +1,33 @@
-Ext.define('Admin.view.DetailToolbar', {
-    extend: 'Ext.toolbar.Toolbar',
-    alias: 'widget.spaceDetailToolbar',
+module admin.ui {
 
-    cls: 'admin-toolbar',
+    export class DetailToolbar {
+        ext;
 
-    defaults: {
-        scale: 'medium'
-    },
-
-    initComponent: function () {
-
-        this.items = <any[]>[
-
-            {
+        constructor() {
+            var tbar = new Ext.toolbar.Toolbar({
+                itemId: 'spaceDetailToolbar',
+                cls: 'admin-toolbar',
+                defaults: {
+                    scale: 'medium'
+                }
+            });
+            var editButton = new Ext.button.Button({
                 text: 'Edit',
                 action: 'editSpace'
-            },
-            {
+            });
+            var deleteButton = new Ext.button.Button({
                 text: 'Delete',
                 action: 'deleteSpace'
-            },
-            '->',
-            {
+            });
+            var separator = new Ext.toolbar.Fill();
+            var closeButton = new Ext.button.Button({
                 text: 'Close',
                 action: 'closeSpace'
-            }
+            });
+            tbar.add([editButton, deleteButton, separator, closeButton]);
 
-        ];
-
-        this.callParent(arguments);
+            this.ext = tbar;
+        }
     }
 
-});
+}

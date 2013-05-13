@@ -2154,32 +2154,45 @@ var admin;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
-Ext.define('Admin.view.DetailToolbar', {
-    extend: 'Ext.toolbar.Toolbar',
-    alias: 'widget.spaceDetailToolbar',
-    cls: 'admin-toolbar',
-    defaults: {
-        scale: 'medium'
-    },
-    initComponent: function () {
-        this.items = [
-            {
-                text: 'Edit',
-                action: 'editSpace'
-            }, 
-            {
-                text: 'Delete',
-                action: 'deleteSpace'
-            }, 
-            '->', 
-            {
-                text: 'Close',
-                action: 'closeSpace'
+var admin;
+(function (admin) {
+    (function (ui) {
+        var DetailToolbar = (function () {
+            function DetailToolbar() {
+                var tbar = new Ext.toolbar.Toolbar({
+                    itemId: 'spaceDetailToolbar',
+                    cls: 'admin-toolbar',
+                    defaults: {
+                        scale: 'medium'
+                    }
+                });
+                var editButton = new Ext.button.Button({
+                    text: 'Edit',
+                    action: 'editSpace'
+                });
+                var deleteButton = new Ext.button.Button({
+                    text: 'Delete',
+                    action: 'deleteSpace'
+                });
+                var separator = new Ext.toolbar.Fill();
+                var closeButton = new Ext.button.Button({
+                    text: 'Close',
+                    action: 'closeSpace'
+                });
+                tbar.add([
+                    editButton, 
+                    deleteButton, 
+                    separator, 
+                    closeButton
+                ]);
+                this.ext = tbar;
             }
-        ];
-        this.callParent(arguments);
-    }
-});
+            return DetailToolbar;
+        })();
+        ui.DetailToolbar = DetailToolbar;        
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
 var admin;
 (function (admin) {
     (function (ui) {
@@ -4456,9 +4469,7 @@ Ext.define('Admin.controller.DetailToolbarController', {
     extend: 'Admin.controller.Controller',
     stores: [],
     models: [],
-    views: [
-        'Admin.view.DetailToolbar'
-    ],
+    views: [],
     init: function () {
         this.control({
             'spaceDetailToolbar *[action=closeSpace]': {
