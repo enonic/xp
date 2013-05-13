@@ -224,11 +224,23 @@ module admin.ui {
                 added = added.concat(this.nonClosableItems.add(nonClosableItems));
             }
             if (editItems.length > 0) {
-                added = added.concat(this.editItems.add(editItems));
+                var editItemObjects = [];
+                Ext.Array.each(editItems, (editItem) => {
+                    // defaultType: 'topBarMenuItem'
+                    if (!editItem.xtype) {
+                        var tbmi = new admin.ui.TopBarMenuItem(editItem.text1, editItem.text2).ext;
+                        editItemObjects.push(tbmi);
+                    } else {
+                        editItemObjects.push(editItem);
+                    }
+                });
+
+                added = added.concat(this.editItems.add(editItemObjects));
             }
             if (viewItems.length > 0) {
                 var viewItemObjects = [];
                 Ext.Array.each(viewItems, (viewItem) => {
+                    // defaultType: 'topBarMenuItem'
                     if (!viewItem.xtype) {
                         var tbmi = new admin.ui.TopBarMenuItem(viewItem.text1, viewItem.text2).ext;
                         viewItemObjects.push(tbmi);
