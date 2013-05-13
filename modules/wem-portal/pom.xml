@@ -11,15 +11,9 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <groupId>com.enonic.wem.tools</groupId>
-  <artifactId>tools</artifactId>
-  <packaging>pom</packaging>
-  <name>Enonic WEM Tools</name>
-
-  <modules>
-    <module>runner</module>
-    <module>maven-tools</module>
-  </modules>
+  <artifactId>wem-portal</artifactId>
+  <packaging>jar</packaging>
+  <name>Enonic WEM Portal</name>
 
 </project>
         
