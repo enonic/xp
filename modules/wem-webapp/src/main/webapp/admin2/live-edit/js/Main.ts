@@ -70,7 +70,7 @@ declare var AdminLiveEdit;
             new LiveEdit.ui.ComponentBar();
             new LiveEdit.MutationObserver();
 
-            AdminLiveEdit.DragDropSort.initialize();
+            new AdminLiveEdit.DragDropSort();
 
             $(window).resize(() => {
                 $(window).trigger('liveEdit.onWindowResize');

@@ -1,14 +1,14 @@
-AdminLiveEdit.namespace.useNamespace('AdminLiveEdit.DragDropSort');
 /*
  This code contains a lot of prototype coding at the moment.
  A clean up should be done when Live Edit is specked
  */
-AdminLiveEdit.DragDropSort = (function ($) {
-    'use strict';
+
+module AdminLiveEdit {
+    var $ = $liveedit;
 
     var componentHelper = LiveEdit.ComponentHelper;
 
-    var isDragging = false;
+    var _isDragging = false;
 
     var cursorAt = LiveEdit.ComponentHelper.supportsTouch() ? {left: 15, top: 70} : {left: -10, top: -15};
 
@@ -22,292 +22,288 @@ AdminLiveEdit.DragDropSort = (function ($) {
 
     var itemsToSortSelector = layoutSelector + ',' + partSelector + ',' + paragraphSelector;
 
-    function enableDragDrop() {
-        $(regionSelector).sortable('enable');
-    }
+    export class DragDropSort {
+
+        constructor() {
+            this.createSortable();
+            this.registerGlobalListeners();
+        }
 
 
-    function disableDragDrop() {
-        $(regionSelector).sortable('disable');
-    }
+        public static isDragging() {
+            return _isDragging;
+        }
 
 
-    function getDragHelperHtml(text) {
-        // Override jQueryUi inline width/height
-        return '<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' +
-               '    <img id="live-edit-drag-helper-status-icon" src="../../../admin2/live-edit/images/drop-no.gif"/>' +
-               '    <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' +
-               '</div>';
-    }
+        private enableDragDrop() {
+            $(regionSelector).sortable('enable');
+        }
 
 
-    function setDragHelperText(text) {
-        $('#live-edit-drag-helper-text').text(text);
-    }
+        private disableDragDrop() {
+            $(regionSelector).sortable('disable');
+        }
 
 
-    function createComponentBarDraggables() {
-        var $componentBarComponents = $('.live-edit-component');
-        var draggableOptions = {
-            connectToSortable: regionSelector,
-            addClasses: false,
-            cursor: 'move',
-            appendTo: 'body',
-            zIndex: 5100000,
-            // The revert property seems buggy and undocumented.
-            // When setting it to 'invalid' the dragged element sometimes reverts when the drop was valid
-            // It is possible to use a function that gets a "valid-drop" argument and create your own logic, but the dragged element still reverts
-            revert: function (validDrop) {
-            },
-            cursorAt: cursorAt,
-            helper: function () {
-                return getDragHelperHtml('');
-            },
-            start: function (event, ui) {
-                $(window).trigger('component.onDragStart', [event, ui]);
-                setDragHelperText($(event.target).data('live-edit-component-name'));
-                isDragging = true;
-            },
-            stop: function (event, ui) {
-                $(window).trigger('component.onDragStop', [event, ui]);
-                isDragging = false;
+        private getDragHelperHtml(text) {
+            // Override jQueryUi inline width/height
+            return '<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' +
+                '    <img id="live-edit-drag-helper-status-icon" src="../../../admin2/live-edit/images/drop-no.gif"/>' +
+                '    <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' +
+                '</div>';
+        }
+
+
+        private setDragHelperText(text) {
+            $('#live-edit-drag-helper-text').text(text);
+        }
+
+
+        private createComponentBarDraggables() {
+            var $componentBarComponents = $('.live-edit-component');
+            var draggableOptions = {
+                connectToSortable: regionSelector,
+                addClasses: false,
+                cursor: 'move',
+                appendTo: 'body',
+                zIndex: 5100000,
+                // The revert property seems buggy and undocumented.
+                // When setting it to 'invalid' the dragged element sometimes reverts when the drop was valid
+                // It is possible to use a function that gets a "valid-drop" argument and create your own logic, but the dragged element still reverts
+                revert: (validDrop) => {
+                },
+                cursorAt: cursorAt,
+                helper: () => {
+                    return this.getDragHelperHtml('');
+                },
+                start: (event, ui) => {
+                    $(window).trigger('component.onDragStart', [event, ui]);
+                    this.setDragHelperText($(event.target).data('live-edit-component-name'));
+                    _isDragging = true;
+                },
+                stop: (event, ui) => {
+                    $(window).trigger('component.onDragStop', [event, ui]);
+                    _isDragging = false;
+                }
+            };
+            $componentBarComponents.draggable(draggableOptions);
+        }
+
+
+        private createDragHelper(event, helper) {
+            return $(this.getDragHelperHtml(componentHelper.getComponentName(helper)));
+        }
+
+
+        private refreshSortable() {
+            $(regionSelector).sortable('refresh');
+        }
+
+
+        private updateHelperStatusIcon(status) {
+            $('#live-edit-drag-helper-status-icon').attr('src', '../../../admin2/live-edit/images/drop-' + status + '.gif');
+        }
+
+
+        private targetIsPlaceholder($target) {
+            return $target.hasClass('live-edit-drop-target-placeholder')
+        }
+
+
+        private handleSortStart(event, ui) {
+            _isDragging = true;
+
+            // Temporary store the selection info during the drag drop lifecycle.
+            // Data is nullified on drag stop.
+            var componentIsSelected = ui.item.hasClass('live-edit-selected-component');
+            ui.item.data('live-edit-selected-on-sort-start', componentIsSelected);
+
+            var targetComponentName = LiveEdit.ComponentHelper.getComponentName($(event.target));
+            ui.placeholder.html('Drop component here' + '<div style="font-size: 10px;">' + targetComponentName + '</div>');
+
+            this.refreshSortable();
+
+            $(window).trigger('component.onSortStart', [event, ui]);
+        }
+
+
+        private handleDragOver(event, ui) {
+            event.stopPropagation();
+
+            // todo: Items in component should have the same @data-live-edit-* structure
+            var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' || ui.item.data('live-edit-type') === 'layout',
+                isDraggingOverLayoutComponent = ui.placeholder.closest(layoutSelector).length > 0;
+
+            if (draggedItemIsLayoutComponent && isDraggingOverLayoutComponent) {
+                this.updateHelperStatusIcon('no');
+                ui.placeholder.hide();
+            } else {
+                this.updateHelperStatusIcon('yes');
+                $(window).trigger('component.onSortOver', [event, ui]);
             }
-        };
-        $componentBarComponents.draggable(draggableOptions);
-    }
-
-
-    function createDragHelper(event, helper) {
-        return $(getDragHelperHtml(componentHelper.getComponentName(helper)));
-    }
-
-
-    function refreshSortable() {
-        $(regionSelector).sortable('refresh');
-    }
-
-
-    function updateHelperStatusIcon(status) {
-        $('#live-edit-drag-helper-status-icon').attr('src', '../../../admin2/live-edit/images/drop-' + status + '.gif');
-    }
-
-
-    function targetIsPlaceholder($target) {
-        return $target.hasClass('live-edit-drop-target-placeholder')
-    }
-
-
-    function handleSortStart(event, ui) {
-        isDragging = true;
-
-        // Temporary store the selection info during the drag drop lifecycle.
-        // Data is nullified on drag stop.
-        var componentIsSelected = ui.item.hasClass('live-edit-selected-component');
-        ui.item.data('live-edit-selected-on-sort-start', componentIsSelected);
-
-        var targetComponentName = LiveEdit.ComponentHelper.getComponentName($(event.target));
-        ui.placeholder.html('Drop component here' + '<div style="font-size: 10px;">' + targetComponentName + '</div>');
-
-        refreshSortable();
-
-        $(window).trigger('component.onSortStart', [event, ui]);
-    }
-
-    function handleDragOver(event, ui) {
-        event.stopPropagation();
-
-        // todo: Items in component should have the same @data-live-edit-* structure
-        var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' || ui.item.data('live-edit-type') === 'layout',
-            isDraggingOverLayoutComponent = ui.placeholder.closest(layoutSelector).length > 0;
-
-        if (draggedItemIsLayoutComponent && isDraggingOverLayoutComponent) {
-            updateHelperStatusIcon('no');
-            ui.placeholder.hide();
-        } else {
-            updateHelperStatusIcon('yes');
-            $(window).trigger('component.onSortOver', [event, ui]);
-        }
-    }
-
-    function handleDragOut(event, ui) {
-        if (targetIsPlaceholder($(event.srcElement))) {
-            removePaddingFromLayoutComponent();
         }
 
-        updateHelperStatusIcon('no');
-        $(window).trigger('component.onSortOut', [event, ui]);
-    }
-
-    function handleSortChange(event, ui) {
-        addPaddingToLayoutComponent($(event.target));
-        updateHelperStatusIcon('yes');
-        ui.placeholder.show();
-        $(window).trigger('component.onSortChange', [event, ui]);
-    }
-
-    function handleSortUpdate(event, ui) {
-        $(window).trigger('component.onSortUpdate', [event, ui]);
-    }
-
-    function handleSortStop(event, ui) {
-        isDragging = false;
-
-        removePaddingFromLayoutComponent();
-
-        // todo: Items in component should have the same @data-live-edit-* structure
-        var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' || ui.item.data('live-edit-type') === 'layout',
-            targetIsInLayoutComponent = $(event.target).closest(layoutSelector).length > 0;
-
-        if (draggedItemIsLayoutComponent && targetIsInLayoutComponent) {
-            ui.item.remove()
-        }
-
-
-        if (LiveEdit.ComponentHelper.supportsTouch()) {
-            $(window).trigger('component.mouseOut');
-        }
-
-        var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
-
-        $(window).trigger('component.onSortStop', [event, ui, wasSelectedOnDragStart]);
-
-        ui.item.removeData('live-edit-selected-on-drag-start');
-    }
-
-
-    function itemIsDraggedFromComponentBar(item) {
-        return item.hasClass('live-edit-component');
-    }
-
-
-    function handleReceive(event, ui) {
-        if (itemIsDraggedFromComponentBar(ui.item)) {
-            var $componentBarComponent = $(this).children('.live-edit-component');
-            var componentKey = $componentBarComponent.data('live-edit-component-key');
-            var componentType = $componentBarComponent.data('live-edit-component-type');
-            var url = '../../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
-
-            $componentBarComponent.hide();
-
-            $.ajax({
-                url: url,
-                cache: false
-            }).done(function (html) {
-
-                    $componentBarComponent.replaceWith(html);
-
-                    // It seems like it is not possible to add new sortables (region in layout) to the existing sortable
-                    // So we have to create it again.
-                    // Ideally we should destroy the existing sortable first before creating.
-                    if (componentType === 'layout') {
-                        createSortable();
-                    }
-
-                    $(window).trigger('component.onSortUpdate');
-                });
-        }
-    }
-
-
-    function addPaddingToLayoutComponent($component) {
-        $component.closest(layoutSelector).addClass('live-edit-component-padding');
-    }
-
-
-    function removePaddingFromLayoutComponent() {
-        $('.live-edit-component-padding').removeClass('live-edit-component-padding');
-    }
-
-
-    function registerGlobalListeners() {
-        // The jQuery draggable() is not "live"/support delegates so we have to make sure the components in the component bar are always draggable
-        // Make the components in the component bar draggable
-        $(window).on('componentBar.dataLoaded', function () {
-            createComponentBarDraggables();
-        });
-
-        $(window).on('component.onSelect', function (event, $component) {
-            /*
-             if (LiveEdit.ComponentHelper.supportsTouch()) {
-             enableDragDrop();
-             }
-             */
-
-            /*
-             // When a Layout component is selected it should not be possible to drag any
-             // child components in the layout.
-             // jQuery UI starts dragging the component closest to the mouse target.
-             // Ideally we should update the "items" (to sort) option, but this is unfortunately buggy at the moment(http://bugs.jqueryui.com/ticket/8532)
-
-             // This is a hack workaround (destroy and re-create sortables) until 8532 is fixed.
-             if (LiveEdit.ComponentHelper.getComponentType($component) === 'layout') {
-             $(regionSelector).sortable('destroy');
-             createSortable(layoutSelector);
-             } else {
-             createSortable(itemsToSortSelector);
-             }
-             */
-
-        });
-
-        $(window).on('component.onDeselect', function () {
-            if (LiveEdit.ComponentHelper.supportsTouch() && !isDragging) {
-                disableDragDrop();
+        private handleDragOut(event, ui) {
+            if (this.targetIsPlaceholder($(event.srcElement))) {
+                this.removePaddingFromLayoutComponent();
             }
-        });
 
-        $(window).on('component.onParagraphSelect', function () {
-            $(regionSelector).sortable('option', 'cancel', '[data-live-edit-type=paragraph]');
-        });
-
-        $(window).on('component.onParagraphEditLeave', function () {
-            $(regionSelector).sortable('option', 'cancel', '');
-        });
-    }
-
-
-    function createSortable() {
-        $(regionSelector).sortable({
-            revert: false,
-            connectWith: regionSelector,   // Sortable elements.
-            items: itemsToSortSelector,   // Elements to sort.
-            distance: 1,
-            delay: 150,
-            tolerance: 'pointer',
-            cursor: 'move',
-            cursorAt: cursorAt,
-            scrollSensitivity: Math.round(LiveEdit.DomHelper.getViewPortSize().height / 8),
-            placeholder: 'live-edit-drop-target-placeholder',
-            helper: createDragHelper,
-            zIndex: 1001000,
-            start: handleSortStart,  // This event is triggered when sorting starts.
-            over: handleDragOver,   // This event is triggered when a sortable item is moved into a connected list.
-            out: handleDragOut,    // This event is triggered when a sortable item is moved away from a connected list.
-            change: handleSortChange, // This event is triggered during sorting, but only when the DOM position has changed.
-            receive: handleReceive,
-            update: handleSortUpdate, // This event is triggered when the user stopped sorting and the DOM position has changed.
-            stop: handleSortStop    // This event is triggered when sorting has stopped.
-        });
-        // }).disableSelection(); // will not make contenteditable work.
-    }
-
-
-    function init() {
-        createSortable();
-        registerGlobalListeners();
-    }
-
-
-    // **********************************************************************************************************************************//
-    // Define public methods
-
-    return {
-        initialize: init,
-        enable: enableDragDrop,
-        disable: disableDragDrop,
-        isDragging: function () {
-            return isDragging;
+            this.updateHelperStatusIcon('no');
+            $(window).trigger('component.onSortOut', [event, ui]);
         }
-    };
 
-}($liveedit));
+        private handleSortChange(event, ui) {
+            this.addPaddingToLayoutComponent($(event.target));
+            this.updateHelperStatusIcon('yes');
+            ui.placeholder.show();
+            $(window).trigger('component.onSortChange', [event, ui]);
+        }
+
+        private handleSortUpdate(event, ui) {
+            $(window).trigger('component.onSortUpdate', [event, ui]);
+        }
+
+        private handleSortStop(event, ui) {
+            _isDragging = false;
+
+            this.removePaddingFromLayoutComponent();
+
+            // todo: Items in component should have the same @data-live-edit-* structure
+            var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' || ui.item.data('live-edit-type') === 'layout',
+                targetIsInLayoutComponent = $(event.target).closest(layoutSelector).length > 0;
+
+            if (draggedItemIsLayoutComponent && targetIsInLayoutComponent) {
+                ui.item.remove()
+            }
+
+
+            if (LiveEdit.ComponentHelper.supportsTouch()) {
+                $(window).trigger('component.mouseOut');
+            }
+
+            var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
+
+            $(window).trigger('component.onSortStop', [event, ui, wasSelectedOnDragStart]);
+
+            ui.item.removeData('live-edit-selected-on-drag-start');
+        }
+
+
+        private itemIsDraggedFromComponentBar(item) {
+            return item.hasClass('live-edit-component');
+        }
+
+
+        private handleReceive(event, ui) {
+            if (this.itemIsDraggedFromComponentBar(ui.item)) {
+                var $componentBarComponent = $(event.target).children('.live-edit-component');
+                var componentKey = $componentBarComponent.data('live-edit-component-key');
+                var componentType = $componentBarComponent.data('live-edit-component-type');
+                var url = '../../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
+
+                $componentBarComponent.hide();
+
+                $.ajax({
+                    url: url,
+                    cache: false
+                }).done((html) => {
+
+                        $componentBarComponent.replaceWith(html);
+
+                        // It seems like it is not possible to add new sortables (region in layout) to the existing sortable
+                        // So we have to create it again.
+                        // Ideally we should destroy the existing sortable first before creating.
+                        if (componentType === 'layout') {
+                            this.createSortable();
+                        }
+
+                        $(window).trigger('component.onSortUpdate');
+                    });
+            }
+        }
+
+
+        private addPaddingToLayoutComponent($component) {
+            $component.closest(layoutSelector).addClass('live-edit-component-padding');
+        }
+
+
+        private removePaddingFromLayoutComponent() {
+            $('.live-edit-component-padding').removeClass('live-edit-component-padding');
+        }
+
+
+        private registerGlobalListeners() {
+            // The jQuery draggable() is not "live"/support delegates so we have to make sure the components in the component bar are always draggable
+            // Make the components in the component bar draggable
+            $(window).on('componentBar.dataLoaded', () => {
+                this.createComponentBarDraggables();
+            });
+
+            $(window).on('component.onSelect', (event, $component) => {
+                /*
+                 if (LiveEdit.ComponentHelper.supportsTouch()) {
+                 enableDragDrop();
+                 }
+                 */
+
+                /*
+                 // When a Layout component is selected it should not be possible to drag any
+                 // child components in the layout.
+                 // jQuery UI starts dragging the component closest to the mouse target.
+                 // Ideally we should update the "items" (to sort) option, but this is unfortunately buggy at the moment(http://bugs.jqueryui.com/ticket/8532)
+
+                 // This is a hack workaround (destroy and re-create sortables) until 8532 is fixed.
+                 if (LiveEdit.ComponentHelper.getComponentType($component) === 'layout') {
+                 $(regionSelector).sortable('destroy');
+                 createSortable(layoutSelector);
+                 } else {
+                 createSortable(itemsToSortSelector);
+                 }
+                 */
+
+            });
+
+            $(window).on('component.onDeselect', () => {
+                if (LiveEdit.ComponentHelper.supportsTouch() && !_isDragging) {
+                    this.disableDragDrop();
+                }
+            });
+
+            $(window).on('component.onParagraphSelect', () => {
+                $(regionSelector).sortable('option', 'cancel', '[data-live-edit-type=paragraph]');
+            });
+
+            $(window).on('component.onParagraphEditLeave', () => {
+                $(regionSelector).sortable('option', 'cancel', '');
+            });
+        }
+
+
+        private createSortable() {
+            $(regionSelector).sortable({
+                revert: false,
+                connectWith: regionSelector,   // Sortable elements.
+                items: itemsToSortSelector,   // Elements to sort.
+                distance: 1,
+                delay: 150,
+                tolerance: 'pointer',
+                cursor: 'move',
+                cursorAt: cursorAt,
+                scrollSensitivity: Math.round(LiveEdit.DomHelper.getViewPortSize().height / 8),
+                placeholder: 'live-edit-drop-target-placeholder',
+                zIndex: 1001000,
+                helper: (event, helper) => this.createDragHelper(event, helper),
+                start: (event, ui) => this.handleSortStart(event, ui),  // This event is triggered when sorting starts.
+                over: (event, ui) =>  this.handleDragOver(event, ui),   // This event is triggered when a sortable item is moved into a connected list.
+                out: (event, ui) =>  this.handleDragOut(event, ui),    // This event is triggered when a sortable item is moved away from a connected list.
+                change: (event, ui) => this.handleSortChange(event, ui), // This event is triggered during sorting, but only when the DOM position has changed.
+                receive: (event, ui) =>  this.handleReceive(event, ui),
+                update: (event, ui) =>  this.handleSortUpdate(event, ui), // This event is triggered when the user stopped sorting and the DOM position has changed.
+                stop: (event, ui) =>  this.handleSortStop(event, ui)    // This event is triggered when sorting has stopped.
+            });
+            // }).disableSelection(); // will not make contenteditable work.
+        }
+
+    }
+}
