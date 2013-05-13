@@ -1,41 +1,48 @@
-Ext.define('Admin.view.AdminImageButton', {
-    extend: 'Ext.button.Button',
-    alias: 'widget.adminImageButton',
+module admin.ui {
 
-    cls: 'admin-image-button',
-    scale: 'large',
+    export class AdminImageButton {
+        ext;
+        private popupTpl:string;
+        private popupData:Object;
+        private popupPanel:any; // Ext.panel.Panel
 
-    popupTpl: undefined,
-    popupData: undefined,
+        constructor(iconUrl:string, popupTpl:string, popupData:Object) {
+            this.popupTpl = popupTpl;
+            this.popupData = popupData;
+            var button = new Ext.button.Button({
+                itemId: 'adminImageButton',
+                cls: 'admin-image-button',
+                scale: 'large',
+                icon: iconUrl
+            });
+            button.on('click', this.onClick, this);
+            this.ext = button;
+        }
 
-    listeners: {
-        click: function (item) {
-            if (!item.popupPanel) {
-                item.popupPanel = Ext.create("Ext.panel.Panel", {
+        private onClick(button:any) {
+            if (!this.popupPanel) {
+                this.popupPanel = new Ext.panel.Panel({
                     floating: true,
                     cls: 'admin-toolbar-popup',
                     border: false,
-                    tpl: item.popupTpl,
-                    data: item.popupData,
+                    tpl: this.popupTpl,
+                    data: this.popupData,
                     styleHtmlContent: true,
                     renderTo: Ext.getBody(),
                     listeners: {
                         afterrender: function (cont) {
                             cont.show();
-                            cont.setPagePosition(cont.el.getAlignToXY(item.el, "tr-br?"));
+                            cont.setPagePosition(cont.el.getAlignToXY(button.el, "tr-br?"));
                         }
                     }
-
                 });
             } else {
-                if (item.popupPanel.isHidden()) {
-                    item.popupPanel.show();
+                if (this.popupPanel.isHidden()) {
+                    this.popupPanel.show();
                 } else {
-                    item.popupPanel.hide();
+                    this.popupPanel.hide();
                 }
-
             }
         }
     }
-
-});
+}

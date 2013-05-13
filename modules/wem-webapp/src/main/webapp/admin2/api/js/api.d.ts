@@ -1,6 +1,6 @@
 module API.util {
-    var baseUri: String;
-    function getAbsoluteUri(uri: String): String;
+    var baseUri: string;
+    function getAbsoluteUri(uri: string): string;
 }
 module API.event {
     class Event {

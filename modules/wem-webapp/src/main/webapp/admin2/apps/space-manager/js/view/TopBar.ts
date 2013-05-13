@@ -66,38 +66,37 @@ module admin.ui {
                     this.homeButton
                 ]
             });
+
             this.rightContainer = Ext.create('Ext.Container', {
                 flex: 5,
                 layout: {
                     type: 'hbox',
                     align: 'middle',
                     pack: 'end'
-                },
-                items: [
-                    {
-                        xtype: 'adminImageButton',
-                        icon: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
-                        popupTpl: '<div class="title">User</div>' +
-                                  '<div class="user-name">{userName}</div>' +
-                                  '<div class="content">' +
-                                  '<div class="column"><img src="{photoUrl}"/>' +
-                                  '<button class="x-btn-red-small">Log Out</button>' +
-                                  '</div>' +
-                                  '<div class="column">' +
-                                  '<span>{qName}</span>' +
-                                  '<a href="#">View Profile</a>' +
-                                  '<a href="#">Edit Profile</a>' +
-                                  '<a href="#">Change User</a>' +
-                                  '</div>' +
-                                  '</div>',
-                        popupData: {
-                            userName: "Thomas Lund Sigdestad",
-                            photoUrl: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
-                            qName: 'system/tsi'
-                        }
-                    }
-                ]
+                }
             });
+            var adminImageButton = new admin.ui.AdminImageButton(
+                API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                '<div class="title">User</div>' +
+                '<div class="user-name">{userName}</div>' +
+                '<div class="content">' +
+                '<div class="column"><img src="{photoUrl}"/>' +
+                '<button class="x-btn-red-small">Log Out</button>' +
+                '</div>' +
+                '<div class="column">' +
+                '<span>{qName}</span>' +
+                '<a href="#">View Profile</a>' +
+                '<a href="#">Edit Profile</a>' +
+                '<a href="#">Change User</a>' +
+                '</div>' +
+                '</div>',
+                {
+                    userName: "Thomas Lund Sigdestad",
+                    photoUrl: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                    qName: 'system/tsi'
+                }
+            );
+            this.rightContainer.add(adminImageButton.ext);
 
             me.add(this.leftContainer);
             me.add(this.rightContainer);
