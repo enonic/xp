@@ -28,7 +28,6 @@
     <module>modules/wem-web</module>
     <module>modules/wem-webapp</module>
     <module>modules/wem-runner</module>
-    <module>modules/wem-maven-tools</module>
     <module>modules/wem-admin</module>
     <module>modules/wem-portal</module>
     <module>modules/wem-vhost</module>
