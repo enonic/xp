@@ -1208,22 +1208,33 @@ Ext.define('Admin.model.SpaceModel', {
     ],
     idProperty: 'name'
 });
-Ext.define('Admin.store.SpaceStore', {
-    extend: 'Ext.data.Store',
-    model: 'Admin.model.SpaceModel',
-    pageSize: 100,
-    autoLoad: true,
-    proxy: {
-        type: 'direct',
-        directFn: Admin.lib.RemoteService.space_list,
-        simpleSortMode: true,
-        reader: {
-            type: 'json',
-            root: 'spaces',
-            totalProperty: 'total'
-        }
-    }
-});
+var APP;
+(function (APP) {
+    (function (store) {
+        var SpaceStore = (function () {
+            function SpaceStore() {
+                var store = this.ext = new Ext.data.Store({
+                    pageSize: 100,
+                    autoLoad: true,
+                    model: 'Admin.model.SpaceModel',
+                    proxy: {
+                        type: 'direct',
+                        directFn: Admin.lib.RemoteService.space_list,
+                        simpleSortMode: true,
+                        reader: {
+                            type: 'json',
+                            root: 'spaces',
+                            totalProperty: 'total'
+                        }
+                    }
+                });
+            }
+            return SpaceStore;
+        })();
+        store.SpaceStore = SpaceStore;        
+    })(APP.store || (APP.store = {}));
+    var store = APP.store;
+})(APP || (APP = {}));
 var admin;
 (function (admin) {
     (function (app) {
@@ -3059,73 +3070,145 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
         }
     }
 });
-Ext.define('Admin.view.TreeGridPanel', {
-    extend: 'Admin.view.BaseTreeGridPanel',
-    alias: 'widget.spaceTreeGrid',
-    store: 'Admin.store.SpaceStore',
-    border: false,
-    keyField: 'name',
-    activeItem: 'grid',
-    gridConf: {
-        selModel: Ext.create('Ext.selection.CheckboxModel', {
-            headerWidth: 36
-        })
-    },
-    treeConf: {
-        selModel: Ext.create('Ext.selection.CheckboxModel', {
-            headerWidth: 36
-        })
-    },
-    initComponent: function () {
-        var me = this;
-        this.columns = [
-            {
-                text: 'Display Name',
-                dataIndex: 'displayName',
-                sortable: true,
-                renderer: this.nameRenderer,
-                scope: me,
-                flex: 1
-            }, 
-            {
-                text: 'Status',
-                renderer: this.statusRenderer
-            }, 
-            {
-                text: 'Owner',
-                dataIndex: 'owner',
-                sortable: true
-            }, 
-            {
-                text: 'Modified',
-                dataIndex: 'modifiedTime',
-                renderer: this.prettyDateRenderer,
-                scope: me,
-                sortable: true
+var admin;
+(function (admin) {
+    (function (ui) {
+        var TreeGridPanel = (function () {
+            function TreeGridPanel(region) {
+                this.store = new Ext.data.Store({
+                    pageSize: 100,
+                    autoLoad: true,
+                    model: 'Admin.model.SpaceModel',
+                    proxy: {
+                        type: 'direct',
+                        directFn: Admin.lib.RemoteService.space_list,
+                        simpleSortMode: true,
+                        reader: {
+                            type: 'json',
+                            root: 'spaces',
+                            totalProperty: 'total'
+                        }
+                    }
+                });
+                this.keyField = 'name';
+                this.nameTemplate = '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>';
+                var gridSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
+                    keyField: this.keyField
+                });
+                var p = this.ext = new Ext.panel.Panel({
+                    region: region,
+                    flex: 1,
+                    layout: 'card',
+                    border: false,
+                    activeItem: 'grid',
+                    gridConf: {
+                        selModel: Ext.create('Ext.selection.CheckboxModel', {
+                            headerWidth: 36
+                        })
+                    },
+                    treeConf: {
+                        selModel: Ext.create('Ext.selection.CheckboxModel', {
+                            headerWidth: 36
+                        })
+                    }
+                });
+                var gp = new Ext.grid.Panel({
+                    itemId: 'grid',
+                    cls: 'admin-grid',
+                    border: false,
+                    hideHeaders: true,
+                    columns: [
+                        {
+                            text: 'Display Name',
+                            dataIndex: 'displayName',
+                            sortable: true,
+                            renderer: this.nameRenderer,
+                            scope: this,
+                            flex: 1
+                        }, 
+                        {
+                            text: 'Status',
+                            renderer: this.statusRenderer
+                        }, 
+                        {
+                            text: 'Owner',
+                            dataIndex: 'owner',
+                            sortable: true
+                        }, 
+                        {
+                            text: 'Modified',
+                            dataIndex: 'modifiedTime',
+                            renderer: this.prettyDateRenderer,
+                            scope: this,
+                            sortable: true
+                        }
+                    ],
+                    viewConfig: {
+                        trackOver: true,
+                        stripeRows: true,
+                        loadMask: {
+                            store: this.store
+                        }
+                    },
+                    store: this.store,
+                    plugins: [
+                        gridSelectionPlugin
+                    ]
+                });
+                gp.addDocked(new Ext.toolbar.Toolbar({
+                    itemId: 'selectionToolbar',
+                    cls: 'admin-white-toolbar',
+                    dock: 'top',
+                    store: this.store,
+                    gridPanel: gp,
+                    resultCountHidden: true,
+                    plugins: [
+                        'gridToolbarPlugin'
+                    ]
+                }));
+                gp.getStore().on('datachanged', this.fireUpdateEvent, this);
+                p.add(gp);
             }
-        ];
-        this.callParent(arguments);
-    },
-    nameRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
-        var space = record.data;
-        var activeListType = this.getActiveList().itemId;
-        return Ext.String.format(this.nameTemplate, activeListType, space.iconUrl, value, space.name);
-    },
-    statusRenderer: function () {
-        return "Online";
-    },
-    prettyDateRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
-        try  {
-            if(parent && Ext.isFunction(parent['humane_date'])) {
-                return parent['humane_date'](value);
-            } else {
-                return value;
-            }
-        } catch (e) {
-            return value;
-        }
-    }
-});
+            TreeGridPanel.prototype.fireUpdateEvent = function (values) {
+                this.ext.fireEvent('datachanged', values);
+            };
+            TreeGridPanel.prototype.getActiveList = function () {
+                return this.ext.getLayout().getActiveItem();
+            };
+            TreeGridPanel.prototype.nameRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
+                var space = record.data;
+                var activeListType = this.getActiveList().itemId;
+                return Ext.String.format(this.nameTemplate, activeListType, space.iconUrl, value, space.name);
+            };
+            TreeGridPanel.prototype.statusRenderer = function () {
+                return "Online";
+            };
+            TreeGridPanel.prototype.prettyDateRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
+                try  {
+                    if(parent && Ext.isFunction(parent['humane_date'])) {
+                        return parent['humane_date'](value);
+                    } else {
+                        return value;
+                    }
+                } catch (e) {
+                    return value;
+                }
+            };
+            TreeGridPanel.prototype.getSelection = function () {
+                var selection = [], activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection');
+                if(plugin) {
+                    selection = plugin.getSelection();
+                } else {
+                    selection = activeList.getSelectionModel().getSelection();
+                }
+                return selection;
+            };
+            return TreeGridPanel;
+        })();
+        ui.TreeGridPanel = TreeGridPanel;        
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
 var admin;
 (function (admin) {
     (function (ui) {
@@ -4805,9 +4888,7 @@ var admin;
 })(admin || (admin = {}));
 Ext.define('Admin.controller.Controller', {
     extend: 'Ext.app.Controller',
-    stores: [
-        'Admin.store.SpaceStore'
-    ],
+    stores: [],
     models: [
         'Admin.model.SpaceModel'
     ],
@@ -4905,7 +4986,7 @@ Ext.define('Admin.controller.Controller', {
         return Ext.ComponentQuery.query('spaceBrowseToolbar')[0];
     },
     getSpaceTreeGridPanel: function () {
-        return Ext.ComponentQuery.query('spaceTreeGrid')[0];
+        return components.gridPanel;
     },
     getSpaceDetailPanel: function () {
         return components.detailPanel;
@@ -5002,9 +5083,7 @@ Ext.define('Admin.controller.GridPanelController', {
     extend: 'Admin.controller.Controller',
     stores: [],
     models: [],
-    views: [
-        'Admin.view.TreeGridPanel'
-    ],
+    views: [],
     contextMenu: null,
     init: function () {
         this.control({
@@ -5270,20 +5349,16 @@ Ext.application({
         'Admin.controller.DialogWindowController', 
         'Admin.controller.WizardController'
     ],
-    stores: [
-        'Admin.store.SpaceStore'
-    ],
+    stores: [],
     launch: function () {
         var toolbar = new admin.ui.BrowseToolbar('north');
-        var grid = components.gridPanel = new Admin.view.TreeGridPanel();
-        grid.region = 'center';
-        grid.flex = 1;
+        var grid = components.gridPanel = new admin.ui.TreeGridPanel('center');
         var detail = components.detailPanel = new admin.ui.SpaceDetailPanel('south');
         var center = new Ext.container.Container();
         center.region = 'center';
         center.layout = 'border';
         center.add(detail.ext);
-        center.add(grid);
+        center.add(grid.ext);
         center.add(toolbar.ext);
         var west = new admin.ui.FilterPanel().getExtEl();
         west.region = 'west';

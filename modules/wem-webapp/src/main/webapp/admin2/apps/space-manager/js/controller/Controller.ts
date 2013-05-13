@@ -2,7 +2,6 @@ Ext.define('Admin.controller.Controller', {
     extend: 'Ext.app.Controller',
 
     stores: [
-        'Admin.store.SpaceStore'
     ],
 
     models: [
@@ -140,7 +139,7 @@ Ext.define('Admin.controller.Controller', {
     },
 
     getSpaceTreeGridPanel: function () {
-        return Ext.ComponentQuery.query('spaceTreeGrid')[0];
+        return components.gridPanel;
     },
 
     getSpaceDetailPanel: function () {

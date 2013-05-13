@@ -89,17 +89,13 @@ Ext.application({
         'Admin.controller.WizardController'
     ],
 
-    stores: [
-        'Admin.store.SpaceStore'
-    ],
+    stores: [],
 
     launch: function () {
 
         var toolbar = new admin.ui.BrowseToolbar('north');
 
-        var grid = components.gridPanel = new Admin.view.TreeGridPanel();
-        grid.region = 'center';
-        grid.flex = 1;
+        var grid = components.gridPanel = new admin.ui.TreeGridPanel('center');
 
         var detail = components.detailPanel = new admin.ui.SpaceDetailPanel('south');
 
@@ -108,7 +104,7 @@ Ext.application({
         center.layout = 'border';
 
         center.add(detail.ext);
-        center.add(grid);
+        center.add(grid.ext);
         center.add(toolbar.ext);
 
         var west = new admin.ui.FilterPanel().getExtEl();

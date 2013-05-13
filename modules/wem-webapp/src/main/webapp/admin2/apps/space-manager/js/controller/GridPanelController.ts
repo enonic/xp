@@ -5,9 +5,7 @@ Ext.define('Admin.controller.GridPanelController', {
 
     models: [],
 
-    views: [
-        'Admin.view.TreeGridPanel'
-    ],
+    views: [],
 
     contextMenu: null,
 

@@ -1,77 +1,151 @@
-Ext.define('Admin.view.TreeGridPanel', {
-    extend: 'Admin.view.BaseTreeGridPanel',
-    alias: 'widget.spaceTreeGrid',
+module admin.ui {
+    export class TreeGridPanel {
+        ext;
 
-    store: 'Admin.store.SpaceStore',
-
-    border: false,
-
-    keyField: 'name',
-
-    activeItem: 'grid',
-
-    gridConf: {
-        selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36})
-    },
-
-    treeConf: {
-        selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36})
-    },
-
-    initComponent: function () {
-        var me = this;
-        this.columns = <any[]>[
-            {
-                text: 'Display Name',
-                dataIndex: 'displayName',
-                sortable: true,
-                renderer: this.nameRenderer,
-                scope: me,
-                flex: 1
-            },
-            {
-                text: 'Status',
-                //dataIndex: 'type',
-                renderer: this.statusRenderer
-            },
-            {
-                text: 'Owner',
-                dataIndex: 'owner',
-                sortable: true
-            },
-            {
-                text: 'Modified',
-                dataIndex: 'modifiedTime',
-                renderer: this.prettyDateRenderer,
-                scope: me,
-                sortable: true
+        private store = new Ext.data.Store({
+            pageSize: 100,
+            autoLoad: true,
+            model: 'Admin.model.SpaceModel',
+            proxy: {
+                type: 'direct',
+                directFn: Admin.lib.RemoteService.space_list,
+                simpleSortMode: true,
+                reader: {
+                    type: 'json',
+                    root: 'spaces',
+                    totalProperty: 'total'
+                }
             }
-        ];
-        this.callParent(arguments);
-    },
+        });
+        private keyField = 'name';
+        private nameTemplate = '<div class="admin-{0}-thumbnail">' +
+                               '<img src="{1}"/>' +
+                               '</div>' +
+                               '<div class="admin-{0}-description">' +
+                               '<h6>{2}</h6>' +
+                               '<p>{3}</p>' +
+                               '</div>';
 
 
-    nameRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
-        var space = record.data;
-        var activeListType = this.getActiveList().itemId;
-        return Ext.String.format(this.nameTemplate, activeListType, space.iconUrl, value, space.name);
-    },
+        constructor(region?:String) {
+            var gridSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
+                keyField: this.keyField
+            });
 
-    statusRenderer: function () {
-        return "Online";
-    },
+            var p = this.ext = new Ext.panel.Panel({
+                region: region,
+                flex: 1,
+                layout: 'card',
+                border: false,
+                activeItem: 'grid',
+                gridConf: {
+                    selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36})
+                },
+                treeConf: {
+                    selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36})
+                }
+            });
 
-    prettyDateRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
-        try {
-            if (parent && Ext.isFunction(parent['humane_date'])) {
-                return parent['humane_date'](value);
-            } else {
+            var gp = new Ext.grid.Panel({
+                itemId: 'grid',
+                cls: 'admin-grid',
+                border: false,
+                hideHeaders: true,
+                columns: <any[]>[
+                    {
+                        text: 'Display Name',
+                        dataIndex: 'displayName',
+                        sortable: true,
+                        renderer: this.nameRenderer,
+                        scope: this,
+                        flex: 1
+                    },
+                    {
+                        text: 'Status',
+                        //dataIndex: 'type',
+                        renderer: this.statusRenderer
+                    },
+                    {
+                        text: 'Owner',
+                        dataIndex: 'owner',
+                        sortable: true
+                    },
+                    {
+                        text: 'Modified',
+                        dataIndex: 'modifiedTime',
+                        renderer: this.prettyDateRenderer,
+                        scope: this,
+                        sortable: true
+                    }
+                ],
+                viewConfig: {
+                    trackOver: true,
+                    stripeRows: true,
+                    loadMask: {
+                        store: this.store
+                    }
+                },
+                store: this.store,
+                plugins: [gridSelectionPlugin]
+            });
+            gp.addDocked(new Ext.toolbar.Toolbar({
+                itemId: 'selectionToolbar',
+                cls: 'admin-white-toolbar',
+                dock: 'top',
+                store: this.store,
+                gridPanel: gp,
+                resultCountHidden: true,
+                plugins: ['gridToolbarPlugin']
+            }));
+            gp.getStore().on('datachanged', this.fireUpdateEvent, this);
+
+
+            p.add(gp);
+        }
+
+        private fireUpdateEvent(values) {
+            this.ext.fireEvent('datachanged', values);
+        }
+
+        private getActiveList() {
+            return this.ext.getLayout().getActiveItem();
+        }
+
+        private nameRenderer(value, metaData, record, rowIndex, colIndex, store, view) {
+            var space = record.data;
+            var activeListType = this.getActiveList().itemId;
+            return Ext.String.format(this.nameTemplate, activeListType, space.iconUrl, value, space.name);
+        }
+
+        private statusRenderer() {
+            return "Online";
+        }
+
+        private prettyDateRenderer(value, metaData, record, rowIndex, colIndex, store, view) {
+            try {
+                if (parent && Ext.isFunction(parent['humane_date'])) {
+                    return parent['humane_date'](value);
+                } else {
+                    return value;
+                }
+            }
+            catch (e) {
                 return value;
             }
         }
-        catch (e) {
-            return value;
+
+        getSelection() {
+            var selection = [],
+                activeList = this.getActiveList(),
+                plugin = activeList.getPlugin('persistentGridSelection');
+
+            if (plugin) {
+                selection = plugin.getSelection();
+            } else {
+                selection = activeList.getSelectionModel().getSelection();
+            }
+
+            return selection;
         }
     }
-
-});
+}
