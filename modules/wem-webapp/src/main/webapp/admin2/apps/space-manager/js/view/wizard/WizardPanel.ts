@@ -2,7 +2,6 @@ Ext.define('Admin.view.wizard.WizardPanel', {
     extend: 'Admin.view.WizardPanel',
     alias: 'widget.spaceAdminWizardPanel',
     requires: [
-        'Admin.view.WizardHeader',
         'Admin.view.wizard.Toolbar',
         'Admin.plugin.fileupload.PhotoUploadButton',
         'Admin.view.wizard.SpaceStepPanel'
@@ -74,15 +73,14 @@ Ext.define('Admin.view.wizard.WizardPanel', {
     },
 
     createWizardHeader: function () {
-        var wizardHeader = Ext.create('Admin.view.WizardHeader', {
-            xtype: 'wizardHeader',
-            pathConfig: {
-                hidden: true
-            },
-            data: this.data
-        });
-        this.validateItems.push(wizardHeader);
-        return wizardHeader;
+        var pathConfig: admin.ui.PathConfig = {
+            hidden: true
+        };
+        var wizardHeader = new admin.ui.WizardHeader({}, pathConfig);
+        wizardHeader.setData(this.data);
+
+        this.validateItems.push(wizardHeader.ext);
+        return wizardHeader.ext;
     },
 
     createIcon: function () {
