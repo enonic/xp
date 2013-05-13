@@ -1,66 +1,7 @@
 /*** Reset */
-/*
-    We could probably make the reset more maintainable by only selecting the Live edit UI components
 
-    Eg.
-    [id^=live-edit-ui-cmp-], [id^=live-edit-ui-cmp-] *
-
-    Todo: create task for this
-*/
-
-.live-edit-loader-splash-container,
-.live-edit-loader-splash-content,
-svg.live-edit-highlight-border,
-#live-edit-shader-north,
-#live-edit-shader-east,
-#live-edit-shader-south,
-#live-edit-shader-west,
-#live-edit-page-shader,
-.live-edit-tool-tip,
-.live-edit-component-menu,
-.live-edit-components-container,
-.live-edit-components-container form,
-.live-edit-component,
-live-edit-component-text-name,
-live-edit-component-text-subtitle,
-.live-edit-loader-splash-content,
-.live-edit-shader,
-#live-edit-page-shader,
-svg.live-edit-highlight-border,
-svg.live-edit-highlight-border rect,
-.live-edit-empty-region-placeholder,
-.live-edit-empty-part-placeholder,
-.live-edit-tool-tip,
-.live-edit-tool-tip-name-text,
-.live-edit-tool-tip-type-text,
-.live-edit-tool-tip-name-text,
-.live-edit-editor-toolbar,
-.live-edit-editor-toolbar-arrow-bottom,
-.live-edit-editor-toolbar-arrow-top,
-.live-edit-component-menu,
-.live-edit-component-menu-title-bar,
-.live-edit-component-menu-title-icon,
-.live-edit-component-menu-title-text,
-.live-edit-component-menu-title-close-button,
-.live-edit-component-menu-page-icon,
-.live-edit-component-menu-region-icon,
-.live-edit-component-menu-part-icon,
-.live-edit-component-menu-paragraph-icon,
-.live-edit-component-menu-content-icon,
-.live-edit-component-menu-button,
-.live-edit-button-text,
-.live-edit-button-icon,
-.live-edit-button-text,
-.live-edit-button,
-#live-edit-drag-helper,
-#live-edit-drag-helper-status-icon,
-#live-edit-drag-helper-text,
-.live-edit-drop-target-placeholder,
-.live-edit-html-element-placeholder,
-.live-edit-html-element-placeholder
-.live-edit-iframe,
-.live-edit-html-element-placeholder
-.live-edit-object {
+[id^=live-edit-ui-cmp-],
+[id^=live-edit-ui-cmp-] * {
     border: 0;
     outline: 0;
     color: #000;
@@ -71,7 +12,6 @@ svg.live-edit-highlight-border rect,
     padding: 0;
     vertical-align: baseline;
     line-height: 1.2;
-
 }
 
 /** Misc */
