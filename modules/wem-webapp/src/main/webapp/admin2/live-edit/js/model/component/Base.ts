@@ -13,7 +13,7 @@ module LiveEdit.model {
             $(document).on('mouseover', this.cssSelector, (event:JQueryEventObject) => {
                 var component:JQuery = $(event.currentTarget);
                 var targetIsUiComponent = this.isLiveEditUiComponent($(event.target));
-                var cancelEvents = targetIsUiComponent || this.hasComponentSelected() || AdminLiveEdit.DragDropSort.isDragging();
+                var cancelEvents = targetIsUiComponent || this.hasComponentSelected() || LiveEdit.DragDropSort.isDragging();
                 if (cancelEvents) {
                     return;
                 }

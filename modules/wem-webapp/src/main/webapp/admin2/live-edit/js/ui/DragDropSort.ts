@@ -3,7 +3,7 @@
  A clean up should be done when Live Edit is specked
  */
 
-module AdminLiveEdit {
+module LiveEdit {
     var $ = $liveedit;
 
     var componentHelper = LiveEdit.ComponentHelper;

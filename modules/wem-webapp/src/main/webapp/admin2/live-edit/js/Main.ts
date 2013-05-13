@@ -1,7 +1,6 @@
 // Globals
 declare var $liveedit;
 declare var LiveEditMutationSummary;
-declare var AdminLiveEdit;
 
 ///<reference path='../lib/jquery-1.8.3.d.ts' />
 ///<reference path='../lib/jqueryui.d.ts' />
@@ -70,7 +69,7 @@ declare var AdminLiveEdit;
             new LiveEdit.ui.ComponentBar();
             new LiveEdit.MutationObserver();
 
-            new AdminLiveEdit.DragDropSort();
+            new LiveEdit.DragDropSort();
 
             $(window).resize(() => {
                 $(window).trigger('liveEdit.onWindowResize');

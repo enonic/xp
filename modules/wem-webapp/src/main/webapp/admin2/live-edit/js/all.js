@@ -167,8 +167,8 @@ var LiveEdit;
     })();
     LiveEdit.MutationObserver = MutationObserver;    
 })(LiveEdit || (LiveEdit = {}));
-var AdminLiveEdit;
-(function (AdminLiveEdit) {
+var LiveEdit;
+(function (LiveEdit) {
     var $ = $liveedit;
     var componentHelper = LiveEdit.ComponentHelper;
     var _isDragging = false;
@@ -408,8 +408,8 @@ var AdminLiveEdit;
         };
         return DragDropSort;
     })();
-    AdminLiveEdit.DragDropSort = DragDropSort;    
-})(AdminLiveEdit || (AdminLiveEdit = {}));
+    LiveEdit.DragDropSort = DragDropSort;    
+})(LiveEdit || (LiveEdit = {}));
 var LiveEdit;
 (function (LiveEdit) {
     (function (model) {
@@ -423,7 +423,7 @@ var LiveEdit;
                 $(document).on('mouseover', this.cssSelector, function (event) {
                     var component = $(event.currentTarget);
                     var targetIsUiComponent = _this.isLiveEditUiComponent($(event.target));
-                    var cancelEvents = targetIsUiComponent || _this.hasComponentSelected() || AdminLiveEdit.DragDropSort.isDragging();
+                    var cancelEvents = targetIsUiComponent || _this.hasComponentSelected() || LiveEdit.DragDropSort.isDragging();
                     if(cancelEvents) {
                         return;
                     }
@@ -1329,7 +1329,7 @@ var LiveEdit;
                 $(document).on('mousemove', '[data-live-edit-type]', function (event) {
                     var targetIsUiComponent = $(event.target).is('[id*=live-edit-ui-cmp]') || $(event.target).parents('[id*=live-edit-ui-cmp]').length > 0;
                     var pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
-                    if(targetIsUiComponent || pageHasComponentSelected || AdminLiveEdit.DragDropSort.isDragging()) {
+                    if(targetIsUiComponent || pageHasComponentSelected || LiveEdit.DragDropSort.isDragging()) {
                         _this.hide();
                         return;
                     }
@@ -2170,7 +2170,7 @@ var LiveEdit;
             new LiveEdit.ui.Editor();
             new LiveEdit.ui.ComponentBar();
             new LiveEdit.MutationObserver();
-            new AdminLiveEdit.DragDropSort();
+            new LiveEdit.DragDropSort();
             $(window).resize(function () {
                 $(window).trigger('liveEdit.onWindowResize');
             });

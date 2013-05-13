@@ -50,7 +50,7 @@ module LiveEdit.ui {
 
                 // TODO: Use PubSub instead of calling DragDrop object.
                 var pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
-                if (targetIsUiComponent || pageHasComponentSelected || AdminLiveEdit.DragDropSort.isDragging()) {
+                if (targetIsUiComponent || pageHasComponentSelected || LiveEdit.DragDropSort.isDragging()) {
                     this.hide();
                     return;
                 }
