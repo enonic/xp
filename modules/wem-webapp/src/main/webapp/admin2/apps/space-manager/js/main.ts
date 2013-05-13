@@ -27,7 +27,6 @@
 
 ///<reference path='view/DeleteSpaceWindow.ts' />
 
-///<reference path='view/BaseTreeGridPanel.ts' />
 ///<reference path='view/TreeGridPanel.ts' />
 
 ///<reference path='view/ContextMenu.ts' />
@@ -41,7 +40,6 @@
 ///<reference path='view/TopBarMenu.ts' />
 ///<reference path='view/TopBar.ts' />
 ///<reference path='view/TabPanel.ts' />
-///<reference path='view/BaseFilterPanel.ts' />
 ///<reference path='view/FilterPanel.ts' />
 ///<reference path='view/BrowseToolbar.ts' />
 
