@@ -2,6 +2,7 @@ package com.enonic.wem.runner;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 public final class Main
 {
@@ -9,20 +10,19 @@ public final class Main
         throws Exception
     {
         final Server server = new Server( 8080 );
+        server.setStopAtShutdown( true );
 
-        ServletContextHandler handler = new ServletContextHandler( ServletContextHandler.SESSIONS );
-        handler.setContextPath( "/" );
-        server.setHandler( handler );
+        final ServletContextHandler servletHandler = new ServletContextHandler( ServletContextHandler.SESSIONS );
+        servletHandler.setContextPath( "/" );
 
-        /*
-        final BootServletListener listener = new BootServletListener();
-        handler.addEventListener( listener );
-*/
+        final WebAppContext webApp = new WebAppContext();
+        webApp.setResourceBase( "./modules/wem-webapp/src/main/webapp" );
+        webApp.setWelcomeFiles( new String[]{"index.html", "index.jsp"} );
+        webApp.setContextPath( "/" );
 
-
+        server.setHandler( webApp );
 
         server.start();
-
-        // server.stop();
+        server.join();
     }
 }
