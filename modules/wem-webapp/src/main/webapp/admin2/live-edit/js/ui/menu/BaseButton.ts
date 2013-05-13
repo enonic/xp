@@ -1,3 +1,11 @@
+interface ButtonConfig {
+    id?:string;
+    text:string;
+    cls?:string;
+    iconCls?:string;
+    handler(event:Event):void;
+}
+
 module LiveEdit.ui {
     var $ = $liveedit;
 
@@ -7,9 +15,9 @@ module LiveEdit.ui {
         }
 
 
-        createButton(config):JQuery {
+        createButton(config:ButtonConfig):JQuery {
             var id = config.id || '';
-            var text = config.text || '';
+            var text = config.text;
             var cls = config.cls || '';
             var iconCls = config.iconCls || '';
             var html = '<div data-live-edit-ui-cmp-id="' + id + '" class="live-edit-button ' + cls + '">';

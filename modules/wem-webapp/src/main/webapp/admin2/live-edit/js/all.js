@@ -1615,7 +1615,7 @@ var LiveEdit;
             BaseButton.prototype.createButton = function (config) {
                 var _this = this;
                 var id = config.id || '';
-                var text = config.text || '';
+                var text = config.text;
                 var cls = config.cls || '';
                 var iconCls = config.iconCls || '';
                 var html = '<div data-live-edit-ui-cmp-id="' + id + '" class="live-edit-button ' + cls + '">';
