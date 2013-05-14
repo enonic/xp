@@ -2,8 +2,6 @@ Ext.define('Admin.view.WizardPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.wizardPanel',
 
-    requires: ['Admin.view.WizardLayout'],
-
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -47,10 +45,7 @@ Ext.define('Admin.view.WizardPanel', {
 
         this.wizard = Ext.createByAlias('widget.container', {
             region: 'center',
-            layout: {
-                type: 'wizard',
-                animation: 'none'
-            },
+            layout: new admin.ui.WizardLayout('none').ext,
             items: this.createSteps()
         });
         this.items = [

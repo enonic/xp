@@ -1242,105 +1242,120 @@ var admin;
     })(admin.app || (admin.app = {}));
     var app = admin.app;
 })(admin || (admin = {}));
-Ext.define('Admin.view.WizardLayout', {
-    extend: 'Ext.layout.container.Card',
-    alias: 'layout.wizard',
-    mixins: [
-        'Ext.util.Animate'
-    ],
-    deferredRender: false,
-    renderHidden: false,
-    animation: 'slide',
-    easing: 'easeOut',
-    duration: 500,
-    setActiveItem: function (item) {
-        var owner = this.owner;
-        var oldCard = this.activeItem;
-        var oldIndex = owner.items.indexOf(oldCard);
-        var newCard = this.parseActiveItem(item);
-        var newIndex = owner.items.indexOf(newCard);
-        if(oldCard !== newCard) {
-            owner.fireEvent("animationstarted", newCard, oldCard);
-            if(newCard.rendered && this.animation && this.animation !== "none") {
-                this.syncFx();
-                var target = this.getRenderTarget();
-                newCard.setWidth(target.getWidth() - target.getPadding("lr") - Ext.getScrollBarWidth());
-                switch(this.animation) {
-                    case 'fade':
-                        newCard.el.setStyle({
-                            position: 'absolute',
-                            opacity: 0,
-                            top: this.getRenderTarget().getPadding('t') + 'px'
-                        });
-                        newCard.show();
-                        if(oldCard) {
-                            oldCard.el.fadeOut({
-                                useDisplay: true,
-                                duration: this.duration,
-                                callback: function () {
-                                    this.hide();
-                                },
-                                scope: this.activeItem
-                            });
-                        }
-                        owner.doLayout();
-                        newCard.el.fadeIn({
-                            useDisplay: true,
-                            duration: this.duration,
-                            callback: function () {
-                                newCard.el.setStyle({
-                                    position: ''
-                                });
-                                owner.fireEvent("animationfinished", newCard, oldCard);
-                            },
-                            scope: this
-                        });
-                        break;
-                    case 'slide':
-                        newCard.el.setStyle({
-                            position: 'absolute',
-                            visibility: 'hidden',
-                            width: this.getRenderTarget().getWidth(),
-                            top: this.getRenderTarget().getPadding('t') + 'px'
-                        });
-                        newCard.show();
-                        if(oldCard) {
-                            oldCard.el.slideOut(newIndex > oldIndex ? "l" : "r", {
-                                duration: this.duration,
-                                easing: this.easing,
-                                remove: false,
-                                scope: this.activeItem,
-                                callback: function () {
-                                    this.hide();
-                                }
-                            });
-                        }
-                        owner.doLayout();
-                        newCard.el.slideIn(newIndex > oldIndex ? "r" : "l", {
-                            duration: this.duration,
-                            easing: this.easing,
-                            scope: this,
-                            callback: function () {
-                                newCard.el.setStyle({
-                                    position: ''
-                                });
-                                owner.fireEvent("animationfinished", newCard, oldCard);
-                            }
-                        });
-                        break;
-                }
-                this.activeItem = newCard;
-                this.sequenceFx();
-            } else {
-                this.callParent([
-                    newCard
-                ]);
-                owner.fireEvent("animationfinished", newCard, oldCard);
+var admin;
+(function (admin) {
+    (function (ui) {
+        var WizardLayout = (function () {
+            function WizardLayout(animation) {
+                if (typeof animation === "undefined") { animation = 'slide'; }
+                var _this = this;
+                var cardLayout = new Ext.layout.container.Card({
+                    deferredRender: false,
+                    renderHidden: false,
+                    animation: animation,
+                    easing: 'easeOut',
+                    duration: 500,
+                    setActiveItem: function (item) {
+                        return _this.setActiveItem(item);
+                    }
+                });
+                cardLayout.self.mixin('animateMixin', Ext.util.Animate);
+                this.ext = cardLayout;
             }
-            return newCard;
-        }
-    }
-});
+            WizardLayout.prototype.setActiveItem = function (item) {
+                var me = this.ext;
+                var owner = me.owner;
+                var oldCard = me.activeItem;
+                var oldIndex = owner.items.indexOf(oldCard);
+                var newCard = me.parseActiveItem(item);
+                var newIndex = owner.items.indexOf(newCard);
+                if(oldCard !== newCard) {
+                    owner.fireEvent("animationstarted", newCard, oldCard);
+                    if(newCard.rendered && me.animation && me.animation !== "none") {
+                        me.syncFx();
+                        var target = me.getRenderTarget();
+                        newCard.setWidth(target.getWidth() - target.getPadding("lr") - Ext.getScrollBarWidth());
+                        switch(me.animation) {
+                            case 'fade':
+                                newCard.el.setStyle({
+                                    position: 'absolute',
+                                    opacity: 0,
+                                    top: me.getRenderTarget().getPadding('t') + 'px'
+                                });
+                                newCard.show();
+                                if(oldCard) {
+                                    oldCard.el.fadeOut({
+                                        useDisplay: true,
+                                        duration: me.duration,
+                                        callback: function () {
+                                            me.hide();
+                                        },
+                                        scope: me.activeItem
+                                    });
+                                }
+                                owner.doLayout();
+                                newCard.el.fadeIn({
+                                    useDisplay: true,
+                                    duration: me.duration,
+                                    callback: function () {
+                                        newCard.el.setStyle({
+                                            position: ''
+                                        });
+                                        owner.fireEvent("animationfinished", newCard, oldCard);
+                                    },
+                                    scope: this
+                                });
+                                break;
+                            case 'slide':
+                                newCard.el.setStyle({
+                                    position: 'absolute',
+                                    visibility: 'hidden',
+                                    width: me.getRenderTarget().getWidth(),
+                                    top: me.getRenderTarget().getPadding('t') + 'px'
+                                });
+                                newCard.show();
+                                if(oldCard) {
+                                    oldCard.el.slideOut(newIndex > oldIndex ? "l" : "r", {
+                                        duration: me.duration,
+                                        easing: me.easing,
+                                        remove: false,
+                                        scope: me.activeItem,
+                                        callback: function () {
+                                            me.hide();
+                                        }
+                                    });
+                                }
+                                owner.doLayout();
+                                newCard.el.slideIn(newIndex > oldIndex ? "r" : "l", {
+                                    duration: me.duration,
+                                    easing: me.easing,
+                                    scope: me,
+                                    callback: function () {
+                                        newCard.el.setStyle({
+                                            position: ''
+                                        });
+                                        owner.fireEvent("animationfinished", newCard, oldCard);
+                                    }
+                                });
+                                break;
+                        }
+                        me.activeItem = newCard;
+                        me.sequenceFx();
+                    } else {
+                        me.callParent([
+                            newCard
+                        ]);
+                        owner.fireEvent("animationfinished", newCard, oldCard);
+                    }
+                    return newCard;
+                }
+            };
+            return WizardLayout;
+        })();
+        ui.WizardLayout = WizardLayout;        
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
 var admin;
 (function (admin) {
     (function (ui) {
@@ -1551,9 +1566,6 @@ var admin;
 Ext.define('Admin.view.WizardPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.wizardPanel',
-    requires: [
-        'Admin.view.WizardLayout'
-    ],
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -1587,10 +1599,7 @@ Ext.define('Admin.view.WizardPanel', {
         this.cls += this.isNew ? ' admin-wizard-new' : ' admin-wizard-edit';
         this.wizard = Ext.createByAlias('widget.container', {
             region: 'center',
-            layout: {
-                type: 'wizard',
-                animation: 'none'
-            },
+            layout: new admin.ui.WizardLayout('none').ext,
             items: this.createSteps()
         });
         this.items = [
