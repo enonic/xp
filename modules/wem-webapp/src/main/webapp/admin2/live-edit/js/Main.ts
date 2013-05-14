@@ -5,9 +5,9 @@ declare var LiveEditMutationSummary;
 ///<reference path='../lib/jquery-1.8.3.d.ts' />
 ///<reference path='../lib/jqueryui.d.ts' />
 
-///<reference path='helper/DomHelper.ts' />
-///<reference path='helper/ComponentHelper.ts' />
-///<reference path='helper/MutationObserver.ts' />
+///<reference path='shared/DomHelper.ts' />
+///<reference path='shared/ComponentHelper.ts' />
+///<reference path='shared/MutationObserver.ts' />
 
 ///<reference path='ui/DragDropSort.ts' />
 
