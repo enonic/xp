@@ -228,7 +228,7 @@ module admin.ui {
                 Ext.Array.each(editItems, (editItem) => {
                     // defaultType: 'topBarMenuItem'
                     if (!editItem.xtype) {
-                        var tbmi = new admin.ui.TopBarMenuItem(editItem.text1, editItem.text2).ext;
+                        var tbmi = new admin.ui.TopBarMenuItem(editItem.text1, editItem.text2, editItem.card, editItem.tabBar).ext;
                         editItemObjects.push(tbmi);
                     } else {
                         editItemObjects.push(editItem);
@@ -242,7 +242,7 @@ module admin.ui {
                 Ext.Array.each(viewItems, (viewItem) => {
                     // defaultType: 'topBarMenuItem'
                     if (!viewItem.xtype) {
-                        var tbmi = new admin.ui.TopBarMenuItem(viewItem.text1, viewItem.text2).ext;
+                        var tbmi = new admin.ui.TopBarMenuItem(viewItem.text1, viewItem.text2, viewItem.card, viewItem.tabBar).ext;
                         viewItemObjects.push(tbmi);
                     } else {
                         viewItemObjects.push(viewItem);
@@ -251,6 +251,7 @@ module admin.ui {
 
                 added = added.concat(this.viewItems.add(viewItemObjects));
             }
+
             this.updateTitles();
 
             this.restoreScrollState();

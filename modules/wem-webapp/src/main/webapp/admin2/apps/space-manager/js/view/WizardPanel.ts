@@ -1,6 +1,7 @@
 Ext.define('Admin.view.WizardPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.wizardPanel',
+    requires: ['Admin.view.WizardLayout'],
 
     layout: {
         type: 'vbox',
@@ -43,9 +44,13 @@ Ext.define('Admin.view.WizardPanel', {
         this.boundItems = [];
         this.cls += this.isNew ? ' admin-wizard-new' : ' admin-wizard-edit';
 
-        this.wizard = Ext.createByAlias('widget.container', {
+        this.wizard = new Ext.container.Container({
             region: 'center',
-            layout: new admin.ui.WizardLayout('none').ext,
+//            layout: new admin.ui.WizardLayout('none').ext,
+            layout: {
+                type: 'wizard',
+                animation: 'none'
+            },
             items: this.createSteps()
         });
         this.items = [

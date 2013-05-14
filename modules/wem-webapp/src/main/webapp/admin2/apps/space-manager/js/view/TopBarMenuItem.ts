@@ -6,16 +6,19 @@ module admin.ui {
         private text1:string;
         private text2:string;
 
-        constructor(text1:string, text2:string) {
+        constructor(text1:string, text2:string, card: any, tabBar: any) {
             this.text1 = text1;
             this.text2 = text2;
-            var tbmi = new Ext.container.Container({});
+            var tbmi = new Ext.container.Container({
+                itemId: 'topBarMenuItem',
+                cls: 'admin-topbar-menu-item',
+                activeCls: 'active',
+                isMenuItem: true,
+                canActivate: true,
+                card: card,
+                tabBar: tabBar
+            });
             this.ext = tbmi;
-            tbmi.itemId = 'topBarMenuItem';
-            tbmi.addCls('admin-topbar-menu-item');
-            tbmi.activeCls = 'active';
-            tbmi.isMenuItem = true;
-            tbmi.canActivate = true;
 
             var layout = new Ext.layout.container.HBox();
             layout.align = 'middle';
@@ -37,7 +40,7 @@ module admin.ui {
                 items.push(image);
             }
             if (this.text1 || this.text2) {
-                var titleContainer = new Ext.Component();
+                var titleContainer = new Ext.Component({});
                 titleContainer.flex = 1;
                 titleContainer.itemId = 'titleContainer';
                 titleContainer.styleHtmlContent = true;
