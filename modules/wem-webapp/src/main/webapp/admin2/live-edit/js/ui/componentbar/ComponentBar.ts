@@ -67,11 +67,11 @@ module LiveEdit.ui {
         }
 
         registerGlobalListeners():void {
-            $(window).on('component.onSelect component.onDragStart component.onSortStart', () => {
+            $(window).on('select.liveEdit.component dragStart.liveEdit.component sortStart.liveEdit.component', () => {
                 this.fadeOut();
             });
 
-            $(window).on('component.onDeselect component.onDragStop component.onSortStop component.onSortUpdate component.onRemove', (event:JQueryEventObject, triggerConfig) => {
+            $(window).on('deselect.liveEdit.component dragStop.liveEdit.component sortstop.liveedit.component sortUpdate.liveEdit.component remove.liveEdit.component', (event:JQueryEventObject, triggerConfig) => {
                 this.fadeIn(triggerConfig);
             });
         }
@@ -87,14 +87,14 @@ module LiveEdit.ui {
 
             // Is this ever triggered?
             this.getBar().on('mouseover', () => {
-                $(window).trigger('componentBar:mouseover');
+                $(window).trigger('mouseOver.liveEdit.componentBar');
             });
         }
 
         loadComponentsData():void {
             $.getJSON(this.getComponentsDataUrl(), null, (data, textStatus, jqXHR) => {
                 this.renderComponents(data);
-                $(window).trigger('componentBar.dataLoaded');
+                $(window).trigger('dataLoaded.liveEdit.componentBar');
             });
         }
 
@@ -176,7 +176,7 @@ module LiveEdit.ui {
 
 
         fadeIn(triggerConfig):void {
-            // componenttip/menu.js triggers a component.onDeselect event
+            // componenttip/menu.js triggers a deselect.liveEdit.component event
             // which results in that the bar is faded in (see the listeners above)
             // The triggerConfig is a temporary workaround until we get this right.
             if (triggerConfig && triggerConfig.showComponentBar === false) {

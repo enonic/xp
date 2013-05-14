@@ -104,10 +104,10 @@ var LiveEdit;
         }
         MutationObserver.prototype.registerGlobalListeners = function () {
             var _this = this;
-            $(window).on('component.onParagraphEdit', function (event, component) {
+            $(window).on('paragraphEdit.liveEdit.component', function (event, component) {
                 _this.observe(event, component);
             });
-            $(window).on('shader.onClick', function (event) {
+            $(window).on('click.liveEdit.shader', function (event) {
                 _this.disconnect(event);
             });
         };
@@ -134,7 +134,7 @@ var LiveEdit;
         };
         MutationObserver.prototype.disconnect = function (event) {
             var targetComponentIsSelected = (this.observedComponent && this.observedComponent.hasClass('live-edit-selected-component'));
-            var componentIsSelectedAndUserMouseOut = event.type === 'component.mouseOut' && targetComponentIsSelected;
+            var componentIsSelectedAndUserMouseOut = event.type === 'mouseOut.liveEdit.component' && targetComponentIsSelected;
             if(componentIsSelectedAndUserMouseOut) {
                 return;
             }
@@ -147,17 +147,17 @@ var LiveEdit;
         };
         MutationObserver.prototype.onMutate = function (summaries, event) {
             if(summaries && summaries[0]) {
-                var $targetComponent = $(summaries[0].target), targetComponentIsSelected = $targetComponent.hasClass('live-edit-selected-component'), componentIsNotSelectedAndMouseIsOver = !targetComponentIsSelected && event.type === 'component.mouseOver', componentIsParagraphAndBeingEdited = $targetComponent.attr('contenteditable');
+                var $targetComponent = $(summaries[0].target), targetComponentIsSelected = $targetComponent.hasClass('live-edit-selected-component'), componentIsNotSelectedAndMouseIsOver = !targetComponentIsSelected && event.type === 'mouseOver.liveEdit.component', componentIsParagraphAndBeingEdited = $targetComponent.attr('contenteditable');
                 if(componentIsParagraphAndBeingEdited) {
-                    $(window).trigger('component.onParagraphEdit', [
+                    $(window).trigger('paragraphEdit.liveEdit.component', [
                         $targetComponent
                     ]);
                 } else if(componentIsNotSelectedAndMouseIsOver) {
-                    $(window).trigger('component.mouseOver', [
+                    $(window).trigger('mouseOver.liveEdit.component', [
                         $targetComponent
                     ]);
                 } else {
-                    $(window).trigger('component.onSelect', [
+                    $(window).trigger('select.liveEdit.component', [
                         $targetComponent
                     ]);
                 }
@@ -220,7 +220,7 @@ var LiveEdit;
                     return _this.getDragHelperHtml('');
                 },
                 start: function (event, ui) {
-                    $(window).trigger('component.onDragStart', [
+                    $(window).trigger('dragStart.liveEdit.component', [
                         event, 
                         ui
                     ]);
@@ -228,7 +228,7 @@ var LiveEdit;
                     _isDragging = true;
                 },
                 stop: function (event, ui) {
-                    $(window).trigger('component.onDragStop', [
+                    $(window).trigger('dragStop.liveEdit.component', [
                         event, 
                         ui
                     ]);
@@ -256,7 +256,7 @@ var LiveEdit;
             var targetComponentName = LiveEdit.ComponentHelper.getComponentName($(event.target));
             ui.placeholder.html('Drop component here' + '<div style="font-size: 10px;">' + targetComponentName + '</div>');
             this.refreshSortable();
-            $(window).trigger('component.onSortStart', [
+            $(window).trigger('sortStart.liveEdit.component', [
                 event, 
                 ui
             ]);
@@ -269,7 +269,7 @@ var LiveEdit;
                 ui.placeholder.hide();
             } else {
                 this.updateHelperStatusIcon('yes');
-                $(window).trigger('component.onSortOver', [
+                $(window).trigger('sortOver.liveEdit.component', [
                     event, 
                     ui
                 ]);
@@ -280,7 +280,7 @@ var LiveEdit;
                 this.removePaddingFromLayoutComponent();
             }
             this.updateHelperStatusIcon('no');
-            $(window).trigger('component.onSortOut', [
+            $(window).trigger('sortOut.liveEdit.component', [
                 event, 
                 ui
             ]);
@@ -289,13 +289,13 @@ var LiveEdit;
             this.addPaddingToLayoutComponent($(event.target));
             this.updateHelperStatusIcon('yes');
             ui.placeholder.show();
-            $(window).trigger('component.onSortChange', [
+            $(window).trigger('sortChange.liveEdit.component', [
                 event, 
                 ui
             ]);
         };
         DragDropSort.prototype.handleSortUpdate = function (event, ui) {
-            $(window).trigger('component.onSortUpdate', [
+            $(window).trigger('sortUpdate.liveEdit.component', [
                 event, 
                 ui
             ]);
@@ -308,10 +308,10 @@ var LiveEdit;
                 ui.item.remove();
             }
             if(LiveEdit.ComponentHelper.supportsTouch()) {
-                $(window).trigger('component.mouseOut');
+                $(window).trigger('mouseOut.liveEdit.component');
             }
             var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
-            $(window).trigger('component.onSortStop', [
+            $(window).trigger('sortStop.liveEdit.component', [
                 event, 
                 ui, 
                 wasSelectedOnDragStart
@@ -334,7 +334,7 @@ var LiveEdit;
                     if(componentType === 'layout') {
                         _this.createSortable();
                     }
-                    $(window).trigger('component.onSortUpdate');
+                    $(window).trigger('sortUpdate.liveEdit.component');
                 });
             }
         };
@@ -349,20 +349,20 @@ var LiveEdit;
         };
         DragDropSort.prototype.registerGlobalListeners = function () {
             var _this = this;
-            $(window).on('componentBar.dataLoaded', function () {
+            $(window).on('dataLoaded.liveEdit.componentBar', function () {
                 _this.createComponentBarDraggables();
             });
-            $(window).on('component.onSelect', function (event, $component) {
+            $(window).on('select.liveEdit.component', function (event, $component) {
             });
-            $(window).on('component.onDeselect', function () {
+            $(window).on('deselect.liveEdit.component', function () {
                 if(LiveEdit.ComponentHelper.supportsTouch() && !_isDragging) {
                     _this.disableDragDrop();
                 }
             });
-            $(window).on('component.onParagraphSelect', function () {
+            $(window).on('paragraphSelect.liveEdit.component', function () {
                 $(regionSelector).sortable('option', 'cancel', '[data-live-edit-type=paragraph]');
             });
-            $(window).on('component.onParagraphEditLeave', function () {
+            $(window).on('paragraphLeave.liveEdit.component', function () {
                 $(regionSelector).sortable('option', 'cancel', '');
             });
         };
@@ -428,7 +428,7 @@ var LiveEdit;
                         return;
                     }
                     event.stopPropagation();
-                    $(window).trigger('component.mouseOver', [
+                    $(window).trigger('mouseOver.liveEdit.component', [
                         component
                     ]);
                 });
@@ -439,7 +439,7 @@ var LiveEdit;
                     if(_this.hasComponentSelected()) {
                         return;
                     }
-                    $(window).trigger('component.mouseOut');
+                    $(window).trigger('mouseOut.liveEdit.component');
                 });
             };
             Base.prototype.attachClickEvent = function () {
@@ -452,13 +452,13 @@ var LiveEdit;
                     event.preventDefault();
                     var component = $(event.currentTarget), componentIsSelected = component.hasClass('live-edit-selected-component'), pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
                     if(componentIsSelected || pageHasComponentSelected) {
-                        $(window).trigger('component.onDeselect');
+                        $(window).trigger('deselect.liveEdit.component');
                     } else {
                         var pagePosition = {
                             x: event.pageX,
                             y: event.pageY
                         };
-                        $(window).trigger('component.onSelect', [
+                        $(window).trigger('select.liveEdit.component', [
                             component, 
                             pagePosition
                         ]);
@@ -522,7 +522,7 @@ var LiveEdit;
             }
             Region.prototype.registerGlobalListeners = function () {
                 var _this = this;
-                $(window).on('component.onSortUpdate component.onSortOver component.onRemove', function () {
+                $(window).on('sortUpdate.liveEdit.component sortOver.liveEdit.component remove.liveEdit.component', function () {
                     _this.renderEmptyPlaceholders();
                 });
             };
@@ -668,7 +668,7 @@ var LiveEdit;
             }
             Paragraph.prototype.registerGlobalListeners = function () {
                 var _this = this;
-                $(window).on('shader.onClick component.onDeselect', function (event) {
+                $(window).on('click.liveEdit.shader deselect.liveEdit.component', function (event) {
                     _this.leaveEditMode();
                 });
             };
@@ -706,17 +706,17 @@ var LiveEdit;
                     x: event.pageX,
                     y: event.pageY
                 };
-                $(window).trigger('component.onSelect', [
+                $(window).trigger('select.liveEdit.component', [
                     this.selectedParagraph, 
                     pagePosition
                 ]);
-                $(window).trigger('component.onParagraphSelect', [
+                $(window).trigger('paragraphSelect.liveEdit.component', [
                     this.selectedParagraph
                 ]);
             };
             Paragraph.prototype.setEditMode = function () {
                 var $paragraph = this.selectedParagraph;
-                $(window).trigger('component.onParagraphEdit', [
+                $(window).trigger('paragraphEdit.liveEdit.component', [
                     this.selectedParagraph
                 ]);
                 $paragraph.css('cursor', 'text');
@@ -728,7 +728,7 @@ var LiveEdit;
                 if($paragraph === null) {
                     return;
                 }
-                $(window).trigger('component.onParagraphEditLeave', [
+                $(window).trigger('paragraphLeave.liveEdit.component', [
                     this.selectedParagraph
                 ]);
                 $paragraph.css('cursor', '');
@@ -864,13 +864,13 @@ var LiveEdit;
             }
             Editor.prototype.registerGlobalListeners = function () {
                 var _this = this;
-                $(window).on('component.onParagraphEdit', function (event, paragraph) {
+                $(window).on('paragraphEdit.liveEdit.component', function (event, paragraph) {
                     _this.activate(paragraph);
                 });
-                $(window).on('component.onParagraphEditLeave', function (event, paragraph) {
+                $(window).on('paragraphLeave.liveEdit.component', function (event, paragraph) {
                     _this.deActivate(paragraph);
                 });
-                $(window).on('editorToolbar.onButtonClick', function (event, tag) {
+                $(window).on('buttonClick.liveEdit.editorToolbar', function (event, tag) {
                     document.execCommand(tag, false, null);
                 });
             };
@@ -906,10 +906,10 @@ var LiveEdit;
             }
             EditorToolbar.prototype.registerGlobalListeners = function () {
                 var _this = this;
-                $(window).on('component.onParagraphEdit', function (event, component) {
+                $(window).on('paragraphEdit.liveEdit.component', function (event, component) {
                     _this.show(component);
                 });
-                $(window).on('component.onParagraphEditLeave component.onRemove component.onSortStart', function () {
+                $(window).on('paragraphLeave.liveEdit.component remove.liveEdit.component sortStart.liveEdit.component', function () {
                     _this.hide();
                 });
             };
@@ -924,7 +924,7 @@ var LiveEdit;
                     event.stopPropagation();
                     var tag = event.target.getAttribute('data-tag');
                     if(tag) {
-                        $(window).trigger('editorToolbar.onButtonClick', [
+                        $(window).trigger('buttonClick.liveEdit.editorToolbar', [
                             tag
                         ]);
                     }
@@ -1006,13 +1006,13 @@ var LiveEdit;
             }
             Shader.prototype.registerGlobalListeners = function () {
                 var _this = this;
-                $(window).on('component.onSelect component.onParagraphEdit', function (event, component) {
+                $(window).on('select.liveEdit.component paragraphEdit.liveEdit.component', function (event, component) {
                     _this.show(component);
                 });
-                $(window).on('component.onDeselect component.onRemove component.onSortStart', function () {
+                $(window).on('deselect.liveEdit.component remove.liveEdit.component sortStart.liveEdit.component', function () {
                     _this.hide();
                 });
-                $(window).on('liveEdit.onWindowResize', function () {
+                $(window).on('windowResize.liveEdit', function () {
                     _this.handleWindowResize();
                 });
             };
@@ -1032,8 +1032,8 @@ var LiveEdit;
                 $('.live-edit-shader').on('click contextmenu', function (event) {
                     event.stopPropagation();
                     event.preventDefault();
-                    $(window).trigger('component.onDeselect');
-                    $(window).trigger('shader.onClick');
+                    $(window).trigger('deselect.liveEdit.component');
+                    $(window).trigger('click.liveEdit.shader');
                 });
             };
             Shader.prototype.show = function (component) {
@@ -1109,10 +1109,10 @@ var LiveEdit;
             }
             Cursor.prototype.registerGlobalListeners = function () {
                 var _this = this;
-                $(window).on('component.mouseOver component.onSelect', function (event, component) {
+                $(window).on('mouseOver.liveEdit.component select.liveEdit.component', function (event, component) {
                     _this.updateCursor(component);
                 });
-                $(window).on('component.mouseOut', function () {
+                $(window).on('mouseOut.liveEdit.component', function () {
                     _this.resetCursor();
                 });
             };
@@ -1163,24 +1163,24 @@ var LiveEdit;
             }
             Highlighter.prototype.registerGlobalListeners = function () {
                 var _this = this;
-                $(window).on('component.mouseOver', function (event, component) {
+                $(window).on('mouseOver.liveEdit.component', function (event, component) {
                     _this.componentMouseOver(component);
                 });
-                $(window).on('component.onSelect', function (event, component) {
+                $(window).on('select.liveEdit.component', function (event, component) {
                     _this.selectComponent(component);
                 });
-                $(window).on('component.onDeselect', function () {
+                $(window).on('deselect.liveEdit.component', function () {
                     _this.deselect();
                 });
-                $(window).on('component.mouseOut component.onSortStart component.onRemove component.onParagraphEdit', function () {
+                $(window).on('mouseOut.liveEdit.component sortStart.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', function () {
                     _this.hide();
                 });
-                $(window).on('liveEdit.onWindowResize', function () {
+                $(window).on('windowResize.liveEdit', function () {
                     _this.handleWindowResize();
                 });
-                $(window).on('component.onSortStop', function (event, uiEvent, ui, wasSelectedOnDragStart) {
+                $(window).on('sortstop.liveedit.component', function (event, uiEvent, ui, wasSelectedOnDragStart) {
                     if(wasSelectedOnDragStart) {
-                        $(window).trigger('component.onSelect', [
+                        $(window).trigger('select.liveEdit.component', [
                             ui.item
                         ]);
                     }
@@ -1308,7 +1308,7 @@ var LiveEdit;
             }
             ToolTip.prototype.registerGlobalListeners = function () {
                 var _this = this;
-                $(window).on('component.onSelect', function () {
+                $(window).on('select.liveEdit.component', function () {
                     _this.hide();
                 });
             };
@@ -1435,13 +1435,13 @@ var LiveEdit;
             }
             Menu.prototype.registerGlobalListeners = function () {
                 var _this = this;
-                $(window).on('component.onSelect', function (event, $component, pagePosition) {
+                $(window).on('select.liveEdit.component', function (event, $component, pagePosition) {
                     _this.show($component, pagePosition);
                 });
-                $(window).on('component.onDeselect component.onRemove component.onParagraphEdit', function () {
+                $(window).on('deselect.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', function () {
                     _this.hide();
                 });
-                $(window).on('component.onSortStart', function () {
+                $(window).on('sortStart.liveEdit.component', function () {
                     _this.fadeOutAndHide();
                 });
             };
@@ -1466,7 +1466,7 @@ var LiveEdit;
                     addClasses: false
                 });
                 this.getCloseButton().click(function () {
-                    $(window).trigger('component.onDeselect');
+                    $(window).trigger('deselect.liveEdit.component');
                 });
             };
             Menu.prototype.show = function (component, pagePosition) {
@@ -1489,7 +1489,7 @@ var LiveEdit;
                 var _this = this;
                 this.getRootEl().fadeOut(500, function () {
                     _this.hide();
-                    $(window).trigger('component.onDeselect', {
+                    $(window).trigger('deselect.liveEdit.component', {
                         showComponentBar: false
                     });
                 });
@@ -1654,7 +1654,7 @@ var LiveEdit;
                         var $parent = _this.menu.selectedComponent.parents('[data-live-edit-type]');
                         if($parent && $parent.length > 0) {
                             $parent = $($parent[0]);
-                            $(window).trigger('component.onSelect', [
+                            $(window).trigger('select.liveEdit.component', [
                                 $parent, 
                                 {
                                     x: 0,
@@ -1803,7 +1803,7 @@ var LiveEdit;
                         event.stopPropagation();
                         var $paragraph = _this.menu.selectedComponent;
                         if($paragraph && $paragraph.length > 0) {
-                            $(window).trigger('component.onParagraphEdit', [
+                            $(window).trigger('paragraphEdit.liveEdit.component', [
                                 $paragraph
                             ]);
                         }
@@ -1964,7 +1964,7 @@ var LiveEdit;
                     handler: function (event) {
                         event.stopPropagation();
                         _this.menu.selectedComponent.remove();
-                        $(window).trigger('component.onRemove');
+                        $(window).trigger('remove.liveEdit.component');
                     }
                 });
                 this.appendTo(this.menu.getRootEl());
@@ -2017,10 +2017,10 @@ var LiveEdit;
             };
             ComponentBar.prototype.registerGlobalListeners = function () {
                 var _this = this;
-                $(window).on('component.onSelect component.onDragStart component.onSortStart', function () {
+                $(window).on('select.liveEdit.component dragStart.liveEdit.component sortStart.liveEdit.component', function () {
                     _this.fadeOut();
                 });
-                $(window).on('component.onDeselect component.onDragStop component.onSortStop component.onSortUpdate component.onRemove', function (event, triggerConfig) {
+                $(window).on('deselect.liveEdit.component dragStop.liveEdit.component sortstop.liveedit.component sortUpdate.liveEdit.component remove.liveEdit.component', function (event, triggerConfig) {
                     _this.fadeIn(triggerConfig);
                 });
             };
@@ -2033,14 +2033,14 @@ var LiveEdit;
                     _this.filterList($(_this).val());
                 });
                 this.getBar().on('mouseover', function () {
-                    $(window).trigger('componentBar:mouseover');
+                    $(window).trigger('mouseOver.liveEdit.componentBar');
                 });
             };
             ComponentBar.prototype.loadComponentsData = function () {
                 var _this = this;
                 $.getJSON(this.getComponentsDataUrl(), null, function (data, textStatus, jqXHR) {
                     _this.renderComponents(data);
-                    $(window).trigger('componentBar.dataLoaded');
+                    $(window).trigger('dataLoaded.liveEdit.componentBar');
                 });
             };
             ComponentBar.prototype.renderComponents = function (jsonData) {
@@ -2163,7 +2163,7 @@ var LiveEdit;
             new LiveEdit.MutationObserver();
             new LiveEdit.DragDropSort();
             $(window).resize(function () {
-                $(window).trigger('liveEdit.onWindowResize');
+                $(window).trigger('windowResize.liveEdit');
             });
         });
     });

@@ -24,29 +24,29 @@ module LiveEdit.ui {
 
 
         private registerGlobalListeners():void {
-            $(window).on('component.mouseOver', (event, component) => {
+            $(window).on('mouseOver.liveEdit.component', (event, component) => {
                 this.componentMouseOver(component);
             });
 
-            $(window).on('component.onSelect', (event, component) => {
+            $(window).on('select.liveEdit.component', (event, component) => {
                 this.selectComponent(component);
             });
 
-            $(window).on('component.onDeselect', () => {
+            $(window).on('deselect.liveEdit.component', () => {
                 this.deselect();
             });
 
-            $(window).on('component.mouseOut component.onSortStart component.onRemove component.onParagraphEdit', () => {
+            $(window).on('mouseOut.liveEdit.component sortStart.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', () => {
                 this.hide();
             });
 
-            $(window).on('liveEdit.onWindowResize', () => {
+            $(window).on('windowResize.liveEdit', () => {
                 this.handleWindowResize();
             });
 
-            $(window).on('component.onSortStop', (event, uiEvent, ui, wasSelectedOnDragStart) => {
+            $(window).on('sortstop.liveedit.component', (event, uiEvent, ui, wasSelectedOnDragStart) => {
                 if (wasSelectedOnDragStart) {
-                    $(window).trigger('component.onSelect', [ui.item]);
+                    $(window).trigger('select.liveEdit.component', [ui.item]);
                 }
             });
         }

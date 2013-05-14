@@ -20,10 +20,10 @@ module LiveEdit.ui {
         }
 
         registerGlobalListeners():void {
-            $(window).on('component.onParagraphEdit', (event:JQueryEventObject, component:JQuery) => {
+            $(window).on('paragraphEdit.liveEdit.component', (event:JQueryEventObject, component:JQuery) => {
                 this.show(component);
             });
-            $(window).on('component.onParagraphEditLeave component.onRemove component.onSortStart', () => {
+            $(window).on('paragraphLeave.liveEdit.component remove.liveEdit.component sortStart.liveEdit.component', () => {
                 this.hide();
             });
         }
@@ -61,7 +61,7 @@ module LiveEdit.ui {
                 // Simple editor command implementation ;)
                 var tag = event.target.getAttribute('data-tag');
                 if (tag) {
-                    $(window).trigger('editorToolbar.onButtonClick', [tag]);
+                    $(window).trigger('buttonClick.liveEdit.editorToolbar', [tag]);
                 }
             });
 

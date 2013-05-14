@@ -22,7 +22,7 @@ module LiveEdit.ui {
 
                     var $paragraph = this.menu.selectedComponent;
                     if ($paragraph && $paragraph.length > 0) {
-                        $(window).trigger('component.onParagraphEdit', [$paragraph]);
+                        $(window).trigger('paragraphEdit.liveEdit.component', [$paragraph]);
                     }
                 }
             });

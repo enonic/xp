@@ -12,10 +12,10 @@ module LiveEdit {
 
 
         private registerGlobalListeners():void {
-            $(window).on('component.onParagraphEdit', (event:JQueryEventObject, component:JQuery) => {
+            $(window).on('paragraphEdit.liveEdit.component', (event:JQueryEventObject, component:JQuery) => {
                 this.observe(event, component)
             });
-            $(window).on('shader.onClick', (event:JQueryEventObject) => {
+            $(window).on('click.liveEdit.shader', (event:JQueryEventObject) => {
                 this.disconnect(event);
             });
         }
@@ -45,7 +45,7 @@ module LiveEdit {
 
         private disconnect(event:JQueryEventObject):void {
             var targetComponentIsSelected = (this.observedComponent && this.observedComponent.hasClass('live-edit-selected-component'));
-            var componentIsSelectedAndUserMouseOut = event.type === 'component.mouseOut' && targetComponentIsSelected;
+            var componentIsSelectedAndUserMouseOut = event.type === 'mouseOut.liveEdit.component' && targetComponentIsSelected;
             if (componentIsSelectedAndUserMouseOut) {
                 return;
             }
@@ -64,14 +64,14 @@ module LiveEdit {
             if (summaries && summaries[0]) {
                 var $targetComponent = $(summaries[0].target),
                     targetComponentIsSelected = $targetComponent.hasClass('live-edit-selected-component'),
-                    componentIsNotSelectedAndMouseIsOver = !targetComponentIsSelected && event.type === 'component.mouseOver',
+                    componentIsNotSelectedAndMouseIsOver = !targetComponentIsSelected && event.type === 'mouseOver.liveEdit.component',
                     componentIsParagraphAndBeingEdited = $targetComponent.attr('contenteditable');
                 if (componentIsParagraphAndBeingEdited) {
-                    $(window).trigger('component.onParagraphEdit', [$targetComponent]);
+                    $(window).trigger('paragraphEdit.liveEdit.component', [$targetComponent]);
                 } else if (componentIsNotSelectedAndMouseIsOver) {
-                    $(window).trigger('component.mouseOver', [$targetComponent]);
+                    $(window).trigger('mouseOver.liveEdit.component', [$targetComponent]);
                 } else {
-                    $(window).trigger('component.onSelect', [$targetComponent]);
+                    $(window).trigger('select.liveEdit.component', [$targetComponent]);
                 }
             }
         }

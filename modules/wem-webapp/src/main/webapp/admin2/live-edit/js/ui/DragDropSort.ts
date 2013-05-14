@@ -77,12 +77,12 @@ module LiveEdit {
                     return this.getDragHelperHtml('');
                 },
                 start: (event, ui) => {
-                    $(window).trigger('component.onDragStart', [event, ui]);
+                    $(window).trigger('dragStart.liveEdit.component', [event, ui]);
                     this.setDragHelperText($(event.target).data('live-edit-component-name'));
                     _isDragging = true;
                 },
                 stop: (event, ui) => {
-                    $(window).trigger('component.onDragStop', [event, ui]);
+                    $(window).trigger('dragStop.liveEdit.component', [event, ui]);
                     _isDragging = false;
                 }
             };
@@ -123,7 +123,7 @@ module LiveEdit {
 
             this.refreshSortable();
 
-            $(window).trigger('component.onSortStart', [event, ui]);
+            $(window).trigger('sortStart.liveEdit.component', [event, ui]);
         }
 
 
@@ -139,7 +139,7 @@ module LiveEdit {
                 ui.placeholder.hide();
             } else {
                 this.updateHelperStatusIcon('yes');
-                $(window).trigger('component.onSortOver', [event, ui]);
+                $(window).trigger('sortOver.liveEdit.component', [event, ui]);
             }
         }
 
@@ -149,18 +149,18 @@ module LiveEdit {
             }
 
             this.updateHelperStatusIcon('no');
-            $(window).trigger('component.onSortOut', [event, ui]);
+            $(window).trigger('sortOut.liveEdit.component', [event, ui]);
         }
 
         private handleSortChange(event:JQueryEventObject, ui):void {
             this.addPaddingToLayoutComponent($(event.target));
             this.updateHelperStatusIcon('yes');
             ui.placeholder.show();
-            $(window).trigger('component.onSortChange', [event, ui]);
+            $(window).trigger('sortChange.liveEdit.component', [event, ui]);
         }
 
         private handleSortUpdate(event:JQueryEventObject, ui):void {
-            $(window).trigger('component.onSortUpdate', [event, ui]);
+            $(window).trigger('sortUpdate.liveEdit.component', [event, ui]);
         }
 
         private handleSortStop(event:JQueryEventObject, ui):void {
@@ -178,12 +178,12 @@ module LiveEdit {
 
 
             if (LiveEdit.ComponentHelper.supportsTouch()) {
-                $(window).trigger('component.mouseOut');
+                $(window).trigger('mouseOut.liveEdit.component');
             }
 
             var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
 
-            $(window).trigger('component.onSortStop', [event, ui, wasSelectedOnDragStart]);
+            $(window).trigger('sortStop.liveEdit.component', [event, ui, wasSelectedOnDragStart]);
 
             ui.item.removeData('live-edit-selected-on-drag-start');
         }
@@ -211,7 +211,7 @@ module LiveEdit {
                             this.createSortable();
                         }
 
-                        $(window).trigger('component.onSortUpdate');
+                        $(window).trigger('sortUpdate.liveEdit.component');
                     });
             }
         }
@@ -235,11 +235,11 @@ module LiveEdit {
         private registerGlobalListeners():void {
             // The jQuery draggable() is not "live"/support delegates so we have to make sure the components in the component bar are always draggable
             // Make the components in the component bar draggable
-            $(window).on('componentBar.dataLoaded', () => {
+            $(window).on('dataLoaded.liveEdit.componentBar', () => {
                 this.createComponentBarDraggables();
             });
 
-            $(window).on('component.onSelect', (event, $component) => {
+            $(window).on('select.liveEdit.component', (event, $component) => {
                 /*
                  if (LiveEdit.ComponentHelper.supportsTouch()) {
                  enableDragDrop();
@@ -263,17 +263,17 @@ module LiveEdit {
 
             });
 
-            $(window).on('component.onDeselect', () => {
+            $(window).on('deselect.liveEdit.component', () => {
                 if (LiveEdit.ComponentHelper.supportsTouch() && !_isDragging) {
                     this.disableDragDrop();
                 }
             });
 
-            $(window).on('component.onParagraphSelect', () => {
+            $(window).on('paragraphSelect.liveEdit.component', () => {
                 $(regionSelector).sortable('option', 'cancel', '[data-live-edit-type=paragraph]');
             });
 
-            $(window).on('component.onParagraphEditLeave', () => {
+            $(window).on('paragraphLeave.liveEdit.component', () => {
                 $(regionSelector).sortable('option', 'cancel', '');
             });
         }

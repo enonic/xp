@@ -29,15 +29,15 @@ module LiveEdit.ui {
 
 
         registerGlobalListeners():void {
-            $(window).on('component.onSelect', (event, $component, pagePosition) => {
+            $(window).on('select.liveEdit.component', (event, $component, pagePosition) => {
                 this.show($component, pagePosition);
             });
 
-            $(window).on('component.onDeselect component.onRemove component.onParagraphEdit', () => {
+            $(window).on('deselect.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', () => {
                 this.hide();
             });
 
-            $(window).on('component.onSortStart', () => {
+            $(window).on('sortStart.liveEdit.component', () => {
                 this.fadeOutAndHide();
             });
         }
@@ -68,7 +68,7 @@ module LiveEdit.ui {
             });
 
             this.getCloseButton().click(function () {
-                $(window).trigger('component.onDeselect');
+                $(window).trigger('deselect.liveEdit.component');
             });
         }
 
@@ -102,7 +102,7 @@ module LiveEdit.ui {
         fadeOutAndHide():void {
             this.getRootEl().fadeOut(500, () => {
                 this.hide();
-                $(window).trigger('component.onDeselect', {showComponentBar: false});
+                $(window).trigger('deselect.liveEdit.component', {showComponentBar: false});
             });
             this.selectedComponent = null;
         }

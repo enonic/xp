@@ -19,7 +19,7 @@ module LiveEdit.model {
 
 
         private registerGlobalListeners():void {
-            $(window).on('component.onSortUpdate component.onSortOver component.onRemove', () => {
+            $(window).on('sortUpdate.liveEdit.component sortOver.liveEdit.component remove.liveEdit.component', () => {
                 this.renderEmptyPlaceholders();
             });
         }

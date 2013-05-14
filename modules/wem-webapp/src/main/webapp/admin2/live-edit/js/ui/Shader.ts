@@ -22,15 +22,15 @@ module LiveEdit.ui {
 
 
         registerGlobalListeners():void {
-            $(window).on('component.onSelect component.onParagraphEdit', (event:JQueryEventObject, component:JQuery) => {
+            $(window).on('select.liveEdit.component paragraphEdit.liveEdit.component', (event:JQueryEventObject, component:JQuery) => {
                 this.show(component);
             });
 
-            $(window).on('component.onDeselect component.onRemove component.onSortStart', () => {
+            $(window).on('deselect.liveEdit.component remove.liveEdit.component sortStart.liveEdit.component', () => {
                 this.hide();
             });
 
-            $(window).on('liveEdit.onWindowResize', () => {
+            $(window).on('windowResize.liveEdit', () => {
                 this.handleWindowResize();
             });
         }
@@ -59,8 +59,8 @@ module LiveEdit.ui {
             $('.live-edit-shader').on('click contextmenu', function (event) {
                 event.stopPropagation();
                 event.preventDefault();
-                $(window).trigger('component.onDeselect');
-                $(window).trigger('shader.onClick');
+                $(window).trigger('deselect.liveEdit.component');
+                $(window).trigger('click.liveEdit.shader');
             });
         }
 

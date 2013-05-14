@@ -15,15 +15,15 @@ module LiveEdit.ui {
         }
 
         registerGlobalListeners():void {
-            $(window).on('component.onParagraphEdit', (event:JQueryEventObject, paragraph:JQuery) => {
+            $(window).on('paragraphEdit.liveEdit.component', (event:JQueryEventObject, paragraph:JQuery) => {
                 this.activate(paragraph);
             });
 
-            $(window).on('component.onParagraphEditLeave', (event:JQueryEventObject, paragraph:JQuery) => {
+            $(window).on('paragraphLeave.liveEdit.component', (event:JQueryEventObject, paragraph:JQuery) => {
                 this.deActivate(paragraph);
             });
 
-            $(window).on('editorToolbar.onButtonClick', (event:JQueryEventObject, tag:string) => {
+            $(window).on('buttonClick.liveEdit.editorToolbar', (event:JQueryEventObject, tag:string) => {
                 // Simplest implementation for now.
                 document.execCommand(tag, false, null);
             });

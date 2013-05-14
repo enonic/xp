@@ -26,7 +26,7 @@ module LiveEdit.ui {
                     if ($parent && $parent.length > 0) {
                         $parent = $($parent[0]);
 
-                        $(window).trigger('component.onSelect', [$parent, {x: 0, y: 0}]);
+                        $(window).trigger('select.liveEdit.component', [$parent, {x: 0, y: 0}]);
 
                         this.scrollComponentIntoView($parent);
 

@@ -27,7 +27,7 @@ module LiveEdit.model {
 
 
         registerGlobalListeners():void {
-            $(window).on('shader.onClick component.onDeselect', (event:JQueryEventObject) => {
+            $(window).on('click.liveEdit.shader deselect.liveEdit.component', (event:JQueryEventObject) => {
                 this.leaveEditMode();
             });
         }
@@ -84,15 +84,15 @@ module LiveEdit.model {
                 y: event.pageY
             };
 
-            $(window).trigger('component.onSelect', [this.selectedParagraph, pagePosition]);
-            $(window).trigger('component.onParagraphSelect', [this.selectedParagraph]);
+            $(window).trigger('select.liveEdit.component', [this.selectedParagraph, pagePosition]);
+            $(window).trigger('paragraphSelect.liveEdit.component', [this.selectedParagraph]);
         }
 
 
         setEditMode():void {
             var $paragraph = this.selectedParagraph;
 
-            $(window).trigger('component.onParagraphEdit', [this.selectedParagraph]);
+            $(window).trigger('paragraphEdit.liveEdit.component', [this.selectedParagraph]);
 
             $paragraph.css('cursor', 'text');
             $paragraph.addClass('live-edit-edited-paragraph');
@@ -106,7 +106,7 @@ module LiveEdit.model {
             if ($paragraph === null) {
                 return;
             }
-            $(window).trigger('component.onParagraphEditLeave', [this.selectedParagraph]);
+            $(window).trigger('paragraphLeave.liveEdit.component', [this.selectedParagraph]);
 
             $paragraph.css('cursor', '');
             $paragraph.removeClass('live-edit-edited-paragraph');
