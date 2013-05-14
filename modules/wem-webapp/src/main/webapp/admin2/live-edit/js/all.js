@@ -341,8 +341,8 @@ var LiveEdit;
         DragDropSort.prototype.itemIsDraggedFromComponentBar = function (item) {
             return item.hasClass('live-edit-component');
         };
-        DragDropSort.prototype.addPaddingToLayoutComponent = function ($component) {
-            $component.closest(layoutSelector).addClass('live-edit-component-padding');
+        DragDropSort.prototype.addPaddingToLayoutComponent = function (component) {
+            component.closest(layoutSelector).addClass('live-edit-component-padding');
         };
         DragDropSort.prototype.removePaddingFromLayoutComponent = function () {
             $('.live-edit-component-padding').removeClass('live-edit-component-padding');
@@ -790,52 +790,52 @@ var LiveEdit;
                 var _this = this;
                 var elements = this.getElements();
                 elements.each(function (i) {
-                    _this.replace(elements[i]);
+                    _this.replace($(elements[i]));
                 });
             };
-            HtmlElementReplacer.prototype.replace = function ($element) {
-                this.hideElement($element);
-                this.addPlaceholder($element);
+            HtmlElementReplacer.prototype.replace = function (element) {
+                this.hideElement(element);
+                this.addPlaceholder(element);
             };
-            HtmlElementReplacer.prototype.addPlaceholder = function ($element) {
-                this.createPlaceholder($element).insertAfter($element);
+            HtmlElementReplacer.prototype.addPlaceholder = function (element) {
+                this.createPlaceholder(element).insertAfter(element);
             };
-            HtmlElementReplacer.prototype.createPlaceholder = function ($element) {
-                var $placeholder = $('<div></div>');
-                $placeholder.addClass('live-edit-html-element-placeholder');
-                $placeholder.width(this.getElementWidth($element));
-                $placeholder.height(this.getElementHeight($element));
-                var $icon = $('<div/>');
-                $icon.addClass(this.resolveIconCssClass($element));
-                $icon.append('<div>' + $element[0].tagName.toLowerCase() + '</div>');
-                $placeholder.append($icon);
-                return $placeholder;
+            HtmlElementReplacer.prototype.createPlaceholder = function (element) {
+                var placeholder = $('<div></div>');
+                placeholder.addClass('live-edit-html-element-placeholder');
+                placeholder.width(this.getElementWidth(element));
+                placeholder.height(this.getElementHeight(element));
+                var icon = $('<div/>');
+                icon.addClass(this.resolveIconCssClass(element));
+                icon.append('<div>' + element[0].tagName.toLowerCase() + '</div>');
+                placeholder.append(icon);
+                return placeholder;
             };
             HtmlElementReplacer.prototype.getElements = function () {
                 return $('[data-live-edit-type=part] > ' + this.elementsToReplaceSpec.toString());
             };
-            HtmlElementReplacer.prototype.getElementWidth = function ($element) {
-                var attrWidth = $element.attr('width');
+            HtmlElementReplacer.prototype.getElementWidth = function (element) {
+                var attrWidth = parseInt(element.attr('width'), 10);
                 if(!attrWidth) {
-                    return $element.width() - 2;
+                    return element.width() - 2;
                 }
                 return attrWidth;
             };
-            HtmlElementReplacer.prototype.getElementHeight = function ($element) {
-                var attrHeight = $element.attr('height');
+            HtmlElementReplacer.prototype.getElementHeight = function (element) {
+                var attrHeight = parseInt(element.attr('height'), 10);
                 if(!attrHeight) {
-                    return $element.height() - 2;
+                    return element.height() - 2;
                 }
                 return attrHeight;
             };
-            HtmlElementReplacer.prototype.showElement = function ($element) {
-                $element.show();
+            HtmlElementReplacer.prototype.showElement = function (element) {
+                element.show(null);
             };
-            HtmlElementReplacer.prototype.hideElement = function ($element) {
-                $element.hide();
+            HtmlElementReplacer.prototype.hideElement = function (element) {
+                element.hide(null);
             };
-            HtmlElementReplacer.prototype.resolveIconCssClass = function ($element) {
-                var tagName = $element[0].tagName.toLowerCase();
+            HtmlElementReplacer.prototype.resolveIconCssClass = function (element) {
+                var tagName = element[0].tagName.toLowerCase();
                 var clsName = '';
                 if(tagName === 'iframe') {
                     clsName = 'live-edit-iframe';
@@ -864,11 +864,11 @@ var LiveEdit;
             }
             Editor.prototype.registerGlobalListeners = function () {
                 var _this = this;
-                $(window).on('component.onParagraphEdit', function (event, $paragraph) {
-                    _this.activate($paragraph);
+                $(window).on('component.onParagraphEdit', function (event, paragraph) {
+                    _this.activate(paragraph);
                 });
-                $(window).on('component.onParagraphEditLeave', function (event, $paragraph) {
-                    _this.deActivate($paragraph);
+                $(window).on('component.onParagraphEditLeave', function (event, paragraph) {
+                    _this.deActivate(paragraph);
                 });
                 $(window).on('editorToolbar.onButtonClick', function (event, tag) {
                     document.execCommand(tag, false, null);
@@ -937,13 +937,13 @@ var LiveEdit;
             };
             EditorToolbar.prototype.show = function (component) {
                 this.selectedComponent = component;
-                this.getRootEl().show();
+                this.getRootEl().show(null);
                 this.toggleArrowPosition(false);
                 this.updatePosition();
             };
             EditorToolbar.prototype.hide = function () {
                 this.selectedComponent = null;
-                this.getRootEl().hide();
+                this.getRootEl().hide(null);
             };
             EditorToolbar.prototype.updatePosition = function () {
                 if(!this.selectedComponent) {
@@ -1036,12 +1036,12 @@ var LiveEdit;
                     $(window).trigger('shader.onClick');
                 });
             };
-            Shader.prototype.show = function ($component) {
-                this.selectedComponent = $component;
-                if(componentHelper.getComponentType($component) === 'page') {
+            Shader.prototype.show = function (component) {
+                this.selectedComponent = component;
+                if(componentHelper.getComponentType(component) === 'page') {
                     this.showForPage();
                 } else {
-                    this.showForComponent($component);
+                    this.showForComponent(component);
                 }
             };
             Shader.prototype.showForPage = function () {
@@ -1053,9 +1053,9 @@ var LiveEdit;
                     left: 0
                 }).show();
             };
-            Shader.prototype.showForComponent = function ($component) {
+            Shader.prototype.showForComponent = function (component) {
                 var documentSize = LiveEdit.DomHelper.getDocumentSize(), docWidth = documentSize.width, docHeight = documentSize.height;
-                var boxModel = componentHelper.getBoxModel($component), x = boxModel.left, y = boxModel.top, w = boxModel.width, h = boxModel.height;
+                var boxModel = componentHelper.getBoxModel(component), x = boxModel.left, y = boxModel.top, w = boxModel.width, h = boxModel.height;
                 this.$northShader.css({
                     top: 0,
                     left: 0,
@@ -1110,13 +1110,13 @@ var LiveEdit;
             Cursor.prototype.registerGlobalListeners = function () {
                 var _this = this;
                 $(window).on('component.mouseOver component.onSelect', function (event, component) {
-                    _this.updateCursor(event, component);
+                    _this.updateCursor(component);
                 });
                 $(window).on('component.mouseOut', function () {
                     _this.resetCursor();
                 });
             };
-            Cursor.prototype.updateCursor = function (event, component) {
+            Cursor.prototype.updateCursor = function (component) {
                 var componentType = LiveEdit.ComponentHelper.getComponentType(component);
                 var $body = $('body');
                 var cursor = 'default';
@@ -1164,10 +1164,10 @@ var LiveEdit;
             Highlighter.prototype.registerGlobalListeners = function () {
                 var _this = this;
                 $(window).on('component.mouseOver', function (event, component) {
-                    _this.componentMouseOver(event, component);
+                    _this.componentMouseOver(component);
                 });
                 $(window).on('component.onSelect', function (event, component) {
-                    _this.selectComponent(event, component);
+                    _this.selectComponent(component);
                 });
                 $(window).on('component.onDeselect', function () {
                     _this.deselect();
@@ -1175,8 +1175,8 @@ var LiveEdit;
                 $(window).on('component.mouseOut component.onSortStart component.onRemove component.onParagraphEdit', function () {
                     _this.hide();
                 });
-                $(window).on('liveEdit.onWindowResize', function (event) {
-                    _this.handleWindowResize(event);
+                $(window).on('liveEdit.onWindowResize', function () {
+                    _this.handleWindowResize();
                 });
                 $(window).on('component.onSortStop', function (event, uiEvent, ui, wasSelectedOnDragStart) {
                     if(wasSelectedOnDragStart) {
@@ -1191,11 +1191,11 @@ var LiveEdit;
                 this.createElement(html);
                 this.appendTo($('body'));
             };
-            Highlighter.prototype.componentMouseOver = function (event, component) {
+            Highlighter.prototype.componentMouseOver = function (component) {
                 this.show();
                 this.paintBorder(component);
             };
-            Highlighter.prototype.selectComponent = function (event, component) {
+            Highlighter.prototype.selectComponent = function (component) {
                 this.selectedComponent = component;
                 var componentType = componentHelper.getComponentType(component);
                 $('.live-edit-selected-component').removeClass('live-edit-selected-component');
@@ -1233,10 +1233,10 @@ var LiveEdit;
                 });
             };
             Highlighter.prototype.show = function () {
-                this.getRootEl().show();
+                this.getRootEl().show(null);
             };
             Highlighter.prototype.hide = function () {
-                this.getRootEl().hide();
+                this.getRootEl().hide(null);
             };
             Highlighter.prototype.getStyleForComponent = function (component) {
                 var componentType = componentHelper.getComponentType(component);
@@ -1278,7 +1278,7 @@ var LiveEdit;
                     fillColor: fillColor
                 };
             };
-            Highlighter.prototype.handleWindowResize = function (event) {
+            Highlighter.prototype.handleWindowResize = function () {
                 if(this.selectedComponent) {
                     this.paintBorder(this.selectedComponent);
                 }
@@ -1342,7 +1342,7 @@ var LiveEdit;
                 });
                 $(document).on('hover', '[data-live-edit-type]', function (event) {
                     if(event.type === 'mouseenter') {
-                        _this.getRootEl().hide().fadeIn(300);
+                        _this.getRootEl().hide(null).fadeIn(300);
                     }
                 });
                 $(document).on('mouseout', function () {
@@ -1436,7 +1436,7 @@ var LiveEdit;
             Menu.prototype.registerGlobalListeners = function () {
                 var _this = this;
                 $(window).on('component.onSelect', function (event, $component, pagePosition) {
-                    _this.show(event, $component, pagePosition);
+                    _this.show($component, pagePosition);
                 });
                 $(window).on('component.onDeselect component.onRemove component.onParagraphEdit', function () {
                     _this.hide();
@@ -1469,20 +1469,20 @@ var LiveEdit;
                     $(window).trigger('component.onDeselect');
                 });
             };
-            Menu.prototype.show = function (event, $component, pagePosition) {
-                this.selectedComponent = $component;
+            Menu.prototype.show = function (component, pagePosition) {
+                this.selectedComponent = component;
                 this.previousPagePositions = pagePosition;
                 this.previousPageSizes = domHelper.getViewPortSize();
-                this.updateTitleBar($component);
-                this.updateMenuItemsForComponent($component);
+                this.updateTitleBar(component);
+                this.updateMenuItemsForComponent(component);
                 var pageXPosition = pagePosition.x - this.getRootEl().width() / 2, pageYPosition = pagePosition.y + 15;
                 this.moveToXY(pageXPosition, pageYPosition);
-                this.getRootEl().show();
+                this.getRootEl().show(null);
                 this.hidden = false;
             };
             Menu.prototype.hide = function () {
                 this.selectedComponent = null;
-                this.getRootEl().hide();
+                this.getRootEl().hide(null);
                 this.hidden = true;
             };
             Menu.prototype.fadeOutAndHide = function () {
@@ -1517,8 +1517,8 @@ var LiveEdit;
                     this.buttons[i].appendTo($menuItemsPlaceholder);
                 }
             };
-            Menu.prototype.updateMenuItemsForComponent = function ($component) {
-                var componentType = componentHelper.getComponentType($component);
+            Menu.prototype.updateMenuItemsForComponent = function (component) {
+                var componentType = componentHelper.getComponentType(component);
                 var buttonArray = this.getConfigForButton(componentType);
                 var buttons = this.getButtons();
                 var i;
@@ -1533,8 +1533,8 @@ var LiveEdit;
                     }
                 }
             };
-            Menu.prototype.updateTitleBar = function ($component) {
-                var componentInfo = componentHelper.getComponentInfo($component);
+            Menu.prototype.updateTitleBar = function (component) {
+                var componentInfo = componentHelper.getComponentInfo(component);
                 this.setIcon(componentInfo.type);
                 this.setTitle(componentInfo.name);
             };
@@ -1589,13 +1589,6 @@ var LiveEdit;
             };
             Menu.prototype.getMenuItemsPlaceholderElement = function () {
                 return $('.live-edit-component-menu-items', this.getRootEl());
-            };
-            Menu.prototype.handleWindowResize = function (event) {
-                if(this.selectedComponent) {
-                    var x = this.previousPagePositions.x, y = this.previousPagePositions.y;
-                    x = x - (this.previousPageSizes.width - LiveEdit.DomHelper.getViewPortSize().width);
-                    this.moveToXY(x, y);
-                }
             };
             return Menu;
         })(LiveEdit.ui.Base);

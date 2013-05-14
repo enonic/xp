@@ -65,12 +65,12 @@ module LiveEdit.ui {
         }
 
 
-        show($component):void {
-            this.selectedComponent = $component;
-            if (componentHelper.getComponentType($component) === 'page') {
+        show(component:JQuery):void {
+            this.selectedComponent = component;
+            if (componentHelper.getComponentType(component) === 'page') {
                 this.showForPage();
             } else {
-                this.showForComponent($component);
+                this.showForComponent(component);
             }
         }
 
@@ -87,12 +87,12 @@ module LiveEdit.ui {
         }
 
 
-        showForComponent($component):void {
+        showForComponent(component:JQuery):void {
             var documentSize = LiveEdit.DomHelper.getDocumentSize(),
                 docWidth = documentSize.width,
                 docHeight = documentSize.height;
 
-            var boxModel = componentHelper.getBoxModel($component),
+            var boxModel = componentHelper.getBoxModel(component),
                 x = boxModel.left,
                 y = boxModel.top,
                 w = boxModel.width,

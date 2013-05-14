@@ -25,11 +25,11 @@ module LiveEdit.ui {
 
         private registerGlobalListeners():void {
             $(window).on('component.mouseOver', (event, component) => {
-                this.componentMouseOver(event, component);
+                this.componentMouseOver(component);
             });
 
             $(window).on('component.onSelect', (event, component) => {
-                this.selectComponent(event, component);
+                this.selectComponent(component);
             });
 
             $(window).on('component.onDeselect', () => {
@@ -40,8 +40,8 @@ module LiveEdit.ui {
                 this.hide();
             });
 
-            $(window).on('liveEdit.onWindowResize', (event:JQueryEventObject) => {
-                this.handleWindowResize(event)
+            $(window).on('liveEdit.onWindowResize', () => {
+                this.handleWindowResize();
             });
 
             $(window).on('component.onSortStop', (event, uiEvent, ui, wasSelectedOnDragStart) => {
@@ -62,13 +62,13 @@ module LiveEdit.ui {
         }
 
 
-        private componentMouseOver(event, component):void {
+        private componentMouseOver(component:JQuery):void {
             this.show();
             this.paintBorder(component);
         }
 
 
-        private selectComponent(event, component):void {
+        private selectComponent(component:JQuery):void {
             this.selectedComponent = component;
             var componentType = componentHelper.getComponentType(component);
 
@@ -128,17 +128,17 @@ module LiveEdit.ui {
 
 
         show():void {
-            this.getRootEl().show();
+            this.getRootEl().show(null);
         }
 
 
         hide():void {
-            this.getRootEl().hide();
+            this.getRootEl().hide(null);
         }
 
 
-        getStyleForComponent(component):ComponentStyle {
-            var componentType = componentHelper.getComponentType(component);
+        getStyleForComponent(component:JQuery):ComponentStyle {
+            var componentType:string = componentHelper.getComponentType(component);
 
             var strokeColor,
                 strokeDashArray,
@@ -189,7 +189,7 @@ module LiveEdit.ui {
         }
 
 
-        handleWindowResize(event):void {
+        handleWindowResize():void {
             if (this.selectedComponent) {
                 this.paintBorder(this.selectedComponent);
             }

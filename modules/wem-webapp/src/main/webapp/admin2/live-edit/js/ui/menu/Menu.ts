@@ -30,7 +30,7 @@ module LiveEdit.ui {
 
         registerGlobalListeners():void {
             $(window).on('component.onSelect', (event, $component, pagePosition) => {
-                this.show(event, $component, pagePosition);
+                this.show($component, pagePosition);
             });
 
             $(window).on('component.onDeselect component.onRemove component.onParagraphEdit', () => {
@@ -73,20 +73,20 @@ module LiveEdit.ui {
         }
 
 
-        show(event, $component, pagePosition):void {
-            this.selectedComponent = $component;
+        show(component:JQuery, pagePosition):void {
+            this.selectedComponent = component;
             this.previousPagePositions = pagePosition;
             this.previousPageSizes = domHelper.getViewPortSize();
 
-            this.updateTitleBar($component);
+            this.updateTitleBar(component);
 
-            this.updateMenuItemsForComponent($component);
+            this.updateMenuItemsForComponent(component);
 
             var pageXPosition = pagePosition.x - this.getRootEl().width() / 2,
                 pageYPosition = pagePosition.y + 15;
             this.moveToXY(pageXPosition, pageYPosition);
 
-            this.getRootEl().show();
+            this.getRootEl().show(null);
 
             this.hidden = false;
         }
@@ -94,7 +94,7 @@ module LiveEdit.ui {
 
         hide():void {
             this.selectedComponent = null;
-            this.getRootEl().hide();
+            this.getRootEl().hide(null);
             this.hidden = true;
         }
 
@@ -136,8 +136,8 @@ module LiveEdit.ui {
         }
 
 
-        updateMenuItemsForComponent($component):void {
-            var componentType = componentHelper.getComponentType($component);
+        updateMenuItemsForComponent(component:JQuery):void {
+            var componentType = componentHelper.getComponentType(component);
             var buttonArray = this.getConfigForButton(componentType);
             var buttons = this.getButtons();
 
@@ -155,19 +155,19 @@ module LiveEdit.ui {
         }
 
 
-        updateTitleBar($component):void {
-            var componentInfo = componentHelper.getComponentInfo($component);
+        updateTitleBar(component:JQuery):void {
+            var componentInfo = componentHelper.getComponentInfo(component);
             this.setIcon(componentInfo.type);
             this.setTitle(componentInfo.name);
         }
 
 
-        setTitle(titleText):void {
+        setTitle(titleText:string):void {
             this.getTitleElement().text(titleText);
         }
 
 
-        setIcon(componentType):void {
+        setIcon(componentType:string):void {
             var $iconCt = this.getIconElement(),
                 iconCls = this.resolveCssClassForComponentType(componentType);
             $iconCt.children('div').attr('class', iconCls);
@@ -216,7 +216,7 @@ module LiveEdit.ui {
         }
 
 
-        getConfigForButton(componentType):any {
+        getConfigForButton(componentType:string):any {
             return this.buttonConfig[componentType];
         }
 
@@ -238,18 +238,6 @@ module LiveEdit.ui {
 
         getMenuItemsPlaceholderElement():JQuery {
             return $('.live-edit-component-menu-items', this.getRootEl());
-        }
-
-
-        handleWindowResize(event):void {
-            if (this.selectedComponent) {
-                var x = this.previousPagePositions.x,
-                    y = this.previousPagePositions.y;
-
-                x = x - (this.previousPageSizes.width - LiveEdit.DomHelper.getViewPortSize().width);
-
-                this.moveToXY(x, y);
-            }
         }
 
     }

@@ -40,7 +40,7 @@ module LiveEdit.ui {
         }
 
 
-        private  setText(componentType, componentName):void {
+        private  setText(componentType:string, componentName:string):void {
             var $tooltip = this.getRootEl();
             $tooltip.children('.live-edit-tool-tip-type-text').text(componentType);
             $tooltip.children('.live-edit-tool-tip-name-text').text(componentName);
@@ -74,7 +74,7 @@ module LiveEdit.ui {
 
             $(document).on('hover', '[data-live-edit-type]', (event) => {
                 if (event.type === 'mouseenter') {
-                    this.getRootEl().hide().fadeIn(300);
+                    this.getRootEl().hide(null).fadeIn(300);
                 }
             });
 
@@ -84,7 +84,7 @@ module LiveEdit.ui {
         }
 
 
-        getPosition(event):ToolTipPosition {
+        getPosition(event:JQueryEventObject):ToolTipPosition {
             var pageX = event.pageX;
             var pageY = event.pageY;
             var x = pageX + this.OFFSET_X;

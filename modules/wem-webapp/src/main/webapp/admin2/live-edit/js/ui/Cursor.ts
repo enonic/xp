@@ -9,14 +9,14 @@ module LiveEdit.ui {
 
         private registerGlobalListeners():void {
             $(window).on('component.mouseOver component.onSelect', (event:JQueryEventObject, component:JQuery) => {
-                this.updateCursor(event, component);
+                this.updateCursor(component);
             });
             $(window).on('component.mouseOut', () => {
                 this.resetCursor();
             });
         }
 
-        private updateCursor(event, component:JQuery):void {
+        private updateCursor(component:JQuery):void {
             var componentType = LiveEdit.ComponentHelper.getComponentType(component);
             var $body = $('body');
             var cursor = 'default';

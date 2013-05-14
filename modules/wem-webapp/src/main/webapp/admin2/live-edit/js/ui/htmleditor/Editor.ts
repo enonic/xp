@@ -15,12 +15,12 @@ module LiveEdit.ui {
         }
 
         registerGlobalListeners():void {
-            $(window).on('component.onParagraphEdit', (event:JQueryEventObject, $paragraph:JQuery) => {
-                this.activate($paragraph);
+            $(window).on('component.onParagraphEdit', (event:JQueryEventObject, paragraph:JQuery) => {
+                this.activate(paragraph);
             });
 
-            $(window).on('component.onParagraphEditLeave', (event:JQueryEventObject, $paragraph:JQuery) => {
-                this.deActivate($paragraph);
+            $(window).on('component.onParagraphEditLeave', (event:JQueryEventObject, paragraph:JQuery) => {
+                this.deActivate(paragraph);
             });
 
             $(window).on('editorToolbar.onButtonClick', (event:JQueryEventObject, tag:string) => {

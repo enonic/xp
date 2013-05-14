@@ -75,14 +75,14 @@ module LiveEdit.ui {
         show(component:JQuery):void {
             this.selectedComponent = component;
 
-            this.getRootEl().show();
+            this.getRootEl().show(null);
             this.toggleArrowPosition(false);
             this.updatePosition();
         }
 
         hide():void {
             this.selectedComponent = null;
-            this.getRootEl().hide();
+            this.getRootEl().hide(null);
         }
 
         updatePosition():void {

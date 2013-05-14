@@ -45,7 +45,7 @@ module LiveEdit {
         }
 
 
-        private getDragHelperHtml(text):string {
+        private getDragHelperHtml(text:string):string {
             // Override jQueryUi inline width/height
             return '<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' +
                 '    <img id="live-edit-drag-helper-status-icon" src="../../../admin2/live-edit/images/drop-no.gif"/>' +
@@ -54,7 +54,7 @@ module LiveEdit {
         }
 
 
-        private setDragHelperText(text):void {
+        private setDragHelperText(text:string):void {
             $('#live-edit-drag-helper-text').text(text);
         }
 
@@ -90,7 +90,7 @@ module LiveEdit {
         }
 
 
-        private createDragHelper(event, helper):string {
+        private createDragHelper(event:JQueryEventObject, helper):string {
             return $(this.getDragHelperHtml(componentHelper.getComponentName(helper)));
         }
 
@@ -100,7 +100,7 @@ module LiveEdit {
         }
 
 
-        private updateHelperStatusIcon(status):void {
+        private updateHelperStatusIcon(status:string):void {
             $('#live-edit-drag-helper-status-icon').attr('src', '../../../admin2/live-edit/images/drop-' + status + '.gif');
         }
 
@@ -110,7 +110,7 @@ module LiveEdit {
         }
 
 
-        private handleSortStart(event, ui):void {
+        private handleSortStart(event:JQueryEventObject, ui):void {
             _isDragging = true;
 
             // Temporary store the selection info during the drag drop lifecycle.
@@ -127,7 +127,7 @@ module LiveEdit {
         }
 
 
-        private handleDragOver(event, ui):void {
+        private handleDragOver(event:JQueryEventObject, ui):void {
             event.stopPropagation();
 
             // todo: Items in component should have the same @data-live-edit-* structure
@@ -143,7 +143,7 @@ module LiveEdit {
             }
         }
 
-        private handleDragOut(event, ui):void {
+        private handleDragOut(event:JQueryEventObject, ui):void {
             if (this.targetIsPlaceholder($(event.srcElement))) {
                 this.removePaddingFromLayoutComponent();
             }
@@ -152,18 +152,18 @@ module LiveEdit {
             $(window).trigger('component.onSortOut', [event, ui]);
         }
 
-        private handleSortChange(event, ui):void {
+        private handleSortChange(event:JQueryEventObject, ui):void {
             this.addPaddingToLayoutComponent($(event.target));
             this.updateHelperStatusIcon('yes');
             ui.placeholder.show();
             $(window).trigger('component.onSortChange', [event, ui]);
         }
 
-        private handleSortUpdate(event, ui):void {
+        private handleSortUpdate(event:JQueryEventObject, ui):void {
             $(window).trigger('component.onSortUpdate', [event, ui]);
         }
 
-        private handleSortStop(event, ui):void {
+        private handleSortStop(event:JQueryEventObject, ui):void {
             _isDragging = false;
 
             this.removePaddingFromLayoutComponent();
@@ -188,7 +188,7 @@ module LiveEdit {
             ui.item.removeData('live-edit-selected-on-drag-start');
         }
 
-        private handleReceive(event, ui):void {
+        private handleReceive(event:JQueryEventObject, ui):void {
             if (this.itemIsDraggedFromComponentBar(ui.item)) {
                 var $componentBarComponent = $(event.target).children('.live-edit-component');
                 var componentKey = $componentBarComponent.data('live-edit-component-key');
@@ -222,8 +222,8 @@ module LiveEdit {
         }
 
 
-        private addPaddingToLayoutComponent($component):void {
-            $component.closest(layoutSelector).addClass('live-edit-component-padding');
+        private addPaddingToLayoutComponent(component:JQuery):void {
+            component.closest(layoutSelector).addClass('live-edit-component-padding');
         }
 
 
