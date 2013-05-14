@@ -1356,6 +1356,105 @@ var admin;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
+Ext.define('Admin.view.WizardLayout', {
+    extend: 'Ext.layout.container.Card',
+    alias: 'layout.wizard',
+    mixins: [
+        'Ext.util.Animate'
+    ],
+    deferredRender: false,
+    renderHidden: false,
+    animation: 'slide',
+    easing: 'easeOut',
+    duration: 500,
+    setActiveItem: function (item) {
+        var owner = this.owner;
+        var oldCard = this.activeItem;
+        var oldIndex = owner.items.indexOf(oldCard);
+        var newCard = this.parseActiveItem(item);
+        var newIndex = owner.items.indexOf(newCard);
+        if(oldCard !== newCard) {
+            owner.fireEvent("animationstarted", newCard, oldCard);
+            if(newCard.rendered && this.animation && this.animation !== "none") {
+                this.syncFx();
+                var target = this.getRenderTarget();
+                newCard.setWidth(target.getWidth() - target.getPadding("lr") - Ext.getScrollBarWidth());
+                switch(this.animation) {
+                    case 'fade':
+                        newCard.el.setStyle({
+                            position: 'absolute',
+                            opacity: 0,
+                            top: this.getRenderTarget().getPadding('t') + 'px'
+                        });
+                        newCard.show();
+                        if(oldCard) {
+                            oldCard.el.fadeOut({
+                                useDisplay: true,
+                                duration: this.duration,
+                                callback: function () {
+                                    this.hide();
+                                },
+                                scope: this.activeItem
+                            });
+                        }
+                        owner.doLayout();
+                        newCard.el.fadeIn({
+                            useDisplay: true,
+                            duration: this.duration,
+                            callback: function () {
+                                newCard.el.setStyle({
+                                    position: ''
+                                });
+                                owner.fireEvent("animationfinished", newCard, oldCard);
+                            },
+                            scope: this
+                        });
+                        break;
+                    case 'slide':
+                        newCard.el.setStyle({
+                            position: 'absolute',
+                            visibility: 'hidden',
+                            width: this.getRenderTarget().getWidth(),
+                            top: this.getRenderTarget().getPadding('t') + 'px'
+                        });
+                        newCard.show();
+                        if(oldCard) {
+                            oldCard.el.slideOut(newIndex > oldIndex ? "l" : "r", {
+                                duration: this.duration,
+                                easing: this.easing,
+                                remove: false,
+                                scope: this.activeItem,
+                                callback: function () {
+                                    this.hide();
+                                }
+                            });
+                        }
+                        owner.doLayout();
+                        newCard.el.slideIn(newIndex > oldIndex ? "r" : "l", {
+                            duration: this.duration,
+                            easing: this.easing,
+                            scope: this,
+                            callback: function () {
+                                newCard.el.setStyle({
+                                    position: ''
+                                });
+                                owner.fireEvent("animationfinished", newCard, oldCard);
+                            }
+                        });
+                        break;
+                }
+                this.activeItem = newCard;
+                this.sequenceFx();
+            } else {
+                this.callParent([
+                    newCard
+                ]);
+                owner.fireEvent("animationfinished", newCard, oldCard);
+            }
+            return newCard;
+        }
+    }
+});
 var admin;
 (function (admin) {
     (function (ui) {
@@ -1566,6 +1665,9 @@ var admin;
 Ext.define('Admin.view.WizardPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.wizardPanel',
+    requires: [
+        'Admin.view.WizardLayout'
+    ],
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -1597,9 +1699,12 @@ Ext.define('Admin.view.WizardPanel', {
         this.invalidItems = [];
         this.boundItems = [];
         this.cls += this.isNew ? ' admin-wizard-new' : ' admin-wizard-edit';
-        this.wizard = Ext.createByAlias('widget.container', {
+        this.wizard = new Ext.container.Container({
             region: 'center',
-            layout: new admin.ui.WizardLayout('none').ext,
+            layout: {
+                type: 'wizard',
+                animation: 'none'
+            },
             items: this.createSteps()
         });
         this.items = [
@@ -3081,17 +3186,19 @@ var admin;
 (function (admin) {
     (function (ui) {
         var TopBarMenuItem = (function () {
-            function TopBarMenuItem(text1, text2) {
+            function TopBarMenuItem(text1, text2, card, tabBar) {
                 this.text1 = text1;
                 this.text2 = text2;
                 var tbmi = new Ext.container.Container({
+                    itemId: 'topBarMenuItem',
+                    cls: 'admin-topbar-menu-item',
+                    activeCls: 'active',
+                    isMenuItem: true,
+                    canActivate: true,
+                    card: card,
+                    tabBar: tabBar
                 });
                 this.ext = tbmi;
-                tbmi.itemId = 'topBarMenuItem';
-                tbmi.addCls('admin-topbar-menu-item');
-                tbmi.activeCls = 'active';
-                tbmi.isMenuItem = true;
-                tbmi.canActivate = true;
                 var layout = new Ext.layout.container.HBox();
                 layout.align = 'middle';
                 tbmi.layout = layout;
@@ -3113,7 +3220,8 @@ var admin;
                     items.push(image);
                 }
                 if(this.text1 || this.text2) {
-                    var titleContainer = new Ext.Component();
+                    var titleContainer = new Ext.Component({
+                    });
                     titleContainer.flex = 1;
                     titleContainer.itemId = 'titleContainer';
                     titleContainer.styleHtmlContent = true;
@@ -3382,7 +3490,7 @@ var admin;
                     var editItemObjects = [];
                     Ext.Array.each(editItems, function (editItem) {
                         if(!editItem.xtype) {
-                            var tbmi = new admin.ui.TopBarMenuItem(editItem.text1, editItem.text2).ext;
+                            var tbmi = new admin.ui.TopBarMenuItem(editItem.text1, editItem.text2, editItem.card, editItem.tabBar).ext;
                             editItemObjects.push(tbmi);
                         } else {
                             editItemObjects.push(editItem);
@@ -3394,7 +3502,7 @@ var admin;
                     var viewItemObjects = [];
                     Ext.Array.each(viewItems, function (viewItem) {
                         if(!viewItem.xtype) {
-                            var tbmi = new admin.ui.TopBarMenuItem(viewItem.text1, viewItem.text2).ext;
+                            var tbmi = new admin.ui.TopBarMenuItem(viewItem.text1, viewItem.text2, viewItem.card, viewItem.tabBar).ext;
                             viewItemObjects.push(tbmi);
                         } else {
                             viewItemObjects.push(viewItem);
