@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import org.springframework.core.annotation.Order;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.config.SystemConfig;
@@ -77,11 +76,12 @@ public final class DataMigrator
 
     @Inject
     public void setSystemConfig( final SystemConfig systemConfig )
+        throws Exception
     {
         this.dataSource.setUrl( systemConfig.getMigrateJdbcUrl() );
-        this.dataSource.setUsername( systemConfig.getMigrateJdbcUser() );
+        this.dataSource.setUser( systemConfig.getMigrateJdbcUser() );
         this.dataSource.setPassword( systemConfig.getMigrateJdbcPassword() );
-        this.dataSource.setDriverClassName( systemConfig.getMigrateJdbcDriver() );
+        this.dataSource.setDriver( systemConfig.getMigrateJdbcDriver() );
         this.enabled = systemConfig.isMigrateEnabled();
     }
 }

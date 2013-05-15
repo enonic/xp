@@ -2,11 +2,15 @@ package com.enonic.wem.migrate.account;
 
 public interface DatabaseAccountsLoader
 {
-    void loadUserStores( ImportDataCallbackHandler handler );
+    void loadUserStores( ImportDataCallbackHandler handler )
+        throws Exception;
 
-    void loadUsers( ImportDataCallbackHandler handler );
+    void loadUsers( ImportDataCallbackHandler handler )
+        throws Exception;
 
-    void loadGroups( ImportDataCallbackHandler handler );
+    void loadGroups( ImportDataCallbackHandler handler )
+        throws Exception;
 
-    void loadMemberships( ImportDataCallbackHandler handler );
+    void loadMemberships( ImportDataCallbackHandler handler )
+        throws Exception;
 }
