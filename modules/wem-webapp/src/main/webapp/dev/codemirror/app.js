@@ -32,6 +32,7 @@ Ext.application({
                                     xtype: 'codemirror',
                                     fieldLabel: 'Code Mirror',
                                     id: 'codeMirrorTest',
+                                    codeMirrorPath: '../../admin/resources/lib/codemirror',
                                     value: '<data>\n\t<item id="1">Fisk</item>\n</data>'
                                 },
                                 {

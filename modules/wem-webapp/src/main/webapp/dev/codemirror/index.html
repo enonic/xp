@@ -17,16 +17,20 @@
 
     <!-- Configuration -->
 
-    <script type="text/javascript" src="../../admin/global.config.js"></script>
+    <script type="text/javascript">
+        Ext.Loader.setConfig({
+            enabled: true,
+            disableCaching: true,
+            paths: {
+                'Admin': 'resources/app'
+            }
+        });
+    </script>
     <script type="text/javascript" charset="utf-8">
-
-        window.CONFIG = {
-            baseUrl: '<%= JspHelper2.getBaseUrl(request) %>'
-        };
 
         Ext.Loader.setConfig({
             paths: {
-                'Common': 'common/js',
+                'Common': '../../../common/js',
                 'Admin': '../../admin/resources/app'
             },
             disableCaching: true
