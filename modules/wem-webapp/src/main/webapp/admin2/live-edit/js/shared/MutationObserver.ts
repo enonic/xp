@@ -12,12 +12,8 @@ module LiveEdit {
 
 
         private registerGlobalListeners():void {
-            $(window).on('paragraphEdit.liveEdit.component', (event:JQueryEventObject, component:JQuery) => {
-                this.observe(event, component)
-            });
-            $(window).on('click.liveEdit.shader', (event:JQueryEventObject) => {
-                this.disconnect(event);
-            });
+            $(window).on('paragraphEdit.liveEdit.component', (event:JQueryEventObject, component:JQuery) => this.observe(event, component));
+            $(window).on('click.liveEdit.shader', (event:JQueryEventObject) => this.disconnect(event));
         }
 
 

@@ -17,9 +17,7 @@ module LiveEdit.ui {
                 text: 'View',
                 id: 'live-edit-button-view',
                 cls: 'live-edit-component-menu-button',
-                handler: (event) => {
-                    event.stopPropagation();
-                }
+                handler: (event) => event.stopPropagation()
             });
 
             this.appendTo(this.menu.getRootEl());

@@ -15,18 +15,9 @@ module LiveEdit.ui {
         }
 
         registerGlobalListeners():void {
-            $(window).on('paragraphEdit.liveEdit.component', (event:JQueryEventObject, paragraph:JQuery) => {
-                this.activate(paragraph);
-            });
-
-            $(window).on('paragraphLeave.liveEdit.component', (event:JQueryEventObject, paragraph:JQuery) => {
-                this.deActivate(paragraph);
-            });
-
-            $(window).on('buttonClick.liveEdit.editorToolbar', (event:JQueryEventObject, tag:string) => {
-                // Simplest implementation for now.
-                document.execCommand(tag, false, null);
-            });
+            $(window).on('paragraphEdit.liveEdit.component', (event:JQueryEventObject, paragraph:JQuery) => this.activate(paragraph));
+            $(window).on('paragraphLeave.liveEdit.component', (event:JQueryEventObject, paragraph:JQuery) => this.deActivate(paragraph));
+            $(window).on('buttonClick.liveEdit.editorToolbar', (event:JQueryEventObject, tag:string) => document.execCommand(tag, false, null));
         }
 
         activate(paragraph:JQuery):void {

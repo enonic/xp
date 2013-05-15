@@ -105,10 +105,10 @@ var LiveEdit;
         MutationObserver.prototype.registerGlobalListeners = function () {
             var _this = this;
             $(window).on('paragraphEdit.liveEdit.component', function (event, component) {
-                _this.observe(event, component);
+                return _this.observe(event, component);
             });
             $(window).on('click.liveEdit.shader', function (event) {
-                _this.disconnect(event);
+                return _this.disconnect(event);
             });
         };
         MutationObserver.prototype.observe = function (event, component) {
@@ -789,8 +789,10 @@ var LiveEdit;
             HtmlElementReplacer.prototype.replaceElementsWithPlaceholders = function () {
                 var _this = this;
                 var elements = this.getElements();
+                var element;
                 elements.each(function (i) {
-                    _this.replace($(elements[i]));
+                    element = $(elements[i]);
+                    _this.replace(element);
                 });
             };
             HtmlElementReplacer.prototype.replace = function (element) {
@@ -865,13 +867,13 @@ var LiveEdit;
             Editor.prototype.registerGlobalListeners = function () {
                 var _this = this;
                 $(window).on('paragraphEdit.liveEdit.component', function (event, paragraph) {
-                    _this.activate(paragraph);
+                    return _this.activate(paragraph);
                 });
                 $(window).on('paragraphLeave.liveEdit.component', function (event, paragraph) {
-                    _this.deActivate(paragraph);
+                    return _this.deActivate(paragraph);
                 });
                 $(window).on('buttonClick.liveEdit.editorToolbar', function (event, tag) {
-                    document.execCommand(tag, false, null);
+                    return document.execCommand(tag, false, null);
                 });
             };
             Editor.prototype.activate = function (paragraph) {
@@ -907,10 +909,10 @@ var LiveEdit;
             EditorToolbar.prototype.registerGlobalListeners = function () {
                 var _this = this;
                 $(window).on('paragraphEdit.liveEdit.component', function (event, component) {
-                    _this.show(component);
+                    return _this.show(component);
                 });
                 $(window).on('paragraphLeave.liveEdit.component remove.liveEdit.component sortStart.liveEdit.component', function () {
-                    _this.hide();
+                    return _this.hide();
                 });
             };
             EditorToolbar.prototype.addView = function () {
@@ -1007,13 +1009,13 @@ var LiveEdit;
             Shader.prototype.registerGlobalListeners = function () {
                 var _this = this;
                 $(window).on('select.liveEdit.component paragraphEdit.liveEdit.component', function (event, component) {
-                    _this.show(component);
+                    return _this.show(component);
                 });
                 $(window).on('deselect.liveEdit.component remove.liveEdit.component sortStart.liveEdit.component', function () {
-                    _this.hide();
+                    return _this.hide();
                 });
                 $(window).on('windowResize.liveEdit', function () {
-                    _this.handleWindowResize();
+                    return _this.handleWindowResize();
                 });
             };
             Shader.prototype.addView = function () {
@@ -1113,7 +1115,7 @@ var LiveEdit;
                     _this.updateCursor(component);
                 });
                 $(window).on('mouseOut.liveEdit.component', function () {
-                    _this.resetCursor();
+                    return _this.resetCursor();
                 });
             };
             Cursor.prototype.updateCursor = function (component) {
@@ -1170,13 +1172,13 @@ var LiveEdit;
                     _this.selectComponent(component);
                 });
                 $(window).on('deselect.liveEdit.component', function () {
-                    _this.deselect();
+                    return _this.deselect();
                 });
                 $(window).on('mouseOut.liveEdit.component sortStart.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', function () {
-                    _this.hide();
+                    return _this.hide();
                 });
                 $(window).on('windowResize.liveEdit', function () {
-                    _this.handleWindowResize();
+                    return _this.handleWindowResize();
                 });
                 $(window).on('sortstop.liveedit.component', function (event, uiEvent, ui, wasSelectedOnDragStart) {
                     if(wasSelectedOnDragStart) {
@@ -1309,7 +1311,7 @@ var LiveEdit;
             ToolTip.prototype.registerGlobalListeners = function () {
                 var _this = this;
                 $(window).on('select.liveEdit.component', function () {
-                    _this.hide();
+                    return _this.hide();
                 });
             };
             ToolTip.prototype.addView = function () {
@@ -1346,7 +1348,7 @@ var LiveEdit;
                     }
                 });
                 $(document).on('mouseout', function () {
-                    _this.hide();
+                    return _this.hide();
                 });
             };
             ToolTip.prototype.getPosition = function (event) {
@@ -1436,13 +1438,13 @@ var LiveEdit;
             Menu.prototype.registerGlobalListeners = function () {
                 var _this = this;
                 $(window).on('select.liveEdit.component', function (event, $component, pagePosition) {
-                    _this.show($component, pagePosition);
+                    return _this.show($component, pagePosition);
                 });
                 $(window).on('deselect.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', function () {
-                    _this.hide();
+                    return _this.hide();
                 });
                 $(window).on('sortStart.liveEdit.component', function () {
-                    _this.fadeOutAndHide();
+                    return _this.fadeOutAndHide();
                 });
             };
             Menu.prototype.addView = function () {
@@ -1619,7 +1621,7 @@ var LiveEdit;
                 var $button = this.createElement(html);
                 if(config.handler) {
                     $button.on('click', function (event) {
-                        config.handler.call(_this, event);
+                        return config.handler.call(_this, event);
                     });
                 }
                 return $button;
@@ -1836,7 +1838,7 @@ var LiveEdit;
                     id: 'live-edit-button-reset',
                     cls: 'live-edit-component-menu-button',
                     handler: function (event) {
-                        event.stopPropagation();
+                        return event.stopPropagation();
                     }
                 });
                 this.appendTo(this.menu.getRootEl());
@@ -1896,7 +1898,7 @@ var LiveEdit;
                     id: 'live-edit-button-view',
                     cls: 'live-edit-component-menu-button',
                     handler: function (event) {
-                        event.stopPropagation();
+                        return event.stopPropagation();
                     }
                 });
                 this.appendTo(this.menu.getRootEl());
@@ -1994,6 +1996,15 @@ var LiveEdit;
                 this.registerEvents();
                 console.log('ComponentBar instantiated. Using jQuery ' + $().jquery);
             }
+            ComponentBar.prototype.registerGlobalListeners = function () {
+                var _this = this;
+                $(window).on('select.liveEdit.component dragStart.liveEdit.component sortStart.liveEdit.component', function () {
+                    return _this.fadeOut();
+                });
+                $(window).on('deselect.liveEdit.component dragStop.liveEdit.component sortstop.liveedit.component sortUpdate.liveEdit.component remove.liveEdit.component', function (event, triggerConfig) {
+                    return _this.fadeIn(triggerConfig);
+                });
+            };
             ComponentBar.prototype.getComponentsDataUrl = function () {
                 return '../../../admin2/live-edit/data/mock-components.json';
             };
@@ -2014,15 +2025,6 @@ var LiveEdit;
                 html += '</div>';
                 this.createElement(html);
                 this.appendTo($('body'));
-            };
-            ComponentBar.prototype.registerGlobalListeners = function () {
-                var _this = this;
-                $(window).on('select.liveEdit.component dragStart.liveEdit.component sortStart.liveEdit.component', function () {
-                    _this.fadeOut();
-                });
-                $(window).on('deselect.liveEdit.component dragStop.liveEdit.component sortstop.liveedit.component sortUpdate.liveEdit.component remove.liveEdit.component', function (event, triggerConfig) {
-                    _this.fadeIn(triggerConfig);
-                });
             };
             ComponentBar.prototype.registerEvents = function () {
                 var _this = this;
@@ -2163,7 +2165,7 @@ var LiveEdit;
             new LiveEdit.MutationObserver();
             new LiveEdit.DragDropSort();
             $(window).resize(function () {
-                $(window).trigger('windowResize.liveEdit');
+                return $(window).trigger('windowResize.liveEdit');
             });
         });
     });

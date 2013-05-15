@@ -29,17 +29,9 @@ module LiveEdit.ui {
 
 
         registerGlobalListeners():void {
-            $(window).on('select.liveEdit.component', (event, $component, pagePosition) => {
-                this.show($component, pagePosition);
-            });
-
-            $(window).on('deselect.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', () => {
-                this.hide();
-            });
-
-            $(window).on('sortStart.liveEdit.component', () => {
-                this.fadeOutAndHide();
-            });
+            $(window).on('select.liveEdit.component', (event, $component, pagePosition) => this.show($component, pagePosition));
+            $(window).on('deselect.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', () => this.hide());
+            $(window).on('sortStart.liveEdit.component', () => this.fadeOutAndHide());
         }
 
 

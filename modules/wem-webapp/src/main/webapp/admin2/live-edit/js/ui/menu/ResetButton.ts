@@ -17,9 +17,7 @@ module LiveEdit.ui {
                 text: 'Reset to Default',
                 id: 'live-edit-button-reset',
                 cls: 'live-edit-component-menu-button',
-                handler: (event) => {
-                    event.stopPropagation();
-                }
+                handler: (event) => event.stopPropagation()
             });
 
             this.appendTo(this.menu.getRootEl());

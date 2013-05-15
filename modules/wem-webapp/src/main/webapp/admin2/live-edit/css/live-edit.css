@@ -1,7 +1,8 @@
 /*** Reset */
 
 [id^=live-edit-ui-cmp-],
-[id^=live-edit-ui-cmp-] * {
+[id^=live-edit-ui-cmp-] *,
+#live-edit-drag-helper-text {
     border: 0;
     outline: 0;
     color: #000;
@@ -630,7 +631,7 @@ svg.live-edit-highlight-border rect {
 
 #live-edit-drag-helper {
     border: 1px solid #c6c6c6;
-    padding: 6px 8px 6px 8px;
+    padding: 6px 16px 6px 8px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     background-color: #fff;
     font-size: 11px;

@@ -42,9 +42,16 @@ module LiveEdit.ui {
         }
 
 
+        registerGlobalListeners():void {
+            $(window).on('select.liveEdit.component dragStart.liveEdit.component sortStart.liveEdit.component', () => this.fadeOut());
+            $(window).on('deselect.liveEdit.component dragStop.liveEdit.component sortstop.liveedit.component sortUpdate.liveEdit.component remove.liveEdit.component', (event:JQueryEventObject, triggerConfig) => this.fadeIn(triggerConfig));
+        }
+
+
         getComponentsDataUrl():string {
             return '../../../admin2/live-edit/data/mock-components.json';
         }
+
 
         addView() {
             var html = '';
@@ -66,15 +73,6 @@ module LiveEdit.ui {
             this.appendTo($('body'));
         }
 
-        registerGlobalListeners():void {
-            $(window).on('select.liveEdit.component dragStart.liveEdit.component sortStart.liveEdit.component', () => {
-                this.fadeOut();
-            });
-
-            $(window).on('deselect.liveEdit.component dragStop.liveEdit.component sortstop.liveedit.component sortUpdate.liveEdit.component remove.liveEdit.component', (event:JQueryEventObject, triggerConfig) => {
-                this.fadeIn(triggerConfig);
-            });
-        }
 
         registerEvents():void {
             this.getToggle().click(() => {

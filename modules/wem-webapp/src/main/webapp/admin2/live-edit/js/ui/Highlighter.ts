@@ -32,17 +32,11 @@ module LiveEdit.ui {
                 this.selectComponent(component);
             });
 
-            $(window).on('deselect.liveEdit.component', () => {
-                this.deselect();
-            });
+            $(window).on('deselect.liveEdit.component', () => this.deselect());
 
-            $(window).on('mouseOut.liveEdit.component sortStart.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', () => {
-                this.hide();
-            });
+            $(window).on('mouseOut.liveEdit.component sortStart.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', () => this.hide());
 
-            $(window).on('windowResize.liveEdit', () => {
-                this.handleWindowResize();
-            });
+            $(window).on('windowResize.liveEdit', () => this.handleWindowResize());
 
             $(window).on('sortstop.liveedit.component', (event, uiEvent, ui, wasSelectedOnDragStart) => {
                 if (wasSelectedOnDragStart) {

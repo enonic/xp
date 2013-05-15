@@ -23,9 +23,7 @@ module LiveEdit.ui {
         }
 
         private registerGlobalListeners():void {
-            $(window).on('select.liveEdit.component', () => {
-                this.hide();
-            });
+            $(window).on('select.liveEdit.component', () => this.hide());
         }
 
 
@@ -78,9 +76,7 @@ module LiveEdit.ui {
                 }
             });
 
-            $(document).on('mouseout', () => {
-                this.hide();
-            });
+            $(document).on('mouseout', () => this.hide());
         }
 
 

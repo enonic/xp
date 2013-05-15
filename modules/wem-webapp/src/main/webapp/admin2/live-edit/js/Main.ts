@@ -71,9 +71,7 @@ declare var LiveEditMutationSummary;
 
             new LiveEdit.DragDropSort();
 
-            $(window).resize(() => {
-                $(window).trigger('windowResize.liveEdit');
-            });
+            $(window).resize(() => $(window).trigger('windowResize.liveEdit'));
         });
     });
 

@@ -22,17 +22,11 @@ module LiveEdit.ui {
 
 
         registerGlobalListeners():void {
-            $(window).on('select.liveEdit.component paragraphEdit.liveEdit.component', (event:JQueryEventObject, component:JQuery) => {
-                this.show(component);
-            });
+            $(window).on('select.liveEdit.component paragraphEdit.liveEdit.component', (event:JQueryEventObject, component:JQuery) => this.show(component));
 
-            $(window).on('deselect.liveEdit.component remove.liveEdit.component sortStart.liveEdit.component', () => {
-                this.hide();
-            });
+            $(window).on('deselect.liveEdit.component remove.liveEdit.component sortStart.liveEdit.component', () => this.hide());
 
-            $(window).on('windowResize.liveEdit', () => {
-                this.handleWindowResize();
-            });
+            $(window).on('windowResize.liveEdit', () => this.handleWindowResize());
         }
 
 

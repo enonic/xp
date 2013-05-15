@@ -11,9 +11,7 @@ module LiveEdit.ui {
             $(window).on('mouseOver.liveEdit.component select.liveEdit.component', (event:JQueryEventObject, component:JQuery) => {
                 this.updateCursor(component);
             });
-            $(window).on('mouseOut.liveEdit.component', () => {
-                this.resetCursor();
-            });
+            $(window).on('mouseOut.liveEdit.component', () => this.resetCursor());
         }
 
         private updateCursor(component:JQuery):void {

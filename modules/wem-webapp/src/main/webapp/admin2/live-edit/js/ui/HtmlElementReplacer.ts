@@ -13,9 +13,11 @@ module LiveEdit.ui {
 
 
         replaceElementsWithPlaceholders():void {
-            var elements = this.getElements();
+            var elements:JQuery = this.getElements();
+            var element:JQuery;
             elements.each((i) => {
-                this.replace($(elements[i]));
+                element = $(elements[i]);
+                this.replace(element);
             });
         }
 
