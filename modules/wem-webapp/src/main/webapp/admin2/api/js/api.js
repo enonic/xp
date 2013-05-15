@@ -350,9 +350,13 @@ var API;
                 __extends(DataSet, _super);
                 function DataSet(json) {
                                 _super.call(this, json.name);
+                    this.dataById = new Object();
                 }
                 DataSet.prototype.addData = function (data) {
-                    this.dataById.push(data.getName(), data);
+                    this.dataById[data.getName()] = data;
+                };
+                DataSet.prototype.getData = function (dataId) {
+                    return this.dataById[dataId];
                 };
                 return DataSet;
             })(data.Data);
@@ -368,11 +372,14 @@ var API;
         (function (data) {
             var Property = (function (_super) {
                 __extends(Property, _super);
-                function Property(json) {
-                                _super.call(this, json.name);
-                    this.value = json.value;
-                    this.type = json.type;
+                function Property(name, value, type) {
+                                _super.call(this, name);
+                    this.value = value;
+                    this.type = type;
                 }
+                Property.from = function from(json) {
+                    return new Property(json.name, json.value, json.type);
+                };
                 Property.prototype.getValue = function () {
                     return this.value;
                 };

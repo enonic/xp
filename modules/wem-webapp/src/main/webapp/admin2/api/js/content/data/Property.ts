@@ -6,10 +6,14 @@ module API.content.data{
 
         private type:string;
 
-        constructor(json) {
-            super(json.name);
-            this.value = json.value;
-            this.type = json.type;
+        static from( json ){
+            return new Property( json.name, json.value, json.type );
+        }
+
+        constructor(name:string, value:string, type:string) {
+            super(name);
+            this.value = value;
+            this.type = type;
         }
 
         getValue():string {

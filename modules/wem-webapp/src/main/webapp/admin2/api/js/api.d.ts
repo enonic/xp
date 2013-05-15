@@ -86,13 +86,15 @@ module API.content.data {
         private dataById;
         constructor(json);
         public addData(data: Data): void;
+        public getData(dataId: string): Data;
     }
 }
 module API.content.data {
     class Property extends Data {
         private value;
         private type;
-        constructor(json);
+        static from(json): Property;
+        constructor(name: string, value: string, type: string);
         public getValue(): string;
         public getType(): string;
     }

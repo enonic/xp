@@ -17,7 +17,7 @@ module.exports = function (grunt) {
                 }
             },
             api_test: {
-                src: ['src/test/webapp/admin2/api/js/test.ts'],
+                src: ['src/test/webapp/admin2/api/js/**/*.ts'],
                 dest: 'src/test/webapp/admin2/api/js/test.js',
                 options: {
                     // target: 'es5',
@@ -52,7 +52,7 @@ module.exports = function (grunt) {
         },
 
         watch: {
-            files: ['src/main/webapp/admin2/**/*.ts', 'src/test/webapp/admin2/**/*.js'],
+            files: ['src/main/webapp/admin2/**/*.ts', 'src/test/webapp/admin2/**/*.ts'],
             tasks: ['typescript']
         }
 
