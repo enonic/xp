@@ -2,15 +2,20 @@ module API.content.data{
 
     export class DataSet extends Data {
 
-        private dataById;
+        private dataById = new Object();
 
         constructor(json) {
             super(json.name);
         }
 
-        addData( data:Data )
-        {
-            this.dataById.push( data.getName(), data );
+        addData( data:Data ) {
+            if(  )
+            this.dataById[data.getName()] = data;
         }
+
+        getData(dataId:string):Data{
+            return this.dataById[dataId];
+        }
+
     }
 }

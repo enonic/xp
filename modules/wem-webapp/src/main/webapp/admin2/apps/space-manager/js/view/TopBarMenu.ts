@@ -15,21 +15,21 @@ module admin.ui {
         private emptyTitle:any; // Ext.Component
 
         constructor(tabPanel:any) {
-            var tbm = new Ext.menu.Menu({});
+            var tbm = new Ext.menu.Menu({
+                itemId: 'topBarMenu',
+                cls: 'admin-topbar-menu',
+                showSeparator: false,
+                styleHtmlContent: true,
+                overflowY: 'auto',
+                overflowX: 'hidden',
+                width: 300,
+                layout: {
+                    type: 'vbox',
+                    align: 'stretchmax'
+                }
+            });
             this.ext = tbm;
             this.tabPanel = tabPanel;
-            tbm.itemId = 'topBarMenu';
-            tbm.addCls('admin-topbar-menu');
-
-            tbm.showSeparator = false;
-            tbm.styleHtmlContent = true;
-            tbm.overflowY = 'auto';
-            tbm.overflowX = 'hidden';
-            tbm.width = 300;
-
-            var layout = new Ext.layout.container.VBox();
-            layout.align = 'stretchmax';
-            tbm.layout = layout;
 
             this.nonClosableItems = this.createNonClosableItems()
             this.editTitle = this.createEditTitle();
@@ -45,27 +45,43 @@ module admin.ui {
             tbm.add(this.viewItems);
             tbm.add(this.emptyTitle);
 
-            tbm.onShow = this.onShow;
-            tbm.onBoxReady = this.onBoxReady;
+            var parentOnShow = tbm.onShow;
+            tbm.onShow = () => {
+                parentOnShow.apply(tbm, arguments);
+                this.onShow();
+            };
+
+            var parentOnBoxReady = tbm.onBoxReady;
+            tbm.onBoxReady = () => {
+                this.onBoxReady();
+                return parentOnBoxReady.apply(tbm, arguments);
+            };
+
+            var parentShow = tbm.show;
             tbm.show = () => {
                 this.show();
+                parentShow.apply(tbm, arguments);
+                return tbm;
             };
+
+            var parentHide = tbm.hide;
             tbm.hide = () => {
-                this.hide();
+                parentHide.apply(tbm, arguments);
+                return this.hide();
             };
+
             tbm.setVerticalPosition = () => {
                 this.setVerticalPosition();
             };
 
             tbm.scrollState = { left: 0, top: 0 };
-            tbm.on('closeMenuItem', this.onCloseMenuItem);
-            tbm.on('resize', this.updatePosition);
+            tbm.on('closeMenuItem', this.onCloseMenuItem, this);
+            tbm.on('resize', this.updatePosition, this);
         }
 
         private createNonClosableItems():any /* Ext.container.Container */ {
             var item = new Ext.container.Container({});
             item.itemId = 'nonClosableItems';
-            item.defaultType = 'topBarMenuItem';
             return item;
         }
 
@@ -81,7 +97,6 @@ module admin.ui {
         private createEditItems():any /* Ext.container.Container */ {
             var item = new Ext.container.Container({});
             item.itemId = 'editItems';
-            item.defaultType = 'topBarMenuItem';
             return item;
         }
 
@@ -97,7 +112,6 @@ module admin.ui {
         private createViewItems():any /* Ext.container.Container */ {
             var item = new Ext.container.Container({});
             item.itemId = 'viewItems';
-            item.defaultType = 'topBarMenuItem';
             return item;
         }
 
@@ -128,8 +142,6 @@ module admin.ui {
         }
 
         onShow():void {
-            this.ext.callParent(arguments);
-
             if (this.activeTab) {
                 this.markActiveTab(this.activeTab);
             }
@@ -140,7 +152,6 @@ module admin.ui {
                 tag: 'div',
                 cls: 'balloon-tip'
             }, true);
-            this.ext.callParent(arguments);
         }
 
         onCloseMenuItem(item):void {
@@ -149,7 +160,7 @@ module admin.ui {
             }
             // hide menu if all closable items have been closed
             if (this.getAllItems(false).length === 0) {
-                this.hide();
+                this.ext.hide();
             }
         }
 
@@ -190,8 +201,8 @@ module admin.ui {
         getAllItems(includeNonClosable):any[] /* Ext.Component[] */ {
             var items = [];
             if (includeNonClosable === false) {
-                items = items.concat(this.editItems.query('topBarMenuItem'));
-                items = items.concat(this.viewItems.query('topBarMenuItem'))
+                items = items.concat(this.editItems.query('#topBarMenuItem'));
+                items = items.concat(this.viewItems.query('#topBarMenuItem'))
             } else {
                 items = items.concat(this.ext.query('topBarMenuItem'));
             }
@@ -228,7 +239,9 @@ module admin.ui {
                 Ext.Array.each(editItems, (editItem) => {
                     // defaultType: 'topBarMenuItem'
                     if (!editItem.xtype) {
-                        var tbmi = new admin.ui.TopBarMenuItem(editItem.text1, editItem.text2, editItem.card, editItem.tabBar).ext;
+                        var tbmi = new admin.ui.TopBarMenuItem(editItem.text1, editItem.text2, editItem.card, editItem.tabBar,
+                            editItem.closable, editItem.disabled, editItem.editing, editItem.hidden,
+                            editItem.iconClass, editItem.iconSrc).ext;
                         editItemObjects.push(tbmi);
                     } else {
                         editItemObjects.push(editItem);
@@ -242,7 +255,9 @@ module admin.ui {
                 Ext.Array.each(viewItems, (viewItem) => {
                     // defaultType: 'topBarMenuItem'
                     if (!viewItem.xtype) {
-                        var tbmi = new admin.ui.TopBarMenuItem(viewItem.text1, viewItem.text2, viewItem.card, viewItem.tabBar).ext;
+                        var tbmi = new admin.ui.TopBarMenuItem(viewItem.text1, viewItem.text2, viewItem.card, viewItem.tabBar,
+                            viewItem.closable, viewItem.disabled, viewItem.editing, viewItem.hidden,
+                            viewItem.iconClass, viewItem.iconSrc).ext;
                         viewItemObjects.push(tbmi);
                     } else {
                         viewItemObjects.push(viewItem);
@@ -360,14 +375,10 @@ module admin.ui {
                 viewHeight = parentEl.getViewSize().height;
                 me.maxHeight = Math.min(this.maxWas || viewHeight - 50, viewHeight - 50);
             }
-
-            this.ext.callParent(arguments);
             return me;
         }
 
         hide():void {
-            this.ext.callParent();
-
             //return back original value to calculate new height on show
             this.ext.maxHeight = this.maxWas;
         }
