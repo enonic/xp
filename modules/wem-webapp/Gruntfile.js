@@ -16,6 +16,15 @@ module.exports = function (grunt) {
                     declaration: true
                 }
             },
+            api_test: {
+                src: ['src/test/webapp/admin2/api/js/test.ts'],
+                dest: 'src/test/webapp/admin2/api/js/test.js',
+                options: {
+                    // target: 'es5',
+                    sourcemap: true,
+                    declaration: true
+                }
+            },
             space_manager: {
                 src: ['src/main/webapp/admin2/apps/space-manager/js/main.ts'],
                 dest: 'src/main/webapp/admin2/apps/space-manager/js/all.js',
@@ -43,7 +52,7 @@ module.exports = function (grunt) {
         },
 
         watch: {
-            files: 'src/main/webapp/admin2/**/*.ts',
+            files: ['src/main/webapp/admin2/**/*.ts', 'src/test/webapp/admin2/**/*.js'],
             tasks: ['typescript']
         }
 

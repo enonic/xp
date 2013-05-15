@@ -103,4 +103,51 @@ var admin;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
+var admin;
+(function (admin) {
+    (function (ui) {
+        var BaseInputComponent = (function () {
+            function BaseInputComponent(input) {
+                this.input = input;
+            }
+            BaseInputComponent.prototype.getInput = function () {
+                return this.input;
+            };
+            return BaseInputComponent;
+        })();
+        ui.BaseInputComponent = BaseInputComponent;        
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
+var __extends = this.__extends || function (d, b) {
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var admin;
+(function (admin) {
+    (function (ui) {
+        var TextLine = (function (_super) {
+            __extends(TextLine, _super);
+            function TextLine(input) {
+                        _super.call(this, input);
+                var fieldContainer = new Ext.form.FieldContainer();
+                fieldContainer.setFieldLabel('');
+                fieldContainer.labelWidth = 110;
+                fieldContainer.labelPad = 0;
+                var textField = new Ext.form.Text();
+                textField.enableKeyEvents = true;
+                textField.displayNameSource = true;
+                fieldContainer.add(textField);
+                this.ext = fieldContainer;
+            }
+            TextLine.prototype.setValue = function (value) {
+                this.ext.down('textfield').setValue(value);
+            };
+            return TextLine;
+        })(admin.ui.BaseInputComponent);
+        ui.TextLine = TextLine;        
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
 //@ sourceMappingURL=all.js.map
