@@ -12,6 +12,13 @@
 ///<reference path='notify/NotifyOpts.ts' />
 ///<reference path='notify/MessageBus.ts' />
 
+///<reference path='content/data/Data.ts' />
+///<reference path='content/data/DataSet.ts' />
+///<reference path='content/data/Property.ts' />
+
+///<reference path='content/schema/content/form/FormItem.ts' />
+///<reference path='content/schema/content/form/Input.ts' />
+///<reference path='content/schema/content/form/Occurrences.ts' />
 
 declare var Ext;
 declare var Admin;

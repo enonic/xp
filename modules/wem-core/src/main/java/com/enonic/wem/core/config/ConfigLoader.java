@@ -7,9 +7,10 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.text.StrLookup;
+import org.apache.commons.lang.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.PropertyPlaceholderHelper;
 
 import com.google.common.base.Strings;
 
@@ -119,9 +120,10 @@ public final class ConfigLoader
 
     private Properties interpolate( final Properties props, final Properties env )
     {
-        final PropertyPlaceholderHelper.PlaceholderResolver resolver = new PropertyPlaceholderHelper.PlaceholderResolver()
+        final StrLookup lookup = new StrLookup()
         {
-            public String resolvePlaceholder( final String key )
+            @Override
+            public String lookup( final String key )
             {
                 String value = props.getProperty( key );
                 if ( !Strings.isNullOrEmpty( value ) )
@@ -133,14 +135,14 @@ public final class ConfigLoader
             }
         };
 
-        final PropertyPlaceholderHelper helper = new PropertyPlaceholderHelper( "${", "}", ":", true );
+        final StrSubstitutor substitutor = new StrSubstitutor( lookup );
         final Properties result = new Properties();
 
         for ( final Object o : props.keySet() )
         {
             final String key = (String) o;
             final String value = props.getProperty( key );
-            final String resolved = helper.replacePlaceholders( value, resolver );
+            final String resolved = substitutor.replace( value );
             result.put( key, resolved );
         }
 

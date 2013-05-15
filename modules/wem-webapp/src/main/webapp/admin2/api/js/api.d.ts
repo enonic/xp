@@ -71,3 +71,62 @@ module API.notify {
     function showFeedback(message: string): void;
     function updateAppTabCount(appId, tabCount: Number): void;
 }
+module API.content.data {
+    class Data {
+        private name;
+        private arrayIndex;
+        constructor(name: string);
+        public setArrayIndex(value: number): void;
+        public getName(): string;
+        public getArrayIndex(): number;
+    }
+}
+module API.content.data {
+    class DataSet extends Data {
+        private dataById;
+        constructor(json);
+        public addData(data: Data): void;
+    }
+}
+module API.content.data {
+    class Property extends Data {
+        private value;
+        private type;
+        constructor(json);
+        public getValue(): string;
+        public getType(): string;
+    }
+}
+module API.content.schema.content.form {
+    class FormItem {
+        private name;
+        constructor(name: string);
+        public getName(): string;
+    }
+}
+module API.content.schema.content.form {
+    class Input extends FormItem {
+        private label;
+        private immutable;
+        private occurrences;
+        private indexed;
+        private customText;
+        private validationRegex;
+        private helpText;
+        constructor(json);
+        public getLabel(): string;
+        public isImmutable(): bool;
+        public getOccurrences(): Occurrences;
+        public isIndexed(): bool;
+        public getCustomText(): string;
+        public getValidationRegex(): string;
+        public getHelpText(): string;
+    }
+}
+module API.content.schema.content.form {
+    class Occurrences {
+        private minimum;
+        private maximum;
+        constructor(json);
+    }
+}
