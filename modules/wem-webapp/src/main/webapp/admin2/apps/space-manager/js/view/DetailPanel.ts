@@ -1,7 +1,7 @@
 module admin.ui {
     export class SpaceDetailPanel {
 
-        ext;
+        ext:Ext_panel_Panel;
 
         private isVertical:Boolean = false;
         private keyField:String = 'name';
@@ -247,6 +247,8 @@ module admin.ui {
                 '</tpl>'
             ]
             c.data = data;
+
+            return c;
         }
 
         private resolveActiveItem() {

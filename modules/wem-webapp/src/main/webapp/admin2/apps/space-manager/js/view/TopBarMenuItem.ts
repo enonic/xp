@@ -31,7 +31,7 @@ module admin.ui {
             });
             this.ext = tbmi;
 
-            tbmi.enableBubble(['closeMenuItem']);
+            tbmi.enableBubble('closeMenuItem');
             this.initComponent(tbmi);
         }
 
