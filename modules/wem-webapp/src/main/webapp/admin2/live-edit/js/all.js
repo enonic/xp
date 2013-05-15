@@ -1014,7 +1014,7 @@ var LiveEdit;
                 $(window).on('deselect.liveEdit.component remove.liveEdit.component sortStart.liveEdit.component', function () {
                     return _this.hide();
                 });
-                $(window).on('windowResize.liveEdit', function () {
+                $(window).on('resize.liveEdit.window', function () {
                     return _this.handleWindowResize();
                 });
             };
@@ -1177,7 +1177,7 @@ var LiveEdit;
                 $(window).on('mouseOut.liveEdit.component sortStart.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', function () {
                     return _this.hide();
                 });
-                $(window).on('windowResize.liveEdit', function () {
+                $(window).on('resize.liveEdit.window', function () {
                     return _this.handleWindowResize();
                 });
                 $(window).on('sortstop.liveedit.component', function (event, uiEvent, ui, wasSelectedOnDragStart) {
@@ -2165,7 +2165,7 @@ var LiveEdit;
             new LiveEdit.MutationObserver();
             new LiveEdit.DragDropSort();
             $(window).resize(function () {
-                return $(window).trigger('windowResize.liveEdit');
+                return $(window).trigger('resize.liveEdit.window');
             });
         });
     });

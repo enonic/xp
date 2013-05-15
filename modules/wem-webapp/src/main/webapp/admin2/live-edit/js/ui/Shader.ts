@@ -26,7 +26,7 @@ module LiveEdit.ui {
 
             $(window).on('deselect.liveEdit.component remove.liveEdit.component sortStart.liveEdit.component', () => this.hide());
 
-            $(window).on('windowResize.liveEdit', () => this.handleWindowResize());
+            $(window).on('resize.liveEdit.window', () => this.handleWindowResize());
         }
 
 

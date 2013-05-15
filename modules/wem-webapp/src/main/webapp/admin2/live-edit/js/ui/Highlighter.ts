@@ -36,7 +36,7 @@ module LiveEdit.ui {
 
             $(window).on('mouseOut.liveEdit.component sortStart.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', () => this.hide());
 
-            $(window).on('windowResize.liveEdit', () => this.handleWindowResize());
+            $(window).on('resize.liveEdit.window', () => this.handleWindowResize());
 
             $(window).on('sortstop.liveedit.component', (event, uiEvent, ui, wasSelectedOnDragStart) => {
                 if (wasSelectedOnDragStart) {
