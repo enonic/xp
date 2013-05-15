@@ -1,55 +1,41 @@
 package com.enonic.wem.core.index.elastic;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.io.CharStreams;
+import com.google.common.io.Resources;
 
 import com.enonic.wem.core.index.IndexException;
-import com.enonic.wem.core.lifecycle.InitializingBean;
 
 @Component
 public class IndexSettingsSourceProvider
-    implements InitializingBean
 {
-    public static final String INDEX_SETTINGS_LOCATION =
-        ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + "/META-INF/index/settings/*-settings.json";
+    private final static String PREFIX = "META-INF/index/settings/";
 
-    private ResourcePatternResolver resourcePatternResolver;
-
-    private List<Resource> resources;
-
-    @Override
-    public void afterPropertiesSet()
-        throws Exception
-    {
-        this.resources = Lists.newArrayList( resourcePatternResolver.getResources( INDEX_SETTINGS_LOCATION ) );
-    }
+    private final static String[] SETTING_FILES = { //
+        PREFIX + "wem-analyzer-settings.json" //
+    };
 
     public List<String> getSources()
     {
-        List<String> settings = Lists.newArrayList();
-
-        for ( Resource resource : resources )
+        final List<String> settings = Lists.newArrayList();
+        for ( final String settingFile : SETTING_FILES )
         {
             final String settingsFileContent;
             try
             {
-                settingsFileContent = CharStreams.toString( new InputStreamReader( resource.getInputStream(), Charsets.UTF_8 ) );
+                final URL url = Resources.getResource( settingFile );
+                settingsFileContent = Resources.toString( url, Charsets.UTF_8 );
             }
             catch ( IOException e )
             {
-                throw new IndexException( "Failed to load settings from file: " + resource.getFilename(), e );
+                throw new IndexException( "Failed to load settings from file: " + settingFile, e );
             }
 
             if ( !Strings.isNullOrEmpty( settingsFileContent ) )
@@ -60,11 +46,5 @@ public class IndexSettingsSourceProvider
         }
 
         return settings;
-    }
-
-    @Inject
-    public void setResourcePatternResolver( final ResourcePatternResolver resourcePatternResolver )
-    {
-        this.resourcePatternResolver = resourcePatternResolver;
     }
 }

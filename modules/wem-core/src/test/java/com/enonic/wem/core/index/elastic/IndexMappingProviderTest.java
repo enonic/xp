@@ -2,12 +2,7 @@ package com.enonic.wem.core.index.elastic;
 
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.ResourcePatternResolver;
 
 import com.google.common.collect.Lists;
 
@@ -22,92 +17,15 @@ public class IndexMappingProviderTest
     public void testLoadMappingFiles()
         throws Exception
     {
-        final ResourcePatternResolver resourcePatternResolver = Mockito.mock( ResourcePatternResolver.class );
-
-        Resource[] resources = new Resource[]{new ClassPathResource( "com/enonic/wem/core/index/elastic/wem-content-mapping.json" ),
-            new ClassPathResource( "com/enonic/wem/core/index/elastic/wem-account-mapping.json" ),
-            new ClassPathResource( "com/enonic/wem/core/index/elastic/wem-relations-mapping.json" )};
-
-        Mockito.when( resourcePatternResolver.getResources( IndexMappingProvider.MAPPING_RESOURCE_LOCATION ) ).thenReturn( resources );
-        IndexMappingProvider mappingProvider = new IndexMappingProvider();
-        mappingProvider.setResourcePatternResolver( resourcePatternResolver );
-        mappingProvider.afterPropertiesSet();
-
+        final IndexMappingProvider mappingProvider = new IndexMappingProvider();
         final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX );
 
         assertEquals( 3, indexMappings.size() );
 
-        for ( IndexMapping indexMapping : indexMappings )
+        for ( final IndexMapping indexMapping : indexMappings )
         {
             assertEquals( IndexConstants.WEM_INDEX, indexMapping.getIndexName() );
-            assertTrue( Lists.newArrayList( "account", "content", "relations" ).contains( indexMapping.getIndexType() ) );
+            assertTrue( Lists.newArrayList( "account", "content", "binaries" ).contains( indexMapping.getIndexType() ) );
         }
     }
-
-    @Ignore //Test in more robust way
-    @Test
-    public void testContentMapping()
-        throws Exception
-    {
-        String expected = "{\n" +
-            "    \"content\": {\n" +
-            "        \"_all\": {\n" +
-            "            \"enabled\": false\n" +
-            "        }\n" +
-            "    }\n" +
-            "}";
-
-        final ResourcePatternResolver resourcePatternResolver = Mockito.mock( ResourcePatternResolver.class );
-
-        Resource[] resources = new Resource[]{new ClassPathResource( "com/enonic/wem/core/index/elastic/wem-content-mapping.json" )};
-
-        Mockito.when( resourcePatternResolver.getResources( IndexMappingProvider.MAPPING_RESOURCE_LOCATION ) ).thenReturn( resources );
-        IndexMappingProvider mappingProvider = new IndexMappingProvider();
-        mappingProvider.setResourcePatternResolver( resourcePatternResolver );
-        mappingProvider.afterPropertiesSet();
-
-        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX );
-
-        assertEquals( 1, indexMappings.size() );
-
-        final IndexMapping contentMapping = indexMappings.iterator().next();
-        assertEquals( expected, contentMapping.getSource() );
-    }
-
-    @Test
-    public void testInvalidMappingResourceName()
-        throws Exception
-    {
-        final ResourcePatternResolver resourcePatternResolver = Mockito.mock( ResourcePatternResolver.class );
-
-        Resource[] resources = new Resource[]{new ClassPathResource( "com/enonic/wem/core/index/elastic/content-mapping.json" )};
-
-        Mockito.when( resourcePatternResolver.getResources( IndexMappingProvider.MAPPING_RESOURCE_LOCATION ) ).thenReturn( resources );
-        IndexMappingProvider mappingProvider = new IndexMappingProvider();
-        mappingProvider.setResourcePatternResolver( resourcePatternResolver );
-        mappingProvider.afterPropertiesSet();
-
-        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX );
-
-        assertEquals( 0, indexMappings.size() );
-    }
-
-    @Test
-    public void doNotLoadOtherIndexMapping()
-        throws Exception
-    {
-        final ResourcePatternResolver resourcePatternResolver = Mockito.mock( ResourcePatternResolver.class );
-
-        Resource[] resources = new Resource[]{new ClassPathResource( "com/enonic/wem/core/index/elastic/otherindex-account-mapping.json" )};
-
-        Mockito.when( resourcePatternResolver.getResources( IndexMappingProvider.MAPPING_RESOURCE_LOCATION ) ).thenReturn( resources );
-        IndexMappingProvider mappingProvider = new IndexMappingProvider();
-        mappingProvider.setResourcePatternResolver( resourcePatternResolver );
-        mappingProvider.afterPropertiesSet();
-
-        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX );
-
-        assertEquals( 0, indexMappings.size() );
-    }
-
 }
