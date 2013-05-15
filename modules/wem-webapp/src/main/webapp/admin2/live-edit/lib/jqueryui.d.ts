@@ -4,6 +4,9 @@
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
 
+/// <reference path="../jquery/jquery.d.ts"/>
+
+
 // Accordion //////////////////////////////////////////////////
 
 interface AccordionOptions {
@@ -54,19 +57,19 @@ interface AutocompleteUIParams {
 
 }
 
-interface AuotcompleteEvent {
+interface AutocompleteEvent {
     (event: Event, ui: AutocompleteUIParams): void;
 }
 
 interface AutocompleteEvents {
-    change?: AuotcompleteEvent;
-    close?: AuotcompleteEvent;
-    create?: AuotcompleteEvent;
-    focus?: AuotcompleteEvent;
-    open?: AuotcompleteEvent;
-    response?: AuotcompleteEvent;
-    search?: AuotcompleteEvent;
-    select?: AuotcompleteEvent;
+    change?: AutocompleteEvent;
+    close?: AutocompleteEvent;
+    create?: AutocompleteEvent;
+    focus?: AutocompleteEvent;
+    open?: AutocompleteEvent;
+    response?: AutocompleteEvent;
+    search?: AutocompleteEvent;
+    select?: AutocompleteEvent;
 }
 
 interface Autocomplete extends Widget, AutocompleteOptions, AutocompleteEvents {
