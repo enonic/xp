@@ -114,6 +114,7 @@ public final class AccountMigrateTask
     }
 
     private void importUserStores()
+        throws Exception
     {
         dbAccountsLoader.loadUserStores( new ImportDataCallbackHandler()
         {
@@ -132,6 +133,7 @@ public final class AccountMigrateTask
     }
 
     private void importUsers()
+        throws Exception
     {
         dbAccountsLoader.loadUsers( new ImportDataCallbackHandler()
         {
@@ -150,6 +152,7 @@ public final class AccountMigrateTask
     }
 
     private void importGroups()
+        throws Exception
     {
         dbAccountsLoader.loadGroups( new ImportDataCallbackHandler()
         {
