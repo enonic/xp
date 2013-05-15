@@ -3186,7 +3186,7 @@ var admin;
 (function (admin) {
     (function (ui) {
         var TopBarMenuItem = (function () {
-            function TopBarMenuItem(text1, text2, card, tabBar) {
+            function TopBarMenuItem(text1, text2, card, tabBar, closable, disabled, editing, hidden, iconClass, iconSrc) {
                 this.text1 = text1;
                 this.text2 = text2;
                 var tbmi = new Ext.container.Container({
@@ -3196,12 +3196,19 @@ var admin;
                     isMenuItem: true,
                     canActivate: true,
                     card: card,
-                    tabBar: tabBar
+                    tabBar: tabBar,
+                    closable: closable,
+                    disabled: disabled,
+                    editing: editing,
+                    hidden: hidden,
+                    iconClass: iconClass,
+                    iconSrc: iconSrc,
+                    layout: {
+                        type: 'hbox',
+                        align: 'middle'
+                    }
                 });
                 this.ext = tbmi;
-                var layout = new Ext.layout.container.HBox();
-                layout.align = 'middle';
-                tbmi.layout = layout;
                 tbmi.enableBubble([
                     'closeMenuItem'
                 ]);
@@ -3304,19 +3311,20 @@ var admin;
             function TopBarMenu(tabPanel) {
                 var _this = this;
                 var tbm = new Ext.menu.Menu({
+                    itemId: 'topBarMenu',
+                    cls: 'admin-topbar-menu',
+                    showSeparator: false,
+                    styleHtmlContent: true,
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
+                    width: 300,
+                    layout: {
+                        type: 'vbox',
+                        align: 'stretchmax'
+                    }
                 });
                 this.ext = tbm;
                 this.tabPanel = tabPanel;
-                tbm.itemId = 'topBarMenu';
-                tbm.addCls('admin-topbar-menu');
-                tbm.showSeparator = false;
-                tbm.styleHtmlContent = true;
-                tbm.overflowY = 'auto';
-                tbm.overflowX = 'hidden';
-                tbm.width = 300;
-                var layout = new Ext.layout.container.VBox();
-                layout.align = 'stretchmax';
-                tbm.layout = layout;
                 this.nonClosableItems = this.createNonClosableItems();
                 this.editTitle = this.createEditTitle();
                 this.editItems = this.createEditItems();
@@ -3329,13 +3337,26 @@ var admin;
                 tbm.add(this.viewTitle);
                 tbm.add(this.viewItems);
                 tbm.add(this.emptyTitle);
-                tbm.onShow = this.onShow;
-                tbm.onBoxReady = this.onBoxReady;
+                var parentOnShow = tbm.onShow;
+                tbm.onShow = function () {
+                    parentOnShow.apply(tbm, arguments);
+                    _this.onShow();
+                };
+                var parentOnBoxReady = tbm.onBoxReady;
+                tbm.onBoxReady = function () {
+                    _this.onBoxReady();
+                    return parentOnBoxReady.apply(tbm, arguments);
+                };
+                var parentShow = tbm.show;
                 tbm.show = function () {
                     _this.show();
+                    parentShow.apply(tbm, arguments);
+                    return tbm;
                 };
+                var parentHide = tbm.hide;
                 tbm.hide = function () {
-                    _this.hide();
+                    parentHide.apply(tbm, arguments);
+                    return _this.hide();
                 };
                 tbm.setVerticalPosition = function () {
                     _this.setVerticalPosition();
@@ -3344,14 +3365,13 @@ var admin;
                     left: 0,
                     top: 0
                 };
-                tbm.on('closeMenuItem', this.onCloseMenuItem);
-                tbm.on('resize', this.updatePosition);
+                tbm.on('closeMenuItem', this.onCloseMenuItem, this);
+                tbm.on('resize', this.updatePosition, this);
             }
             TopBarMenu.prototype.createNonClosableItems = function () {
                 var item = new Ext.container.Container({
                 });
                 item.itemId = 'nonClosableItems';
-                item.defaultType = 'topBarMenuItem';
                 return item;
             };
             TopBarMenu.prototype.createEditTitle = function () {
@@ -3367,7 +3387,6 @@ var admin;
                 var item = new Ext.container.Container({
                 });
                 item.itemId = 'editItems';
-                item.defaultType = 'topBarMenuItem';
                 return item;
             };
             TopBarMenu.prototype.createViewTitle = function () {
@@ -3383,7 +3402,6 @@ var admin;
                 var item = new Ext.container.Container({
                 });
                 item.itemId = 'viewItems';
-                item.defaultType = 'topBarMenuItem';
                 return item;
             };
             TopBarMenu.prototype.createEmptyTitle = function () {
@@ -3409,7 +3427,6 @@ var admin;
                 }
             };
             TopBarMenu.prototype.onShow = function () {
-                this.ext.callParent(arguments);
                 if(this.activeTab) {
                     this.markActiveTab(this.activeTab);
                 }
@@ -3419,14 +3436,13 @@ var admin;
                     tag: 'div',
                     cls: 'balloon-tip'
                 }, true);
-                this.ext.callParent(arguments);
             };
             TopBarMenu.prototype.onCloseMenuItem = function (item) {
                 if(this.tabPanel) {
                     this.tabPanel.remove(item.card);
                 }
                 if(this.getAllItems(false).length === 0) {
-                    this.hide();
+                    this.ext.hide();
                 }
             };
             TopBarMenu.prototype.markActiveTab = function (item) {
@@ -3456,8 +3472,8 @@ var admin;
             TopBarMenu.prototype.getAllItems = function (includeNonClosable) {
                 var items = [];
                 if(includeNonClosable === false) {
-                    items = items.concat(this.editItems.query('topBarMenuItem'));
-                    items = items.concat(this.viewItems.query('topBarMenuItem'));
+                    items = items.concat(this.editItems.query('#topBarMenuItem'));
+                    items = items.concat(this.viewItems.query('#topBarMenuItem'));
                 } else {
                     items = items.concat(this.ext.query('topBarMenuItem'));
                 }
@@ -3490,7 +3506,7 @@ var admin;
                     var editItemObjects = [];
                     Ext.Array.each(editItems, function (editItem) {
                         if(!editItem.xtype) {
-                            var tbmi = new admin.ui.TopBarMenuItem(editItem.text1, editItem.text2, editItem.card, editItem.tabBar).ext;
+                            var tbmi = new admin.ui.TopBarMenuItem(editItem.text1, editItem.text2, editItem.card, editItem.tabBar, editItem.closable, editItem.disabled, editItem.editing, editItem.hidden, editItem.iconClass, editItem.iconSrc).ext;
                             editItemObjects.push(tbmi);
                         } else {
                             editItemObjects.push(editItem);
@@ -3502,7 +3518,7 @@ var admin;
                     var viewItemObjects = [];
                     Ext.Array.each(viewItems, function (viewItem) {
                         if(!viewItem.xtype) {
-                            var tbmi = new admin.ui.TopBarMenuItem(viewItem.text1, viewItem.text2, viewItem.card, viewItem.tabBar).ext;
+                            var tbmi = new admin.ui.TopBarMenuItem(viewItem.text1, viewItem.text2, viewItem.card, viewItem.tabBar, viewItem.closable, viewItem.disabled, viewItem.editing, viewItem.hidden, viewItem.iconClass, viewItem.iconSrc).ext;
                             viewItemObjects.push(tbmi);
                         } else {
                             viewItemObjects.push(viewItem);
@@ -3598,11 +3614,9 @@ var admin;
                     viewHeight = parentEl.getViewSize().height;
                     me.maxHeight = Math.min(this.maxWas || viewHeight - 50, viewHeight - 50);
                 }
-                this.ext.callParent(arguments);
                 return me;
             };
             TopBarMenu.prototype.hide = function () {
-                this.ext.callParent();
                 this.ext.maxHeight = this.maxWas;
             };
             TopBarMenu.prototype.setVerticalPosition = function () {

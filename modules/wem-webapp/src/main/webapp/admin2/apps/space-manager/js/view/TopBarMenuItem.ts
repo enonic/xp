@@ -6,7 +6,8 @@ module admin.ui {
         private text1:string;
         private text2:string;
 
-        constructor(text1:string, text2:string, card: any, tabBar: any) {
+        constructor(text1:string, text2:string, card:any, tabBar:any, closable:bool, disabled:bool, editing:bool, hidden:bool,
+                    iconClass:string, iconSrc:string) {
             this.text1 = text1;
             this.text2 = text2;
             var tbmi = new Ext.container.Container({
@@ -16,13 +17,19 @@ module admin.ui {
                 isMenuItem: true,
                 canActivate: true,
                 card: card,
-                tabBar: tabBar
+                tabBar: tabBar,
+                closable: closable,
+                disabled: disabled,
+                editing: editing,
+                hidden: hidden,
+                iconClass: iconClass,
+                iconSrc: iconSrc,
+                layout: {
+                    type: 'hbox',
+                    align: 'middle'
+                }
             });
             this.ext = tbmi;
-
-            var layout = new Ext.layout.container.HBox();
-            layout.align = 'middle';
-            tbmi.layout = layout;
 
             tbmi.enableBubble(['closeMenuItem']);
             this.initComponent(tbmi);
