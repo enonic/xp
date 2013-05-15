@@ -4,7 +4,7 @@
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
 
-/// <reference path="../jquery/jquery.d.ts"/>
+/// <reference path="jquery-1.8.3.d.ts"/>
 
 
 // Accordion //////////////////////////////////////////////////
