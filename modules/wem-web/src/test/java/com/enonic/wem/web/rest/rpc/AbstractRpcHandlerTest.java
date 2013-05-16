@@ -7,9 +7,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Before;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import org.mockito.Mockito;
 
 import com.google.common.collect.Sets;
 
@@ -18,6 +16,7 @@ import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.json.rpc.processor.JsonRpcProcessorImpl;
 import com.enonic.wem.web.json.rpc.processor.JsonRpcRequest;
 import com.enonic.wem.web.json.rpc.processor.JsonRpcResponse;
+import com.enonic.wem.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 
@@ -167,8 +166,10 @@ public abstract class AbstractRpcHandlerTest
 
     private void mockCurrentContextHttpRequest()
     {
-        final HttpServletRequest req = new MockHttpServletRequest();
-        final ServletRequestAttributes attrs = new ServletRequestAttributes( req );
-        RequestContextHolder.setRequestAttributes( attrs );
+        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
+        Mockito.when( req.getScheme() ).thenReturn( "http" );
+        Mockito.when( req.getServerName() ).thenReturn( "localhost" );
+        Mockito.when( req.getLocalPort() ).thenReturn( 80 );
+        ServletRequestHolder.setRequest( req );
     }
 }

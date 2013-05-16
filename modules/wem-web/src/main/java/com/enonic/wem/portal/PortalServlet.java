@@ -12,13 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.http.HttpMethod;
 
 public final class PortalServlet
     extends HttpServlet
 {
-    private final static List<HttpMethod> ALLOWED_HTTP_METHODS =
-        Arrays.asList( HttpMethod.GET, HttpMethod.POST, HttpMethod.HEAD, HttpMethod.OPTIONS );
+    private final static List<String> ALLOWED_HTTP_METHODS = Arrays.asList( "GET", "POST", "HEAD", "OPTIONS" );
 
     @Override
     public void init( final ServletConfig config )
