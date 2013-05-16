@@ -10,6 +10,7 @@ import com.enonic.wem.core.index.elastic.ElasticClientFactory;
 import com.enonic.wem.core.index.elastic.ElasticNodeFactory;
 import com.enonic.wem.core.index.elastic.ElasticsearchIndexService;
 import com.enonic.wem.core.index.elastic.ElasticsearchIndexServiceImpl;
+import com.enonic.wem.core.index.search.SearchService;
 
 public final class IndexModule
     extends AbstractModule
@@ -19,6 +20,8 @@ public final class IndexModule
     {
         bind( Node.class ).toProvider( ElasticNodeFactory.class ).in( Scopes.SINGLETON );
         bind( Client.class ).toProvider( ElasticClientFactory.class ).in( Scopes.SINGLETON );
+        bind( SearchService.class ).in( Scopes.SINGLETON );
+        bind( IndexService.class ).in( Scopes.SINGLETON );
         bind( ElasticsearchIndexService.class ).to( ElasticsearchIndexServiceImpl.class ).in( Scopes.SINGLETON );
     }
 }
