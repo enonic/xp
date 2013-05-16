@@ -4,12 +4,11 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.initializer.StartupInitializer;
 
-@Component
+
 public final class JspDataTools
 {
     private final static Logger LOG = LoggerFactory.getLogger( JspDataTools.class );

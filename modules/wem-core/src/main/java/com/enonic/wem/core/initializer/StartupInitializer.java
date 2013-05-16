@@ -6,14 +6,12 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.core.jcr.loader.JcrInitializer;
 import com.enonic.wem.core.lifecycle.InitializingBean;
 
-@Component
+
 public final class StartupInitializer
     implements InitializingBean
 {

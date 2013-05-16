@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import javax.inject.Inject;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -11,15 +12,11 @@ import javax.jcr.Workspace;
 
 import org.apache.jackrabbit.commons.cnd.CndImporter;
 
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
 
-@Component
+
 public final class JcrInitializer
     implements JcrConstants
 {

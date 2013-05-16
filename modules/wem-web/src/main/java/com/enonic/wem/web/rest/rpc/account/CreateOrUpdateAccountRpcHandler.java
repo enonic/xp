@@ -13,7 +13,6 @@ import org.apache.commons.io.FileUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
-import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 
@@ -37,7 +36,7 @@ import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.rest.service.upload.UploadItem;
 import com.enonic.wem.web.rest.service.upload.UploadService;
 
-@Component
+
 public final class CreateOrUpdateAccountRpcHandler
     extends AbstractDataRpcHandler
 {

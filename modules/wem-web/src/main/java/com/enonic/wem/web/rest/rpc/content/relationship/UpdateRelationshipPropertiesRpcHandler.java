@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.codehaus.jackson.node.ObjectNode;
-import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Maps;
 
@@ -17,7 +16,7 @@ import com.enonic.wem.api.content.relationship.editor.RelationshipEditors;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
-@Component
+
 public final class UpdateRelationshipPropertiesRpcHandler
     extends AbstractDataRpcHandler
 {

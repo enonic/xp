@@ -3,8 +3,6 @@ package com.enonic.wem.web.rest.rpc.content.schema.relationship;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.schema.relationship.CreateRelationshipType;
@@ -27,7 +25,7 @@ import com.enonic.wem.web.rest.service.upload.UploadService;
 
 import static com.enonic.wem.api.command.Commands.relationshipType;
 
-@Component
+
 public final class CreateOrUpdateRelationshipTypeRpcHandler
     extends AbstractDataRpcHandler
 {

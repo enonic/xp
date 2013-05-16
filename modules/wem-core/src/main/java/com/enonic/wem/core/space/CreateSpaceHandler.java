@@ -4,7 +4,6 @@ import javax.inject.Inject;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.space.CreateSpace;
 import com.enonic.wem.api.content.Content;
@@ -21,7 +20,7 @@ import com.enonic.wem.core.space.dao.SpaceDao;
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.space.Space.newSpace;
 
-@Component
+
 public final class CreateSpaceHandler
     extends CommandHandler<CreateSpace>
 {

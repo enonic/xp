@@ -7,13 +7,12 @@ import javax.inject.Inject;
 import org.codehaus.jackson.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.web.json.rpc.JsonRpcError;
 import com.enonic.wem.web.json.rpc.JsonRpcException;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 
-@Component
+
 public final class JsonRpcProcessorImpl
     implements JsonRpcProcessor
 {

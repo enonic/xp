@@ -3,8 +3,6 @@ package com.enonic.wem.core.content.relationship.dao;
 
 import javax.jcr.Session;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
@@ -17,7 +15,7 @@ import com.enonic.wem.api.content.relationship.Relationships;
  * <path-to-fromContent>/relationships/<relationshipType-moduleName>/<relationshipType-localName>/[managingData/]<toContent-id>
  * Note: the managingData part is only included if set
  */
-@Component
+
 public class RelationshipDaoImpl
     implements RelationshipDao
 {

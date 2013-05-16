@@ -12,7 +12,6 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.elasticsearch.common.collect.Sets;
-import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
@@ -36,7 +35,6 @@ import com.enonic.wem.api.userstore.statistics.UserStoreStatistics;
 import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
-@Component("accountDao")
 public final class AccountDaoImpl
     implements AccountDao
 {

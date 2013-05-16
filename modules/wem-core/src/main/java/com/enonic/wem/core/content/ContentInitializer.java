@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content;
 
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
@@ -12,7 +11,7 @@ import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.core.support.BaseInitializer;
 
-@Component
+
 public class ContentInitializer
     extends BaseInitializer
 {

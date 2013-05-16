@@ -2,8 +2,6 @@ package com.enonic.wem.core.content.schema.relationship;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.command.content.schema.relationship.DeleteRelationshipType;
 import com.enonic.wem.api.command.content.schema.relationship.DeleteRelationshipTypeResult;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
@@ -12,7 +10,7 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.schema.relationship.dao.RelationshipTypeDao;
 
-@Component
+
 public final class DeleteRelationshipTypeHandler
     extends CommandHandler<DeleteRelationshipType>
 {

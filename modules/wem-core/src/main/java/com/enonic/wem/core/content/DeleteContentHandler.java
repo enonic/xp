@@ -4,8 +4,6 @@ package com.enonic.wem.core.content;
 import javax.inject.Inject;
 import javax.jcr.Session;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.command.content.DeleteContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -16,7 +14,7 @@ import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.index.IndexService;
 
-@Component
+
 public class DeleteContentHandler
     extends CommandHandler<DeleteContent>
 {

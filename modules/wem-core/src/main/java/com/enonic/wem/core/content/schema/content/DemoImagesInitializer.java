@@ -2,7 +2,6 @@ package com.enonic.wem.core.content.schema.content;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
@@ -15,7 +14,7 @@ import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.core.support.BaseInitializer;
 
-@Component
+
 public class DemoImagesInitializer
     extends BaseInitializer
 {

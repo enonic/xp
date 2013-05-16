@@ -1,7 +1,6 @@
 package com.enonic.wem.web.rest.rpc.content;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.GetContentVersion;
@@ -16,7 +15,7 @@ import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
-@Component
+
 public class GetContentRpcHandler
     extends AbstractDataRpcHandler
 {

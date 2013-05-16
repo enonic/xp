@@ -3,7 +3,6 @@ package com.enonic.wem.core.content.schema;
 import java.util.List;
 
 import javax.inject.Inject;
-import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 
@@ -22,7 +21,7 @@ import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
 import com.enonic.wem.core.content.schema.mixin.dao.MixinDao;
 import com.enonic.wem.core.content.schema.relationship.dao.RelationshipTypeDao;
 
-@Component
+
 public class GetSchemaTreeHandler
     extends CommandHandler<GetSchemaTree>
 {

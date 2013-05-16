@@ -1,7 +1,6 @@
 package com.enonic.wem.core.content.schema.content;
 
 import javax.inject.Inject;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.content.GetContentTypeTree;
 import com.enonic.wem.api.content.schema.content.ContentType;
@@ -10,7 +9,7 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
 
-@Component
+
 public class GetContentTypeTreeHandler
     extends CommandHandler<GetContentTypeTree>
 {

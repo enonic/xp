@@ -7,12 +7,11 @@ import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 
-@Component
+
 final class NodeSettingsBuilder
     extends AbstractSettingsBuilder
 {

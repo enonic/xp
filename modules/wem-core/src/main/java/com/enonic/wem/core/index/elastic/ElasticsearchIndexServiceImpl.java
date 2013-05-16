@@ -25,7 +25,6 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
 
@@ -46,7 +45,7 @@ import com.enonic.wem.core.index.elastic.result.FacetResultSetFactory;
 import com.enonic.wem.core.index.elastic.searchsource.SearchSourceFactory;
 import com.enonic.wem.core.index.indexdocument.IndexDocument;
 
-@Component
+
 public class ElasticsearchIndexServiceImpl
     implements ElasticsearchIndexService
 {

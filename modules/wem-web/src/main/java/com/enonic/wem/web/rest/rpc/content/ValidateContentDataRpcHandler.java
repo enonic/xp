@@ -1,7 +1,6 @@
 package com.enonic.wem.web.rest.rpc.content;
 
 import org.codehaus.jackson.node.ObjectNode;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.data.ContentData;
@@ -16,7 +15,7 @@ import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import static com.enonic.wem.api.command.Commands.content;
 import static com.enonic.wem.api.command.Commands.contentType;
 
-@Component
+
 public final class ValidateContentDataRpcHandler
     extends AbstractDataRpcHandler
 {

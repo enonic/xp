@@ -7,13 +7,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
-import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
-@Component
+
 public final class UploadServiceImpl
     implements UploadService
 {

@@ -3,8 +3,6 @@ package com.enonic.wem.core.space;
 import javax.inject.Inject;
 import javax.jcr.Session;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.command.space.RenameSpace;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.api.space.Space;
@@ -13,7 +11,7 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.space.dao.SpaceDao;
 
-@Component
+
 public final class RenameSpaceHandler
     extends CommandHandler<RenameSpace>
 {

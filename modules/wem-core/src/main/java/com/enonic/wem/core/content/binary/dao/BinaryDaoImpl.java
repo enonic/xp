@@ -4,12 +4,10 @@ package com.enonic.wem.core.content.binary.dao;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.content.binary.BinaryId;
 
-@Component
+
 public class BinaryDaoImpl
     implements BinaryDao
 {

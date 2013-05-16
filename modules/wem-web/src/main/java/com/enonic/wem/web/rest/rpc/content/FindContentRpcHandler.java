@@ -2,7 +2,6 @@ package com.enonic.wem.web.rest.rpc.content;
 
 import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 
@@ -16,7 +15,7 @@ import com.enonic.wem.api.space.SpaceNames;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
-@Component
+
 public class FindContentRpcHandler
     extends AbstractDataRpcHandler
 {

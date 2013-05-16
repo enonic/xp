@@ -2,8 +2,6 @@ package com.enonic.wem.web.rest.rpc.content.schema.content;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.content.schema.content.CreateContentType;
 import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
@@ -28,7 +26,7 @@ import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
 import static com.enonic.wem.api.content.schema.content.editor.SetContentTypeEditor.newSetContentTypeEditor;
 
-@Component
+
 public class CreateOrUpdateContentTypeRpcHandler
     extends AbstractDataRpcHandler
 {

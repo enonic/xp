@@ -6,12 +6,11 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.initializer.InitializerTask;
 
-@Component
+
 public final class DataMigrator
     extends InitializerTask
 {

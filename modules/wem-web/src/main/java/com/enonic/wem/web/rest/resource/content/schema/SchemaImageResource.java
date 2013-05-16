@@ -12,8 +12,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.schema.SchemaKey;
@@ -31,7 +29,7 @@ import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.command.Commands.mixin;
 import static com.enonic.wem.api.command.Commands.relationshipType;
 
-@Component
+
 @Path("schema/image")
 @Produces("image/*")
 public final class SchemaImageResource

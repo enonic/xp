@@ -2,8 +2,6 @@ package com.enonic.wem.core.content;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Component;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.content.ValidateContentData;
@@ -17,7 +15,7 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
 
-@Component
+
 public final class ValidateContentDataHandler
     extends CommandHandler<ValidateContentData>
 {

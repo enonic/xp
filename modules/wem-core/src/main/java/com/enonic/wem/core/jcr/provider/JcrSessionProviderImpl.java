@@ -1,13 +1,11 @@
 package com.enonic.wem.core.jcr.provider;
 
+import javax.inject.Inject;
 import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import javax.inject.Inject;
-import org.springframework.stereotype.Component;
 
-@Component
 public final class JcrSessionProviderImpl
     implements JcrSessionProvider
 {

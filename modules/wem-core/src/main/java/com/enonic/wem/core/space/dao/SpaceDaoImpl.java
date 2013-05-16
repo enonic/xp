@@ -4,13 +4,11 @@ package com.enonic.wem.core.space.dao;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.space.Spaces;
 
-@Component
+
 public final class SpaceDaoImpl
     implements SpaceDao
 {

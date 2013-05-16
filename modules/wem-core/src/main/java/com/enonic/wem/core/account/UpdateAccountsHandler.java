@@ -4,7 +4,6 @@ import javax.inject.Inject;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
@@ -19,7 +18,7 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.index.IndexService;
 
-@Component
+
 public final class UpdateAccountsHandler
     extends CommandHandler<UpdateAccounts>
 {

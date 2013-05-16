@@ -2,8 +2,6 @@ package com.enonic.wem.core.space;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.space.CreateSpace;
@@ -13,7 +11,7 @@ import com.enonic.wem.core.support.BaseInitializer;
 
 import static com.enonic.wem.api.space.editor.SpaceEditors.setDisplayName;
 
-@Component
+
 public class SpacesInitializer
     extends BaseInitializer
 {

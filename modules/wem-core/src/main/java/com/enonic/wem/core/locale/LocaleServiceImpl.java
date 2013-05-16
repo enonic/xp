@@ -3,9 +3,7 @@ package com.enonic.wem.core.locale;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import org.springframework.stereotype.Component;
 
-@Component
 public class LocaleServiceImpl
     implements LocaleService
 {

@@ -1,9 +1,7 @@
 package com.enonic.wem.core.content.schema.mixin;
 
-import javax.jcr.Session;
-
 import javax.inject.Inject;
-import org.springframework.stereotype.Component;
+import javax.jcr.Session;
 
 import com.enonic.wem.api.command.content.schema.mixin.GetMixins;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
@@ -12,7 +10,7 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.schema.mixin.dao.MixinDao;
 
-@Component
+
 public final class GetMixinsHandler
     extends CommandHandler<GetMixins>
 {

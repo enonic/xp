@@ -4,7 +4,6 @@ import javax.inject.Inject;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.command.content.schema.mixin.UpdateMixinResult;
@@ -19,7 +18,7 @@ import com.enonic.wem.core.content.schema.mixin.dao.MixinDao;
 
 import static com.enonic.wem.api.content.schema.mixin.Mixin.newMixin;
 
-@Component
+
 public final class UpdateMixinHandler
     extends CommandHandler<UpdateMixin>
 {

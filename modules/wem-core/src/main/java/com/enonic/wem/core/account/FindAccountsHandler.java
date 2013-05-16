@@ -6,8 +6,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.jcr.Session;
 
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.account.AccountKey;
@@ -34,7 +32,7 @@ import com.enonic.wem.core.index.facet.Facets;
 
 import static com.enonic.wem.api.account.query.AccountQuery.Direction;
 
-@Component
+
 public final class FindAccountsHandler
     extends CommandHandler<FindAccounts>
 {

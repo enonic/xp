@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
-import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Maps;
 
@@ -12,7 +11,7 @@ import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.exception.BaseException;
 import com.enonic.wem.api.exception.SystemException;
 
-@Component
+
 public final class CommandInvokerImpl
     implements CommandInvoker
 {

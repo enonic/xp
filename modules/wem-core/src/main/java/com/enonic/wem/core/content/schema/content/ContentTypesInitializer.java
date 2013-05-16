@@ -1,7 +1,6 @@
 package com.enonic.wem.core.content.schema.content;
 
 import org.apache.commons.lang.WordUtils;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.content.CreateContentType;
 import com.enonic.wem.api.content.schema.content.ContentType;
@@ -19,7 +18,7 @@ import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
 import static com.enonic.wem.api.content.schema.content.editor.SetContentTypeEditor.newSetContentTypeEditor;
 
-@Component
+
 public class ContentTypesInitializer
     extends BaseInitializer
 {

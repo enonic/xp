@@ -3,8 +3,6 @@ package com.enonic.wem.core.content.schema.relationship;
 import javax.inject.Inject;
 import javax.jcr.Session;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.command.content.schema.relationship.UpdateRelationshipType;
 import com.enonic.wem.api.content.schema.relationship.RelationshipType;
 import com.enonic.wem.api.content.schema.relationship.editor.RelationshipTypeEditor;
@@ -12,7 +10,7 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.schema.relationship.dao.RelationshipTypeDao;
 
-@Component
+
 public final class UpdateRelationshipTypesHandler
     extends CommandHandler<UpdateRelationshipType>
 {

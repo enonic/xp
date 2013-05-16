@@ -10,8 +10,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
-import org.springframework.stereotype.Component;
-
 import com.google.inject.Inject;
 
 import com.enonic.wem.api.Client;
@@ -21,7 +19,7 @@ import com.enonic.wem.api.space.SpaceName;
 
 import static com.enonic.wem.api.command.Commands.space;
 
-@Component
+
 @Path("space/image")
 @Produces("image/*")
 public final class SpaceImageResource

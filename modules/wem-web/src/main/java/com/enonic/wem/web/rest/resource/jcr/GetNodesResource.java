@@ -26,13 +26,12 @@ import org.codehaus.jackson.node.LongNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.jackson.node.TextNode;
 import org.joda.time.DateTime;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 
 import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
 
-@Component
+
 @Path("tools/jcr")
 @Produces("application/json")
 public class GetNodesResource

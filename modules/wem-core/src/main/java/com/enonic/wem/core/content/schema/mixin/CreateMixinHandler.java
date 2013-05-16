@@ -1,10 +1,9 @@
 package com.enonic.wem.core.content.schema.mixin;
 
+import javax.inject.Inject;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
-import javax.inject.Inject;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.mixin.CreateMixin;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
@@ -14,7 +13,7 @@ import com.enonic.wem.core.content.schema.mixin.dao.MixinDao;
 
 import static com.enonic.wem.api.content.schema.mixin.Mixin.newMixin;
 
-@Component
+
 public final class CreateMixinHandler
     extends CommandHandler<CreateMixin>
 {

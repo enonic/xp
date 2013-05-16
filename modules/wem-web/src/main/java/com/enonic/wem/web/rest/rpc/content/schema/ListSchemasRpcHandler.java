@@ -5,8 +5,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.stereotype.Component;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -20,7 +18,7 @@ import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
-@Component
+
 public final class ListSchemasRpcHandler
     extends AbstractDataRpcHandler
 {

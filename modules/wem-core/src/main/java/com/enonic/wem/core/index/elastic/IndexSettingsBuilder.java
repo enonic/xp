@@ -8,11 +8,10 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Predicate;
 
-@Component
+
 public class IndexSettingsBuilder
     extends AbstractSettingsBuilder
 {

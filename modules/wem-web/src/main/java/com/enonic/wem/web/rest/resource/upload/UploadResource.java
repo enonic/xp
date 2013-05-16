@@ -3,6 +3,7 @@ package com.enonic.wem.web.rest.resource.upload;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -11,9 +12,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import javax.inject.Inject;
-import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.sun.jersey.multipart.FormDataBodyPart;
@@ -25,7 +23,7 @@ import com.enonic.wem.web.rest.service.upload.UploadService;
 
 @Path("upload")
 @Produces(MediaType.APPLICATION_JSON)
-@Component
+
 public final class UploadResource
 {
     private UploadService uploadService;

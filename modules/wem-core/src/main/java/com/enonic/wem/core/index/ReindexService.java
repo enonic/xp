@@ -8,7 +8,6 @@ import javax.jcr.Session;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
@@ -19,7 +18,7 @@ import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
 
-@Component
+
 public class ReindexService
 {
     private IndexService indexService;

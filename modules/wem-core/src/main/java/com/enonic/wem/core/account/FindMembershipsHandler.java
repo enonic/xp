@@ -5,7 +5,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.elasticsearch.common.collect.Sets;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
@@ -19,7 +18,7 @@ import com.enonic.wem.core.index.account.AccountSearchQuery;
 import com.enonic.wem.core.index.account.AccountSearchResults;
 import com.enonic.wem.core.index.account.AccountSearchService;
 
-@Component
+
 public final class FindMembershipsHandler
     extends CommandHandler<FindMemberships>
 {

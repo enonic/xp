@@ -13,7 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
@@ -42,7 +41,7 @@ import static com.enonic.wem.api.command.Commands.userStore;
 import static com.enonic.wem.api.userstore.editor.UserStoreEditors.setAdministrators;
 import static com.enonic.wem.api.userstore.editor.UserStoreEditors.setUserStore;
 
-@Component
+
 public final class AccountMigrateTask
     extends MigrateTask
 {

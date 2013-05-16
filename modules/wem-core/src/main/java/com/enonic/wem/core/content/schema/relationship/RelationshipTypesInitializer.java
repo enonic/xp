@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content.schema.relationship;
 
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.schema.relationship.CreateRelationshipType;
@@ -15,7 +14,7 @@ import com.enonic.wem.core.support.BaseInitializer;
 import static com.enonic.wem.api.content.schema.relationship.RelationshipType.newRelationshipType;
 import static com.enonic.wem.api.content.schema.relationship.editor.SetRelationshipTypeEditor.newSetRelationshipTypeEditor;
 
-@Component
+
 public class RelationshipTypesInitializer
     extends BaseInitializer
 {

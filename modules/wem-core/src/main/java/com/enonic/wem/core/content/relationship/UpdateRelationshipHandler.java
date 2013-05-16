@@ -4,7 +4,6 @@ import javax.inject.Inject;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.content.relationship.UpdateRelationship;
@@ -16,7 +15,7 @@ import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
 
 import static com.enonic.wem.api.content.relationship.UpdateRelationshipFailureException.newUpdateRelationshipsResult;
 
-@Component
+
 public final class UpdateRelationshipHandler
     extends CommandHandler<UpdateRelationship>
 {

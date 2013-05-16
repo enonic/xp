@@ -1,27 +1,24 @@
 package com.enonic.wem.web.rest.provider;
 
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.ext.MessageBodyWriter;
-import javax.ws.rs.ext.Provider;
-
-import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.stereotype.Component;
-
-import com.enonic.wem.web.json.JsonSerializable;
-import com.enonic.wem.web.json.ObjectMapperHelper;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
+import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.Provider;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 
-@Component
+import com.enonic.wem.web.json.JsonSerializable;
+import com.enonic.wem.web.json.ObjectMapperHelper;
+
+
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 public final class JsonSerializableProvider

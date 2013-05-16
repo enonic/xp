@@ -4,14 +4,13 @@ import javax.inject.Inject;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.node.Node;
-import org.springframework.stereotype.Component;
 
 import com.google.inject.Provider;
 
 import com.enonic.wem.core.lifecycle.DisposableBean;
 import com.enonic.wem.core.lifecycle.InitializingBean;
 
-@Component
+
 public final class ElasticClientFactory
     implements Provider<Client>, InitializingBean, DisposableBean
 {

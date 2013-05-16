@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -18,8 +19,6 @@ import javax.ws.rs.core.Response;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import javax.inject.Inject;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -34,7 +33,7 @@ import com.enonic.wem.api.account.query.AccountQuery;
 import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.command.Commands;
 
-@Component
+
 @Path("account/export")
 public class AccountExportResource
 {
@@ -62,7 +61,8 @@ public class AccountExportResource
         final AccountQuery accountQueryCount = new AccountQuery( query ).userStores( userStores ).types( parseTypes( types ) ).limit( 0 );
         final int accountsTotal = this.client.execute( Commands.account().find().query( accountQueryCount ) ).getTotalSize();
 
-        final AccountQuery accountQuery = new AccountQuery( query ).userStores( userStores ).types( parseTypes( types ) ).limit( accountsTotal );
+        final AccountQuery accountQuery =
+            new AccountQuery( query ).userStores( userStores ).types( parseTypes( types ) ).limit( accountsTotal );
         final AccountQueryHits accountQueryHits = this.client.execute( Commands.account().find().query( accountQuery ) );
         final AccountKeys accountKeys = accountQueryHits.getKeys();
 

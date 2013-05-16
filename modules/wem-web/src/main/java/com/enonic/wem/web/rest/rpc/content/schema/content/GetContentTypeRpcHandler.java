@@ -1,6 +1,5 @@
 package com.enonic.wem.web.rest.rpc.content.schema.content;
 
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
@@ -11,7 +10,7 @@ import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
-@Component
+
 public final class GetContentTypeRpcHandler
     extends AbstractDataRpcHandler
 {

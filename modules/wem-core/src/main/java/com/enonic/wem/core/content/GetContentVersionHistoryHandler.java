@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
-import org.springframework.stereotype.Component;
 
 import com.google.common.primitives.Longs;
 
@@ -17,7 +16,7 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 
-@Component
+
 public class GetContentVersionHistoryHandler
     extends CommandHandler<GetContentVersionHistory>
 {

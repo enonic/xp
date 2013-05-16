@@ -3,8 +3,6 @@ package com.enonic.wem.core.content.relationship;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
@@ -12,7 +10,7 @@ import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
 
-@Component
+
 public class RelationshipServiceImpl
     implements RelationshipService
 {

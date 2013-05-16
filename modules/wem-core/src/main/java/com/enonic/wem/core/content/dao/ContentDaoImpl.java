@@ -6,8 +6,6 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
@@ -27,7 +25,7 @@ import com.enonic.wem.api.support.tree.Tree;
 /**
  * TODO: Figure out how to handle the thrown RepositoryException from JCR.
  */
-@Component
+
 public class ContentDaoImpl
     implements ContentDao
 {

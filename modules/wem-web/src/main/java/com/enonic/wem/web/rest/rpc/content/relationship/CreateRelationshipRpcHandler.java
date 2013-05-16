@@ -4,7 +4,6 @@ package com.enonic.wem.web.rest.rpc.content.relationship;
 import java.util.Iterator;
 
 import org.codehaus.jackson.node.ObjectNode;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.relationship.CreateRelationship;
@@ -14,7 +13,7 @@ import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeN
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
-@Component
+
 public final class CreateRelationshipRpcHandler
     extends AbstractDataRpcHandler
 {

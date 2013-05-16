@@ -2,8 +2,6 @@ package com.enonic.wem.core.content.schema.mixin;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.schema.mixin.CreateMixin;
@@ -15,7 +13,7 @@ import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;
 import com.enonic.wem.api.content.schema.mixin.editor.SetMixinEditor;
 import com.enonic.wem.core.support.BaseInitializer;
 
-@Component
+
 public class MixinsInitializer
     extends BaseInitializer
 {

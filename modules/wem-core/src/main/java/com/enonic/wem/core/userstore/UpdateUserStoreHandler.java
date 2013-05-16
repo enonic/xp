@@ -3,8 +3,6 @@ package com.enonic.wem.core.userstore;
 import javax.inject.Inject;
 import javax.jcr.Session;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.UpdateResult;
 import com.enonic.wem.api.command.userstore.UpdateUserStore;
@@ -14,7 +12,7 @@ import com.enonic.wem.api.userstore.editor.UserStoreEditor;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
 
-@Component
+
 public class UpdateUserStoreHandler
     extends AbstractUserStoreHandler<UpdateUserStore>
 {

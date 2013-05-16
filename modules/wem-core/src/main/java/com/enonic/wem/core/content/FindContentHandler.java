@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content;
 
-import org.springframework.stereotype.Component;
 
 import com.google.inject.Inject;
 
@@ -13,7 +12,7 @@ import com.enonic.wem.core.index.content.ContentSearchHit;
 import com.enonic.wem.core.index.content.ContentSearchResults;
 import com.enonic.wem.core.index.search.SearchService;
 
-@Component
+
 public class FindContentHandler
     extends CommandHandler<FindContent>
 {

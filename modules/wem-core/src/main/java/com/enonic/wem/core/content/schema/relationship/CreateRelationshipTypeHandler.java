@@ -1,10 +1,9 @@
 package com.enonic.wem.core.content.schema.relationship;
 
+import javax.inject.Inject;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
-import javax.inject.Inject;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.relationship.CreateRelationshipType;
 import com.enonic.wem.api.content.schema.relationship.RelationshipType;
@@ -14,7 +13,7 @@ import com.enonic.wem.core.content.schema.relationship.dao.RelationshipTypeDao;
 
 import static com.enonic.wem.api.content.schema.relationship.RelationshipType.newRelationshipType;
 
-@Component
+
 public final class CreateRelationshipTypeHandler
     extends CommandHandler<CreateRelationshipType>
 {

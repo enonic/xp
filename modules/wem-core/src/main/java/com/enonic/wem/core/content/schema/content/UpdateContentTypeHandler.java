@@ -3,8 +3,6 @@ package com.enonic.wem.core.content.schema.content;
 import javax.inject.Inject;
 import javax.jcr.Session;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.command.content.schema.content.UpdateContentType;
 import com.enonic.wem.api.command.content.schema.content.UpdateContentTypeResult;
 import com.enonic.wem.api.content.schema.content.ContentType;
@@ -20,7 +18,7 @@ import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.content.schema.content.validator.ContentTypeValidator.newContentTypeValidator;
 
-@Component
+
 public final class UpdateContentTypeHandler
     extends CommandHandler<UpdateContentType>
 {

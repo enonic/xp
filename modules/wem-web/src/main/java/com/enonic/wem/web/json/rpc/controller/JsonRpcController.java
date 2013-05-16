@@ -2,6 +2,7 @@ package com.enonic.wem.web.json.rpc.controller;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -13,9 +14,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import javax.inject.Inject;
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.web.json.rpc.JsonRpcException;
@@ -23,7 +21,7 @@ import com.enonic.wem.web.json.rpc.processor.JsonRpcProcessor;
 import com.enonic.wem.web.json.rpc.processor.JsonRpcRequest;
 import com.enonic.wem.web.json.rpc.processor.JsonRpcResponse;
 
-@Component
+
 @Path("jsonrpc")
 @Produces(MediaType.APPLICATION_JSON)
 public final class JsonRpcController

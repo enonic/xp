@@ -1,13 +1,12 @@
 package com.enonic.wem.core.command;
 
 import javax.inject.Inject;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.exception.BaseException;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
 
-@Component
+
 public final class CommandContextFactoryImpl
     implements CommandContextFactory
 {

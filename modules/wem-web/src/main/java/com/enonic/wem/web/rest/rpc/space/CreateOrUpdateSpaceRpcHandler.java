@@ -2,8 +2,6 @@ package com.enonic.wem.web.rest.rpc.space;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.space.UpdateSpace;
 import com.enonic.wem.api.space.SpaceName;
@@ -20,7 +18,7 @@ import static com.enonic.wem.api.space.editor.SpaceEditors.composite;
 import static com.enonic.wem.api.space.editor.SpaceEditors.setDisplayName;
 import static com.enonic.wem.api.space.editor.SpaceEditors.setIcon;
 
-@Component
+
 public final class CreateOrUpdateSpaceRpcHandler
     extends AbstractDataRpcHandler
 {

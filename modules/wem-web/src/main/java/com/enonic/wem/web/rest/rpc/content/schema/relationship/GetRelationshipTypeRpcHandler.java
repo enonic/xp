@@ -1,8 +1,6 @@
 package com.enonic.wem.web.rest.rpc.content.schema.relationship;
 
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.schema.relationship.GetRelationshipTypes;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeNames;
@@ -11,7 +9,7 @@ import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
-@Component
+
 public final class GetRelationshipTypeRpcHandler
     extends AbstractDataRpcHandler
 {

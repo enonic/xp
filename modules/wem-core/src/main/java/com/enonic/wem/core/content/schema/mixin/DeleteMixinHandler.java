@@ -2,8 +2,6 @@ package com.enonic.wem.core.content.schema.mixin;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.command.content.schema.mixin.DeleteMixin;
 import com.enonic.wem.api.command.content.schema.mixin.DeleteMixinResult;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
@@ -12,7 +10,7 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.schema.mixin.dao.MixinDao;
 
-@Component
+
 public final class DeleteMixinHandler
     extends CommandHandler<DeleteMixin>
 {

@@ -16,14 +16,13 @@ import javax.ws.rs.core.StreamingOutput;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
 import com.enonic.wem.core.config.ConfigProperties;
 
-@Component
+
 @Path("ui")
 public final class BackgroundImageResource
 {

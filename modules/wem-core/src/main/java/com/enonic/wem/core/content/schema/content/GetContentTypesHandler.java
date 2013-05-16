@@ -3,8 +3,6 @@ package com.enonic.wem.core.content.schema.content;
 import javax.inject.Inject;
 import javax.jcr.Session;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.ContentTypes;
@@ -17,7 +15,7 @@ import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
 import com.enonic.wem.core.content.schema.mixin.InternalMixinFetcher;
 import com.enonic.wem.core.content.schema.mixin.dao.MixinDao;
 
-@Component
+
 public final class GetContentTypesHandler
     extends CommandHandler<GetContentTypes>
 {

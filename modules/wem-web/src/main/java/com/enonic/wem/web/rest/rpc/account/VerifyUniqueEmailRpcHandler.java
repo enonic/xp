@@ -1,14 +1,13 @@
 package com.enonic.wem.web.rest.rpc.account;
 
-import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.account.query.AccountQuery;
+import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
+import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
-@Component
+
 public final class VerifyUniqueEmailRpcHandler
     extends AbstractDataRpcHandler
 {

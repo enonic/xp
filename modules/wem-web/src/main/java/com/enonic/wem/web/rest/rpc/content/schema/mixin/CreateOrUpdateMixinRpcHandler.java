@@ -2,8 +2,6 @@ package com.enonic.wem.web.rest.rpc.content.schema.mixin;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.content.schema.mixin.CreateMixin;
 import com.enonic.wem.api.command.content.schema.mixin.GetMixins;
@@ -25,7 +23,7 @@ import com.enonic.wem.web.rest.service.upload.UploadService;
 import static com.enonic.wem.api.command.Commands.mixin;
 import static com.enonic.wem.api.content.schema.mixin.editor.SetMixinEditor.newSetMixinEditor;
 
-@Component
+
 public class CreateOrUpdateMixinRpcHandler
     extends AbstractDataRpcHandler
 {

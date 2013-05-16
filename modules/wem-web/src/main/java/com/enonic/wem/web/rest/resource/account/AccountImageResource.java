@@ -2,6 +2,7 @@ package com.enonic.wem.web.rest.resource.account;
 
 import java.awt.image.BufferedImage;
 
+import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -9,15 +10,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import javax.inject.Inject;
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
 
-@Component
+
 @Path("account/image")
 @Produces("image/png")
 public final class AccountImageResource

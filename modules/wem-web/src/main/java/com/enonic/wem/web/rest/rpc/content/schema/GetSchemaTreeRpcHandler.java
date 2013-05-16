@@ -3,8 +3,6 @@ package com.enonic.wem.web.rest.rpc.content.schema;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.command.content.schema.GetSchemaTree;
 import com.enonic.wem.api.content.schema.Schema;
 import com.enonic.wem.api.content.schema.SchemaKind;
@@ -15,7 +13,7 @@ import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
 import static com.enonic.wem.api.command.Commands.schema;
 
-@Component
+
 public final class GetSchemaTreeRpcHandler
     extends AbstractDataRpcHandler
 {

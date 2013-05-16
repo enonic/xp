@@ -4,15 +4,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.core.index.IndexException;
 
-@Component
+
 public class IndexMappingProvider
 {
     private final static String PREFIX = "META-INF/index/mapping/";

@@ -1,6 +1,5 @@
 package com.enonic.wem.web.rest.rpc.userstore;
 
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 
@@ -19,7 +18,7 @@ import com.enonic.wem.api.userstore.editor.UserStoreEditors;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
-@Component
+
 public class CreateOrUpdateUserStoreRpcHandler
     extends AbstractDataRpcHandler
 {

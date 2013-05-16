@@ -1,7 +1,6 @@
 package com.enonic.wem.core.client;
 
 import javax.inject.Inject;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Command;
@@ -9,7 +8,7 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandContextFactory;
 import com.enonic.wem.core.command.CommandInvoker;
 
-@Component
+
 public final class StandardClient
     implements Client
 {

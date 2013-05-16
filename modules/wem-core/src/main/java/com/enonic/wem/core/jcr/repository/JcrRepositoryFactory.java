@@ -18,13 +18,12 @@ import org.apache.jackrabbit.oak.plugins.nodetype.DefaultTypeEditor;
 import org.apache.jackrabbit.oak.plugins.nodetype.RegistrationValidatorProvider;
 import org.apache.jackrabbit.oak.plugins.nodetype.TypeValidatorProvider;
 import org.apache.jackrabbit.oak.plugins.nodetype.write.InitialContent;
-import org.springframework.stereotype.Component;
 
 import com.google.inject.Provider;
 
 import com.enonic.wem.core.lifecycle.InitializingBean;
 
-@Component
+
 public final class JcrRepositoryFactory
     implements Provider<Repository>, InitializingBean
 {

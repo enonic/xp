@@ -2,10 +2,8 @@ package com.enonic.wem.core.userstore;
 
 import java.util.List;
 
-import javax.jcr.Session;
-
 import javax.inject.Inject;
-import org.springframework.stereotype.Component;
+import javax.jcr.Session;
 
 import com.google.common.collect.Lists;
 
@@ -18,7 +16,7 @@ import com.enonic.wem.api.userstore.UserStores;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
 
-@Component
+
 public class GetUserStoresHandler
     extends AbstractUserStoreHandler<GetUserStores>
 {

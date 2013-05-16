@@ -2,15 +2,13 @@ package com.enonic.wem.core.content.binary;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.command.content.binary.GetBinary;
 import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.binary.dao.BinaryDao;
 
-@Component
+
 public class GetBinaryHandler
     extends CommandHandler<GetBinary>
 {

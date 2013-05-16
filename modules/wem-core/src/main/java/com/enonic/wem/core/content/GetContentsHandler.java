@@ -1,7 +1,6 @@
 package com.enonic.wem.core.content;
 
 import javax.inject.Inject;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.GetContents;
 import com.enonic.wem.api.content.ContentSelectors;
@@ -10,7 +9,7 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 
-@Component
+
 public class GetContentsHandler
     extends CommandHandler<GetContents>
 {

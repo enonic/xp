@@ -1,13 +1,12 @@
 package com.enonic.wem.web.rest.rpc.util;
 
 import javax.inject.Inject;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.country.CountryService;
-import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
+import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
-@Component
+
 public final class GetCountriesRpcHandler
     extends AbstractDataRpcHandler
 {

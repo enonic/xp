@@ -3,15 +3,13 @@ package com.enonic.wem.core.userstore;
 import javax.inject.Inject;
 import javax.jcr.Session;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.command.userstore.DeleteUserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 
-@Component
+
 public class DeleteUserStoreHandler
     extends CommandHandler<DeleteUserStore>
 {

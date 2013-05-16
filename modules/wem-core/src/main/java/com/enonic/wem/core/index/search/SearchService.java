@@ -1,6 +1,5 @@
 package com.enonic.wem.core.index.search;
 
-import org.springframework.stereotype.Component;
 
 import com.google.inject.Inject;
 
@@ -8,7 +7,7 @@ import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.core.index.content.ContentSearchResults;
 import com.enonic.wem.core.index.elastic.ElasticsearchIndexService;
 
-@Component
+
 public class SearchService
 {
     private ElasticsearchIndexService elasticsearchIndexService;

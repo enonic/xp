@@ -2,14 +2,12 @@ package com.enonic.wem.core.content.schema.relationship.dao;
 
 import javax.jcr.Session;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.schema.relationship.RelationshipType;
 import com.enonic.wem.api.content.schema.relationship.RelationshipTypes;
 
-@Component
+
 public final class RelationshipTypeDaoImpl
     implements RelationshipTypeDao
 {

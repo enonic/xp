@@ -2,8 +2,6 @@ package com.enonic.wem.web.rest.rpc.space;
 
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
@@ -15,7 +13,7 @@ import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
 import static com.enonic.wem.api.command.Commands.space;
 
-@Component
+
 public final class DeleteSpaceRpcHandler
     extends AbstractDataRpcHandler
 {

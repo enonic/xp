@@ -1,6 +1,5 @@
 package com.enonic.wem.web.rest.rpc.account;
 
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
@@ -11,7 +10,7 @@ import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.rest.service.account.UserIdGenerator;
 
-@Component
+
 public final class SuggestUserNameRpcHandler
     extends AbstractDataRpcHandler
 {

@@ -7,14 +7,13 @@ import org.elasticsearch.common.logging.slf4j.Slf4jESLoggerFactory;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
-import org.springframework.stereotype.Component;
 
 import com.google.inject.Provider;
 
 import com.enonic.wem.core.lifecycle.DisposableBean;
 import com.enonic.wem.core.lifecycle.InitializingBean;
 
-@Component
+
 public final class ElasticNodeFactory
     implements Provider<Node>, InitializingBean, DisposableBean
 {

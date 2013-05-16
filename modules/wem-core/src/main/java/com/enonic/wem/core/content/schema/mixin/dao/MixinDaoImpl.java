@@ -4,15 +4,13 @@ package com.enonic.wem.core.content.schema.mixin.dao;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;
 import com.enonic.wem.api.exception.SystemException;
 
-@Component
+
 public class MixinDaoImpl
     implements MixinDao
 {

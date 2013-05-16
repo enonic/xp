@@ -1,8 +1,6 @@
 package com.enonic.wem.web.rest.rpc.content;
 
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.DeleteContent;
@@ -14,7 +12,7 @@ import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
 import static com.enonic.wem.web.rest.rpc.content.DeleteContentJsonResult.newDeleteContentJsonResult;
 
-@Component
+
 public final class DeleteContentRpcHandler
     extends AbstractDataRpcHandler
 {

@@ -1,8 +1,6 @@
 package com.enonic.wem.web.rest.rpc.content;
 
 
-import org.springframework.stereotype.Component;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
@@ -32,7 +30,7 @@ import static com.enonic.wem.api.content.editor.ContentEditors.composite;
 import static com.enonic.wem.api.content.editor.ContentEditors.setContentData;
 import static com.enonic.wem.api.content.editor.ContentEditors.setContentDisplayName;
 
-@Component
+
 public final class CreateOrUpdateContentRpcHandler
     extends AbstractDataRpcHandler
 {

@@ -2,8 +2,6 @@ package com.enonic.wem.core.content.schema.content;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.command.content.schema.content.DeleteContentType;
 import com.enonic.wem.api.command.content.schema.content.DeleteContentTypeResult;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
@@ -13,7 +11,7 @@ import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
 
-@Component
+
 public final class DeleteContentTypeHandler
     extends CommandHandler<DeleteContentType>
 {

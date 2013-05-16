@@ -14,14 +14,13 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.facet.Facet;
 import org.elasticsearch.search.facet.Facets;
 import org.elasticsearch.search.facet.terms.TermsFacet;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.facet.FacetEntry;
 
-@Component
+
 public class AccountSearchService
 {
     private Client client;

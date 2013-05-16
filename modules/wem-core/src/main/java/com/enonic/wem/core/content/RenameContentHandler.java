@@ -2,15 +2,13 @@ package com.enonic.wem.core.content;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.command.content.RenameContent;
 import com.enonic.wem.api.content.RenameContentException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 
-@Component
+
 public class RenameContentHandler
     extends CommandHandler<RenameContent>
 {

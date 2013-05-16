@@ -4,8 +4,6 @@ package com.enonic.wem.core.content.schema.content.dao;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.content.ContentTypes;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
@@ -13,7 +11,6 @@ import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.exception.SystemException;
 
 
-@Component
 public final class ContentTypeDaoImpl
     implements ContentTypeDao
 {

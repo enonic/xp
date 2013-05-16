@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import org.elasticsearch.indices.IndexAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
@@ -24,7 +23,7 @@ import com.enonic.wem.core.index.elastic.IndexMappingProvider;
 import com.enonic.wem.core.index.indexdocument.IndexDocument;
 import com.enonic.wem.core.lifecycle.InitializingBean;
 
-@Component
+
 public class IndexService
     implements InitializingBean
 {

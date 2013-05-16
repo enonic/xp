@@ -3,10 +3,8 @@ package com.enonic.wem.core.account;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Session;
-
 import javax.inject.Inject;
-import org.springframework.stereotype.Component;
+import javax.jcr.Session;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
@@ -17,7 +15,7 @@ import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 
-@Component
+
 public final class GetAccountsHandler
     extends CommandHandler<GetAccounts>
 {

@@ -1,6 +1,5 @@
 package com.enonic.wem.web.rest.rpc.content.schema.content;
 
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.support.tree.Tree;
@@ -9,7 +8,7 @@ import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
 import static com.enonic.wem.api.command.Commands.contentType;
 
-@Component
+
 public final class GetContentTypeTreeRpcHandler
     extends AbstractDataRpcHandler
 {

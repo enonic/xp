@@ -5,8 +5,6 @@ import java.io.FileInputStream;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Component;
-
 import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.web.json.JsonErrorResult;
@@ -17,7 +15,7 @@ import com.enonic.wem.web.rest.service.upload.UploadService;
 
 import static com.enonic.wem.api.command.Commands.binary;
 
-@Component
+
 public final class CreateBinaryRpcHandler
     extends AbstractDataRpcHandler
 {

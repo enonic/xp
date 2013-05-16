@@ -10,7 +10,6 @@ import javax.jcr.Session;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.UpdateContent;
@@ -37,7 +36,7 @@ import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.api.content.Content.newContent;
 
-@Component
+
 public class UpdateContentHandler
     extends CommandHandler<UpdateContent>
 {
