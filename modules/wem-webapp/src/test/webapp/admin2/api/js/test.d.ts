@@ -2,9 +2,12 @@ module API.content.data {
     class Data {
         private name;
         private arrayIndex;
+        private parent;
         constructor(name: string);
         public setArrayIndex(value: number): void;
+        public setParent(parent: DataSet): void;
         public getName(): string;
+        public getParent(): Data;
         public getArrayIndex(): number;
     }
 }
@@ -21,7 +24,7 @@ module API.content.data {
 module API.content.data {
     class DataSet extends Data {
         private dataById;
-        constructor(json);
+        constructor(name: string);
         public addData(data: Data): void;
         public getData(dataId: string): Data;
     }

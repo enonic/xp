@@ -6,6 +6,8 @@ module API.content.data{
 
         private arrayIndex:number;
 
+        private parent:DataSet;
+
         constructor(name:string) {
             this.name = name;
         }
@@ -14,8 +16,16 @@ module API.content.data{
             this.arrayIndex = value;
         }
 
+        public setParent(parent:DataSet) {
+            this.parent = parent;
+        }
+
         getName():string {
             return this.name;
+        }
+
+        getParent():Data {
+            return this.parent;
         }
 
         getArrayIndex():number {

@@ -323,8 +323,14 @@ var API;
                 Data.prototype.setArrayIndex = function (value) {
                     this.arrayIndex = value;
                 };
+                Data.prototype.setParent = function (parent) {
+                    this.parent = parent;
+                };
                 Data.prototype.getName = function () {
                     return this.name;
+                };
+                Data.prototype.getParent = function () {
+                    return this.parent;
                 };
                 Data.prototype.getArrayIndex = function () {
                     return this.arrayIndex;
@@ -348,11 +354,13 @@ var API;
         (function (data) {
             var DataSet = (function (_super) {
                 __extends(DataSet, _super);
-                function DataSet(json) {
-                                _super.call(this, json.name);
-                    this.dataById = new Object();
+                function DataSet(name) {
+                                _super.call(this, name);
+                    this.dataById = {
+                    };
                 }
                 DataSet.prototype.addData = function (data) {
+                    data.setParent(this);
                     this.dataById[data.getName()] = data;
                 };
                 DataSet.prototype.getData = function (dataId) {

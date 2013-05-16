@@ -7,18 +7,25 @@ TestCase("DataSet", {
 
     "test given a name when getName() then given name is returned": function () {
 
-        var dataSet = new API.content.data.DataSet({ name: 'mySet'});
+        var dataSet = new API.content.data.DataSet('mySet');
 
         assertEquals("mySet", dataSet.getName());
-    }
-    ,
+    },
     "test given a dataId when getData() then given Data is returned": function () {
 
-        var dataSet = new API.content.data.DataSet({ name: 'mySet'});
-        dataSet.addData( new API.content.data.Property('myProp', 'A value', 'String' ) )
-        dataSet.addData( new API.content.data.Property('myOtherProp', 'A value', 'String' ) )
-        assertEquals("myProp", dataSet.getData( 'myProp').getName());
-        assertEquals("myOtherProp", dataSet.getData( 'myOtherProp').getName());
+        var dataSet = new API.content.data.DataSet('mySet');
+        dataSet.addData(new API.content.data.Property('myProp', 'A value', 'String'))
+        dataSet.addData(new API.content.data.Property('myOtherProp', 'A value', 'String'))
+        assertEquals("myProp", dataSet.getData('myProp').getName());
+        assertEquals("myOtherProp", dataSet.getData('myOtherProp').getName());
+    },
+    "test given a Data added to a DataSet when getParent() then the DataSet added to is returned": function () {
+
+        var dataSet = new API.content.data.DataSet('mySet');
+        dataSet.addData(new API.content.data.Property('myProp', 'A value', 'String'))
+
+        var data = dataSet.getData('myProp');
+        assertEquals(dataSet, data.getParent());
     }
 });
 
