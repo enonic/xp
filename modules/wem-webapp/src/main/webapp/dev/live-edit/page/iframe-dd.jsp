@@ -52,7 +52,7 @@
 <body>
 
 <div id="window">
-  <div id="window-drag-handle">||| Palette</div>
+  <div id="window-drag-handle">&lt;Window&gt;</div>
   <div class="live-edit-component" style="width:163px; height:100px; background: #fefefe; border: 1px solid #000"
        data-live-edit-component-key="10001" data-live-edit-component-name="fisk" data-live-edit-component-type="part">
     <img src="http://media.w3.org/2010/05/sintel/poster.png" style="width:163px; height: 100px"/>
@@ -132,7 +132,8 @@
     $('#live-edit-frame').droppable();
 
     $('#window').draggable({
-      handle: '#window-drag-handle'
+      handle: '#window-drag-handle',
+      containment: 'document'
     });
 
 
