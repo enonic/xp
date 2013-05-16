@@ -21,8 +21,49 @@ Ext.define('App.controller.ActivityStreamController', {
     },
 
     createDataView: function () {
+        var Templates_main_activityStream =
+    		'<tpl for=".">' +
+    		    '<div class="admin-activity-stream-message">' +
+    		        '<table border="0" cellspacing="0" cellpadding="0">' +
+    		            '<tr>' +
+    		                '<td valign="top" class="photo-container">' +
+    		                    '<img class="photo" src="{photo}"/>' +
+    		                '</td>' +
+    		                '<td valign="top">' +
+    		                    '<div class="display-name-location"><a href="javascript:;">' +
+    		                        '<tpl if="birthday"><img src="_app/main/images/activity-stream/cake.png" style="width:11px; height:8px" title="{displayName} has Birthday today"/></tpl>' +
+    		                        '{displayName}</a> via {location}</div>' +
+    		                    '<div>{action}:' +
+    		                        '<tpl if="action == \'Said\'">{description}</tpl>' +
+    		                        '<tpl if="action != \'Said\'"><a href="javascript:;">{description}</a></tpl>' +
+    		                    '</div>' +
+    		                '</td>' +
+    		            '</tr>' +
+    		        '</table>' +
+    		        '<div class="actions clearfix" style="clear:both">' +
+    		            '<table border="0" cellspacing="0" cellpadding="0">' +
+    		                '<tr>' +
+    		                    '<td>' +
+    		                        '<span class="pretty-date">{prettyDate}</span>' +
+    		                    '</td>' +
+    		                    '<td>' +
+    		                        '<span class="link favorite" style="visibility:hidden">Favorite</span>' +
+    		                    '</td>' +
+    		                    '<td>' +
+    		                        '<span class="link comment" style="visibility:hidden">Comment</span>' +
+    		                    '</td>' +
+    		                    '<td style="text-align:right">' +
+    		                        '<span class="link more" style="visibility:hidden"><!-- --></span>' +
+    		                    '</td>' +
+    		                '</tr>' +
+    		            '</table>' +
+    		        '</div>' +
+    		    '</div>' +
+    		'</tpl>';
+
         var store = this.getStore('ActivityStreamStore');
-        var template = new Ext.XTemplate(Templates.main.activityStream);
+
+        var template = new Ext.XTemplate(Templates_main_activityStream);
 
         Ext.create('Ext.view.View', {
             store: store,
@@ -85,7 +126,24 @@ Ext.define('App.controller.ActivityStreamController', {
     },
 
     appendSpeakOutPanel: function () {
-        var template = new Ext.XTemplate(Templates.main.speakOutPanel);
+        var Templates_main_activityStream =
+    		'<div>' +
+    		    '<h1>What\'s happening?</h1>' +
+    		    '<div id="activity-stream-speak-out-text-input"><!-- --></div>' +
+    		    '<div class="clearfix">' +
+    		        '<div class="clearfix">' +
+    		            '<div class="admin-left">' +
+    		                '<div id="activity-stream-speak-out-url-shortener-button-container"><!-- --></div>' +
+    		            '</div>' +
+    		            '<div class="admin-right">' +
+    		                '<div id="activity-stream-speak-out-letters-left-container" class="admin-left">140</div>' +
+    		                '<div id="activity-stream-speak-out-send-button-container" class="admin-left"><!-- --></div>' +
+    		            '</div>' +
+    		        '</div>' +
+    		    '</div>' +
+    		'</div>';
+
+        var template = new Ext.XTemplate(Templates_main_activityStream);
         var container = Ext.DomQuery.select('#admin-activity-stream-speak-out-panel-container')[0];
         template.append(container, {});
 

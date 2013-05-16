@@ -118,7 +118,7 @@ Ext.define('Admin.view.account.PasswordMeter', {
                 cls: 'admin-password-meter-status',
                 width: 100,
                 hidden: true,
-                tpl: Templates.account.passwordStatus,
+                tpl: undefined, // template is lost
                 data: me.passwordStatuses[0]
             }
         ];

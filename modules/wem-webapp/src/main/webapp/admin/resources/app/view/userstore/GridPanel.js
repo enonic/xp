@@ -39,8 +39,16 @@ Ext.define('Admin.view.userstore.GridPanel', {
     },
 
     nameRenderer: function (value, p, record) {
-        return Ext.String.format(
-            Templates.userstore.gridPanelNameRenderer,
+        var Templates_userstore_gridPanelNameRenderer =
+    		'<div class="admin-grid-thumbnail">' +
+    		    '<img src="{0}?size=32" alt="{1}"/>' +
+    		'</div>' +
+    		'<div class="admin-grid-description">' +
+    		    '<h6>{1}</h6>' +
+    		    '<p>{3}\\{2}</p>' +
+    		'</div>';
+
+        return Ext.String.format(Templates_userstore_gridPanelNameRenderer,
             'resources/images/icons/48x48/userstore.png',
             value,
             record.data.name

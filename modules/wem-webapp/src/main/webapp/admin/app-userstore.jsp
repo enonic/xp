@@ -14,10 +14,6 @@
 
   <script type="text/javascript" src="resources/lib/ext/ext-all-debug.js"></script>
 
-  <!-- Templates -->
-
-  <script type="text/javascript" src="resources/app/view/XTemplates.js"></script>
-
   <!-- Configuration -->
 
   <script type="text/javascript" src="global.config.js"></script>

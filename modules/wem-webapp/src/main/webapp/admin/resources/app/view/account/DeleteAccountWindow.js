@@ -29,12 +29,33 @@ Ext.define('Admin.view.account.DeleteAccountWindow', {
     },
 
     doShow: function (selection) {
+        var Templates_common_userInfo =
+        		'<div>' +
+        		    '<div class="admin-user-info clearfix">' +
+        		        '<div class="admin-user-photo west admin-left">' +
+        		            '<div class="photo-placeholder">' +
+        		                '<img src="{[values.image_url]}?size=100" alt="{name}"/>' +
+        		            '</div>' +
+        		        '</div>' +
+        		        '<div class="admin-left">' +
+        		            '<h2>{displayName}</h2>({qualifiedName})<br/>' +
+        		            '<a href="mailto:{email}:">{email}</a>' +
+        		        '</div>' +
+        		    '</div>' +
+        		'</div>';
+
         this.setDeleteKeys(selection);
         if (selection.length === 1) {
-            this.setDialogInfoTpl(Templates.common.userInfo);
+            this.setDialogInfoTpl(Templates_common_userInfo);
             this.callParent([selection[0]]);
         } else {
-            this.setDialogInfoTpl(Templates.account.deleteManyUsers);
+            var Templates_account_deleteManyUsers =
+        		'<div class="admin-delete-user-confirmation-message">' +
+        		    '<div class="icon-question-mark-32 admin-left" style="width:32px; height:32px; margin-right: 10px"><!-- --></div>' +
+        		    '<div class="admin-left" style="margin-top:5px">Are you sure you want to delete the selected {selectionLength} items?</div>' +
+        		'</div>';
+
+            this.setDialogInfoTpl(Templates_account_deleteManyUsers);
             this.callParent(
                 [
                     {

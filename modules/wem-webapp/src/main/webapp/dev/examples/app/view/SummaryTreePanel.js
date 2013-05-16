@@ -31,12 +31,25 @@ Ext.define('Admin.view.SummaryTreePanel', {
             ]
         });
 
+        var Templates_common_summaryToolbar =
+        		'<div class="admin-left">' +
+        		    '<span>Modified fields are displayed below</span>' +
+        		    '- <a href="javascript:;" class="admin-summary-show-all-fields-button">Show all fields</a>' +
+        		    '- <a href="javascript:;" class="admin-summary-show-comparison-button">Show comparison</a>' +
+        		'</div>' +
+        		'<div class="admin-right">' +
+        		    '<div class="key added">Added</div>' +
+        		    '<div class="key modified">Modified</div>' +
+        		    '<div class="key removed">Removed</div>' +
+        		    '<br/>' +
+        		'</div>';
+
         this.dockedItems = [
             {
                 xtype: 'container',
                 itemId: 'admin-tree-panel-toolbar-container',
                 cls: 'admin-tree-panel-toolbar-container',
-                html: Templates.common.summaryToolbar
+                html: Templates_common_summaryToolbar
             }
         ];
 

@@ -6,7 +6,12 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
     uploadUrl: 'rest/upload',
     progressBarHeight: 8,
 
-    tpl: new Ext.XTemplate(Templates.common.photoUploadButton),
+    tpl: new Ext.XTemplate('<div id="{id}" title="{title}" class="admin-image-upload-button-container" style="width:{width}px;height:{height}px; margin: 0">' +
+    		    '<img src="{photoUrl}" class="admin-image-upload-button-image" style="width:{width - 2}px;height:{height - 2}px"/>' +
+    		    '<div class="admin-image-upload-button-progress-bar-container" style="width:{width - 3}px">' +
+    		        '<div class="admin-image-upload-button-progress-bar" style="height:{progressBarHeight}px"><!-- --></div>' +
+    		    '</div>' +
+    		'</div>'),
 
     initComponent: function () {
         if (!window.plupload) {
