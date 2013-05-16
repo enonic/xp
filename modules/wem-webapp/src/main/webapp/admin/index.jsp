@@ -75,6 +75,7 @@
     </li>
     <li><a href="../dev/live-edit/page/bootstrap.jsp">Live Edit - Big Bounce</a></li>
     <li><a href="../dev/live-edit/page/frogger.jsp">Live Edit - Frogger</a></li>
+    <li><a href="../dev/live-edit/page/iframe-dd.jsp">Live Edit - Cross frame drag'n drop</a></li>
     <li>
         <a href="../dev/filter/index.html">Facet checkboxes with Ext Data View</a>
     </li>

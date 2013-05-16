@@ -25,17 +25,27 @@
     }
 
     #window {
-      background-color: rgba(0, 0, 0, .5);
-      padding: 10px;
+      background-color: rgba(0, 0, 0, .75);
+      width: 570px;
+      height: 376px;
+      padding: 5px 0px 5px 5px;
       position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 500px;
-      height: 404px;
+      top: 20px;
+      left: 20px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+    .window-drag-handle {
+      height: 20px;
+      cursor: move;
+      background-color: #000;
     }
 
     .live-edit-component {
       cursor: move;
+      padding: 10px;
+      margin-bottom: 5px;
+      margin-right: 5px;
+      float:left;
     }
   </style>
 </head>
@@ -43,16 +53,43 @@
 
 <div id="window">
   <div class="live-edit-component" style="width:163px; height:100px; background: #fefefe; border: 1px solid #000"
-       data-live-edit-component-key="10001" data-live-edit-component-name="fisk" data-live-edit-component-type="part"></div>
+       data-live-edit-component-key="10001" data-live-edit-component-name="fisk" data-live-edit-component-type="part">
+    <img src="http://media.w3.org/2010/05/sintel/poster.png" style="width:163px; height: 100px"/>
+  </div>
   <div class="live-edit-component" style="width:163px; height:100px; background: #fefefe; border: 1px solid #000"
-       data-live-edit-component-key="10001" data-live-edit-component-name="fisk" data-live-edit-component-type="part"></div>
+       data-live-edit-component-key="10001" data-live-edit-component-name="fisk" data-live-edit-component-type="part">
+    <img src="http://media.w3.org/2010/05/sintel/poster.png" style="width:163px; height: 100px"/>
+  </div>
   <div class="live-edit-component" style="width:163px; height:100px; background: #fefefe; border: 1px solid #000"
-       data-live-edit-component-key="10001" data-live-edit-component-name="fisk" data-live-edit-component-type="part"></div>
+       data-live-edit-component-key="10001" data-live-edit-component-name="fisk" data-live-edit-component-type="part">
+    <img src="http://media.w3.org/2010/05/sintel/poster.png" style="width:163px; height: 100px"/>
+  </div>
+  <div class="live-edit-component" style="width:163px; height:100px; background: #fefefe; border: 1px solid #000"
+       data-live-edit-component-key="10001" data-live-edit-component-name="fisk" data-live-edit-component-type="part">
+    <img src="http://media.w3.org/2010/05/sintel/poster.png" style="width:163px; height: 100px"/>
+  </div>
+  <div class="live-edit-component" style="width:163px; height:100px; background: #fefefe; border: 1px solid #000"
+       data-live-edit-component-key="10001" data-live-edit-component-name="fisk" data-live-edit-component-type="part">
+    <img src="http://media.w3.org/2010/05/sintel/poster.png" style="width:163px; height: 100px"/>
+  </div>
+  <div class="live-edit-component" style="width:163px; height:100px; background: #fefefe; border: 1px solid #000"
+       data-live-edit-component-key="10001" data-live-edit-component-name="fisk" data-live-edit-component-type="part">
+    <img src="http://media.w3.org/2010/05/sintel/poster.png" style="width:163px; height: 100px"/>
+  </div>
+  <div class="live-edit-component" style="width:163px; height:100px; background: #fefefe; border: 1px solid #000"
+       data-live-edit-component-key="10001" data-live-edit-component-name="fisk" data-live-edit-component-type="part">
+    <img src="http://media.w3.org/2010/05/sintel/poster.png" style="width:163px; height: 100px"/>
+  </div>
 </div>
 
 <iframe id="live-edit-frame" src="bootstrap.jsp?edit=true"></iframe>
 
 <script type="text/javascript">
+  /*
+    TODO:
+      * When clone and append dragger to the iframe document we need to give simulated mouse down event pageX/Y positions (take scroll offset into account)
+  */
+
   function getWindow() {
     return $('#window');
   }
@@ -98,7 +135,6 @@
       $liveedit(getIframe()[0].contentWindow).on('sortStop.liveEdit.component', function () {
         getWindow().show();
         $('.live-edit-component').simulate('mouseup');
-
       });
     }, 1000);
   });
