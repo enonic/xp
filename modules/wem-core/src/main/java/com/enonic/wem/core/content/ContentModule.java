@@ -38,6 +38,9 @@ import com.enonic.wem.core.content.schema.mixin.MixinsInitializer;
 import com.enonic.wem.core.content.schema.mixin.UpdateMixinHandler;
 import com.enonic.wem.core.content.schema.mixin.dao.MixinDao;
 import com.enonic.wem.core.content.schema.mixin.dao.MixinDaoImpl;
+import com.enonic.wem.core.content.schema.relationship.CreateRelationshipTypeHandler;
+import com.enonic.wem.core.content.schema.relationship.DeleteRelationshipTypeHandler;
+import com.enonic.wem.core.content.schema.relationship.GetRelationshipTypesHandler;
 import com.enonic.wem.core.content.schema.relationship.RelationshipTypesExistsHandler;
 import com.enonic.wem.core.content.schema.relationship.RelationshipTypesInitializer;
 import com.enonic.wem.core.content.schema.relationship.UpdateRelationshipTypesHandler;
@@ -104,9 +107,9 @@ public final class ContentModule
         commands.add( GetMixinsHandler.class );
         commands.add( UpdateMixinHandler.class );
 
-        commands.add( CreateRelationshipHandler.class );
-        commands.add( DeleteRelationshipHandler.class );
-        commands.add( GetRelationshipsHandler.class );
+        commands.add( CreateRelationshipTypeHandler.class );
+        commands.add( DeleteRelationshipTypeHandler.class );
+        commands.add( GetRelationshipTypesHandler.class );
         commands.add( RelationshipTypesExistsHandler.class );
         commands.add( UpdateRelationshipTypesHandler.class );
     }
