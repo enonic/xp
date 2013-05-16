@@ -24,12 +24,26 @@ module admin.ui {
                 hidden: hidden,
                 iconClass: iconClass,
                 iconSrc: iconSrc,
+                text1: text1,
+                text2: text2,
                 layout: {
                     type: 'hbox',
                     align: 'middle'
                 }
             });
             this.ext = tbmi;
+
+            tbmi.onClick = (e) => {
+                this.onClick(e);
+            };
+            tbmi.activate = () => {
+                console.log('activate');
+                this.activate();
+            };
+            tbmi.deactivate = () => {
+                console.log('deactivate');
+                this.deactivate();
+            };
 
             tbmi.enableBubble('closeMenuItem');
             this.initComponent(tbmi);
@@ -60,7 +74,7 @@ module admin.ui {
                 this.titleContainer = titleContainer;
             }
             if (topBarMenuItem.closable !== false) {
-                var closeButton = new Ext.Component();
+                var closeButton = new Ext.Component({});
                 closeButton.autoEl = 'a';
                 closeButton.cls = 'close-button icon-remove icon-large';
                 closeButton.margins = '0 0 0 12px';
@@ -78,6 +92,7 @@ module admin.ui {
         }
 
         private activate():void {
+            console.log('activate');
             var me = this.ext;
 
             if (!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
@@ -89,6 +104,7 @@ module admin.ui {
         }
 
         private deactivate():void {
+            console.log('deactivate');
             var me = this.ext;
 
             if (me.activated) {
@@ -99,7 +115,7 @@ module admin.ui {
             }
         }
 
-        public onClick(e):bool {
+        private onClick(e):bool {
             var me = this.ext;
 
             if (!me.href) {

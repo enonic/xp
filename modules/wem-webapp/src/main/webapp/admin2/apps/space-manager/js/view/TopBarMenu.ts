@@ -70,6 +70,10 @@ module admin.ui {
                 return this.hide();
             };
 
+            tbm.onClick = (e) => {
+                return this.onClick(e);
+            };
+
             tbm.setVerticalPosition = () => {
                 this.setVerticalPosition();
             };
@@ -80,46 +84,53 @@ module admin.ui {
         }
 
         private createNonClosableItems():any /* Ext.container.Container */ {
-            var item = new Ext.container.Container({});
-            item.itemId = 'nonClosableItems';
+            var item = new Ext.container.Container({
+                itemId: 'nonClosableItems'
+            });
             return item;
         }
 
         private createEditTitle():any /* Ext.Component */ {
-            var item = new Ext.Component({});
-            item.addCls('title');
-            item.itemId = 'editTitle';
-            item.hide();
-            item.html = '<span>Editing</span>';
+            var item = new Ext.Component({
+                cls: 'title',
+                itemId: 'editTitle',
+                hidden: true,
+                html: '<span>Editing</span>'
+            });
+
             return item;
         }
 
         private createEditItems():any /* Ext.container.Container */ {
-            var item = new Ext.container.Container({});
-            item.itemId = 'editItems';
+            var item = new Ext.container.Container({
+                itemId: 'editItems'
+            });
             return item;
         }
 
         private createViewTitle():any /* Ext.Component */ {
-            var item = new Ext.Component({});
-            item.addCls('title');
-            item.itemId = 'viewTitle';
-            item.hide();
-            item.html = '<span>Viewing</span>';
+            var item = new Ext.Component({
+                cls: 'title',
+                itemId: 'viewTitle',
+                hidden: true,
+                html: '<span>Viewing</span>'
+            });
             return item;
         }
 
         private createViewItems():any /* Ext.container.Container */ {
-            var item = new Ext.container.Container({});
-            item.itemId = 'viewItems';
+            var item = new Ext.container.Container({
+                itemId: 'viewItems'
+            });
             return item;
         }
 
         private createEmptyTitle():any /* Ext.Component */ {
-            var item = new Ext.Component({});
-            item.addCls('info');
-            item.itemId = 'emptyTitle';
-            item.html = 'List is empty';
+            var item = new Ext.Component({
+                cls: 'info',
+                itemId: 'emptyTitle',
+                html: 'List is empty'
+            });
             return item;
         }
 
@@ -132,12 +143,12 @@ module admin.ui {
                 return;
             }
 
-            item = (e.type === 'click') ? me.getItemFromEvent(e) : me.activeItem;
+            item = (e.type === 'click') ? this.getItemFromEvent(e) : me.activeItem;
             if (item && item.isMenuItem && item.onClick(e) !== false) {
                 if (me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
                     this.tabPanel.setActiveTab(item.card);
                 }
-                this.hide();
+                me.hide();
             }
         }
 
@@ -178,7 +189,7 @@ module admin.ui {
 
                 // activate
                 if (item) {
-                    menuItem = me.down('#' + item.id);
+                    menuItem = item; //me.down('#' + item.id);
                     if (menuItem && menuItem.el) {
                         menuItem.el.addCls('current-tab')
                     }
@@ -194,7 +205,7 @@ module admin.ui {
             do {
                 item = item.getChildByElement(e.getTarget());
             }
-            while (item && Ext.isDefined(item.getChildByElement) && item.getXType() !== 'topBarMenuItem');
+            while (item && Ext.isDefined(item.getChildByElement) && item.itemId !== 'topBarMenuItem');
             return item;
         }
 
@@ -204,7 +215,7 @@ module admin.ui {
                 items = items.concat(this.editItems.query('#topBarMenuItem'));
                 items = items.concat(this.viewItems.query('#topBarMenuItem'))
             } else {
-                items = items.concat(this.ext.query('topBarMenuItem'));
+                items = items.concat(this.ext.query('#topBarMenuItem'));
             }
             return items;
         }
@@ -222,7 +233,7 @@ module admin.ui {
             var viewItems = [];
             var nonClosableItems = [];
             Ext.Array.each(items, (item) => {
-                if (item.closable === false) {
+                if (!item.closable) {
                     nonClosableItems.push(item);
                 } else if (item.editing) {
                     editItems.push(item);
@@ -331,7 +342,6 @@ module admin.ui {
         }
 
         updateTitles():void {
-            var me = this.ext;
             var editCount = this.editItems.items.getCount();
             var viewCount = this.viewItems.items.getCount();
             var nonClosableCount = this.nonClosableItems.items.getCount();
