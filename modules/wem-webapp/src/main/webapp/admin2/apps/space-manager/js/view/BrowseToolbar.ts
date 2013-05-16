@@ -53,6 +53,14 @@ module admin.ui {
             });
 
             tb.add(deleteButton);
+
+            APP.event.GridSelectionChangeEvent.on((event) => {
+                var selected = event.getModel();
+                var enable = selected && selected.length > 0;
+                editButton.setDisabled(!enable);
+                openButton.setDisabled(!enable);
+                deleteButton.setDisabled(!enable);
+            });
         }
     }
 }

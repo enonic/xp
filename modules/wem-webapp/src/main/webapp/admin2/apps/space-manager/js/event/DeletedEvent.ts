@@ -1,15 +1,13 @@
 module APP.event {
 
-    var DELETED:string = 'deleted';
-
     export class DeletedEvent extends API.event.Event {
         constructor() {
-            super(DELETED);
+            super('deleted');
         }
-    }
 
-    export function onDeleted(handler:(event:DeletedEvent) => void) {
-        API.event.onEvent(DELETED, handler);
+        static on(handler:(event:DeletedEvent) => void) {
+            API.event.onEvent('deleted', handler);
+        }
     }
 
 }

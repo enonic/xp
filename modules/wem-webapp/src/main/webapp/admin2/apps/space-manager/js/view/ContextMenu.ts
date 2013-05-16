@@ -29,9 +29,13 @@ module admin.ui {
             menu.add(menuItemDelete);
 
             this.ext = menu;
+
+            APP.event.ShowContextMenuEvent.on((event) => {
+                this.showAt(event.getX(), event.getY());
+            });
         }
 
-        showAt(x:Number, y:Number) {
+        showAt(x:number, y:number) {
             this.ext.showAt(x, y);
         }
     }

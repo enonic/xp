@@ -1,23 +1,13 @@
 module APP.event {
 
-    var DELETE_PROMPT:string = 'deletePrompt';
-
-    export class DeletePromptEvent extends API.event.Event {
-        private model:APP.model.SpaceModel;
-
+    export class DeletePromptEvent extends SpaceModelEvent {
         constructor(model:any) {
-            this.model = model;
-            super(DELETE_PROMPT);
+            super('deletePrompt', model);
         }
 
-        getModel():APP.model.SpaceModel {
-            return this.model;
+        static on(handler:(event:DeletePromptEvent) => void) {
+            API.event.onEvent('deletePrompt', handler);
         }
     }
-
-    export function onDeletePrompt(handler:(event:DeletePromptEvent) => void) {
-        API.event.onEvent(DELETE_PROMPT, handler);
-    }
-
 }
 

@@ -21,7 +21,7 @@ module admin.ui {
         constructor() {
             this.initComponent();
 
-            APP.event.onDeletePrompt((event) => {
+            APP.event.DeletePromptEvent.on((event) => {
                 this.setModel(event.getModel());
                 this.doShow();
             });
@@ -87,7 +87,7 @@ module admin.ui {
         }
 
 
-        setModel(model:APP.model.SpaceModel) {
+        setModel(model:APP.model.SpaceModel[]) {
             this.data = model;
             if (model) {
                 if (this.content) {

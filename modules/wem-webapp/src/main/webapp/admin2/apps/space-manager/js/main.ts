@@ -5,7 +5,10 @@
 ///<reference path='lib/RemoteService.ts' />
 
 ///<reference path='event/DeletedEvent.ts' />
+///<reference path='event/SpaceModelEvent.ts' />
 ///<reference path='event/DeletePromptEvent.ts' />
+///<reference path='event/GridSelectionChangeEvent.ts' />
+///<reference path='event/ShowContextMenuEvent.ts' />
 
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
@@ -128,7 +131,9 @@ Ext.application({
 
         wp.add(tabPanel);
 
+        // Instanciating classes that will be triggered by events
         new admin.ui.DeleteSpaceWindow();
+        new admin.ui.ContextMenu();
     }
 
 });

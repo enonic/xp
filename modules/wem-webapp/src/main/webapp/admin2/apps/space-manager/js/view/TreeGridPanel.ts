@@ -38,6 +38,8 @@ module admin.ui {
                 layout: 'card',
                 border: false,
                 activeItem: 'grid',
+                itemId: 'spaceTreeGrid',
+                alias: 'widget.spaceTreeGrid',
                 gridConf: {
                     selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36})
                 },
@@ -86,7 +88,18 @@ module admin.ui {
                     }
                 },
                 store: this.store,
-                plugins: [gridSelectionPlugin]
+                plugins: [gridSelectionPlugin],
+                listeners: {
+                    selectionchange: (selModel, selected, opts) => {
+                        new APP.event.GridSelectionChangeEvent(selected).fire();
+                    },
+                    itemcontextmenu: (view, rec, node, index, event) => {
+                        event.stopEvent();
+                        new APP.event.ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
+                    },
+                    itemdblclick: (grid, record) => {
+                    }
+                }
             });
             gp.addDocked(new Ext.toolbar.Toolbar({
                 itemId: 'selectionToolbar',
