@@ -121,7 +121,8 @@ Ext.application({
         p.add(center);
         p.add(west);
 
-        var tabPanel = components.tabPanel = new Admin.view.TabPanel({appName: 'Space Admin', appIconCls: 'icon-metro-space-admin-24'});
+        var tabPanel = components.tabPanel =
+                       new admin.ui.TabPanel({appName: 'Space Admin', appIconCls: 'icon-metro-space-admin-24'}).getExtEl();
 
         tabPanel.add(p);
 
