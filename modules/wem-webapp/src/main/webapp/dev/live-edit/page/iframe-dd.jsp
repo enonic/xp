@@ -111,7 +111,6 @@
     var clone = $liveedit(ui.helper.clone());
 
     clone.css('position', 'absolute');
-    clone.css('top', '10px');
     clone.css('z-index', '5100000');
 
     $liveedit('body').append(clone);
