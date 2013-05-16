@@ -246,7 +246,7 @@ Ext.define('Admin.view.WizardPanel', {
 
 
     bindItemListeners: function (cmp) {
-        Ext.each(cmp.validateItems, function (validateItem, index, all) {
+        Ext.each(cmp.validateItems, function (validateItem, i) {
             if (validateItem) {
                 validateItem.on({
                     'validitychange': cmp.handleValidityChange,
@@ -254,7 +254,6 @@ Ext.define('Admin.view.WizardPanel', {
                     scope: cmp
                 }, this);
             }
-            return true;
         });
         var checkValidityFn = function (panel) {
             panel.getForm().checkValidity();

@@ -5,7 +5,7 @@ module admin.ui {
      */
     export class BaseActionMenu {
 
-        ext:Ext_button_Button;
+        ext;
 
         constructor(menuItems:any[]) {
 

@@ -1,6 +1,6 @@
 module admin.ui {
     export class TreeGridPanel {
-        ext:Ext_panel_Panel;
+        ext;
 
         private store = new Ext.data.Store({
             pageSize: 100,

@@ -122,7 +122,7 @@ Ext.define('Admin.controller.Controller', {
         var buttons = Ext.ComponentQuery.query('button[action=viewSpace], ' + 'button[action=editSpace], ' +
                                                'button[action=deleteSpace]', toolbar);
 
-        Ext.Array.each(buttons, function (button:Ext_button_Button, index, all) {
+        Ext.Array.each(buttons, function (button) {
             button.setDisabled(!enable);
         });
     },

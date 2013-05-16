@@ -388,6 +388,9 @@ interface Ext_Packages extends IExt {
     direct: {
         RemotingMethod: Ext_direct_RemotingMethod;
         Provider: Ext_direct_Provider;
+        RemotingProvider: Ext_direct_RemotingProvider;
+        JsonProvider: Ext_direct_JsonProvider;
+        Event: Ext_direct_Event;
     };
     dom: {
         Element: Ext_dom_Element;
@@ -4090,6 +4093,45 @@ interface Ext_direct_Provider extends Ext_Base {
     disconnect(): void;
 
     isConnected(): void;
+
+}
+
+
+/**
+ *      A base provider for communicating using JSON. This is an abstract class and should not be instanced directly.
+ */
+interface Ext_direct_JsonProvider extends Ext_direct_Provider {
+
+    createEvent(response:Object): Ext_direct_Event;
+
+}
+
+
+/**
+ *      The RemotingProvider exposes access to server side methods on the client (a remote procedure call (RPC) type of connection
+ *      where the client can initiate a procedure on the server).
+ */
+interface Ext_direct_RemotingProvider extends Ext_direct_JsonProvider {
+
+    new(config:Object): Ext_direct_RemotingProvider;
+
+    connect(): void;
+
+    disconnect(): void;
+
+    isConnected(): bool;
+
+}
+
+
+/**
+ *      A base class for all Ext.direct events. An event is created after some kind of interaction with the server
+ */
+interface Ext_direct_Event {
+
+    new( config?:Object ): Ext_direct_Event;
+
+    getData( ): Object;
 
 }
 

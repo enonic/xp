@@ -1,6 +1,6 @@
 module admin.ui {
     export class FilterPanel {
-        private ext:Ext_panel_Panel;
+        private ext;
 
         private facetData = [
             {
@@ -134,7 +134,7 @@ module admin.ui {
                         values[this.searchField.name] = query;
                     }
                 }
-                Ext.Array.each(selectedCheckboxes, function (cb:Html_dom_Element, index, all) {
+                Ext.Array.each(selectedCheckboxes, function (cb) {
                     var oldValue = values[cb.name];
                     if (Ext.isArray(oldValue)) {
                         oldValue.push(cb.value);
@@ -155,7 +155,7 @@ module admin.ui {
 
                 var checkboxes = Ext.query('.admin-facet-group input[type=checkbox]', this.facetContainer.el.dom);
                 var checkedCount = 0, facet;
-                Ext.Array.each(checkboxes, function (cb:Html_dom_Element) {
+                Ext.Array.each(checkboxes, function (cb) {
                     var facet = Ext.fly(cb).up('.admin-facet');
                     if (me.isValueChecked(cb.value, values)) {
                         checkedCount++;
@@ -214,7 +214,7 @@ module admin.ui {
                 var facet = target.hasCls('admin-facet') ? target : target.up('.admin-facet');
                 if (facet) {
 
-                    var cb:Html_dom_Element = facet.down('input[type=checkbox]', true);
+                    var cb = facet.down('input[type=checkbox]', true);
                     var checked = cb.hasAttribute("checked");
                     if (checked) {
                         cb.removeAttribute("checked");
@@ -257,7 +257,7 @@ module admin.ui {
                     }
 
                     var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
-                    Ext.Array.each(selectedCheckboxes, function (cb:Html_dom_Element) {
+                    Ext.Array.each(selectedCheckboxes, function (cb) {
                         cb.removeAttribute('checked');
                         Ext.fly(cb).up('.admin-facet').removeCls('checked');
                     });

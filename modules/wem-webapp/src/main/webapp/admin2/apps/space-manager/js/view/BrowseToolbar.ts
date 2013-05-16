@@ -1,6 +1,6 @@
 module admin.ui {
     export class BrowseToolbar {
-        ext:Ext_toolbar_Toolbar;
+        ext;
 
         constructor(region?:String) {
 

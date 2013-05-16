@@ -45,7 +45,7 @@ module admin.ui {
                 this.deactivate();
             };
 
-            tbmi.enableBubble('closeMenuItem');
+            tbmi.enableBubble(['closeMenuItem']);
             this.initComponent(tbmi);
         }
 

@@ -24,7 +24,7 @@ module admin.ui {
                 text: 'Close',
                 action: 'closeSpace'
             });
-            tbar.add(editButton, deleteButton, separator, closeButton);
+            tbar.add([editButton, deleteButton, separator, closeButton]);
 
             this.ext = tbar;
         }
