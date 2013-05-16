@@ -1,7 +1,8 @@
 package com.enonic.wem.core.index.search;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.google.inject.Inject;
 
 import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.core.index.content.ContentSearchResults;
@@ -17,7 +18,7 @@ public class SearchService
         return elasticsearchIndexService.search( contentIndexQuery );
     }
 
-    @Autowired
+    @Inject
     public void setElasticsearchIndexService( final ElasticsearchIndexService elasticsearchIndexService )
     {
         this.elasticsearchIndexService = elasticsearchIndexService;

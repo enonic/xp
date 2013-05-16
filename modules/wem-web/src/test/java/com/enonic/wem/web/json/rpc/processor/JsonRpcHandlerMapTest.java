@@ -3,6 +3,8 @@ package com.enonic.wem.web.json.rpc.processor;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.Sets;
+
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.json.rpc.JsonRpcException;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
@@ -27,7 +29,7 @@ public class JsonRpcHandlerMapTest
             }
         };
 
-        this.handlerMap = new JsonRpcHandlerMap( this.handler );
+        this.handlerMap = new JsonRpcHandlerMap( Sets.newHashSet( this.handler ) );
     }
 
     @Test

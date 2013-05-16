@@ -1,5 +1,7 @@
 package com.enonic.wem.web.json.rpc.processor;
 
+import java.util.Set;
+
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.wem.web.json.rpc.JsonRpcError;
@@ -10,7 +12,7 @@ final class JsonRpcHandlerMap
 {
     private final ImmutableMap<String, JsonRpcHandler> map;
 
-    public JsonRpcHandlerMap( final JsonRpcHandler... handlers )
+    public JsonRpcHandlerMap( final Set<JsonRpcHandler> handlers )
     {
         final ImmutableMap.Builder<String, JsonRpcHandler> builder = ImmutableMap.builder();
         for ( final JsonRpcHandler handler : handlers )

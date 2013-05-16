@@ -1,9 +1,12 @@
 package com.enonic.wem.web.json.rpc.processor;
 
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.codehaus.jackson.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.web.json.rpc.JsonRpcError;
@@ -66,7 +69,7 @@ public final class JsonRpcProcessorImpl
     }
 
     @Inject
-    public void setHandlers( final JsonRpcHandler... handlers )
+    public void setHandlers( final Set<JsonRpcHandler> handlers )
     {
         this.handlerMap = new JsonRpcHandlerMap( handlers );
     }

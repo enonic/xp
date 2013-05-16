@@ -1,7 +1,8 @@
 package com.enonic.wem.core.content;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.google.inject.Inject;
 
 import com.enonic.wem.api.command.content.FindContent;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
@@ -44,7 +45,7 @@ public class FindContentHandler
         command.setResult( contentIndexQueryResult );
     }
 
-    @Autowired
+    @Inject
     public void setSearchService( final SearchService searchService )
     {
         this.searchService = searchService;

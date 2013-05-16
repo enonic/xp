@@ -11,6 +11,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.google.common.collect.Sets;
+
 import com.enonic.wem.web.json.rpc.JsonRpcError;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.json.rpc.processor.JsonRpcProcessorImpl;
@@ -32,7 +34,7 @@ public abstract class AbstractRpcHandlerTest
     {
         this.handler = createHandler();
         this.processor = new JsonRpcProcessorImpl();
-        this.processor.setHandlers( this.handler );
+        this.processor.setHandlers( Sets.newHashSet( this.handler ) );
 
         mockCurrentContextHttpRequest();
     }

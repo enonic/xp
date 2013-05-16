@@ -10,8 +10,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.google.inject.Inject;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.Icon;
@@ -63,7 +64,7 @@ public final class SpaceImageResource
         return space == null ? null : space.getIcon();
     }
 
-    @Autowired
+    @Inject
     public void setClient( final Client client )
     {
         this.client = client;
