@@ -6,23 +6,18 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.node.Node;
 import org.springframework.stereotype.Component;
 
+import com.google.inject.Provider;
+
 import com.enonic.wem.core.lifecycle.DisposableBean;
 import com.enonic.wem.core.lifecycle.InitializingBean;
-import com.enonic.wem.core.lifecycle.ProviderFactory;
 
 @Component
 public final class ElasticClientFactory
-    extends ProviderFactory<Client>
-    implements InitializingBean, DisposableBean
+    implements Provider<Client>, InitializingBean, DisposableBean
 {
     private Node node;
 
     private Client client;
-
-    public ElasticClientFactory()
-    {
-        super( Client.class );
-    }
 
     @Override
     public Client get()

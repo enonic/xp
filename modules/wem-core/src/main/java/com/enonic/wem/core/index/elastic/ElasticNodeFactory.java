@@ -9,14 +9,14 @@ import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.springframework.stereotype.Component;
 
+import com.google.inject.Provider;
+
 import com.enonic.wem.core.lifecycle.DisposableBean;
 import com.enonic.wem.core.lifecycle.InitializingBean;
-import com.enonic.wem.core.lifecycle.ProviderFactory;
 
 @Component
 public final class ElasticNodeFactory
-    extends ProviderFactory<Node>
-    implements InitializingBean, DisposableBean
+    implements Provider<Node>, InitializingBean, DisposableBean
 {
     private Node node;
 
@@ -24,7 +24,6 @@ public final class ElasticNodeFactory
 
     public ElasticNodeFactory()
     {
-        super(Node.class);
         ESLoggerFactory.setDefaultFactory( new Slf4jESLoggerFactory() );
     }
 

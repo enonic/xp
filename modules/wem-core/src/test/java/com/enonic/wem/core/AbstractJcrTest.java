@@ -46,9 +46,9 @@ public abstract class AbstractJcrTest
         jcrMicroKernelFactory.afterPropertiesSet();
 
         final JcrRepositoryFactory jcrRepositoryFactory = new JcrRepositoryFactory();
-        jcrRepositoryFactory.setMicroKernel( jcrMicroKernelFactory.getObject() );
+        jcrRepositoryFactory.setMicroKernel( jcrMicroKernelFactory.get() );
         jcrRepositoryFactory.afterPropertiesSet();
-        final Repository repo = jcrRepositoryFactory.getObject();
+        final Repository repo = jcrRepositoryFactory.get();
 
         final JcrSessionProviderImpl sessionProvider = new JcrSessionProviderImpl();
         sessionProvider.setRepository( repo );

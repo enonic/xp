@@ -28,9 +28,9 @@ public class JcrInitializerTest
         jcrMicroKernelFactory.afterPropertiesSet();
 
         final JcrRepositoryFactory jcrRepositoryFactory = new JcrRepositoryFactory();
-        jcrRepositoryFactory.setMicroKernel( jcrMicroKernelFactory.getObject() );
+        jcrRepositoryFactory.setMicroKernel( jcrMicroKernelFactory.get() );
         jcrRepositoryFactory.afterPropertiesSet();
-        repo = jcrRepositoryFactory.getObject();
+        repo = jcrRepositoryFactory.get();
     }
 
     @After

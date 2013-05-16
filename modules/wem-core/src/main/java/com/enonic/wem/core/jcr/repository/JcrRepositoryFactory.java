@@ -20,22 +20,17 @@ import org.apache.jackrabbit.oak.plugins.nodetype.TypeValidatorProvider;
 import org.apache.jackrabbit.oak.plugins.nodetype.write.InitialContent;
 import org.springframework.stereotype.Component;
 
+import com.google.inject.Provider;
+
 import com.enonic.wem.core.lifecycle.InitializingBean;
-import com.enonic.wem.core.lifecycle.ProviderFactory;
 
 @Component
 public final class JcrRepositoryFactory
-    extends ProviderFactory<Repository>
-    implements InitializingBean
+    implements Provider<Repository>, InitializingBean
 {
     private MicroKernel microKernel;
 
     private Repository repository;
-
-    public JcrRepositoryFactory()
-    {
-        super( Repository.class );
-    }
 
     @Override
     public Repository get()
