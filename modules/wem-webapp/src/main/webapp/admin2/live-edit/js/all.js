@@ -322,9 +322,11 @@ var LiveEdit;
             var _this = this;
             if(this.itemIsDraggedFromComponentBar(ui.item)) {
                 var $componentBarComponent = $(event.target).children('.live-edit-component');
+                console.log($componentBarComponent);
                 var componentKey = $componentBarComponent.data('live-edit-component-key');
                 var componentType = $componentBarComponent.data('live-edit-component-type');
                 var url = '../../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
+                console.log(componentKey);
                 $componentBarComponent.hide();
                 $.ajax({
                     url: url,

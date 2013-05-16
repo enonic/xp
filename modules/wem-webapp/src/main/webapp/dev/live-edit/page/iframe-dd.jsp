@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Enonic - DD iframe test</title>
+
+    <script type="text/javascript" charset="UTF-8" src="../../../admin2/live-edit/lib/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../../../admin2/live-edit/lib/jquery-ui-1.9.2.custom.min.js"></script>
+    <style type="text/css">
+        body, html {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        #window {
+            background-color: rgba(0, 0, 0, .5);
+            padding: 10px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 500px;
+            height: 404px;
+        }
+
+        .live-edit-component {
+            cursor: move;
+        }
+    </style>
+</head>
+<body>
+
+<div id="window" data-live-edit-component-key="10023" data-live-edit-component-name="A part from top frame" data-live-edit-component-type="part">
+    <div class="live-edit-component" style="width: 163px;height: 100px;background-color: #ccc;"></div>
+</div>
+
+<iframe id="live-edit-frame" src="bootstrap.jsp?edit=true"></iframe>
+
+<script type="text/javascript">
+    function getWindow () {
+        return $('#window');
+    }
+
+    function getIframe () {
+        return $('#live-edit-frame');
+    }
+
+    function getLiveEditJQ () {
+        return getIframe()[0].contentWindow.$liveedit;
+    }
+
+    function onDragStart (event, ui) {
+        getWindow().hide();
+        var $liveedit = getLiveEditJQ();
+
+        var clone = ui.helper.clone();
+        clone.css('position', 'absolute');
+        clone.css('top', '10px');
+        clone.css('z-index', '5100000');
+
+        $liveedit('body').append(clone);
+
+        $liveedit(clone).draggable({
+            connectToSortable: '[data-live-edit-type=region]'
+        });
+
+        $liveedit(clone).simulate('mousedown');
+    }
+
+    $(document).ready(function () {
+        $('.live-edit-component').draggable({
+            start: onDragStart
+        });
+        $('#live-edit-frame').droppable();
+    });
+</script>
+
+</body>
+</html>
