@@ -1,7 +1,6 @@
 package com.enonic.wem.core.content.schema.content;
 
 import org.apache.commons.lang.WordUtils;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.content.CreateContentType;
@@ -14,7 +13,6 @@ import com.enonic.wem.api.content.schema.content.form.Input;
 import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.content.schema.content.serializer.ContentTypeJsonSerializer;
-import com.enonic.wem.core.initializer.InitializerTask;
 import com.enonic.wem.core.support.BaseInitializer;
 
 import static com.enonic.wem.api.command.Commands.contentType;
@@ -22,10 +20,8 @@ import static com.enonic.wem.api.content.schema.content.ContentType.newContentTy
 import static com.enonic.wem.api.content.schema.content.editor.SetContentTypeEditor.newSetContentTypeEditor;
 
 @Component
-@Order(10)
 public class ContentTypesInitializer
     extends BaseInitializer
-    implements InitializerTask
 {
     static final ContentType SPACE = createSystemType( QualifiedContentTypeName.space() ).
         setFinal( true ).setAbstract( false ).build();
@@ -110,7 +106,7 @@ public class ContentTypesInitializer
 
     protected ContentTypesInitializer()
     {
-        super( "content-types" );
+        super( 10, "content-types" );
     }
 
     private static Form createMediaImageForm()

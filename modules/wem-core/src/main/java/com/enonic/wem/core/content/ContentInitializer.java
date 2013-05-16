@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content;
 
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
@@ -11,19 +10,16 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.space.SpaceName;
-import com.enonic.wem.core.initializer.InitializerTask;
 import com.enonic.wem.core.support.BaseInitializer;
 
 @Component
-@Order(15)
 public class ContentInitializer
     extends BaseInitializer
-    implements InitializerTask
 {
 
     protected ContentInitializer()
     {
-        super( "content" );
+        super( 15, "content" );
     }
 
     @Override

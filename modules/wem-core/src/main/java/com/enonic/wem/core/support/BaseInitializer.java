@@ -13,8 +13,10 @@ import org.slf4j.LoggerFactory;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.ModuleBasedQualifiedName;
+import com.enonic.wem.core.initializer.InitializerTask;
 
 public abstract class BaseInitializer
+    extends InitializerTask
 {
     private static final Logger LOG = LoggerFactory.getLogger( BaseInitializer.class );
 
@@ -24,8 +26,9 @@ public abstract class BaseInitializer
 
     private String metaInfFolderBasePath;
 
-    protected BaseInitializer( final String metaInfFolderName )
+    protected BaseInitializer( final int order, final String metaInfFolderName )
     {
+        super( order );
         this.metaInfFolderBasePath = FILE_SEPARATOR + "META-INF" + FILE_SEPARATOR + metaInfFolderName;
     }
 

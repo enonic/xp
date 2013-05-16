@@ -2,7 +2,6 @@ package com.enonic.wem.core.content.schema.mixin;
 
 import javax.inject.Inject;
 
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
@@ -14,14 +13,11 @@ import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;
 import com.enonic.wem.api.content.schema.mixin.editor.SetMixinEditor;
-import com.enonic.wem.core.initializer.InitializerTask;
 import com.enonic.wem.core.support.BaseInitializer;
 
 @Component
-@Order(10)
 public class MixinsInitializer
     extends BaseInitializer
-    implements InitializerTask
 {
     private final MixinJsonSerializer serializer = new MixinJsonSerializer();
 
@@ -30,7 +26,7 @@ public class MixinsInitializer
 
     protected MixinsInitializer()
     {
-        super( "mixins" );
+        super( 10, "mixins" );
     }
 
     @Override

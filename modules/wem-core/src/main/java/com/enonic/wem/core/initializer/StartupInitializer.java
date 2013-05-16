@@ -6,7 +6,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -32,7 +31,7 @@ public final class StartupInitializer
     public void setTasks( final Set<InitializerTask> tasks )
     {
         final List<InitializerTask> sortedTaskList = Lists.newArrayList( tasks );
-        Collections.sort( sortedTaskList, new AnnotationAwareOrderComparator() );
+        Collections.sort( sortedTaskList );
         this.tasks = sortedTaskList;
     }
 

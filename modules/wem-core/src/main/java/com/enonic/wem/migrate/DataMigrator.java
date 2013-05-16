@@ -2,19 +2,18 @@ package com.enonic.wem.migrate;
 
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.inject.Inject;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.initializer.InitializerTask;
 
 @Component
-@Order(100)
 public final class DataMigrator
-    implements InitializerTask
+    extends InitializerTask
 {
     private final static Logger LOG = LoggerFactory.getLogger( DataMigrator.class );
 
@@ -26,6 +25,7 @@ public final class DataMigrator
 
     public DataMigrator()
     {
+        super( 100 );
         this.dataSource = new DriverManagerDataSource();
     }
 

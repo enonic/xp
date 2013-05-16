@@ -2,7 +2,6 @@ package com.enonic.wem.core.space;
 
 import javax.inject.Inject;
 
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
@@ -10,22 +9,19 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.space.CreateSpace;
 import com.enonic.wem.api.command.space.UpdateSpace;
 import com.enonic.wem.api.space.SpaceName;
-import com.enonic.wem.core.initializer.InitializerTask;
 import com.enonic.wem.core.support.BaseInitializer;
 
 import static com.enonic.wem.api.space.editor.SpaceEditors.setDisplayName;
 
 @Component
-@Order(10)
 public class SpacesInitializer
     extends BaseInitializer
-    implements InitializerTask
 {
     private Client client;
 
     protected SpacesInitializer()
     {
-        super( "spaces" );
+        super( 10, "spaces" );
     }
 
     @Override

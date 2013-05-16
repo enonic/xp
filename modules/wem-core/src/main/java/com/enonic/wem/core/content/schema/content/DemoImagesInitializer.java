@@ -2,7 +2,6 @@ package com.enonic.wem.core.content.schema.content;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
@@ -14,14 +13,11 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.core.initializer.InitializerTask;
 import com.enonic.wem.core.support.BaseInitializer;
 
 @Component
-@Order(20)
 public class DemoImagesInitializer
     extends BaseInitializer
-    implements InitializerTask
 {
     private static final String[] FOLDER_IMAGES_POP =
         {"Pop_01.jpg", "Pop_02.jpg", "Pop_03.jpg", "Pop_04.jpg", "Pop_05.jpg", "Pop_06.jpg", "Pop_07.jpg", "Pop_08.jpg", "Pop-Black.jpg",
@@ -34,7 +30,7 @@ public class DemoImagesInitializer
 
     protected DemoImagesInitializer()
     {
-        super( "demo-images" );
+        super( 20, "demo-images" );
     }
 
     @Override

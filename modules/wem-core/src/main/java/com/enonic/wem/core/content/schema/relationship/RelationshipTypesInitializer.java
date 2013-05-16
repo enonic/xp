@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content.schema.relationship;
 
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
@@ -11,17 +10,14 @@ import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeN
 import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.schema.relationship.RelationshipType;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.core.initializer.InitializerTask;
 import com.enonic.wem.core.support.BaseInitializer;
 
 import static com.enonic.wem.api.content.schema.relationship.RelationshipType.newRelationshipType;
 import static com.enonic.wem.api.content.schema.relationship.editor.SetRelationshipTypeEditor.newSetRelationshipTypeEditor;
 
 @Component
-@Order(10)
 public class RelationshipTypesInitializer
     extends BaseInitializer
-    implements InitializerTask
 {
     private static final RelationshipType DEFAULT =
         createRelationshipType( QualifiedRelationshipTypeName.DEFAULT, "Default", "relates to", "related of" );
@@ -42,7 +38,7 @@ public class RelationshipTypesInitializer
 
     protected RelationshipTypesInitializer()
     {
-        super( "relationship-types" );
+        super( 10, "relationship-types" );
     }
 
     @Override
