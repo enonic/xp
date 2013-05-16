@@ -6,11 +6,11 @@ import javax.servlet.ServletRegistration;
 
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import com.enonic.wem.web.ResourceServlet;
 import com.enonic.wem.web.rest.JaxRsServlet;
+import com.enonic.wem.web.servlet.RequestContextListener;
 
 public final class BootContextListener
     extends ContextLoaderListener

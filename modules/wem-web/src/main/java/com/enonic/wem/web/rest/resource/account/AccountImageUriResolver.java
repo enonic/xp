@@ -1,10 +1,9 @@
 package com.enonic.wem.web.rest.resource.account;
 
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.web.servlet.ServletRequestUrlHelper;
 
 public final class AccountImageUriResolver
 {
@@ -47,7 +46,6 @@ public final class AccountImageUriResolver
 
     private static String buildImageUrl( final String path )
     {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().path( "/admin/rest/account/image/" ).path(
-            path ).build().toString();
+        return ServletRequestUrlHelper.createUrl( "/admin/rest/account/image/" + path );
     }
 }

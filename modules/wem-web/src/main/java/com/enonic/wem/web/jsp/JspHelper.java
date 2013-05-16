@@ -2,12 +2,10 @@ package com.enonic.wem.web.jsp;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 
 import com.enonic.wem.api.Version;
+import com.enonic.wem.web.servlet.ServletRequestUrlHelper;
 
 public final class JspHelper
 {
@@ -23,19 +21,7 @@ public final class JspHelper
 
     public static String createUrl( final HttpServletRequest req, final String path )
     {
-        ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromContextPath( req );
-        if ( !Strings.isNullOrEmpty( path ) )
-        {
-            if ( '/' == path.charAt( 0 ) )
-            {
-                builder.pathSegment( path.substring( 1 ) );
-            }
-            else
-            {
-                builder.pathSegment( path );
-            }
-        }
-        return builder.build().toString();
+        return ServletRequestUrlHelper.createUrl( req, path );
     }
 
     public static String ellipsis( final String text, final int length )

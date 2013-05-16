@@ -1,8 +1,7 @@
 package com.enonic.wem.web.rest.resource.space;
 
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.web.servlet.ServletRequestUrlHelper;
 
 public final class SpaceImageUriResolver
 {
@@ -10,10 +9,7 @@ public final class SpaceImageUriResolver
     public static String resolve( final SpaceName spaceName )
     {
         final String spaceValue = spaceName.toString();
-        return ServletUriComponentsBuilder.fromCurrentContextPath().
-            path( "/admin/rest/space/image/" ).
-            path( String.valueOf( spaceValue ) ).
-            build().toString();
+        return ServletRequestUrlHelper.createUrl( "/admin/rest/space/image/" + spaceValue );
     }
 
 }
