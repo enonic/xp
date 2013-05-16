@@ -25,21 +25,21 @@
     }
 
     #window {
+      font: 15px Arial;
       background-color: rgba(0, 0, 0, .75);
       width: 570px;
-      height: 376px;
+      height: 415px;
       padding: 5px 0px 5px 5px;
       position: absolute;
       top: 20px;
       left: 20px;
       box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     }
-    .window-drag-handle {
-      height: 20px;
+    #window-drag-handle {
+      color: white;
+      padding: 10px;
       cursor: move;
-      background-color: #000;
     }
-
     .live-edit-component {
       cursor: move;
       padding: 10px;
@@ -52,6 +52,7 @@
 <body>
 
 <div id="window">
+  <div id="window-drag-handle">||| Palette</div>
   <div class="live-edit-component" style="width:163px; height:100px; background: #fefefe; border: 1px solid #000"
        data-live-edit-component-key="10001" data-live-edit-component-name="fisk" data-live-edit-component-type="part">
     <img src="http://media.w3.org/2010/05/sintel/poster.png" style="width:163px; height: 100px"/>
@@ -102,13 +103,13 @@
     return getIframe()[0].contentWindow.$liveedit;
   }
 
+  var cursorAt = { left: 5, top: 5 };
   function onDragStart(event, ui) {
     getWindow().hide();
     var $liveedit = getLiveEditJQ();
 
     var clone = $liveedit(ui.helper.clone());
 
-    console.log(ui.helper[0])
     clone.css('position', 'absolute');
     clone.css('top', '10px');
     clone.css('z-index', '5100000');
@@ -116,7 +117,8 @@
     $liveedit('body').append(clone);
 
     $liveedit(clone).draggable({
-      connectToSortable: '[data-live-edit-type=region]'
+      connectToSortable: '[data-live-edit-type=region]',
+      cursorAt: cursorAt
     });
 
     $liveedit(clone).simulate('mousedown');
@@ -125,9 +127,15 @@
   $(document).ready(function () {
     $('.live-edit-component').draggable({
       helper: 'clone',
-      start: onDragStart
+      start: onDragStart,
+      cursorAt: cursorAt
     });
     $('#live-edit-frame').droppable();
+
+    $('#window').draggable({
+      handle: '#window-drag-handle'
+    });
+
 
     // TODO: Let's pretend that the frame's document is loaded ;)
     setTimeout(function () {
