@@ -1,31 +1,38 @@
 package com.enonic.wem.web.jsp;
 
-import javax.servlet.ServletContext;
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.initializer.StartupInitializer;
 
+@Component
 public final class JspDataTools
 {
     private final static Logger LOG = LoggerFactory.getLogger( JspDataTools.class );
 
-    private final ApplicationContext context;
+    private static JspDataTools INSTANCE;
 
-    public JspDataTools( final ApplicationContext context )
+    private final IndexService indexService;
+
+    private final StartupInitializer startupInitializer;
+
+    @Inject
+    public JspDataTools( final IndexService indexService, final StartupInitializer startupInitializer )
     {
-        this.context = context;
+        INSTANCE = this;
+        this.indexService = indexService;
+        this.startupInitializer = startupInitializer;
     }
 
     public void reindexData()
     {
         try
         {
-            this.context.getBean( IndexService.class ).reIndex();
+            this.indexService.reIndex();
         }
         catch ( final Exception e )
         {
@@ -37,8 +44,8 @@ public final class JspDataTools
     {
         try
         {
-            this.context.getBean( StartupInitializer.class ).initialize( true );
-            this.context.getBean( IndexService.class ).reIndex();
+            this.startupInitializer.initialize( true );
+            this.indexService.reIndex();
         }
         catch ( final Exception e )
         {
@@ -46,8 +53,8 @@ public final class JspDataTools
         }
     }
 
-    public static JspDataTools create( final ServletContext servletContext )
+    public static JspDataTools get()
     {
-        return new JspDataTools( WebApplicationContextUtils.getRequiredWebApplicationContext( servletContext ) );
+        return INSTANCE;
     }
 }

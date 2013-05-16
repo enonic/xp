@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule;
 
 import com.enonic.wem.core.CoreModule;
 import com.enonic.wem.web.json.rpc.JsonRpcModule;
+import com.enonic.wem.web.jsp.JspDataTools;
 import com.enonic.wem.web.rest.RestModule;
 
 public final class WebModule
@@ -16,6 +17,6 @@ public final class WebModule
         install( new JsonRpcModule() );
         install( new RestModule() );
 
-        // bind( JspDataTools.class ).asEagerSingleton();
+        bind( JspDataTools.class ).asEagerSingleton();
     }
 }
