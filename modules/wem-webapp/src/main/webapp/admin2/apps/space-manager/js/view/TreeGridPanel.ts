@@ -1,6 +1,13 @@
 module admin.ui {
+
+    interface PersistentGridSelectionPlugin extends Ext_AbstractPlugin {
+
+        getSelection(): Ext_data_Model[];
+
+    }
+
     export class TreeGridPanel {
-        ext;
+        ext:Ext_panel_Panel;
 
         private store = new Ext.data.Store({
             pageSize: 100,
@@ -120,13 +127,14 @@ module admin.ui {
             this.ext.fireEvent('datachanged', values);
         }
 
-        private getActiveList() {
-            return this.ext.getLayout().getActiveItem();
+        private getActiveList():Ext_panel_Table {
+            // returns either grid or tree that both extend table
+            return <Ext_panel_Table> (<Ext_layout_container_Card> this.ext.getLayout()).getActiveItem();
         }
 
         private nameRenderer(value, metaData, record, rowIndex, colIndex, store, view) {
             var space = record.data;
-            var activeListType = this.getActiveList().itemId;
+            var activeListType = this.getActiveList().getItemId();
             return Ext.String.format(this.nameTemplate, activeListType, space.iconUrl, value, space.name);
         }
 
@@ -150,7 +158,7 @@ module admin.ui {
         getSelection() {
             var selection = [],
                 activeList = this.getActiveList(),
-                plugin = activeList.getPlugin('persistentGridSelection');
+                plugin = <PersistentGridSelectionPlugin> activeList.getPlugin('persistentGridSelection');
 
             if (plugin) {
                 selection = plugin.getSelection();

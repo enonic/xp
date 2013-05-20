@@ -7,14 +7,17 @@ Ext.define('Admin.lib.JsonRpcProvider', {
         var methods = this.methods;
         var namespace = this.namespace;
 
+        var methodName;
         for (var i = 0; i < methods.length; i++) {
+            methodName = methods[i];
+
             var def = {
-                name: methods[i],
+                name: methodName,
                 len: 1
             };
 
             var method = new Ext.direct.RemotingMethod(def);
-            namespace[method.name] = this.createHandler(null, method);
+            namespace[methodName] = this.createHandler(null, method);
         }
     },
 

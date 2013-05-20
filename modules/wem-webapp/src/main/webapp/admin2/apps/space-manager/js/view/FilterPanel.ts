@@ -1,5 +1,6 @@
 module admin.ui {
     export class FilterPanel {
+
         private ext;
 
         private facetData = [
@@ -42,28 +43,185 @@ module admin.ui {
                            '</div>' +
                            '</tpl>';
 
-        constructor() {
-            var fp = this.ext = new Ext.panel.Panel();
-            fp.cls = 'admin-filter';
-            fp.header = false;
-            fp.layout = {
-                type: 'vbox',
-                align: 'stretch'
+        constructor(config?:{
+            region?: string;
+            width?: number;
+            includeSearch?: bool;
+        }) {
+
+            var updateFacets = function (facets) {
+                if (facets) {
+                    this.selectedValues = this.getValues();
+                    this.down('#facetContainer').update(facets);
+                    this.setValues(this.selectedValues);
+                }
             };
-            fp.autoScroll = true;
-            fp.split = true;
-            fp.includeSearch = true;
 
-            fp.includeEmptyFacets = 'none';
-            fp.updateCountCriteria = 'always';
-            fp.updateCountStrategy = 'notlast';
+            var getValues = function () {
+                var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
+                var values = {};
+                if (this.searchField) {
+                    var query = this.searchField.getValue();
+                    if (Ext.String.trim(query).length > 0) {
+                        values[this.searchField.name] = query;
+                    }
+                }
+                Ext.Array.each(selectedCheckboxes, function (cb:Html_dom_Element, index, all) {
+                    var oldValue = values[cb.name];
+                    if (Ext.isArray(oldValue)) {
+                        oldValue.push(cb.value);
+                    } else {
+                        values[cb.name] = [cb.value];
+                    }
+                });
 
-            fp.originalTitle = '';
+                return values;
+            };
 
-            fp.facetData = this.facetData;
+            var setValues = function (values) {
+                var me = this;
 
-            fp.facetTpl = new Ext.XTemplate(this.facetTpl,
-                {
+                if (this.searchField) {
+                    this.searchField.setValue(values[this.searchField.name]);
+                }
+
+                var checkboxes = Ext.query('.admin-facet-group input[type=checkbox]', this.facetContainer.el.dom);
+                var checkedCount = 0, facet;
+                Ext.Array.each(checkboxes, function (cb:Html_dom_Element) {
+                    var facet = Ext.fly(cb).up('.admin-facet');
+                    if (me.isValueChecked(cb.value, values)) {
+                        checkedCount++;
+                        cb.setAttribute('checked', 'true');
+                        facet.addCls('checked');
+                    } else {
+                        cb.removeAttribute('checked');
+                        facet.removeCls('checked');
+                    }
+                });
+
+                if (this.updateCountCriteria == 'query' && this.queryDirty && checkedCount === 0) {
+                    this.queryDirty = false;
+                }
+            };
+
+            var isValueChecked = function (value, values) {
+                for (var facet in values) {
+                    if (values.hasOwnProperty(facet)) {
+                        var terms = [].concat(values[facet]);
+                        for (var i = 0; i < terms.length; i++) {
+                            if (terms[i] === value) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            };
+
+            var isDirty = function () {
+                var selectedCheckboxes = [];
+                var query = '';
+                if (this.facetContainer && this.facetContainer.el) {
+                    selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
+                }
+                if (this.searchField) {
+                    query = Ext.String.trim(this.searchField.getValue());
+                }
+                return selectedCheckboxes.length > 0 || query.length > 0;
+            };
+
+            var search = function () {
+                if (this.fireEvent('search', this.getValues()) !== false) {
+                    this.clearLink.el.setStyle('visibility', this.isDirty() ? 'visible' : 'hidden');
+                }
+            };
+
+            var includeSearch = config? config.includeSearch: true;
+
+            var fp = this.ext = new Ext.panel.Panel({
+                region: config ? config.region : undefined,
+                width: config ? config.width : undefined,
+                cls: 'admin-filter',
+                header: false,
+                layout: {
+                    type: 'vbox',
+                    align: 'stretch'
+                },
+                autoScroll: true,
+                split: true,
+
+                facetCountMap: [],
+                includeSearch: includeSearch,
+                includeEmptyFacets: 'none',
+                updateCountCriteria: 'always',
+                updateCountStrategy: 'notlast',
+
+                originalTitle: '',
+
+                updateFacets: updateFacets,
+                getValues: getValues,
+                setValues: setValues,
+                isValueChecked: isValueChecked,
+                isDirty: isDirty,
+                search: search
+            });
+
+            var facetContainer = this.createFacetContainer();
+            fp.insert(0, facetContainer);
+
+            var clearLink = this.createClearLink();
+            fp.insert(0, clearLink);
+
+            Ext.apply(fp, {
+                facetContainer: facetContainer,
+                clearLink: clearLink
+            });
+
+            if (includeSearch) {
+
+                var searchField = this.createSearchField();
+                fp.insert(0, searchField);
+
+                Ext.apply(fp, {
+                    searchField: searchField
+                });
+            }
+
+            fp.addEvents('search', 'reset');
+        }
+
+        private createFacetContainer() {
+            var fp = this.ext;
+            var onFacetClicked = function (event, target, opts) {
+                target = Ext.fly(target);
+                var facet = target.hasCls('admin-facet') ? target : target.up('.admin-facet');
+                if (facet) {
+
+                    var cb:Html_dom_Element = facet.down('input[type=checkbox]', true);
+                    var checked = cb.hasAttribute("checked");
+                    if (checked) {
+                        cb.removeAttribute("checked");
+                        facet.removeCls("checked");
+                    } else {
+                        cb.setAttribute("checked", "true");
+                        facet.addCls("checked");
+                    }
+
+                    var group = facet.up('.admin-facet-group', true);
+                    if (group) {
+                        this.lastFacetName = group.getAttribute('name');
+                    }
+
+                    this.search();
+                }
+
+                event.stopEvent();
+                return true;
+            };
+
+            var facetContainer = new Ext.Component({
+                itemId: 'facetContainer',
+                tpl: new Ext.XTemplate(this.facetTpl, {
                     updateFacetCount: function (term, facet) {
 
                         // when to update
@@ -100,151 +258,15 @@ module admin.ui {
                         }
                         return false;
                     }
-                }
-            )
-
-            fp.facetContainer = this.createFacetContainer();
-            fp.insert(0, fp.facetContainer);
-
-            fp.clearLink = this.createClearLink();
-            fp.insert(0, fp.clearLink);
-
-            fp.facetCountMap = [];
-
-            if (fp.includeSearch) {
-
-                fp.searchField = this.createSearchField();
-                fp.insert(0, fp.searchField);
-            }
-
-            fp.updateFacets = function (facets) {
-                if (facets) {
-                    this.selectedValues = this.getValues();
-                    this.down('#facetContainer').update(facets);
-                    this.setValues(this.selectedValues);
-                }
-            };
-
-            fp.getValues = function () {
-                var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
-                var values = {};
-                if (this.searchField) {
-                    var query = this.searchField.getValue();
-                    if (Ext.String.trim(query).length > 0) {
-                        values[this.searchField.name] = query;
-                    }
-                }
-                Ext.Array.each(selectedCheckboxes, function (cb) {
-                    var oldValue = values[cb.name];
-                    if (Ext.isArray(oldValue)) {
-                        oldValue.push(cb.value);
-                    } else {
-                        values[cb.name] = [cb.value];
-                    }
-                });
-
-                return values;
-            };
-
-            fp.setValues = function (values) {
-                var me = this;
-
-                if (this.searchField) {
-                    this.searchField.setValue(values[this.searchField.name]);
-                }
-
-                var checkboxes = Ext.query('.admin-facet-group input[type=checkbox]', this.facetContainer.el.dom);
-                var checkedCount = 0, facet;
-                Ext.Array.each(checkboxes, function (cb) {
-                    var facet = Ext.fly(cb).up('.admin-facet');
-                    if (me.isValueChecked(cb.value, values)) {
-                        checkedCount++;
-                        cb.setAttribute('checked', 'true');
-                        facet.addCls('checked');
-                    } else {
-                        cb.removeAttribute('checked');
-                        facet.removeCls('checked');
-                    }
-                });
-
-                if (this.updateCountCriteria == 'query' && this.queryDirty && checkedCount === 0) {
-                    this.queryDirty = false;
-                }
-            };
-
-            fp.isValueChecked = function (value, values) {
-                for (var facet in values) {
-                    if (values.hasOwnProperty(facet)) {
-                        var terms = [].concat(values[facet]);
-                        for (var i = 0; i < terms.length; i++) {
-                            if (terms[i] === value) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-                return false;
-            }
-
-            fp.isDirty = function () {
-                var selectedCheckboxes = [];
-                var query = '';
-                if (this.facetContainer && this.facetContainer.el) {
-                    selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
-                }
-                if (this.searchField) {
-                    query = Ext.String.trim(this.searchField.getValue());
-                }
-                return selectedCheckboxes.length > 0 || query.length > 0;
-            };
-
-            fp.search = function () {
-                if (this.fireEvent('search', this.getValues()) !== false) {
-                    this.clearLink.el.setStyle('visibility', this.isDirty() ? 'visible' : 'hidden');
-                }
-            };
-
-            fp.addEvents('search', 'reset');
-        }
-
-        private createFacetContainer() {
-            var fp = this.ext;
-            var onFacetClicked = function (event, target, opts) {
-                target = Ext.fly(target);
-                var facet = target.hasCls('admin-facet') ? target : target.up('.admin-facet');
-                if (facet) {
-
-                    var cb = facet.down('input[type=checkbox]', true);
-                    var checked = cb.hasAttribute("checked");
-                    if (checked) {
-                        cb.removeAttribute("checked");
-                        facet.removeCls("checked");
-                    } else {
-                        cb.setAttribute("checked", "true");
-                        facet.addCls("checked");
-                    }
-
-                    var group = facet.up('.admin-facet-group', true);
-                    if (group) {
-                        this.lastFacetName = group.getAttribute('name');
-                    }
-
-                    this.search();
-                }
-
-                event.stopEvent();
-                return true;
-            };
-
-            var facetContainer = new Ext.Component();
+                }),
+                data: this.facetData
+            });
             facetContainer.on('afterrender', function (cmp) {
                 cmp.el.on('click', onFacetClicked, fp, {
                     delegate: '.admin-facet'
                 });
             });
-            facetContainer.itemId = 'facetContainer'
-            facetContainer.tpl = fp.facetTpl;
-            facetContainer.data = fp.facetData;
+
             return facetContainer;
         }
 
@@ -257,7 +279,7 @@ module admin.ui {
                     }
 
                     var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
-                    Ext.Array.each(selectedCheckboxes, function (cb) {
+                    Ext.Array.each(selectedCheckboxes, function (cb:Html_dom_Element) {
                         cb.removeAttribute('checked');
                         Ext.fly(cb).up('.admin-facet').removeCls('checked');
                     });
@@ -268,8 +290,9 @@ module admin.ui {
                 }
             };
 
-            var clearLink = new Ext.Component();
-            clearLink.html = '<a href="javascript:;">Clear filter</a>';
+            var clearLink = new Ext.Component({
+                html: '<a href="javascript:;">Clear filter</a>'
+            });
             clearLink.on('click', reset, this.ext, {element: 'el'});
             clearLink.on('afterrender', function (cmp) {
                 // hiding() with hideMode: 'visibility' doesn't retain components space
@@ -303,14 +326,16 @@ module admin.ui {
                 }
             };
 
-            var searchField = new Ext.form.field.Text();
-            searchField.cls = 'admin-search-field';
-            searchField.enableKeyEvents = true;
-            searchField.bubbleEvents = ['specialkey'];
-            searchField.itemId = 'filterText';
-            searchField.margin = '0 0 10 0';
-            searchField.name = 'query';
-            searchField.emptyText = 'Search';
+            var searchField = new Ext.form.field.Text({
+                cls: 'admin-search-field',
+                enableKeyEvents: true,
+                bubbleEvents: ['specialkey'],
+                itemId: 'filterText',
+                margin: '0 0 10 0',
+                name: 'query',
+                emptyText: 'Search'
+            });
+
             searchField.on('specialkey', onKeyPressed, this.ext);
             searchField.on('keypress', onKeyPressed, this.ext);
 

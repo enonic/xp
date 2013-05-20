@@ -5,7 +5,7 @@ module admin.ui {
 
         constructor(animation: string = 'slide') {
             var cardLayout = new Ext.layout.container.Card({
-//                mixins: ['Ext.util.Animate'],
+                mixins: ['Ext.util.Animate'],
                 deferredRender: false,
                 renderHidden: false,
                 animation: animation,
@@ -16,7 +16,7 @@ module admin.ui {
                     return this.setActiveItem(item);
                 }
             });
-            cardLayout.self.mixin('animateMixin', Ext.util.Animate);
+            // cardLayout.self.mixin('animateMixin', Ext.util.Animate);
 
             this.ext = cardLayout;
         }
@@ -38,7 +38,7 @@ module admin.ui {
                     me.syncFx();
 
                     var target = me.getRenderTarget();
-                    newCard.setWidth(target.getWidth() - target.getPadding("lr") - Ext.getScrollBarWidth());
+                    newCard.setWidth(target.getWidth() - target.getPadding("lr") - Ext.getScrollbarSize().width);
 
                     switch (me.animation) {
                         case 'fade':
@@ -188,7 +188,7 @@ Ext.define('Admin.view.WizardLayout', {
                 this.syncFx();
 
                 var target = this.getRenderTarget();
-                newCard.setWidth(target.getWidth() - target.getPadding("lr") - Ext.getScrollBarWidth());
+                newCard.setWidth(target.getWidth() - target.getPadding("lr") - Ext.getScrollbarSize().width);
 
                 switch (this.animation) {
                     case 'fade':

@@ -1,5 +1,20 @@
 module admin.ui {
 
+    interface Ext_TopBarMenu_Item {
+        isMenuItem: bool;
+        xtype: string;
+        text1: string;
+        text2: string;
+        card: Object;
+        tabBar: Object;
+        closable: bool;
+        disabled: bool;
+        editing: bool;
+        hidden: bool;
+        iconClass: string;
+        iconSrc: string;
+    }
+
     export class TopBarMenu {
         ext;
 
@@ -31,7 +46,7 @@ module admin.ui {
             this.ext = tbm;
             this.tabPanel = tabPanel;
 
-            this.nonClosableItems = this.createNonClosableItems()
+            this.nonClosableItems = this.createNonClosableItems();
             this.editTitle = this.createEditTitle();
             this.editItems = this.createEditItems();
             this.viewTitle = this.createViewTitle();
@@ -45,40 +60,25 @@ module admin.ui {
             tbm.add(this.viewItems);
             tbm.add(this.emptyTitle);
 
-            var parentOnShow = tbm.onShow;
-            tbm.onShow = () => {
-                parentOnShow.apply(tbm, arguments);
-                this.onShow();
-            };
+            Ext.Function.interceptAfter(tbm, 'onShow', this.onShow, this);
 
-            var parentOnBoxReady = tbm.onBoxReady;
-            tbm.onBoxReady = () => {
-                this.onBoxReady();
-                return parentOnBoxReady.apply(tbm, arguments);
-            };
+            Ext.Function.interceptAfter(tbm, 'onBoxReady', this.onBoxReady, this);
 
-            var parentShow = tbm.show;
-            tbm.show = () => {
-                this.show();
-                parentShow.apply(tbm, arguments);
-                return tbm;
-            };
+            Ext.Function.interceptAfter(tbm, 'show', this.show, this);
 
-            var parentHide = tbm.hide;
-            tbm.hide = () => {
-                parentHide.apply(tbm, arguments);
-                return this.hide();
-            };
+            Ext.Function.interceptBefore(tbm, 'hide', this.hide, this);
 
-            tbm.onClick = (e) => {
-                return this.onClick(e);
-            };
+            Ext.override(tbm, {
+                scrollState: { left: 0, top: 0 },
 
-            tbm.setVerticalPosition = () => {
-                this.setVerticalPosition();
-            };
+                onClick: (e) => {
+                    return this.onClick(e);
+                },
+                setVerticalPosition: () => {
+                    this.setVerticalPosition();
+                }
+            });
 
-            tbm.scrollState = { left: 0, top: 0 };
             tbm.on('closeMenuItem', this.onCloseMenuItem, this);
             tbm.on('resize', this.updatePosition, this);
         }
@@ -205,17 +205,17 @@ module admin.ui {
             do {
                 item = item.getChildByElement(e.getTarget());
             }
-            while (item && Ext.isDefined(item.getChildByElement) && item.itemId !== 'topBarMenuItem');
+            while (item && Ext.isDefined(item.getChildByElement) && item.isMenuItem !== true);
             return item;
         }
 
         getAllItems(includeNonClosable):any[] /* Ext.Component[] */ {
             var items = [];
             if (includeNonClosable === false) {
-                items = items.concat(this.editItems.query('#topBarMenuItem'));
-                items = items.concat(this.viewItems.query('#topBarMenuItem'))
+                items = items.concat(this.editItems.query('*[isMenuItem=true]'));
+                items = items.concat(this.viewItems.query('*[isMenuItem=true]'))
             } else {
-                items = items.concat(this.ext.query('#topBarMenuItem'));
+                items = items.concat(this.ext.query('*[isMenuItem=true]'));
             }
             return items;
         }
@@ -232,8 +232,8 @@ module admin.ui {
             var editItems = [];
             var viewItems = [];
             var nonClosableItems = [];
-            Ext.Array.each(items, (item) => {
-                if (!item.closable) {
+            Ext.Array.each(items, (item:Ext_TopBarMenu_Item) => {
+                if (item.closable === false) {
                     nonClosableItems.push(item);
                 } else if (item.editing) {
                     editItems.push(item);
@@ -247,7 +247,7 @@ module admin.ui {
             }
             if (editItems.length > 0) {
                 var editItemObjects = [];
-                Ext.Array.each(editItems, (editItem) => {
+                Ext.Array.each(editItems, (editItem:Ext_TopBarMenu_Item) => {
                     // defaultType: 'topBarMenuItem'
                     if (!editItem.xtype) {
                         var tbmi = new admin.ui.TopBarMenuItem(editItem.text1, editItem.text2, editItem.card, editItem.tabBar,
@@ -263,7 +263,7 @@ module admin.ui {
             }
             if (viewItems.length > 0) {
                 var viewItemObjects = [];
-                Ext.Array.each(viewItems, (viewItem) => {
+                Ext.Array.each(viewItems, (viewItem:Ext_TopBarMenu_Item) => {
                     // defaultType: 'topBarMenuItem'
                     if (!viewItem.xtype) {
                         var tbmi = new admin.ui.TopBarMenuItem(viewItem.text1, viewItem.text2, viewItem.card, viewItem.tabBar,
@@ -290,19 +290,19 @@ module admin.ui {
             var editItems = this.editItems;
             var viewItems = this.viewItems;
             var removed = [];
-            Ext.Array.each(editItems.items.items, (item) => {
+            Ext.Array.each(editItems.items.items, (item:Ext_TopBarMenu_Item) => {
                 if (item && item.closable !== false) {
                     removed.push(editItems.remove(item));
                 }
             });
-            Ext.Array.each(viewItems.items.items, (item) => {
+            Ext.Array.each(viewItems.items.items, (item:Ext_TopBarMenu_Item) => {
                 if (item && item.closable !== false) {
                     removed.push(viewItems.remove(item));
                 }
             });
             if (includeNonClosable) {
                 var nonClosableItems = this.nonClosableItems;
-                Ext.Array.each(nonClosableItems.items.items, (item) => {
+                Ext.Array.each(nonClosableItems.items.items, (item:Ext_TopBarMenu_Item) => {
                     if (item && item.closable !== false) {
                         removed.push(nonClosableItems.remove(item));
                     }
@@ -327,7 +327,7 @@ module admin.ui {
             var nonClosableItems = this.nonClosableItems;
             var removed = [];
 
-            Ext.Array.each(items, (item) => {
+            Ext.Array.each(items, (item:Ext_TopBarMenu_Item) => {
                 if (item && item.closable !== false) {
                     removed.push(editItems.remove(item));
                     removed.push(viewItems.remove(item));

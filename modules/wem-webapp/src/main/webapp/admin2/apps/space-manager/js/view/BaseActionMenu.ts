@@ -5,15 +5,16 @@ module admin.ui {
      */
     export class BaseActionMenu {
 
-        ext;
+        ext:Ext_button_Button;
 
         constructor(menuItems:any[]) {
 
-            var menu = new Ext.menu.Menu();
-            menu.cls = 'admin-context-menu';
-            menu.border = false;
-            menu.shadow = false;
-            menu.width = 120;
+            var menu = new Ext.menu.Menu({
+                cls: 'admin-context-menu',
+                border: false,
+                shadow: false,
+                width: 120
+            });
 
             for (var i in menuItems) {
                 menu.add(menuItems[i]);

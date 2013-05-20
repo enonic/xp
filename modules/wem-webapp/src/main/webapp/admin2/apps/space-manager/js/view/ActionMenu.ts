@@ -4,13 +4,15 @@ module admin.ui {
 
         constructor() {
 
-            var openMenuItem = new Ext.menu.Item();
-            openMenuItem.text = 'Open';
-            openMenuItem.action = 'viewSpace';
+            var openMenuItem = new Ext.menu.Item({
+                text: 'Open',
+                action: 'viewSpace'
+            });
 
-            var editMenuItem = new Ext.menu.Item();
-            editMenuItem.text = 'Edit';
-            editMenuItem.action = 'editSpace';
+            var editMenuItem = new Ext.menu.Item({
+                text: 'Edit',
+                action: 'editSpace'
+            });
 
             super([ openMenuItem, editMenuItem]);
         }

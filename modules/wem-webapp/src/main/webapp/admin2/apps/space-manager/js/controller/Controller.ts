@@ -36,7 +36,7 @@ Ext.define('Admin.controller.Controller', {
         tabs.addTab(tabItem);
     },
 
-    viewSpace: function (space) {
+    viewSpace: function (space:Ext_data_Model) {
         space = this.validateSpace(space);
 
         var me = this;
@@ -46,8 +46,8 @@ Ext.define('Admin.controller.Controller', {
         var activeTab = tabs.setActiveTab(me.generateTabId(space, true));
 
         if (!activeTab) {
-            var tabItem = new admin.ui.SpaceDetailPanel();
-
+            var id = this.generateTabId(space, false);
+            var tabItem = new admin.ui.SpaceDetailPanel(undefined, id, space).ext;
             /*    {
              id: me.generateTabId(space, false),
              xtype: 'spaceDetail',
@@ -60,7 +60,7 @@ Ext.define('Admin.controller.Controller', {
         }
     },
 
-    editSpace: function (space) {
+    editSpace: function (space:Ext_data_Model) {
         space = this.validateSpace(space);
 
         var me = this;
@@ -92,7 +92,7 @@ Ext.define('Admin.controller.Controller', {
         });
     },
 
-    deleteSpace: function (space) {
+    deleteSpace: function (space:Ext_data_Model) {
         space = this.validateSpace(space);
         this.showDeleteSpaceWindow([].concat(space));
     },
@@ -103,7 +103,7 @@ Ext.define('Admin.controller.Controller', {
         win.doShow();
     },
 
-    validateSpace: function (space) {
+    validateSpace: function (space:Ext_data_Model) {
         if (!space) {
             var showPanel = this.getSpaceTreeGridPanel();
             return showPanel.getSelection()[0];
@@ -122,7 +122,7 @@ Ext.define('Admin.controller.Controller', {
         var buttons = Ext.ComponentQuery.query('button[action=viewSpace], ' + 'button[action=editSpace], ' +
                                                'button[action=deleteSpace]', toolbar);
 
-        Ext.Array.each(buttons, function (button) {
+        Ext.Array.each(buttons, function (button:Ext_button_Button, index, all) {
             button.setDisabled(!enable);
         });
     },

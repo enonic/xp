@@ -205,7 +205,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
     onHeaderClick: function (headerCt, header, e) {
         if (header.isCheckerHd) {
             e.stopEvent();
-            var isChecked = header.el.hasCls(Ext.baseCSSPrefix + 'grid-hd-checker-on');
+            var isChecked = header.el.hasCls('x-grid-hd-checker-on');
             if (isChecked) {
                 this.clearSelection();
             } else {

@@ -1,7 +1,9 @@
 module admin.ui {
 
     export class TopBar {
-        ext;
+
+        ext:Ext_toolbar_Toolbar;
+
         private startButton:any; // Ext.button.Button
         private homeButton:any; // Ext.button.Button
         private leftContainer:any; // Ext.container.Container
@@ -13,14 +15,15 @@ module admin.ui {
 
 
         constructor(appName:string, tabPanel?:any) {
-            var tb = new Ext.toolbar.Toolbar({});
-            this.ext = tb;
-            tb.itemId = 'topBar';
-            tb.buttonAlign = 'center';
-            tb.addCls('admin-topbar-panel')
-            tb.dock = 'top';
-            tb.plain = true;
-            tb.border = false;
+            this.ext = new Ext.toolbar.Toolbar({
+                itemId: 'topBar',
+                buttonAlign: 'center',
+                cls: 'admin-topbar-panel',
+                dock: 'top',
+                plain: true,
+                border: false
+            });
+
             this.appName = appName;
             this.tabPanel = tabPanel;
 
@@ -219,14 +222,14 @@ module admin.ui {
         /* For 18/4 demo */
         private getApplicationId():string {
             var urlParamsString = document.URL.split('?'),
-                urlParams = Ext.urlDecode(urlParamsString[urlParamsString.length - 1]);
+                urlParams:{appId?:string;} = Ext.Object.fromQueryString(urlParamsString[urlParamsString.length - 1]);
 
             return urlParams.appId ? urlParams.appId.split('#')[0] : null;
         }
 
         private getMenuItemIcon(card):string {
             var icon;
-            if (card.data && card.data instanceof Ext.data.Model) {
+            if (card.data && card.data instanceof <any> Ext.data.Model) {
                 icon = card.data.get('iconUrl') || card.data.get('image_url');
             }
             return icon;
@@ -234,7 +237,7 @@ module admin.ui {
 
         private getMenuItemDescription(card):string {
             var desc;
-            if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+            if (!card.isNew && card.data && card.data instanceof <any> Ext.data.Model) {
                 desc = card.data.get('path') || card.data.get('qualifiedName') || card.data.get('displayName');
             }
             if (!desc) {
@@ -246,7 +249,7 @@ module admin.ui {
 
         private getMenuItemDisplayName(card):string {
             var desc;
-            if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+            if (!card.isNew && card.data && card.data instanceof <any> Ext.data.Model) {
                 desc = card.data.get('displayName') || card.data.get('name');
             }
             if (!desc) {

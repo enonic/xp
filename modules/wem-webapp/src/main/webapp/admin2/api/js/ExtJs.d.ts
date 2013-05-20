@@ -14,6 +14,8 @@ interface Html_dom_Element {
     title: string;
     className: string;
     value: string;
+    parentElement: Html_dom_Element;
+    children: Html_dom_Element[];
 
     hasAttribute(name:string):bool;
     getAttribute(name:string):string;
@@ -213,7 +215,10 @@ interface IExt {
 
     getOrientation(): string;
 
-    getScrollbarSize(force?:bool): Object;
+    getScrollbarSize(force?:bool): {
+        width: number;
+        height: number;
+    };
 
     getStore(store:string): Ext_data_Store;
     getStore(store:Object): Ext_data_Store;
@@ -343,6 +348,9 @@ interface Ext_Packages extends IExt {
     Array: Ext_Array;
     String: Ext_String;
     Function: Ext_Function;
+    Object: Ext_Object;
+
+    Img: Ext_Img;
     Msg: Ext_window_MessageBox;
     MessageBox: Ext_window_MessageBox;
 
@@ -401,7 +409,10 @@ interface Ext_Packages extends IExt {
     };
     form: {
         field: {
+            VTypes: Ext_form_field_VTypes;
             Base: Ext_form_field_Base;
+            Text: Ext_form_field_Text;
+            Display: Ext_form_field_Display;
         };
         Panel: Ext_form_Panel;
     };
@@ -423,8 +434,15 @@ interface Ext_Packages extends IExt {
         };
         Layout: Ext_layout_Layout;
     };
+    menu: {
+        Menu: Ext_menu_Menu;
+        Item: Ext_menu_Item;
+    };
     panel: {
         Panel: Ext_panel_Panel;
+    };
+    tab: {
+        Panel: Ext_tab_Panel;
     };
     toolbar: {
         Toolbar: Ext_toolbar_Toolbar;
@@ -599,7 +617,7 @@ interface Ext_dom_AbstractElement extends Ext_Base {
         height: number;
     };
 
-    getWidth(contentWidth:bool) : number;
+    getWidth(contentWidth?:bool) : number;
 
     getX(el:Object): number;
 
@@ -1290,6 +1308,35 @@ interface Ext_Function {
 
 
 /**
+ *      A collection of useful static methods to deal with objects.
+ */
+interface Ext_Object {
+
+    chain(object:Object): Object;
+
+    each(object:Object, fn:Function, scope?:Object): void;
+
+    fromQueryString(queryString:string, recursive?:bool): Object;
+
+    getKey(object:Object, value:any): string;
+
+    getKeys(object:Object): string[];
+
+    getSize(object:Object): number;
+
+    getValues(object:Object): any[];
+
+    merge(destination:Object, object:Object): Object;
+
+    toQueryObjects(name:string, value:string, recursive?:bool): Object[];
+    toQueryObjects(name:string, value:string[], recursive?:bool): Object[];
+
+    toQueryString(object:Object, recursive?:bool): string;
+
+}
+
+
+/**
  *      Represents an HTML fragment template. Templates may be precompiled for greater performance.
  */
 interface Ext_Template extends Ext_Base {
@@ -1538,6 +1585,18 @@ interface Ext_Component extends Ext_AbstractComponent, Ext_util_Floating {
 
 
 /**
+ *      Simple helper class for easily creating image components. This renders an image tag to the DOM with the configured src.
+ */
+interface Ext_Img extends Ext_Component {
+
+    new(config?:Object): Ext_Img;
+
+    setSrc(src:string): void;
+
+}
+
+
+/**
  *      Provides searching of Components within Ext.ComponentManager (globally) or a specific
  *      Ext.container.Container on the document with a similar syntax to a CSS selector.
  */
@@ -1730,6 +1789,73 @@ interface Ext_LoadMask extends Ext_Component {
 }
 
 
+/*      Menu package        */
+
+
+/**
+ *      A menu object. This is the container to which you may add menu items.
+ */
+interface Ext_menu_Menu extends Ext_panel_Panel {
+
+    isMenu: Boolean;
+
+    parentMenu: Ext_menu_Menu;
+
+
+    new(config?:Object): Ext_menu_Menu;
+
+
+    canActivateItem(item:Object): bool;
+
+    deactivateActiveItem(andBlurFocusedItem:Object): void;
+
+    getBubbleTarget(): Ext_container_Container;
+
+    hide(animateTarget?:string, callback?:Function, scope?:Object): Ext_Component;
+    hide(animateTarget?:Ext_dom_Element, callback?:Function, scope?:Object): Ext_Component;
+    hide(animateTarget?:Ext_Component, callback?:Function, scope?:Object): Ext_Component;
+
+    show(animateTarget?:string, callback?:Function, scope?:Object): Ext_Component;
+    show(animateTarget?:Ext_dom_Element, callback?:Function, scope?:Object): Ext_Component;
+    show(animateTarget?:Ext_Component, callback?:Function, scope?:Object): Ext_Component;
+
+    showBy(component:Ext_dom_Element, position?:string, offsets?:number[]): Ext_Component;
+    showBy(component:Ext_Component, position?:string, offsets?:number[]): Ext_Component;
+
+}
+
+
+/**
+ *      A base class for all menu items that require menu-related functionality such as click handling, sub-menus, icons, etc.
+ */
+interface Ext_menu_Item extends Ext_Component {
+
+    activated: bool;
+
+    maskOnDisable: bool;
+
+    menu: Ext_menu_Menu;
+
+    parentMenu: Ext_menu_Menu;
+
+
+    setHandler(fn:Function, scope?:Object): void;
+
+    setIcon(icon:string): void;
+
+    setIconCls(iconCls:string): void;
+
+    setMenu(menu:Ext_menu_Menu, destroyMenu?:bool): void;
+    setMenu(menu:Object, destroyMenu?:bool): void;
+
+    setText(text:string): void;
+
+    setTooltip(tooltip:string): Ext_menu_Item;
+    setTooltip(tooltip:Object): Ext_menu_Item;
+
+}
+
+
 /*      Button package      */
 
 
@@ -1795,10 +1921,10 @@ interface Ext_container_AbstractContainer extends Ext_Component {
 
     items: Ext_util_AbstractMixedCollection;
 
-    add(component:Ext_Component): Ext_Component;
     add(component:Ext_Component[]): Ext_Component[];
-    add(component:Object): Ext_Component;
+    add(...component:Ext_Component[]): Ext_Component[];
     add(component:Object[]): Ext_Component[];
+    add(...component:Object[]): Ext_Component[];
 
     cascade(fn:Function, scope?:Object, args?:any[]): Ext_container_Container;
 
@@ -2172,7 +2298,7 @@ interface Ext_panel_Tool extends Ext_Component {
  */
 interface Ext_window_Window extends Ext_panel_Panel {
 
-    dd: Ext_util_ComponentDragger;
+    dd: Ext_dd_DragSource;      //TODO: Ext_util_ComponentDragger throws exception
 
     isWindow: bool;
 
@@ -2565,6 +2691,89 @@ interface Ext_form_field_Field extends Ext_Base {
     setValue(value) : Ext_form_field_Field;
 
     validate(): bool;
+
+}
+
+
+interface Ext_form_field_Text extends Ext_form_field_Base {
+
+
+    new(config?:Object): Ext_form_field_Text;
+
+
+    applyState(state:Object): void;
+
+    autoSize(): void;
+
+    getErrors(value:Object): string[];
+
+    getRawValue(): string;
+
+    getState(): Object;
+
+    getSubTplData(): Object;
+
+    processRawValue(value:string): string;
+
+    reset(): void;
+
+    selectText(start?:number, end?:number): void;
+
+    setValue(value:Object): Ext_form_field_Text;
+
+}
+
+
+/**
+ *      A display-only text field which is not validated and not submitted.
+ */
+interface Ext_form_field_Display extends Ext_form_field_Base {
+
+    new(config?:Object): Ext_form_field_Display;
+
+
+    getRawValue(): string;
+
+    getSubTplData(): Object;
+
+    isDirty(): bool;
+
+    isValid(): bool;
+
+    setRawValue(value:Object): Object;
+
+    validate(): bool;
+
+}
+
+
+/**
+ *      This is a singleton object which contains a set of commonly used field validation functions
+ *      and provides a mechanism for creating reusable custom field validations.
+ */
+interface Ext_form_field_VTypes extends Ext_Base {
+
+    alphaMask: RegExp;
+
+    alphaText: string;
+
+    alphanumMask: RegExp;
+
+    alphanumText: string;
+
+    emailMask: RegExp;
+
+    emailText: string;
+
+    urlText: string;
+
+    alpha(value:Object): bool;
+
+    alphanum(value:Object): bool;
+
+    email(value:Object): bool;
+
+    url(value:Object): bool;
 
 }
 
@@ -4129,9 +4338,9 @@ interface Ext_direct_RemotingProvider extends Ext_direct_JsonProvider {
  */
 interface Ext_direct_Event {
 
-    new( config?:Object ): Ext_direct_Event;
+    new(config?:Object): Ext_direct_Event;
 
-    getData( ): Object;
+    getData(): Object;
 
 }
 
@@ -4481,8 +4690,6 @@ interface Ext_dd_DDTarget extends Ext_dd_DragDrop {
 //TODO: required by the above but are not so important and therefore not defined yet
 
 interface Ext_Version {}
-
-interface Ext_menu_Menu extends Ext_Base {}
 
 interface Ext_data_NodeInterface {}
 interface Ext_data_reader_Reader {}

@@ -11,7 +11,6 @@ module admin.ui {
             this.text1 = text1;
             this.text2 = text2;
             var tbmi = new Ext.container.Container({
-                itemId: 'topBarMenuItem',
                 cls: 'admin-topbar-menu-item',
                 activeCls: 'active',
                 isMenuItem: true,
@@ -33,51 +32,56 @@ module admin.ui {
             });
             this.ext = tbmi;
 
-            tbmi.onClick = (e) => {
-                this.onClick(e);
-            };
-            tbmi.activate = () => {
-                console.log('activate');
-                this.activate();
-            };
-            tbmi.deactivate = () => {
-                console.log('deactivate');
-                this.deactivate();
-            };
+            Ext.override(tbmi, {
+                onClick: (e) => {
+                    return this.onClick(e);
+                },
+                activate: () => {
+                    console.log('activate');
+                    this.activate();
+                },
+                deactivate: () => {
+                    console.log('deactivate');
+                    this.deactivate();
+                }
+            });
 
-            tbmi.enableBubble(['closeMenuItem']);
+            tbmi.enableBubble('closeMenuItem');
             this.initComponent(tbmi);
         }
 
         private initComponent(topBarMenuItem):void {
             var items = [];
             if (topBarMenuItem.iconCls || topBarMenuItem.iconSrc) {
-                var image = new Ext.Img();
-                image.width = 32;
-                image.height = 32;
-                image.margin = '0 12px 0 0';
-                image.cls = topBarMenuItem.iconCls;
-                image.src = topBarMenuItem.iconSrc;
+                var image = new Ext.Img({
+                    width: 32,
+                    height: 32,
+                    margin: '0 12px 0 0',
+                    cls: topBarMenuItem.iconCls,
+                    src: topBarMenuItem.iconSrc
+                });
                 items.push(image);
             }
             if (this.text1 || this.text2) {
-                var titleContainer = new Ext.Component({});
-                titleContainer.flex = 1;
-                titleContainer.itemId = 'titleContainer';
-                titleContainer.styleHtmlContent = true;
-                titleContainer.tpl = '<strong>{text1}</strong><tpl if="text2"><br/><em>{text2}</em></tpl>';
-                titleContainer.data = {
-                    text1: this.text1,
-                    text2: this.text2
-                };
+                var titleContainer = new Ext.Component({
+                    flex: 1,
+                    itemId: 'titleContainer',
+                    styleHtmlContent: true,
+                    tpl: '<strong>{text1}</strong><tpl if="text2"><br/><em>{text2}</em></tpl>',
+                    data: {
+                        text1: this.text1,
+                        text2: this.text2
+                    }
+                });
                 items.push(titleContainer);
                 this.titleContainer = titleContainer;
             }
             if (topBarMenuItem.closable !== false) {
-                var closeButton = new Ext.Component({});
-                closeButton.autoEl = 'a';
-                closeButton.cls = 'close-button icon-remove icon-large';
-                closeButton.margins = '0 0 0 12px';
+                var closeButton = new Ext.Component({
+                    autoEl: 'a',
+                    cls: 'close-button icon-remove icon-large',
+                    margins: '0 0 0 12px'
+                });
                 closeButton.on('afterrender', (cmp) => {
                     cmp.el.on('click', () => {
                         this.deactivate();

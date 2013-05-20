@@ -21,11 +21,11 @@ Ext.define('Admin.lib.RemoteService', {
                 "schema_list", "schema_tree", "system_getSystemInfo", "mixin_get", "mixin_createOrUpdate", "mixin_delete",
                 "relationshipType_get", "relationshipType_createOrUpdate", "relationshipType_delete", "space_list", "space_get",
                 "space_delete", "space_createOrUpdate", "binary_create"
-            ]
+            ],
+            "enableBuffer": 20
         };
 
         this.provider = Ext.Direct.addProvider(config);
-        Ext.direct.RemotingProvider.enableBuffer = 20;
     },
 
     account_find: function (params, callback) {

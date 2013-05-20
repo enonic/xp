@@ -1,4 +1,4 @@
-//  <reference path='../../../api/js/ExtJs.d.ts' />
+///<reference path='../../../api/js/ExtJs.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
 ///<reference path='lib/JsonRpcProvider.ts' />
@@ -98,37 +98,43 @@ Ext.application({
 
         var detail = components.detailPanel = new admin.ui.SpaceDetailPanel('south');
 
-        var center = new Ext.container.Container();
-        center.region = 'center';
-        center.layout = 'border';
+        var center = new Ext.container.Container({
+            region: 'center',
+            layout: 'border'
+        });
 
         center.add(detail.ext);
         center.add(grid.ext);
         center.add(toolbar.ext);
 
-        var west = new admin.ui.FilterPanel().getExtEl();
-        west.region = 'west';
-        west.width = 200;
+        var west = new admin.ui.FilterPanel({
+            region: 'west',
+            width: 200
+        }).getExtEl();
 
-        var p = new Ext.panel.Panel();
-        p.id = 'tab-browse';
-        p.title = 'Browse';
-        p.closable = false;
-        p.border = false;
-        p.layout = 'border';
-        p.tabConfig = { hidden: true };
+        var p = new Ext.panel.Panel({
+            id: 'tab-browse',
+            title: 'Browse',
+            closable: false,
+            border: false,
+            layout: 'border',
+            tabConfig: { hidden: true }
+        });
 
         p.add(center);
         p.add(west);
 
-        var tabPanel = components.tabPanel =
-                       new admin.ui.TabPanel({appName: 'Space Admin', appIconCls: 'icon-metro-space-admin-24'}).getExtEl();
+        var tabPanel = components.tabPanel = new admin.ui.TabPanel({
+            appName: 'Space Admin',
+            appIconCls: 'icon-metro-space-admin-24'
+        }).getExtEl();
 
         tabPanel.add(p);
 
-        var wp = new Ext.container.Viewport();
-        wp.layout = 'fit';
-        wp.cls = 'admin-viewport';
+        var wp = new Ext.container.Viewport({
+            layout: 'fit',
+            cls: 'admin-viewport'
+        });
 
         wp.add(tabPanel);
 
