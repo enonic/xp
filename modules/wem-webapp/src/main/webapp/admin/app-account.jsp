@@ -39,10 +39,6 @@
 
   </script>
 
-  <!-- Templates -->
-
-  <script type="text/javascript" src="resources/app/view/XTemplates.js"></script>
-
   <!-- Third party plugins -->
 
   <script type="text/javascript" src="resources/lib/plupload/js/plupload.full.js"></script>

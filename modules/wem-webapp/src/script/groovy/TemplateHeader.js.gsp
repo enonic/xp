@@ -1,3 +1,0 @@
-if ( !Templates ) {
-    var Templates = {};
-}

@@ -54,6 +54,22 @@ Ext.define('Admin.view.TopBar', {
                 me.homeButton
             ]
         });
+
+        var Templates_common_userPopUp =
+        		'<div class="title">User</div>' +
+        		'<div class="user-name">{userName}</div>' +
+        		'<div class="content">' +
+        		    '<div class="column"><img src="{photoUrl}"/>' +
+        		        '<button class="x-btn-red-small">Log Out</button>' +
+        		    '</div>' +
+        		    '<div class="column">' +
+        		        '<span>{qName}</span>' +
+        		        '<a href="#">View Profile</a>' +
+        		        '<a href="#">Edit Profile</a>' +
+        		        '<a href="#">Change User</a>' +
+        		    '</div>' +
+        		'</div>';
+
         this.rightContainer = Ext.create('Ext.Container', {
             flex: 5,
             layout: {
@@ -65,7 +81,7 @@ Ext.define('Admin.view.TopBar', {
                 {
                     xtype: 'adminImageButton',
                     icon: Admin.lib.UriHelper.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
-                    popupTpl: Templates.common.userPopUp,
+                    popupTpl: Templates_common_userPopUp,
                     popupData: {
                         userName: "Thomas Lund Sigdestad",
                         photoUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),

@@ -12,7 +12,42 @@ Ext.define('Admin.view.homescreen.Homescreen', {
 
     autoEl: {
         tag: 'div',
-        html: Templates.homescreen.mainContainerHtml
+        html:
+            '<div id="admin-home-branding">' +
+                '<div id="admin-home-installation-info"><!-- --></div>' +
+                '<div id="admin-home-version-info"><!-- --></div>' +
+            '</div>' +
+            '<div id="admin-home-center">' +
+                '<div id="admin-home-left-column">' +
+                    '<div data-screen="login" style="display: none">' +
+                    '</div>' +
+                    '<div data-screen="app-selector" style="display: none">' +
+                        '<div id="admin-home-app-selector">' +
+                            '<div id="admin-home-app-selector-search-input-container"></div>' +
+                            '<div id="admin-home-app-tiles-placeholder">' +
+                                '<!-- -->' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div id="admin-home-right-column">' +
+                    '<div data-screen="login" style="display: none">' +
+                        '<div id="admin-home-login-form">' +
+                            '<div id="admin-home-login-form-container"></div>' +
+                            '<div id="admin-home-login-licensed-to"><!-- --></div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div data-screen="app-selector" style="display: none">' +
+                        '<div id="admin-home-app-info-container">' +
+                            '<h3 id="admin-home-app-info-name"><!-- --></h3>' +
+                            '<div id="admin-home-app-info-description"><!-- --></div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div id="admin-home-links-container">' +
+                        '<a href="http://www.enonic.com/community">Community</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.enonic.com/docs">Documentation</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://enonic.com/en/home/enonic-cms">About</a>' +
+                    '</div>' +
+                '</div>' +
+            '</div>'
     },
     floating: true,
     hideMode: 'display',

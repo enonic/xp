@@ -57,7 +57,23 @@ Ext.define('App.view.LoggedInUserButton', {
     },
 
     createPopupTemplate: function () {
-        return new Ext.XTemplate(Templates.main.loggedInUserButtonPopup);
+        var Templates_main_loggedInUserButtonPopup =
+    		'<div class="admin-logged-in-user-popup-left">' +
+    		    '<img src="resources/images/x-user.png"/>' +
+    		'</div>' +
+    		'<div class="admin-logged-in-user-popup-right">' +
+    		    '<h1>{displayName}</h1>' +
+    		    '<p>{qualifiedName}</p>' +
+    		    '<p>{email}</p>' +
+    		    '<p>&nbsp;</p>' +
+    		    '<p><form action="main.html"> Change user: <input id="main-change-user-input" name="qname" type="text"/><input type="submit" style="display:none" /></form></p>' +
+    		    '<p>&nbsp;</p>' +
+    		    '<p><span class="link">Edit Account</span></p>' +
+    		    '<p><span class="link">Change Password</span></p>' +
+    		    '<p class="admin-logged-in-user-popup-log-out" style="float:right"><a href="index.html">Log Out</a></p>' +
+    		'</div>';
+
+        return new Ext.XTemplate( Templates_main_loggedInUserButtonPopup );
     },
 
     updatePopupPosition: function () {

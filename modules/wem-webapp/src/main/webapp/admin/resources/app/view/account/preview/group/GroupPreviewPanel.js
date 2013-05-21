@@ -17,6 +17,86 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
     showToolbar: true,
 
     initComponent: function () {
+        var Templates_account_groupPreviewCommonInfo =
+    		'<tpl if="type===\'role\'">' +
+    		    '<div class="container">' +
+    		        '<table>' +
+    		            '<thead>' +
+    		            '<tr>' +
+    		                '<th>Description</th>' +
+    		            '</tr>' +
+    		            '</thead>' +
+    		            '<tbody>' +
+    		            '<tr>' +
+    		                '<td>{staticDesc}</td>' +
+    		            '</tr>' +
+    		            '</tbody>' +
+    		        '</table>' +
+    		    '</div>' +
+    		'</tpl>' +
+    		'<tpl if="type===\'group\'">' +
+    		    '<div class="container">' +
+    		        '<table>' +
+    		            '<thead>' +
+    		            '<tr>' +
+    		                '<th colspan="2">Properties</th>' +
+    		            '</tr>' +
+    		            '</thead>' +
+    		            '<tbody>' +
+    		            '<tr>' +
+    		                '<td class="label">Public:</td>' +
+    		                '<td>{[values.public ? "yes" : "no"]}</td>' +
+    		            '</tr>' +
+    		            '<tr>' +
+    		                '<td class="label">Description:</td>' +
+    		                '<td>{description}</td>' +
+    		            '</tr>' +
+    		            '</tbody>' +
+    		        '</table>' +
+    		    '</div>' +
+    		'</tpl>' +
+    		'<div class="container">' +
+    		    '<table>' +
+    		        '<thead>' +
+    		        '<tr>' +
+    		            '<th colspan="2">Statistics</th>' +
+    		        '</tr>' +
+    		        '</thead>' +
+    		        '<tbody>' +
+    		        '<tr>' +
+    		            '<td class="label">Member count:</td>' +
+    		            '<td>{membersCount}</td>' +
+    		        '</tr>' +
+    		        '<tr>' +
+    		            '<td class="label">Last updated:</td>' +
+    		            '<td>{lastModified}</td>' +
+    		        '</tr>' +
+    		        '</tbody>' +
+    		    '</table>' +
+    		'</div>';
+
+        var Templates_account_userPreviewHeader =
+        		'<div class="container">' +
+        		    '<h1>{displayName}</h1>' +
+        		    '<div>' +
+        		        '<span>{userStore}\\\\{name}</span><!--<span class="email">&nbsp;{email}</span>-->' +
+        		    '</div>' +
+        		'</div>';
+
+        var Templates_account_userPreviewMemberships =
+    		'<fieldset class="x-fieldset x-fieldset-default admin-memberships-container">' +
+    		    '<legend class="x-fieldset-header x-fieldset-header-default">' +
+    		        '<div class="x-component x-fieldset-header-text x-component-default">Graph</div>' +
+    		    '</legend>' +
+    		'</fieldset>';
+
+        var Templates_account_userPreviewPhoto =
+    		'<div class="admin-user-photo west admin-left">' +
+    		    '<div class="photo-placeholder">' +
+    		        '<img src="{[values.image_url]}?size=100" alt="{name}"/>' +
+    		    '</div>' +
+    		'</div>';
+
         var me = this;
         if (this.data && this.data.type === 'role') {
             this.data.staticDesc = this.getRoleDescription(this.data.name);
@@ -36,7 +116,7 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
                     {
                         width: 100,
                         itemId: 'previewPhoto',
-                        tpl: Templates.account.userPreviewPhoto,
+                        tpl: Templates_account_userPreviewPhoto,
                         data: this.data,
                         margin: 5
                     },
@@ -51,7 +131,7 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
                             {
                                 height: 70,
                                 itemId: 'previewHeader',
-                                tpl: Templates.account.userPreviewHeader,
+                                tpl: Templates_account_userPreviewHeader,
                                 data: this.data
                             },
                             {
@@ -79,7 +159,7 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
                                         },
                                         items: [
                                             {
-                                                tpl: Templates.account.userPreviewMemberships
+                                                tpl: Templates_account_userPreviewMemberships
                                             },
                                             {
                                                 xtype: 'membershipsGraphPanel',
@@ -96,7 +176,7 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
                         margin: 5,
                         itemId: 'previewInfo',
                         cls: 'east',
-                        tpl: Templates.account.groupPreviewCommonInfo,
+                        tpl: Templates_account_groupPreviewCommonInfo,
                         data: this.data
                     }
                 ]

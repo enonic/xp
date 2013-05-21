@@ -11,7 +11,19 @@ Ext.define('Admin.view.account.wizard.user.UserStoreListPanel', {
     overItemCls: 'x-item-over',
     emptyText: 'No items available',
     autoScroll: true,
-    tpl: Templates.account.userstoreListItem,
+    tpl:
+    		'<tpl for=".">' +
+    		    '<div class="admin-data-view-row">' +
+    		        '<div class="admin-data-view-thumbnail">' +
+    		            '<img src="{[values.icon || \'resources/images/icons/32x32/server_id_card.png\']}"/>' +
+    		        '</div>' +
+    		        '<div class="admin-data-view-description">' +
+    		            '<h6>{name}</h6>' +
+    		            '<p>userstores\\\\{name}</p>' +
+    		        '</div>' +
+    		        '<div class="x-clear"></div>' +
+    		    '</div>' +
+    		'</tpl>',
 
     initComponent: function () {
         this.callParent(arguments);
