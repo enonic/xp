@@ -16,7 +16,6 @@
   <script type="text/javascript" src="resources/lib/ext/ext-all-debug.js"></script>
 
   <!-- Configuration -->
-  <script type="text/javascript" src="resources/app/view/XTemplates.js"></script>
   <script type="text/javascript" src="global.config.js"></script>
   <script type="text/javascript">
     Ext.Loader.setConfig({

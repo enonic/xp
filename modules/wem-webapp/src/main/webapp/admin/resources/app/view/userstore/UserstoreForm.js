@@ -15,7 +15,11 @@ Ext.define('Admin.view.userstore.UserstoreForm', {
             cls: 'admin-userstore-info',
             styleHtmlContent: true,
             itemId: 'headerPanel',
-            tpl: new Ext.XTemplate(Templates.userstore.editFormHeader),
+            tpl: new Ext.XTemplate(
+            		'<div class="admin-userstore-info">' +
+            		    '<h1>{name}</h1>' +
+            		    '<em>{connectorName}</em>' +
+            		'</div>'),
             border: false,
             bodyPadding: '0 0 10 0',
             height: 90,

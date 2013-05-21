@@ -20,6 +20,81 @@ Ext.define('Admin.view.userstore.preview.UserstorePreviewPanel', {
     },
 
     createUserstoreSelection: function () {
+        var Templates_userstore_previewCommonInfo =
+        		'<div class="container">' +
+        		    '<table>' +
+        		        '<thead>' +
+        		        '<tr>' +
+        		            '<th colspan="2">General</th>' +
+        		        '</tr>' +
+        		        '</thead>' +
+        		        '<tbody>' +
+        		        '<tr>' +
+        		            '<td class="label">Created:</td>' +
+        		            '<td>{created}</td>' +
+        		        '</tr>' +
+        		        '<tr>' +
+        		            '<td class="label">Modified:</td>' +
+        		            '<td>{lastModified}</td>' +
+        		        '</tr>' +
+        		        '</tbody>' +
+        		    '</table>' +
+        		'</div>' +
+        		'<div class="container">' +
+        		    '<table>' +
+        		        '<thead>' +
+        		        '<tr>' +
+        		            '<th colspan="2">Statistics</th>' +
+        		        '</tr>' +
+        		        '</thead>' +
+        		        '<tbody>' +
+        		        '<tr>' +
+        		            '<td class="label">User count:</td>' +
+        		            '<td>{userCount}</td>' +
+        		        '</tr>' +
+        		        '<tr>' +
+        		            '<td class="label">Group count:</td>' +
+        		            '<td>{groupCount}</td>' +
+        		        '</tr>' +
+        		        '</tbody>' +
+        		    '</table>' +
+        		'</div>' +
+        		'<div class="container">' +
+        		    '<table>' +
+        		        '<thead>' +
+        		        '<tr>' +
+        		            '<th colspan="2">Connector</th>' +
+        		        '</tr>' +
+        		        '</thead>' +
+        		        '<tbody>' +
+        		        '<tr>' +
+        		            '<td class="label">Name:</td>' +
+        		            '<td>{connectorName}<tpl if="connectorName == null">Local</tpl></td>' +
+        		        '</tr>' +
+        		        '<tr>' +
+        		            '<td class="label">Plugin:</td>' +
+        		            '<td>{plugin}</td>' +
+        		        '</tr>' +
+        		        '<tr>' +
+        		            '<td class="label">User Policy:</td>' +
+        		            '<td>{userPolicy}</td>' +
+        		        '</tr>' +
+        		        '<tr>' +
+        		            '<td class="label">Group Policy:</td>' +
+        		            '<td>{groupPolicy}</td>' +
+        		        '</tr>' +
+        		        '</tbody>' +
+        		    '</table>' +
+        		'</div>';
+
+        var Templates_userstore_previewHeader =
+        		'<h1>{name}' +
+        		    '<tpl if="defaultStore">(default)</tpl>' +
+        		'</h1><span>{[values.connectorName==null ? "Local" : values.connectorName ]}</span>';
+
+        var Templates_userstore_previewPhoto =
+        		'<img src="resources/images/icons/128x128/userstore.png" alt="{name}"/>';
+
         return {
             xtype: 'container',
             itemId: 'userstoreDetails',
@@ -36,7 +111,7 @@ Ext.define('Admin.view.userstore.preview.UserstorePreviewPanel', {
                     width: 100,
                     cls: 'west',
                     itemId: 'previewPhoto',
-                    tpl: Templates.userstore.previewPhoto,
+                    tpl: Templates_userstore_previewPhoto,
                     data: this.data,
                     margin: 5
                 },
@@ -53,7 +128,7 @@ Ext.define('Admin.view.userstore.preview.UserstorePreviewPanel', {
                             cls: 'north',
                             itemId: 'previewHeader',
                             padding: '5 5 15',
-                            tpl: Templates.userstore.previewHeader,
+                            tpl: Templates_userstore_previewHeader,
                             data: this.data
                         },
                         {
@@ -86,7 +161,7 @@ Ext.define('Admin.view.userstore.preview.UserstorePreviewPanel', {
                     margin: 5,
                     itemId: 'previewInfo',
                     cls: 'east',
-                    tpl: Templates.userstore.previewCommonInfo,
+                    tpl: Templates_userstore_previewCommonInfo,
                     data: this.data
                 }
             ]
@@ -94,7 +169,8 @@ Ext.define('Admin.view.userstore.preview.UserstorePreviewPanel', {
     },
 
     createNoneSelection: function () {
-        var tpl = new Ext.XTemplate(Templates.userstore.noUserstoreSelected);
+        var Templates_userstore_noUserstoreSelected = '<div>No userstore selected</div>';
+        var tpl = new Ext.XTemplate(Templates_userstore_noUserstoreSelected);
         var panel = {
             xtype: 'panel',
             itemId: 'noneSelectedPanel',

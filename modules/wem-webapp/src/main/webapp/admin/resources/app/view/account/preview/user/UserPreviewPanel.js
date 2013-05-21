@@ -18,6 +18,183 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
     showToolbar: true,
 
     initComponent: function () {
+        var Templates_account_userPreviewCommonInfo =
+        		'<div class="container">' +
+        		    '<table>' +
+        		        '<thead>' +
+        		        '<tr>' +
+        		            '<th>Login Info</th>' +
+        		        '</tr>' +
+        		        '</thead>' +
+        		        '<tbody>' +
+        		        '<tr>' +
+        		            '<td class="label">User Name:</td>' +
+        		            '<td>{name}</td>' +
+        		        '</tr>' +
+        		        '<tr>' +
+        		            '<td class="label">E-mail:</td>' +
+        		            '<td>{email}</td>' +
+        		        '</tr>' +
+        		        '</tbody>' +
+        		    '</table>' +
+        		'</div>' +
+        		'<div class="container admin-groups-boxselect">' +
+        		    '<table>' +
+        		        '<thead>' +
+        		        '<tr>' +
+        		            '<th>Roles</th>' +
+        		        '</tr>' +
+        		        '</thead>' +
+        		        '<tbody>' +
+        		        '<tpl for="groups">' +
+        		            '<tpl if="type == \'role\'">' +
+        		                '<tr>' +
+        		                    '<td>' +
+        		                        '<li class="x-boxselect-item admin-{type}-item">' +
+        		                            '<div class="x-boxselect-item-text">{qualifiedName}</div>' +
+        		                        '</li>' +
+        		                    '</td>' +
+        		                '</tr>' +
+        		            '</tpl>' +
+        		        '</tpl>' +
+        		        '</tbody>' +
+        		    '</table>' +
+        		'</div>' +
+        		'<div class="container">' +
+        		    '<table>' +
+        		        '<thead>' +
+        		        '<tr>' +
+        		            '<th colspan="2">Settings</th>' +
+        		        '</tr>' +
+        		        '</thead>' +
+        		        '<tbody>' +
+        		        '<tr>' +
+        		            '<td class="label">Locale:</td>' +
+        		            '<td>{locale}</td>' +
+        		        '</tr>' +
+        		        '<tr>' +
+        		            '<td class="label">Country:</td>' +
+        		            '<td>{country}</td>' +
+        		        '</tr>' +
+        		        '<tr>' +
+        		            '<td class="label">TimeZone:</td>' +
+        		            '<td>{timezone}</td>' +
+        		        '</tr>' +
+        		        '</tbody>' +
+        		    '</table>' +
+        		'</div>' +
+        		'<div class="container">' +
+        		    '<table>' +
+        		        '<thead>' +
+        		        '<tr>' +
+        		            '<th colspan="2">Statistics</th>' +
+        		        '</tr>' +
+        		        '</thead>' +
+        		        '<tbody>' +
+        		        '<tr>' +
+        		            '<td class="label">Last login:</td>' +
+        		            '<td>{lastLogged}</td>' +
+        		        '</tr>' +
+        		        '<tr>' +
+        		            '<td class="label">Created:</td>' +
+        		            '<td>{created}</td>' +
+        		        '</tr>' +
+        		        '<tr>' +
+        		            '<td class="label">Owner of:</td>' +
+        		            '<td>394</td>' +
+        		        '</tr>' +
+        		        '</tbody>' +
+        		    '</table>' +
+        		'</div>';
+
+        var Templates_account_userPreviewHeader =
+        		'<div class="container">' +
+        		    '<h1>{displayName}</h1>' +
+        		    '<div>' +
+        		        '<span>{userStore}\\\\{name}</span><!--<span class="email">&nbsp;{email}</span>-->' +
+        		    '</div>' +
+        		'</div>';
+
+        var Templates_account_userPreviewMemberships =
+    		'<fieldset class="x-fieldset x-fieldset-default admin-memberships-container">' +
+    		    '<legend class="x-fieldset-header x-fieldset-header-default">' +
+    		        '<div class="x-component x-fieldset-header-text x-component-default">Graph</div>' +
+    		    '</legend>' +
+    		'</fieldset>';
+
+        var Templates_account_userPreviewPhoto =
+    		'<div class="admin-user-photo west admin-left">' +
+    		    '<div class="photo-placeholder">' +
+    		        '<img src="{[values.image_url]}?size=100" alt="{name}"/>' +
+    		    '</div>' +
+    		'</div>';
+
+        var Templates_account_userPreviewPlaces =
+    		'<tpl if="userInfo == null || userInfo.addresses == null || userInfo.addresses.length == 0">' +
+    		    '<h2 class="message">No data</h2>' +
+    		'</tpl>' +
+    		'<tpl if="profile != null && profile.addresses != null && profile.addresses.length &gt; 0">' +
+    		    '<fieldset class="x-fieldset x-fieldset-default admin-addresses-container">' +
+    		        '<legend class="x-fieldset-header x-fieldset-header-default">' +
+    		            '<div class="x-component x-fieldset-header-text x-component-default">Addresses</div>' +
+    		        '</legend>' +
+    		        '<tpl for="profile.addresses">' +
+    		            '<div class="address">' +
+    		                '<tpl if="label != null">' +
+    		                    '<h3 class="x-fieldset-header-text">{label}</h3>' +
+    		                '</tpl>' +
+    		                '<div class="body">' +
+    		                    '<table>' +
+    		                        '<tbody>' +
+    		                        '<tr>' +
+    		                            '<td class="label">Street:</td>' +
+    		                            '<td>{street}</td>' +
+    		                        '</tr>' +
+    		                        '<tr>' +
+    		                            '<td class="label">Postal Code:</td>' +
+    		                            '<td>{postalCode}</td>' +
+    		                        '</tr>' +
+    		                        '<tr>' +
+    		                            '<td class="label">Postal Address:</td>' +
+    		                            '<td>{postalAddress}</td>' +
+    		                        '</tr>' +
+    		                        '<tr>' +
+    		                            '<td class="label">Country:</td>' +
+    		                            '<td>{country}</td>' +
+    		                        '</tr>' +
+    		                        '<tr>' +
+    		                            '<td class="label">Region:</td>' +
+    		                            '<td>{region}</td>' +
+    		                        '</tr>' +
+    		                        '</tbody>' +
+    		                    '</table>' +
+    		                '</div>' +
+    		            '</div>' +
+    		        '</tpl>' +
+    		    '</fieldset>' +
+    		'</tpl>';
+
+        var Templates_account_userPreviewProfile =
+            '<div>' +
+                '<tpl for=".">' +
+                    '<fieldset class="x-fieldset x-fieldset-default">' +
+                        '<legend class="x-fieldset-header x-fieldset-header-default">' +
+                            '<div class="x-component x-fieldset-header-text x-component-default">{title}</div>' +
+                        '</legend>' +
+                        '<table>' +
+                            '<tbody>' +
+                            '<tpl for="fields">' +
+                                '<tr>' +
+                                    '<td class="label">{title}</td>' +
+                                    '<td>{value}</td>' +
+                                '</tr>' +
+                            '</tpl>' +
+                            '</tbody>' +
+                        '</table>' +
+                    '</fieldset>' +
+                '</tpl>' +
+            '</div>';
+
         this.fieldSets = [
             {
                 title: 'Name',
@@ -64,7 +241,7 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
                     {
                         width: 100,
                         itemId: 'previewPhoto',
-                        tpl: Templates.account.userPreviewPhoto,
+                        tpl: Templates_account_userPreviewPhoto,
                         data: this.data,
                         margin: 5
                     },
@@ -79,7 +256,7 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
                             {
                                 autoHeight: true,
                                 itemId: 'previewHeader',
-                                tpl: Templates.account.userPreviewHeader
+                                tpl: Templates_account_userPreviewHeader
                             },
                             {
                                 flex: 1,
@@ -93,12 +270,12 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
                                     {
                                         title: "Profile",
                                         itemId: 'profileTab',
-                                        tpl: Templates.account.userPreviewProfile
+                                        tpl: Templates_account_userPreviewProfile
                                     },
                                     {
                                         title: "Places",
                                         itemId: 'placesTab',
-                                        tpl: Templates.account.userPreviewPlaces
+                                        tpl: Templates_account_userPreviewPlaces
                                     },
                                     {
                                         title: "Memberships",
@@ -120,7 +297,7 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
                                         },
                                         items: [
                                             {
-                                                tpl: Templates.account.userPreviewMemberships
+                                                tpl: Templates_account_userPreviewMemberships
                                             },
                                             {
                                                 xtype: 'membershipsGraphPanel',
@@ -137,7 +314,7 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
                         margin: 5,
                         itemId: 'previewInfo',
                         cls: 'east',
-                        tpl: Templates.account.userPreviewCommonInfo
+                        tpl: Templates_account_userPreviewCommonInfo
                     }
                 ]
             }

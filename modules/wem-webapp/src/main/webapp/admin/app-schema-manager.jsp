@@ -36,10 +36,6 @@
     });
   </script>
 
-  <!-- Templates -->
-
-  <script type="text/javascript" src="resources/app/view/XTemplates.js"></script>
-
   <!-- Third party plugins -->
 
   <link rel="stylesheet" type="text/css" href="resources/lib/codemirror/lib/codemirror.css">

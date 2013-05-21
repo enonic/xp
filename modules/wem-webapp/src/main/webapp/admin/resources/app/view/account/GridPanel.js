@@ -116,7 +116,16 @@ Ext.define('Admin.view.account.GridPanel', {
         var account = record.data;
         var photoUrl = account.image_url;
 
-        return Ext.String.format(Templates.account.gridPanelNameRenderer, photoUrl, value, account.name, account.userStore);
+        var Templates_account_gridPanelNameRenderer =
+    		'<div class="admin-grid-thumbnail">' +
+    		    '<img src="{0}?size=32" alt="{1}"/>' +
+    		'</div>' +
+    		'<div class="admin-grid-description">' +
+    		    '<h6>{1}</h6>' +
+    		    '<p>{3}\\{2}</p>' +
+    		'</div>';
+
+        return Ext.String.format(Templates_account_gridPanelNameRenderer, photoUrl, value, account.name, account.userStore);
     },
 
     prettyDateRenderer: function (value, p, record) {

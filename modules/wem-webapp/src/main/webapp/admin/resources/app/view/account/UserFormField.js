@@ -85,9 +85,11 @@ Ext.define('Admin.view.account.UserFormField', {
             hideMode: 'visibility'
         };
         if (me.validationResultType === 'short') {
+            var Templates_account_shortValidationResult =
+        		'<tpl if="(valid)"><img src="resources/images/icons/16x16/check.png"/></tpl>';
             var shortLabel = {
                 width: 16,
-                tpl: Templates.account.shortValidationResult
+                tpl: Templates_account_shortValidationResult
             };
             return Ext.apply(validationLabel, shortLabel);
         }

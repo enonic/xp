@@ -35,7 +35,20 @@ Ext.define('Admin.view.userstore.wizard.UserstoreWizardAdminPanel', {
             },
             listConfig: {
                 getInnerTpl: function () {
-                    return Templates.common.groupList;
+                    var Templates_common_groupList =
+                    		'<div class="clearfix">' +
+                    		    '<div class="admin-left">' +
+                    		        '<span class="{[values.type==="user" && !values.builtIn ? "icon-user" : values.type==="role" || values.builtIn ? "icon-role" : "icon-group"]} admin-list-item"></span>' +
+                    		    '</div>' +
+                    		    '<div class="admin-left">' +
+                    		        '<span>' +
+                    		            '<tpl if="type==\'user\'"> {name} ({qualifiedName})</tpl>' +
+                    		            '<tpl if="type!=\'user\'">{name} ({userStore})</tpl>' +
+                    		        '</span>' +
+                    		    '</div>' +
+                    		'</div>';
+
+                    return Templates_common_groupList;
                 }
 
             },
