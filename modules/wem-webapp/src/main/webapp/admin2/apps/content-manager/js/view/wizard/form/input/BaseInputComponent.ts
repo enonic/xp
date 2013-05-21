@@ -2,13 +2,13 @@ module admin.ui {
 
     export class BaseInputComponent {
 
-        private input:API.content.schema.content.form.Input;
+        private input:API_content_schema_content_form.Input;
 
-        constructor(input:API.content.schema.content.form.Input) {
+        constructor(input:API_content_schema_content_form.Input) {
             this.input = input;
         }
 
-        getInput():API.content.schema.content.form.Input {
+        getInput():API_content_schema_content_form.Input {
             return this.input;
         }
     }

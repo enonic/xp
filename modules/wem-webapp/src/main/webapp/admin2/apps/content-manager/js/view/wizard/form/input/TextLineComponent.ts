@@ -4,7 +4,7 @@ module admin.ui {
 
         ext;
 
-        constructor(input:API.content.schema.content.form.Input) {
+        constructor(input:API_content_schema_content_form.Input) {
             super(input);
 
             var fieldContainer = new Ext.form.FieldContainer();
