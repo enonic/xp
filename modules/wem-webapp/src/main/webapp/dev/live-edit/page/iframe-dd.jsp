@@ -166,12 +166,6 @@
                 getWindow().show();
                 $('.live-edit-component').simulate('mouseup');
             });
-            $liveedit(getIframe()[0].contentWindow).on('select.liveEdit.component', function () {
-                getWindow().hide();
-            });
-            $liveedit(getIframe()[0].contentWindow).on('deselect.liveEdit.component', function () {
-                getWindow().show();
-            });
         }, 1000);
     });
 </script>
