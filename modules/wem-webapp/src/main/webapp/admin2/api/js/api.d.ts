@@ -115,14 +115,14 @@ module API_content_data {
         public getType(): string;
     }
 }
-module API_content_schema_content_form {
+module API_schema_content_form {
     class FormItem {
         private name;
         constructor(name: string);
         public getName(): string;
     }
 }
-module API_content_schema_content_form {
+module API_schema_content_form {
     class Input extends FormItem {
         private label;
         private immutable;
@@ -141,7 +141,7 @@ module API_content_schema_content_form {
         public getHelpText(): string;
     }
 }
-module API_content_schema_content_form {
+module API_schema_content_form {
     class Occurrences {
         private minimum;
         private maximum;

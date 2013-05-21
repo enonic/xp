@@ -17,9 +17,9 @@
 ///<reference path='content/data/DataSet.ts' />
 ///<reference path='content/data/Property.ts' />
 
-///<reference path='content/schema/content/form/FormItem.ts' />
-///<reference path='content/schema/content/form/Input.ts' />
-///<reference path='content/schema/content/form/Occurrences.ts' />
+///<reference path='schema/content/form/FormItem.ts' />
+///<reference path='schema/content/form/Input.ts' />
+///<reference path='schema/content/form/Occurrences.ts' />
 
 declare var Ext;
 declare var Admin;

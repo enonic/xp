@@ -438,8 +438,8 @@ var API_content_data;
     })(API_content_data.Data);
     API_content_data.Property = Property;    
 })(API_content_data || (API_content_data = {}));
-var API_content_schema_content_form;
-(function (API_content_schema_content_form) {
+var API_schema_content_form;
+(function (API_schema_content_form) {
     var FormItem = (function () {
         function FormItem(name) {
             this.name = name;
@@ -449,17 +449,17 @@ var API_content_schema_content_form;
         };
         return FormItem;
     })();
-    API_content_schema_content_form.FormItem = FormItem;    
-})(API_content_schema_content_form || (API_content_schema_content_form = {}));
-var API_content_schema_content_form;
-(function (API_content_schema_content_form) {
+    API_schema_content_form.FormItem = FormItem;    
+})(API_schema_content_form || (API_schema_content_form = {}));
+var API_schema_content_form;
+(function (API_schema_content_form) {
     var Input = (function (_super) {
         __extends(Input, _super);
         function Input(json) {
                 _super.call(this, json.name);
             this.label = json.label;
             this.immutable = json.immutable;
-            this.occurrences = new API_content_schema_content_form.Occurrences(json.occurrences);
+            this.occurrences = new API_schema_content_form.Occurrences(json.occurrences);
             this.indexed = json.indexed;
             this.customText = json.customText;
             this.validationRegex = json.validationRegexp;
@@ -487,11 +487,11 @@ var API_content_schema_content_form;
             return this.helpText;
         };
         return Input;
-    })(API_content_schema_content_form.FormItem);
-    API_content_schema_content_form.Input = Input;    
-})(API_content_schema_content_form || (API_content_schema_content_form = {}));
-var API_content_schema_content_form;
-(function (API_content_schema_content_form) {
+    })(API_schema_content_form.FormItem);
+    API_schema_content_form.Input = Input;    
+})(API_schema_content_form || (API_schema_content_form = {}));
+var API_schema_content_form;
+(function (API_schema_content_form) {
     var Occurrences = (function () {
         function Occurrences(json) {
             this.minimum = json.minimum;
@@ -499,8 +499,8 @@ var API_content_schema_content_form;
         }
         return Occurrences;
     })();
-    API_content_schema_content_form.Occurrences = Occurrences;    
-})(API_content_schema_content_form || (API_content_schema_content_form = {}));
+    API_schema_content_form.Occurrences = Occurrences;    
+})(API_schema_content_form || (API_schema_content_form = {}));
 Ext.Loader.setConfig({
     enabled: false,
     disableCaching: false
