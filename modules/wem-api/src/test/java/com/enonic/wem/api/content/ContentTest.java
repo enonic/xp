@@ -10,22 +10,22 @@ import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.ValueTypes;
-import com.enonic.wem.api.content.schema.content.ContentType;
-import com.enonic.wem.api.content.schema.content.form.FieldSet;
-import com.enonic.wem.api.content.schema.content.form.FormItemSet;
-import com.enonic.wem.api.content.schema.content.form.Input;
-import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.form.FieldSet;
+import com.enonic.wem.api.schema.content.form.FormItemSet;
+import com.enonic.wem.api.schema.content.form.Input;
+import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.data.DataSet.newDataSet;
 import static com.enonic.wem.api.content.data.Property.Text.newText;
 import static com.enonic.wem.api.content.data.Property.Xml.newXml;
 import static com.enonic.wem.api.content.data.Property.newProperty;
-import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
-import static com.enonic.wem.api.content.schema.content.form.FieldSet.newFieldSet;
-import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.schema.content.ContentType.newContentType;
+import static com.enonic.wem.api.schema.content.form.FieldSet.newFieldSet;
+import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.schema.content.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public class ContentTest

@@ -24,18 +24,18 @@ import com.enonic.wem.api.content.CreateContentException;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.PropertyVisitor;
 import com.enonic.wem.api.content.data.type.ValueTypes;
-import com.enonic.wem.api.content.schema.content.ContentType;
-import com.enonic.wem.api.content.schema.content.validator.DataValidationError;
-import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.exception.SystemException;
+import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.validator.DataValidationError;
+import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.relationship.RelationshipService;
 import com.enonic.wem.core.content.relationship.SyncRelationshipsCommand;
-import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
 import com.enonic.wem.core.index.IndexService;
+import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 
 public class CreateContentHandler

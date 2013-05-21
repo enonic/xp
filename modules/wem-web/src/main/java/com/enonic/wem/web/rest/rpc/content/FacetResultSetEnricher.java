@@ -6,13 +6,13 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
+import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.space.GetSpaces;
-import com.enonic.wem.api.content.schema.content.ContentType;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.query.FacetResultSet;
 import com.enonic.wem.api.query.FacetsResultSet;
 import com.enonic.wem.api.query.TermsFacetResultSet;
+import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
 

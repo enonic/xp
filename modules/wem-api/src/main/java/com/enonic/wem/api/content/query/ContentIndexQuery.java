@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.space.SpaceNames;
 
 public class ContentIndexQuery

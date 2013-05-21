@@ -7,7 +7,7 @@ import org.junit.Test;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.DataPath;
-import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 
 import static junit.framework.Assert.assertEquals;
 

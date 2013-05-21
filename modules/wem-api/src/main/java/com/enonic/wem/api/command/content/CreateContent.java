@@ -7,7 +7,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
 public final class CreateContent
     extends Command<CreateContentResult>

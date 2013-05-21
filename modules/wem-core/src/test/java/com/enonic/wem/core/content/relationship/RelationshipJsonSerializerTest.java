@@ -14,7 +14,7 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.relationship.Relationship;
-import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.AbstractSerializerTest;
 
 import static org.junit.Assert.*;

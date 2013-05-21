@@ -6,7 +6,7 @@ import javax.jcr.Session;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
 public class SyncRelationshipsCommand
 {

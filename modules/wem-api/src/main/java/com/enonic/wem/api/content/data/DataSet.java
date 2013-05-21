@@ -15,7 +15,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.data.type.ValueType;
-import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
+import com.enonic.wem.api.schema.content.form.InvalidDataException;
 
 import static com.enonic.wem.api.content.data.DataSetArray.newDataSetArray;
 import static com.enonic.wem.api.content.data.PropertyArray.newPropertyArray;

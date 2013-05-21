@@ -11,26 +11,26 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
+import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.relationship.Relationship;
-import com.enonic.wem.api.content.schema.content.ContentType;
-import com.enonic.wem.api.content.schema.content.ContentTypes;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.content.schema.content.form.Form;
-import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypeConfig;
-import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
-import com.enonic.wem.api.content.schema.content.form.inputtype.RelationshipConfig;
-import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.form.Form;
+import com.enonic.wem.api.schema.content.form.inputtype.InputTypeConfig;
+import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.schema.content.form.inputtype.RelationshipConfig;
+import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
 
-import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
-import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.schema.content.ContentType.newContentType;
+import static com.enonic.wem.api.schema.content.form.Input.newInput;
 
 public class RelationshipServiceImplTest
 {

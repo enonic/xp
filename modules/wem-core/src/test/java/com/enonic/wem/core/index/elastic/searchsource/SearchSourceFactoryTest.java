@@ -8,7 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.query.ContentIndexQuery;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.space.SpaceNames;
 import com.enonic.wem.core.index.elastic.AbstractJsonTest;
 

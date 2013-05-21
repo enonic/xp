@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.DataPath;
-import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 
 /**
  * The natural key of a Relationship.

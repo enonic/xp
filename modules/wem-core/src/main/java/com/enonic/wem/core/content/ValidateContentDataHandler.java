@@ -6,14 +6,14 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.schema.content.ContentType;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
-import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.content.schema.content.validator.OccurrenceValidator;
+import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.schema.content.validator.OccurrenceValidator;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
+import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 
 public final class ValidateContentDataHandler

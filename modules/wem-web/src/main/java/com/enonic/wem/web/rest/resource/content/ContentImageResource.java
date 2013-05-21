@@ -21,9 +21,9 @@ import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.schema.content.ContentType;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 
 import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.web.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;

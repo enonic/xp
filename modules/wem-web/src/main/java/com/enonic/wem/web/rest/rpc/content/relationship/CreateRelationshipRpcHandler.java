@@ -9,7 +9,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.relationship.CreateRelationship;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
-import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 

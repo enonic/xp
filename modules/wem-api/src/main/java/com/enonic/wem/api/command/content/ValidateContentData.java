@@ -4,8 +4,8 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
 public class ValidateContentData
     extends Command<DataValidationErrors>

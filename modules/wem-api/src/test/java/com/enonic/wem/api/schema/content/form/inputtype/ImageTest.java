@@ -1,0 +1,19 @@
+package com.enonic.wem.api.schema.content.form.inputtype;
+
+import org.junit.Test;
+
+import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.data.Value;
+
+import static junit.framework.Assert.assertEquals;
+
+
+public class ImageTest
+{
+    @Test
+    public void newValue()
+    {
+        Value value = new Image().newValue( "ABC" );
+        assertEquals( ContentId.from( "ABC" ), value.asContentId() );
+    }
+}

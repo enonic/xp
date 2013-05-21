@@ -13,16 +13,16 @@ import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.relationship.Relationships;
-import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.AbstractJcrTest;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.dao.ContentDaoImpl;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.relationship.RelationshipKey.newRelationshipKey;
-import static com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName.LIKE;
-import static com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName.LINK;
-import static com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName.PARENT;
+import static com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName.LIKE;
+import static com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName.LINK;
+import static com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName.PARENT;
 import static org.junit.Assert.*;
 
 public class RelationshipDaoImplTest

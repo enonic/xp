@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
+import com.enonic.wem.api.schema.content.form.InvalidValueException;
 
 /**
  * ValueTypes should only be created when:

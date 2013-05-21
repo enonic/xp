@@ -1,6 +1,6 @@
 package com.enonic.wem.api.exception;
 
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
 public final class ContentTypeNotFoundException
     extends BaseException

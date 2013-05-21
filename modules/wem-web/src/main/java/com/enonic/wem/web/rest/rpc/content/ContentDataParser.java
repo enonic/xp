@@ -9,9 +9,9 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.DataPath;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.schema.content.ContentType;
-import com.enonic.wem.api.content.schema.content.form.FormItemPath;
-import com.enonic.wem.api.content.schema.content.form.Input;
+import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.form.FormItemPath;
+import com.enonic.wem.api.schema.content.form.Input;
 
 final class ContentDataParser
 {

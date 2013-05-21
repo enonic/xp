@@ -5,21 +5,21 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.ValidateContentData;
-import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
-import com.enonic.wem.api.content.schema.content.ContentType;
-import com.enonic.wem.api.content.schema.content.ContentTypes;
-import com.enonic.wem.api.content.schema.content.form.Input;
-import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
-import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.content.schema.content.validator.MinimumOccurrencesValidationError;
+import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.schema.content.form.Input;
+import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.schema.content.validator.MinimumOccurrencesValidationError;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
-import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
-import static com.enonic.wem.api.content.schema.content.form.FieldSet.newFieldSet;
-import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.schema.content.ContentType.newContentType;
+import static com.enonic.wem.api.schema.content.form.FieldSet.newFieldSet;
+import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.schema.content.form.Input.newInput;
 import static org.mockito.Matchers.isA;
 
 public class ValidateContentDataRpcHandlerTest

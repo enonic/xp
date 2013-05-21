@@ -10,21 +10,21 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.schema.content.ContentType;
-import com.enonic.wem.api.content.schema.content.ContentTypes;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
-import com.enonic.wem.api.content.schema.content.form.FieldSet;
-import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
-import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.form.FieldSet;
+import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
+import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
-import static com.enonic.wem.api.content.schema.content.form.FieldSet.newFieldSet;
-import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.schema.content.ContentType.newContentType;
+import static com.enonic.wem.api.schema.content.form.FieldSet.newFieldSet;
+import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.schema.content.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public class ValidateContentDataHandlerTest

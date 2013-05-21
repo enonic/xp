@@ -7,7 +7,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.relationship.Relationship;
-import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 
 import static com.enonic.wem.api.content.relationship.Relationship.newRelationship;
 

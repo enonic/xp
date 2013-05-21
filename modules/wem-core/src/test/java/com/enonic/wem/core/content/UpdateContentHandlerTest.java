@@ -22,7 +22,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.editor.ContentEditors;
-import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.relationship.RelationshipService;

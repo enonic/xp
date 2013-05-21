@@ -9,7 +9,7 @@ import com.enonic.wem.api.command.space.CreateSpace;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;

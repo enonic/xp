@@ -4,10 +4,10 @@ package com.enonic.wem.web.rest.rpc.content;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 import com.enonic.wem.web.rest.resource.content.ContentImageUriResolver;
-import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
+import com.enonic.wem.web.rest.resource.schema.SchemaImageUriResolver;
 
 final class ContentJsonTemplate
 {

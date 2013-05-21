@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
 import com.enonic.wem.api.content.relationship.RelationshipNotFoundException;
 import com.enonic.wem.api.content.relationship.UpdateRelationshipFailureException;
-import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 

@@ -20,10 +20,10 @@ import com.enonic.wem.api.content.data.PropertyVisitor;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipKey;
-import com.enonic.wem.api.content.schema.content.form.Form;
-import com.enonic.wem.api.content.schema.content.form.FormItemPath;
-import com.enonic.wem.api.content.schema.content.form.Input;
-import com.enonic.wem.api.content.schema.content.form.inputtype.RelationshipConfig;
+import com.enonic.wem.api.schema.content.form.Form;
+import com.enonic.wem.api.schema.content.form.FormItemPath;
+import com.enonic.wem.api.schema.content.form.Input;
+import com.enonic.wem.api.schema.content.form.inputtype.RelationshipConfig;
 
 import static com.enonic.wem.api.content.relationship.RelationshipKey.newRelationshipKey;
 import static com.enonic.wem.core.content.relationship.RelationshipFactory.newRelationshipFactory;

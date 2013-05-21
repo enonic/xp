@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.DataPath;
-import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;

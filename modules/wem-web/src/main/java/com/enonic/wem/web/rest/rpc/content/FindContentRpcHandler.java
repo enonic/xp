@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
-import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.space.SpaceNames;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
