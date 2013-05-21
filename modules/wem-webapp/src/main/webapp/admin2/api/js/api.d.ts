@@ -71,7 +71,19 @@ module API.notify {
     function showFeedback(message: string): void;
     function updateAppTabCount(appId, tabCount: Number): void;
 }
-module API.content.data {
+module API_content_data {
+    class DataId {
+        private name;
+        private arrayIndex;
+        private refString;
+        constructor(name: string, arrayIndex: number);
+        public getName(): string;
+        public getArrayIndex(): number;
+        public toString(): string;
+        static from(str: string): DataId;
+    }
+}
+module API_content_data {
     class Data {
         private name;
         private arrayIndex;
@@ -84,15 +96,16 @@ module API.content.data {
         public getArrayIndex(): number;
     }
 }
-module API.content.data {
+module API_content_data {
     class DataSet extends Data {
         private dataById;
         constructor(name: string);
+        public dataCount(name: string): number;
         public addData(data: Data): void;
         public getData(dataId: string): Data;
     }
 }
-module API.content.data {
+module API_content_data {
     class Property extends Data {
         private value;
         private type;
@@ -102,14 +115,14 @@ module API.content.data {
         public getType(): string;
     }
 }
-module API.content.schema.content.form {
+module API_content_schema_content_form {
     class FormItem {
         private name;
         constructor(name: string);
         public getName(): string;
     }
 }
-module API.content.schema.content.form {
+module API_content_schema_content_form {
     class Input extends FormItem {
         private label;
         private immutable;
@@ -128,7 +141,7 @@ module API.content.schema.content.form {
         public getHelpText(): string;
     }
 }
-module API.content.schema.content.form {
+module API_content_schema_content_form {
     class Occurrences {
         private minimum;
         private maximum;

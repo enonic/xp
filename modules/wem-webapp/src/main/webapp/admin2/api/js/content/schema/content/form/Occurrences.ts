@@ -1,4 +1,4 @@
-module API.content.schema.content.form{
+module API_content_schema_content_form{
 
 
     export class Occurrences   {

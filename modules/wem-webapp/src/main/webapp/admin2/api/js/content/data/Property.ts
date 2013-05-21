@@ -1,4 +1,4 @@
-module API.content.data{
+module API_content_data{
 
     export class Property extends Data {
 

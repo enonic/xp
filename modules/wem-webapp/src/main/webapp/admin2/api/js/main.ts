@@ -12,6 +12,7 @@
 ///<reference path='notify/NotifyOpts.ts' />
 ///<reference path='notify/MessageBus.ts' />
 
+///<reference path='content/data/DataId.ts' />
 ///<reference path='content/data/Data.ts' />
 ///<reference path='content/data/DataSet.ts' />
 ///<reference path='content/data/Property.ts' />

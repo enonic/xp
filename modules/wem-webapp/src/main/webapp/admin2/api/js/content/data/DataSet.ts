@@ -1,32 +1,35 @@
-module API.content.data{
+module API_content_data{
 
     export class DataSet extends Data {
 
-        private dataById = {};
+        private dataById:{[s:string] : Data; } = {};
 
         constructor(name:string) {
             super(name);
         }
 
-        /*private dataCount(name:string) {
+        dataCount(name:string):number {
             var count = 0;
-            for (var i in dataById) {
-                var data = dataById[i];
+            for (var i in this.dataById) {
+                var data = this.dataById[i];
                 if (data.getName() === name) {
                     count++;
                 }
             }
             return count;
-        }*/
+        }
 
         addData(data:Data) {
             data.setParent(this);
-            //data.setArrayIndex(this.dataCount(data.getName()));
-            this.dataById[data.getName()] = data;
+            var index = this.dataCount(data.getName());
+            data.setArrayIndex(index);
+            var dataId = new DataId(data.getName(), index);
+            var dataIdStr = dataId.toString();
+            this.dataById[dataIdStr] = data;
         }
 
         getData(dataId:string):Data {
-            return this.dataById[dataId];
+            return this.dataById[DataId.from(dataId).toString()];
         }
 
     }

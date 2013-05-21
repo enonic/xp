@@ -312,195 +312,195 @@ var API;
     })(API.notify || (API.notify = {}));
     var notify = API.notify;
 })(API || (API = {}));
-var API;
-(function (API) {
-    (function (content) {
-        (function (data) {
-            var Data = (function () {
-                function Data(name) {
-                    this.name = name;
-                }
-                Data.prototype.setArrayIndex = function (value) {
-                    this.arrayIndex = value;
-                };
-                Data.prototype.setParent = function (parent) {
-                    this.parent = parent;
-                };
-                Data.prototype.getName = function () {
-                    return this.name;
-                };
-                Data.prototype.getParent = function () {
-                    return this.parent;
-                };
-                Data.prototype.getArrayIndex = function () {
-                    return this.arrayIndex;
-                };
-                return Data;
-            })();
-            data.Data = Data;            
-        })(content.data || (content.data = {}));
-        var data = content.data;
-    })(API.content || (API.content = {}));
-    var content = API.content;
-})(API || (API = {}));
+var API_content_data;
+(function (API_content_data) {
+    var DataId = (function () {
+        function DataId(name, arrayIndex) {
+            this.name = name;
+            this.arrayIndex = arrayIndex;
+            if(arrayIndex > 0) {
+                this.refString = name + '[' + arrayIndex + ']';
+            } else {
+                this.refString = name;
+            }
+        }
+        DataId.prototype.getName = function () {
+            return this.name;
+        };
+        DataId.prototype.getArrayIndex = function () {
+            return this.arrayIndex;
+        };
+        DataId.prototype.toString = function () {
+            return this.refString;
+        };
+        DataId.from = function from(str) {
+            console.log("str:" + str);
+            var endsWithEndBracket = str.indexOf(']', str.length - ']'.length) !== -1;
+            var containsStartBracket = str.indexOf('[') !== -1;
+            if(endsWithEndBracket && containsStartBracket) {
+                console.log("str: index there is");
+                var firstBracketPos = str.indexOf('[');
+                var nameStr = str.substring(0, firstBracketPos);
+                var indexStr = str.substring(nameStr.length + 1, (str.length - 1));
+                var index = parseInt(indexStr);
+                return new DataId(nameStr, index);
+            } else {
+                return new DataId(str, 0);
+            }
+        };
+        return DataId;
+    })();
+    API_content_data.DataId = DataId;    
+})(API_content_data || (API_content_data = {}));
+var API_content_data;
+(function (API_content_data) {
+    var Data = (function () {
+        function Data(name) {
+            this.name = name;
+        }
+        Data.prototype.setArrayIndex = function (value) {
+            this.arrayIndex = value;
+        };
+        Data.prototype.setParent = function (parent) {
+            this.parent = parent;
+        };
+        Data.prototype.getName = function () {
+            return this.name;
+        };
+        Data.prototype.getParent = function () {
+            return this.parent;
+        };
+        Data.prototype.getArrayIndex = function () {
+            return this.arrayIndex;
+        };
+        return Data;
+    })();
+    API_content_data.Data = Data;    
+})(API_content_data || (API_content_data = {}));
 var __extends = this.__extends || function (d, b) {
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var API;
-(function (API) {
-    (function (content) {
-        (function (data) {
-            var DataSet = (function (_super) {
-                __extends(DataSet, _super);
-                function DataSet(name) {
-                                _super.call(this, name);
-                    this.dataById = {
-                    };
+var API_content_data;
+(function (API_content_data) {
+    var DataSet = (function (_super) {
+        __extends(DataSet, _super);
+        function DataSet(name) {
+                _super.call(this, name);
+            this.dataById = {
+            };
+        }
+        DataSet.prototype.dataCount = function (name) {
+            var count = 0;
+            for(var i in this.dataById) {
+                var data = this.dataById[i];
+                if(data.getName() === name) {
+                    count++;
                 }
-                DataSet.prototype.addData = function (data) {
-                    data.setParent(this);
-                    this.dataById[data.getName()] = data;
-                };
-                DataSet.prototype.getData = function (dataId) {
-                    return this.dataById[dataId];
-                };
-                return DataSet;
-            })(data.Data);
-            data.DataSet = DataSet;            
-        })(content.data || (content.data = {}));
-        var data = content.data;
-    })(API.content || (API.content = {}));
-    var content = API.content;
-})(API || (API = {}));
-var API;
-(function (API) {
-    (function (content) {
-        (function (data) {
-            var Property = (function (_super) {
-                __extends(Property, _super);
-                function Property(name, value, type) {
-                                _super.call(this, name);
-                    this.value = value;
-                    this.type = type;
-                }
-                Property.from = function from(json) {
-                    return new Property(json.name, json.value, json.type);
-                };
-                Property.prototype.getValue = function () {
-                    return this.value;
-                };
-                Property.prototype.getType = function () {
-                    return this.type;
-                };
-                return Property;
-            })(data.Data);
-            data.Property = Property;            
-        })(content.data || (content.data = {}));
-        var data = content.data;
-    })(API.content || (API.content = {}));
-    var content = API.content;
-})(API || (API = {}));
-var API;
-(function (API) {
-    (function (content) {
-        (function (schema) {
-            (function (content) {
-                (function (form) {
-                    var FormItem = (function () {
-                        function FormItem(name) {
-                            this.name = name;
-                        }
-                        FormItem.prototype.getName = function () {
-                            return this.name;
-                        };
-                        return FormItem;
-                    })();
-                    form.FormItem = FormItem;                    
-                })(content.form || (content.form = {}));
-                var form = content.form;
-            })(schema.content || (schema.content = {}));
-            var content = schema.content;
-        })(content.schema || (content.schema = {}));
-        var schema = content.schema;
-    })(API.content || (API.content = {}));
-    var content = API.content;
-})(API || (API = {}));
-var API;
-(function (API) {
-    (function (content) {
-        (function (schema) {
-            (function (content) {
-                (function (form) {
-                    var Input = (function (_super) {
-                        __extends(Input, _super);
-                        function Input(json) {
-                                                _super.call(this, json.name);
-                            this.label = json.label;
-                            this.immutable = json.immutable;
-                            this.occurrences = new form.Occurrences(json.occurrences);
-                            this.indexed = json.indexed;
-                            this.customText = json.customText;
-                            this.validationRegex = json.validationRegexp;
-                            this.helpText = json.helpText;
-                        }
-                        Input.prototype.getLabel = function () {
-                            return this.label;
-                        };
-                        Input.prototype.isImmutable = function () {
-                            return this.immutable;
-                        };
-                        Input.prototype.getOccurrences = function () {
-                            return this.occurrences;
-                        };
-                        Input.prototype.isIndexed = function () {
-                            return this.indexed;
-                        };
-                        Input.prototype.getCustomText = function () {
-                            return this.customText;
-                        };
-                        Input.prototype.getValidationRegex = function () {
-                            return this.validationRegex;
-                        };
-                        Input.prototype.getHelpText = function () {
-                            return this.helpText;
-                        };
-                        return Input;
-                    })(form.FormItem);
-                    form.Input = Input;                    
-                })(content.form || (content.form = {}));
-                var form = content.form;
-            })(schema.content || (schema.content = {}));
-            var content = schema.content;
-        })(content.schema || (content.schema = {}));
-        var schema = content.schema;
-    })(API.content || (API.content = {}));
-    var content = API.content;
-})(API || (API = {}));
-var API;
-(function (API) {
-    (function (content) {
-        (function (schema) {
-            (function (content) {
-                (function (form) {
-                    var Occurrences = (function () {
-                        function Occurrences(json) {
-                            this.minimum = json.minimum;
-                            this.maximum = json.maximum;
-                        }
-                        return Occurrences;
-                    })();
-                    form.Occurrences = Occurrences;                    
-                })(content.form || (content.form = {}));
-                var form = content.form;
-            })(schema.content || (schema.content = {}));
-            var content = schema.content;
-        })(content.schema || (content.schema = {}));
-        var schema = content.schema;
-    })(API.content || (API.content = {}));
-    var content = API.content;
-})(API || (API = {}));
+            }
+            return count;
+        };
+        DataSet.prototype.addData = function (data) {
+            data.setParent(this);
+            var index = this.dataCount(data.getName());
+            data.setArrayIndex(index);
+            var dataId = new API_content_data.DataId(data.getName(), index);
+            var dataIdStr = dataId.toString();
+            this.dataById[dataIdStr] = data;
+        };
+        DataSet.prototype.getData = function (dataId) {
+            return this.dataById[API_content_data.DataId.from(dataId).toString()];
+        };
+        return DataSet;
+    })(API_content_data.Data);
+    API_content_data.DataSet = DataSet;    
+})(API_content_data || (API_content_data = {}));
+var API_content_data;
+(function (API_content_data) {
+    var Property = (function (_super) {
+        __extends(Property, _super);
+        function Property(name, value, type) {
+                _super.call(this, name);
+            this.value = value;
+            this.type = type;
+        }
+        Property.from = function from(json) {
+            return new Property(json.name, json.value, json.type);
+        };
+        Property.prototype.getValue = function () {
+            return this.value;
+        };
+        Property.prototype.getType = function () {
+            return this.type;
+        };
+        return Property;
+    })(API_content_data.Data);
+    API_content_data.Property = Property;    
+})(API_content_data || (API_content_data = {}));
+var API_content_schema_content_form;
+(function (API_content_schema_content_form) {
+    var FormItem = (function () {
+        function FormItem(name) {
+            this.name = name;
+        }
+        FormItem.prototype.getName = function () {
+            return this.name;
+        };
+        return FormItem;
+    })();
+    API_content_schema_content_form.FormItem = FormItem;    
+})(API_content_schema_content_form || (API_content_schema_content_form = {}));
+var API_content_schema_content_form;
+(function (API_content_schema_content_form) {
+    var Input = (function (_super) {
+        __extends(Input, _super);
+        function Input(json) {
+                _super.call(this, json.name);
+            this.label = json.label;
+            this.immutable = json.immutable;
+            this.occurrences = new API_content_schema_content_form.Occurrences(json.occurrences);
+            this.indexed = json.indexed;
+            this.customText = json.customText;
+            this.validationRegex = json.validationRegexp;
+            this.helpText = json.helpText;
+        }
+        Input.prototype.getLabel = function () {
+            return this.label;
+        };
+        Input.prototype.isImmutable = function () {
+            return this.immutable;
+        };
+        Input.prototype.getOccurrences = function () {
+            return this.occurrences;
+        };
+        Input.prototype.isIndexed = function () {
+            return this.indexed;
+        };
+        Input.prototype.getCustomText = function () {
+            return this.customText;
+        };
+        Input.prototype.getValidationRegex = function () {
+            return this.validationRegex;
+        };
+        Input.prototype.getHelpText = function () {
+            return this.helpText;
+        };
+        return Input;
+    })(API_content_schema_content_form.FormItem);
+    API_content_schema_content_form.Input = Input;    
+})(API_content_schema_content_form || (API_content_schema_content_form = {}));
+var API_content_schema_content_form;
+(function (API_content_schema_content_form) {
+    var Occurrences = (function () {
+        function Occurrences(json) {
+            this.minimum = json.minimum;
+            this.maximum = json.maximum;
+        }
+        return Occurrences;
+    })();
+    API_content_schema_content_form.Occurrences = Occurrences;    
+})(API_content_schema_content_form || (API_content_schema_content_form = {}));
 Ext.Loader.setConfig({
     enabled: false,
     disableCaching: false
