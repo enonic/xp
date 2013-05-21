@@ -105,6 +105,7 @@ module admin.ui {
                         new APP.event.ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
                     },
                     itemdblclick: (grid, record) => {
+                        new APP.event.OpenSpaceWizardEvent().fire();
                     }
                 }
             });

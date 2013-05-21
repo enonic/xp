@@ -185,8 +185,40 @@ module admin.ui {
                 }
             });
 
+            APP.event.OpenSpaceWizardEvent.on(() => {
+                var space = components.gridPanel.getSelection()[0];
+                var tabs = this.getExtEl();
+                console.log(space);
+                Admin.lib.RemoteService.space_get({
+                    "spaceName": [space.get('name')]
+                }, (r) => {
+                    tabs.el.unmask();
+                    if (r) {
+                        var tabItem = {
+                            id: this.generateTabId(space, true),
+                            editing: true,
+                            xtype: 'spaceAdminWizardPanel',
+                            data: space,
+                            title: space.get('displayName')
+                        };
 
+                        //check if preview tab is open and close it
+                        var index = tabs.items.indexOfKey(this.generateTabId(space, false));
+                        if (index >= 0) {
+                            tabs.remove(index);
+                        }
+                        tabs.addTab(tabItem, index >= 0 ? index : undefined, undefined);
+                    } else {
+                        Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve space.");
+                    }
+                });
+            });
         }
+
+        private generateTabId(space, isEdit) {
+            return 'tab-' + ( isEdit ? 'edit-' : 'preview-') + space.get('name');
+        }
+
 
         getTabCount() {
             return this.ext.getTabCount();

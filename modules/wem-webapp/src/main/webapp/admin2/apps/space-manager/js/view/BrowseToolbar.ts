@@ -1,6 +1,5 @@
 module admin.ui {
     export class BrowseToolbar {
-
         ext;
 
         constructor(region?:String) {
@@ -26,7 +25,10 @@ module admin.ui {
                 action: 'editSpace',
                 scale: 'medium',
                 iconAlign: 'top',
-                minWidth: 64
+                minWidth: 64,
+                handler: () => {
+                    new APP.event.OpenSpaceWizardEvent().fire();
+                }
             });
 
             var openButton = new Ext.button.Button({
