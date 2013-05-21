@@ -35,7 +35,7 @@
 
 ///<reference path='view/ContextMenu.ts' />
 
-///<reference path='view/wizard/Toolbar.ts' />
+///<reference path='view/wizard/SpaceWizardToolbar.ts' />
 ///<reference path='view/wizard/SpaceStepPanel.ts' />
 ///<reference path='view/wizard/WizardPanel.ts' />
 

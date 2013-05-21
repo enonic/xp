@@ -120,7 +120,7 @@ Ext.define('Admin.controller.WizardController', {
     },
 
     getWizardToolbar: function () {
-        return Ext.ComponentQuery.query('spaceAdminWizardToolbar', this.getWizardTab())[0];
+        return Ext.ComponentQuery.query('#spaceWizardToolbar', this.getWizardTab())[0];
     }
 
 });

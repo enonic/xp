@@ -2,9 +2,7 @@ Ext.define('Admin.view.wizard.WizardPanel', {
     extend: 'Admin.view.WizardPanel',
     alias: 'widget.spaceAdminWizardPanel',
     requires: [
-        'Admin.view.wizard.Toolbar',
-        'Admin.plugin.fileupload.PhotoUploadButton',
-        'Admin.view.wizard.SpaceStepPanel'
+        'Admin.plugin.fileupload.PhotoUploadButton'
     ],
     border: 0,
     autoScroll: true,
@@ -18,9 +16,7 @@ Ext.define('Admin.view.wizard.WizardPanel', {
 
         var headerData = me.resolveHeaderData(me.data);
 
-        me.tbar = Ext.createByAlias('widget.spaceAdminWizardToolbar', {
-            isNew: headerData.isNewSpace
-        });
+        me.tbar = new admin.ui.SpaceWizardToolbar(headerData.isNewSpace).ext;
 
         this.callParent(arguments);
 
@@ -49,11 +45,10 @@ Ext.define('Admin.view.wizard.WizardPanel', {
 
     createSteps: function () {
 
+        var spaceStep = new admin.ui.SpaceStepPanel(this.data);
+
         return <any[]>[
-            {
-                xtype: 'spaceStepPanel',
-                data: this.data
-            },
+            spaceStep.ext,
             {
                 stepTitle: 'Schemas'
             },
@@ -73,7 +68,7 @@ Ext.define('Admin.view.wizard.WizardPanel', {
     },
 
     createWizardHeader: function () {
-        var pathConfig: admin.ui.PathConfig = {
+        var pathConfig:admin.ui.PathConfig = {
             hidden: true
         };
         var wizardHeader = new admin.ui.WizardHeader({}, pathConfig);

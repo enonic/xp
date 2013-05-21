@@ -413,8 +413,13 @@ interface Ext_Packages extends IExt {
             Base: Ext_form_field_Base;
             Text: Ext_form_field_Text;
             Display: Ext_form_field_Display;
+            Checkbox: Ext_form_field_Checkbox;
+            Trigger: Ext_form_field_Trigger;
+            Picker: Ext_form_field_Picker;
+            ComboBox: Ext_form_field_ComboBox;
         };
         Panel: Ext_form_Panel;
+        FieldSet: Ext_form_FieldSet;
     };
     grid: {
         Panel: Ext_grid_Panel;
@@ -2748,6 +2753,134 @@ interface Ext_form_field_Display extends Ext_form_field_Base {
 
 
 /**
+ *      Single checkbox field. Can be used as a direct replacement for traditional checkbox fields.
+ *      Also serves as a parent class for radio buttons.
+ */
+interface Ext_form_field_Checkbox extends Ext_form_field_Base {
+
+    boxLabelEl: Ext_dom_Element;
+
+    originalValue: Object;
+
+
+    new(config?:Object): Ext_form_field_Checkbox;
+
+
+    getRawValue() : bool;
+
+    getSubTplData() : Object;
+
+    getSubmitValue() : string;
+
+    getValue() : bool;
+
+    initValue(): void;
+
+    resetOriginalValue(): void;
+
+    setRawValue(value): bool;
+
+    setReadOnly(readOnly:bool): void;
+
+    setValue(checked:bool): Ext_form_field_Checkbox;
+
+    valueToRaw(value:Object): Object;
+
+}
+
+
+/**
+ *      Provides a convenient wrapper for TextFields that adds a clickable trigger button (looks like a combobox by default)
+ */
+interface Ext_form_field_Trigger extends Ext_form_field_Text {
+
+    inputCell: Ext_dom_Element;
+
+    triggerEl: Ext_dom_CompositeElement;
+
+    triggerWrap: Ext_dom_Element;
+
+
+    new(config?:Object): Ext_form_field_Trigger;
+
+
+    getSubTplData(): Object;
+
+    getSubTplMarkup(): string;
+
+    getTriggerWidth(): number;
+
+    setEditable(editable:bool): void;
+
+    setReadOnly(readOnly:bool): void;
+
+}
+
+
+/**
+ *      An abstract class for fields that have a single trigger which opens a "picker" popup below the field,
+ *      e.g. a combobox menu list or a date picker.
+ */
+interface Ext_form_field_Picker extends Ext_form_field_Trigger {
+
+    isExpanded: bool;
+
+
+    new(config?:Object): Ext_form_field_Picker;
+
+
+    collapse(): void;
+
+    createPicker(): void;
+
+    expand(): void;
+
+    getPicker() : Ext_Component;
+
+}
+
+
+/**
+ *      A combobox control with support for autocomplete, remote loading, and many other features.
+ */
+interface Ext_form_field_ComboBox extends Ext_form_field_Picker {
+
+    lastQuery: string;
+
+
+    new(config?:Object): Ext_form_field_ComboBox;
+
+
+    clearValue(): void;
+
+    createPicker(): void;
+
+    doQuery(queryString:string, forceAll?:bool, rawQuery?:bool): bool;
+
+    findRecord(field:string, value:Object): Ext_data_Model;
+
+    findRecordByDisplay(value:Object): Ext_data_Model;
+
+    findRecordByValue(value:Object): Ext_data_Model;
+
+    getStore(): Ext_data_Store;
+
+    getSubTplData(): Object;
+
+    getSubmitValue(): string;
+
+    getValue(): Object;
+
+    select(r:Object): void;
+    select(r:Ext_data_Model): void;
+
+    setValue(value:string) : Ext_form_field_Field;
+    setValue(value:string[]) : Ext_form_field_Field;
+
+}
+
+
+/**
  *      This is a singleton object which contains a set of commonly used field validation functions
  *      and provides a mechanism for creating reusable custom field validations.
  */
@@ -3024,6 +3157,36 @@ interface Ext_form_Basic extends Ext_util_Observable {
     submit(options): Ext_form_Basic;
 
     updateRecord(record?:Ext_data_Model): Ext_form_Basic;
+
+}
+
+
+/**
+ *      A container for grouping sets of fields, rendered as a HTML fieldset element.
+ */
+interface Ext_form_FieldSet extends Ext_container_Container {
+
+    checkboxCmp: Ext_form_field_Checkbox;
+
+    legend : Ext_Component;
+
+    maskOnDisable : bool;
+
+    toggleCmp : Ext_panel_Tool;
+
+
+    new(config?:Object): Ext_form_FieldSet;
+
+
+    collapse(): Ext_form_FieldSet;
+
+    expand(): Ext_form_FieldSet;
+
+    getState(): Object;
+
+    setTitle(title:string): Ext_form_FieldSet;
+
+    toggle(): void;
 
 }
 

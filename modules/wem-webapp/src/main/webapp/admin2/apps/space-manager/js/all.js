@@ -3007,96 +3007,101 @@ var admin;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
-Ext.define('Admin.view.wizard.Toolbar', {
-    extend: 'Ext.toolbar.Toolbar',
-    alias: 'widget.spaceAdminWizardToolbar',
-    cls: 'admin-toolbar',
-    border: false,
-    isNewGroup: true,
-    defaults: {
-        scale: 'medium'
-    },
-    initComponent: function () {
-        this.items = [
-            {
-                text: 'Save',
-                action: 'saveSpace',
-                itemId: 'save',
-                disabled: true
-            }, 
-            {
-                text: 'Delete',
-                disabled: this.isNew,
-                action: 'deleteSpace'
-            }, 
-            {
-                text: 'Duplicate',
-                disabled: this.isNew
-            }, 
-            '->', 
-            {
-                text: 'Close',
-                action: 'closeWizard'
-            }
-        ];
-        this.callParent(arguments);
-    }
-});
-Ext.define('Admin.view.wizard.SpaceStepPanel', {
-    extend: 'Ext.form.Panel',
-    alias: 'widget.spaceStepPanel',
-    stepTitle: 'Space',
-    data: undefined,
-    initComponent: function () {
-        var templates = Ext.create('Ext.data.Store', {
-            fields: [
-                'code', 
-                'name'
-            ],
-            data: [
-                {
-                    "code": "1",
-                    "name": "Tpl1"
-                }, 
-                {
-                    "code": "2",
-                    "name": "Tpl2"
-                }, 
-                {
-                    "code": "3",
-                    "name": "Tpl3"
-                }
-            ]
-        });
-        this.items = [
-            {
-                xtype: 'fieldset',
-                title: 'Template',
-                padding: '10px 15px',
-                defaults: {
-                    width: 600
-                },
-                items: [
-                    {
-                        xtype: 'combo',
-                        fieldLabel: 'Space Template',
-                        displayField: 'name',
-                        valueField: 'code',
-                        store: templates
+var admin;
+(function (admin) {
+    (function (ui) {
+        var SpaceWizardToolbar = (function () {
+            function SpaceWizardToolbar(isNew) {
+                if (typeof isNew === "undefined") { isNew = true; }
+                this.isNew = isNew;
+                var tb = this.ext = new Ext.toolbar.Toolbar({
+                    cls: 'admin-toolbar',
+                    itemId: 'spaceWizardToolbar',
+                    border: false,
+                    defaults: {
+                        scale: 'medium'
                     }
-                ]
+                });
+                var saveBtn = new Ext.button.Button({
+                    text: 'Save',
+                    action: 'saveSpace',
+                    itemId: 'save',
+                    disabled: true
+                });
+                var deleteBtn = new Ext.button.Button({
+                    text: 'Delete',
+                    disabled: this.isNew,
+                    action: 'deleteSpace'
+                });
+                var duplicateBtn = new Ext.button.Button({
+                    text: 'Duplicate',
+                    disabled: this.isNew
+                });
+                var closeBtn = new Ext.button.Button({
+                    text: 'Close',
+                    action: 'closeWizard'
+                });
+                tb.add(saveBtn, deleteBtn, duplicateBtn, '->', closeBtn);
             }
-        ];
-        this.callParent(arguments);
-    }
-});
+            return SpaceWizardToolbar;
+        })();
+        ui.SpaceWizardToolbar = SpaceWizardToolbar;        
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
+var admin;
+(function (admin) {
+    (function (ui) {
+        var SpaceStepPanel = (function () {
+            function SpaceStepPanel(data) {
+                this.data = data;
+                var templates = new Ext.data.Store({
+                    fields: [
+                        'code', 
+                        'name'
+                    ],
+                    data: [
+                        {
+                            "code": "1",
+                            "name": "Tpl1"
+                        }, 
+                        {
+                            "code": "2",
+                            "name": "Tpl2"
+                        }, 
+                        {
+                            "code": "3",
+                            "name": "Tpl3"
+                        }
+                    ]
+                });
+                var fs = this.ext = new Ext.form.FieldSet({
+                    stepTitle: 'Space',
+                    title: 'Template',
+                    padding: '10px 15px',
+                    defaults: {
+                        width: 600
+                    }
+                });
+                var combo = new Ext.form.field.ComboBox({
+                    fieldLabel: 'Space Template',
+                    displayField: 'name',
+                    valueField: 'code',
+                    store: templates
+                });
+                fs.add(combo);
+            }
+            return SpaceStepPanel;
+        })();
+        ui.SpaceStepPanel = SpaceStepPanel;        
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
 Ext.define('Admin.view.wizard.WizardPanel', {
     extend: 'Admin.view.WizardPanel',
     alias: 'widget.spaceAdminWizardPanel',
     requires: [
-        'Admin.view.wizard.Toolbar', 
-        'Admin.plugin.fileupload.PhotoUploadButton', 
-        'Admin.view.wizard.SpaceStepPanel'
+        'Admin.plugin.fileupload.PhotoUploadButton'
     ],
     border: 0,
     autoScroll: true,
@@ -3106,9 +3111,7 @@ Ext.define('Admin.view.wizard.WizardPanel', {
     initComponent: function () {
         var me = this;
         var headerData = me.resolveHeaderData(me.data);
-        me.tbar = Ext.createByAlias('widget.spaceAdminWizardToolbar', {
-            isNew: headerData.isNewSpace
-        });
+        me.tbar = new admin.ui.SpaceWizardToolbar(headerData.isNewSpace).ext;
         this.callParent(arguments);
         var uploader = this.down('photoUploadButton');
         uploader.on('fileuploaded', me.photoUploaded, me);
@@ -3131,11 +3134,9 @@ Ext.define('Admin.view.wizard.WizardPanel', {
         };
     },
     createSteps: function () {
+        var spaceStep = new admin.ui.SpaceStepPanel(this.data);
         return [
-            {
-                xtype: 'spaceStepPanel',
-                data: this.data
-            }, 
+            spaceStep.ext, 
             {
                 stepTitle: 'Schemas'
             }, 
@@ -4979,7 +4980,7 @@ Ext.define('Admin.controller.WizardController', {
         return this.getWizardTab();
     },
     getWizardToolbar: function () {
-        return Ext.ComponentQuery.query('spaceAdminWizardToolbar', this.getWizardTab())[0];
+        return Ext.ComponentQuery.query('#spaceWizardToolbar', this.getWizardTab())[0];
     }
 });
 var APP;
