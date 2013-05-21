@@ -76,9 +76,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
 
         return {
             imageUrl: this.content ? this.content.iconUrl : undefined,
-            displayName: this.content ? this.content.displayName : 'New Content',
+            displayName: this.content ? this.content.displayName : undefined,
             path: contentPath,
-            name: contentName,
+            name: isNew ? undefined : contentName,
             isRoot: isRoot,
             isNew: isNew
         };
@@ -143,9 +143,11 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
                 vtype: 'path'
             },
             displayNameConfig: {
+                emptyText: headerData.isNew ? 'New Content' : 'Display Name',
                 autoFocus: headerData.isNew && Ext.isEmpty(evaluateFn)
             },
             data: this.data,
+            content: this.content,
             prepareHeaderData: this.prepareHeaderData
         });
         this.validateItems.push(wizardHeader);
