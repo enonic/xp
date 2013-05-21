@@ -1,4 +1,16 @@
-module API.content.data {
+module API_content_data {
+    class DataId {
+        private name;
+        private arrayIndex;
+        private refString;
+        constructor(name: string, arrayIndex: number);
+        public getName(): string;
+        public getArrayIndex(): number;
+        public toString(): string;
+        static from(str: string): DataId;
+    }
+}
+module API_content_data {
     class Data {
         private name;
         private arrayIndex;
@@ -11,7 +23,7 @@ module API.content.data {
         public getArrayIndex(): number;
     }
 }
-module API.content.data {
+module API_content_data {
     class Property extends Data {
         private value;
         private type;
@@ -21,10 +33,11 @@ module API.content.data {
         public getType(): string;
     }
 }
-module API.content.data {
+module API_content_data {
     class DataSet extends Data {
         private dataById;
         constructor(name: string);
+        public dataCount(name: string): number;
         public addData(data: Data): void;
         public getData(dataId: string): Data;
     }
