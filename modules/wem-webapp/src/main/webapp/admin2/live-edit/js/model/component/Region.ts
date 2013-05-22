@@ -40,20 +40,20 @@ module LiveEdit.model {
         }
 
 
-        private appendEmptyPlaceholder($region):void {
+        private appendEmptyPlaceholder(region:JQuery):void {
             var html = '<div>Drag components here</div>';
-            html += '<div style="font-size: 10px;">' + componentHelper.getComponentName($region) + '</div>';
+            html += '<div style="font-size: 10px;">' + componentHelper.getComponentName(region) + '</div>';
             var $placeholder = $('<div/>', {
                 'class': 'live-edit-empty-region-placeholder',
                 'html': html
             });
-            $region.append($placeholder);
+            region.append($placeholder);
         }
 
 
-        private isRegionEmpty($region:JQuery):Boolean {
-            var hasNotParts:Boolean = $region.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
-            var hasNotDropTargetPlaceholder:Boolean = $region.children('.live-edit-drop-target-placeholder').length === 0;
+        private isRegionEmpty(region:JQuery):Boolean {
+            var hasNotParts:Boolean = region.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
+            var hasNotDropTargetPlaceholder:Boolean = region.children('.live-edit-drop-target-placeholder').length === 0;
             return hasNotParts && hasNotDropTargetPlaceholder;
         }
 

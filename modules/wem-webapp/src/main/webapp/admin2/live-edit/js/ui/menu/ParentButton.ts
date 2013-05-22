@@ -22,19 +22,20 @@ module LiveEdit.ui {
                     event.stopPropagation();
 
 
-                    var $parent = this.menu.selectedComponent.parents('[data-live-edit-type]');
-                    if ($parent && $parent.length > 0) {
-                        $parent = $($parent[0]);
+                    var parent:JQuery = this.menu.selectedComponent.parents('[data-live-edit-type]');
+                    if (parent && parent.length > 0) {
+                        parent = $(parent[0]);
 
-                        $(window).trigger('select.liveEdit.component', [$parent, {x: 0, y: 0}]);
+                        var menuPagePosition:any = {x: 0, y: 0};
+                        $(window).trigger('select.liveEdit.component', [parent, menuPagePosition]);
 
-                        this.scrollComponentIntoView($parent);
+                        this.scrollComponentIntoView(parent);
 
                         // Force position of the menu after component is selected.
                         // We could move this code to menu show.
                         // The position needs to be updated after menu is updated with info in order to get the right dimensions (width) of the menu.
                         var menuWidth = this.menu.getRootEl().outerWidth();
-                        var componentBox = componentHelper.getBoxModel($parent),
+                        var componentBox = componentHelper.getBoxModel(parent),
                             newMenuPosition = {x: componentBox.left + (componentBox.width / 2) - (menuWidth / 2), y: componentBox.top + 10};
 
                         this.menu.moveToXY(newMenuPosition.x, newMenuPosition.y);

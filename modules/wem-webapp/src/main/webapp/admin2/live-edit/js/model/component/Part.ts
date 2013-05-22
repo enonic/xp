@@ -27,11 +27,11 @@ module LiveEdit.model {
         }
 
         private appendEmptyPlaceholder(part:JQuery):void {
-            var $placeholder = $('<div/>', {
+            var placeholder:JQuery = $('<div/>', {
                 'class': 'live-edit-empty-part-placeholder',
                 'html': 'Empty Part'
             });
-            part.append($placeholder);
+            part.append(placeholder);
         }
 
         private isPartEmpty(part:JQuery):Boolean {

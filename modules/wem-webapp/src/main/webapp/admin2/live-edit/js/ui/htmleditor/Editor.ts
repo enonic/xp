@@ -21,12 +21,12 @@ module LiveEdit.ui {
         }
 
         activate(paragraph:JQuery):void {
-            paragraph.get(0).contentEditable = true;
+            paragraph.attr('contenteditable', true);
             paragraph.get(0).focus();
         }
 
         deActivate(paragraph:JQuery):void {
-            paragraph.get(0).contentEditable = false;
+            paragraph.attr('contenteditable', false);
             paragraph.get(0).blur();
         }
 
