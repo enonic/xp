@@ -56,7 +56,7 @@ class MaximumOccurrencesValidator
         final int maxOccurrences = formItemSet.getOccurrences().getMaximum();
         if ( maxOccurrences > 0 )
         {
-            final int size = parentDataSet.dataCount( formItemSet.getName() );
+            final int size = parentDataSet.nameCount( formItemSet.getName() );
             if ( size > maxOccurrences )
             {
                 validationErrors.add( new MaximumOccurrencesValidationError( formItemSet, size ) );
@@ -69,7 +69,7 @@ class MaximumOccurrencesValidator
         final int maxOccurrences = input.getOccurrences().getMaximum();
         if ( maxOccurrences > 0 )
         {
-            final int size = parentDataSet.dataCount( input.getName() );
+            final int size = parentDataSet.nameCount( input.getName() );
             if ( size > maxOccurrences )
             {
                 validationErrors.add( new MaximumOccurrencesValidationError( input, size ) );

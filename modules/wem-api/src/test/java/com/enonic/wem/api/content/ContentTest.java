@@ -503,8 +503,8 @@ public class ContentTest
         assertEquals( 0, contentData.getProperty( "myData" ).getArrayIndex() );
         assertEquals( 0, contentData.getProperty( "myArray" ).getArrayIndex() );
         assertEquals( 1, contentData.getProperty( "myArray[1]" ).getArrayIndex() );
-        assertEquals( 2, contentData.dataCount( "myArray" ) );
-        assertEquals( 1, contentData.dataCount( "myData" ) );
+        assertEquals( 2, contentData.nameCount( "myArray" ) );
+        assertEquals( 1, contentData.nameCount( "myData" ) );
 
         Property myArray = content.getContentData().getProperty( "myArray" );
     }

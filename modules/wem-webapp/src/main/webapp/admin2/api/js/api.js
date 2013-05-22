@@ -392,7 +392,7 @@ var API_content_data;
             this.dataById = {
             };
         }
-        DataSet.prototype.dataCount = function (name) {
+        DataSet.prototype.nameCount = function (name) {
             var count = 0;
             for(var i in this.dataById) {
                 var data = this.dataById[i];
@@ -404,7 +404,7 @@ var API_content_data;
         };
         DataSet.prototype.addData = function (data) {
             data.setParent(this);
-            var index = this.dataCount(data.getName());
+            var index = this.nameCount(data.getName());
             data.setArrayIndex(index);
             var dataId = new API_content_data.DataId(data.getName(), index);
             this.dataById[dataId.toString()] = data;

@@ -47,7 +47,7 @@ TestCase("DataSet", {
         dataSet.addData(new API_content_data.Property('myProp', 'B', 'String'))
 
         // exercise & verify
-        assertEquals(2, dataSet.dataCount('myProp'));
+        assertEquals(2, dataSet.nameCount('myProp'));
     },
     "test given Data with arrayIndex one when getData equal DataId then Data with arrayIndex one is returned": function () {
 

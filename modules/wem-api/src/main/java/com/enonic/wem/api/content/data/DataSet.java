@@ -114,7 +114,7 @@ public class DataSet
                 "Data [" + data.getName() + "] already added to another parent: " + data.getParent().getPath().toString() );
         }
         data.setParent( this );
-        data.setArrayIndex( dataCount( data.getName() ) );
+        data.setArrayIndex( nameCount( data.getName() ) );
         registerArray( data );
         dataById.put( data.getDataId(), data );
     }
@@ -164,7 +164,7 @@ public class DataSet
 
         if ( exData == null )
         {
-            final int expectedIndex = dataCount( dataId.getName() );
+            final int expectedIndex = nameCount( dataId.getName() );
             if ( dataId.getIndex() != expectedIndex )
             {
                 throw new IllegalArgumentException(
@@ -224,7 +224,7 @@ public class DataSet
         return arrayByDataName.keySet();
     }
 
-    public final int dataCount( final String dataName )
+    public final int nameCount( final String dataName )
     {
         DataPath.Element.checkName( dataName );
         DataArray array = arrayByDataName.get( dataName );

@@ -162,7 +162,7 @@ public class DataSetTest
         dataSet.add( Property.newProperty().name( "myOtherData" ).type( ValueTypes.TEXT ).value( "A" ).build() );
         dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "2" ).build() );
 
-        assertEquals( 2, dataSet.dataCount( "myData" ) );
+        assertEquals( 2, dataSet.nameCount( "myData" ) );
     }
 
     @Test
@@ -171,7 +171,7 @@ public class DataSetTest
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
         dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "2" ).build() );
 
-        assertEquals( 0, dataSet.dataCount( "nonExistingData" ) );
+        assertEquals( 0, dataSet.nameCount( "nonExistingData" ) );
     }
 
     @Test

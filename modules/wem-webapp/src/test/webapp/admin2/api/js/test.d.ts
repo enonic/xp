@@ -38,7 +38,7 @@ module API_content_data {
     class DataSet extends Data {
         private dataById;
         constructor(name: string);
-        public dataCount(name: string): number;
+        public nameCount(name: string): number;
         public addData(data: Data): void;
         public getData(dataId: string): Data;
     }

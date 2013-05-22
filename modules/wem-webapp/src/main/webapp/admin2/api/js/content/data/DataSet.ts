@@ -8,7 +8,7 @@ module API_content_data{
             super(name);
         }
 
-        dataCount(name:string):number {
+        nameCount(name:string):number {
             var count = 0;
             for (var i in this.dataById) {
                 var data = this.dataById[i];
@@ -21,7 +21,7 @@ module API_content_data{
 
         addData(data:Data) {
             data.setParent(this);
-            var index = this.dataCount(data.getName());
+            var index = this.nameCount(data.getName());
             data.setArrayIndex(index);
             var dataId = new DataId(data.getName(), index);
             this.dataById[dataId.toString()] = data;
