@@ -40,7 +40,7 @@ TestCase("DataSet", {
         // exercise & verify
         assertEquals(dataSet, data.getParent());
     },
-    "test given two data with same name when dataCount then two is returned": function () {
+    "test given two data with same name when nameCount then two is returned": function () {
 
         var dataSet = new API_content_data.DataSet('mySet');
         dataSet.addData(new API_content_data.Property('myProp', 'A', 'String'))
