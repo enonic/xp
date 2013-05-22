@@ -18,6 +18,7 @@
 ///<reference path='content/data/Property.ts' />
 
 ///<reference path='schema/content/form/FormItem.ts' />
+///<reference path='schema/content/form/InputType.ts' />
 ///<reference path='schema/content/form/Input.ts' />
 ///<reference path='schema/content/form/Occurrences.ts' />
 

@@ -32,12 +32,10 @@ module API_content_data{
         }
 
         static from(str:string):DataId {
-            console.log("str:" + str);
             var endsWithEndBracket:bool = str.indexOf(']', str.length - ']'.length) !== -1;
             var containsStartBracket:bool = str.indexOf('[') !== -1;
 
             if (endsWithEndBracket && containsStartBracket) {
-                console.log("str: index there is");
                 var firstBracketPos:number = str.indexOf('[');
                 var nameStr:string = str.substring(0, firstBracketPos);
                 var indexStr:string = str.substring(nameStr.length + 1, (str.length - 1));

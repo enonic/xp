@@ -24,8 +24,7 @@ module API_content_data{
             var index = this.dataCount(data.getName());
             data.setArrayIndex(index);
             var dataId = new DataId(data.getName(), index);
-            var dataIdStr = dataId.toString();
-            this.dataById[dataIdStr] = data;
+            this.dataById[dataId.toString()] = data;
         }
 
         getData(dataId:string):Data {

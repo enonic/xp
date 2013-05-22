@@ -91,6 +91,7 @@ module API_content_data {
         constructor(name: string);
         public setArrayIndex(value: number): void;
         public setParent(parent: DataSet): void;
+        public getId(): DataId;
         public getName(): string;
         public getParent(): Data;
         public getArrayIndex(): number;
@@ -123,7 +124,15 @@ module API_schema_content_form {
     }
 }
 module API_schema_content_form {
+    class InputType {
+        private name;
+        constructor(json: any);
+        public getName(): string;
+    }
+}
+module API_schema_content_form {
     class Input extends FormItem {
+        private inputType;
         private label;
         private immutable;
         private occurrences;

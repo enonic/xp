@@ -20,11 +20,9 @@ var API_content_data;
             return this.refString;
         };
         DataId.from = function from(str) {
-            console.log("str:" + str);
             var endsWithEndBracket = str.indexOf(']', str.length - ']'.length) !== -1;
             var containsStartBracket = str.indexOf('[') !== -1;
             if(endsWithEndBracket && containsStartBracket) {
-                console.log("str: index there is");
                 var firstBracketPos = str.indexOf('[');
                 var nameStr = str.substring(0, firstBracketPos);
                 var indexStr = str.substring(nameStr.length + 1, (str.length - 1));
@@ -69,6 +67,9 @@ var API_content_data;
         };
         Data.prototype.setParent = function (parent) {
             this.parent = parent;
+        };
+        Data.prototype.getId = function () {
+            return new API_content_data.DataId(this.name, this.arrayIndex);
         };
         Data.prototype.getName = function () {
             return this.name;
@@ -134,8 +135,7 @@ var API_content_data;
             var index = this.dataCount(data.getName());
             data.setArrayIndex(index);
             var dataId = new API_content_data.DataId(data.getName(), index);
-            var dataIdStr = dataId.toString();
-            this.dataById[dataIdStr] = data;
+            this.dataById[dataId.toString()] = data;
         };
         DataSet.prototype.getData = function (dataId) {
             return this.dataById[API_content_data.DataId.from(dataId).toString()];
@@ -149,12 +149,17 @@ TestCase("DataSet", {
         var dataSet = new API_content_data.DataSet('mySet');
         assertEquals("mySet", dataSet.getName());
     },
-    "test given a dataId when getData() then given Data is returned": function () {
+    "test given an existing dataId when getData() then given Data is returned": function () {
         var dataSet = new API_content_data.DataSet('mySet');
         dataSet.addData(new API_content_data.Property('myProp', 'A value', 'String'));
         dataSet.addData(new API_content_data.Property('myOtherProp', 'A value', 'String'));
         assertEquals("myProp", dataSet.getData('myProp').getName());
         assertEquals("myOtherProp", dataSet.getData('myOtherProp').getName());
+    },
+    "test given a dataId not existing when getData() then no Data is returned": function () {
+        var dataSet = new API_content_data.DataSet('mySet');
+        dataSet.addData(new API_content_data.Property('myProp', 'A value', 'String'));
+        assertEquals(null, dataSet.getData('myNonExistingProp'));
     },
     "test given a Data added to a DataSet when getParent() then the DataSet added to is returned": function () {
         var dataSet = new API_content_data.DataSet('mySet');
@@ -162,11 +167,17 @@ TestCase("DataSet", {
         var data = dataSet.getData('myProp');
         assertEquals(dataSet, data.getParent());
     },
-    "test xxx": function () {
+    "test given two data with same name when dataCount then two is returned": function () {
         var dataSet = new API_content_data.DataSet('mySet');
         dataSet.addData(new API_content_data.Property('myProp', 'A', 'String'));
         dataSet.addData(new API_content_data.Property('myProp', 'B', 'String'));
         assertEquals(2, dataSet.dataCount('myProp'));
+    },
+    "test given Data with arrayIndex one when getData equal DataId then Data with arrayIndex one is returned": function () {
+        var dataSet = new API_content_data.DataSet('mySet');
+        dataSet.addData(new API_content_data.Property('myProp', 'A', 'String'));
+        dataSet.addData(new API_content_data.Property('myProp', 'B', 'String'));
+        assertEquals("myProp[1]", dataSet.getData('myProp[1]').getId().toString());
     }
 });
 TestCase("Property", {

@@ -18,6 +18,7 @@ module API_content_data {
         constructor(name: string);
         public setArrayIndex(value: number): void;
         public setParent(parent: DataSet): void;
+        public getId(): DataId;
         public getName(): string;
         public getParent(): Data;
         public getArrayIndex(): number;

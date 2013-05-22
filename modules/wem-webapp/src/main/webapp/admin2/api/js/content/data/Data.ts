@@ -20,6 +20,10 @@ module API_content_data{
             this.parent = parent;
         }
 
+        getId():DataId {
+            return new DataId( this.name, this.arrayIndex );
+        }
+
         getName():string {
             return this.name;
         }

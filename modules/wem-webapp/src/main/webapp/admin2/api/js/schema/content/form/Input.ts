@@ -2,6 +2,8 @@ module API_schema_content_form{
 
     export class Input extends FormItem {
 
+        private inputType:InputType;
+
         private label:string;
 
         private immutable:bool;
@@ -19,6 +21,7 @@ module API_schema_content_form{
         constructor(json) {
 
             super(json.name);
+            this.inputType = new InputType( json.type );
             this.label = json.label;
             this.immutable = json.immutable;
             this.occurrences = new Occurrences(json.occurrences);
@@ -57,25 +60,3 @@ module API_schema_content_form{
         }
     }
 }
-
-/*
- {
- "Input": {
- "name": "myColor",
- "label": null,
- "immutable": false,
- "occurrences": {
- "minimum": 0,
- "maximum": 1
- },
- "indexed": false,
- "customText": null,
- "validationRegexp": null,
- "helpText": null,
- "type": {
- "name": "Color",
- "builtIn": true
- }
- }
- }
- */

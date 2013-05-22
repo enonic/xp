@@ -334,11 +334,9 @@ var API_content_data;
             return this.refString;
         };
         DataId.from = function from(str) {
-            console.log("str:" + str);
             var endsWithEndBracket = str.indexOf(']', str.length - ']'.length) !== -1;
             var containsStartBracket = str.indexOf('[') !== -1;
             if(endsWithEndBracket && containsStartBracket) {
-                console.log("str: index there is");
                 var firstBracketPos = str.indexOf('[');
                 var nameStr = str.substring(0, firstBracketPos);
                 var indexStr = str.substring(nameStr.length + 1, (str.length - 1));
@@ -363,6 +361,9 @@ var API_content_data;
         };
         Data.prototype.setParent = function (parent) {
             this.parent = parent;
+        };
+        Data.prototype.getId = function () {
+            return new API_content_data.DataId(this.name, this.arrayIndex);
         };
         Data.prototype.getName = function () {
             return this.name;
@@ -406,8 +407,7 @@ var API_content_data;
             var index = this.dataCount(data.getName());
             data.setArrayIndex(index);
             var dataId = new API_content_data.DataId(data.getName(), index);
-            var dataIdStr = dataId.toString();
-            this.dataById[dataIdStr] = data;
+            this.dataById[dataId.toString()] = data;
         };
         DataSet.prototype.getData = function (dataId) {
             return this.dataById[API_content_data.DataId.from(dataId).toString()];
@@ -453,10 +453,24 @@ var API_schema_content_form;
 })(API_schema_content_form || (API_schema_content_form = {}));
 var API_schema_content_form;
 (function (API_schema_content_form) {
+    var InputType = (function () {
+        function InputType(json) {
+            this.name = json.name;
+        }
+        InputType.prototype.getName = function () {
+            return this.name;
+        };
+        return InputType;
+    })();
+    API_schema_content_form.InputType = InputType;    
+})(API_schema_content_form || (API_schema_content_form = {}));
+var API_schema_content_form;
+(function (API_schema_content_form) {
     var Input = (function (_super) {
         __extends(Input, _super);
         function Input(json) {
                 _super.call(this, json.name);
+            this.inputType = new API_schema_content_form.InputType(json.type);
             this.label = json.label;
             this.immutable = json.immutable;
             this.occurrences = new API_schema_content_form.Occurrences(json.occurrences);
