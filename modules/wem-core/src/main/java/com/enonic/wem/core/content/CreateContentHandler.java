@@ -32,9 +32,9 @@ import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
-import com.enonic.wem.core.content.relationship.RelationshipService;
-import com.enonic.wem.core.content.relationship.SyncRelationshipsCommand;
 import com.enonic.wem.core.index.IndexService;
+import com.enonic.wem.core.relationship.RelationshipService;
+import com.enonic.wem.core.relationship.SyncRelationshipsCommand;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 

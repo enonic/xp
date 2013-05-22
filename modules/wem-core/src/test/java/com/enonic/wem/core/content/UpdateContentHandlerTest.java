@@ -25,8 +25,8 @@ import com.enonic.wem.api.content.editor.ContentEditors;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
-import com.enonic.wem.core.content.relationship.RelationshipService;
 import com.enonic.wem.core.index.IndexService;
+import com.enonic.wem.core.relationship.RelationshipService;
 
 import static junit.framework.Assert.assertEquals;
 

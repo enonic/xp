@@ -3,7 +3,7 @@ package com.enonic.wem.api.command;
 import com.enonic.wem.api.command.account.AccountCommands;
 import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.binary.BinaryCommands;
-import com.enonic.wem.api.command.content.relationship.RelationshipCommands;
+import com.enonic.wem.api.command.relationship.RelationshipCommands;
 import com.enonic.wem.api.command.schema.SchemaCommands;
 import com.enonic.wem.api.command.schema.content.ContentTypeCommands;
 import com.enonic.wem.api.command.schema.mixin.MixinCommands;
