@@ -36,7 +36,7 @@
     <dependency>
       <groupId>com.sun.jersey.contribs</groupId>
       <artifactId>jersey-guice</artifactId>
-      <version>1.12</version>
+      <version>1.17.1</version>
       <exclusions>
         <exclusion>
           <artifactId>guice-servlet</artifactId>
@@ -60,7 +60,7 @@
     <dependency>
       <groupId>com.sun.jersey.contribs</groupId>
       <artifactId>jersey-multipart</artifactId>
-      <version>1.12</version>
+      <version>1.17.1</version>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>
