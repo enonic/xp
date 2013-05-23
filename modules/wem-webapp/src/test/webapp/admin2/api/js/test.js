@@ -107,6 +107,9 @@ var API_content_data;
         Property.prototype.getType = function () {
             return this.type;
         };
+        Property.prototype.setValue = function (value) {
+            this.value = value;
+        };
         return Property;
     })(API_content_data.Data);
     API_content_data.Property = Property;    

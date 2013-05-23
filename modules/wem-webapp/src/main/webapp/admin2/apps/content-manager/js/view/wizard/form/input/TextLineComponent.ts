@@ -4,8 +4,6 @@ module admin.ui {
 
         ext;
 
-        private property:API_content_data.Property;
-
         constructor(input:API_schema_content_form.Input) {
             super(input);
 
@@ -25,8 +23,11 @@ module admin.ui {
             this.ext = fieldContainer;
         }
 
-        setValue(value) {
+        setValue(value:string, arrayIndex:number) {
+
             this.ext.down('textfield').setValue(value);
+
+            super.setValue( value, arrayIndex )
         }
     }
 }

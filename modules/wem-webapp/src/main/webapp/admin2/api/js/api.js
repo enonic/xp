@@ -418,6 +418,17 @@ var API_content_data;
 })(API_content_data || (API_content_data = {}));
 var API_content_data;
 (function (API_content_data) {
+    var ContentData = (function (_super) {
+        __extends(ContentData, _super);
+        function ContentData() {
+                _super.call(this, "");
+        }
+        return ContentData;
+    })(API_content_data.DataSet);
+    API_content_data.ContentData = ContentData;    
+})(API_content_data || (API_content_data = {}));
+var API_content_data;
+(function (API_content_data) {
     var Property = (function (_super) {
         __extends(Property, _super);
         function Property(name, value, type) {
@@ -433,6 +444,9 @@ var API_content_data;
         };
         Property.prototype.getType = function () {
             return this.type;
+        };
+        Property.prototype.setValue = function (value) {
+            this.value = value;
         };
         return Property;
     })(API_content_data.Data);

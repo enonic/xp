@@ -23,5 +23,9 @@ module API_content_data{
         getType():string {
             return this.type;
         }
+
+        setValue(value:any) {
+            this.value = value;
+        }
     }
 }

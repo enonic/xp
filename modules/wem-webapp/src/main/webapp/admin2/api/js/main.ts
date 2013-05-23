@@ -15,6 +15,7 @@
 ///<reference path='content/data/DataId.ts' />
 ///<reference path='content/data/Data.ts' />
 ///<reference path='content/data/DataSet.ts' />
+///<reference path='content/data/ContentData.ts' />
 ///<reference path='content/data/Property.ts' />
 
 ///<reference path='schema/content/form/FormItem.ts' />
