@@ -71,8 +71,7 @@ Ext.define('Admin.view.wizard.WizardPanel', {
         var pathConfig:admin.ui.PathConfig = {
             hidden: true
         };
-        var wizardHeader = new admin.ui.WizardHeader({}, pathConfig);
-        wizardHeader.setData(this.data);
+        var wizardHeader = new admin.ui.WizardHeader(this.data, {}, pathConfig);
 
         this.validateItems.push(wizardHeader.ext);
         return wizardHeader.ext;
@@ -143,7 +142,7 @@ Ext.define('Admin.view.wizard.WizardPanel', {
     },
 
     getWizardHeader: function () {
-        return this.down('wizardHeader');
+        return this.down('#wizardHeader');
     },
 
     getData: function () {

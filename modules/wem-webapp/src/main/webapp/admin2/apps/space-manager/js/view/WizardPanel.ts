@@ -102,7 +102,7 @@ Ext.define('Admin.view.WizardPanel', {
                                 itemId: 'prev',
                                 iconCls: 'wizard-nav-icon icon-chevron-left icon-6x',
                                 cls: 'wizard-nav-button wizard-nav-button-left',
-                                height: 64,
+                                height: 74,
                                 width: 64,
                                 padding: 0,
                                 margin: '0 0 0 40'
@@ -151,7 +151,7 @@ Ext.define('Admin.view.WizardPanel', {
                                 cls: 'wizard-nav-button wizard-nav-button-right',
                                 formBind: true,
                                 iconCls: 'wizard-nav-icon icon-chevron-right icon-6x',
-                                height: 64,
+                                height: 74,
                                 width: 64,
                                 padding: 0
                             }
@@ -234,7 +234,7 @@ Ext.define('Admin.view.WizardPanel', {
         } else if (btn.hasCls('x-btn-inner')) {
             btn = btn.next('.x-btn-icon');
         }
-        btn.setStyle('color', color);
+        btn && btn.setStyle('color', color);
     },
 
     updateProgress: function (newStep) {

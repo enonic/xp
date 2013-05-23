@@ -69,9 +69,10 @@ module admin.ui {
             hideLabel: true
         };
 
-        constructor(displayNameConfig:DisplayNameConfig = {}, pathConfig:PathConfig = {}, nameConfig:NameConfig = {},
+        constructor(data:Object, displayNameConfig:DisplayNameConfig = {}, pathConfig:PathConfig = {}, nameConfig:NameConfig = {},
                     displayNameProperty:string = 'displayName', pathProperty:string = 'path', nameProperty:string = 'name') {
 
+            this.data = data;
             this.displayNameConfig = <DisplayNameConfig> Ext.apply({}, displayNameConfig, WizardHeader.DEFAULT_DISPLAY_NAME_CONFIG);
             this.pathConfig = <PathConfig> Ext.apply({}, pathConfig, WizardHeader.DEFAULT_PATH_CONFIG);
             this.nameConfig = <NameConfig> Ext.apply({}, nameConfig, WizardHeader.DEFAULT_NAME_CONFIG);
@@ -193,7 +194,7 @@ module admin.ui {
                 var processedValue = this.nameField.processRawValue(this.preProcessName(newVal));
                 this.nameField.setValue(processedValue);
             }
-            this.nameField.growMax = this.ext.el.getWidth() - 100;
+            this.nameField.growMax = this.ext.getEl().getWidth() - 100;
             this.nameField.doComponentLayout();
         }
 

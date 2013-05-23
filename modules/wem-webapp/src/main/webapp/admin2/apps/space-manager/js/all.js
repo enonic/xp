@@ -5,7 +5,7 @@ Ext.define('Admin.lib.JsonRpcProvider', {
         var methods = this.methods;
         var namespace = this.namespace;
         var methodName;
-        for(var i = 0; i < methods.length; i++) {
+        for (var i = 0; i < methods.length; i++) {
             methodName = methods[i];
             var def = {
                 name: methodName,
@@ -27,7 +27,7 @@ Ext.define('Admin.lib.JsonRpcProvider', {
         var error = response.error ? true : false;
         response.tid = response.id;
         response.type = error ? 'exception' : 'rpc';
-        if(error) {
+        if (error) {
             response.message = response.error.message;
         }
         return Ext.create('direct.' + response.type, response);
@@ -46,47 +46,47 @@ Ext.define('Admin.lib.RemoteService', {
             "type": "jsonrpc",
             "namespace": "Admin.lib.RemoteService",
             "methods": [
-                "account_find", 
-                "account_getGraph", 
-                "account_changePassword", 
-                "account_verifyUniqueEmail", 
-                "account_suggestUserName", 
-                "account_createOrUpdate", 
-                "account_delete", 
-                "account_get", 
-                "util_getCountries", 
-                "util_getLocales", 
-                "util_getTimeZones", 
-                "userstore_getAll", 
-                "userstore_get", 
-                "userstore_getConnectors", 
-                "userstore_createOrUpdate", 
-                "userstore_delete", 
-                "content_createOrUpdate", 
-                "content_list", 
-                "contentType_get", 
-                "content_tree", 
-                "content_get", 
-                "contentType_list", 
-                "content_delete", 
-                "content_validate", 
-                "content_find", 
-                "contentType_createOrUpdate", 
-                "contentType_delete", 
-                "contentType_tree", 
-                "schema_list", 
-                "schema_tree", 
-                "system_getSystemInfo", 
-                "mixin_get", 
-                "mixin_createOrUpdate", 
-                "mixin_delete", 
-                "relationshipType_get", 
-                "relationshipType_createOrUpdate", 
-                "relationshipType_delete", 
-                "space_list", 
-                "space_get", 
-                "space_delete", 
-                "space_createOrUpdate", 
+                "account_find",
+                "account_getGraph",
+                "account_changePassword",
+                "account_verifyUniqueEmail",
+                "account_suggestUserName",
+                "account_createOrUpdate",
+                "account_delete",
+                "account_get",
+                "util_getCountries",
+                "util_getLocales",
+                "util_getTimeZones",
+                "userstore_getAll",
+                "userstore_get",
+                "userstore_getConnectors",
+                "userstore_createOrUpdate",
+                "userstore_delete",
+                "content_createOrUpdate",
+                "content_list",
+                "contentType_get",
+                "content_tree",
+                "content_get",
+                "contentType_list",
+                "content_delete",
+                "content_validate",
+                "content_find",
+                "contentType_createOrUpdate",
+                "contentType_delete",
+                "contentType_tree",
+                "schema_list",
+                "schema_tree",
+                "system_getSystemInfo",
+                "mixin_get",
+                "mixin_createOrUpdate",
+                "mixin_delete",
+                "relationshipType_get",
+                "relationshipType_createOrUpdate",
+                "relationshipType_delete",
+                "space_list",
+                "space_get",
+                "space_delete",
+                "space_createOrUpdate",
                 "binary_create"
             ],
             "enableBuffer": 20
@@ -221,7 +221,7 @@ Ext.define('Admin.lib.RemoteService', {
     },
     getMethod: function (name) {
         var handler = this.handlerCache[name];
-        if(handler) {
+        if (handler) {
             return handler;
         }
         var method = new Ext.direct.RemotingMethod({
@@ -240,7 +240,10 @@ Ext.define('Admin.lib.RemoteService', {
     this.init();
 });
 var __extends = this.__extends || function (d, b) {
-    function __() { this.constructor = d; }
+    function __() {
+        this.constructor = d;
+    }
+
     __.prototype = b.prototype;
     d.prototype = new __();
 };
@@ -250,14 +253,15 @@ var APP;
         var DeletedEvent = (function (_super) {
             __extends(DeletedEvent, _super);
             function DeletedEvent() {
-                        _super.call(this, 'deleted');
+                _super.call(this, 'deleted');
             }
+
             DeletedEvent.on = function on(handler) {
                 API.event.onEvent('deleted', handler);
             };
             return DeletedEvent;
         })(API.event.Event);
-        event.DeletedEvent = DeletedEvent;        
+        event.DeletedEvent = DeletedEvent;
     })(APP.event || (APP.event = {}));
     var event = APP.event;
 })(APP || (APP = {}));
@@ -268,14 +272,15 @@ var APP;
             __extends(SpaceModelEvent, _super);
             function SpaceModelEvent(name, model) {
                 this.model = model;
-                        _super.call(this, name);
+                _super.call(this, name);
             }
+
             SpaceModelEvent.prototype.getModel = function () {
                 return this.model;
             };
             return SpaceModelEvent;
         })(API.event.Event);
-        event.SpaceModelEvent = SpaceModelEvent;        
+        event.SpaceModelEvent = SpaceModelEvent;
     })(APP.event || (APP.event = {}));
     var event = APP.event;
 })(APP || (APP = {}));
@@ -285,14 +290,15 @@ var APP;
         var DeletePromptEvent = (function (_super) {
             __extends(DeletePromptEvent, _super);
             function DeletePromptEvent(model) {
-                        _super.call(this, 'deletePrompt', model);
+                _super.call(this, 'deletePrompt', model);
             }
+
             DeletePromptEvent.on = function on(handler) {
                 API.event.onEvent('deletePrompt', handler);
             };
             return DeletePromptEvent;
         })(event.SpaceModelEvent);
-        event.DeletePromptEvent = DeletePromptEvent;        
+        event.DeletePromptEvent = DeletePromptEvent;
     })(APP.event || (APP.event = {}));
     var event = APP.event;
 })(APP || (APP = {}));
@@ -302,14 +308,15 @@ var APP;
         var GridSelectionChangeEvent = (function (_super) {
             __extends(GridSelectionChangeEvent, _super);
             function GridSelectionChangeEvent(model) {
-                        _super.call(this, 'gridChange', model);
+                _super.call(this, 'gridChange', model);
             }
+
             GridSelectionChangeEvent.on = function on(handler) {
                 API.event.onEvent('gridChange', handler);
             };
             return GridSelectionChangeEvent;
         })(event.SpaceModelEvent);
-        event.GridSelectionChangeEvent = GridSelectionChangeEvent;        
+        event.GridSelectionChangeEvent = GridSelectionChangeEvent;
     })(APP.event || (APP.event = {}));
     var event = APP.event;
 })(APP || (APP = {}));
@@ -321,8 +328,9 @@ var APP;
             function ShowContextMenuEvent(x, y) {
                 this.x = x;
                 this.y = y;
-                        _super.call(this, 'showContextMenu');
+                _super.call(this, 'showContextMenu');
             }
+
             ShowContextMenuEvent.prototype.getX = function () {
                 return this.x;
             };
@@ -334,7 +342,7 @@ var APP;
             };
             return ShowContextMenuEvent;
         })(API.event.Event);
-        event.ShowContextMenuEvent = ShowContextMenuEvent;        
+        event.ShowContextMenuEvent = ShowContextMenuEvent;
     })(APP.event || (APP.event = {}));
     var event = APP.event;
 })(APP || (APP = {}));
@@ -344,14 +352,15 @@ var APP;
         var OpenSpaceWizardEvent = (function (_super) {
             __extends(OpenSpaceWizardEvent, _super);
             function OpenSpaceWizardEvent() {
-                        _super.call(this, 'openSpaceWizardEvent');
+                _super.call(this, 'openSpaceWizardEvent');
             }
+
             OpenSpaceWizardEvent.on = function on(handler) {
                 API.event.onEvent('openSpaceWizardEvent', handler);
             };
             return OpenSpaceWizardEvent;
         })(API.event.Event);
-        event.OpenSpaceWizardEvent = OpenSpaceWizardEvent;        
+        event.OpenSpaceWizardEvent = OpenSpaceWizardEvent;
     })(APP.event || (APP.event = {}));
     var event = APP.event;
 })(APP || (APP = {}));
@@ -372,14 +381,14 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
             this.panel.view.on('beforeitemmousedown', function (view, record, item, index, event, eOpts) {
                 var targetElement = new Ext.Element(event.target);
                 var isCheckboxColumnIsClicked = targetElement.findParent('td.x-grid-cell-first') !== null;
-                if(isCheckboxColumnIsClicked) {
+                if (isCheckboxColumnIsClicked) {
                     var isShiftKeyPressed = event.shiftKey === true;
                     var isCtrlKeyPressed = event.ctrlKey === true;
-                    if(isShiftKeyPressed || isCtrlKeyPressed) {
+                    if (isShiftKeyPressed || isCtrlKeyPressed) {
                         return;
                     }
                     var isChecked = this.selected[record.get(this.keyField)];
-                    if(!isChecked) {
+                    if (!isChecked) {
                         this.panel.selModel.select(index, true, false);
                     } else {
                         this.panel.selModel.deselect(index);
@@ -397,7 +406,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
             }, this);
             this.panel.view.on('itemadd', this.onViewRefresh, this);
             var pagingToolbar = this.panel.down('pagingtoolbar');
-            if(pagingToolbar !== null) {
+            if (pagingToolbar !== null) {
                 pagingToolbar.on('beforechange', this.pagingOnBeforeChange, this);
             }
         }, this);
@@ -412,9 +421,9 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         this.onRowDeselect(this.panel.selModel, record);
         var storeRecord;
         var key = record.get(this.keyField);
-        if(this.panel instanceof Ext.tree.Panel) {
+        if (this.panel instanceof Ext.tree.Panel) {
             storeRecord = this.panel.getRootNode().findChild(this.keyField, key);
-        } else if(this.panel instanceof Ext.grid.Panel) {
+        } else if (this.panel instanceof Ext.grid.Panel) {
             storeRecord = this.panel.getStore().findRecord(this.keyField, key);
         }
         this.panel.selModel.deselect(storeRecord);
@@ -436,22 +445,22 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         this.panel.selModel.refresh();
         var i;
         var sm = this.panel.getSelectionModel();
-        if(this.panel instanceof Ext.tree.Panel) {
+        if (this.panel instanceof Ext.tree.Panel) {
             var rootNode = this.panel.getRootNode(), node;
-            for(var selectedItem in this.selected) {
-                if(this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
+            for (var selectedItem in this.selected) {
+                if (this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
                     node = rootNode.findChild(this.keyField, selectedItem, true);
-                    if(node) {
+                    if (node) {
                         sm.select(node, true);
                     }
                 }
             }
-        } else if(this.panel instanceof Ext.grid.Panel) {
+        } else if (this.panel instanceof Ext.grid.Panel) {
             var store = this.panel.getStore(), record;
-            for(var selectedItem in this.selected) {
-                if(this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
+            for (var selectedItem in this.selected) {
+                if (this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
                     record = store.findRecord(this.keyField, selectedItem);
-                    if(record) {
+                    if (record) {
                         sm.select(record, true);
                     }
                 }
@@ -463,25 +472,25 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         this.ignoreSelectionChanges = true;
     },
     onSelectionClear: function () {
-        if(!this.ignoreSelectionChanges) {
+        if (!this.ignoreSelectionChanges) {
             this.selections = [];
             this.selected = {
             };
         }
     },
     onRowSelect: function (sm, rec, i, o) {
-        if(!this.ignoreSelectionChanges) {
-            if(!this.selected[rec.get(this.keyField)]) {
+        if (!this.ignoreSelectionChanges) {
+            if (!this.selected[rec.get(this.keyField)]) {
                 this.selections.push(rec);
                 this.selected[rec.get(this.keyField)] = true;
             }
         }
     },
     onHeaderClick: function (headerCt, header, e) {
-        if(header.isCheckerHd) {
+        if (header.isCheckerHd) {
             e.stopEvent();
             var isChecked = header.el.hasCls('x-grid-hd-checker-on');
-            if(isChecked) {
+            if (isChecked) {
                 this.clearSelection();
             } else {
                 this.panel.selModel.selectAll();
@@ -490,10 +499,10 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         return false;
     },
     onRowDeselect: function (rowModel, record, index, eOpts) {
-        if(!this.ignoreSelectionChanges) {
-            if(this.selected[record.get(this.keyField)]) {
-                for(var j = this.selections.length - 1; j >= 0; j--) {
-                    if(this.selections[j].get(this.keyField) == record.get(this.keyField)) {
+        if (!this.ignoreSelectionChanges) {
+            if (this.selected[record.get(this.keyField)]) {
+                for (var j = this.selections.length - 1; j >= 0; j--) {
+                    if (this.selections[j].get(this.keyField) == record.get(this.keyField)) {
                         this.selections.splice(j, 1);
                         this.selected[record.get(this.keyField)] = false;
                         break;
@@ -509,7 +518,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         var isRightClick = event.button === 2;
         var recordIsSelected = this.selected[record.get(this.keyField)];
         var cancel = isRightClick && recordIsSelected && this.getSelectionCount() > 1;
-        if(cancel) {
+        if (cancel) {
             return false;
         }
         return true;
@@ -518,7 +527,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         var targetElement = event.target;
         var isLeftClick = event.button === 0;
         var isCheckbox = targetElement.className && targetElement.className.indexOf('x-grid-row-checker') > -1;
-        if(isLeftClick && !isCheckbox) {
+        if (isLeftClick && !isCheckbox) {
             this.clearSelection();
         }
     }
@@ -528,7 +537,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     alias: 'plugin.gridToolbarPlugin',
     pluginId: 'gridToolbarPlugin',
     constructor: function (config) {
-        if(config) {
+        if (config) {
             Ext.apply(this, config);
         }
     },
@@ -544,9 +553,9 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         me.tbFill = Ext.create('Ext.toolbar.Fill');
         me.orderByButton = me.createOrderByButton();
         me.orderByDirectionButton = me.createOrderByDirectionButton();
-        if(Ext.isFunction(me.toolbar.store.getCount)) {
+        if (Ext.isFunction(me.toolbar.store.getCount)) {
             me.updateResultCount(me.getCount(me.toolbar.store));
-        } else if(Ext.isString(me.toolbar.store)) {
+        } else if (Ext.isString(me.toolbar.store)) {
             me.toolbar.store = Ext.StoreManager.lookup(me.toolbar.store);
         }
         me.toolbar.insert(0, me.resultTextItem);
@@ -555,7 +564,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             text: ' | '
         }));
         me.toolbar.insert(3, me.clearSelectionButton);
-        if(!(me.toolbar.store instanceof Ext.data.TreeStore)) {
+        if (!(me.toolbar.store instanceof Ext.data.TreeStore)) {
             me.toolbar.insert(4, me.tbFill);
             me.toolbar.insert(5, me.orderByButton);
             me.toolbar.insert(6, me.orderByDirectionButton);
@@ -566,13 +575,13 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         me.orderByDirectionButton.addListener('change', function () {
             me.doSort();
         });
-        if(me.toolbar.store) {
+        if (me.toolbar.store) {
             var loadEventName = me.toolbar.store.buffered ? 'prefetch' : 'load';
             me.toolbar.store.on(loadEventName, function (store) {
                 me.updateResultCount(me.getCount(store));
             });
         }
-        if(me.toolbar.gridPanel) {
+        if (me.toolbar.gridPanel) {
             me.toolbar.gridPanel.getSelectionModel().on('selectionchange', function (model, selected, eOpts) {
                 me.updateSelectAll(selected);
                 me.updateClearSelection(selected);
@@ -591,7 +600,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             listeners: {
                 render: function (cmp) {
                     cmp.el.on('click', function () {
-                        if(cmp.el.hasCls('admin-grid-toolbar-btn-none-selected')) {
+                        if (cmp.el.hasCls('admin-grid-toolbar-btn-none-selected')) {
                             me.toolbar.gridPanel.getSelectionModel().selectAll();
                         } else {
                             me.toolbar.gridPanel.getSelectionModel().deselectAll();
@@ -613,7 +622,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             listeners: {
                 render: function (cmp) {
                     cmp.el.on('click', function () {
-                        if(cmp.el.hasCls('admin-grid-toolbar-btn-clear-selection')) {
+                        if (cmp.el.hasCls('admin-grid-toolbar-btn-clear-selection')) {
                             me.toolbar.gridPanel.getSelectionModel().deselectAll();
                         }
                     });
@@ -640,7 +649,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
                 items: [
                     {
                         text: 'ASC'
-                    }, 
+                    },
                     {
                         text: 'DESC'
                     }
@@ -652,7 +661,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         var me = this;
         var gridColumns = me.toolbar.gridPanel.columns;
         var menuItems = [];
-        for(var i = 0; i < gridColumns.length; i++) {
+        for (var i = 0; i < gridColumns.length; i++) {
             menuItems.push({
                 text: gridColumns[i].text,
                 dataIndex: gridColumns[i].dataIndex
@@ -676,10 +685,10 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         var btn = this.selectAllButton;
         var isSelectMode = btn.el.hasCls('admin-grid-toolbar-btn-none-selected');
         var areAllRecordsSelected = !Ext.isEmpty(selected) && this.getCount(this.toolbar.store) == selected.length;
-        if(areAllRecordsSelected && isSelectMode) {
+        if (areAllRecordsSelected && isSelectMode) {
             btn.update('Deselect all');
             btn.el.removeCls('admin-grid-toolbar-btn-none-selected');
-        } else if(!areAllRecordsSelected && !isSelectMode) {
+        } else if (!areAllRecordsSelected && !isSelectMode) {
             btn.update('Select all');
             btn.el.addCls('admin-grid-toolbar-btn-none-selected');
         }
@@ -687,27 +696,27 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     updateClearSelection: function (selected) {
         var btn = this.clearSelectionButton;
         var count = selected.length;
-        if(count > 0) {
+        if (count > 0) {
             btn.update('Clear selection (' + selected.length + ')');
         } else {
             btn.update('Clear selection');
         }
     },
     getCount: function (store) {
-        if(store instanceof Ext.data.Store) {
+        if (store instanceof Ext.data.Store) {
             return store.getTotalCount();
-        } else if(store instanceof Ext.data.TreeStore) {
+        } else if (store instanceof Ext.data.TreeStore) {
             return this.countTreeNodes(store.getRootNode()) - 1;
         } else {
             return undefined;
         }
     },
     countTreeNodes: function (node) {
-        if(this.toolbar.countTopLevelOnly) {
+        if (this.toolbar.countTopLevelOnly) {
             return Ext.isEmpty(node.childNodes) ? 1 : 1 + node.childNodes.length;
         } else {
             var count = 1;
-            if(!Ext.isEmpty(node.childNodes)) {
+            if (!Ext.isEmpty(node.childNodes)) {
                 node.eachChild(function (child) {
                     count += this.countTreeNodes(child);
                 }, this);
@@ -722,7 +731,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     width: 300,
     height: 150,
     initComponent: function () {
-        if(!window['plupload']) {
+        if (!window['plupload']) {
             alert('FileUploadGrid requires Plupload!');
         }
         this.createStore();
@@ -732,7 +741,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
                 header: 'Name',
                 dataIndex: 'fileName',
                 flex: 2
-            }, 
+            },
             {
                 header: 'Size',
                 dataIndex: 'fileSize',
@@ -756,7 +765,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
                     text: 'Browse...',
                     iconCls: 'icon-browse',
                     itemId: 'browseButton'
-                }, 
+                },
                 {
                     xtype: 'button',
                     text: 'Upload',
@@ -766,7 +775,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
                     handler: function () {
                         Ext.Msg.alert('TODO', 'Upload');
                     }
-                }, 
+                },
                 {
                     xtype: 'button',
                     text: 'Remove',
@@ -805,7 +814,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
         this.uploader.bind('FilesAdded', function (up, files) {
             var file = null;
             var i;
-            for(i = 0; i < files.length; i += 1) {
+            for (i = 0; i < files.length; i += 1) {
                 file = files[i];
                 store.add({
                     'fileId': file.id,
@@ -825,7 +834,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     removeSelectedFiles: function (selected) {
         var store = this.getStore(), fileRecord = null;
         var i;
-        for(i = 0; i < selected.length; i += 1) {
+        for (i = 0; i < selected.length; i += 1) {
             fileRecord = selected[i];
             store.remove(fileRecord);
             this.removeFileFromUploaderQueue(fileRecord.data);
@@ -834,8 +843,8 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     removeFileFromUploaderQueue: function (recordData) {
         var uploaderFiles = this.uploader.files;
         var j;
-        for(j = 0; j < uploaderFiles.length; j += 1) {
-            if(uploaderFiles[j].id === recordData.fileId) {
+        for (j = 0; j < uploaderFiles.length; j += 1) {
+            if (uploaderFiles[j].id === recordData.fileId) {
                 this.uploader.removeFile(uploaderFiles[j]);
             }
         }
@@ -843,8 +852,8 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     createStore: function () {
         this.store = Ext.create('Ext.data.Store', {
             fields: [
-                'fileName', 
-                'fileSize', 
+                'fileName',
+                'fileSize',
                 'fileId'
             ],
             data: {
@@ -870,18 +879,22 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     addBodyListeners: function () {
         var bodyElement = Ext.getBody();
         var gridHtmlElement = this.getEl();
+
         function cancelEvent(event) {
-            if(event.preventDefault) {
+            if (event.preventDefault) {
                 event.preventDefault();
             }
             return false;
         }
+
         function addDragOverCls() {
             gridHtmlElement.addCls('admin-file-upload-drop-target');
         }
+
         function removeDragOverCls() {
             gridHtmlElement.removeCls('admin-file-upload-drop-target');
         }
+
         bodyElement.on('dragover', function (event) {
             addDragOverCls();
             cancelEvent(event);
@@ -911,9 +924,13 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
     height: 132,
     uploadUrl: 'rest/upload',
     progressBarHeight: 8,
-    tpl: new Ext.XTemplate('<div id="{id}" title="{title}" class="admin-image-upload-button-container" style="width:{width}px;height:{height}px; margin: 0">' + '<img src="{photoUrl}" class="admin-image-upload-button-image" style="width:{width - 2}px;height:{height - 2}px"/>' + '<div class="admin-image-upload-button-progress-bar-container" style="width:{width - 3}px">' + '<div class="admin-image-upload-button-progress-bar" style="height:{progressBarHeight}px"><!-- --></div>' + '</div>' + '</div>'),
+    tpl: new Ext.XTemplate('<div id="{id}" title="{title}" class="admin-image-upload-button-container" style="width:{width}px;height:{height}px; margin: 0">' +
+                           '<img src="{photoUrl}" class="admin-image-upload-button-image" style="width:{width - 2}px;height:{height - 2}px"/>' +
+                           '<div class="admin-image-upload-button-progress-bar-container" style="width:{width - 3}px">' +
+                           '<div class="admin-image-upload-button-progress-bar" style="height:{progressBarHeight}px"><!-- --></div>' +
+                           '</div>' + '</div>'),
     initComponent: function () {
-        if(!window['plupload']) {
+        if (!window['plupload']) {
             alert('ImageUploadButton requires Plupload!');
         }
         var me = this;
@@ -978,9 +995,10 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
         });
         uploader.bind('FileUploaded', function (up, file, response) {
             var responseObj, uploadedResUrl;
-            if(response && response.status === 200) {
+            if (response && response.status === 200) {
                 responseObj = Ext.decode(response.response);
-                uploadedResUrl = (responseObj.items && responseObj.items.length > 0) ? 'rest/upload/' + responseObj.items[0].id : 'resources/images/x-user-photo.png';
+                uploadedResUrl = (responseObj.items && responseObj.items.length > 0) ? 'rest/upload/' + responseObj.items[0].id
+                    : 'resources/images/x-user-photo.png';
                 uploadButton.updateImage(uploadedResUrl);
             }
             uploadButton.hideProgressBar();
@@ -1022,18 +1040,22 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
         var bodyElement = Ext.getBody();
         var dropTarget = Ext.get(this.buttonElementId);
         var border = Ext.get(this.buttonElementId + '-over-border');
+
         function cancelEvent(event) {
-            if(event.preventDefault) {
+            if (event.preventDefault) {
                 event.preventDefault();
             }
             return false;
         }
+
         function highlightDropTarget() {
             dropTarget.addCls('admin-file-upload-drop-target');
         }
+
         function removeHighlightFromDropTarget() {
             dropTarget.dom.className = dropTarget.dom.className.replace(/ admin-file-upload-drop-target/, '');
         }
+
         dropTarget.on('mouseenter', function (event) {
             highlightDropTarget();
             me.fireEvent('mouseenter');
@@ -1161,13 +1183,13 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
             }
         };
         this.tbar = [
-            uploadButton, 
-            '->', 
-            cancelButton, 
+            uploadButton,
+            '->',
+            cancelButton,
             setButton
         ];
         this.items = [
-            previewContainer, 
+            previewContainer,
             slider
         ];
         this.callParent(arguments);
@@ -1207,13 +1229,13 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
         var ih = image.getHeight();
         image.setWidth('');
         image.setHeight('');
-        if(iw > fw && ih > fh) {
-            if(ih > iw) {
+        if (iw > fw && ih > fh) {
+            if (ih > iw) {
                 image.setWidth(frame.getWidth() + 20);
             } else {
                 image.setHeight(frame.getHeight() + 20);
             }
-        } else if(ih > fh) {
+        } else if (ih > fh) {
             image.setHeight(frame.getHeight());
         } else {
             image.setWidth(frame.getWidth());
@@ -1246,7 +1268,7 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
         return this.down('slider');
     },
     displayImage: function (show) {
-        if(show) {
+        if (show) {
             this.getImage().show();
         } else {
             this.getImage().hide();
@@ -1262,15 +1284,15 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
 Ext.define('Admin.model.SpaceModel', {
     extend: 'Ext.data.Model',
     fields: [
-        'name', 
-        'displayName', 
-        'iconUrl', 
-        'rootContentId', 
+        'name',
+        'displayName',
+        'iconUrl',
+        'rootContentId',
         {
             name: 'createdTime',
             type: 'date',
             default: new Date()
-        }, 
+        },
         {
             name: 'modifiedTime',
             type: 'date',
@@ -1281,16 +1303,18 @@ Ext.define('Admin.model.SpaceModel', {
 });
 var APP;
 (function (APP) {
-    })(APP || (APP = {}));
+})(APP || (APP = {}));
 var admin;
 (function (admin) {
     (function (app) {
         (function (handler) {
             var DeleteSpacesHandler = (function () {
-                function DeleteSpacesHandler() { }
+                function DeleteSpacesHandler() {
+                }
+
                 DeleteSpacesHandler.prototype.doDelete = function (spaceModels, callback) {
                     var spaceNames = Ext.Array.map([].concat(spaceModels), function (item) {
-                        if(!item) {
+                        if (!item) {
                             console.error('No spaces selected');
                         }
                         return item.get('name');
@@ -1298,7 +1322,7 @@ var admin;
                     Admin.lib.RemoteService.space_delete({
                         'spaceName': spaceNames
                     }, function (response) {
-                        if(response) {
+                        if (response) {
                             callback.call(this, response.success, response);
                         } else {
                             Ext.Msg.alert('Error', response ? response.error : 'Unable to delete space.');
@@ -1307,7 +1331,7 @@ var admin;
                 };
                 return DeleteSpacesHandler;
             })();
-            handler.DeleteSpacesHandler = DeleteSpacesHandler;            
+            handler.DeleteSpacesHandler = DeleteSpacesHandler;
         })(app.handler || (app.handler = {}));
         var handler = app.handler;
     })(admin.app || (admin.app = {}));
@@ -1318,7 +1342,9 @@ var admin;
     (function (ui) {
         var WizardLayout = (function () {
             function WizardLayout(animation) {
-                if (typeof animation === "undefined") { animation = 'slide'; }
+                if (typeof animation === "undefined") {
+                    animation = 'slide';
+                }
                 var _this = this;
                 var cardLayout = new Ext.layout.container.Card({
                     mixins: [
@@ -1335,6 +1361,7 @@ var admin;
                 });
                 this.ext = cardLayout;
             }
+
             WizardLayout.prototype.setActiveItem = function (item) {
                 var me = this.ext;
                 var owner = me.owner;
@@ -1342,75 +1369,75 @@ var admin;
                 var oldIndex = owner.items.indexOf(oldCard);
                 var newCard = me.parseActiveItem(item);
                 var newIndex = owner.items.indexOf(newCard);
-                if(oldCard !== newCard) {
+                if (oldCard !== newCard) {
                     owner.fireEvent("animationstarted", newCard, oldCard);
-                    if(newCard.rendered && me.animation && me.animation !== "none") {
+                    if (newCard.rendered && me.animation && me.animation !== "none") {
                         me.syncFx();
                         var target = me.getRenderTarget();
                         newCard.setWidth(target.getWidth() - target.getPadding("lr") - Ext.getScrollbarSize().width);
-                        switch(me.animation) {
-                            case 'fade':
-                                newCard.el.setStyle({
-                                    position: 'absolute',
-                                    opacity: 0,
-                                    top: me.getRenderTarget().getPadding('t') + 'px'
-                                });
-                                newCard.show();
-                                if(oldCard) {
-                                    oldCard.el.fadeOut({
-                                        useDisplay: true,
-                                        duration: me.duration,
-                                        callback: function () {
-                                            me.hide();
-                                        },
-                                        scope: me.activeItem
-                                    });
-                                }
-                                owner.doLayout();
-                                newCard.el.fadeIn({
+                        switch (me.animation) {
+                        case 'fade':
+                            newCard.el.setStyle({
+                                position: 'absolute',
+                                opacity: 0,
+                                top: me.getRenderTarget().getPadding('t') + 'px'
+                            });
+                            newCard.show();
+                            if (oldCard) {
+                                oldCard.el.fadeOut({
                                     useDisplay: true,
                                     duration: me.duration,
                                     callback: function () {
-                                        newCard.el.setStyle({
-                                            position: ''
-                                        });
-                                        owner.fireEvent("animationfinished", newCard, oldCard);
+                                        me.hide();
                                     },
-                                    scope: this
+                                    scope: me.activeItem
                                 });
-                                break;
-                            case 'slide':
-                                newCard.el.setStyle({
-                                    position: 'absolute',
-                                    visibility: 'hidden',
-                                    width: me.getRenderTarget().getWidth(),
-                                    top: me.getRenderTarget().getPadding('t') + 'px'
-                                });
-                                newCard.show();
-                                if(oldCard) {
-                                    oldCard.el.slideOut(newIndex > oldIndex ? "l" : "r", {
-                                        duration: me.duration,
-                                        easing: me.easing,
-                                        remove: false,
-                                        scope: me.activeItem,
-                                        callback: function () {
-                                            me.hide();
-                                        }
+                            }
+                            owner.doLayout();
+                            newCard.el.fadeIn({
+                                useDisplay: true,
+                                duration: me.duration,
+                                callback: function () {
+                                    newCard.el.setStyle({
+                                        position: ''
                                     });
-                                }
-                                owner.doLayout();
-                                newCard.el.slideIn(newIndex > oldIndex ? "r" : "l", {
+                                    owner.fireEvent("animationfinished", newCard, oldCard);
+                                },
+                                scope: this
+                            });
+                            break;
+                        case 'slide':
+                            newCard.el.setStyle({
+                                position: 'absolute',
+                                visibility: 'hidden',
+                                width: me.getRenderTarget().getWidth(),
+                                top: me.getRenderTarget().getPadding('t') + 'px'
+                            });
+                            newCard.show();
+                            if (oldCard) {
+                                oldCard.el.slideOut(newIndex > oldIndex ? "l" : "r", {
                                     duration: me.duration,
                                     easing: me.easing,
-                                    scope: me,
+                                    remove: false,
+                                    scope: me.activeItem,
                                     callback: function () {
-                                        newCard.el.setStyle({
-                                            position: ''
-                                        });
-                                        owner.fireEvent("animationfinished", newCard, oldCard);
+                                        me.hide();
                                     }
                                 });
-                                break;
+                            }
+                            owner.doLayout();
+                            newCard.el.slideIn(newIndex > oldIndex ? "r" : "l", {
+                                duration: me.duration,
+                                easing: me.easing,
+                                scope: me,
+                                callback: function () {
+                                    newCard.el.setStyle({
+                                        position: ''
+                                    });
+                                    owner.fireEvent("animationfinished", newCard, oldCard);
+                                }
+                            });
+                            break;
                         }
                         me.activeItem = newCard;
                         me.sequenceFx();
@@ -1425,7 +1452,7 @@ var admin;
             };
             return WizardLayout;
         })();
-        ui.WizardLayout = WizardLayout;        
+        ui.WizardLayout = WizardLayout;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -1446,75 +1473,75 @@ Ext.define('Admin.view.WizardLayout', {
         var oldIndex = owner.items.indexOf(oldCard);
         var newCard = this.parseActiveItem(item);
         var newIndex = owner.items.indexOf(newCard);
-        if(oldCard !== newCard) {
+        if (oldCard !== newCard) {
             owner.fireEvent("animationstarted", newCard, oldCard);
-            if(newCard.rendered && this.animation && this.animation !== "none") {
+            if (newCard.rendered && this.animation && this.animation !== "none") {
                 this.syncFx();
                 var target = this.getRenderTarget();
                 newCard.setWidth(target.getWidth() - target.getPadding("lr") - Ext.getScrollbarSize().width);
-                switch(this.animation) {
-                    case 'fade':
-                        newCard.el.setStyle({
-                            position: 'absolute',
-                            opacity: 0,
-                            top: this.getRenderTarget().getPadding('t') + 'px'
-                        });
-                        newCard.show();
-                        if(oldCard) {
-                            oldCard.el.fadeOut({
-                                useDisplay: true,
-                                duration: this.duration,
-                                callback: function () {
-                                    this.hide();
-                                },
-                                scope: this.activeItem
-                            });
-                        }
-                        owner.doLayout();
-                        newCard.el.fadeIn({
+                switch (this.animation) {
+                case 'fade':
+                    newCard.el.setStyle({
+                        position: 'absolute',
+                        opacity: 0,
+                        top: this.getRenderTarget().getPadding('t') + 'px'
+                    });
+                    newCard.show();
+                    if (oldCard) {
+                        oldCard.el.fadeOut({
                             useDisplay: true,
                             duration: this.duration,
                             callback: function () {
-                                newCard.el.setStyle({
-                                    position: ''
-                                });
-                                owner.fireEvent("animationfinished", newCard, oldCard);
+                                this.hide();
                             },
-                            scope: this
+                            scope: this.activeItem
                         });
-                        break;
-                    case 'slide':
-                        newCard.el.setStyle({
-                            position: 'absolute',
-                            visibility: 'hidden',
-                            width: this.getRenderTarget().getWidth(),
-                            top: this.getRenderTarget().getPadding('t') + 'px'
-                        });
-                        newCard.show();
-                        if(oldCard) {
-                            oldCard.el.slideOut(newIndex > oldIndex ? "l" : "r", {
-                                duration: this.duration,
-                                easing: this.easing,
-                                remove: false,
-                                scope: this.activeItem,
-                                callback: function () {
-                                    this.hide();
-                                }
+                    }
+                    owner.doLayout();
+                    newCard.el.fadeIn({
+                        useDisplay: true,
+                        duration: this.duration,
+                        callback: function () {
+                            newCard.el.setStyle({
+                                position: ''
                             });
-                        }
-                        owner.doLayout();
-                        newCard.el.slideIn(newIndex > oldIndex ? "r" : "l", {
+                            owner.fireEvent("animationfinished", newCard, oldCard);
+                        },
+                        scope: this
+                    });
+                    break;
+                case 'slide':
+                    newCard.el.setStyle({
+                        position: 'absolute',
+                        visibility: 'hidden',
+                        width: this.getRenderTarget().getWidth(),
+                        top: this.getRenderTarget().getPadding('t') + 'px'
+                    });
+                    newCard.show();
+                    if (oldCard) {
+                        oldCard.el.slideOut(newIndex > oldIndex ? "l" : "r", {
                             duration: this.duration,
                             easing: this.easing,
-                            scope: this,
+                            remove: false,
+                            scope: this.activeItem,
                             callback: function () {
-                                newCard.el.setStyle({
-                                    position: ''
-                                });
-                                owner.fireEvent("animationfinished", newCard, oldCard);
+                                this.hide();
                             }
                         });
-                        break;
+                    }
+                    owner.doLayout();
+                    newCard.el.slideIn(newIndex > oldIndex ? "r" : "l", {
+                        duration: this.duration,
+                        easing: this.easing,
+                        scope: this,
+                        callback: function () {
+                            newCard.el.setStyle({
+                                position: ''
+                            });
+                            owner.fireEvent("animationfinished", newCard, oldCard);
+                        }
+                    });
+                    break;
                 }
                 this.activeItem = newCard;
                 this.sequenceFx();
@@ -1532,16 +1559,29 @@ var admin;
 (function (admin) {
     (function (ui) {
         var WizardHeader = (function () {
-            function WizardHeader(displayNameConfig, pathConfig, nameConfig, displayNameProperty, pathProperty, nameProperty) {
-                if (typeof displayNameConfig === "undefined") { displayNameConfig = {
-                }; }
-                if (typeof pathConfig === "undefined") { pathConfig = {
-                }; }
-                if (typeof nameConfig === "undefined") { nameConfig = {
-                }; }
-                if (typeof displayNameProperty === "undefined") { displayNameProperty = 'displayName'; }
-                if (typeof pathProperty === "undefined") { pathProperty = 'path'; }
-                if (typeof nameProperty === "undefined") { nameProperty = 'name'; }
+            function WizardHeader(data, displayNameConfig, pathConfig, nameConfig, displayNameProperty, pathProperty, nameProperty) {
+                if (typeof displayNameConfig === "undefined") {
+                    displayNameConfig = {
+                    };
+                }
+                if (typeof pathConfig === "undefined") {
+                    pathConfig = {
+                    };
+                }
+                if (typeof nameConfig === "undefined") {
+                    nameConfig = {
+                    };
+                }
+                if (typeof displayNameProperty === "undefined") {
+                    displayNameProperty = 'displayName';
+                }
+                if (typeof pathProperty === "undefined") {
+                    pathProperty = 'path';
+                }
+                if (typeof nameProperty === "undefined") {
+                    nameProperty = 'name';
+                }
+                this.data = data;
                 this.displayNameConfig = Ext.apply({
                 }, displayNameConfig, WizardHeader.DEFAULT_DISPLAY_NAME_CONFIG);
                 this.pathConfig = Ext.apply({
@@ -1559,6 +1599,7 @@ var admin;
                 this.ext = panel;
                 this.initComponent();
             }
+
             WizardHeader.DEFAULT_DISPLAY_NAME_CONFIG = {
                 emptyText: 'Display Name',
                 enableKeyEvents: true,
@@ -1629,26 +1670,26 @@ var admin;
                 var items = [
                     this.displayNameField
                 ];
-                if(!this.pathField.hidden && !this.nameField.hidden) {
+                if (!this.pathField.hidden && !this.nameField.hidden) {
                     items.push({
                         xtype: 'fieldcontainer',
                         hideLabel: true,
                         layout: 'hbox',
                         items: [
-                            this.pathField, 
+                            this.pathField,
                             this.nameField
                         ]
                     });
-                } else if(!this.pathField.hidden) {
+                } else if (!this.pathField.hidden) {
                     items.push(this.pathField);
-                } else if(!this.nameField.hidden) {
+                } else if (!this.nameField.hidden) {
                     items.push(this.nameField);
                 }
                 me.add(items);
                 me.addEvents('displaynamechange', 'displaynameoverride', 'namechange', 'nameoverride');
             };
             WizardHeader.prototype.onDisplayNameAfterrender = function (field) {
-                if(!field.readOnly && field.autoFocus) {
+                if (!field.readOnly && field.autoFocus) {
                     field.focus(false, 100);
                     field.selectText(0, 0);
                 }
@@ -1656,23 +1697,23 @@ var admin;
             WizardHeader.prototype.onDisplayNameKey = function (field, event, opts) {
                 var wasAutoGenerate = this.autogenerateDisplayName;
                 var autoGenerate = Ext.isEmpty(field.getValue());
-                if(wasAutoGenerate != autoGenerate) {
+                if (wasAutoGenerate != autoGenerate) {
                     this.ext.fireEvent('displaynameoverride', !autoGenerate);
                 }
                 this.autogenerateDisplayName = autoGenerate;
             };
             WizardHeader.prototype.onDisplayNameChanged = function (field, newVal, oldVal, opts) {
-                if(this.ext.fireEvent('displaynamechange', newVal, oldVal) !== false && this.autogenerateName) {
+                if (this.ext.fireEvent('displaynamechange', newVal, oldVal) !== false && this.autogenerateName) {
                     var processedValue = this.nameField.processRawValue(this.preProcessName(newVal));
                     this.nameField.setValue(processedValue);
                 }
-                this.nameField.growMax = this.ext.el.getWidth() - 100;
+                this.nameField.growMax = this.ext.getEl().getWidth() - 100;
                 this.nameField.doComponentLayout();
             };
             WizardHeader.prototype.onNameKey = function (field, event, opts) {
                 var wasAutoGenerate = this.autogenerateName;
                 var autoGenerate = Ext.isEmpty(field.getValue());
-                if(wasAutoGenerate != autoGenerate) {
+                if (wasAutoGenerate != autoGenerate) {
                     this.ext.fireEvent('nameoverride', !autoGenerate);
                 }
                 this.autogenerateName = autoGenerate;
@@ -1712,7 +1753,7 @@ var admin;
             };
             WizardHeader.prototype.setData = function (data) {
                 this.data = data;
-                if(this.resolveHeaderData) {
+                if (this.resolveHeaderData) {
                     this.ext.getForm().setValues(this.resolveHeaderData(data));
                 }
             };
@@ -1731,7 +1772,7 @@ var admin;
             };
             return WizardHeader;
         })();
-        ui.WizardHeader = WizardHeader;        
+        ui.WizardHeader = WizardHeader;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -1760,12 +1801,12 @@ Ext.define('Admin.view.WizardPanel', {
     initComponent: function () {
         var me = this;
         var events = [
-            "beforestepchanged", 
-            "stepchanged", 
-            "animationstarted", 
-            "animationfinished", 
-            'validitychange', 
-            'dirtychange', 
+            "beforestepchanged",
+            "stepchanged",
+            "animationstarted",
+            "animationfinished",
+            'validitychange',
+            'dirtychange',
             "finished"
         ];
         this.dirtyItems = [];
@@ -1781,7 +1822,7 @@ Ext.define('Admin.view.WizardPanel', {
             items: this.createSteps()
         });
         this.items = [
-            this.createHeaderPanel(), 
+            this.createHeaderPanel(),
             {
                 itemId: 'bottomPanel',
                 xtype: 'container',
@@ -1829,13 +1870,13 @@ Ext.define('Admin.view.WizardPanel', {
                                 itemId: 'prev',
                                 iconCls: 'wizard-nav-icon icon-chevron-left icon-6x',
                                 cls: 'wizard-nav-button wizard-nav-button-left',
-                                height: 64,
+                                height: 74,
                                 width: 64,
                                 padding: 0,
                                 margin: '0 0 0 40'
                             }
                         ]
-                    }, 
+                    },
                     {
                         xtype: 'container',
                         region: 'east',
@@ -1877,12 +1918,12 @@ Ext.define('Admin.view.WizardPanel', {
                                 cls: 'wizard-nav-button wizard-nav-button-right',
                                 formBind: true,
                                 iconCls: 'wizard-nav-icon icon-chevron-right icon-6x',
-                                height: 64,
+                                height: 74,
                                 width: 64,
                                 padding: 0
                             }
                         ]
-                    }, 
+                    },
                     this.wizard
                 ],
                 listeners: {
@@ -1906,7 +1947,7 @@ Ext.define('Admin.view.WizardPanel', {
             animationstarted: this.onAnimationStarted,
             animationfinished: this.onAnimationFinished
         });
-        if(this.getActionButton()) {
+        if (this.getActionButton()) {
             this.boundItems.push(this.getActionButton());
         }
         this.down('#progressBar').update(this.wizard.items.items);
@@ -1915,21 +1956,24 @@ Ext.define('Admin.view.WizardPanel', {
     },
     updateShadow: function (me) {
         var bottomPanel = me.down('#bottomPanel').getEl();
-        if(bottomPanel) {
-            var hasScroll = bottomPanel.dom.scrollHeight > bottomPanel.dom.clientHeight, positionPanelEl = me.down('#positionPanel').getEl(), wizardHeaderPanelHeight = me.down('#wizardHeaderPanel').getEl().getHeight(), headerShadowEl = Ext.fly('admin-wizard-header-shadow');
-            if(hasScroll && bottomPanel.dom.scrollTop !== 0) {
-                if(!headerShadowEl) {
+        if (bottomPanel) {
+            var hasScroll = bottomPanel.dom.scrollHeight >
+                            bottomPanel.dom.clientHeight, positionPanelEl = me.down('#positionPanel').getEl(), wizardHeaderPanelHeight = me.down('#wizardHeaderPanel').getEl().getHeight(), headerShadowEl = Ext.fly('admin-wizard-header-shadow');
+            if (hasScroll && bottomPanel.dom.scrollTop !== 0) {
+                if (!headerShadowEl) {
                     var dh = Ext.DomHelper, boxShadowOffsets = Ext.isGecko ? '0 5px 6px -3px' : '0 5px 10px -3px';
                     var shadowDomSpec = {
                         id: 'admin-wizard-header-shadow',
                         tag: 'div',
-                        style: 'position:absolute; top:' + wizardHeaderPanelHeight + 'px; left:0px; z-index:1000; height:10px; background:transparent; width:100%; box-shadow:' + boxShadowOffsets + '#888 inset'
+                        style: 'position:absolute; top:' + wizardHeaderPanelHeight +
+                               'px; left:0px; z-index:1000; height:10px; background:transparent; width:100%; box-shadow:' +
+                               boxShadowOffsets + '#888 inset'
                     };
                     dh.append(positionPanelEl, shadowDomSpec);
                     Ext.fly('admin-wizard-header-shadow').show(true);
                 }
             } else {
-                if(headerShadowEl) {
+                if (headerShadowEl) {
                     headerShadowEl.remove();
                 }
             }
@@ -1937,12 +1981,12 @@ Ext.define('Admin.view.WizardPanel', {
     },
     updateNavButton: function (element, color) {
         var btn = Ext.get(element);
-        if(!btn.hasCls('wizard-nav-icon')) {
+        if (!btn.hasCls('wizard-nav-icon')) {
             btn = btn.down('.wizard-nav-icon');
-        } else if(btn.hasCls('x-btn-inner')) {
+        } else if (btn.hasCls('x-btn-inner')) {
             btn = btn.next('.x-btn-icon');
         }
-        btn.setStyle('color', color);
+        btn && btn.setStyle('color', color);
     },
     updateProgress: function (newStep) {
         var progressBar = this.down('#progressBar');
@@ -1952,7 +1996,7 @@ Ext.define('Admin.view.WizardPanel', {
     },
     bindItemListeners: function (cmp) {
         Ext.each(cmp.validateItems, function (validateItem, index, all) {
-            if(validateItem) {
+            if (validateItem) {
                 validateItem.on({
                     'validitychange': cmp.handleValidityChange,
                     'dirtychange': cmp.handleDirtyChange,
@@ -1965,15 +2009,15 @@ Ext.define('Admin.view.WizardPanel', {
             panel.getForm().checkValidity();
         };
         cmp.wizard.items.each(function (item, i) {
-            if(i === 0) {
+            if (i === 0) {
                 cmp.onAnimationFinished(item, null);
             }
-            if('editUserFormPanel' === item.getXType()) {
+            if ('editUserFormPanel' === item.getXType()) {
                 item.on('fieldsloaded', checkValidityFn);
             }
             var itemForm = Ext.isFunction(item.getForm) ? item.getForm() : undefined;
-            if(itemForm) {
-                if(Ext.isFunction(cmp.washDirtyForm)) {
+            if (itemForm) {
+                if (Ext.isFunction(cmp.washDirtyForm)) {
                     cmp.washDirtyForm(itemForm);
                 }
                 Ext.apply(itemForm, {
@@ -1992,11 +2036,11 @@ Ext.define('Admin.view.WizardPanel', {
     formOnValidityChange: function () {
         var wizardPanel = this.owner.up('wizardPanel');
         var boundItems = wizardPanel.getFormBoundItems(this);
-        if(boundItems && this.owner === wizardPanel.getActiveItem()) {
+        if (boundItems && this.owner === wizardPanel.getActiveItem()) {
             var valid = wizardPanel.isStepValid(this.owner);
             boundItems.each(function (cmp) {
-                if(cmp.rendered && cmp.isHidden() === valid) {
-                    if(valid) {
+                if (cmp.rendered && cmp.isHidden() === valid) {
+                    if (valid) {
                         cmp.show();
                     } else {
                         cmp.hide();
@@ -2007,7 +2051,7 @@ Ext.define('Admin.view.WizardPanel', {
     },
     getFormBoundItems: function (form) {
         var boundItems = form._boundItems;
-        if(!boundItems && form.owner.rendered) {
+        if (!boundItems && form.owner.rendered) {
             boundItems = form._boundItems = Ext.create('Ext.util.MixedCollection');
             boundItems.addAll(form.owner.query('[formBind]'));
             boundItems.addAll(this.boundItems);
@@ -2015,31 +2059,31 @@ Ext.define('Admin.view.WizardPanel', {
         return boundItems;
     },
     handleValidityChange: function (form, valid, opts) {
-        if(!valid) {
+        if (!valid) {
             Ext.Array.include(this.invalidItems, form);
         } else {
             Ext.Array.remove(this.invalidItems, form);
         }
         this.updateProgress();
         var isWizardValid = this.invalidItems.length === 0;
-        if(this.isWizardValid !== isWizardValid) {
+        if (this.isWizardValid !== isWizardValid) {
             this.isWizardValid = isWizardValid;
             var actionButton = this.getActionButton();
-            if(actionButton) {
+            if (actionButton) {
                 actionButton.setVisible(isWizardValid);
             }
             this.fireEvent('validitychange', this, isWizardValid);
         }
     },
     handleDirtyChange: function (form, dirty, opts) {
-        if(dirty) {
+        if (dirty) {
             Ext.Array.include(this.dirtyItems, form);
         } else {
             Ext.Array.remove(this.dirtyItems, form);
         }
         this.updateProgress();
         var isWizardDirty = this.dirtyItems.length > 0;
-        if(this.isWizardDirty !== isWizardDirty) {
+        if (this.isWizardDirty !== isWizardDirty) {
             this.isWizardDirty = isWizardDirty;
             this.fireEvent('dirtychange', this, isWizardDirty);
         }
@@ -2048,10 +2092,10 @@ Ext.define('Admin.view.WizardPanel', {
         var isStepValid = Ext.Array.intersect(this.invalidItems, this.validateItems).length === 0;
         var activeStep = step || this.getActiveItem();
         var activeForm;
-        if(activeStep && Ext.isFunction(activeStep.getForm)) {
+        if (activeStep && Ext.isFunction(activeStep.getForm)) {
             activeForm = activeStep.getForm();
         }
-        if(isStepValid && activeForm) {
+        if (isStepValid && activeForm) {
             isStepValid = isStepValid && !activeForm.hasInvalidField();
         }
         return isStepValid;
@@ -2061,7 +2105,10 @@ Ext.define('Admin.view.WizardPanel', {
     },
     createRibbon: function () {
         var me = this;
-        var stepsTpl = '<div class="navigation-container">' + '<ul class="navigation clearfix">' + '<tpl for=".">' + '<li class="{[ this.resolveClsName( xindex, xcount ) ]}" wizardStep="{[xindex]}">' + '<a href="javascript:;" class="step {[ this.resolveClsName( xindex, xcount ) ]}">{[' + '(values.stepTitle || values.title) ]}</a></li>' + '</tpl>' + '</ul>' + '</div>';
+        var stepsTpl = '<div class="navigation-container">' + '<ul class="navigation clearfix">' + '<tpl for=".">' +
+                       '<li class="{[ this.resolveClsName( xindex, xcount ) ]}" wizardStep="{[xindex]}">' +
+                       '<a href="javascript:;" class="step {[ this.resolveClsName( xindex, xcount ) ]}">{[' +
+                       '(values.stepTitle || values.title) ]}</a></li>' + '</tpl>' + '</ul>' + '</div>';
         return {
             xtype: 'component',
             flex: 1,
@@ -2082,25 +2129,25 @@ Ext.define('Admin.view.WizardPanel', {
                 resolveClsName: function (index, total) {
                     var activeIndex = me.wizard.items.indexOf(me.getActiveItem()) + 1;
                     var clsName = '';
-                    if(index === 1) {
+                    if (index === 1) {
                         clsName += 'first ';
                     }
-                    if(index < activeIndex) {
+                    if (index < activeIndex) {
                         clsName += 'previous ';
                     }
-                    if(index + 1 === activeIndex) {
+                    if (index + 1 === activeIndex) {
                         clsName += 'immediate ';
                     }
-                    if(index === activeIndex) {
+                    if (index === activeIndex) {
                         clsName += 'current ';
                     }
-                    if(index > activeIndex) {
+                    if (index > activeIndex) {
                         clsName += 'next ';
                     }
-                    if(index - 1 === activeIndex) {
+                    if (index - 1 === activeIndex) {
                         clsName += 'immediate ';
                     }
-                    if(index === total) {
+                    if (index === total) {
                         clsName += 'last ';
                     }
                     return clsName;
@@ -2109,27 +2156,27 @@ Ext.define('Admin.view.WizardPanel', {
         };
     },
     onAnimationStarted: function (newStep, oldStep) {
-        if(this.showControls) {
+        if (this.showControls) {
             this.updateButtons(this.wizard, true);
         }
-        if(this.externalControls) {
+        if (this.externalControls) {
             this.updateButtons(this.externalControls, true);
         }
     },
     onAnimationFinished: function (newStep, oldStep) {
-        if(newStep) {
+        if (newStep) {
             this.updateProgress(newStep);
             this.focusFirstField(newStep);
             this.fireEvent("stepchanged", this, oldStep, newStep);
-            if(this.showControls) {
+            if (this.showControls) {
                 this.updateButtons(this.wizard);
             }
-            if(this.externalControls) {
+            if (this.externalControls) {
                 this.updateButtons(this.externalControls);
             }
-            if(Ext.isFunction(newStep.getForm)) {
+            if (Ext.isFunction(newStep.getForm)) {
                 var newForm = newStep.getForm();
-                if(newForm) {
+                if (newForm) {
                     newForm.onValidityChange(this.isStepValid(newStep));
                 }
             }
@@ -2140,26 +2187,26 @@ Ext.define('Admin.view.WizardPanel', {
     focusFirstField: function (newStep) {
         var activeItem = newStep || this.getActiveItem();
         var firstField;
-        if(activeItem && (firstField = activeItem.down('field[disabled=false]'))) {
+        if (activeItem && (firstField = activeItem.down('field[disabled=false]'))) {
             firstField.focus(false);
-            if(firstField.rendered && firstField.selectText) {
+            if (firstField.rendered && firstField.selectText) {
                 firstField.selectText(0, 0);
             }
         }
     },
     updateButtons: function (toolbar, disable) {
-        if(toolbar) {
+        if (toolbar) {
             var prev = this.down('#prev'), next = this.down('#next');
             var hasNext = this.getNext(), hasPrev = this.getPrev();
-            if(prev) {
-                if(disable || !hasPrev) {
+            if (prev) {
+                if (disable || !hasPrev) {
                     prev.hide();
                 } else {
                     prev.show();
                 }
             }
-            if(next) {
-                if(disable || !hasNext) {
+            if (next) {
+                if (disable || !hasNext) {
                     next.hide();
                 } else {
                     next.show();
@@ -2175,7 +2222,8 @@ Ext.define('Admin.view.WizardPanel', {
         var isNew = this.isNew;
         var isDisabled = progressBar.isDisabled();
         var li = target && target.tagName === "LI" ? Ext.fly(target) : Ext.fly(target).up('li');
-        if((!isDisabled && isNew && li && li.hasCls('next') && li.hasCls('immediate')) || (!isDisabled && !isNew) || (isDisabled && !isNew && li && !li.hasCls('last')) || (li && li.hasCls('previous'))) {
+        if ((!isDisabled && isNew && li && li.hasCls('next') && li.hasCls('immediate')) || (!isDisabled && !isNew) ||
+            (isDisabled && !isNew && li && !li.hasCls('last')) || (li && li.hasCls('previous'))) {
             var step = Number(li.getAttribute('wizardStep'));
             this.navigate(step - 1);
         }
@@ -2202,12 +2250,12 @@ Ext.define('Admin.view.WizardPanel', {
                     tdAttrs: {
                         style: 'padding-right: 10px'
                     }
-                }), 
+                }),
                 Ext.applyIf(this.createWizardHeader(), {
                     tdAttrs: {
                         width: '100%'
                     }
-                }), 
+                }),
                 {
                     itemId: 'positionPanel',
                     xtype: 'container',
@@ -2224,7 +2272,7 @@ Ext.define('Admin.view.WizardPanel', {
                     items: [
                         Ext.applyIf(this.createRibbon(), {
                             flex: 1
-                        }), 
+                        }),
                         Ext.apply(this.createActionButton(), {
                             itemId: 'actionButton',
                             ui: 'green',
@@ -2259,50 +2307,50 @@ Ext.define('Admin.view.WizardPanel', {
     },
     navigate: function (direction, btn) {
         var oldStep = this.getActiveItem();
-        if(btn) {
+        if (btn) {
             this.externalControls = btn.up('toolbar');
         }
-        if(this.fireEvent("beforestepchanged", this, oldStep) !== false) {
+        if (this.fireEvent("beforestepchanged", this, oldStep) !== false) {
             var newStep;
-            switch(direction) {
-                case "-1":
-                case "prev":
-                    if(this.getPrev()) {
-                        newStep = this.wizard.getLayout().prev();
-                    }
-                    break;
-                case "+1":
-                case "next":
-                    if(this.getNext()) {
-                        newStep = this.wizard.getLayout().next();
-                    } else {
-                        this.finish();
-                    }
-                    break;
-                default:
-                    newStep = this.wizard.getLayout().setActiveItem(direction);
-                    break;
+            switch (direction) {
+            case "-1":
+            case "prev":
+                if (this.getPrev()) {
+                    newStep = this.wizard.getLayout().prev();
+                }
+                break;
+            case "+1":
+            case "next":
+                if (this.getNext()) {
+                    newStep = this.wizard.getLayout().next();
+                } else {
+                    this.finish();
+                }
+                break;
+            default:
+                newStep = this.wizard.getLayout().setActiveItem(direction);
+                break;
             }
         }
     },
     addData: function (newValues) {
-        if(Ext.isEmpty(this.data)) {
+        if (Ext.isEmpty(this.data)) {
             this.data = {
             };
         }
         Ext.merge(this.data, newValues);
     },
     deleteData: function (key) {
-        if(key) {
+        if (key) {
             delete this.data[key];
         }
     },
     getData: function () {
         var me = this;
         me.wizard.items.each(function (item) {
-            if(item.getData) {
+            if (item.getData) {
                 me.addData(item.getData());
-            } else if(item.getForm) {
+            } else if (item.getForm) {
                 me.addData(item.getForm().getFieldValues());
             }
         });
@@ -2328,7 +2376,7 @@ var admin;
                     shadow: false,
                     width: 120
                 });
-                for(var i in menuItems) {
+                for (var i in menuItems) {
                     menu.add(menuItems[i]);
                 }
                 this.ext = new Ext.button.Button({
@@ -2348,9 +2396,10 @@ var admin;
                     }
                 });
             }
+
             return BaseActionMenu;
         })();
-        ui.BaseActionMenu = BaseActionMenu;        
+        ui.BaseActionMenu = BaseActionMenu;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -2368,14 +2417,15 @@ var admin;
                     text: 'Edit',
                     action: 'editSpace'
                 });
-                        _super.call(this, [
-            openMenuItem, 
-            editMenuItem
-        ]);
+                _super.call(this, [
+                    openMenuItem,
+                    editMenuItem
+                ]);
             }
+
             return ActionMenu;
         })(ui.BaseActionMenu);
-        ui.ActionMenu = ActionMenu;        
+        ui.ActionMenu = ActionMenu;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -2386,30 +2436,31 @@ var admin;
             function DetailToolbar() {
                 var tbar = new Ext.toolbar.Toolbar({
                     itemId: 'spaceDetailToolbar',
-                    cls: 'admin-toolbar',
-                    defaults: {
-                        scale: 'medium'
-                    }
+                    cls: 'admin-toolbar'
                 });
                 var editButton = new Ext.button.Button({
                     text: 'Edit',
-                    action: 'editSpace'
+                    action: 'editSpace',
+                    scale: 'medium'
                 });
                 var deleteButton = new Ext.button.Button({
                     text: 'Delete',
-                    action: 'deleteSpace'
+                    action: 'deleteSpace',
+                    scale: 'medium'
                 });
                 var separator = new Ext.toolbar.Fill();
                 var closeButton = new Ext.button.Button({
                     text: 'Close',
-                    action: 'closeSpace'
+                    action: 'closeSpace',
+                    scale: 'medium'
                 });
                 tbar.add(editButton, deleteButton, separator, closeButton);
                 this.ext = tbar;
             }
+
             return DetailToolbar;
         })();
-        ui.DetailToolbar = DetailToolbar;        
+        ui.DetailToolbar = DetailToolbar;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -2430,7 +2481,7 @@ var admin;
                                 html: '<h1>Sales</h1>'
                             }
                         ]
-                    }, 
+                    },
                     {
                         displayName: 'Scorecard',
                         name: 'scorecard',
@@ -2440,7 +2491,7 @@ var admin;
                                 html: '<h1>Scorecard</h1>'
                             }
                         ]
-                    }, 
+                    },
                     {
                         displayName: 'History',
                         name: 'history',
@@ -2480,10 +2531,10 @@ var admin;
                     }, this, {
                         delegate: '.clearSelection'
                     });
-                    if(detail.isFullPage) {
+                    if (detail.isFullPage) {
                         detail.hideActionButton();
                     }
-                    if(this.tabs.length > 0) {
+                    if (this.tabs.length > 0) {
                         this.changeTab(this.tabs[0].name);
                     }
                 }, this);
@@ -2492,6 +2543,7 @@ var admin;
                 p.add(this.smallBoxSelection(this.data));
                 p.add(this.largeBoxSelection(this.data));
             }
+
             SpaceDetailPanel.prototype.noSelection = function () {
                 return new Ext.panel.Panel({
                     itemId: 'noSelection',
@@ -2517,10 +2569,10 @@ var admin;
                     margin: this.isVertical ? '0' : '20 0 0',
                     colSpan: 3,
                     tpl: [
-                        '<ul class="admin-detail-nav">', 
-                        '<tpl for=".">', 
-                        '<li data-tab="{name}">{displayName}</li>', 
-                        '</tpl>', 
+                        '<ul class="admin-detail-nav">',
+                        '<tpl for=".">',
+                        '<li data-tab="{name}">{displayName}</li>',
+                        '</tpl>',
                         '</ul>'
                     ],
                     listeners: {
@@ -2549,7 +2601,7 @@ var admin;
                         columns: 3
                     }
                 });
-                if(this.isVertical) {
+                if (this.isVertical) {
                     north.add(tabNavigation);
                 }
                 var photo = this.photo = new Ext.Component({
@@ -2575,7 +2627,7 @@ var admin;
                     cls: 'west',
                     width: 200
                 });
-                if(!this.isVertical) {
+                if (!this.isVertical) {
                     west.add(tabNavigation);
                 }
                 c.add(west);
@@ -2598,14 +2650,15 @@ var admin;
                         border: 'none'
                     },
                     tpl: [
-                        '<tpl for=".">', 
-                        '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box small clearfix">', 
-                        '<div class="left"><img src="{data.iconUrl}?size=20" alt="{data.name}"/></div>', 
-                        '<div class="center">{data.displayName}</div>', 
-                        '<div class="right">', 
-                        '<a id="remove-from-selection-button:{data.' + this.keyField + '}" class="deselect icon-remove icon-large" href="javascript:;"></a>', 
-                        '</div>', 
-                        '</div>', 
+                        '<tpl for=".">',
+                        '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box small clearfix">',
+                        '<div class="left"><img src="{data.iconUrl}?size=20" alt="{data.name}"/></div>',
+                        '<div class="center">{data.displayName}</div>',
+                        '<div class="right">',
+                        '<a id="remove-from-selection-button:{data.' + this.keyField +
+                        '}" class="deselect icon-remove icon-large" href="javascript:;"></a>',
+                        '</div>',
+                        '</div>',
                         '</tpl>'
                     ]
                 });
@@ -2621,32 +2674,34 @@ var admin;
                     },
                     autoScroll: true,
                     tpl: [
-                        '<tpl for=".">' + '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box large clearfix">', 
-                        '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>', 
-                        '<div class="center"><h6>{data.displayName}</h6>', 
-                        '<tpl if="data.path">', 
-                        '<p>{data.path}</p>', 
-                        '<tpl elseif="data.description">', 
-                        '<p>{data.description}</p>', 
-                        '<tpl elseif="data.name">', 
-                        '<p>{data.name}</p>', 
-                        '</tpl>', 
-                        '</div>', 
-                        '<div class="right">', 
-                        '<a id="remove-from-selection-button:{data.' + this.keyField + '}" class="deselect icon-remove icon-2x" href="javascript:;"></a>', 
-                        '</div>', 
-                        '</div>', 
+                        '<tpl for=".">' + '<div id="selected-item-box-{data.' + this.keyField +
+                        '}" class="admin-selected-item-box large clearfix">',
+                        '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>',
+                        '<div class="center"><h6>{data.displayName}</h6>',
+                        '<tpl if="data.path">',
+                        '<p>{data.path}</p>',
+                        '<tpl elseif="data.description">',
+                        '<p>{data.description}</p>',
+                        '<tpl elseif="data.name">',
+                        '<p>{data.name}</p>',
+                        '</tpl>',
+                        '</div>',
+                        '<div class="right">',
+                        '<a id="remove-from-selection-button:{data.' + this.keyField +
+                        '}" class="deselect icon-remove icon-2x" href="javascript:;"></a>',
+                        '</div>',
+                        '</div>',
                         '</tpl>'
                     ]
                 });
             };
             SpaceDetailPanel.prototype.resolveActiveItem = function () {
                 var activeItem;
-                if(Ext.isEmpty(this.data)) {
+                if (Ext.isEmpty(this.data)) {
                     activeItem = 'noSelection';
-                } else if(Ext.isObject(this.data) || this.data.length === 1) {
+                } else if (Ext.isObject(this.data) || this.data.length === 1) {
                     activeItem = 'singleSelection';
-                } else if(this.data.length > 1 && this.data.length <= 10) {
+                } else if (this.data.length > 1 && this.data.length <= 10) {
                     activeItem = 'largeBoxSelection';
                 } else {
                     activeItem = 'smallBoxSelection';
@@ -2658,7 +2713,7 @@ var admin;
             };
             SpaceDetailPanel.prototype.resolveActiveData = function (data) {
                 var activeData;
-                if(Ext.isArray(data) && data.length === 1) {
+                if (Ext.isArray(data) && data.length === 1) {
                     activeData = data[0];
                 } else {
                     activeData = data;
@@ -2667,18 +2722,18 @@ var admin;
             };
             SpaceDetailPanel.prototype.updateActiveItem = function (data, item) {
                 item = item || this.getLayout().getActiveItem();
-                if('singleSelection' === item.itemId) {
+                if ('singleSelection' === item.itemId) {
                     this.header.update(data);
                     this.photo.update(data);
                     this.changeTab(this.tabs[0].name);
-                } else if('largeBoxSelection' === item.itemId || 'smallBoxSelection' === item.itemId) {
+                } else if ('largeBoxSelection' === item.itemId || 'smallBoxSelection' === item.itemId) {
                     item.update(data);
                 }
             };
             SpaceDetailPanel.prototype.getTab = function (name) {
                 var tabs = this.tabs;
-                for(var tab in tabs) {
-                    if(tabs[tab].name === name) {
+                for (var tab in tabs) {
+                    if (tabs[tab].name === name) {
                         return tabs[tab];
                     }
                 }
@@ -2686,19 +2741,19 @@ var admin;
             };
             SpaceDetailPanel.prototype.changeTab = function (selectedTab) {
                 var currentTab = this.getTab(selectedTab);
-                if(currentTab) {
+                if (currentTab) {
                     var target = this.center;
                     target.remove(target.child());
-                    if(currentTab.items) {
+                    if (currentTab.items) {
                         target.add(currentTab.items);
-                        if(currentTab.callback) {
+                        if (currentTab.callback) {
                             currentTab.callback(target);
                         }
                     }
                     var elements = Ext.dom.Query.select('*[data-tab=' + selectedTab + ']');
-                    for(var i = 0; i < elements.length; i++) {
+                    for (var i = 0; i < elements.length; i++) {
                         var children = elements[i].parentElement.children;
-                        for(var j = 0; j < children.length; j++) {
+                        for (var j = 0; j < children.length; j++) {
                             children[j].className = '';
                         }
                         elements[i].className = 'active';
@@ -2710,17 +2765,17 @@ var admin;
                 this.data = data;
                 var toActivate = this.resolveActiveItem();
                 var active = this.getLayout().getActiveItem();
-                if(active.getItemId() !== toActivate) {
+                if (active.getItemId() !== toActivate) {
                     active = this.getLayout().setActiveItem(toActivate);
                 }
-                if(active) {
+                if (active) {
                     var activeData = this.resolveActiveData(data);
                     this.updateActiveItem(activeData, active);
                 }
             };
             return SpaceDetailPanel;
         })();
-        ui.SpaceDetailPanel = SpaceDetailPanel;        
+        ui.SpaceDetailPanel = SpaceDetailPanel;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -2732,13 +2787,16 @@ var admin;
                 var _this = this;
                 this.title = "Delete space(s)";
                 this.deleteHandler = new admin.app.handler.DeleteSpacesHandler();
-                this.template = '<div class="delete-container">' + '<tpl for=".">' + '<div class="delete-item">' + '<img class="icon" src="{data.iconUrl}"/>' + '<h4>{data.displayName}</h4>' + '<p>{data.type}</p>' + '</div>' + '</tpl>' + '</div>';
+                this.template = '<div class="delete-container">' + '<tpl for=".">' + '<div class="delete-item">' +
+                                '<img class="icon" src="{data.iconUrl}"/>' + '<h4>{data.displayName}</h4>' + '<p>{data.type}</p>' +
+                                '</div>' + '</tpl>' + '</div>';
                 this.initComponent();
                 APP.event.DeletePromptEvent.on(function (event) {
                     _this.setModel(event.getModel());
                     _this.doShow();
                 });
             }
+
             DeleteSpaceWindow.prototype.initComponent = function () {
                 var _this = this;
                 var deleteCallback = function (obj, success, result) {
@@ -2797,8 +2855,8 @@ var admin;
             };
             DeleteSpaceWindow.prototype.setModel = function (model) {
                 this.data = model;
-                if(model) {
-                    if(this.content) {
+                if (model) {
+                    if (this.content) {
                         this.content.update(model);
                     }
                 }
@@ -2808,7 +2866,7 @@ var admin;
             };
             return DeleteSpaceWindow;
         })();
-        ui.DeleteSpaceWindow = DeleteSpaceWindow;        
+        ui.DeleteSpaceWindow = DeleteSpaceWindow;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -2833,7 +2891,9 @@ var admin;
                     }
                 });
                 this.keyField = 'name';
-                this.nameTemplate = '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>';
+                this.nameTemplate =
+                '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' +
+                '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>';
                 var gridSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
                     keyField: this.keyField
                 });
@@ -2869,16 +2929,16 @@ var admin;
                             renderer: this.nameRenderer,
                             scope: this,
                             flex: 1
-                        }, 
+                        },
                         {
                             text: 'Status',
                             renderer: this.statusRenderer
-                        }, 
+                        },
                         {
                             text: 'Owner',
                             dataIndex: 'owner',
                             sortable: true
-                        }, 
+                        },
                         {
                             text: 'Modified',
                             dataIndex: 'modifiedTime',
@@ -2925,6 +2985,7 @@ var admin;
                 gp.getStore().on('datachanged', this.fireUpdateEvent, this);
                 p.add(gp);
             }
+
             TreeGridPanel.prototype.fireUpdateEvent = function (values) {
                 this.ext.fireEvent('datachanged', values);
             };
@@ -2940,19 +3001,20 @@ var admin;
                 return "Online";
             };
             TreeGridPanel.prototype.prettyDateRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
-                try  {
-                    if(parent && Ext.isFunction(parent['humane_date'])) {
+                try {
+                    if (parent && Ext.isFunction(parent['humane_date'])) {
                         return parent['humane_date'](value);
                     } else {
                         return value;
                     }
-                } catch (e) {
+                }
+                catch (e) {
                     return value;
                 }
             };
             TreeGridPanel.prototype.getSelection = function () {
                 var selection = [], activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection');
-                if(plugin) {
+                if (plugin) {
                     selection = plugin.getSelection();
                 } else {
                     selection = activeList.getSelectionModel().getSelection();
@@ -2961,7 +3023,7 @@ var admin;
             };
             return TreeGridPanel;
         })();
-        ui.TreeGridPanel = TreeGridPanel;        
+        ui.TreeGridPanel = TreeGridPanel;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -2998,12 +3060,13 @@ var admin;
                     _this.showAt(event.getX(), event.getY());
                 });
             }
+
             ContextMenu.prototype.showAt = function (x, y) {
                 this.ext.showAt(x, y);
             };
             return ContextMenu;
         })();
-        ui.ContextMenu = ContextMenu;        
+        ui.ContextMenu = ContextMenu;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -3012,40 +3075,45 @@ var admin;
     (function (ui) {
         var SpaceWizardToolbar = (function () {
             function SpaceWizardToolbar(isNew) {
-                if (typeof isNew === "undefined") { isNew = true; }
+                if (typeof isNew === "undefined") {
+                    isNew = true;
+                }
                 this.isNew = isNew;
-                var tb = this.ext = new Ext.toolbar.Toolbar({
+                var tb = new Ext.toolbar.Toolbar({
                     cls: 'admin-toolbar',
                     itemId: 'spaceWizardToolbar',
-                    border: false,
-                    defaults: {
-                        scale: 'medium'
-                    }
+                    border: false
                 });
+                this.ext = tb;
                 var saveBtn = new Ext.button.Button({
                     text: 'Save',
                     action: 'saveSpace',
                     itemId: 'save',
-                    disabled: true
+                    disabled: true,
+                    scale: 'medium'
                 });
                 var deleteBtn = new Ext.button.Button({
                     text: 'Delete',
                     disabled: this.isNew,
-                    action: 'deleteSpace'
+                    action: 'deleteSpace',
+                    scale: 'medium'
                 });
                 var duplicateBtn = new Ext.button.Button({
                     text: 'Duplicate',
-                    disabled: this.isNew
+                    disabled: this.isNew,
+                    scale: 'medium'
                 });
                 var closeBtn = new Ext.button.Button({
                     text: 'Close',
-                    action: 'closeWizard'
+                    action: 'closeWizard',
+                    scale: 'medium'
                 });
                 tb.add(saveBtn, deleteBtn, duplicateBtn, '->', closeBtn);
             }
+
             return SpaceWizardToolbar;
         })();
-        ui.SpaceWizardToolbar = SpaceWizardToolbar;        
+        ui.SpaceWizardToolbar = SpaceWizardToolbar;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -3057,18 +3125,18 @@ var admin;
                 this.data = data;
                 var templates = new Ext.data.Store({
                     fields: [
-                        'code', 
+                        'code',
                         'name'
                     ],
                     data: [
                         {
                             "code": "1",
                             "name": "Tpl1"
-                        }, 
+                        },
                         {
                             "code": "2",
                             "name": "Tpl2"
-                        }, 
+                        },
                         {
                             "code": "3",
                             "name": "Tpl3"
@@ -3091,9 +3159,10 @@ var admin;
                 });
                 fs.add(combo);
             }
+
             return SpaceStepPanel;
         })();
-        ui.SpaceStepPanel = SpaceStepPanel;        
+        ui.SpaceStepPanel = SpaceStepPanel;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -3121,7 +3190,7 @@ Ext.define('Admin.view.wizard.WizardPanel', {
         var iconUrl = 'resources/images/icons/128x128/default_space.png';
         var displayNameValue = '';
         var spaceName = '';
-        if(data) {
+        if (data) {
             displayNameValue = me.data.get('displayName') || '';
             spaceName = me.data.get('name') || '';
             iconUrl = me.data.get('iconUrl');
@@ -3136,19 +3205,19 @@ Ext.define('Admin.view.wizard.WizardPanel', {
     createSteps: function () {
         var spaceStep = new admin.ui.SpaceStepPanel(this.data);
         return [
-            spaceStep.ext, 
+            spaceStep.ext,
             {
                 stepTitle: 'Schemas'
-            }, 
+            },
             {
                 stepTitle: 'Modules'
-            }, 
+            },
             {
                 stepTitle: 'Templates'
-            }, 
+            },
             {
                 stepTitle: 'Security'
-            }, 
+            },
             {
                 stepTitle: 'Summary'
             }
@@ -3158,9 +3227,8 @@ Ext.define('Admin.view.wizard.WizardPanel', {
         var pathConfig = {
             hidden: true
         };
-        var wizardHeader = new admin.ui.WizardHeader({
+        var wizardHeader = new admin.ui.WizardHeader(this.data, {
         }, pathConfig);
-        wizardHeader.setData(this.data);
         this.validateItems.push(wizardHeader.ext);
         return wizardHeader.ext;
     },
@@ -3192,7 +3260,7 @@ Ext.define('Admin.view.wizard.WizardPanel', {
                             imageToolTip.hide();
                         }
                     }
-                }, 
+                },
                 {
                     styleHtmlContent: true,
                     height: 50,
@@ -3203,7 +3271,8 @@ Ext.define('Admin.view.wizard.WizardPanel', {
                         zIndex: 1001
                     },
                     cls: 'admin-image-upload-button-image-tip',
-                    html: '<div class="x-tip x-tip-default x-layer" role="tooltip">' + '<div class="x-tip-anchor x-tip-anchor-top"></div>' + '<div class="x-tip-body  x-tip-body-default x-tip-body-default">' + 'Click to upload icon</div></div>',
+                    html: '<div class="x-tip x-tip-default x-layer" role="tooltip">' + '<div class="x-tip-anchor x-tip-anchor-top"></div>' +
+                          '<div class="x-tip-body  x-tip-body-default x-tip-body-default">' + 'Click to upload icon</div></div>',
                     listeners: {
                         afterrender: function (cmp) {
                             Ext.Function.defer(function () {
@@ -3223,7 +3292,7 @@ Ext.define('Admin.view.wizard.WizardPanel', {
         };
     },
     getWizardHeader: function () {
-        return this.down('wizardHeader');
+        return this.down('#wizardHeader');
     },
     getData: function () {
         var data = this.callParent();
@@ -3256,8 +3325,9 @@ var admin;
                 button.on('click', this.onClick, this);
                 this.ext = button;
             }
+
             AdminImageButton.prototype.onClick = function (button) {
-                if(!this.popupPanel) {
+                if (!this.popupPanel) {
                     this.popupPanel = new Ext.panel.Panel({
                         floating: true,
                         cls: 'admin-toolbar-popup',
@@ -3274,7 +3344,7 @@ var admin;
                         }
                     });
                 } else {
-                    if(this.popupPanel.isHidden()) {
+                    if (this.popupPanel.isHidden()) {
                         this.popupPanel.show();
                     } else {
                         this.popupPanel.hide();
@@ -3283,7 +3353,7 @@ var admin;
             };
             return AdminImageButton;
         })();
-        ui.AdminImageButton = AdminImageButton;        
+        ui.AdminImageButton = AdminImageButton;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -3332,10 +3402,11 @@ var admin;
                 tbmi.enableBubble('closeMenuItem');
                 this.initComponent(tbmi);
             }
+
             TopBarMenuItem.prototype.initComponent = function (topBarMenuItem) {
                 var _this = this;
                 var items = [];
-                if(topBarMenuItem.iconCls || topBarMenuItem.iconSrc) {
+                if (topBarMenuItem.iconCls || topBarMenuItem.iconSrc) {
                     var image = new Ext.Img({
                         width: 32,
                         height: 32,
@@ -3345,7 +3416,7 @@ var admin;
                     });
                     items.push(image);
                 }
-                if(this.text1 || this.text2) {
+                if (this.text1 || this.text2) {
                     var titleContainer = new Ext.Component({
                         flex: 1,
                         itemId: 'titleContainer',
@@ -3359,7 +3430,7 @@ var admin;
                     items.push(titleContainer);
                     this.titleContainer = titleContainer;
                 }
-                if(topBarMenuItem.closable !== false) {
+                if (topBarMenuItem.closable !== false) {
                     var closeButton = new Ext.Component({
                         autoEl: 'a',
                         cls: 'close-button icon-remove icon-large',
@@ -3379,7 +3450,7 @@ var admin;
             TopBarMenuItem.prototype.activate = function () {
                 console.log('activate');
                 var me = this.ext;
-                if(!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
+                if (!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
                     me.el.addCls(me.activeCls);
                     me.focus();
                     me.activated = true;
@@ -3389,7 +3460,7 @@ var admin;
             TopBarMenuItem.prototype.deactivate = function () {
                 console.log('deactivate');
                 var me = this.ext;
-                if(me.activated) {
+                if (me.activated) {
                     me.el.removeCls(me.activeCls);
                     me.blur();
                     me.activated = false;
@@ -3398,18 +3469,18 @@ var admin;
             };
             TopBarMenuItem.prototype.onClick = function (e) {
                 var me = this.ext;
-                if(!me.href) {
+                if (!me.href) {
                     e.stopEvent();
                 }
-                if(me.disabled) {
+                if (me.disabled) {
                     return false;
                 }
                 Ext.callback(me.handler, me.scope || me, [
-                    me, 
+                    me,
                     e
                 ]);
                 me.fireEvent('click', me, e);
-                if(!me.hideOnClick) {
+                if (!me.hideOnClick) {
                     me.focus();
                 }
                 return Ext.isEmpty(Ext.fly(e.getTarget()).findParent('.close-button'));
@@ -3422,7 +3493,7 @@ var admin;
             };
             return TopBarMenuItem;
         })();
-        ui.TopBarMenuItem = TopBarMenuItem;        
+        ui.TopBarMenuItem = TopBarMenuItem;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -3478,6 +3549,7 @@ var admin;
                 tbm.on('closeMenuItem', this.onCloseMenuItem, this);
                 tbm.on('resize', this.updatePosition, this);
             }
+
             TopBarMenu.prototype.createNonClosableItems = function () {
                 var item = new Ext.container.Container({
                     itemId: 'nonClosableItems'
@@ -3524,20 +3596,20 @@ var admin;
             };
             TopBarMenu.prototype.onClick = function (e) {
                 var me = this.ext, item;
-                if(me.disabled) {
+                if (me.disabled) {
                     e.stopEvent();
                     return;
                 }
                 item = (e.type === 'click') ? this.getItemFromEvent(e) : me.activeItem;
-                if(item && item.isMenuItem && item.onClick(e) !== false) {
-                    if(me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
+                if (item && item.isMenuItem && item.onClick(e) !== false) {
+                    if (me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
                         this.tabPanel.setActiveTab(item.card);
                     }
                     me.hide();
                 }
             };
             TopBarMenu.prototype.onShow = function () {
-                if(this.activeTab) {
+                if (this.activeTab) {
                     this.markActiveTab(this.activeTab);
                 }
             };
@@ -3548,24 +3620,24 @@ var admin;
                 }, true);
             };
             TopBarMenu.prototype.onCloseMenuItem = function (item) {
-                if(this.tabPanel) {
+                if (this.tabPanel) {
                     this.tabPanel.remove(item.card);
                 }
-                if(this.getAllItems(false).length === 0) {
+                if (this.getAllItems(false).length === 0) {
                     this.ext.hide();
                 }
             };
             TopBarMenu.prototype.markActiveTab = function (item) {
                 var me = this.ext;
                 var menuItem;
-                if(me.isVisible()) {
+                if (me.isVisible()) {
                     menuItem = me.el.down('.current-tab');
-                    if(menuItem) {
+                    if (menuItem) {
                         menuItem.removeCls('current-tab');
                     }
-                    if(item) {
+                    if (item) {
                         menuItem = item;
-                        if(menuItem && menuItem.el) {
+                        if (menuItem && menuItem.el) {
                             menuItem.el.addCls('current-tab');
                         }
                     }
@@ -3576,12 +3648,13 @@ var admin;
                 var item = this.ext;
                 do {
                     item = item.getChildByElement(e.getTarget());
-                }while(item && Ext.isDefined(item.getChildByElement) && item.isMenuItem !== true);
+                }
+                while (item && Ext.isDefined(item.getChildByElement) && item.isMenuItem !== true);
                 return item;
             };
             TopBarMenu.prototype.getAllItems = function (includeNonClosable) {
                 var items = [];
-                if(includeNonClosable === false) {
+                if (includeNonClosable === false) {
                     items = items.concat(this.editItems.query('*[isMenuItem=true]'));
                     items = items.concat(this.viewItems.query('*[isMenuItem=true]'));
                 } else {
@@ -3590,9 +3663,9 @@ var admin;
                 return items;
             };
             TopBarMenu.prototype.addItems = function (items) {
-                if(Ext.isEmpty(items)) {
+                if (Ext.isEmpty(items)) {
                     return [];
-                } else if(Ext.isObject(items)) {
+                } else if (Ext.isObject(items)) {
                     items = [].concat(items);
                 }
                 this.saveScrollState();
@@ -3600,23 +3673,25 @@ var admin;
                 var viewItems = [];
                 var nonClosableItems = [];
                 Ext.Array.each(items, function (item) {
-                    if(item.closable === false) {
+                    if (item.closable === false) {
                         nonClosableItems.push(item);
-                    } else if(item.editing) {
+                    } else if (item.editing) {
                         editItems.push(item);
                     } else {
                         viewItems.push(item);
                     }
                 });
                 var added = [];
-                if(nonClosableItems.length > 0) {
+                if (nonClosableItems.length > 0) {
                     added = added.concat(this.nonClosableItems.add(nonClosableItems));
                 }
-                if(editItems.length > 0) {
+                if (editItems.length > 0) {
                     var editItemObjects = [];
                     Ext.Array.each(editItems, function (editItem) {
-                        if(!editItem.xtype) {
-                            var tbmi = new admin.ui.TopBarMenuItem(editItem.text1, editItem.text2, editItem.card, editItem.tabBar, editItem.closable, editItem.disabled, editItem.editing, editItem.hidden, editItem.iconClass, editItem.iconSrc).ext;
+                        if (!editItem.xtype) {
+                            var tbmi = new admin.ui.TopBarMenuItem(editItem.text1, editItem.text2, editItem.card, editItem.tabBar,
+                                editItem.closable, editItem.disabled, editItem.editing, editItem.hidden, editItem.iconClass,
+                                editItem.iconSrc).ext;
                             editItemObjects.push(tbmi);
                         } else {
                             editItemObjects.push(editItem);
@@ -3624,11 +3699,13 @@ var admin;
                     });
                     added = added.concat(this.editItems.add(editItemObjects));
                 }
-                if(viewItems.length > 0) {
+                if (viewItems.length > 0) {
                     var viewItemObjects = [];
                     Ext.Array.each(viewItems, function (viewItem) {
-                        if(!viewItem.xtype) {
-                            var tbmi = new admin.ui.TopBarMenuItem(viewItem.text1, viewItem.text2, viewItem.card, viewItem.tabBar, viewItem.closable, viewItem.disabled, viewItem.editing, viewItem.hidden, viewItem.iconClass, viewItem.iconSrc).ext;
+                        if (!viewItem.xtype) {
+                            var tbmi = new admin.ui.TopBarMenuItem(viewItem.text1, viewItem.text2, viewItem.card, viewItem.tabBar,
+                                viewItem.closable, viewItem.disabled, viewItem.editing, viewItem.hidden, viewItem.iconClass,
+                                viewItem.iconSrc).ext;
                             viewItemObjects.push(tbmi);
                         } else {
                             viewItemObjects.push(viewItem);
@@ -3646,19 +3723,19 @@ var admin;
                 var viewItems = this.viewItems;
                 var removed = [];
                 Ext.Array.each(editItems.items.items, function (item) {
-                    if(item && item.closable !== false) {
+                    if (item && item.closable !== false) {
                         removed.push(editItems.remove(item));
                     }
                 });
                 Ext.Array.each(viewItems.items.items, function (item) {
-                    if(item && item.closable !== false) {
+                    if (item && item.closable !== false) {
                         removed.push(viewItems.remove(item));
                     }
                 });
-                if(includeNonClosable) {
+                if (includeNonClosable) {
                     var nonClosableItems = this.nonClosableItems;
                     Ext.Array.each(nonClosableItems.items.items, function (item) {
-                        if(item && item.closable !== false) {
+                        if (item && item.closable !== false) {
                             removed.push(nonClosableItems.remove(item));
                         }
                     });
@@ -3667,9 +3744,9 @@ var admin;
                 return removed;
             };
             TopBarMenu.prototype.removeItems = function (items) {
-                if(Ext.isEmpty(items)) {
+                if (Ext.isEmpty(items)) {
                     return null;
-                } else if(Ext.isObject(items)) {
+                } else if (Ext.isObject(items)) {
                     items = [].concat(items);
                 }
                 this.saveScrollState();
@@ -3679,7 +3756,7 @@ var admin;
                 var nonClosableItems = this.nonClosableItems;
                 var removed = [];
                 Ext.Array.each(items, function (item) {
-                    if(item && item.closable !== false) {
+                    if (item && item.closable !== false) {
                         removed.push(editItems.remove(item));
                         removed.push(viewItems.remove(item));
                         removed.push(nonClosableItems.remove(item));
@@ -3693,17 +3770,17 @@ var admin;
                 var editCount = this.editItems.items.getCount();
                 var viewCount = this.viewItems.items.getCount();
                 var nonClosableCount = this.nonClosableItems.items.getCount();
-                if(editCount > 0) {
+                if (editCount > 0) {
                     this.editTitle.show();
                 } else {
                     this.editTitle.hide();
                 }
-                if(viewCount > 0) {
+                if (viewCount > 0) {
                     this.viewTitle.show();
                 } else {
                     this.viewTitle.hide();
                 }
-                if((viewCount || editCount || nonClosableCount) > 0) {
+                if ((viewCount || editCount || nonClosableCount) > 0) {
                     this.emptyTitle.hide();
                 } else {
                     this.emptyTitle.show();
@@ -3715,10 +3792,10 @@ var admin;
             TopBarMenu.prototype.show = function () {
                 var me = this.ext, parentEl, viewHeight;
                 this.maxWas = me.maxHeight;
-                if(!me.rendered) {
+                if (!me.rendered) {
                     me.doAutoRender();
                 }
-                if(me.floating) {
+                if (me.floating) {
                     parentEl = Ext.fly(me.el.getScopeParent());
                     viewHeight = parentEl.getViewSize().height;
                     me.maxHeight = Math.min(this.maxWas || viewHeight - 50, viewHeight - 50);
@@ -3732,7 +3809,7 @@ var admin;
             };
             TopBarMenu.prototype.saveScrollState = function () {
                 var me = this.ext;
-                if(me.rendered && !me.hidden) {
+                if (me.rendered && !me.hidden) {
                     var dom = me.body.dom, state = me.scrollState;
                     state.left = dom.scrollLeft;
                     state.top = dom.scrollTop;
@@ -3740,7 +3817,7 @@ var admin;
             };
             TopBarMenu.prototype.restoreScrollState = function () {
                 var me = this.ext;
-                if(me.rendered && !me.hidden) {
+                if (me.rendered && !me.hidden) {
                     var dom = me.body.dom, state = me.scrollState;
                     dom.scrollLeft = state.left;
                     dom.scrollTop = state.top;
@@ -3748,7 +3825,7 @@ var admin;
             };
             return TopBarMenu;
         })();
-        ui.TopBarMenu = TopBarMenu;        
+        ui.TopBarMenu = TopBarMenu;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -3769,6 +3846,7 @@ var admin;
                 this.tabPanel = tabPanel;
                 this.initComponent();
             }
+
             TopBar.prototype.initComponent = function () {
                 var _this = this;
                 var me = this.ext;
@@ -3785,7 +3863,7 @@ var admin;
                     text: this.appName || '&lt; app name &gt;',
                     cls: 'home-button',
                     handler: function (btn, evt) {
-                        if(_this.tabPanel) {
+                        if (_this.tabPanel) {
                             _this.tabPanel.setActiveTab(0);
                         }
                     }
@@ -3798,11 +3876,11 @@ var admin;
                         align: 'middle'
                     },
                     items: [
-                        this.startButton, 
+                        this.startButton,
                         {
                             xtype: "tbseparator",
                             width: '2px'
-                        }, 
+                        },
                         this.homeButton
                     ]
                 });
@@ -3814,15 +3892,19 @@ var admin;
                         pack: 'end'
                     }
                 });
-                var adminImageButton = new admin.ui.AdminImageButton(API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'), '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' + '<div class="content">' + '<div class="column"><img src="{photoUrl}"/>' + '<button class="x-btn-red-small">Log Out</button>' + '</div>' + '<div class="column">' + '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' + '<a href="#">Change User</a>' + '</div>' + '</div>', {
-                    userName: "Thomas Lund Sigdestad",
-                    photoUrl: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
-                    qName: 'system/tsi'
-                });
+                var adminImageButton = new admin.ui.AdminImageButton(API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                    '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' + '<div class="content">' +
+                    '<div class="column"><img src="{photoUrl}"/>' + '<button class="x-btn-red-small">Log Out</button>' + '</div>' +
+                    '<div class="column">' + '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' +
+                    '<a href="#">Change User</a>' + '</div>' + '</div>', {
+                        userName: "Thomas Lund Sigdestad",
+                        photoUrl: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                        qName: 'system/tsi'
+                    });
                 this.rightContainer.add(adminImageButton.ext);
                 me.add(this.leftContainer);
                 me.add(this.rightContainer);
-                if(this.tabPanel) {
+                if (this.tabPanel) {
                     this.tabMenu = new admin.ui.TopBarMenu(this.tabPanel);
                     this.titleButton = Ext.create('Ext.button.Button', {
                         cls: 'title-button',
@@ -3832,12 +3914,12 @@ var admin;
                         styleHtmlContent: true,
                         text: '<span class="title">Title</span><span class="count">0</span>',
                         setTitle: function (title) {
-                            if(this.el) {
+                            if (this.el) {
                                 this.el.down('.title').setHTML(title);
                             }
                         },
                         setCount: function (count) {
-                            if(this.el) {
+                            if (this.el) {
                                 this.el.down('.count').setHTML(count);
                             }
                         }
@@ -3848,7 +3930,7 @@ var admin;
             };
             TopBar.prototype.toggleHomeScreen = function () {
                 var isInsideIframe = window.top !== window.self;
-                if(isInsideIframe) {
+                if (isInsideIframe) {
                     window.parent['Ext'].getCmp('admin-home-main-container').toggleShowHide();
                 } else {
                     console.error('Can not toggle home screen. Document must be loaded inside the main window');
@@ -3864,11 +3946,11 @@ var admin;
                 var card = tab.card;
                 var buttonText = tab.text1;
                 var iconClass;
-                if('tab-browse' === card.id) {
+                if ('tab-browse' === card.id) {
                     buttonText = '';
-                } else if(card.tab.iconClass) {
+                } else if (card.tab.iconClass) {
                     iconClass = card.tab.iconClass;
-                } else if(card.tab.editing) {
+                } else if (card.tab.editing) {
                     iconClass = 'icon-icomoon-pencil-32';
                 }
                 this.titleButton.setIconCls(iconClass);
@@ -3880,7 +3962,7 @@ var admin;
                 return removed;
             };
             TopBar.prototype.findNextActivatable = function () {
-                if(this.tabPanel) {
+                if (this.tabPanel) {
                     return this.tabPanel.items.get(0);
                 }
                 return null;
@@ -3901,7 +3983,7 @@ var admin;
                 };
             };
             TopBar.prototype.syncTabCount = function () {
-                if(this.tabMenu && this.titleButton) {
+                if (this.tabMenu && this.titleButton) {
                     var tabCount = this.tabMenu.getAllItems(false).length;
                     this.titleButton.setVisible(tabCount > 0);
                     this.titleButton.setCount(tabCount);
@@ -3909,32 +3991,33 @@ var admin;
                 }
             };
             TopBar.prototype.getApplicationId = function () {
-                var urlParamsString = document.URL.split('?'), urlParams = Ext.Object.fromQueryString(urlParamsString[urlParamsString.length - 1]);
+                var urlParamsString = document.URL.split('?'), urlParams = Ext.Object.fromQueryString(urlParamsString[urlParamsString.length -
+                                                                                                                      1]);
                 return urlParams.appId ? urlParams.appId.split('#')[0] : null;
             };
             TopBar.prototype.getMenuItemIcon = function (card) {
                 var icon;
-                if(card.data && card.data instanceof Ext.data.Model) {
+                if (card.data && card.data instanceof Ext.data.Model) {
                     icon = card.data.get('iconUrl') || card.data.get('image_url');
                 }
                 return icon;
             };
             TopBar.prototype.getMenuItemDescription = function (card) {
                 var desc;
-                if(!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+                if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
                     desc = card.data.get('path') || card.data.get('qualifiedName') || card.data.get('displayName');
                 }
-                if(!desc) {
+                if (!desc) {
                     desc = card.title;
                 }
                 return desc;
             };
             TopBar.prototype.getMenuItemDisplayName = function (card) {
                 var desc;
-                if(!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+                if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
                     desc = card.data.get('displayName') || card.data.get('name');
                 }
-                if(!desc) {
+                if (!desc) {
                     desc = card.title;
                 }
                 return desc;
@@ -3942,7 +4025,7 @@ var admin;
             TopBar.prototype.setTitleButtonText = function (text) {
                 this.titleButton.setTitle(text);
                 var activeTab = this.titleButton.menu.activeTab;
-                if(activeTab) {
+                if (activeTab) {
                     activeTab.text1 = text;
                     activeTab.updateTitleContainer();
                 }
@@ -3958,7 +4041,7 @@ var admin;
             };
             return TopBar;
         })();
-        ui.TopBar = TopBar;        
+        ui.TopBar = TopBar;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -3977,9 +4060,9 @@ var admin;
                     },
                     addTab: function (item, index, requestConfig) {
                         var tab = this.getTabById(item.id);
-                        if(!tab) {
+                        if (!tab) {
                             tab = this.insert(index || this.items.length, item);
-                            if(requestConfig) {
+                            if (requestConfig) {
                                 this.setActiveTab(tab);
                                 var mask = new Ext.LoadMask(tab, {
                                     msg: "Please wait..."
@@ -4008,7 +4091,7 @@ var admin;
                     removeAllOpenTabs: function () {
                         var all = this.items.items;
                         var last = all[this.getTabCount() - 1];
-                        while(this.getTabCount() > 1) {
+                        while (this.getTabCount() > 1) {
                             this.remove(last);
                             last = this.items.items[this.getTabCount() - 1];
                         }
@@ -4030,32 +4113,32 @@ var admin;
                             iconclschange: me.onItemIconClsChange,
                             titlechange: me.onItemTitleChange
                         });
-                        if(item.isPanel) {
-                            if(me.removePanelHeader) {
-                                if(item.rendered) {
-                                    if(item.header) {
+                        if (item.isPanel) {
+                            if (me.removePanelHeader) {
+                                if (item.rendered) {
+                                    if (item.header) {
                                         item.header.hide();
                                     }
                                 } else {
                                     item.header = false;
                                 }
                             }
-                            if(item.isPanel && me.border) {
+                            if (item.isPanel && me.border) {
                                 item.setBorder(false);
                             }
                         }
                     },
                     doRemove: function (item, autoDestroy) {
                         var me = this;
-                        if(me.destroying || me.items.getCount() === 1) {
+                        if (me.destroying || me.items.getCount() === 1) {
                             me.activeTab = null;
-                        } else if(me.activeTab === item) {
+                        } else if (me.activeTab === item) {
                             var toActivate = me.tabBar.findNextActivatable(item.tab);
-                            if(toActivate) {
+                            if (toActivate) {
                                 me.setActiveTab(toActivate);
                             }
                         }
-                        me.callParent(arguments);
+                        (Ext.tab.Panel).superclass.doRemove.apply(this, arguments);
                     },
                     onRemove: function (item, destroying) {
                         var me = this;
@@ -4065,7 +4148,7 @@ var admin;
                             disable: me.onItemDisable,
                             beforeshow: me.onItemBeforeShow
                         });
-                        if(!me.destroying) {
+                        if (!me.destroying) {
                             me.tabBar.remove(item.tab);
                         }
                     },
@@ -4083,7 +4166,7 @@ var admin;
                         me.addEvents('beforetabchange', 'tabchange');
                         me.superclass.superclass.initComponent.apply(me, arguments);
                         me.activeTab = me.getComponent(activeTab);
-                        if(me.activeTab) {
+                        if (me.activeTab) {
                             me.activeTab.tab.activate(true);
                             me.tabBar.setActiveTab(me.activeTab.tab);
                         }
@@ -4099,7 +4182,7 @@ var admin;
                         ]
                     }, function (r) {
                         tabs.el.unmask();
-                        if(r) {
+                        if (r) {
                             var tabItem = {
                                 id: _this.generateTabId(space, true),
                                 editing: true,
@@ -4108,7 +4191,7 @@ var admin;
                                 title: space.get('displayName')
                             };
                             var index = tabs.items.indexOfKey(_this.generateTabId(space, false));
-                            if(index >= 0) {
+                            if (index >= 0) {
                                 tabs.remove(index);
                             }
                             tabs.addTab(tabItem, index >= 0 ? index : undefined, undefined);
@@ -4118,6 +4201,7 @@ var admin;
                     });
                 });
             }
+
             TabPanel.prototype.getExtEl = function () {
                 return this.ext;
             };
@@ -4135,7 +4219,7 @@ var admin;
             };
             return TabPanel;
         })();
-        ui.TabPanel = TabPanel;        
+        ui.TabPanel = TabPanel;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -4152,14 +4236,14 @@ var admin;
                                 "name": 'Public Web',
                                 "key": 'public',
                                 "count": 8
-                            }, 
+                            },
                             {
                                 "name": 'Intranet',
                                 "key": 'intra',
                                 "count": 20
                             }
                         ]
-                    }, 
+                    },
                     {
                         "name": "Type",
                         "terms": [
@@ -4167,19 +4251,19 @@ var admin;
                                 "name": "Space",
                                 "key": "space",
                                 "count": 10
-                            }, 
+                            },
                             {
                                 "name": "Part",
                                 "key": "part",
                                 "count": 80
-                            }, 
+                            },
                             {
                                 "name": "Page Template",
                                 "key": "template",
                                 "count": 7
                             }
                         ]
-                    }, 
+                    },
                     {
                         "name": "Module",
                         "terms": [
@@ -4187,12 +4271,12 @@ var admin;
                                 "name": "Twitter Bootrstrap",
                                 "key": "twitter",
                                 "count": 0
-                            }, 
+                            },
                             {
                                 "name": "Enonic",
                                 "key": "enonic",
                                 "count": 3
-                            }, 
+                            },
                             {
                                 "name": "Foo",
                                 "key": "foo",
@@ -4201,9 +4285,15 @@ var admin;
                         ]
                     }
                 ];
-                this.facetTpl = '<tpl for=".">' + '<div class="admin-facet-group" name="{name}">' + '<h2>{[values.displayName || values.name]}</h2>' + '<tpl for="terms">{[this.updateFacetCount(values, parent)]}' + '<tpl if="this.shouldShowTerm(values, parent)">' + '<div class="admin-facet {[values.selected ? \'checked\' : \'\']}">' + '<input type="checkbox" id="facet-{term}" value="{name}" class="admin-facet-cb" name="{parent.name}" {[values.selected ? \'checked="true"\' : \'\']} />' + '<label for="facet-{key}" class="admin-facet-lbl"> {[values.displayName || values.name]} ({[this.getTermCount(values)]})</label>' + '</div>' + '</tpl>' + '</tpl>' + '</div>' + '</tpl>';
+                this.facetTpl =
+                '<tpl for=".">' + '<div class="admin-facet-group" name="{name}">' + '<h2>{[values.displayName || values.name]}</h2>' +
+                '<tpl for="terms">{[this.updateFacetCount(values, parent)]}' + '<tpl if="this.shouldShowTerm(values, parent)">' +
+                '<div class="admin-facet {[values.selected ? \'checked\' : \'\']}">' +
+                '<input type="checkbox" id="facet-{term}" value="{name}" class="admin-facet-cb" name="{parent.name}" {[values.selected ? \'checked="true"\' : \'\']} />' +
+                '<label for="facet-{key}" class="admin-facet-lbl"> {[values.displayName || values.name]} ({[this.getTermCount(values)]})</label>' +
+                '</div>' + '</tpl>' + '</tpl>' + '</div>' + '</tpl>';
                 var updateFacets = function (facets) {
-                    if(facets) {
+                    if (facets) {
                         this.selectedValues = this.getValues();
                         this.down('#facetContainer').update(facets);
                         this.setValues(this.selectedValues);
@@ -4213,15 +4303,15 @@ var admin;
                     var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
                     var values = {
                     };
-                    if(this.searchField) {
+                    if (this.searchField) {
                         var query = this.searchField.getValue();
-                        if(Ext.String.trim(query).length > 0) {
+                        if (Ext.String.trim(query).length > 0) {
                             values[this.searchField.name] = query;
                         }
                     }
                     Ext.Array.each(selectedCheckboxes, function (cb, index, all) {
                         var oldValue = values[cb.name];
-                        if(Ext.isArray(oldValue)) {
+                        if (Ext.isArray(oldValue)) {
                             oldValue.push(cb.value);
                         } else {
                             values[cb.name] = [
@@ -4233,14 +4323,14 @@ var admin;
                 };
                 var setValues = function (values) {
                     var me = this;
-                    if(this.searchField) {
+                    if (this.searchField) {
                         this.searchField.setValue(values[this.searchField.name]);
                     }
                     var checkboxes = Ext.query('.admin-facet-group input[type=checkbox]', this.facetContainer.el.dom);
                     var checkedCount = 0, facet;
                     Ext.Array.each(checkboxes, function (cb) {
                         var facet = Ext.fly(cb).up('.admin-facet');
-                        if(me.isValueChecked(cb.value, values)) {
+                        if (me.isValueChecked(cb.value, values)) {
                             checkedCount++;
                             cb.setAttribute('checked', 'true');
                             facet.addCls('checked');
@@ -4249,16 +4339,16 @@ var admin;
                             facet.removeCls('checked');
                         }
                     });
-                    if(this.updateCountCriteria == 'query' && this.queryDirty && checkedCount === 0) {
+                    if (this.updateCountCriteria == 'query' && this.queryDirty && checkedCount === 0) {
                         this.queryDirty = false;
                     }
                 };
                 var isValueChecked = function (value, values) {
-                    for(var facet in values) {
-                        if(values.hasOwnProperty(facet)) {
+                    for (var facet in values) {
+                        if (values.hasOwnProperty(facet)) {
                             var terms = [].concat(values[facet]);
-                            for(var i = 0; i < terms.length; i++) {
-                                if(terms[i] === value) {
+                            for (var i = 0; i < terms.length; i++) {
+                                if (terms[i] === value) {
                                     return true;
                                 }
                             }
@@ -4269,20 +4359,20 @@ var admin;
                 var isDirty = function () {
                     var selectedCheckboxes = [];
                     var query = '';
-                    if(this.facetContainer && this.facetContainer.el) {
+                    if (this.facetContainer && this.facetContainer.el) {
                         selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
                     }
-                    if(this.searchField) {
+                    if (this.searchField) {
                         query = Ext.String.trim(this.searchField.getValue());
                     }
                     return selectedCheckboxes.length > 0 || query.length > 0;
                 };
                 var search = function () {
-                    if(this.fireEvent('search', this.getValues()) !== false) {
+                    if (this.fireEvent('search', this.getValues()) !== false) {
                         this.clearLink.el.setStyle('visibility', this.isDirty() ? 'visible' : 'hidden');
                     }
                 };
-                var includeSearch = config ? config.includeSearch : true;
+                var includeSearch = config && (typeof config.includeSearch !== "undefined") ? config.includeSearch : true;
                 var fp = this.ext = new Ext.panel.Panel({
                     region: config ? config.region : undefined,
                     width: config ? config.width : undefined,
@@ -4315,7 +4405,7 @@ var admin;
                     facetContainer: facetContainer,
                     clearLink: clearLink
                 });
-                if(includeSearch) {
+                if (includeSearch) {
                     var searchField = this.createSearchField();
                     fp.insert(0, searchField);
                     Ext.apply(fp, {
@@ -4324,15 +4414,16 @@ var admin;
                 }
                 fp.addEvents('search', 'reset');
             }
+
             FilterPanel.prototype.createFacetContainer = function () {
                 var fp = this.ext;
                 var onFacetClicked = function (event, target, opts) {
                     target = Ext.fly(target);
                     var facet = target.hasCls('admin-facet') ? target : target.up('.admin-facet');
-                    if(facet) {
+                    if (facet) {
                         var cb = facet.down('input[type=checkbox]', true);
                         var checked = cb.hasAttribute("checked");
-                        if(checked) {
+                        if (checked) {
                             cb.removeAttribute("checked");
                             facet.removeCls("checked");
                         } else {
@@ -4340,7 +4431,7 @@ var admin;
                             facet.addCls("checked");
                         }
                         var group = facet.up('.admin-facet-group', true);
-                        if(group) {
+                        if (group) {
                             this.lastFacetName = group.getAttribute('name');
                         }
                         this.search();
@@ -4353,22 +4444,25 @@ var admin;
                     tpl: new Ext.XTemplate(this.facetTpl, {
                         updateFacetCount: function (term, facet) {
                             var isCriteria = fp.updateCountCriteria == 'always' || (fp.updateCountCriteria == 'query' && fp.queryDirty);
-                            var isStrategy = fp.updateCountStrategy == 'all' || (fp.updateCountStrategy == 'notlast' && fp.lastFacetNafp != facet.nafp);
+                            var isStrategy = fp.updateCountStrategy == 'all' ||
+                                             (fp.updateCountStrategy == 'notlast' && fp.lastFacetNafp != facet.nafp);
                             var isDefined = Ext.isDefined(fp.facetCountMap[term.name]);
                             var isDirty = fp.isDirty();
-                            if(!isDirty || !isDefined || (isCriteria && isStrategy)) {
+                            if (!isDirty || !isDefined || (isCriteria && isStrategy)) {
                                 fp.facetCountMap[term.name] = term.count;
                             }
                         },
                         shouldShowTerm: function (term, facet) {
-                            return fp.includeEmptyFacets == 'all' || (fp.includeEmptyFacets == 'last' && (!fp.lastFacetName || fp.lastFacetName == facet.name)) || fp.facetCountMap[term.name] > 0 || term.selected || this.isSelected(term, facet);
+                            return fp.includeEmptyFacets == 'all' ||
+                                   (fp.includeEmptyFacets == 'last' && (!fp.lastFacetName || fp.lastFacetName == facet.name)) ||
+                                   fp.facetCountMap[term.name] > 0 || term.selected || this.isSelected(term, facet);
                         },
                         getTermCount: function (term) {
                             return fp.facetCountMap[term.name];
                         },
                         isSelected: function (term, facet) {
                             var terms = fp.selectedValues[facet.name];
-                            if(terms) {
+                            if (terms) {
                                 return Ext.Array.contains(terms, term.name);
                             }
                             return false;
@@ -4385,8 +4479,8 @@ var admin;
             };
             FilterPanel.prototype.createClearLink = function () {
                 var reset = function () {
-                    if(this.fireEvent('reset', this.isDirty()) !== false) {
-                        if(this.searchField) {
+                    if (this.fireEvent('reset', this.isDirty()) !== false) {
+                        if (this.searchField) {
                             this.searchField.reset();
                         }
                         var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
@@ -4411,19 +4505,19 @@ var admin;
             };
             FilterPanel.prototype.createSearchField = function () {
                 var onKeyPressed = function (field, event, opts) {
-                    if(this.suspendEvents !== true) {
-                        if(event.getKey() === event.ENTER) {
-                            if(event.type === "keydown") {
+                    if (this.suspendEvents !== true) {
+                        if (event.getKey() === event.ENTER) {
+                            if (event.type === "keydown") {
                                 this.fireEvent('search', this.getValues());
                             }
                         } else {
                             var me = this;
-                            if(this.searchFilterTypingTimer !== null) {
+                            if (this.searchFilterTypingTimer !== null) {
                                 window.clearTimeout(this.searchFilterTypingTimer);
                                 this.searchFilterTypingTimer = null;
                             }
                             this.searchFilterTypingTimer = window.setTimeout(function () {
-                                if(me.updateCountCriteria === 'query') {
+                                if (me.updateCountCriteria === 'query') {
                                     me.queryDirty = true;
                                 }
                                 me.lastFacetName = undefined;
@@ -4433,7 +4527,7 @@ var admin;
                     }
                 };
                 var searchField = new Ext.form.field.Text({
-                    cls: 'admin-search-field',
+                    cls: 'admin-search-trigger',
                     enableKeyEvents: true,
                     bubbleEvents: [
                         'specialkey'
@@ -4452,7 +4546,7 @@ var admin;
             };
             return FilterPanel;
         })();
-        ui.FilterPanel = FilterPanel;        
+        ui.FilterPanel = FilterPanel;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -4513,9 +4607,10 @@ var admin;
                     deleteButton.setDisabled(!enable);
                 });
             }
+
             return BrowseToolbar;
         })();
-        ui.BrowseToolbar = BrowseToolbar;        
+        ui.BrowseToolbar = BrowseToolbar;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -4551,7 +4646,7 @@ Ext.define('Admin.controller.Controller', {
         var me = this;
         var tabs = this.getCmsTabPanel();
         var activeTab = tabs.setActiveTab(me.generateTabId(space, true));
-        if(!activeTab) {
+        if (!activeTab) {
             var id = this.generateTabId(space, false);
             var tabItem = new admin.ui.SpaceDetailPanel(undefined, id, space).ext;
             tabs.addTab(tabItem);
@@ -4568,7 +4663,7 @@ Ext.define('Admin.controller.Controller', {
             ]
         }, function (r) {
             tabs.el.unmask();
-            if(r) {
+            if (r) {
                 var tabItem = {
                     id: me.generateTabId(space, true),
                     editing: true,
@@ -4577,7 +4672,7 @@ Ext.define('Admin.controller.Controller', {
                     title: space.get('displayName')
                 };
                 var index = tabs.items.indexOfKey(me.generateTabId(space, false));
-                if(index >= 0) {
+                if (index >= 0) {
                     tabs.remove(index);
                 }
                 tabs.addTab(tabItem, index >= 0 ? index : undefined, undefined);
@@ -4596,7 +4691,7 @@ Ext.define('Admin.controller.Controller', {
         win.doShow();
     },
     validateSpace: function (space) {
-        if(!space) {
+        if (!space) {
             var showPanel = this.getSpaceTreeGridPanel();
             return showPanel.getSelection()[0];
         }
@@ -4608,7 +4703,8 @@ Ext.define('Admin.controller.Controller', {
     updateToolbarButtons: function (selected) {
         var enable = selected && selected.length > 0;
         var toolbar = this.getSpaceBrowseToolbar();
-        var buttons = Ext.ComponentQuery.query('button[action=viewSpace], ' + 'button[action=editSpace], ' + 'button[action=deleteSpace]', toolbar);
+        var buttons = Ext.ComponentQuery.query('button[action=viewSpace], ' + 'button[action=editSpace], ' + 'button[action=deleteSpace]',
+            toolbar);
         Ext.Array.each(buttons, function (button, index, all) {
             button.setDisabled(!enable);
         });
@@ -4628,7 +4724,7 @@ Ext.define('Admin.controller.Controller', {
     deleteSpaceWindow: null,
     getDeleteSpaceWindow: function () {
         var win = this.deleteSpaceWindow;
-        if(!win) {
+        if (!win) {
             win = new admin.ui.DeleteSpaceWindow();
         }
         return win;
@@ -4637,7 +4733,7 @@ Ext.define('Admin.controller.Controller', {
         return components.tabPanel;
     },
     getTopBar: function () {
-        return Ext.ComponentQuery.query('topBar')[0];
+        return this.getCmsTabPanel().tabBar;
     },
     getMainViewport: function () {
         var parent = window.parent || window;
@@ -4653,7 +4749,7 @@ Ext.define('Admin.controller.SpaceController', {
     },
     remoteCreateOrUpdateSpace: function (spaceParams, callback) {
         Admin.lib.RemoteService.space_createOrUpdate(spaceParams, function (r) {
-            if(r && r.success) {
+            if (r && r.success) {
                 callback(r.created, r.updated);
             } else {
                 Ext.Msg.alert("Error", r ? r.error : "An unexpected error occurred.");
@@ -4668,7 +4764,7 @@ Ext.define('Admin.controller.SpaceController', {
         Admin.lib.RemoteService.space_delete({
             "spaceName": spaceNames
         }, function (r) {
-            if(r) {
+            if (r) {
                 callback.call(me, r.success, r);
             } else {
                 Ext.Msg.alert("Error", r ? r.error : "Unable to delete space.");
@@ -4699,7 +4795,7 @@ Ext.define('Admin.controller.FilterPanelController', {
         this.updateToolbarButtons(selection);
     },
     doReset: function (dirty) {
-        if(!dirty) {
+        if (!dirty) {
             return false;
         }
         var treeGrid = this.getSpaceTreeGridPanel();
@@ -4756,7 +4852,7 @@ Ext.define('Admin.controller.GridPanelController', {
         return false;
     },
     getContextMenu: function () {
-        if(!this.contextMenu) {
+        if (!this.contextMenu) {
             this.contextMenu = new admin.ui.ContextMenu();
         }
         return this.contextMenu;
@@ -4795,13 +4891,13 @@ Ext.define('Admin.controller.BrowseToolbarController', {
     },
     viewSelectedSpaces: function () {
         var selection = this.getSpaceTreeGridPanel().getSelection();
-        for(var i = 0; i < selection.length; i++) {
+        for (var i = 0; i < selection.length; i++) {
             this.viewSpace(selection[i]);
         }
     },
     editSelectedSpaces: function () {
         var selection = this.getSpaceTreeGridPanel().getSelection();
-        for(var i = 0; i < selection.length; i++) {
+        for (var i = 0; i < selection.length; i++) {
             this.editSpace(selection[i]);
         }
     },
@@ -4872,8 +4968,9 @@ Ext.define('Admin.controller.DialogWindowController', {
         var win = this.getDeleteSpaceWindow(), space = win.data, me = this;
         var onDelete = function (success, details) {
             win.close();
-            if(success && details.deleted) {
-                API.notify.showFeedback(Ext.isArray(space) && space.length > 1 ? space.length + ' spaces were deleted' : '1 space was deleted');
+            if (success && details.deleted) {
+                API.notify.showFeedback(Ext.isArray(space) && space.length > 1 ? space.length + ' spaces were deleted'
+                    : '1 space was deleted');
             } else {
                 var message = details.reason;
                 API.notify.showFeedback(message);
@@ -4904,7 +5001,7 @@ Ext.define('Admin.controller.WizardController', {
                     this.deleteSpace(this.getWizardTab());
                 }
             },
-            'spaceAdminWizardPanel wizardHeader': {
+            'spaceAdminWizardPanel #wizardHeader': {
                 displaynamechange: function (newVal, oldVal) {
                     this.getTopBar().setTitleButtonText(newVal);
                 }
@@ -4927,9 +5024,9 @@ Ext.define('Admin.controller.WizardController', {
     closeWizard: function (el, e) {
         var tab = this.getWizardTab();
         var spaceWizard = this.getWizardPanel();
-        if(spaceWizard.isWizardDirty) {
+        if (spaceWizard.isWizardDirty) {
             Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?', function (answer) {
-                if('yes' === answer) {
+                if ('yes' === answer) {
                     tab.close();
                 }
             });
@@ -4952,8 +5049,8 @@ Ext.define('Admin.controller.WizardController', {
             newSpaceName: (originalSpaceName !== spaceName) ? spaceName : undefined
         };
         var onUpdateSpaceSuccess = function (created, updated) {
-            if(created || updated) {
-                if(closeWizard) {
+            if (created || updated) {
+                if (closeWizard) {
                     me.getWizardTab().close();
                 }
                 API.notify.showFeedback('Space "' + spaceName + '" was saved');
@@ -4966,7 +5063,7 @@ Ext.define('Admin.controller.WizardController', {
         var me = this;
         var space = wizard.data;
         var onDeleteSpaceSuccess = function (success, failures) {
-            if(success) {
+            if (success) {
                 wizard.close();
                 API.notify.showFeedback('Space was deleted');
             }
@@ -4996,12 +5093,12 @@ var components;
 Ext.application({
     name: 'spaceAdmin',
     controllers: [
-        'Admin.controller.FilterPanelController', 
-        'Admin.controller.GridPanelController', 
-        'Admin.controller.BrowseToolbarController', 
-        'Admin.controller.DetailPanelController', 
-        'Admin.controller.DetailToolbarController', 
-        'Admin.controller.DialogWindowController', 
+        'Admin.controller.FilterPanelController',
+        'Admin.controller.GridPanelController',
+        'Admin.controller.BrowseToolbarController',
+        'Admin.controller.DetailPanelController',
+        'Admin.controller.DetailToolbarController',
+        'Admin.controller.DialogWindowController',
         'Admin.controller.WizardController'
     ],
     stores: [],

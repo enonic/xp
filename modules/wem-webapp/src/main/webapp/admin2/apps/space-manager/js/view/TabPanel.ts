@@ -129,7 +129,9 @@ module admin.ui {
                         }
                     }
 
-                    me.callParent(arguments);
+                    // call method 'doRemove' from Ext.tab.Panel superclass
+                    // casting to <any> to provide access to 'superclass' property without TypeScript warning
+                    (<any> Ext.tab.Panel).superclass.doRemove.apply(this, arguments);
                 },
                 onRemove: function (item, destroying) {
                     var me:any = this;
@@ -180,7 +182,6 @@ module admin.ui {
 
                         me.tabBar.setActiveTab(me.activeTab.tab);
                     }
-
 
                 }
             });
