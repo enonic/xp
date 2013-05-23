@@ -50,12 +50,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <version>3.2.0.RELEASE</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.easytesting</groupId>
       <artifactId>fest-assert</artifactId>
       <version>1.4</version>
@@ -79,12 +73,6 @@
       <version>1.0.11</version>
       <scope>test</scope>
     </dependency>
-    <!--dependency>
-      <groupId>org.spockframework</groupId>
-      <artifactId>spock-core</artifactId>
-      <version>0.6-groovy-1.8</version>
-      <scope>test</scope>
-    </dependency-->
   </dependencies>
 
   <build>
