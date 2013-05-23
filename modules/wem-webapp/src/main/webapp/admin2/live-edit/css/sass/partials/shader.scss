@@ -1,0 +1,14 @@
+
+.live-edit-shader {
+  position: absolute;
+  display: none;
+  top: 0;
+  left: 0;
+  background-color: #000;
+  opacity: .3;
+  cursor: default !important;
+}
+
+#live-edit-page-shader {
+  position: fixed !important;
+}

@@ -1,0 +1,82 @@
+@-moz-keyframes live-edit-spinner {
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  100% {
+    -moz-transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes live-edit-spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@-ms-keyframes live-edit-spinner {
+  0% {
+    -ms-transform: rotate(0deg);
+  }
+  100% {
+    -ms-transform: rotate(360deg);
+  }
+}
+
+@-o-keyframes live-edit-spinner {
+  0% {
+    -o-transform: rotate(0deg);
+  }
+  100% {
+    -o-transform: rotate(360deg);
+  }
+}
+
+@keyframes live-edit-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.live-edit-loader-splash-content {
+  cursor: progress !important;
+}
+
+.live-edit-loader-splash-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, .9);
+}
+
+.live-edit-loader-splash-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: -36px;
+  margin-left: -36px;
+  text-align: center;
+}
+
+.live-edit-loader-splash-content img {
+  width: 88px;
+  height: 88px;
+  border: none;
+  -moz-animation: live-edit-spinner .5s infinite linear;
+  -webkit-animation: live-edit-spinner .5s infinite linear;
+  -ms-animation: live-edit-spinner .5s infinite linear;
+  -o-animation: live-edit-spinner .5s infinite linear;
+  animation: live-edit-spinner .5s infinite linear;
+}
+
+.live-edit-loader-splash-content div {
+  color: #000;
+  margin-top: .7em;
+}

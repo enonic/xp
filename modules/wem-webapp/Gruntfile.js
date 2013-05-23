@@ -3,6 +3,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-typescript');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-sass');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
 
     grunt.initConfig({
 
@@ -51,6 +52,22 @@ module.exports = function (grunt) {
             }
         },
 
+        sass: {
+            live_edit: {
+                files: {
+                    'src/main/webapp/admin2/live-edit/css/live-edit.css': 'src/main/webapp/admin2/live-edit/css/sass/live-edit.scss'
+                }
+            }
+        },
+
+        // Fixme: how to define a target?
+        cssmin: {
+            minify: {
+                src: 'src/main/webapp/admin2/live-edit/css/live-edit.css',
+                dest: 'src/main/webapp/admin2/live-edit/css/live-edit.min.css'
+            }
+        },
+
         watch: {
             files: ['src/main/webapp/admin2/**/*.ts', 'src/test/webapp/admin2/**/*.ts'],
             tasks: ['typescript']
@@ -59,5 +76,6 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('default', 'watch');
+    grunt.registerTask('build_live_edit', ['typescript:live_edit', 'sass:live_edit', 'cssmin']);
 
 };

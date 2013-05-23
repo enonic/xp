@@ -1,0 +1,47 @@
+.live-edit-empty-region-placeholder {
+  background-color: #fff;
+  border: 2px dashed #add8e6;
+  clear: both;
+  color: #add8e6;
+  font-size: 20px;
+  padding: 28px 10px;
+  text-align: center;
+}
+
+.live-edit-empty-part-placeholder {
+  border: 1px dashed #aaa;
+  clear: both;
+  color: #d3d3d3;
+  margin-bottom: 10px;
+  padding: 11px;
+  text-align: center;
+}
+
+
+/*** HTML element placeholders */
+
+.live-edit-html-element-placeholder {
+  position: relative;
+  color: #444;
+  background-color: Lightgoldenrodyellow;
+  border: 1px solid #ccc;
+}
+
+.live-edit-html-element-placeholder div {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 32px;
+  height: 32px;
+  margin-left: -16px;
+  margin-top: -16px;
+  padding-top: 22px;
+}
+
+.live-edit-html-element-placeholder .live-edit-iframe {
+  background: transparent url("../images/window_star.png") no-repeat;
+}
+
+.live-edit-html-element-placeholder .live-edit-object {
+  background: transparent url("../images/plug.png") no-repeat;
+}

@@ -1,0 +1,12 @@
+.live-edit-selected-component {
+  position: relative;
+}
+
+svg.live-edit-highlight-border {
+  pointer-events: none;
+  position: absolute;
+}
+
+svg.live-edit-highlight-border rect {
+  stroke-width: 4;
+}
