@@ -1,7 +1,7 @@
 var API;
 (function (API) {
     (function (util) {
-        util.baseUri;
+        util.baseUri = '../../..';
         function getAbsoluteUri(uri) {
             return this.baseUri + '/' + uri;
         }

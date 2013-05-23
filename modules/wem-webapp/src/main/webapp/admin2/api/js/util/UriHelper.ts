@@ -3,7 +3,7 @@ module API.util {
     /**
      * Base URI for administration console. Set from the initializing html page.
      */
-    export var baseUri:string;
+    export var baseUri:string = '../../..';
 
     /**
      * Creates a absolute URI from supplied URI.
