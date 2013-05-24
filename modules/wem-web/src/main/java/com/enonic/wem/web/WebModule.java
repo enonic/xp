@@ -2,10 +2,10 @@ package com.enonic.wem.web;
 
 import com.google.inject.AbstractModule;
 
+import com.enonic.wem.admin.json.rpc.JsonRpcModule;
+import com.enonic.wem.admin.rest.RestModule;
 import com.enonic.wem.core.CoreModule;
-import com.enonic.wem.web.json.rpc.JsonRpcModule;
 import com.enonic.wem.web.jsp.JspDataTools;
-import com.enonic.wem.web.rest.RestModule;
 
 public final class WebModule
     extends AbstractModule
