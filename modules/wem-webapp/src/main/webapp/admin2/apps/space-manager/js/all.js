@@ -2439,22 +2439,23 @@ var admin;
                     itemId: 'spaceDetailToolbar',
                     cls: 'admin-toolbar'
                 });
-                var editButton = new Ext.button.Button({
+                var defaults = {
+                    scale: 'medium'
+                };
+                var editButton = new Ext.button.Button(Ext.apply({
                     text: 'Edit',
-                    action: 'editSpace',
-                    scale: 'medium'
-                });
-                var deleteButton = new Ext.button.Button({
+                    action: 'editSpace'
+                }, defaults));
+                var deleteButton = new Ext.button.Button(Ext.apply({
                     text: 'Delete',
-                    action: 'deleteSpace',
-                    scale: 'medium'
-                });
+                    action: 'deleteSpace'
+                }, defaults));
                 var separator = new Ext.toolbar.Fill();
-                var closeButton = new Ext.button.Button({
+                var closeButton = new Ext.button.Button(Ext.apply({
                     text: 'Close',
                     action: 'closeSpace',
                     scale: 'medium'
-                });
+                }, defaults));
                 tbar.add(editButton, deleteButton, separator, closeButton);
                 this.ext = tbar;
             }
@@ -3086,29 +3087,28 @@ var admin;
                     border: false
                 });
                 this.ext = tb;
-                var saveBtn = new Ext.button.Button({
+                var defaults = {
+                    scale: 'medium'
+                };
+                var saveBtn = new Ext.button.Button(Ext.apply({
                     text: 'Save',
                     action: 'saveSpace',
                     itemId: 'save',
-                    disabled: true,
-                    scale: 'medium'
-                });
-                var deleteBtn = new Ext.button.Button({
+                    disabled: true
+                }, defaults));
+                var deleteBtn = new Ext.button.Button(Ext.apply({
                     text: 'Delete',
                     disabled: this.isNew,
-                    action: 'deleteSpace',
-                    scale: 'medium'
-                });
-                var duplicateBtn = new Ext.button.Button({
+                    action: 'deleteSpace'
+                }, defaults));
+                var duplicateBtn = new Ext.button.Button(Ext.apply({
                     text: 'Duplicate',
-                    disabled: this.isNew,
-                    scale: 'medium'
-                });
-                var closeBtn = new Ext.button.Button({
+                    disabled: this.isNew
+                }, defaults));
+                var closeBtn = new Ext.button.Button(Ext.apply({
                     text: 'Close',
-                    action: 'closeWizard',
-                    scale: 'medium'
-                });
+                    action: 'closeWizard'
+                }, defaults));
                 tb.add(saveBtn, deleteBtn, duplicateBtn, '->', closeBtn);
             }
 
@@ -4373,7 +4373,7 @@ var admin;
                         this.clearLink.el.setStyle('visibility', this.isDirty() ? 'visible' : 'hidden');
                     }
                 };
-                var includeSearch = config && (typeof config.includeSearch !== "undefined") ? config.includeSearch : true;
+                var includeSearch = config && Ext.isDefined(config.includeSearch) ? config.includeSearch : true;
                 var fp = this.ext = new Ext.panel.Panel({
                     region: config ? config.region : undefined,
                     width: config ? config.width : undefined,

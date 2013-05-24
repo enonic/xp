@@ -8,22 +8,24 @@ module admin.ui {
                 itemId: 'spaceDetailToolbar',
                 cls: 'admin-toolbar'
             });
-            var editButton = new Ext.button.Button({
+
+            var defaults = {
+                scale: 'medium'
+            };
+            var editButton = new Ext.button.Button(Ext.apply({
                 text: 'Edit',
-                action: 'editSpace',
-                scale: 'medium'
-            });
-            var deleteButton = new Ext.button.Button({
+                action: 'editSpace'
+            }, defaults));
+            var deleteButton = new Ext.button.Button(Ext.apply({
                 text: 'Delete',
-                action: 'deleteSpace',
-                scale: 'medium'
-            });
+                action: 'deleteSpace'
+            }, defaults));
             var separator = new Ext.toolbar.Fill();
-            var closeButton = new Ext.button.Button({
+            var closeButton = new Ext.button.Button(Ext.apply({
                 text: 'Close',
                 action: 'closeSpace',
                 scale: 'medium'
-            });
+            }, defaults));
             tbar.add(editButton, deleteButton, separator, closeButton);
 
             this.ext = <Ext_toolbar_Toolbar> tbar;

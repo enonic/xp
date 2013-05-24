@@ -136,7 +136,7 @@ module admin.ui {
                 }
             };
 
-            var includeSearch = config && (typeof config.includeSearch !== "undefined") ? config.includeSearch : true;
+            var includeSearch = config && Ext.isDefined(config.includeSearch) ? config.includeSearch : true;
 
             var fp = this.ext = new Ext.panel.Panel({
                 region: config ? config.region : undefined,

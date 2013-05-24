@@ -11,29 +11,28 @@ module admin.ui {
             });
             this.ext = <Ext_toolbar_Toolbar> tb;
 
-            var saveBtn = new Ext.button.Button({
+            var defaults = {
+                scale: 'medium'
+            };
+            var saveBtn = new Ext.button.Button(Ext.apply({
                 text: 'Save',
                 action: 'saveSpace',
                 itemId: 'save',
-                disabled: true,
-                scale: 'medium'
-            });
-            var deleteBtn = new Ext.button.Button({
+                disabled: true
+            }, defaults));
+            var deleteBtn = new Ext.button.Button(Ext.apply({
                 text: 'Delete',
                 disabled: this.isNew,
-                action: 'deleteSpace',
-                scale: 'medium'
-            });
-            var duplicateBtn = new Ext.button.Button({
+                action: 'deleteSpace'
+            }, defaults));
+            var duplicateBtn = new Ext.button.Button(Ext.apply({
                 text: 'Duplicate',
-                disabled: this.isNew,
-                scale: 'medium'
-            });
-            var closeBtn = new Ext.button.Button({
+                disabled: this.isNew
+            }, defaults));
+            var closeBtn = new Ext.button.Button(Ext.apply({
                 text: 'Close',
-                action: 'closeWizard',
-                scale: 'medium'
-            });
+                action: 'closeWizard'
+            }, defaults));
 
             tb.add(saveBtn, deleteBtn, duplicateBtn, '->', closeBtn);
         }
