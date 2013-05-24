@@ -32,6 +32,7 @@ module API_content_data {
         constructor(name: string, value: string, type: string);
         public getValue(): string;
         public getType(): string;
+        public setValue(value: any): void;
     }
 }
 module API_content_data {

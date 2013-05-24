@@ -107,6 +107,11 @@ module API_content_data {
     }
 }
 module API_content_data {
+    class ContentData extends DataSet {
+        constructor();
+    }
+}
+module API_content_data {
     class Property extends Data {
         private value;
         private type;
@@ -114,6 +119,7 @@ module API_content_data {
         constructor(name: string, value: string, type: string);
         public getValue(): string;
         public getType(): string;
+        public setValue(value: any): void;
     }
 }
 module API_schema_content_form {

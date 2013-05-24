@@ -106,12 +106,47 @@ var admin;
 var admin;
 (function (admin) {
     (function (ui) {
+        var FormComponent = (function () {
+            function FormComponent() {
+                var panel = new Ext.form.Panel();
+                this.ext = panel;
+            }
+            FormComponent.prototype.getContentData = function () {
+                var contentData = new API_content_data.ContentData();
+                return contentData;
+            };
+            return FormComponent;
+        })();
+        ui.FormComponent = FormComponent;        
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
+var admin;
+(function (admin) {
+    (function (ui) {
+        var FormItemSetComponent = (function () {
+            function FormItemSetComponent() {
+                var panel = new Ext.form.Panel();
+                this.ext = panel;
+            }
+            return FormItemSetComponent;
+        })();
+        ui.FormItemSetComponent = FormItemSetComponent;        
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
+var admin;
+(function (admin) {
+    (function (ui) {
         var BaseInputComponent = (function () {
             function BaseInputComponent(input) {
                 this.input = input;
             }
             BaseInputComponent.prototype.getInput = function () {
                 return this.input;
+            };
+            BaseInputComponent.prototype.setValue = function (value, arrayIndex) {
+                this.values[arrayIndex] = value;
             };
             return BaseInputComponent;
         })();
@@ -141,8 +176,9 @@ var admin;
                 fieldContainer.add(textField);
                 this.ext = fieldContainer;
             }
-            TextLine.prototype.setValue = function (value) {
+            TextLine.prototype.setValue = function (value, arrayIndex) {
                 this.ext.down('textfield').setValue(value);
+                _super.prototype.setValue.call(this, value, arrayIndex);
             };
             return TextLine;
         })(admin.ui.BaseInputComponent);
