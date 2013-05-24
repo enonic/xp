@@ -1,7 +1,6 @@
-module LiveEdit.ui {
-    var $ = $liveedit;
+module LiveEdit.ui.contextmenu.menuitem {
 
-    export class ViewButton extends LiveEdit.ui.BaseButton {
+    export class Details extends LiveEdit.ui.contextmenu.menuitem.Base {
 
         private menu = null;
 
@@ -14,10 +13,12 @@ module LiveEdit.ui {
 
         init():void {
             var $button = this.createButton({
-                text: 'View',
-                id: 'live-edit-button-view',
+                text: 'Show Details',
+                id: 'live-edit-button-details',
                 cls: 'live-edit-component-menu-button',
-                handler: (event) => event.stopPropagation()
+                handler: (event) => {
+                    event.stopPropagation();
+                }
             });
 
             this.appendTo(this.menu.getRootEl());

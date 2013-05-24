@@ -1,7 +1,7 @@
-module LiveEdit.ui {
+module LiveEdit.ui.contextmenu.menuitem {
     var $ = $liveedit;
 
-    export class RemoveButton extends LiveEdit.ui.BaseButton {
+    export class Edit extends LiveEdit.ui.contextmenu.menuitem.Base {
 
         private menu = null;
 
@@ -14,14 +14,16 @@ module LiveEdit.ui {
 
         init():void {
             var $button = this.createButton({
-                text: 'Remove',
-                id: 'live-edit-button-remove',
+                id: 'live-edit-button-edit',
+                text: 'Edit',
                 cls: 'live-edit-component-menu-button',
                 handler: (event) => {
                     event.stopPropagation();
-                    // For demo purposes
-                    this.menu.selectedComponent.remove();
-                    $(window).trigger('remove.liveEdit.component');
+
+                    var $paragraph = this.menu.selectedComponent;
+                    if ($paragraph && $paragraph.length > 0) {
+                        $(window).trigger('paragraphEdit.liveEdit.component', [$paragraph]);
+                    }
                 }
             });
 

@@ -1,4 +1,4 @@
-module LiveEdit.ui {
+module LiveEdit.ui.contextmenu {
     var $ = $liveedit;
     var componentHelper = LiveEdit.ComponentHelper;
     var domHelper = LiveEdit.DomHelper;
@@ -109,16 +109,18 @@ module LiveEdit.ui {
 
 
         private addButtons():void {
-            var parentButton = new LiveEdit.ui.ParentButton(this);
-            var settingsButton = new LiveEdit.ui.SettingsButton(this);
-            var detailsButton = new LiveEdit.ui.DetailsButton(this);
-            var insertButton = new LiveEdit.ui.InsertButton(this);
-            var resetButton = new LiveEdit.ui.ResetButton(this);
-            var clearButton = new LiveEdit.ui.ClearButton(this);
-            var openContentButton = new LiveEdit.ui.OpenContentButton(this);
-            var viewButton = new LiveEdit.ui.ViewButton(this);
-            var editButton = new LiveEdit.ui.EditButton(this);
-            var removeButton = new LiveEdit.ui.RemoveButton(this);
+            var menuItem = LiveEdit.ui.contextmenu.menuitem;
+
+            var parentButton = new menuitem.Parent(this);
+            var settingsButton = new menuitem.Settings(this);
+            var detailsButton = new menuitem.Details(this);
+            var insertButton = new menuitem.Insert(this);
+            var resetButton = new menuitem.Reset(this);
+            var clearButton = new menuitem.Empty(this);
+            var openContentButton = new menuitem.OpenContent(this);
+            var viewButton = new menuitem.View(this);
+            var editButton = new menuitem.Edit(this);
+            var removeButton = new menuitem.Remove(this);
 
             var i,
                 $menuItemsPlaceholder = this.getMenuItemsPlaceholderElement();

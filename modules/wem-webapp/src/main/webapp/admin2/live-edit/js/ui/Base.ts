@@ -17,7 +17,7 @@ module LiveEdit.ui {
 
         public createElement(htmlString:string):JQuery {
             this.element = $(htmlString);
-            this.element.attr('id', (this.ID_PREFIX + this.id.toString()));
+            this.setElementId();
 
             return this.element;
         }
@@ -30,6 +30,10 @@ module LiveEdit.ui {
 
         public getRootEl():JQuery {
             return this.element;
+        }
+
+        private setElementId () {
+            this.element.attr('id', (this.ID_PREFIX + this.id.toString()));
         }
 
     }

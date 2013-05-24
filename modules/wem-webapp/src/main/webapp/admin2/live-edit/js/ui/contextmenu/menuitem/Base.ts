@@ -6,10 +6,10 @@ interface ButtonConfig {
     handler(event:Event):void;
 }
 
-module LiveEdit.ui {
+module LiveEdit.ui.contextmenu.menuitem {
     var $ = $liveedit;
 
-    export class BaseButton extends LiveEdit.ui.Base {
+    export class Base extends LiveEdit.ui.Base {
         constructor() {
             super();
         }

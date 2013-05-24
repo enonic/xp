@@ -28,18 +28,19 @@ declare var LiveEditMutationSummary;
 ///<reference path='ui/Highlighter.ts' />
 ///<reference path='ui/ToolTip.ts' />
 
-///<reference path='ui/menu/Menu.ts' />
-///<reference path='ui/menu/BaseButton.ts' />
-///<reference path='ui/menu/ParentButton.ts' />
-///<reference path='ui/menu/OpenContentButton.ts' />
-///<reference path='ui/menu/InsertButton.ts' />
-///<reference path='ui/menu/DetailsButton.ts' />
-///<reference path='ui/menu/EditButton.ts' />
-///<reference path='ui/menu/ResetButton.ts' />
-///<reference path='ui/menu/ClearButton.ts' />
-///<reference path='ui/menu/ViewButton.ts' />
-///<reference path='ui/menu/SettingsButton.ts' />
-///<reference path='ui/menu/RemoveButton.ts' />
+///<reference path='ui/contextmenu/Menu.ts' />
+///<reference path='ui/contextmenu/menuitem/Base.ts' />
+///<reference path='ui/contextmenu/menuitem/Parent.ts' />
+///<reference path='ui/contextmenu/menuitem/OpenContent.ts' />
+///<reference path='ui/contextmenu/menuitem/Insert.ts' />
+///<reference path='ui/contextmenu/menuitem/Details.ts' />
+///<reference path='ui/contextmenu/menuitem/Edit.ts' />
+///<reference path='ui/contextmenu/menuitem/Reset.ts' />
+///<reference path='ui/contextmenu/menuitem/Empty.ts' />
+///<reference path='ui/contextmenu/menuitem/View.ts' />
+///<reference path='ui/contextmenu/menuitem/Settings.ts' />
+///<reference path='ui/contextmenu/menuitem/Remove.ts' />
+
 ///<reference path='ui/componentbar/ComponentBar.ts' />
 
 
@@ -63,7 +64,7 @@ declare var LiveEditMutationSummary;
             new LiveEdit.ui.Highlighter();
             new LiveEdit.ui.ToolTip();
             new LiveEdit.ui.Cursor();
-            new LiveEdit.ui.Menu();
+            new LiveEdit.ui.contextmenu.Menu();
             new LiveEdit.ui.Shader();
             new LiveEdit.ui.Editor();
             new LiveEdit.ui.ComponentBar();

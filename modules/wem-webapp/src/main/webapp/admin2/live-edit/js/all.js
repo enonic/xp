@@ -756,7 +756,7 @@ var LiveEdit;
             Base.constructedCount = 0;
             Base.prototype.createElement = function (htmlString) {
                 this.element = $(htmlString);
-                this.element.attr('id', (this.ID_PREFIX + this.id.toString()));
+                this.setElementId();
                 return this.element;
             };
             Base.prototype.appendTo = function (parent) {
@@ -766,6 +766,9 @@ var LiveEdit;
             };
             Base.prototype.getRootEl = function () {
                 return this.element;
+            };
+            Base.prototype.setElementId = function () {
+                this.element.attr('id', (this.ID_PREFIX + this.id.toString()));
             };
             return Base;
         })();
@@ -1388,596 +1391,666 @@ var LiveEdit;
 var LiveEdit;
 (function (LiveEdit) {
     (function (ui) {
-        var $ = $liveedit;
-        var componentHelper = LiveEdit.ComponentHelper;
-        var domHelper = LiveEdit.DomHelper;
-        var Menu = (function (_super) {
-            __extends(Menu, _super);
-            function Menu() {
-                        _super.call(this);
-                this.previousPageSizes = null;
-                this.previousPagePositions = null;
-                this.hidden = true;
-                this.buttons = [];
-                this.buttonConfig = {
-                    'page': [
-                        'settings', 
-                        'reset'
-                    ],
-                    'region': [
-                        'parent', 
-                        'settings', 
-                        'reset', 
-                        'clear'
-                    ],
-                    'layout': [
-                        'parent', 
-                        'settings', 
-                        'remove'
-                    ],
-                    'part': [
-                        'parent', 
-                        'settings', 
-                        'details', 
-                        'remove'
-                    ],
-                    'content': [
-                        'parent', 
-                        'opencontent', 
-                        'view'
-                    ],
-                    'paragraph': [
-                        'parent', 
-                        'edit', 
-                        'remove'
-                    ]
+        (function (contextmenu) {
+            var $ = $liveedit;
+            var componentHelper = LiveEdit.ComponentHelper;
+            var domHelper = LiveEdit.DomHelper;
+            var Menu = (function (_super) {
+                __extends(Menu, _super);
+                function Menu() {
+                                _super.call(this);
+                    this.previousPageSizes = null;
+                    this.previousPagePositions = null;
+                    this.hidden = true;
+                    this.buttons = [];
+                    this.buttonConfig = {
+                        'page': [
+                            'settings', 
+                            'reset'
+                        ],
+                        'region': [
+                            'parent', 
+                            'settings', 
+                            'reset', 
+                            'clear'
+                        ],
+                        'layout': [
+                            'parent', 
+                            'settings', 
+                            'remove'
+                        ],
+                        'part': [
+                            'parent', 
+                            'settings', 
+                            'details', 
+                            'remove'
+                        ],
+                        'content': [
+                            'parent', 
+                            'opencontent', 
+                            'view'
+                        ],
+                        'paragraph': [
+                            'parent', 
+                            'edit', 
+                            'remove'
+                        ]
+                    };
+                    this.addView();
+                    this.registerEvents();
+                    this.registerGlobalListeners();
+                    console.log('Menu instantiated. Using jQuery ' + $().jquery);
+                }
+                Menu.prototype.registerGlobalListeners = function () {
+                    var _this = this;
+                    $(window).on('select.liveEdit.component', function (event, component, pagePosition) {
+                        return _this.show(component, pagePosition);
+                    });
+                    $(window).on('deselect.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', function () {
+                        return _this.hide();
+                    });
+                    $(window).on('sortStart.liveEdit.component', function () {
+                        return _this.fadeOutAndHide();
+                    });
                 };
-                this.addView();
-                this.registerEvents();
-                this.registerGlobalListeners();
-                console.log('Menu instantiated. Using jQuery ' + $().jquery);
-            }
-            Menu.prototype.registerGlobalListeners = function () {
-                var _this = this;
-                $(window).on('select.liveEdit.component', function (event, component, pagePosition) {
-                    return _this.show(component, pagePosition);
-                });
-                $(window).on('deselect.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', function () {
-                    return _this.hide();
-                });
-                $(window).on('sortStart.liveEdit.component', function () {
-                    return _this.fadeOutAndHide();
-                });
-            };
-            Menu.prototype.addView = function () {
-                var html = '';
-                html += '<div class="live-edit-component-menu live-edit-arrow-top" style="display: none">';
-                html += '   <div class="live-edit-component-menu-title-bar">';
-                html += '       <div class="live-edit-component-menu-title-icon"><div><!-- --></div></div>';
-                html += '       <div class="live-edit-component-menu-title-text"><!-- populated --></div>';
-                html += '       <div class="live-edit-component-menu-title-close-button"><!-- --></div>';
-                html += '   </div>';
-                html += '   <div class="live-edit-component-menu-items">';
-                html += '   </div>';
-                html += '</div>';
-                this.createElement(html);
-                this.appendTo($('body'));
-                this.addButtons();
-            };
-            Menu.prototype.registerEvents = function () {
-                this.getRootEl().draggable({
-                    handle: '.live-edit-component-menu-title-bar',
-                    addClasses: false
-                });
-                this.getCloseButton().click(function () {
-                    $(window).trigger('deselect.liveEdit.component');
-                });
-            };
-            Menu.prototype.show = function (component, pagePosition) {
-                this.selectedComponent = component;
-                this.previousPagePositions = pagePosition;
-                this.previousPageSizes = domHelper.getViewPortSize();
-                this.updateTitleBar(component);
-                this.updateMenuItemsForComponent(component);
-                var pageXPosition = pagePosition.x - this.getRootEl().width() / 2, pageYPosition = pagePosition.y + 15;
-                this.moveToXY(pageXPosition, pageYPosition);
-                this.getRootEl().show(null);
-                this.hidden = false;
-            };
-            Menu.prototype.hide = function () {
-                this.selectedComponent = null;
-                this.getRootEl().hide(null);
-                this.hidden = true;
-            };
-            Menu.prototype.fadeOutAndHide = function () {
-                var _this = this;
-                this.getRootEl().fadeOut(500, function () {
-                    _this.hide();
-                    $(window).trigger('deselect.liveEdit.component', {
-                        showComponentBar: false
+                Menu.prototype.addView = function () {
+                    var html = '';
+                    html += '<div class="live-edit-component-menu live-edit-arrow-top" style="display: none">';
+                    html += '   <div class="live-edit-component-menu-title-bar">';
+                    html += '       <div class="live-edit-component-menu-title-icon"><div><!-- --></div></div>';
+                    html += '       <div class="live-edit-component-menu-title-text"><!-- populated --></div>';
+                    html += '       <div class="live-edit-component-menu-title-close-button"><!-- --></div>';
+                    html += '   </div>';
+                    html += '   <div class="live-edit-component-menu-items">';
+                    html += '   </div>';
+                    html += '</div>';
+                    this.createElement(html);
+                    this.appendTo($('body'));
+                    this.addButtons();
+                };
+                Menu.prototype.registerEvents = function () {
+                    this.getRootEl().draggable({
+                        handle: '.live-edit-component-menu-title-bar',
+                        addClasses: false
                     });
-                });
-                this.selectedComponent = null;
-            };
-            Menu.prototype.moveToXY = function (x, y) {
-                this.getRootEl().css({
-                    left: x,
-                    top: y
-                });
-            };
-            Menu.prototype.addButtons = function () {
-                var parentButton = new LiveEdit.ui.ParentButton(this);
-                var settingsButton = new LiveEdit.ui.SettingsButton(this);
-                var detailsButton = new LiveEdit.ui.DetailsButton(this);
-                var insertButton = new LiveEdit.ui.InsertButton(this);
-                var resetButton = new LiveEdit.ui.ResetButton(this);
-                var clearButton = new LiveEdit.ui.ClearButton(this);
-                var openContentButton = new LiveEdit.ui.OpenContentButton(this);
-                var viewButton = new LiveEdit.ui.ViewButton(this);
-                var editButton = new LiveEdit.ui.EditButton(this);
-                var removeButton = new LiveEdit.ui.RemoveButton(this);
-                var i, $menuItemsPlaceholder = this.getMenuItemsPlaceholderElement();
-                for(i = 0; i < this.buttons.length; i++) {
-                    this.buttons[i].appendTo($menuItemsPlaceholder);
-                }
-            };
-            Menu.prototype.updateMenuItemsForComponent = function (component) {
-                var componentType = componentHelper.getComponentType(component);
-                var buttonArray = this.getConfigForButton(componentType);
-                var buttons = this.getButtons();
-                var i;
-                for(i = 0; i < buttons.length; i++) {
-                    var $button = buttons[i].getRootEl();
-                    var id = $button.attr('data-live-edit-ui-cmp-id');
-                    var subStr = id.substring(id.lastIndexOf('-') + 1, id.length);
-                    if(buttonArray.indexOf(subStr) > -1) {
-                        $button.show();
-                    } else {
-                        $button.hide();
-                    }
-                }
-            };
-            Menu.prototype.updateTitleBar = function (component) {
-                var componentInfo = componentHelper.getComponentInfo(component);
-                this.setIcon(componentInfo.type);
-                this.setTitle(componentInfo.name);
-            };
-            Menu.prototype.setTitle = function (titleText) {
-                this.getTitleElement().text(titleText);
-            };
-            Menu.prototype.setIcon = function (componentType) {
-                var iconCt = this.getIconElement(), iconCls = this.resolveCssClassForComponentType(componentType);
-                iconCt.children('div').attr('class', iconCls);
-                iconCt.attr('title', componentType);
-            };
-            Menu.prototype.resolveCssClassForComponentType = function (componentType) {
-                var iconCls;
-                switch(componentType) {
-                    case 'page':
-                        iconCls = 'live-edit-component-menu-page-icon';
-                        break;
-                    case 'region':
-                        iconCls = 'live-edit-component-menu-region-icon';
-                        break;
-                    case 'layout':
-                        iconCls = 'live-edit-component-menu-layout-icon';
-                        break;
-                    case 'part':
-                        iconCls = 'live-edit-component-menu-part-icon';
-                        break;
-                    case 'content':
-                        iconCls = 'live-edit-component-menu-content-icon';
-                        break;
-                    case 'paragraph':
-                        iconCls = 'live-edit-component-menu-paragraph-icon';
-                        break;
-                    default:
-                        iconCls = '';
-                }
-                return iconCls;
-            };
-            Menu.prototype.getButtons = function () {
-                return this.buttons;
-            };
-            Menu.prototype.getConfigForButton = function (componentType) {
-                return this.buttonConfig[componentType];
-            };
-            Menu.prototype.getIconElement = function () {
-                return $('.live-edit-component-menu-title-icon', this.getRootEl());
-            };
-            Menu.prototype.getTitleElement = function () {
-                return $('.live-edit-component-menu-title-text', this.getRootEl());
-            };
-            Menu.prototype.getCloseButton = function () {
-                return $('.live-edit-component-menu-title-close-button', this.getRootEl());
-            };
-            Menu.prototype.getMenuItemsPlaceholderElement = function () {
-                return $('.live-edit-component-menu-items', this.getRootEl());
-            };
-            return Menu;
-        })(LiveEdit.ui.Base);
-        ui.Menu = Menu;        
-    })(LiveEdit.ui || (LiveEdit.ui = {}));
-    var ui = LiveEdit.ui;
-})(LiveEdit || (LiveEdit = {}));
-var LiveEdit;
-(function (LiveEdit) {
-    (function (ui) {
-        var $ = $liveedit;
-        var BaseButton = (function (_super) {
-            __extends(BaseButton, _super);
-            function BaseButton() {
-                        _super.call(this);
-            }
-            BaseButton.prototype.createButton = function (config) {
-                var _this = this;
-                var id = config.id || '';
-                var text = config.text;
-                var cls = config.cls || '';
-                var iconCls = config.iconCls || '';
-                var html = '<div data-live-edit-ui-cmp-id="' + id + '" class="live-edit-button ' + cls + '">';
-                if(iconCls !== '') {
-                    html += '<span class="live-edit-button-icon ' + iconCls + '"></span>';
-                }
-                html += '<span class="live-edit-button-text">' + text + '</span></div>';
-                var $button = this.createElement(html);
-                if(config.handler) {
-                    $button.on('click', function (event) {
-                        return config.handler.call(_this, event);
+                    this.getCloseButton().click(function () {
+                        $(window).trigger('deselect.liveEdit.component');
                     });
-                }
-                return $button;
-            };
-            return BaseButton;
-        })(LiveEdit.ui.Base);
-        ui.BaseButton = BaseButton;        
-    })(LiveEdit.ui || (LiveEdit.ui = {}));
-    var ui = LiveEdit.ui;
-})(LiveEdit || (LiveEdit = {}));
-var LiveEdit;
-(function (LiveEdit) {
-    (function (ui) {
-        var $ = $liveedit;
-        var componentHelper = LiveEdit.ComponentHelper;
-        var ParentButton = (function (_super) {
-            __extends(ParentButton, _super);
-            function ParentButton(menu) {
-                        _super.call(this);
-                this.menu = null;
-                this.menu = menu;
-                this.init();
-            }
-            ParentButton.prototype.init = function () {
-                var _this = this;
-                var $button = this.createButton({
-                    id: 'live-edit-button-parent',
-                    text: 'Select Parent',
-                    cls: 'live-edit-component-menu-button',
-                    handler: function (event) {
-                        event.stopPropagation();
-                        var parent = _this.menu.selectedComponent.parents('[data-live-edit-type]');
-                        if(parent && parent.length > 0) {
-                            parent = $(parent[0]);
-                            var menuPagePosition = {
-                                x: 0,
-                                y: 0
-                            };
-                            $(window).trigger('select.liveEdit.component', [
-                                parent, 
-                                menuPagePosition
-                            ]);
-                            _this.scrollComponentIntoView(parent);
-                            var menuWidth = _this.menu.getRootEl().outerWidth();
-                            var componentBox = componentHelper.getBoxModel(parent), newMenuPosition = {
-                                x: componentBox.left + (componentBox.width / 2) - (menuWidth / 2),
-                                y: componentBox.top + 10
-                            };
-                            _this.menu.moveToXY(newMenuPosition.x, newMenuPosition.y);
+                };
+                Menu.prototype.show = function (component, pagePosition) {
+                    this.selectedComponent = component;
+                    this.previousPagePositions = pagePosition;
+                    this.previousPageSizes = domHelper.getViewPortSize();
+                    this.updateTitleBar(component);
+                    this.updateMenuItemsForComponent(component);
+                    var pageXPosition = pagePosition.x - this.getRootEl().width() / 2, pageYPosition = pagePosition.y + 15;
+                    this.moveToXY(pageXPosition, pageYPosition);
+                    this.getRootEl().show(null);
+                    this.hidden = false;
+                };
+                Menu.prototype.hide = function () {
+                    this.selectedComponent = null;
+                    this.getRootEl().hide(null);
+                    this.hidden = true;
+                };
+                Menu.prototype.fadeOutAndHide = function () {
+                    var _this = this;
+                    this.getRootEl().fadeOut(500, function () {
+                        _this.hide();
+                        $(window).trigger('deselect.liveEdit.component', {
+                            showComponentBar: false
+                        });
+                    });
+                    this.selectedComponent = null;
+                };
+                Menu.prototype.moveToXY = function (x, y) {
+                    this.getRootEl().css({
+                        left: x,
+                        top: y
+                    });
+                };
+                Menu.prototype.addButtons = function () {
+                    var menuItem = LiveEdit.ui.contextmenu.menuitem;
+                    var parentButton = new contextmenu.menuitem.Parent(this);
+                    var settingsButton = new contextmenu.menuitem.Settings(this);
+                    var detailsButton = new contextmenu.menuitem.Details(this);
+                    var insertButton = new contextmenu.menuitem.Insert(this);
+                    var resetButton = new contextmenu.menuitem.Reset(this);
+                    var clearButton = new contextmenu.menuitem.Empty(this);
+                    var openContentButton = new contextmenu.menuitem.OpenContent(this);
+                    var viewButton = new contextmenu.menuitem.View(this);
+                    var editButton = new contextmenu.menuitem.Edit(this);
+                    var removeButton = new contextmenu.menuitem.Remove(this);
+                    var i, $menuItemsPlaceholder = this.getMenuItemsPlaceholderElement();
+                    for(i = 0; i < this.buttons.length; i++) {
+                        this.buttons[i].appendTo($menuItemsPlaceholder);
+                    }
+                };
+                Menu.prototype.updateMenuItemsForComponent = function (component) {
+                    var componentType = componentHelper.getComponentType(component);
+                    var buttonArray = this.getConfigForButton(componentType);
+                    var buttons = this.getButtons();
+                    var i;
+                    for(i = 0; i < buttons.length; i++) {
+                        var $button = buttons[i].getRootEl();
+                        var id = $button.attr('data-live-edit-ui-cmp-id');
+                        var subStr = id.substring(id.lastIndexOf('-') + 1, id.length);
+                        if(buttonArray.indexOf(subStr) > -1) {
+                            $button.show();
+                        } else {
+                            $button.hide();
                         }
                     }
-                });
-                this.appendTo(this.menu.getRootEl());
-                this.menu.buttons.push(this);
-            };
-            ParentButton.prototype.scrollComponentIntoView = function ($component) {
-                var componentTopPosition = componentHelper.getPagePositionForComponent($component).top;
-                if(componentTopPosition <= window.pageYOffset) {
-                    $('html, body').animate({
-                        scrollTop: componentTopPosition - 10
-                    }, 200);
-                }
-            };
-            return ParentButton;
-        })(LiveEdit.ui.BaseButton);
-        ui.ParentButton = ParentButton;        
+                };
+                Menu.prototype.updateTitleBar = function (component) {
+                    var componentInfo = componentHelper.getComponentInfo(component);
+                    this.setIcon(componentInfo.type);
+                    this.setTitle(componentInfo.name);
+                };
+                Menu.prototype.setTitle = function (titleText) {
+                    this.getTitleElement().text(titleText);
+                };
+                Menu.prototype.setIcon = function (componentType) {
+                    var iconCt = this.getIconElement(), iconCls = this.resolveCssClassForComponentType(componentType);
+                    iconCt.children('div').attr('class', iconCls);
+                    iconCt.attr('title', componentType);
+                };
+                Menu.prototype.resolveCssClassForComponentType = function (componentType) {
+                    var iconCls;
+                    switch(componentType) {
+                        case 'page':
+                            iconCls = 'live-edit-component-menu-page-icon';
+                            break;
+                        case 'region':
+                            iconCls = 'live-edit-component-menu-region-icon';
+                            break;
+                        case 'layout':
+                            iconCls = 'live-edit-component-menu-layout-icon';
+                            break;
+                        case 'part':
+                            iconCls = 'live-edit-component-menu-part-icon';
+                            break;
+                        case 'content':
+                            iconCls = 'live-edit-component-menu-content-icon';
+                            break;
+                        case 'paragraph':
+                            iconCls = 'live-edit-component-menu-paragraph-icon';
+                            break;
+                        default:
+                            iconCls = '';
+                    }
+                    return iconCls;
+                };
+                Menu.prototype.getButtons = function () {
+                    return this.buttons;
+                };
+                Menu.prototype.getConfigForButton = function (componentType) {
+                    return this.buttonConfig[componentType];
+                };
+                Menu.prototype.getIconElement = function () {
+                    return $('.live-edit-component-menu-title-icon', this.getRootEl());
+                };
+                Menu.prototype.getTitleElement = function () {
+                    return $('.live-edit-component-menu-title-text', this.getRootEl());
+                };
+                Menu.prototype.getCloseButton = function () {
+                    return $('.live-edit-component-menu-title-close-button', this.getRootEl());
+                };
+                Menu.prototype.getMenuItemsPlaceholderElement = function () {
+                    return $('.live-edit-component-menu-items', this.getRootEl());
+                };
+                return Menu;
+            })(LiveEdit.ui.Base);
+            contextmenu.Menu = Menu;            
+        })(ui.contextmenu || (ui.contextmenu = {}));
+        var contextmenu = ui.contextmenu;
     })(LiveEdit.ui || (LiveEdit.ui = {}));
     var ui = LiveEdit.ui;
 })(LiveEdit || (LiveEdit = {}));
 var LiveEdit;
 (function (LiveEdit) {
     (function (ui) {
-        var $ = $liveedit;
-        var OpenContentButton = (function (_super) {
-            __extends(OpenContentButton, _super);
-            function OpenContentButton(menu) {
-                        _super.call(this);
-                this.menu = null;
-                this.menu = menu;
-                this.init();
-            }
-            OpenContentButton.prototype.init = function () {
-                var $button = this.createButton({
-                    text: 'Open in new tab',
-                    id: 'live-edit-button-opencontent',
-                    cls: 'live-edit-component-menu-button',
-                    handler: function (event) {
-                        event.stopPropagation();
-                        var parentWindow = window['parent'];
-                        if(parentWindow && parentWindow['Admin'].MessageBus) {
-                            parentWindow['Admin'].MessageBus.liveEditOpenContent();
+        (function (contextmenu) {
+            (function (menuitem) {
+                var $ = $liveedit;
+                var Base = (function (_super) {
+                    __extends(Base, _super);
+                    function Base() {
+                                        _super.call(this);
+                    }
+                    Base.prototype.createButton = function (config) {
+                        var _this = this;
+                        var id = config.id || '';
+                        var text = config.text;
+                        var cls = config.cls || '';
+                        var iconCls = config.iconCls || '';
+                        var html = '<div data-live-edit-ui-cmp-id="' + id + '" class="live-edit-button ' + cls + '">';
+                        if(iconCls !== '') {
+                            html += '<span class="live-edit-button-icon ' + iconCls + '"></span>';
                         }
-                    }
-                });
-                this.appendTo(this.menu.getRootEl());
-                this.menu.buttons.push(this);
-            };
-            return OpenContentButton;
-        })(LiveEdit.ui.BaseButton);
-        ui.OpenContentButton = OpenContentButton;        
-    })(LiveEdit.ui || (LiveEdit.ui = {}));
-    var ui = LiveEdit.ui;
-})(LiveEdit || (LiveEdit = {}));
-var LiveEdit;
-(function (LiveEdit) {
-    (function (ui) {
-        var $ = $liveedit;
-        var InsertButton = (function (_super) {
-            __extends(InsertButton, _super);
-            function InsertButton(menu) {
-                        _super.call(this);
-                this.menu = null;
-                this.menu = menu;
-                this.init();
-            }
-            InsertButton.prototype.init = function () {
-                var $button = this.createButton({
-                    text: 'Insert',
-                    id: 'live-edit-button-insert',
-                    cls: 'live-edit-component-menu-button',
-                    handler: function (event) {
-                        event.stopPropagation();
-                    }
-                });
-                this.appendTo(this.menu.getRootEl());
-                this.menu.buttons.push(this);
-            };
-            return InsertButton;
-        })(LiveEdit.ui.BaseButton);
-        ui.InsertButton = InsertButton;        
-    })(LiveEdit.ui || (LiveEdit.ui = {}));
-    var ui = LiveEdit.ui;
-})(LiveEdit || (LiveEdit = {}));
-var LiveEdit;
-(function (LiveEdit) {
-    (function (ui) {
-        var DetailsButton = (function (_super) {
-            __extends(DetailsButton, _super);
-            function DetailsButton(menu) {
-                        _super.call(this);
-                this.menu = null;
-                this.menu = menu;
-                this.init();
-            }
-            DetailsButton.prototype.init = function () {
-                var $button = this.createButton({
-                    text: 'Show Details',
-                    id: 'live-edit-button-details',
-                    cls: 'live-edit-component-menu-button',
-                    handler: function (event) {
-                        event.stopPropagation();
-                    }
-                });
-                this.appendTo(this.menu.getRootEl());
-                this.menu.buttons.push(this);
-            };
-            return DetailsButton;
-        })(LiveEdit.ui.BaseButton);
-        ui.DetailsButton = DetailsButton;        
-    })(LiveEdit.ui || (LiveEdit.ui = {}));
-    var ui = LiveEdit.ui;
-})(LiveEdit || (LiveEdit = {}));
-var LiveEdit;
-(function (LiveEdit) {
-    (function (ui) {
-        var $ = $liveedit;
-        var EditButton = (function (_super) {
-            __extends(EditButton, _super);
-            function EditButton(menu) {
-                        _super.call(this);
-                this.menu = null;
-                this.menu = menu;
-                this.init();
-            }
-            EditButton.prototype.init = function () {
-                var _this = this;
-                var $button = this.createButton({
-                    id: 'live-edit-button-edit',
-                    text: 'Edit',
-                    cls: 'live-edit-component-menu-button',
-                    handler: function (event) {
-                        event.stopPropagation();
-                        var $paragraph = _this.menu.selectedComponent;
-                        if($paragraph && $paragraph.length > 0) {
-                            $(window).trigger('paragraphEdit.liveEdit.component', [
-                                $paragraph
-                            ]);
-                        }
-                    }
-                });
-                this.appendTo(this.menu.getRootEl());
-                this.menu.buttons.push(this);
-            };
-            return EditButton;
-        })(LiveEdit.ui.BaseButton);
-        ui.EditButton = EditButton;        
-    })(LiveEdit.ui || (LiveEdit.ui = {}));
-    var ui = LiveEdit.ui;
-})(LiveEdit || (LiveEdit = {}));
-var LiveEdit;
-(function (LiveEdit) {
-    (function (ui) {
-        var $ = $liveedit;
-        var ResetButton = (function (_super) {
-            __extends(ResetButton, _super);
-            function ResetButton(menu) {
-                        _super.call(this);
-                this.menu = null;
-                this.menu = menu;
-                this.init();
-            }
-            ResetButton.prototype.init = function () {
-                var $button = this.createButton({
-                    text: 'Reset to Default',
-                    id: 'live-edit-button-reset',
-                    cls: 'live-edit-component-menu-button',
-                    handler: function (event) {
-                        return event.stopPropagation();
-                    }
-                });
-                this.appendTo(this.menu.getRootEl());
-                this.menu.buttons.push(this);
-            };
-            return ResetButton;
-        })(LiveEdit.ui.BaseButton);
-        ui.ResetButton = ResetButton;        
-    })(LiveEdit.ui || (LiveEdit.ui = {}));
-    var ui = LiveEdit.ui;
-})(LiveEdit || (LiveEdit = {}));
-var LiveEdit;
-(function (LiveEdit) {
-    (function (ui) {
-        var $ = $liveedit;
-        var ClearButton = (function (_super) {
-            __extends(ClearButton, _super);
-            function ClearButton(menu) {
-                        _super.call(this);
-                this.menu = null;
-                this.menu = menu;
-                this.init();
-            }
-            ClearButton.prototype.init = function () {
-                var $button = this.createButton({
-                    text: 'Empty',
-                    id: 'live-edit-button-clear',
-                    cls: 'live-edit-component-menu-button',
-                    handler: function (event) {
-                        event.stopPropagation();
-                    }
-                });
-                this.appendTo(this.menu.getRootEl());
-                this.menu.buttons.push(this);
-            };
-            return ClearButton;
-        })(LiveEdit.ui.BaseButton);
-        ui.ClearButton = ClearButton;        
-    })(LiveEdit.ui || (LiveEdit.ui = {}));
-    var ui = LiveEdit.ui;
-})(LiveEdit || (LiveEdit = {}));
-var LiveEdit;
-(function (LiveEdit) {
-    (function (ui) {
-        var $ = $liveedit;
-        var ViewButton = (function (_super) {
-            __extends(ViewButton, _super);
-            function ViewButton(menu) {
-                        _super.call(this);
-                this.menu = null;
-                this.menu = menu;
-                this.init();
-            }
-            ViewButton.prototype.init = function () {
-                var $button = this.createButton({
-                    text: 'View',
-                    id: 'live-edit-button-view',
-                    cls: 'live-edit-component-menu-button',
-                    handler: function (event) {
-                        return event.stopPropagation();
-                    }
-                });
-                this.appendTo(this.menu.getRootEl());
-                this.menu.buttons.push(this);
-            };
-            return ViewButton;
-        })(LiveEdit.ui.BaseButton);
-        ui.ViewButton = ViewButton;        
-    })(LiveEdit.ui || (LiveEdit.ui = {}));
-    var ui = LiveEdit.ui;
-})(LiveEdit || (LiveEdit = {}));
-var LiveEdit;
-(function (LiveEdit) {
-    (function (ui) {
-        var $ = $liveedit;
-        var SettingsButton = (function (_super) {
-            __extends(SettingsButton, _super);
-            function SettingsButton(menu) {
-                        _super.call(this);
-                this.menu = null;
-                this.menu = menu;
-                this.init();
-            }
-            SettingsButton.prototype.init = function () {
-                var $button = this.createButton({
-                    text: 'Settings',
-                    id: 'live-edit-button-settings',
-                    cls: 'live-edit-component-menu-button',
-                    handler: function (event) {
-                        event.stopPropagation();
-                        var parentWindow = window['parent'];
-                        if(parentWindow && parentWindow['Admin'].MessageBus) {
-                            parentWindow['Admin'].MessageBus.showLiveEditTestSettingsWindow({
+                        html += '<span class="live-edit-button-text">' + text + '</span></div>';
+                        var $button = this.createElement(html);
+                        if(config.handler) {
+                            $button.on('click', function (event) {
+                                return config.handler.call(_this, event);
                             });
                         }
-                    }
-                });
-                this.appendTo(this.menu.getRootEl());
-                this.menu.buttons.push(this);
-            };
-            return SettingsButton;
-        })(LiveEdit.ui.BaseButton);
-        ui.SettingsButton = SettingsButton;        
+                        return $button;
+                    };
+                    return Base;
+                })(LiveEdit.ui.Base);
+                menuitem.Base = Base;                
+            })(contextmenu.menuitem || (contextmenu.menuitem = {}));
+            var menuitem = contextmenu.menuitem;
+        })(ui.contextmenu || (ui.contextmenu = {}));
+        var contextmenu = ui.contextmenu;
     })(LiveEdit.ui || (LiveEdit.ui = {}));
     var ui = LiveEdit.ui;
 })(LiveEdit || (LiveEdit = {}));
 var LiveEdit;
 (function (LiveEdit) {
     (function (ui) {
-        var $ = $liveedit;
-        var RemoveButton = (function (_super) {
-            __extends(RemoveButton, _super);
-            function RemoveButton(menu) {
-                        _super.call(this);
-                this.menu = null;
-                this.menu = menu;
-                this.init();
-            }
-            RemoveButton.prototype.init = function () {
-                var _this = this;
-                var $button = this.createButton({
-                    text: 'Remove',
-                    id: 'live-edit-button-remove',
-                    cls: 'live-edit-component-menu-button',
-                    handler: function (event) {
-                        event.stopPropagation();
-                        _this.menu.selectedComponent.remove();
-                        $(window).trigger('remove.liveEdit.component');
+        (function (contextmenu) {
+            (function (menuitem) {
+                var $ = $liveedit;
+                var componentHelper = LiveEdit.ComponentHelper;
+                var Parent = (function (_super) {
+                    __extends(Parent, _super);
+                    function Parent(menu) {
+                                        _super.call(this);
+                        this.menu = null;
+                        this.menu = menu;
+                        this.init();
                     }
-                });
-                this.appendTo(this.menu.getRootEl());
-                this.menu.buttons.push(this);
-            };
-            return RemoveButton;
-        })(LiveEdit.ui.BaseButton);
-        ui.RemoveButton = RemoveButton;        
+                    Parent.prototype.init = function () {
+                        var _this = this;
+                        var $button = this.createButton({
+                            id: 'live-edit-button-parent',
+                            text: 'Select Parent',
+                            cls: 'live-edit-component-menu-button',
+                            handler: function (event) {
+                                event.stopPropagation();
+                                var parent = _this.menu.selectedComponent.parents('[data-live-edit-type]');
+                                if(parent && parent.length > 0) {
+                                    parent = $(parent[0]);
+                                    var menuPagePosition = {
+                                        x: 0,
+                                        y: 0
+                                    };
+                                    $(window).trigger('select.liveEdit.component', [
+                                        parent, 
+                                        menuPagePosition
+                                    ]);
+                                    _this.scrollComponentIntoView(parent);
+                                    var menuWidth = _this.menu.getRootEl().outerWidth();
+                                    var componentBox = componentHelper.getBoxModel(parent), newMenuPosition = {
+                                        x: componentBox.left + (componentBox.width / 2) - (menuWidth / 2),
+                                        y: componentBox.top + 10
+                                    };
+                                    _this.menu.moveToXY(newMenuPosition.x, newMenuPosition.y);
+                                }
+                            }
+                        });
+                        this.appendTo(this.menu.getRootEl());
+                        this.menu.buttons.push(this);
+                    };
+                    Parent.prototype.scrollComponentIntoView = function ($component) {
+                        var componentTopPosition = componentHelper.getPagePositionForComponent($component).top;
+                        if(componentTopPosition <= window.pageYOffset) {
+                            $('html, body').animate({
+                                scrollTop: componentTopPosition - 10
+                            }, 200);
+                        }
+                    };
+                    return Parent;
+                })(LiveEdit.ui.contextmenu.menuitem.Base);
+                menuitem.Parent = Parent;                
+            })(contextmenu.menuitem || (contextmenu.menuitem = {}));
+            var menuitem = contextmenu.menuitem;
+        })(ui.contextmenu || (ui.contextmenu = {}));
+        var contextmenu = ui.contextmenu;
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
+    (function (ui) {
+        (function (contextmenu) {
+            (function (menuitem) {
+                var $ = $liveedit;
+                var OpenContent = (function (_super) {
+                    __extends(OpenContent, _super);
+                    function OpenContent(menu) {
+                                        _super.call(this);
+                        this.menu = null;
+                        this.menu = menu;
+                        this.init();
+                    }
+                    OpenContent.prototype.init = function () {
+                        var $button = this.createButton({
+                            text: 'Open in new tab',
+                            id: 'live-edit-button-opencontent',
+                            cls: 'live-edit-component-menu-button',
+                            handler: function (event) {
+                                event.stopPropagation();
+                                var parentWindow = window['parent'];
+                                if(parentWindow && parentWindow['Admin'].MessageBus) {
+                                    parentWindow['Admin'].MessageBus.liveEditOpenContent();
+                                }
+                            }
+                        });
+                        this.appendTo(this.menu.getRootEl());
+                        this.menu.buttons.push(this);
+                    };
+                    return OpenContent;
+                })(LiveEdit.ui.contextmenu.menuitem.Base);
+                menuitem.OpenContent = OpenContent;                
+            })(contextmenu.menuitem || (contextmenu.menuitem = {}));
+            var menuitem = contextmenu.menuitem;
+        })(ui.contextmenu || (ui.contextmenu = {}));
+        var contextmenu = ui.contextmenu;
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
+    (function (ui) {
+        (function (contextmenu) {
+            (function (menuitem) {
+                var $ = $liveedit;
+                var Insert = (function (_super) {
+                    __extends(Insert, _super);
+                    function Insert(menu) {
+                                        _super.call(this);
+                        this.menu = null;
+                        this.menu = menu;
+                        this.init();
+                    }
+                    Insert.prototype.init = function () {
+                        var $button = this.createButton({
+                            text: 'Insert',
+                            id: 'live-edit-button-insert',
+                            cls: 'live-edit-component-menu-button',
+                            handler: function (event) {
+                                event.stopPropagation();
+                            }
+                        });
+                        this.appendTo(this.menu.getRootEl());
+                        this.menu.buttons.push(this);
+                    };
+                    return Insert;
+                })(LiveEdit.ui.contextmenu.menuitem.Base);
+                menuitem.Insert = Insert;                
+            })(contextmenu.menuitem || (contextmenu.menuitem = {}));
+            var menuitem = contextmenu.menuitem;
+        })(ui.contextmenu || (ui.contextmenu = {}));
+        var contextmenu = ui.contextmenu;
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
+    (function (ui) {
+        (function (contextmenu) {
+            (function (menuitem) {
+                var Details = (function (_super) {
+                    __extends(Details, _super);
+                    function Details(menu) {
+                                        _super.call(this);
+                        this.menu = null;
+                        this.menu = menu;
+                        this.init();
+                    }
+                    Details.prototype.init = function () {
+                        var $button = this.createButton({
+                            text: 'Show Details',
+                            id: 'live-edit-button-details',
+                            cls: 'live-edit-component-menu-button',
+                            handler: function (event) {
+                                event.stopPropagation();
+                            }
+                        });
+                        this.appendTo(this.menu.getRootEl());
+                        this.menu.buttons.push(this);
+                    };
+                    return Details;
+                })(LiveEdit.ui.contextmenu.menuitem.Base);
+                menuitem.Details = Details;                
+            })(contextmenu.menuitem || (contextmenu.menuitem = {}));
+            var menuitem = contextmenu.menuitem;
+        })(ui.contextmenu || (ui.contextmenu = {}));
+        var contextmenu = ui.contextmenu;
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
+    (function (ui) {
+        (function (contextmenu) {
+            (function (menuitem) {
+                var $ = $liveedit;
+                var Edit = (function (_super) {
+                    __extends(Edit, _super);
+                    function Edit(menu) {
+                                        _super.call(this);
+                        this.menu = null;
+                        this.menu = menu;
+                        this.init();
+                    }
+                    Edit.prototype.init = function () {
+                        var _this = this;
+                        var $button = this.createButton({
+                            id: 'live-edit-button-edit',
+                            text: 'Edit',
+                            cls: 'live-edit-component-menu-button',
+                            handler: function (event) {
+                                event.stopPropagation();
+                                var $paragraph = _this.menu.selectedComponent;
+                                if($paragraph && $paragraph.length > 0) {
+                                    $(window).trigger('paragraphEdit.liveEdit.component', [
+                                        $paragraph
+                                    ]);
+                                }
+                            }
+                        });
+                        this.appendTo(this.menu.getRootEl());
+                        this.menu.buttons.push(this);
+                    };
+                    return Edit;
+                })(LiveEdit.ui.contextmenu.menuitem.Base);
+                menuitem.Edit = Edit;                
+            })(contextmenu.menuitem || (contextmenu.menuitem = {}));
+            var menuitem = contextmenu.menuitem;
+        })(ui.contextmenu || (ui.contextmenu = {}));
+        var contextmenu = ui.contextmenu;
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
+    (function (ui) {
+        (function (contextmenu) {
+            (function (menuitem) {
+                var $ = $liveedit;
+                var Reset = (function (_super) {
+                    __extends(Reset, _super);
+                    function Reset(menu) {
+                                        _super.call(this);
+                        this.menu = null;
+                        this.menu = menu;
+                        this.init();
+                    }
+                    Reset.prototype.init = function () {
+                        var $button = this.createButton({
+                            text: 'Reset to Default',
+                            id: 'live-edit-button-reset',
+                            cls: 'live-edit-component-menu-button',
+                            handler: function (event) {
+                                return event.stopPropagation();
+                            }
+                        });
+                        this.appendTo(this.menu.getRootEl());
+                        this.menu.buttons.push(this);
+                    };
+                    return Reset;
+                })(LiveEdit.ui.contextmenu.menuitem.Base);
+                menuitem.Reset = Reset;                
+            })(contextmenu.menuitem || (contextmenu.menuitem = {}));
+            var menuitem = contextmenu.menuitem;
+        })(ui.contextmenu || (ui.contextmenu = {}));
+        var contextmenu = ui.contextmenu;
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
+    (function (ui) {
+        (function (contextmenu) {
+            (function (menuitem) {
+                var $ = $liveedit;
+                var Empty = (function (_super) {
+                    __extends(Empty, _super);
+                    function Empty(menu) {
+                                        _super.call(this);
+                        this.menu = null;
+                        this.menu = menu;
+                        this.init();
+                    }
+                    Empty.prototype.init = function () {
+                        var $button = this.createButton({
+                            text: 'Empty',
+                            id: 'live-edit-button-clear',
+                            cls: 'live-edit-component-menu-button',
+                            handler: function (event) {
+                                event.stopPropagation();
+                            }
+                        });
+                        this.appendTo(this.menu.getRootEl());
+                        this.menu.buttons.push(this);
+                    };
+                    return Empty;
+                })(LiveEdit.ui.contextmenu.menuitem.Base);
+                menuitem.Empty = Empty;                
+            })(contextmenu.menuitem || (contextmenu.menuitem = {}));
+            var menuitem = contextmenu.menuitem;
+        })(ui.contextmenu || (ui.contextmenu = {}));
+        var contextmenu = ui.contextmenu;
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
+    (function (ui) {
+        (function (contextmenu) {
+            (function (menuitem) {
+                var $ = $liveedit;
+                var View = (function (_super) {
+                    __extends(View, _super);
+                    function View(menu) {
+                                        _super.call(this);
+                        this.menu = null;
+                        this.menu = menu;
+                        this.init();
+                    }
+                    View.prototype.init = function () {
+                        var $button = this.createButton({
+                            text: 'View',
+                            id: 'live-edit-button-view',
+                            cls: 'live-edit-component-menu-button',
+                            handler: function (event) {
+                                return event.stopPropagation();
+                            }
+                        });
+                        this.appendTo(this.menu.getRootEl());
+                        this.menu.buttons.push(this);
+                    };
+                    return View;
+                })(LiveEdit.ui.contextmenu.menuitem.Base);
+                menuitem.View = View;                
+            })(contextmenu.menuitem || (contextmenu.menuitem = {}));
+            var menuitem = contextmenu.menuitem;
+        })(ui.contextmenu || (ui.contextmenu = {}));
+        var contextmenu = ui.contextmenu;
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
+    (function (ui) {
+        (function (contextmenu) {
+            (function (menuitem) {
+                var $ = $liveedit;
+                var Settings = (function (_super) {
+                    __extends(Settings, _super);
+                    function Settings(menu) {
+                                        _super.call(this);
+                        this.menu = null;
+                        this.menu = menu;
+                        this.init();
+                    }
+                    Settings.prototype.init = function () {
+                        var $button = this.createButton({
+                            text: 'Settings',
+                            id: 'live-edit-button-settings',
+                            cls: 'live-edit-component-menu-button',
+                            handler: function (event) {
+                                event.stopPropagation();
+                                var parentWindow = window['parent'];
+                                if(parentWindow && parentWindow['Admin'].MessageBus) {
+                                    parentWindow['Admin'].MessageBus.showLiveEditTestSettingsWindow({
+                                    });
+                                }
+                            }
+                        });
+                        this.appendTo(this.menu.getRootEl());
+                        this.menu.buttons.push(this);
+                    };
+                    return Settings;
+                })(LiveEdit.ui.contextmenu.menuitem.Base);
+                menuitem.Settings = Settings;                
+            })(contextmenu.menuitem || (contextmenu.menuitem = {}));
+            var menuitem = contextmenu.menuitem;
+        })(ui.contextmenu || (ui.contextmenu = {}));
+        var contextmenu = ui.contextmenu;
+    })(LiveEdit.ui || (LiveEdit.ui = {}));
+    var ui = LiveEdit.ui;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
+    (function (ui) {
+        (function (contextmenu) {
+            (function (menuitem) {
+                var $ = $liveedit;
+                var Remove = (function (_super) {
+                    __extends(Remove, _super);
+                    function Remove(menu) {
+                                        _super.call(this);
+                        this.menu = null;
+                        this.menu = menu;
+                        this.init();
+                    }
+                    Remove.prototype.init = function () {
+                        var _this = this;
+                        var $button = this.createButton({
+                            text: 'Remove',
+                            id: 'live-edit-button-remove',
+                            cls: 'live-edit-component-menu-button',
+                            handler: function (event) {
+                                event.stopPropagation();
+                                _this.menu.selectedComponent.remove();
+                                $(window).trigger('remove.liveEdit.component');
+                            }
+                        });
+                        this.appendTo(this.menu.getRootEl());
+                        this.menu.buttons.push(this);
+                    };
+                    return Remove;
+                })(LiveEdit.ui.contextmenu.menuitem.Base);
+                menuitem.Remove = Remove;                
+            })(contextmenu.menuitem || (contextmenu.menuitem = {}));
+            var menuitem = contextmenu.menuitem;
+        })(ui.contextmenu || (ui.contextmenu = {}));
+        var contextmenu = ui.contextmenu;
     })(LiveEdit.ui || (LiveEdit.ui = {}));
     var ui = LiveEdit.ui;
 })(LiveEdit || (LiveEdit = {}));
@@ -2161,7 +2234,7 @@ var LiveEdit;
             new LiveEdit.ui.Highlighter();
             new LiveEdit.ui.ToolTip();
             new LiveEdit.ui.Cursor();
-            new LiveEdit.ui.Menu();
+            new LiveEdit.ui.contextmenu.Menu();
             new LiveEdit.ui.Shader();
             new LiveEdit.ui.Editor();
             new LiveEdit.ui.ComponentBar();

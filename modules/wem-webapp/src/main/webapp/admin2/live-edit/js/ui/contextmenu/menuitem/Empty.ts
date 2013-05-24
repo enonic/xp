@@ -1,7 +1,7 @@
-module LiveEdit.ui {
+module LiveEdit.ui.contextmenu.menuitem {
     var $ = $liveedit;
 
-    export class ResetButton extends LiveEdit.ui.BaseButton {
+    export class Empty extends LiveEdit.ui.contextmenu.menuitem.Base {
 
         private menu = null;
 
@@ -14,10 +14,12 @@ module LiveEdit.ui {
 
         init():void {
             var $button = this.createButton({
-                text: 'Reset to Default',
-                id: 'live-edit-button-reset',
+                text: 'Empty',
+                id: 'live-edit-button-clear',
                 cls: 'live-edit-component-menu-button',
-                handler: (event) => event.stopPropagation()
+                handler: (event) => {
+                    event.stopPropagation();
+                }
             });
 
             this.appendTo(this.menu.getRootEl());

@@ -1,7 +1,7 @@
-module LiveEdit.ui {
+module LiveEdit.ui.contextmenu.menuitem {
     var $ = $liveedit;
 
-    export class ClearButton extends LiveEdit.ui.BaseButton {
+    export class View extends LiveEdit.ui.contextmenu.menuitem.Base {
 
         private menu = null;
 
@@ -14,12 +14,10 @@ module LiveEdit.ui {
 
         init():void {
             var $button = this.createButton({
-                text: 'Empty',
-                id: 'live-edit-button-clear',
+                text: 'View',
+                id: 'live-edit-button-view',
                 cls: 'live-edit-component-menu-button',
-                handler: (event) => {
-                    event.stopPropagation();
-                }
+                handler: (event) => event.stopPropagation()
             });
 
             this.appendTo(this.menu.getRootEl());

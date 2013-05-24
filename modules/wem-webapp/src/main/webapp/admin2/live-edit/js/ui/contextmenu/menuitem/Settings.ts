@@ -1,7 +1,7 @@
-module LiveEdit.ui {
+module LiveEdit.ui.contextmenu.menuitem {
     var $ = $liveedit;
 
-    export class EditButton extends LiveEdit.ui.BaseButton {
+    export class Settings extends LiveEdit.ui.contextmenu.menuitem.Base {
 
         private menu = null;
 
@@ -14,15 +14,16 @@ module LiveEdit.ui {
 
         init():void {
             var $button = this.createButton({
-                id: 'live-edit-button-edit',
-                text: 'Edit',
+                text: 'Settings',
+                id: 'live-edit-button-settings',
                 cls: 'live-edit-component-menu-button',
                 handler: (event) => {
                     event.stopPropagation();
 
-                    var $paragraph = this.menu.selectedComponent;
-                    if ($paragraph && $paragraph.length > 0) {
-                        $(window).trigger('paragraphEdit.liveEdit.component', [$paragraph]);
+                    // Temporary workaround until we get a firm messaging system
+                    var parentWindow = window['parent'];
+                    if (parentWindow && parentWindow['Admin'].MessageBus) {
+                        parentWindow['Admin'].MessageBus.showLiveEditTestSettingsWindow({});
                     }
                 }
             });
