@@ -1532,7 +1532,7 @@ var admin;
 (function (admin) {
     (function (ui) {
         var WizardHeader = (function () {
-            function WizardHeader(displayNameConfig, pathConfig, nameConfig, displayNameProperty, pathProperty, nameProperty) {
+            function WizardHeader(data, displayNameConfig, pathConfig, nameConfig, displayNameProperty, pathProperty, nameProperty) {
                 if (typeof displayNameConfig === "undefined") { displayNameConfig = {
                 }; }
                 if (typeof pathConfig === "undefined") { pathConfig = {
@@ -1542,6 +1542,7 @@ var admin;
                 if (typeof displayNameProperty === "undefined") { displayNameProperty = 'displayName'; }
                 if (typeof pathProperty === "undefined") { pathProperty = 'path'; }
                 if (typeof nameProperty === "undefined") { nameProperty = 'name'; }
+                this.data = data;
                 this.displayNameConfig = Ext.apply({
                 }, displayNameConfig, WizardHeader.DEFAULT_DISPLAY_NAME_CONFIG);
                 this.pathConfig = Ext.apply({
@@ -1666,7 +1667,7 @@ var admin;
                     var processedValue = this.nameField.processRawValue(this.preProcessName(newVal));
                     this.nameField.setValue(processedValue);
                 }
-                this.nameField.growMax = this.ext.el.getWidth() - 100;
+                this.nameField.growMax = this.ext.getEl().getWidth() - 100;
                 this.nameField.doComponentLayout();
             };
             WizardHeader.prototype.onNameKey = function (field, event, opts) {
@@ -1829,7 +1830,7 @@ Ext.define('Admin.view.WizardPanel', {
                                 itemId: 'prev',
                                 iconCls: 'wizard-nav-icon icon-chevron-left icon-6x',
                                 cls: 'wizard-nav-button wizard-nav-button-left',
-                                height: 64,
+                                height: 74,
                                 width: 64,
                                 padding: 0,
                                 margin: '0 0 0 40'
@@ -1877,7 +1878,7 @@ Ext.define('Admin.view.WizardPanel', {
                                 cls: 'wizard-nav-button wizard-nav-button-right',
                                 formBind: true,
                                 iconCls: 'wizard-nav-icon icon-chevron-right icon-6x',
-                                height: 64,
+                                height: 74,
                                 width: 64,
                                 padding: 0
                             }
@@ -1889,31 +1890,32 @@ Ext.define('Admin.view.WizardPanel', {
                     scroll: {
                         element: 'el',
                         fn: function () {
-                            me.updateShadow(me);
+                            me.updateShadow();
                         }
                     }
                 }
             }
         ];
-        Ext.EventManager.onWindowResize(function () {
-            me.updateShadow(me);
-        });
         this.callParent(arguments);
         this.addEvents(events);
         this.wizard.addEvents(events);
         this.wizard.enableBubble(events);
         this.on({
             animationstarted: this.onAnimationStarted,
-            animationfinished: this.onAnimationFinished
+            animationfinished: this.onAnimationFinished,
+            resize: function () {
+                me.updateShadow();
+            }
         });
         if(this.getActionButton()) {
             this.boundItems.push(this.getActionButton());
         }
         this.down('#progressBar').update(this.wizard.items.items);
         this.on('afterrender', this.bindItemListeners);
-        me.updateShadow(me);
+        me.updateShadow();
     },
-    updateShadow: function (me) {
+    updateShadow: function () {
+        var me = this;
         var bottomPanel = me.down('#bottomPanel').getEl();
         if(bottomPanel) {
             var hasScroll = bottomPanel.dom.scrollHeight > bottomPanel.dom.clientHeight, positionPanelEl = me.down('#positionPanel').getEl(), wizardHeaderPanelHeight = me.down('#wizardHeaderPanel').getEl().getHeight(), headerShadowEl = Ext.fly('admin-wizard-header-shadow');
@@ -1942,7 +1944,7 @@ Ext.define('Admin.view.WizardPanel', {
         } else if(btn.hasCls('x-btn-inner')) {
             btn = btn.next('.x-btn-icon');
         }
-        btn.setStyle('color', color);
+        btn && btn.setStyle('color', color);
     },
     updateProgress: function (newStep) {
         var progressBar = this.down('#progressBar');
@@ -2386,24 +2388,25 @@ var admin;
             function DetailToolbar() {
                 var tbar = new Ext.toolbar.Toolbar({
                     itemId: 'spaceDetailToolbar',
-                    cls: 'admin-toolbar',
-                    defaults: {
-                        scale: 'medium'
-                    }
+                    cls: 'admin-toolbar'
                 });
-                var editButton = new Ext.button.Button({
+                var defaults = {
+                    scale: 'medium'
+                };
+                var editButton = new Ext.button.Button(Ext.apply({
                     text: 'Edit',
                     action: 'editSpace'
-                });
-                var deleteButton = new Ext.button.Button({
+                }, defaults));
+                var deleteButton = new Ext.button.Button(Ext.apply({
                     text: 'Delete',
                     action: 'deleteSpace'
-                });
+                }, defaults));
                 var separator = new Ext.toolbar.Fill();
-                var closeButton = new Ext.button.Button({
+                var closeButton = new Ext.button.Button(Ext.apply({
                     text: 'Close',
-                    action: 'closeSpace'
-                });
+                    action: 'closeSpace',
+                    scale: 'medium'
+                }, defaults));
                 tbar.add(editButton, deleteButton, separator, closeButton);
                 this.ext = tbar;
             }
@@ -3017,33 +3020,34 @@ var admin;
             function SpaceWizardToolbar(isNew) {
                 if (typeof isNew === "undefined") { isNew = true; }
                 this.isNew = isNew;
-                var tb = this.ext = new Ext.toolbar.Toolbar({
+                var tb = new Ext.toolbar.Toolbar({
                     cls: 'admin-toolbar',
                     itemId: 'spaceWizardToolbar',
-                    border: false,
-                    defaults: {
-                        scale: 'medium'
-                    }
+                    border: false
                 });
-                var saveBtn = new Ext.button.Button({
+                this.ext = tb;
+                var defaults = {
+                    scale: 'medium'
+                };
+                var saveBtn = new Ext.button.Button(Ext.apply({
                     text: 'Save',
                     action: 'saveSpace',
                     itemId: 'save',
                     disabled: true
-                });
-                var deleteBtn = new Ext.button.Button({
+                }, defaults));
+                var deleteBtn = new Ext.button.Button(Ext.apply({
                     text: 'Delete',
                     disabled: this.isNew,
                     action: 'deleteSpace'
-                });
-                var duplicateBtn = new Ext.button.Button({
+                }, defaults));
+                var duplicateBtn = new Ext.button.Button(Ext.apply({
                     text: 'Duplicate',
                     disabled: this.isNew
-                });
-                var closeBtn = new Ext.button.Button({
+                }, defaults));
+                var closeBtn = new Ext.button.Button(Ext.apply({
                     text: 'Close',
                     action: 'closeWizard'
-                });
+                }, defaults));
                 tb.add(saveBtn, deleteBtn, duplicateBtn, '->', closeBtn);
             }
             return SpaceWizardToolbar;
@@ -3161,9 +3165,8 @@ Ext.define('Admin.view.wizard.WizardPanel', {
         var pathConfig = {
             hidden: true
         };
-        var wizardHeader = new admin.ui.WizardHeader({
+        var wizardHeader = new admin.ui.WizardHeader(this.data, {
         }, pathConfig);
-        wizardHeader.setData(this.data);
         this.validateItems.push(wizardHeader.ext);
         return wizardHeader.ext;
     },
@@ -3226,7 +3229,7 @@ Ext.define('Admin.view.wizard.WizardPanel', {
         };
     },
     getWizardHeader: function () {
-        return this.down('wizardHeader');
+        return this.down('#wizardHeader');
     },
     getData: function () {
         var data = this.callParent();
@@ -4058,7 +4061,7 @@ var admin;
                                 me.setActiveTab(toActivate);
                             }
                         }
-                        me.callParent(arguments);
+                        (Ext.tab.Panel).superclass.doRemove.apply(this, arguments);
                     },
                     onRemove: function (item, destroying) {
                         var me = this;
@@ -4285,7 +4288,7 @@ var admin;
                         this.clearLink.el.setStyle('visibility', this.isDirty() ? 'visible' : 'hidden');
                     }
                 };
-                var includeSearch = config ? config.includeSearch : true;
+                var includeSearch = config && Ext.isDefined(config.includeSearch) ? config.includeSearch : true;
                 var fp = this.ext = new Ext.panel.Panel({
                     region: config ? config.region : undefined,
                     width: config ? config.width : undefined,
@@ -4436,7 +4439,7 @@ var admin;
                     }
                 };
                 var searchField = new Ext.form.field.Text({
-                    cls: 'admin-search-field',
+                    cls: 'admin-search-trigger',
                     enableKeyEvents: true,
                     bubbleEvents: [
                         'specialkey'
@@ -4640,7 +4643,7 @@ Ext.define('Admin.controller.Controller', {
         return components.tabPanel;
     },
     getTopBar: function () {
-        return Ext.ComponentQuery.query('topBar')[0];
+        return this.getCmsTabPanel().tabBar;
     },
     getMainViewport: function () {
         var parent = window.parent || window;
@@ -4907,7 +4910,7 @@ Ext.define('Admin.controller.WizardController', {
                     this.deleteSpace(this.getWizardTab());
                 }
             },
-            'spaceAdminWizardPanel wizardHeader': {
+            'spaceAdminWizardPanel #wizardHeader': {
                 displaynamechange: function (newVal, oldVal) {
                     this.getTopBar().setTitleButtonText(newVal);
                 }

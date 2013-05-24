@@ -1,41 +1,40 @@
 module admin.ui {
     export class SpaceWizardToolbar {
-
         ext:Ext_toolbar_Toolbar;
 
         constructor(public isNew?:bool = true) {
 
-            var tb = this.ext = new Ext.toolbar.Toolbar({
+            var tb = new Ext.toolbar.Toolbar({
                 cls: 'admin-toolbar',
                 itemId: 'spaceWizardToolbar',
-                border: false,
-                defaults: {
-                    scale: 'medium'
-                },
+                border: false
             });
+            this.ext = <Ext_toolbar_Toolbar> tb;
 
-            var saveBtn = new Ext.button.Button({
+            var defaults = {
+                scale: 'medium'
+            };
+            var saveBtn = new Ext.button.Button(Ext.apply({
                 text: 'Save',
                 action: 'saveSpace',
                 itemId: 'save',
                 disabled: true
-            });
-            var deleteBtn = new Ext.button.Button({
+            }, defaults));
+            var deleteBtn = new Ext.button.Button(Ext.apply({
                 text: 'Delete',
                 disabled: this.isNew,
                 action: 'deleteSpace'
-            });
-            var duplicateBtn = new Ext.button.Button({
+            }, defaults));
+            var duplicateBtn = new Ext.button.Button(Ext.apply({
                 text: 'Duplicate',
                 disabled: this.isNew
-            });
-            var closeBtn = new Ext.button.Button({
+            }, defaults));
+            var closeBtn = new Ext.button.Button(Ext.apply({
                 text: 'Close',
                 action: 'closeWizard'
-            });
+            }, defaults));
 
             tb.add(saveBtn, deleteBtn, duplicateBtn, '->', closeBtn);
-
         }
 
     }
