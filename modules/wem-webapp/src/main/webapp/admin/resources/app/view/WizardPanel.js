@@ -53,113 +53,116 @@ Ext.define('Admin.view.WizardPanel', {
             },
             items: this.createSteps()
         });
-        this.items = [
-            this.createHeaderPanel(),
+
+        var wizardPanel = [
             {
-                itemId: 'bottomPanel',
                 xtype: 'container',
+                region: 'west',
+                padding: 10,
+                width: 130,
+                style: {
+                    cursor: 'pointer'
+                },
+                layout: 'absolute',
+                listeners: {
+                    click: {
+                        element: 'el',
+                        fn: function () {
+                            me.prev();
+                        }
+                    },
+                    mouseover: {
+                        element: 'el',
+                        fn: function (event, element) {
+                            me.updateNavButton(element, '#000000');
+                        }
+                    },
+                    mouseout: {
+                        element: 'el',
+                        fn: function (event, element) {
+                            me.updateNavButton(element, '#777777');
+                        }
+                    }
+                },
+                items: [
+                    {
+                        xtype: 'button',
+                        itemId: 'prev',
+                        iconCls: 'wizard-nav-icon icon-chevron-left icon-6x gray-color',
+                        style: {
+                            backgroundColor: 'transparent',
+                            border: 'none'
+                        },
+                        height: 80,
+                        width: 64,
+                        padding: 0,
+                        margin: '0 0 0 40'
+                    }
+                ]
+            },
+            {
+                xtype: 'container',
+                itemId: 'nextPanel',
+                region: 'east',
+                padding: 10,
+                width: 100,
+                style: {
+                    cursor: 'pointer'
+                },
+                layout: 'absolute',
+                listeners: {
+                    click: {
+                        element: 'el',
+                        fn: function () {
+                            me.next();
+                        }
+                    },
+                    mouseover: {
+                        element: 'el',
+                        fn: function (event, element) {
+                            me.updateNavButton(element, '#000000');
+                        }
+                    },
+                    mouseout: {
+                        element: 'el',
+                        fn: function (event, element) {
+                            me.updateNavButton(element, '#777777');
+                        }
+                    }
+
+                },
+                items: [
+                    {
+                        xtype: 'button',
+                        itemId: 'next',
+                        iconAlign: 'right',
+                        style: {
+                            backgroundColor: 'transparent',
+                            border: 'none'
+                        },
+                        height: 80,
+                        formBind: true,
+                        iconCls: 'wizard-nav-icon icon-chevron-right icon-6x gray-color',
+                        width: 64,
+                        padding: 0
+                    }
+                ]
+            },
+            this.wizard
+        ];
+
+
+        var bottomPanel = [
+            {
+                itemId : 'bottomPanel',
+                region: 'center',
+                xtype: 'container',
+                flex: 1,
                 autoScroll: true,
                 padding: '20 0 0 0',
                 layout: 'border',
-                flex: 1,
-                items: [
-                    {
-                        xtype: 'container',
-                        region: 'west',
-                        padding: 10,
-                        width: 130,
-                        style: {
-                            position: 'fixed !important',
-                            top: '210px !important'
-                        },
-                        layout: {
-                            type: 'hbox',
-                            align: 'middle'
-                        },
-                        listeners: {
-                            click: {
-                                element: 'el',
-                                fn: function () {
-                                    me.prev();
-                                }
-                            },
-                            mouseover: {
-                                element: 'el',
-                                fn: function (event, element) {
-                                    me.updateNavButton(element, '#000000');
-                                }
-                            },
-                            mouseout: {
-                                element: 'el',
-                                fn: function (event, element) {
-                                    me.updateNavButton(element, '#777777');
-                                }
-                            }
-                        },
-                        items: [
-                            {
-                                xtype: 'button',
-                                itemId: 'prev',
-                                iconCls: 'wizard-nav-icon icon-chevron-left icon-6x',
-                                cls: 'wizard-nav-button wizard-nav-button-left',
-                                height: 64,
-                                width: 64,
-                                padding: 0,
-                                margin: '0 0 0 40'
-                            }
-                        ]
-                    },
-                    {
-                        xtype: 'container',
-                        region: 'east',
-                        padding: 10,
-                        width: 130,
-                        style: {
-                            position: 'fixed !important',
-                            top: '210px !important'
-                        },
-                        layout: {
-                            type: 'hbox',
-                            align: 'middle'
-                        },
-                        listeners: {
-                            click: {
-                                element: 'el',
-                                fn: function () {
-                                    me.next();
-                                }
-                            },
-                            mouseover: {
-                                element: 'el',
-                                fn: function (event, element) {
-                                    me.updateNavButton(element, '#000000');
-                                }
-                            },
-                            mouseout: {
-                                element: 'el',
-                                fn: function (event, element) {
-                                    me.updateNavButton(element, '#777777');
-                                }
-                            }
-
-                        },
-                        items: [
-                            {
-                                xtype: 'button',
-                                itemId: 'next',
-                                iconAlign: 'right',
-                                cls: 'wizard-nav-button wizard-nav-button-right',
-                                formBind: true,
-                                iconCls: 'wizard-nav-icon icon-chevron-right icon-6x',
-                                height: 64,
-                                width: 64,
-                                padding: 0
-                            }
-                        ]
-                    },
-                    this.wizard
-                ],
-                listeners: {
+                items: wizardPanel,
+                listeners : {
                     scroll: {
                         element: 'el',
                         fn: function () {
@@ -167,6 +170,17 @@ Ext.define('Admin.view.WizardPanel', {
                         }
                     }
                 }
+            }
+        ];
+
+        this.items = [
+            this.createHeaderPanel(),
+            {
+                xtype: 'container',
+                padding: '20 0 0 0',
+                layout: 'border',
+                flex: 1,
+                items: bottomPanel
             }
         ];
 
@@ -190,13 +204,16 @@ Ext.define('Admin.view.WizardPanel', {
         // bind afterrender events
         this.on('afterrender', this.bindItemListeners);
 
-        me.updateShadow(me);
+        this.on('afterlayout', function(){
+            me.updateShadow(me);
+        });
     },
 
     updateShadow: function (me) {
-        var bottomPanel = me.down('#bottomPanel').getEl();
+        var bottomPanel = me.down('#bottomPanel');
 
-        if (bottomPanel) {
+        if (bottomPanel && bottomPanel.getEl()) {
+            bottomPanel = bottomPanel.getEl();
             var hasScroll = bottomPanel.dom.scrollHeight > bottomPanel.dom.clientHeight,
                 positionPanelEl = me.down('#positionPanel').getEl(),
                 wizardHeaderPanelHeight = me.down('#wizardHeaderPanel').getEl().getHeight(),
@@ -224,6 +241,20 @@ Ext.define('Admin.view.WizardPanel', {
                     headerShadowEl.remove();
                 }
             }
+
+            var prev = this.down('#prev'),
+                next = this.down('#next' ),
+                nextPanel = this.down('#nextPanel' );
+
+            var width = bottomPanel.getSize().width;
+            var isWide = width > 800;
+            nextPanel.setVisible( isWide );
+            bottomPanel.setStyle( {overflowX: ( isWide ? 'hidden' : 'auto' ), overflowY: 'auto'} );
+
+            var height = nextPanel.getSize().height;
+            var top = bottomPanel.dom.scrollTop + height / 2 - 50;
+            prev.setPosition( 0, top );
+            next.setPosition( 0, top );
         }
     },
 
@@ -234,7 +265,9 @@ Ext.define('Admin.view.WizardPanel', {
         } else if (btn.hasCls('x-btn-inner')) {
             btn = btn.next('.x-btn-icon');
         }
-        btn.setStyle('color', color);
+        if (btn) {
+            btn.setStyle('color', color);
+        }
     },
 
     updateProgress: function (newStep) {
