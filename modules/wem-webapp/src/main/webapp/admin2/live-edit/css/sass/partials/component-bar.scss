@@ -1,3 +1,4 @@
+@import "../modules/colors";
 
 .live-edit-components-container {
   opacity: 1;
@@ -8,14 +9,14 @@
 }
 
 .live-edit-components-container.live-edit-collapsed .live-edit-toggle-components-container {
-  background-image: url("../images/arrow-left.png");
+  background-image: url($resourcePath + "/images/arrow-left.png");
   background-repeat: no-repeat;
   background-position: center 10px;
   height: 100px;
 }
 
 .live-edit-components-container .live-edit-toggle-components-container {
-  background-image: url("../images/arrow-right.png");
+  background-image: url($resourcePath + "/images/arrow-right.png");
   background-repeat: no-repeat;
   background-position: center center;
   height: 50px;
@@ -109,8 +110,8 @@
 }
 
 .live-edit-component:hover {
-  background-color: #3892dd;
-  color: #fff;
+  background-color: $hoverColor;
+  color: $hoverTextColor;
 }
 
 .live-edit-component img {
@@ -123,8 +124,5 @@
 
 .live-edit-component-text-name {
   font-size: 14px;
-  margin-bottom: 2px;;
-}
-
-.live-edit-component-text-subtitle {
+  margin-bottom: 2px;
 }

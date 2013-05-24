@@ -75,6 +75,6 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('default', 'watch');
-    grunt.registerTask('build_live_edit', ['typescript:live_edit', 'sass:live_edit', 'cssmin']);
+    grunt.registerTask('build_live_edit', ['typescript:live_edit', 'sass:live_edit', 'cssmin:live_edit']);
 
 };

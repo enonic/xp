@@ -1,3 +1,5 @@
+@import "../modules/colors";
+
 /* Remove the outline added by browser */
 .live-edit-edited-paragraph {
   outline-color: transparent;
@@ -5,8 +7,8 @@
 }
 
 .live-edit-editor-toolbar {
-  background-color: #f6f5f7;
-  border: 1px solid #aaa;
+  background-color: $baseColor;
+  border: 1px solid $borderColor;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   cursor: default;
   padding: 5px;
@@ -14,7 +16,7 @@
 
 .live-edit-editor-button {
   border: 1px solid transparent;
-  background-color: #f6f5f7;
+  background-color: $baseColor;
   width: 30px;
   height: 30px;
   cursor: pointer;
@@ -26,61 +28,61 @@
 }
 
 .live-edit-editor-button[data-tag=paste] {
-  background: url("../images/htmleditor/paste.png") center center no-repeat;
+  background: url($resourcePath + "/images/htmleditor/paste.png") center center no-repeat;
 }
 
 .live-edit-editor-button[data-tag=insertUnorderedList] {
-  background: url("../images/htmleditor/list.png") center center no-repeat;
+  background: url($resourcePath + "/images/htmleditor/list.png") center center no-repeat;
 }
 
 .live-edit-editor-button[data-tag=insertOrderedList] {
-  background: url("../images/htmleditor/numbered-list.png") center center no-repeat;
+  background: url($resourcePath + "/images/htmleditor/numbered-list.png") center center no-repeat;
 }
 
 .live-edit-editor-button[data-tag=link] {
-  background: url("../images/htmleditor/link.png") center center no-repeat;
+  background: url($resourcePath + "/images/htmleditor/link.png") center center no-repeat;
 }
 
 .live-edit-editor-button[data-tag=cut] {
-  background: url("../images/htmleditor/scissors.png") center center no-repeat;
+  background: url($resourcePath + "/images/htmleditor/scissors.png") center center no-repeat;
 }
 
 .live-edit-editor-button[data-tag=strikeThrough] {
-  background: url("../images/htmleditor/strikethrough.png") center center no-repeat;
+  background: url($resourcePath + "/images/htmleditor/strikethrough.png") center center no-repeat;
 }
 
 .live-edit-editor-button[data-tag=bold] {
-  background: url("../images/htmleditor/bold.png") center center no-repeat;
+  background: url($resourcePath + "/images/htmleditor/bold.png") center center no-repeat;
 }
 
 .live-edit-editor-button[data-tag=underline] {
-  background: url("../images/htmleditor/underline.png") center center no-repeat;
+  background: url($resourcePath + "/images/htmleditor/underline.png") center center no-repeat;
 }
 
 .live-edit-editor-button[data-tag=italic] {
-  background: url("../images/htmleditor/italic.png") center center no-repeat;
+  background: url($resourcePath + "/images/htmleditor/italic.png") center center no-repeat;
 }
 
 .live-edit-editor-button[data-tag=superscript] {
-  background: url("../images/htmleditor/superscript.png") center center no-repeat;
+  background: url($resourcePath + "/images/htmleditor/superscript.png") center center no-repeat;
 }
 
 .live-edit-editor-button[data-tag=subscript] {
-  background: url("../images/htmleditor/subscript.png") center center no-repeat;
+  background: url($resourcePath + "/images/htmleditor/subscript.png") center center no-repeat;
 }
 
 .live-edit-editor-button[data-tag=justifyLeft] {
-  background: url("../images/htmleditor/paragraph-left.png") center center no-repeat;
+  background: url($resourcePath + "/images/htmleditor/paragraph-left.png") center center no-repeat;
 }
 
 .live-edit-editor-button[data-tag=justifyCenter] {
-  background: url("../images/htmleditor/paragraph-center.png") center center no-repeat;
+  background: url($resourcePath + "/images/htmleditor/paragraph-center.png") center center no-repeat;
 }
 
 .live-edit-editor-button[data-tag=justifyRight] {
-  background: url("../images/htmleditor/paragraph-right.png") center center no-repeat;
+  background: url($resourcePath + "/images/htmleditor/paragraph-right.png") center center no-repeat;
 }
 
 .live-edit-editor-button[data-tag=justifyFull] {
-  background: url("../images/htmleditor/paragraph-justify.png") center center no-repeat;
+  background: url($resourcePath + "/images/htmleditor/paragraph-justify.png") center center no-repeat;
 }

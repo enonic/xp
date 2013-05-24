@@ -1,8 +1,9 @@
+@import "../modules/colors";
 
 #live-edit-drag-helper {
   border: 1px solid #c6c6c6;
   padding: 6px 16px 6px 8px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: $shadow;
   background-color: #fff;
   font-size: 11px;
   overflow: hidden;

@@ -1,3 +1,5 @@
+@import "../modules/colors";
+
 .live-edit-empty-region-placeholder {
   background-color: #fff;
   border: 2px dashed #add8e6;
@@ -9,7 +11,7 @@
 }
 
 .live-edit-empty-part-placeholder {
-  border: 1px dashed #aaa;
+  border: 1px dashed $borderColor;
   clear: both;
   color: #d3d3d3;
   margin-bottom: 10px;
@@ -39,9 +41,9 @@
 }
 
 .live-edit-html-element-placeholder .live-edit-iframe {
-  background: transparent url("../images/window_star.png") no-repeat;
+  background: transparent url($resourcePath + "/images/window_star.png") no-repeat;
 }
 
 .live-edit-html-element-placeholder .live-edit-object {
-  background: transparent url("../images/plug.png") no-repeat;
+  background: transparent url($resourcePath + "../images/plug.png") no-repeat;
 }

@@ -1,15 +1,13 @@
-/*** Component menu */
+@import "../modules/colors";
 
 .live-edit-component-menu {
   position: absolute;
   min-width: 150px;
   padding: 0;
-  background-color: #f6f5f7;
-  border: 1px solid #aaa;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  background-color: $baseColor;
+  border: 1px solid $borderColor;
+  box-shadow: $shadow;
 }
-
-
 
 .live-edit-component-menu-title-bar {
   overflow: hidden;
@@ -17,7 +15,7 @@
   cursor: hand;
   cursor: grab !important;
   cursor: -moz-grab;
-  cursor: url(../images/cursor-grab.png), pointer !important;
+  cursor: url($resourcePath + '/images/cursor-grab.png'), pointer !important;
   cursor: -webkit-grab;
 }
 
@@ -38,23 +36,23 @@
 }
 
 .live-edit-component-menu-page-icon {
-  background: transparent url("../images/component-types/22/file.png") center center no-repeat;
+  background: transparent url($resourcePath + "/images/component-types/22/file.png") center center no-repeat;
 }
 
 .live-edit-component-menu-region-icon {
-  background: transparent url("../images/component-types/22/compass.png") center center no-repeat;
+  background: transparent url($resourcePath + "/images/component-types/22/compass.png") center center no-repeat;
 }
 
 .live-edit-component-menu-part-icon {
-  background: transparent url("../images/component-types/22/puzzle.png") center center no-repeat;
+  background: transparent url($resourcePath + "/images/component-types/22/puzzle.png") center center no-repeat;
 }
 
 .live-edit-component-menu-paragraph-icon {
-  background: transparent url("../images/component-types/22/text-color.png") center center no-repeat;
+  background: transparent url($resourcePath + "/images/component-types/22/text-color.png") center center no-repeat;
 }
 
 .live-edit-component-menu-layout-icon {
-  background: transparent url("../images/component-types/22/insert-template.png") center center no-repeat;
+  background: transparent url($resourcePath + "/images/component-types/22/insert-template.png") center center no-repeat;
 }
 
 .live-edit-component-menu-title-text {
@@ -68,7 +66,7 @@
 .live-edit-component-menu-title-close-button {
   float: right;
   cursor: pointer;
-  background: transparent url("../images/close.png") center center no-repeat;
+  background: transparent url($resourcePath + "/images/close.png") center center no-repeat;
   width: 22px;
   height: 22px;
   padding: 5px 7px;
@@ -87,8 +85,8 @@
 }
 
 .live-edit-component-menu-button:hover {
-  background-color: #3892dd;
-  color: #fff !important;
+  background-color: $hoverColor;
+  color: $hoverTextColor !important;
 }
 
 .live-edit-button-text {
