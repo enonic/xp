@@ -1,32 +1,34 @@
 module admin.ui {
 
     export class DetailToolbar {
-        ext;
+        ext:Ext_toolbar_Toolbar;
 
         constructor() {
             var tbar = new Ext.toolbar.Toolbar({
                 itemId: 'spaceDetailToolbar',
-                cls: 'admin-toolbar',
-                defaults: {
-                    scale: 'medium'
-                }
+                cls: 'admin-toolbar'
             });
-            var editButton = new Ext.button.Button({
+
+            var defaults = {
+                scale: 'medium'
+            };
+            var editButton = new Ext.button.Button(Ext.apply({
                 text: 'Edit',
                 action: 'editSpace'
-            });
-            var deleteButton = new Ext.button.Button({
+            }, defaults));
+            var deleteButton = new Ext.button.Button(Ext.apply({
                 text: 'Delete',
                 action: 'deleteSpace'
-            });
+            }, defaults));
             var separator = new Ext.toolbar.Fill();
-            var closeButton = new Ext.button.Button({
+            var closeButton = new Ext.button.Button(Ext.apply({
                 text: 'Close',
-                action: 'closeSpace'
-            });
+                action: 'closeSpace',
+                scale: 'medium'
+            }, defaults));
             tbar.add(editButton, deleteButton, separator, closeButton);
 
-            this.ext = tbar;
+            this.ext = <Ext_toolbar_Toolbar> tbar;
         }
     }
 

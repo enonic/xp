@@ -136,7 +136,7 @@ module admin.ui {
                 }
             };
 
-            var includeSearch = config? config.includeSearch: true;
+            var includeSearch = config && Ext.isDefined(config.includeSearch) ? config.includeSearch : true;
 
             var fp = this.ext = new Ext.panel.Panel({
                 region: config ? config.region : undefined,
@@ -327,7 +327,7 @@ module admin.ui {
             };
 
             var searchField = new Ext.form.field.Text({
-                cls: 'admin-search-field',
+                cls: 'admin-search-trigger',
                 enableKeyEvents: true,
                 bubbleEvents: ['specialkey'],
                 itemId: 'filterText',

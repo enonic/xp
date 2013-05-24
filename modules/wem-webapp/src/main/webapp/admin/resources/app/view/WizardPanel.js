@@ -154,7 +154,7 @@ Ext.define('Admin.view.WizardPanel', {
 
         var bottomPanel = [
             {
-                itemId : 'bottomPanel',
+                itemId: 'bottomPanel',
                 region: 'center',
                 xtype: 'container',
                 flex: 1,
@@ -162,7 +162,7 @@ Ext.define('Admin.view.WizardPanel', {
                 padding: '20 0 0 0',
                 layout: 'border',
                 items: wizardPanel,
-                listeners : {
+                listeners: {
                     scroll: {
                         element: 'el',
                         fn: function () {
@@ -184,17 +184,16 @@ Ext.define('Admin.view.WizardPanel', {
             }
         ];
 
-        Ext.EventManager.onWindowResize(function () {
-            me.updateShadow(me);
-        });
-
         this.callParent(arguments);
         this.addEvents(events);
         this.wizard.addEvents(events);
         this.wizard.enableBubble(events);
         this.on({
             animationstarted: this.onAnimationStarted,
-            animationfinished: this.onAnimationFinished
+            animationfinished: this.onAnimationFinished,
+            resize: function () {
+                me.updateShadow(me);
+            }
         });
         if (this.getActionButton()) {
             this.boundItems.push(this.getActionButton());
@@ -204,7 +203,7 @@ Ext.define('Admin.view.WizardPanel', {
         // bind afterrender events
         this.on('afterrender', this.bindItemListeners);
 
-        this.on('afterlayout', function(){
+        this.on('afterlayout', function () {
             me.updateShadow(me);
         });
     },
@@ -243,18 +242,18 @@ Ext.define('Admin.view.WizardPanel', {
             }
 
             var prev = this.down('#prev'),
-                next = this.down('#next' ),
-                nextPanel = this.down('#nextPanel' );
+                next = this.down('#next'),
+                nextPanel = this.down('#nextPanel');
 
             var width = bottomPanel.getSize().width;
             var isWide = width > 800;
-            nextPanel.setVisible( isWide );
-            bottomPanel.setStyle( {overflowX: ( isWide ? 'hidden' : 'auto' ), overflowY: 'auto'} );
+            nextPanel.setVisible(isWide);
+            bottomPanel.setStyle({overflowX: ( isWide ? 'hidden' : 'auto' ), overflowY: 'auto'});
 
             var height = nextPanel.getSize().height;
             var top = bottomPanel.dom.scrollTop + height / 2 - 50;
-            prev.setPosition( 0, top );
-            next.setPosition( 0, top );
+            prev.setPosition(0, top);
+            next.setPosition(0, top);
         }
     },
 
@@ -406,15 +405,15 @@ Ext.define('Admin.view.WizardPanel', {
 
     createRibbon: function () {
         var Templates_common_wizardPanelSteps =
-        		'<div class="navigation-container">' +
-        		    '<ul class="navigation clearfix">' +
-        		        '<tpl for=".">' +
-        		            '<li class="{[ this.resolveClsName( xindex, xcount ) ]}" wizardStep="{[xindex]}">' +
-        		                '<a href="javascript:;" class="step {[ this.resolveClsName( xindex, xcount ) ]}">{[' +
-        		                    '(values.stepTitle || values.title) ]}</a></li>' +
-        		        '</tpl>' +
-        		    '</ul>' +
-        		'</div>';
+            '<div class="navigation-container">' +
+            '<ul class="navigation clearfix">' +
+            '<tpl for=".">' +
+            '<li class="{[ this.resolveClsName( xindex, xcount ) ]}" wizardStep="{[xindex]}">' +
+            '<a href="javascript:;" class="step {[ this.resolveClsName( xindex, xcount ) ]}">{[' +
+            '(values.stepTitle || values.title) ]}</a></li>' +
+            '</tpl>' +
+            '</ul>' +
+            '</div>';
 
         var me = this;
 

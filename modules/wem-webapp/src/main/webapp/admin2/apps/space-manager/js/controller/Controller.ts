@@ -163,7 +163,7 @@ Ext.define('Admin.controller.Controller', {
     },
 
     getTopBar: function () {
-        return Ext.ComponentQuery.query('topBar')[0];
+        return this.getCmsTabPanel().tabBar;
     },
 
     getMainViewport: function () {

@@ -27,7 +27,7 @@ Ext.define('Admin.controller.WizardController', {
                     this.deleteSpace(this.getWizardTab());
                 }
             },
-            'spaceAdminWizardPanel wizardHeader': {
+            'spaceAdminWizardPanel #wizardHeader': {
                 displaynamechange: function (newVal, oldVal) {
                     this.getTopBar().setTitleButtonText(newVal);
                 }

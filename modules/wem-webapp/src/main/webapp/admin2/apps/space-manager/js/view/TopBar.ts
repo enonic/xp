@@ -15,7 +15,7 @@ module admin.ui {
 
 
         constructor(appName:string, tabPanel?:any) {
-            this.ext = new Ext.toolbar.Toolbar({
+            this.ext = <Ext_toolbar_Toolbar> new Ext.toolbar.Toolbar({
                 itemId: 'topBar',
                 buttonAlign: 'center',
                 cls: 'admin-topbar-panel',

@@ -102,7 +102,7 @@ Ext.define('Admin.view.WizardPanel', {
                                 itemId: 'prev',
                                 iconCls: 'wizard-nav-icon icon-chevron-left icon-6x',
                                 cls: 'wizard-nav-button wizard-nav-button-left',
-                                height: 64,
+                                height: 74,
                                 width: 64,
                                 padding: 0,
                                 margin: '0 0 0 40'
@@ -151,7 +151,7 @@ Ext.define('Admin.view.WizardPanel', {
                                 cls: 'wizard-nav-button wizard-nav-button-right',
                                 formBind: true,
                                 iconCls: 'wizard-nav-icon icon-chevron-right icon-6x',
-                                height: 64,
+                                height: 74,
                                 width: 64,
                                 padding: 0
                             }
@@ -163,16 +163,12 @@ Ext.define('Admin.view.WizardPanel', {
                     scroll: {
                         element: 'el',
                         fn: function () {
-                            me.updateShadow(me);
+                            me.updateShadow();
                         }
                     }
                 }
             }
         ];
-
-        Ext.EventManager.onWindowResize(function () {
-            me.updateShadow(me);
-        });
 
         this.callParent(arguments);
         this.addEvents(events);
@@ -180,7 +176,10 @@ Ext.define('Admin.view.WizardPanel', {
         this.wizard.enableBubble(events);
         this.on({
             animationstarted: this.onAnimationStarted,
-            animationfinished: this.onAnimationFinished
+            animationfinished: this.onAnimationFinished,
+            resize: function () {
+                me.updateShadow();
+            }
         });
         if (this.getActionButton()) {
             this.boundItems.push(this.getActionButton());
@@ -190,10 +189,11 @@ Ext.define('Admin.view.WizardPanel', {
         // bind afterrender events
         this.on('afterrender', this.bindItemListeners);
 
-        me.updateShadow(me);
+        me.updateShadow();
     },
 
-    updateShadow: function (me) {
+    updateShadow: function () {
+        var me = this;
         var bottomPanel = me.down('#bottomPanel').getEl();
 
         if (bottomPanel) {
@@ -234,7 +234,7 @@ Ext.define('Admin.view.WizardPanel', {
         } else if (btn.hasCls('x-btn-inner')) {
             btn = btn.next('.x-btn-icon');
         }
-        btn.setStyle('color', color);
+        btn && btn.setStyle('color', color);
     },
 
     updateProgress: function (newStep) {
