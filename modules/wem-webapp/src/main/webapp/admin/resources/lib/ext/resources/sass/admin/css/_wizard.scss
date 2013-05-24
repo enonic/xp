@@ -1,6 +1,10 @@
 @import "../variables/core";
 
 .admin-wizard {
+    .gray-color {
+        color: #777;
+    }
+
     .navigation {
         margin: 0 !important;
         padding: 0 !important;
@@ -88,7 +92,7 @@
         opacity: 1;
         filter: none;
     }
-
+    
     div.navigation-container {
         background-color: #fff;
     }
