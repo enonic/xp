@@ -12,7 +12,7 @@ Ext.define('Admin.controller.GridPanelController', {
     init: function () {
 
         this.control({
-            'spaceTreeGrid gridpanel, spaceTreeGrid treepanel': {
+            '#spaceTreeGrid gridpanel, #spaceTreeGrid treepanel': {
                 selectionchange: this.onGridSelectionChange,
                 itemcontextmenu: this.showContextMenu,
                 itemdblclick: function (grid, record) {

@@ -95,6 +95,7 @@ module admin.ui {
                     }
                 },
                 store: this.store,
+                selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36}),
                 plugins: [gridSelectionPlugin],
                 listeners: {
                     selectionchange: (selModel, selected, opts) => {

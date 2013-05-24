@@ -2895,6 +2895,9 @@ var admin;
                         }
                     },
                     store: this.store,
+                    selModel: Ext.create('Ext.selection.CheckboxModel', {
+                        headerWidth: 36
+                    }),
                     plugins: [
                         gridSelectionPlugin
                     ],
@@ -4721,7 +4724,7 @@ Ext.define('Admin.controller.GridPanelController', {
     contextMenu: null,
     init: function () {
         this.control({
-            'spaceTreeGrid gridpanel, spaceTreeGrid treepanel': {
+            '#spaceTreeGrid gridpanel, #spaceTreeGrid treepanel': {
                 selectionchange: this.onGridSelectionChange,
                 itemcontextmenu: this.showContextMenu,
                 itemdblclick: function (grid, record) {
