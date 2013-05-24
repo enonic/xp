@@ -1930,31 +1930,32 @@ Ext.define('Admin.view.WizardPanel', {
                     scroll: {
                         element: 'el',
                         fn: function () {
-                            me.updateShadow(me);
+                            me.updateShadow();
                         }
                     }
                 }
             }
         ];
-        Ext.EventManager.onWindowResize(function () {
-            me.updateShadow(me);
-        });
         this.callParent(arguments);
         this.addEvents(events);
         this.wizard.addEvents(events);
         this.wizard.enableBubble(events);
         this.on({
             animationstarted: this.onAnimationStarted,
-            animationfinished: this.onAnimationFinished
+            animationfinished: this.onAnimationFinished,
+            resize: function () {
+                me.updateShadow();
+            }
         });
         if (this.getActionButton()) {
             this.boundItems.push(this.getActionButton());
         }
         this.down('#progressBar').update(this.wizard.items.items);
         this.on('afterrender', this.bindItemListeners);
-        me.updateShadow(me);
+        me.updateShadow();
     },
-    updateShadow: function (me) {
+    updateShadow: function () {
+        var me = this;
         var bottomPanel = me.down('#bottomPanel').getEl();
         if (bottomPanel) {
             var hasScroll = bottomPanel.dom.scrollHeight >
