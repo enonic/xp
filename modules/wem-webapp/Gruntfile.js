@@ -60,9 +60,8 @@ module.exports = function (grunt) {
             }
         },
 
-        // Fixme: how to define a target?
         cssmin: {
-            minify: {
+            live_edit: {
                 src: 'src/main/webapp/admin2/live-edit/css/live-edit.css',
                 dest: 'src/main/webapp/admin2/live-edit/css/live-edit.min.css'
             }
