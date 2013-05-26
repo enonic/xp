@@ -20,6 +20,12 @@ interface ComponentInfo {
     tagName: string;
 }
 
+interface HighlighterStyle {
+    strokeColor: string;
+    strokeDashArray: string;
+    fillColor: string;
+}
+
 interface ComponentPagePosition {
     top: number;
     left: number;
@@ -63,6 +69,97 @@ module LiveEdit {
                 paddingLeft: pl
             };
         }
+
+
+        public static getHighlighterStyleForComponent(component:JQuery):HighlighterStyle {
+            var componentType:string = ComponentHelper.getComponentType(component);
+
+            var strokeColor,
+                strokeDashArray,
+                fillColor;
+
+            switch (componentType) {
+            case 'region':
+                strokeColor = 'rgba(20,20,20,1)';
+                strokeDashArray = '';
+                fillColor = 'rgba(255,255,255,0)';
+                break;
+
+            case 'layout':
+                strokeColor = 'rgba(255,165,0,1)';
+                strokeDashArray = '5 5';
+                fillColor = 'rgba(100,12,36,0)';
+                break;
+
+            case 'part':
+                strokeColor = 'rgba(68,68,68,1)';
+                strokeDashArray = '5 5';
+                fillColor = 'rgba(255,255,255,0)';
+                break;
+
+            case 'paragraph':
+                strokeColor = 'rgba(85,85,255,1)';
+                strokeDashArray = '5 5';
+                fillColor = 'rgba(255,255,255,0)';
+                break;
+
+            case 'content':
+                strokeColor = '';
+                strokeDashArray = '';
+                fillColor = 'rgba(0,108,255,.25)';
+                break;
+
+            default:
+                strokeColor = 'rgba(20,20,20,1)';
+                strokeDashArray = '';
+                fillColor = 'rgba(255,255,255,0)';
+            }
+
+            return {
+                strokeColor: strokeColor,
+                strokeDashArray: strokeDashArray,
+                fillColor: fillColor
+            }
+        }
+
+
+
+        public static resolveCssClassForComponent(component:JQuery):string {
+            var iconCls:string;
+            var componentType = ComponentHelper.getComponentType(component);
+
+            switch (componentType) {
+            case 'page':
+                iconCls = 'live-edit-component-menu-page-icon';
+                break;
+
+            case 'region':
+                iconCls = 'live-edit-component-menu-region-icon';
+                break;
+
+            case 'layout':
+                iconCls = 'live-edit-component-menu-layout-icon';
+                break;
+
+            case 'part':
+                iconCls = 'live-edit-component-menu-part-icon';
+                break;
+
+            case 'content':
+                iconCls = 'live-edit-component-menu-content-icon';
+                break;
+
+            case 'paragraph':
+                iconCls = 'live-edit-component-menu-paragraph-icon';
+                break;
+
+            default:
+                iconCls = '';
+            }
+
+            return iconCls;
+        }
+
 
 
         public static getPagePositionForComponent(component:JQuery):ComponentPagePosition {

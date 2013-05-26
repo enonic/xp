@@ -1,7 +1,7 @@
-module LiveEdit.model {
+module LiveEdit.component.observer {
     var $ = $liveedit;
 
-    export class Page extends LiveEdit.model.Base {
+    export class Page extends LiveEdit.component.observer.Base {
         constructor() {
             super();
 
@@ -9,7 +9,7 @@ module LiveEdit.model {
 
             this.attachClickEvent();
 
-            console.log('Page model instantiated. Using jQuery ' + $().jquery);
+            console.log('Page observer instantiated. Using jQuery ' + $().jquery);
         }
     }
 }

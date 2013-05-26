@@ -1,7 +1,7 @@
-module LiveEdit.model {
+module LiveEdit.component.observer {
     var $ = $liveedit;
 
-    export class Part extends LiveEdit.model.Base {
+    export class Part extends LiveEdit.component.observer.Base {
         constructor() {
             super();
 
@@ -12,7 +12,7 @@ module LiveEdit.model {
             this.attachMouseOutEvent();
             this.attachClickEvent();
 
-            console.log('Part model instantiated. Using jQuery ' + $().jquery);
+            console.log('Part observer instantiated. Using jQuery ' + $().jquery);
         }
 
         private renderEmptyPlaceholders():void {

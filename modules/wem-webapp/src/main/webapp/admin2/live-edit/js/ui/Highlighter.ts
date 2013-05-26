@@ -1,10 +1,3 @@
-
-interface ComponentStyle {
-    strokeColor: string;
-    strokeDashArray: string;
-    fillColor: string;
-}
-
 module LiveEdit.ui {
     var $ = $liveedit;
 
@@ -93,7 +86,7 @@ module LiveEdit.ui {
 
             this.resizeBorderToComponent(component);
 
-            var style = this.getStyleForComponent(component);
+            var style = componentHelper.getHighlighterStyleForComponent(component);
             border.css('stroke', style.strokeColor);
             border.css('fill', style.fillColor);
             border.css('stroke-dasharray', style.strokeDashArray);
@@ -131,56 +124,7 @@ module LiveEdit.ui {
         }
 
 
-        getStyleForComponent(component:JQuery):ComponentStyle {
-            var componentType:string = componentHelper.getComponentType(component);
 
-            var strokeColor,
-                strokeDashArray,
-                fillColor;
-
-            switch (componentType) {
-                case 'region':
-                    strokeColor = 'rgba(20,20,20,1)';
-                    strokeDashArray = '';
-                    fillColor = 'rgba(255,255,255,0)';
-                    break;
-
-                case 'layout':
-                    strokeColor = 'rgba(255,165,0,1)';
-                    strokeDashArray = '5 5';
-                    fillColor = 'rgba(100,12,36,0)';
-                    break;
-
-                case 'part':
-                    strokeColor = 'rgba(68,68,68,1)';
-                    strokeDashArray = '5 5';
-                    fillColor = 'rgba(255,255,255,0)';
-                    break;
-
-                case 'paragraph':
-                    strokeColor = 'rgba(85,85,255,1)';
-                    strokeDashArray = '5 5';
-                    fillColor = 'rgba(255,255,255,0)';
-                    break;
-
-                case 'content':
-                    strokeColor = '';
-                    strokeDashArray = '';
-                    fillColor = 'rgba(0,108,255,.25)';
-                    break;
-
-                default:
-                    strokeColor = 'rgba(20,20,20,1)';
-                    strokeDashArray = '';
-                    fillColor = 'rgba(255,255,255,0)';
-            }
-
-            return {
-                strokeColor: strokeColor,
-                strokeDashArray: strokeDashArray,
-                fillColor: fillColor
-            }
-        }
 
 
         handleWindowResize():void {

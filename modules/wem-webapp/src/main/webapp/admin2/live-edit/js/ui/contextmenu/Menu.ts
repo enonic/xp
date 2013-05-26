@@ -151,7 +151,7 @@ module LiveEdit.ui.contextmenu {
 
         private updateTitleBar(component:JQuery):void {
             var componentInfo = componentHelper.getComponentInfo(component);
-            this.setIcon(componentInfo.type);
+            this.setIcon(component);
             this.setTitle(componentInfo.name);
         }
 
@@ -161,47 +161,11 @@ module LiveEdit.ui.contextmenu {
         }
 
 
-        private setIcon(componentType:string):void {
+        private setIcon(component:JQuery):void {
             var iconCt:JQuery = this.getIconElement(),
-                iconCls:string = this.resolveCssClassForComponentType(componentType);
+                iconCls:string = componentHelper.resolveCssClassForComponent(component);
             iconCt.children('div').attr('class', iconCls);
-            iconCt.attr('title', componentType);
-        }
-
-
-        private resolveCssClassForComponentType(componentType:string):string {
-            var iconCls:string;
-
-            switch (componentType) {
-                case 'page':
-                    iconCls = 'live-edit-component-menu-page-icon';
-                    break;
-
-                case 'region':
-                    iconCls = 'live-edit-component-menu-region-icon';
-                    break;
-
-                case 'layout':
-                    iconCls = 'live-edit-component-menu-layout-icon';
-                    break;
-
-                case 'part':
-                    iconCls = 'live-edit-component-menu-part-icon';
-                    break;
-
-                case 'content':
-                    iconCls = 'live-edit-component-menu-content-icon';
-                    break;
-
-                case 'paragraph':
-                    iconCls = 'live-edit-component-menu-paragraph-icon';
-                    break;
-
-                default:
-                    iconCls = '';
-            }
-
-            return iconCls;
+            iconCt.attr('title', componentHelper.getComponentType(component));
         }
 
 

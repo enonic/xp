@@ -11,13 +11,15 @@ declare var LiveEditMutationSummary;
 
 ///<reference path='ui/DragDropSort.ts' />
 
-///<reference path='model/component/Base.ts' />
-///<reference path='model/component/Page.ts' />
-///<reference path='model/component/Region.ts' />
-///<reference path='model/component/Layout.ts' />
-///<reference path='model/component/Part.ts' />
-///<reference path='model/component/Content.ts' />
-///<reference path='model/component/Paragraph.ts' />
+///<reference path='component/Component.ts' />
+
+///<reference path='component/observer/Base.ts' />
+///<reference path='component/observer/Page.ts' />
+///<reference path='component/observer/Region.ts' />
+///<reference path='component/observer/Layout.ts' />
+///<reference path='component/observer/Part.ts' />
+///<reference path='component/observer/Content.ts' />
+///<reference path='component/observer/Paragraph.ts' />
 
 ///<reference path='ui/Base.ts' />
 ///<reference path='ui/HtmlElementReplacer.ts' />
@@ -53,12 +55,12 @@ declare var LiveEditMutationSummary;
         loaderSplash.fadeOut('fast', function () {
             loaderSplash.remove();
 
-            new LiveEdit.model.Page();
-            new LiveEdit.model.Region();
-            new LiveEdit.model.Layout();
-            new LiveEdit.model.Part();
-            new LiveEdit.model.Paragraph();
-            new LiveEdit.model.Content();
+            new LiveEdit.component.observer.Page();
+            new LiveEdit.component.observer.Region();
+            new LiveEdit.component.observer.Layout();
+            new LiveEdit.component.observer.Part();
+            new LiveEdit.component.observer.Paragraph();
+            new LiveEdit.component.observer.Content();
 
             new LiveEdit.ui.HtmlElementReplacer();
             new LiveEdit.ui.Highlighter();

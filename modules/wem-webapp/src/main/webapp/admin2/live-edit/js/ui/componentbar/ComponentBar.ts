@@ -5,10 +5,10 @@ interface ComponentsJson {
 
 interface ComponentGroup {
     name:string;
-    components:Component[];
+    components:ComponentItem[];
 }
 
-interface Component {
+interface ComponentItem {
     key:string;
     type:string;
     name:string;
@@ -115,13 +115,13 @@ module LiveEdit.ui {
             this.getComponentsContainer().append(html);
         }
 
-        addComponentsToGroup(components:Component[]) {
-            $.each(components, (index, component:Component) => {
+        addComponentsToGroup(components:ComponentItem[]) {
+            $.each(components, (index, component:ComponentItem) => {
                 this.addComponent(component);
             });
         }
 
-        addComponent(component:Component):void {
+        addComponent(component:ComponentItem):void {
             var html = '';
 
             html += '<li class="live-edit-component" data-live-edit-component-key="' + component.key + '" data-live-edit-component-name="' + component.name + '" data-live-edit-component-type="' + component.type + '">';

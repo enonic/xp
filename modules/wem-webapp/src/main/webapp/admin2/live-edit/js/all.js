@@ -59,6 +59,73 @@ var LiveEdit;
                 paddingLeft: pl
             };
         };
+        ComponentHelper.getHighlighterStyleForComponent = function getHighlighterStyleForComponent(component) {
+            var componentType = ComponentHelper.getComponentType(component);
+            var strokeColor, strokeDashArray, fillColor;
+            switch(componentType) {
+                case 'region':
+                    strokeColor = 'rgba(20,20,20,1)';
+                    strokeDashArray = '';
+                    fillColor = 'rgba(255,255,255,0)';
+                    break;
+                case 'layout':
+                    strokeColor = 'rgba(255,165,0,1)';
+                    strokeDashArray = '5 5';
+                    fillColor = 'rgba(100,12,36,0)';
+                    break;
+                case 'part':
+                    strokeColor = 'rgba(68,68,68,1)';
+                    strokeDashArray = '5 5';
+                    fillColor = 'rgba(255,255,255,0)';
+                    break;
+                case 'paragraph':
+                    strokeColor = 'rgba(85,85,255,1)';
+                    strokeDashArray = '5 5';
+                    fillColor = 'rgba(255,255,255,0)';
+                    break;
+                case 'content':
+                    strokeColor = '';
+                    strokeDashArray = '';
+                    fillColor = 'rgba(0,108,255,.25)';
+                    break;
+                default:
+                    strokeColor = 'rgba(20,20,20,1)';
+                    strokeDashArray = '';
+                    fillColor = 'rgba(255,255,255,0)';
+            }
+            return {
+                strokeColor: strokeColor,
+                strokeDashArray: strokeDashArray,
+                fillColor: fillColor
+            };
+        };
+        ComponentHelper.resolveCssClassForComponent = function resolveCssClassForComponent(component) {
+            var iconCls;
+            var componentType = ComponentHelper.getComponentType(component);
+            switch(componentType) {
+                case 'page':
+                    iconCls = 'live-edit-component-menu-page-icon';
+                    break;
+                case 'region':
+                    iconCls = 'live-edit-component-menu-region-icon';
+                    break;
+                case 'layout':
+                    iconCls = 'live-edit-component-menu-layout-icon';
+                    break;
+                case 'part':
+                    iconCls = 'live-edit-component-menu-part-icon';
+                    break;
+                case 'content':
+                    iconCls = 'live-edit-component-menu-content-icon';
+                    break;
+                case 'paragraph':
+                    iconCls = 'live-edit-component-menu-paragraph-icon';
+                    break;
+                default:
+                    iconCls = '';
+            }
+            return iconCls;
+        };
         ComponentHelper.getPagePositionForComponent = function getPagePositionForComponent(component) {
             var pos = component.position();
             return {
@@ -414,73 +481,141 @@ var LiveEdit;
 })(LiveEdit || (LiveEdit = {}));
 var LiveEdit;
 (function (LiveEdit) {
-    (function (model) {
-        var $ = $liveedit;
-        var Base = (function () {
-            function Base() {
-                this.cssSelector = '';
-            }
-            Base.prototype.attachMouseOverEvent = function () {
-                var _this = this;
-                $(document).on('mouseover', this.cssSelector, function (event) {
-                    var component = $(event.currentTarget);
-                    var targetIsUiComponent = _this.isLiveEditUiComponent($(event.target));
-                    var cancelEvents = targetIsUiComponent || _this.hasComponentSelected() || LiveEdit.DragDropSort.isDragging();
-                    if(cancelEvents) {
-                        return;
-                    }
-                    event.stopPropagation();
-                    $(window).trigger('mouseOver.liveEdit.component', [
-                        component
-                    ]);
-                });
-            };
-            Base.prototype.attachMouseOutEvent = function () {
-                var _this = this;
-                $(document).on('mouseout', function () {
-                    if(_this.hasComponentSelected()) {
-                        return;
-                    }
-                    $(window).trigger('mouseOut.liveEdit.component');
-                });
-            };
-            Base.prototype.attachClickEvent = function () {
-                var _this = this;
-                $(document).on('click contextmenu touchstart', this.cssSelector, function (event) {
-                    if(_this.isLiveEditUiComponent($(event.target))) {
-                        return;
-                    }
-                    event.stopPropagation();
-                    event.preventDefault();
-                    var component = $(event.currentTarget), componentIsSelected = component.hasClass('live-edit-selected-component'), pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
-                    if(componentIsSelected || pageHasComponentSelected) {
-                        $(window).trigger('deselect.liveEdit.component');
-                    } else {
-                        var pagePosition = {
-                            x: event.pageX,
-                            y: event.pageY
-                        };
-                        $(window).trigger('select.liveEdit.component', [
-                            component, 
-                            pagePosition
+    var componentHelper = LiveEdit.ComponentHelper;
+    var Component = (function () {
+        function Component(element) {
+            this.setRootElement(element);
+            this.setType(componentHelper.getComponentType(element));
+            this.setName(componentHelper.getComponentName(element));
+            this.setKey(componentHelper.getComponentKey(element));
+            this.setDimensions(componentHelper.getBoxModel(element));
+            this.setHighlightStyle(componentHelper.getHighlighterStyleForComponent(element));
+            this.setIconCls(componentHelper.resolveCssClassForComponent(element));
+        }
+        Component.prototype.getRootElement = function () {
+            return this.rootElement;
+        };
+        Component.prototype.setRootElement = function (element) {
+            this.rootElement = element;
+        };
+        Component.prototype.getType = function () {
+            return this.type;
+        };
+        Component.prototype.setType = function (type) {
+            this.type = type;
+        };
+        Component.prototype.getName = function () {
+            return this.name;
+        };
+        Component.prototype.setName = function (name) {
+            this.name = name;
+        };
+        Component.prototype.getKey = function () {
+            return this.key;
+        };
+        Component.prototype.setKey = function (key) {
+            this.key = key;
+        };
+        Component.prototype.getDimensions = function () {
+            return this.dimensions;
+        };
+        Component.prototype.setDimensions = function (rectangle) {
+            this.dimensions = rectangle;
+        };
+        Component.prototype.getHighlightStyle = function () {
+            return this.highlightStyle;
+        };
+        Component.prototype.setHighlightStyle = function (style) {
+            this.highlightStyle = style;
+        };
+        Component.prototype.getIconCls = function () {
+            return this.iconCls;
+        };
+        Component.prototype.setIconCls = function (cls) {
+            this.iconCls = cls;
+        };
+        Component.prototype.getContextMenuConfig = function () {
+            return this.contextMenuConfig;
+        };
+        Component.prototype.setContextMenuConfig = function (config) {
+            this.contextMenuConfig = config;
+        };
+        return Component;
+    })();
+    LiveEdit.Component = Component;    
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
+    (function (component) {
+        (function (observer) {
+            var $ = $liveedit;
+            var Base = (function () {
+                function Base() {
+                    this.cssSelector = '';
+                }
+                Base.prototype.attachMouseOverEvent = function () {
+                    var _this = this;
+                    $(document).on('mouseover', this.cssSelector, function (event) {
+                        var component = $(event.currentTarget);
+                        var targetIsUiComponent = _this.isLiveEditUiComponent($(event.target));
+                        var cancelEvents = targetIsUiComponent || _this.hasComponentSelected() || LiveEdit.DragDropSort.isDragging();
+                        if(cancelEvents) {
+                            return;
+                        }
+                        event.stopPropagation();
+                        $(window).trigger('mouseOver.liveEdit.component', [
+                            component
                         ]);
-                    }
-                });
-            };
-            Base.prototype.hasComponentSelected = function () {
-                return $('.live-edit-selected-component').length > 0;
-            };
-            Base.prototype.isLiveEditUiComponent = function (target) {
-                return target.is('[id*=live-edit-ui-cmp]') || target.parents('[id*=live-edit-ui-cmp]').length > 0;
-            };
-            Base.prototype.getAll = function () {
-                return $(this.cssSelector);
-            };
-            return Base;
-        })();
-        model.Base = Base;        
-    })(LiveEdit.model || (LiveEdit.model = {}));
-    var model = LiveEdit.model;
+                    });
+                };
+                Base.prototype.attachMouseOutEvent = function () {
+                    var _this = this;
+                    $(document).on('mouseout', function () {
+                        if(_this.hasComponentSelected()) {
+                            return;
+                        }
+                        $(window).trigger('mouseOut.liveEdit.component');
+                    });
+                };
+                Base.prototype.attachClickEvent = function () {
+                    var _this = this;
+                    $(document).on('click contextmenu touchstart', this.cssSelector, function (event) {
+                        if(_this.isLiveEditUiComponent($(event.target))) {
+                            return;
+                        }
+                        event.stopPropagation();
+                        event.preventDefault();
+                        var component = $(event.currentTarget), componentIsSelected = component.hasClass('live-edit-selected-component'), pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
+                        if(componentIsSelected || pageHasComponentSelected) {
+                            $(window).trigger('deselect.liveEdit.component');
+                        } else {
+                            var pagePosition = {
+                                x: event.pageX,
+                                y: event.pageY
+                            };
+                            $(window).trigger('select.liveEdit.component', [
+                                component, 
+                                pagePosition
+                            ]);
+                        }
+                    });
+                };
+                Base.prototype.hasComponentSelected = function () {
+                    return $('.live-edit-selected-component').length > 0;
+                };
+                Base.prototype.isLiveEditUiComponent = function (target) {
+                    return target.is('[id*=live-edit-ui-cmp]') || target.parents('[id*=live-edit-ui-cmp]').length > 0;
+                };
+                Base.prototype.getAll = function () {
+                    return $(this.cssSelector);
+                };
+                return Base;
+            })();
+            observer.Base = Base;            
+        })(component.observer || (component.observer = {}));
+        var observer = component.observer;
+    })(LiveEdit.component || (LiveEdit.component = {}));
+    var component = LiveEdit.component;
 })(LiveEdit || (LiveEdit = {}));
 var __extends = this.__extends || function (d, b) {
     function __() { this.constructor = d; }
@@ -489,260 +624,278 @@ var __extends = this.__extends || function (d, b) {
 };
 var LiveEdit;
 (function (LiveEdit) {
-    (function (model) {
-        var $ = $liveedit;
-        var Page = (function (_super) {
-            __extends(Page, _super);
-            function Page() {
-                        _super.call(this);
-                this.cssSelector = '[data-live-edit-type=page]';
-                this.attachClickEvent();
-                console.log('Page model instantiated. Using jQuery ' + $().jquery);
-            }
-            return Page;
-        })(LiveEdit.model.Base);
-        model.Page = Page;        
-    })(LiveEdit.model || (LiveEdit.model = {}));
-    var model = LiveEdit.model;
-})(LiveEdit || (LiveEdit = {}));
-var LiveEdit;
-(function (LiveEdit) {
-    (function (model) {
-        var $ = $liveedit;
-        var componentHelper = LiveEdit.ComponentHelper;
-        var Region = (function (_super) {
-            __extends(Region, _super);
-            function Region() {
-                        _super.call(this);
-                this.cssSelector = '[data-live-edit-type=region]';
-                this.renderEmptyPlaceholders();
-                this.attachMouseOverEvent();
-                this.attachMouseOutEvent();
-                this.attachClickEvent();
-                this.registerGlobalListeners();
-                console.log('Region model instantiated. Using jQuery ' + $().jquery);
-            }
-            Region.prototype.registerGlobalListeners = function () {
-                var _this = this;
-                $(window).on('sortUpdate.liveEdit.component sortOver.liveEdit.component remove.liveEdit.component', function () {
-                    _this.renderEmptyPlaceholders();
-                });
-            };
-            Region.prototype.renderEmptyPlaceholders = function () {
-                var _this = this;
-                this.removeAllRegionPlaceholders();
-                var regions = this.getAll(), region;
-                regions.each(function (i) {
-                    region = $(regions[i]);
-                    var regionIsEmpty = _this.isRegionEmpty(region);
-                    if(regionIsEmpty) {
-                        _this.appendEmptyPlaceholder(region);
-                    }
-                });
-            };
-            Region.prototype.appendEmptyPlaceholder = function (region) {
-                var html = '<div>Drag components here</div>';
-                html += '<div style="font-size: 10px;">' + componentHelper.getComponentName(region) + '</div>';
-                var $placeholder = $('<div/>', {
-                    'class': 'live-edit-empty-region-placeholder',
-                    'html': html
-                });
-                region.append($placeholder);
-            };
-            Region.prototype.isRegionEmpty = function (region) {
-                var hasNotParts = region.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
-                var hasNotDropTargetPlaceholder = region.children('.live-edit-drop-target-placeholder').length === 0;
-                return hasNotParts && hasNotDropTargetPlaceholder;
-            };
-            Region.prototype.removeAllRegionPlaceholders = function () {
-                $('.live-edit-empty-region-placeholder').remove();
-            };
-            return Region;
-        })(LiveEdit.model.Base);
-        model.Region = Region;        
-    })(LiveEdit.model || (LiveEdit.model = {}));
-    var model = LiveEdit.model;
-})(LiveEdit || (LiveEdit = {}));
-var LiveEdit;
-(function (LiveEdit) {
-    (function (model) {
-        var $ = $liveedit;
-        var Layout = (function (_super) {
-            __extends(Layout, _super);
-            function Layout() {
-                        _super.call(this);
-                this.cssSelector = '[data-live-edit-type=layout]';
-                this.attachMouseOverEvent();
-                this.attachMouseOutEvent();
-                this.attachClickEvent();
-                console.log('Layout model instantiated. Using jQuery ' + $().jquery);
-            }
-            return Layout;
-        })(LiveEdit.model.Base);
-        model.Layout = Layout;        
-    })(LiveEdit.model || (LiveEdit.model = {}));
-    var model = LiveEdit.model;
-})(LiveEdit || (LiveEdit = {}));
-var LiveEdit;
-(function (LiveEdit) {
-    (function (model) {
-        var $ = $liveedit;
-        var Part = (function (_super) {
-            __extends(Part, _super);
-            function Part() {
-                        _super.call(this);
-                this.cssSelector = '[data-live-edit-type=part]';
-                this.renderEmptyPlaceholders();
-                this.attachMouseOverEvent();
-                this.attachMouseOutEvent();
-                this.attachClickEvent();
-                console.log('Part model instantiated. Using jQuery ' + $().jquery);
-            }
-            Part.prototype.renderEmptyPlaceholders = function () {
-                var _this = this;
-                var parts = this.getAll(), part;
-                parts.each(function (i) {
-                    part = $(parts[i]);
-                    if(_this.isPartEmpty(part)) {
-                        _this.appendEmptyPlaceholder(part);
-                    }
-                });
-            };
-            Part.prototype.appendEmptyPlaceholder = function (part) {
-                var placeholder = $('<div/>', {
-                    'class': 'live-edit-empty-part-placeholder',
-                    'html': 'Empty Part'
-                });
-                part.append(placeholder);
-            };
-            Part.prototype.isPartEmpty = function (part) {
-                return $(part).children().length === 0;
-            };
-            return Part;
-        })(LiveEdit.model.Base);
-        model.Part = Part;        
-    })(LiveEdit.model || (LiveEdit.model = {}));
-    var model = LiveEdit.model;
-})(LiveEdit || (LiveEdit = {}));
-var LiveEdit;
-(function (LiveEdit) {
-    (function (model) {
-        var $ = $liveedit;
-        var Content = (function (_super) {
-            __extends(Content, _super);
-            function Content() {
-                        _super.call(this);
-                this.cssSelector = '[data-live-edit-type=content]';
-                this.attachMouseOverEvent();
-                this.attachMouseOutEvent();
-                this.attachClickEvent();
-                console.log('Content model instantiated. Using jQuery ' + $().jquery);
-            }
-            return Content;
-        })(LiveEdit.model.Base);
-        model.Content = Content;        
-    })(LiveEdit.model || (LiveEdit.model = {}));
-    var model = LiveEdit.model;
-})(LiveEdit || (LiveEdit = {}));
-var LiveEdit;
-(function (LiveEdit) {
-    (function (model) {
-        var $ = $liveedit;
-        var Paragraph = (function (_super) {
-            __extends(Paragraph, _super);
-            function Paragraph() {
-                        _super.call(this);
-                this.selectedParagraph = null;
-                this.modes = {
-                };
-                this.cssSelector = '[data-live-edit-type=paragraph]';
-                this.modes = {
-                    UNSELECTED: 0,
-                    SELECTED: 1,
-                    EDIT: 2
-                };
-                this.currentMode = this.modes.UNSELECTED;
-                this.attachMouseOverEvent();
-                this.attachMouseOutEvent();
-                this.attachClickEvent();
-                this.registerGlobalListeners();
-                console.log('Paragraph model instantiated. Using jQuery ' + $().jquery);
-            }
-            Paragraph.prototype.registerGlobalListeners = function () {
-                var _this = this;
-                $(window).on('click.liveEdit.shader deselect.liveEdit.component', function (event) {
-                    _this.leaveEditMode();
-                });
-            };
-            Paragraph.prototype.attachClickEvent = function () {
-                var _this = this;
-                $(document).on('click contextmenu touchstart', this.cssSelector, function (event) {
-                    _this.handleClick(event);
-                });
-            };
-            Paragraph.prototype.handleClick = function (event) {
-                event.stopPropagation();
-                event.preventDefault();
-                if(this.selectedParagraph && !(this.currentMode === this.modes.EDIT)) {
-                    this.selectedParagraph.css('cursor', '');
+    (function (component) {
+        (function (observer) {
+            var $ = $liveedit;
+            var Page = (function (_super) {
+                __extends(Page, _super);
+                function Page() {
+                                _super.call(this);
+                    this.cssSelector = '[data-live-edit-type=page]';
+                    this.attachClickEvent();
+                    console.log('Page observer instantiated. Using jQuery ' + $().jquery);
                 }
-                var $paragraph = $(event.currentTarget);
-                if(!$paragraph.is(this.selectedParagraph)) {
+                return Page;
+            })(LiveEdit.component.observer.Base);
+            observer.Page = Page;            
+        })(component.observer || (component.observer = {}));
+        var observer = component.observer;
+    })(LiveEdit.component || (LiveEdit.component = {}));
+    var component = LiveEdit.component;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
+    (function (component) {
+        (function (observer) {
+            var $ = $liveedit;
+            var componentHelper = LiveEdit.ComponentHelper;
+            var Region = (function (_super) {
+                __extends(Region, _super);
+                function Region() {
+                                _super.call(this);
+                    this.cssSelector = '[data-live-edit-type=region]';
+                    this.renderEmptyPlaceholders();
+                    this.attachMouseOverEvent();
+                    this.attachMouseOutEvent();
+                    this.attachClickEvent();
+                    this.registerGlobalListeners();
+                    console.log('Region observer instantiated. Using jQuery ' + $().jquery);
+                }
+                Region.prototype.registerGlobalListeners = function () {
+                    var _this = this;
+                    $(window).on('sortUpdate.liveEdit.component sortOver.liveEdit.component remove.liveEdit.component', function () {
+                        _this.renderEmptyPlaceholders();
+                    });
+                };
+                Region.prototype.renderEmptyPlaceholders = function () {
+                    var _this = this;
+                    this.removeAllRegionPlaceholders();
+                    var regions = this.getAll(), region;
+                    regions.each(function (i) {
+                        region = $(regions[i]);
+                        var regionIsEmpty = _this.isRegionEmpty(region);
+                        if(regionIsEmpty) {
+                            _this.appendEmptyPlaceholder(region);
+                        }
+                    });
+                };
+                Region.prototype.appendEmptyPlaceholder = function (region) {
+                    var html = '<div>Drag components here</div>';
+                    html += '<div style="font-size: 10px;">' + componentHelper.getComponentName(region) + '</div>';
+                    var $placeholder = $('<div/>', {
+                        'class': 'live-edit-empty-region-placeholder',
+                        'html': html
+                    });
+                    region.append($placeholder);
+                };
+                Region.prototype.isRegionEmpty = function (region) {
+                    var hasNotParts = region.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
+                    var hasNotDropTargetPlaceholder = region.children('.live-edit-drop-target-placeholder').length === 0;
+                    return hasNotParts && hasNotDropTargetPlaceholder;
+                };
+                Region.prototype.removeAllRegionPlaceholders = function () {
+                    $('.live-edit-empty-region-placeholder').remove();
+                };
+                return Region;
+            })(LiveEdit.component.observer.Base);
+            observer.Region = Region;            
+        })(component.observer || (component.observer = {}));
+        var observer = component.observer;
+    })(LiveEdit.component || (LiveEdit.component = {}));
+    var component = LiveEdit.component;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
+    (function (component) {
+        (function (observer) {
+            var $ = $liveedit;
+            var Layout = (function (_super) {
+                __extends(Layout, _super);
+                function Layout() {
+                                _super.call(this);
+                    this.cssSelector = '[data-live-edit-type=layout]';
+                    this.attachMouseOverEvent();
+                    this.attachMouseOutEvent();
+                    this.attachClickEvent();
+                    console.log('Layout observer instantiated. Using jQuery ' + $().jquery);
+                }
+                return Layout;
+            })(LiveEdit.component.observer.Base);
+            observer.Layout = Layout;            
+        })(component.observer || (component.observer = {}));
+        var observer = component.observer;
+    })(LiveEdit.component || (LiveEdit.component = {}));
+    var component = LiveEdit.component;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
+    (function (component) {
+        (function (observer) {
+            var $ = $liveedit;
+            var Part = (function (_super) {
+                __extends(Part, _super);
+                function Part() {
+                                _super.call(this);
+                    this.cssSelector = '[data-live-edit-type=part]';
+                    this.renderEmptyPlaceholders();
+                    this.attachMouseOverEvent();
+                    this.attachMouseOutEvent();
+                    this.attachClickEvent();
+                    console.log('Part observer instantiated. Using jQuery ' + $().jquery);
+                }
+                Part.prototype.renderEmptyPlaceholders = function () {
+                    var _this = this;
+                    var parts = this.getAll(), part;
+                    parts.each(function (i) {
+                        part = $(parts[i]);
+                        if(_this.isPartEmpty(part)) {
+                            _this.appendEmptyPlaceholder(part);
+                        }
+                    });
+                };
+                Part.prototype.appendEmptyPlaceholder = function (part) {
+                    var placeholder = $('<div/>', {
+                        'class': 'live-edit-empty-part-placeholder',
+                        'html': 'Empty Part'
+                    });
+                    part.append(placeholder);
+                };
+                Part.prototype.isPartEmpty = function (part) {
+                    return $(part).children().length === 0;
+                };
+                return Part;
+            })(LiveEdit.component.observer.Base);
+            observer.Part = Part;            
+        })(component.observer || (component.observer = {}));
+        var observer = component.observer;
+    })(LiveEdit.component || (LiveEdit.component = {}));
+    var component = LiveEdit.component;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
+    (function (component) {
+        (function (observer) {
+            var $ = $liveedit;
+            var Content = (function (_super) {
+                __extends(Content, _super);
+                function Content() {
+                                _super.call(this);
+                    this.cssSelector = '[data-live-edit-type=content]';
+                    this.attachMouseOverEvent();
+                    this.attachMouseOutEvent();
+                    this.attachClickEvent();
+                    console.log('Content observer instantiated. Using jQuery ' + $().jquery);
+                }
+                return Content;
+            })(LiveEdit.component.observer.Base);
+            observer.Content = Content;            
+        })(component.observer || (component.observer = {}));
+        var observer = component.observer;
+    })(LiveEdit.component || (LiveEdit.component = {}));
+    var component = LiveEdit.component;
+})(LiveEdit || (LiveEdit = {}));
+var LiveEdit;
+(function (LiveEdit) {
+    (function (component) {
+        (function (observer) {
+            var $ = $liveedit;
+            var Paragraph = (function (_super) {
+                __extends(Paragraph, _super);
+                function Paragraph() {
+                                _super.call(this);
+                    this.selectedParagraph = null;
+                    this.modes = {
+                    };
+                    this.cssSelector = '[data-live-edit-type=paragraph]';
+                    this.modes = {
+                        UNSELECTED: 0,
+                        SELECTED: 1,
+                        EDIT: 2
+                    };
                     this.currentMode = this.modes.UNSELECTED;
+                    this.attachMouseOverEvent();
+                    this.attachMouseOutEvent();
+                    this.attachClickEvent();
+                    this.registerGlobalListeners();
+                    console.log('Paragraph observer instantiated. Using jQuery ' + $().jquery);
                 }
-                this.selectedParagraph = $paragraph;
-                if(this.currentMode === this.modes.UNSELECTED) {
-                    this.setSelectMode(event);
-                } else if(this.currentMode === this.modes.SELECTED) {
-                    this.setEditMode();
-                } else {
-                }
-            };
-            Paragraph.prototype.setSelectMode = function (event) {
-                this.selectedParagraph.css('cursor', 'url(../../../admin2/live-edit/images/pencil.png) 0 40, text');
-                this.currentMode = this.modes.SELECTED;
-                if(window.getSelection) {
-                    window.getSelection().removeAllRanges();
-                }
-                var pagePosition = {
-                    x: event.pageX,
-                    y: event.pageY
+                Paragraph.prototype.registerGlobalListeners = function () {
+                    var _this = this;
+                    $(window).on('click.liveEdit.shader deselect.liveEdit.component', function (event) {
+                        _this.leaveEditMode();
+                    });
                 };
-                $(window).trigger('select.liveEdit.component', [
-                    this.selectedParagraph, 
-                    pagePosition
-                ]);
-                $(window).trigger('paragraphSelect.liveEdit.component', [
-                    this.selectedParagraph
-                ]);
-            };
-            Paragraph.prototype.setEditMode = function () {
-                var $paragraph = this.selectedParagraph;
-                $(window).trigger('paragraphEdit.liveEdit.component', [
-                    this.selectedParagraph
-                ]);
-                $paragraph.css('cursor', 'text');
-                $paragraph.addClass('live-edit-edited-paragraph');
-                this.currentMode = this.modes.EDIT;
-            };
-            Paragraph.prototype.leaveEditMode = function () {
-                var $paragraph = this.selectedParagraph;
-                if($paragraph === null) {
-                    return;
-                }
-                $(window).trigger('paragraphLeave.liveEdit.component', [
-                    this.selectedParagraph
-                ]);
-                $paragraph.css('cursor', '');
-                $paragraph.removeClass('live-edit-edited-paragraph');
-                this.selectedParagraph = null;
-                this.currentMode = this.modes.UNSELECTED;
-            };
-            return Paragraph;
-        })(LiveEdit.model.Base);
-        model.Paragraph = Paragraph;        
-    })(LiveEdit.model || (LiveEdit.model = {}));
-    var model = LiveEdit.model;
+                Paragraph.prototype.attachClickEvent = function () {
+                    var _this = this;
+                    $(document).on('click contextmenu touchstart', this.cssSelector, function (event) {
+                        _this.handleClick(event);
+                    });
+                };
+                Paragraph.prototype.handleClick = function (event) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    if(this.selectedParagraph && !(this.currentMode === this.modes.EDIT)) {
+                        this.selectedParagraph.css('cursor', '');
+                    }
+                    var $paragraph = $(event.currentTarget);
+                    if(!$paragraph.is(this.selectedParagraph)) {
+                        this.currentMode = this.modes.UNSELECTED;
+                    }
+                    this.selectedParagraph = $paragraph;
+                    if(this.currentMode === this.modes.UNSELECTED) {
+                        this.setSelectMode(event);
+                    } else if(this.currentMode === this.modes.SELECTED) {
+                        this.setEditMode();
+                    } else {
+                    }
+                };
+                Paragraph.prototype.setSelectMode = function (event) {
+                    this.selectedParagraph.css('cursor', 'url(../../../admin2/live-edit/images/pencil.png) 0 40, text');
+                    this.currentMode = this.modes.SELECTED;
+                    if(window.getSelection) {
+                        window.getSelection().removeAllRanges();
+                    }
+                    var pagePosition = {
+                        x: event.pageX,
+                        y: event.pageY
+                    };
+                    $(window).trigger('select.liveEdit.component', [
+                        this.selectedParagraph, 
+                        pagePosition
+                    ]);
+                    $(window).trigger('paragraphSelect.liveEdit.component', [
+                        this.selectedParagraph
+                    ]);
+                };
+                Paragraph.prototype.setEditMode = function () {
+                    var $paragraph = this.selectedParagraph;
+                    $(window).trigger('paragraphEdit.liveEdit.component', [
+                        this.selectedParagraph
+                    ]);
+                    $paragraph.css('cursor', 'text');
+                    $paragraph.addClass('live-edit-edited-paragraph');
+                    this.currentMode = this.modes.EDIT;
+                };
+                Paragraph.prototype.leaveEditMode = function () {
+                    var $paragraph = this.selectedParagraph;
+                    if($paragraph === null) {
+                        return;
+                    }
+                    $(window).trigger('paragraphLeave.liveEdit.component', [
+                        this.selectedParagraph
+                    ]);
+                    $paragraph.css('cursor', '');
+                    $paragraph.removeClass('live-edit-edited-paragraph');
+                    this.selectedParagraph = null;
+                    this.currentMode = this.modes.UNSELECTED;
+                };
+                return Paragraph;
+            })(LiveEdit.component.observer.Base);
+            observer.Paragraph = Paragraph;            
+        })(component.observer || (component.observer = {}));
+        var observer = component.observer;
+    })(LiveEdit.component || (LiveEdit.component = {}));
+    var component = LiveEdit.component;
 })(LiveEdit || (LiveEdit = {}));
 var LiveEdit;
 (function (LiveEdit) {
@@ -1221,7 +1374,7 @@ var LiveEdit;
             Highlighter.prototype.paintBorder = function (component) {
                 var border = this.getRootEl();
                 this.resizeBorderToComponent(component);
-                var style = this.getStyleForComponent(component);
+                var style = componentHelper.getHighlighterStyleForComponent(component);
                 border.css('stroke', style.strokeColor);
                 border.css('fill', style.fillColor);
                 border.css('stroke-dasharray', style.strokeDashArray);
@@ -1244,46 +1397,6 @@ var LiveEdit;
             };
             Highlighter.prototype.hide = function () {
                 this.getRootEl().hide(null);
-            };
-            Highlighter.prototype.getStyleForComponent = function (component) {
-                var componentType = componentHelper.getComponentType(component);
-                var strokeColor, strokeDashArray, fillColor;
-                switch(componentType) {
-                    case 'region':
-                        strokeColor = 'rgba(20,20,20,1)';
-                        strokeDashArray = '';
-                        fillColor = 'rgba(255,255,255,0)';
-                        break;
-                    case 'layout':
-                        strokeColor = 'rgba(255,165,0,1)';
-                        strokeDashArray = '5 5';
-                        fillColor = 'rgba(100,12,36,0)';
-                        break;
-                    case 'part':
-                        strokeColor = 'rgba(68,68,68,1)';
-                        strokeDashArray = '5 5';
-                        fillColor = 'rgba(255,255,255,0)';
-                        break;
-                    case 'paragraph':
-                        strokeColor = 'rgba(85,85,255,1)';
-                        strokeDashArray = '5 5';
-                        fillColor = 'rgba(255,255,255,0)';
-                        break;
-                    case 'content':
-                        strokeColor = '';
-                        strokeDashArray = '';
-                        fillColor = 'rgba(0,108,255,.25)';
-                        break;
-                    default:
-                        strokeColor = 'rgba(20,20,20,1)';
-                        strokeDashArray = '';
-                        fillColor = 'rgba(255,255,255,0)';
-                }
-                return {
-                    strokeColor: strokeColor,
-                    strokeDashArray: strokeDashArray,
-                    fillColor: fillColor
-                };
             };
             Highlighter.prototype.handleWindowResize = function () {
                 if(this.selectedComponent) {
@@ -1544,42 +1657,16 @@ var LiveEdit;
                 };
                 Menu.prototype.updateTitleBar = function (component) {
                     var componentInfo = componentHelper.getComponentInfo(component);
-                    this.setIcon(componentInfo.type);
+                    this.setIcon(component);
                     this.setTitle(componentInfo.name);
                 };
                 Menu.prototype.setTitle = function (titleText) {
                     this.getTitleElement().text(titleText);
                 };
-                Menu.prototype.setIcon = function (componentType) {
-                    var iconCt = this.getIconElement(), iconCls = this.resolveCssClassForComponentType(componentType);
+                Menu.prototype.setIcon = function (component) {
+                    var iconCt = this.getIconElement(), iconCls = componentHelper.resolveCssClassForComponent(component);
                     iconCt.children('div').attr('class', iconCls);
-                    iconCt.attr('title', componentType);
-                };
-                Menu.prototype.resolveCssClassForComponentType = function (componentType) {
-                    var iconCls;
-                    switch(componentType) {
-                        case 'page':
-                            iconCls = 'live-edit-component-menu-page-icon';
-                            break;
-                        case 'region':
-                            iconCls = 'live-edit-component-menu-region-icon';
-                            break;
-                        case 'layout':
-                            iconCls = 'live-edit-component-menu-layout-icon';
-                            break;
-                        case 'part':
-                            iconCls = 'live-edit-component-menu-part-icon';
-                            break;
-                        case 'content':
-                            iconCls = 'live-edit-component-menu-content-icon';
-                            break;
-                        case 'paragraph':
-                            iconCls = 'live-edit-component-menu-paragraph-icon';
-                            break;
-                        default:
-                            iconCls = '';
-                    }
-                    return iconCls;
+                    iconCt.attr('title', componentHelper.getComponentType(component));
                 };
                 Menu.prototype.getButtons = function () {
                     return this.buttons;
@@ -2224,12 +2311,12 @@ var LiveEdit;
         var loaderSplash = $('.live-edit-loader-splash-container');
         loaderSplash.fadeOut('fast', function () {
             loaderSplash.remove();
-            new LiveEdit.model.Page();
-            new LiveEdit.model.Region();
-            new LiveEdit.model.Layout();
-            new LiveEdit.model.Part();
-            new LiveEdit.model.Paragraph();
-            new LiveEdit.model.Content();
+            new LiveEdit.component.observer.Page();
+            new LiveEdit.component.observer.Region();
+            new LiveEdit.component.observer.Layout();
+            new LiveEdit.component.observer.Part();
+            new LiveEdit.component.observer.Paragraph();
+            new LiveEdit.component.observer.Content();
             new LiveEdit.ui.HtmlElementReplacer();
             new LiveEdit.ui.Highlighter();
             new LiveEdit.ui.ToolTip();

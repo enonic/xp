@@ -1,7 +1,7 @@
-module LiveEdit.model {
+module LiveEdit.component.observer {
     var $ = $liveedit;
 
-    export class Paragraph extends LiveEdit.model.Base {
+    export class Paragraph extends LiveEdit.component.observer.Base {
 
         private selectedParagraph:JQuery = null;
         private modes:any = {};
@@ -22,7 +22,7 @@ module LiveEdit.model {
             this.attachClickEvent();
             this.registerGlobalListeners();
 
-            console.log('Paragraph model instantiated. Using jQuery ' + $().jquery);
+            console.log('Paragraph observer instantiated. Using jQuery ' + $().jquery);
         }
 
 

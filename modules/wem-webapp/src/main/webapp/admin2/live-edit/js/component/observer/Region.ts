@@ -1,8 +1,8 @@
-module LiveEdit.model {
+module LiveEdit.component.observer {
     var $ = $liveedit;
     var componentHelper = LiveEdit.ComponentHelper;
 
-    export class Region extends LiveEdit.model.Base {
+    export class Region extends LiveEdit.component.observer.Base {
         constructor() {
             super();
 
@@ -14,7 +14,7 @@ module LiveEdit.model {
             this.attachClickEvent();
             this.registerGlobalListeners();
 
-            console.log('Region model instantiated. Using jQuery ' + $().jquery);
+            console.log('Region observer instantiated. Using jQuery ' + $().jquery);
         }
 
 

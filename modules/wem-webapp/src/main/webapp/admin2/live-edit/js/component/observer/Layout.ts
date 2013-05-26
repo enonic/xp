@@ -1,7 +1,7 @@
-module LiveEdit.model {
+module LiveEdit.component.observer {
     var $ = $liveedit;
 
-    export class Layout extends LiveEdit.model.Base {
+    export class Layout extends LiveEdit.component.observer.Base {
         constructor() {
             super();
 
@@ -11,7 +11,7 @@ module LiveEdit.model {
             this.attachMouseOutEvent();
             this.attachClickEvent();
 
-            console.log('Layout model instantiated. Using jQuery ' + $().jquery);
+            console.log('Layout observer instantiated. Using jQuery ' + $().jquery);
         }
     }
 }
