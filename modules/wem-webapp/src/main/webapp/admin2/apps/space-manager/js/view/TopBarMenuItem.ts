@@ -37,11 +37,9 @@ module admin.ui {
                     return this.onClick(e);
                 },
                 activate: () => {
-                    console.log('activate');
                     this.activate();
                 },
                 deactivate: () => {
-                    console.log('deactivate');
                     this.deactivate();
                 }
             });
@@ -96,7 +94,6 @@ module admin.ui {
         }
 
         private activate():void {
-            console.log('activate');
             var me = this.ext;
 
             if (!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
@@ -108,7 +105,6 @@ module admin.ui {
         }
 
         private deactivate():void {
-            console.log('deactivate');
             var me = this.ext;
 
             if (me.activated) {

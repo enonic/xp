@@ -37,7 +37,7 @@
 
 ///<reference path='view/wizard/SpaceWizardToolbar.ts' />
 ///<reference path='view/wizard/SpaceStepPanel.ts' />
-///<reference path='view/wizard/WizardPanel.ts' />
+///<reference path='view/wizard/SpaceWizardPanel.ts' />
 
 ///<reference path='view/AdminImageButton.ts' />
 ///<reference path='view/TopBarMenuItem.ts' />

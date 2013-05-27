@@ -1736,589 +1736,614 @@ var admin;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
-Ext.define('Admin.view.WizardPanel', {
-    extend: 'Ext.panel.Panel',
-    alias: 'widget.wizardPanel',
-    requires: [
-        'Admin.view.WizardLayout'
-    ],
-    layout: {
-        type: 'vbox',
-        align: 'stretch'
-    },
-    cls: 'admin-wizard',
-    externalControls: undefined,
-    showControls: true,
-    data: undefined,
-    isNew: true,
-    validateItems: [],
-    boundItems: [],
-    isWizardValid: undefined,
-    isWizardDirty: undefined,
-    dirtyItems: undefined,
-    invalidItems: undefined,
-    presentationMode: false,
-    initComponent: function () {
-        var me = this;
-        var events = [
-            "beforestepchanged", 
-            "stepchanged", 
-            "animationstarted", 
-            "animationfinished", 
-            'validitychange', 
-            'dirtychange', 
-            "finished"
-        ];
-        this.dirtyItems = [];
-        this.invalidItems = [];
-        this.boundItems = [];
-        this.cls += this.isNew ? ' admin-wizard-new' : ' admin-wizard-edit';
-        this.wizard = new Ext.container.Container({
-            region: 'center',
-            layout: {
-                type: 'wizard',
-                animation: 'none'
-            },
-            items: this.createSteps()
-        });
-        this.items = [
-            this.createHeaderPanel(), 
-            {
-                itemId: 'bottomPanel',
-                xtype: 'container',
-                autoScroll: true,
-                padding: '20 0 0 0',
-                layout: 'border',
-                flex: 1,
-                items: [
+var admin;
+(function (admin) {
+    (function (ui) {
+        var WizardPanel = (function () {
+            function WizardPanel(config) {
+                this.showControls = true;
+                this.isNew = true;
+                this.validateItems = [];
+                this.boundItems = [];
+                this.presentationMode = false;
+                this.dirtyItems = [];
+                this.invalidItems = [];
+                this.boundItems = [];
+                var defaultPanelConfig = {
+                    itemId: 'wizardPanel',
+                    layout: {
+                        type: 'vbox',
+                        align: 'stretch'
+                    },
+                    cls: 'admin-wizard'
+                };
+                var panelConfig = Ext.apply({
+                }, config, defaultPanelConfig);
+                var panel = new Ext.panel.Panel(panelConfig);
+                this.ext = panel;
+                this.initComponent();
+            }
+            WizardPanel.prototype.initComponent = function () {
+                var _this = this;
+                var me = this.ext;
+                var events = [
+                    "beforestepchanged", 
+                    "stepchanged", 
+                    "animationstarted", 
+                    "animationfinished", 
+                    'validitychange', 
+                    'dirtychange', 
+                    "finished"
+                ];
+                me.cls += this.isNew ? ' admin-wizard-new' : ' admin-wizard-edit';
+                this.wizard = new Ext.container.Container({
+                    region: 'center',
+                    layout: {
+                        type: 'wizard',
+                        animation: 'none'
+                    },
+                    items: this.createSteps()
+                });
+                var items = [
+                    this.createHeaderPanel(), 
                     {
+                        itemId: 'bottomPanel',
                         xtype: 'container',
-                        region: 'west',
-                        padding: 10,
-                        width: 130,
-                        style: {
-                            position: 'fixed !important',
-                            top: '210px !important'
-                        },
-                        layout: {
-                            type: 'hbox',
-                            align: 'middle'
-                        },
-                        listeners: {
-                            click: {
-                                element: 'el',
-                                fn: function () {
-                                    me.prev();
-                                }
-                            },
-                            mouseover: {
-                                element: 'el',
-                                fn: function (event, element) {
-                                    me.updateNavButton(element, '#000000');
-                                }
-                            },
-                            mouseout: {
-                                element: 'el',
-                                fn: function (event, element) {
-                                    me.updateNavButton(element, '#777777');
-                                }
-                            }
-                        },
+                        autoScroll: true,
+                        padding: '20 0 0 0',
+                        layout: 'border',
+                        flex: 1,
                         items: [
                             {
-                                xtype: 'button',
-                                itemId: 'prev',
-                                iconCls: 'wizard-nav-icon icon-chevron-left icon-6x',
-                                cls: 'wizard-nav-button wizard-nav-button-left',
-                                height: 74,
-                                width: 64,
-                                padding: 0,
-                                margin: '0 0 0 40'
-                            }
-                        ]
-                    }, 
-                    {
-                        xtype: 'container',
-                        region: 'east',
-                        padding: 10,
-                        width: 130,
-                        style: {
-                            position: 'fixed !important',
-                            top: '210px !important'
-                        },
-                        layout: {
-                            type: 'hbox',
-                            align: 'middle'
-                        },
+                                xtype: 'container',
+                                region: 'west',
+                                padding: 10,
+                                width: 130,
+                                style: {
+                                    position: 'fixed !important',
+                                    top: '210px !important'
+                                },
+                                layout: {
+                                    type: 'hbox',
+                                    align: 'middle'
+                                },
+                                listeners: {
+                                    click: {
+                                        element: 'el',
+                                        fn: function () {
+                                            _this.prev();
+                                        }
+                                    },
+                                    mouseover: {
+                                        element: 'el',
+                                        fn: function (event, element) {
+                                            _this.updateNavButton(element, '#000000');
+                                        }
+                                    },
+                                    mouseout: {
+                                        element: 'el',
+                                        fn: function (event, element) {
+                                            _this.updateNavButton(element, '#777777');
+                                        }
+                                    }
+                                },
+                                items: [
+                                    {
+                                        xtype: 'button',
+                                        itemId: 'prev',
+                                        iconCls: 'wizard-nav-icon icon-chevron-left icon-6x',
+                                        cls: 'wizard-nav-button wizard-nav-button-left',
+                                        height: 74,
+                                        width: 64,
+                                        padding: 0,
+                                        margin: '0 0 0 40'
+                                    }
+                                ]
+                            }, 
+                            {
+                                xtype: 'container',
+                                region: 'east',
+                                padding: 10,
+                                width: 130,
+                                style: {
+                                    position: 'fixed !important',
+                                    top: '210px !important'
+                                },
+                                layout: {
+                                    type: 'hbox',
+                                    align: 'middle'
+                                },
+                                listeners: {
+                                    click: {
+                                        element: 'el',
+                                        fn: function () {
+                                            _this.next();
+                                        }
+                                    },
+                                    mouseover: {
+                                        element: 'el',
+                                        fn: function (event, element) {
+                                            _this.updateNavButton(element, '#000000');
+                                        }
+                                    },
+                                    mouseout: {
+                                        element: 'el',
+                                        fn: function (event, element) {
+                                            _this.updateNavButton(element, '#777777');
+                                        }
+                                    }
+                                },
+                                items: [
+                                    {
+                                        xtype: 'button',
+                                        itemId: 'next',
+                                        iconAlign: 'right',
+                                        cls: 'wizard-nav-button wizard-nav-button-right',
+                                        formBind: true,
+                                        iconCls: 'wizard-nav-icon icon-chevron-right icon-6x',
+                                        height: 74,
+                                        width: 64,
+                                        padding: 0
+                                    }
+                                ]
+                            }, 
+                            this.wizard
+                        ],
                         listeners: {
-                            click: {
+                            scroll: {
                                 element: 'el',
                                 fn: function () {
-                                    me.next();
-                                }
-                            },
-                            mouseover: {
-                                element: 'el',
-                                fn: function (event, element) {
-                                    me.updateNavButton(element, '#000000');
-                                }
-                            },
-                            mouseout: {
-                                element: 'el',
-                                fn: function (event, element) {
-                                    me.updateNavButton(element, '#777777');
+                                    _this.updateShadow();
                                 }
                             }
-                        },
-                        items: [
-                            {
-                                xtype: 'button',
-                                itemId: 'next',
-                                iconAlign: 'right',
-                                cls: 'wizard-nav-button wizard-nav-button-right',
-                                formBind: true,
-                                iconCls: 'wizard-nav-icon icon-chevron-right icon-6x',
-                                height: 74,
-                                width: 64,
-                                padding: 0
-                            }
-                        ]
-                    }, 
-                    this.wizard
-                ],
-                listeners: {
-                    scroll: {
-                        element: 'el',
-                        fn: function () {
-                            me.updateShadow();
+                        }
+                    }
+                ];
+                me.add(items);
+                me.addEvents(events);
+                this.wizard.addEvents(events);
+                this.wizard.enableBubble(events);
+                me.on({
+                    animationstarted: this.onAnimationStarted,
+                    animationfinished: this.onAnimationFinished,
+                    resize: function () {
+                        _this.updateShadow();
+                    },
+                    scope: this
+                });
+                if(this.getActionButton()) {
+                    this.boundItems.push(this.getActionButton());
+                }
+                me.down('#progressBar').update(this.wizard.items.items);
+                me.on('afterrender', this.bindItemListeners, this);
+                this.updateShadow();
+            };
+            WizardPanel.prototype.updateShadow = function () {
+                var me = this.ext;
+                var bottomPanel = me.down('#bottomPanel').getEl();
+                if(bottomPanel) {
+                    var hasScroll = bottomPanel.dom.scrollHeight > bottomPanel.dom.clientHeight, positionPanelEl = me.down('#positionPanel').getEl(), wizardHeaderPanelHeight = me.down('#wizardHeaderPanel').getEl().getHeight(), headerShadowEl = Ext.fly('admin-wizard-header-shadow');
+                    if(hasScroll && bottomPanel.dom.scrollTop !== 0) {
+                        if(!headerShadowEl) {
+                            var dh = Ext.DomHelper, boxShadowOffsets = Ext.isGecko ? '0 5px 6px -3px' : '0 5px 10px -3px';
+                            var shadowDomSpec = {
+                                id: 'admin-wizard-header-shadow',
+                                tag: 'div',
+                                style: 'position:absolute; top:' + wizardHeaderPanelHeight + 'px; left:0px; z-index:1000; height:10px; background:transparent; width:100%; box-shadow:' + boxShadowOffsets + '#888 inset'
+                            };
+                            dh.append(positionPanelEl, shadowDomSpec);
+                            Ext.fly('admin-wizard-header-shadow').show(true);
+                        }
+                    } else {
+                        if(headerShadowEl) {
+                            headerShadowEl.remove();
                         }
                     }
                 }
-            }
-        ];
-        this.callParent(arguments);
-        this.addEvents(events);
-        this.wizard.addEvents(events);
-        this.wizard.enableBubble(events);
-        this.on({
-            animationstarted: this.onAnimationStarted,
-            animationfinished: this.onAnimationFinished,
-            resize: function () {
-                me.updateShadow();
-            }
-        });
-        if(this.getActionButton()) {
-            this.boundItems.push(this.getActionButton());
-        }
-        this.down('#progressBar').update(this.wizard.items.items);
-        this.on('afterrender', this.bindItemListeners);
-        me.updateShadow();
-    },
-    updateShadow: function () {
-        var me = this;
-        var bottomPanel = me.down('#bottomPanel').getEl();
-        if(bottomPanel) {
-            var hasScroll = bottomPanel.dom.scrollHeight > bottomPanel.dom.clientHeight, positionPanelEl = me.down('#positionPanel').getEl(), wizardHeaderPanelHeight = me.down('#wizardHeaderPanel').getEl().getHeight(), headerShadowEl = Ext.fly('admin-wizard-header-shadow');
-            if(hasScroll && bottomPanel.dom.scrollTop !== 0) {
-                if(!headerShadowEl) {
-                    var dh = Ext.DomHelper, boxShadowOffsets = Ext.isGecko ? '0 5px 6px -3px' : '0 5px 10px -3px';
-                    var shadowDomSpec = {
-                        id: 'admin-wizard-header-shadow',
-                        tag: 'div',
-                        style: 'position:absolute; top:' + wizardHeaderPanelHeight + 'px; left:0px; z-index:1000; height:10px; background:transparent; width:100%; box-shadow:' + boxShadowOffsets + '#888 inset'
-                    };
-                    dh.append(positionPanelEl, shadowDomSpec);
-                    Ext.fly('admin-wizard-header-shadow').show(true);
+            };
+            WizardPanel.prototype.updateNavButton = function (element, color) {
+                var btn = Ext.get(element);
+                if(!btn.hasCls('wizard-nav-icon')) {
+                    btn = btn.down('.wizard-nav-icon');
+                } else if(btn.hasCls('x-btn-inner')) {
+                    btn = btn.next('.x-btn-icon');
                 }
-            } else {
-                if(headerShadowEl) {
-                    headerShadowEl.remove();
-                }
-            }
-        }
-    },
-    updateNavButton: function (element, color) {
-        var btn = Ext.get(element);
-        if(!btn.hasCls('wizard-nav-icon')) {
-            btn = btn.down('.wizard-nav-icon');
-        } else if(btn.hasCls('x-btn-inner')) {
-            btn = btn.next('.x-btn-icon');
-        }
-        btn && btn.setStyle('color', color);
-    },
-    updateProgress: function (newStep) {
-        var progressBar = this.down('#progressBar');
-        progressBar.update(this.wizard.items.items);
-        var conditionsMet = this.isWizardValid && (this.isWizardDirty || this.isNew);
-        progressBar.setDisabled(this.isNew ? !this.isStepValid(newStep) : !conditionsMet);
-    },
-    bindItemListeners: function (cmp) {
-        Ext.each(cmp.validateItems, function (validateItem, index, all) {
-            if(validateItem) {
-                validateItem.on({
-                    'validitychange': cmp.handleValidityChange,
-                    'dirtychange': cmp.handleDirtyChange,
-                    scope: cmp
-                }, this);
-            }
-            return true;
-        });
-        var checkValidityFn = function (panel) {
-            panel.getForm().checkValidity();
-        };
-        cmp.wizard.items.each(function (item, i) {
-            if(i === 0) {
-                cmp.onAnimationFinished(item, null);
-            }
-            if('editUserFormPanel' === item.getXType()) {
-                item.on('fieldsloaded', checkValidityFn);
-            }
-            var itemForm = Ext.isFunction(item.getForm) ? item.getForm() : undefined;
-            if(itemForm) {
-                if(Ext.isFunction(cmp.washDirtyForm)) {
-                    cmp.washDirtyForm(itemForm);
-                }
-                Ext.apply(itemForm, {
-                    onValidityChange: cmp.formOnValidityChange,
-                    _boundItems: undefined
+                btn && btn.setStyle('color', color);
+            };
+            WizardPanel.prototype.updateProgress = function (newStep) {
+                var me = this.ext;
+                var progressBar = me.down('#progressBar');
+                progressBar.update(this.wizard.items.items);
+                var conditionsMet = this.isWizardValid && (this.isWizardDirty || this.isNew);
+                progressBar.setDisabled(this.isNew ? !this.isStepValid(newStep) : !conditionsMet);
+            };
+            WizardPanel.prototype.bindItemListeners = function (cmp) {
+                var _this = this;
+                Ext.each(this.validateItems, function (validateItem, index, all) {
+                    if(validateItem) {
+                        validateItem.on({
+                            'validitychange': _this.handleValidityChange,
+                            'dirtychange': _this.handleDirtyChange,
+                            scope: _this
+                        }, _this);
+                    }
+                    return true;
                 });
-                itemForm.on({
-                    'validitychange': cmp.handleValidityChange,
-                    'dirtychange': cmp.handleDirtyChange,
-                    scope: cmp
+                var checkValidityFn = function (panel) {
+                    panel.getForm().checkValidity();
+                };
+                this.wizard.items.each(function (item, i) {
+                    if(i === 0) {
+                        _this.onAnimationFinished(item, null);
+                    }
+                    if('editUserFormPanel' === item.getXType()) {
+                        item.on('fieldsloaded', checkValidityFn);
+                    }
+                    var itemForm = Ext.isFunction(item.getForm) ? item.getForm() : undefined;
+                    if(itemForm) {
+                        if(Ext.isFunction(_this.washDirtyForm)) {
+                            _this.washDirtyForm(itemForm);
+                        }
+                        Ext.apply(itemForm, {
+                            onValidityChange: _this.formOnValidityChange,
+                            _boundItems: undefined
+                        });
+                        itemForm.on({
+                            'validitychange': _this.handleValidityChange,
+                            'dirtychange': _this.handleDirtyChange,
+                            scope: _this
+                        });
+                        itemForm.checkValidity();
+                    }
                 });
-                itemForm.checkValidity();
-            }
-        });
-    },
-    formOnValidityChange: function () {
-        var wizardPanel = this.owner.up('wizardPanel');
-        var boundItems = wizardPanel.getFormBoundItems(this);
-        if(boundItems && this.owner === wizardPanel.getActiveItem()) {
-            var valid = wizardPanel.isStepValid(this.owner);
-            boundItems.each(function (cmp) {
-                if(cmp.rendered && cmp.isHidden() === valid) {
-                    if(valid) {
-                        cmp.show();
-                    } else {
-                        cmp.hide();
-                    }
+            };
+            WizardPanel.prototype.formOnValidityChange = function () {
+                var me = this.ext;
+                var wizardPanel = me.owner.up('wizardPanel');
+                var boundItems = wizardPanel.getFormBoundItems(this);
+                if(boundItems && me.owner === wizardPanel.getActiveItem()) {
+                    var valid = wizardPanel.isStepValid(me.owner);
+                    boundItems.each(function (cmp) {
+                        if(cmp.rendered && cmp.isHidden() === valid) {
+                            if(valid) {
+                                cmp.show();
+                            } else {
+                                cmp.hide();
+                            }
+                        }
+                    });
                 }
-            });
-        }
-    },
-    getFormBoundItems: function (form) {
-        var boundItems = form._boundItems;
-        if(!boundItems && form.owner.rendered) {
-            boundItems = form._boundItems = Ext.create('Ext.util.MixedCollection');
-            boundItems.addAll(form.owner.query('[formBind]'));
-            boundItems.addAll(this.boundItems);
-        }
-        return boundItems;
-    },
-    handleValidityChange: function (form, valid, opts) {
-        if(!valid) {
-            Ext.Array.include(this.invalidItems, form);
-        } else {
-            Ext.Array.remove(this.invalidItems, form);
-        }
-        this.updateProgress();
-        var isWizardValid = this.invalidItems.length === 0;
-        if(this.isWizardValid !== isWizardValid) {
-            this.isWizardValid = isWizardValid;
-            var actionButton = this.getActionButton();
-            if(actionButton) {
-                actionButton.setVisible(isWizardValid);
-            }
-            this.fireEvent('validitychange', this, isWizardValid);
-        }
-    },
-    handleDirtyChange: function (form, dirty, opts) {
-        if(dirty) {
-            Ext.Array.include(this.dirtyItems, form);
-        } else {
-            Ext.Array.remove(this.dirtyItems, form);
-        }
-        this.updateProgress();
-        var isWizardDirty = this.dirtyItems.length > 0;
-        if(this.isWizardDirty !== isWizardDirty) {
-            this.isWizardDirty = isWizardDirty;
-            this.fireEvent('dirtychange', this, isWizardDirty);
-        }
-    },
-    isStepValid: function (step) {
-        var isStepValid = Ext.Array.intersect(this.invalidItems, this.validateItems).length === 0;
-        var activeStep = step || this.getActiveItem();
-        var activeForm;
-        if(activeStep && Ext.isFunction(activeStep.getForm)) {
-            activeForm = activeStep.getForm();
-        }
-        if(isStepValid && activeForm) {
-            isStepValid = isStepValid && !activeForm.hasInvalidField();
-        }
-        return isStepValid;
-    },
-    getProgressBar: function () {
-        return this.down('#progressBar');
-    },
-    createRibbon: function () {
-        var me = this;
-        var stepsTpl = '<div class="navigation-container">' + '<ul class="navigation clearfix">' + '<tpl for=".">' + '<li class="{[ this.resolveClsName( xindex, xcount ) ]}" wizardStep="{[xindex]}">' + '<a href="javascript:;" class="step {[ this.resolveClsName( xindex, xcount ) ]}">{[' + '(values.stepTitle || values.title) ]}</a></li>' + '</tpl>' + '</ul>' + '</div>';
-        return {
-            xtype: 'component',
-            flex: 1,
-            cls: 'toolbar',
-            disabledCls: 'toolbar-disabled',
-            itemId: 'progressBar',
-            width: '100%',
-            listeners: {
-                click: {
-                    fn: this.changeStep,
-                    element: 'el',
-                    scope: this
+            };
+            WizardPanel.prototype.getFormBoundItems = function (form) {
+                var boundItems = form._boundItems;
+                if(!boundItems && form.owner.rendered) {
+                    boundItems = form._boundItems = Ext.create('Ext.util.MixedCollection');
+                    boundItems.addAll(form.owner.query('[formBind]'));
+                    boundItems.addAll(this.boundItems);
                 }
-            },
-            styleHtmlContent: true,
-            margin: 0,
-            tpl: new Ext.XTemplate(stepsTpl, {
-                resolveClsName: function (index, total) {
-                    var activeIndex = me.wizard.items.indexOf(me.getActiveItem()) + 1;
-                    var clsName = '';
-                    if(index === 1) {
-                        clsName += 'first ';
-                    }
-                    if(index < activeIndex) {
-                        clsName += 'previous ';
-                    }
-                    if(index + 1 === activeIndex) {
-                        clsName += 'immediate ';
-                    }
-                    if(index === activeIndex) {
-                        clsName += 'current ';
-                    }
-                    if(index > activeIndex) {
-                        clsName += 'next ';
-                    }
-                    if(index - 1 === activeIndex) {
-                        clsName += 'immediate ';
-                    }
-                    if(index === total) {
-                        clsName += 'last ';
-                    }
-                    return clsName;
-                }
-            })
-        };
-    },
-    onAnimationStarted: function (newStep, oldStep) {
-        if(this.showControls) {
-            this.updateButtons(this.wizard, true);
-        }
-        if(this.externalControls) {
-            this.updateButtons(this.externalControls, true);
-        }
-    },
-    onAnimationFinished: function (newStep, oldStep) {
-        if(newStep) {
-            this.updateProgress(newStep);
-            this.focusFirstField(newStep);
-            this.fireEvent("stepchanged", this, oldStep, newStep);
-            if(this.showControls) {
-                this.updateButtons(this.wizard);
-            }
-            if(this.externalControls) {
-                this.updateButtons(this.externalControls);
-            }
-            if(Ext.isFunction(newStep.getForm)) {
-                var newForm = newStep.getForm();
-                if(newForm) {
-                    newForm.onValidityChange(this.isStepValid(newStep));
-                }
-            }
-            this.doLayout();
-            return newStep;
-        }
-    },
-    focusFirstField: function (newStep) {
-        var activeItem = newStep || this.getActiveItem();
-        var firstField;
-        if(activeItem && (firstField = activeItem.down('field[disabled=false]'))) {
-            firstField.focus(false);
-            if(firstField.rendered && firstField.selectText) {
-                firstField.selectText(0, 0);
-            }
-        }
-    },
-    updateButtons: function (toolbar, disable) {
-        if(toolbar) {
-            var prev = this.down('#prev'), next = this.down('#next');
-            var hasNext = this.getNext(), hasPrev = this.getPrev();
-            if(prev) {
-                if(disable || !hasPrev) {
-                    prev.hide();
+                return boundItems;
+            };
+            WizardPanel.prototype.handleValidityChange = function (form, valid, opts) {
+                if(!valid) {
+                    Ext.Array.include(this.invalidItems, form);
                 } else {
-                    prev.show();
+                    Ext.Array.remove(this.invalidItems, form);
                 }
-            }
-            if(next) {
-                if(disable || !hasNext) {
-                    next.hide();
+                this.updateProgress();
+                var isWizardValid = this.invalidItems.length === 0;
+                if(this.isWizardValid !== isWizardValid) {
+                    this.isWizardValid = isWizardValid;
+                    var actionButton = this.getActionButton();
+                    if(actionButton) {
+                        actionButton.setVisible(isWizardValid);
+                    }
+                    this.ext.fireEvent('validitychange', this, isWizardValid);
+                }
+            };
+            WizardPanel.prototype.handleDirtyChange = function (form, dirty, opts) {
+                if(dirty) {
+                    Ext.Array.include(this.dirtyItems, form);
                 } else {
-                    next.show();
+                    Ext.Array.remove(this.dirtyItems, form);
                 }
-                next.removeCls('admin-prev-button');
-                next.removeCls('admin-button');
-                next.addCls(hasPrev ? 'admin-prev-button' : 'admin-button');
-            }
-        }
-    },
-    changeStep: function (event, target) {
-        var progressBar = this.down('#progressBar');
-        var isNew = this.isNew;
-        var isDisabled = progressBar.isDisabled();
-        var li = target && target.tagName === "LI" ? Ext.fly(target) : Ext.fly(target).up('li');
-        if((!isDisabled && isNew && li && li.hasCls('next') && li.hasCls('immediate')) || (!isDisabled && !isNew) || (isDisabled && !isNew && li && !li.hasCls('last')) || (li && li.hasCls('previous'))) {
-            var step = Number(li.getAttribute('wizardStep'));
-            this.navigate(step - 1);
-        }
-        event.stopEvent();
-    },
-    createHeaderPanel: function () {
-        var icon = this.createIcon();
-        return {
-            xtype: 'container',
-            itemId: 'wizardHeaderPanel',
-            cls: 'admin-wizard-panel',
-            padding: '10 0 0 10',
-            margin: '0 0 0 0',
-            layout: {
-                type: 'table',
-                columns: 2,
-                tableAttrs: {
-                    width: '100%'
+                this.updateProgress();
+                var isWizardDirty = this.dirtyItems.length > 0;
+                if(this.isWizardDirty !== isWizardDirty) {
+                    this.isWizardDirty = isWizardDirty;
+                    this.ext.fireEvent('dirtychange', this, isWizardDirty);
                 }
-            },
-            items: [
-                Ext.applyIf(icon, {
-                    rowspan: 2,
-                    tdAttrs: {
-                        style: 'padding-right: 10px'
+            };
+            WizardPanel.prototype.isStepValid = function (step) {
+                var isStepValid = Ext.Array.intersect(this.invalidItems, this.validateItems).length === 0;
+                var activeStep = step || this.getActiveItem();
+                var activeForm;
+                if(activeStep && Ext.isFunction(activeStep.getForm)) {
+                    activeForm = activeStep.getForm();
+                }
+                if(isStepValid && activeForm) {
+                    isStepValid = isStepValid && !activeForm.hasInvalidField();
+                }
+                return isStepValid;
+            };
+            WizardPanel.prototype.getProgressBar = function () {
+                return this.ext.down('#progressBar');
+            };
+            WizardPanel.prototype.createRibbon = function () {
+                var _this = this;
+                var me = this;
+                var stepsTpl = '<div class="navigation-container">' + '<ul class="navigation clearfix">' + '<tpl for=".">' + '<li class="{[ this.resolveClsName( xindex, xcount ) ]}" wizardStep="{[xindex]}">' + '<a href="javascript:;" class="step {[ this.resolveClsName( xindex, xcount ) ]}">{[' + '(values.stepTitle || values.title) ]}</a></li>' + '</tpl>' + '</ul>' + '</div>';
+                return {
+                    xtype: 'component',
+                    flex: 1,
+                    cls: 'toolbar',
+                    disabledCls: 'toolbar-disabled',
+                    itemId: 'progressBar',
+                    width: '100%',
+                    listeners: {
+                        click: {
+                            fn: me.changeStep,
+                            element: 'el',
+                            scope: me
+                        }
+                    },
+                    styleHtmlContent: true,
+                    margin: 0,
+                    tpl: new Ext.XTemplate(stepsTpl, {
+                        resolveClsName: function (index, total) {
+                            var activeIndex = me.wizard.items.indexOf(_this.getActiveItem()) + 1;
+                            var clsName = '';
+                            if(index === 1) {
+                                clsName += 'first ';
+                            }
+                            if(index < activeIndex) {
+                                clsName += 'previous ';
+                            }
+                            if(index + 1 === activeIndex) {
+                                clsName += 'immediate ';
+                            }
+                            if(index === activeIndex) {
+                                clsName += 'current ';
+                            }
+                            if(index > activeIndex) {
+                                clsName += 'next ';
+                            }
+                            if(index - 1 === activeIndex) {
+                                clsName += 'immediate ';
+                            }
+                            if(index === total) {
+                                clsName += 'last ';
+                            }
+                            return clsName;
+                        }
+                    })
+                };
+            };
+            WizardPanel.prototype.onAnimationStarted = function (newStep, oldStep) {
+                if(this.showControls) {
+                    this.updateButtons(this.wizard, true);
+                }
+                if(this.externalControls) {
+                    this.updateButtons(this.externalControls, true);
+                }
+            };
+            WizardPanel.prototype.onAnimationFinished = function (newStep, oldStep) {
+                var me = this.ext;
+                if(newStep) {
+                    this.updateProgress(newStep);
+                    this.focusFirstField(newStep);
+                    me.fireEvent("stepchanged", this, oldStep, newStep);
+                    if(this.showControls) {
+                        this.updateButtons(this.wizard);
                     }
-                }), 
-                Ext.applyIf(this.createWizardHeader(), {
-                    tdAttrs: {
-                        width: '100%'
+                    if(this.externalControls) {
+                        this.updateButtons(this.externalControls);
                     }
-                }), 
-                {
-                    itemId: 'positionPanel',
+                    if(Ext.isFunction(newStep.getForm)) {
+                        var newForm = newStep.getForm();
+                        if(newForm) {
+                            newForm.onValidityChange(this.isStepValid(newStep));
+                        }
+                    }
+                    me.doLayout();
+                    return newStep;
+                }
+                return null;
+            };
+            WizardPanel.prototype.focusFirstField = function (newStep) {
+                var activeItem = newStep || this.getActiveItem();
+                var firstField;
+                if(activeItem && (firstField = activeItem.down('field[disabled=false]'))) {
+                    firstField.focus(false);
+                    if(firstField.rendered && firstField.selectText) {
+                        firstField.selectText(0, 0);
+                    }
+                }
+            };
+            WizardPanel.prototype.updateButtons = function (toolbar, disable) {
+                var me = this.ext;
+                if(toolbar) {
+                    var prev = me.down('#prev'), next = me.down('#next');
+                    var hasNext = this.getNext(), hasPrev = this.getPrev();
+                    if(prev) {
+                        if(disable || !hasPrev) {
+                            prev.hide();
+                        } else {
+                            prev.show();
+                        }
+                    }
+                    if(next) {
+                        if(disable || !hasNext) {
+                            next.hide();
+                        } else {
+                            next.show();
+                        }
+                        next.removeCls('admin-prev-button');
+                        next.removeCls('admin-button');
+                        next.addCls(hasPrev ? 'admin-prev-button' : 'admin-button');
+                    }
+                }
+            };
+            WizardPanel.prototype.changeStep = function (event, target) {
+                var me = this.ext;
+                var progressBar = me.down('#progressBar');
+                var isNew = this.isNew;
+                var isDisabled = progressBar.isDisabled();
+                var li = target && target.tagName === "LI" ? Ext.fly(target) : Ext.fly(target).up('li');
+                if((!isDisabled && isNew && li && li.hasCls('next') && li.hasCls('immediate')) || (!isDisabled && !isNew) || (isDisabled && !isNew && li && !li.hasCls('last')) || (li && li.hasCls('previous'))) {
+                    var step = Number(li.getAttribute('wizardStep'));
+                    this.navigate(step - 1);
+                }
+                event.stopEvent();
+            };
+            WizardPanel.prototype.createHeaderPanel = function () {
+                var icon = this.createIcon();
+                var actionButton = Ext.apply(this.createActionButton(), {
+                    itemId: 'actionButton',
+                    ui: 'green',
+                    margin: '0 30 0 0',
+                    scale: 'large'
+                });
+                return {
                     xtype: 'container',
-                    style: {
-                        backgroundColor: '#EEEEEE'
-                    },
+                    itemId: 'wizardHeaderPanel',
+                    cls: 'admin-wizard-panel',
+                    padding: '10 0 0 10',
+                    margin: '0 0 0 0',
                     layout: {
-                        type: 'hbox',
-                        align: 'stretch'
-                    },
-                    tdAttrs: {
-                        style: 'vertical-align: bottom;'
+                        type: 'table',
+                        columns: 2,
+                        tableAttrs: {
+                            width: '100%'
+                        }
                     },
                     items: [
-                        Ext.applyIf(this.createRibbon(), {
-                            flex: 1
+                        Ext.applyIf(icon, {
+                            rowspan: 2,
+                            tdAttrs: {
+                                style: 'padding-right: 10px'
+                            }
                         }), 
-                        Ext.apply(this.createActionButton(), {
-                            itemId: 'actionButton',
-                            ui: 'green',
-                            margin: '0 30 0 0',
-                            scale: 'large'
-                        })
+                        Ext.applyIf(this.createWizardHeader(), {
+                            tdAttrs: {
+                                width: '100%'
+                            }
+                        }), 
+                        {
+                            itemId: 'positionPanel',
+                            xtype: 'container',
+                            style: {
+                                backgroundColor: '#EEEEEE'
+                            },
+                            layout: {
+                                type: 'hbox',
+                                align: 'stretch'
+                            },
+                            tdAttrs: {
+                                style: 'vertical-align: bottom;'
+                            },
+                            items: [
+                                Ext.applyIf(this.createRibbon(), {
+                                    flex: 1
+                                }), 
+                                actionButton
+                            ]
+                        }
                     ]
-                }
-            ]
-        };
-    },
-    getActionButton: function () {
-        return this.down('#actionButton');
-    },
-    next: function (btn) {
-        return this.navigate("next", btn);
-    },
-    prev: function (btn) {
-        return this.navigate("prev", btn);
-    },
-    finish: function () {
-        this.fireEvent("finished", this, this.getData());
-    },
-    getNext: function () {
-        return this.wizard.getLayout().getNext();
-    },
-    getPrev: function () {
-        return this.wizard.getLayout().getPrev();
-    },
-    getActiveItem: function () {
-        return this.wizard.getLayout().getActiveItem();
-    },
-    navigate: function (direction, btn) {
-        var oldStep = this.getActiveItem();
-        if(btn) {
-            this.externalControls = btn.up('toolbar');
-        }
-        if(this.fireEvent("beforestepchanged", this, oldStep) !== false) {
-            var newStep;
-            switch(direction) {
-                case "-1":
-                case "prev":
-                    if(this.getPrev()) {
-                        newStep = this.wizard.getLayout().prev();
-                    }
-                    break;
-                case "+1":
-                case "next":
-                    if(this.getNext()) {
-                        newStep = this.wizard.getLayout().next();
-                    } else {
-                        this.finish();
-                    }
-                    break;
-                default:
-                    newStep = this.wizard.getLayout().setActiveItem(direction);
-                    break;
-            }
-        }
-    },
-    addData: function (newValues) {
-        if(Ext.isEmpty(this.data)) {
-            this.data = {
+                };
             };
-        }
-        Ext.merge(this.data, newValues);
-    },
-    deleteData: function (key) {
-        if(key) {
-            delete this.data[key];
-        }
-    },
-    getData: function () {
-        var me = this;
-        me.wizard.items.each(function (item) {
-            if(item.getData) {
-                me.addData(item.getData());
-            } else if(item.getForm) {
-                me.addData(item.getForm().getFieldValues());
-            }
-        });
-        return me.data;
-    },
-    createSteps: function () {
-    },
-    createIcon: function () {
-    },
-    createWizardHeader: function () {
-    },
-    createActionButton: function () {
-    }
-});
+            WizardPanel.prototype.getActionButton = function () {
+                return this.ext.down('#actionButton');
+            };
+            WizardPanel.prototype.next = function (btn) {
+                return this.navigate("next", btn);
+            };
+            WizardPanel.prototype.prev = function (btn) {
+                return this.navigate("prev", btn);
+            };
+            WizardPanel.prototype.finish = function () {
+                this.ext.fireEvent("finished", this, this.getData());
+            };
+            WizardPanel.prototype.getNext = function () {
+                return this.wizard.getLayout().getNext();
+            };
+            WizardPanel.prototype.getPrev = function () {
+                return this.wizard.getLayout().getPrev();
+            };
+            WizardPanel.prototype.getActiveItem = function () {
+                return this.wizard.getLayout().getActiveItem();
+            };
+            WizardPanel.prototype.navigate = function (direction, btn) {
+                var oldStep = this.getActiveItem();
+                if(btn) {
+                    this.externalControls = btn.up('toolbar');
+                }
+                if(this.ext.fireEvent("beforestepchanged", this, oldStep) !== false) {
+                    var newStep;
+                    switch(direction) {
+                        case "-1":
+                        case "prev":
+                            if(this.getPrev()) {
+                                newStep = this.wizard.getLayout().prev();
+                            }
+                            break;
+                        case "+1":
+                        case "next":
+                            if(this.getNext()) {
+                                newStep = this.wizard.getLayout().next();
+                            } else {
+                                this.finish();
+                            }
+                            break;
+                        default:
+                            newStep = this.wizard.getLayout().setActiveItem(direction);
+                            break;
+                    }
+                }
+            };
+            WizardPanel.prototype.addData = function (newValues) {
+                if(Ext.isEmpty(this.data)) {
+                    this.data = {
+                    };
+                }
+                Ext.merge(this.data, newValues);
+            };
+            WizardPanel.prototype.deleteData = function (key) {
+                if(key) {
+                    delete this.data[key];
+                }
+            };
+            WizardPanel.prototype.getData = function () {
+                var me = this;
+                me.wizard.items.each(function (item) {
+                    if(item.getData) {
+                        me.addData(item.getData());
+                    } else if(item.getForm) {
+                        me.addData(item.getForm().getFieldValues());
+                    }
+                });
+                return me.data;
+            };
+            WizardPanel.prototype.createSteps = function () {
+                return null;
+            };
+            WizardPanel.prototype.createIcon = function () {
+                return null;
+            };
+            WizardPanel.prototype.createWizardHeader = function () {
+                return null;
+            };
+            WizardPanel.prototype.createActionButton = function () {
+                return null;
+            };
+            WizardPanel.prototype.washDirtyForm = function (form) {
+                return null;
+            };
+            return WizardPanel;
+        })();
+        ui.WizardPanel = WizardPanel;        
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
 var admin;
 (function (admin) {
     (function (ui) {
@@ -3104,148 +3129,158 @@ var admin;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
-Ext.define('Admin.view.wizard.WizardPanel', {
-    extend: 'Admin.view.WizardPanel',
-    alias: 'widget.spaceAdminWizardPanel',
-    requires: [
-        'Admin.plugin.fileupload.PhotoUploadButton'
-    ],
-    border: 0,
-    autoScroll: true,
-    defaults: {
-        border: false
-    },
-    initComponent: function () {
-        var me = this;
-        var headerData = me.resolveHeaderData(me.data);
-        me.tbar = new admin.ui.SpaceWizardToolbar(headerData.isNewSpace).ext;
-        this.callParent(arguments);
-        var uploader = this.down('photoUploadButton');
-        uploader.on('fileuploaded', me.photoUploaded, me);
-    },
-    resolveHeaderData: function (data) {
-        var me = this;
-        var iconUrl = 'resources/images/icons/128x128/default_space.png';
-        var displayNameValue = '';
-        var spaceName = '';
-        if(data) {
-            displayNameValue = me.data.get('displayName') || '';
-            spaceName = me.data.get('name') || '';
-            iconUrl = me.data.get('iconUrl');
-        }
-        return {
-            'displayName': displayNameValue,
-            'spaceName': spaceName,
-            'isNewSpace': spaceName ? false : true,
-            'iconUrl': iconUrl
-        };
-    },
-    createSteps: function () {
-        var spaceStep = new admin.ui.SpaceStepPanel(this.data);
-        return [
-            spaceStep.ext, 
-            {
-                stepTitle: 'Schemas'
-            }, 
-            {
-                stepTitle: 'Modules'
-            }, 
-            {
-                stepTitle: 'Templates'
-            }, 
-            {
-                stepTitle: 'Security'
-            }, 
-            {
-                stepTitle: 'Summary'
+var admin;
+(function (admin) {
+    (function (ui) {
+        var SpaceWizardPanel = (function (_super) {
+            __extends(SpaceWizardPanel, _super);
+            function SpaceWizardPanel(id, title, editing) {
+                if (typeof editing === "undefined") { editing = false; }
+                var headerData = this.resolveHeaderData();
+                var panelConfig = {
+                    id: id,
+                    editing: editing,
+                    title: title,
+                    itemId: 'spaceAdminWizardPanel',
+                    border: 0,
+                    autoScroll: true,
+                    defaults: {
+                        border: false
+                    },
+                    tbar: new admin.ui.SpaceWizardToolbar(headerData.isNewSpace).ext
+                };
+                        _super.call(this, panelConfig);
+                var uploader = this.ext.down('photoUploadButton');
+                uploader.on('fileuploaded', this.photoUploaded, this);
             }
-        ];
-    },
-    createWizardHeader: function () {
-        var pathConfig = {
-            hidden: true
-        };
-        var wizardHeader = new admin.ui.WizardHeader(this.data, {
-        }, pathConfig);
-        this.validateItems.push(wizardHeader.ext);
-        return wizardHeader.ext;
-    },
-    createIcon: function () {
-        var me = this;
-        var headerData = me.resolveHeaderData(me.data);
-        return {
-            xtype: 'container',
-            width: 110,
-            height: 110,
-            items: [
-                {
-                    xtype: 'photoUploadButton',
+            SpaceWizardPanel.prototype.resolveHeaderData = function () {
+                var iconUrl = 'resources/images/icons/128x128/default_space.png';
+                var displayNameValue = '';
+                var spaceName = '';
+                var data = this.data;
+                if(data) {
+                    displayNameValue = data.get('displayName') || '';
+                    spaceName = data.get('name') || '';
+                    iconUrl = data.get('iconUrl');
+                }
+                return {
+                    'displayName': displayNameValue,
+                    'spaceName': spaceName,
+                    'isNewSpace': spaceName ? false : true,
+                    'iconUrl': iconUrl
+                };
+            };
+            SpaceWizardPanel.prototype.createSteps = function () {
+                var spaceStep = new admin.ui.SpaceStepPanel(this.data);
+                return [
+                    spaceStep.ext, 
+                    {
+                        stepTitle: 'Schemas'
+                    }, 
+                    {
+                        stepTitle: 'Modules'
+                    }, 
+                    {
+                        stepTitle: 'Templates'
+                    }, 
+                    {
+                        stepTitle: 'Security'
+                    }, 
+                    {
+                        stepTitle: 'Summary'
+                    }
+                ];
+            };
+            SpaceWizardPanel.prototype.createWizardHeader = function () {
+                var pathConfig = {
+                    hidden: true
+                };
+                var wizardHeader = new admin.ui.WizardHeader(this.data, {
+                }, pathConfig);
+                this.validateItems.push(wizardHeader.ext);
+                return wizardHeader.ext;
+            };
+            SpaceWizardPanel.prototype.createIcon = function () {
+                var me = this.ext;
+                var headerData = this.resolveHeaderData();
+                return {
+                    xtype: 'container',
                     width: 110,
                     height: 110,
-                    photoUrl: headerData.iconUrl,
-                    title: "Space",
-                    style: {
-                        margin: '1px'
-                    },
-                    progressBarHeight: 6,
-                    listeners: {
-                        mouseenter: function () {
-                            var imageToolTip = me.down('#imageToolTip');
-                            imageToolTip.show();
-                        },
-                        mouseleave: function () {
-                            var imageToolTip = me.down('#imageToolTip');
-                            imageToolTip.hide();
+                    items: [
+                        {
+                            xtype: 'photoUploadButton',
+                            width: 110,
+                            height: 110,
+                            photoUrl: headerData.iconUrl,
+                            title: "Space",
+                            style: {
+                                margin: '1px'
+                            },
+                            progressBarHeight: 6,
+                            listeners: {
+                                mouseenter: function () {
+                                    var imageToolTip = me.down('#imageToolTip');
+                                    imageToolTip.show();
+                                },
+                                mouseleave: function () {
+                                    var imageToolTip = me.down('#imageToolTip');
+                                    imageToolTip.hide();
+                                }
+                            }
+                        }, 
+                        {
+                            styleHtmlContent: true,
+                            height: 50,
+                            border: 0,
+                            itemId: 'imageToolTip',
+                            style: {
+                                top: '5px',
+                                zIndex: 1001
+                            },
+                            cls: 'admin-image-upload-button-image-tip',
+                            html: '<div class="x-tip x-tip-default x-layer" role="tooltip">' + '<div class="x-tip-anchor x-tip-anchor-top"></div>' + '<div class="x-tip-body  x-tip-body-default x-tip-body-default">' + 'Click to upload icon</div></div>',
+                            listeners: {
+                                afterrender: function (cmp) {
+                                    Ext.Function.defer(function () {
+                                        cmp.hide();
+                                    }, 10000);
+                                }
+                            }
                         }
-                    }
-                }, 
-                {
-                    styleHtmlContent: true,
-                    height: 50,
-                    border: 0,
-                    itemId: 'imageToolTip',
-                    style: {
-                        top: '5px',
-                        zIndex: 1001
-                    },
-                    cls: 'admin-image-upload-button-image-tip',
-                    html: '<div class="x-tip x-tip-default x-layer" role="tooltip">' + '<div class="x-tip-anchor x-tip-anchor-top"></div>' + '<div class="x-tip-body  x-tip-body-default x-tip-body-default">' + 'Click to upload icon</div></div>',
-                    listeners: {
-                        afterrender: function (cmp) {
-                            Ext.Function.defer(function () {
-                                cmp.hide();
-                            }, 10000);
-                        }
-                    }
-                }
-            ]
-        };
-    },
-    createActionButton: function () {
-        return {
-            xtype: 'button',
-            text: 'Save',
-            action: 'saveSpace'
-        };
-    },
-    getWizardHeader: function () {
-        return this.down('#wizardHeader');
-    },
-    getData: function () {
-        var data = this.callParent();
-        var headerData = this.getWizardHeader().getData();
-        return Ext.apply(data, {
-            displayName: headerData.displayName,
-            spaceName: headerData.name
-        });
-    },
-    photoUploaded: function (photoUploadButton, response) {
-        var iconRef = response.items && response.items.length > 0 && response.items[0].id;
-        this.addData({
-            iconRef: iconRef
-        });
-    }
-});
+                    ]
+                };
+            };
+            SpaceWizardPanel.prototype.createActionButton = function () {
+                return {
+                    xtype: 'button',
+                    text: 'Save',
+                    action: 'saveSpace'
+                };
+            };
+            SpaceWizardPanel.prototype.getWizardHeader = function () {
+                return this.ext.down('#wizardHeader');
+            };
+            SpaceWizardPanel.prototype.getData = function () {
+                var data = _super.prototype.getData.call(this);
+                var headerData = this.getWizardHeader().getData();
+                return Ext.apply(data, {
+                    displayName: headerData.displayName,
+                    spaceName: headerData.name
+                });
+            };
+            SpaceWizardPanel.prototype.photoUploaded = function (photoUploadButton, response) {
+                var iconRef = response.items && response.items.length > 0 && response.items[0].id;
+                this.addData({
+                    iconRef: iconRef
+                });
+            };
+            return SpaceWizardPanel;
+        })(admin.ui.WizardPanel);
+        ui.SpaceWizardPanel = SpaceWizardPanel;        
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
 var admin;
 (function (admin) {
     (function (ui) {
@@ -3327,11 +3362,9 @@ var admin;
                         return _this.onClick(e);
                     },
                     activate: function () {
-                        console.log('activate');
                         _this.activate();
                     },
                     deactivate: function () {
-                        console.log('deactivate');
                         _this.deactivate();
                     }
                 });
@@ -3383,7 +3416,6 @@ var admin;
                 topBarMenuItem.addEvents('activate', 'deactivate', 'click', 'closeMenuItem');
             };
             TopBarMenuItem.prototype.activate = function () {
-                console.log('activate');
                 var me = this.ext;
                 if(!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
                     me.el.addCls(me.activeCls);
@@ -3393,7 +3425,6 @@ var admin;
                 }
             };
             TopBarMenuItem.prototype.deactivate = function () {
-                console.log('deactivate');
                 var me = this.ext;
                 if(me.activated) {
                     me.el.removeCls(me.activeCls);
@@ -4544,13 +4575,8 @@ Ext.define('Admin.controller.Controller', {
     },
     showNewSpaceWindow: function () {
         var tabs = this.getCmsTabPanel();
-        var tabItem = {
-            id: 'new-space',
-            xtype: 'spaceAdminWizardPanel',
-            editing: true,
-            title: 'New Space'
-        };
-        tabs.addTab(tabItem);
+        var spaceWizardPanel = new admin.ui.SpaceWizardPanel('new-space', 'New Space', true);
+        tabs.addTab(spaceWizardPanel.ext);
     },
     viewSpace: function (space) {
         space = this.validateSpace(space);
@@ -4772,9 +4798,7 @@ Ext.define('Admin.controller.BrowseToolbarController', {
     extend: 'Admin.controller.Controller',
     stores: [],
     models: [],
-    views: [
-        'Admin.view.wizard.WizardPanel'
-    ],
+    views: [],
     init: function () {
         this.control({
             '#spaceBrowseToolbar *[action=newSpace]': {

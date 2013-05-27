@@ -6,7 +6,7 @@ Ext.define('Admin.controller.BrowseToolbarController', {
     stores: [],
     models: [],
     views: [
-        'Admin.view.wizard.WizardPanel'
+//        'Admin.view.wizard.WizardPanel'
     ],
 
     init: function () {

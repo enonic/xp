@@ -26,14 +26,15 @@ Ext.define('Admin.controller.Controller', {
     showNewSpaceWindow: function () {
         var tabs = this.getCmsTabPanel();
 
-        var tabItem = {
-            id: 'new-space',
-            xtype: 'spaceAdminWizardPanel',
-            editing: true,
-            title: 'New Space'
-        };
+//        var tabItem = {
+//            id: 'new-space',
+//            xtype: 'spaceAdminWizardPanel',
+//            editing: true,
+//            title: 'New Space'
+//        };
+        var spaceWizardPanel = new admin.ui.SpaceWizardPanel('new-space', 'New Space', true);
 
-        tabs.addTab(tabItem);
+        tabs.addTab(spaceWizardPanel.ext);
     },
 
     viewSpace: function (space:Ext_data_Model) {
