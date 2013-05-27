@@ -58,10 +58,6 @@ public final class BootContextListener
     {
         context.addListener( new RequestContextListener() );
 
-        /*
-        final FilterRegistration.Dynamic allowOriginFilter = context.addFilter( "allowOrigin", new AllowOriginFilter() );
-        allowOriginFilter.addMappingForUrlPatterns( EnumSet.of( DispatcherType.REQUEST ), true, "/*" );
-*/
         final FilterRegistration.Dynamic guiceFilter = context.addFilter( "guice", new GuiceFilter() );
         guiceFilter.addMappingForUrlPatterns( EnumSet.of( DispatcherType.REQUEST ), true, "/*" );
 

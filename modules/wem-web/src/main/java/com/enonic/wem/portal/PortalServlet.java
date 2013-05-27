@@ -1,10 +1,10 @@
 package com.enonic.wem.portal;
 
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 
+@Singleton
 public final class PortalServlet
     extends HttpServlet
 {
