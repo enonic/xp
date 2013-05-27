@@ -2414,8 +2414,9 @@ var admin;
                     text: 'Actions',
                     height: 30,
                     itemId: 'dropdown',
-                    tdAttr: {
-                        width: 120,
+                    margin: '0 20 0 0',
+                    tdAttrs: {
+                        width: 140,
                         valign: 'top',
                         style: {
                             padding: '0 20px 0 0'
