@@ -55,19 +55,18 @@ module LiveEdit {
             }
         }
 
-
         private onMutate(summaries:any, event:JQueryEventObject):void {
             if (summaries && summaries[0]) {
-                var targetComponent:JQuery = $(summaries[0].target),
-                    targetComponentIsSelected = targetComponent.hasClass('live-edit-selected-component'),
+                var component:JQuery = $(summaries[0].target),
+                    targetComponentIsSelected = component.hasClass('live-edit-selected-component'),
                     componentIsNotSelectedAndMouseIsOver = !targetComponentIsSelected && event.type === 'mouseOver.liveEdit.component',
-                    componentIsParagraphAndBeingEdited = targetComponent.attr('contenteditable');
+                    componentIsParagraphAndBeingEdited = component.attr('contenteditable');
                 if (componentIsParagraphAndBeingEdited) {
-                    $(window).trigger('paragraphEdit.liveEdit.component', [targetComponent]);
+                    $(window).trigger('paragraphEdit.liveEdit.component', [component]);
                 } else if (componentIsNotSelectedAndMouseIsOver) {
-                    $(window).trigger('mouseOver.liveEdit.component', [targetComponent]);
+                    $(window).trigger('mouseOver.liveEdit.component', [component]);
                 } else {
-                    $(window).trigger('select.liveEdit.component', [targetComponent]);
+                    $(window).trigger('select.liveEdit.component', [component]);
                 }
             }
         }

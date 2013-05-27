@@ -17,19 +17,14 @@ module LiveEdit.ui {
 
 
         private registerGlobalListeners():void {
-            $(window).on('mouseOver.liveEdit.component', (event, component) => {
-                this.componentMouseOver(component);
-            });
-
-            $(window).on('select.liveEdit.component', (event, component) => {
-                this.selectComponent(component);
-            });
-
-            $(window).on('deselect.liveEdit.component', () => this.deselect());
-
-            $(window).on('mouseOut.liveEdit.component sortStart.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', () => this.hide());
-
-            $(window).on('resize.liveEdit.window', () => this.handleWindowResize());
+            $(window).on('mouseOver.liveEdit.component', (event, component) => this.componentMouseOver(component));
+            $(window).on('select.liveEdit.component', (event, component)    => this.selectComponent(component));
+            $(window).on('deselect.liveEdit.component', ()                  => this.deselect());
+            $(window).on('mouseOut.liveEdit.component', ()                  => this.hide());
+            $(window).on('sortStart.liveEdit.component', ()                 => this.hide());
+            $(window).on('remove.liveEdit.component', ()                    => this.hide());
+            $(window).on('paragraphEdit.liveEdit.component', ()             => this.hide());
+            $(window).on('resize.liveEdit.window', ()                       => this.handleWindowResize());
 
             $(window).on('sortstop.liveedit.component', (event, uiEvent, ui, wasSelectedOnDragStart) => {
                 if (wasSelectedOnDragStart) {

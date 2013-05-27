@@ -3,7 +3,7 @@ module LiveEdit {
 
     export class Component {
 
-        private rootElement:JQuery;
+        private jQueryElement:JQuery;
         private type:string;
         private name:string;
         private key:string;
@@ -11,11 +11,11 @@ module LiveEdit {
         private highlightStyle:HighlighterStyle;
         private iconCls:string;
 
-        // fixme: move stuff from menu etc. into ComponentHelper
+        // fixme: move context menu stuff here
         private contextMenuConfig:any;
 
         constructor(element:JQuery) {
-            this.setRootElement(element);
+            this.setJQueryElement(element);
             this.setType(componentHelper.getComponentType(element));
             this.setName(componentHelper.getComponentName(element));
             this.setKey(componentHelper.getComponentKey(element));
@@ -24,12 +24,12 @@ module LiveEdit {
             this.setIconCls(componentHelper.resolveCssClassForComponent(element));
         }
 
-        getRootElement():JQuery {
-            return this.rootElement;
+        getJQueryElement():JQuery {
+            return this.jQueryElement;
         }
 
-        setRootElement(element:JQuery):void {
-            this.rootElement = element;
+        setJQueryElement(element:JQuery):void {
+            this.jQueryElement = element;
         }
 
         getType():string {

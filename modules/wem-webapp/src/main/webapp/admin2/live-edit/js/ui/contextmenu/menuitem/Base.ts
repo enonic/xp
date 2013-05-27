@@ -14,7 +14,6 @@ module LiveEdit.ui.contextmenu.menuitem {
             super();
         }
 
-
         createButton(config:ButtonConfig):JQuery {
             var id = config.id || '';
             var text = config.text;

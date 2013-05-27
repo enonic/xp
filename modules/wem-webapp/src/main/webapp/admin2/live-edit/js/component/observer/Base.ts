@@ -10,17 +10,13 @@ module LiveEdit.component.observer {
 
 
         attachMouseOverEvent():void {
-
             $(document).on('mouseover', this.cssSelector, (event:JQueryEventObject) => {
-                var component:JQuery = $(event.currentTarget);
-                var targetIsUiComponent = this.isLiveEditUiComponent($(event.target));
-                var cancelEvents = targetIsUiComponent || this.hasComponentSelected() || LiveEdit.DragDropSort.isDragging();
-                if (cancelEvents) {
+                if (this.cancelMouseOverEvent(event)) {
                     return;
                 }
                 event.stopPropagation();
 
-                $(window).trigger('mouseOver.liveEdit.component', [component]);
+                $(window).trigger('mouseOver.liveEdit.component', [$(event.currentTarget)]);
             });
         }
 
@@ -63,6 +59,12 @@ module LiveEdit.component.observer {
                     $(window).trigger('select.liveEdit.component', [component, pagePosition]);
                 }
             });
+        }
+
+
+        cancelMouseOverEvent(event:JQueryEventObject):Boolean {
+            var elementIsUiComponent = this.isLiveEditUiComponent($(event.target));
+            return elementIsUiComponent || this.hasComponentSelected() || LiveEdit.DragDropSort.isDragging();
         }
 
 

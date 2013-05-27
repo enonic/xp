@@ -26,7 +26,6 @@ module LiveEdit.ui {
             $(window).on('select.liveEdit.component', () => this.hide());
         }
 
-
         private addView():void {
             var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
                 '    <span class="live-edit-tool-tip-name-text"></span>' +
@@ -37,13 +36,11 @@ module LiveEdit.ui {
             this.appendTo($('body'));
         }
 
-
         private  setText(componentType:string, componentName:string):void {
             var $tooltip = this.getRootEl();
             $tooltip.children('.live-edit-tool-tip-type-text').text(componentType);
             $tooltip.children('.live-edit-tool-tip-name-text').text(componentName);
         }
-
 
         private attachEventListeners():void {
 
@@ -79,8 +76,7 @@ module LiveEdit.ui {
             $(document).on('mouseout', () => this.hide());
         }
 
-
-        getPosition(event:JQueryEventObject):ToolTipPosition {
+        private getPosition(event:JQueryEventObject):ToolTipPosition {
             var pageX = event.pageX;
             var pageY = event.pageY;
             var x = pageX + this.OFFSET_X;
@@ -102,8 +98,7 @@ module LiveEdit.ui {
             };
         }
 
-
-        hide():void {
+        private hide():void {
             this.getRootEl().css({
                 top: '-5000px',
                 left: '-5000px'

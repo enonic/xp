@@ -27,15 +27,15 @@ module LiveEdit.ui.contextmenu {
             console.log('Menu instantiated. Using jQuery ' + $().jquery);
         }
 
-
-        registerGlobalListeners():void {
+        private registerGlobalListeners():void {
             $(window).on('select.liveEdit.component', (event:JQueryEventObject, component:JQuery, pagePosition) => this.show(component, pagePosition));
-            $(window).on('deselect.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', () => this.hide());
+            $(window).on('deselect.liveEdit.component', () => this.hide());
+            $(window).on('remove.liveEdit.component', () => this.hide());
+            $(window).on('paragraphEdit.liveEdit.component', () => this.hide());
             $(window).on('sortStart.liveEdit.component', () => this.fadeOutAndHide());
         }
 
-
-        addView():void {
+        private addView():void {
             var html = '';
             html += '<div class="live-edit-component-menu live-edit-arrow-top" style="display: none">';
             html += '   <div class="live-edit-component-menu-title-bar">';
@@ -52,7 +52,6 @@ module LiveEdit.ui.contextmenu {
             this.addButtons();
         }
 
-
         private registerEvents():void {
             this.getRootEl().draggable({
                 handle: '.live-edit-component-menu-title-bar',
@@ -63,7 +62,6 @@ module LiveEdit.ui.contextmenu {
                 $(window).trigger('deselect.liveEdit.component');
             });
         }
-
 
         private show(component:JQuery, pagePosition):void {
             this.selectedComponent = component;
@@ -82,7 +80,6 @@ module LiveEdit.ui.contextmenu {
 
             this.hidden = false;
         }
-
 
         private hide():void {
             this.selectedComponent = null;
@@ -107,7 +104,6 @@ module LiveEdit.ui.contextmenu {
             });
         }
 
-
         private addButtons():void {
             var menuItem = LiveEdit.ui.contextmenu.menuitem;
 
@@ -129,7 +125,6 @@ module LiveEdit.ui.contextmenu {
             }
         }
 
-
         private updateMenuItemsForComponent(component:JQuery):void {
             var componentType = componentHelper.getComponentType(component);
             var buttonArray = this.getConfigForButton(componentType);
@@ -148,18 +143,15 @@ module LiveEdit.ui.contextmenu {
             }
         }
 
-
         private updateTitleBar(component:JQuery):void {
             var componentInfo = componentHelper.getComponentInfo(component);
             this.setIcon(component);
             this.setTitle(componentInfo.name);
         }
 
-
         private setTitle(titleText:string):void {
             this.getTitleElement().text(titleText);
         }
-
 
         private setIcon(component:JQuery):void {
             var iconCt:JQuery = this.getIconElement(),
@@ -168,31 +160,25 @@ module LiveEdit.ui.contextmenu {
             iconCt.attr('title', componentHelper.getComponentType(component));
         }
 
-
         private getButtons():any[] {
             return this.buttons;
         }
-
 
         private getConfigForButton(componentType:string):any {
             return this.buttonConfig[componentType];
         }
 
-
         private getIconElement():JQuery {
             return $('.live-edit-component-menu-title-icon', this.getRootEl());
         }
-
 
         private getTitleElement():JQuery {
             return $('.live-edit-component-menu-title-text', this.getRootEl());
         }
 
-
         private getCloseButton():JQuery {
             return $('.live-edit-component-menu-title-close-button', this.getRootEl());
         }
-
 
         private getMenuItemsPlaceholderElement():JQuery {
             return $('.live-edit-component-menu-items', this.getRootEl());

@@ -214,18 +214,18 @@ var LiveEdit;
         };
         MutationObserver.prototype.onMutate = function (summaries, event) {
             if(summaries && summaries[0]) {
-                var targetComponent = $(summaries[0].target), targetComponentIsSelected = targetComponent.hasClass('live-edit-selected-component'), componentIsNotSelectedAndMouseIsOver = !targetComponentIsSelected && event.type === 'mouseOver.liveEdit.component', componentIsParagraphAndBeingEdited = targetComponent.attr('contenteditable');
+                var component = $(summaries[0].target), targetComponentIsSelected = component.hasClass('live-edit-selected-component'), componentIsNotSelectedAndMouseIsOver = !targetComponentIsSelected && event.type === 'mouseOver.liveEdit.component', componentIsParagraphAndBeingEdited = component.attr('contenteditable');
                 if(componentIsParagraphAndBeingEdited) {
                     $(window).trigger('paragraphEdit.liveEdit.component', [
-                        targetComponent
+                        component
                     ]);
                 } else if(componentIsNotSelectedAndMouseIsOver) {
                     $(window).trigger('mouseOver.liveEdit.component', [
-                        targetComponent
+                        component
                     ]);
                 } else {
                     $(window).trigger('select.liveEdit.component', [
-                        targetComponent
+                        component
                     ]);
                 }
             }
@@ -389,11 +389,9 @@ var LiveEdit;
             var _this = this;
             if(this.itemIsDraggedFromComponentBar(ui.item)) {
                 var $componentBarComponent = $(event.target).children('.live-edit-component');
-                console.log($componentBarComponent);
                 var componentKey = $componentBarComponent.data('live-edit-component-key');
                 var componentType = $componentBarComponent.data('live-edit-component-type');
                 var url = '../../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
-                console.log(componentKey);
                 $componentBarComponent.hide();
                 $.ajax({
                     url: url,
@@ -484,7 +482,7 @@ var LiveEdit;
     var componentHelper = LiveEdit.ComponentHelper;
     var Component = (function () {
         function Component(element) {
-            this.setRootElement(element);
+            this.setJQueryElement(element);
             this.setType(componentHelper.getComponentType(element));
             this.setName(componentHelper.getComponentName(element));
             this.setKey(componentHelper.getComponentKey(element));
@@ -492,11 +490,11 @@ var LiveEdit;
             this.setHighlightStyle(componentHelper.getHighlighterStyleForComponent(element));
             this.setIconCls(componentHelper.resolveCssClassForComponent(element));
         }
-        Component.prototype.getRootElement = function () {
-            return this.rootElement;
+        Component.prototype.getJQueryElement = function () {
+            return this.jQueryElement;
         };
-        Component.prototype.setRootElement = function (element) {
-            this.rootElement = element;
+        Component.prototype.setJQueryElement = function (element) {
+            this.jQueryElement = element;
         };
         Component.prototype.getType = function () {
             return this.type;
@@ -556,15 +554,12 @@ var LiveEdit;
                 Base.prototype.attachMouseOverEvent = function () {
                     var _this = this;
                     $(document).on('mouseover', this.cssSelector, function (event) {
-                        var component = $(event.currentTarget);
-                        var targetIsUiComponent = _this.isLiveEditUiComponent($(event.target));
-                        var cancelEvents = targetIsUiComponent || _this.hasComponentSelected() || LiveEdit.DragDropSort.isDragging();
-                        if(cancelEvents) {
+                        if(_this.cancelMouseOverEvent(event)) {
                             return;
                         }
                         event.stopPropagation();
                         $(window).trigger('mouseOver.liveEdit.component', [
-                            component
+                            $(event.currentTarget)
                         ]);
                     });
                 };
@@ -599,6 +594,10 @@ var LiveEdit;
                             ]);
                         }
                     });
+                };
+                Base.prototype.cancelMouseOverEvent = function (event) {
+                    var elementIsUiComponent = this.isLiveEditUiComponent($(event.target));
+                    return elementIsUiComponent || this.hasComponentSelected() || LiveEdit.DragDropSort.isDragging();
                 };
                 Base.prototype.hasComponentSelected = function () {
                     return $('.live-edit-selected-component').length > 0;
@@ -1069,7 +1068,13 @@ var LiveEdit;
                 $(window).on('paragraphEdit.liveEdit.component', function (event, component) {
                     return _this.show(component);
                 });
-                $(window).on('paragraphLeave.liveEdit.component remove.liveEdit.component sortStart.liveEdit.component', function () {
+                $(window).on('paragraphLeave.liveEdit.component', function () {
+                    return _this.hide();
+                });
+                $(window).on('remove.liveEdit.component', function () {
+                    return _this.hide();
+                });
+                $(window).on('sortStart.liveEdit.component', function () {
                     return _this.hide();
                 });
             };
@@ -1166,10 +1171,19 @@ var LiveEdit;
             }
             Shader.prototype.registerGlobalListeners = function () {
                 var _this = this;
-                $(window).on('select.liveEdit.component paragraphEdit.liveEdit.component', function (event, component) {
+                $(window).on('select.liveEdit.component', function (event, component) {
                     return _this.show(component);
                 });
-                $(window).on('deselect.liveEdit.component remove.liveEdit.component sortStart.liveEdit.component', function () {
+                $(window).on('paragraphEdit.liveEdit.component', function (event, component) {
+                    return _this.show(component);
+                });
+                $(window).on('deselect.liveEdit.component', function () {
+                    return _this.hide();
+                });
+                $(window).on('remove.liveEdit.component', function () {
+                    return _this.hide();
+                });
+                $(window).on('sortStart.liveEdit.component', function () {
                     return _this.hide();
                 });
                 $(window).on('resize.liveEdit.window', function () {
@@ -1269,8 +1283,11 @@ var LiveEdit;
             }
             Cursor.prototype.registerGlobalListeners = function () {
                 var _this = this;
-                $(window).on('mouseOver.liveEdit.component select.liveEdit.component', function (event, component) {
-                    _this.updateCursor(component);
+                $(window).on('mouseOver.liveEdit.component', function (event, component) {
+                    return _this.updateCursor(component);
+                });
+                $(window).on('select.liveEdit.component', function (event, component) {
+                    return _this.updateCursor(component);
                 });
                 $(window).on('mouseOut.liveEdit.component', function () {
                     return _this.resetCursor();
@@ -1324,15 +1341,24 @@ var LiveEdit;
             Highlighter.prototype.registerGlobalListeners = function () {
                 var _this = this;
                 $(window).on('mouseOver.liveEdit.component', function (event, component) {
-                    _this.componentMouseOver(component);
+                    return _this.componentMouseOver(component);
                 });
                 $(window).on('select.liveEdit.component', function (event, component) {
-                    _this.selectComponent(component);
+                    return _this.selectComponent(component);
                 });
                 $(window).on('deselect.liveEdit.component', function () {
                     return _this.deselect();
                 });
-                $(window).on('mouseOut.liveEdit.component sortStart.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', function () {
+                $(window).on('mouseOut.liveEdit.component', function () {
+                    return _this.hide();
+                });
+                $(window).on('sortStart.liveEdit.component', function () {
+                    return _this.hide();
+                });
+                $(window).on('remove.liveEdit.component', function () {
+                    return _this.hide();
+                });
+                $(window).on('paragraphEdit.liveEdit.component', function () {
                     return _this.hide();
                 });
                 $(window).on('resize.liveEdit.window', function () {
@@ -1559,7 +1585,13 @@ var LiveEdit;
                     $(window).on('select.liveEdit.component', function (event, component, pagePosition) {
                         return _this.show(component, pagePosition);
                     });
-                    $(window).on('deselect.liveEdit.component remove.liveEdit.component paragraphEdit.liveEdit.component', function () {
+                    $(window).on('deselect.liveEdit.component', function () {
+                        return _this.hide();
+                    });
+                    $(window).on('remove.liveEdit.component', function () {
+                        return _this.hide();
+                    });
+                    $(window).on('paragraphEdit.liveEdit.component', function () {
                         return _this.hide();
                     });
                     $(window).on('sortStart.liveEdit.component', function () {

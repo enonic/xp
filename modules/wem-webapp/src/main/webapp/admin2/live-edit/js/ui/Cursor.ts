@@ -8,9 +8,8 @@ module LiveEdit.ui {
         }
 
         private registerGlobalListeners():void {
-            $(window).on('mouseOver.liveEdit.component select.liveEdit.component', (event:JQueryEventObject, component:JQuery) => {
-                this.updateCursor(component);
-            });
+            $(window).on('mouseOver.liveEdit.component', (event:JQueryEventObject, component) => this.updateCursor(component));
+            $(window).on('select.liveEdit.component', (event:JQueryEventObject, component:JQuery) => this.updateCursor(component));
             $(window).on('mouseOut.liveEdit.component', () => this.resetCursor());
         }
 
