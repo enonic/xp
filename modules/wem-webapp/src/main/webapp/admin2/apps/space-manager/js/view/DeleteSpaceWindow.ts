@@ -64,7 +64,8 @@ module admin.ui {
             ct.add(header, content);
 
             var buttonRow = new Ext.container.Container({
-                layout: { type: 'hbox', pack: 'end' }
+                layout: { type: 'hbox', pack: 'end' },
+                margin: '20 0 0 0'
             });
 
             var deleteButton = new Ext.button.Button({

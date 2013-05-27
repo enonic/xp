@@ -2862,7 +2862,8 @@ var admin;
                     layout: {
                         type: 'hbox',
                         pack: 'end'
-                    }
+                    },
+                    margin: '20 0 0 0'
                 });
                 var deleteButton = new Ext.button.Button({
                     text: 'Delete',
