@@ -191,32 +191,22 @@ public class RelationshipDaoImplTest
         commit();
 
         // exercise
-        Relationships storedRelationships = relationshipDao.selectFromContent( contentIdA, session );
+        Relationships storedRelationships = sortOnCreatedTime( relationshipDao.selectFromContent( contentIdA, session ) );
 
         // verify
         assertEquals( 3, storedRelationships.getSize() );
-        // sort relationships by creation time
-        final List<Relationship> storedRelationshipsSorted = new ArrayList<>( storedRelationships.getList() );
-        Collections.sort( storedRelationshipsSorted, new Comparator<Relationship>()
-        {
-            @Override
-            public int compare( final Relationship o1, final Relationship o2 )
-            {
-                return o1.getCreatedTime().compareTo( o2.getCreatedTime() );
-            }
-        } );
 
-        Relationship parentRelationshipToB = storedRelationshipsSorted.get( 0 );
+        Relationship parentRelationshipToB = storedRelationships.get( 0 );
         assertEquals( contentIdB, parentRelationshipToB.getToContent() );
         assertEquals( DataPath.from( "myParent[3].myData[1]" ), parentRelationshipToB.getManagingData() );
         assertEquals( PARENT, parentRelationshipToB.getType() );
 
-        Relationship parentRelationshipToC = storedRelationshipsSorted.get( 1 );
+        Relationship parentRelationshipToC = storedRelationships.get( 1 );
         assertEquals( contentIdC, parentRelationshipToC.getToContent() );
         assertEquals( null, parentRelationshipToC.getManagingData() );
         assertEquals( PARENT, parentRelationshipToC.getType() );
 
-        Relationship likeRelationshipToC = storedRelationshipsSorted.get( 2 );
+        Relationship likeRelationshipToC = storedRelationships.get( 2 );
         assertEquals( contentIdC, likeRelationshipToC.getToContent() );
         assertEquals( null, likeRelationshipToC.getManagingData() );
         assertEquals( LIKE, likeRelationshipToC.getType() );
@@ -255,5 +245,20 @@ public class RelationshipDaoImplTest
     private Content createContent( String path )
     {
         return newContent().path( ContentPath.from( path ) ).build();
+    }
+
+    private Relationships sortOnCreatedTime( Relationships relationships )
+    {
+        final List<Relationship> sortedList = new ArrayList<>( relationships.getList() );
+        Collections.sort( sortedList, new Comparator<Relationship>()
+        {
+            @Override
+            public int compare( final Relationship o1, final Relationship o2 )
+            {
+                return o1.getCreatedTime().compareTo( o2.getCreatedTime() );
+            }
+        } );
+
+        return Relationships.from( sortedList );
     }
 }
