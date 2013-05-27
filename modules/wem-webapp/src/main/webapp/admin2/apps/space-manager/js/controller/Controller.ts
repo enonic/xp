@@ -150,11 +150,7 @@ Ext.define('Admin.controller.Controller', {
     deleteSpaceWindow: null,
 
     getDeleteSpaceWindow: function () {
-        var win = this.deleteSpaceWindow;
-        if (!win) {
-            win = new admin.ui.DeleteSpaceWindow();
-        }
-        return win;
+        return components.deleteWindow;
     },
 
     /*  Getters */

@@ -4759,11 +4759,7 @@ Ext.define('Admin.controller.Controller', {
     },
     deleteSpaceWindow: null,
     getDeleteSpaceWindow: function () {
-        var win = this.deleteSpaceWindow;
-        if (!win) {
-            win = new admin.ui.DeleteSpaceWindow();
-        }
-        return win;
+        return components.deleteWindow;
     },
     getCmsTabPanel: function () {
         return components.tabPanel;
@@ -5123,6 +5119,7 @@ var components;
     components.detailPanel;
     components.gridPanel;
     components.tabPanel;
+    components.deleteWindow;
 })(components || (components = {}));
 Ext.application({
     name: 'spaceAdmin',
@@ -5173,7 +5170,7 @@ Ext.application({
             cls: 'admin-viewport'
         });
         wp.add(tabPanel);
-        new admin.ui.DeleteSpaceWindow();
+        components.deleteWindow = new admin.ui.DeleteSpaceWindow();
         new admin.ui.ContextMenu();
     }
 });

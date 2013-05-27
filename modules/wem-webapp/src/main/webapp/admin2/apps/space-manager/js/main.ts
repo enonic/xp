@@ -74,6 +74,7 @@ module components {
     export var detailPanel:admin.ui.SpaceDetailPanel;
     export var gridPanel;
     export var tabPanel;
+    export var deleteWindow;
 }
 
 Ext.application({
@@ -140,7 +141,7 @@ Ext.application({
         wp.add(tabPanel);
 
         // Instanciating classes that will be triggered by events
-        new admin.ui.DeleteSpaceWindow();
+        components.deleteWindow = new admin.ui.DeleteSpaceWindow();
         new admin.ui.ContextMenu();
     }
 
