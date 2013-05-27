@@ -34,7 +34,7 @@ module admin.ui {
             }
         ];
 
-        constructor(region?:String, id?:string, model?:Ext_data_Model) {
+        constructor(region?:String, id?:string, model?:APP.model.SpaceModel) {
             var cls = 'admin-preview-panel admin-detail' + ( this.isVertical ? 'admin-detail-vertical' : '' );
             var p = this.ext = new Ext.panel.Panel({
                 id: id,
@@ -73,13 +73,13 @@ module admin.ui {
                 }
             }, this);
 
-            p.add(this.noSelection());
-            p.add(this.singleSelectionComponent(this.data));
-            p.add(this.smallBoxSelection(this.data));
-            p.add(this.largeBoxSelection(this.data));
+            p.add(this.createNoSelectionView());
+            p.add(this.createSingleSelectionView(this.data));
+            p.add(this.createSmallBoxSelectionView(this.data));
+            p.add(this.createLargeBoxSelectionView(this.data));
         }
 
-        private noSelection() {
+        private createNoSelectionView() {
             return new Ext.panel.Panel({
                 itemId: 'noSelection',
                 styleHtmlContent: true,
@@ -89,7 +89,7 @@ module admin.ui {
             });
         }
 
-        private singleSelectionComponent(data) {
+        private createSingleSelectionView(data) {
             var c = new Ext.container.Container({
                 itemId: 'singleSelection',
                 layout: 'border',
@@ -188,7 +188,7 @@ module admin.ui {
             return c;
         }
 
-        private smallBoxSelection(data) {
+        private createSmallBoxSelectionView(data) {
             return new Ext.Component({
                 data: data,
                 itemId: 'smallBoxSelection',
@@ -211,7 +211,7 @@ module admin.ui {
             });
         }
 
-        private largeBoxSelection(data) {
+        private createLargeBoxSelectionView(data) {
             return new Ext.Component({
                 data: data,
                 itemId: 'largeBoxSelection',

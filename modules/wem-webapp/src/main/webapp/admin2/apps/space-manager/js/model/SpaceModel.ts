@@ -11,7 +11,7 @@ Ext.define('Admin.model.SpaceModel', {
 });
 
 module APP.model {
-    export interface SpaceModel {
+    export interface SpaceModel extends Ext_data_Model {
         name:String;
         displayName:String;
         iconUrl:String;

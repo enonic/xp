@@ -10,7 +10,10 @@ module admin.ui {
             return this.ext;
         }
 
-        constructor(config) {
+        constructor(config:{
+            appName:string;
+            appIconCls:string;
+        }) {
             this.ext = new Ext.tab.Panel({
                 appName: config.appName,
                 appIconCls: config.appIconCls,
