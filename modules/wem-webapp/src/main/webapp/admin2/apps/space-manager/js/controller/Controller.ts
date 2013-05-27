@@ -73,20 +73,18 @@ Ext.define('Admin.controller.Controller', {
         }, function (r) {
             tabs.el.unmask();
             if (r) {
-                var tabItem = {
-                    id: me.generateTabId(space, true),
-                    editing: true,
-                    xtype: 'spaceAdminWizardPanel',
-                    data: space,
-                    title: space.get('displayName')
-                };
+                var id = me.generateTabId(space, true);
+                var editing = true;
+                var title = <string> space.get('displayName');
+                var data = space;
+                var spaceWizardPanel = new admin.ui.SpaceWizardPanel(id, title, editing, data);
 
                 //check if preview tab is open and close it
                 var index = tabs.items.indexOfKey(me.generateTabId(space, false));
                 if (index >= 0) {
                     tabs.remove(index);
                 }
-                tabs.addTab(tabItem, index >= 0 ? index : undefined, undefined);
+                tabs.addTab(spaceWizardPanel.ext, index >= 0 ? index : undefined, undefined);
             } else {
                 Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve space.");
             }

@@ -2,12 +2,13 @@ module admin.ui {
 
     export class SpaceWizardPanel extends admin.ui.WizardPanel {
 
-        constructor(id: string, title: string, editing: bool = false) {
+        constructor(id:string, title:string, editing:bool, data?:any) {
             var headerData = this.resolveHeaderData();
             var panelConfig = {
                 id: id,
                 editing: editing,
                 title: title,
+                data: data,
 
                 itemId: 'spaceAdminWizardPanel',
                 border: 0,
