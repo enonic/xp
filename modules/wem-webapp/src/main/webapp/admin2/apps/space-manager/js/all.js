@@ -929,7 +929,7 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
         var height = this.height;
         var title = this.title;
         var progressBarHeight = this.progressBarHeight;
-        var photoUrl = this.photoUrl || 'resources/images/x-user-photo.png';
+        var photoUrl = this.prepareUrl(this.photoUrl || 'resources/images/x-user-photo.png');
         this.update({
             id: buttonElementId,
             width: width,
@@ -939,6 +939,12 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
             title: title
         });
         this.buttonElementId = buttonElementId;
+    },
+    prepareUrl: function (url) {
+        if (url.indexOf('/') == 0) {
+            return url;
+        }
+        return APP.id + '/' + url;
     },
     afterRender: function () {
         this.initUploader();
