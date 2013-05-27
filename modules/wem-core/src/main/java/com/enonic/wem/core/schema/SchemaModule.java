@@ -31,7 +31,7 @@ import com.enonic.wem.core.schema.relationship.UpdateRelationshipTypesHandler;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDaoImpl;
 
-public class SchemaModule
+public final class SchemaModule
     extends AbstractModule
 {
     @Override

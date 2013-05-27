@@ -7,7 +7,7 @@ import com.enonic.wem.core.command.CommandBinder;
 import com.enonic.wem.core.relationship.dao.RelationshipDao;
 import com.enonic.wem.core.relationship.dao.RelationshipDaoImpl;
 
-public class RelationshipModule
+public final class RelationshipModule
     extends AbstractModule
 {
     @Override
