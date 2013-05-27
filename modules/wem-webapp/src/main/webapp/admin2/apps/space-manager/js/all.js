@@ -4915,25 +4915,25 @@ Ext.define('Admin.controller.WizardController', {
     init: function () {
         var me = this;
         me.control({
-            'spaceAdminWizardPanel *[action=closeWizard]': {
+            '#spaceAdminWizardPanel *[action=closeWizard]': {
                 click: me.closeWizard
             },
-            'spaceAdminWizardPanel *[action=saveSpace]': {
+            '#spaceAdminWizardPanel *[action=saveSpace]': {
                 click: function (el) {
-                    me.saveSpace(el.up('spaceAdminWizardPanel'), false);
+                    me.saveSpace(this.getWizardPanel(), false);
                 }
             },
-            'spaceAdminWizardPanel *[action=deleteSpace]': {
+            '#spaceAdminWizardPanel *[action=deleteSpace]': {
                 click: function () {
                     this.deleteSpace(this.getWizardTab());
                 }
             },
-            'spaceAdminWizardPanel #wizardHeader': {
+            '#spaceAdminWizardPanel #wizardHeader': {
                 displaynamechange: function (newVal, oldVal) {
                     this.getTopBar().setTitleButtonText(newVal);
                 }
             },
-            'spaceAdminWizardPanel': {
+            '#spaceAdminWizardPanel': {
                 'validitychange': function (wizard, isValid) {
                     this.updateWizardToolbarButtons(wizard.isWizardDirty, isValid);
                 },
