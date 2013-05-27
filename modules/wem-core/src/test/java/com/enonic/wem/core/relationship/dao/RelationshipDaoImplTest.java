@@ -1,6 +1,11 @@
 package com.enonic.wem.core.relationship.dao;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
@@ -178,10 +183,11 @@ public class RelationshipDaoImplTest
         ContentId contentIdD = contentDao.create( createContent( "myspace:d" ), session );
         commit();
 
-        relationshipDao.create( createRelationship( contentIdA, contentIdB, PARENT, DataPath.from( "myParent[3].myData[1]" ) ), session );
-        relationshipDao.create( createRelationship( contentIdA, contentIdC, PARENT ), session );
-        relationshipDao.create( createRelationship( contentIdA, contentIdC, LIKE ), session );
-        relationshipDao.create( createRelationship( contentIdD, contentIdB, PARENT ), session );
+        relationshipDao.create(
+            createRelationship( contentIdA, contentIdB, PARENT, DataPath.from( "myParent[3].myData[1]" ), NOW.plusSeconds( 1 ) ), session );
+        relationshipDao.create( createRelationship( contentIdA, contentIdC, PARENT, NOW.plusSeconds( 2 ) ), session );
+        relationshipDao.create( createRelationship( contentIdA, contentIdC, LIKE, NOW.plusSeconds( 3 ) ), session );
+        relationshipDao.create( createRelationship( contentIdD, contentIdB, PARENT, NOW.plusSeconds( 4 ) ), session );
         commit();
 
         // exercise
@@ -189,18 +195,28 @@ public class RelationshipDaoImplTest
 
         // verify
         assertEquals( 3, storedRelationships.getSize() );
+        // sort relationships by creation time
+        final List<Relationship> storedRelationshipsSorted = new ArrayList<>( storedRelationships.getList() );
+        Collections.sort( storedRelationshipsSorted, new Comparator<Relationship>()
+        {
+            @Override
+            public int compare( final Relationship o1, final Relationship o2 )
+            {
+                return o1.getCreatedTime().compareTo( o2.getCreatedTime() );
+            }
+        } );
 
-        Relationship parentRelationshipToB = storedRelationships.get( 0 );
+        Relationship parentRelationshipToB = storedRelationshipsSorted.get( 0 );
         assertEquals( contentIdB, parentRelationshipToB.getToContent() );
         assertEquals( DataPath.from( "myParent[3].myData[1]" ), parentRelationshipToB.getManagingData() );
         assertEquals( PARENT, parentRelationshipToB.getType() );
 
-        Relationship parentRelationshipToC = storedRelationships.get( 1 );
+        Relationship parentRelationshipToC = storedRelationshipsSorted.get( 1 );
         assertEquals( contentIdC, parentRelationshipToC.getToContent() );
         assertEquals( null, parentRelationshipToC.getManagingData() );
         assertEquals( PARENT, parentRelationshipToC.getType() );
 
-        Relationship likeRelationshipToC = storedRelationships.get( 2 );
+        Relationship likeRelationshipToC = storedRelationshipsSorted.get( 2 );
         assertEquals( contentIdC, likeRelationshipToC.getToContent() );
         assertEquals( null, likeRelationshipToC.getManagingData() );
         assertEquals( LIKE, likeRelationshipToC.getType() );
@@ -208,11 +224,23 @@ public class RelationshipDaoImplTest
 
     private Relationship createRelationship( final ContentId contentA, final ContentId contentB, final QualifiedRelationshipTypeName type )
     {
-        return createRelationship( contentA, contentB, type, null );
+        return createRelationship( contentA, contentB, type, (DataPath) null );
+    }
+
+    private Relationship createRelationship( final ContentId contentA, final ContentId contentB, final QualifiedRelationshipTypeName type,
+                                             final DateTime createdTime )
+    {
+        return createRelationship( contentA, contentB, type, null, createdTime );
     }
 
     private Relationship createRelationship( final ContentId contentA, final ContentId contentB, final QualifiedRelationshipTypeName type,
                                              final DataPath managingData )
+    {
+        return createRelationship( contentA, contentB, type, managingData, NOW );
+    }
+
+    private Relationship createRelationship( final ContentId contentA, final ContentId contentB, final QualifiedRelationshipTypeName type,
+                                             final DataPath managingData, final DateTime createdTime )
     {
         return Relationship.newRelationship().
             type( type ).
@@ -220,7 +248,7 @@ public class RelationshipDaoImplTest
             toContent( contentB ).
             managed( managingData ).
             creator( AccountKey.superUser() ).
-            createdTime( NOW ).
+            createdTime( createdTime ).
             build();
     }
 
