@@ -12,7 +12,7 @@ import com.enonic.wem.api.schema.content.form.FormItemSet;
 import com.enonic.wem.api.schema.content.form.Input;
 import com.enonic.wem.api.schema.content.form.Layout;
 import com.enonic.wem.api.schema.content.form.MixinReference;
-import com.enonic.wem.api.schema.content.form.inputtype.ImageConfig;
+import com.enonic.wem.api.schema.content.form.inputtype.ImageSelectorConfig;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.schema.content.form.inputtype.SingleSelectorConfig;
@@ -27,7 +27,7 @@ import static com.enonic.wem.api.schema.content.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.schema.content.form.Input.newInput;
 import static com.enonic.wem.api.schema.content.form.MixinReference.newMixinReference;
-import static com.enonic.wem.api.schema.content.form.inputtype.ImageConfig.newImageConfig;
+import static com.enonic.wem.api.schema.content.form.inputtype.ImageSelectorConfig.newImageSelectorConfig;
 import static com.enonic.wem.api.schema.content.form.inputtype.RelationshipConfig.newRelationshipConfig;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
@@ -286,7 +286,7 @@ public abstract class AbstractContentTypeSerializerTest
             relationshipType( QualifiedRelationshipTypeName.LIKE ).
             build();
 
-        ImageConfig imageConfig = newImageConfig().
+        ImageSelectorConfig imageSelectorConfig = newImageSelectorConfig().
             relationshipType( QualifiedRelationshipTypeName.DEFAULT ).
             build();
 
@@ -314,7 +314,8 @@ public abstract class AbstractContentTypeSerializerTest
         contentTypeBuilder.addFormItem( newInput().name( "myXml" ).inputType( InputTypes.XML ).build() );
         contentTypeBuilder.addFormItem(
             newInput().name( "myRelationship" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( relationshipConfig ).build() );
-        contentTypeBuilder.addFormItem( newInput().name( "myImage" ).inputType( InputTypes.IMAGE ).inputTypeConfig( imageConfig ).build() );
+        contentTypeBuilder.addFormItem(
+            newInput().name( "myImage" ).inputType( InputTypes.IMAGE_SELECTOR ).inputTypeConfig( imageSelectorConfig ).build() );
 
         return contentTypeBuilder.build();
     }

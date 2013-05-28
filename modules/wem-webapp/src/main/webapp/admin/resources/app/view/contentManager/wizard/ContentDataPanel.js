@@ -10,6 +10,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
         'Admin.view.contentManager.wizard.form.input.TextArea',
         'Admin.view.contentManager.wizard.form.input.TextLine',
         'Admin.view.contentManager.wizard.form.input.Image',
+        'Admin.view.contentManager.wizard.form.input.ImageSelector',
         'Admin.view.contentManager.wizard.form.InputContainer',
         'Admin.view.contentManager.wizard.form.FormItemSetContainer'
     ],

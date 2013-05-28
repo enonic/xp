@@ -22,6 +22,8 @@ public final class InputTypes
 
     public static final Image IMAGE = new Image();
 
+    public static final ImageSelector IMAGE_SELECTOR = new ImageSelector();
+
     public static final ImageUpload IMAGE_UPLOAD = new ImageUpload();
 
     public static final Money MONEY = new Money();
@@ -54,6 +56,7 @@ public final class InputTypes
         register( GEO_LOCATION );
         register( HTML_AREA );
         register( IMAGE );
+        register( IMAGE_SELECTOR );
         register( MONEY );
         register( PHONE );
         register( RELATIONSHIP );

@@ -2,15 +2,15 @@ package com.enonic.wem.api.schema.content.form.inputtype;
 
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 
-public class ImageConfig
+public class ImageSelectorConfig
     extends RelationshipConfig
 {
-    private ImageConfig( final Builder builder )
+    private ImageSelectorConfig( final Builder builder )
     {
         super( builder );
     }
 
-    public static Builder newImageConfig()
+    public static Builder newImageSelectorConfig()
     {
         return new Builder();
     }
@@ -30,9 +30,9 @@ public class ImageConfig
             return this;
         }
 
-        public ImageConfig build()
+        public ImageSelectorConfig build()
         {
-            return new ImageConfig( this );
+            return new ImageSelectorConfig( this );
         }
     }
 

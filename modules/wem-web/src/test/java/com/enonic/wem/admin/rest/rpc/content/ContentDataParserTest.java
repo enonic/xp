@@ -26,7 +26,7 @@ import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.schema.content.form.Input.newInput;
-import static com.enonic.wem.api.schema.content.form.inputtype.ImageConfig.newImageConfig;
+import static com.enonic.wem.api.schema.content.form.inputtype.ImageSelectorConfig.newImageSelectorConfig;
 import static com.enonic.wem.api.schema.content.form.inputtype.RelationshipConfig.newRelationshipConfig;
 import static org.junit.Assert.*;
 
@@ -94,7 +94,7 @@ public class ContentDataParserTest
         final ContentType contentType = newContentType().
             module( ModuleName.from( "mymodule" ) ).
             name( "my_content_type" ).
-            addFormItem( newInput().name( "myImage" ).inputType( InputTypes.IMAGE ).inputTypeConfig( newImageConfig().
+            addFormItem( newInput().name( "myImage" ).inputType( InputTypes.IMAGE_SELECTOR ).inputTypeConfig( newImageSelectorConfig().
                 relationshipType( QualifiedRelationshipTypeName.DEFAULT ).
                 build() ).build() ).
             build();

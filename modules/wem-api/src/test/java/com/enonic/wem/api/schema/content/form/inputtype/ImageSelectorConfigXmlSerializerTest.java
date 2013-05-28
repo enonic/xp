@@ -11,15 +11,15 @@ import org.xml.sax.SAXException;
 import com.enonic.wem.api.XmlTestHelper;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 
-import static com.enonic.wem.api.schema.content.form.inputtype.ImageConfig.newImageConfig;
+import static com.enonic.wem.api.schema.content.form.inputtype.ImageSelectorConfig.newImageSelectorConfig;
 import static junit.framework.Assert.assertEquals;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 
-public class ImageConfigXmlSerializerTest
+public class ImageSelectorConfigXmlSerializerTest
 {
     private XmlTestHelper xmlHelper;
 
-    private ImageConfigXmlSerializer serializer = new ImageConfigXmlSerializer();
+    private ImageSelectorConfigXmlSerializer serializer = new ImageSelectorConfigXmlSerializer();
 
     @Before
     public void before()
@@ -32,9 +32,9 @@ public class ImageConfigXmlSerializerTest
         throws IOException, SAXException
     {
         // setup
-        ImageConfig.Builder builder = newImageConfig();
+        ImageSelectorConfig.Builder builder = newImageSelectorConfig();
         builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        ImageConfig config = builder.build();
+        ImageSelectorConfig config = builder.build();
 
         // exercise
         Element configEl = new Element( "config" );
@@ -49,12 +49,12 @@ public class ImageConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        ImageConfig.Builder builder = newImageConfig();
+        ImageSelectorConfig.Builder builder = newImageSelectorConfig();
         builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        ImageConfig expected = builder.build();
+        ImageSelectorConfig expected = builder.build();
 
         // exercise
-        ImageConfig parsed = serializer.parseConfig( xmlHelper.loadXml( "parseConfig.xml" ).getRootElement() );
+        ImageSelectorConfig parsed = serializer.parseConfig( xmlHelper.loadXml( "parseConfig.xml" ).getRootElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -66,9 +66,9 @@ public class ImageConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        ImageConfig.Builder builder = newImageConfig();
+        ImageSelectorConfig.Builder builder = newImageSelectorConfig();
         builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        ImageConfig expected = builder.build();
+        ImageSelectorConfig expected = builder.build();
 
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
@@ -77,7 +77,7 @@ public class ImageConfigXmlSerializerTest
         xml.append( "</config>\n" );
 
         // exercise
-        ImageConfig parsed = serializer.parseConfig( xmlHelper.parse( xml.toString() ).getRootElement() );
+        ImageSelectorConfig parsed = serializer.parseConfig( xmlHelper.parse( xml.toString() ).getRootElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -88,8 +88,8 @@ public class ImageConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        ImageConfig.Builder builder = ImageConfig.newImageConfig();
-        ImageConfig expected = builder.build();
+        ImageSelectorConfig.Builder builder = ImageSelectorConfig.newImageSelectorConfig();
+        ImageSelectorConfig expected = builder.build();
 
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
@@ -97,7 +97,7 @@ public class ImageConfigXmlSerializerTest
         xml.append( "</config>\n" );
 
         // exercise
-        ImageConfig parsed = serializer.parseConfig( xmlHelper.parse( xml.toString() ).getRootElement() );
+        ImageSelectorConfig parsed = serializer.parseConfig( xmlHelper.parse( xml.toString() ).getRootElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );

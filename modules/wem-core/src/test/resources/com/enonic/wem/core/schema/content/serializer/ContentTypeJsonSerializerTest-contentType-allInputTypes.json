@@ -305,7 +305,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "Image",
+                    "name": "ImageSelector",
                     "builtIn": true,
                     "config": {
                         "relationshipType": "system:default"
