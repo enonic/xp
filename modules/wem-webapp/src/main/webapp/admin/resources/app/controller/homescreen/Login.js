@@ -75,7 +75,7 @@ Ext.define('Admin.controller.homescreen.Login', {
             loginFormPanel = me.getLoginFormPanelView();
 
         loginFormPanel.getForm().submit({
-            url: 'dummy-login-response.jsp',
+            url: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/auth/login'),
             success: function (form, action) {
                 Ext.util.Cookies.set('dummy_userIsLoggedIn', 'true');
 

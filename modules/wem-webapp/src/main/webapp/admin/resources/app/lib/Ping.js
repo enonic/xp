@@ -1,7 +1,7 @@
 Ext.define('Admin.lib.Ping', {
     singleton: true,
 
-    pingUrl: 'ping.jsp',
+    pingUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/status/ping'),
     intervalId: -1,
     pollIntervalMs: 5000,
     errorMessageId: null,

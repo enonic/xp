@@ -1,17 +1,16 @@
-<%@ page import="com.enonic.wem.web.jsp.JspHelper" %>
 <!DOCTYPE html>
 <html>
 <head>
-
   <meta charset="utf-8"/>
   <title>Enonic WEM Admin</title>
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/icons-icomoon.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons-metro.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/icons-icomoon.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/admin-preview-panel.css">
 
   <!-- WEM ExtJS theme -->
 
-  <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/admin.css">
+  <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/admin.css"/>
 
   <!-- ExtJS -->
 
@@ -23,7 +22,7 @@
   <script type="text/javascript">
 
     window.CONFIG = {
-      baseUrl: '<%= JspHelper.getBaseUrl(request) %>'
+      baseUrl: '..'
     };
 
     Ext.Loader.setConfig({
@@ -34,17 +33,19 @@
       },
       disableCaching: false
     });
-
   </script>
 
   <!-- Third party plugins -->
+
+  <link rel="stylesheet" type="text/css" href="resources/lib/codemirror/lib/codemirror.css">
+  <script type="text/javascript" src="resources/lib/codemirror/lib/codemirror.js"></script>
+  <script type="text/javascript" src="resources/lib/codemirror/lib/util/loadmode.js"></script>
 
   <script type="text/javascript" src="resources/lib/plupload/js/plupload.full.js"></script>
 
   <!-- Application -->
 
-  <script type="text/javascript" src="app-space-admin.js"></script>
-
+  <script type="text/javascript" src="app-schema-manager.js"></script>
 
 </head>
 <body>
