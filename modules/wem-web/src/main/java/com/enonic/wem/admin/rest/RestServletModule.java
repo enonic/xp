@@ -18,6 +18,6 @@ final class RestServletModule
         initProps.put( "com.sun.jersey.config.feature.DisableWADL", "true" );
         initProps.put( "com.sun.jersey.spi.container.ContainerResponseFilters", ResponseCorsFilter.class.getName() );
 
-        serve( "/admin/rest/*", "/dev/rest/*" ).with( GuiceContainer.class, initProps );
+        serve( "/admin/rest/*", "/dev/rest/*", "/admin2/apps/rest/*" ).with( GuiceContainer.class, initProps );
     }
 }
