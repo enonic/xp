@@ -184,9 +184,7 @@ module admin.ui {
             var data = super.getData();
             var headerData = this.getWizardHeader().getData();
 
-            console.log(headerData);
-
-            return this.merge_options(data, {
+            return this.merge(data, {
                 displayName: headerData.displayName,
                 spaceName: headerData.name
             });
@@ -197,7 +195,7 @@ module admin.ui {
             this.addData({iconRef: iconRef});
         }
 
-        private merge_options(obj1, obj2) {
+        private merge(obj1, obj2) {
             var obj3 = {};
             for (var attrname in obj1) {
                 obj3[attrname] = obj1[attrname];
