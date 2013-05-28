@@ -4,7 +4,7 @@
             "id": "app-10",
             "name": "Content Manager",
             "description": "Vel eius tation id, duo principes inciderint mediocritatem ut. Utroque ponderum duo ei. Cu cum choro delenit, est elitr utroque scripserit te. Mea ad lorem munere epicuri, clita omnes evertitur sed an. Eu aliquid ornatus principes vel. An eam justo malis debitis, ignota vocibus periculis in sit, alia adolescens ei has.",
-            "appUrl": "app-content-manager.jsp",
+            "appUrl": "app-content-manager.html",
             "icon": "resources/images/icons/metro/40x40/database.png"
         },
         {
@@ -18,21 +18,21 @@
             "id": "app-30",
             "name": "Space Admin",
             "description": "Ius nibh voluptua lobortis ut, ex nec hinc vitae. Eu qui reque movet, tota vivendum postulant ea mea, his oporteat consetetur te. Deserunt vituperatoribus cum ut, cu pri euismod expetenda adipiscing. Facilisi assueverit ad his, at mel posidonium neglegentur consequuntur. Sapientem complectitur usu te, errem platonem ad eam, ne vis assum fastidii.",
-            "appUrl": "app-space-admin.jsp",
+            "appUrl": "app-space-admin.html",
             "icon": "resources/images/icons/metro/40x40/earth.png"
         },
         {
             "id": "app-40",
             "name": "Schema Manager",
             "description": "Doctus recteque intellegat duo ut, cu vidit neglegentur duo, has tritani verterem id. Feugiat omnesque intellegam ut sea, elitr tractatos et mel, pri paulo definiebas liberavisse ea. Eos diceret electram no, ad liber dictas vel. Vix solum tation veritus eu.",
-            "appUrl": "app-schema-manager.jsp",
+            "appUrl": "app-schema-manager.html",
             "icon": "resources/images/icons/metro/40x40/signup.png"
         },
         {
             "id": "app-50",
             "name": "Store Manager",
             "description": "Ei malis impedit expetendis quo. His id iusto nihil quando, qui facer equidem molestie ei, dolore possit eripuit ad eum. Dissentiet instructior no nec, blandit salutandi ea vel, legere essent quo at. At eos consul perpetua. Sea duis postea et, cum agam justo cu. Nulla numquam vim no.",
-            "appUrl": "app-userstore.jsp",
+            "appUrl": "app-userstore.html",
             "icon": "resources/images/icons/metro/40x40/cart.png"
         },
         {
@@ -53,14 +53,14 @@
             "id": "app-80",
             "name": "Analytics",
             "description": "Ei veri vituperata cum, no habeo dicta diceret vis. Eirmod audiam efficiendi quo ne, et duo decore epicurei. In veri liber movet usu, posse lorem erroribus at usu. Mea in vidisse mentitum repudiare, invidunt sensibus adipiscing ea nec. Illud munere te sit, ad singulis definitionem his.",
-            "appUrl": "app-dashboard.jsp",
+            "appUrl": "app-dashboard.html",
             "icon": "resources/images/icons/metro/40x40/stats.png"
         },
         {
             "id": "app-90",
             "name": "Accounts",
             "description": "Ei veri vituperata cum, no habeo dicta diceret vis. Eirmod audiam efficiendi quo ne, et duo decore epicurei. In veri liber movet usu, posse lorem erroribus at usu. Mea in vidisse mentitum repudiare, invidunt sensibus adipiscing ea nec. Illud munere te sit, ad singulis definitionem his.",
-            "appUrl": "app-account.jsp",
+            "appUrl": "app-account.html",
             "icon": "resources/images/icons/metro/40x40/users.png"
         },
         {
