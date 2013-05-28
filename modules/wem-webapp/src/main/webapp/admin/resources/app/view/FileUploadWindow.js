@@ -103,9 +103,6 @@ Ext.define('Admin.view.FileUploadWindow', {
         var me = this;
         var dropZoneEl = container.down('#dropZone').el;
 
-        dropZoneEl.on('mouseenter', this.onDropZoneOver);
-        dropZoneEl.on('mouseleave', this.onDropZoneOut);
-
         this.uploader = new plupload.Uploader({
             runtimes: 'gears,html5,flash',
             browse_button: dropZoneEl.dom.id,
@@ -176,15 +173,6 @@ Ext.define('Admin.view.FileUploadWindow', {
         });
 
         this.uploader.init();
-    },
-
-    onDropZoneOver: function (event, target) {
-        Ext.fly(target).addCls('over');
-    },
-
-    onDropZoneOut: function (event, target) {
-        Ext.fly(target).removeCls('over');
     }
-
 });
 

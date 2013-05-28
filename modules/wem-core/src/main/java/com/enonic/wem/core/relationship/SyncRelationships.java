@@ -115,8 +115,11 @@ class SyncRelationships
             final Input relationshipInput = form.getInput( FormItemPath.from( addedReference.getPath().resolvePathElementNames() ) );
             Preconditions.checkNotNull( relationshipInput, "No Input found for Property: %s ", addedReference.getPath() );
             final RelationshipConfig relationshipConfig = (RelationshipConfig) relationshipInput.getInputTypeConfig();
-            final Relationship relationship = relationshipFactory.create( addedReference, relationshipConfig.getRelationshipType() );
-            relationshipsToAddBuilder.add( relationship );
+            if ( relationshipConfig != null )
+            {
+                final Relationship relationship = relationshipFactory.create( addedReference, relationshipConfig.getRelationshipType() );
+                relationshipsToAddBuilder.add( relationship );
+            }
         }
     }
 

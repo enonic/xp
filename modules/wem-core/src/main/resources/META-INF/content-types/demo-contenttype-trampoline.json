@@ -113,7 +113,7 @@
                             "validationRegexp": null,
                             "helpText": "",
                             "type": {
-                                "name": "Image",
+                                "name": "ImageSelector",
                                 "builtIn": true,
                                 "config": {
                                     "relationshipType": "system:default"
@@ -235,7 +235,7 @@
                                         "validationRegexp": null,
                                         "helpText": "",
                                         "type": {
-                                            "name": "Image",
+                                            "name": "ImageSelector",
                                             "builtIn": true,
                                             "config": {
                                                 "relationshipType": "system:default"

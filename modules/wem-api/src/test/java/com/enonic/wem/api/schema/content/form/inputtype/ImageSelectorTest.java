@@ -8,12 +8,12 @@ import com.enonic.wem.api.content.data.Value;
 import static junit.framework.Assert.assertEquals;
 
 
-public class ImageTest
+public class ImageSelectorTest
 {
     @Test
     public void newValue()
     {
-        Value value = new Image().newValue( "ABC" );
+        Value value = new ImageSelector().newValue( "ABC" );
         assertEquals( ContentId.from( "ABC" ), value.asContentId() );
     }
 }

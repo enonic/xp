@@ -13,11 +13,11 @@ import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import static com.enonic.wem.api.JsonTestHelper.assertJsonEquals;
 import static junit.framework.Assert.assertEquals;
 
-public class ImageConfigJsonSerializerTest
+public class ImageSelectorConfigJsonSerializerTest
 {
     private JsonTestHelper jsonHelper;
 
-    private ImageConfigJsonSerializer serializer = new ImageConfigJsonSerializer();
+    private ImageSelectorConfigJsonSerializer serializer = new ImageSelectorConfigJsonSerializer();
 
     @Before
     public void before()
@@ -30,9 +30,9 @@ public class ImageConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        ImageConfig.Builder builder = ImageConfig.newImageConfig();
+        ImageSelectorConfig.Builder builder = ImageSelectorConfig.newImageSelectorConfig();
         builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        ImageConfig config = builder.build();
+        ImageSelectorConfig config = builder.build();
 
         // exercise
         JsonNode json = serializer.serializeConfig( config, jsonHelper.objectMapper() );
@@ -46,8 +46,8 @@ public class ImageConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        ImageConfig.Builder builder = ImageConfig.newImageConfig();
-        ImageConfig config = builder.build();
+        ImageSelectorConfig.Builder builder = ImageSelectorConfig.newImageSelectorConfig();
+        ImageSelectorConfig config = builder.build();
 
         // exercise
         serializer.serializeConfig( config, jsonHelper.objectMapper() );
@@ -58,12 +58,12 @@ public class ImageConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        ImageConfig.Builder builder = ImageConfig.newImageConfig();
+        ImageSelectorConfig.Builder builder = ImageSelectorConfig.newImageSelectorConfig();
         builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
-        ImageConfig expected = builder.build();
+        ImageSelectorConfig expected = builder.build();
 
         // exercise
-        ImageConfig parsed = serializer.parseConfig( jsonHelper.loadTestJson( "parseConfig.json" ) );
+        ImageSelectorConfig parsed = serializer.parseConfig( jsonHelper.loadTestJson( "parseConfig.json" ) );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );

@@ -111,7 +111,7 @@ public class ContentTypesInitializer
     private static Form createMediaImageForm()
     {
         return Form.newForm().
-            addFormItem( Input.newInput().name( "binary" ).inputType( InputTypes.IMAGE_UPLOAD ).label( "Binary" ).build() ).
+            addFormItem( Input.newInput().name( "binary" ).inputType( InputTypes.IMAGE ).label( "Media" ).build() ).
             addFormItem( Input.newInput().name( "mimeType" ).inputType( InputTypes.TEXT_LINE ).label( "Mime type" ).build() ).
             build();
     }
