@@ -137,7 +137,7 @@
         <relationship-type>system:like</relationship-type>
       </config>
     </input>
-    <input type="Image" built-in="true" name="myImage">
+    <input type="ImageSelector" built-in="true" name="myImage">
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
