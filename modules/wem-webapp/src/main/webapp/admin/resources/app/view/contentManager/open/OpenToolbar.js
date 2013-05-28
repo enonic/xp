@@ -1,6 +1,6 @@
-Ext.define('Admin.view.contentManager.DetailToolbar', {
+Ext.define('Admin.view.contentManager.open.OpenToolbar', {
     extend: 'Ext.toolbar.Toolbar',
-    alias: 'widget.contentDetailToolbar',
+    alias: 'widget.contentOpenToolbar',
 
     cls: 'admin-toolbar',
 

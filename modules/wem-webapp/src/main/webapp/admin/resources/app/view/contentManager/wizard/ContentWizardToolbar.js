@@ -58,6 +58,11 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
                 itemId: 'export',
                 action: 'exportContent'
             },
+            '-',
+            {
+                text: 'Close',
+                action: 'closeWizard'
+            },
             '->',
             {
                 xtype: 'toggleslide',
@@ -71,10 +76,12 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
                     }
                 }
             },
-
             {
-                text: 'Close',
-                action: 'closeWizard'
+                iconCls: 'icon-toolbar-settings',
+                itemId: 'settingsButton',
+                action: 'showToolbarMenu',
+                minWidth: 42,
+                padding: '6 8 6 12'
             }
 
         ];

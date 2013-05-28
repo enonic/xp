@@ -3,7 +3,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     alias: 'widget.contentDetail',
 
     requires: [
-        'Admin.view.contentManager.DetailToolbar',
+        'Admin.view.contentManager.open.OpenToolbar',
         'Admin.view.contentManager.LivePreview',
         'Admin.view.account.MembershipsGraphPanel',
         'Ext.ux.toggleslide.ToggleSlide'
@@ -128,7 +128,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
     createToolBar: function () {
         var me = this;
-        return Ext.createByAlias('widget.contentDetailToolbar', {
+        return Ext.createByAlias('widget.contentOpenToolbar', {
             isLiveMode: me.isLiveMode
         });
     },

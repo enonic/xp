@@ -7,53 +7,53 @@ Ext.define('Admin.controller.contentManager.DetailToolbarController', {
     models: [
     ],
     views: [
-        'Admin.view.contentManager.DetailToolbar'
+        'Admin.view.contentManager.open.OpenToolbar'
     ],
 
     init: function () {
 
         this.control({
-            'contentDetailToolbar *[action=newContent]': {
+            'contentOpenToolbar *[action=newContent]': {
                 click: function (el, e) {
                     this.getNewContentWindow().doShow();
                 }
             },
-            'contentDetailToolbar *[action=editContent]': {
+            'contentOpenToolbar *[action=editContent]': {
                 click: function (el, e) {
                     this.editContent();
                 }
             },
-            'contentDetailToolbar *[action=deleteContent]': {
+            'contentOpenToolbar *[action=deleteContent]': {
                 click: function (el, e) {
                     this.deleteContent();
                 }
             },
-            'contentDetailToolbar *[action=duplicateContent]': {
+            'contentOpenToolbar *[action=duplicateContent]': {
                 click: function (el, e) {
                     this.duplicateContent();
                 }
             },
-            'contentDetailToolbar *[action=moveContent]': {
+            'contentOpenToolbar *[action=moveContent]': {
                 click: function (el, e) {
 
                 }
             },
-            'contentDetailToolbar *[action=relations]': {
+            'contentOpenToolbar *[action=relations]': {
                 click: function (el, e) {
 
                 }
             },
-            'contentDetailToolbar *[action=closeContent]': {
+            'contentOpenToolbar *[action=closeContent]': {
                 click: function (el, e) {
                     this.getCmsTabPanel().getActiveTab().close();
                 }
             },
-            'contentDetailToolbar *[action=toggleLive]': {
+            'contentOpenToolbar *[action=toggleLive]': {
                 change: function (slider, state) {
                     slider.up().down('#deviceCycle').setDisabled(!state);
                 }
             },
-            'contentDetailToolbar #deviceCycle': {
+            'contentOpenToolbar #deviceCycle': {
                 change: function (cycle, item) {
                     this.application.fireEvent('toggleDeviceContext', item.device);
                 }

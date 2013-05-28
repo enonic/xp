@@ -10,6 +10,9 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
     views: [
         'Admin.view.contentManager.wizard.ContentWizardPanel'
     ],
+    requires: [
+        'Admin.view.contentManager.wizard.WizardToolbarMenu'
+    ],
 
     init: function () {
         var me = this;
@@ -50,6 +53,11 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
             'contentWizardToolbar *[action=deleteContent]': {
                 click: function (el, e) {
                     this.deleteContent(this.getContentWizardTab().data);
+                }
+            },
+            'contentWizardToolbar *[action=showToolbarMenu]': {
+                click: function (button, event) {
+                    this.showToolbarMenu(button, event);
                 }
             },
             'contentWizardToolbar toggleslide': {
@@ -215,6 +223,11 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         );
     },
 
+    showToolbarMenu: function (button, event) {
+        event.stopEvent();
+        var menu = this.getWizardToolbarMenu();
+        menu.showAt(event.getX(), button.getEl().getY() + button.getEl().getHeight());
+    },
 
     /*      Getters     */
 
@@ -228,6 +241,17 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
 
     getContentLiveEditPanel: function () {
         return this.getContentWizardTab().down('contentLiveEditPanel');
+    },
+
+    getWizardToolbarMenu: function () {
+        var menu = Ext.ComponentQuery.query('wizardToolbarMenu')[0];
+        if (!menu) {
+            menu = Ext.create('widget.wizardToolbarMenu');
+
+            console.log(menu)
+        }
+        return menu;
     }
+
 
 });
