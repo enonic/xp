@@ -14,6 +14,7 @@ import com.enonic.wem.admin.rest.resource.jcr.GetNodesResource;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageResource;
 import com.enonic.wem.admin.rest.resource.space.SpaceImageResource;
 import com.enonic.wem.admin.rest.resource.status.PingResource;
+import com.enonic.wem.admin.rest.resource.tools.ToolsResource;
 import com.enonic.wem.admin.rest.resource.upload.UploadResource;
 import com.enonic.wem.admin.rest.rpc.account.ChangePasswordRpcHandler;
 import com.enonic.wem.admin.rest.rpc.account.CreateOrUpdateAccountRpcHandler;
@@ -91,6 +92,7 @@ public final class RestModule
         bind( UploadResource.class ).in( Scopes.SINGLETON );
         bind( AuthResource.class ).in( Scopes.SINGLETON );
         bind( PingResource.class ).in( Scopes.SINGLETON );
+        bind( ToolsResource.class ).in( Scopes.SINGLETON );
 
         final JsonRpcHandlerBinder handlers = JsonRpcHandlerBinder.from( binder() );
         handlers.add( ChangePasswordRpcHandler.class );
