@@ -72,7 +72,7 @@ module APP {
 
 module components {
     export var detailPanel:admin.ui.SpaceDetailPanel;
-    export var gridPanel;
+    export var gridPanel:admin.ui.TreeGridPanel;
     export var tabPanel;
     export var deleteWindow;
 }

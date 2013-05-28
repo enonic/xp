@@ -256,8 +256,7 @@ module admin.ui {
         }
 
         getData():Object {
-            var me = this.ext;
-            return me.getForm().getFieldValues();
+            return this.ext.getForm().getFieldValues();
         }
 
         getDisplayName():string {

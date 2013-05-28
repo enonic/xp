@@ -1718,8 +1718,7 @@ var admin;
                 }
             };
             WizardHeader.prototype.getData = function () {
-                var me = this.ext;
-                return me.getForm().getFieldValues();
+                return this.ext.getForm().getFieldValues();
             };
             WizardHeader.prototype.getDisplayName = function () {
                 return this.displayNameField.getValue();
@@ -2313,15 +2312,15 @@ var admin;
                 }
             };
             WizardPanel.prototype.getData = function () {
-                var me = this;
-                me.wizard.items.each(function (item) {
+                var _this = this;
+                this.wizard.items.each(function (item) {
                     if(item.getData) {
-                        me.addData(item.getData());
+                        _this.addData(item.getData());
                     } else if(item.getForm) {
-                        me.addData(item.getForm().getFieldValues());
+                        _this.addData(item.getForm().getFieldValues());
                     }
                 });
-                return me.data;
+                return this.data;
             };
             WizardPanel.prototype.createSteps = function () {
                 return null;
@@ -2983,6 +2982,9 @@ var admin;
                     return value;
                 }
             };
+            TreeGridPanel.prototype.refresh = function () {
+                this.store.loadPage(this.store.currentPage);
+            };
             TreeGridPanel.prototype.getSelection = function () {
                 var selection = [], activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection');
                 if(plugin) {
@@ -3155,6 +3157,33 @@ var admin;
                 var uploader = this.ext.down('photoUploadButton');
                 uploader.on('fileuploaded', this.photoUploaded, this);
             }
+            SpaceWizardPanel.prototype.saveSpace = function () {
+                var spaceWizardData = this.getData();
+                var displayName = spaceWizardData.displayName;
+                var spaceName = spaceWizardData.spaceName;
+                var iconReference = spaceWizardData.iconRef;
+                var spaceModel = this.data;
+                var originalSpaceName = spaceModel && spaceModel.get ? spaceModel.get('name') : undefined;
+                var spaceParams = {
+                    spaceName: originalSpaceName || spaceName,
+                    displayName: displayName,
+                    iconReference: iconReference,
+                    newSpaceName: (originalSpaceName !== spaceName) ? spaceName : undefined
+                };
+                var onUpdateSpaceSuccess = function (created, updated) {
+                    if(created || updated) {
+                        API.notify.showFeedback('Space "' + spaceName + '" was saved');
+                        components.gridPanel.refresh();
+                    }
+                };
+                Admin.lib.RemoteService.space_createOrUpdate(spaceParams, function (r) {
+                    if(r && r.success) {
+                        onUpdateSpaceSuccess(r.created, r.updated);
+                    } else {
+                        console.error("Error", r ? r.error : "An unexpected error occurred.");
+                    }
+                });
+            };
             SpaceWizardPanel.prototype.resolveHeaderData = function () {
                 var iconUrl = 'resources/images/icons/128x128/default_space.png';
                 var displayNameValue = '';
@@ -3197,7 +3226,7 @@ var admin;
                 var pathConfig = {
                     hidden: true
                 };
-                var wizardHeader = new admin.ui.WizardHeader(this.data, {
+                var wizardHeader = this.wizardHeader = new admin.ui.WizardHeader(this.data, {
                 }, pathConfig);
                 this.validateItems.push(wizardHeader.ext);
                 return wizardHeader.ext;
@@ -3254,19 +3283,23 @@ var admin;
                 };
             };
             SpaceWizardPanel.prototype.createActionButton = function () {
+                var _this = this;
                 return {
                     xtype: 'button',
                     text: 'Save',
-                    action: 'saveSpace'
+                    handler: function () {
+                        _this.saveSpace();
+                    }
                 };
             };
             SpaceWizardPanel.prototype.getWizardHeader = function () {
-                return this.ext.down('#wizardHeader');
+                return this.wizardHeader;
             };
             SpaceWizardPanel.prototype.getData = function () {
                 var data = _super.prototype.getData.call(this);
                 var headerData = this.getWizardHeader().getData();
-                return Ext.apply(data, {
+                console.log(headerData);
+                return this.merge_options(data, {
                     displayName: headerData.displayName,
                     spaceName: headerData.name
                 });
@@ -3276,6 +3309,17 @@ var admin;
                 this.addData({
                     iconRef: iconRef
                 });
+            };
+            SpaceWizardPanel.prototype.merge_options = function (obj1, obj2) {
+                var obj3 = {
+                };
+                for(var attrname in obj1) {
+                    obj3[attrname] = obj1[attrname];
+                }
+                for(var attrname in obj2) {
+                    obj3[attrname] = obj2[attrname];
+                }
+                return obj3;
             };
             return SpaceWizardPanel;
         })(admin.ui.WizardPanel);

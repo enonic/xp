@@ -2,6 +2,8 @@ module admin.ui {
 
     export class SpaceWizardPanel extends admin.ui.WizardPanel {
 
+        private wizardHeader;
+
         constructor(id:string, title:string, editing:bool, data?:any) {
             var headerData = this.resolveHeaderData();
             var panelConfig = {
@@ -22,6 +24,38 @@ module admin.ui {
 
             var uploader = this.ext.down('photoUploadButton');
             uploader.on('fileuploaded', this.photoUploaded, this);
+        }
+
+        private saveSpace() {
+            var spaceWizardData = this.getData();
+            var displayName = spaceWizardData.displayName;
+            var spaceName = spaceWizardData.spaceName;
+            var iconReference = spaceWizardData.iconRef;
+
+            var spaceModel = this.data;
+            var originalSpaceName = spaceModel && spaceModel.get ? spaceModel.get('name') : undefined;
+
+            var spaceParams = {
+                spaceName: originalSpaceName || spaceName,
+                displayName: displayName,
+                iconReference: iconReference,
+                newSpaceName: (originalSpaceName !== spaceName) ? spaceName : undefined
+            };
+
+            var onUpdateSpaceSuccess = function (created, updated) {
+                if (created || updated) {
+
+                    API.notify.showFeedback('Space "' + spaceName + '" was saved');
+                    components.gridPanel.refresh();
+                }
+            };
+            Admin.lib.RemoteService.space_createOrUpdate(spaceParams, function (r) {
+                if (r && r.success) {
+                    onUpdateSpaceSuccess(r.created, r.updated);
+                } else {
+                    console.error("Error", r ? r.error : "An unexpected error occurred.");
+                }
+            });
         }
 
         resolveHeaderData() {
@@ -70,7 +104,7 @@ module admin.ui {
             var pathConfig:admin.ui.PathConfig = {
                 hidden: true
             };
-            var wizardHeader = new admin.ui.WizardHeader(this.data, {}, pathConfig);
+            var wizardHeader = this.wizardHeader = new admin.ui.WizardHeader(this.data, {}, pathConfig);
 
             this.validateItems.push(wizardHeader.ext);
             return wizardHeader.ext;
@@ -136,19 +170,23 @@ module admin.ui {
             return {
                 xtype: 'button',
                 text: 'Save',
-                action: 'saveSpace'
+                handler: () => {
+                    this.saveSpace();
+                }
             };
         }
 
         getWizardHeader() {
-            return this.ext.down('#wizardHeader');
+            return this.wizardHeader;
         }
 
-        getData() {
+        getData():any {
             var data = super.getData();
             var headerData = this.getWizardHeader().getData();
 
-            return Ext.apply(data, {
+            console.log(headerData);
+
+            return this.merge_options(data, {
                 displayName: headerData.displayName,
                 spaceName: headerData.name
             });
@@ -157,6 +195,17 @@ module admin.ui {
         photoUploaded(photoUploadButton, response) {
             var iconRef = response.items && response.items.length > 0 && response.items[0].id;
             this.addData({iconRef: iconRef});
+        }
+
+        private merge_options(obj1, obj2) {
+            var obj3 = {};
+            for (var attrname in obj1) {
+                obj3[attrname] = obj1[attrname];
+            }
+            for (var attrname in obj2) {
+                obj3[attrname] = obj2[attrname];
+            }
+            return obj3;
         }
 
     }

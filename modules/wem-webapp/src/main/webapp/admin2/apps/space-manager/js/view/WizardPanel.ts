@@ -22,7 +22,7 @@ module admin.ui {
         private presentationMode:bool;
         private wizard:any; // Ext.container.Container
 
-        constructor(config?: any) {
+        constructor(config?:any) {
             this.showControls = true;
             this.isNew = true;
             this.validateItems = [];
@@ -653,23 +653,23 @@ module admin.ui {
             if (this.ext.fireEvent("beforestepchanged", this, oldStep) !== false) {
                 var newStep;
                 switch (direction) {
-                    case "-1":
-                    case "prev":
-                        if (this.getPrev()) {
-                            newStep = this.wizard.getLayout().prev();
-                        }
-                        break;
-                    case "+1":
-                    case "next":
-                        if (this.getNext()) {
-                            newStep = this.wizard.getLayout().next();
-                        } else {
-                            this.finish();
-                        }
-                        break;
-                    default:
-                        newStep = this.wizard.getLayout().setActiveItem(direction);
-                        break;
+                case "-1":
+                case "prev":
+                    if (this.getPrev()) {
+                        newStep = this.wizard.getLayout().prev();
+                    }
+                    break;
+                case "+1":
+                case "next":
+                    if (this.getNext()) {
+                        newStep = this.wizard.getLayout().next();
+                    } else {
+                        this.finish();
+                    }
+                    break;
+                default:
+                    newStep = this.wizard.getLayout().setActiveItem(direction);
+                    break;
                 }
             }
         }
@@ -689,15 +689,14 @@ module admin.ui {
 
 
         getData() {
-            var me = this;
-            me.wizard.items.each((item) => {
+            this.wizard.items.each((item) => {
                 if (item.getData) {
-                    me.addData(item.getData());
+                    this.addData(item.getData());
                 } else if (item.getForm) {
-                    me.addData(item.getForm().getFieldValues());
+                    this.addData(item.getForm().getFieldValues());
                 }
             });
-            return me.data;
+            return this.data;
         }
 
         /*

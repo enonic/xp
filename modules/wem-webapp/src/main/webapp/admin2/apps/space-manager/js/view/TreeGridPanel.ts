@@ -157,6 +157,10 @@ module admin.ui {
             }
         }
 
+        refresh() {
+            this.store.loadPage(this.store.currentPage);
+        }
+
         getSelection() {
             var selection = [],
                 activeList = this.getActiveList(),
