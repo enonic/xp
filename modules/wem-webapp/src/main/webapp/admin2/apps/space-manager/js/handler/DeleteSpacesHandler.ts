@@ -14,7 +14,7 @@ module admin.app.handler {
                 if (response) {
                     callback.call(this, response.success, response);
                 } else {
-                    Ext.Msg.alert('Error', response ? response.error : 'Unable to delete space.');
+                    console.error('Error', response ? response.error : 'Unable to delete space.');
                 }
             });
         }

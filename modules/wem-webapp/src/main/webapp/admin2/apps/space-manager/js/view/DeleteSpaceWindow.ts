@@ -30,6 +30,7 @@ module admin.ui {
         private initComponent() {
             var deleteCallback = (obj, success, result) => {
                 this.container.hide();
+                components.gridPanel.refresh();
                 //TODO: Fire event
             };
 
