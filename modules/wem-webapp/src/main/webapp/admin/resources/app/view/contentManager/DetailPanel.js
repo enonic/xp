@@ -22,7 +22,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                 displayName: 'Analytics',
                 name: 'analytics',
                 items: [
-                    {xtype: 'iframe', url: '/dev/detailpanel/analytics.jsp', iFrameCls: (me.isVertical ? 'admin-detail-vertical' : '') }
+                    {xtype: 'iframe', url: '/dev/detailpanel/analytics.html ', iFrameCls: (me.isVertical ? 'admin-detail-vertical' : '') }
                 ]
             },
             {

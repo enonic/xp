@@ -26,10 +26,8 @@ Ext.define('Admin.view.IframeContainer', {
 
     load: function (url, isEdit) {
         var iframe = this.getEl().down('iframe');
-
-        isEdit = isEdit || false;
         if (!Ext.isEmpty(url)) {
-            iframe.dom.src = Admin.lib.UriHelper.getAbsoluteUri(url + "?edit=" + isEdit);
+            iframe.dom.src = Admin.lib.UriHelper.getAbsoluteUri(url);
             /*            if (this.iFrameCls) {
              console.log(iframe.dom.contentDocument);
              iframe.dom.contentDocument.body.className = "test";
