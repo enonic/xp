@@ -4,18 +4,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
 import com.enonic.wem.admin.json.rpc.JsonRpcHandlerBinder;
-import com.enonic.wem.admin.rest.provider.JsonObjectProvider;
-import com.enonic.wem.admin.rest.provider.JsonSerializableProvider;
-import com.enonic.wem.admin.rest.resource.account.AccountExportResource;
-import com.enonic.wem.admin.rest.resource.account.AccountImageResource;
-import com.enonic.wem.admin.rest.resource.auth.AuthResource;
-import com.enonic.wem.admin.rest.resource.content.ContentImageResource;
-import com.enonic.wem.admin.rest.resource.jcr.GetNodesResource;
-import com.enonic.wem.admin.rest.resource.schema.SchemaImageResource;
-import com.enonic.wem.admin.rest.resource.space.SpaceImageResource;
-import com.enonic.wem.admin.rest.resource.status.PingResource;
-import com.enonic.wem.admin.rest.resource.tools.ToolsResource;
-import com.enonic.wem.admin.rest.resource.upload.UploadResource;
 import com.enonic.wem.admin.rest.rpc.account.ChangePasswordRpcHandler;
 import com.enonic.wem.admin.rest.rpc.account.CreateOrUpdateAccountRpcHandler;
 import com.enonic.wem.admin.rest.rpc.account.DeleteAccountsRpcHandler;
@@ -67,7 +55,6 @@ import com.enonic.wem.admin.rest.rpc.util.GetLocalesRpcHandler;
 import com.enonic.wem.admin.rest.rpc.util.GetTimeZonesRpcHandler;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rest.service.upload.UploadServiceImpl;
-import com.enonic.wem.admin.rest.ui.BackgroundImageResource;
 
 public final class RestModule
     extends AbstractModule
@@ -78,21 +65,6 @@ public final class RestModule
         install( new RestServletModule() );
 
         bind( UploadService.class ).to( UploadServiceImpl.class ).in( Scopes.SINGLETON );
-
-        bind( JsonObjectProvider.class ).in( Scopes.SINGLETON );
-        bind( JsonSerializableProvider.class ).in( Scopes.SINGLETON );
-
-        bind( BackgroundImageResource.class ).in( Scopes.SINGLETON );
-        bind( AccountExportResource.class ).in( Scopes.SINGLETON );
-        bind( AccountImageResource.class ).in( Scopes.SINGLETON );
-        bind( ContentImageResource.class ).in( Scopes.SINGLETON );
-        bind( SchemaImageResource.class ).in( Scopes.SINGLETON );
-        bind( GetNodesResource.class ).in( Scopes.SINGLETON );
-        bind( SpaceImageResource.class ).in( Scopes.SINGLETON );
-        bind( UploadResource.class ).in( Scopes.SINGLETON );
-        bind( AuthResource.class ).in( Scopes.SINGLETON );
-        bind( PingResource.class ).in( Scopes.SINGLETON );
-        bind( ToolsResource.class ).in( Scopes.SINGLETON );
 
         final JsonRpcHandlerBinder handlers = JsonRpcHandlerBinder.from( binder() );
         handlers.add( ChangePasswordRpcHandler.class );

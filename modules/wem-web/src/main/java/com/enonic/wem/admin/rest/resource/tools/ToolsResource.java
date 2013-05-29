@@ -13,14 +13,19 @@ import com.enonic.wem.core.initializer.StartupInitializer;
 @Path("tools")
 public final class ToolsResource
 {
-    private final IndexService indexService;
+    private IndexService indexService;
 
-    private final StartupInitializer startupInitializer;
+    private StartupInitializer startupInitializer;
 
     @Inject
-    public ToolsResource( final IndexService indexService, final StartupInitializer startupInitializer )
+    public void setIndexService( final IndexService indexService )
     {
         this.indexService = indexService;
+    }
+
+    @Inject
+    public void setStartupInitializer( final StartupInitializer startupInitializer )
+    {
         this.startupInitializer = startupInitializer;
     }
 
