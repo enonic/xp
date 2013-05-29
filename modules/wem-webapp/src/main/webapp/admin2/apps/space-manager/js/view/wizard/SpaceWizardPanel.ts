@@ -4,8 +4,9 @@ module admin.ui {
 
         private wizardHeader;
 
-        constructor(id:string, title:string, editing:bool, data?:any) {
+        constructor(id:string, title:string, editing:bool, data?:APP.model.SpaceModel) {
             var headerData = this.resolveHeaderData();
+            this.data = data;
             var panelConfig = {
                 id: id,
                 editing: editing,
@@ -105,6 +106,7 @@ module admin.ui {
                 hidden: true
             };
             var wizardHeader = this.wizardHeader = new admin.ui.WizardHeader(this.data, {}, pathConfig);
+            console.log(this.data);
 
             this.validateItems.push(wizardHeader.ext);
             return wizardHeader.ext;

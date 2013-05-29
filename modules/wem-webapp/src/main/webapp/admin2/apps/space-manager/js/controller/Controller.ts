@@ -86,7 +86,7 @@ Ext.define('Admin.controller.Controller', {
                 }
                 tabs.addTab(spaceWizardPanel.ext, index >= 0 ? index : undefined, undefined);
             } else {
-                Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve space.");
+                console.log("Error", r ? r.error : "Unable to retrieve space.");
             }
         });
     },

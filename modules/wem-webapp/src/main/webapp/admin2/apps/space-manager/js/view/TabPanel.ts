@@ -30,6 +30,7 @@ module admin.ui {
                  * @return {Ext.tab.Tab}
                  */
                 addTab: function (item, index, requestConfig) {
+                    console.log(arguments);
                     var tab = this.getTabById(item.id);
                     // Create a new tab if it has not been created
                     if (!tab) {
@@ -189,14 +190,15 @@ module admin.ui {
                 }
             });
 
-            APP.event.OpenSpaceWizardEvent.on(() => {
+
+
+  /*          APP.event.EditSpaceEvent.on(() => {
                 var space = components.gridPanel.getSelection()[0];
-                var tabs = this.getExtEl();
                 console.log(space);
                 Admin.lib.RemoteService.space_get({
                     "spaceName": [space.get('name')]
                 }, (r) => {
-                    tabs.el.unmask();
+                    this.ext.el.unmask();
                     if (r) {
                         var id = this.generateTabId(space, true);
                         var editing = true;
@@ -205,16 +207,21 @@ module admin.ui {
                         var spaceWizardPanel = new admin.ui.SpaceWizardPanel(id, title, editing, data);
 
                         //check if preview tab is open and close it
-                        var index = tabs.items.indexOfKey(this.generateTabId(space, false));
+                        var index = this.ext.items.indexOfKey(this.generateTabId(space, false));
                         if (index >= 0) {
-                            tabs.remove(index);
+                            this.ext.remove(index);
                         }
-                        tabs.addTab(spaceWizardPanel.ext, index >= 0 ? index : undefined, undefined);
+                        this.addTab(spaceWizardPanel.ext, index >= 0 ? index : undefined, undefined);
                     } else {
-                        Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve space.");
+                        console.error("Error", r ? r.error : "Unable to retrieve space.");
                     }
                 });
-            });
+            });*/
+        }
+
+        private addTab(panel:any, index:number) {
+            console.log("adding tab");
+            this.ext.addTab(panel, index, undefined);
         }
 
         private generateTabId(space, isEdit) {

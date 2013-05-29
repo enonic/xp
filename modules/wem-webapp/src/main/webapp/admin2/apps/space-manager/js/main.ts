@@ -9,7 +9,7 @@
 ///<reference path='event/DeletePromptEvent.ts' />
 ///<reference path='event/GridSelectionChangeEvent.ts' />
 ///<reference path='event/ShowContextMenuEvent.ts' />
-///<reference path='event/OpenSpaceWizardEvent.ts' />
+///<reference path='event/EditSpaceEvent.ts' />
 
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
