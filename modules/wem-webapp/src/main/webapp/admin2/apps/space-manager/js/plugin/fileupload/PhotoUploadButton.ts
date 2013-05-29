@@ -32,7 +32,7 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
         var height = this.height;
         var title = this.title;
         var progressBarHeight = this.progressBarHeight;
-        var photoUrl = this.prepareUrl(this.photoUrl || 'resources/images/x-user-photo.png');
+        var photoUrl = this.photoUrl || 'resources/images/x-user-photo.png';
         this.update({
             id: buttonElementId,
             width: width,
@@ -43,18 +43,6 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
         });
 
         this.buttonElementId = buttonElementId;
-    },
-
-    /**
-     * Prepend url with app name in order to create correct path to app resources
-     * Do not modify url if it starts with '/'
-     */
-    prepareUrl: function (url) {
-        if (url.indexOf('/') == 0) {
-            return url;
-        }
-
-        return APP.id + '/' + url;
     },
 
     afterRender: function () {
