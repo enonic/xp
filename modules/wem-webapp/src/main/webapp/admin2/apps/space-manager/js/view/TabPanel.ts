@@ -30,7 +30,6 @@ module admin.ui {
                  * @return {Ext.tab.Tab}
                  */
                 addTab: function (item, index, requestConfig) {
-                    console.log(arguments);
                     var tab = this.getTabById(item.id);
                     // Create a new tab if it has not been created
                     if (!tab) {
@@ -191,36 +190,34 @@ module admin.ui {
             });
 
 
+            /*          APP.event.EditSpaceEvent.on(() => {
+             var space = components.gridPanel.getSelection()[0];
+             console.log(space);
+             Admin.lib.RemoteService.space_get({
+             "spaceName": [space.get('name')]
+             }, (r) => {
+             this.ext.el.unmask();
+             if (r) {
+             var id = this.generateTabId(space, true);
+             var editing = true;
+             var title = <string> space.get('displayName');
+             var data = space;
+             var spaceWizardPanel = new admin.ui.SpaceWizardPanel(id, title, editing, data);
 
-  /*          APP.event.EditSpaceEvent.on(() => {
-                var space = components.gridPanel.getSelection()[0];
-                console.log(space);
-                Admin.lib.RemoteService.space_get({
-                    "spaceName": [space.get('name')]
-                }, (r) => {
-                    this.ext.el.unmask();
-                    if (r) {
-                        var id = this.generateTabId(space, true);
-                        var editing = true;
-                        var title = <string> space.get('displayName');
-                        var data = space;
-                        var spaceWizardPanel = new admin.ui.SpaceWizardPanel(id, title, editing, data);
-
-                        //check if preview tab is open and close it
-                        var index = this.ext.items.indexOfKey(this.generateTabId(space, false));
-                        if (index >= 0) {
-                            this.ext.remove(index);
-                        }
-                        this.addTab(spaceWizardPanel.ext, index >= 0 ? index : undefined, undefined);
-                    } else {
-                        console.error("Error", r ? r.error : "Unable to retrieve space.");
-                    }
-                });
-            });*/
+             //check if preview tab is open and close it
+             var index = this.ext.items.indexOfKey(this.generateTabId(space, false));
+             if (index >= 0) {
+             this.ext.remove(index);
+             }
+             this.addTab(spaceWizardPanel.ext, index >= 0 ? index : undefined, undefined);
+             } else {
+             console.error("Error", r ? r.error : "Unable to retrieve space.");
+             }
+             });
+             });*/
         }
 
         private addTab(panel:any, index:number) {
-            console.log("adding tab");
             this.ext.addTab(panel, index, undefined);
         }
 

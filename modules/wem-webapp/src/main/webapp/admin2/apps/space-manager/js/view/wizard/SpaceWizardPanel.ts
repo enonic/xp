@@ -106,7 +106,6 @@ module admin.ui {
                 hidden: true
             };
             var wizardHeader = this.wizardHeader = new admin.ui.WizardHeader(this.data, {}, pathConfig);
-            console.log(this.data);
 
             this.validateItems.push(wizardHeader.ext);
             return wizardHeader.ext;

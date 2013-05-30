@@ -324,7 +324,6 @@ module admin.ui {
         }
 
         setData(data) {
-            console.log(data);
             this.data = data;
             var toActivate = this.resolveActiveItem();
             var active = this.getLayout().getActiveItem();
