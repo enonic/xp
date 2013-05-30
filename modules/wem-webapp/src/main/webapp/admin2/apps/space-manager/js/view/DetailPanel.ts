@@ -36,10 +36,12 @@ module admin.ui {
 
         constructor(region?:String, id?:string, model?:APP.model.SpaceModel) {
             var cls = 'admin-preview-panel admin-detail' + ( this.isVertical ? 'admin-detail-vertical' : '' );
-            var p = this.ext = new Ext.panel.Panel({
+            this.data = model;
+
+            var p = new Ext.panel.Panel({
                 id: id,
                 region: region,
-                data: model,
+                data: this.data,
                 layout: 'card',
                 cls: cls,
                 border: false,
@@ -51,6 +53,8 @@ module admin.ui {
                 isFullPage: false,
                 keyField: this.keyField
             });
+
+            this.ext = <Ext_panel_Panel> p;
 
             p.on('afterrender', function (detail) {
                 detail.el.on('click', function (event, target, opts) {
@@ -77,6 +81,8 @@ module admin.ui {
             p.add(this.createSingleSelectionView(this.data));
             p.add(this.createSmallBoxSelectionView(this.data));
             p.add(this.createLargeBoxSelectionView(this.data));
+
+            this.getLayout().setActiveItem(this.resolveActiveItem());
         }
 
         private createNoSelectionView() {
