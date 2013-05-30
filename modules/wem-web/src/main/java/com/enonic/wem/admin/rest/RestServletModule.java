@@ -8,6 +8,6 @@ final class RestServletModule
     @Override
     protected void configureServlets()
     {
-        serve( "/admin/rest/*", "/dev/rest/*", "/admin2/apps/rest/*" ).with( RestServlet.class );
+        serve( "/admin/rest/*", "/dev/rest/*", "/admin2/apps/space-manager/rest/*" ).with( RestServlet.class );
     }
 }
