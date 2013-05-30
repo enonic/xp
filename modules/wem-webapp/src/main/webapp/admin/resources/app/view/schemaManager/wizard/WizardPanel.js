@@ -32,9 +32,6 @@ Ext.define('Admin.view.schemaManager.wizard.WizardPanel', {
             pathConfig: {
                 hidden: true
             },
-            nameConfig: {
-                hidden: true
-            },
             data: this.data
         });
 
