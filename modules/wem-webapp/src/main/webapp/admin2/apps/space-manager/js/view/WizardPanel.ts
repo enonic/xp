@@ -45,6 +45,13 @@ module admin.ui {
 
             this.ext = panel;
             this.initComponent();
+
+            APP_action.SpaceActions.NEW_SPACE.addExecutionListener((action:API_action.Action) => {
+                // TODO: handle new space action
+            });
+            APP_action.SpaceActions.EDIT_SPACE.addExecutionListener((action:API_action.Action) => {
+                // TODO: handle edit space action
+            });
         }
 
         initComponent() {

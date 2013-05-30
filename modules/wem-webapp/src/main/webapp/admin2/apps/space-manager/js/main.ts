@@ -4,6 +4,8 @@
 ///<reference path='lib/JsonRpcProvider.ts' />
 ///<reference path='lib/RemoteService.ts' />
 
+///<reference path='action/SpaceActions.ts' />
+
 ///<reference path='event/DeletedEvent.ts' />
 ///<reference path='event/SpaceModelEvent.ts' />
 ///<reference path='event/DeletePromptEvent.ts' />
@@ -46,6 +48,8 @@
 ///<reference path='view/TabPanel.ts' />
 ///<reference path='view/FilterPanel.ts' />
 ///<reference path='view/BrowseToolbar.ts' />
+
+///<reference path='view/BrowseToolbar2.ts' />
 
 ///<reference path='controller/Controller.ts' />
 ///<reference path='controller/SpaceController.ts' />

@@ -4,6 +4,11 @@
 
 ///<reference path='util/UriHelper.ts' />
 
+///<reference path='action/Action.ts' />
+
+///<reference path='ui/toolbar/Button.ts' />
+///<reference path='ui/toolbar/Toolbar.ts' />
+
 ///<reference path='event/Event.ts' />
 ///<reference path='event/EventBus.ts' />
 
