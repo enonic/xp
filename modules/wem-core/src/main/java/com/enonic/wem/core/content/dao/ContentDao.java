@@ -35,6 +35,8 @@ public interface ContentDao
 
     public static final String CONTENT_EMBEDDED_NODE = NON_CONTENT_NODE_PREFIX + "embedded";
 
+    public static final String CONTENT_ATTACHMENTS_NODE = NON_CONTENT_NODE_PREFIX + "attachments";
+
     public static final String CONTENT_NEXT_VERSION_PROPERTY = "nextVersion";
 
     ContentId create( Content content, Session session );

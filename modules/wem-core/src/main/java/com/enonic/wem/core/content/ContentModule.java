@@ -4,6 +4,9 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
 import com.enonic.wem.core.command.CommandBinder;
+import com.enonic.wem.core.content.attachment.CreateAttachmentHandler;
+import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
+import com.enonic.wem.core.content.attachment.dao.AttachmentDaoImpl;
 import com.enonic.wem.core.content.binary.CreateBinaryHandler;
 import com.enonic.wem.core.content.binary.DeleteBinaryHandler;
 import com.enonic.wem.core.content.binary.GetBinaryHandler;
@@ -21,6 +24,7 @@ public final class ContentModule
     {
         bind( ContentDao.class ).to( ContentDaoImpl.class ).in( Scopes.SINGLETON );
         bind( BinaryDao.class ).to( BinaryDaoImpl.class ).in( Scopes.SINGLETON );
+        bind( AttachmentDao.class ).to( AttachmentDaoImpl.class ).in( Scopes.SINGLETON );
 
         final InitializerTaskBinder tasks = InitializerTaskBinder.from( binder() );
         tasks.bind( ContentInitializer.class );
@@ -42,5 +46,7 @@ public final class ContentModule
         commands.add( CreateBinaryHandler.class );
         commands.add( DeleteBinaryHandler.class );
         commands.add( GetBinaryHandler.class );
+
+        commands.add( CreateAttachmentHandler.class );
     }
 }
