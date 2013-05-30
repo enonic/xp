@@ -7,7 +7,6 @@ var API_action;
             this.propertyChangeListeners = [];
             this.label = label;
         }
-
         Action.prototype.getLabel = function () {
             return this.label;
         };
@@ -19,12 +18,12 @@ var API_action;
         };
         Action.prototype.setEnabled = function (value) {
             this.enabled = value;
-            for (var i in this.propertyChangeListeners) {
+            for(var i in this.propertyChangeListeners) {
                 this.propertyChangeListeners[i](this);
             }
         };
         Action.prototype.execute = function () {
-            for (var i in this.executionListeners) {
+            for(var i in this.executionListeners) {
                 this.executionListeners[i](this);
             }
         };
@@ -36,7 +35,7 @@ var API_action;
         };
         return Action;
     })();
-    API_action.Action = Action;
+    API_action.Action = Action;    
 })(API_action || (API_action = {}));
 TestCase("Action", {
     "test getLabel": function () {
@@ -65,13 +64,12 @@ var API_content_data;
         function DataId(name, arrayIndex) {
             this.name = name;
             this.arrayIndex = arrayIndex;
-            if (arrayIndex > 0) {
+            if(arrayIndex > 0) {
                 this.refString = name + '[' + arrayIndex + ']';
             } else {
                 this.refString = name;
             }
         }
-
         DataId.prototype.getName = function () {
             return this.name;
         };
@@ -84,7 +82,7 @@ var API_content_data;
         DataId.from = function from(str) {
             var endsWithEndBracket = str.indexOf(']', str.length - ']'.length) !== -1;
             var containsStartBracket = str.indexOf('[') !== -1;
-            if (endsWithEndBracket && containsStartBracket) {
+            if(endsWithEndBracket && containsStartBracket) {
                 var firstBracketPos = str.indexOf('[');
                 var nameStr = str.substring(0, firstBracketPos);
                 var indexStr = str.substring(nameStr.length + 1, (str.length - 1));
@@ -96,7 +94,7 @@ var API_content_data;
         };
         return DataId;
     })();
-    API_content_data.DataId = DataId;
+    API_content_data.DataId = DataId;    
 })(API_content_data || (API_content_data = {}));
 TestCase("DataId", {
     "test getName": function () {
@@ -124,7 +122,6 @@ var API_content_data;
         function Data(name) {
             this.name = name;
         }
-
         Data.prototype.setArrayIndex = function (value) {
             this.arrayIndex = value;
         };
@@ -145,13 +142,10 @@ var API_content_data;
         };
         return Data;
     })();
-    API_content_data.Data = Data;
+    API_content_data.Data = Data;    
 })(API_content_data || (API_content_data = {}));
 var __extends = this.__extends || function (d, b) {
-    function __() {
-        this.constructor = d;
-    }
-
+    function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
@@ -160,11 +154,10 @@ var API_content_data;
     var Property = (function (_super) {
         __extends(Property, _super);
         function Property(name, value, type) {
-            _super.call(this, name);
+                _super.call(this, name);
             this.value = value;
             this.type = type;
         }
-
         Property.from = function from(json) {
             return new Property(json.name, json.value, json.type);
         };
@@ -179,23 +172,22 @@ var API_content_data;
         };
         return Property;
     })(API_content_data.Data);
-    API_content_data.Property = Property;
+    API_content_data.Property = Property;    
 })(API_content_data || (API_content_data = {}));
 var API_content_data;
 (function (API_content_data) {
     var DataSet = (function (_super) {
         __extends(DataSet, _super);
         function DataSet(name) {
-            _super.call(this, name);
+                _super.call(this, name);
             this.dataById = {
             };
         }
-
         DataSet.prototype.nameCount = function (name) {
             var count = 0;
-            for (var i in this.dataById) {
+            for(var i in this.dataById) {
                 var data = this.dataById[i];
-                if (data.getName() === name) {
+                if(data.getName() === name) {
                     count++;
                 }
             }
@@ -213,7 +205,7 @@ var API_content_data;
         };
         return DataSet;
     })(API_content_data.Data);
-    API_content_data.DataSet = DataSet;
+    API_content_data.DataSet = DataSet;    
 })(API_content_data || (API_content_data = {}));
 TestCase("DataSet", {
     "test given a name when getName() then given name is returned": function () {
