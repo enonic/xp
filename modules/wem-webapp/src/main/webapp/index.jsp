@@ -25,7 +25,7 @@
 </div>
 
 <%
-  String adminUrl = JspHelper.createUrl( request, "admin/index.jsp" );
+  String adminUrl = JspHelper.createUrl( request, "admin/index.html" );
   String davUrl = JspHelper.createUrl( request, "dav" );
 %>
 
