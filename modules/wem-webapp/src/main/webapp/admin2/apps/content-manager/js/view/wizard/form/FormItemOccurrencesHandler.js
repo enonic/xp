@@ -1,0 +1,87 @@
+Ext.define('Admin.view.contentManager.wizard.form.FormItemOccurrencesHandler', {
+
+    copyNo: 1,
+
+    /**
+     * Handles multiple occurences, called right before component is rendered, could be overriden for custom implementation
+     */
+    handleOccurrences: function (minimum) {
+        this.addEvents('copyadded', 'copyremoved');
+        this.enableBubble('copyadded', 'copyremoved');
+        if (Ext.isEmpty(this.value) && this.copyNo < minimum) {
+            this.addCopy();
+        } else {
+            var value = this.value;
+            if (value instanceof Array && value.length > 0) {
+                this.setValue(value[0].value);
+                if (value.length > 1) {
+                    this.addCopy(value.slice(1));
+                }
+            }
+        }
+    },
+
+    /**
+     * Adds copy of current component to the parent content.
+     * @return copy {*|Ext.Component|Ext.Component}
+     */
+    addCopy: function (value) {
+        var parent = this.up();
+
+        var clone = this.cloneConfig({
+            copyNo: this.copyNo + 1,
+            fieldLabel: '',
+            value: value || ''
+        });
+        //Support links between copies (linked list), so we could analyze them and change their state
+        this.nextField = clone;
+        clone.prevField = this;
+        var me = this;
+        var index = parent.items.findIndexBy(function (item) {
+            if (item.getItemId() === me.getItemId()) {
+                return true;
+            }
+            return false;
+        });
+        parent.insert(index + 1, clone);
+        clone.fireEvent('copyadded', clone);
+        return clone;
+    },
+
+    /**
+     * Remove copy from parent content
+     * @return one of the remain copies {*}
+     */
+    removeCopy: function () {
+        var parent = this.up();
+        var linkedField = this.prevField || this.nextField;
+        // Set links to apropriate values
+        if (this.prevField) {
+            this.prevField.nextField = this.nextField;
+        }
+        if (this.nextField) {
+            this.nextField.prevField = this.prevField;
+        }
+
+        if (linkedField) {
+            linkedField.updateCopyNo();
+        }
+        this.fireEvent('copyremoved', this);
+        parent.remove(this);
+        return linkedField;
+    },
+
+    /**
+     * @private
+     */
+    updateCopyNo: function () {
+        if (this.prevField) {
+            this.copyNo = this.prevField.copyNo + 1;
+        } else {
+            this.copyNo = 1;
+        }
+        if (this.nextField) {
+            this.nextField.updateCopyNo();
+        }
+    }
+});

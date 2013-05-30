@@ -1,8 +1,8 @@
 ///<reference path='../../../api/js/ExtJs.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
-///<reference path='lib/JsonRpcProvider.ts' />
-///<reference path='lib/RemoteService.ts' />
+///<reference path='../../../api/js/lib/JsonRpcProvider.ts' />
+///<reference path='../../../api/js/lib/RemoteService.ts' />
 
 ///<reference path='action/SpaceActions.ts' />
 
