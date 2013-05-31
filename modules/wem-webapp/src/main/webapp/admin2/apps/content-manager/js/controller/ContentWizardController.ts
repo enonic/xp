@@ -7,9 +7,14 @@ Ext.define('Admin.controller.ContentWizardController', {
     ],
     models: [
     ],
-    /*    views: [
-     'Admin.view.contentManager.wizard.ContentWizardPanel'
-     ],*/
+    /*
+    views: [
+        'Admin.view.contentManager.wizard.ContentWizardPanel'
+    ],
+    requires: [
+        'Admin.view.contentManager.wizard.WizardToolbarMenu'
+    ],
+    */
 
     init: function () {
         var me = this;

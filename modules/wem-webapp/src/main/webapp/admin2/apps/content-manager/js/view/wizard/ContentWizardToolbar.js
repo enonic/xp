@@ -58,6 +58,11 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
                 itemId: 'export',
                 action: 'exportContent'
             },
+            '-',
+            {
+                text: 'Close',
+                action: 'closeWizard'
+            },
             '->',
             {
                 xtype: 'toggleslide',
