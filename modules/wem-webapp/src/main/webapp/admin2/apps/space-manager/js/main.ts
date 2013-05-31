@@ -98,8 +98,8 @@ Ext.application({
 
     launch: function () {
 
-        //var toolbar = new admin.ui.BrowseToolbar('north');
-        var toolbar = new APP.ui.BrowseToolbar2();
+        var toolbar = new admin.ui.BrowseToolbar('north');
+        var toolbar2 = new APP.ui.BrowseToolbar2();
 
         var grid = components.gridPanel = new admin.ui.TreeGridPanel('center');
 
@@ -113,6 +113,7 @@ Ext.application({
         center.add(detail.ext);
         center.add(grid.ext);
         center.add(toolbar.ext);
+        center.add(toolbar2.ext);
 
         var west = new admin.ui.FilterPanel({
             region: 'west',
@@ -149,7 +150,6 @@ Ext.application({
         components.deleteWindow = new admin.ui.DeleteSpaceWindow();
         new admin.ui.ContextMenu();
 
-        toolbar.afterRender();
     }
 
 });

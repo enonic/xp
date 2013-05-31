@@ -13,6 +13,12 @@ Ext.define('Admin.controller.WizardController', {
 
     init: function () {
         var me = this;
+
+        APP_action.SpaceActions.NEW_SPACE.addExecutionListener((action:API_action.Action) => {
+            this.showNewSpaceWindow();
+        });
+
+
         me.control({
             '#spaceAdminWizardPanel *[action=closeWizard]': {
                 click: me.closeWizard
