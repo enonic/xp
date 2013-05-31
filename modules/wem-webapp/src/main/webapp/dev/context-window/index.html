@@ -1,0 +1,95 @@
+<html>
+<head>
+    <title>Enonic WEM Admin</title>
+    <link rel="stylesheet" type="text/css" href="../../admin/resources/lib/ext/resources/css/admin.css">
+    <style type="text/css">
+        .admin-context-window {
+            background-color: rgba(0, 0, 0, .7);
+            color: #fff;
+        }
+
+        .admin-context-window-title-bar {
+            background-color: #000;
+        }
+
+        .admin-context-window-title-text {
+            cursor: move;
+            padding: 10px;
+            font-size: 15px;
+        }
+
+        .admin-context-window-menu {
+            padding: 10px;
+            font-size: 20px;
+        }
+
+        .admin-context-window-toggle {
+            padding: 10px;
+            font-size: 15px;
+        }
+
+    </style>
+    <script type="text/javascript" src="../../admin/resources/lib/ext/ext-all-debug.js"></script>
+    <script type="text/javascript" src="../../admin2/apps/content-manager/js/view/liveedit/ContextWindow.js"></script>
+
+    <script type="text/javascript">
+
+        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        // App
+
+
+        Ext.application({
+            name: 'App',
+
+            controllers: [
+            ],
+
+            requires: [
+            ],
+
+            launch: function () {
+                Ext.create('Ext.container.Viewport', {
+                    layout: 'border',
+                    items: [
+                        {
+                            region: 'center',
+                            flex: 1,
+                            split: true,
+                            padding: '5',
+                            autoScroll: true,
+                            tbar: [
+                                {
+                                    text: 'Toggle Context Window',
+                                    handler: function () {
+                                        var win = Ext.ComponentQuery.query('liveEditContextWindow')[0];
+                                        if (!win) {
+                                            win = new Admin.view.contentManager.liveedit.ContextWindow({});
+                                        }
+
+                                        if (win.isVisible()) {
+                                            win.hide();
+                                        } else {
+                                            win.doShow();
+                                        }
+                                    }
+                                }
+                            ],
+                            items: [
+                                {
+                                    xtype: 'component',
+                                    html: '<iframe style="border:0;width: 100%; height: 100%" src="../live-edit/page/bootstrap.jsp?edit=true"></iframe>'
+                                }
+                            ]
+                        }
+                    ]
+                });
+            }
+
+        });
+
+    </script>
+
+</head>
+<body>
+</body>
+</html>
