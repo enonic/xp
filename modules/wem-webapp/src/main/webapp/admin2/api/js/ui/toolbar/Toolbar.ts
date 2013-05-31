@@ -1,62 +1,49 @@
 module API_ui_toolbar {
 
-    export class Toolbar {
+    export class Toolbar extends API_ui.Component {
 
         ext;
 
         private buttons:Button[] = [];
+
         private element:HTMLElement;
 
         // TODO: create and expose HTML for tool bar
 
         constructor(actions:API_action.Action[]) {
-
+            super("toolbar");
             for (var i in actions) {
                 this.addAction(actions[i]);
             }
 
-            this.init();
+            this.initExt();
         }
 
-        private init() {
+        private initExt() {
             this.ext = new Ext.Component({
-                html: this.toHtml(),
+                contentEl: this.toHTMLElement(),
                 region: 'north'
             });
         }
 
-        toHtml():string {
-            var html = '';
-            html += '<div id="toolbar">';
+        toHTMLElement():HTMLElement {
+            var divEl:HTMLElement = document.createElement("div");
+            divEl.id = super.getId();
             for (var i in this.buttons) {
-                html += this.buttons[i].toHTML();
+                divEl.appendChild(this.buttons[i].toHTMLElement());
             }
-            html += '</div>';
-
-            return html;
+            return divEl;
         }
 
         add(action:API_action.Action) {
-            var btn = this.addAction(action);
-            this.element.innerHTML += btn.toHTML();
-            btn.afterRender();
-        }
-
-        afterRender() {
-            this.element = document.getElementById('toolbar');
-            for (var i in this.buttons) {
-                this.buttons[i].afterRender();
-            }
+            var button:Button = this.addAction(action);
+            this.element.appendChild(button.toHTMLElement())
         }
 
         private addAction(action:API_action.Action):Button {
-
             var button = new Button(action);
             this.buttons.push(button);
-
             return button;
         }
-
-
     }
 }

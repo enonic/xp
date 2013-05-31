@@ -1,48 +1,37 @@
 module API_ui_toolbar {
 
-    export class Button {
-
-        private static counstructorCounter:number = 0;
+    export class Button extends API_ui.Component {
 
         private action:API_action.Action;
-        private id:string;
+
         private element:HTMLElement;
 
         constructor(action:API_action.Action) {
+            super('button');
             this.action = action;
-            this.id = 'button-' + ++Button.counstructorCounter;
-
 
             action.addPropertyChangeListener((action:API_action.Action) => {
-                // TODO: refresh ui
                 this.enable(action.isEnabled());
             });
         }
 
-        enable(isEnabled:bool) {
-            if (isEnabled) {
+        enable(value:bool) {
+            if (value) {
                 this.element.className = 'enabled';
             } else {
                 this.element.className = 'disabled';
             }
-
         }
 
-        toHTML():string {
-            var html = '';
-            html += '<button id="' + this.id + '">';
-            html += this.action.getLabel();
-            html += '</button>';
-            return html;
-        }
-
-        afterRender() {
-            this.element = document.getElementById(this.id);
-
+        toHTMLElement():HTMLElement {
+            var buttonEl:HTMLElement = document.createElement("button");
+            buttonEl.id = super.getId();
+            buttonEl.innerHTML = this.action.getLabel();
+            this.element = buttonEl;
             this.element.addEventListener('click', () => {
                 this.action.execute();
             });
+            return buttonEl;
         }
-
     }
 }
