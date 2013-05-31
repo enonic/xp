@@ -20,15 +20,26 @@ module API_action {
 }
 module API_ui_toolbar {
     class Button {
+        private static counstructorCounter;
         private action;
+        private id;
+        private element;
         constructor(action: API_action.Action);
+        public enable(isEnabled: bool): void;
         public toHTML(): string;
+        public afterRender(): void;
     }
 }
 module API_ui_toolbar {
     class Toolbar {
+        public ext;
         private buttons;
+        private element;
         constructor(actions: API_action.Action[]);
+        private init();
+        public toHtml(): string;
+        public add(action: API_action.Action): void;
+        public afterRender(): void;
         private addAction(action);
     }
 }

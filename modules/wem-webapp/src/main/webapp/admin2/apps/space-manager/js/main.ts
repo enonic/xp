@@ -98,7 +98,8 @@ Ext.application({
 
     launch: function () {
 
-        var toolbar = new admin.ui.BrowseToolbar('north');
+        //var toolbar = new admin.ui.BrowseToolbar('north');
+        var toolbar = new APP.ui.BrowseToolbar2();
 
         var grid = components.gridPanel = new admin.ui.TreeGridPanel('center');
 
@@ -147,6 +148,8 @@ Ext.application({
         // Instanciating classes that will be triggered by events
         components.deleteWindow = new admin.ui.DeleteSpaceWindow();
         new admin.ui.ContextMenu();
+
+        toolbar.afterRender();
     }
 
 });

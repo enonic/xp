@@ -54,16 +54,32 @@ var API_ui_toolbar;
         function Button(action) {
             var _this = this;
             this.action = action;
+            this.id = 'button-' + ++Button.counstructorCounter;
             action.addPropertyChangeListener(function (action) {
-                _this.action = action;
+                _this.enable(action.isEnabled());
             });
         }
+        Button.counstructorCounter = 0;
+        Button.prototype.enable = function (isEnabled) {
+            if(isEnabled) {
+                this.element.className = 'enabled';
+            } else {
+                this.element.className = 'disabled';
+            }
+        };
         Button.prototype.toHTML = function () {
-            var html = "";
-            html += "<button>";
+            var html = '';
+            html += '<button id="' + this.id + '">';
             html += this.action.getLabel();
-            html += "</button>";
+            html += '</button>';
             return html;
+        };
+        Button.prototype.afterRender = function () {
+            var _this = this;
+            this.element = document.getElementById(this.id);
+            this.element.addEventListener('click', function () {
+                _this.action.execute();
+            });
         };
         return Button;
     })();
@@ -77,10 +93,38 @@ var API_ui_toolbar;
             for(var i in actions) {
                 this.addAction(actions[i]);
             }
+            this.init();
         }
+        Toolbar.prototype.init = function () {
+            this.ext = new Ext.Component({
+                html: this.toHtml(),
+                region: 'north'
+            });
+        };
+        Toolbar.prototype.toHtml = function () {
+            var html = '';
+            html += '<div id="toolbar">';
+            for(var i in this.buttons) {
+                html += this.buttons[i].toHTML();
+            }
+            html += '</div>';
+            return html;
+        };
+        Toolbar.prototype.add = function (action) {
+            var btn = this.addAction(action);
+            this.element.innerHTML += btn.toHTML();
+            btn.afterRender();
+        };
+        Toolbar.prototype.afterRender = function () {
+            this.element = document.getElementById('toolbar');
+            for(var i in this.buttons) {
+                this.buttons[i].afterRender();
+            }
+        };
         Toolbar.prototype.addAction = function (action) {
             var button = new API_ui_toolbar.Button(action);
             this.buttons.push(button);
+            return button;
         };
         return Toolbar;
     })();

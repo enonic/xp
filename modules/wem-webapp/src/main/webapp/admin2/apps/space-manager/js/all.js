@@ -249,7 +249,12 @@ var APP_action;
     var NewSpaceAction = (function (_super) {
         __extends(NewSpaceAction, _super);
         function NewSpaceAction() {
+            var _this = this;
                 _super.call(this, "New");
+            this.addExecutionListener(function () {
+                _this.setEnabled(!_this.isEnabled());
+                console.log("Button clicked");
+            });
         }
         return NewSpaceAction;
     })(API_action.Action);
@@ -4627,9 +4632,9 @@ var admin;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
-var API;
-(function (API) {
-    (function (toolbar) {
+var APP;
+(function (APP) {
+    (function (ui) {
         var BrowseToolbar2 = (function (_super) {
             __extends(BrowseToolbar2, _super);
             function BrowseToolbar2() {
@@ -4642,10 +4647,10 @@ var API;
             }
             return BrowseToolbar2;
         })(API_ui_toolbar.Toolbar);
-        toolbar.BrowseToolbar2 = BrowseToolbar2;        
-    })(API.toolbar || (API.toolbar = {}));
-    var toolbar = API.toolbar;
-})(API || (API = {}));
+        ui.BrowseToolbar2 = BrowseToolbar2;        
+    })(APP.ui || (APP.ui = {}));
+    var ui = APP.ui;
+})(APP || (APP = {}));
 Ext.define('Admin.controller.Controller', {
     extend: 'Ext.app.Controller',
     stores: [],
@@ -5121,7 +5126,7 @@ Ext.application({
     ],
     stores: [],
     launch: function () {
-        var toolbar = new admin.ui.BrowseToolbar('north');
+        var toolbar = new APP.ui.BrowseToolbar2();
         var grid = components.gridPanel = new admin.ui.TreeGridPanel('center');
         var detail = components.detailPanel = new admin.ui.SpaceDetailPanel('south');
         var center = new Ext.container.Container({
@@ -5159,6 +5164,7 @@ Ext.application({
         wp.add(tabPanel);
         components.deleteWindow = new admin.ui.DeleteSpaceWindow();
         new admin.ui.ContextMenu();
+        toolbar.afterRender();
     }
 });
 //@ sourceMappingURL=all.js.map

@@ -2,9 +2,10 @@ module API_ui_toolbar {
 
     export class Toolbar {
 
-        //private ext:Ext.Component;
+        ext;
 
         private buttons:Button[] = [];
+        private element:HTMLElement;
 
         // TODO: create and expose HTML for tool bar
 
@@ -14,13 +15,46 @@ module API_ui_toolbar {
                 this.addAction(actions[i]);
             }
 
-            //this.ext = new Ext.Component;
+            this.init();
         }
 
-        private addAction(action:API_action.Action) {
+        private init() {
+            this.ext = new Ext.Component({
+                html: this.toHtml(),
+                region: 'north'
+            });
+        }
+
+        toHtml():string {
+            var html = '';
+            html += '<div id="toolbar">';
+            for (var i in this.buttons) {
+                html += this.buttons[i].toHTML();
+            }
+            html += '</div>';
+
+            return html;
+        }
+
+        add(action:API_action.Action) {
+            var btn = this.addAction(action);
+            this.element.innerHTML += btn.toHTML();
+            btn.afterRender();
+        }
+
+        afterRender() {
+            this.element = document.getElementById('toolbar');
+            for (var i in this.buttons) {
+                this.buttons[i].afterRender();
+            }
+        }
+
+        private addAction(action:API_action.Action):Button {
 
             var button = new Button(action);
             this.buttons.push(button);
+
+            return button;
         }
 
 

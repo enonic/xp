@@ -190,7 +190,7 @@ module admin.ui {
             });
 
 
-            /*          APP.event.EditSpaceEvent.on(() => {
+            /*           APP.event.EditSpaceEvent.on(() => {
              var space = components.gridPanel.getSelection()[0];
              console.log(space);
              Admin.lib.RemoteService.space_get({

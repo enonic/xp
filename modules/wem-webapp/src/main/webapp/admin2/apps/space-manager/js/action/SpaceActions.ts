@@ -4,6 +4,10 @@ module APP_action {
 
         constructor() {
             super("New");
+            this.addExecutionListener(() => {
+                this.setEnabled(!this.isEnabled());
+                console.log("Button clicked");
+            });
         }
     }
 

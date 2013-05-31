@@ -1,4 +1,4 @@
-module API.toolbar {
+module APP.ui {
 
     /**
      * TODO: The upcoming successor of BrowseToolbar, when the Toolbar code is working....
