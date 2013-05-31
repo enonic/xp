@@ -20,10 +20,20 @@
 ///<reference path='store/ContentStore.ts' />
 ///<reference path='store/ContentTreeStore.ts' />
 
+///<reference path='lib/UriHelper.ts' />
+///<reference path='lib/DateHelper.ts' />
+
+///<reference path='view/AdminImageButton.ts' />
+///<reference path='view/TopBarMenuItem.ts' />
+///<reference path='view/TopBarMenu.ts' />
+///<reference path='view/TopBar.ts' />
+///<reference path='view/TabPanel.ts' />
 ///<reference path='view/BaseFilterPanel.ts' />
 ///<reference path='view/FilterPanel.ts' />
 ///<reference path='view/ShowPanel.ts' />
 ///<reference path='view/BrowseToolbar.ts' />
+///<reference path='view/BaseContextMenu.ts' />
+///<reference path='view/ContextMenu.ts' />
 ///<reference path='view/BaseTreeGridPanel.ts' />
 ///<reference path='view/TreeGridPanel.ts' />
 ///<reference path='view/DetailToolbar.ts' />
@@ -33,6 +43,7 @@
 ///<reference path='view/IframeContainer.ts' />
 ///<reference path='view/BaseDetailPanel.ts' />
 ///<reference path='view/DetailPanel.ts' />
+
 
 ///<reference path='controller/BaseController.ts' />
 ///<reference path='controller/Controller.ts' />
