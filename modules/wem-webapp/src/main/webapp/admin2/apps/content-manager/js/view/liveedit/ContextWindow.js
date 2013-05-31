@@ -12,9 +12,8 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     cls: 'admin-context-window',
 
     initComponent: function () {
-        var me = this;
-        me.items = [
-            me.createTitleBar()
+        this.items = [
+            this.createTitleBar()
         ];
 
         this.enableDrag();
@@ -23,7 +22,7 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
 
     createTitleBar: function () {
         var me = this;
-        return Ext.create('Ext.container.Container', {
+        return new Ext.container.Container({
             cls: 'admin-context-window-title-bar',
             layout: {
                 type: 'hbox',
@@ -38,14 +37,14 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     },
 
     createMenuButton: function () {
-        return Ext.create('Ext.Component', {
+        return new Ext.Component({
             cls: 'admin-context-window-menu icon-reorder',
             width: 30
         });
     },
 
     createTitleText: function () {
-        return Ext.create('Ext.Component', {
+        return Ext.Component({
             cls: 'admin-context-window-title-text',
             html: 'Title',
             flex: 3
@@ -53,7 +52,7 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     },
 
     createToggle: function () {
-        return Ext.create('Ext.Component', {
+        return new Ext.Component({
             cls: 'admin-context-window-toggle icon-chevron-down',
             width: 30
         });
