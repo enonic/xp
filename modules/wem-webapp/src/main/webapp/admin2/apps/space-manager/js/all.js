@@ -252,44 +252,50 @@ var APP_action;
     var NewSpaceAction = (function (_super) {
         __extends(NewSpaceAction, _super);
         function NewSpaceAction() {
-                _super.call(this, "New");
+            _super.call(this, "New");
         }
+
         return NewSpaceAction;
     })(API_action.Action);
-    APP_action.NewSpaceAction = NewSpaceAction;    
+    APP_action.NewSpaceAction = NewSpaceAction;
     var OpenSpaceAction = (function (_super) {
         __extends(OpenSpaceAction, _super);
         function OpenSpaceAction() {
-                _super.call(this, "Open");
+            _super.call(this, "Open");
         }
+
         return OpenSpaceAction;
     })(API_action.Action);
-    APP_action.OpenSpaceAction = OpenSpaceAction;    
+    APP_action.OpenSpaceAction = OpenSpaceAction;
     var EditSpaceAction = (function (_super) {
         __extends(EditSpaceAction, _super);
         function EditSpaceAction() {
-                _super.call(this, "Edit");
+            _super.call(this, "Edit");
         }
+
         return EditSpaceAction;
     })(API_action.Action);
-    APP_action.EditSpaceAction = EditSpaceAction;    
+    APP_action.EditSpaceAction = EditSpaceAction;
     var DeleteSpaceAction = (function (_super) {
         __extends(DeleteSpaceAction, _super);
         function DeleteSpaceAction() {
-                _super.call(this, "Delete");
+            _super.call(this, "Delete");
         }
+
         return DeleteSpaceAction;
     })(API_action.Action);
-    APP_action.DeleteSpaceAction = DeleteSpaceAction;    
+    APP_action.DeleteSpaceAction = DeleteSpaceAction;
     var SpaceActions = (function () {
-        function SpaceActions() { }
+        function SpaceActions() {
+        }
+
         SpaceActions.NEW_SPACE = new NewSpaceAction();
         SpaceActions.OPEN_SPACE = new OpenSpaceAction();
         SpaceActions.EDIT_SPACE = new EditSpaceAction();
         SpaceActions.DELETE_SPACE = new DeleteSpaceAction();
         return SpaceActions;
     })();
-    APP_action.SpaceActions = SpaceActions;    
+    APP_action.SpaceActions = SpaceActions;
 })(APP_action || (APP_action = {}));
 var APP;
 (function (APP) {
@@ -4729,16 +4735,17 @@ var API;
         var BrowseToolbar2 = (function (_super) {
             __extends(BrowseToolbar2, _super);
             function BrowseToolbar2() {
-                        _super.call(this, [
-            APP_action.SpaceActions.NEW_SPACE, 
-            APP_action.SpaceActions.OPEN_SPACE, 
-            APP_action.SpaceActions.EDIT_SPACE, 
-            APP_action.SpaceActions.DELETE_SPACE
-        ]);
+                _super.call(this, [
+                    APP_action.SpaceActions.NEW_SPACE,
+                    APP_action.SpaceActions.OPEN_SPACE,
+                    APP_action.SpaceActions.EDIT_SPACE,
+                    APP_action.SpaceActions.DELETE_SPACE
+                ]);
             }
+
             return BrowseToolbar2;
         })(API_ui_toolbar.Toolbar);
-        toolbar.BrowseToolbar2 = BrowseToolbar2;        
+        toolbar.BrowseToolbar2 = BrowseToolbar2;
     })(API.toolbar || (API.toolbar = {}));
     var toolbar = API.toolbar;
 })(API || (API = {}));
