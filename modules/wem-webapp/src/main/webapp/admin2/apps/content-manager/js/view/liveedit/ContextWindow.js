@@ -11,17 +11,25 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     constrain: true,
     cls: 'admin-context-window',
 
-    initComponent: function () {
-        this.items = [
-            this.createTitleBar()
-        ];
+    titleBar: undefined,
+    menuButton: undefined,
+    titleText: undefined,
+    toggleButton: undefined,
 
+    initComponent: function () {
+        this.titleBar = this.createTitleBar();
+        this.items = [
+            this.titleBar
+        ];
         this.enableDrag();
         this.callParent(arguments);
     },
 
     createTitleBar: function () {
-        var me = this;
+        this.menuButton = this.createMenuButton();
+        this.titleText = this.createTitleText();
+        this.toggleButton = this.createToggleButton();
+
         return new Ext.container.Container({
             cls: 'admin-context-window-title-bar',
             layout: {
@@ -29,9 +37,9 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
                 align: 'stretch'
             },
             items: [
-                me.createMenuButton(),
-                me.createTitleText(),
-                me.createToggle()
+                this.menuButton,
+                this.titleText,
+                this.toggleButton
             ]
         });
     },
@@ -44,14 +52,14 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     },
 
     createTitleText: function () {
-        return Ext.Component({
+        return new Ext.Component({
             cls: 'admin-context-window-title-text',
             html: 'Title',
             flex: 3
         });
     },
 
-    createToggle: function () {
+    createToggleButton: function () {
         return new Ext.Component({
             cls: 'admin-context-window-toggle icon-chevron-down',
             width: 30
@@ -74,7 +82,7 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
         this.hide();
     },
 
-    close: function () {
+    doClose: function () {
         this.destroy();
     }
 
