@@ -1172,7 +1172,7 @@ Ext.define('Admin.view.AdminImageButton', {
     popupData: undefined,
     listeners: {
         click: function (item) {
-            if (!item.popupPanel) {
+            if(!item.popupPanel) {
                 item.popupPanel = Ext.create("Ext.panel.Panel", {
                     floating: true,
                     cls: 'admin-toolbar-popup',
@@ -1189,7 +1189,7 @@ Ext.define('Admin.view.AdminImageButton', {
                     }
                 });
             } else {
-                if (item.popupPanel.isHidden()) {
+                if(item.popupPanel.isHidden()) {
                     item.popupPanel.show();
                 } else {
                     item.popupPanel.hide();
@@ -1215,7 +1215,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
     initComponent: function () {
         var me = this;
         this.items = [];
-        if (this.iconCls || this.iconSrc) {
+        if(this.iconCls || this.iconSrc) {
             this.items.push({
                 xtype: 'image',
                 width: 32,
@@ -1225,7 +1225,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
                 src: this.iconSrc
             });
         }
-        if (this.text1 || this.text2) {
+        if(this.text1 || this.text2) {
             this.items.push({
                 xtype: 'component',
                 flex: 1,
@@ -1238,7 +1238,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
                 }
             });
         }
-        if (this.closable !== false) {
+        if(this.closable !== false) {
             this.items.push({
                 xtype: 'component',
                 autoEl: 'a',
@@ -1259,7 +1259,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
     },
     activate: function () {
         var me = this;
-        if (!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
+        if(!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
             me.el.addCls(me.activeCls);
             me.focus();
             me.activated = true;
@@ -1268,7 +1268,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
     },
     deactivate: function () {
         var me = this;
-        if (me.activated) {
+        if(me.activated) {
             me.el.removeCls(me.activeCls);
             me.blur();
             me.activated = false;
@@ -1277,18 +1277,18 @@ Ext.define('Admin.view.TopBarMenuItem', {
     },
     onClick: function (e) {
         var me = this;
-        if (!me.href) {
+        if(!me.href) {
             e.stopEvent();
         }
-        if (me.disabled) {
+        if(me.disabled) {
             return;
         }
         Ext.callback(me.handler, me.scope || me, [
-            me,
+            me, 
             e
         ]);
         me.fireEvent('click', me, e);
-        if (!me.hideOnClick) {
+        if(!me.hideOnClick) {
             me.focus();
         }
         return Ext.isEmpty(Ext.fly(e.getTarget()).findParent('.close-button'));
@@ -1321,31 +1321,31 @@ Ext.define('Admin.view.TopBarMenu', {
             xtype: 'container',
             itemId: 'nonClosableItems',
             defaultType: 'topBarMenuItem'
-        },
+        }, 
         {
             xtype: 'component',
             cls: 'title',
             itemId: 'editTitle',
             hidden: true,
             html: '<span>Editing</span>'
-        },
+        }, 
         {
             xtype: 'container',
             itemId: 'editItems',
             defaultType: 'topBarMenuItem'
-        },
+        }, 
         {
             xtype: 'component',
             cls: 'title',
             itemId: 'viewTitle',
             hidden: true,
             html: '<span>Viewing</span>'
-        },
+        }, 
         {
             xtype: 'container',
             itemId: 'viewItems',
             defaultType: 'topBarMenuItem'
-        },
+        }, 
         {
             xtype: 'component',
             cls: 'info',
@@ -1367,13 +1367,13 @@ Ext.define('Admin.view.TopBarMenu', {
     },
     onClick: function (e) {
         var me = this, item;
-        if (me.disabled) {
+        if(me.disabled) {
             e.stopEvent();
             return;
         }
         item = (e.type === 'click') ? me.getItemFromEvent(e) : me.activeItem;
-        if (item && item.isMenuItem && item.onClick(e) !== false) {
-            if (me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
+        if(item && item.isMenuItem && item.onClick(e) !== false) {
+            if(me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
                 this.tabPanel.setActiveTab(item.card);
             }
             this.hide();
@@ -1381,7 +1381,7 @@ Ext.define('Admin.view.TopBarMenu', {
     },
     onShow: function () {
         this.callParent(arguments);
-        if (this.activeTab) {
+        if(this.activeTab) {
             this.markActiveTab(this.activeTab);
         }
     },
@@ -1393,24 +1393,24 @@ Ext.define('Admin.view.TopBarMenu', {
         this.callParent(arguments);
     },
     onCloseMenuItem: function (item) {
-        if (this.tabPanel) {
+        if(this.tabPanel) {
             this.tabPanel.remove(item.card);
         }
-        if (this.getAllItems(false).length === 0) {
+        if(this.getAllItems(false).length === 0) {
             this.hide();
         }
     },
     markActiveTab: function (item) {
         var me = this;
         var menuItem;
-        if (me.isVisible()) {
+        if(me.isVisible()) {
             menuItem = me.el.down('.current-tab');
-            if (menuItem) {
+            if(menuItem) {
                 menuItem.removeCls('current-tab');
             }
-            if (item) {
+            if(item) {
                 menuItem = me.down('#' + item.id);
-                if (menuItem && menuItem.el) {
+                if(menuItem && menuItem.el) {
                     menuItem.el.addCls('current-tab');
                 }
             }
@@ -1421,13 +1421,12 @@ Ext.define('Admin.view.TopBarMenu', {
         var item = this;
         do {
             item = item.getChildByElement(e.getTarget());
-        }
-        while (item && Ext.isDefined(item.getChildByElement) && item.getXType() !== 'topBarMenuItem');
+        }while(item && Ext.isDefined(item.getChildByElement) && item.getXType() !== 'topBarMenuItem');
         return item;
     },
     getAllItems: function (includeNonClosable) {
         var items = [];
-        if (includeNonClosable === false) {
+        if(includeNonClosable === false) {
             items = items.concat(this.down('#editItems').query('topBarMenuItem'));
             items = items.concat(this.down('#viewItems').query('topBarMenuItem'));
         } else {
@@ -1436,9 +1435,9 @@ Ext.define('Admin.view.TopBarMenu', {
         return items;
     },
     addItems: function (items) {
-        if (Ext.isEmpty(items)) {
+        if(Ext.isEmpty(items)) {
             return;
-        } else if (Ext.isObject(items)) {
+        } else if(Ext.isObject(items)) {
             items = [].concat(items);
         }
         this.saveScrollState();
@@ -1446,22 +1445,22 @@ Ext.define('Admin.view.TopBarMenu', {
         var viewItems = [];
         var nonClosableItems = [];
         Ext.Array.each(items, function (item) {
-            if (item.closable === false) {
+            if(item.closable === false) {
                 nonClosableItems.push(item);
-            } else if (item.editing) {
+            } else if(item.editing) {
                 editItems.push(item);
             } else {
                 viewItems.push(item);
             }
         });
         var added = [];
-        if (nonClosableItems.length > 0) {
+        if(nonClosableItems.length > 0) {
             added = added.concat(this.down("#nonClosableItems").add(nonClosableItems));
         }
-        if (editItems.length > 0) {
+        if(editItems.length > 0) {
             added = added.concat(this.down('#editItems').add(editItems));
         }
-        if (viewItems.length > 0) {
+        if(viewItems.length > 0) {
             added = added.concat(this.down('#viewItems').add(viewItems));
         }
         this.updateTitles();
@@ -1473,19 +1472,19 @@ Ext.define('Admin.view.TopBarMenu', {
         var viewItems = this.down('#viewItems');
         var removed = [];
         Ext.Array.each(editItems.items.items, function (item) {
-            if (item && item.closable !== false) {
+            if(item && item.closable !== false) {
                 removed.push(editItems.remove(item));
             }
         });
         Ext.Array.each(viewItems.items.items, function (item) {
-            if (item && item.closable !== false) {
+            if(item && item.closable !== false) {
                 removed.push(viewItems.remove(item));
             }
         });
-        if (includeNonClosable) {
+        if(includeNonClosable) {
             var nonClosableItems = this.down('#nonClosableItems');
             Ext.Array.each(nonClosableItems.items.items, function (item) {
-                if (item && item.closable !== false) {
+                if(item && item.closable !== false) {
                     removed.push(nonClosableItems.remove(item));
                 }
             });
@@ -1494,9 +1493,9 @@ Ext.define('Admin.view.TopBarMenu', {
         return removed;
     },
     removeItems: function (items) {
-        if (Ext.isEmpty(items)) {
+        if(Ext.isEmpty(items)) {
             return;
-        } else if (Ext.isObject(items)) {
+        } else if(Ext.isObject(items)) {
             items = [].concat(items);
         }
         this.saveScrollState();
@@ -1505,7 +1504,7 @@ Ext.define('Admin.view.TopBarMenu', {
         var nonClosableItems = this.down('#nonClosableItems');
         var removed = [];
         Ext.Array.each(items, function (item) {
-            if (item && item.closable !== false) {
+            if(item && item.closable !== false) {
                 removed.push(editItems.remove(item));
                 removed.push(viewItems.remove(item));
                 removed.push(nonClosableItems.remove(item));
@@ -1528,10 +1527,10 @@ Ext.define('Admin.view.TopBarMenu', {
     show: function () {
         var me = this, parentEl, viewHeight;
         me.maxWas = me.maxHeight;
-        if (!me.rendered) {
+        if(!me.rendered) {
             me.doAutoRender();
         }
-        if (me.floating) {
+        if(me.floating) {
             parentEl = Ext.fly(me.el.getScopeParent());
             viewHeight = parentEl.getViewSize().height;
             me.maxHeight = Math.min(me.maxWas || viewHeight - 50, viewHeight - 50);
@@ -1547,14 +1546,14 @@ Ext.define('Admin.view.TopBarMenu', {
     setVerticalPosition: function () {
     },
     saveScrollState: function () {
-        if (this.rendered && !this.hidden) {
+        if(this.rendered && !this.hidden) {
             var dom = this.body.dom, state = this.scrollState;
             state.left = dom.scrollLeft;
             state.top = dom.scrollTop;
         }
     },
     restoreScrollState: function () {
-        if (this.rendered && !this.hidden) {
+        if(this.rendered && !this.hidden) {
             var dom = this.body.dom, state = this.scrollState;
             dom.scrollLeft = state.left;
             dom.scrollTop = state.top;
@@ -1565,8 +1564,8 @@ Ext.define('Admin.view.TopBar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.topBar',
     requires: [
-        'Admin.view.TopBarMenu',
-        'Admin.view.AdminImageButton',
+        'Admin.view.TopBarMenu', 
+        'Admin.view.AdminImageButton', 
         'Admin.lib.UriHelper'
     ],
     buttonAlign: 'center',
@@ -1589,7 +1588,7 @@ Ext.define('Admin.view.TopBar', {
             text: me.appName || '&lt; app name &gt;',
             cls: 'home-button',
             handler: function (btn, evt) {
-                if (me.tabPanel) {
+                if(me.tabPanel) {
                     me.tabPanel.setActiveTab(0);
                 }
             }
@@ -1602,19 +1601,15 @@ Ext.define('Admin.view.TopBar', {
                 align: 'middle'
             },
             items: [
-                me.startButton,
+                me.startButton, 
                 {
                     xtype: "tbseparator",
                     width: '2px'
-                },
+                }, 
                 me.homeButton
             ]
         });
-        var Templates_common_userPopUp = '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' +
-                                         '<div class="content">' + '<div class="column"><img src="{photoUrl}"/>' +
-                                         '<button class="x-btn-red-small">Log Out</button>' + '</div>' + '<div class="column">' +
-                                         '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' +
-                                         '<a href="#">Change User</a>' + '</div>' + '</div>';
+        var Templates_common_userPopUp = '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' + '<div class="content">' + '<div class="column"><img src="{photoUrl}"/>' + '<button class="x-btn-red-small">Log Out</button>' + '</div>' + '<div class="column">' + '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' + '<a href="#">Change User</a>' + '</div>' + '</div>';
         this.rightContainer = Ext.create('Ext.Container', {
             flex: 5,
             layout: {
@@ -1636,10 +1631,10 @@ Ext.define('Admin.view.TopBar', {
             ]
         });
         this.items = [
-            me.leftContainer,
+            me.leftContainer, 
             me.rightContainer
         ];
-        if (this.tabPanel) {
+        if(this.tabPanel) {
             this.tabMenu = Ext.create('Admin.view.TopBarMenu', {
                 tabPanel: me.tabPanel
             });
@@ -1651,12 +1646,12 @@ Ext.define('Admin.view.TopBar', {
                 styleHtmlContent: true,
                 text: '<span class="title">Title</span><span class="count">0</span>',
                 setTitle: function (title) {
-                    if (this.el) {
+                    if(this.el) {
                         this.el.down('.title').setHTML(title);
                     }
                 },
                 setCount: function (count) {
-                    if (this.el) {
+                    if(this.el) {
                         this.el.down('.count').setHTML(count);
                     }
                 }
@@ -1670,7 +1665,7 @@ Ext.define('Admin.view.TopBar', {
     },
     toggleHomeScreen: function () {
         var isInsideIframe = window.top !== window.self;
-        if (isInsideIframe) {
+        if(isInsideIframe) {
         } else {
             console.error('Can not toggle home screen. Document must be loaded inside the main window');
         }
@@ -1685,11 +1680,11 @@ Ext.define('Admin.view.TopBar', {
         var card = tab.card;
         var buttonText = tab.text1;
         var iconClass;
-        if ('tab-browse' === card.id) {
+        if('tab-browse' === card.id) {
             buttonText = '';
-        } else if (card.tab.iconClass) {
+        } else if(card.tab.iconClass) {
             iconClass = card.tab.iconClass;
-        } else if (card.tab.editing) {
+        } else if(card.tab.editing) {
             iconClass = 'icon-icomoon-pencil-32';
         }
         this.titleButton.setIconCls(iconClass);
@@ -1701,7 +1696,7 @@ Ext.define('Admin.view.TopBar', {
         return removed;
     },
     findNextActivatable: function (tab) {
-        if (this.tabPanel) {
+        if(this.tabPanel) {
             return this.tabPanel.items.get(0);
         }
     },
@@ -1722,7 +1717,7 @@ Ext.define('Admin.view.TopBar', {
         };
     },
     syncTabCount: function () {
-        if (this.tabMenu && this.titleButton) {
+        if(this.tabMenu && this.titleButton) {
             var tabCount = this.tabMenu.getAllItems(false).length;
             this.titleButton.setVisible(tabCount > 0);
             this.titleButton.setCount(tabCount);
@@ -1734,27 +1729,27 @@ Ext.define('Admin.view.TopBar', {
     },
     getMenuItemIcon: function (card) {
         var icon;
-        if (card.data && card.data instanceof Ext.data.Model) {
+        if(card.data && card.data instanceof Ext.data.Model) {
             icon = card.data.get('iconUrl') || card.data.get('image_url');
         }
         return icon;
     },
     getMenuItemDescription: function (card) {
         var desc;
-        if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+        if(!card.isNew && card.data && card.data instanceof Ext.data.Model) {
             desc = card.data.get('path') || card.data.get('qualifiedName') || card.data.get('displayName');
         }
-        if (!desc) {
+        if(!desc) {
             desc = card.title;
         }
         return desc;
     },
     getMenuItemDisplayName: function (card) {
         var desc;
-        if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+        if(!card.isNew && card.data && card.data instanceof Ext.data.Model) {
             desc = card.data.get('displayName') || card.data.get('name');
         }
-        if (!desc) {
+        if(!desc) {
             desc = card.title;
         }
         return desc;
@@ -1762,7 +1757,7 @@ Ext.define('Admin.view.TopBar', {
     setTitleButtonText: function (text) {
         this.titleButton.setTitle(text);
         var activeTab = this.titleButton.menu.activeTab;
-        if (activeTab) {
+        if(activeTab) {
             activeTab.text1 = text;
             activeTab.updateTitleContainer();
         }
@@ -1805,7 +1800,7 @@ Ext.define('Admin.view.TabPanel', {
         me.addEvents('beforetabchange', 'tabchange');
         me.superclass.superclass.initComponent.apply(me, arguments);
         me.activeTab = me.getComponent(activeTab);
-        if (me.activeTab) {
+        if(me.activeTab) {
             me.activeTab.tab.activate(true);
             me.tabBar.setActiveTab(me.activeTab.tab);
         }
@@ -1813,9 +1808,9 @@ Ext.define('Admin.view.TabPanel', {
     addTab: function (item, index, requestConfig) {
         var me = this;
         var tab = this.getTabById(item.id);
-        if (!tab) {
+        if(!tab) {
             tab = this.insert(index || this.items.length, item);
-            if (requestConfig) {
+            if(requestConfig) {
                 this.setActiveTab(tab);
                 var mask = new Ext.LoadMask(tab, {
                     msg: "Please wait..."
@@ -1844,7 +1839,7 @@ Ext.define('Admin.view.TabPanel', {
     removeAllOpenTabs: function () {
         var all = this.items.items;
         var last = all[this.getTabCount() - 1];
-        while (this.getTabCount() > 1) {
+        while(this.getTabCount() > 1) {
             this.remove(last);
             last = this.items.items[this.getTabCount() - 1];
         }
@@ -1866,28 +1861,28 @@ Ext.define('Admin.view.TabPanel', {
             iconclschange: me.onItemIconClsChange,
             titlechange: me.onItemTitleChange
         });
-        if (item.isPanel) {
-            if (me.removePanelHeader) {
-                if (item.rendered) {
-                    if (item.header) {
+        if(item.isPanel) {
+            if(me.removePanelHeader) {
+                if(item.rendered) {
+                    if(item.header) {
                         item.header.hide();
                     }
                 } else {
                     item.header = false;
                 }
             }
-            if (item.isPanel && me.border) {
+            if(item.isPanel && me.border) {
                 item.setBorder(false);
             }
         }
     },
     doRemove: function (item, autoDestroy) {
         var me = this;
-        if (me.destroying || me.items.getCount() === 1) {
+        if(me.destroying || me.items.getCount() === 1) {
             me.activeTab = null;
-        } else if (me.activeTab === item) {
+        } else if(me.activeTab === item) {
             var toActivate = me.tabBar.findNextActivatable(item.tab);
-            if (toActivate) {
+            if(toActivate) {
                 me.setActiveTab(toActivate);
             }
         }
@@ -1901,7 +1896,7 @@ Ext.define('Admin.view.TabPanel', {
             disable: me.onItemDisable,
             beforeshow: me.onItemBeforeShow
         });
-        if (!me.destroying) {
+        if(!me.destroying) {
             me.tabBar.remove(item.tab);
         }
     }
@@ -2275,29 +2270,29 @@ Ext.define('Admin.view.contentManager.ContextMenu', {
             icon: undefined,
             action: 'newContent',
             disableOnMultipleSelection: true
-        },
+        }, 
         {
             text: 'Edit',
             icon: undefined,
             action: 'editContent',
             disableOnMultipleSelection: false
-        },
+        }, 
         {
             text: 'Open',
             icon: undefined,
             action: 'viewContent',
             disableOnMultipleSelection: false
-        },
+        }, 
         {
             text: 'Delete',
             icon: undefined,
             action: 'deleteContent'
-        },
+        }, 
         {
             text: 'Duplicate',
             icon: undefined,
             action: 'duplicateContent'
-        },
+        }, 
         {
             text: 'Move',
             icon: undefined,
@@ -3844,7 +3839,6 @@ Ext.define('Admin.controller.GridPanelController', {
         this.control({
             'contentTreeGridPanel treepanel, grid': {
                 selectionchange: function (panel, selected, opts) {
-                    console.log("Fire selection change");
                     this.updateDetailPanel(selected);
                     this.updateToolbarButtons(selected);
                 },
