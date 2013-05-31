@@ -21,6 +21,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
@@ -28,7 +29,9 @@ import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
 import com.enonic.wem.core.relationship.SyncRelationshipsCommand;
+import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
+import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
@@ -40,6 +43,8 @@ public class CreateContentHandlerTest
     private CreateContentHandler handler;
 
     private ContentDao contentDao;
+
+    private ContentTypeDao contentTypeDao;
 
     private RelationshipService relationshipService;
 
@@ -55,15 +60,24 @@ public class CreateContentHandlerTest
         super.initialize();
 
         contentDao = Mockito.mock( ContentDao.class );
+        contentTypeDao = Mockito.mock( ContentTypeDao.class );
         relationshipService = Mockito.mock( RelationshipService.class );
         indexService = Mockito.mock( IndexService.class );
 
         handler = new CreateContentHandler();
         handler.setContentDao( contentDao );
+        handler.setContentTypeDao( contentTypeDao );
         handler.setRelationshipService( relationshipService );
         handler.setIndexService( indexService );
 
         Mockito.when( super.client.execute( Mockito.isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
+
+        final QualifiedContentTypeName myContentTypeName = new QualifiedContentTypeName( ModuleName.SYSTEM, "my_content_type" );
+        final ContentType myContentType = newContentType().
+            qualifiedName( myContentTypeName ).
+            superType( QualifiedContentTypeName.structured() ).
+            build();
+        Mockito.when( contentTypeDao.select( myContentTypeName, session ) ).thenReturn( myContentType );
 
         DateTimeUtils.setCurrentMillisFixed( CREATED_TIME.getMillis() );
     }

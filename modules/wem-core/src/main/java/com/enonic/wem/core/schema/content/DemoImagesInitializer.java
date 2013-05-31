@@ -5,7 +5,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.binary.Binary;
@@ -16,7 +15,6 @@ import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.core.support.BaseInitializer;
 
-import static com.enonic.wem.api.command.Commands.attachment;
 import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
 
 
@@ -71,16 +69,15 @@ public class DemoImagesInitializer
 
         final ContentData dataSet = createContentData( binaryId );
 
+        final Attachment attachment = newAttachment().name( fileName ).binary( binary ).mimeType( "image/jpg" ).build();
         final CreateContent createContent = Commands.content().create().
             contentType( QualifiedContentTypeName.imageMedia() ).
             displayName( displayName ).
             name( fileName ).
             parentContentPath( parent ).
-            contentData( dataSet );
-        final ContentId contentId = client.execute( createContent ).getContentId();
-
-        final Attachment attachment = newAttachment().name( fileName ).binary( binary ).mimeType( "image/png" ).build();
-        client.execute( attachment().create().contentSelector( contentId ).attachment( attachment ) );
+            contentData( dataSet ).
+            attachments( attachment );
+        client.execute( createContent ).getContentId();
     }
 
     private ContentData createContentData( final BinaryId binaryId )

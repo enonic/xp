@@ -59,7 +59,7 @@ public abstract class BaseInitializer
         }
         catch ( Exception e )
         {
-            LOG.warn( "Icon not found: " + filePath, e );
+            LOG.warn( "Icon not found: " + filePath );
             return null;
         }
     }

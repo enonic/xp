@@ -1,11 +1,16 @@
 package com.enonic.wem.api.command.content;
 
 
+import java.util.Collection;
+import java.util.Map;
+
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
@@ -25,6 +30,8 @@ public final class CreateContent
     private ContentPath parentContentPath;
 
     private boolean temporary;
+
+    private Map<String, Attachment> attachments = Maps.newHashMap();
 
     public CreateContent contentType( final QualifiedContentTypeName value )
     {
@@ -74,6 +81,17 @@ public final class CreateContent
         return this;
     }
 
+    public CreateContent attachments( final Attachment... attachments )
+    {
+        for ( Attachment attachment : attachments )
+        {
+            Preconditions.checkArgument( !this.attachments.containsKey( attachment.getName() ), "attachment with duplicated name: %s",
+                                         attachment.getName() );
+            this.attachments.put( attachment.getName(), attachment );
+        }
+        return this;
+    }
+
     public ContentPath getParentContentPath()
     {
         return parentContentPath;
@@ -107,6 +125,16 @@ public final class CreateContent
     public boolean isTemporary()
     {
         return temporary;
+    }
+
+    public Collection<Attachment> getAttachments()
+    {
+        return attachments.values();
+    }
+
+    public Attachment getAttachment(final String attachmentName)
+    {
+        return attachments.get(attachmentName);
     }
 
     @Override

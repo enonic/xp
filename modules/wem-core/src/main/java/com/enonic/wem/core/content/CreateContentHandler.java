@@ -1,8 +1,12 @@
 package com.enonic.wem.core.content;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -21,6 +25,8 @@ import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentException;
+import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.PropertyVisitor;
 import com.enonic.wem.api.content.data.type.ValueTypes;
@@ -32,11 +38,13 @@ import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
+import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
 import com.enonic.wem.core.relationship.SyncRelationshipsCommand;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
+import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
 
 public class CreateContentHandler
     extends CommandHandler<CreateContent>
@@ -44,6 +52,12 @@ public class CreateContentHandler
     private static final ContentPath TEMPORARY_PARENT_PATH = ContentPath.rootOf( SpaceName.temporary() );
 
     private static final ContentPathNameGenerator CONTENT_PATH_NAME_GENERATOR = new ContentPathNameGenerator();
+
+    private static final int THUMBNAIL_SIZE = 512;
+
+    private static final String THUMBNAIL_NAME = "_thumb.png";
+
+    private static final String THUMBNAIL_MIME_TYPE = "image/png";
 
     private ContentDao contentDao;
 
@@ -93,10 +107,13 @@ public class CreateContentHandler
 
             final Content content = builder.build();
 
-            validateContentData( context.getClient(), content );
+            final Client client = context.getClient();
+            validateContentData( client, content );
 
             final ContentId contentId = contentDao.create( content, session );
             session.save();
+            addAttachments( client, contentId, command.getAttachments() );
+            addMediaThumbnail( client, session, command, content, contentId );
 
             try
             {
@@ -108,7 +125,7 @@ public class CreateContentHandler
                 }
 
                 relationshipService.syncRelationships( new SyncRelationshipsCommand().
-                    client( context.getClient() ).
+                    client( client ).
                     jcrSession( session ).
                     contentType( content.getType() ).
                     contentToUpdate( contentId ).
@@ -131,6 +148,21 @@ public class CreateContentHandler
         catch ( final Exception e )
         {
             throw new CreateContentException( command, e );
+        }
+    }
+
+    private void addMediaThumbnail( final Client client, final Session session, final CreateContent command, final Content content,
+                                    final ContentId contentId )
+        throws Exception
+    {
+        final ContentType contentType = contentTypeDao.select( content.getType(), session );
+        if ( ( contentType.getSuperType() != null ) && contentType.getSuperType().isMedia() )
+        {
+            final Attachment mediaAttachment = command.getAttachment( content.getName() );
+            if ( mediaAttachment != null )
+            {
+                addThumbnail( client, contentId, mediaAttachment );
+            }
         }
     }
 
@@ -215,6 +247,36 @@ public class CreateContentHandler
         {
             throw new ContentDataValidationException( dataValidationErrors.getFirst().getErrorMessage() );
         }
+    }
+
+    private void addAttachments( final Client client, final ContentId contentId, final Collection<Attachment> attachments )
+    {
+        for ( Attachment attachment : attachments )
+        {
+            client.execute( Commands.attachment().create().contentSelector( contentId ).attachment( attachment ) );
+        }
+    }
+
+    private void addThumbnail( final Client client, final ContentId contentId, final Attachment attachment )
+        throws Exception
+    {
+        final Binary thumbnailBinary = createImageThumbnail( attachment.getBinary(), THUMBNAIL_SIZE );
+        final Attachment thumbnailAttachment = newAttachment( attachment ).
+            binary( thumbnailBinary ).
+            name( THUMBNAIL_NAME ).
+            mimeType( THUMBNAIL_MIME_TYPE ).
+            build();
+        client.execute( Commands.attachment().create().contentSelector( contentId ).attachment( thumbnailAttachment ) );
+    }
+
+    public Binary createImageThumbnail( final Binary binary, final int size )
+        throws Exception
+    {
+        final BufferedImage image = ImageIO.read( binary.asInputStream() );
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        final BufferedImage scaledImage = new ScaleMaxFilter( size ).filter( image );
+        ImageIO.write( scaledImage, "png", outputStream );
+        return Binary.from( outputStream.toByteArray() );
     }
 
     @Inject
