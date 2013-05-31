@@ -28,6 +28,16 @@
             font-size: 15px;
         }
 
+        .context-window-dragging-shim {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: #fff;
+            opacity: 0;
+        }
+
     </style>
     <script type="text/javascript" src="../../admin/resources/lib/ext/ext-all-debug.js"></script>
     <script type="text/javascript" src="../../admin2/apps/content-manager/js/view/liveedit/ContextWindow.js"></script>
@@ -36,7 +46,6 @@
 
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         // App
-
 
         Ext.application({
             name: 'App',
@@ -77,7 +86,7 @@
                             items: [
                                 {
                                     xtype: 'component',
-                                    html: '<iframe style="border:0;width: 100%; height: 100%" src="../live-edit/page/bootstrap.jsp?edit=true"></iframe>'
+                                    html: '<iframe id="live-edit-frame" style="border:0;width: 100%; height: 100%" src="../live-edit/page/bootstrap.jsp?edit=true"></iframe>'
                                 }
                             ]
                         }
