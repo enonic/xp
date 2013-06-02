@@ -1,5 +1,5 @@
 module APP.event {
-    export class ShowContextMenuEvent extends API.event.Event {
+    export class ShowContextMenuEvent extends API_event.Event {
 
         private x:number;
         private y:number;
@@ -19,7 +19,7 @@ module APP.event {
         }
 
         static on(handler:(event:ShowContextMenuEvent) => void) {
-            API.event.onEvent('showContextMenu', handler);
+            API_event.onEvent('showContextMenu', handler);
         }
     }
 }

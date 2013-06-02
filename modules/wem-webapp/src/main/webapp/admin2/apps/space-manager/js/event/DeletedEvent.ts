@@ -1,12 +1,12 @@
 module APP.event {
 
-    export class DeletedEvent extends API.event.Event {
+    export class DeletedEvent extends API_event.Event {
         constructor() {
             super('deleted');
         }
 
         static on(handler:(event:DeletedEvent) => void) {
-            API.event.onEvent('deleted', handler);
+            API_event.onEvent('deleted', handler);
         }
     }
 

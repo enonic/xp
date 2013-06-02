@@ -62,6 +62,8 @@
 ///<reference path='controller/DialogWindowController.ts' />
 ///<reference path='controller/WizardController.ts' />
 
+///<reference path='context/SpaceContext.ts' />
+
 
 declare var Ext;
 declare var Admin;
@@ -153,3 +155,5 @@ Ext.application({
     }
 
 });
+
+APP_context.SpaceContext.init();

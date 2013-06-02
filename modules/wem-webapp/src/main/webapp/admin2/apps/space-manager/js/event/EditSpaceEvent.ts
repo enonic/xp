@@ -1,12 +1,12 @@
 module APP.event {
-    export class EditSpaceEvent extends API.event.Event {
+    export class EditSpaceEvent extends API_event.Event {
 
         constructor() {
             super('editSpaceEvent');
         }
 
         static on(handler:(event:EditSpaceEvent) => void) {
-            API.event.onEvent('editSpaceEvent', handler);
+            API_event.onEvent('editSpaceEvent', handler);
         }
     }
 }

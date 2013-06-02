@@ -1,6 +1,6 @@
 module APP.event {
 
-    export class SpaceModelEvent extends API.event.Event {
+    export class SpaceModelEvent extends API_event.Event {
         private model:APP.model.SpaceModel[];
 
         constructor(name:string, model:APP.model.SpaceModel[]) {

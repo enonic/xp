@@ -1,4 +1,4 @@
-module API.event {
+module API_event {
 
     export class Event {
         private name:string;

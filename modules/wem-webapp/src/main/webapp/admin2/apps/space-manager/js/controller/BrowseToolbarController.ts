@@ -26,11 +26,6 @@ Ext.define('Admin.controller.BrowseToolbarController', {
                 click: function (button, event) {
                     this.editSelectedSpaces();
                 }
-            },
-            '#spaceBrowseToolbar *[action=deleteSpace]': {
-                click: function (button, event) {
-                    this.deleteSelectedSpaces();
-                }
             }
         });
     },
@@ -47,11 +42,6 @@ Ext.define('Admin.controller.BrowseToolbarController', {
         for (var i = 0; i < selection.length; i++) {
             this.editSpace(selection[i]);
         }
-    },
-
-    deleteSelectedSpaces: function () {
-        var selection = this.getSpaceTreeGridPanel().getSelection();
-        this.showDeleteSpaceWindow(selection);
     }
 
 });

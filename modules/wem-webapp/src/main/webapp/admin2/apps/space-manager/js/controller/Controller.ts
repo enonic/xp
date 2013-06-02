@@ -96,12 +96,6 @@ Ext.define('Admin.controller.Controller', {
         this.showDeleteSpaceWindow([].concat(space));
     },
 
-    showDeleteSpaceWindow: function (spaceArray) {
-        var win = this.getDeleteSpaceWindow();
-        win.setModel(spaceArray);
-        win.doShow();
-    },
-
     validateSpace: function (space:APP.model.SpaceModel) {
         if (!space) {
             var showPanel = this.getSpaceTreeGridPanel();

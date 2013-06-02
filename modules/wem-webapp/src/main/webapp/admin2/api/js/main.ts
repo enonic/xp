@@ -6,14 +6,14 @@
 
 ///<reference path='util/UriHelper.ts' />
 
+///<reference path='event/Event.ts' />
+///<reference path='event/EventBus.ts' />
+
 ///<reference path='action/Action.ts' />
 
 ///<reference path='ui/Component.ts' />
 ///<reference path='ui/toolbar/Button.ts' />
 ///<reference path='ui/toolbar/Toolbar.ts' />
-
-///<reference path='event/Event.ts' />
-///<reference path='event/EventBus.ts' />
 
 ///<reference path='notify/Message.ts' />
 ///<reference path='notify/NotifyManager.ts' />

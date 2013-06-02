@@ -6,7 +6,7 @@ module APP.event {
         }
 
         static on(handler:(event:GridSelectionChangeEvent) => void) {
-            API.event.onEvent('gridChange', handler);
+            API_event.onEvent('gridChange', handler);
         }
     }
 }

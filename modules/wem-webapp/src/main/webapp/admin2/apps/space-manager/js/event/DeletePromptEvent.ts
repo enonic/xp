@@ -6,8 +6,12 @@ module APP.event {
         }
 
         static on(handler:(event:DeletePromptEvent) => void) {
-            API.event.onEvent('deletePrompt', handler);
+            API_event.onEvent('deletePrompt', handler);
         }
     }
+
+    APP_action.SpaceActions.DELETE_SPACE.addExecutionListener(() => {
+        new DeletePromptEvent( APP_context.SpaceContext.get().getSelectedSpaces() ).fire();
+    });
 }
 
