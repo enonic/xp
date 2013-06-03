@@ -1,24 +1,26 @@
-Ext.define('Admin.view.DropDownButton', {
-    extend: 'Ext.button.Button',
-    alias: 'widget.dropDownButton',
+module admin.ui {
 
-    cls: 'admin-dropdown-button',
-    width: 120,
-    padding: 5,
-    menuItems: [],
+    export class DropDownButton {
 
-    initComponent: function () {
+        ext;
 
-        this.menu = this.createMenu();
+        constructor(config?:Object, menuItems?:Object[]) {
 
-        this.callParent(arguments);
-    },
+            var menu;
+            if (!Ext.isEmpty(menuItems)) {
+                menu = new Admin.view.BaseContextMenu({
+                    width: 120,
+                    items: menuItems
+                })
+            }
 
-    createMenu: function () {
-        var me = this;
-        return Ext.create('Admin.view.BaseContextMenu', {
-            width: 120,
-            items: this.menuItems
-        });
+            this.ext = new Ext.button.Button(Ext.apply({
+                cls: 'admin-dropdown-button',
+                width: 120,
+                padding: 5,
+                menu: menu
+            }, config));
+        }
+
     }
-});
+}

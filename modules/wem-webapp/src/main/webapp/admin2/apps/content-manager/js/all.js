@@ -1659,7 +1659,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
         };
     },
     hideActionButton: function () {
-        var actionsButton = this.down('dropDownButton');
+        var actionsButton = this.down('#dropDownButton');
         if(actionsButton) {
             actionsButton.setVisible(false);
         }
@@ -1674,11 +1674,10 @@ Ext.define('Admin.view.BaseDetailPanel', {
             return {
             };
         }
-        return {
-            xtype: 'dropDownButton',
+        return new admin.ui.DropDownButton({
+            itemId: 'dropDownButton',
             text: 'Actions',
             height: 30,
-            itemId: 'dropdown',
             width: 120,
             tdAttrs: {
                 width: 120,
@@ -1686,9 +1685,8 @@ Ext.define('Admin.view.BaseDetailPanel', {
                 style: {
                     padding: '0 20px 0 0'
                 }
-            },
-            menuItems: me.getActionItems()
-        };
+            }
+        }, me.getActionItems()).ext;
     },
     singleTemplate: {
         photo: '<img src="{data.iconUrl}?size=80" style="width: 64px;" alt="{name}"/>',
@@ -3533,25 +3531,31 @@ Ext.define('Admin.view.contentManager.LivePreview', {
         }
     }
 });
-Ext.define('Admin.view.DropDownButton', {
-    extend: 'Ext.button.Button',
-    alias: 'widget.dropDownButton',
-    cls: 'admin-dropdown-button',
-    width: 120,
-    padding: 5,
-    menuItems: [],
-    initComponent: function () {
-        this.menu = this.createMenu();
-        this.callParent(arguments);
-    },
-    createMenu: function () {
-        var me = this;
-        return Ext.create('Admin.view.BaseContextMenu', {
-            width: 120,
-            items: this.menuItems
-        });
-    }
-});
+var admin;
+(function (admin) {
+    (function (ui) {
+        var DropDownButton = (function () {
+            function DropDownButton(config, menuItems) {
+                var menu;
+                if(!Ext.isEmpty(menuItems)) {
+                    menu = new Admin.view.BaseContextMenu({
+                        width: 120,
+                        items: menuItems
+                    });
+                }
+                this.ext = new Ext.button.Button(Ext.apply({
+                    cls: 'admin-dropdown-button',
+                    width: 120,
+                    padding: 5,
+                    menu: menu
+                }, config));
+            }
+            return DropDownButton;
+        })();
+        ui.DropDownButton = DropDownButton;        
+    })(admin.ui || (admin.ui = {}));
+    var ui = admin.ui;
+})(admin || (admin = {}));
 Ext.define('Admin.view.IframeContainer', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.iframe',

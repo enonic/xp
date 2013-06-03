@@ -74,7 +74,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
      * Actions button
      * */
     hideActionButton: function () {
-        var actionsButton = this.down('dropDownButton');
+        var actionsButton = this.down('#dropDownButton');
         if (actionsButton) {
             actionsButton.setVisible(false);
         }
@@ -91,22 +91,22 @@ Ext.define('Admin.view.BaseDetailPanel', {
         if (this.actionButtonItems.length < 1) {
             return {};
         }
-        return {
-            xtype: 'dropDownButton',
-            text: 'Actions',
-            height: 30,
-            itemId: 'dropdown',
-            width: 120,
-            tdAttrs: {
+        return new admin.ui.DropDownButton(
+            {
+                itemId: 'dropDownButton',
+                text: 'Actions',
+                height: 30,
                 width: 120,
-                valign: 'top',
-                style: {
-                    padding: '0 20px 0 0'
+                tdAttrs: {
+                    width: 120,
+                    valign: 'top',
+                    style: {
+                        padding: '0 20px 0 0'
+                    }
                 }
             },
-            menuItems: me.getActionItems()
-
-        };
+            me.getActionItems()
+        ).ext;
 
     },
 
