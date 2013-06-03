@@ -1,9 +1,11 @@
+/**
+ * fixme: compute the height of the body
+ */
 Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     extend: 'Ext.container.Container',
     alias: 'widget.liveEditContextWindow',
     modal: false,
     width: 320,
-    height: 518,
     border: false,
     floating: true,
     shadow: false,
@@ -17,13 +19,17 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     menuButton: undefined,
     titleText: undefined,
     toggleButton: undefined,
-    draggingCanvas: undefined,
+    windowBody: undefined,
+    draggingShim: undefined,
+    isBodyVisible: true,
 
     initComponent: function () {
         this.titleBar = this.createTitleBar();
-        this.draggingCanvas = this.createDraggingShim();
+        this.draggingShim = this.createDraggingShim();
+        this.windowBody = this.createWindowBody();
         this.items = [
-            this.titleBar
+            this.titleBar,
+            this.windowBody
         ];
         this.enableDrag();
         this.callParent(arguments);
@@ -76,9 +82,49 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
      * @returns {Ext.Component}
      */
     createToggleButton: function () {
+        var me = this;
         return new Ext.Component({
             cls: 'admin-context-window-toggle icon-chevron-down',
-            width: 30
+            width: 30,
+            listeners: {
+                render: function (component) {
+                    component.getEl().on('click', function () {
+                        if (me.isBodyVisible) {
+                            component.getEl().addCls('icon-chevron-up').removeCls('icon-chevron-down');
+                        } else {
+                            component.getEl().addCls('icon-chevron-down').removeCls('icon-chevron-up');
+                        }
+                        me.toggleWindowBody();
+                    });
+                }
+            }
+        });
+    },
+
+    /**
+     * @returns {Ext.container.Container}
+     */
+    createWindowBody: function () {
+        return new Ext.container.Container({
+            height: 484, // fixme: set this dynamically
+            autoScroll: false,
+            cls: 'admin-context-window-body',
+            listeners: {
+                render: function (container) {
+                    container.getEl().on('mouseover', function () {
+                        container.setAutoScroll(true);
+                    });
+                    container.getEl().on('mouseout', function () {
+                        container.setAutoScroll(false);
+                    });
+                }
+            },
+            items: [
+                {
+                    xtype: 'container',
+                    html: '<p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p>'
+                }
+            ]
         });
     },
 
@@ -96,16 +142,30 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
         return div;
     },
 
+    toggleWindowBody: function () {
+        if (this.isBodyVisible) {
+            this.windowBody.hide();
+            this.setHeight(33);
+            this.isBodyVisible = false;
+        } else {
+            this.windowBody.show();
+            this.setHeight(517);
+            this.isBodyVisible = true;
+        }
+    },
+
     enableDrag: function () {
         var me = this;
         this.draggable = {
             delegate: '.admin-context-window-title-text',
             listeners: {
                 dragstart: function () {
-                    me.draggingCanvas.style.display = 'block'
+                    me.getEl().toggleCls('is-dragging');
+                    me.draggingShim.style.display = 'block'
                 },
                 dragend: function () {
-                    me.draggingCanvas.style.display = 'none'
+                    me.getEl().toggleCls('is-dragging');
+                    me.draggingShim.style.display = 'none'
                 }
             }
         };

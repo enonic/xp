@@ -3,29 +3,37 @@
     <title>Enonic WEM Admin</title>
     <link rel="stylesheet" type="text/css" href="../../admin/resources/lib/ext/resources/css/admin.css">
     <style type="text/css">
+
         .admin-context-window {
             background-color: rgba(0, 0, 0, .7);
             color: #fff;
         }
 
         .admin-context-window-title-bar {
+            padding: 7px 7px 4px 10px;
             background-color: #000;
+        }
+        .admin-context-window.is-dragging .admin-context-window-title-bar {
+            color: silver;
         }
 
         .admin-context-window-title-text {
             cursor: move;
-            padding: 10px;
             font-size: 15px;
         }
 
         .admin-context-window-menu {
-            padding: 10px;
+            cursor: pointer;
             font-size: 20px;
         }
 
         .admin-context-window-toggle {
-            padding: 10px;
+            cursor: pointer;
             font-size: 15px;
+        }
+
+        .admin-context-window-body {
+            padding: 0 10px;
         }
 
         .context-window-dragging-shim {
@@ -36,6 +44,21 @@
             left: 0;
             background: #fff;
             opacity: 0;
+        }
+
+        .admin-context-window ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        .admin-context-window ::-webkit-scrollbar-track-piece  {
+            background-color: #343434;
+            -webkit-border-radius: 6px;
+        }
+
+        .admin-context-window ::-webkit-scrollbar-thumb:vertical {
+            background-color: #777;
+            -webkit-border-radius: 6px;
         }
 
     </style>
