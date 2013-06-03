@@ -69,7 +69,7 @@ public class DemoImagesInitializer
 
         final ContentData dataSet = createContentData( binaryId );
 
-        final Attachment attachment = newAttachment().name( fileName ).binary( binary ).mimeType( "image/jpg" ).build();
+        final Attachment attachment = newAttachment().name( fileName ).binary( binary ).mimeType( "image/jpeg" ).build();
         final CreateContent createContent = Commands.content().create().
             contentType( QualifiedContentTypeName.imageMedia() ).
             displayName( displayName ).

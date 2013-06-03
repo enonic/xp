@@ -15,12 +15,12 @@ import javax.ws.rs.core.Response;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
+import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.binary.Binary;
-import com.enonic.wem.api.content.binary.BinaryId;
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
@@ -64,12 +64,25 @@ public class ContentImageResource
 
         final QualifiedContentTypeName contentType = content.getType();
 
+        if ( thumbnail )
+        {
+            // check if content has a thumbnail attachment ("_thumb.png")
+            final Attachment attachmentThumbnail = findAttachment( contentIdValue, CreateContent.THUMBNAIL_NAME );
+            if ( attachmentThumbnail != null )
+            {
+                final BufferedImage thumbnailImage = helper.getImageFromBinary( attachmentThumbnail.getBinary(), size, ScaleSquareFilter );
+                return Response.ok( thumbnailImage, attachmentThumbnail.getMimeType() ).build();
+            }
+        }
+
         final String mimeType;
         final BufferedImage contentImage;
         if ( contentType.isImageMedia() )
         {
-            final ContentData contentData = content.getContentData();
-            final Binary binary = findBinary( contentData.getProperty( "binary" ).getBinaryId() );
+            final String attachmentName = content.getName();
+            final Attachment attachment = findAttachment( contentIdValue, attachmentName );
+
+            final Binary binary = attachment.getBinary();
             if ( thumbnail )
             {
                 contentImage = helper.getImageFromBinary( binary, size, ScaleSquareFilter );
@@ -78,13 +91,13 @@ public class ContentImageResource
             {
                 contentImage = helper.getImageFromBinary( binary, size, ScaleMax );
             }
-            mimeType = contentData.getProperty( "mimeType" ).getString();
+            mimeType = attachment.getMimeType();
         }
         else
         {
             final Icon contentTypeIcon = findRootContentTypeIcon( contentType );
             contentImage = helper.getIconImage( contentTypeIcon, size );
-            mimeType = contentTypeIcon == null ? "image/png" : contentTypeIcon.getMimeType();
+            mimeType = contentTypeIcon.getMimeType();
         }
 
         return Response.ok( contentImage, mimeType ).build();
@@ -115,9 +128,9 @@ public class ContentImageResource
         return client.execute( Commands.content().get().selectors( ContentIds.from( contentId ) ) ).first();
     }
 
-    private Binary findBinary( final BinaryId binaryId )
+    private Attachment findAttachment( final ContentId contentId, final String attachmentName )
     {
-        return client.execute( Commands.binary().get().binaryId( binaryId ) );
+        return client.execute( Commands.attachment().get().contentSelector( contentId ).attachmentName( attachmentName ) );
     }
 
     @Inject

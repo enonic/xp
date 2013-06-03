@@ -39,7 +39,7 @@ public class AttachmentDaoImplTest
     {
         // setup
         final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpg" ).label( "small" ).build();
+        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
 
         final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
         final ContentId contentId = contentDao.create( content, session );
@@ -66,7 +66,7 @@ public class AttachmentDaoImplTest
     {
         // setup
         final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpg" ).label( "small" ).build();
+        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
 
         final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
         contentDao.create( content, session );
@@ -93,7 +93,7 @@ public class AttachmentDaoImplTest
     {
         // setup
         final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpg" ).label( "small" ).build();
+        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
         final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
         final ContentId contentId = contentDao.create( content, session );
         commit();
@@ -115,7 +115,7 @@ public class AttachmentDaoImplTest
     {
         // setup
         final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpg" ).label( "small" ).build();
+        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
         final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
         contentDao.create( content, session );
         commit();
@@ -137,7 +137,7 @@ public class AttachmentDaoImplTest
     {
         // setup
         final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpg" ).label( "small" ).build();
+        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
         final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
         contentDao.create( content, session );
         commit();
@@ -157,8 +157,8 @@ public class AttachmentDaoImplTest
     {
         // setup
         final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpg" ).label( "small" ).build();
-        final Attachment attachment2 = newAttachment().binary( binary ).name( "file2.jpg" ).mimeType( "image/jpg" ).label( "big" ).build();
+        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
+        final Attachment attachment2 = newAttachment().binary( binary ).name( "file2.jpg" ).mimeType( "image/jpeg" ).label( "big" ).build();
         final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
         final ContentId contentId = contentDao.create( content, session );
         commit();
@@ -185,8 +185,8 @@ public class AttachmentDaoImplTest
     {
         // setup
         final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpg" ).label( "small" ).build();
-        final Attachment attachment2 = newAttachment().binary( binary ).name( "file2.jpg" ).mimeType( "image/jpg" ).label( "big" ).build();
+        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
+        final Attachment attachment2 = newAttachment().binary( binary ).name( "file2.jpg" ).mimeType( "image/jpeg" ).label( "big" ).build();
         final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
         contentDao.create( content, session );
         commit();
@@ -213,7 +213,7 @@ public class AttachmentDaoImplTest
     {
         // setup
         final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpg" ).label( "small" ).build();
+        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
         final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
         contentDao.create( content, session );
         commit();

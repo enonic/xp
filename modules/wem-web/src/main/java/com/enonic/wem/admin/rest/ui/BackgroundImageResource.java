@@ -40,7 +40,7 @@ public final class BackgroundImageResource
 
     @GET
     @Path("background.jpg")
-    @Produces("image/jpg")
+    @Produces("image/jpeg")
     public Response streamBackgroundImage()
     {
         final StreamingOutput stream = new StreamingOutput()
