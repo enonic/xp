@@ -8,7 +8,10 @@ module admin.ui {
 
             var menu;
             if (!Ext.isEmpty(menuItems)) {
-                menu = new Admin.view.BaseContextMenu({
+                menu = new Ext.menu.Menu({
+                    cls: 'admin-context-menu',
+                    border: false,
+                    shadow: false,
                     width: 120,
                     items: menuItems
                 })

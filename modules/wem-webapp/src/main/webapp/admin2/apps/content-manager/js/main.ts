@@ -29,7 +29,6 @@
 ///<reference path='lib/Sortable.ts' />
 
 ///<reference path='view/BaseDialogWindow.ts' />
-///<reference path='view/BaseContextMenu.ts' />
 ///<reference path='view/BaseDetailPanel.ts' />
 ///<reference path='view/AdminImageButton.ts' />
 ///<reference path='view/TopBarMenuItem.ts' />

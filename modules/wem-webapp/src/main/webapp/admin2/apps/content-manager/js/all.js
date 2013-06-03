@@ -1599,13 +1599,6 @@ Ext.define('Admin.view.BaseDialogWindow', {
         };
     }
 });
-Ext.define('Admin.view.BaseContextMenu', {
-    extend: 'Ext.menu.Menu',
-    alias: 'widget.baseContextMenu',
-    cls: 'admin-context-menu',
-    border: false,
-    shadow: false
-});
 Ext.define('Admin.view.BaseDetailPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.detailPanel',
@@ -3538,7 +3531,10 @@ var admin;
             function DropDownButton(config, menuItems) {
                 var menu;
                 if(!Ext.isEmpty(menuItems)) {
-                    menu = new Admin.view.BaseContextMenu({
+                    menu = new Ext.menu.Menu({
+                        cls: 'admin-context-menu',
+                        border: false,
+                        shadow: false,
                         width: 120,
                         items: menuItems
                     });
