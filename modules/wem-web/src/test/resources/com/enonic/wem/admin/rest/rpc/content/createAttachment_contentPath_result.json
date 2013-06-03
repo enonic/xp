@@ -1,0 +1,11 @@
+{
+    "success": true,
+    "contentPath": "myspace:/parent/child",
+    "attachments": [
+        {
+            "name": "photo.png",
+            "size": 35,
+            "mimeType": "image/png"
+        }
+    ]
+}

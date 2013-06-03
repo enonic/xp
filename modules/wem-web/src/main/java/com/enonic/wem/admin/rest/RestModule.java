@@ -12,6 +12,7 @@ import com.enonic.wem.admin.rest.rpc.account.GetAccountGraphRpcHandler;
 import com.enonic.wem.admin.rest.rpc.account.GetAccountRpcHandler;
 import com.enonic.wem.admin.rest.rpc.account.SuggestUserNameRpcHandler;
 import com.enonic.wem.admin.rest.rpc.account.VerifyUniqueEmailRpcHandler;
+import com.enonic.wem.admin.rest.rpc.content.CreateAttachmentRpcHandler;
 import com.enonic.wem.admin.rest.rpc.content.CreateBinaryRpcHandler;
 import com.enonic.wem.admin.rest.rpc.content.CreateOrUpdateContentRpcHandler;
 import com.enonic.wem.admin.rest.rpc.content.DeleteContentRpcHandler;
@@ -94,6 +95,7 @@ public final class RestModule
         handlers.add( ListSpacesRpcHandler.class );
 
         handlers.add( CreateBinaryRpcHandler.class );
+        handlers.add( CreateAttachmentRpcHandler.class );
         handlers.add( CreateOrUpdateContentRpcHandler.class );
         handlers.add( DeleteContentRpcHandler.class );
         handlers.add( FindContentRpcHandler.class );

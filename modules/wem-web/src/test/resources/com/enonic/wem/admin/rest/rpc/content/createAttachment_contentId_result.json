@@ -1,0 +1,11 @@
+{
+    "success": true,
+    "contentId" : "7fb16ce6-8c30-4309-bfa1-6ae5ebe19e2c",
+    "attachments": [
+        {
+            "name": "photo.png",
+            "size": 35,
+            "mimeType": "image/png"
+        }
+    ]
+}
