@@ -1,19 +1,16 @@
-/**
- * fixme: compute the height of the body
- */
 Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     extend: 'Ext.container.Container',
     alias: 'widget.liveEditContextWindow',
     modal: false,
-    width: 320,
-    border: false,
-    floating: true,
-    shadow: false,
-    draggable: true,
-    constrain: true,
     cls: 'admin-context-window',
     x: 10,
     y: 40,
+    width: 320,
+    shadow: false,
+    border: false,
+    floating: true,
+    draggable: true,
+    constrain: true,
 
     titleBar: undefined,
     menuButton: undefined,
@@ -22,6 +19,9 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     windowBody: undefined,
     draggingShim: undefined,
     isBodyVisible: true,
+
+    defaultTitleBarHeight: 32,
+    defaultBodyHeight: 516,
 
     initComponent: function () {
         this.titleBar = this.createTitleBar();
@@ -45,6 +45,7 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
 
         return new Ext.container.Container({
             cls: 'admin-context-window-title-bar',
+            height: this.defaultTitleBarHeight,
             layout: {
                 type: 'hbox',
                 align: 'stretch'
@@ -106,7 +107,7 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
      */
     createWindowBody: function () {
         return new Ext.container.Container({
-            height: 484, // fixme: set this dynamically
+            height: this.defaultBodyHeight, // fixme: set this dynamically
             autoScroll: false,
             cls: 'admin-context-window-body',
             listeners: {
@@ -145,11 +146,11 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     toggleWindowBody: function () {
         if (this.isBodyVisible) {
             this.windowBody.hide();
-            this.setHeight(33);
+            this.setHeight(this.defaultTitleBarHeight);
             this.isBodyVisible = false;
         } else {
             this.windowBody.show();
-            this.setHeight(517);
+            this.setHeight(this.defaultBodyHeight - this.defaultTitleBarHeight);
             this.isBodyVisible = true;
         }
     },
