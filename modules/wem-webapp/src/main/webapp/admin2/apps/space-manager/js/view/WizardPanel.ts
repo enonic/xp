@@ -44,6 +44,8 @@ module admin.ui {
             var panel = new Ext.panel.Panel(panelConfig);
 
             this.ext = panel;
+            // reference to typescript wrapper object to have access to this object from ext component
+            this.ext.wrapper = this;
             this.initComponent();
         }
 

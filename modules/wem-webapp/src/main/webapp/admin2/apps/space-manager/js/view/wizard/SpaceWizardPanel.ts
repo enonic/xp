@@ -2,7 +2,7 @@ module admin.ui {
 
     export class SpaceWizardPanel extends admin.ui.WizardPanel {
 
-        private wizardHeader;
+        private wizardHeader:admin.ui.WizardHeader;
 
         constructor(id:string, title:string, editing:bool, data?:APP.model.SpaceModel) {
             var headerData = this.resolveHeaderData();
@@ -25,38 +25,6 @@ module admin.ui {
 
             var uploader = this.ext.down('photoUploadButton');
             uploader.on('fileuploaded', this.photoUploaded, this);
-        }
-
-        private saveSpace() {
-            var spaceWizardData = this.getData();
-            var displayName = spaceWizardData.displayName;
-            var spaceName = spaceWizardData.spaceName;
-            var iconReference = spaceWizardData.iconRef;
-
-            var spaceModel = this.data;
-            var originalSpaceName = spaceModel && spaceModel.get ? spaceModel.get('name') : undefined;
-
-            var spaceParams = {
-                spaceName: originalSpaceName || spaceName,
-                displayName: displayName,
-                iconReference: iconReference,
-                newSpaceName: (originalSpaceName !== spaceName) ? spaceName : undefined
-            };
-
-            var onUpdateSpaceSuccess = function (created, updated) {
-                if (created || updated) {
-
-                    API.notify.showFeedback('Space "' + spaceName + '" was saved');
-                    components.gridPanel.refresh();
-                }
-            };
-            Admin.lib.RemoteService.space_createOrUpdate(spaceParams, function (r) {
-                if (r && r.success) {
-                    onUpdateSpaceSuccess(r.created, r.updated);
-                } else {
-                    console.error("Error", r ? r.error : "An unexpected error occurred.");
-                }
-            });
         }
 
         resolveHeaderData() {
@@ -172,18 +140,18 @@ module admin.ui {
                 xtype: 'button',
                 text: 'Save',
                 handler: () => {
-                    this.saveSpace();
+                    new APP.event.SaveSpaceEvent().fire();
                 }
             };
         }
 
-        getWizardHeader() {
+        getWizardHeader():admin.ui.WizardHeader {
             return this.wizardHeader;
         }
 
         getData():any {
             var data = super.getData();
-            var headerData = this.getWizardHeader().getData();
+            var headerData = <any> this.getWizardHeader().getData();
 
             return this.merge(data, {
                 displayName: headerData.displayName,

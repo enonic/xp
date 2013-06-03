@@ -12,6 +12,7 @@
 ///<reference path='event/GridSelectionChangeEvent.ts' />
 ///<reference path='event/ShowContextMenuEvent.ts' />
 ///<reference path='event/EditSpaceEvent.ts' />
+///<reference path='event/SaveSpaceEvent.ts' />
 
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
