@@ -3,12 +3,12 @@ module admin.ui {
     export class DeleteSpaceWindow {
 
         private container;
-        private data;
+        private spaceModelArray:APP.model.SpaceModel[];
         private title:String = "Delete space(s)";
-        private deleteHandler = new admin.app.handler.DeleteSpacesHandler();
+        private deleteHandler:admin.app.handler.DeleteSpacesHandler = new admin.app.handler.DeleteSpacesHandler();
         private content;
 
-        private template = '<div class="delete-container">' +
+        private template:string = '<div class="delete-container">' +
                            '<tpl for=".">' +
                            '<div class="delete-item">' +
                            '<img class="icon" src="{data.iconUrl}"/>' +
@@ -34,7 +34,7 @@ module admin.ui {
                 //TODO: Fire event
             };
 
-            var ct = this.container = new Ext.container.Container({
+            this.container = new Ext.container.Container({
                 border: false,
                 floating: true,
                 shadow: false,
@@ -53,7 +53,7 @@ module admin.ui {
                 margin: '0 0 20 0'
             });
 
-            var content = this.content = new Ext.Component({
+            this.content = new Ext.Component({
                 region: 'center',
                 cls: 'dialog-info',
                 border: false,
@@ -62,7 +62,7 @@ module admin.ui {
                 tpl: this.template
             });
 
-            ct.add(header, content);
+            this.container.add(header, this.content);
 
             var buttonRow = new Ext.container.Container({
                 layout: { type: 'hbox', pack: 'end' },
@@ -73,7 +73,7 @@ module admin.ui {
                 text: 'Delete',
                 margin: '0 0 0 10',
                 handler: (btn, evt) => {
-                    this.deleteHandler.doDelete(this.data, deleteCallback);
+                    this.deleteHandler.doDelete(this.spaceModelArray, deleteCallback);
                 }
             });
 
@@ -81,21 +81,21 @@ module admin.ui {
                 text: 'Cancel',
                 margin: '0 0 0 10',
                 handler: () => {
-                    ct.hide();
+                    this.container.hide();
                 }
             });
 
             buttonRow.add(deleteButton, cancelButton);
 
-            ct.add(buttonRow);
+            this.container.add(buttonRow);
         }
 
 
-        setModel(model:APP.model.SpaceModel[]) {
-            this.data = model;
-            if (model) {
+        setModel(models:APP.model.SpaceModel[]) {
+            this.spaceModelArray = models;
+            if (models) {
                 if (this.content) {
-                    this.content.update(model);
+                    this.content.update(models);
                 }
 
             }

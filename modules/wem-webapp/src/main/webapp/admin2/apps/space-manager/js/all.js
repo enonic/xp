@@ -2919,7 +2919,7 @@ var admin;
                     _this.container.hide();
                     components.gridPanel.refresh();
                 };
-                var ct = this.container = new Ext.container.Container({
+                this.container = new Ext.container.Container({
                     border: false,
                     floating: true,
                     shadow: false,
@@ -2938,7 +2938,7 @@ var admin;
                     },
                     margin: '0 0 20 0'
                 });
-                var content = this.content = new Ext.Component({
+                this.content = new Ext.Component({
                     region: 'center',
                     cls: 'dialog-info',
                     border: false,
@@ -2946,7 +2946,7 @@ var admin;
                     styleHtmlContent: true,
                     tpl: this.template
                 });
-                ct.add(header, content);
+                this.container.add(header, this.content);
                 var buttonRow = new Ext.container.Container({
                     layout: {
                         type: 'hbox',
@@ -2958,24 +2958,24 @@ var admin;
                     text: 'Delete',
                     margin: '0 0 0 10',
                     handler: function (btn, evt) {
-                        _this.deleteHandler.doDelete(_this.data, deleteCallback);
+                        _this.deleteHandler.doDelete(_this.spaceModelArray, deleteCallback);
                     }
                 });
                 var cancelButton = new Ext.button.Button({
                     text: 'Cancel',
                     margin: '0 0 0 10',
                     handler: function () {
-                        ct.hide();
+                        _this.container.hide();
                     }
                 });
                 buttonRow.add(deleteButton, cancelButton);
-                ct.add(buttonRow);
+                this.container.add(buttonRow);
             };
-            DeleteSpaceWindow.prototype.setModel = function (model) {
-                this.data = model;
-                if(model) {
+            DeleteSpaceWindow.prototype.setModel = function (models) {
+                this.spaceModelArray = models;
+                if(models) {
                     if(this.content) {
-                        this.content.update(model);
+                        this.content.update(models);
                     }
                 }
             };
