@@ -104,17 +104,14 @@ var API_ui_toolbar;
             var _this = this;
                 _super.call(this, 'button');
             this.action = action;
+            this.element = this.createHTMLElement();
+            this.enable(action.isEnabled());
             action.addPropertyChangeListener(function (action) {
                 _this.enable(action.isEnabled());
             });
-            this.element = this.createHTMLElement();
         }
         Button.prototype.enable = function (value) {
-            if(value) {
-                this.element.className = 'enabled';
-            } else {
-                this.element.className = 'disabled';
-            }
+            this.element.disabled = !value;
         };
         Button.prototype.getHTMLElement = function () {
             return this.element;
@@ -158,6 +155,7 @@ var API_ui_toolbar;
         Toolbar.prototype.createHTMLElement = function () {
             var divEl = document.createElement("div");
             divEl.id = _super.prototype.getId.call(this);
+            divEl.className = 'toolbar';
             for(var i in this.buttons) {
                 divEl.appendChild(this.buttons[i].getHTMLElement());
             }

@@ -11,6 +11,7 @@ module APP_action {
 
         constructor() {
             super("Open");
+            this.setEnabled(false);
         }
     }
 
@@ -18,6 +19,7 @@ module APP_action {
 
         constructor() {
             super("Edit");
+            this.setEnabled(false);
         }
     }
 
@@ -25,7 +27,7 @@ module APP_action {
 
         constructor() {
             super("Delete");
-
+            this.setEnabled(false);
             this.addExecutionListener(() => {
                 new APP.event.DeletePromptEvent(APP_context.SpaceContext.get().getSelectedSpaces()).fire();
             });

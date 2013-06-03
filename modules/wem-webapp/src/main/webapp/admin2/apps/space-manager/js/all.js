@@ -369,6 +369,7 @@ var APP_action;
         __extends(OpenSpaceAction, _super);
         function OpenSpaceAction() {
                 _super.call(this, "Open");
+            this.setEnabled(false);
         }
         return OpenSpaceAction;
     })(API_action.Action);
@@ -377,6 +378,7 @@ var APP_action;
         __extends(EditSpaceAction, _super);
         function EditSpaceAction() {
                 _super.call(this, "Edit");
+            this.setEnabled(false);
         }
         return EditSpaceAction;
     })(API_action.Action);
@@ -385,6 +387,7 @@ var APP_action;
         __extends(DeleteSpaceAction, _super);
         function DeleteSpaceAction() {
                 _super.call(this, "Delete");
+            this.setEnabled(false);
             this.addExecutionListener(function () {
                 new APP.event.DeletePromptEvent(APP_context.SpaceContext.get().getSelectedSpaces()).fire();
             });
@@ -4661,8 +4664,8 @@ var APP;
             function BrowseToolbar2() {
                         _super.call(this, [
             APP_action.SpaceActions.NEW_SPACE, 
-            APP_action.SpaceActions.OPEN_SPACE, 
             APP_action.SpaceActions.EDIT_SPACE, 
+            APP_action.SpaceActions.OPEN_SPACE, 
             APP_action.SpaceActions.DELETE_SPACE
         ]);
             }

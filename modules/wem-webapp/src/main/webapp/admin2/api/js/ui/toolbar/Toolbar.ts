@@ -34,6 +34,7 @@ module API_ui_toolbar {
         private createHTMLElement():HTMLElement {
             var divEl:HTMLElement = document.createElement("div");
             divEl.id = super.getId();
+            divEl.className = 'toolbar';
             for (var i in this.buttons) {
                 divEl.appendChild(this.buttons[i].getHTMLElement());
             }
