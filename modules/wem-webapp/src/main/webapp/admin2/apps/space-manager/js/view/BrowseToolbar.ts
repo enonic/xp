@@ -27,7 +27,7 @@ module admin.ui {
                 iconAlign: 'top',
                 minWidth: 64,
                 handler: () => {
-                    new APP.event.EditSpaceEvent().fire();
+                    new APP.event.EditSpaceEvent(APP_context.SpaceContext.get().getSelectedSpaces()).fire();
                 }
             });
 

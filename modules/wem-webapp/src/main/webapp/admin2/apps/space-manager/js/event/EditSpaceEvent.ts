@@ -1,8 +1,8 @@
 module APP.event {
-    export class EditSpaceEvent extends API_event.Event {
+    export class EditSpaceEvent extends SpaceModelEvent {
 
-        constructor() {
-            super('editSpaceEvent');
+        constructor(model:APP.model.SpaceModel[]) {
+            super('editSpaceEvent', model);
         }
 
         static on(handler:(event:EditSpaceEvent) => void) {

@@ -4,6 +4,9 @@ module APP_action {
 
         constructor() {
             super("New");
+            this.addExecutionListener(() => {
+                new APP.event.NewSpaceEvent().fire();
+            });
         }
     }
 
@@ -12,6 +15,9 @@ module APP_action {
         constructor() {
             super("Open");
             this.setEnabled(false);
+            this.addExecutionListener(() => {
+                new APP.event.OpenSpaceEvent(APP_context.SpaceContext.get().getSelectedSpaces()).fire();
+            });
         }
     }
 
@@ -20,6 +26,9 @@ module APP_action {
         constructor() {
             super("Edit");
             this.setEnabled(false);
+            this.addExecutionListener(() => {
+                new APP.event.EditSpaceEvent(APP_context.SpaceContext.get().getSelectedSpaces()).fire();
+            });
         }
     }
 
@@ -79,8 +88,8 @@ module APP_action {
             for (var i in spaces) {
                 var space:APP.model.SpaceModel = spaces[i];
                 /*if (space.raw.editable) {
-                    return true;
-                }*/
+                 return true;
+                 }*/
             }
             return false;
         }
@@ -89,8 +98,8 @@ module APP_action {
             for (var i in spaces) {
                 var space:APP.model.SpaceModel = spaces[i];
                 /*if (space.raw.deletable) {
-                    return true;
-                }*/
+                 return true;
+                 }*/
             }
             return false;
         }

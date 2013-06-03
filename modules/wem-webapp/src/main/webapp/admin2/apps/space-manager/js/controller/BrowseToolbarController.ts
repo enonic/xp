@@ -11,6 +11,10 @@ Ext.define('Admin.controller.BrowseToolbarController', {
 
     init: function () {
 
+        APP.event.OpenSpaceEvent.on((event) => {
+            this.viewSelectedSpaces();
+        });
+
         this.control({
             '#spaceBrowseToolbar *[action=newSpace]': {
                 click: function (button, event) {

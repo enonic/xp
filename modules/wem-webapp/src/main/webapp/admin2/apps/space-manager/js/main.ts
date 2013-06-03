@@ -9,7 +9,10 @@
 ///<reference path='event/DeletePromptEvent.ts' />
 ///<reference path='event/GridSelectionChangeEvent.ts' />
 ///<reference path='event/ShowContextMenuEvent.ts' />
+///<reference path='event/NewSpaceEvent.ts' />
+///<reference path='event/OpenSpaceEvent.ts' />
 ///<reference path='event/EditSpaceEvent.ts' />
+
 
 ///<reference path='action/SpaceActions.ts' />
 
