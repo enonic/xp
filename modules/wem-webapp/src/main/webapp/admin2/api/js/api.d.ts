@@ -31,6 +31,11 @@ module API_action {
     }
 }
 module API_ui {
+    class HTMLElementHelper {
+        static addClass(el: HTMLElement, clsName: string): void;
+    }
+}
+module API_ui {
     class Component {
         private static counstructorCounter;
         private id;

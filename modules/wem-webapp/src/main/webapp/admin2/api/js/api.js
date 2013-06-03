@@ -79,6 +79,21 @@ var API_action;
 })(API_action || (API_action = {}));
 var API_ui;
 (function (API_ui) {
+    var HTMLElementHelper = (function () {
+        function HTMLElementHelper() { }
+        HTMLElementHelper.addClass = function addClass(el, clsName) {
+            if(el.className == '') {
+                el.className += clsName;
+            } else {
+                el.className += ' ' + clsName;
+            }
+        };
+        return HTMLElementHelper;
+    })();
+    API_ui.HTMLElementHelper = HTMLElementHelper;    
+})(API_ui || (API_ui = {}));
+var API_ui;
+(function (API_ui) {
     var Component = (function () {
         function Component(parentName) {
             this.id = parentName + '-' + ++API_ui.Component.counstructorCounter;
@@ -114,6 +129,9 @@ var API_ui_toolbar;
             this.element.disabled = !value;
         };
         Button.prototype.setFloatRight = function (value) {
+            if(value) {
+                API_ui.HTMLElementHelper.addClass(this.element, 'pull-right');
+            }
         };
         Button.prototype.getHTMLElement = function () {
             return this.element;

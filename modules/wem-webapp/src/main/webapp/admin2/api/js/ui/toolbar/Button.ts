@@ -22,9 +22,10 @@ module API_ui_toolbar {
         }
 
         setFloatRight(value:bool) {
-            // TODO:
+            if( value ) {
+                API_ui.HTMLElementHelper.addClass(this.element, 'pull-right');
+            }
         }
-
 
         getHTMLElement():HTMLElement {
             return this.element;
