@@ -17,6 +17,8 @@ import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 public final class CreateContent
     extends Command<CreateContentResult>
 {
+    public static final String THUMBNAIL_NAME = "_thumb.png";
+
     private ContentData contentData;
 
     private QualifiedContentTypeName contentType;

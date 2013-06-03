@@ -48,7 +48,7 @@ public class GetAttachmentHandlerTest
     {
         // setup
         final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpg" ).label( "small" ).build();
+        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
         when( attachmentDao.getAttachment( isA( ContentSelector.class ), isA( String.class ), any( Session.class ) ) ).thenReturn(
             attachment );
 

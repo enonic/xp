@@ -48,7 +48,7 @@ public class CreateAttachmentHandlerTest
     {
         // setup
         final Binary binary = Binary.from( "some binary data".getBytes() );
-        final Attachment attachment = newAttachment().name( "file.jpg" ).label( "small" ).mimeType( "image/jpg" ).binary( binary ).build();
+        final Attachment attachment = newAttachment().name( "file.jpg" ).label( "small" ).mimeType( "image/jpeg" ).binary( binary ).build();
         final CreateAttachment command =
             Commands.attachment().create().contentSelector( ContentPath.from( "myspace:/image" ) ).attachment( attachment );
 

@@ -55,8 +55,6 @@ public class CreateContentHandler
 
     private static final int THUMBNAIL_SIZE = 512;
 
-    private static final String THUMBNAIL_NAME = "_thumb.png";
-
     private static final String THUMBNAIL_MIME_TYPE = "image/png";
 
     private ContentDao contentDao;
@@ -263,7 +261,7 @@ public class CreateContentHandler
         final Binary thumbnailBinary = createImageThumbnail( attachment.getBinary(), THUMBNAIL_SIZE );
         final Attachment thumbnailAttachment = newAttachment( attachment ).
             binary( thumbnailBinary ).
-            name( THUMBNAIL_NAME ).
+            name( CreateContent.THUMBNAIL_NAME ).
             mimeType( THUMBNAIL_MIME_TYPE ).
             build();
         client.execute( Commands.attachment().create().contentSelector( contentId ).attachment( thumbnailAttachment ) );
