@@ -558,9 +558,9 @@ Ext.define('Admin.controller.Controller', {
     },
 
     getContentManagerContextMenu: function () {
-        var menu = Ext.ComponentQuery.query('contentManagerContextMenu')[0];
+        var menu = Ext.ComponentManager.get('contentManagerContextMenu');
         if (!menu) {
-            menu = Ext.create('widget.contentManagerContextMenu');
+            menu = new admin.ui.ContextMenu().ext;
         }
         return menu;
     },
