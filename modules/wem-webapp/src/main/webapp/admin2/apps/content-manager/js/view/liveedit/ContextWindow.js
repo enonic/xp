@@ -1,3 +1,6 @@
+/**
+ * TODO: Controller? :)
+ */
 Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     extend: 'Ext.container.Container',
     alias: 'widget.liveEditContextWindow',
@@ -20,8 +23,30 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     draggingShim: undefined,
     isBodyVisible: true,
 
+    defaultPanelIndex: 0,
     defaultTitleBarHeight: 32,
     defaultBodyHeight: 516,
+
+    panels: [
+        {
+            name: 'Components',
+            item: function () {
+                return new Admin.view.contentManager.liveedit.Components({hidden:true});
+            }
+        },
+        {
+            name: 'Device Selector',
+            item: function () {
+                return new Admin.view.contentManager.liveedit.DeviceSelector({hidden:true});
+            }
+        },
+        {
+            name: 'Images',
+            item: function () {
+                return new Admin.view.contentManager.liveedit.Images({hidden:true});
+            }
+        },
+    ],
 
     initComponent: function () {
         this.titleBar = this.createTitleBar();
@@ -66,12 +91,7 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
             text: '',
             arrowCls: '-none',
             cls: 'admin-context-window-menu-button icon-reorder',
-            menu: [
-                {text: 'Item 1'},
-                {text: 'Item 2'},
-                {text: 'Item 3'},
-                {text: 'Item 4'}
-            ]
+            menu: this.createMenuItems()
         });
     },
 
@@ -102,7 +122,7 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
                         } else {
                             component.getEl().addCls('icon-chevron-down').removeCls('icon-chevron-up');
                         }
-                        me.toggleWindowBody();
+                        me.toggleExpandCollapse();
                     });
                 }
             }
@@ -113,6 +133,7 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
      * @returns {Ext.container.Container}
      */
     createWindowBody: function () {
+        var me = this;
         return new Ext.container.Container({
             height: this.defaultBodyHeight, // fixme: set this dynamically
             autoScroll: false,
@@ -125,12 +146,73 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
                     container.getEl().on('mouseout', function () {
                         container.setAutoScroll(false);
                     });
+
+                    me.addBodyPanels();
+                    me.setBodyPanel(me.defaultPanelIndex);
                 }
-            },
-            items: [
-                new Admin.view.contentManager.liveedit.TestContent()
-            ]
+            }
         });
+    },
+
+    setTitleText: function (text) {
+        this.titleText.getEl().setHTML(text);
+    },
+
+    toggleExpandCollapse: function () {
+        if (this.isBodyVisible) {
+            this.windowBody.hide();
+            this.setHeight(this.defaultTitleBarHeight);
+            this.isBodyVisible = false;
+        } else {
+            this.windowBody.show();
+            this.setHeight(this.defaultBodyHeight + this.defaultTitleBarHeight);
+            this.isBodyVisible = true;
+        }
+    },
+
+    setBodyPanel: function (index) {
+        var addedPanels = this.windowBody.items.items, panel;
+        for (var i = 0; i < addedPanels.length; i++) {
+            panel = addedPanels[i];
+            if (i == index) {
+                panel.show();
+                this.setTitleText(this.panels[i].name); // ai, move this
+
+            } else {
+                panel.hide();
+            }
+        }
+    },
+
+    addBodyPanels: function () {
+        var key, panel;
+        for (key in this.panels) {
+            if (this.panels.hasOwnProperty(key)) {
+                panel = this.panels[key];
+                this.windowBody.add(panel.item());
+            }
+        }
+    },
+
+    /**
+     * @returns {Array}
+     */
+    createMenuItems: function () {
+        var me = this, menuItems = [], panels = this.panels, key, panel;
+        for (key in this.panels) {
+            if (this.panels.hasOwnProperty(key)) {
+                panel = panels[key];
+                menuItems.push({
+                    itemId: key,
+                    text: panel.name,
+                    handler: function (item) {
+                        me.setBodyPanel(item.itemId);
+                    }
+                })
+
+            }
+        }
+        return menuItems;
     },
 
     /**
@@ -145,18 +227,6 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
         div.setAttribute('style', 'display: none');
         document.body.appendChild(div);
         return div;
-    },
-
-    toggleWindowBody: function () {
-        if (this.isBodyVisible) {
-            this.windowBody.hide();
-            this.setHeight(this.defaultTitleBarHeight);
-            this.isBodyVisible = false;
-        } else {
-            this.windowBody.show();
-            this.setHeight(this.defaultBodyHeight + this.defaultTitleBarHeight);
-            this.isBodyVisible = true;
-        }
     },
 
     enableDrag: function () {
