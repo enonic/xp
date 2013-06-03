@@ -4662,12 +4662,11 @@ var APP;
         var BrowseToolbar2 = (function (_super) {
             __extends(BrowseToolbar2, _super);
             function BrowseToolbar2() {
-                        _super.call(this, [
-            APP_action.SpaceActions.NEW_SPACE, 
-            APP_action.SpaceActions.EDIT_SPACE, 
-            APP_action.SpaceActions.OPEN_SPACE, 
-            APP_action.SpaceActions.DELETE_SPACE
-        ]);
+                        _super.call(this);
+                _super.prototype.addAction.call(this, APP_action.SpaceActions.NEW_SPACE);
+                _super.prototype.addAction.call(this, APP_action.SpaceActions.EDIT_SPACE);
+                _super.prototype.addAction.call(this, APP_action.SpaceActions.OPEN_SPACE);
+                _super.prototype.addAction.call(this, APP_action.SpaceActions.DELETE_SPACE);
             }
             return BrowseToolbar2;
         })(API_ui_toolbar.Toolbar);

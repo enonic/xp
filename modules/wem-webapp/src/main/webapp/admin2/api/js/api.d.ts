@@ -53,12 +53,12 @@ module API_ui_toolbar {
         public ext;
         private buttons;
         private element;
-        constructor(actions: API_action.Action[]);
+        constructor();
         private initExt();
         public getHTMLElement(): HTMLElement;
         private createHTMLElement();
-        public add(action: API_action.Action): void;
-        private addAction(action);
+        public addAction(action: API_action.Action): void;
+        private doAddAction(action);
     }
 }
 module API.notify {

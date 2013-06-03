@@ -8,14 +8,8 @@ module API_ui_toolbar {
 
         private element:HTMLElement;
 
-        // TODO: create and expose HTML for tool bar
-
-        constructor(actions:API_action.Action[]) {
+        constructor() {
             super("toolbar");
-            for (var i in actions) {
-                this.addAction(actions[i]);
-            }
-
             this.element = this.createHTMLElement();
             this.initExt();
         }
@@ -41,17 +35,14 @@ module API_ui_toolbar {
             return divEl;
         }
 
-        add(action:API_action.Action) {
-            var button:Button = this.addAction(action);
+        addAction(action:API_action.Action) {
+            var button:Button = this.doAddAction(action);
             this.element.appendChild(button.getHTMLElement())
         }
 
-        private addAction(action:API_action.Action):Button {
+        private doAddAction(action:API_action.Action):Button {
             var button = new Button(action);
             this.buttons.push(button);
-            action.addPropertyChangeListener((action:API_action.Action) => {
-                this.element.disabled = !action.isEnabled();
-            });
             return button;
         }
     }

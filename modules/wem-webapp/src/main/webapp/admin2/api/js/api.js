@@ -134,12 +134,9 @@ var API_ui_toolbar;
 (function (API_ui_toolbar) {
     var Toolbar = (function (_super) {
         __extends(Toolbar, _super);
-        function Toolbar(actions) {
+        function Toolbar() {
                 _super.call(this, "toolbar");
             this.buttons = [];
-            for(var i in actions) {
-                this.addAction(actions[i]);
-            }
             this.element = this.createHTMLElement();
             this.initExt();
         }
@@ -161,17 +158,13 @@ var API_ui_toolbar;
             }
             return divEl;
         };
-        Toolbar.prototype.add = function (action) {
-            var button = this.addAction(action);
+        Toolbar.prototype.addAction = function (action) {
+            var button = this.doAddAction(action);
             this.element.appendChild(button.getHTMLElement());
         };
-        Toolbar.prototype.addAction = function (action) {
-            var _this = this;
+        Toolbar.prototype.doAddAction = function (action) {
             var button = new API_ui_toolbar.Button(action);
             this.buttons.push(button);
-            action.addPropertyChangeListener(function (action) {
-                _this.element.disabled = !action.isEnabled();
-            });
             return button;
         };
         return Toolbar;
