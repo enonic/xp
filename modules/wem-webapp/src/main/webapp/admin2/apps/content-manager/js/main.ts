@@ -17,8 +17,12 @@
 ///<reference path='plugin/GridToolbarPlugin.ts' />
 
 ///<reference path='model/ContentModel.ts' />
+///<reference path='model/ContentTypeModel.ts' />
+
 ///<reference path='store/ContentStore.ts' />
 ///<reference path='store/ContentTreeStore.ts' />
+///<reference path='store/ContentTypeStore.ts' />
+///<reference path='store/ContentTypeTreeStore.ts' />
 
 ///<reference path='lib/UriHelper.ts' />
 ///<reference path='lib/DateHelper.ts' />
@@ -43,6 +47,9 @@
 ///<reference path='view/IframeContainer.ts' />
 ///<reference path='view/BaseDetailPanel.ts' />
 ///<reference path='view/DetailPanel.ts' />
+
+///<reference path='view/BaseDialogWindow.ts' />
+///<reference path='view/NewContentWindow.ts' />
 
 
 ///<reference path='controller/BaseController.ts' />

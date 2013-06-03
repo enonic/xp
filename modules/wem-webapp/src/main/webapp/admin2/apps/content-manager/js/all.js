@@ -5,7 +5,7 @@ Ext.define('Admin.lib.JsonRpcProvider', {
         var methods = this.methods;
         var namespace = this.namespace;
         var methodName;
-        for(var i = 0; i < methods.length; i++) {
+        for (var i = 0; i < methods.length; i++) {
             methodName = methods[i];
             var def = {
                 name: methodName,
@@ -27,7 +27,7 @@ Ext.define('Admin.lib.JsonRpcProvider', {
         var error = response.error ? true : false;
         response.tid = response.id;
         response.type = error ? 'exception' : 'rpc';
-        if(error) {
+        if (error) {
             response.message = response.error.message;
         }
         return Ext.create('direct.' + response.type, response);
@@ -46,47 +46,47 @@ Ext.define('Admin.lib.RemoteService', {
             "type": "jsonrpc",
             "namespace": "Admin.lib.RemoteService",
             "methods": [
-                "account_find", 
-                "account_getGraph", 
-                "account_changePassword", 
-                "account_verifyUniqueEmail", 
-                "account_suggestUserName", 
-                "account_createOrUpdate", 
-                "account_delete", 
-                "account_get", 
-                "util_getCountries", 
-                "util_getLocales", 
-                "util_getTimeZones", 
-                "userstore_getAll", 
-                "userstore_get", 
-                "userstore_getConnectors", 
-                "userstore_createOrUpdate", 
-                "userstore_delete", 
-                "content_createOrUpdate", 
-                "content_list", 
-                "contentType_get", 
-                "content_tree", 
-                "content_get", 
-                "contentType_list", 
-                "content_delete", 
-                "content_validate", 
-                "content_find", 
-                "contentType_createOrUpdate", 
-                "contentType_delete", 
-                "contentType_tree", 
-                "schema_list", 
-                "schema_tree", 
-                "system_getSystemInfo", 
-                "mixin_get", 
-                "mixin_createOrUpdate", 
-                "mixin_delete", 
-                "relationshipType_get", 
-                "relationshipType_createOrUpdate", 
-                "relationshipType_delete", 
-                "space_list", 
-                "space_get", 
-                "space_delete", 
-                "space_createOrUpdate", 
+                "account_find",
+                "account_getGraph",
+                "account_changePassword",
+                "account_verifyUniqueEmail",
+                "account_suggestUserName",
+                "account_createOrUpdate",
+                "account_delete",
+                "account_get",
+                "util_getCountries",
+                "util_getLocales",
+                "util_getTimeZones",
+                "userstore_getAll",
+                "userstore_get",
+                "userstore_getConnectors",
+                "userstore_createOrUpdate",
+                "userstore_delete",
+                "content_createOrUpdate",
+                "content_list",
+                "contentType_get",
+                "content_tree",
+                "content_get",
+                "contentType_list",
+                "content_delete",
+                "content_validate",
+                "content_find",
+                "contentType_createOrUpdate",
+                "contentType_delete",
+                "contentType_tree",
+                "schema_list",
+                "schema_tree",
+                "system_getSystemInfo",
+                "mixin_get",
+                "mixin_createOrUpdate",
+                "mixin_delete",
+                "relationshipType_get",
+                "relationshipType_createOrUpdate",
+                "relationshipType_delete",
+                "space_list",
+                "space_get",
+                "space_delete",
+                "space_createOrUpdate",
                 "binary_create"
             ],
             "enableBuffer": 20
@@ -221,7 +221,7 @@ Ext.define('Admin.lib.RemoteService', {
     },
     getMethod: function (name) {
         var handler = this.handlerCache[name];
-        if(handler) {
+        if (handler) {
             return handler;
         }
         var method = new Ext.direct.RemotingMethod({
@@ -258,7 +258,7 @@ Ext.define('Ext.ux.toggleslide.Thumb', {
         me.onRender();
     },
     onRender: function () {
-        if(this.disabled) {
+        if (this.disabled) {
             this.disable();
         }
     },
@@ -304,13 +304,13 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
     diff3: 0,
     frame: false,
     renderTpl: [
-        '<div class="holder">', 
-        '<label class="{onLabelCls}">', 
-        '<span>{onText}</span>', 
-        '</label>', 
-        '<label class="{offLabelCls}">', 
-        '<span>{offText}</span>', 
-        '</label>', 
+        '<div class="holder">',
+        '<label class="{onLabelCls}">',
+        '<span>{onText}</span>',
+        '</label>',
+        '<label class="{offLabelCls}">',
+        '<span>{offText}</span>',
+        '</label>',
         '</div>'
     ],
     autoEl: {
@@ -335,15 +335,15 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
     },
     onRender: function () {
         var me = this;
-        if(!me.resizeContainer) {
+        if (!me.resizeContainer) {
             me.diff = 0;
         }
-        if(!me.resizeHandle) {
+        if (!me.resizeHandle) {
             me.diff2 = 3;
             me.diff3 = 5;
         }
         me.callParent(arguments);
-        if(me.cls) {
+        if (me.cls) {
             me.el.addCls(me.cls);
         }
         me.thumb = new Ext.ux.toggleslide.Thumb({
@@ -356,18 +356,18 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
         me.onSpan = me.onLabel.first();
         me.offLabel = me.onLabel.next();
         me.offSpan = me.offLabel.first();
-        if(me.rendered) {
+        if (me.rendered) {
             me.thumb.render();
         }
         me.handle = me.thumb.el;
-        if(me.resizeHandle) {
+        if (me.resizeHandle) {
             me.thumb.bringToFront();
         } else {
             me.thumb.sendToBack();
         }
         me.resize();
         me.disableTextSelection();
-        if(!me.disabled) {
+        if (!me.disabled) {
             me.registerToggleListeners();
         } else {
             Ext.ux.toggleslide.ToggleSlide.superclass.disable.call(me);
@@ -375,11 +375,11 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
     },
     resize: function () {
         var me = this, container = me.el, offlabel = me.offLabel, onlabel = me.onLabel, handle = me.handle;
-        if(me.resizeHandle) {
+        if (me.resizeHandle) {
             var min = (onlabel.getWidth() < offlabel.getWidth()) ? onlabel.getWidth() : offlabel.getWidth();
             handle.setWidth(min);
         }
-        if(me.resizeContainer) {
+        if (me.resizeContainer) {
             var max = (onlabel.getWidth() > offlabel.getWidth()) ? onlabel.getWidth() : offlabel.getWidth();
             var expandPx = Math.ceil(container.getHeight() / 3);
             container.setWidth(max + handle.getWidth() + expandPx);
@@ -388,7 +388,7 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
         onlabel.setWidth(container.getWidth() - b + me.diff2);
         offlabel.setWidth(container.getWidth() - b + me.diff2);
         var rightside = me.rightside = container.getWidth() - handle.getWidth() - me.diff;
-        if(me.state) {
+        if (me.state) {
             handle.setLeft(rightside);
         } else {
             handle.setLeft(0);
@@ -397,9 +397,9 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
     },
     disableTextSelection: function () {
         var els = [
-            this.el, 
-            this.onLabel, 
-            this.offLabel, 
+            this.el,
+            this.onLabel,
+            this.offLabel,
             this.handle
         ];
         Ext.each(els, function (el) {
@@ -407,7 +407,7 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
                 evt.preventDefault();
                 return false;
             });
-            if(Ext.isIE) {
+            if (Ext.isIE) {
                 el.on('startselect', function (evt) {
                     evt.stopEvent();
                     return false;
@@ -457,7 +457,8 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
         });
     },
     onDragEnd: function (e) {
-        var me = this, hc = (me.handle.getLeft(true) + me.handle.getRight(true)) / 2, cc = (me.el.getLeft(true) + me.el.getRight(true)) / 2, next = hc > cc;
+        var me = this, hc = (me.handle.getLeft(true) + me.handle.getRight(true)) / 2, cc = (me.el.getLeft(true) + me.el.getRight(true)) /
+                                                                                           2, next = hc > cc;
         (me.state != next) ? me.toggle() : me.moveHandle(next);
         me.dragging = false;
     },
@@ -469,20 +470,20 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
         });
     },
     onMouseUp: function () {
-        if(!this.dragging) {
+        if (!this.dragging) {
             this.toggle();
         }
     },
     toggle: function () {
         var me = this, next = !this.state;
-        if(!me.booleanMode) {
+        if (!me.booleanMode) {
             next = me.state ? me.onText : me.offText;
         }
-        if(me.fireEvent('beforechange', me, next) !== false) {
+        if (me.fireEvent('beforechange', me, next) !== false) {
             me.state = !me.state;
             me.moveHandle(me.state, Ext.bind(me.fireEvent, me, [
-                'change', 
-                me, 
+                'change',
+                me,
                 me.getValue()
             ]));
         } else {
@@ -490,14 +491,14 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
         }
     },
     enable: function () {
-        if(this.disabled) {
+        if (this.disabled) {
             Ext.ux.toggleslide.ToggleSlide.superclass.enable.call(this);
             this.registerToggleListeners();
         }
         return this;
     },
     disable: function () {
-        if(!this.disabled) {
+        if (!this.disabled) {
             Ext.ux.toggleslide.ToggleSlide.superclass.disable.call(this);
             this.unregisterToggleListeners();
         }
@@ -525,7 +526,9 @@ var admin;
     (function (app) {
         (function (handler) {
             var DeleteContentHandler = (function () {
-                function DeleteContentHandler() { }
+                function DeleteContentHandler() {
+                }
+
                 DeleteContentHandler.prototype.doDelete = function (contentModels, callback) {
                     var _this = this;
                     var contentPaths = Ext.Array.map([].concat(contentModels), function (item) {
@@ -534,7 +537,7 @@ var admin;
                     Admin.lib.RemoteService.content_delete({
                         'contentPaths': contentPaths
                     }, function (response) {
-                        if(response) {
+                        if (response) {
                             callback.call(_this, response.success, response.failures);
                         } else {
                             Ext.Msg.alert('Error', response ? response.error : 'Internal error occured.');
@@ -543,7 +546,7 @@ var admin;
                 };
                 return DeleteContentHandler;
             })();
-            handler.DeleteContentHandler = DeleteContentHandler;            
+            handler.DeleteContentHandler = DeleteContentHandler;
         })(app.handler || (app.handler = {}));
         var handler = app.handler;
     })(admin.app || (admin.app = {}));
@@ -557,7 +560,9 @@ var admin;
                 var _this = this;
                 this.title = "Delete content(s)";
                 this.deleteHandler = new admin.app.handler.DeleteContentHandler();
-                this.template = '<div class="delete-container">' + '<tpl for=".">' + '<div class="delete-item">' + '<img class="icon" src="{data.iconUrl}"/>' + '<h4>{data.displayName}</h4>' + '<p>{data.type}</p>' + '</div>' + '</tpl>' + '</div>';
+                this.template = '<div class="delete-container">' + '<tpl for=".">' + '<div class="delete-item">' +
+                                '<img class="icon" src="{data.iconUrl}"/>' + '<h4>{data.displayName}</h4>' + '<p>{data.type}</p>' +
+                                '</div>' + '</tpl>' + '</div>';
                 var deleteCallback = function (obj, success, result) {
                     _this.container.hide();
                 };
@@ -608,10 +613,11 @@ var admin;
                 buttonRow.add(cancelButton);
                 ct.add(buttonRow);
             }
+
             DeleteContentWindow.prototype.setModel = function (model) {
                 this.data = model;
-                if(model) {
-                    if(this.content) {
+                if (model) {
+                    if (this.content) {
                         this.content.update(model);
                     }
                 }
@@ -621,7 +627,7 @@ var admin;
             };
             return DeleteContentWindow;
         })();
-        ui.DeleteContentWindow = DeleteContentWindow;        
+        ui.DeleteContentWindow = DeleteContentWindow;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -633,13 +639,14 @@ var admin;
                 var panel = new Ext.form.Panel();
                 this.ext = panel;
             }
+
             FormComponent.prototype.getContentData = function () {
                 var contentData = new API_content_data.ContentData();
                 return contentData;
             };
             return FormComponent;
         })();
-        ui.FormComponent = FormComponent;        
+        ui.FormComponent = FormComponent;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -651,9 +658,10 @@ var admin;
                 var panel = new Ext.form.Panel();
                 this.ext = panel;
             }
+
             return FormItemSetComponent;
         })();
-        ui.FormItemSetComponent = FormItemSetComponent;        
+        ui.FormItemSetComponent = FormItemSetComponent;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -664,6 +672,7 @@ var admin;
             function BaseInputComponent(input) {
                 this.input = input;
             }
+
             BaseInputComponent.prototype.getInput = function () {
                 return this.input;
             };
@@ -672,12 +681,15 @@ var admin;
             };
             return BaseInputComponent;
         })();
-        ui.BaseInputComponent = BaseInputComponent;        
+        ui.BaseInputComponent = BaseInputComponent;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
 var __extends = this.__extends || function (d, b) {
-    function __() { this.constructor = d; }
+    function __() {
+        this.constructor = d;
+    }
+
     __.prototype = b.prototype;
     d.prototype = new __();
 };
@@ -687,7 +699,7 @@ var admin;
         var TextLine = (function (_super) {
             __extends(TextLine, _super);
             function TextLine(input) {
-                        _super.call(this, input);
+                _super.call(this, input);
                 var fieldContainer = new Ext.form.FieldContainer();
                 fieldContainer.setFieldLabel('');
                 fieldContainer.labelWidth = 110;
@@ -698,13 +710,14 @@ var admin;
                 fieldContainer.add(textField);
                 this.ext = fieldContainer;
             }
+
             TextLine.prototype.setValue = function (value, arrayIndex) {
                 this.ext.down('textfield').setValue(value);
                 _super.prototype.setValue.call(this, value, arrayIndex);
             };
             return TextLine;
         })(admin.ui.BaseInputComponent);
-        ui.TextLine = TextLine;        
+        ui.TextLine = TextLine;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -725,14 +738,14 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
             this.panel.view.on('beforeitemmousedown', function (view, record, item, index, event, eOpts) {
                 var targetElement = new Ext.Element(event.target);
                 var isCheckboxColumnIsClicked = targetElement.findParent('td.x-grid-cell-first') !== null;
-                if(isCheckboxColumnIsClicked) {
+                if (isCheckboxColumnIsClicked) {
                     var isShiftKeyPressed = event.shiftKey === true;
                     var isCtrlKeyPressed = event.ctrlKey === true;
-                    if(isShiftKeyPressed || isCtrlKeyPressed) {
+                    if (isShiftKeyPressed || isCtrlKeyPressed) {
                         return;
                     }
                     var isChecked = this.selected[record.get(this.keyField)];
-                    if(!isChecked) {
+                    if (!isChecked) {
                         this.panel.selModel.select(index, true, false);
                     } else {
                         this.panel.selModel.deselect(index);
@@ -750,7 +763,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
             }, this);
             this.panel.view.on('itemadd', this.onViewRefresh, this);
             var pagingToolbar = this.panel.down('pagingtoolbar');
-            if(pagingToolbar !== null) {
+            if (pagingToolbar !== null) {
                 pagingToolbar.on('beforechange', this.pagingOnBeforeChange, this);
             }
         }, this);
@@ -765,9 +778,9 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         this.onRowDeselect(this.panel.selModel, record);
         var storeRecord;
         var key = record.get(this.keyField);
-        if(this.panel instanceof Ext.tree.Panel) {
+        if (this.panel instanceof Ext.tree.Panel) {
             storeRecord = this.panel.getRootNode().findChild(this.keyField, key);
-        } else if(this.panel instanceof Ext.grid.Panel) {
+        } else if (this.panel instanceof Ext.grid.Panel) {
             storeRecord = this.panel.getStore().findRecord(this.keyField, key);
         }
         this.panel.selModel.deselect(storeRecord);
@@ -789,22 +802,22 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         this.panel.selModel.refresh();
         var i;
         var sm = this.panel.getSelectionModel();
-        if(this.panel instanceof Ext.tree.Panel) {
+        if (this.panel instanceof Ext.tree.Panel) {
             var rootNode = this.panel.getRootNode(), node;
-            for(var selectedItem in this.selected) {
-                if(this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
+            for (var selectedItem in this.selected) {
+                if (this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
                     node = rootNode.findChild(this.keyField, selectedItem, true);
-                    if(node) {
+                    if (node) {
                         sm.select(node, true);
                     }
                 }
             }
-        } else if(this.panel instanceof Ext.grid.Panel) {
+        } else if (this.panel instanceof Ext.grid.Panel) {
             var store = this.panel.getStore(), record;
-            for(var selectedItem in this.selected) {
-                if(this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
+            for (var selectedItem in this.selected) {
+                if (this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
                     record = store.findRecord(this.keyField, selectedItem);
-                    if(record) {
+                    if (record) {
                         sm.select(record, true);
                     }
                 }
@@ -816,25 +829,25 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         this.ignoreSelectionChanges = true;
     },
     onSelectionClear: function () {
-        if(!this.ignoreSelectionChanges) {
+        if (!this.ignoreSelectionChanges) {
             this.selections = [];
             this.selected = {
             };
         }
     },
     onRowSelect: function (sm, rec, i, o) {
-        if(!this.ignoreSelectionChanges) {
-            if(!this.selected[rec.get(this.keyField)]) {
+        if (!this.ignoreSelectionChanges) {
+            if (!this.selected[rec.get(this.keyField)]) {
                 this.selections.push(rec);
                 this.selected[rec.get(this.keyField)] = true;
             }
         }
     },
     onHeaderClick: function (headerCt, header, e) {
-        if(header.isCheckerHd) {
+        if (header.isCheckerHd) {
             e.stopEvent();
             var isChecked = header.el.hasCls('x-grid-hd-checker-on');
-            if(isChecked) {
+            if (isChecked) {
                 this.clearSelection();
             } else {
                 this.panel.selModel.selectAll();
@@ -843,10 +856,10 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         return false;
     },
     onRowDeselect: function (rowModel, record, index, eOpts) {
-        if(!this.ignoreSelectionChanges) {
-            if(this.selected[record.get(this.keyField)]) {
-                for(var j = this.selections.length - 1; j >= 0; j--) {
-                    if(this.selections[j].get(this.keyField) == record.get(this.keyField)) {
+        if (!this.ignoreSelectionChanges) {
+            if (this.selected[record.get(this.keyField)]) {
+                for (var j = this.selections.length - 1; j >= 0; j--) {
+                    if (this.selections[j].get(this.keyField) == record.get(this.keyField)) {
                         this.selections.splice(j, 1);
                         this.selected[record.get(this.keyField)] = false;
                         break;
@@ -862,7 +875,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         var isRightClick = event.button === 2;
         var recordIsSelected = this.selected[record.get(this.keyField)];
         var cancel = isRightClick && recordIsSelected && this.getSelectionCount() > 1;
-        if(cancel) {
+        if (cancel) {
             return false;
         }
         return true;
@@ -871,7 +884,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         var targetElement = event.target;
         var isLeftClick = event.button === 0;
         var isCheckbox = targetElement.className && targetElement.className.indexOf('x-grid-row-checker') > -1;
-        if(isLeftClick && !isCheckbox) {
+        if (isLeftClick && !isCheckbox) {
             this.clearSelection();
         }
     }
@@ -881,7 +894,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     alias: 'plugin.gridToolbarPlugin',
     pluginId: 'gridToolbarPlugin',
     constructor: function (config) {
-        if(config) {
+        if (config) {
             Ext.apply(this, config);
         }
     },
@@ -897,9 +910,9 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         me.tbFill = Ext.create('Ext.toolbar.Fill');
         me.orderByButton = me.createOrderByButton();
         me.orderByDirectionButton = me.createOrderByDirectionButton();
-        if(Ext.isFunction(me.toolbar.store.getCount)) {
+        if (Ext.isFunction(me.toolbar.store.getCount)) {
             me.updateResultCount(me.getCount(me.toolbar.store));
-        } else if(Ext.isString(me.toolbar.store)) {
+        } else if (Ext.isString(me.toolbar.store)) {
             me.toolbar.store = Ext.StoreManager.lookup(me.toolbar.store);
         }
         me.toolbar.insert(0, me.resultTextItem);
@@ -908,7 +921,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             text: ' | '
         }));
         me.toolbar.insert(3, me.clearSelectionButton);
-        if(!(me.toolbar.store instanceof Ext.data.TreeStore)) {
+        if (!(me.toolbar.store instanceof Ext.data.TreeStore)) {
             me.toolbar.insert(4, me.tbFill);
             me.toolbar.insert(5, me.orderByButton);
             me.toolbar.insert(6, me.orderByDirectionButton);
@@ -919,13 +932,13 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         me.orderByDirectionButton.addListener('change', function () {
             me.doSort();
         });
-        if(me.toolbar.store) {
+        if (me.toolbar.store) {
             var loadEventName = me.toolbar.store.buffered ? 'prefetch' : 'load';
             me.toolbar.store.on(loadEventName, function (store) {
                 me.updateResultCount(me.getCount(store));
             });
         }
-        if(me.toolbar.gridPanel) {
+        if (me.toolbar.gridPanel) {
             me.toolbar.gridPanel.getSelectionModel().on('selectionchange', function (model, selected, eOpts) {
                 me.updateSelectAll(selected);
                 me.updateClearSelection(selected);
@@ -944,7 +957,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             listeners: {
                 render: function (cmp) {
                     cmp.el.on('click', function () {
-                        if(cmp.el.hasCls('admin-grid-toolbar-btn-none-selected')) {
+                        if (cmp.el.hasCls('admin-grid-toolbar-btn-none-selected')) {
                             me.toolbar.gridPanel.getSelectionModel().selectAll();
                         } else {
                             me.toolbar.gridPanel.getSelectionModel().deselectAll();
@@ -966,7 +979,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             listeners: {
                 render: function (cmp) {
                     cmp.el.on('click', function () {
-                        if(cmp.el.hasCls('admin-grid-toolbar-btn-clear-selection')) {
+                        if (cmp.el.hasCls('admin-grid-toolbar-btn-clear-selection')) {
                             me.toolbar.gridPanel.getSelectionModel().deselectAll();
                         }
                     });
@@ -993,7 +1006,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
                 items: [
                     {
                         text: 'ASC'
-                    }, 
+                    },
                     {
                         text: 'DESC'
                     }
@@ -1005,7 +1018,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         var me = this;
         var gridColumns = me.toolbar.gridPanel.columns;
         var menuItems = [];
-        for(var i = 0; i < gridColumns.length; i++) {
+        for (var i = 0; i < gridColumns.length; i++) {
             menuItems.push({
                 text: gridColumns[i].text,
                 dataIndex: gridColumns[i].dataIndex
@@ -1029,10 +1042,10 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         var btn = this.selectAllButton;
         var isSelectMode = btn.el.hasCls('admin-grid-toolbar-btn-none-selected');
         var areAllRecordsSelected = !Ext.isEmpty(selected) && this.getCount(this.toolbar.store) == selected.length;
-        if(areAllRecordsSelected && isSelectMode) {
+        if (areAllRecordsSelected && isSelectMode) {
             btn.update('Deselect all');
             btn.el.removeCls('admin-grid-toolbar-btn-none-selected');
-        } else if(!areAllRecordsSelected && !isSelectMode) {
+        } else if (!areAllRecordsSelected && !isSelectMode) {
             btn.update('Select all');
             btn.el.addCls('admin-grid-toolbar-btn-none-selected');
         }
@@ -1040,27 +1053,27 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     updateClearSelection: function (selected) {
         var btn = this.clearSelectionButton;
         var count = selected.length;
-        if(count > 0) {
+        if (count > 0) {
             btn.update('Clear selection (' + selected.length + ')');
         } else {
             btn.update('Clear selection');
         }
     },
     getCount: function (store) {
-        if(store instanceof Ext.data.Store) {
+        if (store instanceof Ext.data.Store) {
             return store.getTotalCount();
-        } else if(store instanceof Ext.data.TreeStore) {
+        } else if (store instanceof Ext.data.TreeStore) {
             return this.countTreeNodes(store.getRootNode()) - 1;
         } else {
             return undefined;
         }
     },
     countTreeNodes: function (node) {
-        if(this.toolbar.countTopLevelOnly) {
+        if (this.toolbar.countTopLevelOnly) {
             return Ext.isEmpty(node.childNodes) ? 1 : 1 + node.childNodes.length;
         } else {
             var count = 1;
-            if(!Ext.isEmpty(node.childNodes)) {
+            if (!Ext.isEmpty(node.childNodes)) {
                 node.eachChild(function (child) {
                     count += this.countTreeNodes(child);
                 }, this);
@@ -1075,40 +1088,40 @@ Ext.define('Admin.model.contentManager.ContentModel', {
         'Ext.data.UuidGenerator'
     ],
     fields: [
-        'id', 
-        'path', 
-        'name', 
-        'type', 
-        'displayName', 
-        'owner', 
-        'modifier', 
-        'iconUrl', 
+        'id',
+        'path',
+        'name',
+        'type',
+        'displayName',
+        'owner',
+        'modifier',
+        'iconUrl',
         {
             name: 'modifiedTime',
             type: 'date',
             defaultValue: new Date()
-        }, 
+        },
         {
             name: 'createdTime',
             type: 'date',
             defaultValue: new Date()
-        }, 
+        },
         {
             name: 'editable',
             type: 'boolean'
-        }, 
+        },
         {
             name: 'deletable',
             type: 'boolean'
-        }, 
+        },
         {
             name: 'allowsChildren',
             type: 'boolean'
-        }, 
+        },
         {
             name: 'hasChildren',
             type: 'boolean'
-        }, 
+        },
         {
             name: 'leaf',
             type: 'boolean',
@@ -1118,6 +1131,28 @@ Ext.define('Admin.model.contentManager.ContentModel', {
         }
     ],
     idProperty: 'uuid'
+});
+Ext.define('Admin.model.schemaManager.ContentTypeModel', {
+    extend: 'Ext.data.Model',
+    fields: [
+        'qualifiedName',
+        'name',
+        'displayName',
+        'module',
+        {
+            name: 'createdTime',
+            type: 'date',
+            defaultValue: new Date()
+        },
+        {
+            name: 'modifiedTime',
+            type: 'date',
+            defaultValue: new Date()
+        },
+        'configXML',
+        'iconUrl'
+    ],
+    idProperty: 'qualifiedName'
 });
 Ext.define('Admin.store.contentManager.ContentStore', {
     extend: 'Ext.data.Store',
@@ -1149,6 +1184,44 @@ Ext.define('Admin.store.contentManager.ContentTreeStore', {
         }
     }
 });
+Ext.define('Admin.store.schemaManager.ContentTypeStore', {
+    extend: 'Ext.data.Store',
+    model: 'Admin.model.schemaManager.ContentTypeModel',
+    pageSize: 50,
+    remoteSort: true,
+    sorters: [
+        {
+            property: 'modifiedTime',
+            direction: 'DESC'
+        }
+    ],
+    autoLoad: true,
+    proxy: {
+        type: 'direct',
+        directFn: Admin.lib.RemoteService.contentType_list,
+        simpleSortMode: true,
+        reader: {
+            type: 'json',
+            root: 'contentTypes',
+            totalProperty: 'total'
+        }
+    }
+});
+Ext.define('Admin.store.schemaManager.ContentTypeTreeStore', {
+    extend: 'Ext.data.TreeStore',
+    model: 'Admin.model.schemaManager.ContentTypeModel',
+    folderSort: true,
+    proxy: {
+        type: 'direct',
+        directFn: Admin.lib.RemoteService.contentType_tree,
+        simpleSortMode: true,
+        reader: {
+            type: 'json',
+            root: 'contentTypes',
+            totalProperty: 'total'
+        }
+    }
+});
 Ext.define('Admin.lib.UriHelper', {
     singleton: true,
     getContentManagerSearchUri: function () {
@@ -1172,7 +1245,7 @@ Ext.define('Admin.view.AdminImageButton', {
     popupData: undefined,
     listeners: {
         click: function (item) {
-            if(!item.popupPanel) {
+            if (!item.popupPanel) {
                 item.popupPanel = Ext.create("Ext.panel.Panel", {
                     floating: true,
                     cls: 'admin-toolbar-popup',
@@ -1189,7 +1262,7 @@ Ext.define('Admin.view.AdminImageButton', {
                     }
                 });
             } else {
-                if(item.popupPanel.isHidden()) {
+                if (item.popupPanel.isHidden()) {
                     item.popupPanel.show();
                 } else {
                     item.popupPanel.hide();
@@ -1215,7 +1288,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
     initComponent: function () {
         var me = this;
         this.items = [];
-        if(this.iconCls || this.iconSrc) {
+        if (this.iconCls || this.iconSrc) {
             this.items.push({
                 xtype: 'image',
                 width: 32,
@@ -1225,7 +1298,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
                 src: this.iconSrc
             });
         }
-        if(this.text1 || this.text2) {
+        if (this.text1 || this.text2) {
             this.items.push({
                 xtype: 'component',
                 flex: 1,
@@ -1238,7 +1311,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
                 }
             });
         }
-        if(this.closable !== false) {
+        if (this.closable !== false) {
             this.items.push({
                 xtype: 'component',
                 autoEl: 'a',
@@ -1259,7 +1332,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
     },
     activate: function () {
         var me = this;
-        if(!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
+        if (!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
             me.el.addCls(me.activeCls);
             me.focus();
             me.activated = true;
@@ -1268,7 +1341,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
     },
     deactivate: function () {
         var me = this;
-        if(me.activated) {
+        if (me.activated) {
             me.el.removeCls(me.activeCls);
             me.blur();
             me.activated = false;
@@ -1277,18 +1350,18 @@ Ext.define('Admin.view.TopBarMenuItem', {
     },
     onClick: function (e) {
         var me = this;
-        if(!me.href) {
+        if (!me.href) {
             e.stopEvent();
         }
-        if(me.disabled) {
+        if (me.disabled) {
             return;
         }
         Ext.callback(me.handler, me.scope || me, [
-            me, 
+            me,
             e
         ]);
         me.fireEvent('click', me, e);
-        if(!me.hideOnClick) {
+        if (!me.hideOnClick) {
             me.focus();
         }
         return Ext.isEmpty(Ext.fly(e.getTarget()).findParent('.close-button'));
@@ -1321,31 +1394,31 @@ Ext.define('Admin.view.TopBarMenu', {
             xtype: 'container',
             itemId: 'nonClosableItems',
             defaultType: 'topBarMenuItem'
-        }, 
+        },
         {
             xtype: 'component',
             cls: 'title',
             itemId: 'editTitle',
             hidden: true,
             html: '<span>Editing</span>'
-        }, 
+        },
         {
             xtype: 'container',
             itemId: 'editItems',
             defaultType: 'topBarMenuItem'
-        }, 
+        },
         {
             xtype: 'component',
             cls: 'title',
             itemId: 'viewTitle',
             hidden: true,
             html: '<span>Viewing</span>'
-        }, 
+        },
         {
             xtype: 'container',
             itemId: 'viewItems',
             defaultType: 'topBarMenuItem'
-        }, 
+        },
         {
             xtype: 'component',
             cls: 'info',
@@ -1367,13 +1440,13 @@ Ext.define('Admin.view.TopBarMenu', {
     },
     onClick: function (e) {
         var me = this, item;
-        if(me.disabled) {
+        if (me.disabled) {
             e.stopEvent();
             return;
         }
         item = (e.type === 'click') ? me.getItemFromEvent(e) : me.activeItem;
-        if(item && item.isMenuItem && item.onClick(e) !== false) {
-            if(me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
+        if (item && item.isMenuItem && item.onClick(e) !== false) {
+            if (me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
                 this.tabPanel.setActiveTab(item.card);
             }
             this.hide();
@@ -1381,7 +1454,7 @@ Ext.define('Admin.view.TopBarMenu', {
     },
     onShow: function () {
         this.callParent(arguments);
-        if(this.activeTab) {
+        if (this.activeTab) {
             this.markActiveTab(this.activeTab);
         }
     },
@@ -1393,24 +1466,24 @@ Ext.define('Admin.view.TopBarMenu', {
         this.callParent(arguments);
     },
     onCloseMenuItem: function (item) {
-        if(this.tabPanel) {
+        if (this.tabPanel) {
             this.tabPanel.remove(item.card);
         }
-        if(this.getAllItems(false).length === 0) {
+        if (this.getAllItems(false).length === 0) {
             this.hide();
         }
     },
     markActiveTab: function (item) {
         var me = this;
         var menuItem;
-        if(me.isVisible()) {
+        if (me.isVisible()) {
             menuItem = me.el.down('.current-tab');
-            if(menuItem) {
+            if (menuItem) {
                 menuItem.removeCls('current-tab');
             }
-            if(item) {
+            if (item) {
                 menuItem = me.down('#' + item.id);
-                if(menuItem && menuItem.el) {
+                if (menuItem && menuItem.el) {
                     menuItem.el.addCls('current-tab');
                 }
             }
@@ -1421,12 +1494,13 @@ Ext.define('Admin.view.TopBarMenu', {
         var item = this;
         do {
             item = item.getChildByElement(e.getTarget());
-        }while(item && Ext.isDefined(item.getChildByElement) && item.getXType() !== 'topBarMenuItem');
+        }
+        while (item && Ext.isDefined(item.getChildByElement) && item.getXType() !== 'topBarMenuItem');
         return item;
     },
     getAllItems: function (includeNonClosable) {
         var items = [];
-        if(includeNonClosable === false) {
+        if (includeNonClosable === false) {
             items = items.concat(this.down('#editItems').query('topBarMenuItem'));
             items = items.concat(this.down('#viewItems').query('topBarMenuItem'));
         } else {
@@ -1435,9 +1509,9 @@ Ext.define('Admin.view.TopBarMenu', {
         return items;
     },
     addItems: function (items) {
-        if(Ext.isEmpty(items)) {
+        if (Ext.isEmpty(items)) {
             return;
-        } else if(Ext.isObject(items)) {
+        } else if (Ext.isObject(items)) {
             items = [].concat(items);
         }
         this.saveScrollState();
@@ -1445,22 +1519,22 @@ Ext.define('Admin.view.TopBarMenu', {
         var viewItems = [];
         var nonClosableItems = [];
         Ext.Array.each(items, function (item) {
-            if(item.closable === false) {
+            if (item.closable === false) {
                 nonClosableItems.push(item);
-            } else if(item.editing) {
+            } else if (item.editing) {
                 editItems.push(item);
             } else {
                 viewItems.push(item);
             }
         });
         var added = [];
-        if(nonClosableItems.length > 0) {
+        if (nonClosableItems.length > 0) {
             added = added.concat(this.down("#nonClosableItems").add(nonClosableItems));
         }
-        if(editItems.length > 0) {
+        if (editItems.length > 0) {
             added = added.concat(this.down('#editItems').add(editItems));
         }
-        if(viewItems.length > 0) {
+        if (viewItems.length > 0) {
             added = added.concat(this.down('#viewItems').add(viewItems));
         }
         this.updateTitles();
@@ -1472,19 +1546,19 @@ Ext.define('Admin.view.TopBarMenu', {
         var viewItems = this.down('#viewItems');
         var removed = [];
         Ext.Array.each(editItems.items.items, function (item) {
-            if(item && item.closable !== false) {
+            if (item && item.closable !== false) {
                 removed.push(editItems.remove(item));
             }
         });
         Ext.Array.each(viewItems.items.items, function (item) {
-            if(item && item.closable !== false) {
+            if (item && item.closable !== false) {
                 removed.push(viewItems.remove(item));
             }
         });
-        if(includeNonClosable) {
+        if (includeNonClosable) {
             var nonClosableItems = this.down('#nonClosableItems');
             Ext.Array.each(nonClosableItems.items.items, function (item) {
-                if(item && item.closable !== false) {
+                if (item && item.closable !== false) {
                     removed.push(nonClosableItems.remove(item));
                 }
             });
@@ -1493,9 +1567,9 @@ Ext.define('Admin.view.TopBarMenu', {
         return removed;
     },
     removeItems: function (items) {
-        if(Ext.isEmpty(items)) {
+        if (Ext.isEmpty(items)) {
             return;
-        } else if(Ext.isObject(items)) {
+        } else if (Ext.isObject(items)) {
             items = [].concat(items);
         }
         this.saveScrollState();
@@ -1504,7 +1578,7 @@ Ext.define('Admin.view.TopBarMenu', {
         var nonClosableItems = this.down('#nonClosableItems');
         var removed = [];
         Ext.Array.each(items, function (item) {
-            if(item && item.closable !== false) {
+            if (item && item.closable !== false) {
                 removed.push(editItems.remove(item));
                 removed.push(viewItems.remove(item));
                 removed.push(nonClosableItems.remove(item));
@@ -1527,10 +1601,10 @@ Ext.define('Admin.view.TopBarMenu', {
     show: function () {
         var me = this, parentEl, viewHeight;
         me.maxWas = me.maxHeight;
-        if(!me.rendered) {
+        if (!me.rendered) {
             me.doAutoRender();
         }
-        if(me.floating) {
+        if (me.floating) {
             parentEl = Ext.fly(me.el.getScopeParent());
             viewHeight = parentEl.getViewSize().height;
             me.maxHeight = Math.min(me.maxWas || viewHeight - 50, viewHeight - 50);
@@ -1546,14 +1620,14 @@ Ext.define('Admin.view.TopBarMenu', {
     setVerticalPosition: function () {
     },
     saveScrollState: function () {
-        if(this.rendered && !this.hidden) {
+        if (this.rendered && !this.hidden) {
             var dom = this.body.dom, state = this.scrollState;
             state.left = dom.scrollLeft;
             state.top = dom.scrollTop;
         }
     },
     restoreScrollState: function () {
-        if(this.rendered && !this.hidden) {
+        if (this.rendered && !this.hidden) {
             var dom = this.body.dom, state = this.scrollState;
             dom.scrollLeft = state.left;
             dom.scrollTop = state.top;
@@ -1564,8 +1638,8 @@ Ext.define('Admin.view.TopBar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.topBar',
     requires: [
-        'Admin.view.TopBarMenu', 
-        'Admin.view.AdminImageButton', 
+        'Admin.view.TopBarMenu',
+        'Admin.view.AdminImageButton',
         'Admin.lib.UriHelper'
     ],
     buttonAlign: 'center',
@@ -1588,7 +1662,7 @@ Ext.define('Admin.view.TopBar', {
             text: me.appName || '&lt; app name &gt;',
             cls: 'home-button',
             handler: function (btn, evt) {
-                if(me.tabPanel) {
+                if (me.tabPanel) {
                     me.tabPanel.setActiveTab(0);
                 }
             }
@@ -1601,15 +1675,19 @@ Ext.define('Admin.view.TopBar', {
                 align: 'middle'
             },
             items: [
-                me.startButton, 
+                me.startButton,
                 {
                     xtype: "tbseparator",
                     width: '2px'
-                }, 
+                },
                 me.homeButton
             ]
         });
-        var Templates_common_userPopUp = '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' + '<div class="content">' + '<div class="column"><img src="{photoUrl}"/>' + '<button class="x-btn-red-small">Log Out</button>' + '</div>' + '<div class="column">' + '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' + '<a href="#">Change User</a>' + '</div>' + '</div>';
+        var Templates_common_userPopUp = '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' +
+                                         '<div class="content">' + '<div class="column"><img src="{photoUrl}"/>' +
+                                         '<button class="x-btn-red-small">Log Out</button>' + '</div>' + '<div class="column">' +
+                                         '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' +
+                                         '<a href="#">Change User</a>' + '</div>' + '</div>';
         this.rightContainer = Ext.create('Ext.Container', {
             flex: 5,
             layout: {
@@ -1631,10 +1709,10 @@ Ext.define('Admin.view.TopBar', {
             ]
         });
         this.items = [
-            me.leftContainer, 
+            me.leftContainer,
             me.rightContainer
         ];
-        if(this.tabPanel) {
+        if (this.tabPanel) {
             this.tabMenu = Ext.create('Admin.view.TopBarMenu', {
                 tabPanel: me.tabPanel
             });
@@ -1646,12 +1724,12 @@ Ext.define('Admin.view.TopBar', {
                 styleHtmlContent: true,
                 text: '<span class="title">Title</span><span class="count">0</span>',
                 setTitle: function (title) {
-                    if(this.el) {
+                    if (this.el) {
                         this.el.down('.title').setHTML(title);
                     }
                 },
                 setCount: function (count) {
-                    if(this.el) {
+                    if (this.el) {
                         this.el.down('.count').setHTML(count);
                     }
                 }
@@ -1665,7 +1743,7 @@ Ext.define('Admin.view.TopBar', {
     },
     toggleHomeScreen: function () {
         var isInsideIframe = window.top !== window.self;
-        if(isInsideIframe) {
+        if (isInsideIframe) {
         } else {
             console.error('Can not toggle home screen. Document must be loaded inside the main window');
         }
@@ -1680,11 +1758,11 @@ Ext.define('Admin.view.TopBar', {
         var card = tab.card;
         var buttonText = tab.text1;
         var iconClass;
-        if('tab-browse' === card.id) {
+        if ('tab-browse' === card.id) {
             buttonText = '';
-        } else if(card.tab.iconClass) {
+        } else if (card.tab.iconClass) {
             iconClass = card.tab.iconClass;
-        } else if(card.tab.editing) {
+        } else if (card.tab.editing) {
             iconClass = 'icon-icomoon-pencil-32';
         }
         this.titleButton.setIconCls(iconClass);
@@ -1696,7 +1774,7 @@ Ext.define('Admin.view.TopBar', {
         return removed;
     },
     findNextActivatable: function (tab) {
-        if(this.tabPanel) {
+        if (this.tabPanel) {
             return this.tabPanel.items.get(0);
         }
     },
@@ -1717,7 +1795,7 @@ Ext.define('Admin.view.TopBar', {
         };
     },
     syncTabCount: function () {
-        if(this.tabMenu && this.titleButton) {
+        if (this.tabMenu && this.titleButton) {
             var tabCount = this.tabMenu.getAllItems(false).length;
             this.titleButton.setVisible(tabCount > 0);
             this.titleButton.setCount(tabCount);
@@ -1729,27 +1807,27 @@ Ext.define('Admin.view.TopBar', {
     },
     getMenuItemIcon: function (card) {
         var icon;
-        if(card.data && card.data instanceof Ext.data.Model) {
+        if (card.data && card.data instanceof Ext.data.Model) {
             icon = card.data.get('iconUrl') || card.data.get('image_url');
         }
         return icon;
     },
     getMenuItemDescription: function (card) {
         var desc;
-        if(!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+        if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
             desc = card.data.get('path') || card.data.get('qualifiedName') || card.data.get('displayName');
         }
-        if(!desc) {
+        if (!desc) {
             desc = card.title;
         }
         return desc;
     },
     getMenuItemDisplayName: function (card) {
         var desc;
-        if(!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+        if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
             desc = card.data.get('displayName') || card.data.get('name');
         }
-        if(!desc) {
+        if (!desc) {
             desc = card.title;
         }
         return desc;
@@ -1757,7 +1835,7 @@ Ext.define('Admin.view.TopBar', {
     setTitleButtonText: function (text) {
         this.titleButton.setTitle(text);
         var activeTab = this.titleButton.menu.activeTab;
-        if(activeTab) {
+        if (activeTab) {
             activeTab.text1 = text;
             activeTab.updateTitleContainer();
         }
@@ -1800,7 +1878,7 @@ Ext.define('Admin.view.TabPanel', {
         me.addEvents('beforetabchange', 'tabchange');
         me.superclass.superclass.initComponent.apply(me, arguments);
         me.activeTab = me.getComponent(activeTab);
-        if(me.activeTab) {
+        if (me.activeTab) {
             me.activeTab.tab.activate(true);
             me.tabBar.setActiveTab(me.activeTab.tab);
         }
@@ -1808,9 +1886,9 @@ Ext.define('Admin.view.TabPanel', {
     addTab: function (item, index, requestConfig) {
         var me = this;
         var tab = this.getTabById(item.id);
-        if(!tab) {
+        if (!tab) {
             tab = this.insert(index || this.items.length, item);
-            if(requestConfig) {
+            if (requestConfig) {
                 this.setActiveTab(tab);
                 var mask = new Ext.LoadMask(tab, {
                     msg: "Please wait..."
@@ -1839,7 +1917,7 @@ Ext.define('Admin.view.TabPanel', {
     removeAllOpenTabs: function () {
         var all = this.items.items;
         var last = all[this.getTabCount() - 1];
-        while(this.getTabCount() > 1) {
+        while (this.getTabCount() > 1) {
             this.remove(last);
             last = this.items.items[this.getTabCount() - 1];
         }
@@ -1861,28 +1939,28 @@ Ext.define('Admin.view.TabPanel', {
             iconclschange: me.onItemIconClsChange,
             titlechange: me.onItemTitleChange
         });
-        if(item.isPanel) {
-            if(me.removePanelHeader) {
-                if(item.rendered) {
-                    if(item.header) {
+        if (item.isPanel) {
+            if (me.removePanelHeader) {
+                if (item.rendered) {
+                    if (item.header) {
                         item.header.hide();
                     }
                 } else {
                     item.header = false;
                 }
             }
-            if(item.isPanel && me.border) {
+            if (item.isPanel && me.border) {
                 item.setBorder(false);
             }
         }
     },
     doRemove: function (item, autoDestroy) {
         var me = this;
-        if(me.destroying || me.items.getCount() === 1) {
+        if (me.destroying || me.items.getCount() === 1) {
             me.activeTab = null;
-        } else if(me.activeTab === item) {
+        } else if (me.activeTab === item) {
             var toActivate = me.tabBar.findNextActivatable(item.tab);
-            if(toActivate) {
+            if (toActivate) {
                 me.setActiveTab(toActivate);
             }
         }
@@ -1896,7 +1974,7 @@ Ext.define('Admin.view.TabPanel', {
             disable: me.onItemDisable,
             beforeshow: me.onItemBeforeShow
         });
-        if(!me.destroying) {
+        if (!me.destroying) {
             me.tabBar.remove(item.tab);
         }
     }
@@ -1920,35 +1998,43 @@ Ext.define('Admin.view.FilterPanel', {
     facetData: undefined,
     initComponent: function () {
         var me = this;
-        if(!Ext.isEmpty(this.title)) {
+        if (!Ext.isEmpty(this.title)) {
             this.originalTitle = this.title;
         }
         Ext.applyIf(this, {
             items: [],
-            facetTpl: new Ext.XTemplate('<tpl for=".">', '<div class="admin-facet-group" name="{name}">', '<h2>{[values.displayName || values.name]}</h2>', '<tpl for="terms">{[this.updateFacetCount(values, parent)]}', '<tpl if="this.shouldShowTerm(values, parent)">', '<div class="admin-facet {[values.selected ? \'checked\' : \'\']}">', '<input type="checkbox" id="facet-{term}" value="{name}" class="admin-facet-cb" name="{parent.name}" {[values.selected ? \'checked="true"\' : \'\']} />', '<label for="facet-{key}" class="admin-facet-lbl"> {[values.displayName || values.name]} ({[this.getTermCount(values)]})</label>', '</div>', '</tpl>', '</tpl>', '</div>', '</tpl>', {
-                updateFacetCount: function (term, facet) {
-                    var isCriteria = me.updateCountCriteria == 'always' || (me.updateCountCriteria == 'query' && me.queryDirty);
-                    var isStrategy = me.updateCountStrategy == 'all' || (me.updateCountStrategy == 'notlast' && me.lastFacetName != facet.name);
-                    var isDefined = Ext.isDefined(me.facetCountMap[term.name]);
-                    var isDirty = me.isDirty();
-                    if(!isDirty || !isDefined || (isCriteria && isStrategy)) {
-                        me.facetCountMap[term.name] = term.count;
+            facetTpl: new Ext.XTemplate('<tpl for=".">', '<div class="admin-facet-group" name="{name}">',
+                '<h2>{[values.displayName || values.name]}</h2>', '<tpl for="terms">{[this.updateFacetCount(values, parent)]}',
+                '<tpl if="this.shouldShowTerm(values, parent)">', '<div class="admin-facet {[values.selected ? \'checked\' : \'\']}">',
+                '<input type="checkbox" id="facet-{term}" value="{name}" class="admin-facet-cb" name="{parent.name}" {[values.selected ? \'checked="true"\' : \'\']} />',
+                '<label for="facet-{key}" class="admin-facet-lbl"> {[values.displayName || values.name]} ({[this.getTermCount(values)]})</label>',
+                '</div>', '</tpl>', '</tpl>', '</div>', '</tpl>', {
+                    updateFacetCount: function (term, facet) {
+                        var isCriteria = me.updateCountCriteria == 'always' || (me.updateCountCriteria == 'query' && me.queryDirty);
+                        var isStrategy = me.updateCountStrategy == 'all' ||
+                                         (me.updateCountStrategy == 'notlast' && me.lastFacetName != facet.name);
+                        var isDefined = Ext.isDefined(me.facetCountMap[term.name]);
+                        var isDirty = me.isDirty();
+                        if (!isDirty || !isDefined || (isCriteria && isStrategy)) {
+                            me.facetCountMap[term.name] = term.count;
+                        }
+                    },
+                    shouldShowTerm: function (term, facet) {
+                        return me.includeEmptyFacets == 'all' ||
+                               (me.includeEmptyFacets == 'last' && (!me.lastFacetName || me.lastFacetName == facet.name)) ||
+                               me.facetCountMap[term.name] > 0 || term.selected || this.isSelected(term, facet);
+                    },
+                    getTermCount: function (term) {
+                        return me.facetCountMap[term.name];
+                    },
+                    isSelected: function (term, facet) {
+                        var terms = me.selectedValues[facet.name];
+                        if (terms) {
+                            return Ext.Array.contains(terms, term.name);
+                        }
+                        return false;
                     }
-                },
-                shouldShowTerm: function (term, facet) {
-                    return me.includeEmptyFacets == 'all' || (me.includeEmptyFacets == 'last' && (!me.lastFacetName || me.lastFacetName == facet.name)) || me.facetCountMap[term.name] > 0 || term.selected || this.isSelected(term, facet);
-                },
-                getTermCount: function (term) {
-                    return me.facetCountMap[term.name];
-                },
-                isSelected: function (term, facet) {
-                    var terms = me.selectedValues[facet.name];
-                    if(terms) {
-                        return Ext.Array.contains(terms, term.name);
-                    }
-                    return false;
-                }
-            })
+                })
         });
         this.facetContainer = Ext.create('Ext.Component', {
             xtype: 'component',
@@ -1979,7 +2065,7 @@ Ext.define('Admin.view.FilterPanel', {
             }
         });
         this.items.unshift(this.clearLink);
-        if(this.includeSearch) {
+        if (this.includeSearch) {
             this.searchField = Ext.create('Ext.form.field.Text', {
                 xtype: 'textfield',
                 cls: 'admin-search-trigger',
@@ -2009,19 +2095,19 @@ Ext.define('Admin.view.FilterPanel', {
         this.addEvents('search', 'reset');
     },
     onKeyPressed: function (field, event, opts) {
-        if(this.suspendEvents !== true) {
-            if(event.getKey() === event.ENTER) {
-                if(event.type === "keydown") {
+        if (this.suspendEvents !== true) {
+            if (event.getKey() === event.ENTER) {
+                if (event.type === "keydown") {
                     this.fireEvent('search', this.getValues());
                 }
             } else {
                 var me = this;
-                if(this.searchFilterTypingTimer !== null) {
+                if (this.searchFilterTypingTimer !== null) {
                     window.clearTimeout(this.searchFilterTypingTimer);
                     this.searchFilterTypingTimer = null;
                 }
                 this.searchFilterTypingTimer = window.setTimeout(function () {
-                    if(me.updateCountCriteria === 'query') {
+                    if (me.updateCountCriteria === 'query') {
                         me.queryDirty = true;
                     }
                     me.lastFacetName = undefined;
@@ -2033,10 +2119,10 @@ Ext.define('Admin.view.FilterPanel', {
     onFacetClicked: function (event, target, opts) {
         target = Ext.fly(target);
         var facet = target.hasCls('admin-facet') ? target : target.up('.admin-facet');
-        if(facet) {
+        if (facet) {
             var cb = facet.down('input[type=checkbox]', true);
             var checked = cb.hasAttribute("checked");
-            if(checked) {
+            if (checked) {
                 cb.removeAttribute("checked");
                 facet.removeCls("checked");
             } else {
@@ -2044,7 +2130,7 @@ Ext.define('Admin.view.FilterPanel', {
                 facet.addCls("checked");
             }
             var group = facet.up('.admin-facet-group', true);
-            if(group) {
+            if (group) {
                 this.lastFacetName = group.getAttribute('name');
             }
             this.search();
@@ -2053,7 +2139,7 @@ Ext.define('Admin.view.FilterPanel', {
         return true;
     },
     updateFacets: function (facets) {
-        if(facets) {
+        if (facets) {
             this.selectedValues = this.getValues();
             this.down('#facetContainer').update(facets);
             this.setValues(this.selectedValues);
@@ -2063,15 +2149,15 @@ Ext.define('Admin.view.FilterPanel', {
         var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
         var values = {
         };
-        if(this.searchField) {
+        if (this.searchField) {
             var query = this.searchField.getValue();
-            if(Ext.String.trim(query).length > 0) {
+            if (Ext.String.trim(query).length > 0) {
                 values[this.searchField.name] = query;
             }
         }
         Ext.Array.each(selectedCheckboxes, function (cb) {
             var oldValue = values[cb.name];
-            if(Ext.isArray(oldValue)) {
+            if (Ext.isArray(oldValue)) {
                 oldValue.push(cb.value);
             } else {
                 values[cb.name] = [
@@ -2083,14 +2169,14 @@ Ext.define('Admin.view.FilterPanel', {
     },
     setValues: function (values) {
         var me = this;
-        if(this.searchField) {
+        if (this.searchField) {
             this.searchField.setValue(values[this.searchField.name]);
         }
         var checkboxes = Ext.query('.admin-facet-group input[type=checkbox]', this.facetContainer.el.dom);
         var checkedCount = 0, facet;
         Ext.Array.each(checkboxes, function (cb) {
             var facet = Ext.fly(cb).up('.admin-facet');
-            if(me.isValueChecked(cb.value, values)) {
+            if (me.isValueChecked(cb.value, values)) {
                 checkedCount++;
                 cb.setAttribute('checked', 'true');
                 facet.addCls('checked');
@@ -2099,16 +2185,16 @@ Ext.define('Admin.view.FilterPanel', {
                 facet.removeCls('checked');
             }
         });
-        if(this.updateCountCriteria == 'query' && this.queryDirty && checkedCount === 0) {
+        if (this.updateCountCriteria == 'query' && this.queryDirty && checkedCount === 0) {
             this.queryDirty = false;
         }
     },
     isValueChecked: function (value, values) {
-        for(var facet in values) {
-            if(values.hasOwnProperty(facet)) {
+        for (var facet in values) {
+            if (values.hasOwnProperty(facet)) {
                 var terms = [].concat(values[facet]);
-                for(var i = 0; i < terms.length; i++) {
-                    if(terms[i] === value) {
+                for (var i = 0; i < terms.length; i++) {
+                    if (terms[i] === value) {
                         return true;
                     }
                 }
@@ -2119,17 +2205,17 @@ Ext.define('Admin.view.FilterPanel', {
     isDirty: function () {
         var selectedCheckboxes = [];
         var query = '';
-        if(this.facetContainer && this.facetContainer.el) {
+        if (this.facetContainer && this.facetContainer.el) {
             selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
         }
-        if(this.searchField) {
+        if (this.searchField) {
             query = Ext.String.trim(this.searchField.getValue());
         }
         return selectedCheckboxes.length > 0 || query.length > 0;
     },
     reset: function () {
-        if(this.fireEvent('reset', this.isDirty()) !== false) {
-            if(this.searchField) {
+        if (this.fireEvent('reset', this.isDirty()) !== false) {
+            if (this.searchField) {
                 this.searchField.reset();
             }
             var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
@@ -2142,7 +2228,7 @@ Ext.define('Admin.view.FilterPanel', {
         }
     },
     search: function () {
-        if(this.fireEvent('search', this.getValues()) !== false) {
+        if (this.fireEvent('search', this.getValues()) !== false) {
             this.clearLink.el.setStyle('visibility', this.isDirty() ? 'visible' : 'hidden');
         }
     }
@@ -2162,13 +2248,13 @@ Ext.define('Admin.view.contentManager.ShowPanel', {
             {
                 region: 'north',
                 xtype: 'browseToolbar'
-            }, 
+            },
             {
                 xtype: 'contentTreeGridPanel',
                 region: 'center',
                 itemId: 'contentList',
                 flex: 1
-            }, 
+            },
             {
                 region: 'south',
                 split: true,
@@ -2178,7 +2264,7 @@ Ext.define('Admin.view.contentManager.ShowPanel', {
                 isLiveMode: contentIsOpenedFromPortal,
                 showToolbar: false,
                 flex: 1
-            }, 
+            },
             {
                 region: 'east',
                 split: true,
@@ -2214,36 +2300,36 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
                 text: ' New',
                 disabled: true,
                 action: 'newContent'
-            }, 
+            },
             {
                 text: 'Edit',
                 action: 'editContent'
-            }, 
+            },
             {
                 text: 'Open',
                 action: 'viewContent'
-            }, 
+            },
             {
                 text: 'Delete',
                 action: 'deleteContent'
-            }, 
+            },
             {
                 text: 'Duplicate',
                 action: 'duplicateContent'
-            }, 
+            },
             {
                 text: 'Move',
                 disabled: true,
                 action: 'moveContent'
-            }, 
-            '->', 
+            },
+            '->',
             {
                 xtype: 'toggleslide',
                 onText: 'Preview',
                 offText: 'Details',
                 action: 'toggleLive',
                 state: this.isLiveMode
-            }, 
+            },
             {
                 iconCls: 'icon-toolbar-settings',
                 action: 'showToolbarMenu',
@@ -2270,29 +2356,29 @@ Ext.define('Admin.view.contentManager.ContextMenu', {
             icon: undefined,
             action: 'newContent',
             disableOnMultipleSelection: true
-        }, 
+        },
         {
             text: 'Edit',
             icon: undefined,
             action: 'editContent',
             disableOnMultipleSelection: false
-        }, 
+        },
         {
             text: 'Open',
             icon: undefined,
             action: 'viewContent',
             disableOnMultipleSelection: false
-        }, 
+        },
         {
             text: 'Delete',
             icon: undefined,
             action: 'deleteContent'
-        }, 
+        },
         {
             text: 'Duplicate',
             icon: undefined,
             action: 'duplicateContent'
-        }, 
+        },
         {
             text: 'Move',
             icon: undefined,
@@ -2306,7 +2392,7 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
     alias: 'widget.treeGridPanel',
     layout: 'card',
     requires: [
-        'Admin.plugin.PersistentGridSelectionPlugin', 
+        'Admin.plugin.PersistentGridSelectionPlugin',
         'Admin.plugin.GridToolbarPlugin'
     ],
     treeConf: {
@@ -2314,11 +2400,12 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
     gridConf: {
     },
     keyField: 'key',
-    nameTemplate: '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>',
+    nameTemplate: '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' +
+                  '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>',
     initComponent: function () {
         var me = this;
         var treeColumns = Ext.clone(this.columns);
-        if(Ext.isEmpty(treeColumns)) {
+        if (Ext.isEmpty(treeColumns)) {
             throw "this.columns can't be null";
         }
         treeColumns[0].xtype = 'treecolumn';
@@ -2371,7 +2458,7 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
         };
         gridPanel = Ext.apply(gridPanel, me.gridConf);
         this.items = [
-            treePanel, 
+            treePanel,
             gridPanel
         ];
         this.callParent(arguments);
@@ -2416,7 +2503,7 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
     },
     getSelection: function () {
         var selection = [], activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection');
-        if(plugin) {
+        if (plugin) {
             selection = plugin.getSelection();
         } else {
             selection = activeList.getSelectionModel().getSelection();
@@ -2428,45 +2515,46 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
         var selModel = activeList.getSelectionModel();
         var keys = [].concat(key);
         var i;
-        if(activeList.xtype === 'treepanel') {
+        if (activeList.xtype === 'treepanel') {
             var rootNode = activeList.getRootNode(), node;
-            for(i = 0; i < keys.length; i++) {
+            for (i = 0; i < keys.length; i++) {
                 node = rootNode.findChild(this.keyField, keys[i], true);
-                if(node) {
+                if (node) {
                     selModel.select(node, keepExisting);
                 }
             }
-        } else if(activeList.xtype === 'grid') {
+        } else if (activeList.xtype === 'grid') {
             var store = activeList.getStore(), record;
-            for(i = 0; i < keys.length; i++) {
+            for (i = 0; i < keys.length; i++) {
                 record = store.findRecord(this.keyField, keys[i]);
-                if(record) {
+                if (record) {
                     selModel.select(record, keepExisting);
                 }
             }
         }
     },
     deselect: function (key) {
-        var activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection'), selModel = plugin ? plugin : activeList.getSelectionModel();
-        if(!key || key === -1) {
-            if(plugin) {
+        var activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection'), selModel = plugin ? plugin
+            : activeList.getSelectionModel();
+        if (!key || key === -1) {
+            if (plugin) {
                 plugin.clearSelection();
             } else {
                 selModel.deselectAll();
             }
         } else {
-            if(activeList.xtype === 'treepanel') {
+            if (activeList.xtype === 'treepanel') {
                 var selNodes = selModel.getSelection();
                 var i;
-                for(i = 0; i < selNodes.length; i++) {
+                for (i = 0; i < selNodes.length; i++) {
                     var selNode = selNodes[i];
-                    if(key == selNode.get(this.keyField)) {
+                    if (key == selNode.get(this.keyField)) {
                         selModel.deselect(selNode);
                     }
                 }
-            } else if(activeList.xtype === 'grid') {
+            } else if (activeList.xtype === 'grid') {
                 var record = activeList.getStore().findRecord(this.keyField, key);
-                if(record) {
+                if (record) {
                     selModel.deselect(record);
                 }
             }
@@ -2485,7 +2573,7 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
     },
     removeAll: function () {
         var activeList = this.getActiveList();
-        if(activeList.xtype === 'treepanel') {
+        if (activeList.xtype === 'treepanel') {
             activeList.getRootNode().removeAll();
         } else {
             activeList.removeAll();
@@ -2494,10 +2582,10 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
     refresh: function () {
         var activeList = this.getActiveList();
         var currentStore = activeList.store;
-        if(!currentStore.loading) {
-            if(activeList.xtype === 'treepanel') {
+        if (!currentStore.loading) {
+            if (activeList.xtype === 'treepanel') {
                 currentStore.load();
-            } else if(activeList.xtype === 'grid') {
+            } else if (activeList.xtype === 'grid') {
                 currentStore.loadPage(currentStore.currentPage);
             }
         }
@@ -2530,11 +2618,11 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
                 renderer: this.nameRenderer,
                 scope: me,
                 flex: 1
-            }, 
+            },
             {
                 text: 'Status',
                 renderer: this.statusRenderer
-            }, 
+            },
             {
                 text: 'Modified',
                 dataIndex: 'modifiedTime',
@@ -2548,15 +2636,18 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
     nameRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
         var account = record.data;
         var activeListType = this.getActiveList().itemId;
-        var Templates_contentManager_treeGridPanelNameRenderer = '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>';
+        var Templates_contentManager_treeGridPanelNameRenderer = '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' +
+                                                                 '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' +
+                                                                 '</div>';
         return Ext.String.format(Templates_contentManager_treeGridPanelNameRenderer, activeListType, account.iconUrl, value, account.path);
     },
     statusRenderer: function () {
         return "Online";
     },
     prettyDateRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
-        try  {
-        } catch (e) {
+        try {
+        }
+        catch (e) {
             return value;
         }
     }
@@ -2578,27 +2669,27 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
             {
                 text: 'New',
                 action: 'newContent'
-            }, 
+            },
             {
                 text: 'Edit',
                 action: 'editContent'
-            }, 
+            },
             {
                 text: 'Delete',
                 action: 'deleteContent'
-            }, 
+            },
             {
                 text: 'Duplicate',
                 action: 'duplicateContent'
-            }, 
+            },
             {
                 text: 'Move',
                 action: 'moveContent'
-            }, 
+            },
             {
                 text: 'Export'
-            }, 
-            '->', 
+            },
+            '->',
             {
                 xtype: 'cycle',
                 itemId: 'deviceCycle',
@@ -2611,26 +2702,26 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
                             text: 'Desktop',
                             checked: true,
                             device: 'DESKTOP'
-                        }, 
+                        },
                         {
                             text: 'iPhone 5 Vertical',
                             device: 'IPHONE_5_VERTICAL'
-                        }, 
+                        },
                         {
                             text: 'iPhone 5 Horizontal',
                             device: 'IPHONE_5_HORIZONTAL'
-                        }, 
+                        },
                         {
                             text: 'iPad 3 Vertical',
                             device: 'IPAD_3_VERTICAL'
-                        }, 
+                        },
                         {
                             text: 'iPad 3 Horizontal',
                             device: 'IPAD_3_HORIZONTAL'
                         }
                     ]
                 }
-            }, 
+            },
             {
                 xtype: 'toggleslide',
                 onText: 'Preview',
@@ -2642,7 +2733,7 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
                         me.isLiveMode = state;
                     }
                 }
-            }, 
+            },
             {
                 text: 'Close',
                 action: 'closeContent'
@@ -2665,7 +2756,7 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     initComponent: function () {
         var me = this;
         me.on('afterrender', function () {
-            if(me.actionButton) {
+            if (me.actionButton) {
                 me.renderActionButton();
             }
         });
@@ -2675,7 +2766,10 @@ Ext.define('Admin.view.contentManager.LivePreview', {
         return this.getTargetEl().down('iframe');
     },
     resizeIframe: function (dimmensions) {
-        var iFrame = this.getIframe(), widthHasPercentUnit = dimmensions.width.indexOf('%') > -1, heightHasPercentUnit = dimmensions.height.indexOf('%') > -1, width = widthHasPercentUnit ? this.getWidth() : dimmensions.width, height = heightHasPercentUnit ? this.getHeight() : dimmensions.height;
+        var iFrame = this.getIframe(), widthHasPercentUnit = dimmensions.width.indexOf('%') >
+                                                             -1, heightHasPercentUnit = dimmensions.height.indexOf('%') >
+                                                                                        -1, width = widthHasPercentUnit ? this.getWidth()
+            : dimmensions.width, height = heightHasPercentUnit ? this.getHeight() : dimmensions.height;
         var animation = iFrame.animate({
             duration: 300,
             to: {
@@ -2684,10 +2778,10 @@ Ext.define('Admin.view.contentManager.LivePreview', {
             },
             listeners: {
                 afteranimate: function () {
-                    if(widthHasPercentUnit) {
+                    if (widthHasPercentUnit) {
                         iFrame.setStyle('width', dimmensions.width);
                     }
-                    if(heightHasPercentUnit) {
+                    if (heightHasPercentUnit) {
                         iFrame.setStyle('height', dimmensions.height);
                     }
                 }
@@ -2706,7 +2800,7 @@ Ext.define('Admin.view.contentManager.LivePreview', {
             items: [
                 {
                     xtype: 'tbfill'
-                }, 
+                },
                 Ext.apply(me.actionButton, {
                     border: 0
                 })
@@ -2716,7 +2810,7 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     load: function (url, isEdit) {
         var iFrame = this.getIframe();
         isEdit = isEdit || false;
-        if(!Ext.isEmpty(url)) {
+        if (!Ext.isEmpty(url)) {
             iFrame.dom.src = Admin.lib.UriHelper.getAbsoluteUri(url + "?edit=" + isEdit);
             this.iFrameLoaded = true;
         } else {
@@ -2754,7 +2848,7 @@ Ext.define('Admin.view.IframeContainer', {
     minHeight: 420,
     listeners: {
         afterrender: function (panel) {
-            if(this.url) {
+            if (this.url) {
                 this.load(this.url);
             }
         }
@@ -2764,7 +2858,7 @@ Ext.define('Admin.view.IframeContainer', {
     },
     load: function (url, isEdit) {
         var iframe = this.getEl().down('iframe');
-        if(!Ext.isEmpty(url)) {
+        if (!Ext.isEmpty(url)) {
             iframe.dom.src = Admin.lib.UriHelper.getAbsoluteUri(url);
         } else {
             iframe.update("<h2 class='message'>Page can't be found.</h2>");
@@ -2794,19 +2888,19 @@ Ext.define('Admin.view.BaseDetailPanel', {
             }, this, {
                 delegate: '.clearSelection'
             });
-            if(this.isFullPage) {
+            if (this.isFullPage) {
                 this.hideActionButton();
             }
-            if(this.singleSelection.tabs.length > 0) {
+            if (this.singleSelection.tabs.length > 0) {
                 this.changeTab(this.singleSelection.tabs[0].name);
             }
         }
     },
     initComponent: function () {
-        if(this.showToolbar) {
+        if (this.showToolbar) {
             this.tbar = this.createToolBar();
         }
-        if(this.isVertical) {
+        if (this.isVertical) {
             this.cls = this.cls + 'admin-detail-vertical';
         }
         this.callParent(arguments);
@@ -2825,7 +2919,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     hideActionButton: function () {
         var actionsButton = this.down('dropDownButton');
-        if(actionsButton) {
+        if (actionsButton) {
             actionsButton.setVisible(false);
         }
     },
@@ -2835,7 +2929,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     getActionButton: function () {
         var me = this;
-        if(this.actionButtonItems.length < 1) {
+        if (this.actionButtonItems.length < 1) {
             return {
             };
         }
@@ -2907,19 +3001,19 @@ Ext.define('Admin.view.BaseDetailPanel', {
                             tdAttrs: {
                                 width: 80
                             }
-                        }, 
+                        },
                         {
                             xtype: 'component',
                             itemId: 'previewHeader',
                             tpl: me.singleTemplate.header,
                             data: data,
                             cls: 'admin-detail-header'
-                        }, 
-                        me.getActionButton(), 
+                        },
+                        me.getActionButton(),
                         me.renderTabNavigation(me.isVertical)
                     ]
-                }, 
-                me.renderWestContainer(), 
+                },
+                me.renderWestContainer(),
                 {
                     region: 'center',
                     cls: 'center',
@@ -2931,7 +3025,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     renderWestContainer: function () {
         var me = this;
-        if(me.isVertical) {
+        if (me.isVertical) {
             return {
             };
         }
@@ -2947,7 +3041,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     renderTabNavigation: function (doRender) {
         var me = this;
-        if(!doRender) {
+        if (!doRender) {
             return {
             };
         }
@@ -2956,7 +3050,8 @@ Ext.define('Admin.view.BaseDetailPanel', {
             cls: (me.isVertical ? 'vertical' : 'horizontal'),
             margin: (me.isVertical ? '0' : '20 0 0'),
             colspan: 3,
-            tpl: Ext.create('Ext.XTemplate', '<ul class="admin-detail-nav">' + '<tpl for=".">' + '<li data-tab="{name}">{displayName}</li>' + '</tpl>' + '</ul>'),
+            tpl: Ext.create('Ext.XTemplate',
+                '<ul class="admin-detail-nav">' + '<tpl for=".">' + '<li data-tab="{name}">{displayName}</li>' + '</tpl>' + '</ul>'),
             data: me.singleSelection.tabs,
             listeners: {
                 click: {
@@ -2964,7 +3059,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
                     fn: function (evt, element) {
                         var tab = element.attributes['data-tab'].value;
                         var panels = Ext.ComponentQuery.query('contentDetail');
-                        for(var i = 0; i < panels.length; i++) {
+                        for (var i = 0; i < panels.length; i++) {
                             panels[i].changeTab(tab);
                         }
                     }
@@ -2974,21 +3069,22 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     getLargeBoxTemplate: function () {
         return [
-            '<tpl for=".">' + '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box large clearfix">', 
-            '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>', 
-            '<div class="center"><h6>{data.displayName}</h6>', 
-            '<tpl if="data.path">', 
-            '<p>{data.path}</p>', 
-            '<tpl elseif="data.description">', 
-            '<p>{data.description}</p>', 
-            '<tpl elseif="data.name">', 
-            '<p>{data.name}</p>', 
-            '</tpl>', 
-            '</div>', 
-            '<div class="right">', 
-            '<a id="remove-from-selection-button:{data.' + this.keyField + '}" class="deselect icon-remove icon-2x" href="javascript:;"></a>', 
-            '</div>', 
-            '</div>', 
+            '<tpl for=".">' + '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box large clearfix">',
+            '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>',
+            '<div class="center"><h6>{data.displayName}</h6>',
+            '<tpl if="data.path">',
+            '<p>{data.path}</p>',
+            '<tpl elseif="data.description">',
+            '<p>{data.description}</p>',
+            '<tpl elseif="data.name">',
+            '<p>{data.name}</p>',
+            '</tpl>',
+            '</div>',
+            '<div class="right">',
+            '<a id="remove-from-selection-button:{data.' + this.keyField +
+            '}" class="deselect icon-remove icon-2x" href="javascript:;"></a>',
+            '</div>',
+            '</div>',
             '</tpl>'
         ];
     },
@@ -3008,14 +3104,15 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     getSmallBoxTemplate: function () {
         return [
-            '<tpl for=".">', 
-            '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box small clearfix">', 
-            '<div class="left"><img src="{data.iconUrl}?size=20" alt="{data.name}"/></div>', 
-            '<div class="center">{data.displayName}</div>', 
-            '<div class="right">', 
-            '<a id="remove-from-selection-button:{data.' + this.keyField + '}" class="deselect icon-remove icon-large" href="javascript:;"></a>', 
-            '</div>', 
-            '</div>', 
+            '<tpl for=".">',
+            '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box small clearfix">',
+            '<div class="left"><img src="{data.iconUrl}?size=20" alt="{data.name}"/></div>',
+            '<div class="center">{data.displayName}</div>',
+            '<div class="right">',
+            '<a id="remove-from-selection-button:{data.' + this.keyField +
+            '}" class="deselect icon-remove icon-large" href="javascript:;"></a>',
+            '</div>',
+            '</div>',
             '</tpl>'
         ];
     },
@@ -3051,11 +3148,11 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     resolveActiveItem: function (data) {
         var activeItem;
-        if(Ext.isEmpty(this.data)) {
+        if (Ext.isEmpty(this.data)) {
             activeItem = 'noSelection';
-        } else if(Ext.isObject(this.data) || this.data.length === 1) {
+        } else if (Ext.isObject(this.data) || this.data.length === 1) {
             activeItem = 'singleSelection';
-        } else if(this.data.length > 1 && this.data.length <= 10) {
+        } else if (this.data.length > 1 && this.data.length <= 10) {
             activeItem = 'largeBoxSelection';
         } else {
             activeItem = 'smallBoxSelection';
@@ -3064,7 +3161,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     resolveActiveData: function (data) {
         var activeData;
-        if(Ext.isArray(data) && data.length === 1) {
+        if (Ext.isArray(data) && data.length === 1) {
             activeData = data[0];
         } else {
             activeData = data;
@@ -3073,13 +3170,13 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     updateActiveItem: function (data, item) {
         item = item || this.getLayout().getActiveItem();
-        if('singleSelection' === item.itemId) {
+        if ('singleSelection' === item.itemId) {
             var previewHeader = item.down('#previewHeader');
             previewHeader.update(data);
             var previewPhoto = item.down('#previewPhoto');
             previewPhoto.update(data);
             this.changeTab('traffic');
-        } else if('largeBoxSelection' === item.itemId || 'smallBoxSelection' === item.itemId) {
+        } else if ('largeBoxSelection' === item.itemId || 'smallBoxSelection' === item.itemId) {
             item.update(data);
         }
     },
@@ -3087,10 +3184,10 @@ Ext.define('Admin.view.BaseDetailPanel', {
         this.data = data;
         var toActivate = this.resolveActiveItem(data);
         var active = this.getLayout().getActiveItem();
-        if(active.itemId !== toActivate) {
+        if (active.itemId !== toActivate) {
             active = this.getLayout().setActiveItem(toActivate);
         }
-        if(active) {
+        if (active) {
             var activeData = this.resolveActiveData(data);
             this.updateActiveItem(activeData, active);
         }
@@ -3101,8 +3198,8 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     getTab: function (name) {
         var tabs = this.singleSelection.tabs;
-        for(var tab in tabs) {
-            if(tabs[tab].name === name) {
+        for (var tab in tabs) {
+            if (tabs[tab].name === name) {
                 return tabs[tab];
             }
         }
@@ -3110,19 +3207,19 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     changeTab: function (selectedTab) {
         var currentTab = this.getTab(selectedTab);
-        if(currentTab) {
+        if (currentTab) {
             var target = this.down('#center');
             target.remove(target.child());
-            if(currentTab.items) {
+            if (currentTab.items) {
                 target.add(currentTab.items);
-                if(currentTab.callback) {
+                if (currentTab.callback) {
                     currentTab.callback(target);
                 }
             }
             var elements = Ext.dom.Query.select('*[data-tab=' + selectedTab + ']');
-            for(var i = 0; i < elements.length; i++) {
+            for (var i = 0; i < elements.length; i++) {
                 var children = elements[i].parentElement.children;
-                for(var j = 0; j < children.length; j++) {
+                for (var j = 0; j < children.length; j++) {
                     children[j].className = '';
                 }
                 elements[i].className = 'active';
@@ -3149,7 +3246,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                         iFrameCls: (me.isVertical ? 'admin-detail-vertical' : '')
                     }
                 ]
-            }, 
+            },
             {
                 displayName: 'Sales',
                 name: 'sales',
@@ -3159,7 +3256,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                         html: '<h1>Sales</h1>'
                     }
                 ]
-            }, 
+            },
             {
                 displayName: 'Scorecard',
                 name: 'scorecard',
@@ -3169,7 +3266,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                         html: '<h1>Scorecard</h1>'
                     }
                 ]
-            }, 
+            },
             {
                 displayName: 'History',
                 name: 'history',
@@ -3187,29 +3284,29 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                 icon: undefined,
                 action: 'newContent',
                 disableOnMultipleSelection: true
-            }, 
+            },
             {
                 text: 'Edit',
                 icon: undefined,
                 action: 'editContent',
                 disableOnMultipleSelection: false
-            }, 
+            },
             {
                 text: 'Open',
                 icon: undefined,
                 action: 'viewContent',
                 disableOnMultipleSelection: false
-            }, 
+            },
             {
                 text: 'Delete',
                 icon: undefined,
                 action: 'deleteContent'
-            }, 
+            },
             {
                 text: 'Duplicate',
                 icon: undefined,
                 action: 'duplicateContent'
-            }, 
+            },
             {
                 text: 'Move',
                 icon: undefined,
@@ -3218,32 +3315,34 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             }
         ];
         this.on('afterrender', function () {
-            if(this.isLiveMode) {
+            if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
                 livePreview.load(this.getLiveUrl(this.data), false);
             }
         }, this);
         this.setDataCallback = function (data) {
-            if(this.isLiveMode) {
+            if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
                 livePreview.load(this.getLiveUrl(data), false);
             }
         };
         this.items = [
-            this.createNoSelection(), 
-            this.createSingleSelection(this.data), 
-            this.createLargeBoxSelection(this.data), 
-            this.createSmallBoxSelection(this.data), 
+            this.createNoSelection(),
+            this.createSingleSelection(this.data),
+            this.createLargeBoxSelection(this.data),
+            this.createSmallBoxSelection(this.data),
             this.createLivePreview(this.data)
         ];
         this.callParent(arguments);
     },
     getLiveUrl: function (data) {
-        if(data) {
-            if(data.length > 0) {
-                return data[0].data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp' : '/dev/live-edit/page/bootstrap.jsp';
-            } else if(data.data) {
-                return data.data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp' : '/dev/live-edit/page/bootstrap.jsp';
+        if (data) {
+            if (data.length > 0) {
+                return data[0].data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp'
+                    : '/dev/live-edit/page/bootstrap.jsp';
+            } else if (data.data) {
+                return data.data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp'
+                    : '/dev/live-edit/page/bootstrap.jsp';
             }
         }
         return '/dev/live-edit/page/bootstrap.jsp';
@@ -3264,15 +3363,15 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     },
     resolveActiveItem: function (data) {
         var activeItem;
-        if(Ext.isEmpty(this.data)) {
+        if (Ext.isEmpty(this.data)) {
             activeItem = 'noSelection';
-        } else if(Ext.isObject(this.data) || this.data.length === 1) {
-            if(this.isLiveMode) {
+        } else if (Ext.isObject(this.data) || this.data.length === 1) {
+            if (this.isLiveMode) {
                 activeItem = 'livePreview';
             } else {
                 activeItem = 'singleSelection';
             }
-        } else if(this.data.length > 1 && this.data.length <= 10) {
+        } else if (this.data.length > 1 && this.data.length <= 10) {
             activeItem = 'largeBoxSelection';
         } else {
             activeItem = 'smallBoxSelection';
@@ -3282,6 +3381,455 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     toggleLive: function () {
         this.isLiveMode = !this.isLiveMode;
         this.setData(this.data, false);
+    }
+});
+Ext.define('Admin.view.BaseDialogWindow', {
+    extend: 'Ext.container.Container',
+    alias: 'widget.baseDialogWindow',
+    border: false,
+    floating: true,
+    shadow: false,
+    width: 500,
+    modal: true,
+    autoHeight: true,
+    maxHeight: 600,
+    cls: 'admin-window',
+    closeAction: 'hide',
+    padding: 20,
+    data: undefined,
+    modelData: undefined,
+    dialogTitle: 'Base dialog',
+    dialogSubTitle: '',
+    dialogInfoTpl: '<div>' + '<div class="admin-user-info clearfix">' + '<div class="admin-user-photo west admin-left">' +
+                   '<div class="photo-placeholder">' + '<img src="{[values.image_url]}?size=100" alt="{name}"/>' + '</div>' + '</div>' +
+                   '<div class="admin-left">' + '<h2>{displayName}</h2>({qualifiedName})<br/>' + '<a href="mailto:{email}:">{email}</a>' +
+                   '</div>' + '</div>' + '</div>',
+    buttonItems: [],
+    buttonRow: function () {
+        var i;
+        if (arguments.length !== 0) {
+            this.buttonItems = [];
+        }
+        for (i = 0; i < arguments.length; i++) {
+            this.buttonItems.push(arguments[i]);
+        }
+        return {
+            region: 'south',
+            margin: '20 0 0 0',
+            border: false,
+            layout: {
+                type: 'hbox',
+                pack: 'end'
+            },
+            defaults: {
+                xtype: 'button',
+                margin: '0 0 0 10'
+            },
+            items: this.buttonItems
+        };
+    },
+    header: function (title, subtitle) {
+        return {
+            region: 'north',
+            xtype: 'component',
+            tpl: '<h2>{title}</h2><tpl if="subtitle != undefined"><p>{subtitle}</p></tpl>',
+            data: {
+                title: title,
+                subtitle: subtitle
+            },
+            margin: '0 0 20 0'
+        };
+    },
+    listeners: {
+        show: function (cmp) {
+            var form = cmp.down('form');
+            if (form) {
+                form.getForm().reset();
+                form.doLayout();
+                var firstField = form.down('field');
+                if (firstField) {
+                    firstField.focus();
+                }
+            }
+        },
+        resize: function (window) {
+            if (this.getHeight() > this.maxHeight) {
+                this.setHeight(this.maxHeight);
+            }
+            this.center();
+        }
+    },
+    initComponent: function () {
+        var me = this;
+        if (!this.dockedItems) {
+            this.dockedItems = [];
+        }
+        Ext.Array.insert(this.dockedItems, 0, [
+            {
+                xtype: 'toolbar',
+                dock: 'right',
+                autoHeight: true,
+                items: [
+                    {
+                        itemId: 'closeButton',
+                        scale: 'medium',
+                        iconAlign: 'top',
+                        text: 'Close',
+                        action: 'close',
+                        iconCls: 'icon-close',
+                        listeners: {
+                            click: function (btn, evt) {
+                                me.close();
+                            }
+                        }
+                    }
+                ]
+            }
+        ]);
+        if (!this.items) {
+            this.items = [];
+        }
+        if (this.dialogTitle) {
+            this.setDialogHeader(this.dialogTitle);
+        }
+        if (this.dialogSubTitle) {
+            this.setDialogSubHeader(this.dialogSubTitle);
+        }
+        if (this.dialogInfoTpl) {
+            this.setDialogInfo(this.dialogInfoTpl);
+        }
+        this.callParent(arguments);
+    },
+    filterItem: function (id) {
+        return Ext.Array.filter(this.items, function (item) {
+            return item.itemId !== id;
+        });
+    },
+    setDialogHeader: function (title) {
+        var headerItems = [];
+        headerItems.push(this.createTitle(title));
+        Ext.Array.each(this.buttons, function (b, i) {
+            headerItems.push(this.buttons[i]);
+        });
+        headerItems.push(this.createCloseButton());
+        this.items = this.filterItem('dialogTitle');
+        Ext.Array.insert(this.items, 0, [
+            {
+                xtype: 'container',
+                itemId: 'dialogTitle',
+                cls: 'admin-window-header',
+                padding: '5 0 5 5',
+                layout: {
+                    type: 'hbox',
+                    align: 'stretch'
+                },
+                defaults: {
+                    margin: '0 5 0 0'
+                },
+                items: headerItems
+            }
+        ]);
+        this.doLayout();
+    },
+    setDialogSubHeader: function (title) {
+        var i = this.dialogTitle ? 1 : 0;
+        this.items = this.filterItem('dialogSubTitle');
+        Ext.Array.insert(this.items, i, [
+            {
+                xtype: 'component',
+                itemId: 'dialogSubTitle',
+                cls: 'admin-window-subheader',
+                html: title
+            }
+        ]);
+        this.doLayout();
+    },
+    setDialogInfo: function (tpl) {
+        var i = 0;
+        if (this.dialogTitle) {
+            i++;
+        }
+        if (this.dialogSubTitle) {
+            i++;
+        }
+        this.items = this.filterItem('dialogInfo');
+        Ext.Array.insert(this.items, i, [
+            {
+                itemId: 'dialogInfo',
+                cls: 'dialog-info',
+                xtype: 'component',
+                border: false,
+                autoHeight: true,
+                styleHtmlContent: true,
+                tpl: new Ext.XTemplate(tpl)
+            }
+        ]);
+    },
+    setDialogInfoTpl: function (tpl) {
+        var dialogInfo = this.down('#dialogInfo');
+        if (dialogInfo) {
+            dialogInfo.tpl = new Ext.XTemplate(tpl);
+        } else {
+            this.setDialogInfo(tpl);
+        }
+    },
+    setDialogInfoData: function (model) {
+        if (model) {
+            this.data = model;
+            this.modelData = model.data;
+            var info = this.down('#dialogInfo');
+            if (info) {
+                info.update(this.modelData);
+            }
+        }
+    },
+    doShow: function (model) {
+        this.setDialogInfoData(model);
+        this.show();
+    },
+    doHide: function () {
+        this.x = -this.width;
+        this.hide();
+    },
+    close: function () {
+        this.destroy();
+    },
+    createTitle: function (title) {
+        return {
+            xtype: 'component',
+            flex: 1,
+            cls: this.iconCls,
+            autoEl: {
+                tag: 'h1',
+                html: title
+            }
+        };
+    },
+    createCloseButton: function () {
+        var me = this;
+        return {
+            xtype: 'button',
+            ui: 'grey',
+            text: 'Close',
+            handler: function (btn) {
+                me.close();
+            }
+        };
+    }
+});
+Ext.define('Admin.view.contentManager.NewContentWindow', {
+    extend: 'Admin.view.BaseDialogWindow',
+    alias: 'widget.newContentWindow',
+    requires: [
+        'Admin.model.schemaManager.ContentTypeModel',
+        'Admin.store.schemaManager.ContentTypeTreeStore'
+    ],
+    dialogTitle: undefined,
+    dialogSubTitle: undefined,
+    dialogInfoTpl: undefined,
+    width: 800,
+    height: 560,
+    layout: 'border',
+    defaultType: 'container',
+    recentCount: 5,
+    cookieKey: 'Admin.view.contentManager.NewContentWindow',
+    cookieSeparator: '|',
+    dataViewItemTemplate: '<tpl for=".">' + '<div class="admin-data-view-row">' + '<div class="admin-data-view-thumbnail">' +
+                          '<img src="{iconUrl}?size=32"/>' + '</div>' + '<div class="admin-data-view-description">' +
+                          '<h6>{displayName}</h6>' + '<p>{qualifiedName}</p>' + '</div>' + '<div class="x-clear"></div>' + '</div>' +
+                          '</tpl>',
+    initComponent: function () {
+        var me = this;
+        var baseDataViewConfig = {
+            xtype: 'dataview',
+            cls: 'admin-data-view',
+            tpl: me.dataViewItemTemplate,
+            itemSelector: '.admin-data-view-row',
+            trackOver: true,
+            overItemCls: 'x-item-over',
+            listeners: {
+                itemclick: function (dataview, record, item, index, e, opts) {
+                    me.updateRecentCookies(record);
+                    me.fireEvent('contentTypeSelected', me, record);
+                }
+            }
+        };
+        var recentContentTypesStore = Ext.create('Ext.data.Store', {
+            model: 'Admin.model.schemaManager.ContentTypeModel'
+        });
+        this.updateRecentItems(recentContentTypesStore);
+        var recentDataView = Ext.apply({
+            store: recentContentTypesStore,
+            emptyText: 'No recent content types'
+        }, baseDataViewConfig);
+        var recommendedContentTypesStore = Ext.create('Ext.data.Store', {
+            model: 'Admin.model.schemaManager.ContentTypeModel',
+            data: [
+                {
+                    iconUrl: '/enonic/admin/rest/schema/image/ContentType:system:structured',
+                    name: 'Advanced Data',
+                    qualifiedName: 'path/1'
+                }
+            ],
+            autoLoad: true
+        });
+        this.updateRecommendedItems(recommendedContentTypesStore, recentContentTypesStore);
+        var recommendedDataView = Ext.apply({
+            store: recommendedContentTypesStore,
+            emptyText: 'No recommendations yet'
+        }, baseDataViewConfig);
+        var allContentTypesStore = Ext.create('Admin.store.schemaManager.ContentTypeStore', {
+            remoteSort: false,
+            sorters: [
+                {
+                    property: 'name',
+                    direction: 'ASC'
+                }
+            ]
+        });
+        var allDataView = Ext.apply({
+            store: allContentTypesStore,
+            emptyText: 'No matching content types'
+        }, baseDataViewConfig);
+        this.items = [
+            me.header('Select Content Type', 'parent/of/new/content'),
+            {
+                region: 'west',
+                width: 300,
+                margin: '0 20 0 0',
+                layout: {
+                    type: 'vbox',
+                    align: 'stretch'
+                },
+                defaults: {
+                    autoScroll: true,
+                    xtype: 'panel',
+                    border: false,
+                    cls: 'admin-box'
+                },
+                items: [
+                    {
+                        title: 'Recommended',
+                        autoHeight: true,
+                        margin: '0 0 20 0',
+                        items: [
+                            recommendedDataView
+                        ]
+                    },
+                    {
+                        title: 'Recent',
+                        flex: 1,
+                        items: [
+                            recentDataView
+                        ]
+                    }
+                ]
+            },
+            {
+                region: 'center',
+                layout: {
+                    type: 'vbox',
+                    align: 'stretch'
+                },
+                items: [
+                    {
+                        xtype: 'textfield',
+                        emptyText: 'Content Type Search',
+                        margin: '0 0 20 0',
+                        enableKeyEvents: true,
+                        listeners: {
+                            keyup: function (field, event, opts) {
+                                var value = field.getValue();
+                                if (!Ext.isEmpty(value, false)) {
+                                    allContentTypesStore.clearFilter(true);
+                                    allContentTypesStore.filter({
+                                        property: "name",
+                                        value: value,
+                                        anyMatch: true
+                                    });
+                                } else {
+                                    allContentTypesStore.clearFilter();
+                                }
+                            }
+                        }
+                    },
+                    {
+                        flex: 1,
+                        overflowY: 'auto',
+                        border: false,
+                        items: [
+                            allDataView
+                        ]
+                    }
+                ]
+            },
+            me.buttonRow({
+                xtype: 'button',
+                text: 'Cancel',
+                handler: function (btn, evt) {
+                    me.close();
+                }
+            })
+        ];
+        this.callParent(arguments);
+        this.addEvents('contentTypeSelected');
+    },
+    updateRecentCookies: function (contentType) {
+        var cookies = Ext.util.Cookies.get(this.cookieKey);
+        var recentArray = cookies ? cookies.split(this.cookieSeparator) : [];
+        var recentItem = this.serializeContentType(contentType);
+        if (recentArray.length === 0 || recentArray[0] !== recentItem) {
+            recentArray.unshift(recentItem);
+        }
+        if (recentArray.length > this.recentCount) {
+            recentArray = recentArray.slice(0, this.recentCount);
+        }
+        Ext.util.Cookies.set(this.cookieKey, recentArray.join(this.cookieSeparator));
+    },
+    updateRecentItems: function (recentStore) {
+        recentStore.removeAll(true);
+        var me = this;
+        var cookies = Ext.util.Cookies.get(this.cookieKey);
+        if (cookies) {
+            var recentRecords = [];
+            var recentArray = cookies.split(this.cookieSeparator);
+            Ext.Array.each(recentArray, function (item, index, all) {
+                recentRecords.push(me.parseContentType(item));
+            });
+            if (recentRecords.length > 0) {
+                recentStore.loadData(recentRecords);
+            }
+        }
+    },
+    updateRecommendedItems: function (recommendedStore, recentStore) {
+        recommendedStore.removeAll(true);
+        var recommendedCount = 0;
+        var recommendedRecord;
+        var qualifiedNames = recentStore.collect('qualifiedName');
+        var qualifiedRecords;
+        for (var i = 0; i < qualifiedNames.length; i++) {
+            qualifiedRecords = recentStore.queryBy((function (index) {
+                return function (recentRecord, id) {
+                    return recentRecord.get('qualifiedName') === qualifiedNames[index];
+                };
+            })(i));
+            if (qualifiedRecords.getCount() > recommendedCount) {
+                recommendedRecord = qualifiedRecords.get(0);
+                recommendedCount = qualifiedRecords.getCount();
+            }
+        }
+        if (recommendedRecord) {
+            recommendedStore.loadRecords([
+                recommendedRecord
+            ]);
+        }
+    },
+    serializeContentType: function (contentType) {
+        return Ext.JSON.encode(contentType.data);
+    },
+    parseContentType: function (string) {
+        var json = Ext.JSON.decode(string, true);
+        return Ext.create('Admin.model.schemaManager.ContentTypeModel', json);
     }
 });
 Ext.define('Admin.controller.BaseController', {
@@ -3339,7 +3887,7 @@ Ext.define('Admin.controller.Controller', {
     },
     getNewContentWindow: function () {
         var win = Ext.ComponentQuery.query('newContentWindow')[0];
-        if(!win) {
+        if (!win) {
             win = Ext.create('widget.newContentWindow');
         }
         return win;
@@ -3349,7 +3897,7 @@ Ext.define('Admin.controller.Controller', {
     },
     viewContent: function (contentModels, callback, contentOpenedFromLiveEdit) {
         var me = this;
-        if(!contentModels) {
+        if (!contentModels) {
             var showPanel = this.getContentTreeGridPanel();
             contentModels = showPanel.getSelection();
         } else {
@@ -3357,10 +3905,10 @@ Ext.define('Admin.controller.Controller', {
         }
         var tabs = this.getCmsTabPanel();
         var i;
-        if(tabs) {
-            for(i = 0; i < contentModels.length; i += 1) {
+        if (tabs) {
+            for (i = 0; i < contentModels.length; i += 1) {
                 var activeTab = tabs.setActiveTab(me.generateTabId(contentModels[i], true));
-                if(!activeTab) {
+                if (!activeTab) {
                     var tabItem = {
                         xtype: 'contentDetail',
                         id: me.generateTabId(contentModels[i], false),
@@ -3376,7 +3924,7 @@ Ext.define('Admin.controller.Controller', {
     },
     editContent: function (contentModel, callback) {
         var me = this;
-        if(!contentModel) {
+        if (!contentModel) {
             var showPanel = this.getContentTreeGridPanel();
             contentModel = showPanel.getSelection();
         } else {
@@ -3384,7 +3932,7 @@ Ext.define('Admin.controller.Controller', {
         }
         var tabs = this.getCmsTabPanel();
         var createContentTabFn = function (response) {
-            if(Ext.isFunction(callback)) {
+            if (Ext.isFunction(callback)) {
                 callback();
             }
             return {
@@ -3408,7 +3956,7 @@ Ext.define('Admin.controller.Controller', {
                     };
                     Admin.lib.RemoteService.contentType_get(getContentTypeCommand, function (rpcResponse) {
                         getContentTypeResponse = rpcResponse;
-                        if(getContentTypeResponse && getContentTypeResponse.success && getContentResponse && getContentResponse.success) {
+                        if (getContentTypeResponse && getContentTypeResponse.success && getContentResponse && getContentResponse.success) {
                             getContentTypeResponse.content = getContentResponse.content;
                             handleRpcResponse(getContentTypeResponse);
                         }
@@ -3418,7 +3966,7 @@ Ext.define('Admin.controller.Controller', {
                     };
                     Admin.lib.RemoteService.content_get(getContentCommand, function (rpcResponse) {
                         getContentResponse = rpcResponse;
-                        if(getContentResponse && getContentResponse.success && getContentTypeResponse && getContentTypeResponse.success) {
+                        if (getContentResponse && getContentResponse.success && getContentTypeResponse && getContentTypeResponse.success) {
                             getContentTypeResponse.content = getContentResponse.content;
                             handleRpcResponse(getContentTypeResponse);
                         }
@@ -3435,14 +3983,14 @@ Ext.define('Admin.controller.Controller', {
                 layout: 'fit'
             };
             var index = tabs.items.indexOfKey(me.generateTabId(selectedContent, false));
-            if(index >= 0) {
+            if (index >= 0) {
                 tabs.remove(index);
             }
             tabs.addTab(tabItem, index >= 0 ? index : undefined, requestConfig);
         };
         var i;
-        if(tabs) {
-            for(i = 0; i < contentModel.length; i += 1) {
+        if (tabs) {
+            for (i = 0; i < contentModel.length; i += 1) {
                 var data = contentModel[i];
                 openEditContentTabFn(data);
             }
@@ -3450,84 +3998,84 @@ Ext.define('Admin.controller.Controller', {
     },
     createContent: function (type, qualifiedContentType, contentTypeName) {
         var tabs = this.getCmsTabPanel();
-        if(tabs) {
+        if (tabs) {
             var tab;
             var treeGridSelection = this.getContentTreeGridPanel().getSelection();
-            switch(type) {
-                case 'contentType':
-                    Admin.lib.RemoteService.contentType_get({
-                        format: 'JSON',
-                        contentType: qualifiedContentType,
-                        mixinReferencesToFormItems: true
-                    }, function (rpcResponse) {
-                        if(rpcResponse.success) {
-                            var createContentTabFn = function (response) {
-                                return {
-                                    xtype: 'contentLiveEditPanel',
-                                    title: '[New ' + response.contentType.displayName + ']',
-                                    content: {
-                                        iconUrl: response.iconUrl
-                                    },
-                                    contentType: response.contentType,
-                                    contentParent: treeGridSelection.length > 0 ? treeGridSelection[0].data : undefined,
-                                    data: {
-                                    }
-                                };
-                            };
-                            var requestConfig = {
-                                doTabRequest: function (handleRpcResponse) {
-                                    handleRpcResponse(rpcResponse);
+            switch (type) {
+            case 'contentType':
+                Admin.lib.RemoteService.contentType_get({
+                    format: 'JSON',
+                    contentType: qualifiedContentType,
+                    mixinReferencesToFormItems: true
+                }, function (rpcResponse) {
+                    if (rpcResponse.success) {
+                        var createContentTabFn = function (response) {
+                            return {
+                                xtype: 'contentLiveEditPanel',
+                                title: '[New ' + response.contentType.displayName + ']',
+                                content: {
+                                    iconUrl: response.iconUrl
                                 },
-                                createTabFromResponse: createContentTabFn
-                            };
-                            var tabItem = {
-                                id: 'tab-new-content-' + qualifiedContentType,
+                                contentType: response.contentType,
+                                contentParent: treeGridSelection.length > 0 ? treeGridSelection[0].data : undefined,
                                 data: {
-                                    name: contentTypeName,
-                                    content: {
-                                        iconUrl: rpcResponse.iconUrl
-                                    }
-                                },
-                                title: '[New ' + contentTypeName + ']',
-                                closable: true,
-                                editing: true,
-                                layout: 'fit'
+                                }
                             };
-                            tabs.addTab(tabItem, undefined, requestConfig);
-                        }
-                    });
-                    break;
-                case 'site':
-                    tab = {
-                        xtype: 'panel',
-                        html: 'New site wizard here',
-                        title: 'New Site'
-                    };
-                    tabs.addTab(tab);
-                    break;
+                        };
+                        var requestConfig = {
+                            doTabRequest: function (handleRpcResponse) {
+                                handleRpcResponse(rpcResponse);
+                            },
+                            createTabFromResponse: createContentTabFn
+                        };
+                        var tabItem = {
+                            id: 'tab-new-content-' + qualifiedContentType,
+                            data: {
+                                name: contentTypeName,
+                                content: {
+                                    iconUrl: rpcResponse.iconUrl
+                                }
+                            },
+                            title: '[New ' + contentTypeName + ']',
+                            closable: true,
+                            editing: true,
+                            layout: 'fit'
+                        };
+                        tabs.addTab(tabItem, undefined, requestConfig);
+                    }
+                });
+                break;
+            case 'site':
+                tab = {
+                    xtype: 'panel',
+                    html: 'New site wizard here',
+                    title: 'New Site'
+                };
+                tabs.addTab(tab);
+                break;
             }
         }
     },
     deleteContent: function (content) {
-        if(!content) {
+        if (!content) {
             var showPanel = this.getContentTreeGridPanel();
             content = showPanel.getSelection();
         } else {
             content = [].concat(content);
         }
-        if(content && content.length > 0) {
+        if (content && content.length > 0) {
             this.getDeleteContentWindow().doShow(content);
         }
     },
     duplicateContent: function (content) {
-        if(!content) {
+        if (!content) {
             var showPanel = this.getContentTreeGridPanel();
             content = showPanel.getSelection();
         } else {
             content = [].concat(content);
         }
         var selection = content[0];
-        if(selection) {
+        if (selection) {
             Admin.MessageBus.showFeedback({
                 title: selection.get('name') + ' duplicated into /path/to/content-copy',
                 message: 'Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.',
@@ -3549,9 +4097,9 @@ Ext.define('Admin.controller.Controller', {
         var deleteContentButton = toolbar.down('*[action=deleteContent]');
         var disabled = false;
         var i;
-        for(i = 0; i < selected.length; i++) {
+        for (i = 0; i < selected.length; i++) {
             var deletable = selected[i].get('deletable');
-            if(!deletable) {
+            if (!deletable) {
                 disabled = true;
                 break;
             }
@@ -3560,23 +4108,24 @@ Ext.define('Admin.controller.Controller', {
         deleteContentButton = contextMenu.down('*[action=deleteContent]');
         deleteContentButton.setDisabled(disabled);
         deleteContentButton = detailPanel.down('*[action=deleteContent]');
-        if(deleteContentButton) {
+        if (deleteContentButton) {
             deleteContentButton.setDisabled(disabled);
         }
     },
     loadContentAndFacets: function (values) {
         var me = this, filter = this.getContentFilter(), params = this.createLoadContentParams(values || filter.getValues());
         Admin.lib.RemoteService.content_find(params, function (response) {
-            if(response && response.success) {
+            if (response && response.success) {
                 me.getContentFilter().updateFacets(response.facets);
-                var ids = Ext.Array.pluck(response.contents, 'id'), treeGridPanel = me.getContentTreeGridPanel(), filterDirty = filter.isDirty();
+                var ids = Ext.Array.pluck(response.contents,
+                    'id'), treeGridPanel = me.getContentTreeGridPanel(), filterDirty = filter.isDirty();
                 treeGridPanel.setResultCountVisible(filterDirty);
-                if(!filterDirty) {
+                if (!filterDirty) {
                     treeGridPanel.setRemoteSearchParams({
                     });
                     treeGridPanel.refresh();
                 } else {
-                    if(ids.length > 0) {
+                    if (ids.length > 0) {
                         treeGridPanel.setRemoteSearchParams({
                             contentIds: ids
                         });
@@ -3591,42 +4140,42 @@ Ext.define('Admin.controller.Controller', {
     },
     getDimensionsForDevice: function (device) {
         var dimensions;
-        switch(device) {
-            case 'DESKTOP':
-                dimensions = {
-                    width: '100%',
-                    height: '100%'
-                };
-                break;
-            case 'IPHONE_5_VERTICAL':
-                dimensions = {
-                    width: '320px',
-                    height: '568px'
-                };
-                break;
-            case 'IPHONE_5_HORIZONTAL':
-                dimensions = {
-                    width: '568px',
-                    height: '320px'
-                };
-                break;
-            case 'IPAD_3_VERTICAL':
-                dimensions = {
-                    width: '768px',
-                    height: '1024px'
-                };
-                break;
-            case 'IPAD_3_HORIZONTAL':
-                dimensions = {
-                    width: '1024px',
-                    height: '768px'
-                };
-                break;
-            default:
-                dimensions = {
-                    width: '100%',
-                    height: '100%'
-                };
+        switch (device) {
+        case 'DESKTOP':
+            dimensions = {
+                width: '100%',
+                height: '100%'
+            };
+            break;
+        case 'IPHONE_5_VERTICAL':
+            dimensions = {
+                width: '320px',
+                height: '568px'
+            };
+            break;
+        case 'IPHONE_5_HORIZONTAL':
+            dimensions = {
+                width: '568px',
+                height: '320px'
+            };
+            break;
+        case 'IPAD_3_VERTICAL':
+            dimensions = {
+                width: '768px',
+                height: '1024px'
+            };
+            break;
+        case 'IPAD_3_HORIZONTAL':
+            dimensions = {
+                width: '1024px',
+                height: '768px'
+            };
+            break;
+        default:
+            dimensions = {
+                width: '100%',
+                height: '100%'
+            };
         }
         return dimensions;
     },
@@ -3687,22 +4236,22 @@ Ext.define('Admin.controller.Controller', {
             }
         };
         var ranges = [];
-        if(values.ranges) {
-            for(var i = 0; i < values.ranges.length; i++) {
+        if (values.ranges) {
+            for (var i = 0; i < values.ranges.length; i++) {
                 var lower;
-                switch(values.ranges[i]) {
-                    case '< 1 day':
-                        lower = oneDayAgo;
-                        break;
-                    case '< 1 hour':
-                        lower = oneHourAgo;
-                        break;
-                    case '< 1 week':
-                        lower = oneWeekAgo;
-                        break;
-                    default:
-                        lower = null;
-                        break;
+                switch (values.ranges[i]) {
+                case '< 1 day':
+                    lower = oneDayAgo;
+                    break;
+                case '< 1 hour':
+                    lower = oneHourAgo;
+                    break;
+                case '< 1 week':
+                    lower = oneWeekAgo;
+                    break;
+                default:
+                    lower = null;
+                    break;
                 }
                 ranges.push({
                     lower: lower,
@@ -3731,7 +4280,7 @@ Ext.define('Admin.controller.Controller', {
     },
     getContentManagerContextMenu: function () {
         var menu = Ext.ComponentQuery.query('contentManagerContextMenu')[0];
-        if(!menu) {
+        if (!menu) {
             menu = Ext.create('widget.contentManagerContextMenu');
         }
         return menu;
@@ -3749,14 +4298,14 @@ Ext.define('Admin.controller.Controller', {
     },
     getDeleteContentWindow: function () {
         var win = Ext.ComponentQuery.query('deleteContentWindow')[0];
-        if(!win) {
+        if (!win) {
             win = Ext.create('widget.deleteContentWindow');
         }
         return win;
     },
     getLiveEditTestWindow: function () {
         var win = Ext.ComponentQuery.query('liveEditTestWindow')[0];
-        if(!win) {
+        if (!win) {
             win = Ext.create('widget.liveEditTestWindow');
         }
         return win;
@@ -3787,14 +4336,14 @@ Ext.define('Admin.controller.TopBarController', {
         var me = this, parent = this.getParentFrame(), iFrames = parent.Ext.DomQuery.select('iframe');
         var iFrameExist = false;
         Ext.each(iFrames, function (iframe, index, allIFrames) {
-            if(iframe.id === 'iframe-' + appData.id) {
+            if (iframe.id === 'iframe-' + appData.id) {
                 iFrameExist = true;
                 iframe.style.display = 'block';
             } else {
                 iframe.style.display = 'none';
             }
         });
-        if(!iFrameExist) {
+        if (!iFrameExist) {
             me.appendIframe(parent, appData, urlHash);
             me.showLoadMask();
         }
@@ -3805,7 +4354,7 @@ Ext.define('Admin.controller.TopBarController', {
     },
     appendIframe: function (parent, appData, urlHash) {
         var url = appData.appUrl + '?appId=' + appData.id;
-        if(urlHash) {
+        if (urlHash) {
             url += urlHash;
         }
         var iFrameSpec = parent.Ext.core.DomHelper.append('admin-application-frames', {
@@ -3819,7 +4368,7 @@ Ext.define('Admin.controller.TopBarController', {
     },
     setStartButton: function (selectedMenuItem) {
         var topBar = this.getTopBar();
-        if(topBar) {
+        if (topBar) {
             var startButton = this.getStartButton();
             startButton.setText(selectedMenuItem.title);
             startButton.setIconCls(selectedMenuItem.iconCls);
@@ -3829,7 +4378,7 @@ Ext.define('Admin.controller.TopBarController', {
 Ext.define('Admin.controller.GridPanelController', {
     extend: 'Admin.controller.Controller',
     stores: [
-        'Admin.store.contentManager.ContentStore', 
+        'Admin.store.contentManager.ContentStore',
         'Admin.store.contentManager.ContentTreeStore'
     ],
     models: [
@@ -3849,7 +4398,7 @@ Ext.define('Admin.controller.GridPanelController', {
             },
             'contentShow': {
                 afterrender: function () {
-                    if(document.location.hash.indexOf('/cm/open/') > -1) {
+                    if (document.location.hash.indexOf('/cm/open/') > -1) {
                         Admin.MessageBus.liveEditOpenContent();
                     }
                 }
@@ -3902,7 +4451,7 @@ Ext.define('Admin.controller.FilterPanelController', {
         this.loadContentAndFacets(values);
     },
     doReset: function (dirty) {
-        if(!dirty) {
+        if (!dirty) {
             return false;
         }
         this.loadContentAndFacets({
@@ -3947,7 +4496,7 @@ Ext.define('Admin.controller.BrowseToolbarController', {
         var toShow = contentDetail[vertical ? 1 : 0];
         toHide.setVisible(false);
         toShow.setVisible(true);
-        if(toShow.isLiveMode != toHide.isLiveMode) {
+        if (toShow.isLiveMode != toHide.isLiveMode) {
             toShow.toggleLive();
         }
         var showPanel = this.getContentTreeGridPanel();
@@ -3957,7 +4506,7 @@ Ext.define('Admin.controller.BrowseToolbarController', {
     },
     getContentManagerToolbarMenu: function () {
         var menu = Ext.ComponentQuery.query('contentManagerToolbarMenu')[0];
-        if(!menu) {
+        if (!menu) {
             menu = Ext.create('widget.contentManagerToolbarMenu');
         }
         return menu;
@@ -4024,7 +4573,7 @@ Ext.define('Admin.controller.ContentController', {
     },
     remoteCreateOrUpdateContent: function (contentParams, callback) {
         Admin.lib.RemoteService.content_createOrUpdate(contentParams, function (r) {
-            if(r && r.success) {
+            if (r && r.success) {
                 callback(r.created, r.updated, r.contentPath, r.contentId);
             } else {
                 Ext.Msg.alert("Error", r ? r.error : "Internal error occured.");
@@ -4039,7 +4588,7 @@ Ext.define('Admin.controller.ContentController', {
         Admin.lib.RemoteService.content_delete({
             "contentPaths": contentPaths
         }, function (r) {
-            if(r) {
+            if (r) {
                 callback.call(me, r.success, r.failures);
             } else {
                 Ext.Msg.alert("Error", r ? r.error : "Internal error occured.");
@@ -4122,13 +4671,13 @@ Ext.define('Admin.controller.ContentWizardController', {
     onDisplayNameSourceChanged: function (field, event, opts) {
         var wizard = this.getContentWizardPanel();
         var evaluateFn = wizard.data && wizard.contentType && wizard.contentType.contentDisplayNameScript;
-        if(wizard.evaluateDisplayName && !Ext.isEmpty(evaluateFn)) {
+        if (wizard.evaluateDisplayName && !Ext.isEmpty(evaluateFn)) {
             var rawData = wizard.getData().contentData;
             var contentData = {
             };
             var key;
-            for(key in rawData) {
-                if(rawData.hasOwnProperty(key)) {
+            for (key in rawData) {
+                if (rawData.hasOwnProperty(key)) {
                     contentData[key.replace(/\[0\]/g, '')] = rawData[key];
                 }
             }
@@ -4142,9 +4691,9 @@ Ext.define('Admin.controller.ContentWizardController', {
     closeWizard: function (el, e) {
         var tab = this.getContentWizardTab();
         var contentWizard = this.getContentWizardPanel();
-        if(contentWizard.isWizardDirty) {
+        if (contentWizard.isWizardDirty) {
             Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?', function (answer) {
-                if('yes' === answer) {
+                if ('yes' === answer) {
                     tab.close();
                 }
             });
@@ -4173,21 +4722,21 @@ Ext.define('Admin.controller.ContentWizardController', {
         };
         var onUpdateContentSuccess = function (created, updated, contentPath, contentId) {
             var lastSlashIndex, contentName;
-            if(contentPath) {
-                if(content.path !== contentPath) {
+            if (contentPath) {
+                if (content.path !== contentPath) {
                     lastSlashIndex = contentPath.lastIndexOf('/');
-                    if(lastSlashIndex >= 0) {
+                    if (lastSlashIndex >= 0) {
                         contentName = contentPath.substring(lastSlashIndex + 1);
                         contentWizard.getWizardHeader().setName(contentName);
                     }
                 }
                 content.path = contentPath;
             }
-            if(contentId) {
+            if (contentId) {
                 content.id = contentId;
             }
-            if(created || updated) {
-                if(closeWizard) {
+            if (created || updated) {
+                if (closeWizard) {
                     me.getContentWizardTab().close();
                 }
                 var displayName = contentParams.displayName || displayName;
@@ -4196,7 +4745,7 @@ Ext.define('Admin.controller.ContentWizardController', {
                 }, function () {
                     alert('close link callback');
                 });
-                if(Ext.isFunction(contentWizard.washDirtyForms)) {
+                if (Ext.isFunction(contentWizard.washDirtyForms)) {
                     contentWizard.washDirtyForms();
                 }
                 me.loadContentAndFacets();
@@ -4211,7 +4760,7 @@ Ext.define('Admin.controller.ContentWizardController', {
     publishContent: function (contentWizard, closeWizard) {
         var me = this;
         var displayName = contentWizard.content.displayName;
-        if(closeWizard) {
+        if (closeWizard) {
             me.getContentWizardTab().close();
         }
         Admin.MessageBus.showPublish(displayName, function () {
@@ -4280,10 +4829,10 @@ Ext.define('Admin.controller.DialogWindowController', {
             },
             'newContentWindow': {
                 contentTypeSelected: function (window, contentType) {
-                    if(window) {
+                    if (window) {
                         window.close();
                     }
-                    if(contentType) {
+                    if (contentType) {
                         this.createContent('contentType', contentType.get('qualifiedName'), contentType.get('name'));
                     }
                 }
@@ -4299,17 +4848,18 @@ Ext.define('Admin.controller.DialogWindowController', {
         var content = win.data;
         var onContentDeleted = function (success, details) {
             win.close();
-            if(success) {
+            if (success) {
                 Admin.MessageBus.showFeedback({
                     title: 'Content was deleted',
-                    message: Ext.isArray(content) && content.length > 1 ? content.length + ' contents were deleted' : '1 content was deleted',
+                    message: Ext.isArray(content) && content.length > 1 ? content.length + ' contents were deleted'
+                        : '1 content was deleted',
                     opts: {
                     }
                 });
             } else {
                 var message = '';
                 var i;
-                for(i = 0; i < details.length; i++) {
+                for (i = 0; i < details.length; i++) {
                     message += details[0].reason + "\n";
                 }
                 Admin.MessageBus.showFeedback({
@@ -4328,16 +4878,16 @@ Ext.application({
     name: 'CM',
     appFolder: 'resources/app',
     controllers: [
-        'Admin.controller.BaseController', 
-        'Admin.controller.Controller', 
-        'Admin.controller.TopBarController', 
-        'Admin.controller.GridPanelController', 
-        'Admin.controller.DetailPanelController', 
-        'Admin.controller.FilterPanelController', 
-        'Admin.controller.BrowseToolbarController', 
-        'Admin.controller.DetailToolbarController', 
-        'Admin.controller.ContentWizardController', 
-        'Admin.controller.ContentPreviewController', 
+        'Admin.controller.BaseController',
+        'Admin.controller.Controller',
+        'Admin.controller.TopBarController',
+        'Admin.controller.GridPanelController',
+        'Admin.controller.DetailPanelController',
+        'Admin.controller.FilterPanelController',
+        'Admin.controller.BrowseToolbarController',
+        'Admin.controller.DetailToolbarController',
+        'Admin.controller.ContentWizardController',
+        'Admin.controller.ContentPreviewController',
         'Admin.controller.DialogWindowController'
     ],
     launch: function () {
@@ -4364,7 +4914,7 @@ Ext.application({
                                     region: 'west',
                                     xtype: 'contentFilter',
                                     width: 200
-                                }, 
+                                },
                                 {
                                     region: 'center',
                                     xtype: 'contentShow'

@@ -115,7 +115,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
                     border: false,
                     cls: 'admin-box'
                 },
-                items: [
+                items: <any[]> [
                     {
                         title: 'Recommended',
                         autoHeight: true,
@@ -139,7 +139,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
                     type: 'vbox',
                     align: 'stretch'
                 },
-                items: [
+                items: <any[]> [
                     {
                         xtype: 'textfield',
                         emptyText: 'Content Type Search',
