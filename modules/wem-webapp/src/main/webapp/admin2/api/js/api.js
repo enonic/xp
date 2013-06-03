@@ -105,13 +105,15 @@ var API_ui_toolbar;
                 _super.call(this, 'button');
             this.action = action;
             this.element = this.createHTMLElement();
-            this.enable(action.isEnabled());
+            this.setEnable(action.isEnabled());
             action.addPropertyChangeListener(function (action) {
-                _this.enable(action.isEnabled());
+                _this.setEnable(action.isEnabled());
             });
         }
-        Button.prototype.enable = function (value) {
+        Button.prototype.setEnable = function (value) {
             this.element.disabled = !value;
+        };
+        Button.prototype.setFloatRight = function (value) {
         };
         Button.prototype.getHTMLElement = function () {
             return this.element;
@@ -136,10 +138,16 @@ var API_ui_toolbar;
         __extends(Toolbar, _super);
         function Toolbar() {
                 _super.call(this, "toolbar");
-            this.buttons = [];
+            this.components = [];
             this.element = this.createHTMLElement();
             this.initExt();
         }
+        Toolbar.prototype.createHTMLElement = function () {
+            var divEl = document.createElement("div");
+            divEl.id = _super.prototype.getId.call(this);
+            divEl.className = 'toolbar';
+            return divEl;
+        };
         Toolbar.prototype.initExt = function () {
             this.ext = new Ext.Component({
                 contentEl: this.element,
@@ -149,27 +157,39 @@ var API_ui_toolbar;
         Toolbar.prototype.getHTMLElement = function () {
             return this.element;
         };
-        Toolbar.prototype.createHTMLElement = function () {
-            var divEl = document.createElement("div");
-            divEl.id = _super.prototype.getId.call(this);
-            divEl.className = 'toolbar';
-            for(var i in this.buttons) {
-                divEl.appendChild(this.buttons[i].getHTMLElement());
-            }
-            return divEl;
-        };
         Toolbar.prototype.addAction = function (action) {
             var button = this.doAddAction(action);
             this.element.appendChild(button.getHTMLElement());
         };
+        Toolbar.prototype.addGreedySpacer = function () {
+            var spacer = new ToolbarGreedySpacer();
+            this.components.push(spacer);
+        };
         Toolbar.prototype.doAddAction = function (action) {
             var button = new API_ui_toolbar.Button(action);
-            this.buttons.push(button);
+            if(this.hasGreedySpacer()) {
+                button.setFloatRight(true);
+            }
+            this.components.push(button);
             return button;
+        };
+        Toolbar.prototype.hasGreedySpacer = function () {
+            for(var i in this.components) {
+                var comp = this.components[i];
+                if(comp instanceof ToolbarGreedySpacer) {
+                    return true;
+                }
+            }
+            return false;
         };
         return Toolbar;
     })(API_ui.Component);
     API_ui_toolbar.Toolbar = Toolbar;    
+    var ToolbarGreedySpacer = (function () {
+        function ToolbarGreedySpacer() { }
+        return ToolbarGreedySpacer;
+    })();
+    API_ui_toolbar.ToolbarGreedySpacer = ToolbarGreedySpacer;    
 })(API_ui_toolbar || (API_ui_toolbar = {}));
 var API;
 (function (API) {

@@ -43,7 +43,8 @@ module API_ui_toolbar {
         private action;
         private element;
         constructor(action: API_action.Action);
-        public enable(value: bool): void;
+        public setEnable(value: bool): void;
+        public setFloatRight(value: bool): void;
         public getHTMLElement(): HTMLElement;
         private createHTMLElement();
     }
@@ -51,14 +52,18 @@ module API_ui_toolbar {
 module API_ui_toolbar {
     class Toolbar extends API_ui.Component {
         public ext;
-        private buttons;
+        private components;
         private element;
         constructor();
+        private createHTMLElement();
         private initExt();
         public getHTMLElement(): HTMLElement;
-        private createHTMLElement();
         public addAction(action: API_action.Action): void;
+        public addGreedySpacer(): void;
         private doAddAction(action);
+        private hasGreedySpacer();
+    }
+    class ToolbarGreedySpacer {
     }
 }
 module API.notify {

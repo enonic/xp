@@ -4,7 +4,7 @@ module API_ui_toolbar {
 
         ext;
 
-        private buttons:Button[] = [];
+        private components:any[] = [];
 
         private element:HTMLElement;
 
@@ -12,6 +12,13 @@ module API_ui_toolbar {
             super("toolbar");
             this.element = this.createHTMLElement();
             this.initExt();
+        }
+
+        private createHTMLElement():HTMLElement {
+            var divEl:HTMLElement = document.createElement("div");
+            divEl.id = super.getId();
+            divEl.className = 'toolbar';
+            return divEl;
         }
 
         private initExt() {
@@ -25,25 +32,37 @@ module API_ui_toolbar {
             return this.element;
         }
 
-        private createHTMLElement():HTMLElement {
-            var divEl:HTMLElement = document.createElement("div");
-            divEl.id = super.getId();
-            divEl.className = 'toolbar';
-            for (var i in this.buttons) {
-                divEl.appendChild(this.buttons[i].getHTMLElement());
-            }
-            return divEl;
-        }
-
         addAction(action:API_action.Action) {
             var button:Button = this.doAddAction(action);
             this.element.appendChild(button.getHTMLElement())
         }
 
+        addGreedySpacer() {
+            var spacer = new ToolbarGreedySpacer();
+            this.components.push( spacer );
+        }
+
         private doAddAction(action:API_action.Action):Button {
-            var button = new Button(action);
-            this.buttons.push(button);
+            var button:API_ui_toolbar.Button = new API_ui_toolbar.Button(action);
+            if( this.hasGreedySpacer() ) {
+                button.setFloatRight(true);
+            }
+            this.components.push(button);
             return button;
         }
+
+        private hasGreedySpacer():bool {
+            for( var i in this.components ) {
+                var comp = this.components[i];
+                if( comp instanceof ToolbarGreedySpacer ) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    export class ToolbarGreedySpacer {
+
     }
 }

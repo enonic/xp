@@ -10,16 +10,21 @@ module API_ui_toolbar {
             super('button');
             this.action = action;
             this.element = this.createHTMLElement();
-            this.enable(action.isEnabled());
+            this.setEnable(action.isEnabled());
 
             action.addPropertyChangeListener((action:API_action.Action) => {
-                this.enable(action.isEnabled());
+                this.setEnable(action.isEnabled());
             });
         }
 
-        enable(value:bool) {
+        setEnable(value:bool) {
             this.element.disabled = !value;
         }
+
+        setFloatRight(value:bool) {
+            // TODO:
+        }
+
 
         getHTMLElement():HTMLElement {
             return this.element;
