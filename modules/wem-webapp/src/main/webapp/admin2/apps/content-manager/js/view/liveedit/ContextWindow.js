@@ -59,12 +59,19 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     },
 
     /**
-     * @returns {Ext.Component}
+     * @returns {Ext.button.Button}
      */
     createMenuButton: function () {
-        return new Ext.Component({
-            cls: 'admin-context-window-menu icon-reorder',
-            width: 30
+        return new Ext.button.Button({
+            text: '',
+            arrowCls: '-none',
+            cls: 'admin-context-window-menu-button icon-reorder',
+            menu: [
+                {text: 'Item 1'},
+                {text: 'Item 2'},
+                {text: 'Item 3'},
+                {text: 'Item 4'}
+            ]
         });
     },
 
@@ -85,7 +92,7 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     createToggleButton: function () {
         var me = this;
         return new Ext.Component({
-            cls: 'admin-context-window-toggle icon-chevron-down',
+            cls: 'admin-context-window-toggle-button icon-chevron-down',
             width: 30,
             listeners: {
                 render: function (component) {
@@ -121,10 +128,7 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
                 }
             },
             items: [
-                {
-                    xtype: 'container',
-                    html: '<p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p>'
-                }
+                new Admin.view.contentManager.liveedit.TestContent()
             ]
         });
     },
@@ -138,7 +142,7 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     createDraggingShim: function () {
         var div = document.createElement('div');
         div.setAttribute('class', 'context-window-dragging-shim');
-        div.setAttribute('style', 'display:none');
+        div.setAttribute('style', 'display: none');
         document.body.appendChild(div);
         return div;
     },
@@ -150,7 +154,7 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
             this.isBodyVisible = false;
         } else {
             this.windowBody.show();
-            this.setHeight(this.defaultBodyHeight - this.defaultTitleBarHeight);
+            this.setHeight(this.defaultBodyHeight + this.defaultTitleBarHeight);
             this.isBodyVisible = true;
         }
     },
