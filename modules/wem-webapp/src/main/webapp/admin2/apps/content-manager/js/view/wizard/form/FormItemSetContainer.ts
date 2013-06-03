@@ -70,7 +70,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSetContainer', {
             html: '<span class="admin-text-button admin-collapse-all-button" href="javascript:;">Collapse</span>'
         };
         if ((this.minFields !== this.maxFields) || (this.maxFields === 0)) {
-            return [addButton, collapseButton];
+            return <any[]>[addButton, collapseButton];
         } else {
             return [collapseButton];
         }

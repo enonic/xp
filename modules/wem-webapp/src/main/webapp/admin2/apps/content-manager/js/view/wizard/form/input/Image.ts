@@ -1,3 +1,5 @@
+declare var plupload;
+
 Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
     extend: 'Admin.view.contentManager.wizard.form.input.Base',
     alias: 'widget.Image',
@@ -43,7 +45,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                 type: 'vbox',
                 align: 'stretch'
             },
-            items: [
+            items: <any[]>[
                 {
                     xtype: 'textfield',
                     emptyText: 'Paste URL to image here',
@@ -72,7 +74,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                 align: 'center',
                 pack: 'center'
             },
-            items: [
+            items: <any[]>[
                 {
                     itemId: 'progressBar',
                     width: 500,
@@ -118,7 +120,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             itemId: 'imageForm',
             xtype: 'container',
             width: 500,
-            items: [
+            items: <any[]>[
                 {
                     itemId: 'image',
                     xtype: 'component',
@@ -137,7 +139,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                         align: 'top',
                         pack: 'end'
                     },
-                    items: [
+                    items: <any[]>[
                         {
                             xtype: 'button',
                             text: 'Edit',

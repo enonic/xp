@@ -50,7 +50,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentLiveEditPanel', {
             hidden: true
         };
 
-        this.items = [wizardPanel, liveEdit];
+        this.items = <any[]>[wizardPanel, liveEdit];
 
         this.callParent(arguments);
     },

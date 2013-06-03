@@ -108,7 +108,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             xtype: 'panel'
         };
 
-        return [dataStep, metaStep, pageStep, securityStep, summaryStep];
+        return <any[]>[dataStep, metaStep, pageStep, securityStep, summaryStep];
     },
 
     isNewContent: function () {

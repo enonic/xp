@@ -73,7 +73,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
                 me.removeCopy();
             }
         };
-        var items = closable ? [label, removeBtn] : [label];
+        var items = closable ? <any[]>[label, removeBtn] : [label];
         return {
             xtype: 'container',
             margin: '10 0 10 0',

@@ -62,7 +62,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     createComboBox: function () {
         var me = this;
 
-        var fieldTpl = [
+        var fieldTpl = <any[]>[
             '<div class="{hiddenDataCls}" role="presentation"></div>',
             '<input id="{id}" type="{type}" {inputAttrTpl} class="{fieldCls} {typeCls} {editableCls}" autocomplete="off"',
             '<tpl if="value"> value="{[Ext.util.Format.htmlEncode(values.value)]}"</tpl>',

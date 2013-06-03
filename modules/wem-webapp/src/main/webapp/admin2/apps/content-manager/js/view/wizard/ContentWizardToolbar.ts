@@ -19,7 +19,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
 
     initComponent: function () {
         var me = this;
-        this.items = [
+        this.items = <any[]>[
 
             {
                 text: 'Save',

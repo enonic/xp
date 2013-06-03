@@ -144,7 +144,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
         var me = this;
 
         // default template with icon and library link added
-        var fieldTpl = [
+        var fieldTpl = <any[]>[
             '<div class="{hiddenDataCls}" role="presentation"></div>',
             '<input id="{id}" type="{type}" {inputAttrTpl} class="{fieldCls} {typeCls} {editableCls}" autocomplete="off"',
             '<tpl if="value"> value="{[Ext.util.Format.htmlEncode(values.value)]}"</tpl>',

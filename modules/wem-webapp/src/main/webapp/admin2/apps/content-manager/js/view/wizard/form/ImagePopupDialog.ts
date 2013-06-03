@@ -23,7 +23,7 @@ Ext.define('Admin.view.contentManager.wizard.form.ImagePopupDialog', {
 
     initComponent: function () {
 
-        this.items = [
+        this.items = <any[]>[
             {
                 tpl: this.tpl,
                 itemId: 'messageBox',
