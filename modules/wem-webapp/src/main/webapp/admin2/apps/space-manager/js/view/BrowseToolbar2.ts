@@ -10,7 +10,6 @@ module APP.ui {
             super.addAction(APP_action.SpaceActions.NEW_SPACE);
             super.addAction(APP_action.SpaceActions.EDIT_SPACE);
             super.addAction(APP_action.SpaceActions.OPEN_SPACE);
-            super.addGreedySpacer();
             super.addAction(APP_action.SpaceActions.DELETE_SPACE);
         }
     }

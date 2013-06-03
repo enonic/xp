@@ -70,8 +70,8 @@ module APP_action {
 
                     NEW_SPACE.setEnabled(false);
                     OPEN_SPACE.setEnabled(true);
-                    //EDIT_SPACE.setEnabled(spaces[0].editable);
-                    //DELETE_SPACE.setEnabled(spaces[0].raw.deletable);
+                    EDIT_SPACE.setEnabled(spaces[0].data.editable);
+                    DELETE_SPACE.setEnabled(spaces[0].data.deletable);
                 }
                 else {
                     console.log(spaces.length + "spaces selected");
@@ -87,9 +87,9 @@ module APP_action {
         static anyEditable(spaces:APP.model.SpaceModel[]):bool {
             for (var i in spaces) {
                 var space:APP.model.SpaceModel = spaces[i];
-                /*if (space.raw.editable) {
-                 return true;
-                 }*/
+                if (space.data.editable) {
+                    return true;
+                }
             }
             return false;
         }
@@ -97,9 +97,9 @@ module APP_action {
         static anyDeleteable(spaces:APP.model.SpaceModel[]):bool {
             for (var i in spaces) {
                 var space:APP.model.SpaceModel = spaces[i];
-                /*if (space.raw.deletable) {
-                 return true;
-                 }*/
+                if (space.data.deletable) {
+                    return true;
+                }
             }
             return false;
         }
