@@ -9,9 +9,5 @@ module APP.event {
             API_event.onEvent('deletePrompt', handler);
         }
     }
-
-    APP_action.SpaceActions.DELETE_SPACE.addExecutionListener(() => {
-        new DeletePromptEvent( APP_context.SpaceContext.get().getSelectedSpaces() ).fire();
-    });
 }
 

@@ -4,14 +4,14 @@
 ///<reference path='../../../api/js/lib/JsonRpcProvider.ts' />
 ///<reference path='../../../api/js/lib/RemoteService.ts' />
 
-///<reference path='action/SpaceActions.ts' />
-
 ///<reference path='event/DeletedEvent.ts' />
 ///<reference path='event/SpaceModelEvent.ts' />
 ///<reference path='event/DeletePromptEvent.ts' />
 ///<reference path='event/GridSelectionChangeEvent.ts' />
 ///<reference path='event/ShowContextMenuEvent.ts' />
 ///<reference path='event/EditSpaceEvent.ts' />
+
+///<reference path='action/SpaceActions.ts' />
 
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
@@ -157,3 +157,7 @@ Ext.application({
 });
 
 APP_context.SpaceContext.init();
+
+
+APP_action.SpaceActions.init();
+

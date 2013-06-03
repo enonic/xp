@@ -244,50 +244,6 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var APP_action;
-(function (APP_action) {
-    var NewSpaceAction = (function (_super) {
-        __extends(NewSpaceAction, _super);
-        function NewSpaceAction() {
-                _super.call(this, "New");
-        }
-        return NewSpaceAction;
-    })(API_action.Action);
-    APP_action.NewSpaceAction = NewSpaceAction;    
-    var OpenSpaceAction = (function (_super) {
-        __extends(OpenSpaceAction, _super);
-        function OpenSpaceAction() {
-                _super.call(this, "Open");
-        }
-        return OpenSpaceAction;
-    })(API_action.Action);
-    APP_action.OpenSpaceAction = OpenSpaceAction;    
-    var EditSpaceAction = (function (_super) {
-        __extends(EditSpaceAction, _super);
-        function EditSpaceAction() {
-                _super.call(this, "Edit");
-        }
-        return EditSpaceAction;
-    })(API_action.Action);
-    APP_action.EditSpaceAction = EditSpaceAction;    
-    var DeleteSpaceAction = (function (_super) {
-        __extends(DeleteSpaceAction, _super);
-        function DeleteSpaceAction() {
-                _super.call(this, "Delete");
-        }
-        return DeleteSpaceAction;
-    })(API_action.Action);
-    APP_action.DeleteSpaceAction = DeleteSpaceAction;    
-    var SpaceActions = (function () {
-        function SpaceActions() { }
-        SpaceActions.NEW_SPACE = new NewSpaceAction();
-        SpaceActions.OPEN_SPACE = new OpenSpaceAction();
-        SpaceActions.EDIT_SPACE = new EditSpaceAction();
-        SpaceActions.DELETE_SPACE = new DeleteSpaceAction();
-        return SpaceActions;
-    })();
-    APP_action.SpaceActions = SpaceActions;    
-})(APP_action || (APP_action = {}));
 var APP;
 (function (APP) {
     (function (event) {
@@ -337,9 +293,6 @@ var APP;
             return DeletePromptEvent;
         })(event.SpaceModelEvent);
         event.DeletePromptEvent = DeletePromptEvent;        
-        APP_action.SpaceActions.DELETE_SPACE.addExecutionListener(function () {
-            new DeletePromptEvent(APP_context.SpaceContext.get().getSelectedSpaces()).fire();
-        });
     })(APP.event || (APP.event = {}));
     var event = APP.event;
 })(APP || (APP = {}));
@@ -402,6 +355,71 @@ var APP;
     })(APP.event || (APP.event = {}));
     var event = APP.event;
 })(APP || (APP = {}));
+var APP_action;
+(function (APP_action) {
+    var NewSpaceAction = (function (_super) {
+        __extends(NewSpaceAction, _super);
+        function NewSpaceAction() {
+                _super.call(this, "New");
+        }
+        return NewSpaceAction;
+    })(API_action.Action);
+    APP_action.NewSpaceAction = NewSpaceAction;    
+    var OpenSpaceAction = (function (_super) {
+        __extends(OpenSpaceAction, _super);
+        function OpenSpaceAction() {
+                _super.call(this, "Open");
+        }
+        return OpenSpaceAction;
+    })(API_action.Action);
+    APP_action.OpenSpaceAction = OpenSpaceAction;    
+    var EditSpaceAction = (function (_super) {
+        __extends(EditSpaceAction, _super);
+        function EditSpaceAction() {
+                _super.call(this, "Edit");
+        }
+        return EditSpaceAction;
+    })(API_action.Action);
+    APP_action.EditSpaceAction = EditSpaceAction;    
+    var DeleteSpaceAction = (function (_super) {
+        __extends(DeleteSpaceAction, _super);
+        function DeleteSpaceAction() {
+                _super.call(this, "Delete");
+            this.addExecutionListener(function () {
+                new APP.event.DeletePromptEvent(APP_context.SpaceContext.get().getSelectedSpaces()).fire();
+            });
+        }
+        return DeleteSpaceAction;
+    })(API_action.Action);
+    APP_action.DeleteSpaceAction = DeleteSpaceAction;    
+    var SpaceActions = (function () {
+        function SpaceActions() { }
+        SpaceActions.NEW_SPACE = new NewSpaceAction();
+        SpaceActions.OPEN_SPACE = new OpenSpaceAction();
+        SpaceActions.EDIT_SPACE = new EditSpaceAction();
+        SpaceActions.DELETE_SPACE = new DeleteSpaceAction();
+        SpaceActions.init = function init() {
+            APP.event.GridSelectionChangeEvent.on(function (event) {
+                var spaces = event.getModel();
+                if(spaces.length <= 0) {
+                    console.log("no spaces selected");
+                    SpaceActions.NEW_SPACE.setEnabled(true);
+                    SpaceActions.OPEN_SPACE.setEnabled(false);
+                    SpaceActions.EDIT_SPACE.setEnabled(false);
+                    SpaceActions.DELETE_SPACE.setEnabled(false);
+                } else {
+                    console.log(spaces.length + " spaces selected");
+                    SpaceActions.NEW_SPACE.setEnabled(false);
+                    SpaceActions.OPEN_SPACE.setEnabled(true);
+                    SpaceActions.EDIT_SPACE.setEnabled(true);
+                    SpaceActions.DELETE_SPACE.setEnabled(true);
+                }
+            });
+        };
+        return SpaceActions;
+    })();
+    APP_action.SpaceActions = SpaceActions;    
+})(APP_action || (APP_action = {}));
 Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
     extend: 'Ext.util.Observable',
     pluginId: 'persistentGridSelection',
@@ -1322,7 +1340,16 @@ Ext.define('Admin.model.SpaceModel', {
             name: 'modifiedTime',
             type: 'date',
             default: new Date()
-        }
+        }, 
+        {
+            name: 'editable',
+            type: 'boolean'
+        }, 
+        {
+            name: 'deletable',
+            type: 'boolean'
+        }, 
+        
     ],
     idProperty: 'name'
 });
@@ -4711,7 +4738,8 @@ Ext.define('Admin.controller.Controller', {
     },
     validateSpace: function (space) {
         if(!space) {
-            space = APP_context.SpaceContext.get().getSelectedSpaces()[0];
+            var showPanel = this.getSpaceTreeGridPanel();
+            return showPanel.getSelection()[0];
         }
         return space;
     },
@@ -5174,4 +5202,5 @@ Ext.application({
     }
 });
 APP_context.SpaceContext.init();
+APP_action.SpaceActions.init();
 //@ sourceMappingURL=all.js.map

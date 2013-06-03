@@ -4,7 +4,9 @@ Ext.define('Admin.model.SpaceModel', {
     fields: <any[]>[
         'name', 'displayName', 'iconUrl', 'rootContentId',
         {name: 'createdTime', type: 'date', default: new Date()},
-        {name: 'modifiedTime', type: 'date', default: new Date()}
+        {name: 'modifiedTime', type: 'date', default: new Date()},
+        { name: 'editable', type: 'boolean' },
+        { name: 'deletable', type: 'boolean' },
     ],
 
     idProperty: 'name'
@@ -18,5 +20,7 @@ module APP.model {
         rootContentId:Number;
         createdTime:Date;
         modifiedTime:Date;
+        editable:bool;
+        deletable:bool;
     }
 }
