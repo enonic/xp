@@ -12,7 +12,7 @@ import com.enonic.wem.api.account.UserKey;
 
 public class JsonSerializerUtil
 {
-    private static DateTimeFormatter isoDateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
+    public static final DateTimeFormatter isoDateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
 
     public static UserKey getUserKeyValue( final String propertyName, final JsonNode node )
     {

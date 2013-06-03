@@ -8,6 +8,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.admin.json.JsonResult;
+import com.enonic.wem.admin.rest.rpc.space.json.SpaceRowJson;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.Spaces;
 
@@ -16,12 +17,9 @@ final class ListSpacesJsonResult
 {
     private Spaces spaces;
 
-    private final SpaceJsonRpcSerializer spaceJsonRpcSerializer;
-
     ListSpacesJsonResult( final Spaces spaces )
     {
         this.spaces = spaces;
-        this.spaceJsonRpcSerializer = new SpaceJsonRpcSerializer();
     }
 
     @Override
@@ -36,11 +34,8 @@ final class ListSpacesJsonResult
         final ArrayNode spacesNode = arrayNode();
         for ( Space space : list )
         {
-            final ObjectNode spaceNode = spacesNode.addObject();
-            spaceJsonRpcSerializer.serialize( space, spaceNode );
-            // hasChildren
+            spacesNode.addPOJO( new SpaceRowJson( space ) );
         }
         return spacesNode;
     }
-
 }

@@ -1,13 +1,15 @@
 package com.enonic.wem.admin.json;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 
 public abstract class JsonResult
     implements JsonSerializable
 {
+    protected final ObjectMapper objectMapper = createObjectMapper();
+
     private final boolean success;
 
     private final String error;
@@ -35,6 +37,11 @@ public abstract class JsonResult
         this.error = builder.error;
     }
 
+    private ObjectMapper createObjectMapper()
+    {
+        return ObjectMapperHelper.create();
+    }
+
     public boolean hasError()
     {
         return error != null;
@@ -46,7 +53,8 @@ public abstract class JsonResult
     @Override
     public final JsonNode toJson()
     {
-        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+
+        final ObjectNode json = objectMapper.createObjectNode();
         json.put( "success", this.success );
 
         if ( this.error != null )
@@ -60,12 +68,12 @@ public abstract class JsonResult
 
     protected final ObjectNode objectNode()
     {
-        return JsonNodeFactory.instance.objectNode();
+        return objectMapper.createObjectNode();
     }
 
     protected final ArrayNode arrayNode()
     {
-        return JsonNodeFactory.instance.arrayNode();
+        return objectMapper.createArrayNode();
     }
 
     public static class JsonResultBuilder
@@ -87,6 +95,5 @@ public abstract class JsonResult
             this.success = false;
             return this;
         }
-
     }
 }

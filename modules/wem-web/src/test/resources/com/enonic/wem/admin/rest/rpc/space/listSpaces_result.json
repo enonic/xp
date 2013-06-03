@@ -3,36 +3,44 @@
     "total": 4,
     "spaces": [
         {
-            "name": "space1",
+            "createdTime": "2000-01-01T12:00:00.000Z",
+            "deletable": true,
             "displayName": "My space 1",
-            "createdTime": "2000-01-01T12:00:00.000Z",
+            "editable": true,
+            "iconUrl": "http://localhost/admin/rest/space/image/space1",
             "modifiedTime": "2000-01-01T12:00:00.000Z",
-            "rootContentId": "ca952feb",
-            "iconUrl": "http://localhost/admin/rest/space/image/space1"
+            "name": "space1",
+            "rootContentId": "ca952feb"
         },
         {
-            "name": "space2",
+            "createdTime": "2000-01-01T12:00:00.000Z",
+            "deletable": true,
             "displayName": "My space 2",
-            "createdTime": "2000-01-01T12:00:00.000Z",
+            "editable": true,
+            "iconUrl": "http://localhost/admin/rest/space/image/space2",
             "modifiedTime": "2000-01-01T12:00:00.000Z",
-            "rootContentId": "ca952fec",
-            "iconUrl": "http://localhost/admin/rest/space/image/space2"
+            "name": "space2",
+            "rootContentId": "ca952fec"
         },
         {
-            "name": "space3",
+            "createdTime": "2000-01-01T12:00:00.000Z",
+            "deletable": true,
             "displayName": "My space 3",
-            "createdTime": "2000-01-01T12:00:00.000Z",
+            "editable": true,
+            "iconUrl": "http://localhost/admin/rest/space/image/space3",
             "modifiedTime": "2000-01-01T12:00:00.000Z",
-            "rootContentId": "ca952fed",
-            "iconUrl": "http://localhost/admin/rest/space/image/space3"
+            "name": "space3",
+            "rootContentId": "ca952fed"
         },
         {
-            "name": "space4",
-            "displayName": "My space 4",
             "createdTime": "2000-01-01T12:00:00.000Z",
+            "deletable": true,
+            "displayName": "My space 4",
+            "editable": true,
+            "iconUrl": "http://localhost/admin/rest/space/image/space4",
             "modifiedTime": "2000-01-01T12:00:00.000Z",
-            "rootContentId": "ca952fee",
-            "iconUrl": "http://localhost/admin/rest/space/image/space4"
+            "name": "space4",
+            "rootContentId": "ca952fee"
         }
     ]
 }
