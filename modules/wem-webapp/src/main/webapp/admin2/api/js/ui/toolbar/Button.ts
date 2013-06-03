@@ -13,6 +13,8 @@ module API_ui_toolbar {
             action.addPropertyChangeListener((action:API_action.Action) => {
                 this.enable(action.isEnabled());
             });
+
+            this.element = this.createHTMLElement();
         }
 
         enable(value:bool) {
@@ -23,12 +25,15 @@ module API_ui_toolbar {
             }
         }
 
-        toHTMLElement():HTMLElement {
+        getHTMLElement():HTMLElement {
+            return this.element;
+        }
+
+        private createHTMLElement():HTMLElement {
             var buttonEl:HTMLElement = document.createElement("button");
             buttonEl.id = super.getId();
             buttonEl.innerHTML = this.action.getLabel();
-            this.element = buttonEl;
-            this.element.addEventListener('click', () => {
+            buttonEl.addEventListener('click', () => {
                 this.action.execute();
             });
             return buttonEl;

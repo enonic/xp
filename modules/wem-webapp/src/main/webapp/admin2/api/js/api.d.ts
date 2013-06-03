@@ -44,7 +44,8 @@ module API_ui_toolbar {
         private element;
         constructor(action: API_action.Action);
         public enable(value: bool): void;
-        public toHTMLElement(): HTMLElement;
+        public getHTMLElement(): HTMLElement;
+        private createHTMLElement();
     }
 }
 module API_ui_toolbar {
@@ -54,7 +55,8 @@ module API_ui_toolbar {
         private element;
         constructor(actions: API_action.Action[]);
         private initExt();
-        public toHTMLElement(): HTMLElement;
+        public getHTMLElement(): HTMLElement;
+        private createHTMLElement();
         public add(action: API_action.Action): void;
         private addAction(action);
     }

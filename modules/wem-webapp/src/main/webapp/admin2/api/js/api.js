@@ -107,6 +107,7 @@ var API_ui_toolbar;
             action.addPropertyChangeListener(function (action) {
                 _this.enable(action.isEnabled());
             });
+            this.element = this.createHTMLElement();
         }
         Button.prototype.enable = function (value) {
             if(value) {
@@ -115,13 +116,15 @@ var API_ui_toolbar;
                 this.element.className = 'disabled';
             }
         };
-        Button.prototype.toHTMLElement = function () {
+        Button.prototype.getHTMLElement = function () {
+            return this.element;
+        };
+        Button.prototype.createHTMLElement = function () {
             var _this = this;
             var buttonEl = document.createElement("button");
             buttonEl.id = _super.prototype.getId.call(this);
             buttonEl.innerHTML = this.action.getLabel();
-            this.element = buttonEl;
-            this.element.addEventListener('click', function () {
+            buttonEl.addEventListener('click', function () {
                 _this.action.execute();
             });
             return buttonEl;
@@ -140,29 +143,37 @@ var API_ui_toolbar;
             for(var i in actions) {
                 this.addAction(actions[i]);
             }
+            this.element = this.createHTMLElement();
             this.initExt();
         }
         Toolbar.prototype.initExt = function () {
             this.ext = new Ext.Component({
-                contentEl: this.toHTMLElement(),
+                contentEl: this.element,
                 region: 'north'
             });
         };
-        Toolbar.prototype.toHTMLElement = function () {
+        Toolbar.prototype.getHTMLElement = function () {
+            return this.element;
+        };
+        Toolbar.prototype.createHTMLElement = function () {
             var divEl = document.createElement("div");
             divEl.id = _super.prototype.getId.call(this);
             for(var i in this.buttons) {
-                divEl.appendChild(this.buttons[i].toHTMLElement());
+                divEl.appendChild(this.buttons[i].getHTMLElement());
             }
             return divEl;
         };
         Toolbar.prototype.add = function (action) {
             var button = this.addAction(action);
-            this.element.appendChild(button.toHTMLElement());
+            this.element.appendChild(button.getHTMLElement());
         };
         Toolbar.prototype.addAction = function (action) {
+            var _this = this;
             var button = new API_ui_toolbar.Button(action);
             this.buttons.push(button);
+            action.addPropertyChangeListener(function (action) {
+                _this.element.disabled = !action.isEnabled();
+            });
             return button;
         };
         return Toolbar;
