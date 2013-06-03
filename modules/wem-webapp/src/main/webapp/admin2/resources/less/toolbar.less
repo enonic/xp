@@ -1,0 +1,22 @@
+.toolbar {
+  background-color: @admin-light-gray-bg;
+  height: 38px;
+
+  button {
+    font-family: "Open Sans", sans-serif;
+    padding: 6px 12px 6px 12px;
+    background-color: transparent;
+    font-size: 14px;
+    border-width: 0;
+    color: @admin-gray-font;
+
+    &:hover {
+      cursor: pointer;
+      color: @admin-gray-font-hover;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
+}

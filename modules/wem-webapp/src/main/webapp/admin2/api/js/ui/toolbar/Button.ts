@@ -9,20 +9,16 @@ module API_ui_toolbar {
         constructor(action:API_action.Action) {
             super('button');
             this.action = action;
+            this.element = this.createHTMLElement();
+            this.enable(action.isEnabled());
 
             action.addPropertyChangeListener((action:API_action.Action) => {
                 this.enable(action.isEnabled());
             });
-
-            this.element = this.createHTMLElement();
         }
 
         enable(value:bool) {
-            if (value) {
-                this.element.className = 'enabled';
-            } else {
-                this.element.className = 'disabled';
-            }
+            this.element.disabled = !value;
         }
 
         getHTMLElement():HTMLElement {
