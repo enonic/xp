@@ -46,27 +46,53 @@ module APP_action {
             APP.event.GridSelectionChangeEvent.on((event) => {
 
                 var spaces:APP.model.SpaceModel[] = event.getModel();
-                if (spaces.length <= 0) {
 
+                if (spaces.length <= 0) {
                     console.log("no spaces selected");
 
                     NEW_SPACE.setEnabled(true);
                     OPEN_SPACE.setEnabled(false);
                     EDIT_SPACE.setEnabled(false);
                     DELETE_SPACE.setEnabled(false);
-
-
                 }
-                else {
-                    console.log(spaces.length + " spaces selected");
+                else if (spaces.length == 1) {
+
+                    console.log("one spaces selected");
 
                     NEW_SPACE.setEnabled(false);
                     OPEN_SPACE.setEnabled(true);
-                    EDIT_SPACE.setEnabled(true);
-                    DELETE_SPACE.setEnabled(true);
+                    //EDIT_SPACE.setEnabled(spaces[0].editable);
+                    //DELETE_SPACE.setEnabled(spaces[0].raw.deletable);
+                }
+                else {
+                    console.log(spaces.length + "spaces selected");
+
+                    NEW_SPACE.setEnabled(false);
+                    OPEN_SPACE.setEnabled(true);
+                    EDIT_SPACE.setEnabled(anyEditable(spaces));
+                    DELETE_SPACE.setEnabled(anyDeleteable(spaces));
                 }
             });
+        }
 
+        static anyEditable(spaces:APP.model.SpaceModel[]):bool {
+            for (var i in spaces) {
+                var space:APP.model.SpaceModel = spaces[i];
+                /*if (space.raw.editable) {
+                    return true;
+                }*/
+            }
+            return false;
+        }
+
+        static anyDeleteable(spaces:APP.model.SpaceModel[]):bool {
+            for (var i in spaces) {
+                var space:APP.model.SpaceModel = spaces[i];
+                /*if (space.raw.deletable) {
+                    return true;
+                }*/
+            }
+            return false;
         }
     }
 }

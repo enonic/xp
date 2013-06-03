@@ -410,14 +410,30 @@ var APP_action;
                     SpaceActions.OPEN_SPACE.setEnabled(false);
                     SpaceActions.EDIT_SPACE.setEnabled(false);
                     SpaceActions.DELETE_SPACE.setEnabled(false);
-                } else {
-                    console.log(spaces.length + " spaces selected");
+                } else if(spaces.length == 1) {
+                    console.log("one spaces selected");
                     SpaceActions.NEW_SPACE.setEnabled(false);
                     SpaceActions.OPEN_SPACE.setEnabled(true);
-                    SpaceActions.EDIT_SPACE.setEnabled(true);
-                    SpaceActions.DELETE_SPACE.setEnabled(true);
+                } else {
+                    console.log(spaces.length + "spaces selected");
+                    SpaceActions.NEW_SPACE.setEnabled(false);
+                    SpaceActions.OPEN_SPACE.setEnabled(true);
+                    SpaceActions.EDIT_SPACE.setEnabled(SpaceActions.anyEditable(spaces));
+                    SpaceActions.DELETE_SPACE.setEnabled(SpaceActions.anyDeleteable(spaces));
                 }
             });
+        };
+        SpaceActions.anyEditable = function anyEditable(spaces) {
+            for(var i in spaces) {
+                var space = spaces[i];
+            }
+            return false;
+        };
+        SpaceActions.anyDeleteable = function anyDeleteable(spaces) {
+            for(var i in spaces) {
+                var space = spaces[i];
+            }
+            return false;
         };
         return SpaceActions;
     })();
@@ -4666,6 +4682,7 @@ var APP;
                 _super.prototype.addAction.call(this, APP_action.SpaceActions.NEW_SPACE);
                 _super.prototype.addAction.call(this, APP_action.SpaceActions.EDIT_SPACE);
                 _super.prototype.addAction.call(this, APP_action.SpaceActions.OPEN_SPACE);
+                _super.prototype.addGreedySpacer.call(this);
                 _super.prototype.addAction.call(this, APP_action.SpaceActions.DELETE_SPACE);
             }
             return BrowseToolbar2;

@@ -49,11 +49,11 @@ public class SpaceRowJson
 
     public boolean getEditable()
     {
-        return !space.isTemporary() && !space.getName().equals( "default" );
+        return !space.isTemporary() && !space.getName().toString().equals( "default" );
     }
 
     public boolean getDeletable()
     {
-        return !space.isTemporary() && !space.getName().equals( "default" );
+        return !space.isTemporary() && !space.getName().toString().equals( "default" );
     }
 }
