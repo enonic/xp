@@ -24,8 +24,6 @@ public final class InputTypes
 
     public static final ImageSelector IMAGE_SELECTOR = new ImageSelector();
 
-    public static final ImageUpload IMAGE_UPLOAD = new ImageUpload();
-
     public static final Money MONEY = new Money();
 
     public static final Phone PHONE = new Phone();
