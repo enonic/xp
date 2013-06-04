@@ -2,7 +2,7 @@ module admin.ui {
 
     export class SpaceWizardPanel extends admin.ui.WizardPanel {
 
-        private wizardHeader;
+        private wizardHeader:admin.ui.WizardHeader;
 
         constructor(id:string, title:string, editing:bool, data?:APP.model.SpaceModel) {
             var headerData = this.resolveHeaderData();
@@ -172,18 +172,18 @@ module admin.ui {
                 xtype: 'button',
                 text: 'Save',
                 handler: () => {
-                    this.saveSpace();
+                    new APP.event.SaveSpaceEvent().fire();
                 }
             };
         }
 
-        getWizardHeader() {
+        getWizardHeader():admin.ui.WizardHeader {
             return this.wizardHeader;
         }
 
         getData():any {
             var data = super.getData();
-            var headerData = this.getWizardHeader().getData();
+            var headerData = <any> this.getWizardHeader().getData();
 
             return this.merge(data, {
                 displayName: headerData.displayName,
