@@ -1,0 +1,49 @@
+.live-edit-component-search-bar {
+    padding: 10px 15px;
+}
+
+.live-edit-component {
+    display: block;
+    padding: 10px 15px;
+    cursor: hand;
+    cursor: grab !important;
+    cursor: -moz-grab;
+    cursor: url("cursor-grab.png"), pointer !important;
+    cursor: -webkit-grab;
+}
+
+.live-edit-component:hover {
+    background-color: #3892dd;
+}
+
+.live-edit-component:hover small {
+    color: #fff;
+}
+
+.live-edit-component-row {
+    display: table-row;
+}
+
+.live-edit-component-row .live-edit-component-icon {
+    width: 45px;
+    color: #f2f2f2;
+    font-size: 32px;
+    font-weight: lighter;
+    display: table-cell;
+}
+
+.live-edit-component-row div {
+    display: table-cell;
+    vertical-align: top;
+}
+
+.live-edit-component-row h3 {
+    margin: 0;
+    padding: 0;
+    line-height: 1.4;
+    font-size: 14px !important;
+    color: #f2f2f2;
+}
+
+.live-edit-component-row small {
+}

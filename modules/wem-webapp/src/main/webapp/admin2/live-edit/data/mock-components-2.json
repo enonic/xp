@@ -1,0 +1,65 @@
+{
+    "components": [
+        {
+            "key": "10017",
+            "type": "layout",
+            "name": "2+1 Column Layout",
+            "subtitle": "Layout"
+        },
+        {
+            "key": "10016",
+            "type": "layout",
+            "name": "2 Column Layout",
+            "subtitle": "Layout"
+        },
+        {
+            "key": "10018",
+            "type": "layout",
+            "name": "3 Column Layout",
+            "subtitle": "Layout"
+        },
+        {
+            "key": "10007",
+            "type": "paragraph",
+            "name": "Lorem Ipsum Paragraph",
+            "subtitle": "Filler text"
+        },
+        {
+            "key": "10022",
+            "type": "part",
+            "name": "Trampoline - Show Variants",
+            "subtitle": "Subtitle"
+        },
+        {
+            "key": "10023",
+            "type": "part",
+            "name": "Trampoline - Image Gallery",
+            "subtitle": "Subtitle"
+        },
+        {
+            "key": "10024",
+            "type": "part",
+            "name": "Trampoline - Show Description",
+            "subtitle": "Subtitle"
+        },
+        {
+            "key": "10025",
+            "type": "part",
+            "name": "Trampoline - Show Accessories",
+            "subtitle": "Subtitle"
+        },
+        {
+            "key": "10026",
+            "type": "part",
+            "name": "Trampoline - Comments",
+            "subtitle": "Subtitle"
+        },
+        {
+            "key": "10027",
+            "type": "part",
+            "name": "Upsale Teaser - Big Bounce",
+            "subtitle": "Subtitle"
+        }
+    ]
+
+}
