@@ -1,8 +1,13 @@
 package com.enonic.wem.core.content.attachment.dao;
 
+import java.util.Set;
+
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 
 import org.junit.Test;
+
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -230,6 +235,50 @@ public class AttachmentDaoImplTest
         Node attachmentsNode = contentNode.getNode( ContentDao.CONTENT_ATTACHMENTS_NODE );
         assertEquals( 1, attachmentsNode.getNodes().getSize() );
         assertNotNull( JcrHelper.getNodeOrNull( attachmentsNode, attachment.getName() ) );
+    }
+
+    @Test
+    public void renameAttachments()
+        throws Exception
+    {
+        // setup
+        final Binary binary = Binary.from( "some data".getBytes() );
+        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).build();
+        final Attachment attachment2 =
+            newAttachment().binary( binary ).name( "file-small.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
+        final Attachment attachment3 =
+            newAttachment().binary( binary ).name( "file-large.jpg" ).mimeType( "image/jpeg" ).label( "large" ).build();
+
+        final Content contentRoot = newContent().path( ContentPath.from( "myspace:/" ) ).build();
+        contentDao.create( contentRoot, session );
+        final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).name( "file" ).build();
+        final ContentId contentId = contentDao.create( content, session );
+        commit();
+        attachmentDao.createAttachment( ContentPath.from( "myspace:/file" ), attachment, session );
+        attachmentDao.createAttachment( ContentPath.from( "myspace:/file" ), attachment2, session );
+        attachmentDao.createAttachment( ContentPath.from( "myspace:/file" ), attachment3, session );
+        commit();
+
+        // exercise
+        boolean renamed = attachmentDao.renameAttachments( contentId, "file", "other-file.jpg", session );
+        commit();
+
+        // verify
+        assertTrue( renamed );
+        Node contentNode = session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root/file" );
+        Node attachmentsNode = contentNode.getNode( ContentDao.CONTENT_ATTACHMENTS_NODE );
+        assertEquals( 3, attachmentsNode.getNodes().getSize() );
+        final NodeIterator attachmentsNodes = attachmentsNode.getNodes();
+        final Set<String> newNodeNames = Sets.newHashSet();
+        while ( attachmentsNodes.hasNext() )
+        {
+            final Node attachmentNode = attachmentsNodes.nextNode();
+            newNodeNames.add( attachmentNode.getName() );
+        }
+
+        assertTrue( newNodeNames.contains( "other-file.jpg" ) );
+        assertTrue( newNodeNames.contains( "other-file-small.jpg" ) );
+        assertTrue( newNodeNames.contains( "other-file-large.jpg" ) );
     }
 
 }

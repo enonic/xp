@@ -7,10 +7,14 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.RenameContent;
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
+import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
 import com.enonic.wem.core.content.dao.ContentDao;
 
 import static junit.framework.Assert.assertTrue;
@@ -26,6 +30,7 @@ public class RenameContentHandlerTest
 
     private ContentDao contentDao;
 
+    private AttachmentDao attachmentDao;
 
     @Before
     public void setUp()
@@ -36,9 +41,11 @@ public class RenameContentHandlerTest
         super.initialize();
 
         contentDao = Mockito.mock( ContentDao.class );
+        attachmentDao = Mockito.mock( AttachmentDao.class );
 
         handler = new RenameContentHandler();
         handler.setContentDao( contentDao );
+        handler.setAttachmentDao( attachmentDao );
     }
 
     @Test
@@ -46,9 +53,19 @@ public class RenameContentHandlerTest
         throws Exception
     {
         // setup
-        Mockito.when( contentDao.renameContent( isA( ContentId.class ), eq( "newName" ), any( Session.class ) ) ).thenReturn( true );
-
         final ContentId contentId = ContentId.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" );
+        final Content content = Content.newContent().
+            id( contentId ).
+            name( "myContent" ).
+            displayName( "MyContent" ).
+            owner( UserKey.superUser() ).
+            contentData( new ContentData() ).
+            build();
+        Mockito.when( contentDao.select( isA( ContentId.class ), any( Session.class ) ) ).thenReturn( content );
+        Mockito.when( contentDao.renameContent( isA( ContentId.class ), eq( "newName" ), any( Session.class ) ) ).thenReturn( true );
+        Mockito.when( attachmentDao.renameAttachments( isA( ContentId.class ), eq( "myContent" ), eq( "newName" ),
+                                                       any( Session.class ) ) ).thenReturn( true );
+
         final RenameContent command = Commands.content().rename().contentId( contentId ).newName( "newName" );
 
         // exercise

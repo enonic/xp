@@ -9,7 +9,7 @@ public class RenameContentException
 {
     public RenameContentException( final RenameContent renameContent, final Throwable t )
     {
-        super( "Failed to rename content [" + renameContent.getContentId() + "] to '" + renameContent.getNewName() + "': " + t.getMessage(),
-               t );
+        super( t, "Failed to rename content [" + renameContent.getContentId() + "] to '" + renameContent.getNewName() + "': " +
+            t.getMessage() );
     }
 }

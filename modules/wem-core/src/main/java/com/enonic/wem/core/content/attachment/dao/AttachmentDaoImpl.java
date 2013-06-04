@@ -90,4 +90,17 @@ public class AttachmentDaoImpl
             throw new RuntimeException( e );
         }
     }
+
+    @Override
+    public boolean renameAttachments( final ContentId contentId, String oldContentName, final String newContentName, final Session session )
+    {
+        try
+        {
+            return new AttachmentDaoHandlerRename( session ).handle( contentId, oldContentName, newContentName );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
 }
