@@ -17,17 +17,17 @@ Ext.define('Admin.view.AutosizeTextField', {
     isFocused: false,
 
     tpl: '<div class="autosizeTextField" style="' +
-            'float: left; ' +
-            'border: 1px solid #EEEEEE; ' +
-            'min-width: 200px; ' +
-            'padding: 0px 10px; ' +
-            'margin: 3px; ' +
-            'white-space: nowrap; ' +
-            'overflow: hidden; ' +
-            '" contenteditable="true">{value}' +
-        '</div>',
+         'float: left; ' +
+         'border: 1px solid #EEEEEE; ' +
+         'min-width: 200px; ' +
+         'padding: 0px 10px; ' +
+         'margin: 3px; ' +
+         'white-space: nowrap; ' +
+         'overflow: hidden; ' +
+         '" contenteditable="true">{value}' +
+         '</div>',
 
-    data : {
+    data: {
         value: ''
     },
 
@@ -36,43 +36,43 @@ Ext.define('Admin.view.AutosizeTextField', {
     initComponent: function () {
         this.data.value = this.value;
 
-        this.isEmpty = ! this.data.value;
-        if ( this.isEmpty ) {
+        this.isEmpty = !this.data.value;
+        if (this.isEmpty) {
             this.data.value = this.emptyText;
         }
 
         this.callParent(arguments);
     },
 
-    afterRender: function() {
+    afterRender: function () {
         var me = this;
 
         me.callParent();
 
         var textEl = this.el.down('.autosizeTextField');
-        textEl.on( this.ons );
+        textEl.on(this.ons);
 
-        textEl.on( {
-            focus: function() {
+        textEl.on({
+            focus: function () {
                 me.isFocused = true;
                 if (me.isEmpty) {
                     me.setRawValue('');
                 }
                 me.updateComponent();
             },
-            blur: function() {
+            blur: function () {
                 me.isFocused = false;
-                me.isEmpty = ! me.getRawValue();
+                me.isEmpty = !me.getRawValue();
                 if (me.isEmpty) {
-                    me.setRawValue( me.emptyText );
+                    me.setRawValue(me.emptyText);
                 }
                 me.updateComponent();
             },
-            mouseover: function() {
+            mouseover: function () {
                 me.isMouseOver = true;
                 me.updateComponent();
             },
-            mouseout: function() {
+            mouseout: function () {
                 me.isMouseOver = false;
                 me.updateComponent();
             }
@@ -81,13 +81,16 @@ Ext.define('Admin.view.AutosizeTextField', {
         this.textEl = textEl;
 
         if (me.isEmpty) {
-            me.setRawValue( me.emptyText );
+            me.setRawValue(me.emptyText);
         }
 
         this.updateComponent();
     },
 
-    updateComponent: function() {
+    updateComponent: function () {
+        if (!this.textEl) {
+            return;
+        }
         this.textEl.applyStyles({
             boxShadow: this.isFocused ? '0 0 3px #98C9F2' : 'none',
             border: '1px solid ' + (this.isMouseOver || this.isFocused ? '#98C9F2' : '#EEEEEE'),
@@ -97,25 +100,25 @@ Ext.define('Admin.view.AutosizeTextField', {
         });
     },
 
-    on: function ( ons ) {
+    on: function (ons) {
         var me = this;
 
         var keyup = ons.keyup;
 
-        ons.keyup = function(field, event, opts) {
+        ons.keyup = function (field, event, opts) {
             field.getValue = function () {
                 return me.getValue();
             };
             keyup.call(ons.scope, field, event, opts);
         };
 
-        ons.input = function(field, newVal, oldVal) {
+        ons.input = function (field, newVal, oldVal) {
             newVal = me.getRawValue();
             oldVal = me.getRawValue();
             ons.change.call(ons.scope, field, newVal, oldVal);
         };
 
-        ons.keypress = function(event) {
+        ons.keypress = function (event) {
             var value = String.fromCharCode(event.charCode);
 
             var newValue = 'ok';
@@ -134,24 +137,28 @@ Ext.define('Admin.view.AutosizeTextField', {
         this.ons = ons;
     },
 
-    getValue: function() {
+    getValue: function () {
         return this.isEmpty ? '' : this.getRawValue();
     },
 
-    getRawValue: function() {
-        return this.textEl.dom.textContent;
+    getRawValue: function () {
+        return this.textEl ? this.textEl.dom.textContent : this.value;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this.isEmpty = !value;
         this.setRawValue(value);
     },
 
-    setRawValue: function(value) {
-        this.textEl.dom.textContent = value;
+    setRawValue: function (value) {
+        if (this.textEl) {
+            this.textEl.dom.textContent = value;
+        } else {
+            this.value = value;
+        }
     },
 
-    processRawValue: function(value) {
+    processRawValue: function (value) {
         var me = this,
             stripRe = me.stripCharsRe,
             newValue;
@@ -166,7 +173,7 @@ Ext.define('Admin.view.AutosizeTextField', {
         return value;
     },
 
-    getFocusEl : function () {
+    getFocusEl: function () {
         return this.textEl;
     }
 
