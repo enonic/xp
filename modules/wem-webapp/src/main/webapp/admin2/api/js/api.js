@@ -80,13 +80,36 @@ var API_action;
 var API_ui;
 (function (API_ui) {
     var HTMLElementHelper = (function () {
-        function HTMLElementHelper() { }
-        HTMLElementHelper.addClass = function addClass(el, clsName) {
-            if(el.className == '') {
-                el.className += clsName;
+        function HTMLElementHelper(element) {
+            this.el = element;
+        }
+        HTMLElementHelper.fromName = function fromName(name) {
+            return new HTMLElementHelper(document.createElement(name));
+        };
+        HTMLElementHelper.prototype.getHTMLElement = function () {
+            return this.el;
+        };
+        HTMLElementHelper.prototype.setDisabled = function (value) {
+            this.el.disabled = value;
+        };
+        HTMLElementHelper.prototype.setId = function (value) {
+            this.el.id = value;
+        };
+        HTMLElementHelper.prototype.setInnerHtml = function (value) {
+            this.el.innerHTML = value;
+        };
+        HTMLElementHelper.prototype.addClass = function (clsName) {
+            if(this.el.className === '') {
+                this.el.className += clsName;
             } else {
-                el.className += ' ' + clsName;
+                this.el.className += ' ' + clsName;
             }
+        };
+        HTMLElementHelper.prototype.addEventListener = function (eventName, f) {
+            this.el.addEventListener(eventName, f);
+        };
+        HTMLElementHelper.prototype.appendChild = function (child) {
+            this.el.appendChild(child);
         };
         return HTMLElementHelper;
     })();
@@ -95,12 +118,23 @@ var API_ui;
 var API_ui;
 (function (API_ui) {
     var Component = (function () {
-        function Component(parentName) {
-            this.id = parentName + '-' + ++API_ui.Component.counstructorCounter;
+        function Component(name, elementName) {
+            this.el = API_ui.HTMLElementHelper.fromName(elementName);
+            this.id = name + '-' + (++Component.constructorCounter);
+            this.el.setId(this.id);
         }
-        Component.counstructorCounter = 0;
+        Component.constructorCounter = 0;
         Component.prototype.getId = function () {
             return this.id;
+        };
+        Component.prototype.getEl = function () {
+            return this.el;
+        };
+        Component.prototype.getHTMLElement = function () {
+            return this.el.getHTMLElement();
+        };
+        Component.prototype.appendChild = function (child) {
+            this.el.appendChild(child.getEl().getHTMLElement());
         };
         return Component;
     })();
@@ -117,34 +151,24 @@ var API_ui_toolbar;
         __extends(Button, _super);
         function Button(action) {
             var _this = this;
-                _super.call(this, 'button');
+                _super.call(this, "button", "button");
             this.action = action;
-            this.element = this.createHTMLElement();
+            this.getEl().setInnerHtml(this.action.getLabel());
+            this.getEl().addEventListener("click", function () {
+                _this.action.execute();
+            });
             this.setEnable(action.isEnabled());
             action.addPropertyChangeListener(function (action) {
                 _this.setEnable(action.isEnabled());
             });
         }
         Button.prototype.setEnable = function (value) {
-            this.element.disabled = !value;
+            this.getEl().setDisabled(!value);
         };
         Button.prototype.setFloatRight = function (value) {
             if(value) {
-                API_ui.HTMLElementHelper.addClass(this.element, 'pull-right');
+                this.getEl().addClass('pull-right');
             }
-        };
-        Button.prototype.getHTMLElement = function () {
-            return this.element;
-        };
-        Button.prototype.createHTMLElement = function () {
-            var _this = this;
-            var buttonEl = document.createElement("button");
-            buttonEl.id = _super.prototype.getId.call(this);
-            buttonEl.innerHTML = this.action.getLabel();
-            buttonEl.addEventListener('click', function () {
-                _this.action.execute();
-            });
-            return buttonEl;
         };
         return Button;
     })(API_ui.Component);
@@ -155,29 +179,21 @@ var API_ui_toolbar;
     var Toolbar = (function (_super) {
         __extends(Toolbar, _super);
         function Toolbar() {
-                _super.call(this, "toolbar");
+                _super.call(this, "toolbar", "div");
             this.components = [];
-            this.element = this.createHTMLElement();
+            this.getEl().addClass("toolbar");
             this.initExt();
         }
-        Toolbar.prototype.createHTMLElement = function () {
-            var divEl = document.createElement("div");
-            divEl.id = _super.prototype.getId.call(this);
-            divEl.className = 'toolbar';
-            return divEl;
-        };
         Toolbar.prototype.initExt = function () {
+            var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
-                contentEl: this.element,
+                contentEl: htmlEl,
                 region: 'north'
             });
         };
-        Toolbar.prototype.getHTMLElement = function () {
-            return this.element;
-        };
         Toolbar.prototype.addAction = function (action) {
             var button = this.doAddAction(action);
-            this.element.appendChild(button.getHTMLElement());
+            this.appendChild(button);
         };
         Toolbar.prototype.addGreedySpacer = function () {
             var spacer = new ToolbarGreedySpacer();

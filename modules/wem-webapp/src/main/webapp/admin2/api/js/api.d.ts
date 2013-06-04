@@ -32,37 +32,44 @@ module API_action {
 }
 module API_ui {
     class HTMLElementHelper {
-        static addClass(el: HTMLElement, clsName: string): void;
+        private el;
+        static fromName(name: string): HTMLElementHelper;
+        constructor(element: HTMLElement);
+        public getHTMLElement(): HTMLElement;
+        public setDisabled(value: bool): void;
+        public setId(value: string): void;
+        public setInnerHtml(value: string): void;
+        public addClass(clsName: string): void;
+        public addEventListener(eventName: string, f: () => any): void;
+        public appendChild(child: HTMLElement): void;
     }
 }
 module API_ui {
     class Component {
-        private static counstructorCounter;
+        private static constructorCounter;
+        private el;
         private id;
-        constructor(parentName: string);
+        constructor(name: string, elementName: string);
         public getId(): string;
+        public getEl(): HTMLElementHelper;
+        public getHTMLElement(): HTMLElement;
+        public appendChild(child: Component): void;
     }
 }
 module API_ui_toolbar {
     class Button extends API_ui.Component {
         private action;
-        private element;
         constructor(action: API_action.Action);
         public setEnable(value: bool): void;
         public setFloatRight(value: bool): void;
-        public getHTMLElement(): HTMLElement;
-        private createHTMLElement();
     }
 }
 module API_ui_toolbar {
     class Toolbar extends API_ui.Component {
         public ext;
         private components;
-        private element;
         constructor();
-        private createHTMLElement();
         private initExt();
-        public getHTMLElement(): HTMLElement;
         public addAction(action: API_action.Action): void;
         public addGreedySpacer(): void;
         private doAddAction(action);
