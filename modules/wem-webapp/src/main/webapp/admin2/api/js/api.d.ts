@@ -57,14 +57,6 @@ module API_ui {
     }
 }
 module API_ui_toolbar {
-    class Button extends API_ui.Component {
-        private action;
-        constructor(action: API_action.Action);
-        public setEnable(value: bool): void;
-        public setFloatRight(value: bool): void;
-    }
-}
-module API_ui_toolbar {
     class Toolbar extends API_ui.Component {
         public ext;
         private components;
@@ -74,8 +66,6 @@ module API_ui_toolbar {
         public addGreedySpacer(): void;
         private doAddAction(action);
         private hasGreedySpacer();
-    }
-    class ToolbarGreedySpacer {
     }
 }
 module API.notify {

@@ -147,35 +147,6 @@ var __extends = this.__extends || function (d, b) {
 };
 var API_ui_toolbar;
 (function (API_ui_toolbar) {
-    var Button = (function (_super) {
-        __extends(Button, _super);
-        function Button(action) {
-            var _this = this;
-                _super.call(this, "button", "button");
-            this.action = action;
-            this.getEl().setInnerHtml(this.action.getLabel());
-            this.getEl().addEventListener("click", function () {
-                _this.action.execute();
-            });
-            this.setEnable(action.isEnabled());
-            action.addPropertyChangeListener(function (action) {
-                _this.setEnable(action.isEnabled());
-            });
-        }
-        Button.prototype.setEnable = function (value) {
-            this.getEl().setDisabled(!value);
-        };
-        Button.prototype.setFloatRight = function (value) {
-            if(value) {
-                this.getEl().addClass('pull-right');
-            }
-        };
-        return Button;
-    })(API_ui.Component);
-    API_ui_toolbar.Button = Button;    
-})(API_ui_toolbar || (API_ui_toolbar = {}));
-var API_ui_toolbar;
-(function (API_ui_toolbar) {
     var Toolbar = (function (_super) {
         __extends(Toolbar, _super);
         function Toolbar() {
@@ -200,7 +171,7 @@ var API_ui_toolbar;
             this.components.push(spacer);
         };
         Toolbar.prototype.doAddAction = function (action) {
-            var button = new API_ui_toolbar.Button(action);
+            var button = new Button(action);
             if(this.hasGreedySpacer()) {
                 button.setFloatRight(true);
             }
@@ -219,11 +190,36 @@ var API_ui_toolbar;
         return Toolbar;
     })(API_ui.Component);
     API_ui_toolbar.Toolbar = Toolbar;    
+    var Button = (function (_super) {
+        __extends(Button, _super);
+        function Button(action) {
+            var _this = this;
+                _super.call(this, "button", "button");
+            this.action = action;
+            this.getEl().setInnerHtml(this.action.getLabel());
+            this.getEl().addEventListener("click", function () {
+                _this.action.execute();
+            });
+            this.setEnable(action.isEnabled());
+            action.addPropertyChangeListener(function (action) {
+                _this.setEnable(action.isEnabled());
+            });
+        }
+        Button.prototype.setEnable = function (value) {
+            this.getEl().setDisabled(!value);
+        };
+        Button.prototype.setFloatRight = function (value) {
+            if(value) {
+                this.getEl().addClass('pull-right');
+            }
+        };
+        return Button;
+    })(API_ui.Component);    
     var ToolbarGreedySpacer = (function () {
-        function ToolbarGreedySpacer() { }
+        function ToolbarGreedySpacer() {
+        }
         return ToolbarGreedySpacer;
-    })();
-    API_ui_toolbar.ToolbarGreedySpacer = ToolbarGreedySpacer;    
+    })();    
 })(API_ui_toolbar || (API_ui_toolbar = {}));
 var API;
 (function (API) {

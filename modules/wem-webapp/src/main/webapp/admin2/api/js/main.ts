@@ -13,7 +13,6 @@
 
 ///<reference path='ui/HTMLElementHelper.ts' />
 ///<reference path='ui/Component.ts' />
-///<reference path='ui/toolbar/Button.ts' />
 ///<reference path='ui/toolbar/Toolbar.ts' />
 
 ///<reference path='notify/Message.ts' />
