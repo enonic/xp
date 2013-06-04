@@ -4,7 +4,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import com.enonic.wem.portal.request.StaticRequest;
+import com.enonic.wem.portal.AbstractResource;
 
 public class StaticResource
     extends AbstractResource
@@ -20,16 +20,16 @@ public class StaticResource
     {
         final StaticResource resource = this.resourceContext.getResource( StaticResource.class );
 
-        final StaticRequest staticRequest = getStaticRequest();
+        final StaticResourceRequest staticResourceRequest = getStaticRequest();
 
-        staticRequest.appendPath( name );
+        staticResourceRequest.appendPath( name );
 
         return resource;
     }
 
-    private StaticRequest getStaticRequest()
+    private StaticResourceRequest getStaticRequest()
     {
-        return this.resourceContext.getResource( StaticRequest.class );
+        return this.resourceContext.getResource( StaticResourceRequest.class );
     }
 
 

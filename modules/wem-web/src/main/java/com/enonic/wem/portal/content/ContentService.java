@@ -1,7 +1,7 @@
-package com.enonic.wem.portal.service;
+package com.enonic.wem.portal.content;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.portal.request.PortalRequest;
+import com.enonic.wem.portal.dispatch.PortalRequest;
 
 public interface ContentService
 {

@@ -1,6 +1,6 @@
-package com.enonic.wem.portal.service;
+package com.enonic.wem.portal.attachment;
 
-import com.enonic.wem.portal.request.AttachmentRequest;
+import com.enonic.wem.portal.AbstractPortalService;
 
 public class AttachmentServiceImpl
     extends AbstractPortalService

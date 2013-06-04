@@ -1,12 +1,11 @@
-package com.enonic.wem.portal.resource;
+package com.enonic.wem.portal.attachment;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import com.enonic.wem.portal.request.AttachmentRequest;
-import com.enonic.wem.portal.service.AttachmentService;
+import com.enonic.wem.portal.AbstractResource;
 
 public class AttachmentResource
     extends AbstractResource

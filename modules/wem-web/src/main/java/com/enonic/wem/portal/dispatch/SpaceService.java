@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.service;
+package com.enonic.wem.portal.dispatch;
 
 import com.enonic.wem.api.space.Space;
 

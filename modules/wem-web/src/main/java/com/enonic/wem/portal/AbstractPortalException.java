@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.exception;
+package com.enonic.wem.portal;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;

@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.service;
+package com.enonic.wem.portal.content;
 
 import com.google.inject.Singleton;
 
@@ -8,8 +8,9 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.portal.request.PortalRequest;
-import com.enonic.wem.portal.request.PortalRequestPath;
+import com.enonic.wem.portal.AbstractPortalService;
+import com.enonic.wem.portal.dispatch.PortalRequest;
+import com.enonic.wem.portal.dispatch.PortalRequestPath;
 
 @Singleton
 public class ContentServiceImpl

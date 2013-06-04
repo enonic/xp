@@ -1,6 +1,7 @@
-package com.enonic.wem.portal.request;
+package com.enonic.wem.portal.dispatch;
 
 import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.portal.AbstractResourceRequestPath;
 
 public class PortalRequestPath
     extends AbstractResourceRequestPath

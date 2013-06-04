@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.service;
+package com.enonic.wem.portal;
 
 import javax.inject.Inject;
 

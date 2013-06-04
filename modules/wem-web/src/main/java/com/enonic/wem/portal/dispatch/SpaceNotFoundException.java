@@ -1,4 +1,6 @@
-package com.enonic.wem.portal.exception;
+package com.enonic.wem.portal.dispatch;
+
+import com.enonic.wem.portal.AbstractPortalException;
 
 public class SpaceNotFoundException
     extends AbstractPortalException

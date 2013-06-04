@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.resource;
+package com.enonic.wem.portal;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
@@ -6,7 +6,7 @@ import javax.ws.rs.core.UriInfo;
 
 import com.sun.jersey.api.core.ResourceContext;
 
-import com.enonic.wem.portal.request.PortalRequest;
+import com.enonic.wem.portal.dispatch.PortalRequest;
 
 public class AbstractResource
 {

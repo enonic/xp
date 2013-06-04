@@ -1,8 +1,8 @@
-package com.enonic.wem.portal.service;
+package com.enonic.wem.portal.image;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.portal.request.ImageRequest;
+import com.enonic.wem.portal.AbstractPortalService;
 
 public class ImageServiceImpl
     extends AbstractPortalService

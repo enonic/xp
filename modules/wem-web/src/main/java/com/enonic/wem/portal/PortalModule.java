@@ -3,14 +3,14 @@ package com.enonic.wem.portal;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
-import com.enonic.wem.portal.service.AttachmentService;
-import com.enonic.wem.portal.service.AttachmentServiceImpl;
-import com.enonic.wem.portal.service.ContentService;
-import com.enonic.wem.portal.service.ContentServiceImpl;
-import com.enonic.wem.portal.service.ImageService;
-import com.enonic.wem.portal.service.ImageServiceImpl;
-import com.enonic.wem.portal.service.SpaceService;
-import com.enonic.wem.portal.service.SpaceServiceImpl;
+import com.enonic.wem.portal.attachment.AttachmentService;
+import com.enonic.wem.portal.attachment.AttachmentServiceImpl;
+import com.enonic.wem.portal.content.ContentService;
+import com.enonic.wem.portal.content.ContentServiceImpl;
+import com.enonic.wem.portal.dispatch.SpaceService;
+import com.enonic.wem.portal.dispatch.SpaceServiceImpl;
+import com.enonic.wem.portal.image.ImageService;
+import com.enonic.wem.portal.image.ImageServiceImpl;
 
 public final class PortalModule
     extends AbstractModule

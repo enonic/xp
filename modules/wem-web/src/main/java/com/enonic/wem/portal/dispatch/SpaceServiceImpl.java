@@ -1,8 +1,9 @@
-package com.enonic.wem.portal.service;
+package com.enonic.wem.portal.dispatch;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.portal.AbstractPortalService;
 
 public class SpaceServiceImpl
     extends AbstractPortalService

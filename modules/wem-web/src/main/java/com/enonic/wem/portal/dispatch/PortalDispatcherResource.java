@@ -1,12 +1,11 @@
-package com.enonic.wem.portal.resource;
+package com.enonic.wem.portal.dispatch;
 
 import javax.inject.Inject;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import com.enonic.wem.api.space.Space;
-import com.enonic.wem.portal.exception.SpaceNotFoundException;
-import com.enonic.wem.portal.service.SpaceService;
+import com.enonic.wem.portal.AbstractResource;
 
 @Path("/{workspace}/{mode}")
 public class PortalDispatcherResource
@@ -27,11 +26,11 @@ public class PortalDispatcherResource
     }
 
     @Path("space/{spaceName}")
-    public SpaceResource handle( @PathParam("spaceName") String spaceName )
+    public SpaceDispatcherResource handle( @PathParam("spaceName") String spaceName )
     {
         final Space space = validateSpace( spaceName );
 
-        final SpaceResource resource = this.resourceContext.getResource( SpaceResource.class );
+        final SpaceDispatcherResource resource = this.resourceContext.getResource( SpaceDispatcherResource.class );
 
         getPortalRequest().createPortalRequestPath( space.getName() );
 

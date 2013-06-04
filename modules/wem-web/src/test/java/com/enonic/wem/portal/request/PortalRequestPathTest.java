@@ -3,6 +3,7 @@ package com.enonic.wem.portal.request;
 import org.junit.Test;
 
 import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.portal.dispatch.PortalRequestPath;
 
 import static junit.framework.Assert.assertEquals;
 

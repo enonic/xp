@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.request;
+package com.enonic.wem.portal.attachment;
 
 import com.google.common.base.Objects;
 

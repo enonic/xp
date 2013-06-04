@@ -1,6 +1,11 @@
-package com.enonic.wem.portal.resource;
+package com.enonic.wem.portal.dispatch;
 
 import javax.ws.rs.Path;
+
+import com.enonic.wem.portal.AbstractResource;
+import com.enonic.wem.portal.attachment.AttachmentResource;
+import com.enonic.wem.portal.image.ImageResource;
+import com.enonic.wem.portal.resource.StaticResource;
 
 public class UnderscoreDispatcherResource
     extends AbstractResource

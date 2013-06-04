@@ -1,6 +1,4 @@
-package com.enonic.wem.portal.service;
-
-import com.enonic.wem.portal.request.ImageRequest;
+package com.enonic.wem.portal.image;
 
 public interface ImageService
 {

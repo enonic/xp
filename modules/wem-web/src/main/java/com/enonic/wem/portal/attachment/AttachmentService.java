@@ -1,6 +1,4 @@
-package com.enonic.wem.portal.service;
-
-import com.enonic.wem.portal.request.AttachmentRequest;
+package com.enonic.wem.portal.attachment;
 
 public interface AttachmentService
 {
