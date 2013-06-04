@@ -27,38 +27,6 @@ module admin.ui {
             uploader.on('fileuploaded', this.photoUploaded, this);
         }
 
-        private saveSpace() {
-            var spaceWizardData = this.getData();
-            var displayName = spaceWizardData.displayName;
-            var spaceName = spaceWizardData.spaceName;
-            var iconReference = spaceWizardData.iconRef;
-
-            var spaceModel = this.data;
-            var originalSpaceName = spaceModel && spaceModel.get ? spaceModel.get('name') : undefined;
-
-            var spaceParams = {
-                spaceName: originalSpaceName || spaceName,
-                displayName: displayName,
-                iconReference: iconReference,
-                newSpaceName: (originalSpaceName !== spaceName) ? spaceName : undefined
-            };
-
-            var onUpdateSpaceSuccess = function (created, updated) {
-                if (created || updated) {
-
-                    API.notify.showFeedback('Space "' + spaceName + '" was saved');
-                    components.gridPanel.refresh();
-                }
-            };
-            Admin.lib.RemoteService.space_createOrUpdate(spaceParams, function (r) {
-                if (r && r.success) {
-                    onUpdateSpaceSuccess(r.created, r.updated);
-                } else {
-                    console.error("Error", r ? r.error : "An unexpected error occurred.");
-                }
-            });
-        }
-
         resolveHeaderData() {
             var iconUrl = 'resources/images/icons/128x128/default_space.png';
             var displayNameValue = '';
