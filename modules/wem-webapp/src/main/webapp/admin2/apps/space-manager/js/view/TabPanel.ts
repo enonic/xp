@@ -221,10 +221,6 @@ module admin.ui {
 
         }
 
-        private addTab(panel:any, index:number) {
-            this.ext.addTab(panel, index, undefined);
-        }
-
         private generateTabId(space, isEdit) {
             return 'tab-' + ( isEdit ? 'edit-' : 'preview-') + space.get('name');
         }
