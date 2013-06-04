@@ -9,11 +9,24 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     x: 10,
     y: 40,
     width: 320,
+    height: 548,
     shadow: false,
     border: false,
     floating: true,
     draggable: true,
     constrain: true,
+    layout: {
+        type: 'vbox',
+        align : 'stretch'
+    },
+    listeners: {
+        resize: function () {
+            this.handleResize();
+        }
+    },
+
+    DEFAULT_SELECTED_PANEL_INDEX: 0,
+    TITLE_BAR_HEIGHT: 32,
 
     titleBar: undefined,
     menuButton: undefined,
@@ -21,11 +34,8 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     toggleButton: undefined,
     windowBody: undefined,
     draggingShim: undefined,
-    isBodyVisible: true,
-
-    defaultPanelIndex: 0,
-    defaultTitleBarHeight: 32,
-    defaultBodyHeight: 516,
+    collapsed: false,
+    currentHeight: undefined,
 
     panels: [
         {
@@ -48,6 +58,7 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
         },
     ],
 
+
     initComponent: function () {
         this.titleBar = this.createTitleBar();
         this.draggingShim = this.createDraggingShim();
@@ -57,6 +68,8 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
             this.windowBody
         ];
         this.enableDrag();
+        this.currentHeight = this.height;
+
         this.callParent(arguments);
     },
 
@@ -70,7 +83,7 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
 
         return new Ext.container.Container({
             cls: 'admin-context-window-title-bar',
-            height: this.defaultTitleBarHeight,
+            height: this.TITLE_BAR_HEIGHT,
             layout: {
                 type: 'hbox',
                 align: 'stretch'
@@ -117,10 +130,10 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
             listeners: {
                 render: function (component) {
                     component.getEl().on('click', function () {
-                        if (me.isBodyVisible) {
-                            component.getEl().addCls('icon-chevron-up').removeCls('icon-chevron-down');
-                        } else {
+                        if (me.collapsed) {
                             component.getEl().addCls('icon-chevron-down').removeCls('icon-chevron-up');
+                        } else {
+                            component.getEl().addCls('icon-chevron-up').removeCls('icon-chevron-down');
                         }
                         me.toggleExpandCollapse();
                     });
@@ -135,20 +148,13 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     createWindowBody: function () {
         var me = this;
         return new Ext.container.Container({
-            height: this.defaultBodyHeight, // fixme: set this dynamically
-            autoScroll: false,
+            flex: 1,
+            height: this.height - this.TITLE_BAR_HEIGHT,
             cls: 'admin-context-window-body',
             listeners: {
-                render: function (container) {
-                    container.getEl().on('mouseover', function () {
-                        container.setAutoScroll(true);
-                    });
-                    container.getEl().on('mouseout', function () {
-                        container.setAutoScroll(false);
-                    });
-
+                render: function () {
                     me.addBodyPanels();
-                    me.setBodyPanel(me.defaultPanelIndex);
+                    me.setBodyPanel(me.DEFAULT_SELECTED_PANEL_INDEX);
                 }
             }
         });
@@ -159,15 +165,25 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
     },
 
     toggleExpandCollapse: function () {
-        if (this.isBodyVisible) {
-            this.windowBody.hide();
-            this.setHeight(this.defaultTitleBarHeight);
-            this.isBodyVisible = false;
+        if (this.collapsed) {
+            this.animate({
+                duration: 200,
+                to: {
+                    height: this.currentHeight
+                }
+            });
+            this.collapsed = false;
         } else {
-            this.windowBody.show();
-            this.setHeight(this.defaultBodyHeight + this.defaultTitleBarHeight);
-            this.isBodyVisible = true;
+            this.animate({
+                duration: 200,
+                to: {
+                    height: this.TITLE_BAR_HEIGHT
+                }
+            });
+            this.currentHeight = this.height;
+            this.collapsed = true;
         }
+        this.handleResize();
     },
 
     setBodyPanel: function (index) {
@@ -208,8 +224,7 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
                     handler: function (item) {
                         me.setBodyPanel(item.itemId);
                     }
-                })
-
+                });
             }
         }
         return menuItems;
@@ -223,7 +238,7 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
      */
     createDraggingShim: function () {
         var div = document.createElement('div');
-        div.setAttribute('class', 'context-window-dragging-shim');
+        div.setAttribute('class', 'admin-context-window-dragging-shim');
         div.setAttribute('style', 'display: none');
         document.body.appendChild(div);
         return div;
@@ -236,16 +251,24 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
             listeners: {
                 dragstart: function () {
                     me.getEl().toggleCls('is-dragging');
-                    me.draggingShim.style.display = 'block'
+                    me.draggingShim.style.display = 'block';
                 },
                 dragend: function () {
                     me.getEl().toggleCls('is-dragging');
-                    me.draggingShim.style.display = 'none'
+                    me.draggingShim.style.display = 'none';
                 }
             }
         };
         this.constrain = true;
-        this.constrainTo = Ext.get('live-edit-frame')
+        this.constrainTo = Ext.get('live-edit-frame');
+    },
+
+    handleResize: function () {
+        var addedPanels = this.windowBody.items.items,
+            newBodyHeight = this.height - this.TITLE_BAR_HEIGHT;
+        for (var i = 0; i < addedPanels.length; i++) {
+            addedPanels[i].setHeight(newBodyHeight);
+        }
     },
 
     doShow: function () {
