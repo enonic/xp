@@ -526,6 +526,107 @@ var APP;
     })();
     APP.SpaceActions = SpaceActions;    
 })(APP || (APP = {}));
+var APP_wizard;
+(function (APP_wizard) {
+    var SaveSpaceAction = (function (_super) {
+        __extends(SaveSpaceAction, _super);
+        function SaveSpaceAction() {
+                _super.call(this, "Save");
+            this.addExecutionListener(function () {
+            });
+        }
+        return SaveSpaceAction;
+    })(API_action.Action);
+    APP_wizard.SaveSpaceAction = SaveSpaceAction;    
+    var DuplicateSpaceAction = (function (_super) {
+        __extends(DuplicateSpaceAction, _super);
+        function DuplicateSpaceAction() {
+                _super.call(this, "Duplicate");
+            this.addExecutionListener(function () {
+            });
+        }
+        return DuplicateSpaceAction;
+    })(API_action.Action);
+    APP_wizard.DuplicateSpaceAction = DuplicateSpaceAction;    
+    var DeleteSpaceAction = (function (_super) {
+        __extends(DeleteSpaceAction, _super);
+        function DeleteSpaceAction() {
+                _super.call(this, "Delete");
+            this.setEnabled(false);
+            this.addExecutionListener(function () {
+            });
+        }
+        return DeleteSpaceAction;
+    })(API_action.Action);
+    APP_wizard.DeleteSpaceAction = DeleteSpaceAction;    
+    var CloseSpaceAction = (function (_super) {
+        __extends(CloseSpaceAction, _super);
+        function CloseSpaceAction() {
+                _super.call(this, "Close");
+            this.addExecutionListener(function () {
+            });
+        }
+        return CloseSpaceAction;
+    })(API_action.Action);
+    APP_wizard.CloseSpaceAction = CloseSpaceAction;    
+    var SpaceWizardActions = (function () {
+        function SpaceWizardActions() {
+            this.SAVE_SPACE = new SaveSpaceAction();
+            this.DUPLICATE_SPACE = new DuplicateSpaceAction();
+            this.DELETE_SPACE = new DeleteSpaceAction();
+            this.CLOSE_SPACE = new CloseSpaceAction();
+        }
+        return SpaceWizardActions;
+    })();
+    APP_wizard.SpaceWizardActions = SpaceWizardActions;    
+})(APP_wizard || (APP_wizard = {}));
+var APP_wizard;
+(function (APP_wizard) {
+    var SpaceWizardContext = (function () {
+        function SpaceWizardContext(id) {
+            this.id = id;
+            this.spaceWizardActions = new APP_wizard.SpaceWizardActions();
+        }
+        SpaceWizardContext.spaceWizardContexts = [];
+        SpaceWizardContext.activeSpaceWizardContext = -1;
+        SpaceWizardContext.createSpaceWizardContext = function createSpaceWizardContext() {
+            var id = SpaceWizardContext.spaceWizardContexts.length + 1;
+            var context = new SpaceWizardContext(id);
+            SpaceWizardContext.spaceWizardContexts.push(context);
+            return context;
+        };
+        SpaceWizardContext.setActiveSpaceWizardContext = function setActiveSpaceWizardContext(value) {
+            SpaceWizardContext.activeSpaceWizardContext = value;
+        };
+        SpaceWizardContext.getActiveSpaceWizardContext = function getActiveSpaceWizardContext() {
+            return SpaceWizardContext.spaceWizardContexts[SpaceWizardContext.activeSpaceWizardContext];
+        };
+        SpaceWizardContext.prototype.getId = function () {
+            return this.id;
+        };
+        SpaceWizardContext.prototype.getActions = function () {
+            return this.spaceWizardActions;
+        };
+        return SpaceWizardContext;
+    })();
+    APP_wizard.SpaceWizardContext = SpaceWizardContext;    
+})(APP_wizard || (APP_wizard = {}));
+var APP_wizard;
+(function (APP_wizard) {
+    var SpaceWizardToolbar2 = (function (_super) {
+        __extends(SpaceWizardToolbar2, _super);
+        function SpaceWizardToolbar2(actions) {
+                _super.call(this);
+            _super.prototype.addAction.call(this, actions.SAVE_SPACE);
+            _super.prototype.addAction.call(this, actions.DUPLICATE_SPACE);
+            _super.prototype.addAction.call(this, actions.DELETE_SPACE);
+            _super.prototype.addGreedySpacer.call(this);
+            _super.prototype.addAction.call(this, actions.DELETE_SPACE);
+        }
+        return SpaceWizardToolbar2;
+    })(API_ui_toolbar.Toolbar);
+    APP_wizard.SpaceWizardToolbar2 = SpaceWizardToolbar2;    
+})(APP_wizard || (APP_wizard = {}));
 Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
     extend: 'Ext.util.Observable',
     pluginId: 'persistentGridSelection',

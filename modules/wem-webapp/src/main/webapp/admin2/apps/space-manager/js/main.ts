@@ -18,6 +18,10 @@
 
 ///<reference path='SpaceActions.ts' />
 
+///<reference path='wizard/SpaceWizardActions.ts' />
+///<reference path='wizard/SpaceWizardContext.ts' />
+///<reference path='wizard/SpaceWizardToolbar2.ts' />
+
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
 ///<reference path='plugin/fileupload/FileUploadGrid.ts' />
