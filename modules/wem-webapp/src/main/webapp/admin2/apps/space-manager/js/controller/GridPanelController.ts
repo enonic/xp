@@ -23,11 +23,6 @@ Ext.define('Admin.controller.GridPanelController', {
                 click: function (el, e) {
                     this.editSpace();
                 }
-            },
-            '#spaceContextMenu *[action=viewSpace]': {
-                click: function (el, e) {
-                    this.viewSpace();
-                }
             }
         });
     },

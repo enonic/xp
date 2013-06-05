@@ -4778,10 +4778,6 @@ Ext.define('Admin.controller.Controller', {
             }
         });
     },
-    deleteSpace: function (space) {
-        space = this.validateSpace(space);
-        this.showDeleteSpaceWindow([].concat(space));
-    },
     validateSpace: function (space) {
         if(!space) {
             var showPanel = this.getSpaceTreeGridPanel();
@@ -4911,19 +4907,9 @@ Ext.define('Admin.controller.GridPanelController', {
                     this.editSpace(record);
                 }
             },
-            '#spaceContextMenu *[action=deleteSpace]': {
-                click: function (el, e) {
-                    this.deleteSpace();
-                }
-            },
             '#spaceContextMenu *[action=editSpace]': {
                 click: function (el, e) {
                     this.editSpace();
-                }
-            },
-            '#spaceContextMenu *[action=viewSpace]': {
-                click: function (el, e) {
-                    this.viewSpace();
                 }
             }
         });
