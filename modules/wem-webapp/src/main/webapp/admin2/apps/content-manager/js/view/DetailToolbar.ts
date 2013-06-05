@@ -1,53 +1,75 @@
-Ext.define('Admin.view.contentManager.DetailToolbar', {
-    extend: 'Ext.toolbar.Toolbar',
-    alias: 'widget.contentDetailToolbar',
+module admin.ui {
 
-    cls: 'admin-toolbar',
+    export class DetailToolbar {
+        ext;
 
-    isLiveMode: false,
+        private isLiveMode:bool = false;
 
-    requires: [
-        'Ext.ux.toggleslide.ToggleSlide'
-    ],
+        constructor(isLiveMode?:bool) {
+            this.isLiveMode = isLiveMode;
 
-    defaults: {
-        scale: 'medium'
-    },
+            var tbar = new Ext.toolbar.Toolbar({
+                itemId: 'contentDetailToolbar',
+                cls: 'admin-toolbar'
+            });
 
-    initComponent: function () {
-        var me = this;
-        this.items = <any[]>[
+            var defaults = {
+                scale: 'medium'
+            };
 
-            {
+            var btnNew = this.createButton({
                 text: 'New',
                 action: 'newContent'
-            },
+            }, defaults);
 
-            {
+            var btnEdit = this.createButton({
                 text: 'Edit',
                 action: 'editContent'
-            },
-            {
+            }, defaults);
+
+            var btnDelete = this.createButton({
                 text: 'Delete',
                 action: 'deleteContent'
-            },
+            }, defaults);
 
-            {
+            var btnDuplicate = this.createButton({
                 text: 'Duplicate',
                 action: 'duplicateContent'
-            },
-            {
+            }, defaults);
+
+            var btnMove = this.createButton({
                 text: 'Move',
                 action: 'moveContent'
-            },
-            {
+            }, defaults);
+
+            var btnExport = this.createButton({
                 text: 'Export'
-            },
-            '->',
-            {
-                xtype: 'cycle',
+            }, defaults);
+
+            var separator = new Ext.toolbar.Fill();
+
+            var cycle = this.createCycle();
+
+            var toggleSlide = this.createToggleSlide();
+
+            var btnClose = this.createButton({
+                text: 'Close',
+                action: 'closeContent'
+            }, defaults);
+
+            tbar.add(btnNew, btnEdit, btnDelete, btnDuplicate, btnMove, btnExport, separator, cycle, toggleSlide, btnClose);
+
+            this.ext = tbar;
+        }
+
+        private createButton(config, defaults) {
+            return new Ext.button.Button(Ext.apply(config, defaults));
+        }
+
+        private createCycle() {
+            return new Ext.button.Cycle({
                 itemId: 'deviceCycle',
-                disabled: !me.isLiveMode,
+                disabled: !this.isLiveMode,
                 showText: true,
                 prependText: 'Device: ',
                 menu: {
@@ -75,26 +97,22 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
                         }
                     ]
                 }
-            },
-            {
+            });
+        }
+
+        private createToggleSlide() {
+            return new Ext.ux.toggleslide.ToggleSlide({
                 xtype: 'toggleslide',
                 onText: 'Preview',
                 offText: 'Details',
                 action: 'toggleLive',
-                state: me.isLiveMode,
+                state: this.isLiveMode,
                 listeners: {
                     change: function (toggle, state) {
-                        me.isLiveMode = state;
+                        this.isLiveMode = state;
                     }
                 }
-            },
-            {
-                text: 'Close',
-                action: 'closeContent'
-            }
-        ];
-
-        this.callParent(arguments);
+            });
+        }
     }
-
-});
+}
