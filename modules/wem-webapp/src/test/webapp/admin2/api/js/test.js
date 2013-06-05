@@ -12,8 +12,11 @@ var API_action;
         };
         Action.prototype.setLabel = function (value) {
             if(value !== this.label) {
+                this.label = value;
+                for(var i in this.propertyChangeListeners) {
+                    this.propertyChangeListeners[i](this);
+                }
             }
-            this.label = value;
         };
         Action.prototype.isEnabled = function () {
             return this.enabled;
