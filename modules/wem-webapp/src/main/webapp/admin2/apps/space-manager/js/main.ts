@@ -56,7 +56,6 @@
 ///<reference path='view/TopBar.ts' />
 ///<reference path='view/TabPanel.ts' />
 ///<reference path='view/FilterPanel.ts' />
-///<reference path='view/BrowseToolbar.ts' />
 
 ///<reference path='view/BrowseToolbar2.ts' />
 
@@ -108,8 +107,7 @@ Ext.application({
 
     launch: function () {
 
-        var toolbar = new app_ui.BrowseToolbar('north');
-        var toolbar2 = new app_ui.BrowseToolbar2();
+        var toolbar = new app_ui.BrowseToolbar2();
 
         var grid = components.gridPanel = new app_ui.TreeGridPanel('center');
 
@@ -123,7 +121,6 @@ Ext.application({
         center.add(detail.ext);
         center.add(grid.ext);
         center.add(toolbar.ext);
-        center.add(toolbar2.ext);
 
         var west = new app_ui.FilterPanel({
             region: 'west',

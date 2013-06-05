@@ -4705,66 +4705,6 @@ var app_ui;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
-    var BrowseToolbar = (function () {
-        function BrowseToolbar(region) {
-            var tb = this.ext = new Ext.toolbar.Toolbar({
-                cls: 'admin-toolbar',
-                border: true,
-                itemId: 'spaceBrowseToolbar',
-                region: region
-            });
-            var newButton = new Ext.button.Button({
-                text: 'New',
-                action: 'newSpace',
-                scale: 'medium',
-                iconAlign: 'top',
-                minWidth: 64
-            });
-            var editButton = new Ext.button.Button({
-                text: 'Edit',
-                disabled: true,
-                action: 'editSpace',
-                scale: 'medium',
-                iconAlign: 'top',
-                minWidth: 64,
-                handler: function () {
-                    new app_event.EditSpaceEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
-                }
-            });
-            var openButton = new Ext.button.Button({
-                text: 'Open',
-                disabled: true,
-                action: 'viewSpace',
-                scale: 'medium',
-                iconAlign: 'top',
-                minWidth: 64
-            });
-            var deleteButton = new Ext.button.Button({
-                text: 'Delete',
-                disabled: true,
-                action: 'deleteSpace',
-                scale: 'medium',
-                iconAlign: 'top',
-                minWidth: 64,
-                handler: function () {
-                    new app_event.DeletePromptEvent(components.gridPanel.getSelection()).fire();
-                }
-            });
-            tb.add(newButton, editButton, openButton, deleteButton);
-            app_event.GridSelectionChangeEvent.on(function (event) {
-                var selected = event.getModel();
-                var enable = selected && selected.length > 0;
-                editButton.setDisabled(!enable);
-                openButton.setDisabled(!enable);
-                deleteButton.setDisabled(!enable);
-            });
-        }
-        return BrowseToolbar;
-    })();
-    app_ui.BrowseToolbar = BrowseToolbar;    
-})(app_ui || (app_ui = {}));
-var app_ui;
-(function (app_ui) {
     var BrowseToolbar2 = (function (_super) {
         __extends(BrowseToolbar2, _super);
         function BrowseToolbar2() {
@@ -5249,8 +5189,7 @@ Ext.application({
     ],
     stores: [],
     launch: function () {
-        var toolbar = new app_ui.BrowseToolbar('north');
-        var toolbar2 = new app_ui.BrowseToolbar2();
+        var toolbar = new app_ui.BrowseToolbar2();
         var grid = components.gridPanel = new app_ui.TreeGridPanel('center');
         var detail = components.detailPanel = new app_ui.SpaceDetailPanel('south');
         var center = new Ext.container.Container({
@@ -5260,7 +5199,6 @@ Ext.application({
         center.add(detail.ext);
         center.add(grid.ext);
         center.add(toolbar.ext);
-        center.add(toolbar2.ext);
         var west = new app_ui.FilterPanel({
             region: 'west',
             width: 200
