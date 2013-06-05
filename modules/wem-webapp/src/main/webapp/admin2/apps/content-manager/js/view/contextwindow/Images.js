@@ -1,5 +1,5 @@
-Ext.define('Admin.view.contentManager.liveedit.Images', {
+Ext.define('Admin.view.contentManager.contextwindow.Images', {
     extend: 'Ext.Component',
-    alias: 'widget.liveEditImages',
+    alias: 'widget.contextWindowImages',
     html: '<p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p><p>test</p>'
 });

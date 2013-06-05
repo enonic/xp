@@ -1,6 +1,6 @@
-Ext.define('Admin.view.contentManager.liveedit.Components', {
+Ext.define('Admin.view.contentManager.contextwindow.Components', {
     extend: 'Ext.container.Container',
-    alias: 'widget.liveEditComponentsPanel',
+    alias: 'widget.contextWindowComponentsPanel',
 
     layout: {
         type: 'vbox',

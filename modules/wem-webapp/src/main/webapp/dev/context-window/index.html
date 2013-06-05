@@ -5,10 +5,10 @@
     <link rel="stylesheet" type="text/css" href="css/context-window.css">
     <link rel="stylesheet" type="text/css" href="css/components.css">
     <script type="text/javascript" src="../../admin/resources/lib/ext/ext-all-debug.js"></script>
-    <script type="text/javascript" src="../../admin2/apps/content-manager/js/view/liveedit/ContextWindow.js"></script>
-    <script type="text/javascript" src="../../admin2/apps/content-manager/js/view/liveedit/Components.js"></script>
-    <script type="text/javascript" src="../../admin2/apps/content-manager/js/view/liveedit/DeviceSelector.js"></script>
-    <script type="text/javascript" src="../../admin2/apps/content-manager/js/view/liveedit/Images.js"></script>
+    <script type="text/javascript" src="../../admin2/apps/content-manager/js/view/contextwindow/ContextWindow.js"></script>
+    <script type="text/javascript" src="../../admin2/apps/content-manager/js/view/contextwindow/Components.js"></script>
+    <script type="text/javascript" src="../../admin2/apps/content-manager/js/view/contextwindow/DeviceSelector.js"></script>
+    <script type="text/javascript" src="../../admin2/apps/content-manager/js/view/contextwindow/Images.js"></script>
 
     <script type="text/javascript">
 
@@ -38,9 +38,9 @@
                                 {
                                     text: 'Toggle Context Window',
                                     handler: function () {
-                                        var win = Ext.ComponentQuery.query('liveEditContextWindow')[0];
+                                        var win = Ext.ComponentQuery.query('contextWindow')[0];
                                         if (!win) {
-                                            win = new Admin.view.contentManager.liveedit.ContextWindow({});
+                                            win = new Admin.view.contentManager.contextwindow.ContextWindow({});
                                         }
 
                                         if (win.isVisible()) {

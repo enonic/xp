@@ -1,9 +1,9 @@
 /**
  * TODO: Controller? :)
  */
-Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
+Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     extend: 'Ext.container.Container',
-    alias: 'widget.liveEditContextWindow',
+    alias: 'widget.contextWindow',
     modal: false,
     cls: 'admin-context-window',
     x: 10,
@@ -41,19 +41,19 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
         {
             name: 'Components',
             item: function () {
-                return new Admin.view.contentManager.liveedit.Components({hidden:true});
+                return new Admin.view.contentManager.contextwindow.Components({hidden:true});
             }
         },
         {
             name: 'Device Selector',
             item: function () {
-                return new Admin.view.contentManager.liveedit.DeviceSelector({hidden:true});
+                return new Admin.view.contentManager.contextwindow.DeviceSelector({hidden:true});
             }
         },
         {
             name: 'Images',
             item: function () {
-                return new Admin.view.contentManager.liveedit.Images({hidden:true});
+                return new Admin.view.contentManager.contextwindow.Images({hidden:true});
             }
         },
     ],
