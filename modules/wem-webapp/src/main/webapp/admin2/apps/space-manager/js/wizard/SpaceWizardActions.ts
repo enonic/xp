@@ -1,4 +1,4 @@
-module APP_wizard {
+module app_wizard {
 
     export class SaveSpaceAction extends API_action.Action {
 

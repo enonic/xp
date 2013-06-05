@@ -1,4 +1,4 @@
-module admin.ui {
+module app_ui {
     export class SpaceDetailPanel {
 
         ext:Ext_panel_Panel;
@@ -34,7 +34,7 @@ module admin.ui {
             }
         ];
 
-        constructor(region?:String, id?:string, model?:APP.model.SpaceModel) {
+        constructor(region?:String, id?:string, model?:app_model.SpaceModel) {
             var cls = 'admin-preview-panel admin-detail' + ( this.isVertical ? 'admin-detail-vertical' : '' );
             this.data = model;
 
@@ -167,7 +167,7 @@ module admin.ui {
                 cls: 'admin-detail-header'
             });
 
-            north.add(photo, header, new admin.ui.ActionMenu().ext);
+            north.add(photo, header, new app_ui.ActionMenu().ext);
 
             c.add(north);
 

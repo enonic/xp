@@ -1,4 +1,4 @@
-module APP.ui {
+module app_ui {
 
     /**
      * TODO: The upcoming successor of BrowseToolbar, when the Toolbar code is working....
@@ -7,10 +7,10 @@ module APP.ui {
 
         constructor() {
             super();
-            super.addAction(APP.SpaceActions.NEW_SPACE);
-            super.addAction(APP.SpaceActions.EDIT_SPACE);
-            super.addAction(APP.SpaceActions.OPEN_SPACE);
-            super.addAction(APP.SpaceActions.DELETE_SPACE);
+            super.addAction(app.SpaceActions.NEW_SPACE);
+            super.addAction(app.SpaceActions.EDIT_SPACE);
+            super.addAction(app.SpaceActions.OPEN_SPACE);
+            super.addAction(app.SpaceActions.DELETE_SPACE);
         }
     }
 }

@@ -1,11 +1,11 @@
-module admin.ui {
+module app_ui {
 
     export class DeleteSpaceWindow {
 
         private container;
-        private spaceModelArray:APP.model.SpaceModel[];
+        private spaceModelArray:app_model.SpaceModel[];
         private title:String = "Delete space(s)";
-        private deleteHandler:admin.app.handler.DeleteSpacesHandler = new admin.app.handler.DeleteSpacesHandler();
+        private deleteHandler:app_handler.DeleteSpacesHandler = new app_handler.DeleteSpacesHandler();
         private content;
 
         private template:string = '<div class="delete-container">' +
@@ -21,7 +21,7 @@ module admin.ui {
         constructor() {
             this.initComponent();
 
-            APP.event.DeletePromptEvent.on((event) => {
+            app_event.DeletePromptEvent.on((event) => {
                 this.setModel(event.getModel());
                 this.doShow();
             });
@@ -91,7 +91,7 @@ module admin.ui {
         }
 
 
-        setModel(models:APP.model.SpaceModel[]) {
+        setModel(models:app_model.SpaceModel[]) {
             this.spaceModelArray = models;
             if (models) {
                 if (this.content) {

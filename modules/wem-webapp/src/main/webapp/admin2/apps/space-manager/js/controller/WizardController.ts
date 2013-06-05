@@ -14,7 +14,7 @@ Ext.define('Admin.controller.WizardController', {
     init: function () {
         var me = this;
 
-        APP.event.NewSpaceEvent.on((event) => {
+        app_event.NewSpaceEvent.on((event) => {
             this.showNewSpaceWindow();
         });
 
@@ -24,7 +24,7 @@ Ext.define('Admin.controller.WizardController', {
             },
             '#spaceAdminWizardPanel *[action=saveSpace]': {
                 click: (el) => {
-                    new APP.event.SaveSpaceEvent().fire();
+                    new app_event.SaveSpaceEvent().fire();
                 }
             },
             '#spaceAdminWizardPanel *[action=deleteSpace]': {
@@ -47,7 +47,7 @@ Ext.define('Admin.controller.WizardController', {
             }
         });
 
-        APP.event.SaveSpaceEvent.on((event) => {
+        app_event.SaveSpaceEvent.on((event) => {
             me.saveSpace();
         });
     },

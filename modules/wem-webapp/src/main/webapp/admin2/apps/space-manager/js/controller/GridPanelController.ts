@@ -51,7 +51,7 @@ Ext.define('Admin.controller.GridPanelController', {
 
     getContextMenu: function () {
         if (!this.contextMenu) {
-            this.contextMenu = new admin.ui.ContextMenu();
+            this.contextMenu = new app_ui.ContextMenu();
         }
         return this.contextMenu;
     }

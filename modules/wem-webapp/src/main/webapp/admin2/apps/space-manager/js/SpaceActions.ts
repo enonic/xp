@@ -1,11 +1,11 @@
-module APP {
+module app {
 
     export class NewSpaceAction extends API_action.Action {
 
         constructor() {
             super("New");
             this.addExecutionListener(() => {
-                new APP.event.NewSpaceEvent().fire();
+                new app_event.NewSpaceEvent().fire();
             });
         }
     }
@@ -16,7 +16,7 @@ module APP {
             super("Open");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new APP.event.OpenSpaceEvent(SpaceContext.get().getSelectedSpaces()).fire();
+                new app_event.OpenSpaceEvent(SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
     }
@@ -27,7 +27,7 @@ module APP {
             super("Edit");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new APP.event.EditSpaceEvent(SpaceContext.get().getSelectedSpaces()).fire();
+                new app_event.EditSpaceEvent(SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
     }
@@ -38,7 +38,7 @@ module APP {
             super("Delete");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new APP.event.DeletePromptEvent(SpaceContext.get().getSelectedSpaces()).fire();
+                new app_event.DeletePromptEvent(SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
     }
@@ -52,9 +52,9 @@ module APP {
 
         static init() {
 
-            APP.event.GridSelectionChangeEvent.on((event) => {
+            app_event.GridSelectionChangeEvent.on((event) => {
 
-                var spaces:APP.model.SpaceModel[] = event.getModel();
+                var spaces:app_model.SpaceModel[] = event.getModel();
 
                 if (spaces.length <= 0) {
                     NEW_SPACE.setEnabled(true);
@@ -77,9 +77,9 @@ module APP {
             });
         }
 
-        static anyEditable(spaces:APP.model.SpaceModel[]):bool {
+        static anyEditable(spaces:app_model.SpaceModel[]):bool {
             for (var i in spaces) {
-                var space:APP.model.SpaceModel = spaces[i];
+                var space:app_model.SpaceModel = spaces[i];
                 if (space.data.editable) {
                     return true;
                 }
@@ -87,9 +87,9 @@ module APP {
             return false;
         }
 
-        static anyDeleteable(spaces:APP.model.SpaceModel[]):bool {
+        static anyDeleteable(spaces:app_model.SpaceModel[]):bool {
             for (var i in spaces) {
-                var space:APP.model.SpaceModel = spaces[i];
+                var space:app_model.SpaceModel = spaces[i];
                 if (space.data.deletable) {
                     return true;
                 }

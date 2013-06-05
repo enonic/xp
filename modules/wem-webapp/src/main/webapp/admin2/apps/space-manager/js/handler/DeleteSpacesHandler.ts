@@ -1,4 +1,4 @@
-module admin.app.handler {
+module app_handler {
 
     export class DeleteSpacesHandler {
 

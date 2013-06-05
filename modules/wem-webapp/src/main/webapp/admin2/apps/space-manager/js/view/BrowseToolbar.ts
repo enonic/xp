@@ -1,4 +1,4 @@
-module admin.ui {
+module app_ui {
     export class BrowseToolbar {
         ext;
 
@@ -27,7 +27,7 @@ module admin.ui {
                 iconAlign: 'top',
                 minWidth: 64,
                 handler: () => {
-                    new APP.event.EditSpaceEvent(APP.SpaceContext.get().getSelectedSpaces()).fire();
+                    new app_event.EditSpaceEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
                 }
             });
 
@@ -48,13 +48,13 @@ module admin.ui {
                 iconAlign: 'top',
                 minWidth: 64,
                 handler: () => {
-                    new APP.event.DeletePromptEvent(components.gridPanel.getSelection()).fire();
+                    new app_event.DeletePromptEvent(components.gridPanel.getSelection()).fire();
                 }
             });
 
             tb.add(newButton, editButton, openButton, deleteButton);
 
-            APP.event.GridSelectionChangeEvent.on((event) => {
+            app_event.GridSelectionChangeEvent.on((event) => {
                 var selected = event.getModel();
                 var enable = selected && selected.length > 0;
                 editButton.setDisabled(!enable);

@@ -1,10 +1,10 @@
-module admin.ui {
+module app_ui_wizard {
 
-    export class SpaceWizardPanel extends admin.ui.WizardPanel {
+    export class SpaceWizardPanel extends app_ui.WizardPanel {
 
-        private wizardHeader:admin.ui.WizardHeader;
+        private wizardHeader:app_ui.WizardHeader;
 
-        constructor(id:string, title:string, editing:bool, data?:APP.model.SpaceModel) {
+        constructor(id:string, title:string, editing:bool, data?:app_model.SpaceModel) {
             var headerData = this.resolveHeaderData();
             this.data = data;
             var panelConfig = {
@@ -19,7 +19,7 @@ module admin.ui {
                 defaults: {
                     border: false
                 },
-                tbar: new admin.ui.SpaceWizardToolbar(headerData.isNewSpace).ext
+                tbar: new SpaceWizardToolbar(headerData.isNewSpace).ext
             };
             super(panelConfig);
 
@@ -47,7 +47,7 @@ module admin.ui {
         }
 
         createSteps() {
-            var spaceStep = new admin.ui.SpaceStepPanel(this.data);
+            var spaceStep = new SpaceStepPanel(this.data);
 
             return <any[]>[
                 spaceStep.ext,
@@ -70,10 +70,10 @@ module admin.ui {
         }
 
         createWizardHeader() {
-            var pathConfig:admin.ui.PathConfig = {
+            var pathConfig:app_ui.PathConfig = {
                 hidden: true
             };
-            var wizardHeader = this.wizardHeader = new admin.ui.WizardHeader(this.data, {}, pathConfig);
+            var wizardHeader = this.wizardHeader = new app_ui.WizardHeader(this.data, {}, pathConfig);
 
             this.validateItems.push(wizardHeader.ext);
             return wizardHeader.ext;
@@ -140,12 +140,12 @@ module admin.ui {
                 xtype: 'button',
                 text: 'Save',
                 handler: () => {
-                    new APP.event.SaveSpaceEvent().fire();
+                    new app_event.SaveSpaceEvent().fire();
                 }
             };
         }
 
-        getWizardHeader():admin.ui.WizardHeader {
+        getWizardHeader():app_ui.WizardHeader {
             return this.wizardHeader;
         }
 

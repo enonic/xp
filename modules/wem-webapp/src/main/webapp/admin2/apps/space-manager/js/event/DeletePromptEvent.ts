@@ -1,7 +1,7 @@
-module APP.event {
+module app_event {
 
     export class DeletePromptEvent extends SpaceModelEvent {
-        constructor(model:APP.model.SpaceModel[]) {
+        constructor(model:app_model.SpaceModel[]) {
             super('deletePrompt', model);
         }
 

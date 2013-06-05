@@ -1,4 +1,4 @@
-module admin.ui {
+module app_ui_wizard {
     export class SpaceStepPanel {
 
         ext:Ext_form_FieldSet;

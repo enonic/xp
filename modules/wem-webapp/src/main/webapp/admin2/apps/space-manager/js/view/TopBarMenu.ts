@@ -1,4 +1,4 @@
-module admin.ui {
+module app_ui {
 
     interface Ext_TopBarMenu_Item {
         isMenuItem: bool;
@@ -250,7 +250,7 @@ module admin.ui {
                 Ext.Array.each(editItems, (editItem:Ext_TopBarMenu_Item) => {
                     // defaultType: 'topBarMenuItem'
                     if (!editItem.xtype) {
-                        var tbmi = new admin.ui.TopBarMenuItem(editItem.text1, editItem.text2, editItem.card, editItem.tabBar,
+                        var tbmi = new app_ui.TopBarMenuItem(editItem.text1, editItem.text2, editItem.card, editItem.tabBar,
                             editItem.closable, editItem.disabled, editItem.editing, editItem.hidden,
                             editItem.iconClass, editItem.iconSrc).ext;
                         editItemObjects.push(tbmi);
@@ -266,7 +266,7 @@ module admin.ui {
                 Ext.Array.each(viewItems, (viewItem:Ext_TopBarMenu_Item) => {
                     // defaultType: 'topBarMenuItem'
                     if (!viewItem.xtype) {
-                        var tbmi = new admin.ui.TopBarMenuItem(viewItem.text1, viewItem.text2, viewItem.card, viewItem.tabBar,
+                        var tbmi = new app_ui.TopBarMenuItem(viewItem.text1, viewItem.text2, viewItem.card, viewItem.tabBar,
                             viewItem.closable, viewItem.disabled, viewItem.editing, viewItem.hidden,
                             viewItem.iconClass, viewItem.iconSrc).ext;
                         viewItemObjects.push(tbmi);

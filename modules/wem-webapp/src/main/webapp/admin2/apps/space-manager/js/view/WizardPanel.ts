@@ -1,4 +1,4 @@
-module admin.ui {
+module app_ui {
 
     export class WizardPanel {
         ext:any;
@@ -64,7 +64,7 @@ module admin.ui {
 
             this.wizard = new Ext.container.Container({
                 region: 'center',
-//            layout: new admin.ui.WizardLayout('none').ext,
+//            layout: new app_ui.WizardLayout('none').ext,
                 layout: {
                     type: 'wizard',
                     animation: 'none'

@@ -1,10 +1,10 @@
-module APP {
+module app {
 
     export class SpaceContext  {
 
         private static context:SpaceContext;
 
-        private selectedSpaces:APP.model.SpaceModel[];
+        private selectedSpaces:app_model.SpaceModel[];
 
         static init():SpaceContext{
             return context = new SpaceContext();
@@ -15,12 +15,12 @@ module APP {
         }
 
         constructor(){
-            APP.event.GridSelectionChangeEvent.on((event) => {
+            app_event.GridSelectionChangeEvent.on((event) => {
                 this.selectedSpaces = event.getModel();
             });
         }
 
-        getSelectedSpaces():APP.model.SpaceModel[] {
+        getSelectedSpaces():app_model.SpaceModel[] {
             return this.selectedSpaces;
         }
     }

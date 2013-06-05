@@ -1,8 +1,8 @@
-module admin.ui {
+module app_ui {
 
     interface PersistentGridSelectionPlugin extends Ext_AbstractPlugin {
 
-        getSelection():APP.model.SpaceModel[];
+        getSelection():app_model.SpaceModel[];
 
     }
 
@@ -99,14 +99,14 @@ module admin.ui {
                 plugins: [gridSelectionPlugin],
                 listeners: {
                     selectionchange: (selModel, selected, opts) => {
-                        new APP.event.GridSelectionChangeEvent(selected).fire();
+                        new app_event.GridSelectionChangeEvent(selected).fire();
                     },
                     itemcontextmenu: (view, rec, node, index, event) => {
                         event.stopEvent();
-                        new APP.event.ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
+                        new app_event.ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
                     },
                     itemdblclick: (grid, record) => {
-                        new APP.event.EditSpaceEvent(grid.getSelection()).fire();
+                        new app_event.EditSpaceEvent(grid.getSelection()).fire();
                     }
                 }
             });
