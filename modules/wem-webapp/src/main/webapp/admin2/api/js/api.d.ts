@@ -1,8 +1,8 @@
-module API.util {
+module api_util {
     var baseUri: string;
     function getAbsoluteUri(uri: string): string;
 }
-module API_event {
+module api_event {
     class Event {
         private name;
         constructor(name: string);
@@ -10,11 +10,11 @@ module API_event {
         public fire(): void;
     }
 }
-module API_event {
+module api_event {
     function onEvent(name: string, handler: (event: Event) => void): void;
     function fireEvent(event: Event): void;
 }
-module API_action {
+module api_action {
     class Action {
         private label;
         private enabled;
@@ -30,7 +30,7 @@ module API_action {
         public addPropertyChangeListener(listener: (action: Action) => void): void;
     }
 }
-module API_ui {
+module api_ui {
     class HTMLElementHelper {
         private el;
         static fromName(name: string): HTMLElementHelper;
@@ -44,7 +44,7 @@ module API_ui {
         public appendChild(child: HTMLElement): void;
     }
 }
-module API_ui {
+module api_ui {
     class Component {
         private static constructorCounter;
         private el;
@@ -56,25 +56,25 @@ module API_ui {
         public appendChild(child: Component): void;
     }
 }
-module API_ui_toolbar {
-    class Toolbar extends API_ui.Component {
+module api_ui_toolbar {
+    class Toolbar extends api_ui.Component {
         public ext;
         private components;
         constructor();
         private initExt();
-        public addAction(action: API_action.Action): void;
+        public addAction(action: api_action.Action): void;
         public addGreedySpacer(): void;
         private doAddAction(action);
         private hasGreedySpacer();
     }
 }
-module API_ui_menu {
-    class ContextMenu extends API_ui.Component {
+module api_ui_menu {
+    class ContextMenu extends api_ui.Component {
         public ext;
         private menuItems;
         constructor();
         private initExt();
-        public addAction(action: API_action.Action): void;
+        public addAction(action: api_action.Action): void;
         private createMenuItem(action);
         public showAt(x: number, y: number): void;
     }
@@ -136,7 +136,7 @@ module API.notify {
     function showFeedback(message: string): void;
     function updateAppTabCount(appId, tabCount: Number): void;
 }
-module API_content_data {
+module api_content_data {
     class DataId {
         private name;
         private arrayIndex;
@@ -148,7 +148,7 @@ module API_content_data {
         static from(str: string): DataId;
     }
 }
-module API_content_data {
+module api_content_data {
     class Data {
         private name;
         private arrayIndex;
@@ -162,7 +162,7 @@ module API_content_data {
         public getArrayIndex(): number;
     }
 }
-module API_content_data {
+module api_content_data {
     class DataSet extends Data {
         private dataById;
         constructor(name: string);
@@ -171,12 +171,12 @@ module API_content_data {
         public getData(dataId: string): Data;
     }
 }
-module API_content_data {
+module api_content_data {
     class ContentData extends DataSet {
         constructor();
     }
 }
-module API_content_data {
+module api_content_data {
     class Property extends Data {
         private value;
         private type;
@@ -187,21 +187,21 @@ module API_content_data {
         public setValue(value: any): void;
     }
 }
-module API_schema_content_form {
+module api_schema_content_form {
     class FormItem {
         private name;
         constructor(name: string);
         public getName(): string;
     }
 }
-module API_schema_content_form {
+module api_schema_content_form {
     class InputType {
         private name;
         constructor(json: any);
         public getName(): string;
     }
 }
-module API_schema_content_form {
+module api_schema_content_form {
     class Input extends FormItem {
         private inputType;
         private label;
@@ -221,7 +221,7 @@ module API_schema_content_form {
         public getHelpText(): string;
     }
 }
-module API_schema_content_form {
+module api_schema_content_form {
     class Occurrences {
         private minimum;
         private maximum;

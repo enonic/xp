@@ -1,4 +1,4 @@
-module API_ui {
+module api_ui {
 
     export class HTMLElementHelper {
 

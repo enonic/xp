@@ -1,6 +1,6 @@
 module app_ui {
 
-    export class ContextMenuGridPanel extends API_ui_menu.ContextMenu {
+    export class ContextMenuGridPanel extends api_ui_menu.ContextMenu {
 
         constructor() {
             super();

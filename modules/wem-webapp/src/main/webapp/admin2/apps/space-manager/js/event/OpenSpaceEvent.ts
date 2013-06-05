@@ -6,7 +6,7 @@ module app_event {
         }
 
         static on(handler:(event:OpenSpaceEvent) => void) {
-            API_event.onEvent('openSpace', handler);
+            api_event.onEvent('openSpace', handler);
         }
     }
 

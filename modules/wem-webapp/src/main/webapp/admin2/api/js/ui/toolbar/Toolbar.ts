@@ -1,6 +1,6 @@
-module API_ui_toolbar {
+module api_ui_toolbar {
 
-    export class Toolbar extends API_ui.Component {
+    export class Toolbar extends api_ui.Component {
 
         ext;
 
@@ -20,7 +20,7 @@ module API_ui_toolbar {
             });
         }
 
-        addAction(action:API_action.Action) {
+        addAction(action:api_action.Action) {
             var button:Button = this.doAddAction(action);
             this.appendChild(button);
         }
@@ -30,7 +30,7 @@ module API_ui_toolbar {
             this.components.push(spacer);
         }
 
-        private doAddAction(action:API_action.Action):Button {
+        private doAddAction(action:api_action.Action):Button {
             var button:Button = new Button(action);
             if (this.hasGreedySpacer()) {
                 button.setFloatRight(true);
@@ -51,11 +51,11 @@ module API_ui_toolbar {
     }
 
 
-    class Button extends API_ui.Component {
+    class Button extends api_ui.Component {
 
-        private action:API_action.Action;
+        private action:api_action.Action;
 
-        constructor(action:API_action.Action) {
+        constructor(action:api_action.Action) {
             super("button", "button");
             this.action = action;
             this.getEl().setInnerHtml(this.action.getLabel());
@@ -64,7 +64,7 @@ module API_ui_toolbar {
             });
             this.setEnable(action.isEnabled());
 
-            action.addPropertyChangeListener((action:API_action.Action) => {
+            action.addPropertyChangeListener((action:api_action.Action) => {
                 this.setEnable(action.isEnabled());
             });
         }

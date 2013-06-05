@@ -1,4 +1,4 @@
-module API_action {
+module api_action {
     class Action {
         private label;
         private enabled;
@@ -14,7 +14,7 @@ module API_action {
         public addPropertyChangeListener(listener: (action: Action) => void): void;
     }
 }
-module API_content_data {
+module api_content_data {
     class DataId {
         private name;
         private arrayIndex;
@@ -26,7 +26,7 @@ module API_content_data {
         static from(str: string): DataId;
     }
 }
-module API_content_data {
+module api_content_data {
     class Data {
         private name;
         private arrayIndex;
@@ -40,7 +40,7 @@ module API_content_data {
         public getArrayIndex(): number;
     }
 }
-module API_content_data {
+module api_content_data {
     class Property extends Data {
         private value;
         private type;
@@ -51,7 +51,7 @@ module API_content_data {
         public setValue(value: any): void;
     }
 }
-module API_content_data {
+module api_content_data {
     class DataSet extends Data {
         private dataById;
         constructor(name: string);

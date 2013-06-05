@@ -1,4 +1,4 @@
-module API_ui_menu{
+module api_ui_menu{
 
     export class ActionMenu {
 
@@ -6,7 +6,7 @@ module API_ui_menu{
 
         //private buttons:Button[] = [];
 
-        constructor(actions:API_action.Action[]) {
+        constructor(actions:api_action.Action[]) {
 
             for (var i in actions) {
                 this.addAction(actions[i]);
@@ -15,7 +15,7 @@ module API_ui_menu{
             //this.ext = new Ext.Component;
         }
 
-        private addAction(action:API_action.Action) {
+        private addAction(action:api_action.Action) {
 
             //var button = new Button(action);
             //this.buttons.push(button);

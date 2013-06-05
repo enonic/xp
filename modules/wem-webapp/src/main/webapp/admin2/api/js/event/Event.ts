@@ -1,4 +1,4 @@
-module API_event {
+module api_event {
 
     export class Event {
         private name:string;
@@ -15,5 +15,4 @@ module API_event {
             fireEvent(this);
         }
     }
-
 }

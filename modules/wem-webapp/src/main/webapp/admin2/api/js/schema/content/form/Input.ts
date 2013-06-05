@@ -1,4 +1,4 @@
-module API_schema_content_form{
+module api_schema_content_form{
 
     export class Input extends FormItem {
 

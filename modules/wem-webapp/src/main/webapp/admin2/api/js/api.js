@@ -1,16 +1,13 @@
-var API;
-(function (API) {
-    (function (util) {
-        util.baseUri = '../../..';
-        function getAbsoluteUri(uri) {
-            return this.baseUri + '/' + uri;
-        }
-        util.getAbsoluteUri = getAbsoluteUri;
-    })(API.util || (API.util = {}));
-    var util = API.util;
-})(API || (API = {}));
-var API_event;
-(function (API_event) {
+var api_util;
+(function (api_util) {
+    api_util.baseUri = '../../..';
+    function getAbsoluteUri(uri) {
+        return this.baseUri + '/' + uri;
+    }
+    api_util.getAbsoluteUri = getAbsoluteUri;
+})(api_util || (api_util = {}));
+var api_event;
+(function (api_event) {
     var Event = (function () {
         function Event(name) {
             this.name = name;
@@ -19,27 +16,27 @@ var API_event;
             return this.name;
         };
         Event.prototype.fire = function () {
-            API_event.fireEvent(this);
+            api_event.fireEvent(this);
         };
         return Event;
     })();
-    API_event.Event = Event;    
-})(API_event || (API_event = {}));
-var API_event;
-(function (API_event) {
+    api_event.Event = Event;    
+})(api_event || (api_event = {}));
+var api_event;
+(function (api_event) {
     var bus = new Ext.util.Observable({
     });
     function onEvent(name, handler) {
         bus.on(name, handler);
     }
-    API_event.onEvent = onEvent;
+    api_event.onEvent = onEvent;
     function fireEvent(event) {
         bus.fireEvent(event.getName(), event);
     }
-    API_event.fireEvent = fireEvent;
-})(API_event || (API_event = {}));
-var API_action;
-(function (API_action) {
+    api_event.fireEvent = fireEvent;
+})(api_event || (api_event = {}));
+var api_action;
+(function (api_action) {
     var Action = (function () {
         function Action(label) {
             this.enabled = true;
@@ -84,10 +81,10 @@ var API_action;
         };
         return Action;
     })();
-    API_action.Action = Action;    
-})(API_action || (API_action = {}));
-var API_ui;
-(function (API_ui) {
+    api_action.Action = Action;    
+})(api_action || (api_action = {}));
+var api_ui;
+(function (api_ui) {
     var HTMLElementHelper = (function () {
         function HTMLElementHelper(element) {
             this.el = element;
@@ -122,13 +119,13 @@ var API_ui;
         };
         return HTMLElementHelper;
     })();
-    API_ui.HTMLElementHelper = HTMLElementHelper;    
-})(API_ui || (API_ui = {}));
-var API_ui;
-(function (API_ui) {
+    api_ui.HTMLElementHelper = HTMLElementHelper;    
+})(api_ui || (api_ui = {}));
+var api_ui;
+(function (api_ui) {
     var Component = (function () {
         function Component(name, elementName) {
-            this.el = API_ui.HTMLElementHelper.fromName(elementName);
+            this.el = api_ui.HTMLElementHelper.fromName(elementName);
             this.id = name + '-' + (++Component.constructorCounter);
             this.el.setId(this.id);
         }
@@ -147,15 +144,15 @@ var API_ui;
         };
         return Component;
     })();
-    API_ui.Component = Component;    
-})(API_ui || (API_ui = {}));
+    api_ui.Component = Component;    
+})(api_ui || (api_ui = {}));
 var __extends = this.__extends || function (d, b) {
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var API_ui_toolbar;
-(function (API_ui_toolbar) {
+var api_ui_toolbar;
+(function (api_ui_toolbar) {
     var Toolbar = (function (_super) {
         __extends(Toolbar, _super);
         function Toolbar() {
@@ -197,8 +194,8 @@ var API_ui_toolbar;
             return false;
         };
         return Toolbar;
-    })(API_ui.Component);
-    API_ui_toolbar.Toolbar = Toolbar;    
+    })(api_ui.Component);
+    api_ui_toolbar.Toolbar = Toolbar;    
     var Button = (function (_super) {
         __extends(Button, _super);
         function Button(action) {
@@ -223,15 +220,15 @@ var API_ui_toolbar;
             }
         };
         return Button;
-    })(API_ui.Component);    
+    })(api_ui.Component);    
     var ToolbarGreedySpacer = (function () {
         function ToolbarGreedySpacer() {
         }
         return ToolbarGreedySpacer;
     })();    
-})(API_ui_toolbar || (API_ui_toolbar = {}));
-var API_ui_menu;
-(function (API_ui_menu) {
+})(api_ui_toolbar || (api_ui_toolbar = {}));
+var api_ui_menu;
+(function (api_ui_menu) {
     var ContextMenu = (function (_super) {
         __extends(ContextMenu, _super);
         function ContextMenu() {
@@ -262,8 +259,8 @@ var API_ui_menu;
             this.ext.showAt(x, y);
         };
         return ContextMenu;
-    })(API_ui.Component);
-    API_ui_menu.ContextMenu = ContextMenu;    
+    })(api_ui.Component);
+    api_ui_menu.ContextMenu = ContextMenu;    
     var MenuItem = (function (_super) {
         __extends(MenuItem, _super);
         function MenuItem(parent, action) {
@@ -285,8 +282,8 @@ var API_ui_menu;
             this.getEl().setDisabled(!value);
         };
         return MenuItem;
-    })(API_ui.Component);    
-})(API_ui_menu || (API_ui_menu = {}));
+    })(api_ui.Component);    
+})(api_ui_menu || (api_ui_menu = {}));
 var API;
 (function (API) {
     (function (notify) {
@@ -555,8 +552,8 @@ var API;
     })(API.notify || (API.notify = {}));
     var notify = API.notify;
 })(API || (API = {}));
-var API_content_data;
-(function (API_content_data) {
+var api_content_data;
+(function (api_content_data) {
     var DataId = (function () {
         function DataId(name, arrayIndex) {
             this.name = name;
@@ -591,10 +588,10 @@ var API_content_data;
         };
         return DataId;
     })();
-    API_content_data.DataId = DataId;    
-})(API_content_data || (API_content_data = {}));
-var API_content_data;
-(function (API_content_data) {
+    api_content_data.DataId = DataId;    
+})(api_content_data || (api_content_data = {}));
+var api_content_data;
+(function (api_content_data) {
     var Data = (function () {
         function Data(name) {
             this.name = name;
@@ -606,7 +603,7 @@ var API_content_data;
             this.parent = parent;
         };
         Data.prototype.getId = function () {
-            return new API_content_data.DataId(this.name, this.arrayIndex);
+            return new api_content_data.DataId(this.name, this.arrayIndex);
         };
         Data.prototype.getName = function () {
             return this.name;
@@ -619,10 +616,10 @@ var API_content_data;
         };
         return Data;
     })();
-    API_content_data.Data = Data;    
-})(API_content_data || (API_content_data = {}));
-var API_content_data;
-(function (API_content_data) {
+    api_content_data.Data = Data;    
+})(api_content_data || (api_content_data = {}));
+var api_content_data;
+(function (api_content_data) {
     var DataSet = (function (_super) {
         __extends(DataSet, _super);
         function DataSet(name) {
@@ -644,29 +641,29 @@ var API_content_data;
             data.setParent(this);
             var index = this.nameCount(data.getName());
             data.setArrayIndex(index);
-            var dataId = new API_content_data.DataId(data.getName(), index);
+            var dataId = new api_content_data.DataId(data.getName(), index);
             this.dataById[dataId.toString()] = data;
         };
         DataSet.prototype.getData = function (dataId) {
-            return this.dataById[API_content_data.DataId.from(dataId).toString()];
+            return this.dataById[api_content_data.DataId.from(dataId).toString()];
         };
         return DataSet;
-    })(API_content_data.Data);
-    API_content_data.DataSet = DataSet;    
-})(API_content_data || (API_content_data = {}));
-var API_content_data;
-(function (API_content_data) {
+    })(api_content_data.Data);
+    api_content_data.DataSet = DataSet;    
+})(api_content_data || (api_content_data = {}));
+var api_content_data;
+(function (api_content_data) {
     var ContentData = (function (_super) {
         __extends(ContentData, _super);
         function ContentData() {
                 _super.call(this, "");
         }
         return ContentData;
-    })(API_content_data.DataSet);
-    API_content_data.ContentData = ContentData;    
-})(API_content_data || (API_content_data = {}));
-var API_content_data;
-(function (API_content_data) {
+    })(api_content_data.DataSet);
+    api_content_data.ContentData = ContentData;    
+})(api_content_data || (api_content_data = {}));
+var api_content_data;
+(function (api_content_data) {
     var Property = (function (_super) {
         __extends(Property, _super);
         function Property(name, value, type) {
@@ -687,11 +684,11 @@ var API_content_data;
             this.value = value;
         };
         return Property;
-    })(API_content_data.Data);
-    API_content_data.Property = Property;    
-})(API_content_data || (API_content_data = {}));
-var API_schema_content_form;
-(function (API_schema_content_form) {
+    })(api_content_data.Data);
+    api_content_data.Property = Property;    
+})(api_content_data || (api_content_data = {}));
+var api_schema_content_form;
+(function (api_schema_content_form) {
     var FormItem = (function () {
         function FormItem(name) {
             this.name = name;
@@ -701,10 +698,10 @@ var API_schema_content_form;
         };
         return FormItem;
     })();
-    API_schema_content_form.FormItem = FormItem;    
-})(API_schema_content_form || (API_schema_content_form = {}));
-var API_schema_content_form;
-(function (API_schema_content_form) {
+    api_schema_content_form.FormItem = FormItem;    
+})(api_schema_content_form || (api_schema_content_form = {}));
+var api_schema_content_form;
+(function (api_schema_content_form) {
     var InputType = (function () {
         function InputType(json) {
             this.name = json.name;
@@ -714,18 +711,18 @@ var API_schema_content_form;
         };
         return InputType;
     })();
-    API_schema_content_form.InputType = InputType;    
-})(API_schema_content_form || (API_schema_content_form = {}));
-var API_schema_content_form;
-(function (API_schema_content_form) {
+    api_schema_content_form.InputType = InputType;    
+})(api_schema_content_form || (api_schema_content_form = {}));
+var api_schema_content_form;
+(function (api_schema_content_form) {
     var Input = (function (_super) {
         __extends(Input, _super);
         function Input(json) {
                 _super.call(this, json.name);
-            this.inputType = new API_schema_content_form.InputType(json.type);
+            this.inputType = new api_schema_content_form.InputType(json.type);
             this.label = json.label;
             this.immutable = json.immutable;
-            this.occurrences = new API_schema_content_form.Occurrences(json.occurrences);
+            this.occurrences = new api_schema_content_form.Occurrences(json.occurrences);
             this.indexed = json.indexed;
             this.customText = json.customText;
             this.validationRegex = json.validationRegexp;
@@ -753,11 +750,11 @@ var API_schema_content_form;
             return this.helpText;
         };
         return Input;
-    })(API_schema_content_form.FormItem);
-    API_schema_content_form.Input = Input;    
-})(API_schema_content_form || (API_schema_content_form = {}));
-var API_schema_content_form;
-(function (API_schema_content_form) {
+    })(api_schema_content_form.FormItem);
+    api_schema_content_form.Input = Input;    
+})(api_schema_content_form || (api_schema_content_form = {}));
+var api_schema_content_form;
+(function (api_schema_content_form) {
     var Occurrences = (function () {
         function Occurrences(json) {
             this.minimum = json.minimum;
@@ -765,8 +762,8 @@ var API_schema_content_form;
         }
         return Occurrences;
     })();
-    API_schema_content_form.Occurrences = Occurrences;    
-})(API_schema_content_form || (API_schema_content_form = {}));
+    api_schema_content_form.Occurrences = Occurrences;    
+})(api_schema_content_form || (api_schema_content_form = {}));
 Ext.Loader.setConfig({
     enabled: false,
     disableCaching: false

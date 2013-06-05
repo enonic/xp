@@ -1,4 +1,4 @@
-module API_action {
+module api_action {
 
     export class Action {
 

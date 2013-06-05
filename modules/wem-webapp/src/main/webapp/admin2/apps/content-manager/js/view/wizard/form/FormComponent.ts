@@ -12,8 +12,8 @@ module admin.ui {
             this.ext = panel;
         }
 
-        getContentData():API_content_data.ContentData {
-            var contentData = new API_content_data.ContentData();
+        getContentData():api_content_data.ContentData {
+            var contentData = new api_content_data.ContentData();
             return contentData;
         }
     }

@@ -8,7 +8,7 @@ Ext.define('Admin.lib.RemoteService', {
 
     init: function () {
         var config = {
-            "url": API.util.getAbsoluteUri("admin/rest/jsonrpc"),
+            "url": api_util.getAbsoluteUri("admin/rest/jsonrpc"),
             "type": "jsonrpc",
             "namespace": "Admin.lib.RemoteService",
             "methods": [

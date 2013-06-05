@@ -1,5 +1,5 @@
-var API_action;
-(function (API_action) {
+var api_action;
+(function (api_action) {
     var Action = (function () {
         function Action(label) {
             this.enabled = true;
@@ -44,14 +44,14 @@ var API_action;
         };
         return Action;
     })();
-    API_action.Action = Action;    
-})(API_action || (API_action = {}));
+    api_action.Action = Action;    
+})(api_action || (api_action = {}));
 TestCase("Action", {
     "test getLabel": function () {
-        assertEquals("My action", new API_action.Action('My action').getLabel());
+        assertEquals("My action", new api_action.Action('My action').getLabel());
     },
     "test given setEnabled invoked then addPropertyChangeListener is invoked and action isEnabled is correct": function () {
-        var action = new API_action.Action('My action');
+        var action = new api_action.Action('My action');
         action.setEnabled(true);
         assertEquals(true, action.isEnabled());
         action.addPropertyChangeListener(function (action) {
@@ -60,15 +60,15 @@ TestCase("Action", {
         action.setEnabled(false);
     },
     "test given setLabel invoked then addPropertyChangeListener is invoked and action getLabel is correct": function () {
-        var action = new API_action.Action('My action');
+        var action = new api_action.Action('My action');
         action.addPropertyChangeListener(function (action) {
             assertEquals("Changed label", action.getLabel());
         });
         action.setLabel("Changed label");
     }
 });
-var API_content_data;
-(function (API_content_data) {
+var api_content_data;
+(function (api_content_data) {
     var DataId = (function () {
         function DataId(name, arrayIndex) {
             this.name = name;
@@ -103,30 +103,30 @@ var API_content_data;
         };
         return DataId;
     })();
-    API_content_data.DataId = DataId;    
-})(API_content_data || (API_content_data = {}));
+    api_content_data.DataId = DataId;    
+})(api_content_data || (api_content_data = {}));
 TestCase("DataId", {
     "test getName": function () {
-        assertEquals("myName", new API_content_data.DataId('myName', 0));
+        assertEquals("myName", new api_content_data.DataId('myName', 0));
     },
     "test getArrayIndex": function () {
-        assertEquals(0, new API_content_data.DataId('myName', 0).getArrayIndex());
-        assertEquals(1, new API_content_data.DataId('myName', 1).getArrayIndex());
-        assertEquals(999, new API_content_data.DataId('myName', 999).getArrayIndex());
+        assertEquals(0, new api_content_data.DataId('myName', 0).getArrayIndex());
+        assertEquals(1, new api_content_data.DataId('myName', 1).getArrayIndex());
+        assertEquals(999, new api_content_data.DataId('myName', 999).getArrayIndex());
     },
     "test toString": function () {
-        assertEquals("myName", new API_content_data.DataId('myName', 0).toString());
-        assertEquals("myName[1]", new API_content_data.DataId('myName', 1).toString());
-        assertEquals("myName[999]", new API_content_data.DataId('myName', 999).toString());
+        assertEquals("myName", new api_content_data.DataId('myName', 0).toString());
+        assertEquals("myName[1]", new api_content_data.DataId('myName', 1).toString());
+        assertEquals("myName[999]", new api_content_data.DataId('myName', 999).toString());
     },
     "test toString when created using from": function () {
-        assertEquals("myName", API_content_data.DataId.from('myName[0]').toString());
-        assertEquals("myName[1]", API_content_data.DataId.from('myName[1]').toString());
-        assertEquals("myName[999]", API_content_data.DataId.from('myName[999]').toString());
+        assertEquals("myName", api_content_data.DataId.from('myName[0]').toString());
+        assertEquals("myName[1]", api_content_data.DataId.from('myName[1]').toString());
+        assertEquals("myName[999]", api_content_data.DataId.from('myName[999]').toString());
     }
 });
-var API_content_data;
-(function (API_content_data) {
+var api_content_data;
+(function (api_content_data) {
     var Data = (function () {
         function Data(name) {
             this.name = name;
@@ -138,7 +138,7 @@ var API_content_data;
             this.parent = parent;
         };
         Data.prototype.getId = function () {
-            return new API_content_data.DataId(this.name, this.arrayIndex);
+            return new api_content_data.DataId(this.name, this.arrayIndex);
         };
         Data.prototype.getName = function () {
             return this.name;
@@ -151,15 +151,15 @@ var API_content_data;
         };
         return Data;
     })();
-    API_content_data.Data = Data;    
-})(API_content_data || (API_content_data = {}));
+    api_content_data.Data = Data;    
+})(api_content_data || (api_content_data = {}));
 var __extends = this.__extends || function (d, b) {
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var API_content_data;
-(function (API_content_data) {
+var api_content_data;
+(function (api_content_data) {
     var Property = (function (_super) {
         __extends(Property, _super);
         function Property(name, value, type) {
@@ -180,11 +180,11 @@ var API_content_data;
             this.value = value;
         };
         return Property;
-    })(API_content_data.Data);
-    API_content_data.Property = Property;    
-})(API_content_data || (API_content_data = {}));
-var API_content_data;
-(function (API_content_data) {
+    })(api_content_data.Data);
+    api_content_data.Property = Property;    
+})(api_content_data || (api_content_data = {}));
+var api_content_data;
+(function (api_content_data) {
     var DataSet = (function (_super) {
         __extends(DataSet, _super);
         function DataSet(name) {
@@ -206,63 +206,63 @@ var API_content_data;
             data.setParent(this);
             var index = this.nameCount(data.getName());
             data.setArrayIndex(index);
-            var dataId = new API_content_data.DataId(data.getName(), index);
+            var dataId = new api_content_data.DataId(data.getName(), index);
             this.dataById[dataId.toString()] = data;
         };
         DataSet.prototype.getData = function (dataId) {
-            return this.dataById[API_content_data.DataId.from(dataId).toString()];
+            return this.dataById[api_content_data.DataId.from(dataId).toString()];
         };
         return DataSet;
-    })(API_content_data.Data);
-    API_content_data.DataSet = DataSet;    
-})(API_content_data || (API_content_data = {}));
+    })(api_content_data.Data);
+    api_content_data.DataSet = DataSet;    
+})(api_content_data || (api_content_data = {}));
 TestCase("DataSet", {
     "test given a name when getName() then given name is returned": function () {
-        var dataSet = new API_content_data.DataSet('mySet');
+        var dataSet = new api_content_data.DataSet('mySet');
         assertEquals("mySet", dataSet.getName());
     },
     "test given an existing dataId when getData() then given Data is returned": function () {
-        var dataSet = new API_content_data.DataSet('mySet');
-        dataSet.addData(new API_content_data.Property('myProp', 'A value', 'String'));
-        dataSet.addData(new API_content_data.Property('myOtherProp', 'A value', 'String'));
+        var dataSet = new api_content_data.DataSet('mySet');
+        dataSet.addData(new api_content_data.Property('myProp', 'A value', 'String'));
+        dataSet.addData(new api_content_data.Property('myOtherProp', 'A value', 'String'));
         assertEquals("myProp", dataSet.getData('myProp').getName());
         assertEquals("myOtherProp", dataSet.getData('myOtherProp').getName());
     },
     "test given a dataId not existing when getData() then no Data is returned": function () {
-        var dataSet = new API_content_data.DataSet('mySet');
-        dataSet.addData(new API_content_data.Property('myProp', 'A value', 'String'));
+        var dataSet = new api_content_data.DataSet('mySet');
+        dataSet.addData(new api_content_data.Property('myProp', 'A value', 'String'));
         assertEquals(null, dataSet.getData('myNonExistingProp'));
     },
     "test given a Data added to a DataSet when getParent() then the DataSet added to is returned": function () {
-        var dataSet = new API_content_data.DataSet('mySet');
-        dataSet.addData(new API_content_data.Property('myProp', 'A value', 'String'));
+        var dataSet = new api_content_data.DataSet('mySet');
+        dataSet.addData(new api_content_data.Property('myProp', 'A value', 'String'));
         var data = dataSet.getData('myProp');
         assertEquals(dataSet, data.getParent());
     },
     "test given two data with same name when nameCount then two is returned": function () {
-        var dataSet = new API_content_data.DataSet('mySet');
-        dataSet.addData(new API_content_data.Property('myProp', 'A', 'String'));
-        dataSet.addData(new API_content_data.Property('myProp', 'B', 'String'));
+        var dataSet = new api_content_data.DataSet('mySet');
+        dataSet.addData(new api_content_data.Property('myProp', 'A', 'String'));
+        dataSet.addData(new api_content_data.Property('myProp', 'B', 'String'));
         assertEquals(2, dataSet.nameCount('myProp'));
     },
     "test given Data with arrayIndex one when getData equal DataId then Data with arrayIndex one is returned": function () {
-        var dataSet = new API_content_data.DataSet('mySet');
-        dataSet.addData(new API_content_data.Property('myProp', 'A', 'String'));
-        dataSet.addData(new API_content_data.Property('myProp', 'B', 'String'));
+        var dataSet = new api_content_data.DataSet('mySet');
+        dataSet.addData(new api_content_data.Property('myProp', 'A', 'String'));
+        dataSet.addData(new api_content_data.Property('myProp', 'B', 'String'));
         assertEquals("myProp[1]", dataSet.getData('myProp[1]').getId().toString());
     }
 });
 TestCase("Property", {
     "test given a name when getName() then given name is returned": function () {
-        var property = new API_content_data.Property('myProp', 'A value', 'String');
+        var property = new api_content_data.Property('myProp', 'A value', 'String');
         assertEquals("myProp", property.getName());
     },
     "test given a value when getValue() then given value is returned": function () {
-        var property = new API_content_data.Property('myProp', 'A value', 'String');
+        var property = new api_content_data.Property('myProp', 'A value', 'String');
         assertEquals("A value", property.getValue());
     },
     "test given a type when getType() then given type is returned": function () {
-        var property = new API_content_data.Property('myProp', 'A value', 'String');
+        var property = new api_content_data.Property('myProp', 'A value', 'String');
         assertEquals("String", property.getType());
     }
 });

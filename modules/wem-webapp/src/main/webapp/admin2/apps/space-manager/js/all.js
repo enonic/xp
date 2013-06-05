@@ -42,7 +42,7 @@ Ext.define('Admin.lib.RemoteService', {
     },
     init: function () {
         var config = {
-            "url": API.util.getAbsoluteUri("admin/rest/jsonrpc"),
+            "url": api_util.getAbsoluteUri("admin/rest/jsonrpc"),
             "type": "jsonrpc",
             "namespace": "Admin.lib.RemoteService",
             "methods": [
@@ -252,10 +252,10 @@ var app_event;
                 _super.call(this, 'deleted');
         }
         DeletedEvent.on = function on(handler) {
-            API_event.onEvent('deleted', handler);
+            api_event.onEvent('deleted', handler);
         };
         return DeletedEvent;
-    })(API_event.Event);
+    })(api_event.Event);
     app_event.DeletedEvent = DeletedEvent;    
 })(app_event || (app_event = {}));
 var app_event;
@@ -270,7 +270,7 @@ var app_event;
             return this.model;
         };
         return SpaceModelEvent;
-    })(API_event.Event);
+    })(api_event.Event);
     app_event.SpaceModelEvent = SpaceModelEvent;    
 })(app_event || (app_event = {}));
 var app_event;
@@ -281,7 +281,7 @@ var app_event;
                 _super.call(this, 'deletePrompt', model);
         }
         DeletePromptEvent.on = function on(handler) {
-            API_event.onEvent('deletePrompt', handler);
+            api_event.onEvent('deletePrompt', handler);
         };
         return DeletePromptEvent;
     })(app_event.SpaceModelEvent);
@@ -295,7 +295,7 @@ var app_event;
                 _super.call(this, 'gridChange', model);
         }
         GridSelectionChangeEvent.on = function on(handler) {
-            API_event.onEvent('gridChange', handler);
+            api_event.onEvent('gridChange', handler);
         };
         return GridSelectionChangeEvent;
     })(app_event.SpaceModelEvent);
@@ -317,10 +317,10 @@ var app_event;
             return this.y;
         };
         ShowContextMenuEvent.on = function on(handler) {
-            API_event.onEvent('showContextMenu', handler);
+            api_event.onEvent('showContextMenu', handler);
         };
         return ShowContextMenuEvent;
-    })(API_event.Event);
+    })(api_event.Event);
     app_event.ShowContextMenuEvent = ShowContextMenuEvent;    
 })(app_event || (app_event = {}));
 var app_event;
@@ -331,10 +331,10 @@ var app_event;
                 _super.call(this, 'newSpace');
         }
         NewSpaceEvent.on = function on(handler) {
-            API_event.onEvent('newSpace', handler);
+            api_event.onEvent('newSpace', handler);
         };
         return NewSpaceEvent;
-    })(API_event.Event);
+    })(api_event.Event);
     app_event.NewSpaceEvent = NewSpaceEvent;    
 })(app_event || (app_event = {}));
 var app_event;
@@ -345,7 +345,7 @@ var app_event;
                 _super.call(this, 'openSpace', model);
         }
         OpenSpaceEvent.on = function on(handler) {
-            API_event.onEvent('openSpace', handler);
+            api_event.onEvent('openSpace', handler);
         };
         return OpenSpaceEvent;
     })(app_event.SpaceModelEvent);
@@ -359,7 +359,7 @@ var app_event;
                 _super.call(this, 'editSpaceEvent', model);
         }
         EditSpaceEvent.on = function on(handler) {
-            API_event.onEvent('editSpaceEvent', handler);
+            api_event.onEvent('editSpaceEvent', handler);
         };
         return EditSpaceEvent;
     })(app_event.SpaceModelEvent);
@@ -373,10 +373,10 @@ var app_event;
                 _super.call(this, 'saveSpace');
         }
         SaveSpaceEvent.on = function on(handler) {
-            API_event.onEvent('saveSpace', handler);
+            api_event.onEvent('saveSpace', handler);
         };
         return SaveSpaceEvent;
-    })(API_event.Event);
+    })(api_event.Event);
     app_event.SaveSpaceEvent = SaveSpaceEvent;    
 })(app_event || (app_event = {}));
 var app;
@@ -412,7 +412,7 @@ var app;
             });
         }
         return NewSpaceAction;
-    })(API_action.Action);
+    })(api_action.Action);
     app.NewSpaceAction = NewSpaceAction;    
     var OpenSpaceAction = (function (_super) {
         __extends(OpenSpaceAction, _super);
@@ -424,7 +424,7 @@ var app;
             });
         }
         return OpenSpaceAction;
-    })(API_action.Action);
+    })(api_action.Action);
     app.OpenSpaceAction = OpenSpaceAction;    
     var EditSpaceAction = (function (_super) {
         __extends(EditSpaceAction, _super);
@@ -436,7 +436,7 @@ var app;
             });
         }
         return EditSpaceAction;
-    })(API_action.Action);
+    })(api_action.Action);
     app.EditSpaceAction = EditSpaceAction;    
     var DeleteSpaceAction = (function (_super) {
         __extends(DeleteSpaceAction, _super);
@@ -448,7 +448,7 @@ var app;
             });
         }
         return DeleteSpaceAction;
-    })(API_action.Action);
+    })(api_action.Action);
     app.DeleteSpaceAction = DeleteSpaceAction;    
     var SpaceActions = (function () {
         function SpaceActions() { }
@@ -509,7 +509,7 @@ var app_wizard;
             });
         }
         return SaveSpaceAction;
-    })(API_action.Action);
+    })(api_action.Action);
     app_wizard.SaveSpaceAction = SaveSpaceAction;    
     var DuplicateSpaceAction = (function (_super) {
         __extends(DuplicateSpaceAction, _super);
@@ -519,7 +519,7 @@ var app_wizard;
             });
         }
         return DuplicateSpaceAction;
-    })(API_action.Action);
+    })(api_action.Action);
     app_wizard.DuplicateSpaceAction = DuplicateSpaceAction;    
     var DeleteSpaceAction = (function (_super) {
         __extends(DeleteSpaceAction, _super);
@@ -530,7 +530,7 @@ var app_wizard;
             });
         }
         return DeleteSpaceAction;
-    })(API_action.Action);
+    })(api_action.Action);
     app_wizard.DeleteSpaceAction = DeleteSpaceAction;    
     var CloseSpaceAction = (function (_super) {
         __extends(CloseSpaceAction, _super);
@@ -540,7 +540,7 @@ var app_wizard;
             });
         }
         return CloseSpaceAction;
-    })(API_action.Action);
+    })(api_action.Action);
     app_wizard.CloseSpaceAction = CloseSpaceAction;    
     var SpaceWizardActions = (function () {
         function SpaceWizardActions() {
@@ -597,7 +597,7 @@ var app_wizard;
             _super.prototype.addAction.call(this, actions.DELETE_SPACE);
         }
         return SpaceWizardToolbar2;
-    })(API_ui_toolbar.Toolbar);
+    })(api_ui_toolbar.Toolbar);
     app_wizard.SpaceWizardToolbar2 = SpaceWizardToolbar2;    
 })(app_wizard || (app_wizard = {}));
 Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
@@ -3272,7 +3272,7 @@ var app_ui;
             _super.prototype.addAction.call(this, app.SpaceActions.DELETE_SPACE);
         }
         return ContextMenuGridPanel;
-    })(API_ui_menu.ContextMenu);
+    })(api_ui_menu.ContextMenu);
     app_ui.ContextMenuGridPanel = ContextMenuGridPanel;    
 })(app_ui || (app_ui = {}));
 var app_ui_wizard;
@@ -4083,9 +4083,9 @@ var app_ui;
                     pack: 'end'
                 }
             });
-            var adminImageButton = new app_ui.AdminImageButton(API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'), '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' + '<div class="content">' + '<div class="column"><img src="{photoUrl}"/>' + '<button class="x-btn-red-small">Log Out</button>' + '</div>' + '<div class="column">' + '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' + '<a href="#">Change User</a>' + '</div>' + '</div>', {
+            var adminImageButton = new app_ui.AdminImageButton(api_util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'), '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' + '<div class="content">' + '<div class="column"><img src="{photoUrl}"/>' + '<button class="x-btn-red-small">Log Out</button>' + '</div>' + '<div class="column">' + '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' + '<a href="#">Change User</a>' + '</div>' + '</div>', {
                 userName: "Thomas Lund Sigdestad",
-                photoUrl: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                photoUrl: api_util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
                 qName: 'system/tsi'
             });
             this.rightContainer.add(adminImageButton.ext);
@@ -4729,7 +4729,7 @@ var app_ui;
             _super.prototype.addAction.call(this, app.SpaceActions.DELETE_SPACE);
         }
         return BrowseToolbar;
-    })(API_ui_toolbar.Toolbar);
+    })(api_ui_toolbar.Toolbar);
     app_ui.BrowseToolbar = BrowseToolbar;    
 })(app_ui || (app_ui = {}));
 Ext.define('Admin.controller.Controller', {

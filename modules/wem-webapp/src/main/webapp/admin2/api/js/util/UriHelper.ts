@@ -1,4 +1,4 @@
-module API.util {
+module api_util {
 
     /**
      * Base URI for administration console. Set from the initializing html page.

@@ -1,6 +1,6 @@
 module app {
 
-    export class NewSpaceAction extends API_action.Action {
+    export class NewSpaceAction extends api_action.Action {
 
         constructor() {
             super("New");
@@ -10,7 +10,7 @@ module app {
         }
     }
 
-    export class OpenSpaceAction extends API_action.Action {
+    export class OpenSpaceAction extends api_action.Action {
 
         constructor() {
             super("Open");
@@ -21,7 +21,7 @@ module app {
         }
     }
 
-    export class EditSpaceAction extends API_action.Action {
+    export class EditSpaceAction extends api_action.Action {
 
         constructor() {
             super("Edit");
@@ -32,7 +32,7 @@ module app {
         }
     }
 
-    export class DeleteSpaceAction extends API_action.Action {
+    export class DeleteSpaceAction extends api_action.Action {
 
         constructor() {
             super("Delete");
@@ -45,10 +45,10 @@ module app {
 
     export class SpaceActions {
 
-        static NEW_SPACE:API_action.Action = new NewSpaceAction();
-        static OPEN_SPACE:API_action.Action = new OpenSpaceAction;
-        static EDIT_SPACE:API_action.Action = new EditSpaceAction();
-        static DELETE_SPACE:API_action.Action = new DeleteSpaceAction();
+        static NEW_SPACE:api_action.Action = new NewSpaceAction();
+        static OPEN_SPACE:api_action.Action = new OpenSpaceAction;
+        static EDIT_SPACE:api_action.Action = new EditSpaceAction();
+        static DELETE_SPACE:api_action.Action = new DeleteSpaceAction();
 
         static init() {
 

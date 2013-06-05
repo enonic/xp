@@ -1,6 +1,6 @@
-module API_ui_menu{
+module api_ui_menu{
 
-    export class ContextMenu extends API_ui.Component {
+    export class ContextMenu extends api_ui.Component {
         ext; //:Ext.Component;
 
         private menuItems:MenuItem[] = [];
@@ -22,12 +22,12 @@ module API_ui_menu{
             this.ext.mixins.floating.constructor.call(this.ext);
         }
 
-        addAction(action:API_action.Action) {
+        addAction(action:api_action.Action) {
             var menuItem = this.createMenuItem(action);
             this.appendChild(menuItem);
         }
 
-        private createMenuItem(action:API_action.Action):MenuItem {
+        private createMenuItem(action:api_action.Action):MenuItem {
             var menuItem = new MenuItem(this, action);
             this.menuItems.push(menuItem);
             return menuItem;
@@ -38,12 +38,12 @@ module API_ui_menu{
         }
     }
 
-    class MenuItem extends API_ui.Component {
+    class MenuItem extends api_ui.Component {
 
-        private menu:API_ui_menu.ContextMenu;
-        private action:API_action.Action;
+        private menu:api_ui_menu.ContextMenu;
+        private action:api_action.Action;
 
-        constructor(parent:API_ui_menu.ContextMenu, action:API_action.Action) {
+        constructor(parent:api_ui_menu.ContextMenu, action:api_action.Action) {
             super("menu-item", "li");
             this.action = action;
             this.menu = parent;
@@ -54,7 +54,7 @@ module API_ui_menu{
             });
             this.setEnable(action.isEnabled());
 
-            action.addPropertyChangeListener((action:API_action.Action) => {
+            action.addPropertyChangeListener((action:api_action.Action) => {
                 this.setEnable(action.isEnabled());
             });
         }

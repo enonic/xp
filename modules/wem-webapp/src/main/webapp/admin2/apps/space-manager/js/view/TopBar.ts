@@ -79,7 +79,7 @@ module app_ui {
                 }
             });
             var adminImageButton = new app_ui.AdminImageButton(
-                API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                api_util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
                 '<div class="title">User</div>' +
                 '<div class="user-name">{userName}</div>' +
                 '<div class="content">' +
@@ -95,7 +95,7 @@ module app_ui {
                 '</div>',
                 {
                     userName: "Thomas Lund Sigdestad",
-                    photoUrl: API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                    photoUrl: api_util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
                     qName: 'system/tsi'
                 }
             );

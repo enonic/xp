@@ -1,4 +1,4 @@
-module API_ui {
+module api_ui {
 
     export class Component {
 
@@ -26,7 +26,7 @@ module API_ui {
             return this.el.getHTMLElement();
         }
 
-        appendChild(child:API_ui.Component) {
+        appendChild(child:api_ui.Component) {
             this.el.appendChild(child.getEl().getHTMLElement());
         }
 

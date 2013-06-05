@@ -3,7 +3,7 @@ module app_wizard {
     /**
      * TODO: The upcoming successor of SpaceWizardToolbar, when the Toolbar code is working....
      */
-    export class SpaceWizardToolbar2 extends API_ui_toolbar.Toolbar {
+    export class SpaceWizardToolbar2 extends api_ui_toolbar.Toolbar {
 
         constructor(actions:app_wizard.SpaceWizardActions) {
             super();

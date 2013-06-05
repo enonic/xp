@@ -6,7 +6,7 @@ module app_event {
         }
 
         static on(handler:(event:EditSpaceEvent) => void) {
-            API_event.onEvent('editSpaceEvent', handler);
+            api_event.onEvent('editSpaceEvent', handler);
         }
     }
 }

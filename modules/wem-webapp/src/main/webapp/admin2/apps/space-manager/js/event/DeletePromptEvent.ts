@@ -6,7 +6,7 @@ module app_event {
         }
 
         static on(handler:(event:DeletePromptEvent) => void) {
-            API_event.onEvent('deletePrompt', handler);
+            api_event.onEvent('deletePrompt', handler);
         }
     }
 }

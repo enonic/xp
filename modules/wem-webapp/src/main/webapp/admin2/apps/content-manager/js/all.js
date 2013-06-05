@@ -42,7 +42,7 @@ Ext.define('Admin.lib.RemoteService', {
     },
     init: function () {
         var config = {
-            "url": API.util.getAbsoluteUri("admin/rest/jsonrpc"),
+            "url": api_util.getAbsoluteUri("admin/rest/jsonrpc"),
             "type": "jsonrpc",
             "namespace": "Admin.lib.RemoteService",
             "methods": [
@@ -634,7 +634,7 @@ var admin;
                 this.ext = panel;
             }
             FormComponent.prototype.getContentData = function () {
-                var contentData = new API_content_data.ContentData();
+                var contentData = new api_content_data.ContentData();
                 return contentData;
             };
             return FormComponent;

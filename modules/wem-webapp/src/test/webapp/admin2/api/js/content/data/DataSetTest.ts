@@ -7,16 +7,16 @@ TestCase("DataSet", {
 
     "test given a name when getName() then given name is returned": function () {
 
-        var dataSet = new API_content_data.DataSet('mySet');
+        var dataSet = new api_content_data.DataSet('mySet');
 
         // exercise & verify
         assertEquals("mySet", dataSet.getName());
     },
     "test given an existing dataId when getData() then given Data is returned": function () {
 
-        var dataSet = new API_content_data.DataSet('mySet');
-        dataSet.addData(new API_content_data.Property('myProp', 'A value', 'String'))
-        dataSet.addData(new API_content_data.Property('myOtherProp', 'A value', 'String'))
+        var dataSet = new api_content_data.DataSet('mySet');
+        dataSet.addData(new api_content_data.Property('myProp', 'A value', 'String'))
+        dataSet.addData(new api_content_data.Property('myOtherProp', 'A value', 'String'))
 
         // exercise & verify
         assertEquals("myProp", dataSet.getData('myProp').getName());
@@ -24,16 +24,16 @@ TestCase("DataSet", {
     },
     "test given a dataId not existing when getData() then no Data is returned": function () {
 
-        var dataSet = new API_content_data.DataSet('mySet');
-        dataSet.addData(new API_content_data.Property('myProp', 'A value', 'String'))
+        var dataSet = new api_content_data.DataSet('mySet');
+        dataSet.addData(new api_content_data.Property('myProp', 'A value', 'String'))
 
         // exercise & verify
         assertEquals(null, dataSet.getData('myNonExistingProp'));
     },
     "test given a Data added to a DataSet when getParent() then the DataSet added to is returned": function () {
 
-        var dataSet = new API_content_data.DataSet('mySet');
-        dataSet.addData(new API_content_data.Property('myProp', 'A value', 'String'))
+        var dataSet = new api_content_data.DataSet('mySet');
+        dataSet.addData(new api_content_data.Property('myProp', 'A value', 'String'))
 
         var data = dataSet.getData('myProp');
 
@@ -42,18 +42,18 @@ TestCase("DataSet", {
     },
     "test given two data with same name when nameCount then two is returned": function () {
 
-        var dataSet = new API_content_data.DataSet('mySet');
-        dataSet.addData(new API_content_data.Property('myProp', 'A', 'String'))
-        dataSet.addData(new API_content_data.Property('myProp', 'B', 'String'))
+        var dataSet = new api_content_data.DataSet('mySet');
+        dataSet.addData(new api_content_data.Property('myProp', 'A', 'String'))
+        dataSet.addData(new api_content_data.Property('myProp', 'B', 'String'))
 
         // exercise & verify
         assertEquals(2, dataSet.nameCount('myProp'));
     },
     "test given Data with arrayIndex one when getData equal DataId then Data with arrayIndex one is returned": function () {
 
-        var dataSet = new API_content_data.DataSet('mySet');
-        dataSet.addData(new API_content_data.Property('myProp', 'A', 'String'))
-        dataSet.addData(new API_content_data.Property('myProp', 'B', 'String'))
+        var dataSet = new api_content_data.DataSet('mySet');
+        dataSet.addData(new api_content_data.Property('myProp', 'A', 'String'))
+        dataSet.addData(new api_content_data.Property('myProp', 'B', 'String'))
 
         assertEquals("myProp[1]", dataSet.getData('myProp[1]').getId().toString());
     }
