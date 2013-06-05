@@ -11,20 +11,26 @@ var API_action;
             return this.label;
         };
         Action.prototype.setLabel = function (value) {
+            if(value !== this.label) {
+            }
             this.label = value;
         };
         Action.prototype.isEnabled = function () {
             return this.enabled;
         };
         Action.prototype.setEnabled = function (value) {
-            this.enabled = value;
-            for(var i in this.propertyChangeListeners) {
-                this.propertyChangeListeners[i](this);
+            if(value !== this.enabled) {
+                this.enabled = value;
+                for(var i in this.propertyChangeListeners) {
+                    this.propertyChangeListeners[i](this);
+                }
             }
         };
         Action.prototype.execute = function () {
-            for(var i in this.executionListeners) {
-                this.executionListeners[i](this);
+            if(this.enabled) {
+                for(var i in this.executionListeners) {
+                    this.executionListeners[i](this);
+                }
             }
         };
         Action.prototype.addExecutionListener = function (listener) {

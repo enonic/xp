@@ -19,7 +19,14 @@ module API_action {
         }
 
         setLabel(value:string) {
-            this.label = value;
+
+            if( value !== this.label ) {
+                this.label = value;
+
+                for (var i in this.propertyChangeListeners) {
+                    this.propertyChangeListeners[i](this);
+                }
+            }
         }
 
         isEnabled():bool {
@@ -28,17 +35,21 @@ module API_action {
 
         setEnabled(value:bool) {
 
-            this.enabled = value;
+            if (value !== this.enabled) {
+                this.enabled = value;
 
-            for (var i in this.propertyChangeListeners) {
-                this.propertyChangeListeners[i](this);
+                for (var i in this.propertyChangeListeners) {
+                    this.propertyChangeListeners[i](this);
+                }
             }
         }
 
         execute():void {
 
-            for (var i in this.executionListeners) {
-                this.executionListeners[i](this);
+            if (this.enabled) {
+                for (var i in this.executionListeners) {
+                    this.executionListeners[i](this);
+                }
             }
         }
 
