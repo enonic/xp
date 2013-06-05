@@ -57,7 +57,7 @@
 ///<reference path='view/TabPanel.ts' />
 ///<reference path='view/FilterPanel.ts' />
 
-///<reference path='view/BrowseToolbar2.ts' />
+///<reference path='view/BrowseToolbar.ts' />
 
 ///<reference path='controller/Controller.ts' />
 ///<reference path='controller/SpaceController.ts' />
@@ -107,7 +107,7 @@ Ext.application({
 
     launch: function () {
 
-        var toolbar = new app_ui.BrowseToolbar2();
+        var toolbar = new app_ui.BrowseToolbar();
 
         var grid = components.gridPanel = new app_ui.TreeGridPanel('center');
 

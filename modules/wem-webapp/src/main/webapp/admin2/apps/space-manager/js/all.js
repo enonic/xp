@@ -4716,7 +4716,7 @@ var app_ui;
         }
         return BrowseToolbar2;
     })(API_ui_toolbar.Toolbar);
-    app_ui.BrowseToolbar2 = BrowseToolbar2;    
+    app_ui.BrowseToolbar = BrowseToolbar2;
 })(app_ui || (app_ui = {}));
 Ext.define('Admin.controller.Controller', {
     extend: 'Ext.app.Controller',
@@ -5189,7 +5189,7 @@ Ext.application({
     ],
     stores: [],
     launch: function () {
-        var toolbar = new app_ui.BrowseToolbar2();
+        var toolbar = new app_ui.BrowseToolbar();
         var grid = components.gridPanel = new app_ui.TreeGridPanel('center');
         var detail = components.detailPanel = new app_ui.SpaceDetailPanel('south');
         var center = new Ext.container.Container({
