@@ -19,11 +19,6 @@ Ext.define('Admin.controller.GridPanelController', {
                     this.editSpace(record);
                 }
             },
-            '#spaceContextMenu *[action=deleteSpace]': {
-                click: function (el, e) {
-                    this.deleteSpace();
-                }
-            },
             '#spaceContextMenu *[action=editSpace]': {
                 click: function (el, e) {
                     this.editSpace();

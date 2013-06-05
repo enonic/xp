@@ -91,11 +91,6 @@ Ext.define('Admin.controller.Controller', {
         });
     },
 
-    deleteSpace: function (space:app_model.SpaceModel) {
-        space = this.validateSpace(space);
-        this.showDeleteSpaceWindow([].concat(space));
-    },
-
     validateSpace: function (space:app_model.SpaceModel) {
         if (!space) {
             var showPanel = this.getSpaceTreeGridPanel();

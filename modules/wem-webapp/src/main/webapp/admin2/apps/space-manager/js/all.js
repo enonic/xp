@@ -4705,18 +4705,18 @@ var app_ui;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
-    var BrowseToolbar2 = (function (_super) {
-        __extends(BrowseToolbar2, _super);
-        function BrowseToolbar2() {
+    var BrowseToolbar = (function (_super) {
+        __extends(BrowseToolbar, _super);
+        function BrowseToolbar() {
                 _super.call(this);
             _super.prototype.addAction.call(this, app.SpaceActions.NEW_SPACE);
             _super.prototype.addAction.call(this, app.SpaceActions.EDIT_SPACE);
             _super.prototype.addAction.call(this, app.SpaceActions.OPEN_SPACE);
             _super.prototype.addAction.call(this, app.SpaceActions.DELETE_SPACE);
         }
-        return BrowseToolbar2;
+        return BrowseToolbar;
     })(API_ui_toolbar.Toolbar);
-    app_ui.BrowseToolbar = BrowseToolbar2;
+    app_ui.BrowseToolbar = BrowseToolbar;    
 })(app_ui || (app_ui = {}));
 Ext.define('Admin.controller.Controller', {
     extend: 'Ext.app.Controller',
