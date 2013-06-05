@@ -12,7 +12,7 @@
 ///<reference path='event/NewSpaceEvent.ts' />
 ///<reference path='event/OpenSpaceEvent.ts' />
 ///<reference path='event/EditSpaceEvent.ts' />
-
+///<reference path='event/SaveSpaceEvent.ts' />
 
 ///<reference path='action/SpaceActions.ts' />
 
@@ -160,7 +160,3 @@ Ext.application({
 });
 
 APP_context.SpaceContext.init();
-
-
-APP_action.SpaceActions.init();
-
