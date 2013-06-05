@@ -1,10 +1,10 @@
 .live-edit-component-search-bar {
-    padding: 10px 15px;
+    padding: 10px 20px;
 }
 
 .live-edit-component {
     display: block;
-    padding: 10px 15px;
+    padding: 10px 20px;
     cursor: hand;
     cursor: grab !important;
     cursor: -moz-grab;

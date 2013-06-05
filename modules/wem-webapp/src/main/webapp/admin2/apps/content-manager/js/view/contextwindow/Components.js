@@ -38,7 +38,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
 
         // fixme: formalize model, store 'n stuff
 
-        Ext.define('LiveEdit.Component', {
+        Ext.define('ContextWindow.Component', {
             extend: 'Ext.data.Model',
             fields: [
                 { name: 'key', type: 'string' },
@@ -49,8 +49,8 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
         });
 
         Ext.create('Ext.data.Store', {
-            id: 'liveEditComponentsStore',
-            model: 'LiveEdit.Component',
+            id: 'ctxWindowComponentStore',
+            model: 'ContextWindow.Component',
             proxy: {
                 type: 'ajax',
                 url: '../../admin2/live-edit/data/mock-components-2.json',
@@ -102,12 +102,22 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
         );
 
         return new Ext.view.View({
-            autoScroll: true,
+            autoScroll: false,
             flex: 1,
-            store: Ext.data.StoreManager.lookup('liveEditComponentsStore'),
+            store: Ext.data.StoreManager.lookup('ctxWindowComponentStore'),
             tpl: imageTpl,
             itemSelector: 'div.live-edit-component',
-            emptyText: 'No components available'
+            emptyText: 'No components available',
+            listeners: {
+                render: function (view) {
+                    view.getEl().on('mouseover', function() {
+                        view.setAutoScroll(true);
+                    });
+                    view.getEl().on('mouseout', function() {
+                        view.setAutoScroll(false);
+                    });
+                }
+            }
         });
     }
 
