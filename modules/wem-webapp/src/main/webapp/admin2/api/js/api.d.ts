@@ -68,6 +68,17 @@ module API_ui_toolbar {
         private hasGreedySpacer();
     }
 }
+module API_ui_menu {
+    class ContextMenu extends API_ui.Component {
+        public ext;
+        private menuItems;
+        constructor();
+        private initExt();
+        public addAction(action: API_action.Action): void;
+        private createMenuItem(action);
+        public showAt(x: number, y: number): void;
+    }
+}
 module API.notify {
     enum Type {
         INFO,

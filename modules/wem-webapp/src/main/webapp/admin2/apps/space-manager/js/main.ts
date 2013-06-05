@@ -45,6 +45,7 @@
 ///<reference path='view/TreeGridPanel.ts' />
 
 ///<reference path='view/ContextMenu.ts' />
+///<reference path='view/ContextMenuGridPanel.ts' />
 
 ///<reference path='view/wizard/SpaceWizardToolbar.ts' />
 ///<reference path='view/wizard/SpaceStepPanel.ts' />
@@ -155,8 +156,6 @@ Ext.application({
 
         // Instanciating classes that will be triggered by events
         components.deleteWindow = new app_ui.DeleteSpaceWindow();
-        new app_ui.ContextMenu();
-
     }
 
 });

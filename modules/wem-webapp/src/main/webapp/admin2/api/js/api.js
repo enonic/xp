@@ -52,8 +52,11 @@ var API_action;
         };
         Action.prototype.setLabel = function (value) {
             if(value !== this.label) {
+                this.label = value;
+                for(var i in this.propertyChangeListeners) {
+                    this.propertyChangeListeners[i](this);
+                }
             }
-            this.label = value;
         };
         Action.prototype.isEnabled = function () {
             return this.enabled;
@@ -227,6 +230,63 @@ var API_ui_toolbar;
         return ToolbarGreedySpacer;
     })();    
 })(API_ui_toolbar || (API_ui_toolbar = {}));
+var API_ui_menu;
+(function (API_ui_menu) {
+    var ContextMenu = (function (_super) {
+        __extends(ContextMenu, _super);
+        function ContextMenu() {
+                _super.call(this, "context-menu", "ul");
+            this.menuItems = [];
+            this.getEl().addClass("context-menu");
+            this.initExt();
+        }
+        ContextMenu.prototype.initExt = function () {
+            var htmlEl = this.getHTMLElement();
+            this.ext = new Ext.Component({
+                contentEl: htmlEl,
+                region: 'north'
+            });
+            this.ext.self.mixin('floating', Ext.util.Floating);
+            this.ext.mixins.floating.constructor.call(this.ext);
+        };
+        ContextMenu.prototype.addAction = function (action) {
+            var menuItem = this.createMenuItem(action);
+            this.appendChild(menuItem);
+        };
+        ContextMenu.prototype.createMenuItem = function (action) {
+            var menuItem = new MenuItem(this, action);
+            this.menuItems.push(menuItem);
+            return menuItem;
+        };
+        ContextMenu.prototype.showAt = function (x, y) {
+            this.ext.showAt(x, y);
+        };
+        return ContextMenu;
+    })(API_ui.Component);
+    API_ui_menu.ContextMenu = ContextMenu;    
+    var MenuItem = (function (_super) {
+        __extends(MenuItem, _super);
+        function MenuItem(parent, action) {
+            var _this = this;
+                _super.call(this, "menu-item", "li");
+            this.action = action;
+            this.menu = parent;
+            this.getEl().setInnerHtml(this.action.getLabel());
+            this.getEl().addEventListener("click", function () {
+                _this.action.execute();
+                _this.menu.ext.hide();
+            });
+            this.setEnable(action.isEnabled());
+            action.addPropertyChangeListener(function (action) {
+                _this.setEnable(action.isEnabled());
+            });
+        }
+        MenuItem.prototype.setEnable = function (value) {
+            this.getEl().setDisabled(!value);
+        };
+        return MenuItem;
+    })(API_ui.Component);    
+})(API_ui_menu || (API_ui_menu = {}));
 var API;
 (function (API) {
     (function (notify) {

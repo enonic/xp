@@ -10,7 +10,7 @@ Ext.define('Admin.controller.GridPanelController', {
     contextMenu: null,
 
     init: function () {
-
+        this.contextMenu = new app_ui.ContextMenuGridPanel();
         this.control({
             '#spaceTreeGrid gridpanel, #spaceTreeGrid treepanel': {
                 selectionchange: this.onGridSelectionChange,
@@ -41,7 +41,7 @@ Ext.define('Admin.controller.GridPanelController', {
 
     getContextMenu: function () {
         if (!this.contextMenu) {
-            this.contextMenu = new app_ui.ContextMenu();
+            this.contextMenu = new app_ui.ContextMenuGridPanel();
         }
         return this.contextMenu;
     }

@@ -3261,6 +3261,20 @@ var app_ui;
     })();
     app_ui.ContextMenu = ContextMenu;    
 })(app_ui || (app_ui = {}));
+var app_ui;
+(function (app_ui) {
+    var ContextMenuGridPanel = (function (_super) {
+        __extends(ContextMenuGridPanel, _super);
+        function ContextMenuGridPanel() {
+                _super.call(this);
+            _super.prototype.addAction.call(this, app.SpaceActions.EDIT_SPACE);
+            _super.prototype.addAction.call(this, app.SpaceActions.OPEN_SPACE);
+            _super.prototype.addAction.call(this, app.SpaceActions.DELETE_SPACE);
+        }
+        return ContextMenuGridPanel;
+    })(API_ui_menu.ContextMenu);
+    app_ui.ContextMenuGridPanel = ContextMenuGridPanel;    
+})(app_ui || (app_ui = {}));
 var app_ui_wizard;
 (function (app_ui_wizard) {
     var SpaceWizardToolbar = (function () {
@@ -4899,6 +4913,7 @@ Ext.define('Admin.controller.GridPanelController', {
     views: [],
     contextMenu: null,
     init: function () {
+        this.contextMenu = new app_ui.ContextMenuGridPanel();
         this.control({
             '#spaceTreeGrid gridpanel, #spaceTreeGrid treepanel': {
                 selectionchange: this.onGridSelectionChange,
@@ -4926,7 +4941,7 @@ Ext.define('Admin.controller.GridPanelController', {
     },
     getContextMenu: function () {
         if(!this.contextMenu) {
-            this.contextMenu = new app_ui.ContextMenu();
+            this.contextMenu = new app_ui.ContextMenuGridPanel();
         }
         return this.contextMenu;
     }
@@ -5212,7 +5227,6 @@ Ext.application({
         });
         wp.add(tabPanel);
         components.deleteWindow = new app_ui.DeleteSpaceWindow();
-        new app_ui.ContextMenu();
     }
 });
 app.SpaceContext.init();
