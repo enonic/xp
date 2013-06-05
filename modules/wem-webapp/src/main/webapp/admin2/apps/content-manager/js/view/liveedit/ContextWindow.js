@@ -104,8 +104,41 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
             text: '',
             arrowCls: '-none',
             cls: 'admin-context-window-menu-button icon-reorder',
-            menu: this.createMenuItems()
+            menu: this.createMenu()
         });
+    },
+
+    /**
+     * @returns {Ext.menu.Menu}
+     */
+    createMenu: function () {
+        return new Ext.menu.Menu({
+            plain: true,
+            cls: 'context-window-menu',
+            items: this.createMenuItems()
+        });
+    },
+
+    /**
+     * @returns {Array}
+     */
+    createMenuItems: function () {
+        var me = this, menuItems = [], panels = this.panels, key, panel;
+        for (key in this.panels) {
+            if (this.panels.hasOwnProperty(key)) {
+                panel = panels[key];
+                menuItems.push({
+                    plain: true,
+                    cls: 'context-window-menu-item',
+                    itemId: key,
+                    text: panel.name,
+                    handler: function (item) {
+                        me.setBodyPanel(item.itemId);
+                    }
+                });
+            }
+        }
+        return menuItems;
     },
 
     /**
@@ -208,26 +241,6 @@ Ext.define('Admin.view.contentManager.liveedit.ContextWindow', {
                 this.windowBody.add(panel.item());
             }
         }
-    },
-
-    /**
-     * @returns {Array}
-     */
-    createMenuItems: function () {
-        var me = this, menuItems = [], panels = this.panels, key, panel;
-        for (key in this.panels) {
-            if (this.panels.hasOwnProperty(key)) {
-                panel = panels[key];
-                menuItems.push({
-                    itemId: key,
-                    text: panel.name,
-                    handler: function (item) {
-                        me.setBodyPanel(item.itemId);
-                    }
-                });
-            }
-        }
-        return menuItems;
     },
 
     /**

@@ -24,6 +24,14 @@
     border: none;
 }
 
+.context-window-menu .x-panel-body {
+    background-color: #fff !important;
+}
+
+.context-window-menu-item {
+    padding: 5px;
+}
+
 .admin-context-window-title-text {
     padding-top: 5px;
     padding-left: 2px;
