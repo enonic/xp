@@ -1,4 +1,4 @@
-module admin.ui {
+module app_ui {
 
     /**
      * Candidate to be shared between applications.

@@ -1,11 +1,11 @@
-module APP_action {
+module app {
 
     export class NewSpaceAction extends API_action.Action {
 
         constructor() {
             super("New");
             this.addExecutionListener(() => {
-                new APP.event.NewSpaceEvent().fire();
+                new app_event.NewSpaceEvent().fire();
             });
         }
     }
@@ -16,7 +16,7 @@ module APP_action {
             super("Open");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new APP.event.OpenSpaceEvent(APP_context.SpaceContext.get().getSelectedSpaces()).fire();
+                new app_event.OpenSpaceEvent(SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
     }
@@ -27,7 +27,7 @@ module APP_action {
             super("Edit");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new APP.event.EditSpaceEvent(APP_context.SpaceContext.get().getSelectedSpaces()).fire();
+                new app_event.EditSpaceEvent(SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
     }
@@ -38,7 +38,7 @@ module APP_action {
             super("Delete");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new APP.event.DeletePromptEvent(APP_context.SpaceContext.get().getSelectedSpaces()).fire();
+                new app_event.DeletePromptEvent(SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
     }
@@ -52,30 +52,23 @@ module APP_action {
 
         static init() {
 
-            APP.event.GridSelectionChangeEvent.on((event) => {
+            app_event.GridSelectionChangeEvent.on((event) => {
 
-                var spaces:APP.model.SpaceModel[] = event.getModel();
+                var spaces:app_model.SpaceModel[] = event.getModel();
 
                 if (spaces.length <= 0) {
-                    console.log("no spaces selected");
-
                     NEW_SPACE.setEnabled(true);
                     OPEN_SPACE.setEnabled(false);
                     EDIT_SPACE.setEnabled(false);
                     DELETE_SPACE.setEnabled(false);
                 }
                 else if (spaces.length == 1) {
-
-                    console.log("one spaces selected");
-
                     NEW_SPACE.setEnabled(false);
                     OPEN_SPACE.setEnabled(true);
                     EDIT_SPACE.setEnabled(spaces[0].data.editable);
                     DELETE_SPACE.setEnabled(spaces[0].data.deletable);
                 }
                 else {
-                    console.log(spaces.length + "spaces selected");
-
                     NEW_SPACE.setEnabled(false);
                     OPEN_SPACE.setEnabled(true);
                     EDIT_SPACE.setEnabled(anyEditable(spaces));
@@ -84,9 +77,9 @@ module APP_action {
             });
         }
 
-        static anyEditable(spaces:APP.model.SpaceModel[]):bool {
+        static anyEditable(spaces:app_model.SpaceModel[]):bool {
             for (var i in spaces) {
-                var space:APP.model.SpaceModel = spaces[i];
+                var space:app_model.SpaceModel = spaces[i];
                 if (space.data.editable) {
                     return true;
                 }
@@ -94,9 +87,9 @@ module APP_action {
             return false;
         }
 
-        static anyDeleteable(spaces:APP.model.SpaceModel[]):bool {
+        static anyDeleteable(spaces:app_model.SpaceModel[]):bool {
             for (var i in spaces) {
-                var space:APP.model.SpaceModel = spaces[i];
+                var space:app_model.SpaceModel = spaces[i];
                 if (space.data.deletable) {
                     return true;
                 }

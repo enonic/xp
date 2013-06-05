@@ -1,4 +1,4 @@
-module admin.ui {
+module app_ui_wizard {
     export class SpaceWizardToolbar {
         ext:Ext_toolbar_Toolbar;
 

@@ -1,10 +1,10 @@
-module admin.ui {
+module app_ui_wizard {
 
-    export class SpaceWizardPanel extends admin.ui.WizardPanel {
+    export class SpaceWizardPanel extends app_ui.WizardPanel {
 
-        private wizardHeader;
+        private wizardHeader:app_ui.WizardHeader;
 
-        constructor(id:string, title:string, editing:bool, data?:APP.model.SpaceModel) {
+        constructor(id:string, title:string, editing:bool, data?:app_model.SpaceModel) {
             var headerData = this.resolveHeaderData();
             this.data = data;
             var panelConfig = {
@@ -19,44 +19,12 @@ module admin.ui {
                 defaults: {
                     border: false
                 },
-                tbar: new admin.ui.SpaceWizardToolbar(headerData.isNewSpace).ext
+                tbar: new SpaceWizardToolbar(headerData.isNewSpace).ext
             };
             super(panelConfig);
 
             var uploader = this.ext.down('photoUploadButton');
             uploader.on('fileuploaded', this.photoUploaded, this);
-        }
-
-        private saveSpace() {
-            var spaceWizardData = this.getData();
-            var displayName = spaceWizardData.displayName;
-            var spaceName = spaceWizardData.spaceName;
-            var iconReference = spaceWizardData.iconRef;
-
-            var spaceModel = this.data;
-            var originalSpaceName = spaceModel && spaceModel.get ? spaceModel.get('name') : undefined;
-
-            var spaceParams = {
-                spaceName: originalSpaceName || spaceName,
-                displayName: displayName,
-                iconReference: iconReference,
-                newSpaceName: (originalSpaceName !== spaceName) ? spaceName : undefined
-            };
-
-            var onUpdateSpaceSuccess = function (created, updated) {
-                if (created || updated) {
-
-                    API.notify.showFeedback('Space "' + spaceName + '" was saved');
-                    components.gridPanel.refresh();
-                }
-            };
-            Admin.lib.RemoteService.space_createOrUpdate(spaceParams, function (r) {
-                if (r && r.success) {
-                    onUpdateSpaceSuccess(r.created, r.updated);
-                } else {
-                    console.error("Error", r ? r.error : "An unexpected error occurred.");
-                }
-            });
         }
 
         resolveHeaderData() {
@@ -79,7 +47,7 @@ module admin.ui {
         }
 
         createSteps() {
-            var spaceStep = new admin.ui.SpaceStepPanel(this.data);
+            var spaceStep = new SpaceStepPanel(this.data);
 
             return <any[]>[
                 spaceStep.ext,
@@ -102,10 +70,10 @@ module admin.ui {
         }
 
         createWizardHeader() {
-            var pathConfig:admin.ui.PathConfig = {
+            var pathConfig:app_ui.PathConfig = {
                 hidden: true
             };
-            var wizardHeader = this.wizardHeader = new admin.ui.WizardHeader(this.data, {}, pathConfig);
+            var wizardHeader = this.wizardHeader = new app_ui.WizardHeader(this.data, {}, pathConfig);
 
             this.validateItems.push(wizardHeader.ext);
             return wizardHeader.ext;
@@ -172,18 +140,18 @@ module admin.ui {
                 xtype: 'button',
                 text: 'Save',
                 handler: () => {
-                    this.saveSpace();
+                    new app_event.SaveSpaceEvent().fire();
                 }
             };
         }
 
-        getWizardHeader() {
+        getWizardHeader():app_ui.WizardHeader {
             return this.wizardHeader;
         }
 
         getData():any {
             var data = super.getData();
-            var headerData = this.getWizardHeader().getData();
+            var headerData = <any> this.getWizardHeader().getData();
 
             return this.merge(data, {
                 displayName: headerData.displayName,

@@ -12,7 +12,7 @@ Ext.define('Admin.model.SpaceModel', {
     idProperty: 'name'
 });
 
-module APP.model {
+module app_model {
 
     export interface SpaceModel extends Ext_data_Model {
         data:{

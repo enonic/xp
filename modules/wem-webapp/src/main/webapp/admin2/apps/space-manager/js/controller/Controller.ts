@@ -32,12 +32,12 @@ Ext.define('Admin.controller.Controller', {
 //            editing: true,
 //            title: 'New Space'
 //        };
-        var spaceWizardPanel = new admin.ui.SpaceWizardPanel('new-space', 'New Space', true);
+        var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel('new-space', 'New Space', true);
 
         tabs.addTab(spaceWizardPanel.ext);
     },
 
-    viewSpace: function (space:APP.model.SpaceModel) {
+    viewSpace: function (space:app_model.SpaceModel) {
         space = this.validateSpace(space);
 
         var me = this;
@@ -48,7 +48,7 @@ Ext.define('Admin.controller.Controller', {
 
         if (!activeTab) {
             var id = this.generateTabId(space, false);
-            var tabItem = new admin.ui.SpaceDetailPanel(undefined, id, space).ext;
+            var tabItem = new app_ui.SpaceDetailPanel(undefined, id, space).ext;
             /*    {
              id: me.generateTabId(space, false),
              xtype: 'spaceDetail',
@@ -61,7 +61,7 @@ Ext.define('Admin.controller.Controller', {
         }
     },
 
-    editSpace: function (space:APP.model.SpaceModel) {
+    editSpace: function (space:app_model.SpaceModel) {
         space = this.validateSpace(space);
 
         var me = this;
@@ -77,7 +77,7 @@ Ext.define('Admin.controller.Controller', {
                 var editing = true;
                 var title = <string> space.get('displayName');
                 var data = space;
-                var spaceWizardPanel = new admin.ui.SpaceWizardPanel(id, title, editing, data);
+                var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel(id, title, editing, data);
 
                 //check if preview tab is open and close it
                 var index = tabs.items.indexOfKey(me.generateTabId(space, false));
@@ -91,12 +91,7 @@ Ext.define('Admin.controller.Controller', {
         });
     },
 
-    deleteSpace: function (space:APP.model.SpaceModel) {
-        space = this.validateSpace(space);
-        this.showDeleteSpaceWindow([].concat(space));
-    },
-
-    validateSpace: function (space:APP.model.SpaceModel) {
+    validateSpace: function (space:app_model.SpaceModel) {
         if (!space) {
             var showPanel = this.getSpaceTreeGridPanel();
             return showPanel.getSelection()[0];

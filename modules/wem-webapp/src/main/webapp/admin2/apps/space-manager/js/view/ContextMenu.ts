@@ -1,4 +1,4 @@
-module admin.ui {
+module app_ui {
 
     export class ContextMenu {
         ext;
@@ -32,7 +32,7 @@ module admin.ui {
 
             this.ext = menu;
 
-            APP.event.ShowContextMenuEvent.on((event) => {
+            app_event.ShowContextMenuEvent.on((event) => {
                 this.showAt(event.getX(), event.getY());
             });
         }

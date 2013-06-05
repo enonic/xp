@@ -1,4 +1,4 @@
-module admin.ui {
+module app_ui {
 
     export class TopBar {
 
@@ -9,7 +9,7 @@ module admin.ui {
         private leftContainer:any; // Ext.container.Container
         private rightContainer:any; // Ext.container.Container
         private tabPanel:any; // Admin.view.TabPanel?
-        private tabMenu:admin.ui.TopBarMenu;
+        private tabMenu:app_ui.TopBarMenu;
         private titleButton:any; // Ext.button.Button
         private appName:string;
 
@@ -78,7 +78,7 @@ module admin.ui {
                     pack: 'end'
                 }
             });
-            var adminImageButton = new admin.ui.AdminImageButton(
+            var adminImageButton = new app_ui.AdminImageButton(
                 API.util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
                 '<div class="title">User</div>' +
                 '<div class="user-name">{userName}</div>' +
@@ -105,7 +105,7 @@ module admin.ui {
             me.add(this.rightContainer);
 
             if (this.tabPanel) {
-                this.tabMenu = new admin.ui.TopBarMenu(this.tabPanel);
+                this.tabMenu = new app_ui.TopBarMenu(this.tabPanel);
                 this.titleButton = Ext.create('Ext.button.Button', {
                     cls: 'title-button',
                     menuAlign: 't-b?',

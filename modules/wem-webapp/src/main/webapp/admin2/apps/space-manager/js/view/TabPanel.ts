@@ -2,7 +2,7 @@
  * Main tab panel for admin apps. Extends Ext.tab.Panel with admin tabs functionality
  */
 
-module admin.ui {
+module app_ui {
     export class TabPanel {
         private ext;
 
@@ -166,7 +166,7 @@ module admin.ui {
                     }, me.layout));
 
                     // Custom tabBar is why we needed to override this
-                    this.tabBar = new admin.ui.TopBar(me.appName, me);
+                    this.tabBar = new app_ui.TopBar(me.appName, me);
 
                     dockedItems.push(this.tabBar.ext);
                     me.dockedItems = dockedItems;
@@ -190,7 +190,7 @@ module admin.ui {
             });
 
 
-            APP.event.EditSpaceEvent.on((event) => {
+            app_event.EditSpaceEvent.on((event) => {
                 var spaces = event.getModel();
                 for (var i in spaces) {
                     var space = spaces[i];
@@ -204,7 +204,7 @@ module admin.ui {
                             var editing = true;
                             var title = <string> space.get('displayName');
                             var data = space;
-                            var spaceWizardPanel = new admin.ui.SpaceWizardPanel(id, title, editing, data);
+                            var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel(id, title, editing, data);
 
                             //check if preview tab is open and close it
                             var index = this.ext.items.indexOfKey(this.generateTabId(space, false));
@@ -219,10 +219,6 @@ module admin.ui {
                 }
             });
 
-        }
-
-        private addTab(panel:any, index:number) {
-            this.ext.addTab(panel, index, undefined);
         }
 
         private generateTabId(space, isEdit) {

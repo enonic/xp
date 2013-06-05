@@ -1,4 +1,4 @@
-module admin.ui {
+module app_ui {
 
     export class DetailToolbar {
         ext:Ext_toolbar_Toolbar;

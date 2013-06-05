@@ -12,9 +12,15 @@
 ///<reference path='event/NewSpaceEvent.ts' />
 ///<reference path='event/OpenSpaceEvent.ts' />
 ///<reference path='event/EditSpaceEvent.ts' />
+///<reference path='event/SaveSpaceEvent.ts' />
 
+///<reference path='SpaceContext.ts' />
 
-///<reference path='action/SpaceActions.ts' />
+///<reference path='SpaceActions.ts' />
+
+///<reference path='wizard/SpaceWizardActions.ts' />
+///<reference path='wizard/SpaceWizardContext.ts' />
+///<reference path='wizard/SpaceWizardToolbar2.ts' />
 
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
@@ -50,9 +56,8 @@
 ///<reference path='view/TopBar.ts' />
 ///<reference path='view/TabPanel.ts' />
 ///<reference path='view/FilterPanel.ts' />
-///<reference path='view/BrowseToolbar.ts' />
 
-///<reference path='view/BrowseToolbar2.ts' />
+///<reference path='view/BrowseToolbar.ts' />
 
 ///<reference path='controller/Controller.ts' />
 ///<reference path='controller/SpaceController.ts' />
@@ -65,14 +70,13 @@
 ///<reference path='controller/DialogWindowController.ts' />
 ///<reference path='controller/WizardController.ts' />
 
-///<reference path='context/SpaceContext.ts' />
 
 
 declare var Ext;
 declare var Admin;
 declare var CONFIG;
 
-module APP {
+module app {
 
     // Application id for uniquely identifying app
     export var id = 'space-manager';
@@ -80,8 +84,8 @@ module APP {
 }
 
 module components {
-    export var detailPanel:admin.ui.SpaceDetailPanel;
-    export var gridPanel:admin.ui.TreeGridPanel;
+    export var detailPanel:app_ui.SpaceDetailPanel;
+    export var gridPanel:app_ui.TreeGridPanel;
     export var tabPanel;
     export var deleteWindow;
 }
@@ -103,12 +107,11 @@ Ext.application({
 
     launch: function () {
 
-        var toolbar = new admin.ui.BrowseToolbar('north');
-        var toolbar2 = new APP.ui.BrowseToolbar2();
+        var toolbar = new app_ui.BrowseToolbar();
 
-        var grid = components.gridPanel = new admin.ui.TreeGridPanel('center');
+        var grid = components.gridPanel = new app_ui.TreeGridPanel('center');
 
-        var detail = components.detailPanel = new admin.ui.SpaceDetailPanel('south');
+        var detail = components.detailPanel = new app_ui.SpaceDetailPanel('south');
 
         var center = new Ext.container.Container({
             region: 'center',
@@ -118,9 +121,8 @@ Ext.application({
         center.add(detail.ext);
         center.add(grid.ext);
         center.add(toolbar.ext);
-        center.add(toolbar2.ext);
 
-        var west = new admin.ui.FilterPanel({
+        var west = new app_ui.FilterPanel({
             region: 'west',
             width: 200
         }).getExtEl();
@@ -137,7 +139,7 @@ Ext.application({
         p.add(center);
         p.add(west);
 
-        var tabPanel = components.tabPanel = new admin.ui.TabPanel({
+        var tabPanel = components.tabPanel = new app_ui.TabPanel({
             appName: 'Space Admin',
             appIconCls: 'icon-metro-space-admin-24'
         }).getExtEl();
@@ -152,15 +154,12 @@ Ext.application({
         wp.add(tabPanel);
 
         // Instanciating classes that will be triggered by events
-        components.deleteWindow = new admin.ui.DeleteSpaceWindow();
-        new admin.ui.ContextMenu();
+        components.deleteWindow = new app_ui.DeleteSpaceWindow();
+        new app_ui.ContextMenu();
 
     }
 
 });
 
-APP_context.SpaceContext.init();
-
-
-APP_action.SpaceActions.init();
-
+app.SpaceContext.init();
+app.SpaceActions.init();

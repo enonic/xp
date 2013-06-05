@@ -1,7 +1,7 @@
-module APP.event {
+module app_event {
 
     export class GridSelectionChangeEvent extends SpaceModelEvent {
-        constructor(model:APP.model.SpaceModel[]) {
+        constructor(model:app_model.SpaceModel[]) {
             super('gridChange', model);
         }
 

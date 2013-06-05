@@ -1,66 +1,16 @@
-module admin.ui {
-    export class BrowseToolbar {
-        ext;
+module app_ui {
 
-        constructor(region?:String) {
+    /**
+     * TODO: The upcoming successor of BrowseToolbar, when the Toolbar code is working....
+     */
+    export class BrowseToolbar extends API_ui_toolbar.Toolbar {
 
-            var tb = this.ext = new Ext.toolbar.Toolbar({
-                cls: 'admin-toolbar',
-                border: true,
-                itemId: 'spaceBrowseToolbar',
-                region: region
-            });
-
-            var newButton = new Ext.button.Button({
-                text: 'New',
-                action: 'newSpace',
-                scale: 'medium',
-                iconAlign: 'top',
-                minWidth: 64
-            });
-
-            var editButton = new Ext.button.Button({
-                text: 'Edit',
-                disabled: true,
-                action: 'editSpace',
-                scale: 'medium',
-                iconAlign: 'top',
-                minWidth: 64,
-                handler: () => {
-                    new APP.event.EditSpaceEvent(APP_context.SpaceContext.get().getSelectedSpaces()).fire();
-                }
-            });
-
-            var openButton = new Ext.button.Button({
-                text: 'Open',
-                disabled: true,
-                action: 'viewSpace',
-                scale: 'medium',
-                iconAlign: 'top',
-                minWidth: 64
-            });
-
-            var deleteButton = new Ext.button.Button({
-                text: 'Delete',
-                disabled: true,
-                action: 'deleteSpace',
-                scale: 'medium',
-                iconAlign: 'top',
-                minWidth: 64,
-                handler: () => {
-                    new APP.event.DeletePromptEvent(components.gridPanel.getSelection()).fire();
-                }
-            });
-
-            tb.add(newButton, editButton, openButton, deleteButton);
-
-            APP.event.GridSelectionChangeEvent.on((event) => {
-                var selected = event.getModel();
-                var enable = selected && selected.length > 0;
-                editButton.setDisabled(!enable);
-                openButton.setDisabled(!enable);
-                deleteButton.setDisabled(!enable);
-            });
+        constructor() {
+            super();
+            super.addAction(app.SpaceActions.NEW_SPACE);
+            super.addAction(app.SpaceActions.EDIT_SPACE);
+            super.addAction(app.SpaceActions.OPEN_SPACE);
+            super.addAction(app.SpaceActions.DELETE_SPACE);
         }
     }
 }
