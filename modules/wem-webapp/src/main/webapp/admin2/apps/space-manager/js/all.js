@@ -406,8 +406,30 @@ var APP;
     })(APP.event || (APP.event = {}));
     var event = APP.event;
 })(APP || (APP = {}));
-var APP_action;
-(function (APP_action) {
+var APP;
+(function (APP) {
+    var SpaceContext = (function () {
+        function SpaceContext() {
+            var _this = this;
+            APP.event.GridSelectionChangeEvent.on(function (event) {
+                _this.selectedSpaces = event.getModel();
+            });
+        }
+        SpaceContext.init = function init() {
+            return SpaceContext.context = new SpaceContext();
+        };
+        SpaceContext.get = function get() {
+            return SpaceContext.context;
+        };
+        SpaceContext.prototype.getSelectedSpaces = function () {
+            return this.selectedSpaces;
+        };
+        return SpaceContext;
+    })();
+    APP.SpaceContext = SpaceContext;    
+})(APP || (APP = {}));
+var APP;
+(function (APP) {
     var NewSpaceAction = (function (_super) {
         __extends(NewSpaceAction, _super);
         function NewSpaceAction() {
@@ -418,43 +440,43 @@ var APP_action;
         }
         return NewSpaceAction;
     })(API_action.Action);
-    APP_action.NewSpaceAction = NewSpaceAction;    
+    APP.NewSpaceAction = NewSpaceAction;    
     var OpenSpaceAction = (function (_super) {
         __extends(OpenSpaceAction, _super);
         function OpenSpaceAction() {
                 _super.call(this, "Open");
             this.setEnabled(false);
             this.addExecutionListener(function () {
-                new APP.event.OpenSpaceEvent(APP_context.SpaceContext.get().getSelectedSpaces()).fire();
+                new APP.event.OpenSpaceEvent(APP.SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
         return OpenSpaceAction;
     })(API_action.Action);
-    APP_action.OpenSpaceAction = OpenSpaceAction;    
+    APP.OpenSpaceAction = OpenSpaceAction;    
     var EditSpaceAction = (function (_super) {
         __extends(EditSpaceAction, _super);
         function EditSpaceAction() {
                 _super.call(this, "Edit");
             this.setEnabled(false);
             this.addExecutionListener(function () {
-                new APP.event.EditSpaceEvent(APP_context.SpaceContext.get().getSelectedSpaces()).fire();
+                new APP.event.EditSpaceEvent(APP.SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
         return EditSpaceAction;
     })(API_action.Action);
-    APP_action.EditSpaceAction = EditSpaceAction;    
+    APP.EditSpaceAction = EditSpaceAction;    
     var DeleteSpaceAction = (function (_super) {
         __extends(DeleteSpaceAction, _super);
         function DeleteSpaceAction() {
                 _super.call(this, "Delete");
             this.setEnabled(false);
             this.addExecutionListener(function () {
-                new APP.event.DeletePromptEvent(APP_context.SpaceContext.get().getSelectedSpaces()).fire();
+                new APP.event.DeletePromptEvent(APP.SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
         return DeleteSpaceAction;
     })(API_action.Action);
-    APP_action.DeleteSpaceAction = DeleteSpaceAction;    
+    APP.DeleteSpaceAction = DeleteSpaceAction;    
     var SpaceActions = (function () {
         function SpaceActions() { }
         SpaceActions.NEW_SPACE = new NewSpaceAction();
@@ -502,8 +524,8 @@ var APP_action;
         };
         return SpaceActions;
     })();
-    APP_action.SpaceActions = SpaceActions;    
-})(APP_action || (APP_action = {}));
+    APP.SpaceActions = SpaceActions;    
+})(APP || (APP = {}));
 Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
     extend: 'Ext.util.Observable',
     pluginId: 'persistentGridSelection',
@@ -4699,7 +4721,7 @@ var admin;
                     iconAlign: 'top',
                     minWidth: 64,
                     handler: function () {
-                        new APP.event.EditSpaceEvent(APP_context.SpaceContext.get().getSelectedSpaces()).fire();
+                        new APP.event.EditSpaceEvent(APP.SpaceContext.get().getSelectedSpaces()).fire();
                     }
                 });
                 var openButton = new Ext.button.Button({
@@ -4743,10 +4765,10 @@ var APP;
             __extends(BrowseToolbar2, _super);
             function BrowseToolbar2() {
                         _super.call(this);
-                _super.prototype.addAction.call(this, APP_action.SpaceActions.NEW_SPACE);
-                _super.prototype.addAction.call(this, APP_action.SpaceActions.EDIT_SPACE);
-                _super.prototype.addAction.call(this, APP_action.SpaceActions.OPEN_SPACE);
-                _super.prototype.addAction.call(this, APP_action.SpaceActions.DELETE_SPACE);
+                _super.prototype.addAction.call(this, APP.SpaceActions.NEW_SPACE);
+                _super.prototype.addAction.call(this, APP.SpaceActions.EDIT_SPACE);
+                _super.prototype.addAction.call(this, APP.SpaceActions.OPEN_SPACE);
+                _super.prototype.addAction.call(this, APP.SpaceActions.DELETE_SPACE);
             }
             return BrowseToolbar2;
         })(API_ui_toolbar.Toolbar);
@@ -5201,28 +5223,6 @@ Ext.define('Admin.controller.WizardController', {
         return Ext.ComponentQuery.query('#spaceWizardToolbar', this.getWizardTab())[0];
     }
 });
-var APP_context;
-(function (APP_context) {
-    var SpaceContext = (function () {
-        function SpaceContext() {
-            var _this = this;
-            APP.event.GridSelectionChangeEvent.on(function (event) {
-                _this.selectedSpaces = event.getModel();
-            });
-        }
-        SpaceContext.init = function init() {
-            return SpaceContext.context = new SpaceContext();
-        };
-        SpaceContext.get = function get() {
-            return SpaceContext.context;
-        };
-        SpaceContext.prototype.getSelectedSpaces = function () {
-            return this.selectedSpaces;
-        };
-        return SpaceContext;
-    })();
-    APP_context.SpaceContext = SpaceContext;    
-})(APP_context || (APP_context = {}));
 var APP;
 (function (APP) {
     APP.id = 'space-manager';
@@ -5289,6 +5289,6 @@ Ext.application({
         new admin.ui.ContextMenu();
     }
 });
-APP_context.SpaceContext.init();
-APP_action.SpaceActions.init();
+APP.SpaceContext.init();
+APP.SpaceActions.init();
 //@ sourceMappingURL=all.js.map

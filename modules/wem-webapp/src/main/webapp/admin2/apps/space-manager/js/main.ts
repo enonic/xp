@@ -14,7 +14,9 @@
 ///<reference path='event/EditSpaceEvent.ts' />
 ///<reference path='event/SaveSpaceEvent.ts' />
 
-///<reference path='action/SpaceActions.ts' />
+///<reference path='SpaceContext.ts' />
+
+///<reference path='SpaceActions.ts' />
 
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
@@ -65,7 +67,6 @@
 ///<reference path='controller/DialogWindowController.ts' />
 ///<reference path='controller/WizardController.ts' />
 
-///<reference path='context/SpaceContext.ts' />
 
 
 declare var Ext;
@@ -159,5 +160,5 @@ Ext.application({
 
 });
 
-APP_context.SpaceContext.init();
-APP_action.SpaceActions.init();
+APP.SpaceContext.init();
+APP.SpaceActions.init();

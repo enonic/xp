@@ -7,10 +7,10 @@ module APP.ui {
 
         constructor() {
             super();
-            super.addAction(APP_action.SpaceActions.NEW_SPACE);
-            super.addAction(APP_action.SpaceActions.EDIT_SPACE);
-            super.addAction(APP_action.SpaceActions.OPEN_SPACE);
-            super.addAction(APP_action.SpaceActions.DELETE_SPACE);
+            super.addAction(APP.SpaceActions.NEW_SPACE);
+            super.addAction(APP.SpaceActions.EDIT_SPACE);
+            super.addAction(APP.SpaceActions.OPEN_SPACE);
+            super.addAction(APP.SpaceActions.DELETE_SPACE);
         }
     }
 }

@@ -1,4 +1,4 @@
-module APP_context {
+module APP {
 
     export class SpaceContext  {
 
