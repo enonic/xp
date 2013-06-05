@@ -57,25 +57,18 @@ module APP_action {
                 var spaces:APP.model.SpaceModel[] = event.getModel();
 
                 if (spaces.length <= 0) {
-                    console.log("no spaces selected");
-
                     NEW_SPACE.setEnabled(true);
                     OPEN_SPACE.setEnabled(false);
                     EDIT_SPACE.setEnabled(false);
                     DELETE_SPACE.setEnabled(false);
                 }
                 else if (spaces.length == 1) {
-
-                    console.log("one spaces selected");
-
                     NEW_SPACE.setEnabled(false);
                     OPEN_SPACE.setEnabled(true);
                     EDIT_SPACE.setEnabled(spaces[0].data.editable);
                     DELETE_SPACE.setEnabled(spaces[0].data.deletable);
                 }
                 else {
-                    console.log(spaces.length + "spaces selected");
-
                     NEW_SPACE.setEnabled(false);
                     OPEN_SPACE.setEnabled(true);
                     EDIT_SPACE.setEnabled(anyEditable(spaces));

@@ -160,3 +160,4 @@ Ext.application({
 });
 
 APP_context.SpaceContext.init();
+APP_action.SpaceActions.init();
