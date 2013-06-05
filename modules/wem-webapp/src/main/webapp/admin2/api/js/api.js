@@ -4,7 +4,6 @@ var api_util;
     function getAbsoluteUri(uri) {
         return this.baseUri + '/' + uri;
     }
-
     api_util.getAbsoluteUri = getAbsoluteUri;
 })(api_util || (api_util = {}));
 var api_event;
@@ -13,7 +12,6 @@ var api_event;
         function Event(name) {
             this.name = name;
         }
-
         Event.prototype.getName = function () {
             return this.name;
         };
@@ -22,22 +20,19 @@ var api_event;
         };
         return Event;
     })();
-    api_event.Event = Event;
+    api_event.Event = Event;    
 })(api_event || (api_event = {}));
 var api_event;
 (function (api_event) {
     var bus = new Ext.util.Observable({
     });
-
     function onEvent(name, handler) {
         bus.on(name, handler);
     }
-
     api_event.onEvent = onEvent;
     function fireEvent(event) {
         bus.fireEvent(event.getName(), event);
     }
-
     api_event.fireEvent = fireEvent;
 })(api_event || (api_event = {}));
 var api_action;
@@ -49,14 +44,13 @@ var api_action;
             this.propertyChangeListeners = [];
             this.label = label;
         }
-
         Action.prototype.getLabel = function () {
             return this.label;
         };
         Action.prototype.setLabel = function (value) {
-            if (value !== this.label) {
+            if(value !== this.label) {
                 this.label = value;
-                for (var i in this.propertyChangeListeners) {
+                for(var i in this.propertyChangeListeners) {
                     this.propertyChangeListeners[i](this);
                 }
             }
@@ -65,16 +59,16 @@ var api_action;
             return this.enabled;
         };
         Action.prototype.setEnabled = function (value) {
-            if (value !== this.enabled) {
+            if(value !== this.enabled) {
                 this.enabled = value;
-                for (var i in this.propertyChangeListeners) {
+                for(var i in this.propertyChangeListeners) {
                     this.propertyChangeListeners[i](this);
                 }
             }
         };
         Action.prototype.execute = function () {
-            if (this.enabled) {
-                for (var i in this.executionListeners) {
+            if(this.enabled) {
+                for(var i in this.executionListeners) {
                     this.executionListeners[i](this);
                 }
             }
@@ -87,7 +81,7 @@ var api_action;
         };
         return Action;
     })();
-    api_action.Action = Action;
+    api_action.Action = Action;    
 })(api_action || (api_action = {}));
 var api_ui;
 (function (api_ui) {
@@ -95,7 +89,6 @@ var api_ui;
         function HTMLElementHelper(element) {
             this.el = element;
         }
-
         HTMLElementHelper.fromName = function fromName(name) {
             return new HTMLElementHelper(document.createElement(name));
         };
@@ -112,7 +105,7 @@ var api_ui;
             this.el.innerHTML = value;
         };
         HTMLElementHelper.prototype.addClass = function (clsName) {
-            if (this.el.className === '') {
+            if(this.el.className === '') {
                 this.el.className += clsName;
             } else {
                 this.el.className += ' ' + clsName;
@@ -126,7 +119,7 @@ var api_ui;
         };
         return HTMLElementHelper;
     })();
-    api_ui.HTMLElementHelper = HTMLElementHelper;
+    api_ui.HTMLElementHelper = HTMLElementHelper;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
@@ -136,7 +129,6 @@ var api_ui;
             this.id = name + '-' + (++Component.constructorCounter);
             this.el.setId(this.id);
         }
-
         Component.constructorCounter = 0;
         Component.prototype.getId = function () {
             return this.id;
@@ -152,13 +144,10 @@ var api_ui;
         };
         return Component;
     })();
-    api_ui.Component = Component;
+    api_ui.Component = Component;    
 })(api_ui || (api_ui = {}));
 var __extends = this.__extends || function (d, b) {
-    function __() {
-        this.constructor = d;
-    }
-
+    function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
@@ -167,12 +156,11 @@ var api_ui_toolbar;
     var Toolbar = (function (_super) {
         __extends(Toolbar, _super);
         function Toolbar() {
-            _super.call(this, "toolbar", "div");
+                _super.call(this, "toolbar", "div");
             this.components = [];
             this.getEl().addClass("toolbar");
             this.initExt();
         }
-
         Toolbar.prototype.initExt = function () {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
@@ -190,16 +178,16 @@ var api_ui_toolbar;
         };
         Toolbar.prototype.doAddAction = function (action) {
             var button = new Button(action);
-            if (this.hasGreedySpacer()) {
+            if(this.hasGreedySpacer()) {
                 button.setFloatRight(true);
             }
             this.components.push(button);
             return button;
         };
         Toolbar.prototype.hasGreedySpacer = function () {
-            for (var i in this.components) {
+            for(var i in this.components) {
                 var comp = this.components[i];
-                if (comp instanceof ToolbarGreedySpacer) {
+                if(comp instanceof ToolbarGreedySpacer) {
                     return true;
                 }
             }
@@ -207,12 +195,12 @@ var api_ui_toolbar;
         };
         return Toolbar;
     })(api_ui.Component);
-    api_ui_toolbar.Toolbar = Toolbar;
+    api_ui_toolbar.Toolbar = Toolbar;    
     var Button = (function (_super) {
         __extends(Button, _super);
         function Button(action) {
             var _this = this;
-            _super.call(this, "button", "button");
+                _super.call(this, "button", "button");
             this.action = action;
             this.getEl().setInnerHtml(this.action.getLabel());
             this.getEl().addEventListener("click", function () {
@@ -223,35 +211,32 @@ var api_ui_toolbar;
                 _this.setEnable(action.isEnabled());
             });
         }
-
         Button.prototype.setEnable = function (value) {
             this.getEl().setDisabled(!value);
         };
         Button.prototype.setFloatRight = function (value) {
-            if (value) {
+            if(value) {
                 this.getEl().addClass('pull-right');
             }
         };
         return Button;
-    })(api_ui.Component);
+    })(api_ui.Component);    
     var ToolbarGreedySpacer = (function () {
         function ToolbarGreedySpacer() {
         }
-
         return ToolbarGreedySpacer;
-    })();
+    })();    
 })(api_ui_toolbar || (api_ui_toolbar = {}));
 var api_ui_menu;
 (function (api_ui_menu) {
     var ContextMenu = (function (_super) {
         __extends(ContextMenu, _super);
         function ContextMenu() {
-            _super.call(this, "context-menu", "ul");
+                _super.call(this, "context-menu", "ul");
             this.menuItems = [];
             this.getEl().addClass("context-menu");
             this.initExt();
         }
-
         ContextMenu.prototype.initExt = function () {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
@@ -275,12 +260,12 @@ var api_ui_menu;
         };
         return ContextMenu;
     })(api_ui.Component);
-    api_ui_menu.ContextMenu = ContextMenu;
+    api_ui_menu.ContextMenu = ContextMenu;    
     var MenuItem = (function (_super) {
         __extends(MenuItem, _super);
         function MenuItem(parent, action) {
             var _this = this;
-            _super.call(this, "menu-item", "li");
+                _super.call(this, "menu-item", "li");
             this.action = action;
             this.menu = parent;
             this.getEl().setInnerHtml(this.action.getLabel());
@@ -293,312 +278,280 @@ var api_ui_menu;
                 _this.setEnable(action.isEnabled());
             });
         }
-
         MenuItem.prototype.setEnable = function (value) {
             this.getEl().setDisabled(!value);
         };
         return MenuItem;
-    })(api_ui.Component);
+    })(api_ui.Component);    
 })(api_ui_menu || (api_ui_menu = {}));
-var API;
-(function (API) {
-    (function (notify) {
-        (function (Type) {
-            Type._map = [];
-            Type._map[0] = "INFO";
-            Type.INFO = 0;
-            Type._map[1] = "ERROR";
-            Type.ERROR = 1;
-            Type._map[2] = "ACTION";
-            Type.ACTION = 2;
-        })(notify.Type || (notify.Type = {}));
-        var Type = notify.Type;
-        var Action = (function () {
-            function Action(name, handler) {
-                this.name = name;
-                this.handler = handler;
-            }
-
-            Action.prototype.getName = function () {
-                return this.name;
-            };
-            Action.prototype.getHandler = function () {
-                return this.handler;
-            };
-            return Action;
-        })();
-        notify.Action = Action;
-        var Message = (function () {
-            function Message(type, text) {
-                this.type = type;
-                this.text = text;
-                this.actions = [];
-            }
-
-            Message.prototype.getType = function () {
-                return this.type;
-            };
-            Message.prototype.getText = function () {
-                return this.text;
-            };
-            Message.prototype.getActions = function () {
-                return this.actions;
-            };
-            Message.prototype.addAction = function (name, handler) {
-                this.actions.push(new Action(name, handler));
-            };
-            Message.prototype.send = function () {
-                notify.sendNotification(this);
-            };
-            return Message;
-        })();
-        notify.Message = Message;
-        function newInfo(text) {
-            return new Message(Type.INFO, text);
+var api_notify;
+(function (api_notify) {
+    (function (Type) {
+        Type._map = [];
+        Type._map[0] = "INFO";
+        Type.INFO = 0;
+        Type._map[1] = "ERROR";
+        Type.ERROR = 1;
+        Type._map[2] = "ACTION";
+        Type.ACTION = 2;
+    })(api_notify.Type || (api_notify.Type = {}));
+    var Type = api_notify.Type;
+    var Action = (function () {
+        function Action(name, handler) {
+            this.name = name;
+            this.handler = handler;
         }
-
-        notify.newInfo = newInfo;
-        function newError(text) {
-            return new Message(Type.ERROR, text);
-        }
-
-        notify.newError = newError;
-        function newAction(text) {
-            return new Message(Type.ACTION, text);
-        }
-
-        notify.newAction = newAction;
-    })(API.notify || (API.notify = {}));
-    var notify = API.notify;
-})(API || (API = {}));
-var API;
-(function (API) {
-    (function (notify) {
-        var space = 3;
-        var lifetime = 5000;
-        var slideDuration = 1000;
-        var templates = {
-            manager: new Ext.Template('<div class="admin-notification-container">', '   <div class="admin-notification-wrapper"></div>',
-                '</div>'),
-            notify: new Ext.Template('<div class="admin-notification" style="height: 0; opacity: 0;">',
-                '   <div class="admin-notification-inner">', '       <a class="admin-notification-remove" href="#">X</a>',
-                '       <div class="admin-notification-content">{message}</div>', '   </div>', '</div>')
+        Action.prototype.getName = function () {
+            return this.name;
         };
-        var NotifyManager = (function () {
-            function NotifyManager() {
-                this.timers = {
-                };
-                this.render();
-            }
-
-            NotifyManager.prototype.render = function () {
-                var template = templates.manager;
-                var node = template.append(Ext.getBody());
-                this.el = Ext.get(node);
-                this.el.setStyle('bottom', 0);
-                this.getWrapperEl().setStyle({
-                    margin: 'auto'
-                });
-            };
-            NotifyManager.prototype.getWrapperEl = function () {
-                return this.el.first('.admin-notification-wrapper');
-            };
-            NotifyManager.prototype.notify = function (message) {
-                var opts = notify.buildOpts(message);
-                this.doNotify(opts);
-            };
-            NotifyManager.prototype.doNotify = function (opts) {
-                var _this = this;
-                var notificationEl = this.renderNotification(opts);
-                var height = getInnerEl(notificationEl).getHeight();
-                this.setListeners(notificationEl, opts);
-                notificationEl.animate({
-                    duration: slideDuration,
-                    to: {
-                        height: height + space,
-                        opacity: 1
-                    },
-                    callback: function () {
-                        _this.timers[notificationEl.id] = {
-                            remainingTime: lifetime
-                        };
-                        _this.startTimer(notificationEl);
-                    }
-                });
-            };
-            NotifyManager.prototype.setListeners = function (el, opts) {
-                var _this = this;
-                el.on({
-                    'click': {
-                        fn: function () {
-                            _this.remove(el);
-                        },
-                        stopEvent: true
-                    },
-                    'mouseover': function () {
-                        _this.stopTimer(el);
-                    },
-                    'mouseleave': function () {
-                        _this.startTimer(el);
-                    }
-                });
-                if (opts.listeners) {
-                    Ext.each(opts.listeners, function (listener) {
-                        el.on({
-                            'click': listener
-                        });
-                    });
-                }
-            };
-            NotifyManager.prototype.remove = function (el) {
-                if (!el) {
-                    return;
-                }
-                el.animate({
-                    duration: slideDuration,
-                    to: {
-                        height: 0,
-                        opacity: 0
-                    },
-                    callback: function () {
-                        Ext.removeNode(el.dom);
-                    }
-                });
-                delete this.timers[el.id];
-            };
-            NotifyManager.prototype.startTimer = function (el) {
-                var _this = this;
-                var timer = this.timers[el.id];
-                if (!timer) {
-                    return;
-                }
-                timer.id = setTimeout(function () {
-                    _this.remove(el);
-                }, timer.remainingTime);
-                timer.startTime = Date.now();
-            };
-            NotifyManager.prototype.stopTimer = function (el) {
-                var timer = this.timers[el.id];
-                if (!timer || !timer.id) {
-                    return;
-                }
-                clearTimeout(timer.id);
-                timer.id = null;
-                timer.remainingTime -= Date.now() - timer.startTime;
-            };
-            NotifyManager.prototype.renderNotification = function (opts) {
-                var style = {
-                };
-                var template = templates.notify;
-                var notificationEl = template.append(this.getWrapperEl(), opts, true);
-                if (opts.backgroundColor) {
-                    style['backgroundColor'] = opts.backgroundColor;
-                }
-                style['marginTop'] = space + 'px';
-                getInnerEl(notificationEl).setStyle(style);
-                return notificationEl;
-            };
-            return NotifyManager;
-        })();
-        notify.NotifyManager = NotifyManager;
-        function getInnerEl(notificationEl) {
-            return notificationEl.down('.admin-notification-inner');
+        Action.prototype.getHandler = function () {
+            return this.handler;
+        };
+        return Action;
+    })();
+    api_notify.Action = Action;    
+    var Message = (function () {
+        function Message(type, text) {
+            this.type = type;
+            this.text = text;
+            this.actions = [];
         }
-
-        var manager = new NotifyManager();
-
-        function sendNotification(message) {
-            manager.notify(message);
+        Message.prototype.getType = function () {
+            return this.type;
+        };
+        Message.prototype.getText = function () {
+            return this.text;
+        };
+        Message.prototype.getActions = function () {
+            return this.actions;
+        };
+        Message.prototype.addAction = function (name, handler) {
+            this.actions.push(new Action(name, handler));
+        };
+        Message.prototype.send = function () {
+            api_notify.sendNotification(this);
+        };
+        return Message;
+    })();
+    api_notify.Message = Message;    
+    function newInfo(text) {
+        return new Message(Type.INFO, text);
+    }
+    api_notify.newInfo = newInfo;
+    function newError(text) {
+        return new Message(Type.ERROR, text);
+    }
+    api_notify.newError = newError;
+    function newAction(text) {
+        return new Message(Type.ACTION, text);
+    }
+    api_notify.newAction = newAction;
+})(api_notify || (api_notify = {}));
+var api_notify;
+(function (api_notify) {
+    var space = 3;
+    var lifetime = 5000;
+    var slideDuration = 1000;
+    var templates = {
+        manager: new Ext.Template('<div class="admin-notification-container">', '   <div class="admin-notification-wrapper"></div>', '</div>'),
+        notify: new Ext.Template('<div class="admin-notification" style="height: 0; opacity: 0;">', '   <div class="admin-notification-inner">', '       <a class="admin-notification-remove" href="#">X</a>', '       <div class="admin-notification-content">{message}</div>', '   </div>', '</div>')
+    };
+    var NotifyManager = (function () {
+        function NotifyManager() {
+            this.timers = {
+            };
+            this.render();
         }
-
-        notify.sendNotification = sendNotification;
-    })(API.notify || (API.notify = {}));
-    var notify = API.notify;
-})(API || (API = {}));
-var API;
-(function (API) {
-    (function (notify) {
-        var NotifyOpts = (function () {
-            function NotifyOpts() {
-            }
-
-            return NotifyOpts;
-        })();
-        notify.NotifyOpts = NotifyOpts;
-        function buildOpts(message) {
-            var opts = new NotifyOpts();
-            if (message.getType() == notify.Type.ERROR) {
-                opts.backgroundColor = 'red';
-            } else if (message.getType() == notify.Type.ACTION) {
-                opts.backgroundColor = '#669c34';
-            }
-            createHtmlMessage(message, opts);
-            addListeners(message, opts);
-            return opts;
-        }
-
-        notify.buildOpts = buildOpts;
-        function addListeners(message, opts) {
-            opts.listeners = [];
-            var actions = message.getActions();
-            for (var i = 0; i < actions.length; i++) {
-                opts.listeners.push({
-                    fn: actions[i].getHandler(),
-                    delegate: 'notify_action_' + i,
+        NotifyManager.prototype.render = function () {
+            var template = templates.manager;
+            var node = template.append(Ext.getBody());
+            this.el = Ext.get(node);
+            this.el.setStyle('bottom', 0);
+            this.getWrapperEl().setStyle({
+                margin: 'auto'
+            });
+        };
+        NotifyManager.prototype.getWrapperEl = function () {
+            return this.el.first('.admin-notification-wrapper');
+        };
+        NotifyManager.prototype.notify = function (message) {
+            var opts = api_notify.buildOpts(message);
+            this.doNotify(opts);
+        };
+        NotifyManager.prototype.doNotify = function (opts) {
+            var _this = this;
+            var notificationEl = this.renderNotification(opts);
+            var height = getInnerEl(notificationEl).getHeight();
+            this.setListeners(notificationEl, opts);
+            notificationEl.animate({
+                duration: slideDuration,
+                to: {
+                    height: height + space,
+                    opacity: 1
+                },
+                callback: function () {
+                    _this.timers[notificationEl.id] = {
+                        remainingTime: lifetime
+                    };
+                    _this.startTimer(notificationEl);
+                }
+            });
+        };
+        NotifyManager.prototype.setListeners = function (el, opts) {
+            var _this = this;
+            el.on({
+                'click': {
+                    fn: function () {
+                        _this.remove(el);
+                    },
                     stopEvent: true
+                },
+                'mouseover': function () {
+                    _this.stopTimer(el);
+                },
+                'mouseleave': function () {
+                    _this.startTimer(el);
+                }
+            });
+            if(opts.listeners) {
+                Ext.each(opts.listeners, function (listener) {
+                    el.on({
+                        'click': listener
+                    });
                 });
             }
-        }
-
-        function createHtmlMessage(message, opts) {
-            var actions = message.getActions();
-            opts.message = '<span>' + message.getText() + '</span>';
-            if (actions.length > 0) {
-                var linkHtml = '<span style="float: right; margin-left: 30px;">';
-                for (var i = 0; i < actions.length; i++) {
-                    if ((i > 0) && (i == (actions.length - 1))) {
-                        linkHtml += ' or ';
-                    } else if (i > 0) {
-                        linkHtml += ', ';
-                    }
-                    linkHtml += '<a href="#" class="notify_action_"' + i + '">';
-                    linkHtml += actions[i].getName() + "</a>";
-                }
-                linkHtml += '</span>';
-                opts.message = linkHtml + opts.message;
+        };
+        NotifyManager.prototype.remove = function (el) {
+            if(!el) {
+                return;
             }
+            el.animate({
+                duration: slideDuration,
+                to: {
+                    height: 0,
+                    opacity: 0
+                },
+                callback: function () {
+                    Ext.removeNode(el.dom);
+                }
+            });
+            delete this.timers[el.id];
+        };
+        NotifyManager.prototype.startTimer = function (el) {
+            var _this = this;
+            var timer = this.timers[el.id];
+            if(!timer) {
+                return;
+            }
+            timer.id = setTimeout(function () {
+                _this.remove(el);
+            }, timer.remainingTime);
+            timer.startTime = Date.now();
+        };
+        NotifyManager.prototype.stopTimer = function (el) {
+            var timer = this.timers[el.id];
+            if(!timer || !timer.id) {
+                return;
+            }
+            clearTimeout(timer.id);
+            timer.id = null;
+            timer.remainingTime -= Date.now() - timer.startTime;
+        };
+        NotifyManager.prototype.renderNotification = function (opts) {
+            var style = {
+            };
+            var template = templates.notify;
+            var notificationEl = template.append(this.getWrapperEl(), opts, true);
+            if(opts.backgroundColor) {
+                style['backgroundColor'] = opts.backgroundColor;
+            }
+            style['marginTop'] = space + 'px';
+            getInnerEl(notificationEl).setStyle(style);
+            return notificationEl;
+        };
+        return NotifyManager;
+    })();
+    api_notify.NotifyManager = NotifyManager;    
+    function getInnerEl(notificationEl) {
+        return notificationEl.down('.admin-notification-inner');
+    }
+    var manager = new NotifyManager();
+    function sendNotification(message) {
+        manager.notify(message);
+    }
+    api_notify.sendNotification = sendNotification;
+})(api_notify || (api_notify = {}));
+var api_notify;
+(function (api_notify) {
+    var NotifyOpts = (function () {
+        function NotifyOpts() { }
+        return NotifyOpts;
+    })();
+    api_notify.NotifyOpts = NotifyOpts;    
+    function buildOpts(message) {
+        var opts = new NotifyOpts();
+        if(message.getType() == api_notify.Type.ERROR) {
+            opts.backgroundColor = 'red';
+        } else if(message.getType() == api_notify.Type.ACTION) {
+            opts.backgroundColor = '#669c34';
         }
-    })(API.notify || (API.notify = {}));
-    var notify = API.notify;
-})(API || (API = {}));
-var API;
-(function (API) {
-    (function (notify) {
-        function showFeedback(message) {
-            notify.newInfo(message).send();
+        createHtmlMessage(message, opts);
+        addListeners(message, opts);
+        return opts;
+    }
+    api_notify.buildOpts = buildOpts;
+    function addListeners(message, opts) {
+        opts.listeners = [];
+        var actions = message.getActions();
+        for(var i = 0; i < actions.length; i++) {
+            opts.listeners.push({
+                fn: actions[i].getHandler(),
+                delegate: 'notify_action_' + i,
+                stopEvent: true
+            });
         }
-
-        notify.showFeedback = showFeedback;
-        function updateAppTabCount(appId, tabCount) {
+    }
+    function createHtmlMessage(message, opts) {
+        var actions = message.getActions();
+        opts.message = '<span>' + message.getText() + '</span>';
+        if(actions.length > 0) {
+            var linkHtml = '<span style="float: right; margin-left: 30px;">';
+            for(var i = 0; i < actions.length; i++) {
+                if((i > 0) && (i == (actions.length - 1))) {
+                    linkHtml += ' or ';
+                } else if(i > 0) {
+                    linkHtml += ', ';
+                }
+                linkHtml += '<a href="#" class="notify_action_"' + i + '">';
+                linkHtml += actions[i].getName() + "</a>";
+            }
+            linkHtml += '</span>';
+            opts.message = linkHtml + opts.message;
         }
-
-        notify.updateAppTabCount = updateAppTabCount;
-    })(API.notify || (API.notify = {}));
-    var notify = API.notify;
-})(API || (API = {}));
+    }
+})(api_notify || (api_notify = {}));
+var api_notify;
+(function (api_notify) {
+    function showFeedback(message) {
+        api_notify.newInfo(message).send();
+    }
+    api_notify.showFeedback = showFeedback;
+    function updateAppTabCount(appId, tabCount) {
+    }
+    api_notify.updateAppTabCount = updateAppTabCount;
+})(api_notify || (api_notify = {}));
 var api_content_data;
 (function (api_content_data) {
     var DataId = (function () {
         function DataId(name, arrayIndex) {
             this.name = name;
             this.arrayIndex = arrayIndex;
-            if (arrayIndex > 0) {
+            if(arrayIndex > 0) {
                 this.refString = name + '[' + arrayIndex + ']';
             } else {
                 this.refString = name;
             }
         }
-
         DataId.prototype.getName = function () {
             return this.name;
         };
@@ -611,7 +564,7 @@ var api_content_data;
         DataId.from = function from(str) {
             var endsWithEndBracket = str.indexOf(']', str.length - ']'.length) !== -1;
             var containsStartBracket = str.indexOf('[') !== -1;
-            if (endsWithEndBracket && containsStartBracket) {
+            if(endsWithEndBracket && containsStartBracket) {
                 var firstBracketPos = str.indexOf('[');
                 var nameStr = str.substring(0, firstBracketPos);
                 var indexStr = str.substring(nameStr.length + 1, (str.length - 1));
@@ -623,7 +576,7 @@ var api_content_data;
         };
         return DataId;
     })();
-    api_content_data.DataId = DataId;
+    api_content_data.DataId = DataId;    
 })(api_content_data || (api_content_data = {}));
 var api_content_data;
 (function (api_content_data) {
@@ -631,7 +584,6 @@ var api_content_data;
         function Data(name) {
             this.name = name;
         }
-
         Data.prototype.setArrayIndex = function (value) {
             this.arrayIndex = value;
         };
@@ -652,23 +604,22 @@ var api_content_data;
         };
         return Data;
     })();
-    api_content_data.Data = Data;
+    api_content_data.Data = Data;    
 })(api_content_data || (api_content_data = {}));
 var api_content_data;
 (function (api_content_data) {
     var DataSet = (function (_super) {
         __extends(DataSet, _super);
         function DataSet(name) {
-            _super.call(this, name);
+                _super.call(this, name);
             this.dataById = {
             };
         }
-
         DataSet.prototype.nameCount = function (name) {
             var count = 0;
-            for (var i in this.dataById) {
+            for(var i in this.dataById) {
                 var data = this.dataById[i];
-                if (data.getName() === name) {
+                if(data.getName() === name) {
                     count++;
                 }
             }
@@ -686,30 +637,28 @@ var api_content_data;
         };
         return DataSet;
     })(api_content_data.Data);
-    api_content_data.DataSet = DataSet;
+    api_content_data.DataSet = DataSet;    
 })(api_content_data || (api_content_data = {}));
 var api_content_data;
 (function (api_content_data) {
     var ContentData = (function (_super) {
         __extends(ContentData, _super);
         function ContentData() {
-            _super.call(this, "");
+                _super.call(this, "");
         }
-
         return ContentData;
     })(api_content_data.DataSet);
-    api_content_data.ContentData = ContentData;
+    api_content_data.ContentData = ContentData;    
 })(api_content_data || (api_content_data = {}));
 var api_content_data;
 (function (api_content_data) {
     var Property = (function (_super) {
         __extends(Property, _super);
         function Property(name, value, type) {
-            _super.call(this, name);
+                _super.call(this, name);
             this.value = value;
             this.type = type;
         }
-
         Property.from = function from(json) {
             return new Property(json.name, json.value, json.type);
         };
@@ -724,7 +673,7 @@ var api_content_data;
         };
         return Property;
     })(api_content_data.Data);
-    api_content_data.Property = Property;
+    api_content_data.Property = Property;    
 })(api_content_data || (api_content_data = {}));
 var api_schema_content_form;
 (function (api_schema_content_form) {
@@ -732,13 +681,12 @@ var api_schema_content_form;
         function FormItem(name) {
             this.name = name;
         }
-
         FormItem.prototype.getName = function () {
             return this.name;
         };
         return FormItem;
     })();
-    api_schema_content_form.FormItem = FormItem;
+    api_schema_content_form.FormItem = FormItem;    
 })(api_schema_content_form || (api_schema_content_form = {}));
 var api_schema_content_form;
 (function (api_schema_content_form) {
@@ -746,20 +694,19 @@ var api_schema_content_form;
         function InputType(json) {
             this.name = json.name;
         }
-
         InputType.prototype.getName = function () {
             return this.name;
         };
         return InputType;
     })();
-    api_schema_content_form.InputType = InputType;
+    api_schema_content_form.InputType = InputType;    
 })(api_schema_content_form || (api_schema_content_form = {}));
 var api_schema_content_form;
 (function (api_schema_content_form) {
     var Input = (function (_super) {
         __extends(Input, _super);
         function Input(json) {
-            _super.call(this, json.name);
+                _super.call(this, json.name);
             this.inputType = new api_schema_content_form.InputType(json.type);
             this.label = json.label;
             this.immutable = json.immutable;
@@ -769,7 +716,6 @@ var api_schema_content_form;
             this.validationRegex = json.validationRegexp;
             this.helpText = json.helpText;
         }
-
         Input.prototype.getLabel = function () {
             return this.label;
         };
@@ -793,7 +739,7 @@ var api_schema_content_form;
         };
         return Input;
     })(api_schema_content_form.FormItem);
-    api_schema_content_form.Input = Input;
+    api_schema_content_form.Input = Input;    
 })(api_schema_content_form || (api_schema_content_form = {}));
 var api_schema_content_form;
 (function (api_schema_content_form) {
@@ -802,10 +748,9 @@ var api_schema_content_form;
             this.minimum = json.minimum;
             this.maximum = json.maximum;
         }
-
         return Occurrences;
     })();
-    api_schema_content_form.Occurrences = Occurrences;
+    api_schema_content_form.Occurrences = Occurrences;    
 })(api_schema_content_form || (api_schema_content_form = {}));
 Ext.Loader.setConfig({
     enabled: false,

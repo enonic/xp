@@ -215,7 +215,7 @@ module app_ui {
                 this.titleButton.setVisible(tabCount > 0);
                 this.titleButton.setCount(tabCount);
 
-                API.notify.updateAppTabCount(this.getApplicationId(), tabCount);
+                api_notify.updateAppTabCount(this.getApplicationId(), tabCount);
             }
         }
 

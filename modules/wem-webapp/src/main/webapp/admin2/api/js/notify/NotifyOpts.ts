@@ -1,4 +1,4 @@
-module API.notify {
+module api_notify {
 
     export class NotifyOpts {
         message:string;

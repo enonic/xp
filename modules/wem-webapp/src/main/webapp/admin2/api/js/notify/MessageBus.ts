@@ -1,4 +1,4 @@
-module API.notify {
+module api_notify {
 
     export function showFeedback(message:string):void {
         newInfo(message).send();

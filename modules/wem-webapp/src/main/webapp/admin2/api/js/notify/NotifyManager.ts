@@ -1,4 +1,4 @@
-module API.notify {
+module api_notify {
 
     var space:number = 3;
 

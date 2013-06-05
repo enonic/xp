@@ -4174,7 +4174,7 @@ var app_ui;
                 var tabCount = this.tabMenu.getAllItems(false).length;
                 this.titleButton.setVisible(tabCount > 0);
                 this.titleButton.setCount(tabCount);
-                API.notify.updateAppTabCount(this.getApplicationId(), tabCount);
+                api_notify.updateAppTabCount(this.getApplicationId(), tabCount);
             }
         };
         TopBar.prototype.getApplicationId = function () {
@@ -5050,10 +5050,10 @@ Ext.define('Admin.controller.DialogWindowController', {
         var onDelete = function (success, details) {
             win.close();
             if(success && details.deleted) {
-                API.notify.showFeedback(Ext.isArray(space) && space.length > 1 ? space.length + ' spaces were deleted' : '1 space was deleted');
+                api_notify.showFeedback(Ext.isArray(space) && space.length > 1 ? space.length + ' spaces were deleted' : '1 space was deleted');
             } else {
                 var message = details.reason;
-                API.notify.showFeedback(message);
+                api_notify.showFeedback(message);
             }
             me.getSpaceTreeGridPanel().refresh();
         };
@@ -5138,7 +5138,7 @@ Ext.define('Admin.controller.WizardController', {
         };
         var onUpdateSpaceSuccess = function (created, updated) {
             if(created || updated) {
-                API.notify.showFeedback('Space "' + spaceName + '" was saved');
+                api_notify.showFeedback('Space "' + spaceName + '" was saved');
                 me.getSpaceTreeGridPanel().refresh();
                 me.getWizardPanel().isWizardDirty = false;
             }
@@ -5151,7 +5151,7 @@ Ext.define('Admin.controller.WizardController', {
         var onDeleteSpaceSuccess = function (success, failures) {
             if(success) {
                 wizard.close();
-                API.notify.showFeedback('Space was deleted');
+                api_notify.showFeedback('Space was deleted');
             }
         };
         this.remoteDeleteSpace(space, onDeleteSpaceSuccess);

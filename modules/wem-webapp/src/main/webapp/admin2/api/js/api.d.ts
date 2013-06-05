@@ -79,7 +79,7 @@ module api_ui_menu {
         public showAt(x: number, y: number): void;
     }
 }
-module API.notify {
+module api_notify {
     enum Type {
         INFO,
         ERROR,
@@ -107,7 +107,7 @@ module API.notify {
     function newError(text: string): Message;
     function newAction(text: string): Message;
 }
-module API.notify {
+module api_notify {
     class NotifyManager {
         private timers;
         private el;
@@ -124,7 +124,7 @@ module API.notify {
     }
     function sendNotification(message: Message): void;
 }
-module API.notify {
+module api_notify {
     class NotifyOpts {
         public message: string;
         public backgroundColor: string;
@@ -132,7 +132,7 @@ module API.notify {
     }
     function buildOpts(message: Message): NotifyOpts;
 }
-module API.notify {
+module api_notify {
     function showFeedback(message: string): void;
     function updateAppTabCount(appId, tabCount: Number): void;
 }
