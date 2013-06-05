@@ -9,7 +9,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     x: 10,
     y: 40,
     width: 320,
-    height: 548,
+    height: 520,
     shadow: false,
     border: false,
     floating: true,

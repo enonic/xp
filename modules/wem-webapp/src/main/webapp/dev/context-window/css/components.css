@@ -30,6 +30,7 @@
     font-size: 32px;
     font-weight: lighter;
     display: table-cell;
+    padding-top: 1px;
 }
 
 .live-edit-component-row div {

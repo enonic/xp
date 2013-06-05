@@ -102,7 +102,6 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
         );
 
         return new Ext.view.View({
-            autoScroll: false,
             flex: 1,
             store: Ext.data.StoreManager.lookup('ctxWindowComponentStore'),
             tpl: imageTpl,
@@ -111,10 +110,10 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
             listeners: {
                 render: function (view) {
                     view.getEl().on('mouseover', function() {
-                        view.setAutoScroll(true);
+                        view.setOverflowXY('hidden', 'auto');
                     });
                     view.getEl().on('mouseout', function() {
-                        view.setAutoScroll(false);
+                        view.setOverflowXY('hidden', 'hidden');
                     });
                 }
             }
