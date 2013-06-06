@@ -122,8 +122,17 @@ var api_ui;
                 this.el.className = this.el.className.replace(reg, '');
             }
         };
+        HTMLElementHelper.prototype.addEventListener = function (eventName, f) {
+            this.el.addEventListener(eventName, f);
+        };
+        HTMLElementHelper.prototype.appendChild = function (child) {
+            this.el.appendChild(child);
+        };
         HTMLElementHelper.prototype.setDisplay = function (value) {
             this.el.style.display = value;
+        };
+        HTMLElementHelper.prototype.setPosition = function (value) {
+            this.el.style.position = value;
         };
         HTMLElementHelper.prototype.setWidth = function (value) {
             this.el.style.width = value;
@@ -143,14 +152,14 @@ var api_ui;
         HTMLElementHelper.prototype.setMarginRight = function (value) {
             this.el.style.marginRight = value;
         };
+        HTMLElementHelper.prototype.setMarginTop = function (value) {
+            this.el.style.marginTop = value;
+        };
+        HTMLElementHelper.prototype.setMarginBottom = function (value) {
+            this.el.style.marginBottom = value;
+        };
         HTMLElementHelper.prototype.setZindex = function (value) {
             this.el.style.zIndex = value.toString();
-        };
-        HTMLElementHelper.prototype.addEventListener = function (eventName, f) {
-            this.el.addEventListener(eventName, f);
-        };
-        HTMLElementHelper.prototype.appendChild = function (child) {
-            this.el.appendChild(child);
         };
         return HTMLElementHelper;
     })();
@@ -388,10 +397,13 @@ var api_ui_dialog;
             this.getEl().setZindex(30001);
             this.getEl().addClass("modal-dialog");
             this.getEl().addClass("display-none");
-            this.getEl().setWidth("500px");
-            this.getEl().setHeight("500px");
-            this.getEl().setTop("100px");
-            this.getEl().setLeft("100px");
+            this.getEl().setWidth(this.width + "px");
+            this.getEl().setHeight(this.height + "px");
+            this.getEl().setPosition("fixed");
+            this.getEl().setTop("50%");
+            this.getEl().setLeft("50%");
+            this.getEl().setMarginLeft("-" + (this.width / 2) + "px");
+            this.getEl().setMarginTop("-" + (this.height / 2) + "px");
             this.title = new ModalDialogTitle(title);
             this.appendChild(this.title);
             this.contentPanel = new ModalDialogContentPanel();

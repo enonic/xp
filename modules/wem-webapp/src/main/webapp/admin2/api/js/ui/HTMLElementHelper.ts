@@ -50,8 +50,20 @@ module api_ui {
             }
         }
 
+        addEventListener(eventName:string, f:() => any) {
+            this.el.addEventListener(eventName, f);
+        }
+
+        appendChild(child:HTMLElement) {
+            this.el.appendChild(child);
+        }
+
         setDisplay(value:string) {
             this.el.style.display = value;
+        }
+
+        setPosition(value:string) {
+            this.el.style.position = value;
         }
 
         setWidth(value:string) {
@@ -78,16 +90,16 @@ module api_ui {
             this.el.style.marginRight = value;
         }
 
+        setMarginTop(value:string) {
+            this.el.style.marginTop = value;
+        }
+
+        setMarginBottom(value:string) {
+            this.el.style.marginBottom = value;
+        }
+
         setZindex(value:number) {
             this.el.style.zIndex = value.toString();
-        }
-
-        addEventListener(eventName:string, f:() => any) {
-            this.el.addEventListener(eventName, f);
-        }
-
-        appendChild(child:HTMLElement) {
-            this.el.appendChild(child);
         }
 
     }

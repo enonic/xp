@@ -20,10 +20,15 @@ module api_ui_dialog{
             this.getEl().setZindex(30001);
             this.getEl().addClass("modal-dialog");
             this.getEl().addClass("display-none");
-            this.getEl().setWidth("500px");
-            this.getEl().setHeight("500px");
-            this.getEl().setTop("100px");
-            this.getEl().setLeft("100px");
+            this.getEl().setWidth(this.width + "px");
+            this.getEl().setHeight(this.height + "px");
+
+            // center element...
+            this.getEl().setPosition("fixed");
+            this.getEl().setTop("50%");
+            this.getEl().setLeft("50%");
+            this.getEl().setMarginLeft("-" + (this.width / 2) + "px");
+            this.getEl().setMarginTop("-" + (this.height / 2) + "px");
 
             this.title = new ModalDialogTitle(title);
             this.appendChild(this.title);

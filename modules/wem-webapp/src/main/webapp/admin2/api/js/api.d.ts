@@ -42,16 +42,19 @@ module api_ui {
         public addClass(clsName: string): void;
         public hasClass(clsName: string): bool;
         public removeClass(clsName: string): void;
+        public addEventListener(eventName: string, f: () => any): void;
+        public appendChild(child: HTMLElement): void;
         public setDisplay(value: string): void;
+        public setPosition(value: string): void;
         public setWidth(value: string): void;
         public setHeight(value: string): void;
         public setTop(value: string): void;
         public setLeft(value: string): void;
         public setMarginLeft(value: string): void;
         public setMarginRight(value: string): void;
+        public setMarginTop(value: string): void;
+        public setMarginBottom(value: string): void;
         public setZindex(value: number): void;
-        public addEventListener(eventName: string, f: () => any): void;
-        public appendChild(child: HTMLElement): void;
     }
 }
 module api_ui {
