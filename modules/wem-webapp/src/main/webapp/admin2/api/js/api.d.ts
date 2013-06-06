@@ -40,6 +40,8 @@ module api_ui {
         public setId(value: string): void;
         public setInnerHtml(value: string): void;
         public addClass(clsName: string): void;
+        public hasClass(clsName: string): bool;
+        public removeClass(clsName: string): void;
         public addEventListener(eventName: string, f: () => any): void;
         public appendChild(child: HTMLElement): void;
     }

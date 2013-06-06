@@ -29,12 +29,24 @@ module api_ui {
         }
 
         addClass(clsName:string) {
-
-            if (this.el.className === '') {
-                this.el.className += clsName;
+            if (!this.hasClass(clsName)) {
+                if (this.el.className === '') {
+                    this.el.className += clsName;
+                }
+                else {
+                    this.el.className += ' ' + clsName;
+                }
             }
-            else {
-                this.el.className += ' ' + clsName;
+        }
+
+        hasClass(clsName:string): bool {
+            return this.el.className.match(new RegExp('(\\s|^)' + clsName + '(\\s|$)')) !== null;
+        }
+
+        removeClass(clsName:string) {
+            if (this.hasClass(clsName)) {
+                var reg = new RegExp('(\\s|^)' + clsName + '(\\s|$)');
+                this.el.className = this.el.className.replace(reg, ' ');
             }
         }
 

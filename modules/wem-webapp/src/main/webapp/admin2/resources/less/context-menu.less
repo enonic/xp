@@ -10,15 +10,15 @@
     font-size: 14px;
     width: 120px;
     border-width: 0;
-    color:#333;
+    color: #333;
 
-    padding:5px;
-    margin:0;
+    padding: 5px;
+    margin: 0;
 
-    &:hover {
+    &:hover:not(.context-menu-item-disabled) {
       cursor: pointer;
-      background-color:#4294de;
-      color:#fff;
+      background-color: #4294de;
+      color: #fff;
     }
 
     &:disabled {
@@ -26,4 +26,9 @@
     }
 
   }
+
+  li.context-menu-item-disabled {
+    opacity: 0.5;
+  }
 }
+

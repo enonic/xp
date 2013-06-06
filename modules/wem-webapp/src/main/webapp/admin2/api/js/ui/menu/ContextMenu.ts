@@ -15,7 +15,8 @@ module api_ui_menu{
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
                 contentEl: htmlEl,
-                region: 'north'
+                region: 'north',
+                shadow: false
             });
             // add Floating mixin so that later call to showAt() works properly
             this.ext.self.mixin('floating', Ext.util.Floating);
@@ -60,7 +61,13 @@ module api_ui_menu{
         }
 
         setEnable(value:bool) {
-            this.getEl().setDisabled(!value);
+            var el = this.getEl();
+            el.setDisabled(!value);
+            if (value) {
+                el.removeClass("context-menu-item-disabled");
+            } else {
+                el.addClass("context-menu-item-disabled");
+            }
         }
     }
 
