@@ -46,15 +46,7 @@ module api_ui {
         removeClass(clsName:string) {
             if (this.hasClass(clsName)) {
                 var reg = new RegExp('(\\s|^)' + clsName + '(\\s|$)');
-                this.el.className = this.el.className.replace(reg, ' ');
-            }
-        }
-
-        removeClass(clsName:string) {
-
-            if (this.el.className.length > 0) {
-                var regexp = new RegExp(clsName, "g");
-                this.el.className = this.el.className.replace(regexp, '');
+                this.el.className = this.el.className.replace(reg, '');
             }
         }
 
