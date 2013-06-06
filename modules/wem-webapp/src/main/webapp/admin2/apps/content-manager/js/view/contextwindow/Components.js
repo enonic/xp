@@ -1,3 +1,6 @@
+/**
+ * fixme: Extract model and store
+ */
 Ext.define('Admin.view.contentManager.contextwindow.Components', {
     extend: 'Ext.container.Container',
     alias: 'widget.contextWindowComponentsPanel',
@@ -42,22 +45,14 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
      * @returns {Ext.Component}
      */
     createSearchInput: function () {
+        var me = this;
         return new Ext.Component({
             autoEl: 'input',
             cls: 'live-edit-component-search-input',
             listeners: {
                 render: function () {
-                    this.getEl().on('keyup', function () {
-
-                        var store = Ext.data.StoreManager.lookup('ctxWindowComponentStore');
-                        var valueLowerCased = this.getValue().toLowerCase();
-
-                        store.clearFilter();
-                        store.filterBy(function (item) {
-                            return item.get('name').toLowerCase().indexOf(valueLowerCased) > -1;
-                        });
-
-
+                    this.getEl().on('keyup', function (event, el) {
+                        me.filterComponentStore(el.value);
                     });
                 }
             }
@@ -151,6 +146,16 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
                     });
                 }
             }
+        });
+    },
+
+    filterComponentStore: function (value) {
+        var store = Ext.data.StoreManager.lookup('ctxWindowComponentStore'),
+            valueLowerCased = value.toLowerCase();
+
+        store.clearFilter();
+        store.filterBy(function (item) {
+            return item.get('name').toLowerCase().indexOf(valueLowerCased) > -1;
         });
     }
 
