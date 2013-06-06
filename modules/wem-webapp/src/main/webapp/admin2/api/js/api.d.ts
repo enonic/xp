@@ -99,6 +99,8 @@ module api_ui_menu {
         public addAction(action: api_action.Action): void;
         private createMenuItem(action);
         public showAt(x: number, y: number): void;
+        private hide();
+        private onDocumentClick(evt);
     }
 }
 module api_ui_dialog {

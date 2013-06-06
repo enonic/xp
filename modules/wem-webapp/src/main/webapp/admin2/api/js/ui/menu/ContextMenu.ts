@@ -9,6 +9,10 @@ module api_ui_menu{
             super("context-menu", "ul");
             this.getEl().addClass("context-menu");
             this.initExt();
+
+            window.document.addEventListener("click", (evt:Event) => {
+                this.onDocumentClick(evt);
+            });
         }
 
         private initExt() {
@@ -37,6 +41,23 @@ module api_ui_menu{
         showAt(x:number, y:number) {
             this.ext.showAt(x, y);
         }
+
+        private hide() {
+            this.ext.hide();
+        }
+
+        private onDocumentClick(evt:Event):void {
+            var id = this.getId();
+            var target:any = evt.target;
+            for (var element = target; element; element = element.parentNode) {
+                if (element.id === id) {
+                    return; // menu clicked
+                }
+            }
+
+            // click outside menu
+            this.hide();
+        }
     }
 
     class MenuItem extends api_ui.Component {
@@ -50,8 +71,10 @@ module api_ui_menu{
             this.menu = parent;
             this.getEl().setInnerHtml(this.action.getLabel());
             this.getEl().addEventListener("click", () => {
-                this.action.execute();
-                this.menu.ext.hide();
+                if (action.isEnabled()) {
+                    this.action.execute();
+                    this.menu.ext.hide();
+                }
             });
             this.setEnable(action.isEnabled());
 

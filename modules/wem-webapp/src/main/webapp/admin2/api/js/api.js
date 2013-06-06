@@ -301,10 +301,14 @@ var api_ui_menu;
     var ContextMenu = (function (_super) {
         __extends(ContextMenu, _super);
         function ContextMenu() {
+            var _this = this;
                 _super.call(this, "context-menu", "ul");
             this.menuItems = [];
             this.getEl().addClass("context-menu");
             this.initExt();
+            window.document.addEventListener("click", function (evt) {
+                _this.onDocumentClick(evt);
+            });
         }
         ContextMenu.prototype.initExt = function () {
             var htmlEl = this.getHTMLElement();
@@ -328,6 +332,19 @@ var api_ui_menu;
         ContextMenu.prototype.showAt = function (x, y) {
             this.ext.showAt(x, y);
         };
+        ContextMenu.prototype.hide = function () {
+            this.ext.hide();
+        };
+        ContextMenu.prototype.onDocumentClick = function (evt) {
+            var id = this.getId();
+            var target = evt.target;
+            for(var element = target; element; element = element.parentNode) {
+                if(element.id === id) {
+                    return;
+                }
+            }
+            this.hide();
+        };
         return ContextMenu;
     })(api_ui.Component);
     api_ui_menu.ContextMenu = ContextMenu;    
@@ -340,8 +357,10 @@ var api_ui_menu;
             this.menu = parent;
             this.getEl().setInnerHtml(this.action.getLabel());
             this.getEl().addEventListener("click", function () {
-                _this.action.execute();
-                _this.menu.ext.hide();
+                if(action.isEnabled()) {
+                    _this.action.execute();
+                    _this.menu.ext.hide();
+                }
             });
             this.setEnable(action.isEnabled());
             action.addPropertyChangeListener(function (action) {
