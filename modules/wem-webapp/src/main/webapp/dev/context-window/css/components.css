@@ -1,10 +1,19 @@
 .live-edit-component-search-bar {
-    padding: 10px 20px;
+    padding: 10px 10px;
+}
+
+.live-edit-component-search-input {
+    background-color: #5a5a5a;
+    border: 1px solid #aaa;
+    color: #aaa;
+    padding: 3px;
+    width: 100%;
 }
 
 .live-edit-component {
     display: block;
-    padding: 10px 20px;
+    margin: 0 10px 0 10px;
+    padding: 8px;
     cursor: hand;
     cursor: grab !important;
     cursor: -moz-grab;
@@ -42,7 +51,7 @@
     margin: 0;
     padding: 0;
     line-height: 1.2;
-    font-size: 15px !important;
+    font-size: 13px !important;
     color: #f2f2f2;
 }
 

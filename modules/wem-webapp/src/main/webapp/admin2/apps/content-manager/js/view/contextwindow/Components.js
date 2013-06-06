@@ -8,6 +8,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
     },
 
     searchBar: undefined,
+    searchInput: undefined,
     listView: undefined,
 
     initComponent: function () {
@@ -24,10 +25,42 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
      * @returns {Ext.Component}
      */
     createSearchBar: function () {
-        return new Ext.Component({
-            height: 50,
+        this.searchInput = this.createSearchInput();
+        return new Ext.container.Container({
+            height: 73,
             cls: 'live-edit-component-search-bar',
-            html: 'Search Bar goes here'
+            items: [
+                new Ext.Component({
+                    html: '<p>Drag\'n drop Parts, Layouts and more..</p>'
+                }),
+                this.searchInput
+            ]
+        });
+    },
+
+    /**
+     * @returns {Ext.Component}
+     */
+    createSearchInput: function () {
+        return new Ext.Component({
+            autoEl: 'input',
+            cls: 'live-edit-component-search-input',
+            listeners: {
+                render: function () {
+                    this.getEl().on('keyup', function () {
+
+                        var store = Ext.data.StoreManager.lookup('ctxWindowComponentStore');
+                        var valueLowerCased = this.getValue().toLowerCase();
+
+                        store.clearFilter();
+                        store.filterBy(function (item) {
+                            return item.get('name').toLowerCase().indexOf(valueLowerCased) > -1;
+                        });
+
+
+                    });
+                }
+            }
         });
     },
 
@@ -105,6 +138,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
             flex: 1,
             store: Ext.data.StoreManager.lookup('ctxWindowComponentStore'),
             tpl: imageTpl,
+            cls: 'live-edit-component-list',
             itemSelector: 'div.live-edit-component',
             emptyText: 'No components available',
             listeners: {
