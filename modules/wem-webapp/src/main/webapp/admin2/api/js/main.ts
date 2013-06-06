@@ -15,7 +15,9 @@
 ///<reference path='ui/Component.ts' />
 ///<reference path='ui/BodyMask.ts' />
 ///<reference path='ui/toolbar/Toolbar.ts' />
+///<reference path='ui/menu/MenuItem.ts' />
 ///<reference path='ui/menu/ContextMenu.ts' />
+///<reference path='ui/menu/ActionMenu.ts' />
 
 ///<reference path='ui/dialog/DialogButton.ts' />
 ///<reference path='ui/dialog/ModalDialog.ts' />

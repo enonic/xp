@@ -42,7 +42,7 @@ module api_ui {
         public addClass(clsName: string): void;
         public hasClass(clsName: string): bool;
         public removeClass(clsName: string): void;
-        public addEventListener(eventName: string, f: () => any): void;
+        public addEventListener(eventName: string, f: (event: Event) => any): void;
         public appendChild(child: HTMLElement): void;
         public setDisplay(value: string): void;
         public setPosition(value: string): void;
@@ -91,6 +91,14 @@ module api_ui_toolbar {
     }
 }
 module api_ui_menu {
+    class MenuItem extends api_ui.Component {
+        private menu;
+        private action;
+        constructor(menu: api_ui.Component, action: api_action.Action);
+        public setEnable(value: bool): void;
+    }
+}
+module api_ui_menu {
     class ContextMenu extends api_ui.Component {
         public ext;
         private menuItems;
@@ -101,6 +109,26 @@ module api_ui_menu {
         public showAt(x: number, y: number): void;
         private hide();
         private onDocumentClick(evt);
+    }
+}
+module api_ui_menu {
+    class ActionMenu extends api_ui.Component {
+        public ext;
+        public button: ActionMenuButton;
+        private menuItems;
+        constructor(...actions: api_action.Action[]);
+        public addAction(action: api_action.Action): void;
+        private initExt();
+        private createMenuItem(action);
+        private hide();
+        private onDocumentClick(evt);
+    }
+    class ActionMenuButton extends api_ui.Component {
+        public ext;
+        public menu: ActionMenu;
+        constructor(label: string, menu: ActionMenu);
+        public setEnabled(value: bool): void;
+        private initExt();
     }
 }
 module api_ui_dialog {

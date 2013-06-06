@@ -37,6 +37,7 @@
 
 ///<reference path='view/BaseActionMenu.ts' />
 ///<reference path='view/ActionMenu.ts' />
+///<reference path='view/ActionMenu2.ts' />
 ///<reference path='view/DetailToolbar.ts' />
 ///<reference path='view/DetailPanel.ts' />
 

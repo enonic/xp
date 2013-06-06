@@ -59,7 +59,7 @@ module api_ui_toolbar {
             super("button", "button");
             this.action = action;
             this.getEl().setInnerHtml(this.action.getLabel());
-            this.getEl().addEventListener("click", () => {
+            this.getEl().addEventListener("click", (evt:Event) => {
                 this.action.execute();
             });
             this.setEnable(action.isEnabled());

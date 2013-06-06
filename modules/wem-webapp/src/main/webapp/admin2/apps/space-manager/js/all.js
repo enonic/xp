@@ -2639,6 +2639,17 @@ var app_ui;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
+    var ActionMenu2 = (function (_super) {
+        __extends(ActionMenu2, _super);
+        function ActionMenu2() {
+                _super.call(this, app.SpaceActions.OPEN_SPACE, app.SpaceActions.EDIT_SPACE);
+        }
+        return ActionMenu2;
+    })(api_ui_menu.ActionMenu);
+    app_ui.ActionMenu2 = ActionMenu2;    
+})(app_ui || (app_ui = {}));
+var app_ui;
+(function (app_ui) {
     var DetailToolbar = (function () {
         function DetailToolbar() {
             var tbar = new Ext.toolbar.Toolbar({
@@ -2800,7 +2811,7 @@ var app_ui;
                     type: 'table',
                     tableAttrs: {
                         style: {
-                            tableLayout: 'fixed',
+                            'table-layout': 'fixed',
                             width: '100%'
                         }
                     },
@@ -2826,7 +2837,12 @@ var app_ui;
                 data: data,
                 cls: 'admin-detail-header'
             });
-            north.add(photo, header, new app_ui.ActionMenu().ext);
+            var actionMenu = this.actionMenu = Ext.apply(new app_ui.ActionMenu2().button.ext, {
+                tdAttrs: {
+                    width: 140
+                }
+            });
+            north.add(photo, header, actionMenu);
             c.add(north);
             var west = new Ext.container.Container({
                 region: 'west',

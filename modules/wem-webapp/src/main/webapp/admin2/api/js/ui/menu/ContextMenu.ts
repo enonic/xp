@@ -34,6 +34,9 @@ module api_ui_menu{
 
         private createMenuItem(action:api_action.Action):MenuItem {
             var menuItem = new MenuItem(this, action);
+            menuItem.getEl().addEventListener("click", (evt:Event) => {
+                this.hide();
+            });
             this.menuItems.push(menuItem);
             return menuItem;
         }
@@ -57,40 +60,6 @@ module api_ui_menu{
 
             // click outside menu
             this.hide();
-        }
-    }
-
-    class MenuItem extends api_ui.Component {
-
-        private menu:api_ui_menu.ContextMenu;
-        private action:api_action.Action;
-
-        constructor(parent:api_ui_menu.ContextMenu, action:api_action.Action) {
-            super("menu-item", "li");
-            this.action = action;
-            this.menu = parent;
-            this.getEl().setInnerHtml(this.action.getLabel());
-            this.getEl().addEventListener("click", () => {
-                if (action.isEnabled()) {
-                    this.action.execute();
-                    this.menu.ext.hide();
-                }
-            });
-            this.setEnable(action.isEnabled());
-
-            action.addPropertyChangeListener((action:api_action.Action) => {
-                this.setEnable(action.isEnabled());
-            });
-        }
-
-        setEnable(value:bool) {
-            var el = this.getEl();
-            el.setDisabled(!value);
-            if (value) {
-                el.removeClass("context-menu-item-disabled");
-            } else {
-                el.addClass("context-menu-item-disabled");
-            }
         }
     }
 

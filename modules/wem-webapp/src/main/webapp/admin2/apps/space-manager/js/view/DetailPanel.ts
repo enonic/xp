@@ -8,6 +8,7 @@ module app_ui {
         private data;
         private header;
         private photo;
+        private actionMenu;
         private center;
 
         private tabs = [
@@ -139,7 +140,7 @@ module app_ui {
                     type: 'table',
                     tableAttrs: {
                         style: {
-                            tableLayout: 'fixed',
+                            'table-layout': 'fixed',
                             width: '100%'
                         }
                     },
@@ -167,7 +168,14 @@ module app_ui {
                 cls: 'admin-detail-header'
             });
 
-            north.add(photo, header, new app_ui.ActionMenu().ext);
+            var actionMenu = this.actionMenu = Ext.apply(
+                new app_ui.ActionMenu2().button.ext,
+                {
+                    tdAttrs: { width: 140 }
+                }
+            );
+
+            north.add(photo, header, actionMenu);
 
             c.add(north);
 

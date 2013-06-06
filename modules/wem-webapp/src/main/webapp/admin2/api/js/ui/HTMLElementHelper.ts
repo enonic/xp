@@ -50,7 +50,7 @@ module api_ui {
             }
         }
 
-        addEventListener(eventName:string, f:() => any) {
+        addEventListener(eventName:string, f:(event:Event) => any) {
             this.el.addEventListener(eventName, f);
         }
 

@@ -1,0 +1,45 @@
+.action-menu {
+  border-width: 2px;
+  border-style: solid;
+  border-color: #ccc !important;
+  background: #fff !important;
+
+  li {
+    font-family: "Open Sans", sans-serif;
+    background-color: transparent;
+    font-size: 14px;
+    width: 120px;
+    border-width: 0;
+    color: #333;
+
+    padding: 5px;
+    margin: 0;
+
+    &:hover {
+      cursor: pointer;
+      background-color: #4294de;
+      color: #fff;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+    }
+
+  }
+}
+
+.action-menu-button {
+  background-color: #4294de;
+  width: 120px;
+  height: 34px;
+  line-height: 34px;
+  border-width: 0;
+  cursor: pointer;
+
+  em {
+    background: url("../images/admin-arrow.png") right center no-repeat;
+    font-size: 14px;
+    padding-right: 18px;
+    color: #fff;
+  }
+}
