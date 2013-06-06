@@ -2,7 +2,7 @@
  * Main file for all admin API classes and methods.
  */
 
-
+///<reference path='Mousetrap.d.ts' />
 
 ///<reference path='util/UriHelper.ts' />
 
@@ -13,8 +13,13 @@
 
 ///<reference path='ui/HTMLElementHelper.ts' />
 ///<reference path='ui/Component.ts' />
+///<reference path='ui/BodyMask.ts' />
 ///<reference path='ui/toolbar/Toolbar.ts' />
 ///<reference path='ui/menu/ContextMenu.ts' />
+
+///<reference path='ui/dialog/DialogButton.ts' />
+///<reference path='ui/dialog/ModalDialog.ts' />
+///<reference path='delete/DeleteDialog.ts' />
 
 ///<reference path='notify/Message.ts' />
 ///<reference path='notify/NotifyManager.ts' />

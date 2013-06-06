@@ -42,6 +42,14 @@ module api_ui {
         public addClass(clsName: string): void;
         public hasClass(clsName: string): bool;
         public removeClass(clsName: string): void;
+        public setDisplay(value: string): void;
+        public setWidth(value: string): void;
+        public setHeight(value: string): void;
+        public setTop(value: string): void;
+        public setLeft(value: string): void;
+        public setMarginLeft(value: string): void;
+        public setMarginRight(value: string): void;
+        public setZindex(value: number): void;
         public addEventListener(eventName: string, f: () => any): void;
         public appendChild(child: HTMLElement): void;
     }
@@ -56,6 +64,15 @@ module api_ui {
         public getEl(): HTMLElementHelper;
         public getHTMLElement(): HTMLElement;
         public appendChild(child: Component): void;
+    }
+}
+module api_ui {
+    class BodyMask extends Component {
+        private static instance;
+        static get(): BodyMask;
+        constructor();
+        public activate(): void;
+        public deActivate(): void;
     }
 }
 module api_ui_toolbar {
@@ -79,6 +96,43 @@ module api_ui_menu {
         public addAction(action: api_action.Action): void;
         private createMenuItem(action);
         public showAt(x: number, y: number): void;
+    }
+}
+module api_ui_dialog {
+    class DialogButton extends api_ui.Component {
+        private action;
+        constructor(action: api_action.Action);
+        public setEnable(value: bool): void;
+    }
+}
+module api_ui_dialog {
+    class ModalDialog extends api_ui.Component {
+        private title;
+        private contentPanel;
+        private buttonRow;
+        private closeAction;
+        private width;
+        private height;
+        constructor(title: string);
+        public addToButtonRow(comp: api_ui.Component): void;
+        public close(): void;
+        public open(): void;
+    }
+    class ModalDialogTitle extends api_ui.Component {
+        constructor(title: string);
+    }
+    class ModalDialogContentPanel extends api_ui.Component {
+        constructor();
+    }
+    class ModalDialogButtonRow extends api_ui.Component {
+        constructor();
+    }
+}
+module api_delete {
+    class DeleteDialog extends api_ui_dialog.ModalDialog {
+        private deleteButton;
+        private cancelButton;
+        constructor(title: string, deleteAction: api_action.Action, cancelAction: api_action.Action);
     }
 }
 module api_notify {

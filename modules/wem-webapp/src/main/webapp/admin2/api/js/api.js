@@ -105,11 +105,46 @@ var api_ui;
             this.el.innerHTML = value;
         };
         HTMLElementHelper.prototype.addClass = function (clsName) {
-            if(this.el.className === '') {
-                this.el.className += clsName;
-            } else {
-                this.el.className += ' ' + clsName;
+            if(!this.hasClass(clsName)) {
+                if(this.el.className === '') {
+                    this.el.className += clsName;
+                } else {
+                    this.el.className += ' ' + clsName;
+                }
             }
+        };
+        HTMLElementHelper.prototype.hasClass = function (clsName) {
+            return this.el.className.match(new RegExp('(\\s|^)' + clsName + '(\\s|$)')) !== null;
+        };
+        HTMLElementHelper.prototype.removeClass = function (clsName) {
+            if(this.hasClass(clsName)) {
+                var reg = new RegExp('(\\s|^)' + clsName + '(\\s|$)');
+                this.el.className = this.el.className.replace(reg, '');
+            }
+        };
+        HTMLElementHelper.prototype.setDisplay = function (value) {
+            this.el.style.display = value;
+        };
+        HTMLElementHelper.prototype.setWidth = function (value) {
+            this.el.style.width = value;
+        };
+        HTMLElementHelper.prototype.setHeight = function (value) {
+            this.el.style.height = value;
+        };
+        HTMLElementHelper.prototype.setTop = function (value) {
+            this.el.style.top = value;
+        };
+        HTMLElementHelper.prototype.setLeft = function (value) {
+            this.el.style.left = value;
+        };
+        HTMLElementHelper.prototype.setMarginLeft = function (value) {
+            this.el.style.marginLeft = value;
+        };
+        HTMLElementHelper.prototype.setMarginRight = function (value) {
+            this.el.style.marginRight = value;
+        };
+        HTMLElementHelper.prototype.setZindex = function (value) {
+            this.el.style.zIndex = value.toString();
         };
         HTMLElementHelper.prototype.addEventListener = function (eventName, f) {
             this.el.addEventListener(eventName, f);
@@ -151,6 +186,31 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var api_ui;
+(function (api_ui) {
+    var BodyMask = (function (_super) {
+        __extends(BodyMask, _super);
+        function BodyMask() {
+                _super.call(this, "Mask", "div");
+            this.getEl().setDisplay("none");
+            this.getEl().addClass("body-mask");
+            this.getEl().setZindex(30000);
+            document.body.appendChild(this.getHTMLElement());
+        }
+        BodyMask.instance = new BodyMask();
+        BodyMask.get = function get() {
+            return BodyMask.instance;
+        };
+        BodyMask.prototype.activate = function () {
+            this.getEl().setDisplay("block");
+        };
+        BodyMask.prototype.deActivate = function () {
+            this.getEl().setDisplay("none");
+        };
+        return BodyMask;
+    })(api_ui.Component);
+    api_ui.BodyMask = BodyMask;    
+})(api_ui || (api_ui = {}));
 var api_ui_toolbar;
 (function (api_ui_toolbar) {
     var Toolbar = (function (_super) {
@@ -241,7 +301,8 @@ var api_ui_menu;
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
                 contentEl: htmlEl,
-                region: 'north'
+                region: 'north',
+                shadow: false
             });
             this.ext.self.mixin('floating', Ext.util.Floating);
             this.ext.mixins.floating.constructor.call(this.ext);
@@ -279,11 +340,127 @@ var api_ui_menu;
             });
         }
         MenuItem.prototype.setEnable = function (value) {
-            this.getEl().setDisabled(!value);
+            var el = this.getEl();
+            el.setDisabled(!value);
+            if(value) {
+                el.removeClass("context-menu-item-disabled");
+            } else {
+                el.addClass("context-menu-item-disabled");
+            }
         };
         return MenuItem;
     })(api_ui.Component);    
 })(api_ui_menu || (api_ui_menu = {}));
+var api_ui_dialog;
+(function (api_ui_dialog) {
+    var DialogButton = (function (_super) {
+        __extends(DialogButton, _super);
+        function DialogButton(action) {
+            var _this = this;
+                _super.call(this, "DialogButton", "button");
+            this.getEl().addClass("DialogButton");
+            this.action = action;
+            this.getEl().setInnerHtml(this.action.getLabel());
+            this.getEl().addEventListener("click", function () {
+                _this.action.execute();
+            });
+            this.setEnable(action.isEnabled());
+            action.addPropertyChangeListener(function (action) {
+                _this.setEnable(action.isEnabled());
+            });
+        }
+        DialogButton.prototype.setEnable = function (value) {
+            this.getEl().setDisabled(!value);
+        };
+        return DialogButton;
+    })(api_ui.Component);
+    api_ui_dialog.DialogButton = DialogButton;    
+})(api_ui_dialog || (api_ui_dialog = {}));
+var api_ui_dialog;
+(function (api_ui_dialog) {
+    var ModalDialog = (function (_super) {
+        __extends(ModalDialog, _super);
+        function ModalDialog(title) {
+            var _this = this;
+                _super.call(this, "ModalDialog", "div");
+            this.width = 700;
+            this.height = 500;
+            this.getEl().setZindex(30001);
+            this.getEl().addClass("modal-dialog");
+            this.getEl().addClass("display-none");
+            this.getEl().setWidth("500px");
+            this.getEl().setHeight("500px");
+            this.getEl().setTop("100px");
+            this.getEl().setLeft("100px");
+            this.title = new ModalDialogTitle(title);
+            this.appendChild(this.title);
+            this.contentPanel = new ModalDialogContentPanel();
+            this.appendChild(this.contentPanel);
+            this.closeAction = new api_action.Action("Close");
+            this.closeAction.addExecutionListener(function () {
+                _this.close();
+            });
+        }
+        ModalDialog.prototype.addToButtonRow = function (comp) {
+            this.buttonRow.appendChild(comp);
+        };
+        ModalDialog.prototype.close = function () {
+            api_ui.BodyMask.get().deActivate();
+            this.getEl().removeClass("display-block");
+            this.getEl().addClass("display-none");
+            Mousetrap.unbind('esc');
+        };
+        ModalDialog.prototype.open = function () {
+            var _this = this;
+            api_ui.BodyMask.get().activate();
+            this.getEl().removeClass("display-none");
+            this.getEl().addClass("display-block");
+            Mousetrap.bind('esc', function () {
+                _this.close();
+            });
+        };
+        return ModalDialog;
+    })(api_ui.Component);
+    api_ui_dialog.ModalDialog = ModalDialog;    
+    var ModalDialogTitle = (function (_super) {
+        __extends(ModalDialogTitle, _super);
+        function ModalDialogTitle(title) {
+                _super.call(this, "ModalDialogTitle", "h2");
+            this.getEl().setInnerHtml(title);
+        }
+        return ModalDialogTitle;
+    })(api_ui.Component);
+    api_ui_dialog.ModalDialogTitle = ModalDialogTitle;    
+    var ModalDialogContentPanel = (function (_super) {
+        __extends(ModalDialogContentPanel, _super);
+        function ModalDialogContentPanel() {
+                _super.call(this, "ModalDialogContentPanel", "div");
+        }
+        return ModalDialogContentPanel;
+    })(api_ui.Component);
+    api_ui_dialog.ModalDialogContentPanel = ModalDialogContentPanel;    
+    var ModalDialogButtonRow = (function (_super) {
+        __extends(ModalDialogButtonRow, _super);
+        function ModalDialogButtonRow() {
+                _super.call(this, "ModalDialogButtonRow", "div");
+        }
+        return ModalDialogButtonRow;
+    })(api_ui.Component);
+    api_ui_dialog.ModalDialogButtonRow = ModalDialogButtonRow;    
+})(api_ui_dialog || (api_ui_dialog = {}));
+var api_delete;
+(function (api_delete) {
+    var DeleteDialog = (function (_super) {
+        __extends(DeleteDialog, _super);
+        function DeleteDialog(title, deleteAction, cancelAction) {
+                _super.call(this, title);
+            this.deleteButton = new api_ui_dialog.DialogButton(deleteAction);
+            this.cancelButton = new api_ui_dialog.DialogButton(cancelAction);
+        }
+        return DeleteDialog;
+    })(api_ui_dialog.ModalDialog);
+    api_delete.DeleteDialog = DeleteDialog;    
+})(api_delete || (api_delete = {}));
 var api_notify;
 (function (api_notify) {
     (function (Type) {
