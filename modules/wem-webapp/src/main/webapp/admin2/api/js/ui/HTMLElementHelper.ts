@@ -50,6 +50,46 @@ module api_ui {
             }
         }
 
+        removeClass(clsName:string) {
+
+            if (this.el.className.length > 0) {
+                var regexp = new RegExp(clsName, "g");
+                this.el.className = this.el.className.replace(regexp, '');
+            }
+        }
+
+        setDisplay(value:string) {
+            this.el.style.display = value;
+        }
+
+        setWidth(value:string) {
+            this.el.style.width = value;
+        }
+
+        setHeight(value:string) {
+            this.el.style.height = value;
+        }
+
+        setTop(value:string) {
+            this.el.style.top = value;
+        }
+
+        setLeft(value:string) {
+            this.el.style.left = value;
+        }
+
+        setMarginLeft(value:string) {
+            this.el.style.marginLeft = value;
+        }
+
+        setMarginRight(value:string) {
+            this.el.style.marginRight = value;
+        }
+
+        setZindex(value:number) {
+            this.el.style.zIndex = value.toString();
+        }
+
         addEventListener(eventName:string, f:() => any) {
             this.el.addEventListener(eventName, f);
         }
