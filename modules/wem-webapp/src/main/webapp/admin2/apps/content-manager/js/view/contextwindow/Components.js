@@ -52,7 +52,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
             listeners: {
                 render: function () {
                     this.getEl().on('keyup', function (event, el) {
-                        me.filterComponentStore(el.value);
+                        me.doFilterStore(el.value);
                     });
                 }
             }
@@ -135,21 +135,11 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
             tpl: imageTpl,
             cls: 'live-edit-component-list',
             itemSelector: 'div.live-edit-component',
-            emptyText: 'No components available',
-            listeners: {
-                render: function (view) {
-                    view.getEl().on('mouseover', function() {
-                        view.setOverflowXY('hidden', 'auto');
-                    });
-                    view.getEl().on('mouseout', function() {
-                        view.setOverflowXY('hidden', 'hidden');
-                    });
-                }
-            }
+            emptyText: 'No components available'
         });
     },
 
-    filterComponentStore: function (value) {
+    doFilterStore: function (value) {
         var store = Ext.data.StoreManager.lookup('ctxWindowComponentStore'),
             valueLowerCased = value.toLowerCase();
 

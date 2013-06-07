@@ -10,6 +10,14 @@
     width: 100%;
 }
 
+.live-edit-component-list {
+    overflow: hidden;
+}
+
+.live-edit-component-list:hover {
+    overflow: auto;
+}
+
 .live-edit-component {
     display: block;
     margin: 0 10px 0 10px;
