@@ -30,7 +30,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
     createSearchBar: function () {
         this.searchInput = this.createSearchInput();
         return new Ext.container.Container({
-            height: 73,
+            height: 75,
             cls: 'live-edit-component-search-bar',
             items: [
                 new Ext.Component({
@@ -47,7 +47,10 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
     createSearchInput: function () {
         var me = this;
         return new Ext.Component({
-            autoEl: 'input',
+            autoEl: {
+                tag: 'input',
+                placeholder: 'Search'
+            },
             cls: 'live-edit-component-search-input',
             listeners: {
                 render: function () {
