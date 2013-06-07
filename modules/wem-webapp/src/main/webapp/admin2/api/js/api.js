@@ -97,12 +97,15 @@ var api_ui;
         };
         HTMLElementHelper.prototype.setDisabled = function (value) {
             this.el.disabled = value;
+            return this;
         };
         HTMLElementHelper.prototype.setId = function (value) {
             this.el.id = value;
+            return this;
         };
         HTMLElementHelper.prototype.setInnerHtml = function (value) {
             this.el.innerHTML = value;
+            return this;
         };
         HTMLElementHelper.prototype.addClass = function (clsName) {
             if(!this.hasClass(clsName)) {
@@ -130,36 +133,47 @@ var api_ui;
         };
         HTMLElementHelper.prototype.setDisplay = function (value) {
             this.el.style.display = value;
+            return this;
         };
         HTMLElementHelper.prototype.setPosition = function (value) {
             this.el.style.position = value;
+            return this;
         };
         HTMLElementHelper.prototype.setWidth = function (value) {
             this.el.style.width = value;
+            return this;
         };
         HTMLElementHelper.prototype.setHeight = function (value) {
             this.el.style.height = value;
+            return this;
         };
         HTMLElementHelper.prototype.setTop = function (value) {
             this.el.style.top = value;
+            return this;
         };
         HTMLElementHelper.prototype.setLeft = function (value) {
             this.el.style.left = value;
+            return this;
         };
         HTMLElementHelper.prototype.setMarginLeft = function (value) {
             this.el.style.marginLeft = value;
+            return this;
         };
         HTMLElementHelper.prototype.setMarginRight = function (value) {
             this.el.style.marginRight = value;
+            return this;
         };
         HTMLElementHelper.prototype.setMarginTop = function (value) {
             this.el.style.marginTop = value;
+            return this;
         };
         HTMLElementHelper.prototype.setMarginBottom = function (value) {
             this.el.style.marginBottom = value;
+            return this;
         };
         HTMLElementHelper.prototype.setZindex = function (value) {
             this.el.style.zIndex = value.toString();
+            return this;
         };
         return HTMLElementHelper;
     })();
@@ -384,21 +398,12 @@ var api_ui_menu;
                 _super.call(this, "context-menu", "ul");
             this.menuItems = [];
             this.getEl().addClass("context-menu");
-            this.initExt();
-            window.document.addEventListener("click", function (evt) {
-                _this.onDocumentClick(evt);
+            var htmlEl = this.getHTMLElement();
+            document.body.insertBefore(htmlEl, document.body.childNodes[0]);
+            document.addEventListener('click', function (evt) {
+                _this.hideMenuOnOutsideClick(evt);
             });
         }
-        ContextMenu.prototype.initExt = function () {
-            var htmlEl = this.getHTMLElement();
-            this.ext = new Ext.Component({
-                contentEl: htmlEl,
-                region: 'north',
-                shadow: false
-            });
-            this.ext.self.mixin('floating', Ext.util.Floating);
-            this.ext.mixins.floating.constructor.call(this.ext);
-        };
         ContextMenu.prototype.addAction = function (action) {
             var menuItem = this.createMenuItem(action);
             this.appendChild(menuItem);
@@ -406,19 +411,19 @@ var api_ui_menu;
         ContextMenu.prototype.createMenuItem = function (action) {
             var _this = this;
             var menuItem = new api_ui_menu.MenuItem(action);
-            menuItem.getEl().addEventListener("click", function (evt) {
+            menuItem.getEl().addEventListener('click', function (evt) {
                 _this.hide();
             });
             this.menuItems.push(menuItem);
             return menuItem;
         };
         ContextMenu.prototype.showAt = function (x, y) {
-            this.ext.showAt(x, y);
+            this.getEl().setPosition('absolute').setZindex(20000).setLeft(x + 'px').setTop(y + 'px').setDisplay('block');
         };
         ContextMenu.prototype.hide = function () {
-            this.ext.hide();
+            this.getEl().setDisplay('none');
         };
-        ContextMenu.prototype.onDocumentClick = function (evt) {
+        ContextMenu.prototype.hideMenuOnOutsideClick = function (evt) {
             var id = this.getId();
             var target = evt.target;
             for(var element = target; element; element = element.parentNode) {
@@ -450,7 +455,7 @@ var api_ui_menu;
                 this.addAction(actions[i]);
             }
             window.document.addEventListener("click", function (evt) {
-                _this.onDocumentClick(evt);
+                _this.hideMenuOnOutsideClick(evt);
             });
             this.initExt();
         }
@@ -488,7 +493,7 @@ var api_ui_menu;
         ActionMenu.prototype.hide = function () {
             this.ext.hide();
         };
-        ActionMenu.prototype.onDocumentClick = function (evt) {
+        ActionMenu.prototype.hideMenuOnOutsideClick = function (evt) {
             var id = this.getId();
             var target = evt.target;
             for(var element = target; element; element = element.parentNode) {

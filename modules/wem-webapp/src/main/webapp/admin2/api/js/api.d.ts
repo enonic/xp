@@ -36,25 +36,25 @@ module api_ui {
         static fromName(name: string): HTMLElementHelper;
         constructor(element: HTMLElement);
         public getHTMLElement(): HTMLElement;
-        public setDisabled(value: bool): void;
-        public setId(value: string): void;
-        public setInnerHtml(value: string): void;
+        public setDisabled(value: bool): HTMLElementHelper;
+        public setId(value: string): HTMLElementHelper;
+        public setInnerHtml(value: string): HTMLElementHelper;
         public addClass(clsName: string): void;
         public hasClass(clsName: string): bool;
         public removeClass(clsName: string): void;
         public addEventListener(eventName: string, f: (event: Event) => any): void;
         public appendChild(child: HTMLElement): void;
-        public setDisplay(value: string): void;
-        public setPosition(value: string): void;
-        public setWidth(value: string): void;
-        public setHeight(value: string): void;
-        public setTop(value: string): void;
-        public setLeft(value: string): void;
-        public setMarginLeft(value: string): void;
-        public setMarginRight(value: string): void;
-        public setMarginTop(value: string): void;
-        public setMarginBottom(value: string): void;
-        public setZindex(value: number): void;
+        public setDisplay(value: string): HTMLElementHelper;
+        public setPosition(value: string): HTMLElementHelper;
+        public setWidth(value: string): HTMLElementHelper;
+        public setHeight(value: string): HTMLElementHelper;
+        public setTop(value: string): HTMLElementHelper;
+        public setLeft(value: string): HTMLElementHelper;
+        public setMarginLeft(value: string): HTMLElementHelper;
+        public setMarginRight(value: string): HTMLElementHelper;
+        public setMarginTop(value: string): HTMLElementHelper;
+        public setMarginBottom(value: string): HTMLElementHelper;
+        public setZindex(value: number): HTMLElementHelper;
     }
 }
 module api_ui {
@@ -117,15 +117,13 @@ module api_ui_menu {
 }
 module api_ui_menu {
     class ContextMenu extends api_ui.Component {
-        public ext;
         private menuItems;
         constructor();
-        private initExt();
         public addAction(action: api_action.Action): void;
         private createMenuItem(action);
         public showAt(x: number, y: number): void;
         private hide();
-        private onDocumentClick(evt);
+        private hideMenuOnOutsideClick(evt);
     }
 }
 module api_ui_menu {
@@ -140,7 +138,7 @@ module api_ui_menu {
         private initExt();
         private createMenuItem(action);
         private hide();
-        private onDocumentClick(evt);
+        private hideMenuOnOutsideClick(evt);
     }
     class ActionMenuButton extends api_ui.Component {
         private ext;

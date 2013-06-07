@@ -1,30 +1,18 @@
 module api_ui_menu{
 
     export class ContextMenu extends api_ui.Component {
-        ext; //:Ext.Component;
-
         private menuItems:MenuItem[] = [];
 
         constructor() {
             super("context-menu", "ul");
             this.getEl().addClass("context-menu");
-            this.initExt();
 
-            window.document.addEventListener("click", (evt:Event) => {
-                this.onDocumentClick(evt);
-            });
-        }
-
-        private initExt() {
             var htmlEl = this.getHTMLElement();
-            this.ext = new Ext.Component({
-                contentEl: htmlEl,
-                region: 'north',
-                shadow: false
+            document.body.insertBefore(htmlEl, document.body.childNodes[0]);
+
+            document.addEventListener('click', (evt:Event) => {
+                this.hideMenuOnOutsideClick(evt);
             });
-            // add Floating mixin so that later call to showAt() works properly
-            this.ext.self.mixin('floating', Ext.util.Floating);
-            this.ext.mixins.floating.constructor.call(this.ext);
         }
 
         addAction(action:api_action.Action) {
@@ -34,7 +22,7 @@ module api_ui_menu{
 
         private createMenuItem(action:api_action.Action):MenuItem {
             var menuItem = new MenuItem(action);
-            menuItem.getEl().addEventListener("click", (evt:Event) => {
+            menuItem.getEl().addEventListener('click', (evt:Event) => {
                 this.hide();
             });
             this.menuItems.push(menuItem);
@@ -42,14 +30,19 @@ module api_ui_menu{
         }
 
         showAt(x:number, y:number) {
-            this.ext.showAt(x, y);
+            this.getEl().
+                setPosition('absolute').
+                setZindex(20000).
+                setLeft(x + 'px').
+                setTop(y + 'px').
+                setDisplay('block');
         }
 
         private hide() {
-            this.ext.hide();
+            this.getEl().setDisplay('none');
         }
 
-        private onDocumentClick(evt:Event):void {
+        private hideMenuOnOutsideClick(evt:Event):void {
             var id = this.getId();
             var target:any = evt.target;
             for (var element = target; element; element = element.parentNode) {

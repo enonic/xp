@@ -18,7 +18,7 @@ module api_ui_menu{
             }
 
             window.document.addEventListener("click", (evt:Event) => {
-                this.onDocumentClick(evt);
+                this.hideMenuOnOutsideClick(evt);
             });
 
             this.initExt();
@@ -62,7 +62,7 @@ module api_ui_menu{
             this.ext.hide();
         }
 
-        private onDocumentClick(evt:Event):void {
+        private hideMenuOnOutsideClick(evt:Event):void {
             var id = this.getId();
             var target:any = evt.target;
             for (var element = target; element; element = element.parentNode) {

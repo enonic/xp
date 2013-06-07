@@ -16,16 +16,19 @@ module api_ui {
             return this.el;
         }
 
-        setDisabled(value:bool) {
+        setDisabled(value:bool):HTMLElementHelper {
             this.el.disabled = value;
+            return this;
         }
 
-        setId(value:string) {
+        setId(value:string):HTMLElementHelper {
             this.el.id = value;
+            return this;
         }
 
-        setInnerHtml(value:string) {
+        setInnerHtml(value:string):HTMLElementHelper {
             this.el.innerHTML = value;
+            return this;
         }
 
         addClass(clsName:string) {
@@ -39,7 +42,7 @@ module api_ui {
             }
         }
 
-        hasClass(clsName:string): bool {
+        hasClass(clsName:string):bool {
             return this.el.className.match(new RegExp('(\\s|^)' + clsName + '(\\s|$)')) !== null;
         }
 
@@ -58,48 +61,59 @@ module api_ui {
             this.el.appendChild(child);
         }
 
-        setDisplay(value:string) {
+        setDisplay(value:string):HTMLElementHelper {
             this.el.style.display = value;
+            return this;
         }
 
-        setPosition(value:string) {
+        setPosition(value:string):HTMLElementHelper {
             this.el.style.position = value;
+            return this;
         }
 
-        setWidth(value:string) {
+        setWidth(value:string):HTMLElementHelper {
             this.el.style.width = value;
+            return this;
         }
 
-        setHeight(value:string) {
+        setHeight(value:string):HTMLElementHelper {
             this.el.style.height = value;
+            return this;
         }
 
-        setTop(value:string) {
+        setTop(value:string):HTMLElementHelper {
             this.el.style.top = value;
+            return this;
         }
 
-        setLeft(value:string) {
+        setLeft(value:string):HTMLElementHelper {
             this.el.style.left = value;
+            return this;
         }
 
-        setMarginLeft(value:string) {
+        setMarginLeft(value:string):HTMLElementHelper {
             this.el.style.marginLeft = value;
+            return this;
         }
 
-        setMarginRight(value:string) {
+        setMarginRight(value:string):HTMLElementHelper {
             this.el.style.marginRight = value;
+            return this;
         }
 
-        setMarginTop(value:string) {
+        setMarginTop(value:string):HTMLElementHelper {
             this.el.style.marginTop = value;
+            return this;
         }
 
-        setMarginBottom(value:string) {
+        setMarginBottom(value:string):HTMLElementHelper {
             this.el.style.marginBottom = value;
+            return this;
         }
 
-        setZindex(value:number) {
+        setZindex(value:number):HTMLElementHelper {
             this.el.style.zIndex = value.toString();
+            return this;
         }
 
     }
