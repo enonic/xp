@@ -58,6 +58,15 @@ module api_ui {
     }
 }
 module api_ui {
+    class HTMLImageElementHelper extends HTMLElementHelper {
+        private el;
+        static create(): HTMLElementHelper;
+        constructor(element: HTMLImageElement);
+        public getHTMLElement(): HTMLImageElement;
+        public setSrc(value: string): void;
+    }
+}
+module api_ui {
     class Component {
         private static constructorCounter;
         private el;
@@ -65,8 +74,10 @@ module api_ui {
         constructor(name: string, elementName: string);
         public getId(): string;
         public getEl(): HTMLElementHelper;
+        public getImg(): HTMLImageElementHelper;
         public getHTMLElement(): HTMLElement;
         public appendChild(child: Component): void;
+        public removeChildren(): void;
     }
 }
 module api_ui {
@@ -76,6 +87,13 @@ module api_ui {
         constructor();
         public activate(): void;
         public deActivate(): void;
+    }
+}
+module api_ui {
+    class AbstractButton extends Component {
+        private label;
+        constructor(name: string, label: string);
+        public setEnable(value: bool): void;
     }
 }
 module api_ui_toolbar {
@@ -139,15 +157,19 @@ module api_ui_dialog {
     }
 }
 module api_ui_dialog {
+    interface ModalDialogConfig {
+        title: string;
+        width: number;
+        height: number;
+    }
     class ModalDialog extends api_ui.Component {
+        private config;
         private title;
         private contentPanel;
         private buttonRow;
-        private closeAction;
-        private width;
-        private height;
-        constructor(title: string);
-        public addToButtonRow(comp: api_ui.Component): void;
+        constructor(config: ModalDialogConfig);
+        public appendChildToContentPanel(child: api_ui.Component): void;
+        public addAction(action: api_action.Action): void;
         public close(): void;
         public open(): void;
     }
@@ -159,13 +181,41 @@ module api_ui_dialog {
     }
     class ModalDialogButtonRow extends api_ui.Component {
         constructor();
+        public addAction(action: api_action.Action): void;
+    }
+    class ModalDialogButton extends api_ui.AbstractButton {
+        private action;
+        constructor(action: api_action.Action);
+    }
+    class ModalDialogCancelAction extends api_action.Action {
+        constructor();
+    }
+}
+module api_delete {
+    class DeleteItem {
+        private iconUrl;
+        private displayName;
+        constructor(iconUrl: string, displayName: string);
+        public getDisplayName(): string;
+        public getIconUrl(): string;
     }
 }
 module api_delete {
     class DeleteDialog extends api_ui_dialog.ModalDialog {
-        private deleteButton;
-        private cancelButton;
-        constructor(title: string, deleteAction: api_action.Action, cancelAction: api_action.Action);
+        private deleteAction;
+        private cancelAction;
+        private deleteItems;
+        private itemList;
+        constructor(title: string);
+        public setDeleteAction(action: api_action.Action): void;
+        public setDeleteItems(deleteItems: DeleteItem[]): void;
+    }
+    class CancelDeleteDialogAction extends api_action.Action {
+        constructor();
+    }
+    class DeleteDialogItemList extends api_ui.Component {
+        constructor();
+        public clear(): void;
     }
 }
 module api_notify {

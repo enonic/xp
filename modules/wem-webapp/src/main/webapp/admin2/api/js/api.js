@@ -165,11 +165,41 @@ var api_ui;
     })();
     api_ui.HTMLElementHelper = HTMLElementHelper;    
 })(api_ui || (api_ui = {}));
+var __extends = this.__extends || function (d, b) {
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var api_ui;
+(function (api_ui) {
+    var HTMLImageElementHelper = (function (_super) {
+        __extends(HTMLImageElementHelper, _super);
+        function HTMLImageElementHelper(element) {
+                _super.call(this, element);
+            this.el = element;
+        }
+        HTMLImageElementHelper.create = function create() {
+            return new HTMLImageElementHelper(document.createElement("img"));
+        };
+        HTMLImageElementHelper.prototype.getHTMLElement = function () {
+            return this.el;
+        };
+        HTMLImageElementHelper.prototype.setSrc = function (value) {
+            this.el.src = value;
+        };
+        return HTMLImageElementHelper;
+    })(api_ui.HTMLElementHelper);
+    api_ui.HTMLImageElementHelper = HTMLImageElementHelper;    
+})(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var Component = (function () {
         function Component(name, elementName) {
-            this.el = api_ui.HTMLElementHelper.fromName(elementName);
+            if(elementName === "img") {
+                this.el = api_ui.HTMLImageElementHelper.create();
+            } else {
+                this.el = api_ui.HTMLElementHelper.fromName(elementName);
+            }
             this.id = name + '-' + (++Component.constructorCounter);
             this.el.setId(this.id);
         }
@@ -180,21 +210,25 @@ var api_ui;
         Component.prototype.getEl = function () {
             return this.el;
         };
+        Component.prototype.getImg = function () {
+            return this.el;
+        };
         Component.prototype.getHTMLElement = function () {
             return this.el.getHTMLElement();
         };
         Component.prototype.appendChild = function (child) {
             this.el.appendChild(child.getEl().getHTMLElement());
         };
+        Component.prototype.removeChildren = function () {
+            var htmlEl = this.el.getHTMLElement();
+            while(htmlEl.firstChild) {
+                htmlEl.removeChild(htmlEl.firstChild);
+            }
+        };
         return Component;
     })();
     api_ui.Component = Component;    
 })(api_ui || (api_ui = {}));
-var __extends = this.__extends || function (d, b) {
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
 var api_ui;
 (function (api_ui) {
     var BodyMask = (function (_super) {
@@ -220,12 +254,28 @@ var api_ui;
     })(api_ui.Component);
     api_ui.BodyMask = BodyMask;    
 })(api_ui || (api_ui = {}));
+var api_ui;
+(function (api_ui) {
+    var AbstractButton = (function (_super) {
+        __extends(AbstractButton, _super);
+        function AbstractButton(name, label) {
+                _super.call(this, name, "button");
+            this.label = label;
+            this.getEl().setInnerHtml(this.label);
+        }
+        AbstractButton.prototype.setEnable = function (value) {
+            this.getEl().setDisabled(!value);
+        };
+        return AbstractButton;
+    })(api_ui.Component);
+    api_ui.AbstractButton = AbstractButton;    
+})(api_ui || (api_ui = {}));
 var api_ui_toolbar;
 (function (api_ui_toolbar) {
     var Toolbar = (function (_super) {
         __extends(Toolbar, _super);
         function Toolbar() {
-                _super.call(this, "toolbar", "div");
+                _super.call(this, "Toolbar", "div");
             this.components = [];
             this.getEl().addClass("toolbar");
             this.initExt();
@@ -246,7 +296,7 @@ var api_ui_toolbar;
             this.components.push(spacer);
         };
         Toolbar.prototype.doAddAction = function (action) {
-            var button = new Button(action);
+            var button = new ToolbarButton(action);
             if(this.hasGreedySpacer()) {
                 button.setFloatRight(true);
             }
@@ -265,11 +315,11 @@ var api_ui_toolbar;
         return Toolbar;
     })(api_ui.Component);
     api_ui_toolbar.Toolbar = Toolbar;    
-    var Button = (function (_super) {
-        __extends(Button, _super);
-        function Button(action) {
+    var ToolbarButton = (function (_super) {
+        __extends(ToolbarButton, _super);
+        function ToolbarButton(action) {
             var _this = this;
-                _super.call(this, "button", "button");
+                _super.call(this, "ToolbarButton", action.getLabel());
             this.action = action;
             this.getEl().setInnerHtml(this.action.getLabel());
             this.getEl().addEventListener("click", function (evt) {
@@ -280,16 +330,13 @@ var api_ui_toolbar;
                 _this.setEnable(action.isEnabled());
             });
         }
-        Button.prototype.setEnable = function (value) {
-            this.getEl().setDisabled(!value);
-        };
-        Button.prototype.setFloatRight = function (value) {
+        ToolbarButton.prototype.setFloatRight = function (value) {
             if(value) {
                 this.getEl().addClass('pull-right');
             }
         };
-        return Button;
-    })(api_ui.Component);    
+        return ToolbarButton;
+    })(api_ui.AbstractButton);    
     var ToolbarGreedySpacer = (function () {
         function ToolbarGreedySpacer() {
         }
@@ -511,44 +558,41 @@ var api_ui_dialog;
 (function (api_ui_dialog) {
     var ModalDialog = (function (_super) {
         __extends(ModalDialog, _super);
-        function ModalDialog(title) {
-            var _this = this;
+        function ModalDialog(config) {
                 _super.call(this, "ModalDialog", "div");
-            this.width = 700;
-            this.height = 500;
+            this.config = config;
             this.getEl().setZindex(30001);
             this.getEl().addClass("modal-dialog");
             this.getEl().addClass("display-none");
-            this.getEl().setWidth(this.width + "px");
-            this.getEl().setHeight(this.height + "px");
+            this.getEl().setWidth(this.config.width + "px");
+            this.getEl().setHeight(this.config.height + "px");
             this.getEl().setPosition("fixed");
             this.getEl().setTop("50%");
             this.getEl().setLeft("50%");
-            this.getEl().setMarginLeft("-" + (this.width / 2) + "px");
-            this.getEl().setMarginTop("-" + (this.height / 2) + "px");
-            this.title = new ModalDialogTitle(title);
+            this.getEl().setMarginLeft("-" + (this.config.width / 2) + "px");
+            this.getEl().setMarginTop("-" + (this.config.height / 2) + "px");
+            this.title = new ModalDialogTitle(this.config.title);
             this.appendChild(this.title);
             this.contentPanel = new ModalDialogContentPanel();
             this.appendChild(this.contentPanel);
-            this.closeAction = new api_action.Action("Close");
-            this.closeAction.addExecutionListener(function () {
-                _this.close();
-            });
+            this.buttonRow = new ModalDialogButtonRow();
+            this.appendChild(this.buttonRow);
         }
-        ModalDialog.prototype.addToButtonRow = function (comp) {
-            this.buttonRow.appendChild(comp);
+        ModalDialog.prototype.appendChildToContentPanel = function (child) {
+            this.contentPanel.appendChild(child);
+        };
+        ModalDialog.prototype.addAction = function (action) {
+            this.buttonRow.addAction(action);
         };
         ModalDialog.prototype.close = function () {
             api_ui.BodyMask.get().deActivate();
-            this.getEl().removeClass("display-block");
-            this.getEl().addClass("display-none");
+            this.getEl().setDisplay("none");
             Mousetrap.unbind('esc');
         };
         ModalDialog.prototype.open = function () {
             var _this = this;
             api_ui.BodyMask.get().activate();
-            this.getEl().removeClass("display-none");
-            this.getEl().addClass("display-block");
+            this.getEl().setDisplay("block");
             Mousetrap.bind('esc', function () {
                 _this.close();
             });
@@ -569,6 +613,7 @@ var api_ui_dialog;
         __extends(ModalDialogContentPanel, _super);
         function ModalDialogContentPanel() {
                 _super.call(this, "ModalDialogContentPanel", "div");
+            this.getEl().addClass("modal-dialog-content-panel");
         }
         return ModalDialogContentPanel;
     })(api_ui.Component);
@@ -577,23 +622,129 @@ var api_ui_dialog;
         __extends(ModalDialogButtonRow, _super);
         function ModalDialogButtonRow() {
                 _super.call(this, "ModalDialogButtonRow", "div");
+            this.getEl().addClass("modal-dialog-button-row");
         }
+        ModalDialogButtonRow.prototype.addAction = function (action) {
+            var button = new ModalDialogButton(action);
+            this.appendChild(button);
+        };
         return ModalDialogButtonRow;
     })(api_ui.Component);
     api_ui_dialog.ModalDialogButtonRow = ModalDialogButtonRow;    
+    var ModalDialogButton = (function (_super) {
+        __extends(ModalDialogButton, _super);
+        function ModalDialogButton(action) {
+            var _this = this;
+                _super.call(this, "ModalDialogButton", action.getLabel());
+            this.action = action;
+            this.getEl().addEventListener("click", function () {
+                _this.action.execute();
+            });
+            _super.prototype.setEnable.call(this, action.isEnabled());
+            action.addPropertyChangeListener(function (action) {
+                _this.setEnable(action.isEnabled());
+            });
+        }
+        return ModalDialogButton;
+    })(api_ui.AbstractButton);
+    api_ui_dialog.ModalDialogButton = ModalDialogButton;    
+    var ModalDialogCancelAction = (function (_super) {
+        __extends(ModalDialogCancelAction, _super);
+        function ModalDialogCancelAction() {
+                _super.call(this, "Cancel");
+        }
+        return ModalDialogCancelAction;
+    })(api_action.Action);
+    api_ui_dialog.ModalDialogCancelAction = ModalDialogCancelAction;    
 })(api_ui_dialog || (api_ui_dialog = {}));
+var api_delete;
+(function (api_delete) {
+    var DeleteItem = (function () {
+        function DeleteItem(iconUrl, displayName) {
+            this.iconUrl = iconUrl;
+            this.displayName = displayName;
+        }
+        DeleteItem.prototype.getDisplayName = function () {
+            return this.displayName;
+        };
+        DeleteItem.prototype.getIconUrl = function () {
+            return this.iconUrl;
+        };
+        return DeleteItem;
+    })();
+    api_delete.DeleteItem = DeleteItem;    
+})(api_delete || (api_delete = {}));
 var api_delete;
 (function (api_delete) {
     var DeleteDialog = (function (_super) {
         __extends(DeleteDialog, _super);
-        function DeleteDialog(title, deleteAction, cancelAction) {
-                _super.call(this, title);
-            this.deleteButton = new api_ui_dialog.DialogButton(deleteAction);
-            this.cancelButton = new api_ui_dialog.DialogButton(cancelAction);
+        function DeleteDialog(title) {
+            var _this = this;
+                _super.call(this, {
+        title: title,
+        width: 500,
+        height: 300
+    });
+            this.cancelAction = new CancelDeleteDialogAction();
+            this.itemList = new DeleteDialogItemList();
+            this.getEl().addClass("delete-dialog");
+            this.appendChildToContentPanel(this.itemList);
+            this.addAction(this.cancelAction);
+            this.cancelAction.addExecutionListener(function () {
+                _this.close();
+            });
         }
+        DeleteDialog.prototype.setDeleteAction = function (action) {
+            this.deleteAction = action;
+            this.addAction(action);
+        };
+        DeleteDialog.prototype.setDeleteItems = function (deleteItems) {
+            this.deleteItems = deleteItems;
+            this.itemList.clear();
+            for(var i in this.deleteItems) {
+                var deleteItem = this.deleteItems[i];
+                this.itemList.appendChild(new DeleteDialogItemComponent(deleteItem));
+            }
+        };
         return DeleteDialog;
     })(api_ui_dialog.ModalDialog);
     api_delete.DeleteDialog = DeleteDialog;    
+    var CancelDeleteDialogAction = (function (_super) {
+        __extends(CancelDeleteDialogAction, _super);
+        function CancelDeleteDialogAction() {
+                _super.call(this, "Cancel");
+        }
+        return CancelDeleteDialogAction;
+    })(api_action.Action);
+    api_delete.CancelDeleteDialogAction = CancelDeleteDialogAction;    
+    var DeleteDialogItemList = (function (_super) {
+        __extends(DeleteDialogItemList, _super);
+        function DeleteDialogItemList() {
+                _super.call(this, "DeleteDialogItemList", "div");
+            this.getEl().addClass("delete-dialog-item-list");
+        }
+        DeleteDialogItemList.prototype.clear = function () {
+            this.removeChildren();
+        };
+        return DeleteDialogItemList;
+    })(api_ui.Component);
+    api_delete.DeleteDialogItemList = DeleteDialogItemList;    
+    var DeleteDialogItemComponent = (function (_super) {
+        __extends(DeleteDialogItemComponent, _super);
+        function DeleteDialogItemComponent(deleteItem) {
+                _super.call(this, "DeleteDialogItem", "div");
+            this.getEl().addClass("delete-dialog-item");
+            var icon = new api_ui.Component("img", "img");
+            icon.getImg().setSrc(deleteItem.getIconUrl());
+            this.appendChild(icon);
+            var displayName = new api_ui.Component("h4", "h4");
+            displayName.getEl().setInnerHtml(deleteItem.getDisplayName());
+            this.appendChild(displayName);
+            var newLine = new api_ui.Component("p", "p");
+            this.appendChild(newLine);
+        }
+        return DeleteDialogItemComponent;
+    })(api_ui.Component);    
 })(api_delete || (api_delete = {}));
 var api_notify;
 (function (api_notify) {

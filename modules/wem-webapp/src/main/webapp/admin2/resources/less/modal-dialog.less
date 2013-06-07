@@ -1,4 +1,31 @@
 .modal-dialog {
   display: none;
   background-color: white;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
+
+  .modal-dialog-content-panel {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .modal-dialog-button-row {
+
+    button {
+      font-family: "Open Sans", sans-serif;
+      padding: 6px 19px 6px 19px;
+      background-color: #2c76e9;
+
+      font-size: 12px;
+      border-width: 0;
+      color: white;
+
+      &:hover {
+        cursor: pointer;
+        color: @admin-gray-font-hover;
+      }
+    }
+  }
 }

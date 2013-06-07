@@ -9,7 +9,12 @@ module api_ui {
         private id:string;
 
         constructor(name:string, elementName:string) {
-            this.el = HTMLElementHelper.fromName(elementName);
+            if (elementName === "img") {
+                this.el = HTMLImageElementHelper.create();
+            }
+            else {
+                this.el = HTMLElementHelper.fromName(elementName);
+            }
             this.id = name + '-' + (++Component.constructorCounter);
             this.el.setId(this.id);
         }
@@ -22,6 +27,10 @@ module api_ui {
             return this.el;
         }
 
+        getImg():HTMLImageElementHelper {
+            return <HTMLImageElementHelper>this.el;
+        }
+
         getHTMLElement():HTMLElement {
             return this.el.getHTMLElement();
         }
@@ -30,5 +39,11 @@ module api_ui {
             this.el.appendChild(child.getEl().getHTMLElement());
         }
 
+        removeChildren() {
+            var htmlEl = this.el.getHTMLElement();
+            while (htmlEl.firstChild) {
+                htmlEl.removeChild(htmlEl.firstChild);
+            }
+        }
     }
 }

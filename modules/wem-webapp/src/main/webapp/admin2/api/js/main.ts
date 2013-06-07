@@ -12,8 +12,10 @@
 ///<reference path='action/Action.ts' />
 
 ///<reference path='ui/HTMLElementHelper.ts' />
+///<reference path='ui/HTMLImageElementHelper.ts' />
 ///<reference path='ui/Component.ts' />
 ///<reference path='ui/BodyMask.ts' />
+///<reference path='ui/AbstractButton.ts' />
 ///<reference path='ui/toolbar/Toolbar.ts' />
 ///<reference path='ui/menu/MenuItem.ts' />
 ///<reference path='ui/menu/ContextMenu.ts' />
@@ -21,6 +23,7 @@
 
 ///<reference path='ui/dialog/DialogButton.ts' />
 ///<reference path='ui/dialog/ModalDialog.ts' />
+///<reference path='delete/DeleteItem.ts' />
 ///<reference path='delete/DeleteDialog.ts' />
 
 ///<reference path='notify/Message.ts' />

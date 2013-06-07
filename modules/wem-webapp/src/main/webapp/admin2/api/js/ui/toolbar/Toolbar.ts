@@ -7,7 +7,7 @@ module api_ui_toolbar {
         private components:any[] = [];
 
         constructor() {
-            super("toolbar", "div");
+            super("Toolbar", "div");
             this.getEl().addClass("toolbar");
             this.initExt();
         }
@@ -21,7 +21,7 @@ module api_ui_toolbar {
         }
 
         addAction(action:api_action.Action) {
-            var button:Button = this.doAddAction(action);
+            var button:ToolbarButton = this.doAddAction(action);
             this.appendChild(button);
         }
 
@@ -30,8 +30,8 @@ module api_ui_toolbar {
             this.components.push(spacer);
         }
 
-        private doAddAction(action:api_action.Action):Button {
-            var button:Button = new Button(action);
+        private doAddAction(action:api_action.Action):api_ui_toolbar.ToolbarButton {
+            var button:ToolbarButton = new ToolbarButton(action);
             if (this.hasGreedySpacer()) {
                 button.setFloatRight(true);
             }
@@ -51,12 +51,12 @@ module api_ui_toolbar {
     }
 
 
-    class Button extends api_ui.Component {
+    class ToolbarButton extends api_ui.AbstractButton {
 
         private action:api_action.Action;
 
         constructor(action:api_action.Action) {
-            super("button", "button");
+            super("ToolbarButton", action.getLabel());
             this.action = action;
             this.getEl().setInnerHtml(this.action.getLabel());
             this.getEl().addEventListener("click", (evt:Event) => {
@@ -67,10 +67,6 @@ module api_ui_toolbar {
             action.addPropertyChangeListener((action:api_action.Action) => {
                 this.setEnable(action.isEnabled());
             });
-        }
-
-        setEnable(value:bool) {
-            this.getEl().setDisabled(!value);
         }
 
         setFloatRight(value:bool) {
