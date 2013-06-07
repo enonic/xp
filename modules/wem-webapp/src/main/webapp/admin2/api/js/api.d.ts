@@ -110,9 +110,8 @@ module api_ui_toolbar {
 }
 module api_ui_menu {
     class MenuItem extends api_ui.Component {
-        private menu;
         private action;
-        constructor(menu: api_ui.Component, action: api_action.Action);
+        constructor(action: api_action.Action);
         public setEnable(value: bool): void;
     }
 }
@@ -131,21 +130,24 @@ module api_ui_menu {
 }
 module api_ui_menu {
     class ActionMenu extends api_ui.Component {
-        public ext;
-        public button: ActionMenuButton;
+        private ext;
+        private button;
         private menuItems;
         constructor(...actions: api_action.Action[]);
         public addAction(action: api_action.Action): void;
+        public getExt();
+        public showBy(button: ActionMenuButton): void;
         private initExt();
         private createMenuItem(action);
         private hide();
         private onDocumentClick(evt);
     }
     class ActionMenuButton extends api_ui.Component {
-        public ext;
-        public menu: ActionMenu;
-        constructor(label: string, menu: ActionMenu);
+        private ext;
+        private menu;
+        constructor(menu: ActionMenu);
         public setEnabled(value: bool): void;
+        public getExt();
         private initExt();
     }
 }

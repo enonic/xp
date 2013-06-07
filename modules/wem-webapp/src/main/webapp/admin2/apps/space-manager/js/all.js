@@ -2837,7 +2837,7 @@ var app_ui;
                 data: data,
                 cls: 'admin-detail-header'
             });
-            var actionMenu = this.actionMenu = Ext.apply(new app_ui.ActionMenu2().button.ext, {
+            var actionMenu = this.actionMenu = Ext.apply(new app_ui.ActionMenu2().getExt(), {
                 tdAttrs: {
                     width: 140
                 }

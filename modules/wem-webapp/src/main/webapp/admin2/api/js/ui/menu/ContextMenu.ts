@@ -33,7 +33,7 @@ module api_ui_menu{
         }
 
         private createMenuItem(action:api_action.Action):MenuItem {
-            var menuItem = new MenuItem(this, action);
+            var menuItem = new MenuItem(action);
             menuItem.getEl().addEventListener("click", (evt:Event) => {
                 this.hide();
             });

@@ -1,9 +1,9 @@
 module api_ui_menu{
 
     export class ActionMenu extends api_ui.Component {
-        ext; //:Ext.Component;
+        private ext; //:Ext.Component;
 
-        button:ActionMenuButton;
+        private button:ActionMenuButton;
 
         private menuItems:MenuItem[] = [];
 
@@ -11,7 +11,7 @@ module api_ui_menu{
             super("action-menu", "ul");
             this.getEl().addClass("action-menu");
 
-            this.button = new ActionMenuButton("Actions", this);
+            this.button = new ActionMenuButton(this);
 
             for (var i = 0; i < actions.length; i++) {
                 this.addAction(actions[i]);
@@ -29,6 +29,15 @@ module api_ui_menu{
             this.appendChild(menuItem);
         }
 
+        getExt() {
+            return this.button.getExt();
+        }
+
+        showBy(button:ActionMenuButton) {
+            this.ext.show();
+            this.ext.getEl().alignTo(button.getExt().getEl(), 'tl-bl?', [-2, 0]);
+        }
+
         private initExt() {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
@@ -41,7 +50,7 @@ module api_ui_menu{
         }
 
         private createMenuItem(action:api_action.Action):MenuItem {
-            var menuItem = new MenuItem(this, action);
+            var menuItem = new MenuItem(action);
             menuItem.getEl().addEventListener("click", (evt:Event) => {
                 this.hide();
             });
@@ -70,25 +79,23 @@ module api_ui_menu{
 
 
     export class ActionMenuButton extends api_ui.Component {
-        ext;
+        private ext;
 
-        menu:ActionMenu;
+        private menu:ActionMenu;
 
-        constructor(label:string, menu:ActionMenu) {
+        constructor(menu:ActionMenu) {
             super("button", "button");
             this.menu = menu;
 
-            var btn = this;
             var btnEl = this.getEl();
             btnEl.addClass("action-menu-button");
 
             var em = api_ui.HTMLElementHelper.fromName('em');
-            em.setInnerHtml(label);
+            em.setInnerHtml("Actions");
             btnEl.appendChild(em.getHTMLElement());
 
             btnEl.addEventListener("click", (e) => {
-                menu.ext.show();
-                menu.ext.getEl().alignTo(btn.ext.getEl(), 'tl-bl?', [-2, 0]);
+                menu.showBy(this);
 
                 // stop event to prevent menu close because of body click
                 if(e.stopPropagation) {
@@ -102,6 +109,10 @@ module api_ui_menu{
 
         setEnabled(value:bool) {
             this.getEl().setDisabled(!value);
+        }
+
+        getExt() {
+            return this.ext;
         }
 
         private initExt() {

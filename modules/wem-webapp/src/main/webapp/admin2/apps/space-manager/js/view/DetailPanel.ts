@@ -169,7 +169,7 @@ module app_ui {
             });
 
             var actionMenu = this.actionMenu = Ext.apply(
-                new app_ui.ActionMenu2().button.ext,
+                new app_ui.ActionMenu2().getExt(),
                 {
                     tdAttrs: { width: 140 }
                 }

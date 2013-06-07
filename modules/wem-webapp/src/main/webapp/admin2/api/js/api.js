@@ -347,11 +347,10 @@ var api_ui_menu;
 (function (api_ui_menu) {
     var MenuItem = (function (_super) {
         __extends(MenuItem, _super);
-        function MenuItem(menu, action) {
+        function MenuItem(action) {
             var _this = this;
                 _super.call(this, "menu-item", "li");
             this.action = action;
-            this.menu = menu;
             this.getEl().setInnerHtml(this.action.getLabel());
             this.getEl().addEventListener("click", function () {
                 if(action.isEnabled()) {
@@ -406,7 +405,7 @@ var api_ui_menu;
         };
         ContextMenu.prototype.createMenuItem = function (action) {
             var _this = this;
-            var menuItem = new api_ui_menu.MenuItem(this, action);
+            var menuItem = new api_ui_menu.MenuItem(action);
             menuItem.getEl().addEventListener("click", function (evt) {
                 _this.hide();
             });
@@ -446,7 +445,7 @@ var api_ui_menu;
                 _super.call(this, "action-menu", "ul");
             this.menuItems = [];
             this.getEl().addClass("action-menu");
-            this.button = new ActionMenuButton("Actions", this);
+            this.button = new ActionMenuButton(this);
             for(var i = 0; i < actions.length; i++) {
                 this.addAction(actions[i]);
             }
@@ -459,6 +458,16 @@ var api_ui_menu;
             var menuItem = this.createMenuItem(action);
             this.appendChild(menuItem);
         };
+        ActionMenu.prototype.getExt = function () {
+            return this.button.getExt();
+        };
+        ActionMenu.prototype.showBy = function (button) {
+            this.ext.show();
+            this.ext.getEl().alignTo(button.getExt().getEl(), 'tl-bl?', [
+                -2, 
+                0
+            ]);
+        };
         ActionMenu.prototype.initExt = function () {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
@@ -469,7 +478,7 @@ var api_ui_menu;
         };
         ActionMenu.prototype.createMenuItem = function (action) {
             var _this = this;
-            var menuItem = new api_ui_menu.MenuItem(this, action);
+            var menuItem = new api_ui_menu.MenuItem(action);
             menuItem.getEl().addEventListener("click", function (evt) {
                 _this.hide();
             });
@@ -494,21 +503,17 @@ var api_ui_menu;
     api_ui_menu.ActionMenu = ActionMenu;    
     var ActionMenuButton = (function (_super) {
         __extends(ActionMenuButton, _super);
-        function ActionMenuButton(label, menu) {
+        function ActionMenuButton(menu) {
+            var _this = this;
                 _super.call(this, "button", "button");
             this.menu = menu;
-            var btn = this;
             var btnEl = this.getEl();
             btnEl.addClass("action-menu-button");
             var em = api_ui.HTMLElementHelper.fromName('em');
-            em.setInnerHtml(label);
+            em.setInnerHtml("Actions");
             btnEl.appendChild(em.getHTMLElement());
             btnEl.addEventListener("click", function (e) {
-                menu.ext.show();
-                menu.ext.getEl().alignTo(btn.ext.getEl(), 'tl-bl?', [
-                    -2, 
-                    0
-                ]);
+                menu.showBy(_this);
                 if(e.stopPropagation) {
                     e.stopPropagation();
                 }
@@ -518,6 +523,9 @@ var api_ui_menu;
         }
         ActionMenuButton.prototype.setEnabled = function (value) {
             this.getEl().setDisabled(!value);
+        };
+        ActionMenuButton.prototype.getExt = function () {
+            return this.ext;
         };
         ActionMenuButton.prototype.initExt = function () {
             var htmlEl = this.getHTMLElement();
