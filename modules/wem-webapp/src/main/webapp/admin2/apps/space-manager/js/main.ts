@@ -157,6 +157,12 @@ Ext.application({
 
         // Instanciating classes that will be triggered by events
         components.deleteWindow = new app_ui.DeleteSpaceWindow();
+
+        //var deleteSpaceDialog:app_ui.DeleteSpaceDialog = new app_ui.DeleteSpaceDialog();
+        //app_event.DeletePromptEvent.on((event) => {
+        //    deleteSpaceDialog.setSpacesToDelete(event.getModel());
+        //    deleteSpaceDialog.open();
+        //});
     }
 
 });

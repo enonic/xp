@@ -16,10 +16,10 @@ module app_model {
 
     export interface SpaceModel extends Ext_data_Model {
         data:{
-            name:String;
-            displayName:String;
-            iconUrl:String;
-            rootContentId:Number;
+            name:string;
+            displayName:string;
+            iconUrl:string;
+            rootContentId:number;
             createdTime:Date;
             modifiedTime:Date;
             editable:bool;
