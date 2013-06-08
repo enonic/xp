@@ -2,6 +2,8 @@ module api_delete{
 
     export class DeleteDialog extends api_ui_dialog.ModalDialog {
 
+        private modelName:string;
+
         private deleteAction:api_action.Action;
 
         private cancelAction:api_action.Action = new CancelDeleteDialogAction();
@@ -10,12 +12,14 @@ module api_delete{
 
         private itemList:DeleteDialogItemList = new DeleteDialogItemList();
 
-        constructor(title:string) {
+        constructor(modelName:string) {
             super({
-                title: title,
+                title: "Delete " + modelName,
                 width: 500,
                 height: 300
             });
+
+            this.modelName = modelName;
 
             this.getEl().addClass("delete-dialog");
             this.appendChildToContentPanel(this.itemList);
@@ -36,6 +40,13 @@ module api_delete{
 
             this.itemList.clear();
 
+            if( deleteItems.length > 1 ) {
+                this.setTitle( "Delete " + this.modelName + "s");
+            }
+            else {
+                this.setTitle( "Delete " + this.modelName);
+            }
+
             for (var i in this.deleteItems) {
                 var deleteItem:DeleteItem = this.deleteItems[i];
                 // TODO: created and add DeleteDialogItemList
@@ -54,7 +65,7 @@ module api_delete{
     export class DeleteDialogItemList extends api_ui.Component {
         constructor() {
             super("DeleteDialogItemList", "div")
-            this.getEl().addClass("delete-dialog-item-list")
+            this.getEl().addClass("delete-dialog-item-list");
         }
 
         clear() {
@@ -64,19 +75,16 @@ module api_delete{
 
     class DeleteDialogItemComponent extends api_ui.Component {
         constructor(deleteItem:api_delete.DeleteItem) {
-            super("DeleteDialogItem", "div")
-            this.getEl().addClass("delete-dialog-item")
+            super("DeleteDialogItem", "div");
+            this.getEl().addClass("delete-dialog-item");
 
             var icon:api_ui.Component = new api_ui.Component("img", "img");
             icon.getImg().setSrc(deleteItem.getIconUrl());
             this.appendChild(icon);
 
             var displayName:api_ui.Component = new api_ui.Component("h4", "h4");
-            displayName.getEl().setInnerHtml(deleteItem.getDisplayName())
+            displayName.getEl().setInnerHtml(deleteItem.getDisplayName());
             this.appendChild(displayName);
-
-            var newLine:api_ui.Component = new api_ui.Component("p", "p");
-            this.appendChild(newLine);
         }
     }
 }

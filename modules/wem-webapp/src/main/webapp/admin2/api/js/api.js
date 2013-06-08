@@ -335,7 +335,6 @@ var api_ui_toolbar;
             var _this = this;
                 _super.call(this, "ToolbarButton", action.getLabel());
             this.action = action;
-            this.getEl().setInnerHtml(this.action.getLabel());
             this.getEl().addEventListener("click", function (evt) {
                 _this.action.execute();
             });
@@ -574,16 +573,11 @@ var api_ui_dialog;
         function ModalDialog(config) {
                 _super.call(this, "ModalDialog", "div");
             this.config = config;
-            this.getEl().setZindex(30001);
-            this.getEl().addClass("modal-dialog");
-            this.getEl().addClass("display-none");
-            this.getEl().setWidth(this.config.width + "px");
-            this.getEl().setHeight(this.config.height + "px");
-            this.getEl().setPosition("fixed");
-            this.getEl().setTop("50%");
-            this.getEl().setLeft("50%");
-            this.getEl().setMarginLeft("-" + (this.config.width / 2) + "px");
-            this.getEl().setMarginTop("-" + (this.config.height / 2) + "px");
+            var el = this.getEl();
+            el.setDisplay("none").addClass("modal-dialog");
+            el.setWidth(this.config.width + "px").setHeight(this.config.height + "px");
+            el.setZindex(30001);
+            el.setPosition("fixed").setTop("50%").setLeft("50%").setMarginLeft("-" + (this.config.width / 2) + "px").setMarginTop("-" + (this.config.height / 2) + "px");
             this.title = new ModalDialogTitle(this.config.title);
             this.appendChild(this.title);
             this.contentPanel = new ModalDialogContentPanel();
@@ -591,6 +585,9 @@ var api_ui_dialog;
             this.buttonRow = new ModalDialogButtonRow();
             this.appendChild(this.buttonRow);
         }
+        ModalDialog.prototype.setTitle = function (value) {
+            this.title.setTitle(value);
+        };
         ModalDialog.prototype.appendChildToContentPanel = function (child) {
             this.contentPanel.appendChild(child);
         };
@@ -619,6 +616,9 @@ var api_ui_dialog;
                 _super.call(this, "ModalDialogTitle", "h2");
             this.getEl().setInnerHtml(title);
         }
+        ModalDialogTitle.prototype.setTitle = function (value) {
+            this.getEl().setInnerHtml(value);
+        };
         return ModalDialogTitle;
     })(api_ui.Component);
     api_ui_dialog.ModalDialogTitle = ModalDialogTitle;    
@@ -691,15 +691,16 @@ var api_delete;
 (function (api_delete) {
     var DeleteDialog = (function (_super) {
         __extends(DeleteDialog, _super);
-        function DeleteDialog(title) {
+        function DeleteDialog(modelName) {
             var _this = this;
                 _super.call(this, {
-        title: title,
+        title: "Delete " + modelName,
         width: 500,
         height: 300
     });
             this.cancelAction = new CancelDeleteDialogAction();
             this.itemList = new DeleteDialogItemList();
+            this.modelName = modelName;
             this.getEl().addClass("delete-dialog");
             this.appendChildToContentPanel(this.itemList);
             this.addAction(this.cancelAction);
@@ -714,6 +715,11 @@ var api_delete;
         DeleteDialog.prototype.setDeleteItems = function (deleteItems) {
             this.deleteItems = deleteItems;
             this.itemList.clear();
+            if(deleteItems.length > 1) {
+                this.setTitle("Delete " + this.modelName + "s");
+            } else {
+                this.setTitle("Delete " + this.modelName);
+            }
             for(var i in this.deleteItems) {
                 var deleteItem = this.deleteItems[i];
                 this.itemList.appendChild(new DeleteDialogItemComponent(deleteItem));
@@ -753,8 +759,6 @@ var api_delete;
             var displayName = new api_ui.Component("h4", "h4");
             displayName.getEl().setInnerHtml(deleteItem.getDisplayName());
             this.appendChild(displayName);
-            var newLine = new api_ui.Component("p", "p");
-            this.appendChild(newLine);
         }
         return DeleteDialogItemComponent;
     })(api_ui.Component);    

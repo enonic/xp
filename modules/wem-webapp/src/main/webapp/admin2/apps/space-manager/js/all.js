@@ -2999,15 +2999,10 @@ var app_ui;
 (function (app_ui) {
     var DeleteSpaceWindow = (function () {
         function DeleteSpaceWindow() {
-            var _this = this;
             this.title = "Delete space(s)";
             this.deleteHandler = new app_handler.DeleteSpacesHandler();
             this.template = '<div class="delete-container">' + '<tpl for=".">' + '<div class="delete-item">' + '<img class="icon" src="{data.iconUrl}"/>' + '<h4>{data.displayName}</h4>' + '<p>{data.type}</p>' + '</div>' + '</tpl>' + '</div>';
             this.initComponent();
-            app_event.DeletePromptEvent.on(function (event) {
-                _this.setModel(event.getModel());
-                _this.doShow();
-            });
         }
         DeleteSpaceWindow.prototype.initComponent = function () {
             var _this = this;
@@ -3081,6 +3076,47 @@ var app_ui;
         return DeleteSpaceWindow;
     })();
     app_ui.DeleteSpaceWindow = DeleteSpaceWindow;    
+})(app_ui || (app_ui = {}));
+var app_ui;
+(function (app_ui) {
+    var DeleteSpaceDialog = (function (_super) {
+        __extends(DeleteSpaceDialog, _super);
+        function DeleteSpaceDialog() {
+            var _this = this;
+                _super.call(this, "Space");
+            this.deleteAction = new DeleteSpaceDialogAction();
+            this.deleteHandler = new app_handler.DeleteSpacesHandler();
+            this.setDeleteAction(this.deleteAction);
+            var deleteCallback = function (obj, success, result) {
+                _this.close();
+                components.gridPanel.refresh();
+            };
+            this.deleteAction.addExecutionListener(function () {
+                _this.deleteHandler.doDelete(_this.spacesToDelete, deleteCallback);
+            });
+            document.body.appendChild(this.getHTMLElement());
+        }
+        DeleteSpaceDialog.prototype.setSpacesToDelete = function (spaces) {
+            this.spacesToDelete = spaces;
+            var deleteItems = [];
+            for(var i in spaces) {
+                var space = spaces[i];
+                var deleteItem = new api_delete.DeleteItem(space.data.iconUrl, space.data.displayName);
+                deleteItems.push(deleteItem);
+            }
+            this.setDeleteItems(deleteItems);
+        };
+        return DeleteSpaceDialog;
+    })(api_delete.DeleteDialog);
+    app_ui.DeleteSpaceDialog = DeleteSpaceDialog;    
+    var DeleteSpaceDialogAction = (function (_super) {
+        __extends(DeleteSpaceDialogAction, _super);
+        function DeleteSpaceDialogAction() {
+                _super.call(this, "Delete");
+        }
+        return DeleteSpaceDialogAction;
+    })(api_action.Action);
+    app_ui.DeleteSpaceDialogAction = DeleteSpaceDialogAction;    
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
@@ -5243,6 +5279,11 @@ Ext.application({
         });
         wp.add(tabPanel);
         components.deleteWindow = new app_ui.DeleteSpaceWindow();
+        var deleteSpaceDialog = new app_ui.DeleteSpaceDialog();
+        app_event.DeletePromptEvent.on(function (event) {
+            deleteSpaceDialog.setSpacesToDelete(event.getModel());
+            deleteSpaceDialog.open();
+        });
     }
 });
 app.SpaceContext.init();

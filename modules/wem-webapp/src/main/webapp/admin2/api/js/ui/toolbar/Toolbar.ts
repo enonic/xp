@@ -58,7 +58,6 @@ module api_ui_toolbar {
         constructor(action:api_action.Action) {
             super("ToolbarButton", action.getLabel());
             this.action = action;
-            this.getEl().setInnerHtml(this.action.getLabel());
             this.getEl().addEventListener("click", (evt:Event) => {
                 this.action.execute();
             });

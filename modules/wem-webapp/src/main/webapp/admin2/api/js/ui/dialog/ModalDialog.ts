@@ -21,18 +21,16 @@ module api_ui_dialog{
 
             super("ModalDialog", "div");
             this.config = config;
-            this.getEl().setZindex(30001);
-            this.getEl().addClass("modal-dialog");
-            this.getEl().addClass("display-none");
-            this.getEl().setWidth(this.config.width + "px");
-            this.getEl().setHeight(this.config.height + "px");
+            var el = this.getEl();
+            el.setDisplay("none").addClass("modal-dialog");
+            el.setWidth(this.config.width + "px").setHeight(this.config.height + "px");
+            el.setZindex(30001);
 
             // center element...
-            this.getEl().setPosition("fixed");
-            this.getEl().setTop("50%");
-            this.getEl().setLeft("50%");
-            this.getEl().setMarginLeft("-" + (this.config.width / 2) + "px");
-            this.getEl().setMarginTop("-" + (this.config.height / 2) + "px");
+            el.setPosition("fixed").
+                setTop("50%").setLeft("50%").
+                setMarginLeft("-" + (this.config.width / 2) + "px").
+                setMarginTop("-" + (this.config.height / 2) + "px");
 
             this.title = new ModalDialogTitle(this.config.title);
             this.appendChild(this.title);
@@ -42,6 +40,10 @@ module api_ui_dialog{
 
             this.buttonRow = new ModalDialogButtonRow();
             this.appendChild(this.buttonRow);
+        }
+
+        setTitle(value:string) {
+            this.title.setTitle(value);
         }
 
         appendChildToContentPanel(child:api_ui.Component) {
@@ -77,6 +79,10 @@ module api_ui_dialog{
             super("ModalDialogTitle", "h2");
             this.getEl().setInnerHtml(title);
         }
+
+        setTitle(value:string) {
+            this.getEl().setInnerHtml(value);
+        }
     }
 
     export class ModalDialogContentPanel extends api_ui.Component {
@@ -84,7 +90,6 @@ module api_ui_dialog{
         constructor() {
             super("ModalDialogContentPanel", "div");
             this.getEl().addClass("modal-dialog-content-panel")
-            //this.getEl().setHeight("150")
         }
     }
 

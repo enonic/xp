@@ -21,10 +21,6 @@ module app_ui {
         constructor() {
             this.initComponent();
 
-            app_event.DeletePromptEvent.on((event) => {
-                this.setModel(event.getModel());
-                this.doShow();
-            });
         }
 
         private initComponent() {

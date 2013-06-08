@@ -168,6 +168,7 @@ module api_ui_dialog {
         private contentPanel;
         private buttonRow;
         constructor(config: ModalDialogConfig);
+        public setTitle(value: string): void;
         public appendChildToContentPanel(child: api_ui.Component): void;
         public addAction(action: api_action.Action): void;
         public close(): void;
@@ -175,6 +176,7 @@ module api_ui_dialog {
     }
     class ModalDialogTitle extends api_ui.Component {
         constructor(title: string);
+        public setTitle(value: string): void;
     }
     class ModalDialogContentPanel extends api_ui.Component {
         constructor();
@@ -202,11 +204,12 @@ module api_delete {
 }
 module api_delete {
     class DeleteDialog extends api_ui_dialog.ModalDialog {
+        private modelName;
         private deleteAction;
         private cancelAction;
         private deleteItems;
         private itemList;
-        constructor(title: string);
+        constructor(modelName: string);
         public setDeleteAction(action: api_action.Action): void;
         public setDeleteItems(deleteItems: DeleteItem[]): void;
     }
