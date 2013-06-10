@@ -3,16 +3,16 @@
   height: 38px;
 
   button {
-    font-family: "Open Sans", sans-serif;
+    font-family: @admin-font-family;
     padding: 6px 15px 6px 15px;
     background-color: transparent;
     font-size: 14px;
     border-width: 0;
-    color: @admin-gray-font;
+    color: @admin-light-gray-font;
 
     &:hover {
       cursor: pointer;
-      color: @admin-gray-font-hover;
+      color: @admin-dark-gray-font;
     }
 
     &:disabled {
@@ -20,7 +20,7 @@
     }
 
     &.pull-right {
-      float:right;
+      float: right;
     }
   }
 }

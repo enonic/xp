@@ -5,7 +5,7 @@
   background: #fff !important;
 
   li {
-    font-family: "Open Sans", sans-serif;
+    font-family: @admin-font-family;
     background-color: transparent;
     font-size: 14px;
     width: 120px;
@@ -17,7 +17,7 @@
 
     &:hover {
       cursor: pointer;
-      background-color: #4294de;
+      background-color: @admin-blue;
       color: #fff;
     }
 
@@ -30,11 +30,11 @@
 
 .action-menu-button {
   width: 120px;
-  font-family: 'Open Sans', sans-serif;
+  font-family: @admin-font-family;
   font-size: 14px;
   cursor: pointer;
   color: #fff;
-  background: #4294de url("../images/admin-arrow.png") right center no-repeat;
+  background: @admin-blue url("../images/admin-arrow.png") right center no-repeat;
   border: 0 none;
   padding: 5px;
   border-right: 5px solid transparent;

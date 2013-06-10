@@ -116,5 +116,10 @@ module api_ui {
             return this;
         }
 
+        remove() {
+            var parent = this.el.parentElement;
+            parent.removeChild(this.el);
+        }
+
     }
 }

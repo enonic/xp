@@ -2674,6 +2674,48 @@ var app_ui;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
+    var SpaceDetailPanel2 = (function (_super) {
+        __extends(SpaceDetailPanel2, _super);
+        function SpaceDetailPanel2() {
+            var _this = this;
+                _super.call(this);
+            var selectedSpaces = app.SpaceContext.get().getSelectedSpaces();
+            if(!selectedSpaces || selectedSpaces.length == 0) {
+                this.showBlank();
+            }
+            app_event.GridSelectionChangeEvent.on(function (event) {
+                _this.update(event.getSpaceModels());
+            });
+        }
+        SpaceDetailPanel2.prototype.showBlank = function () {
+            this.getEl().setInnerHtml("Nothing selected");
+        };
+        SpaceDetailPanel2.prototype.update = function (models) {
+            if(models.length == 1) {
+                this.showSingle(models[0]);
+            } else if(models.length > 1) {
+                this.showMultiple(models);
+            }
+        };
+        SpaceDetailPanel2.prototype.showSingle = function (model) {
+            this.getEl().setInnerHtml("One selected");
+        };
+        SpaceDetailPanel2.prototype.showMultiple = function (models) {
+            this.getEl().setInnerHtml("");
+            for(var i in models) {
+                this.getEl().appendChild(new api_ui_detailpanel.DetailPanelBox(models[i]).getHTMLElement());
+            }
+        };
+        return SpaceDetailPanel2;
+    })(api_ui_detailpanel.DetailPanel);
+    app_ui.SpaceDetailPanel2 = SpaceDetailPanel2;    
+    var DetailPanelTabList = (function (_super) {
+        __extends(DetailPanelTabList, _super);
+        function DetailPanelTabList() {
+                _super.call(this, "tab-list");
+        }
+        return DetailPanelTabList;
+    })(api_ui.UlEl);    
     var SpaceDetailPanel = (function () {
         function SpaceDetailPanel(region, id, model) {
             this.isVertical = false;
@@ -4769,7 +4811,6 @@ Ext.define('Admin.controller.Controller', {
         return space;
     },
     updateDetailPanel: function (selected) {
-        this.getSpaceDetailPanel().setData(selected);
     },
     updateToolbarButtons: function (selected) {
         var enable = selected && selected.length > 0;
@@ -5123,7 +5164,7 @@ Ext.application({
     launch: function () {
         var toolbar = new app_ui.BrowseToolbar();
         var grid = components.gridPanel = new app_ui.TreeGridPanel('center');
-        var detail = components.detailPanel = new app_ui.SpaceDetailPanel('south');
+        var detail = components.detailPanel = new app_ui.SpaceDetailPanel2();
         var center = new Ext.container.Container({
             region: 'center',
             layout: 'border'

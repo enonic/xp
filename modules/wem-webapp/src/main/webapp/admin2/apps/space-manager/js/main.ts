@@ -73,7 +73,6 @@
 ///<reference path='controller/WizardController.ts' />
 
 
-
 declare var Ext;
 declare var Admin;
 declare var CONFIG;
@@ -86,7 +85,7 @@ module app {
 }
 
 module components {
-    export var detailPanel:app_ui.SpaceDetailPanel;
+    export var detailPanel:app_ui.SpaceDetailPanel2;
     export var gridPanel:app_ui.TreeGridPanel;
     export var tabPanel;
     export var deleteWindow;
@@ -112,7 +111,8 @@ Ext.application({
 
         var grid = components.gridPanel = new app_ui.TreeGridPanel('center');
 
-        var detail = components.detailPanel = new app_ui.SpaceDetailPanel('south');
+        //var detail = components.detailPanel = new app_ui.SpaceDetailPanel('south');
+        var detail = components.detailPanel = new app_ui.SpaceDetailPanel2();
 
         var center = new Ext.container.Container({
             region: 'center',

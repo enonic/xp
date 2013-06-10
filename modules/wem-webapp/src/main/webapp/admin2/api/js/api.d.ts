@@ -1,4 +1,10 @@
 module api_util {
+    class ImageLoader {
+        private static images;
+        static get(url: string, width?: number, height?: number);
+    }
+}
+module api_util {
     var baseUri: string;
     function getAbsoluteUri(uri: string): string;
 }
@@ -65,6 +71,7 @@ module api_ui {
         public setMarginTop(value: string): HTMLElementHelper;
         public setMarginBottom(value: string): HTMLElementHelper;
         public setZindex(value: number): HTMLElementHelper;
+        public remove(): void;
     }
 }
 module api_ui {
@@ -173,6 +180,20 @@ module api_ui_menu {
         private action;
         constructor(action: api_action.Action);
         public setEnable(value: bool): void;
+    }
+}
+module api_ui_detailpanel {
+    class DetailPanel extends api_ui.DivEl {
+        public ext;
+        constructor();
+        private initExt();
+    }
+    class DetailPanelBox extends api_ui.DivEl {
+        private model;
+        constructor(model: any, event?: api_event.Event);
+        private addRemoveButton(removeEvent?);
+        private setIcon(iconUrl, size);
+        private setData(title, subtitle);
     }
 }
 module api_ui_menu {

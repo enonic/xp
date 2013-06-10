@@ -1,5 +1,31 @@
 var api_util;
 (function (api_util) {
+    var ImageLoader = (function () {
+        function ImageLoader() { }
+        ImageLoader.images = [];
+        ImageLoader.get = function get(url, width, height) {
+            var imageFound = false;
+            var returnImage;
+            for(var i in ImageLoader.images) {
+                if(ImageLoader.images[i].src == url) {
+                    imageFound = true;
+                    returnImage = ImageLoader.images[i];
+                }
+            }
+            if(!imageFound) {
+                var image = new Image(width, height);
+                image.src = url;
+                ImageLoader.images[ImageLoader.images.length + 1] = image;
+                returnImage = image;
+            }
+            return returnImage;
+        };
+        return ImageLoader;
+    })();
+    api_util.ImageLoader = ImageLoader;    
+})(api_util || (api_util = {}));
+var api_util;
+(function (api_util) {
     api_util.baseUri = '../../..';
     function getAbsoluteUri(uri) {
         return this.baseUri + '/' + uri;
@@ -191,6 +217,10 @@ var api_ui;
         HTMLElementHelper.prototype.setZindex = function (value) {
             this.el.style.zIndex = value.toString();
             return this;
+        };
+        HTMLElementHelper.prototype.remove = function () {
+            var parent = this.el.parentElement;
+            parent.removeChild(this.el);
         };
         return HTMLElementHelper;
     })();
@@ -509,15 +539,73 @@ var api_ui_menu;
             var el = this.getEl();
             el.setDisabled(!value);
             if(value) {
-                el.removeClass("context-menu-item-disabled");
+                el.removeClass("disabled");
             } else {
-                el.addClass("context-menu-item-disabled");
+                el.addClass("disabled");
             }
         };
         return MenuItem;
     })(api_ui.LiEl);
     api_ui_menu.MenuItem = MenuItem;    
 })(api_ui_menu || (api_ui_menu = {}));
+var api_ui_detailpanel;
+(function (api_ui_detailpanel) {
+    var DetailPanel = (function (_super) {
+        __extends(DetailPanel, _super);
+        function DetailPanel() {
+                _super.call(this, "detailpanel");
+            this.getEl().addClass("detailpanel");
+            this.initExt();
+        }
+        DetailPanel.prototype.initExt = function () {
+            var htmlEl = this.getHTMLElement();
+            this.ext = new Ext.Component({
+                contentEl: htmlEl,
+                region: 'south'
+            });
+        };
+        return DetailPanel;
+    })(api_ui.DivEl);
+    api_ui_detailpanel.DetailPanel = DetailPanel;    
+    var DetailPanelBox = (function (_super) {
+        __extends(DetailPanelBox, _super);
+        function DetailPanelBox(model, event) {
+                _super.call(this, "detailpanel-box");
+            this.model = model;
+            this.getEl().addClass("detailpanel-box");
+            this.setIcon(model.data.iconUrl, 32);
+            this.setData(model.data.displayName, model.data.name);
+            this.addRemoveButton(event);
+        }
+        DetailPanelBox.prototype.addRemoveButton = function (removeEvent) {
+            var _this = this;
+            var removeEl = document.createElement("div");
+            removeEl.className = "remove";
+            removeEl.innerHTML = "&times;";
+            removeEl.addEventListener("click", function (event) {
+                _this.getEl().remove();
+                if(removeEvent) {
+                    removeEvent.fire();
+                }
+            });
+            this.getEl().appendChild(removeEl);
+        };
+        DetailPanelBox.prototype.setIcon = function (iconUrl, size) {
+            this.getEl().appendChild(api_util.ImageLoader.get(iconUrl + "?size=" + size, 32, 32));
+        };
+        DetailPanelBox.prototype.setData = function (title, subtitle) {
+            var titleEl = document.createElement("h6");
+            titleEl.innerHTML = title;
+            var subtitleEl = document.createElement("small");
+            subtitleEl.innerHTML = subtitle;
+            titleEl.appendChild(subtitleEl);
+            this.getEl().appendChild(titleEl);
+            return titleEl;
+        };
+        return DetailPanelBox;
+    })(api_ui.DivEl);
+    api_ui_detailpanel.DetailPanelBox = DetailPanelBox;    
+})(api_ui_detailpanel || (api_ui_detailpanel = {}));
 var api_ui_menu;
 (function (api_ui_menu) {
     var ContextMenu = (function (_super) {
@@ -750,7 +838,7 @@ var api_ui_dialog;
         __extends(ModalDialogContentPanel, _super);
         function ModalDialogContentPanel() {
                 _super.call(this, "ModalDialogContentPanel");
-            this.getEl().addClass("modal-dialog-content-panel");
+            this.getEl().addClass("content-panel");
         }
         return ModalDialogContentPanel;
     })(api_ui.DivEl);
@@ -759,7 +847,7 @@ var api_ui_dialog;
         __extends(ModalDialogButtonRow, _super);
         function ModalDialogButtonRow() {
                 _super.call(this, "ModalDialogButtonRow");
-            this.getEl().addClass("modal-dialog-button-row");
+            this.getEl().addClass("button-row");
         }
         ModalDialogButtonRow.prototype.addAction = function (action) {
             var button = new ModalDialogButton(action);
@@ -864,7 +952,7 @@ var api_delete;
         __extends(DeleteDialogItemList, _super);
         function DeleteDialogItemList() {
                 _super.call(this, "DeleteDialogItemList");
-            this.getEl().addClass("delete-dialog-item-list");
+            this.getEl().addClass("item-list");
         }
         DeleteDialogItemList.prototype.clear = function () {
             this.removeChildren();
@@ -876,7 +964,7 @@ var api_delete;
         __extends(DeleteDialogItemComponent, _super);
         function DeleteDialogItemComponent(deleteItem) {
                 _super.call(this, "DeleteDialogItem");
-            this.getEl().addClass("delete-dialog-item");
+            this.getEl().addClass("item");
             var icon = new api_ui.ImgEl();
             icon.getEl().setSrc(deleteItem.getIconUrl());
             this.appendChild(icon);

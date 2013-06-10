@@ -24,9 +24,9 @@ module api_ui_menu {
             var el = this.getEl();
             el.setDisabled(!value);
             if (value) {
-                el.removeClass("context-menu-item-disabled");
+                el.removeClass("disabled");
             } else {
-                el.addClass("context-menu-item-disabled");
+                el.addClass("disabled");
             }
         }
     }

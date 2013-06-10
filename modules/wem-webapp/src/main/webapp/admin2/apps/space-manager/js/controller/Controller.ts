@@ -100,7 +100,7 @@ Ext.define('Admin.controller.Controller', {
     },
 
     updateDetailPanel: function (selected) {
-        this.getSpaceDetailPanel().setData(selected);
+        //this.getSpaceDetailPanel().setData(selected);
     },
 
     updateToolbarButtons: function (selected) {

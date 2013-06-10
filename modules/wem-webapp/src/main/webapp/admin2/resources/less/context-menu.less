@@ -1,23 +1,23 @@
 .context-menu {
   border-width: 2px;
   border-style: solid;
-  border-color: #ccc !important;
-  background: #fff !important;
+  border-color: @admin-medium-gray-border;
+  background: @admin-white;
 
   li {
-    font-family: "Open Sans", sans-serif;
+    font-family: @admin-font-family;
     background-color: transparent;
     font-size: 14px;
     width: 120px;
     border-width: 0;
-    color: #333;
+    color: @admin-dark-gray-font;
 
     padding: 5px;
     margin: 0;
 
     &:hover:not(.context-menu-item-disabled) {
       cursor: pointer;
-      background-color: #4294de;
+      background-color: @admin-blue;
       color: #fff;
     }
 
@@ -25,10 +25,10 @@
       opacity: 0.5;
     }
 
-  }
+    &.disabled {
+      opacity: 0.5;
+    }
 
-  li.context-menu-item-disabled {
-    opacity: 0.5;
   }
 }
 

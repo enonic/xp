@@ -4,6 +4,7 @@
 
 ///<reference path='Mousetrap.d.ts' />
 
+///<reference path='util/ImageLoader.ts' />
 ///<reference path='util/UriHelper.ts' />
 
 ///<reference path='handler/DeleteSpaceParam.ts' />
@@ -31,6 +32,7 @@
 ///<reference path='ui/AbstractButton.ts' />
 ///<reference path='ui/toolbar/Toolbar.ts' />
 ///<reference path='ui/menu/MenuItem.ts' />
+///<reference path='ui/detailpanel/DetailPanel.ts' />
 ///<reference path='ui/menu/ContextMenu.ts' />
 ///<reference path='ui/menu/ActionMenu.ts' />
 

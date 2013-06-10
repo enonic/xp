@@ -89,7 +89,7 @@ module api_ui_dialog{
 
         constructor() {
             super("ModalDialogContentPanel");
-            this.getEl().addClass("modal-dialog-content-panel")
+            this.getEl().addClass("content-panel")
         }
     }
 
@@ -97,7 +97,7 @@ module api_ui_dialog{
 
         constructor() {
             super("ModalDialogButtonRow");
-            this.getEl().addClass("modal-dialog-button-row")
+            this.getEl().addClass("button-row")
         }
 
         addAction(action:api_action.Action) {
