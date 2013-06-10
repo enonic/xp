@@ -8,13 +8,11 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     cls: 'admin-context-window',
     x: 10,
     y: 40,
-    width: 300,
-    height: 480,
+    width: 320,
+    height: 512,
     shadow: false,
     border: false,
     floating: true,
-    draggable: true,
-    constrain: true,
     layout: {
         type: 'vbox',
         align : 'stretch'
@@ -61,12 +59,12 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
 
     initComponent: function () {
         this.titleBar = this.createTitleBar();
-        this.draggingShim = this.createDraggingShim();
         this.windowBody = this.createWindowBody();
         this.items = [
             this.titleBar,
             this.windowBody
         ];
+        this.draggingShim = this.createDraggingShim();
         this.enableDrag();
         this.currentHeight = this.height;
 

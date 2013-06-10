@@ -1,5 +1,5 @@
 .live-edit-component-search-bar {
-    padding: 10px 10px;
+    padding: 10px 15px;
 }
 
 .live-edit-component-search-input {
@@ -12,6 +12,7 @@
 
 .live-edit-component-list {
     overflow: hidden;
+    padding: 2px;
 }
 
 .live-edit-component-list:hover {
@@ -20,8 +21,8 @@
 
 .live-edit-component {
     display: block;
-    margin: 0 10px 0 10px;
-    padding: 8px;
+    /*margin: 0 2px 0 2px;*/
+    padding: 10px 20px;
     cursor: hand;
     cursor: grab !important;
     cursor: -moz-grab;
@@ -42,7 +43,7 @@
 }
 
 .live-edit-component-row .live-edit-component-icon {
-    width: 45px;
+    width: 50px;
     color: #f2f2f2;
     font-size: 32px;
     font-weight: lighter;
