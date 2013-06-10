@@ -16,7 +16,7 @@ module app {
 
         constructor(){
             app_event.GridSelectionChangeEvent.on((event) => {
-                this.selectedSpaces = event.getModel();
+                this.selectedSpaces = event.getSpaceModels();
             });
         }
 

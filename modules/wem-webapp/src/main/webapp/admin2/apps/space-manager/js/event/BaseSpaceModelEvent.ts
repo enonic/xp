@@ -1,6 +1,6 @@
 module app_event {
 
-    export class SpaceModelEvent extends api_event.Event {
+    export class BaseSpaceModelEvent extends api_event.Event {
         private model:app_model.SpaceModel[];
 
         constructor(name:string, model:app_model.SpaceModel[]) {
@@ -8,7 +8,7 @@ module app_event {
             super(name);
         }
 
-        getModel():app_model.SpaceModel[] {
+        getSpaceModels():app_model.SpaceModel[] {
             return this.model;
         }
     }

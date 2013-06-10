@@ -5,7 +5,7 @@
 ///<reference path='../../../api/js/lib/RemoteService.ts' />
 
 ///<reference path='event/DeletedEvent.ts' />
-///<reference path='event/SpaceModelEvent.ts' />
+///<reference path='event/BaseSpaceModelEvent.ts' />
 ///<reference path='event/DeletePromptEvent.ts' />
 ///<reference path='event/GridSelectionChangeEvent.ts' />
 ///<reference path='event/ShowContextMenuEvent.ts' />
@@ -161,7 +161,7 @@ Ext.application({
 
         var deleteSpaceDialog:app_ui.DeleteSpaceDialog = new app_ui.DeleteSpaceDialog();
         app_event.DeletePromptEvent.on((event) => {
-            deleteSpaceDialog.setSpacesToDelete(event.getModel());
+            deleteSpaceDialog.setSpacesToDelete(event.getSpaceModels());
             deleteSpaceDialog.open();
         });
     }

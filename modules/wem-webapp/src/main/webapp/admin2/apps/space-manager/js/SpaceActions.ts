@@ -54,7 +54,7 @@ module app {
 
             app_event.GridSelectionChangeEvent.on((event) => {
 
-                var spaces:app_model.SpaceModel[] = event.getModel();
+                var spaces:app_model.SpaceModel[] = event.getSpaceModels();
 
                 if (spaces.length <= 0) {
                     NEW_SPACE.setEnabled(true);

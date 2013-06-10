@@ -1,5 +1,5 @@
 module app_event {
-    export class EditSpaceEvent extends SpaceModelEvent {
+    export class EditSpaceEvent extends BaseSpaceModelEvent {
 
         constructor(model:app_model.SpaceModel[]) {
             super('editSpaceEvent', model);

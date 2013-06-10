@@ -191,7 +191,7 @@ module app_ui {
 
 
             app_event.EditSpaceEvent.on((event) => {
-                var spaces = event.getModel();
+                var spaces = event.getSpaceModels();
                 for (var i in spaces) {
                     var space = spaces[i];
                     console.log(space);

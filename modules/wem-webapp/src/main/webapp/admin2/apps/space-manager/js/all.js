@@ -260,18 +260,18 @@ var app_event;
 })(app_event || (app_event = {}));
 var app_event;
 (function (app_event) {
-    var SpaceModelEvent = (function (_super) {
-        __extends(SpaceModelEvent, _super);
-        function SpaceModelEvent(name, model) {
+    var BaseSpaceModelEvent = (function (_super) {
+        __extends(BaseSpaceModelEvent, _super);
+        function BaseSpaceModelEvent(name, model) {
             this.model = model;
                 _super.call(this, name);
         }
-        SpaceModelEvent.prototype.getModel = function () {
+        BaseSpaceModelEvent.prototype.getSpaceModels = function () {
             return this.model;
         };
-        return SpaceModelEvent;
+        return BaseSpaceModelEvent;
     })(api_event.Event);
-    app_event.SpaceModelEvent = SpaceModelEvent;    
+    app_event.BaseSpaceModelEvent = BaseSpaceModelEvent;    
 })(app_event || (app_event = {}));
 var app_event;
 (function (app_event) {
@@ -284,7 +284,7 @@ var app_event;
             api_event.onEvent('deletePrompt', handler);
         };
         return DeletePromptEvent;
-    })(app_event.SpaceModelEvent);
+    })(app_event.BaseSpaceModelEvent);
     app_event.DeletePromptEvent = DeletePromptEvent;    
 })(app_event || (app_event = {}));
 var app_event;
@@ -298,7 +298,7 @@ var app_event;
             api_event.onEvent('gridChange', handler);
         };
         return GridSelectionChangeEvent;
-    })(app_event.SpaceModelEvent);
+    })(app_event.BaseSpaceModelEvent);
     app_event.GridSelectionChangeEvent = GridSelectionChangeEvent;    
 })(app_event || (app_event = {}));
 var app_event;
@@ -348,7 +348,7 @@ var app_event;
             api_event.onEvent('openSpace', handler);
         };
         return OpenSpaceEvent;
-    })(app_event.SpaceModelEvent);
+    })(app_event.BaseSpaceModelEvent);
     app_event.OpenSpaceEvent = OpenSpaceEvent;    
 })(app_event || (app_event = {}));
 var app_event;
@@ -362,7 +362,7 @@ var app_event;
             api_event.onEvent('editSpaceEvent', handler);
         };
         return EditSpaceEvent;
-    })(app_event.SpaceModelEvent);
+    })(app_event.BaseSpaceModelEvent);
     app_event.EditSpaceEvent = EditSpaceEvent;    
 })(app_event || (app_event = {}));
 var app_event;
@@ -385,7 +385,7 @@ var app;
         function SpaceContext() {
             var _this = this;
             app_event.GridSelectionChangeEvent.on(function (event) {
-                _this.selectedSpaces = event.getModel();
+                _this.selectedSpaces = event.getSpaceModels();
             });
         }
         SpaceContext.init = function init() {
@@ -458,7 +458,7 @@ var app;
         SpaceActions.DELETE_SPACE = new DeleteSpaceAction();
         SpaceActions.init = function init() {
             app_event.GridSelectionChangeEvent.on(function (event) {
-                var spaces = event.getModel();
+                var spaces = event.getSpaceModels();
                 if(spaces.length <= 0) {
                     SpaceActions.NEW_SPACE.setEnabled(true);
                     SpaceActions.OPEN_SPACE.setEnabled(false);
@@ -4408,7 +4408,7 @@ var app_ui;
                 }
             });
             app_event.EditSpaceEvent.on(function (event) {
-                var spaces = event.getModel();
+                var spaces = event.getSpaceModels();
                 for(var i in spaces) {
                     var space = spaces[i];
                     console.log(space);
@@ -5281,7 +5281,7 @@ Ext.application({
         components.deleteWindow = new app_ui.DeleteSpaceWindow();
         var deleteSpaceDialog = new app_ui.DeleteSpaceDialog();
         app_event.DeletePromptEvent.on(function (event) {
-            deleteSpaceDialog.setSpacesToDelete(event.getModel());
+            deleteSpaceDialog.setSpacesToDelete(event.getSpaceModels());
             deleteSpaceDialog.open();
         });
     }
