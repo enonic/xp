@@ -116,7 +116,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     createOrderByButton: function () {
         var me = this;
         var menuItems = me.createOrderByMenuItems();
-        return <any> Ext.create('Ext.button.Cycle', {
+        return new Ext.button.Cycle({
             showText: true,
             prependText: 'Order by ',
             menu: {
@@ -126,7 +126,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     },
 
     createOrderByDirectionButton: function () {
-        return <any> Ext.create('Ext.button.Cycle', {
+        return new Ext.button.Cycle({
             showText: true,
             prependText: 'Direction ',
             menu: {

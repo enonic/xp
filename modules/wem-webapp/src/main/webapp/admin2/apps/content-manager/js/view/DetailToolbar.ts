@@ -67,7 +67,7 @@ module admin.ui {
         }
 
         private createCycle() {
-            return Ext.create('Ext.button.Cycle', {
+            return new Ext.button.Cycle({
                 itemId: 'deviceCycle',
                 disabled: !this.isLiveMode,
                 showText: true,

@@ -230,7 +230,7 @@ Ext.define('Admin.view.TopBar', {
 
     getMenuItemIcon: function (card) {
         var icon;
-        if (card.data && card.data instanceof <any> Ext.data.Model) {
+        if (card.data && card.data instanceof (<any> Ext.data.Model)) {
             icon = card.data.get('iconUrl') || card.data.get('image_url');
         }
         return icon;
@@ -238,7 +238,7 @@ Ext.define('Admin.view.TopBar', {
 
     getMenuItemDescription: function (card) {
         var desc;
-        if (!card.isNew && card.data && card.data instanceof <any> Ext.data.Model) {
+        if (!card.isNew && card.data && card.data instanceof (<any> Ext.data.Model)) {
             desc = card.data.get('path') || card.data.get('qualifiedName') || card.data.get('displayName');
         }
         if (!desc) {
@@ -250,7 +250,7 @@ Ext.define('Admin.view.TopBar', {
 
     getMenuItemDisplayName: function (card) {
         var desc;
-        if (!card.isNew && card.data && card.data instanceof <any> Ext.data.Model) {
+        if (!card.isNew && card.data && card.data instanceof (<any> Ext.data.Model)) {
             desc = card.data.get('displayName') || card.data.get('name');
         }
         if (!desc) {
