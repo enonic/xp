@@ -5,7 +5,7 @@ Ext.define('Admin.lib.JsonRpcProvider', {
         var methods = this.methods;
         var namespace = this.namespace;
         var methodName;
-        for(var i = 0; i < methods.length; i++) {
+        for (var i = 0; i < methods.length; i++) {
             methodName = methods[i];
             var def = {
                 name: methodName,
@@ -27,7 +27,7 @@ Ext.define('Admin.lib.JsonRpcProvider', {
         var error = response.error ? true : false;
         response.tid = response.id;
         response.type = error ? 'exception' : 'rpc';
-        if(error) {
+        if (error) {
             response.message = response.error.message;
         }
         return Ext.create('direct.' + response.type, response);
@@ -46,47 +46,47 @@ Ext.define('Admin.lib.RemoteService', {
             "type": "jsonrpc",
             "namespace": "Admin.lib.RemoteService",
             "methods": [
-                "account_find", 
-                "account_getGraph", 
-                "account_changePassword", 
-                "account_verifyUniqueEmail", 
-                "account_suggestUserName", 
-                "account_createOrUpdate", 
-                "account_delete", 
-                "account_get", 
-                "util_getCountries", 
-                "util_getLocales", 
-                "util_getTimeZones", 
-                "userstore_getAll", 
-                "userstore_get", 
-                "userstore_getConnectors", 
-                "userstore_createOrUpdate", 
-                "userstore_delete", 
-                "content_createOrUpdate", 
-                "content_list", 
-                "contentType_get", 
-                "content_tree", 
-                "content_get", 
-                "contentType_list", 
-                "content_delete", 
-                "content_validate", 
-                "content_find", 
-                "contentType_createOrUpdate", 
-                "contentType_delete", 
-                "contentType_tree", 
-                "schema_list", 
-                "schema_tree", 
-                "system_getSystemInfo", 
-                "mixin_get", 
-                "mixin_createOrUpdate", 
-                "mixin_delete", 
-                "relationshipType_get", 
-                "relationshipType_createOrUpdate", 
-                "relationshipType_delete", 
-                "space_list", 
-                "space_get", 
-                "space_delete", 
-                "space_createOrUpdate", 
+                "account_find",
+                "account_getGraph",
+                "account_changePassword",
+                "account_verifyUniqueEmail",
+                "account_suggestUserName",
+                "account_createOrUpdate",
+                "account_delete",
+                "account_get",
+                "util_getCountries",
+                "util_getLocales",
+                "util_getTimeZones",
+                "userstore_getAll",
+                "userstore_get",
+                "userstore_getConnectors",
+                "userstore_createOrUpdate",
+                "userstore_delete",
+                "content_createOrUpdate",
+                "content_list",
+                "contentType_get",
+                "content_tree",
+                "content_get",
+                "contentType_list",
+                "content_delete",
+                "content_validate",
+                "content_find",
+                "contentType_createOrUpdate",
+                "contentType_delete",
+                "contentType_tree",
+                "schema_list",
+                "schema_tree",
+                "system_getSystemInfo",
+                "mixin_get",
+                "mixin_createOrUpdate",
+                "mixin_delete",
+                "relationshipType_get",
+                "relationshipType_createOrUpdate",
+                "relationshipType_delete",
+                "space_list",
+                "space_get",
+                "space_delete",
+                "space_createOrUpdate",
                 "binary_create"
             ],
             "enableBuffer": 20
@@ -221,7 +221,7 @@ Ext.define('Admin.lib.RemoteService', {
     },
     getMethod: function (name) {
         var handler = this.handlerCache[name];
-        if(handler) {
+        if (handler) {
             return handler;
         }
         var method = new Ext.direct.RemotingMethod({
@@ -258,7 +258,7 @@ Ext.define('Ext.ux.toggleslide.Thumb', {
         me.onRender();
     },
     onRender: function () {
-        if(this.disabled) {
+        if (this.disabled) {
             this.disable();
         }
     },
@@ -304,13 +304,13 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
     diff3: 0,
     frame: false,
     renderTpl: [
-        '<div class="holder">', 
-        '<label class="{onLabelCls}">', 
-        '<span>{onText}</span>', 
-        '</label>', 
-        '<label class="{offLabelCls}">', 
-        '<span>{offText}</span>', 
-        '</label>', 
+        '<div class="holder">',
+        '<label class="{onLabelCls}">',
+        '<span>{onText}</span>',
+        '</label>',
+        '<label class="{offLabelCls}">',
+        '<span>{offText}</span>',
+        '</label>',
         '</div>'
     ],
     autoEl: {
@@ -335,15 +335,15 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
     },
     onRender: function () {
         var me = this;
-        if(!me.resizeContainer) {
+        if (!me.resizeContainer) {
             me.diff = 0;
         }
-        if(!me.resizeHandle) {
+        if (!me.resizeHandle) {
             me.diff2 = 3;
             me.diff3 = 5;
         }
         me.callParent(arguments);
-        if(me.cls) {
+        if (me.cls) {
             me.el.addCls(me.cls);
         }
         me.thumb = new (Ext).ux.toggleslide.Thumb({
@@ -356,18 +356,18 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
         me.onSpan = me.onLabel.first();
         me.offLabel = me.onLabel.next();
         me.offSpan = me.offLabel.first();
-        if(me.rendered) {
+        if (me.rendered) {
             me.thumb.render();
         }
         me.handle = me.thumb.el;
-        if(me.resizeHandle) {
+        if (me.resizeHandle) {
             me.thumb.bringToFront();
         } else {
             me.thumb.sendToBack();
         }
         me.resize();
         me.disableTextSelection();
-        if(!me.disabled) {
+        if (!me.disabled) {
             me.registerToggleListeners();
         } else {
             (Ext).ux.toggleslide.ToggleSlide.superclass.disable.call(me);
@@ -375,11 +375,11 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
     },
     resize: function () {
         var me = this, container = me.el, offlabel = me.offLabel, onlabel = me.onLabel, handle = me.handle;
-        if(me.resizeHandle) {
+        if (me.resizeHandle) {
             var min = (onlabel.getWidth() < offlabel.getWidth()) ? onlabel.getWidth() : offlabel.getWidth();
             handle.setWidth(min);
         }
-        if(me.resizeContainer) {
+        if (me.resizeContainer) {
             var max = (onlabel.getWidth() > offlabel.getWidth()) ? onlabel.getWidth() : offlabel.getWidth();
             var expandPx = Math.ceil(container.getHeight() / 3);
             container.setWidth(max + handle.getWidth() + expandPx);
@@ -388,7 +388,7 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
         onlabel.setWidth(container.getWidth() - b + me.diff2);
         offlabel.setWidth(container.getWidth() - b + me.diff2);
         var rightside = me.rightside = container.getWidth() - handle.getWidth() - me.diff;
-        if(me.state) {
+        if (me.state) {
             handle.setLeft(rightside);
         } else {
             handle.setLeft(0);
@@ -397,9 +397,9 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
     },
     disableTextSelection: function () {
         var els = [
-            this.el, 
-            this.onLabel, 
-            this.offLabel, 
+            this.el,
+            this.onLabel,
+            this.offLabel,
             this.handle
         ];
         Ext.each(els, function (el) {
@@ -407,7 +407,7 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
                 evt.preventDefault();
                 return false;
             });
-            if(Ext.isIE) {
+            if (Ext.isIE) {
                 el.on('startselect', function (evt) {
                     evt.stopEvent();
                     return false;
@@ -457,7 +457,8 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
         });
     },
     onDragEnd: function (e) {
-        var me = this, hc = (me.handle.getLeft(true) + me.handle.getRight(true)) / 2, cc = (me.el.getLeft(true) + me.el.getRight(true)) / 2, next = hc > cc;
+        var me = this, hc = (me.handle.getLeft(true) + me.handle.getRight(true)) / 2, cc = (me.el.getLeft(true) + me.el.getRight(true)) /
+                                                                                           2, next = hc > cc;
         (me.state != next) ? me.toggle() : me.moveHandle(next);
         me.dragging = false;
     },
@@ -469,20 +470,20 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
         });
     },
     onMouseUp: function () {
-        if(!this.dragging) {
+        if (!this.dragging) {
             this.toggle();
         }
     },
     toggle: function () {
         var me = this, next = !this.state;
-        if(!me.booleanMode) {
+        if (!me.booleanMode) {
             next = me.state ? me.onText : me.offText;
         }
-        if(me.fireEvent('beforechange', me, next) !== false) {
+        if (me.fireEvent('beforechange', me, next) !== false) {
             me.state = !me.state;
             me.moveHandle(me.state, Ext.bind(me.fireEvent, me, [
-                'change', 
-                me, 
+                'change',
+                me,
                 me.getValue()
             ]));
         } else {
@@ -490,14 +491,14 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
         }
     },
     enable: function () {
-        if(this.disabled) {
+        if (this.disabled) {
             (Ext).ux.toggleslide.ToggleSlide.superclass.enable.call(this);
             this.registerToggleListeners();
         }
         return this;
     },
     disable: function () {
-        if(!this.disabled) {
+        if (!this.disabled) {
             (Ext).ux.toggleslide.ToggleSlide.superclass.disable.call(this);
             this.unregisterToggleListeners();
         }
@@ -525,7 +526,9 @@ var admin;
     (function (app) {
         (function (handler) {
             var DeleteContentHandler = (function () {
-                function DeleteContentHandler() { }
+                function DeleteContentHandler() {
+                }
+
                 DeleteContentHandler.prototype.doDelete = function (contentModels, callback) {
                     var _this = this;
                     var contentPaths = Ext.Array.map([].concat(contentModels), function (item) {
@@ -534,7 +537,7 @@ var admin;
                     Admin.lib.RemoteService.content_delete({
                         'contentPaths': contentPaths
                     }, function (response) {
-                        if(response) {
+                        if (response) {
                             callback.call(_this, response.success, response.failures);
                         } else {
                             Ext.Msg.alert('Error', response ? response.error : 'Internal error occured.');
@@ -543,7 +546,7 @@ var admin;
                 };
                 return DeleteContentHandler;
             })();
-            handler.DeleteContentHandler = DeleteContentHandler;            
+            handler.DeleteContentHandler = DeleteContentHandler;
         })(app.handler || (app.handler = {}));
         var handler = app.handler;
     })(admin.app || (admin.app = {}));
@@ -557,7 +560,9 @@ var admin;
                 var _this = this;
                 this.title = "Delete content(s)";
                 this.deleteHandler = new admin.app.handler.DeleteContentHandler();
-                this.template = '<div class="delete-container">' + '<tpl for=".">' + '<div class="delete-item">' + '<img class="icon" src="{data.iconUrl}"/>' + '<h4>{data.displayName}</h4>' + '<p>{data.type}</p>' + '</div>' + '</tpl>' + '</div>';
+                this.template = '<div class="delete-container">' + '<tpl for=".">' + '<div class="delete-item">' +
+                                '<img class="icon" src="{data.iconUrl}"/>' + '<h4>{data.displayName}</h4>' + '<p>{data.type}</p>' +
+                                '</div>' + '</tpl>' + '</div>';
                 var deleteCallback = function (obj, success, result) {
                     _this.container.hide();
                 };
@@ -614,10 +619,11 @@ var admin;
                 buttonRow.add(cancelButton);
                 ct.add(buttonRow);
             }
+
             DeleteContentWindow.prototype.setModel = function (model) {
                 this.data = model;
-                if(model) {
-                    if(this.content) {
+                if (model) {
+                    if (this.content) {
                         this.content.update(model);
                     }
                 }
@@ -627,7 +633,7 @@ var admin;
             };
             return DeleteContentWindow;
         })();
-        ui.DeleteContentWindow = DeleteContentWindow;        
+        ui.DeleteContentWindow = DeleteContentWindow;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -639,13 +645,14 @@ var admin;
                 var panel = new Ext.form.Panel();
                 this.ext = panel;
             }
+
             FormComponent.prototype.getContentData = function () {
                 var contentData = new api_content_data.ContentData();
                 return contentData;
             };
             return FormComponent;
         })();
-        ui.FormComponent = FormComponent;        
+        ui.FormComponent = FormComponent;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -657,9 +664,10 @@ var admin;
                 var panel = new Ext.form.Panel();
                 this.ext = panel;
             }
+
             return FormItemSetComponent;
         })();
-        ui.FormItemSetComponent = FormItemSetComponent;        
+        ui.FormItemSetComponent = FormItemSetComponent;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -670,6 +678,7 @@ var admin;
             function BaseInputComponent(input) {
                 this.input = input;
             }
+
             BaseInputComponent.prototype.getInput = function () {
                 return this.input;
             };
@@ -678,12 +687,15 @@ var admin;
             };
             return BaseInputComponent;
         })();
-        ui.BaseInputComponent = BaseInputComponent;        
+        ui.BaseInputComponent = BaseInputComponent;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
 var __extends = this.__extends || function (d, b) {
-    function __() { this.constructor = d; }
+    function __() {
+        this.constructor = d;
+    }
+
     __.prototype = b.prototype;
     d.prototype = new __();
 };
@@ -693,7 +705,7 @@ var admin;
         var TextLine = (function (_super) {
             __extends(TextLine, _super);
             function TextLine(input) {
-                        _super.call(this, input);
+                _super.call(this, input);
                 var fieldContainer = Ext.create('Ext.form.FieldContainer');
                 fieldContainer.setFieldLabel('');
                 fieldContainer.labelWidth = 110;
@@ -704,13 +716,14 @@ var admin;
                 fieldContainer.add(textField);
                 this.ext = fieldContainer;
             }
+
             TextLine.prototype.setValue = function (value, arrayIndex) {
                 this.ext.down('textfield').setValue(value);
                 _super.prototype.setValue.call(this, value, arrayIndex);
             };
             return TextLine;
         })(admin.ui.BaseInputComponent);
-        ui.TextLine = TextLine;        
+        ui.TextLine = TextLine;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -731,14 +744,14 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
             this.panel.view.on('beforeitemmousedown', function (view, record, item, index, event, eOpts) {
                 var targetElement = new Ext.Element(event.target);
                 var isCheckboxColumnIsClicked = targetElement.findParent('td.x-grid-cell-first') !== null;
-                if(isCheckboxColumnIsClicked) {
+                if (isCheckboxColumnIsClicked) {
                     var isShiftKeyPressed = event.shiftKey === true;
                     var isCtrlKeyPressed = event.ctrlKey === true;
-                    if(isShiftKeyPressed || isCtrlKeyPressed) {
+                    if (isShiftKeyPressed || isCtrlKeyPressed) {
                         return;
                     }
                     var isChecked = this.selected[record.get(this.keyField)];
-                    if(!isChecked) {
+                    if (!isChecked) {
                         this.panel.selModel.select(index, true, false);
                     } else {
                         this.panel.selModel.deselect(index);
@@ -756,7 +769,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
             }, this);
             this.panel.view.on('itemadd', this.onViewRefresh, this);
             var pagingToolbar = this.panel.down('pagingtoolbar');
-            if(pagingToolbar !== null) {
+            if (pagingToolbar !== null) {
                 pagingToolbar.on('beforechange', this.pagingOnBeforeChange, this);
             }
         }, this);
@@ -771,9 +784,9 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         this.onRowDeselect(this.panel.selModel, record);
         var storeRecord;
         var key = record.get(this.keyField);
-        if(this.panel instanceof Ext.tree.Panel) {
+        if (this.panel instanceof Ext.tree.Panel) {
             storeRecord = this.panel.getRootNode().findChild(this.keyField, key);
-        } else if(this.panel instanceof Ext.grid.Panel) {
+        } else if (this.panel instanceof Ext.grid.Panel) {
             storeRecord = this.panel.getStore().findRecord(this.keyField, key);
         }
         this.panel.selModel.deselect(storeRecord);
@@ -795,22 +808,22 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         this.panel.selModel.refresh();
         var i;
         var sm = this.panel.getSelectionModel();
-        if(this.panel instanceof Ext.tree.Panel) {
+        if (this.panel instanceof Ext.tree.Panel) {
             var rootNode = this.panel.getRootNode(), node;
-            for(var selectedItem in this.selected) {
-                if(this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
+            for (var selectedItem in this.selected) {
+                if (this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
                     node = rootNode.findChild(this.keyField, selectedItem, true);
-                    if(node) {
+                    if (node) {
                         sm.select(node, true);
                     }
                 }
             }
-        } else if(this.panel instanceof Ext.grid.Panel) {
+        } else if (this.panel instanceof Ext.grid.Panel) {
             var store = this.panel.getStore(), record;
-            for(var selectedItem in this.selected) {
-                if(this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
+            for (var selectedItem in this.selected) {
+                if (this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
                     record = store.findRecord(this.keyField, selectedItem);
-                    if(record) {
+                    if (record) {
                         sm.select(record, true);
                     }
                 }
@@ -822,25 +835,25 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         this.ignoreSelectionChanges = true;
     },
     onSelectionClear: function () {
-        if(!this.ignoreSelectionChanges) {
+        if (!this.ignoreSelectionChanges) {
             this.selections = [];
             this.selected = {
             };
         }
     },
     onRowSelect: function (sm, rec, i, o) {
-        if(!this.ignoreSelectionChanges) {
-            if(!this.selected[rec.get(this.keyField)]) {
+        if (!this.ignoreSelectionChanges) {
+            if (!this.selected[rec.get(this.keyField)]) {
                 this.selections.push(rec);
                 this.selected[rec.get(this.keyField)] = true;
             }
         }
     },
     onHeaderClick: function (headerCt, header, e) {
-        if(header.isCheckerHd) {
+        if (header.isCheckerHd) {
             e.stopEvent();
             var isChecked = header.el.hasCls('x-grid-hd-checker-on');
-            if(isChecked) {
+            if (isChecked) {
                 this.clearSelection();
             } else {
                 this.panel.selModel.selectAll();
@@ -849,10 +862,10 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         return false;
     },
     onRowDeselect: function (rowModel, record, index, eOpts) {
-        if(!this.ignoreSelectionChanges) {
-            if(this.selected[record.get(this.keyField)]) {
-                for(var j = this.selections.length - 1; j >= 0; j--) {
-                    if(this.selections[j].get(this.keyField) == record.get(this.keyField)) {
+        if (!this.ignoreSelectionChanges) {
+            if (this.selected[record.get(this.keyField)]) {
+                for (var j = this.selections.length - 1; j >= 0; j--) {
+                    if (this.selections[j].get(this.keyField) == record.get(this.keyField)) {
                         this.selections.splice(j, 1);
                         this.selected[record.get(this.keyField)] = false;
                         break;
@@ -868,7 +881,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         var isRightClick = event.button === 2;
         var recordIsSelected = this.selected[record.get(this.keyField)];
         var cancel = isRightClick && recordIsSelected && this.getSelectionCount() > 1;
-        if(cancel) {
+        if (cancel) {
             return false;
         }
         return true;
@@ -877,7 +890,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         var targetElement = event.target;
         var isLeftClick = event.button === 0;
         var isCheckbox = targetElement.className && targetElement.className.indexOf('x-grid-row-checker') > -1;
-        if(isLeftClick && !isCheckbox) {
+        if (isLeftClick && !isCheckbox) {
             this.clearSelection();
         }
     }
@@ -887,7 +900,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     alias: 'plugin.gridToolbarPlugin',
     pluginId: 'gridToolbarPlugin',
     constructor: function (config) {
-        if(config) {
+        if (config) {
             Ext.apply(this, config);
         }
     },
@@ -903,9 +916,9 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         me.tbFill = Ext.create('Ext.toolbar.Fill');
         me.orderByButton = me.createOrderByButton();
         me.orderByDirectionButton = me.createOrderByDirectionButton();
-        if(Ext.isFunction(me.toolbar.store.getCount)) {
+        if (Ext.isFunction(me.toolbar.store.getCount)) {
             me.updateResultCount(me.getCount(me.toolbar.store));
-        } else if(Ext.isString(me.toolbar.store)) {
+        } else if (Ext.isString(me.toolbar.store)) {
             me.toolbar.store = Ext.StoreManager.lookup(me.toolbar.store);
         }
         me.toolbar.insert(0, me.resultTextItem);
@@ -914,7 +927,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             text: ' | '
         }));
         me.toolbar.insert(3, me.clearSelectionButton);
-        if(!(me.toolbar.store instanceof Ext.data.TreeStore)) {
+        if (!(me.toolbar.store instanceof Ext.data.TreeStore)) {
             me.toolbar.insert(4, me.tbFill);
             me.toolbar.insert(5, me.orderByButton);
             me.toolbar.insert(6, me.orderByDirectionButton);
@@ -925,13 +938,13 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         me.orderByDirectionButton.addListener('change', function () {
             me.doSort();
         });
-        if(me.toolbar.store) {
+        if (me.toolbar.store) {
             var loadEventName = me.toolbar.store.buffered ? 'prefetch' : 'load';
             me.toolbar.store.on(loadEventName, function (store) {
                 me.updateResultCount(me.getCount(store));
             });
         }
-        if(me.toolbar.gridPanel) {
+        if (me.toolbar.gridPanel) {
             me.toolbar.gridPanel.getSelectionModel().on('selectionchange', function (model, selected, eOpts) {
                 me.updateSelectAll(selected);
                 me.updateClearSelection(selected);
@@ -950,7 +963,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             listeners: {
                 render: function (cmp) {
                     cmp.el.on('click', function () {
-                        if(cmp.el.hasCls('admin-grid-toolbar-btn-none-selected')) {
+                        if (cmp.el.hasCls('admin-grid-toolbar-btn-none-selected')) {
                             me.toolbar.gridPanel.getSelectionModel().selectAll();
                         } else {
                             me.toolbar.gridPanel.getSelectionModel().deselectAll();
@@ -972,7 +985,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             listeners: {
                 render: function (cmp) {
                     cmp.el.on('click', function () {
-                        if(cmp.el.hasCls('admin-grid-toolbar-btn-clear-selection')) {
+                        if (cmp.el.hasCls('admin-grid-toolbar-btn-clear-selection')) {
                             me.toolbar.gridPanel.getSelectionModel().deselectAll();
                         }
                     });
@@ -983,7 +996,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     createOrderByButton: function () {
         var me = this;
         var menuItems = me.createOrderByMenuItems();
-        return Ext.create('Ext.button.Cycle', {
+        return new Ext.button.Cycle({
             showText: true,
             prependText: 'Order by ',
             menu: {
@@ -992,14 +1005,14 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         });
     },
     createOrderByDirectionButton: function () {
-        return Ext.create('Ext.button.Cycle', {
+        return new Ext.button.Cycle({
             showText: true,
             prependText: 'Direction ',
             menu: {
                 items: [
                     {
                         text: 'ASC'
-                    }, 
+                    },
                     {
                         text: 'DESC'
                     }
@@ -1011,7 +1024,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         var me = this;
         var gridColumns = me.toolbar.gridPanel.columns;
         var menuItems = [];
-        for(var i = 0; i < gridColumns.length; i++) {
+        for (var i = 0; i < gridColumns.length; i++) {
             menuItems.push({
                 text: gridColumns[i].text,
                 dataIndex: gridColumns[i].dataIndex
@@ -1035,10 +1048,10 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         var btn = this.selectAllButton;
         var isSelectMode = btn.el.hasCls('admin-grid-toolbar-btn-none-selected');
         var areAllRecordsSelected = !Ext.isEmpty(selected) && this.getCount(this.toolbar.store) == selected.length;
-        if(areAllRecordsSelected && isSelectMode) {
+        if (areAllRecordsSelected && isSelectMode) {
             btn.update('Deselect all');
             btn.el.removeCls('admin-grid-toolbar-btn-none-selected');
-        } else if(!areAllRecordsSelected && !isSelectMode) {
+        } else if (!areAllRecordsSelected && !isSelectMode) {
             btn.update('Select all');
             btn.el.addCls('admin-grid-toolbar-btn-none-selected');
         }
@@ -1046,27 +1059,27 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     updateClearSelection: function (selected) {
         var btn = this.clearSelectionButton;
         var count = selected.length;
-        if(count > 0) {
+        if (count > 0) {
             btn.update('Clear selection (' + selected.length + ')');
         } else {
             btn.update('Clear selection');
         }
     },
     getCount: function (store) {
-        if(store instanceof Ext.data.Store) {
+        if (store instanceof Ext.data.Store) {
             return store.getTotalCount();
-        } else if(store instanceof Ext.data.TreeStore) {
+        } else if (store instanceof Ext.data.TreeStore) {
             return this.countTreeNodes(store.getRootNode()) - 1;
         } else {
             return undefined;
         }
     },
     countTreeNodes: function (node) {
-        if(this.toolbar.countTopLevelOnly) {
+        if (this.toolbar.countTopLevelOnly) {
             return Ext.isEmpty(node.childNodes) ? 1 : 1 + node.childNodes.length;
         } else {
             var count = 1;
-            if(!Ext.isEmpty(node.childNodes)) {
+            if (!Ext.isEmpty(node.childNodes)) {
                 node.eachChild(function (child) {
                     count += this.countTreeNodes(child);
                 }, this);
@@ -1081,40 +1094,40 @@ Ext.define('Admin.model.contentManager.ContentModel', {
         'Ext.data.UuidGenerator'
     ],
     fields: [
-        'id', 
-        'path', 
-        'name', 
-        'type', 
-        'displayName', 
-        'owner', 
-        'modifier', 
-        'iconUrl', 
+        'id',
+        'path',
+        'name',
+        'type',
+        'displayName',
+        'owner',
+        'modifier',
+        'iconUrl',
         {
             name: 'modifiedTime',
             type: 'date',
             defaultValue: new Date()
-        }, 
+        },
         {
             name: 'createdTime',
             type: 'date',
             defaultValue: new Date()
-        }, 
+        },
         {
             name: 'editable',
             type: 'boolean'
-        }, 
+        },
         {
             name: 'deletable',
             type: 'boolean'
-        }, 
+        },
         {
             name: 'allowsChildren',
             type: 'boolean'
-        }, 
+        },
         {
             name: 'hasChildren',
             type: 'boolean'
-        }, 
+        },
         {
             name: 'leaf',
             type: 'boolean',
@@ -1128,21 +1141,21 @@ Ext.define('Admin.model.contentManager.ContentModel', {
 Ext.define('Admin.model.schemaManager.ContentTypeModel', {
     extend: 'Ext.data.Model',
     fields: [
-        'qualifiedName', 
-        'name', 
-        'displayName', 
-        'module', 
+        'qualifiedName',
+        'name',
+        'displayName',
+        'module',
         {
             name: 'createdTime',
             type: 'date',
             defaultValue: new Date()
-        }, 
+        },
         {
             name: 'modifiedTime',
             type: 'date',
             defaultValue: new Date()
-        }, 
-        'configXML', 
+        },
+        'configXML',
         'iconUrl'
     ],
     idProperty: 'qualifiedName'
@@ -1251,10 +1264,10 @@ Ext.define('Admin.lib.Sortable', {
             }),
             getDragData: function (event) {
                 var sourceDomEl = event.getTarget('.admin-sortable');
-                if(!sourceDomEl) {
+                if (!sourceDomEl) {
                     return;
                 }
-                if(sortable.config.handle && !Ext.fly(sourceDomEl).down(sortable.config.handle).contains(Ext.fly(event.getTarget()))) {
+                if (sortable.config.handle && !Ext.fly(sourceDomEl).down(sortable.config.handle).contains(Ext.fly(event.getTarget()))) {
                     return;
                 }
                 return {
@@ -1295,17 +1308,17 @@ Ext.define('Admin.lib.Sortable', {
             },
             onNodeOver: function (target, dd, event, data) {
                 var cmpNode = Ext.getCmp(target.id);
-                if(!cmpNode) {
+                if (!cmpNode) {
                     return;
                 }
-                if(target === data.sourceElement) {
+                if (target === data.sourceElement) {
                     return;
                 }
-                if(!cmpNode.hasCls('admin-drop-indicator')) {
+                if (!cmpNode.hasCls('admin-drop-indicator')) {
                     var mouseYPos = event.getY();
                     var componentElementBox = cmpNode.getEl().getPageBox();
                     var nodeMiddle = componentElementBox.top + componentElementBox.height / 2;
-                    if(mouseYPos < nodeMiddle) {
+                    if (mouseYPos < nodeMiddle) {
                         sortable.currentPos = 'above';
                     } else {
                         sortable.currentPos = 'below';
@@ -1317,16 +1330,16 @@ Ext.define('Admin.lib.Sortable', {
             onNodeDrop: function (target, dd, event, data) {
                 var draggedCmp = Ext.getCmp(data.sourceElement.id);
                 var targetCmp = Ext.getCmp(target.id);
-                if(target === data.sourceElement) {
+                if (target === data.sourceElement) {
                     return;
                 }
                 draggedCmp.getEl().setStyle('opacity', 1);
-                if(targetCmp) {
+                if (targetCmp) {
                     var targetCmpIndex = sortable.getIndexOfComponent(targetCmp);
                     var draggedCmpOrgIndex = sortable.getIndexOfComponent(draggedCmp);
-                    if(sortable.currentPos === 'below') {
+                    if (sortable.currentPos === 'below') {
                         targetCmpIndex = targetCmpIndex + 1;
-                        if(draggedCmpOrgIndex < targetCmpIndex) {
+                        if (draggedCmpOrgIndex < targetCmpIndex) {
                             targetCmpIndex = targetCmpIndex - 1;
                         }
                     }
@@ -1350,7 +1363,7 @@ Ext.define('Admin.lib.Sortable', {
     showIndicator: function (area, position) {
         this.indicatorEl.show();
         var index = this.getIndexOfComponent(area);
-        if(index > -1) {
+        if (index > -1) {
             var insertPoint = position === 'above' ? index : index + 1;
             this.parentComponent.insert(insertPoint, this.indicatorEl);
         }
@@ -1361,7 +1374,7 @@ Ext.define('Admin.lib.Sortable', {
     },
     createDragProxy: function (sourceElement) {
         var proxyEl;
-        if(this.config.proxyHtml) {
+        if (this.config.proxyHtml) {
             proxyEl = Ext.get(document.createElement('div'));
             proxyEl.setHTML(this.config.proxyHtml);
             proxyEl = proxyEl.dom;
@@ -1391,14 +1404,17 @@ Ext.define('Admin.view.BaseDialogWindow', {
     modelData: undefined,
     dialogTitle: 'Base dialog',
     dialogSubTitle: '',
-    dialogInfoTpl: '<div>' + '<div class="admin-user-info clearfix">' + '<div class="admin-user-photo west admin-left">' + '<div class="photo-placeholder">' + '<img src="{[values.image_url]}?size=100" alt="{name}"/>' + '</div>' + '</div>' + '<div class="admin-left">' + '<h2>{displayName}</h2>({qualifiedName})<br/>' + '<a href="mailto:{email}:">{email}</a>' + '</div>' + '</div>' + '</div>',
+    dialogInfoTpl: '<div>' + '<div class="admin-user-info clearfix">' + '<div class="admin-user-photo west admin-left">' +
+                   '<div class="photo-placeholder">' + '<img src="{[values.image_url]}?size=100" alt="{name}"/>' + '</div>' + '</div>' +
+                   '<div class="admin-left">' + '<h2>{displayName}</h2>({qualifiedName})<br/>' + '<a href="mailto:{email}:">{email}</a>' +
+                   '</div>' + '</div>' + '</div>',
     buttonItems: [],
     buttonRow: function () {
         var i;
-        if(arguments.length !== 0) {
+        if (arguments.length !== 0) {
             this.buttonItems = [];
         }
-        for(i = 0; i < arguments.length; i++) {
+        for (i = 0; i < arguments.length; i++) {
             this.buttonItems.push(arguments[i]);
         }
         return {
@@ -1431,17 +1447,17 @@ Ext.define('Admin.view.BaseDialogWindow', {
     listeners: {
         show: function (cmp) {
             var form = cmp.down('form');
-            if(form) {
+            if (form) {
                 form.getForm().reset();
                 form.doLayout();
                 var firstField = form.down('field');
-                if(firstField) {
+                if (firstField) {
                     firstField.focus();
                 }
             }
         },
         resize: function (window) {
-            if(this.getHeight() > this.maxHeight) {
+            if (this.getHeight() > this.maxHeight) {
                 this.setHeight(this.maxHeight);
             }
             this.center();
@@ -1449,7 +1465,7 @@ Ext.define('Admin.view.BaseDialogWindow', {
     },
     initComponent: function () {
         var me = this;
-        if(!this.dockedItems) {
+        if (!this.dockedItems) {
             this.dockedItems = [];
         }
         Ext.Array.insert(this.dockedItems, 0, [
@@ -1474,16 +1490,16 @@ Ext.define('Admin.view.BaseDialogWindow', {
                 ]
             }
         ]);
-        if(!this.items) {
+        if (!this.items) {
             this.items = [];
         }
-        if(this.dialogTitle) {
+        if (this.dialogTitle) {
             this.setDialogHeader(this.dialogTitle);
         }
-        if(this.dialogSubTitle) {
+        if (this.dialogSubTitle) {
             this.setDialogSubHeader(this.dialogSubTitle);
         }
-        if(this.dialogInfoTpl) {
+        if (this.dialogInfoTpl) {
             this.setDialogInfo(this.dialogInfoTpl);
         }
         this.callParent(arguments);
@@ -1534,10 +1550,10 @@ Ext.define('Admin.view.BaseDialogWindow', {
     },
     setDialogInfo: function (tpl) {
         var i = 0;
-        if(this.dialogTitle) {
+        if (this.dialogTitle) {
             i++;
         }
-        if(this.dialogSubTitle) {
+        if (this.dialogSubTitle) {
             i++;
         }
         this.items = this.filterItem('dialogInfo');
@@ -1555,18 +1571,18 @@ Ext.define('Admin.view.BaseDialogWindow', {
     },
     setDialogInfoTpl: function (tpl) {
         var dialogInfo = this.down('#dialogInfo');
-        if(dialogInfo) {
+        if (dialogInfo) {
             dialogInfo.tpl = new Ext.XTemplate(tpl);
         } else {
             this.setDialogInfo(tpl);
         }
     },
     setDialogInfoData: function (model) {
-        if(model) {
+        if (model) {
             this.data = model;
             this.modelData = model.data;
             var info = this.down('#dialogInfo');
-            if(info) {
+            if (info) {
                 info.update(this.modelData);
             }
         }
@@ -1628,19 +1644,19 @@ Ext.define('Admin.view.BaseDetailPanel', {
             }, this, {
                 delegate: '.clearSelection'
             });
-            if(this.isFullPage) {
+            if (this.isFullPage) {
                 this.hideActionButton();
             }
-            if(this.singleSelection.tabs.length > 0) {
+            if (this.singleSelection.tabs.length > 0) {
                 this.changeTab(this.singleSelection.tabs[0].name);
             }
         }
     },
     initComponent: function () {
-        if(this.showToolbar) {
+        if (this.showToolbar) {
             this.tbar = this.createToolBar();
         }
-        if(this.isVertical) {
+        if (this.isVertical) {
             this.cls = this.cls + 'admin-detail-vertical';
         }
         this.callParent(arguments);
@@ -1659,7 +1675,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     hideActionButton: function () {
         var actionsButton = this.down('#dropDownButton');
-        if(actionsButton) {
+        if (actionsButton) {
             actionsButton.setVisible(false);
         }
     },
@@ -1669,7 +1685,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     getActionButton: function () {
         var me = this;
-        if(this.actionButtonItems.length < 1) {
+        if (this.actionButtonItems.length < 1) {
             return {
             };
         }
@@ -1739,19 +1755,19 @@ Ext.define('Admin.view.BaseDetailPanel', {
                             tdAttrs: {
                                 width: 80
                             }
-                        }, 
+                        },
                         {
                             xtype: 'component',
                             itemId: 'previewHeader',
                             tpl: me.singleTemplate.header,
                             data: data,
                             cls: 'admin-detail-header'
-                        }, 
-                        me.getActionButton(), 
+                        },
+                        me.getActionButton(),
                         me.renderTabNavigation(me.isVertical)
                     ]
-                }, 
-                me.renderWestContainer(), 
+                },
+                me.renderWestContainer(),
                 {
                     region: 'center',
                     cls: 'center',
@@ -1763,7 +1779,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     renderWestContainer: function () {
         var me = this;
-        if(me.isVertical) {
+        if (me.isVertical) {
             return {
             };
         }
@@ -1779,7 +1795,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     renderTabNavigation: function (doRender) {
         var me = this;
-        if(!doRender) {
+        if (!doRender) {
             return {
             };
         }
@@ -1788,7 +1804,8 @@ Ext.define('Admin.view.BaseDetailPanel', {
             cls: (me.isVertical ? 'vertical' : 'horizontal'),
             margin: (me.isVertical ? '0' : '20 0 0'),
             colspan: 3,
-            tpl: Ext.create('Ext.XTemplate', '<ul class="admin-detail-nav">' + '<tpl for=".">' + '<li data-tab="{name}">{displayName}</li>' + '</tpl>' + '</ul>'),
+            tpl: Ext.create('Ext.XTemplate',
+                '<ul class="admin-detail-nav">' + '<tpl for=".">' + '<li data-tab="{name}">{displayName}</li>' + '</tpl>' + '</ul>'),
             data: me.singleSelection.tabs,
             listeners: {
                 click: {
@@ -1796,7 +1813,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
                     fn: function (evt, element) {
                         var tab = element.attributes['data-tab'].value;
                         var panels = Ext.ComponentQuery.query('contentDetail');
-                        for(var i = 0; i < panels.length; i++) {
+                        for (var i = 0; i < panels.length; i++) {
                             panels[i].changeTab(tab);
                         }
                     }
@@ -1806,21 +1823,22 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     getLargeBoxTemplate: function () {
         return [
-            '<tpl for=".">' + '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box large clearfix">', 
-            '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>', 
-            '<div class="center"><h6>{data.displayName}</h6>', 
-            '<tpl if="data.path">', 
-            '<p>{data.path}</p>', 
-            '<tpl elseif="data.description">', 
-            '<p>{data.description}</p>', 
-            '<tpl elseif="data.name">', 
-            '<p>{data.name}</p>', 
-            '</tpl>', 
-            '</div>', 
-            '<div class="right">', 
-            '<a id="remove-from-selection-button:{data.' + this.keyField + '}" class="deselect icon-remove icon-2x" href="javascript:;"></a>', 
-            '</div>', 
-            '</div>', 
+            '<tpl for=".">' + '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box large clearfix">',
+            '<div class="left"><img src="{data.iconUrl}?size=32" alt="{data.name}"/></div>',
+            '<div class="center"><h6>{data.displayName}</h6>',
+            '<tpl if="data.path">',
+            '<p>{data.path}</p>',
+            '<tpl elseif="data.description">',
+            '<p>{data.description}</p>',
+            '<tpl elseif="data.name">',
+            '<p>{data.name}</p>',
+            '</tpl>',
+            '</div>',
+            '<div class="right">',
+            '<a id="remove-from-selection-button:{data.' + this.keyField +
+            '}" class="deselect icon-remove icon-2x" href="javascript:;"></a>',
+            '</div>',
+            '</div>',
             '</tpl>'
         ];
     },
@@ -1840,14 +1858,15 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     getSmallBoxTemplate: function () {
         return [
-            '<tpl for=".">', 
-            '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box small clearfix">', 
-            '<div class="left"><img src="{data.iconUrl}?size=20" alt="{data.name}"/></div>', 
-            '<div class="center">{data.displayName}</div>', 
-            '<div class="right">', 
-            '<a id="remove-from-selection-button:{data.' + this.keyField + '}" class="deselect icon-remove icon-large" href="javascript:;"></a>', 
-            '</div>', 
-            '</div>', 
+            '<tpl for=".">',
+            '<div id="selected-item-box-{data.' + this.keyField + '}" class="admin-selected-item-box small clearfix">',
+            '<div class="left"><img src="{data.iconUrl}?size=20" alt="{data.name}"/></div>',
+            '<div class="center">{data.displayName}</div>',
+            '<div class="right">',
+            '<a id="remove-from-selection-button:{data.' + this.keyField +
+            '}" class="deselect icon-remove icon-large" href="javascript:;"></a>',
+            '</div>',
+            '</div>',
             '</tpl>'
         ];
     },
@@ -1883,11 +1902,11 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     resolveActiveItem: function (data) {
         var activeItem;
-        if(Ext.isEmpty(this.data)) {
+        if (Ext.isEmpty(this.data)) {
             activeItem = 'noSelection';
-        } else if(Ext.isObject(this.data) || this.data.length === 1) {
+        } else if (Ext.isObject(this.data) || this.data.length === 1) {
             activeItem = 'singleSelection';
-        } else if(this.data.length > 1 && this.data.length <= 10) {
+        } else if (this.data.length > 1 && this.data.length <= 10) {
             activeItem = 'largeBoxSelection';
         } else {
             activeItem = 'smallBoxSelection';
@@ -1896,7 +1915,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     resolveActiveData: function (data) {
         var activeData;
-        if(Ext.isArray(data) && data.length === 1) {
+        if (Ext.isArray(data) && data.length === 1) {
             activeData = data[0];
         } else {
             activeData = data;
@@ -1905,13 +1924,13 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     updateActiveItem: function (data, item) {
         item = item || this.getLayout().getActiveItem();
-        if('singleSelection' === item.itemId) {
+        if ('singleSelection' === item.itemId) {
             var previewHeader = item.down('#previewHeader');
             previewHeader.update(data);
             var previewPhoto = item.down('#previewPhoto');
             previewPhoto.update(data);
             this.changeTab('traffic');
-        } else if('largeBoxSelection' === item.itemId || 'smallBoxSelection' === item.itemId) {
+        } else if ('largeBoxSelection' === item.itemId || 'smallBoxSelection' === item.itemId) {
             item.update(data);
         }
     },
@@ -1919,10 +1938,10 @@ Ext.define('Admin.view.BaseDetailPanel', {
         this.data = data;
         var toActivate = this.resolveActiveItem(data);
         var active = this.getLayout().getActiveItem();
-        if(active.itemId !== toActivate) {
+        if (active.itemId !== toActivate) {
             active = this.getLayout().setActiveItem(toActivate);
         }
-        if(active) {
+        if (active) {
             var activeData = this.resolveActiveData(data);
             this.updateActiveItem(activeData, active);
         }
@@ -1933,8 +1952,8 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     getTab: function (name) {
         var tabs = this.singleSelection.tabs;
-        for(var tab in tabs) {
-            if(tabs[tab].name === name) {
+        for (var tab in tabs) {
+            if (tabs[tab].name === name) {
                 return tabs[tab];
             }
         }
@@ -1942,19 +1961,19 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
     changeTab: function (selectedTab) {
         var currentTab = this.getTab(selectedTab);
-        if(currentTab) {
+        if (currentTab) {
             var target = this.down('#center');
             target.remove(target.child());
-            if(currentTab.items) {
+            if (currentTab.items) {
                 target.add(currentTab.items);
-                if(currentTab.callback) {
+                if (currentTab.callback) {
                     currentTab.callback(target);
                 }
             }
             var elements = Ext.dom.Query.select('*[data-tab=' + selectedTab + ']');
-            for(var i = 0; i < elements.length; i++) {
+            for (var i = 0; i < elements.length; i++) {
                 var children = elements[i].parentElement.children;
-                for(var j = 0; j < children.length; j++) {
+                for (var j = 0; j < children.length; j++) {
                     children[j].className = '';
                 }
                 elements[i].className = 'active';
@@ -1971,7 +1990,7 @@ Ext.define('Admin.view.AdminImageButton', {
     popupData: undefined,
     listeners: {
         click: function (item) {
-            if(!item.popupPanel) {
+            if (!item.popupPanel) {
                 item.popupPanel = Ext.create("Ext.panel.Panel", {
                     floating: true,
                     cls: 'admin-toolbar-popup',
@@ -1988,7 +2007,7 @@ Ext.define('Admin.view.AdminImageButton', {
                     }
                 });
             } else {
-                if(item.popupPanel.isHidden()) {
+                if (item.popupPanel.isHidden()) {
                     item.popupPanel.show();
                 } else {
                     item.popupPanel.hide();
@@ -2014,7 +2033,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
     initComponent: function () {
         var me = this;
         this.items = [];
-        if(this.iconCls || this.iconSrc) {
+        if (this.iconCls || this.iconSrc) {
             this.items.push({
                 xtype: 'image',
                 width: 32,
@@ -2024,7 +2043,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
                 src: this.iconSrc
             });
         }
-        if(this.text1 || this.text2) {
+        if (this.text1 || this.text2) {
             this.items.push({
                 xtype: 'component',
                 flex: 1,
@@ -2037,7 +2056,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
                 }
             });
         }
-        if(this.closable !== false) {
+        if (this.closable !== false) {
             this.items.push({
                 xtype: 'component',
                 autoEl: 'a',
@@ -2058,7 +2077,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
     },
     activate: function () {
         var me = this;
-        if(!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
+        if (!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
             me.el.addCls(me.activeCls);
             me.focus();
             me.activated = true;
@@ -2067,7 +2086,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
     },
     deactivate: function () {
         var me = this;
-        if(me.activated) {
+        if (me.activated) {
             me.el.removeCls(me.activeCls);
             me.blur();
             me.activated = false;
@@ -2076,18 +2095,18 @@ Ext.define('Admin.view.TopBarMenuItem', {
     },
     onClick: function (e) {
         var me = this;
-        if(!me.href) {
+        if (!me.href) {
             e.stopEvent();
         }
-        if(me.disabled) {
+        if (me.disabled) {
             return;
         }
         Ext.callback(me.handler, me.scope || me, [
-            me, 
+            me,
             e
         ]);
         me.fireEvent('click', me, e);
-        if(!me.hideOnClick) {
+        if (!me.hideOnClick) {
             me.focus();
         }
         return Ext.isEmpty(Ext.fly(e.getTarget()).findParent('.close-button'));
@@ -2120,31 +2139,31 @@ Ext.define('Admin.view.TopBarMenu', {
             xtype: 'container',
             itemId: 'nonClosableItems',
             defaultType: 'topBarMenuItem'
-        }, 
+        },
         {
             xtype: 'component',
             cls: 'title',
             itemId: 'editTitle',
             hidden: true,
             html: '<span>Editing</span>'
-        }, 
+        },
         {
             xtype: 'container',
             itemId: 'editItems',
             defaultType: 'topBarMenuItem'
-        }, 
+        },
         {
             xtype: 'component',
             cls: 'title',
             itemId: 'viewTitle',
             hidden: true,
             html: '<span>Viewing</span>'
-        }, 
+        },
         {
             xtype: 'container',
             itemId: 'viewItems',
             defaultType: 'topBarMenuItem'
-        }, 
+        },
         {
             xtype: 'component',
             cls: 'info',
@@ -2166,13 +2185,13 @@ Ext.define('Admin.view.TopBarMenu', {
     },
     onClick: function (e) {
         var me = this, item;
-        if(me.disabled) {
+        if (me.disabled) {
             e.stopEvent();
             return;
         }
         item = (e.type === 'click') ? me.getItemFromEvent(e) : me.activeItem;
-        if(item && item.isMenuItem && item.onClick(e) !== false) {
-            if(me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
+        if (item && item.isMenuItem && item.onClick(e) !== false) {
+            if (me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
                 this.tabPanel.setActiveTab(item.card);
             }
             this.hide();
@@ -2180,7 +2199,7 @@ Ext.define('Admin.view.TopBarMenu', {
     },
     onShow: function () {
         this.callParent(arguments);
-        if(this.activeTab) {
+        if (this.activeTab) {
             this.markActiveTab(this.activeTab);
         }
     },
@@ -2192,24 +2211,24 @@ Ext.define('Admin.view.TopBarMenu', {
         this.callParent(arguments);
     },
     onCloseMenuItem: function (item) {
-        if(this.tabPanel) {
+        if (this.tabPanel) {
             this.tabPanel.remove(item.card);
         }
-        if(this.getAllItems(false).length === 0) {
+        if (this.getAllItems(false).length === 0) {
             this.hide();
         }
     },
     markActiveTab: function (item) {
         var me = this;
         var menuItem;
-        if(me.isVisible()) {
+        if (me.isVisible()) {
             menuItem = me.el.down('.current-tab');
-            if(menuItem) {
+            if (menuItem) {
                 menuItem.removeCls('current-tab');
             }
-            if(item) {
+            if (item) {
                 menuItem = me.down('#' + item.id);
-                if(menuItem && menuItem.el) {
+                if (menuItem && menuItem.el) {
                     menuItem.el.addCls('current-tab');
                 }
             }
@@ -2220,12 +2239,13 @@ Ext.define('Admin.view.TopBarMenu', {
         var item = this;
         do {
             item = item.getChildByElement(e.getTarget());
-        }while(item && Ext.isDefined(item.getChildByElement) && item.getXType() !== 'topBarMenuItem');
+        }
+        while (item && Ext.isDefined(item.getChildByElement) && item.getXType() !== 'topBarMenuItem');
         return item;
     },
     getAllItems: function (includeNonClosable) {
         var items = [];
-        if(includeNonClosable === false) {
+        if (includeNonClosable === false) {
             items = items.concat(this.down('#editItems').query('topBarMenuItem'));
             items = items.concat(this.down('#viewItems').query('topBarMenuItem'));
         } else {
@@ -2234,9 +2254,9 @@ Ext.define('Admin.view.TopBarMenu', {
         return items;
     },
     addItems: function (items) {
-        if(Ext.isEmpty(items)) {
+        if (Ext.isEmpty(items)) {
             return;
-        } else if(Ext.isObject(items)) {
+        } else if (Ext.isObject(items)) {
             items = [].concat(items);
         }
         this.saveScrollState();
@@ -2244,22 +2264,22 @@ Ext.define('Admin.view.TopBarMenu', {
         var viewItems = [];
         var nonClosableItems = [];
         Ext.Array.each(items, function (item) {
-            if(item.closable === false) {
+            if (item.closable === false) {
                 nonClosableItems.push(item);
-            } else if(item.editing) {
+            } else if (item.editing) {
                 editItems.push(item);
             } else {
                 viewItems.push(item);
             }
         });
         var added = [];
-        if(nonClosableItems.length > 0) {
+        if (nonClosableItems.length > 0) {
             added = added.concat(this.down("#nonClosableItems").add(nonClosableItems));
         }
-        if(editItems.length > 0) {
+        if (editItems.length > 0) {
             added = added.concat(this.down('#editItems').add(editItems));
         }
-        if(viewItems.length > 0) {
+        if (viewItems.length > 0) {
             added = added.concat(this.down('#viewItems').add(viewItems));
         }
         this.updateTitles();
@@ -2271,19 +2291,19 @@ Ext.define('Admin.view.TopBarMenu', {
         var viewItems = this.down('#viewItems');
         var removed = [];
         Ext.Array.each(editItems.items.items, function (item) {
-            if(item && item.closable !== false) {
+            if (item && item.closable !== false) {
                 removed.push(editItems.remove(item));
             }
         });
         Ext.Array.each(viewItems.items.items, function (item) {
-            if(item && item.closable !== false) {
+            if (item && item.closable !== false) {
                 removed.push(viewItems.remove(item));
             }
         });
-        if(includeNonClosable) {
+        if (includeNonClosable) {
             var nonClosableItems = this.down('#nonClosableItems');
             Ext.Array.each(nonClosableItems.items.items, function (item) {
-                if(item && item.closable !== false) {
+                if (item && item.closable !== false) {
                     removed.push(nonClosableItems.remove(item));
                 }
             });
@@ -2292,9 +2312,9 @@ Ext.define('Admin.view.TopBarMenu', {
         return removed;
     },
     removeItems: function (items) {
-        if(Ext.isEmpty(items)) {
+        if (Ext.isEmpty(items)) {
             return;
-        } else if(Ext.isObject(items)) {
+        } else if (Ext.isObject(items)) {
             items = [].concat(items);
         }
         this.saveScrollState();
@@ -2303,7 +2323,7 @@ Ext.define('Admin.view.TopBarMenu', {
         var nonClosableItems = this.down('#nonClosableItems');
         var removed = [];
         Ext.Array.each(items, function (item) {
-            if(item && item.closable !== false) {
+            if (item && item.closable !== false) {
                 removed.push(editItems.remove(item));
                 removed.push(viewItems.remove(item));
                 removed.push(nonClosableItems.remove(item));
@@ -2326,10 +2346,10 @@ Ext.define('Admin.view.TopBarMenu', {
     show: function () {
         var me = this, parentEl, viewHeight;
         me.maxWas = me.maxHeight;
-        if(!me.rendered) {
+        if (!me.rendered) {
             me.doAutoRender();
         }
-        if(me.floating) {
+        if (me.floating) {
             parentEl = Ext.fly(me.el.getScopeParent());
             viewHeight = parentEl.getViewSize().height;
             me.maxHeight = Math.min(me.maxWas || viewHeight - 50, viewHeight - 50);
@@ -2345,14 +2365,14 @@ Ext.define('Admin.view.TopBarMenu', {
     setVerticalPosition: function () {
     },
     saveScrollState: function () {
-        if(this.rendered && !this.hidden) {
+        if (this.rendered && !this.hidden) {
             var dom = this.body.dom, state = this.scrollState;
             state.left = dom.scrollLeft;
             state.top = dom.scrollTop;
         }
     },
     restoreScrollState: function () {
-        if(this.rendered && !this.hidden) {
+        if (this.rendered && !this.hidden) {
             var dom = this.body.dom, state = this.scrollState;
             dom.scrollLeft = state.left;
             dom.scrollTop = state.top;
@@ -2363,8 +2383,8 @@ Ext.define('Admin.view.TopBar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.topBar',
     requires: [
-        'Admin.view.TopBarMenu', 
-        'Admin.view.AdminImageButton', 
+        'Admin.view.TopBarMenu',
+        'Admin.view.AdminImageButton',
         'Admin.lib.UriHelper'
     ],
     buttonAlign: 'center',
@@ -2387,7 +2407,7 @@ Ext.define('Admin.view.TopBar', {
             text: me.appName || '&lt; app name &gt;',
             cls: 'home-button',
             handler: function (btn, evt) {
-                if(me.tabPanel) {
+                if (me.tabPanel) {
                     me.tabPanel.setActiveTab(0);
                 }
             }
@@ -2400,15 +2420,19 @@ Ext.define('Admin.view.TopBar', {
                 align: 'middle'
             },
             items: [
-                me.startButton, 
+                me.startButton,
                 {
                     xtype: "tbseparator",
                     width: '2px'
-                }, 
+                },
                 me.homeButton
             ]
         });
-        var Templates_common_userPopUp = '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' + '<div class="content">' + '<div class="column"><img src="{photoUrl}"/>' + '<button class="x-btn-red-small">Log Out</button>' + '</div>' + '<div class="column">' + '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' + '<a href="#">Change User</a>' + '</div>' + '</div>';
+        var Templates_common_userPopUp = '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' +
+                                         '<div class="content">' + '<div class="column"><img src="{photoUrl}"/>' +
+                                         '<button class="x-btn-red-small">Log Out</button>' + '</div>' + '<div class="column">' +
+                                         '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' +
+                                         '<a href="#">Change User</a>' + '</div>' + '</div>';
         this.rightContainer = Ext.create('Ext.Container', {
             flex: 5,
             layout: {
@@ -2430,10 +2454,10 @@ Ext.define('Admin.view.TopBar', {
             ]
         });
         this.items = [
-            me.leftContainer, 
+            me.leftContainer,
             me.rightContainer
         ];
-        if(this.tabPanel) {
+        if (this.tabPanel) {
             this.tabMenu = Ext.create('Admin.view.TopBarMenu', {
                 tabPanel: me.tabPanel
             });
@@ -2445,12 +2469,12 @@ Ext.define('Admin.view.TopBar', {
                 styleHtmlContent: true,
                 text: '<span class="title">Title</span><span class="count">0</span>',
                 setTitle: function (title) {
-                    if(this.el) {
+                    if (this.el) {
                         this.el.down('.title').setHTML(title);
                     }
                 },
                 setCount: function (count) {
-                    if(this.el) {
+                    if (this.el) {
                         this.el.down('.count').setHTML(count);
                     }
                 }
@@ -2464,7 +2488,7 @@ Ext.define('Admin.view.TopBar', {
     },
     toggleHomeScreen: function () {
         var isInsideIframe = window.top !== window.self;
-        if(isInsideIframe) {
+        if (isInsideIframe) {
         } else {
             console.error('Can not toggle home screen. Document must be loaded inside the main window');
         }
@@ -2479,11 +2503,11 @@ Ext.define('Admin.view.TopBar', {
         var card = tab.card;
         var buttonText = tab.text1;
         var iconClass;
-        if('tab-browse' === card.id) {
+        if ('tab-browse' === card.id) {
             buttonText = '';
-        } else if(card.tab.iconClass) {
+        } else if (card.tab.iconClass) {
             iconClass = card.tab.iconClass;
-        } else if(card.tab.editing) {
+        } else if (card.tab.editing) {
             iconClass = 'icon-icomoon-pencil-32';
         }
         this.titleButton.setIconCls(iconClass);
@@ -2495,7 +2519,7 @@ Ext.define('Admin.view.TopBar', {
         return removed;
     },
     findNextActivatable: function (tab) {
-        if(this.tabPanel) {
+        if (this.tabPanel) {
             return this.tabPanel.items.get(0);
         }
     },
@@ -2516,7 +2540,7 @@ Ext.define('Admin.view.TopBar', {
         };
     },
     syncTabCount: function () {
-        if(this.tabMenu && this.titleButton) {
+        if (this.tabMenu && this.titleButton) {
             var tabCount = this.tabMenu.getAllItems(false).length;
             this.titleButton.setVisible(tabCount > 0);
             this.titleButton.setCount(tabCount);
@@ -2528,27 +2552,27 @@ Ext.define('Admin.view.TopBar', {
     },
     getMenuItemIcon: function (card) {
         var icon;
-        if(card.data && card.data instanceof Ext.data.Model) {
+        if (card.data && card.data instanceof (Ext.data.Model)) {
             icon = card.data.get('iconUrl') || card.data.get('image_url');
         }
         return icon;
     },
     getMenuItemDescription: function (card) {
         var desc;
-        if(!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+        if (!card.isNew && card.data && card.data instanceof (Ext.data.Model)) {
             desc = card.data.get('path') || card.data.get('qualifiedName') || card.data.get('displayName');
         }
-        if(!desc) {
+        if (!desc) {
             desc = card.title;
         }
         return desc;
     },
     getMenuItemDisplayName: function (card) {
         var desc;
-        if(!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+        if (!card.isNew && card.data && card.data instanceof (Ext.data.Model)) {
             desc = card.data.get('displayName') || card.data.get('name');
         }
-        if(!desc) {
+        if (!desc) {
             desc = card.title;
         }
         return desc;
@@ -2556,7 +2580,7 @@ Ext.define('Admin.view.TopBar', {
     setTitleButtonText: function (text) {
         this.titleButton.setTitle(text);
         var activeTab = this.titleButton.menu.activeTab;
-        if(activeTab) {
+        if (activeTab) {
             activeTab.text1 = text;
             activeTab.updateTitleContainer();
         }
@@ -2599,7 +2623,7 @@ Ext.define('Admin.view.TabPanel', {
         me.addEvents('beforetabchange', 'tabchange');
         me.superclass.superclass.initComponent.apply(me, arguments);
         me.activeTab = me.getComponent(activeTab);
-        if(me.activeTab) {
+        if (me.activeTab) {
             me.activeTab.tab.activate(true);
             me.tabBar.setActiveTab(me.activeTab.tab);
         }
@@ -2607,9 +2631,9 @@ Ext.define('Admin.view.TabPanel', {
     addTab: function (item, index, requestConfig) {
         var me = this;
         var tab = this.getTabById(item.id);
-        if(!tab) {
+        if (!tab) {
             tab = this.insert(index || this.items.length, item);
-            if(requestConfig) {
+            if (requestConfig) {
                 this.setActiveTab(tab);
                 var mask = new Ext.LoadMask(tab, {
                     msg: "Please wait..."
@@ -2638,7 +2662,7 @@ Ext.define('Admin.view.TabPanel', {
     removeAllOpenTabs: function () {
         var all = this.items.items;
         var last = all[this.getTabCount() - 1];
-        while(this.getTabCount() > 1) {
+        while (this.getTabCount() > 1) {
             this.remove(last);
             last = this.items.items[this.getTabCount() - 1];
         }
@@ -2660,28 +2684,28 @@ Ext.define('Admin.view.TabPanel', {
             iconclschange: me.onItemIconClsChange,
             titlechange: me.onItemTitleChange
         });
-        if(item.isPanel) {
-            if(me.removePanelHeader) {
-                if(item.rendered) {
-                    if(item.header) {
+        if (item.isPanel) {
+            if (me.removePanelHeader) {
+                if (item.rendered) {
+                    if (item.header) {
                         item.header.hide();
                     }
                 } else {
                     item.header = false;
                 }
             }
-            if(item.isPanel && me.border) {
+            if (item.isPanel && me.border) {
                 item.setBorder(false);
             }
         }
     },
     doRemove: function (item, autoDestroy) {
         var me = this;
-        if(me.destroying || me.items.getCount() === 1) {
+        if (me.destroying || me.items.getCount() === 1) {
             me.activeTab = null;
-        } else if(me.activeTab === item) {
+        } else if (me.activeTab === item) {
             var toActivate = me.tabBar.findNextActivatable(item.tab);
-            if(toActivate) {
+            if (toActivate) {
                 me.setActiveTab(toActivate);
             }
         }
@@ -2695,7 +2719,7 @@ Ext.define('Admin.view.TabPanel', {
             disable: me.onItemDisable,
             beforeshow: me.onItemBeforeShow
         });
-        if(!me.destroying) {
+        if (!me.destroying) {
             me.tabBar.remove(item.tab);
         }
     }
@@ -2719,35 +2743,43 @@ Ext.define('Admin.view.FilterPanel', {
     facetData: undefined,
     initComponent: function () {
         var me = this;
-        if(!Ext.isEmpty(this.title)) {
+        if (!Ext.isEmpty(this.title)) {
             this.originalTitle = this.title;
         }
         Ext.applyIf(this, {
             items: [],
-            facetTpl: new Ext.XTemplate('<tpl for=".">', '<div class="admin-facet-group" name="{name}">', '<h2>{[values.displayName || values.name]}</h2>', '<tpl for="terms">{[this.updateFacetCount(values, parent)]}', '<tpl if="this.shouldShowTerm(values, parent)">', '<div class="admin-facet {[values.selected ? \'checked\' : \'\']}">', '<input type="checkbox" id="facet-{term}" value="{name}" class="admin-facet-cb" name="{parent.name}" {[values.selected ? \'checked="true"\' : \'\']} />', '<label for="facet-{key}" class="admin-facet-lbl"> {[values.displayName || values.name]} ({[this.getTermCount(values)]})</label>', '</div>', '</tpl>', '</tpl>', '</div>', '</tpl>', {
-                updateFacetCount: function (term, facet) {
-                    var isCriteria = me.updateCountCriteria == 'always' || (me.updateCountCriteria == 'query' && me.queryDirty);
-                    var isStrategy = me.updateCountStrategy == 'all' || (me.updateCountStrategy == 'notlast' && me.lastFacetName != facet.name);
-                    var isDefined = Ext.isDefined(me.facetCountMap[term.name]);
-                    var isDirty = me.isDirty();
-                    if(!isDirty || !isDefined || (isCriteria && isStrategy)) {
-                        me.facetCountMap[term.name] = term.count;
+            facetTpl: new Ext.XTemplate('<tpl for=".">', '<div class="admin-facet-group" name="{name}">',
+                '<h2>{[values.displayName || values.name]}</h2>', '<tpl for="terms">{[this.updateFacetCount(values, parent)]}',
+                '<tpl if="this.shouldShowTerm(values, parent)">', '<div class="admin-facet {[values.selected ? \'checked\' : \'\']}">',
+                '<input type="checkbox" id="facet-{term}" value="{name}" class="admin-facet-cb" name="{parent.name}" {[values.selected ? \'checked="true"\' : \'\']} />',
+                '<label for="facet-{key}" class="admin-facet-lbl"> {[values.displayName || values.name]} ({[this.getTermCount(values)]})</label>',
+                '</div>', '</tpl>', '</tpl>', '</div>', '</tpl>', {
+                    updateFacetCount: function (term, facet) {
+                        var isCriteria = me.updateCountCriteria == 'always' || (me.updateCountCriteria == 'query' && me.queryDirty);
+                        var isStrategy = me.updateCountStrategy == 'all' ||
+                                         (me.updateCountStrategy == 'notlast' && me.lastFacetName != facet.name);
+                        var isDefined = Ext.isDefined(me.facetCountMap[term.name]);
+                        var isDirty = me.isDirty();
+                        if (!isDirty || !isDefined || (isCriteria && isStrategy)) {
+                            me.facetCountMap[term.name] = term.count;
+                        }
+                    },
+                    shouldShowTerm: function (term, facet) {
+                        return me.includeEmptyFacets == 'all' ||
+                               (me.includeEmptyFacets == 'last' && (!me.lastFacetName || me.lastFacetName == facet.name)) ||
+                               me.facetCountMap[term.name] > 0 || term.selected || this.isSelected(term, facet);
+                    },
+                    getTermCount: function (term) {
+                        return me.facetCountMap[term.name];
+                    },
+                    isSelected: function (term, facet) {
+                        var terms = me.selectedValues[facet.name];
+                        if (terms) {
+                            return Ext.Array.contains(terms, term.name);
+                        }
+                        return false;
                     }
-                },
-                shouldShowTerm: function (term, facet) {
-                    return me.includeEmptyFacets == 'all' || (me.includeEmptyFacets == 'last' && (!me.lastFacetName || me.lastFacetName == facet.name)) || me.facetCountMap[term.name] > 0 || term.selected || this.isSelected(term, facet);
-                },
-                getTermCount: function (term) {
-                    return me.facetCountMap[term.name];
-                },
-                isSelected: function (term, facet) {
-                    var terms = me.selectedValues[facet.name];
-                    if(terms) {
-                        return Ext.Array.contains(terms, term.name);
-                    }
-                    return false;
-                }
-            })
+                })
         });
         this.facetContainer = Ext.create('Ext.Component', {
             xtype: 'component',
@@ -2778,7 +2810,7 @@ Ext.define('Admin.view.FilterPanel', {
             }
         });
         this.items.unshift(this.clearLink);
-        if(this.includeSearch) {
+        if (this.includeSearch) {
             this.searchField = Ext.create('Ext.form.field.Text', {
                 xtype: 'textfield',
                 cls: 'admin-search-trigger',
@@ -2808,19 +2840,19 @@ Ext.define('Admin.view.FilterPanel', {
         this.addEvents('search', 'reset');
     },
     onKeyPressed: function (field, event, opts) {
-        if(this.suspendEvents !== true) {
-            if(event.getKey() === event.ENTER) {
-                if(event.type === "keydown") {
+        if (this.suspendEvents !== true) {
+            if (event.getKey() === event.ENTER) {
+                if (event.type === "keydown") {
                     this.fireEvent('search', this.getValues());
                 }
             } else {
                 var me = this;
-                if(this.searchFilterTypingTimer !== null) {
+                if (this.searchFilterTypingTimer !== null) {
                     window.clearTimeout(this.searchFilterTypingTimer);
                     this.searchFilterTypingTimer = null;
                 }
                 this.searchFilterTypingTimer = window.setTimeout(function () {
-                    if(me.updateCountCriteria === 'query') {
+                    if (me.updateCountCriteria === 'query') {
                         me.queryDirty = true;
                     }
                     me.lastFacetName = undefined;
@@ -2832,10 +2864,10 @@ Ext.define('Admin.view.FilterPanel', {
     onFacetClicked: function (event, target, opts) {
         target = Ext.fly(target);
         var facet = target.hasCls('admin-facet') ? target : target.up('.admin-facet');
-        if(facet) {
+        if (facet) {
             var cb = facet.down('input[type=checkbox]', true);
             var checked = cb.hasAttribute("checked");
-            if(checked) {
+            if (checked) {
                 cb.removeAttribute("checked");
                 facet.removeCls("checked");
             } else {
@@ -2843,7 +2875,7 @@ Ext.define('Admin.view.FilterPanel', {
                 facet.addCls("checked");
             }
             var group = facet.up('.admin-facet-group', true);
-            if(group) {
+            if (group) {
                 this.lastFacetName = group.getAttribute('name');
             }
             this.search();
@@ -2852,7 +2884,7 @@ Ext.define('Admin.view.FilterPanel', {
         return true;
     },
     updateFacets: function (facets) {
-        if(facets) {
+        if (facets) {
             this.selectedValues = this.getValues();
             this.down('#facetContainer').update(facets);
             this.setValues(this.selectedValues);
@@ -2862,15 +2894,15 @@ Ext.define('Admin.view.FilterPanel', {
         var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
         var values = {
         };
-        if(this.searchField) {
+        if (this.searchField) {
             var query = this.searchField.getValue();
-            if(Ext.String.trim(query).length > 0) {
+            if (Ext.String.trim(query).length > 0) {
                 values[this.searchField.name] = query;
             }
         }
         Ext.Array.each(selectedCheckboxes, function (cb) {
             var oldValue = values[cb.name];
-            if(Ext.isArray(oldValue)) {
+            if (Ext.isArray(oldValue)) {
                 oldValue.push(cb.value);
             } else {
                 values[cb.name] = [
@@ -2883,14 +2915,14 @@ Ext.define('Admin.view.FilterPanel', {
     },
     setValues: function (values) {
         var me = this;
-        if(this.searchField) {
+        if (this.searchField) {
             this.searchField.setValue(values[this.searchField.name]);
         }
         var checkboxes = Ext.query('.admin-facet-group input[type=checkbox]', this.facetContainer.el.dom);
         var checkedCount = 0, facet;
         Ext.Array.each(checkboxes, function (cb) {
             var facet = Ext.fly(cb).up('.admin-facet');
-            if(me.isValueChecked(cb.value, values)) {
+            if (me.isValueChecked(cb.value, values)) {
                 checkedCount++;
                 cb.setAttribute('checked', 'true');
                 facet.addCls('checked');
@@ -2900,16 +2932,16 @@ Ext.define('Admin.view.FilterPanel', {
             }
             return true;
         });
-        if(this.updateCountCriteria == 'query' && this.queryDirty && checkedCount === 0) {
+        if (this.updateCountCriteria == 'query' && this.queryDirty && checkedCount === 0) {
             this.queryDirty = false;
         }
     },
     isValueChecked: function (value, values) {
-        for(var facet in values) {
-            if(values.hasOwnProperty(facet)) {
+        for (var facet in values) {
+            if (values.hasOwnProperty(facet)) {
                 var terms = [].concat(values[facet]);
-                for(var i = 0; i < terms.length; i++) {
-                    if(terms[i] === value) {
+                for (var i = 0; i < terms.length; i++) {
+                    if (terms[i] === value) {
                         return true;
                     }
                 }
@@ -2920,17 +2952,17 @@ Ext.define('Admin.view.FilterPanel', {
     isDirty: function () {
         var selectedCheckboxes = [];
         var query = '';
-        if(this.facetContainer && this.facetContainer.el) {
+        if (this.facetContainer && this.facetContainer.el) {
             selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
         }
-        if(this.searchField) {
+        if (this.searchField) {
             query = Ext.String.trim(this.searchField.getValue());
         }
         return selectedCheckboxes.length > 0 || query.length > 0;
     },
     reset: function () {
-        if(this.fireEvent('reset', this.isDirty()) !== false) {
-            if(this.searchField) {
+        if (this.fireEvent('reset', this.isDirty()) !== false) {
+            if (this.searchField) {
                 this.searchField.reset();
             }
             var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
@@ -2944,7 +2976,7 @@ Ext.define('Admin.view.FilterPanel', {
         }
     },
     search: function () {
-        if(this.fireEvent('search', this.getValues()) !== false) {
+        if (this.fireEvent('search', this.getValues()) !== false) {
             this.clearLink.el.setStyle('visibility', this.isDirty() ? 'visible' : 'hidden');
         }
     }
@@ -2964,13 +2996,13 @@ Ext.define('Admin.view.contentManager.ShowPanel', {
             {
                 region: 'north',
                 xtype: 'browseToolbar'
-            }, 
+            },
             {
                 xtype: 'contentTreeGridPanel',
                 region: 'center',
                 itemId: 'contentList',
                 flex: 1
-            }, 
+            },
             {
                 region: 'south',
                 split: true,
@@ -2980,7 +3012,7 @@ Ext.define('Admin.view.contentManager.ShowPanel', {
                 isLiveMode: contentIsOpenedFromPortal,
                 showToolbar: false,
                 flex: 1
-            }, 
+            },
             {
                 region: 'east',
                 split: true,
@@ -3016,36 +3048,36 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
                 text: ' New',
                 disabled: true,
                 action: 'newContent'
-            }, 
+            },
             {
                 text: 'Edit',
                 action: 'editContent'
-            }, 
+            },
             {
                 text: 'Open',
                 action: 'viewContent'
-            }, 
+            },
             {
                 text: 'Delete',
                 action: 'deleteContent'
-            }, 
+            },
             {
                 text: 'Duplicate',
                 action: 'duplicateContent'
-            }, 
+            },
             {
                 text: 'Move',
                 disabled: true,
                 action: 'moveContent'
-            }, 
-            '->', 
+            },
+            '->',
             {
                 xtype: 'toggleslide',
                 onText: 'Preview',
                 offText: 'Details',
                 action: 'toggleLive',
                 state: this.isLiveMode
-            }, 
+            },
             {
                 iconCls: 'icon-toolbar-settings',
                 action: 'showToolbarMenu',
@@ -3104,9 +3136,10 @@ var admin;
                 menu.add(itemNew, itemEdit, itemOpen, itemDelete, itemDuplicate, itemMove);
                 this.ext = menu;
             }
+
             return ContextMenu;
         })();
-        ui.ContextMenu = ContextMenu;        
+        ui.ContextMenu = ContextMenu;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -3115,7 +3148,7 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
     alias: 'widget.treeGridPanel',
     layout: 'card',
     requires: [
-        'Admin.plugin.PersistentGridSelectionPlugin', 
+        'Admin.plugin.PersistentGridSelectionPlugin',
         'Admin.plugin.GridToolbarPlugin'
     ],
     treeConf: {
@@ -3123,11 +3156,12 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
     gridConf: {
     },
     keyField: 'key',
-    nameTemplate: '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>',
+    nameTemplate: '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' +
+                  '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>',
     initComponent: function () {
         var me = this;
         var treeColumns = Ext.clone(this.columns);
-        if(Ext.isEmpty(treeColumns)) {
+        if (Ext.isEmpty(treeColumns)) {
             throw "this.columns can't be null";
         }
         treeColumns[0].xtype = 'treecolumn';
@@ -3180,7 +3214,7 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
         };
         gridPanel = Ext.apply(gridPanel, me.gridConf);
         this.items = [
-            treePanel, 
+            treePanel,
             gridPanel
         ];
         this.callParent(arguments);
@@ -3225,7 +3259,7 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
     },
     getSelection: function () {
         var selection = [], activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection');
-        if(plugin) {
+        if (plugin) {
             selection = plugin.getSelection();
         } else {
             selection = activeList.getSelectionModel().getSelection();
@@ -3237,45 +3271,46 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
         var selModel = activeList.getSelectionModel();
         var keys = [].concat(key);
         var i;
-        if(activeList.xtype === 'treepanel') {
+        if (activeList.xtype === 'treepanel') {
             var rootNode = activeList.getRootNode(), node;
-            for(i = 0; i < keys.length; i++) {
+            for (i = 0; i < keys.length; i++) {
                 node = rootNode.findChild(this.keyField, keys[i], true);
-                if(node) {
+                if (node) {
                     selModel.select(node, keepExisting);
                 }
             }
-        } else if(activeList.xtype === 'grid') {
+        } else if (activeList.xtype === 'grid') {
             var store = activeList.getStore(), record;
-            for(i = 0; i < keys.length; i++) {
+            for (i = 0; i < keys.length; i++) {
                 record = store.findRecord(this.keyField, keys[i]);
-                if(record) {
+                if (record) {
                     selModel.select(record, keepExisting);
                 }
             }
         }
     },
     deselect: function (key) {
-        var activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection'), selModel = plugin ? plugin : activeList.getSelectionModel();
-        if(!key || key === -1) {
-            if(plugin) {
+        var activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection'), selModel = plugin ? plugin
+            : activeList.getSelectionModel();
+        if (!key || key === -1) {
+            if (plugin) {
                 plugin.clearSelection();
             } else {
                 selModel.deselectAll();
             }
         } else {
-            if(activeList.xtype === 'treepanel') {
+            if (activeList.xtype === 'treepanel') {
                 var selNodes = selModel.getSelection();
                 var i;
-                for(i = 0; i < selNodes.length; i++) {
+                for (i = 0; i < selNodes.length; i++) {
                     var selNode = selNodes[i];
-                    if(key == selNode.get(this.keyField)) {
+                    if (key == selNode.get(this.keyField)) {
                         selModel.deselect(selNode);
                     }
                 }
-            } else if(activeList.xtype === 'grid') {
+            } else if (activeList.xtype === 'grid') {
                 var record = activeList.getStore().findRecord(this.keyField, key);
-                if(record) {
+                if (record) {
                     selModel.deselect(record);
                 }
             }
@@ -3294,7 +3329,7 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
     },
     removeAll: function () {
         var activeList = this.getActiveList();
-        if(activeList.xtype === 'treepanel') {
+        if (activeList.xtype === 'treepanel') {
             activeList.getRootNode().removeAll();
         } else {
             activeList.removeAll();
@@ -3303,10 +3338,10 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
     refresh: function () {
         var activeList = this.getActiveList();
         var currentStore = activeList.store;
-        if(!currentStore.loading) {
-            if(activeList.xtype === 'treepanel') {
+        if (!currentStore.loading) {
+            if (activeList.xtype === 'treepanel') {
                 currentStore.load();
-            } else if(activeList.xtype === 'grid') {
+            } else if (activeList.xtype === 'grid') {
                 currentStore.loadPage(currentStore.currentPage);
             }
         }
@@ -3339,11 +3374,11 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
                 renderer: this.nameRenderer,
                 scope: me,
                 flex: 1
-            }, 
+            },
             {
                 text: 'Status',
                 renderer: this.statusRenderer
-            }, 
+            },
             {
                 text: 'Modified',
                 dataIndex: 'modifiedTime',
@@ -3357,15 +3392,18 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
     nameRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
         var account = record.data;
         var activeListType = this.getActiveList().itemId;
-        var Templates_contentManager_treeGridPanelNameRenderer = '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>';
+        var Templates_contentManager_treeGridPanelNameRenderer = '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' +
+                                                                 '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' +
+                                                                 '</div>';
         return Ext.String.format(Templates_contentManager_treeGridPanelNameRenderer, activeListType, account.iconUrl, value, account.path);
     },
     statusRenderer: function () {
         return "Online";
     },
     prettyDateRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
-        try  {
-        } catch (e) {
+        try {
+        }
+        catch (e) {
             return value;
         }
     }
@@ -3417,11 +3455,12 @@ var admin;
                 tbar.add(btnNew, btnEdit, btnDelete, btnDuplicate, btnMove, btnExport, separator, cycle, toggleSlide, btnClose);
                 this.ext = tbar;
             }
+
             DetailToolbar.prototype.createButton = function (config, defaults) {
                 return new Ext.button.Button(Ext.apply(config, defaults));
             };
             DetailToolbar.prototype.createCycle = function () {
-                return Ext.create('Ext.button.Cycle', {
+                return new Ext.button.Cycle({
                     itemId: 'deviceCycle',
                     disabled: !this.isLiveMode,
                     showText: true,
@@ -3432,19 +3471,19 @@ var admin;
                                 text: 'Desktop',
                                 checked: true,
                                 device: 'DESKTOP'
-                            }, 
+                            },
                             {
                                 text: 'iPhone 5 Vertical',
                                 device: 'IPHONE_5_VERTICAL'
-                            }, 
+                            },
                             {
                                 text: 'iPhone 5 Horizontal',
                                 device: 'IPHONE_5_HORIZONTAL'
-                            }, 
+                            },
                             {
                                 text: 'iPad 3 Vertical',
                                 device: 'IPAD_3_VERTICAL'
-                            }, 
+                            },
                             {
                                 text: 'iPad 3 Horizontal',
                                 device: 'IPAD_3_HORIZONTAL'
@@ -3469,7 +3508,7 @@ var admin;
             };
             return DetailToolbar;
         })();
-        ui.DetailToolbar = DetailToolbar;        
+        ui.DetailToolbar = DetailToolbar;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -3487,7 +3526,7 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     initComponent: function () {
         var me = this;
         me.on('afterrender', function () {
-            if(me.actionButton) {
+            if (me.actionButton) {
                 me.renderActionButton();
             }
         });
@@ -3497,7 +3536,10 @@ Ext.define('Admin.view.contentManager.LivePreview', {
         return this.getTargetEl().down('iframe');
     },
     resizeIframe: function (dimmensions) {
-        var iFrame = this.getIframe(), widthHasPercentUnit = dimmensions.width.indexOf('%') > -1, heightHasPercentUnit = dimmensions.height.indexOf('%') > -1, width = widthHasPercentUnit ? this.getWidth() : dimmensions.width, height = heightHasPercentUnit ? this.getHeight() : dimmensions.height;
+        var iFrame = this.getIframe(), widthHasPercentUnit = dimmensions.width.indexOf('%') >
+                                                             -1, heightHasPercentUnit = dimmensions.height.indexOf('%') >
+                                                                                        -1, width = widthHasPercentUnit ? this.getWidth()
+            : dimmensions.width, height = heightHasPercentUnit ? this.getHeight() : dimmensions.height;
         var animation = iFrame.animate({
             duration: 300,
             to: {
@@ -3506,10 +3548,10 @@ Ext.define('Admin.view.contentManager.LivePreview', {
             },
             listeners: {
                 afteranimate: function () {
-                    if(widthHasPercentUnit) {
+                    if (widthHasPercentUnit) {
                         iFrame.setStyle('width', dimmensions.width);
                     }
-                    if(heightHasPercentUnit) {
+                    if (heightHasPercentUnit) {
                         iFrame.setStyle('height', dimmensions.height);
                     }
                 }
@@ -3528,7 +3570,7 @@ Ext.define('Admin.view.contentManager.LivePreview', {
             items: [
                 {
                     xtype: 'tbfill'
-                }, 
+                },
                 Ext.apply(me.actionButton, {
                     border: 0
                 })
@@ -3538,7 +3580,7 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     load: function (url, isEdit) {
         var iFrame = this.getIframe();
         isEdit = isEdit || false;
-        if(!Ext.isEmpty(url)) {
+        if (!Ext.isEmpty(url)) {
             iFrame.dom.src = Admin.lib.UriHelper.getAbsoluteUri(url + "?edit=" + isEdit);
             this.iFrameLoaded = true;
         } else {
@@ -3552,7 +3594,7 @@ var admin;
         var DropDownButton = (function () {
             function DropDownButton(config, menuItems) {
                 var menu;
-                if(!Ext.isEmpty(menuItems)) {
+                if (!Ext.isEmpty(menuItems)) {
                     menu = new Ext.menu.Menu({
                         cls: 'admin-context-menu',
                         border: false,
@@ -3568,9 +3610,10 @@ var admin;
                     menu: menu
                 }, config));
             }
+
             return DropDownButton;
         })();
-        ui.DropDownButton = DropDownButton;        
+        ui.DropDownButton = DropDownButton;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
@@ -3585,7 +3628,7 @@ Ext.define('Admin.view.IframeContainer', {
     minHeight: 420,
     listeners: {
         afterrender: function (panel) {
-            if(this.url) {
+            if (this.url) {
                 this.load(this.url);
             }
         }
@@ -3595,7 +3638,7 @@ Ext.define('Admin.view.IframeContainer', {
     },
     load: function (url, isEdit) {
         var iframe = this.getEl().down('iframe');
-        if(!Ext.isEmpty(url)) {
+        if (!Ext.isEmpty(url)) {
             iframe.dom.src = Admin.lib.UriHelper.getAbsoluteUri(url);
         } else {
             iframe.update("<h2 class='message'>Page can't be found.</h2>");
@@ -3621,7 +3664,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                         iFrameCls: (me.isVertical ? 'admin-detail-vertical' : '')
                     }
                 ]
-            }, 
+            },
             {
                 displayName: 'Sales',
                 name: 'sales',
@@ -3631,7 +3674,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                         html: '<h1>Sales</h1>'
                     }
                 ]
-            }, 
+            },
             {
                 displayName: 'Scorecard',
                 name: 'scorecard',
@@ -3641,7 +3684,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                         html: '<h1>Scorecard</h1>'
                     }
                 ]
-            }, 
+            },
             {
                 displayName: 'History',
                 name: 'history',
@@ -3659,29 +3702,29 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                 icon: undefined,
                 action: 'newContent',
                 disableOnMultipleSelection: true
-            }, 
+            },
             {
                 text: 'Edit',
                 icon: undefined,
                 action: 'editContent',
                 disableOnMultipleSelection: false
-            }, 
+            },
             {
                 text: 'Open',
                 icon: undefined,
                 action: 'viewContent',
                 disableOnMultipleSelection: false
-            }, 
+            },
             {
                 text: 'Delete',
                 icon: undefined,
                 action: 'deleteContent'
-            }, 
+            },
             {
                 text: 'Duplicate',
                 icon: undefined,
                 action: 'duplicateContent'
-            }, 
+            },
             {
                 text: 'Move',
                 icon: undefined,
@@ -3690,32 +3733,34 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             }
         ];
         this.on('afterrender', function () {
-            if(this.isLiveMode) {
+            if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
                 livePreview.load(this.getLiveUrl(this.data), false);
             }
         }, this);
         this.setDataCallback = function (data) {
-            if(this.isLiveMode) {
+            if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
                 livePreview.load(this.getLiveUrl(data), false);
             }
         };
         this.items = [
-            this.createNoSelection(), 
-            this.createSingleSelection(this.data), 
-            this.createLargeBoxSelection(this.data), 
-            this.createSmallBoxSelection(this.data), 
+            this.createNoSelection(),
+            this.createSingleSelection(this.data),
+            this.createLargeBoxSelection(this.data),
+            this.createSmallBoxSelection(this.data),
             this.createLivePreview(this.data)
         ];
         this.callParent(arguments);
     },
     getLiveUrl: function (data) {
-        if(data) {
-            if(data.length > 0) {
-                return data[0].data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp' : '/dev/live-edit/page/bootstrap.jsp';
-            } else if(data.data) {
-                return data.data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp' : '/dev/live-edit/page/bootstrap.jsp';
+        if (data) {
+            if (data.length > 0) {
+                return data[0].data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp'
+                    : '/dev/live-edit/page/bootstrap.jsp';
+            } else if (data.data) {
+                return data.data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp'
+                    : '/dev/live-edit/page/bootstrap.jsp';
             }
         }
         return '/dev/live-edit/page/bootstrap.jsp';
@@ -3736,15 +3781,15 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     },
     resolveActiveItem: function (data) {
         var activeItem;
-        if(Ext.isEmpty(this.data)) {
+        if (Ext.isEmpty(this.data)) {
             activeItem = 'noSelection';
-        } else if(Ext.isObject(this.data) || this.data.length === 1) {
-            if(this.isLiveMode) {
+        } else if (Ext.isObject(this.data) || this.data.length === 1) {
+            if (this.isLiveMode) {
                 activeItem = 'livePreview';
             } else {
                 activeItem = 'singleSelection';
             }
-        } else if(this.data.length > 1 && this.data.length <= 10) {
+        } else if (this.data.length > 1 && this.data.length <= 10) {
             activeItem = 'largeBoxSelection';
         } else {
             activeItem = 'smallBoxSelection';
@@ -3760,7 +3805,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
     extend: 'Admin.view.BaseDialogWindow',
     alias: 'widget.newContentWindow',
     requires: [
-        'Admin.model.schemaManager.ContentTypeModel', 
+        'Admin.model.schemaManager.ContentTypeModel',
         'Admin.store.schemaManager.ContentTypeTreeStore'
     ],
     dialogTitle: undefined,
@@ -3773,7 +3818,10 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
     recentCount: 5,
     cookieKey: 'Admin.view.contentManager.NewContentWindow',
     cookieSeparator: '|',
-    dataViewItemTemplate: '<tpl for=".">' + '<div class="admin-data-view-row">' + '<div class="admin-data-view-thumbnail">' + '<img src="{iconUrl}?size=32"/>' + '</div>' + '<div class="admin-data-view-description">' + '<h6>{displayName}</h6>' + '<p>{qualifiedName}</p>' + '</div>' + '<div class="x-clear"></div>' + '</div>' + '</tpl>',
+    dataViewItemTemplate: '<tpl for=".">' + '<div class="admin-data-view-row">' + '<div class="admin-data-view-thumbnail">' +
+                          '<img src="{iconUrl}?size=32"/>' + '</div>' + '<div class="admin-data-view-description">' +
+                          '<h6>{displayName}</h6>' + '<p>{qualifiedName}</p>' + '</div>' + '<div class="x-clear"></div>' + '</div>' +
+                          '</tpl>',
     initComponent: function () {
         var me = this;
         var baseDataViewConfig = {
@@ -3828,7 +3876,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
             emptyText: 'No matching content types'
         }, baseDataViewConfig);
         this.items = [
-            me.header('Select Content Type', 'parent/of/new/content'), 
+            me.header('Select Content Type', 'parent/of/new/content'),
             {
                 region: 'west',
                 width: 300,
@@ -3851,7 +3899,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
                         items: [
                             recommendedDataView
                         ]
-                    }, 
+                    },
                     {
                         title: 'Recent',
                         flex: 1,
@@ -3860,7 +3908,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
                         ]
                     }
                 ]
-            }, 
+            },
             {
                 region: 'center',
                 layout: {
@@ -3876,7 +3924,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
                         listeners: {
                             keyup: function (field, event, opts) {
                                 var value = field.getValue();
-                                if(!Ext.isEmpty(value, false)) {
+                                if (!Ext.isEmpty(value, false)) {
                                     allContentTypesStore.clearFilter(true);
                                     allContentTypesStore.filter({
                                         property: "name",
@@ -3888,7 +3936,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
                                 }
                             }
                         }
-                    }, 
+                    },
                     {
                         flex: 1,
                         overflowY: 'auto',
@@ -3898,7 +3946,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
                         ]
                     }
                 ]
-            }, 
+            },
             me.buttonRow({
                 xtype: 'button',
                 text: 'Cancel',
@@ -3914,10 +3962,10 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
         var cookies = Ext.util.Cookies.get(this.cookieKey);
         var recentArray = cookies ? cookies.split(this.cookieSeparator) : [];
         var recentItem = this.serializeContentType(contentType);
-        if(recentArray.length === 0 || recentArray[0] !== recentItem) {
+        if (recentArray.length === 0 || recentArray[0] !== recentItem) {
             recentArray.unshift(recentItem);
         }
-        if(recentArray.length > this.recentCount) {
+        if (recentArray.length > this.recentCount) {
             recentArray = recentArray.slice(0, this.recentCount);
         }
         Ext.util.Cookies.set(this.cookieKey, recentArray.join(this.cookieSeparator));
@@ -3926,13 +3974,13 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
         recentStore.removeAll(true);
         var me = this;
         var cookies = Ext.util.Cookies.get(this.cookieKey);
-        if(cookies) {
+        if (cookies) {
             var recentRecords = [];
             var recentArray = cookies.split(this.cookieSeparator);
             Ext.Array.each(recentArray, function (item, index, all) {
                 recentRecords.push(me.parseContentType(item));
             });
-            if(recentRecords.length > 0) {
+            if (recentRecords.length > 0) {
                 recentStore.loadData(recentRecords);
             }
         }
@@ -3943,18 +3991,18 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
         var recommendedRecord;
         var qualifiedNames = recentStore.collect('qualifiedName');
         var qualifiedRecords;
-        for(var i = 0; i < qualifiedNames.length; i++) {
+        for (var i = 0; i < qualifiedNames.length; i++) {
             qualifiedRecords = recentStore.queryBy((function (index) {
                 return function (recentRecord, id) {
                     return recentRecord.get('qualifiedName') === qualifiedNames[index];
                 };
             })(i));
-            if(qualifiedRecords.getCount() > recommendedCount) {
+            if (qualifiedRecords.getCount() > recommendedCount) {
                 recommendedRecord = qualifiedRecords.get(0);
                 recommendedCount = qualifiedRecords.getCount();
             }
         }
-        if(recommendedRecord) {
+        if (recommendedRecord) {
             recommendedStore.loadRecords([
                 recommendedRecord
             ]);
@@ -3987,14 +4035,15 @@ Ext.define('Admin.view.FileUploadWindow', {
     initComponent: function () {
         var me = this;
         this.items = [
-            me.header('Image uploader', 'Images uploaded will be embedded directly in this content, you may move them to the library later if desired'), 
-            me.plupload(), 
+            me.header('Image uploader',
+                'Images uploaded will be embedded directly in this content, you may move them to the library later if desired'),
+            me.plupload(),
             me.buttonRow({
                 xtype: 'button',
                 text: 'Cancel',
                 ui: 'grey',
                 handler: function (btn, evt) {
-                    if(me.uploader) {
+                    if (me.uploader) {
                         me.uploader.stop();
                     }
                     me.close();
@@ -4028,7 +4077,7 @@ Ext.define('Admin.view.FileUploadWindow', {
                             emptyText: 'Paste URL to image here',
                             margin: '0 0 20 0',
                             enableKeyEvents: true
-                        }, 
+                        },
                         {
                             flex: 1,
                             xtype: 'component',
@@ -4037,12 +4086,14 @@ Ext.define('Admin.view.FileUploadWindow', {
                             styleHtmlContent: true
                         }
                     ]
-                }, 
+                },
                 {
                     itemId: 'progressForm',
                     cls: 'admin-upload-progress',
                     xtype: 'component',
-                    tpl: '<h4>{percent}% complete</h4>' + '<div class="admin-progress-bar"><div class="admin-progress" style="width: {percent}%;"></div></div>' + '<p>{[values.uploaded + values.failed + 1]} of {[values.uploaded + values.queued + values.failed]}</p>',
+                    tpl: '<h4>{percent}% complete</h4>' +
+                         '<div class="admin-progress-bar"><div class="admin-progress" style="width: {percent}%;"></div></div>' +
+                         '<p>{[values.uploaded + values.failed + 1]} of {[values.uploaded + values.queued + values.failed]}</p>',
                     data: {
                         percent: 40,
                         uploaded: 2,
@@ -4072,7 +4123,7 @@ Ext.define('Admin.view.FileUploadWindow', {
         });
         this.uploader.bind('Init', function (up) {
             var hint = '';
-            if(!!up.features.dragdrop) {
+            if (!!up.features.dragdrop) {
                 hint = '<h4>Drop files here or click to select</h4>';
             } else {
                 hint = '<h4>Click to select</h4>';
@@ -4081,7 +4132,7 @@ Ext.define('Admin.view.FileUploadWindow', {
         });
         this.uploader.bind('QueueChanged', function (up) {
             var activeItem;
-            if(up.files.length > 0) {
+            if (up.files.length > 0) {
                 activeItem = 'progressForm';
                 up.start();
             } else {
@@ -4094,9 +4145,9 @@ Ext.define('Admin.view.FileUploadWindow', {
             container.down('#progressForm').update(up.total);
         });
         this.uploader.bind('FileUploaded', function (up, file, response) {
-            if(response && response.response) {
+            if (response && response.response) {
                 var json = Ext.JSON.decode(response.response);
-                if(json.success && json.items && json.items.length == 1) {
+                if (json.success && json.items && json.items.length == 1) {
                     file.response = json.items[0];
                 }
             }
@@ -4122,7 +4173,9 @@ Ext.define('Admin.view.AutosizeTextField', {
     fieldHeight: undefined,
     isMouseOver: false,
     isFocused: false,
-    tpl: '<div class="autosizeTextField" style="' + 'float: left; ' + 'border: 1px solid #EEEEEE; ' + 'min-width: 200px; ' + 'padding: 0px 10px; ' + 'margin: 3px; ' + 'white-space: nowrap; ' + 'overflow: hidden; ' + '" contenteditable="true">{value}' + '</div>',
+    tpl: '<div class="autosizeTextField" style="' + 'float: left; ' + 'border: 1px solid #EEEEEE; ' + 'min-width: 200px; ' +
+         'padding: 0px 10px; ' + 'margin: 3px; ' + 'white-space: nowrap; ' + 'overflow: hidden; ' + '" contenteditable="true">{value}' +
+         '</div>',
     data: {
         value: ''
     },
@@ -4130,7 +4183,7 @@ Ext.define('Admin.view.AutosizeTextField', {
     initComponent: function () {
         this.data.value = this.value;
         this.isEmpty = !this.data.value;
-        if(this.isEmpty) {
+        if (this.isEmpty) {
             this.data.value = this.emptyText;
         }
         this.callParent(arguments);
@@ -4143,7 +4196,7 @@ Ext.define('Admin.view.AutosizeTextField', {
         textEl.on({
             focus: function () {
                 me.isFocused = true;
-                if(me.isEmpty) {
+                if (me.isEmpty) {
                     me.setRawValue('');
                 }
                 me.updateComponent();
@@ -4151,7 +4204,7 @@ Ext.define('Admin.view.AutosizeTextField', {
             blur: function () {
                 me.isFocused = false;
                 me.isEmpty = !me.getRawValue();
-                if(me.isEmpty) {
+                if (me.isEmpty) {
                     me.setRawValue(me.emptyText);
                 }
                 me.updateComponent();
@@ -4166,7 +4219,7 @@ Ext.define('Admin.view.AutosizeTextField', {
             }
         });
         this.textEl = textEl;
-        if(me.isEmpty) {
+        if (me.isEmpty) {
             me.setRawValue(me.emptyText);
         }
         this.updateComponent();
@@ -4197,10 +4250,10 @@ Ext.define('Admin.view.AutosizeTextField', {
         ons.keypress = function (event) {
             var value = String.fromCharCode(event.charCode);
             var newValue = 'ok';
-            if(value != '' && event.charCode != 0) {
+            if (value != '' && event.charCode != 0) {
                 newValue = value.replace(me.stripCharsRe, '');
             }
-            if(event.keyCode == event.RETURN || newValue == '') {
+            if (event.keyCode == event.RETURN || newValue == '') {
                 event.preventDefault();
             }
             this.isEmpty = false;
@@ -4222,9 +4275,9 @@ Ext.define('Admin.view.AutosizeTextField', {
     },
     processRawValue: function (value) {
         var me = this, stripRe = me.stripCharsRe, newValue;
-        if(stripRe) {
+        if (stripRe) {
             newValue = value.replace(stripRe, '');
-            if(newValue !== value) {
+            if (newValue !== value) {
                 me.setRawValue(newValue);
                 value = newValue;
             }
@@ -4314,26 +4367,26 @@ Ext.define('Admin.view.WizardHeader', {
         this.items = [
             me.displayNameField
         ];
-        if(!me.pathField.hidden && !me.nameField.hidden) {
+        if (!me.pathField.hidden && !me.nameField.hidden) {
             this.items.push({
                 xtype: 'fieldcontainer',
                 hideLabel: true,
                 layout: 'hbox',
                 items: [
-                    me.pathField, 
+                    me.pathField,
                     me.nameField
                 ]
             });
-        } else if(!me.pathField.hidden) {
+        } else if (!me.pathField.hidden) {
             this.items.push(me.pathField);
-        } else if(!me.nameField.hidden) {
+        } else if (!me.nameField.hidden) {
             this.items.push(me.nameField);
         }
         this.callParent(arguments);
         this.addEvents('displaynamechange', 'displaynameoverride', 'namechange', 'nameoverride');
     },
     onDisplayNameAfterrender: function (field) {
-        if(!field.readOnly && field.autoFocus) {
+        if (!field.readOnly && field.autoFocus) {
             field.focus(false, 100);
             field.selectText(0, 0);
         }
@@ -4341,13 +4394,13 @@ Ext.define('Admin.view.WizardHeader', {
     onDisplayNameKey: function (field, event, opts) {
         var wasAutoGenerate = this.autogenerateDisplayName;
         var autoGenerate = Ext.isEmpty(field.getValue());
-        if(wasAutoGenerate != autoGenerate) {
+        if (wasAutoGenerate != autoGenerate) {
             this.fireEvent('displaynameoverride', !autoGenerate);
         }
         this.autogenerateDisplayName = autoGenerate;
     },
     onDisplayNameChanged: function (field, newVal, oldVal, opts) {
-        if(this.fireEvent('displaynamechange', newVal, oldVal) !== false && this.autogenerateName) {
+        if (this.fireEvent('displaynamechange', newVal, oldVal) !== false && this.autogenerateName) {
             var processedValue = this.nameField.processRawValue(this.preProcessName(newVal));
             this.nameField.setValue(processedValue);
         }
@@ -4355,7 +4408,7 @@ Ext.define('Admin.view.WizardHeader', {
     onNameKey: function (field, event, opts) {
         var wasAutoGenerate = this.autogenerateName;
         var autoGenerate = Ext.isEmpty(field.getValue());
-        if(wasAutoGenerate != autoGenerate) {
+        if (wasAutoGenerate != autoGenerate) {
             this.fireEvent('nameoverride', !autoGenerate);
         }
         this.autogenerateName = autoGenerate;
@@ -4387,7 +4440,8 @@ Ext.define('Admin.view.WizardHeader', {
         });
     },
     preProcessName: function (displayName) {
-        return !Ext.isEmpty(displayName) ? displayName.replace('/[\s+\./]/ig', '-').replace(/-{2,}/g, '-').replace(/^-|-$/g, '').toLowerCase() : '';
+        return !Ext.isEmpty(displayName) ? displayName.replace('/[\s+\./]/ig', '-').replace(/-{2,}/g, '-').replace(/^-|-$/g,
+            '').toLowerCase() : '';
     },
     prepareHeaderData: function (data) {
         return data && data.data || data || {
@@ -4432,75 +4486,75 @@ Ext.define('Admin.view.WizardLayout', {
         var oldIndex = owner.items.indexOf(oldCard);
         var newCard = this.parseActiveItem(item);
         var newIndex = owner.items.indexOf(newCard);
-        if(oldCard !== newCard) {
+        if (oldCard !== newCard) {
             owner.fireEvent("animationstarted", newCard, oldCard);
-            if(newCard.rendered && this.animation && this.animation !== "none") {
+            if (newCard.rendered && this.animation && this.animation !== "none") {
                 this.syncFx();
                 var target = this.getRenderTarget();
                 newCard.setWidth(target.getWidth() - target.getPadding("lr") - Ext.getScrollbarSize().width);
-                switch(this.animation) {
-                    case 'fade':
-                        newCard.el.setStyle({
-                            position: 'absolute',
-                            opacity: 0,
-                            top: this.getRenderTarget().getPadding('t') + 'px'
-                        });
-                        newCard.show();
-                        if(oldCard) {
-                            oldCard.el.fadeOut({
-                                useDisplay: true,
-                                duration: this.duration,
-                                callback: function () {
-                                    this.hide();
-                                },
-                                scope: this.activeItem
-                            });
-                        }
-                        owner.doLayout();
-                        newCard.el.fadeIn({
+                switch (this.animation) {
+                case 'fade':
+                    newCard.el.setStyle({
+                        position: 'absolute',
+                        opacity: 0,
+                        top: this.getRenderTarget().getPadding('t') + 'px'
+                    });
+                    newCard.show();
+                    if (oldCard) {
+                        oldCard.el.fadeOut({
                             useDisplay: true,
                             duration: this.duration,
                             callback: function () {
-                                newCard.el.setStyle({
-                                    position: ''
-                                });
-                                owner.fireEvent("animationfinished", newCard, oldCard);
+                                this.hide();
                             },
-                            scope: this
+                            scope: this.activeItem
                         });
-                        break;
-                    case 'slide':
-                        newCard.el.setStyle({
-                            position: 'absolute',
-                            visibility: 'hidden',
-                            width: this.getRenderTarget().getWidth(),
-                            top: this.getRenderTarget().getPadding('t') + 'px'
-                        });
-                        newCard.show();
-                        if(oldCard) {
-                            oldCard.el.slideOut(newIndex > oldIndex ? "l" : "r", {
-                                duration: this.duration,
-                                easing: this.easing,
-                                remove: false,
-                                scope: this.activeItem,
-                                callback: function () {
-                                    this.hide();
-                                }
+                    }
+                    owner.doLayout();
+                    newCard.el.fadeIn({
+                        useDisplay: true,
+                        duration: this.duration,
+                        callback: function () {
+                            newCard.el.setStyle({
+                                position: ''
                             });
-                        }
-                        owner.doLayout();
-                        newCard.el.slideIn(newIndex > oldIndex ? "r" : "l", {
+                            owner.fireEvent("animationfinished", newCard, oldCard);
+                        },
+                        scope: this
+                    });
+                    break;
+                case 'slide':
+                    newCard.el.setStyle({
+                        position: 'absolute',
+                        visibility: 'hidden',
+                        width: this.getRenderTarget().getWidth(),
+                        top: this.getRenderTarget().getPadding('t') + 'px'
+                    });
+                    newCard.show();
+                    if (oldCard) {
+                        oldCard.el.slideOut(newIndex > oldIndex ? "l" : "r", {
                             duration: this.duration,
                             easing: this.easing,
-                            scope: this,
+                            remove: false,
+                            scope: this.activeItem,
                             callback: function () {
-                                newCard.el.setStyle({
-                                    position: ''
-                                });
-                                owner.fireEvent("animationfinished", newCard, oldCard);
+                                this.hide();
                             }
                         });
-                        break;
+                    }
+                    owner.doLayout();
+                    newCard.el.slideIn(newIndex > oldIndex ? "r" : "l", {
+                        duration: this.duration,
+                        easing: this.easing,
+                        scope: this,
+                        callback: function () {
+                            newCard.el.setStyle({
+                                position: ''
+                            });
+                            owner.fireEvent("animationfinished", newCard, oldCard);
+                        }
+                    });
+                    break;
                 }
                 this.activeItem = newCard;
                 this.sequenceFx();
@@ -4539,12 +4593,12 @@ Ext.define('Admin.view.WizardPanel', {
     initComponent: function () {
         var me = this;
         var events = [
-            "beforestepchanged", 
-            "stepchanged", 
-            "animationstarted", 
-            "animationfinished", 
-            'validitychange', 
-            'dirtychange', 
+            "beforestepchanged",
+            "stepchanged",
+            "animationstarted",
+            "animationfinished",
+            'validitychange',
+            'dirtychange',
             "finished"
         ];
         this.dirtyItems = [];
@@ -4604,7 +4658,7 @@ Ext.define('Admin.view.WizardPanel', {
                         margin: '0 0 0 40'
                     }
                 ]
-            }, 
+            },
             {
                 xtype: 'container',
                 itemId: 'nextPanel',
@@ -4651,7 +4705,7 @@ Ext.define('Admin.view.WizardPanel', {
                         padding: 0
                     }
                 ]
-            }, 
+            },
             this.wizard
         ];
         var bottomPanel = [
@@ -4675,7 +4729,7 @@ Ext.define('Admin.view.WizardPanel', {
             }
         ];
         this.items = [
-            this.createHeaderPanel(), 
+            this.createHeaderPanel(),
             {
                 xtype: 'container',
                 padding: '20 0 0 0',
@@ -4695,7 +4749,7 @@ Ext.define('Admin.view.WizardPanel', {
                 me.updateShadow(me);
             }
         });
-        if(this.getActionButton()) {
+        if (this.getActionButton()) {
             this.boundItems.push(this.getActionButton());
         }
         this.down('#progressBar').update(this.wizard.items.items);
@@ -4706,22 +4760,25 @@ Ext.define('Admin.view.WizardPanel', {
     },
     updateShadow: function (me) {
         var bottomPanel = me.down('#bottomPanel');
-        if(bottomPanel && bottomPanel.getEl()) {
+        if (bottomPanel && bottomPanel.getEl()) {
             bottomPanel = bottomPanel.getEl();
-            var hasScroll = bottomPanel.dom.scrollHeight > bottomPanel.dom.clientHeight, positionPanelEl = me.down('#positionPanel').getEl(), wizardHeaderPanelHeight = me.down('#wizardHeaderPanel').getEl().getHeight(), headerShadowEl = Ext.fly('admin-wizard-header-shadow');
-            if(hasScroll && bottomPanel.dom.scrollTop !== 0) {
-                if(!headerShadowEl) {
+            var hasScroll = bottomPanel.dom.scrollHeight >
+                            bottomPanel.dom.clientHeight, positionPanelEl = me.down('#positionPanel').getEl(), wizardHeaderPanelHeight = me.down('#wizardHeaderPanel').getEl().getHeight(), headerShadowEl = Ext.fly('admin-wizard-header-shadow');
+            if (hasScroll && bottomPanel.dom.scrollTop !== 0) {
+                if (!headerShadowEl) {
                     var dh = Ext.DomHelper, boxShadowOffsets = Ext.isGecko ? '0 5px 6px -3px' : '0 5px 10px -3px';
                     var shadowDomSpec = {
                         id: 'admin-wizard-header-shadow',
                         tag: 'div',
-                        style: 'position:absolute; top:' + wizardHeaderPanelHeight + 'px; left:0px; z-index:1000; height:10px; background:transparent; width:100%; box-shadow:' + boxShadowOffsets + '#888 inset'
+                        style: 'position:absolute; top:' + wizardHeaderPanelHeight +
+                               'px; left:0px; z-index:1000; height:10px; background:transparent; width:100%; box-shadow:' +
+                               boxShadowOffsets + '#888 inset'
                     };
                     dh.append(positionPanelEl, shadowDomSpec);
                     Ext.fly('admin-wizard-header-shadow').show(true);
                 }
             } else {
-                if(headerShadowEl) {
+                if (headerShadowEl) {
                     headerShadowEl.remove();
                 }
             }
@@ -4741,12 +4798,12 @@ Ext.define('Admin.view.WizardPanel', {
     },
     updateNavButton: function (element, color) {
         var btn = Ext.get(element);
-        if(!btn.hasCls('wizard-nav-icon')) {
+        if (!btn.hasCls('wizard-nav-icon')) {
             btn = btn.down('.wizard-nav-icon');
-        } else if(btn.hasCls('x-btn-inner')) {
+        } else if (btn.hasCls('x-btn-inner')) {
             btn = btn.next('.x-btn-icon');
         }
-        if(btn) {
+        if (btn) {
             btn.setStyle('color', color);
         }
     },
@@ -4758,7 +4815,7 @@ Ext.define('Admin.view.WizardPanel', {
     },
     bindItemListeners: function (cmp) {
         Ext.each(cmp.validateItems, function (validateItem, i) {
-            if(validateItem) {
+            if (validateItem) {
                 validateItem.on({
                     'validitychange': cmp.handleValidityChange,
                     'dirtychange': cmp.handleDirtyChange,
@@ -4770,15 +4827,15 @@ Ext.define('Admin.view.WizardPanel', {
             panel.getForm().checkValidity();
         };
         cmp.wizard.items.each(function (item, i) {
-            if(i === 0) {
+            if (i === 0) {
                 cmp.onAnimationFinished(item, null);
             }
-            if('editUserFormPanel' === item.getXType()) {
+            if ('editUserFormPanel' === item.getXType()) {
                 item.on('fieldsloaded', checkValidityFn);
             }
             var itemForm = Ext.isFunction(item.getForm) ? item.getForm() : undefined;
-            if(itemForm) {
-                if(Ext.isFunction(cmp.washDirtyForm)) {
+            if (itemForm) {
+                if (Ext.isFunction(cmp.washDirtyForm)) {
                     cmp.washDirtyForm(itemForm);
                 }
                 Ext.apply(itemForm, {
@@ -4797,11 +4854,11 @@ Ext.define('Admin.view.WizardPanel', {
     formOnValidityChange: function () {
         var wizardPanel = this.owner.up('wizardPanel');
         var boundItems = wizardPanel.getFormBoundItems(this);
-        if(boundItems && this.owner === wizardPanel.getActiveItem()) {
+        if (boundItems && this.owner === wizardPanel.getActiveItem()) {
             var valid = wizardPanel.isStepValid(this.owner);
             boundItems.each(function (cmp) {
-                if(cmp.rendered && cmp.isHidden() === valid) {
-                    if(valid) {
+                if (cmp.rendered && cmp.isHidden() === valid) {
+                    if (valid) {
                         cmp.show();
                     } else {
                         cmp.hide();
@@ -4812,7 +4869,7 @@ Ext.define('Admin.view.WizardPanel', {
     },
     getFormBoundItems: function (form) {
         var boundItems = form._boundItems;
-        if(!boundItems && form.owner.rendered) {
+        if (!boundItems && form.owner.rendered) {
             boundItems = form._boundItems = Ext.create('Ext.util.MixedCollection');
             boundItems.addAll(form.owner.query('[formBind]'));
             boundItems.addAll(this.boundItems);
@@ -4820,31 +4877,31 @@ Ext.define('Admin.view.WizardPanel', {
         return boundItems;
     },
     handleValidityChange: function (form, valid, opts) {
-        if(!valid) {
+        if (!valid) {
             Ext.Array.include(this.invalidItems, form);
         } else {
             Ext.Array.remove(this.invalidItems, form);
         }
         this.updateProgress();
         var isWizardValid = this.invalidItems.length === 0;
-        if(this.isWizardValid !== isWizardValid) {
+        if (this.isWizardValid !== isWizardValid) {
             this.isWizardValid = isWizardValid;
             var actionButton = this.getActionButton();
-            if(actionButton) {
+            if (actionButton) {
                 actionButton.setVisible(isWizardValid);
             }
             this.fireEvent('validitychange', this, isWizardValid);
         }
     },
     handleDirtyChange: function (form, dirty, opts) {
-        if(dirty) {
+        if (dirty) {
             Ext.Array.include(this.dirtyItems, form);
         } else {
             Ext.Array.remove(this.dirtyItems, form);
         }
         this.updateProgress();
         var isWizardDirty = this.dirtyItems.length > 0;
-        if(this.isWizardDirty !== isWizardDirty) {
+        if (this.isWizardDirty !== isWizardDirty) {
             this.isWizardDirty = isWizardDirty;
             this.fireEvent('dirtychange', this, isWizardDirty);
         }
@@ -4853,10 +4910,10 @@ Ext.define('Admin.view.WizardPanel', {
         var isStepValid = Ext.Array.intersect(this.invalidItems, this.validateItems).length === 0;
         var activeStep = step || this.getActiveItem();
         var activeForm;
-        if(activeStep && Ext.isFunction(activeStep.getForm)) {
+        if (activeStep && Ext.isFunction(activeStep.getForm)) {
             activeForm = activeStep.getForm();
         }
-        if(isStepValid && activeForm) {
+        if (isStepValid && activeForm) {
             isStepValid = isStepValid && !activeForm.hasInvalidField();
         }
         return isStepValid;
@@ -4865,7 +4922,11 @@ Ext.define('Admin.view.WizardPanel', {
         return this.down('#progressBar');
     },
     createRibbon: function () {
-        var Templates_common_wizardPanelSteps = '<div class="navigation-container">' + '<ul class="navigation clearfix">' + '<tpl for=".">' + '<li class="{[ this.resolveClsName( xindex, xcount ) ]}" wizardStep="{[xindex]}">' + '<a href="javascript:;" class="step {[ this.resolveClsName( xindex, xcount ) ]}">{[' + '(values.stepTitle || values.title) ]}</a></li>' + '</tpl>' + '</ul>' + '</div>';
+        var Templates_common_wizardPanelSteps = '<div class="navigation-container">' + '<ul class="navigation clearfix">' +
+                                                '<tpl for=".">' +
+                                                '<li class="{[ this.resolveClsName( xindex, xcount ) ]}" wizardStep="{[xindex]}">' +
+                                                '<a href="javascript:;" class="step {[ this.resolveClsName( xindex, xcount ) ]}">{[' +
+                                                '(values.stepTitle || values.title) ]}</a></li>' + '</tpl>' + '</ul>' + '</div>';
         var me = this;
         return {
             xtype: 'component',
@@ -4887,25 +4948,25 @@ Ext.define('Admin.view.WizardPanel', {
                 resolveClsName: function (index, total) {
                     var activeIndex = me.wizard.items.indexOf(me.getActiveItem()) + 1;
                     var clsName = '';
-                    if(index === 1) {
+                    if (index === 1) {
                         clsName += 'first ';
                     }
-                    if(index < activeIndex) {
+                    if (index < activeIndex) {
                         clsName += 'previous ';
                     }
-                    if(index + 1 === activeIndex) {
+                    if (index + 1 === activeIndex) {
                         clsName += 'immediate ';
                     }
-                    if(index === activeIndex) {
+                    if (index === activeIndex) {
                         clsName += 'current ';
                     }
-                    if(index > activeIndex) {
+                    if (index > activeIndex) {
                         clsName += 'next ';
                     }
-                    if(index - 1 === activeIndex) {
+                    if (index - 1 === activeIndex) {
                         clsName += 'immediate ';
                     }
-                    if(index === total) {
+                    if (index === total) {
                         clsName += 'last ';
                     }
                     return clsName;
@@ -4914,27 +4975,27 @@ Ext.define('Admin.view.WizardPanel', {
         };
     },
     onAnimationStarted: function (newStep, oldStep) {
-        if(this.showControls) {
+        if (this.showControls) {
             this.updateButtons(this.wizard, true);
         }
-        if(this.externalControls) {
+        if (this.externalControls) {
             this.updateButtons(this.externalControls, true);
         }
     },
     onAnimationFinished: function (newStep, oldStep) {
-        if(newStep) {
+        if (newStep) {
             this.updateProgress(newStep);
             this.focusFirstField(newStep);
             this.fireEvent("stepchanged", this, oldStep, newStep);
-            if(this.showControls) {
+            if (this.showControls) {
                 this.updateButtons(this.wizard);
             }
-            if(this.externalControls) {
+            if (this.externalControls) {
                 this.updateButtons(this.externalControls);
             }
-            if(Ext.isFunction(newStep.getForm)) {
+            if (Ext.isFunction(newStep.getForm)) {
                 var newForm = newStep.getForm();
-                if(newForm) {
+                if (newForm) {
                     newForm.onValidityChange(this.isStepValid(newStep));
                 }
             }
@@ -4945,26 +5006,26 @@ Ext.define('Admin.view.WizardPanel', {
     focusFirstField: function (newStep) {
         var activeItem = newStep || this.getActiveItem();
         var firstField;
-        if(activeItem && (firstField = activeItem.down('field[disabled=false]'))) {
+        if (activeItem && (firstField = activeItem.down('field[disabled=false]'))) {
             firstField.focus(false);
-            if(firstField.rendered && firstField.selectText) {
+            if (firstField.rendered && firstField.selectText) {
                 firstField.selectText(0, 0);
             }
         }
     },
     updateButtons: function (toolbar, disable) {
-        if(toolbar) {
+        if (toolbar) {
             var prev = this.down('#prev'), next = this.down('#next');
             var hasNext = this.getNext(), hasPrev = this.getPrev();
-            if(prev) {
-                if(disable || !hasPrev) {
+            if (prev) {
+                if (disable || !hasPrev) {
                     prev.hide();
                 } else {
                     prev.show();
                 }
             }
-            if(next) {
-                if(disable || !hasNext) {
+            if (next) {
+                if (disable || !hasNext) {
                     next.hide();
                 } else {
                     next.show();
@@ -4980,7 +5041,8 @@ Ext.define('Admin.view.WizardPanel', {
         var isNew = this.isNew;
         var isDisabled = progressBar.isDisabled();
         var li = target && target.tagName === "LI" ? Ext.fly(target) : Ext.fly(target).up('li');
-        if((!isDisabled && isNew && li && li.hasCls('next') && li.hasCls('immediate')) || (!isDisabled && !isNew) || (isDisabled && !isNew && li && !li.hasCls('last')) || (li && li.hasCls('previous'))) {
+        if ((!isDisabled && isNew && li && li.hasCls('next') && li.hasCls('immediate')) || (!isDisabled && !isNew) ||
+            (isDisabled && !isNew && li && !li.hasCls('last')) || (li && li.hasCls('previous'))) {
             var step = Number(li.getAttribute('wizardStep'));
             this.navigate(step - 1);
         }
@@ -5007,12 +5069,12 @@ Ext.define('Admin.view.WizardPanel', {
                     tdAttrs: {
                         style: 'padding-right: 10px'
                     }
-                }), 
+                }),
                 Ext.applyIf(this.createWizardHeader(), {
                     tdAttrs: {
                         width: '100%'
                     }
-                }), 
+                }),
                 {
                     itemId: 'positionPanel',
                     xtype: 'container',
@@ -5029,7 +5091,7 @@ Ext.define('Admin.view.WizardPanel', {
                     items: [
                         Ext.applyIf(this.createRibbon(), {
                             flex: 1
-                        }), 
+                        }),
                         Ext.apply(this.createActionButton(), {
                             itemId: 'actionButton',
                             ui: 'green',
@@ -5064,50 +5126,50 @@ Ext.define('Admin.view.WizardPanel', {
     },
     navigate: function (direction, btn) {
         var oldStep = this.getActiveItem();
-        if(btn) {
+        if (btn) {
             this.externalControls = btn.up('toolbar');
         }
-        if(this.fireEvent("beforestepchanged", this, oldStep) !== false) {
+        if (this.fireEvent("beforestepchanged", this, oldStep) !== false) {
             var newStep;
-            switch(direction) {
-                case "-1":
-                case "prev":
-                    if(this.getPrev()) {
-                        newStep = this.wizard.getLayout().prev();
-                    }
-                    break;
-                case "+1":
-                case "next":
-                    if(this.getNext()) {
-                        newStep = this.wizard.getLayout().next();
-                    } else {
-                        this.finish();
-                    }
-                    break;
-                default:
-                    newStep = this.wizard.getLayout().setActiveItem(direction);
-                    break;
+            switch (direction) {
+            case "-1":
+            case "prev":
+                if (this.getPrev()) {
+                    newStep = this.wizard.getLayout().prev();
+                }
+                break;
+            case "+1":
+            case "next":
+                if (this.getNext()) {
+                    newStep = this.wizard.getLayout().next();
+                } else {
+                    this.finish();
+                }
+                break;
+            default:
+                newStep = this.wizard.getLayout().setActiveItem(direction);
+                break;
             }
         }
     },
     addData: function (newValues) {
-        if(Ext.isEmpty(this.data)) {
+        if (Ext.isEmpty(this.data)) {
             this.data = {
             };
         }
         Ext.merge(this.data, newValues);
     },
     deleteData: function (key) {
-        if(key) {
+        if (key) {
             delete this.data[key];
         }
     },
     getData: function () {
         var me = this;
         me.wizard.items.each(function (item) {
-            if(item.getData) {
+            if (item.getData) {
                 me.addData(item.getData());
-            } else if(item.getForm) {
+            } else if (item.getForm) {
                 me.addData(item.getForm().getFieldValues());
             }
         });
@@ -5127,13 +5189,13 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemOccurrencesHandler', {
     handleOccurrences: function (minimum) {
         this.addEvents('copyadded', 'copyremoved');
         this.enableBubble('copyadded', 'copyremoved');
-        if(Ext.isEmpty(this.value) && this.copyNo < minimum) {
+        if (Ext.isEmpty(this.value) && this.copyNo < minimum) {
             this.addCopy();
         } else {
             var value = this.value;
-            if(value instanceof Array && value.length > 0) {
+            if (value instanceof Array && value.length > 0) {
                 this.setValue(value[0].value);
-                if(value.length > 1) {
+                if (value.length > 1) {
                     this.addCopy(value.slice(1));
                 }
             }
@@ -5150,7 +5212,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemOccurrencesHandler', {
         clone.prevField = this;
         var me = this;
         var index = parent.items.findIndexBy(function (item) {
-            if(item.getItemId() === me.getItemId()) {
+            if (item.getItemId() === me.getItemId()) {
                 return true;
             }
             return false;
@@ -5162,13 +5224,13 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemOccurrencesHandler', {
     removeCopy: function () {
         var parent = this.up();
         var linkedField = this.prevField || this.nextField;
-        if(this.prevField) {
+        if (this.prevField) {
             this.prevField.nextField = this.nextField;
         }
-        if(this.nextField) {
+        if (this.nextField) {
             this.nextField.prevField = this.prevField;
         }
-        if(linkedField) {
+        if (linkedField) {
             linkedField.updateCopyNo();
         }
         this.fireEvent('copyremoved', this);
@@ -5176,12 +5238,12 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemOccurrencesHandler', {
         return linkedField;
     },
     updateCopyNo: function () {
-        if(this.prevField) {
+        if (this.prevField) {
             this.copyNo = this.prevField.copyNo + 1;
         } else {
             this.copyNo = 1;
         }
-        if(this.nextField) {
+        if (this.nextField) {
             this.nextField.updateCopyNo();
         }
     }
@@ -5206,7 +5268,7 @@ Ext.define('Admin.view.contentManager.wizard.form.ImagePopupDialog', {
                 tpl: this.tpl,
                 itemId: 'messageBox',
                 data: this.buildTemplateData(this.data)
-            }, 
+            },
             {
                 layout: {
                     type: 'hbox',
@@ -5223,7 +5285,7 @@ Ext.define('Admin.view.contentManager.wizard.form.ImagePopupDialog', {
                         listeners: {
                             click: this.editHandler
                         }
-                    }, 
+                    },
                     {
                         xtype: 'button',
                         text: 'Remove',
@@ -5267,7 +5329,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
         });
     },
     addComponent: function (component, parentComponent) {
-        if(this.componentIsContainer(parentComponent)) {
+        if (this.componentIsContainer(parentComponent)) {
             parentComponent.add(component);
         } else {
             parentComponent.items.push(component);
@@ -5295,7 +5357,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
     },
     createInputComponent: function (inputConfig, inputData) {
         var classAlias = 'widget.' + inputConfig.type.name;
-        if(!this.formItemIsSupported(classAlias)) {
+        if (!this.formItemIsSupported(classAlias)) {
             console.error('Unsupported input type', inputConfig);
             return;
         }
@@ -5306,7 +5368,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
             inputConfig: inputConfig,
             value: inputData
         });
-        if(!inputComponent.defaultOccurrencesHandling) {
+        if (!inputComponent.defaultOccurrencesHandling) {
             inputComponent.setFieldLabel(this.generateLabelHTML(inputConfig));
             return inputComponent;
         } else {
@@ -5329,20 +5391,21 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
     },
     generateLabelHTML: function (inputConfig) {
         var label = inputConfig.label;
-        if(inputConfig.occurrences.minimum > 0) {
-            var requiredTitle = "Minimum " + inputConfig.occurrences.minimum + ' ' + (inputConfig.occurrences.minimum == 1 ? 'occurrence is' : 'occurrences are') + ' required';
+        if (inputConfig.occurrences.minimum > 0) {
+            var requiredTitle = "Minimum " + inputConfig.occurrences.minimum + ' ' +
+                                (inputConfig.occurrences.minimum == 1 ? 'occurrence is' : 'occurrences are') + ' required';
             label += ' <sup style="color: #E32400" title="' + requiredTitle + '">*</sup>';
         }
         return label;
     },
     getDataForConfig: function (formItemConfig, dataSet) {
         var key, data = [];
-        if(formItemConfig.type === 'FieldSet') {
+        if (formItemConfig.type === 'FieldSet') {
             return dataSet;
         }
-        for(key in dataSet) {
-            if(dataSet.hasOwnProperty(key)) {
-                if(formItemConfig.name === dataSet[key].name) {
+        for (key in dataSet) {
+            if (dataSet.hasOwnProperty(key)) {
+                if (formItemConfig.name === dataSet[key].name) {
                     data.push(dataSet[key]);
                 }
             }
@@ -5351,8 +5414,8 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
     },
     constructCreationFunction: function (formItemConfig) {
         var key;
-        for(key in formItemConfig) {
-            if(formItemConfig.hasOwnProperty(key)) {
+        for (key in formItemConfig) {
+            if (formItemConfig.hasOwnProperty(key)) {
                 return this["create" + key + "Component"];
             }
         }
@@ -5361,8 +5424,8 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
     },
     getFormItemConfig: function (formItemConfig) {
         var key;
-        for(key in formItemConfig) {
-            if(formItemConfig.hasOwnProperty(key)) {
+        for (key in formItemConfig) {
+            if (formItemConfig.hasOwnProperty(key)) {
                 return formItemConfig[key];
             }
         }
@@ -5372,7 +5435,8 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
         return Ext.ClassManager.getByAlias(classAlias);
     },
     componentIsContainer: function (component) {
-        return component.getXType() === 'FormItemSet' || component.getXType() === 'FieldSetLayout' || component.getXType() === 'fieldcontainer' || component.getXType() === 'container';
+        return component.getXType() === 'FormItemSet' || component.getXType() === 'FieldSetLayout' ||
+               component.getXType() === 'fieldcontainer' || component.getXType() === 'container';
     }
 });
 Ext.define('Admin.view.contentManager.wizard.form.FieldSetLayout', {
@@ -5417,7 +5481,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemContainer', {
         this.maxFields = this.field.getConfig().occurrences.maximum;
         this.minFields = this.field.getConfig().occurrences.minimum;
         this.items = [
-            this.label, 
+            this.label,
             {
                 xtype: 'panel',
                 itemId: 'formItemsPanel',
@@ -5452,10 +5516,10 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemContainer', {
     getValue: function () {
         var value = [];
         var formItemsPanel = this.down('#formItemsPanel');
-        if(formItemsPanel) {
+        if (formItemsPanel) {
             formItemsPanel.items.each(function (formItem) {
                 var formItemValue = formItem.getValue();
-                if(formItemValue instanceof Array) {
+                if (formItemValue instanceof Array) {
                     value = value.concat(formItemValue);
                 } else {
                     value.push(formItemValue);
@@ -5469,7 +5533,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.FormItemSet',
     requires: [
-        'Admin.lib.Sortable', 
+        'Admin.lib.Sortable',
         'Admin.lib.UriHelper'
     ],
     mixins: {
@@ -5505,8 +5569,9 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
         var me = this;
         var requiredTitle = '';
         var requiredMark = '';
-        if(this.formItemSetConfig.occurrences.minimum > 0) {
-            requiredTitle = "Minimum " + this.formItemSetConfig.occurrences.minimum + ' ' + (this.formItemSetConfig.occurrences.minimum == 1 ? 'occurrence is' : 'occurrences are') + ' required';
+        if (this.formItemSetConfig.occurrences.minimum > 0) {
+            requiredTitle = "Minimum " + this.formItemSetConfig.occurrences.minimum + ' ' +
+                            (this.formItemSetConfig.occurrences.minimum == 1 ? 'occurrence is' : 'occurrences are') + ' required';
             requiredMark = '<sub title="' + requiredTitle + '">*</sub>';
         }
         var label = {
@@ -5529,7 +5594,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
             }
         };
         var items = closable ? [
-            label, 
+            label,
             removeBtn
         ] : [
             label
@@ -5568,9 +5633,9 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
         var value = [];
         var me = this;
         me.items.each(function (item, index) {
-            if(item.getValue) {
+            if (item.getValue) {
                 var currentItemValue = item.getValue();
-                if(currentItemValue instanceof Array) {
+                if (currentItemValue instanceof Array) {
                     Ext.each(currentItemValue, function (itemValue) {
                         itemValue.path = me.name.concat('[', me.copyNo - 1, ']', '.', itemValue.path);
                     });
@@ -5598,12 +5663,12 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSetContainer', {
         var formItemsPanel = this.down('#formItemsPanel');
         var addButton = this.down('#addButton');
         var collapseButton = this.down('#collapseButton');
-        if(formItemsPanel) {
+        if (formItemsPanel) {
             var last = formItemsPanel.items.last();
-            if(addButton) {
+            if (addButton) {
                 addButton.setDisabled(last && last.copyNo === this.maxFields);
             }
-            if(collapseButton) {
+            if (collapseButton) {
                 collapseButton.setVisible(formItemsPanel.items.getCount() > 0);
             }
         }
@@ -5622,7 +5687,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSetContainer', {
             handler: function () {
                 var formItemsPanel = me.down('#formItemsPanel');
                 var last = formItemsPanel.items.last();
-                if(last) {
+                if (last) {
                     last.addCopy();
                 } else {
                     formItemsPanel.add(me.field.cloneConfig());
@@ -5654,9 +5719,9 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSetContainer', {
             },
             html: '<span class="admin-text-button admin-collapse-all-button" href="javascript:;">Collapse</span>'
         };
-        if((this.minFields !== this.maxFields) || (this.maxFields === 0)) {
+        if ((this.minFields !== this.maxFields) || (this.maxFields === 0)) {
             return [
-                addButton, 
+                addButton,
                 collapseButton
             ];
         } else {
@@ -5672,14 +5737,14 @@ Ext.define('Admin.view.contentManager.wizard.form.InputContainer', {
     updateControlsState: function () {
         var formItemsPanel = this.down('#formItemsPanel');
         var addButton = this.down('#addButton');
-        if(formItemsPanel && addButton) {
+        if (formItemsPanel && addButton) {
             var last = formItemsPanel.items.last();
             addButton.setDisabled(last && last.copyNo === this.maxFields);
         }
     },
     createControls: function () {
         var me = this;
-        if((this.maxFields > 1 && this.minFields !== this.maxFields) || (this.maxFields === 0)) {
+        if ((this.maxFields > 1 && this.minFields !== this.maxFields) || (this.maxFields === 0)) {
             return [
                 {
                     xtype: 'button',
@@ -5690,7 +5755,7 @@ Ext.define('Admin.view.contentManager.wizard.form.InputContainer', {
                         click: function () {
                             var formItemsPanel = me.down('#formItemsPanel');
                             var last = formItemsPanel.items.last();
-                            if(last) {
+                            if (last) {
                                 last.addCopy();
                             } else {
                                 formItemsPanel.add(me.field.cloneConfig());
@@ -5720,7 +5785,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
     defaultOccurrencesHandling: true,
     listeners: {
         beforerender: function () {
-            if(this.defaultOccurrencesHandling) {
+            if (this.defaultOccurrencesHandling) {
                 this.handleOccurrences(this.inputConfig.occurrences.minimum);
             }
         },
@@ -5735,7 +5800,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
         this.defaults = {
             width: 500
         };
-        if(this.defaultOccurrencesHandling && this.inputConfig.occurrences.maximum !== 1) {
+        if (this.defaultOccurrencesHandling && this.inputConfig.occurrences.maximum !== 1) {
             this.items.push(this.createDeleteButton());
         }
         this.callParent(arguments);
@@ -5761,7 +5826,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
             listeners: {
                 click: function () {
                     var remainElement = element.removeCopy();
-                    if(remainElement) {
+                    if (remainElement) {
                         remainElement.updateButtonState();
                     }
                 }
@@ -5770,18 +5835,18 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
     },
     setButtonDisabled: function (disabled) {
         var button = this.down('#add-delete-button');
-        if(button) {
+        if (button) {
             button.setDisabled(disabled);
         }
     },
     updateButtonState: function () {
         var totalCount = 1;
         var tmp = this;
-        while(tmp.prevField) {
+        while (tmp.prevField) {
             tmp = tmp.prevField;
         }
         var root = tmp;
-        while(tmp.nextField) {
+        while (tmp.nextField) {
             tmp = tmp.nextField;
             totalCount++;
         }
@@ -5790,7 +5855,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
     updateButtonStateInternal: function (totalCount) {
         var min = this.inputConfig.occurrences.minimum;
         this.setButtonDisabled(totalCount === min && this.copyNo !== totalCount);
-        if(this.nextField) {
+        if (this.nextField) {
             this.nextField.updateButtonStateInternal(totalCount);
         }
     },
@@ -5804,7 +5869,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.HtmlArea', {
     initComponent: function () {
         var me = this;
         me.items = [
-            me.createEditor(), 
+            me.createEditor(),
             me.createHiddenInput()
         ];
         me.callParent();
@@ -5826,7 +5891,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.HtmlArea', {
     },
     setContentEditableHtml: function (html) {
         var me = this, ce = me.getContentEditable();
-        if(ce) {
+        if (ce) {
             ce.getEl().setHTML(html);
         }
     },
@@ -5846,7 +5911,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.HtmlArea', {
             xtype: 'container',
             layout: 'vbox',
             items: [
-                me.createToolbar(), 
+                me.createToolbar(),
                 me.createContentEditableDiv()
             ]
         };
@@ -5879,10 +5944,10 @@ Ext.define('Admin.view.contentManager.wizard.form.input.HtmlArea', {
                 render: function (component) {
                     component.el.on('DOMSubtreeModified', function (event) {
                         var height = component.getHeight();
-                        if(height !== component.currentHeight) {
+                        if (height !== component.currentHeight) {
                             component.currentHeight = height;
                             var parent = component.up();
-                            if(Ext.isFunction(parent.doComponentLayout)) {
+                            if (Ext.isFunction(parent.doComponentLayout)) {
                                 parent.doComponentLayout();
                             }
                         }
@@ -5930,9 +5995,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
     initComponent: function () {
         var me = this;
         me.items = [
-            me.createUploadForm(), 
-            me.createProgressForm(), 
-            me.createLoadingForm(), 
+            me.createUploadForm(),
+            me.createProgressForm(),
+            me.createLoadingForm(),
             me.createImageForm()
         ];
         me.listeners = {
@@ -5940,7 +6005,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             scope: me
         };
         me.callParent(arguments);
-        if(me.value && me.value.length > 0) {
+        if (me.value && me.value.length > 0) {
             me.on('beforerender', function () {
                 me.setValue(me.value);
             });
@@ -5962,7 +6027,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                     emptyText: 'Paste URL to image here',
                     margin: '0 0 5 0',
                     enableKeyEvents: true
-                }, 
+                },
                 {
                     flex: 1,
                     xtype: 'component',
@@ -5988,11 +6053,12 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                 {
                     itemId: 'progressBar',
                     width: 500,
-                    tpl: '<h3>{percent}% complete</h3>' + '<div class="admin-progress-bar"><div class="admin-progress" style="width: {percent}%;"></div></div>',
+                    tpl: '<h3>{percent}% complete</h3>' +
+                         '<div class="admin-progress-bar"><div class="admin-progress" style="width: {percent}%;"></div></div>',
                     data: {
                         percent: 0
                     }
-                }, 
+                },
                 {
                     xtype: 'button',
                     text: 'Cancel',
@@ -6031,13 +6097,13 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                     itemId: 'image',
                     xtype: 'component',
                     tpl: [
-                        '<tpl for=".">', 
-                        '<div class="admin-image-form">', 
-                        '<img src="{iconUrl}?size=500" alt="test image"/>', 
-                        '</div>', 
+                        '<tpl for=".">',
+                        '<div class="admin-image-form">',
+                        '<img src="{iconUrl}?size=500" alt="test image"/>',
+                        '</div>',
                         '</tpl>'
                     ]
-                }, 
+                },
                 {
                     xtype: 'container',
                     layout: {
@@ -6060,7 +6126,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                                     scope: me
                                 }
                             }
-                        }, 
+                        },
                         {
                             xtype: 'button',
                             text: 'Remove',
@@ -6099,7 +6165,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             dropZoneEl.update('<h4>' + (!!up.features.dragdrop ? 'Drop files here or click to select' : 'Click to select') + '</h4>');
         });
         me.uploader.bind('QueueChanged', function (up) {
-            if(up.files.length == 1) {
+            if (up.files.length == 1) {
                 up.start();
             }
         });
@@ -6116,9 +6182,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             container.getLayout().setActiveItem('uploadForm');
         }, me);
         me.uploader.bind('FileUploaded', function (up, file, response) {
-            if(response && response.response) {
+            if (response && response.response) {
                 var json = Ext.JSON.decode(response.response);
-                if(json.success && json.items && json.items.length == 1) {
+                if (json.success && json.items && json.items.length == 1) {
                     file.response = json.items[0];
                 }
             }
@@ -6148,7 +6214,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                     ]
                 };
                 Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
-                    if(getContentResponse && getContentResponse.success) {
+                    if (getContentResponse && getContentResponse.success) {
                         var contentData = getContentResponse.content[0];
                         var contentModel = new Admin.model.contentManager.ContentModel(contentData);
                         callback(contentModel);
@@ -6162,7 +6228,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             'uploadFileId': fileUploadId
         };
         Admin.lib.RemoteService.binary_create(createBinaryCommand, function (response) {
-            if(response && response.success) {
+            if (response && response.success) {
                 callback(response.binaryId);
             } else {
                 Ext.Msg.alert("Error", response ? response.error : "Unable to create binary content.");
@@ -6180,7 +6246,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             "temporary": true
         };
         Admin.lib.RemoteService.content_createOrUpdate(createContentCommand, function (response) {
-            if(response && response.success) {
+            if (response && response.success) {
                 callback(response.contentId);
             } else {
                 Ext.Msg.alert("Error", response ? response.error : "Unable to create image content.");
@@ -6199,7 +6265,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
     },
     getValue: function () {
         var me = this;
-        if(!me.imageModel) {
+        if (!me.imageModel) {
             return null;
         }
         return {
@@ -6216,7 +6282,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         };
         me.getLayout().setActiveItem('loadingForm');
         Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
-            if(getContentResponse && getContentResponse.success) {
+            if (getContentResponse && getContentResponse.success) {
                 var contentData = getContentResponse.content[0];
                 var contentModel = new Admin.model.contentManager.ContentModel(contentData);
                 me.imageModel = contentModel;
@@ -6229,8 +6295,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
     extend: 'Admin.view.contentManager.wizard.form.input.Base',
     alias: 'widget.ImageSelector',
     requires: [
-        'Admin.store.contentManager.ContentStore', 
-        'Admin.view.FileUploadWindow', 
+        'Admin.store.contentManager.ContentStore',
+        'Admin.view.FileUploadWindow',
         'Admin.view.contentManager.wizard.form.ImagePopupDialog'
     ],
     defaultOccurrencesHandling: false,
@@ -6239,21 +6305,21 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
         this.selectedContentStore = this.createSelectedContentStore();
         this.selectedDataView = this.createViewForSelectedContent();
         this.items = [
-            this.createHiddenInput(), 
-            this.createComboBox(), 
-            this.createOpenLibraryButton(), 
-            this.createUploadButton(), 
+            this.createHiddenInput(),
+            this.createComboBox(),
+            this.createOpenLibraryButton(),
+            this.createUploadButton(),
             this.selectedDataView
         ];
-        if(this.inputConfig && this.inputConfig.type && this.inputConfig.type.config) {
+        if (this.inputConfig && this.inputConfig.type && this.inputConfig.type.config) {
             var getRelationshipTypeCommand = {
                 qualifiedRelationshipTypeName: this.inputConfig.type.config.relationshipType,
                 format: 'JSON'
             };
             Admin.lib.RemoteService.relationshipType_get(getRelationshipTypeCommand, function (response) {
-                if(response && response.success) {
+                if (response && response.success) {
                     var iconUrl = response.relationshipType.iconUrl;
-                    if(me.rendered) {
+                    if (me.rendered) {
                         var relationshipTypeIcon = me.el.down('.admin-image-icon');
                         relationshipTypeIcon.set({
                             'src': iconUrl
@@ -6272,13 +6338,13 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
     },
     getValue: function () {
         var value = this.items.items[0].getValue();
-        if(value && Ext.isString(value)) {
+        if (value && Ext.isString(value)) {
             value = value.split(',');
         } else {
             return [];
         }
         var valueList = [];
-        for(var i = 0; i < value.length; i++) {
+        for (var i = 0; i < value.length; i++) {
             var currentItemValue = {
                 'path': this.name.concat('[', i, ']'),
                 'value': value[i]
@@ -6293,7 +6359,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
             contentIds: Ext.Array.pluck(values, 'value')
         };
         Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
-            if(getContentResponse && getContentResponse.success) {
+            if (getContentResponse && getContentResponse.success) {
                 Ext.each(getContentResponse.content, function (contentData) {
                     var contentModel = new Admin.model.contentManager.ContentModel(contentData);
                     me.selectedContentStore.add(contentModel);
@@ -6310,12 +6376,12 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
             listeners: {
                 datachanged: function (store) {
                     me.updateHiddenValue();
-                    if(me.contentStore) {
+                    if (me.contentStore) {
                         me.contentStore.clearFilter(true);
                         me.contentStore.filter({
                             filterFn: function (content) {
                                 var existing = me.selectedContentStore.findRecord('id', content.get('id'));
-                                if(existing) {
+                                if (existing) {
                                     content.set('grayedOutComboItem', 'admin-inputimage-combo-grayed-out-item');
                                 } else {
                                     content.set('grayedOutComboItem', '');
@@ -6324,9 +6390,11 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
                             }
                         });
                     }
-                    try  {
-                        me.down('combobox').setDisabled(me.selectedContentStore.getCount() === me.contentTypeItemConfig.occurrences.maximum);
-                    } catch (exception) {
+                    try {
+                        me.down('combobox').setDisabled(me.selectedContentStore.getCount() ===
+                                                        me.contentTypeItemConfig.occurrences.maximum);
+                    }
+                    catch (exception) {
                     }
                 }
             }
@@ -6343,34 +6411,34 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
     createComboBox: function () {
         var me = this;
         var fieldTpl = [
-            '<div class="{hiddenDataCls}" role="presentation"></div>', 
-            '<input id="{id}" type="{type}" {inputAttrTpl} class="{fieldCls} {typeCls} {editableCls}" autocomplete="off"', 
-            '<tpl if="value"> value="{[Ext.util.Format.htmlEncode(values.value)]}"</tpl>', 
-            '<tpl if="name"> name="{name}"</tpl>', 
-            '<tpl if="placeholder"> placeholder="{placeholder}"</tpl>', 
-            '<tpl if="size"> size="{size}"</tpl>', 
-            '<tpl if="maxLength !== undefined"> maxlength="{maxLength}"</tpl>', 
-            '<tpl if="readOnly"> readonly="readonly"</tpl>', 
-            '<tpl if="disabled"> disabled="disabled"</tpl>', 
-            '<tpl if="tabIdx"> tabIndex="{tabIdx}"</tpl>', 
-            '<tpl if="fieldStyle"> style="{fieldStyle}"</tpl>', 
-            '/>', 
-            '<img src="{relationshipTypeIconUrl}" class="admin-image-icon"/>', 
+            '<div class="{hiddenDataCls}" role="presentation"></div>',
+            '<input id="{id}" type="{type}" {inputAttrTpl} class="{fieldCls} {typeCls} {editableCls}" autocomplete="off"',
+            '<tpl if="value"> value="{[Ext.util.Format.htmlEncode(values.value)]}"</tpl>',
+            '<tpl if="name"> name="{name}"</tpl>',
+            '<tpl if="placeholder"> placeholder="{placeholder}"</tpl>',
+            '<tpl if="size"> size="{size}"</tpl>',
+            '<tpl if="maxLength !== undefined"> maxlength="{maxLength}"</tpl>',
+            '<tpl if="readOnly"> readonly="readonly"</tpl>',
+            '<tpl if="disabled"> disabled="disabled"</tpl>',
+            '<tpl if="tabIdx"> tabIndex="{tabIdx}"</tpl>',
+            '<tpl if="fieldStyle"> style="{fieldStyle}"</tpl>',
+            '/>',
+            '<img src="{relationshipTypeIconUrl}" class="admin-image-icon"/>',
             {
                 compiled: true,
                 disableFormats: true
             }
         ];
         var listItemTpl = [
-            '<tpl for=".">', 
-            '   <div role="option" class="x-boundlist-item {grayedOutComboItem}">', 
-            '       <img src="{iconUrl}?size=32" alt="{displayName}" width="32" height="32"/>', 
-            '       <div class="info">', 
-            '           <h6>{displayName}</h6>', 
-            '           <div style="color: #666">{path}</div>', 
-            '       </div>', 
-            '       <div class="x-clear"></div>', 
-            '   </div>', 
+            '<tpl for=".">',
+            '   <div role="option" class="x-boundlist-item {grayedOutComboItem}">',
+            '       <img src="{iconUrl}?size=32" alt="{displayName}" width="32" height="32"/>',
+            '       <div class="info">',
+            '           <h6>{displayName}</h6>',
+            '           <div style="color: #666">{path}</div>',
+            '       </div>',
+            '       <div class="x-clear"></div>',
+            '   </div>',
             '</tpl>'
         ];
         this.contentStore = new Admin.store.contentManager.ContentStore();
@@ -6447,7 +6515,11 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
     },
     createViewForSelectedContent: function () {
         var me = this;
-        var template = new Ext.XTemplate('<tpl for=".">', '   <div class="admin-inputimage">', '       <img class="image" src="{iconUrl}?size=140&thumbnail=false"/>', '       <div class="loader"></div>', '       <div class="bottom-bar">', '           <h6>{displayName}</h6>', '       </div>', '       <div class="admin-zoom" style="background-image: url({iconUrl}?size=140&thumbnail=false);"></div>', '   </div>', '</tpl>');
+        var template = new Ext.XTemplate('<tpl for=".">', '   <div class="admin-inputimage">',
+            '       <img class="image" src="{iconUrl}?size=140&thumbnail=false"/>', '       <div class="loader"></div>',
+            '       <div class="bottom-bar">', '           <h6>{displayName}</h6>', '       </div>',
+            '       <div class="admin-zoom" style="background-image: url({iconUrl}?size=140&thumbnail=false);"></div>', '   </div>',
+            '</tpl>');
         return Ext.create('Ext.view.View', {
             store: me.selectedContentStore,
             tpl: template,
@@ -6464,14 +6536,14 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
                 itemclick: function (view, contentModel, item, index, e) {
                     var clickedElement = Ext.fly(e.target);
                     var viewEl = view.getEl();
-                    if(clickedElement.hasCls('admin-zoom')) {
+                    if (clickedElement.hasCls('admin-zoom')) {
                         view.getSelectionModel().deselectAll();
                         return false;
                     } else {
                         var offset = (index + 1) % 3 > 0 ? 3 - (index + 1) % 3 : 0;
                         var insertPoint = viewEl.query('.admin-inputimage')[index + offset];
                         var picker = me.createImageDialog(view, contentModel);
-                        if(insertPoint) {
+                        if (insertPoint) {
                             picker.getEl().insertAfter(insertPoint);
                         } else {
                             picker.getEl().insertAfter(viewEl.last());
@@ -6480,7 +6552,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
                 },
                 itemadd: function (contentModel, index, htmlElements) {
                     this.getSelectionModel().deselectAll();
-                    if((index + 1) % 3 === 0) {
+                    if ((index + 1) % 3 === 0) {
                         Ext.fly(htmlElements[0]).addCls('admin-inputimage-last');
                     }
                 },
@@ -6491,19 +6563,19 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
                     me.refreshListLayout();
                 },
                 deselect: function () {
-                    if(me.getImageDialog()) {
+                    if (me.getImageDialog()) {
                         me.getImageDialog().hide();
                         var parent = me.up();
-                        if(Ext.isFunction(parent.doComponentLayout)) {
+                        if (Ext.isFunction(parent.doComponentLayout)) {
                             parent.doComponentLayout();
                         }
                     }
                 },
                 select: function () {
-                    if(me.getImageDialog()) {
+                    if (me.getImageDialog()) {
                         me.getImageDialog().show();
                         var parent = me.up();
-                        if(Ext.isFunction(parent.doComponentLayout)) {
+                        if (Ext.isFunction(parent.doComponentLayout)) {
                             parent.doComponentLayout();
                         }
                     }
@@ -6518,7 +6590,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
         var imageItems = this.selectedDataView.getEl().query('.admin-inputimage');
         Ext.each(imageItems, function (imageItem, index) {
             Ext.fly(imageItem).removeCls('admin-inputimage-last');
-            if((index + 1) % 3 === 0) {
+            if ((index + 1) % 3 === 0) {
                 Ext.fly(imageItem).addCls('admin-inputimage-last');
             }
         });
@@ -6530,7 +6602,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
     updateHiddenValue: function () {
         var me = this;
         var ids = [];
-        if(this.items) {
+        if (this.items) {
             Ext.Array.each(me.selectedContentStore.data.items, function (item) {
                 ids.push(item.data.id);
             });
@@ -6540,7 +6612,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
     onContentSelected: function (contentModels) {
         var contentModel = contentModels[0];
         var isAlreadyAdded = this.selectedContentStore.findRecord('id', contentModel.get('id'));
-        if(isAlreadyAdded) {
+        if (isAlreadyAdded) {
             this.alertContentIsAdded(contentModel);
             return;
         }
@@ -6561,9 +6633,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
         win.close();
     },
     hideLoaderOnImageLoad: function (contentModel) {
-        if(this.selectedDataView) {
+        if (this.selectedDataView) {
             var node = this.selectedDataView.getNode(contentModel);
-            if(node) {
+            if (node) {
                 Ext.fly(node).down('img').on('load', function (event, target, opts) {
                     Ext.fly(target).next('.loader').destroy();
                 });
@@ -6580,7 +6652,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
                     ]
                 };
                 Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
-                    if(getContentResponse && getContentResponse.success) {
+                    if (getContentResponse && getContentResponse.success) {
                         var contentData = getContentResponse.content[0];
                         var contentModel = new Admin.model.contentManager.ContentModel(contentData);
                         callback(contentModel);
@@ -6594,7 +6666,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
             'uploadFileId': fileUploadId
         };
         Admin.lib.RemoteService.binary_create(createBinaryCommand, function (response) {
-            if(response && response.success) {
+            if (response && response.success) {
                 callback(response.binaryId);
             } else {
                 Ext.Msg.alert("Error", response ? response.error : "Unable to create binary content.");
@@ -6612,7 +6684,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
             "temporary": true
         };
         Admin.lib.RemoteService.content_createOrUpdate(createContentCommand, function (response) {
-            if(response && response.success) {
+            if (response && response.success) {
                 callback(response.contentId);
             } else {
                 Ext.Msg.alert("Error", response ? response.error : "Unable to create image content.");
@@ -6621,7 +6693,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
     },
     getFileUploadWindow: function () {
         var win = Ext.ComponentQuery.query('fileUploadWindow')[0];
-        if(!win) {
+        if (!win) {
             win = Ext.create('widget.fileUploadWindow');
             win.on('uploadcomplete', this.onFilesUploaded, this);
         }
@@ -6629,7 +6701,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
     },
     createImageDialog: function (view, model) {
         var me = this;
-        if(this.dialog) {
+        if (this.dialog) {
             this.dialog.updateTpl(model.data);
             return this.dialog;
         } else {
@@ -6639,7 +6711,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
                 removeHandler: function () {
                     var selectionModel = view.getSelectionModel();
                     var selection = selectionModel.getSelection();
-                    if(selection.length > 0) {
+                    if (selection.length > 0) {
                         selectionModel.deselectAll();
                         me.selectedContentStore.remove(selection[0]);
                     }
@@ -6667,20 +6739,20 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
         var me = this;
         me.selectedContentStore = me.createSelectedContentStore();
         me.items = [
-            me.createHiddenInput(), 
-            me.createComboBox(), 
-            me.createOpenLibraryButton(), 
+            me.createHiddenInput(),
+            me.createComboBox(),
+            me.createOpenLibraryButton(),
             me.createViewForSelectedContent()
         ];
-        if(me.inputConfig && me.inputConfig.type && me.inputConfig.type.config) {
+        if (me.inputConfig && me.inputConfig.type && me.inputConfig.type.config) {
             var getRelationshipTypeCommand = {
                 qualifiedRelationshipTypeName: me.inputConfig.type.config.relationshipType,
                 format: 'JSON'
             };
             Admin.lib.RemoteService.relationshipType_get(getRelationshipTypeCommand, function (response) {
-                if(response && response.success) {
+                if (response && response.success) {
                     var iconUrl = response.relationshipType.iconUrl;
-                    if(me.rendered) {
+                    if (me.rendered) {
                         me.el.down('.admin-image-icon').set({
                             'src': iconUrl
                         });
@@ -6704,34 +6776,34 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     createComboBox: function () {
         var me = this;
         var fieldTpl = [
-            '<div class="{hiddenDataCls}" role="presentation"></div>', 
-            '<input id="{id}" type="{type}" {inputAttrTpl} class="{fieldCls} {typeCls} {editableCls}" autocomplete="off"', 
-            '<tpl if="value"> value="{[Ext.util.Format.htmlEncode(values.value)]}"</tpl>', 
-            '<tpl if="name"> name="{name}"</tpl>', 
-            '<tpl if="placeholder"> placeholder="{placeholder}"</tpl>', 
-            '<tpl if="size"> size="{size}"</tpl>', 
-            '<tpl if="maxLength !== undefined"> maxlength="{maxLength}"</tpl>', 
-            '<tpl if="readOnly"> readonly="readonly"</tpl>', 
-            '<tpl if="disabled"> disabled="disabled"</tpl>', 
-            '<tpl if="tabIdx"> tabIndex="{tabIdx}"</tpl>', 
-            '<tpl if="fieldStyle"> style="{fieldStyle}"</tpl>', 
-            '/>', 
-            '<img src="{relationshipTypeIconUrl}" class="admin-image-icon"/>', 
+            '<div class="{hiddenDataCls}" role="presentation"></div>',
+            '<input id="{id}" type="{type}" {inputAttrTpl} class="{fieldCls} {typeCls} {editableCls}" autocomplete="off"',
+            '<tpl if="value"> value="{[Ext.util.Format.htmlEncode(values.value)]}"</tpl>',
+            '<tpl if="name"> name="{name}"</tpl>',
+            '<tpl if="placeholder"> placeholder="{placeholder}"</tpl>',
+            '<tpl if="size"> size="{size}"</tpl>',
+            '<tpl if="maxLength !== undefined"> maxlength="{maxLength}"</tpl>',
+            '<tpl if="readOnly"> readonly="readonly"</tpl>',
+            '<tpl if="disabled"> disabled="disabled"</tpl>',
+            '<tpl if="tabIdx"> tabIndex="{tabIdx}"</tpl>',
+            '<tpl if="fieldStyle"> style="{fieldStyle}"</tpl>',
+            '/>',
+            '<img src="{relationshipTypeIconUrl}" class="admin-image-icon"/>',
             {
                 compiled: true,
                 disableFormats: true
             }
         ];
         var listItemTpl = [
-            '<tpl for=".">', 
-            '   <div role="option" class="x-boundlist-item {grayedOutComboItem}">', 
-            '       <img src="{iconUrl}?size=32" alt="{displayName}" width="32" height="32"/>', 
-            '       <div class="info">', 
-            '           <h6>{displayName}</h6>', 
-            '           <div style="color: #666">{path}</div>', 
-            '       </div>', 
-            '       <div class="x-clear"></div>', 
-            '   </div>', 
+            '<tpl for=".">',
+            '   <div role="option" class="x-boundlist-item {grayedOutComboItem}">',
+            '       <img src="{iconUrl}?size=32" alt="{displayName}" width="32" height="32"/>',
+            '       <div class="info">',
+            '           <h6>{displayName}</h6>',
+            '           <div style="color: #666">{path}</div>',
+            '       </div>',
+            '       <div class="x-clear"></div>',
+            '   </div>',
             '</tpl>'
         ];
         me.contentStore = new Admin.store.contentManager.ContentStore({
@@ -6743,7 +6815,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
         var relationshipTypeName = me.inputConfig.type.config.relationshipType;
         me.remoteGetRelationshipType(relationshipTypeName, function (relationshipType) {
             var allowedContentTypes = relationshipType.allowedToTypes;
-            if(!Ext.isEmpty(allowedContentTypes)) {
+            if (!Ext.isEmpty(allowedContentTypes)) {
                 me.contentStore.proxy.extraParams = {
                     'contentTypes': allowedContentTypes
                 };
@@ -6789,7 +6861,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     onSelectContent: function (contentModels) {
         var contentModel = contentModels[0];
         var isAlreadyAdded = this.selectedContentStore.findRecord('id', contentModel.get('id'));
-        if(isAlreadyAdded) {
+        if (isAlreadyAdded) {
             this.alertContentIsAdded(contentModel);
             return;
         }
@@ -6797,14 +6869,14 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     },
     getValue: function () {
         var value = this.items.items[0].getValue();
-        if(value && Ext.isString(value)) {
+        if (value && Ext.isString(value)) {
             value = value.split(',');
         } else {
             return [];
         }
         var valueList = [];
         var i;
-        for(i = 0; i < value.length; i++) {
+        for (i = 0; i < value.length; i++) {
             var currentItemValue = {
                 'path': this.name.concat('[', i, ']'),
                 'value': value[i]
@@ -6819,7 +6891,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             contentIds: Ext.Array.pluck(values, 'value')
         };
         Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
-            if(getContentResponse && getContentResponse.success) {
+            if (getContentResponse && getContentResponse.success) {
                 Ext.each(getContentResponse.content, function (contentData) {
                     var contentModel = new Admin.model.contentManager.ContentModel(contentData);
                     me.selectedContentStore.add(contentModel);
@@ -6837,12 +6909,12 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             listeners: {
                 datachanged: function (store) {
                     me.updateHiddenValue();
-                    if(me.contentStore) {
+                    if (me.contentStore) {
                         me.contentStore.clearFilter(true);
                         me.contentStore.filter({
                             filterFn: function (content) {
                                 var existing = me.selectedContentStore.findRecord('id', content.get('id'));
-                                if(existing) {
+                                if (existing) {
                                     content.set('grayedOutComboItem', 'admin-relationship-combo-grayed-out-item');
                                 } else {
                                     content.set('grayedOutComboItem', '');
@@ -6851,11 +6923,12 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
                             }
                         });
                     }
-                    try  {
-                        if(max > 0) {
+                    try {
+                        if (max > 0) {
                             me.down('#relationshipCombo').setDisabled(store.getCount() === max);
                         }
-                    } catch (exception) {
+                    }
+                    catch (exception) {
                     }
                 }
             }
@@ -6880,7 +6953,10 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
     createViewForSelectedContent: function () {
         var me = this;
         var min = this.inputConfig.occurrences.minimum;
-        var template = new Ext.XTemplate('<tpl for=".">', '   <div class="admin-related-item">', '       <img src="{iconUrl}" alt="{displayName}" width="32" height="32"/>', '       <span class="center-column">', '           {displayName}', '           <p style="color: #666">{path}</p>', '       </span>', '       <span class="right-column"><a href="javascript:;" class="icon-remove icon-2x"></a></span>', '   </div>', '</tpl>');
+        var template = new Ext.XTemplate('<tpl for=".">', '   <div class="admin-related-item">',
+            '       <img src="{iconUrl}" alt="{displayName}" width="32" height="32"/>', '       <span class="center-column">',
+            '           {displayName}', '           <p style="color: #666">{path}</p>', '       </span>',
+            '       <span class="right-column"><a href="javascript:;" class="icon-remove icon-2x"></a></span>', '   </div>', '</tpl>');
         return Ext.create('Ext.view.View', {
             store: me.selectedContentStore,
             itemId: 'relationshipView',
@@ -6891,7 +6967,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             listeners: {
                 itemclick: function (view, contentModel, item, index, e) {
                     var clickedElement = Ext.fly(e.target);
-                    if(clickedElement.hasCls('icon-remove')) {
+                    if (clickedElement.hasCls('icon-remove')) {
                         me.selectedContentStore.remove(contentModel);
                     }
                 }
@@ -6902,13 +6978,14 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
         alert('Open library now');
     },
     alertContentIsAdded: function (contentModel) {
-        console.log('Temporary alert! Can not have duplicates in Relationship input\n"' + contentModel.get('path') + '" has already been added');
+        console.log('Temporary alert! Can not have duplicates in Relationship input\n"' + contentModel.get('path') +
+                    '" has already been added');
         this.down('combobox').focus('');
     },
     updateHiddenValue: function () {
         var me = this;
         var keys = [];
-        if(this.items) {
+        if (this.items) {
             Ext.Array.each(me.selectedContentStore.getRange(), function (item) {
                 keys.push(item.get('id'));
             });
@@ -6921,7 +6998,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             'format': 'JSON'
         };
         Admin.lib.RemoteService.relationshipType_get(getRelationshipTypeCommand, function (response) {
-            if(response && response.success) {
+            if (response && response.success) {
                 callback(response.relationshipType);
             } else {
                 Ext.Msg.alert("Error", response ? response.error : "Unable to load relationship type");
@@ -6988,43 +7065,43 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
                 text: 'Save',
                 itemId: 'save',
                 action: 'saveContent'
-            }, 
+            },
             {
                 text: 'Preview',
                 itemId: 'preview',
                 action: 'previewContent'
-            }, 
+            },
             {
                 text: 'Publish',
                 itemId: 'publish',
                 action: 'publishContent'
-            }, 
+            },
             {
                 text: 'Delete',
                 itemId: 'delete',
                 action: 'deleteContent'
-            }, 
+            },
             {
                 text: 'Duplicate',
                 itemId: 'duplicate',
                 action: 'duplicateContent'
-            }, 
+            },
             {
                 text: 'Move',
                 itemId: 'move',
                 action: 'moveContent'
-            }, 
+            },
             {
                 text: 'Export',
                 itemId: 'export',
                 action: 'exportContent'
-            }, 
-            '-', 
+            },
+            '-',
             {
                 text: 'Close',
                 action: 'closeWizard'
-            }, 
-            '->', 
+            },
+            '->',
             {
                 xtype: 'toggleslide',
                 onText: 'Live',
@@ -7036,7 +7113,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
                         me.isLiveMode = state;
                     }
                 }
-            }, 
+            },
             {
                 text: 'Close',
                 action: 'closeWizard'
@@ -7062,15 +7139,15 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.contentDataPanel',
     requires: [
-        'Admin.view.contentManager.wizard.form.FieldSetLayout', 
-        'Admin.view.contentManager.wizard.form.FormItemSet', 
-        'Admin.view.contentManager.wizard.form.input.HtmlArea', 
-        'Admin.view.contentManager.wizard.form.input.Relationship', 
-        'Admin.view.contentManager.wizard.form.input.TextArea', 
-        'Admin.view.contentManager.wizard.form.input.TextLine', 
-        'Admin.view.contentManager.wizard.form.input.Image', 
-        'Admin.view.contentManager.wizard.form.input.ImageSelector', 
-        'Admin.view.contentManager.wizard.form.InputContainer', 
+        'Admin.view.contentManager.wizard.form.FieldSetLayout',
+        'Admin.view.contentManager.wizard.form.FormItemSet',
+        'Admin.view.contentManager.wizard.form.input.HtmlArea',
+        'Admin.view.contentManager.wizard.form.input.Relationship',
+        'Admin.view.contentManager.wizard.form.input.TextArea',
+        'Admin.view.contentManager.wizard.form.input.TextLine',
+        'Admin.view.contentManager.wizard.form.input.Image',
+        'Admin.view.contentManager.wizard.form.input.ImageSelector',
+        'Admin.view.contentManager.wizard.form.InputContainer',
         'Admin.view.contentManager.wizard.form.FormItemSetContainer'
     ],
     mixins: {
@@ -7104,7 +7181,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
         };
         Ext.Array.each(formItems, function (item) {
             var currentItemValue = (item).getValue();
-            if(currentItemValue instanceof Array) {
+            if (currentItemValue instanceof Array) {
                 Ext.each(currentItemValue, function (itemValue) {
                     contentData[itemValue.path] = itemValue.value;
                 });
@@ -7119,8 +7196,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     extend: 'Admin.view.WizardPanel',
     alias: 'widget.contentWizardPanel',
     requires: [
-        'Admin.view.WizardHeader', 
-        'Admin.view.contentManager.wizard.ContentWizardToolbar', 
+        'Admin.view.WizardHeader',
+        'Admin.view.contentManager.wizard.ContentWizardToolbar',
         'Admin.view.contentManager.wizard.ContentDataPanel'
     ],
     header: false,
@@ -7136,7 +7213,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             var me = this;
             var data = this.getData();
             var copyData = copy.getValue();
-            if(copyData instanceof Array) {
+            if (copyData instanceof Array) {
                 Ext.each(copyData, function (copyDataItem) {
                     me.deleteData(copyDataItem.path);
                 });
@@ -7154,24 +7231,24 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         var contentPath = '';
         var isRoot = false;
         var isNew = true;
-        if(this.content) {
-            if(!Ext.isEmpty(this.content.path)) {
+        if (this.content) {
+            if (!Ext.isEmpty(this.content.path)) {
                 contentPath = this.content.path;
                 isNew = false;
             }
-            if(Ext.isDefined(this.content.isRoot)) {
+            if (Ext.isDefined(this.content.isRoot)) {
                 isRoot = this.content.isRoot;
             }
         }
-        if(isNew && this.contentParent) {
-            if(!Ext.isEmpty(this.contentParent.path)) {
+        if (isNew && this.contentParent) {
+            if (!Ext.isEmpty(this.contentParent.path)) {
                 var isParentRoot = !this.contentParent.deletable || false;
                 contentPath = this.contentParent.path + (isParentRoot ? '' : '/');
             }
         }
         var lastSlashIndex = contentPath.lastIndexOf('/');
         var contentName = '/';
-        if(lastSlashIndex >= 0) {
+        if (lastSlashIndex >= 0) {
             contentName = contentPath.substring(lastSlashIndex + (isRoot ? 0 : 1));
             contentPath = contentPath.substring(0, lastSlashIndex + (isRoot ? 0 : 1));
         }
@@ -7208,10 +7285,10 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             xtype: 'panel'
         };
         return [
-            dataStep, 
-            metaStep, 
-            pageStep, 
-            securityStep, 
+            dataStep,
+            metaStep,
+            pageStep,
+            securityStep,
             summaryStep
         ];
     },
@@ -7219,14 +7296,14 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         return !this.data || !this.content || Ext.isEmpty(this.content.path);
     },
     washDirtyForms: function () {
-        for(var i = this.dirtyItems.length - 1; i >= 0; i--) {
+        for (var i = this.dirtyItems.length - 1; i >= 0; i--) {
             this.washDirtyForm(this.dirtyItems[i]);
         }
         this.dirtyItems = [];
         this.isWizardDirty = false;
     },
     washDirtyForm: function (dirtyForm) {
-        if(dirtyForm.isDirty()) {
+        if (dirtyForm.isDirty()) {
             dirtyForm.getFields().each(function (me) {
                 me.originalValue = me.getValue();
                 me.checkDirty();
@@ -7272,8 +7349,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             listeners: {
                 render: function (cmp) {
                     var contentType = (me.data && me.contentType) ? me.contentType : undefined;
-                    if(contentType) {
-                        var toolText = '<strong>' + contentType.displayName + '</strong></br>' + contentType.module + ':' + contentType.name;
+                    if (contentType) {
+                        var toolText = '<strong>' + contentType.displayName + '</strong></br>' + contentType.module + ':' +
+                                       contentType.name;
                         var tip = Ext.create('Ext.tip.ToolTip', {
                             target: cmp.el,
                             html: toolText,
@@ -7291,7 +7369,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     },
     setLiveMode: function (mode) {
         this.getLayout().setActiveItem(mode ? 1 : 0);
-        if(mode) {
+        if (mode) {
             var livePreview = this.down('#livePreview');
             livePreview.load('/dev/live-edit/page/bootstrap.jsp', true);
         }
@@ -7308,7 +7386,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentLiveEditPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.contentLiveEditPanel',
     requires: [
-        'Admin.view.contentManager.wizard.ContentWizardToolbar', 
+        'Admin.view.contentManager.wizard.ContentWizardToolbar',
         'Admin.view.contentManager.wizard.ContentWizardPanel'
     ],
     layout: {
@@ -7345,26 +7423,26 @@ Ext.define('Admin.view.contentManager.wizard.ContentLiveEditPanel', {
             hidden: true
         };
         this.items = [
-            wizardPanel, 
+            wizardPanel,
             liveEdit
         ];
         this.callParent(arguments);
     },
     setLiveMode: function (mode) {
         this.getLayout().setActiveItem(mode ? 1 : 0);
-        if(mode) {
+        if (mode) {
             var livePreviewPanel = this.down('#livePreview');
-            if(!livePreviewPanel.iFrameLoaded) {
+            if (!livePreviewPanel.iFrameLoaded) {
                 livePreviewPanel.load(this.getLiveUrl(this.data), true);
             }
         }
     },
     getLiveUrl: function (data) {
         var str = '';
-        if(this.content) {
-            if(this.content.displayName) {
+        if (this.content) {
+            if (this.content.displayName) {
                 str = this.content.displayName;
-            } else if(this.content.path) {
+            } else if (this.content.path) {
                 str = this.content.path;
             }
         }
@@ -7430,7 +7508,7 @@ Ext.define('Admin.controller.Controller', {
     },
     getNewContentWindow: function () {
         var win = Ext.ComponentQuery.query('newContentWindow')[0];
-        if(!win) {
+        if (!win) {
             win = Ext.create('widget.newContentWindow');
         }
         return win;
@@ -7440,7 +7518,7 @@ Ext.define('Admin.controller.Controller', {
     },
     viewContent: function (contentModels, callback, contentOpenedFromLiveEdit) {
         var me = this;
-        if(!contentModels) {
+        if (!contentModels) {
             var showPanel = this.getContentTreeGridPanel();
             contentModels = showPanel.getSelection();
         } else {
@@ -7448,10 +7526,10 @@ Ext.define('Admin.controller.Controller', {
         }
         var tabs = this.getCmsTabPanel();
         var i;
-        if(tabs) {
-            for(i = 0; i < contentModels.length; i += 1) {
+        if (tabs) {
+            for (i = 0; i < contentModels.length; i += 1) {
                 var activeTab = tabs.setActiveTab(me.generateTabId(contentModels[i], true));
-                if(!activeTab) {
+                if (!activeTab) {
                     var tabItem = {
                         xtype: 'contentDetail',
                         id: me.generateTabId(contentModels[i], false),
@@ -7467,7 +7545,7 @@ Ext.define('Admin.controller.Controller', {
     },
     editContent: function (contentModel, callback) {
         var me = this;
-        if(!contentModel) {
+        if (!contentModel) {
             var showPanel = this.getContentTreeGridPanel();
             contentModel = showPanel.getSelection();
         } else {
@@ -7475,7 +7553,7 @@ Ext.define('Admin.controller.Controller', {
         }
         var tabs = this.getCmsTabPanel();
         var createContentTabFn = function (response) {
-            if(Ext.isFunction(callback)) {
+            if (Ext.isFunction(callback)) {
                 callback();
             }
             return {
@@ -7499,7 +7577,7 @@ Ext.define('Admin.controller.Controller', {
                     };
                     Admin.lib.RemoteService.contentType_get(getContentTypeCommand, function (rpcResponse) {
                         getContentTypeResponse = rpcResponse;
-                        if(getContentTypeResponse && getContentTypeResponse.success && getContentResponse && getContentResponse.success) {
+                        if (getContentTypeResponse && getContentTypeResponse.success && getContentResponse && getContentResponse.success) {
                             getContentTypeResponse.content = getContentResponse.content;
                             handleRpcResponse(getContentTypeResponse);
                         }
@@ -7509,7 +7587,7 @@ Ext.define('Admin.controller.Controller', {
                     };
                     Admin.lib.RemoteService.content_get(getContentCommand, function (rpcResponse) {
                         getContentResponse = rpcResponse;
-                        if(getContentResponse && getContentResponse.success && getContentTypeResponse && getContentTypeResponse.success) {
+                        if (getContentResponse && getContentResponse.success && getContentTypeResponse && getContentTypeResponse.success) {
                             getContentTypeResponse.content = getContentResponse.content;
                             handleRpcResponse(getContentTypeResponse);
                         }
@@ -7526,14 +7604,14 @@ Ext.define('Admin.controller.Controller', {
                 layout: 'fit'
             };
             var index = tabs.items.indexOfKey(me.generateTabId(selectedContent, false));
-            if(index >= 0) {
+            if (index >= 0) {
                 tabs.remove(index);
             }
             tabs.addTab(tabItem, index >= 0 ? index : undefined, requestConfig);
         };
         var i;
-        if(tabs) {
-            for(i = 0; i < contentModel.length; i += 1) {
+        if (tabs) {
+            for (i = 0; i < contentModel.length; i += 1) {
                 var data = contentModel[i];
                 openEditContentTabFn(data);
             }
@@ -7541,84 +7619,84 @@ Ext.define('Admin.controller.Controller', {
     },
     createContent: function (type, qualifiedContentType, contentTypeName) {
         var tabs = this.getCmsTabPanel();
-        if(tabs) {
+        if (tabs) {
             var tab;
             var treeGridSelection = this.getContentTreeGridPanel().getSelection();
-            switch(type) {
-                case 'contentType':
-                    Admin.lib.RemoteService.contentType_get({
-                        format: 'JSON',
-                        contentType: qualifiedContentType,
-                        mixinReferencesToFormItems: true
-                    }, function (rpcResponse) {
-                        if(rpcResponse.success) {
-                            var createContentTabFn = function (response) {
-                                return {
-                                    xtype: 'contentLiveEditPanel',
-                                    title: '[New ' + response.contentType.displayName + ']',
-                                    content: {
-                                        iconUrl: response.iconUrl
-                                    },
-                                    contentType: response.contentType,
-                                    contentParent: treeGridSelection.length > 0 ? treeGridSelection[0].data : undefined,
-                                    data: {
-                                    }
-                                };
-                            };
-                            var requestConfig = {
-                                doTabRequest: function (handleRpcResponse) {
-                                    handleRpcResponse(rpcResponse);
+            switch (type) {
+            case 'contentType':
+                Admin.lib.RemoteService.contentType_get({
+                    format: 'JSON',
+                    contentType: qualifiedContentType,
+                    mixinReferencesToFormItems: true
+                }, function (rpcResponse) {
+                    if (rpcResponse.success) {
+                        var createContentTabFn = function (response) {
+                            return {
+                                xtype: 'contentLiveEditPanel',
+                                title: '[New ' + response.contentType.displayName + ']',
+                                content: {
+                                    iconUrl: response.iconUrl
                                 },
-                                createTabFromResponse: createContentTabFn
-                            };
-                            var tabItem = {
-                                id: 'tab-new-content-' + qualifiedContentType,
+                                contentType: response.contentType,
+                                contentParent: treeGridSelection.length > 0 ? treeGridSelection[0].data : undefined,
                                 data: {
-                                    name: contentTypeName,
-                                    content: {
-                                        iconUrl: rpcResponse.iconUrl
-                                    }
-                                },
-                                title: '[New ' + contentTypeName + ']',
-                                closable: true,
-                                editing: true,
-                                layout: 'fit'
+                                }
                             };
-                            tabs.addTab(tabItem, undefined, requestConfig);
-                        }
-                    });
-                    break;
-                case 'site':
-                    tab = {
-                        xtype: 'panel',
-                        html: 'New site wizard here',
-                        title: 'New Site'
-                    };
-                    tabs.addTab(tab);
-                    break;
+                        };
+                        var requestConfig = {
+                            doTabRequest: function (handleRpcResponse) {
+                                handleRpcResponse(rpcResponse);
+                            },
+                            createTabFromResponse: createContentTabFn
+                        };
+                        var tabItem = {
+                            id: 'tab-new-content-' + qualifiedContentType,
+                            data: {
+                                name: contentTypeName,
+                                content: {
+                                    iconUrl: rpcResponse.iconUrl
+                                }
+                            },
+                            title: '[New ' + contentTypeName + ']',
+                            closable: true,
+                            editing: true,
+                            layout: 'fit'
+                        };
+                        tabs.addTab(tabItem, undefined, requestConfig);
+                    }
+                });
+                break;
+            case 'site':
+                tab = {
+                    xtype: 'panel',
+                    html: 'New site wizard here',
+                    title: 'New Site'
+                };
+                tabs.addTab(tab);
+                break;
             }
         }
     },
     deleteContent: function (content) {
-        if(!content) {
+        if (!content) {
             var showPanel = this.getContentTreeGridPanel();
             content = showPanel.getSelection();
         } else {
             content = [].concat(content);
         }
-        if(content && content.length > 0) {
+        if (content && content.length > 0) {
             this.getDeleteContentWindow().doShow(content);
         }
     },
     duplicateContent: function (content) {
-        if(!content) {
+        if (!content) {
             var showPanel = this.getContentTreeGridPanel();
             content = showPanel.getSelection();
         } else {
             content = [].concat(content);
         }
         var selection = content[0];
-        if(selection) {
+        if (selection) {
             Admin.MessageBus.showFeedback({
                 title: selection.get('name') + ' duplicated into /path/to/content-copy',
                 message: 'Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.',
@@ -7640,9 +7718,9 @@ Ext.define('Admin.controller.Controller', {
         var deleteContentButton = toolbar.down('*[action=deleteContent]');
         var disabled = false;
         var i;
-        for(i = 0; i < selected.length; i++) {
+        for (i = 0; i < selected.length; i++) {
             var deletable = selected[i].get('deletable');
-            if(!deletable) {
+            if (!deletable) {
                 disabled = true;
                 break;
             }
@@ -7651,23 +7729,24 @@ Ext.define('Admin.controller.Controller', {
         deleteContentButton = contextMenu.down('*[action=deleteContent]');
         deleteContentButton.setDisabled(disabled);
         deleteContentButton = detailPanel.down('*[action=deleteContent]');
-        if(deleteContentButton) {
+        if (deleteContentButton) {
             deleteContentButton.setDisabled(disabled);
         }
     },
     loadContentAndFacets: function (values) {
         var me = this, filter = this.getContentFilter(), params = this.createLoadContentParams(values || filter.getValues());
         Admin.lib.RemoteService.content_find(params, function (response) {
-            if(response && response.success) {
+            if (response && response.success) {
                 me.getContentFilter().updateFacets(response.facets);
-                var ids = Ext.Array.pluck(response.contents, 'id'), treeGridPanel = me.getContentTreeGridPanel(), filterDirty = filter.isDirty();
+                var ids = Ext.Array.pluck(response.contents,
+                    'id'), treeGridPanel = me.getContentTreeGridPanel(), filterDirty = filter.isDirty();
                 treeGridPanel.setResultCountVisible(filterDirty);
-                if(!filterDirty) {
+                if (!filterDirty) {
                     treeGridPanel.setRemoteSearchParams({
                     });
                     treeGridPanel.refresh();
                 } else {
-                    if(ids.length > 0) {
+                    if (ids.length > 0) {
                         treeGridPanel.setRemoteSearchParams({
                             contentIds: ids
                         });
@@ -7682,42 +7761,42 @@ Ext.define('Admin.controller.Controller', {
     },
     getDimensionsForDevice: function (device) {
         var dimensions;
-        switch(device) {
-            case 'DESKTOP':
-                dimensions = {
-                    width: '100%',
-                    height: '100%'
-                };
-                break;
-            case 'IPHONE_5_VERTICAL':
-                dimensions = {
-                    width: '320px',
-                    height: '568px'
-                };
-                break;
-            case 'IPHONE_5_HORIZONTAL':
-                dimensions = {
-                    width: '568px',
-                    height: '320px'
-                };
-                break;
-            case 'IPAD_3_VERTICAL':
-                dimensions = {
-                    width: '768px',
-                    height: '1024px'
-                };
-                break;
-            case 'IPAD_3_HORIZONTAL':
-                dimensions = {
-                    width: '1024px',
-                    height: '768px'
-                };
-                break;
-            default:
-                dimensions = {
-                    width: '100%',
-                    height: '100%'
-                };
+        switch (device) {
+        case 'DESKTOP':
+            dimensions = {
+                width: '100%',
+                height: '100%'
+            };
+            break;
+        case 'IPHONE_5_VERTICAL':
+            dimensions = {
+                width: '320px',
+                height: '568px'
+            };
+            break;
+        case 'IPHONE_5_HORIZONTAL':
+            dimensions = {
+                width: '568px',
+                height: '320px'
+            };
+            break;
+        case 'IPAD_3_VERTICAL':
+            dimensions = {
+                width: '768px',
+                height: '1024px'
+            };
+            break;
+        case 'IPAD_3_HORIZONTAL':
+            dimensions = {
+                width: '1024px',
+                height: '768px'
+            };
+            break;
+        default:
+            dimensions = {
+                width: '100%',
+                height: '100%'
+            };
         }
         return dimensions;
     },
@@ -7778,22 +7857,22 @@ Ext.define('Admin.controller.Controller', {
             }
         };
         var ranges = [];
-        if(values.ranges) {
-            for(var i = 0; i < values.ranges.length; i++) {
+        if (values.ranges) {
+            for (var i = 0; i < values.ranges.length; i++) {
                 var lower;
-                switch(values.ranges[i]) {
-                    case '< 1 day':
-                        lower = oneDayAgo;
-                        break;
-                    case '< 1 hour':
-                        lower = oneHourAgo;
-                        break;
-                    case '< 1 week':
-                        lower = oneWeekAgo;
-                        break;
-                    default:
-                        lower = null;
-                        break;
+                switch (values.ranges[i]) {
+                case '< 1 day':
+                    lower = oneDayAgo;
+                    break;
+                case '< 1 hour':
+                    lower = oneHourAgo;
+                    break;
+                case '< 1 week':
+                    lower = oneWeekAgo;
+                    break;
+                default:
+                    lower = null;
+                    break;
                 }
                 ranges.push({
                     lower: lower,
@@ -7822,7 +7901,7 @@ Ext.define('Admin.controller.Controller', {
     },
     getContentManagerContextMenu: function () {
         var menu = Ext.ComponentManager.get('contentManagerContextMenu');
-        if(!menu) {
+        if (!menu) {
             menu = new admin.ui.ContextMenu().ext;
         }
         return menu;
@@ -7840,14 +7919,14 @@ Ext.define('Admin.controller.Controller', {
     },
     getDeleteContentWindow: function () {
         var win = Ext.ComponentQuery.query('deleteContentWindow')[0];
-        if(!win) {
+        if (!win) {
             win = Ext.create('widget.deleteContentWindow');
         }
         return win;
     },
     getLiveEditTestWindow: function () {
         var win = Ext.ComponentQuery.query('liveEditTestWindow')[0];
-        if(!win) {
+        if (!win) {
             win = Ext.create('widget.liveEditTestWindow');
         }
         return win;
@@ -7878,14 +7957,14 @@ Ext.define('Admin.controller.TopBarController', {
         var me = this, parent = this.getParentFrame(), iFrames = parent.Ext.DomQuery.select('iframe');
         var iFrameExist = false;
         Ext.each(iFrames, function (iframe, index, allIFrames) {
-            if(iframe.id === 'iframe-' + appData.id) {
+            if (iframe.id === 'iframe-' + appData.id) {
                 iFrameExist = true;
                 iframe.style.display = 'block';
             } else {
                 iframe.style.display = 'none';
             }
         });
-        if(!iFrameExist) {
+        if (!iFrameExist) {
             me.appendIframe(parent, appData, urlHash);
             me.showLoadMask();
         }
@@ -7896,7 +7975,7 @@ Ext.define('Admin.controller.TopBarController', {
     },
     appendIframe: function (parent, appData, urlHash) {
         var url = appData.appUrl + '?appId=' + appData.id;
-        if(urlHash) {
+        if (urlHash) {
             url += urlHash;
         }
         var iFrameSpec = parent.Ext.core.DomHelper.append('admin-application-frames', {
@@ -7910,7 +7989,7 @@ Ext.define('Admin.controller.TopBarController', {
     },
     setStartButton: function (selectedMenuItem) {
         var topBar = this.getTopBar();
-        if(topBar) {
+        if (topBar) {
             var startButton = this.getStartButton();
             startButton.setText(selectedMenuItem.title);
             startButton.setIconCls(selectedMenuItem.iconCls);
@@ -7920,7 +7999,7 @@ Ext.define('Admin.controller.TopBarController', {
 Ext.define('Admin.controller.GridPanelController', {
     extend: 'Admin.controller.Controller',
     stores: [
-        'Admin.store.contentManager.ContentStore', 
+        'Admin.store.contentManager.ContentStore',
         'Admin.store.contentManager.ContentTreeStore'
     ],
     models: [
@@ -7940,7 +8019,7 @@ Ext.define('Admin.controller.GridPanelController', {
             },
             'contentShow': {
                 afterrender: function () {
-                    if(document.location.hash.indexOf('/cm/open/') > -1) {
+                    if (document.location.hash.indexOf('/cm/open/') > -1) {
                         Admin.MessageBus.liveEditOpenContent();
                     }
                 }
@@ -7993,7 +8072,7 @@ Ext.define('Admin.controller.FilterPanelController', {
         this.loadContentAndFacets(values);
     },
     doReset: function (dirty) {
-        if(!dirty) {
+        if (!dirty) {
             return false;
         }
         this.loadContentAndFacets({
@@ -8038,7 +8117,7 @@ Ext.define('Admin.controller.BrowseToolbarController', {
         var toShow = contentDetail[vertical ? 1 : 0];
         toHide.setVisible(false);
         toShow.setVisible(true);
-        if(toShow.isLiveMode != toHide.isLiveMode) {
+        if (toShow.isLiveMode != toHide.isLiveMode) {
             toShow.toggleLive();
         }
         var showPanel = this.getContentTreeGridPanel();
@@ -8048,7 +8127,7 @@ Ext.define('Admin.controller.BrowseToolbarController', {
     },
     getContentManagerToolbarMenu: function () {
         var menu = Ext.ComponentQuery.query('contentManagerToolbarMenu')[0];
-        if(!menu) {
+        if (!menu) {
             menu = Ext.create('widget.contentManagerToolbarMenu');
         }
         return menu;
@@ -8115,7 +8194,7 @@ Ext.define('Admin.controller.ContentController', {
     },
     remoteCreateOrUpdateContent: function (contentParams, callback) {
         Admin.lib.RemoteService.content_createOrUpdate(contentParams, function (r) {
-            if(r && r.success) {
+            if (r && r.success) {
                 callback(r.created, r.updated, r.contentPath, r.contentId);
             } else {
                 Ext.Msg.alert("Error", r ? r.error : "Internal error occured.");
@@ -8130,7 +8209,7 @@ Ext.define('Admin.controller.ContentController', {
         Admin.lib.RemoteService.content_delete({
             "contentPaths": contentPaths
         }, function (r) {
-            if(r) {
+            if (r) {
                 callback.call(me, r.success, r.failures);
             } else {
                 Ext.Msg.alert("Error", r ? r.error : "Internal error occured.");
@@ -8213,13 +8292,13 @@ Ext.define('Admin.controller.ContentWizardController', {
     onDisplayNameSourceChanged: function (field, event, opts) {
         var wizard = this.getContentWizardPanel();
         var evaluateFn = wizard.data && wizard.contentType && wizard.contentType.contentDisplayNameScript;
-        if(wizard.evaluateDisplayName && !Ext.isEmpty(evaluateFn)) {
+        if (wizard.evaluateDisplayName && !Ext.isEmpty(evaluateFn)) {
             var rawData = wizard.getData().contentData;
             var contentData = {
             };
             var key;
-            for(key in rawData) {
-                if(rawData.hasOwnProperty(key)) {
+            for (key in rawData) {
+                if (rawData.hasOwnProperty(key)) {
                     contentData[key.replace(/\[0\]/g, '')] = rawData[key];
                 }
             }
@@ -8233,9 +8312,9 @@ Ext.define('Admin.controller.ContentWizardController', {
     closeWizard: function (el, e) {
         var tab = this.getContentWizardTab();
         var contentWizard = this.getContentWizardPanel();
-        if(contentWizard.isWizardDirty) {
+        if (contentWizard.isWizardDirty) {
             Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?', function (answer) {
-                if('yes' === answer) {
+                if ('yes' === answer) {
                     tab.close();
                 }
             });
@@ -8264,21 +8343,21 @@ Ext.define('Admin.controller.ContentWizardController', {
         };
         var onUpdateContentSuccess = function (created, updated, contentPath, contentId) {
             var lastSlashIndex, contentName;
-            if(contentPath) {
-                if(content.path !== contentPath) {
+            if (contentPath) {
+                if (content.path !== contentPath) {
                     lastSlashIndex = contentPath.lastIndexOf('/');
-                    if(lastSlashIndex >= 0) {
+                    if (lastSlashIndex >= 0) {
                         contentName = contentPath.substring(lastSlashIndex + 1);
                         contentWizard.getWizardHeader().setName(contentName);
                     }
                 }
                 content.path = contentPath;
             }
-            if(contentId) {
+            if (contentId) {
                 content.id = contentId;
             }
-            if(created || updated) {
-                if(closeWizard) {
+            if (created || updated) {
+                if (closeWizard) {
                     me.getContentWizardTab().close();
                 }
                 var displayName = contentParams.displayName || displayName;
@@ -8287,7 +8366,7 @@ Ext.define('Admin.controller.ContentWizardController', {
                 }, function () {
                     alert('close link callback');
                 });
-                if(Ext.isFunction(contentWizard.washDirtyForms)) {
+                if (Ext.isFunction(contentWizard.washDirtyForms)) {
                     contentWizard.washDirtyForms();
                 }
                 me.loadContentAndFacets();
@@ -8302,7 +8381,7 @@ Ext.define('Admin.controller.ContentWizardController', {
     publishContent: function (contentWizard, closeWizard) {
         var me = this;
         var displayName = contentWizard.content.displayName;
-        if(closeWizard) {
+        if (closeWizard) {
             me.getContentWizardTab().close();
         }
         Admin.MessageBus.showPublish(displayName, function () {
@@ -8371,10 +8450,10 @@ Ext.define('Admin.controller.DialogWindowController', {
             },
             'newContentWindow': {
                 contentTypeSelected: function (window, contentType) {
-                    if(window) {
+                    if (window) {
                         window.close();
                     }
-                    if(contentType) {
+                    if (contentType) {
                         this.createContent('contentType', contentType.get('qualifiedName'), contentType.get('name'));
                     }
                 }
@@ -8390,17 +8469,18 @@ Ext.define('Admin.controller.DialogWindowController', {
         var content = win.data;
         var onContentDeleted = function (success, details) {
             win.close();
-            if(success) {
+            if (success) {
                 Admin.MessageBus.showFeedback({
                     title: 'Content was deleted',
-                    message: Ext.isArray(content) && content.length > 1 ? content.length + ' contents were deleted' : '1 content was deleted',
+                    message: Ext.isArray(content) && content.length > 1 ? content.length + ' contents were deleted'
+                        : '1 content was deleted',
                     opts: {
                     }
                 });
             } else {
                 var message = '';
                 var i;
-                for(i = 0; i < details.length; i++) {
+                for (i = 0; i < details.length; i++) {
                     message += details[0].reason + "\n";
                 }
                 Admin.MessageBus.showFeedback({
@@ -8419,16 +8499,16 @@ Ext.application({
     name: 'CM',
     appFolder: 'resources/app',
     controllers: [
-        'Admin.controller.BaseController', 
-        'Admin.controller.Controller', 
-        'Admin.controller.TopBarController', 
-        'Admin.controller.GridPanelController', 
-        'Admin.controller.DetailPanelController', 
-        'Admin.controller.FilterPanelController', 
-        'Admin.controller.BrowseToolbarController', 
-        'Admin.controller.DetailToolbarController', 
-        'Admin.controller.ContentWizardController', 
-        'Admin.controller.ContentPreviewController', 
+        'Admin.controller.BaseController',
+        'Admin.controller.Controller',
+        'Admin.controller.TopBarController',
+        'Admin.controller.GridPanelController',
+        'Admin.controller.DetailPanelController',
+        'Admin.controller.FilterPanelController',
+        'Admin.controller.BrowseToolbarController',
+        'Admin.controller.DetailToolbarController',
+        'Admin.controller.ContentWizardController',
+        'Admin.controller.ContentPreviewController',
         'Admin.controller.DialogWindowController'
     ],
     launch: function () {
@@ -8455,7 +8535,7 @@ Ext.application({
                                     region: 'west',
                                     xtype: 'contentFilter',
                                     width: 200
-                                }, 
+                                },
                                 {
                                     region: 'center',
                                     xtype: 'contentShow'

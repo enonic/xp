@@ -365,6 +365,8 @@ interface Ext_Packages extends IExt {
     };
     button: {
         Button: Ext_button_Button;
+        Split: Ext_button_Split;
+        Cycle: Ext_button_Cycle;
     };
     container: {
         ButtonGroup: Ext_container_ButtonGroup;
@@ -452,6 +454,7 @@ interface Ext_Packages extends IExt {
     menu: {
         Menu: Ext_menu_Menu;
         Item: Ext_menu_Item;
+        CheckItem: Ext_menu_CheckItem;
     };
     panel: {
         Panel: Ext_panel_Panel;
@@ -1893,6 +1896,17 @@ interface Ext_menu_Item extends Ext_Component {
 }
 
 
+interface Ext_menu_CheckItem extends Ext_menu_Item {
+
+    disableCheckChange(): void;
+
+    enableCheckChange(): void;
+
+    setChecked(checked:bool, suppressEvents?:bool): void;
+
+}
+
+
 /*      Button package      */
 
 
@@ -1944,6 +1958,26 @@ interface Ext_button_Button extends Ext_Component {
     showMenu(fromEvent:Object): void;
 
     toggle(state?:bool, suppressEvent?:bool): Ext_button_Button;
+
+}
+
+
+interface Ext_button_Split extends Ext_button_Button {
+
+    setArrowHandler(handler:Function, scope:Object): void;
+
+}
+
+
+interface Ext_button_Cycle extends Ext_button_Split {
+
+    menu: Ext_menu_Menu;
+
+    getActiveItem(): Ext_menu_CheckItem;
+
+    setActiveItem(item:Ext_menu_CheckItem, suppressEvent?:bool): void;
+
+    toggleSelected(): void;
 
 }
 
