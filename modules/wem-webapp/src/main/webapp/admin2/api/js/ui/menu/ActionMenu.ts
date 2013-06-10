@@ -90,8 +90,8 @@ module api_ui_menu{
             var btnEl = this.getEl();
             btnEl.addClass("action-menu-button");
 
-            var em = api_ui.HTMLElementHelper.fromName('em');
-            em.setInnerHtml("Actions");
+            var emEl:api_ui.EmEl = new api_ui.EmEl();
+            emEl.getEl().setInnerHtml("Actions");
             btnEl.appendChild(em.getHTMLElement());
 
             btnEl.addEventListener("click", (e) => {

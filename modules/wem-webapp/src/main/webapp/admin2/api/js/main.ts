@@ -21,6 +21,7 @@
 ///<reference path='ui/H4El.ts' />
 ///<reference path='ui/UlEl.ts' />
 ///<reference path='ui/LiEl.ts' />
+///<reference path='ui/EmEl.ts' />
 ///<reference path='ui/ImgEl.ts' />
 ///<reference path='ui/ButtonEl.ts' />
 ///<reference path='ui/BodyMask.ts' />
