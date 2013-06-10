@@ -85,7 +85,17 @@ module api_ui {
     }
 }
 module api_ui {
+    class H1El extends AbstractEl {
+        constructor(name: string);
+    }
+}
+module api_ui {
     class H2El extends AbstractEl {
+        constructor(name: string);
+    }
+}
+module api_ui {
+    class H3El extends AbstractEl {
         constructor(name: string);
     }
 }

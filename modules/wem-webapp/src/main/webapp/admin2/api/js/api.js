@@ -254,6 +254,17 @@ var api_ui;
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
+    var H1El = (function (_super) {
+        __extends(H1El, _super);
+        function H1El(name) {
+                _super.call(this, "h1", name);
+        }
+        return H1El;
+    })(api_ui.AbstractEl);
+    api_ui.H1El = H1El;    
+})(api_ui || (api_ui = {}));
+var api_ui;
+(function (api_ui) {
     var H2El = (function (_super) {
         __extends(H2El, _super);
         function H2El(name) {
@@ -262,6 +273,17 @@ var api_ui;
         return H2El;
     })(api_ui.AbstractEl);
     api_ui.H2El = H2El;    
+})(api_ui || (api_ui = {}));
+var api_ui;
+(function (api_ui) {
+    var H3El = (function (_super) {
+        __extends(H3El, _super);
+        function H3El(name) {
+                _super.call(this, "h3", name);
+        }
+        return H3El;
+    })(api_ui.AbstractEl);
+    api_ui.H3El = H3El;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {

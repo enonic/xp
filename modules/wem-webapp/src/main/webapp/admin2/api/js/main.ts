@@ -15,7 +15,9 @@
 ///<reference path='ui/HTMLImageElementHelper.ts' />
 ///<reference path='ui/AbstractEl.ts' />
 ///<reference path='ui/DivEl.ts' />
+///<reference path='ui/H1El.ts' />
 ///<reference path='ui/H2El.ts' />
+///<reference path='ui/H3El.ts' />
 ///<reference path='ui/H4El.ts' />
 ///<reference path='ui/UlEl.ts' />
 ///<reference path='ui/LiEl.ts' />
