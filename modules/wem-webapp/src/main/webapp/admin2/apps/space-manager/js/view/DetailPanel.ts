@@ -4,6 +4,7 @@ module app_ui {
         ext:Ext_panel_Panel;
 
         private isVertical:Boolean = false;
+        private isFullScreen = false;
         private keyField:String = 'name';
         private data;
         private header;
@@ -38,6 +39,7 @@ module app_ui {
         constructor(region?:String, id?:string, model?:app_model.SpaceModel) {
             var cls = 'admin-preview-panel admin-detail' + ( this.isVertical ? 'admin-detail-vertical' : '' );
             this.data = model;
+            this.isFullScreen = Ext.isEmpty(region);
 
             var p = new Ext.panel.Panel({
                 id: id,
@@ -171,11 +173,17 @@ module app_ui {
             var actionMenu = this.actionMenu = Ext.apply(
                 new app_ui.ActionMenu2().getExt(),
                 {
-                    tdAttrs: { width: 140 }
+                    tdAttrs: {
+                        width: 120,
+                        style: 'vertical-align: top;'
+                    }
                 }
             );
 
-            north.add(photo, header, actionMenu);
+            north.add(photo, header);
+            if (!this.isFullScreen) {
+                north.add(actionMenu);
+            }
 
             c.add(north);
 

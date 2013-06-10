@@ -2685,6 +2685,7 @@ var app_ui;
     var SpaceDetailPanel = (function () {
         function SpaceDetailPanel(region, id, model) {
             this.isVertical = false;
+            this.isFullScreen = false;
             this.keyField = 'name';
             this.tabs = [
                 {
@@ -2720,6 +2721,7 @@ var app_ui;
             ];
             var cls = 'admin-preview-panel admin-detail' + (this.isVertical ? 'admin-detail-vertical' : '');
             this.data = model;
+            this.isFullScreen = Ext.isEmpty(region);
             var p = new Ext.panel.Panel({
                 id: id,
                 region: region,
@@ -2839,10 +2841,14 @@ var app_ui;
             });
             var actionMenu = this.actionMenu = Ext.apply(new app_ui.ActionMenu2().getExt(), {
                 tdAttrs: {
-                    width: 140
+                    width: 120,
+                    style: 'vertical-align: top;'
                 }
             });
-            north.add(photo, header, actionMenu);
+            north.add(photo, header);
+            if(!this.isFullScreen) {
+                north.add(actionMenu);
+            }
             c.add(north);
             var west = new Ext.container.Container({
                 region: 'west',
@@ -4775,7 +4781,7 @@ Ext.define('Admin.controller.Controller', {
     updateToolbarButtons: function (selected) {
         var enable = selected && selected.length > 0;
         var toolbar = this.getSpaceBrowseToolbar();
-        var buttons = Ext.ComponentQuery.query('button[action=viewSpace], ' + 'button[action=editSpace], ' + 'button[action=deleteSpace]', toolbar);
+        var buttons = Ext.ComponentQuery.query('button[action=viewSpace], ' + 'button[action=editSpace] ', toolbar);
         Ext.Array.each(buttons, function (button, index, all) {
             button.setDisabled(!enable);
         });
@@ -4993,33 +4999,6 @@ Ext.define('Admin.controller.DetailToolbarController', {
         });
     }
 });
-Ext.define('Admin.controller.DialogWindowController', {
-    extend: 'Admin.controller.SpaceController',
-    stores: [],
-    models: [],
-    views: [],
-    init: function () {
-        this.control({
-            'deleteSpaceWindow *[action=deleteSpace]': {
-                click: this.deleteSpace
-            }
-        });
-    },
-    deleteSpace: function () {
-        var win = this.getDeleteSpaceWindow(), space = win.data, me = this;
-        var onDelete = function (success, details) {
-            win.close();
-            if(success && details.deleted) {
-                api_notify.showFeedback(Ext.isArray(space) && space.length > 1 ? space.length + ' spaces were deleted' : '1 space was deleted');
-            } else {
-                var message = details.reason;
-                api_notify.showFeedback(message);
-            }
-            me.getSpaceTreeGridPanel().refresh();
-        };
-        this.remoteDeleteSpace(space, onDelete);
-    }
-});
 Ext.define('Admin.controller.WizardController', {
     extend: 'Admin.controller.SpaceController',
     stores: [],
@@ -5145,7 +5124,6 @@ Ext.application({
         'Admin.controller.BrowseToolbarController', 
         'Admin.controller.DetailPanelController', 
         'Admin.controller.DetailToolbarController', 
-        'Admin.controller.DialogWindowController', 
         'Admin.controller.WizardController'
     ],
     stores: [],

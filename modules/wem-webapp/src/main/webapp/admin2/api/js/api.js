@@ -626,9 +626,7 @@ var api_ui_menu;
             this.menu = menu;
             var btnEl = this.getEl();
             btnEl.addClass("action-menu-button");
-            var emEl = new api_ui.EmEl();
-            emEl.getEl().setInnerHtml("Actions");
-            btnEl.appendChild(emEl.getHTMLElement());
+            btnEl.setInnerHtml("Actions");
             btnEl.addEventListener("click", function (e) {
                 menu.showBy(_this);
                 if(e.stopPropagation) {
