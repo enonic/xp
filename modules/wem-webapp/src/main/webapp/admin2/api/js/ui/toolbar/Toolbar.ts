@@ -25,6 +25,13 @@ module api_ui_toolbar {
             this.appendChild(button);
         }
 
+        addElement(element:api_ui.Element) {
+            if (this.hasGreedySpacer()) {
+                element.getEl().addClass('pull-right');
+            }
+            this.appendChild(element);
+        }
+
         addGreedySpacer() {
             var spacer = new ToolbarGreedySpacer();
             this.components.push(spacer);

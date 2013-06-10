@@ -1,8 +1,5 @@
 module app_ui {
 
-    /**
-     * TODO: The upcoming successor of BrowseToolbar, when the Toolbar code is working....
-     */
     export class BrowseToolbar extends api_ui_toolbar.Toolbar {
 
         constructor() {

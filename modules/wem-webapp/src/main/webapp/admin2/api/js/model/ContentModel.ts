@@ -10,13 +10,13 @@ module api_model {
             owner:string;
             modifier:string;
             iconUrl:string;
-            createdTime:Date;
             modifiedTime:Date;
-
+            createdTime:Date;
             editable:bool;
             deletable:bool;
-            hasChildren:bool;
             allowsChildren:bool;
+            hasChildren:bool;
+            leaf:bool;
         };
     }
 }

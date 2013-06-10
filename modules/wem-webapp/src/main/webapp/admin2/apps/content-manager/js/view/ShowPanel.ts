@@ -12,15 +12,17 @@ Ext.define('Admin.view.contentManager.ShowPanel', {
     border: false,
 
     initComponent: function () {
+        var toolbar = new app_ui.BrowseToolbar();
 
         /* For 18/4 demo */
         var contentIsOpenedFromPortal = document.location.href.indexOf('/open') > -1;
 
         this.items = [
-            {
-                region: 'north',
-                xtype: 'browseToolbar'
-            },
+//            {
+//                region: 'north',
+//                xtype: 'browseToolbar'
+//            },
+            toolbar.ext,
             {
                 xtype: 'contentTreeGridPanel',
                 region: 'center',

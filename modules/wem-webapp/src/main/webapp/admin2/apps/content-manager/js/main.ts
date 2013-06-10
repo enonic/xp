@@ -4,6 +4,13 @@
 ///<reference path='../../../api/js/lib/JsonRpcProvider.ts' />
 ///<reference path='../../../api/js/lib/RemoteService.ts' />
 
+///<reference path='event/BaseContentModelEvent.ts' />
+///<reference path='event/GridSelectionChangeEvent.ts' />
+
+///<reference path='ContentContext.ts' />
+
+///<reference path='ContentActions.ts' />
+
 ///<reference path='lib/ux/toggleslide/Thumb.ts' />
 ///<reference path='lib/ux/toggleslide/ToggleSlide.ts' />
 
