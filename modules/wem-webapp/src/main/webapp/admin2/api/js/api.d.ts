@@ -63,7 +63,7 @@ module api_ui {
         static create(): HTMLElementHelper;
         constructor(element: HTMLImageElement);
         public getHTMLElement(): HTMLImageElement;
-        public setSrc(value: string): void;
+        public setSrc(value: string): HTMLImageElementHelper;
     }
 }
 module api_ui {
@@ -71,10 +71,9 @@ module api_ui {
         private static constructorCounter;
         private el;
         private id;
-        constructor(name: string, elementName: string);
+        constructor(elementName: string, name: string, elHelper?: HTMLElementHelper);
         public getId(): string;
         public getEl(): HTMLElementHelper;
-        public getImg(): HTMLImageElementHelper;
         public getHTMLElement(): HTMLElement;
         public appendChild(child: AbstractEl): void;
         public removeChildren(): void;
@@ -107,10 +106,8 @@ module api_ui {
 }
 module api_ui {
     class ImgEl extends AbstractEl {
-        private el;
-        private id;
         constructor(name: string);
-        public getImg(): HTMLImageElementHelper;
+        public getEl(): HTMLImageElementHelper;
     }
 }
 module api_ui {

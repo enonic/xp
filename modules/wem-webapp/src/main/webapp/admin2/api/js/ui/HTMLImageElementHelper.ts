@@ -17,8 +17,9 @@ module api_ui {
             return this.el;
         }
 
-        setSrc(value:string){
+        setSrc(value:string):HTMLImageElementHelper{
             this.el.src = value;
+            return this;
         }
     }
 }

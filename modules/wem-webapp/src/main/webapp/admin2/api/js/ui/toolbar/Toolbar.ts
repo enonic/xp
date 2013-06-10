@@ -50,7 +50,6 @@ module api_ui_toolbar {
         }
     }
 
-
     class ToolbarButton extends api_ui.AbstractButton {
 
         private action:api_action.Action;

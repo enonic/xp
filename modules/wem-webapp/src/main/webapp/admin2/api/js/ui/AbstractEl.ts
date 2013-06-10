@@ -8,12 +8,12 @@ module api_ui {
 
         private id:string;
 
-        constructor(elementName:string, name:string) {
-            if (elementName === "img") {
-                this.el = HTMLImageElementHelper.create();
-            }
-            else {
+        constructor(elementName:string, name:string, elHelper?:HTMLElementHelper) {
+            if (elHelper == null) {
                 this.el = HTMLElementHelper.fromName(elementName);
+            }
+            else{
+                this.el = elHelper;
             }
             this.id = name + '-' + (++api_ui.AbstractEl.constructorCounter);
             this.el.setId(this.id);
@@ -25,10 +25,6 @@ module api_ui {
 
         getEl():HTMLElementHelper {
             return this.el;
-        }
-
-        getImg():HTMLImageElementHelper {
-            return <HTMLImageElementHelper>this.el;
         }
 
         getHTMLElement():HTMLElement {

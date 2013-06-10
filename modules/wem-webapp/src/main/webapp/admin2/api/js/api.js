@@ -200,6 +200,7 @@ var api_ui;
         };
         HTMLImageElementHelper.prototype.setSrc = function (value) {
             this.el.src = value;
+            return this;
         };
         return HTMLImageElementHelper;
     })(api_ui.HTMLElementHelper);
@@ -208,11 +209,11 @@ var api_ui;
 var api_ui;
 (function (api_ui) {
     var AbstractEl = (function () {
-        function AbstractEl(name, elementName) {
-            if(elementName === "img") {
-                this.el = api_ui.HTMLImageElementHelper.create();
-            } else {
+        function AbstractEl(elementName, name, elHelper) {
+            if(elHelper == null) {
                 this.el = api_ui.HTMLElementHelper.fromName(elementName);
+            } else {
+                this.el = elHelper;
             }
             this.id = name + '-' + (++api_ui.AbstractEl.constructorCounter);
             this.el.setId(this.id);
@@ -222,9 +223,6 @@ var api_ui;
             return this.id;
         };
         AbstractEl.prototype.getEl = function () {
-            return this.el;
-        };
-        AbstractEl.prototype.getImg = function () {
             return this.el;
         };
         AbstractEl.prototype.getHTMLElement = function () {
@@ -248,7 +246,7 @@ var api_ui;
     var DivEl = (function (_super) {
         __extends(DivEl, _super);
         function DivEl(name) {
-                _super.call(this, name, "div");
+                _super.call(this, "div", name);
         }
         return DivEl;
     })(api_ui.AbstractEl);
@@ -259,7 +257,7 @@ var api_ui;
     var H2El = (function (_super) {
         __extends(H2El, _super);
         function H2El(name) {
-                _super.call(this, name, "h2");
+                _super.call(this, "h2", name);
         }
         return H2El;
     })(api_ui.AbstractEl);
@@ -270,7 +268,7 @@ var api_ui;
     var H4El = (function (_super) {
         __extends(H4El, _super);
         function H4El(name) {
-                _super.call(this, name, "h4");
+                _super.call(this, "h4", name);
         }
         return H4El;
     })(api_ui.AbstractEl);
@@ -281,7 +279,7 @@ var api_ui;
     var UlEl = (function (_super) {
         __extends(UlEl, _super);
         function UlEl(name) {
-                _super.call(this, name, "ul");
+                _super.call(this, "ul", name);
         }
         return UlEl;
     })(api_ui.AbstractEl);
@@ -292,7 +290,7 @@ var api_ui;
     var LiEl = (function (_super) {
         __extends(LiEl, _super);
         function LiEl(name) {
-                _super.call(this, name, "li");
+                _super.call(this, "li", name);
         }
         return LiEl;
     })(api_ui.AbstractEl);
@@ -303,11 +301,10 @@ var api_ui;
     var ImgEl = (function (_super) {
         __extends(ImgEl, _super);
         function ImgEl(name) {
-                _super.call(this, name, "img");
-            this.el = api_ui.HTMLImageElementHelper.create();
+                _super.call(this, "img", name, api_ui.HTMLImageElementHelper.create());
         }
-        ImgEl.prototype.getImg = function () {
-            return this.el;
+        ImgEl.prototype.getEl = function () {
+            return _super.prototype.getEl.call(this);
         };
         return ImgEl;
     })(api_ui.AbstractEl);
@@ -318,7 +315,7 @@ var api_ui;
     var ButtonEl = (function (_super) {
         __extends(ButtonEl, _super);
         function ButtonEl(name) {
-                _super.call(this, name, "button");
+                _super.call(this, "button", name);
         }
         return ButtonEl;
     })(api_ui.AbstractEl);
@@ -831,7 +828,7 @@ var api_delete;
                 _super.call(this, "DeleteDialogItem");
             this.getEl().addClass("delete-dialog-item");
             var icon = new api_ui.ImgEl("img");
-            icon.getImg().setSrc(deleteItem.getIconUrl());
+            icon.getEl().setSrc(deleteItem.getIconUrl());
             this.appendChild(icon);
             var displayName = new api_ui.H4El("h4");
             displayName.getEl().setInnerHtml(deleteItem.getDisplayName());
