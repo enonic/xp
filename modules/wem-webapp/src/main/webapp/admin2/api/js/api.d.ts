@@ -71,7 +71,7 @@ module api_ui {
         private static constructorCounter;
         private el;
         private id;
-        constructor(elementName: string, name: string, elHelper?: HTMLElementHelper);
+        constructor(elementName: string, name?: string, elHelper?: HTMLElementHelper);
         public getId(): string;
         public getEl(): HTMLElementHelper;
         public getHTMLElement(): HTMLElement;
@@ -81,48 +81,48 @@ module api_ui {
 }
 module api_ui {
     class DivEl extends AbstractEl {
-        constructor(name: string);
+        constructor(name?: string);
     }
 }
 module api_ui {
     class H1El extends AbstractEl {
-        constructor(name: string);
+        constructor(name?: string);
     }
 }
 module api_ui {
     class H2El extends AbstractEl {
-        constructor(name: string);
+        constructor(name?: string);
     }
 }
 module api_ui {
     class H3El extends AbstractEl {
-        constructor(name: string);
+        constructor(name?: string);
     }
 }
 module api_ui {
     class H4El extends AbstractEl {
-        constructor(name: string);
+        constructor(name?: string);
     }
 }
 module api_ui {
     class UlEl extends AbstractEl {
-        constructor(name: string);
+        constructor(name?: string);
     }
 }
 module api_ui {
     class LiEl extends AbstractEl {
-        constructor(name: string);
+        constructor(name?: string);
     }
 }
 module api_ui {
     class ImgEl extends AbstractEl {
-        constructor(name: string);
+        constructor(name?: string);
         public getEl(): HTMLImageElementHelper;
     }
 }
 module api_ui {
     class ButtonEl extends AbstractEl {
-        constructor(name: string);
+        constructor(name?: string);
     }
 }
 module api_ui {

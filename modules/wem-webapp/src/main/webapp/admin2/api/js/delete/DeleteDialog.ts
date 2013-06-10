@@ -78,11 +78,11 @@ module api_delete{
             super("DeleteDialogItem");
             this.getEl().addClass("delete-dialog-item");
 
-            var icon:api_ui.ImgEl = new api_ui.ImgEl("img");
+            var icon:api_ui.ImgEl = new api_ui.ImgEl();
             icon.getEl().setSrc(deleteItem.getIconUrl());
             this.appendChild(icon);
 
-            var displayName:api_ui.H4El = new api_ui.H4El("h4");
+            var displayName:api_ui.H4El = new api_ui.H4El();
             displayName.getEl().setInnerHtml(deleteItem.getDisplayName());
             this.appendChild(displayName);
         }

@@ -2,7 +2,7 @@ module api_ui {
 
     export class ImgEl extends api_ui.AbstractEl {
 
-        constructor(name:string) {
+        constructor(name?:string) {
             super( "img", name, HTMLImageElementHelper.create() );
         }
 

@@ -215,8 +215,10 @@ var api_ui;
             } else {
                 this.el = elHelper;
             }
-            this.id = name + '-' + (++api_ui.AbstractEl.constructorCounter);
-            this.el.setId(this.id);
+            if(name != null) {
+                this.id = name + '-' + (++api_ui.AbstractEl.constructorCounter);
+                this.el.setId(this.id);
+            }
         }
         AbstractEl.constructorCounter = 0;
         AbstractEl.prototype.getId = function () {
@@ -849,10 +851,10 @@ var api_delete;
         function DeleteDialogItemComponent(deleteItem) {
                 _super.call(this, "DeleteDialogItem");
             this.getEl().addClass("delete-dialog-item");
-            var icon = new api_ui.ImgEl("img");
+            var icon = new api_ui.ImgEl();
             icon.getEl().setSrc(deleteItem.getIconUrl());
             this.appendChild(icon);
-            var displayName = new api_ui.H4El("h4");
+            var displayName = new api_ui.H4El();
             displayName.getEl().setInnerHtml(deleteItem.getDisplayName());
             this.appendChild(displayName);
         }

@@ -2,7 +2,7 @@ module api_ui {
 
     export class DivEl extends api_ui.AbstractEl {
 
-        constructor(name:string) {
+        constructor(name?:string) {
             super("div", name);
         }
     }

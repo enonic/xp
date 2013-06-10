@@ -8,15 +8,17 @@ module api_ui {
 
         private id:string;
 
-        constructor(elementName:string, name:string, elHelper?:HTMLElementHelper) {
+        constructor(elementName:string, name?:string, elHelper?:HTMLElementHelper) {
             if (elHelper == null) {
                 this.el = HTMLElementHelper.fromName(elementName);
             }
-            else{
+            else {
                 this.el = elHelper;
             }
-            this.id = name + '-' + (++api_ui.AbstractEl.constructorCounter);
-            this.el.setId(this.id);
+            if (name != null) {
+                this.id = name + '-' + (++api_ui.AbstractEl.constructorCounter);
+                this.el.setId(this.id);
+            }
         }
 
         getId():string {
