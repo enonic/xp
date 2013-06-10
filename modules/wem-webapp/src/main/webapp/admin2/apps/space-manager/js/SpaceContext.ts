@@ -4,7 +4,7 @@ module app {
 
         private static context:SpaceContext;
 
-        private selectedSpaces:app_model.SpaceModel[];
+        private selectedSpaces:api_model.SpaceModel[];
 
         static init():SpaceContext{
             return context = new SpaceContext();
@@ -16,11 +16,11 @@ module app {
 
         constructor(){
             app_event.GridSelectionChangeEvent.on((event) => {
-                this.selectedSpaces = event.getSpaceModels();
+                this.selectedSpaces = event.getModels();
             });
         }
 
-        getSelectedSpaces():app_model.SpaceModel[] {
+        getSelectedSpaces():api_model.SpaceModel[] {
             return this.selectedSpaces;
         }
     }

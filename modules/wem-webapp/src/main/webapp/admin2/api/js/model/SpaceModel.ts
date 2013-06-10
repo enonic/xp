@@ -12,9 +12,9 @@ Ext.define('Admin.model.SpaceModel', {
     idProperty: 'name'
 });
 
-module app_model {
+module api_model {
 
-    export interface SpaceModel extends Ext_data_Model {
+    export interface SpaceModel extends Model {
         data:{
             name:string;
             displayName:string;
@@ -22,6 +22,7 @@ module app_model {
             rootContentId:number;
             createdTime:Date;
             modifiedTime:Date;
+
             editable:bool;
             deletable:bool;
         };

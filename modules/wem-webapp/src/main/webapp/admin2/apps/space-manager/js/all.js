@@ -266,7 +266,7 @@ var app_event;
             this.model = model;
                 _super.call(this, name);
         }
-        BaseSpaceModelEvent.prototype.getSpaceModels = function () {
+        BaseSpaceModelEvent.prototype.getModels = function () {
             return this.model;
         };
         return BaseSpaceModelEvent;
@@ -385,7 +385,7 @@ var app;
         function SpaceContext() {
             var _this = this;
             app_event.GridSelectionChangeEvent.on(function (event) {
-                _this.selectedSpaces = event.getSpaceModels();
+                _this.selectedSpaces = event.getModels();
             });
         }
         SpaceContext.init = function init() {
@@ -458,7 +458,7 @@ var app;
         SpaceActions.DELETE_SPACE = new DeleteSpaceAction();
         SpaceActions.init = function init() {
             app_event.GridSelectionChangeEvent.on(function (event) {
-                var spaces = event.getSpaceModels();
+                var spaces = event.getModels();
                 if(spaces.length <= 0) {
                     SpaceActions.NEW_SPACE.setEnabled(true);
                     SpaceActions.OPEN_SPACE.setEnabled(false);
@@ -1504,52 +1504,6 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
         this.show();
     }
 });
-Ext.define('Admin.model.SpaceModel', {
-    extend: 'Ext.data.Model',
-    fields: [
-        'name', 
-        'displayName', 
-        'iconUrl', 
-        'rootContentId', 
-        {
-            name: 'createdTime',
-            type: 'date',
-            default: new Date()
-        }, 
-        {
-            name: 'modifiedTime',
-            type: 'date',
-            default: new Date()
-        }, 
-        {
-            name: 'editable',
-            type: 'boolean'
-        }, 
-        {
-            name: 'deletable',
-            type: 'boolean'
-        }, 
-        
-    ],
-    idProperty: 'name'
-});
-var app_handler;
-(function (app_handler) {
-    var DeleteSpaceParamFactory = (function () {
-        function DeleteSpaceParamFactory() { }
-        DeleteSpaceParamFactory.create = function create(spaces) {
-            var spaceNames = [];
-            for(var i = 0; i < spaces.length; i++) {
-                spaceNames[i] = spaces[i].data.name;
-            }
-            return {
-                spaceName: spaceNames
-            };
-        };
-        return DeleteSpaceParamFactory;
-    })();
-    app_handler.DeleteSpaceParamFactory = DeleteSpaceParamFactory;    
-})(app_handler || (app_handler = {}));
 var app_ui;
 (function (app_ui) {
     var WizardLayout = (function () {
@@ -2684,7 +2638,7 @@ var app_ui;
                 this.showBlank();
             }
             app_event.GridSelectionChangeEvent.on(function (event) {
-                _this.update(event.getSpaceModels());
+                _this.update(event.getModels());
             });
         }
         SpaceDetailPanel2.prototype.showBlank = function () {
@@ -3051,7 +3005,7 @@ var app_ui;
                 new app_event.DeletedEvent().fire();
             };
             this.deleteAction.addExecutionListener(function () {
-                _this.deleteHandler.doDelete(app_handler.DeleteSpaceParamFactory.create(_this.spacesToDelete), deleteCallback);
+                _this.deleteHandler.doDelete(api_handler.DeleteSpaceParamFactory.create(_this.spacesToDelete), deleteCallback);
             });
             document.body.appendChild(this.getHTMLElement());
         }
@@ -4367,7 +4321,7 @@ var app_ui;
                 }
             });
             app_event.EditSpaceEvent.on(function (event) {
-                var spaces = event.getSpaceModels();
+                var spaces = event.getModels();
                 for(var i in spaces) {
                     var space = spaces[i];
                     console.log(space);
@@ -4783,14 +4737,14 @@ Ext.define('Admin.controller.Controller', {
         tabs.el.mask();
         Admin.lib.RemoteService.space_get({
             "spaceName": [
-                space.get('name')
+                space.data.name
             ]
         }, function (r) {
             tabs.el.unmask();
             if(r) {
                 var id = me.generateTabId(space, true);
                 var editing = true;
-                var title = space.get('displayName');
+                var title = space.data.displayName;
                 var data = space;
                 var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel(id, title, editing, data);
                 var index = tabs.items.indexOfKey(me.generateTabId(space, false));
@@ -5200,7 +5154,7 @@ Ext.application({
         wp.add(tabPanel);
         var deleteSpaceDialog = new app_ui.DeleteSpaceDialog();
         app_event.DeletePromptEvent.on(function (event) {
-            deleteSpaceDialog.setSpacesToDelete(event.getSpaceModels());
+            deleteSpaceDialog.setSpacesToDelete(event.getModels());
             deleteSpaceDialog.open();
         });
     }

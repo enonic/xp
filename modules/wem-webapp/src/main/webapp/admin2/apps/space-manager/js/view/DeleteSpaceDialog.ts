@@ -7,7 +7,7 @@ module app_ui {
 
         private deleteAction:api_action.Action = new DeleteSpaceDialogAction();
 
-        private spacesToDelete:app_model.SpaceModel[];
+        private spacesToDelete:api_model.SpaceModel[];
 
         private deleteHandler:api_handler.DeleteSpacesHandler = new api_handler.DeleteSpacesHandler();
 
@@ -23,18 +23,18 @@ module app_ui {
             };
 
             this.deleteAction.addExecutionListener(()=> {
-                this.deleteHandler.doDelete(app_handler.DeleteSpaceParamFactory.create( this.spacesToDelete ), deleteCallback );
+                this.deleteHandler.doDelete(api_handler.DeleteSpaceParamFactory.create( this.spacesToDelete ), deleteCallback );
             });
 
             document.body.appendChild(this.getHTMLElement());
         }
 
-        setSpacesToDelete(spaces:app_model.SpaceModel[]) {
+        setSpacesToDelete(spaces:api_model.SpaceModel[]) {
             this.spacesToDelete = spaces;
 
             var deleteItems:api_delete.DeleteItem[] = [];
             for (var i in spaces) {
-                var space:app_model.SpaceModel = spaces[i];
+                var space:api_model.SpaceModel = spaces[i];
 
                 var deleteItem:api_delete.DeleteItem = new api_delete.DeleteItem(space.data.iconUrl, space.data.displayName);
                 deleteItems.push(deleteItem);

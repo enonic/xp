@@ -37,7 +37,7 @@ Ext.define('Admin.controller.Controller', {
         tabs.addTab(spaceWizardPanel.ext);
     },
 
-    viewSpace: function (space:app_model.SpaceModel) {
+    viewSpace: function (space:api_model.SpaceModel) {
         space = this.validateSpace(space);
 
         var me = this;
@@ -61,7 +61,7 @@ Ext.define('Admin.controller.Controller', {
         }
     },
 
-    editSpace: function (space:app_model.SpaceModel) {
+    editSpace: function (space:api_model.SpaceModel) {
         space = this.validateSpace(space);
 
         var me = this;
@@ -69,13 +69,13 @@ Ext.define('Admin.controller.Controller', {
 
         tabs.el.mask();
         Admin.lib.RemoteService.space_get({
-            "spaceName": [space.get('name')]
+            "spaceName": [space.data.name]
         }, function (r) {
             tabs.el.unmask();
             if (r) {
                 var id = me.generateTabId(space, true);
                 var editing = true;
-                var title = <string> space.get('displayName');
+                var title = <string> space.data.displayName;
                 var data = space;
                 var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel(id, title, editing, data);
 
@@ -91,7 +91,7 @@ Ext.define('Admin.controller.Controller', {
         });
     },
 
-    validateSpace: function (space:app_model.SpaceModel) {
+    validateSpace: function (space:api_model.SpaceModel) {
         if (!space) {
             var showPanel = this.getSpaceTreeGridPanel();
             return showPanel.getSelection()[0];

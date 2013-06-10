@@ -1,8 +1,8 @@
-module app_handler {
+module api_handler {
 
     export class DeleteSpaceParamFactory {
 
-        static create(spaces:app_model.SpaceModel[]):api_handler.DeleteSpaceParam {
+        static create(spaces:api_model.SpaceModel[]):api_handler.DeleteSpaceParam {
 
             var spaceNames:string[] = [];
             for (var i = 0; i < spaces.length; i++) {

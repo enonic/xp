@@ -8,9 +8,67 @@ module api_util {
     var baseUri: string;
     function getAbsoluteUri(uri: string): string;
 }
+module api_model {
+    interface Model {
+        data: any;
+    }
+}
+module api_model {
+    interface SpaceModel extends Model {
+        data: {
+            name: string;
+            displayName: string;
+            iconUrl: string;
+            rootContentId: number;
+            createdTime: Date;
+            modifiedTime: Date;
+            editable: bool;
+            deletable: bool;
+        };
+    }
+}
+module api_model {
+    interface ContentModel extends Model {
+        data: {
+            id: string;
+            name: string;
+            path: string;
+            type: string;
+            displayName: string;
+            owner: string;
+            modifier: string;
+            iconUrl: string;
+            createdTime: Date;
+            modifiedTime: Date;
+            editable: bool;
+            deletable: bool;
+            hasChildren: bool;
+            allowsChildren: bool;
+        };
+    }
+}
+module api_model {
+    interface ContentTypeModel extends Model {
+        data: {
+            qualifiedName: string;
+            name: string;
+            displayName: string;
+            module: string;
+            iconUrl: string;
+            configXML: string;
+            createdTime: Date;
+            modifiedTime: Date;
+        };
+    }
+}
 module api_handler {
     interface DeleteSpaceParam {
         spaceName: string[];
+    }
+}
+module api_handler {
+    class DeleteSpaceParamFactory {
+        static create(spaces: api_model.SpaceModel[]): DeleteSpaceParam;
     }
 }
 module api_handler {

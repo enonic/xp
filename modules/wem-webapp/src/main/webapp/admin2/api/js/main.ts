@@ -7,7 +7,13 @@
 ///<reference path='util/ImageLoader.ts' />
 ///<reference path='util/UriHelper.ts' />
 
+///<reference path='model/Model.ts' />
+///<reference path='model/SpaceModel.ts' />
+///<reference path='model/ContentModel.ts' />
+///<reference path='model/ContentTypeModel.ts' />
+
 ///<reference path='handler/DeleteSpaceParam.ts' />
+///<reference path='handler/DeleteSpaceParamFactory.ts' />
 ///<reference path='handler/DeleteSpacesHandler.ts' />
 
 ///<reference path='event/Event.ts' />

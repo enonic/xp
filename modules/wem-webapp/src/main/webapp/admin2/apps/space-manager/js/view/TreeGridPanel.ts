@@ -2,7 +2,7 @@ module app_ui {
 
     interface PersistentGridSelectionPlugin extends Ext_AbstractPlugin {
 
-        getSelection():app_model.SpaceModel[];
+        getSelection():api_model.SpaceModel[];
 
     }
 

@@ -4,7 +4,7 @@ module app_ui_wizard {
 
         private wizardHeader:app_ui.WizardHeader;
 
-        constructor(id:string, title:string, editing:bool, data?:app_model.SpaceModel) {
+        constructor(id:string, title:string, editing:bool, data?:api_model.SpaceModel) {
             var headerData = this.resolveHeaderData();
             this.data = data;
             var panelConfig = {

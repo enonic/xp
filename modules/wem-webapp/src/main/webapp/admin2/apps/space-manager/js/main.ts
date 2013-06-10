@@ -28,10 +28,6 @@
 ///<reference path='plugin/fileupload/PhotoUploadButton.ts' />
 ///<reference path='plugin/fileupload/PhotoUploadWindow.ts' />
 
-///<reference path='model/SpaceModel.ts' />
-
-///<reference path='handler/DeleteSpaceParamFactory.ts' />
-
 ///<reference path='view/WizardLayout.ts' />
 ///<reference path='view/WizardHeader.ts' />
 ///<reference path='view/WizardPanel.ts' />
@@ -156,7 +152,7 @@ Ext.application({
 
         var deleteSpaceDialog:app_ui.DeleteSpaceDialog = new app_ui.DeleteSpaceDialog();
         app_event.DeletePromptEvent.on((event) => {
-            deleteSpaceDialog.setSpacesToDelete(event.getSpaceModels());
+            deleteSpaceDialog.setSpacesToDelete(event.getModels());
             deleteSpaceDialog.open();
         });
     }

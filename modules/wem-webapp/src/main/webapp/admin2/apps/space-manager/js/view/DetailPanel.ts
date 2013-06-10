@@ -9,7 +9,7 @@ module app_ui {
             }
 
             app_event.GridSelectionChangeEvent.on((event) => {
-                this.update(event.getSpaceModels());
+                this.update(event.getModels());
             })
         }
 
@@ -82,7 +82,7 @@ module app_ui {
             }
         ];
 
-        constructor(region?:String, id?:string, model?:app_model.SpaceModel) {
+        constructor(region?:String, id?:string, model?:api_model.SpaceModel) {
             var cls = 'admin-preview-panel admin-detail' + ( this.isVertical ? 'admin-detail-vertical' : '' );
             this.data = model;
             this.isFullScreen = Ext.isEmpty(region);
