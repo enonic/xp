@@ -10,6 +10,10 @@
  * @author Harald Hanek (c) 2011-2012
  * @license http://harrydeluxe.mit-license.org
  */
+
+
+
+
 Ext.define('Ext.ux.toggleslide.ToggleSlide', {
     extend: 'Ext.Component',
     alias: 'widget.toggleslide',
@@ -166,7 +170,7 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
             me.el.addCls(me.cls);
         }
 
-        me.thumb = new Ext.ux.toggleslide.Thumb({
+        me.thumb = new (<any> Ext).ux.toggleslide.Thumb({
             ownerCt: me,
             slider: me,
             disabled: !!me.disabled
@@ -199,7 +203,7 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
             me.registerToggleListeners();
         }
         else {
-            Ext.ux.toggleslide.ToggleSlide.superclass.disable.call(me);
+            (<any> Ext).ux.toggleslide.ToggleSlide.superclass.disable.call(me);
         }
     },
 
@@ -396,7 +400,7 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
      */
     enable: function () {
         if (this.disabled) {
-            Ext.ux.toggleslide.ToggleSlide.superclass.enable.call(this);
+            (<any> Ext).ux.toggleslide.ToggleSlide.superclass.enable.call(this);
             this.registerToggleListeners();
             //this.thumb.enable();
         }
@@ -411,7 +415,7 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
      */
     disable: function () {
         if (!this.disabled) {
-            Ext.ux.toggleslide.ToggleSlide.superclass.disable.call(this);
+            (<any> Ext).ux.toggleslide.ToggleSlide.superclass.disable.call(this);
             this.unregisterToggleListeners();
             //this.thumb.disable();
         }

@@ -67,7 +67,7 @@ module admin.ui {
         }
 
         private createCycle() {
-            return new Ext.button.Cycle({
+            return Ext.create('Ext.button.Cycle', {
                 itemId: 'deviceCycle',
                 disabled: !this.isLiveMode,
                 showText: true,
@@ -101,7 +101,7 @@ module admin.ui {
         }
 
         private createToggleSlide() {
-            return new Ext.ux.toggleslide.ToggleSlide({
+            return Ext.create({
                 xtype: 'toggleslide',
                 onText: 'Preview',
                 offText: 'Details',

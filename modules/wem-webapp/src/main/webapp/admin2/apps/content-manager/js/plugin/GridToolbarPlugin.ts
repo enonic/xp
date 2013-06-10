@@ -15,13 +15,13 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
 
         me.toolbar = toolbar;
 
-        me.resultTextItem = Ext.create('Ext.toolbar.TextItem', {
+        me.resultTextItem = <any> Ext.create('Ext.toolbar.TextItem', {
             text: '',
             hidden: !!me.toolbar.resultCountHidden
         });
         me.selectAllButton = me.createSelectAllButton();
         me.clearSelectionButton = me.createClearSelectionButton();
-        me.tbFill = Ext.create('Ext.toolbar.Fill');
+        me.tbFill = <any> Ext.create('Ext.toolbar.Fill');
         me.orderByButton = me.createOrderByButton();
         me.orderByDirectionButton = me.createOrderByDirectionButton();
 
@@ -69,7 +69,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
 
     createSelectAllButton: function () {
         var me = this;
-        return Ext.create('Ext.Component', {
+        return <any> Ext.create('Ext.Component', {
             autoEl: {
                 tag: 'a',
                 href: 'javascript:;',
@@ -93,7 +93,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
 
     createClearSelectionButton: function () {
         var me = this;
-        return Ext.create('Ext.Component', {
+        return <any> Ext.create('Ext.Component', {
             autoEl: {
                 tag: 'a',
                 href: 'javascript:;',
@@ -116,7 +116,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     createOrderByButton: function () {
         var me = this;
         var menuItems = me.createOrderByMenuItems();
-        return Ext.create('Ext.button.Cycle', {
+        return <any> Ext.create('Ext.button.Cycle', {
             showText: true,
             prependText: 'Order by ',
             menu: {
@@ -126,7 +126,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     },
 
     createOrderByDirectionButton: function () {
-        return Ext.create('Ext.button.Cycle', {
+        return <any> Ext.create('Ext.button.Cycle', {
             showText: true,
             prependText: 'Direction ',
             menu: {

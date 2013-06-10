@@ -62,7 +62,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
             formItems = me.items.items,
             contentData = {};
         Ext.Array.each(formItems, function (item) {
-            var currentItemValue = item.getValue();
+            var currentItemValue = (<any> item).getValue();
             if (currentItemValue instanceof Array) {
                 Ext.each(currentItemValue, function (itemValue) {
                     contentData[itemValue.path] = itemValue.value;

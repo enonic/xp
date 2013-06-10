@@ -18,7 +18,7 @@ Ext.define('Admin.view.TopBar', {
     initComponent: function () {
         var me = this;
 
-        this.startButton = Ext.create('Ext.button.Button', {
+        this.startButton = <any> Ext.create('Ext.button.Button', {
             xtype: 'button',
             itemId: 'app-launcher-button',
             margins: '0 8px 0 0',
@@ -28,7 +28,7 @@ Ext.define('Admin.view.TopBar', {
             }
         });
 
-        this.homeButton = Ext.create('Ext.button.Button', {
+        this.homeButton = <any> Ext.create('Ext.button.Button', {
             text: me.appName || '&lt; app name &gt;',
             cls: 'home-button',
             handler: function (btn, evt) {
@@ -38,7 +38,7 @@ Ext.define('Admin.view.TopBar', {
             }
         });
 
-        this.leftContainer = Ext.create('Ext.Container', {
+        this.leftContainer = <any> Ext.create('Ext.Container', {
             flex: 5,
             padding: 6,
             layout: {
@@ -70,7 +70,7 @@ Ext.define('Admin.view.TopBar', {
             '</div>' +
             '</div>';
 
-        this.rightContainer = Ext.create('Ext.Container', {
+        this.rightContainer = <any> Ext.create('Ext.Container', {
             flex: 5,
             layout: {
                 type: 'hbox',
@@ -97,10 +97,10 @@ Ext.define('Admin.view.TopBar', {
         ];
 
         if (this.tabPanel) {
-            this.tabMenu = Ext.create('Admin.view.TopBarMenu', {
+            this.tabMenu = <any> Ext.create('Admin.view.TopBarMenu', {
                 tabPanel: me.tabPanel
             });
-            this.titleButton = Ext.create('Ext.button.Button', {
+            this.titleButton = <any> Ext.create('Ext.button.Button', {
                 cls: 'title-button',
                 menuAlign: 't-b?',
                 menu: me.tabMenu,
@@ -221,15 +221,16 @@ Ext.define('Admin.view.TopBar', {
 
     /* For 18/4 demo */
     getApplicationId: function () {
+
         var urlParamsString = document.URL.split('?'),
-            urlParams = Ext.urlDecode(urlParamsString[urlParamsString.length - 1]);
+            urlParams = <any> Ext.Object.fromQueryString(urlParamsString[urlParamsString.length - 1]);
 
         return urlParams.appId ? urlParams.appId.split('#')[0] : null;
     },
 
     getMenuItemIcon: function (card) {
         var icon;
-        if (card.data && card.data instanceof Ext.data.Model) {
+        if (card.data && card.data instanceof <any> Ext.data.Model) {
             icon = card.data.get('iconUrl') || card.data.get('image_url');
         }
         return icon;
@@ -237,7 +238,7 @@ Ext.define('Admin.view.TopBar', {
 
     getMenuItemDescription: function (card) {
         var desc;
-        if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+        if (!card.isNew && card.data && card.data instanceof <any> Ext.data.Model) {
             desc = card.data.get('path') || card.data.get('qualifiedName') || card.data.get('displayName');
         }
         if (!desc) {
@@ -249,7 +250,7 @@ Ext.define('Admin.view.TopBar', {
 
     getMenuItemDisplayName: function (card) {
         var desc;
-        if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+        if (!card.isNew && card.data && card.data instanceof <any> Ext.data.Model) {
             desc = card.data.get('displayName') || card.data.get('name');
         }
         if (!desc) {

@@ -7,13 +7,13 @@ module admin.ui {
         constructor(input:api_schema_content_form.Input) {
             super(input);
 
-            var fieldContainer = new Ext.form.FieldContainer();
+            var fieldContainer = <any> Ext.create('Ext.form.FieldContainer');
             fieldContainer.setFieldLabel('');
             fieldContainer.labelWidth = 110;
             fieldContainer.labelPad = 0;
             // more base stuff...
 
-            var textField = new Ext.form.Text();
+            var textField = <any> Ext.create('Ext.form.Text');
             textField.enableKeyEvents = true;
             textField.displayNameSource = true;
             //textField.name = this.name;
@@ -27,7 +27,7 @@ module admin.ui {
 
             this.ext.down('textfield').setValue(value);
 
-            super.setValue( value, arrayIndex )
+            super.setValue(value, arrayIndex)
         }
     }
 }

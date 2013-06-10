@@ -11,7 +11,7 @@ Ext.define('Admin.view.AdminImageButton', {
     listeners: {
         click: function (item) {
             if (!item.popupPanel) {
-                item.popupPanel = Ext.create("Ext.panel.Panel", {
+                item.popupPanel = <any> Ext.create("Ext.panel.Panel", {
                     floating: true,
                     cls: 'admin-toolbar-popup',
                     border: false,

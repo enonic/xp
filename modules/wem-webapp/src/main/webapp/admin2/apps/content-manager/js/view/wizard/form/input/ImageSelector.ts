@@ -92,7 +92,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
     createSelectedContentStore: function () {
         var me = this;
 
-        return Ext.create('Ext.data.Store', {
+        return <any> Ext.create('Ext.data.Store', {
             model: 'Admin.model.contentManager.ContentModel',
             data: [],
             listeners: {
@@ -277,7 +277,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
             '</tpl>'
         );
 
-        return Ext.create('Ext.view.View', {
+        return <any> Ext.create('Ext.view.View', {
             store: me.selectedContentStore,
             tpl: template,
             itemSelector: 'div.admin-inputimage',
@@ -499,7 +499,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
     getFileUploadWindow: function () {
         var win = Ext.ComponentQuery.query('fileUploadWindow')[0];
         if (!win) {
-            win = Ext.create('widget.fileUploadWindow');
+            win = <any> Ext.create('widget.fileUploadWindow');
             win.on('uploadcomplete', this.onFilesUploaded, this);
         }
         return win;
@@ -511,7 +511,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
             this.dialog.updateTpl(model.data);
             return this.dialog;
         } else {
-            this.dialog = Ext.create('widget.imagePopupDialog', {
+            this.dialog = <any> Ext.create('widget.imagePopupDialog', {
                 renderTo: view.getEl(),
                 data: model.data,
                 removeHandler: function () {

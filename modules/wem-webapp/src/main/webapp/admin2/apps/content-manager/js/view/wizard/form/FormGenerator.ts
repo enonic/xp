@@ -31,7 +31,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
      * @private
      */
     createLayoutComponent: function (fieldSetLayoutConfig, fieldSetLayoutData) {
-        return Ext.create({
+        return <any> Ext.create({
             xclass: 'widget.FieldSetLayout',
             name: fieldSetLayoutConfig.name,
             fieldSetLayoutConfig: fieldSetLayoutConfig,
@@ -44,13 +44,13 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
      * @private
      */
     createFormItemSetComponent: function (formItemSetConfig, formItemSetData) {
-        var formItemSetComponent = Ext.create({
+        var formItemSetComponent = <any> Ext.create({
             xclass: 'widget.FormItemSet',
             name: formItemSetConfig.name,
             formItemSetConfig: formItemSetConfig,
             value: formItemSetData
         });
-        return Ext.create({
+        return <any> Ext.create({
             xclass: 'widget.formItemSetContainer',
             field: formItemSetComponent
         });
@@ -66,7 +66,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
             return;
         }
 
-        var inputComponent = Ext.create({
+        var inputComponent = <any> Ext.create({
             xclass: classAlias,
             name: inputConfig.name,
             copyNo: inputConfig.copyNo || 1,
@@ -79,7 +79,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
             return inputComponent;
         } else {
             var fieldLabel = this.createInputLabel(inputConfig);
-            return Ext.create({
+            return <any> Ext.create({
                 xclass: 'widget.inputContainer',
                 label: fieldLabel,
                 field: inputComponent
@@ -95,8 +95,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
     createInputLabel: function (inputConfig) {
         var label = this.generateLabelHTML(inputConfig);
         label += ':';
-        return Ext.create({
-            xclass: 'widget.label',
+        return <any> Ext.create('Ext.form.Label', {
             width: 110,
             styleHtmlContent: true,
             html: label

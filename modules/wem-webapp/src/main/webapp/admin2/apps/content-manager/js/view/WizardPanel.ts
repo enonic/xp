@@ -339,7 +339,7 @@ Ext.define('Admin.view.WizardPanel', {
     getFormBoundItems: function (form) {
         var boundItems = form._boundItems;
         if (!boundItems && form.owner.rendered) {
-            boundItems = form._boundItems = Ext.create('Ext.util.MixedCollection');
+            boundItems = form._boundItems = <any> Ext.create('Ext.util.MixedCollection');
             boundItems.addAll(form.owner.query('[formBind]'));
             boundItems.addAll(this.boundItems);
         }

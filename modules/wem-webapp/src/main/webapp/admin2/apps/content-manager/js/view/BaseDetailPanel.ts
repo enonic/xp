@@ -234,7 +234,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
                     element: 'el', //bind to the underlying el property on the panel
                     fn: function (evt, element) {
                         var tab = element.attributes['data-tab'].value;
-                        var panels = Ext.ComponentQuery.query('contentDetail');
+                        var panels = <any[]> Ext.ComponentQuery.query('contentDetail');
                         for (var i = 0; i < panels.length; i++) {
                             panels[i].changeTab(tab);
                         }
