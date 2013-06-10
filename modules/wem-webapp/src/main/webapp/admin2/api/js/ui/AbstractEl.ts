@@ -1,6 +1,6 @@
 module api_ui {
 
-    export class Component {
+    export class AbstractEl {
 
         private static constructorCounter:number = 0;
 
@@ -15,7 +15,7 @@ module api_ui {
             else {
                 this.el = HTMLElementHelper.fromName(elementName);
             }
-            this.id = name + '-' + (++Component.constructorCounter);
+            this.id = name + '-' + (++api_ui.AbstractEl.constructorCounter);
             this.el.setId(this.id);
         }
 
@@ -35,7 +35,7 @@ module api_ui {
             return this.el.getHTMLElement();
         }
 
-        appendChild(child:api_ui.Component) {
+        appendChild(child:api_ui.AbstractEl) {
             this.el.appendChild(child.getEl().getHTMLElement());
         }
 

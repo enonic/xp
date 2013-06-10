@@ -207,41 +207,41 @@ var api_ui;
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
-    var Component = (function () {
-        function Component(name, elementName) {
+    var AbstractEl = (function () {
+        function AbstractEl(name, elementName) {
             if(elementName === "img") {
                 this.el = api_ui.HTMLImageElementHelper.create();
             } else {
                 this.el = api_ui.HTMLElementHelper.fromName(elementName);
             }
-            this.id = name + '-' + (++Component.constructorCounter);
+            this.id = name + '-' + (++api_ui.AbstractEl.constructorCounter);
             this.el.setId(this.id);
         }
-        Component.constructorCounter = 0;
-        Component.prototype.getId = function () {
+        AbstractEl.constructorCounter = 0;
+        AbstractEl.prototype.getId = function () {
             return this.id;
         };
-        Component.prototype.getEl = function () {
+        AbstractEl.prototype.getEl = function () {
             return this.el;
         };
-        Component.prototype.getImg = function () {
+        AbstractEl.prototype.getImg = function () {
             return this.el;
         };
-        Component.prototype.getHTMLElement = function () {
+        AbstractEl.prototype.getHTMLElement = function () {
             return this.el.getHTMLElement();
         };
-        Component.prototype.appendChild = function (child) {
+        AbstractEl.prototype.appendChild = function (child) {
             this.el.appendChild(child.getEl().getHTMLElement());
         };
-        Component.prototype.removeChildren = function () {
+        AbstractEl.prototype.removeChildren = function () {
             var htmlEl = this.el.getHTMLElement();
             while(htmlEl.firstChild) {
                 htmlEl.removeChild(htmlEl.firstChild);
             }
         };
-        return Component;
+        return AbstractEl;
     })();
-    api_ui.Component = Component;    
+    api_ui.AbstractEl = AbstractEl;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
@@ -251,8 +251,52 @@ var api_ui;
                 _super.call(this, name, "div");
         }
         return DivEl;
-    })(api_ui.Component);
+    })(api_ui.AbstractEl);
     api_ui.DivEl = DivEl;    
+})(api_ui || (api_ui = {}));
+var api_ui;
+(function (api_ui) {
+    var H2El = (function (_super) {
+        __extends(H2El, _super);
+        function H2El(name) {
+                _super.call(this, name, "h2");
+        }
+        return H2El;
+    })(api_ui.AbstractEl);
+    api_ui.H2El = H2El;    
+})(api_ui || (api_ui = {}));
+var api_ui;
+(function (api_ui) {
+    var H4El = (function (_super) {
+        __extends(H4El, _super);
+        function H4El(name) {
+                _super.call(this, name, "h4");
+        }
+        return H4El;
+    })(api_ui.AbstractEl);
+    api_ui.H4El = H4El;    
+})(api_ui || (api_ui = {}));
+var api_ui;
+(function (api_ui) {
+    var UlEl = (function (_super) {
+        __extends(UlEl, _super);
+        function UlEl(name) {
+                _super.call(this, name, "ul");
+        }
+        return UlEl;
+    })(api_ui.AbstractEl);
+    api_ui.UlEl = UlEl;    
+})(api_ui || (api_ui = {}));
+var api_ui;
+(function (api_ui) {
+    var LiEl = (function (_super) {
+        __extends(LiEl, _super);
+        function LiEl(name) {
+                _super.call(this, name, "li");
+        }
+        return LiEl;
+    })(api_ui.AbstractEl);
+    api_ui.LiEl = LiEl;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
@@ -262,12 +306,11 @@ var api_ui;
                 _super.call(this, name, "img");
             this.el = api_ui.HTMLImageElementHelper.create();
         }
-        ImgEl.constructorCounter = 0;
         ImgEl.prototype.getImg = function () {
             return this.el;
         };
         return ImgEl;
-    })(api_ui.Component);
+    })(api_ui.AbstractEl);
     api_ui.ImgEl = ImgEl;    
 })(api_ui || (api_ui = {}));
 var api_ui;
@@ -278,7 +321,7 @@ var api_ui;
                 _super.call(this, name, "button");
         }
         return ButtonEl;
-    })(api_ui.Component);
+    })(api_ui.AbstractEl);
     api_ui.ButtonEl = ButtonEl;    
 })(api_ui || (api_ui = {}));
 var api_ui;
@@ -400,7 +443,7 @@ var api_ui_menu;
         __extends(MenuItem, _super);
         function MenuItem(action) {
             var _this = this;
-                _super.call(this, "menu-item", "li");
+                _super.call(this, "menu-item");
             this.action = action;
             this.getEl().setInnerHtml(this.action.getLabel());
             this.getEl().addEventListener("click", function () {
@@ -423,7 +466,7 @@ var api_ui_menu;
             }
         };
         return MenuItem;
-    })(api_ui.Component);
+    })(api_ui.LiEl);
     api_ui_menu.MenuItem = MenuItem;    
 })(api_ui_menu || (api_ui_menu = {}));
 var api_ui_menu;
@@ -432,7 +475,7 @@ var api_ui_menu;
         __extends(ContextMenu, _super);
         function ContextMenu() {
             var _this = this;
-                _super.call(this, "context-menu", "ul");
+                _super.call(this, "context-menu");
             this.menuItems = [];
             this.getEl().addClass("context-menu");
             var htmlEl = this.getHTMLElement();
@@ -471,7 +514,7 @@ var api_ui_menu;
             this.hide();
         };
         return ContextMenu;
-    })(api_ui.Component);
+    })(api_ui.UlEl);
     api_ui_menu.ContextMenu = ContextMenu;    
 })(api_ui_menu || (api_ui_menu = {}));
 var api_ui_menu;
@@ -484,7 +527,7 @@ var api_ui_menu;
             for (var _i = 0; _i < (arguments.length - 0); _i++) {
                 actions[_i] = arguments[_i + 0];
             }
-                _super.call(this, "action-menu", "ul");
+                _super.call(this, "action-menu");
             this.menuItems = [];
             this.getEl().addClass("action-menu");
             this.button = new ActionMenuButton(this);
@@ -541,13 +584,13 @@ var api_ui_menu;
             this.hide();
         };
         return ActionMenu;
-    })(api_ui.Component);
+    })(api_ui.UlEl);
     api_ui_menu.ActionMenu = ActionMenu;    
     var ActionMenuButton = (function (_super) {
         __extends(ActionMenuButton, _super);
         function ActionMenuButton(menu) {
             var _this = this;
-                _super.call(this, "button", "button");
+                _super.call(this, "button");
             this.menu = menu;
             var btnEl = this.getEl();
             btnEl.addClass("action-menu-button");
@@ -576,7 +619,7 @@ var api_ui_menu;
             });
         };
         return ActionMenuButton;
-    })(api_ui.Component);
+    })(api_ui.ButtonEl);
     api_ui_menu.ActionMenuButton = ActionMenuButton;    
 })(api_ui_menu || (api_ui_menu = {}));
 var api_ui_dialog;
@@ -647,28 +690,28 @@ var api_ui_dialog;
     var ModalDialogTitle = (function (_super) {
         __extends(ModalDialogTitle, _super);
         function ModalDialogTitle(title) {
-                _super.call(this, "ModalDialogTitle", "h2");
+                _super.call(this, "ModalDialogTitle");
             this.getEl().setInnerHtml(title);
         }
         ModalDialogTitle.prototype.setTitle = function (value) {
             this.getEl().setInnerHtml(value);
         };
         return ModalDialogTitle;
-    })(api_ui.Component);
+    })(api_ui.H2El);
     api_ui_dialog.ModalDialogTitle = ModalDialogTitle;    
     var ModalDialogContentPanel = (function (_super) {
         __extends(ModalDialogContentPanel, _super);
         function ModalDialogContentPanel() {
-                _super.call(this, "ModalDialogContentPanel", "div");
+                _super.call(this, "ModalDialogContentPanel");
             this.getEl().addClass("modal-dialog-content-panel");
         }
         return ModalDialogContentPanel;
-    })(api_ui.Component);
+    })(api_ui.DivEl);
     api_ui_dialog.ModalDialogContentPanel = ModalDialogContentPanel;    
     var ModalDialogButtonRow = (function (_super) {
         __extends(ModalDialogButtonRow, _super);
         function ModalDialogButtonRow() {
-                _super.call(this, "ModalDialogButtonRow", "div");
+                _super.call(this, "ModalDialogButtonRow");
             this.getEl().addClass("modal-dialog-button-row");
         }
         ModalDialogButtonRow.prototype.addAction = function (action) {
@@ -676,7 +719,7 @@ var api_ui_dialog;
             this.appendChild(button);
         };
         return ModalDialogButtonRow;
-    })(api_ui.Component);
+    })(api_ui.DivEl);
     api_ui_dialog.ModalDialogButtonRow = ModalDialogButtonRow;    
     var ModalDialogButton = (function (_super) {
         __extends(ModalDialogButton, _super);
@@ -773,29 +816,29 @@ var api_delete;
     var DeleteDialogItemList = (function (_super) {
         __extends(DeleteDialogItemList, _super);
         function DeleteDialogItemList() {
-                _super.call(this, "DeleteDialogItemList", "div");
+                _super.call(this, "DeleteDialogItemList");
             this.getEl().addClass("delete-dialog-item-list");
         }
         DeleteDialogItemList.prototype.clear = function () {
             this.removeChildren();
         };
         return DeleteDialogItemList;
-    })(api_ui.Component);
+    })(api_ui.DivEl);
     api_delete.DeleteDialogItemList = DeleteDialogItemList;    
     var DeleteDialogItemComponent = (function (_super) {
         __extends(DeleteDialogItemComponent, _super);
         function DeleteDialogItemComponent(deleteItem) {
-                _super.call(this, "DeleteDialogItem", "div");
+                _super.call(this, "DeleteDialogItem");
             this.getEl().addClass("delete-dialog-item");
             var icon = new api_ui.ImgEl("img");
             icon.getImg().setSrc(deleteItem.getIconUrl());
             this.appendChild(icon);
-            var displayName = new api_ui.Component("h4", "h4");
+            var displayName = new api_ui.H4El("h4");
             displayName.getEl().setInnerHtml(deleteItem.getDisplayName());
             this.appendChild(displayName);
         }
         return DeleteDialogItemComponent;
-    })(api_ui.Component);    
+    })(api_ui.DivEl);    
 })(api_delete || (api_delete = {}));
 var api_notify;
 (function (api_notify) {

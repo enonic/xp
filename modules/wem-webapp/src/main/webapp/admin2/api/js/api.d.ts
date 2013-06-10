@@ -67,7 +67,7 @@ module api_ui {
     }
 }
 module api_ui {
-    class Component {
+    class AbstractEl {
         private static constructorCounter;
         private el;
         private id;
@@ -76,18 +76,37 @@ module api_ui {
         public getEl(): HTMLElementHelper;
         public getImg(): HTMLImageElementHelper;
         public getHTMLElement(): HTMLElement;
-        public appendChild(child: Component): void;
+        public appendChild(child: AbstractEl): void;
         public removeChildren(): void;
     }
 }
 module api_ui {
-    class DivEl extends Component {
+    class DivEl extends AbstractEl {
         constructor(name: string);
     }
 }
 module api_ui {
-    class ImgEl extends Component {
-        private static constructorCounter;
+    class H2El extends AbstractEl {
+        constructor(name: string);
+    }
+}
+module api_ui {
+    class H4El extends AbstractEl {
+        constructor(name: string);
+    }
+}
+module api_ui {
+    class UlEl extends AbstractEl {
+        constructor(name: string);
+    }
+}
+module api_ui {
+    class LiEl extends AbstractEl {
+        constructor(name: string);
+    }
+}
+module api_ui {
+    class ImgEl extends AbstractEl {
         private el;
         private id;
         constructor(name: string);
@@ -95,7 +114,7 @@ module api_ui {
     }
 }
 module api_ui {
-    class ButtonEl extends Component {
+    class ButtonEl extends AbstractEl {
         constructor(name: string);
     }
 }
@@ -128,14 +147,14 @@ module api_ui_toolbar {
     }
 }
 module api_ui_menu {
-    class MenuItem extends api_ui.Component {
+    class MenuItem extends api_ui.LiEl {
         private action;
         constructor(action: api_action.Action);
         public setEnable(value: bool): void;
     }
 }
 module api_ui_menu {
-    class ContextMenu extends api_ui.Component {
+    class ContextMenu extends api_ui.UlEl {
         private menuItems;
         constructor();
         public addAction(action: api_action.Action): void;
@@ -146,7 +165,7 @@ module api_ui_menu {
     }
 }
 module api_ui_menu {
-    class ActionMenu extends api_ui.Component {
+    class ActionMenu extends api_ui.UlEl {
         private ext;
         private button;
         private menuItems;
@@ -159,7 +178,7 @@ module api_ui_menu {
         private hide();
         private hideMenuOnOutsideClick(evt);
     }
-    class ActionMenuButton extends api_ui.Component {
+    class ActionMenuButton extends api_ui.ButtonEl {
         private ext;
         private menu;
         constructor(menu: ActionMenu);
@@ -187,19 +206,19 @@ module api_ui_dialog {
         private buttonRow;
         constructor(config: ModalDialogConfig);
         public setTitle(value: string): void;
-        public appendChildToContentPanel(child: api_ui.Component): void;
+        public appendChildToContentPanel(child: api_ui.AbstractEl): void;
         public addAction(action: api_action.Action): void;
         public close(): void;
         public open(): void;
     }
-    class ModalDialogTitle extends api_ui.Component {
+    class ModalDialogTitle extends api_ui.H2El {
         constructor(title: string);
         public setTitle(value: string): void;
     }
-    class ModalDialogContentPanel extends api_ui.Component {
+    class ModalDialogContentPanel extends api_ui.DivEl {
         constructor();
     }
-    class ModalDialogButtonRow extends api_ui.Component {
+    class ModalDialogButtonRow extends api_ui.DivEl {
         constructor();
         public addAction(action: api_action.Action): void;
     }
@@ -234,7 +253,7 @@ module api_delete {
     class CancelDeleteDialogAction extends api_action.Action {
         constructor();
     }
-    class DeleteDialogItemList extends api_ui.Component {
+    class DeleteDialogItemList extends api_ui.DivEl {
         constructor();
         public clear(): void;
     }

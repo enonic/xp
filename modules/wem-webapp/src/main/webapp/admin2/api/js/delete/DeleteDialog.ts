@@ -62,9 +62,9 @@ module api_delete{
         }
     }
 
-    export class DeleteDialogItemList extends api_ui.Component {
+    export class DeleteDialogItemList extends api_ui.DivEl {
         constructor() {
-            super("DeleteDialogItemList", "div")
+            super("DeleteDialogItemList");
             this.getEl().addClass("delete-dialog-item-list");
         }
 
@@ -73,16 +73,16 @@ module api_delete{
         }
     }
 
-    class DeleteDialogItemComponent extends api_ui.Component {
+    class DeleteDialogItemComponent extends api_ui.DivEl {
         constructor(deleteItem:api_delete.DeleteItem) {
-            super("DeleteDialogItem", "div");
+            super("DeleteDialogItem");
             this.getEl().addClass("delete-dialog-item");
 
-            var icon:api_ui.Component = new api_ui.ImgEl("img");
+            var icon:api_ui.ImgEl = new api_ui.ImgEl("img");
             icon.getImg().setSrc(deleteItem.getIconUrl());
             this.appendChild(icon);
 
-            var displayName:api_ui.Component = new api_ui.Component("h4", "h4");
+            var displayName:api_ui.H4El = new api_ui.H4El("h4");
             displayName.getEl().setInnerHtml(deleteItem.getDisplayName());
             this.appendChild(displayName);
         }

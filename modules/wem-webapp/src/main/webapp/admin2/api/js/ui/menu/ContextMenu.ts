@@ -1,10 +1,10 @@
 module api_ui_menu{
 
-    export class ContextMenu extends api_ui.Component {
+    export class ContextMenu extends api_ui.UlEl {
         private menuItems:MenuItem[] = [];
 
         constructor() {
-            super("context-menu", "ul");
+            super("context-menu");
             this.getEl().addClass("context-menu");
 
             var htmlEl = this.getHTMLElement();

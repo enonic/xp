@@ -1,6 +1,6 @@
 module api_ui {
 
-    export class ButtonEl extends Component {
+    export class ButtonEl extends api_ui.AbstractEl {
 
         constructor(name:string) {
             super(name, "button");

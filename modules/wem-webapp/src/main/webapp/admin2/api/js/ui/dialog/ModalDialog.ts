@@ -46,7 +46,7 @@ module api_ui_dialog{
             this.title.setTitle(value);
         }
 
-        appendChildToContentPanel(child:api_ui.Component) {
+        appendChildToContentPanel(child:api_ui.AbstractEl) {
             this.contentPanel.appendChild(child);
         }
 
@@ -73,10 +73,10 @@ module api_ui_dialog{
         }
     }
 
-    export class ModalDialogTitle extends api_ui.Component {
+    export class ModalDialogTitle extends api_ui.H2El {
 
         constructor(title:string) {
-            super("ModalDialogTitle", "h2");
+            super("ModalDialogTitle");
             this.getEl().setInnerHtml(title);
         }
 
@@ -85,18 +85,18 @@ module api_ui_dialog{
         }
     }
 
-    export class ModalDialogContentPanel extends api_ui.Component {
+    export class ModalDialogContentPanel extends api_ui.DivEl {
 
         constructor() {
-            super("ModalDialogContentPanel", "div");
+            super("ModalDialogContentPanel");
             this.getEl().addClass("modal-dialog-content-panel")
         }
     }
 
-    export class ModalDialogButtonRow extends api_ui.Component {
+    export class ModalDialogButtonRow extends api_ui.DivEl {
 
         constructor() {
-            super("ModalDialogButtonRow", "div");
+            super("ModalDialogButtonRow");
             this.getEl().addClass("modal-dialog-button-row")
         }
 

@@ -1,11 +1,11 @@
 module api_ui_menu {
 
-    export class MenuItem extends api_ui.Component {
+    export class MenuItem extends api_ui.LiEl {
 
         private action:api_action.Action;
 
         constructor(action:api_action.Action) {
-            super("menu-item", "li");
+            super("menu-item");
             this.action = action;
             this.getEl().setInnerHtml(this.action.getLabel());
             this.getEl().addEventListener("click", () => {

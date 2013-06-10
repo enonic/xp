@@ -1,12 +1,8 @@
 module api_ui {
 
-    export class ImgEl extends Component {
-
-        private static constructorCounter:number = 0;
+    export class ImgEl extends api_ui.AbstractEl {
 
         private el:HTMLElementHelper;
-
-        private id:string;
 
         constructor(name:string) {
             super( name, "img" );

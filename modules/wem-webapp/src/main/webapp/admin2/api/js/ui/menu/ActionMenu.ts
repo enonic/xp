@@ -1,6 +1,6 @@
 module api_ui_menu{
 
-    export class ActionMenu extends api_ui.Component {
+    export class ActionMenu extends api_ui.UlEl {
         private ext; //:Ext.Component;
 
         private button:ActionMenuButton;
@@ -8,7 +8,7 @@ module api_ui_menu{
         private menuItems:MenuItem[] = [];
 
         constructor(...actions:api_action.Action[]) {
-            super("action-menu", "ul");
+            super("action-menu");
             this.getEl().addClass("action-menu");
 
             this.button = new ActionMenuButton(this);
@@ -78,13 +78,13 @@ module api_ui_menu{
     }
 
 
-    export class ActionMenuButton extends api_ui.Component {
+    export class ActionMenuButton extends api_ui.ButtonEl {
         private ext;
 
         private menu:ActionMenu;
 
         constructor(menu:ActionMenu) {
-            super("button", "button");
+            super("button");
             this.menu = menu;
 
             var btnEl = this.getEl();

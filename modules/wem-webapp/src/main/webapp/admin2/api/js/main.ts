@@ -13,8 +13,12 @@
 
 ///<reference path='ui/HTMLElementHelper.ts' />
 ///<reference path='ui/HTMLImageElementHelper.ts' />
-///<reference path='ui/Component.ts' />
+///<reference path='ui/AbstractEl.ts' />
 ///<reference path='ui/DivEl.ts' />
+///<reference path='ui/H2El.ts' />
+///<reference path='ui/H4El.ts' />
+///<reference path='ui/UlEl.ts' />
+///<reference path='ui/LiEl.ts' />
 ///<reference path='ui/ImgEl.ts' />
 ///<reference path='ui/ButtonEl.ts' />
 ///<reference path='ui/BodyMask.ts' />
