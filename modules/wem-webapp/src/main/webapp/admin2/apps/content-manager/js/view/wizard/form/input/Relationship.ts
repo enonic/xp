@@ -136,7 +136,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
                 emptyText: 'No matching items'
             },
 
-            displayTpl: Ext.create('Ext.XTemplate',
+            displayTpl: new Ext.XTemplate(
                 '<tpl for=".">',
                 '{displayName}',
                 '</tpl>'
@@ -216,7 +216,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
         var max = this.inputConfig.occurrences.maximum;
         var min = this.inputConfig.occurrences.minimum;
 
-        return Ext.create('Ext.data.Store', {
+        return <any> Ext.create('Ext.data.Store', {
             model: 'Admin.model.contentManager.ContentModel',
             data: [],
             listeners: {
@@ -290,7 +290,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             '</tpl>'
         );
 
-        return Ext.create('Ext.view.View', {
+        return <any> Ext.create('Ext.view.View', {
             store: me.selectedContentStore,
             itemId: 'relationshipView',
             tpl: template,

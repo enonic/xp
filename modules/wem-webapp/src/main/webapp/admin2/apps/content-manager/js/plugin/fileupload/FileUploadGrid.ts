@@ -18,7 +18,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
             { header: 'Size', dataIndex: 'fileSize', flex: 1 }
         ];
 
-        this.selModel = Ext.create('Ext.selection.RowModel', {
+        this.selModel = <any> Ext.create('Ext.selection.RowModel', {
             mode: 'MULTI'
         });
 
@@ -31,7 +31,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
 
     createToolbar: function () {
         var grid = this;
-        grid.tbar = Ext.create('Ext.toolbar.Toolbar', {
+        grid.tbar = <any> Ext.create('Ext.toolbar.Toolbar', {
             items: [
                 {
                     xtype: 'button',
@@ -138,7 +138,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     },
 
     createStore: function () {
-        this.store = Ext.create('Ext.data.Store', {
+        this.store = <any> Ext.create('Ext.data.Store', {
             fields: ['fileName', 'fileSize', 'fileId'],
             data: {'items': [
             ]},

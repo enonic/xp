@@ -135,7 +135,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     createWizardHeader: function () {
         var headerData = this.prepareHeaderData(this.data);
         var evaluateFn = this.data && this.contentType && this.contentType.contentDisplayNameScript;
-        var wizardHeader = Ext.create('Admin.view.WizardHeader', {
+        var wizardHeader = <any> Ext.create('Admin.view.WizardHeader', {
             xtype: 'wizardHeader',
             nameConfig: {
                 readOnly: headerData.isRoot,
@@ -178,7 +178,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
                         var toolText = '<strong>' + contentType.displayName + '</strong></br>' +
                                        contentType.module + ':' + contentType.name;
 
-                        var tip = Ext.create('Ext.tip.ToolTip', {
+                        var tip = <any> Ext.create('Ext.tip.ToolTip', {
                             target: cmp.el,
                             html: toolText,
                             padding: 10,

@@ -28,7 +28,7 @@ Ext.define('Admin.view.TabPanel', {
         }, me.layout));
 
         // Custom tabBar is why we needed to override this
-        this.tabBar = Ext.create('Admin.view.TopBar', Ext.apply({
+        this.tabBar = <any> Ext.create('Admin.view.TopBar', Ext.apply({
             appName: me.appName,
             appIconCls: me.appIconCls,
             tabPanel: me
