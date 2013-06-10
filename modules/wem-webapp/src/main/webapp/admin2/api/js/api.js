@@ -322,6 +322,17 @@ var api_ui;
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
+    var EmEl = (function (_super) {
+        __extends(EmEl, _super);
+        function EmEl(name) {
+                _super.call(this, "em", name);
+        }
+        return EmEl;
+    })(api_ui.AbstractEl);
+    api_ui.EmEl = EmEl;    
+})(api_ui || (api_ui = {}));
+var api_ui;
+(function (api_ui) {
     var ImgEl = (function (_super) {
         __extends(ImgEl, _super);
         function ImgEl(name) {
@@ -615,9 +626,9 @@ var api_ui_menu;
             this.menu = menu;
             var btnEl = this.getEl();
             btnEl.addClass("action-menu-button");
-            var em = api_ui.HTMLElementHelper.fromName('em');
-            em.setInnerHtml("Actions");
-            btnEl.appendChild(em.getHTMLElement());
+            var emEl = new api_ui.EmEl();
+            emEl.getEl().setInnerHtml("Actions");
+            btnEl.appendChild(emEl.getHTMLElement());
             btnEl.addEventListener("click", function (e) {
                 menu.showBy(_this);
                 if(e.stopPropagation) {

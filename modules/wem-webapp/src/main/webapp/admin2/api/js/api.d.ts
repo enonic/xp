@@ -115,6 +115,11 @@ module api_ui {
     }
 }
 module api_ui {
+    class EmEl extends AbstractEl {
+        constructor(name?: string);
+    }
+}
+module api_ui {
     class ImgEl extends AbstractEl {
         constructor(name?: string);
         public getEl(): HTMLImageElementHelper;
