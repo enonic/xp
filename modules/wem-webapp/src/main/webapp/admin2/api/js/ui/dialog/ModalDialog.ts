@@ -46,7 +46,7 @@ module api_ui_dialog{
             this.title.setTitle(value);
         }
 
-        appendChildToContentPanel(child:api_ui.AbstractEl) {
+        appendChildToContentPanel(child:api_ui.Element) {
             this.contentPanel.appendChild(child);
         }
 

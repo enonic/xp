@@ -225,40 +225,40 @@ var api_ui;
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
-    var AbstractEl = (function () {
-        function AbstractEl(elementName, name, elHelper) {
+    var Element = (function () {
+        function Element(elementName, name, elHelper) {
             if(elHelper == null) {
                 this.el = api_ui.HTMLElementHelper.fromName(elementName);
             } else {
                 this.el = elHelper;
             }
             if(name != null) {
-                this.id = name + '-' + (++api_ui.AbstractEl.constructorCounter);
+                this.id = name + '-' + (++api_ui.Element.constructorCounter);
                 this.el.setId(this.id);
             }
         }
-        AbstractEl.constructorCounter = 0;
-        AbstractEl.prototype.getId = function () {
+        Element.constructorCounter = 0;
+        Element.prototype.getId = function () {
             return this.id;
         };
-        AbstractEl.prototype.getEl = function () {
+        Element.prototype.getEl = function () {
             return this.el;
         };
-        AbstractEl.prototype.getHTMLElement = function () {
+        Element.prototype.getHTMLElement = function () {
             return this.el.getHTMLElement();
         };
-        AbstractEl.prototype.appendChild = function (child) {
+        Element.prototype.appendChild = function (child) {
             this.el.appendChild(child.getEl().getHTMLElement());
         };
-        AbstractEl.prototype.removeChildren = function () {
+        Element.prototype.removeChildren = function () {
             var htmlEl = this.el.getHTMLElement();
             while(htmlEl.firstChild) {
                 htmlEl.removeChild(htmlEl.firstChild);
             }
         };
-        return AbstractEl;
+        return Element;
     })();
-    api_ui.AbstractEl = AbstractEl;    
+    api_ui.Element = Element;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
@@ -268,7 +268,7 @@ var api_ui;
                 _super.call(this, "div", name);
         }
         return DivEl;
-    })(api_ui.AbstractEl);
+    })(api_ui.Element);
     api_ui.DivEl = DivEl;    
 })(api_ui || (api_ui = {}));
 var api_ui;
@@ -279,7 +279,7 @@ var api_ui;
                 _super.call(this, "h1", name);
         }
         return H1El;
-    })(api_ui.AbstractEl);
+    })(api_ui.Element);
     api_ui.H1El = H1El;    
 })(api_ui || (api_ui = {}));
 var api_ui;
@@ -290,7 +290,7 @@ var api_ui;
                 _super.call(this, "h2", name);
         }
         return H2El;
-    })(api_ui.AbstractEl);
+    })(api_ui.Element);
     api_ui.H2El = H2El;    
 })(api_ui || (api_ui = {}));
 var api_ui;
@@ -301,7 +301,7 @@ var api_ui;
                 _super.call(this, "h3", name);
         }
         return H3El;
-    })(api_ui.AbstractEl);
+    })(api_ui.Element);
     api_ui.H3El = H3El;    
 })(api_ui || (api_ui = {}));
 var api_ui;
@@ -312,7 +312,7 @@ var api_ui;
                 _super.call(this, "h4", name);
         }
         return H4El;
-    })(api_ui.AbstractEl);
+    })(api_ui.Element);
     api_ui.H4El = H4El;    
 })(api_ui || (api_ui = {}));
 var api_ui;
@@ -323,7 +323,7 @@ var api_ui;
                 _super.call(this, "ul", name);
         }
         return UlEl;
-    })(api_ui.AbstractEl);
+    })(api_ui.Element);
     api_ui.UlEl = UlEl;    
 })(api_ui || (api_ui = {}));
 var api_ui;
@@ -334,7 +334,7 @@ var api_ui;
                 _super.call(this, "li", name);
         }
         return LiEl;
-    })(api_ui.AbstractEl);
+    })(api_ui.Element);
     api_ui.LiEl = LiEl;    
 })(api_ui || (api_ui = {}));
 var api_ui;
@@ -345,7 +345,7 @@ var api_ui;
                 _super.call(this, "em", name);
         }
         return EmEl;
-    })(api_ui.AbstractEl);
+    })(api_ui.Element);
     api_ui.EmEl = EmEl;    
 })(api_ui || (api_ui = {}));
 var api_ui;
@@ -359,7 +359,7 @@ var api_ui;
             return _super.prototype.getEl.call(this);
         };
         return ImgEl;
-    })(api_ui.AbstractEl);
+    })(api_ui.Element);
     api_ui.ImgEl = ImgEl;    
 })(api_ui || (api_ui = {}));
 var api_ui;
@@ -370,7 +370,7 @@ var api_ui;
                 _super.call(this, "button", name);
         }
         return ButtonEl;
-    })(api_ui.AbstractEl);
+    })(api_ui.Element);
     api_ui.ButtonEl = ButtonEl;    
 })(api_ui || (api_ui = {}));
 var api_ui;

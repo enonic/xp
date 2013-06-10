@@ -77,7 +77,7 @@ module api_ui {
     }
 }
 module api_ui {
-    class AbstractEl {
+    class Element {
         private static constructorCounter;
         private el;
         private id;
@@ -85,58 +85,58 @@ module api_ui {
         public getId(): string;
         public getEl(): HTMLElementHelper;
         public getHTMLElement(): HTMLElement;
-        public appendChild(child: AbstractEl): void;
+        public appendChild(child: Element): void;
         public removeChildren(): void;
     }
 }
 module api_ui {
-    class DivEl extends AbstractEl {
+    class DivEl extends Element {
         constructor(name?: string);
     }
 }
 module api_ui {
-    class H1El extends AbstractEl {
+    class H1El extends Element {
         constructor(name?: string);
     }
 }
 module api_ui {
-    class H2El extends AbstractEl {
+    class H2El extends Element {
         constructor(name?: string);
     }
 }
 module api_ui {
-    class H3El extends AbstractEl {
+    class H3El extends Element {
         constructor(name?: string);
     }
 }
 module api_ui {
-    class H4El extends AbstractEl {
+    class H4El extends Element {
         constructor(name?: string);
     }
 }
 module api_ui {
-    class UlEl extends AbstractEl {
+    class UlEl extends Element {
         constructor(name?: string);
     }
 }
 module api_ui {
-    class LiEl extends AbstractEl {
+    class LiEl extends Element {
         constructor(name?: string);
     }
 }
 module api_ui {
-    class EmEl extends AbstractEl {
+    class EmEl extends Element {
         constructor(name?: string);
     }
 }
 module api_ui {
-    class ImgEl extends AbstractEl {
+    class ImgEl extends Element {
         constructor(name?: string);
         public getEl(): HTMLImageElementHelper;
     }
 }
 module api_ui {
-    class ButtonEl extends AbstractEl {
+    class ButtonEl extends Element {
         constructor(name?: string);
     }
 }
@@ -228,7 +228,7 @@ module api_ui_dialog {
         private buttonRow;
         constructor(config: ModalDialogConfig);
         public setTitle(value: string): void;
-        public appendChildToContentPanel(child: api_ui.AbstractEl): void;
+        public appendChildToContentPanel(child: api_ui.Element): void;
         public addAction(action: api_action.Action): void;
         public close(): void;
         public open(): void;
