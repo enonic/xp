@@ -107,8 +107,7 @@ Ext.define('Admin.controller.Controller', {
         var enable = selected && selected.length > 0;
         var toolbar = this.getSpaceBrowseToolbar();
 
-        var buttons = Ext.ComponentQuery.query('button[action=viewSpace], ' + 'button[action=editSpace], ' +
-                                               'button[action=deleteSpace]', toolbar);
+        var buttons = Ext.ComponentQuery.query('button[action=viewSpace], ' + 'button[action=editSpace] ', toolbar);
 
         Ext.Array.each(buttons, function (button:Ext_button_Button, index, all) {
             button.setDisabled(!enable);
@@ -132,12 +131,6 @@ Ext.define('Admin.controller.Controller', {
 
     getSpaceDetailPanel: function () {
         return components.detailPanel;
-    },
-
-    deleteSpaceWindow: null,
-
-    getDeleteSpaceWindow: function () {
-        return components.deleteWindow;
     },
 
     /*  Getters */

@@ -22,14 +22,7 @@ Ext.define('Admin.controller.DetailToolbarController', {
                     var space = el.up('spaceDetail').getData();
                     this.editSpace(space);
                 }
-            },
-            'spaceDetailToolbar *[action=deleteSpace]': {
-                click: function (el, e) {
-                    var space = el.up('spaceDetail').getData();
-                    this.showDeleteSpaceWindow(space);
-                }
             }
-
         });
     }
 

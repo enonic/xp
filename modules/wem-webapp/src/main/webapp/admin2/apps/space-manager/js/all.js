@@ -2997,88 +2997,6 @@ var app_ui;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
-    var DeleteSpaceWindow = (function () {
-        function DeleteSpaceWindow() {
-            this.title = "Delete space(s)";
-            this.deleteHandler = new app_handler.DeleteSpacesHandler();
-            this.template = '<div class="delete-container">' + '<tpl for=".">' + '<div class="delete-item">' + '<img class="icon" src="{data.iconUrl}"/>' + '<h4>{data.displayName}</h4>' + '<p>{data.type}</p>' + '</div>' + '</tpl>' + '</div>';
-            this.initComponent();
-        }
-        DeleteSpaceWindow.prototype.initComponent = function () {
-            var _this = this;
-            var deleteCallback = function (obj, success, result) {
-                _this.container.hide();
-                components.gridPanel.refresh();
-            };
-            this.container = new Ext.container.Container({
-                border: false,
-                floating: true,
-                shadow: false,
-                width: 500,
-                modal: true,
-                autoHeight: true,
-                maxHeight: 600,
-                cls: 'admin-window',
-                padding: 20
-            });
-            var header = new Ext.Component({
-                region: 'north',
-                tpl: '<h2>{title}</h2><tpl if="subtitle != undefined"><p>{subtitle}</p></tpl>',
-                data: {
-                    title: this.title
-                },
-                margin: '0 0 20 0'
-            });
-            this.content = new Ext.Component({
-                region: 'center',
-                cls: 'dialog-info',
-                border: false,
-                heigh: 150,
-                styleHtmlContent: true,
-                tpl: this.template
-            });
-            this.container.add(header, this.content);
-            var buttonRow = new Ext.container.Container({
-                layout: {
-                    type: 'hbox',
-                    pack: 'end'
-                },
-                margin: '20 0 0 0'
-            });
-            var deleteButton = new Ext.button.Button({
-                text: 'Delete',
-                margin: '0 0 0 10',
-                handler: function (btn, evt) {
-                    _this.deleteHandler.doDelete(_this.spaceModelArray, deleteCallback);
-                }
-            });
-            var cancelButton = new Ext.button.Button({
-                text: 'Cancel',
-                margin: '0 0 0 10',
-                handler: function () {
-                    _this.container.hide();
-                }
-            });
-            buttonRow.add(deleteButton, cancelButton);
-            this.container.add(buttonRow);
-        };
-        DeleteSpaceWindow.prototype.setModel = function (models) {
-            this.spaceModelArray = models;
-            if(models) {
-                if(this.content) {
-                    this.content.update(models);
-                }
-            }
-        };
-        DeleteSpaceWindow.prototype.doShow = function () {
-            this.container.show();
-        };
-        return DeleteSpaceWindow;
-    })();
-    app_ui.DeleteSpaceWindow = DeleteSpaceWindow;    
-})(app_ui || (app_ui = {}));
-var app_ui;
-(function (app_ui) {
     var DeleteSpaceDialog = (function (_super) {
         __extends(DeleteSpaceDialog, _super);
         function DeleteSpaceDialog() {
@@ -4874,10 +4792,6 @@ Ext.define('Admin.controller.Controller', {
     getSpaceDetailPanel: function () {
         return components.detailPanel;
     },
-    deleteSpaceWindow: null,
-    getDeleteSpaceWindow: function () {
-        return components.deleteWindow;
-    },
     getCmsTabPanel: function () {
         return components.tabPanel;
     },
@@ -5074,12 +4988,6 @@ Ext.define('Admin.controller.DetailToolbarController', {
                 click: function (el, e) {
                     var space = el.up('spaceDetail').getData();
                     this.editSpace(space);
-                }
-            },
-            'spaceDetailToolbar *[action=deleteSpace]': {
-                click: function (el, e) {
-                    var space = el.up('spaceDetail').getData();
-                    this.showDeleteSpaceWindow(space);
                 }
             }
         });
@@ -5278,7 +5186,6 @@ Ext.application({
             cls: 'admin-viewport'
         });
         wp.add(tabPanel);
-        components.deleteWindow = new app_ui.DeleteSpaceWindow();
         var deleteSpaceDialog = new app_ui.DeleteSpaceDialog();
         app_event.DeletePromptEvent.on(function (event) {
             deleteSpaceDialog.setSpacesToDelete(event.getSpaceModels());

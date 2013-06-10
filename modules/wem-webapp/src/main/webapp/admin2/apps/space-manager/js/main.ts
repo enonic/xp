@@ -41,7 +41,6 @@
 ///<reference path='view/DetailToolbar.ts' />
 ///<reference path='view/DetailPanel.ts' />
 
-///<reference path='view/DeleteSpaceWindow.ts' />
 ///<reference path='view/DeleteSpaceDialog.ts' />
 
 ///<reference path='view/TreeGridPanel.ts' />
@@ -70,7 +69,6 @@
 ///<reference path='controller/BrowseToolbarController.ts' />
 ///<reference path='controller/DetailPanelController.ts' />
 ///<reference path='controller/DetailToolbarController.ts' />
-///<reference path='controller/DialogWindowController.ts' />
 ///<reference path='controller/WizardController.ts' />
 
 
@@ -102,7 +100,6 @@ Ext.application({
         'Admin.controller.BrowseToolbarController',
         'Admin.controller.DetailPanelController',
         'Admin.controller.DetailToolbarController',
-        'Admin.controller.DialogWindowController',
         'Admin.controller.WizardController'
     ],
 
@@ -155,9 +152,6 @@ Ext.application({
         });
 
         wp.add(tabPanel);
-
-        // Instanciating classes that will be triggered by events
-        components.deleteWindow = new app_ui.DeleteSpaceWindow();
 
         var deleteSpaceDialog:app_ui.DeleteSpaceDialog = new app_ui.DeleteSpaceDialog();
         app_event.DeletePromptEvent.on((event) => {
