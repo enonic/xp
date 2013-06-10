@@ -1504,6 +1504,35 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
         this.show();
     }
 });
+Ext.define('Admin.model.SpaceModel', {
+    extend: 'Ext.data.Model',
+    fields: [
+        'name', 
+        'displayName', 
+        'iconUrl', 
+        'rootContentId', 
+        {
+            name: 'createdTime',
+            type: 'date',
+            default: new Date()
+        }, 
+        {
+            name: 'modifiedTime',
+            type: 'date',
+            default: new Date()
+        }, 
+        {
+            name: 'editable',
+            type: 'boolean'
+        }, 
+        {
+            name: 'deletable',
+            type: 'boolean'
+        }, 
+        
+    ],
+    idProperty: 'name'
+});
 var app_ui;
 (function (app_ui) {
     var WizardLayout = (function () {

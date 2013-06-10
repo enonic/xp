@@ -28,6 +28,8 @@
 ///<reference path='plugin/fileupload/PhotoUploadButton.ts' />
 ///<reference path='plugin/fileupload/PhotoUploadWindow.ts' />
 
+///<reference path='model/SpaceModel.ts' />
+
 ///<reference path='view/WizardLayout.ts' />
 ///<reference path='view/WizardHeader.ts' />
 ///<reference path='view/WizardPanel.ts' />

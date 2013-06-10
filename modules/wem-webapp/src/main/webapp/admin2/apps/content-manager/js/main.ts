@@ -17,6 +17,9 @@
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
 
+///<reference path='model/ContentExtModel.ts' />
+///<reference path='model/ContentTypeExtModel.ts' />
+
 ///<reference path='store/ContentStore.ts' />
 ///<reference path='store/ContentTreeStore.ts' />
 ///<reference path='store/ContentTypeStore.ts' />
