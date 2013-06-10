@@ -9,7 +9,7 @@ module app_ui {
 
         private spacesToDelete:app_model.SpaceModel[];
 
-        private deleteHandler:app_handler.DeleteSpacesHandler = new app_handler.DeleteSpacesHandler();
+        private deleteHandler:api_handler.DeleteSpacesHandler = new api_handler.DeleteSpacesHandler();
 
         constructor() {
             super("Space");
@@ -19,11 +19,11 @@ module app_ui {
             var deleteCallback = (obj, success, result) => {
                 this.close();
                 components.gridPanel.refresh();
-                //TODO: Fire event
+                new app_event.DeletedEvent().fire();
             };
 
             this.deleteAction.addExecutionListener(()=> {
-                this.deleteHandler.doDelete(this.spacesToDelete, deleteCallback );
+                this.deleteHandler.doDelete(app_handler.DeleteSpaceParamFactory.create( this.spacesToDelete ), deleteCallback );
             });
 
             document.body.appendChild(this.getHTMLElement());

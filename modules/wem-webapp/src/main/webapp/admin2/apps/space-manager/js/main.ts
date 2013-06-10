@@ -30,7 +30,8 @@
 
 ///<reference path='model/SpaceModel.ts' />
 
-///<reference path='handler/DeleteSpacesHandler.ts' />
+///<reference path='handler/DeleteSpaceParamFactory.ts' />
+
 ///<reference path='view/WizardLayout.ts' />
 ///<reference path='view/WizardHeader.ts' />
 ///<reference path='view/WizardPanel.ts' />

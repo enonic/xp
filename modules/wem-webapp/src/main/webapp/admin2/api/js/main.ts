@@ -6,6 +6,9 @@
 
 ///<reference path='util/UriHelper.ts' />
 
+///<reference path='handler/DeleteSpaceParam.ts' />
+///<reference path='handler/DeleteSpacesHandler.ts' />
+
 ///<reference path='event/Event.ts' />
 ///<reference path='event/EventBus.ts' />
 

@@ -1535,28 +1535,20 @@ Ext.define('Admin.model.SpaceModel', {
 });
 var app_handler;
 (function (app_handler) {
-    var DeleteSpacesHandler = (function () {
-        function DeleteSpacesHandler() { }
-        DeleteSpacesHandler.prototype.doDelete = function (spaceModels, callback) {
-            var spaceNames = Ext.Array.map([].concat(spaceModels), function (item) {
-                if(!item) {
-                    console.error('No spaces selected');
-                }
-                return item.get('name');
-            });
-            Admin.lib.RemoteService.space_delete({
-                'spaceName': spaceNames
-            }, function (response) {
-                if(response) {
-                    callback.call(this, response.success, response);
-                } else {
-                    console.error('Error', response ? response.error : 'Unable to delete space.');
-                }
-            });
+    var DeleteSpaceParamFactory = (function () {
+        function DeleteSpaceParamFactory() { }
+        DeleteSpaceParamFactory.create = function create(spaces) {
+            var spaceNames = [];
+            for(var i = 0; i < spaces.length; i++) {
+                spaceNames[i] = spaces[i].data.name;
+            }
+            return {
+                spaceName: spaceNames
+            };
         };
-        return DeleteSpacesHandler;
+        return DeleteSpaceParamFactory;
     })();
-    app_handler.DeleteSpacesHandler = DeleteSpacesHandler;    
+    app_handler.DeleteSpaceParamFactory = DeleteSpaceParamFactory;    
 })(app_handler || (app_handler = {}));
 var app_ui;
 (function (app_ui) {
@@ -3009,14 +3001,15 @@ var app_ui;
             var _this = this;
                 _super.call(this, "Space");
             this.deleteAction = new DeleteSpaceDialogAction();
-            this.deleteHandler = new app_handler.DeleteSpacesHandler();
+            this.deleteHandler = new api_handler.DeleteSpacesHandler();
             this.setDeleteAction(this.deleteAction);
             var deleteCallback = function (obj, success, result) {
                 _this.close();
                 components.gridPanel.refresh();
+                new app_event.DeletedEvent().fire();
             };
             this.deleteAction.addExecutionListener(function () {
-                _this.deleteHandler.doDelete(_this.spacesToDelete, deleteCallback);
+                _this.deleteHandler.doDelete(app_handler.DeleteSpaceParamFactory.create(_this.spacesToDelete), deleteCallback);
             });
             document.body.appendChild(this.getHTMLElement());
         }

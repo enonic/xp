@@ -6,6 +6,23 @@ var api_util;
     }
     api_util.getAbsoluteUri = getAbsoluteUri;
 })(api_util || (api_util = {}));
+var api_handler;
+(function (api_handler) {
+    var DeleteSpacesHandler = (function () {
+        function DeleteSpacesHandler() { }
+        DeleteSpacesHandler.prototype.doDelete = function (deleteSpaceParam, callback) {
+            Admin.lib.RemoteService.space_delete(deleteSpaceParam, function (response) {
+                if(response) {
+                    callback.call(this, response.success, response);
+                } else {
+                    console.error('Error', response ? response.error : 'Unable to delete space.');
+                }
+            });
+        };
+        return DeleteSpacesHandler;
+    })();
+    api_handler.DeleteSpacesHandler = DeleteSpacesHandler;    
+})(api_handler || (api_handler = {}));
 var api_event;
 (function (api_event) {
     var Event = (function () {

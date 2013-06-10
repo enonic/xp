@@ -2,6 +2,16 @@ module api_util {
     var baseUri: string;
     function getAbsoluteUri(uri: string): string;
 }
+module api_handler {
+    interface DeleteSpaceParam {
+        spaceName: string[];
+    }
+}
+module api_handler {
+    class DeleteSpacesHandler {
+        public doDelete(deleteSpaceParam: DeleteSpaceParam, callback: (thisArg: any, success: any, result: any) => void): void;
+    }
+}
 module api_event {
     class Event {
         private name;
