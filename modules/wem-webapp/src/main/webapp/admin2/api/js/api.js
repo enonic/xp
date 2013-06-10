@@ -128,29 +128,29 @@ var api_action;
 })(api_action || (api_action = {}));
 var api_ui;
 (function (api_ui) {
-    var HTMLElementHelper = (function () {
-        function HTMLElementHelper(element) {
+    var ElementHelper = (function () {
+        function ElementHelper(element) {
             this.el = element;
         }
-        HTMLElementHelper.fromName = function fromName(name) {
-            return new HTMLElementHelper(document.createElement(name));
+        ElementHelper.fromName = function fromName(name) {
+            return new api_ui.ElementHelper(document.createElement(name));
         };
-        HTMLElementHelper.prototype.getHTMLElement = function () {
+        ElementHelper.prototype.getHTMLElement = function () {
             return this.el;
         };
-        HTMLElementHelper.prototype.setDisabled = function (value) {
+        ElementHelper.prototype.setDisabled = function (value) {
             this.el.disabled = value;
             return this;
         };
-        HTMLElementHelper.prototype.setId = function (value) {
+        ElementHelper.prototype.setId = function (value) {
             this.el.id = value;
             return this;
         };
-        HTMLElementHelper.prototype.setInnerHtml = function (value) {
+        ElementHelper.prototype.setInnerHtml = function (value) {
             this.el.innerHTML = value;
             return this;
         };
-        HTMLElementHelper.prototype.addClass = function (clsName) {
+        ElementHelper.prototype.addClass = function (clsName) {
             if(!this.hasClass(clsName)) {
                 if(this.el.className === '') {
                     this.el.className += clsName;
@@ -159,72 +159,72 @@ var api_ui;
                 }
             }
         };
-        HTMLElementHelper.prototype.hasClass = function (clsName) {
+        ElementHelper.prototype.hasClass = function (clsName) {
             return this.el.className.match(new RegExp('(\\s|^)' + clsName + '(\\s|$)')) !== null;
         };
-        HTMLElementHelper.prototype.removeClass = function (clsName) {
+        ElementHelper.prototype.removeClass = function (clsName) {
             if(this.hasClass(clsName)) {
                 var reg = new RegExp('(\\s|^)' + clsName + '(\\s|$)');
                 this.el.className = this.el.className.replace(reg, '');
             }
         };
-        HTMLElementHelper.prototype.addEventListener = function (eventName, f) {
+        ElementHelper.prototype.addEventListener = function (eventName, f) {
             this.el.addEventListener(eventName, f);
         };
-        HTMLElementHelper.prototype.appendChild = function (child) {
+        ElementHelper.prototype.appendChild = function (child) {
             this.el.appendChild(child);
         };
-        HTMLElementHelper.prototype.setDisplay = function (value) {
+        ElementHelper.prototype.setDisplay = function (value) {
             this.el.style.display = value;
             return this;
         };
-        HTMLElementHelper.prototype.setPosition = function (value) {
+        ElementHelper.prototype.setPosition = function (value) {
             this.el.style.position = value;
             return this;
         };
-        HTMLElementHelper.prototype.setWidth = function (value) {
+        ElementHelper.prototype.setWidth = function (value) {
             this.el.style.width = value;
             return this;
         };
-        HTMLElementHelper.prototype.setHeight = function (value) {
+        ElementHelper.prototype.setHeight = function (value) {
             this.el.style.height = value;
             return this;
         };
-        HTMLElementHelper.prototype.setTop = function (value) {
+        ElementHelper.prototype.setTop = function (value) {
             this.el.style.top = value;
             return this;
         };
-        HTMLElementHelper.prototype.setLeft = function (value) {
+        ElementHelper.prototype.setLeft = function (value) {
             this.el.style.left = value;
             return this;
         };
-        HTMLElementHelper.prototype.setMarginLeft = function (value) {
+        ElementHelper.prototype.setMarginLeft = function (value) {
             this.el.style.marginLeft = value;
             return this;
         };
-        HTMLElementHelper.prototype.setMarginRight = function (value) {
+        ElementHelper.prototype.setMarginRight = function (value) {
             this.el.style.marginRight = value;
             return this;
         };
-        HTMLElementHelper.prototype.setMarginTop = function (value) {
+        ElementHelper.prototype.setMarginTop = function (value) {
             this.el.style.marginTop = value;
             return this;
         };
-        HTMLElementHelper.prototype.setMarginBottom = function (value) {
+        ElementHelper.prototype.setMarginBottom = function (value) {
             this.el.style.marginBottom = value;
             return this;
         };
-        HTMLElementHelper.prototype.setZindex = function (value) {
+        ElementHelper.prototype.setZindex = function (value) {
             this.el.style.zIndex = value.toString();
             return this;
         };
-        HTMLElementHelper.prototype.remove = function () {
+        ElementHelper.prototype.remove = function () {
             var parent = this.el.parentElement;
             parent.removeChild(this.el);
         };
-        return HTMLElementHelper;
+        return ElementHelper;
     })();
-    api_ui.HTMLElementHelper = HTMLElementHelper;    
+    api_ui.ElementHelper = ElementHelper;    
 })(api_ui || (api_ui = {}));
 var __extends = this.__extends || function (d, b) {
     function __() { this.constructor = d; }
@@ -233,32 +233,32 @@ var __extends = this.__extends || function (d, b) {
 };
 var api_ui;
 (function (api_ui) {
-    var HTMLImageElementHelper = (function (_super) {
-        __extends(HTMLImageElementHelper, _super);
-        function HTMLImageElementHelper(element) {
+    var ImgHelper = (function (_super) {
+        __extends(ImgHelper, _super);
+        function ImgHelper(element) {
                 _super.call(this, element);
             this.el = element;
         }
-        HTMLImageElementHelper.create = function create() {
-            return new HTMLImageElementHelper(document.createElement("img"));
+        ImgHelper.create = function create() {
+            return new api_ui.ImgHelper(document.createElement("img"));
         };
-        HTMLImageElementHelper.prototype.getHTMLElement = function () {
+        ImgHelper.prototype.getHTMLElement = function () {
             return this.el;
         };
-        HTMLImageElementHelper.prototype.setSrc = function (value) {
+        ImgHelper.prototype.setSrc = function (value) {
             this.el.src = value;
             return this;
         };
-        return HTMLImageElementHelper;
-    })(api_ui.HTMLElementHelper);
-    api_ui.HTMLImageElementHelper = HTMLImageElementHelper;    
+        return ImgHelper;
+    })(api_ui.ElementHelper);
+    api_ui.ImgHelper = ImgHelper;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var Element = (function () {
         function Element(elementName, name, elHelper) {
             if(elHelper == null) {
-                this.el = api_ui.HTMLElementHelper.fromName(elementName);
+                this.el = api_ui.ElementHelper.fromName(elementName);
             } else {
                 this.el = elHelper;
             }
@@ -383,7 +383,7 @@ var api_ui;
     var ImgEl = (function (_super) {
         __extends(ImgEl, _super);
         function ImgEl(name) {
-                _super.call(this, "img", name, api_ui.HTMLImageElementHelper.create());
+                _super.call(this, "img", name, api_ui.ImgHelper.create());
         }
         ImgEl.prototype.getEl = function () {
             return _super.prototype.getEl.call(this);

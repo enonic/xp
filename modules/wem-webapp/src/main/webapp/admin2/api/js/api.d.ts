@@ -47,40 +47,40 @@ module api_action {
     }
 }
 module api_ui {
-    class HTMLElementHelper {
+    class ElementHelper {
         private el;
-        static fromName(name: string): HTMLElementHelper;
+        static fromName(name: string): ElementHelper;
         constructor(element: HTMLElement);
         public getHTMLElement(): HTMLElement;
-        public setDisabled(value: bool): HTMLElementHelper;
-        public setId(value: string): HTMLElementHelper;
-        public setInnerHtml(value: string): HTMLElementHelper;
+        public setDisabled(value: bool): ElementHelper;
+        public setId(value: string): ElementHelper;
+        public setInnerHtml(value: string): ElementHelper;
         public addClass(clsName: string): void;
         public hasClass(clsName: string): bool;
         public removeClass(clsName: string): void;
         public addEventListener(eventName: string, f: (event: Event) => any): void;
         public appendChild(child: HTMLElement): void;
-        public setDisplay(value: string): HTMLElementHelper;
-        public setPosition(value: string): HTMLElementHelper;
-        public setWidth(value: string): HTMLElementHelper;
-        public setHeight(value: string): HTMLElementHelper;
-        public setTop(value: string): HTMLElementHelper;
-        public setLeft(value: string): HTMLElementHelper;
-        public setMarginLeft(value: string): HTMLElementHelper;
-        public setMarginRight(value: string): HTMLElementHelper;
-        public setMarginTop(value: string): HTMLElementHelper;
-        public setMarginBottom(value: string): HTMLElementHelper;
-        public setZindex(value: number): HTMLElementHelper;
+        public setDisplay(value: string): ElementHelper;
+        public setPosition(value: string): ElementHelper;
+        public setWidth(value: string): ElementHelper;
+        public setHeight(value: string): ElementHelper;
+        public setTop(value: string): ElementHelper;
+        public setLeft(value: string): ElementHelper;
+        public setMarginLeft(value: string): ElementHelper;
+        public setMarginRight(value: string): ElementHelper;
+        public setMarginTop(value: string): ElementHelper;
+        public setMarginBottom(value: string): ElementHelper;
+        public setZindex(value: number): ElementHelper;
         public remove(): void;
     }
 }
 module api_ui {
-    class HTMLImageElementHelper extends HTMLElementHelper {
+    class ImgHelper extends ElementHelper {
         private el;
-        static create(): HTMLElementHelper;
+        static create(): ElementHelper;
         constructor(element: HTMLImageElement);
         public getHTMLElement(): HTMLImageElement;
-        public setSrc(value: string): HTMLImageElementHelper;
+        public setSrc(value: string): ImgHelper;
     }
 }
 module api_ui {
@@ -88,9 +88,9 @@ module api_ui {
         private static constructorCounter;
         private el;
         private id;
-        constructor(elementName: string, name?: string, elHelper?: HTMLElementHelper);
+        constructor(elementName: string, name?: string, elHelper?: ElementHelper);
         public getId(): string;
-        public getEl(): HTMLElementHelper;
+        public getEl(): ElementHelper;
         public getHTMLElement(): HTMLElement;
         public appendChild(child: Element): void;
         public removeChildren(): void;
@@ -139,7 +139,7 @@ module api_ui {
 module api_ui {
     class ImgEl extends Element {
         constructor(name?: string);
-        public getEl(): HTMLImageElementHelper;
+        public getEl(): ImgHelper;
     }
 }
 module api_ui {
