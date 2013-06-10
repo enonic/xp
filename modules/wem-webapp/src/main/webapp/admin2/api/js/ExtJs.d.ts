@@ -149,7 +149,7 @@ interface IExt {
 
     application(config:Object): void;
 
-    apply(target:Object, config:Object, defaults?:Object): Object;
+    apply(target:any, config:any, defaults?:any): any;
 
     applyIf(target:Object, config:Object): Object;
 
@@ -165,6 +165,7 @@ interface IExt {
     copyTo(dest:Object, source:Object, names:string[], usePrototypeKeys?:bool): Object;
 
     create(name:string, object?:Object): Object;
+    create(object:Object): Object;
 
     createByAlias(alias:string, ...args:Object[]): Object;
 
@@ -183,7 +184,7 @@ interface IExt {
 
     destroyMembers(o:Object, ...args:string[]): void;
 
-    each(value:any, fn:(item:any, index:number, all:any) => bool, scope?:Object, reverse?:bool);
+    each(value:any, fn:(item:any, index:number, all:any) => any /*bool*/, scope?:Object, reverse?:bool);
 
     encode(value:any): string;
 
@@ -195,6 +196,7 @@ interface IExt {
     get (node:string): Ext_dom_Element;
     get (node:Ext_dom_Element): Ext_dom_Element;
     get (node:Html_dom_Element): Ext_dom_Element;
+    get (node:HTMLElement): Ext_dom_Element;
 
     getBody(): Ext_dom_Element;
 
@@ -324,6 +326,7 @@ interface IExt {
 interface Ext_Packages extends IExt {
 
     // managers
+    ClassManager: Ext_ClassManager;
     EventManager: Ext_EventManager;
     WindowManager: Ext_WindowManager;
     StoreManager: Ext_data_StoreManager;
@@ -349,6 +352,7 @@ interface Ext_Packages extends IExt {
     String: Ext_String;
     Function: Ext_Function;
     Object: Ext_Object;
+    JSON: Ext_JSON;
 
     Img: Ext_Img;
     Msg: Ext_window_MessageBox;
@@ -392,6 +396,12 @@ interface Ext_Packages extends IExt {
         DD: Ext_dd_DD;
         DDProxy: Ext_dd_DDProxy;
         DDTarget: Ext_dd_DDTarget;
+        DragSource: Ext_dd_DragSource;
+        DragZone: Ext_dd_DragZone;
+        DropTarget: Ext_dd_DropTarget;
+        DropZone: Ext_dd_DropZone;
+        ScrollManager: Ext_dd_ScrollManager;
+        StatusProxy: Ext_dd_StatusProxy;
     };
     direct: {
         RemotingMethod: Ext_direct_RemotingMethod;
@@ -459,6 +469,7 @@ interface Ext_Packages extends IExt {
     };
     util: {
         Animate: Ext_util_Animate;
+        Cookies: Ext_util_Cookies;
         Renderable: Ext_util_Renderable;
         Observable: Ext_util_Observable;
         Floating: Ext_util_Floating;
@@ -466,6 +477,7 @@ interface Ext_Packages extends IExt {
         Offset: Ext_util_Offset;
         Point: Ext_util_Point;
         Region: Ext_util_Region;
+        TaskRunner: Ext_util_TaskRunner;
     };
     window: {
         Window: Ext_window_Window;
@@ -727,6 +739,7 @@ interface Ext_dom_AbstractElement extends Ext_Base {
     }, animate?:any /* bool/Object */): Ext_dom_Element;
 
     setStyle(property:string, value:string): Ext_dom_Element;
+    setStyle(property:string, value:number): Ext_dom_Element;
     setStyle(property:Object): Ext_dom_Element;
 
     setTop(top:string): Ext_dom_AbstractElement;
@@ -1171,13 +1184,14 @@ interface Ext_Array {
 
     difference(arrayA:any[], arrayB:any[]): any[];
 
-    each(iterable:any /* Array/NodeList/Object */, fn:(item:Object, index:number, all:any) => bool, scope?:Object, reverse?:bool): bool;
+    each(iterable:any /* Array/NodeList/Object */, fn:(item:any /*Object*/, index:number, all:any) => any /*bool*/, scope?:Object,
+         reverse?:bool): bool;
 
     erase(array:any[], index:number, removeCount:number): any[];
 
     every(array:any[], fn:Function, scope:Object): bool;
 
-    filter(array:any[], fn:Function, scope): any[];
+    filter(array:any[], fn:Function, scope?): any[];
 
     flatten(array:any[]): any[];
 
@@ -1337,6 +1351,24 @@ interface Ext_Object {
     toQueryObjects(name:string, value:string[], recursive?:bool): Object[];
 
     toQueryString(object:Object, recursive?:bool): string;
+
+}
+
+
+/**
+ * Modified version of Douglas Crockford's JSON.js that doesn't mess with the Object prototype.
+ */
+interface Ext_JSON {
+
+    decode(json:string, safe?:bool): any;
+
+    encode(object:any): string;
+
+    encodeDate(date:Date): string;
+
+    encodeString(string:string): string;
+
+    encodeValue(object:any): string;
 
 }
 
@@ -3631,6 +3663,20 @@ interface Ext_util_Animate extends Ext_Base {
 }
 
 
+/**
+ *  Utility class for setting/reading values from browser cookies.
+ */
+interface Ext_util_Cookies extends Ext_Base {
+
+    clear(name:string, path?:string): void;
+
+    get(name:string): Object;
+
+    set(name:string, value:Object, expires?:Object, path?:string, domain?:string, secure?:bool): void;
+
+}
+
+
 interface Ext_util_Renderable extends Ext_Base {
 
     doAutoRender(): void;
@@ -3895,6 +3941,35 @@ interface Ext_util_Sorter extends Ext_Base {
     toggle(): void;
 
     updateSortFunction(fn?:Function): void;
+
+}
+
+
+/**
+ *      Provides the ability to execute one or more arbitrary tasks in a asynchronous manner.
+ */
+interface Ext_util_TaskRunner extends Ext_Base {
+
+    new(interval?:number): Ext_util_TaskRunner;
+    new(interval?:Object): Ext_util_TaskRunner;
+
+    destroy(): void;
+
+    newTask(config:Object): void;
+
+    start(task:{
+        run?: () => bool;
+        onError?: Function;
+        interval?: number;
+        args?: Object[];
+        scope?: Object;
+        duration?: number;
+        repeat?: number;
+    }): Object;
+
+    stop(task:Object): Object;
+
+    stopAll(): void;
 
 }
 
@@ -4267,6 +4342,46 @@ interface Ext_AbstractManager extends Ext_Base {
 
 }
 
+
+/**
+ *  Ext.ClassManager manages all classes and handles mapping from string class name
+ *  to actual class objects throughout the whole framework.
+ */
+interface Ext_ClassManager {
+
+    addNameAliasMappings(aliases:Object): Ext_ClassManager;
+
+    addNameAlternateMappings(alternates:Object): Ext_ClassManager;
+
+    get(name:string): Ext_Class;
+
+    getAliasesByName(name:string): any[];
+
+    getByAlias(alias:string): Ext_Class;
+
+    getClass(object:any): Ext_Class;
+
+    getDisplayName(object:any): string;
+
+    getName(object:any): string;
+
+    getNameByAlias(alias:string): string;
+
+    getNameByAlternate(alternate:string): string;
+
+    getNamesByExpression(expression:string): string[];
+
+    instantiateByAlias(alias:string, ...args:any[]): any;
+
+    isCreated(className:string): bool;
+
+    set(name:string, value:any): Ext_ClassManager;
+
+    setAlias(cls:string, alias:string): Ext_ClassManager;
+    setAlias(cls:Ext_Class, alias:string): Ext_ClassManager;
+
+    setNamespace(name:string, value:any): void;
+}
 
 /**
  *      Provides a registry of all Components (instances of Ext.Component or any subclass thereof) on a page so that they
@@ -4652,7 +4767,7 @@ interface Ext_dd_DD extends Ext_dd_DragDrop {
 
     scroll: bool;
 
-    new(id:string, sGroup:string, config:Object): Ext_dd_DD;
+    new(id:string, sGroup?:string, config?:Object): Ext_dd_DD;
 
     alignElWithMouse(el:Html_dom_Element, iPageX:number, iPageY:number): void;
 
@@ -4754,6 +4869,27 @@ interface Ext_dd_DragSource extends Ext_dd_DDProxy {
 
 
 /**
+ *  This class provides a container DD instance that allows dragging of multiple child source nodes.
+ */
+interface Ext_dd_DragZone extends Ext_dd_DragSource {
+
+    dragData: Object;
+
+    new(el:string, config:Object): Ext_dd_DragZone;
+    new(el:HTMLElement, config:Object): Ext_dd_DragZone;
+    new(el:Ext_dom_Element, config:Object): Ext_dd_DragZone;
+
+    afterRepair(): void;
+
+    getDragData(event:Event): Object;
+
+    getRepairXY(event:Event): number[];
+
+    onInitDrag(x:number, y:number): bool;
+
+}
+
+/**
  *      A specialized floating Component that supports a drop status icon, Ext.Layer styles and auto-repair.
  *      This is the default drag proxy used by all Ext.dd components.
  */
@@ -4850,6 +4986,108 @@ interface Ext_dd_DDTarget extends Ext_dd_DragDrop {
 }
 
 
+/**
+ * A simple class that provides the basic implementation needed
+ * to make any element a drop target that can have draggable items dropped onto it.
+ */
+interface Ext_dd_DropTarget extends Ext_dd_DDTarget {
+
+    isTarget: bool;
+
+    new(el:string, config:Object): Ext_dd_DropTarget;
+    new(el:HTMLElement, config:Object): Ext_dd_DropTarget;
+    new(el:Ext_dom_Element, config:Object): Ext_dd_DropTarget;
+
+    notifyDrop(source:Ext_dd_DragSource, e:Event, data:Object): bool;
+
+    notifyEnter(source:Ext_dd_DragSource, e:Event, data:Object): String;
+
+    notifyOut(source:Ext_dd_DragSource, e:Event, data:Object): void;
+
+    notifyOver(source:Ext_dd_DragSource, e:Event, data:Object): String;
+
+}
+
+
+/**
+ * This class provides a container DD instance that allows dropping on multiple child target nodes.
+ */
+interface Ext_dd_DropZone extends Ext_dd_DropTarget {
+
+    getTargetFromEvent(event:Event): Object;
+
+    notifyDrop(source:Ext_dd_DragSource, e:Event, data:Object): bool;
+
+    notifyEnter(source:Ext_dd_DragSource, e:Event, data:Object): String;
+
+    notifyOut(source:Ext_dd_DragSource, e:Event, data:Object): void;
+
+    notifyOver(source:Ext_dd_DragSource, e:Event, data:Object): String;
+
+    onContainerDrop(source:Ext_dd_DragSource, e:Event, data:Object): bool;
+
+    onContainerOver(source:Ext_dd_DragSource, e:Event, data:Object): String;
+
+    onNodeDrop(nodeData:Object, source:Ext_dd_DragSource, e:Event, data:Object): bool;
+
+    onNodeEnter(nodeData:Object, source:Ext_dd_DragSource, e:Event, data:Object): void;
+
+    onNodeOut(nodeData:Object, source:Ext_dd_DragSource, e:Event, data:Object): void;
+
+    onNodeOver(nodeData:Object, source:Ext_dd_DragSource, e:Event, data:Object): String;
+
+}
+
+
+/**
+ *  Provides automatic scrolling of overflow regions in the page during drag operations.
+ */
+interface Ext_dd_ScrollManager {
+
+    animDuration: number;
+
+    animate: bool;
+
+    ddGroup: string;
+
+    frequency: number;
+
+    hthresh: number;
+
+    increment: number;
+
+    vthresh: number;
+
+    new(): Ext_dd_ScrollManager;
+
+    refreshCache(): void;
+
+    register(el:string): void;
+
+    register(el:HTMLElement): void;
+
+    register(el:Ext_dom_Element): void;
+
+    register(el:string[]): void;
+
+    register(el:HTMLElement[]): void;
+
+    register(el:Ext_dom_Element[]): void;
+
+    unregister(el:string): void;
+
+    unregister(el:HTMLElement): void;
+
+    unregister(el:Ext_dom_Element): void;
+
+    unregister(el:string[]): void;
+
+    unregister(el:HTMLElement[]): void;
+
+    unregister(el:Ext_dom_Element[]): void;
+
+}
+
 //TODO: required by the above but are not so important and therefore not defined yet
 
 interface Ext_Version {}
@@ -4867,6 +5105,7 @@ interface Ext_util_ComponentDragger {}
 
 interface Ext_ElementLoader {}
 interface Ext_ComponentLoader {}
+
 
 
 

@@ -56,7 +56,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
         };
 
         // Recent section
-        var recentContentTypesStore = Ext.create('Ext.data.Store', {
+        var recentContentTypesStore = <any> Ext.create('Ext.data.Store', {
             model: 'Admin.model.schemaManager.ContentTypeModel'
         });
 
@@ -68,7 +68,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
         }, baseDataViewConfig);
 
         // Recommended section
-        var recommendedContentTypesStore = Ext.create('Ext.data.Store', {
+        var recommendedContentTypesStore = <any> Ext.create('Ext.data.Store', {
             model: 'Admin.model.schemaManager.ContentTypeModel',
             data: [
                 { iconUrl: '/enonic/admin/rest/schema/image/ContentType:system:structured', name: 'Advanced Data', qualifiedName: 'path/1' }
@@ -84,7 +84,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
         }, baseDataViewConfig);
 
         // All section
-        var allContentTypesStore = Ext.create('Admin.store.schemaManager.ContentTypeStore', {
+        var allContentTypesStore = <any> Ext.create('Admin.store.schemaManager.ContentTypeStore', {
             remoteSort: false,
             sorters: [
                 {
@@ -183,7 +183,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
 
     updateRecentCookies: function (contentType) {
 
-        var cookies = Ext.util.Cookies.get(this.cookieKey);
+        var cookies = <String> Ext.util.Cookies.get(this.cookieKey);
         var recentArray = cookies ? cookies.split(this.cookieSeparator) : [];
 
         var recentItem = this.serializeContentType(contentType);
@@ -205,7 +205,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
         recentStore.removeAll(true);
 
         var me = this;
-        var cookies = Ext.util.Cookies.get(this.cookieKey);
+        var cookies = <String> Ext.util.Cookies.get(this.cookieKey);
         if (cookies) {
 
             var recentRecords = [];
@@ -255,7 +255,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
 
     parseContentType: function (string) {
         var json = Ext.JSON.decode(string, true);
-        return Ext.create('Admin.model.schemaManager.ContentTypeModel', json);
+        return <any> Ext.create('Admin.model.schemaManager.ContentTypeModel', json);
     }
 
 });

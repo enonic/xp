@@ -26,7 +26,7 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
     initComponent: function () {
         var me = this;
 
-        var treeColumns = Ext.clone(this.columns);
+        var treeColumns = <any> Ext.clone(this.columns);
         if (Ext.isEmpty(treeColumns)) {
             throw "this.columns can't be null";
         }

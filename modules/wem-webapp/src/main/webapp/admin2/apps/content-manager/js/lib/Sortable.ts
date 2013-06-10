@@ -150,7 +150,7 @@ Ext.define('Admin.lib.Sortable', {
             indicatorEl,
             arrowLeft;
 
-        indicatorEl = Ext.create('widget.component', {
+        indicatorEl = <any> Ext.create('widget.component', {
             html: '<div>Drop ' + name + ' here </div>',
             cls: 'admin-drop-indicator admin-sortable'
         });

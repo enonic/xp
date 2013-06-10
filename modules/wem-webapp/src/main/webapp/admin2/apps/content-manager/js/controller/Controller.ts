@@ -107,7 +107,7 @@ Ext.define('Admin.controller.Controller', {
     getNewContentWindow: function () {
         var win = Ext.ComponentQuery.query('newContentWindow')[0];
         if (!win) {
-            win = Ext.create('widget.newContentWindow');
+            win = <any> Ext.create('widget.newContentWindow');
         }
         return win;
     },
@@ -582,7 +582,7 @@ Ext.define('Admin.controller.Controller', {
     getDeleteContentWindow: function () {
         var win = Ext.ComponentQuery.query('deleteContentWindow')[0];
         if (!win) {
-            win = Ext.create('widget.deleteContentWindow');
+            win = <any> Ext.create('widget.deleteContentWindow');
         }
         return win;
     },
@@ -590,7 +590,7 @@ Ext.define('Admin.controller.Controller', {
     getLiveEditTestWindow: function () {
         var win = Ext.ComponentQuery.query('liveEditTestWindow')[0];
         if (!win) {
-            win = Ext.create('widget.liveEditTestWindow');
+            win = <any> Ext.create('widget.liveEditTestWindow');
         }
         return win;
     }

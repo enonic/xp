@@ -103,7 +103,7 @@ Ext.define('Admin.view.FilterPanel', {
             )
         });
 
-        this.facetContainer = Ext.create('Ext.Component', {
+        this.facetContainer = <any> Ext.create('Ext.Component', {
             xtype: 'component',
             itemId: 'facetContainer',
             tpl: me.facetTpl,
@@ -118,7 +118,7 @@ Ext.define('Admin.view.FilterPanel', {
         });
         this.items.unshift(this.facetContainer);
 
-        this.clearLink = Ext.create('Ext.Component', {
+        this.clearLink = <any> Ext.create('Ext.Component', {
             xtype: 'component',
             html: '<a href="javascript:;">Clear filter</a>',
             listeners: {
@@ -139,7 +139,7 @@ Ext.define('Admin.view.FilterPanel', {
 
         if (this.includeSearch) {
 
-            this.searchField = Ext.create('Ext.form.field.Text', {
+            this.searchField = <any> Ext.create('Ext.form.field.Text', {
                 xtype: 'textfield',
                 cls: 'admin-search-trigger',
                 enableKeyEvents: true,
@@ -242,6 +242,7 @@ Ext.define('Admin.view.FilterPanel', {
             } else {
                 values[cb.name] = [cb.value];
             }
+            return true;
         });
 
         return values;
@@ -266,6 +267,7 @@ Ext.define('Admin.view.FilterPanel', {
                 cb.removeAttribute('checked');
                 facet.removeCls('checked');
             }
+            return true;
         });
 
         if (this.updateCountCriteria == 'query' && this.queryDirty && checkedCount === 0) {
@@ -312,6 +314,7 @@ Ext.define('Admin.view.FilterPanel', {
             Ext.Array.each(selectedCheckboxes, function (cb) {
                 cb.removeAttribute('checked');
                 Ext.fly(cb).up('.admin-facet').removeCls('checked');
+                return true;
             });
 
             this.clearLink.el.setStyle('visibility', 'hidden');

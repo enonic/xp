@@ -31,7 +31,7 @@ Ext.define('Ext.ux.toggleslide.Thumb', {
          * The slider this thumb is contained within
          */
         Ext.apply(me, config || {}, {
-            cls: Ext.baseCSSPrefix + 'toggle-slide-thumb',
+            cls: (<any> Ext).baseCSSPrefix + 'toggle-slide-thumb',
 
             /**
              * @cfg {Boolean} constrain True to constrain the thumb so that it cannot overlap its siblings

@@ -26,7 +26,7 @@ Ext.define('Admin.view.WizardLayout', {
                 this.syncFx();
 
                 var target = this.getRenderTarget();
-                newCard.setWidth(target.getWidth() - target.getPadding("lr") - Ext.getScrollBarWidth());
+                newCard.setWidth(target.getWidth() - target.getPadding("lr") - Ext.getScrollbarSize().width);
 
                 switch (this.animation) {
                 case 'fade':

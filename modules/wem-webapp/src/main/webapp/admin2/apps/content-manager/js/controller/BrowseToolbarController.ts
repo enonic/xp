@@ -51,7 +51,7 @@ Ext.define('Admin.controller.BrowseToolbarController', {
 
 
     moveDetailPanel: function (button, event) {
-        var contentDetail = Ext.ComponentQuery.query('contentDetail');
+        var contentDetail = <any> Ext.ComponentQuery.query('contentDetail');
         var vertical = contentDetail[0].isVisible();
 
         var toHide = contentDetail[vertical ? 0 : 1];
@@ -77,7 +77,7 @@ Ext.define('Admin.controller.BrowseToolbarController', {
     getContentManagerToolbarMenu: function () {
         var menu = Ext.ComponentQuery.query('contentManagerToolbarMenu')[0];
         if (!menu) {
-            menu = Ext.create('widget.contentManagerToolbarMenu');
+            menu = <any> Ext.create('widget.contentManagerToolbarMenu');
         }
         return menu;
     }
