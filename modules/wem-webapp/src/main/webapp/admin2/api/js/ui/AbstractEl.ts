@@ -8,7 +8,7 @@ module api_ui {
 
         private id:string;
 
-        constructor(name:string, elementName:string) {
+        constructor(elementName:string, name:string) {
             if (elementName === "img") {
                 this.el = HTMLImageElementHelper.create();
             }

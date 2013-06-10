@@ -5,7 +5,7 @@ module api_ui {
         private el:HTMLElementHelper;
 
         constructor(name:string) {
-            super( name, "img" );
+            super( "img", name );
             this.el = HTMLImageElementHelper.create();
         }
 
