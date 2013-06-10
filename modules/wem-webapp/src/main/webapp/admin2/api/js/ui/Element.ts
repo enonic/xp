@@ -4,13 +4,13 @@ module api_ui {
 
         private static constructorCounter:number = 0;
 
-        private el:HTMLElementHelper;
+        private el:api_ui.ElementHelper;
 
         private id:string;
 
-        constructor(elementName:string, name?:string, elHelper?:HTMLElementHelper) {
+        constructor(elementName:string, name?:string, elHelper?:api_ui.ElementHelper) {
             if (elHelper == null) {
-                this.el = HTMLElementHelper.fromName(elementName);
+                this.el = api_ui.ElementHelper.fromName(elementName);
             }
             else {
                 this.el = elHelper;
@@ -25,7 +25,7 @@ module api_ui {
             return this.id;
         }
 
-        getEl():HTMLElementHelper {
+        getEl():api_ui.ElementHelper {
             return this.el;
         }
 
