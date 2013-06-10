@@ -14,6 +14,9 @@
 ///<reference path='ui/HTMLElementHelper.ts' />
 ///<reference path='ui/HTMLImageElementHelper.ts' />
 ///<reference path='ui/Component.ts' />
+///<reference path='ui/DivEl.ts' />
+///<reference path='ui/ImgEl.ts' />
+///<reference path='ui/ButtonEl.ts' />
 ///<reference path='ui/BodyMask.ts' />
 ///<reference path='ui/AbstractButton.ts' />
 ///<reference path='ui/toolbar/Toolbar.ts' />

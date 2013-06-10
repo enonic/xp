@@ -7,7 +7,7 @@ module api_ui_dialog{
         height:number;
     }
 
-    export class ModalDialog extends api_ui.Component {
+    export class ModalDialog extends api_ui.DivEl {
 
         private config:ModalDialogConfig;
 
@@ -19,7 +19,7 @@ module api_ui_dialog{
 
         constructor(config:ModalDialogConfig) {
 
-            super("ModalDialog", "div");
+            super("ModalDialog");
             this.config = config;
             var el = this.getEl();
             el.setDisplay("none").addClass("modal-dialog");

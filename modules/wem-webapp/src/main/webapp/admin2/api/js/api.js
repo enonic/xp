@@ -245,10 +245,48 @@ var api_ui;
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
+    var DivEl = (function (_super) {
+        __extends(DivEl, _super);
+        function DivEl(name) {
+                _super.call(this, name, "div");
+        }
+        return DivEl;
+    })(api_ui.Component);
+    api_ui.DivEl = DivEl;    
+})(api_ui || (api_ui = {}));
+var api_ui;
+(function (api_ui) {
+    var ImgEl = (function (_super) {
+        __extends(ImgEl, _super);
+        function ImgEl(name) {
+                _super.call(this, name, "img");
+            this.el = api_ui.HTMLImageElementHelper.create();
+        }
+        ImgEl.constructorCounter = 0;
+        ImgEl.prototype.getImg = function () {
+            return this.el;
+        };
+        return ImgEl;
+    })(api_ui.Component);
+    api_ui.ImgEl = ImgEl;    
+})(api_ui || (api_ui = {}));
+var api_ui;
+(function (api_ui) {
+    var ButtonEl = (function (_super) {
+        __extends(ButtonEl, _super);
+        function ButtonEl(name) {
+                _super.call(this, name, "button");
+        }
+        return ButtonEl;
+    })(api_ui.Component);
+    api_ui.ButtonEl = ButtonEl;    
+})(api_ui || (api_ui = {}));
+var api_ui;
+(function (api_ui) {
     var BodyMask = (function (_super) {
         __extends(BodyMask, _super);
         function BodyMask() {
-                _super.call(this, "Mask", "div");
+                _super.call(this, "Mask");
             this.getEl().setDisplay("none");
             this.getEl().addClass("body-mask");
             this.getEl().setZindex(30000);
@@ -265,7 +303,7 @@ var api_ui;
             this.getEl().setDisplay("none");
         };
         return BodyMask;
-    })(api_ui.Component);
+    })(api_ui.DivEl);
     api_ui.BodyMask = BodyMask;    
 })(api_ui || (api_ui = {}));
 var api_ui;
@@ -273,7 +311,7 @@ var api_ui;
     var AbstractButton = (function (_super) {
         __extends(AbstractButton, _super);
         function AbstractButton(name, label) {
-                _super.call(this, name, "button");
+                _super.call(this, name);
             this.label = label;
             this.getEl().setInnerHtml(this.label);
         }
@@ -281,7 +319,7 @@ var api_ui;
             this.getEl().setDisabled(!value);
         };
         return AbstractButton;
-    })(api_ui.Component);
+    })(api_ui.ButtonEl);
     api_ui.AbstractButton = AbstractButton;    
 })(api_ui || (api_ui = {}));
 var api_ui_toolbar;
@@ -289,7 +327,7 @@ var api_ui_toolbar;
     var Toolbar = (function (_super) {
         __extends(Toolbar, _super);
         function Toolbar() {
-                _super.call(this, "Toolbar", "div");
+                _super.call(this, "Toolbar");
             this.components = [];
             this.getEl().addClass("toolbar");
             this.initExt();
@@ -327,7 +365,7 @@ var api_ui_toolbar;
             return false;
         };
         return Toolbar;
-    })(api_ui.Component);
+    })(api_ui.DivEl);
     api_ui_toolbar.Toolbar = Toolbar;    
     var ToolbarButton = (function (_super) {
         __extends(ToolbarButton, _super);
@@ -547,10 +585,9 @@ var api_ui_dialog;
         __extends(DialogButton, _super);
         function DialogButton(action) {
             var _this = this;
-                _super.call(this, "DialogButton", "button");
+                _super.call(this, "DialogButton", action.getLabel());
             this.getEl().addClass("DialogButton");
             this.action = action;
-            this.getEl().setInnerHtml(this.action.getLabel());
             this.getEl().addEventListener("click", function () {
                 _this.action.execute();
             });
@@ -559,11 +596,8 @@ var api_ui_dialog;
                 _this.setEnable(action.isEnabled());
             });
         }
-        DialogButton.prototype.setEnable = function (value) {
-            this.getEl().setDisabled(!value);
-        };
         return DialogButton;
-    })(api_ui.Component);
+    })(api_ui.AbstractButton);
     api_ui_dialog.DialogButton = DialogButton;    
 })(api_ui_dialog || (api_ui_dialog = {}));
 var api_ui_dialog;
@@ -571,7 +605,7 @@ var api_ui_dialog;
     var ModalDialog = (function (_super) {
         __extends(ModalDialog, _super);
         function ModalDialog(config) {
-                _super.call(this, "ModalDialog", "div");
+                _super.call(this, "ModalDialog");
             this.config = config;
             var el = this.getEl();
             el.setDisplay("none").addClass("modal-dialog");
@@ -608,7 +642,7 @@ var api_ui_dialog;
             });
         };
         return ModalDialog;
-    })(api_ui.Component);
+    })(api_ui.DivEl);
     api_ui_dialog.ModalDialog = ModalDialog;    
     var ModalDialogTitle = (function (_super) {
         __extends(ModalDialogTitle, _super);
@@ -753,7 +787,7 @@ var api_delete;
         function DeleteDialogItemComponent(deleteItem) {
                 _super.call(this, "DeleteDialogItem", "div");
             this.getEl().addClass("delete-dialog-item");
-            var icon = new api_ui.Component("img", "img");
+            var icon = new api_ui.ImgEl("img");
             icon.getImg().setSrc(deleteItem.getIconUrl());
             this.appendChild(icon);
             var displayName = new api_ui.Component("h4", "h4");

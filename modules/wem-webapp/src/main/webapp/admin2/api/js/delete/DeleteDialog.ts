@@ -40,11 +40,11 @@ module api_delete{
 
             this.itemList.clear();
 
-            if( deleteItems.length > 1 ) {
-                this.setTitle( "Delete " + this.modelName + "s");
+            if (deleteItems.length > 1) {
+                this.setTitle("Delete " + this.modelName + "s");
             }
             else {
-                this.setTitle( "Delete " + this.modelName);
+                this.setTitle("Delete " + this.modelName);
             }
 
             for (var i in this.deleteItems) {
@@ -78,7 +78,7 @@ module api_delete{
             super("DeleteDialogItem", "div");
             this.getEl().addClass("delete-dialog-item");
 
-            var icon:api_ui.Component = new api_ui.Component("img", "img");
+            var icon:api_ui.Component = new api_ui.ImgEl("img");
             icon.getImg().setSrc(deleteItem.getIconUrl());
             this.appendChild(icon);
 

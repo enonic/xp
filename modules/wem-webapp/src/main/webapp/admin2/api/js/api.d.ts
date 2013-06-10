@@ -81,7 +81,26 @@ module api_ui {
     }
 }
 module api_ui {
-    class BodyMask extends Component {
+    class DivEl extends Component {
+        constructor(name: string);
+    }
+}
+module api_ui {
+    class ImgEl extends Component {
+        private static constructorCounter;
+        private el;
+        private id;
+        constructor(name: string);
+        public getImg(): HTMLImageElementHelper;
+    }
+}
+module api_ui {
+    class ButtonEl extends Component {
+        constructor(name: string);
+    }
+}
+module api_ui {
+    class BodyMask extends DivEl {
         private static instance;
         static get(): BodyMask;
         constructor();
@@ -90,14 +109,14 @@ module api_ui {
     }
 }
 module api_ui {
-    class AbstractButton extends Component {
+    class AbstractButton extends ButtonEl {
         private label;
         constructor(name: string, label: string);
         public setEnable(value: bool): void;
     }
 }
 module api_ui_toolbar {
-    class Toolbar extends api_ui.Component {
+    class Toolbar extends api_ui.DivEl {
         public ext;
         private components;
         constructor();
@@ -150,10 +169,9 @@ module api_ui_menu {
     }
 }
 module api_ui_dialog {
-    class DialogButton extends api_ui.Component {
+    class DialogButton extends api_ui.AbstractButton {
         private action;
         constructor(action: api_action.Action);
-        public setEnable(value: bool): void;
     }
 }
 module api_ui_dialog {
@@ -162,7 +180,7 @@ module api_ui_dialog {
         width: number;
         height: number;
     }
-    class ModalDialog extends api_ui.Component {
+    class ModalDialog extends api_ui.DivEl {
         private config;
         private title;
         private contentPanel;

@@ -1,14 +1,13 @@
 module api_ui_dialog{
 
-    export class DialogButton extends api_ui.Component {
+    export class DialogButton extends api_ui.AbstractButton {
 
         private action:api_action.Action;
 
         constructor(action:api_action.Action) {
-            super("DialogButton", "button");
+            super("DialogButton", action.getLabel());
             this.getEl().addClass("DialogButton")
             this.action = action;
-            this.getEl().setInnerHtml(this.action.getLabel());
             this.getEl().addEventListener("click", () => {
                 this.action.execute();
             });
@@ -17,10 +16,6 @@ module api_ui_dialog{
             action.addPropertyChangeListener((action:api_action.Action) => {
                 this.setEnable(action.isEnabled());
             });
-        }
-
-        setEnable(value:bool) {
-            this.getEl().setDisabled(!value);
         }
     }
 }

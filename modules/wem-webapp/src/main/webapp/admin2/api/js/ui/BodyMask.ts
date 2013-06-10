@@ -3,7 +3,7 @@ module api_ui{
     /**
      * A statically accessible object for masking the whole body.
      */
-    export class BodyMask extends api_ui.Component {
+    export class BodyMask extends api_ui.DivEl {
 
         private static instance:BodyMask = new BodyMask();
 
@@ -12,7 +12,7 @@ module api_ui{
         }
 
         constructor() {
-            super("Mask", "div");
+            super("Mask");
             this.getEl().setDisplay("none");
             this.getEl().addClass("body-mask")
             this.getEl().setZindex(30000);

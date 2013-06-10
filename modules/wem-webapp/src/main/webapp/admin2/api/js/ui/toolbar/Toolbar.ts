@@ -1,13 +1,13 @@
 module api_ui_toolbar {
 
-    export class Toolbar extends api_ui.Component {
+    export class Toolbar extends api_ui.DivEl {
 
         ext;
 
         private components:any[] = [];
 
         constructor() {
-            super("Toolbar", "div");
+            super("Toolbar");
             this.getEl().addClass("toolbar");
             this.initExt();
         }
