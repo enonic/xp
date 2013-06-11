@@ -4,6 +4,8 @@ module api_action {
 
         private label:string;
 
+        private iconClass:string;
+
         private enabled:bool = true;
 
         private executionListeners:Function[] = [];
@@ -37,6 +39,21 @@ module api_action {
 
             if (value !== this.enabled) {
                 this.enabled = value;
+
+                for (var i in this.propertyChangeListeners) {
+                    this.propertyChangeListeners[i](this);
+                }
+            }
+        }
+
+        getIconClass():string {
+            return this.iconClass;
+        }
+
+        setIconClass(value:string) {
+
+            if( value !== this.iconClass ) {
+                this.iconClass = value;
 
                 for (var i in this.propertyChangeListeners) {
                     this.propertyChangeListeners[i](this);

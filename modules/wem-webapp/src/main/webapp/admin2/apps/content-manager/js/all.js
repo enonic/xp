@@ -239,6 +239,206 @@ Ext.define('Admin.lib.RemoteService', {
 }, function () {
     this.init();
 });
+var __extends = this.__extends || function (d, b) {
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var app_event;
+(function (app_event) {
+    var BaseContentModelEvent = (function (_super) {
+        __extends(BaseContentModelEvent, _super);
+        function BaseContentModelEvent(name, model) {
+            this.model = model;
+                _super.call(this, name);
+        }
+        BaseContentModelEvent.prototype.getModels = function () {
+            return this.model;
+        };
+        return BaseContentModelEvent;
+    })(api_event.Event);
+    app_event.BaseContentModelEvent = BaseContentModelEvent;    
+})(app_event || (app_event = {}));
+var app_event;
+(function (app_event) {
+    var GridSelectionChangeEvent = (function (_super) {
+        __extends(GridSelectionChangeEvent, _super);
+        function GridSelectionChangeEvent(model) {
+                _super.call(this, 'gridChange', model);
+        }
+        GridSelectionChangeEvent.on = function on(handler) {
+            api_event.onEvent('gridChange', handler);
+        };
+        return GridSelectionChangeEvent;
+    })(app_event.BaseContentModelEvent);
+    app_event.GridSelectionChangeEvent = GridSelectionChangeEvent;    
+})(app_event || (app_event = {}));
+var app;
+(function (app) {
+    var ContentContext = (function () {
+        function ContentContext() {
+            var _this = this;
+            app_event.GridSelectionChangeEvent.on(function (event) {
+                _this.selectedContents = event.getModels();
+            });
+        }
+        ContentContext.init = function init() {
+            return ContentContext.context = new ContentContext();
+        };
+        ContentContext.get = function get() {
+            return ContentContext.context;
+        };
+        ContentContext.prototype.getSelectedContents = function () {
+            return this.selectedContents;
+        };
+        return ContentContext;
+    })();
+    app.ContentContext = ContentContext;    
+})(app || (app = {}));
+var app;
+(function (app) {
+    var NewContentAction = (function (_super) {
+        __extends(NewContentAction, _super);
+        function NewContentAction() {
+                _super.call(this, "New");
+            this.addExecutionListener(function () {
+                console.log('TODO: New content');
+            });
+        }
+        return NewContentAction;
+    })(api_action.Action);
+    app.NewContentAction = NewContentAction;    
+    var OpenContentAction = (function (_super) {
+        __extends(OpenContentAction, _super);
+        function OpenContentAction() {
+                _super.call(this, "Open");
+            this.setEnabled(false);
+            this.addExecutionListener(function () {
+                console.log('TODO: Open content');
+            });
+        }
+        return OpenContentAction;
+    })(api_action.Action);
+    app.OpenContentAction = OpenContentAction;    
+    var EditContentAction = (function (_super) {
+        __extends(EditContentAction, _super);
+        function EditContentAction() {
+                _super.call(this, "Edit");
+            this.setEnabled(false);
+            this.addExecutionListener(function () {
+                console.log('TODO: Edit content');
+            });
+        }
+        return EditContentAction;
+    })(api_action.Action);
+    app.EditContentAction = EditContentAction;    
+    var DeleteContentAction = (function (_super) {
+        __extends(DeleteContentAction, _super);
+        function DeleteContentAction() {
+                _super.call(this, "Delete");
+            this.setEnabled(false);
+            this.addExecutionListener(function () {
+                console.log('TODO: Delete content');
+            });
+        }
+        return DeleteContentAction;
+    })(api_action.Action);
+    app.DeleteContentAction = DeleteContentAction;    
+    var DuplicateContentAction = (function (_super) {
+        __extends(DuplicateContentAction, _super);
+        function DuplicateContentAction() {
+                _super.call(this, "Duplicate");
+            this.setEnabled(false);
+            this.addExecutionListener(function () {
+                console.log('TODO: Duplicate content');
+            });
+        }
+        return DuplicateContentAction;
+    })(api_action.Action);
+    app.DuplicateContentAction = DuplicateContentAction;    
+    var MoveContentAction = (function (_super) {
+        __extends(MoveContentAction, _super);
+        function MoveContentAction() {
+                _super.call(this, "Move");
+            this.setEnabled(false);
+            this.addExecutionListener(function () {
+                console.log('TODO: Move content');
+            });
+        }
+        return MoveContentAction;
+    })(api_action.Action);
+    app.MoveContentAction = MoveContentAction;    
+    var BrowseContentSettingsAction = (function (_super) {
+        __extends(BrowseContentSettingsAction, _super);
+        function BrowseContentSettingsAction() {
+                _super.call(this, "");
+            this.setEnabled(true);
+            this.setIconClass('icon-toolbar-settings');
+            this.addExecutionListener(function () {
+                console.log('TODO: browse content settings');
+            });
+        }
+        return BrowseContentSettingsAction;
+    })(api_action.Action);
+    app.BrowseContentSettingsAction = BrowseContentSettingsAction;    
+    var ContentActions = (function () {
+        function ContentActions() { }
+        ContentActions.NEW_CONTENT = new NewContentAction();
+        ContentActions.OPEN_CONTENT = new OpenContentAction();
+        ContentActions.EDIT_CONTENT = new EditContentAction();
+        ContentActions.DELETE_CONTENT = new DeleteContentAction();
+        ContentActions.DUPLICATE_CONTENT = new DuplicateContentAction();
+        ContentActions.MOVE_CONTENT = new MoveContentAction();
+        ContentActions.BROWSE_CONTENT_SETTINGS = new BrowseContentSettingsAction();
+        ContentActions.init = function init() {
+            app_event.GridSelectionChangeEvent.on(function (event) {
+                var contents = event.getModels();
+                if(contents.length <= 0) {
+                    ContentActions.NEW_CONTENT.setEnabled(true);
+                    ContentActions.OPEN_CONTENT.setEnabled(false);
+                    ContentActions.EDIT_CONTENT.setEnabled(false);
+                    ContentActions.DELETE_CONTENT.setEnabled(false);
+                    ContentActions.DUPLICATE_CONTENT.setEnabled(false);
+                    ContentActions.MOVE_CONTENT.setEnabled(false);
+                } else if(contents.length == 1) {
+                    ContentActions.NEW_CONTENT.setEnabled(false);
+                    ContentActions.OPEN_CONTENT.setEnabled(true);
+                    ContentActions.EDIT_CONTENT.setEnabled(contents[0].data.editable);
+                    ContentActions.DELETE_CONTENT.setEnabled(contents[0].data.deletable);
+                    ContentActions.DUPLICATE_CONTENT.setEnabled(true);
+                    ContentActions.MOVE_CONTENT.setEnabled(true);
+                } else {
+                    ContentActions.NEW_CONTENT.setEnabled(false);
+                    ContentActions.OPEN_CONTENT.setEnabled(true);
+                    ContentActions.EDIT_CONTENT.setEnabled(ContentActions.anyEditable(contents));
+                    ContentActions.DELETE_CONTENT.setEnabled(ContentActions.anyDeleteable(contents));
+                    ContentActions.DUPLICATE_CONTENT.setEnabled(true);
+                    ContentActions.MOVE_CONTENT.setEnabled(true);
+                }
+            });
+        };
+        ContentActions.anyEditable = function anyEditable(contents) {
+            for(var i in contents) {
+                var content = contents[i];
+                if(content.data.editable) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        ContentActions.anyDeleteable = function anyDeleteable(contents) {
+            for(var i in contents) {
+                var content = contents[i];
+                if(content.data.deletable) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        return ContentActions;
+    })();
+    app.ContentActions = ContentActions;    
+})(app || (app = {}));
 Ext.define('Ext.ux.toggleslide.Thumb', {
     topZIndex: 10000,
     constructor: function (config) {
@@ -682,11 +882,6 @@ var admin;
     })(admin.ui || (admin.ui = {}));
     var ui = admin.ui;
 })(admin || (admin = {}));
-var __extends = this.__extends || function (d, b) {
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
 var admin;
 (function (admin) {
     (function (ui) {
@@ -2959,12 +3154,10 @@ Ext.define('Admin.view.contentManager.ShowPanel', {
     layout: 'border',
     border: false,
     initComponent: function () {
+        var toolbar = new app_ui.BrowseToolbar();
         var contentIsOpenedFromPortal = document.location.href.indexOf('/open') > -1;
         this.items = [
-            {
-                region: 'north',
-                xtype: 'browseToolbar'
-            }, 
+            toolbar.ext, 
             {
                 xtype: 'contentTreeGridPanel',
                 region: 'center',
@@ -2997,65 +3190,29 @@ Ext.define('Admin.view.contentManager.ShowPanel', {
         this.callParent(arguments);
     }
 });
-Ext.define('Admin.view.contentManager.BrowseToolbar', {
-    extend: 'Ext.toolbar.Toolbar',
-    alias: 'widget.browseToolbar',
-    requires: [
-        'Ext.ux.toggleslide.ToggleSlide'
-    ],
-    cls: 'admin-toolbar',
-    border: true,
-    defaults: {
-        scale: 'medium',
-        iconAlign: 'top',
-        minWidth: 64
-    },
-    initComponent: function () {
-        this.items = [
-            {
-                text: ' New',
-                disabled: true,
-                action: 'newContent'
-            }, 
-            {
-                text: 'Edit',
-                action: 'editContent'
-            }, 
-            {
-                text: 'Open',
-                action: 'viewContent'
-            }, 
-            {
-                text: 'Delete',
-                action: 'deleteContent'
-            }, 
-            {
-                text: 'Duplicate',
-                action: 'duplicateContent'
-            }, 
-            {
-                text: 'Move',
-                disabled: true,
-                action: 'moveContent'
-            }, 
-            '->', 
-            {
-                xtype: 'toggleslide',
-                onText: 'Preview',
-                offText: 'Details',
-                action: 'toggleLive',
-                state: this.isLiveMode
-            }, 
-            {
-                iconCls: 'icon-toolbar-settings',
-                action: 'showToolbarMenu',
-                minWidth: 42,
-                padding: '6 8 6 12'
-            }
-        ];
-        this.callParent(arguments);
-    }
-});
+var app_ui;
+(function (app_ui) {
+    var BrowseToolbar = (function (_super) {
+        __extends(BrowseToolbar, _super);
+        function BrowseToolbar() {
+                _super.call(this);
+            this.isLiveMode = false;
+            _super.prototype.addAction.call(this, app.ContentActions.NEW_CONTENT);
+            _super.prototype.addAction.call(this, app.ContentActions.EDIT_CONTENT);
+            _super.prototype.addAction.call(this, app.ContentActions.OPEN_CONTENT);
+            _super.prototype.addAction.call(this, app.ContentActions.DELETE_CONTENT);
+            _super.prototype.addAction.call(this, app.ContentActions.DUPLICATE_CONTENT);
+            _super.prototype.addAction.call(this, app.ContentActions.MOVE_CONTENT);
+            _super.prototype.addGreedySpacer.call(this);
+            var previewToggle = new api_ui.Element('span', 'preview-toggle');
+            previewToggle.getEl().setInnerHtml('TODO preview-toggle');
+            _super.prototype.addAction.call(this, app.ContentActions.BROWSE_CONTENT_SETTINGS);
+            _super.prototype.addElement.call(this, previewToggle);
+        }
+        return BrowseToolbar;
+    })(api_ui_toolbar.Toolbar);
+    app_ui.BrowseToolbar = BrowseToolbar;    
+})(app_ui || (app_ui = {}));
 var admin;
 (function (admin) {
     (function (ui) {

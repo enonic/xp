@@ -13,13 +13,11 @@ module app_ui {
             super.addAction(app.ContentActions.MOVE_CONTENT);
             super.addGreedySpacer();
 
-            // TODO add widget components for preview toggle and settings
+            // TODO add widget component for preview toggle
             var previewToggle = new api_ui.Element('span', 'preview-toggle');
             previewToggle.getEl().setInnerHtml('TODO preview-toggle');
-            var toolbarSettings = new api_ui.Element('span');
-            toolbarSettings.getEl().setInnerHtml('TODO settings');
 
-            super.addElement(toolbarSettings);
+            super.addAction(app.ContentActions.BROWSE_CONTENT_SETTINGS);
             super.addElement(previewToggle);
         }
     }

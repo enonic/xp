@@ -1,6 +1,7 @@
 module api_action {
     class Action {
         private label;
+        private iconClass;
         private enabled;
         private executionListeners;
         private propertyChangeListeners;
@@ -9,6 +10,8 @@ module api_action {
         public setLabel(value: string): void;
         public isEnabled(): bool;
         public setEnabled(value: bool): void;
+        public getIconClass(): string;
+        public setIconClass(value: string): void;
         public execute(): void;
         public addExecutionListener(listener: (action: Action) => void): void;
         public addPropertyChangeListener(listener: (action: Action) => void): void;

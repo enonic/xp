@@ -126,6 +126,17 @@ var api_action;
                 }
             }
         };
+        Action.prototype.getIconClass = function () {
+            return this.iconClass;
+        };
+        Action.prototype.setIconClass = function (value) {
+            if(value !== this.iconClass) {
+                this.iconClass = value;
+                for(var i in this.propertyChangeListeners) {
+                    this.propertyChangeListeners[i](this);
+                }
+            }
+        };
         Action.prototype.execute = function () {
             if(this.enabled) {
                 for(var i in this.executionListeners) {
@@ -479,14 +490,20 @@ var api_ui_toolbar;
             });
         };
         Toolbar.prototype.addAction = function (action) {
-            var button = this.doAddAction(action);
+            var button = this.addActionButton(action);
             this.appendChild(button);
+        };
+        Toolbar.prototype.addElement = function (element) {
+            if(this.hasGreedySpacer()) {
+                element.getEl().addClass('pull-right');
+            }
+            this.appendChild(element);
         };
         Toolbar.prototype.addGreedySpacer = function () {
             var spacer = new ToolbarGreedySpacer();
             this.components.push(spacer);
         };
-        Toolbar.prototype.doAddAction = function (action) {
+        Toolbar.prototype.addActionButton = function (action) {
             var button = new ToolbarButton(action);
             if(this.hasGreedySpacer()) {
                 button.setFloatRight(true);
@@ -515,6 +532,9 @@ var api_ui_toolbar;
             this.getEl().addEventListener("click", function (evt) {
                 _this.action.execute();
             });
+            if(action.getIconClass()) {
+                this.getEl().addClass(action.getIconClass());
+            }
             this.setEnable(action.isEnabled());
             action.addPropertyChangeListener(function (action) {
                 _this.setEnable(action.isEnabled());

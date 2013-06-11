@@ -65,6 +65,18 @@ module app {
         }
     }
 
+    export class BrowseContentSettingsAction extends api_action.Action {
+
+        constructor() {
+            super("");
+            this.setEnabled(true);
+            this.setIconClass('icon-toolbar-settings');
+            this.addExecutionListener(() => {
+                console.log('TODO: browse content settings');
+            });
+        }
+    }
+
     export class ContentActions {
 
         static NEW_CONTENT:api_action.Action = new NewContentAction();
@@ -73,6 +85,7 @@ module app {
         static DELETE_CONTENT:api_action.Action = new DeleteContentAction();
         static DUPLICATE_CONTENT:api_action.Action = new DuplicateContentAction();
         static MOVE_CONTENT:api_action.Action = new MoveContentAction();
+        static BROWSE_CONTENT_SETTINGS:api_action.Action = new BrowseContentSettingsAction();
 
         static init() {
 

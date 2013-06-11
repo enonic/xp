@@ -21,7 +21,7 @@ module api_ui_toolbar {
         }
 
         addAction(action:api_action.Action) {
-            var button:ToolbarButton = this.doAddAction(action);
+            var button:ToolbarButton = this.addActionButton(action);
             this.appendChild(button);
         }
 
@@ -37,7 +37,7 @@ module api_ui_toolbar {
             this.components.push(spacer);
         }
 
-        private doAddAction(action:api_action.Action):api_ui_toolbar.ToolbarButton {
+        private addActionButton(action:api_action.Action):api_ui_toolbar.ToolbarButton {
             var button:ToolbarButton = new ToolbarButton(action);
             if (this.hasGreedySpacer()) {
                 button.setFloatRight(true);
@@ -67,6 +67,9 @@ module api_ui_toolbar {
             this.getEl().addEventListener("click", (evt:Event) => {
                 this.action.execute();
             });
+            if (action.getIconClass()) {
+                this.getEl().addClass(action.getIconClass());
+            }
             this.setEnable(action.isEnabled());
 
             action.addPropertyChangeListener((action:api_action.Action) => {

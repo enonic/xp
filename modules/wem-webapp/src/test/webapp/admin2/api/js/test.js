@@ -29,6 +29,17 @@ var api_action;
                 }
             }
         };
+        Action.prototype.getIconClass = function () {
+            return this.iconClass;
+        };
+        Action.prototype.setIconClass = function (value) {
+            if(value !== this.iconClass) {
+                this.iconClass = value;
+                for(var i in this.propertyChangeListeners) {
+                    this.propertyChangeListeners[i](this);
+                }
+            }
+        };
         Action.prototype.execute = function () {
             if(this.enabled) {
                 for(var i in this.executionListeners) {
