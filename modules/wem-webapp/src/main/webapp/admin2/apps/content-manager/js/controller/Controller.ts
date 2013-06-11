@@ -350,28 +350,30 @@ Ext.define('Admin.controller.Controller', {
 
     updateToolbarButtons: function (selected) {
         var toolbar = this.getContentBrowseToolbar();
-        var contextMenu = this.getContentManagerContextMenu();
-        var detailPanel = this.getContentDetailPanel();
-        var newContentButton = toolbar.down('*[action=newContent]');
-        newContentButton.setDisabled(Ext.isEmpty(selected) || selected.length !== 1 || (!selected[0].get('allowsChildren')));
+        if (toolbar) {
+            var contextMenu = this.getContentManagerContextMenu();
+            var detailPanel = this.getContentDetailPanel();
+            var newContentButton = toolbar.down('*[action=newContent]');
+            newContentButton.setDisabled(Ext.isEmpty(selected) || selected.length !== 1 || (!selected[0].get('allowsChildren')));
 
-        var deleteContentButton = toolbar.down('*[action=deleteContent]');
-        var disabled = false;
+            var deleteContentButton = toolbar.down('*[action=deleteContent]');
+            var disabled = false;
 
-        var i;
-        for (i = 0; i < selected.length; i++) {
-            var deletable = selected[i].get('deletable');
-            if (!deletable) {
-                disabled = true;
-                break;
+            var i;
+            for (i = 0; i < selected.length; i++) {
+                var deletable = selected[i].get('deletable');
+                if (!deletable) {
+                    disabled = true;
+                    break;
+                }
             }
-        }
-        deleteContentButton.setDisabled(disabled);
-        deleteContentButton = contextMenu.down('*[action=deleteContent]');
-        deleteContentButton.setDisabled(disabled);
-        deleteContentButton = detailPanel.down('*[action=deleteContent]');
-        if (deleteContentButton) {
             deleteContentButton.setDisabled(disabled);
+            deleteContentButton = contextMenu.down('*[action=deleteContent]');
+            deleteContentButton.setDisabled(disabled);
+            deleteContentButton = detailPanel.down('*[action=deleteContent]');
+            if (deleteContentButton) {
+                deleteContentButton.setDisabled(disabled);
+            }
         }
     },
 
@@ -549,12 +551,8 @@ Ext.define('Admin.controller.Controller', {
         return Ext.ComponentQuery.query('contentFilter')[0];
     },
 
-    getContentShowPanel: function () {
-        return Ext.ComponentQuery.query('contentShow')[0];
-    },
-
     getContentBrowseToolbar: function () {
-        return this.getContentShowPanel().down('browseToolbar');
+        return Ext.ComponentQuery.query('browseToolbar')[0];
     },
 
     getContentManagerContextMenu: function () {
@@ -566,7 +564,7 @@ Ext.define('Admin.controller.Controller', {
     },
 
     getContentTreeGridPanel: function () {
-        return this.getContentShowPanel().down('contentTreeGridPanel');
+        return Ext.ComponentQuery.query('contentTreeGridPanel')[0];
     },
 
     getContentDetailPanel: function () {

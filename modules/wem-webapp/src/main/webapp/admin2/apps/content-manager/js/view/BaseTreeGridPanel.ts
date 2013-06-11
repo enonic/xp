@@ -57,7 +57,12 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
             },
             store: this.treeStore,
             columns: treeColumns,
-            plugins: [treeSelectionPlugin]
+            plugins: [treeSelectionPlugin],
+            listeners: {
+                selectionchange: (selModel, selected, opts) => {
+                    new app_event.GridSelectionChangeEvent(selected).fire();
+                }
+            }
         };
         treePanel = Ext.apply(treePanel, me.treeConf);
 
@@ -80,11 +85,16 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
             },
             store: this.store,
             columns: this.columns,
-            plugins: [gridSelectionPlugin]
+            plugins: [gridSelectionPlugin],
+            listeners: {
+                selectionchange: (selModel, selected, opts) => {
+                    new app_event.GridSelectionChangeEvent(selected).fire();
+                }
+            }
         };
         gridPanel = Ext.apply(gridPanel, me.gridConf);
 
-        this.items = [treePanel, gridPanel];
+        this.items = <any[]>[treePanel, gridPanel];
         this.callParent(arguments);
 
         var grid = this.down('#grid');

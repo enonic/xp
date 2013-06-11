@@ -3148,48 +3148,6 @@ Ext.define('Admin.view.contentManager.FilterPanel', {
     extend: 'Admin.view.FilterPanel',
     alias: 'widget.contentFilter'
 });
-Ext.define('Admin.view.contentManager.ShowPanel', {
-    extend: 'Ext.panel.Panel',
-    alias: 'widget.contentShow',
-    layout: 'border',
-    border: false,
-    initComponent: function () {
-        var toolbar = new app_ui.BrowseToolbar();
-        var contentIsOpenedFromPortal = document.location.href.indexOf('/open') > -1;
-        this.items = [
-            toolbar.ext, 
-            {
-                xtype: 'contentTreeGridPanel',
-                region: 'center',
-                itemId: 'contentList',
-                flex: 1
-            }, 
-            {
-                region: 'south',
-                split: true,
-                collapsible: true,
-                header: false,
-                xtype: 'contentDetail',
-                isLiveMode: contentIsOpenedFromPortal,
-                showToolbar: false,
-                flex: 1
-            }, 
-            {
-                region: 'east',
-                split: true,
-                collapsible: true,
-                header: false,
-                xtype: 'contentDetail',
-                isLiveMode: contentIsOpenedFromPortal,
-                showToolbar: false,
-                flex: 1,
-                hidden: true,
-                isVertical: true
-            }
-        ];
-        this.callParent(arguments);
-    }
-});
 var app_ui;
 (function (app_ui) {
     var BrowseToolbar = (function (_super) {
@@ -3310,7 +3268,12 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
             columns: treeColumns,
             plugins: [
                 treeSelectionPlugin
-            ]
+            ],
+            listeners: {
+                selectionchange: function (selModel, selected, opts) {
+                    new app_event.GridSelectionChangeEvent(selected).fire();
+                }
+            }
         };
         treePanel = Ext.apply(treePanel, me.treeConf);
         var gridSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
@@ -3333,7 +3296,12 @@ Ext.define('Admin.view.BaseTreeGridPanel', {
             columns: this.columns,
             plugins: [
                 gridSelectionPlugin
-            ]
+            ],
+            listeners: {
+                selectionchange: function (selModel, selected, opts) {
+                    new app_event.GridSelectionChangeEvent(selected).fire();
+                }
+            }
         };
         gridPanel = Ext.apply(gridPanel, me.gridConf);
         this.items = [
@@ -7790,26 +7758,28 @@ Ext.define('Admin.controller.Controller', {
     },
     updateToolbarButtons: function (selected) {
         var toolbar = this.getContentBrowseToolbar();
-        var contextMenu = this.getContentManagerContextMenu();
-        var detailPanel = this.getContentDetailPanel();
-        var newContentButton = toolbar.down('*[action=newContent]');
-        newContentButton.setDisabled(Ext.isEmpty(selected) || selected.length !== 1 || (!selected[0].get('allowsChildren')));
-        var deleteContentButton = toolbar.down('*[action=deleteContent]');
-        var disabled = false;
-        var i;
-        for(i = 0; i < selected.length; i++) {
-            var deletable = selected[i].get('deletable');
-            if(!deletable) {
-                disabled = true;
-                break;
+        if(toolbar) {
+            var contextMenu = this.getContentManagerContextMenu();
+            var detailPanel = this.getContentDetailPanel();
+            var newContentButton = toolbar.down('*[action=newContent]');
+            newContentButton.setDisabled(Ext.isEmpty(selected) || selected.length !== 1 || (!selected[0].get('allowsChildren')));
+            var deleteContentButton = toolbar.down('*[action=deleteContent]');
+            var disabled = false;
+            var i;
+            for(i = 0; i < selected.length; i++) {
+                var deletable = selected[i].get('deletable');
+                if(!deletable) {
+                    disabled = true;
+                    break;
+                }
             }
-        }
-        deleteContentButton.setDisabled(disabled);
-        deleteContentButton = contextMenu.down('*[action=deleteContent]');
-        deleteContentButton.setDisabled(disabled);
-        deleteContentButton = detailPanel.down('*[action=deleteContent]');
-        if(deleteContentButton) {
             deleteContentButton.setDisabled(disabled);
+            deleteContentButton = contextMenu.down('*[action=deleteContent]');
+            deleteContentButton.setDisabled(disabled);
+            deleteContentButton = detailPanel.down('*[action=deleteContent]');
+            if(deleteContentButton) {
+                deleteContentButton.setDisabled(disabled);
+            }
         }
     },
     loadContentAndFacets: function (values) {
@@ -7971,11 +7941,8 @@ Ext.define('Admin.controller.Controller', {
     getContentFilter: function () {
         return Ext.ComponentQuery.query('contentFilter')[0];
     },
-    getContentShowPanel: function () {
-        return Ext.ComponentQuery.query('contentShow')[0];
-    },
     getContentBrowseToolbar: function () {
-        return this.getContentShowPanel().down('browseToolbar');
+        return Ext.ComponentQuery.query('browseToolbar')[0];
     },
     getContentManagerContextMenu: function () {
         var menu = Ext.ComponentManager.get('contentManagerContextMenu');
@@ -7985,7 +7952,7 @@ Ext.define('Admin.controller.Controller', {
         return menu;
     },
     getContentTreeGridPanel: function () {
-        return this.getContentShowPanel().down('contentTreeGridPanel');
+        return Ext.ComponentQuery.query('contentTreeGridPanel')[0];
     },
     getContentDetailPanel: function () {
         var contentDetail = Ext.ComponentQuery.query('contentDetail');
@@ -8572,6 +8539,10 @@ Ext.define('Admin.controller.DialogWindowController', {
         this.remoteDeleteContent(content, onContentDeleted);
     }
 });
+var components;
+(function (components) {
+    components.browseToolbar;
+})(components || (components = {}));
 Ext.application({
     name: 'CM',
     appFolder: 'resources/app',
@@ -8589,6 +8560,41 @@ Ext.application({
         'Admin.controller.DialogWindowController'
     ],
     launch: function () {
+        var contentIsOpenedFromPortal = document.location.href.indexOf('/open') > -1;
+        var filter = new Admin.view.contentManager.FilterPanel({
+            region: 'west',
+            xtype: 'contentFilter',
+            width: 200
+        });
+        var toolbar = components.browseToolbar = new app_ui.BrowseToolbar();
+        var grid = new Admin.view.contentManager.TreeGridPanel({
+            xtype: 'contentTreeGridPanel',
+            region: 'center',
+            itemId: 'contentList',
+            flex: 1
+        });
+        var detailsHorizontal = new Admin.view.contentManager.DetailPanel({
+            region: 'south',
+            split: true,
+            collapsible: true,
+            header: false,
+            xtype: 'contentDetail',
+            isLiveMode: contentIsOpenedFromPortal,
+            showToolbar: false,
+            flex: 1
+        });
+        var detailsVertical = new Admin.view.contentManager.DetailPanel({
+            region: 'east',
+            split: true,
+            collapsible: true,
+            header: false,
+            xtype: 'contentDetail',
+            isLiveMode: contentIsOpenedFromPortal,
+            showToolbar: false,
+            flex: 1,
+            hidden: true,
+            isVertical: true
+        });
         Ext.create('Ext.container.Viewport', {
             layout: 'fit',
             cls: 'admin-viewport',
@@ -8608,14 +8614,18 @@ Ext.application({
                                 hidden: true
                             },
                             items: [
-                                {
-                                    region: 'west',
-                                    xtype: 'contentFilter',
-                                    width: 200
-                                }, 
+                                filter, 
                                 {
                                     region: 'center',
-                                    xtype: 'contentShow'
+                                    xtype: 'container',
+                                    layout: 'border',
+                                    border: false,
+                                    items: [
+                                        toolbar.ext, 
+                                        grid, 
+                                        detailsHorizontal, 
+                                        detailsVertical
+                                    ]
                                 }
                             ]
                         }
@@ -8625,4 +8635,6 @@ Ext.application({
         });
     }
 });
+app.ContentContext.init();
+app.ContentActions.init();
 //@ sourceMappingURL=all.js.map

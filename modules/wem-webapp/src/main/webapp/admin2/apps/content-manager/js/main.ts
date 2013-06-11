@@ -45,7 +45,6 @@
 ///<reference path='view/TabPanel.ts' />
 ///<reference path='view/BaseFilterPanel.ts' />
 ///<reference path='view/FilterPanel.ts' />
-///<reference path='view/ShowPanel.ts' />
 ///<reference path='view/BrowseToolbar.ts' />
 ///<reference path='view/ContextMenu.ts' />
 ///<reference path='view/BaseTreeGridPanel.ts' />
@@ -109,6 +108,10 @@ declare var Ext;
 declare var Admin;
 declare var CONFIG;
 
+module components {
+    export var browseToolbar: app_ui.BrowseToolbar;
+}
+
 Ext.application({
     name: 'CM',
 
@@ -136,6 +139,50 @@ Ext.application({
 
     launch: function () {
 
+        /* For 18/4 demo */
+        var contentIsOpenedFromPortal = document.location.href.indexOf('/open') > -1;
+
+        var filter = new Admin.view.contentManager.FilterPanel({
+            region: 'west',
+            xtype: 'contentFilter',
+            width: 200
+        });
+
+        var toolbar = components.browseToolbar = new app_ui.BrowseToolbar();
+
+        var grid = new Admin.view.contentManager.TreeGridPanel({
+            xtype: 'contentTreeGridPanel',
+            region: 'center',
+            itemId: 'contentList',
+            flex: 1
+        });
+
+        var detailsHorizontal = new Admin.view.contentManager.DetailPanel({
+            region: 'south',
+            split: true,
+            collapsible: true,
+            header: false,
+            xtype: 'contentDetail',
+            isLiveMode: contentIsOpenedFromPortal,
+
+            showToolbar: false,
+            flex: 1
+        });
+
+        var detailsVertical = new Admin.view.contentManager.DetailPanel({
+            region: 'east',
+            split: true,
+            collapsible: true,
+            header: false,
+            xtype: 'contentDetail',
+            isLiveMode: contentIsOpenedFromPortal,
+
+            showToolbar: false,
+            flex: 1,
+            hidden: true,
+            isVertical: true
+        });
+
         Ext.create('Ext.container.Viewport', {
             layout: 'fit',
             cls: 'admin-viewport',
@@ -155,15 +202,19 @@ Ext.application({
                             tabConfig: {
                                 hidden: true
                             },
-                            items: [
-                                {
-                                    region: 'west',
-                                    xtype: 'contentFilter',
-                                    width: 200
-                                },
+                            items: <any[]>[
+                                filter,
                                 {
                                     region: 'center',
-                                    xtype: 'contentShow'
+                                    xtype: 'container',
+                                    layout: 'border',
+                                    border: false,
+                                    items: <any>[
+                                        toolbar.ext,
+                                        grid,
+                                        detailsHorizontal,
+                                        detailsVertical
+                                    ]
                                 }
                             ]
                         }
@@ -173,3 +224,7 @@ Ext.application({
         });
     }
 });
+
+
+app.ContentContext.init();
+app.ContentActions.init();
