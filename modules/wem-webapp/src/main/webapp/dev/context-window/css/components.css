@@ -7,7 +7,7 @@
     border: 1px solid #aaa;
     color: #bbb;
     padding: 3px;
-    width: 98%;
+    width: 100%;
 }
 
 .live-edit-component-list {
@@ -23,11 +23,7 @@
     display: block;
     /*margin: 0 2px 0 2px;*/
     padding: 10px 20px;
-    cursor: hand;
-    cursor: grab !important;
-    cursor: -moz-grab;
-    cursor: url("cursor-grab.png"), pointer !important;
-    cursor: -webkit-grab;
+    cursor: move;
 }
 
 .live-edit-component:hover {
@@ -62,7 +58,4 @@
     line-height: 1.4;
     font-size: 13px !important;
     color: #f2f2f2;
-}
-
-.live-edit-component-row small {
 }

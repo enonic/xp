@@ -1,16 +1,16 @@
 /** Window */
 
 .admin-context-window {
-    background-color: rgba(0, 0, 0, .7);
+    background: linear-gradient(to bottom, rgba(50,50,50,.8) 0%,rgba(0,0,0,.8) 100%); /* W3C */
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 22px 70px 4px rgba(0,0,0,0.56), 0 0 0 1px rgba(0, 0, 0, 0.3);
     color: #c7c7c7;
+    border-radius: 4px 4px 0 0;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 22px 70px 4px rgba(0,0,0,0.56), 0 0 0 1px rgba(0, 0, 0, 0.3);
-    border-radius: 4px 4px 0 0;
 }
 
 .admin-context-window-title-bar {
@@ -37,8 +37,12 @@
 .admin-context-window-title-text {
     padding-top: 5px;
     padding-left: 2px;
-    cursor: move;
     font-size: 15px;
+    cursor: hand;
+    cursor: grab !important;
+    cursor: -moz-grab;
+    cursor: url('cursor-grab.png'), pointer !important;
+    cursor: -webkit-grab;
 }
 
 .admin-context-window-toggle-button {

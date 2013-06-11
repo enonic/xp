@@ -11,12 +11,19 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     width: 320,
     height: 512,
     shadow: false,
-    border: false,
+    border: 1,
+    style: {
+        borderColor: 'black',
+        borderStyle: 'solid'
+    },
     floating: true,
     layout: {
         type: 'vbox',
         align : 'stretch'
     },
+
+
+
     listeners: {
         resize: function () {
             this.handleResize();
@@ -66,6 +73,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         ];
         this.draggingShim = this.createDraggingShim();
         this.enableDrag();
+        this.enableResize();
         this.currentHeight = this.height;
 
         this.callParent(arguments);
@@ -255,6 +263,10 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         return div;
     },
 
+    showHideDraggingShim: function (show) {
+        this.draggingShim.style.display = show ? 'block' : 'none';
+    },
+
     enableDrag: function () {
         var me = this;
         this.draggable = {
@@ -262,11 +274,11 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             listeners: {
                 dragstart: function () {
                     me.getEl().toggleCls('is-dragging');
-                    me.draggingShim.style.display = 'block';
+                    me.showHideDraggingShim(true);
                 },
                 dragend: function () {
                     me.getEl().toggleCls('is-dragging');
-                    me.draggingShim.style.display = 'none';
+                    me.showHideDraggingShim(false);
                 }
             }
         };
@@ -274,12 +286,34 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         this.constrainTo = Ext.get('live-edit-frame');
     },
 
+    enableResize: function () {
+        var me = this;
+        this.resizable = {
+            dynamic: true,
+            transparent: true,
+            listeners: {
+                beforeresize: function () {
+                    me.showHideDraggingShim(true)
+                },
+                resize: function () {
+                    me.showHideDraggingShim(false)
+                }
+            }
+        };
+    },
+
     handleResize: function () {
+        // fixme: optimize
+
         var addedPanels = this.windowBody.items.items,
             newBodyHeight = this.height - this.TITLE_BAR_HEIGHT;
         for (var i = 0; i < addedPanels.length; i++) {
             addedPanels[i].setHeight(newBodyHeight);
         }
+    },
+
+    getLiveEditIframe: function () {
+        return Ext.DomQuery.selectNode('#live-edit-frame');
     },
 
     doShow: function () {

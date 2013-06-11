@@ -5,16 +5,38 @@
     <link rel="stylesheet" type="text/css" href="css/context-window.css">
     <link rel="stylesheet" type="text/css" href="css/components.css">
     <script type="text/javascript" src="../../admin/resources/lib/ext/ext-all-debug.js"></script>
-    <script type="text/javascript" src="../../admin2/apps/content-manager/js/view/contextwindow/ContextWindow.js"></script>
+
+    <script type="text/javascript" charset="UTF-8" src="../../admin2/live-edit/lib/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" charset="UTF-8"
+            src="../../admin2/live-edit/lib/jquery-ui-1.9.2.custom.min.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../../admin2/live-edit/lib/jquery.simulate.js"></script>
+
+    <script type="text/javascript">
+        // Patch for making the components list always draggable
+        (function ($) {
+            $.fn.liveDraggable = function (opts) {
+                this.live("mouseover", function () {
+                    if (!$(this).data("init")) {
+                        $(this).data("init", true).draggable(opts);
+                    }
+                });
+                return this;
+            };
+        }(jQuery));
+    </script>
+
+    <script type="text/javascript"
+            src="../../admin2/apps/content-manager/js/view/contextwindow/ContextWindow.js"></script>
     <script type="text/javascript" src="../../admin2/apps/content-manager/js/view/contextwindow/Components.js"></script>
-    <script type="text/javascript" src="../../admin2/apps/content-manager/js/view/contextwindow/DeviceSelector.js"></script>
+    <script type="text/javascript"
+            src="../../admin2/apps/content-manager/js/view/contextwindow/DeviceSelector.js"></script>
     <script type="text/javascript" src="../../admin2/apps/content-manager/js/view/contextwindow/Images.js"></script>
 
     <script type="text/javascript">
 
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         // App
-
+        // Map jQuery served with Live Edit
         Ext.application({
             name: 'App',
 
