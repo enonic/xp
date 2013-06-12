@@ -4,11 +4,12 @@
 Ext.define('Admin.view.contentManager.contextwindow.Components', {
     extend: 'Ext.container.Container',
     alias: 'widget.contextWindowComponentsPanel',
-
     layout: {
         type: 'vbox',
         align: 'stretch'
     },
+
+    COMPONENTS_STORE_URL: '../../admin2/live-edit/data/mock-components-2.json',
 
     searchBar: undefined,
     searchInput: undefined,
@@ -85,7 +86,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
             model: 'ContextWindow.Component',
             proxy: {
                 type: 'ajax',
-                url: '../../admin2/live-edit/data/mock-components-2.json',
+                url: me.COMPONENTS_STORE_URL,
                 reader: {
                     type: 'json',
                     root: 'components'
@@ -94,10 +95,6 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
             autoLoad: true
         });
 
-
-        /*
-         data-live-edit-component-key="10001" data-live-edit-component-name="fisk" data-live-edit-component-type="part"
-         * */
         var imageTpl = new Ext.XTemplate(
             '<tpl for=".">',
             '   <div class="live-edit-component" data-live-edit-component-key="{key}" data-live-edit-component-type="{type}" data-live-edit-component-name="{name}">',

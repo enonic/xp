@@ -21,9 +21,6 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         type: 'vbox',
         align : 'stretch'
     },
-
-
-
     listeners: {
         resize: function () {
             this.handleResize();
@@ -33,14 +30,16 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     DEFAULT_SELECTED_PANEL_INDEX: 0,
     TITLE_BAR_HEIGHT: 32,
 
+    collapsed: false,
+    currentHeight: undefined,
+
     titleBar: undefined,
     menuButton: undefined,
     titleText: undefined,
     toggleButton: undefined,
     windowBody: undefined,
+
     draggingShim: undefined,
-    collapsed: false,
-    currentHeight: undefined,
 
     panels: [
         {

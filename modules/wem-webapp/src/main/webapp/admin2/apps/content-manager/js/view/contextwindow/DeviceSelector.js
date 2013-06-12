@@ -1,7 +1,6 @@
 Ext.define('Admin.view.contentManager.contextwindow.DeviceSelector', {
     extend: 'Ext.container.Container',
     alias: 'widget.contextWindowDeviceSelector',
-
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -21,44 +20,6 @@ Ext.define('Admin.view.contentManager.contextwindow.DeviceSelector', {
         ];
         */
         this.callParent(arguments);
-    },
-
-    /**
-     * @returns {Ext.Component}
-     */
-    createSearchBar: function () {
-        this.searchInput = this.createSearchInput();
-        return new Ext.container.Container({
-            height: 70,
-            cls: 'live-edit-component-search-bar',
-            items: [
-                new Ext.Component({
-                    html: '<p>Drag\'n drop Parts, Layouts and more..</p>'
-                }),
-                this.searchInput
-            ]
-        });
-    },
-
-    /**
-     * @returns {Ext.Component}
-     */
-    createSearchInput: function () {
-        var me = this;
-        return new Ext.Component({
-            autoEl: {
-                tag: 'input',
-                placeholder: 'Search'
-            },
-            cls: 'live-edit-component-search-input',
-            listeners: {
-                render: function () {
-                    this.getEl().on('keyup', function (event, el) {
-                        me.doFilterStore(el.value);
-                    });
-                }
-            }
-        });
     },
 
     /**
