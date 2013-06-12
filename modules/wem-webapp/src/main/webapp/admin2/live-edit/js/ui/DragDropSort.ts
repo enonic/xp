@@ -10,7 +10,7 @@ module LiveEdit {
 
     var _isDragging = false;
 
-    var cursorAt = LiveEdit.ComponentHelper.supportsTouch() ? {left: 15, top: 70} : {left: -10, top: -15};
+    var cursorAt = {left: -10, top: -15};
 
     var regionSelector = '[data-live-edit-type=region]';
 
