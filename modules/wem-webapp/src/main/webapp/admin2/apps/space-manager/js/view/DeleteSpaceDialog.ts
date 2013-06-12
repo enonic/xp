@@ -19,7 +19,8 @@ module app_ui {
             var deleteCallback = (obj, success, result) => {
                 this.close();
                 components.gridPanel.refresh();
-                new app_event.DeletedEvent().fire();
+                // TODO: fire DeletedEvent or give better feedback directly
+                api_notify.showFeedback('Space(s) was deleted!');
             };
 
             this.deleteAction.addExecutionListener(()=> {
