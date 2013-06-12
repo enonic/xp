@@ -33,6 +33,7 @@
 ///<reference path='ui/LiEl.ts' />
 ///<reference path='ui/EmEl.ts' />
 ///<reference path='ui/ImgEl.ts' />
+///<reference path='ui/Panel.ts' />
 ///<reference path='ui/ButtonEl.ts' />
 ///<reference path='ui/BodyMask.ts' />
 ///<reference path='ui/AbstractButton.ts' />
