@@ -37,11 +37,16 @@
 ///<reference path='ui/ButtonEl.ts' />
 ///<reference path='ui/BodyMask.ts' />
 ///<reference path='ui/AbstractButton.ts' />
-///<reference path='ui/toolbar/Toolbar.ts' />
-///<reference path='ui/menu/MenuItem.ts' />
 ///<reference path='ui/detailpanel/DetailPanel.ts' />
+///<reference path='ui/menu/MenuItem.ts' />
 ///<reference path='ui/menu/ContextMenu.ts' />
 ///<reference path='ui/menu/ActionMenu.ts' />
+///<reference path='ui/tab/Tab.ts' />
+///<reference path='ui/tab/TabRemovedListener.ts' />
+///<reference path='ui/tab/TabSelectedListener.ts' />
+///<reference path='ui/tab/TabController.ts' />
+///<reference path='ui/toolbar/Toolbar.ts' />
+
 
 ///<reference path='ui/dialog/DialogButton.ts' />
 ///<reference path='ui/dialog/ModalDialog.ts' />
