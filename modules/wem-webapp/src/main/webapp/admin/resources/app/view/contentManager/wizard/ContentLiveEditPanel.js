@@ -74,8 +74,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentLiveEditPanel', {
                 str = this.content.path;
             }
         }
-        return str.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp'
-            : '/dev/live-edit/page/bootstrap.jsp';
+        return str.match(/frogger/gi) !== null ? '/dev/live-edit-page/frogger.jsp'
+            : '/dev/live-edit-page/bootstrap.jsp';
     },
 
     toggleLive: function () {

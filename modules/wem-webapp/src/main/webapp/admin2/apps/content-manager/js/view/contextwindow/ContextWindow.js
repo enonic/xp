@@ -139,7 +139,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
                     itemId: key,
                     text: panel.name,
                     handler: function (item) {
-                        me.setBodyPanel(item.itemId);
+                        me.setPanel(item.itemId);
                     }
                 });
             }
@@ -192,8 +192,8 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             cls: 'admin-context-window-body',
             listeners: {
                 render: function () {
-                    me.addBodyPanels();
-                    me.setBodyPanel(me.DEFAULT_SELECTED_PANEL_INDEX);
+                    me.addPanels();
+                    me.setPanel(me.DEFAULT_SELECTED_PANEL_INDEX);
                 }
             }
         });
@@ -225,7 +225,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         this.handleResize();
     },
 
-    setBodyPanel: function (index) {
+    setPanel: function (index) {
         var addedPanels = this.windowBody.items.items, panel;
         for (var i = 0; i < addedPanels.length; i++) {
             panel = addedPanels[i];
@@ -239,7 +239,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         }
     },
 
-    addBodyPanels: function () {
+    addPanels: function () {
         var key, panel;
         for (key in this.panels) {
             if (this.panels.hasOwnProperty(key)) {

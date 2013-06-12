@@ -116,14 +116,14 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     getLiveUrl: function (data) {
         if (data) {
             if (data.length > 0) {
-                return data[0].data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp'
-                    : '/dev/live-edit/page/bootstrap.jsp';
+                return data[0].data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit-page/frogger.jsp'
+                    : '/dev/live-edit-page/bootstrap.jsp';
             } else if (data.data) {
-                return data.data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp'
-                    : '/dev/live-edit/page/bootstrap.jsp';
+                return data.data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit-page/frogger.jsp'
+                    : '/dev/live-edit-page/bootstrap.jsp';
             }
         }
-        return '/dev/live-edit/page/bootstrap.jsp';
+        return '/dev/live-edit-page/bootstrap.jsp';
     },
 
     createToolBar: function () {

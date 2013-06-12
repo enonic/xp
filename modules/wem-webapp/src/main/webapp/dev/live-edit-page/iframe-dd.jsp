@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <title>Enonic - DD iframe test</title>
 
-    <script type="text/javascript" charset="UTF-8" src="../../../admin2/live-edit/lib/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../../admin2/live-edit/lib/jquery-1.8.3.min.js"></script>
     <script type="text/javascript" charset="UTF-8"
-            src="../../../admin2/live-edit/lib/jquery-ui-1.9.2.custom.min.js"></script>
-    <script type="text/javascript" charset="UTF-8" src="../../../admin2/live-edit/lib/jquery.simulate.js"></script>
+            src="../../admin2/live-edit/lib/jquery-ui-1.9.2.custom.min.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../../admin2/live-edit/lib/jquery.simulate.js"></script>
     <style type="text/css">
         body, html {
             height: 100%;

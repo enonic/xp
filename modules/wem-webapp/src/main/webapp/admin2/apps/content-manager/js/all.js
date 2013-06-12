@@ -3838,12 +3838,12 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     getLiveUrl: function (data) {
         if(data) {
             if(data.length > 0) {
-                return data[0].data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp' : '/dev/live-edit/page/bootstrap.jsp';
+                return data[0].data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit-page/frogger.jsp' : '/dev/live-edit-page/bootstrap.jsp';
             } else if(data.data) {
-                return data.data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp' : '/dev/live-edit/page/bootstrap.jsp';
+                return data.data.displayName.match(/frogger/gi) !== null ? '/dev/live-edit-page/frogger.jsp' : '/dev/live-edit-page/bootstrap.jsp';
             }
         }
-        return '/dev/live-edit/page/bootstrap.jsp';
+        return '/dev/live-edit-page/bootstrap.jsp';
     },
     createToolBar: function () {
         var me = this;
@@ -7418,7 +7418,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         this.getLayout().setActiveItem(mode ? 1 : 0);
         if(mode) {
             var livePreview = this.down('#livePreview');
-            livePreview.load('/dev/live-edit/page/bootstrap.jsp', true);
+            livePreview.load('/dev/live-edit-page/bootstrap.jsp', true);
         }
     },
     getData: function () {
@@ -7493,7 +7493,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentLiveEditPanel', {
                 str = this.content.path;
             }
         }
-        return str.match(/frogger/gi) !== null ? '/dev/live-edit/page/frogger.jsp' : '/dev/live-edit/page/bootstrap.jsp';
+        return str.match(/frogger/gi) !== null ? '/dev/live-edit-page/frogger.jsp' : '/dev/live-edit-page/bootstrap.jsp';
     },
     toggleLive: function () {
         this.isLiveMode = !this.isLiveMode;
@@ -8420,7 +8420,7 @@ Ext.define('Admin.controller.ContentWizardController', {
         this.remoteCreateOrUpdateContent(contentParams, onUpdateContentSuccess);
     },
     previewContent: function (panel) {
-        var previewUrl = '/dev/live-edit/page/frogger.jsp';
+        var previewUrl = '/dev/live-edit-page/frogger.jsp';
         window.open(Admin.lib.UriHelper.getAbsoluteUri(previewUrl));
     },
     publishContent: function (contentWizard, closeWizard) {
