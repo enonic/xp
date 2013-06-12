@@ -37,8 +37,8 @@ Ext.define('Admin.view.BaseDetailPanel', {
             if (this.isFullPage) {
                 this.hideActionButton();
             }
-            if (this.singleSelection.tabs.length > 0) {
-                this.changeTab(this.singleSelection.tabs[0].name);
+            if (this.singleSelection.getTabs().length > 0) {
+                this.changeTab(this.singleSelection.getTabs()[0].name);
             }
         }
     },
@@ -228,7 +228,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
                                              '<li data-tab="{name}">{displayName}</li>' +
                                              '</tpl>' +
                                              '</ul>'),
-            data: me.singleSelection.tabs,
+            data: me.singleSelection.getTabs(),
             listeners: {
                 click: {
                     element: 'el', //bind to the underlying el property on the panel
@@ -402,7 +402,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
 
     getTab: function (name) {
-        var tabs = this.singleSelection.tabs;
+        var tabs = this.singleSelection.getTabs();
         for (var tab in tabs) {
             if (tabs[tab].name === name) {
                 return tabs[tab];
@@ -417,7 +417,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
         if (currentTab) {
             var target = this.down('#center');
             // This clears the center everytime we click. This might not be the fastest solution.
-            target.remove(target.child());
+            target.removeAll();
             if (currentTab.items) {
                 target.add(currentTab.items);
                 if (currentTab.callback) {
