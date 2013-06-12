@@ -8,6 +8,7 @@
 ///<reference path='event/BaseSpaceModelEvent.ts' />
 ///<reference path='event/DeletePromptEvent.ts' />
 ///<reference path='event/GridSelectionChangeEvent.ts' />
+///<reference path='event/GridDeselectEvent.ts' />
 ///<reference path='event/ShowContextMenuEvent.ts' />
 ///<reference path='event/NewSpaceEvent.ts' />
 ///<reference path='event/OpenSpaceEvent.ts' />

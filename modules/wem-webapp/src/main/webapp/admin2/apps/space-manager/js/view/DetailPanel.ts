@@ -10,7 +10,8 @@ module app_ui {
 
             app_event.GridSelectionChangeEvent.on((event) => {
                 this.update(event.getModels());
-            })
+            });
+
         }
 
         showBlank() {
@@ -26,21 +27,28 @@ module app_ui {
         }
 
         private showSingle(model) {
-            this.getEl().setInnerHtml("One selected");
+            this.empty();
+
+            var tabPanel = new api_ui_detailpanel.DetailTabPanel(model);
+            tabPanel.addTab(new api_ui_detailpanel.DetailPanelTab("Analytics"));
+            tabPanel.addTab(new api_ui_detailpanel.DetailPanelTab("Sales"));
+            tabPanel.addTab(new api_ui_detailpanel.DetailPanelTab("History"));
+
+            var testAction = new api_action.Action("Test");
+            tabPanel.addAction(testAction);
+
+            this.getEl().appendChild(tabPanel.getHTMLElement());
         }
 
         private showMultiple(models:any[]) {
-            this.getEl().setInnerHtml("");
+            this.empty();
             for (var i in models) {
-                this.getEl().appendChild(new api_ui_detailpanel.DetailPanelBox(models[i]).getHTMLElement());
+                var removeCallback = (box:api_ui_detailpanel.DetailPanelBox) => {
+                    var models:api_model.SpaceModel[] = [box.getModel()];
+                    new app_event.GridDeselectEvent(models).fire();
+                }
+                this.getEl().appendChild(new api_ui_detailpanel.DetailPanelBox(models[i], removeCallback).getHTMLElement());
             }
-        }
-    }
-
-    class DetailPanelTabList extends api_ui.UlEl {
-        constructor() {
-            super("tab-list");
-
         }
     }
 

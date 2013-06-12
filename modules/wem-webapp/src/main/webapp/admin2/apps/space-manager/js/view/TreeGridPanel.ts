@@ -3,6 +3,7 @@ module app_ui {
     interface PersistentGridSelectionPlugin extends Ext_AbstractPlugin {
 
         getSelection():api_model.SpaceModel[];
+        clearSelection():void;
 
     }
 
@@ -120,9 +121,11 @@ module app_ui {
                 plugins: ['gridToolbarPlugin']
             }));
             gp.getStore().on('datachanged', this.fireUpdateEvent, this);
-
-
             p.add(gp);
+
+            app_event.GridDeselectEvent.on((event) => {
+                this.deselect(event.getModels()[0].data.name);
+            });
         }
 
         private fireUpdateEvent(values) {
@@ -160,6 +163,27 @@ module app_ui {
         refresh() {
             this.store.loadPage(this.store.currentPage);
         }
+
+
+        deselect(key) {
+            var activeList = this.getActiveList(),
+                selModel = activeList.getSelectionModel();
+
+            if (!key || key === -1) {
+                selModel.deselectAll();
+            } else {
+                var selNodes = selModel.getSelection();
+                var i;
+
+                for (i = 0; i < selNodes.length; i++) {
+                    var selNode = selNodes[i];
+                    if (key == selNode.get(this.keyField)) {
+                        selModel.deselect([selNode]);
+                    }
+                }
+            }
+        }
+
 
         getSelection() {
             var selection = [],

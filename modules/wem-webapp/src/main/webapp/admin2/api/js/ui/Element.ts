@@ -21,6 +21,10 @@ module api_ui {
             }
         }
 
+        empty() {
+            this.el.setInnerHtml("");
+        }
+
         getId():string {
             return this.id;
         }
