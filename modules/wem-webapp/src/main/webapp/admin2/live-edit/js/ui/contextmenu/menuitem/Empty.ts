@@ -1,5 +1,5 @@
 module LiveEdit.ui.contextmenu.menuitem {
-    var $ = $liveedit;
+    var $ = $liveEdit;
 
     export class Empty extends LiveEdit.ui.contextmenu.menuitem.Base {
 

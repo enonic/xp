@@ -1,5 +1,5 @@
 module LiveEdit.ui.contextmenu {
-    var $ = $liveedit;
+    var $ = $liveEdit;
     var componentHelper = LiveEdit.ComponentHelper;
     var domHelper = LiveEdit.DomHelper;
 

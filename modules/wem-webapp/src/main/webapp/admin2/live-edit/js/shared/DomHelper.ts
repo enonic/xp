@@ -12,7 +12,7 @@ interface ViewPortSize {
 module LiveEdit {
     export class DomHelper {
 
-        static $ = $liveedit;
+        static $ = $liveEdit;
 
         public static getDocumentSize():DocumentSize {
             var $document = $(document);

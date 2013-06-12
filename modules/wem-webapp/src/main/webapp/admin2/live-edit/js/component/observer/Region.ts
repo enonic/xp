@@ -1,5 +1,5 @@
 module LiveEdit.component.observer {
-    var $ = $liveedit;
+    var $ = $liveEdit;
     var componentHelper = LiveEdit.ComponentHelper;
 
     export class Region extends LiveEdit.component.observer.Base {

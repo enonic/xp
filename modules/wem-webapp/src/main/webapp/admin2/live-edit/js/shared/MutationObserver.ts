@@ -1,5 +1,5 @@
 module LiveEdit {
-    var $ = $liveedit;
+    var $ = $liveEdit;
 
     export class MutationObserver {
 

@@ -4,7 +4,7 @@ interface ToolTipPosition {
 }
 
 module LiveEdit.ui {
-    var $ = $liveedit;
+    var $ = $liveEdit;
 
     var componentHelper = LiveEdit.ComponentHelper;
     var domHelper = LiveEdit.DomHelper;

@@ -1,2 +1,2 @@
 // Map jQuery served with Live Edit
-var $liveedit = $.noConflict(true);
+var $liveEdit = $.noConflict(true);

@@ -1,5 +1,5 @@
 module LiveEdit.component.observer {
-    var $ = $liveedit;
+    var $ = $liveEdit;
 
     export class Part extends LiveEdit.component.observer.Base {
         constructor() {

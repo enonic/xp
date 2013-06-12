@@ -7,7 +7,7 @@ interface ButtonConfig {
 }
 
 module LiveEdit.ui.contextmenu.menuitem {
-    var $ = $liveedit;
+    var $ = $liveEdit;
 
     export class Base extends LiveEdit.ui.Base {
         constructor() {

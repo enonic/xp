@@ -179,20 +179,20 @@ Ext.define('Admin.view.contentManager.contextwindow.DeviceSelector', {
             cursorAt: cursorAt,
             start: function (event, ui) {
                 me.getContextWindow().hide();
-                var $liveedit = iFrame.contentWindow.$liveedit;
-                var clone = $liveedit(ui.helper.clone());
+                var liveEditPageJQuery = iFrame.contentWindow.$liveEdit;
+                var clone = liveEditPageJQuery(ui.helper.clone());
 
                 clone.css('position', 'absolute');
                 clone.css('z-index', '5100000');
 
-                $liveedit('body').append(clone);
+                liveEditPageJQuery('body').append(clone);
 
-                $liveedit(clone).draggable({
+                liveEditPageJQuery(clone).draggable({
                     connectToSortable: '[data-live-edit-type=region]',
                     cursorAt: cursorAt
                 });
 
-                $liveedit(clone).simulate('mousedown');
+                liveEditPageJQuery(clone).simulate('mousedown');
             }
         });
     },
@@ -201,8 +201,8 @@ Ext.define('Admin.view.contentManager.contextwindow.DeviceSelector', {
         var me = this;
         var iFrame = me.getContextWindow().getLiveEditIframe();
 
-        var $liveedit = iFrame.contentWindow.$liveedit;
-        $liveedit(iFrame.contentWindow).on('sortStop.liveEdit.component', function () {
+        var liveEditPageJQuery = iFrame.contentWindow.$liveEdit;
+        liveEditPageJQuery(iFrame.contentWindow).on('sortStop.liveEdit.component', function () {
             $('.live-edit-component').simulate('mouseup');
             me.getContextWindow().doShow();
         });

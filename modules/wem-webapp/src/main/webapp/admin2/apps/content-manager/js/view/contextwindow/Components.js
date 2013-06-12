@@ -165,7 +165,6 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
 
     initJQueryLiveDraggable: function () {
         var me = this,
-            iFrame = this.getContextWindow().getLiveEditIframe(),
             cursorAt = {left: -10, top: -15};
 
         $('.live-edit-component').liveDraggable({
@@ -174,20 +173,20 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
             helper: me.createDragHelper,
             start: function (event, ui) {
                 me.getContextWindow().hide();
-                var $liveedit = iFrame.contentWindow.$liveedit;
-                var clone = $liveedit(ui.helper.clone());
+                var jQuery = me.getJQueryFromLiveEditPage();
+                var clone = jQuery(ui.helper.clone());
 
                 clone.css('position', 'absolute');
                 clone.css('z-index', '5100000');
 
-                $liveedit('body').append(clone);
+                jQuery('body').append(clone);
 
-                $liveedit(clone).draggable({
+                jQuery(clone).draggable({
                     connectToSortable: '[data-live-edit-type=region]',
                     cursorAt: cursorAt
                 });
 
-                $liveedit(clone).simulate('mousedown');
+                jQuery(clone).simulate('mousedown');
             }
         });
     },
@@ -196,8 +195,8 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
         var me = this;
         var iFrame = me.getContextWindow().getLiveEditIframe();
 
-        var liveEditPageJQuery = iFrame.contentWindow.$liveedit;
-        liveEditPageJQuery(iFrame.contentWindow).on('sortStop.liveEdit.component', function () {
+        var jQuery = me.getJQueryFromLiveEditPage();
+        jQuery(iFrame.contentWindow).on('sortStop.liveEdit.component', function () {
             $('.live-edit-component').simulate('mouseup');
             me.getContextWindow().doShow();
         });
@@ -210,6 +209,10 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
             name = currentTarget.data('live-edit-component-name');
 
         return $('<div id="live-edit-drag-helper" class="live-edit-component" style="width: 150px; height: 16px;" data-live-edit-component-key="' + key + '" data-live-edit-component-name="' + type + '" data-live-edit-component-type="' + type + '"><img id="live-edit-drag-helper-status-icon" src="live-edit/images/drop-no.gif"/><span id="live-edit-drag-helper-text" style="width: 134px;">' + name + '</span></div>');
+    },
+
+    getJQueryFromLiveEditPage: function () {
+        return  this.getContextWindow().getLiveEditIframe().contentWindow.$liveEdit;
     },
 
     getContextWindow: function () {

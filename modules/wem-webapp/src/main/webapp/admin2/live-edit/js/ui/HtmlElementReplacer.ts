@@ -1,5 +1,5 @@
 module LiveEdit.ui {
-    var $ = $liveedit;
+    var $ = $liveEdit;
 
     export class HtmlElementReplacer extends LiveEdit.ui.Base {
         private elementsToReplaceSpec = ['iframe', 'object'];

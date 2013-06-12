@@ -1,5 +1,5 @@
 module LiveEdit.ui {
-    var $ = $liveedit;
+    var $ = $liveEdit;
 
     export class Editor extends LiveEdit.ui.Base {
 

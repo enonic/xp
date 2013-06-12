@@ -4,7 +4,7 @@
  */
 
 module LiveEdit {
-    var $ = $liveedit;
+    var $ = $liveEdit;
 
     var componentHelper = LiveEdit.ComponentHelper;
 

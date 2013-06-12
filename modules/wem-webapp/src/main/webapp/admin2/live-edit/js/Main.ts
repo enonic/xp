@@ -1,5 +1,5 @@
 // Globals
-declare var $liveedit;
+declare var $liveEdit;
 declare var LiveEditMutationSummary;
 
 ///<reference path='../lib/jquery-1.8.3.d.ts' />
@@ -87,4 +87,4 @@ declare var LiveEditMutationSummary;
         });
     });
 
-}($liveedit));
+}($liveEdit));

@@ -34,7 +34,7 @@ interface ComponentPagePosition {
 module LiveEdit {
     export class ComponentHelper {
 
-        static $:JQuery = $liveedit;
+        static $:JQuery = $liveEdit;
 
         public static getBoxModel(component:JQuery):ComponentBoxModel {
             var cmp:JQuery = component;

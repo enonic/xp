@@ -2,7 +2,7 @@ var LiveEdit;
 (function (LiveEdit) {
     var DomHelper = (function () {
         function DomHelper() { }
-        DomHelper.$ = $liveedit;
+        DomHelper.$ = $liveEdit;
         DomHelper.getDocumentSize = function getDocumentSize() {
             var $document = DomHelper.$(document);
             return {
@@ -28,7 +28,7 @@ var LiveEdit;
 (function (LiveEdit) {
     var ComponentHelper = (function () {
         function ComponentHelper() { }
-        ComponentHelper.$ = $liveedit;
+        ComponentHelper.$ = $liveEdit;
         ComponentHelper.getBoxModel = function getBoxModel(component) {
             var cmp = component;
             var offset = cmp.offset();
@@ -162,7 +162,7 @@ var LiveEdit;
 })(LiveEdit || (LiveEdit = {}));
 var LiveEdit;
 (function (LiveEdit) {
-    var $ = $liveedit;
+    var $ = $liveEdit;
     var MutationObserver = (function () {
         function MutationObserver() {
             this.mutationSummary = null;
@@ -236,13 +236,10 @@ var LiveEdit;
 })(LiveEdit || (LiveEdit = {}));
 var LiveEdit;
 (function (LiveEdit) {
-    var $ = $liveedit;
+    var $ = $liveEdit;
     var componentHelper = LiveEdit.ComponentHelper;
     var _isDragging = false;
-    var cursorAt = LiveEdit.ComponentHelper.supportsTouch() ? {
-        left: 15,
-        top: 70
-    } : {
+    var cursorAt = {
         left: -10,
         top: -15
     };
@@ -546,7 +543,7 @@ var LiveEdit;
 (function (LiveEdit) {
     (function (component) {
         (function (observer) {
-            var $ = $liveedit;
+            var $ = $liveEdit;
             var Base = (function () {
                 function Base() {
                     this.cssSelector = '';
@@ -625,7 +622,7 @@ var LiveEdit;
 (function (LiveEdit) {
     (function (component) {
         (function (observer) {
-            var $ = $liveedit;
+            var $ = $liveEdit;
             var Page = (function (_super) {
                 __extends(Page, _super);
                 function Page() {
@@ -646,7 +643,7 @@ var LiveEdit;
 (function (LiveEdit) {
     (function (component) {
         (function (observer) {
-            var $ = $liveedit;
+            var $ = $liveEdit;
             var componentHelper = LiveEdit.ComponentHelper;
             var Region = (function (_super) {
                 __extends(Region, _super);
@@ -707,7 +704,7 @@ var LiveEdit;
 (function (LiveEdit) {
     (function (component) {
         (function (observer) {
-            var $ = $liveedit;
+            var $ = $liveEdit;
             var Layout = (function (_super) {
                 __extends(Layout, _super);
                 function Layout() {
@@ -730,7 +727,7 @@ var LiveEdit;
 (function (LiveEdit) {
     (function (component) {
         (function (observer) {
-            var $ = $liveedit;
+            var $ = $liveEdit;
             var Part = (function (_super) {
                 __extends(Part, _super);
                 function Part() {
@@ -774,7 +771,7 @@ var LiveEdit;
 (function (LiveEdit) {
     (function (component) {
         (function (observer) {
-            var $ = $liveedit;
+            var $ = $liveEdit;
             var Content = (function (_super) {
                 __extends(Content, _super);
                 function Content() {
@@ -797,7 +794,7 @@ var LiveEdit;
 (function (LiveEdit) {
     (function (component) {
         (function (observer) {
-            var $ = $liveedit;
+            var $ = $liveEdit;
             var Paragraph = (function (_super) {
                 __extends(Paragraph, _super);
                 function Paragraph() {
@@ -899,7 +896,7 @@ var LiveEdit;
 var LiveEdit;
 (function (LiveEdit) {
     (function (ui) {
-        var $ = $liveedit;
+        var $ = $liveEdit;
         var Base = (function () {
             function Base() {
                 this.ID_PREFIX = 'live-edit-ui-cmp-';
@@ -931,7 +928,7 @@ var LiveEdit;
 var LiveEdit;
 (function (LiveEdit) {
     (function (ui) {
-        var $ = $liveedit;
+        var $ = $liveEdit;
         var HtmlElementReplacer = (function (_super) {
             __extends(HtmlElementReplacer, _super);
             function HtmlElementReplacer() {
@@ -1012,7 +1009,7 @@ var LiveEdit;
 var LiveEdit;
 (function (LiveEdit) {
     (function (ui) {
-        var $ = $liveedit;
+        var $ = $liveEdit;
         var Editor = (function (_super) {
             __extends(Editor, _super);
             function Editor() {
@@ -1050,7 +1047,7 @@ var LiveEdit;
 var LiveEdit;
 (function (LiveEdit) {
     (function (ui) {
-        var $ = $liveedit;
+        var $ = $liveEdit;
         var componentHelper = LiveEdit.ComponentHelper;
         var EditorToolbar = (function (_super) {
             __extends(EditorToolbar, _super);
@@ -1157,7 +1154,7 @@ var LiveEdit;
 var LiveEdit;
 (function (LiveEdit) {
     (function (ui) {
-        var $ = $liveedit;
+        var $ = $liveEdit;
         var componentHelper = LiveEdit.ComponentHelper;
         var Shader = (function (_super) {
             __extends(Shader, _super);
@@ -1274,7 +1271,7 @@ var LiveEdit;
 var LiveEdit;
 (function (LiveEdit) {
     (function (ui) {
-        var $ = $liveedit;
+        var $ = $liveEdit;
         var Cursor = (function (_super) {
             __extends(Cursor, _super);
             function Cursor() {
@@ -1327,7 +1324,7 @@ var LiveEdit;
 var LiveEdit;
 (function (LiveEdit) {
     (function (ui) {
-        var $ = $liveedit;
+        var $ = $liveEdit;
         var componentHelper = LiveEdit.ComponentHelper;
         var Highlighter = (function (_super) {
             __extends(Highlighter, _super);
@@ -1438,7 +1435,7 @@ var LiveEdit;
 var LiveEdit;
 (function (LiveEdit) {
     (function (ui) {
-        var $ = $liveedit;
+        var $ = $liveEdit;
         var componentHelper = LiveEdit.ComponentHelper;
         var domHelper = LiveEdit.DomHelper;
         var ToolTip = (function (_super) {
@@ -1531,7 +1528,7 @@ var LiveEdit;
 (function (LiveEdit) {
     (function (ui) {
         (function (contextmenu) {
-            var $ = $liveedit;
+            var $ = $liveEdit;
             var componentHelper = LiveEdit.ComponentHelper;
             var domHelper = LiveEdit.DomHelper;
             var Menu = (function (_super) {
@@ -1731,7 +1728,7 @@ var LiveEdit;
     (function (ui) {
         (function (contextmenu) {
             (function (menuitem) {
-                var $ = $liveedit;
+                var $ = $liveEdit;
                 var Base = (function (_super) {
                     __extends(Base, _super);
                     function Base() {
@@ -1771,7 +1768,7 @@ var LiveEdit;
     (function (ui) {
         (function (contextmenu) {
             (function (menuitem) {
-                var $ = $liveedit;
+                var $ = $liveEdit;
                 var componentHelper = LiveEdit.ComponentHelper;
                 var Parent = (function (_super) {
                     __extends(Parent, _super);
@@ -1836,7 +1833,7 @@ var LiveEdit;
     (function (ui) {
         (function (contextmenu) {
             (function (menuitem) {
-                var $ = $liveedit;
+                var $ = $liveEdit;
                 var OpenContent = (function (_super) {
                     __extends(OpenContent, _super);
                     function OpenContent(menu) {
@@ -1876,7 +1873,7 @@ var LiveEdit;
     (function (ui) {
         (function (contextmenu) {
             (function (menuitem) {
-                var $ = $liveedit;
+                var $ = $liveEdit;
                 var Insert = (function (_super) {
                     __extends(Insert, _super);
                     function Insert(menu) {
@@ -1947,7 +1944,7 @@ var LiveEdit;
     (function (ui) {
         (function (contextmenu) {
             (function (menuitem) {
-                var $ = $liveedit;
+                var $ = $liveEdit;
                 var Edit = (function (_super) {
                     __extends(Edit, _super);
                     function Edit(menu) {
@@ -1990,7 +1987,7 @@ var LiveEdit;
     (function (ui) {
         (function (contextmenu) {
             (function (menuitem) {
-                var $ = $liveedit;
+                var $ = $liveEdit;
                 var Reset = (function (_super) {
                     __extends(Reset, _super);
                     function Reset(menu) {
@@ -2026,7 +2023,7 @@ var LiveEdit;
     (function (ui) {
         (function (contextmenu) {
             (function (menuitem) {
-                var $ = $liveedit;
+                var $ = $liveEdit;
                 var Empty = (function (_super) {
                     __extends(Empty, _super);
                     function Empty(menu) {
@@ -2062,7 +2059,7 @@ var LiveEdit;
     (function (ui) {
         (function (contextmenu) {
             (function (menuitem) {
-                var $ = $liveedit;
+                var $ = $liveEdit;
                 var View = (function (_super) {
                     __extends(View, _super);
                     function View(menu) {
@@ -2098,7 +2095,7 @@ var LiveEdit;
     (function (ui) {
         (function (contextmenu) {
             (function (menuitem) {
-                var $ = $liveedit;
+                var $ = $liveEdit;
                 var Settings = (function (_super) {
                     __extends(Settings, _super);
                     function Settings(menu) {
@@ -2139,7 +2136,7 @@ var LiveEdit;
     (function (ui) {
         (function (contextmenu) {
             (function (menuitem) {
-                var $ = $liveedit;
+                var $ = $liveEdit;
                 var Remove = (function (_super) {
                     __extends(Remove, _super);
                     function Remove(menu) {
@@ -2176,7 +2173,7 @@ var LiveEdit;
 var LiveEdit;
 (function (LiveEdit) {
     (function (ui) {
-        var $ = $liveedit;
+        var $ = $liveEdit;
         var ComponentBar = (function (_super) {
             __extends(ComponentBar, _super);
             function ComponentBar() {
@@ -2370,5 +2367,5 @@ var LiveEdit;
             return false;
         });
     });
-})($liveedit));
+})($liveEdit));
 //@ sourceMappingURL=all.js.map

@@ -17,7 +17,7 @@ interface ComponentItem {
 }
 
 module LiveEdit.ui {
-    var $ = $liveedit;
+    var $ = $liveEdit;
 
     export class ComponentBar extends LiveEdit.ui.Base {
 
