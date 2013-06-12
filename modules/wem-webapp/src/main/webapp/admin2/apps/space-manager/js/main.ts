@@ -84,7 +84,7 @@ module app {
 }
 
 module components {
-    export var detailPanel:app_ui.SpaceDetailPanel2;
+    export var detailPanel:app_ui.SpaceDetailPanel;
     export var gridPanel:app_ui.TreeGridPanel;
     export var tabPanel;
     export var deleteWindow;
@@ -111,7 +111,7 @@ Ext.application({
         var grid = components.gridPanel = new app_ui.TreeGridPanel('center');
 
         //var detail = components.detailPanel = new app_ui.SpaceDetailPanel('south');
-        var detail = components.detailPanel = new app_ui.SpaceDetailPanel2();
+        var detail = components.detailPanel = new app_ui.SpaceDetailPanel();
 
         var center = new Ext.container.Container({
             region: 'center',

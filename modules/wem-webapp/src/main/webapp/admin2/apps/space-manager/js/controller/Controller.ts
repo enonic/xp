@@ -48,7 +48,7 @@ Ext.define('Admin.controller.Controller', {
 
         if (!activeTab) {
             var id = this.generateTabId(space, false);
-            var tabItem = new app_ui.SpaceDetailPanel(undefined, id, space).ext;
+            //var tabItem = new app_ui.SpaceDetailPanel(undefined, id, space).ext;
             /*    {
              id: me.generateTabId(space, false),
              xtype: 'spaceDetail',
@@ -57,7 +57,7 @@ Ext.define('Admin.controller.Controller', {
              title: space.get('displayName'),
              isFullPage: true
              };*/
-            tabs.addTab(tabItem);
+            //tabs.addTab(tabItem);
         }
     },
 
