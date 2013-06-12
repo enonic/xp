@@ -16,6 +16,7 @@ interface Html_dom_Element {
     value: string;
     parentElement: Html_dom_Element;
     children: Html_dom_Element[];
+    src: string;
 
     hasAttribute(name:string):bool;
     getAttribute(name:string):string;
