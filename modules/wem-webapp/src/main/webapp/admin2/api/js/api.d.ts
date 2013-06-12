@@ -208,7 +208,16 @@ module api_ui {
 }
 module api_ui {
     class Panel extends DivEl {
-        constructor(name: string);
+        constructor(name?: string);
+    }
+}
+module api_ui {
+    class DeckPanel extends Panel {
+        constructor(name?: string);
+        public addPanel(panel: Panel): number;
+        public getPanel(index: number);
+        public removePanel(index: number): void;
+        public showPanel(index: number): void;
     }
 }
 module api_ui {
@@ -318,6 +327,8 @@ module api_ui_menu {
 }
 module api_ui_tab {
     interface Tab {
+        setTabIndex(value: number);
+        getTabIndex(): number;
     }
 }
 module api_ui_tab {
@@ -331,7 +342,34 @@ module api_ui_tab {
     }
 }
 module api_ui_tab {
-    class TabController implements TabRemovedListener, TabSelectedListener {
+    interface TabNavigator {
+        addTab(tab: Tab);
+        addTabSelectedListener(listener: TabSelectedListener);
+        addTabRemovedListener(listener: TabRemovedListener);
+    }
+}
+module api_ui_tab {
+    class TabMenu implements TabNavigator {
+        public addTab(tab: Tab): void;
+        public addTabSelectedListener(listener: TabSelectedListener): void;
+        public addTabRemovedListener(listener: TabRemovedListener): void;
+    }
+}
+module api_ui_tab {
+    class TabMenuItem implements Tab {
+        constructor();
+        public setTabIndex(value: number): void;
+        public getTabIndex(): number;
+    }
+}
+module api_ui_tab {
+    class TabPanelController implements TabRemovedListener, TabSelectedListener {
+        private tabNavigator;
+        private deckPanel;
+        private tabs;
+        private deckIndexByTabIndex;
+        constructor(tabNavigator: TabNavigator, deckPanel: api_ui.DeckPanel);
+        public addPanel(panel: api_ui.Panel, tab: Tab): void;
         public removedTab(tab: Tab): void;
         public selectedTab(tab: Tab): void;
     }

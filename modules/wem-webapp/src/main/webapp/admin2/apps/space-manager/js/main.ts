@@ -71,6 +71,10 @@
 ///<reference path='controller/DetailToolbarController.ts' />
 ///<reference path='controller/WizardController.ts' />
 
+///<reference path='appbar/SpaceTabMenuItem.ts' />
+///<reference path='appbar/SpaceAppBarTabMenu.ts' />
+///<reference path='SpaceAppPanelController.ts' />
+
 
 declare var Ext;
 declare var Admin;

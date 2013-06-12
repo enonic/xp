@@ -34,6 +34,7 @@
 ///<reference path='ui/EmEl.ts' />
 ///<reference path='ui/ImgEl.ts' />
 ///<reference path='ui/Panel.ts' />
+///<reference path='ui/DeckPanel.ts' />
 ///<reference path='ui/ButtonEl.ts' />
 ///<reference path='ui/BodyMask.ts' />
 ///<reference path='ui/AbstractButton.ts' />
@@ -44,7 +45,10 @@
 ///<reference path='ui/tab/Tab.ts' />
 ///<reference path='ui/tab/TabRemovedListener.ts' />
 ///<reference path='ui/tab/TabSelectedListener.ts' />
-///<reference path='ui/tab/TabController.ts' />
+///<reference path='ui/tab/TabNavigator.ts' />
+///<reference path='ui/tab/TabMenu.ts' />
+///<reference path='ui/tab/TabMenuItem.ts' />
+///<reference path='ui/tab/TabPanelController.ts' />
 ///<reference path='ui/toolbar/Toolbar.ts' />
 
 
