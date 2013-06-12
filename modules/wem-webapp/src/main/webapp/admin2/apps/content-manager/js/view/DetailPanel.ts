@@ -17,36 +17,42 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         var me = this;
         this.activeItem = this.resolveActiveItem(this.data);
 
-        this.singleSelection.tabs = <any[]>[
-            {
-                displayName: 'Analytics',
-                name: 'analytics',
-                items: [
-                    {xtype: 'iframe', url: '/dev/detailpanel/analytics.html ', iFrameCls: (me.isVertical ? 'admin-detail-vertical' : '') }
-                ]
-            },
-            {
-                displayName: 'Sales',
-                name: 'sales',
-                items: [
-                    {xtype: 'component', html: '<h1>Sales</h1>'}
-                ]
-            },
-            {
-                displayName: 'Scorecard',
-                name: 'scorecard',
-                items: [
-                    {xtype: 'component', html: '<h1>Scorecard</h1>'}
-                ]
-            },
-            {
-                displayName: 'History',
-                name: 'history',
-                items: [
-                    {xtype: 'component', html: '<h1>History</h1>'}
-                ]
-            }
-        ];
+        this.singleSelection.getTabs = function () {
+            var analytics = new admin.ui.IframeContainer({
+                url: '/dev/detailpanel/analytics.html ',
+                iFrameCls: (me.isVertical ? 'admin-detail-vertical' : '')
+            });
+
+            return <any[]> [
+                {
+                    displayName: 'Analytics',
+                    name: 'analytics',
+                    items: [analytics.ext]
+                },
+                {
+                    displayName: 'Sales',
+                    name: 'sales',
+                    items: [
+                        {xtype: 'component', html: '<h1>Sales</h1>'}
+                    ]
+                },
+                {
+                    displayName: 'Scorecard',
+                    name: 'scorecard',
+                    items: [
+                        {xtype: 'component', html: '<h1>Scorecard</h1>'}
+                    ]
+                },
+                {
+                    displayName: 'History',
+                    name: 'history',
+                    items: [
+                        {xtype: 'component', html: '<h1>History</h1>'}
+                    ]
+                }
+            ];
+        };
+
 
         //Handlers for this items put in the Admin.controller.contentManager.Controller
         this.actionButtonItems = [
