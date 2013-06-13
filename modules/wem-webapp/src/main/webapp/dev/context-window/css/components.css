@@ -20,8 +20,6 @@
 }
 
 .live-edit-component {
-    display: block;
-    /*margin: 0 2px 0 2px;*/
     padding: 10px 20px;
     cursor: move;
 }
@@ -30,15 +28,11 @@
     background-color: #3892dd;
 }
 
-.live-edit-component:hover small {
-    color: #fff;
-}
-
 .live-edit-component-row {
     display: table-row;
 }
 
-.live-edit-component-row .live-edit-component-icon {
+.live-edit-component-icon {
     width: 50px;
     color: #f2f2f2;
     font-size: 32px;
@@ -47,7 +41,7 @@
     padding-top: 1px;
 }
 
-.live-edit-component-row div {
+.live-edit-component-row .live-edit-component-info {
     display: table-cell;
     vertical-align: top;
 }
@@ -58,4 +52,8 @@
     line-height: 1.4;
     font-size: 13px !important;
     color: #f2f2f2;
+}
+
+.live-edit-component:hover small {
+    color: #fff;
 }

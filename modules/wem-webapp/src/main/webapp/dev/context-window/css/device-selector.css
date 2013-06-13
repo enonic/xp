@@ -1,3 +1,69 @@
 .live-edit-device-top-bar {
     padding: 10px 15px;
 }
+
+/** fixme: make generic / merge with components.css? */
+
+.live-edit-device-list {
+    overflow: hidden;
+    padding: 2px;
+}
+
+.live-edit-device-list:hover {
+    overflow: auto;
+}
+
+.live-edit-device {
+    position: relative;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.live-edit-device:hover {
+    background-color: #3892dd;
+}
+
+.live-edit-device-selected:before {
+    content: '*';
+    position: absolute;
+    top: 20px;
+    left: 5px;
+    font-size: 15px;
+}
+
+.live-edit-device-rotate-button {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 25px;
+}
+
+.live-edit-device-row {
+    display: table-row;
+}
+
+.live-edit-device-icon {
+    width: 50px;
+    color: #f2f2f2;
+    font-size: 32px;
+    font-weight: lighter;
+    display: table-cell;
+    padding-top: 1px;
+}
+
+.live-edit-device-info {
+    display: table-cell;
+    vertical-align: top;
+}
+
+.live-edit-device-row h3 {
+    margin: 0;
+    padding: 0;
+    line-height: 1.4;
+    font-size: 13px !important;
+    color: #f2f2f2;
+}
+
+.live-edit-device:hover small {
+    color: #fff;
+}

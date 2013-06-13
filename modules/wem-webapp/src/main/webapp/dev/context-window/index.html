@@ -59,25 +59,21 @@
                             autoScroll: true,
                             tbar: [
                                 {
-                                    text: 'Toggle Context Window',
-                                    handler: function () {
-                                        var win = Ext.ComponentQuery.query('contextWindow')[0];
-                                        if (!win) {
-                                            win = new Admin.view.contentManager.contextwindow.ContextWindow({});
-                                        }
-
-                                        if (win.isVisible()) {
-                                            win.hide();
-                                        } else {
-                                            win.doShow();
-                                        }
-                                    }
+                                    text: 'Save'
+                                },
+                                {
+                                    text: 'Preview'
+                                },
+                                {
+                                    text: 'Publish'
                                 }
                             ],
                             items: [
                                 {
                                     xtype: 'component',
-                                    html: '<iframe id="live-edit-frame" style="border:0;width: 100%; height: 100%" src="../live-edit-page/bootstrap.jsp?edit=true"></iframe>'
+                                    id: 'live-edit-iframe-container',
+                                    style: 'height: 100%; text-align: center; background-color: #ccc',
+                                    html: '<iframe id="live-edit-iframe" style="border:0;width: 100%; height: 100%" src="../live-edit-page/bootstrap.jsp?edit=true"></iframe>'
                                 }
                             ]
                         }

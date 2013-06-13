@@ -282,7 +282,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             }
         };
         this.constrain = true;
-        this.constrainTo = Ext.get('live-edit-frame');
+        this.constrainTo = Ext.get('live-edit-iframe-container');
     },
 
     enableResize: function () {
@@ -311,8 +311,11 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         }
     },
 
-    getLiveEditIframe: function () {
-        return Ext.DomQuery.selectNode('#live-edit-frame');
+    /**
+     * @returns {Html_dom_Element}
+     */
+    getLiveEditIFrame: function () {
+        return Ext.DomQuery.selectNode('#live-edit-iframe');
     },
 
     doShow: function () {

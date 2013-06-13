@@ -9,7 +9,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
         align: 'stretch'
     },
 
-    COMPONENTS_STORE_URL: '../../admin2/live-edit/data/mock-components-2.json',
+    COMPONENTS_STORE_URL: '../../admin2/apps/content-manager/js/data/context-window/mock-components.json',
 
     searchBar: undefined,
     searchInput: undefined,
@@ -100,7 +100,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
             '   <div class="live-edit-component" data-live-edit-component-key="{key}" data-live-edit-component-type="{type}" data-live-edit-component-name="{name}">',
             '      <div class="live-edit-component-row">',
             '           <div class="live-edit-component-icon {[this.resolveIconCls(values.type)]}"></div>',
-            '           <div>',
+            '           <div class="live-edit-component-info">',
             '               <h3>{name}</h3>',
             '               <small>{subtitle}</small>',
             '           </div>',
@@ -169,6 +169,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
             cursorAt: cursorAt,
             helper: me.createDragHelper,
             start: function (event, ui) {
+
                 me.getContextWindow().hide();
                 var jQuery = me.getJQueryFromLiveEditPage();
                 var clone = jQuery(ui.helper.clone());
@@ -190,7 +191,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
 
     registerListenersFromLiveEditPage: function () {
         var me = this,
-            iFrame = me.getContextWindow().getLiveEditIframe(),
+            iFrame = me.getContextWindow().getLiveEditIFrame(),
             jQuery = me.getJQueryFromLiveEditPage();
 
         jQuery(iFrame.contentWindow).on('sortStop.liveEdit.component', function () {
@@ -209,7 +210,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
     },
 
     getJQueryFromLiveEditPage: function () {
-        return  this.getContextWindow().getLiveEditIframe().contentWindow.$liveEdit;
+        return  this.getContextWindow().getLiveEditIFrame().contentWindow.$liveEdit;
     },
 
     getContextWindow: function () {
