@@ -1,6 +1,6 @@
 module app {
 
-    export class NewContentAction extends api_action.Action {
+    export class NewContentAction extends api_ui.Action {
 
         constructor() {
             super("New");
@@ -10,7 +10,7 @@ module app {
         }
     }
 
-    export class OpenContentAction extends api_action.Action {
+    export class OpenContentAction extends api_ui.Action {
 
         constructor() {
             super("Open");
@@ -21,7 +21,7 @@ module app {
         }
     }
 
-    export class EditContentAction extends api_action.Action {
+    export class EditContentAction extends api_ui.Action {
 
         constructor() {
             super("Edit");
@@ -32,7 +32,7 @@ module app {
         }
     }
 
-    export class DeleteContentAction extends api_action.Action {
+    export class DeleteContentAction extends api_ui.Action {
 
         constructor() {
             super("Delete");
@@ -43,7 +43,7 @@ module app {
         }
     }
 
-    export class DuplicateContentAction extends api_action.Action {
+    export class DuplicateContentAction extends api_ui.Action {
 
         constructor() {
             super("Duplicate");
@@ -54,7 +54,7 @@ module app {
         }
     }
 
-    export class MoveContentAction extends api_action.Action {
+    export class MoveContentAction extends api_ui.Action {
 
         constructor() {
             super("Move");
@@ -65,7 +65,7 @@ module app {
         }
     }
 
-    export class BrowseContentSettingsAction extends api_action.Action {
+    export class BrowseContentSettingsAction extends api_ui.Action {
 
         constructor() {
             super("");
@@ -79,13 +79,13 @@ module app {
 
     export class ContentActions {
 
-        static NEW_CONTENT:api_action.Action = new NewContentAction();
-        static OPEN_CONTENT:api_action.Action = new OpenContentAction;
-        static EDIT_CONTENT:api_action.Action = new EditContentAction();
-        static DELETE_CONTENT:api_action.Action = new DeleteContentAction();
-        static DUPLICATE_CONTENT:api_action.Action = new DuplicateContentAction();
-        static MOVE_CONTENT:api_action.Action = new MoveContentAction();
-        static BROWSE_CONTENT_SETTINGS:api_action.Action = new BrowseContentSettingsAction();
+        static NEW_CONTENT:api_ui.Action = new NewContentAction();
+        static OPEN_CONTENT:api_ui.Action = new OpenContentAction;
+        static EDIT_CONTENT:api_ui.Action = new EditContentAction();
+        static DELETE_CONTENT:api_ui.Action = new DeleteContentAction();
+        static DUPLICATE_CONTENT:api_ui.Action = new DuplicateContentAction();
+        static MOVE_CONTENT:api_ui.Action = new MoveContentAction();
+        static BROWSE_CONTENT_SETTINGS:api_ui.Action = new BrowseContentSettingsAction();
 
         static init() {
 

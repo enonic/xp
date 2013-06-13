@@ -50,7 +50,7 @@ module api_ui_dialog{
             this.contentPanel.appendChild(child);
         }
 
-        addAction(action:api_action.Action) {
+        addAction(action:api_ui.Action) {
             this.buttonRow.addAction(action);
         }
 
@@ -100,7 +100,7 @@ module api_ui_dialog{
             this.getEl().addClass("button-row")
         }
 
-        addAction(action:api_action.Action) {
+        addAction(action:api_ui.Action) {
 
             var button = new ModalDialogButton(action);
             this.appendChild(button);
@@ -109,9 +109,9 @@ module api_ui_dialog{
 
     export class ModalDialogButton extends api_ui.AbstractButton {
 
-        private action:api_action.Action;
+        private action:api_ui.Action;
 
-        constructor(action:api_action.Action) {
+        constructor(action:api_ui.Action) {
             super("ModalDialogButton", action.getLabel());
             this.action = action;
 
@@ -120,13 +120,13 @@ module api_ui_dialog{
             });
             super.setEnable(action.isEnabled());
 
-            action.addPropertyChangeListener((action:api_action.Action) => {
+            action.addPropertyChangeListener((action:api_ui.Action) => {
                 this.setEnable(action.isEnabled());
             });
         }
     }
 
-    export class ModalDialogCancelAction extends api_action.Action {
+    export class ModalDialogCancelAction extends api_ui.Action {
         constructor() {
             super("Cancel");
         }

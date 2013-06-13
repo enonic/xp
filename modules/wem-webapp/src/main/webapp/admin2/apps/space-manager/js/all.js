@@ -426,7 +426,7 @@ var app;
             });
         }
         return NewSpaceAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     app.NewSpaceAction = NewSpaceAction;    
     var OpenSpaceAction = (function (_super) {
         __extends(OpenSpaceAction, _super);
@@ -438,7 +438,7 @@ var app;
             });
         }
         return OpenSpaceAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     app.OpenSpaceAction = OpenSpaceAction;    
     var EditSpaceAction = (function (_super) {
         __extends(EditSpaceAction, _super);
@@ -450,7 +450,7 @@ var app;
             });
         }
         return EditSpaceAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     app.EditSpaceAction = EditSpaceAction;    
     var DeleteSpaceAction = (function (_super) {
         __extends(DeleteSpaceAction, _super);
@@ -462,7 +462,7 @@ var app;
             });
         }
         return DeleteSpaceAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     app.DeleteSpaceAction = DeleteSpaceAction;    
     var SpaceActions = (function () {
         function SpaceActions() { }
@@ -523,7 +523,7 @@ var app_wizard;
             });
         }
         return SaveSpaceAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     app_wizard.SaveSpaceAction = SaveSpaceAction;    
     var DuplicateSpaceAction = (function (_super) {
         __extends(DuplicateSpaceAction, _super);
@@ -533,7 +533,7 @@ var app_wizard;
             });
         }
         return DuplicateSpaceAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     app_wizard.DuplicateSpaceAction = DuplicateSpaceAction;    
     var DeleteSpaceAction = (function (_super) {
         __extends(DeleteSpaceAction, _super);
@@ -544,7 +544,7 @@ var app_wizard;
             });
         }
         return DeleteSpaceAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     app_wizard.DeleteSpaceAction = DeleteSpaceAction;    
     var CloseSpaceAction = (function (_super) {
         __extends(CloseSpaceAction, _super);
@@ -554,7 +554,7 @@ var app_wizard;
             });
         }
         return CloseSpaceAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     app_wizard.CloseSpaceAction = CloseSpaceAction;    
     var SpaceWizardActions = (function () {
         function SpaceWizardActions() {
@@ -2700,7 +2700,7 @@ var app_ui;
             tabPanel.addTab(new api_ui_detailpanel.DetailPanelTab("Analytics"));
             tabPanel.addTab(new api_ui_detailpanel.DetailPanelTab("Sales"));
             tabPanel.addTab(new api_ui_detailpanel.DetailPanelTab("History"));
-            var testAction = new api_action.Action("Test");
+            var testAction = new api_ui.Action("Test");
             tabPanel.addAction(testAction);
             this.getEl().appendChild(tabPanel.getHTMLElement());
         };
@@ -2759,7 +2759,7 @@ var app_ui;
                 _super.call(this, "Delete");
         }
         return DeleteSpaceDialogAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     app_ui.DeleteSpaceDialogAction = DeleteSpaceDialogAction;    
 })(app_ui || (app_ui = {}));
 var app_ui;

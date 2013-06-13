@@ -34,7 +34,7 @@ module app_ui {
             tabPanel.addTab(new api_ui_detailpanel.DetailPanelTab("Sales"));
             tabPanel.addTab(new api_ui_detailpanel.DetailPanelTab("History"));
 
-            var testAction = new api_action.Action("Test");
+            var testAction = new api_ui.Action("Test");
             tabPanel.addAction(testAction);
 
             this.getEl().appendChild(tabPanel.getHTMLElement());

@@ -19,8 +19,7 @@
 ///<reference path='event/Event.ts' />
 ///<reference path='event/EventBus.ts' />
 
-///<reference path='action/Action.ts' />
-
+///<reference path='ui/Action.ts' />
 ///<reference path='ui/ElementHelper.ts' />
 ///<reference path='ui/ImgElHelper.ts' />
 ///<reference path='ui/Element.ts' />

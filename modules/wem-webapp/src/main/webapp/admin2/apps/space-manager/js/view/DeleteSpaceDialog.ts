@@ -5,7 +5,7 @@ module app_ui {
      */
     export class DeleteSpaceDialog extends api_delete.DeleteDialog {
 
-        private deleteAction:api_action.Action = new DeleteSpaceDialogAction();
+        private deleteAction:api_ui.Action = new DeleteSpaceDialogAction();
 
         private spacesToDelete:api_model.SpaceModel[];
 
@@ -44,7 +44,7 @@ module app_ui {
         }
     }
 
-    export class DeleteSpaceDialogAction extends api_action.Action {
+    export class DeleteSpaceDialogAction extends api_ui.Action {
 
         constructor() {
             super("Delete");

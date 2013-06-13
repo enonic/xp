@@ -1,4 +1,4 @@
-module api_action {
+module api_ui {
     class Action {
         private label;
         private iconClass;

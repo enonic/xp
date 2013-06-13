@@ -1,5 +1,5 @@
-var api_action;
-(function (api_action) {
+var api_ui;
+(function (api_ui) {
     var Action = (function () {
         function Action(label) {
             this.enabled = true;
@@ -55,14 +55,14 @@ var api_action;
         };
         return Action;
     })();
-    api_action.Action = Action;    
-})(api_action || (api_action = {}));
+    api_ui.Action = Action;    
+})(api_ui || (api_ui = {}));
 TestCase("Action", {
     "test getLabel": function () {
-        assertEquals("My action", new api_action.Action('My action').getLabel());
+        assertEquals("My action", new api_ui.Action('My action').getLabel());
     },
     "test given setEnabled invoked then addPropertyChangeListener is invoked and action isEnabled is correct": function () {
-        var action = new api_action.Action('My action');
+        var action = new api_ui.Action('My action');
         action.setEnabled(true);
         assertEquals(true, action.isEnabled());
         action.addPropertyChangeListener(function (action) {
@@ -71,7 +71,7 @@ TestCase("Action", {
         action.setEnabled(false);
     },
     "test given setLabel invoked then addPropertyChangeListener is invoked and action getLabel is correct": function () {
-        var action = new api_action.Action('My action');
+        var action = new api_ui.Action('My action');
         action.addPropertyChangeListener(function (action) {
             assertEquals("Changed label", action.getLabel());
         });

@@ -87,7 +87,7 @@ module api_ui_detailpanel {
             this.canvas.appendChild(tab.content);
         }
 
-        addAction(action:api_action.Action) {
+        addAction(action:api_ui.Action) {
             this.actionMenu.addAction(action);
         }
 

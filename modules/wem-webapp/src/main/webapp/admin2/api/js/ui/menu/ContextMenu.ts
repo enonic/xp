@@ -15,12 +15,12 @@ module api_ui_menu{
             });
         }
 
-        addAction(action:api_action.Action) {
+        addAction(action:api_ui.Action) {
             var menuItem = this.createMenuItem(action);
             this.appendChild(menuItem);
         }
 
-        private createMenuItem(action:api_action.Action):MenuItem {
+        private createMenuItem(action:api_ui.Action):MenuItem {
             var menuItem = new MenuItem(action);
             menuItem.getEl().addEventListener('click', (evt:Event) => {
                 this.hide();

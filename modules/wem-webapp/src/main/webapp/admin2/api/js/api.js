@@ -95,8 +95,8 @@ var api_event;
     }
     api_event.fireEvent = fireEvent;
 })(api_event || (api_event = {}));
-var api_action;
-(function (api_action) {
+var api_ui;
+(function (api_ui) {
     var Action = (function () {
         function Action(label) {
             this.enabled = true;
@@ -152,8 +152,8 @@ var api_action;
         };
         return Action;
     })();
-    api_action.Action = Action;    
-})(api_action || (api_action = {}));
+    api_ui.Action = Action;    
+})(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var ElementHelper = (function () {
@@ -1113,7 +1113,7 @@ var api_ui_dialog;
                 _super.call(this, "Cancel");
         }
         return ModalDialogCancelAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     api_ui_dialog.ModalDialogCancelAction = ModalDialogCancelAction;    
 })(api_ui_dialog || (api_ui_dialog = {}));
 var api_delete;
@@ -1180,7 +1180,7 @@ var api_delete;
                 _super.call(this, "Cancel");
         }
         return CancelDeleteDialogAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     api_delete.CancelDeleteDialogAction = CancelDeleteDialogAction;    
     var DeleteDialogItemList = (function (_super) {
         __extends(DeleteDialogItemList, _super);

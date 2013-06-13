@@ -306,7 +306,7 @@ var app;
             });
         }
         return NewContentAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     app.NewContentAction = NewContentAction;    
     var OpenContentAction = (function (_super) {
         __extends(OpenContentAction, _super);
@@ -318,7 +318,7 @@ var app;
             });
         }
         return OpenContentAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     app.OpenContentAction = OpenContentAction;    
     var EditContentAction = (function (_super) {
         __extends(EditContentAction, _super);
@@ -330,7 +330,7 @@ var app;
             });
         }
         return EditContentAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     app.EditContentAction = EditContentAction;    
     var DeleteContentAction = (function (_super) {
         __extends(DeleteContentAction, _super);
@@ -342,7 +342,7 @@ var app;
             });
         }
         return DeleteContentAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     app.DeleteContentAction = DeleteContentAction;    
     var DuplicateContentAction = (function (_super) {
         __extends(DuplicateContentAction, _super);
@@ -354,7 +354,7 @@ var app;
             });
         }
         return DuplicateContentAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     app.DuplicateContentAction = DuplicateContentAction;    
     var MoveContentAction = (function (_super) {
         __extends(MoveContentAction, _super);
@@ -366,7 +366,7 @@ var app;
             });
         }
         return MoveContentAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     app.MoveContentAction = MoveContentAction;    
     var BrowseContentSettingsAction = (function (_super) {
         __extends(BrowseContentSettingsAction, _super);
@@ -379,7 +379,7 @@ var app;
             });
         }
         return BrowseContentSettingsAction;
-    })(api_action.Action);
+    })(api_ui.Action);
     app.BrowseContentSettingsAction = BrowseContentSettingsAction;    
     var ContentActions = (function () {
         function ContentActions() { }

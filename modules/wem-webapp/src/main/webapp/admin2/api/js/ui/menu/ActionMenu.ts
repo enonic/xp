@@ -7,7 +7,7 @@ module api_ui_menu{
 
         private menuItems:MenuItem[] = [];
 
-        constructor(...actions:api_action.Action[]) {
+        constructor(...actions:api_ui.Action[]) {
             super("action-menu");
             this.getEl().addClass("action-menu");
 
@@ -24,7 +24,7 @@ module api_ui_menu{
             this.initExt();
         }
 
-        addAction(action:api_action.Action) {
+        addAction(action:api_ui.Action) {
             var menuItem = this.createMenuItem(action);
             this.appendChild(menuItem);
         }
@@ -49,7 +49,7 @@ module api_ui_menu{
             this.ext.mixins.floating.constructor.call(this.ext);
         }
 
-        private createMenuItem(action:api_action.Action):MenuItem {
+        private createMenuItem(action:api_ui.Action):MenuItem {
             var menuItem = new MenuItem(action);
             menuItem.getEl().addEventListener("click", (evt:Event) => {
                 this.hide();

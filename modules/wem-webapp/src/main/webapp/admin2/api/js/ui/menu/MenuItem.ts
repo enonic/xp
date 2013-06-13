@@ -2,9 +2,9 @@ module api_ui_menu {
 
     export class MenuItem extends api_ui.LiEl {
 
-        private action:api_action.Action;
+        private action:api_ui.Action;
 
-        constructor(action:api_action.Action) {
+        constructor(action:api_ui.Action) {
             super("menu-item");
             this.action = action;
             this.getEl().setInnerHtml(this.action.getLabel());
@@ -15,7 +15,7 @@ module api_ui_menu {
             });
             this.setEnable(action.isEnabled());
 
-            action.addPropertyChangeListener((action:api_action.Action) => {
+            action.addPropertyChangeListener((action:api_ui.Action) => {
                 this.setEnable(action.isEnabled());
             });
         }

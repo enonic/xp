@@ -4,9 +4,9 @@ module api_delete{
 
         private modelName:string;
 
-        private deleteAction:api_action.Action;
+        private deleteAction:api_ui.Action;
 
-        private cancelAction:api_action.Action = new CancelDeleteDialogAction();
+        private cancelAction:api_ui.Action = new CancelDeleteDialogAction();
 
         private deleteItems:DeleteItem[];
 
@@ -30,7 +30,7 @@ module api_delete{
             })
         }
 
-        setDeleteAction(action:api_action.Action) {
+        setDeleteAction(action:api_ui.Action) {
             this.deleteAction = action;
             this.addAction(action);
         }
@@ -55,7 +55,7 @@ module api_delete{
         }
     }
 
-    export class CancelDeleteDialogAction extends api_action.Action {
+    export class CancelDeleteDialogAction extends api_ui.Action {
 
         constructor() {
             super("Cancel");

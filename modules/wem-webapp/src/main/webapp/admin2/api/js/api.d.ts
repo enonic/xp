@@ -90,7 +90,7 @@ module api_event {
     function onEvent(name: string, handler: (event: Event) => void): void;
     function fireEvent(event: Event): void;
 }
-module api_action {
+module api_ui {
     class Action {
         private label;
         private iconClass;
@@ -260,7 +260,7 @@ module api_ui_detailpanel {
         public setTabChangeCallback(callback: (DetailPanelTab: any) => void): void;
         public addTab(tab: DetailPanelTab): void;
         public setActiveTab(tab: DetailPanelTab): void;
-        public addAction(action: api_action.Action): void;
+        public addAction(action: api_ui.Action): void;
         private createActionMenu();
         private addNavigation();
     }
@@ -287,7 +287,7 @@ module api_ui_detailpanel {
 module api_ui_menu {
     class MenuItem extends api_ui.LiEl {
         private action;
-        constructor(action: api_action.Action);
+        constructor(action: api_ui.Action);
         public setEnable(value: bool): void;
     }
 }
@@ -295,7 +295,7 @@ module api_ui_menu {
     class ContextMenu extends api_ui.UlEl {
         private menuItems;
         constructor();
-        public addAction(action: api_action.Action): void;
+        public addAction(action: api_ui.Action): void;
         private createMenuItem(action);
         public showAt(x: number, y: number): void;
         private hide();
@@ -307,8 +307,8 @@ module api_ui_menu {
         private ext;
         private button;
         private menuItems;
-        constructor(...actions: api_action.Action[]);
-        public addAction(action: api_action.Action): void;
+        constructor(...actions: api_ui.Action[]);
+        public addAction(action: api_ui.Action): void;
         public getExt();
         public showBy(button: ActionMenuButton): void;
         private initExt();
@@ -380,7 +380,7 @@ module api_ui_toolbar {
         private components;
         constructor();
         private initExt();
-        public addAction(action: api_action.Action): void;
+        public addAction(action: api_ui.Action): void;
         public addElement(element: api_ui.Element): void;
         public addGreedySpacer(): void;
         private addActionButton(action);
@@ -390,7 +390,7 @@ module api_ui_toolbar {
 module api_ui_dialog {
     class DialogButton extends api_ui.AbstractButton {
         private action;
-        constructor(action: api_action.Action);
+        constructor(action: api_ui.Action);
     }
 }
 module api_ui_dialog {
@@ -407,7 +407,7 @@ module api_ui_dialog {
         constructor(config: ModalDialogConfig);
         public setTitle(value: string): void;
         public appendChildToContentPanel(child: api_ui.Element): void;
-        public addAction(action: api_action.Action): void;
+        public addAction(action: api_ui.Action): void;
         public close(): void;
         public open(): void;
     }
@@ -420,13 +420,13 @@ module api_ui_dialog {
     }
     class ModalDialogButtonRow extends api_ui.DivEl {
         constructor();
-        public addAction(action: api_action.Action): void;
+        public addAction(action: api_ui.Action): void;
     }
     class ModalDialogButton extends api_ui.AbstractButton {
         private action;
-        constructor(action: api_action.Action);
+        constructor(action: api_ui.Action);
     }
-    class ModalDialogCancelAction extends api_action.Action {
+    class ModalDialogCancelAction extends api_ui.Action {
         constructor();
     }
 }
@@ -447,10 +447,10 @@ module api_delete {
         private deleteItems;
         private itemList;
         constructor(modelName: string);
-        public setDeleteAction(action: api_action.Action): void;
+        public setDeleteAction(action: api_ui.Action): void;
         public setDeleteItems(deleteItems: DeleteItem[]): void;
     }
-    class CancelDeleteDialogAction extends api_action.Action {
+    class CancelDeleteDialogAction extends api_ui.Action {
         constructor();
     }
     class DeleteDialogItemList extends api_ui.DivEl {
