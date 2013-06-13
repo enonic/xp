@@ -6,6 +6,10 @@
 
 ///<reference path='event/BaseContentModelEvent.ts' />
 ///<reference path='event/GridSelectionChangeEvent.ts' />
+///<reference path='event/NewContentEvent.ts' />
+///<reference path='event/OpenContentEvent.ts' />
+///<reference path='event/EditContentEvent.ts' />
+///<reference path='event/DeleteContentEvent.ts' />
 
 ///<reference path='ContentContext.ts' />
 
@@ -46,6 +50,7 @@
 ///<reference path='view/BaseFilterPanel.ts' />
 ///<reference path='view/FilterPanel.ts' />
 ///<reference path='view/BrowseToolbar.ts' />
+///<reference path='view/ActionMenu.ts' />
 ///<reference path='view/ContextMenu.ts' />
 ///<reference path='view/BaseTreeGridPanel.ts' />
 ///<reference path='view/TreeGridPanel.ts' />
@@ -110,6 +115,7 @@ declare var CONFIG;
 
 module components {
     export var browseToolbar: app_ui.BrowseToolbar;
+    export var contextMenu: app_ui.ContextMenu;
 }
 
 Ext.application({

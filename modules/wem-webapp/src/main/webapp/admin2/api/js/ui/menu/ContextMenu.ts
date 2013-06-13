@@ -3,12 +3,16 @@ module api_ui_menu{
     export class ContextMenu extends api_ui.UlEl {
         private menuItems:MenuItem[] = [];
 
-        constructor() {
+        constructor(...actions:api_ui.Action[]) {
             super("context-menu");
             this.getEl().addClass("context-menu");
 
             var htmlEl = this.getHTMLElement();
             document.body.insertBefore(htmlEl, document.body.childNodes[0]);
+
+            for (var i = 0; i < actions.length; i++) {
+                this.addAction(actions[i]);
+            }
 
             document.addEventListener('click', (evt:Event) => {
                 this.hideMenuOnOutsideClick(evt);

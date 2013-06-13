@@ -1,6 +1,6 @@
 module app_ui {
 
-    export class ContextMenu extends api_ui_menu.ContextMenu {
+    export class ActionMenu extends api_ui_menu.ActionMenu {
 
         constructor() {
             super(
@@ -15,4 +15,3 @@ module app_ui {
     }
 
 }
-

@@ -273,6 +273,62 @@ var app_event;
     })(app_event.BaseContentModelEvent);
     app_event.GridSelectionChangeEvent = GridSelectionChangeEvent;    
 })(app_event || (app_event = {}));
+var app_event;
+(function (app_event) {
+    var NewContentEvent = (function (_super) {
+        __extends(NewContentEvent, _super);
+        function NewContentEvent() {
+                _super.call(this, 'newContent');
+        }
+        NewContentEvent.on = function on(handler) {
+            api_event.onEvent('newContent', handler);
+        };
+        return NewContentEvent;
+    })(api_event.Event);
+    app_event.NewContentEvent = NewContentEvent;    
+})(app_event || (app_event = {}));
+var app_event;
+(function (app_event) {
+    var OpenContentEvent = (function (_super) {
+        __extends(OpenContentEvent, _super);
+        function OpenContentEvent(model) {
+                _super.call(this, 'openContent', model);
+        }
+        OpenContentEvent.on = function on(handler) {
+            api_event.onEvent('openContent', handler);
+        };
+        return OpenContentEvent;
+    })(app_event.BaseContentModelEvent);
+    app_event.OpenContentEvent = OpenContentEvent;    
+})(app_event || (app_event = {}));
+var app_event;
+(function (app_event) {
+    var EditContentEvent = (function (_super) {
+        __extends(EditContentEvent, _super);
+        function EditContentEvent(model) {
+                _super.call(this, 'editContent', model);
+        }
+        EditContentEvent.on = function on(handler) {
+            api_event.onEvent('editContent', handler);
+        };
+        return EditContentEvent;
+    })(app_event.BaseContentModelEvent);
+    app_event.EditContentEvent = EditContentEvent;    
+})(app_event || (app_event = {}));
+var app_event;
+(function (app_event) {
+    var DeleteContentEvent = (function (_super) {
+        __extends(DeleteContentEvent, _super);
+        function DeleteContentEvent(model) {
+                _super.call(this, 'deleteContent', model);
+        }
+        DeleteContentEvent.on = function on(handler) {
+            api_event.onEvent('deleteContent', handler);
+        };
+        return DeleteContentEvent;
+    })(app_event.BaseContentModelEvent);
+    app_event.DeleteContentEvent = DeleteContentEvent;    
+})(app_event || (app_event = {}));
 var app;
 (function (app) {
     var ContentContext = (function () {
@@ -302,7 +358,7 @@ var app;
         function NewContentAction() {
                 _super.call(this, "New");
             this.addExecutionListener(function () {
-                console.log('TODO: New content');
+                new app_event.NewContentEvent().fire();
             });
         }
         return NewContentAction;
@@ -314,7 +370,7 @@ var app;
                 _super.call(this, "Open");
             this.setEnabled(false);
             this.addExecutionListener(function () {
-                console.log('TODO: Open content');
+                new app_event.OpenContentEvent(app.ContentContext.get().getSelectedContents()).fire();
             });
         }
         return OpenContentAction;
@@ -326,7 +382,7 @@ var app;
                 _super.call(this, "Edit");
             this.setEnabled(false);
             this.addExecutionListener(function () {
-                console.log('TODO: Edit content');
+                new app_event.EditContentEvent(app.ContentContext.get().getSelectedContents()).fire();
             });
         }
         return EditContentAction;
@@ -338,7 +394,7 @@ var app;
                 _super.call(this, "Delete");
             this.setEnabled(false);
             this.addExecutionListener(function () {
-                console.log('TODO: Delete content');
+                new app_event.DeleteContentEvent(app.ContentContext.get().getSelectedContents()).fire();
             });
         }
         return DeleteContentAction;
@@ -1853,23 +1909,14 @@ Ext.define('Admin.view.BaseDetailPanel', {
         };
     },
     hideActionButton: function () {
-        var actionsButton = this.down('#dropDownButton');
+        var actionsButton = this.down('#actionMenu');
         if(actionsButton) {
             actionsButton.setVisible(false);
         }
     },
-    actionButtonItems: [],
-    getActionItems: function () {
-        return this.actionButtonItems;
-    },
     getActionButton: function () {
-        var me = this;
-        if(this.actionButtonItems.length < 1) {
-            return {
-            };
-        }
-        return new admin.ui.DropDownButton({
-            itemId: 'dropDownButton',
+        return Ext.apply(new app_ui.ActionMenu().getExt(), {
+            itemId: 'actionMenu',
             text: 'Actions',
             height: 30,
             width: 120,
@@ -1880,7 +1927,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
                     padding: '0 20px 0 0'
                 }
             }
-        }, me.getActionItems()).ext;
+        });
     },
     singleTemplate: {
         photo: '<img src="{data.iconUrl}?size=80" style="width: 64px;" alt="{name}"/>',
@@ -3171,60 +3218,28 @@ var app_ui;
     })(api_ui_toolbar.Toolbar);
     app_ui.BrowseToolbar = BrowseToolbar;    
 })(app_ui || (app_ui = {}));
-var admin;
-(function (admin) {
-    (function (ui) {
-        var ContextMenu = (function () {
-            function ContextMenu() {
-                var menu = new Ext.menu.Menu({
-                    cls: 'admin-context-menu',
-                    border: false,
-                    shadow: false,
-                    itemId: 'contentMangerContextMenu'
-                });
-                var itemNew = new Ext.menu.Item({
-                    text: ' New',
-                    icon: undefined,
-                    action: 'newContent',
-                    disableOnMultipleSelection: true
-                });
-                var itemEdit = new Ext.menu.Item({
-                    text: 'Edit',
-                    icon: undefined,
-                    action: 'editContent',
-                    disableOnMultipleSelection: false
-                });
-                var itemOpen = new Ext.menu.Item({
-                    text: 'Open',
-                    icon: undefined,
-                    action: 'viewContent',
-                    disableOnMultipleSelection: false
-                });
-                var itemDelete = new Ext.menu.Item({
-                    text: 'Delete',
-                    icon: undefined,
-                    action: 'deleteContent'
-                });
-                var itemDuplicate = new Ext.menu.Item({
-                    text: 'Duplicate',
-                    icon: undefined,
-                    action: 'duplicateContent'
-                });
-                var itemMove = new Ext.menu.Item({
-                    text: 'Move',
-                    icon: undefined,
-                    disabled: true,
-                    action: 'moveContent'
-                });
-                menu.add(itemNew, itemEdit, itemOpen, itemDelete, itemDuplicate, itemMove);
-                this.ext = menu;
-            }
-            return ContextMenu;
-        })();
-        ui.ContextMenu = ContextMenu;        
-    })(admin.ui || (admin.ui = {}));
-    var ui = admin.ui;
-})(admin || (admin = {}));
+var app_ui;
+(function (app_ui) {
+    var ActionMenu = (function (_super) {
+        __extends(ActionMenu, _super);
+        function ActionMenu() {
+                _super.call(this, app.ContentActions.NEW_CONTENT, app.ContentActions.EDIT_CONTENT, app.ContentActions.OPEN_CONTENT, app.ContentActions.DELETE_CONTENT, app.ContentActions.DUPLICATE_CONTENT, app.ContentActions.MOVE_CONTENT);
+        }
+        return ActionMenu;
+    })(api_ui_menu.ActionMenu);
+    app_ui.ActionMenu = ActionMenu;    
+})(app_ui || (app_ui = {}));
+var app_ui;
+(function (app_ui) {
+    var ContextMenu = (function (_super) {
+        __extends(ContextMenu, _super);
+        function ContextMenu() {
+                _super.call(this, app.ContentActions.NEW_CONTENT, app.ContentActions.EDIT_CONTENT, app.ContentActions.OPEN_CONTENT, app.ContentActions.DELETE_CONTENT, app.ContentActions.DUPLICATE_CONTENT, app.ContentActions.MOVE_CONTENT);
+        }
+        return ContextMenu;
+    })(api_ui_menu.ContextMenu);
+    app_ui.ContextMenu = ContextMenu;    
+})(app_ui || (app_ui = {}));
 Ext.define('Admin.view.BaseTreeGridPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.treeGridPanel',
@@ -7771,7 +7786,6 @@ Ext.define('Admin.controller.Controller', {
     updateToolbarButtons: function (selected) {
         var toolbar = this.getContentBrowseToolbar();
         if(toolbar) {
-            var contextMenu = this.getContentManagerContextMenu();
             var detailPanel = this.getContentDetailPanel();
             var newContentButton = toolbar.down('*[action=newContent]');
             newContentButton.setDisabled(Ext.isEmpty(selected) || selected.length !== 1 || (!selected[0].get('allowsChildren')));
@@ -7785,8 +7799,6 @@ Ext.define('Admin.controller.Controller', {
                     break;
                 }
             }
-            deleteContentButton.setDisabled(disabled);
-            deleteContentButton = contextMenu.down('*[action=deleteContent]');
             deleteContentButton.setDisabled(disabled);
             deleteContentButton = detailPanel.down('*[action=deleteContent]');
             if(deleteContentButton) {
@@ -7957,9 +7969,9 @@ Ext.define('Admin.controller.Controller', {
         return Ext.ComponentQuery.query('browseToolbar')[0];
     },
     getContentManagerContextMenu: function () {
-        var menu = Ext.ComponentManager.get('contentManagerContextMenu');
+        var menu = components.contextMenu;
         if(!menu) {
-            menu = new admin.ui.ContextMenu().ext;
+            menu = components.contextMenu = new app_ui.ContextMenu();
         }
         return menu;
     },
@@ -8085,7 +8097,7 @@ Ext.define('Admin.controller.GridPanelController', {
     },
     popupMenu: function (view, rec, node, index, e) {
         e.stopEvent();
-        this.getContentManagerContextMenu().showAt(e.getXY());
+        this.getContentManagerContextMenu().showAt(e.getX(), e.getY());
         return false;
     }
 });
@@ -8554,6 +8566,7 @@ Ext.define('Admin.controller.DialogWindowController', {
 var components;
 (function (components) {
     components.browseToolbar;
+    components.contextMenu;
 })(components || (components = {}));
 Ext.application({
     name: 'CM',

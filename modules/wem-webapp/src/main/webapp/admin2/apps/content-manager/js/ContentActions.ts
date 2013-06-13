@@ -5,7 +5,7 @@ module app {
         constructor() {
             super("New");
             this.addExecutionListener(() => {
-                console.log('TODO: New content');
+                new app_event.NewContentEvent().fire();
             });
         }
     }
@@ -16,7 +16,7 @@ module app {
             super("Open");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                console.log('TODO: Open content');
+                new app_event.OpenContentEvent(ContentContext.get().getSelectedContents()).fire();
             });
         }
     }
@@ -27,7 +27,7 @@ module app {
             super("Edit");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                console.log('TODO: Edit content');
+                new app_event.EditContentEvent(ContentContext.get().getSelectedContents()).fire();
             });
         }
     }
@@ -38,7 +38,7 @@ module app {
             super("Delete");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                console.log('TODO: Delete content');
+                new app_event.DeleteContentEvent(ContentContext.get().getSelectedContents()).fire();
             });
         }
     }

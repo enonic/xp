@@ -1,8 +1,8 @@
 .action-menu {
   border-width: 2px;
   border-style: solid;
-  border-color: #ccc !important;
-  background: #fff !important;
+  border-color: @admin-medium-gray-border;
+  background: @admin-white;
 
   li {
     font-family: @admin-font-family;
@@ -10,18 +10,22 @@
     font-size: 14px;
     width: 120px;
     border-width: 0;
-    color: #333;
+    color: @admin-dark-gray-font;
 
     padding: 5px;
     margin: 0;
 
-    &:hover {
+    &:hover:not(.context-menu-item-disabled) {
       cursor: pointer;
       background-color: @admin-blue;
       color: #fff;
     }
 
     &:disabled {
+      opacity: 0.5;
+    }
+
+    &.disabled {
       opacity: 0.5;
     }
 

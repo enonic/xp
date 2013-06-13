@@ -73,26 +73,17 @@ Ext.define('Admin.view.BaseDetailPanel', {
      * Actions button
      * */
     hideActionButton: function () {
-        var actionsButton = this.down('#dropDownButton');
+        var actionsButton = this.down('#actionMenu');
         if (actionsButton) {
             actionsButton.setVisible(false);
         }
     },
 
-    actionButtonItems: [],
-
-    getActionItems: function () {
-        return this.actionButtonItems;
-    },
-
     getActionButton: function () {
-        var me = this;
-        if (this.actionButtonItems.length < 1) {
-            return {};
-        }
-        return new admin.ui.DropDownButton(
+        return Ext.apply(
+            new app_ui.ActionMenu().getExt(),
             {
-                itemId: 'dropDownButton',
+                itemId: 'actionMenu',
                 text: 'Actions',
                 height: 30,
                 width: 120,
@@ -103,10 +94,8 @@ Ext.define('Admin.view.BaseDetailPanel', {
                         padding: '0 20px 0 0'
                     }
                 }
-            },
-            me.getActionItems()
-        ).ext;
-
+            }
+        );
     },
 
     /*

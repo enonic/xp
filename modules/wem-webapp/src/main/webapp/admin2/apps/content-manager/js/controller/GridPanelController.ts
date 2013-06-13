@@ -46,7 +46,7 @@ Ext.define('Admin.controller.GridPanelController', {
 
     popupMenu: function (view, rec, node, index, e) {
         e.stopEvent();
-        this.getContentManagerContextMenu().showAt(e.getXY());
+        this.getContentManagerContextMenu().showAt(e.getX(), e.getY());
         return false;
     }
 

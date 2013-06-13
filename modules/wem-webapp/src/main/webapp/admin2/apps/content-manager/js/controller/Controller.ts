@@ -351,7 +351,6 @@ Ext.define('Admin.controller.Controller', {
     updateToolbarButtons: function (selected) {
         var toolbar = this.getContentBrowseToolbar();
         if (toolbar) {
-            var contextMenu = this.getContentManagerContextMenu();
             var detailPanel = this.getContentDetailPanel();
             var newContentButton = toolbar.down('*[action=newContent]');
             newContentButton.setDisabled(Ext.isEmpty(selected) || selected.length !== 1 || (!selected[0].get('allowsChildren')));
@@ -368,8 +367,7 @@ Ext.define('Admin.controller.Controller', {
                 }
             }
             deleteContentButton.setDisabled(disabled);
-            deleteContentButton = contextMenu.down('*[action=deleteContent]');
-            deleteContentButton.setDisabled(disabled);
+
             deleteContentButton = detailPanel.down('*[action=deleteContent]');
             if (deleteContentButton) {
                 deleteContentButton.setDisabled(disabled);
@@ -555,10 +553,10 @@ Ext.define('Admin.controller.Controller', {
         return Ext.ComponentQuery.query('browseToolbar')[0];
     },
 
-    getContentManagerContextMenu: function () {
-        var menu = Ext.ComponentManager.get('contentManagerContextMenu');
+    getContentManagerContextMenu: function (): app_ui.ContextMenu {
+        var menu = components.contextMenu;
         if (!menu) {
-            menu = new admin.ui.ContextMenu().ext;
+            menu = components.contextMenu = new app_ui.ContextMenu();
         }
         return menu;
     },

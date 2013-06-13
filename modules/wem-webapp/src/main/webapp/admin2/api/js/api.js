@@ -1,20 +1,18 @@
 var api_util;
 (function (api_util) {
     var ImageLoader = (function () {
-        function ImageLoader() {
-        }
-
+        function ImageLoader() { }
         ImageLoader.cachedImages = [];
         ImageLoader.get = function get(url, width, height) {
             var imageFound = false;
             var returnImage;
-            for (var i in ImageLoader.cachedImages) {
-                if (ImageLoader.cachedImages[i].src == url) {
+            for(var i in ImageLoader.cachedImages) {
+                if(ImageLoader.cachedImages[i].src == url) {
                     imageFound = true;
                     returnImage = ImageLoader.cachedImages[i];
                 }
             }
-            if (!imageFound) {
+            if(!imageFound) {
                 var image = new Image(width, height);
                 image.src = url;
                 ImageLoader.cachedImages[ImageLoader.cachedImages.length + 1] = image;
@@ -24,7 +22,7 @@ var api_util;
         };
         return ImageLoader;
     })();
-    api_util.ImageLoader = ImageLoader;
+    api_util.ImageLoader = ImageLoader;    
 })(api_util || (api_util = {}));
 var api_util;
 (function (api_util) {
@@ -32,18 +30,15 @@ var api_util;
     function getAbsoluteUri(uri) {
         return this.baseUri + '/' + uri;
     }
-
     api_util.getAbsoluteUri = getAbsoluteUri;
 })(api_util || (api_util = {}));
 var api_handler;
 (function (api_handler) {
     var DeleteSpaceParamFactory = (function () {
-        function DeleteSpaceParamFactory() {
-        }
-
+        function DeleteSpaceParamFactory() { }
         DeleteSpaceParamFactory.create = function create(spaces) {
             var spaceNames = [];
-            for (var i = 0; i < spaces.length; i++) {
+            for(var i = 0; i < spaces.length; i++) {
                 spaceNames[i] = spaces[i].data.name;
             }
             return {
@@ -52,17 +47,15 @@ var api_handler;
         };
         return DeleteSpaceParamFactory;
     })();
-    api_handler.DeleteSpaceParamFactory = DeleteSpaceParamFactory;
+    api_handler.DeleteSpaceParamFactory = DeleteSpaceParamFactory;    
 })(api_handler || (api_handler = {}));
 var api_handler;
 (function (api_handler) {
     var DeleteSpacesHandler = (function () {
-        function DeleteSpacesHandler() {
-        }
-
+        function DeleteSpacesHandler() { }
         DeleteSpacesHandler.prototype.doDelete = function (deleteSpaceParam, callback) {
             Admin.lib.RemoteService.space_delete(deleteSpaceParam, function (response) {
-                if (response) {
+                if(response) {
                     callback.call(this, response.success, response);
                 } else {
                     console.error('Error', response ? response.error : 'Unable to delete space.');
@@ -71,7 +64,7 @@ var api_handler;
         };
         return DeleteSpacesHandler;
     })();
-    api_handler.DeleteSpacesHandler = DeleteSpacesHandler;
+    api_handler.DeleteSpacesHandler = DeleteSpacesHandler;    
 })(api_handler || (api_handler = {}));
 var api_event;
 (function (api_event) {
@@ -79,7 +72,6 @@ var api_event;
         function Event(name) {
             this.name = name;
         }
-
         Event.prototype.getName = function () {
             return this.name;
         };
@@ -88,22 +80,19 @@ var api_event;
         };
         return Event;
     })();
-    api_event.Event = Event;
+    api_event.Event = Event;    
 })(api_event || (api_event = {}));
 var api_event;
 (function (api_event) {
     var bus = new Ext.util.Observable({
     });
-
     function onEvent(name, handler) {
         bus.on(name, handler);
     }
-
     api_event.onEvent = onEvent;
     function fireEvent(event) {
         bus.fireEvent(event.getName(), event);
     }
-
     api_event.fireEvent = fireEvent;
 })(api_event || (api_event = {}));
 var api_ui;
@@ -115,14 +104,13 @@ var api_ui;
             this.propertyChangeListeners = [];
             this.label = label;
         }
-
         Action.prototype.getLabel = function () {
             return this.label;
         };
         Action.prototype.setLabel = function (value) {
-            if (value !== this.label) {
+            if(value !== this.label) {
                 this.label = value;
-                for (var i in this.propertyChangeListeners) {
+                for(var i in this.propertyChangeListeners) {
                     this.propertyChangeListeners[i](this);
                 }
             }
@@ -131,9 +119,9 @@ var api_ui;
             return this.enabled;
         };
         Action.prototype.setEnabled = function (value) {
-            if (value !== this.enabled) {
+            if(value !== this.enabled) {
                 this.enabled = value;
-                for (var i in this.propertyChangeListeners) {
+                for(var i in this.propertyChangeListeners) {
                     this.propertyChangeListeners[i](this);
                 }
             }
@@ -142,16 +130,16 @@ var api_ui;
             return this.iconClass;
         };
         Action.prototype.setIconClass = function (value) {
-            if (value !== this.iconClass) {
+            if(value !== this.iconClass) {
                 this.iconClass = value;
-                for (var i in this.propertyChangeListeners) {
+                for(var i in this.propertyChangeListeners) {
                     this.propertyChangeListeners[i](this);
                 }
             }
         };
         Action.prototype.execute = function () {
-            if (this.enabled) {
-                for (var i in this.executionListeners) {
+            if(this.enabled) {
+                for(var i in this.executionListeners) {
                     this.executionListeners[i](this);
                 }
             }
@@ -164,7 +152,7 @@ var api_ui;
         };
         return Action;
     })();
-    api_ui.Action = Action;
+    api_ui.Action = Action;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
@@ -172,7 +160,6 @@ var api_ui;
         function ElementHelper(element) {
             this.el = element;
         }
-
         ElementHelper.fromName = function fromName(name) {
             return new api_ui.ElementHelper(document.createElement(name));
         };
@@ -196,8 +183,8 @@ var api_ui;
             return this;
         };
         ElementHelper.prototype.addClass = function (clsName) {
-            if (!this.hasClass(clsName)) {
-                if (this.el.className === '') {
+            if(!this.hasClass(clsName)) {
+                if(this.el.className === '') {
                     this.el.className += clsName;
                 } else {
                     this.el.className += ' ' + clsName;
@@ -208,7 +195,7 @@ var api_ui;
             return this.el.className.match(new RegExp('(\\s|^)' + clsName + '(\\s|$)')) !== null;
         };
         ElementHelper.prototype.removeClass = function (clsName) {
-            if (this.hasClass(clsName)) {
+            if(this.hasClass(clsName)) {
                 var reg = new RegExp('(\\s|^)' + clsName + '(\\s|$)');
                 this.el.className = this.el.className.replace(reg, '');
             }
@@ -269,13 +256,10 @@ var api_ui;
         };
         return ElementHelper;
     })();
-    api_ui.ElementHelper = ElementHelper;
+    api_ui.ElementHelper = ElementHelper;    
 })(api_ui || (api_ui = {}));
 var __extends = this.__extends || function (d, b) {
-    function __() {
-        this.constructor = d;
-    }
-
+    function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
@@ -284,10 +268,9 @@ var api_ui;
     var ImgHelper = (function (_super) {
         __extends(ImgHelper, _super);
         function ImgHelper(element) {
-            _super.call(this, element);
+                _super.call(this, element);
             this.el = element;
         }
-
         ImgHelper.create = function create() {
             return new api_ui.ImgHelper(document.createElement("img"));
         };
@@ -300,23 +283,22 @@ var api_ui;
         };
         return ImgHelper;
     })(api_ui.ElementHelper);
-    api_ui.ImgHelper = ImgHelper;
+    api_ui.ImgHelper = ImgHelper;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var Element = (function () {
         function Element(elementName, name, elHelper) {
-            if (elHelper == null) {
+            if(elHelper == null) {
                 this.el = api_ui.ElementHelper.fromName(elementName);
             } else {
                 this.el = elHelper;
             }
-            if (name != null) {
+            if(name != null) {
                 this.id = name + '-' + (++api_ui.Element.constructorCounter);
                 this.el.setId(this.id);
             }
         }
-
         Element.constructorCounter = 0;
         Element.prototype.empty = function () {
             this.el.setInnerHtml("");
@@ -335,146 +317,135 @@ var api_ui;
         };
         Element.prototype.removeChildren = function () {
             var htmlEl = this.el.getHTMLElement();
-            while (htmlEl.firstChild) {
+            while(htmlEl.firstChild) {
                 htmlEl.removeChild(htmlEl.firstChild);
             }
         };
         return Element;
     })();
-    api_ui.Element = Element;
+    api_ui.Element = Element;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var DivEl = (function (_super) {
         __extends(DivEl, _super);
         function DivEl(name) {
-            _super.call(this, "div", name);
+                _super.call(this, "div", name);
         }
-
         return DivEl;
     })(api_ui.Element);
-    api_ui.DivEl = DivEl;
+    api_ui.DivEl = DivEl;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var H1El = (function (_super) {
         __extends(H1El, _super);
         function H1El(name) {
-            _super.call(this, "h1", name);
+                _super.call(this, "h1", name);
         }
-
         return H1El;
     })(api_ui.Element);
-    api_ui.H1El = H1El;
+    api_ui.H1El = H1El;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var H2El = (function (_super) {
         __extends(H2El, _super);
         function H2El(name) {
-            _super.call(this, "h2", name);
+                _super.call(this, "h2", name);
         }
-
         return H2El;
     })(api_ui.Element);
-    api_ui.H2El = H2El;
+    api_ui.H2El = H2El;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var H3El = (function (_super) {
         __extends(H3El, _super);
         function H3El(name) {
-            _super.call(this, "h3", name);
+                _super.call(this, "h3", name);
         }
-
         return H3El;
     })(api_ui.Element);
-    api_ui.H3El = H3El;
+    api_ui.H3El = H3El;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var H4El = (function (_super) {
         __extends(H4El, _super);
         function H4El(name) {
-            _super.call(this, "h4", name);
+                _super.call(this, "h4", name);
         }
-
         return H4El;
     })(api_ui.Element);
-    api_ui.H4El = H4El;
+    api_ui.H4El = H4El;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var UlEl = (function (_super) {
         __extends(UlEl, _super);
         function UlEl(name) {
-            _super.call(this, "ul", name);
+                _super.call(this, "ul", name);
         }
-
         return UlEl;
     })(api_ui.Element);
-    api_ui.UlEl = UlEl;
+    api_ui.UlEl = UlEl;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var LiEl = (function (_super) {
         __extends(LiEl, _super);
         function LiEl(name) {
-            _super.call(this, "li", name);
+                _super.call(this, "li", name);
         }
-
         return LiEl;
     })(api_ui.Element);
-    api_ui.LiEl = LiEl;
+    api_ui.LiEl = LiEl;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var EmEl = (function (_super) {
         __extends(EmEl, _super);
         function EmEl(name) {
-            _super.call(this, "em", name);
+                _super.call(this, "em", name);
         }
-
         return EmEl;
     })(api_ui.Element);
-    api_ui.EmEl = EmEl;
+    api_ui.EmEl = EmEl;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var ImgEl = (function (_super) {
         __extends(ImgEl, _super);
         function ImgEl(name) {
-            _super.call(this, "img", name, api_ui.ImgHelper.create());
+                _super.call(this, "img", name, api_ui.ImgHelper.create());
         }
-
         ImgEl.prototype.getEl = function () {
             return _super.prototype.getEl.call(this);
         };
         return ImgEl;
     })(api_ui.Element);
-    api_ui.ImgEl = ImgEl;
+    api_ui.ImgEl = ImgEl;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var Panel = (function (_super) {
         __extends(Panel, _super);
         function Panel(name) {
-            _super.call(this, name);
+                _super.call(this, name);
             this.getEl().addClass("panel");
         }
-
         return Panel;
     })(api_ui.DivEl);
-    api_ui.Panel = Panel;
+    api_ui.Panel = Panel;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var DeckPanel = (function (_super) {
         __extends(DeckPanel, _super);
         function DeckPanel(name) {
-            _super.call(this, name);
+                _super.call(this, name);
         }
-
         DeckPanel.prototype.addPanel = function (panel) {
             return 0;
         };
@@ -487,32 +458,30 @@ var api_ui;
         };
         return DeckPanel;
     })(api_ui.Panel);
-    api_ui.DeckPanel = DeckPanel;
+    api_ui.DeckPanel = DeckPanel;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var ButtonEl = (function (_super) {
         __extends(ButtonEl, _super);
         function ButtonEl(name) {
-            _super.call(this, "button", name);
+                _super.call(this, "button", name);
         }
-
         return ButtonEl;
     })(api_ui.Element);
-    api_ui.ButtonEl = ButtonEl;
+    api_ui.ButtonEl = ButtonEl;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var BodyMask = (function (_super) {
         __extends(BodyMask, _super);
         function BodyMask() {
-            _super.call(this, "Mask");
+                _super.call(this, "Mask");
             this.getEl().setDisplay("none");
             this.getEl().addClass("body-mask");
             this.getEl().setZindex(30000);
             document.body.appendChild(this.getHTMLElement());
         }
-
         BodyMask.instance = new BodyMask();
         BodyMask.get = function get() {
             return BodyMask.instance;
@@ -525,36 +494,34 @@ var api_ui;
         };
         return BodyMask;
     })(api_ui.DivEl);
-    api_ui.BodyMask = BodyMask;
+    api_ui.BodyMask = BodyMask;    
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var AbstractButton = (function (_super) {
         __extends(AbstractButton, _super);
         function AbstractButton(name, label) {
-            _super.call(this, name);
+                _super.call(this, name);
             this.label = label;
             this.getEl().setInnerHtml(this.label);
         }
-
         AbstractButton.prototype.setEnable = function (value) {
             this.getEl().setDisabled(!value);
         };
         return AbstractButton;
     })(api_ui.ButtonEl);
-    api_ui.AbstractButton = AbstractButton;
+    api_ui.AbstractButton = AbstractButton;    
 })(api_ui || (api_ui = {}));
 var api_ui_toolbar;
 (function (api_ui_toolbar) {
     var Toolbar = (function (_super) {
         __extends(Toolbar, _super);
         function Toolbar() {
-            _super.call(this, "Toolbar");
+                _super.call(this, "Toolbar");
             this.components = [];
             this.getEl().addClass("toolbar");
             this.initExt();
         }
-
         Toolbar.prototype.initExt = function () {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
@@ -567,7 +534,7 @@ var api_ui_toolbar;
             this.appendChild(button);
         };
         Toolbar.prototype.addElement = function (element) {
-            if (this.hasGreedySpacer()) {
+            if(this.hasGreedySpacer()) {
                 element.getEl().addClass('pull-right');
             }
             this.appendChild(element);
@@ -578,16 +545,16 @@ var api_ui_toolbar;
         };
         Toolbar.prototype.addActionButton = function (action) {
             var button = new ToolbarButton(action);
-            if (this.hasGreedySpacer()) {
+            if(this.hasGreedySpacer()) {
                 button.setFloatRight(true);
             }
             this.components.push(button);
             return button;
         };
         Toolbar.prototype.hasGreedySpacer = function () {
-            for (var i in this.components) {
+            for(var i in this.components) {
                 var comp = this.components[i];
-                if (comp instanceof ToolbarGreedySpacer) {
+                if(comp instanceof ToolbarGreedySpacer) {
                     return true;
                 }
             }
@@ -595,17 +562,17 @@ var api_ui_toolbar;
         };
         return Toolbar;
     })(api_ui.DivEl);
-    api_ui_toolbar.Toolbar = Toolbar;
+    api_ui_toolbar.Toolbar = Toolbar;    
     var ToolbarButton = (function (_super) {
         __extends(ToolbarButton, _super);
         function ToolbarButton(action) {
             var _this = this;
-            _super.call(this, "ToolbarButton", action.getLabel());
+                _super.call(this, "ToolbarButton", action.getLabel());
             this.action = action;
             this.getEl().addEventListener("click", function (evt) {
                 _this.action.execute();
             });
-            if (action.getIconClass()) {
+            if(action.getIconClass()) {
                 this.getEl().addClass(action.getIconClass());
             }
             this.setEnable(action.isEnabled());
@@ -613,20 +580,18 @@ var api_ui_toolbar;
                 _this.setEnable(action.isEnabled());
             });
         }
-
         ToolbarButton.prototype.setFloatRight = function (value) {
-            if (value) {
+            if(value) {
                 this.getEl().addClass('pull-right');
             }
         };
         return ToolbarButton;
-    })(api_ui.AbstractButton);
+    })(api_ui.AbstractButton);    
     var ToolbarGreedySpacer = (function () {
         function ToolbarGreedySpacer() {
         }
-
         return ToolbarGreedySpacer;
-    })();
+    })();    
 })(api_ui_toolbar || (api_ui_toolbar = {}));
 var api_ui_menu;
 (function (api_ui_menu) {
@@ -634,11 +599,11 @@ var api_ui_menu;
         __extends(MenuItem, _super);
         function MenuItem(action) {
             var _this = this;
-            _super.call(this, "menu-item");
+                _super.call(this, "menu-item");
             this.action = action;
             this.getEl().setInnerHtml(this.action.getLabel());
             this.getEl().addEventListener("click", function () {
-                if (action.isEnabled()) {
+                if(action.isEnabled()) {
                     _this.action.execute();
                 }
             });
@@ -647,11 +612,10 @@ var api_ui_menu;
                 _this.setEnable(action.isEnabled());
             });
         }
-
         MenuItem.prototype.setEnable = function (value) {
             var el = this.getEl();
             el.setDisabled(!value);
-            if (value) {
+            if(value) {
                 el.removeClass("disabled");
             } else {
                 el.addClass("disabled");
@@ -659,18 +623,17 @@ var api_ui_menu;
         };
         return MenuItem;
     })(api_ui.LiEl);
-    api_ui_menu.MenuItem = MenuItem;
+    api_ui_menu.MenuItem = MenuItem;    
 })(api_ui_menu || (api_ui_menu = {}));
 var api_ui_detailpanel;
 (function (api_ui_detailpanel) {
     var DetailPanel = (function (_super) {
         __extends(DetailPanel, _super);
         function DetailPanel() {
-            _super.call(this, "detailpanel");
+                _super.call(this, "detailpanel");
             this.getEl().addClass("detailpanel");
             this.initExt();
         }
-
         DetailPanel.prototype.initExt = function () {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
@@ -681,12 +644,12 @@ var api_ui_detailpanel;
         };
         return DetailPanel;
     })(api_ui.DivEl);
-    api_ui_detailpanel.DetailPanel = DetailPanel;
+    api_ui_detailpanel.DetailPanel = DetailPanel;    
     var DetailTabPanel = (function (_super) {
         __extends(DetailTabPanel, _super);
         function DetailTabPanel(model) {
             var _this = this;
-            _super.call(this, "detailpanel-tab");
+                _super.call(this, "detailpanel-tab");
             this.tabs = [];
             this.getEl().addClass("detailpanel-tab");
             this.model = model;
@@ -697,7 +660,6 @@ var api_ui_detailpanel;
                 _this.setActiveTab(tab);
             });
         }
-
         DetailTabPanel.prototype.addHeader = function (title, subtitle, iconUrl) {
             var headerEl = new api_ui.DivEl("header");
             headerEl.getEl().addClass("header");
@@ -744,25 +706,23 @@ var api_ui_detailpanel;
         };
         return DetailTabPanel;
     })(api_ui.DivEl);
-    api_ui_detailpanel.DetailTabPanel = DetailTabPanel;
+    api_ui_detailpanel.DetailTabPanel = DetailTabPanel;    
     var DetailPanelTab = (function () {
         function DetailPanelTab(name) {
             this.name = name;
             this.content = new api_ui.DivEl("test-content");
             this.content.getEl().setInnerHtml(this.name);
         }
-
         return DetailPanelTab;
     })();
-    api_ui_detailpanel.DetailPanelTab = DetailPanelTab;
+    api_ui_detailpanel.DetailPanelTab = DetailPanelTab;    
     var DetailPanelTabList = (function (_super) {
         __extends(DetailPanelTabList, _super);
         function DetailPanelTabList() {
-            _super.call(this, "tab-list");
+                _super.call(this, "tab-list");
             this.tabs = [];
             this.getEl().addClass("tab-list");
         }
-
         DetailPanelTabList.prototype.addTab = function (tab, clickCallback) {
             var _this = this;
             var tabEl = new api_ui.LiEl("tab");
@@ -782,18 +742,17 @@ var api_ui_detailpanel;
         };
         return DetailPanelTabList;
     })(api_ui.UlEl);
-    api_ui_detailpanel.DetailPanelTabList = DetailPanelTabList;
+    api_ui_detailpanel.DetailPanelTabList = DetailPanelTabList;    
     var DetailPanelBox = (function (_super) {
         __extends(DetailPanelBox, _super);
         function DetailPanelBox(model, removeCallback) {
-            _super.call(this, "detailpanel-box");
+                _super.call(this, "detailpanel-box");
             this.model = model;
             this.getEl().addClass("detailpanel-box");
             this.setIcon(model.data.iconUrl, 32);
             this.setData(model.data.displayName, model.data.name);
             this.addRemoveButton(removeCallback);
         }
-
         DetailPanelBox.prototype.addRemoveButton = function (callback) {
             var _this = this;
             var removeEl = document.createElement("div");
@@ -801,7 +760,7 @@ var api_ui_detailpanel;
             removeEl.innerHTML = "&times;";
             removeEl.addEventListener("click", function (event) {
                 _this.getEl().remove();
-                if (callback) {
+                if(callback) {
                     callback(_this);
                 }
             });
@@ -824,19 +783,18 @@ var api_ui_detailpanel;
         };
         return DetailPanelBox;
     })(api_ui.DivEl);
-    api_ui_detailpanel.DetailPanelBox = DetailPanelBox;
+    api_ui_detailpanel.DetailPanelBox = DetailPanelBox;    
 })(api_ui_detailpanel || (api_ui_detailpanel = {}));
 var api_ui_wizard;
 (function (api_ui_wizard) {
     var WizardPanel = (function (_super) {
         __extends(WizardPanel, _super);
         function WizardPanel() {
-            _super.call(this, "wizard-panel");
+                _super.call(this, "wizard-panel");
             this.steps = [];
             this.addStepContainer();
             this.initExt();
         }
-
         WizardPanel.prototype.initExt = function () {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
@@ -864,27 +822,25 @@ var api_ui_wizard;
         };
         return WizardPanel;
     })(api_ui.Panel);
-    api_ui_wizard.WizardPanel = WizardPanel;
+    api_ui_wizard.WizardPanel = WizardPanel;    
     var WizardStepContainer = (function (_super) {
         __extends(WizardStepContainer, _super);
         function WizardStepContainer() {
-            _super.call(this, "step-container");
+                _super.call(this, "step-container");
             this.getEl().addClass("step-container");
         }
-
         WizardStepContainer.prototype.addStep = function (step) {
             var stepEl = new api_ui.LiEl(step.getLabel());
             stepEl.getEl().setInnerHtml(step.getLabel());
             this.appendChild(stepEl);
         };
         return WizardStepContainer;
-    })(api_ui.UlEl);
+    })(api_ui.UlEl);    
     var WizardStep = (function () {
         function WizardStep(label, panel) {
             this.label = label;
             this.panel = panel;
         }
-
         WizardStep.prototype.getLabel = function () {
             return this.label;
         };
@@ -893,7 +849,7 @@ var api_ui_wizard;
         };
         return WizardStep;
     })();
-    api_ui_wizard.WizardStep = WizardStep;
+    api_ui_wizard.WizardStep = WizardStep;    
 })(api_ui_wizard || (api_ui_wizard = {}));
 var api_ui_menu;
 (function (api_ui_menu) {
@@ -901,16 +857,22 @@ var api_ui_menu;
         __extends(ContextMenu, _super);
         function ContextMenu() {
             var _this = this;
-            _super.call(this, "context-menu");
+            var actions = [];
+            for (var _i = 0; _i < (arguments.length - 0); _i++) {
+                actions[_i] = arguments[_i + 0];
+            }
+                _super.call(this, "context-menu");
             this.menuItems = [];
             this.getEl().addClass("context-menu");
             var htmlEl = this.getHTMLElement();
             document.body.insertBefore(htmlEl, document.body.childNodes[0]);
+            for(var i = 0; i < actions.length; i++) {
+                this.addAction(actions[i]);
+            }
             document.addEventListener('click', function (evt) {
                 _this.hideMenuOnOutsideClick(evt);
             });
         }
-
         ContextMenu.prototype.addAction = function (action) {
             var menuItem = this.createMenuItem(action);
             this.appendChild(menuItem);
@@ -933,8 +895,8 @@ var api_ui_menu;
         ContextMenu.prototype.hideMenuOnOutsideClick = function (evt) {
             var id = this.getId();
             var target = evt.target;
-            for (var element = target; element; element = element.parentNode) {
-                if (element.id === id) {
+            for(var element = target; element; element = element.parentNode) {
+                if(element.id === id) {
                     return;
                 }
             }
@@ -942,7 +904,7 @@ var api_ui_menu;
         };
         return ContextMenu;
     })(api_ui.UlEl);
-    api_ui_menu.ContextMenu = ContextMenu;
+    api_ui_menu.ContextMenu = ContextMenu;    
 })(api_ui_menu || (api_ui_menu = {}));
 var api_ui_menu;
 (function (api_ui_menu) {
@@ -954,11 +916,11 @@ var api_ui_menu;
             for (var _i = 0; _i < (arguments.length - 0); _i++) {
                 actions[_i] = arguments[_i + 0];
             }
-            _super.call(this, "action-menu");
+                _super.call(this, "action-menu");
             this.menuItems = [];
             this.getEl().addClass("action-menu");
             this.button = new ActionMenuButton(this);
-            for (var i = 0; i < actions.length; i++) {
+            for(var i = 0; i < actions.length; i++) {
                 this.addAction(actions[i]);
             }
             window.document.addEventListener("click", function (evt) {
@@ -966,7 +928,6 @@ var api_ui_menu;
             });
             this.initExt();
         }
-
         ActionMenu.prototype.addAction = function (action) {
             var menuItem = this.createMenuItem(action);
             this.appendChild(menuItem);
@@ -977,7 +938,7 @@ var api_ui_menu;
         ActionMenu.prototype.showBy = function (button) {
             this.ext.show();
             this.ext.getEl().alignTo(button.getExt().getEl(), 'tl-bl?', [
-                -2,
+                -2, 
                 0
             ]);
         };
@@ -1004,8 +965,8 @@ var api_ui_menu;
         ActionMenu.prototype.hideMenuOnOutsideClick = function (evt) {
             var id = this.getId();
             var target = evt.target;
-            for (var element = target; element; element = element.parentNode) {
-                if (element.id === id) {
+            for(var element = target; element; element = element.parentNode) {
+                if(element.id === id) {
                     return;
                 }
             }
@@ -1013,26 +974,25 @@ var api_ui_menu;
         };
         return ActionMenu;
     })(api_ui.UlEl);
-    api_ui_menu.ActionMenu = ActionMenu;
+    api_ui_menu.ActionMenu = ActionMenu;    
     var ActionMenuButton = (function (_super) {
         __extends(ActionMenuButton, _super);
         function ActionMenuButton(menu) {
             var _this = this;
-            _super.call(this, "button");
+                _super.call(this, "button");
             this.menu = menu;
             var btnEl = this.getEl();
             btnEl.addClass("action-menu-button");
             btnEl.setInnerHtml("Actions");
             btnEl.addEventListener("click", function (e) {
                 menu.showBy(_this);
-                if (e.stopPropagation) {
+                if(e.stopPropagation) {
                     e.stopPropagation();
                 }
                 e.cancelBubble = true;
             });
             this.initExt();
         }
-
         ActionMenuButton.prototype.setEnabled = function (value) {
             this.getEl().setDisabled(!value);
         };
@@ -1047,14 +1007,12 @@ var api_ui_menu;
         };
         return ActionMenuButton;
     })(api_ui.ButtonEl);
-    api_ui_menu.ActionMenuButton = ActionMenuButton;
+    api_ui_menu.ActionMenuButton = ActionMenuButton;    
 })(api_ui_menu || (api_ui_menu = {}));
 var api_ui_tab;
 (function (api_ui_tab) {
     var TabMenu = (function () {
-        function TabMenu() {
-        }
-
+        function TabMenu() { }
         TabMenu.prototype.addTab = function (tab) {
         };
         TabMenu.prototype.addTabSelectedListener = function (listener) {
@@ -1063,14 +1021,13 @@ var api_ui_tab;
         };
         return TabMenu;
     })();
-    api_ui_tab.TabMenu = TabMenu;
+    api_ui_tab.TabMenu = TabMenu;    
 })(api_ui_tab || (api_ui_tab = {}));
 var api_ui_tab;
 (function (api_ui_tab) {
     var TabMenuItem = (function () {
         function TabMenuItem() {
         }
-
         TabMenuItem.prototype.setTabIndex = function (value) {
         };
         TabMenuItem.prototype.getTabIndex = function () {
@@ -1078,7 +1035,7 @@ var api_ui_tab;
         };
         return TabMenuItem;
     })();
-    api_ui_tab.TabMenuItem = TabMenuItem;
+    api_ui_tab.TabMenuItem = TabMenuItem;    
 })(api_ui_tab || (api_ui_tab = {}));
 var api_ui_tab;
 (function (api_ui_tab) {
@@ -1092,7 +1049,6 @@ var api_ui_tab;
             this.tabNavigator.addTabSelectedListener(this);
             this.tabNavigator.addTabRemovedListener(this);
         }
-
         TabPanelController.prototype.addPanel = function (panel, tab) {
             var tabIndex = this.tabs.length;
             tab.setTabIndex(tabIndex);
@@ -1110,7 +1066,7 @@ var api_ui_tab;
         };
         return TabPanelController;
     })();
-    api_ui_tab.TabPanelController = TabPanelController;
+    api_ui_tab.TabPanelController = TabPanelController;    
 })(api_ui_tab || (api_ui_tab = {}));
 var api_ui_dialog;
 (function (api_ui_dialog) {
@@ -1118,7 +1074,7 @@ var api_ui_dialog;
         __extends(DialogButton, _super);
         function DialogButton(action) {
             var _this = this;
-            _super.call(this, "DialogButton", action.getLabel());
+                _super.call(this, "DialogButton", action.getLabel());
             this.getEl().addClass("DialogButton");
             this.action = action;
             this.getEl().addEventListener("click", function () {
@@ -1129,26 +1085,22 @@ var api_ui_dialog;
                 _this.setEnable(action.isEnabled());
             });
         }
-
         return DialogButton;
     })(api_ui.AbstractButton);
-    api_ui_dialog.DialogButton = DialogButton;
+    api_ui_dialog.DialogButton = DialogButton;    
 })(api_ui_dialog || (api_ui_dialog = {}));
 var api_ui_dialog;
 (function (api_ui_dialog) {
     var ModalDialog = (function (_super) {
         __extends(ModalDialog, _super);
         function ModalDialog(config) {
-            _super.call(this, "ModalDialog");
+                _super.call(this, "ModalDialog");
             this.config = config;
             var el = this.getEl();
             el.setDisplay("none").addClass("modal-dialog");
             el.setWidth(this.config.width + "px").setHeight(this.config.height + "px");
             el.setZindex(30001);
-            el.setPosition("fixed").setTop("50%").setLeft("50%").setMarginLeft("-" + (this.config.width / 2) + "px").setMarginTop("-" +
-                                                                                                                                  (this.config.height /
-                                                                                                                                   2) +
-                                                                                                                                  "px");
+            el.setPosition("fixed").setTop("50%").setLeft("50%").setMarginLeft("-" + (this.config.width / 2) + "px").setMarginTop("-" + (this.config.height / 2) + "px");
             this.title = new ModalDialogTitle(this.config.title);
             this.appendChild(this.title);
             this.contentPanel = new ModalDialogContentPanel();
@@ -1156,7 +1108,6 @@ var api_ui_dialog;
             this.buttonRow = new ModalDialogButtonRow();
             this.appendChild(this.buttonRow);
         }
-
         ModalDialog.prototype.setTitle = function (value) {
             this.title.setTitle(value);
         };
@@ -1181,49 +1132,46 @@ var api_ui_dialog;
         };
         return ModalDialog;
     })(api_ui.DivEl);
-    api_ui_dialog.ModalDialog = ModalDialog;
+    api_ui_dialog.ModalDialog = ModalDialog;    
     var ModalDialogTitle = (function (_super) {
         __extends(ModalDialogTitle, _super);
         function ModalDialogTitle(title) {
-            _super.call(this, "ModalDialogTitle");
+                _super.call(this, "ModalDialogTitle");
             this.getEl().setInnerHtml(title);
         }
-
         ModalDialogTitle.prototype.setTitle = function (value) {
             this.getEl().setInnerHtml(value);
         };
         return ModalDialogTitle;
     })(api_ui.H2El);
-    api_ui_dialog.ModalDialogTitle = ModalDialogTitle;
+    api_ui_dialog.ModalDialogTitle = ModalDialogTitle;    
     var ModalDialogContentPanel = (function (_super) {
         __extends(ModalDialogContentPanel, _super);
         function ModalDialogContentPanel() {
-            _super.call(this, "ModalDialogContentPanel");
+                _super.call(this, "ModalDialogContentPanel");
             this.getEl().addClass("content-panel");
         }
-
         return ModalDialogContentPanel;
     })(api_ui.DivEl);
-    api_ui_dialog.ModalDialogContentPanel = ModalDialogContentPanel;
+    api_ui_dialog.ModalDialogContentPanel = ModalDialogContentPanel;    
     var ModalDialogButtonRow = (function (_super) {
         __extends(ModalDialogButtonRow, _super);
         function ModalDialogButtonRow() {
-            _super.call(this, "ModalDialogButtonRow");
+                _super.call(this, "ModalDialogButtonRow");
             this.getEl().addClass("button-row");
         }
-
         ModalDialogButtonRow.prototype.addAction = function (action) {
             var button = new ModalDialogButton(action);
             this.appendChild(button);
         };
         return ModalDialogButtonRow;
     })(api_ui.DivEl);
-    api_ui_dialog.ModalDialogButtonRow = ModalDialogButtonRow;
+    api_ui_dialog.ModalDialogButtonRow = ModalDialogButtonRow;    
     var ModalDialogButton = (function (_super) {
         __extends(ModalDialogButton, _super);
         function ModalDialogButton(action) {
             var _this = this;
-            _super.call(this, "ModalDialogButton", action.getLabel());
+                _super.call(this, "ModalDialogButton", action.getLabel());
             this.action = action;
             this.getEl().addEventListener("click", function () {
                 _this.action.execute();
@@ -1233,19 +1181,17 @@ var api_ui_dialog;
                 _this.setEnable(action.isEnabled());
             });
         }
-
         return ModalDialogButton;
     })(api_ui.AbstractButton);
-    api_ui_dialog.ModalDialogButton = ModalDialogButton;
+    api_ui_dialog.ModalDialogButton = ModalDialogButton;    
     var ModalDialogCancelAction = (function (_super) {
         __extends(ModalDialogCancelAction, _super);
         function ModalDialogCancelAction() {
-            _super.call(this, "Cancel");
+                _super.call(this, "Cancel");
         }
-
         return ModalDialogCancelAction;
     })(api_ui.Action);
-    api_ui_dialog.ModalDialogCancelAction = ModalDialogCancelAction;
+    api_ui_dialog.ModalDialogCancelAction = ModalDialogCancelAction;    
 })(api_ui_dialog || (api_ui_dialog = {}));
 var api_delete;
 (function (api_delete) {
@@ -1254,7 +1200,6 @@ var api_delete;
             this.iconUrl = iconUrl;
             this.displayName = displayName;
         }
-
         DeleteItem.prototype.getDisplayName = function () {
             return this.displayName;
         };
@@ -1263,7 +1208,7 @@ var api_delete;
         };
         return DeleteItem;
     })();
-    api_delete.DeleteItem = DeleteItem;
+    api_delete.DeleteItem = DeleteItem;    
 })(api_delete || (api_delete = {}));
 var api_delete;
 (function (api_delete) {
@@ -1271,11 +1216,11 @@ var api_delete;
         __extends(DeleteDialog, _super);
         function DeleteDialog(modelName) {
             var _this = this;
-            _super.call(this, {
-                title: "Delete " + modelName,
-                width: 500,
-                height: 300
-            });
+                _super.call(this, {
+        title: "Delete " + modelName,
+        width: 500,
+        height: 300
+    });
             this.cancelAction = new CancelDeleteDialogAction();
             this.itemList = new DeleteDialogItemList();
             this.modelName = modelName;
@@ -1286,7 +1231,6 @@ var api_delete;
                 _this.close();
             });
         }
-
         DeleteDialog.prototype.setDeleteAction = function (action) {
             this.deleteAction = action;
             this.addAction(action);
@@ -1294,45 +1238,43 @@ var api_delete;
         DeleteDialog.prototype.setDeleteItems = function (deleteItems) {
             this.deleteItems = deleteItems;
             this.itemList.clear();
-            if (deleteItems.length > 1) {
+            if(deleteItems.length > 1) {
                 this.setTitle("Delete " + this.modelName + "s");
             } else {
                 this.setTitle("Delete " + this.modelName);
             }
-            for (var i in this.deleteItems) {
+            for(var i in this.deleteItems) {
                 var deleteItem = this.deleteItems[i];
                 this.itemList.appendChild(new DeleteDialogItemComponent(deleteItem));
             }
         };
         return DeleteDialog;
     })(api_ui_dialog.ModalDialog);
-    api_delete.DeleteDialog = DeleteDialog;
+    api_delete.DeleteDialog = DeleteDialog;    
     var CancelDeleteDialogAction = (function (_super) {
         __extends(CancelDeleteDialogAction, _super);
         function CancelDeleteDialogAction() {
-            _super.call(this, "Cancel");
+                _super.call(this, "Cancel");
         }
-
         return CancelDeleteDialogAction;
     })(api_ui.Action);
-    api_delete.CancelDeleteDialogAction = CancelDeleteDialogAction;
+    api_delete.CancelDeleteDialogAction = CancelDeleteDialogAction;    
     var DeleteDialogItemList = (function (_super) {
         __extends(DeleteDialogItemList, _super);
         function DeleteDialogItemList() {
-            _super.call(this, "DeleteDialogItemList");
+                _super.call(this, "DeleteDialogItemList");
             this.getEl().addClass("item-list");
         }
-
         DeleteDialogItemList.prototype.clear = function () {
             this.removeChildren();
         };
         return DeleteDialogItemList;
     })(api_ui.DivEl);
-    api_delete.DeleteDialogItemList = DeleteDialogItemList;
+    api_delete.DeleteDialogItemList = DeleteDialogItemList;    
     var DeleteDialogItemComponent = (function (_super) {
         __extends(DeleteDialogItemComponent, _super);
         function DeleteDialogItemComponent(deleteItem) {
-            _super.call(this, "DeleteDialogItem");
+                _super.call(this, "DeleteDialogItem");
             this.getEl().addClass("item");
             var icon = new api_ui.ImgEl();
             icon.getEl().setSrc(deleteItem.getIconUrl());
@@ -1341,9 +1283,8 @@ var api_delete;
             displayName.getEl().setInnerHtml(deleteItem.getDisplayName());
             this.appendChild(displayName);
         }
-
         return DeleteDialogItemComponent;
-    })(api_ui.DivEl);
+    })(api_ui.DivEl);    
 })(api_delete || (api_delete = {}));
 var api_notify;
 (function (api_notify) {
@@ -1362,7 +1303,6 @@ var api_notify;
             this.name = name;
             this.handler = handler;
         }
-
         Action.prototype.getName = function () {
             return this.name;
         };
@@ -1371,14 +1311,13 @@ var api_notify;
         };
         return Action;
     })();
-    api_notify.Action = Action;
+    api_notify.Action = Action;    
     var Message = (function () {
         function Message(type, text) {
             this.type = type;
             this.text = text;
             this.actions = [];
         }
-
         Message.prototype.getType = function () {
             return this.type;
         };
@@ -1396,21 +1335,18 @@ var api_notify;
         };
         return Message;
     })();
-    api_notify.Message = Message;
+    api_notify.Message = Message;    
     function newInfo(text) {
         return new Message(Type.INFO, text);
     }
-
     api_notify.newInfo = newInfo;
     function newError(text) {
         return new Message(Type.ERROR, text);
     }
-
     api_notify.newError = newError;
     function newAction(text) {
         return new Message(Type.ACTION, text);
     }
-
     api_notify.newAction = newAction;
 })(api_notify || (api_notify = {}));
 var api_notify;
@@ -1419,11 +1355,8 @@ var api_notify;
     var lifetime = 5000;
     var slideDuration = 1000;
     var templates = {
-        manager: new Ext.Template('<div class="admin-notification-container">', '   <div class="admin-notification-wrapper"></div>',
-            '</div>'),
-        notify: new Ext.Template('<div class="admin-notification" style="height: 0; opacity: 0;">',
-            '   <div class="admin-notification-inner">', '       <a class="admin-notification-remove" href="#">X</a>',
-            '       <div class="admin-notification-content">{message}</div>', '   </div>', '</div>')
+        manager: new Ext.Template('<div class="admin-notification-container">', '   <div class="admin-notification-wrapper"></div>', '</div>'),
+        notify: new Ext.Template('<div class="admin-notification" style="height: 0; opacity: 0;">', '   <div class="admin-notification-inner">', '       <a class="admin-notification-remove" href="#">X</a>', '       <div class="admin-notification-content">{message}</div>', '   </div>', '</div>')
     };
     var NotifyManager = (function () {
         function NotifyManager() {
@@ -1431,7 +1364,6 @@ var api_notify;
             };
             this.render();
         }
-
         NotifyManager.prototype.render = function () {
             var template = templates.manager;
             var node = template.append(Ext.getBody());
@@ -1483,7 +1415,7 @@ var api_notify;
                     _this.startTimer(el);
                 }
             });
-            if (opts.listeners) {
+            if(opts.listeners) {
                 Ext.each(opts.listeners, function (listener) {
                     el.on({
                         'click': listener
@@ -1492,7 +1424,7 @@ var api_notify;
             }
         };
         NotifyManager.prototype.remove = function (el) {
-            if (!el) {
+            if(!el) {
                 return;
             }
             el.animate({
@@ -1510,7 +1442,7 @@ var api_notify;
         NotifyManager.prototype.startTimer = function (el) {
             var _this = this;
             var timer = this.timers[el.id];
-            if (!timer) {
+            if(!timer) {
                 return;
             }
             timer.id = setTimeout(function () {
@@ -1520,7 +1452,7 @@ var api_notify;
         };
         NotifyManager.prototype.stopTimer = function (el) {
             var timer = this.timers[el.id];
-            if (!timer || !timer.id) {
+            if(!timer || !timer.id) {
                 return;
             }
             clearTimeout(timer.id);
@@ -1532,7 +1464,7 @@ var api_notify;
             };
             var template = templates.notify;
             var notificationEl = template.append(this.getWrapperEl(), opts, true);
-            if (opts.backgroundColor) {
+            if(opts.backgroundColor) {
                 style['backgroundColor'] = opts.backgroundColor;
             }
             style['marginTop'] = space + 'px';
@@ -1541,45 +1473,39 @@ var api_notify;
         };
         return NotifyManager;
     })();
-    api_notify.NotifyManager = NotifyManager;
+    api_notify.NotifyManager = NotifyManager;    
     function getInnerEl(notificationEl) {
         return notificationEl.down('.admin-notification-inner');
     }
-
     var manager = new NotifyManager();
-
     function sendNotification(message) {
         manager.notify(message);
     }
-
     api_notify.sendNotification = sendNotification;
 })(api_notify || (api_notify = {}));
 var api_notify;
 (function (api_notify) {
     var NotifyOpts = (function () {
-        function NotifyOpts() {
-        }
-
+        function NotifyOpts() { }
         return NotifyOpts;
     })();
-    api_notify.NotifyOpts = NotifyOpts;
+    api_notify.NotifyOpts = NotifyOpts;    
     function buildOpts(message) {
         var opts = new NotifyOpts();
-        if (message.getType() == api_notify.Type.ERROR) {
+        if(message.getType() == api_notify.Type.ERROR) {
             opts.backgroundColor = 'red';
-        } else if (message.getType() == api_notify.Type.ACTION) {
+        } else if(message.getType() == api_notify.Type.ACTION) {
             opts.backgroundColor = '#669c34';
         }
         createHtmlMessage(message, opts);
         addListeners(message, opts);
         return opts;
     }
-
     api_notify.buildOpts = buildOpts;
     function addListeners(message, opts) {
         opts.listeners = [];
         var actions = message.getActions();
-        for (var i = 0; i < actions.length; i++) {
+        for(var i = 0; i < actions.length; i++) {
             opts.listeners.push({
                 fn: actions[i].getHandler(),
                 delegate: 'notify_action_' + i,
@@ -1587,16 +1513,15 @@ var api_notify;
             });
         }
     }
-
     function createHtmlMessage(message, opts) {
         var actions = message.getActions();
         opts.message = '<span>' + message.getText() + '</span>';
-        if (actions.length > 0) {
+        if(actions.length > 0) {
             var linkHtml = '<span style="float: right; margin-left: 30px;">';
-            for (var i = 0; i < actions.length; i++) {
-                if ((i > 0) && (i == (actions.length - 1))) {
+            for(var i = 0; i < actions.length; i++) {
+                if((i > 0) && (i == (actions.length - 1))) {
                     linkHtml += ' or ';
-                } else if (i > 0) {
+                } else if(i > 0) {
                     linkHtml += ', ';
                 }
                 linkHtml += '<a href="#" class="notify_action_"' + i + '">';
@@ -1612,11 +1537,9 @@ var api_notify;
     function showFeedback(message) {
         api_notify.newInfo(message).send();
     }
-
     api_notify.showFeedback = showFeedback;
     function updateAppTabCount(appId, tabCount) {
     }
-
     api_notify.updateAppTabCount = updateAppTabCount;
 })(api_notify || (api_notify = {}));
 var api_content_data;
@@ -1625,13 +1548,12 @@ var api_content_data;
         function DataId(name, arrayIndex) {
             this.name = name;
             this.arrayIndex = arrayIndex;
-            if (arrayIndex > 0) {
+            if(arrayIndex > 0) {
                 this.refString = name + '[' + arrayIndex + ']';
             } else {
                 this.refString = name;
             }
         }
-
         DataId.prototype.getName = function () {
             return this.name;
         };
@@ -1644,7 +1566,7 @@ var api_content_data;
         DataId.from = function from(str) {
             var endsWithEndBracket = str.indexOf(']', str.length - ']'.length) !== -1;
             var containsStartBracket = str.indexOf('[') !== -1;
-            if (endsWithEndBracket && containsStartBracket) {
+            if(endsWithEndBracket && containsStartBracket) {
                 var firstBracketPos = str.indexOf('[');
                 var nameStr = str.substring(0, firstBracketPos);
                 var indexStr = str.substring(nameStr.length + 1, (str.length - 1));
@@ -1656,7 +1578,7 @@ var api_content_data;
         };
         return DataId;
     })();
-    api_content_data.DataId = DataId;
+    api_content_data.DataId = DataId;    
 })(api_content_data || (api_content_data = {}));
 var api_content_data;
 (function (api_content_data) {
@@ -1664,7 +1586,6 @@ var api_content_data;
         function Data(name) {
             this.name = name;
         }
-
         Data.prototype.setArrayIndex = function (value) {
             this.arrayIndex = value;
         };
@@ -1685,23 +1606,22 @@ var api_content_data;
         };
         return Data;
     })();
-    api_content_data.Data = Data;
+    api_content_data.Data = Data;    
 })(api_content_data || (api_content_data = {}));
 var api_content_data;
 (function (api_content_data) {
     var DataSet = (function (_super) {
         __extends(DataSet, _super);
         function DataSet(name) {
-            _super.call(this, name);
+                _super.call(this, name);
             this.dataById = {
             };
         }
-
         DataSet.prototype.nameCount = function (name) {
             var count = 0;
-            for (var i in this.dataById) {
+            for(var i in this.dataById) {
                 var data = this.dataById[i];
-                if (data.getName() === name) {
+                if(data.getName() === name) {
                     count++;
                 }
             }
@@ -1719,30 +1639,28 @@ var api_content_data;
         };
         return DataSet;
     })(api_content_data.Data);
-    api_content_data.DataSet = DataSet;
+    api_content_data.DataSet = DataSet;    
 })(api_content_data || (api_content_data = {}));
 var api_content_data;
 (function (api_content_data) {
     var ContentData = (function (_super) {
         __extends(ContentData, _super);
         function ContentData() {
-            _super.call(this, "");
+                _super.call(this, "");
         }
-
         return ContentData;
     })(api_content_data.DataSet);
-    api_content_data.ContentData = ContentData;
+    api_content_data.ContentData = ContentData;    
 })(api_content_data || (api_content_data = {}));
 var api_content_data;
 (function (api_content_data) {
     var Property = (function (_super) {
         __extends(Property, _super);
         function Property(name, value, type) {
-            _super.call(this, name);
+                _super.call(this, name);
             this.value = value;
             this.type = type;
         }
-
         Property.from = function from(json) {
             return new Property(json.name, json.value, json.type);
         };
@@ -1757,7 +1675,7 @@ var api_content_data;
         };
         return Property;
     })(api_content_data.Data);
-    api_content_data.Property = Property;
+    api_content_data.Property = Property;    
 })(api_content_data || (api_content_data = {}));
 var api_schema_content_form;
 (function (api_schema_content_form) {
@@ -1765,13 +1683,12 @@ var api_schema_content_form;
         function FormItem(name) {
             this.name = name;
         }
-
         FormItem.prototype.getName = function () {
             return this.name;
         };
         return FormItem;
     })();
-    api_schema_content_form.FormItem = FormItem;
+    api_schema_content_form.FormItem = FormItem;    
 })(api_schema_content_form || (api_schema_content_form = {}));
 var api_schema_content_form;
 (function (api_schema_content_form) {
@@ -1779,20 +1696,19 @@ var api_schema_content_form;
         function InputType(json) {
             this.name = json.name;
         }
-
         InputType.prototype.getName = function () {
             return this.name;
         };
         return InputType;
     })();
-    api_schema_content_form.InputType = InputType;
+    api_schema_content_form.InputType = InputType;    
 })(api_schema_content_form || (api_schema_content_form = {}));
 var api_schema_content_form;
 (function (api_schema_content_form) {
     var Input = (function (_super) {
         __extends(Input, _super);
         function Input(json) {
-            _super.call(this, json.name);
+                _super.call(this, json.name);
             this.inputType = new api_schema_content_form.InputType(json.type);
             this.label = json.label;
             this.immutable = json.immutable;
@@ -1802,7 +1718,6 @@ var api_schema_content_form;
             this.validationRegex = json.validationRegexp;
             this.helpText = json.helpText;
         }
-
         Input.prototype.getLabel = function () {
             return this.label;
         };
@@ -1826,7 +1741,7 @@ var api_schema_content_form;
         };
         return Input;
     })(api_schema_content_form.FormItem);
-    api_schema_content_form.Input = Input;
+    api_schema_content_form.Input = Input;    
 })(api_schema_content_form || (api_schema_content_form = {}));
 var api_schema_content_form;
 (function (api_schema_content_form) {
@@ -1835,10 +1750,9 @@ var api_schema_content_form;
             this.minimum = json.minimum;
             this.maximum = json.maximum;
         }
-
         return Occurrences;
     })();
-    api_schema_content_form.Occurrences = Occurrences;
+    api_schema_content_form.Occurrences = Occurrences;    
 })(api_schema_content_form || (api_schema_content_form = {}));
 Ext.Loader.setConfig({
     enabled: false,
