@@ -55,6 +55,10 @@
     padding: 0;
 }
 
+.admin-context-window-body-top {
+    padding: 10px 15px;
+}
+
 .admin-context-window-dragging-shim {
     position: absolute;
     top: 0;

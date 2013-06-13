@@ -82,7 +82,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
         });
 
         Ext.create('Ext.data.Store', {
-            id: 'ctxWindowComponentStore',
+            id: 'contextWindowComponentStore',
             model: 'ContextWindow.Component',
             proxy: {
                 type: 'ajax',
@@ -95,7 +95,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
             autoLoad: true
         });
 
-        var imageTpl = new Ext.XTemplate(
+        var templates = new Ext.XTemplate(
             '<tpl for=".">',
             '   <div class="live-edit-component" data-live-edit-component-key="{key}" data-live-edit-component-type="{type}" data-live-edit-component-name="{name}">',
             '      <div class="live-edit-component-row">',
@@ -136,8 +136,8 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
 
         return new Ext.view.View({
             flex: 1,
-            store: Ext.data.StoreManager.lookup('ctxWindowComponentStore'),
-            tpl: imageTpl,
+            store: Ext.data.StoreManager.lookup('contextWindowComponentStore'),
+            tpl: templates,
             cls: 'live-edit-component-list',
             itemSelector: 'div.live-edit-component',
             emptyText: 'No components available',
@@ -151,7 +151,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
     },
 
     doFilterStore: function (value) {
-        var store = Ext.data.StoreManager.lookup('ctxWindowComponentStore'),
+        var store = Ext.data.StoreManager.lookup('contextWindowComponentStore'),
             valueLowerCased = value.toLowerCase();
 
         store.clearFilter();
