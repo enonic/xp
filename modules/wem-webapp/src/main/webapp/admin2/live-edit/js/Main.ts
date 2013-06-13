@@ -45,14 +45,19 @@ declare var LiveEditMutationSummary;
 
 ///<reference path='ui/componentbar/ComponentBar.ts' />
 
-
 (function ($) {
     'use strict';
 
     $(window).load(() => {
-        var loaderSplash:JQuery = $('.live-edit-loader-splash-container');
 
-        loaderSplash.fadeOut('fast', function () {
+        // Open the context window
+        if (window['parent'] && window['parent'].Admin.view.contentManager.contextwindow !== undefined) {
+            new window['parent'].Admin.view.contentManager.contextwindow.ContextWindow({}).doShow();
+        }
+
+        // Fade out the loader splash and start the app.
+        var loaderSplash:JQuery = $('.live-edit-loader-splash-container');
+        loaderSplash.fadeOut('fast', () => {
             loaderSplash.remove();
 
             new LiveEdit.component.observer.Page();

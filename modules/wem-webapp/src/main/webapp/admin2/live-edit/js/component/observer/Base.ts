@@ -8,18 +8,19 @@ module LiveEdit.component.observer {
         constructor() {
         }
 
-
         attachMouseOverEvent():void {
+
             $(document).on('mouseover', this.cssSelector, (event:JQueryEventObject) => {
                 if (this.cancelMouseOverEvent(event)) {
                     return;
                 }
+                $('.live-edit-selected-component').removeClass('live-edit-selected-component');
+
                 event.stopPropagation();
 
                 $(window).trigger('mouseOver.liveEdit.component', [$(event.currentTarget)]);
             });
         }
-
 
         attachMouseOutEvent():void {
 
@@ -61,25 +62,21 @@ module LiveEdit.component.observer {
             });
         }
 
+        getAll():JQuery {
+            return $(this.cssSelector);
+        }
 
         cancelMouseOverEvent(event:JQueryEventObject):Boolean {
             var elementIsUiComponent = this.isLiveEditUiComponent($(event.target));
             return elementIsUiComponent || this.hasComponentSelected() || LiveEdit.DragDropSort.isDragging();
         }
 
-
         hasComponentSelected():Boolean {
             return $('.live-edit-selected-component').length > 0;
         }
 
-
         isLiveEditUiComponent(target:JQuery):Boolean {
             return target.is('[id*=live-edit-ui-cmp]') || target.parents('[id*=live-edit-ui-cmp]').length > 0;
-        }
-
-
-        getAll():JQuery {
-            return $(this.cssSelector);
         }
 
     }

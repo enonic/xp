@@ -33,6 +33,7 @@ module LiveEdit.ui.contextmenu {
             $(window).on('remove.liveEdit.component', () => this.hide());
             $(window).on('paragraphEdit.liveEdit.component', () => this.hide());
             $(window).on('sortStart.liveEdit.component', () => this.fadeOutAndHide());
+            $(window).on('resize.liveEdit.window', () => this.handleWindowResize());
         }
 
         private addView():void {
@@ -69,13 +70,13 @@ module LiveEdit.ui.contextmenu {
             this.previousPageSizes = domHelper.getViewPortSize();
 
             this.updateTitleBar(component);
-
             this.updateMenuItemsForComponent(component);
 
+            // Calculate positions after menu is populated in order to get the right position.
             var pageXPosition = pagePosition.x - this.getRootEl().width() / 2,
                 pageYPosition = pagePosition.y + 15;
-            this.moveToXY(pageXPosition, pageYPosition);
 
+            this.moveToXY(pageXPosition, pageYPosition);
             this.getRootEl().show(null);
 
             this.hidden = false;
@@ -87,7 +88,6 @@ module LiveEdit.ui.contextmenu {
             this.hidden = true;
         }
 
-
         private fadeOutAndHide():void {
             this.getRootEl().fadeOut(500, () => {
                 this.hide();
@@ -95,7 +95,6 @@ module LiveEdit.ui.contextmenu {
             });
             this.selectedComponent = null;
         }
-
 
         private moveToXY(x, y):void {
             this.getRootEl().css({
@@ -106,7 +105,6 @@ module LiveEdit.ui.contextmenu {
 
         private addButtons():void {
             var menuItem = LiveEdit.ui.contextmenu.menuitem;
-
             var parentButton = new menuitem.Parent(this);
             var settingsButton = new menuitem.Settings(this);
             var detailsButton = new menuitem.Details(this);
@@ -117,9 +115,9 @@ module LiveEdit.ui.contextmenu {
             var viewButton = new menuitem.View(this);
             var editButton = new menuitem.Edit(this);
             var removeButton = new menuitem.Remove(this);
-
             var i,
                 $menuItemsPlaceholder = this.getMenuItemsPlaceholderElement();
+
             for (i = 0; i < this.buttons.length; i++) {
                 this.buttons[i].appendTo($menuItemsPlaceholder);
             }
@@ -158,6 +156,17 @@ module LiveEdit.ui.contextmenu {
                 iconCls:string = componentHelper.resolveCssClassForComponent(component);
             iconCt.children('div').attr('class', iconCls);
             iconCt.attr('title', componentHelper.getComponentType(component));
+        }
+
+        private handleWindowResize():void {
+            // fixme: improve!
+            if (this.selectedComponent) {
+                var componentBoxModel = componentHelper.getBoxModel(this.selectedComponent),
+                    x = componentBoxModel.left + componentBoxModel.width / 2 - this.getRootEl().width() / 2,
+                    y = this.getRootEl().offset().top;
+
+                this.moveToXY(x, y);
+            }
         }
 
         private getButtons():any[] {

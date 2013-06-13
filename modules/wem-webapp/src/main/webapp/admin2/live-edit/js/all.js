@@ -554,6 +554,7 @@ var LiveEdit;
                         if(_this.cancelMouseOverEvent(event)) {
                             return;
                         }
+                        $('.live-edit-selected-component').removeClass('live-edit-selected-component');
                         event.stopPropagation();
                         $(window).trigger('mouseOver.liveEdit.component', [
                             $(event.currentTarget)
@@ -592,6 +593,9 @@ var LiveEdit;
                         }
                     });
                 };
+                Base.prototype.getAll = function () {
+                    return $(this.cssSelector);
+                };
                 Base.prototype.cancelMouseOverEvent = function (event) {
                     var elementIsUiComponent = this.isLiveEditUiComponent($(event.target));
                     return elementIsUiComponent || this.hasComponentSelected() || LiveEdit.DragDropSort.isDragging();
@@ -601,9 +605,6 @@ var LiveEdit;
                 };
                 Base.prototype.isLiveEditUiComponent = function (target) {
                     return target.is('[id*=live-edit-ui-cmp]') || target.parents('[id*=live-edit-ui-cmp]').length > 0;
-                };
-                Base.prototype.getAll = function () {
-                    return $(this.cssSelector);
                 };
                 return Base;
             })();
@@ -1377,11 +1378,11 @@ var LiveEdit;
             Highlighter.prototype.componentMouseOver = function (component) {
                 this.show();
                 this.paintBorder(component);
+                this.selectedComponent = component;
             };
             Highlighter.prototype.selectComponent = function (component) {
                 this.selectedComponent = component;
                 var componentType = componentHelper.getComponentType(component);
-                $('.live-edit-selected-component').removeClass('live-edit-selected-component');
                 component.addClass('live-edit-selected-component');
                 if(componentType === 'page') {
                     this.hide();
@@ -1594,6 +1595,9 @@ var LiveEdit;
                     $(window).on('sortStart.liveEdit.component', function () {
                         return _this.fadeOutAndHide();
                     });
+                    $(window).on('resize.liveEdit.window', function () {
+                        return _this.handleWindowResize();
+                    });
                 };
                 Menu.prototype.addView = function () {
                     var html = '';
@@ -1696,6 +1700,12 @@ var LiveEdit;
                     var iconCt = this.getIconElement(), iconCls = componentHelper.resolveCssClassForComponent(component);
                     iconCt.children('div').attr('class', iconCls);
                     iconCt.attr('title', componentHelper.getComponentType(component));
+                };
+                Menu.prototype.handleWindowResize = function () {
+                    if(this.selectedComponent) {
+                        var componentBoxModel = componentHelper.getBoxModel(this.selectedComponent), x = componentBoxModel.left + componentBoxModel.width / 2 - this.getRootEl().width() / 2, y = this.getRootEl().offset().top;
+                        this.moveToXY(x, y);
+                    }
                 };
                 Menu.prototype.getButtons = function () {
                     return this.buttons;
@@ -2337,6 +2347,10 @@ var LiveEdit;
 ((function ($) {
     'use strict';
     $(window).load(function () {
+        if(window['parent'] && window['parent'].Admin.view.contentManager.contextwindow !== undefined) {
+            new window['parent'].Admin.view.contentManager.contextwindow.ContextWindow({
+            }).doShow();
+        }
         var loaderSplash = $('.live-edit-loader-splash-container');
         loaderSplash.fadeOut('fast', function () {
             loaderSplash.remove();
