@@ -189,10 +189,10 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
     },
 
     registerListenersFromLiveEditPage: function () {
-        var me = this;
-        var iFrame = me.getContextWindow().getLiveEditIframe();
+        var me = this,
+            iFrame = me.getContextWindow().getLiveEditIframe(),
+            jQuery = me.getJQueryFromLiveEditPage();
 
-        var jQuery = me.getJQueryFromLiveEditPage();
         jQuery(iFrame.contentWindow).on('sortStop.liveEdit.component', function () {
             $('.live-edit-component').simulate('mouseup');
             me.getContextWindow().doShow();
@@ -205,7 +205,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
             type = currentTarget.data('live-edit-component-type'),
             name = currentTarget.data('live-edit-component-name');
 
-        return $('<div id="live-edit-drag-helper" class="live-edit-component" style="width: 150px; height: 16px;" data-live-edit-component-key="' + key + '" data-live-edit-component-name="' + type + '" data-live-edit-component-type="' + type + '"><img id="live-edit-drag-helper-status-icon" src="live-edit/images/drop-no.gif"/><span id="live-edit-drag-helper-text" style="width: 134px;">' + name + '</span></div>');
+        return $('<div id="live-edit-drag-helper" class="live-edit-component" style="width: 150px; height: 16px;" data-live-edit-component-key="' + key + '" data-live-edit-component-name="' + type + '" data-live-edit-component-type="' + type + '"><div id="live-edit-drag-helper-status-icon"></div><span id="live-edit-drag-helper-text">' + name + '</span></div>');
     },
 
     getJQueryFromLiveEditPage: function () {

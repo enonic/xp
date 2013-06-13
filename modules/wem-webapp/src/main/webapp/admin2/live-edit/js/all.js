@@ -263,7 +263,7 @@ var LiveEdit;
             $(regionSelector).sortable('disable');
         };
         DragDropSort.prototype.getDragHelperHtml = function (text) {
-            return '<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' + '    <img id="live-edit-drag-helper-status-icon" src="../../../admin2/live-edit/images/drop-no.gif"/>' + '    <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' + '</div>';
+            return '<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' + '    <div id="live-edit-drag-helper-status-icon" class="live-edit-drag-helper-yes"></div>' + '    <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' + '</div>';
         };
         DragDropSort.prototype.setDragHelperText = function (text) {
             $('#live-edit-drag-helper-text').text(text);

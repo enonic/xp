@@ -48,7 +48,7 @@ module LiveEdit {
         private getDragHelperHtml(text:string):string {
             // Override jQueryUi with inline width/height
             return '<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' +
-                '    <img id="live-edit-drag-helper-status-icon" src="../../../admin2/live-edit/images/drop-no.gif"/>' +
+                '    <div id="live-edit-drag-helper-status-icon" class="live-edit-drag-helper-yes"></div>' +
                 '    <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' +
                 '</div>';
         }
