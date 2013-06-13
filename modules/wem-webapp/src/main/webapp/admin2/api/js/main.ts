@@ -19,7 +19,7 @@
 ///<reference path='event/Event.ts' />
 ///<reference path='event/EventBus.ts' />
 
-///<reference path='action/Action.ts' />
+///<reference path='ui/Action.ts' />
 
 ///<reference path='ui/ElementHelper.ts' />
 ///<reference path='ui/ImgElHelper.ts' />
@@ -34,6 +34,7 @@
 ///<reference path='ui/EmEl.ts' />
 ///<reference path='ui/ImgEl.ts' />
 ///<reference path='ui/Panel.ts' />
+///<reference path='ui/DeckPanel.ts' />
 ///<reference path='ui/ButtonEl.ts' />
 ///<reference path='ui/BodyMask.ts' />
 ///<reference path='ui/AbstractButton.ts' />
@@ -43,6 +44,14 @@
 ///<reference path='ui/wizard/WizardPanel.ts' />
 ///<reference path='ui/menu/ContextMenu.ts' />
 ///<reference path='ui/menu/ActionMenu.ts' />
+///<reference path='ui/tab/Tab.ts' />
+///<reference path='ui/tab/TabRemovedListener.ts' />
+///<reference path='ui/tab/TabSelectedListener.ts' />
+///<reference path='ui/tab/TabNavigator.ts' />
+///<reference path='ui/tab/TabMenu.ts' />
+///<reference path='ui/tab/TabMenuItem.ts' />
+///<reference path='ui/tab/TabPanelController.ts' />
+///<reference path='ui/toolbar/Toolbar.ts' />
 
 ///<reference path='ui/dialog/DialogButton.ts' />
 ///<reference path='ui/dialog/ModalDialog.ts' />
