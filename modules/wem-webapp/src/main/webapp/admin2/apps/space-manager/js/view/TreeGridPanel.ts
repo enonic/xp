@@ -16,7 +16,7 @@ module app_ui {
             model: 'Admin.model.SpaceModel',
             proxy: {
                 type: 'direct',
-                directFn: Admin.lib.RemoteService.space_list,
+                directFn: api_remote.RemoteService.space_list,
                 simpleSortMode: true,
                 reader: {
                     type: 'json',

@@ -1,220 +1,249 @@
-Ext.define('Admin.lib.RemoteService', {
+module api_remote {
 
-    requires: ['Admin.lib.JsonRpcProvider'],
+    export var RemoteService: RemoteServiceInterface;
 
-    singleton: true,
+    export interface RemoteServiceInterface {
+        account_find (params, callback:(accountFindResult:any)=>void):void;
+        account_getGraph (params, callback):void;
+        account_changePassword (params, callback):void;
+        account_verifyUniqueEmail (params, callback):void;
+        account_suggestUserName (params, callback):void;
+        account_createOrUpdate (params, callback):void;
+        account_delete (params, callback):void;
+        account_get (params, callback):void;
+        util_getCountries (params, callback):void;
+        util_getLocales (params, callback):void;
+        util_getTimeZones (params, callback):void;
+        userstore_getAll (params, callback):void;
+        userstore_get (params, callback):void;
+        userstore_getConnectors (params, callback):void;
+        userstore_createOrUpdate (params, callback):void;
+        userstore_delete (params, callback):void;
+        content_createOrUpdate (params, callback):void;
+        contentType_get (params, callback):void;
+        content_list (params, callback):void;
+        content_tree (params, callback):void;
+        content_get (params, callback):void;
+        contentType_list (params, callback):void;
+        content_delete (params, callback):void;
+        content_find (params, callback):void;
+        content_validate (params, callback):void;
+        contentType_createOrUpdate (params, callback):void;
+        contentType_delete (params, callback):void;
+        contentType_tree (params, callback):void;
+        schema_tree (params, callback):void;
+        schema_list (params, callback):void;
+        system_getSystemInfo (params, callback):void;
+        mixin_get (params, callback):void;
+        mixin_createOrUpdate (params, callback):void;
+        mixin_delete (params, callback):void;
+        relationshipType_get (params, callback):void;
+        relationshipType_createOrUpdate (params, callback):void;
+        relationshipType_delete (params, callback):void;
+        space_list (params, callback):void;
+        space_get (params, callback):void;
+        space_delete (params, callback):void;
+        space_createOrUpdate (params, callback):void;
+        binary_create (params, callback):void;
+    }
+    
+    class RemoteServiceImpl implements RemoteServiceInterface {
+        private provider: any; //Ext_direct_RemotingProvider;
 
-    handlerCache: {},
-
-    init: function () {
-        var config = {
-            "url": api_util.getAbsoluteUri("admin/rest/jsonrpc"),
-            "type": "jsonrpc",
-            "namespace": "Admin.lib.RemoteService",
-            "methods": [
-                "account_find", "account_getGraph", "account_changePassword", "account_verifyUniqueEmail", "account_suggestUserName",
-                "account_createOrUpdate", "account_delete", "account_get", "util_getCountries", "util_getLocales", "util_getTimeZones",
-                "userstore_getAll", "userstore_get", "userstore_getConnectors", "userstore_createOrUpdate", "userstore_delete",
-                "content_createOrUpdate", "content_list", "contentType_get", "content_tree", "content_get", "contentType_list",
-                "content_delete", "content_validate", "content_find", "contentType_createOrUpdate", "contentType_delete",
-                "contentType_tree",
-                "schema_list", "schema_tree", "system_getSystemInfo", "mixin_get", "mixin_createOrUpdate", "mixin_delete",
-                "relationshipType_get", "relationshipType_createOrUpdate", "relationshipType_delete", "space_list", "space_get",
-                "space_delete", "space_createOrUpdate", "binary_create"
-            ],
-            "enableBuffer": 20
-        };
-
-        this.provider = Ext.Direct.addProvider(config);
-    },
-
-    account_find: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    account_getGraph: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    account_changePassword: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    account_verifyUniqueEmail: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    account_suggestUserName: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    account_createOrUpdate: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    account_delete: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    account_get: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    util_getCountries: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    util_getLocales: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    util_getTimeZones: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    userstore_getAll: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    userstore_get: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    userstore_getConnectors: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    userstore_createOrUpdate: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    userstore_delete: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    content_createOrUpdate: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    contentType_get: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    content_list: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    content_tree: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    content_get: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    contentType_list: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    content_delete: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    content_find: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    content_validate: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    contentType_createOrUpdate: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    contentType_delete: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    contentType_tree: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    schema_tree: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    schema_list: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    system_getSystemInfo: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    mixin_get: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    mixin_createOrUpdate: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    mixin_delete: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    relationshipType_get: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    relationshipType_createOrUpdate: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    relationshipType_delete: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    space_list: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    space_get: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    space_delete: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    space_createOrUpdate: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    binary_create: function (params, callback) {
-        console.log(params, callback);
-    },
-
-    getMethod: function (name) {
-        var handler = this.handlerCache[name];
-
-        if (handler) {
-            return handler;
+        constructor() {
         }
 
-        var method = new Ext.direct.RemotingMethod({name: name, len: 1});
-        handler = this.provider.createHandler(null, method);
-        this.handlerCache[name] = handler;
-        return handler;
-    },
+        public init(namespace: string) {
+            var url:string = api_util.getAbsoluteUri("admin/rest/jsonrpc");
+            var methods:string[] = [
+                "account_find", "account_getGraph", "account_changePassword", "account_verifyUniqueEmail", "account_suggestUserName",
+                "account_createOrUpdate", "account_delete", "account_get",
+                "util_getCountries", "util_getLocales", "util_getTimeZones",
+                "userstore_getAll", "userstore_get", "userstore_getConnectors", "userstore_createOrUpdate", "userstore_delete",
+                "content_createOrUpdate", "content_list", "contentType_get", "content_tree", "content_get", "contentType_list",
+                "content_delete", "content_validate", "content_find",
+                "contentType_createOrUpdate", "contentType_delete", "contentType_tree",
+                "schema_list", "schema_tree",
+                "system_getSystemInfo",
+                "mixin_get", "mixin_createOrUpdate", "mixin_delete",
+                "relationshipType_get", "relationshipType_createOrUpdate", "relationshipType_delete",
+                "space_list", "space_get", "space_delete", "space_createOrUpdate",
+                "binary_create"
+            ];
+            var jsonRpcProvider = new api_remote.JsonRpcProvider(url, methods, namespace);
+            this.provider = Ext.Direct.addProvider(jsonRpcProvider.ext);
+        }
 
-    call: function (name, params, callback) {
-        var method = this.getMethod(name);
-        return method(params, callback);
+        account_find(params, callback:(accountFindResult:any)=>void):void {
+            console.log(params, callback);
+        }
+
+        account_getGraph(params, callback):void {
+            console.log(params, callback);
+        }
+
+        account_changePassword(params, callback):void {
+            console.log(params, callback);
+        }
+
+        account_verifyUniqueEmail(params, callback):void {
+            console.log(params, callback);
+        }
+
+        account_suggestUserName(params, callback):void {
+            console.log(params, callback);
+        }
+
+        account_createOrUpdate(params, callback):void {
+            console.log(params, callback);
+        }
+
+        account_delete(params, callback):void {
+            console.log(params, callback);
+        }
+
+        account_get(params, callback):void {
+            console.log(params, callback);
+        }
+
+        util_getCountries(params, callback):void {
+            console.log(params, callback);
+        }
+
+        util_getLocales(params, callback):void {
+            console.log(params, callback);
+        }
+
+        util_getTimeZones(params, callback):void {
+            console.log(params, callback);
+        }
+
+        userstore_getAll(params, callback):void {
+            console.log(params, callback);
+        }
+
+        userstore_get(params, callback):void {
+            console.log(params, callback);
+        }
+
+        userstore_getConnectors(params, callback):void {
+            console.log(params, callback);
+        }
+
+        userstore_createOrUpdate(params, callback):void {
+            console.log(params, callback);
+        }
+
+        userstore_delete(params, callback):void {
+            console.log(params, callback);
+        }
+
+        content_createOrUpdate(params, callback):void {
+            console.log(params, callback);
+        }
+
+        contentType_get(params, callback):void {
+            console.log(params, callback);
+        }
+
+        content_list(params, callback):void {
+            console.log(params, callback);
+        }
+
+        content_tree(params, callback):void {
+            console.log(params, callback);
+        }
+
+        content_get(params, callback):void {
+            console.log(params, callback);
+        }
+
+        contentType_list(params, callback):void {
+            console.log(params, callback);
+        }
+
+        content_delete(params, callback):void {
+            console.log(params, callback);
+        }
+
+        content_find(params, callback):void {
+            console.log(params, callback);
+        }
+
+        content_validate(params, callback):void {
+            console.log(params, callback);
+        }
+
+        contentType_createOrUpdate(params, callback):void {
+            console.log(params, callback);
+        }
+
+        contentType_delete(params, callback):void {
+            console.log(params, callback);
+        }
+
+        contentType_tree(params, callback):void {
+            console.log(params, callback);
+        }
+
+        schema_tree(params, callback):void {
+            console.log(params, callback);
+        }
+
+        schema_list(params, callback):void {
+            console.log(params, callback);
+        }
+
+        system_getSystemInfo(params, callback):void {
+            console.log(params, callback);
+        }
+
+        mixin_get(params, callback):void {
+            console.log(params, callback);
+        }
+
+        mixin_createOrUpdate(params, callback):void {
+            console.log(params, callback);
+        }
+
+        mixin_delete(params, callback):void {
+            console.log(params, callback);
+        }
+
+        relationshipType_get(params, callback):void {
+            console.log(params, callback);
+        }
+
+        relationshipType_createOrUpdate(params, callback):void {
+            console.log(params, callback);
+        }
+
+        relationshipType_delete(params, callback):void {
+            console.log(params, callback);
+        }
+
+        space_list(params, callback):void {
+            console.log(params, callback);
+        }
+
+        space_get(params, callback):void {
+            console.log(params, callback);
+        }
+
+        space_delete(params, callback):void {
+            console.log(params, callback);
+        }
+
+        space_createOrUpdate(params, callback):void {
+            console.log(params, callback);
+        }
+
+        binary_create(params, callback):void {
+            console.log(params, callback);
+        }
     }
 
-}, function () {
-    this.init();
-});
-
+    var remoteServiceImpl = new RemoteServiceImpl();
+    RemoteService = remoteServiceImpl;
+    remoteServiceImpl.init('api_remote.RemoteService');
+}

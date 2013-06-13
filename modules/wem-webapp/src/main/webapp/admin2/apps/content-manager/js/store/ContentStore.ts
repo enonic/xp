@@ -5,7 +5,7 @@ Ext.define('Admin.store.contentManager.ContentStore', {
 
     proxy: {
         type: 'direct',
-        directFn: Admin.lib.RemoteService.content_find,
+        directFn: api_remote.RemoteService.content_find,
         simpleSortMode: true,
         reader: {
             type: 'json',

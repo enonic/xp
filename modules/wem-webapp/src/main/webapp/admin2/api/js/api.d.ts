@@ -78,6 +78,62 @@ module api_handler {
         public doDelete(deleteSpaceParam: DeleteSpaceParam, callback: (thisArg: any, success: any, result: any) => void): void;
     }
 }
+module api_remote {
+    class JsonRpcProvider {
+        public ext: any;
+        constructor(url: string, methods: string[], namespace: string);
+        private initAPI(methods);
+        private getCallData(transaction);
+        private createEvent(response);
+    }
+}
+module api_remote {
+    var RemoteService: RemoteServiceInterface;
+    interface RemoteServiceInterface {
+        account_find(params, callback: (accountFindResult: any) => void): void;
+        account_getGraph(params, callback): void;
+        account_changePassword(params, callback): void;
+        account_verifyUniqueEmail(params, callback): void;
+        account_suggestUserName(params, callback): void;
+        account_createOrUpdate(params, callback): void;
+        account_delete(params, callback): void;
+        account_get(params, callback): void;
+        util_getCountries(params, callback): void;
+        util_getLocales(params, callback): void;
+        util_getTimeZones(params, callback): void;
+        userstore_getAll(params, callback): void;
+        userstore_get(params, callback): void;
+        userstore_getConnectors(params, callback): void;
+        userstore_createOrUpdate(params, callback): void;
+        userstore_delete(params, callback): void;
+        content_createOrUpdate(params, callback): void;
+        contentType_get(params, callback): void;
+        content_list(params, callback): void;
+        content_tree(params, callback): void;
+        content_get(params, callback): void;
+        contentType_list(params, callback): void;
+        content_delete(params, callback): void;
+        content_find(params, callback): void;
+        content_validate(params, callback): void;
+        contentType_createOrUpdate(params, callback): void;
+        contentType_delete(params, callback): void;
+        contentType_tree(params, callback): void;
+        schema_tree(params, callback): void;
+        schema_list(params, callback): void;
+        system_getSystemInfo(params, callback): void;
+        mixin_get(params, callback): void;
+        mixin_createOrUpdate(params, callback): void;
+        mixin_delete(params, callback): void;
+        relationshipType_get(params, callback): void;
+        relationshipType_createOrUpdate(params, callback): void;
+        relationshipType_delete(params, callback): void;
+        space_list(params, callback): void;
+        space_get(params, callback): void;
+        space_delete(params, callback): void;
+        space_createOrUpdate(params, callback): void;
+        binary_create(params, callback): void;
+    }
+}
 module api_event {
     class Event {
         private name;

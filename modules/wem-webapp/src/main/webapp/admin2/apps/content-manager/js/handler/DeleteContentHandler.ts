@@ -7,7 +7,7 @@ module admin.app.handler {
                 return item.get('path');
             });
 
-            Admin.lib.RemoteService.content_delete({'contentPaths': contentPaths }, (response) => {
+            api_remote.RemoteService.content_delete({'contentPaths': contentPaths }, (response) => {
                 if (response) {
                     callback.call(this, response.success, response.failures);
                 } else {

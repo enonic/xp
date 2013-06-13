@@ -1,9 +1,6 @@
 ///<reference path='../../../api/js/ExtJs.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
-///<reference path='../../../api/js/lib/JsonRpcProvider.ts' />
-///<reference path='../../../api/js/lib/RemoteService.ts' />
-
 ///<reference path='event/BaseContentModelEvent.ts' />
 ///<reference path='event/GridSelectionChangeEvent.ts' />
 ///<reference path='event/NewContentEvent.ts' />

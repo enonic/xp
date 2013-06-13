@@ -15,7 +15,7 @@ Ext.define('Admin.store.schemaManager.ContentTypeStore', {
 
     proxy: {
         type: 'direct',
-        directFn: Admin.lib.RemoteService.contentType_list,
+        directFn: api_remote.RemoteService.contentType_list,
         simpleSortMode: true,
         reader: {
             type: 'json',

@@ -261,7 +261,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                 var getContentCommand = {
                     contentIds: [contentId]
                 };
-                Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
+                api_remote.RemoteService.content_get(getContentCommand, function (getContentResponse) {
                     if (getContentResponse && getContentResponse.success) {
                         var contentData = getContentResponse.content[0];
                         var contentModel = new Admin.model.contentManager.ContentModel(contentData);
@@ -277,7 +277,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
      */
     remoteCreateBinary: function (fileUploadId, callback) {
         var createBinaryCommand = {'uploadFileId': fileUploadId};
-        Admin.lib.RemoteService.binary_create(createBinaryCommand, function (response) {
+        api_remote.RemoteService.binary_create(createBinaryCommand, function (response) {
             if (response && response.success) {
                 callback(response.binaryId);
             } else {
@@ -300,7 +300,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             "temporary": true
         };
 
-        Admin.lib.RemoteService.content_createOrUpdate(createContentCommand, function (response) {
+        api_remote.RemoteService.content_createOrUpdate(createContentCommand, function (response) {
             if (response && response.success) {
                 callback(response.contentId);
             } else {
@@ -347,7 +347,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         };
         me.getLayout().setActiveItem('loadingForm');
         // retrieve image contents by contentId
-        Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
+        api_remote.RemoteService.content_get(getContentCommand, function (getContentResponse) {
             if (getContentResponse && getContentResponse.success) {
                 var contentData = getContentResponse.content[0];
                 var contentModel = new Admin.model.contentManager.ContentModel(contentData);

@@ -1,244 +1,3 @@
-Ext.define('Admin.lib.JsonRpcProvider', {
-    alias: 'direct.jsonrpcprovider',
-    extend: 'Ext.direct.RemotingProvider',
-    initAPI: function () {
-        var methods = this.methods;
-        var namespace = this.namespace;
-        var methodName;
-        for(var i = 0; i < methods.length; i++) {
-            methodName = methods[i];
-            var def = {
-                name: methodName,
-                len: 1
-            };
-            var method = new Ext.direct.RemotingMethod(def);
-            namespace[methodName] = this.createHandler(null, method);
-        }
-    },
-    getCallData: function (transaction) {
-        return {
-            jsonrpc: '2.0',
-            id: transaction.tid,
-            method: transaction.method,
-            params: transaction.data[0]
-        };
-    },
-    createEvent: function (response) {
-        var error = response.error ? true : false;
-        response.tid = response.id;
-        response.type = error ? 'exception' : 'rpc';
-        if(error) {
-            response.message = response.error.message;
-        }
-        return Ext.create('direct.' + response.type, response);
-    }
-});
-Ext.define('Admin.lib.RemoteService', {
-    requires: [
-        'Admin.lib.JsonRpcProvider'
-    ],
-    singleton: true,
-    handlerCache: {
-    },
-    init: function () {
-        var config = {
-            "url": api_util.getAbsoluteUri("admin/rest/jsonrpc"),
-            "type": "jsonrpc",
-            "namespace": "Admin.lib.RemoteService",
-            "methods": [
-                "account_find", 
-                "account_getGraph", 
-                "account_changePassword", 
-                "account_verifyUniqueEmail", 
-                "account_suggestUserName", 
-                "account_createOrUpdate", 
-                "account_delete", 
-                "account_get", 
-                "util_getCountries", 
-                "util_getLocales", 
-                "util_getTimeZones", 
-                "userstore_getAll", 
-                "userstore_get", 
-                "userstore_getConnectors", 
-                "userstore_createOrUpdate", 
-                "userstore_delete", 
-                "content_createOrUpdate", 
-                "content_list", 
-                "contentType_get", 
-                "content_tree", 
-                "content_get", 
-                "contentType_list", 
-                "content_delete", 
-                "content_validate", 
-                "content_find", 
-                "contentType_createOrUpdate", 
-                "contentType_delete", 
-                "contentType_tree", 
-                "schema_list", 
-                "schema_tree", 
-                "system_getSystemInfo", 
-                "mixin_get", 
-                "mixin_createOrUpdate", 
-                "mixin_delete", 
-                "relationshipType_get", 
-                "relationshipType_createOrUpdate", 
-                "relationshipType_delete", 
-                "space_list", 
-                "space_get", 
-                "space_delete", 
-                "space_createOrUpdate", 
-                "binary_create"
-            ],
-            "enableBuffer": 20
-        };
-        this.provider = Ext.Direct.addProvider(config);
-    },
-    account_find: function (params, callback) {
-        console.log(params, callback);
-    },
-    account_getGraph: function (params, callback) {
-        console.log(params, callback);
-    },
-    account_changePassword: function (params, callback) {
-        console.log(params, callback);
-    },
-    account_verifyUniqueEmail: function (params, callback) {
-        console.log(params, callback);
-    },
-    account_suggestUserName: function (params, callback) {
-        console.log(params, callback);
-    },
-    account_createOrUpdate: function (params, callback) {
-        console.log(params, callback);
-    },
-    account_delete: function (params, callback) {
-        console.log(params, callback);
-    },
-    account_get: function (params, callback) {
-        console.log(params, callback);
-    },
-    util_getCountries: function (params, callback) {
-        console.log(params, callback);
-    },
-    util_getLocales: function (params, callback) {
-        console.log(params, callback);
-    },
-    util_getTimeZones: function (params, callback) {
-        console.log(params, callback);
-    },
-    userstore_getAll: function (params, callback) {
-        console.log(params, callback);
-    },
-    userstore_get: function (params, callback) {
-        console.log(params, callback);
-    },
-    userstore_getConnectors: function (params, callback) {
-        console.log(params, callback);
-    },
-    userstore_createOrUpdate: function (params, callback) {
-        console.log(params, callback);
-    },
-    userstore_delete: function (params, callback) {
-        console.log(params, callback);
-    },
-    content_createOrUpdate: function (params, callback) {
-        console.log(params, callback);
-    },
-    contentType_get: function (params, callback) {
-        console.log(params, callback);
-    },
-    content_list: function (params, callback) {
-        console.log(params, callback);
-    },
-    content_tree: function (params, callback) {
-        console.log(params, callback);
-    },
-    content_get: function (params, callback) {
-        console.log(params, callback);
-    },
-    contentType_list: function (params, callback) {
-        console.log(params, callback);
-    },
-    content_delete: function (params, callback) {
-        console.log(params, callback);
-    },
-    content_find: function (params, callback) {
-        console.log(params, callback);
-    },
-    content_validate: function (params, callback) {
-        console.log(params, callback);
-    },
-    contentType_createOrUpdate: function (params, callback) {
-        console.log(params, callback);
-    },
-    contentType_delete: function (params, callback) {
-        console.log(params, callback);
-    },
-    contentType_tree: function (params, callback) {
-        console.log(params, callback);
-    },
-    schema_tree: function (params, callback) {
-        console.log(params, callback);
-    },
-    schema_list: function (params, callback) {
-        console.log(params, callback);
-    },
-    system_getSystemInfo: function (params, callback) {
-        console.log(params, callback);
-    },
-    mixin_get: function (params, callback) {
-        console.log(params, callback);
-    },
-    mixin_createOrUpdate: function (params, callback) {
-        console.log(params, callback);
-    },
-    mixin_delete: function (params, callback) {
-        console.log(params, callback);
-    },
-    relationshipType_get: function (params, callback) {
-        console.log(params, callback);
-    },
-    relationshipType_createOrUpdate: function (params, callback) {
-        console.log(params, callback);
-    },
-    relationshipType_delete: function (params, callback) {
-        console.log(params, callback);
-    },
-    space_list: function (params, callback) {
-        console.log(params, callback);
-    },
-    space_get: function (params, callback) {
-        console.log(params, callback);
-    },
-    space_delete: function (params, callback) {
-        console.log(params, callback);
-    },
-    space_createOrUpdate: function (params, callback) {
-        console.log(params, callback);
-    },
-    binary_create: function (params, callback) {
-        console.log(params, callback);
-    },
-    getMethod: function (name) {
-        var handler = this.handlerCache[name];
-        if(handler) {
-            return handler;
-        }
-        var method = new Ext.direct.RemotingMethod({
-            name: name,
-            len: 1
-        });
-        handler = this.provider.createHandler(null, method);
-        this.handlerCache[name] = handler;
-        return handler;
-    },
-    call: function (name, params, callback) {
-        var method = this.getMethod(name);
-        return method(params, callback);
-    }
-}, function () {
-    this.init();
-});
 var __extends = this.__extends || function (d, b) {
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
@@ -787,7 +546,7 @@ var admin;
                     var contentPaths = Ext.Array.map([].concat(contentModels), function (item) {
                         return item.get('path');
                     });
-                    Admin.lib.RemoteService.content_delete({
+                    api_remote.RemoteService.content_delete({
                         'contentPaths': contentPaths
                     }, function (response) {
                         if(response) {
@@ -1403,7 +1162,7 @@ Ext.define('Admin.store.contentManager.ContentStore', {
     model: 'Admin.model.contentManager.ContentModel',
     proxy: {
         type: 'direct',
-        directFn: Admin.lib.RemoteService.content_find,
+        directFn: api_remote.RemoteService.content_find,
         simpleSortMode: true,
         reader: {
             type: 'json',
@@ -1419,7 +1178,7 @@ Ext.define('Admin.store.contentManager.ContentTreeStore', {
     autoLoad: false,
     proxy: {
         type: 'direct',
-        directFn: Admin.lib.RemoteService.content_tree,
+        directFn: api_remote.RemoteService.content_tree,
         simpleSortMode: true,
         reader: {
             type: 'json',
@@ -1442,7 +1201,7 @@ Ext.define('Admin.store.schemaManager.ContentTypeStore', {
     autoLoad: true,
     proxy: {
         type: 'direct',
-        directFn: Admin.lib.RemoteService.contentType_list,
+        directFn: api_remote.RemoteService.contentType_list,
         simpleSortMode: true,
         reader: {
             type: 'json',
@@ -1457,7 +1216,7 @@ Ext.define('Admin.store.schemaManager.ContentTypeTreeStore', {
     folderSort: true,
     proxy: {
         type: 'direct',
-        directFn: Admin.lib.RemoteService.contentType_tree,
+        directFn: api_remote.RemoteService.contentType_tree,
         simpleSortMode: true,
         reader: {
             type: 'json',
@@ -6299,7 +6058,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                         contentId
                     ]
                 };
-                Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
+                api_remote.RemoteService.content_get(getContentCommand, function (getContentResponse) {
                     if(getContentResponse && getContentResponse.success) {
                         var contentData = getContentResponse.content[0];
                         var contentModel = new Admin.model.contentManager.ContentModel(contentData);
@@ -6313,7 +6072,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         var createBinaryCommand = {
             'uploadFileId': fileUploadId
         };
-        Admin.lib.RemoteService.binary_create(createBinaryCommand, function (response) {
+        api_remote.RemoteService.binary_create(createBinaryCommand, function (response) {
             if(response && response.success) {
                 callback(response.binaryId);
             } else {
@@ -6331,7 +6090,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             "displayName": displayName,
             "temporary": true
         };
-        Admin.lib.RemoteService.content_createOrUpdate(createContentCommand, function (response) {
+        api_remote.RemoteService.content_createOrUpdate(createContentCommand, function (response) {
             if(response && response.success) {
                 callback(response.contentId);
             } else {
@@ -6367,7 +6126,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
             ]
         };
         me.getLayout().setActiveItem('loadingForm');
-        Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
+        api_remote.RemoteService.content_get(getContentCommand, function (getContentResponse) {
             if(getContentResponse && getContentResponse.success) {
                 var contentData = getContentResponse.content[0];
                 var contentModel = new Admin.model.contentManager.ContentModel(contentData);
@@ -6402,7 +6161,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
                 qualifiedRelationshipTypeName: this.inputConfig.type.config.relationshipType,
                 format: 'JSON'
             };
-            Admin.lib.RemoteService.relationshipType_get(getRelationshipTypeCommand, function (response) {
+            api_remote.RemoteService.relationshipType_get(getRelationshipTypeCommand, function (response) {
                 if(response && response.success) {
                     var iconUrl = response.relationshipType.iconUrl;
                     if(me.rendered) {
@@ -6444,7 +6203,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
         var getContentCommand = {
             contentIds: Ext.Array.pluck(values, 'value')
         };
-        Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
+        api_remote.RemoteService.content_get(getContentCommand, function (getContentResponse) {
             if(getContentResponse && getContentResponse.success) {
                 Ext.each(getContentResponse.content, function (contentData) {
                     var contentModel = new Admin.model.contentManager.ContentModel(contentData);
@@ -6731,7 +6490,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
                         contentId
                     ]
                 };
-                Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
+                api_remote.RemoteService.content_get(getContentCommand, function (getContentResponse) {
                     if(getContentResponse && getContentResponse.success) {
                         var contentData = getContentResponse.content[0];
                         var contentModel = new Admin.model.contentManager.ContentModel(contentData);
@@ -6745,7 +6504,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
         var createBinaryCommand = {
             'uploadFileId': fileUploadId
         };
-        Admin.lib.RemoteService.binary_create(createBinaryCommand, function (response) {
+        api_remote.RemoteService.binary_create(createBinaryCommand, function (response) {
             if(response && response.success) {
                 callback(response.binaryId);
             } else {
@@ -6763,7 +6522,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
             "displayName": displayName,
             "temporary": true
         };
-        Admin.lib.RemoteService.content_createOrUpdate(createContentCommand, function (response) {
+        api_remote.RemoteService.content_createOrUpdate(createContentCommand, function (response) {
             if(response && response.success) {
                 callback(response.contentId);
             } else {
@@ -6829,7 +6588,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
                 qualifiedRelationshipTypeName: me.inputConfig.type.config.relationshipType,
                 format: 'JSON'
             };
-            Admin.lib.RemoteService.relationshipType_get(getRelationshipTypeCommand, function (response) {
+            api_remote.RemoteService.relationshipType_get(getRelationshipTypeCommand, function (response) {
                 if(response && response.success) {
                     var iconUrl = response.relationshipType.iconUrl;
                     if(me.rendered) {
@@ -6970,7 +6729,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
         var getContentCommand = {
             contentIds: Ext.Array.pluck(values, 'value')
         };
-        Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
+        api_remote.RemoteService.content_get(getContentCommand, function (getContentResponse) {
             if(getContentResponse && getContentResponse.success) {
                 Ext.each(getContentResponse.content, function (contentData) {
                     var contentModel = new Admin.model.contentManager.ContentModel(contentData);
@@ -7072,7 +6831,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             'qualifiedRelationshipTypeName': relationshipTypeName,
             'format': 'JSON'
         };
-        Admin.lib.RemoteService.relationshipType_get(getRelationshipTypeCommand, function (response) {
+        api_remote.RemoteService.relationshipType_get(getRelationshipTypeCommand, function (response) {
             if(response && response.success) {
                 callback(response.relationshipType);
             } else {
@@ -7649,7 +7408,7 @@ Ext.define('Admin.controller.Controller', {
                         contentType: selectedContent.get('type'),
                         mixinReferencesToFormItems: true
                     };
-                    Admin.lib.RemoteService.contentType_get(getContentTypeCommand, function (rpcResponse) {
+                    api_remote.RemoteService.contentType_get(getContentTypeCommand, function (rpcResponse) {
                         getContentTypeResponse = rpcResponse;
                         if(getContentTypeResponse && getContentTypeResponse.success && getContentResponse && getContentResponse.success) {
                             getContentTypeResponse.content = getContentResponse.content;
@@ -7659,7 +7418,7 @@ Ext.define('Admin.controller.Controller', {
                     var getContentCommand = {
                         path: selectedContent.get('path')
                     };
-                    Admin.lib.RemoteService.content_get(getContentCommand, function (rpcResponse) {
+                    api_remote.RemoteService.content_get(getContentCommand, function (rpcResponse) {
                         getContentResponse = rpcResponse;
                         if(getContentResponse && getContentResponse.success && getContentTypeResponse && getContentTypeResponse.success) {
                             getContentTypeResponse.content = getContentResponse.content;
@@ -7698,7 +7457,7 @@ Ext.define('Admin.controller.Controller', {
             var treeGridSelection = this.getContentTreeGridPanel().getSelection();
             switch(type) {
                 case 'contentType':
-                    Admin.lib.RemoteService.contentType_get({
+                    api_remote.RemoteService.contentType_get({
                         format: 'JSON',
                         contentType: qualifiedContentType,
                         mixinReferencesToFormItems: true
@@ -7808,7 +7567,7 @@ Ext.define('Admin.controller.Controller', {
     },
     loadContentAndFacets: function (values) {
         var me = this, filter = this.getContentFilter(), params = this.createLoadContentParams(values || filter.getValues());
-        Admin.lib.RemoteService.content_find(params, function (response) {
+        api_remote.RemoteService.content_find(params, function (response) {
             if(response && response.success) {
                 me.getContentFilter().updateFacets(response.facets);
                 var ids = Ext.Array.pluck(response.contents, 'id'), treeGridPanel = me.getContentTreeGridPanel(), filterDirty = filter.isDirty();
@@ -8262,7 +8021,7 @@ Ext.define('Admin.controller.ContentController', {
     init: function () {
     },
     remoteCreateOrUpdateContent: function (contentParams, callback) {
-        Admin.lib.RemoteService.content_createOrUpdate(contentParams, function (r) {
+        api_remote.RemoteService.content_createOrUpdate(contentParams, function (r) {
             if(r && r.success) {
                 callback(r.created, r.updated, r.contentPath, r.contentId);
             } else {
@@ -8275,7 +8034,7 @@ Ext.define('Admin.controller.ContentController', {
         var contentPaths = Ext.Array.map([].concat(contents), function (item) {
             return item.get('path');
         });
-        Admin.lib.RemoteService.content_delete({
+        api_remote.RemoteService.content_delete({
             "contentPaths": contentPaths
         }, function (r) {
             if(r) {

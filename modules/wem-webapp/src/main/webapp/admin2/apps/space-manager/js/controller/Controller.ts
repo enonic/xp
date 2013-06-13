@@ -8,10 +8,6 @@ Ext.define('Admin.controller.Controller', {
         'Admin.model.SpaceModel'
     ],
 
-    requires: [
-        'Admin.lib.RemoteService'
-    ],
-
     init: function () {
         var me = this;
 
@@ -68,7 +64,7 @@ Ext.define('Admin.controller.Controller', {
         var tabs = this.getCmsTabPanel();
 
         tabs.el.mask();
-        Admin.lib.RemoteService.space_get({
+        api_remote.RemoteService.space_get({
             "spaceName": [space.data.name]
         }, function (r) {
             tabs.el.unmask();

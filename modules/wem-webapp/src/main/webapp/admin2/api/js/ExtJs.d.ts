@@ -4635,6 +4635,8 @@ interface Ext_direct_JsonProvider extends Ext_direct_Provider {
  */
 interface Ext_direct_RemotingProvider extends Ext_direct_JsonProvider {
 
+    namespace: string;
+
     new(config:Object): Ext_direct_RemotingProvider;
 
     connect(): void;
@@ -4643,6 +4645,11 @@ interface Ext_direct_RemotingProvider extends Ext_direct_JsonProvider {
 
     isConnected(): bool;
 
+    getCallData(transaction:any): void;
+
+    createEvent(response:any): void;
+
+    createHandler(action:any, method:any):any;
 }
 
 

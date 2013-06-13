@@ -8,7 +8,7 @@ Ext.define('Admin.store.contentManager.ContentTreeStore', {
 
     proxy: {
         type: 'direct',
-        directFn: Admin.lib.RemoteService.content_tree,
+        directFn: api_remote.RemoteService.content_tree,
         simpleSortMode: true,
         reader: {
             type: 'json',

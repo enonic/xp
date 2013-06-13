@@ -1,45 +1,66 @@
-Ext.define('Admin.lib.JsonRpcProvider', {
+module api_remote {
 
-    alias: 'direct.jsonrpcprovider',
-    extend: 'Ext.direct.RemotingProvider',
+    export class JsonRpcProvider {
+        ext:any; //Ext_direct_RemotingProvider;
 
-    initAPI: function () {
-        var methods = this.methods;
-        var namespace = this.namespace;
-
-        var methodName;
-        for (var i = 0; i < methods.length; i++) {
-            methodName = methods[i];
-
-            var def = {
-                name: methodName,
-                len: 1
+        constructor(url:string, methods:string[], namespace:string) {
+            var config = {
+                url: url,
+                type: 'jsonrpc',
+                namespace: namespace,
+                methods: methods,
+                enableBuffer: 20,
+                alias: 'direct.jsonrpcprovider'
             };
 
-            var method = new Ext.direct.RemotingMethod(def);
-            namespace[methodName] = this.createHandler(null, method);
-        }
-    },
+            var remotingProvider = new Ext.direct.RemotingProvider(config);
+            remotingProvider.getCallData = this.getCallData;
+            remotingProvider.createEvent = this.createEvent;
 
-    getCallData: function (transaction) {
-        return {
-            jsonrpc: '2.0',
-            id: transaction.tid,
-            method: transaction.method,
-            params: transaction.data[0]
-        };
-    },
+            this.ext = remotingProvider;
+            this.ext.isProvider = true;
 
-    createEvent: function (response) {
-        var error = response.error ? true : false;
-
-        response.tid = response.id;
-        response.type = error ? 'exception' : 'rpc';
-
-        if (error) {
-            response.message = response.error.message;
+            this.initAPI(methods);
         }
 
-        return Ext.create('direct.' + response.type, response);
+        private initAPI(methods:string[]) {
+            var namespace = this.ext.namespace;
+
+            var methodName: string, length = methods.length;
+            for (var i = 0; i < length; i++) {
+                methodName = methods[i];
+
+                var def = {
+                    name: methodName,
+                    len: 1
+                };
+
+                var method = new Ext.direct.RemotingMethod(def);
+                namespace[methodName] = this.ext.createHandler(null, method);
+            }
+        }
+
+        private getCallData(transaction:any): any {
+            return {
+                jsonrpc: '2.0',
+                id: transaction.tid,
+                method: transaction.method,
+                params: transaction.data[0]
+            };
+        }
+
+        private createEvent(response:any): any {
+            var error:bool = response.error ? true : false;
+
+            response.tid = response.id;
+            response.type = error ? 'exception' : 'rpc';
+
+            if (error) {
+                response.message = response.error.message;
+            }
+
+            return Ext.create('direct.' + response.type, response);
+        }
     }
-});
+
+}

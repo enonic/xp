@@ -54,7 +54,7 @@ var api_handler;
     var DeleteSpacesHandler = (function () {
         function DeleteSpacesHandler() { }
         DeleteSpacesHandler.prototype.doDelete = function (deleteSpaceParam, callback) {
-            Admin.lib.RemoteService.space_delete(deleteSpaceParam, function (response) {
+            api_remote.RemoteService.space_delete(deleteSpaceParam, function (response) {
                 if(response) {
                     callback.call(this, response.success, response);
                 } else {
@@ -66,6 +66,246 @@ var api_handler;
     })();
     api_handler.DeleteSpacesHandler = DeleteSpacesHandler;    
 })(api_handler || (api_handler = {}));
+var api_remote;
+(function (api_remote) {
+    var JsonRpcProvider = (function () {
+        function JsonRpcProvider(url, methods, namespace) {
+            var config = {
+                url: url,
+                type: 'jsonrpc',
+                namespace: namespace,
+                methods: methods,
+                enableBuffer: 20,
+                alias: 'direct.jsonrpcprovider'
+            };
+            var remotingProvider = new Ext.direct.RemotingProvider(config);
+            remotingProvider.getCallData = this.getCallData;
+            remotingProvider.createEvent = this.createEvent;
+            this.ext = remotingProvider;
+            this.ext.isProvider = true;
+            this.initAPI(methods);
+        }
+        JsonRpcProvider.prototype.initAPI = function (methods) {
+            var namespace = this.ext.namespace;
+            var methodName, length = methods.length;
+            for(var i = 0; i < length; i++) {
+                methodName = methods[i];
+                var def = {
+                    name: methodName,
+                    len: 1
+                };
+                var method = new Ext.direct.RemotingMethod(def);
+                namespace[methodName] = this.ext.createHandler(null, method);
+            }
+        };
+        JsonRpcProvider.prototype.getCallData = function (transaction) {
+            return {
+                jsonrpc: '2.0',
+                id: transaction.tid,
+                method: transaction.method,
+                params: transaction.data[0]
+            };
+        };
+        JsonRpcProvider.prototype.createEvent = function (response) {
+            var error = response.error ? true : false;
+            response.tid = response.id;
+            response.type = error ? 'exception' : 'rpc';
+            if(error) {
+                response.message = response.error.message;
+            }
+            return Ext.create('direct.' + response.type, response);
+        };
+        return JsonRpcProvider;
+    })();
+    api_remote.JsonRpcProvider = JsonRpcProvider;    
+})(api_remote || (api_remote = {}));
+var api_remote;
+(function (api_remote) {
+    api_remote.RemoteService;
+    var RemoteServiceImpl = (function () {
+        function RemoteServiceImpl() {
+        }
+        RemoteServiceImpl.prototype.init = function (namespace) {
+            var url = api_util.getAbsoluteUri("admin/rest/jsonrpc");
+            var methods = [
+                "account_find", 
+                "account_getGraph", 
+                "account_changePassword", 
+                "account_verifyUniqueEmail", 
+                "account_suggestUserName", 
+                "account_createOrUpdate", 
+                "account_delete", 
+                "account_get", 
+                "util_getCountries", 
+                "util_getLocales", 
+                "util_getTimeZones", 
+                "userstore_getAll", 
+                "userstore_get", 
+                "userstore_getConnectors", 
+                "userstore_createOrUpdate", 
+                "userstore_delete", 
+                "content_createOrUpdate", 
+                "content_list", 
+                "contentType_get", 
+                "content_tree", 
+                "content_get", 
+                "contentType_list", 
+                "content_delete", 
+                "content_validate", 
+                "content_find", 
+                "contentType_createOrUpdate", 
+                "contentType_delete", 
+                "contentType_tree", 
+                "schema_list", 
+                "schema_tree", 
+                "system_getSystemInfo", 
+                "mixin_get", 
+                "mixin_createOrUpdate", 
+                "mixin_delete", 
+                "relationshipType_get", 
+                "relationshipType_createOrUpdate", 
+                "relationshipType_delete", 
+                "space_list", 
+                "space_get", 
+                "space_delete", 
+                "space_createOrUpdate", 
+                "binary_create"
+            ];
+            var jsonRpcProvider = new api_remote.JsonRpcProvider(url, methods, namespace);
+            this.provider = Ext.Direct.addProvider(jsonRpcProvider.ext);
+        };
+        RemoteServiceImpl.prototype.account_find = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.account_getGraph = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.account_changePassword = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.account_verifyUniqueEmail = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.account_suggestUserName = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.account_createOrUpdate = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.account_delete = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.account_get = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.util_getCountries = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.util_getLocales = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.util_getTimeZones = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.userstore_getAll = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.userstore_get = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.userstore_getConnectors = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.userstore_createOrUpdate = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.userstore_delete = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.content_createOrUpdate = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.contentType_get = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.content_list = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.content_tree = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.content_get = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.contentType_list = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.content_delete = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.content_find = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.content_validate = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.contentType_createOrUpdate = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.contentType_delete = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.contentType_tree = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.schema_tree = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.schema_list = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.system_getSystemInfo = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.mixin_get = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.mixin_createOrUpdate = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.mixin_delete = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.relationshipType_get = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.relationshipType_createOrUpdate = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.relationshipType_delete = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.space_list = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.space_get = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.space_delete = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.space_createOrUpdate = function (params, callback) {
+            console.log(params, callback);
+        };
+        RemoteServiceImpl.prototype.binary_create = function (params, callback) {
+            console.log(params, callback);
+        };
+        return RemoteServiceImpl;
+    })();    
+    var remoteServiceImpl = new RemoteServiceImpl();
+    api_remote.RemoteService = remoteServiceImpl;
+    remoteServiceImpl.init('api_remote.RemoteService');
+})(api_remote || (api_remote = {}));
 var api_event;
 (function (api_event) {
     var Event = (function () {

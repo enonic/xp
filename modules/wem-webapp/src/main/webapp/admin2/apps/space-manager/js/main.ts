@@ -1,9 +1,6 @@
 ///<reference path='../../../api/js/ExtJs.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
-///<reference path='../../../api/js/lib/JsonRpcProvider.ts' />
-///<reference path='../../../api/js/lib/RemoteService.ts' />
-
 ///<reference path='event/DeletedEvent.ts' />
 ///<reference path='event/BaseSpaceModelEvent.ts' />
 ///<reference path='event/DeletePromptEvent.ts' />

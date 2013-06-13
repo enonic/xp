@@ -195,7 +195,7 @@ module app_ui {
                 for (var i in spaces) {
                     var space = spaces[i];
                     console.log(space);
-                    Admin.lib.RemoteService.space_get({
+                    api_remote.RemoteService.space_get({
                         "spaceName": [space.get('name')]
                     }, (r) => {
                         this.ext.el.unmask();
