@@ -51,6 +51,7 @@
 ///<reference path='view/wizard/SpaceWizardToolbar.ts' />
 ///<reference path='view/wizard/SpaceStepPanel.ts' />
 ///<reference path='view/wizard/SpaceWizardPanel.ts' />
+///<reference path='wizard/SpaceWizardPanel2.ts' />
 
 ///<reference path='view/AdminImageButton.ts' />
 ///<reference path='view/TopBarMenuItem.ts' />
@@ -93,6 +94,9 @@ module components {
     export var tabPanel;
     export var deleteWindow;
 }
+
+
+
 
 Ext.application({
     name: 'spaceAdmin',

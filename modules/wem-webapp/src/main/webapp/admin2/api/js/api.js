@@ -95,8 +95,8 @@ var api_event;
     }
     api_event.fireEvent = fireEvent;
 })(api_event || (api_event = {}));
-var api_ui;
-(function (api_ui) {
+var api_action;
+(function (api_action) {
     var Action = (function () {
         function Action(label) {
             this.enabled = true;
@@ -152,8 +152,8 @@ var api_ui;
         };
         return Action;
     })();
-    api_ui.Action = Action;    
-})(api_ui || (api_ui = {}));
+    api_action.Action = Action;    
+})(api_action || (api_action = {}));
 var api_ui;
 (function (api_ui) {
     var ElementHelper = (function () {
@@ -176,6 +176,10 @@ var api_ui;
         };
         ElementHelper.prototype.setInnerHtml = function (value) {
             this.el.innerHTML = value;
+            return this;
+        };
+        ElementHelper.prototype.setValue = function (value) {
+            this.el.setAttribute("value", value);
             return this;
         };
         ElementHelper.prototype.addClass = function (clsName) {
@@ -437,27 +441,6 @@ var api_ui;
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
-    var DeckPanel = (function (_super) {
-        __extends(DeckPanel, _super);
-        function DeckPanel(name) {
-                _super.call(this, name);
-        }
-        DeckPanel.prototype.addPanel = function (panel) {
-            return 0;
-        };
-        DeckPanel.prototype.getPanel = function (index) {
-            return null;
-        };
-        DeckPanel.prototype.removePanel = function (index) {
-        };
-        DeckPanel.prototype.showPanel = function (index) {
-        };
-        return DeckPanel;
-    })(api_ui.Panel);
-    api_ui.DeckPanel = DeckPanel;    
-})(api_ui || (api_ui = {}));
-var api_ui;
-(function (api_ui) {
     var ButtonEl = (function (_super) {
         __extends(ButtonEl, _super);
         function ButtonEl(name) {
@@ -508,6 +491,119 @@ var api_ui;
     })(api_ui.ButtonEl);
     api_ui.AbstractButton = AbstractButton;    
 })(api_ui || (api_ui = {}));
+var api_ui_toolbar;
+(function (api_ui_toolbar) {
+    var Toolbar = (function (_super) {
+        __extends(Toolbar, _super);
+        function Toolbar() {
+                _super.call(this, "Toolbar");
+            this.components = [];
+            this.getEl().addClass("toolbar");
+            this.initExt();
+        }
+        Toolbar.prototype.initExt = function () {
+            var htmlEl = this.getHTMLElement();
+            this.ext = new Ext.Component({
+                contentEl: htmlEl,
+                region: 'north'
+            });
+        };
+        Toolbar.prototype.addAction = function (action) {
+            var button = this.addActionButton(action);
+            this.appendChild(button);
+        };
+        Toolbar.prototype.addElement = function (element) {
+            if(this.hasGreedySpacer()) {
+                element.getEl().addClass('pull-right');
+            }
+            this.appendChild(element);
+        };
+        Toolbar.prototype.addGreedySpacer = function () {
+            var spacer = new ToolbarGreedySpacer();
+            this.components.push(spacer);
+        };
+        Toolbar.prototype.addActionButton = function (action) {
+            var button = new ToolbarButton(action);
+            if(this.hasGreedySpacer()) {
+                button.setFloatRight(true);
+            }
+            this.components.push(button);
+            return button;
+        };
+        Toolbar.prototype.hasGreedySpacer = function () {
+            for(var i in this.components) {
+                var comp = this.components[i];
+                if(comp instanceof ToolbarGreedySpacer) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        return Toolbar;
+    })(api_ui.DivEl);
+    api_ui_toolbar.Toolbar = Toolbar;    
+    var ToolbarButton = (function (_super) {
+        __extends(ToolbarButton, _super);
+        function ToolbarButton(action) {
+            var _this = this;
+                _super.call(this, "ToolbarButton", action.getLabel());
+            this.action = action;
+            this.getEl().addEventListener("click", function (evt) {
+                _this.action.execute();
+            });
+            if(action.getIconClass()) {
+                this.getEl().addClass(action.getIconClass());
+            }
+            this.setEnable(action.isEnabled());
+            action.addPropertyChangeListener(function (action) {
+                _this.setEnable(action.isEnabled());
+            });
+        }
+        ToolbarButton.prototype.setFloatRight = function (value) {
+            if(value) {
+                this.getEl().addClass('pull-right');
+            }
+        };
+        return ToolbarButton;
+    })(api_ui.AbstractButton);    
+    var ToolbarGreedySpacer = (function () {
+        function ToolbarGreedySpacer() {
+        }
+        return ToolbarGreedySpacer;
+    })();    
+})(api_ui_toolbar || (api_ui_toolbar = {}));
+var api_ui_menu;
+(function (api_ui_menu) {
+    var MenuItem = (function (_super) {
+        __extends(MenuItem, _super);
+        function MenuItem(action) {
+            var _this = this;
+                _super.call(this, "menu-item");
+            this.action = action;
+            this.getEl().setInnerHtml(this.action.getLabel());
+            this.getEl().addEventListener("click", function () {
+                if(action.isEnabled()) {
+                    _this.action.execute();
+                }
+            });
+            this.setEnable(action.isEnabled());
+            action.addPropertyChangeListener(function (action) {
+                _this.setEnable(action.isEnabled());
+            });
+        }
+        MenuItem.prototype.setEnable = function (value) {
+            var el = this.getEl();
+            el.setDisabled(!value);
+            if(value) {
+                el.removeClass("disabled");
+            } else {
+                el.addClass("disabled");
+            }
+        };
+        return MenuItem;
+    })(api_ui.LiEl);
+    api_ui_menu.MenuItem = MenuItem;    
+})(api_ui_menu || (api_ui_menu = {}));
 var api_ui_detailpanel;
 (function (api_ui_detailpanel) {
     var DetailPanel = (function (_super) {
@@ -668,38 +764,72 @@ var api_ui_detailpanel;
     })(api_ui.DivEl);
     api_ui_detailpanel.DetailPanelBox = DetailPanelBox;    
 })(api_ui_detailpanel || (api_ui_detailpanel = {}));
-var api_ui_menu;
-(function (api_ui_menu) {
-    var MenuItem = (function (_super) {
-        __extends(MenuItem, _super);
-        function MenuItem(action) {
-            var _this = this;
-                _super.call(this, "menu-item");
-            this.action = action;
-            this.getEl().setInnerHtml(this.action.getLabel());
-            this.getEl().addEventListener("click", function () {
-                if(action.isEnabled()) {
-                    _this.action.execute();
-                }
-            });
-            this.setEnable(action.isEnabled());
-            action.addPropertyChangeListener(function (action) {
-                _this.setEnable(action.isEnabled());
-            });
+var api_ui_wizard;
+(function (api_ui_wizard) {
+    var WizardPanel = (function (_super) {
+        __extends(WizardPanel, _super);
+        function WizardPanel() {
+                _super.call(this, "wizard-panel");
+            this.steps = [];
+            this.addStepContainer();
+            this.initExt();
         }
-        MenuItem.prototype.setEnable = function (value) {
-            var el = this.getEl();
-            el.setDisabled(!value);
-            if(value) {
-                el.removeClass("disabled");
-            } else {
-                el.addClass("disabled");
-            }
+        WizardPanel.prototype.initExt = function () {
+            var htmlEl = this.getHTMLElement();
+            this.ext = new Ext.Component({
+                contentEl: htmlEl
+            });
         };
-        return MenuItem;
-    })(api_ui.LiEl);
-    api_ui_menu.MenuItem = MenuItem;    
-})(api_ui_menu || (api_ui_menu = {}));
+        WizardPanel.prototype.setTitle = function (title) {
+            var titleEl = new api_ui.Element("input", "title");
+            titleEl.getEl().setValue(title);
+            this.appendChild(titleEl);
+        };
+        WizardPanel.prototype.setSubtitle = function (subtitle) {
+            var subTitleEl = new api_ui.Element("input", "title");
+            subTitleEl.getEl().setValue(subtitle);
+            this.appendChild(subTitleEl);
+        };
+        WizardPanel.prototype.addStep = function (step) {
+            this.steps.push(step);
+            this.stepContainer.addStep(step);
+        };
+        WizardPanel.prototype.addStepContainer = function () {
+            var stepContainerEl = new WizardStepContainer();
+            this.stepContainer = stepContainerEl;
+            this.appendChild(stepContainerEl);
+        };
+        return WizardPanel;
+    })(api_ui.Panel);
+    api_ui_wizard.WizardPanel = WizardPanel;    
+    var WizardStepContainer = (function (_super) {
+        __extends(WizardStepContainer, _super);
+        function WizardStepContainer() {
+                _super.call(this, "step-container");
+            this.getEl().addClass("step-container");
+        }
+        WizardStepContainer.prototype.addStep = function (step) {
+            var stepEl = new api_ui.LiEl(step.getLabel());
+            stepEl.getEl().setInnerHtml(step.getLabel());
+            this.appendChild(stepEl);
+        };
+        return WizardStepContainer;
+    })(api_ui.UlEl);    
+    var WizardStep = (function () {
+        function WizardStep(label, panel) {
+            this.label = label;
+            this.panel = panel;
+        }
+        WizardStep.prototype.getLabel = function () {
+            return this.label;
+        };
+        WizardStep.prototype.getPanel = function () {
+            return this.panel;
+        };
+        return WizardStep;
+    })();
+    api_ui_wizard.WizardStep = WizardStep;    
+})(api_ui_wizard || (api_ui_wizard = {}));
 var api_ui_menu;
 (function (api_ui_menu) {
     var ContextMenu = (function (_super) {
@@ -851,146 +981,6 @@ var api_ui_menu;
     })(api_ui.ButtonEl);
     api_ui_menu.ActionMenuButton = ActionMenuButton;    
 })(api_ui_menu || (api_ui_menu = {}));
-var api_ui_tab;
-(function (api_ui_tab) {
-    var TabMenu = (function () {
-        function TabMenu() { }
-        TabMenu.prototype.addTab = function (tab) {
-        };
-        TabMenu.prototype.addTabSelectedListener = function (listener) {
-        };
-        TabMenu.prototype.addTabRemovedListener = function (listener) {
-        };
-        return TabMenu;
-    })();
-    api_ui_tab.TabMenu = TabMenu;    
-})(api_ui_tab || (api_ui_tab = {}));
-var api_ui_tab;
-(function (api_ui_tab) {
-    var TabMenuItem = (function () {
-        function TabMenuItem() {
-        }
-        TabMenuItem.prototype.setTabIndex = function (value) {
-        };
-        TabMenuItem.prototype.getTabIndex = function () {
-            return 0;
-        };
-        return TabMenuItem;
-    })();
-    api_ui_tab.TabMenuItem = TabMenuItem;    
-})(api_ui_tab || (api_ui_tab = {}));
-var api_ui_tab;
-(function (api_ui_tab) {
-    var TabPanelController = (function () {
-        function TabPanelController(tabNavigator, deckPanel) {
-            this.tabs = [];
-            this.deckIndexByTabIndex = {
-            };
-            this.tabNavigator = tabNavigator;
-            this.deckPanel = deckPanel;
-            this.tabNavigator.addTabSelectedListener(this);
-            this.tabNavigator.addTabRemovedListener(this);
-        }
-        TabPanelController.prototype.addPanel = function (panel, tab) {
-            var tabIndex = this.tabs.length;
-            tab.setTabIndex(tabIndex);
-            this.tabNavigator.addTab(tab);
-            this.deckIndexByTabIndex[tabIndex] = this.deckPanel.addPanel(panel);
-            this.tabs.push(tab);
-        };
-        TabPanelController.prototype.removedTab = function (tab) {
-            var deckIndex = this.deckIndexByTabIndex[tab.getTabIndex()];
-            this.deckPanel.removePanel(deckIndex);
-        };
-        TabPanelController.prototype.selectedTab = function (tab) {
-            var deckIndex = this.deckIndexByTabIndex[tab.getTabIndex()];
-            this.deckPanel.showPanel(deckIndex);
-        };
-        return TabPanelController;
-    })();
-    api_ui_tab.TabPanelController = TabPanelController;    
-})(api_ui_tab || (api_ui_tab = {}));
-var api_ui_toolbar;
-(function (api_ui_toolbar) {
-    var Toolbar = (function (_super) {
-        __extends(Toolbar, _super);
-        function Toolbar() {
-                _super.call(this, "Toolbar");
-            this.components = [];
-            this.getEl().addClass("toolbar");
-            this.initExt();
-        }
-        Toolbar.prototype.initExt = function () {
-            var htmlEl = this.getHTMLElement();
-            this.ext = new Ext.Component({
-                contentEl: htmlEl,
-                region: 'north'
-            });
-        };
-        Toolbar.prototype.addAction = function (action) {
-            var button = this.addActionButton(action);
-            this.appendChild(button);
-        };
-        Toolbar.prototype.addElement = function (element) {
-            if(this.hasGreedySpacer()) {
-                element.getEl().addClass('pull-right');
-            }
-            this.appendChild(element);
-        };
-        Toolbar.prototype.addGreedySpacer = function () {
-            var spacer = new ToolbarGreedySpacer();
-            this.components.push(spacer);
-        };
-        Toolbar.prototype.addActionButton = function (action) {
-            var button = new ToolbarButton(action);
-            if(this.hasGreedySpacer()) {
-                button.setFloatRight(true);
-            }
-            this.components.push(button);
-            return button;
-        };
-        Toolbar.prototype.hasGreedySpacer = function () {
-            for(var i in this.components) {
-                var comp = this.components[i];
-                if(comp instanceof ToolbarGreedySpacer) {
-                    return true;
-                }
-            }
-            return false;
-        };
-        return Toolbar;
-    })(api_ui.DivEl);
-    api_ui_toolbar.Toolbar = Toolbar;    
-    var ToolbarButton = (function (_super) {
-        __extends(ToolbarButton, _super);
-        function ToolbarButton(action) {
-            var _this = this;
-                _super.call(this, "ToolbarButton", action.getLabel());
-            this.action = action;
-            this.getEl().addEventListener("click", function (evt) {
-                _this.action.execute();
-            });
-            if(action.getIconClass()) {
-                this.getEl().addClass(action.getIconClass());
-            }
-            this.setEnable(action.isEnabled());
-            action.addPropertyChangeListener(function (action) {
-                _this.setEnable(action.isEnabled());
-            });
-        }
-        ToolbarButton.prototype.setFloatRight = function (value) {
-            if(value) {
-                this.getEl().addClass('pull-right');
-            }
-        };
-        return ToolbarButton;
-    })(api_ui.AbstractButton);    
-    var ToolbarGreedySpacer = (function () {
-        function ToolbarGreedySpacer() {
-        }
-        return ToolbarGreedySpacer;
-    })();    
-})(api_ui_toolbar || (api_ui_toolbar = {}));
 var api_ui_dialog;
 (function (api_ui_dialog) {
     var DialogButton = (function (_super) {
@@ -1113,7 +1103,7 @@ var api_ui_dialog;
                 _super.call(this, "Cancel");
         }
         return ModalDialogCancelAction;
-    })(api_ui.Action);
+    })(api_action.Action);
     api_ui_dialog.ModalDialogCancelAction = ModalDialogCancelAction;    
 })(api_ui_dialog || (api_ui_dialog = {}));
 var api_delete;
@@ -1180,7 +1170,7 @@ var api_delete;
                 _super.call(this, "Cancel");
         }
         return CancelDeleteDialogAction;
-    })(api_ui.Action);
+    })(api_action.Action);
     api_delete.CancelDeleteDialogAction = CancelDeleteDialogAction;    
     var DeleteDialogItemList = (function (_super) {
         __extends(DeleteDialogItemList, _super);

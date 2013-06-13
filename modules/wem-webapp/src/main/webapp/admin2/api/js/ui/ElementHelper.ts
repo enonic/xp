@@ -31,6 +31,11 @@ module api_ui {
             return this;
         }
 
+        setValue(value:string):api_ui.ElementHelper {
+            this.el.setAttribute("value", value);
+            return this;
+        }
+
         addClass(clsName:string) {
             if (!this.hasClass(clsName)) {
                 if (this.el.className === '') {

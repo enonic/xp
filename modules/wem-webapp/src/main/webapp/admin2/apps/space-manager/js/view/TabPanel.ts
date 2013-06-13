@@ -204,7 +204,10 @@ module app_ui {
                             var editing = true;
                             var title = <string> space.get('displayName');
                             var data = space;
-                            var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel(id, title, editing, data);
+                            //var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel(id, title, editing, data);
+                            var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel2(id, title);
+
+
 
                             //check if preview tab is open and close it
                             var index = this.ext.items.indexOfKey(this.generateTabId(space, false));

@@ -426,7 +426,7 @@ var app;
             });
         }
         return NewSpaceAction;
-    })(api_ui.Action);
+    })(api_action.Action);
     app.NewSpaceAction = NewSpaceAction;    
     var OpenSpaceAction = (function (_super) {
         __extends(OpenSpaceAction, _super);
@@ -438,7 +438,7 @@ var app;
             });
         }
         return OpenSpaceAction;
-    })(api_ui.Action);
+    })(api_action.Action);
     app.OpenSpaceAction = OpenSpaceAction;    
     var EditSpaceAction = (function (_super) {
         __extends(EditSpaceAction, _super);
@@ -450,7 +450,7 @@ var app;
             });
         }
         return EditSpaceAction;
-    })(api_ui.Action);
+    })(api_action.Action);
     app.EditSpaceAction = EditSpaceAction;    
     var DeleteSpaceAction = (function (_super) {
         __extends(DeleteSpaceAction, _super);
@@ -462,7 +462,7 @@ var app;
             });
         }
         return DeleteSpaceAction;
-    })(api_ui.Action);
+    })(api_action.Action);
     app.DeleteSpaceAction = DeleteSpaceAction;    
     var SpaceActions = (function () {
         function SpaceActions() { }
@@ -523,7 +523,7 @@ var app_wizard;
             });
         }
         return SaveSpaceAction;
-    })(api_ui.Action);
+    })(api_action.Action);
     app_wizard.SaveSpaceAction = SaveSpaceAction;    
     var DuplicateSpaceAction = (function (_super) {
         __extends(DuplicateSpaceAction, _super);
@@ -533,7 +533,7 @@ var app_wizard;
             });
         }
         return DuplicateSpaceAction;
-    })(api_ui.Action);
+    })(api_action.Action);
     app_wizard.DuplicateSpaceAction = DuplicateSpaceAction;    
     var DeleteSpaceAction = (function (_super) {
         __extends(DeleteSpaceAction, _super);
@@ -544,7 +544,7 @@ var app_wizard;
             });
         }
         return DeleteSpaceAction;
-    })(api_ui.Action);
+    })(api_action.Action);
     app_wizard.DeleteSpaceAction = DeleteSpaceAction;    
     var CloseSpaceAction = (function (_super) {
         __extends(CloseSpaceAction, _super);
@@ -554,7 +554,7 @@ var app_wizard;
             });
         }
         return CloseSpaceAction;
-    })(api_ui.Action);
+    })(api_action.Action);
     app_wizard.CloseSpaceAction = CloseSpaceAction;    
     var SpaceWizardActions = (function () {
         function SpaceWizardActions() {
@@ -2700,7 +2700,7 @@ var app_ui;
             tabPanel.addTab(new api_ui_detailpanel.DetailPanelTab("Analytics"));
             tabPanel.addTab(new api_ui_detailpanel.DetailPanelTab("Sales"));
             tabPanel.addTab(new api_ui_detailpanel.DetailPanelTab("History"));
-            var testAction = new api_ui.Action("Test");
+            var testAction = new api_action.Action("Test");
             tabPanel.addAction(testAction);
             this.getEl().appendChild(tabPanel.getHTMLElement());
         };
@@ -2759,7 +2759,7 @@ var app_ui;
                 _super.call(this, "Delete");
         }
         return DeleteSpaceDialogAction;
-    })(api_ui.Action);
+    })(api_action.Action);
     app_ui.DeleteSpaceDialogAction = DeleteSpaceDialogAction;    
 })(app_ui || (app_ui = {}));
 var app_ui;
@@ -3239,6 +3239,24 @@ var app_ui_wizard;
         return SpaceWizardPanel;
     })(app_ui.WizardPanel);
     app_ui_wizard.SpaceWizardPanel = SpaceWizardPanel;    
+})(app_ui_wizard || (app_ui_wizard = {}));
+var app_ui_wizard;
+(function (app_ui_wizard) {
+    var SpaceWizardPanel2 = (function (_super) {
+        __extends(SpaceWizardPanel2, _super);
+        function SpaceWizardPanel2(id, title) {
+                _super.call(this);
+            this.setTitle(title);
+            this.setSubtitle(id);
+            var stepPanel = new api_ui.Panel("spacePanel");
+            this.addStep(new api_ui_wizard.WizardStep("Space", stepPanel));
+            this.addStep(new api_ui_wizard.WizardStep("Schemas", stepPanel));
+            this.addStep(new api_ui_wizard.WizardStep("Modules", stepPanel));
+            this.addStep(new api_ui_wizard.WizardStep("Templates", stepPanel));
+        }
+        return SpaceWizardPanel2;
+    })(api_ui_wizard.WizardPanel);
+    app_ui_wizard.SpaceWizardPanel2 = SpaceWizardPanel2;    
 })(app_ui_wizard || (app_ui_wizard = {}));
 var app_ui;
 (function (app_ui) {
@@ -4088,7 +4106,7 @@ var app_ui;
                             var editing = true;
                             var title = space.get('displayName');
                             var data = space;
-                            var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel(id, title, editing, data);
+                            var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel2(id, title);
                             var index = _this.ext.items.indexOfKey(_this.generateTabId(space, false));
                             if(index >= 0) {
                                 _this.ext.remove(index);
@@ -4843,53 +4861,6 @@ Ext.define('Admin.controller.WizardController', {
         return Ext.ComponentQuery.query('#spaceWizardToolbar', this.getWizardTab())[0];
     }
 });
-var app_appbar;
-(function (app_appbar) {
-    var SpaceTabMenuItem = (function (_super) {
-        __extends(SpaceTabMenuItem, _super);
-        function SpaceTabMenuItem() {
-            _super.apply(this, arguments);
-
-        }
-        return SpaceTabMenuItem;
-    })(api_ui_tab.TabMenuItem);
-    app_appbar.SpaceTabMenuItem = SpaceTabMenuItem;    
-})(app_appbar || (app_appbar = {}));
-var app;
-(function (app) {
-    var SpaceAppBarTabMenu = (function () {
-        function SpaceAppBarTabMenu() {
-            app_event.NewSpaceEvent.on(function (event) {
-            });
-        }
-        return SpaceAppBarTabMenu;
-    })();
-    app.SpaceAppBarTabMenu = SpaceAppBarTabMenu;    
-})(app || (app = {}));
-var app;
-(function (app) {
-    var SpaceAppPanelController = (function (_super) {
-        __extends(SpaceAppPanelController, _super);
-        function SpaceAppPanelController() {
-            var _this = this;
-            var appBarTabMenu = new api_ui_tab.TabMenu();
-            var appPanel = new api_ui.DeckPanel();
-                _super.call(this, appBarTabMenu, appPanel);
-            app_event.NewSpaceEvent.on(function (event) {
-                var tabMenuItem = new app_appbar.SpaceTabMenuItem();
-                var panel = new api_ui.Panel();
-                _this.addPanel(panel, tabMenuItem);
-            });
-            app_event.OpenSpaceEvent.on(function (event) {
-                var tabMenuItem = new app_appbar.SpaceTabMenuItem();
-                var panel = new api_ui.Panel();
-                _this.addPanel(panel, tabMenuItem);
-            });
-        }
-        return SpaceAppPanelController;
-    })(api_ui_tab.TabPanelController);
-    app.SpaceAppPanelController = SpaceAppPanelController;    
-})(app || (app = {}));
 var app;
 (function (app) {
     app.id = 'space-manager';
