@@ -2,8 +2,8 @@ module api_ui {
 
     export class ImgEl extends api_ui.Element {
 
-        constructor(src:string, name?:string, className?:string) {
-            super("img", name, className, api_ui.ImgHelper.create());
+        constructor(src:string, idPrefix?:string, className?:string) {
+            super("img", idPrefix, className, api_ui.ImgHelper.create());
             this.getEl().setSrc(src);
         }
 

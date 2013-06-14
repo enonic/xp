@@ -2,8 +2,8 @@ module api_ui {
 
     export class ButtonEl extends api_ui.Element {
 
-        constructor(name?:string, className?:string) {
-            super("button", name, className);
+        constructor(idPrefix?:string, className?:string) {
+            super("button", idPrefix, className);
         }
     }
 }

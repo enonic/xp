@@ -5,8 +5,8 @@ module api_ui {
      */
     export class DeckPanel extends Panel {
 
-        constructor(name?:string) {
-            super(name);
+        constructor(idPrefix?:string) {
+            super(idPrefix);
         }
 
         addPanel(panel:Panel):number {

@@ -540,14 +540,14 @@ var api_ui;
 var api_ui;
 (function (api_ui) {
     var Element = (function () {
-        function Element(elementName, name, className, elHelper) {
+        function Element(elementName, idPrefix, className, elHelper) {
             if(elHelper == null) {
                 this.el = api_ui.ElementHelper.fromName(elementName);
             } else {
                 this.el = elHelper;
             }
-            if(name != null) {
-                this.id = name + '-' + (++api_ui.Element.constructorCounter);
+            if(idPrefix != null) {
+                this.id = idPrefix + '-' + (++api_ui.Element.constructorCounter);
                 this.el.setId(this.id);
             }
             if(className != null) {
@@ -590,8 +590,8 @@ var api_ui;
 (function (api_ui) {
     var DivEl = (function (_super) {
         __extends(DivEl, _super);
-        function DivEl(name, className) {
-                _super.call(this, "div", name, className);
+        function DivEl(idPrefix, className) {
+                _super.call(this, "div", idPrefix, className);
         }
         return DivEl;
     })(api_ui.Element);
@@ -601,8 +601,8 @@ var api_ui;
 (function (api_ui) {
     var H1El = (function (_super) {
         __extends(H1El, _super);
-        function H1El(name, className) {
-                _super.call(this, "h1", name, className);
+        function H1El(idPrefix, className) {
+                _super.call(this, "h1", idPrefix, className);
         }
         return H1El;
     })(api_ui.Element);
@@ -612,8 +612,8 @@ var api_ui;
 (function (api_ui) {
     var H2El = (function (_super) {
         __extends(H2El, _super);
-        function H2El(name, className) {
-                _super.call(this, "h2", name, className);
+        function H2El(idPrefix, className) {
+                _super.call(this, "h2", idPrefix, className);
         }
         return H2El;
     })(api_ui.Element);
@@ -623,8 +623,8 @@ var api_ui;
 (function (api_ui) {
     var H3El = (function (_super) {
         __extends(H3El, _super);
-        function H3El(name, className) {
-                _super.call(this, "h3", name, className);
+        function H3El(idPrefix, className) {
+                _super.call(this, "h3", idPrefix, className);
         }
         return H3El;
     })(api_ui.Element);
@@ -634,8 +634,8 @@ var api_ui;
 (function (api_ui) {
     var H4El = (function (_super) {
         __extends(H4El, _super);
-        function H4El(name, className) {
-                _super.call(this, "h4", name, className);
+        function H4El(idPrefix, className) {
+                _super.call(this, "h4", idPrefix, className);
         }
         return H4El;
     })(api_ui.Element);
@@ -645,8 +645,8 @@ var api_ui;
 (function (api_ui) {
     var UlEl = (function (_super) {
         __extends(UlEl, _super);
-        function UlEl(name, className) {
-                _super.call(this, "ul", name, className);
+        function UlEl(idPrefix, className) {
+                _super.call(this, "ul", idPrefix, className);
         }
         return UlEl;
     })(api_ui.Element);
@@ -656,8 +656,8 @@ var api_ui;
 (function (api_ui) {
     var LiEl = (function (_super) {
         __extends(LiEl, _super);
-        function LiEl(name, className) {
-                _super.call(this, "li", name, className);
+        function LiEl(idPrefix, className) {
+                _super.call(this, "li", idPrefix, className);
         }
         return LiEl;
     })(api_ui.Element);
@@ -667,8 +667,8 @@ var api_ui;
 (function (api_ui) {
     var EmEl = (function (_super) {
         __extends(EmEl, _super);
-        function EmEl(name, className) {
-                _super.call(this, "em", name, className);
+        function EmEl(idPrefix, className) {
+                _super.call(this, "em", idPrefix, className);
         }
         return EmEl;
     })(api_ui.Element);
@@ -678,8 +678,8 @@ var api_ui;
 (function (api_ui) {
     var ImgEl = (function (_super) {
         __extends(ImgEl, _super);
-        function ImgEl(src, name, className) {
-                _super.call(this, "img", name, className, api_ui.ImgHelper.create());
+        function ImgEl(src, idPrefix, className) {
+                _super.call(this, "img", idPrefix, className, api_ui.ImgHelper.create());
             this.getEl().setSrc(src);
         }
         ImgEl.prototype.getEl = function () {
@@ -693,8 +693,8 @@ var api_ui;
 (function (api_ui) {
     var Panel = (function (_super) {
         __extends(Panel, _super);
-        function Panel(name) {
-                _super.call(this, name, "panel");
+        function Panel(idPrefix) {
+                _super.call(this, idPrefix, "panel");
         }
         return Panel;
     })(api_ui.DivEl);
@@ -704,8 +704,8 @@ var api_ui;
 (function (api_ui) {
     var DeckPanel = (function (_super) {
         __extends(DeckPanel, _super);
-        function DeckPanel(name) {
-                _super.call(this, name);
+        function DeckPanel(idPrefix) {
+                _super.call(this, idPrefix);
         }
         DeckPanel.prototype.addPanel = function (panel) {
             return 0;
@@ -725,8 +725,8 @@ var api_ui;
 (function (api_ui) {
     var ButtonEl = (function (_super) {
         __extends(ButtonEl, _super);
-        function ButtonEl(name, className) {
-                _super.call(this, "button", name, className);
+        function ButtonEl(idPrefix, className) {
+                _super.call(this, "button", idPrefix, className);
         }
         return ButtonEl;
     })(api_ui.Element);
@@ -761,8 +761,8 @@ var api_ui;
 (function (api_ui) {
     var AbstractButton = (function (_super) {
         __extends(AbstractButton, _super);
-        function AbstractButton(name, label) {
-                _super.call(this, name);
+        function AbstractButton(idPrefix, label) {
+                _super.call(this, idPrefix);
             this.label = label;
             this.getEl().setInnerHtml(this.label);
         }

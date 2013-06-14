@@ -4,8 +4,8 @@ module api_ui{
 
         private label:string;
 
-        constructor(name:string, label:string) {
-            super(name);
+        constructor(idPrefix:string, label:string) {
+            super(idPrefix);
             this.label = label;
 
             this.getEl().setInnerHtml(this.label);
