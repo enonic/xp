@@ -278,6 +278,7 @@ module api_ui {
         private panels;
         private panelShown;
         constructor(idPrefix?: string);
+        public getSize(): number;
         public addPanel(panel: Panel): number;
         public getPanel(index: number): Panel;
         public removePanel(index: number): Panel;

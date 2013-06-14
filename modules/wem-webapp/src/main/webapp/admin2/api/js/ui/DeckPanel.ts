@@ -13,6 +13,10 @@ module api_ui {
             super(idPrefix || "DeckPanel");
         }
 
+        getSize():number {
+            return this.panels.length;
+        }
+
         /**
          * Add new Panel to the deck.
          * @param panel

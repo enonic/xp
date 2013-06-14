@@ -709,6 +709,9 @@ var api_ui;
             this.panels = [];
             this.panelShown = -1;
         }
+        DeckPanel.prototype.getSize = function () {
+            return this.panels.length;
+        };
         DeckPanel.prototype.addPanel = function (panel) {
             panel.hide();
             this.appendChild(panel);
