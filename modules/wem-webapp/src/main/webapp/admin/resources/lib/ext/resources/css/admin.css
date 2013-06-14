@@ -1551,6 +1551,11 @@ ul.icons-ul > li .icon-li {
 .icon-share-sign:before {
   content: "\f14d"; }
 
+/* This was used in previous revision. Ask LJL if knows about this */
+/* line 38, ../sass/admin/css/_font-awesome.scss */
+.icon-6x {
+  font-size: 6em; }
+
 /**
  * @var {color} $base-color
  * The base color to be used throughout the theme.
