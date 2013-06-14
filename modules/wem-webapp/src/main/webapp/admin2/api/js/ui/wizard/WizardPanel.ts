@@ -1,12 +1,21 @@
 module api_ui_wizard {
     export class WizardPanel extends api_ui.Panel {
+
         private steps:WizardStep[] = [];
+
         private stepContainer:WizardStepContainer;
+
+        private wizardStepPanels:WizardStepPanels;
+
         ext;
 
         constructor() {
             super("wizard-panel");
             this.addStepContainer();
+
+            this.wizardStepPanels = new WizardStepPanels();
+            this.appendChild(this.wizardStepPanels);
+
             this.initExt();
         }
 
@@ -40,6 +49,12 @@ module api_ui_wizard {
             this.appendChild(stepContainerEl);
         }
 
+    }
+
+    class WizardStepPanels extends api_ui.DeckPanel {
+        constructor() {
+            super("WizardStepPanels");
+        }
     }
 
     class WizardStepContainer extends api_ui.UlEl {

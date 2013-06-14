@@ -705,17 +705,41 @@ var api_ui;
     var DeckPanel = (function (_super) {
         __extends(DeckPanel, _super);
         function DeckPanel(idPrefix) {
-                _super.call(this, idPrefix);
+                _super.call(this, idPrefix || "DeckPanel");
+            this.panels = [];
+            this.panelShown = -1;
         }
         DeckPanel.prototype.addPanel = function (panel) {
-            return 0;
+            panel.hide();
+            this.appendChild(panel);
+            return this.panels.push(panel) - 1;
         };
         DeckPanel.prototype.getPanel = function (index) {
-            return null;
+            return this.panels[index];
         };
         DeckPanel.prototype.removePanel = function (index) {
+            var panel = this.panels[index];
+            this.panels.splice(index, 1);
+            if(this.panelShown === index) {
+                if(this.panels.length < index + 1) {
+                    this.panels[this.panels.length].show();
+                    this.panelShown = this.panels.length - 1;
+                } else {
+                    this.panels[index].show();
+                }
+            }
+            return panel;
         };
         DeckPanel.prototype.showPanel = function (index) {
+            for(var i = 0; i < this.panels.length; i++) {
+                var panel = this.panels[i];
+                if(i === index) {
+                    panel.show();
+                    this.panelShown = index;
+                } else {
+                    panel.hide();
+                }
+            }
         };
         return DeckPanel;
     })(api_ui.Panel);
@@ -1046,6 +1070,8 @@ var api_ui_wizard;
                 _super.call(this, "wizard-panel");
             this.steps = [];
             this.addStepContainer();
+            this.wizardStepPanels = new WizardStepPanels();
+            this.appendChild(this.wizardStepPanels);
             this.initExt();
         }
         WizardPanel.prototype.initExt = function () {
@@ -1076,6 +1102,13 @@ var api_ui_wizard;
         return WizardPanel;
     })(api_ui.Panel);
     api_ui_wizard.WizardPanel = WizardPanel;    
+    var WizardStepPanels = (function (_super) {
+        __extends(WizardStepPanels, _super);
+        function WizardStepPanels() {
+                _super.call(this, "WizardStepPanels");
+        }
+        return WizardStepPanels;
+    })(api_ui.DeckPanel);    
     var WizardStepContainer = (function (_super) {
         __extends(WizardStepContainer, _super);
         function WizardStepContainer() {

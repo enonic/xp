@@ -275,10 +275,12 @@ module api_ui {
 }
 module api_ui {
     class DeckPanel extends Panel {
+        private panels;
+        private panelShown;
         constructor(idPrefix?: string);
         public addPanel(panel: Panel): number;
-        public getPanel(index: number);
-        public removePanel(index: number): void;
+        public getPanel(index: number): Panel;
+        public removePanel(index: number): Panel;
         public showPanel(index: number): void;
     }
 }
@@ -370,6 +372,7 @@ module api_ui_wizard {
     class WizardPanel extends api_ui.Panel {
         private steps;
         private stepContainer;
+        private wizardStepPanels;
         public ext;
         constructor();
         private initExt();
