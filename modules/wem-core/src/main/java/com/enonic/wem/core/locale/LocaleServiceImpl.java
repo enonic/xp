@@ -3,11 +3,13 @@ package com.enonic.wem.core.locale;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import javax.inject.Singleton;
 
-public class LocaleServiceImpl
+@Singleton
+public final class LocaleServiceImpl
     implements LocaleService
 {
-    private final ArrayList<Locale> locales = new ArrayList<Locale>();
+    private final ArrayList<Locale> locales = new ArrayList<>();
 
     public LocaleServiceImpl()
     {

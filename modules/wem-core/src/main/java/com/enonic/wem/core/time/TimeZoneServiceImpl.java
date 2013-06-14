@@ -5,13 +5,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Singleton;
+
 import org.joda.time.DateTimeZone;
 
-
-public class TimeZoneServiceImpl
+@Singleton
+public final class TimeZoneServiceImpl
     implements TimeZoneService
 {
-    private final List<DateTimeZone> timeZones = new ArrayList<DateTimeZone>();
+    private final List<DateTimeZone> timeZones = new ArrayList<>();
 
     public TimeZoneServiceImpl()
     {

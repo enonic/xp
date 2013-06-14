@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jdom.Document;
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ import com.enonic.wem.core.support.util.JdomHelper;
  * This implements the country service. It load country codes from an xml file. It tries to find the first resource that exists and load
  * it.
  */
-
+@Singleton
 public final class CountryServiceImpl
     implements CountryService
 {
