@@ -78,8 +78,7 @@ module api_delete{
             super("DeleteDialogItem");
             this.getEl().addClass("item");
 
-            var icon:api_ui.ImgEl = new api_ui.ImgEl();
-            icon.getEl().setSrc(deleteItem.getIconUrl());
+            var icon:api_ui.ImgEl = new api_ui.ImgEl(deleteItem.getIconUrl());
             this.appendChild(icon);
 
             var displayName:api_ui.H4El = new api_ui.H4El();

@@ -678,8 +678,9 @@ var api_ui;
 (function (api_ui) {
     var ImgEl = (function (_super) {
         __extends(ImgEl, _super);
-        function ImgEl(name, className) {
+        function ImgEl(src, name, className) {
                 _super.call(this, "img", name, className, api_ui.ImgHelper.create());
+            this.getEl().setSrc(src);
         }
         ImgEl.prototype.getEl = function () {
             return _super.prototype.getEl.call(this);
@@ -1528,8 +1529,7 @@ var api_delete;
         function DeleteDialogItemComponent(deleteItem) {
                 _super.call(this, "DeleteDialogItem");
             this.getEl().addClass("item");
-            var icon = new api_ui.ImgEl();
-            icon.getEl().setSrc(deleteItem.getIconUrl());
+            var icon = new api_ui.ImgEl(deleteItem.getIconUrl());
             this.appendChild(icon);
             var displayName = new api_ui.H4El();
             displayName.getEl().setInnerHtml(deleteItem.getDisplayName());

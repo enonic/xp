@@ -264,7 +264,7 @@ module api_ui {
 }
 module api_ui {
     class ImgEl extends Element {
-        constructor(name?: string, className?: string);
+        constructor(src: string, name?: string, className?: string);
         public getEl(): ImgHelper;
     }
 }
