@@ -4,8 +4,7 @@ module api_ui_menu{
         private menuItems:MenuItem[] = [];
 
         constructor(...actions:api_ui.Action[]) {
-            super("context-menu");
-            this.getEl().addClass("context-menu");
+            super("context-menu", "context-menu");
 
             var htmlEl = this.getHTMLElement();
             document.body.insertBefore(htmlEl, document.body.childNodes[0]);

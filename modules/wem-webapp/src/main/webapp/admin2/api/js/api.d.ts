@@ -211,7 +211,7 @@ module api_ui {
         private static constructorCounter;
         private el;
         private id;
-        constructor(elementName: string, name?: string, elHelper?: ElementHelper);
+        constructor(elementName: string, name?: string, className?: string, elHelper?: ElementHelper);
         public show(): void;
         public hide(): void;
         public empty(): void;
@@ -224,47 +224,47 @@ module api_ui {
 }
 module api_ui {
     class DivEl extends Element {
-        constructor(name?: string);
+        constructor(name?: string, className?: string);
     }
 }
 module api_ui {
     class H1El extends Element {
-        constructor(name?: string);
+        constructor(name?: string, className?: string);
     }
 }
 module api_ui {
     class H2El extends Element {
-        constructor(name?: string);
+        constructor(name?: string, className?: string);
     }
 }
 module api_ui {
     class H3El extends Element {
-        constructor(name?: string);
+        constructor(name?: string, className?: string);
     }
 }
 module api_ui {
     class H4El extends Element {
-        constructor(name?: string);
+        constructor(name?: string, className?: string);
     }
 }
 module api_ui {
     class UlEl extends Element {
-        constructor(name?: string);
+        constructor(name?: string, className?: string);
     }
 }
 module api_ui {
     class LiEl extends Element {
-        constructor(name?: string);
+        constructor(name?: string, className?: string);
     }
 }
 module api_ui {
     class EmEl extends Element {
-        constructor(name?: string);
+        constructor(name?: string, className?: string);
     }
 }
 module api_ui {
     class ImgEl extends Element {
-        constructor(name?: string);
+        constructor(name?: string, className?: string);
         public getEl(): ImgHelper;
     }
 }
@@ -284,7 +284,7 @@ module api_ui {
 }
 module api_ui {
     class ButtonEl extends Element {
-        constructor(name?: string);
+        constructor(name?: string, className?: string);
     }
 }
 module api_ui {

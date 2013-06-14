@@ -8,8 +8,7 @@ module api_ui_menu{
         private menuItems:MenuItem[] = [];
 
         constructor(...actions:api_ui.Action[]) {
-            super("action-menu");
-            this.getEl().addClass("action-menu");
+            super("action-menu", "action-menu");
 
             this.button = new ActionMenuButton(this);
 
@@ -84,11 +83,10 @@ module api_ui_menu{
         private menu:ActionMenu;
 
         constructor(menu:ActionMenu) {
-            super("button");
+            super("button", "action-menu-button");
             this.menu = menu;
 
             var btnEl = this.getEl();
-            btnEl.addClass("action-menu-button");
             btnEl.setInnerHtml("Actions");
             btnEl.addEventListener("click", (e) => {
                 menu.showBy(this);

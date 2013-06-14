@@ -44,8 +44,7 @@ module api_ui_wizard {
 
     class WizardStepContainer extends api_ui.UlEl {
         constructor() {
-            super("step-container");
-            this.getEl().addClass("step-container");
+            super("step-container", "step-container");
         }
 
         addStep(step:WizardStep) {

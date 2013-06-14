@@ -4,8 +4,7 @@ module api_ui_detailpanel {
         ext;
 
         constructor() {
-            super("detailpanel");
-            this.getEl().addClass("detailpanel");
+            super("detailpanel", "detailpanel");
             this.initExt();
         }
 
@@ -30,8 +29,7 @@ module api_ui_detailpanel {
         private actionMenu:api_ui_menu.ActionMenu;
 
         constructor(model:api_model.Model) {
-            super("detailpanel-tab");
-            this.getEl().addClass("detailpanel-tab")
+            super("detailpanel-tab", "detailpanel-tab");
             this.model = model;
             this.addHeader(model.data.name, model.id, model.data.iconUrl);
             this.addNavigation();
@@ -43,8 +41,7 @@ module api_ui_detailpanel {
         }
 
         private addHeader(title:string, subtitle:string, iconUrl:string) {
-            var headerEl = new api_ui.DivEl("header");
-            headerEl.getEl().addClass("header");
+            var headerEl = new api_ui.DivEl("header", "header");
 
             var iconEl = api_util.ImageLoader.get(iconUrl + "?size=80", 80, 80);
 
@@ -67,9 +64,7 @@ module api_ui_detailpanel {
         }
 
         private addCanvas() {
-            var canvasEl = new api_ui.DivEl("canvas");
-            this.canvas = canvasEl;
-            canvasEl.getEl().addClass("canvas");
+            var canvasEl = this.canvas = new api_ui.DivEl("canvas", "canvas");
             this.appendChild(canvasEl);
         }
 
@@ -118,8 +113,7 @@ module api_ui_detailpanel {
         private tabs:api_ui.LiEl[] = [];
 
         constructor() {
-            super("tab-list");
-            this.getEl().addClass("tab-list");
+            super("tab-list", "tab-list");
         }
 
         addTab(tab, clickCallback:(DetailPanelTab) => void) {
@@ -145,9 +139,8 @@ module api_ui_detailpanel {
         private model:api_model.Model;
 
         constructor(model:any, removeCallback?:(DetailPanelBox) => void) {
-            super("detailpanel-box");
+            super("detailpanel-box", "detailpanel-box");
             this.model = model;
-            this.getEl().addClass("detailpanel-box");
             this.setIcon(model.data.iconUrl, 32);
             this.setData(model.data.displayName, model.data.name);
             this.addRemoveButton(removeCallback);

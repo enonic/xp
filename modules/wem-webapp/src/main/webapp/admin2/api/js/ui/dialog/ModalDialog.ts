@@ -19,10 +19,9 @@ module api_ui_dialog{
 
         constructor(config:ModalDialogConfig) {
 
-            super("ModalDialog");
+            super("ModalDialog", "modal-dialog");
             this.config = config;
             var el = this.getEl();
-            el.addClass("modal-dialog");
             el.setDisplay("none");
             el.setWidth(this.config.width + "px").setHeight(this.config.height + "px");
             el.setZindex(30001);
@@ -99,16 +98,14 @@ module api_ui_dialog{
     export class ModalDialogContentPanel extends api_ui.DivEl {
 
         constructor() {
-            super("ModalDialogContentPanel");
-            this.getEl().addClass("content-panel")
+            super("ModalDialogContentPanel", "content-panel");
         }
     }
 
     export class ModalDialogButtonRow extends api_ui.DivEl {
 
         constructor() {
-            super("ModalDialogButtonRow");
-            this.getEl().addClass("button-row")
+            super("ModalDialogButtonRow", "button-row");
         }
 
         addAction(action:api_ui.Action) {

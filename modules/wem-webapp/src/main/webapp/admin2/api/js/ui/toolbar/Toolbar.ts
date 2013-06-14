@@ -7,8 +7,7 @@ module api_ui_toolbar {
         private components:any[] = [];
 
         constructor() {
-            super("Toolbar");
-            this.getEl().addClass("toolbar");
+            super("Toolbar", "toolbar");
             this.initExt();
         }
 

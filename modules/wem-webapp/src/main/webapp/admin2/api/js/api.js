@@ -540,7 +540,7 @@ var api_ui;
 var api_ui;
 (function (api_ui) {
     var Element = (function () {
-        function Element(elementName, name, elHelper) {
+        function Element(elementName, name, className, elHelper) {
             if(elHelper == null) {
                 this.el = api_ui.ElementHelper.fromName(elementName);
             } else {
@@ -549,6 +549,9 @@ var api_ui;
             if(name != null) {
                 this.id = name + '-' + (++api_ui.Element.constructorCounter);
                 this.el.setId(this.id);
+            }
+            if(className != null) {
+                this.getHTMLElement().className = className;
             }
         }
         Element.constructorCounter = 0;
@@ -587,8 +590,8 @@ var api_ui;
 (function (api_ui) {
     var DivEl = (function (_super) {
         __extends(DivEl, _super);
-        function DivEl(name) {
-                _super.call(this, "div", name);
+        function DivEl(name, className) {
+                _super.call(this, "div", name, className);
         }
         return DivEl;
     })(api_ui.Element);
@@ -598,8 +601,8 @@ var api_ui;
 (function (api_ui) {
     var H1El = (function (_super) {
         __extends(H1El, _super);
-        function H1El(name) {
-                _super.call(this, "h1", name);
+        function H1El(name, className) {
+                _super.call(this, "h1", name, className);
         }
         return H1El;
     })(api_ui.Element);
@@ -609,8 +612,8 @@ var api_ui;
 (function (api_ui) {
     var H2El = (function (_super) {
         __extends(H2El, _super);
-        function H2El(name) {
-                _super.call(this, "h2", name);
+        function H2El(name, className) {
+                _super.call(this, "h2", name, className);
         }
         return H2El;
     })(api_ui.Element);
@@ -620,8 +623,8 @@ var api_ui;
 (function (api_ui) {
     var H3El = (function (_super) {
         __extends(H3El, _super);
-        function H3El(name) {
-                _super.call(this, "h3", name);
+        function H3El(name, className) {
+                _super.call(this, "h3", name, className);
         }
         return H3El;
     })(api_ui.Element);
@@ -631,8 +634,8 @@ var api_ui;
 (function (api_ui) {
     var H4El = (function (_super) {
         __extends(H4El, _super);
-        function H4El(name) {
-                _super.call(this, "h4", name);
+        function H4El(name, className) {
+                _super.call(this, "h4", name, className);
         }
         return H4El;
     })(api_ui.Element);
@@ -642,8 +645,8 @@ var api_ui;
 (function (api_ui) {
     var UlEl = (function (_super) {
         __extends(UlEl, _super);
-        function UlEl(name) {
-                _super.call(this, "ul", name);
+        function UlEl(name, className) {
+                _super.call(this, "ul", name, className);
         }
         return UlEl;
     })(api_ui.Element);
@@ -653,8 +656,8 @@ var api_ui;
 (function (api_ui) {
     var LiEl = (function (_super) {
         __extends(LiEl, _super);
-        function LiEl(name) {
-                _super.call(this, "li", name);
+        function LiEl(name, className) {
+                _super.call(this, "li", name, className);
         }
         return LiEl;
     })(api_ui.Element);
@@ -664,8 +667,8 @@ var api_ui;
 (function (api_ui) {
     var EmEl = (function (_super) {
         __extends(EmEl, _super);
-        function EmEl(name) {
-                _super.call(this, "em", name);
+        function EmEl(name, className) {
+                _super.call(this, "em", name, className);
         }
         return EmEl;
     })(api_ui.Element);
@@ -675,8 +678,8 @@ var api_ui;
 (function (api_ui) {
     var ImgEl = (function (_super) {
         __extends(ImgEl, _super);
-        function ImgEl(name) {
-                _super.call(this, "img", name, api_ui.ImgHelper.create());
+        function ImgEl(name, className) {
+                _super.call(this, "img", name, className, api_ui.ImgHelper.create());
         }
         ImgEl.prototype.getEl = function () {
             return _super.prototype.getEl.call(this);
@@ -690,8 +693,7 @@ var api_ui;
     var Panel = (function (_super) {
         __extends(Panel, _super);
         function Panel(name) {
-                _super.call(this, name);
-            this.getEl().addClass("panel");
+                _super.call(this, name, "panel");
         }
         return Panel;
     })(api_ui.DivEl);
@@ -722,8 +724,8 @@ var api_ui;
 (function (api_ui) {
     var ButtonEl = (function (_super) {
         __extends(ButtonEl, _super);
-        function ButtonEl(name) {
-                _super.call(this, "button", name);
+        function ButtonEl(name, className) {
+                _super.call(this, "button", name, className);
         }
         return ButtonEl;
     })(api_ui.Element);
@@ -775,9 +777,8 @@ var api_ui_toolbar;
     var Toolbar = (function (_super) {
         __extends(Toolbar, _super);
         function Toolbar() {
-                _super.call(this, "Toolbar");
+                _super.call(this, "Toolbar", "toolbar");
             this.components = [];
-            this.getEl().addClass("toolbar");
             this.initExt();
         }
         Toolbar.prototype.initExt = function () {
@@ -888,8 +889,7 @@ var api_ui_detailpanel;
     var DetailPanel = (function (_super) {
         __extends(DetailPanel, _super);
         function DetailPanel() {
-                _super.call(this, "detailpanel");
-            this.getEl().addClass("detailpanel");
+                _super.call(this, "detailpanel", "detailpanel");
             this.initExt();
         }
         DetailPanel.prototype.initExt = function () {
@@ -907,9 +907,8 @@ var api_ui_detailpanel;
         __extends(DetailTabPanel, _super);
         function DetailTabPanel(model) {
             var _this = this;
-                _super.call(this, "detailpanel-tab");
+                _super.call(this, "detailpanel-tab", "detailpanel-tab");
             this.tabs = [];
-            this.getEl().addClass("detailpanel-tab");
             this.model = model;
             this.addHeader(model.data.name, model.id, model.data.iconUrl);
             this.addNavigation();
@@ -919,8 +918,7 @@ var api_ui_detailpanel;
             });
         }
         DetailTabPanel.prototype.addHeader = function (title, subtitle, iconUrl) {
-            var headerEl = new api_ui.DivEl("header");
-            headerEl.getEl().addClass("header");
+            var headerEl = new api_ui.DivEl("header", "header");
             var iconEl = api_util.ImageLoader.get(iconUrl + "?size=80", 80, 80);
             var hgroupEl = new api_ui.Element("hgroup");
             var headerTextEl = new api_ui.H1El();
@@ -935,9 +933,7 @@ var api_ui_detailpanel;
             this.appendChild(headerEl);
         };
         DetailTabPanel.prototype.addCanvas = function () {
-            var canvasEl = new api_ui.DivEl("canvas");
-            this.canvas = canvasEl;
-            canvasEl.getEl().addClass("canvas");
+            var canvasEl = this.canvas = new api_ui.DivEl("canvas", "canvas");
             this.appendChild(canvasEl);
         };
         DetailTabPanel.prototype.setTabChangeCallback = function (callback) {
@@ -977,9 +973,8 @@ var api_ui_detailpanel;
     var DetailPanelTabList = (function (_super) {
         __extends(DetailPanelTabList, _super);
         function DetailPanelTabList() {
-                _super.call(this, "tab-list");
+                _super.call(this, "tab-list", "tab-list");
             this.tabs = [];
-            this.getEl().addClass("tab-list");
         }
         DetailPanelTabList.prototype.addTab = function (tab, clickCallback) {
             var _this = this;
@@ -1004,9 +999,8 @@ var api_ui_detailpanel;
     var DetailPanelBox = (function (_super) {
         __extends(DetailPanelBox, _super);
         function DetailPanelBox(model, removeCallback) {
-                _super.call(this, "detailpanel-box");
+                _super.call(this, "detailpanel-box", "detailpanel-box");
             this.model = model;
-            this.getEl().addClass("detailpanel-box");
             this.setIcon(model.data.iconUrl, 32);
             this.setData(model.data.displayName, model.data.name);
             this.addRemoveButton(removeCallback);
@@ -1084,8 +1078,7 @@ var api_ui_wizard;
     var WizardStepContainer = (function (_super) {
         __extends(WizardStepContainer, _super);
         function WizardStepContainer() {
-                _super.call(this, "step-container");
-            this.getEl().addClass("step-container");
+                _super.call(this, "step-container", "step-container");
         }
         WizardStepContainer.prototype.addStep = function (step) {
             var stepEl = new api_ui.LiEl(step.getLabel());
@@ -1119,9 +1112,8 @@ var api_ui_menu;
             for (var _i = 0; _i < (arguments.length - 0); _i++) {
                 actions[_i] = arguments[_i + 0];
             }
-                _super.call(this, "context-menu");
+                _super.call(this, "context-menu", "context-menu");
             this.menuItems = [];
-            this.getEl().addClass("context-menu");
             var htmlEl = this.getHTMLElement();
             document.body.insertBefore(htmlEl, document.body.childNodes[0]);
             for(var i = 0; i < actions.length; i++) {
@@ -1174,9 +1166,8 @@ var api_ui_menu;
             for (var _i = 0; _i < (arguments.length - 0); _i++) {
                 actions[_i] = arguments[_i + 0];
             }
-                _super.call(this, "action-menu");
+                _super.call(this, "action-menu", "action-menu");
             this.menuItems = [];
-            this.getEl().addClass("action-menu");
             this.button = new ActionMenuButton(this);
             for(var i = 0; i < actions.length; i++) {
                 this.addAction(actions[i]);
@@ -1237,10 +1228,9 @@ var api_ui_menu;
         __extends(ActionMenuButton, _super);
         function ActionMenuButton(menu) {
             var _this = this;
-                _super.call(this, "button");
+                _super.call(this, "button", "action-menu-button");
             this.menu = menu;
             var btnEl = this.getEl();
-            btnEl.addClass("action-menu-button");
             btnEl.setInnerHtml("Actions");
             btnEl.addEventListener("click", function (e) {
                 menu.showBy(_this);
@@ -1352,10 +1342,9 @@ var api_ui_dialog;
     var ModalDialog = (function (_super) {
         __extends(ModalDialog, _super);
         function ModalDialog(config) {
-                _super.call(this, "ModalDialog");
+                _super.call(this, "ModalDialog", "modal-dialog");
             this.config = config;
             var el = this.getEl();
-            el.addClass("modal-dialog");
             el.setDisplay("none");
             el.setWidth(this.config.width + "px").setHeight(this.config.height + "px");
             el.setZindex(30001);
@@ -1413,8 +1402,7 @@ var api_ui_dialog;
     var ModalDialogContentPanel = (function (_super) {
         __extends(ModalDialogContentPanel, _super);
         function ModalDialogContentPanel() {
-                _super.call(this, "ModalDialogContentPanel");
-            this.getEl().addClass("content-panel");
+                _super.call(this, "ModalDialogContentPanel", "content-panel");
         }
         return ModalDialogContentPanel;
     })(api_ui.DivEl);
@@ -1422,8 +1410,7 @@ var api_ui_dialog;
     var ModalDialogButtonRow = (function (_super) {
         __extends(ModalDialogButtonRow, _super);
         function ModalDialogButtonRow() {
-                _super.call(this, "ModalDialogButtonRow");
-            this.getEl().addClass("button-row");
+                _super.call(this, "ModalDialogButtonRow", "button-row");
         }
         ModalDialogButtonRow.prototype.addAction = function (action) {
             var button = new ModalDialogButton(action);
