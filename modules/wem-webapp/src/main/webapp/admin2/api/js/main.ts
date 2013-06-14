@@ -3,6 +3,7 @@
  */
 
 ///<reference path='Mousetrap.d.ts' />
+///<reference path='jquery.d.ts' />
 
 ///<reference path='util/ImageLoader.ts' />
 ///<reference path='util/UriHelper.ts' />

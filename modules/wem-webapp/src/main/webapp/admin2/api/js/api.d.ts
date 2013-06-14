@@ -180,6 +180,9 @@ module api_ui {
         public removeClass(clsName: string): void;
         public addEventListener(eventName: string, f: (event: Event) => any): void;
         public appendChild(child: HTMLElement): void;
+        public setData(name: string, value: string): ElementHelper;
+        public getData(name: string): string;
+        public getDisplay(): string;
         public setDisplay(value: string): ElementHelper;
         public setPosition(value: string): ElementHelper;
         public setWidth(value: string): ElementHelper;
@@ -209,6 +212,8 @@ module api_ui {
         private el;
         private id;
         constructor(elementName: string, name?: string, elHelper?: ElementHelper);
+        public show(): void;
+        public hide(): void;
         public empty(): void;
         public getId(): string;
         public getEl(): ElementHelper;
@@ -485,6 +490,8 @@ module api_ui_dialog {
         public setTitle(value: string): void;
         public appendChildToContentPanel(child: api_ui.Element): void;
         public addAction(action: api_ui.Action): void;
+        public show(): void;
+        public hide(): void;
         public close(): void;
         public open(): void;
     }

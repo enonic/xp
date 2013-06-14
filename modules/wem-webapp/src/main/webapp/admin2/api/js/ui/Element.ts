@@ -21,6 +21,16 @@ module api_ui {
             }
         }
 
+        show() {
+            // Using jQuery to show, since it seems to contain some smartness
+            jQuery(this.el.getHTMLElement()).show();
+        }
+
+        hide() {
+            // Using jQuery to hide, since it seems to contain some smartness
+            jQuery(this.el.getHTMLElement()).hide();
+        }
+
         empty() {
             this.el.setInnerHtml("");
         }

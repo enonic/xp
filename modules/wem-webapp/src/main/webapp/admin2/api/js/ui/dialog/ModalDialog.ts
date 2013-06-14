@@ -22,7 +22,8 @@ module api_ui_dialog{
             super("ModalDialog");
             this.config = config;
             var el = this.getEl();
-            el.setDisplay("none").addClass("modal-dialog");
+            el.addClass("modal-dialog");
+            el.setDisplay("none");
             el.setWidth(this.config.width + "px").setHeight(this.config.height + "px");
             el.setZindex(30001);
 
@@ -54,11 +55,21 @@ module api_ui_dialog{
             this.buttonRow.addAction(action);
         }
 
+        show(){
+            // experimenting with transitions
+            jQuery(this.getEl().getHTMLElement()).show(100);
+        }
+
+        hide(){
+            // experimenting with transitions
+            jQuery(this.getEl().getHTMLElement()).hide(100);
+        }
+
         close() {
 
             api_ui.BodyMask.get().deActivate();
 
-            this.getEl().setDisplay("none");
+            this.hide();
             Mousetrap.unbind('esc');
         }
 
@@ -66,7 +77,7 @@ module api_ui_dialog{
 
             api_ui.BodyMask.get().activate();
 
-            this.getEl().setDisplay("block");
+            this.show();
             Mousetrap.bind('esc', () => {
                 this.close();
             });

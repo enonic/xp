@@ -446,6 +446,18 @@ var api_ui;
         ElementHelper.prototype.appendChild = function (child) {
             this.el.appendChild(child);
         };
+        ElementHelper.prototype.setData = function (name, value) {
+            var any = this.el;
+            any._data[name] = value;
+            return this;
+        };
+        ElementHelper.prototype.getData = function (name) {
+            var any = this.el;
+            return any._data[name];
+        };
+        ElementHelper.prototype.getDisplay = function () {
+            return this.el.style.display;
+        };
         ElementHelper.prototype.setDisplay = function (value) {
             this.el.style.display = value;
             return this;
@@ -540,6 +552,12 @@ var api_ui;
             }
         }
         Element.constructorCounter = 0;
+        Element.prototype.show = function () {
+            jQuery(this.el.getHTMLElement()).show();
+        };
+        Element.prototype.hide = function () {
+            jQuery(this.el.getHTMLElement()).hide();
+        };
         Element.prototype.empty = function () {
             this.el.setInnerHtml("");
         };
@@ -1337,7 +1355,8 @@ var api_ui_dialog;
                 _super.call(this, "ModalDialog");
             this.config = config;
             var el = this.getEl();
-            el.setDisplay("none").addClass("modal-dialog");
+            el.addClass("modal-dialog");
+            el.setDisplay("none");
             el.setWidth(this.config.width + "px").setHeight(this.config.height + "px");
             el.setZindex(30001);
             el.setPosition("fixed").setTop("50%").setLeft("50%").setMarginLeft("-" + (this.config.width / 2) + "px").setMarginTop("-" + (this.config.height / 2) + "px");
@@ -1357,15 +1376,21 @@ var api_ui_dialog;
         ModalDialog.prototype.addAction = function (action) {
             this.buttonRow.addAction(action);
         };
+        ModalDialog.prototype.show = function () {
+            jQuery(this.getEl().getHTMLElement()).show(100);
+        };
+        ModalDialog.prototype.hide = function () {
+            jQuery(this.getEl().getHTMLElement()).hide(100);
+        };
         ModalDialog.prototype.close = function () {
             api_ui.BodyMask.get().deActivate();
-            this.getEl().setDisplay("none");
+            this.hide();
             Mousetrap.unbind('esc');
         };
         ModalDialog.prototype.open = function () {
             var _this = this;
             api_ui.BodyMask.get().activate();
-            this.getEl().setDisplay("block");
+            this.show();
             Mousetrap.bind('esc', function () {
                 _this.close();
             });

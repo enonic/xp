@@ -66,6 +66,21 @@ module api_ui {
             this.el.appendChild(child);
         }
 
+        setData(name:string, value:string):api_ui.ElementHelper {
+            var any = <any>this.el;
+            any._data[name] = value;
+            return this;
+        }
+
+        getData(name:string):string{
+            var any = <any>this.el;
+            return any._data[name];
+        }
+
+        getDisplay():string{
+            return this.el.style.display;
+        }
+
         setDisplay(value:string):api_ui.ElementHelper {
             this.el.style.display = value;
             return this;
