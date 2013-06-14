@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.lifecycle.InitializingBean;
 import com.enonic.wem.core.support.util.JdomHelper;
 
 /**
@@ -22,17 +21,25 @@ import com.enonic.wem.core.support.util.JdomHelper;
  */
 
 public final class CountryServiceImpl
-    implements CountryService, InitializingBean
+    implements CountryService
 {
     private final static Logger LOG = LoggerFactory.getLogger( CountryServiceImpl.class );
 
     private final LinkedHashMap<CountryCode, Country> countriesMapByCode;
 
-    private SystemConfig systemConfig;
+    private final File countryFile;
 
-    public CountryServiceImpl()
+    @Inject
+    public CountryServiceImpl( final SystemConfig systemConfig )
+        throws Exception
     {
+        this.countryFile = new File( systemConfig.getConfigDir(), "countries.xml" );
         this.countriesMapByCode = new LinkedHashMap<>();
+        final URL url = findCountryResource();
+        for ( final Country country : readCountries( url ) )
+        {
+            this.countriesMapByCode.put( country.getCode(), country );
+        }
     }
 
     public Collection<Country> getCountries()
@@ -45,23 +52,12 @@ public final class CountryServiceImpl
         return this.countriesMapByCode.get( countryCode );
     }
 
-    public void afterPropertiesSet()
-        throws Exception
-    {
-        final URL url = findCountryResource();
-        for ( final Country country : readCountries( url ) )
-        {
-            this.countriesMapByCode.put( country.getCode(), country );
-        }
-    }
-
     private URL findCountryResource()
         throws Exception
     {
-        final File countryFile = new File( this.systemConfig.getConfigDir(), "countries.xml" );
-        if ( countryFile.exists() && countryFile.isFile() )
+        if ( this.countryFile.exists() && this.countryFile.isFile() )
         {
-            return countryFile.toURI().toURL();
+            return this.countryFile.toURI().toURL();
         }
         else
         {
@@ -76,11 +72,5 @@ public final class CountryServiceImpl
         final List<Country> list = CountryXmlParser.parseCountriesXml( doc );
         LOG.info( "Loaded country codes from [" + url.toExternalForm() + "]" );
         return list;
-    }
-
-    @Inject
-    public void setSystemConfig( final SystemConfig systemConfig )
-    {
-        this.systemConfig = systemConfig;
     }
 }

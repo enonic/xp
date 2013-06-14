@@ -19,13 +19,10 @@ public class CountryServiceImplTest
     public void setUp()
         throws Exception
     {
-        this.service = new CountryServiceImpl();
-
         final SystemConfig config = Mockito.mock( SystemConfig.class );
         Mockito.when( config.getConfigDir() ).thenReturn( Files.newTemporaryFolder() );
 
-        this.service.setSystemConfig( config );
-        this.service.afterPropertiesSet();
+        this.service = new CountryServiceImpl( config );
     }
 
     @Test
