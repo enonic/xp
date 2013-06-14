@@ -27,12 +27,12 @@ module LiveEdit.ui {
         }
 
         private addView():void {
-            var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
-                '    <span class="live-edit-tool-tip-name-text"></span>' +
-                '    <span class="live-edit-tool-tip-type-text"></span> ' +
-                '</div>';
+            var html:string = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
+                              '    <span class="live-edit-tool-tip-name-text"></span>' +
+                              '    <span class="live-edit-tool-tip-type-text"></span> ' +
+                              '</div>';
 
-            this.createElement(html);
+            this.createElementsFromString(html);
             this.appendTo($('body'));
         }
 
@@ -46,7 +46,7 @@ module LiveEdit.ui {
 
             $(document).on('mousemove', '[data-live-edit-type]', (event) => {
                 var targetIsUiComponent = $(event.target).is('[id*=live-edit-ui-cmp]') ||
-                    $(event.target).parents('[id*=live-edit-ui-cmp]').length > 0;
+                                          $(event.target).parents('[id*=live-edit-ui-cmp]').length > 0;
 
                 // TODO: Use PubSub instead of calling DragDrop object.
                 var pageHasComponentSelected = $('.live-edit-selected-component').length > 0;

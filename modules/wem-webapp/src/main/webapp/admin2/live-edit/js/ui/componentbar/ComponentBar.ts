@@ -44,7 +44,8 @@ module LiveEdit.ui {
 
         registerGlobalListeners():void {
             $(window).on('select.liveEdit.component dragStart.liveEdit.component sortStart.liveEdit.component', () => this.fadeOut());
-            $(window).on('deselect.liveEdit.component dragStop.liveEdit.component sortstop.liveedit.component sortUpdate.liveEdit.component remove.liveEdit.component', (event:JQueryEventObject, triggerConfig) => this.fadeIn(triggerConfig));
+            $(window).on('deselect.liveEdit.component dragStop.liveEdit.component sortstop.liveedit.component sortUpdate.liveEdit.component remove.liveEdit.component',
+                (event:JQueryEventObject, triggerConfig) => this.fadeIn(triggerConfig));
         }
 
 
@@ -54,9 +55,11 @@ module LiveEdit.ui {
 
 
         addView() {
-            var html = '';
-            html += '<div class="live-edit-components-container live-edit-collapsed" style="width:' + this.BAR_WIDTH + 'px; right: -' + this.INNER_WIDTH + 'px">';
-            html += '    <div class="live-edit-toggle-components-container" style="width:' + this.TOGGLE_WIDTH + 'px"><span class="live-edit-toggle-text-container">Toolbar</span></div>';
+            var html:string = '';
+            html += '<div class="live-edit-components-container live-edit-collapsed" style="width:' + this.BAR_WIDTH + 'px; right: -' +
+                    this.INNER_WIDTH + 'px">';
+            html += '    <div class="live-edit-toggle-components-container" style="width:' + this.TOGGLE_WIDTH +
+                    'px"><span class="live-edit-toggle-text-container">Toolbar</span></div>';
             html += '        <div class="live-edit-components">';
             html += '            <div class="live-edit-form-container">';
             html += '               <form onsubmit="return false;">';
@@ -69,7 +72,7 @@ module LiveEdit.ui {
             html += '    </div>';
             html += '</div>';
 
-            this.createElement(html);
+            this.createElementsFromString(html);
             this.appendTo($('body'));
         }
 
@@ -124,7 +127,8 @@ module LiveEdit.ui {
         addComponent(component:ComponentItem):void {
             var html = '';
 
-            html += '<li class="live-edit-component" data-live-edit-component-key="' + component.key + '" data-live-edit-component-name="' + component.name + '" data-live-edit-component-type="' + component.type + '">';
+            html += '<li class="live-edit-component" data-live-edit-component-key="' + component.key + '" data-live-edit-component-name="' +
+                    component.name + '" data-live-edit-component-type="' + component.type + '">';
             html += '    <img src="' + component.icon + '"/>';
             html += '    <div class="live-edit-component-text">';
             html += '        <div class="live-edit-component-text-name">' + component.name + '</div>';

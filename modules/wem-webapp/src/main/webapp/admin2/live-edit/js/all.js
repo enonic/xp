@@ -901,24 +901,21 @@ var LiveEdit;
         var Base = (function () {
             function Base() {
                 this.ID_PREFIX = 'live-edit-ui-cmp-';
-                this.id = Base.constructedCount++;
+                this.id = this.ID_PREFIX + Base.constructedCount++;
             }
             Base.constructedCount = 0;
-            Base.prototype.createElement = function (htmlString) {
-                this.element = $(htmlString);
-                this.setElementId();
-                return this.element;
+            Base.prototype.createElementsFromString = function (html) {
+                this.rootEl = $(html);
+                this.rootEl.attr('id', this.id);
+                return this.rootEl;
             };
             Base.prototype.appendTo = function (parent) {
-                if(parent.length > 0 && this.element.length > 0) {
-                    parent.append(this.element);
+                if(parent.length > 0 && this.rootEl.length > 0) {
+                    parent.append(this.rootEl);
                 }
             };
             Base.prototype.getRootEl = function () {
-                return this.element;
-            };
-            Base.prototype.setElementId = function () {
-                this.element.attr('id', (this.ID_PREFIX + this.id.toString()));
+                return this.rootEl;
             };
             return Base;
         })();
@@ -1078,7 +1075,7 @@ var LiveEdit;
             };
             EditorToolbar.prototype.addView = function () {
                 var html = '<div class="live-edit-editor-toolbar live-edit-arrow-bottom" style="display: none">' + '    <button data-tag="paste" class="live-edit-editor-button"></button>' + '    <button data-tag="insertUnorderedList" class="live-edit-editor-button"></button>' + '    <button data-tag="insertOrderedList" class="live-edit-editor-button"></button>' + '    <button data-tag="link" class="live-edit-editor-button"></button>' + '    <button data-tag="cut" class="live-edit-editor-button"></button>' + '    <button data-tag="strikeThrough" class="live-edit-editor-button"></button>' + '    <button data-tag="bold" class="live-edit-editor-button"></button>' + '    <button data-tag="underline" class="live-edit-editor-button"></button>' + '    <button data-tag="italic" class="live-edit-editor-button"></button>' + '    <button data-tag="superscript" class="live-edit-editor-button"></button>' + '    <button data-tag="subscript" class="live-edit-editor-button"></button>' + '    <button data-tag="justifyLeft" class="live-edit-editor-button"></button>' + '    <button data-tag="justifyCenter" class="live-edit-editor-button"></button>' + '    <button data-tag="justifyRight" class="live-edit-editor-button"></button>' + '    <button data-tag="justifyFull" class="live-edit-editor-button"></button>' + '</div>';
-                this.createElement(html);
+                this.createElementsFromString(html);
                 this.appendTo($('body'));
             };
             EditorToolbar.prototype.addEvents = function () {
@@ -1372,7 +1369,7 @@ var LiveEdit;
             };
             Highlighter.prototype.addView = function () {
                 var html = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlight-border" style="top:-5000px;left:-5000px">' + '    <rect width="150" height="150"/>' + '</svg>';
-                this.createElement(html);
+                this.createElementsFromString(html);
                 this.appendTo($('body'));
             };
             Highlighter.prototype.componentMouseOver = function (component) {
@@ -1458,7 +1455,7 @@ var LiveEdit;
             };
             ToolTip.prototype.addView = function () {
                 var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' + '    <span class="live-edit-tool-tip-name-text"></span>' + '    <span class="live-edit-tool-tip-type-text"></span> ' + '</div>';
-                this.createElement(html);
+                this.createElementsFromString(html);
                 this.appendTo($('body'));
             };
             ToolTip.prototype.setText = function (componentType, componentName) {
@@ -1610,7 +1607,7 @@ var LiveEdit;
                     html += '   <div class="live-edit-component-menu-items">';
                     html += '   </div>';
                     html += '</div>';
-                    this.createElement(html);
+                    this.createElementsFromString(html);
                     this.appendTo($('body'));
                     this.addButtons();
                 };
@@ -1755,7 +1752,7 @@ var LiveEdit;
                             html += '<span class="live-edit-button-icon ' + iconCls + '"></span>';
                         }
                         html += '<span class="live-edit-button-text">' + text + '</span></div>';
-                        var $button = this.createElement(html);
+                        var $button = this.createElementsFromString(html);
                         if(config.handler) {
                             $button.on('click', function (event) {
                                 return config.handler.call(_this, event);
@@ -2225,7 +2222,7 @@ var LiveEdit;
                 html += '        </div>';
                 html += '    </div>';
                 html += '</div>';
-                this.createElement(html);
+                this.createElementsFromString(html);
                 this.appendTo($('body'));
             };
             ComponentBar.prototype.registerEvents = function () {
@@ -2347,9 +2344,12 @@ var LiveEdit;
 ((function ($) {
     'use strict';
     $(window).load(function () {
-        if(window['parent'] && window['parent'].Admin.view.contentManager.contextwindow !== undefined) {
-            new window['parent'].Admin.view.contentManager.contextwindow.ContextWindow({
-            }).doShow();
+        try  {
+            if(window['parent'] && window['parent'].Admin.view.contentManager.contextwindow !== undefined) {
+                new window['parent'].Admin.view.contentManager.contextwindow.ContextWindow({
+                }).doShow();
+            }
+        } catch (e) {
         }
         var loaderSplash = $('.live-edit-loader-splash-container');
         loaderSplash.fadeOut('fast', function () {

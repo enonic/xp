@@ -70,7 +70,6 @@ module LiveEdit {
             };
         }
 
-
         public static getHighlighterStyleForComponent(component:JQuery):HighlighterStyle {
             var componentType:string = ComponentHelper.getComponentType(component);
 
@@ -122,8 +121,6 @@ module LiveEdit {
             }
         }
 
-
-
         public static resolveCssClassForComponent(component:JQuery):string {
             var iconCls:string;
             var componentType = ComponentHelper.getComponentType(component);
@@ -160,8 +157,6 @@ module LiveEdit {
             return iconCls;
         }
 
-
-
         public static getPagePositionForComponent(component:JQuery):ComponentPagePosition {
             var pos = component.position();
             return {
@@ -169,7 +164,6 @@ module LiveEdit {
                 left: pos.left
             };
         }
-
 
         public static getComponentInfo(component:JQuery):ComponentInfo {
             return {
@@ -179,7 +173,6 @@ module LiveEdit {
                 tagName: getTagNameForComponent(component)
             };
         }
-
 
         public static getComponentType(component:JQuery):string {
             return component.data('live-edit-type');

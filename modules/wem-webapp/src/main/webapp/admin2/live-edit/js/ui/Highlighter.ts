@@ -33,11 +33,11 @@ module LiveEdit.ui {
         }
 
         private addView():void {
-            var html =  '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlight-border" style="top:-5000px;left:-5000px">' +
-                        '    <rect width="150" height="150"/>' +
-                        '</svg>';
+            var html:string = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlight-border" style="top:-5000px;left:-5000px">' +
+                              '    <rect width="150" height="150"/>' +
+                              '</svg>';
 
-            this.createElement(html);
+            this.createElementsFromString(html);
             this.appendTo($('body'));
         }
 
@@ -63,12 +63,10 @@ module LiveEdit.ui {
             this.show();
         }
 
-
         private deselect():void {
             $('.live-edit-selected-component').removeClass('live-edit-selected-component');
             this.selectedComponent = null;
         }
-
 
         private paintBorder(component):void {
             var border = this.getRootEl();
@@ -80,7 +78,6 @@ module LiveEdit.ui {
             border.css('fill', style.fillColor);
             border.css('stroke-dasharray', style.strokeDashArray);
         }
-
 
         private resizeBorderToComponent(component):void {
             var componentBoxModel = componentHelper.getBoxModel(component);

@@ -15,16 +15,16 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         createButton(config:ButtonConfig):JQuery {
-            var id = config.id || '';
-            var text = config.text;
-            var cls = config.cls || '';
-            var iconCls = config.iconCls || '';
-            var html = '<div data-live-edit-ui-cmp-id="' + id + '" class="live-edit-button ' + cls + '">';
+            var id:string = config.id || '';
+            var text:string = config.text;
+            var cls:string = config.cls || '';
+            var iconCls:string = config.iconCls || '';
+            var html:string = '<div data-live-edit-ui-cmp-id="' + id + '" class="live-edit-button ' + cls + '">';
             if (iconCls !== '') {
                 html += '<span class="live-edit-button-icon ' + iconCls + '"></span>';
             }
             html += '<span class="live-edit-button-text">' + text + '</span></div>';
-            var $button = this.createElement(html);
+            var $button = this.createElementsFromString(html);
 
             if (config.handler) {
                 $button.on('click', (event) => config.handler.call(this, event));

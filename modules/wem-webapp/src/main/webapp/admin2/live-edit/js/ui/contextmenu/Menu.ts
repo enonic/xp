@@ -10,12 +10,12 @@ module LiveEdit.ui.contextmenu {
         private hidden = true;
         private buttons = [];
         private buttonConfig = {
-            'page':         ['settings', 'reset'],
-            'region':       ['parent', 'settings', 'reset', 'clear'],
-            'layout':       ['parent', 'settings', 'remove'],
-            'part':         ['parent', 'settings', 'details', 'remove'],
-            'content':      ['parent', 'opencontent', 'view'],
-            'paragraph':    ['parent', 'edit', 'remove']
+            'page': ['settings', 'reset'],
+            'region': ['parent', 'settings', 'reset', 'clear'],
+            'layout': ['parent', 'settings', 'remove'],
+            'part': ['parent', 'settings', 'details', 'remove'],
+            'content': ['parent', 'opencontent', 'view'],
+            'paragraph': ['parent', 'edit', 'remove']
         };
 
         constructor() {
@@ -28,7 +28,8 @@ module LiveEdit.ui.contextmenu {
         }
 
         private registerGlobalListeners():void {
-            $(window).on('select.liveEdit.component', (event:JQueryEventObject, component:JQuery, pagePosition) => this.show(component, pagePosition));
+            $(window).on('select.liveEdit.component',
+                (event:JQueryEventObject, component:JQuery, pagePosition) => this.show(component, pagePosition));
             $(window).on('deselect.liveEdit.component', () => this.hide());
             $(window).on('remove.liveEdit.component', () => this.hide());
             $(window).on('paragraphEdit.liveEdit.component', () => this.hide());
@@ -37,7 +38,7 @@ module LiveEdit.ui.contextmenu {
         }
 
         private addView():void {
-            var html = '';
+            var html:string = '';
             html += '<div class="live-edit-component-menu live-edit-arrow-top" style="display: none">';
             html += '   <div class="live-edit-component-menu-title-bar">';
             html += '       <div class="live-edit-component-menu-title-icon"><div><!-- --></div></div>';
@@ -48,7 +49,7 @@ module LiveEdit.ui.contextmenu {
             html += '   </div>';
             html += '</div>';
 
-            this.createElement(html);
+            this.createElementsFromString(html);
             this.appendTo($('body'));
             this.addButtons();
         }

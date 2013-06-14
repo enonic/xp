@@ -10,12 +10,10 @@ module LiveEdit {
             this.registerGlobalListeners();
         }
 
-
         private registerGlobalListeners():void {
             $(window).on('paragraphEdit.liveEdit.component', (event:JQueryEventObject, component:JQuery) => this.observe(event, component));
             $(window).on('click.liveEdit.shader', (event:JQueryEventObject) => this.disconnect(event));
         }
-
 
         private observe(event:JQueryEventObject, component:JQuery):void {
             var isBeingObserved:Boolean = this.observedComponent && this.observedComponent[0] === component[0];
@@ -37,7 +35,6 @@ module LiveEdit {
 
             console.log('MutationObserver: start observing component', component);
         }
-
 
         private disconnect(event:JQueryEventObject):void {
             var targetComponentIsSelected = (this.observedComponent && this.observedComponent.hasClass('live-edit-selected-component'));

@@ -32,7 +32,6 @@ module LiveEdit.component.observer {
             });
         }
 
-
         attachClickEvent():void {
 
             $(document).on('click contextmenu touchstart', this.cssSelector, (event:JQueryEventObject) => {

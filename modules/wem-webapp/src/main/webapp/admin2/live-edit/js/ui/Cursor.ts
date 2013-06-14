@@ -19,20 +19,20 @@ module LiveEdit.ui {
             var cursor = 'default';
 
             switch (componentType) {
-                case 'region':
-                    cursor = 'pointer';
-                    break;
-                case 'part':
-                    cursor = 'move';
-                    break;
-                case 'layout':
-                    cursor = 'move';
-                    break;
-                case 'paragraph':
-                    cursor = 'move';
-                    break;
-                default:
-                    cursor = 'default';
+            case 'region':
+                cursor = 'pointer';
+                break;
+            case 'part':
+                cursor = 'move';
+                break;
+            case 'layout':
+                cursor = 'move';
+                break;
+            case 'paragraph':
+                cursor = 'move';
+                break;
+            default:
+                cursor = 'default';
             }
             $body.css('cursor', cursor);
         }

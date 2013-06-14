@@ -25,13 +25,11 @@ module LiveEdit.component.observer {
             console.log('Paragraph observer instantiated. Using jQuery ' + $().jquery);
         }
 
-
         registerGlobalListeners():void {
             $(window).on('click.liveEdit.shader deselect.liveEdit.component', (event:JQueryEventObject) => {
                 this.leaveEditMode();
             });
         }
-
 
         // Override base attachClickEvent
         attachClickEvent():void {
@@ -39,7 +37,6 @@ module LiveEdit.component.observer {
                 this.handleClick(event);
             });
         }
-
 
         handleClick(event):void {
             event.stopPropagation();
@@ -68,7 +65,6 @@ module LiveEdit.component.observer {
 
         }
 
-
         setSelectMode(event:JQueryEventObject):void {
             this.selectedParagraph.css('cursor', 'url(../../../admin2/live-edit/images/pencil.png) 0 40, text');
 
@@ -88,7 +84,6 @@ module LiveEdit.component.observer {
             $(window).trigger('paragraphSelect.liveEdit.component', [this.selectedParagraph]);
         }
 
-
         setEditMode():void {
             var $paragraph = this.selectedParagraph;
 
@@ -99,7 +94,6 @@ module LiveEdit.component.observer {
 
             this.currentMode = this.modes.EDIT;
         }
-
 
         leaveEditMode():void {
             var $paragraph = this.selectedParagraph;

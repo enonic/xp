@@ -3,37 +3,32 @@ module LiveEdit.ui {
 
     export class Base {
 
+        ID_PREFIX:string = 'live-edit-ui-cmp-';
+
         static constructedCount:number = 0;
 
-        private ID_PREFIX:string = 'live-edit-ui-cmp-';
-
-        private id:number;
-
-        private element:JQuery;
+        private rootEl:JQuery;
+        private id:string;
 
         constructor() {
-            this.id = Base.constructedCount++;
+            this.id = this.ID_PREFIX + Base.constructedCount++;
         }
 
-        public createElement(htmlString:string):JQuery {
-            this.element = $(htmlString);
-            this.setElementId();
+        public createElementsFromString(html:string):JQuery {
+            this.rootEl = $(html);
+            this.rootEl.attr('id', this.id);
 
-            return this.element;
+            return this.rootEl;
         }
 
         public appendTo(parent:JQuery):void {
-            if (parent.length > 0 && this.element.length > 0) {
-                parent.append(this.element);
+            if (parent.length > 0 && this.rootEl.length > 0) {
+                parent.append(this.rootEl);
             }
         }
 
         public getRootEl():JQuery {
-            return this.element;
-        }
-
-        private setElementId () {
-            this.element.attr('id', (this.ID_PREFIX + this.id.toString()));
+            return this.rootEl;
         }
 
     }

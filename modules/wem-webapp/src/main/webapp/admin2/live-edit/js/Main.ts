@@ -51,8 +51,12 @@ declare var LiveEditMutationSummary;
     $(window).load(() => {
 
         // Open the context window
-        if (window['parent'] && window['parent'].Admin.view.contentManager.contextwindow !== undefined) {
-            new window['parent'].Admin.view.contentManager.contextwindow.ContextWindow({}).doShow();
+        try {
+            if (window['parent'] && window['parent'].Admin.view.contentManager.contextwindow !== undefined) {
+                new window['parent'].Admin.view.contentManager.contextwindow.ContextWindow({}).doShow();
+            }
+        } catch(e) {
+
         }
 
         // Fade out the loader splash and start the app.

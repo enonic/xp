@@ -27,7 +27,7 @@ module LiveEdit.ui {
         }
 
         addView():void {
-            var html = '<div class="live-edit-editor-toolbar live-edit-arrow-bottom" style="display: none">' +
+            var html:string = '<div class="live-edit-editor-toolbar live-edit-arrow-bottom" style="display: none">' +
                 '    <button data-tag="paste" class="live-edit-editor-button"></button>' +
                 '    <button data-tag="insertUnorderedList" class="live-edit-editor-button"></button>' +
                 '    <button data-tag="insertOrderedList" class="live-edit-editor-button"></button>' +
@@ -45,10 +45,9 @@ module LiveEdit.ui {
                 '    <button data-tag="justifyFull" class="live-edit-editor-button"></button>' +
                 '</div>';
 
-            this.createElement(html);
+            this.createElementsFromString(html);
             this.appendTo($('body'));
         }
-
 
         addEvents():void {
             this.getRootEl().on('click', (event) => {
@@ -113,7 +112,6 @@ module LiveEdit.ui {
             this.toggleArrowPosition(placeArrowOnTop);
         }
 
-
         toggleArrowPosition(showArrowAtTop:Boolean):void {
             if (showArrowAtTop) {
                 this.getRootEl().removeClass('live-edit-arrow-bottom').addClass('live-edit-arrow-top');
@@ -121,7 +119,6 @@ module LiveEdit.ui {
                 this.getRootEl().removeClass('live-edit-arrow-top').addClass('live-edit-arrow-bottom');
             }
         }
-
 
         getPositionRelativeToComponentTop():any {
             var componentBox = componentHelper.getBoxModel(this.selectedComponent),

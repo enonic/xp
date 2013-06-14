@@ -11,7 +11,6 @@ module LiveEdit.ui {
             console.log('HtmlElementReplacer instantiated. Using jQuery ' + $().jquery);
         }
 
-
         replaceElementsWithPlaceholders():void {
             var elements:JQuery = this.getElements();
             var element:JQuery;
@@ -21,17 +20,14 @@ module LiveEdit.ui {
             });
         }
 
-
         replace(element):void {
             this.hideElement(element);
             this.addPlaceholder(element);
         }
 
-
         addPlaceholder(element:JQuery):void {
             this.createPlaceholder(element).insertAfter(element);
         }
-
 
         createPlaceholder(element:JQuery):JQuery {
             var placeholder:JQuery = $('<div></div>');
@@ -47,11 +43,9 @@ module LiveEdit.ui {
             return placeholder;
         }
 
-
         getElements():JQuery {
             return $('[data-live-edit-type=part] > ' + this.elementsToReplaceSpec.toString());
         }
-
 
         getElementWidth(element:JQuery):number {
             var attrWidth = parseInt(element.attr('width'), 10);
@@ -63,7 +57,6 @@ module LiveEdit.ui {
             return attrWidth;
         }
 
-
         getElementHeight(element:JQuery):number {
             var attrHeight = parseInt(element.attr('height'), 10);
             if (!attrHeight) {
@@ -74,16 +67,13 @@ module LiveEdit.ui {
             return attrHeight;
         }
 
-
         showElement(element:JQuery):void {
             element.show(null);
         }
 
-
         hideElement(element:JQuery):void {
             element.hide(null);
         }
-
 
         resolveIconCssClass(element:JQuery):string {
             var tagName = element[0].tagName.toLowerCase();

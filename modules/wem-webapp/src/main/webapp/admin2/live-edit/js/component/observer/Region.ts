@@ -17,13 +17,11 @@ module LiveEdit.component.observer {
             console.log('Region observer instantiated. Using jQuery ' + $().jquery);
         }
 
-
         private registerGlobalListeners():void {
             $(window).on('sortUpdate.liveEdit.component sortOver.liveEdit.component remove.liveEdit.component', () => {
                 this.renderEmptyPlaceholders();
             });
         }
-
 
         private renderEmptyPlaceholders():void {
             this.removeAllRegionPlaceholders();
@@ -39,7 +37,6 @@ module LiveEdit.component.observer {
             });
         }
 
-
         private appendEmptyPlaceholder(region:JQuery):void {
             var html = '<div>Drag components here</div>';
             html += '<div style="font-size: 10px;">' + componentHelper.getComponentName(region) + '</div>';
@@ -50,13 +47,11 @@ module LiveEdit.component.observer {
             region.append($placeholder);
         }
 
-
         private isRegionEmpty(region:JQuery):Boolean {
             var hasNotParts:Boolean = region.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
             var hasNotDropTargetPlaceholder:Boolean = region.children('.live-edit-drop-target-placeholder').length === 0;
             return hasNotParts && hasNotDropTargetPlaceholder;
         }
-
 
         private removeAllRegionPlaceholders():void {
             $('.live-edit-empty-region-placeholder').remove();

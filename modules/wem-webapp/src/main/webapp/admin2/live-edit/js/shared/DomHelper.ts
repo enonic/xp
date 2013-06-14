@@ -22,7 +22,6 @@ module LiveEdit {
             };
         }
 
-
         public static getViewPortSize():ViewPortSize {
             var window:JQuery = $(window);
             return {
@@ -30,7 +29,6 @@ module LiveEdit {
                 height: window.height()
             };
         }
-
 
         public static getDocumentScrollTop():number {
             return $(document).scrollTop();
