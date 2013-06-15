@@ -3,16 +3,15 @@
 }
 
 .live-edit-component-search-input {
-    background-color: #5a5a5a;
-    border: 1px solid #aaa;
-    color: #bbb;
-    padding: 3px;
+    background-color: #3c3c3c;
+    border: 1px solid #1c1c1c;
+    color: #c7c7c7;
+    padding: 5px;
     width: 100%;
 }
 
 .live-edit-component-list {
     overflow: hidden;
-    padding: 2px;
 }
 
 .live-edit-component-list:hover {
@@ -20,12 +19,12 @@
 }
 
 .live-edit-component {
-    padding: 10px 20px;
+    padding: 15px 20px;
     cursor: move;
 }
 
 .live-edit-component:hover {
-    background-color: #3892dd;
+    background-color: #353535; /*4096ee, 3892dd*/
 }
 
 .live-edit-component-row {
@@ -33,7 +32,7 @@
 }
 
 .live-edit-component-icon {
-    width: 50px;
+    width: 55px;
     color: #f2f2f2;
     font-size: 32px;
     font-weight: lighter;
@@ -52,8 +51,4 @@
     line-height: 1.4;
     font-size: 13px !important;
     color: #f2f2f2;
-}
-
-.live-edit-component:hover small {
-    color: #fff;
 }

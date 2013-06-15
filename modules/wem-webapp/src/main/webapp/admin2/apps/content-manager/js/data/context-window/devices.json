@@ -1,22 +1,39 @@
 {
     "devices": [
         {
-            "name": "Desktop",
-            "type": "pc",
-            "width": "100%",
-            "height": "100%"
+            "name": "iPhone 5",
+            "device_type": "mobile",
+            "width": 320,
+            "height": 578,
+            "rotatable": true
         },
         {
-            "name": "iPhone 5",
-            "type": "mobile",
-            "width": "320px",
-            "height": "568px"
+            "name": "Galaxy S3",
+            "device_type": "mobile",
+            "width": 360,
+            "height": 640,
+            "rotatable": true
         },
         {
             "name": "iPad 3",
-            "type": "tablet",
-            "width": "768px",
-            "height": "1024px"
+            "device_type": "tablet",
+            "width": 768,
+            "height": 1024,
+            "rotatable": true
+        },
+        {
+            "name": "13\" Notebook",
+            "device_type": "monitor",
+            "width": 1280,
+            "height": 800,
+            "rotatable": false
+        },
+        {
+            "name": "15\" Notebook",
+            "device_type": "monitor",
+            "width": 1366,
+            "height": 768,
+            "rotatable": false
         }
 
     ]

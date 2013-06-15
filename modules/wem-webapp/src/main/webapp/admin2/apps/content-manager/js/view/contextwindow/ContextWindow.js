@@ -8,14 +8,10 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     cls: 'admin-context-window',
     x: 10,
     y: 40,
-    width: 320,
-    height: 512,
+    width: 290,
+    height: 508,
     shadow: false,
-    border: 1,
-    style: {
-        borderColor: 'black',
-        borderStyle: 'solid'
-    },
+    border: false,
     floating: true,
     layout: {
         type: 'vbox',
@@ -23,7 +19,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     },
     listeners: {
         resize: function () {
-            this.handleResize();
+            this.onWindowResize();
         }
     },
 
@@ -33,12 +29,11 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     collapsed: false,
     currentHeight: undefined,
 
-    titleBar: undefined,
+    titleBarCt: undefined,
     menuButton: undefined,
-    titleText: undefined,
+    titleTextCmp: undefined,
     toggleButton: undefined,
-    windowBody: undefined,
-
+    windowBodyCt: undefined,
     draggingShim: undefined,
 
     panels: [
@@ -59,20 +54,20 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             item: function () {
                 return new Admin.view.contentManager.contextwindow.Images({hidden:true});
             }
-        },
+        }
     ],
 
 
     initComponent: function () {
-        this.titleBar = this.createTitleBar();
-        this.windowBody = this.createWindowBody();
+        this.titleBarCt = this.createTitleBarCt();
+        this.windowBodyCt = this.createWindowBodyCt();
         this.items = [
-            this.titleBar,
-            this.windowBody
+            this.titleBarCt,
+            this.windowBodyCt
         ];
         this.draggingShim = this.createDraggingShim();
-        this.enableDrag();
-        this.enableResize();
+        this.enableWindowDrag();
+        this.enableWindowResize();
         this.currentHeight = this.height;
 
         this.callParent(arguments);
@@ -81,9 +76,9 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     /**
      * @returns {Ext.container.Container}
      */
-    createTitleBar: function () {
+    createTitleBarCt: function () {
         this.menuButton = this.createMenuButton();
-        this.titleText = this.createTitleText();
+        this.titleTextCmp = this.createTitleTextCmp();
         this.toggleButton = this.createToggleButton();
 
         return new Ext.container.Container({
@@ -95,7 +90,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             },
             items: [
                 this.menuButton,
-                this.titleText,
+                this.titleTextCmp,
                 this.toggleButton
             ]
         });
@@ -118,6 +113,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
      */
     createMenu: function () {
         return new Ext.menu.Menu({
+            border: false,
             plain: true,
             cls: 'context-window-menu',
             items: this.createMenuItems()
@@ -138,7 +134,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
                     itemId: key,
                     text: panel.name,
                     handler: function (item) {
-                        me.setPanel(item.itemId);
+                        me.showPanel(item.itemId);
                     }
                 });
             }
@@ -149,7 +145,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     /**
      * @returns {Ext.Component}
      */
-    createTitleText: function () {
+    createTitleTextCmp: function () {
         return new Ext.Component({
             cls: 'admin-context-window-title-text',
             html: 'Title',
@@ -169,6 +165,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
                 render: function (component) {
                     component.getEl().on('click', function () {
                         if (me.collapsed) {
+                            // fixme: is there a simpler way to toggle classes?
                             component.getEl().addCls('icon-chevron-down').removeCls('icon-chevron-up');
                         } else {
                             component.getEl().addCls('icon-chevron-up').removeCls('icon-chevron-down');
@@ -183,7 +180,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     /**
      * @returns {Ext.container.Container}
      */
-    createWindowBody: function () {
+    createWindowBodyCt: function () {
         var me = this;
         return new Ext.container.Container({
             flex: 1,
@@ -192,14 +189,14 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             listeners: {
                 render: function () {
                     me.addPanels();
-                    me.setPanel(me.DEFAULT_SELECTED_PANEL_INDEX);
+                    me.showPanel(me.DEFAULT_SELECTED_PANEL_INDEX);
                 }
             }
         });
     },
 
     setTitleText: function (text) {
-        this.titleText.getEl().setHTML(text);
+        this.titleTextCmp.getEl().setHTML(text);
     },
 
     toggleExpandCollapse: function () {
@@ -221,11 +218,10 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             this.currentHeight = this.height;
             this.collapsed = true;
         }
-        this.handleResize();
     },
 
-    setPanel: function (index) {
-        var addedPanels = this.windowBody.items.items, panel;
+    showPanel: function (index) {
+        var addedPanels = this.windowBodyCt.items.items, panel;
         for (var i = 0; i < addedPanels.length; i++) {
             panel = addedPanels[i];
             if (i == index) {
@@ -243,7 +239,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         for (key in this.panels) {
             if (this.panels.hasOwnProperty(key)) {
                 panel = this.panels[key];
-                this.windowBody.add(panel.item());
+                this.windowBodyCt.add(panel.item());
             }
         }
     },
@@ -266,7 +262,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         this.draggingShim.style.display = show ? 'block' : 'none';
     },
 
-    enableDrag: function () {
+    enableWindowDrag: function () {
         var me = this;
         this.draggable = {
             delegate: '.admin-context-window-title-text',
@@ -285,7 +281,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         this.constrainTo = Ext.get('live-edit-iframe-container');
     },
 
-    enableResize: function () {
+    enableWindowResize: function () {
         var me = this;
         this.resizable = {
             dynamic: true,
@@ -301,11 +297,11 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         };
     },
 
-    handleResize: function () {
+    onWindowResize: function () {
         // fixme: optimize
-
-        var addedPanels = this.windowBody.items.items,
+        var addedPanels = this.windowBodyCt.items.items,
             newBodyHeight = this.height - this.TITLE_BAR_HEIGHT;
+
         for (var i = 0; i < addedPanels.length; i++) {
             addedPanels[i].setHeight(newBodyHeight);
         }

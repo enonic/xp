@@ -6,7 +6,6 @@
 
 .live-edit-device-list {
     overflow: hidden;
-    padding: 2px;
 }
 
 .live-edit-device-list:hover {
@@ -15,12 +14,17 @@
 
 .live-edit-device {
     position: relative;
-    padding: 10px 20px;
+    padding: 15px 20px;
     cursor: pointer;
 }
 
-.live-edit-device:hover {
-    background-color: #3892dd;
+.live-edit-device:not(.live-edit-device-selected):hover {
+    background-color: #353535;
+}
+
+.live-edit-device-selected {
+    background-color: #1e1e1e;
+    color: #fff;
 }
 
 .live-edit-device-selected:before {
@@ -29,13 +33,25 @@
     top: 20px;
     left: 5px;
     font-size: 15px;
+    color: #fff;
 }
 
 .live-edit-device-rotate-button {
+    display: none;
     position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 25px;
+    padding: 10px 20px;
+    right: 0;
+    font-size: 15px;
+    color: #fff;
+    -webkit-transition: -webkit-transform 100ms;
+    transition: transform 100ms;
+}
+.live-edit-device-selected .live-edit-device-rotate-button {
+    display: block;
+}
+.live-edit-device-rotate-button-horizontal {
+    -webkit-transform:rotate(90deg) !important;
+    transform:rotate(90deg) !important;
 }
 
 .live-edit-device-row {
@@ -43,7 +59,7 @@
 }
 
 .live-edit-device-icon {
-    width: 50px;
+    width: 55px;
     color: #f2f2f2;
     font-size: 32px;
     font-weight: lighter;
@@ -62,8 +78,4 @@
     line-height: 1.4;
     font-size: 13px !important;
     color: #f2f2f2;
-}
-
-.live-edit-device:hover small {
-    color: #fff;
 }

@@ -6,26 +6,31 @@ Ext.define('Admin.view.contentManager.contextwindow.DeviceSelector', {
         align: 'stretch'
     },
 
-    DEVICE_STORE_URL: '../../admin2/apps/content-manager/js/data/context-window/devices.json',
+    DEVICES_URL: '../../admin2/apps/content-manager/js/data/context-window/devices.json',
 
-    topText: undefined,
+    topTextCmp: undefined,
     listView: undefined,
 
+    deviceOrientation: 'vertical', // vertical|horizontal
+
     initComponent: function () {
-        this.topText = this.createTopText();
+        this.topTextCmp = this.createTopTextCmp();
         this.listView = this.createListView();
         this.items = [
-            this.topText,
+            this.topTextCmp,
             this.listView
         ];
         this.callParent(arguments);
     },
 
-    createTopText: function () {
+    /**
+     * @returns {Ext.Component}
+     */
+    createTopTextCmp: function () {
         return new Ext.Component({
             height: 40,
             cls: 'live-edit-device-top-bar',
-            html: '<p>Emulate different client types</p>'
+            html: '<p>Emulate different client types physical sizes</p>'
         });
     },
 
@@ -34,28 +39,42 @@ Ext.define('Admin.view.contentManager.contextwindow.DeviceSelector', {
      */
     createListView: function () {
         var me = this;
+        var defaultModelData = {
+            "name": "Monitor full (default)",
+            "device_type": "monitor_full",
+            "width": "100%",
+            "height": "100%",
+            "rotatable": false
+        };
 
         // fixme: formalize model, store 'n stuff
 
-        Ext.define('ContextWindow.Devices', {
+        Ext.define('Admin.ContextWindow.DeviceModel', {
             extend: 'Ext.data.Model',
             fields: [
                 { name: 'name', type: 'string' },
-                { name: 'type', type: 'string' },
-                { name: 'width', type: 'string' },
-                { name: 'height', type: 'string' }
+                { name: 'device_type', type: 'string' },
+                { name: 'width', type: 'auto' },
+                { name: 'height', type: 'auto' },
+                { name: 'rotatable', type: 'boolean' }
             ]
         });
 
         Ext.create('Ext.data.Store', {
             id: 'contextWindowDeviceStore',
-            model: 'ContextWindow.Devices',
+            model: 'Admin.ContextWindow.DeviceModel',
             proxy: {
                 type: 'ajax',
-                url: me.DEVICE_STORE_URL,
+                url: me.DEVICES_URL,
                 reader: {
                     type: 'json',
                     root: 'devices'
+                }
+            },
+            listeners: {
+                load: function (store, records) {
+                    var defaultModel = new Admin.ContextWindow.DeviceModel(defaultModelData);
+                    store.insert(0, defaultModel);
                 }
             },
             autoLoad: true
@@ -65,32 +84,20 @@ Ext.define('Admin.view.contentManager.contextwindow.DeviceSelector', {
             '<tpl for=".">',
             '   <div class="live-edit-device">',
             '      <div class="live-edit-device-row">',
-            '           <div class="live-edit-device-icon {[this.resolveIconCls(values.type)]}"></div>',
+            '           <div class="live-edit-device-icon {[this.getIconCls(values.device_type)]}"></div>',
             '           <div class="live-edit-device-info">',
             '               <h3>{name}</h3>',
             '               <small>{width} x {height}</small>',
             '           </div>',
-            '           <div class="live-edit-device-rotate-button icon-rotate-right"></div>',
+            '           <tpl if="rotatable">',
+            '               <div class="live-edit-device-rotate-button icon-rotate-right" title="Rotate"></div>',
+            '           </tpl>',
             '       </div>',
             '   </div>',
             '</tpl>',
             {
-                resolveIconCls: function (deviceType) {
-                    var iconCls;
-                    switch (deviceType) {
-                    case 'pc':
-                        iconCls = 'icon-desktop';
-                        break;
-                    case 'mobile':
-                        iconCls = 'icon-mobile-phone';
-                        break;
-                    case 'tablet':
-                        iconCls = 'icon-tablet';
-                        break;
-                    default:
-                        iconCls = '';
-                    }
-                    return iconCls;
+                getIconCls: function (deviceType) {
+                    return me.resolveIconCls(deviceType);
                 }
             }
         );
@@ -104,48 +111,92 @@ Ext.define('Admin.view.contentManager.contextwindow.DeviceSelector', {
             emptyText: 'No devices available',
             selectedItemCls: 'live-edit-device-selected',
             listeners: {
-                itemclick: function (view, record, item, index, event) {
-                    if (Ext.fly(event.target).hasCls('live-edit-device-rotate-button')) {
-                        me.resizeIFrame(record, true);
-                    } else {
-                        me.resizeIFrame(record, false);
-                    }
+                itemclick: {
+                    fn: me.onItemClick,
+                    scope: me
                 }
             }
         });
     },
 
-    resizeIFrame: function (deviceModel, rotate) {
-
-        // fixme: rotate
-
+    resizeLiveEditFrame: function (deviceModel) {
         var iFrame = Ext.get(this.getContextWindow().getLiveEditIFrame().id),
             iFrameContainer = Ext.get('live-edit-iframe-container'),
+            deviceType = deviceModel.data.device_type,
+            isRotatable = deviceModel.data.rotatable,
             width = deviceModel.data.width,
             height = deviceModel.data.height,
-            widthHasPercentUnit = width.indexOf('%') > -1,
-            heightHasPercentUnit = height.indexOf('%') > -1,
-            // Ext animate does not work on percent units so we have to use the iFrame container's current dimensions
-            newWidth = widthHasPercentUnit ? iFrameContainer.getWidth() : width,
-            newHeight = heightHasPercentUnit ? iFrameContainer.getWidth() : height;
+            useFullWidth = deviceType === 'monitor_full',
+            newWidth = useFullWidth ? iFrameContainer.getWidth() : width,
+            newHeight = useFullWidth ? iFrameContainer.getWidth() : height;
 
+        if (this.deviceOrientation === 'horizontal' && isRotatable) {
+            newWidth = height;
+            newHeight = width;
+        }
         iFrame.animate({
-            duration: 300,
+            duration: 450,
             to: {
                 width: newWidth,
                 height: newHeight
             },
             listeners: {
                 afteranimate: function () {
-                    if (widthHasPercentUnit) {
+                    if (useFullWidth) {
                         iFrame.setStyle('width', width);
                     }
-                    if (heightHasPercentUnit) {
+                    if (useFullWidth) {
                         iFrame.setStyle('height', height);
                     }
                 }
             }
         });
+    },
+
+    resolveIconCls: function (deviceType) {
+        var iconCls;
+        switch (deviceType) {
+        case 'monitor':
+            iconCls = 'icon-desktop';
+            break;
+        case 'monitor_full':
+            iconCls = 'icon-desktop';
+            break;
+        case 'mobile':
+            iconCls = 'icon-mobile-phone';
+            break;
+        case 'tablet':
+            iconCls = 'icon-tablet';
+            break;
+        default:
+            iconCls = '';
+        }
+        return iconCls;
+    },
+
+    onItemClick: function (view, record, item, index, event) {
+        var me = this;
+        var targetIsRotateButton = Ext.fly(event.target).hasCls('live-edit-device-rotate-button');
+        if (targetIsRotateButton) {
+            me.deviceOrientation = me.deviceOrientation === 'vertical' ? 'horizontal' : 'vertical';
+            me.rotateRotateButton(Ext.fly(event.target));
+        } else {
+            me.deviceOrientation = 'vertical';
+            var rotateButtonDom = Ext.get(item).down('.live-edit-device-rotate-button');
+            if (rotateButtonDom) {
+                rotateButtonDom.removeCls('live-edit-device-rotate-button-horizontal');
+            }
+        }
+
+        me.resizeLiveEditFrame(record);
+    },
+
+    rotateRotateButton: function (buttonEl) {
+        if (this.deviceOrientation === 'horizontal') {
+            buttonEl.addCls('live-edit-device-rotate-button-horizontal');
+        } else {
+            buttonEl.removeCls('live-edit-device-rotate-button-horizontal');
+        }
     },
 
     getContextWindow: function () {

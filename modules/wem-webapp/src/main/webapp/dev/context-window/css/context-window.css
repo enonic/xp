@@ -30,8 +30,17 @@
     background-color: #fff !important;
 }
 
+.context-window-menu .x-menu-body {
+    padding: 0;
+}
+
 .context-window-menu-item {
     padding: 5px;
+}
+
+.context-window-menu-item:hover {
+    background-color: #3892dd;
+    color: #fff;
 }
 
 .admin-context-window-title-text {
@@ -74,7 +83,7 @@
 }
 
 .admin-context-window ::-webkit-scrollbar-track-piece  {
-    background-color: #343434;
+    background-color: #515151;
 }
 
 .admin-context-window ::-webkit-scrollbar-thumb:vertical {

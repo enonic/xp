@@ -9,35 +9,35 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
         align: 'stretch'
     },
 
-    COMPONENTS_STORE_URL: '../../admin2/apps/content-manager/js/data/context-window/mock-components.json',
+    URL_TO_COMPONENTS: '../../admin2/apps/content-manager/js/data/context-window/mock-components.json',
 
-    searchBar: undefined,
-    searchInput: undefined,
+    searchBarCt: undefined,
+    searchInputCmp: undefined,
     listView: undefined,
 
     initComponent: function () {
-        this.searchBar = this.createSearchBar();
+        this.searchBarCt = this.createSearchBarCt();
         this.listView = this.createListView();
         this.items = [
-            this.searchBar,
+            this.searchBarCt,
             this.listView
         ];
         this.callParent(arguments);
     },
 
     /**
-     * @returns {Ext.Component}
+     * @returns {Ext.container.Container}
      */
-    createSearchBar: function () {
-        this.searchInput = this.createSearchInput();
+    createSearchBarCt: function () {
+        this.searchInputCmp = this.createSearchInputCmp();
         return new Ext.container.Container({
-            height: 70,
+            height: 80,
             cls: 'live-edit-component-search-bar',
             items: [
                 new Ext.Component({
                     html: '<p>Drag\'n drop Parts, Layouts and more..</p>'
                 }),
-                this.searchInput
+                this.searchInputCmp
             ]
         });
     },
@@ -45,7 +45,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
     /**
      * @returns {Ext.Component}
      */
-    createSearchInput: function () {
+    createSearchInputCmp: function () {
         var me = this;
         return new Ext.Component({
             autoEl: {
@@ -71,7 +71,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
 
         // fixme: formalize model, store 'n stuff
 
-        Ext.define('ContextWindow.Component', {
+        Ext.define('Admin.ContextWindow.ComponentModel', {
             extend: 'Ext.data.Model',
             fields: [
                 { name: 'key', type: 'string' },
@@ -83,10 +83,10 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
 
         Ext.create('Ext.data.Store', {
             id: 'contextWindowComponentStore',
-            model: 'ContextWindow.Component',
+            model: 'Admin.ContextWindow.ComponentModel',
             proxy: {
                 type: 'ajax',
-                url: me.COMPONENTS_STORE_URL,
+                url: me.URL_TO_COMPONENTS,
                 reader: {
                     type: 'json',
                     root: 'components'
