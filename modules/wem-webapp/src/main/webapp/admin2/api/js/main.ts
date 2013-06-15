@@ -62,6 +62,8 @@
 ///<reference path='delete/DeleteItem.ts' />
 ///<reference path='delete/DeleteDialog.ts' />
 
+///<reference path='AppBrowsePanel.ts' />
+
 ///<reference path='notify/Message.ts' />
 ///<reference path='notify/NotifyManager.ts' />
 ///<reference path='notify/NotifyOpts.ts' />

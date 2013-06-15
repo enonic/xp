@@ -15,6 +15,7 @@
 ///<reference path='SpaceContext.ts' />
 
 ///<reference path='SpaceActions.ts' />
+///<reference path='SpaceAppBrowsePanel.ts' />
 
 ///<reference path='wizard/SpaceWizardActions.ts' />
 ///<reference path='wizard/SpaceWizardContext.ts' />
@@ -111,52 +112,22 @@ Ext.application({
 
     launch: function () {
 
-        var toolbar = new app_ui.BrowseToolbar();
-
-        var grid = components.gridPanel = new app_ui.TreeGridPanel('center');
-
-        //var detail = components.detailPanel = new app_ui.SpaceDetailPanel('south');
-        var detail = components.detailPanel = new app_ui.SpaceDetailPanel();
-
-        var center = new Ext.container.Container({
-            region: 'center',
-            layout: 'border'
-        });
-
-        center.add(detail.ext);
-        center.add(grid.ext);
-        center.add(toolbar.ext);
-
-        var west = new app_ui.FilterPanel({
-            region: 'west',
-            width: 200
-        }).getExtEl();
-
-        var p = new Ext.panel.Panel({
-            id: 'tab-browse',
-            title: 'Browse',
-            closable: false,
-            border: false,
-            layout: 'border',
-            tabConfig: { hidden: true }
-        });
-
-        p.add(center);
-        p.add(west);
+        // TODO: var spaceAppPanel = new app.SpaceAppPanel();
+        var spaceAppMainPanel = new app.SpaceAppBrowsePanel();
 
         var tabPanel = components.tabPanel = new app_ui.TabPanel({
             appName: 'Space Admin',
             appIconCls: 'icon-metro-space-admin-24'
         }).getExtEl();
 
-        tabPanel.add(p);
+        tabPanel.add(spaceAppMainPanel.ext);
 
-        var wp = new Ext.container.Viewport({
+        var viewPort = new Ext.container.Viewport({
             layout: 'fit',
             cls: 'admin-viewport'
         });
 
-        wp.add(tabPanel);
+        viewPort.add(tabPanel);
 
         var deleteSpaceDialog:app_ui.DeleteSpaceDialog = new app_ui.DeleteSpaceDialog();
         app_event.DeletePromptEvent.on((event) => {

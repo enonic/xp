@@ -1574,6 +1574,43 @@ var api_delete;
         return DeleteDialogItemComponent;
     })(api_ui.DivEl);    
 })(api_delete || (api_delete = {}));
+var api;
+(function (api) {
+    var AppBrowsePanel = (function (_super) {
+        __extends(AppBrowsePanel, _super);
+        function AppBrowsePanel(browseToolbar, grid, detailPanel, filterPanel) {
+            this.browseToolbar = browseToolbar;
+            this.grid = grid;
+            this.detailPanel = detailPanel;
+            this.filterPanel = filterPanel;
+                _super.call(this, "AppBrowsePanel");
+            this.initExt();
+        }
+        AppBrowsePanel.prototype.initExt = function () {
+            var center = new Ext.container.Container({
+                region: 'center',
+                layout: 'border'
+            });
+            center.add(this.browseToolbar.ext);
+            center.add(this.grid.ext);
+            center.add(this.detailPanel.ext);
+            this.ext = new Ext.panel.Panel({
+                id: 'tab-browse',
+                title: 'Browse',
+                closable: false,
+                border: false,
+                layout: 'border',
+                tabConfig: {
+                    hidden: true
+                }
+            });
+            this.ext.add(center);
+            this.ext.add(this.filterPanel);
+        };
+        return AppBrowsePanel;
+    })(api_ui.Panel);
+    api.AppBrowsePanel = AppBrowsePanel;    
+})(api || (api = {}));
 var api_notify;
 (function (api_notify) {
     (function (Type) {

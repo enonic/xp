@@ -272,6 +272,24 @@ var app;
     })();
     app.SpaceActions = SpaceActions;    
 })(app || (app = {}));
+var app;
+(function (app) {
+    var SpaceAppBrowsePanel = (function (_super) {
+        __extends(SpaceAppBrowsePanel, _super);
+        function SpaceAppBrowsePanel() {
+            var toolbar = new app_ui.BrowseToolbar();
+            var grid = components.gridPanel = new app_ui.TreeGridPanel('center');
+            var detail = components.detailPanel = new app_ui.SpaceDetailPanel();
+            var filterPanel = new app_ui.FilterPanel({
+                region: 'west',
+                width: 200
+            }).getExtEl();
+                _super.call(this, toolbar, grid, detail, filterPanel);
+        }
+        return SpaceAppBrowsePanel;
+    })(api.AppBrowsePanel);
+    app.SpaceAppBrowsePanel = SpaceAppBrowsePanel;    
+})(app || (app = {}));
 var app_wizard;
 (function (app_wizard) {
     var SaveSpaceAction = (function (_super) {
@@ -4687,42 +4705,17 @@ Ext.application({
     ],
     stores: [],
     launch: function () {
-        var toolbar = new app_ui.BrowseToolbar();
-        var grid = components.gridPanel = new app_ui.TreeGridPanel('center');
-        var detail = components.detailPanel = new app_ui.SpaceDetailPanel();
-        var center = new Ext.container.Container({
-            region: 'center',
-            layout: 'border'
-        });
-        center.add(detail.ext);
-        center.add(grid.ext);
-        center.add(toolbar.ext);
-        var west = new app_ui.FilterPanel({
-            region: 'west',
-            width: 200
-        }).getExtEl();
-        var p = new Ext.panel.Panel({
-            id: 'tab-browse',
-            title: 'Browse',
-            closable: false,
-            border: false,
-            layout: 'border',
-            tabConfig: {
-                hidden: true
-            }
-        });
-        p.add(center);
-        p.add(west);
+        var spaceAppMainPanel = new app.SpaceAppBrowsePanel();
         var tabPanel = components.tabPanel = new app_ui.TabPanel({
             appName: 'Space Admin',
             appIconCls: 'icon-metro-space-admin-24'
         }).getExtEl();
-        tabPanel.add(p);
-        var wp = new Ext.container.Viewport({
+        tabPanel.add(spaceAppMainPanel.ext);
+        var viewPort = new Ext.container.Viewport({
             layout: 'fit',
             cls: 'admin-viewport'
         });
-        wp.add(tabPanel);
+        viewPort.add(tabPanel);
         var deleteSpaceDialog = new app_ui.DeleteSpaceDialog();
         app_event.DeletePromptEvent.on(function (event) {
             deleteSpaceDialog.setSpacesToDelete(event.getModels());

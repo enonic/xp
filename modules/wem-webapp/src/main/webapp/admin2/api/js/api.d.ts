@@ -546,6 +546,17 @@ module api_delete {
         public clear(): void;
     }
 }
+module api {
+    class AppBrowsePanel extends api_ui.Panel {
+        public ext;
+        private browseToolbar;
+        private grid;
+        private detailPanel;
+        private filterPanel;
+        constructor(browseToolbar: api_ui_toolbar.Toolbar, grid: any, detailPanel: api_ui_detailpanel.DetailPanel, filterPanel: any);
+        private initExt();
+    }
+}
 module api_notify {
     enum Type {
         INFO,
