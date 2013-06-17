@@ -136,6 +136,11 @@ module api_ui {
             return this;
         }
 
+        setBackgroundImage(value:string):api_ui.ElementHelper {
+            this.el.style.backgroundImage = value;
+            return this;
+        }
+
         remove() {
             var parent = this.el.parentElement;
             parent.removeChild(this.el);
