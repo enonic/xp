@@ -23,7 +23,7 @@ public class ResourceDaoImpl
 
         if ( !resourceFile.exists() )
         {
-            throw new RuntimeException( "Could not find resource: " + resourceRoot.getAbsolutePath() + "/" + path );
+            return null;
         }
 
         Resource resource = new Resource( resourceFile.getName(), Files.asByteSource( resourceFile ) );

@@ -24,6 +24,11 @@ public class ResourceRequestHandler
     {
         final Resource resource = resourceService.getResource( getStaticRequest() );
 
+        if ( resource == null )
+        {
+            return Response.status( Response.Status.NOT_FOUND ).build();
+        }
+
         final String mimeType = mimeTypeResolver.getMimeType( resource.getFile().getName() );
 
         try
@@ -32,7 +37,6 @@ public class ResourceRequestHandler
         }
         catch ( IOException e )
         {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             return Response.serverError().build();
         }
     }
