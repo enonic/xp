@@ -4717,7 +4717,6 @@ var components;
     components.detailPanel;
     components.gridPanel;
     components.tabPanel;
-    components.deleteWindow;
 })(components || (components = {}));
 Ext.application({
     name: 'spaceAdmin',

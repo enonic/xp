@@ -90,8 +90,7 @@ module app {
 module components {
     export var detailPanel:app_ui.SpaceDetailPanel;
     export var gridPanel:app_ui.TreeGridPanel;
-    export var tabPanel;
-    export var deleteWindow;
+    export var tabPanel:app_ui.TabPanel;
 }
 
 
