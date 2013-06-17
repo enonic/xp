@@ -22,7 +22,7 @@ public class ResourceRequestHandler
     @GET
     public Response getResource()
     {
-        final Resource resource = resourceService.getResource( getStaticRequest() );
+        final Resource resource = resourceService.getResource( getResourceRequest() );
 
         if ( resource == null )
         {
@@ -46,13 +46,13 @@ public class ResourceRequestHandler
     {
         final ResourceRequestHandler resource = this.resourceContext.getResource( ResourceRequestHandler.class );
 
-        final ResourceRequest resourceRequest = getStaticRequest();
+        final ResourceRequest resourceRequest = getResourceRequest();
         resourceRequest.appendPathElement( pathElement );
 
         return resource;
     }
 
-    private ResourceRequest getStaticRequest()
+    private ResourceRequest getResourceRequest()
     {
         return this.resourceContext.getResource( ResourceRequest.class );
     }
