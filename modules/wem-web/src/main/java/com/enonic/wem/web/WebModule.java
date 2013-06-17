@@ -15,5 +15,6 @@ public final class WebModule
         install( new CoreModule() );
         install( new AdminModule() );
         install( new PortalModule() );
+
     }
 }

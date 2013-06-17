@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.server.impl.container.filter.NormalizeFilter;
 
-import com.enonic.wem.portal.dispatch.PortalDispatcherResource;
+import com.enonic.wem.portal.dispatch.PortalDispatcherHandler;
 import com.enonic.wem.web.jaxrs.JaxRsServlet;
 
 @Singleton
@@ -18,7 +18,7 @@ public final class PortalServlet
         setFeature( ResourceConfig.FEATURE_NORMALIZE_URI, true );
         setFeature( ResourceConfig.FEATURE_CANONICALIZE_URI_PATH, true );
 
-        addClass( PortalDispatcherResource.class );
+        addClass( PortalDispatcherHandler.class );
         addClass( NormalizeFilter.class );
     }
 }

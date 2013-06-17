@@ -10,7 +10,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import com.enonic.wem.portal.AbstractResource;
 
-public class ImageResource
+public class ImageRequestHandler
     extends AbstractResource
 {
 

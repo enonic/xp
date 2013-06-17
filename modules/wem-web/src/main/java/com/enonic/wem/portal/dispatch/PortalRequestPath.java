@@ -1,10 +1,10 @@
 package com.enonic.wem.portal.dispatch;
 
 import com.enonic.wem.api.space.SpaceName;
-import com.enonic.wem.portal.AbstractResourceRequestPath;
+import com.enonic.wem.portal.AbstractRequestPath;
 
 public class PortalRequestPath
-    extends AbstractResourceRequestPath
+    extends AbstractRequestPath
 {
     private static final String SPACE_PREFIX_DIVIDER = ":";
 

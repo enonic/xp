@@ -5,6 +5,7 @@ import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.attachment.AttachmentCommands;
 import com.enonic.wem.api.command.content.binary.BinaryCommands;
 import com.enonic.wem.api.command.relationship.RelationshipCommands;
+import com.enonic.wem.api.command.resource.ResourceCommands;
 import com.enonic.wem.api.command.schema.SchemaCommands;
 import com.enonic.wem.api.command.schema.content.ContentTypeCommands;
 import com.enonic.wem.api.command.schema.mixin.MixinCommands;
@@ -35,6 +36,8 @@ public final class Commands
     private static final BinaryCommands BINARY_COMMANDS = new BinaryCommands();
 
     private static final AttachmentCommands ATTACHMENT_COMMANDS = new AttachmentCommands();
+
+    private static final ResourceCommands RESOURCE_COMMANDS = new ResourceCommands();
 
     private Commands()
     {
@@ -94,4 +97,10 @@ public final class Commands
     {
         return ATTACHMENT_COMMANDS;
     }
+
+    public static ResourceCommands resource()
+    {
+        return RESOURCE_COMMANDS;
+    }
+
 }

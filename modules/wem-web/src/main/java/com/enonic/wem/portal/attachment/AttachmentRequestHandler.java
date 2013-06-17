@@ -7,7 +7,7 @@ import javax.ws.rs.PathParam;
 
 import com.enonic.wem.portal.AbstractResource;
 
-public class AttachmentResource
+public class AttachmentRequestHandler
     extends AbstractResource
 {
     private AttachmentService attachmentService;

@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
-public abstract class AbstractResourceRequestPath
+public abstract class AbstractRequestPath
 {
     protected static final String ELEMENT_DIVIDER = "/";
 
@@ -18,7 +18,7 @@ public abstract class AbstractResourceRequestPath
         return elements;
     }
 
-    public void appendPath( final String element )
+    public void appendPathElement( final String element )
     {
         elements.add( element );
     }

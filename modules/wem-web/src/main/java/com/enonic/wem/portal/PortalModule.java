@@ -11,6 +11,10 @@ import com.enonic.wem.portal.dispatch.SpaceService;
 import com.enonic.wem.portal.dispatch.SpaceServiceImpl;
 import com.enonic.wem.portal.image.ImageService;
 import com.enonic.wem.portal.image.ImageServiceImpl;
+import com.enonic.wem.portal.resource.ResourceService;
+import com.enonic.wem.portal.resource.ResourceServiceImpl;
+import com.enonic.wem.web.util.MimeTypeResolver;
+import com.enonic.wem.web.util.MimeTypeResolverImpl;
 
 public final class PortalModule
     extends AbstractModule
@@ -23,5 +27,9 @@ public final class PortalModule
         bind( AttachmentService.class ).to( AttachmentServiceImpl.class ).in( Scopes.SINGLETON );
         bind( SpaceService.class ).to( SpaceServiceImpl.class ).in( Scopes.SINGLETON );
         bind( ImageService.class ).to( ImageServiceImpl.class ).in( Scopes.SINGLETON );
+        bind( ResourceService.class ).to( ResourceServiceImpl.class ).in( Scopes.SINGLETON );
+
+        bind( MimeTypeResolver.class ).to( MimeTypeResolverImpl.class ).in( Scopes.SINGLETON );
+
     }
 }

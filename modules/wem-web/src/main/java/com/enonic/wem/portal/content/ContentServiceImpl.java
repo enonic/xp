@@ -9,7 +9,6 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.portal.AbstractPortalService;
-import com.enonic.wem.portal.dispatch.PortalRequest;
 import com.enonic.wem.portal.dispatch.PortalRequestPath;
 
 @Singleton
@@ -17,9 +16,9 @@ public class ContentServiceImpl
     extends AbstractPortalService
     implements ContentService
 {
-    public Content getContent( final PortalRequest portalRequest )
+    public Content getContent( final PageRequest pageRequest )
     {
-        final PortalRequestPath portalRequestPath = portalRequest.getPortalRequestPath();
+        final PortalRequestPath portalRequestPath = pageRequest.getPortalRequest().getPortalRequestPath();
 
         final ContentPath contentPath =
             ContentPath.newPath().spaceName( portalRequestPath.getSpaceName() ).elements( portalRequestPath.getElements() ).build();

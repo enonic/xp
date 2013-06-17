@@ -8,7 +8,7 @@ import com.enonic.wem.api.space.Space;
 import com.enonic.wem.portal.AbstractResource;
 
 @Path("/{workspace}/{mode}")
-public class PortalDispatcherResource
+public class PortalDispatcherHandler
     extends AbstractResource
 {
     private SpaceService spaceService;
@@ -26,11 +26,11 @@ public class PortalDispatcherResource
     }
 
     @Path("space/{spaceName}")
-    public SpaceDispatcherResource handle( @PathParam("spaceName") String spaceName )
+    public SpaceDispatcherHandler handle( @PathParam("spaceName") String spaceName )
     {
         final Space space = validateSpace( spaceName );
 
-        final SpaceDispatcherResource resource = this.resourceContext.getResource( SpaceDispatcherResource.class );
+        final SpaceDispatcherHandler resource = this.resourceContext.getResource( SpaceDispatcherHandler.class );
 
         getPortalRequest().createPortalRequestPath( space.getName() );
 

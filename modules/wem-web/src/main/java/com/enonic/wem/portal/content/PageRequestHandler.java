@@ -5,16 +5,15 @@ import javax.inject.Inject;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.portal.AbstractResource;
 
-public class PageResource
+public class PageRequestHandler
     extends AbstractResource
 {
     private ContentService contentService;
 
     public String getPage()
     {
-        contentService.getContent( getPortalRequest() );
 
-        final Content content = contentService.getContent( getPortalRequest() );
+        final Content content = contentService.getContent( new PageRequest( getPortalRequest() ) );
 
         if ( content != null )
         {

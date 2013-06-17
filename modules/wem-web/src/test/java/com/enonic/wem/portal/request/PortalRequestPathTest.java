@@ -24,9 +24,9 @@ public class PortalRequestPathTest
     {
         PortalRequestPath path = new PortalRequestPath( SpaceName.from( "testSpace" ) );
 
-        path.appendPath( "element1" );
-        path.appendPath( "element2" );
-        path.appendPath( "element3" );
+        path.appendPathElement( "element1" );
+        path.appendPathElement( "element2" );
+        path.appendPathElement( "element3" );
 
         assertEquals( "/element1/element2/element3", path.getRelativePathAsString() );
     }

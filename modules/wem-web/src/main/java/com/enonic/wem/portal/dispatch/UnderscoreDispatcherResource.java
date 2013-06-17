@@ -3,31 +3,31 @@ package com.enonic.wem.portal.dispatch;
 import javax.ws.rs.Path;
 
 import com.enonic.wem.portal.AbstractResource;
-import com.enonic.wem.portal.attachment.AttachmentResource;
-import com.enonic.wem.portal.image.ImageResource;
-import com.enonic.wem.portal.resource.StaticResource;
+import com.enonic.wem.portal.attachment.AttachmentRequestHandler;
+import com.enonic.wem.portal.image.ImageRequestHandler;
+import com.enonic.wem.portal.resource.ResourceRequestHandler;
 
 public class UnderscoreDispatcherResource
     extends AbstractResource
 {
 
     @Path("attachment")
-    public AttachmentResource handleAttachment()
+    public AttachmentRequestHandler handleAttachment()
     {
-        final AttachmentResource resource = this.resourceContext.getResource( AttachmentResource.class );
+        final AttachmentRequestHandler resource = this.resourceContext.getResource( AttachmentRequestHandler.class );
         return resource;
     }
 
     @Path("image")
-    public ImageResource handleImage()
+    public ImageRequestHandler handleImage()
     {
-        return this.resourceContext.getResource( ImageResource.class );
+        return this.resourceContext.getResource( ImageRequestHandler.class );
     }
 
     @Path("public")
-    public StaticResource handleStatic()
+    public ResourceRequestHandler handleStatic()
     {
-        return this.resourceContext.getResource( StaticResource.class );
+        return this.resourceContext.getResource( ResourceRequestHandler.class );
     }
 
 

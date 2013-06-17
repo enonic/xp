@@ -6,23 +6,23 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import com.enonic.wem.portal.AbstractResource;
-import com.enonic.wem.portal.content.PageResource;
+import com.enonic.wem.portal.content.PageRequestHandler;
 
-public class SpaceDispatcherResource
+public class SpaceDispatcherHandler
     extends AbstractResource
 {
     @GET
     @Produces("text/plain")
     public String doGet()
     {
-        return this.resourceContext.getResource( PageResource.class ).getPage();
+        return this.resourceContext.getResource( PageRequestHandler.class ).getPage();
     }
 
-    @Path("{name}")
-    public SpaceDispatcherResource handlePathElement( @PathParam("name") String name )
+    @Path("{pathElement}")
+    public SpaceDispatcherHandler handlePathElement( @PathParam("pathElement") String pathElement )
     {
-        final SpaceDispatcherResource resource = this.resourceContext.getResource( SpaceDispatcherResource.class );
-        getPortalRequest().appendPath( name );
+        final SpaceDispatcherHandler resource = this.resourceContext.getResource( SpaceDispatcherHandler.class );
+        getPortalRequest().appendPath( pathElement );
 
         return resource;
     }

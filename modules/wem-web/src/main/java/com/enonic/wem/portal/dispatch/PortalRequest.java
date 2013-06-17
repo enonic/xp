@@ -17,7 +17,7 @@ public class PortalRequest
 
     public void appendPath( final String element )
     {
-        portalRequestPath.appendPath( element );
+        portalRequestPath.appendPathElement( element );
     }
 
     public String getWorkspace()
