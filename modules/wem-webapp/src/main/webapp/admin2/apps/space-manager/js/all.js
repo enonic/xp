@@ -3970,8 +3970,6 @@ var app_ui;
                         itemCls: me.itemCls,
                         activeItem: me.activeTab
                     }, me.layout));
-                    this.appbar = new app_ui.SpaceAppBar();
-                    dockedItems.push(me.appbar.ext);
                     this.tabBar = new app_ui.TopBar(me.appName, me);
                     dockedItems.push(this.tabBar.ext);
                     me.dockedItems = dockedItems;
