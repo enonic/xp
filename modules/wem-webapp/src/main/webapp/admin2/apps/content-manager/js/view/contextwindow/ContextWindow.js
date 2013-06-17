@@ -8,8 +8,8 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     cls: 'admin-context-window',
     x: 10,
     y: 40,
-    width: 290,
-    height: 508,
+    width: 360,
+    height: 555,
     shadow: false,
     border: false,
     floating: true,
@@ -159,7 +159,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     createToggleButton: function () {
         var me = this;
         return new Ext.Component({
-            cls: 'admin-context-window-toggle-button icon-chevron-down',
+            cls: 'admin-context-window-expand-collapse-button icon-chevron-down',
             width: 30,
             listeners: {
                 render: function (component) {
@@ -285,7 +285,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         var me = this;
         this.resizable = {
             dynamic: true,
-            transparent: true,
+            transparent: false,
             listeners: {
                 beforeresize: function () {
                     me.showHideDraggingShim(true)

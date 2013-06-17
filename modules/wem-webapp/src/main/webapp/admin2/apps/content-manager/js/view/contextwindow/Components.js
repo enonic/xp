@@ -160,44 +160,107 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
         });
     },
 
-    initJQueryLiveDraggable: function () {
-        var me = this,
-            cursorAt = {left: -10, top: -15};
-
-        $('.live-edit-component').liveDraggable({
-            zIndex: 4000000,
-            cursorAt: cursorAt,
-            helper: me.createDragHelper,
-            start: function (event, ui) {
-
-                me.getContextWindow().hide();
-                var jQuery = me.getJQueryFromLiveEditPage();
-                var clone = jQuery(ui.helper.clone());
-
-                clone.css('position', 'absolute');
-                clone.css('z-index', '5100000');
-
-                jQuery('body').append(clone);
-
-                jQuery(clone).draggable({
-                    connectToSortable: '[data-live-edit-type=region]',
-                    cursorAt: cursorAt
-                });
-
-                jQuery(clone).simulate('mousedown');
-            }
-        });
+    getJQueryFromLiveEditPage: function () {
+        return  this.getContextWindow().getLiveEditIFrame().contentWindow.$liveEdit;
     },
 
-    registerListenersFromLiveEditPage: function () {
-        var me = this,
-            iFrame = me.getContextWindow().getLiveEditIFrame(),
-            jQuery = me.getJQueryFromLiveEditPage();
+    getContextWindow: function () {
+        return this.up('contextWindow');
+    },
 
-        jQuery(iFrame.contentWindow).on('sortStop.liveEdit.component', function () {
-            $('.live-edit-component').simulate('mouseup');
-            me.getContextWindow().doShow();
+    getContextWindowViewRegion: function () {
+        return this.getContextWindow().getEl().getViewRegion();
+    },
+
+
+    /***************************************************************************************************
+     * fixme: Refactor, use a mixin or something similar for the drag drop implementation
+     ***************************************************************************************************/
+
+    windowRegion: null,
+    cursorAt: {left: -10, top: -15},
+
+    initJQueryLiveDraggable: function () {
+        var me = this;
+
+        // set up draggable
+        $('.live-edit-component').liveDraggable({
+            zIndex: 400000,
+            cursorAt: me.cursorAt,
+            //appendTo: 'body',
+            helper: me.createDragHelper,
+            start: function (event, ui) {
+                me.onJQueryDraggableStart(event, ui);
+            },
+            drag: function (event, ui) {
+                me.onJQueryDraggableDrag(event, ui);
+            }
         });
+
+        // set up droppable
+        /*
+        $(me.getContextWindow().getLiveEditIFrame()).droppable({
+            over: function (event, ui) {
+                me.onJQueryDroppableOver(event, ui);
+            }
+        });
+        */
+    },
+
+    onJQueryDraggableStart: function (event, ui) {
+        var me = this;
+
+        // cache the window view region on drag start for performance
+        me.windowRegion = me.getContextWindowViewRegion();
+
+         me.getContextWindow().hide();
+         var jQuery = me.getJQueryFromLiveEditPage();
+         var clone = jQuery(ui.helper.clone());
+
+         clone.css('position', 'absolute');
+         clone.css('z-index', '5100000');
+
+         jQuery('body').append(clone);
+
+         jQuery(clone).draggable({
+         connectToSortable: '[data-live-edit-type=region]',
+         cursorAt: me.cursorAt
+         });
+
+         jQuery(clone).simulate('mousedown');
+    },
+
+    onJQueryDraggableDrag: function (event, ui) {
+        var me = this,
+            mouseX = event.pageX,
+            mouseY = event.pageY,
+            mousePointerIsOutsideOfWindow = mouseY <= me.windowRegion.top || mouseY >= (me.windowRegion.bottom - 10) || mouseX >= (me.windowRegion.right - 10) ||
+                                            mouseX <= me.windowRegion.left;
+
+        if (mousePointerIsOutsideOfWindow) {
+            me.getContextWindow().hide();
+        }
+
+    },
+
+    onJQueryDroppableOver: function (event, ui) {
+        var me = this,
+            jQuery = me.getJQueryFromLiveEditPage(),
+            clone = jQuery(ui.helper.clone());
+
+        clone.css('position', 'absolute');
+        clone.css('z-index', '5100000');
+
+        jQuery('body').append(clone);
+
+        ui.helper.hide(null);
+
+        jQuery(clone).draggable({
+            connectToSortable: '[data-live-edit-type=region]',
+            cursorAt: me.cursorAt
+        });
+
+        jQuery(clone).simulate('mousedown');
     },
 
     createDragHelper: function (jQueryEvent) {
@@ -209,13 +272,16 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
         return $('<div id="live-edit-drag-helper" class="live-edit-component" style="width: 150px; height: 16px;" data-live-edit-component-key="' + key + '" data-live-edit-component-name="' + type + '" data-live-edit-component-type="' + type + '"><div id="live-edit-drag-helper-status-icon"></div><span id="live-edit-drag-helper-text">' + name + '</span></div>');
     },
 
-    getJQueryFromLiveEditPage: function () {
-        return  this.getContextWindow().getLiveEditIFrame().contentWindow.$liveEdit;
-    },
+    registerListenersFromLiveEditPage: function () {
+        var me = this,
+        // Right now We need to use the jQuery object from the live edit page in order to listen for the events
+            jQuery = me.getJQueryFromLiveEditPage(),
+            liveEditWindow = me.getContextWindow().getLiveEditIFrame().contentWindow;
 
-    getContextWindow: function () {
-        return this.up('contextWindow');
+        jQuery(liveEditWindow).on('sortStop.liveEdit.component', function () {
+            $('.live-edit-component').simulate('mouseup');
+            me.getContextWindow().doShow();
+        });
     }
-
 
 });

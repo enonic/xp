@@ -30,7 +30,7 @@ Ext.define('Admin.view.contentManager.contextwindow.DeviceSelector', {
         return new Ext.Component({
             height: 40,
             cls: 'live-edit-device-top-bar',
-            html: '<p>Emulate different client types physical sizes</p>'
+            html: '<p>Emulate different client\'s physical sizes</p>'
         });
     },
 
@@ -39,7 +39,7 @@ Ext.define('Admin.view.contentManager.contextwindow.DeviceSelector', {
      */
     createListView: function () {
         var me = this;
-        var defaultModelData = {
+        var monitorFullModelData = {
             "name": "Monitor full (default)",
             "device_type": "monitor_full",
             "width": "100%",
@@ -73,8 +73,8 @@ Ext.define('Admin.view.contentManager.contextwindow.DeviceSelector', {
             },
             listeners: {
                 load: function (store, records) {
-                    var defaultModel = new Admin.ContextWindow.DeviceModel(defaultModelData);
-                    store.insert(0, defaultModel);
+                    var monitorFullModel = new Admin.ContextWindow.DeviceModel(monitorFullModelData);
+                    store.insert(0, monitorFullModel);
                 }
             },
             autoLoad: true

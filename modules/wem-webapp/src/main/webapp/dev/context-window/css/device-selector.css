@@ -1,5 +1,5 @@
 .live-edit-device-top-bar {
-    padding: 10px 15px;
+    padding: 10px;
 }
 
 /** fixme: make generic / merge with components.css? */
@@ -19,27 +19,17 @@
 }
 
 .live-edit-device:not(.live-edit-device-selected):hover {
-    background-color: #353535;
+    background-color: #414042;
 }
 
 .live-edit-device-selected {
     background-color: #1e1e1e;
-    color: #fff;
-}
-
-.live-edit-device-selected:before {
-    content: '*';
-    position: absolute;
-    top: 20px;
-    left: 5px;
-    font-size: 15px;
-    color: #fff;
 }
 
 .live-edit-device-rotate-button {
     display: none;
     position: absolute;
-    padding: 10px 20px;
+    padding: 10px 15px;
     right: 0;
     font-size: 15px;
     color: #fff;
@@ -59,7 +49,7 @@
 }
 
 .live-edit-device-icon {
-    width: 55px;
+    width: 50px;
     color: #f2f2f2;
     font-size: 32px;
     font-weight: lighter;
@@ -75,7 +65,7 @@
 .live-edit-device-row h3 {
     margin: 0;
     padding: 0;
-    line-height: 1.4;
+    line-height: 1.3;
     font-size: 13px !important;
     color: #f2f2f2;
 }

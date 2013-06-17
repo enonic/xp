@@ -1,9 +1,11 @@
-/** Window */
+/** Context Window */
 
 .admin-context-window {
-    background: linear-gradient(to bottom, rgba(50,50,50,.8) 0%,rgba(0,0,0,.8) 100%); /* W3C */
+    background: linear-gradient(to bottom, rgba(65,65,65,.8) 0%,rgba(0,0,0,.9) 100%);
+    /*background-color: rgba(47,47,47,.8);*/
+
     box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 22px 70px 4px rgba(0,0,0,0.56), 0 0 0 1px rgba(0, 0, 0, 0.3);
-    color: #c7c7c7;
+    color: #c7c7c7; /*8f8f8f*/
     border-radius: 4px 4px 0 0;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -35,7 +37,7 @@
 }
 
 .context-window-menu-item {
-    padding: 5px;
+    padding: 7px;
 }
 
 .context-window-menu-item:hover {
@@ -54,7 +56,7 @@
     cursor: -webkit-grab;
 }
 
-.admin-context-window-toggle-button {
+.admin-context-window-expand-collapse-button {
     padding-top: 8px;
     cursor: pointer;
     font-size: 15px;
@@ -64,10 +66,7 @@
     padding: 0;
 }
 
-.admin-context-window-body-top {
-    padding: 10px 15px;
-}
-
+/** Drag shim */
 .admin-context-window-dragging-shim {
     position: absolute;
     top: 0;
@@ -78,6 +77,7 @@
     opacity: 0;
 }
 
+/** Scroll bar */
 .admin-context-window ::-webkit-scrollbar {
     width: 10px;
 }
@@ -88,4 +88,25 @@
 
 .admin-context-window ::-webkit-scrollbar-thumb:vertical {
     background-color: #777;
+}
+
+/** Resize handle */
+.admin-context-window .x-resizable-handle-north,
+.admin-context-window .x-resizable-handle-east,
+.admin-context-window .x-resizable-handle-south,
+.admin-context-window .x-resizable-handle-west,
+.admin-context-window .x-resizable-handle-northeast,
+.admin-context-window .x-resizable-handle-northwest,
+.admin-context-window .x-resizable-handle-southeast,
+.admin-context-window .x-resizable-handle-southwest {
+    background: #000 !important;
+}
+
+.admin-context-window .x-resizable-handle-north,
+.admin-context-window .x-resizable-handle-south {
+    height: 1px;
+}
+.admin-context-window .x-resizable-handle-east,
+.admin-context-window .x-resizable-handle-west {
+    width: 1px;
 }
