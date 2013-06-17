@@ -165,6 +165,10 @@ module app_ui {
                         activeItem: me.activeTab
                     }, me.layout));
 
+                    // New TopBar implementation. Remove coment when the time comes
+                    // this.appbar = <any> new app_ui.SpaceAppBar();
+                    // dockedItems.push(me.appbar.ext);
+
                     // Custom tabBar is why we needed to override this
                     this.tabBar = new app_ui.TopBar(me.appName, me);
 
@@ -206,7 +210,6 @@ module app_ui {
                             var data = space;
                             //var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel(id, title, editing, data);
                             var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel2(id, title);
-
 
 
                             //check if preview tab is open and close it

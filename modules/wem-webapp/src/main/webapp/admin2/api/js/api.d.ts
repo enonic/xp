@@ -241,6 +241,8 @@ module api_ui {
 
         public setZindex(value:number):ElementHelper;
 
+        public setBackgroundImage(value:string):ElementHelper;
+
         public remove():void;
     }
 }
@@ -327,6 +329,11 @@ module api_ui {
         constructor(src:string, idPrefix?:string, className?:string);
 
         public getEl():ImgHelper;
+    }
+}
+module api_ui {
+    class SpanEl extends Element {
+        constructor(idPrefix?:string, className?:string);
     }
 }
 module api_ui {
@@ -624,6 +631,92 @@ module api_ui_tab {
         public removedTab(tab:Tab):void;
 
         public selectedTab(tab:Tab):void;
+    }
+}
+module api_appbar {
+    class AppBar extends api_ui.DivEl {
+        public ext;
+        public appName:string;
+        private startButton;
+        private homeButton;
+        private tabMenu;
+        private userButton;
+        private userInfoPopup;
+
+        constructor(appName);
+
+        private initExt();
+
+        private addStartButton();
+
+        private addSeparator();
+
+        private addHomeButton();
+
+        private addTabMenu();
+
+        private addUserButton();
+
+        private addUserInfoPopup();
+    }
+    class StartButton extends api_ui.ButtonEl {
+        constructor();
+    }
+    class Separator extends api_ui.SpanEl {
+        constructor();
+    }
+    class HomeButton extends api_ui.ButtonEl {
+        constructor(text:string);
+    }
+    class TabMenuContainer extends api_ui.DivEl {
+        constructor();
+    }
+    class UserButton extends api_ui.ButtonEl {
+        constructor();
+
+        public setIcon(photoUrl:string):void;
+    }
+}
+module api_appbar {
+    class UserInfoPopup extends api_ui.DivEl {
+        private isShown;
+
+        constructor();
+
+        private createContent();
+
+        private render();
+
+        public toggle():void;
+    }
+}
+module api_appbar {
+    class OpenStartMenuAction extends api_ui.Action {
+        constructor();
+    }
+    class OpenHomePageAction extends api_ui.Action {
+        constructor();
+    }
+    class ToggleUserInfoAction extends api_ui.Action {
+        constructor();
+    }
+    class AppBarActions {
+        static OPEN_START_MENU:api_ui.Action;
+        static OPEN_HOME_PAGE:api_ui.Action;
+        static SHOW_USER_INFO:api_ui.Action;
+    }
+}
+module api_appbar {
+    class OpenStartMenuEvent extends api_event.Event {
+        constructor();
+    }
+    class OpenHomePageEvent extends api_event.Event {
+        constructor();
+    }
+    class ToggleUserInfoEvent extends api_event.Event {
+        static NAME:string;
+
+        constructor();
     }
 }
 module api_ui_dialog {

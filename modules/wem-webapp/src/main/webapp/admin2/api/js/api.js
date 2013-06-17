@@ -517,6 +517,10 @@ var api_ui;
             this.el.style.zIndex = value.toString();
             return this;
         };
+        ElementHelper.prototype.setBackgroundImage = function (value) {
+            this.el.style.backgroundImage = value;
+            return this;
+        };
         ElementHelper.prototype.remove = function () {
             var parent = this.el.parentElement;
             parent.removeChild(this.el);
@@ -717,6 +721,18 @@ var api_ui;
         return ImgEl;
     })(api_ui.Element);
     api_ui.ImgEl = ImgEl;
+})(api_ui || (api_ui = {}));
+var api_ui;
+(function (api_ui) {
+    var SpanEl = (function (_super) {
+        __extends(SpanEl, _super);
+        function SpanEl(idPrefix, className) {
+            _super.call(this, 'span', idPrefix, className);
+        }
+
+        return SpanEl;
+    })(api_ui.Element);
+    api_ui.SpanEl = SpanEl;
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
@@ -1453,6 +1469,233 @@ var api_ui_tab;
     })();
     api_ui_tab.TabPanelController = TabPanelController;
 })(api_ui_tab || (api_ui_tab = {}));
+var api_appbar;
+(function (api_appbar) {
+    var AppBar = (function (_super) {
+        __extends(AppBar, _super);
+        function AppBar(appName) {
+            _super.call(this, 'AppBar', 'appbar');
+            this.appName = appName;
+            this.addStartButton();
+            this.addSeparator();
+            this.addHomeButton();
+            this.addUserButton();
+            this.addTabMenu();
+            this.addUserInfoPopup();
+            this.initExt();
+        }
+
+        AppBar.prototype.initExt = function () {
+            var htmlEl = this.getHTMLElement();
+            this.ext = new Ext.Component({
+                contentEl: htmlEl
+            });
+        };
+        AppBar.prototype.addStartButton = function () {
+            this.startButton = new api_appbar.StartButton();
+            this.appendChild(this.startButton);
+        };
+        AppBar.prototype.addSeparator = function () {
+            var separator = new api_appbar.Separator();
+            this.appendChild(separator);
+        };
+        AppBar.prototype.addHomeButton = function () {
+            this.homeButton = new api_appbar.HomeButton(this.appName);
+            this.appendChild(this.homeButton);
+        };
+        AppBar.prototype.addTabMenu = function () {
+            this.tabMenu = new api_appbar.TabMenuContainer();
+            this.appendChild(this.tabMenu);
+        };
+        AppBar.prototype.addUserButton = function () {
+            this.userButton = new api_appbar.UserButton();
+            this.appendChild(this.userButton);
+        };
+        AppBar.prototype.addUserInfoPopup = function () {
+            var _this = this;
+            this.userInfoPopup = new api_appbar.UserInfoPopup();
+            api_event.onEvent(api_appbar.ToggleUserInfoEvent.NAME, function () {
+                _this.userInfoPopup.toggle();
+            });
+        };
+        return AppBar;
+    })(api_ui.DivEl);
+    api_appbar.AppBar = AppBar;
+    var StartButton = (function (_super) {
+        __extends(StartButton, _super);
+        function StartButton() {
+            _super.call(this, 'StartButton', 'start-button');
+            this.getEl().addEventListener('click', function (event) {
+                api_appbar.AppBarActions.OPEN_START_MENU.execute();
+            });
+        }
+
+        return StartButton;
+    })(api_ui.ButtonEl);
+    api_appbar.StartButton = StartButton;
+    var Separator = (function (_super) {
+        __extends(Separator, _super);
+        function Separator() {
+            _super.call(this, 'AppBarSeparator', 'appbar-separator');
+        }
+
+        return Separator;
+    })(api_ui.SpanEl);
+    api_appbar.Separator = Separator;
+    var HomeButton = (function (_super) {
+        __extends(HomeButton, _super);
+        function HomeButton(text) {
+            _super.call(this, 'HomeButton', 'home-button');
+            this.getEl().setInnerHtml(text);
+            this.getEl().addEventListener('click', function (event) {
+                api_appbar.AppBarActions.OPEN_HOME_PAGE.execute();
+            });
+        }
+
+        return HomeButton;
+    })(api_ui.ButtonEl);
+    api_appbar.HomeButton = HomeButton;
+    var TabMenuContainer = (function (_super) {
+        __extends(TabMenuContainer, _super);
+        function TabMenuContainer() {
+            _super.call(this, 'TabMenuContainer', 'tabmenu-container');
+        }
+
+        return TabMenuContainer;
+    })(api_ui.DivEl);
+    api_appbar.TabMenuContainer = TabMenuContainer;
+    var UserButton = (function (_super) {
+        __extends(UserButton, _super);
+        function UserButton() {
+            _super.call(this, 'UserButton', 'user-button');
+            var photoUrl = api_util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg');
+            this.setIcon(photoUrl);
+            this.getEl().addEventListener('click', function (event) {
+                api_appbar.AppBarActions.SHOW_USER_INFO.execute();
+            });
+        }
+
+        UserButton.prototype.setIcon = function (photoUrl) {
+            this.getEl().setBackgroundImage('url("' + photoUrl + '")');
+        };
+        return UserButton;
+    })(api_ui.ButtonEl);
+    api_appbar.UserButton = UserButton;
+})(api_appbar || (api_appbar = {}));
+var api_appbar;
+(function (api_appbar) {
+    var UserInfoPopup = (function (_super) {
+        __extends(UserInfoPopup, _super);
+        function UserInfoPopup() {
+            _super.call(this, 'UserInfoPopup', 'user-info-popup');
+            this.isShown = false;
+            this.createContent();
+            this.render();
+        }
+
+        UserInfoPopup.prototype.createContent = function () {
+            var userName = 'Thomas Lund Sigdestad', photoUrl = api_util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'), qName = 'system/tsi';
+            var content = '<div class="title">User</div>' + '<div class="user-name">' + userName + '</div>' + '<div class="content">' +
+                          '<div class="column">' + '<img src="' + photoUrl + '"/>' + '<button>Log Out</button>' + '</div>' +
+                          '<div class="column">' + '<span>' + qName + '</span>' + '<a href="#">View Profile</a>' +
+                          '<a href="#">Edit Profile</a>' + '<a href="#">Change User</a>' + '</div>' + '</div>';
+            this.getEl().setInnerHtml(content);
+        };
+        UserInfoPopup.prototype.render = function () {
+            this.hide();
+            this.isShown = false;
+            document.body.insertBefore(this.getHTMLElement());
+        };
+        UserInfoPopup.prototype.toggle = function () {
+            this.isShown ? this.hide() : this.show();
+            this.isShown = !this.isShown;
+        };
+        return UserInfoPopup;
+    })(api_ui.DivEl);
+    api_appbar.UserInfoPopup = UserInfoPopup;
+})(api_appbar || (api_appbar = {}));
+var api_appbar;
+(function (api_appbar) {
+    var OpenStartMenuAction = (function (_super) {
+        __extends(OpenStartMenuAction, _super);
+        function OpenStartMenuAction() {
+            _super.call(this, 'Start');
+            this.addExecutionListener(function () {
+                new api_appbar.OpenStartMenuEvent().fire();
+                console.log('api_appbar.OpenStartMenuEvent fired.');
+            });
+        }
+
+        return OpenStartMenuAction;
+    })(api_ui.Action);
+    api_appbar.OpenStartMenuAction = OpenStartMenuAction;
+    var OpenHomePageAction = (function (_super) {
+        __extends(OpenHomePageAction, _super);
+        function OpenHomePageAction() {
+            _super.call(this, 'Home');
+            this.addExecutionListener(function () {
+                new api_appbar.OpenHomePageEvent().fire();
+                console.log('api_appbar.OpenHomePageEvent fired.');
+            });
+        }
+
+        return OpenHomePageAction;
+    })(api_ui.Action);
+    api_appbar.OpenHomePageAction = OpenHomePageAction;
+    var ToggleUserInfoAction = (function (_super) {
+        __extends(ToggleUserInfoAction, _super);
+        function ToggleUserInfoAction() {
+            _super.call(this, 'UserInfo');
+            this.addExecutionListener(function () {
+                new api_appbar.ToggleUserInfoEvent().fire();
+            });
+        }
+
+        return ToggleUserInfoAction;
+    })(api_ui.Action);
+    api_appbar.ToggleUserInfoAction = ToggleUserInfoAction;
+    var AppBarActions = (function () {
+        function AppBarActions() {
+        }
+
+        AppBarActions.OPEN_START_MENU = new OpenStartMenuAction();
+        AppBarActions.OPEN_HOME_PAGE = new OpenHomePageAction();
+        AppBarActions.SHOW_USER_INFO = new ToggleUserInfoAction();
+        return AppBarActions;
+    })();
+    api_appbar.AppBarActions = AppBarActions;
+})(api_appbar || (api_appbar = {}));
+var api_appbar;
+(function (api_appbar) {
+    var OpenStartMenuEvent = (function (_super) {
+        __extends(OpenStartMenuEvent, _super);
+        function OpenStartMenuEvent() {
+            _super.call(this, 'openStartMenu');
+        }
+
+        return OpenStartMenuEvent;
+    })(api_event.Event);
+    api_appbar.OpenStartMenuEvent = OpenStartMenuEvent;
+    var OpenHomePageEvent = (function (_super) {
+        __extends(OpenHomePageEvent, _super);
+        function OpenHomePageEvent() {
+            _super.call(this, 'openHomePage');
+        }
+
+        return OpenHomePageEvent;
+    })(api_event.Event);
+    api_appbar.OpenHomePageEvent = OpenHomePageEvent;
+    var ToggleUserInfoEvent = (function (_super) {
+        __extends(ToggleUserInfoEvent, _super);
+        function ToggleUserInfoEvent() {
+            _super.call(this, ToggleUserInfoEvent.NAME);
+        }
+
+        ToggleUserInfoEvent.NAME = 'toggleUserInfo';
+        return ToggleUserInfoEvent;
+    })(api_event.Event);
+    api_appbar.ToggleUserInfoEvent = ToggleUserInfoEvent;
+})(api_appbar || (api_appbar = {}));
 var api_ui_dialog;
 (function (api_ui_dialog) {
     var DialogButton = (function (_super) {
