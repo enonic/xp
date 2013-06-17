@@ -4,7 +4,21 @@
 
 module app_ui {
     export class TabPanel {
+
+        private static singleton:TabPanel;
+
         private ext;
+
+        static init(config:{
+            appName:string;
+            appIconCls:string;
+        }):TabPanel {
+            return singleton = new TabPanel(config);
+        }
+
+        static get():TabPanel {
+            return singleton;
+        }
 
         public getExtEl():any {
             return this.ext;
