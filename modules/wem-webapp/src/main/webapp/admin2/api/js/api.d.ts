@@ -476,6 +476,8 @@ module api_ui_wizard {
         private steps;
         private stepContainer;
         private wizardStepPanels;
+        private titleEl;
+        private subTitleEl;
         public ext;
 
         constructor();
@@ -488,18 +490,27 @@ module api_ui_wizard {
 
         public addStep(step:WizardStep):void;
 
+        private addTitle();
+
+        private addSubTitle();
+
         private addStepContainer();
     }
     class WizardStep {
         private label;
         private panel;
         private active;
+        private el;
 
         constructor(label:string, panel:api_ui.Panel);
+
+        public setEl(el:api_ui.Element):void;
 
         public setActive(active:bool):void;
 
         public isActive():bool;
+
+        public getEl():api_ui.Element;
 
         public getLabel():string;
 

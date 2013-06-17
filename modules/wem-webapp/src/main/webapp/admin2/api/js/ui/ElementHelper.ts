@@ -37,7 +37,6 @@ module api_ui {
         }
 
         addClass(clsName:string) {
-            console.log("adding class " + clsName);
             if (!this.hasClass(clsName)) {
                 if (this.el.className === '') {
                     this.el.className += clsName;

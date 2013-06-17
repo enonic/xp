@@ -7,15 +7,19 @@ module api_ui_wizard {
 
         private wizardStepPanels:WizardStepPanels;
 
+        private titleEl:api_ui.Element;
+        private subTitleEl:api_ui.Element;
+
         ext;
 
         constructor() {
             super("wizard-panel");
             this.getEl().addClass("wizard-panel");
-            this.addStepContainer();
-
+            this.addTitle();
+            this.addSubTitle();
             this.wizardStepPanels = new WizardStepPanels();
             this.appendChild(this.wizardStepPanels);
+            this.addStepContainer();
 
             this.initExt();
         }
@@ -28,29 +32,33 @@ module api_ui_wizard {
         }
 
         setTitle(title:string) {
-            var titleEl = new api_ui.Element("input", "title");
-            titleEl.getEl().setValue(title);
-            titleEl.getEl().addClass("title");
-            this.appendChild(titleEl);
+            this.titleEl.getEl().setValue(title);
         }
 
         setSubtitle(subtitle:string) {
-            var subTitleEl = new api_ui.Element("input", "title");
-            subTitleEl.getEl().addClass("subtitle");
-            subTitleEl.getEl().setValue(subtitle);
-            this.appendChild(subTitleEl);
+            this.subTitleEl.getEl().setValue(subtitle);
         }
 
         addStep(step:WizardStep) {
+            this.wizardStepPanels.addPanel(step.getPanel());
             this.steps.push(step);
-            if (this.steps.length == 1) {
-                step.setActive(true);
-            }
             this.stepContainer.addStep(step);
         }
 
+        private addTitle() {
+            this.titleEl = new api_ui.Element("input", "title");
+            this.titleEl.getEl().addClass("title");
+            this.appendChild(this.titleEl);
+        }
+
+        private addSubTitle() {
+            this.subTitleEl = new api_ui.Element("input", "title");
+            this.subTitleEl.getEl().addClass("subtitle");
+            this.appendChild(this.subTitleEl);
+        }
+
         private addStepContainer() {
-            var stepContainerEl = new WizardStepContainer();
+            var stepContainerEl = new WizardStepContainer(this.wizardStepPanels);
             this.stepContainer = stepContainerEl;
             this.appendChild(stepContainerEl);
         }
@@ -64,17 +72,36 @@ module api_ui_wizard {
     }
 
     class WizardStepContainer extends api_ui.UlEl {
-        constructor() {
+        private deckPanel;
+        private steps:WizardStep[] = [];
+
+        constructor(deckPanel:WizardStepPanels) {
             super("step-container", "step-container");
+            this.deckPanel = deckPanel;
         }
 
         addStep(step:WizardStep) {
+            this.steps.push(step);
+            var panelIndex = this.deckPanel.addPanel(step.getPanel());
+
             var stepEl = new api_ui.LiEl(step.getLabel());
+            step.setEl(stepEl);
             stepEl.getEl().setInnerHtml(step.getLabel());
-            if (step.isActive()) {
-                stepEl.getEl().addClass("active");
+            stepEl.getEl().addEventListener("click", (event) => {
+                this.removeActive();
+                step.setActive(true);
+                this.deckPanel.showPanel(panelIndex);
+            });
+            if (this.steps.length == 1) {
+                step.setActive(true);
             }
             this.appendChild(stepEl);
+        }
+
+        private removeActive() {
+            this.steps.forEach((step:WizardStep) => {
+                step.setActive(false);
+            })
         }
     }
 
@@ -82,18 +109,32 @@ module api_ui_wizard {
         private label:string;
         private panel:api_ui.Panel;
         private active:bool;
+        private el:api_ui.Element;
 
         constructor(label:string, panel:api_ui.Panel) {
             this.label = label;
             this.panel = panel;
         }
 
+        setEl(el:api_ui.Element) {
+            this.el = el;
+        }
+
         setActive(active:bool) {
             this.active = active;
+            if (active) {
+                this.el.getEl().addClass("active");
+            } else {
+                this.el.getEl().removeClass("active");
+            }
         }
 
         isActive():bool {
             return this.active;
+        }
+
+        getEl():api_ui.Element {
+            return this.el;
         }
 
         getLabel():string {

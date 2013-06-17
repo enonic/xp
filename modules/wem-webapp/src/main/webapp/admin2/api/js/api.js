@@ -438,7 +438,6 @@ var api_ui;
             return this;
         };
         ElementHelper.prototype.addClass = function (clsName) {
-            console.log("adding class " + clsName);
             if (!this.hasClass(clsName)) {
                 if (this.el.className === '') {
                     this.el.className += clsName;
@@ -1117,9 +1116,11 @@ var api_ui_wizard;
             _super.call(this, "wizard-panel");
             this.steps = [];
             this.getEl().addClass("wizard-panel");
-            this.addStepContainer();
+            this.addTitle();
+            this.addSubTitle();
             this.wizardStepPanels = new WizardStepPanels();
             this.appendChild(this.wizardStepPanels);
+            this.addStepContainer();
             this.initExt();
         }
 
@@ -1130,26 +1131,28 @@ var api_ui_wizard;
             });
         };
         WizardPanel.prototype.setTitle = function (title) {
-            var titleEl = new api_ui.Element("input", "title");
-            titleEl.getEl().setValue(title);
-            titleEl.getEl().addClass("title");
-            this.appendChild(titleEl);
+            this.titleEl.getEl().setValue(title);
         };
         WizardPanel.prototype.setSubtitle = function (subtitle) {
-            var subTitleEl = new api_ui.Element("input", "title");
-            subTitleEl.getEl().addClass("subtitle");
-            subTitleEl.getEl().setValue(subtitle);
-            this.appendChild(subTitleEl);
+            this.subTitleEl.getEl().setValue(subtitle);
         };
         WizardPanel.prototype.addStep = function (step) {
+            this.wizardStepPanels.addPanel(step.getPanel());
             this.steps.push(step);
-            if (this.steps.length == 1) {
-                step.setActive(true);
-            }
             this.stepContainer.addStep(step);
         };
+        WizardPanel.prototype.addTitle = function () {
+            this.titleEl = new api_ui.Element("input", "title");
+            this.titleEl.getEl().addClass("title");
+            this.appendChild(this.titleEl);
+        };
+        WizardPanel.prototype.addSubTitle = function () {
+            this.subTitleEl = new api_ui.Element("input", "title");
+            this.subTitleEl.getEl().addClass("subtitle");
+            this.appendChild(this.subTitleEl);
+        };
         WizardPanel.prototype.addStepContainer = function () {
-            var stepContainerEl = new WizardStepContainer();
+            var stepContainerEl = new WizardStepContainer(this.wizardStepPanels);
             this.stepContainer = stepContainerEl;
             this.appendChild(stepContainerEl);
         };
@@ -1166,17 +1169,33 @@ var api_ui_wizard;
     })(api_ui.DeckPanel);
     var WizardStepContainer = (function (_super) {
         __extends(WizardStepContainer, _super);
-        function WizardStepContainer() {
+        function WizardStepContainer(deckPanel) {
             _super.call(this, "step-container", "step-container");
+            this.steps = [];
+            this.deckPanel = deckPanel;
         }
 
         WizardStepContainer.prototype.addStep = function (step) {
+            var _this = this;
+            this.steps.push(step);
+            var panelIndex = this.deckPanel.addPanel(step.getPanel());
             var stepEl = new api_ui.LiEl(step.getLabel());
+            step.setEl(stepEl);
             stepEl.getEl().setInnerHtml(step.getLabel());
-            if (step.isActive()) {
-                stepEl.getEl().addClass("active");
+            stepEl.getEl().addEventListener("click", function (event) {
+                _this.removeActive();
+                step.setActive(true);
+                _this.deckPanel.showPanel(panelIndex);
+            });
+            if (this.steps.length == 1) {
+                step.setActive(true);
             }
             this.appendChild(stepEl);
+        };
+        WizardStepContainer.prototype.removeActive = function () {
+            this.steps.forEach(function (step) {
+                step.setActive(false);
+            });
         };
         return WizardStepContainer;
     })(api_ui.UlEl);
@@ -1186,11 +1205,22 @@ var api_ui_wizard;
             this.panel = panel;
         }
 
+        WizardStep.prototype.setEl = function (el) {
+            this.el = el;
+        };
         WizardStep.prototype.setActive = function (active) {
             this.active = active;
+            if (active) {
+                this.el.getEl().addClass("active");
+            } else {
+                this.el.getEl().removeClass("active");
+            }
         };
         WizardStep.prototype.isActive = function () {
             return this.active;
+        };
+        WizardStep.prototype.getEl = function () {
+            return this.el;
         };
         WizardStep.prototype.getLabel = function () {
             return this.label;
