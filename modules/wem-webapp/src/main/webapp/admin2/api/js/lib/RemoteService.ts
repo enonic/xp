@@ -2,8 +2,46 @@ module api_remote {
 
     export var RemoteService: RemoteServiceInterface;
 
+    export interface RemoteCallResultBase {
+        success: bool;
+        error?: string;
+    }
+
+    export interface RemoteCallSpaceListParams {
+    }
+
+    export interface RemoteCallSpaceListResult extends RemoteCallResultBase {
+        total: number;
+        spaces: {
+            createdTime:Date;
+            deletable:bool;
+            displayName:string;
+            editable:bool;
+            iconUrl:string;
+            modifiedTime:Date;
+            name:string;
+            rootContentId:string;
+        }[];
+    }
+
+    export interface RemoteCallSpaceGetParams {
+        spaceName: string[];
+    }
+
+    export interface RemoteCallSpaceGetResult extends RemoteCallResultBase {
+        total: number;
+        space: {
+            createdTime:Date;
+            displayName:string;
+            iconUrl:string;
+            modifiedTime:Date;
+            name:string;
+            rootContentId:string;
+        };
+    }
+
     export interface RemoteServiceInterface {
-        account_find (params, callback:(accountFindResult:any)=>void):void;
+        account_find (params, callback):void;
         account_getGraph (params, callback):void;
         account_changePassword (params, callback):void;
         account_verifyUniqueEmail (params, callback):void;
@@ -40,8 +78,8 @@ module api_remote {
         relationshipType_get (params, callback):void;
         relationshipType_createOrUpdate (params, callback):void;
         relationshipType_delete (params, callback):void;
-        space_list (params, callback):void;
-        space_get (params, callback):void;
+        space_list (params:RemoteCallSpaceListParams, callback:(result:RemoteCallSpaceListResult)=>void):void;
+        space_get (params:RemoteCallSpaceGetParams, callback:(result:RemoteCallSpaceGetResult)=>void):void;
         space_delete (params, callback):void;
         space_createOrUpdate (params, callback):void;
         binary_create (params, callback):void;
