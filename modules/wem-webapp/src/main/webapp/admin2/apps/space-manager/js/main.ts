@@ -59,7 +59,7 @@
 ///<reference path='view/FilterPanel.ts' />
 
 ///<reference path='view/BrowseToolbar.ts' />
-///<reference path='view/SpaceAppBar.ts' />
+///<reference path='appbar/SpaceAppBar.ts' />
 
 ///<reference path='controller/Controller.ts' />
 ///<reference path='controller/SpaceController.ts' />

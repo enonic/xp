@@ -166,8 +166,8 @@ module app_ui {
                     }, me.layout));
 
                     // New TopBar implementation. Remove coment when the time comes
-                    // this.appbar = <any> new app_ui.SpaceAppBar();
-                    // dockedItems.push(me.appbar.ext);
+                    this.appbar = <any> new app_ui.SpaceAppBar();
+                    dockedItems.push(me.appbar.ext);
 
                     // Custom tabBar is why we needed to override this
                     this.tabBar = new app_ui.TopBar(me.appName, me);

@@ -6,7 +6,7 @@ module api_appbar {
 
         appName:string;
 
-        private startButton:api_ui.ButtonEl;
+        private launcherButton:api_ui.ButtonEl;
         private homeButton:api_ui.ButtonEl;
         private tabMenu:api_appbar.TabMenuContainer;
         private userButton:api_appbar.UserButton;
@@ -16,7 +16,7 @@ module api_appbar {
             super('AppBar', 'appbar');
             this.appName = appName;
 
-            this.addStartButton();
+            this.addLauncherButton();
             this.addSeparator();
             this.addHomeButton();
             this.addUserButton();
@@ -33,9 +33,9 @@ module api_appbar {
             });
         }
 
-        private addStartButton() {
-            this.startButton = new api_appbar.StartButton();
-            this.appendChild(this.startButton);
+        private addLauncherButton() {
+            this.launcherButton = new api_appbar.LauncherButton();
+            this.appendChild(this.launcherButton);
         }
 
         private addSeparator() {
@@ -61,19 +61,19 @@ module api_appbar {
         private addUserInfoPopup() {
             this.userInfoPopup = new api_appbar.UserInfoPopup();
 
-            api_event.onEvent(api_appbar.ToggleUserInfoEvent.NAME, () => {
+            this.userButton.getEl().addEventListener('click', (event:Event) => {
                 this.userInfoPopup.toggle();
             });
         }
     }
 
-    export class StartButton extends api_ui.ButtonEl {
+    export class LauncherButton extends api_ui.ButtonEl {
 
         constructor() {
-            super('StartButton', 'start-button');
+            super('LauncherButton', 'launcher-button');
 
             this.getEl().addEventListener('click', (event:Event) => {
-                api_appbar.AppBarActions.OPEN_START_MENU.execute();
+                api_appbar.AppBarActions.OPEN_APP_LAUNCHER.execute();
             });
         }
 
@@ -95,7 +95,7 @@ module api_appbar {
             this.getEl().setInnerHtml(text);
 
             this.getEl().addEventListener('click', (event:Event) => {
-                api_appbar.AppBarActions.OPEN_HOME_PAGE.execute();
+                api_appbar.AppBarActions.SHOW_APP_BROWSER_PANEL.execute();
             });
         }
 
@@ -116,10 +116,6 @@ module api_appbar {
 
             var photoUrl = api_util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg');
             this.setIcon(photoUrl);
-
-            this.getEl().addEventListener('click', (event:Event) => {
-                api_appbar.AppBarActions.SHOW_USER_INFO.execute();
-            });
         }
 
         setIcon(photoUrl:string) {
