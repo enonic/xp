@@ -1,0 +1,124 @@
+.appbar {
+  height: 44px;
+  padding: 6px;
+  .gradient(@admin-black, @admin-dark-gray);
+
+  .start-button {
+    float: left;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    margin: 4px;
+    border: 0 none;
+    background-image: url("../images/home-button.svg");
+    background-size: 24px 24px;
+    background-position: center;
+    background-color: transparent;
+    cursor: pointer;
+  }
+
+  .appbar-separator {
+    float: left;
+    height: 32px;
+    width: 2px;
+    margin-left: 8px;
+    background-color: #555;
+  }
+
+  .home-button {
+    float: left;
+    line-height: 18px;
+    margin: 3px 0;
+    padding: 4px 10px;
+    border: 0;
+    color: @admin-light-gray-bg;
+    background-color: transparent;
+    font-family: "Open Sans", sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #444;
+    }
+  }
+
+  .tabmenu-container {
+    display: block;
+    margin: auto;
+    height: 100%;
+    width: 100%;
+  }
+
+  .user-button {
+    float: right;
+    height: 44px;
+    width: 44px;
+    margin: -6px -6px 0 0;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    background-size: 44px;
+    cursor: pointer;
+  }
+}
+
+.user-info-popup {
+  z-index: 50000;
+  position: absolute;
+  top: 44px;
+  right: 12px;
+  width: 250px;
+  padding: 5px;
+  background: white;
+  .box-shadow(0px 0px 4px @admin-shadow-gray);
+
+  img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .title {
+    padding: 5px;
+    background: #333;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  .user-name {
+    margin: 5px;
+    color: #333;
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  button {
+    width: 100%;
+    margin: 5px 0;
+    padding: 3px;
+    border: none;
+    cursor: pointer;
+    background: #B51A00;
+    color: white;
+    font-weight: bold;
+  }
+
+  .content {
+    .column {
+      float: left;
+      margin-left: 10px;
+      margin-right: 10px;
+      width: 100px;
+
+      * {
+        display: block;
+      }
+
+      a {
+        text-decoration: none;
+        color: blue;
+      }
+    }
+  }
+}

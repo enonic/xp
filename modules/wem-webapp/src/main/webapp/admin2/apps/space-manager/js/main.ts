@@ -59,6 +59,7 @@
 ///<reference path='view/FilterPanel.ts' />
 
 ///<reference path='view/BrowseToolbar.ts' />
+///<reference path='view/SpaceAppBar.ts' />
 
 ///<reference path='controller/Controller.ts' />
 ///<reference path='controller/SpaceController.ts' />
@@ -92,8 +93,6 @@ module components {
     export var tabPanel;
     export var deleteWindow;
 }
-
-
 
 
 Ext.application({
