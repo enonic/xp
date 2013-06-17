@@ -12,7 +12,7 @@ import com.enonic.wem.admin.rest.resource.content.ContentImageResource;
 import com.enonic.wem.admin.rest.resource.jcr.GetNodesResource;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageResource;
 import com.enonic.wem.admin.rest.resource.space.SpaceImageResource;
-import com.enonic.wem.admin.rest.resource.status.PingResource;
+import com.enonic.wem.admin.rest.resource.status.StatusResource;
 import com.enonic.wem.admin.rest.resource.tools.ToolsResource;
 import com.enonic.wem.admin.rest.resource.upload.UploadResource;
 import com.enonic.wem.admin.rest.ui.BackgroundImageResource;
@@ -37,8 +37,8 @@ public final class RestServlet
         addClass( SpaceImageResource.class );
         addClass( UploadResource.class );
         addClass( AuthResource.class );
-        addClass( PingResource.class );
         addClass( ToolsResource.class );
+        addClass( StatusResource.class );
 
         addSingleton( JsonRpcController.class );
     }

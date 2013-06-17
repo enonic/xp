@@ -1,7 +1,7 @@
 Ext.define('Admin.lib.Ping', {
     singleton: true,
 
-    pingUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/status/ping'),
+    pingUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/status'),
     intervalId: -1,
     pollIntervalMs: 5000,
     errorMessageId: null,

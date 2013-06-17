@@ -13,6 +13,7 @@ public final class ObjectMapperHelper
         final ObjectMapper mapper = new ObjectMapper();
         mapper.setDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) );
         mapper.disable( SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS );
+        mapper.disable( SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS );
         mapper.setSerializationInclusion( JsonSerialize.Inclusion.NON_NULL );
         return mapper;
     }
