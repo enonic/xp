@@ -62,7 +62,7 @@
 ///<reference path='view/WizardHeader.ts' />
 ///<reference path='view/WizardLayout.ts' />
 ///<reference path='view/WizardPanel.ts' />
-///<reference path='view/ContentAppBar.ts' />
+///<reference path='appbar/ContentAppBar.ts' />
 
 /// <reference path='view/wizard/form/FormItemOccurrencesHandler.ts' />
 /// <reference path='view/wizard/form/ImagePopupDialog.ts' />
