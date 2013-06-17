@@ -3911,6 +3911,12 @@ var app_ui;
                 }
             });
         }
+        TabPanel.init = function init(config) {
+            return TabPanel.singleton = new TabPanel(config);
+        };
+        TabPanel.get = function get() {
+            return TabPanel.singleton;
+        };
         TabPanel.prototype.getExtEl = function () {
             return this.ext;
         };
@@ -4731,7 +4737,7 @@ Ext.application({
     stores: [],
     launch: function () {
         var spaceAppMainPanel = new app.SpaceAppBrowsePanel();
-        var tabPanel = components.tabPanel = new app_ui.TabPanel({
+        var tabPanel = components.tabPanel = app_ui.TabPanel.init({
             appName: 'Space Admin',
             appIconCls: 'icon-metro-space-admin-24'
         }).getExtEl();
