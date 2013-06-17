@@ -113,7 +113,7 @@ Ext.application({
         // TODO: var spaceAppPanel = new app.SpaceAppPanel();
         var spaceAppMainPanel = new app.SpaceAppBrowsePanel();
 
-        var tabPanel = components.tabPanel = new app_ui.TabPanel({
+        var tabPanel = components.tabPanel = app_ui.TabPanel.init({
             appName: 'Space Admin',
             appIconCls: 'icon-metro-space-admin-24'
         }).getExtEl();
