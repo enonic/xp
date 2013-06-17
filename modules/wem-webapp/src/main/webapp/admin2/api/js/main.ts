@@ -37,6 +37,7 @@
 ///<reference path='ui/LiEl.ts' />
 ///<reference path='ui/EmEl.ts' />
 ///<reference path='ui/ImgEl.ts' />
+///<reference path='ui/SpanEl.ts' />
 ///<reference path='ui/Panel.ts' />
 ///<reference path='ui/DeckPanel.ts' />
 ///<reference path='ui/ButtonEl.ts' />
@@ -55,7 +56,11 @@
 ///<reference path='ui/tab/TabMenu.ts' />
 ///<reference path='ui/tab/TabMenuItem.ts' />
 ///<reference path='ui/tab/TabPanelController.ts' />
-///<reference path='ui/toolbar/Toolbar.ts' />
+
+///<reference path='appbar/AppBar.ts' />
+///<reference path='appbar/UserInfoPopup.ts' />
+///<reference path='appbar/Actions.ts' />
+///<reference path='appbar/Events.ts' />
 
 ///<reference path='ui/dialog/DialogButton.ts' />
 ///<reference path='ui/dialog/ModalDialog.ts' />

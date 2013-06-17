@@ -62,6 +62,7 @@
 ///<reference path='view/WizardHeader.ts' />
 ///<reference path='view/WizardLayout.ts' />
 ///<reference path='view/WizardPanel.ts' />
+///<reference path='view/ContentAppBar.ts' />
 
 /// <reference path='view/wizard/form/FormItemOccurrencesHandler.ts' />
 /// <reference path='view/wizard/form/ImagePopupDialog.ts' />
@@ -111,8 +112,8 @@ declare var Admin;
 declare var CONFIG;
 
 module components {
-    export var browseToolbar: app_ui.BrowseToolbar;
-    export var contextMenu: app_ui.ContextMenu;
+    export var browseToolbar:app_ui.BrowseToolbar;
+    export var contextMenu:app_ui.ContextMenu;
 }
 
 Ext.application({
