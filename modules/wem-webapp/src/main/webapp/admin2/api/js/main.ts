@@ -59,8 +59,8 @@
 
 ///<reference path='appbar/AppBar.ts' />
 ///<reference path='appbar/UserInfoPopup.ts' />
-///<reference path='appbar/Actions.ts' />
-///<reference path='appbar/Events.ts' />
+///<reference path='appbar/AppBarActions.ts' />
+///<reference path='appbar/AppBarEvents.ts' />
 
 ///<reference path='ui/dialog/DialogButton.ts' />
 ///<reference path='ui/dialog/ModalDialog.ts' />
