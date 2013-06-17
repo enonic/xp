@@ -11,6 +11,7 @@ module api_ui_wizard {
 
         constructor() {
             super("wizard-panel");
+            this.getEl().addClass("wizard-panel");
             this.addStepContainer();
 
             this.wizardStepPanels = new WizardStepPanels();
@@ -29,17 +30,22 @@ module api_ui_wizard {
         setTitle(title:string) {
             var titleEl = new api_ui.Element("input", "title");
             titleEl.getEl().setValue(title);
+            titleEl.getEl().addClass("title");
             this.appendChild(titleEl);
         }
 
         setSubtitle(subtitle:string) {
             var subTitleEl = new api_ui.Element("input", "title");
+            subTitleEl.getEl().addClass("subtitle");
             subTitleEl.getEl().setValue(subtitle);
             this.appendChild(subTitleEl);
         }
 
         addStep(step:WizardStep) {
             this.steps.push(step);
+            if (this.steps.length == 1) {
+                step.setActive(true);
+            }
             this.stepContainer.addStep(step);
         }
 
@@ -65,17 +71,29 @@ module api_ui_wizard {
         addStep(step:WizardStep) {
             var stepEl = new api_ui.LiEl(step.getLabel());
             stepEl.getEl().setInnerHtml(step.getLabel());
+            if (step.isActive()) {
+                stepEl.getEl().addClass("active");
+            }
             this.appendChild(stepEl);
         }
     }
 
     export class WizardStep {
-        private label;
-        private panel;
+        private label:string;
+        private panel:api_ui.Panel;
+        private active:bool;
 
         constructor(label:string, panel:api_ui.Panel) {
             this.label = label;
             this.panel = panel;
+        }
+
+        setActive(active:bool) {
+            this.active = active;
+        }
+
+        isActive():bool {
+            return this.active;
         }
 
         getLabel():string {

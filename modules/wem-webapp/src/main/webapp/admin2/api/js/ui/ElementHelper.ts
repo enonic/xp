@@ -37,6 +37,7 @@ module api_ui {
         }
 
         addClass(clsName:string) {
+            console.log("adding class " + clsName);
             if (!this.hasClass(clsName)) {
                 if (this.el.className === '') {
                     this.el.className += clsName;
@@ -72,12 +73,12 @@ module api_ui {
             return this;
         }
 
-        getData(name:string):string{
+        getData(name:string):string {
             var any = <any>this.el;
             return any._data[name];
         }
 
-        getDisplay():string{
+        getDisplay():string {
             return this.el.style.display;
         }
 

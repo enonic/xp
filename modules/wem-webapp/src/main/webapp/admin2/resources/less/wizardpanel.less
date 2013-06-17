@@ -1,0 +1,49 @@
+.wizard-panel {
+  font-size: 14px;
+
+  input {
+    border: 1px solid @admin-light-gray-bg;
+    min-width: 200px;
+    padding: 0px 10px;
+    margin: 3px;
+    font-size: 26px;
+    min-height: 40px;
+    display: block;
+
+    &.subtitle {
+      font-size: 16px;
+      min-height: 30px;
+    }
+  }
+
+  .step-container {
+    background-color: @admin-light-gray-bg;
+    color: @admin-medium-gray-font;
+    overflow: hidden;
+
+    li {
+      float: left;
+      padding: 10px 10px 10px 20px;
+
+      &.active {
+        background-color: white;
+        color: @admin-dark-gray-font;
+        padding-bottom: 0;
+
+        &:after {
+          content: " ";
+          display: block;
+          float: right;
+          height: 0;
+          width: 0;
+          margin-top: -10px;
+          border-top: 20px solid transparent;
+          border-bottom: 20px solid transparent;
+          border-left: 10px solid white;
+          margin-left: 10px;
+          margin-right: -20px;
+        }
+      }
+    }
+  }
+}
