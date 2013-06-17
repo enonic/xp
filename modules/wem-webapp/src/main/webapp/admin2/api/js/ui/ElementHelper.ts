@@ -72,12 +72,12 @@ module api_ui {
             return this;
         }
 
-        getData(name:string):string{
+        getData(name:string):string {
             var any = <any>this.el;
             return any._data[name];
         }
 
-        getDisplay():string{
+        getDisplay():string {
             return this.el.style.display;
         }
 
@@ -133,6 +133,11 @@ module api_ui {
 
         setZindex(value:number):api_ui.ElementHelper {
             this.el.style.zIndex = value.toString();
+            return this;
+        }
+
+        setBackgroundImage(value:string):api_ui.ElementHelper {
+            this.el.style.backgroundImage = value;
             return this;
         }
 

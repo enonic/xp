@@ -27,6 +27,10 @@ Ext.define('Admin.view.TabPanel', {
             activeItem: me.activeTab
         }, me.layout));
 
+        // New TopBar implementation. Uncomment when the time comes
+        // this.appbar = <any> new app_ui.ContentAppBar();
+        // dockedItems.push(me.appbar.ext);
+
         // Custom tabBar is why we needed to override this
         this.tabBar = <any> Ext.create('Admin.view.TopBar', Ext.apply({
             appName: me.appName,
