@@ -18,8 +18,8 @@ module api_ui_wizard {
             this.addTitle();
             this.addSubTitle();
             this.wizardStepPanels = new WizardStepPanels();
-            this.appendChild(this.wizardStepPanels);
             this.addStepContainer();
+            this.appendChild(this.wizardStepPanels);
 
             this.initExt();
         }
@@ -41,6 +41,10 @@ module api_ui_wizard {
 
         addStep(step:WizardStep) {
             this.wizardStepPanels.addPanel(step.getPanel());
+            if (this.steps.length == 0) {
+                console.log("showing panel");
+                this.wizardStepPanels.showPanel(1);
+            }
             this.steps.push(step);
             this.stepContainer.addStep(step);
         }
