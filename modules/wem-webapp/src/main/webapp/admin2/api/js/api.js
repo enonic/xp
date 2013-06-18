@@ -1513,6 +1513,26 @@ var api_ui_tab;
 })(api_ui_tab || (api_ui_tab = {}));
 var api_ui_tab;
 (function (api_ui_tab) {
+    var TabBar = (function (_super) {
+        __extends(TabBar, _super);
+        function TabBar(idPrefix) {
+                _super.call(this, idPrefix || "TabBar");
+        }
+        TabBar.prototype.addTab = function (tab) {
+        };
+        TabBar.prototype.getSize = function () {
+            return 0;
+        };
+        TabBar.prototype.addTabSelectedListener = function (listener) {
+        };
+        TabBar.prototype.addTabRemoveListener = function (listener) {
+        };
+        return TabBar;
+    })(api_ui.DivEl);
+    api_ui_tab.TabBar = TabBar;    
+})(api_ui_tab || (api_ui_tab = {}));
+var api_ui_tab;
+(function (api_ui_tab) {
     var TabPanelController = (function () {
         function TabPanelController(tabNavigator, deckPanel) {
             this.deckIndexByTabIndex = {

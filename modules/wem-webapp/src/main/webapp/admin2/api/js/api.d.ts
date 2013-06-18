@@ -550,6 +550,15 @@ module api_ui_tab {
     }
 }
 module api_ui_tab {
+    class TabBar extends api_ui.DivEl implements TabNavigator {
+        constructor(idPrefix?: string);
+        public addTab(tab: Tab): void;
+        public getSize(): number;
+        public addTabSelectedListener(listener: TabSelectedListener): void;
+        public addTabRemoveListener(listener: TabRemoveListener): void;
+    }
+}
+module api_ui_tab {
     class TabPanelController implements TabRemoveListener, TabSelectedListener {
         private tabNavigator;
         private deckPanel;
