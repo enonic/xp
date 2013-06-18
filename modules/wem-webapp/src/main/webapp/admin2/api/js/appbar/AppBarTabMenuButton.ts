@@ -16,8 +16,6 @@ module api_appbar{
 
             this.tabCountEl = new AppBarTabCount;
             this.appendChild(this.tabCountEl);
-
-            this.setLabel("****");
         }
 
         setTabCount(value:number) {
@@ -33,7 +31,12 @@ module api_appbar{
         }
 
         setCount(value:number) {
-            this.getEl().setInnerHtml("" + value);
+            if (value > 0) {
+                this.getEl().setInnerHtml("" + value);
+            }
+            else {
+                this.getEl().setInnerHtml("");
+            }
         }
     }
 }

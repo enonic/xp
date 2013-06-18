@@ -11,6 +11,7 @@
 ///<reference path='event/OpenSpaceEvent.ts' />
 ///<reference path='event/EditSpaceEvent.ts' />
 ///<reference path='event/SaveSpaceEvent.ts' />
+///<reference path='event/CloseActiveSpacePanelEvent.ts' />
 
 ///<reference path='SpaceContext.ts' />
 
@@ -73,7 +74,8 @@
 
 ///<reference path='appbar/SpaceAppBarTabMenuItem.ts' />
 ///<reference path='appbar/SpaceAppBarTabMenu.ts' />
-///<reference path='SpaceAppPanelController.ts' />
+///<reference path='appbar/SpaceAppBar.ts' />
+///<reference path='SpaceAppTabPanelController.ts' />
 ///<reference path='SpaceAppPanel.ts' />
 
 
@@ -133,9 +135,11 @@ Ext.application({
             deleteSpaceDialog.setSpacesToDelete(event.getModels());
             deleteSpaceDialog.open();
         });
-    }
 
+    }
 });
 
 app.SpaceContext.init();
 app.SpaceActions.init();
+app.SpaceAppTabPanelController.init();
+

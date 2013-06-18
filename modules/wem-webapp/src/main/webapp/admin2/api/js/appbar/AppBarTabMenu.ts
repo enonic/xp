@@ -22,5 +22,14 @@ module api_appbar{
             this.tabMenuButton = new AppBarTabMenuButton();
             return this.tabMenuButton;
         }
+
+        removeTab(tab:api_ui_tab.Tab) {
+            super.removeTab(tab);
+
+            this.tabMenuButton.setTabCount( this.getSize() );
+            if( this.getSize() == 0 ) {
+                this.tabMenuButton.setLabel("")
+            }
+        }
     }
 }

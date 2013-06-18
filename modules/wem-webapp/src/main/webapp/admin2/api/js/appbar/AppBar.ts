@@ -7,20 +7,31 @@ module api_appbar {
         appName:string;
 
         private launcherButton:api_ui.ButtonEl;
+
         private homeButton:api_ui.ButtonEl;
-        private tabMenu:api_appbar.TabMenuContainer;
+
+        private tabMenu:api_appbar.AppBarTabMenu;
+
         private userButton:api_appbar.UserButton;
+
         private userInfoPopup:api_appbar.UserInfoPopup;
 
-        constructor(appName) {
+        constructor(appName, tabMenu?:AppBarTabMenu) {
             super('AppBar', 'appbar');
+
             this.appName = appName;
+            this.tabMenu = tabMenu;
 
             this.addLauncherButton();
             this.addSeparator();
             this.addHomeButton();
             this.addUserButton();
-            this.addTabMenu();
+            if( this.tabMenu != null ) {
+                this.appendChild(this.tabMenu);
+            }
+            else {
+                this.appendChild(new TabMenuContainer())
+            }
             this.addUserInfoPopup();
 
             this.initExt();
@@ -48,10 +59,6 @@ module api_appbar {
             this.appendChild(this.homeButton);
         }
 
-        private addTabMenu() {
-            this.tabMenu = new api_appbar.TabMenuContainer();
-            this.appendChild(this.tabMenu);
-        }
 
         private addUserButton() {
             this.userButton = new api_appbar.UserButton();

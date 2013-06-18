@@ -13,8 +13,8 @@ module api_ui_tab {
             this.tabNavigator = tabNavigator;
             this.deckPanel = deckPanel;
 
-            this.tabNavigator.addTabSelectedListener(this);
-            this.tabNavigator.addTabRemoveListener(this);
+            //this.tabNavigator.addTabSelectedListener(this);
+            //this.tabNavigator.addTabRemoveListener(this);
         }
 
         addPanel(panel:api_ui.Panel, tab:api_ui_tab.Tab) {
@@ -35,11 +35,6 @@ module api_ui_tab {
                 this.deckPanel.removePanel(deckIndex);
             }
         }
-
-        removeTab(tab:api_ui_tab.Tab) {
-            //this.tabNavigator.removeTab(tab);
-        }
-
 
         selectedTab(tab:api_ui_tab.Tab) {
             var deckIndex = this.deckIndexByTabIndex[tab.getTabIndex()];
