@@ -1,15 +1,9 @@
-module app {
+module app_appbar {
 
-    /**
-     * The TabMenu to be placed in the SpaceAppBar.
-     */
-    export class SpaceAppBarTabMenu  /* TODO: extends api_ui_tab.TabMenu */ {
+    export class SpaceAppBarTabMenu extends api_appbar.AppBarTabMenu  {
 
         constructor() {
-
-            app_event.NewSpaceEvent.on( (event) => {
-
-            });
+            super("SpaceAppBarTabMenu");
         }
     }
 }

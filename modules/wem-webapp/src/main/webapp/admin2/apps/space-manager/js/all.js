@@ -4669,27 +4669,26 @@ Ext.define('Admin.controller.WizardController', {
 });
 var app_appbar;
 (function (app_appbar) {
-    var SpaceTabMenuItem = (function (_super) {
-        __extends(SpaceTabMenuItem, _super);
-        function SpaceTabMenuItem() {
-            _super.apply(this, arguments);
-
+    var SpaceAppBarTabMenuItem = (function (_super) {
+        __extends(SpaceAppBarTabMenuItem, _super);
+        function SpaceAppBarTabMenuItem(label) {
+                _super.call(this, label);
         }
-        return SpaceTabMenuItem;
-    })(api_ui_tab.TabMenuItem);
-    app_appbar.SpaceTabMenuItem = SpaceTabMenuItem;    
+        return SpaceAppBarTabMenuItem;
+    })(api_appbar.AppBarTabMenuItem);
+    app_appbar.SpaceAppBarTabMenuItem = SpaceAppBarTabMenuItem;    
 })(app_appbar || (app_appbar = {}));
-var app;
-(function (app) {
-    var SpaceAppBarTabMenu = (function () {
+var app_appbar;
+(function (app_appbar) {
+    var SpaceAppBarTabMenu = (function (_super) {
+        __extends(SpaceAppBarTabMenu, _super);
         function SpaceAppBarTabMenu() {
-            app_event.NewSpaceEvent.on(function (event) {
-            });
+                _super.call(this, "SpaceAppBarTabMenu");
         }
         return SpaceAppBarTabMenu;
-    })();
-    app.SpaceAppBarTabMenu = SpaceAppBarTabMenu;    
-})(app || (app = {}));
+    })(api_appbar.AppBarTabMenu);
+    app_appbar.SpaceAppBarTabMenu = SpaceAppBarTabMenu;    
+})(app_appbar || (app_appbar = {}));
 var app;
 (function (app) {
     var SpaceAppPanelController = (function (_super) {
@@ -4700,12 +4699,12 @@ var app;
             var appPanel = new api_ui.DeckPanel();
                 _super.call(this, appBarTabMenu, appPanel);
             app_event.NewSpaceEvent.on(function (event) {
-                var tabMenuItem = new app_appbar.SpaceTabMenuItem("New Space");
+                var tabMenuItem = new app_appbar.SpaceAppBarTabMenuItem("New Space");
                 var panel = new api_ui.Panel();
                 _this.addPanel(panel, tabMenuItem);
             });
             app_event.OpenSpaceEvent.on(function (event) {
-                var tabMenuItem = new app_appbar.SpaceTabMenuItem("TODO");
+                var tabMenuItem = new app_appbar.SpaceAppBarTabMenuItem("TODO");
                 var panel = new api_ui.Panel();
                 _this.addPanel(panel, tabMenuItem);
             });
