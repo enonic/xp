@@ -730,5 +730,9 @@ module app_ui {
             return null;
         }
 
+        getWizardDirty():bool {
+            return this.isWizardDirty;
+        }
+
     }
 }

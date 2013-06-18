@@ -2342,6 +2342,9 @@ var app_ui;
         WizardPanel.prototype.washDirtyForm = function (form) {
             return null;
         };
+        WizardPanel.prototype.getWizardDirty = function () {
+            return this.isWizardDirty;
+        };
         return WizardPanel;
     })();
     app_ui.WizardPanel = WizardPanel;    
