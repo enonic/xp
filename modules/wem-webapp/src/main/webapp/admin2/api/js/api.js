@@ -1954,6 +1954,73 @@ var api_delete;
         return DeleteDialogItemComponent;
     })(api_ui.DivEl);    
 })(api_delete || (api_delete = {}));
+var api_appbar;
+(function (api_appbar) {
+    var AppBarTabMenu = (function (_super) {
+        __extends(AppBarTabMenu, _super);
+        function AppBarTabMenu(idPrefix) {
+                _super.call(this, idPrefix || "AppBarTabMenu");
+            this.getEl().addClass("appbar-tabmenu");
+        }
+        AppBarTabMenu.prototype.addTab = function (tab) {
+            _super.prototype.addTab.call(this, tab);
+            this.tabMenuButton.setTabCount(this.getSize());
+        };
+        AppBarTabMenu.prototype.selectTab = function (tab) {
+            _super.prototype.selectTab.call(this, tab);
+        };
+        AppBarTabMenu.prototype.createTabMenuButton = function () {
+            this.tabMenuButton = new api_appbar.AppBarTabMenuButton();
+            return this.tabMenuButton;
+        };
+        return AppBarTabMenu;
+    })(api_ui_tab.TabMenu);
+    api_appbar.AppBarTabMenu = AppBarTabMenu;    
+})(api_appbar || (api_appbar = {}));
+var api_appbar;
+(function (api_appbar) {
+    var AppBarTabMenuButton = (function (_super) {
+        __extends(AppBarTabMenuButton, _super);
+        function AppBarTabMenuButton(idPrefix) {
+                _super.call(this, idPrefix || "AppBarTabMenuButton");
+            this.getEl().addClass("appbar-tabmenu-button");
+            this.iconEl = new api_ui.SpanEl();
+            this.iconEl.getEl().addClass("icon-icomoon-pencil-32");
+            this.prependChild(this.iconEl);
+            this.tabCountEl = new AppBarTabCount();
+            this.appendChild(this.tabCountEl);
+            this.setLabel("****");
+        }
+        AppBarTabMenuButton.prototype.setTabCount = function (value) {
+            this.tabCountEl.setCount(value);
+        };
+        return AppBarTabMenuButton;
+    })(api_ui_tab.TabMenuButton);
+    api_appbar.AppBarTabMenuButton = AppBarTabMenuButton;    
+    var AppBarTabCount = (function (_super) {
+        __extends(AppBarTabCount, _super);
+        function AppBarTabCount() {
+                _super.call(this);
+            this.getEl().addClass("tabcount");
+        }
+        AppBarTabCount.prototype.setCount = function (value) {
+            this.getEl().setInnerHtml("" + value);
+        };
+        return AppBarTabCount;
+    })(api_ui.SpanEl);
+    api_appbar.AppBarTabCount = AppBarTabCount;    
+})(api_appbar || (api_appbar = {}));
+var api_appbar;
+(function (api_appbar) {
+    var AppBarTabMenuItem = (function (_super) {
+        __extends(AppBarTabMenuItem, _super);
+        function AppBarTabMenuItem(label) {
+                _super.call(this, label);
+        }
+        return AppBarTabMenuItem;
+    })(api_ui_tab.TabMenuItem);
+    api_appbar.AppBarTabMenuItem = AppBarTabMenuItem;    
+})(api_appbar || (api_appbar = {}));
 var api;
 (function (api) {
     var AppBrowsePanel = (function (_super) {

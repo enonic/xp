@@ -68,6 +68,10 @@
 ///<reference path='delete/DeleteItem.ts' />
 ///<reference path='delete/DeleteDialog.ts' />
 
+///<reference path='appbar/AppBarTabMenu.ts' />
+///<reference path='appbar/AppBarTabMenuButton.ts' />
+///<reference path='appbar/AppBarTabMenuItem.ts' />
+
 ///<reference path='AppBrowsePanel.ts' />
 ///<reference path='FormDeckPanel.ts' />
 

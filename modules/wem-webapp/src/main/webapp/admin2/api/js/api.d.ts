@@ -698,6 +698,32 @@ module api_delete {
         public clear(): void;
     }
 }
+module api_appbar {
+    class AppBarTabMenu extends api_ui_tab.TabMenu {
+        private tabMenuButton;
+        constructor(idPrefix?: string);
+        public addTab(tab: api_ui_tab.Tab): void;
+        public selectTab(tab: api_ui_tab.Tab): void;
+        public createTabMenuButton(): api_ui_tab.TabMenuButton;
+    }
+}
+module api_appbar {
+    class AppBarTabMenuButton extends api_ui_tab.TabMenuButton {
+        private iconEl;
+        private tabCountEl;
+        constructor(idPrefix?: string);
+        public setTabCount(value: number): void;
+    }
+    class AppBarTabCount extends api_ui.SpanEl {
+        constructor();
+        public setCount(value: number): void;
+    }
+}
+module api_appbar {
+    class AppBarTabMenuItem extends api_ui_tab.TabMenuItem {
+        constructor(label: string);
+    }
+}
 module api {
     class AppBrowsePanel extends api_ui.Panel {
         public ext;

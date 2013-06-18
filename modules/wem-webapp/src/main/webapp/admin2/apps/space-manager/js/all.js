@@ -4705,7 +4705,7 @@ var app;
                 _this.addPanel(panel, tabMenuItem);
             });
             app_event.OpenSpaceEvent.on(function (event) {
-                var tabMenuItem = new app_appbar.SpaceTabMenuItem("Space?");
+                var tabMenuItem = new app_appbar.SpaceTabMenuItem("TODO");
                 var panel = new api_ui.Panel();
                 _this.addPanel(panel, tabMenuItem);
             });

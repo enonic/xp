@@ -17,19 +17,19 @@ module api_appbar {
                 qName = 'system/tsi';
 
             var content = '<div class="title">User</div>' +
-                          '<div class="user-name">' + userName + '</div>' +
-                          '<div class="content">' +
-                          '<div class="column">' +
-                          '<img src="' + photoUrl + '"/>' +
-                          '<button>Log Out</button>' +
-                          '</div>' +
-                          '<div class="column">' +
-                          '<span>' + qName + '</span>' +
-                          '<a href="#">View Profile</a>' +
-                          '<a href="#">Edit Profile</a>' +
-                          '<a href="#">Change User</a>' +
-                          '</div>' +
-                          '</div>';
+                '<div class="user-name">' + userName + '</div>' +
+                '<div class="content">' +
+                '<div class="column">' +
+                '<img src="' + photoUrl + '"/>' +
+                '<button>Log Out</button>' +
+                '</div>' +
+                '<div class="column">' +
+                '<span>' + qName + '</span>' +
+                '<a href="#">View Profile</a>' +
+                '<a href="#">Edit Profile</a>' +
+                '<a href="#">Change User</a>' +
+                '</div>' +
+                '</div>';
 
             this.getEl().setInnerHtml(content);
         }
