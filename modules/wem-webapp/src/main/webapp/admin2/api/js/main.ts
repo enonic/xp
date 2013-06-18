@@ -56,6 +56,7 @@
 ///<reference path='ui/tab/TabMenu.ts' />
 ///<reference path='ui/tab/TabMenuButton.ts' />
 ///<reference path='ui/tab/TabMenuItem.ts' />
+///<reference path='ui/tab/TabBar.ts' />
 ///<reference path='ui/tab/TabPanelController.ts' />
 
 ///<reference path='appbar/AppBar.ts' />
