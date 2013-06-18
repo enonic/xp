@@ -44,6 +44,10 @@ module api_wizard {
             this.stepContainer.addStep(step);
         }
 
+        addIcon(icon:api_ui_form.FormIcon) {
+            this.getEl().insertBefore(icon, this.titleEl);
+        }
+
         addToolbar(toolbar:api_ui_toolbar.Toolbar) {
             this.getEl().insertBefore(toolbar, this.titleEl);
         }

@@ -1,5 +1,8 @@
 var __extends = this.__extends || function (d, b) {
-    function __() { this.constructor = d; }
+    function __() {
+        this.constructor = d;
+    }
+
     __.prototype = b.prototype;
     d.prototype = new __();
 };
@@ -8,14 +11,15 @@ var app_event;
     var DeletedEvent = (function (_super) {
         __extends(DeletedEvent, _super);
         function DeletedEvent() {
-                _super.call(this, 'deleted');
+            _super.call(this, 'deleted');
         }
+
         DeletedEvent.on = function on(handler) {
             api_event.onEvent('deleted', handler);
         };
         return DeletedEvent;
     })(api_event.Event);
-    app_event.DeletedEvent = DeletedEvent;    
+    app_event.DeletedEvent = DeletedEvent;
 })(app_event || (app_event = {}));
 var app_event;
 (function (app_event) {
@@ -23,56 +27,60 @@ var app_event;
         __extends(BaseSpaceModelEvent, _super);
         function BaseSpaceModelEvent(name, model) {
             this.model = model;
-                _super.call(this, name);
+            _super.call(this, name);
         }
+
         BaseSpaceModelEvent.prototype.getModels = function () {
             return this.model;
         };
         return BaseSpaceModelEvent;
     })(api_event.Event);
-    app_event.BaseSpaceModelEvent = BaseSpaceModelEvent;    
+    app_event.BaseSpaceModelEvent = BaseSpaceModelEvent;
 })(app_event || (app_event = {}));
 var app_event;
 (function (app_event) {
     var DeletePromptEvent = (function (_super) {
         __extends(DeletePromptEvent, _super);
         function DeletePromptEvent(model) {
-                _super.call(this, 'deletePrompt', model);
+            _super.call(this, 'deletePrompt', model);
         }
+
         DeletePromptEvent.on = function on(handler) {
             api_event.onEvent('deletePrompt', handler);
         };
         return DeletePromptEvent;
     })(app_event.BaseSpaceModelEvent);
-    app_event.DeletePromptEvent = DeletePromptEvent;    
+    app_event.DeletePromptEvent = DeletePromptEvent;
 })(app_event || (app_event = {}));
 var app_event;
 (function (app_event) {
     var GridSelectionChangeEvent = (function (_super) {
         __extends(GridSelectionChangeEvent, _super);
         function GridSelectionChangeEvent(model) {
-                _super.call(this, 'gridChange', model);
+            _super.call(this, 'gridChange', model);
         }
+
         GridSelectionChangeEvent.on = function on(handler) {
             api_event.onEvent('gridChange', handler);
         };
         return GridSelectionChangeEvent;
     })(app_event.BaseSpaceModelEvent);
-    app_event.GridSelectionChangeEvent = GridSelectionChangeEvent;    
+    app_event.GridSelectionChangeEvent = GridSelectionChangeEvent;
 })(app_event || (app_event = {}));
 var app_event;
 (function (app_event) {
     var GridDeselectEvent = (function (_super) {
         __extends(GridDeselectEvent, _super);
         function GridDeselectEvent(model) {
-                _super.call(this, 'removeFromGrid', model);
+            _super.call(this, 'removeFromGrid', model);
         }
+
         GridDeselectEvent.on = function on(handler) {
             api_event.onEvent('removeFromGrid', handler);
         };
         return GridDeselectEvent;
     })(app_event.BaseSpaceModelEvent);
-    app_event.GridDeselectEvent = GridDeselectEvent;    
+    app_event.GridDeselectEvent = GridDeselectEvent;
 })(app_event || (app_event = {}));
 var app_event;
 (function (app_event) {
@@ -81,8 +89,9 @@ var app_event;
         function ShowContextMenuEvent(x, y) {
             this.x = x;
             this.y = y;
-                _super.call(this, 'showContextMenu');
+            _super.call(this, 'showContextMenu');
         }
+
         ShowContextMenuEvent.prototype.getX = function () {
             return this.x;
         };
@@ -94,63 +103,67 @@ var app_event;
         };
         return ShowContextMenuEvent;
     })(api_event.Event);
-    app_event.ShowContextMenuEvent = ShowContextMenuEvent;    
+    app_event.ShowContextMenuEvent = ShowContextMenuEvent;
 })(app_event || (app_event = {}));
 var app_event;
 (function (app_event) {
     var NewSpaceEvent = (function (_super) {
         __extends(NewSpaceEvent, _super);
         function NewSpaceEvent() {
-                _super.call(this, 'newSpace');
+            _super.call(this, 'newSpace');
         }
+
         NewSpaceEvent.on = function on(handler) {
             api_event.onEvent('newSpace', handler);
         };
         return NewSpaceEvent;
     })(api_event.Event);
-    app_event.NewSpaceEvent = NewSpaceEvent;    
+    app_event.NewSpaceEvent = NewSpaceEvent;
 })(app_event || (app_event = {}));
 var app_event;
 (function (app_event) {
     var OpenSpaceEvent = (function (_super) {
         __extends(OpenSpaceEvent, _super);
         function OpenSpaceEvent(model) {
-                _super.call(this, 'openSpace', model);
+            _super.call(this, 'openSpace', model);
         }
+
         OpenSpaceEvent.on = function on(handler) {
             api_event.onEvent('openSpace', handler);
         };
         return OpenSpaceEvent;
     })(app_event.BaseSpaceModelEvent);
-    app_event.OpenSpaceEvent = OpenSpaceEvent;    
+    app_event.OpenSpaceEvent = OpenSpaceEvent;
 })(app_event || (app_event = {}));
 var app_event;
 (function (app_event) {
     var EditSpaceEvent = (function (_super) {
         __extends(EditSpaceEvent, _super);
         function EditSpaceEvent(model) {
-                _super.call(this, 'editSpaceEvent', model);
+            _super.call(this, 'editSpaceEvent', model);
         }
+
         EditSpaceEvent.on = function on(handler) {
             api_event.onEvent('editSpaceEvent', handler);
         };
         return EditSpaceEvent;
     })(app_event.BaseSpaceModelEvent);
-    app_event.EditSpaceEvent = EditSpaceEvent;    
+    app_event.EditSpaceEvent = EditSpaceEvent;
 })(app_event || (app_event = {}));
 var app_event;
 (function (app_event) {
     var SaveSpaceEvent = (function (_super) {
         __extends(SaveSpaceEvent, _super);
         function SaveSpaceEvent() {
-                _super.call(this, 'saveSpace');
+            _super.call(this, 'saveSpace');
         }
+
         SaveSpaceEvent.on = function on(handler) {
             api_event.onEvent('saveSpace', handler);
         };
         return SaveSpaceEvent;
     })(api_event.Event);
-    app_event.SaveSpaceEvent = SaveSpaceEvent;    
+    app_event.SaveSpaceEvent = SaveSpaceEvent;
 })(app_event || (app_event = {}));
 var app;
 (function (app) {
@@ -161,6 +174,7 @@ var app;
                 _this.selectedSpaces = event.getModels();
             });
         }
+
         SpaceContext.init = function init() {
             return SpaceContext.context = new SpaceContext();
         };
@@ -172,59 +186,65 @@ var app;
         };
         return SpaceContext;
     })();
-    app.SpaceContext = SpaceContext;    
+    app.SpaceContext = SpaceContext;
 })(app || (app = {}));
 var app;
 (function (app) {
     var NewSpaceAction = (function (_super) {
         __extends(NewSpaceAction, _super);
         function NewSpaceAction() {
-                _super.call(this, "New");
+            _super.call(this, "New");
             this.addExecutionListener(function () {
                 new app_event.NewSpaceEvent().fire();
             });
         }
+
         return NewSpaceAction;
     })(api_ui.Action);
-    app.NewSpaceAction = NewSpaceAction;    
+    app.NewSpaceAction = NewSpaceAction;
     var OpenSpaceAction = (function (_super) {
         __extends(OpenSpaceAction, _super);
         function OpenSpaceAction() {
-                _super.call(this, "Open");
+            _super.call(this, "Open");
             this.setEnabled(false);
             this.addExecutionListener(function () {
                 new app_event.OpenSpaceEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
+
         return OpenSpaceAction;
     })(api_ui.Action);
-    app.OpenSpaceAction = OpenSpaceAction;    
+    app.OpenSpaceAction = OpenSpaceAction;
     var EditSpaceAction = (function (_super) {
         __extends(EditSpaceAction, _super);
         function EditSpaceAction() {
-                _super.call(this, "Edit");
+            _super.call(this, "Edit");
             this.setEnabled(false);
             this.addExecutionListener(function () {
                 new app_event.EditSpaceEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
+
         return EditSpaceAction;
     })(api_ui.Action);
-    app.EditSpaceAction = EditSpaceAction;    
+    app.EditSpaceAction = EditSpaceAction;
     var DeleteSpaceAction = (function (_super) {
         __extends(DeleteSpaceAction, _super);
         function DeleteSpaceAction() {
-                _super.call(this, "Delete");
+            _super.call(this, "Delete");
             this.setEnabled(false);
             this.addExecutionListener(function () {
                 new app_event.DeletePromptEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
+
         return DeleteSpaceAction;
     })(api_ui.Action);
-    app.DeleteSpaceAction = DeleteSpaceAction;    
+    app.DeleteSpaceAction = DeleteSpaceAction;
     var SpaceActions = (function () {
-        function SpaceActions() { }
+        function SpaceActions() {
+        }
+
         SpaceActions.NEW_SPACE = new NewSpaceAction();
         SpaceActions.OPEN_SPACE = new OpenSpaceAction();
         SpaceActions.EDIT_SPACE = new EditSpaceAction();
@@ -232,12 +252,12 @@ var app;
         SpaceActions.init = function init() {
             app_event.GridSelectionChangeEvent.on(function (event) {
                 var spaces = event.getModels();
-                if(spaces.length <= 0) {
+                if (spaces.length <= 0) {
                     SpaceActions.NEW_SPACE.setEnabled(true);
                     SpaceActions.OPEN_SPACE.setEnabled(false);
                     SpaceActions.EDIT_SPACE.setEnabled(false);
                     SpaceActions.DELETE_SPACE.setEnabled(false);
-                } else if(spaces.length == 1) {
+                } else if (spaces.length == 1) {
                     SpaceActions.NEW_SPACE.setEnabled(false);
                     SpaceActions.OPEN_SPACE.setEnabled(true);
                     SpaceActions.EDIT_SPACE.setEnabled(spaces[0].data.editable);
@@ -251,18 +271,18 @@ var app;
             });
         };
         SpaceActions.anyEditable = function anyEditable(spaces) {
-            for(var i in spaces) {
+            for (var i in spaces) {
                 var space = spaces[i];
-                if(space.data.editable) {
+                if (space.data.editable) {
                     return true;
                 }
             }
             return false;
         };
         SpaceActions.anyDeleteable = function anyDeleteable(spaces) {
-            for(var i in spaces) {
+            for (var i in spaces) {
                 var space = spaces[i];
-                if(space.data.deletable) {
+                if (space.data.deletable) {
                     return true;
                 }
             }
@@ -270,7 +290,7 @@ var app;
         };
         return SpaceActions;
     })();
-    app.SpaceActions = SpaceActions;    
+    app.SpaceActions = SpaceActions;
 })(app || (app = {}));
 var app;
 (function (app) {
@@ -284,55 +304,60 @@ var app;
                 region: 'west',
                 width: 200
             }).getExtEl();
-                _super.call(this, toolbar, grid, detail, filterPanel);
+            _super.call(this, toolbar, grid, detail, filterPanel);
         }
+
         return SpaceAppBrowsePanel;
     })(api.AppBrowsePanel);
-    app.SpaceAppBrowsePanel = SpaceAppBrowsePanel;    
+    app.SpaceAppBrowsePanel = SpaceAppBrowsePanel;
 })(app || (app = {}));
 var app_wizard;
 (function (app_wizard) {
     var SaveSpaceAction = (function (_super) {
         __extends(SaveSpaceAction, _super);
         function SaveSpaceAction() {
-                _super.call(this, "Save");
+            _super.call(this, "Save");
             this.addExecutionListener(function () {
             });
         }
+
         return SaveSpaceAction;
     })(api_ui.Action);
-    app_wizard.SaveSpaceAction = SaveSpaceAction;    
+    app_wizard.SaveSpaceAction = SaveSpaceAction;
     var DuplicateSpaceAction = (function (_super) {
         __extends(DuplicateSpaceAction, _super);
         function DuplicateSpaceAction() {
-                _super.call(this, "Duplicate");
+            _super.call(this, "Duplicate");
             this.addExecutionListener(function () {
             });
         }
+
         return DuplicateSpaceAction;
     })(api_ui.Action);
-    app_wizard.DuplicateSpaceAction = DuplicateSpaceAction;    
+    app_wizard.DuplicateSpaceAction = DuplicateSpaceAction;
     var DeleteSpaceAction = (function (_super) {
         __extends(DeleteSpaceAction, _super);
         function DeleteSpaceAction() {
-                _super.call(this, "Delete");
+            _super.call(this, "Delete");
             this.setEnabled(false);
             this.addExecutionListener(function () {
             });
         }
+
         return DeleteSpaceAction;
     })(api_ui.Action);
-    app_wizard.DeleteSpaceAction = DeleteSpaceAction;    
+    app_wizard.DeleteSpaceAction = DeleteSpaceAction;
     var CloseSpaceAction = (function (_super) {
         __extends(CloseSpaceAction, _super);
         function CloseSpaceAction() {
-                _super.call(this, "Close");
+            _super.call(this, "Close");
             this.addExecutionListener(function () {
             });
         }
+
         return CloseSpaceAction;
     })(api_ui.Action);
-    app_wizard.CloseSpaceAction = CloseSpaceAction;    
+    app_wizard.CloseSpaceAction = CloseSpaceAction;
     var SpaceWizardActions = (function () {
         function SpaceWizardActions() {
             this.SAVE_SPACE = new SaveSpaceAction();
@@ -340,9 +365,10 @@ var app_wizard;
             this.DELETE_SPACE = new DeleteSpaceAction();
             this.CLOSE_SPACE = new CloseSpaceAction();
         }
+
         return SpaceWizardActions;
     })();
-    app_wizard.SpaceWizardActions = SpaceWizardActions;    
+    app_wizard.SpaceWizardActions = SpaceWizardActions;
 })(app_wizard || (app_wizard = {}));
 var app_wizard;
 (function (app_wizard) {
@@ -351,6 +377,7 @@ var app_wizard;
             this.id = id;
             this.spaceWizardActions = new app_wizard.SpaceWizardActions();
         }
+
         SpaceWizardContext.spaceWizardContexts = [];
         SpaceWizardContext.activeSpaceWizardContext = -1;
         SpaceWizardContext.createSpaceWizardContext = function createSpaceWizardContext() {
@@ -373,23 +400,24 @@ var app_wizard;
         };
         return SpaceWizardContext;
     })();
-    app_wizard.SpaceWizardContext = SpaceWizardContext;    
+    app_wizard.SpaceWizardContext = SpaceWizardContext;
 })(app_wizard || (app_wizard = {}));
 var app_wizard;
 (function (app_wizard) {
     var SpaceWizardToolbar2 = (function (_super) {
         __extends(SpaceWizardToolbar2, _super);
         function SpaceWizardToolbar2(actions) {
-                _super.call(this);
+            _super.call(this);
             _super.prototype.addAction.call(this, actions.SAVE_SPACE);
             _super.prototype.addAction.call(this, actions.DUPLICATE_SPACE);
             _super.prototype.addAction.call(this, actions.DELETE_SPACE);
             _super.prototype.addGreedySpacer.call(this);
             _super.prototype.addAction.call(this, actions.CLOSE_SPACE);
         }
+
         return SpaceWizardToolbar2;
     })(api_ui_toolbar.Toolbar);
-    app_wizard.SpaceWizardToolbar2 = SpaceWizardToolbar2;    
+    app_wizard.SpaceWizardToolbar2 = SpaceWizardToolbar2;
 })(app_wizard || (app_wizard = {}));
 Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
     extend: 'Ext.util.Observable',
@@ -408,14 +436,14 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
             this.panel.view.on('beforeitemmousedown', function (view, record, item, index, event, eOpts) {
                 var targetElement = new Ext.Element(event.target);
                 var isCheckboxColumnIsClicked = targetElement.findParent('td.x-grid-cell-first') !== null;
-                if(isCheckboxColumnIsClicked) {
+                if (isCheckboxColumnIsClicked) {
                     var isShiftKeyPressed = event.shiftKey === true;
                     var isCtrlKeyPressed = event.ctrlKey === true;
-                    if(isShiftKeyPressed || isCtrlKeyPressed) {
+                    if (isShiftKeyPressed || isCtrlKeyPressed) {
                         return;
                     }
                     var isChecked = this.selected[record.get(this.keyField)];
-                    if(!isChecked) {
+                    if (!isChecked) {
                         this.panel.selModel.select(index, true, false);
                     } else {
                         this.panel.selModel.deselect(index);
@@ -433,7 +461,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
             }, this);
             this.panel.view.on('itemadd', this.onViewRefresh, this);
             var pagingToolbar = this.panel.down('pagingtoolbar');
-            if(pagingToolbar !== null) {
+            if (pagingToolbar !== null) {
                 pagingToolbar.on('beforechange', this.pagingOnBeforeChange, this);
             }
         }, this);
@@ -448,9 +476,9 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         this.onRowDeselect(this.panel.selModel, record);
         var storeRecord;
         var key = record.get(this.keyField);
-        if(this.panel instanceof Ext.tree.Panel) {
+        if (this.panel instanceof Ext.tree.Panel) {
             storeRecord = this.panel.getRootNode().findChild(this.keyField, key);
-        } else if(this.panel instanceof Ext.grid.Panel) {
+        } else if (this.panel instanceof Ext.grid.Panel) {
             storeRecord = this.panel.getStore().findRecord(this.keyField, key);
         }
         this.panel.selModel.deselect(storeRecord);
@@ -472,22 +500,22 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         this.panel.selModel.refresh();
         var i;
         var sm = this.panel.getSelectionModel();
-        if(this.panel instanceof Ext.tree.Panel) {
+        if (this.panel instanceof Ext.tree.Panel) {
             var rootNode = this.panel.getRootNode(), node;
-            for(var selectedItem in this.selected) {
-                if(this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
+            for (var selectedItem in this.selected) {
+                if (this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
                     node = rootNode.findChild(this.keyField, selectedItem, true);
-                    if(node) {
+                    if (node) {
                         sm.select(node, true);
                     }
                 }
             }
-        } else if(this.panel instanceof Ext.grid.Panel) {
+        } else if (this.panel instanceof Ext.grid.Panel) {
             var store = this.panel.getStore(), record;
-            for(var selectedItem in this.selected) {
-                if(this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
+            for (var selectedItem in this.selected) {
+                if (this.selected.hasOwnProperty(selectedItem) && this.selected[selectedItem]) {
                     record = store.findRecord(this.keyField, selectedItem);
-                    if(record) {
+                    if (record) {
                         sm.select(record, true);
                     }
                 }
@@ -499,25 +527,25 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         this.ignoreSelectionChanges = true;
     },
     onSelectionClear: function () {
-        if(!this.ignoreSelectionChanges) {
+        if (!this.ignoreSelectionChanges) {
             this.selections = [];
             this.selected = {
             };
         }
     },
     onRowSelect: function (sm, rec, i, o) {
-        if(!this.ignoreSelectionChanges) {
-            if(!this.selected[rec.get(this.keyField)]) {
+        if (!this.ignoreSelectionChanges) {
+            if (!this.selected[rec.get(this.keyField)]) {
                 this.selections.push(rec);
                 this.selected[rec.get(this.keyField)] = true;
             }
         }
     },
     onHeaderClick: function (headerCt, header, e) {
-        if(header.isCheckerHd) {
+        if (header.isCheckerHd) {
             e.stopEvent();
             var isChecked = header.el.hasCls('x-grid-hd-checker-on');
-            if(isChecked) {
+            if (isChecked) {
                 this.clearSelection();
             } else {
                 this.panel.selModel.selectAll();
@@ -526,10 +554,10 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         return false;
     },
     onRowDeselect: function (rowModel, record, index, eOpts) {
-        if(!this.ignoreSelectionChanges) {
-            if(this.selected[record.get(this.keyField)]) {
-                for(var j = this.selections.length - 1; j >= 0; j--) {
-                    if(this.selections[j].get(this.keyField) == record.get(this.keyField)) {
+        if (!this.ignoreSelectionChanges) {
+            if (this.selected[record.get(this.keyField)]) {
+                for (var j = this.selections.length - 1; j >= 0; j--) {
+                    if (this.selections[j].get(this.keyField) == record.get(this.keyField)) {
                         this.selections.splice(j, 1);
                         this.selected[record.get(this.keyField)] = false;
                         break;
@@ -545,7 +573,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         var isRightClick = event.button === 2;
         var recordIsSelected = this.selected[record.get(this.keyField)];
         var cancel = isRightClick && recordIsSelected && this.getSelectionCount() > 1;
-        if(cancel) {
+        if (cancel) {
             return false;
         }
         return true;
@@ -554,7 +582,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
         var targetElement = event.target;
         var isLeftClick = event.button === 0;
         var isCheckbox = targetElement.className && targetElement.className.indexOf('x-grid-row-checker') > -1;
-        if(isLeftClick && !isCheckbox) {
+        if (isLeftClick && !isCheckbox) {
             this.clearSelection();
         }
     }
@@ -564,7 +592,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     alias: 'plugin.gridToolbarPlugin',
     pluginId: 'gridToolbarPlugin',
     constructor: function (config) {
-        if(config) {
+        if (config) {
             Ext.apply(this, config);
         }
     },
@@ -580,9 +608,9 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         me.tbFill = Ext.create('Ext.toolbar.Fill');
         me.orderByButton = me.createOrderByButton();
         me.orderByDirectionButton = me.createOrderByDirectionButton();
-        if(Ext.isFunction(me.toolbar.store.getCount)) {
+        if (Ext.isFunction(me.toolbar.store.getCount)) {
             me.updateResultCount(me.getCount(me.toolbar.store));
-        } else if(Ext.isString(me.toolbar.store)) {
+        } else if (Ext.isString(me.toolbar.store)) {
             me.toolbar.store = Ext.StoreManager.lookup(me.toolbar.store);
         }
         me.toolbar.insert(0, me.resultTextItem);
@@ -591,7 +619,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             text: ' | '
         }));
         me.toolbar.insert(3, me.clearSelectionButton);
-        if(!(me.toolbar.store instanceof Ext.data.TreeStore)) {
+        if (!(me.toolbar.store instanceof Ext.data.TreeStore)) {
             me.toolbar.insert(4, me.tbFill);
             me.toolbar.insert(5, me.orderByButton);
             me.toolbar.insert(6, me.orderByDirectionButton);
@@ -602,13 +630,13 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         me.orderByDirectionButton.addListener('change', function () {
             me.doSort();
         });
-        if(me.toolbar.store) {
+        if (me.toolbar.store) {
             var loadEventName = me.toolbar.store.buffered ? 'prefetch' : 'load';
             me.toolbar.store.on(loadEventName, function (store) {
                 me.updateResultCount(me.getCount(store));
             });
         }
-        if(me.toolbar.gridPanel) {
+        if (me.toolbar.gridPanel) {
             me.toolbar.gridPanel.getSelectionModel().on('selectionchange', function (model, selected, eOpts) {
                 me.updateSelectAll(selected);
                 me.updateClearSelection(selected);
@@ -627,7 +655,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             listeners: {
                 render: function (cmp) {
                     cmp.el.on('click', function () {
-                        if(cmp.el.hasCls('admin-grid-toolbar-btn-none-selected')) {
+                        if (cmp.el.hasCls('admin-grid-toolbar-btn-none-selected')) {
                             me.toolbar.gridPanel.getSelectionModel().selectAll();
                         } else {
                             me.toolbar.gridPanel.getSelectionModel().deselectAll();
@@ -649,7 +677,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             listeners: {
                 render: function (cmp) {
                     cmp.el.on('click', function () {
-                        if(cmp.el.hasCls('admin-grid-toolbar-btn-clear-selection')) {
+                        if (cmp.el.hasCls('admin-grid-toolbar-btn-clear-selection')) {
                             me.toolbar.gridPanel.getSelectionModel().deselectAll();
                         }
                     });
@@ -676,7 +704,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
                 items: [
                     {
                         text: 'ASC'
-                    }, 
+                    },
                     {
                         text: 'DESC'
                     }
@@ -688,7 +716,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         var me = this;
         var gridColumns = me.toolbar.gridPanel.columns;
         var menuItems = [];
-        for(var i = 0; i < gridColumns.length; i++) {
+        for (var i = 0; i < gridColumns.length; i++) {
             menuItems.push({
                 text: gridColumns[i].text,
                 dataIndex: gridColumns[i].dataIndex
@@ -712,10 +740,10 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         var btn = this.selectAllButton;
         var isSelectMode = btn.el.hasCls('admin-grid-toolbar-btn-none-selected');
         var areAllRecordsSelected = !Ext.isEmpty(selected) && this.getCount(this.toolbar.store) == selected.length;
-        if(areAllRecordsSelected && isSelectMode) {
+        if (areAllRecordsSelected && isSelectMode) {
             btn.update('Deselect all');
             btn.el.removeCls('admin-grid-toolbar-btn-none-selected');
-        } else if(!areAllRecordsSelected && !isSelectMode) {
+        } else if (!areAllRecordsSelected && !isSelectMode) {
             btn.update('Select all');
             btn.el.addCls('admin-grid-toolbar-btn-none-selected');
         }
@@ -723,27 +751,27 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     updateClearSelection: function (selected) {
         var btn = this.clearSelectionButton;
         var count = selected.length;
-        if(count > 0) {
+        if (count > 0) {
             btn.update('Clear selection (' + selected.length + ')');
         } else {
             btn.update('Clear selection');
         }
     },
     getCount: function (store) {
-        if(store instanceof Ext.data.Store) {
+        if (store instanceof Ext.data.Store) {
             return store.getTotalCount();
-        } else if(store instanceof Ext.data.TreeStore) {
+        } else if (store instanceof Ext.data.TreeStore) {
             return this.countTreeNodes(store.getRootNode()) - 1;
         } else {
             return undefined;
         }
     },
     countTreeNodes: function (node) {
-        if(this.toolbar.countTopLevelOnly) {
+        if (this.toolbar.countTopLevelOnly) {
             return Ext.isEmpty(node.childNodes) ? 1 : 1 + node.childNodes.length;
         } else {
             var count = 1;
-            if(!Ext.isEmpty(node.childNodes)) {
+            if (!Ext.isEmpty(node.childNodes)) {
                 node.eachChild(function (child) {
                     count += this.countTreeNodes(child);
                 }, this);
@@ -758,7 +786,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     width: 300,
     height: 150,
     initComponent: function () {
-        if(!window['plupload']) {
+        if (!window['plupload']) {
             alert('FileUploadGrid requires Plupload!');
         }
         this.createStore();
@@ -768,7 +796,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
                 header: 'Name',
                 dataIndex: 'fileName',
                 flex: 2
-            }, 
+            },
             {
                 header: 'Size',
                 dataIndex: 'fileSize',
@@ -792,7 +820,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
                     text: 'Browse...',
                     iconCls: 'icon-browse',
                     itemId: 'browseButton'
-                }, 
+                },
                 {
                     xtype: 'button',
                     text: 'Upload',
@@ -802,7 +830,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
                     handler: function () {
                         Ext.Msg.alert('TODO', 'Upload');
                     }
-                }, 
+                },
                 {
                     xtype: 'button',
                     text: 'Remove',
@@ -841,7 +869,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
         this.uploader.bind('FilesAdded', function (up, files) {
             var file = null;
             var i;
-            for(i = 0; i < files.length; i += 1) {
+            for (i = 0; i < files.length; i += 1) {
                 file = files[i];
                 store.add({
                     'fileId': file.id,
@@ -861,7 +889,7 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     removeSelectedFiles: function (selected) {
         var store = this.getStore(), fileRecord = null;
         var i;
-        for(i = 0; i < selected.length; i += 1) {
+        for (i = 0; i < selected.length; i += 1) {
             fileRecord = selected[i];
             store.remove(fileRecord);
             this.removeFileFromUploaderQueue(fileRecord.data);
@@ -870,8 +898,8 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     removeFileFromUploaderQueue: function (recordData) {
         var uploaderFiles = this.uploader.files;
         var j;
-        for(j = 0; j < uploaderFiles.length; j += 1) {
-            if(uploaderFiles[j].id === recordData.fileId) {
+        for (j = 0; j < uploaderFiles.length; j += 1) {
+            if (uploaderFiles[j].id === recordData.fileId) {
                 this.uploader.removeFile(uploaderFiles[j]);
             }
         }
@@ -879,8 +907,8 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     createStore: function () {
         this.store = Ext.create('Ext.data.Store', {
             fields: [
-                'fileName', 
-                'fileSize', 
+                'fileName',
+                'fileSize',
                 'fileId'
             ],
             data: {
@@ -906,18 +934,22 @@ Ext.define('Admin.plugin.fileupload.FileUploadGrid', {
     addBodyListeners: function () {
         var bodyElement = Ext.getBody();
         var gridHtmlElement = this.getEl();
+
         function cancelEvent(event) {
-            if(event.preventDefault) {
+            if (event.preventDefault) {
                 event.preventDefault();
             }
             return false;
         }
+
         function addDragOverCls() {
             gridHtmlElement.addCls('admin-file-upload-drop-target');
         }
+
         function removeDragOverCls() {
             gridHtmlElement.removeCls('admin-file-upload-drop-target');
         }
+
         bodyElement.on('dragover', function (event) {
             addDragOverCls();
             cancelEvent(event);
@@ -947,9 +979,13 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
     height: 132,
     uploadUrl: 'rest/upload',
     progressBarHeight: 8,
-    tpl: new Ext.XTemplate('<div id="{id}" title="{title}" class="admin-image-upload-button-container" style="width:{width}px;height:{height}px; margin: 0">' + '<img src="{photoUrl}" class="admin-image-upload-button-image" style="width:{width - 2}px;height:{height - 2}px"/>' + '<div class="admin-image-upload-button-progress-bar-container" style="width:{width - 3}px">' + '<div class="admin-image-upload-button-progress-bar" style="height:{progressBarHeight}px"><!-- --></div>' + '</div>' + '</div>'),
+    tpl: new Ext.XTemplate('<div id="{id}" title="{title}" class="admin-image-upload-button-container" style="width:{width}px;height:{height}px; margin: 0">' +
+                           '<img src="{photoUrl}" class="admin-image-upload-button-image" style="width:{width - 2}px;height:{height - 2}px"/>' +
+                           '<div class="admin-image-upload-button-progress-bar-container" style="width:{width - 3}px">' +
+                           '<div class="admin-image-upload-button-progress-bar" style="height:{progressBarHeight}px"><!-- --></div>' +
+                           '</div>' + '</div>'),
     initComponent: function () {
-        if(!window['plupload']) {
+        if (!window['plupload']) {
             alert('ImageUploadButton requires Plupload!');
         }
         var me = this;
@@ -1014,9 +1050,10 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
         });
         uploader.bind('FileUploaded', function (up, file, response) {
             var responseObj, uploadedResUrl;
-            if(response && response.status === 200) {
+            if (response && response.status === 200) {
                 responseObj = Ext.decode(response.response);
-                uploadedResUrl = (responseObj.items && responseObj.items.length > 0) ? 'rest/upload/' + responseObj.items[0].id : 'resources/images/x-user-photo.png';
+                uploadedResUrl = (responseObj.items && responseObj.items.length > 0) ? 'rest/upload/' + responseObj.items[0].id
+                    : 'resources/images/x-user-photo.png';
                 uploadButton.updateImage(uploadedResUrl);
             }
             uploadButton.hideProgressBar();
@@ -1058,18 +1095,22 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
         var bodyElement = Ext.getBody();
         var dropTarget = Ext.get(this.buttonElementId);
         var border = Ext.get(this.buttonElementId + '-over-border');
+
         function cancelEvent(event) {
-            if(event.preventDefault) {
+            if (event.preventDefault) {
                 event.preventDefault();
             }
             return false;
         }
+
         function highlightDropTarget() {
             dropTarget.addCls('admin-file-upload-drop-target');
         }
+
         function removeHighlightFromDropTarget() {
             dropTarget.dom.className = dropTarget.dom.className.replace(/ admin-file-upload-drop-target/, '');
         }
+
         dropTarget.on('mouseenter', function (event) {
             highlightDropTarget();
             me.fireEvent('mouseenter');
@@ -1197,13 +1238,13 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
             }
         };
         this.tbar = [
-            uploadButton, 
-            '->', 
-            cancelButton, 
+            uploadButton,
+            '->',
+            cancelButton,
             setButton
         ];
         this.items = [
-            previewContainer, 
+            previewContainer,
             slider
         ];
         this.callParent(arguments);
@@ -1243,13 +1284,13 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
         var ih = image.getHeight();
         image.setWidth('');
         image.setHeight('');
-        if(iw > fw && ih > fh) {
-            if(ih > iw) {
+        if (iw > fw && ih > fh) {
+            if (ih > iw) {
                 image.setWidth(frame.getWidth() + 20);
             } else {
                 image.setHeight(frame.getHeight() + 20);
             }
-        } else if(ih > fh) {
+        } else if (ih > fh) {
             image.setHeight(frame.getHeight());
         } else {
             image.setWidth(frame.getWidth());
@@ -1282,7 +1323,7 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
         return this.down('slider');
     },
     displayImage: function (show) {
-        if(show) {
+        if (show) {
             this.getImage().show();
         } else {
             this.getImage().hide();
@@ -1298,29 +1339,29 @@ Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
 Ext.define('Admin.model.SpaceModel', {
     extend: 'Ext.data.Model',
     fields: [
-        'name', 
-        'displayName', 
-        'iconUrl', 
-        'rootContentId', 
+        'name',
+        'displayName',
+        'iconUrl',
+        'rootContentId',
         {
             name: 'createdTime',
             type: 'date',
             default: new Date()
-        }, 
+        },
         {
             name: 'modifiedTime',
             type: 'date',
             default: new Date()
-        }, 
+        },
         {
             name: 'editable',
             type: 'boolean'
-        }, 
+        },
         {
             name: 'deletable',
             type: 'boolean'
-        }, 
-        
+        },
+
     ],
     idProperty: 'name'
 });
@@ -1328,7 +1369,9 @@ var app_ui;
 (function (app_ui) {
     var WizardLayout = (function () {
         function WizardLayout(animation) {
-            if (typeof animation === "undefined") { animation = 'slide'; }
+            if (typeof animation === "undefined") {
+                animation = 'slide';
+            }
             var _this = this;
             var cardLayout = new Ext.layout.container.Card({
                 mixins: [
@@ -1345,6 +1388,7 @@ var app_ui;
             });
             this.ext = cardLayout;
         }
+
         WizardLayout.prototype.setActiveItem = function (item) {
             var me = this.ext;
             var owner = me.owner;
@@ -1352,75 +1396,75 @@ var app_ui;
             var oldIndex = owner.items.indexOf(oldCard);
             var newCard = me.parseActiveItem(item);
             var newIndex = owner.items.indexOf(newCard);
-            if(oldCard !== newCard) {
+            if (oldCard !== newCard) {
                 owner.fireEvent("animationstarted", newCard, oldCard);
-                if(newCard.rendered && me.animation && me.animation !== "none") {
+                if (newCard.rendered && me.animation && me.animation !== "none") {
                     me.syncFx();
                     var target = me.getRenderTarget();
                     newCard.setWidth(target.getWidth() - target.getPadding("lr") - Ext.getScrollbarSize().width);
-                    switch(me.animation) {
-                        case 'fade':
-                            newCard.el.setStyle({
-                                position: 'absolute',
-                                opacity: 0,
-                                top: me.getRenderTarget().getPadding('t') + 'px'
-                            });
-                            newCard.show();
-                            if(oldCard) {
-                                oldCard.el.fadeOut({
-                                    useDisplay: true,
-                                    duration: me.duration,
-                                    callback: function () {
-                                        me.hide();
-                                    },
-                                    scope: me.activeItem
-                                });
-                            }
-                            owner.doLayout();
-                            newCard.el.fadeIn({
+                    switch (me.animation) {
+                    case 'fade':
+                        newCard.el.setStyle({
+                            position: 'absolute',
+                            opacity: 0,
+                            top: me.getRenderTarget().getPadding('t') + 'px'
+                        });
+                        newCard.show();
+                        if (oldCard) {
+                            oldCard.el.fadeOut({
                                 useDisplay: true,
                                 duration: me.duration,
                                 callback: function () {
-                                    newCard.el.setStyle({
-                                        position: ''
-                                    });
-                                    owner.fireEvent("animationfinished", newCard, oldCard);
+                                    me.hide();
                                 },
-                                scope: this
+                                scope: me.activeItem
                             });
-                            break;
-                        case 'slide':
-                            newCard.el.setStyle({
-                                position: 'absolute',
-                                visibility: 'hidden',
-                                width: me.getRenderTarget().getWidth(),
-                                top: me.getRenderTarget().getPadding('t') + 'px'
-                            });
-                            newCard.show();
-                            if(oldCard) {
-                                oldCard.el.slideOut(newIndex > oldIndex ? "l" : "r", {
-                                    duration: me.duration,
-                                    easing: me.easing,
-                                    remove: false,
-                                    scope: me.activeItem,
-                                    callback: function () {
-                                        me.hide();
-                                    }
+                        }
+                        owner.doLayout();
+                        newCard.el.fadeIn({
+                            useDisplay: true,
+                            duration: me.duration,
+                            callback: function () {
+                                newCard.el.setStyle({
+                                    position: ''
                                 });
-                            }
-                            owner.doLayout();
-                            newCard.el.slideIn(newIndex > oldIndex ? "r" : "l", {
+                                owner.fireEvent("animationfinished", newCard, oldCard);
+                            },
+                            scope: this
+                        });
+                        break;
+                    case 'slide':
+                        newCard.el.setStyle({
+                            position: 'absolute',
+                            visibility: 'hidden',
+                            width: me.getRenderTarget().getWidth(),
+                            top: me.getRenderTarget().getPadding('t') + 'px'
+                        });
+                        newCard.show();
+                        if (oldCard) {
+                            oldCard.el.slideOut(newIndex > oldIndex ? "l" : "r", {
                                 duration: me.duration,
                                 easing: me.easing,
-                                scope: me,
+                                remove: false,
+                                scope: me.activeItem,
                                 callback: function () {
-                                    newCard.el.setStyle({
-                                        position: ''
-                                    });
-                                    owner.fireEvent("animationfinished", newCard, oldCard);
+                                    me.hide();
                                 }
                             });
-                            break;
+                        }
+                        owner.doLayout();
+                        newCard.el.slideIn(newIndex > oldIndex ? "r" : "l", {
+                            duration: me.duration,
+                            easing: me.easing,
+                            scope: me,
+                            callback: function () {
+                                newCard.el.setStyle({
+                                    position: ''
+                                });
+                                owner.fireEvent("animationfinished", newCard, oldCard);
+                            }
+                        });
+                        break;
                     }
                     me.activeItem = newCard;
                     me.sequenceFx();
@@ -1435,7 +1479,7 @@ var app_ui;
         };
         return WizardLayout;
     })();
-    app_ui.WizardLayout = WizardLayout;    
+    app_ui.WizardLayout = WizardLayout;
 })(app_ui || (app_ui = {}));
 Ext.define('Admin.view.WizardLayout', {
     extend: 'Ext.layout.container.Card',
@@ -1454,75 +1498,75 @@ Ext.define('Admin.view.WizardLayout', {
         var oldIndex = owner.items.indexOf(oldCard);
         var newCard = this.parseActiveItem(item);
         var newIndex = owner.items.indexOf(newCard);
-        if(oldCard !== newCard) {
+        if (oldCard !== newCard) {
             owner.fireEvent("animationstarted", newCard, oldCard);
-            if(newCard.rendered && this.animation && this.animation !== "none") {
+            if (newCard.rendered && this.animation && this.animation !== "none") {
                 this.syncFx();
                 var target = this.getRenderTarget();
                 newCard.setWidth(target.getWidth() - target.getPadding("lr") - Ext.getScrollbarSize().width);
-                switch(this.animation) {
-                    case 'fade':
-                        newCard.el.setStyle({
-                            position: 'absolute',
-                            opacity: 0,
-                            top: this.getRenderTarget().getPadding('t') + 'px'
-                        });
-                        newCard.show();
-                        if(oldCard) {
-                            oldCard.el.fadeOut({
-                                useDisplay: true,
-                                duration: this.duration,
-                                callback: function () {
-                                    this.hide();
-                                },
-                                scope: this.activeItem
-                            });
-                        }
-                        owner.doLayout();
-                        newCard.el.fadeIn({
+                switch (this.animation) {
+                case 'fade':
+                    newCard.el.setStyle({
+                        position: 'absolute',
+                        opacity: 0,
+                        top: this.getRenderTarget().getPadding('t') + 'px'
+                    });
+                    newCard.show();
+                    if (oldCard) {
+                        oldCard.el.fadeOut({
                             useDisplay: true,
                             duration: this.duration,
                             callback: function () {
-                                newCard.el.setStyle({
-                                    position: ''
-                                });
-                                owner.fireEvent("animationfinished", newCard, oldCard);
+                                this.hide();
                             },
-                            scope: this
+                            scope: this.activeItem
                         });
-                        break;
-                    case 'slide':
-                        newCard.el.setStyle({
-                            position: 'absolute',
-                            visibility: 'hidden',
-                            width: this.getRenderTarget().getWidth(),
-                            top: this.getRenderTarget().getPadding('t') + 'px'
-                        });
-                        newCard.show();
-                        if(oldCard) {
-                            oldCard.el.slideOut(newIndex > oldIndex ? "l" : "r", {
-                                duration: this.duration,
-                                easing: this.easing,
-                                remove: false,
-                                scope: this.activeItem,
-                                callback: function () {
-                                    this.hide();
-                                }
+                    }
+                    owner.doLayout();
+                    newCard.el.fadeIn({
+                        useDisplay: true,
+                        duration: this.duration,
+                        callback: function () {
+                            newCard.el.setStyle({
+                                position: ''
                             });
-                        }
-                        owner.doLayout();
-                        newCard.el.slideIn(newIndex > oldIndex ? "r" : "l", {
+                            owner.fireEvent("animationfinished", newCard, oldCard);
+                        },
+                        scope: this
+                    });
+                    break;
+                case 'slide':
+                    newCard.el.setStyle({
+                        position: 'absolute',
+                        visibility: 'hidden',
+                        width: this.getRenderTarget().getWidth(),
+                        top: this.getRenderTarget().getPadding('t') + 'px'
+                    });
+                    newCard.show();
+                    if (oldCard) {
+                        oldCard.el.slideOut(newIndex > oldIndex ? "l" : "r", {
                             duration: this.duration,
                             easing: this.easing,
-                            scope: this,
+                            remove: false,
+                            scope: this.activeItem,
                             callback: function () {
-                                newCard.el.setStyle({
-                                    position: ''
-                                });
-                                owner.fireEvent("animationfinished", newCard, oldCard);
+                                this.hide();
                             }
                         });
-                        break;
+                    }
+                    owner.doLayout();
+                    newCard.el.slideIn(newIndex > oldIndex ? "r" : "l", {
+                        duration: this.duration,
+                        easing: this.easing,
+                        scope: this,
+                        callback: function () {
+                            newCard.el.setStyle({
+                                position: ''
+                            });
+                            owner.fireEvent("animationfinished", newCard, oldCard);
+                        }
+                    });
+                    break;
                 }
                 this.activeItem = newCard;
                 this.sequenceFx();
@@ -1540,15 +1584,27 @@ var app_ui;
 (function (app_ui) {
     var WizardHeader = (function () {
         function WizardHeader(data, displayNameConfig, pathConfig, nameConfig, displayNameProperty, pathProperty, nameProperty) {
-            if (typeof displayNameConfig === "undefined") { displayNameConfig = {
-            }; }
-            if (typeof pathConfig === "undefined") { pathConfig = {
-            }; }
-            if (typeof nameConfig === "undefined") { nameConfig = {
-            }; }
-            if (typeof displayNameProperty === "undefined") { displayNameProperty = 'displayName'; }
-            if (typeof pathProperty === "undefined") { pathProperty = 'path'; }
-            if (typeof nameProperty === "undefined") { nameProperty = 'name'; }
+            if (typeof displayNameConfig === "undefined") {
+                displayNameConfig = {
+                };
+            }
+            if (typeof pathConfig === "undefined") {
+                pathConfig = {
+                };
+            }
+            if (typeof nameConfig === "undefined") {
+                nameConfig = {
+                };
+            }
+            if (typeof displayNameProperty === "undefined") {
+                displayNameProperty = 'displayName';
+            }
+            if (typeof pathProperty === "undefined") {
+                pathProperty = 'path';
+            }
+            if (typeof nameProperty === "undefined") {
+                nameProperty = 'name';
+            }
             this.data = data;
             this.displayNameConfig = Ext.apply({
             }, displayNameConfig, WizardHeader.DEFAULT_DISPLAY_NAME_CONFIG);
@@ -1567,6 +1623,7 @@ var app_ui;
             this.ext = panel;
             this.initComponent();
         }
+
         WizardHeader.DEFAULT_DISPLAY_NAME_CONFIG = {
             emptyText: 'Display Name',
             enableKeyEvents: true,
@@ -1637,26 +1694,26 @@ var app_ui;
             var items = [
                 this.displayNameField
             ];
-            if(!this.pathField.hidden && !this.nameField.hidden) {
+            if (!this.pathField.hidden && !this.nameField.hidden) {
                 items.push({
                     xtype: 'fieldcontainer',
                     hideLabel: true,
                     layout: 'hbox',
                     items: [
-                        this.pathField, 
+                        this.pathField,
                         this.nameField
                     ]
                 });
-            } else if(!this.pathField.hidden) {
+            } else if (!this.pathField.hidden) {
                 items.push(this.pathField);
-            } else if(!this.nameField.hidden) {
+            } else if (!this.nameField.hidden) {
                 items.push(this.nameField);
             }
             me.add(items);
             me.addEvents('displaynamechange', 'displaynameoverride', 'namechange', 'nameoverride');
         };
         WizardHeader.prototype.onDisplayNameAfterrender = function (field) {
-            if(!field.readOnly && field.autoFocus) {
+            if (!field.readOnly && field.autoFocus) {
                 field.focus(false, 100);
                 field.selectText(0, 0);
             }
@@ -1664,13 +1721,13 @@ var app_ui;
         WizardHeader.prototype.onDisplayNameKey = function (field, event, opts) {
             var wasAutoGenerate = this.autogenerateDisplayName;
             var autoGenerate = Ext.isEmpty(field.getValue());
-            if(wasAutoGenerate != autoGenerate) {
+            if (wasAutoGenerate != autoGenerate) {
                 this.ext.fireEvent('displaynameoverride', !autoGenerate);
             }
             this.autogenerateDisplayName = autoGenerate;
         };
         WizardHeader.prototype.onDisplayNameChanged = function (field, newVal, oldVal, opts) {
-            if(this.ext.fireEvent('displaynamechange', newVal, oldVal) !== false && this.autogenerateName) {
+            if (this.ext.fireEvent('displaynamechange', newVal, oldVal) !== false && this.autogenerateName) {
                 var processedValue = this.nameField.processRawValue(this.preProcessName(newVal));
                 this.nameField.setValue(processedValue);
             }
@@ -1680,7 +1737,7 @@ var app_ui;
         WizardHeader.prototype.onNameKey = function (field, event, opts) {
             var wasAutoGenerate = this.autogenerateName;
             var autoGenerate = Ext.isEmpty(field.getValue());
-            if(wasAutoGenerate != autoGenerate) {
+            if (wasAutoGenerate != autoGenerate) {
                 this.ext.fireEvent('nameoverride', !autoGenerate);
             }
             this.autogenerateName = autoGenerate;
@@ -1720,7 +1777,7 @@ var app_ui;
         };
         WizardHeader.prototype.setData = function (data) {
             this.data = data;
-            if(this.resolveHeaderData) {
+            if (this.resolveHeaderData) {
                 this.ext.getForm().setValues(this.resolveHeaderData(data));
             }
         };
@@ -1738,7 +1795,7 @@ var app_ui;
         };
         return WizardHeader;
     })();
-    app_ui.WizardHeader = WizardHeader;    
+    app_ui.WizardHeader = WizardHeader;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
@@ -1767,16 +1824,17 @@ var app_ui;
             this.ext.wrapper = this;
             this.initComponent();
         }
+
         WizardPanel.prototype.initComponent = function () {
             var _this = this;
             var me = this.ext;
             var events = [
-                "beforestepchanged", 
-                "stepchanged", 
-                "animationstarted", 
-                "animationfinished", 
-                'validitychange', 
-                'dirtychange', 
+                "beforestepchanged",
+                "stepchanged",
+                "animationstarted",
+                "animationfinished",
+                'validitychange',
+                'dirtychange',
                 "finished"
             ];
             me.cls += this.isNew ? ' admin-wizard-new' : ' admin-wizard-edit';
@@ -1789,7 +1847,7 @@ var app_ui;
                 items: this.createSteps()
             });
             var items = [
-                this.createHeaderPanel(), 
+                this.createHeaderPanel(),
                 {
                     itemId: 'bottomPanel',
                     xtype: 'container',
@@ -1843,7 +1901,7 @@ var app_ui;
                                     margin: '0 0 0 40'
                                 }
                             ]
-                        }, 
+                        },
                         {
                             xtype: 'container',
                             region: 'east',
@@ -1890,7 +1948,7 @@ var app_ui;
                                     padding: 0
                                 }
                             ]
-                        }, 
+                        },
                         this.wizard
                     ],
                     listeners: {
@@ -1915,7 +1973,7 @@ var app_ui;
                 },
                 scope: this
             });
-            if(this.getActionButton()) {
+            if (this.getActionButton()) {
                 this.boundItems.push(this.getActionButton());
             }
             me.down('#progressBar').update(this.wizard.items.items);
@@ -1925,21 +1983,24 @@ var app_ui;
         WizardPanel.prototype.updateShadow = function () {
             var me = this.ext;
             var bottomPanel = me.down('#bottomPanel').getEl();
-            if(bottomPanel) {
-                var hasScroll = bottomPanel.dom.scrollHeight > bottomPanel.dom.clientHeight, positionPanelEl = me.down('#positionPanel').getEl(), wizardHeaderPanelHeight = me.down('#wizardHeaderPanel').getEl().getHeight(), headerShadowEl = Ext.fly('admin-wizard-header-shadow');
-                if(hasScroll && bottomPanel.dom.scrollTop !== 0) {
-                    if(!headerShadowEl) {
+            if (bottomPanel) {
+                var hasScroll = bottomPanel.dom.scrollHeight >
+                                bottomPanel.dom.clientHeight, positionPanelEl = me.down('#positionPanel').getEl(), wizardHeaderPanelHeight = me.down('#wizardHeaderPanel').getEl().getHeight(), headerShadowEl = Ext.fly('admin-wizard-header-shadow');
+                if (hasScroll && bottomPanel.dom.scrollTop !== 0) {
+                    if (!headerShadowEl) {
                         var dh = Ext.DomHelper, boxShadowOffsets = Ext.isGecko ? '0 5px 6px -3px' : '0 5px 10px -3px';
                         var shadowDomSpec = {
                             id: 'admin-wizard-header-shadow',
                             tag: 'div',
-                            style: 'position:absolute; top:' + wizardHeaderPanelHeight + 'px; left:0px; z-index:1000; height:10px; background:transparent; width:100%; box-shadow:' + boxShadowOffsets + '#888 inset'
+                            style: 'position:absolute; top:' + wizardHeaderPanelHeight +
+                                   'px; left:0px; z-index:1000; height:10px; background:transparent; width:100%; box-shadow:' +
+                                   boxShadowOffsets + '#888 inset'
                         };
                         dh.append(positionPanelEl, shadowDomSpec);
                         Ext.fly('admin-wizard-header-shadow').show(true);
                     }
                 } else {
-                    if(headerShadowEl) {
+                    if (headerShadowEl) {
                         headerShadowEl.remove();
                     }
                 }
@@ -1947,9 +2008,9 @@ var app_ui;
         };
         WizardPanel.prototype.updateNavButton = function (element, color) {
             var btn = Ext.get(element);
-            if(!btn.hasCls('wizard-nav-icon')) {
+            if (!btn.hasCls('wizard-nav-icon')) {
                 btn = btn.down('.wizard-nav-icon');
-            } else if(btn.hasCls('x-btn-inner')) {
+            } else if (btn.hasCls('x-btn-inner')) {
                 btn = btn.next('.x-btn-icon');
             }
             btn && btn.setStyle('color', color);
@@ -1964,7 +2025,7 @@ var app_ui;
         WizardPanel.prototype.bindItemListeners = function (cmp) {
             var _this = this;
             Ext.each(this.validateItems, function (validateItem, index, all) {
-                if(validateItem) {
+                if (validateItem) {
                     validateItem.on({
                         'validitychange': _this.handleValidityChange,
                         'dirtychange': _this.handleDirtyChange,
@@ -1977,15 +2038,15 @@ var app_ui;
                 panel.getForm().checkValidity();
             };
             this.wizard.items.each(function (item, i) {
-                if(i === 0) {
+                if (i === 0) {
                     _this.onAnimationFinished(item, null);
                 }
-                if('editUserFormPanel' === item.getXType()) {
+                if ('editUserFormPanel' === item.getXType()) {
                     item.on('fieldsloaded', checkValidityFn);
                 }
                 var itemForm = Ext.isFunction(item.getForm) ? item.getForm() : undefined;
-                if(itemForm) {
-                    if(Ext.isFunction(_this.washDirtyForm)) {
+                if (itemForm) {
+                    if (Ext.isFunction(_this.washDirtyForm)) {
                         _this.washDirtyForm(itemForm);
                     }
                     Ext.apply(itemForm, {
@@ -2005,11 +2066,11 @@ var app_ui;
             var me = this.ext;
             var wizardPanel = me.owner.up('wizardPanel');
             var boundItems = wizardPanel.getFormBoundItems(this);
-            if(boundItems && me.owner === wizardPanel.getActiveItem()) {
+            if (boundItems && me.owner === wizardPanel.getActiveItem()) {
                 var valid = wizardPanel.isStepValid(me.owner);
                 boundItems.each(function (cmp) {
-                    if(cmp.rendered && cmp.isHidden() === valid) {
-                        if(valid) {
+                    if (cmp.rendered && cmp.isHidden() === valid) {
+                        if (valid) {
                             cmp.show();
                         } else {
                             cmp.hide();
@@ -2020,7 +2081,7 @@ var app_ui;
         };
         WizardPanel.prototype.getFormBoundItems = function (form) {
             var boundItems = form._boundItems;
-            if(!boundItems && form.owner.rendered) {
+            if (!boundItems && form.owner.rendered) {
                 boundItems = form._boundItems = Ext.create('Ext.util.MixedCollection');
                 boundItems.addAll(form.owner.query('[formBind]'));
                 boundItems.addAll(this.boundItems);
@@ -2028,31 +2089,31 @@ var app_ui;
             return boundItems;
         };
         WizardPanel.prototype.handleValidityChange = function (form, valid, opts) {
-            if(!valid) {
+            if (!valid) {
                 Ext.Array.include(this.invalidItems, form);
             } else {
                 Ext.Array.remove(this.invalidItems, form);
             }
             this.updateProgress();
             var isWizardValid = this.invalidItems.length === 0;
-            if(this.isWizardValid !== isWizardValid) {
+            if (this.isWizardValid !== isWizardValid) {
                 this.isWizardValid = isWizardValid;
                 var actionButton = this.getActionButton();
-                if(actionButton) {
+                if (actionButton) {
                     actionButton.setVisible(isWizardValid);
                 }
                 this.ext.fireEvent('validitychange', this, isWizardValid);
             }
         };
         WizardPanel.prototype.handleDirtyChange = function (form, dirty, opts) {
-            if(dirty) {
+            if (dirty) {
                 Ext.Array.include(this.dirtyItems, form);
             } else {
                 Ext.Array.remove(this.dirtyItems, form);
             }
             this.updateProgress();
             var isWizardDirty = this.dirtyItems.length > 0;
-            if(this.isWizardDirty !== isWizardDirty) {
+            if (this.isWizardDirty !== isWizardDirty) {
                 this.isWizardDirty = isWizardDirty;
                 this.ext.fireEvent('dirtychange', this, isWizardDirty);
             }
@@ -2061,10 +2122,10 @@ var app_ui;
             var isStepValid = Ext.Array.intersect(this.invalidItems, this.validateItems).length === 0;
             var activeStep = step || this.getActiveItem();
             var activeForm;
-            if(activeStep && Ext.isFunction(activeStep.getForm)) {
+            if (activeStep && Ext.isFunction(activeStep.getForm)) {
                 activeForm = activeStep.getForm();
             }
-            if(isStepValid && activeForm) {
+            if (isStepValid && activeForm) {
                 isStepValid = isStepValid && !activeForm.hasInvalidField();
             }
             return isStepValid;
@@ -2075,7 +2136,10 @@ var app_ui;
         WizardPanel.prototype.createRibbon = function () {
             var _this = this;
             var me = this;
-            var stepsTpl = '<div class="navigation-container">' + '<ul class="navigation clearfix">' + '<tpl for=".">' + '<li class="{[ this.resolveClsName( xindex, xcount ) ]}" wizardStep="{[xindex]}">' + '<a href="javascript:;" class="step {[ this.resolveClsName( xindex, xcount ) ]}">{[' + '(values.stepTitle || values.title) ]}</a></li>' + '</tpl>' + '</ul>' + '</div>';
+            var stepsTpl = '<div class="navigation-container">' + '<ul class="navigation clearfix">' + '<tpl for=".">' +
+                           '<li class="{[ this.resolveClsName( xindex, xcount ) ]}" wizardStep="{[xindex]}">' +
+                           '<a href="javascript:;" class="step {[ this.resolveClsName( xindex, xcount ) ]}">{[' +
+                           '(values.stepTitle || values.title) ]}</a></li>' + '</tpl>' + '</ul>' + '</div>';
             return {
                 xtype: 'component',
                 flex: 1,
@@ -2096,25 +2160,25 @@ var app_ui;
                     resolveClsName: function (index, total) {
                         var activeIndex = me.wizard.items.indexOf(_this.getActiveItem()) + 1;
                         var clsName = '';
-                        if(index === 1) {
+                        if (index === 1) {
                             clsName += 'first ';
                         }
-                        if(index < activeIndex) {
+                        if (index < activeIndex) {
                             clsName += 'previous ';
                         }
-                        if(index + 1 === activeIndex) {
+                        if (index + 1 === activeIndex) {
                             clsName += 'immediate ';
                         }
-                        if(index === activeIndex) {
+                        if (index === activeIndex) {
                             clsName += 'current ';
                         }
-                        if(index > activeIndex) {
+                        if (index > activeIndex) {
                             clsName += 'next ';
                         }
-                        if(index - 1 === activeIndex) {
+                        if (index - 1 === activeIndex) {
                             clsName += 'immediate ';
                         }
-                        if(index === total) {
+                        if (index === total) {
                             clsName += 'last ';
                         }
                         return clsName;
@@ -2123,28 +2187,28 @@ var app_ui;
             };
         };
         WizardPanel.prototype.onAnimationStarted = function (newStep, oldStep) {
-            if(this.showControls) {
+            if (this.showControls) {
                 this.updateButtons(this.wizard, true);
             }
-            if(this.externalControls) {
+            if (this.externalControls) {
                 this.updateButtons(this.externalControls, true);
             }
         };
         WizardPanel.prototype.onAnimationFinished = function (newStep, oldStep) {
             var me = this.ext;
-            if(newStep) {
+            if (newStep) {
                 this.updateProgress(newStep);
                 this.focusFirstField(newStep);
                 me.fireEvent("stepchanged", this, oldStep, newStep);
-                if(this.showControls) {
+                if (this.showControls) {
                     this.updateButtons(this.wizard);
                 }
-                if(this.externalControls) {
+                if (this.externalControls) {
                     this.updateButtons(this.externalControls);
                 }
-                if(Ext.isFunction(newStep.getForm)) {
+                if (Ext.isFunction(newStep.getForm)) {
                     var newForm = newStep.getForm();
-                    if(newForm) {
+                    if (newForm) {
                         newForm.onValidityChange(this.isStepValid(newStep));
                     }
                 }
@@ -2156,27 +2220,27 @@ var app_ui;
         WizardPanel.prototype.focusFirstField = function (newStep) {
             var activeItem = newStep || this.getActiveItem();
             var firstField;
-            if(activeItem && (firstField = activeItem.down('field[disabled=false]'))) {
+            if (activeItem && (firstField = activeItem.down('field[disabled=false]'))) {
                 firstField.focus(false);
-                if(firstField.rendered && firstField.selectText) {
+                if (firstField.rendered && firstField.selectText) {
                     firstField.selectText(0, 0);
                 }
             }
         };
         WizardPanel.prototype.updateButtons = function (toolbar, disable) {
             var me = this.ext;
-            if(toolbar) {
+            if (toolbar) {
                 var prev = me.down('#prev'), next = me.down('#next');
                 var hasNext = this.getNext(), hasPrev = this.getPrev();
-                if(prev) {
-                    if(disable || !hasPrev) {
+                if (prev) {
+                    if (disable || !hasPrev) {
                         prev.hide();
                     } else {
                         prev.show();
                     }
                 }
-                if(next) {
-                    if(disable || !hasNext) {
+                if (next) {
+                    if (disable || !hasNext) {
                         next.hide();
                     } else {
                         next.show();
@@ -2193,7 +2257,8 @@ var app_ui;
             var isNew = this.isNew;
             var isDisabled = progressBar.isDisabled();
             var li = target && target.tagName === "LI" ? Ext.fly(target) : Ext.fly(target).up('li');
-            if((!isDisabled && isNew && li && li.hasCls('next') && li.hasCls('immediate')) || (!isDisabled && !isNew) || (isDisabled && !isNew && li && !li.hasCls('last')) || (li && li.hasCls('previous'))) {
+            if ((!isDisabled && isNew && li && li.hasCls('next') && li.hasCls('immediate')) || (!isDisabled && !isNew) ||
+                (isDisabled && !isNew && li && !li.hasCls('last')) || (li && li.hasCls('previous'))) {
                 var step = Number(li.getAttribute('wizardStep'));
                 this.navigate(step - 1);
             }
@@ -2226,12 +2291,12 @@ var app_ui;
                         tdAttrs: {
                             style: 'padding-right: 10px'
                         }
-                    }), 
+                    }),
                     Ext.applyIf(this.createWizardHeader(), {
                         tdAttrs: {
                             width: '100%'
                         }
-                    }), 
+                    }),
                     {
                         itemId: 'positionPanel',
                         xtype: 'container',
@@ -2248,7 +2313,7 @@ var app_ui;
                         items: [
                             Ext.applyIf(this.createRibbon(), {
                                 flex: 1
-                            }), 
+                            }),
                             actionButton
                         ]
                     }
@@ -2278,50 +2343,50 @@ var app_ui;
         };
         WizardPanel.prototype.navigate = function (direction, btn) {
             var oldStep = this.getActiveItem();
-            if(btn) {
+            if (btn) {
                 this.externalControls = btn.up('toolbar');
             }
-            if(this.ext.fireEvent("beforestepchanged", this, oldStep) !== false) {
+            if (this.ext.fireEvent("beforestepchanged", this, oldStep) !== false) {
                 var newStep;
-                switch(direction) {
-                    case "-1":
-                    case "prev":
-                        if(this.getPrev()) {
-                            newStep = this.wizard.getLayout().prev();
-                        }
-                        break;
-                    case "+1":
-                    case "next":
-                        if(this.getNext()) {
-                            newStep = this.wizard.getLayout().next();
-                        } else {
-                            this.finish();
-                        }
-                        break;
-                    default:
-                        newStep = this.wizard.getLayout().setActiveItem(direction);
-                        break;
+                switch (direction) {
+                case "-1":
+                case "prev":
+                    if (this.getPrev()) {
+                        newStep = this.wizard.getLayout().prev();
+                    }
+                    break;
+                case "+1":
+                case "next":
+                    if (this.getNext()) {
+                        newStep = this.wizard.getLayout().next();
+                    } else {
+                        this.finish();
+                    }
+                    break;
+                default:
+                    newStep = this.wizard.getLayout().setActiveItem(direction);
+                    break;
                 }
             }
         };
         WizardPanel.prototype.addData = function (newValues) {
-            if(Ext.isEmpty(this.data)) {
+            if (Ext.isEmpty(this.data)) {
                 this.data = {
                 };
             }
             Ext.merge(this.data, newValues);
         };
         WizardPanel.prototype.deleteData = function (key) {
-            if(key) {
+            if (key) {
                 delete this.data[key];
             }
         };
         WizardPanel.prototype.getData = function () {
             var _this = this;
             this.wizard.items.each(function (item) {
-                if(item.getData) {
+                if (item.getData) {
                     _this.addData(item.getData());
-                } else if(item.getForm) {
+                } else if (item.getForm) {
                     _this.addData(item.getForm().getFieldValues());
                 }
             });
@@ -2347,7 +2412,7 @@ var app_ui;
         };
         return WizardPanel;
     })();
-    app_ui.WizardPanel = WizardPanel;    
+    app_ui.WizardPanel = WizardPanel;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
@@ -2359,7 +2424,7 @@ var app_ui;
                 shadow: false,
                 width: 120
             });
-            for(var i in menuItems) {
+            for (var i in menuItems) {
                 menu.add(menuItems[i]);
             }
             this.ext = new Ext.button.Button({
@@ -2380,9 +2445,10 @@ var app_ui;
                 }
             });
         }
+
         return BaseActionMenu;
     })();
-    app_ui.BaseActionMenu = BaseActionMenu;    
+    app_ui.BaseActionMenu = BaseActionMenu;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
@@ -2397,25 +2463,27 @@ var app_ui;
                 text: 'Edit',
                 action: 'editSpace'
             });
-                _super.call(this, [
-        openMenuItem, 
-        editMenuItem
-    ]);
+            _super.call(this, [
+                openMenuItem,
+                editMenuItem
+            ]);
         }
+
         return ActionMenu;
     })(app_ui.BaseActionMenu);
-    app_ui.ActionMenu = ActionMenu;    
+    app_ui.ActionMenu = ActionMenu;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
     var ActionMenu2 = (function (_super) {
         __extends(ActionMenu2, _super);
         function ActionMenu2() {
-                _super.call(this, app.SpaceActions.OPEN_SPACE, app.SpaceActions.EDIT_SPACE);
+            _super.call(this, app.SpaceActions.OPEN_SPACE, app.SpaceActions.EDIT_SPACE);
         }
+
         return ActionMenu2;
     })(api_ui_menu.ActionMenu);
-    app_ui.ActionMenu2 = ActionMenu2;    
+    app_ui.ActionMenu2 = ActionMenu2;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
@@ -2445,9 +2513,10 @@ var app_ui;
             tbar.add(editButton, deleteButton, separator, closeButton);
             this.ext = tbar;
         }
+
         return DetailToolbar;
     })();
-    app_ui.DetailToolbar = DetailToolbar;    
+    app_ui.DetailToolbar = DetailToolbar;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
@@ -2455,22 +2524,23 @@ var app_ui;
         __extends(SpaceDetailPanel, _super);
         function SpaceDetailPanel() {
             var _this = this;
-                _super.call(this);
+            _super.call(this);
             var selectedSpaces = app.SpaceContext.get().getSelectedSpaces();
-            if(!selectedSpaces || selectedSpaces.length == 0) {
+            if (!selectedSpaces || selectedSpaces.length == 0) {
                 this.showBlank();
             }
             app_event.GridSelectionChangeEvent.on(function (event) {
                 _this.update(event.getModels());
             });
         }
+
         SpaceDetailPanel.prototype.showBlank = function () {
             this.getEl().setInnerHtml("Nothing selected");
         };
         SpaceDetailPanel.prototype.update = function (models) {
-            if(models.length == 1) {
+            if (models.length == 1) {
                 this.showSingle(models[0]);
-            } else if(models.length > 1) {
+            } else if (models.length > 1) {
                 this.showMultiple(models);
             }
         };
@@ -2486,7 +2556,7 @@ var app_ui;
         };
         SpaceDetailPanel.prototype.showMultiple = function (models) {
             this.empty();
-            for(var i in models) {
+            for (var i in models) {
                 var removeCallback = function (box) {
                     var models = [
                         box.getModel()
@@ -2498,7 +2568,7 @@ var app_ui;
         };
         return SpaceDetailPanel;
     })(api_ui_detailpanel.DetailPanel);
-    app_ui.SpaceDetailPanel = SpaceDetailPanel;    
+    app_ui.SpaceDetailPanel = SpaceDetailPanel;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
@@ -2506,7 +2576,7 @@ var app_ui;
         __extends(DeleteSpaceDialog, _super);
         function DeleteSpaceDialog() {
             var _this = this;
-                _super.call(this, "Space");
+            _super.call(this, "Space");
             this.deleteAction = new DeleteSpaceDialogAction();
             this.deleteHandler = new api_handler.DeleteSpacesHandler();
             this.setDeleteAction(this.deleteAction);
@@ -2520,10 +2590,11 @@ var app_ui;
             });
             document.body.appendChild(this.getHTMLElement());
         }
+
         DeleteSpaceDialog.prototype.setSpacesToDelete = function (spaces) {
             this.spacesToDelete = spaces;
             var deleteItems = [];
-            for(var i in spaces) {
+            for (var i in spaces) {
                 var space = spaces[i];
                 var deleteItem = new api_delete.DeleteItem(space.data.iconUrl, space.data.displayName);
                 deleteItems.push(deleteItem);
@@ -2532,15 +2603,16 @@ var app_ui;
         };
         return DeleteSpaceDialog;
     })(api_delete.DeleteDialog);
-    app_ui.DeleteSpaceDialog = DeleteSpaceDialog;    
+    app_ui.DeleteSpaceDialog = DeleteSpaceDialog;
     var DeleteSpaceDialogAction = (function (_super) {
         __extends(DeleteSpaceDialogAction, _super);
         function DeleteSpaceDialogAction() {
-                _super.call(this, "Delete");
+            _super.call(this, "Delete");
         }
+
         return DeleteSpaceDialogAction;
     })(api_ui.Action);
-    app_ui.DeleteSpaceDialogAction = DeleteSpaceDialogAction;    
+    app_ui.DeleteSpaceDialogAction = DeleteSpaceDialogAction;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
@@ -2563,7 +2635,9 @@ var app_ui;
                 }
             });
             this.keyField = 'name';
-            this.nameTemplate = '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>';
+            this.nameTemplate =
+            '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' +
+            '<p>{3}</p>' + '</div>';
             var gridSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
                 keyField: this.keyField
             });
@@ -2599,16 +2673,16 @@ var app_ui;
                         renderer: this.nameRenderer,
                         scope: this,
                         flex: 1
-                    }, 
+                    },
                     {
                         text: 'Status',
                         renderer: this.statusRenderer
-                    }, 
+                    },
                     {
                         text: 'Owner',
                         dataIndex: 'owner',
                         sortable: true
-                    }, 
+                    },
                     {
                         text: 'Modified',
                         dataIndex: 'modifiedTime',
@@ -2661,6 +2735,7 @@ var app_ui;
                 _this.deselect(event.getModels()[0].data.name);
             });
         }
+
         TreeGridPanel.prototype.fireUpdateEvent = function (values) {
             this.ext.fireEvent('datachanged', values);
         };
@@ -2676,13 +2751,14 @@ var app_ui;
             return "Online";
         };
         TreeGridPanel.prototype.prettyDateRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
-            try  {
-                if(parent && Ext.isFunction(parent['humane_date'])) {
+            try {
+                if (parent && Ext.isFunction(parent['humane_date'])) {
                     return parent['humane_date'](value);
                 } else {
                     return value;
                 }
-            } catch (e) {
+            }
+            catch (e) {
                 return value;
             }
         };
@@ -2691,14 +2767,14 @@ var app_ui;
         };
         TreeGridPanel.prototype.deselect = function (key) {
             var activeList = this.getActiveList(), selModel = activeList.getSelectionModel();
-            if(!key || key === -1) {
+            if (!key || key === -1) {
                 selModel.deselectAll();
             } else {
                 var selNodes = selModel.getSelection();
                 var i;
-                for(i = 0; i < selNodes.length; i++) {
+                for (i = 0; i < selNodes.length; i++) {
                     var selNode = selNodes[i];
-                    if(key == selNode.get(this.keyField)) {
+                    if (key == selNode.get(this.keyField)) {
                         selModel.deselect([
                             selNode
                         ]);
@@ -2708,7 +2784,7 @@ var app_ui;
         };
         TreeGridPanel.prototype.getSelection = function () {
             var selection = [], activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection');
-            if(plugin) {
+            if (plugin) {
                 selection = plugin.getSelection();
             } else {
                 selection = activeList.getSelectionModel().getSelection();
@@ -2717,7 +2793,7 @@ var app_ui;
         };
         return TreeGridPanel;
     })();
-    app_ui.TreeGridPanel = TreeGridPanel;    
+    app_ui.TreeGridPanel = TreeGridPanel;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
@@ -2751,32 +2827,36 @@ var app_ui;
                 _this.showAt(event.getX(), event.getY());
             });
         }
+
         ContextMenu.prototype.showAt = function (x, y) {
             this.ext.showAt(x, y);
         };
         return ContextMenu;
     })();
-    app_ui.ContextMenu = ContextMenu;    
+    app_ui.ContextMenu = ContextMenu;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
     var ContextMenuGridPanel = (function (_super) {
         __extends(ContextMenuGridPanel, _super);
         function ContextMenuGridPanel() {
-                _super.call(this);
+            _super.call(this);
             _super.prototype.addAction.call(this, app.SpaceActions.EDIT_SPACE);
             _super.prototype.addAction.call(this, app.SpaceActions.OPEN_SPACE);
             _super.prototype.addAction.call(this, app.SpaceActions.DELETE_SPACE);
         }
+
         return ContextMenuGridPanel;
     })(api_ui_menu.ContextMenu);
-    app_ui.ContextMenuGridPanel = ContextMenuGridPanel;    
+    app_ui.ContextMenuGridPanel = ContextMenuGridPanel;
 })(app_ui || (app_ui = {}));
 var app_ui_wizard;
 (function (app_ui_wizard) {
     var SpaceWizardToolbar = (function () {
         function SpaceWizardToolbar(isNew) {
-            if (typeof isNew === "undefined") { isNew = true; }
+            if (typeof isNew === "undefined") {
+                isNew = true;
+            }
             this.isNew = isNew;
             var tb = new Ext.toolbar.Toolbar({
                 cls: 'admin-toolbar',
@@ -2808,9 +2888,10 @@ var app_ui_wizard;
             }, defaults));
             tb.add(saveBtn, deleteBtn, duplicateBtn, '->', closeBtn);
         }
+
         return SpaceWizardToolbar;
     })();
-    app_ui_wizard.SpaceWizardToolbar = SpaceWizardToolbar;    
+    app_ui_wizard.SpaceWizardToolbar = SpaceWizardToolbar;
 })(app_ui_wizard || (app_ui_wizard = {}));
 var app_ui_wizard;
 (function (app_ui_wizard) {
@@ -2819,18 +2900,18 @@ var app_ui_wizard;
             this.data = data;
             var templates = new Ext.data.Store({
                 fields: [
-                    'code', 
+                    'code',
                     'name'
                 ],
                 data: [
                     {
                         "code": "1",
                         "name": "Tpl1"
-                    }, 
+                    },
                     {
                         "code": "2",
                         "name": "Tpl2"
-                    }, 
+                    },
                     {
                         "code": "3",
                         "name": "Tpl3"
@@ -2853,9 +2934,10 @@ var app_ui_wizard;
             });
             fs.add(combo);
         }
+
         return SpaceStepPanel;
     })();
-    app_ui_wizard.SpaceStepPanel = SpaceStepPanel;    
+    app_ui_wizard.SpaceStepPanel = SpaceStepPanel;
 })(app_ui_wizard || (app_ui_wizard = {}));
 var app_ui_wizard;
 (function (app_ui_wizard) {
@@ -2877,14 +2959,15 @@ var app_ui_wizard;
                 },
                 tbar: new app_ui_wizard.SpaceWizardToolbar(headerData.isNewSpace).ext
             };
-                _super.call(this, panelConfig);
+            _super.call(this, panelConfig);
         }
+
         SpaceWizardPanel.prototype.resolveHeaderData = function () {
             var iconUrl = 'resources/images/icons/128x128/default_space.png';
             var displayNameValue = '';
             var spaceName = '';
             var data = this.data;
-            if(data) {
+            if (data) {
                 displayNameValue = data.get('displayName') || '';
                 spaceName = data.get('name') || '';
                 iconUrl = data.get('iconUrl');
@@ -2899,19 +2982,19 @@ var app_ui_wizard;
         SpaceWizardPanel.prototype.createSteps = function () {
             var spaceStep = new app_ui_wizard.SpaceStepPanel(this.data);
             return [
-                spaceStep.ext, 
+                spaceStep.ext,
                 {
                     stepTitle: 'Schemas'
-                }, 
+                },
                 {
                     stepTitle: 'Modules'
-                }, 
+                },
                 {
                     stepTitle: 'Templates'
-                }, 
+                },
                 {
                     stepTitle: 'Security'
-                }, 
+                },
                 {
                     stepTitle: 'Summary'
                 }
@@ -2961,24 +3044,24 @@ var app_ui_wizard;
         SpaceWizardPanel.prototype.merge = function (obj1, obj2) {
             var obj3 = {
             };
-            for(var attrname in obj1) {
+            for (var attrname in obj1) {
                 obj3[attrname] = obj1[attrname];
             }
-            for(var attrname in obj2) {
+            for (var attrname in obj2) {
                 obj3[attrname] = obj2[attrname];
             }
             return obj3;
         };
         return SpaceWizardPanel;
     })(app_ui.WizardPanel);
-    app_ui_wizard.SpaceWizardPanel = SpaceWizardPanel;    
+    app_ui_wizard.SpaceWizardPanel = SpaceWizardPanel;
 })(app_ui_wizard || (app_ui_wizard = {}));
 var app_wizard;
 (function (app_wizard) {
     var SpaceWizardPanel2 = (function (_super) {
         __extends(SpaceWizardPanel2, _super);
-        function SpaceWizardPanel2(id, title) {
-                _super.call(this);
+        function SpaceWizardPanel2(id, title, iconUrl) {
+            _super.call(this);
             var context = app_wizard.SpaceWizardContext.createSpaceWizardContext();
             this.setTitle(title);
             this.setSubtitle(id);
@@ -3003,10 +3086,12 @@ var app_wizard;
             this.addStep(new api_wizard.WizardStep("Modules", modulesPanel));
             this.addStep(new api_wizard.WizardStep("Templates", templatesPanel));
             this.addToolbar(new app_wizard.SpaceWizardToolbar2(context.getActions()));
+            this.addIcon(new api_ui_form.FormIcon(iconUrl, "Click to upload icon", "rest/upload"));
         }
+
         return SpaceWizardPanel2;
     })(api_wizard.WizardPanel);
-    app_wizard.SpaceWizardPanel2 = SpaceWizardPanel2;    
+    app_wizard.SpaceWizardPanel2 = SpaceWizardPanel2;
 })(app_wizard || (app_wizard = {}));
 var app_ui;
 (function (app_ui) {
@@ -3023,8 +3108,9 @@ var app_ui;
             button.on('click', this.onClick, this);
             this.ext = button;
         }
+
         AdminImageButton.prototype.onClick = function (button) {
-            if(!this.popupPanel) {
+            if (!this.popupPanel) {
                 this.popupPanel = new Ext.panel.Panel({
                     floating: true,
                     cls: 'admin-toolbar-popup',
@@ -3041,7 +3127,7 @@ var app_ui;
                     }
                 });
             } else {
-                if(this.popupPanel.isHidden()) {
+                if (this.popupPanel.isHidden()) {
                     this.popupPanel.show();
                 } else {
                     this.popupPanel.hide();
@@ -3050,7 +3136,7 @@ var app_ui;
         };
         return AdminImageButton;
     })();
-    app_ui.AdminImageButton = AdminImageButton;    
+    app_ui.AdminImageButton = AdminImageButton;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
@@ -3094,10 +3180,11 @@ var app_ui;
             tbmi.enableBubble('closeMenuItem');
             this.initComponent(tbmi);
         }
+
         TopBarMenuItem.prototype.initComponent = function (topBarMenuItem) {
             var _this = this;
             var items = [];
-            if(topBarMenuItem.iconCls || topBarMenuItem.iconSrc) {
+            if (topBarMenuItem.iconCls || topBarMenuItem.iconSrc) {
                 var image = new Ext.Img({
                     width: 32,
                     height: 32,
@@ -3107,7 +3194,7 @@ var app_ui;
                 });
                 items.push(image);
             }
-            if(this.text1 || this.text2) {
+            if (this.text1 || this.text2) {
                 var titleContainer = new Ext.Component({
                     flex: 1,
                     itemId: 'titleContainer',
@@ -3121,7 +3208,7 @@ var app_ui;
                 items.push(titleContainer);
                 this.titleContainer = titleContainer;
             }
-            if(topBarMenuItem.closable !== false) {
+            if (topBarMenuItem.closable !== false) {
                 var closeButton = new Ext.Component({
                     autoEl: 'a',
                     cls: 'close-button icon-remove icon-large',
@@ -3140,7 +3227,7 @@ var app_ui;
         };
         TopBarMenuItem.prototype.activate = function () {
             var me = this.ext;
-            if(!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
+            if (!me.activated && me.canActivate && me.rendered && !me.isDisabled() && me.isVisible()) {
                 me.el.addCls(me.activeCls);
                 me.focus();
                 me.activated = true;
@@ -3149,7 +3236,7 @@ var app_ui;
         };
         TopBarMenuItem.prototype.deactivate = function () {
             var me = this.ext;
-            if(me.activated) {
+            if (me.activated) {
                 me.el.removeCls(me.activeCls);
                 me.blur();
                 me.activated = false;
@@ -3158,18 +3245,18 @@ var app_ui;
         };
         TopBarMenuItem.prototype.onClick = function (e) {
             var me = this.ext;
-            if(!me.href) {
+            if (!me.href) {
                 e.stopEvent();
             }
-            if(me.disabled) {
+            if (me.disabled) {
                 return false;
             }
             Ext.callback(me.handler, me.scope || me, [
-                me, 
+                me,
                 e
             ]);
             me.fireEvent('click', me, e);
-            if(!me.hideOnClick) {
+            if (!me.hideOnClick) {
                 me.focus();
             }
             return Ext.isEmpty(Ext.fly(e.getTarget()).findParent('.close-button'));
@@ -3182,7 +3269,7 @@ var app_ui;
         };
         return TopBarMenuItem;
     })();
-    app_ui.TopBarMenuItem = TopBarMenuItem;    
+    app_ui.TopBarMenuItem = TopBarMenuItem;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
@@ -3235,6 +3322,7 @@ var app_ui;
             tbm.on('closeMenuItem', this.onCloseMenuItem, this);
             tbm.on('resize', this.updatePosition, this);
         }
+
         TopBarMenu.prototype.createNonClosableItems = function () {
             var item = new Ext.container.Container({
                 itemId: 'nonClosableItems'
@@ -3281,20 +3369,20 @@ var app_ui;
         };
         TopBarMenu.prototype.onClick = function (e) {
             var me = this.ext, item;
-            if(me.disabled) {
+            if (me.disabled) {
                 e.stopEvent();
                 return;
             }
             item = (e.type === 'click') ? this.getItemFromEvent(e) : me.activeItem;
-            if(item && item.isMenuItem && item.onClick(e) !== false) {
-                if(me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
+            if (item && item.isMenuItem && item.onClick(e) !== false) {
+                if (me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
                     this.tabPanel.setActiveTab(item.card);
                 }
                 me.hide();
             }
         };
         TopBarMenu.prototype.onShow = function () {
-            if(this.activeTab) {
+            if (this.activeTab) {
                 this.markActiveTab(this.activeTab);
             }
         };
@@ -3305,24 +3393,24 @@ var app_ui;
             }, true);
         };
         TopBarMenu.prototype.onCloseMenuItem = function (item) {
-            if(this.tabPanel) {
+            if (this.tabPanel) {
                 this.tabPanel.remove(item.card);
             }
-            if(this.getAllItems(false).length === 0) {
+            if (this.getAllItems(false).length === 0) {
                 this.ext.hide();
             }
         };
         TopBarMenu.prototype.markActiveTab = function (item) {
             var me = this.ext;
             var menuItem;
-            if(me.isVisible()) {
+            if (me.isVisible()) {
                 menuItem = me.el.down('.current-tab');
-                if(menuItem) {
+                if (menuItem) {
                     menuItem.removeCls('current-tab');
                 }
-                if(item) {
+                if (item) {
                     menuItem = item;
-                    if(menuItem && menuItem.el) {
+                    if (menuItem && menuItem.el) {
                         menuItem.el.addCls('current-tab');
                     }
                 }
@@ -3333,12 +3421,13 @@ var app_ui;
             var item = this.ext;
             do {
                 item = item.getChildByElement(e.getTarget());
-            }while(item && Ext.isDefined(item.getChildByElement) && item.isMenuItem !== true);
+            }
+            while (item && Ext.isDefined(item.getChildByElement) && item.isMenuItem !== true);
             return item;
         };
         TopBarMenu.prototype.getAllItems = function (includeNonClosable) {
             var items = [];
-            if(includeNonClosable === false) {
+            if (includeNonClosable === false) {
                 items = items.concat(this.editItems.query('*[isMenuItem=true]'));
                 items = items.concat(this.viewItems.query('*[isMenuItem=true]'));
             } else {
@@ -3347,9 +3436,9 @@ var app_ui;
             return items;
         };
         TopBarMenu.prototype.addItems = function (items) {
-            if(Ext.isEmpty(items)) {
+            if (Ext.isEmpty(items)) {
                 return [];
-            } else if(Ext.isObject(items)) {
+            } else if (Ext.isObject(items)) {
                 items = [].concat(items);
             }
             this.saveScrollState();
@@ -3357,23 +3446,25 @@ var app_ui;
             var viewItems = [];
             var nonClosableItems = [];
             Ext.Array.each(items, function (item) {
-                if(item.closable === false) {
+                if (item.closable === false) {
                     nonClosableItems.push(item);
-                } else if(item.editing) {
+                } else if (item.editing) {
                     editItems.push(item);
                 } else {
                     viewItems.push(item);
                 }
             });
             var added = [];
-            if(nonClosableItems.length > 0) {
+            if (nonClosableItems.length > 0) {
                 added = added.concat(this.nonClosableItems.add(nonClosableItems));
             }
-            if(editItems.length > 0) {
+            if (editItems.length > 0) {
                 var editItemObjects = [];
                 Ext.Array.each(editItems, function (editItem) {
-                    if(!editItem.xtype) {
-                        var tbmi = new app_ui.TopBarMenuItem(editItem.text1, editItem.text2, editItem.card, editItem.tabBar, editItem.closable, editItem.disabled, editItem.editing, editItem.hidden, editItem.iconClass, editItem.iconSrc).ext;
+                    if (!editItem.xtype) {
+                        var tbmi = new app_ui.TopBarMenuItem(editItem.text1, editItem.text2, editItem.card, editItem.tabBar,
+                            editItem.closable, editItem.disabled, editItem.editing, editItem.hidden, editItem.iconClass,
+                            editItem.iconSrc).ext;
                         editItemObjects.push(tbmi);
                     } else {
                         editItemObjects.push(editItem);
@@ -3381,11 +3472,13 @@ var app_ui;
                 });
                 added = added.concat(this.editItems.add(editItemObjects));
             }
-            if(viewItems.length > 0) {
+            if (viewItems.length > 0) {
                 var viewItemObjects = [];
                 Ext.Array.each(viewItems, function (viewItem) {
-                    if(!viewItem.xtype) {
-                        var tbmi = new app_ui.TopBarMenuItem(viewItem.text1, viewItem.text2, viewItem.card, viewItem.tabBar, viewItem.closable, viewItem.disabled, viewItem.editing, viewItem.hidden, viewItem.iconClass, viewItem.iconSrc).ext;
+                    if (!viewItem.xtype) {
+                        var tbmi = new app_ui.TopBarMenuItem(viewItem.text1, viewItem.text2, viewItem.card, viewItem.tabBar,
+                            viewItem.closable, viewItem.disabled, viewItem.editing, viewItem.hidden, viewItem.iconClass,
+                            viewItem.iconSrc).ext;
                         viewItemObjects.push(tbmi);
                     } else {
                         viewItemObjects.push(viewItem);
@@ -3403,19 +3496,19 @@ var app_ui;
             var viewItems = this.viewItems;
             var removed = [];
             Ext.Array.each(editItems.items.items, function (item) {
-                if(item && item.closable !== false) {
+                if (item && item.closable !== false) {
                     removed.push(editItems.remove(item));
                 }
             });
             Ext.Array.each(viewItems.items.items, function (item) {
-                if(item && item.closable !== false) {
+                if (item && item.closable !== false) {
                     removed.push(viewItems.remove(item));
                 }
             });
-            if(includeNonClosable) {
+            if (includeNonClosable) {
                 var nonClosableItems = this.nonClosableItems;
                 Ext.Array.each(nonClosableItems.items.items, function (item) {
-                    if(item && item.closable !== false) {
+                    if (item && item.closable !== false) {
                         removed.push(nonClosableItems.remove(item));
                     }
                 });
@@ -3424,9 +3517,9 @@ var app_ui;
             return removed;
         };
         TopBarMenu.prototype.removeItems = function (items) {
-            if(Ext.isEmpty(items)) {
+            if (Ext.isEmpty(items)) {
                 return null;
-            } else if(Ext.isObject(items)) {
+            } else if (Ext.isObject(items)) {
                 items = [].concat(items);
             }
             this.saveScrollState();
@@ -3436,7 +3529,7 @@ var app_ui;
             var nonClosableItems = this.nonClosableItems;
             var removed = [];
             Ext.Array.each(items, function (item) {
-                if(item && item.closable !== false) {
+                if (item && item.closable !== false) {
                     removed.push(editItems.remove(item));
                     removed.push(viewItems.remove(item));
                     removed.push(nonClosableItems.remove(item));
@@ -3450,17 +3543,17 @@ var app_ui;
             var editCount = this.editItems.items.getCount();
             var viewCount = this.viewItems.items.getCount();
             var nonClosableCount = this.nonClosableItems.items.getCount();
-            if(editCount > 0) {
+            if (editCount > 0) {
                 this.editTitle.show();
             } else {
                 this.editTitle.hide();
             }
-            if(viewCount > 0) {
+            if (viewCount > 0) {
                 this.viewTitle.show();
             } else {
                 this.viewTitle.hide();
             }
-            if((viewCount || editCount || nonClosableCount) > 0) {
+            if ((viewCount || editCount || nonClosableCount) > 0) {
                 this.emptyTitle.hide();
             } else {
                 this.emptyTitle.show();
@@ -3472,10 +3565,10 @@ var app_ui;
         TopBarMenu.prototype.show = function () {
             var me = this.ext, parentEl, viewHeight;
             this.maxWas = me.maxHeight;
-            if(!me.rendered) {
+            if (!me.rendered) {
                 me.doAutoRender();
             }
-            if(me.floating) {
+            if (me.floating) {
                 parentEl = Ext.fly(me.el.getScopeParent());
                 viewHeight = parentEl.getViewSize().height;
                 me.maxHeight = Math.min(this.maxWas || viewHeight - 50, viewHeight - 50);
@@ -3489,7 +3582,7 @@ var app_ui;
         };
         TopBarMenu.prototype.saveScrollState = function () {
             var me = this.ext;
-            if(me.rendered && !me.hidden) {
+            if (me.rendered && !me.hidden) {
                 var dom = me.body.dom, state = me.scrollState;
                 state.left = dom.scrollLeft;
                 state.top = dom.scrollTop;
@@ -3497,7 +3590,7 @@ var app_ui;
         };
         TopBarMenu.prototype.restoreScrollState = function () {
             var me = this.ext;
-            if(me.rendered && !me.hidden) {
+            if (me.rendered && !me.hidden) {
                 var dom = me.body.dom, state = me.scrollState;
                 dom.scrollLeft = state.left;
                 dom.scrollTop = state.top;
@@ -3505,7 +3598,7 @@ var app_ui;
         };
         return TopBarMenu;
     })();
-    app_ui.TopBarMenu = TopBarMenu;    
+    app_ui.TopBarMenu = TopBarMenu;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
@@ -3523,6 +3616,7 @@ var app_ui;
             this.tabPanel = tabPanel;
             this.initComponent();
         }
+
         TopBar.prototype.initComponent = function () {
             var _this = this;
             var me = this.ext;
@@ -3539,7 +3633,7 @@ var app_ui;
                 text: this.appName || '&lt; app name &gt;',
                 cls: 'home-button',
                 handler: function (btn, evt) {
-                    if(_this.tabPanel) {
+                    if (_this.tabPanel) {
                         _this.tabPanel.setActiveTab(0);
                     }
                 }
@@ -3552,11 +3646,11 @@ var app_ui;
                     align: 'middle'
                 },
                 items: [
-                    this.startButton, 
+                    this.startButton,
                     {
                         xtype: "tbseparator",
                         width: '2px'
-                    }, 
+                    },
                     this.homeButton
                 ]
             });
@@ -3568,15 +3662,19 @@ var app_ui;
                     pack: 'end'
                 }
             });
-            var adminImageButton = new app_ui.AdminImageButton(api_util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'), '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' + '<div class="content">' + '<div class="column"><img src="{photoUrl}"/>' + '<button class="x-btn-red-small">Log Out</button>' + '</div>' + '<div class="column">' + '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' + '<a href="#">Change User</a>' + '</div>' + '</div>', {
-                userName: "Thomas Lund Sigdestad",
-                photoUrl: api_util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
-                qName: 'system/tsi'
-            });
+            var adminImageButton = new app_ui.AdminImageButton(api_util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                '<div class="title">User</div>' + '<div class="user-name">{userName}</div>' + '<div class="content">' +
+                '<div class="column"><img src="{photoUrl}"/>' + '<button class="x-btn-red-small">Log Out</button>' + '</div>' +
+                '<div class="column">' + '<span>{qName}</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' +
+                '<a href="#">Change User</a>' + '</div>' + '</div>', {
+                    userName: "Thomas Lund Sigdestad",
+                    photoUrl: api_util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                    qName: 'system/tsi'
+                });
             this.rightContainer.add(adminImageButton.ext);
             me.add(this.leftContainer);
             me.add(this.rightContainer);
-            if(this.tabPanel) {
+            if (this.tabPanel) {
                 this.tabMenu = new app_ui.TopBarMenu(this.tabPanel);
                 this.titleButton = Ext.create('Ext.button.Button', {
                     cls: 'title-button',
@@ -3586,12 +3684,12 @@ var app_ui;
                     styleHtmlContent: true,
                     text: '<span class="title">Title</span><span class="count">0</span>',
                     setTitle: function (title) {
-                        if(this.el) {
+                        if (this.el) {
                             this.el.down('.title').setHTML(title);
                         }
                     },
                     setCount: function (count) {
-                        if(this.el) {
+                        if (this.el) {
                             this.el.down('.count').setHTML(count);
                         }
                     }
@@ -3602,7 +3700,7 @@ var app_ui;
         };
         TopBar.prototype.toggleHomeScreen = function () {
             var isInsideIframe = window.top !== window.self;
-            if(isInsideIframe) {
+            if (isInsideIframe) {
                 window.parent['Ext'].getCmp('admin-home-main-container').toggleShowHide();
             } else {
                 console.error('Can not toggle home screen. Document must be loaded inside the main window');
@@ -3618,11 +3716,11 @@ var app_ui;
             var card = tab.card;
             var buttonText = tab.text1;
             var iconClass;
-            if('tab-browse' === card.id) {
+            if ('tab-browse' === card.id) {
                 buttonText = '';
-            } else if(card.tab.iconClass) {
+            } else if (card.tab.iconClass) {
                 iconClass = card.tab.iconClass;
-            } else if(card.tab.editing) {
+            } else if (card.tab.editing) {
                 iconClass = 'icon-icomoon-pencil-32';
             }
             this.titleButton.setIconCls(iconClass);
@@ -3634,7 +3732,7 @@ var app_ui;
             return removed;
         };
         TopBar.prototype.findNextActivatable = function () {
-            if(this.tabPanel) {
+            if (this.tabPanel) {
                 return this.tabPanel.items.get(0);
             }
             return null;
@@ -3655,7 +3753,7 @@ var app_ui;
             };
         };
         TopBar.prototype.syncTabCount = function () {
-            if(this.tabMenu && this.titleButton) {
+            if (this.tabMenu && this.titleButton) {
                 var tabCount = this.tabMenu.getAllItems(false).length;
                 this.titleButton.setVisible(tabCount > 0);
                 this.titleButton.setCount(tabCount);
@@ -3663,32 +3761,33 @@ var app_ui;
             }
         };
         TopBar.prototype.getApplicationId = function () {
-            var urlParamsString = document.URL.split('?'), urlParams = Ext.Object.fromQueryString(urlParamsString[urlParamsString.length - 1]);
+            var urlParamsString = document.URL.split('?'), urlParams = Ext.Object.fromQueryString(urlParamsString[urlParamsString.length -
+                                                                                                                  1]);
             return urlParams.appId ? urlParams.appId.split('#')[0] : null;
         };
         TopBar.prototype.getMenuItemIcon = function (card) {
             var icon;
-            if(card.data && card.data instanceof Ext.data.Model) {
+            if (card.data && card.data instanceof Ext.data.Model) {
                 icon = card.data.get('iconUrl') || card.data.get('image_url');
             }
             return icon;
         };
         TopBar.prototype.getMenuItemDescription = function (card) {
             var desc;
-            if(!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+            if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
                 desc = card.data.get('path') || card.data.get('qualifiedName') || card.data.get('displayName');
             }
-            if(!desc) {
+            if (!desc) {
                 desc = card.title;
             }
             return desc;
         };
         TopBar.prototype.getMenuItemDisplayName = function (card) {
             var desc;
-            if(!card.isNew && card.data && card.data instanceof Ext.data.Model) {
+            if (!card.isNew && card.data && card.data instanceof Ext.data.Model) {
                 desc = card.data.get('displayName') || card.data.get('name');
             }
-            if(!desc) {
+            if (!desc) {
                 desc = card.title;
             }
             return desc;
@@ -3696,7 +3795,7 @@ var app_ui;
         TopBar.prototype.setTitleButtonText = function (text) {
             this.titleButton.setTitle(text);
             var activeTab = this.titleButton.menu.activeTab;
-            if(activeTab) {
+            if (activeTab) {
                 activeTab.text1 = text;
                 activeTab.updateTitleContainer();
             }
@@ -3712,7 +3811,7 @@ var app_ui;
         };
         return TopBar;
     })();
-    app_ui.TopBar = TopBar;    
+    app_ui.TopBar = TopBar;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
@@ -3728,9 +3827,9 @@ var app_ui;
                 },
                 addTab: function (item, index, requestConfig) {
                     var tab = this.getTabById(item.id);
-                    if(!tab) {
+                    if (!tab) {
                         tab = this.insert(index || this.items.length, item);
-                        if(requestConfig) {
+                        if (requestConfig) {
                             this.setActiveTab(tab);
                             var mask = new Ext.LoadMask(tab, {
                                 msg: "Please wait..."
@@ -3759,7 +3858,7 @@ var app_ui;
                 removeAllOpenTabs: function () {
                     var all = this.items.items;
                     var last = all[this.getTabCount() - 1];
-                    while(this.getTabCount() > 1) {
+                    while (this.getTabCount() > 1) {
                         this.remove(last);
                         last = this.items.items[this.getTabCount() - 1];
                     }
@@ -3781,28 +3880,28 @@ var app_ui;
                         iconclschange: me.onItemIconClsChange,
                         titlechange: me.onItemTitleChange
                     });
-                    if(item.isPanel) {
-                        if(me.removePanelHeader) {
-                            if(item.rendered) {
-                                if(item.header) {
+                    if (item.isPanel) {
+                        if (me.removePanelHeader) {
+                            if (item.rendered) {
+                                if (item.header) {
                                     item.header.hide();
                                 }
                             } else {
                                 item.header = false;
                             }
                         }
-                        if(item.isPanel && me.border) {
+                        if (item.isPanel && me.border) {
                             item.setBorder(false);
                         }
                     }
                 },
                 doRemove: function (item, autoDestroy) {
                     var me = this;
-                    if(me.destroying || me.items.getCount() === 1) {
+                    if (me.destroying || me.items.getCount() === 1) {
                         me.activeTab = null;
-                    } else if(me.activeTab === item) {
+                    } else if (me.activeTab === item) {
                         var toActivate = me.tabBar.findNextActivatable(item.tab);
-                        if(toActivate) {
+                        if (toActivate) {
                             me.setActiveTab(toActivate);
                         }
                     }
@@ -3816,7 +3915,7 @@ var app_ui;
                         disable: me.onItemDisable,
                         beforeshow: me.onItemBeforeShow
                     });
-                    if(!me.destroying) {
+                    if (!me.destroying) {
                         me.tabBar.remove(item.tab);
                     }
                 },
@@ -3834,7 +3933,7 @@ var app_ui;
                     me.addEvents('beforetabchange', 'tabchange');
                     me.superclass.superclass.initComponent.apply(me, arguments);
                     me.activeTab = me.getComponent(activeTab);
-                    if(me.activeTab) {
+                    if (me.activeTab) {
                         me.activeTab.tab.activate(true);
                         me.tabBar.setActiveTab(me.activeTab.tab);
                     }
@@ -3842,7 +3941,7 @@ var app_ui;
             });
             app_event.EditSpaceEvent.on(function (event) {
                 var spaces = event.getModels();
-                for(var i in spaces) {
+                for (var i in spaces) {
                     var space = spaces[i];
                     console.log(space);
                     api_remote.RemoteService.space_get({
@@ -3851,14 +3950,14 @@ var app_ui;
                         ]
                     }, function (r) {
                         _this.ext.el.unmask();
-                        if(r) {
+                        if (r) {
                             var id = _this.generateTabId(space, true);
                             var editing = true;
                             var title = space.get('displayName');
                             var data = space;
-                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel2(id, title);
+                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel2(id, title, space.data.iconUrl);
                             var index = _this.ext.items.indexOfKey(_this.generateTabId(space, false));
-                            if(index >= 0) {
+                            if (index >= 0) {
                                 _this.ext.remove(index);
                             }
                             _this.addTab(spaceWizardPanel.ext, index >= 0 ? index : undefined, undefined);
@@ -3869,6 +3968,7 @@ var app_ui;
                 }
             });
         }
+
         TabPanel.init = function init(config) {
             return TabPanel.singleton = new TabPanel(config);
         };
@@ -3892,7 +3992,7 @@ var app_ui;
         };
         return TabPanel;
     })();
-    app_ui.TabPanel = TabPanel;    
+    app_ui.TabPanel = TabPanel;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
@@ -3906,14 +4006,14 @@ var app_ui;
                             "name": 'Public Web',
                             "key": 'public',
                             "count": 8
-                        }, 
+                        },
                         {
                             "name": 'Intranet',
                             "key": 'intra',
                             "count": 20
                         }
                     ]
-                }, 
+                },
                 {
                     "name": "Type",
                     "terms": [
@@ -3921,19 +4021,19 @@ var app_ui;
                             "name": "Space",
                             "key": "space",
                             "count": 10
-                        }, 
+                        },
                         {
                             "name": "Part",
                             "key": "part",
                             "count": 80
-                        }, 
+                        },
                         {
                             "name": "Page Template",
                             "key": "template",
                             "count": 7
                         }
                     ]
-                }, 
+                },
                 {
                     "name": "Module",
                     "terms": [
@@ -3941,12 +4041,12 @@ var app_ui;
                             "name": "Twitter Bootrstrap",
                             "key": "twitter",
                             "count": 0
-                        }, 
+                        },
                         {
                             "name": "Enonic",
                             "key": "enonic",
                             "count": 3
-                        }, 
+                        },
                         {
                             "name": "Foo",
                             "key": "foo",
@@ -3955,9 +4055,15 @@ var app_ui;
                     ]
                 }
             ];
-            this.facetTpl = '<tpl for=".">' + '<div class="admin-facet-group" name="{name}">' + '<h2>{[values.displayName || values.name]}</h2>' + '<tpl for="terms">{[this.updateFacetCount(values, parent)]}' + '<tpl if="this.shouldShowTerm(values, parent)">' + '<div class="admin-facet {[values.selected ? \'checked\' : \'\']}">' + '<input type="checkbox" id="facet-{term}" value="{name}" class="admin-facet-cb" name="{parent.name}" {[values.selected ? \'checked="true"\' : \'\']} />' + '<label for="facet-{key}" class="admin-facet-lbl"> {[values.displayName || values.name]} ({[this.getTermCount(values)]})</label>' + '</div>' + '</tpl>' + '</tpl>' + '</div>' + '</tpl>';
+            this.facetTpl =
+            '<tpl for=".">' + '<div class="admin-facet-group" name="{name}">' + '<h2>{[values.displayName || values.name]}</h2>' +
+            '<tpl for="terms">{[this.updateFacetCount(values, parent)]}' + '<tpl if="this.shouldShowTerm(values, parent)">' +
+            '<div class="admin-facet {[values.selected ? \'checked\' : \'\']}">' +
+            '<input type="checkbox" id="facet-{term}" value="{name}" class="admin-facet-cb" name="{parent.name}" {[values.selected ? \'checked="true"\' : \'\']} />' +
+            '<label for="facet-{key}" class="admin-facet-lbl"> {[values.displayName || values.name]} ({[this.getTermCount(values)]})</label>' +
+            '</div>' + '</tpl>' + '</tpl>' + '</div>' + '</tpl>';
             var updateFacets = function (facets) {
-                if(facets) {
+                if (facets) {
                     this.selectedValues = this.getValues();
                     this.down('#facetContainer').update(facets);
                     this.setValues(this.selectedValues);
@@ -3967,15 +4073,15 @@ var app_ui;
                 var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
                 var values = {
                 };
-                if(this.searchField) {
+                if (this.searchField) {
                     var query = this.searchField.getValue();
-                    if(Ext.String.trim(query).length > 0) {
+                    if (Ext.String.trim(query).length > 0) {
                         values[this.searchField.name] = query;
                     }
                 }
                 Ext.Array.each(selectedCheckboxes, function (cb, index, all) {
                     var oldValue = values[cb.name];
-                    if(Ext.isArray(oldValue)) {
+                    if (Ext.isArray(oldValue)) {
                         oldValue.push(cb.value);
                     } else {
                         values[cb.name] = [
@@ -3987,14 +4093,14 @@ var app_ui;
             };
             var setValues = function (values) {
                 var me = this;
-                if(this.searchField) {
+                if (this.searchField) {
                     this.searchField.setValue(values[this.searchField.name]);
                 }
                 var checkboxes = Ext.query('.admin-facet-group input[type=checkbox]', this.facetContainer.el.dom);
                 var checkedCount = 0, facet;
                 Ext.Array.each(checkboxes, function (cb) {
                     var facet = Ext.fly(cb).up('.admin-facet');
-                    if(me.isValueChecked(cb.value, values)) {
+                    if (me.isValueChecked(cb.value, values)) {
                         checkedCount++;
                         cb.setAttribute('checked', 'true');
                         facet.addCls('checked');
@@ -4003,16 +4109,16 @@ var app_ui;
                         facet.removeCls('checked');
                     }
                 });
-                if(this.updateCountCriteria == 'query' && this.queryDirty && checkedCount === 0) {
+                if (this.updateCountCriteria == 'query' && this.queryDirty && checkedCount === 0) {
                     this.queryDirty = false;
                 }
             };
             var isValueChecked = function (value, values) {
-                for(var facet in values) {
-                    if(values.hasOwnProperty(facet)) {
+                for (var facet in values) {
+                    if (values.hasOwnProperty(facet)) {
                         var terms = [].concat(values[facet]);
-                        for(var i = 0; i < terms.length; i++) {
-                            if(terms[i] === value) {
+                        for (var i = 0; i < terms.length; i++) {
+                            if (terms[i] === value) {
                                 return true;
                             }
                         }
@@ -4023,16 +4129,16 @@ var app_ui;
             var isDirty = function () {
                 var selectedCheckboxes = [];
                 var query = '';
-                if(this.facetContainer && this.facetContainer.el) {
+                if (this.facetContainer && this.facetContainer.el) {
                     selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
                 }
-                if(this.searchField) {
+                if (this.searchField) {
                     query = Ext.String.trim(this.searchField.getValue());
                 }
                 return selectedCheckboxes.length > 0 || query.length > 0;
             };
             var search = function () {
-                if(this.fireEvent('search', this.getValues()) !== false) {
+                if (this.fireEvent('search', this.getValues()) !== false) {
                     this.clearLink.el.setStyle('visibility', this.isDirty() ? 'visible' : 'hidden');
                 }
             };
@@ -4069,7 +4175,7 @@ var app_ui;
                 facetContainer: facetContainer,
                 clearLink: clearLink
             });
-            if(includeSearch) {
+            if (includeSearch) {
                 var searchField = this.createSearchField();
                 fp.insert(0, searchField);
                 Ext.apply(fp, {
@@ -4078,15 +4184,16 @@ var app_ui;
             }
             fp.addEvents('search', 'reset');
         }
+
         FilterPanel.prototype.createFacetContainer = function () {
             var fp = this.ext;
             var onFacetClicked = function (event, target, opts) {
                 target = Ext.fly(target);
                 var facet = target.hasCls('admin-facet') ? target : target.up('.admin-facet');
-                if(facet) {
+                if (facet) {
                     var cb = facet.down('input[type=checkbox]', true);
                     var checked = cb.hasAttribute("checked");
-                    if(checked) {
+                    if (checked) {
                         cb.removeAttribute("checked");
                         facet.removeCls("checked");
                     } else {
@@ -4094,7 +4201,7 @@ var app_ui;
                         facet.addCls("checked");
                     }
                     var group = facet.up('.admin-facet-group', true);
-                    if(group) {
+                    if (group) {
                         this.lastFacetName = group.getAttribute('name');
                     }
                     this.search();
@@ -4107,22 +4214,25 @@ var app_ui;
                 tpl: new Ext.XTemplate(this.facetTpl, {
                     updateFacetCount: function (term, facet) {
                         var isCriteria = fp.updateCountCriteria == 'always' || (fp.updateCountCriteria == 'query' && fp.queryDirty);
-                        var isStrategy = fp.updateCountStrategy == 'all' || (fp.updateCountStrategy == 'notlast' && fp.lastFacetNafp != facet.nafp);
+                        var isStrategy = fp.updateCountStrategy == 'all' ||
+                                         (fp.updateCountStrategy == 'notlast' && fp.lastFacetNafp != facet.nafp);
                         var isDefined = Ext.isDefined(fp.facetCountMap[term.name]);
                         var isDirty = fp.isDirty();
-                        if(!isDirty || !isDefined || (isCriteria && isStrategy)) {
+                        if (!isDirty || !isDefined || (isCriteria && isStrategy)) {
                             fp.facetCountMap[term.name] = term.count;
                         }
                     },
                     shouldShowTerm: function (term, facet) {
-                        return fp.includeEmptyFacets == 'all' || (fp.includeEmptyFacets == 'last' && (!fp.lastFacetName || fp.lastFacetName == facet.name)) || fp.facetCountMap[term.name] > 0 || term.selected || this.isSelected(term, facet);
+                        return fp.includeEmptyFacets == 'all' ||
+                               (fp.includeEmptyFacets == 'last' && (!fp.lastFacetName || fp.lastFacetName == facet.name)) ||
+                               fp.facetCountMap[term.name] > 0 || term.selected || this.isSelected(term, facet);
                     },
                     getTermCount: function (term) {
                         return fp.facetCountMap[term.name];
                     },
                     isSelected: function (term, facet) {
                         var terms = fp.selectedValues[facet.name];
-                        if(terms) {
+                        if (terms) {
                             return Ext.Array.contains(terms, term.name);
                         }
                         return false;
@@ -4139,8 +4249,8 @@ var app_ui;
         };
         FilterPanel.prototype.createClearLink = function () {
             var reset = function () {
-                if(this.fireEvent('reset', this.isDirty()) !== false) {
-                    if(this.searchField) {
+                if (this.fireEvent('reset', this.isDirty()) !== false) {
+                    if (this.searchField) {
                         this.searchField.reset();
                     }
                     var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
@@ -4165,19 +4275,19 @@ var app_ui;
         };
         FilterPanel.prototype.createSearchField = function () {
             var onKeyPressed = function (field, event, opts) {
-                if(this.suspendEvents !== true) {
-                    if(event.getKey() === event.ENTER) {
-                        if(event.type === "keydown") {
+                if (this.suspendEvents !== true) {
+                    if (event.getKey() === event.ENTER) {
+                        if (event.type === "keydown") {
                             this.fireEvent('search', this.getValues());
                         }
                     } else {
                         var me = this;
-                        if(this.searchFilterTypingTimer !== null) {
+                        if (this.searchFilterTypingTimer !== null) {
                             window.clearTimeout(this.searchFilterTypingTimer);
                             this.searchFilterTypingTimer = null;
                         }
                         this.searchFilterTypingTimer = window.setTimeout(function () {
-                            if(me.updateCountCriteria === 'query') {
+                            if (me.updateCountCriteria === 'query') {
                                 me.queryDirty = true;
                             }
                             me.lastFacetName = undefined;
@@ -4206,33 +4316,35 @@ var app_ui;
         };
         return FilterPanel;
     })();
-    app_ui.FilterPanel = FilterPanel;    
+    app_ui.FilterPanel = FilterPanel;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
     var BrowseToolbar = (function (_super) {
         __extends(BrowseToolbar, _super);
         function BrowseToolbar() {
-                _super.call(this);
+            _super.call(this);
             _super.prototype.addAction.call(this, app.SpaceActions.NEW_SPACE);
             _super.prototype.addAction.call(this, app.SpaceActions.EDIT_SPACE);
             _super.prototype.addAction.call(this, app.SpaceActions.OPEN_SPACE);
             _super.prototype.addAction.call(this, app.SpaceActions.DELETE_SPACE);
         }
+
         return BrowseToolbar;
     })(api_ui_toolbar.Toolbar);
-    app_ui.BrowseToolbar = BrowseToolbar;    
+    app_ui.BrowseToolbar = BrowseToolbar;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
     var SpaceAppBar = (function (_super) {
         __extends(SpaceAppBar, _super);
         function SpaceAppBar() {
-                _super.call(this, "Space Admin");
+            _super.call(this, "Space Admin");
         }
+
         return SpaceAppBar;
     })(api_appbar.AppBar);
-    app_ui.SpaceAppBar = SpaceAppBar;    
+    app_ui.SpaceAppBar = SpaceAppBar;
 })(app_ui || (app_ui = {}));
 Ext.define('Admin.controller.Controller', {
     extend: 'Ext.app.Controller',
@@ -4258,7 +4370,7 @@ Ext.define('Admin.controller.Controller', {
         var me = this;
         var tabs = this.getCmsTabPanel();
         var activeTab = tabs.setActiveTab(me.generateTabId(space, true));
-        if(!activeTab) {
+        if (!activeTab) {
             var id = this.generateTabId(space, false);
         }
     },
@@ -4273,14 +4385,14 @@ Ext.define('Admin.controller.Controller', {
             ]
         }, function (r) {
             tabs.el.unmask();
-            if(r) {
+            if (r) {
                 var id = me.generateTabId(space, true);
                 var editing = true;
                 var title = space.data.displayName;
                 var data = space;
                 var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel(id, title, editing, data);
                 var index = tabs.items.indexOfKey(me.generateTabId(space, false));
-                if(index >= 0) {
+                if (index >= 0) {
                     tabs.remove(index);
                 }
                 tabs.addTab(spaceWizardPanel.ext, index >= 0 ? index : undefined, undefined);
@@ -4290,7 +4402,7 @@ Ext.define('Admin.controller.Controller', {
         });
     },
     validateSpace: function (space) {
-        if(!space) {
+        if (!space) {
             var showPanel = this.getSpaceTreeGridPanel();
             return showPanel.getSelection()[0];
         }
@@ -4338,7 +4450,7 @@ Ext.define('Admin.controller.SpaceController', {
     },
     remoteCreateOrUpdateSpace: function (spaceParams, callback) {
         api_remote.RemoteService.space_createOrUpdate(spaceParams, function (r) {
-            if(r && r.success) {
+            if (r && r.success) {
                 callback(r.created, r.updated);
             } else {
                 Ext.Msg.alert("Error", r ? r.error : "An unexpected error occurred.");
@@ -4353,7 +4465,7 @@ Ext.define('Admin.controller.SpaceController', {
         api_remote.RemoteService.space_delete({
             "spaceName": spaceNames
         }, function (r) {
-            if(r) {
+            if (r) {
                 callback.call(me, r.success, r);
             } else {
                 Ext.Msg.alert("Error", r ? r.error : "Unable to delete space.");
@@ -4384,7 +4496,7 @@ Ext.define('Admin.controller.FilterPanelController', {
         this.updateToolbarButtons(selection);
     },
     doReset: function (dirty) {
-        if(!dirty) {
+        if (!dirty) {
             return false;
         }
         var treeGrid = this.getSpaceTreeGridPanel();
@@ -4432,7 +4544,7 @@ Ext.define('Admin.controller.GridPanelController', {
         return false;
     },
     getContextMenu: function () {
-        if(!this.contextMenu) {
+        if (!this.contextMenu) {
             this.contextMenu = new app_ui.ContextMenuGridPanel();
         }
         return this.contextMenu;
@@ -4468,13 +4580,13 @@ Ext.define('Admin.controller.BrowseToolbarController', {
     },
     viewSelectedSpaces: function () {
         var selection = this.getSpaceTreeGridPanel().getSelection();
-        for(var i = 0; i < selection.length; i++) {
+        for (var i = 0; i < selection.length; i++) {
             this.viewSpace(selection[i]);
         }
     },
     editSelectedSpaces: function () {
         var selection = this.getSpaceTreeGridPanel().getSelection();
-        for(var i = 0; i < selection.length; i++) {
+        for (var i = 0; i < selection.length; i++) {
             this.editSpace(selection[i]);
         }
     }
@@ -4570,9 +4682,9 @@ Ext.define('Admin.controller.WizardController', {
     closeWizard: function (el, e) {
         var tab = this.getWizardTab();
         var spaceWizard = this.getWizardPanel();
-        if(spaceWizard.isWizardDirty) {
+        if (spaceWizard.isWizardDirty) {
             Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?', function (answer) {
-                if('yes' === answer) {
+                if ('yes' === answer) {
                     tab.close();
                 }
             });
@@ -4596,7 +4708,7 @@ Ext.define('Admin.controller.WizardController', {
             newSpaceName: (originalSpaceName !== spaceName) ? spaceName : undefined
         };
         var onUpdateSpaceSuccess = function (created, updated) {
-            if(created || updated) {
+            if (created || updated) {
                 api_notify.showFeedback('Space "' + spaceName + '" was saved');
                 me.getSpaceTreeGridPanel().refresh();
                 me.getWizardPanel().isWizardDirty = false;
@@ -4608,7 +4720,7 @@ Ext.define('Admin.controller.WizardController', {
         var me = this;
         var space = wizard.data;
         var onDeleteSpaceSuccess = function (success, failures) {
-            if(success) {
+            if (success) {
                 wizard.close();
                 api_notify.showFeedback('Space was deleted');
             }
@@ -4630,22 +4742,24 @@ var app_appbar;
     var SpaceAppBarTabMenuItem = (function (_super) {
         __extends(SpaceAppBarTabMenuItem, _super);
         function SpaceAppBarTabMenuItem(label) {
-                _super.call(this, label);
+            _super.call(this, label);
         }
+
         return SpaceAppBarTabMenuItem;
     })(api_appbar.AppBarTabMenuItem);
-    app_appbar.SpaceAppBarTabMenuItem = SpaceAppBarTabMenuItem;    
+    app_appbar.SpaceAppBarTabMenuItem = SpaceAppBarTabMenuItem;
 })(app_appbar || (app_appbar = {}));
 var app_appbar;
 (function (app_appbar) {
     var SpaceAppBarTabMenu = (function (_super) {
         __extends(SpaceAppBarTabMenu, _super);
         function SpaceAppBarTabMenu() {
-                _super.call(this, "SpaceAppBarTabMenu");
+            _super.call(this, "SpaceAppBarTabMenu");
         }
+
         return SpaceAppBarTabMenu;
     })(api_appbar.AppBarTabMenu);
-    app_appbar.SpaceAppBarTabMenu = SpaceAppBarTabMenu;    
+    app_appbar.SpaceAppBarTabMenu = SpaceAppBarTabMenu;
 })(app_appbar || (app_appbar = {}));
 var app;
 (function (app) {
@@ -4655,7 +4769,7 @@ var app;
             var _this = this;
             var appBarTabMenu = new api_ui_tab.TabMenu();
             var appPanel = new api_ui.DeckPanel();
-                _super.call(this, appBarTabMenu, appPanel);
+            _super.call(this, appBarTabMenu, appPanel);
             app_event.NewSpaceEvent.on(function (event) {
                 var tabMenuItem = new app_appbar.SpaceAppBarTabMenuItem("New Space");
                 var panel = new api_ui.Panel();
@@ -4667,9 +4781,10 @@ var app;
                 _this.addPanel(panel, tabMenuItem);
             });
         }
+
         return SpaceAppPanelController;
     })(api_ui_tab.TabPanelController);
-    app.SpaceAppPanelController = SpaceAppPanelController;    
+    app.SpaceAppPanelController = SpaceAppPanelController;
 })(app || (app = {}));
 var app;
 (function (app) {
@@ -4678,11 +4793,12 @@ var app;
         function SpaceAppPanel() {
             this.appBrowsePanel = new app.SpaceAppBrowsePanel();
             this.formDeckPanel = new api.FormDeckPanel();
-                _super.call(this, this.appBrowsePanel, this.formDeckPanel);
+            _super.call(this, this.appBrowsePanel, this.formDeckPanel);
         }
+
         return SpaceAppPanel;
     })(api.AppPanel);
-    app.SpaceAppPanel = SpaceAppPanel;    
+    app.SpaceAppPanel = SpaceAppPanel;
 })(app || (app = {}));
 var app;
 (function (app) {
@@ -4697,11 +4813,11 @@ var components;
 Ext.application({
     name: 'spaceAdmin',
     controllers: [
-        'Admin.controller.FilterPanelController', 
-        'Admin.controller.GridPanelController', 
-        'Admin.controller.BrowseToolbarController', 
-        'Admin.controller.DetailPanelController', 
-        'Admin.controller.DetailToolbarController', 
+        'Admin.controller.FilterPanelController',
+        'Admin.controller.GridPanelController',
+        'Admin.controller.BrowseToolbarController',
+        'Admin.controller.DetailPanelController',
+        'Admin.controller.DetailToolbarController',
         'Admin.controller.WizardController'
     ],
     stores: [],

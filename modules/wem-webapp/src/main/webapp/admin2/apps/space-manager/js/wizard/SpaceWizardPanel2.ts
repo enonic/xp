@@ -1,6 +1,6 @@
 module app_wizard {
     export class SpaceWizardPanel2 extends api_wizard.WizardPanel {
-        constructor(id:string, title:string) {
+        constructor(id:string, title:string, iconUrl:string) {
             super();
             var context = app_wizard.SpaceWizardContext.createSpaceWizardContext();
             this.setTitle(title);
@@ -33,6 +33,7 @@ module app_wizard {
             this.addStep(new api_wizard.WizardStep("Templates", templatesPanel));
 
             this.addToolbar(new SpaceWizardToolbar2(context.getActions()));
+            this.addIcon(new api_ui_form.FormIcon(iconUrl, "Click to upload icon", "rest/upload"))
         }
     }
 }
