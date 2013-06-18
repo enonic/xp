@@ -5,5 +5,8 @@ module api_ui_tab {
         setTabIndex(value:number);
 
         getTabIndex():number;
+
+        getLabel():string;
+
     }
 }

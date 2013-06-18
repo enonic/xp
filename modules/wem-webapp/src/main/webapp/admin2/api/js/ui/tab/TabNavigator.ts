@@ -4,8 +4,10 @@ module api_ui_tab {
 
         addTab(tab:api_ui_tab.Tab);
 
+        getSize():number;
+
         addTabSelectedListener(listener:TabSelectedListener);
 
-        addTabRemovedListener(listener:TabRemovedListener);
+        addTabRemoveListener(listener:api_ui_tab.TabRemoveListener);
     }
 }
