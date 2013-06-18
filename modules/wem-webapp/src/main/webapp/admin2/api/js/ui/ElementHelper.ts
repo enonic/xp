@@ -66,6 +66,10 @@ module api_ui {
             this.el.addEventListener(eventName, f);
         }
 
+        removeEventListener(eventName:string, f:(event:Event) => any) {
+            this.el.removeEventListener(eventName, f);
+        }
+
         appendChild(child:HTMLElement) {
             this.el.appendChild(child);
         }
@@ -90,6 +94,15 @@ module api_ui {
             return this;
         }
 
+        getVisibility() {
+            return this.el.style.visibility;
+        }
+
+        setVisibility(value:string):api_ui.ElementHelper {
+            this.el.style.visibility = value;
+            return this;
+        }
+
         setPosition(value:string):api_ui.ElementHelper {
             this.el.style.position = value;
             return this;
@@ -100,9 +113,17 @@ module api_ui {
             return this;
         }
 
+        getWidth(): number {
+            return this.el.offsetWidth;
+        }
+
         setHeight(value:string):api_ui.ElementHelper {
             this.el.style.height = value;
             return this;
+        }
+
+        getHeight(): number {
+            return this.el.offsetHeight;
         }
 
         setTop(value:string):api_ui.ElementHelper {
@@ -148,6 +169,18 @@ module api_ui {
         remove() {
             var parent = this.el.parentElement;
             parent.removeChild(this.el);
+        }
+
+        getOffset() {
+            var el = this.el;
+            var x = 0,
+                y = 0;
+            while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
+                x += el.offsetLeft - el.scrollLeft;
+                y += el.offsetTop - el.scrollTop;
+                el = <HTMLElement> el.offsetParent;
+            }
+            return { top: y, left: x };
         }
 
     }

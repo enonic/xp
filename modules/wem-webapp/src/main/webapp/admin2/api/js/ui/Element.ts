@@ -33,6 +33,13 @@ module api_ui {
             jQuery(this.el.getHTMLElement()).hide();
         }
 
+        isVisible() {
+            var displayed = this.el.getDisplay() != "none";
+            var visible = this.el.getVisibility() != "hidden";
+            var sized = this.el.getWidth() != 0 || this.el.getHeight() != 0;
+            return displayed && visible && sized;
+        }
+
         empty() {
             this.el.setInnerHtml("");
         }

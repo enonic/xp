@@ -23,8 +23,8 @@ module app_ui_wizard {
             };
             super(panelConfig);
 
-            var uploader = this.ext.down('photoUploadButton');
-            uploader.on('fileuploaded', this.photoUploaded, this);
+//            var uploader = this.ext.down('photoUploadButton');
+//            uploader.on('fileuploaded', this.photoUploaded, this);
         }
 
         resolveHeaderData() {
@@ -83,56 +83,8 @@ module app_ui_wizard {
             var me = this.ext;
             var headerData = this.resolveHeaderData();
 
-            return {
-                xtype: 'container',
-                width: 110,
-                height: 110,
-                items: <any[]>[
-                    {
-                        xtype: 'photoUploadButton',
-                        width: 110,
-                        height: 110,
-                        photoUrl: headerData.iconUrl,
-                        title: "Space",
-                        style: {
-                            margin: '1px'
-                        },
-                        progressBarHeight: 6,
-                        listeners: {
-                            mouseenter: function () {
-                                var imageToolTip = me.down('#imageToolTip');
-                                imageToolTip.show();
-                            },
-                            mouseleave: function () {
-                                var imageToolTip = me.down('#imageToolTip');
-                                imageToolTip.hide();
-                            }
-                        }
-                    },
-                    {
-                        styleHtmlContent: true,
-                        height: 50,
-                        border: 0,
-                        itemId: 'imageToolTip',
-                        style: {
-                            top: '5px',
-                            zIndex: 1001
-                        },
-                        cls: 'admin-image-upload-button-image-tip',
-                        html: '<div class="x-tip x-tip-default x-layer" role="tooltip">' +
-                              '<div class="x-tip-anchor x-tip-anchor-top"></div>' +
-                              '<div class="x-tip-body  x-tip-body-default x-tip-body-default">' +
-                              'Click to upload icon</div></div>',
-                        listeners: {
-                            afterrender: function (cmp) {
-                                Ext.Function.defer(function () {
-                                    cmp.hide();
-                                }, 10000);
-                            }
-                        }
-                    }
-                ]
-            };
+            var formIcon = new api_ui_form.FormIcon(headerData.iconUrl, "Click to upload icon", "rest/upload" );
+            return formIcon.ext;
         }
 
         createActionButton() {

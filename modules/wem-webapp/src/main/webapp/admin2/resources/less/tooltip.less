@@ -1,0 +1,52 @@
+.tooltip {
+  position: absolute;
+  border: @admin-medium-gray-border 1px solid;
+  border-radius: 5px;
+  background: #fff;
+  padding: 10px;
+  z-index: 99;
+
+  .tooltip-anchor {
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    overflow: hidden;
+    border: 5px @admin-medium-gray-border solid;
+  }
+
+  &.bottom .tooltip-anchor {
+    top: -10px;
+    left: 50%;
+    margin-left: -5px;
+    border-left-color: transparent;
+    border-top-color: transparent;
+    border-right-color: transparent;
+  }
+
+  &.left .tooltip-anchor {
+    right: -10px;
+    top: 50%;
+    margin-top: -5px;
+    border-top-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+  }
+  &.top .tooltip-anchor {
+    bottom: -10px;
+    left: 50%;
+    margin-left: -5px;
+    border-left-color: transparent;
+    border-bottom-color: transparent;
+    border-right-color: transparent;
+  }
+
+  &.right .tooltip-anchor {
+    left: -10px;
+    top: 50%;
+    margin-top: -5px;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-bottom-color: transparent;
+  }
+
+}

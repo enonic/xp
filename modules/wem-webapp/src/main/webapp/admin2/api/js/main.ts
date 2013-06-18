@@ -58,6 +58,10 @@
 ///<reference path='ui/tab/TabMenuItem.ts' />
 ///<reference path='ui/tab/TabBar.ts' />
 ///<reference path='ui/tab/TabPanelController.ts' />
+///<reference path='ui/form/FormIcon.ts' />
+
+///<reference path='ui/util/Tooltip.ts' />
+///<reference path='ui/util/ProgressBar.ts' />    
 
 ///<reference path='appbar/AppBar.ts' />
 ///<reference path='appbar/UserInfoPopup.ts' />
