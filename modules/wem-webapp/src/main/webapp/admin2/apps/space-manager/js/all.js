@@ -4718,6 +4718,19 @@ var app;
 })(app || (app = {}));
 var app;
 (function (app) {
+    var SpaceAppPanel = (function (_super) {
+        __extends(SpaceAppPanel, _super);
+        function SpaceAppPanel() {
+            this.appBrowsePanel = new app.SpaceAppBrowsePanel();
+            this.formDeckPanel = new api.FormDeckPanel();
+                _super.call(this, this.appBrowsePanel, this.formDeckPanel);
+        }
+        return SpaceAppPanel;
+    })(api.AppPanel);
+    app.SpaceAppPanel = SpaceAppPanel;    
+})(app || (app = {}));
+var app;
+(function (app) {
     app.id = 'space-manager';
 })(app || (app = {}));
 var components;

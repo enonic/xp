@@ -72,6 +72,9 @@
 ///<reference path='appbar/AppBarTabMenu.ts' />
 ///<reference path='appbar/AppBarTabMenuButton.ts' />
 ///<reference path='appbar/AppBarTabMenuItem.ts' />
+///<reference path='appbar/AppBar.ts' />
+///<reference path='FormDeckPanel.ts' />
+///<reference path='AppPanel.ts' />
 
 ///<reference path='AppBrowsePanel.ts' />
 ///<reference path='FormDeckPanel.ts' />

@@ -734,6 +734,20 @@ module api_appbar {
     }
 }
 module api {
+    class FormDeckPanel extends api_ui.DeckPanel {
+        constructor();
+    }
+}
+module api {
+    class AppPanel extends api_ui.DeckPanel {
+        public ext;
+        private appBrowsePanel;
+        private formDeckPanel;
+        constructor(appMainPanel: AppBrowsePanel, formDeckPanel: FormDeckPanel);
+        private initExt();
+    }
+}
+module api {
     class AppBrowsePanel extends api_ui.Panel {
         public ext;
         private browseToolbar;
@@ -742,11 +756,6 @@ module api {
         private filterPanel;
         constructor(browseToolbar: api_ui_toolbar.Toolbar, grid: any, detailPanel: api_ui_detailpanel.DetailPanel, filterPanel: any);
         private initExt();
-    }
-}
-module api {
-    class FormDeckPanel extends api_ui.DeckPanel {
-        constructor();
     }
 }
 module api_notify {

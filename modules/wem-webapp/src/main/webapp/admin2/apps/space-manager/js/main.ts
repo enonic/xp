@@ -74,6 +74,7 @@
 ///<reference path='appbar/SpaceAppBarTabMenuItem.ts' />
 ///<reference path='appbar/SpaceAppBarTabMenu.ts' />
 ///<reference path='SpaceAppPanelController.ts' />
+///<reference path='SpaceAppPanel.ts' />
 
 
 declare var Ext;

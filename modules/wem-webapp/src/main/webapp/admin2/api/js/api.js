@@ -2043,6 +2043,45 @@ var api_appbar;
 })(api_appbar || (api_appbar = {}));
 var api;
 (function (api) {
+    var FormDeckPanel = (function (_super) {
+        __extends(FormDeckPanel, _super);
+        function FormDeckPanel() {
+                _super.call(this, "FormDeckPanel");
+        }
+        return FormDeckPanel;
+    })(api_ui.DeckPanel);
+    api.FormDeckPanel = FormDeckPanel;    
+})(api || (api = {}));
+var api;
+(function (api) {
+    var AppPanel = (function (_super) {
+        __extends(AppPanel, _super);
+        function AppPanel(appMainPanel, formDeckPanel) {
+                _super.call(this, "AppPanel");
+            this.appBrowsePanel = appMainPanel;
+            this.formDeckPanel = formDeckPanel;
+            this.addPanel(this.appBrowsePanel);
+            this.addPanel(this.formDeckPanel);
+            this.showPanel(0);
+            this.initExt();
+        }
+        AppPanel.prototype.initExt = function () {
+            this.ext = new Ext.layout.container.Card({
+                id: 'AppPanel',
+                title: 'AppPanel',
+                closable: false,
+                border: false,
+                layout: 'card'
+            });
+            this.ext.add(this.appBrowsePanel);
+            this.ext.add(this.formDeckPanel);
+        };
+        return AppPanel;
+    })(api_ui.DeckPanel);
+    api.AppPanel = AppPanel;    
+})(api || (api = {}));
+var api;
+(function (api) {
     var AppBrowsePanel = (function (_super) {
         __extends(AppBrowsePanel, _super);
         function AppBrowsePanel(browseToolbar, grid, detailPanel, filterPanel) {
@@ -2077,17 +2116,6 @@ var api;
         return AppBrowsePanel;
     })(api_ui.Panel);
     api.AppBrowsePanel = AppBrowsePanel;    
-})(api || (api = {}));
-var api;
-(function (api) {
-    var FormDeckPanel = (function (_super) {
-        __extends(FormDeckPanel, _super);
-        function FormDeckPanel() {
-                _super.call(this, "FormDeckPanel");
-        }
-        return FormDeckPanel;
-    })(api_ui.DeckPanel);
-    api.FormDeckPanel = FormDeckPanel;    
 })(api || (api = {}));
 var api_notify;
 (function (api_notify) {
