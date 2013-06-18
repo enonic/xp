@@ -54,7 +54,7 @@ module api_ui {
         }
 
         prependChild(child:api_ui.Element) {
-            jQuery(this.el.getHTMLElement()).prepend(child.getHTMLElement());
+            this.el.getHTMLElement().insertBefore(child.getHTMLElement(), this.el.getHTMLElement().firstChild);
         }
 
         removeChildren() {

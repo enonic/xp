@@ -1,4 +1,4 @@
-module api_ui_wizard {
+module api_wizard {
     export class WizardPanel extends api_ui.Panel {
 
         private steps:WizardStep[] = [];
@@ -42,6 +42,10 @@ module api_ui_wizard {
         addStep(step:WizardStep) {
             this.steps.push(step);
             this.stepContainer.addStep(step);
+        }
+
+        addToolbar(toolbar:api_ui_toolbar.Toolbar) {
+            this.getEl().insertBefore(toolbar, this.titleEl);
         }
 
         private addTitle() {

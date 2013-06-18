@@ -16,6 +16,10 @@ module api_ui {
             return this.el;
         }
 
+        insertBefore(newEl:api_ui.Element, existingEl:api_ui.Element) {
+            this.el.insertBefore(newEl.getHTMLElement(), existingEl.getHTMLElement());
+        }
+
         setDisabled(value:bool):api_ui.ElementHelper {
             this.el.disabled = value;
             return this;

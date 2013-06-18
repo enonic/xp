@@ -11,7 +11,7 @@ module app_wizard {
             super.addAction(actions.DUPLICATE_SPACE);
             super.addAction(actions.DELETE_SPACE);
             super.addGreedySpacer();
-            super.addAction(actions.DELETE_SPACE);
+            super.addAction(actions.CLOSE_SPACE);
         }
     }
 }
