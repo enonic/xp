@@ -180,7 +180,7 @@ module app_ui {
                     }, me.layout));
 
                     // Include the 2 lines below to get the new AppBar on top of the old TopBar
-                    this.appbar = <any> new app_ui.SpaceAppBar();
+                    this.appbar = <any> new app_appbar.SpaceAppBar();
                     dockedItems.push(me.appbar.ext);
 
                     // Custom tabBar is why we needed to override this

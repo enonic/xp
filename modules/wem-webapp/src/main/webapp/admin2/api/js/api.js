@@ -1472,6 +1472,9 @@ var api_ui_tab;
         };
         TabMenu.prototype.selectTab = function (tab) {
         };
+        TabMenu.prototype.deselectTab = function () {
+            this.tabMenuButton.setLabel("");
+        };
         TabMenu.prototype.addTabSelectedListener = function (listener) {
             this.tabSelectedListeners.push(listener);
         };
@@ -1860,20 +1863,29 @@ var api_appbar;
 (function (api_appbar) {
     var AppBar = (function (_super) {
         __extends(AppBar, _super);
-        function AppBar(appName, tabMenu) {
+        function AppBar(appName, actions, tabMenu) {
+            var _this = this;
                 _super.call(this, 'AppBar', 'appbar');
             this.appName = appName;
+            this.actions = actions;
             this.tabMenu = tabMenu;
-            this.addLauncherButton();
-            this.addSeparator();
-            this.addHomeButton();
-            this.addUserButton();
+            this.launcherButton = new api_appbar.LauncherButton(actions.showAppLauncherAction);
+            this.appendChild(this.launcherButton);
+            var separator = new api_appbar.Separator();
+            this.appendChild(separator);
+            this.homeButton = new api_appbar.HomeButton(this.appName, actions.showAppBrowsePanelAction);
+            this.appendChild(this.homeButton);
+            this.userButton = new api_appbar.UserButton();
+            this.appendChild(this.userButton);
             if(this.tabMenu != null) {
                 this.appendChild(this.tabMenu);
             } else {
                 this.appendChild(new TabMenuContainer());
             }
-            this.addUserInfoPopup();
+            this.userInfoPopup = new api_appbar.UserInfoPopup();
+            this.userButton.getEl().addEventListener('click', function (event) {
+                _this.userInfoPopup.toggle();
+            });
             this.initExt();
         }
         AppBar.prototype.initExt = function () {
@@ -1882,38 +1894,15 @@ var api_appbar;
                 contentEl: htmlEl
             });
         };
-        AppBar.prototype.addLauncherButton = function () {
-            this.launcherButton = new api_appbar.LauncherButton();
-            this.appendChild(this.launcherButton);
-        };
-        AppBar.prototype.addSeparator = function () {
-            var separator = new api_appbar.Separator();
-            this.appendChild(separator);
-        };
-        AppBar.prototype.addHomeButton = function () {
-            this.homeButton = new api_appbar.HomeButton(this.appName);
-            this.appendChild(this.homeButton);
-        };
-        AppBar.prototype.addUserButton = function () {
-            this.userButton = new api_appbar.UserButton();
-            this.appendChild(this.userButton);
-        };
-        AppBar.prototype.addUserInfoPopup = function () {
-            var _this = this;
-            this.userInfoPopup = new api_appbar.UserInfoPopup();
-            this.userButton.getEl().addEventListener('click', function (event) {
-                _this.userInfoPopup.toggle();
-            });
-        };
         return AppBar;
     })(api_ui.DivEl);
     api_appbar.AppBar = AppBar;    
     var LauncherButton = (function (_super) {
         __extends(LauncherButton, _super);
-        function LauncherButton() {
+        function LauncherButton(action) {
                 _super.call(this, 'LauncherButton', 'launcher-button');
             this.getEl().addEventListener('click', function (event) {
-                api_appbar.AppBarActions.OPEN_APP_LAUNCHER.execute();
+                action.execute();
             });
         }
         return LauncherButton;
@@ -1929,11 +1918,11 @@ var api_appbar;
     api_appbar.Separator = Separator;    
     var HomeButton = (function (_super) {
         __extends(HomeButton, _super);
-        function HomeButton(text) {
+        function HomeButton(text, action) {
                 _super.call(this, 'HomeButton', 'home-button');
             this.getEl().setInnerHtml(text);
             this.getEl().addEventListener('click', function (event) {
-                api_appbar.AppBarActions.SHOW_APP_BROWSER_PANEL.execute();
+                action.execute();
             });
         }
         return HomeButton;
@@ -1991,53 +1980,25 @@ var api_appbar;
 })(api_appbar || (api_appbar = {}));
 var api_appbar;
 (function (api_appbar) {
-    var OpenAppLauncherAction = (function (_super) {
-        __extends(OpenAppLauncherAction, _super);
-        function OpenAppLauncherAction() {
-                _super.call(this, 'Start');
-            this.addExecutionListener(function () {
-                new api_appbar.OpenAppLauncherEvent().fire();
-                console.log('api_appbar.OpenAppLauncherEvent fired.');
-            });
+    var ShowAppLauncherEvent = (function (_super) {
+        __extends(ShowAppLauncherEvent, _super);
+        function ShowAppLauncherEvent() {
+                _super.call(this, 'showAppLauncher');
         }
-        return OpenAppLauncherAction;
-    })(api_ui.Action);
-    api_appbar.OpenAppLauncherAction = OpenAppLauncherAction;    
-    var ShowAppBrowsePanelAction = (function (_super) {
-        __extends(ShowAppBrowsePanelAction, _super);
-        function ShowAppBrowsePanelAction() {
-                _super.call(this, 'Home');
-            this.addExecutionListener(function () {
-                new api_appbar.ShowAppBrowsePanelEvent().fire();
-                console.log('api_appbar.ShowAppBrowsePanelEvent fired.');
-            });
-        }
-        return ShowAppBrowsePanelAction;
-    })(api_ui.Action);
-    api_appbar.ShowAppBrowsePanelAction = ShowAppBrowsePanelAction;    
-    var AppBarActions = (function () {
-        function AppBarActions() { }
-        AppBarActions.OPEN_APP_LAUNCHER = new OpenAppLauncherAction();
-        AppBarActions.SHOW_APP_BROWSER_PANEL = new ShowAppBrowsePanelAction();
-        return AppBarActions;
-    })();
-    api_appbar.AppBarActions = AppBarActions;    
-})(api_appbar || (api_appbar = {}));
-var api_appbar;
-(function (api_appbar) {
-    var OpenAppLauncherEvent = (function (_super) {
-        __extends(OpenAppLauncherEvent, _super);
-        function OpenAppLauncherEvent() {
-                _super.call(this, 'openAppLauncher');
-        }
-        return OpenAppLauncherEvent;
+        ShowAppLauncherEvent.on = function on(handler) {
+            api_event.onEvent('showAppLauncher', handler);
+        };
+        return ShowAppLauncherEvent;
     })(api_event.Event);
-    api_appbar.OpenAppLauncherEvent = OpenAppLauncherEvent;    
+    api_appbar.ShowAppLauncherEvent = ShowAppLauncherEvent;    
     var ShowAppBrowsePanelEvent = (function (_super) {
         __extends(ShowAppBrowsePanelEvent, _super);
         function ShowAppBrowsePanelEvent() {
                 _super.call(this, 'showAppBrowsePanel');
         }
+        ShowAppBrowsePanelEvent.on = function on(handler) {
+            api_event.onEvent('showAppBrowsePanel', handler);
+        };
         return ShowAppBrowsePanelEvent;
     })(api_event.Event);
     api_appbar.ShowAppBrowsePanelEvent = ShowAppBrowsePanelEvent;    

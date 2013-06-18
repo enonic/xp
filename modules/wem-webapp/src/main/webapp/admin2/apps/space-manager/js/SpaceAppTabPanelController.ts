@@ -66,7 +66,7 @@ module app {
                     };
                     api_remote.RemoteService.space_get(spaceGetParams, (result:api_remote.RemoteCallSpaceGetResult) => {
 
-                        if( result ) {
+                        if (result) {
                             var tabMenuItem = new app_appbar.SpaceAppBarTabMenuItem(result.space.displayName);
                             this.appBarTabMenu.addTab(tabMenuItem);
 
@@ -74,8 +74,8 @@ module app {
                             var id = this.generateTabId(result.space.name, true);
                             var editing = true;
                             var title = <string> result.space.displayName;
-                            var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel(id, title, editing, spaceModel);
-                            //var spaceWizardPanel = new app_wizard.SpaceWizardPanel2(id, title);
+                            //var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel(id, title, editing, spaceModel);
+                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel2(id, title, result.space.iconUrl);
 
 
                             //check if preview tab (open action) is open and close it
@@ -99,6 +99,11 @@ module app {
                     });
                 }
 
+            });
+
+            api_appbar.ShowAppBrowsePanelEvent.on((event) => {
+                app_ui.TabPanel.get().getExtEl().setActiveTab(0);
+                this.appBarTabMenu.deselectTab();
             });
         }
 
@@ -131,7 +136,7 @@ module app {
             this.appBarTabMenu.removeTab(tab);
             //var activeTab = app_ui.TabPanel.get().getExtEl().getActiveTab();
             var extTab = this.extTabByTabIndex[tab.getTabIndex()];
-            app_ui.TabPanel.get().getExtEl().remove( extTab );
+            app_ui.TabPanel.get().getExtEl().remove(extTab);
             delete this.extTabByTabIndex[tab.getTabIndex()];
         }
 

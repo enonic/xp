@@ -4,7 +4,9 @@ module api_appbar {
 
         ext;
 
-        appName:string;
+        private appName:string;
+
+        private actions:AppBarActions;
 
         private launcherButton:api_ui.ButtonEl;
 
@@ -16,23 +18,37 @@ module api_appbar {
 
         private userInfoPopup:api_appbar.UserInfoPopup;
 
-        constructor(appName, tabMenu?:AppBarTabMenu) {
+        constructor(appName, actions:AppBarActions, tabMenu?:AppBarTabMenu) {
             super('AppBar', 'appbar');
 
             this.appName = appName;
+            this.actions = actions;
             this.tabMenu = tabMenu;
 
-            this.addLauncherButton();
-            this.addSeparator();
-            this.addHomeButton();
-            this.addUserButton();
-            if( this.tabMenu != null ) {
+            this.launcherButton = new api_appbar.LauncherButton(actions.showAppLauncherAction);
+            this.appendChild(this.launcherButton);
+
+            var separator = new api_appbar.Separator();
+            this.appendChild(separator);
+
+            this.homeButton = new api_appbar.HomeButton(this.appName, actions.showAppBrowsePanelAction);
+            this.appendChild(this.homeButton);
+
+            this.userButton = new api_appbar.UserButton();
+            this.appendChild(this.userButton);
+
+            if (this.tabMenu != null) {
                 this.appendChild(this.tabMenu);
             }
             else {
                 this.appendChild(new TabMenuContainer())
             }
-            this.addUserInfoPopup();
+
+            this.userInfoPopup = new api_appbar.UserInfoPopup();
+
+            this.userButton.getEl().addEventListener('click', (event:Event) => {
+                this.userInfoPopup.toggle();
+            });
 
             this.initExt();
         }
@@ -43,44 +59,22 @@ module api_appbar {
                 contentEl: htmlEl
             });
         }
+    }
 
-        private addLauncherButton() {
-            this.launcherButton = new api_appbar.LauncherButton();
-            this.appendChild(this.launcherButton);
-        }
+    export interface AppBarActions {
 
-        private addSeparator() {
-            var separator = new api_appbar.Separator();
-            this.appendChild(separator);
-        }
+        showAppLauncherAction:api_ui.Action;
 
-        private addHomeButton() {
-            this.homeButton = new api_appbar.HomeButton(this.appName);
-            this.appendChild(this.homeButton);
-        }
-
-
-        private addUserButton() {
-            this.userButton = new api_appbar.UserButton();
-            this.appendChild(this.userButton);
-        }
-
-        private addUserInfoPopup() {
-            this.userInfoPopup = new api_appbar.UserInfoPopup();
-
-            this.userButton.getEl().addEventListener('click', (event:Event) => {
-                this.userInfoPopup.toggle();
-            });
-        }
+        showAppBrowsePanelAction:api_ui.Action;
     }
 
     export class LauncherButton extends api_ui.ButtonEl {
 
-        constructor() {
+        constructor(action:api_ui.Action) {
             super('LauncherButton', 'launcher-button');
 
             this.getEl().addEventListener('click', (event:Event) => {
-                api_appbar.AppBarActions.OPEN_APP_LAUNCHER.execute();
+                action.execute();
             });
         }
 
@@ -96,13 +90,13 @@ module api_appbar {
 
     export class HomeButton extends api_ui.ButtonEl {
 
-        constructor(text:string) {
+        constructor(text:string, action:api_ui.Action) {
             super('HomeButton', 'home-button');
 
             this.getEl().setInnerHtml(text);
 
             this.getEl().addEventListener('click', (event:Event) => {
-                api_appbar.AppBarActions.SHOW_APP_BROWSER_PANEL.execute();
+                action.execute();
             });
         }
 

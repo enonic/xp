@@ -1,9 +1,13 @@
 module api_appbar {
 
-    export class OpenAppLauncherEvent extends api_event.Event {
+    export class ShowAppLauncherEvent extends api_event.Event {
 
         constructor() {
-            super('openAppLauncher');
+            super('showAppLauncher');
+        }
+
+        static on(handler:(event:api_appbar.ShowAppLauncherEvent) => void) {
+            api_event.onEvent('showAppLauncher', handler);
         }
 
     }
@@ -12,6 +16,10 @@ module api_appbar {
 
         constructor() {
             super('showAppBrowsePanel');
+        }
+
+        static on(handler:(event:ShowAppBrowsePanelEvent) => void) {
+            api_event.onEvent('showAppBrowsePanel', handler);
         }
 
     }

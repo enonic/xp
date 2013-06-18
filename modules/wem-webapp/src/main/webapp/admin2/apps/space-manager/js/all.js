@@ -3843,7 +3843,7 @@ var app_ui;
                         itemCls: me.itemCls,
                         activeItem: me.activeTab
                     }, me.layout));
-                    this.appbar = new app_ui.SpaceAppBar();
+                    this.appbar = new app_appbar.SpaceAppBar();
                     dockedItems.push(me.appbar.ext);
                     this.tabBar = new app_ui.TopBar(me.appName, me);
                     dockedItems.push(this.tabBar.ext);
@@ -4240,17 +4240,20 @@ var app_ui;
     })(api_ui_toolbar.Toolbar);
     app_ui.BrowseToolbar = BrowseToolbar;    
 })(app_ui || (app_ui = {}));
-var app_ui;
-(function (app_ui) {
+var app_appbar;
+(function (app_appbar) {
     var SpaceAppBar = (function (_super) {
         __extends(SpaceAppBar, _super);
         function SpaceAppBar() {
-                _super.call(this, "Space Admin", app.SpaceAppTabPanelController.get().getAppBarTabMenu());
+                _super.call(this, "Space Admin", {
+        showAppLauncherAction: app_appbar.SpaceAppBarActions.SHOW_APP_LAUNCHER,
+        showAppBrowsePanelAction: app_appbar.SpaceAppBarActions.SHOW_APP_BROWSER_PANEL
+    }, app.SpaceAppTabPanelController.get().getAppBarTabMenu());
         }
         return SpaceAppBar;
     })(api_appbar.AppBar);
-    app_ui.SpaceAppBar = SpaceAppBar;    
-})(app_ui || (app_ui = {}));
+    app_appbar.SpaceAppBar = SpaceAppBar;    
+})(app_appbar || (app_appbar = {}));
 Ext.define('Admin.controller.Controller', {
     extend: 'Ext.app.Controller',
     stores: [],
@@ -4640,6 +4643,38 @@ Ext.define('Admin.controller.WizardController', {
 });
 var app_appbar;
 (function (app_appbar) {
+    var ShowAppLauncherAction = (function (_super) {
+        __extends(ShowAppLauncherAction, _super);
+        function ShowAppLauncherAction() {
+                _super.call(this, 'Start');
+            this.addExecutionListener(function () {
+                new api_appbar.ShowAppLauncherEvent().fire();
+            });
+        }
+        return ShowAppLauncherAction;
+    })(api_ui.Action);
+    app_appbar.ShowAppLauncherAction = ShowAppLauncherAction;    
+    var ShowAppBrowsePanelAction = (function (_super) {
+        __extends(ShowAppBrowsePanelAction, _super);
+        function ShowAppBrowsePanelAction() {
+                _super.call(this, 'Browse');
+            this.addExecutionListener(function () {
+                new api_appbar.ShowAppBrowsePanelEvent().fire();
+            });
+        }
+        return ShowAppBrowsePanelAction;
+    })(api_ui.Action);
+    app_appbar.ShowAppBrowsePanelAction = ShowAppBrowsePanelAction;    
+    var SpaceAppBarActions = (function () {
+        function SpaceAppBarActions() { }
+        SpaceAppBarActions.SHOW_APP_LAUNCHER = new app_appbar.ShowAppLauncherAction();
+        SpaceAppBarActions.SHOW_APP_BROWSER_PANEL = new ShowAppBrowsePanelAction();
+        return SpaceAppBarActions;
+    })();
+    app_appbar.SpaceAppBarActions = SpaceAppBarActions;    
+})(app_appbar || (app_appbar = {}));
+var app_appbar;
+(function (app_appbar) {
     var SpaceAppBarTabMenuItem = (function (_super) {
         __extends(SpaceAppBarTabMenuItem, _super);
         function SpaceAppBarTabMenuItem(label) {
@@ -4703,7 +4738,7 @@ var app;
                             var id = _this.generateTabId(result.space.name, true);
                             var editing = true;
                             var title = result.space.displayName;
-                            var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel(id, title, editing, spaceModel);
+                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel2(id, title, result.space.iconUrl);
                             var index = app_ui.TabPanel.get().getExtEl().items.indexOfKey(_this.generateTabId(result.space.name, false));
                             if(index >= 0) {
                                 app_ui.TabPanel.get().getExtEl().remove(index);
@@ -4719,6 +4754,10 @@ var app;
                         }
                     });
                 }
+            });
+            api_appbar.ShowAppBrowsePanelEvent.on(function (event) {
+                app_ui.TabPanel.get().getExtEl().setActiveTab(0);
+                _this.appBarTabMenu.deselectTab();
             });
         }
         SpaceAppTabPanelController.init = function init() {

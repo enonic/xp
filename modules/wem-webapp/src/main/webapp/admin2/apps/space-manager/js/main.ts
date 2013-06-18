@@ -72,6 +72,7 @@
 ///<reference path='controller/DetailToolbarController.ts' />
 ///<reference path='controller/WizardController.ts' />
 
+///<reference path='appbar/SpaceAppBarActions.ts' />
 ///<reference path='appbar/SpaceAppBarTabMenuItem.ts' />
 ///<reference path='appbar/SpaceAppBarTabMenu.ts' />
 ///<reference path='appbar/SpaceAppBar.ts' />

@@ -5033,17 +5033,52 @@ Ext.define('Admin.view.WizardPanel', {
     createActionButton: function () {
     }
 });
-var app_ui;
-(function (app_ui) {
+var app_appbar;
+(function (app_appbar) {
+    var ShowAppLauncherAction = (function (_super) {
+        __extends(ShowAppLauncherAction, _super);
+        function ShowAppLauncherAction() {
+                _super.call(this, 'Start');
+            this.addExecutionListener(function () {
+                new api_appbar.ShowAppLauncherEvent().fire();
+            });
+        }
+        return ShowAppLauncherAction;
+    })(api_ui.Action);
+    app_appbar.ShowAppLauncherAction = ShowAppLauncherAction;    
+    var ShowAppBrowsePanelAction = (function (_super) {
+        __extends(ShowAppBrowsePanelAction, _super);
+        function ShowAppBrowsePanelAction() {
+                _super.call(this, 'Browse');
+            this.addExecutionListener(function () {
+                new api_appbar.ShowAppBrowsePanelEvent().fire();
+            });
+        }
+        return ShowAppBrowsePanelAction;
+    })(api_ui.Action);
+    app_appbar.ShowAppBrowsePanelAction = ShowAppBrowsePanelAction;    
+    var ContentAppBarActions = (function () {
+        function ContentAppBarActions() { }
+        ContentAppBarActions.SHOW_APP_LAUNCHER = new app_appbar.ShowAppLauncherAction();
+        ContentAppBarActions.SHOW_APP_BROWSER_PANEL = new ShowAppBrowsePanelAction();
+        return ContentAppBarActions;
+    })();
+    app_appbar.ContentAppBarActions = ContentAppBarActions;    
+})(app_appbar || (app_appbar = {}));
+var app_appbar;
+(function (app_appbar) {
     var ContentAppBar = (function (_super) {
         __extends(ContentAppBar, _super);
         function ContentAppBar() {
-                _super.call(this, "Content Manager");
+                _super.call(this, "Content Manager", {
+        showAppLauncherAction: app_appbar.ContentAppBarActions.SHOW_APP_LAUNCHER,
+        showAppBrowsePanelAction: app_appbar.ContentAppBarActions.SHOW_APP_BROWSER_PANEL
+    });
         }
         return ContentAppBar;
     })(api_appbar.AppBar);
-    app_ui.ContentAppBar = ContentAppBar;    
-})(app_ui || (app_ui = {}));
+    app_appbar.ContentAppBar = ContentAppBar;    
+})(app_appbar || (app_appbar = {}));
 Ext.define('Admin.view.contentManager.wizard.form.FormItemOccurrencesHandler', {
     copyNo: 1,
     handleOccurrences: function (minimum) {

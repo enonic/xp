@@ -96,7 +96,10 @@ module api_ui_tab {
 
         selectTab(tab:api_ui_tab.Tab) {
 
+        }
 
+        deselectTab() {
+            this.tabMenuButton.setLabel("");
         }
 
         addTabSelectedListener(listener:TabSelectedListener) {

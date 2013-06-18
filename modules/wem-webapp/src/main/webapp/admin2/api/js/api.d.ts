@@ -532,6 +532,7 @@ module api_ui_tab {
         public getSize(): number;
         public removeTab(tab: Tab): void;
         public selectTab(tab: Tab): void;
+        public deselectTab(): void;
         public addTabSelectedListener(listener: TabSelectedListener): void;
         public addTabRemoveListener(listener: TabRemoveListener): void;
         public handleTabClickedEvent(tabMenuItem: TabMenuItem): void;
@@ -630,28 +631,28 @@ module api_ui_util {
 module api_appbar {
     class AppBar extends api_ui.DivEl {
         public ext;
-        public appName: string;
+        private appName;
+        private actions;
         private launcherButton;
         private homeButton;
         private tabMenu;
         private userButton;
         private userInfoPopup;
-        constructor(appName, tabMenu?: AppBarTabMenu);
+        constructor(appName, actions: AppBarActions, tabMenu?: AppBarTabMenu);
         private initExt();
-        private addLauncherButton();
-        private addSeparator();
-        private addHomeButton();
-        private addUserButton();
-        private addUserInfoPopup();
+    }
+    interface AppBarActions {
+        showAppLauncherAction: api_ui.Action;
+        showAppBrowsePanelAction: api_ui.Action;
     }
     class LauncherButton extends api_ui.ButtonEl {
-        constructor();
+        constructor(action: api_ui.Action);
     }
     class Separator extends api_ui.SpanEl {
         constructor();
     }
     class HomeButton extends api_ui.ButtonEl {
-        constructor(text: string);
+        constructor(text: string, action: api_ui.Action);
     }
     class TabMenuContainer extends api_ui.DivEl {
         constructor();
@@ -671,23 +672,13 @@ module api_appbar {
     }
 }
 module api_appbar {
-    class OpenAppLauncherAction extends api_ui.Action {
+    class ShowAppLauncherEvent extends api_event.Event {
         constructor();
-    }
-    class ShowAppBrowsePanelAction extends api_ui.Action {
-        constructor();
-    }
-    class AppBarActions {
-        static OPEN_APP_LAUNCHER: api_ui.Action;
-        static SHOW_APP_BROWSER_PANEL: api_ui.Action;
-    }
-}
-module api_appbar {
-    class OpenAppLauncherEvent extends api_event.Event {
-        constructor();
+        static on(handler: (event: ShowAppLauncherEvent) => void): void;
     }
     class ShowAppBrowsePanelEvent extends api_event.Event {
         constructor();
+        static on(handler: (event: ShowAppBrowsePanelEvent) => void): void;
     }
 }
 module api_ui_dialog {

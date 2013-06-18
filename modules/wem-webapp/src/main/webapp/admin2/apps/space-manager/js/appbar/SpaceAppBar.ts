@@ -1,9 +1,14 @@
-module app_ui {
+module app_appbar {
 
     export class SpaceAppBar extends api_appbar.AppBar {
 
         constructor() {
-            super("Space Admin", app.SpaceAppTabPanelController.get().getAppBarTabMenu())
+            super("Space Admin",
+                {
+                    showAppLauncherAction: SpaceAppBarActions.SHOW_APP_LAUNCHER,
+                    showAppBrowsePanelAction: SpaceAppBarActions.SHOW_APP_BROWSER_PANEL
+                },
+                app.SpaceAppTabPanelController.get().getAppBarTabMenu());
         }
 
     }
