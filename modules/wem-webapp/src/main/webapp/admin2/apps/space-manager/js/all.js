@@ -4700,12 +4700,12 @@ var app;
             var appPanel = new api_ui.DeckPanel();
                 _super.call(this, appBarTabMenu, appPanel);
             app_event.NewSpaceEvent.on(function (event) {
-                var tabMenuItem = new app_appbar.SpaceTabMenuItem();
+                var tabMenuItem = new app_appbar.SpaceTabMenuItem("New Space");
                 var panel = new api_ui.Panel();
                 _this.addPanel(panel, tabMenuItem);
             });
             app_event.OpenSpaceEvent.on(function (event) {
-                var tabMenuItem = new app_appbar.SpaceTabMenuItem();
+                var tabMenuItem = new app_appbar.SpaceTabMenuItem("Space?");
                 var panel = new api_ui.Panel();
                 _this.addPanel(panel, tabMenuItem);
             });

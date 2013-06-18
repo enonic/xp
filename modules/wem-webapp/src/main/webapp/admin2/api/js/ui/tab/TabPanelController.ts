@@ -1,12 +1,10 @@
 module api_ui_tab {
 
-    export class TabPanelController implements TabRemovedListener, TabSelectedListener {
+    export class TabPanelController implements api_ui_tab.TabRemoveListener, TabSelectedListener {
 
         private tabNavigator:TabNavigator;
 
         private deckPanel:api_ui.DeckPanel;
-
-        private tabs:Tab[] = [];
 
         private deckIndexByTabIndex = {};
 
@@ -16,29 +14,39 @@ module api_ui_tab {
             this.deckPanel = deckPanel;
 
             this.tabNavigator.addTabSelectedListener(this);
-            this.tabNavigator.addTabRemovedListener(this);
+            this.tabNavigator.addTabRemoveListener(this);
         }
 
         addPanel(panel:api_ui.Panel, tab:api_ui_tab.Tab) {
 
-            var tabIndex:number = this.tabs.length;
+            var tabIndex:number = this.tabNavigator.getSize();
             tab.setTabIndex(tabIndex);
             this.tabNavigator.addTab(tab);
 
-            this.deckIndexByTabIndex[tabIndex] = this.deckPanel.addPanel(panel);
-            this.tabs.push(tab);
+            if (this.deckPanel != null) {
+                this.deckIndexByTabIndex[tabIndex] = this.deckPanel.addPanel(panel);
+            }
         }
 
-        removedTab(tab:Tab) {
+        tabRemove(tab:Tab) {
             var deckIndex = this.deckIndexByTabIndex[tab.getTabIndex()];
-            this.deckPanel.removePanel(deckIndex);
+
+            if (this.deckPanel != null) {
+                this.deckPanel.removePanel(deckIndex);
+            }
         }
 
-        selectedTab(tab:Tab) {
+        removeTab(tab:api_ui_tab.Tab) {
+            //this.tabNavigator.removeTab(tab);
+        }
+
+
+        selectedTab(tab:api_ui_tab.Tab) {
             var deckIndex = this.deckIndexByTabIndex[tab.getTabIndex()];
-            this.deckPanel.showPanel(deckIndex);
+
+            if (this.deckPanel != null) {
+                this.deckPanel.showPanel(deckIndex);
+            }
         }
     }
-
-
 }

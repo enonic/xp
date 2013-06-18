@@ -478,11 +478,12 @@ module api_ui_tab {
     interface Tab {
         setTabIndex(value: number);
         getTabIndex(): number;
+        getLabel(): string;
     }
 }
 module api_ui_tab {
-    interface TabRemovedListener {
-        removedTab(tab: Tab);
+    interface TabRemoveListener {
+        tabRemove(tab: Tab);
     }
 }
 module api_ui_tab {
@@ -493,33 +494,70 @@ module api_ui_tab {
 module api_ui_tab {
     interface TabNavigator {
         addTab(tab: Tab);
+        getSize(): number;
         addTabSelectedListener(listener: TabSelectedListener);
-        addTabRemovedListener(listener: TabRemovedListener);
+        addTabRemoveListener(listener: TabRemoveListener);
     }
 }
 module api_ui_tab {
-    class TabMenu implements TabNavigator {
+    class TabMenu extends api_ui.DivEl implements TabNavigator {
+        public ext;
+        private tabMenuButton;
+        private menuEl;
+        private showingMenuItems;
+        private tabs;
+        private tabSelectedListeners;
+        private tabRemovedListeners;
+        constructor(idPrefix?: string);
+        public createTabMenuButton(): TabMenuButton;
+        public createMenu(): api_ui.UlEl;
+        private initExt();
+        private toggleMenu();
+        public hideMenu(): void;
+        public showMenu(): void;
         public addTab(tab: Tab): void;
+        public getSize(): number;
+        public removeTab(tab: Tab): void;
+        public selectTab(tab: Tab): void;
         public addTabSelectedListener(listener: TabSelectedListener): void;
-        public addTabRemovedListener(listener: TabRemovedListener): void;
+        public addTabRemoveListener(listener: TabRemoveListener): void;
+        public handleTabClickedEvent(tabMenuItem: TabMenuItem): void;
+        public handleTabRemoveButtonClickedEvent(tabMenuItem: TabMenuItem): void;
+        public fireTabSelected(tab: Tab): void;
+        private fireBeforeTabRemoved(tab);
     }
 }
 module api_ui_tab {
-    class TabMenuItem implements Tab {
-        constructor();
+    class TabMenuButton extends api_ui.DivEl {
+        private labelEl;
+        private tabMenu;
+        constructor(idPrefix?: string);
+        public setTabMenu(tabMenu: TabMenu): void;
+        public setLabel(value: string): void;
+    }
+}
+module api_ui_tab {
+    class TabMenuItem extends api_ui.LiEl implements Tab {
+        private tabIndex;
+        private label;
+        private labelEl;
+        private tabMenu;
+        constructor(label: string);
+        public setTabMenu(tabMenu: TabMenu): void;
         public setTabIndex(value: number): void;
         public getTabIndex(): number;
+        public getLabel(): string;
     }
 }
 module api_ui_tab {
-    class TabPanelController implements TabRemovedListener, TabSelectedListener {
+    class TabPanelController implements TabRemoveListener, TabSelectedListener {
         private tabNavigator;
         private deckPanel;
-        private tabs;
         private deckIndexByTabIndex;
         constructor(tabNavigator: TabNavigator, deckPanel: api_ui.DeckPanel);
         public addPanel(panel: api_ui.Panel, tab: Tab): void;
-        public removedTab(tab: Tab): void;
+        public tabRemove(tab: Tab): void;
+        public removeTab(tab: Tab): void;
         public selectedTab(tab: Tab): void;
     }
 }

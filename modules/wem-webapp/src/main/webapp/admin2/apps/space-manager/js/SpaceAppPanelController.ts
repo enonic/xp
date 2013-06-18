@@ -11,14 +11,14 @@ module app {
 
             app_event.NewSpaceEvent.on((event) => {
 
-                var tabMenuItem = new app_appbar.SpaceTabMenuItem();
+                var tabMenuItem = new app_appbar.SpaceTabMenuItem("New Space");
                 var panel = new api_ui.Panel();
                 this.addPanel( panel, tabMenuItem );
             });
 
             app_event.OpenSpaceEvent.on((event) => {
 
-                var tabMenuItem = new app_appbar.SpaceTabMenuItem();
+                var tabMenuItem = new app_appbar.SpaceTabMenuItem("TODO");
                 var panel = new api_ui.Panel();
                 this.addPanel( panel, tabMenuItem );
             });

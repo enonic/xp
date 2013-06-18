@@ -1362,58 +1362,187 @@ var api_ui_menu;
 })(api_ui_menu || (api_ui_menu = {}));
 var api_ui_tab;
 (function (api_ui_tab) {
-    var TabMenu = (function () {
-        function TabMenu() { }
+    var TabMenu = (function (_super) {
+        __extends(TabMenu, _super);
+        function TabMenu(idPrefix) {
+            var _this = this;
+                _super.call(this, idPrefix || "TabMenu");
+            this.showingMenuItems = false;
+            this.tabs = [];
+            this.tabSelectedListeners = [];
+            this.tabRemovedListeners = [];
+            this.tabMenuButton = this.createTabMenuButton();
+            this.tabMenuButton.getEl().addEventListener("click", function () {
+                _this.toggleMenu();
+            });
+            this.appendChild(this.tabMenuButton);
+            this.menuEl = this.createMenu();
+            this.appendChild(this.menuEl);
+            this.initExt();
+        }
+        TabMenu.prototype.createTabMenuButton = function () {
+            return new api_ui_tab.TabMenuButton();
+        };
+        TabMenu.prototype.createMenu = function () {
+            var ulEl = new api_ui.UlEl();
+            ulEl.getEl().setZindex(19001);
+            ulEl.hide();
+            return ulEl;
+        };
+        TabMenu.prototype.initExt = function () {
+            var htmlEl = this.getHTMLElement();
+            this.ext = new Ext.Component({
+                contentEl: htmlEl
+            });
+        };
+        TabMenu.prototype.toggleMenu = function () {
+            if(!this.showingMenuItems) {
+                this.showMenu();
+            } else {
+                this.hideMenu();
+            }
+        };
+        TabMenu.prototype.hideMenu = function () {
+            this.menuEl.hide();
+            this.showingMenuItems = false;
+        };
+        TabMenu.prototype.showMenu = function () {
+            this.menuEl.show();
+            this.showingMenuItems = true;
+        };
         TabMenu.prototype.addTab = function (tab) {
+            var tabMenuItem = tab;
+            tabMenuItem.setTabMenu(this);
+            var newLength = this.tabs.push(tabMenuItem);
+            tabMenuItem.setTabIndex(newLength - 1);
+            this.tabMenuButton.setLabel(tab.getLabel());
+            this.menuEl.appendChild(tabMenuItem);
+        };
+        TabMenu.prototype.getSize = function () {
+            return this.tabs.length;
+        };
+        TabMenu.prototype.removeTab = function (tab) {
+            var tabMenuItem = tab;
+            tabMenuItem.getEl().remove();
+            this.tabs.splice(tab.getTabIndex());
+        };
+        TabMenu.prototype.selectTab = function (tab) {
         };
         TabMenu.prototype.addTabSelectedListener = function (listener) {
+            this.tabSelectedListeners.push(listener);
         };
-        TabMenu.prototype.addTabRemovedListener = function (listener) {
+        TabMenu.prototype.addTabRemoveListener = function (listener) {
+            this.tabRemovedListeners.push(listener);
+        };
+        TabMenu.prototype.handleTabClickedEvent = function (tabMenuItem) {
+            this.hideMenu();
+            this.fireTabSelected(tabMenuItem);
+        };
+        TabMenu.prototype.handleTabRemoveButtonClickedEvent = function (tabMenuItem) {
+            this.fireBeforeTabRemoved(tabMenuItem);
+        };
+        TabMenu.prototype.fireTabSelected = function (tab) {
+            for(var i = 0; i < this.tabSelectedListeners.length; i++) {
+                this.tabSelectedListeners[i].selectedTab(tab);
+            }
+        };
+        TabMenu.prototype.fireBeforeTabRemoved = function (tab) {
+            for(var i = 0; i < this.tabRemovedListeners.length; i++) {
+                this.tabRemovedListeners[i].tabRemove(tab);
+            }
         };
         return TabMenu;
-    })();
+    })(api_ui.DivEl);
     api_ui_tab.TabMenu = TabMenu;    
 })(api_ui_tab || (api_ui_tab = {}));
 var api_ui_tab;
 (function (api_ui_tab) {
-    var TabMenuItem = (function () {
-        function TabMenuItem() {
+    var TabMenuButton = (function (_super) {
+        __extends(TabMenuButton, _super);
+        function TabMenuButton(idPrefix) {
+                _super.call(this, idPrefix || "TabMenuButton");
+            this.labelEl = new api_ui.SpanEl();
+            this.appendChild(this.labelEl);
         }
+        TabMenuButton.prototype.setTabMenu = function (tabMenu) {
+            this.tabMenu = tabMenu;
+        };
+        TabMenuButton.prototype.setLabel = function (value) {
+            jQuery(this.labelEl.getHTMLElement()).text(value);
+        };
+        return TabMenuButton;
+    })(api_ui.DivEl);
+    api_ui_tab.TabMenuButton = TabMenuButton;    
+})(api_ui_tab || (api_ui_tab = {}));
+var api_ui_tab;
+(function (api_ui_tab) {
+    var TabMenuItem = (function (_super) {
+        __extends(TabMenuItem, _super);
+        function TabMenuItem(label) {
+            var _this = this;
+                _super.call(this, "TabMenuItem", "tab-menu-item");
+            this.label = label;
+            this.labelEl = new api_ui.SpanEl();
+            this.labelEl.getEl().setInnerHtml(label);
+            this.appendChild(this.labelEl);
+            var removeButton = new api_ui.ButtonEl();
+            removeButton.getEl().setInnerHtml("X");
+            this.appendChild(removeButton);
+            this.labelEl.getEl().addEventListener("click", function () {
+                _this.tabMenu.handleTabClickedEvent(_this);
+            });
+            removeButton.getEl().addEventListener("click", function () {
+                _this.tabMenu.handleTabRemoveButtonClickedEvent(_this);
+            });
+        }
+        TabMenuItem.prototype.setTabMenu = function (tabMenu) {
+            this.tabMenu = tabMenu;
+        };
         TabMenuItem.prototype.setTabIndex = function (value) {
+            this.tabIndex = value;
         };
         TabMenuItem.prototype.getTabIndex = function () {
-            return 0;
+            return this.tabIndex;
+        };
+        TabMenuItem.prototype.getLabel = function () {
+            return this.label;
         };
         return TabMenuItem;
-    })();
+    })(api_ui.LiEl);
     api_ui_tab.TabMenuItem = TabMenuItem;    
 })(api_ui_tab || (api_ui_tab = {}));
 var api_ui_tab;
 (function (api_ui_tab) {
     var TabPanelController = (function () {
         function TabPanelController(tabNavigator, deckPanel) {
-            this.tabs = [];
             this.deckIndexByTabIndex = {
             };
             this.tabNavigator = tabNavigator;
             this.deckPanel = deckPanel;
             this.tabNavigator.addTabSelectedListener(this);
-            this.tabNavigator.addTabRemovedListener(this);
+            this.tabNavigator.addTabRemoveListener(this);
         }
         TabPanelController.prototype.addPanel = function (panel, tab) {
-            var tabIndex = this.tabs.length;
+            var tabIndex = this.tabNavigator.getSize();
             tab.setTabIndex(tabIndex);
             this.tabNavigator.addTab(tab);
-            this.deckIndexByTabIndex[tabIndex] = this.deckPanel.addPanel(panel);
-            this.tabs.push(tab);
+            if(this.deckPanel != null) {
+                this.deckIndexByTabIndex[tabIndex] = this.deckPanel.addPanel(panel);
+            }
         };
-        TabPanelController.prototype.removedTab = function (tab) {
+        TabPanelController.prototype.tabRemove = function (tab) {
             var deckIndex = this.deckIndexByTabIndex[tab.getTabIndex()];
-            this.deckPanel.removePanel(deckIndex);
+            if(this.deckPanel != null) {
+                this.deckPanel.removePanel(deckIndex);
+            }
+        };
+        TabPanelController.prototype.removeTab = function (tab) {
         };
         TabPanelController.prototype.selectedTab = function (tab) {
             var deckIndex = this.deckIndexByTabIndex[tab.getTabIndex()];
-            this.deckPanel.showPanel(deckIndex);
+            if(this.deckPanel != null) {
+                this.deckPanel.showPanel(deckIndex);
+            }
         };
         return TabPanelController;
     })();
