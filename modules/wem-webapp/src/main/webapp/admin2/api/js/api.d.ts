@@ -253,6 +253,7 @@ module api_ui {
         public getEl(): ElementHelper;
         public getHTMLElement(): HTMLElement;
         public appendChild(child: Element): void;
+        public prependChild(child: Element): void;
         public removeChildren(): void;
     }
 }

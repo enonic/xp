@@ -53,6 +53,10 @@ module api_ui {
             this.el.appendChild(child.getEl().getHTMLElement());
         }
 
+        prependChild(child:api_ui.Element) {
+            jQuery(this.el.getHTMLElement()).prepend(child.getHTMLElement());
+        }
+
         removeChildren() {
             var htmlEl = this.el.getHTMLElement();
             while (htmlEl.firstChild) {
