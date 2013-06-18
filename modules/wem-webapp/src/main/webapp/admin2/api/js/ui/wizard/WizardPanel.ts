@@ -40,11 +40,6 @@ module api_ui_wizard {
         }
 
         addStep(step:WizardStep) {
-            this.wizardStepPanels.addPanel(step.getPanel());
-            if (this.steps.length == 0) {
-                console.log("showing panel");
-                this.wizardStepPanels.showPanel(1);
-            }
             this.steps.push(step);
             this.stepContainer.addStep(step);
         }
@@ -76,7 +71,7 @@ module api_ui_wizard {
     }
 
     class WizardStepContainer extends api_ui.UlEl {
-        private deckPanel;
+        private deckPanel:WizardStepPanels;
         private steps:WizardStep[] = [];
 
         constructor(deckPanel:WizardStepPanels) {
@@ -87,6 +82,9 @@ module api_ui_wizard {
         addStep(step:WizardStep) {
             this.steps.push(step);
             var panelIndex = this.deckPanel.addPanel(step.getPanel());
+            if (panelIndex == 0) {
+                this.deckPanel.showPanel(0);
+            }
 
             var stepEl = new api_ui.LiEl(step.getLabel());
             step.setEl(stepEl);

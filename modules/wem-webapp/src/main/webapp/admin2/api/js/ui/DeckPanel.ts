@@ -22,7 +22,7 @@ module api_ui {
          * @param panel
          * @returns {number} The index for the added Panel.
          */
-        addPanel(panel:Panel):number {
+            addPanel(panel:Panel):number {
             panel.hide();
             this.appendChild(panel);
             return this.panels.push(panel) - 1;
@@ -50,7 +50,6 @@ module api_ui {
         }
 
         showPanel(index:number) {
-
             for (var i:number = 0; i < this.panels.length; i++) {
                 var panel = this.panels[i];
                 if (i === index) {
