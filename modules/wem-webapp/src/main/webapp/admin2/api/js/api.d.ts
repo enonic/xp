@@ -430,39 +430,6 @@ module api_ui_detailpanel {
         public getModel(): api_model.Model;
     }
 }
-module api_wizard {
-    class WizardPanel extends api_ui.Panel {
-        private steps;
-        private stepContainer;
-        private wizardStepPanels;
-        private titleEl;
-        private subTitleEl;
-        public ext;
-        constructor();
-        private initExt();
-        public setTitle(title: string): void;
-        public setSubtitle(subtitle: string): void;
-        public addStep(step: WizardStep): void;
-        public addIcon(icon: api_ui_form.FormIcon): void;
-        public addToolbar(toolbar: api_ui_toolbar.Toolbar): void;
-        private addTitle();
-        private addSubTitle();
-        private addStepContainer();
-    }
-    class WizardStep {
-        private label;
-        private panel;
-        private active;
-        private el;
-        constructor(label: string, panel: api_ui.Panel);
-        public setEl(el: api_dom.Element): void;
-        public setActive(active: bool): void;
-        public isActive(): bool;
-        public getEl(): api_dom.Element;
-        public getLabel(): string;
-        public getPanel(): api_ui.Panel;
-    }
-}
 module api_ui_menu {
     class ContextMenu extends api_dom.UlEl {
         private menuItems;
@@ -692,6 +659,41 @@ module api_appbar {
         static on(handler: (event: ShowAppBrowsePanelEvent) => void): void;
     }
 }
+module api_appbar {
+    class AppBarTabMenu extends api_ui_tab.TabMenu {
+        private tabMenuButton;
+        constructor(idPrefix?: string);
+        public addTab(tab: api_ui_tab.Tab): void;
+        public createTabMenuButton(): api_ui_tab.TabMenuButton;
+        public removeTab(tab: api_ui_tab.Tab): void;
+    }
+}
+module api_appbar {
+    class AppBarTabMenuButton extends api_ui_tab.TabMenuButton {
+        private iconEl;
+        private tabCountEl;
+        constructor(idPrefix?: string);
+        public setTabCount(value: number): void;
+    }
+    class AppBarTabCount extends api_dom.SpanEl {
+        constructor();
+        public setCount(value: number): void;
+    }
+}
+module api_appbar {
+    class AppBarTabMenuItem extends api_ui_tab.TabMenuItem {
+        constructor(label: string);
+    }
+}
+module api {
+    class AppPanel extends api_ui.DeckPanel {
+        private browsePanel;
+        private deckPanel;
+        constructor(browsePanel: AppBrowsePanel, deckPanel: AppDeckPanel);
+        public showBrowsePanel(): void;
+        public showDeckPanel(): void;
+    }
+}
 module api_ui_dialog {
     class DialogButton extends api_ui.AbstractButton {
         private action;
@@ -765,39 +767,37 @@ module api_delete {
         public clear(): void;
     }
 }
-module api_appbar {
-    class AppBarTabMenu extends api_ui_tab.TabMenu {
-        private tabMenuButton;
-        constructor(idPrefix?: string);
-        public addTab(tab: api_ui_tab.Tab): void;
-        public createTabMenuButton(): api_ui_tab.TabMenuButton;
-        public removeTab(tab: api_ui_tab.Tab): void;
-    }
-}
-module api_appbar {
-    class AppBarTabMenuButton extends api_ui_tab.TabMenuButton {
-        private iconEl;
-        private tabCountEl;
-        constructor(idPrefix?: string);
-        public setTabCount(value: number): void;
-    }
-    class AppBarTabCount extends api_dom.SpanEl {
+module api_wizard {
+    class WizardPanel extends api_ui.Panel {
+        private steps;
+        private stepContainer;
+        private wizardStepPanels;
+        private titleEl;
+        private subTitleEl;
+        public ext;
         constructor();
-        public setCount(value: number): void;
+        private initExt();
+        public setTitle(title: string): void;
+        public setSubtitle(subtitle: string): void;
+        public addStep(step: WizardStep): void;
+        public addIcon(icon: api_ui_form.FormIcon): void;
+        public addToolbar(toolbar: api_ui_toolbar.Toolbar): void;
+        private addTitle();
+        private addSubTitle();
+        private addStepContainer();
     }
-}
-module api_appbar {
-    class AppBarTabMenuItem extends api_ui_tab.TabMenuItem {
-        constructor(label: string);
-    }
-}
-module api {
-    class AppPanel extends api_ui.DeckPanel {
-        private browsePanel;
-        private deckPanel;
-        constructor(browsePanel: AppBrowsePanel, deckPanel: AppDeckPanel);
-        public showBrowsePanel(): void;
-        public showDeckPanel(): void;
+    class WizardStep {
+        private label;
+        private panel;
+        private active;
+        private el;
+        constructor(label: string, panel: api_ui.Panel);
+        public setEl(el: api_dom.Element): void;
+        public setActive(active: bool): void;
+        public isActive(): bool;
+        public getEl(): api_dom.Element;
+        public getLabel(): string;
+        public getPanel(): api_ui.Panel;
     }
 }
 module api {

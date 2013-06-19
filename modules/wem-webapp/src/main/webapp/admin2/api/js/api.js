@@ -1129,134 +1129,6 @@ var api_ui_detailpanel;
     })(api_dom.DivEl);
     api_ui_detailpanel.DetailPanelBox = DetailPanelBox;    
 })(api_ui_detailpanel || (api_ui_detailpanel = {}));
-var api_wizard;
-(function (api_wizard) {
-    var WizardPanel = (function (_super) {
-        __extends(WizardPanel, _super);
-        function WizardPanel() {
-                _super.call(this, "wizard-panel");
-            this.steps = [];
-            this.getEl().addClass("wizard-panel");
-            this.addTitle();
-            this.addSubTitle();
-            this.wizardStepPanels = new WizardStepPanels();
-            this.addStepContainer();
-            this.appendChild(this.wizardStepPanels);
-            this.initExt();
-        }
-        WizardPanel.prototype.initExt = function () {
-            var htmlEl = this.getHTMLElement();
-            this.ext = new Ext.Component({
-                contentEl: htmlEl
-            });
-        };
-        WizardPanel.prototype.setTitle = function (title) {
-            this.titleEl.getEl().setValue(title);
-        };
-        WizardPanel.prototype.setSubtitle = function (subtitle) {
-            this.subTitleEl.getEl().setValue(subtitle);
-        };
-        WizardPanel.prototype.addStep = function (step) {
-            this.steps.push(step);
-            this.stepContainer.addStep(step);
-        };
-        WizardPanel.prototype.addIcon = function (icon) {
-            this.getEl().insertBefore(icon, this.titleEl);
-        };
-        WizardPanel.prototype.addToolbar = function (toolbar) {
-            this.getEl().insertBefore(toolbar, this.titleEl);
-        };
-        WizardPanel.prototype.addTitle = function () {
-            this.titleEl = new api_dom.Element("input", "title");
-            this.titleEl.getEl().addClass("title");
-            this.appendChild(this.titleEl);
-        };
-        WizardPanel.prototype.addSubTitle = function () {
-            this.subTitleEl = new api_dom.Element("input", "title");
-            this.subTitleEl.getEl().addClass("subtitle");
-            this.appendChild(this.subTitleEl);
-        };
-        WizardPanel.prototype.addStepContainer = function () {
-            var stepContainerEl = new WizardStepContainer(this.wizardStepPanels);
-            this.stepContainer = stepContainerEl;
-            this.appendChild(stepContainerEl);
-        };
-        return WizardPanel;
-    })(api_ui.Panel);
-    api_wizard.WizardPanel = WizardPanel;    
-    var WizardStepPanels = (function (_super) {
-        __extends(WizardStepPanels, _super);
-        function WizardStepPanels() {
-                _super.call(this, "WizardStepPanels");
-        }
-        return WizardStepPanels;
-    })(api_ui.DeckPanel);    
-    var WizardStepContainer = (function (_super) {
-        __extends(WizardStepContainer, _super);
-        function WizardStepContainer(deckPanel) {
-                _super.call(this, "step-container", "step-container");
-            this.steps = [];
-            this.deckPanel = deckPanel;
-        }
-        WizardStepContainer.prototype.addStep = function (step) {
-            var _this = this;
-            this.steps.push(step);
-            var panelIndex = this.deckPanel.addPanel(step.getPanel());
-            if(panelIndex == 0) {
-                this.deckPanel.showPanel(0);
-            }
-            var stepEl = new api_dom.LiEl(step.getLabel());
-            step.setEl(stepEl);
-            stepEl.getEl().setInnerHtml(step.getLabel());
-            stepEl.getEl().addEventListener("click", function (event) {
-                _this.removeActive();
-                step.setActive(true);
-                _this.deckPanel.showPanel(panelIndex);
-            });
-            if(this.steps.length == 1) {
-                step.setActive(true);
-            }
-            this.appendChild(stepEl);
-        };
-        WizardStepContainer.prototype.removeActive = function () {
-            this.steps.forEach(function (step) {
-                step.setActive(false);
-            });
-        };
-        return WizardStepContainer;
-    })(api_dom.UlEl);    
-    var WizardStep = (function () {
-        function WizardStep(label, panel) {
-            this.label = label;
-            this.panel = panel;
-        }
-        WizardStep.prototype.setEl = function (el) {
-            this.el = el;
-        };
-        WizardStep.prototype.setActive = function (active) {
-            this.active = active;
-            if(active) {
-                this.el.getEl().addClass("active");
-            } else {
-                this.el.getEl().removeClass("active");
-            }
-        };
-        WizardStep.prototype.isActive = function () {
-            return this.active;
-        };
-        WizardStep.prototype.getEl = function () {
-            return this.el;
-        };
-        WizardStep.prototype.getLabel = function () {
-            return this.label;
-        };
-        WizardStep.prototype.getPanel = function () {
-            return this.panel;
-        };
-        return WizardStep;
-    })();
-    api_wizard.WizardStep = WizardStep;    
-})(api_wizard || (api_wizard = {}));
 var api_ui_menu;
 (function (api_ui_menu) {
     var ContextMenu = (function (_super) {
@@ -2048,6 +1920,103 @@ var api_appbar;
     })(api_event.Event);
     api_appbar.ShowAppBrowsePanelEvent = ShowAppBrowsePanelEvent;    
 })(api_appbar || (api_appbar = {}));
+var api_appbar;
+(function (api_appbar) {
+    var AppBarTabMenu = (function (_super) {
+        __extends(AppBarTabMenu, _super);
+        function AppBarTabMenu(idPrefix) {
+                _super.call(this, idPrefix || "AppBarTabMenu");
+            this.getEl().addClass("appbar-tabmenu");
+        }
+        AppBarTabMenu.prototype.addTab = function (tab) {
+            _super.prototype.addTab.call(this, tab);
+            this.tabMenuButton.setTabCount(this.getSize());
+        };
+        AppBarTabMenu.prototype.createTabMenuButton = function () {
+            this.tabMenuButton = new api_appbar.AppBarTabMenuButton();
+            return this.tabMenuButton;
+        };
+        AppBarTabMenu.prototype.removeTab = function (tab) {
+            _super.prototype.removeTab.call(this, tab);
+            this.tabMenuButton.setTabCount(this.getSize());
+            if(this.getSize() == 0) {
+                this.tabMenuButton.setLabel("");
+            }
+        };
+        return AppBarTabMenu;
+    })(api_ui_tab.TabMenu);
+    api_appbar.AppBarTabMenu = AppBarTabMenu;    
+})(api_appbar || (api_appbar = {}));
+var api_appbar;
+(function (api_appbar) {
+    var AppBarTabMenuButton = (function (_super) {
+        __extends(AppBarTabMenuButton, _super);
+        function AppBarTabMenuButton(idPrefix) {
+                _super.call(this, idPrefix || "AppBarTabMenuButton");
+            this.getEl().addClass("appbar-tabmenu-button");
+            this.iconEl = new api_dom.SpanEl();
+            this.iconEl.getEl().addClass("icon-icomoon-pencil-32");
+            this.prependChild(this.iconEl);
+            this.tabCountEl = new AppBarTabCount();
+            this.appendChild(this.tabCountEl);
+        }
+        AppBarTabMenuButton.prototype.setTabCount = function (value) {
+            this.tabCountEl.setCount(value);
+        };
+        return AppBarTabMenuButton;
+    })(api_ui_tab.TabMenuButton);
+    api_appbar.AppBarTabMenuButton = AppBarTabMenuButton;    
+    var AppBarTabCount = (function (_super) {
+        __extends(AppBarTabCount, _super);
+        function AppBarTabCount() {
+                _super.call(this);
+            this.getEl().addClass("tabcount");
+        }
+        AppBarTabCount.prototype.setCount = function (value) {
+            if(value > 0) {
+                this.getEl().setInnerHtml("" + value);
+            } else {
+                this.getEl().setInnerHtml("");
+            }
+        };
+        return AppBarTabCount;
+    })(api_dom.SpanEl);
+    api_appbar.AppBarTabCount = AppBarTabCount;    
+})(api_appbar || (api_appbar = {}));
+var api_appbar;
+(function (api_appbar) {
+    var AppBarTabMenuItem = (function (_super) {
+        __extends(AppBarTabMenuItem, _super);
+        function AppBarTabMenuItem(label) {
+                _super.call(this, label);
+        }
+        return AppBarTabMenuItem;
+    })(api_ui_tab.TabMenuItem);
+    api_appbar.AppBarTabMenuItem = AppBarTabMenuItem;    
+})(api_appbar || (api_appbar = {}));
+var api;
+(function (api) {
+    var AppPanel = (function (_super) {
+        __extends(AppPanel, _super);
+        function AppPanel(browsePanel, deckPanel) {
+                _super.call(this, "AppPanel");
+            this.browsePanel = browsePanel;
+            this.deckPanel = deckPanel;
+            deckPanel.setAppPanel(this);
+            this.addPanel(this.browsePanel);
+            this.addPanel(this.deckPanel);
+            this.showPanel(0);
+        }
+        AppPanel.prototype.showBrowsePanel = function () {
+            this.showPanel(0);
+        };
+        AppPanel.prototype.showDeckPanel = function () {
+            this.showPanel(1);
+        };
+        return AppPanel;
+    })(api_ui.DeckPanel);
+    api.AppPanel = AppPanel;    
+})(api || (api = {}));
 var api_ui_dialog;
 (function (api_ui_dialog) {
     var DialogButton = (function (_super) {
@@ -2269,103 +2238,134 @@ var api_delete;
         return DeleteDialogItemComponent;
     })(api_dom.DivEl);    
 })(api_delete || (api_delete = {}));
-var api_appbar;
-(function (api_appbar) {
-    var AppBarTabMenu = (function (_super) {
-        __extends(AppBarTabMenu, _super);
-        function AppBarTabMenu(idPrefix) {
-                _super.call(this, idPrefix || "AppBarTabMenu");
-            this.getEl().addClass("appbar-tabmenu");
+var api_wizard;
+(function (api_wizard) {
+    var WizardPanel = (function (_super) {
+        __extends(WizardPanel, _super);
+        function WizardPanel() {
+                _super.call(this, "wizard-panel");
+            this.steps = [];
+            this.getEl().addClass("wizard-panel");
+            this.addTitle();
+            this.addSubTitle();
+            this.wizardStepPanels = new WizardStepPanels();
+            this.addStepContainer();
+            this.appendChild(this.wizardStepPanels);
+            this.initExt();
         }
-        AppBarTabMenu.prototype.addTab = function (tab) {
-            _super.prototype.addTab.call(this, tab);
-            this.tabMenuButton.setTabCount(this.getSize());
+        WizardPanel.prototype.initExt = function () {
+            var htmlEl = this.getHTMLElement();
+            this.ext = new Ext.Component({
+                contentEl: htmlEl
+            });
         };
-        AppBarTabMenu.prototype.createTabMenuButton = function () {
-            this.tabMenuButton = new api_appbar.AppBarTabMenuButton();
-            return this.tabMenuButton;
+        WizardPanel.prototype.setTitle = function (title) {
+            this.titleEl.getEl().setValue(title);
         };
-        AppBarTabMenu.prototype.removeTab = function (tab) {
-            _super.prototype.removeTab.call(this, tab);
-            this.tabMenuButton.setTabCount(this.getSize());
-            if(this.getSize() == 0) {
-                this.tabMenuButton.setLabel("");
-            }
+        WizardPanel.prototype.setSubtitle = function (subtitle) {
+            this.subTitleEl.getEl().setValue(subtitle);
         };
-        return AppBarTabMenu;
-    })(api_ui_tab.TabMenu);
-    api_appbar.AppBarTabMenu = AppBarTabMenu;    
-})(api_appbar || (api_appbar = {}));
-var api_appbar;
-(function (api_appbar) {
-    var AppBarTabMenuButton = (function (_super) {
-        __extends(AppBarTabMenuButton, _super);
-        function AppBarTabMenuButton(idPrefix) {
-                _super.call(this, idPrefix || "AppBarTabMenuButton");
-            this.getEl().addClass("appbar-tabmenu-button");
-            this.iconEl = new api_dom.SpanEl();
-            this.iconEl.getEl().addClass("icon-icomoon-pencil-32");
-            this.prependChild(this.iconEl);
-            this.tabCountEl = new AppBarTabCount();
-            this.appendChild(this.tabCountEl);
+        WizardPanel.prototype.addStep = function (step) {
+            this.steps.push(step);
+            this.stepContainer.addStep(step);
+        };
+        WizardPanel.prototype.addIcon = function (icon) {
+            this.getEl().insertBefore(icon, this.titleEl);
+        };
+        WizardPanel.prototype.addToolbar = function (toolbar) {
+            this.getEl().insertBefore(toolbar, this.titleEl);
+        };
+        WizardPanel.prototype.addTitle = function () {
+            this.titleEl = new api_dom.Element("input", "title");
+            this.titleEl.getEl().addClass("title");
+            this.appendChild(this.titleEl);
+        };
+        WizardPanel.prototype.addSubTitle = function () {
+            this.subTitleEl = new api_dom.Element("input", "title");
+            this.subTitleEl.getEl().addClass("subtitle");
+            this.appendChild(this.subTitleEl);
+        };
+        WizardPanel.prototype.addStepContainer = function () {
+            var stepContainerEl = new WizardStepContainer(this.wizardStepPanels);
+            this.stepContainer = stepContainerEl;
+            this.appendChild(stepContainerEl);
+        };
+        return WizardPanel;
+    })(api_ui.Panel);
+    api_wizard.WizardPanel = WizardPanel;    
+    var WizardStepPanels = (function (_super) {
+        __extends(WizardStepPanels, _super);
+        function WizardStepPanels() {
+                _super.call(this, "WizardStepPanels");
         }
-        AppBarTabMenuButton.prototype.setTabCount = function (value) {
-            this.tabCountEl.setCount(value);
-        };
-        return AppBarTabMenuButton;
-    })(api_ui_tab.TabMenuButton);
-    api_appbar.AppBarTabMenuButton = AppBarTabMenuButton;    
-    var AppBarTabCount = (function (_super) {
-        __extends(AppBarTabCount, _super);
-        function AppBarTabCount() {
-                _super.call(this);
-            this.getEl().addClass("tabcount");
-        }
-        AppBarTabCount.prototype.setCount = function (value) {
-            if(value > 0) {
-                this.getEl().setInnerHtml("" + value);
-            } else {
-                this.getEl().setInnerHtml("");
-            }
-        };
-        return AppBarTabCount;
-    })(api_dom.SpanEl);
-    api_appbar.AppBarTabCount = AppBarTabCount;    
-})(api_appbar || (api_appbar = {}));
-var api_appbar;
-(function (api_appbar) {
-    var AppBarTabMenuItem = (function (_super) {
-        __extends(AppBarTabMenuItem, _super);
-        function AppBarTabMenuItem(label) {
-                _super.call(this, label);
-        }
-        return AppBarTabMenuItem;
-    })(api_ui_tab.TabMenuItem);
-    api_appbar.AppBarTabMenuItem = AppBarTabMenuItem;    
-})(api_appbar || (api_appbar = {}));
-var api;
-(function (api) {
-    var AppPanel = (function (_super) {
-        __extends(AppPanel, _super);
-        function AppPanel(browsePanel, deckPanel) {
-                _super.call(this, "AppPanel");
-            this.browsePanel = browsePanel;
+        return WizardStepPanels;
+    })(api_ui.DeckPanel);    
+    var WizardStepContainer = (function (_super) {
+        __extends(WizardStepContainer, _super);
+        function WizardStepContainer(deckPanel) {
+                _super.call(this, "step-container", "step-container");
+            this.steps = [];
             this.deckPanel = deckPanel;
-            deckPanel.setAppPanel(this);
-            this.addPanel(this.browsePanel);
-            this.addPanel(this.deckPanel);
-            this.showPanel(0);
         }
-        AppPanel.prototype.showBrowsePanel = function () {
-            this.showPanel(0);
+        WizardStepContainer.prototype.addStep = function (step) {
+            var _this = this;
+            this.steps.push(step);
+            var panelIndex = this.deckPanel.addPanel(step.getPanel());
+            if(panelIndex == 0) {
+                this.deckPanel.showPanel(0);
+            }
+            var stepEl = new api_dom.LiEl(step.getLabel());
+            step.setEl(stepEl);
+            stepEl.getEl().setInnerHtml(step.getLabel());
+            stepEl.getEl().addEventListener("click", function (event) {
+                _this.removeActive();
+                step.setActive(true);
+                _this.deckPanel.showPanel(panelIndex);
+            });
+            if(this.steps.length == 1) {
+                step.setActive(true);
+            }
+            this.appendChild(stepEl);
         };
-        AppPanel.prototype.showDeckPanel = function () {
-            this.showPanel(1);
+        WizardStepContainer.prototype.removeActive = function () {
+            this.steps.forEach(function (step) {
+                step.setActive(false);
+            });
         };
-        return AppPanel;
-    })(api_ui.DeckPanel);
-    api.AppPanel = AppPanel;    
-})(api || (api = {}));
+        return WizardStepContainer;
+    })(api_dom.UlEl);    
+    var WizardStep = (function () {
+        function WizardStep(label, panel) {
+            this.label = label;
+            this.panel = panel;
+        }
+        WizardStep.prototype.setEl = function (el) {
+            this.el = el;
+        };
+        WizardStep.prototype.setActive = function (active) {
+            this.active = active;
+            if(active) {
+                this.el.getEl().addClass("active");
+            } else {
+                this.el.getEl().removeClass("active");
+            }
+        };
+        WizardStep.prototype.isActive = function () {
+            return this.active;
+        };
+        WizardStep.prototype.getEl = function () {
+            return this.el;
+        };
+        WizardStep.prototype.getLabel = function () {
+            return this.label;
+        };
+        WizardStep.prototype.getPanel = function () {
+            return this.panel;
+        };
+        return WizardStep;
+    })();
+    api_wizard.WizardStep = WizardStep;    
+})(api_wizard || (api_wizard = {}));
 var api;
 (function (api) {
     var AppBrowsePanel = (function (_super) {
