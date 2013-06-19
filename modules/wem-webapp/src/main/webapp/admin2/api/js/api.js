@@ -32,6 +32,29 @@ var api_util;
     }
     api_util.getAbsoluteUri = getAbsoluteUri;
 })(api_util || (api_util = {}));
+var api_util;
+(function (api_util) {
+    var Animation = (function () {
+        function Animation() { }
+        Animation.DELAY = 10;
+        Animation.start = function start(doStep, duration, delay) {
+            var startTime = new Date().getTime();
+            var id = setInterval(function () {
+                var progress = Math.min(((new Date()).getTime() - startTime) / duration, 1);
+                doStep(progress);
+                if(progress == 1) {
+                    clearInterval(id);
+                }
+            }, delay || api_util.Animation.DELAY);
+            return id;
+        };
+        Animation.stop = function stop(id) {
+            clearInterval(id);
+        };
+        return Animation;
+    })();
+    api_util.Animation = Animation;    
+})(api_util || (api_util = {}));
 var api_handler;
 (function (api_handler) {
     var DeleteSpaceParamFactory = (function () {
@@ -451,6 +474,7 @@ var api_ui;
         };
         ElementHelper.prototype.appendChild = function (child) {
             this.el.appendChild(child);
+            return this;
         };
         ElementHelper.prototype.setData = function (name, value) {
             var any = this.el;
@@ -943,6 +967,86 @@ var api_ui_toolbar;
         }
         return ToolbarGreedySpacer;
     })();    
+})(api_ui_toolbar || (api_ui_toolbar = {}));
+var api_ui_toolbar;
+(function (api_ui_toolbar) {
+    var ToggleSlide = (function (_super) {
+        __extends(ToggleSlide, _super);
+        function ToggleSlide(onText, offText, initOn) {
+                _super.call(this, 'ToogleSlide', 'toggle-slide');
+            this.animationDuration = 300;
+            this.onText = onText;
+            this.offText = offText;
+            this.createMarkup();
+            this.calculateStyles();
+            initOn ? this.turnOn() : this.turnOff();
+            this.addListeners();
+        }
+        ToggleSlide.prototype.toggle = function () {
+            this.isOn ? this.turnOff() : this.turnOn();
+        };
+        ToggleSlide.prototype.turnOn = function () {
+            this.slideRight();
+            this.isOn = true;
+        };
+        ToggleSlide.prototype.turnOff = function () {
+            this.slideLeft();
+            this.isOn = false;
+        };
+        ToggleSlide.prototype.isTurnedOn = function () {
+            return this.isOn;
+        };
+        ToggleSlide.prototype.createMarkup = function () {
+            this.thumb = new api_ui.DivEl(null, 'thumb');
+            this.holder = new api_ui.DivEl(null, 'holder');
+            this.onLabel = new api_ui.DivEl(null, 'on');
+            this.offLabel = new api_ui.DivEl(null, 'off');
+            var thumbEl = this.thumb.getEl(), holderEl = this.holder.getEl(), onLabelEl = this.onLabel.getEl(), offLabelEl = this.offLabel.getEl();
+            this.getEl().appendChild(thumbEl.getHTMLElement()).appendChild(holderEl.getHTMLElement());
+            holderEl.appendChild(onLabelEl.getHTMLElement()).appendChild(offLabelEl.getHTMLElement());
+            onLabelEl.setInnerHtml(this.onText);
+            offLabelEl.setInnerHtml(this.offText);
+        };
+        ToggleSlide.prototype.calculateStyles = function () {
+            var thumbEl = this.thumb.getEl(), onLabelEl = this.onLabel.getEl(), offLabelEl = this.offLabel.getEl();
+            document.body.appendChild(this.getHTMLElement());
+            var onWidth = onLabelEl.getWidth(), offWidth = offLabelEl.getWidth();
+            var thumbWidth = Math.max(onWidth, offWidth);
+            thumbEl.setWidth((thumbWidth + 4) + 'px');
+            onLabelEl.setWidth(thumbWidth + 'px');
+            offLabelEl.setWidth(thumbWidth + 'px');
+        };
+        ToggleSlide.prototype.addListeners = function () {
+            var me = this;
+            me.getEl().addEventListener('click', function () {
+                me.toggle();
+            });
+        };
+        ToggleSlide.prototype.slideLeft = function () {
+            var thumbEl = this.thumb.getEl(), offset = this.calculateOffset();
+            this.animate(function (progress) {
+                thumbEl.setLeft(offset * (1 - progress) + 'px');
+            });
+        };
+        ToggleSlide.prototype.slideRight = function () {
+            var thumbEl = this.thumb.getEl(), offset = this.calculateOffset();
+            this.animate(function (progress) {
+                thumbEl.setLeft(offset * progress + 'px');
+            });
+        };
+        ToggleSlide.prototype.calculateOffset = function () {
+            var toggleWidth = this.getEl().getWidth(), thumbWidth = this.thumb.getEl().getWidth();
+            return toggleWidth - thumbWidth;
+        };
+        ToggleSlide.prototype.animate = function (step) {
+            if(this.animationId) {
+                api_util.Animation.stop(this.animationId);
+            }
+            this.animationId = api_util.Animation.start(step, this.animationDuration);
+        };
+        return ToggleSlide;
+    })(api_ui.DivEl);
+    api_ui_toolbar.ToggleSlide = ToggleSlide;    
 })(api_ui_toolbar || (api_ui_toolbar = {}));
 var api_ui_menu;
 (function (api_ui_menu) {
