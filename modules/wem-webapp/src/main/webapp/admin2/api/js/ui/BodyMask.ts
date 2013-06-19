@@ -3,7 +3,7 @@ module api_ui{
     /**
      * A statically accessible object for masking the whole body.
      */
-    export class BodyMask extends api_ui.DivEl {
+    export class BodyMask extends api_dom.DivEl {
 
         private static instance:BodyMask = new BodyMask();
 

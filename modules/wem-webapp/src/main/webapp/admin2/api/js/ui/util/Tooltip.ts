@@ -1,8 +1,8 @@
 module api_ui_util {
 
-    export class Tooltip extends api_ui.DivEl {
+    export class Tooltip extends api_dom.DivEl {
 
-        private target:api_ui.Element;
+        private target:api_dom.Element;
         private timeout:number;
         private side:string;
         private offset:number[];
@@ -17,7 +17,7 @@ module api_ui_util {
          * @param side Side of the target where tooltip should be shown (top,left,right,bottom)
          * @param offset Fine tuning of the tooltip positioning (defaults to the center of the side)
          */
-        constructor(target:api_ui.Element, text:string, timeout?:number, side?:string, offset?:number[]) {
+            constructor(target:api_dom.Element, text:string, timeout?:number, side?:string, offset?:number[]) {
             super("Tooltip", "tooltip");
 
             this.target = target;
@@ -30,7 +30,7 @@ module api_ui_util {
             el.addClass(this.side);
             el.setInnerHtml(text);
 
-            var anchorEl = new api_ui.DivEl("Tooltip", "tooltip-anchor");
+            var anchorEl = new api_dom.DivEl("Tooltip", "tooltip-anchor");
             el.appendChild(anchorEl.getHTMLElement());
 
             el.addEventListener("mouseover", function (event:Event) {

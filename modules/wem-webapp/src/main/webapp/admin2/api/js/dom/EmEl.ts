@@ -1,6 +1,6 @@
-module api_ui {
+module api_dom {
 
-    export class EmEl extends api_ui.Element {
+    export class EmEl extends Element {
 
         constructor(idPrefix?:string, className?:string) {
             super("em", idPrefix, className);

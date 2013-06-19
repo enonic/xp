@@ -1,6 +1,6 @@
 module api_ui{
 
-    export class AbstractButton extends api_ui.ButtonEl {
+    export class AbstractButton extends api_dom.ButtonEl {
 
         private label:string;
 

@@ -1,6 +1,6 @@
 module api_ui_tab {
 
-    export class TabBar extends api_ui.DivEl implements TabNavigator {
+    export class TabBar extends api_dom.DivEl implements TabNavigator {
 
         constructor(idPrefix?:string) {
             super(idPrefix || "TabBar");

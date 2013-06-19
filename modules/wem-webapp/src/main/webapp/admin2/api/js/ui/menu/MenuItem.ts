@@ -1,6 +1,6 @@
 module api_ui_menu {
 
-    export class MenuItem extends api_ui.LiEl {
+    export class MenuItem extends api_dom.LiEl {
 
         private action:api_ui.Action;
 

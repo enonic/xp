@@ -1,6 +1,6 @@
 module api_ui_toolbar {
 
-    export class Toolbar extends api_ui.DivEl {
+    export class Toolbar extends api_dom.DivEl {
 
         ext;
 
@@ -24,7 +24,7 @@ module api_ui_toolbar {
             this.appendChild(button);
         }
 
-        addElement(element:api_ui.Element) {
+        addElement(element:api_dom.Element) {
             if (this.hasGreedySpacer()) {
                 element.getEl().addClass('pull-right');
             }

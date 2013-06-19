@@ -1,6 +1,6 @@
-module api_ui {
+module api_dom {
 
-    export class DivEl extends api_ui.Element {
+    export class DivEl extends Element {
 
         constructor(idPrefix?:string, className?:string) {
             super("div", idPrefix, className);

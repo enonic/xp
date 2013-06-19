@@ -1,5 +1,5 @@
 module api_ui_detailpanel {
-    export class DetailPanel extends api_ui.DivEl {
+    export class DetailPanel extends api_dom.DivEl {
 
         ext;
 
@@ -20,11 +20,11 @@ module api_ui_detailpanel {
 
     }
 
-    export class DetailTabPanel extends api_ui.DivEl {
+    export class DetailTabPanel extends api_dom.DivEl {
         private model:api_model.Model;
         private navigation:DetailPanelTabList;
         private tabs:DetailPanelTab[] = [];
-        private canvas:api_ui.DivEl;
+        private canvas:api_dom.DivEl;
         private tabChangeCallback:(DetailPanelTab) => void;
         private actionMenu:api_ui_menu.ActionMenu;
 
@@ -41,18 +41,18 @@ module api_ui_detailpanel {
         }
 
         private addHeader(title:string, subtitle:string, iconUrl:string) {
-            var headerEl = new api_ui.DivEl("header", "header");
+            var headerEl = new api_dom.DivEl("header", "header");
 
             var iconEl = api_util.ImageLoader.get(iconUrl + "?size=80", 80, 80);
 
 
-            var hgroupEl = new api_ui.Element("hgroup");
+            var hgroupEl = new api_dom.Element("hgroup");
 
-            var headerTextEl = new api_ui.H1El();
+            var headerTextEl = new api_dom.H1El();
             headerTextEl.getEl().setInnerHtml(title);
             hgroupEl.appendChild(headerTextEl);
 
-            var subtitleEl = new api_ui.H4El();
+            var subtitleEl = new api_dom.H4El();
             subtitleEl.getEl().setInnerHtml(subtitle);
             hgroupEl.appendChild(subtitleEl);
 
@@ -64,7 +64,7 @@ module api_ui_detailpanel {
         }
 
         private addCanvas() {
-            var canvasEl = this.canvas = new api_ui.DivEl("canvas", "canvas");
+            var canvasEl = this.canvas = new api_dom.DivEl("canvas", "canvas");
             this.appendChild(canvasEl);
         }
 
@@ -99,25 +99,25 @@ module api_ui_detailpanel {
 
     export class DetailPanelTab {
         name:string;
-        content:api_ui.Element;
+        content:api_dom.Element;
 
         constructor(name:string) {
             this.name = name;
-            this.content = new api_ui.DivEl("test-content");
+            this.content = new api_dom.DivEl("test-content");
             this.content.getEl().setInnerHtml(this.name);
         }
     }
 
-    export class DetailPanelTabList extends api_ui.UlEl {
+    export class DetailPanelTabList extends api_dom.UlEl {
 
-        private tabs:api_ui.LiEl[] = [];
+        private tabs:api_dom.LiEl[] = [];
 
         constructor() {
             super("tab-list", "tab-list");
         }
 
         addTab(tab, clickCallback:(DetailPanelTab) => void) {
-            var tabEl = new api_ui.LiEl("tab");
+            var tabEl = new api_dom.LiEl("tab");
             this.tabs.push(tabEl);
             tabEl.getEl().setInnerHtml(tab.name);
             tabEl.getEl().addEventListener("click", (event) => {
@@ -127,15 +127,15 @@ module api_ui_detailpanel {
             this.getEl().appendChild(tabEl.getHTMLElement());
         }
 
-        private selectTab(tab:api_ui.LiEl) {
-            this.tabs.forEach(function (entry:api_ui.LiEl) {
+        private selectTab(tab:api_dom.LiEl) {
+            this.tabs.forEach(function (entry:api_dom.LiEl) {
                 entry.getEl().removeClass("active");
             });
             tab.getEl().addClass("active");
         }
     }
 
-    export class DetailPanelBox extends api_ui.DivEl {
+    export class DetailPanelBox extends api_dom.DivEl {
         private model:api_model.Model;
 
         constructor(model:any, removeCallback?:(DetailPanelBox) => void) {

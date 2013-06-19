@@ -7,8 +7,8 @@ module api_wizard {
 
         private wizardStepPanels:WizardStepPanels;
 
-        private titleEl:api_ui.Element;
-        private subTitleEl:api_ui.Element;
+        private titleEl:api_dom.Element;
+        private subTitleEl:api_dom.Element;
 
         ext;
 
@@ -53,13 +53,13 @@ module api_wizard {
         }
 
         private addTitle() {
-            this.titleEl = new api_ui.Element("input", "title");
+            this.titleEl = new api_dom.Element("input", "title");
             this.titleEl.getEl().addClass("title");
             this.appendChild(this.titleEl);
         }
 
         private addSubTitle() {
-            this.subTitleEl = new api_ui.Element("input", "title");
+            this.subTitleEl = new api_dom.Element("input", "title");
             this.subTitleEl.getEl().addClass("subtitle");
             this.appendChild(this.subTitleEl);
         }
@@ -78,7 +78,7 @@ module api_wizard {
         }
     }
 
-    class WizardStepContainer extends api_ui.UlEl {
+    class WizardStepContainer extends api_dom.UlEl {
         private deckPanel:WizardStepPanels;
         private steps:WizardStep[] = [];
 
@@ -94,7 +94,7 @@ module api_wizard {
                 this.deckPanel.showPanel(0);
             }
 
-            var stepEl = new api_ui.LiEl(step.getLabel());
+            var stepEl = new api_dom.LiEl(step.getLabel());
             step.setEl(stepEl);
             stepEl.getEl().setInnerHtml(step.getLabel());
             stepEl.getEl().addEventListener("click", (event) => {
@@ -119,14 +119,14 @@ module api_wizard {
         private label:string;
         private panel:api_ui.Panel;
         private active:bool;
-        private el:api_ui.Element;
+        private el:api_dom.Element;
 
         constructor(label:string, panel:api_ui.Panel) {
             this.label = label;
             this.panel = panel;
         }
 
-        setEl(el:api_ui.Element) {
+        setEl(el:api_dom.Element) {
             this.el = el;
         }
 
@@ -143,7 +143,7 @@ module api_wizard {
             return this.active;
         }
 
-        getEl():api_ui.Element {
+        getEl():api_dom.Element {
             return this.el;
         }
 

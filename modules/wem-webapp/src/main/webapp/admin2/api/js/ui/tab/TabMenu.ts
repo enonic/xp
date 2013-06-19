@@ -1,12 +1,12 @@
 module api_ui_tab {
 
-    export class TabMenu extends api_ui.DivEl implements TabNavigator {
+    export class TabMenu extends api_dom.DivEl implements TabNavigator {
 
         ext;
 
         private tabMenuButton:TabMenuButton;
 
-        private menuEl:api_ui.UlEl;
+        private menuEl:api_dom.UlEl;
 
         private showingMenuItems:bool = false;
 
@@ -37,8 +37,8 @@ module api_ui_tab {
             return new TabMenuButton();
         }
 
-        createMenu():api_ui.UlEl {
-            var ulEl = new api_ui.UlEl();
+        createMenu():api_dom.UlEl {
+            var ulEl = new api_dom.UlEl();
             ulEl.getEl().setZindex(19001);
             ulEl.hide();
             return ulEl;
@@ -94,8 +94,7 @@ module api_ui_tab {
             tabMenuItem.getEl().remove();
             var isLastTab = this.isLastTab(tab);
             this.tabs.splice(tab.getTabIndex(), 1);
-            if( this.isSelectedTab( tab ) )
-            {
+            if (this.isSelectedTab(tab)) {
                 // TODO: update selected tab acccoridnt to same logic as in DeckPanel.remove
             }
             if (!isLastTab) {

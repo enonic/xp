@@ -1,11 +1,11 @@
-module api_ui {
+module api_dom {
 
-    export class ImgHelper extends api_ui.ElementHelper {
+    export class ImgHelper extends ElementHelper {
 
         private el:HTMLImageElement;
 
         static create():ElementHelper {
-            return new api_ui.ImgHelper(<HTMLImageElement>document.createElement("img"));
+            return new ImgHelper(<HTMLImageElement>document.createElement("img"));
         }
 
         constructor(element:HTMLImageElement) {
@@ -17,7 +17,7 @@ module api_ui {
             return this.el;
         }
 
-        setSrc(value:string):api_ui.ImgHelper{
+        setSrc(value:string):ImgHelper {
             this.el.src = value;
             return this;
         }

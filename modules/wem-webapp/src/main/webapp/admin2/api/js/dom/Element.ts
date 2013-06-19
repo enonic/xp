@@ -1,21 +1,21 @@
-module api_ui {
+module api_dom {
 
     export class Element {
 
         private static constructorCounter:number = 0;
 
-        private el:api_ui.ElementHelper;
+        private el:ElementHelper;
 
         private id:string;
 
-        constructor(elementName:string, idPrefix?:string, className?:string, elHelper?:api_ui.ElementHelper) {
+        constructor(elementName:string, idPrefix?:string, className?:string, elHelper?:ElementHelper) {
             if (elHelper == null) {
-                this.el = api_ui.ElementHelper.fromName(elementName);
+                this.el = ElementHelper.fromName(elementName);
             } else {
                 this.el = elHelper;
             }
             if (idPrefix != null) {
-                this.id = idPrefix + '-' + (++api_ui.Element.constructorCounter);
+                this.id = idPrefix + '-' + (++Element.constructorCounter);
                 this.el.setId(this.id);
             }
             if (className != null) {
@@ -48,7 +48,7 @@ module api_ui {
             return this.id;
         }
 
-        getEl():api_ui.ElementHelper {
+        getEl():ElementHelper {
             return this.el;
         }
 
@@ -56,11 +56,11 @@ module api_ui {
             return this.el.getHTMLElement();
         }
 
-        appendChild(child:api_ui.Element) {
+        appendChild(child:Element) {
             this.el.appendChild(child.getEl().getHTMLElement());
         }
 
-        prependChild(child:api_ui.Element) {
+        prependChild(child:Element) {
             this.el.getHTMLElement().insertBefore(child.getHTMLElement(), this.el.getHTMLElement().firstChild);
         }
 

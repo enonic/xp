@@ -14,7 +14,7 @@ module app_ui {
             super.addGreedySpacer();
 
             // TODO add widget component for preview toggle
-            var previewToggle = new api_ui.Element('span', 'preview-toggle');
+            var previewToggle = new api_dom.Element('span', 'preview-toggle');
             previewToggle.getEl().setInnerHtml('TODO preview-toggle');
 
             super.addAction(app.ContentActions.BROWSE_CONTENT_SETTINGS);

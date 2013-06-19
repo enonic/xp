@@ -2,12 +2,12 @@ declare var plupload;
 
 module api_ui_form {
 
-    export class FormIcon extends api_ui.ButtonEl {
+    export class FormIcon extends api_dom.ButtonEl {
 
         ext;
 
         private uploader;
-        private img:api_ui.ImgEl;
+        private img:api_dom.ImgEl;
         private progress:api_ui_util.ProgressBar;
         private tooltip:api_ui_util.Tooltip;
 
@@ -17,14 +17,14 @@ module api_ui_form {
          * @param iconTitle text to display in tooltip
          * @param uploadUrl url to upload new icon to
          */
-        constructor(public iconUrl:string, public iconTitle:string, public uploadUrl?:string) {
+            constructor(public iconUrl:string, public iconTitle:string, public uploadUrl?:string) {
             super("FormIcon", "form-icon");
             var el = this.getEl();
             var me = this;
 
             this.tooltip = new api_ui_util.Tooltip(this, iconTitle, 10, "bottom", [0, 5]);
 
-            var img = this.img = new api_ui.ImgEl(this.iconUrl, "FormIcon");
+            var img = this.img = new api_dom.ImgEl(this.iconUrl, "FormIcon");
             img.getEl().addEventListener("load", function () => {
                 this.tooltip.showFor(10000);
             });

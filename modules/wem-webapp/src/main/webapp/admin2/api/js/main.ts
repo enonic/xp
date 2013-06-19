@@ -25,22 +25,23 @@
 
 ///<reference path='ui/Action.ts' />
 
-///<reference path='ui/ElementHelper.ts' />
-///<reference path='ui/ImgElHelper.ts' />
-///<reference path='ui/Element.ts' />
-///<reference path='ui/DivEl.ts' />
-///<reference path='ui/H1El.ts' />
-///<reference path='ui/H2El.ts' />
-///<reference path='ui/H3El.ts' />
-///<reference path='ui/H4El.ts' />
-///<reference path='ui/UlEl.ts' />
-///<reference path='ui/LiEl.ts' />
-///<reference path='ui/EmEl.ts' />
-///<reference path='ui/ImgEl.ts' />
-///<reference path='ui/SpanEl.ts' />
+///<reference path='dom/ElementHelper.ts' />
+///<reference path='dom/ImgElHelper.ts' />
+///<reference path='dom/Element.ts' />
+///<reference path='dom/DivEl.ts' />
+///<reference path='dom/H1El.ts' />
+///<reference path='dom/H2El.ts' />
+///<reference path='dom/H3El.ts' />
+///<reference path='dom/H4El.ts' />
+///<reference path='dom/UlEl.ts' />
+///<reference path='dom/LiEl.ts' />
+///<reference path='dom/EmEl.ts' />
+///<reference path='dom/ImgEl.ts' />
+///<reference path='dom/SpanEl.ts' />
+///<reference path='dom/ButtonEl.ts' />
+
 ///<reference path='ui/Panel.ts' />
 ///<reference path='ui/DeckPanel.ts' />
-///<reference path='ui/ButtonEl.ts' />
 ///<reference path='ui/BodyMask.ts' />
 ///<reference path='ui/AbstractButton.ts' />
 ///<reference path='ui/toolbar/Toolbar.ts' />

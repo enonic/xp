@@ -1,11 +1,11 @@
-module api_ui {
+module api_dom {
 
     export class ElementHelper {
 
         private el:HTMLElement;
 
-        static fromName(name:string):api_ui.ElementHelper {
-            return new api_ui.ElementHelper(document.createElement(name));
+        static fromName(name:string):ElementHelper {
+            return new ElementHelper(document.createElement(name));
         }
 
         constructor(element:HTMLElement) {
@@ -16,26 +16,26 @@ module api_ui {
             return this.el;
         }
 
-        insertBefore(newEl:api_ui.Element, existingEl:api_ui.Element) {
+        insertBefore(newEl:Element, existingEl:Element) {
             this.el.insertBefore(newEl.getHTMLElement(), existingEl.getHTMLElement());
         }
 
-        setDisabled(value:bool):api_ui.ElementHelper {
+        setDisabled(value:bool):ElementHelper {
             this.el.disabled = value;
             return this;
         }
 
-        setId(value:string):api_ui.ElementHelper {
+        setId(value:string):ElementHelper {
             this.el.id = value;
             return this;
         }
 
-        setInnerHtml(value:string):api_ui.ElementHelper {
+        setInnerHtml(value:string):ElementHelper {
             this.el.innerHTML = value;
             return this;
         }
 
-        setValue(value:string):api_ui.ElementHelper {
+        setValue(value:string):ElementHelper {
             this.el.setAttribute("value", value);
             return this;
         }
@@ -74,7 +74,7 @@ module api_ui {
             this.el.appendChild(child);
         }
 
-        setData(name:string, value:string):api_ui.ElementHelper {
+        setData(name:string, value:string):ElementHelper {
             var any = <any>this.el;
             any._data[name] = value;
             return this;
@@ -89,7 +89,7 @@ module api_ui {
             return this.el.style.display;
         }
 
-        setDisplay(value:string):api_ui.ElementHelper {
+        setDisplay(value:string):ElementHelper {
             this.el.style.display = value;
             return this;
         }
@@ -98,70 +98,70 @@ module api_ui {
             return this.el.style.visibility;
         }
 
-        setVisibility(value:string):api_ui.ElementHelper {
+        setVisibility(value:string):ElementHelper {
             this.el.style.visibility = value;
             return this;
         }
 
-        setPosition(value:string):api_ui.ElementHelper {
+        setPosition(value:string):ElementHelper {
             this.el.style.position = value;
             return this;
         }
 
-        setWidth(value:string):api_ui.ElementHelper {
+        setWidth(value:string):ElementHelper {
             this.el.style.width = value;
             return this;
         }
 
-        getWidth(): number {
+        getWidth():number {
             return this.el.offsetWidth;
         }
 
-        setHeight(value:string):api_ui.ElementHelper {
+        setHeight(value:string):ElementHelper {
             this.el.style.height = value;
             return this;
         }
 
-        getHeight(): number {
+        getHeight():number {
             return this.el.offsetHeight;
         }
 
-        setTop(value:string):api_ui.ElementHelper {
+        setTop(value:string):ElementHelper {
             this.el.style.top = value;
             return this;
         }
 
-        setLeft(value:string):api_ui.ElementHelper {
+        setLeft(value:string):ElementHelper {
             this.el.style.left = value;
             return this;
         }
 
-        setMarginLeft(value:string):api_ui.ElementHelper {
+        setMarginLeft(value:string):ElementHelper {
             this.el.style.marginLeft = value;
             return this;
         }
 
-        setMarginRight(value:string):api_ui.ElementHelper {
+        setMarginRight(value:string):ElementHelper {
             this.el.style.marginRight = value;
             return this;
         }
 
-        setMarginTop(value:string):api_ui.ElementHelper {
+        setMarginTop(value:string):ElementHelper {
             this.el.style.marginTop = value;
             return this;
         }
 
-        setMarginBottom(value:string):api_ui.ElementHelper {
+        setMarginBottom(value:string):ElementHelper {
             this.el.style.marginBottom = value;
             return this;
         }
 
-        setZindex(value:number):api_ui.ElementHelper {
+        setZindex(value:number):ElementHelper {
             this.el.style.zIndex = value.toString();
             return this;
         }
 
-        setBackgroundImage(value:string):api_ui.ElementHelper {
+        setBackgroundImage(value:string):ElementHelper {
             this.el.style.backgroundImage = value;
             return this;
         }

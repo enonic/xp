@@ -1,6 +1,6 @@
-module api_ui {
+module api_dom {
 
-    export class H2El extends api_ui.Element {
+    export class H2El extends Element {
 
         constructor(idPrefix?:string, className?:string) {
             super("h2", idPrefix, className);
