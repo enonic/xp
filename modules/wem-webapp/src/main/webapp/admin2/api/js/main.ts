@@ -50,14 +50,12 @@
 ///<reference path='ui/menu/ContextMenu.ts' />
 ///<reference path='ui/menu/ActionMenu.ts' />
 ///<reference path='ui/tab/Tab.ts' />
-///<reference path='ui/tab/TabRemoveListener.ts' />
-///<reference path='ui/tab/TabSelectedListener.ts' />
 ///<reference path='ui/tab/TabNavigator.ts' />
 ///<reference path='ui/tab/TabMenu.ts' />
 ///<reference path='ui/tab/TabMenuButton.ts' />
 ///<reference path='ui/tab/TabMenuItem.ts' />
 ///<reference path='ui/tab/TabBar.ts' />
-///<reference path='ui/tab/TabPanelController.ts' />
+///<reference path='ui/tab/TabbedDeckPanel.ts' />
 ///<reference path='ui/form/FormIcon.ts' />
 
 ///<reference path='ui/util/Tooltip.ts' />

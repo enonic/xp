@@ -4,10 +4,21 @@ module api_ui_tab {
 
         addTab(tab:api_ui_tab.Tab);
 
+        removeTab(tab:api_ui_tab.Tab);
+
+        selectTab(tab:api_ui_tab.Tab);
+
+        getActiveTab():api_ui_tab.Tab;
+
+        /**
+         * Deselects any selected tab.
+         */
+        deselectTab();
+
         getSize():number;
 
-        addTabSelectedListener(listener:TabSelectedListener);
+        addTabSelectedListener(listener:(Tab) => void);
 
-        addTabRemoveListener(listener:api_ui_tab.TabRemoveListener);
+        addTabRemoveListener(listener:(Tab) => bool);
     }
 }

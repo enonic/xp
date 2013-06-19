@@ -778,16 +778,24 @@ var api_ui;
         };
         DeckPanel.prototype.removePanel = function (index) {
             var panel = this.panels[index];
+            panel.getEl().remove();
+            var lastPanel = this.panels.length == index + 1;
             this.panels.splice(index, 1);
-            if(this.panelShown === index) {
-                if(this.panels.length < index + 1) {
-                    this.panels[this.panels.length].show();
+            if(this.panels.length == 0) {
+                return panel;
+            }
+            if(this.isShownPanel(index)) {
+                if(!lastPanel) {
+                    this.panels[this.panels.length - 1].show();
                     this.panelShown = this.panels.length - 1;
                 } else {
-                    this.panels[index].show();
+                    this.panels[index - 1].show();
                 }
             }
             return panel;
+        };
+        DeckPanel.prototype.isShownPanel = function (panelIndex) {
+            return this.panelShown === panelIndex;
         };
         DeckPanel.prototype.showPanel = function (index) {
             for(var i = 0; i < this.panels.length; i++) {
@@ -1468,12 +1476,32 @@ var api_ui_tab;
         TabMenu.prototype.removeTab = function (tab) {
             var tabMenuItem = tab;
             tabMenuItem.getEl().remove();
-            this.tabs.splice(tab.getTabIndex());
+            var isLastTab = this.isLastTab(tab);
+            this.tabs.splice(tab.getTabIndex(), 1);
+            if(this.isSelectedTab(tab)) {
+            }
+            if(!isLastTab) {
+                for(var i = tab.getTabIndex() - 1; i < this.tabs.length; i++) {
+                    this.tabs[i].setTabIndex(i);
+                }
+            }
+        };
+        TabMenu.prototype.isSelectedTab = function (tab) {
+            return tab == this.selectedTab;
+        };
+        TabMenu.prototype.isLastTab = function (tab) {
+            return tab.getTabIndex() === this.tabs.length;
         };
         TabMenu.prototype.selectTab = function (tab) {
+            this.tabMenuButton.setLabel(tab.getLabel());
+            this.selectedTab = tab;
+        };
+        TabMenu.prototype.getActiveTab = function () {
+            return this.selectedTab;
         };
         TabMenu.prototype.deselectTab = function () {
             this.tabMenuButton.setLabel("");
+            this.selectedTab = null;
         };
         TabMenu.prototype.addTabSelectedListener = function (listener) {
             this.tabSelectedListeners.push(listener);
@@ -1486,17 +1514,22 @@ var api_ui_tab;
             this.fireTabSelected(tabMenuItem);
         };
         TabMenu.prototype.handleTabRemoveButtonClickedEvent = function (tabMenuItem) {
-            this.fireBeforeTabRemoved(tabMenuItem);
+            if(this.fireTabRemoveEvent(tabMenuItem)) {
+                this.removeTab(tabMenuItem);
+            }
         };
         TabMenu.prototype.fireTabSelected = function (tab) {
             for(var i = 0; i < this.tabSelectedListeners.length; i++) {
-                this.tabSelectedListeners[i].selectedTab(tab);
+                this.tabSelectedListeners[i](tab);
             }
         };
-        TabMenu.prototype.fireBeforeTabRemoved = function (tab) {
+        TabMenu.prototype.fireTabRemoveEvent = function (tab) {
             for(var i = 0; i < this.tabRemovedListeners.length; i++) {
-                this.tabRemovedListeners[i].tabRemove(tab);
+                if(!this.tabRemovedListeners[i](tab)) {
+                    return false;
+                }
             }
+            return true;
         };
         return TabMenu;
     })(api_ui.DivEl);
@@ -1567,8 +1600,17 @@ var api_ui_tab;
         }
         TabBar.prototype.addTab = function (tab) {
         };
+        TabBar.prototype.removeTab = function (tab) {
+        };
         TabBar.prototype.getSize = function () {
             return 0;
+        };
+        TabBar.prototype.getActiveTab = function () {
+            return null;
+        };
+        TabBar.prototype.selectTab = function (tab) {
+        };
+        TabBar.prototype.deselectTab = function () {
         };
         TabBar.prototype.addTabSelectedListener = function (listener) {
         };
@@ -1580,36 +1622,34 @@ var api_ui_tab;
 })(api_ui_tab || (api_ui_tab = {}));
 var api_ui_tab;
 (function (api_ui_tab) {
-    var TabPanelController = (function () {
-        function TabPanelController(tabNavigator, deckPanel) {
-            this.deckIndexByTabIndex = {
-            };
-            this.tabNavigator = tabNavigator;
-            this.deckPanel = deckPanel;
+    var TabbedDeckPanel = (function (_super) {
+        __extends(TabbedDeckPanel, _super);
+        function TabbedDeckPanel(navigator) {
+            var _this = this;
+                _super.call(this);
+            this.navigator = navigator;
+            this.navigator.addTabRemoveListener(function (tab) {
+                return _this.tabRemove(tab);
+            });
+            this.navigator.addTabSelectedListener(function (tab) {
+                _this.showTab(tab);
+            });
         }
-        TabPanelController.prototype.addPanel = function (panel, tab) {
-            var tabIndex = this.tabNavigator.getSize();
-            tab.setTabIndex(tabIndex);
-            this.tabNavigator.addTab(tab);
-            if(this.deckPanel != null) {
-                this.deckIndexByTabIndex[tabIndex] = this.deckPanel.addPanel(panel);
-            }
+        TabbedDeckPanel.prototype.addTab = function (tab, panel) {
+            this.navigator.addTab(tab);
+            this.addPanel(panel);
         };
-        TabPanelController.prototype.tabRemove = function (tab) {
-            var deckIndex = this.deckIndexByTabIndex[tab.getTabIndex()];
-            if(this.deckPanel != null) {
-                this.deckPanel.removePanel(deckIndex);
-            }
+        TabbedDeckPanel.prototype.showTab = function (tab) {
+            _super.prototype.showPanel.call(this, tab.getTabIndex());
+            this.navigator.selectTab(tab);
         };
-        TabPanelController.prototype.selectedTab = function (tab) {
-            var deckIndex = this.deckIndexByTabIndex[tab.getTabIndex()];
-            if(this.deckPanel != null) {
-                this.deckPanel.showPanel(deckIndex);
-            }
+        TabbedDeckPanel.prototype.tabRemove = function (tab) {
+            this.removePanel(tab.getTabIndex());
+            return true;
         };
-        return TabPanelController;
-    })();
-    api_ui_tab.TabPanelController = TabPanelController;    
+        return TabbedDeckPanel;
+    })(api_ui.DeckPanel);
+    api_ui_tab.TabbedDeckPanel = TabbedDeckPanel;    
 })(api_ui_tab || (api_ui_tab = {}));
 var api_ui_form;
 (function (api_ui_form) {
@@ -1892,8 +1932,12 @@ var api_appbar;
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
                 contentEl: htmlEl,
-                cls: 'appbar-container'
+                cls: 'appbar-container',
+                region: 'north'
             });
+        };
+        AppBar.prototype.getTabMenu = function () {
+            return this.tabMenu;
         };
         return AppBar;
     })(api_ui.DivEl);
@@ -2237,9 +2281,6 @@ var api_appbar;
             _super.prototype.addTab.call(this, tab);
             this.tabMenuButton.setTabCount(this.getSize());
         };
-        AppBarTabMenu.prototype.selectTab = function (tab) {
-            _super.prototype.selectTab.call(this, tab);
-        };
         AppBarTabMenu.prototype.createTabMenuButton = function () {
             this.tabMenuButton = new api_appbar.AppBarTabMenuButton();
             return this.tabMenuButton;
@@ -2310,21 +2351,16 @@ var api;
                 _super.call(this, "AppPanel");
             this.browsePanel = browsePanel;
             this.deckPanel = deckPanel;
+            deckPanel.setAppPanel(this);
             this.addPanel(this.browsePanel);
             this.addPanel(this.deckPanel);
             this.showPanel(0);
-            this.initExt();
         }
-        AppPanel.prototype.initExt = function () {
-            this.ext = new Ext.layout.container.Card({
-                id: 'AppPanel',
-                title: 'AppPanel',
-                closable: false,
-                border: false,
-                layout: 'card'
-            });
-            this.ext.add(this.browsePanel);
-            this.ext.add(this.deckPanel);
+        AppPanel.prototype.showBrowsePanel = function () {
+            this.showPanel(0);
+        };
+        AppPanel.prototype.showDeckPanel = function () {
+            this.showPanel(1);
         };
         return AppPanel;
     })(api_ui.DeckPanel);
@@ -2335,13 +2371,17 @@ var api;
     var AppBrowsePanel = (function (_super) {
         __extends(AppBrowsePanel, _super);
         function AppBrowsePanel(browseToolbar, grid, detailPanel, filterPanel) {
+                _super.call(this, "AppBrowsePanel");
             this.browseToolbar = browseToolbar;
             this.grid = grid;
             this.detailPanel = detailPanel;
             this.filterPanel = filterPanel;
-                _super.call(this, "AppBrowsePanel");
-            this.initExt();
         }
+        AppBrowsePanel.prototype.init = function () {
+            this.appendChild(this.browseToolbar);
+            this.grid.create('center', this.getId());
+            this.appendChild(this.detailPanel);
+        };
         AppBrowsePanel.prototype.initExt = function () {
             var center = new Ext.container.Container({
                 region: 'center',
@@ -2371,11 +2411,31 @@ var api;
 (function (api) {
     var AppDeckPanel = (function (_super) {
         __extends(AppDeckPanel, _super);
-        function AppDeckPanel() {
-                _super.call(this, "AppDeckPanel");
+        function AppDeckPanel(navigator) {
+                _super.call(this, navigator);
         }
+        AppDeckPanel.prototype.tabRemove = function (tab) {
+            if(this.hasUnsavedChanges()) {
+                return false;
+            } else {
+                return _super.prototype.tabRemove.call(this, tab);
+            }
+        };
+        AppDeckPanel.prototype.removePanel = function (index) {
+            var panelRemoved = _super.prototype.removePanel.call(this, index);
+            if(this.getSize() == 0) {
+                this.appPanel.showBrowsePanel();
+            }
+            return panelRemoved;
+        };
+        AppDeckPanel.prototype.hasUnsavedChanges = function () {
+            return false;
+        };
+        AppDeckPanel.prototype.setAppPanel = function (value) {
+            this.appPanel = value;
+        };
         return AppDeckPanel;
-    })(api_ui.DeckPanel);
+    })(api_ui_tab.TabbedDeckPanel);
     api.AppDeckPanel = AppDeckPanel;    
 })(api || (api = {}));
 var api_notify;

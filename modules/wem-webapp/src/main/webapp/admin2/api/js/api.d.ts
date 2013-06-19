@@ -342,6 +342,7 @@ module api_ui {
         public addPanel(panel: Panel): number;
         public getPanel(index: number): Panel;
         public removePanel(index: number): Panel;
+        private isShownPanel(panelIndex);
         public showPanel(index: number): void;
     }
 }
@@ -504,21 +505,15 @@ module api_ui_tab {
     }
 }
 module api_ui_tab {
-    interface TabRemoveListener {
-        tabRemove(tab: Tab);
-    }
-}
-module api_ui_tab {
-    interface TabSelectedListener {
-        selectedTab(tab: Tab);
-    }
-}
-module api_ui_tab {
     interface TabNavigator {
         addTab(tab: Tab);
+        removeTab(tab: Tab);
+        selectTab(tab: Tab);
+        getActiveTab(): Tab;
+        deselectTab();
         getSize(): number;
-        addTabSelectedListener(listener: TabSelectedListener);
-        addTabRemoveListener(listener: TabRemoveListener);
+        addTabSelectedListener(listener: (Tab: any) => void);
+        addTabRemoveListener(listener: (Tab: any) => bool);
     }
 }
 module api_ui_tab {
@@ -528,6 +523,7 @@ module api_ui_tab {
         private menuEl;
         private showingMenuItems;
         private tabs;
+        private selectedTab;
         private tabSelectedListeners;
         private tabRemovedListeners;
         constructor(idPrefix?: string);
@@ -540,14 +536,17 @@ module api_ui_tab {
         public addTab(tab: Tab): void;
         public getSize(): number;
         public removeTab(tab: Tab): void;
+        private isSelectedTab(tab);
+        private isLastTab(tab);
         public selectTab(tab: Tab): void;
+        public getActiveTab(): Tab;
         public deselectTab(): void;
-        public addTabSelectedListener(listener: TabSelectedListener): void;
-        public addTabRemoveListener(listener: TabRemoveListener): void;
+        public addTabSelectedListener(listener: (Tab: any) => void): void;
+        public addTabRemoveListener(listener: (Tab: any) => bool): void;
         public handleTabClickedEvent(tabMenuItem: TabMenuItem): void;
         public handleTabRemoveButtonClickedEvent(tabMenuItem: TabMenuItem): void;
         public fireTabSelected(tab: Tab): void;
-        private fireBeforeTabRemoved(tab);
+        private fireTabRemoveEvent(tab);
     }
 }
 module api_ui_tab {
@@ -576,20 +575,22 @@ module api_ui_tab {
     class TabBar extends api_ui.DivEl implements TabNavigator {
         constructor(idPrefix?: string);
         public addTab(tab: Tab): void;
+        public removeTab(tab: Tab): void;
         public getSize(): number;
-        public addTabSelectedListener(listener: TabSelectedListener): void;
-        public addTabRemoveListener(listener: TabRemoveListener): void;
+        public getActiveTab(): Tab;
+        public selectTab(tab: Tab): void;
+        public deselectTab(): void;
+        public addTabSelectedListener(listener: (Tab: any) => void): void;
+        public addTabRemoveListener(listener: (Tab: any) => bool): void;
     }
 }
 module api_ui_tab {
-    class TabPanelController implements TabRemoveListener, TabSelectedListener {
-        private tabNavigator;
-        private deckPanel;
-        private deckIndexByTabIndex;
-        constructor(tabNavigator: TabNavigator, deckPanel: api_ui.DeckPanel);
-        public addPanel(panel: api_ui.Panel, tab: Tab): void;
-        public tabRemove(tab: Tab): void;
-        public selectedTab(tab: Tab): void;
+    class TabbedDeckPanel extends api_ui.DeckPanel {
+        private navigator;
+        constructor(navigator: TabNavigator);
+        public addTab(tab: Tab, panel: api_ui.Panel): void;
+        public showTab(tab: Tab): void;
+        public tabRemove(tab: Tab): bool;
     }
 }
 module api_ui_form {
@@ -649,6 +650,7 @@ module api_appbar {
         private userInfoPopup;
         constructor(appName, actions: AppBarActions, tabMenu?: AppBarTabMenu);
         private initExt();
+        public getTabMenu(): AppBarTabMenu;
     }
     interface AppBarActions {
         showAppLauncherAction: api_ui.Action;
@@ -768,7 +770,6 @@ module api_appbar {
         private tabMenuButton;
         constructor(idPrefix?: string);
         public addTab(tab: api_ui_tab.Tab): void;
-        public selectTab(tab: api_ui_tab.Tab): void;
         public createTabMenuButton(): api_ui_tab.TabMenuButton;
         public removeTab(tab: api_ui_tab.Tab): void;
     }
@@ -792,11 +793,11 @@ module api_appbar {
 }
 module api {
     class AppPanel extends api_ui.DeckPanel {
-        public ext;
         private browsePanel;
         private deckPanel;
         constructor(browsePanel: AppBrowsePanel, deckPanel: AppDeckPanel);
-        private initExt();
+        public showBrowsePanel(): void;
+        public showDeckPanel(): void;
     }
 }
 module api {
@@ -807,12 +808,18 @@ module api {
         private detailPanel;
         private filterPanel;
         constructor(browseToolbar: api_ui_toolbar.Toolbar, grid: any, detailPanel: api_ui_detailpanel.DetailPanel, filterPanel: any);
+        public init(): void;
         private initExt();
     }
 }
 module api {
-    class AppDeckPanel extends api_ui.DeckPanel {
-        constructor();
+    class AppDeckPanel extends api_ui_tab.TabbedDeckPanel {
+        private appPanel;
+        constructor(navigator: api_ui_tab.TabNavigator);
+        public tabRemove(tab: api_ui_tab.Tab): bool;
+        public removePanel(index: number): api_ui.Panel;
+        private hasUnsavedChanges();
+        public setAppPanel(value: AppPanel): void;
     }
 }
 module api_notify {

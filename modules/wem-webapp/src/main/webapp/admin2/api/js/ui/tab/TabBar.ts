@@ -8,20 +8,34 @@ module api_ui_tab {
 
         addTab(tab:api_ui_tab.Tab) {
 
+        }
 
-            // TODO: cast to TabMenuItem and add
+        removeTab(tab:api_ui_tab.Tab) {
+
         }
 
         getSize():number {
             return 0;
         }
 
-        addTabSelectedListener(listener:TabSelectedListener) {
-            // TODO
+        getActiveTab():api_ui_tab.Tab {
+            return null;
         }
 
-        addTabRemoveListener(listener:api_ui_tab.TabRemoveListener) {
-            // TODO
+        selectTab(tab:api_ui_tab.Tab) {
+
+        }
+
+        deselectTab() {
+
+        }
+
+        addTabSelectedListener(listener:(Tab) => void) {
+
+        }
+
+        addTabRemoveListener(listener:(Tab) => bool) {
+
         }
     }
 }

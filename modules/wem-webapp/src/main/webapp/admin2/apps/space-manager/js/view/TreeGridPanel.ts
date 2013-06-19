@@ -35,7 +35,7 @@ module app_ui {
                                '</div>';
 
 
-        constructor(region?:String) {
+        create(region?:string, renderTo?:string) {
             var gridSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
                 keyField: this.keyField
             });
@@ -48,6 +48,7 @@ module app_ui {
                 activeItem: 'grid',
                 itemId: 'spaceTreeGrid',
                 alias: 'widget.spaceTreeGrid',
+                renderTo: renderTo,
                 gridConf: {
                     selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36})
                 },

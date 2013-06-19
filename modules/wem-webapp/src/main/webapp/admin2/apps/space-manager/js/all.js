@@ -292,12 +292,12 @@ var app;
         __extends(SpaceAppBrowsePanel, _super);
         function SpaceAppBrowsePanel() {
             var toolbar = new app_ui.BrowseToolbar();
-            var grid = components.gridPanel = new app_ui.TreeGridPanel('center');
+            var grid = components.gridPanel = new app_ui.TreeGridPanel();
             var detail = components.detailPanel = new app_ui.SpaceDetailPanel();
             var filterPanel = new app_ui.FilterPanel({
                 region: 'west',
                 width: 200
-            }).getExtEl();
+            });
                 _super.call(this, toolbar, grid, detail, filterPanel);
         }
         return SpaceAppBrowsePanel;
@@ -2559,8 +2559,7 @@ var app_ui;
 var app_ui;
 (function (app_ui) {
     var TreeGridPanel = (function () {
-        function TreeGridPanel(region) {
-            var _this = this;
+        function TreeGridPanel() {
             this.store = new Ext.data.Store({
                 pageSize: 100,
                 autoLoad: true,
@@ -2578,6 +2577,9 @@ var app_ui;
             });
             this.keyField = 'name';
             this.nameTemplate = '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>';
+        }
+        TreeGridPanel.prototype.create = function (region, renderTo) {
+            var _this = this;
             var gridSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
                 keyField: this.keyField
             });
@@ -2589,6 +2591,7 @@ var app_ui;
                 activeItem: 'grid',
                 itemId: 'spaceTreeGrid',
                 alias: 'widget.spaceTreeGrid',
+                renderTo: renderTo,
                 gridConf: {
                     selModel: Ext.create('Ext.selection.CheckboxModel', {
                         headerWidth: 36
@@ -2674,7 +2677,7 @@ var app_ui;
             app_event.GridDeselectEvent.on(function (event) {
                 _this.deselect(event.getModels()[0].data.name);
             });
-        }
+        };
         TreeGridPanel.prototype.fireUpdateEvent = function (values) {
             this.ext.fireEvent('datachanged', values);
         };
@@ -4248,7 +4251,7 @@ var app_appbar;
                 _super.call(this, "Space Admin", {
         showAppLauncherAction: app_appbar.SpaceAppBarActions.SHOW_APP_LAUNCHER,
         showAppBrowsePanelAction: app_appbar.SpaceAppBarActions.SHOW_APP_BROWSER_PANEL
-    }, app.SpaceAppTabPanelController.get().getAppBarTabMenu());
+    }, new app_appbar.SpaceAppBarTabMenu());
         }
         return SpaceAppBar;
     })(api_appbar.AppBar);
@@ -4425,7 +4428,7 @@ Ext.define('Admin.controller.GridPanelController', {
     views: [],
     contextMenu: null,
     init: function () {
-        this.contextMenu = new app_ui.ContextMenuGridPanel();
+        this.contextMenu = null;
         this.control({
             '#spaceTreeGrid gridpanel, #spaceTreeGrid treepanel': {
                 selectionchange: this.onGridSelectionChange,
@@ -4697,28 +4700,26 @@ var app_appbar;
 })(app_appbar || (app_appbar = {}));
 var app;
 (function (app) {
-    var SpaceAppTabPanelController = (function (_super) {
-        __extends(SpaceAppTabPanelController, _super);
-        function SpaceAppTabPanelController() {
+    var SpaceAppPanel = (function (_super) {
+        __extends(SpaceAppPanel, _super);
+        function SpaceAppPanel(appBar) {
             var _this = this;
-                _super.call(this, null, null);
-            this.extTabByTabIndex = {
-            };
-            this.appBarTabMenu = new app_appbar.SpaceAppBarTabMenu();
-            this.formDeckPanel = new api.AppDeckPanel();
-            this.appBarTabMenu.addTabSelectedListener(this);
-            this.appBarTabMenu.addTabRemoveListener(this);
+            this.appBrowsePanel = new app.SpaceAppBrowsePanel();
+            this.appDeckPanel = new api.AppDeckPanel(appBar.getTabMenu());
+            appBar.getTabMenu().addTabSelectedListener(function (tab) {
+                _this.showDeckPanel();
+            });
+                _super.call(this, this.appBrowsePanel, this.appDeckPanel);
+            api_appbar.ShowAppBrowsePanelEvent.on(function (event) {
+                _this.showBrowsePanel();
+                appBar.getTabMenu().deselectTab();
+            });
             app_event.NewSpaceEvent.on(function (event) {
                 var tabMenuItem = new app_appbar.SpaceAppBarTabMenuItem("New Space");
-                _this.appBarTabMenu.addTab(tabMenuItem);
-                _this.appBarTabMenu.selectTab(tabMenuItem);
-                var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel('new-space', 'New Space', true);
-                (app_ui.TabPanel.get()).addTab(spaceWizardPanel.ext);
-                _this.extTabByTabIndex[tabMenuItem.getTabIndex()] = spaceWizardPanel.ext;
-                console.log("NewSpaceEvent: Added tab", tabMenuItem);
-                console.log(".. at index", tabMenuItem.getTabIndex());
-                console.log(".. created spaceWizardPanel", spaceWizardPanel);
-                console.log(".. spaceWizardPanel.ext", spaceWizardPanel.ext);
+                var spaceWizardPanel = new app_wizard.SpaceWizardPanel2('new-space', 'New Space', "");
+                _this.appDeckPanel.addTab(tabMenuItem, spaceWizardPanel);
+                _this.appDeckPanel.showTab(tabMenuItem);
+                _this.showDeckPanel();
             });
             app_event.OpenSpaceEvent.on(function (event) {
             });
@@ -4734,87 +4735,24 @@ var app;
                     api_remote.RemoteService.space_get(spaceGetParams, function (result) {
                         if(result) {
                             var tabMenuItem = new app_appbar.SpaceAppBarTabMenuItem(result.space.displayName);
-                            _this.appBarTabMenu.addTab(tabMenuItem);
                             var id = _this.generateTabId(result.space.name, true);
-                            var editing = true;
-                            var title = result.space.displayName;
-                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel2(id, title, result.space.iconUrl);
-                            var index = app_ui.TabPanel.get().getExtEl().items.indexOfKey(_this.generateTabId(result.space.name, false));
-                            if(index >= 0) {
-                                app_ui.TabPanel.get().getExtEl().remove(index);
-                            }
-                            app_ui.TabPanel.get().addTab(spaceWizardPanel.ext, index >= 0 ? index : undefined, undefined);
-                            _this.extTabByTabIndex[tabMenuItem.getTabIndex()] = spaceWizardPanel.ext;
-                            console.log("EditSpaceEvent: Added tab", tabMenuItem);
-                            console.log(".. at index", tabMenuItem.getTabIndex());
-                            console.log(".. created spaceWizardPanel", spaceWizardPanel);
-                            console.log(".. spaceWizardPanel.ext", spaceWizardPanel.ext);
+                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel2(id, result.space.displayName, result.space.iconUrl);
+                            _this.appDeckPanel.addTab(tabMenuItem, spaceWizardPanel);
+                            _this.appDeckPanel.showTab(tabMenuItem);
+                            _this.showDeckPanel();
                         } else {
                             console.error("Error", result ? result.error : "Unable to retrieve space.");
                         }
                     });
                 }
             });
-            api_appbar.ShowAppBrowsePanelEvent.on(function (event) {
-                app_ui.TabPanel.get().getExtEl().setActiveTab(0);
-                _this.appBarTabMenu.deselectTab();
-            });
         }
-        SpaceAppTabPanelController.init = function init() {
-            return SpaceAppTabPanelController.singleton = new SpaceAppTabPanelController();
+        SpaceAppPanel.prototype.init = function () {
+            this.appBrowsePanel.init();
         };
-        SpaceAppTabPanelController.get = function get() {
-            return SpaceAppTabPanelController.singleton;
-        };
-        SpaceAppTabPanelController.prototype.getAppBarTabMenu = function () {
-            return this.appBarTabMenu;
-        };
-        SpaceAppTabPanelController.prototype.tabRemove = function (tab) {
-            var _this = this;
-            var activeTab = app_ui.TabPanel.get().getExtEl().getActiveTab();
-            var wizardPanel = activeTab.wrapper;
-            if(wizardPanel != null && wizardPanel.getWizardDirty()) {
-                Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?', function (answer) {
-                    if('yes' === answer) {
-                        _this.removeTab(tab);
-                    }
-                });
-            } else {
-                this.removeTab(tab);
-            }
-        };
-        SpaceAppTabPanelController.prototype.removeTab = function (tab) {
-            console.log("removeTab: ", tab);
-            console.log(".. tabIndex", tab.getTabIndex());
-            console.log(".. corresponding wizardPanel", this.extTabByTabIndex[tab.getTabIndex()]);
-            this.appBarTabMenu.removeTab(tab);
-            var extTab = this.extTabByTabIndex[tab.getTabIndex()];
-            app_ui.TabPanel.get().getExtEl().remove(extTab);
-            delete this.extTabByTabIndex[tab.getTabIndex()];
-        };
-        SpaceAppTabPanelController.prototype.selectedTab = function (tab) {
-            var extTab = this.extTabByTabIndex[tab.getTabIndex()];
-            console.log("selectedTab: ", tab);
-            console.log(".. tabIndex", tab.getTabIndex());
-            console.log(".. corresponding wizardPanel", extTab);
-            app_ui.TabPanel.get().getExtEl().setActiveTab(extTab);
-        };
-        SpaceAppTabPanelController.prototype.generateTabId = function (spaceName, isEdit) {
+        SpaceAppPanel.prototype.generateTabId = function (spaceName, isEdit) {
             return 'tab-' + (isEdit ? 'edit-' : 'preview-') + spaceName;
         };
-        return SpaceAppTabPanelController;
-    })(api_ui_tab.TabPanelController);
-    app.SpaceAppTabPanelController = SpaceAppTabPanelController;    
-})(app || (app = {}));
-var app;
-(function (app) {
-    var SpaceAppPanel = (function (_super) {
-        __extends(SpaceAppPanel, _super);
-        function SpaceAppPanel() {
-            this.appBrowsePanel = new app.SpaceAppBrowsePanel();
-            this.formDeckPanel = new api.AppDeckPanel();
-                _super.call(this, this.appBrowsePanel, this.formDeckPanel);
-        }
         return SpaceAppPanel;
     })(api.AppPanel);
     app.SpaceAppPanel = SpaceAppPanel;    
@@ -4841,17 +4779,11 @@ Ext.application({
     ],
     stores: [],
     launch: function () {
-        var spaceAppMainPanel = new app.SpaceAppBrowsePanel();
-        var tabPanel = components.tabPanel = app_ui.TabPanel.init({
-            appName: 'Space Admin',
-            appIconCls: 'icon-metro-space-admin-24'
-        }).getExtEl();
-        tabPanel.add(spaceAppMainPanel.ext);
-        var viewPort = new Ext.container.Viewport({
-            layout: 'fit',
-            cls: 'admin-viewport'
-        });
-        viewPort.add(tabPanel);
+        var appBar = new app_appbar.SpaceAppBar();
+        var appPanel = new app.SpaceAppPanel(appBar);
+        document.body.appendChild(appBar.getHTMLElement());
+        document.body.appendChild(appPanel.getHTMLElement());
+        appPanel.init();
         var deleteSpaceDialog = new app_ui.DeleteSpaceDialog();
         app_event.DeletePromptEvent.on(function (event) {
             deleteSpaceDialog.setSpacesToDelete(event.getModels());
@@ -4861,5 +4793,4 @@ Ext.application({
 });
 app.SpaceContext.init();
 app.SpaceActions.init();
-app.SpaceAppTabPanelController.init();
 //@ sourceMappingURL=all.js.map

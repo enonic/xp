@@ -5,13 +5,13 @@ module app {
         constructor() {
 
             var toolbar = new app_ui.BrowseToolbar();
-            var grid = components.gridPanel = new app_ui.TreeGridPanel('center');
+            var grid = components.gridPanel = new app_ui.TreeGridPanel();
             var detail = components.detailPanel = new app_ui.SpaceDetailPanel();
 
             var filterPanel = new app_ui.FilterPanel({
                 region: 'west',
                 width: 200
-            }).getExtEl();
+            });
 
             super(toolbar, grid, detail, filterPanel);
         }

@@ -57,8 +57,13 @@ module api_appbar {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
                 contentEl: htmlEl,
-                cls: 'appbar-container'
+                cls: 'appbar-container',
+                region: 'north'
             });
+        }
+
+        getTabMenu():api_appbar.AppBarTabMenu {
+            return this.tabMenu;
         }
     }
 

@@ -14,10 +14,6 @@ module api_appbar{
             this.tabMenuButton.setTabCount(this.getSize())
         }
 
-        selectTab(tab:api_ui_tab.Tab) {
-            super.selectTab(tab);
-        }
-
         createTabMenuButton():api_ui_tab.TabMenuButton {
             this.tabMenuButton = new AppBarTabMenuButton();
             return this.tabMenuButton;

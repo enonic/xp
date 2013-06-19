@@ -13,15 +13,20 @@ module api{
         private filterPanel:any;
 
         constructor(browseToolbar:api_ui_toolbar.Toolbar, grid:any, detailPanel:api_ui_detailpanel.DetailPanel, filterPanel:any) {
+            super("AppBrowsePanel");
 
             this.browseToolbar = browseToolbar;
             this.grid = grid;
             this.detailPanel = detailPanel;
             this.filterPanel = filterPanel;
+            //this.initExt();
+        }
 
-            super("AppBrowsePanel");
-
-            this.initExt();
+        init() {
+            this.appendChild(this.browseToolbar);
+            // TODO: filterPanel.renderTo(this);
+            this.grid.create('center', this.getId());
+            this.appendChild(this.detailPanel);
         }
 
         private initExt() {

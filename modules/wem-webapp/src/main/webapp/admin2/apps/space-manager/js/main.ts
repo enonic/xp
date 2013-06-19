@@ -76,7 +76,6 @@
 ///<reference path='appbar/SpaceAppBarTabMenuItem.ts' />
 ///<reference path='appbar/SpaceAppBarTabMenu.ts' />
 ///<reference path='appbar/SpaceAppBar.ts' />
-///<reference path='SpaceAppTabPanelController.ts' />
 ///<reference path='SpaceAppPanel.ts' />
 
 
@@ -114,22 +113,13 @@ Ext.application({
 
     launch: function () {
 
-        // TODO: var spaceAppPanel = new app.SpaceAppPanel();
-        var spaceAppMainPanel = new app.SpaceAppBrowsePanel();
+        var appBar = new app_appbar.SpaceAppBar();
+        var appPanel = new app.SpaceAppPanel(appBar);
 
-        var tabPanel = components.tabPanel = app_ui.TabPanel.init({
-            appName: 'Space Admin',
-            appIconCls: 'icon-metro-space-admin-24'
-        }).getExtEl();
+        document.body.appendChild(appBar.getHTMLElement());
+        document.body.appendChild(appPanel.getHTMLElement());
 
-        tabPanel.add(spaceAppMainPanel.ext);
-
-        var viewPort = new Ext.container.Viewport({
-            layout: 'fit',
-            cls: 'admin-viewport'
-        });
-
-        viewPort.add(tabPanel);
+        appPanel.init();
 
         var deleteSpaceDialog:app_ui.DeleteSpaceDialog = new app_ui.DeleteSpaceDialog();
         app_event.DeletePromptEvent.on((event) => {
@@ -142,5 +132,4 @@ Ext.application({
 
 app.SpaceContext.init();
 app.SpaceActions.init();
-app.SpaceAppTabPanelController.init();
 

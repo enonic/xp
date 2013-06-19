@@ -2,8 +2,6 @@ module api{
 
     export class AppPanel extends api_ui.DeckPanel {
 
-        ext;
-
         private browsePanel:AppBrowsePanel;
 
         private deckPanel:api.AppDeckPanel;
@@ -13,27 +11,20 @@ module api{
 
             this.browsePanel = browsePanel;
             this.deckPanel = deckPanel;
+            deckPanel.setAppPanel(this);
 
             this.addPanel(this.browsePanel);
             this.addPanel(this.deckPanel);
             this.showPanel(0);
 
-            this.initExt();
         }
 
-        private initExt() {
-
-            this.ext = new Ext.layout.container.Card({
-                id: 'AppPanel',
-                title: 'AppPanel',
-                closable: false,
-                border: false,
-                layout: 'card'
-            });
-
-            this.ext.add(this.browsePanel);
-            this.ext.add(this.deckPanel);
+        showBrowsePanel() {
+            this.showPanel(0);
         }
 
+        showDeckPanel() {
+            this.showPanel(1);
+        }
     }
 }

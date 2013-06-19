@@ -1524,6 +1524,8 @@ interface Ext_AbstractComponent extends Ext_Base, Ext_state_Stateful, Ext_util_A
 
     removeUIClsFromElement(ui:string): void;
 
+    renderTo(el:any): void;
+
     setBorder(border:string): void;
     setBorder(border:number): void;
 
