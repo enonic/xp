@@ -8,6 +8,7 @@ module api_wizard {
         private wizardStepPanels:WizardStepPanels;
 
         private titleEl:api_dom.Element;
+
         private subTitleEl:api_dom.Element;
 
         ext;
@@ -44,7 +45,7 @@ module api_wizard {
             this.stepContainer.addStep(step);
         }
 
-        addIcon(icon:api_ui_form.FormIcon) {
+        addIcon(icon:FormIcon) {
             this.getEl().insertBefore(icon, this.titleEl);
         }
 
@@ -72,13 +73,13 @@ module api_wizard {
 
     }
 
-    class WizardStepPanels extends api_ui.DeckPanel {
+    export class WizardStepPanels extends api_ui.DeckPanel {
         constructor() {
             super("WizardStepPanels");
         }
     }
 
-    class WizardStepContainer extends api_dom.UlEl {
+    export class WizardStepContainer extends api_dom.UlEl {
         private deckPanel:WizardStepPanels;
         private steps:WizardStep[] = [];
 

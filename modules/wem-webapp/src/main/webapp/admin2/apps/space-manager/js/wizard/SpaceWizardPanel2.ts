@@ -33,7 +33,7 @@ module app_wizard {
             this.addStep(new api_wizard.WizardStep("Templates", templatesPanel));
 
             this.addToolbar(new SpaceWizardToolbar2(context.getActions()));
-            this.addIcon(new api_ui_form.FormIcon(iconUrl, "Click to upload icon", "rest/upload"))
+            this.addIcon(new api_wizard.FormIcon(iconUrl, "Click to upload icon", "rest/upload"))
         }
     }
 }

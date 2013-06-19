@@ -335,65 +335,262 @@ var api_event;
     }
     api_event.fireEvent = fireEvent;
 })(api_event || (api_event = {}));
-var api_ui;
-(function (api_ui) {
+var api_notify;
+(function (api_notify) {
+    (function (Type) {
+        Type._map = [];
+        Type._map[0] = "INFO";
+        Type.INFO = 0;
+        Type._map[1] = "ERROR";
+        Type.ERROR = 1;
+        Type._map[2] = "ACTION";
+        Type.ACTION = 2;
+    })(api_notify.Type || (api_notify.Type = {}));
+    var Type = api_notify.Type;
     var Action = (function () {
-        function Action(label) {
-            this.enabled = true;
-            this.executionListeners = [];
-            this.propertyChangeListeners = [];
-            this.label = label;
+        function Action(name, handler) {
+            this.name = name;
+            this.handler = handler;
         }
-        Action.prototype.getLabel = function () {
-            return this.label;
+        Action.prototype.getName = function () {
+            return this.name;
         };
-        Action.prototype.setLabel = function (value) {
-            if(value !== this.label) {
-                this.label = value;
-                for(var i in this.propertyChangeListeners) {
-                    this.propertyChangeListeners[i](this);
-                }
-            }
-        };
-        Action.prototype.isEnabled = function () {
-            return this.enabled;
-        };
-        Action.prototype.setEnabled = function (value) {
-            if(value !== this.enabled) {
-                this.enabled = value;
-                for(var i in this.propertyChangeListeners) {
-                    this.propertyChangeListeners[i](this);
-                }
-            }
-        };
-        Action.prototype.getIconClass = function () {
-            return this.iconClass;
-        };
-        Action.prototype.setIconClass = function (value) {
-            if(value !== this.iconClass) {
-                this.iconClass = value;
-                for(var i in this.propertyChangeListeners) {
-                    this.propertyChangeListeners[i](this);
-                }
-            }
-        };
-        Action.prototype.execute = function () {
-            if(this.enabled) {
-                for(var i in this.executionListeners) {
-                    this.executionListeners[i](this);
-                }
-            }
-        };
-        Action.prototype.addExecutionListener = function (listener) {
-            this.executionListeners.push(listener);
-        };
-        Action.prototype.addPropertyChangeListener = function (listener) {
-            this.propertyChangeListeners.push(listener);
+        Action.prototype.getHandler = function () {
+            return this.handler;
         };
         return Action;
     })();
-    api_ui.Action = Action;    
-})(api_ui || (api_ui = {}));
+    api_notify.Action = Action;    
+    var Message = (function () {
+        function Message(type, text) {
+            this.type = type;
+            this.text = text;
+            this.actions = [];
+        }
+        Message.prototype.getType = function () {
+            return this.type;
+        };
+        Message.prototype.getText = function () {
+            return this.text;
+        };
+        Message.prototype.getActions = function () {
+            return this.actions;
+        };
+        Message.prototype.addAction = function (name, handler) {
+            this.actions.push(new Action(name, handler));
+        };
+        Message.prototype.send = function () {
+            api_notify.sendNotification(this);
+        };
+        return Message;
+    })();
+    api_notify.Message = Message;    
+    function newInfo(text) {
+        return new Message(Type.INFO, text);
+    }
+    api_notify.newInfo = newInfo;
+    function newError(text) {
+        return new Message(Type.ERROR, text);
+    }
+    api_notify.newError = newError;
+    function newAction(text) {
+        return new Message(Type.ACTION, text);
+    }
+    api_notify.newAction = newAction;
+})(api_notify || (api_notify = {}));
+var api_notify;
+(function (api_notify) {
+    var space = 3;
+    var lifetime = 5000;
+    var slideDuration = 1000;
+    var templates = {
+        manager: new Ext.Template('<div class="admin-notification-container">', '   <div class="admin-notification-wrapper"></div>', '</div>'),
+        notify: new Ext.Template('<div class="admin-notification" style="height: 0; opacity: 0;">', '   <div class="admin-notification-inner">', '       <a class="admin-notification-remove" href="#">X</a>', '       <div class="admin-notification-content">{message}</div>', '   </div>', '</div>')
+    };
+    var NotifyManager = (function () {
+        function NotifyManager() {
+            this.timers = {
+            };
+            this.render();
+        }
+        NotifyManager.prototype.render = function () {
+            var template = templates.manager;
+            var node = template.append(Ext.getBody());
+            this.el = Ext.get(node);
+            this.el.setStyle('bottom', 0);
+            this.getWrapperEl().setStyle({
+                margin: 'auto'
+            });
+        };
+        NotifyManager.prototype.getWrapperEl = function () {
+            return this.el.first('.admin-notification-wrapper');
+        };
+        NotifyManager.prototype.notify = function (message) {
+            var opts = api_notify.buildOpts(message);
+            this.doNotify(opts);
+        };
+        NotifyManager.prototype.doNotify = function (opts) {
+            var _this = this;
+            var notificationEl = this.renderNotification(opts);
+            var height = getInnerEl(notificationEl).getHeight();
+            this.setListeners(notificationEl, opts);
+            notificationEl.animate({
+                duration: slideDuration,
+                to: {
+                    height: height + space,
+                    opacity: 1
+                },
+                callback: function () {
+                    _this.timers[notificationEl.id] = {
+                        remainingTime: lifetime
+                    };
+                    _this.startTimer(notificationEl);
+                }
+            });
+        };
+        NotifyManager.prototype.setListeners = function (el, opts) {
+            var _this = this;
+            el.on({
+                'click': {
+                    fn: function () {
+                        _this.remove(el);
+                    },
+                    stopEvent: true
+                },
+                'mouseover': function () {
+                    _this.stopTimer(el);
+                },
+                'mouseleave': function () {
+                    _this.startTimer(el);
+                }
+            });
+            if(opts.listeners) {
+                Ext.each(opts.listeners, function (listener) {
+                    el.on({
+                        'click': listener
+                    });
+                });
+            }
+        };
+        NotifyManager.prototype.remove = function (el) {
+            if(!el) {
+                return;
+            }
+            el.animate({
+                duration: slideDuration,
+                to: {
+                    height: 0,
+                    opacity: 0
+                },
+                callback: function () {
+                    Ext.removeNode(el.dom);
+                }
+            });
+            delete this.timers[el.id];
+        };
+        NotifyManager.prototype.startTimer = function (el) {
+            var _this = this;
+            var timer = this.timers[el.id];
+            if(!timer) {
+                return;
+            }
+            timer.id = setTimeout(function () {
+                _this.remove(el);
+            }, timer.remainingTime);
+            timer.startTime = Date.now();
+        };
+        NotifyManager.prototype.stopTimer = function (el) {
+            var timer = this.timers[el.id];
+            if(!timer || !timer.id) {
+                return;
+            }
+            clearTimeout(timer.id);
+            timer.id = null;
+            timer.remainingTime -= Date.now() - timer.startTime;
+        };
+        NotifyManager.prototype.renderNotification = function (opts) {
+            var style = {
+            };
+            var template = templates.notify;
+            var notificationEl = template.append(this.getWrapperEl(), opts, true);
+            if(opts.backgroundColor) {
+                style['backgroundColor'] = opts.backgroundColor;
+            }
+            style['marginTop'] = space + 'px';
+            getInnerEl(notificationEl).setStyle(style);
+            return notificationEl;
+        };
+        return NotifyManager;
+    })();
+    api_notify.NotifyManager = NotifyManager;    
+    function getInnerEl(notificationEl) {
+        return notificationEl.down('.admin-notification-inner');
+    }
+    var manager = new NotifyManager();
+    function sendNotification(message) {
+        manager.notify(message);
+    }
+    api_notify.sendNotification = sendNotification;
+})(api_notify || (api_notify = {}));
+var api_notify;
+(function (api_notify) {
+    var NotifyOpts = (function () {
+        function NotifyOpts() { }
+        return NotifyOpts;
+    })();
+    api_notify.NotifyOpts = NotifyOpts;    
+    function buildOpts(message) {
+        var opts = new NotifyOpts();
+        if(message.getType() == api_notify.Type.ERROR) {
+            opts.backgroundColor = 'red';
+        } else if(message.getType() == api_notify.Type.ACTION) {
+            opts.backgroundColor = '#669c34';
+        }
+        createHtmlMessage(message, opts);
+        addListeners(message, opts);
+        return opts;
+    }
+    api_notify.buildOpts = buildOpts;
+    function addListeners(message, opts) {
+        opts.listeners = [];
+        var actions = message.getActions();
+        for(var i = 0; i < actions.length; i++) {
+            opts.listeners.push({
+                fn: actions[i].getHandler(),
+                delegate: 'notify_action_' + i,
+                stopEvent: true
+            });
+        }
+    }
+    function createHtmlMessage(message, opts) {
+        var actions = message.getActions();
+        opts.message = '<span>' + message.getText() + '</span>';
+        if(actions.length > 0) {
+            var linkHtml = '<span style="float: right; margin-left: 30px;">';
+            for(var i = 0; i < actions.length; i++) {
+                if((i > 0) && (i == (actions.length - 1))) {
+                    linkHtml += ' or ';
+                } else if(i > 0) {
+                    linkHtml += ', ';
+                }
+                linkHtml += '<a href="#" class="notify_action_"' + i + '">';
+                linkHtml += actions[i].getName() + "</a>";
+            }
+            linkHtml += '</span>';
+            opts.message = linkHtml + opts.message;
+        }
+    }
+})(api_notify || (api_notify = {}));
+var api_notify;
+(function (api_notify) {
+    function showFeedback(message) {
+        api_notify.newInfo(message).send();
+    }
+    api_notify.showFeedback = showFeedback;
+    function updateAppTabCount(appId, tabCount) {
+    }
+    api_notify.updateAppTabCount = updateAppTabCount;
+})(api_notify || (api_notify = {}));
 var api_dom;
 (function (api_dom) {
     var ElementHelper = (function () {
@@ -756,6 +953,65 @@ var api_dom;
     })(api_dom.Element);
     api_dom.ButtonEl = ButtonEl;    
 })(api_dom || (api_dom = {}));
+var api_ui;
+(function (api_ui) {
+    var Action = (function () {
+        function Action(label) {
+            this.enabled = true;
+            this.executionListeners = [];
+            this.propertyChangeListeners = [];
+            this.label = label;
+        }
+        Action.prototype.getLabel = function () {
+            return this.label;
+        };
+        Action.prototype.setLabel = function (value) {
+            if(value !== this.label) {
+                this.label = value;
+                for(var i in this.propertyChangeListeners) {
+                    this.propertyChangeListeners[i](this);
+                }
+            }
+        };
+        Action.prototype.isEnabled = function () {
+            return this.enabled;
+        };
+        Action.prototype.setEnabled = function (value) {
+            if(value !== this.enabled) {
+                this.enabled = value;
+                for(var i in this.propertyChangeListeners) {
+                    this.propertyChangeListeners[i](this);
+                }
+            }
+        };
+        Action.prototype.getIconClass = function () {
+            return this.iconClass;
+        };
+        Action.prototype.setIconClass = function (value) {
+            if(value !== this.iconClass) {
+                this.iconClass = value;
+                for(var i in this.propertyChangeListeners) {
+                    this.propertyChangeListeners[i](this);
+                }
+            }
+        };
+        Action.prototype.execute = function () {
+            if(this.enabled) {
+                for(var i in this.executionListeners) {
+                    this.executionListeners[i](this);
+                }
+            }
+        };
+        Action.prototype.addExecutionListener = function (listener) {
+            this.executionListeners.push(listener);
+        };
+        Action.prototype.addPropertyChangeListener = function (listener) {
+            this.propertyChangeListeners.push(listener);
+        };
+        return Action;
+    })();
+    api_ui.Action = Action;    
+})(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var Panel = (function (_super) {
@@ -1523,110 +1779,6 @@ var api_ui_tab;
     })(api_ui.DeckPanel);
     api_ui_tab.TabbedDeckPanel = TabbedDeckPanel;    
 })(api_ui_tab || (api_ui_tab = {}));
-var api_ui_form;
-(function (api_ui_form) {
-    var FormIcon = (function (_super) {
-        __extends(FormIcon, _super);
-        function FormIcon(iconUrl, iconTitle, uploadUrl) {
-            var _this = this;
-                _super.call(this, "FormIcon", "form-icon");
-            this.iconUrl = iconUrl;
-            this.iconTitle = iconTitle;
-            this.uploadUrl = uploadUrl;
-            var el = this.getEl();
-            var me = this;
-            this.tooltip = new api_ui_util.Tooltip(this, iconTitle, 10, "bottom", [
-                0, 
-                5
-            ]);
-            var img = this.img = new api_dom.ImgEl(this.iconUrl, "FormIcon");
-            img.getEl().addEventListener("load", function () {
-                _this.tooltip.showFor(10000);
-            });
-            el.appendChild(img.getHTMLElement());
-            if(this.uploadUrl) {
-                this.progress = new api_ui_util.ProgressBar();
-                el.appendChild(this.progress.getHTMLElement());
-                var firstClickHandler = function (event) {
-                    if(!me.uploader) {
-                        if(!plupload) {
-                            console.log('FormIcon: plupload not found, check if it is included in page.');
-                        } else {
-                            me.uploader = me.initUploader(me.getId());
-                            me.getHTMLElement().click();
-                        }
-                    }
-                    me.getEl().removeEventListener("click", firstClickHandler);
-                };
-                this.getEl().addEventListener("click", firstClickHandler);
-            }
-            this.ext = this.initExt();
-        }
-        FormIcon.prototype.initExt = function () {
-            var me = this;
-            return new Ext.Component({
-                contentEl: this.getHTMLElement()
-            });
-        };
-        FormIcon.prototype.initUploader = function (elId) {
-            var _this = this;
-            var uploader = new plupload.Uploader({
-                runtimes: 'gears,html5,flash,silverlight,browserplus',
-                multi_selection: false,
-                browse_button: elId,
-                url: this.uploadUrl,
-                multipart: true,
-                drop_element: elId,
-                flash_swf_url: 'common/js/fileupload/plupload/js/plupload.flash.swf',
-                silverlight_xap_url: 'common/js/fileupload/plupload/js/plupload.silverlight.xap',
-                filters: [
-                    {
-                        title: 'Image files',
-                        extensions: 'jpg,gif,png'
-                    }
-                ]
-            });
-            uploader.bind('Init', function (up, params) {
-                console.log('uploader init', up, params);
-            });
-            uploader.bind('FilesAdded', function (up, files) {
-                console.log('uploader files added', up, files);
-            });
-            uploader.bind('QueueChanged', function (up) {
-                console.log('uploader queue changed', up);
-                up.start();
-            });
-            uploader.bind('UploadFile', function (up, file) {
-                console.log('uploader upload file', up, file);
-                _this.progress.show();
-            });
-            uploader.bind('UploadProgress', function (up, file) {
-                console.log('uploader upload progress', up, file);
-                _this.progress.setValue(file.percent);
-            });
-            uploader.bind('FileUploaded', function (up, file, response) {
-                console.log('uploader file uploaded', up, file, response);
-                var responseObj, uploadedResUrl;
-                if(response && response.status === 200) {
-                    responseObj = Ext.decode(response.response);
-                    uploadedResUrl = (responseObj.items && responseObj.items.length > 0) ? 'rest/upload/' + responseObj.items[0].id : 'resources/images/x-user-photo.png';
-                    _this.setSrc(uploadedResUrl);
-                }
-                _this.progress.hide();
-            });
-            uploader.bind('UploadComplete', function (up, files) {
-                console.log('uploader upload complete', up, files);
-            });
-            uploader.init();
-            return uploader;
-        };
-        FormIcon.prototype.setSrc = function (src) {
-            this.img.getEl().setSrc(src);
-        };
-        return FormIcon;
-    })(api_dom.ButtonEl);
-    api_ui_form.FormIcon = FormIcon;    
-})(api_ui_form || (api_ui_form = {}));
 var api_ui_util;
 (function (api_ui_util) {
     var Tooltip = (function (_super) {
@@ -1996,6 +2148,78 @@ var api_appbar;
 })(api_appbar || (api_appbar = {}));
 var api;
 (function (api) {
+    var AppBrowsePanel = (function (_super) {
+        __extends(AppBrowsePanel, _super);
+        function AppBrowsePanel(browseToolbar, grid, detailPanel, filterPanel) {
+                _super.call(this, "AppBrowsePanel");
+            this.browseToolbar = browseToolbar;
+            this.grid = grid;
+            this.detailPanel = detailPanel;
+            this.filterPanel = filterPanel;
+        }
+        AppBrowsePanel.prototype.init = function () {
+            this.appendChild(this.browseToolbar);
+            this.grid.create('center', this.getId());
+            this.appendChild(this.detailPanel);
+        };
+        AppBrowsePanel.prototype.initExt = function () {
+            var center = new Ext.container.Container({
+                region: 'center',
+                layout: 'border'
+            });
+            center.add(this.browseToolbar.ext);
+            center.add(this.grid.ext);
+            center.add(this.detailPanel.ext);
+            this.ext = new Ext.panel.Panel({
+                id: 'tab-browse',
+                title: 'Browse',
+                closable: false,
+                border: false,
+                layout: 'border',
+                tabConfig: {
+                    hidden: true
+                }
+            });
+            this.ext.add(center);
+            this.ext.add(this.filterPanel);
+        };
+        return AppBrowsePanel;
+    })(api_ui.Panel);
+    api.AppBrowsePanel = AppBrowsePanel;    
+})(api || (api = {}));
+var api;
+(function (api) {
+    var AppDeckPanel = (function (_super) {
+        __extends(AppDeckPanel, _super);
+        function AppDeckPanel(navigator) {
+                _super.call(this, navigator);
+        }
+        AppDeckPanel.prototype.tabRemove = function (tab) {
+            if(this.hasUnsavedChanges()) {
+                return false;
+            } else {
+                return _super.prototype.tabRemove.call(this, tab);
+            }
+        };
+        AppDeckPanel.prototype.removePanel = function (index) {
+            var panelRemoved = _super.prototype.removePanel.call(this, index);
+            if(this.getSize() == 0) {
+                this.appPanel.showBrowsePanel();
+            }
+            return panelRemoved;
+        };
+        AppDeckPanel.prototype.hasUnsavedChanges = function () {
+            return false;
+        };
+        AppDeckPanel.prototype.setAppPanel = function (value) {
+            this.appPanel = value;
+        };
+        return AppDeckPanel;
+    })(api_ui_tab.TabbedDeckPanel);
+    api.AppDeckPanel = AppDeckPanel;    
+})(api || (api = {}));
+var api;
+(function (api) {
     var AppPanel = (function (_super) {
         __extends(AppPanel, _super);
         function AppPanel(browsePanel, deckPanel) {
@@ -2240,6 +2464,110 @@ var api_delete;
 })(api_delete || (api_delete = {}));
 var api_wizard;
 (function (api_wizard) {
+    var FormIcon = (function (_super) {
+        __extends(FormIcon, _super);
+        function FormIcon(iconUrl, iconTitle, uploadUrl) {
+            var _this = this;
+                _super.call(this, "FormIcon", "form-icon");
+            this.iconUrl = iconUrl;
+            this.iconTitle = iconTitle;
+            this.uploadUrl = uploadUrl;
+            var el = this.getEl();
+            var me = this;
+            this.tooltip = new api_ui_util.Tooltip(this, iconTitle, 10, "bottom", [
+                0, 
+                5
+            ]);
+            var img = this.img = new api_dom.ImgEl(this.iconUrl, "FormIcon");
+            img.getEl().addEventListener("load", function () {
+                _this.tooltip.showFor(10000);
+            });
+            el.appendChild(img.getHTMLElement());
+            if(this.uploadUrl) {
+                this.progress = new api_ui_util.ProgressBar();
+                el.appendChild(this.progress.getHTMLElement());
+                var firstClickHandler = function (event) {
+                    if(!me.uploader) {
+                        if(!plupload) {
+                            console.log('FormIcon: plupload not found, check if it is included in page.');
+                        } else {
+                            me.uploader = me.initUploader(me.getId());
+                            me.getHTMLElement().click();
+                        }
+                    }
+                    me.getEl().removeEventListener("click", firstClickHandler);
+                };
+                this.getEl().addEventListener("click", firstClickHandler);
+            }
+            this.ext = this.initExt();
+        }
+        FormIcon.prototype.initExt = function () {
+            var me = this;
+            return new Ext.Component({
+                contentEl: this.getHTMLElement()
+            });
+        };
+        FormIcon.prototype.initUploader = function (elId) {
+            var _this = this;
+            var uploader = new plupload.Uploader({
+                runtimes: 'gears,html5,flash,silverlight,browserplus',
+                multi_selection: false,
+                browse_button: elId,
+                url: this.uploadUrl,
+                multipart: true,
+                drop_element: elId,
+                flash_swf_url: 'common/js/fileupload/plupload/js/plupload.flash.swf',
+                silverlight_xap_url: 'common/js/fileupload/plupload/js/plupload.silverlight.xap',
+                filters: [
+                    {
+                        title: 'Image files',
+                        extensions: 'jpg,gif,png'
+                    }
+                ]
+            });
+            uploader.bind('Init', function (up, params) {
+                console.log('uploader init', up, params);
+            });
+            uploader.bind('FilesAdded', function (up, files) {
+                console.log('uploader files added', up, files);
+            });
+            uploader.bind('QueueChanged', function (up) {
+                console.log('uploader queue changed', up);
+                up.start();
+            });
+            uploader.bind('UploadFile', function (up, file) {
+                console.log('uploader upload file', up, file);
+                _this.progress.show();
+            });
+            uploader.bind('UploadProgress', function (up, file) {
+                console.log('uploader upload progress', up, file);
+                _this.progress.setValue(file.percent);
+            });
+            uploader.bind('FileUploaded', function (up, file, response) {
+                console.log('uploader file uploaded', up, file, response);
+                var responseObj, uploadedResUrl;
+                if(response && response.status === 200) {
+                    responseObj = Ext.decode(response.response);
+                    uploadedResUrl = (responseObj.items && responseObj.items.length > 0) ? 'rest/upload/' + responseObj.items[0].id : 'resources/images/x-user-photo.png';
+                    _this.setSrc(uploadedResUrl);
+                }
+                _this.progress.hide();
+            });
+            uploader.bind('UploadComplete', function (up, files) {
+                console.log('uploader upload complete', up, files);
+            });
+            uploader.init();
+            return uploader;
+        };
+        FormIcon.prototype.setSrc = function (src) {
+            this.img.getEl().setSrc(src);
+        };
+        return FormIcon;
+    })(api_dom.ButtonEl);
+    api_wizard.FormIcon = FormIcon;    
+})(api_wizard || (api_wizard = {}));
+var api_wizard;
+(function (api_wizard) {
     var WizardPanel = (function (_super) {
         __extends(WizardPanel, _super);
         function WizardPanel() {
@@ -2299,7 +2627,8 @@ var api_wizard;
                 _super.call(this, "WizardStepPanels");
         }
         return WizardStepPanels;
-    })(api_ui.DeckPanel);    
+    })(api_ui.DeckPanel);
+    api_wizard.WizardStepPanels = WizardStepPanels;    
     var WizardStepContainer = (function (_super) {
         __extends(WizardStepContainer, _super);
         function WizardStepContainer(deckPanel) {
@@ -2333,7 +2662,8 @@ var api_wizard;
             });
         };
         return WizardStepContainer;
-    })(api_dom.UlEl);    
+    })(api_dom.UlEl);
+    api_wizard.WizardStepContainer = WizardStepContainer;    
     var WizardStep = (function () {
         function WizardStep(label, panel) {
             this.label = label;
@@ -2366,334 +2696,6 @@ var api_wizard;
     })();
     api_wizard.WizardStep = WizardStep;    
 })(api_wizard || (api_wizard = {}));
-var api;
-(function (api) {
-    var AppBrowsePanel = (function (_super) {
-        __extends(AppBrowsePanel, _super);
-        function AppBrowsePanel(browseToolbar, grid, detailPanel, filterPanel) {
-                _super.call(this, "AppBrowsePanel");
-            this.browseToolbar = browseToolbar;
-            this.grid = grid;
-            this.detailPanel = detailPanel;
-            this.filterPanel = filterPanel;
-        }
-        AppBrowsePanel.prototype.init = function () {
-            this.appendChild(this.browseToolbar);
-            this.grid.create('center', this.getId());
-            this.appendChild(this.detailPanel);
-        };
-        AppBrowsePanel.prototype.initExt = function () {
-            var center = new Ext.container.Container({
-                region: 'center',
-                layout: 'border'
-            });
-            center.add(this.browseToolbar.ext);
-            center.add(this.grid.ext);
-            center.add(this.detailPanel.ext);
-            this.ext = new Ext.panel.Panel({
-                id: 'tab-browse',
-                title: 'Browse',
-                closable: false,
-                border: false,
-                layout: 'border',
-                tabConfig: {
-                    hidden: true
-                }
-            });
-            this.ext.add(center);
-            this.ext.add(this.filterPanel);
-        };
-        return AppBrowsePanel;
-    })(api_ui.Panel);
-    api.AppBrowsePanel = AppBrowsePanel;    
-})(api || (api = {}));
-var api;
-(function (api) {
-    var AppDeckPanel = (function (_super) {
-        __extends(AppDeckPanel, _super);
-        function AppDeckPanel(navigator) {
-                _super.call(this, navigator);
-        }
-        AppDeckPanel.prototype.tabRemove = function (tab) {
-            if(this.hasUnsavedChanges()) {
-                return false;
-            } else {
-                return _super.prototype.tabRemove.call(this, tab);
-            }
-        };
-        AppDeckPanel.prototype.removePanel = function (index) {
-            var panelRemoved = _super.prototype.removePanel.call(this, index);
-            if(this.getSize() == 0) {
-                this.appPanel.showBrowsePanel();
-            }
-            return panelRemoved;
-        };
-        AppDeckPanel.prototype.hasUnsavedChanges = function () {
-            return false;
-        };
-        AppDeckPanel.prototype.setAppPanel = function (value) {
-            this.appPanel = value;
-        };
-        return AppDeckPanel;
-    })(api_ui_tab.TabbedDeckPanel);
-    api.AppDeckPanel = AppDeckPanel;    
-})(api || (api = {}));
-var api_notify;
-(function (api_notify) {
-    (function (Type) {
-        Type._map = [];
-        Type._map[0] = "INFO";
-        Type.INFO = 0;
-        Type._map[1] = "ERROR";
-        Type.ERROR = 1;
-        Type._map[2] = "ACTION";
-        Type.ACTION = 2;
-    })(api_notify.Type || (api_notify.Type = {}));
-    var Type = api_notify.Type;
-    var Action = (function () {
-        function Action(name, handler) {
-            this.name = name;
-            this.handler = handler;
-        }
-        Action.prototype.getName = function () {
-            return this.name;
-        };
-        Action.prototype.getHandler = function () {
-            return this.handler;
-        };
-        return Action;
-    })();
-    api_notify.Action = Action;    
-    var Message = (function () {
-        function Message(type, text) {
-            this.type = type;
-            this.text = text;
-            this.actions = [];
-        }
-        Message.prototype.getType = function () {
-            return this.type;
-        };
-        Message.prototype.getText = function () {
-            return this.text;
-        };
-        Message.prototype.getActions = function () {
-            return this.actions;
-        };
-        Message.prototype.addAction = function (name, handler) {
-            this.actions.push(new Action(name, handler));
-        };
-        Message.prototype.send = function () {
-            api_notify.sendNotification(this);
-        };
-        return Message;
-    })();
-    api_notify.Message = Message;    
-    function newInfo(text) {
-        return new Message(Type.INFO, text);
-    }
-    api_notify.newInfo = newInfo;
-    function newError(text) {
-        return new Message(Type.ERROR, text);
-    }
-    api_notify.newError = newError;
-    function newAction(text) {
-        return new Message(Type.ACTION, text);
-    }
-    api_notify.newAction = newAction;
-})(api_notify || (api_notify = {}));
-var api_notify;
-(function (api_notify) {
-    var space = 3;
-    var lifetime = 5000;
-    var slideDuration = 1000;
-    var templates = {
-        manager: new Ext.Template('<div class="admin-notification-container">', '   <div class="admin-notification-wrapper"></div>', '</div>'),
-        notify: new Ext.Template('<div class="admin-notification" style="height: 0; opacity: 0;">', '   <div class="admin-notification-inner">', '       <a class="admin-notification-remove" href="#">X</a>', '       <div class="admin-notification-content">{message}</div>', '   </div>', '</div>')
-    };
-    var NotifyManager = (function () {
-        function NotifyManager() {
-            this.timers = {
-            };
-            this.render();
-        }
-        NotifyManager.prototype.render = function () {
-            var template = templates.manager;
-            var node = template.append(Ext.getBody());
-            this.el = Ext.get(node);
-            this.el.setStyle('bottom', 0);
-            this.getWrapperEl().setStyle({
-                margin: 'auto'
-            });
-        };
-        NotifyManager.prototype.getWrapperEl = function () {
-            return this.el.first('.admin-notification-wrapper');
-        };
-        NotifyManager.prototype.notify = function (message) {
-            var opts = api_notify.buildOpts(message);
-            this.doNotify(opts);
-        };
-        NotifyManager.prototype.doNotify = function (opts) {
-            var _this = this;
-            var notificationEl = this.renderNotification(opts);
-            var height = getInnerEl(notificationEl).getHeight();
-            this.setListeners(notificationEl, opts);
-            notificationEl.animate({
-                duration: slideDuration,
-                to: {
-                    height: height + space,
-                    opacity: 1
-                },
-                callback: function () {
-                    _this.timers[notificationEl.id] = {
-                        remainingTime: lifetime
-                    };
-                    _this.startTimer(notificationEl);
-                }
-            });
-        };
-        NotifyManager.prototype.setListeners = function (el, opts) {
-            var _this = this;
-            el.on({
-                'click': {
-                    fn: function () {
-                        _this.remove(el);
-                    },
-                    stopEvent: true
-                },
-                'mouseover': function () {
-                    _this.stopTimer(el);
-                },
-                'mouseleave': function () {
-                    _this.startTimer(el);
-                }
-            });
-            if(opts.listeners) {
-                Ext.each(opts.listeners, function (listener) {
-                    el.on({
-                        'click': listener
-                    });
-                });
-            }
-        };
-        NotifyManager.prototype.remove = function (el) {
-            if(!el) {
-                return;
-            }
-            el.animate({
-                duration: slideDuration,
-                to: {
-                    height: 0,
-                    opacity: 0
-                },
-                callback: function () {
-                    Ext.removeNode(el.dom);
-                }
-            });
-            delete this.timers[el.id];
-        };
-        NotifyManager.prototype.startTimer = function (el) {
-            var _this = this;
-            var timer = this.timers[el.id];
-            if(!timer) {
-                return;
-            }
-            timer.id = setTimeout(function () {
-                _this.remove(el);
-            }, timer.remainingTime);
-            timer.startTime = Date.now();
-        };
-        NotifyManager.prototype.stopTimer = function (el) {
-            var timer = this.timers[el.id];
-            if(!timer || !timer.id) {
-                return;
-            }
-            clearTimeout(timer.id);
-            timer.id = null;
-            timer.remainingTime -= Date.now() - timer.startTime;
-        };
-        NotifyManager.prototype.renderNotification = function (opts) {
-            var style = {
-            };
-            var template = templates.notify;
-            var notificationEl = template.append(this.getWrapperEl(), opts, true);
-            if(opts.backgroundColor) {
-                style['backgroundColor'] = opts.backgroundColor;
-            }
-            style['marginTop'] = space + 'px';
-            getInnerEl(notificationEl).setStyle(style);
-            return notificationEl;
-        };
-        return NotifyManager;
-    })();
-    api_notify.NotifyManager = NotifyManager;    
-    function getInnerEl(notificationEl) {
-        return notificationEl.down('.admin-notification-inner');
-    }
-    var manager = new NotifyManager();
-    function sendNotification(message) {
-        manager.notify(message);
-    }
-    api_notify.sendNotification = sendNotification;
-})(api_notify || (api_notify = {}));
-var api_notify;
-(function (api_notify) {
-    var NotifyOpts = (function () {
-        function NotifyOpts() { }
-        return NotifyOpts;
-    })();
-    api_notify.NotifyOpts = NotifyOpts;    
-    function buildOpts(message) {
-        var opts = new NotifyOpts();
-        if(message.getType() == api_notify.Type.ERROR) {
-            opts.backgroundColor = 'red';
-        } else if(message.getType() == api_notify.Type.ACTION) {
-            opts.backgroundColor = '#669c34';
-        }
-        createHtmlMessage(message, opts);
-        addListeners(message, opts);
-        return opts;
-    }
-    api_notify.buildOpts = buildOpts;
-    function addListeners(message, opts) {
-        opts.listeners = [];
-        var actions = message.getActions();
-        for(var i = 0; i < actions.length; i++) {
-            opts.listeners.push({
-                fn: actions[i].getHandler(),
-                delegate: 'notify_action_' + i,
-                stopEvent: true
-            });
-        }
-    }
-    function createHtmlMessage(message, opts) {
-        var actions = message.getActions();
-        opts.message = '<span>' + message.getText() + '</span>';
-        if(actions.length > 0) {
-            var linkHtml = '<span style="float: right; margin-left: 30px;">';
-            for(var i = 0; i < actions.length; i++) {
-                if((i > 0) && (i == (actions.length - 1))) {
-                    linkHtml += ' or ';
-                } else if(i > 0) {
-                    linkHtml += ', ';
-                }
-                linkHtml += '<a href="#" class="notify_action_"' + i + '">';
-                linkHtml += actions[i].getName() + "</a>";
-            }
-            linkHtml += '</span>';
-            opts.message = linkHtml + opts.message;
-        }
-    }
-})(api_notify || (api_notify = {}));
-var api_notify;
-(function (api_notify) {
-    function showFeedback(message) {
-        api_notify.newInfo(message).send();
-    }
-    api_notify.showFeedback = showFeedback;
-    function updateAppTabCount(appId, tabCount) {
-    }
-    api_notify.updateAppTabCount = updateAppTabCount;
-})(api_notify || (api_notify = {}));
 var api_content_data;
 (function (api_content_data) {
     var DataId = (function () {

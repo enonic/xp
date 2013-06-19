@@ -2946,7 +2946,7 @@ var app_ui_wizard;
         SpaceWizardPanel.prototype.createIcon = function () {
             var me = this.ext;
             var headerData = this.resolveHeaderData();
-            var formIcon = new api_ui_form.FormIcon(headerData.iconUrl, "Click to upload icon", "rest/upload");
+            var formIcon = new api_wizard.FormIcon(headerData.iconUrl, "Click to upload icon", "rest/upload");
             return formIcon.ext;
         };
         SpaceWizardPanel.prototype.createActionButton = function () {
@@ -3020,7 +3020,7 @@ var app_wizard;
             this.addStep(new api_wizard.WizardStep("Modules", modulesPanel));
             this.addStep(new api_wizard.WizardStep("Templates", templatesPanel));
             this.addToolbar(new app_wizard.SpaceWizardToolbar2(context.getActions()));
-            this.addIcon(new api_ui_form.FormIcon(iconUrl, "Click to upload icon", "rest/upload"));
+            this.addIcon(new api_wizard.FormIcon(iconUrl, "Click to upload icon", "rest/upload"));
         }
         return SpaceWizardPanel2;
     })(api_wizard.WizardPanel);

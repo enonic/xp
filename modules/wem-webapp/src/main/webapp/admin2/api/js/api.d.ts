@@ -188,24 +188,62 @@ module api_event {
     function onEvent(name: string, handler: (event: Event) => void): void;
     function fireEvent(event: Event): void;
 }
-module api_ui {
-    class Action {
-        private label;
-        private iconClass;
-        private enabled;
-        private executionListeners;
-        private propertyChangeListeners;
-        constructor(label: string);
-        public getLabel(): string;
-        public setLabel(value: string): void;
-        public isEnabled(): bool;
-        public setEnabled(value: bool): void;
-        public getIconClass(): string;
-        public setIconClass(value: string): void;
-        public execute(): void;
-        public addExecutionListener(listener: (action: Action) => void): void;
-        public addPropertyChangeListener(listener: (action: Action) => void): void;
+module api_notify {
+    enum Type {
+        INFO,
+        ERROR,
+        ACTION,
     }
+    class Action {
+        private name;
+        private handler;
+        constructor(name: string, handler: Function);
+        public getName(): string;
+        public getHandler(): Function;
+    }
+    class Message {
+        private type;
+        private text;
+        private actions;
+        constructor(type: Type, text: string);
+        public getType(): Type;
+        public getText(): string;
+        public getActions(): Action[];
+        public addAction(name: string, handler: () => void): void;
+        public send(): void;
+    }
+    function newInfo(text: string): Message;
+    function newError(text: string): Message;
+    function newAction(text: string): Message;
+}
+module api_notify {
+    class NotifyManager {
+        private timers;
+        private el;
+        constructor();
+        private render();
+        private getWrapperEl();
+        public notify(message: Message): void;
+        private doNotify(opts);
+        private setListeners(el, opts);
+        private remove(el);
+        private startTimer(el);
+        private stopTimer(el);
+        private renderNotification(opts);
+    }
+    function sendNotification(message: Message): void;
+}
+module api_notify {
+    class NotifyOpts {
+        public message: string;
+        public backgroundColor: string;
+        public listeners: Object[];
+    }
+    function buildOpts(message: Message): NotifyOpts;
+}
+module api_notify {
+    function showFeedback(message: string): void;
+    function updateAppTabCount(appId, tabCount: Number): void;
 }
 module api_dom {
     class ElementHelper {
@@ -331,6 +369,25 @@ module api_dom {
 module api_dom {
     class ButtonEl extends Element {
         constructor(idPrefix?: string, className?: string);
+    }
+}
+module api_ui {
+    class Action {
+        private label;
+        private iconClass;
+        private enabled;
+        private executionListeners;
+        private propertyChangeListeners;
+        constructor(label: string);
+        public getLabel(): string;
+        public setLabel(value: string): void;
+        public isEnabled(): bool;
+        public setEnabled(value: bool): void;
+        public getIconClass(): string;
+        public setIconClass(value: string): void;
+        public execute(): void;
+        public addExecutionListener(listener: (action: Action) => void): void;
+        public addPropertyChangeListener(listener: (action: Action) => void): void;
     }
 }
 module api_ui {
@@ -560,22 +617,6 @@ module api_ui_tab {
         public tabRemove(tab: Tab): bool;
     }
 }
-module api_ui_form {
-    class FormIcon extends api_dom.ButtonEl {
-        public iconUrl: string;
-        public iconTitle: string;
-        public uploadUrl: string;
-        public ext;
-        private uploader;
-        private img;
-        private progress;
-        private tooltip;
-        constructor(iconUrl: string, iconTitle: string, uploadUrl?: string);
-        private initExt();
-        private initUploader(elId);
-        public setSrc(src: string): void;
-    }
-}
 module api_ui_util {
     class Tooltip extends api_dom.DivEl {
         private target;
@@ -686,6 +727,28 @@ module api_appbar {
     }
 }
 module api {
+    class AppBrowsePanel extends api_ui.Panel {
+        public ext;
+        private browseToolbar;
+        private grid;
+        private detailPanel;
+        private filterPanel;
+        constructor(browseToolbar: api_ui_toolbar.Toolbar, grid: any, detailPanel: api_ui_detailpanel.DetailPanel, filterPanel: any);
+        public init(): void;
+        private initExt();
+    }
+}
+module api {
+    class AppDeckPanel extends api_ui_tab.TabbedDeckPanel {
+        private appPanel;
+        constructor(navigator: api_ui_tab.TabNavigator);
+        public tabRemove(tab: api_ui_tab.Tab): bool;
+        public removePanel(index: number): api_ui.Panel;
+        private hasUnsavedChanges();
+        public setAppPanel(value: AppPanel): void;
+    }
+}
+module api {
     class AppPanel extends api_ui.DeckPanel {
         private browsePanel;
         private deckPanel;
@@ -768,6 +831,22 @@ module api_delete {
     }
 }
 module api_wizard {
+    class FormIcon extends api_dom.ButtonEl {
+        public iconUrl: string;
+        public iconTitle: string;
+        public uploadUrl: string;
+        public ext;
+        private uploader;
+        private img;
+        private progress;
+        private tooltip;
+        constructor(iconUrl: string, iconTitle: string, uploadUrl?: string);
+        private initExt();
+        private initUploader(elId);
+        public setSrc(src: string): void;
+    }
+}
+module api_wizard {
     class WizardPanel extends api_ui.Panel {
         private steps;
         private stepContainer;
@@ -780,11 +859,21 @@ module api_wizard {
         public setTitle(title: string): void;
         public setSubtitle(subtitle: string): void;
         public addStep(step: WizardStep): void;
-        public addIcon(icon: api_ui_form.FormIcon): void;
+        public addIcon(icon: FormIcon): void;
         public addToolbar(toolbar: api_ui_toolbar.Toolbar): void;
         private addTitle();
         private addSubTitle();
         private addStepContainer();
+    }
+    class WizardStepPanels extends api_ui.DeckPanel {
+        constructor();
+    }
+    class WizardStepContainer extends api_dom.UlEl {
+        private deckPanel;
+        private steps;
+        constructor(deckPanel: WizardStepPanels);
+        public addStep(step: WizardStep): void;
+        private removeActive();
     }
     class WizardStep {
         private label;
@@ -799,85 +888,6 @@ module api_wizard {
         public getLabel(): string;
         public getPanel(): api_ui.Panel;
     }
-}
-module api {
-    class AppBrowsePanel extends api_ui.Panel {
-        public ext;
-        private browseToolbar;
-        private grid;
-        private detailPanel;
-        private filterPanel;
-        constructor(browseToolbar: api_ui_toolbar.Toolbar, grid: any, detailPanel: api_ui_detailpanel.DetailPanel, filterPanel: any);
-        public init(): void;
-        private initExt();
-    }
-}
-module api {
-    class AppDeckPanel extends api_ui_tab.TabbedDeckPanel {
-        private appPanel;
-        constructor(navigator: api_ui_tab.TabNavigator);
-        public tabRemove(tab: api_ui_tab.Tab): bool;
-        public removePanel(index: number): api_ui.Panel;
-        private hasUnsavedChanges();
-        public setAppPanel(value: AppPanel): void;
-    }
-}
-module api_notify {
-    enum Type {
-        INFO,
-        ERROR,
-        ACTION,
-    }
-    class Action {
-        private name;
-        private handler;
-        constructor(name: string, handler: Function);
-        public getName(): string;
-        public getHandler(): Function;
-    }
-    class Message {
-        private type;
-        private text;
-        private actions;
-        constructor(type: Type, text: string);
-        public getType(): Type;
-        public getText(): string;
-        public getActions(): Action[];
-        public addAction(name: string, handler: () => void): void;
-        public send(): void;
-    }
-    function newInfo(text: string): Message;
-    function newError(text: string): Message;
-    function newAction(text: string): Message;
-}
-module api_notify {
-    class NotifyManager {
-        private timers;
-        private el;
-        constructor();
-        private render();
-        private getWrapperEl();
-        public notify(message: Message): void;
-        private doNotify(opts);
-        private setListeners(el, opts);
-        private remove(el);
-        private startTimer(el);
-        private stopTimer(el);
-        private renderNotification(opts);
-    }
-    function sendNotification(message: Message): void;
-}
-module api_notify {
-    class NotifyOpts {
-        public message: string;
-        public backgroundColor: string;
-        public listeners: Object[];
-    }
-    function buildOpts(message: Message): NotifyOpts;
-}
-module api_notify {
-    function showFeedback(message: string): void;
-    function updateAppTabCount(appId, tabCount: Number): void;
 }
 module api_content_data {
     class DataId {

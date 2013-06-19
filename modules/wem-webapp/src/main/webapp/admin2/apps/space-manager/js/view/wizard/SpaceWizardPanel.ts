@@ -83,7 +83,7 @@ module app_ui_wizard {
             var me = this.ext;
             var headerData = this.resolveHeaderData();
 
-            var formIcon = new api_ui_form.FormIcon(headerData.iconUrl, "Click to upload icon", "rest/upload" );
+            var formIcon = new api_wizard.FormIcon(headerData.iconUrl, "Click to upload icon", "rest/upload" );
             return formIcon.ext;
         }
 

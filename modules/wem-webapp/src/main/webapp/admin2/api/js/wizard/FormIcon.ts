@@ -1,6 +1,6 @@
 declare var plupload;
 
-module api_ui_form {
+module api_wizard {
 
     export class FormIcon extends api_dom.ButtonEl {
 

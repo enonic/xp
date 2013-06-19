@@ -23,7 +23,10 @@
 ///<reference path='event/Event.ts' />
 ///<reference path='event/EventBus.ts' />
 
-///<reference path='ui/Action.ts' />
+///<reference path='notify/Message.ts' />
+///<reference path='notify/NotifyManager.ts' />
+///<reference path='notify/NotifyOpts.ts' />
+///<reference path='notify/MessageBus.ts' />
 
 ///<reference path='dom/ElementHelper.ts' />
 ///<reference path='dom/ImgElHelper.ts' />
@@ -40,6 +43,7 @@
 ///<reference path='dom/SpanEl.ts' />
 ///<reference path='dom/ButtonEl.ts' />
 
+///<reference path='ui/Action.ts' />
 ///<reference path='ui/Panel.ts' />
 ///<reference path='ui/DeckPanel.ts' />
 ///<reference path='ui/BodyMask.ts' />
@@ -56,7 +60,6 @@
 ///<reference path='ui/tab/TabMenuItem.ts' />
 ///<reference path='ui/tab/TabBar.ts' />
 ///<reference path='ui/tab/TabbedDeckPanel.ts' />
-///<reference path='ui/form/FormIcon.ts' />
 ///<reference path='ui/util/Tooltip.ts' />
 ///<reference path='ui/util/ProgressBar.ts' />
 
@@ -67,25 +70,18 @@
 ///<reference path='appbar/AppBarTabMenuButton.ts' />
 ///<reference path='appbar/AppBarTabMenuItem.ts' />
 ///<reference path='appbar/AppBar.ts' />
+
+///<reference path='AppBrowsePanel.ts' />
+///<reference path='AppDeckPanel.ts' />
 ///<reference path='AppPanel.ts' />
-
-
 
 ///<reference path='ui/dialog/DialogButton.ts' />
 ///<reference path='ui/dialog/ModalDialog.ts' />
 ///<reference path='delete/DeleteItem.ts' />
 ///<reference path='delete/DeleteDialog.ts' />
 
+///<reference path='wizard/FormIcon.ts' />
 ///<reference path='wizard/WizardPanel.ts' />
-
-
-///<reference path='AppBrowsePanel.ts' />
-///<reference path='AppDeckPanel.ts' />
-
-///<reference path='notify/Message.ts' />
-///<reference path='notify/NotifyManager.ts' />
-///<reference path='notify/NotifyOpts.ts' />
-///<reference path='notify/MessageBus.ts' />
 
 ///<reference path='content/data/DataId.ts' />
 ///<reference path='content/data/Data.ts' />
