@@ -1,6 +1,6 @@
 module api_remote {
 
-    export var RemoteService: RemoteServiceInterface;
+    export var RemoteService:RemoteServiceInterface;
 
     export interface RemoteCallResultBase {
         success: bool;
@@ -38,6 +38,17 @@ module api_remote {
             name:string;
             rootContentId:string;
         };
+    }
+
+    export interface RemoteCallSpaceCreateOrUpdateParams {
+        spaceName:string;
+        displayName:string;
+        iconReference?:string;
+    }
+
+    export interface RemoteCallSpaceCreateOrUpdateResult extends RemoteCallResultBase {
+        created:bool;
+        updated:bool;
     }
 
     export interface RemoteServiceInterface {
@@ -81,17 +92,17 @@ module api_remote {
         space_list (params:RemoteCallSpaceListParams, callback:(result:RemoteCallSpaceListResult)=>void):void;
         space_get (params:RemoteCallSpaceGetParams, callback:(result:RemoteCallSpaceGetResult)=>void):void;
         space_delete (params, callback):void;
-        space_createOrUpdate (params, callback):void;
+        space_createOrUpdate (params:RemoteCallSpaceCreateOrUpdateParams, callback:(result:RemoteCallSpaceCreateOrUpdateResult)=>void):void;
         binary_create (params, callback):void;
     }
-    
+
     class RemoteServiceImpl implements RemoteServiceInterface {
-        private provider: any; //Ext_direct_RemotingProvider;
+        private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
         }
 
-        public init(namespace: string) {
+        public init(namespace:string) {
             var url:string = api_util.getAbsoluteUri("admin/rest/jsonrpc");
             var methods:string[] = [
                 "account_find", "account_getGraph", "account_changePassword", "account_verifyUniqueEmail", "account_suggestUserName",
