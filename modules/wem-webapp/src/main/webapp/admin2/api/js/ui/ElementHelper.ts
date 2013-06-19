@@ -72,6 +72,7 @@ module api_ui {
 
         appendChild(child:HTMLElement) {
             this.el.appendChild(child);
+            return this;
         }
 
         setData(name:string, value:string):api_ui.ElementHelper {
@@ -113,7 +114,7 @@ module api_ui {
             return this;
         }
 
-        getWidth(): number {
+        getWidth():number {
             return this.el.offsetWidth;
         }
 
@@ -122,7 +123,7 @@ module api_ui {
             return this;
         }
 
-        getHeight(): number {
+        getHeight():number {
             return this.el.offsetHeight;
         }
 
