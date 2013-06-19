@@ -353,6 +353,15 @@ public abstract class Value<T>
         }
     }
 
+    public static final class AttachmentName
+        extends Value<String>
+    {
+        public AttachmentName( final String value )
+        {
+            super( ValueTypes.ATTACHMENT_NAME, value );
+        }
+    }
+
     public static final class BinaryId
         extends Value<com.enonic.wem.api.content.binary.BinaryId>
     {

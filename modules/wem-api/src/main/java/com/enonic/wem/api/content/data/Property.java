@@ -164,6 +164,12 @@ public class Property
         return getArray().getValue( arrayIndex ).asDate();
     }
 
+    public String getAttachmentName()
+        throws InconvertibleValueException
+    {
+        return value.asString();
+    }
+
     public com.enonic.wem.api.content.binary.BinaryId getBinaryId()
         throws InconvertibleValueException
     {
@@ -480,6 +486,48 @@ public class Property
             public BinaryId build()
             {
                 return new BinaryId( this );
+            }
+        }
+    }
+
+    public final static class AttachmentName
+        extends Property
+    {
+        public AttachmentName( final String name, final String value )
+        {
+            super( name, new Value.AttachmentName( value ) );
+        }
+
+        private AttachmentName( final AbstractBaseBuilder builder )
+        {
+            super( builder );
+        }
+
+
+        public static Builder newAttachmentName()
+        {
+            return new Builder();
+        }
+
+
+        public static class Builder
+            extends AbstractNameBuilder<Builder>
+        {
+            public Builder()
+            {
+                setType( ValueTypes.ATTACHMENT_NAME );
+            }
+
+            public Builder value( final String value )
+            {
+                setValue( value );
+                return this;
+            }
+
+            @Override
+            public AttachmentName build()
+            {
+                return new AttachmentName( this );
             }
         }
     }

@@ -27,6 +27,8 @@ public final class ValueTypes
 
     public static final GeographicCoordinate GEOGRAPHIC_COORDINATE = new GeographicCoordinate( 9 );
 
+    public static final AttachmentName ATTACHMENT_NAME = new AttachmentName( 10 );
+
     private static final Map<Integer, ValueType> typesByKey = new HashMap<>();
 
     private static final Map<String, ValueType> typesByName = new HashMap<>();
@@ -42,6 +44,7 @@ public final class ValueTypes
         register( WHOLE_NUMBER );
         register( DECIMAL_NUMBER );
         register( GEOGRAPHIC_COORDINATE );
+        register( ATTACHMENT_NAME );
     }
 
     private static void register( ValueType valueType )
