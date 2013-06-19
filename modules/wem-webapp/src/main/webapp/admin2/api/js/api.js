@@ -1891,7 +1891,8 @@ var api_appbar;
         AppBar.prototype.initExt = function () {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
-                contentEl: htmlEl
+                contentEl: htmlEl,
+                cls: 'appbar-container'
             });
         };
         return AppBar;

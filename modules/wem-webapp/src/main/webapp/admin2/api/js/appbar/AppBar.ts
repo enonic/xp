@@ -56,7 +56,8 @@ module api_appbar {
         private initExt() {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
-                contentEl: htmlEl
+                contentEl: htmlEl,
+                cls: 'appbar-container'
             });
         }
     }
