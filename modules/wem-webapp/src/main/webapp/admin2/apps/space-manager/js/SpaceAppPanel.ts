@@ -4,12 +4,12 @@ module app {
 
         private appBrowsePanel:SpaceAppBrowsePanel;
 
-        private formDeckPanel:api.FormDeckPanel;
+        private formDeckPanel:api.AppDeckPanel;
 
         constructor() {
 
             this.appBrowsePanel = new SpaceAppBrowsePanel();
-            this.formDeckPanel = new api.FormDeckPanel();
+            this.formDeckPanel = new api.AppDeckPanel();
 
             super(this.appBrowsePanel, this.formDeckPanel);
         }

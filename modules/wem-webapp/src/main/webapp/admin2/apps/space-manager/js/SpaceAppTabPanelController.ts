@@ -6,7 +6,7 @@ module app {
 
         private appBarTabMenu:api_appbar.AppBarTabMenu;
 
-        private formDeckPanel:api.FormDeckPanel;
+        private formDeckPanel:api.AppDeckPanel;
 
         private extTabByTabIndex = {};
 
@@ -22,7 +22,7 @@ module app {
             super(null, null);
 
             this.appBarTabMenu = new app_appbar.SpaceAppBarTabMenu();
-            this.formDeckPanel = new api.FormDeckPanel();
+            this.formDeckPanel = new api.AppDeckPanel();
 
             this.appBarTabMenu.addTabSelectedListener(this);
             this.appBarTabMenu.addTabRemoveListener(this);

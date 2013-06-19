@@ -4705,7 +4705,7 @@ var app;
             this.extTabByTabIndex = {
             };
             this.appBarTabMenu = new app_appbar.SpaceAppBarTabMenu();
-            this.formDeckPanel = new api.FormDeckPanel();
+            this.formDeckPanel = new api.AppDeckPanel();
             this.appBarTabMenu.addTabSelectedListener(this);
             this.appBarTabMenu.addTabRemoveListener(this);
             app_event.NewSpaceEvent.on(function (event) {
@@ -4812,7 +4812,7 @@ var app;
         __extends(SpaceAppPanel, _super);
         function SpaceAppPanel() {
             this.appBrowsePanel = new app.SpaceAppBrowsePanel();
-            this.formDeckPanel = new api.FormDeckPanel();
+            this.formDeckPanel = new api.AppDeckPanel();
                 _super.call(this, this.appBrowsePanel, this.formDeckPanel);
         }
         return SpaceAppPanel;

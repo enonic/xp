@@ -4,18 +4,18 @@ module api{
 
         ext;
 
-        private appBrowsePanel:AppBrowsePanel;
+        private browsePanel:AppBrowsePanel;
 
-        private formDeckPanel:FormDeckPanel;
+        private deckPanel:api.AppDeckPanel;
 
-        constructor(appMainPanel:AppBrowsePanel, formDeckPanel:FormDeckPanel) {
+        constructor(browsePanel:AppBrowsePanel, deckPanel:api.AppDeckPanel) {
             super("AppPanel");
 
-            this.appBrowsePanel = appMainPanel;
-            this.formDeckPanel = formDeckPanel;
+            this.browsePanel = browsePanel;
+            this.deckPanel = deckPanel;
 
-            this.addPanel(this.appBrowsePanel);
-            this.addPanel(this.formDeckPanel);
+            this.addPanel(this.browsePanel);
+            this.addPanel(this.deckPanel);
             this.showPanel(0);
 
             this.initExt();
@@ -31,8 +31,8 @@ module api{
                 layout: 'card'
             });
 
-            this.ext.add(this.appBrowsePanel);
-            this.ext.add(this.formDeckPanel);
+            this.ext.add(this.browsePanel);
+            this.ext.add(this.deckPanel);
         }
 
     }

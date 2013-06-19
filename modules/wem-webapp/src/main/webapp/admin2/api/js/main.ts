@@ -79,7 +79,7 @@
 ///<reference path='AppPanel.ts' />
 
 ///<reference path='AppBrowsePanel.ts' />
-///<reference path='FormDeckPanel.ts' />
+///<reference path='AppDeckPanel.ts' />
 
 ///<reference path='notify/Message.ts' />
 ///<reference path='notify/NotifyManager.ts' />

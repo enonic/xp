@@ -793,9 +793,9 @@ module api_appbar {
 module api {
     class AppPanel extends api_ui.DeckPanel {
         public ext;
-        private appBrowsePanel;
-        private formDeckPanel;
-        constructor(appMainPanel: AppBrowsePanel, formDeckPanel: FormDeckPanel);
+        private browsePanel;
+        private deckPanel;
+        constructor(browsePanel: AppBrowsePanel, deckPanel: AppDeckPanel);
         private initExt();
     }
 }
@@ -811,7 +811,7 @@ module api {
     }
 }
 module api {
-    class FormDeckPanel extends api_ui.DeckPanel {
+    class AppDeckPanel extends api_ui.DeckPanel {
         constructor();
     }
 }

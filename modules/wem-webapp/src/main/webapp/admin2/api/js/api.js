@@ -2306,12 +2306,12 @@ var api;
 (function (api) {
     var AppPanel = (function (_super) {
         __extends(AppPanel, _super);
-        function AppPanel(appMainPanel, formDeckPanel) {
+        function AppPanel(browsePanel, deckPanel) {
                 _super.call(this, "AppPanel");
-            this.appBrowsePanel = appMainPanel;
-            this.formDeckPanel = formDeckPanel;
-            this.addPanel(this.appBrowsePanel);
-            this.addPanel(this.formDeckPanel);
+            this.browsePanel = browsePanel;
+            this.deckPanel = deckPanel;
+            this.addPanel(this.browsePanel);
+            this.addPanel(this.deckPanel);
             this.showPanel(0);
             this.initExt();
         }
@@ -2323,8 +2323,8 @@ var api;
                 border: false,
                 layout: 'card'
             });
-            this.ext.add(this.appBrowsePanel);
-            this.ext.add(this.formDeckPanel);
+            this.ext.add(this.browsePanel);
+            this.ext.add(this.deckPanel);
         };
         return AppPanel;
     })(api_ui.DeckPanel);
@@ -2369,14 +2369,14 @@ var api;
 })(api || (api = {}));
 var api;
 (function (api) {
-    var FormDeckPanel = (function (_super) {
-        __extends(FormDeckPanel, _super);
-        function FormDeckPanel() {
-                _super.call(this, "FormDeckPanel");
+    var AppDeckPanel = (function (_super) {
+        __extends(AppDeckPanel, _super);
+        function AppDeckPanel() {
+                _super.call(this, "AppDeckPanel");
         }
-        return FormDeckPanel;
+        return AppDeckPanel;
     })(api_ui.DeckPanel);
-    api.FormDeckPanel = FormDeckPanel;    
+    api.AppDeckPanel = AppDeckPanel;    
 })(api || (api = {}));
 var api_notify;
 (function (api_notify) {
