@@ -8,6 +8,13 @@ module api_util {
     var baseUri: string;
     function getAbsoluteUri(uri: string): string;
 }
+module api_util {
+    class Animation {
+        static DELAY: number;
+        static start(doStep: Function, duration: number, delay?: number): number;
+        static stop(id: number): void;
+    }
+}
 module api_model {
     interface Model {
         data: any;
@@ -223,7 +230,7 @@ module api_ui {
         public removeClass(clsName: string): void;
         public addEventListener(eventName: string, f: (event: Event) => any): void;
         public removeEventListener(eventName: string, f: (event: Event) => any): void;
-        public appendChild(child: HTMLElement): void;
+        public appendChild(child: HTMLElement): ElementHelper;
         public setData(name: string, value: string): ElementHelper;
         public getData(name: string): string;
         public getDisplay(): string;
@@ -378,6 +385,31 @@ module api_ui_toolbar {
         public addGreedySpacer(): void;
         private addActionButton(action);
         private hasGreedySpacer();
+    }
+}
+module api_ui_toolbar {
+    class ToggleSlide extends api_ui.DivEl {
+        private onText;
+        private offText;
+        private isOn;
+        private thumb;
+        private holder;
+        private onLabel;
+        private offLabel;
+        private animationId;
+        private animationDuration;
+        constructor(onText: string, offText: string, initOn: bool);
+        public toggle(): void;
+        public turnOn(): void;
+        public turnOff(): void;
+        public isTurnedOn(): bool;
+        private createMarkup();
+        private calculateStyles();
+        private addListeners();
+        private slideLeft();
+        private slideRight();
+        private calculateOffset();
+        private animate(step);
     }
 }
 module api_ui_menu {
