@@ -7,6 +7,17 @@ module api_remote {
         error?: string;
     }
 
+    export interface RemoteCallContentTypeCreateOrUpdateParams {
+        contentType: string;
+        iconReference: string;
+    }
+
+    export interface RemoteCallContentTypeCreateOrUpdateResult extends RemoteCallResultBase {
+        created: bool;
+        updated: bool;
+        failure?: string;
+    }
+
     export interface RemoteCallSpaceListParams {
     }
 
@@ -77,7 +88,8 @@ module api_remote {
         content_delete (params, callback):void;
         content_find (params, callback):void;
         content_validate (params, callback):void;
-        contentType_createOrUpdate (params, callback):void;
+        contentType_createOrUpdate (params:RemoteCallContentTypeCreateOrUpdateParams,
+                                    callback:(result:RemoteCallContentTypeCreateOrUpdateResult)=>void):void;
         contentType_delete (params, callback):void;
         contentType_tree (params, callback):void;
         schema_tree (params, callback):void;
