@@ -70,7 +70,6 @@
 ///<reference path='appbar/AppBarTabMenuItem.ts' />
 ///<reference path='appbar/AppBar.ts' />
 
-///<reference path='AppDeckPanel.ts' />
 ///<reference path='AppPanel.ts' />
 
 ///<reference path='ui/dialog/DialogButton.ts' />

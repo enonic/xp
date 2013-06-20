@@ -818,6 +818,11 @@ var api_dom;
         Element.prototype.prependChild = function (child) {
             this.el.getHTMLElement().insertBefore(child.getHTMLElement(), this.el.getHTMLElement().firstChild);
         };
+        Element.prototype.removeChild = function (child) {
+            if(this.el.getHTMLElement().contains(child.getHTMLElement())) {
+                this.el.getHTMLElement().removeChild(child.getHTMLElement());
+            }
+        };
         Element.prototype.removeChildren = function () {
             var htmlEl = this.el.getHTMLElement();
             while(htmlEl.firstChild) {
@@ -1074,6 +1079,9 @@ var api_ui;
                     panel.hide();
                 }
             }
+        };
+        DeckPanel.prototype.getPanels = function () {
+            return this.panels;
         };
         return DeckPanel;
     })(api_ui.Panel);
@@ -1442,11 +1450,19 @@ var api_ui_tab;
             tabMenuItem.setTabMenu(this);
             var newLength = this.tabs.push(tabMenuItem);
             tabMenuItem.setTabIndex(newLength - 1);
-            this.tabMenuButton.setLabel(tab.getLabel());
-            this.menuEl.appendChild(tabMenuItem);
+            if(tab.isVisible()) {
+                this.tabMenuButton.setLabel(tab.getLabel());
+                this.menuEl.appendChild(tabMenuItem);
+            }
         };
         TabMenu.prototype.getSize = function () {
-            return this.tabs.length;
+            var size = 0;
+            this.tabs.forEach(function (tab) {
+                if(tab.isVisible()) {
+                    size++;
+                }
+            });
+            return size;
         };
         TabMenu.prototype.removeTab = function (tab) {
             var tabMenuItem = tab;
@@ -1523,7 +1539,7 @@ var api_ui_tab;
             this.tabMenu = tabMenu;
         };
         TabMenuButton.prototype.setLabel = function (value) {
-            jQuery(this.labelEl.getHTMLElement()).text(value);
+            this.labelEl.getEl().setInnerHtml(value);
         };
         return TabMenuButton;
     })(api_dom.DivEl);
@@ -1536,6 +1552,8 @@ var api_ui_tab;
         function TabMenuItem(label) {
             var _this = this;
                 _super.call(this, "TabMenuItem", "tab-menu-item");
+            this.visible = true;
+            this.removable = true;
             this.label = label;
             this.labelEl = new api_dom.SpanEl();
             this.labelEl.getEl().setInnerHtml(label);
@@ -1547,7 +1565,9 @@ var api_ui_tab;
                 _this.tabMenu.handleTabClickedEvent(_this);
             });
             removeButton.getEl().addEventListener("click", function () {
-                _this.tabMenu.handleTabRemoveButtonClickedEvent(_this);
+                if(_this.removable) {
+                    _this.tabMenu.handleTabRemoveButtonClickedEvent(_this);
+                }
             });
         }
         TabMenuItem.prototype.setTabMenu = function (tabMenu) {
@@ -1561,6 +1581,26 @@ var api_ui_tab;
         };
         TabMenuItem.prototype.getLabel = function () {
             return this.label;
+        };
+        TabMenuItem.prototype.isVisible = function () {
+            return this.visible;
+        };
+        TabMenuItem.prototype.setVisible = function (value) {
+            this.visible = value;
+            if(!this.visible) {
+                this.remove();
+            }
+        };
+        TabMenuItem.prototype.isRemovable = function () {
+            return this.removable;
+        };
+        TabMenuItem.prototype.setRemovable = function (value) {
+            this.removable = value;
+        };
+        TabMenuItem.prototype.remove = function () {
+            if(this.tabMenu) {
+                this.tabMenu.removeChild(this);
+            }
         };
         return TabMenuItem;
     })(api_dom.LiEl);
@@ -1995,6 +2035,23 @@ var api_appbar;
 })(api_appbar || (api_appbar = {}));
 var api;
 (function (api) {
+    var AppPanel = (function (_super) {
+        __extends(AppPanel, _super);
+        function AppPanel(appBar, homePanel) {
+                _super.call(this, appBar);
+            this.homePanel = homePanel;
+            var homePanelMenuItem = new api_appbar.AppBarTabMenuItem("home");
+            homePanelMenuItem.setVisible(false);
+            homePanelMenuItem.setRemovable(false);
+            this.addTab(homePanelMenuItem, this.homePanel);
+            this.showPanel(0);
+        }
+        AppPanel.prototype.showBrowsePanel = function () {
+            this.showPanel(0);
+        };
+        return AppPanel;
+    })(api_ui_tab.TabbedDeckPanel);
+    api.AppPanel = AppPanel;    
     var AppDeckPanel = (function (_super) {
         __extends(AppDeckPanel, _super);
         function AppDeckPanel(navigator) {
@@ -2023,29 +2080,6 @@ var api;
         return AppDeckPanel;
     })(api_ui_tab.TabbedDeckPanel);
     api.AppDeckPanel = AppDeckPanel;    
-})(api || (api = {}));
-var api;
-(function (api) {
-    var AppPanel = (function (_super) {
-        __extends(AppPanel, _super);
-        function AppPanel(browsePanel, deckPanel) {
-                _super.call(this, "AppPanel");
-            this.browsePanel = browsePanel;
-            this.deckPanel = deckPanel;
-            deckPanel.setAppPanel(this);
-            this.addPanel(this.browsePanel);
-            this.addPanel(this.deckPanel);
-            this.showPanel(0);
-        }
-        AppPanel.prototype.showBrowsePanel = function () {
-            this.showPanel(0);
-        };
-        AppPanel.prototype.showDeckPanel = function () {
-            this.showPanel(1);
-        };
-        return AppPanel;
-    })(api_ui.DeckPanel);
-    api.AppPanel = AppPanel;    
 })(api || (api = {}));
 var api_ui_dialog;
 (function (api_ui_dialog) {

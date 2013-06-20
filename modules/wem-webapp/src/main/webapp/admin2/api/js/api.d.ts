@@ -312,6 +312,7 @@ module api_dom {
         public getHTMLElement(): HTMLElement;
         public appendChild(child: Element): void;
         public prependChild(child: Element): void;
+        public removeChild(child: Element): void;
         public removeChildren(): void;
     }
 }
@@ -406,6 +407,7 @@ module api_ui {
         public removePanel(index: number): Panel;
         private isShownPanel(panelIndex);
         public showPanel(index: number): void;
+        public getPanels(): Panel[];
     }
 }
 module api_ui {
@@ -483,6 +485,8 @@ module api_ui_tab {
         setTabIndex(value: number);
         getTabIndex(): number;
         getLabel(): string;
+        isVisible(): bool;
+        isRemovable(): bool;
     }
 }
 module api_ui_tab {
@@ -545,11 +549,18 @@ module api_ui_tab {
         private label;
         private labelEl;
         private tabMenu;
+        private visible;
+        private removable;
         constructor(label: string);
         public setTabMenu(tabMenu: TabMenu): void;
         public setTabIndex(value: number): void;
         public getTabIndex(): number;
         public getLabel(): string;
+        public isVisible(): bool;
+        public setVisible(value: bool): void;
+        public isRemovable(): bool;
+        public setRemovable(value: bool): void;
+        private remove();
     }
 }
 module api_ui_tab {
@@ -684,6 +695,11 @@ module api_appbar {
     }
 }
 module api {
+    class AppPanel extends api_ui_tab.TabbedDeckPanel {
+        private homePanel;
+        constructor(appBar: api_ui_tab.TabNavigator, homePanel: api_ui.Panel);
+        public showBrowsePanel(): void;
+    }
     class AppDeckPanel extends api_ui_tab.TabbedDeckPanel {
         private appPanel;
         constructor(navigator: api_ui_tab.TabNavigator);
@@ -691,15 +707,6 @@ module api {
         public removePanel(index: number): api_ui.Panel;
         private hasUnsavedChanges();
         public setAppPanel(value: AppPanel): void;
-    }
-}
-module api {
-    class AppPanel extends api_ui.DeckPanel {
-        private browsePanel;
-        private deckPanel;
-        constructor(browsePanel: api_browse.AppBrowsePanel, deckPanel: AppDeckPanel);
-        public showBrowsePanel(): void;
-        public showDeckPanel(): void;
     }
 }
 module api_ui_dialog {

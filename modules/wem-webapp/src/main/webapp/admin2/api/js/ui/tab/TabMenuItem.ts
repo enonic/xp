@@ -10,6 +10,10 @@ module api_ui_tab {
 
         private tabMenu:TabMenu;
 
+        private visible:bool = true;
+
+        private removable:bool = true;
+
         constructor(label:string) {
             super("TabMenuItem", "tab-menu-item");
 
@@ -27,7 +31,9 @@ module api_ui_tab {
             });
 
             removeButton.getEl().addEventListener("click", () => {
-                this.tabMenu.handleTabRemoveButtonClickedEvent(this);
+                if (this.removable) {
+                    this.tabMenu.handleTabRemoveButtonClickedEvent(this);
+                }
             });
         }
 
@@ -47,5 +53,29 @@ module api_ui_tab {
             return this.label;
         }
 
+        isVisible():bool {
+            return this.visible
+        }
+
+        setVisible(value:bool) {
+            this.visible = value;
+            if (!this.visible) {
+                this.remove();
+            }
+        }
+
+        isRemovable():bool {
+            return this.removable;
+        }
+
+        setRemovable(value:bool) {
+            this.removable = value;
+        }
+
+        private remove() {
+            if (this.tabMenu) {
+                this.tabMenu.removeChild(this);
+            }
+        }
     }
 }
