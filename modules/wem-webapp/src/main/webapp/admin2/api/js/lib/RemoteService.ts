@@ -7,6 +7,18 @@ module api_remote {
         error?: string;
     }
 
+    export interface RemoteCallContentTypeGetParams {
+        format: string;
+        contentType: string;
+        mixinReferencesToFormItems?: bool;
+    }
+
+    export interface RemoteCallContentTypeGetResult extends RemoteCallResultBase {
+        contentType?: ContentType;
+        iconUrl?: string;
+        contentTypeXml?: string;
+    }
+
     export interface RemoteCallSpaceListParams {
     }
 
@@ -29,7 +41,6 @@ module api_remote {
     }
 
     export interface RemoteCallSpaceGetResult extends RemoteCallResultBase {
-        total: number;
         space: {
             createdTime:Date;
             displayName:string;
@@ -69,14 +80,14 @@ module api_remote {
         userstore_createOrUpdate (params, callback):void;
         userstore_delete (params, callback):void;
         content_createOrUpdate (params, callback):void;
-        contentType_get (params, callback):void;
         content_list (params, callback):void;
         content_tree (params, callback):void;
         content_get (params, callback):void;
-        contentType_list (params, callback):void;
         content_delete (params, callback):void;
         content_find (params, callback):void;
         content_validate (params, callback):void;
+        contentType_get (params:RemoteCallContentTypeGetParams, callback:(result:RemoteCallContentTypeGetResult)=>void):void;
+        contentType_list (params, callback):void;
         contentType_createOrUpdate (params, callback):void;
         contentType_delete (params, callback):void;
         contentType_tree (params, callback):void;
@@ -109,9 +120,9 @@ module api_remote {
                 "account_createOrUpdate", "account_delete", "account_get",
                 "util_getCountries", "util_getLocales", "util_getTimeZones",
                 "userstore_getAll", "userstore_get", "userstore_getConnectors", "userstore_createOrUpdate", "userstore_delete",
-                "content_createOrUpdate", "content_list", "contentType_get", "content_tree", "content_get", "contentType_list",
+                "content_createOrUpdate", "content_list", "content_tree", "content_get",
                 "content_delete", "content_validate", "content_find",
-                "contentType_createOrUpdate", "contentType_delete", "contentType_tree",
+                "contentType_get", "contentType_list", "contentType_createOrUpdate", "contentType_delete", "contentType_tree",
                 "schema_list", "schema_tree",
                 "system_getSystemInfo",
                 "mixin_get", "mixin_createOrUpdate", "mixin_delete",
@@ -195,19 +206,11 @@ module api_remote {
             console.log(params, callback);
         }
 
-        content_list(params, callback):void {
-            console.log(params, callback);
-        }
-
         content_tree(params, callback):void {
             console.log(params, callback);
         }
 
         content_get(params, callback):void {
-            console.log(params, callback);
-        }
-
-        contentType_list(params, callback):void {
             console.log(params, callback);
         }
 
@@ -220,6 +223,14 @@ module api_remote {
         }
 
         content_validate(params, callback):void {
+            console.log(params, callback);
+        }
+
+        content_list(params:RemoteCallContentTypeGetParams, callback:(result:RemoteCallContentTypeGetResult)=>void):void {
+            console.log(params, callback);
+        }
+
+        contentType_list(params, callback):void {
             console.log(params, callback);
         }
 
@@ -271,11 +282,11 @@ module api_remote {
             console.log(params, callback);
         }
 
-        space_list(params, callback):void {
+        space_list(params:RemoteCallSpaceListParams, callback:(result:RemoteCallSpaceListResult)=>void):void {
             console.log(params, callback);
         }
 
-        space_get(params, callback):void {
+        space_get(params:RemoteCallSpaceGetParams, callback:(result:RemoteCallSpaceGetResult)=>void):void {
             console.log(params, callback);
         }
 
@@ -283,7 +294,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        space_createOrUpdate(params, callback):void {
+        space_createOrUpdate(params:RemoteCallSpaceCreateOrUpdateParams, callback:(result:RemoteCallSpaceCreateOrUpdateResult)=>void):void {
             console.log(params, callback);
         }
 
