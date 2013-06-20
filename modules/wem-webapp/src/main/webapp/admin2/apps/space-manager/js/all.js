@@ -2347,41 +2347,6 @@ var app_ui;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
-    var BaseActionMenu = (function () {
-        function BaseActionMenu(menuItems) {
-            var menu = new Ext.menu.Menu({
-                cls: 'admin-context-menu',
-                border: false,
-                shadow: false,
-                width: 120
-            });
-            for(var i in menuItems) {
-                menu.add(menuItems[i]);
-            }
-            this.ext = new Ext.button.Button({
-                menu: menu,
-                cls: 'admin-dropdown-button',
-                width: 120,
-                padding: 5,
-                text: 'Actions',
-                height: 30,
-                itemId: 'dropdown',
-                margin: '0 20 0 0',
-                tdAttrs: {
-                    width: 140,
-                    valign: 'top',
-                    style: {
-                        padding: '0 20px 0 0'
-                    }
-                }
-            });
-        }
-        return BaseActionMenu;
-    })();
-    app_ui.BaseActionMenu = BaseActionMenu;    
-})(app_ui || (app_ui = {}));
-var app_ui;
-(function (app_ui) {
     var DetailToolbar = (function () {
         function DetailToolbar() {
             var tbar = new Ext.toolbar.Toolbar({
@@ -4090,8 +4055,8 @@ var app_ui;
     })();
     app_ui.FilterPanel = FilterPanel;    
 })(app_ui || (app_ui = {}));
-var app_ui;
-(function (app_ui) {
+var app_browse;
+(function (app_browse) {
     var BrowseToolbar = (function (_super) {
         __extends(BrowseToolbar, _super);
         function BrowseToolbar() {
@@ -4103,8 +4068,8 @@ var app_ui;
         }
         return BrowseToolbar;
     })(api_ui_toolbar.Toolbar);
-    app_ui.BrowseToolbar = BrowseToolbar;    
-})(app_ui || (app_ui = {}));
+    app_browse.BrowseToolbar = BrowseToolbar;    
+})(app_browse || (app_browse = {}));
 var app_browse;
 (function (app_browse) {
     var SpaceActionMenu = (function (_super) {
@@ -4172,7 +4137,7 @@ var app_browse;
     var SpaceAppBrowsePanel = (function (_super) {
         __extends(SpaceAppBrowsePanel, _super);
         function SpaceAppBrowsePanel() {
-            var toolbar = new app_ui.BrowseToolbar();
+            var toolbar = new app_browse.BrowseToolbar();
             var grid = components.gridPanel = new app_ui.TreeGridPanel();
             var detail = components.detailPanel = new app_browse.SpaceDetailPanel();
             var filterPanel = new app_ui.FilterPanel({

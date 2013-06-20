@@ -4,7 +4,7 @@ module app_browse {
 
         constructor() {
 
-            var toolbar = new app_ui.BrowseToolbar();
+            var toolbar = new BrowseToolbar();
             var grid = components.gridPanel = new app_ui.TreeGridPanel();
             var detail = components.detailPanel = new app_browse.SpaceDetailPanel();
 

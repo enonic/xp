@@ -1,4 +1,4 @@
-module app_ui {
+module app_browse {
 
     export class BrowseToolbar extends api_ui_toolbar.Toolbar {
 

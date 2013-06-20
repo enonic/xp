@@ -32,7 +32,6 @@
 ///<reference path='view/WizardLayout.ts' />
 ///<reference path='view/WizardHeader.ts' />
 ///<reference path='view/WizardPanel.ts' />
-///<reference path='view/BaseActionMenu.ts' />
 ///<reference path='view/DetailToolbar.ts' />
 ///<reference path='view/DeleteSpaceDialog.ts' />
 ///<reference path='view/TreeGridPanel.ts' />
@@ -48,8 +47,7 @@
 ///<reference path='view/TabPanel.ts' />
 ///<reference path='view/FilterPanel.ts' />
 
-///<reference path='view/BrowseToolbar.ts' />
-
+///<reference path='browse/SpaceBrowseToolbar.ts' />
 ///<reference path='browse/SpaceActionMenu.ts' />
 ///<reference path='browse/SpaceDetailPanel.ts' />
 ///<reference path='browse/SpaceAppBrowsePanel.ts' />
