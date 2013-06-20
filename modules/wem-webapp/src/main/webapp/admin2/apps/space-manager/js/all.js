@@ -2380,17 +2380,6 @@ var app_ui;
     })();
     app_ui.BaseActionMenu = BaseActionMenu;    
 })(app_ui || (app_ui = {}));
-var app_browse;
-(function (app_browse) {
-    var ActionMenu2 = (function (_super) {
-        __extends(ActionMenu2, _super);
-        function ActionMenu2() {
-                _super.call(this, app.SpaceActions.OPEN_SPACE, app.SpaceActions.EDIT_SPACE);
-        }
-        return ActionMenu2;
-    })(api_ui_menu.ActionMenu);
-    app_browse.SpaceActionMenu = ActionMenu2;
-})(app_browse || (app_browse = {}));
 var app_ui;
 (function (app_ui) {
     var DetailToolbar = (function () {
@@ -4116,6 +4105,17 @@ var app_ui;
     })(api_ui_toolbar.Toolbar);
     app_ui.BrowseToolbar = BrowseToolbar;    
 })(app_ui || (app_ui = {}));
+var app_browse;
+(function (app_browse) {
+    var SpaceActionMenu = (function (_super) {
+        __extends(SpaceActionMenu, _super);
+        function SpaceActionMenu() {
+                _super.call(this, app.SpaceActions.OPEN_SPACE, app.SpaceActions.EDIT_SPACE);
+        }
+        return SpaceActionMenu;
+    })(api_ui_menu.ActionMenu);
+    app_browse.SpaceActionMenu = SpaceActionMenu;    
+})(app_browse || (app_browse = {}));
 var app_browse;
 (function (app_browse) {
     var SpaceDetailPanel = (function (_super) {
