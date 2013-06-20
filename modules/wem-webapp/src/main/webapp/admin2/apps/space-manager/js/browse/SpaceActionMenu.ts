@@ -1,6 +1,6 @@
-module app_ui {
+module app_browse {
 
-    export class ActionMenu2 extends api_ui_menu.ActionMenu {
+    export class SpaceActionMenu extends api_ui_menu.ActionMenu {
 
         constructor() {
             super(

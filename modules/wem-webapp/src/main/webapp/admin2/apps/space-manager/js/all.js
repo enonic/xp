@@ -2380,8 +2380,8 @@ var app_ui;
     })();
     app_ui.BaseActionMenu = BaseActionMenu;    
 })(app_ui || (app_ui = {}));
-var app_ui;
-(function (app_ui) {
+var app_browse;
+(function (app_browse) {
     var ActionMenu2 = (function (_super) {
         __extends(ActionMenu2, _super);
         function ActionMenu2() {
@@ -2389,8 +2389,8 @@ var app_ui;
         }
         return ActionMenu2;
     })(api_ui_menu.ActionMenu);
-    app_ui.ActionMenu2 = ActionMenu2;    
-})(app_ui || (app_ui = {}));
+    app_browse.SpaceActionMenu = ActionMenu2;
+})(app_browse || (app_browse = {}));
 var app_ui;
 (function (app_ui) {
     var DetailToolbar = (function () {
