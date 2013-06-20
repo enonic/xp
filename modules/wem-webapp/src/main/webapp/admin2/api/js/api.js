@@ -1626,8 +1626,8 @@ var api_ui_tab;
     })(api_ui.DeckPanel);
     api_ui_tab.TabbedDeckPanel = TabbedDeckPanel;    
 })(api_ui_tab || (api_ui_tab = {}));
-var api_ui_util;
-(function (api_ui_util) {
+var api_ui;
+(function (api_ui) {
     var Tooltip = (function (_super) {
         __extends(Tooltip, _super);
         function Tooltip(target, text, timeout, side, offset) {
@@ -1740,10 +1740,10 @@ var api_ui_util;
         };
         return Tooltip;
     })(api_dom.DivEl);
-    api_ui_util.Tooltip = Tooltip;    
-})(api_ui_util || (api_ui_util = {}));
-var api_ui_util;
-(function (api_ui_util) {
+    api_ui.Tooltip = Tooltip;    
+})(api_ui || (api_ui = {}));
+var api_ui;
+(function (api_ui) {
     var ProgressBar = (function (_super) {
         __extends(ProgressBar, _super);
         function ProgressBar(value) {
@@ -1768,8 +1768,8 @@ var api_ui_util;
         };
         return ProgressBar;
     })(api_dom.DivEl);
-    api_ui_util.ProgressBar = ProgressBar;    
-})(api_ui_util || (api_ui_util = {}));
+    api_ui.ProgressBar = ProgressBar;    
+})(api_ui || (api_ui = {}));
 var api_appbar;
 (function (api_appbar) {
     var AppBar = (function (_super) {
@@ -2474,7 +2474,7 @@ var api_wizard;
             this.uploadUrl = uploadUrl;
             var el = this.getEl();
             var me = this;
-            this.tooltip = new api_ui_util.Tooltip(this, iconTitle, 10, "bottom", [
+            this.tooltip = new api_ui.Tooltip(this, iconTitle, 10, "bottom", [
                 0, 
                 5
             ]);
@@ -2484,7 +2484,7 @@ var api_wizard;
             });
             el.appendChild(img.getHTMLElement());
             if(this.uploadUrl) {
-                this.progress = new api_ui_util.ProgressBar();
+                this.progress = new api_ui.ProgressBar();
                 el.appendChild(this.progress.getHTMLElement());
                 var firstClickHandler = function (event) {
                     if(!me.uploader) {

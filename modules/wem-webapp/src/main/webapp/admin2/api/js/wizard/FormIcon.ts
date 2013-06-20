@@ -8,8 +8,8 @@ module api_wizard {
 
         private uploader;
         private img:api_dom.ImgEl;
-        private progress:api_ui_util.ProgressBar;
-        private tooltip:api_ui_util.Tooltip;
+        private progress:api_ui.ProgressBar;
+        private tooltip:api_ui.Tooltip;
 
         /**
          * Icon widget with tooltip and upload possibility
@@ -22,7 +22,7 @@ module api_wizard {
             var el = this.getEl();
             var me = this;
 
-            this.tooltip = new api_ui_util.Tooltip(this, iconTitle, 10, "bottom", [0, 5]);
+            this.tooltip = new api_ui.Tooltip(this, iconTitle, 10, "bottom", [0, 5]);
 
             var img = this.img = new api_dom.ImgEl(this.iconUrl, "FormIcon");
             img.getEl().addEventListener("load", function () => {
@@ -31,7 +31,7 @@ module api_wizard {
             el.appendChild(img.getHTMLElement());
 
             if (this.uploadUrl) {
-                this.progress = new api_ui_util.ProgressBar();
+                this.progress = new api_ui.ProgressBar();
                 el.appendChild(this.progress.getHTMLElement());
 
                 var firstClickHandler = function (event:Event) => {

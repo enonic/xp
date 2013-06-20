@@ -59,8 +59,8 @@
 ///<reference path='ui/tab/TabMenuItem.ts' />
 ///<reference path='ui/tab/TabBar.ts' />
 ///<reference path='ui/tab/TabbedDeckPanel.ts' />
-///<reference path='ui/util/Tooltip.ts' />
-///<reference path='ui/util/ProgressBar.ts' />
+///<reference path='ui/Tooltip.ts' />
+///<reference path='ui/ProgressBar.ts' />
 
 ///<reference path='appbar/AppBar.ts' />
 ///<reference path='appbar/UserInfoPopup.ts' />

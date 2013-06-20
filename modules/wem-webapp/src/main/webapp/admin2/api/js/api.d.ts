@@ -574,7 +574,7 @@ module api_ui_tab {
         public tabRemove(tab: Tab): bool;
     }
 }
-module api_ui_util {
+module api_ui {
     class Tooltip extends api_dom.DivEl {
         private target;
         private timeout;
@@ -593,7 +593,7 @@ module api_ui_util {
         private stopTimeout();
     }
 }
-module api_ui_util {
+module api_ui {
     class ProgressBar extends api_dom.DivEl {
         private progress;
         private value;

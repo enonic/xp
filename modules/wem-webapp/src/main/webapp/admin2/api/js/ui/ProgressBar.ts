@@ -1,4 +1,4 @@
-module api_ui_util {
+module api_ui {
 
     export class ProgressBar extends api_dom.DivEl {
 
