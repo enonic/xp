@@ -2,6 +2,9 @@
  * Main file for all admin API classes and methods.
  */
 
+// require ExtJs as long as it is used for implementation
+///<reference path='ExtJs.d.ts' />
+
 ///<reference path='Mousetrap.d.ts' />
 ///<reference path='jquery.d.ts' />
 
@@ -61,6 +64,7 @@
 ///<reference path='ui/tab/TabbedDeckPanel.ts' />
 ///<reference path='ui/Tooltip.ts' />
 ///<reference path='ui/ProgressBar.ts' />
+///<reference path='ui/grid/TreeGridPanel.ts' />
 
 ///<reference path='appbar/AppBar.ts' />
 ///<reference path='appbar/UserInfoPopup.ts' />

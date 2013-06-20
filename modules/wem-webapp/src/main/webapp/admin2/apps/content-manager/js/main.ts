@@ -7,6 +7,7 @@
 ///<reference path='event/OpenContentEvent.ts' />
 ///<reference path='event/EditContentEvent.ts' />
 ///<reference path='event/DeleteContentEvent.ts' />
+///<reference path='event/ShowContextMenuEvent.ts' />
 
 ///<reference path='ContentContext.ts' />
 
@@ -49,8 +50,7 @@
 ///<reference path='view/BrowseToolbar.ts' />
 ///<reference path='view/ActionMenu.ts' />
 ///<reference path='view/ContextMenu.ts' />
-///<reference path='view/BaseTreeGridPanel.ts' />
-///<reference path='view/TreeGridPanel.ts' />
+
 ///<reference path='view/DetailToolbar.ts' />
 ///<reference path='view/LivePreview.ts' />
 ///<reference path='view/DropDownButton.ts' />
@@ -62,6 +62,8 @@
 ///<reference path='view/WizardHeader.ts' />
 ///<reference path='view/WizardLayout.ts' />
 ///<reference path='view/WizardPanel.ts' />
+
+///<reference path='browse/ContentTreeGridPanel.ts' />
 
 ///<reference path='appbar/ContentAppBarActions.ts' />
 ///<reference path='appbar/ContentAppBar.ts' />
@@ -116,6 +118,7 @@ declare var CONFIG;
 module components {
     export var browseToolbar:app_ui.BrowseToolbar;
     export var contextMenu:app_ui.ContextMenu;
+    export var gridPanel:app_browse.ContentTreeGridPanel;
 }
 
 Ext.application({
@@ -156,12 +159,8 @@ Ext.application({
 
         var toolbar = components.browseToolbar = new app_ui.BrowseToolbar();
 
-        var grid = new Admin.view.contentManager.TreeGridPanel({
-            xtype: 'contentTreeGridPanel',
-            region: 'center',
-            itemId: 'contentList',
-            flex: 1
-        });
+        var grid = components.gridPanel =
+                   <app_browse.ContentTreeGridPanel> new app_browse.ContentTreeGridPanel('contentTreeGrid').create('center');
 
         var detailsHorizontal = new Admin.view.contentManager.DetailPanel({
             region: 'south',
@@ -217,7 +216,7 @@ Ext.application({
                                     border: false,
                                     items: <any>[
                                         toolbar.ext,
-                                        grid,
+                                        grid.ext,
                                         detailsHorizontal,
                                         detailsVertical
                                     ]

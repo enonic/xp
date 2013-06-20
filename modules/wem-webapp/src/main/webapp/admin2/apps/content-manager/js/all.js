@@ -88,6 +88,28 @@ var app_event;
     })(app_event.BaseContentModelEvent);
     app_event.DeleteContentEvent = DeleteContentEvent;    
 })(app_event || (app_event = {}));
+var app_event;
+(function (app_event) {
+    var ShowContextMenuEvent = (function (_super) {
+        __extends(ShowContextMenuEvent, _super);
+        function ShowContextMenuEvent(x, y) {
+            this.x = x;
+            this.y = y;
+                _super.call(this, 'showContextMenu');
+        }
+        ShowContextMenuEvent.prototype.getX = function () {
+            return this.x;
+        };
+        ShowContextMenuEvent.prototype.getY = function () {
+            return this.y;
+        };
+        ShowContextMenuEvent.on = function on(handler) {
+            api_event.onEvent('showContextMenu', handler);
+        };
+        return ShowContextMenuEvent;
+    })(api_event.Event);
+    app_event.ShowContextMenuEvent = ShowContextMenuEvent;    
+})(app_event || (app_event = {}));
 var app;
 (function (app) {
     var ContentContext = (function () {
@@ -2999,276 +3021,6 @@ var app_ui;
     })(api_ui_menu.ContextMenu);
     app_ui.ContextMenu = ContextMenu;    
 })(app_ui || (app_ui = {}));
-Ext.define('Admin.view.BaseTreeGridPanel', {
-    extend: 'Ext.panel.Panel',
-    alias: 'widget.treeGridPanel',
-    layout: 'card',
-    requires: [
-        'Admin.plugin.PersistentGridSelectionPlugin', 
-        'Admin.plugin.GridToolbarPlugin'
-    ],
-    treeConf: {
-    },
-    gridConf: {
-    },
-    keyField: 'key',
-    nameTemplate: '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>',
-    initComponent: function () {
-        var me = this;
-        var treeColumns = Ext.clone(this.columns);
-        if(Ext.isEmpty(treeColumns)) {
-            throw "this.columns can't be null";
-        }
-        treeColumns[0].xtype = 'treecolumn';
-        var treeSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
-            keyField: me.keyField
-        });
-        var treePanel = {
-            xtype: 'treepanel',
-            cls: 'admin-tree',
-            hideHeaders: true,
-            itemId: 'tree',
-            useArrows: true,
-            border: false,
-            rootVisible: false,
-            viewConfig: {
-                trackOver: true,
-                stripeRows: true,
-                loadMask: {
-                    store: me.treeStore
-                }
-            },
-            store: this.treeStore,
-            columns: treeColumns,
-            plugins: [
-                treeSelectionPlugin
-            ],
-            listeners: {
-                selectionchange: function (selModel, selected, opts) {
-                    new app_event.GridSelectionChangeEvent(selected).fire();
-                }
-            }
-        };
-        treePanel = Ext.apply(treePanel, me.treeConf);
-        var gridSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
-            keyField: me.keyField
-        });
-        var gridPanel = {
-            xtype: 'grid',
-            itemId: 'grid',
-            cls: 'admin-grid',
-            border: false,
-            hideHeaders: true,
-            viewConfig: {
-                trackOver: true,
-                stripeRows: true,
-                loadMask: {
-                    store: me.store
-                }
-            },
-            store: this.store,
-            columns: this.columns,
-            plugins: [
-                gridSelectionPlugin
-            ],
-            listeners: {
-                selectionchange: function (selModel, selected, opts) {
-                    new app_event.GridSelectionChangeEvent(selected).fire();
-                }
-            }
-        };
-        gridPanel = Ext.apply(gridPanel, me.gridConf);
-        this.items = [
-            treePanel, 
-            gridPanel
-        ];
-        this.callParent(arguments);
-        var grid = this.down('#grid');
-        grid.addDocked({
-            xtype: 'toolbar',
-            itemId: 'selectionToolbar',
-            cls: 'admin-white-toolbar',
-            dock: 'top',
-            store: this.store,
-            gridPanel: grid,
-            resultCountHidden: true,
-            plugins: [
-                'gridToolbarPlugin'
-            ]
-        });
-        grid.getStore().on('datachanged', this.fireUpdateEvent, this);
-        var tree = this.down('#tree');
-        tree.addDocked({
-            xtype: 'toolbar',
-            itemId: 'selectionToolbar',
-            cls: 'admin-white-toolbar',
-            dock: 'top',
-            store: this.treeStore,
-            gridPanel: tree,
-            resultCountHidden: true,
-            countTopLevelOnly: true,
-            plugins: [
-                'gridToolbarPlugin'
-            ]
-        });
-        this.addEvents('datachanged');
-    },
-    fireUpdateEvent: function (values) {
-        this.fireEvent('datachanged', values);
-    },
-    setActiveList: function (listId) {
-        this.getLayout().setActiveItem(listId);
-    },
-    getActiveList: function () {
-        return this.getLayout().getActiveItem();
-    },
-    getSelection: function () {
-        var selection = [], activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection');
-        if(plugin) {
-            selection = plugin.getSelection();
-        } else {
-            selection = activeList.getSelectionModel().getSelection();
-        }
-        return selection;
-    },
-    select: function (key, keepExisting) {
-        var activeList = this.getActiveList();
-        var selModel = activeList.getSelectionModel();
-        var keys = [].concat(key);
-        var i;
-        if(activeList.xtype === 'treepanel') {
-            var rootNode = activeList.getRootNode(), node;
-            for(i = 0; i < keys.length; i++) {
-                node = rootNode.findChild(this.keyField, keys[i], true);
-                if(node) {
-                    selModel.select(node, keepExisting);
-                }
-            }
-        } else if(activeList.xtype === 'grid') {
-            var store = activeList.getStore(), record;
-            for(i = 0; i < keys.length; i++) {
-                record = store.findRecord(this.keyField, keys[i]);
-                if(record) {
-                    selModel.select(record, keepExisting);
-                }
-            }
-        }
-    },
-    deselect: function (key) {
-        var activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection'), selModel = plugin ? plugin : activeList.getSelectionModel();
-        if(!key || key === -1) {
-            if(plugin) {
-                plugin.clearSelection();
-            } else {
-                selModel.deselectAll();
-            }
-        } else {
-            if(activeList.xtype === 'treepanel') {
-                var selNodes = selModel.getSelection();
-                var i;
-                for(i = 0; i < selNodes.length; i++) {
-                    var selNode = selNodes[i];
-                    if(key == selNode.get(this.keyField)) {
-                        selModel.deselect(selNode);
-                    }
-                }
-            } else if(activeList.xtype === 'grid') {
-                var record = activeList.getStore().findRecord(this.keyField, key);
-                if(record) {
-                    selModel.deselect(record);
-                }
-            }
-        }
-    },
-    setRemoteSearchParams: function (params) {
-        var activeList = this.getActiveList();
-        var currentStore = activeList.store;
-        currentStore.getProxy().extraParams = params;
-    },
-    setResultCountVisible: function (visible) {
-        this.getActiveList().getDockedComponent('selectionToolbar').getPlugin('gridToolbarPlugin').setResultCountVisible(visible);
-    },
-    updateResultCount: function (count) {
-        this.getActiveList().getDockedComponent('selectionToolbar').getPlugin('gridToolbarPlugin').updateResultCount(count);
-    },
-    removeAll: function () {
-        var activeList = this.getActiveList();
-        if(activeList.xtype === 'treepanel') {
-            activeList.getRootNode().removeAll();
-        } else {
-            activeList.removeAll();
-        }
-    },
-    refresh: function () {
-        var activeList = this.getActiveList();
-        var currentStore = activeList.store;
-        if(!currentStore.loading) {
-            if(activeList.xtype === 'treepanel') {
-                currentStore.load();
-            } else if(activeList.xtype === 'grid') {
-                currentStore.loadPage(currentStore.currentPage);
-            }
-        }
-    }
-});
-Ext.define('Admin.view.contentManager.TreeGridPanel', {
-    extend: 'Admin.view.BaseTreeGridPanel',
-    alias: 'widget.contentTreeGridPanel',
-    store: 'Admin.store.contentManager.ContentStore',
-    treeStore: 'Admin.store.contentManager.ContentTreeStore',
-    border: false,
-    keyField: 'path',
-    gridConf: {
-        selModel: Ext.create('Ext.selection.CheckboxModel', {
-            headerWidth: 36
-        })
-    },
-    treeConf: {
-        selModel: Ext.create('Ext.selection.CheckboxModel', {
-            headerWidth: 36
-        })
-    },
-    initComponent: function () {
-        var me = this;
-        this.columns = [
-            {
-                text: 'Display Name',
-                dataIndex: 'displayName',
-                sortable: true,
-                renderer: this.nameRenderer,
-                scope: me,
-                flex: 1
-            }, 
-            {
-                text: 'Status',
-                renderer: this.statusRenderer
-            }, 
-            {
-                text: 'Modified',
-                dataIndex: 'modifiedTime',
-                renderer: this.prettyDateRenderer,
-                scope: me,
-                sortable: true
-            }
-        ];
-        this.callParent(arguments);
-    },
-    nameRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
-        var account = record.data;
-        var activeListType = this.getActiveList().itemId;
-        var Templates_contentManager_treeGridPanelNameRenderer = '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>';
-        return Ext.String.format(Templates_contentManager_treeGridPanelNameRenderer, activeListType, account.iconUrl, value, account.path);
-    },
-    statusRenderer: function () {
-        return "Online";
-    },
-    prettyDateRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
-        try  {
-        } catch (e) {
-            return value;
-        }
-    }
-});
 var admin;
 (function (admin) {
     (function (ui) {
@@ -5033,6 +4785,118 @@ Ext.define('Admin.view.WizardPanel', {
     createActionButton: function () {
     }
 });
+var app_browse;
+(function (app_browse) {
+    var ContentTreeGridPanel = (function (_super) {
+        __extends(ContentTreeGridPanel, _super);
+        function ContentTreeGridPanel(itemId) {
+                _super.call(this, this.createColumns(), this.createGridStore(), this.createTreeStore(), this.createGridConfig(), this.createTreeConfig());
+            this.setActiveList(api_ui_grid.TreeGridPanel.TREE);
+            this.setKeyField("path");
+            this.setItemId(itemId);
+        }
+        ContentTreeGridPanel.prototype.createGridStore = function () {
+            return new Ext.data.Store({
+                model: 'Admin.model.contentManager.ContentModel',
+                proxy: {
+                    type: 'direct',
+                    directFn: api_remote.RemoteService.content_find,
+                    simpleSortMode: true,
+                    reader: {
+                        type: 'json',
+                        root: 'contents',
+                        totalProperty: 'total'
+                    }
+                }
+            });
+        };
+        ContentTreeGridPanel.prototype.createTreeStore = function () {
+            return new Ext.data.TreeStore({
+                model: 'Admin.model.contentManager.ContentModel',
+                folderSort: true,
+                autoLoad: false,
+                proxy: {
+                    type: 'direct',
+                    directFn: api_remote.RemoteService.content_tree,
+                    simpleSortMode: true,
+                    reader: {
+                        type: 'json',
+                        root: 'contents',
+                        totalProperty: 'total'
+                    }
+                }
+            });
+        };
+        ContentTreeGridPanel.prototype.createColumns = function () {
+            return [
+                {
+                    text: 'Display Name',
+                    dataIndex: 'displayName',
+                    sortable: true,
+                    renderer: this.nameRenderer,
+                    scope: this,
+                    flex: 1
+                }, 
+                {
+                    text: 'Status',
+                    renderer: this.statusRenderer
+                }, 
+                {
+                    text: 'Modified',
+                    dataIndex: 'modifiedTime',
+                    renderer: this.prettyDateRenderer,
+                    scope: this,
+                    sortable: true
+                }
+            ];
+        };
+        ContentTreeGridPanel.prototype.createGridConfig = function () {
+            return {
+                listeners: {
+                    selectionchange: function (selModel, selected, opts) {
+                        new app_event.GridSelectionChangeEvent(selected).fire();
+                    },
+                    itemcontextmenu: function (view, rec, node, index, event) {
+                        event.stopEvent();
+                        new app_event.ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
+                    },
+                    itemdblclick: function (grid, record) {
+                        new app_event.EditContentEvent(grid.getSelection()).fire();
+                    }
+                }
+            };
+        };
+        ContentTreeGridPanel.prototype.createTreeConfig = function () {
+            return {
+                selectionchange: function (selModel, selected, opts) {
+                    new app_event.GridSelectionChangeEvent(selected).fire();
+                }
+            };
+        };
+        ContentTreeGridPanel.prototype.nameRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
+            var nameTemplate = '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>';
+            var content = record.data;
+            var activeListType = this.getActiveList().getItemId();
+            return Ext.String.format(nameTemplate, activeListType, content.iconUrl, value, content.name);
+        };
+        ContentTreeGridPanel.prototype.statusRenderer = function () {
+            return "Online";
+        };
+        ContentTreeGridPanel.prototype.prettyDateRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
+            try  {
+                if(parent && Ext.isFunction(parent['humane_date'])) {
+                    return parent['humane_date'](value);
+                } else {
+                    return value;
+                }
+            } catch (e) {
+                return value;
+            }
+        };
+        return ContentTreeGridPanel;
+    })(api_ui_grid.TreeGridPanel);
+    app_browse.ContentTreeGridPanel = ContentTreeGridPanel;    
+})(app_browse || (app_browse = {}));
 var app_appbar;
 (function (app_appbar) {
     var ShowAppLauncherAction = (function (_super) {
@@ -7781,7 +7645,7 @@ Ext.define('Admin.controller.Controller', {
         return menu;
     },
     getContentTreeGridPanel: function () {
-        return Ext.ComponentQuery.query('contentTreeGridPanel')[0];
+        return components.gridPanel;
     },
     getContentDetailPanel: function () {
         var contentDetail = Ext.ComponentQuery.query('contentDetail');
@@ -7881,7 +7745,7 @@ Ext.define('Admin.controller.GridPanelController', {
     ],
     init: function () {
         this.control({
-            'contentTreeGridPanel treepanel, grid': {
+            '#contentTreeGrid treepanel, #contentTreeGrid grid': {
                 selectionchange: function (panel, selected, opts) {
                     this.updateDetailPanel(selected);
                     this.updateToolbarButtons(selected);
@@ -8372,6 +8236,7 @@ var components;
 (function (components) {
     components.browseToolbar;
     components.contextMenu;
+    components.gridPanel;
 })(components || (components = {}));
 Ext.application({
     name: 'CM',
@@ -8397,12 +8262,7 @@ Ext.application({
             width: 200
         });
         var toolbar = components.browseToolbar = new app_ui.BrowseToolbar();
-        var grid = new Admin.view.contentManager.TreeGridPanel({
-            xtype: 'contentTreeGridPanel',
-            region: 'center',
-            itemId: 'contentList',
-            flex: 1
-        });
+        var grid = components.gridPanel = new app_browse.ContentTreeGridPanel('contentTreeGrid').create('center');
         var detailsHorizontal = new Admin.view.contentManager.DetailPanel({
             region: 'south',
             split: true,
@@ -8452,7 +8312,7 @@ Ext.application({
                                     border: false,
                                     items: [
                                         toolbar.ext, 
-                                        grid, 
+                                        grid.ext, 
                                         detailsHorizontal, 
                                         detailsVertical
                                     ]

@@ -415,7 +415,8 @@ var api_notify;
         }
         NotifyManager.prototype.render = function () {
             var template = templates.manager;
-            var node = template.append(Ext.getBody());
+            var node = template.append(Ext.getBody(), {
+            });
             this.el = Ext.get(node);
             this.el.setStyle('bottom', 0);
             this.getWrapperEl().setStyle({
@@ -1810,6 +1811,196 @@ var api_ui;
     })(api_dom.DivEl);
     api_ui.ProgressBar = ProgressBar;    
 })(api_ui || (api_ui = {}));
+var api_ui_grid;
+(function (api_ui_grid) {
+    var TreeGridPanel = (function () {
+        function TreeGridPanel(columns, gridStore, treeStore, gridConfig, treeConfig) {
+            this.keyField = 'name';
+            this.activeList = "grid";
+            this.gridStore = gridStore;
+            this.treeStore = treeStore;
+            this.columns = columns;
+            this.gridConfig = gridConfig;
+            this.treeConfig = treeConfig;
+        }
+        TreeGridPanel.GRID = "grid";
+        TreeGridPanel.TREE = "tree";
+        TreeGridPanel.prototype.create = function (region, renderTo) {
+            this.ext = new Ext.panel.Panel({
+                region: region,
+                renderTo: renderTo,
+                flex: 1,
+                layout: 'card',
+                border: false,
+                activeItem: this.activeList,
+                itemId: this.itemId
+            });
+            this.ext.add(this.createGridPanel(this.gridStore, this.gridConfig));
+            this.ext.add(this.createTreePanel(this.treeStore, this.treeConfig));
+            return this;
+        };
+        TreeGridPanel.prototype.createGridPanel = function (gridStore, gridConfig) {
+            var grid = new Ext.grid.Panel(Ext.apply({
+                itemId: 'grid',
+                cls: 'admin-grid',
+                border: false,
+                hideHeaders: true,
+                columns: this.columns,
+                viewConfig: {
+                    trackOver: true,
+                    stripeRows: true,
+                    loadMask: {
+                        store: gridStore
+                    }
+                },
+                store: gridStore,
+                selModel: Ext.create('Ext.selection.CheckboxModel', {
+                    headerWidth: 36
+                }),
+                plugins: [
+                    new Admin.plugin.PersistentGridSelectionPlugin({
+                        keyField: this.keyField
+                    })
+                ]
+            }, gridConfig));
+            grid.addDocked(new Ext.toolbar.Toolbar({
+                itemId: 'selectionToolbar',
+                cls: 'admin-white-toolbar',
+                dock: 'top',
+                store: gridStore,
+                gridPanel: grid,
+                resultCountHidden: true,
+                plugins: [
+                    'gridToolbarPlugin'
+                ]
+            }));
+            gridStore.on('datachanged', this.fireUpdateEvent, this);
+            return grid;
+        };
+        TreeGridPanel.prototype.createTreePanel = function (treeStore, treeConfig) {
+            var treeColumns = Ext.clone(this.columns);
+            treeColumns[0].xtype = 'treecolumn';
+            var tree = new Ext.tree.Panel(Ext.apply({
+                xtype: 'treepanel',
+                cls: 'admin-tree',
+                hideHeaders: true,
+                itemId: 'tree',
+                useArrows: true,
+                border: false,
+                rootVisible: false,
+                viewConfig: {
+                    trackOver: true,
+                    stripeRows: true,
+                    loadMask: {
+                        store: treeStore
+                    }
+                },
+                store: treeStore,
+                columns: treeColumns,
+                plugins: [
+                    new Admin.plugin.PersistentGridSelectionPlugin({
+                        keyField: this.keyField
+                    })
+                ]
+            }, treeConfig));
+            tree.addDocked({
+                xtype: 'toolbar',
+                itemId: 'selectionToolbar',
+                cls: 'admin-white-toolbar',
+                dock: 'top',
+                store: treeStore,
+                gridPanel: tree,
+                resultCountHidden: true,
+                countTopLevelOnly: true,
+                plugins: [
+                    'gridToolbarPlugin'
+                ]
+            });
+            treeStore.on('datachanged', this.fireUpdateEvent, this);
+            return tree;
+        };
+        TreeGridPanel.prototype.fireUpdateEvent = function (values) {
+            this.ext.fireEvent('datachanged', values);
+        };
+        TreeGridPanel.prototype.getActiveList = function () {
+            return (this.ext.getLayout()).getActiveItem();
+        };
+        TreeGridPanel.prototype.setActiveList = function (listId) {
+            this.activeList = listId;
+            if(this.ext) {
+                (this.ext.getLayout()).setActiveItem(listId);
+            }
+        };
+        TreeGridPanel.prototype.setKeyField = function (keyField) {
+            this.keyField = keyField;
+        };
+        TreeGridPanel.prototype.getKeyField = function () {
+            return this.keyField;
+        };
+        TreeGridPanel.prototype.setItemId = function (itemId) {
+            this.itemId = itemId;
+        };
+        TreeGridPanel.prototype.getItemId = function () {
+            return this.itemId;
+        };
+        TreeGridPanel.prototype.refresh = function () {
+            var activeStore = this.getActiveList().getStore();
+            if(this.activeList == TreeGridPanel.GRID) {
+                activeStore.loadPage(activeStore.currentPage);
+            } else {
+                activeStore.load();
+            }
+        };
+        TreeGridPanel.prototype.removeAll = function () {
+            var activeList = this.getActiveList();
+            if(this.activeList == TreeGridPanel.GRID) {
+                activeList.removeAll();
+            } else {
+                (activeList).getRootNode().removeAll();
+            }
+        };
+        TreeGridPanel.prototype.deselect = function (key) {
+            var activeList = this.getActiveList(), selModel = activeList.getSelectionModel();
+            if(!key || key === -1) {
+                selModel.deselectAll();
+            } else {
+                var selNodes = selModel.getSelection();
+                var i;
+                for(i = 0; i < selNodes.length; i++) {
+                    var selNode = selNodes[i];
+                    if(key == selNode.get(this.keyField)) {
+                        selModel.deselect([
+                            selNode
+                        ]);
+                    }
+                }
+            }
+        };
+        TreeGridPanel.prototype.getSelection = function () {
+            var selection = [], activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection');
+            if(plugin) {
+                selection = plugin.getSelection();
+            } else {
+                selection = activeList.getSelectionModel().getSelection();
+            }
+            return selection;
+        };
+        TreeGridPanel.prototype.setRemoteSearchParams = function (params) {
+            var activeStore = this.getActiveList().getStore();
+            (activeStore.getProxy()).extraParams = params;
+        };
+        TreeGridPanel.prototype.setResultCountVisible = function (visible) {
+            var plugin = this.getActiveList().getDockedComponent('selectionToolbar').getPlugin('gridToolbarPlugin');
+            plugin.setResultCountVisible(visible);
+        };
+        TreeGridPanel.prototype.updateResultCount = function (count) {
+            var plugin = this.getActiveList().getDockedComponent('selectionToolbar').getPlugin('gridToolbarPlugin');
+            plugin.updateResultCount(count);
+        };
+        return TreeGridPanel;
+    })();
+    api_ui_grid.TreeGridPanel = TreeGridPanel;    
+})(api_ui_grid || (api_ui_grid = {}));
 var api_appbar;
 (function (api_appbar) {
     var AppBar = (function (_super) {

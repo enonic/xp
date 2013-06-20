@@ -614,6 +614,39 @@ module api_ui {
         private normalizeValue(value);
     }
 }
+module api_ui_grid {
+    class TreeGridPanel {
+        static GRID: string;
+        static TREE: string;
+        public ext: Ext_panel_Panel;
+        private gridStore;
+        private gridConfig;
+        private columns;
+        private treeStore;
+        private treeConfig;
+        private keyField;
+        private activeList;
+        private itemId;
+        public create(region?: string, renderTo?: string): TreeGridPanel;
+        constructor(columns: any[], gridStore: Ext_data_Store, treeStore: Ext_data_TreeStore, gridConfig?: Object, treeConfig?: Object);
+        private createGridPanel(gridStore, gridConfig?);
+        private createTreePanel(treeStore, treeConfig?);
+        private fireUpdateEvent(values);
+        public getActiveList(): Ext_panel_Table;
+        public setActiveList(listId): void;
+        public setKeyField(keyField: string): void;
+        public getKeyField(): string;
+        public setItemId(itemId: string): void;
+        public getItemId(): string;
+        public refresh(): void;
+        public removeAll(): void;
+        public deselect(key): void;
+        public getSelection(): any[];
+        public setRemoteSearchParams(params): void;
+        public setResultCountVisible(visible): void;
+        public updateResultCount(count): void;
+    }
+}
 module api_appbar {
     class AppBar extends api_dom.DivEl {
         public ext;
@@ -789,7 +822,7 @@ module api_browse {
         private grid;
         private detailPanel;
         private filterPanel;
-        constructor(browseToolbar: api_ui_toolbar.Toolbar, grid: any, detailPanel: DetailPanel, filterPanel: any);
+        constructor(browseToolbar: api_ui_toolbar.Toolbar, grid: api_ui_grid.TreeGridPanel, detailPanel: DetailPanel, filterPanel: any);
         public init(): void;
         private initExt();
     }
