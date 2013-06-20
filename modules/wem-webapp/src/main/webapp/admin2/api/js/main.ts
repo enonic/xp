@@ -10,6 +10,7 @@
 
 ///<reference path='util/ImageLoader.ts' />
 ///<reference path='util/UriHelper.ts' />
+///<reference path='util/Animation.ts'/>
 
 ///<reference path='model/Model.ts' />
 ///<reference path='model/SpaceModel.ts' />
@@ -52,6 +53,7 @@
 ///<reference path='ui/BodyMask.ts' />
 ///<reference path='ui/AbstractButton.ts' />
 ///<reference path='ui/toolbar/Toolbar.ts' />
+///<reference path='ui/toolbar/ToggleSlide.ts' />
 ///<reference path='ui/menu/MenuItem.ts' />
 ///<reference path='ui/menu/ContextMenu.ts' />
 ///<reference path='ui/menu/ActionMenu.ts' />
