@@ -59,7 +59,6 @@
 
 ///<reference path='controller/FilterPanelController.ts' />
 ///<reference path='controller/GridPanelController.ts' />
-///<reference path='controller/BrowseToolbarController.ts' />
 ///<reference path='controller/DetailPanelController.ts' />
 ///<reference path='controller/DetailToolbarController.ts' />
 ///<reference path='controller/WizardController.ts' />
@@ -98,7 +97,6 @@ Ext.application({
     controllers: [
         'Admin.controller.FilterPanelController',
         'Admin.controller.GridPanelController',
-        'Admin.controller.BrowseToolbarController',
         'Admin.controller.DetailPanelController',
         'Admin.controller.DetailToolbarController',
         'Admin.controller.WizardController'

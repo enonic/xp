@@ -4348,47 +4348,6 @@ Ext.define('Admin.controller.GridPanelController', {
         return this.contextMenu;
     }
 });
-Ext.define('Admin.controller.BrowseToolbarController', {
-    extend: 'Admin.controller.Controller',
-    stores: [],
-    models: [],
-    views: [],
-    init: function () {
-        var _this = this;
-        app_event.OpenSpaceEvent.on(function (event) {
-            _this.viewSelectedSpaces();
-        });
-        this.control({
-            '#spaceBrowseToolbar *[action=newSpace]': {
-                click: function (button, event) {
-                    this.showNewSpaceWindow();
-                }
-            },
-            '#spaceBrowseToolbar *[action=viewSpace]': {
-                click: function (button, event) {
-                    this.viewSelectedSpaces();
-                }
-            },
-            '#spaceBrowseToolbar *[action=editSpace]': {
-                click: function (button, event) {
-                    this.editSelectedSpaces();
-                }
-            }
-        });
-    },
-    viewSelectedSpaces: function () {
-        var selection = this.getSpaceTreeGridPanel().getSelection();
-        for(var i = 0; i < selection.length; i++) {
-            this.viewSpace(selection[i]);
-        }
-    },
-    editSelectedSpaces: function () {
-        var selection = this.getSpaceTreeGridPanel().getSelection();
-        for(var i = 0; i < selection.length; i++) {
-            this.editSpace(selection[i]);
-        }
-    }
-});
 Ext.define('Admin.controller.DetailPanelController', {
     extend: 'Admin.controller.Controller',
     stores: [],
@@ -4715,7 +4674,6 @@ Ext.application({
     controllers: [
         'Admin.controller.FilterPanelController', 
         'Admin.controller.GridPanelController', 
-        'Admin.controller.BrowseToolbarController', 
         'Admin.controller.DetailPanelController', 
         'Admin.controller.DetailToolbarController', 
         'Admin.controller.WizardController'
