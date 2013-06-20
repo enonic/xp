@@ -75,6 +75,9 @@ Ext.define('Admin.view.AutosizeTextField', {
             mouseout: function () {
                 me.isMouseOver = false;
                 me.updateComponent();
+            },
+            keyup: function () {
+                console.log('keyup');
             }
         });
 
@@ -146,8 +149,13 @@ Ext.define('Admin.view.AutosizeTextField', {
     },
 
     setValue: function (value) {
+        var oldValue = this.getValue(),
+            newValue = value;
+
         this.isEmpty = !value;
         this.setRawValue(value);
+
+        this.ons.input(this.textEl, newValue, oldValue);
     },
 
     setRawValue: function (value) {
