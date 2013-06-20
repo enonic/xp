@@ -2,13 +2,13 @@ module app {
 
     export class SpaceAppPanel extends api.AppPanel {
 
-        private appBrowsePanel:SpaceAppBrowsePanel;
+        private appBrowsePanel:app_browse.SpaceAppBrowsePanel;
 
         private appDeckPanel:api.AppDeckPanel;
 
         constructor(appBar:app_appbar.SpaceAppBar) {
 
-            this.appBrowsePanel = new SpaceAppBrowsePanel();
+            this.appBrowsePanel = new app_browse.SpaceAppBrowsePanel();
             this.appDeckPanel = new api.AppDeckPanel(appBar.getTabMenu());
             appBar.getTabMenu().addTabSelectedListener((tab:api_ui_tab.Tab) => {
                 this.showDeckPanel();

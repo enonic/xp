@@ -444,49 +444,6 @@ module api_ui_menu {
         public setEnable(value: bool): void;
     }
 }
-module api_ui_detailpanel {
-    class DetailPanel extends api_dom.DivEl {
-        public ext;
-        constructor();
-        private initExt();
-    }
-    class DetailTabPanel extends api_dom.DivEl {
-        private model;
-        private navigation;
-        private tabs;
-        private canvas;
-        private tabChangeCallback;
-        private actionMenu;
-        constructor(model: api_model.Model);
-        private addHeader(title, subtitle, iconUrl);
-        private addCanvas();
-        public setTabChangeCallback(callback: (DetailPanelTab: any) => void): void;
-        public addTab(tab: DetailPanelTab): void;
-        public setActiveTab(tab: DetailPanelTab): void;
-        public addAction(action: api_ui.Action): void;
-        private createActionMenu();
-        private addNavigation();
-    }
-    class DetailPanelTab {
-        public name: string;
-        public content: api_dom.Element;
-        constructor(name: string);
-    }
-    class DetailPanelTabList extends api_dom.UlEl {
-        private tabs;
-        constructor();
-        public addTab(tab, clickCallback: (DetailPanelTab: any) => void): void;
-        private selectTab(tab);
-    }
-    class DetailPanelBox extends api_dom.DivEl {
-        private model;
-        constructor(model: any, removeCallback?: (DetailPanelBox: any) => void);
-        private addRemoveButton(callback?);
-        private setIcon(iconUrl, size);
-        private setData(title, subtitle);
-        public getModel(): api_model.Model;
-    }
-}
 module api_ui_menu {
     class ContextMenu extends api_dom.UlEl {
         private menuItems;
@@ -727,18 +684,6 @@ module api_appbar {
     }
 }
 module api {
-    class AppBrowsePanel extends api_ui.Panel {
-        public ext;
-        private browseToolbar;
-        private grid;
-        private detailPanel;
-        private filterPanel;
-        constructor(browseToolbar: api_ui_toolbar.Toolbar, grid: any, detailPanel: api_ui_detailpanel.DetailPanel, filterPanel: any);
-        public init(): void;
-        private initExt();
-    }
-}
-module api {
     class AppDeckPanel extends api_ui_tab.TabbedDeckPanel {
         private appPanel;
         constructor(navigator: api_ui_tab.TabNavigator);
@@ -752,7 +697,7 @@ module api {
     class AppPanel extends api_ui.DeckPanel {
         private browsePanel;
         private deckPanel;
-        constructor(browsePanel: AppBrowsePanel, deckPanel: AppDeckPanel);
+        constructor(browsePanel: api_browse.AppBrowsePanel, deckPanel: AppDeckPanel);
         public showBrowsePanel(): void;
         public showDeckPanel(): void;
     }
@@ -828,6 +773,61 @@ module api_delete {
     class DeleteDialogItemList extends api_dom.DivEl {
         constructor();
         public clear(): void;
+    }
+}
+module api_browse {
+    class AppBrowsePanel extends api_ui.Panel {
+        public ext;
+        private browseToolbar;
+        private grid;
+        private detailPanel;
+        private filterPanel;
+        constructor(browseToolbar: api_ui_toolbar.Toolbar, grid: any, detailPanel: DetailPanel, filterPanel: any);
+        public init(): void;
+        private initExt();
+    }
+}
+module api_browse {
+    class DetailPanel extends api_dom.DivEl {
+        public ext;
+        constructor();
+        private initExt();
+    }
+    class DetailTabPanel extends api_dom.DivEl {
+        private model;
+        private navigation;
+        private tabs;
+        private canvas;
+        private tabChangeCallback;
+        private actionMenu;
+        constructor(model: api_model.Model);
+        private addHeader(title, subtitle, iconUrl);
+        private addCanvas();
+        public setTabChangeCallback(callback: (DetailPanelTab: any) => void): void;
+        public addTab(tab: DetailPanelTab): void;
+        public setActiveTab(tab: DetailPanelTab): void;
+        public addAction(action: api_ui.Action): void;
+        private createActionMenu();
+        private addNavigation();
+    }
+    class DetailPanelTab {
+        public name: string;
+        public content: api_dom.Element;
+        constructor(name: string);
+    }
+    class DetailPanelTabList extends api_dom.UlEl {
+        private tabs;
+        constructor();
+        public addTab(tab, clickCallback: (DetailPanelTab: any) => void): void;
+        private selectTab(tab);
+    }
+    class DetailPanelBox extends api_dom.DivEl {
+        private model;
+        constructor(model: any, removeCallback?: (DetailPanelBox: any) => void);
+        private addRemoveButton(callback?);
+        private setIcon(iconUrl, size);
+        private setData(title, subtitle);
+        public getModel(): api_model.Model;
     }
 }
 module api_wizard {

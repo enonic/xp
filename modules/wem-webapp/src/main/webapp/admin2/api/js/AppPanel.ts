@@ -2,11 +2,11 @@ module api{
 
     export class AppPanel extends api_ui.DeckPanel {
 
-        private browsePanel:AppBrowsePanel;
+        private browsePanel:api_browse.AppBrowsePanel;
 
         private deckPanel:api.AppDeckPanel;
 
-        constructor(browsePanel:AppBrowsePanel, deckPanel:api.AppDeckPanel) {
+        constructor(browsePanel:api_browse.AppBrowsePanel, deckPanel:api.AppDeckPanel) {
             super("AppPanel");
 
             this.browsePanel = browsePanel;

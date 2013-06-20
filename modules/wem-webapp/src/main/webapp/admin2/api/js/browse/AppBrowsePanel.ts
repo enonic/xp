@@ -1,4 +1,4 @@
-module api{
+module api_browse{
 
     export class AppBrowsePanel extends api_ui.Panel {
 
@@ -8,11 +8,11 @@ module api{
 
         private grid:any;
 
-        private detailPanel:api_ui_detailpanel.DetailPanel;
+        private detailPanel:DetailPanel;
 
         private filterPanel:any;
 
-        constructor(browseToolbar:api_ui_toolbar.Toolbar, grid:any, detailPanel:api_ui_detailpanel.DetailPanel, filterPanel:any) {
+        constructor(browseToolbar:api_ui_toolbar.Toolbar, grid:any, detailPanel:DetailPanel, filterPanel:any) {
             super("AppBrowsePanel");
 
             this.browseToolbar = browseToolbar;

@@ -50,7 +50,6 @@
 ///<reference path='ui/AbstractButton.ts' />
 ///<reference path='ui/toolbar/Toolbar.ts' />
 ///<reference path='ui/menu/MenuItem.ts' />
-///<reference path='ui/detailpanel/DetailPanel.ts' />
 ///<reference path='ui/menu/ContextMenu.ts' />
 ///<reference path='ui/menu/ActionMenu.ts' />
 ///<reference path='ui/tab/Tab.ts' />
@@ -71,7 +70,6 @@
 ///<reference path='appbar/AppBarTabMenuItem.ts' />
 ///<reference path='appbar/AppBar.ts' />
 
-///<reference path='AppBrowsePanel.ts' />
 ///<reference path='AppDeckPanel.ts' />
 ///<reference path='AppPanel.ts' />
 
@@ -79,6 +77,9 @@
 ///<reference path='ui/dialog/ModalDialog.ts' />
 ///<reference path='delete/DeleteItem.ts' />
 ///<reference path='delete/DeleteDialog.ts' />
+
+///<reference path='browse/AppBrowsePanel.ts' />
+///<reference path='browse/DetailPanel.ts' />
 
 ///<reference path='wizard/FormIcon.ts' />
 ///<reference path='wizard/WizardPanel.ts' />

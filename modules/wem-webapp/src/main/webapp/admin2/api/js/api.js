@@ -1232,159 +1232,6 @@ var api_ui_menu;
     })(api_dom.LiEl);
     api_ui_menu.MenuItem = MenuItem;    
 })(api_ui_menu || (api_ui_menu = {}));
-var api_ui_detailpanel;
-(function (api_ui_detailpanel) {
-    var DetailPanel = (function (_super) {
-        __extends(DetailPanel, _super);
-        function DetailPanel() {
-                _super.call(this, "detailpanel", "detailpanel");
-            this.initExt();
-        }
-        DetailPanel.prototype.initExt = function () {
-            var htmlEl = this.getHTMLElement();
-            this.ext = new Ext.Component({
-                contentEl: htmlEl,
-                region: 'south',
-                split: true
-            });
-        };
-        return DetailPanel;
-    })(api_dom.DivEl);
-    api_ui_detailpanel.DetailPanel = DetailPanel;    
-    var DetailTabPanel = (function (_super) {
-        __extends(DetailTabPanel, _super);
-        function DetailTabPanel(model) {
-            var _this = this;
-                _super.call(this, "detailpanel-tab", "detailpanel-tab");
-            this.tabs = [];
-            this.model = model;
-            this.addHeader(model.data.name, model.id, model.data.iconUrl);
-            this.addNavigation();
-            this.addCanvas();
-            this.setTabChangeCallback(function (tab) {
-                _this.setActiveTab(tab);
-            });
-        }
-        DetailTabPanel.prototype.addHeader = function (title, subtitle, iconUrl) {
-            var headerEl = new api_dom.DivEl("header", "header");
-            var iconEl = api_util.ImageLoader.get(iconUrl + "?size=80", 80, 80);
-            var hgroupEl = new api_dom.Element("hgroup");
-            var headerTextEl = new api_dom.H1El();
-            headerTextEl.getEl().setInnerHtml(title);
-            hgroupEl.appendChild(headerTextEl);
-            var subtitleEl = new api_dom.H4El();
-            subtitleEl.getEl().setInnerHtml(subtitle);
-            hgroupEl.appendChild(subtitleEl);
-            headerEl.getEl().appendChild(iconEl);
-            headerEl.appendChild(hgroupEl);
-            headerEl.appendChild(this.createActionMenu());
-            this.appendChild(headerEl);
-        };
-        DetailTabPanel.prototype.addCanvas = function () {
-            var canvasEl = this.canvas = new api_dom.DivEl("canvas", "canvas");
-            this.appendChild(canvasEl);
-        };
-        DetailTabPanel.prototype.setTabChangeCallback = function (callback) {
-            this.tabChangeCallback = callback;
-        };
-        DetailTabPanel.prototype.addTab = function (tab) {
-            this.tabs.push(tab);
-            this.navigation.addTab(tab, this.tabChangeCallback);
-        };
-        DetailTabPanel.prototype.setActiveTab = function (tab) {
-            this.canvas.empty();
-            this.canvas.appendChild(tab.content);
-        };
-        DetailTabPanel.prototype.addAction = function (action) {
-            this.actionMenu.addAction(action);
-        };
-        DetailTabPanel.prototype.createActionMenu = function () {
-            this.actionMenu = new api_ui_menu.ActionMenu();
-            return new api_ui_menu.ActionMenuButton(this.actionMenu);
-        };
-        DetailTabPanel.prototype.addNavigation = function () {
-            this.navigation = new DetailPanelTabList();
-            this.getEl().appendChild(this.navigation.getHTMLElement());
-        };
-        return DetailTabPanel;
-    })(api_dom.DivEl);
-    api_ui_detailpanel.DetailTabPanel = DetailTabPanel;    
-    var DetailPanelTab = (function () {
-        function DetailPanelTab(name) {
-            this.name = name;
-            this.content = new api_dom.DivEl("test-content");
-            this.content.getEl().setInnerHtml(this.name);
-        }
-        return DetailPanelTab;
-    })();
-    api_ui_detailpanel.DetailPanelTab = DetailPanelTab;    
-    var DetailPanelTabList = (function (_super) {
-        __extends(DetailPanelTabList, _super);
-        function DetailPanelTabList() {
-                _super.call(this, "tab-list", "tab-list");
-            this.tabs = [];
-        }
-        DetailPanelTabList.prototype.addTab = function (tab, clickCallback) {
-            var _this = this;
-            var tabEl = new api_dom.LiEl("tab");
-            this.tabs.push(tabEl);
-            tabEl.getEl().setInnerHtml(tab.name);
-            tabEl.getEl().addEventListener("click", function (event) {
-                _this.selectTab(tabEl);
-                clickCallback(tab);
-            });
-            this.getEl().appendChild(tabEl.getHTMLElement());
-        };
-        DetailPanelTabList.prototype.selectTab = function (tab) {
-            this.tabs.forEach(function (entry) {
-                entry.getEl().removeClass("active");
-            });
-            tab.getEl().addClass("active");
-        };
-        return DetailPanelTabList;
-    })(api_dom.UlEl);
-    api_ui_detailpanel.DetailPanelTabList = DetailPanelTabList;    
-    var DetailPanelBox = (function (_super) {
-        __extends(DetailPanelBox, _super);
-        function DetailPanelBox(model, removeCallback) {
-                _super.call(this, "detailpanel-box", "detailpanel-box");
-            this.model = model;
-            this.setIcon(model.data.iconUrl, 32);
-            this.setData(model.data.displayName, model.data.name);
-            this.addRemoveButton(removeCallback);
-        }
-        DetailPanelBox.prototype.addRemoveButton = function (callback) {
-            var _this = this;
-            var removeEl = document.createElement("div");
-            removeEl.className = "remove";
-            removeEl.innerHTML = "&times;";
-            removeEl.addEventListener("click", function (event) {
-                _this.getEl().remove();
-                if(callback) {
-                    callback(_this);
-                }
-            });
-            this.getEl().appendChild(removeEl);
-        };
-        DetailPanelBox.prototype.setIcon = function (iconUrl, size) {
-            this.getEl().appendChild(api_util.ImageLoader.get(iconUrl + "?size=" + size, 32, 32));
-        };
-        DetailPanelBox.prototype.setData = function (title, subtitle) {
-            var titleEl = document.createElement("h6");
-            titleEl.innerHTML = title;
-            var subtitleEl = document.createElement("small");
-            subtitleEl.innerHTML = subtitle;
-            titleEl.appendChild(subtitleEl);
-            this.getEl().appendChild(titleEl);
-            return titleEl;
-        };
-        DetailPanelBox.prototype.getModel = function () {
-            return this.model;
-        };
-        return DetailPanelBox;
-    })(api_dom.DivEl);
-    api_ui_detailpanel.DetailPanelBox = DetailPanelBox;    
-})(api_ui_detailpanel || (api_ui_detailpanel = {}));
 var api_ui_menu;
 (function (api_ui_menu) {
     var ContextMenu = (function (_super) {
@@ -2148,47 +1995,6 @@ var api_appbar;
 })(api_appbar || (api_appbar = {}));
 var api;
 (function (api) {
-    var AppBrowsePanel = (function (_super) {
-        __extends(AppBrowsePanel, _super);
-        function AppBrowsePanel(browseToolbar, grid, detailPanel, filterPanel) {
-                _super.call(this, "AppBrowsePanel");
-            this.browseToolbar = browseToolbar;
-            this.grid = grid;
-            this.detailPanel = detailPanel;
-            this.filterPanel = filterPanel;
-        }
-        AppBrowsePanel.prototype.init = function () {
-            this.appendChild(this.browseToolbar);
-            this.grid.create('center', this.getId());
-            this.appendChild(this.detailPanel);
-        };
-        AppBrowsePanel.prototype.initExt = function () {
-            var center = new Ext.container.Container({
-                region: 'center',
-                layout: 'border'
-            });
-            center.add(this.browseToolbar.ext);
-            center.add(this.grid.ext);
-            center.add(this.detailPanel.ext);
-            this.ext = new Ext.panel.Panel({
-                id: 'tab-browse',
-                title: 'Browse',
-                closable: false,
-                border: false,
-                layout: 'border',
-                tabConfig: {
-                    hidden: true
-                }
-            });
-            this.ext.add(center);
-            this.ext.add(this.filterPanel);
-        };
-        return AppBrowsePanel;
-    })(api_ui.Panel);
-    api.AppBrowsePanel = AppBrowsePanel;    
-})(api || (api = {}));
-var api;
-(function (api) {
     var AppDeckPanel = (function (_super) {
         __extends(AppDeckPanel, _super);
         function AppDeckPanel(navigator) {
@@ -2462,6 +2268,200 @@ var api_delete;
         return DeleteDialogItemComponent;
     })(api_dom.DivEl);    
 })(api_delete || (api_delete = {}));
+var api_browse;
+(function (api_browse) {
+    var AppBrowsePanel = (function (_super) {
+        __extends(AppBrowsePanel, _super);
+        function AppBrowsePanel(browseToolbar, grid, detailPanel, filterPanel) {
+                _super.call(this, "AppBrowsePanel");
+            this.browseToolbar = browseToolbar;
+            this.grid = grid;
+            this.detailPanel = detailPanel;
+            this.filterPanel = filterPanel;
+        }
+        AppBrowsePanel.prototype.init = function () {
+            this.appendChild(this.browseToolbar);
+            this.grid.create('center', this.getId());
+            this.appendChild(this.detailPanel);
+        };
+        AppBrowsePanel.prototype.initExt = function () {
+            var center = new Ext.container.Container({
+                region: 'center',
+                layout: 'border'
+            });
+            center.add(this.browseToolbar.ext);
+            center.add(this.grid.ext);
+            center.add(this.detailPanel.ext);
+            this.ext = new Ext.panel.Panel({
+                id: 'tab-browse',
+                title: 'Browse',
+                closable: false,
+                border: false,
+                layout: 'border',
+                tabConfig: {
+                    hidden: true
+                }
+            });
+            this.ext.add(center);
+            this.ext.add(this.filterPanel);
+        };
+        return AppBrowsePanel;
+    })(api_ui.Panel);
+    api_browse.AppBrowsePanel = AppBrowsePanel;    
+})(api_browse || (api_browse = {}));
+var api_browse;
+(function (api_browse) {
+    var DetailPanel = (function (_super) {
+        __extends(DetailPanel, _super);
+        function DetailPanel() {
+                _super.call(this, "detailpanel", "detailpanel");
+            this.initExt();
+        }
+        DetailPanel.prototype.initExt = function () {
+            var htmlEl = this.getHTMLElement();
+            this.ext = new Ext.Component({
+                contentEl: htmlEl,
+                region: 'south',
+                split: true
+            });
+        };
+        return DetailPanel;
+    })(api_dom.DivEl);
+    api_browse.DetailPanel = DetailPanel;    
+    var DetailTabPanel = (function (_super) {
+        __extends(DetailTabPanel, _super);
+        function DetailTabPanel(model) {
+            var _this = this;
+                _super.call(this, "detailpanel-tab", "detailpanel-tab");
+            this.tabs = [];
+            this.model = model;
+            this.addHeader(model.data.name, model.id, model.data.iconUrl);
+            this.addNavigation();
+            this.addCanvas();
+            this.setTabChangeCallback(function (tab) {
+                _this.setActiveTab(tab);
+            });
+        }
+        DetailTabPanel.prototype.addHeader = function (title, subtitle, iconUrl) {
+            var headerEl = new api_dom.DivEl("header", "header");
+            var iconEl = api_util.ImageLoader.get(iconUrl + "?size=80", 80, 80);
+            var hgroupEl = new api_dom.Element("hgroup");
+            var headerTextEl = new api_dom.H1El();
+            headerTextEl.getEl().setInnerHtml(title);
+            hgroupEl.appendChild(headerTextEl);
+            var subtitleEl = new api_dom.H4El();
+            subtitleEl.getEl().setInnerHtml(subtitle);
+            hgroupEl.appendChild(subtitleEl);
+            headerEl.getEl().appendChild(iconEl);
+            headerEl.appendChild(hgroupEl);
+            headerEl.appendChild(this.createActionMenu());
+            this.appendChild(headerEl);
+        };
+        DetailTabPanel.prototype.addCanvas = function () {
+            var canvasEl = this.canvas = new api_dom.DivEl("canvas", "canvas");
+            this.appendChild(canvasEl);
+        };
+        DetailTabPanel.prototype.setTabChangeCallback = function (callback) {
+            this.tabChangeCallback = callback;
+        };
+        DetailTabPanel.prototype.addTab = function (tab) {
+            this.tabs.push(tab);
+            this.navigation.addTab(tab, this.tabChangeCallback);
+        };
+        DetailTabPanel.prototype.setActiveTab = function (tab) {
+            this.canvas.empty();
+            this.canvas.appendChild(tab.content);
+        };
+        DetailTabPanel.prototype.addAction = function (action) {
+            this.actionMenu.addAction(action);
+        };
+        DetailTabPanel.prototype.createActionMenu = function () {
+            this.actionMenu = new api_ui_menu.ActionMenu();
+            return new api_ui_menu.ActionMenuButton(this.actionMenu);
+        };
+        DetailTabPanel.prototype.addNavigation = function () {
+            this.navigation = new DetailPanelTabList();
+            this.getEl().appendChild(this.navigation.getHTMLElement());
+        };
+        return DetailTabPanel;
+    })(api_dom.DivEl);
+    api_browse.DetailTabPanel = DetailTabPanel;    
+    var DetailPanelTab = (function () {
+        function DetailPanelTab(name) {
+            this.name = name;
+            this.content = new api_dom.DivEl("test-content");
+            this.content.getEl().setInnerHtml(this.name);
+        }
+        return DetailPanelTab;
+    })();
+    api_browse.DetailPanelTab = DetailPanelTab;    
+    var DetailPanelTabList = (function (_super) {
+        __extends(DetailPanelTabList, _super);
+        function DetailPanelTabList() {
+                _super.call(this, "tab-list", "tab-list");
+            this.tabs = [];
+        }
+        DetailPanelTabList.prototype.addTab = function (tab, clickCallback) {
+            var _this = this;
+            var tabEl = new api_dom.LiEl("tab");
+            this.tabs.push(tabEl);
+            tabEl.getEl().setInnerHtml(tab.name);
+            tabEl.getEl().addEventListener("click", function (event) {
+                _this.selectTab(tabEl);
+                clickCallback(tab);
+            });
+            this.getEl().appendChild(tabEl.getHTMLElement());
+        };
+        DetailPanelTabList.prototype.selectTab = function (tab) {
+            this.tabs.forEach(function (entry) {
+                entry.getEl().removeClass("active");
+            });
+            tab.getEl().addClass("active");
+        };
+        return DetailPanelTabList;
+    })(api_dom.UlEl);
+    api_browse.DetailPanelTabList = DetailPanelTabList;    
+    var DetailPanelBox = (function (_super) {
+        __extends(DetailPanelBox, _super);
+        function DetailPanelBox(model, removeCallback) {
+                _super.call(this, "detailpanel-box", "detailpanel-box");
+            this.model = model;
+            this.setIcon(model.data.iconUrl, 32);
+            this.setData(model.data.displayName, model.data.name);
+            this.addRemoveButton(removeCallback);
+        }
+        DetailPanelBox.prototype.addRemoveButton = function (callback) {
+            var _this = this;
+            var removeEl = document.createElement("div");
+            removeEl.className = "remove";
+            removeEl.innerHTML = "&times;";
+            removeEl.addEventListener("click", function (event) {
+                _this.getEl().remove();
+                if(callback) {
+                    callback(_this);
+                }
+            });
+            this.getEl().appendChild(removeEl);
+        };
+        DetailPanelBox.prototype.setIcon = function (iconUrl, size) {
+            this.getEl().appendChild(api_util.ImageLoader.get(iconUrl + "?size=" + size, 32, 32));
+        };
+        DetailPanelBox.prototype.setData = function (title, subtitle) {
+            var titleEl = document.createElement("h6");
+            titleEl.innerHTML = title;
+            var subtitleEl = document.createElement("small");
+            subtitleEl.innerHTML = subtitle;
+            titleEl.appendChild(subtitleEl);
+            this.getEl().appendChild(titleEl);
+            return titleEl;
+        };
+        DetailPanelBox.prototype.getModel = function () {
+            return this.model;
+        };
+        return DetailPanelBox;
+    })(api_dom.DivEl);
+    api_browse.DetailPanelBox = DetailPanelBox;    
+})(api_browse || (api_browse = {}));
 var api_wizard;
 (function (api_wizard) {
     var FormIcon = (function (_super) {
