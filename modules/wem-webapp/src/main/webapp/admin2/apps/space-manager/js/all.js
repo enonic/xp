@@ -2382,28 +2382,6 @@ var app_ui;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
-    var ActionMenu = (function (_super) {
-        __extends(ActionMenu, _super);
-        function ActionMenu() {
-            var openMenuItem = new Ext.menu.Item({
-                text: 'Open',
-                action: 'viewSpace'
-            });
-            var editMenuItem = new Ext.menu.Item({
-                text: 'Edit',
-                action: 'editSpace'
-            });
-                _super.call(this, [
-        openMenuItem, 
-        editMenuItem
-    ]);
-        }
-        return ActionMenu;
-    })(app_ui.BaseActionMenu);
-    app_ui.ActionMenu = ActionMenu;    
-})(app_ui || (app_ui = {}));
-var app_ui;
-(function (app_ui) {
     var ActionMenu2 = (function (_super) {
         __extends(ActionMenu2, _super);
         function ActionMenu2() {
