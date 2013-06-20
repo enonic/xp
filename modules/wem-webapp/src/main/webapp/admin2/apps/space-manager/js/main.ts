@@ -33,7 +33,6 @@
 ///<reference path='view/WizardHeader.ts' />
 ///<reference path='view/WizardPanel.ts' />
 ///<reference path='view/DetailToolbar.ts' />
-///<reference path='view/DeleteSpaceDialog.ts' />
 ///<reference path='view/TreeGridPanel.ts' />
 ///<reference path='view/ContextMenu.ts' />
 ///<reference path='view/ContextMenuGridPanel.ts' />
@@ -70,6 +69,8 @@
 ///<reference path='appbar/SpaceAppBarTabMenuItem.ts' />
 ///<reference path='appbar/SpaceAppBarTabMenu.ts' />
 ///<reference path='appbar/SpaceAppBar.ts' />
+
+///<reference path='SpaceDeleteDialog.ts' />
 ///<reference path='SpaceAppPanel.ts' />
 
 
@@ -115,7 +116,7 @@ Ext.application({
 
         appPanel.init();
 
-        var deleteSpaceDialog:app_ui.DeleteSpaceDialog = new app_ui.DeleteSpaceDialog();
+        var deleteSpaceDialog = new app.SpaceDeleteDialog();
         app_event.DeletePromptEvent.on((event) => {
             deleteSpaceDialog.setSpacesToDelete(event.getModels());
             deleteSpaceDialog.open();

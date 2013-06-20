@@ -2379,48 +2379,6 @@ var app_ui;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
-    var DeleteSpaceDialog = (function (_super) {
-        __extends(DeleteSpaceDialog, _super);
-        function DeleteSpaceDialog() {
-            var _this = this;
-                _super.call(this, "Space");
-            this.deleteAction = new DeleteSpaceDialogAction();
-            this.deleteHandler = new api_handler.DeleteSpacesHandler();
-            this.setDeleteAction(this.deleteAction);
-            var deleteCallback = function (obj, success, result) {
-                _this.close();
-                components.gridPanel.refresh();
-                api_notify.showFeedback('Space(s) was deleted!');
-            };
-            this.deleteAction.addExecutionListener(function () {
-                _this.deleteHandler.doDelete(api_handler.DeleteSpaceParamFactory.create(_this.spacesToDelete), deleteCallback);
-            });
-            document.body.appendChild(this.getHTMLElement());
-        }
-        DeleteSpaceDialog.prototype.setSpacesToDelete = function (spaces) {
-            this.spacesToDelete = spaces;
-            var deleteItems = [];
-            for(var i in spaces) {
-                var space = spaces[i];
-                var deleteItem = new api_delete.DeleteItem(space.data.iconUrl, space.data.displayName);
-                deleteItems.push(deleteItem);
-            }
-            this.setDeleteItems(deleteItems);
-        };
-        return DeleteSpaceDialog;
-    })(api_delete.DeleteDialog);
-    app_ui.DeleteSpaceDialog = DeleteSpaceDialog;    
-    var DeleteSpaceDialogAction = (function (_super) {
-        __extends(DeleteSpaceDialogAction, _super);
-        function DeleteSpaceDialogAction() {
-                _super.call(this, "Delete");
-        }
-        return DeleteSpaceDialogAction;
-    })(api_ui.Action);
-    app_ui.DeleteSpaceDialogAction = DeleteSpaceDialogAction;    
-})(app_ui || (app_ui = {}));
-var app_ui;
-(function (app_ui) {
     var TreeGridPanel = (function () {
         function TreeGridPanel() {
             this.store = new Ext.data.Store({
@@ -4643,6 +4601,48 @@ var app_appbar;
 })(app_appbar || (app_appbar = {}));
 var app;
 (function (app) {
+    var SpaceDeleteDialog = (function (_super) {
+        __extends(SpaceDeleteDialog, _super);
+        function SpaceDeleteDialog() {
+            var _this = this;
+                _super.call(this, "Space");
+            this.deleteAction = new DeleteSpaceDialogAction();
+            this.deleteHandler = new api_handler.DeleteSpacesHandler();
+            this.setDeleteAction(this.deleteAction);
+            var deleteCallback = function (obj, success, result) {
+                _this.close();
+                components.gridPanel.refresh();
+                api_notify.showFeedback('Space(s) was deleted!');
+            };
+            this.deleteAction.addExecutionListener(function () {
+                _this.deleteHandler.doDelete(api_handler.DeleteSpaceParamFactory.create(_this.spacesToDelete), deleteCallback);
+            });
+            document.body.appendChild(this.getHTMLElement());
+        }
+        SpaceDeleteDialog.prototype.setSpacesToDelete = function (spaces) {
+            this.spacesToDelete = spaces;
+            var deleteItems = [];
+            for(var i in spaces) {
+                var space = spaces[i];
+                var deleteItem = new api_delete.DeleteItem(space.data.iconUrl, space.data.displayName);
+                deleteItems.push(deleteItem);
+            }
+            this.setDeleteItems(deleteItems);
+        };
+        return SpaceDeleteDialog;
+    })(api_delete.DeleteDialog);
+    app.SpaceDeleteDialog = SpaceDeleteDialog;    
+    var DeleteSpaceDialogAction = (function (_super) {
+        __extends(DeleteSpaceDialogAction, _super);
+        function DeleteSpaceDialogAction() {
+                _super.call(this, "Delete");
+        }
+        return DeleteSpaceDialogAction;
+    })(api_ui.Action);
+    app.DeleteSpaceDialogAction = DeleteSpaceDialogAction;    
+})(app || (app = {}));
+var app;
+(function (app) {
     var SpaceAppPanel = (function (_super) {
         __extends(SpaceAppPanel, _super);
         function SpaceAppPanel(appBar) {
@@ -4727,7 +4727,7 @@ Ext.application({
         document.body.appendChild(appBar.getHTMLElement());
         document.body.appendChild(appPanel.getHTMLElement());
         appPanel.init();
-        var deleteSpaceDialog = new app_ui.DeleteSpaceDialog();
+        var deleteSpaceDialog = new app.SpaceDeleteDialog();
         app_event.DeletePromptEvent.on(function (event) {
             deleteSpaceDialog.setSpacesToDelete(event.getModels());
             deleteSpaceDialog.open();

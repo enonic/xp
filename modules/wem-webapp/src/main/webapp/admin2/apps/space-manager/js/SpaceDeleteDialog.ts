@@ -1,9 +1,6 @@
-module app_ui {
+module app {
 
-    /**
-     * TODO: The upcoming successor of DeleteSpaceWindow, when the Toolbar code is working....
-     */
-    export class DeleteSpaceDialog extends api_delete.DeleteDialog {
+    export class SpaceDeleteDialog extends api_delete.DeleteDialog {
 
         private deleteAction:api_ui.Action = new DeleteSpaceDialogAction();
 
@@ -24,7 +21,7 @@ module app_ui {
             };
 
             this.deleteAction.addExecutionListener(()=> {
-                this.deleteHandler.doDelete(api_handler.DeleteSpaceParamFactory.create( this.spacesToDelete ), deleteCallback );
+                this.deleteHandler.doDelete(api_handler.DeleteSpaceParamFactory.create(this.spacesToDelete), deleteCallback);
             });
 
             document.body.appendChild(this.getHTMLElement());
