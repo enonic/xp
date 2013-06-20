@@ -1559,7 +1559,7 @@ var api_ui_tab;
             this.labelEl.getEl().setInnerHtml(label);
             this.appendChild(this.labelEl);
             var removeButton = new api_dom.ButtonEl();
-            removeButton.getEl().setInnerHtml("X");
+            removeButton.getEl().setInnerHtml("&times;");
             this.appendChild(removeButton);
             this.labelEl.getEl().addEventListener("click", function () {
                 _this.tabMenu.handleTabClickedEvent(_this);
