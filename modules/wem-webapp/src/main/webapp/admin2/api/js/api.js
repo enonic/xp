@@ -1,18 +1,20 @@
 var api_util;
 (function (api_util) {
     var ImageLoader = (function () {
-        function ImageLoader() { }
+        function ImageLoader() {
+        }
+
         ImageLoader.cachedImages = [];
         ImageLoader.get = function get(url, width, height) {
             var imageFound = false;
             var returnImage;
-            for(var i in ImageLoader.cachedImages) {
-                if(ImageLoader.cachedImages[i].src == url) {
+            for (var i in ImageLoader.cachedImages) {
+                if (ImageLoader.cachedImages[i].src == url) {
                     imageFound = true;
                     returnImage = ImageLoader.cachedImages[i];
                 }
             }
-            if(!imageFound) {
+            if (!imageFound) {
                 var image = new Image(width, height);
                 image.src = url;
                 ImageLoader.cachedImages[ImageLoader.cachedImages.length + 1] = image;
@@ -22,7 +24,7 @@ var api_util;
         };
         return ImageLoader;
     })();
-    api_util.ImageLoader = ImageLoader;    
+    api_util.ImageLoader = ImageLoader;
 })(api_util || (api_util = {}));
 var api_util;
 (function (api_util) {
@@ -30,15 +32,18 @@ var api_util;
     function getAbsoluteUri(uri) {
         return this.baseUri + '/' + uri;
     }
+
     api_util.getAbsoluteUri = getAbsoluteUri;
 })(api_util || (api_util = {}));
 var api_handler;
 (function (api_handler) {
     var DeleteSpaceParamFactory = (function () {
-        function DeleteSpaceParamFactory() { }
+        function DeleteSpaceParamFactory() {
+        }
+
         DeleteSpaceParamFactory.create = function create(spaces) {
             var spaceNames = [];
-            for(var i = 0; i < spaces.length; i++) {
+            for (var i = 0; i < spaces.length; i++) {
                 spaceNames[i] = spaces[i].data.name;
             }
             return {
@@ -47,15 +52,17 @@ var api_handler;
         };
         return DeleteSpaceParamFactory;
     })();
-    api_handler.DeleteSpaceParamFactory = DeleteSpaceParamFactory;    
+    api_handler.DeleteSpaceParamFactory = DeleteSpaceParamFactory;
 })(api_handler || (api_handler = {}));
 var api_handler;
 (function (api_handler) {
     var DeleteSpacesHandler = (function () {
-        function DeleteSpacesHandler() { }
+        function DeleteSpacesHandler() {
+        }
+
         DeleteSpacesHandler.prototype.doDelete = function (deleteSpaceParam, callback) {
             api_remote.RemoteService.space_delete(deleteSpaceParam, function (response) {
-                if(response) {
+                if (response) {
                     callback.call(this, response.success, response);
                 } else {
                     console.error('Error', response ? response.error : 'Unable to delete space.');
@@ -64,7 +71,7 @@ var api_handler;
         };
         return DeleteSpacesHandler;
     })();
-    api_handler.DeleteSpacesHandler = DeleteSpacesHandler;    
+    api_handler.DeleteSpacesHandler = DeleteSpacesHandler;
 })(api_handler || (api_handler = {}));
 var api_remote;
 (function (api_remote) {
@@ -85,10 +92,11 @@ var api_remote;
             this.ext.isProvider = true;
             this.initAPI(methods);
         }
+
         JsonRpcProvider.prototype.initAPI = function (methods) {
             var namespace = this.ext.namespace;
             var methodName, length = methods.length;
-            for(var i = 0; i < length; i++) {
+            for (var i = 0; i < length; i++) {
                 methodName = methods[i];
                 var def = {
                     name: methodName,
@@ -110,14 +118,14 @@ var api_remote;
             var error = response.error ? true : false;
             response.tid = response.id;
             response.type = error ? 'exception' : 'rpc';
-            if(error) {
+            if (error) {
                 response.message = response.error.message;
             }
             return Ext.create('direct.' + response.type, response);
         };
         return JsonRpcProvider;
     })();
-    api_remote.JsonRpcProvider = JsonRpcProvider;    
+    api_remote.JsonRpcProvider = JsonRpcProvider;
 })(api_remote || (api_remote = {}));
 var api_remote;
 (function (api_remote) {
@@ -125,50 +133,51 @@ var api_remote;
     var RemoteServiceImpl = (function () {
         function RemoteServiceImpl() {
         }
+
         RemoteServiceImpl.prototype.init = function (namespace) {
             var url = api_util.getAbsoluteUri("admin/rest/jsonrpc");
             var methods = [
-                "account_find", 
-                "account_getGraph", 
-                "account_changePassword", 
-                "account_verifyUniqueEmail", 
-                "account_suggestUserName", 
-                "account_createOrUpdate", 
-                "account_delete", 
-                "account_get", 
-                "util_getCountries", 
-                "util_getLocales", 
-                "util_getTimeZones", 
-                "userstore_getAll", 
-                "userstore_get", 
-                "userstore_getConnectors", 
-                "userstore_createOrUpdate", 
-                "userstore_delete", 
-                "content_createOrUpdate", 
-                "content_list", 
-                "contentType_get", 
-                "content_tree", 
-                "content_get", 
-                "contentType_list", 
-                "content_delete", 
-                "content_validate", 
-                "content_find", 
-                "contentType_createOrUpdate", 
-                "contentType_delete", 
-                "contentType_tree", 
-                "schema_list", 
-                "schema_tree", 
-                "system_getSystemInfo", 
-                "mixin_get", 
-                "mixin_createOrUpdate", 
-                "mixin_delete", 
-                "relationshipType_get", 
-                "relationshipType_createOrUpdate", 
-                "relationshipType_delete", 
-                "space_list", 
-                "space_get", 
-                "space_delete", 
-                "space_createOrUpdate", 
+                "account_find",
+                "account_getGraph",
+                "account_changePassword",
+                "account_verifyUniqueEmail",
+                "account_suggestUserName",
+                "account_createOrUpdate",
+                "account_delete",
+                "account_get",
+                "util_getCountries",
+                "util_getLocales",
+                "util_getTimeZones",
+                "userstore_getAll",
+                "userstore_get",
+                "userstore_getConnectors",
+                "userstore_createOrUpdate",
+                "userstore_delete",
+                "content_createOrUpdate",
+                "content_list",
+                "content_tree",
+                "content_get",
+                "content_delete",
+                "content_validate",
+                "content_find",
+                "contentType_get",
+                "contentType_list",
+                "contentType_createOrUpdate",
+                "contentType_delete",
+                "contentType_tree",
+                "schema_list",
+                "schema_tree",
+                "system_getSystemInfo",
+                "mixin_get",
+                "mixin_createOrUpdate",
+                "mixin_delete",
+                "relationshipType_get",
+                "relationshipType_createOrUpdate",
+                "relationshipType_delete",
+                "space_list",
+                "space_get",
+                "space_delete",
+                "space_createOrUpdate",
                 "binary_create"
             ];
             var jsonRpcProvider = new api_remote.JsonRpcProvider(url, methods, namespace);
@@ -301,7 +310,7 @@ var api_remote;
             console.log(params, callback);
         };
         return RemoteServiceImpl;
-    })();    
+    })();
     var remoteServiceImpl = new RemoteServiceImpl();
     api_remote.RemoteService = remoteServiceImpl;
     remoteServiceImpl.init('api_remote.RemoteService');
@@ -312,6 +321,7 @@ var api_event;
         function Event(name) {
             this.name = name;
         }
+
         Event.prototype.getName = function () {
             return this.name;
         };
@@ -320,19 +330,22 @@ var api_event;
         };
         return Event;
     })();
-    api_event.Event = Event;    
+    api_event.Event = Event;
 })(api_event || (api_event = {}));
 var api_event;
 (function (api_event) {
     var bus = new Ext.util.Observable({
     });
+
     function onEvent(name, handler) {
         bus.on(name, handler);
     }
+
     api_event.onEvent = onEvent;
     function fireEvent(event) {
         bus.fireEvent(event.getName(), event);
     }
+
     api_event.fireEvent = fireEvent;
 })(api_event || (api_event = {}));
 var api_notify;
@@ -352,6 +365,7 @@ var api_notify;
             this.name = name;
             this.handler = handler;
         }
+
         Action.prototype.getName = function () {
             return this.name;
         };
@@ -360,13 +374,14 @@ var api_notify;
         };
         return Action;
     })();
-    api_notify.Action = Action;    
+    api_notify.Action = Action;
     var Message = (function () {
         function Message(type, text) {
             this.type = type;
             this.text = text;
             this.actions = [];
         }
+
         Message.prototype.getType = function () {
             return this.type;
         };
@@ -384,18 +399,21 @@ var api_notify;
         };
         return Message;
     })();
-    api_notify.Message = Message;    
+    api_notify.Message = Message;
     function newInfo(text) {
         return new Message(Type.INFO, text);
     }
+
     api_notify.newInfo = newInfo;
     function newError(text) {
         return new Message(Type.ERROR, text);
     }
+
     api_notify.newError = newError;
     function newAction(text) {
         return new Message(Type.ACTION, text);
     }
+
     api_notify.newAction = newAction;
 })(api_notify || (api_notify = {}));
 var api_notify;
@@ -404,8 +422,11 @@ var api_notify;
     var lifetime = 5000;
     var slideDuration = 1000;
     var templates = {
-        manager: new Ext.Template('<div class="admin-notification-container">', '   <div class="admin-notification-wrapper"></div>', '</div>'),
-        notify: new Ext.Template('<div class="admin-notification" style="height: 0; opacity: 0;">', '   <div class="admin-notification-inner">', '       <a class="admin-notification-remove" href="#">X</a>', '       <div class="admin-notification-content">{message}</div>', '   </div>', '</div>')
+        manager: new Ext.Template('<div class="admin-notification-container">', '   <div class="admin-notification-wrapper"></div>',
+            '</div>'),
+        notify: new Ext.Template('<div class="admin-notification" style="height: 0; opacity: 0;">',
+            '   <div class="admin-notification-inner">', '       <a class="admin-notification-remove" href="#">X</a>',
+            '       <div class="admin-notification-content">{message}</div>', '   </div>', '</div>')
     };
     var NotifyManager = (function () {
         function NotifyManager() {
@@ -413,6 +434,7 @@ var api_notify;
             };
             this.render();
         }
+
         NotifyManager.prototype.render = function () {
             var template = templates.manager;
             var node = template.append(Ext.getBody());
@@ -464,7 +486,7 @@ var api_notify;
                     _this.startTimer(el);
                 }
             });
-            if(opts.listeners) {
+            if (opts.listeners) {
                 Ext.each(opts.listeners, function (listener) {
                     el.on({
                         'click': listener
@@ -473,7 +495,7 @@ var api_notify;
             }
         };
         NotifyManager.prototype.remove = function (el) {
-            if(!el) {
+            if (!el) {
                 return;
             }
             el.animate({
@@ -491,7 +513,7 @@ var api_notify;
         NotifyManager.prototype.startTimer = function (el) {
             var _this = this;
             var timer = this.timers[el.id];
-            if(!timer) {
+            if (!timer) {
                 return;
             }
             timer.id = setTimeout(function () {
@@ -501,7 +523,7 @@ var api_notify;
         };
         NotifyManager.prototype.stopTimer = function (el) {
             var timer = this.timers[el.id];
-            if(!timer || !timer.id) {
+            if (!timer || !timer.id) {
                 return;
             }
             clearTimeout(timer.id);
@@ -513,7 +535,7 @@ var api_notify;
             };
             var template = templates.notify;
             var notificationEl = template.append(this.getWrapperEl(), opts, true);
-            if(opts.backgroundColor) {
+            if (opts.backgroundColor) {
                 style['backgroundColor'] = opts.backgroundColor;
             }
             style['marginTop'] = space + 'px';
@@ -522,39 +544,45 @@ var api_notify;
         };
         return NotifyManager;
     })();
-    api_notify.NotifyManager = NotifyManager;    
+    api_notify.NotifyManager = NotifyManager;
     function getInnerEl(notificationEl) {
         return notificationEl.down('.admin-notification-inner');
     }
+
     var manager = new NotifyManager();
+
     function sendNotification(message) {
         manager.notify(message);
     }
+
     api_notify.sendNotification = sendNotification;
 })(api_notify || (api_notify = {}));
 var api_notify;
 (function (api_notify) {
     var NotifyOpts = (function () {
-        function NotifyOpts() { }
+        function NotifyOpts() {
+        }
+
         return NotifyOpts;
     })();
-    api_notify.NotifyOpts = NotifyOpts;    
+    api_notify.NotifyOpts = NotifyOpts;
     function buildOpts(message) {
         var opts = new NotifyOpts();
-        if(message.getType() == api_notify.Type.ERROR) {
+        if (message.getType() == api_notify.Type.ERROR) {
             opts.backgroundColor = 'red';
-        } else if(message.getType() == api_notify.Type.ACTION) {
+        } else if (message.getType() == api_notify.Type.ACTION) {
             opts.backgroundColor = '#669c34';
         }
         createHtmlMessage(message, opts);
         addListeners(message, opts);
         return opts;
     }
+
     api_notify.buildOpts = buildOpts;
     function addListeners(message, opts) {
         opts.listeners = [];
         var actions = message.getActions();
-        for(var i = 0; i < actions.length; i++) {
+        for (var i = 0; i < actions.length; i++) {
             opts.listeners.push({
                 fn: actions[i].getHandler(),
                 delegate: 'notify_action_' + i,
@@ -562,15 +590,16 @@ var api_notify;
             });
         }
     }
+
     function createHtmlMessage(message, opts) {
         var actions = message.getActions();
         opts.message = '<span>' + message.getText() + '</span>';
-        if(actions.length > 0) {
+        if (actions.length > 0) {
             var linkHtml = '<span style="float: right; margin-left: 30px;">';
-            for(var i = 0; i < actions.length; i++) {
-                if((i > 0) && (i == (actions.length - 1))) {
+            for (var i = 0; i < actions.length; i++) {
+                if ((i > 0) && (i == (actions.length - 1))) {
                     linkHtml += ' or ';
-                } else if(i > 0) {
+                } else if (i > 0) {
                     linkHtml += ', ';
                 }
                 linkHtml += '<a href="#" class="notify_action_"' + i + '">';
@@ -586,9 +615,11 @@ var api_notify;
     function showFeedback(message) {
         api_notify.newInfo(message).send();
     }
+
     api_notify.showFeedback = showFeedback;
     function updateAppTabCount(appId, tabCount) {
     }
+
     api_notify.updateAppTabCount = updateAppTabCount;
 })(api_notify || (api_notify = {}));
 var api_dom;
@@ -597,6 +628,7 @@ var api_dom;
         function ElementHelper(element) {
             this.el = element;
         }
+
         ElementHelper.fromName = function fromName(name) {
             return new ElementHelper(document.createElement(name));
         };
@@ -623,8 +655,8 @@ var api_dom;
             return this;
         };
         ElementHelper.prototype.addClass = function (clsName) {
-            if(!this.hasClass(clsName)) {
-                if(this.el.className === '') {
+            if (!this.hasClass(clsName)) {
+                if (this.el.className === '') {
                     this.el.className += clsName;
                 } else {
                     this.el.className += ' ' + clsName;
@@ -635,7 +667,7 @@ var api_dom;
             return this.el.className.match(new RegExp('(\\s|^)' + clsName + '(\\s|$)')) !== null;
         };
         ElementHelper.prototype.removeClass = function (clsName) {
-            if(this.hasClass(clsName)) {
+            if (this.hasClass(clsName)) {
                 var reg = new RegExp('(\\s|^)' + clsName + '(\\s|$)');
                 this.el.className = this.el.className.replace(reg, '');
             }
@@ -729,7 +761,7 @@ var api_dom;
         ElementHelper.prototype.getOffset = function () {
             var el = this.el;
             var x = 0, y = 0;
-            while(el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
+            while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
                 x += el.offsetLeft - el.scrollLeft;
                 y += el.offsetTop - el.scrollTop;
                 el = el.offsetParent;
@@ -741,10 +773,13 @@ var api_dom;
         };
         return ElementHelper;
     })();
-    api_dom.ElementHelper = ElementHelper;    
+    api_dom.ElementHelper = ElementHelper;
 })(api_dom || (api_dom = {}));
 var __extends = this.__extends || function (d, b) {
-    function __() { this.constructor = d; }
+    function __() {
+        this.constructor = d;
+    }
+
     __.prototype = b.prototype;
     d.prototype = new __();
 };
@@ -753,9 +788,10 @@ var api_dom;
     var ImgHelper = (function (_super) {
         __extends(ImgHelper, _super);
         function ImgHelper(element) {
-                _super.call(this, element);
+            _super.call(this, element);
             this.el = element;
         }
+
         ImgHelper.create = function create() {
             return new ImgHelper(document.createElement("img"));
         };
@@ -768,25 +804,26 @@ var api_dom;
         };
         return ImgHelper;
     })(api_dom.ElementHelper);
-    api_dom.ImgHelper = ImgHelper;    
+    api_dom.ImgHelper = ImgHelper;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var Element = (function () {
         function Element(elementName, idPrefix, className, elHelper) {
-            if(elHelper == null) {
+            if (elHelper == null) {
                 this.el = api_dom.ElementHelper.fromName(elementName);
             } else {
                 this.el = elHelper;
             }
-            if(idPrefix != null) {
+            if (idPrefix != null) {
                 this.id = idPrefix + '-' + (++Element.constructorCounter);
                 this.el.setId(this.id);
             }
-            if(className != null) {
+            if (className != null) {
                 this.getHTMLElement().className = className;
             }
         }
+
         Element.constructorCounter = 0;
         Element.prototype.show = function () {
             jQuery(this.el.getHTMLElement()).show();
@@ -820,138 +857,149 @@ var api_dom;
         };
         Element.prototype.removeChildren = function () {
             var htmlEl = this.el.getHTMLElement();
-            while(htmlEl.firstChild) {
+            while (htmlEl.firstChild) {
                 htmlEl.removeChild(htmlEl.firstChild);
             }
         };
         return Element;
     })();
-    api_dom.Element = Element;    
+    api_dom.Element = Element;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var DivEl = (function (_super) {
         __extends(DivEl, _super);
         function DivEl(idPrefix, className) {
-                _super.call(this, "div", idPrefix, className);
+            _super.call(this, "div", idPrefix, className);
         }
+
         return DivEl;
     })(api_dom.Element);
-    api_dom.DivEl = DivEl;    
+    api_dom.DivEl = DivEl;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var H1El = (function (_super) {
         __extends(H1El, _super);
         function H1El(idPrefix, className) {
-                _super.call(this, "h1", idPrefix, className);
+            _super.call(this, "h1", idPrefix, className);
         }
+
         return H1El;
     })(api_dom.Element);
-    api_dom.H1El = H1El;    
+    api_dom.H1El = H1El;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var H2El = (function (_super) {
         __extends(H2El, _super);
         function H2El(idPrefix, className) {
-                _super.call(this, "h2", idPrefix, className);
+            _super.call(this, "h2", idPrefix, className);
         }
+
         return H2El;
     })(api_dom.Element);
-    api_dom.H2El = H2El;    
+    api_dom.H2El = H2El;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var H3El = (function (_super) {
         __extends(H3El, _super);
         function H3El(idPrefix, className) {
-                _super.call(this, "h3", idPrefix, className);
+            _super.call(this, "h3", idPrefix, className);
         }
+
         return H3El;
     })(api_dom.Element);
-    api_dom.H3El = H3El;    
+    api_dom.H3El = H3El;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var H4El = (function (_super) {
         __extends(H4El, _super);
         function H4El(idPrefix, className) {
-                _super.call(this, "h4", idPrefix, className);
+            _super.call(this, "h4", idPrefix, className);
         }
+
         return H4El;
     })(api_dom.Element);
-    api_dom.H4El = H4El;    
+    api_dom.H4El = H4El;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var UlEl = (function (_super) {
         __extends(UlEl, _super);
         function UlEl(idPrefix, className) {
-                _super.call(this, "ul", idPrefix, className);
+            _super.call(this, "ul", idPrefix, className);
         }
+
         return UlEl;
     })(api_dom.Element);
-    api_dom.UlEl = UlEl;    
+    api_dom.UlEl = UlEl;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var LiEl = (function (_super) {
         __extends(LiEl, _super);
         function LiEl(idPrefix, className) {
-                _super.call(this, "li", idPrefix, className);
+            _super.call(this, "li", idPrefix, className);
         }
+
         return LiEl;
     })(api_dom.Element);
-    api_dom.LiEl = LiEl;    
+    api_dom.LiEl = LiEl;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var EmEl = (function (_super) {
         __extends(EmEl, _super);
         function EmEl(idPrefix, className) {
-                _super.call(this, "em", idPrefix, className);
+            _super.call(this, "em", idPrefix, className);
         }
+
         return EmEl;
     })(api_dom.Element);
-    api_dom.EmEl = EmEl;    
+    api_dom.EmEl = EmEl;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var ImgEl = (function (_super) {
         __extends(ImgEl, _super);
         function ImgEl(src, idPrefix, className) {
-                _super.call(this, "img", idPrefix, className, api_dom.ImgHelper.create());
+            _super.call(this, "img", idPrefix, className, api_dom.ImgHelper.create());
             this.getEl().setSrc(src);
         }
+
         ImgEl.prototype.getEl = function () {
             return _super.prototype.getEl.call(this);
         };
         return ImgEl;
     })(api_dom.Element);
-    api_dom.ImgEl = ImgEl;    
+    api_dom.ImgEl = ImgEl;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var SpanEl = (function (_super) {
         __extends(SpanEl, _super);
         function SpanEl(idPrefix, className) {
-                _super.call(this, 'span', idPrefix, className);
+            _super.call(this, 'span', idPrefix, className);
         }
+
         return SpanEl;
     })(api_dom.Element);
-    api_dom.SpanEl = SpanEl;    
+    api_dom.SpanEl = SpanEl;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var ButtonEl = (function (_super) {
         __extends(ButtonEl, _super);
         function ButtonEl(idPrefix, className) {
-                _super.call(this, "button", idPrefix, className);
+            _super.call(this, "button", idPrefix, className);
         }
+
         return ButtonEl;
     })(api_dom.Element);
-    api_dom.ButtonEl = ButtonEl;    
+    api_dom.ButtonEl = ButtonEl;
 })(api_dom || (api_dom = {}));
 var api_ui;
 (function (api_ui) {
@@ -962,13 +1010,14 @@ var api_ui;
             this.propertyChangeListeners = [];
             this.label = label;
         }
+
         Action.prototype.getLabel = function () {
             return this.label;
         };
         Action.prototype.setLabel = function (value) {
-            if(value !== this.label) {
+            if (value !== this.label) {
                 this.label = value;
-                for(var i in this.propertyChangeListeners) {
+                for (var i in this.propertyChangeListeners) {
                     this.propertyChangeListeners[i](this);
                 }
             }
@@ -977,9 +1026,9 @@ var api_ui;
             return this.enabled;
         };
         Action.prototype.setEnabled = function (value) {
-            if(value !== this.enabled) {
+            if (value !== this.enabled) {
                 this.enabled = value;
-                for(var i in this.propertyChangeListeners) {
+                for (var i in this.propertyChangeListeners) {
                     this.propertyChangeListeners[i](this);
                 }
             }
@@ -988,16 +1037,16 @@ var api_ui;
             return this.iconClass;
         };
         Action.prototype.setIconClass = function (value) {
-            if(value !== this.iconClass) {
+            if (value !== this.iconClass) {
                 this.iconClass = value;
-                for(var i in this.propertyChangeListeners) {
+                for (var i in this.propertyChangeListeners) {
                     this.propertyChangeListeners[i](this);
                 }
             }
         };
         Action.prototype.execute = function () {
-            if(this.enabled) {
-                for(var i in this.executionListeners) {
+            if (this.enabled) {
+                for (var i in this.executionListeners) {
                     this.executionListeners[i](this);
                 }
             }
@@ -1010,28 +1059,30 @@ var api_ui;
         };
         return Action;
     })();
-    api_ui.Action = Action;    
+    api_ui.Action = Action;
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var Panel = (function (_super) {
         __extends(Panel, _super);
         function Panel(idPrefix) {
-                _super.call(this, idPrefix, "panel");
+            _super.call(this, idPrefix, "panel");
         }
+
         return Panel;
     })(api_dom.DivEl);
-    api_ui.Panel = Panel;    
+    api_ui.Panel = Panel;
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var DeckPanel = (function (_super) {
         __extends(DeckPanel, _super);
         function DeckPanel(idPrefix) {
-                _super.call(this, idPrefix || "DeckPanel");
+            _super.call(this, idPrefix || "DeckPanel");
             this.panels = [];
             this.panelShown = -1;
         }
+
         DeckPanel.prototype.getSize = function () {
             return this.panels.length;
         };
@@ -1048,11 +1099,11 @@ var api_ui;
             panel.getEl().remove();
             var lastPanel = this.panels.length == index + 1;
             this.panels.splice(index, 1);
-            if(this.panels.length == 0) {
+            if (this.panels.length == 0) {
                 return panel;
             }
-            if(this.isShownPanel(index)) {
-                if(!lastPanel) {
+            if (this.isShownPanel(index)) {
+                if (!lastPanel) {
                     this.panels[this.panels.length - 1].show();
                     this.panelShown = this.panels.length - 1;
                 } else {
@@ -1065,9 +1116,9 @@ var api_ui;
             return this.panelShown === panelIndex;
         };
         DeckPanel.prototype.showPanel = function (index) {
-            for(var i = 0; i < this.panels.length; i++) {
+            for (var i = 0; i < this.panels.length; i++) {
                 var panel = this.panels[i];
-                if(i === index) {
+                if (i === index) {
                     panel.show();
                     this.panelShown = index;
                 } else {
@@ -1077,19 +1128,20 @@ var api_ui;
         };
         return DeckPanel;
     })(api_ui.Panel);
-    api_ui.DeckPanel = DeckPanel;    
+    api_ui.DeckPanel = DeckPanel;
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var BodyMask = (function (_super) {
         __extends(BodyMask, _super);
         function BodyMask() {
-                _super.call(this, "Mask");
+            _super.call(this, "Mask");
             this.getEl().setDisplay("none");
             this.getEl().addClass("body-mask");
             this.getEl().setZindex(30000);
             document.body.appendChild(this.getHTMLElement());
         }
+
         BodyMask.instance = new BodyMask();
         BodyMask.get = function get() {
             return BodyMask.instance;
@@ -1102,33 +1154,35 @@ var api_ui;
         };
         return BodyMask;
     })(api_dom.DivEl);
-    api_ui.BodyMask = BodyMask;    
+    api_ui.BodyMask = BodyMask;
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var AbstractButton = (function (_super) {
         __extends(AbstractButton, _super);
         function AbstractButton(idPrefix, label) {
-                _super.call(this, idPrefix);
+            _super.call(this, idPrefix);
             this.label = label;
             this.getEl().setInnerHtml(this.label);
         }
+
         AbstractButton.prototype.setEnable = function (value) {
             this.getEl().setDisabled(!value);
         };
         return AbstractButton;
     })(api_dom.ButtonEl);
-    api_ui.AbstractButton = AbstractButton;    
+    api_ui.AbstractButton = AbstractButton;
 })(api_ui || (api_ui = {}));
 var api_ui_toolbar;
 (function (api_ui_toolbar) {
     var Toolbar = (function (_super) {
         __extends(Toolbar, _super);
         function Toolbar() {
-                _super.call(this, "Toolbar", "toolbar");
+            _super.call(this, "Toolbar", "toolbar");
             this.components = [];
             this.initExt();
         }
+
         Toolbar.prototype.initExt = function () {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
@@ -1141,7 +1195,7 @@ var api_ui_toolbar;
             this.appendChild(button);
         };
         Toolbar.prototype.addElement = function (element) {
-            if(this.hasGreedySpacer()) {
+            if (this.hasGreedySpacer()) {
                 element.getEl().addClass('pull-right');
             }
             this.appendChild(element);
@@ -1152,16 +1206,16 @@ var api_ui_toolbar;
         };
         Toolbar.prototype.addActionButton = function (action) {
             var button = new ToolbarButton(action);
-            if(this.hasGreedySpacer()) {
+            if (this.hasGreedySpacer()) {
                 button.setFloatRight(true);
             }
             this.components.push(button);
             return button;
         };
         Toolbar.prototype.hasGreedySpacer = function () {
-            for(var i in this.components) {
+            for (var i in this.components) {
                 var comp = this.components[i];
-                if(comp instanceof ToolbarGreedySpacer) {
+                if (comp instanceof ToolbarGreedySpacer) {
                     return true;
                 }
             }
@@ -1169,17 +1223,17 @@ var api_ui_toolbar;
         };
         return Toolbar;
     })(api_dom.DivEl);
-    api_ui_toolbar.Toolbar = Toolbar;    
+    api_ui_toolbar.Toolbar = Toolbar;
     var ToolbarButton = (function (_super) {
         __extends(ToolbarButton, _super);
         function ToolbarButton(action) {
             var _this = this;
-                _super.call(this, "ToolbarButton", action.getLabel());
+            _super.call(this, "ToolbarButton", action.getLabel());
             this.action = action;
             this.getEl().addEventListener("click", function (evt) {
                 _this.action.execute();
             });
-            if(action.getIconClass()) {
+            if (action.getIconClass()) {
                 this.getEl().addClass(action.getIconClass());
             }
             this.setEnable(action.isEnabled());
@@ -1187,18 +1241,20 @@ var api_ui_toolbar;
                 _this.setEnable(action.isEnabled());
             });
         }
+
         ToolbarButton.prototype.setFloatRight = function (value) {
-            if(value) {
+            if (value) {
                 this.getEl().addClass('pull-right');
             }
         };
         return ToolbarButton;
-    })(api_ui.AbstractButton);    
+    })(api_ui.AbstractButton);
     var ToolbarGreedySpacer = (function () {
         function ToolbarGreedySpacer() {
         }
+
         return ToolbarGreedySpacer;
-    })();    
+    })();
 })(api_ui_toolbar || (api_ui_toolbar = {}));
 var api_ui_menu;
 (function (api_ui_menu) {
@@ -1206,11 +1262,11 @@ var api_ui_menu;
         __extends(MenuItem, _super);
         function MenuItem(action) {
             var _this = this;
-                _super.call(this, "menu-item");
+            _super.call(this, "menu-item");
             this.action = action;
             this.getEl().setInnerHtml(this.action.getLabel());
             this.getEl().addEventListener("click", function () {
-                if(action.isEnabled()) {
+                if (action.isEnabled()) {
                     _this.action.execute();
                 }
             });
@@ -1219,10 +1275,11 @@ var api_ui_menu;
                 _this.setEnable(action.isEnabled());
             });
         }
+
         MenuItem.prototype.setEnable = function (value) {
             var el = this.getEl();
             el.setDisabled(!value);
-            if(value) {
+            if (value) {
                 el.removeClass("disabled");
             } else {
                 el.addClass("disabled");
@@ -1230,7 +1287,7 @@ var api_ui_menu;
         };
         return MenuItem;
     })(api_dom.LiEl);
-    api_ui_menu.MenuItem = MenuItem;    
+    api_ui_menu.MenuItem = MenuItem;
 })(api_ui_menu || (api_ui_menu = {}));
 var api_ui_menu;
 (function (api_ui_menu) {
@@ -1242,17 +1299,18 @@ var api_ui_menu;
             for (var _i = 0; _i < (arguments.length - 0); _i++) {
                 actions[_i] = arguments[_i + 0];
             }
-                _super.call(this, "context-menu", "context-menu");
+            _super.call(this, "context-menu", "context-menu");
             this.menuItems = [];
             var htmlEl = this.getHTMLElement();
             document.body.insertBefore(htmlEl, document.body.childNodes[0]);
-            for(var i = 0; i < actions.length; i++) {
+            for (var i = 0; i < actions.length; i++) {
                 this.addAction(actions[i]);
             }
             document.addEventListener('click', function (evt) {
                 _this.hideMenuOnOutsideClick(evt);
             });
         }
+
         ContextMenu.prototype.addAction = function (action) {
             var menuItem = this.createMenuItem(action);
             this.appendChild(menuItem);
@@ -1275,8 +1333,8 @@ var api_ui_menu;
         ContextMenu.prototype.hideMenuOnOutsideClick = function (evt) {
             var id = this.getId();
             var target = evt.target;
-            for(var element = target; element; element = element.parentNode) {
-                if(element.id === id) {
+            for (var element = target; element; element = element.parentNode) {
+                if (element.id === id) {
                     return;
                 }
             }
@@ -1284,7 +1342,7 @@ var api_ui_menu;
         };
         return ContextMenu;
     })(api_dom.UlEl);
-    api_ui_menu.ContextMenu = ContextMenu;    
+    api_ui_menu.ContextMenu = ContextMenu;
 })(api_ui_menu || (api_ui_menu = {}));
 var api_ui_menu;
 (function (api_ui_menu) {
@@ -1296,10 +1354,10 @@ var api_ui_menu;
             for (var _i = 0; _i < (arguments.length - 0); _i++) {
                 actions[_i] = arguments[_i + 0];
             }
-                _super.call(this, "action-menu", "action-menu");
+            _super.call(this, "action-menu", "action-menu");
             this.menuItems = [];
             this.button = new ActionMenuButton(this);
-            for(var i = 0; i < actions.length; i++) {
+            for (var i = 0; i < actions.length; i++) {
                 this.addAction(actions[i]);
             }
             window.document.addEventListener("click", function (evt) {
@@ -1307,6 +1365,7 @@ var api_ui_menu;
             });
             this.initExt();
         }
+
         ActionMenu.prototype.addAction = function (action) {
             var menuItem = this.createMenuItem(action);
             this.appendChild(menuItem);
@@ -1317,7 +1376,7 @@ var api_ui_menu;
         ActionMenu.prototype.showBy = function (button) {
             this.ext.show();
             this.ext.getEl().alignTo(button.getExt().getEl(), 'tl-bl?', [
-                -2, 
+                -2,
                 0
             ]);
         };
@@ -1344,8 +1403,8 @@ var api_ui_menu;
         ActionMenu.prototype.hideMenuOnOutsideClick = function (evt) {
             var id = this.getId();
             var target = evt.target;
-            for(var element = target; element; element = element.parentNode) {
-                if(element.id === id) {
+            for (var element = target; element; element = element.parentNode) {
+                if (element.id === id) {
                     return;
                 }
             }
@@ -1353,24 +1412,25 @@ var api_ui_menu;
         };
         return ActionMenu;
     })(api_dom.UlEl);
-    api_ui_menu.ActionMenu = ActionMenu;    
+    api_ui_menu.ActionMenu = ActionMenu;
     var ActionMenuButton = (function (_super) {
         __extends(ActionMenuButton, _super);
         function ActionMenuButton(menu) {
             var _this = this;
-                _super.call(this, "button", "action-menu-button");
+            _super.call(this, "button", "action-menu-button");
             this.menu = menu;
             var btnEl = this.getEl();
             btnEl.setInnerHtml("Actions");
             btnEl.addEventListener("click", function (e) {
                 menu.showBy(_this);
-                if(e.stopPropagation) {
+                if (e.stopPropagation) {
                     e.stopPropagation();
                 }
                 e.cancelBubble = true;
             });
             this.initExt();
         }
+
         ActionMenuButton.prototype.setEnabled = function (value) {
             this.getEl().setDisabled(!value);
         };
@@ -1385,7 +1445,7 @@ var api_ui_menu;
         };
         return ActionMenuButton;
     })(api_dom.ButtonEl);
-    api_ui_menu.ActionMenuButton = ActionMenuButton;    
+    api_ui_menu.ActionMenuButton = ActionMenuButton;
 })(api_ui_menu || (api_ui_menu = {}));
 var api_ui_tab;
 (function (api_ui_tab) {
@@ -1393,7 +1453,7 @@ var api_ui_tab;
         __extends(TabMenu, _super);
         function TabMenu(idPrefix) {
             var _this = this;
-                _super.call(this, idPrefix || "TabMenu");
+            _super.call(this, idPrefix || "TabMenu");
             this.showingMenuItems = false;
             this.tabs = [];
             this.tabSelectedListeners = [];
@@ -1407,6 +1467,7 @@ var api_ui_tab;
             this.appendChild(this.menuEl);
             this.initExt();
         }
+
         TabMenu.prototype.createTabMenuButton = function () {
             return new api_ui_tab.TabMenuButton();
         };
@@ -1423,7 +1484,7 @@ var api_ui_tab;
             });
         };
         TabMenu.prototype.toggleMenu = function () {
-            if(!this.showingMenuItems) {
+            if (!this.showingMenuItems) {
                 this.showMenu();
             } else {
                 this.hideMenu();
@@ -1453,10 +1514,10 @@ var api_ui_tab;
             tabMenuItem.getEl().remove();
             var isLastTab = this.isLastTab(tab);
             this.tabs.splice(tab.getTabIndex(), 1);
-            if(this.isSelectedTab(tab)) {
+            if (this.isSelectedTab(tab)) {
             }
-            if(!isLastTab) {
-                for(var i = tab.getTabIndex() - 1; i < this.tabs.length; i++) {
+            if (!isLastTab) {
+                for (var i = tab.getTabIndex() - 1; i < this.tabs.length; i++) {
                     this.tabs[i].setTabIndex(i);
                 }
             }
@@ -1489,18 +1550,18 @@ var api_ui_tab;
             this.fireTabSelected(tabMenuItem);
         };
         TabMenu.prototype.handleTabRemoveButtonClickedEvent = function (tabMenuItem) {
-            if(this.fireTabRemoveEvent(tabMenuItem)) {
+            if (this.fireTabRemoveEvent(tabMenuItem)) {
                 this.removeTab(tabMenuItem);
             }
         };
         TabMenu.prototype.fireTabSelected = function (tab) {
-            for(var i = 0; i < this.tabSelectedListeners.length; i++) {
+            for (var i = 0; i < this.tabSelectedListeners.length; i++) {
                 this.tabSelectedListeners[i](tab);
             }
         };
         TabMenu.prototype.fireTabRemoveEvent = function (tab) {
-            for(var i = 0; i < this.tabRemovedListeners.length; i++) {
-                if(!this.tabRemovedListeners[i](tab)) {
+            for (var i = 0; i < this.tabRemovedListeners.length; i++) {
+                if (!this.tabRemovedListeners[i](tab)) {
                     return false;
                 }
             }
@@ -1508,17 +1569,18 @@ var api_ui_tab;
         };
         return TabMenu;
     })(api_dom.DivEl);
-    api_ui_tab.TabMenu = TabMenu;    
+    api_ui_tab.TabMenu = TabMenu;
 })(api_ui_tab || (api_ui_tab = {}));
 var api_ui_tab;
 (function (api_ui_tab) {
     var TabMenuButton = (function (_super) {
         __extends(TabMenuButton, _super);
         function TabMenuButton(idPrefix) {
-                _super.call(this, idPrefix || "TabMenuButton");
+            _super.call(this, idPrefix || "TabMenuButton");
             this.labelEl = new api_dom.SpanEl();
             this.appendChild(this.labelEl);
         }
+
         TabMenuButton.prototype.setTabMenu = function (tabMenu) {
             this.tabMenu = tabMenu;
         };
@@ -1527,7 +1589,7 @@ var api_ui_tab;
         };
         return TabMenuButton;
     })(api_dom.DivEl);
-    api_ui_tab.TabMenuButton = TabMenuButton;    
+    api_ui_tab.TabMenuButton = TabMenuButton;
 })(api_ui_tab || (api_ui_tab = {}));
 var api_ui_tab;
 (function (api_ui_tab) {
@@ -1535,7 +1597,7 @@ var api_ui_tab;
         __extends(TabMenuItem, _super);
         function TabMenuItem(label) {
             var _this = this;
-                _super.call(this, "TabMenuItem", "tab-menu-item");
+            _super.call(this, "TabMenuItem", "tab-menu-item");
             this.label = label;
             this.labelEl = new api_dom.SpanEl();
             this.labelEl.getEl().setInnerHtml(label);
@@ -1550,6 +1612,7 @@ var api_ui_tab;
                 _this.tabMenu.handleTabRemoveButtonClickedEvent(_this);
             });
         }
+
         TabMenuItem.prototype.setTabMenu = function (tabMenu) {
             this.tabMenu = tabMenu;
         };
@@ -1564,15 +1627,16 @@ var api_ui_tab;
         };
         return TabMenuItem;
     })(api_dom.LiEl);
-    api_ui_tab.TabMenuItem = TabMenuItem;    
+    api_ui_tab.TabMenuItem = TabMenuItem;
 })(api_ui_tab || (api_ui_tab = {}));
 var api_ui_tab;
 (function (api_ui_tab) {
     var TabBar = (function (_super) {
         __extends(TabBar, _super);
         function TabBar(idPrefix) {
-                _super.call(this, idPrefix || "TabBar");
+            _super.call(this, idPrefix || "TabBar");
         }
+
         TabBar.prototype.addTab = function (tab) {
         };
         TabBar.prototype.removeTab = function (tab) {
@@ -1593,7 +1657,7 @@ var api_ui_tab;
         };
         return TabBar;
     })(api_dom.DivEl);
-    api_ui_tab.TabBar = TabBar;    
+    api_ui_tab.TabBar = TabBar;
 })(api_ui_tab || (api_ui_tab = {}));
 var api_ui_tab;
 (function (api_ui_tab) {
@@ -1601,7 +1665,7 @@ var api_ui_tab;
         __extends(TabbedDeckPanel, _super);
         function TabbedDeckPanel(navigator) {
             var _this = this;
-                _super.call(this);
+            _super.call(this);
             this.navigator = navigator;
             this.navigator.addTabRemoveListener(function (tab) {
                 return _this.tabRemove(tab);
@@ -1610,6 +1674,7 @@ var api_ui_tab;
                 _this.showTab(tab);
             });
         }
+
         TabbedDeckPanel.prototype.addTab = function (tab, panel) {
             this.navigator.addTab(tab);
             this.addPanel(panel);
@@ -1624,19 +1689,19 @@ var api_ui_tab;
         };
         return TabbedDeckPanel;
     })(api_ui.DeckPanel);
-    api_ui_tab.TabbedDeckPanel = TabbedDeckPanel;    
+    api_ui_tab.TabbedDeckPanel = TabbedDeckPanel;
 })(api_ui_tab || (api_ui_tab = {}));
 var api_ui;
 (function (api_ui) {
     var Tooltip = (function (_super) {
         __extends(Tooltip, _super);
         function Tooltip(target, text, timeout, side, offset) {
-                _super.call(this, "Tooltip", "tooltip");
+            _super.call(this, "Tooltip", "tooltip");
             this.target = target;
             this.timeout = timeout !== undefined ? timeout : 1000;
             this.side = side || "bottom";
             this.offset = offset || [
-                0, 
+                0,
                 0
             ];
             var me = this;
@@ -1654,7 +1719,7 @@ var api_ui;
             var targetEl = target.getEl();
             targetEl.addEventListener("mouseover", function (event) {
                 me.stopTimeout();
-                if(!me.isVisible()) {
+                if (!me.isVisible()) {
                     me.show();
                 }
             });
@@ -1663,6 +1728,7 @@ var api_ui;
             });
             document.body.appendChild(this.getHTMLElement());
         }
+
         Tooltip.prototype.show = function () {
             _super.prototype.show.call(this);
             this.positionByTarget();
@@ -1688,32 +1754,32 @@ var api_ui;
             var targetOffset = this.target.getEl().getOffset();
             var el = this.getHTMLElement();
             var offsetLeft, offsetTop;
-            switch(this.side) {
-                case "top":
-                    offsetLeft = targetOffset.left + (targetEl.offsetWidth - el.offsetWidth) / 2 + this.offset[0];
-                    offsetTop = targetOffset.top - el.offsetHeight + this.offset[1];
-                    break;
-                case "bottom":
-                    offsetLeft = targetOffset.left + (targetEl.offsetWidth - el.offsetWidth) / 2 + this.offset[0];
-                    offsetTop = targetOffset.top + targetEl.offsetHeight + this.offset[1];
-                    break;
-                case "left":
-                    offsetLeft = targetOffset.left - el.offsetWidth + this.offset[0];
-                    offsetTop = targetOffset.top + (targetEl.offsetHeight - el.offsetHeight) / 2 + this.offset[1];
-                    break;
-                case "right":
-                    offsetLeft = targetOffset.left + targetEl.offsetWidth + this.offset[0];
-                    offsetTop = targetOffset.top + (targetEl.offsetHeight - el.offsetHeight) / 2 + this.offset[1];
-                    break;
+            switch (this.side) {
+            case "top":
+                offsetLeft = targetOffset.left + (targetEl.offsetWidth - el.offsetWidth) / 2 + this.offset[0];
+                offsetTop = targetOffset.top - el.offsetHeight + this.offset[1];
+                break;
+            case "bottom":
+                offsetLeft = targetOffset.left + (targetEl.offsetWidth - el.offsetWidth) / 2 + this.offset[0];
+                offsetTop = targetOffset.top + targetEl.offsetHeight + this.offset[1];
+                break;
+            case "left":
+                offsetLeft = targetOffset.left - el.offsetWidth + this.offset[0];
+                offsetTop = targetOffset.top + (targetEl.offsetHeight - el.offsetHeight) / 2 + this.offset[1];
+                break;
+            case "right":
+                offsetLeft = targetOffset.left + targetEl.offsetWidth + this.offset[0];
+                offsetTop = targetOffset.top + (targetEl.offsetHeight - el.offsetHeight) / 2 + this.offset[1];
+                break;
             }
-            if(offsetLeft < 0) {
+            if (offsetLeft < 0) {
                 offsetLeft = 0;
-            } else if(offsetLeft + el.offsetWidth > document.body.clientWidth) {
+            } else if (offsetLeft + el.offsetWidth > document.body.clientWidth) {
                 offsetLeft = document.body.clientWidth - el.offsetWidth;
             }
-            if(offsetTop < 0) {
+            if (offsetTop < 0) {
                 offsetTop = 0;
-            } else if(offsetTop + el.offsetHeight > document.body.clientHeight) {
+            } else if (offsetTop + el.offsetHeight > document.body.clientHeight) {
                 offsetTop = document.body.clientHeight - el.offsetHeight;
             }
             jQuery(this.getHTMLElement()).offset({
@@ -1724,7 +1790,7 @@ var api_ui;
         Tooltip.prototype.startTimeout = function (ms) {
             this.stopTimeout();
             var me = this;
-            if(this.timeout > 0) {
+            if (this.timeout > 0) {
                 this.hideTimeout = setTimeout(function () {
                     me.hide();
                 }, ms || this.timeout);
@@ -1733,26 +1799,27 @@ var api_ui;
             }
         };
         Tooltip.prototype.stopTimeout = function () {
-            if(this.hideTimeout) {
+            if (this.hideTimeout) {
                 clearTimeout(this.hideTimeout);
                 this.hideTimeout = undefined;
             }
         };
         return Tooltip;
     })(api_dom.DivEl);
-    api_ui.Tooltip = Tooltip;    
+    api_ui.Tooltip = Tooltip;
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var ProgressBar = (function (_super) {
         __extends(ProgressBar, _super);
         function ProgressBar(value) {
-                _super.call(this, "ProgressBar", "progress-bar");
+            _super.call(this, "ProgressBar", "progress-bar");
             this.value = value || 0;
             var progress = this.progress = new api_dom.DivEl("ProgressBar", "progress-indicator");
             this.getEl().appendChild(progress.getHTMLElement());
             this.setValue(this.value);
         }
+
         ProgressBar.prototype.setValue = function (value) {
             var normalizedValue = value > 0 ? this.normalizeValue(value) : 0;
             this.progress.getEl().setWidth(normalizedValue * 100 + "%");
@@ -1768,7 +1835,7 @@ var api_ui;
         };
         return ProgressBar;
     })(api_dom.DivEl);
-    api_ui.ProgressBar = ProgressBar;    
+    api_ui.ProgressBar = ProgressBar;
 })(api_ui || (api_ui = {}));
 var api_appbar;
 (function (api_appbar) {
@@ -1776,7 +1843,7 @@ var api_appbar;
         __extends(AppBar, _super);
         function AppBar(appName, actions, tabMenu) {
             var _this = this;
-                _super.call(this, 'AppBar', 'appbar');
+            _super.call(this, 'AppBar', 'appbar');
             this.appName = appName;
             this.actions = actions;
             this.tabMenu = tabMenu;
@@ -1788,7 +1855,7 @@ var api_appbar;
             this.appendChild(this.homeButton);
             this.userButton = new api_appbar.UserButton();
             this.appendChild(this.userButton);
-            if(this.tabMenu != null) {
+            if (this.tabMenu != null) {
                 this.appendChild(this.tabMenu);
             } else {
                 this.appendChild(new TabMenuContainer());
@@ -1799,6 +1866,7 @@ var api_appbar;
             });
             this.initExt();
         }
+
         AppBar.prototype.initExt = function () {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
@@ -1812,73 +1880,82 @@ var api_appbar;
         };
         return AppBar;
     })(api_dom.DivEl);
-    api_appbar.AppBar = AppBar;    
+    api_appbar.AppBar = AppBar;
     var LauncherButton = (function (_super) {
         __extends(LauncherButton, _super);
         function LauncherButton(action) {
-                _super.call(this, 'LauncherButton', 'launcher-button');
+            _super.call(this, 'LauncherButton', 'launcher-button');
             this.getEl().addEventListener('click', function (event) {
                 action.execute();
             });
         }
+
         return LauncherButton;
     })(api_dom.ButtonEl);
-    api_appbar.LauncherButton = LauncherButton;    
+    api_appbar.LauncherButton = LauncherButton;
     var Separator = (function (_super) {
         __extends(Separator, _super);
         function Separator() {
-                _super.call(this, 'AppBarSeparator', 'appbar-separator');
+            _super.call(this, 'AppBarSeparator', 'appbar-separator');
         }
+
         return Separator;
     })(api_dom.SpanEl);
-    api_appbar.Separator = Separator;    
+    api_appbar.Separator = Separator;
     var HomeButton = (function (_super) {
         __extends(HomeButton, _super);
         function HomeButton(text, action) {
-                _super.call(this, 'HomeButton', 'home-button');
+            _super.call(this, 'HomeButton', 'home-button');
             this.getEl().setInnerHtml(text);
             this.getEl().addEventListener('click', function (event) {
                 action.execute();
             });
         }
+
         return HomeButton;
     })(api_dom.ButtonEl);
-    api_appbar.HomeButton = HomeButton;    
+    api_appbar.HomeButton = HomeButton;
     var TabMenuContainer = (function (_super) {
         __extends(TabMenuContainer, _super);
         function TabMenuContainer() {
-                _super.call(this, 'TabMenuContainer', 'tabmenu-container');
+            _super.call(this, 'TabMenuContainer', 'tabmenu-container');
         }
+
         return TabMenuContainer;
     })(api_dom.DivEl);
-    api_appbar.TabMenuContainer = TabMenuContainer;    
+    api_appbar.TabMenuContainer = TabMenuContainer;
     var UserButton = (function (_super) {
         __extends(UserButton, _super);
         function UserButton() {
-                _super.call(this, 'UserButton', 'user-button');
+            _super.call(this, 'UserButton', 'user-button');
             var photoUrl = api_util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg');
             this.setIcon(photoUrl);
         }
+
         UserButton.prototype.setIcon = function (photoUrl) {
             this.getEl().setBackgroundImage('url("' + photoUrl + '")');
         };
         return UserButton;
     })(api_dom.ButtonEl);
-    api_appbar.UserButton = UserButton;    
+    api_appbar.UserButton = UserButton;
 })(api_appbar || (api_appbar = {}));
 var api_appbar;
 (function (api_appbar) {
     var UserInfoPopup = (function (_super) {
         __extends(UserInfoPopup, _super);
         function UserInfoPopup() {
-                _super.call(this, 'UserInfoPopup', 'user-info-popup');
+            _super.call(this, 'UserInfoPopup', 'user-info-popup');
             this.isShown = false;
             this.createContent();
             this.render();
         }
+
         UserInfoPopup.prototype.createContent = function () {
             var userName = 'Thomas Lund Sigdestad', photoUrl = api_util.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'), qName = 'system/tsi';
-            var content = '<div class="title">User</div>' + '<div class="user-name">' + userName + '</div>' + '<div class="content">' + '<div class="column">' + '<img src="' + photoUrl + '"/>' + '<button>Log Out</button>' + '</div>' + '<div class="column">' + '<span>' + qName + '</span>' + '<a href="#">View Profile</a>' + '<a href="#">Edit Profile</a>' + '<a href="#">Change User</a>' + '</div>' + '</div>';
+            var content = '<div class="title">User</div>' + '<div class="user-name">' + userName + '</div>' + '<div class="content">' +
+                          '<div class="column">' + '<img src="' + photoUrl + '"/>' + '<button>Log Out</button>' + '</div>' +
+                          '<div class="column">' + '<span>' + qName + '</span>' + '<a href="#">View Profile</a>' +
+                          '<a href="#">Edit Profile</a>' + '<a href="#">Change User</a>' + '</div>' + '</div>';
             this.getEl().setInnerHtml(content);
         };
         UserInfoPopup.prototype.render = function () {
@@ -1892,41 +1969,44 @@ var api_appbar;
         };
         return UserInfoPopup;
     })(api_dom.DivEl);
-    api_appbar.UserInfoPopup = UserInfoPopup;    
+    api_appbar.UserInfoPopup = UserInfoPopup;
 })(api_appbar || (api_appbar = {}));
 var api_appbar;
 (function (api_appbar) {
     var ShowAppLauncherEvent = (function (_super) {
         __extends(ShowAppLauncherEvent, _super);
         function ShowAppLauncherEvent() {
-                _super.call(this, 'showAppLauncher');
+            _super.call(this, 'showAppLauncher');
         }
+
         ShowAppLauncherEvent.on = function on(handler) {
             api_event.onEvent('showAppLauncher', handler);
         };
         return ShowAppLauncherEvent;
     })(api_event.Event);
-    api_appbar.ShowAppLauncherEvent = ShowAppLauncherEvent;    
+    api_appbar.ShowAppLauncherEvent = ShowAppLauncherEvent;
     var ShowAppBrowsePanelEvent = (function (_super) {
         __extends(ShowAppBrowsePanelEvent, _super);
         function ShowAppBrowsePanelEvent() {
-                _super.call(this, 'showAppBrowsePanel');
+            _super.call(this, 'showAppBrowsePanel');
         }
+
         ShowAppBrowsePanelEvent.on = function on(handler) {
             api_event.onEvent('showAppBrowsePanel', handler);
         };
         return ShowAppBrowsePanelEvent;
     })(api_event.Event);
-    api_appbar.ShowAppBrowsePanelEvent = ShowAppBrowsePanelEvent;    
+    api_appbar.ShowAppBrowsePanelEvent = ShowAppBrowsePanelEvent;
 })(api_appbar || (api_appbar = {}));
 var api_appbar;
 (function (api_appbar) {
     var AppBarTabMenu = (function (_super) {
         __extends(AppBarTabMenu, _super);
         function AppBarTabMenu(idPrefix) {
-                _super.call(this, idPrefix || "AppBarTabMenu");
+            _super.call(this, idPrefix || "AppBarTabMenu");
             this.getEl().addClass("appbar-tabmenu");
         }
+
         AppBarTabMenu.prototype.addTab = function (tab) {
             _super.prototype.addTab.call(this, tab);
             this.tabMenuButton.setTabCount(this.getSize());
@@ -1938,20 +2018,20 @@ var api_appbar;
         AppBarTabMenu.prototype.removeTab = function (tab) {
             _super.prototype.removeTab.call(this, tab);
             this.tabMenuButton.setTabCount(this.getSize());
-            if(this.getSize() == 0) {
+            if (this.getSize() == 0) {
                 this.tabMenuButton.setLabel("");
             }
         };
         return AppBarTabMenu;
     })(api_ui_tab.TabMenu);
-    api_appbar.AppBarTabMenu = AppBarTabMenu;    
+    api_appbar.AppBarTabMenu = AppBarTabMenu;
 })(api_appbar || (api_appbar = {}));
 var api_appbar;
 (function (api_appbar) {
     var AppBarTabMenuButton = (function (_super) {
         __extends(AppBarTabMenuButton, _super);
         function AppBarTabMenuButton(idPrefix) {
-                _super.call(this, idPrefix || "AppBarTabMenuButton");
+            _super.call(this, idPrefix || "AppBarTabMenuButton");
             this.getEl().addClass("appbar-tabmenu-button");
             this.iconEl = new api_dom.SpanEl();
             this.iconEl.getEl().addClass("icon-icomoon-pencil-32");
@@ -1959,20 +2039,22 @@ var api_appbar;
             this.tabCountEl = new AppBarTabCount();
             this.appendChild(this.tabCountEl);
         }
+
         AppBarTabMenuButton.prototype.setTabCount = function (value) {
             this.tabCountEl.setCount(value);
         };
         return AppBarTabMenuButton;
     })(api_ui_tab.TabMenuButton);
-    api_appbar.AppBarTabMenuButton = AppBarTabMenuButton;    
+    api_appbar.AppBarTabMenuButton = AppBarTabMenuButton;
     var AppBarTabCount = (function (_super) {
         __extends(AppBarTabCount, _super);
         function AppBarTabCount() {
-                _super.call(this);
+            _super.call(this);
             this.getEl().addClass("tabcount");
         }
+
         AppBarTabCount.prototype.setCount = function (value) {
-            if(value > 0) {
+            if (value > 0) {
                 this.getEl().setInnerHtml("" + value);
             } else {
                 this.getEl().setInnerHtml("");
@@ -1980,28 +2062,30 @@ var api_appbar;
         };
         return AppBarTabCount;
     })(api_dom.SpanEl);
-    api_appbar.AppBarTabCount = AppBarTabCount;    
+    api_appbar.AppBarTabCount = AppBarTabCount;
 })(api_appbar || (api_appbar = {}));
 var api_appbar;
 (function (api_appbar) {
     var AppBarTabMenuItem = (function (_super) {
         __extends(AppBarTabMenuItem, _super);
         function AppBarTabMenuItem(label) {
-                _super.call(this, label);
+            _super.call(this, label);
         }
+
         return AppBarTabMenuItem;
     })(api_ui_tab.TabMenuItem);
-    api_appbar.AppBarTabMenuItem = AppBarTabMenuItem;    
+    api_appbar.AppBarTabMenuItem = AppBarTabMenuItem;
 })(api_appbar || (api_appbar = {}));
 var api;
 (function (api) {
     var AppDeckPanel = (function (_super) {
         __extends(AppDeckPanel, _super);
         function AppDeckPanel(navigator) {
-                _super.call(this, navigator);
+            _super.call(this, navigator);
         }
+
         AppDeckPanel.prototype.tabRemove = function (tab) {
-            if(this.hasUnsavedChanges()) {
+            if (this.hasUnsavedChanges()) {
                 return false;
             } else {
                 return _super.prototype.tabRemove.call(this, tab);
@@ -2009,7 +2093,7 @@ var api;
         };
         AppDeckPanel.prototype.removePanel = function (index) {
             var panelRemoved = _super.prototype.removePanel.call(this, index);
-            if(this.getSize() == 0) {
+            if (this.getSize() == 0) {
                 this.appPanel.showBrowsePanel();
             }
             return panelRemoved;
@@ -2022,14 +2106,14 @@ var api;
         };
         return AppDeckPanel;
     })(api_ui_tab.TabbedDeckPanel);
-    api.AppDeckPanel = AppDeckPanel;    
+    api.AppDeckPanel = AppDeckPanel;
 })(api || (api = {}));
 var api;
 (function (api) {
     var AppPanel = (function (_super) {
         __extends(AppPanel, _super);
         function AppPanel(browsePanel, deckPanel) {
-                _super.call(this, "AppPanel");
+            _super.call(this, "AppPanel");
             this.browsePanel = browsePanel;
             this.deckPanel = deckPanel;
             deckPanel.setAppPanel(this);
@@ -2037,6 +2121,7 @@ var api;
             this.addPanel(this.deckPanel);
             this.showPanel(0);
         }
+
         AppPanel.prototype.showBrowsePanel = function () {
             this.showPanel(0);
         };
@@ -2045,7 +2130,7 @@ var api;
         };
         return AppPanel;
     })(api_ui.DeckPanel);
-    api.AppPanel = AppPanel;    
+    api.AppPanel = AppPanel;
 })(api || (api = {}));
 var api_ui_dialog;
 (function (api_ui_dialog) {
@@ -2053,7 +2138,7 @@ var api_ui_dialog;
         __extends(DialogButton, _super);
         function DialogButton(action) {
             var _this = this;
-                _super.call(this, "DialogButton", action.getLabel());
+            _super.call(this, "DialogButton", action.getLabel());
             this.getEl().addClass("DialogButton");
             this.action = action;
             this.getEl().addEventListener("click", function () {
@@ -2064,22 +2149,26 @@ var api_ui_dialog;
                 _this.setEnable(action.isEnabled());
             });
         }
+
         return DialogButton;
     })(api_ui.AbstractButton);
-    api_ui_dialog.DialogButton = DialogButton;    
+    api_ui_dialog.DialogButton = DialogButton;
 })(api_ui_dialog || (api_ui_dialog = {}));
 var api_ui_dialog;
 (function (api_ui_dialog) {
     var ModalDialog = (function (_super) {
         __extends(ModalDialog, _super);
         function ModalDialog(config) {
-                _super.call(this, "ModalDialog", "modal-dialog");
+            _super.call(this, "ModalDialog", "modal-dialog");
             this.config = config;
             var el = this.getEl();
             el.setDisplay("none");
             el.setWidth(this.config.width + "px").setHeight(this.config.height + "px");
             el.setZindex(30001);
-            el.setPosition("fixed").setTop("50%").setLeft("50%").setMarginLeft("-" + (this.config.width / 2) + "px").setMarginTop("-" + (this.config.height / 2) + "px");
+            el.setPosition("fixed").setTop("50%").setLeft("50%").setMarginLeft("-" + (this.config.width / 2) + "px").setMarginTop("-" +
+                                                                                                                                  (this.config.height /
+                                                                                                                                   2) +
+                                                                                                                                  "px");
             this.title = new ModalDialogTitle(this.config.title);
             this.appendChild(this.title);
             this.contentPanel = new ModalDialogContentPanel();
@@ -2087,6 +2176,7 @@ var api_ui_dialog;
             this.buttonRow = new ModalDialogButtonRow();
             this.appendChild(this.buttonRow);
         }
+
         ModalDialog.prototype.setTitle = function (value) {
             this.title.setTitle(value);
         };
@@ -2117,44 +2207,47 @@ var api_ui_dialog;
         };
         return ModalDialog;
     })(api_dom.DivEl);
-    api_ui_dialog.ModalDialog = ModalDialog;    
+    api_ui_dialog.ModalDialog = ModalDialog;
     var ModalDialogTitle = (function (_super) {
         __extends(ModalDialogTitle, _super);
         function ModalDialogTitle(title) {
-                _super.call(this, "ModalDialogTitle");
+            _super.call(this, "ModalDialogTitle");
             this.getEl().setInnerHtml(title);
         }
+
         ModalDialogTitle.prototype.setTitle = function (value) {
             this.getEl().setInnerHtml(value);
         };
         return ModalDialogTitle;
     })(api_dom.H2El);
-    api_ui_dialog.ModalDialogTitle = ModalDialogTitle;    
+    api_ui_dialog.ModalDialogTitle = ModalDialogTitle;
     var ModalDialogContentPanel = (function (_super) {
         __extends(ModalDialogContentPanel, _super);
         function ModalDialogContentPanel() {
-                _super.call(this, "ModalDialogContentPanel", "content-panel");
+            _super.call(this, "ModalDialogContentPanel", "content-panel");
         }
+
         return ModalDialogContentPanel;
     })(api_dom.DivEl);
-    api_ui_dialog.ModalDialogContentPanel = ModalDialogContentPanel;    
+    api_ui_dialog.ModalDialogContentPanel = ModalDialogContentPanel;
     var ModalDialogButtonRow = (function (_super) {
         __extends(ModalDialogButtonRow, _super);
         function ModalDialogButtonRow() {
-                _super.call(this, "ModalDialogButtonRow", "button-row");
+            _super.call(this, "ModalDialogButtonRow", "button-row");
         }
+
         ModalDialogButtonRow.prototype.addAction = function (action) {
             var button = new ModalDialogButton(action);
             this.appendChild(button);
         };
         return ModalDialogButtonRow;
     })(api_dom.DivEl);
-    api_ui_dialog.ModalDialogButtonRow = ModalDialogButtonRow;    
+    api_ui_dialog.ModalDialogButtonRow = ModalDialogButtonRow;
     var ModalDialogButton = (function (_super) {
         __extends(ModalDialogButton, _super);
         function ModalDialogButton(action) {
             var _this = this;
-                _super.call(this, "ModalDialogButton", action.getLabel());
+            _super.call(this, "ModalDialogButton", action.getLabel());
             this.action = action;
             this.getEl().addEventListener("click", function () {
                 _this.action.execute();
@@ -2164,17 +2257,19 @@ var api_ui_dialog;
                 _this.setEnable(action.isEnabled());
             });
         }
+
         return ModalDialogButton;
     })(api_ui.AbstractButton);
-    api_ui_dialog.ModalDialogButton = ModalDialogButton;    
+    api_ui_dialog.ModalDialogButton = ModalDialogButton;
     var ModalDialogCancelAction = (function (_super) {
         __extends(ModalDialogCancelAction, _super);
         function ModalDialogCancelAction() {
-                _super.call(this, "Cancel");
+            _super.call(this, "Cancel");
         }
+
         return ModalDialogCancelAction;
     })(api_ui.Action);
-    api_ui_dialog.ModalDialogCancelAction = ModalDialogCancelAction;    
+    api_ui_dialog.ModalDialogCancelAction = ModalDialogCancelAction;
 })(api_ui_dialog || (api_ui_dialog = {}));
 var api_delete;
 (function (api_delete) {
@@ -2183,6 +2278,7 @@ var api_delete;
             this.iconUrl = iconUrl;
             this.displayName = displayName;
         }
+
         DeleteItem.prototype.getDisplayName = function () {
             return this.displayName;
         };
@@ -2191,7 +2287,7 @@ var api_delete;
         };
         return DeleteItem;
     })();
-    api_delete.DeleteItem = DeleteItem;    
+    api_delete.DeleteItem = DeleteItem;
 })(api_delete || (api_delete = {}));
 var api_delete;
 (function (api_delete) {
@@ -2199,11 +2295,11 @@ var api_delete;
         __extends(DeleteDialog, _super);
         function DeleteDialog(modelName) {
             var _this = this;
-                _super.call(this, {
-        title: "Delete " + modelName,
-        width: 500,
-        height: 300
-    });
+            _super.call(this, {
+                title: "Delete " + modelName,
+                width: 500,
+                height: 300
+            });
             this.cancelAction = new CancelDeleteDialogAction();
             this.itemList = new DeleteDialogItemList();
             this.modelName = modelName;
@@ -2214,6 +2310,7 @@ var api_delete;
                 _this.close();
             });
         }
+
         DeleteDialog.prototype.setDeleteAction = function (action) {
             this.deleteAction = action;
             this.addAction(action);
@@ -2221,43 +2318,45 @@ var api_delete;
         DeleteDialog.prototype.setDeleteItems = function (deleteItems) {
             this.deleteItems = deleteItems;
             this.itemList.clear();
-            if(deleteItems.length > 1) {
+            if (deleteItems.length > 1) {
                 this.setTitle("Delete " + this.modelName + "s");
             } else {
                 this.setTitle("Delete " + this.modelName);
             }
-            for(var i in this.deleteItems) {
+            for (var i in this.deleteItems) {
                 var deleteItem = this.deleteItems[i];
                 this.itemList.appendChild(new DeleteDialogItemComponent(deleteItem));
             }
         };
         return DeleteDialog;
     })(api_ui_dialog.ModalDialog);
-    api_delete.DeleteDialog = DeleteDialog;    
+    api_delete.DeleteDialog = DeleteDialog;
     var CancelDeleteDialogAction = (function (_super) {
         __extends(CancelDeleteDialogAction, _super);
         function CancelDeleteDialogAction() {
-                _super.call(this, "Cancel");
+            _super.call(this, "Cancel");
         }
+
         return CancelDeleteDialogAction;
     })(api_ui.Action);
-    api_delete.CancelDeleteDialogAction = CancelDeleteDialogAction;    
+    api_delete.CancelDeleteDialogAction = CancelDeleteDialogAction;
     var DeleteDialogItemList = (function (_super) {
         __extends(DeleteDialogItemList, _super);
         function DeleteDialogItemList() {
-                _super.call(this, "DeleteDialogItemList");
+            _super.call(this, "DeleteDialogItemList");
             this.getEl().addClass("item-list");
         }
+
         DeleteDialogItemList.prototype.clear = function () {
             this.removeChildren();
         };
         return DeleteDialogItemList;
     })(api_dom.DivEl);
-    api_delete.DeleteDialogItemList = DeleteDialogItemList;    
+    api_delete.DeleteDialogItemList = DeleteDialogItemList;
     var DeleteDialogItemComponent = (function (_super) {
         __extends(DeleteDialogItemComponent, _super);
         function DeleteDialogItemComponent(deleteItem) {
-                _super.call(this, "DeleteDialogItem");
+            _super.call(this, "DeleteDialogItem");
             this.getEl().addClass("item");
             var icon = new api_dom.ImgEl(deleteItem.getIconUrl());
             this.appendChild(icon);
@@ -2265,20 +2364,22 @@ var api_delete;
             displayName.getEl().setInnerHtml(deleteItem.getDisplayName());
             this.appendChild(displayName);
         }
+
         return DeleteDialogItemComponent;
-    })(api_dom.DivEl);    
+    })(api_dom.DivEl);
 })(api_delete || (api_delete = {}));
 var api_browse;
 (function (api_browse) {
     var AppBrowsePanel = (function (_super) {
         __extends(AppBrowsePanel, _super);
         function AppBrowsePanel(browseToolbar, grid, detailPanel, filterPanel) {
-                _super.call(this, "AppBrowsePanel");
+            _super.call(this, "AppBrowsePanel");
             this.browseToolbar = browseToolbar;
             this.grid = grid;
             this.detailPanel = detailPanel;
             this.filterPanel = filterPanel;
         }
+
         AppBrowsePanel.prototype.init = function () {
             this.appendChild(this.browseToolbar);
             this.grid.create('center', this.getId());
@@ -2307,16 +2408,17 @@ var api_browse;
         };
         return AppBrowsePanel;
     })(api_ui.Panel);
-    api_browse.AppBrowsePanel = AppBrowsePanel;    
+    api_browse.AppBrowsePanel = AppBrowsePanel;
 })(api_browse || (api_browse = {}));
 var api_browse;
 (function (api_browse) {
     var DetailPanel = (function (_super) {
         __extends(DetailPanel, _super);
         function DetailPanel() {
-                _super.call(this, "detailpanel", "detailpanel");
+            _super.call(this, "detailpanel", "detailpanel");
             this.initExt();
         }
+
         DetailPanel.prototype.initExt = function () {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
@@ -2327,12 +2429,12 @@ var api_browse;
         };
         return DetailPanel;
     })(api_dom.DivEl);
-    api_browse.DetailPanel = DetailPanel;    
+    api_browse.DetailPanel = DetailPanel;
     var DetailTabPanel = (function (_super) {
         __extends(DetailTabPanel, _super);
         function DetailTabPanel(model) {
             var _this = this;
-                _super.call(this, "detailpanel-tab", "detailpanel-tab");
+            _super.call(this, "detailpanel-tab", "detailpanel-tab");
             this.tabs = [];
             this.model = model;
             this.addHeader(model.data.name, model.id, model.data.iconUrl);
@@ -2342,6 +2444,7 @@ var api_browse;
                 _this.setActiveTab(tab);
             });
         }
+
         DetailTabPanel.prototype.addHeader = function (title, subtitle, iconUrl) {
             var headerEl = new api_dom.DivEl("header", "header");
             var iconEl = api_util.ImageLoader.get(iconUrl + "?size=80", 80, 80);
@@ -2385,22 +2488,24 @@ var api_browse;
         };
         return DetailTabPanel;
     })(api_dom.DivEl);
-    api_browse.DetailTabPanel = DetailTabPanel;    
+    api_browse.DetailTabPanel = DetailTabPanel;
     var DetailPanelTab = (function () {
         function DetailPanelTab(name) {
             this.name = name;
             this.content = new api_dom.DivEl("test-content");
             this.content.getEl().setInnerHtml(this.name);
         }
+
         return DetailPanelTab;
     })();
-    api_browse.DetailPanelTab = DetailPanelTab;    
+    api_browse.DetailPanelTab = DetailPanelTab;
     var DetailPanelTabList = (function (_super) {
         __extends(DetailPanelTabList, _super);
         function DetailPanelTabList() {
-                _super.call(this, "tab-list", "tab-list");
+            _super.call(this, "tab-list", "tab-list");
             this.tabs = [];
         }
+
         DetailPanelTabList.prototype.addTab = function (tab, clickCallback) {
             var _this = this;
             var tabEl = new api_dom.LiEl("tab");
@@ -2420,16 +2525,17 @@ var api_browse;
         };
         return DetailPanelTabList;
     })(api_dom.UlEl);
-    api_browse.DetailPanelTabList = DetailPanelTabList;    
+    api_browse.DetailPanelTabList = DetailPanelTabList;
     var DetailPanelBox = (function (_super) {
         __extends(DetailPanelBox, _super);
         function DetailPanelBox(model, removeCallback) {
-                _super.call(this, "detailpanel-box", "detailpanel-box");
+            _super.call(this, "detailpanel-box", "detailpanel-box");
             this.model = model;
             this.setIcon(model.data.iconUrl, 32);
             this.setData(model.data.displayName, model.data.name);
             this.addRemoveButton(removeCallback);
         }
+
         DetailPanelBox.prototype.addRemoveButton = function (callback) {
             var _this = this;
             var removeEl = document.createElement("div");
@@ -2437,7 +2543,7 @@ var api_browse;
             removeEl.innerHTML = "&times;";
             removeEl.addEventListener("click", function (event) {
                 _this.getEl().remove();
-                if(callback) {
+                if (callback) {
                     callback(_this);
                 }
             });
@@ -2460,7 +2566,7 @@ var api_browse;
         };
         return DetailPanelBox;
     })(api_dom.DivEl);
-    api_browse.DetailPanelBox = DetailPanelBox;    
+    api_browse.DetailPanelBox = DetailPanelBox;
 })(api_browse || (api_browse = {}));
 var api_wizard;
 (function (api_wizard) {
@@ -2468,14 +2574,14 @@ var api_wizard;
         __extends(FormIcon, _super);
         function FormIcon(iconUrl, iconTitle, uploadUrl) {
             var _this = this;
-                _super.call(this, "FormIcon", "form-icon");
+            _super.call(this, "FormIcon", "form-icon");
             this.iconUrl = iconUrl;
             this.iconTitle = iconTitle;
             this.uploadUrl = uploadUrl;
             var el = this.getEl();
             var me = this;
             this.tooltip = new api_ui.Tooltip(this, iconTitle, 10, "bottom", [
-                0, 
+                0,
                 5
             ]);
             var img = this.img = new api_dom.ImgEl(this.iconUrl, "FormIcon");
@@ -2483,12 +2589,12 @@ var api_wizard;
                 _this.tooltip.showFor(10000);
             });
             el.appendChild(img.getHTMLElement());
-            if(this.uploadUrl) {
+            if (this.uploadUrl) {
                 this.progress = new api_ui.ProgressBar();
                 el.appendChild(this.progress.getHTMLElement());
                 var firstClickHandler = function (event) {
-                    if(!me.uploader) {
-                        if(!plupload) {
+                    if (!me.uploader) {
+                        if (!plupload) {
                             console.log('FormIcon: plupload not found, check if it is included in page.');
                         } else {
                             me.uploader = me.initUploader(me.getId());
@@ -2501,6 +2607,7 @@ var api_wizard;
             }
             this.ext = this.initExt();
         }
+
         FormIcon.prototype.initExt = function () {
             var me = this;
             return new Ext.Component({
@@ -2546,9 +2653,10 @@ var api_wizard;
             uploader.bind('FileUploaded', function (up, file, response) {
                 console.log('uploader file uploaded', up, file, response);
                 var responseObj, uploadedResUrl;
-                if(response && response.status === 200) {
+                if (response && response.status === 200) {
                     responseObj = Ext.decode(response.response);
-                    uploadedResUrl = (responseObj.items && responseObj.items.length > 0) ? 'rest/upload/' + responseObj.items[0].id : 'resources/images/x-user-photo.png';
+                    uploadedResUrl = (responseObj.items && responseObj.items.length > 0) ? 'rest/upload/' + responseObj.items[0].id
+                        : 'resources/images/x-user-photo.png';
                     _this.setSrc(uploadedResUrl);
                 }
                 _this.progress.hide();
@@ -2564,14 +2672,14 @@ var api_wizard;
         };
         return FormIcon;
     })(api_dom.ButtonEl);
-    api_wizard.FormIcon = FormIcon;    
+    api_wizard.FormIcon = FormIcon;
 })(api_wizard || (api_wizard = {}));
 var api_wizard;
 (function (api_wizard) {
     var WizardPanel = (function (_super) {
         __extends(WizardPanel, _super);
         function WizardPanel() {
-                _super.call(this, "wizard-panel");
+            _super.call(this, "wizard-panel");
             this.steps = [];
             this.getEl().addClass("wizard-panel");
             this.addTitle();
@@ -2581,6 +2689,7 @@ var api_wizard;
             this.appendChild(this.wizardStepPanels);
             this.initExt();
         }
+
         WizardPanel.prototype.initExt = function () {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
@@ -2620,27 +2729,29 @@ var api_wizard;
         };
         return WizardPanel;
     })(api_ui.Panel);
-    api_wizard.WizardPanel = WizardPanel;    
+    api_wizard.WizardPanel = WizardPanel;
     var WizardStepPanels = (function (_super) {
         __extends(WizardStepPanels, _super);
         function WizardStepPanels() {
-                _super.call(this, "WizardStepPanels");
+            _super.call(this, "WizardStepPanels");
         }
+
         return WizardStepPanels;
     })(api_ui.DeckPanel);
-    api_wizard.WizardStepPanels = WizardStepPanels;    
+    api_wizard.WizardStepPanels = WizardStepPanels;
     var WizardStepContainer = (function (_super) {
         __extends(WizardStepContainer, _super);
         function WizardStepContainer(deckPanel) {
-                _super.call(this, "step-container", "step-container");
+            _super.call(this, "step-container", "step-container");
             this.steps = [];
             this.deckPanel = deckPanel;
         }
+
         WizardStepContainer.prototype.addStep = function (step) {
             var _this = this;
             this.steps.push(step);
             var panelIndex = this.deckPanel.addPanel(step.getPanel());
-            if(panelIndex == 0) {
+            if (panelIndex == 0) {
                 this.deckPanel.showPanel(0);
             }
             var stepEl = new api_dom.LiEl(step.getLabel());
@@ -2651,7 +2762,7 @@ var api_wizard;
                 step.setActive(true);
                 _this.deckPanel.showPanel(panelIndex);
             });
-            if(this.steps.length == 1) {
+            if (this.steps.length == 1) {
                 step.setActive(true);
             }
             this.appendChild(stepEl);
@@ -2663,18 +2774,19 @@ var api_wizard;
         };
         return WizardStepContainer;
     })(api_dom.UlEl);
-    api_wizard.WizardStepContainer = WizardStepContainer;    
+    api_wizard.WizardStepContainer = WizardStepContainer;
     var WizardStep = (function () {
         function WizardStep(label, panel) {
             this.label = label;
             this.panel = panel;
         }
+
         WizardStep.prototype.setEl = function (el) {
             this.el = el;
         };
         WizardStep.prototype.setActive = function (active) {
             this.active = active;
-            if(active) {
+            if (active) {
                 this.el.getEl().addClass("active");
             } else {
                 this.el.getEl().removeClass("active");
@@ -2694,7 +2806,7 @@ var api_wizard;
         };
         return WizardStep;
     })();
-    api_wizard.WizardStep = WizardStep;    
+    api_wizard.WizardStep = WizardStep;
 })(api_wizard || (api_wizard = {}));
 var api_content_data;
 (function (api_content_data) {
@@ -2702,12 +2814,13 @@ var api_content_data;
         function DataId(name, arrayIndex) {
             this.name = name;
             this.arrayIndex = arrayIndex;
-            if(arrayIndex > 0) {
+            if (arrayIndex > 0) {
                 this.refString = name + '[' + arrayIndex + ']';
             } else {
                 this.refString = name;
             }
         }
+
         DataId.prototype.getName = function () {
             return this.name;
         };
@@ -2720,7 +2833,7 @@ var api_content_data;
         DataId.from = function from(str) {
             var endsWithEndBracket = str.indexOf(']', str.length - ']'.length) !== -1;
             var containsStartBracket = str.indexOf('[') !== -1;
-            if(endsWithEndBracket && containsStartBracket) {
+            if (endsWithEndBracket && containsStartBracket) {
                 var firstBracketPos = str.indexOf('[');
                 var nameStr = str.substring(0, firstBracketPos);
                 var indexStr = str.substring(nameStr.length + 1, (str.length - 1));
@@ -2732,7 +2845,7 @@ var api_content_data;
         };
         return DataId;
     })();
-    api_content_data.DataId = DataId;    
+    api_content_data.DataId = DataId;
 })(api_content_data || (api_content_data = {}));
 var api_content_data;
 (function (api_content_data) {
@@ -2740,6 +2853,7 @@ var api_content_data;
         function Data(name) {
             this.name = name;
         }
+
         Data.prototype.setArrayIndex = function (value) {
             this.arrayIndex = value;
         };
@@ -2760,22 +2874,23 @@ var api_content_data;
         };
         return Data;
     })();
-    api_content_data.Data = Data;    
+    api_content_data.Data = Data;
 })(api_content_data || (api_content_data = {}));
 var api_content_data;
 (function (api_content_data) {
     var DataSet = (function (_super) {
         __extends(DataSet, _super);
         function DataSet(name) {
-                _super.call(this, name);
+            _super.call(this, name);
             this.dataById = {
             };
         }
+
         DataSet.prototype.nameCount = function (name) {
             var count = 0;
-            for(var i in this.dataById) {
+            for (var i in this.dataById) {
                 var data = this.dataById[i];
-                if(data.getName() === name) {
+                if (data.getName() === name) {
                     count++;
                 }
             }
@@ -2793,28 +2908,30 @@ var api_content_data;
         };
         return DataSet;
     })(api_content_data.Data);
-    api_content_data.DataSet = DataSet;    
+    api_content_data.DataSet = DataSet;
 })(api_content_data || (api_content_data = {}));
 var api_content_data;
 (function (api_content_data) {
     var ContentData = (function (_super) {
         __extends(ContentData, _super);
         function ContentData() {
-                _super.call(this, "");
+            _super.call(this, "");
         }
+
         return ContentData;
     })(api_content_data.DataSet);
-    api_content_data.ContentData = ContentData;    
+    api_content_data.ContentData = ContentData;
 })(api_content_data || (api_content_data = {}));
 var api_content_data;
 (function (api_content_data) {
     var Property = (function (_super) {
         __extends(Property, _super);
         function Property(name, value, type) {
-                _super.call(this, name);
+            _super.call(this, name);
             this.value = value;
             this.type = type;
         }
+
         Property.from = function from(json) {
             return new Property(json.name, json.value, json.type);
         };
@@ -2829,7 +2946,7 @@ var api_content_data;
         };
         return Property;
     })(api_content_data.Data);
-    api_content_data.Property = Property;    
+    api_content_data.Property = Property;
 })(api_content_data || (api_content_data = {}));
 var api_schema_content_form;
 (function (api_schema_content_form) {
@@ -2837,12 +2954,13 @@ var api_schema_content_form;
         function FormItem(name) {
             this.name = name;
         }
+
         FormItem.prototype.getName = function () {
             return this.name;
         };
         return FormItem;
     })();
-    api_schema_content_form.FormItem = FormItem;    
+    api_schema_content_form.FormItem = FormItem;
 })(api_schema_content_form || (api_schema_content_form = {}));
 var api_schema_content_form;
 (function (api_schema_content_form) {
@@ -2850,19 +2968,20 @@ var api_schema_content_form;
         function InputType(json) {
             this.name = json.name;
         }
+
         InputType.prototype.getName = function () {
             return this.name;
         };
         return InputType;
     })();
-    api_schema_content_form.InputType = InputType;    
+    api_schema_content_form.InputType = InputType;
 })(api_schema_content_form || (api_schema_content_form = {}));
 var api_schema_content_form;
 (function (api_schema_content_form) {
     var Input = (function (_super) {
         __extends(Input, _super);
         function Input(json) {
-                _super.call(this, json.name);
+            _super.call(this, json.name);
             this.inputType = new api_schema_content_form.InputType(json.type);
             this.label = json.label;
             this.immutable = json.immutable;
@@ -2872,6 +2991,7 @@ var api_schema_content_form;
             this.validationRegex = json.validationRegexp;
             this.helpText = json.helpText;
         }
+
         Input.prototype.getLabel = function () {
             return this.label;
         };
@@ -2895,7 +3015,7 @@ var api_schema_content_form;
         };
         return Input;
     })(api_schema_content_form.FormItem);
-    api_schema_content_form.Input = Input;    
+    api_schema_content_form.Input = Input;
 })(api_schema_content_form || (api_schema_content_form = {}));
 var api_schema_content_form;
 (function (api_schema_content_form) {
@@ -2904,9 +3024,10 @@ var api_schema_content_form;
             this.minimum = json.minimum;
             this.maximum = json.maximum;
         }
+
         return Occurrences;
     })();
-    api_schema_content_form.Occurrences = Occurrences;    
+    api_schema_content_form.Occurrences = Occurrences;
 })(api_schema_content_form || (api_schema_content_form = {}));
 Ext.Loader.setConfig({
     enabled: false,
