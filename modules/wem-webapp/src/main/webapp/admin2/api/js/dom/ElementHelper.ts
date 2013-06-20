@@ -72,6 +72,7 @@ module api_dom {
 
         appendChild(child:HTMLElement) {
             this.el.appendChild(child);
+            return this;
         }
 
         setData(name:string, value:string):ElementHelper {
