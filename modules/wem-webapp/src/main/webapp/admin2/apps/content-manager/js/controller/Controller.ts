@@ -33,11 +33,6 @@ Ext.define('Admin.controller.Controller', {
                     this.editContent();
                 }
             },
-            'browseToolbar *[action=deleteContent], contentManagerContextMenu *[action=deleteContent], contentDetail *[action=deleteContent]': {
-                click: function (button, event) {
-                    this.deleteContent();
-                }
-            },
             'browseToolbar *[action=duplicateContent], contentManagerContextMenu *[action=duplicateContent], contentDetail *[action=duplicateContent]': {
                 click: function (button, event) {
                     this.duplicateContent();
@@ -308,20 +303,6 @@ Ext.define('Admin.controller.Controller', {
         }
     },
 
-    deleteContent: function (content) {
-        if (!content) {
-            var showPanel = this.getContentTreeGridPanel();
-            content = showPanel.getSelection();
-        }
-        else {
-            content = [].concat(content);
-        }
-
-        if (content && content.length > 0) {
-            this.getDeleteContentWindow().doShow(content);
-        }
-    },
-
     duplicateContent: function (content) {
         if (!content) {
             var showPanel = this.getContentTreeGridPanel();
@@ -553,7 +534,7 @@ Ext.define('Admin.controller.Controller', {
         return Ext.ComponentQuery.query('browseToolbar')[0];
     },
 
-    getContentManagerContextMenu: function (): app_ui.ContextMenu {
+    getContentManagerContextMenu: function ():app_ui.ContextMenu {
         var menu = components.contextMenu;
         if (!menu) {
             menu = components.contextMenu = new app_ui.ContextMenu();
@@ -573,14 +554,6 @@ Ext.define('Admin.controller.Controller', {
 
     getPersistentGridSelectionPlugin: function () {
         return this.getContentGridPanel().getPlugin('persistentGridSelection');
-    },
-
-    getDeleteContentWindow: function () {
-        var win = Ext.ComponentQuery.query('deleteContentWindow')[0];
-        if (!win) {
-            win = <any> Ext.create('widget.deleteContentWindow');
-        }
-        return win;
     },
 
     getLiveEditTestWindow: function () {

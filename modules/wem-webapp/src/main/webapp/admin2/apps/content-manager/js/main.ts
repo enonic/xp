@@ -17,7 +17,6 @@
 ///<reference path='lib/ux/toggleslide/ToggleSlide.ts' />
 
 ///<reference path='handler/DeleteContentHandler.ts' />
-///<reference path='view/DeleteContentWindow.ts' />
 ///<reference path='view/wizard/form/FormComponent.ts' />
 ///<reference path='view/wizard/form/FormItemSetComponent.ts' />
 ///<reference path='view/wizard/form/input/BaseInputComponent.ts' />
@@ -39,6 +38,7 @@
 ///<reference path='lib/Sortable.ts' />
 
 ///<reference path='view/BaseDialogWindow.ts' />
+///<reference path='view/DeleteContentDialog.ts' />
 ///<reference path='view/BaseDetailPanel.ts' />
 ///<reference path='view/AdminImageButton.ts' />
 ///<reference path='view/TopBarMenuItem.ts' />
@@ -226,6 +226,12 @@ Ext.application({
                     ]
                 }
             ]
+        });
+
+        var deleteContentDialog:app_ui.DeleteContentDialog = new app_ui.DeleteContentDialog();
+        app_event.DeleteContentEvent.on((event) => {
+            deleteContentDialog.setContentToDelete(event.getModels());
+            deleteContentDialog.open();
         });
     }
 });
