@@ -89,6 +89,40 @@ var api_handler;
     })();
     api_handler.DeleteSpacesHandler = DeleteSpacesHandler;    
 })(api_handler || (api_handler = {}));
+var api_handler;
+(function (api_handler) {
+    var DeleteContentParamFactory = (function () {
+        function DeleteContentParamFactory() { }
+        DeleteContentParamFactory.create = function create(content) {
+            var contentIds = [];
+            for(var i = 0; i < content.length; i++) {
+                contentIds[i] = content[i].data.id;
+            }
+            return {
+                contentIds: contentIds
+            };
+        };
+        return DeleteContentParamFactory;
+    })();
+    api_handler.DeleteContentParamFactory = DeleteContentParamFactory;    
+})(api_handler || (api_handler = {}));
+var api_handler;
+(function (api_handler) {
+    var DeleteContentHandler = (function () {
+        function DeleteContentHandler() { }
+        DeleteContentHandler.prototype.doDelete = function (deleteContentParam, callback) {
+            api_remote.RemoteService.content_delete(deleteContentParam, function (response) {
+                if(response) {
+                    callback.call(this, response.success, response);
+                } else {
+                    console.error('Error', response ? response.error : 'Unable to delete content.');
+                }
+            });
+        };
+        return DeleteContentHandler;
+    })();
+    api_handler.DeleteContentHandler = DeleteContentHandler;    
+})(api_handler || (api_handler = {}));
 var api_remote;
 (function (api_remote) {
     var JsonRpcProvider = (function () {
