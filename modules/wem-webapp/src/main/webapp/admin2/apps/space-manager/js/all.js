@@ -188,104 +188,6 @@ var app;
     })();
     app.SpaceContext = SpaceContext;    
 })(app || (app = {}));
-var app;
-(function (app) {
-    var NewSpaceAction = (function (_super) {
-        __extends(NewSpaceAction, _super);
-        function NewSpaceAction() {
-                _super.call(this, "New");
-            this.addExecutionListener(function () {
-                new app_event.NewSpaceEvent().fire();
-            });
-        }
-        return NewSpaceAction;
-    })(api_ui.Action);
-    app.NewSpaceAction = NewSpaceAction;    
-    var OpenSpaceAction = (function (_super) {
-        __extends(OpenSpaceAction, _super);
-        function OpenSpaceAction() {
-                _super.call(this, "Open");
-            this.setEnabled(false);
-            this.addExecutionListener(function () {
-                new app_event.OpenSpaceEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
-            });
-        }
-        return OpenSpaceAction;
-    })(api_ui.Action);
-    app.OpenSpaceAction = OpenSpaceAction;    
-    var EditSpaceAction = (function (_super) {
-        __extends(EditSpaceAction, _super);
-        function EditSpaceAction() {
-                _super.call(this, "Edit");
-            this.setEnabled(false);
-            this.addExecutionListener(function () {
-                new app_event.EditSpaceEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
-            });
-        }
-        return EditSpaceAction;
-    })(api_ui.Action);
-    app.EditSpaceAction = EditSpaceAction;    
-    var DeleteSpaceAction = (function (_super) {
-        __extends(DeleteSpaceAction, _super);
-        function DeleteSpaceAction() {
-                _super.call(this, "Delete");
-            this.setEnabled(false);
-            this.addExecutionListener(function () {
-                new app_event.DeletePromptEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
-            });
-        }
-        return DeleteSpaceAction;
-    })(api_ui.Action);
-    app.DeleteSpaceAction = DeleteSpaceAction;    
-    var SpaceActions = (function () {
-        function SpaceActions() { }
-        SpaceActions.NEW_SPACE = new NewSpaceAction();
-        SpaceActions.OPEN_SPACE = new OpenSpaceAction();
-        SpaceActions.EDIT_SPACE = new EditSpaceAction();
-        SpaceActions.DELETE_SPACE = new DeleteSpaceAction();
-        SpaceActions.init = function init() {
-            app_event.GridSelectionChangeEvent.on(function (event) {
-                var spaces = event.getModels();
-                if(spaces.length <= 0) {
-                    SpaceActions.NEW_SPACE.setEnabled(true);
-                    SpaceActions.OPEN_SPACE.setEnabled(false);
-                    SpaceActions.EDIT_SPACE.setEnabled(false);
-                    SpaceActions.DELETE_SPACE.setEnabled(false);
-                } else if(spaces.length == 1) {
-                    SpaceActions.NEW_SPACE.setEnabled(false);
-                    SpaceActions.OPEN_SPACE.setEnabled(true);
-                    SpaceActions.EDIT_SPACE.setEnabled(spaces[0].data.editable);
-                    SpaceActions.DELETE_SPACE.setEnabled(spaces[0].data.deletable);
-                } else {
-                    SpaceActions.NEW_SPACE.setEnabled(false);
-                    SpaceActions.OPEN_SPACE.setEnabled(true);
-                    SpaceActions.EDIT_SPACE.setEnabled(SpaceActions.anyEditable(spaces));
-                    SpaceActions.DELETE_SPACE.setEnabled(SpaceActions.anyDeleteable(spaces));
-                }
-            });
-        };
-        SpaceActions.anyEditable = function anyEditable(spaces) {
-            for(var i in spaces) {
-                var space = spaces[i];
-                if(space.data.editable) {
-                    return true;
-                }
-            }
-            return false;
-        };
-        SpaceActions.anyDeleteable = function anyDeleteable(spaces) {
-            for(var i in spaces) {
-                var space = spaces[i];
-                if(space.data.deletable) {
-                    return true;
-                }
-            }
-            return false;
-        };
-        return SpaceActions;
-    })();
-    app.SpaceActions = SpaceActions;    
-})(app || (app = {}));
 var app_wizard;
 (function (app_wizard) {
     var SaveSpaceAction = (function (_super) {
@@ -387,6 +289,320 @@ var app_wizard;
     })(api_ui_toolbar.Toolbar);
     app_wizard.SpaceWizardToolbar2 = SpaceWizardToolbar2;    
 })(app_wizard || (app_wizard = {}));
+var app_browse;
+(function (app_browse) {
+    var NewSpaceAction = (function (_super) {
+        __extends(NewSpaceAction, _super);
+        function NewSpaceAction() {
+                _super.call(this, "New");
+            this.addExecutionListener(function () {
+                new app_event.NewSpaceEvent().fire();
+            });
+        }
+        return NewSpaceAction;
+    })(api_ui.Action);
+    app_browse.NewSpaceAction = NewSpaceAction;    
+    var OpenSpaceAction = (function (_super) {
+        __extends(OpenSpaceAction, _super);
+        function OpenSpaceAction() {
+                _super.call(this, "Open");
+            this.setEnabled(false);
+            this.addExecutionListener(function () {
+                new app_event.OpenSpaceEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
+            });
+        }
+        return OpenSpaceAction;
+    })(api_ui.Action);
+    app_browse.OpenSpaceAction = OpenSpaceAction;    
+    var EditSpaceAction = (function (_super) {
+        __extends(EditSpaceAction, _super);
+        function EditSpaceAction() {
+                _super.call(this, "Edit");
+            this.setEnabled(false);
+            this.addExecutionListener(function () {
+                new app_event.EditSpaceEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
+            });
+        }
+        return EditSpaceAction;
+    })(api_ui.Action);
+    app_browse.EditSpaceAction = EditSpaceAction;    
+    var DeleteSpaceAction = (function (_super) {
+        __extends(DeleteSpaceAction, _super);
+        function DeleteSpaceAction() {
+                _super.call(this, "Delete");
+            this.setEnabled(false);
+            this.addExecutionListener(function () {
+                new app_event.DeletePromptEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
+            });
+        }
+        return DeleteSpaceAction;
+    })(api_ui.Action);
+    app_browse.DeleteSpaceAction = DeleteSpaceAction;    
+    var SpaceBrowseActions = (function () {
+        function SpaceBrowseActions() { }
+        SpaceBrowseActions.NEW_SPACE = new NewSpaceAction();
+        SpaceBrowseActions.OPEN_SPACE = new OpenSpaceAction();
+        SpaceBrowseActions.EDIT_SPACE = new EditSpaceAction();
+        SpaceBrowseActions.DELETE_SPACE = new DeleteSpaceAction();
+        SpaceBrowseActions.init = function init() {
+            app_event.GridSelectionChangeEvent.on(function (event) {
+                var spaces = event.getModels();
+                if(spaces.length <= 0) {
+                    SpaceBrowseActions.NEW_SPACE.setEnabled(true);
+                    SpaceBrowseActions.OPEN_SPACE.setEnabled(false);
+                    SpaceBrowseActions.EDIT_SPACE.setEnabled(false);
+                    SpaceBrowseActions.DELETE_SPACE.setEnabled(false);
+                } else if(spaces.length == 1) {
+                    SpaceBrowseActions.NEW_SPACE.setEnabled(false);
+                    SpaceBrowseActions.OPEN_SPACE.setEnabled(true);
+                    SpaceBrowseActions.EDIT_SPACE.setEnabled(spaces[0].data.editable);
+                    SpaceBrowseActions.DELETE_SPACE.setEnabled(spaces[0].data.deletable);
+                } else {
+                    SpaceBrowseActions.NEW_SPACE.setEnabled(false);
+                    SpaceBrowseActions.OPEN_SPACE.setEnabled(true);
+                    SpaceBrowseActions.EDIT_SPACE.setEnabled(SpaceBrowseActions.anyEditable(spaces));
+                    SpaceBrowseActions.DELETE_SPACE.setEnabled(SpaceBrowseActions.anyDeleteable(spaces));
+                }
+            });
+        };
+        SpaceBrowseActions.anyEditable = function anyEditable(spaces) {
+            for(var i in spaces) {
+                var space = spaces[i];
+                if(space.data.editable) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        SpaceBrowseActions.anyDeleteable = function anyDeleteable(spaces) {
+            for(var i in spaces) {
+                var space = spaces[i];
+                if(space.data.deletable) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        return SpaceBrowseActions;
+    })();
+    app_browse.SpaceBrowseActions = SpaceBrowseActions;    
+})(app_browse || (app_browse = {}));
+var app_browse;
+(function (app_browse) {
+    var BrowseToolbar = (function (_super) {
+        __extends(BrowseToolbar, _super);
+        function BrowseToolbar() {
+                _super.call(this);
+            _super.prototype.addAction.call(this, app_browse.SpaceBrowseActions.NEW_SPACE);
+            _super.prototype.addAction.call(this, app_browse.SpaceBrowseActions.EDIT_SPACE);
+            _super.prototype.addAction.call(this, app_browse.SpaceBrowseActions.OPEN_SPACE);
+            _super.prototype.addAction.call(this, app_browse.SpaceBrowseActions.DELETE_SPACE);
+        }
+        return BrowseToolbar;
+    })(api_ui_toolbar.Toolbar);
+    app_browse.BrowseToolbar = BrowseToolbar;    
+})(app_browse || (app_browse = {}));
+var app_browse;
+(function (app_browse) {
+    var SpaceActionMenu = (function (_super) {
+        __extends(SpaceActionMenu, _super);
+        function SpaceActionMenu() {
+                _super.call(this, app_browse.SpaceBrowseActions.OPEN_SPACE, app_browse.SpaceBrowseActions.EDIT_SPACE);
+        }
+        return SpaceActionMenu;
+    })(api_ui_menu.ActionMenu);
+    app_browse.SpaceActionMenu = SpaceActionMenu;    
+})(app_browse || (app_browse = {}));
+var app_browse;
+(function (app_browse) {
+    var SpaceDetailPanel = (function (_super) {
+        __extends(SpaceDetailPanel, _super);
+        function SpaceDetailPanel() {
+            var _this = this;
+                _super.call(this);
+            var selectedSpaces = app.SpaceContext.get().getSelectedSpaces();
+            if(!selectedSpaces || selectedSpaces.length == 0) {
+                this.showBlank();
+            }
+            app_event.GridSelectionChangeEvent.on(function (event) {
+                _this.update(event.getModels());
+            });
+        }
+        SpaceDetailPanel.prototype.showBlank = function () {
+            this.getEl().setInnerHtml("Nothing selected");
+        };
+        SpaceDetailPanel.prototype.update = function (models) {
+            if(models.length == 1) {
+                this.showSingle(models[0]);
+            } else if(models.length > 1) {
+                this.showMultiple(models);
+            }
+        };
+        SpaceDetailPanel.prototype.showSingle = function (model) {
+            this.empty();
+            var tabPanel = new api_browse.DetailTabPanel(model);
+            tabPanel.addTab(new api_browse.DetailPanelTab("Analytics"));
+            tabPanel.addTab(new api_browse.DetailPanelTab("Sales"));
+            tabPanel.addTab(new api_browse.DetailPanelTab("History"));
+            var testAction = new api_ui.Action("Test");
+            tabPanel.addAction(testAction);
+            this.getEl().appendChild(tabPanel.getHTMLElement());
+        };
+        SpaceDetailPanel.prototype.showMultiple = function (models) {
+            this.empty();
+            for(var i in models) {
+                var removeCallback = function (box) {
+                    var models = [
+                        box.getModel()
+                    ];
+                    new app_event.GridDeselectEvent(models).fire();
+                };
+                this.getEl().appendChild(new api_browse.DetailPanelBox(models[i], removeCallback).getHTMLElement());
+            }
+        };
+        return SpaceDetailPanel;
+    })(api_browse.DetailPanel);
+    app_browse.SpaceDetailPanel = SpaceDetailPanel;    
+})(app_browse || (app_browse = {}));
+var app_browse;
+(function (app_browse) {
+    var SpaceAppBrowsePanel = (function (_super) {
+        __extends(SpaceAppBrowsePanel, _super);
+        function SpaceAppBrowsePanel() {
+            var toolbar = new app_browse.BrowseToolbar();
+            var grid = components.gridPanel = new app_browse.SpaceTreeGridPanel('spaceTreeGrid');
+            var detail = components.detailPanel = new app_browse.SpaceDetailPanel();
+            var filterPanel = new app_ui.FilterPanel({
+                region: 'west',
+                width: 200
+            });
+                _super.call(this, toolbar, grid, detail, filterPanel);
+        }
+        return SpaceAppBrowsePanel;
+    })(api_browse.AppBrowsePanel);
+    app_browse.SpaceAppBrowsePanel = SpaceAppBrowsePanel;    
+})(app_browse || (app_browse = {}));
+var app_browse;
+(function (app_browse) {
+    var SpaceTreeGridContextMenu = (function (_super) {
+        __extends(SpaceTreeGridContextMenu, _super);
+        function SpaceTreeGridContextMenu() {
+                _super.call(this);
+            _super.prototype.addAction.call(this, app_browse.SpaceBrowseActions.EDIT_SPACE);
+            _super.prototype.addAction.call(this, app_browse.SpaceBrowseActions.OPEN_SPACE);
+            _super.prototype.addAction.call(this, app_browse.SpaceBrowseActions.DELETE_SPACE);
+        }
+        return SpaceTreeGridContextMenu;
+    })(api_ui_menu.ContextMenu);
+    app_browse.SpaceTreeGridContextMenu = SpaceTreeGridContextMenu;    
+})(app_browse || (app_browse = {}));
+var app_browse;
+(function (app_browse) {
+    var SpaceTreeGridPanel = (function (_super) {
+        __extends(SpaceTreeGridPanel, _super);
+        function SpaceTreeGridPanel(itemId) {
+            var _this = this;
+                _super.call(this, this.createColumns(), this.createGridStore(), this.createTreeStore(), this.createGridConfig(), this.createTreeConfig());
+            this.setItemId(itemId);
+            app_event.GridDeselectEvent.on(function (event) {
+                _this.deselect(event.getModels()[0].data.name);
+            });
+        }
+        SpaceTreeGridPanel.prototype.createGridStore = function () {
+            return new Ext.data.Store({
+                pageSize: 100,
+                autoLoad: true,
+                model: 'Admin.model.SpaceModel',
+                proxy: {
+                    type: 'direct',
+                    directFn: api_remote.RemoteService.space_list,
+                    simpleSortMode: true,
+                    reader: {
+                        type: 'json',
+                        root: 'spaces',
+                        totalProperty: 'total'
+                    }
+                }
+            });
+        };
+        SpaceTreeGridPanel.prototype.createTreeStore = function () {
+            return new Ext.data.TreeStore();
+        };
+        SpaceTreeGridPanel.prototype.createColumns = function () {
+            return [
+                {
+                    text: 'Display Name',
+                    dataIndex: 'displayName',
+                    sortable: true,
+                    renderer: this.nameRenderer,
+                    scope: this,
+                    flex: 1
+                }, 
+                {
+                    text: 'Status',
+                    renderer: this.statusRenderer
+                }, 
+                {
+                    text: 'Owner',
+                    dataIndex: 'owner',
+                    sortable: true
+                }, 
+                {
+                    text: 'Modified',
+                    dataIndex: 'modifiedTime',
+                    renderer: this.prettyDateRenderer,
+                    scope: this,
+                    sortable: true
+                }
+            ];
+        };
+        SpaceTreeGridPanel.prototype.createGridConfig = function () {
+            return {
+                listeners: {
+                    selectionchange: function (selModel, selected, opts) {
+                        new app_event.GridSelectionChangeEvent(selected).fire();
+                    },
+                    itemcontextmenu: function (view, rec, node, index, event) {
+                        event.stopEvent();
+                        new app_event.ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
+                    },
+                    itemdblclick: function (grid, record) {
+                        new app_event.EditSpaceEvent(grid.getSelection()).fire();
+                    }
+                }
+            };
+        };
+        SpaceTreeGridPanel.prototype.createTreeConfig = function () {
+            return {
+                selectionchange: function (selModel, selected, opts) {
+                    new app_event.GridSelectionChangeEvent(selected).fire();
+                }
+            };
+        };
+        SpaceTreeGridPanel.prototype.nameRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
+            var nameTemplate = '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>';
+            var space = record.data;
+            var activeListType = this.getActiveList().getItemId();
+            return Ext.String.format(nameTemplate, activeListType, space.iconUrl, value, space.name);
+        };
+        SpaceTreeGridPanel.prototype.statusRenderer = function () {
+            return "Online";
+        };
+        SpaceTreeGridPanel.prototype.prettyDateRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
+            try  {
+                if(parent && Ext.isFunction(parent['humane_date'])) {
+                    return parent['humane_date'](value);
+                } else {
+                    return value;
+                }
+            } catch (e) {
+                return value;
+            }
+        };
+        return SpaceTreeGridPanel;
+    })(api_ui_grid.TreeGridPanel);
+    app_browse.SpaceTreeGridPanel = SpaceTreeGridPanel;    
+})(app_browse || (app_browse = {}));
 Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
     extend: 'Ext.util.Observable',
     pluginId: 'persistentGridSelection',
@@ -2416,20 +2632,6 @@ var app_ui;
     })();
     app_ui.ContextMenu = ContextMenu;    
 })(app_ui || (app_ui = {}));
-var app_ui;
-(function (app_ui) {
-    var ContextMenuGridPanel = (function (_super) {
-        __extends(ContextMenuGridPanel, _super);
-        function ContextMenuGridPanel() {
-                _super.call(this);
-            _super.prototype.addAction.call(this, app.SpaceActions.EDIT_SPACE);
-            _super.prototype.addAction.call(this, app.SpaceActions.OPEN_SPACE);
-            _super.prototype.addAction.call(this, app.SpaceActions.DELETE_SPACE);
-        }
-        return ContextMenuGridPanel;
-    })(api_ui_menu.ContextMenu);
-    app_ui.ContextMenuGridPanel = ContextMenuGridPanel;    
-})(app_ui || (app_ui = {}));
 var app_ui_wizard;
 (function (app_ui_wizard) {
     var SpaceWizardToolbar = (function () {
@@ -3833,208 +4035,6 @@ var app_ui;
     })();
     app_ui.FilterPanel = FilterPanel;    
 })(app_ui || (app_ui = {}));
-var app_browse;
-(function (app_browse) {
-    var BrowseToolbar = (function (_super) {
-        __extends(BrowseToolbar, _super);
-        function BrowseToolbar() {
-                _super.call(this);
-            _super.prototype.addAction.call(this, app.SpaceActions.NEW_SPACE);
-            _super.prototype.addAction.call(this, app.SpaceActions.EDIT_SPACE);
-            _super.prototype.addAction.call(this, app.SpaceActions.OPEN_SPACE);
-            _super.prototype.addAction.call(this, app.SpaceActions.DELETE_SPACE);
-        }
-        return BrowseToolbar;
-    })(api_ui_toolbar.Toolbar);
-    app_browse.BrowseToolbar = BrowseToolbar;    
-})(app_browse || (app_browse = {}));
-var app_browse;
-(function (app_browse) {
-    var SpaceActionMenu = (function (_super) {
-        __extends(SpaceActionMenu, _super);
-        function SpaceActionMenu() {
-                _super.call(this, app.SpaceActions.OPEN_SPACE, app.SpaceActions.EDIT_SPACE);
-        }
-        return SpaceActionMenu;
-    })(api_ui_menu.ActionMenu);
-    app_browse.SpaceActionMenu = SpaceActionMenu;    
-})(app_browse || (app_browse = {}));
-var app_browse;
-(function (app_browse) {
-    var SpaceDetailPanel = (function (_super) {
-        __extends(SpaceDetailPanel, _super);
-        function SpaceDetailPanel() {
-            var _this = this;
-                _super.call(this);
-            var selectedSpaces = app.SpaceContext.get().getSelectedSpaces();
-            if(!selectedSpaces || selectedSpaces.length == 0) {
-                this.showBlank();
-            }
-            app_event.GridSelectionChangeEvent.on(function (event) {
-                _this.update(event.getModels());
-            });
-        }
-        SpaceDetailPanel.prototype.showBlank = function () {
-            this.getEl().setInnerHtml("Nothing selected");
-        };
-        SpaceDetailPanel.prototype.update = function (models) {
-            if(models.length == 1) {
-                this.showSingle(models[0]);
-            } else if(models.length > 1) {
-                this.showMultiple(models);
-            }
-        };
-        SpaceDetailPanel.prototype.showSingle = function (model) {
-            this.empty();
-            var tabPanel = new api_browse.DetailTabPanel(model);
-            tabPanel.addTab(new api_browse.DetailPanelTab("Analytics"));
-            tabPanel.addTab(new api_browse.DetailPanelTab("Sales"));
-            tabPanel.addTab(new api_browse.DetailPanelTab("History"));
-            var testAction = new api_ui.Action("Test");
-            tabPanel.addAction(testAction);
-            this.getEl().appendChild(tabPanel.getHTMLElement());
-        };
-        SpaceDetailPanel.prototype.showMultiple = function (models) {
-            this.empty();
-            for(var i in models) {
-                var removeCallback = function (box) {
-                    var models = [
-                        box.getModel()
-                    ];
-                    new app_event.GridDeselectEvent(models).fire();
-                };
-                this.getEl().appendChild(new api_browse.DetailPanelBox(models[i], removeCallback).getHTMLElement());
-            }
-        };
-        return SpaceDetailPanel;
-    })(api_browse.DetailPanel);
-    app_browse.SpaceDetailPanel = SpaceDetailPanel;    
-})(app_browse || (app_browse = {}));
-var app_browse;
-(function (app_browse) {
-    var SpaceAppBrowsePanel = (function (_super) {
-        __extends(SpaceAppBrowsePanel, _super);
-        function SpaceAppBrowsePanel() {
-            var toolbar = new app_browse.BrowseToolbar();
-            var grid = components.gridPanel = new app_browse.SpaceTreeGridPanel('spaceTreeGrid');
-            var detail = components.detailPanel = new app_browse.SpaceDetailPanel();
-            var filterPanel = new app_ui.FilterPanel({
-                region: 'west',
-                width: 200
-            });
-                _super.call(this, toolbar, grid, detail, filterPanel);
-        }
-        return SpaceAppBrowsePanel;
-    })(api_browse.AppBrowsePanel);
-    app_browse.SpaceAppBrowsePanel = SpaceAppBrowsePanel;    
-})(app_browse || (app_browse = {}));
-var app_browse;
-(function (app_browse) {
-    var SpaceTreeGridPanel = (function (_super) {
-        __extends(SpaceTreeGridPanel, _super);
-        function SpaceTreeGridPanel(itemId) {
-            var _this = this;
-                _super.call(this, this.createColumns(), this.createGridStore(), this.createTreeStore(), this.createGridConfig(), this.createTreeConfig());
-            this.setItemId(itemId);
-            app_event.GridDeselectEvent.on(function (event) {
-                _this.deselect(event.getModels()[0].data.name);
-            });
-        }
-        SpaceTreeGridPanel.prototype.createGridStore = function () {
-            return new Ext.data.Store({
-                pageSize: 100,
-                autoLoad: true,
-                model: 'Admin.model.SpaceModel',
-                proxy: {
-                    type: 'direct',
-                    directFn: api_remote.RemoteService.space_list,
-                    simpleSortMode: true,
-                    reader: {
-                        type: 'json',
-                        root: 'spaces',
-                        totalProperty: 'total'
-                    }
-                }
-            });
-        };
-        SpaceTreeGridPanel.prototype.createTreeStore = function () {
-            return new Ext.data.TreeStore();
-        };
-        SpaceTreeGridPanel.prototype.createColumns = function () {
-            return [
-                {
-                    text: 'Display Name',
-                    dataIndex: 'displayName',
-                    sortable: true,
-                    renderer: this.nameRenderer,
-                    scope: this,
-                    flex: 1
-                }, 
-                {
-                    text: 'Status',
-                    renderer: this.statusRenderer
-                }, 
-                {
-                    text: 'Owner',
-                    dataIndex: 'owner',
-                    sortable: true
-                }, 
-                {
-                    text: 'Modified',
-                    dataIndex: 'modifiedTime',
-                    renderer: this.prettyDateRenderer,
-                    scope: this,
-                    sortable: true
-                }
-            ];
-        };
-        SpaceTreeGridPanel.prototype.createGridConfig = function () {
-            return {
-                listeners: {
-                    selectionchange: function (selModel, selected, opts) {
-                        new app_event.GridSelectionChangeEvent(selected).fire();
-                    },
-                    itemcontextmenu: function (view, rec, node, index, event) {
-                        event.stopEvent();
-                        new app_event.ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
-                    },
-                    itemdblclick: function (grid, record) {
-                        new app_event.EditSpaceEvent(grid.getSelection()).fire();
-                    }
-                }
-            };
-        };
-        SpaceTreeGridPanel.prototype.createTreeConfig = function () {
-            return {
-                selectionchange: function (selModel, selected, opts) {
-                    new app_event.GridSelectionChangeEvent(selected).fire();
-                }
-            };
-        };
-        SpaceTreeGridPanel.prototype.nameRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
-            var nameTemplate = '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>';
-            var space = record.data;
-            var activeListType = this.getActiveList().getItemId();
-            return Ext.String.format(nameTemplate, activeListType, space.iconUrl, value, space.name);
-        };
-        SpaceTreeGridPanel.prototype.statusRenderer = function () {
-            return "Online";
-        };
-        SpaceTreeGridPanel.prototype.prettyDateRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
-            try  {
-                if(parent && Ext.isFunction(parent['humane_date'])) {
-                    return parent['humane_date'](value);
-                } else {
-                    return value;
-                }
-            } catch (e) {
-                return value;
-            }
-        };
-        return SpaceTreeGridPanel;
-    })(api_ui_grid.TreeGridPanel);
-    app_browse.SpaceTreeGridPanel = SpaceTreeGridPanel;    
-})(app_browse || (app_browse = {}));
 var app_wizard;
 (function (app_wizard) {
     var SpaceWizardPanel2 = (function (_super) {
@@ -4270,7 +4270,7 @@ Ext.define('Admin.controller.GridPanelController', {
     },
     getContextMenu: function () {
         if(!this.contextMenu) {
-            this.contextMenu = new app_ui.ContextMenuGridPanel();
+            this.contextMenu = new app_browse.SpaceTreeGridContextMenu();
         }
         return this.contextMenu;
     }
@@ -4631,5 +4631,5 @@ Ext.application({
     }
 });
 app.SpaceContext.init();
-app.SpaceActions.init();
+app_browse.SpaceBrowseActions.init();
 //@ sourceMappingURL=all.js.map

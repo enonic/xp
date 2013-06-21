@@ -4,8 +4,8 @@ module app_browse {
 
         constructor() {
             super(
-                app.SpaceActions.OPEN_SPACE,
-                app.SpaceActions.EDIT_SPACE
+                SpaceBrowseActions.OPEN_SPACE,
+                SpaceBrowseActions.EDIT_SPACE
             );
         }
     }

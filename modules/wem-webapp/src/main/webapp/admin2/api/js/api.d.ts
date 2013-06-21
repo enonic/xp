@@ -967,14 +967,12 @@ module api_delete {
 }
 module api_browse {
     class AppBrowsePanel extends api_ui.Panel {
-        public ext;
         private browseToolbar;
         private grid;
         private detailPanel;
         private filterPanel;
         constructor(browseToolbar: api_ui_toolbar.Toolbar, grid: api_ui_grid.TreeGridPanel, detailPanel: DetailPanel, filterPanel: any);
         public init(): void;
-        private initExt();
     }
 }
 module api_browse {

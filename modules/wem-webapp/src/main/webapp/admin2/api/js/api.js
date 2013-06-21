@@ -1072,7 +1072,6 @@ var api_ui;
         Action.prototype.activateShortcut = function () {
             var _this = this;
             if(this.hasShortcut()) {
-                console.log("activating shortcut [" + this.shortcut + "] for action: " + this.label);
                 Mousetrap.bind(this.getShortcut(), function (e, combo) {
                     _this.execute();
                 });
@@ -1080,7 +1079,6 @@ var api_ui;
         };
         Action.prototype.deactivateShortcut = function () {
             if(this.hasShortcut()) {
-                console.log("deactivating shortcut [" + this.shortcut + "] for action: " + this.label);
                 Mousetrap.unbind(this.getShortcut());
             }
         };
@@ -2684,27 +2682,6 @@ var api_browse;
             this.appendChild(this.browseToolbar);
             this.grid.create('center', this.getId());
             this.appendChild(this.detailPanel);
-        };
-        AppBrowsePanel.prototype.initExt = function () {
-            var center = new Ext.container.Container({
-                region: 'center',
-                layout: 'border'
-            });
-            center.add(this.browseToolbar.ext);
-            center.add(this.grid.ext);
-            center.add(this.detailPanel.ext);
-            this.ext = new Ext.panel.Panel({
-                id: 'tab-browse',
-                title: 'Browse',
-                closable: false,
-                border: false,
-                layout: 'border',
-                tabConfig: {
-                    hidden: true
-                }
-            });
-            this.ext.add(center);
-            this.ext.add(this.filterPanel);
         };
         return AppBrowsePanel;
     })(api_ui.Panel);

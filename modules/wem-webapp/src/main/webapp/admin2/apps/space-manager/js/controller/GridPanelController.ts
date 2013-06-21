@@ -42,7 +42,7 @@ Ext.define('Admin.controller.GridPanelController', {
 
     getContextMenu: function () {
         if (!this.contextMenu) {
-            this.contextMenu = new app_ui.ContextMenuGridPanel();
+            this.contextMenu = new app_browse.SpaceTreeGridContextMenu();
         }
         return this.contextMenu;
     }

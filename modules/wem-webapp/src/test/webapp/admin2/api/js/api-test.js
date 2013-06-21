@@ -53,7 +53,6 @@ var api_ui;
         Action.prototype.activateShortcut = function () {
             var _this = this;
             if(this.hasShortcut()) {
-                console.log("activating shortcut [" + this.shortcut + "] for action: " + this.label);
                 Mousetrap.bind(this.getShortcut(), function (e, combo) {
                     _this.execute();
                 });
@@ -61,7 +60,6 @@ var api_ui;
         };
         Action.prototype.deactivateShortcut = function () {
             if(this.hasShortcut()) {
-                console.log("deactivating shortcut [" + this.shortcut + "] for action: " + this.label);
                 Mousetrap.unbind(this.getShortcut());
             }
         };

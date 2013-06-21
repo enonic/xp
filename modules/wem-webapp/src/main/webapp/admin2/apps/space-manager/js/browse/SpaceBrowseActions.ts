@@ -1,4 +1,4 @@
-module app {
+module app_browse {
 
     export class NewSpaceAction extends api_ui.Action {
 
@@ -16,7 +16,7 @@ module app {
             super("Open");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new app_event.OpenSpaceEvent(SpaceContext.get().getSelectedSpaces()).fire();
+                new app_event.OpenSpaceEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
     }
@@ -27,7 +27,7 @@ module app {
             super("Edit");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new app_event.EditSpaceEvent(SpaceContext.get().getSelectedSpaces()).fire();
+                new app_event.EditSpaceEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
     }
@@ -38,12 +38,12 @@ module app {
             super("Delete");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new app_event.DeletePromptEvent(SpaceContext.get().getSelectedSpaces()).fire();
+                new app_event.DeletePromptEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
     }
 
-    export class SpaceActions {
+    export class SpaceBrowseActions {
 
         static NEW_SPACE:api_ui.Action = new NewSpaceAction();
         static OPEN_SPACE:api_ui.Action = new OpenSpaceAction;

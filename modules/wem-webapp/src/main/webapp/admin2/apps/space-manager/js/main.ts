@@ -16,11 +16,18 @@
 
 ///<reference path='SpaceContext.ts' />
 
-///<reference path='SpaceActions.ts' />
-
 ///<reference path='wizard/SpaceWizardActions.ts' />
 ///<reference path='wizard/SpaceWizardContext.ts' />
 ///<reference path='wizard/SpaceWizardToolbar2.ts' />
+
+///<reference path='browse/SpaceBrowseActions.ts' />
+///<reference path='browse/SpaceBrowseToolbar.ts' />
+///<reference path='browse/SpaceActionMenu.ts' />
+///<reference path='browse/SpaceDetailPanel.ts' />
+///<reference path='browse/SpaceAppBrowsePanel.ts' />
+///<reference path='browse/SpaceTreeGridContextMenu.ts' />
+///<reference path='browse/SpaceTreeGridPanel.ts' />
+
 
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
@@ -35,7 +42,6 @@
 ///<reference path='view/WizardPanel.ts' />
 ///<reference path='view/DetailToolbar.ts' />
 ///<reference path='view/ContextMenu.ts' />
-///<reference path='view/ContextMenuGridPanel.ts' />
 ///<reference path='view/wizard/SpaceWizardToolbar.ts' />
 ///<reference path='view/wizard/SpaceStepPanel.ts' />
 ///<reference path='view/wizard/SpaceWizardPanel.ts' />
@@ -46,11 +52,6 @@
 ///<reference path='view/TabPanel.ts' />
 ///<reference path='view/FilterPanel.ts' />
 
-///<reference path='browse/SpaceBrowseToolbar.ts' />
-///<reference path='browse/SpaceActionMenu.ts' />
-///<reference path='browse/SpaceDetailPanel.ts' />
-///<reference path='browse/SpaceAppBrowsePanel.ts' />
-///<reference path='browse/SpaceTreeGridPanel.ts' />
 
 
 ///<reference path='wizard/SpaceWizardPanel2.ts' />
@@ -125,5 +126,5 @@ Ext.application({
 });
 
 app.SpaceContext.init();
-app.SpaceActions.init();
+app_browse.SpaceBrowseActions.init();
 
