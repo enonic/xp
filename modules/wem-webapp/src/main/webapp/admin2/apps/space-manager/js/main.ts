@@ -16,7 +16,6 @@
 ///<reference path='SpaceContext.ts' />
 
 ///<reference path='SpaceActions.ts' />
-///<reference path='SpaceAppBrowsePanel.ts' />
 
 ///<reference path='wizard/SpaceWizardActions.ts' />
 ///<reference path='wizard/SpaceWizardContext.ts' />
@@ -33,25 +32,12 @@
 ///<reference path='view/WizardLayout.ts' />
 ///<reference path='view/WizardHeader.ts' />
 ///<reference path='view/WizardPanel.ts' />
-
-///<reference path='view/BaseActionMenu.ts' />
-///<reference path='view/ActionMenu.ts' />
-///<reference path='view/ActionMenu2.ts' />
 ///<reference path='view/DetailToolbar.ts' />
-///<reference path='view/DetailPanel.ts' />
-
-///<reference path='view/DeleteSpaceDialog.ts' />
-
-///<reference path='view/TreeGridPanel.ts' />
-
 ///<reference path='view/ContextMenu.ts' />
 ///<reference path='view/ContextMenuGridPanel.ts' />
-
 ///<reference path='view/wizard/SpaceWizardToolbar.ts' />
 ///<reference path='view/wizard/SpaceStepPanel.ts' />
 ///<reference path='view/wizard/SpaceWizardPanel.ts' />
-///<reference path='wizard/SpaceWizardPanel2.ts' />
-
 ///<reference path='view/AdminImageButton.ts' />
 ///<reference path='view/TopBarMenuItem.ts' />
 ///<reference path='view/TopBarMenu.ts' />
@@ -59,24 +45,31 @@
 ///<reference path='view/TabPanel.ts' />
 ///<reference path='view/FilterPanel.ts' />
 
-///<reference path='view/BrowseToolbar.ts' />
-///<reference path='appbar/SpaceAppBar.ts' />
+///<reference path='browse/SpaceBrowseToolbar.ts' />
+///<reference path='browse/SpaceActionMenu.ts' />
+///<reference path='browse/SpaceDetailPanel.ts' />
+///<reference path='browse/SpaceAppBrowsePanel.ts' />
+///<reference path='browse/SpaceTreeGridPanel.ts' />
+
+
+///<reference path='wizard/SpaceWizardPanel2.ts' />
 
 ///<reference path='controller/Controller.ts' />
 ///<reference path='controller/SpaceController.ts' />
 
 ///<reference path='controller/FilterPanelController.ts' />
 ///<reference path='controller/GridPanelController.ts' />
-///<reference path='controller/BrowseToolbarController.ts' />
 ///<reference path='controller/DetailPanelController.ts' />
 ///<reference path='controller/DetailToolbarController.ts' />
 ///<reference path='controller/WizardController.ts' />
 
+///<reference path='appbar/SpaceAppBar.ts' />
 ///<reference path='appbar/SpaceAppBarActions.ts' />
 ///<reference path='appbar/SpaceAppBarTabMenuItem.ts' />
 ///<reference path='appbar/SpaceAppBarTabMenu.ts' />
 ///<reference path='appbar/SpaceAppBar.ts' />
-///<reference path='SpaceAppTabPanelController.ts' />
+
+///<reference path='SpaceDeleteDialog.ts' />
 ///<reference path='SpaceAppPanel.ts' />
 
 
@@ -92,8 +85,8 @@ module app {
 }
 
 module components {
-    export var detailPanel:app_ui.SpaceDetailPanel;
-    export var gridPanel:app_ui.TreeGridPanel;
+    export var detailPanel:app_browse.SpaceDetailPanel;
+    export var gridPanel:app_browse.SpaceTreeGridPanel;
     export var tabPanel:app_ui.TabPanel;
 }
 
@@ -104,7 +97,6 @@ Ext.application({
     controllers: [
         'Admin.controller.FilterPanelController',
         'Admin.controller.GridPanelController',
-        'Admin.controller.BrowseToolbarController',
         'Admin.controller.DetailPanelController',
         'Admin.controller.DetailToolbarController',
         'Admin.controller.WizardController'
@@ -114,24 +106,15 @@ Ext.application({
 
     launch: function () {
 
-        // TODO: var spaceAppPanel = new app.SpaceAppPanel();
-        var spaceAppMainPanel = new app.SpaceAppBrowsePanel();
+        var appBar = new app_appbar.SpaceAppBar();
+        var appPanel = new app.SpaceAppPanel(appBar);
 
-        var tabPanel = components.tabPanel = app_ui.TabPanel.init({
-            appName: 'Space Admin',
-            appIconCls: 'icon-metro-space-admin-24'
-        }).getExtEl();
+        document.body.appendChild(appBar.getHTMLElement());
+        document.body.appendChild(appPanel.getHTMLElement());
 
-        tabPanel.add(spaceAppMainPanel.ext);
+        appPanel.init();
 
-        var viewPort = new Ext.container.Viewport({
-            layout: 'fit',
-            cls: 'admin-viewport'
-        });
-
-        viewPort.add(tabPanel);
-
-        var deleteSpaceDialog:app_ui.DeleteSpaceDialog = new app_ui.DeleteSpaceDialog();
+        var deleteSpaceDialog = new app.SpaceDeleteDialog();
         app_event.DeletePromptEvent.on((event) => {
             deleteSpaceDialog.setSpacesToDelete(event.getModels());
             deleteSpaceDialog.open();
@@ -142,5 +125,4 @@ Ext.application({
 
 app.SpaceContext.init();
 app.SpaceActions.init();
-app.SpaceAppTabPanelController.init();
 

@@ -2,16 +2,106 @@ module app {
 
     export class SpaceAppPanel extends api.AppPanel {
 
-        private appBrowsePanel:SpaceAppBrowsePanel;
+        private appBrowsePanel:app_browse.SpaceAppBrowsePanel;
 
-        private formDeckPanel:api.FormDeckPanel;
+        constructor(appBar:app_appbar.SpaceAppBar) {
 
-        constructor() {
+            this.appBrowsePanel = new app_browse.SpaceAppBrowsePanel();
 
-            this.appBrowsePanel = new SpaceAppBrowsePanel();
-            this.formDeckPanel = new api.FormDeckPanel();
+            super(appBar.getTabMenu(), this.appBrowsePanel);
 
-            super(this.appBrowsePanel, this.formDeckPanel);
+            api_appbar.ShowAppBrowsePanelEvent.on((event) => {
+                this.showBrowsePanel();
+                appBar.getTabMenu().deselectTab();
+            });
+
+            app_event.NewSpaceEvent.on((event) => {
+
+                var tabMenuItem = new app_appbar.SpaceAppBarTabMenuItem("New Space");
+                var spaceWizardPanel = new app_wizard.SpaceWizardPanel2('new-space', 'New Space', "");
+
+                this.addTab(tabMenuItem, spaceWizardPanel);
+                this.showTab(tabMenuItem);
+            });
+
+            app_event.OpenSpaceEvent.on((event) => {
+
+                // TODO: Open detailpanel in "full screen"
+            });
+
+            app_event.EditSpaceEvent.on((event) => {
+
+                var spaces:api_model.SpaceModel[] = event.getModels();
+                for (var i = 0; i < spaces.length; i++) {
+                    var spaceModel:api_model.SpaceModel = spaces[i];
+
+                    var spaceGetParams:api_remote.RemoteCallSpaceGetParams = {
+                        "spaceName": [spaceModel.data.name]
+                    };
+                    api_remote.RemoteService.space_get(spaceGetParams, (result:api_remote.RemoteCallSpaceGetResult) => {
+
+                        if (result) {
+
+                            var tabMenuItem = new app_appbar.SpaceAppBarTabMenuItem(result.space.displayName);
+                            var id = this.generateTabId(result.space.name, true);
+                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel2(id, result.space.displayName, result.space.iconUrl);
+
+                            this.addTab(tabMenuItem, spaceWizardPanel);
+                            this.showTab(tabMenuItem);
+                        } else {
+                            console.error("Error", result ? result.error : "Unable to retrieve space.");
+                        }
+
+                    });
+                }
+
+
+            });
+        }
+
+        init() {
+            this.appBrowsePanel.init();
+        }
+
+        tabRemove(tab:api_ui_tab.Tab):bool {
+
+            if (this.hasUnsavedChanges()) {
+                return false;
+            }
+            else {
+                return super.tabRemove(tab);
+            }
+
+        }
+
+        removePanel(index:number):api_ui.Panel {
+            var panelRemoved = super.removePanel(index);
+            if (this.getSize() == 0) {
+                this.showBrowsePanel();
+            }
+            return panelRemoved;
+        }
+
+
+        private hasUnsavedChanges():bool {
+            /*TODO: if (wizardPanel != null && wizardPanel.getWizardDirty()) {
+             Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?',
+             (answer) => {
+             if ('yes' === answer) {
+             this.removeTab(tab);
+             } else {
+             return false;
+             }
+             });
+             } else {
+             this.removeTab(tab);
+             }*/
+            return false;
+        }
+
+
+        private generateTabId(spaceName, isEdit) {
+            return 'tab-' + ( isEdit ? 'edit-' : 'preview-') + spaceName;
         }
     }
 

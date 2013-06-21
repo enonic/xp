@@ -1,20 +1,22 @@
 module api_ui_tab {
 
-    export class TabMenu extends api_ui.DivEl implements TabNavigator {
+    export class TabMenu extends api_dom.DivEl implements TabNavigator {
 
         ext;
 
         private tabMenuButton:TabMenuButton;
 
-        private menuEl:api_ui.UlEl;
+        private menuEl:api_dom.UlEl;
 
         private showingMenuItems:bool = false;
 
         private tabs:TabMenuItem[] = [];
 
-        private tabSelectedListeners:TabSelectedListener[] = [];
+        private selectedTab:TabMenuItem;
 
-        private tabRemovedListeners:api_ui_tab.TabRemoveListener[] = [];
+        private tabSelectedListeners:Function[] = [];
+
+        private tabRemovedListeners:Function[] = [];
 
         constructor(idPrefix?:string) {
             super(idPrefix || "TabMenu");
@@ -35,8 +37,8 @@ module api_ui_tab {
             return new TabMenuButton();
         }
 
-        createMenu():api_ui.UlEl {
-            var ulEl = new api_ui.UlEl();
+        createMenu():api_dom.UlEl {
+            var ulEl = new api_dom.UlEl();
             ulEl.getEl().setZindex(19001);
             ulEl.hide();
             return ulEl;
@@ -76,37 +78,65 @@ module api_ui_tab {
             var newLength = this.tabs.push(tabMenuItem);
             tabMenuItem.setTabIndex(newLength - 1);
 
-            this.tabMenuButton.setLabel(tab.getLabel());
-
-            this.menuEl.appendChild(tabMenuItem);
-
+            if (tab.isVisible()) {
+                this.tabMenuButton.setLabel(tab.getLabel());
+                this.menuEl.appendChild(tabMenuItem);
+            }
         }
 
         getSize():number {
-            return this.tabs.length;
+            var size = 0;
+            this.tabs.forEach(function(tab:TabMenuItem) {
+                if(tab.isVisible()) {
+                    size++;
+                }
+            });
+            return size;
         }
 
         removeTab(tab:api_ui_tab.Tab) {
             var tabMenuItem = <TabMenuItem>tab;
 
             tabMenuItem.getEl().remove();
+            var isLastTab = this.isLastTab(tab);
+            this.tabs.splice(tab.getTabIndex(), 1);
+            if (this.isSelectedTab(tab)) {
+                // TODO: update selected tab acccoridnt to same logic as in DeckPanel.remove
+            }
+            if (!isLastTab) {
+                for (var i = tab.getTabIndex() - 1; i < this.tabs.length; i++) {
+                    this.tabs[i].setTabIndex(i);
+                }
+            }
+        }
 
-            this.tabs.splice(tab.getTabIndex());
+        private isSelectedTab(tab:Tab) {
+            return tab == this.selectedTab;
+        }
+
+        private isLastTab(tab:Tab):bool {
+            return tab.getTabIndex() === this.tabs.length;
         }
 
         selectTab(tab:api_ui_tab.Tab) {
+            this.tabMenuButton.setLabel(tab.getLabel());
+            this.selectedTab = <TabMenuItem>tab;
+        }
 
+        getActiveTab():api_ui_tab.Tab {
+            return this.selectedTab;
         }
 
         deselectTab() {
             this.tabMenuButton.setLabel("");
+            this.selectedTab = null;
         }
 
-        addTabSelectedListener(listener:TabSelectedListener) {
+        addTabSelectedListener(listener:(Tab) => void) {
             this.tabSelectedListeners.push(listener);
         }
 
-        addTabRemoveListener(listener:api_ui_tab.TabRemoveListener) {
+        addTabRemoveListener(listener:(Tab) => bool) {
             this.tabRemovedListeners.push(listener);
         }
 
@@ -116,19 +146,24 @@ module api_ui_tab {
         }
 
         handleTabRemoveButtonClickedEvent(tabMenuItem:TabMenuItem) {
-            this.fireBeforeTabRemoved(tabMenuItem);
+            if (this.fireTabRemoveEvent(tabMenuItem)) {
+                this.removeTab(tabMenuItem);
+            }
         }
 
         fireTabSelected(tab:api_ui_tab.Tab) {
             for (var i = 0; i < this.tabSelectedListeners.length; i++) {
-                this.tabSelectedListeners[i].selectedTab(tab);
+                this.tabSelectedListeners[i](tab);
             }
         }
 
-        private fireBeforeTabRemoved(tab:api_ui_tab.Tab) {
+        private fireTabRemoveEvent(tab:api_ui_tab.Tab):bool {
             for (var i = 0; i < this.tabRemovedListeners.length; i++) {
-                this.tabRemovedListeners[i].tabRemove(tab);
+                if (!this.tabRemovedListeners[i](tab)) {
+                    return false;
+                }
             }
+            return true;
         }
     }
 }

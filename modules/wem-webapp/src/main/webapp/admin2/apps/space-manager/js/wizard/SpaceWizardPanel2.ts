@@ -8,22 +8,22 @@ module app_wizard {
 
 
             var spacePanel = new api_ui.Panel("spacePanel");
-            var h1El = new api_ui.H1El();
+            var h1El = new api_dom.H1El();
             h1El.getEl().setInnerHtml("space");
             spacePanel.appendChild(h1El);
 
             var schemaPanel = new api_ui.Panel("schemaPanel");
-            h1El = new api_ui.H1El();
+            h1El = new api_dom.H1El();
             h1El.getEl().setInnerHtml("schema");
             schemaPanel.appendChild(h1El);
 
             var modulesPanel = new api_ui.Panel("modulesPanel");
-            h1El = new api_ui.H1El();
+            h1El = new api_dom.H1El();
             h1El.getEl().setInnerHtml("modules");
             modulesPanel.appendChild(h1El);
 
             var templatesPanel = new api_ui.Panel("templatesPanel");
-            h1El = new api_ui.H1El();
+            h1El = new api_dom.H1El();
             h1El.getEl().setInnerHtml("templates");
             templatesPanel.appendChild(h1El);
 
@@ -33,7 +33,7 @@ module app_wizard {
             this.addStep(new api_wizard.WizardStep("Templates", templatesPanel));
 
             this.addToolbar(new SpaceWizardToolbar2(context.getActions()));
-            this.addIcon(new api_ui_form.FormIcon(iconUrl, "Click to upload icon", "rest/upload"))
+            this.addIcon(new api_wizard.FormIcon(iconUrl, "Click to upload icon", "rest/upload"))
         }
     }
 }

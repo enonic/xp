@@ -35,18 +35,29 @@ module api_ui {
         removePanel(index:number):Panel {
 
             var panel = this.panels[index];
+            panel.getEl().remove();
+            var lastPanel = this.panels.length == index + 1;
             this.panels.splice(index, 1);
 
-            if (this.panelShown === index) {
-                if (this.panels.length < index + 1) {
-                    this.panels[this.panels.length].show();
+            if (this.panels.length == 0) {
+                return panel;
+            }
+
+            if (this.isShownPanel(index)) {
+
+                if (!lastPanel) {
+                    this.panels[this.panels.length - 1].show();
                     this.panelShown = this.panels.length - 1;
                 }
                 else {
-                    this.panels[index].show();
+                    this.panels[index-1].show();
                 }
             }
             return panel;
+        }
+
+        private isShownPanel(panelIndex:number):bool {
+            return this.panelShown === panelIndex;
         }
 
         showPanel(index:number) {
@@ -60,6 +71,10 @@ module api_ui {
                     panel.hide();
                 }
             }
+        }
+
+        getPanels():Panel[] {
+            return this.panels;
         }
     }
 }

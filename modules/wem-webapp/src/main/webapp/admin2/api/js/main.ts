@@ -2,11 +2,15 @@
  * Main file for all admin API classes and methods.
  */
 
+// require ExtJs as long as it is used for implementation
+///<reference path='ExtJs.d.ts' />
+
 ///<reference path='Mousetrap.d.ts' />
 ///<reference path='jquery.d.ts' />
 
 ///<reference path='util/ImageLoader.ts' />
 ///<reference path='util/UriHelper.ts' />
+///<reference path='util/Animation.ts'/>
 
 ///<reference path='model/Model.ts' />
 ///<reference path='model/SpaceModel.ts' />
@@ -26,68 +30,67 @@
 ///<reference path='event/Event.ts' />
 ///<reference path='event/EventBus.ts' />
 
-///<reference path='ui/Action.ts' />
+///<reference path='notify/Message.ts' />
+///<reference path='notify/NotifyManager.ts' />
+///<reference path='notify/NotifyOpts.ts' />
+///<reference path='notify/MessageBus.ts' />
 
-///<reference path='ui/ElementHelper.ts' />
-///<reference path='ui/ImgElHelper.ts' />
-///<reference path='ui/Element.ts' />
-///<reference path='ui/DivEl.ts' />
-///<reference path='ui/H1El.ts' />
-///<reference path='ui/H2El.ts' />
-///<reference path='ui/H3El.ts' />
-///<reference path='ui/H4El.ts' />
-///<reference path='ui/UlEl.ts' />
-///<reference path='ui/LiEl.ts' />
-///<reference path='ui/EmEl.ts' />
-///<reference path='ui/ImgEl.ts' />
-///<reference path='ui/SpanEl.ts' />
+///<reference path='dom/ElementHelper.ts' />
+///<reference path='dom/ImgElHelper.ts' />
+///<reference path='dom/Element.ts' />
+///<reference path='dom/DivEl.ts' />
+///<reference path='dom/H1El.ts' />
+///<reference path='dom/H2El.ts' />
+///<reference path='dom/H3El.ts' />
+///<reference path='dom/H4El.ts' />
+///<reference path='dom/UlEl.ts' />
+///<reference path='dom/LiEl.ts' />
+///<reference path='dom/EmEl.ts' />
+///<reference path='dom/ImgEl.ts' />
+///<reference path='dom/SpanEl.ts' />
+///<reference path='dom/ButtonEl.ts' />
+
+///<reference path='ui/Action.ts' />
 ///<reference path='ui/Panel.ts' />
 ///<reference path='ui/DeckPanel.ts' />
-///<reference path='ui/ButtonEl.ts' />
 ///<reference path='ui/BodyMask.ts' />
 ///<reference path='ui/AbstractButton.ts' />
 ///<reference path='ui/toolbar/Toolbar.ts' />
+///<reference path='ui/toolbar/ToggleSlide.ts' />
 ///<reference path='ui/menu/MenuItem.ts' />
-///<reference path='ui/detailpanel/DetailPanel.ts' />
-///<reference path='ui/wizard/WizardPanel.ts' />
 ///<reference path='ui/menu/ContextMenu.ts' />
 ///<reference path='ui/menu/ActionMenu.ts' />
 ///<reference path='ui/tab/Tab.ts' />
-///<reference path='ui/tab/TabRemoveListener.ts' />
-///<reference path='ui/tab/TabSelectedListener.ts' />
 ///<reference path='ui/tab/TabNavigator.ts' />
 ///<reference path='ui/tab/TabMenu.ts' />
 ///<reference path='ui/tab/TabMenuButton.ts' />
 ///<reference path='ui/tab/TabMenuItem.ts' />
 ///<reference path='ui/tab/TabBar.ts' />
-///<reference path='ui/tab/TabPanelController.ts' />
-///<reference path='ui/form/FormIcon.ts' />
-
-///<reference path='ui/util/Tooltip.ts' />
-///<reference path='ui/util/ProgressBar.ts' />    
+///<reference path='ui/tab/TabbedDeckPanel.ts' />
+///<reference path='ui/Tooltip.ts' />
+///<reference path='ui/ProgressBar.ts' />
+///<reference path='ui/grid/TreeGridPanel.ts' />
 
 ///<reference path='appbar/AppBar.ts' />
 ///<reference path='appbar/UserInfoPopup.ts' />
 ///<reference path='appbar/AppBarEvents.ts' />
+///<reference path='appbar/AppBarTabMenu.ts' />
+///<reference path='appbar/AppBarTabMenuButton.ts' />
+///<reference path='appbar/AppBarTabMenuItem.ts' />
+///<reference path='appbar/AppBar.ts' />
+
+///<reference path='AppPanel.ts' />
 
 ///<reference path='ui/dialog/DialogButton.ts' />
 ///<reference path='ui/dialog/ModalDialog.ts' />
 ///<reference path='delete/DeleteItem.ts' />
 ///<reference path='delete/DeleteDialog.ts' />
 
-///<reference path='appbar/AppBarTabMenu.ts' />
-///<reference path='appbar/AppBarTabMenuButton.ts' />
-///<reference path='appbar/AppBarTabMenuItem.ts' />
-///<reference path='appbar/AppBar.ts' />
-///<reference path='AppPanel.ts' />
+///<reference path='browse/AppBrowsePanel.ts' />
+///<reference path='browse/DetailPanel.ts' />
 
-///<reference path='AppBrowsePanel.ts' />
-///<reference path='FormDeckPanel.ts' />
-
-///<reference path='notify/Message.ts' />
-///<reference path='notify/NotifyManager.ts' />
-///<reference path='notify/NotifyOpts.ts' />
-///<reference path='notify/MessageBus.ts' />
+///<reference path='wizard/FormIcon.ts' />
+///<reference path='wizard/WizardPanel.ts' />
 
 ///<reference path='content/data/DataId.ts' />
 ///<reference path='content/data/Data.ts' />

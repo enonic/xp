@@ -1,6 +1,6 @@
 module api_ui_menu{
 
-    export class ContextMenu extends api_ui.UlEl {
+    export class ContextMenu extends api_dom.UlEl {
         private menuItems:MenuItem[] = [];
 
         constructor(...actions:api_ui.Action[]) {

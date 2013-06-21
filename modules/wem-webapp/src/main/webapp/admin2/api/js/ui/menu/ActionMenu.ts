@@ -1,6 +1,6 @@
 module api_ui_menu{
 
-    export class ActionMenu extends api_ui.UlEl {
+    export class ActionMenu extends api_dom.UlEl {
         private ext; //:Ext.Component;
 
         private button:ActionMenuButton;
@@ -77,7 +77,7 @@ module api_ui_menu{
     }
 
 
-    export class ActionMenuButton extends api_ui.ButtonEl {
+    export class ActionMenuButton extends api_dom.ButtonEl {
         private ext;
 
         private menu:ActionMenu;
@@ -92,7 +92,7 @@ module api_ui_menu{
                 menu.showBy(this);
 
                 // stop event to prevent menu close because of body click
-                if(e.stopPropagation) {
+                if (e.stopPropagation) {
                     e.stopPropagation();
                 }
                 e.cancelBubble = true;

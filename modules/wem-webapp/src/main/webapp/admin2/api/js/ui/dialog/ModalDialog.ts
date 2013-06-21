@@ -7,7 +7,7 @@ module api_ui_dialog{
         height:number;
     }
 
-    export class ModalDialog extends api_ui.DivEl {
+    export class ModalDialog extends api_dom.DivEl {
 
         private config:ModalDialogConfig;
 
@@ -46,7 +46,7 @@ module api_ui_dialog{
             this.title.setTitle(value);
         }
 
-        appendChildToContentPanel(child:api_ui.Element) {
+        appendChildToContentPanel(child:api_dom.Element) {
             this.contentPanel.appendChild(child);
         }
 
@@ -54,12 +54,12 @@ module api_ui_dialog{
             this.buttonRow.addAction(action);
         }
 
-        show(){
+        show() {
             // experimenting with transitions
             jQuery(this.getEl().getHTMLElement()).show(100);
         }
 
-        hide(){
+        hide() {
             // experimenting with transitions
             jQuery(this.getEl().getHTMLElement()).hide(100);
         }
@@ -83,7 +83,7 @@ module api_ui_dialog{
         }
     }
 
-    export class ModalDialogTitle extends api_ui.H2El {
+    export class ModalDialogTitle extends api_dom.H2El {
 
         constructor(title:string) {
             super("ModalDialogTitle");
@@ -95,14 +95,14 @@ module api_ui_dialog{
         }
     }
 
-    export class ModalDialogContentPanel extends api_ui.DivEl {
+    export class ModalDialogContentPanel extends api_dom.DivEl {
 
         constructor() {
             super("ModalDialogContentPanel", "content-panel");
         }
     }
 
-    export class ModalDialogButtonRow extends api_ui.DivEl {
+    export class ModalDialogButtonRow extends api_dom.DivEl {
 
         constructor() {
             super("ModalDialogButtonRow", "button-row");

@@ -1,6 +1,6 @@
 module api_ui {
 
-    export class Panel extends DivEl {
+    export class Panel extends api_dom.DivEl {
 
         constructor(idPrefix?:string) {
             super(idPrefix, "panel");

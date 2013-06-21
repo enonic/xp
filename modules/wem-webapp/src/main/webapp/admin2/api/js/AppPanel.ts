@@ -1,39 +1,24 @@
 module api{
 
-    export class AppPanel extends api_ui.DeckPanel {
+    export class AppPanel extends api_ui_tab.TabbedDeckPanel {
 
-        ext;
+        private homePanel:api_ui.Panel;
 
-        private appBrowsePanel:AppBrowsePanel;
+        constructor(appBar:api_ui_tab.TabNavigator, homePanel:api_ui.Panel) {
+            super(appBar);
 
-        private formDeckPanel:FormDeckPanel;
-
-        constructor(appMainPanel:AppBrowsePanel, formDeckPanel:FormDeckPanel) {
-            super("AppPanel");
-
-            this.appBrowsePanel = appMainPanel;
-            this.formDeckPanel = formDeckPanel;
-
-            this.addPanel(this.appBrowsePanel);
-            this.addPanel(this.formDeckPanel);
+            this.homePanel = homePanel;
+            var homePanelMenuItem = new api_appbar.AppBarTabMenuItem("home");
+            homePanelMenuItem.setVisible(false);
+            homePanelMenuItem.setRemovable(false);
+            this.addTab(homePanelMenuItem, this.homePanel);
             this.showPanel(0);
-
-            this.initExt();
         }
 
-        private initExt() {
-
-            this.ext = new Ext.layout.container.Card({
-                id: 'AppPanel',
-                title: 'AppPanel',
-                closable: false,
-                border: false,
-                layout: 'card'
-            });
-
-            this.ext.add(this.appBrowsePanel);
-            this.ext.add(this.formDeckPanel);
+        showBrowsePanel() {
+            this.showPanel(0);
         }
+
 
     }
 }

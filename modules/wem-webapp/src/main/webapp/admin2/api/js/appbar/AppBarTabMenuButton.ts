@@ -2,7 +2,7 @@ module api_appbar{
 
     export class AppBarTabMenuButton extends api_ui_tab.TabMenuButton {
 
-        private iconEl:api_ui.SpanEl;
+        private iconEl:api_dom.SpanEl;
 
         private tabCountEl:AppBarTabCount;
 
@@ -10,7 +10,7 @@ module api_appbar{
             super(idPrefix || "AppBarTabMenuButton");
             this.getEl().addClass("appbar-tabmenu-button");
 
-            this.iconEl = new api_ui.SpanEl(); // TODO:
+            this.iconEl = new api_dom.SpanEl(); // TODO:
             this.iconEl.getEl().addClass("icon-icomoon-pencil-32");
             this.prependChild(this.iconEl);
 
@@ -23,7 +23,7 @@ module api_appbar{
         }
     }
 
-    export class AppBarTabCount extends api_ui.SpanEl {
+    export class AppBarTabCount extends api_dom.SpanEl {
 
         constructor() {
             super();

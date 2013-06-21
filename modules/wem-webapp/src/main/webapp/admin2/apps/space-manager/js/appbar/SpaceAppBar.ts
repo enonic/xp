@@ -8,7 +8,7 @@ module app_appbar {
                     showAppLauncherAction: SpaceAppBarActions.SHOW_APP_LAUNCHER,
                     showAppBrowsePanelAction: SpaceAppBarActions.SHOW_APP_BROWSER_PANEL
                 },
-                app.SpaceAppTabPanelController.get().getAppBarTabMenu());
+                new app_appbar.SpaceAppBarTabMenu());
         }
 
     }

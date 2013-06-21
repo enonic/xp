@@ -543,7 +543,7 @@ Ext.define('Admin.controller.Controller', {
     },
 
     getContentTreeGridPanel: function () {
-        return Ext.ComponentQuery.query('contentTreeGridPanel')[0];
+        return components.gridPanel;
     },
 
     getContentDetailPanel: function () {

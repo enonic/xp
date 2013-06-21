@@ -1,6 +1,6 @@
 module api_appbar {
 
-    export class AppBar extends api_ui.DivEl {
+    export class AppBar extends api_dom.DivEl {
 
         ext;
 
@@ -8,9 +8,9 @@ module api_appbar {
 
         private actions:AppBarActions;
 
-        private launcherButton:api_ui.ButtonEl;
+        private launcherButton:api_dom.ButtonEl;
 
-        private homeButton:api_ui.ButtonEl;
+        private homeButton:api_dom.ButtonEl;
 
         private tabMenu:api_appbar.AppBarTabMenu;
 
@@ -57,8 +57,13 @@ module api_appbar {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
                 contentEl: htmlEl,
-                cls: 'appbar-container'
+                cls: 'appbar-container',
+                region: 'north'
             });
+        }
+
+        getTabMenu():api_appbar.AppBarTabMenu {
+            return this.tabMenu;
         }
     }
 
@@ -69,7 +74,7 @@ module api_appbar {
         showAppBrowsePanelAction:api_ui.Action;
     }
 
-    export class LauncherButton extends api_ui.ButtonEl {
+    export class LauncherButton extends api_dom.ButtonEl {
 
         constructor(action:api_ui.Action) {
             super('LauncherButton', 'launcher-button');
@@ -81,7 +86,7 @@ module api_appbar {
 
     }
 
-    export class Separator extends api_ui.SpanEl {
+    export class Separator extends api_dom.SpanEl {
 
         constructor() {
             super('AppBarSeparator', 'appbar-separator');
@@ -89,7 +94,7 @@ module api_appbar {
 
     }
 
-    export class HomeButton extends api_ui.ButtonEl {
+    export class HomeButton extends api_dom.ButtonEl {
 
         constructor(text:string, action:api_ui.Action) {
             super('HomeButton', 'home-button');
@@ -103,7 +108,7 @@ module api_appbar {
 
     }
 
-    export class TabMenuContainer extends api_ui.DivEl {
+    export class TabMenuContainer extends api_dom.DivEl {
 
         constructor() {
             super('TabMenuContainer', 'tabmenu-container');
@@ -111,7 +116,7 @@ module api_appbar {
 
     }
 
-    export class UserButton extends api_ui.ButtonEl {
+    export class UserButton extends api_dom.ButtonEl {
 
         constructor() {
             super('UserButton', 'user-button');

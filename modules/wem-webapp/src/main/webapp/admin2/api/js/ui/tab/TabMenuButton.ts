@@ -1,15 +1,15 @@
 module api_ui_tab {
 
-    export class TabMenuButton extends api_ui.DivEl {
+    export class TabMenuButton extends api_dom.DivEl {
 
-        private labelEl:api_ui.SpanEl;
+        private labelEl:api_dom.SpanEl;
 
         private tabMenu:TabMenu;
 
         constructor(idPrefix?:string) {
             super(idPrefix || "TabMenuButton");
 
-            this.labelEl = new api_ui.SpanEl();
+            this.labelEl = new api_dom.SpanEl();
             this.appendChild(this.labelEl);
         }
 
@@ -18,7 +18,7 @@ module api_ui_tab {
         }
 
         setLabel(value:string) {
-            jQuery(<any>this.labelEl.getHTMLElement()).text(value);
+            this.labelEl.getEl().setInnerHtml(value);
         }
     }
 }
