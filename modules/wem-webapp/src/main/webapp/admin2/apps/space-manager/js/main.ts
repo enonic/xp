@@ -1,4 +1,5 @@
 ///<reference path='../../../api/js/ExtJs.d.ts' />
+///<reference path='../../../api/js/Mousetrap.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
 ///<reference path='event/DeletedEvent.ts' />

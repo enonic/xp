@@ -79,14 +79,8 @@ module api_ui_dialog{
             api_ui.BodyMask.get().deActivate();
 
             this.hide();
-            this.cancelAction.deactivateShortcut();
-
-
             this.actions.forEach((action, index, array)=> {
-                //action.deactivateShortcut();
-                if (action.hasShortcut()) {
-                    Mousetrap.unbind(action.getShortcut());
-                }
+                action.deactivateShortcut();
             });
         }
 
@@ -95,12 +89,9 @@ module api_ui_dialog{
             api_ui.BodyMask.get().activate();
 
             this.show();
-            this.cancelAction.activateShortcut();
-
             this.actions.forEach((action, index, array)=> {
                 if (action.hasShortcut()) {
-                    //action.activateShortcut();
-                    Mousetrap.bind(action.getShortcut(), action.execute);
+                    action.activateShortcut();
                 }
             });
         }

@@ -21,12 +21,12 @@ module api_ui {
             return this.panels.length;
         }
 
-        /**
+        /*
          * Add new Panel to the deck.
          * @param panel
          * @returns {number} The index for the added Panel.
          */
-            addPanel(panel:Panel):number {
+        addPanel(panel:Panel):number {
             panel.hide();
             this.appendChild(panel);
             return this.panels.push(panel) - 1;

@@ -1,4 +1,5 @@
 ///<reference path='../TestCase.d.ts' />
+///<reference path='../../../../../../main/webapp/admin2/api/js/Mousetrap.d.ts' />
 ///<reference path='../../../../../../main/webapp/admin2/api/js/ui/Action.ts' />
 
 TestCase("Action", {

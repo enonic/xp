@@ -78,13 +78,15 @@ module api_ui {
 
         activateShortcut() {
             if (this.hasShortcut()) {
-            //Mousetrap.bind(this.getShortcut(), this.execute);
+                Mousetrap.bind(this.getShortcut(), (e: ExtendedKeyboardEvent, combo: string) => {
+                    this.execute();
+                });
             }
         }
 
         deactivateShortcut() {
             if (this.hasShortcut()) {
-            //Mousetrap.unbind(this.getShortcut());
+                Mousetrap.unbind(this.getShortcut());
             }
         }
 

@@ -1070,11 +1070,18 @@ var api_ui;
             this.shortcut = value;
         };
         Action.prototype.activateShortcut = function () {
+            var _this = this;
             if(this.hasShortcut()) {
+                console.log("activating shortcut [" + this.shortcut + "] for action: " + this.label);
+                Mousetrap.bind(this.getShortcut(), function (e, combo) {
+                    _this.execute();
+                });
             }
         };
         Action.prototype.deactivateShortcut = function () {
             if(this.hasShortcut()) {
+                console.log("deactivating shortcut [" + this.shortcut + "] for action: " + this.label);
+                Mousetrap.unbind(this.getShortcut());
             }
         };
         Action.prototype.execute = function () {
@@ -2496,20 +2503,16 @@ var api_ui_dialog;
         ModalDialog.prototype.close = function () {
             api_ui.BodyMask.get().deActivate();
             this.hide();
-            this.cancelAction.deactivateShortcut();
             this.actions.forEach(function (action, index, array) {
-                if(action.hasShortcut()) {
-                    Mousetrap.unbind(action.getShortcut());
-                }
+                action.deactivateShortcut();
             });
         };
         ModalDialog.prototype.open = function () {
             api_ui.BodyMask.get().activate();
             this.show();
-            this.cancelAction.activateShortcut();
             this.actions.forEach(function (action, index, array) {
                 if(action.hasShortcut()) {
-                    Mousetrap.bind(action.getShortcut(), action.execute);
+                    action.activateShortcut();
                 }
             });
         };

@@ -104,6 +104,7 @@
 ///<reference path='schema/content/form/Input.ts' />
 ///<reference path='schema/content/form/Occurrences.ts' />
 
+declare var Mousetrap;
 declare var Ext;
 declare var Admin;
 
