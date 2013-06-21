@@ -51,6 +51,15 @@ module api_remote {
         updated:bool;
     }
 
+    export interface RemoteCallSpaceDeleteParams {
+        spaceName:string[];
+    }
+
+    export interface RemoteCallSpaceDeleteResult extends RemoteCallResultBase {
+        deleted:bool;
+        failureReason?:string;
+    }
+
     export interface RemoteServiceInterface {
         account_find (params, callback):void;
         account_getGraph (params, callback):void;
@@ -91,7 +100,7 @@ module api_remote {
         relationshipType_delete (params, callback):void;
         space_list (params:RemoteCallSpaceListParams, callback:(result:RemoteCallSpaceListResult)=>void):void;
         space_get (params:RemoteCallSpaceGetParams, callback:(result:RemoteCallSpaceGetResult)=>void):void;
-        space_delete (params, callback):void;
+        space_delete (params:RemoteCallSpaceDeleteParams, callback:(result:RemoteCallSpaceDeleteResult)=>void):void;
         space_createOrUpdate (params:RemoteCallSpaceCreateOrUpdateParams, callback:(result:RemoteCallSpaceCreateOrUpdateResult)=>void):void;
         binary_create (params, callback):void;
     }
@@ -279,7 +288,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        space_delete(params, callback):void {
+        space_delete(params:RemoteCallSpaceDeleteParams, callback:(result:RemoteCallSpaceDeleteResult)=>void):void {
             console.log(params, callback);
         }
 
