@@ -1,0 +1,16 @@
+apply plugin: 'java'
+
+sourceCompatibility = '1.7'
+compileJava.options.encoding = 'UTF-8'
+
+test {
+    systemProperty 'java.awt.headless', 'true'
+    maxHeapSize = '2048m'
+}
+
+dependencies {
+    testCompile 'junit:junit:4.10'
+    testCompile 'org.mockito:mockito-all:1.8.5'
+    testCompile 'xmlunit:xmlunit:1.4'
+    testCompile 'org.easytesting:fest-assert:1.4'
+}

@@ -1,0 +1,11 @@
+dependencies {
+    compile project( ':wem-core' )
+    compile 'org.codehaus.jackson:jackson-jaxrs:1.9.11'
+    compile 'com.sun.jersey:jersey-core:1.17.1'
+    compile 'com.sun.jersey:jersey-server:1.17.1'
+    compile 'com.sun.jersey:jersey-servlet:1.17.1'
+    compile 'com.sun.jersey.contribs:jersey-multipart:1.17.1'
+    compile 'org.sonatype.sisu.inject:guice-servlet:3.1.4'
+    compile 'commons-fileupload:commons-fileupload:1.2.2'
+    compile 'javax.servlet:javax.servlet-api:3.0.1'
+}

@@ -1,0 +1,4 @@
+def jvm = org.gradle.internal.jvm.Jvm.current()
+def javaVersion = JavaVersion.current()
+
+assert javaVersion.java7: "Must use a Java 7 compatible JVM to perform this build. Current JVM is ${jvm}."
