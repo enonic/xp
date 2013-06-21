@@ -33,6 +33,9 @@ module api_ui_tab {
             removeButton.getEl().addEventListener("click", () => {
                 if (this.removable) {
                     this.tabMenu.handleTabRemoveButtonClickedEvent(this);
+                    if (this.tabMenu.getSize() == 0) {
+                        this.tabMenu.hideMenu();
+                    }
                 }
             });
         }
