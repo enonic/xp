@@ -6,7 +6,7 @@ module api_ui_tab {
 
         removeTab(tab:api_ui_tab.Tab);
 
-        selectTab(tab:api_ui_tab.Tab);
+        selectTab(tabIndex:number);
 
         getActiveTab():api_ui_tab.Tab;
 

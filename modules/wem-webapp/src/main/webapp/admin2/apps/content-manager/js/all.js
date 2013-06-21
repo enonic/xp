@@ -589,88 +589,6 @@ var admin;
 var admin;
 (function (admin) {
     (function (ui) {
-        var DeleteContentWindow = (function () {
-            function DeleteContentWindow() {
-                var _this = this;
-                this.title = "Delete content(s)";
-                this.deleteHandler = new admin.app.handler.DeleteContentHandler();
-                this.template = '<div class="delete-container">' + '<tpl for=".">' + '<div class="delete-item">' + '<img class="icon" src="{data.iconUrl}"/>' + '<h4>{data.displayName}</h4>' + '<p>{data.type}</p>' + '</div>' + '</tpl>' + '</div>';
-                var deleteCallback = function (obj, success, result) {
-                    _this.container.hide();
-                };
-                var ct = this.container = new Ext.container.Container({
-                    border: false,
-                    floating: true,
-                    shadow: false,
-                    width: 500,
-                    modal: true,
-                    autoHeight: true,
-                    maxHeight: 600,
-                    cls: 'admin-window',
-                    padding: 20
-                });
-                var header = new Ext.Component({
-                    region: 'north',
-                    tpl: '<h2>{title}</h2><tpl if="subtitle != undefined"><p>{subtitle}</p></tpl>',
-                    data: {
-                        title: this.title
-                    },
-                    margin: '0 0 20 0'
-                });
-                ct.add(header);
-                var content = this.content = new Ext.Component({
-                    region: 'center',
-                    cls: 'dialog-info',
-                    border: false,
-                    height: 150,
-                    styleHtmlContent: true,
-                    tpl: this.template
-                });
-                ct.add(content);
-                var buttonRow = new Ext.container.Container({
-                    layout: {
-                        type: 'hbox',
-                        pack: 'end'
-                    }
-                });
-                var deleteButton = new Ext.button.Button({
-                    text: 'Delete',
-                    margin: '0 0 0 10',
-                    handler: function (btn, evt) {
-                        _this.deleteHandler.doDelete(_this.data, deleteCallback);
-                    }
-                });
-                buttonRow.add(deleteButton);
-                var cancelButton = new Ext.button.Button({
-                    text: 'Cancel',
-                    margin: '0 0 0 10',
-                    handler: function (btn, evt) {
-                        ct.hide();
-                    }
-                });
-                buttonRow.add(cancelButton);
-                ct.add(buttonRow);
-            }
-            DeleteContentWindow.prototype.setModel = function (model) {
-                this.data = model;
-                if(model) {
-                    if(this.content) {
-                        this.content.update(model);
-                    }
-                }
-            };
-            DeleteContentWindow.prototype.doShow = function () {
-                this.container.show();
-            };
-            return DeleteContentWindow;
-        })();
-        ui.DeleteContentWindow = DeleteContentWindow;        
-    })(admin.ui || (admin.ui = {}));
-    var ui = admin.ui;
-})(admin || (admin = {}));
-var admin;
-(function (admin) {
-    (function (ui) {
         var FormComponent = (function () {
             function FormComponent() {
                 var panel = new Ext.form.Panel();
@@ -1637,6 +1555,47 @@ Ext.define('Admin.view.BaseDialogWindow', {
         };
     }
 });
+var app_ui;
+(function (app_ui) {
+    var DeleteContentDialog = (function (_super) {
+        __extends(DeleteContentDialog, _super);
+        function DeleteContentDialog() {
+            var _this = this;
+                _super.call(this, "Delete");
+            this.deleteAction = new DeleteContentAction();
+            this.deleteHandler = new api_handler.DeleteContentHandler();
+            this.setDeleteAction(this.deleteAction);
+            var deleteCallback = function (obj, success, result) {
+                _this.close();
+                api_notify.showFeedback('Content was deleted!');
+            };
+            this.deleteAction.addExecutionListener(function () {
+                _this.deleteHandler.doDelete(api_handler.DeleteContentParamFactory.create(_this.contentToDelete), deleteCallback);
+            });
+            document.body.appendChild(this.getHTMLElement());
+        }
+        DeleteContentDialog.prototype.setContentToDelete = function (contentModels) {
+            this.contentToDelete = contentModels;
+            var deleteItems = [];
+            for(var i in contentModels) {
+                var contentModel = contentModels[i];
+                var deleteItem = new api_delete.DeleteItem(contentModel.data.iconUrl, contentModel.data.displayName);
+                deleteItems.push(deleteItem);
+            }
+            this.setDeleteItems(deleteItems);
+        };
+        return DeleteContentDialog;
+    })(api_delete.DeleteDialog);
+    app_ui.DeleteContentDialog = DeleteContentDialog;    
+    var DeleteContentAction = (function (_super) {
+        __extends(DeleteContentAction, _super);
+        function DeleteContentAction() {
+                _super.call(this, "Delete");
+        }
+        return DeleteContentAction;
+    })(api_ui.Action);
+    app_ui.DeleteContentAction = DeleteContentAction;    
+})(app_ui || (app_ui = {}));
 Ext.define('Admin.view.BaseDetailPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.detailPanel',
@@ -7234,11 +7193,6 @@ Ext.define('Admin.controller.Controller', {
                     this.editContent();
                 }
             },
-            'browseToolbar *[action=deleteContent], contentManagerContextMenu *[action=deleteContent], contentDetail *[action=deleteContent]': {
-                click: function (button, event) {
-                    this.deleteContent();
-                }
-            },
             'browseToolbar *[action=duplicateContent], contentManagerContextMenu *[action=duplicateContent], contentDetail *[action=duplicateContent]': {
                 click: function (button, event) {
                     this.duplicateContent();
@@ -7417,17 +7371,6 @@ Ext.define('Admin.controller.Controller', {
                     tabs.addTab(tab);
                     break;
             }
-        }
-    },
-    deleteContent: function (content) {
-        if(!content) {
-            var showPanel = this.getContentTreeGridPanel();
-            content = showPanel.getSelection();
-        } else {
-            content = [].concat(content);
-        }
-        if(content && content.length > 0) {
-            this.getDeleteContentWindow().doShow(content);
         }
     },
     duplicateContent: function (content) {
@@ -7653,13 +7596,6 @@ Ext.define('Admin.controller.Controller', {
     },
     getPersistentGridSelectionPlugin: function () {
         return this.getContentGridPanel().getPlugin('persistentGridSelection');
-    },
-    getDeleteContentWindow: function () {
-        var win = Ext.ComponentQuery.query('deleteContentWindow')[0];
-        if(!win) {
-            win = Ext.create('widget.deleteContentWindow');
-        }
-        return win;
     },
     getLiveEditTestWindow: function () {
         var win = Ext.ComponentQuery.query('liveEditTestWindow')[0];
@@ -8182,9 +8118,6 @@ Ext.define('Admin.controller.DialogWindowController', {
     models: [],
     init: function () {
         this.control({
-            'deleteContentWindow *[action=deleteContent]': {
-                click: this.doDelete
-            },
             'newContentWindow': {
                 contentTypeSelected: function (window, contentType) {
                     if(window) {
@@ -8198,37 +8131,6 @@ Ext.define('Admin.controller.DialogWindowController', {
         });
         this.application.on({
         });
-    },
-    doDelete: function (el, e) {
-        var win = this.getDeleteContentWindow();
-        console.log(win);
-        var me = this;
-        var content = win.data;
-        var onContentDeleted = function (success, details) {
-            win.close();
-            if(success) {
-                Admin.MessageBus.showFeedback({
-                    title: 'Content was deleted',
-                    message: Ext.isArray(content) && content.length > 1 ? content.length + ' contents were deleted' : '1 content was deleted',
-                    opts: {
-                    }
-                });
-            } else {
-                var message = '';
-                var i;
-                for(i = 0; i < details.length; i++) {
-                    message += details[0].reason + "\n";
-                }
-                Admin.MessageBus.showFeedback({
-                    title: 'Content was not deleted',
-                    message: message,
-                    opts: {
-                    }
-                });
-            }
-            me.getContentTreeGridPanel().refresh();
-        };
-        this.remoteDeleteContent(content, onContentDeleted);
     }
 });
 var components;
@@ -8321,6 +8223,11 @@ Ext.application({
                     ]
                 }
             ]
+        });
+        var deleteContentDialog = new app_ui.DeleteContentDialog();
+        app_event.DeleteContentEvent.on(function (event) {
+            deleteContentDialog.setContentToDelete(event.getModels());
+            deleteContentDialog.open();
         });
     }
 });

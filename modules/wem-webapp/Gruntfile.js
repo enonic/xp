@@ -19,7 +19,7 @@ module.exports = function (grunt) {
             },
             api_test: {
                 src: ['src/test/webapp/admin2/api/js/**/*.ts'],
-                dest: 'src/test/webapp/admin2/api/js/test.js',
+                dest: 'src/test/webapp/admin2/api/js/api-test.js',
                 options: {
                     // target: 'es5',
                     sourcemap: true,

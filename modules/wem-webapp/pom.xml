@@ -29,5 +29,26 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <!--plugin>
+        <groupId>com.googlecode.jstd-maven-plugin</groupId>
+        <artifactId>jstd-maven-plugin</artifactId>
+        <version>1.3.5.1</version>
+        <configuration>
+          <port>9876</port>
+        </configuration>
+        <executions>
+          <execution>
+            <id>run-tests</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin-->
+    </plugins>
+  </build>
+
 </project>
         

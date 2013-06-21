@@ -12,7 +12,7 @@ module api_ui_tab {
 
         private tabs:TabMenuItem[] = [];
 
-        private selectedTab:TabMenuItem;
+        private selectedTab:number;
 
         private tabSelectedListeners:Function[] = [];
 
@@ -84,14 +84,26 @@ module api_ui_tab {
             }
         }
 
+        isEmpty():bool {
+            return this.tabs.length == 0;
+        }
+
         getSize():number {
             var size = 0;
-            this.tabs.forEach(function(tab:TabMenuItem) {
-                if(tab.isVisible()) {
+            this.tabs.forEach(function (tab:TabMenuItem) {
+                if (tab.isVisible()) {
                     size++;
                 }
             });
             return size;
+        }
+
+        getSelectedTabIndex():number {
+            return this.selectedTab;
+        }
+
+        getSelectedTab():Tab {
+            return this.tabs[this.selectedTab];
         }
 
         removeTab(tab:api_ui_tab.Tab) {
@@ -100,8 +112,13 @@ module api_ui_tab {
             tabMenuItem.getEl().remove();
             var isLastTab = this.isLastTab(tab);
             this.tabs.splice(tab.getTabIndex(), 1);
+
             if (this.isSelectedTab(tab)) {
-                // TODO: update selected tab acccoridnt to same logic as in DeckPanel.remove
+                if (this.isEmpty()) {
+                    this.selectedTab = -1;
+                } else if (tab.getTabIndex() > this.tabs.length - 1) {
+                    this.selectedTab = tab.getTabIndex() - 1;
+                }
             }
             if (!isLastTab) {
                 for (var i = tab.getTabIndex() - 1; i < this.tabs.length; i++) {
@@ -111,25 +128,26 @@ module api_ui_tab {
         }
 
         private isSelectedTab(tab:Tab) {
-            return tab == this.selectedTab;
+            return tab.getTabIndex() == this.selectedTab;
         }
 
         private isLastTab(tab:Tab):bool {
             return tab.getTabIndex() === this.tabs.length;
         }
 
-        selectTab(tab:api_ui_tab.Tab) {
-            this.tabMenuButton.setLabel(tab.getLabel());
-            this.selectedTab = <TabMenuItem>tab;
+        selectTab(tabIndex:number) {
+            var selectedTab = this.tabs[tabIndex];
+            this.tabMenuButton.setLabel(selectedTab.getLabel());
+            this.selectedTab = tabIndex;
         }
 
         getActiveTab():api_ui_tab.Tab {
-            return this.selectedTab;
+            return this.getSelectedTab();
         }
 
         deselectTab() {
             this.tabMenuButton.setLabel("");
-            this.selectedTab = null;
+            this.selectedTab = -1;
         }
 
         addTabSelectedListener(listener:(Tab) => void) {

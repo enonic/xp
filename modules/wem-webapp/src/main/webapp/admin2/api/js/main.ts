@@ -20,6 +20,9 @@
 ///<reference path='handler/DeleteSpaceParam.ts' />
 ///<reference path='handler/DeleteSpaceParamFactory.ts' />
 ///<reference path='handler/DeleteSpacesHandler.ts' />
+///<reference path='handler/DeleteContentParam.ts' />
+///<reference path='handler/DeleteContentParamFactory.ts' />
+///<reference path='handler/DeleteContentHandler.ts' />
 
 ///<reference path='lib/JsonRpcProvider.ts' />
 ///<reference path='lib/RemoteService.ts' />

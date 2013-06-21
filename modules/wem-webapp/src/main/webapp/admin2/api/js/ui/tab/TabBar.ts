@@ -22,7 +22,7 @@ module api_ui_tab {
             return null;
         }
 
-        selectTab(tab:api_ui_tab.Tab) {
+        selectTab(tabIndex:number) {
 
         }
 
