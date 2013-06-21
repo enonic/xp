@@ -268,9 +268,8 @@ var LiveEdit;
         DragDropSort.prototype.setDragHelperText = function (text) {
             $('#live-edit-drag-helper-text').text(text);
         };
-        DragDropSort.prototype.createComponentBarDraggables = function () {
+        DragDropSort.prototype.createComponentBarDraggables = function (c) {
             var _this = this;
-            var $componentBarComponents = $('.live-edit-component');
             var draggableOptions = {
                 connectToSortable: regionSelector,
                 addClasses: false,
@@ -299,7 +298,7 @@ var LiveEdit;
                     _isDragging = false;
                 }
             };
-            $componentBarComponents.draggable(draggableOptions);
+            c.draggable(draggableOptions);
         };
         DragDropSort.prototype.createDragHelper = function (event, helper) {
             return $(this.getDragHelperHtml(componentHelper.getComponentName(helper)));
@@ -413,9 +412,6 @@ var LiveEdit;
         };
         DragDropSort.prototype.registerGlobalListeners = function () {
             var _this = this;
-            $(window).on('dataLoaded.liveEdit.componentBar', function () {
-                _this.createComponentBarDraggables();
-            });
             $(window).on('select.liveEdit.component', function (event, $component) {
             });
             $(window).on('deselect.liveEdit.component', function () {
@@ -2177,170 +2173,6 @@ var LiveEdit;
     })(LiveEdit.ui || (LiveEdit.ui = {}));
     var ui = LiveEdit.ui;
 })(LiveEdit || (LiveEdit = {}));
-var LiveEdit;
-(function (LiveEdit) {
-    (function (ui) {
-        var $ = $liveEdit;
-        var ComponentBar = (function (_super) {
-            __extends(ComponentBar, _super);
-            function ComponentBar() {
-                        _super.call(this);
-                this.BAR_WIDTH = 235;
-                this.TOGGLE_WIDTH = 30;
-                this.INNER_WIDTH = this.BAR_WIDTH - this.TOGGLE_WIDTH;
-                this.hidden = true;
-                this.addView();
-                this.loadComponentsData();
-                this.registerGlobalListeners();
-                this.registerEvents();
-                console.log('ComponentBar instantiated. Using jQuery ' + $().jquery);
-            }
-            ComponentBar.prototype.registerGlobalListeners = function () {
-                var _this = this;
-                $(window).on('select.liveEdit.component dragStart.liveEdit.component sortStart.liveEdit.component', function () {
-                    return _this.fadeOut();
-                });
-                $(window).on('deselect.liveEdit.component dragStop.liveEdit.component sortstop.liveedit.component sortUpdate.liveEdit.component remove.liveEdit.component', function (event, triggerConfig) {
-                    return _this.fadeIn(triggerConfig);
-                });
-            };
-            ComponentBar.prototype.getComponentsDataUrl = function () {
-                return '../../../admin2/live-edit/data/mock-components.json';
-            };
-            ComponentBar.prototype.addView = function () {
-                var html = '';
-                html += '<div class="live-edit-components-container live-edit-collapsed" style="width:' + this.BAR_WIDTH + 'px; right: -' + this.INNER_WIDTH + 'px">';
-                html += '    <div class="live-edit-toggle-components-container" style="width:' + this.TOGGLE_WIDTH + 'px"><span class="live-edit-toggle-text-container">Toolbar</span></div>';
-                html += '        <div class="live-edit-components">';
-                html += '            <div class="live-edit-form-container">';
-                html += '               <form onsubmit="return false;">';
-                html += '                   <input type="text" placeholder="Filter" name="filter"/>';
-                html += '               </form>';
-                html += '            </div>';
-                html += '            <ul>';
-                html += '            </ul>';
-                html += '        </div>';
-                html += '    </div>';
-                html += '</div>';
-                this.createElementsFromString(html);
-                this.appendTo($('body'));
-            };
-            ComponentBar.prototype.registerEvents = function () {
-                var _this = this;
-                this.getToggle().click(function () {
-                    _this.toggle();
-                });
-                this.getFilterInput().on('keyup', function () {
-                    _this.filterList($(_this).val());
-                });
-                this.getBar().on('mouseover', function () {
-                    $(window).trigger('mouseOver.liveEdit.componentBar');
-                });
-            };
-            ComponentBar.prototype.loadComponentsData = function () {
-                var _this = this;
-                $.getJSON(this.getComponentsDataUrl(), null, function (data, textStatus, jqXHR) {
-                    _this.renderComponents(data);
-                    $(window).trigger('dataLoaded.liveEdit.componentBar');
-                });
-            };
-            ComponentBar.prototype.renderComponents = function (jsonData) {
-                var _this = this;
-                var groups = jsonData.componentGroups;
-                $.each(groups, function (index, group) {
-                    _this.addHeader(group);
-                    if(group.components) {
-                        _this.addComponentsToGroup(group.components);
-                    }
-                });
-            };
-            ComponentBar.prototype.addHeader = function (componentGroup) {
-                var html = '';
-                html += '<li class="live-edit-component-list-header">';
-                html += '    <span>' + componentGroup.name + '</span>';
-                html += '</li>';
-                this.getComponentsContainer().append(html);
-            };
-            ComponentBar.prototype.addComponentsToGroup = function (components) {
-                var _this = this;
-                $.each(components, function (index, component) {
-                    _this.addComponent(component);
-                });
-            };
-            ComponentBar.prototype.addComponent = function (component) {
-                var html = '';
-                html += '<li class="live-edit-component" data-live-edit-component-key="' + component.key + '" data-live-edit-component-name="' + component.name + '" data-live-edit-component-type="' + component.type + '">';
-                html += '    <img src="' + component.icon + '"/>';
-                html += '    <div class="live-edit-component-text">';
-                html += '        <div class="live-edit-component-text-name">' + component.name + '</div>';
-                html += '        <div class="live-edit-component-text-subtitle">' + component.subtitle + '</div>';
-                html += '    </div>';
-                html += '</li>';
-                this.getComponentsContainer().append(html);
-            };
-            ComponentBar.prototype.filterList = function (value) {
-                var $element, name, valueLowerCased = value.toLowerCase();
-                var list = this.getComponentList();
-                list.each(function (index) {
-                    $element = list[index];
-                    name = $element.data('live-edit-component-name').toLowerCase();
-                    $element.css('display', name.indexOf(valueLowerCased) > -1 ? '' : 'none');
-                });
-            };
-            ComponentBar.prototype.toggle = function () {
-                if(this.hidden) {
-                    this.show();
-                    this.hidden = false;
-                } else {
-                    this.hide();
-                    this.hidden = true;
-                }
-            };
-            ComponentBar.prototype.show = function () {
-                var $bar = this.getBar();
-                $bar.css('right', '0');
-                this.getToggleTextContainer().text('');
-                $bar.removeClass('live-edit-collapsed');
-            };
-            ComponentBar.prototype.hide = function () {
-                var $bar = this.getBar();
-                $bar.css('right', '-' + this.INNER_WIDTH + 'px');
-                this.getToggleTextContainer().text('Toolbar');
-                $bar.addClass('live-edit-collapsed');
-            };
-            ComponentBar.prototype.fadeIn = function (triggerConfig) {
-                if(triggerConfig && triggerConfig.showComponentBar === false) {
-                    return;
-                }
-                this.getBar().fadeIn(120);
-            };
-            ComponentBar.prototype.fadeOut = function () {
-                this.getBar().fadeOut(120);
-            };
-            ComponentBar.prototype.getBar = function () {
-                return this.getRootEl();
-            };
-            ComponentBar.prototype.getToggle = function () {
-                return $('.live-edit-toggle-components-container', this.getRootEl());
-            };
-            ComponentBar.prototype.getFilterInput = function () {
-                return $('.live-edit-form-container input[name=filter]', this.getRootEl());
-            };
-            ComponentBar.prototype.getComponentsContainer = function () {
-                return $('.live-edit-components ul', this.getRootEl());
-            };
-            ComponentBar.prototype.getComponentList = function () {
-                return $('.live-edit-component', this.getRootEl());
-            };
-            ComponentBar.prototype.getToggleTextContainer = function () {
-                return $('.live-edit-toggle-text-container', this.getRootEl());
-            };
-            return ComponentBar;
-        })(LiveEdit.ui.Base);
-        ui.ComponentBar = ComponentBar;        
-    })(LiveEdit.ui || (LiveEdit.ui = {}));
-    var ui = LiveEdit.ui;
-})(LiveEdit || (LiveEdit = {}));
 ((function ($) {
     'use strict';
     $(window).load(function () {
@@ -2367,7 +2199,6 @@ var LiveEdit;
             new LiveEdit.ui.contextmenu.Menu();
             new LiveEdit.ui.Shader();
             new LiveEdit.ui.Editor();
-            new LiveEdit.ui.ComponentBar();
             new LiveEdit.MutationObserver();
             new LiveEdit.DragDropSort();
             $(window).resize(function () {

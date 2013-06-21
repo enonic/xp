@@ -38,21 +38,21 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
 
     panels: [
         {
-            name: 'Components',
+            name: 'Insert',
             item: function () {
-                return new Admin.view.contentManager.contextwindow.Components({hidden:true});
+                return new Admin.view.contentManager.contextwindow.panel.Components({hidden:true});
             }
         },
         {
             name: 'Device Selector',
             item: function () {
-                return new Admin.view.contentManager.contextwindow.DeviceSelector({hidden:true});
+                return new Admin.view.contentManager.contextwindow.panel.DeviceSelector({hidden:true});
             }
         },
         {
             name: 'Images',
             item: function () {
-                return new Admin.view.contentManager.contextwindow.Images({hidden:true});
+                return new Admin.view.contentManager.contextwindow.panel.Images({hidden:true});
             }
         }
     ],
@@ -305,13 +305,6 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         for (var i = 0; i < addedPanels.length; i++) {
             addedPanels[i].setHeight(newBodyHeight);
         }
-    },
-
-    /**
-     * @returns {Html_dom_Element}
-     */
-    getLiveEditIFrame: function () {
-        return Ext.DomQuery.selectNode('#live-edit-iframe');
     },
 
     doShow: function () {

@@ -59,8 +59,8 @@ module LiveEdit {
         }
 
 
-        private createComponentBarDraggables():void {
-            var $componentBarComponents = $('.live-edit-component');
+        public createComponentBarDraggables(c:JQuery):void {
+            // var $componentBarComponents = $('.live-edit-component');
             var draggableOptions = {
                 connectToSortable: regionSelector,
                 addClasses: false,
@@ -86,7 +86,7 @@ module LiveEdit {
                     _isDragging = false;
                 }
             };
-            $componentBarComponents.draggable(draggableOptions);
+            c.draggable(draggableOptions);
         }
 
 
@@ -236,9 +236,11 @@ module LiveEdit {
         private registerGlobalListeners():void {
             // The jQuery draggable() is not "live"/support delegates so we have to make sure the components in the component bar are always draggable
             // Make the components in the component bar draggable
+            /*
             $(window).on('dataLoaded.liveEdit.componentBar', () => {
                 this.createComponentBarDraggables();
             });
+            */
 
             $(window).on('select.liveEdit.component', (event, $component) => {
                 /*

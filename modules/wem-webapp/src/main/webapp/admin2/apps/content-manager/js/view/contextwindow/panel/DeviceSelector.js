@@ -1,4 +1,4 @@
-Ext.define('Admin.view.contentManager.contextwindow.DeviceSelector', {
+Ext.define('Admin.view.contentManager.contextwindow.panel.DeviceSelector', {
     extend: 'Ext.container.Container',
     alias: 'widget.contextWindowDeviceSelector',
     layout: {
@@ -120,8 +120,9 @@ Ext.define('Admin.view.contentManager.contextwindow.DeviceSelector', {
     },
 
     resizeLiveEditFrame: function (deviceModel) {
-        var iFrame = Ext.get(this.getContextWindow().getLiveEditIFrame().id),
-            iFrameContainer = Ext.get('live-edit-iframe-container'),
+        var panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
+            iFrame = Ext.get(panelHelper.getLiveEditIFrameDomEl().id),
+            iFrameContainer = panelHelper.getLiveEditIFrameContainerEl(),
             deviceType = deviceModel.data.device_type,
             isRotatable = deviceModel.data.rotatable,
             width = deviceModel.data.width,
@@ -197,10 +198,6 @@ Ext.define('Admin.view.contentManager.contextwindow.DeviceSelector', {
         } else {
             buttonEl.removeCls('live-edit-device-rotate-button-horizontal');
         }
-    },
-
-    getContextWindow: function () {
-        return this.up('contextWindow');
     }
 
 });

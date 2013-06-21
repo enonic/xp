@@ -43,7 +43,7 @@ declare var LiveEditMutationSummary;
 ///<reference path='ui/contextmenu/menuitem/Settings.ts' />
 ///<reference path='ui/contextmenu/menuitem/Remove.ts' />
 
-///<reference path='ui/componentbar/ComponentBar.ts' />
+/* ///<reference path='ui/componentbar/ComponentBar.ts' /> */
 
 (function ($) {
     'use strict';
@@ -78,7 +78,7 @@ declare var LiveEditMutationSummary;
             new LiveEdit.ui.contextmenu.Menu();
             new LiveEdit.ui.Shader();
             new LiveEdit.ui.Editor();
-            new LiveEdit.ui.ComponentBar();
+            // new LiveEdit.ui.ComponentBar();
             new LiveEdit.MutationObserver();
 
             new LiveEdit.DragDropSort();

@@ -1,7 +1,7 @@
 /**
  * fixme: Extract model and store
  */
-Ext.define('Admin.view.contentManager.contextwindow.Components', {
+Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
     extend: 'Ext.container.Container',
     alias: 'widget.contextWindowComponentsPanel',
     layout: {
@@ -111,23 +111,23 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
                 resolveIconCls: function (componentType) {
                     var iconCls;
                     switch (componentType) {
-                        case 'page':
-                            iconCls = 'icon-file';
-                            break;
-                        case 'region':
-                            iconCls = 'icon-th-large';
-                            break;
-                        case 'layout':
-                            iconCls = 'icon-columns';
-                            break;
-                        case 'part':
-                            iconCls = 'icon-puzzle-piece';
-                            break;
-                        case 'paragraph':
-                            iconCls = 'icon-edit';
-                            break;
-                        default:
-                            iconCls = '';
+                    case 'page':
+                        iconCls = 'icon-file';
+                        break;
+                    case 'region':
+                        iconCls = 'icon-th-large';
+                        break;
+                    case 'layout':
+                        iconCls = 'icon-columns';
+                        break;
+                    case 'part':
+                        iconCls = 'icon-puzzle-piece';
+                        break;
+                    case 'paragraph':
+                        iconCls = 'icon-edit';
+                        break;
+                    default:
+                        iconCls = '';
                     }
                     return iconCls;
                 }
@@ -160,18 +160,6 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
         });
     },
 
-    getJQueryFromLiveEditPage: function () {
-        return  this.getContextWindow().getLiveEditIFrame().contentWindow.$liveEdit;
-    },
-
-    getContextWindow: function () {
-        return this.up('contextWindow');
-    },
-
-    getContextWindowViewRegion: function () {
-        return this.getContextWindow().getEl().getViewRegion();
-    },
-
 
     /***************************************************************************************************
      * fixme: Refactor, use a mixin or something similar for the drag drop implementation
@@ -199,53 +187,58 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
 
         // set up droppable
         /*
-        $(me.getContextWindow().getLiveEditIFrame()).droppable({
-            over: function (event, ui) {
-                me.onJQueryDroppableOver(event, ui);
-            }
-        });
-        */
+         $(me.getContextWindow().getLiveEditIFrameDomEl()).droppable({
+         over: function (event, ui) {
+         me.onJQueryDroppableOver(event, ui);
+         }
+         });
+         */
     },
 
     onJQueryDraggableStart: function (event, ui) {
-        var me = this;
+        var me = this,
+            panelHelper = Admin.view.contentManager.contextwindow.panel.Helper;
 
         // cache the window view region on drag start for performance
-        me.windowRegion = me.getContextWindowViewRegion();
+        me.windowRegion = panelHelper.getContextWindowViewRegion(panelHelper.getContextWindowFromChildCmp(me));
 
-         me.getContextWindow().hide();
-         var jQuery = me.getJQueryFromLiveEditPage();
-         var clone = jQuery(ui.helper.clone());
+        panelHelper.getContextWindowFromChildCmp(me).hide();
 
-         clone.css('position', 'absolute');
-         clone.css('z-index', '5100000');
+        var jQuery = panelHelper.getJQueryFromLiveEditPage();
+        var clone = jQuery(ui.helper.clone());
 
-         jQuery('body').append(clone);
+        clone.css('position', 'absolute');
+        clone.css('z-index', '5100000');
 
-         jQuery(clone).draggable({
-         connectToSortable: '[data-live-edit-type=region]',
-         cursorAt: me.cursorAt
-         });
+        jQuery('body').append(clone);
 
-         jQuery(clone).simulate('mousedown');
+        jQuery(clone).draggable({
+            connectToSortable: '[data-live-edit-type=region]',
+            cursorAt: me.cursorAt
+        });
+
+        jQuery(clone).simulate('mousedown');
     },
 
     onJQueryDraggableDrag: function (event, ui) {
         var me = this,
+            panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
             mouseX = event.pageX,
             mouseY = event.pageY,
-            mousePointerIsOutsideOfWindow = mouseY <= me.windowRegion.top || mouseY >= (me.windowRegion.bottom - 10) || mouseX >= (me.windowRegion.right - 10) ||
+            mousePointerIsOutsideOfWindow = mouseY <= me.windowRegion.top || mouseY >= (me.windowRegion.bottom - 10) ||
+                                            mouseX >= (me.windowRegion.right - 10) ||
                                             mouseX <= me.windowRegion.left;
 
         if (mousePointerIsOutsideOfWindow) {
-            me.getContextWindow().hide();
+            panelHelper.getContextWindowFromChildCmp(me).hide();
         }
 
     },
 
     onJQueryDroppableOver: function (event, ui) {
         var me = this,
-            jQuery = me.getJQueryFromLiveEditPage(),
+            panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
+            jQuery = panelHelper.getJQueryFromLiveEditPage(),
             clone = jQuery(ui.helper.clone());
 
         clone.css('position', 'absolute');
@@ -269,18 +262,21 @@ Ext.define('Admin.view.contentManager.contextwindow.Components', {
             type = currentTarget.data('live-edit-component-type'),
             name = currentTarget.data('live-edit-component-name');
 
-        return $('<div id="live-edit-drag-helper" class="live-edit-component" style="width: 150px; height: 16px;" data-live-edit-component-key="' + key + '" data-live-edit-component-name="' + type + '" data-live-edit-component-type="' + type + '"><div id="live-edit-drag-helper-status-icon"></div><span id="live-edit-drag-helper-text">' + name + '</span></div>');
+        return $('<div id="live-edit-drag-helper" class="live-edit-component" style="width: 150px; height: 16px;" data-live-edit-component-key="' +
+                 key + '" data-live-edit-component-name="' + type + '" data-live-edit-component-type="' + type +
+                 '"><div id="live-edit-drag-helper-status-icon"></div><span id="live-edit-drag-helper-text">' + name + '</span></div>');
     },
 
     registerListenersFromLiveEditPage: function () {
         var me = this,
+            panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
         // Right now We need to use the jQuery object from the live edit page in order to listen for the events
-            jQuery = me.getJQueryFromLiveEditPage(),
-            liveEditWindow = me.getContextWindow().getLiveEditIFrame().contentWindow;
+            jQuery = panelHelper.getJQueryFromLiveEditPage(),
+            liveEditWindow = panelHelper.getLiveEditWindow()
 
         jQuery(liveEditWindow).on('sortStop.liveEdit.component', function () {
             $('.live-edit-component').simulate('mouseup');
-            me.getContextWindow().doShow();
+            panelHelper.getContextWindowFromChildCmp(me).doShow();
         });
     }
 
