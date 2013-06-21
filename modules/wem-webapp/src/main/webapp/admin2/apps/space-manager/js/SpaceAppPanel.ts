@@ -4,17 +4,11 @@ module app {
 
         private appBrowsePanel:app_browse.SpaceAppBrowsePanel;
 
-        private appDeckPanel:api.AppDeckPanel;
-
         constructor(appBar:app_appbar.SpaceAppBar) {
 
             this.appBrowsePanel = new app_browse.SpaceAppBrowsePanel();
-            this.appDeckPanel = new api.AppDeckPanel(appBar.getTabMenu());
-            appBar.getTabMenu().addTabSelectedListener((tab:api_ui_tab.Tab) => {
-                this.showDeckPanel();
-            });
 
-            super(this.appBrowsePanel, this.appDeckPanel);
+            super(appBar.getTabMenu(), this.appBrowsePanel);
 
             api_appbar.ShowAppBrowsePanelEvent.on((event) => {
                 this.showBrowsePanel();
@@ -26,9 +20,8 @@ module app {
                 var tabMenuItem = new app_appbar.SpaceAppBarTabMenuItem("New Space");
                 var spaceWizardPanel = new app_wizard.SpaceWizardPanel2('new-space', 'New Space', "");
 
-                this.appDeckPanel.addTab(tabMenuItem, spaceWizardPanel);
-                this.appDeckPanel.showTab(tabMenuItem);
-                this.showDeckPanel();
+                this.addTab(tabMenuItem, spaceWizardPanel);
+                this.showTab(tabMenuItem);
             });
 
             app_event.OpenSpaceEvent.on((event) => {
@@ -53,9 +46,8 @@ module app {
                             var id = this.generateTabId(result.space.name, true);
                             var spaceWizardPanel = new app_wizard.SpaceWizardPanel2(id, result.space.displayName, result.space.iconUrl);
 
-                            this.appDeckPanel.addTab(tabMenuItem, spaceWizardPanel);
-                            this.appDeckPanel.showTab(tabMenuItem);
-                            this.showDeckPanel();
+                            this.addTab(tabMenuItem, spaceWizardPanel);
+                            this.showTab(tabMenuItem);
                         } else {
                             console.error("Error", result ? result.error : "Unable to retrieve space.");
                         }
@@ -69,6 +61,42 @@ module app {
 
         init() {
             this.appBrowsePanel.init();
+        }
+
+        tabRemove(tab:api_ui_tab.Tab):bool {
+
+            if (this.hasUnsavedChanges()) {
+                return false;
+            }
+            else {
+                return super.tabRemove(tab);
+            }
+
+        }
+
+        removePanel(index:number):api_ui.Panel {
+            var panelRemoved = super.removePanel(index);
+            if (this.getSize() == 0) {
+                this.showBrowsePanel();
+            }
+            return panelRemoved;
+        }
+
+
+        private hasUnsavedChanges():bool {
+            /*TODO: if (wizardPanel != null && wizardPanel.getWizardDirty()) {
+             Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?',
+             (answer) => {
+             if ('yes' === answer) {
+             this.removeTab(tab);
+             } else {
+             return false;
+             }
+             });
+             } else {
+             this.removeTab(tab);
+             }*/
+            return false;
         }
 
 

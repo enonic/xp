@@ -2,11 +2,15 @@
  * Main file for all admin API classes and methods.
  */
 
+// require ExtJs as long as it is used for implementation
+///<reference path='ExtJs.d.ts' />
+
 ///<reference path='Mousetrap.d.ts' />
 ///<reference path='jquery.d.ts' />
 
 ///<reference path='util/ImageLoader.ts' />
 ///<reference path='util/UriHelper.ts' />
+///<reference path='util/Animation.ts'/>
 
 ///<reference path='model/Model.ts' />
 ///<reference path='model/SpaceModel.ts' />
@@ -49,6 +53,7 @@
 ///<reference path='ui/BodyMask.ts' />
 ///<reference path='ui/AbstractButton.ts' />
 ///<reference path='ui/toolbar/Toolbar.ts' />
+///<reference path='ui/toolbar/ToggleSlide.ts' />
 ///<reference path='ui/menu/MenuItem.ts' />
 ///<reference path='ui/menu/ContextMenu.ts' />
 ///<reference path='ui/menu/ActionMenu.ts' />
@@ -61,6 +66,7 @@
 ///<reference path='ui/tab/TabbedDeckPanel.ts' />
 ///<reference path='ui/Tooltip.ts' />
 ///<reference path='ui/ProgressBar.ts' />
+///<reference path='ui/grid/TreeGridPanel.ts' />
 
 ///<reference path='appbar/AppBar.ts' />
 ///<reference path='appbar/UserInfoPopup.ts' />
@@ -70,7 +76,6 @@
 ///<reference path='appbar/AppBarTabMenuItem.ts' />
 ///<reference path='appbar/AppBar.ts' />
 
-///<reference path='AppDeckPanel.ts' />
 ///<reference path='AppPanel.ts' />
 
 ///<reference path='ui/dialog/DialogButton.ts' />

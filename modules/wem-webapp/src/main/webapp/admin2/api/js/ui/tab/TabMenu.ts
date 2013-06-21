@@ -78,14 +78,20 @@ module api_ui_tab {
             var newLength = this.tabs.push(tabMenuItem);
             tabMenuItem.setTabIndex(newLength - 1);
 
-            this.tabMenuButton.setLabel(tab.getLabel());
-
-            this.menuEl.appendChild(tabMenuItem);
-
+            if (tab.isVisible()) {
+                this.tabMenuButton.setLabel(tab.getLabel());
+                this.menuEl.appendChild(tabMenuItem);
+            }
         }
 
         getSize():number {
-            return this.tabs.length;
+            var size = 0;
+            this.tabs.forEach(function(tab:TabMenuItem) {
+                if(tab.isVisible()) {
+                    size++;
+                }
+            });
+            return size;
         }
 
         removeTab(tab:api_ui_tab.Tab) {

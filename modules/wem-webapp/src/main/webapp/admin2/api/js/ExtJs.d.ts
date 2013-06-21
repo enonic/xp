@@ -160,7 +160,7 @@ interface IExt {
 
     callback(callback:Function, scope?:Object, args?:any[], delay?:number): void;
 
-    clone(item:Object): Object;
+    clone(item:any): any;
 
     copyTo(dest:Object, source:Object, names:string, usePrototypeKeys?:bool): Object;
     copyTo(dest:Object, source:Object, names:string[], usePrototypeKeys?:bool): Object;
@@ -348,6 +348,7 @@ interface Ext_Packages extends IExt {
     Template: Ext_Template;
     LoadMask: Ext_LoadMask;
     XTemplate: Ext_XTemplate;
+    Loader: Ext_Loader;
 
     Array: Ext_Array;
     String: Ext_String;
@@ -1378,11 +1379,56 @@ interface Ext_JSON {
 
 
 /**
+ * Ext.Loader supports both asynchronous and synchronous loading approaches, and leverage their advantages for the best development flow.
+ */
+interface Ext_Loader {
+
+    history: string[];
+
+    addClassPathMappings(paths:Object): Ext_Loader;
+
+    exclude(excludes:string): Object;
+    exclude(excludes:string[]): Object;
+
+    getConfig(name:string): Object;
+
+    getPath(className:string): string;
+
+    loadScript(options:{
+        url:string;
+        onLoad?:Function;
+        onError?:Function;
+        scope?:Object;
+    }): void;
+
+    onReady(fn:Function, scope:Object, withDomReady:bool): void;
+
+    require(expressions:string, fn?:Function, scope?:Object, excludes?:string): void;
+    require(expressions:string, fn?:Function, scope?:Object, excludes?:string[]): void;
+    require(expressions:string[], fn?:Function, scope?:Object, excludes?:string): void;
+    require(expressions:string[], fn?:Function, scope?:Object, excludes?:string[]): void;
+
+    setConfig(config:Object): Ext_Loader;
+
+    setPath(name:Object): Ext_Loader;
+    setPath(name:string, path?:string): Ext_Loader;
+
+    syncRequire(expressions:string, fn?:Function, scope?:Object, excludes?:string): void;
+    syncRequire(expressions:string, fn?:Function, scope?:Object, excludes?:string []): void;
+    syncRequire(expressions:string[], fn?:Function, scope?:Object, excludes?:string): void;
+    syncRequire(expressions:string[], fn?:Function, scope?:Object, excludes?:string []): void;
+
+}
+
+
+/**
  *      Represents an HTML fragment template. Templates may be precompiled for greater performance.
  */
 interface Ext_Template extends Ext_Base {
 
     isTemplate: bool;
+
+    new(...html:string[]):Ext_Template;
 
     append(el:string, values:any /* Object/Array */, returnElement?:bool): any;      // HTMLElement/Ext.Element
     append(el:Html_dom_Element, values:any /* Object/Array */, returnElement?:bool): any;      // HTMLElement/Ext.Element
@@ -3603,6 +3649,8 @@ interface Ext_util_Observable extends Ext_Base {
     hasListeners: Object;
     isObservable: bool;
 
+    new(config?:Object):Ext_util_Observable;
+
     addEvents(...eventNames:string[]): void;
     addEvents(eventNames:Object): void;
 
@@ -4345,6 +4393,110 @@ interface Ext_data_Errors extends Ext_Base {
     getByField(fieldName:string): Object[];
 
     isValid(): bool;
+
+}
+
+
+/**
+ * This class is used as a set of methods that are applied to the prototype of a Model to decorate it with a Node API.
+ */
+interface Ext_data_NodeInterface extends Ext_Base {
+
+    childNodes: Object;
+
+    firstChild: Object;
+
+    isNode: Boolean;
+
+    lastChild: Object;
+
+    nextSibling: Object;
+
+    parentNode: Object;
+
+    previousSibling: Object;
+
+
+    appendChild(node:Ext_data_NodeInterface): Ext_data_NodeInterface;
+    appendChild(node:Ext_data_NodeInterface[]): Ext_data_NodeInterface;
+
+    bubble(fn:Function, scope?:Object, args?:any[]): void;
+
+    cascadeBy(fn, scope?:Object, args?:any[]): void;
+
+    collapse(recursive?:bool, callback?:Function, scope?:Object): void;
+
+    collapseChildren(recursive?:bool, callback?:Function, scope?:Object): void;
+
+    contains(node): bool;
+
+    copy(id?:string, deep?:bool): Ext_data_NodeInterface;
+
+    createNode(node:Object): Ext_data_NodeInterface;
+
+    destroy(silent?:bool): void;
+
+    eachChild(fn:Function, scope?:Object, args?:any[]): void;
+
+    expand(recursive?:bool, callback?:Function, scope?:Object): void;
+
+    expandChildren(recursive?:bool, callback?:Function, scope?:Object): void;
+
+    findChild(attribute:string, value:Object, deep?:bool): Ext_data_NodeInterface;
+
+    findChildBy(fn, scope?:Object, deep?:bool): Ext_data_NodeInterface;
+
+    getChildAt(index): Ext_data_NodeInterface;
+
+    getDepth(): number;
+
+    getInitialConfig(name?:string): any;
+
+    getOwnerTree(): Ext_tree_Panel;
+
+    getPath(field?:string, separator?:string): string;
+
+    hasChildNodes(): bool;
+
+    indexOf(node): number;
+
+    indexOfId(id): number;
+
+    insertBefore(node:Ext_data_NodeInterface, refNode:Ext_data_NodeInterface): Ext_data_NodeInterface;
+
+    insertChild(index:number, node:Ext_data_NodeInterface): Ext_data_NodeInterface;
+
+    isAncestor(node:Ext_data_NodeInterface): bool;
+
+    isExpandable(): bool;
+
+    isExpanded(): bool;
+
+    isFirst(): bool;
+
+    isLast(): bool;
+
+    isLeaf(): bool;
+
+    isLoaded(): bool;
+
+    isLoading(): bool;
+
+    isRoot(): bool;
+
+    isVisible(): bool;
+
+    remove(destroy?:bool): Ext_data_NodeInterface;
+
+    removeAll(destroy?:bool): Ext_data_NodeInterface;
+
+    removeChild(node:Ext_data_NodeInterface, destroy?:bool): Ext_data_NodeInterface;
+
+    replaceChild(newChild, oldChild): Ext_data_NodeInterface;
+
+    sort(fn, recursive?:bool, suppressEvent?:bool): void;
+
+    updateInfo(commit): bool;
 
 }
 
@@ -5136,7 +5288,6 @@ interface Ext_dd_ScrollManager {
 
 interface Ext_Version {}
 
-interface Ext_data_NodeInterface {}
 interface Ext_data_reader_Reader {}
 interface Ext_data_writer_Writer {}
 interface Ext_data_Operation {}

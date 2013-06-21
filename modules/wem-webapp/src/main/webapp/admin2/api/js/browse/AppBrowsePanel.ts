@@ -6,13 +6,13 @@ module api_browse{
 
         private browseToolbar:api_ui_toolbar.Toolbar;
 
-        private grid:any;
+        private grid:api_ui_grid.TreeGridPanel;
 
         private detailPanel:DetailPanel;
 
         private filterPanel:any;
 
-        constructor(browseToolbar:api_ui_toolbar.Toolbar, grid:any, detailPanel:DetailPanel, filterPanel:any) {
+        constructor(browseToolbar:api_ui_toolbar.Toolbar, grid:api_ui_grid.TreeGridPanel, detailPanel:DetailPanel, filterPanel:any) {
             super("AppBrowsePanel");
 
             this.browseToolbar = browseToolbar;

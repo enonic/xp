@@ -38,7 +38,7 @@ module api_notify {
             var template = templates.manager;
 
             // render manager template to document body
-            var node = template.append(Ext.getBody());
+            var node = template.append(Ext.getBody(), {});
             this.el = Ext.get(node);
 
             // align the element (TODO: Should be placed in CSS)

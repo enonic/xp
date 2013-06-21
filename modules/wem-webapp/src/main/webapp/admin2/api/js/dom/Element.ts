@@ -64,6 +64,12 @@ module api_dom {
             this.el.getHTMLElement().insertBefore(child.getHTMLElement(), this.el.getHTMLElement().firstChild);
         }
 
+        removeChild(child:Element) {
+            if (this.el.getHTMLElement().contains(child.getHTMLElement())) {
+                this.el.getHTMLElement().removeChild(child.getHTMLElement());
+            }
+        }
+
         removeChildren() {
             var htmlEl = this.el.getHTMLElement();
             while (htmlEl.firstChild) {

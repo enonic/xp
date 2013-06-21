@@ -146,9 +146,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
                 emptyText: headerData.isNew ? 'New Content' : 'Display Name',
                 autoFocus: headerData.isNew && Ext.isEmpty(evaluateFn)
             },
-            data: this.data,
-            content: this.content,
-            prepareHeaderData: this.prepareHeaderData
+            data: headerData,
+            content: this.content
         });
         this.validateItems.push(wizardHeader);
         return wizardHeader;

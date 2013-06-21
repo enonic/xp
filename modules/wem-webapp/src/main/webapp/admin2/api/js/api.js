@@ -32,6 +32,29 @@ var api_util;
     }
     api_util.getAbsoluteUri = getAbsoluteUri;
 })(api_util || (api_util = {}));
+var api_util;
+(function (api_util) {
+    var Animation = (function () {
+        function Animation() { }
+        Animation.DELAY = 10;
+        Animation.start = function start(doStep, duration, delay) {
+            var startTime = new Date().getTime();
+            var id = setInterval(function () {
+                var progress = Math.min(((new Date()).getTime() - startTime) / duration, 1);
+                doStep(progress);
+                if(progress == 1) {
+                    clearInterval(id);
+                }
+            }, delay || api_util.Animation.DELAY);
+            return id;
+        };
+        Animation.stop = function stop(id) {
+            clearInterval(id);
+        };
+        return Animation;
+    })();
+    api_util.Animation = Animation;    
+})(api_util || (api_util = {}));
 var api_handler;
 (function (api_handler) {
     var DeleteSpaceParamFactory = (function () {
@@ -415,7 +438,8 @@ var api_notify;
         }
         NotifyManager.prototype.render = function () {
             var template = templates.manager;
-            var node = template.append(Ext.getBody());
+            var node = template.append(Ext.getBody(), {
+            });
             this.el = Ext.get(node);
             this.el.setStyle('bottom', 0);
             this.getWrapperEl().setStyle({
@@ -648,6 +672,7 @@ var api_dom;
         };
         ElementHelper.prototype.appendChild = function (child) {
             this.el.appendChild(child);
+            return this;
         };
         ElementHelper.prototype.setData = function (name, value) {
             var any = this.el;
@@ -817,6 +842,11 @@ var api_dom;
         };
         Element.prototype.prependChild = function (child) {
             this.el.getHTMLElement().insertBefore(child.getHTMLElement(), this.el.getHTMLElement().firstChild);
+        };
+        Element.prototype.removeChild = function (child) {
+            if(this.el.getHTMLElement().contains(child.getHTMLElement())) {
+                this.el.getHTMLElement().removeChild(child.getHTMLElement());
+            }
         };
         Element.prototype.removeChildren = function () {
             var htmlEl = this.el.getHTMLElement();
@@ -1075,6 +1105,9 @@ var api_ui;
                 }
             }
         };
+        DeckPanel.prototype.getPanels = function () {
+            return this.panels;
+        };
         return DeckPanel;
     })(api_ui.Panel);
     api_ui.DeckPanel = DeckPanel;    
@@ -1199,6 +1232,86 @@ var api_ui_toolbar;
         }
         return ToolbarGreedySpacer;
     })();    
+})(api_ui_toolbar || (api_ui_toolbar = {}));
+var api_ui_toolbar;
+(function (api_ui_toolbar) {
+    var ToggleSlide = (function (_super) {
+        __extends(ToggleSlide, _super);
+        function ToggleSlide(onText, offText, initOn) {
+                _super.call(this, 'ToogleSlide', 'toggle-slide');
+            this.animationDuration = 300;
+            this.onText = onText;
+            this.offText = offText;
+            this.createMarkup();
+            this.calculateStyles();
+            initOn ? this.turnOn() : this.turnOff();
+            this.addListeners();
+        }
+        ToggleSlide.prototype.toggle = function () {
+            this.isOn ? this.turnOff() : this.turnOn();
+        };
+        ToggleSlide.prototype.turnOn = function () {
+            this.slideRight();
+            this.isOn = true;
+        };
+        ToggleSlide.prototype.turnOff = function () {
+            this.slideLeft();
+            this.isOn = false;
+        };
+        ToggleSlide.prototype.isTurnedOn = function () {
+            return this.isOn;
+        };
+        ToggleSlide.prototype.createMarkup = function () {
+            this.thumb = new api_dom.DivEl(null, 'thumb');
+            this.holder = new api_dom.DivEl(null, 'holder');
+            this.onLabel = new api_dom.DivEl(null, 'on');
+            this.offLabel = new api_dom.DivEl(null, 'off');
+            var thumbEl = this.thumb.getEl(), holderEl = this.holder.getEl(), onLabelEl = this.onLabel.getEl(), offLabelEl = this.offLabel.getEl();
+            this.getEl().appendChild(thumbEl.getHTMLElement()).appendChild(holderEl.getHTMLElement());
+            holderEl.appendChild(onLabelEl.getHTMLElement()).appendChild(offLabelEl.getHTMLElement());
+            onLabelEl.setInnerHtml(this.onText);
+            offLabelEl.setInnerHtml(this.offText);
+        };
+        ToggleSlide.prototype.calculateStyles = function () {
+            var thumbEl = this.thumb.getEl(), onLabelEl = this.onLabel.getEl(), offLabelEl = this.offLabel.getEl();
+            document.body.appendChild(this.getHTMLElement());
+            var onWidth = onLabelEl.getWidth(), offWidth = offLabelEl.getWidth();
+            var thumbWidth = Math.max(onWidth, offWidth);
+            thumbEl.setWidth((thumbWidth + 4) + 'px');
+            onLabelEl.setWidth(thumbWidth + 'px');
+            offLabelEl.setWidth(thumbWidth + 'px');
+        };
+        ToggleSlide.prototype.addListeners = function () {
+            var me = this;
+            me.getEl().addEventListener('click', function () {
+                me.toggle();
+            });
+        };
+        ToggleSlide.prototype.slideLeft = function () {
+            var thumbEl = this.thumb.getEl(), offset = this.calculateOffset();
+            this.animate(function (progress) {
+                thumbEl.setLeft(offset * (1 - progress) + 'px');
+            });
+        };
+        ToggleSlide.prototype.slideRight = function () {
+            var thumbEl = this.thumb.getEl(), offset = this.calculateOffset();
+            this.animate(function (progress) {
+                thumbEl.setLeft(offset * progress + 'px');
+            });
+        };
+        ToggleSlide.prototype.calculateOffset = function () {
+            var toggleWidth = this.getEl().getWidth(), thumbWidth = this.thumb.getEl().getWidth();
+            return toggleWidth - thumbWidth;
+        };
+        ToggleSlide.prototype.animate = function (step) {
+            if(this.animationId) {
+                api_util.Animation.stop(this.animationId);
+            }
+            this.animationId = api_util.Animation.start(step, this.animationDuration);
+        };
+        return ToggleSlide;
+    })(api_dom.DivEl);
+    api_ui_toolbar.ToggleSlide = ToggleSlide;    
 })(api_ui_toolbar || (api_ui_toolbar = {}));
 var api_ui_menu;
 (function (api_ui_menu) {
@@ -1442,11 +1555,19 @@ var api_ui_tab;
             tabMenuItem.setTabMenu(this);
             var newLength = this.tabs.push(tabMenuItem);
             tabMenuItem.setTabIndex(newLength - 1);
-            this.tabMenuButton.setLabel(tab.getLabel());
-            this.menuEl.appendChild(tabMenuItem);
+            if(tab.isVisible()) {
+                this.tabMenuButton.setLabel(tab.getLabel());
+                this.menuEl.appendChild(tabMenuItem);
+            }
         };
         TabMenu.prototype.getSize = function () {
-            return this.tabs.length;
+            var size = 0;
+            this.tabs.forEach(function (tab) {
+                if(tab.isVisible()) {
+                    size++;
+                }
+            });
+            return size;
         };
         TabMenu.prototype.removeTab = function (tab) {
             var tabMenuItem = tab;
@@ -1523,7 +1644,7 @@ var api_ui_tab;
             this.tabMenu = tabMenu;
         };
         TabMenuButton.prototype.setLabel = function (value) {
-            jQuery(this.labelEl.getHTMLElement()).text(value);
+            this.labelEl.getEl().setInnerHtml(value);
         };
         return TabMenuButton;
     })(api_dom.DivEl);
@@ -1536,18 +1657,25 @@ var api_ui_tab;
         function TabMenuItem(label) {
             var _this = this;
                 _super.call(this, "TabMenuItem", "tab-menu-item");
+            this.visible = true;
+            this.removable = true;
             this.label = label;
             this.labelEl = new api_dom.SpanEl();
             this.labelEl.getEl().setInnerHtml(label);
             this.appendChild(this.labelEl);
             var removeButton = new api_dom.ButtonEl();
-            removeButton.getEl().setInnerHtml("X");
+            removeButton.getEl().setInnerHtml("&times;");
             this.appendChild(removeButton);
             this.labelEl.getEl().addEventListener("click", function () {
                 _this.tabMenu.handleTabClickedEvent(_this);
             });
             removeButton.getEl().addEventListener("click", function () {
-                _this.tabMenu.handleTabRemoveButtonClickedEvent(_this);
+                if(_this.removable) {
+                    _this.tabMenu.handleTabRemoveButtonClickedEvent(_this);
+                    if(_this.tabMenu.getSize() == 0) {
+                        _this.tabMenu.hideMenu();
+                    }
+                }
             });
         }
         TabMenuItem.prototype.setTabMenu = function (tabMenu) {
@@ -1561,6 +1689,26 @@ var api_ui_tab;
         };
         TabMenuItem.prototype.getLabel = function () {
             return this.label;
+        };
+        TabMenuItem.prototype.isVisible = function () {
+            return this.visible;
+        };
+        TabMenuItem.prototype.setVisible = function (value) {
+            this.visible = value;
+            if(!this.visible) {
+                this.remove();
+            }
+        };
+        TabMenuItem.prototype.isRemovable = function () {
+            return this.removable;
+        };
+        TabMenuItem.prototype.setRemovable = function (value) {
+            this.removable = value;
+        };
+        TabMenuItem.prototype.remove = function () {
+            if(this.tabMenu) {
+                this.tabMenu.removeChild(this);
+            }
         };
         return TabMenuItem;
     })(api_dom.LiEl);
@@ -1770,6 +1918,196 @@ var api_ui;
     })(api_dom.DivEl);
     api_ui.ProgressBar = ProgressBar;    
 })(api_ui || (api_ui = {}));
+var api_ui_grid;
+(function (api_ui_grid) {
+    var TreeGridPanel = (function () {
+        function TreeGridPanel(columns, gridStore, treeStore, gridConfig, treeConfig) {
+            this.keyField = 'name';
+            this.activeList = "grid";
+            this.gridStore = gridStore;
+            this.treeStore = treeStore;
+            this.columns = columns;
+            this.gridConfig = gridConfig;
+            this.treeConfig = treeConfig;
+        }
+        TreeGridPanel.GRID = "grid";
+        TreeGridPanel.TREE = "tree";
+        TreeGridPanel.prototype.create = function (region, renderTo) {
+            this.ext = new Ext.panel.Panel({
+                region: region,
+                renderTo: renderTo,
+                flex: 1,
+                layout: 'card',
+                border: false,
+                activeItem: this.activeList,
+                itemId: this.itemId
+            });
+            this.ext.add(this.createGridPanel(this.gridStore, this.gridConfig));
+            this.ext.add(this.createTreePanel(this.treeStore, this.treeConfig));
+            return this;
+        };
+        TreeGridPanel.prototype.createGridPanel = function (gridStore, gridConfig) {
+            var grid = new Ext.grid.Panel(Ext.apply({
+                itemId: 'grid',
+                cls: 'admin-grid',
+                border: false,
+                hideHeaders: true,
+                columns: this.columns,
+                viewConfig: {
+                    trackOver: true,
+                    stripeRows: true,
+                    loadMask: {
+                        store: gridStore
+                    }
+                },
+                store: gridStore,
+                selModel: Ext.create('Ext.selection.CheckboxModel', {
+                    headerWidth: 36
+                }),
+                plugins: [
+                    new Admin.plugin.PersistentGridSelectionPlugin({
+                        keyField: this.keyField
+                    })
+                ]
+            }, gridConfig));
+            grid.addDocked(new Ext.toolbar.Toolbar({
+                itemId: 'selectionToolbar',
+                cls: 'admin-white-toolbar',
+                dock: 'top',
+                store: gridStore,
+                gridPanel: grid,
+                resultCountHidden: true,
+                plugins: [
+                    'gridToolbarPlugin'
+                ]
+            }));
+            gridStore.on('datachanged', this.fireUpdateEvent, this);
+            return grid;
+        };
+        TreeGridPanel.prototype.createTreePanel = function (treeStore, treeConfig) {
+            var treeColumns = Ext.clone(this.columns);
+            treeColumns[0].xtype = 'treecolumn';
+            var tree = new Ext.tree.Panel(Ext.apply({
+                xtype: 'treepanel',
+                cls: 'admin-tree',
+                hideHeaders: true,
+                itemId: 'tree',
+                useArrows: true,
+                border: false,
+                rootVisible: false,
+                viewConfig: {
+                    trackOver: true,
+                    stripeRows: true,
+                    loadMask: {
+                        store: treeStore
+                    }
+                },
+                store: treeStore,
+                columns: treeColumns,
+                plugins: [
+                    new Admin.plugin.PersistentGridSelectionPlugin({
+                        keyField: this.keyField
+                    })
+                ]
+            }, treeConfig));
+            tree.addDocked({
+                xtype: 'toolbar',
+                itemId: 'selectionToolbar',
+                cls: 'admin-white-toolbar',
+                dock: 'top',
+                store: treeStore,
+                gridPanel: tree,
+                resultCountHidden: true,
+                countTopLevelOnly: true,
+                plugins: [
+                    'gridToolbarPlugin'
+                ]
+            });
+            treeStore.on('datachanged', this.fireUpdateEvent, this);
+            return tree;
+        };
+        TreeGridPanel.prototype.fireUpdateEvent = function (values) {
+            this.ext.fireEvent('datachanged', values);
+        };
+        TreeGridPanel.prototype.getActiveList = function () {
+            return (this.ext.getLayout()).getActiveItem();
+        };
+        TreeGridPanel.prototype.setActiveList = function (listId) {
+            this.activeList = listId;
+            if(this.ext) {
+                (this.ext.getLayout()).setActiveItem(listId);
+            }
+        };
+        TreeGridPanel.prototype.setKeyField = function (keyField) {
+            this.keyField = keyField;
+        };
+        TreeGridPanel.prototype.getKeyField = function () {
+            return this.keyField;
+        };
+        TreeGridPanel.prototype.setItemId = function (itemId) {
+            this.itemId = itemId;
+        };
+        TreeGridPanel.prototype.getItemId = function () {
+            return this.itemId;
+        };
+        TreeGridPanel.prototype.refresh = function () {
+            var activeStore = this.getActiveList().getStore();
+            if(this.activeList == TreeGridPanel.GRID) {
+                activeStore.loadPage(activeStore.currentPage);
+            } else {
+                activeStore.load();
+            }
+        };
+        TreeGridPanel.prototype.removeAll = function () {
+            var activeList = this.getActiveList();
+            if(this.activeList == TreeGridPanel.GRID) {
+                activeList.removeAll();
+            } else {
+                (activeList).getRootNode().removeAll();
+            }
+        };
+        TreeGridPanel.prototype.deselect = function (key) {
+            var activeList = this.getActiveList(), selModel = activeList.getSelectionModel();
+            if(!key || key === -1) {
+                selModel.deselectAll();
+            } else {
+                var selNodes = selModel.getSelection();
+                var i;
+                for(i = 0; i < selNodes.length; i++) {
+                    var selNode = selNodes[i];
+                    if(key == selNode.get(this.keyField)) {
+                        selModel.deselect([
+                            selNode
+                        ]);
+                    }
+                }
+            }
+        };
+        TreeGridPanel.prototype.getSelection = function () {
+            var selection = [], activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection');
+            if(plugin) {
+                selection = plugin.getSelection();
+            } else {
+                selection = activeList.getSelectionModel().getSelection();
+            }
+            return selection;
+        };
+        TreeGridPanel.prototype.setRemoteSearchParams = function (params) {
+            var activeStore = this.getActiveList().getStore();
+            (activeStore.getProxy()).extraParams = params;
+        };
+        TreeGridPanel.prototype.setResultCountVisible = function (visible) {
+            var plugin = this.getActiveList().getDockedComponent('selectionToolbar').getPlugin('gridToolbarPlugin');
+            plugin.setResultCountVisible(visible);
+        };
+        TreeGridPanel.prototype.updateResultCount = function (count) {
+            var plugin = this.getActiveList().getDockedComponent('selectionToolbar').getPlugin('gridToolbarPlugin');
+            plugin.updateResultCount(count);
+        };
+        return TreeGridPanel;
+    })();
+    api_ui_grid.TreeGridPanel = TreeGridPanel;    
+})(api_ui_grid || (api_ui_grid = {}));
 var api_appbar;
 (function (api_appbar) {
     var AppBar = (function (_super) {
@@ -1930,6 +2268,7 @@ var api_appbar;
         AppBarTabMenu.prototype.addTab = function (tab) {
             _super.prototype.addTab.call(this, tab);
             this.tabMenuButton.setTabCount(this.getSize());
+            this.tabMenuButton.show();
         };
         AppBarTabMenu.prototype.createTabMenuButton = function () {
             this.tabMenuButton = new api_appbar.AppBarTabMenuButton();
@@ -1940,6 +2279,7 @@ var api_appbar;
             this.tabMenuButton.setTabCount(this.getSize());
             if(this.getSize() == 0) {
                 this.tabMenuButton.setLabel("");
+                this.tabMenuButton.hide();
             }
         };
         return AppBarTabMenu;
@@ -1995,56 +2335,22 @@ var api_appbar;
 })(api_appbar || (api_appbar = {}));
 var api;
 (function (api) {
-    var AppDeckPanel = (function (_super) {
-        __extends(AppDeckPanel, _super);
-        function AppDeckPanel(navigator) {
-                _super.call(this, navigator);
-        }
-        AppDeckPanel.prototype.tabRemove = function (tab) {
-            if(this.hasUnsavedChanges()) {
-                return false;
-            } else {
-                return _super.prototype.tabRemove.call(this, tab);
-            }
-        };
-        AppDeckPanel.prototype.removePanel = function (index) {
-            var panelRemoved = _super.prototype.removePanel.call(this, index);
-            if(this.getSize() == 0) {
-                this.appPanel.showBrowsePanel();
-            }
-            return panelRemoved;
-        };
-        AppDeckPanel.prototype.hasUnsavedChanges = function () {
-            return false;
-        };
-        AppDeckPanel.prototype.setAppPanel = function (value) {
-            this.appPanel = value;
-        };
-        return AppDeckPanel;
-    })(api_ui_tab.TabbedDeckPanel);
-    api.AppDeckPanel = AppDeckPanel;    
-})(api || (api = {}));
-var api;
-(function (api) {
     var AppPanel = (function (_super) {
         __extends(AppPanel, _super);
-        function AppPanel(browsePanel, deckPanel) {
-                _super.call(this, "AppPanel");
-            this.browsePanel = browsePanel;
-            this.deckPanel = deckPanel;
-            deckPanel.setAppPanel(this);
-            this.addPanel(this.browsePanel);
-            this.addPanel(this.deckPanel);
+        function AppPanel(appBar, homePanel) {
+                _super.call(this, appBar);
+            this.homePanel = homePanel;
+            var homePanelMenuItem = new api_appbar.AppBarTabMenuItem("home");
+            homePanelMenuItem.setVisible(false);
+            homePanelMenuItem.setRemovable(false);
+            this.addTab(homePanelMenuItem, this.homePanel);
             this.showPanel(0);
         }
         AppPanel.prototype.showBrowsePanel = function () {
             this.showPanel(0);
         };
-        AppPanel.prototype.showDeckPanel = function () {
-            this.showPanel(1);
-        };
         return AppPanel;
-    })(api_ui.DeckPanel);
+    })(api_ui_tab.TabbedDeckPanel);
     api.AppPanel = AppPanel;    
 })(api || (api = {}));
 var api_ui_dialog;

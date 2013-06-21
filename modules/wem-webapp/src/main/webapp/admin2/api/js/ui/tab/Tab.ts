@@ -8,5 +8,9 @@ module api_ui_tab {
 
         getLabel():string;
 
+        isVisible():bool;
+
+        isRemovable():bool;
+
     }
 }

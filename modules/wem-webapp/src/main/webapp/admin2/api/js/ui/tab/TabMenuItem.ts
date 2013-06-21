@@ -10,6 +10,10 @@ module api_ui_tab {
 
         private tabMenu:TabMenu;
 
+        private visible:bool = true;
+
+        private removable:bool = true;
+
         constructor(label:string) {
             super("TabMenuItem", "tab-menu-item");
 
@@ -19,7 +23,7 @@ module api_ui_tab {
             this.appendChild(this.labelEl);
 
             var removeButton = new api_dom.ButtonEl();
-            removeButton.getEl().setInnerHtml("X");
+            removeButton.getEl().setInnerHtml("&times;");
             this.appendChild(removeButton);
 
             this.labelEl.getEl().addEventListener("click", () => {
@@ -27,7 +31,12 @@ module api_ui_tab {
             });
 
             removeButton.getEl().addEventListener("click", () => {
-                this.tabMenu.handleTabRemoveButtonClickedEvent(this);
+                if (this.removable) {
+                    this.tabMenu.handleTabRemoveButtonClickedEvent(this);
+                    if (this.tabMenu.getSize() == 0) {
+                        this.tabMenu.hideMenu();
+                    }
+                }
             });
         }
 
@@ -47,5 +56,29 @@ module api_ui_tab {
             return this.label;
         }
 
+        isVisible():bool {
+            return this.visible
+        }
+
+        setVisible(value:bool) {
+            this.visible = value;
+            if (!this.visible) {
+                this.remove();
+            }
+        }
+
+        isRemovable():bool {
+            return this.removable;
+        }
+
+        setRemovable(value:bool) {
+            this.removable = value;
+        }
+
+        private remove() {
+            if (this.tabMenu) {
+                this.tabMenu.removeChild(this);
+            }
+        }
     }
 }

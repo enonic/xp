@@ -18,7 +18,7 @@ module api_ui_tab {
         }
 
         setLabel(value:string) {
-            jQuery(<any>this.labelEl.getHTMLElement()).text(value);
+            this.labelEl.getEl().setInnerHtml(value);
         }
     }
 }

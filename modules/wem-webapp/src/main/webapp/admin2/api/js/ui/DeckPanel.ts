@@ -72,5 +72,9 @@ module api_ui {
                 }
             }
         }
+
+        getPanels():Panel[] {
+            return this.panels;
+        }
     }
 }

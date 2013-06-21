@@ -33,7 +33,6 @@
 ///<reference path='view/WizardHeader.ts' />
 ///<reference path='view/WizardPanel.ts' />
 ///<reference path='view/DetailToolbar.ts' />
-///<reference path='view/TreeGridPanel.ts' />
 ///<reference path='view/ContextMenu.ts' />
 ///<reference path='view/ContextMenuGridPanel.ts' />
 ///<reference path='view/wizard/SpaceWizardToolbar.ts' />
@@ -50,6 +49,7 @@
 ///<reference path='browse/SpaceActionMenu.ts' />
 ///<reference path='browse/SpaceDetailPanel.ts' />
 ///<reference path='browse/SpaceAppBrowsePanel.ts' />
+///<reference path='browse/SpaceTreeGridPanel.ts' />
 
 
 ///<reference path='wizard/SpaceWizardPanel2.ts' />
@@ -86,7 +86,7 @@ module app {
 
 module components {
     export var detailPanel:app_browse.SpaceDetailPanel;
-    export var gridPanel:app_ui.TreeGridPanel;
+    export var gridPanel:app_browse.SpaceTreeGridPanel;
     export var tabPanel:app_ui.TabPanel;
 }
 

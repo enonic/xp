@@ -2379,186 +2379,6 @@ var app_ui;
 })(app_ui || (app_ui = {}));
 var app_ui;
 (function (app_ui) {
-    var TreeGridPanel = (function () {
-        function TreeGridPanel() {
-            this.store = new Ext.data.Store({
-                pageSize: 100,
-                autoLoad: true,
-                model: 'Admin.model.SpaceModel',
-                proxy: {
-                    type: 'direct',
-                    directFn: api_remote.RemoteService.space_list,
-                    simpleSortMode: true,
-                    reader: {
-                        type: 'json',
-                        root: 'spaces',
-                        totalProperty: 'total'
-                    }
-                }
-            });
-            this.keyField = 'name';
-            this.nameTemplate = '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>';
-        }
-        TreeGridPanel.prototype.create = function (region, renderTo) {
-            var _this = this;
-            var gridSelectionPlugin = new Admin.plugin.PersistentGridSelectionPlugin({
-                keyField: this.keyField
-            });
-            var p = this.ext = new Ext.panel.Panel({
-                region: region,
-                flex: 1,
-                layout: 'card',
-                border: false,
-                activeItem: 'grid',
-                itemId: 'spaceTreeGrid',
-                alias: 'widget.spaceTreeGrid',
-                renderTo: renderTo,
-                gridConf: {
-                    selModel: Ext.create('Ext.selection.CheckboxModel', {
-                        headerWidth: 36
-                    })
-                },
-                treeConf: {
-                    selModel: Ext.create('Ext.selection.CheckboxModel', {
-                        headerWidth: 36
-                    })
-                }
-            });
-            var gp = new Ext.grid.Panel({
-                itemId: 'grid',
-                cls: 'admin-grid',
-                border: false,
-                hideHeaders: true,
-                columns: [
-                    {
-                        text: 'Display Name',
-                        dataIndex: 'displayName',
-                        sortable: true,
-                        renderer: this.nameRenderer,
-                        scope: this,
-                        flex: 1
-                    }, 
-                    {
-                        text: 'Status',
-                        renderer: this.statusRenderer
-                    }, 
-                    {
-                        text: 'Owner',
-                        dataIndex: 'owner',
-                        sortable: true
-                    }, 
-                    {
-                        text: 'Modified',
-                        dataIndex: 'modifiedTime',
-                        renderer: this.prettyDateRenderer,
-                        scope: this,
-                        sortable: true
-                    }
-                ],
-                viewConfig: {
-                    trackOver: true,
-                    stripeRows: true,
-                    loadMask: {
-                        store: this.store
-                    }
-                },
-                store: this.store,
-                selModel: Ext.create('Ext.selection.CheckboxModel', {
-                    headerWidth: 36
-                }),
-                plugins: [
-                    gridSelectionPlugin
-                ],
-                listeners: {
-                    selectionchange: function (selModel, selected, opts) {
-                        new app_event.GridSelectionChangeEvent(selected).fire();
-                    },
-                    itemcontextmenu: function (view, rec, node, index, event) {
-                        event.stopEvent();
-                        new app_event.ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
-                    },
-                    itemdblclick: function (grid, record) {
-                        new app_event.EditSpaceEvent(grid.getSelection()).fire();
-                    }
-                }
-            });
-            gp.addDocked(new Ext.toolbar.Toolbar({
-                itemId: 'selectionToolbar',
-                cls: 'admin-white-toolbar',
-                dock: 'top',
-                store: this.store,
-                gridPanel: gp,
-                resultCountHidden: true,
-                plugins: [
-                    'gridToolbarPlugin'
-                ]
-            }));
-            gp.getStore().on('datachanged', this.fireUpdateEvent, this);
-            p.add(gp);
-            app_event.GridDeselectEvent.on(function (event) {
-                _this.deselect(event.getModels()[0].data.name);
-            });
-        };
-        TreeGridPanel.prototype.fireUpdateEvent = function (values) {
-            this.ext.fireEvent('datachanged', values);
-        };
-        TreeGridPanel.prototype.getActiveList = function () {
-            return (this.ext.getLayout()).getActiveItem();
-        };
-        TreeGridPanel.prototype.nameRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
-            var space = record.data;
-            var activeListType = this.getActiveList().getItemId();
-            return Ext.String.format(this.nameTemplate, activeListType, space.iconUrl, value, space.name);
-        };
-        TreeGridPanel.prototype.statusRenderer = function () {
-            return "Online";
-        };
-        TreeGridPanel.prototype.prettyDateRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
-            try  {
-                if(parent && Ext.isFunction(parent['humane_date'])) {
-                    return parent['humane_date'](value);
-                } else {
-                    return value;
-                }
-            } catch (e) {
-                return value;
-            }
-        };
-        TreeGridPanel.prototype.refresh = function () {
-            this.store.loadPage(this.store.currentPage);
-        };
-        TreeGridPanel.prototype.deselect = function (key) {
-            var activeList = this.getActiveList(), selModel = activeList.getSelectionModel();
-            if(!key || key === -1) {
-                selModel.deselectAll();
-            } else {
-                var selNodes = selModel.getSelection();
-                var i;
-                for(i = 0; i < selNodes.length; i++) {
-                    var selNode = selNodes[i];
-                    if(key == selNode.get(this.keyField)) {
-                        selModel.deselect([
-                            selNode
-                        ]);
-                    }
-                }
-            }
-        };
-        TreeGridPanel.prototype.getSelection = function () {
-            var selection = [], activeList = this.getActiveList(), plugin = activeList.getPlugin('persistentGridSelection');
-            if(plugin) {
-                selection = plugin.getSelection();
-            } else {
-                selection = activeList.getSelectionModel().getSelection();
-            }
-            return selection;
-        };
-        return TreeGridPanel;
-    })();
-    app_ui.TreeGridPanel = TreeGridPanel;    
-})(app_ui || (app_ui = {}));
-var app_ui;
-(function (app_ui) {
     var ContextMenu = (function () {
         function ContextMenu() {
             var _this = this;
@@ -4096,7 +3916,7 @@ var app_browse;
         __extends(SpaceAppBrowsePanel, _super);
         function SpaceAppBrowsePanel() {
             var toolbar = new app_browse.BrowseToolbar();
-            var grid = components.gridPanel = new app_ui.TreeGridPanel();
+            var grid = components.gridPanel = new app_browse.SpaceTreeGridPanel('spaceTreeGrid');
             var detail = components.detailPanel = new app_browse.SpaceDetailPanel();
             var filterPanel = new app_ui.FilterPanel({
                 region: 'west',
@@ -4107,6 +3927,113 @@ var app_browse;
         return SpaceAppBrowsePanel;
     })(api_browse.AppBrowsePanel);
     app_browse.SpaceAppBrowsePanel = SpaceAppBrowsePanel;    
+})(app_browse || (app_browse = {}));
+var app_browse;
+(function (app_browse) {
+    var SpaceTreeGridPanel = (function (_super) {
+        __extends(SpaceTreeGridPanel, _super);
+        function SpaceTreeGridPanel(itemId) {
+            var _this = this;
+                _super.call(this, this.createColumns(), this.createGridStore(), this.createTreeStore(), this.createGridConfig(), this.createTreeConfig());
+            this.setItemId(itemId);
+            app_event.GridDeselectEvent.on(function (event) {
+                _this.deselect(event.getModels()[0].data.name);
+            });
+        }
+        SpaceTreeGridPanel.prototype.createGridStore = function () {
+            return new Ext.data.Store({
+                pageSize: 100,
+                autoLoad: true,
+                model: 'Admin.model.SpaceModel',
+                proxy: {
+                    type: 'direct',
+                    directFn: api_remote.RemoteService.space_list,
+                    simpleSortMode: true,
+                    reader: {
+                        type: 'json',
+                        root: 'spaces',
+                        totalProperty: 'total'
+                    }
+                }
+            });
+        };
+        SpaceTreeGridPanel.prototype.createTreeStore = function () {
+            return new Ext.data.TreeStore();
+        };
+        SpaceTreeGridPanel.prototype.createColumns = function () {
+            return [
+                {
+                    text: 'Display Name',
+                    dataIndex: 'displayName',
+                    sortable: true,
+                    renderer: this.nameRenderer,
+                    scope: this,
+                    flex: 1
+                }, 
+                {
+                    text: 'Status',
+                    renderer: this.statusRenderer
+                }, 
+                {
+                    text: 'Owner',
+                    dataIndex: 'owner',
+                    sortable: true
+                }, 
+                {
+                    text: 'Modified',
+                    dataIndex: 'modifiedTime',
+                    renderer: this.prettyDateRenderer,
+                    scope: this,
+                    sortable: true
+                }
+            ];
+        };
+        SpaceTreeGridPanel.prototype.createGridConfig = function () {
+            return {
+                listeners: {
+                    selectionchange: function (selModel, selected, opts) {
+                        new app_event.GridSelectionChangeEvent(selected).fire();
+                    },
+                    itemcontextmenu: function (view, rec, node, index, event) {
+                        event.stopEvent();
+                        new app_event.ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
+                    },
+                    itemdblclick: function (grid, record) {
+                        new app_event.EditSpaceEvent(grid.getSelection()).fire();
+                    }
+                }
+            };
+        };
+        SpaceTreeGridPanel.prototype.createTreeConfig = function () {
+            return {
+                selectionchange: function (selModel, selected, opts) {
+                    new app_event.GridSelectionChangeEvent(selected).fire();
+                }
+            };
+        };
+        SpaceTreeGridPanel.prototype.nameRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
+            var nameTemplate = '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>';
+            var space = record.data;
+            var activeListType = this.getActiveList().getItemId();
+            return Ext.String.format(nameTemplate, activeListType, space.iconUrl, value, space.name);
+        };
+        SpaceTreeGridPanel.prototype.statusRenderer = function () {
+            return "Online";
+        };
+        SpaceTreeGridPanel.prototype.prettyDateRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
+            try  {
+                if(parent && Ext.isFunction(parent['humane_date'])) {
+                    return parent['humane_date'](value);
+                } else {
+                    return value;
+                }
+            } catch (e) {
+                return value;
+            }
+        };
+        return SpaceTreeGridPanel;
+    })(api_ui_grid.TreeGridPanel);
+    app_browse.SpaceTreeGridPanel = SpaceTreeGridPanel;    
 })(app_browse || (app_browse = {}));
 var app_wizard;
 (function (app_wizard) {
@@ -4607,11 +4534,7 @@ var app;
         function SpaceAppPanel(appBar) {
             var _this = this;
             this.appBrowsePanel = new app_browse.SpaceAppBrowsePanel();
-            this.appDeckPanel = new api.AppDeckPanel(appBar.getTabMenu());
-            appBar.getTabMenu().addTabSelectedListener(function (tab) {
-                _this.showDeckPanel();
-            });
-                _super.call(this, this.appBrowsePanel, this.appDeckPanel);
+                _super.call(this, appBar.getTabMenu(), this.appBrowsePanel);
             api_appbar.ShowAppBrowsePanelEvent.on(function (event) {
                 _this.showBrowsePanel();
                 appBar.getTabMenu().deselectTab();
@@ -4619,9 +4542,8 @@ var app;
             app_event.NewSpaceEvent.on(function (event) {
                 var tabMenuItem = new app_appbar.SpaceAppBarTabMenuItem("New Space");
                 var spaceWizardPanel = new app_wizard.SpaceWizardPanel2('new-space', 'New Space', "");
-                _this.appDeckPanel.addTab(tabMenuItem, spaceWizardPanel);
-                _this.appDeckPanel.showTab(tabMenuItem);
-                _this.showDeckPanel();
+                _this.addTab(tabMenuItem, spaceWizardPanel);
+                _this.showTab(tabMenuItem);
             });
             app_event.OpenSpaceEvent.on(function (event) {
             });
@@ -4639,9 +4561,8 @@ var app;
                             var tabMenuItem = new app_appbar.SpaceAppBarTabMenuItem(result.space.displayName);
                             var id = _this.generateTabId(result.space.name, true);
                             var spaceWizardPanel = new app_wizard.SpaceWizardPanel2(id, result.space.displayName, result.space.iconUrl);
-                            _this.appDeckPanel.addTab(tabMenuItem, spaceWizardPanel);
-                            _this.appDeckPanel.showTab(tabMenuItem);
-                            _this.showDeckPanel();
+                            _this.addTab(tabMenuItem, spaceWizardPanel);
+                            _this.showTab(tabMenuItem);
                         } else {
                             console.error("Error", result ? result.error : "Unable to retrieve space.");
                         }
@@ -4651,6 +4572,23 @@ var app;
         }
         SpaceAppPanel.prototype.init = function () {
             this.appBrowsePanel.init();
+        };
+        SpaceAppPanel.prototype.tabRemove = function (tab) {
+            if(this.hasUnsavedChanges()) {
+                return false;
+            } else {
+                return _super.prototype.tabRemove.call(this, tab);
+            }
+        };
+        SpaceAppPanel.prototype.removePanel = function (index) {
+            var panelRemoved = _super.prototype.removePanel.call(this, index);
+            if(this.getSize() == 0) {
+                this.showBrowsePanel();
+            }
+            return panelRemoved;
+        };
+        SpaceAppPanel.prototype.hasUnsavedChanges = function () {
+            return false;
         };
         SpaceAppPanel.prototype.generateTabId = function (spaceName, isEdit) {
             return 'tab-' + (isEdit ? 'edit-' : 'preview-') + spaceName;
