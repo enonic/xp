@@ -21,6 +21,8 @@ module api_ui {
         public execute(): void;
         public addExecutionListener(listener: (action: Action) => void): void;
         public addPropertyChangeListener(listener: (action: Action) => void): void;
+        static activateShortcuts(actions: Action[]): void;
+        static deactivateShortcuts(actions: Action[]): void;
     }
 }
 module api_content_data {

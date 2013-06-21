@@ -76,6 +76,16 @@ var api_ui;
         Action.prototype.addPropertyChangeListener = function (listener) {
             this.propertyChangeListeners.push(listener);
         };
+        Action.activateShortcuts = function activateShortcuts(actions) {
+            actions.forEach(function (action, index, array) {
+                action.activateShortcut();
+            });
+        };
+        Action.deactivateShortcuts = function deactivateShortcuts(actions) {
+            actions.forEach(function (action, index, array) {
+                action.deactivateShortcut();
+            });
+        };
         return Action;
     })();
     api_ui.Action = Action;    

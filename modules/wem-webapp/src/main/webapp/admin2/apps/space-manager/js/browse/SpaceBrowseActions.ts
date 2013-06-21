@@ -35,7 +35,7 @@ module app_browse {
     export class DeleteSpaceAction extends api_ui.Action {
 
         constructor() {
-            super("Delete");
+            super("Delete", "mod+del");
             this.setEnabled(false);
             this.addExecutionListener(() => {
                 new app_event.DeletePromptEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
@@ -50,7 +50,11 @@ module app_browse {
         static EDIT_SPACE:api_ui.Action = new EditSpaceAction();
         static DELETE_SPACE:api_ui.Action = new DeleteSpaceAction();
 
+        static ACTIONS:api_ui.Action[] = [];
+
         static init() {
+
+            ACTIONS.push(NEW_SPACE, OPEN_SPACE, EDIT_SPACE, DELETE_SPACE);
 
             app_event.GridSelectionChangeEvent.on((event) => {
 
@@ -77,7 +81,7 @@ module app_browse {
             });
         }
 
-        static anyEditable(spaces:api_model.SpaceModel[]):bool {
+        private static anyEditable(spaces:api_model.SpaceModel[]):bool {
             for (var i in spaces) {
                 var space:api_model.SpaceModel = spaces[i];
                 if (space.data.editable) {
@@ -87,7 +91,7 @@ module app_browse {
             return false;
         }
 
-        static anyDeleteable(spaces:api_model.SpaceModel[]):bool {
+        private static anyDeleteable(spaces:api_model.SpaceModel[]):bool {
             for (var i in spaces) {
                 var space:api_model.SpaceModel = spaces[i];
                 if (space.data.deletable) {

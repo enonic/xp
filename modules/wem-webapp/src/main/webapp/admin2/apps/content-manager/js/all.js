@@ -172,7 +172,7 @@ var app_browse;
     var DeleteContentAction = (function (_super) {
         __extends(DeleteContentAction, _super);
         function DeleteContentAction() {
-                _super.call(this, "Delete");
+                _super.call(this, "Delete", "mod+del");
             this.setEnabled(false);
             this.addExecutionListener(function () {
                 new app_event.DeleteContentEvent(app.ContentContext.get().getSelectedContents()).fire();

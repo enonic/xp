@@ -329,7 +329,7 @@ var app_browse;
     var DeleteSpaceAction = (function (_super) {
         __extends(DeleteSpaceAction, _super);
         function DeleteSpaceAction() {
-                _super.call(this, "Delete");
+                _super.call(this, "Delete", "mod+del");
             this.setEnabled(false);
             this.addExecutionListener(function () {
                 new app_event.DeletePromptEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
@@ -344,7 +344,9 @@ var app_browse;
         SpaceBrowseActions.OPEN_SPACE = new OpenSpaceAction();
         SpaceBrowseActions.EDIT_SPACE = new EditSpaceAction();
         SpaceBrowseActions.DELETE_SPACE = new DeleteSpaceAction();
+        SpaceBrowseActions.ACTIONS = [];
         SpaceBrowseActions.init = function init() {
+            SpaceBrowseActions.ACTIONS.push(SpaceBrowseActions.NEW_SPACE, SpaceBrowseActions.OPEN_SPACE, SpaceBrowseActions.EDIT_SPACE, SpaceBrowseActions.DELETE_SPACE);
             app_event.GridSelectionChangeEvent.on(function (event) {
                 var spaces = event.getModels();
                 if(spaces.length <= 0) {

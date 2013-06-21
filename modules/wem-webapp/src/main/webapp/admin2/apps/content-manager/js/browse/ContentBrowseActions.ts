@@ -35,7 +35,7 @@ module app_browse {
     export class DeleteContentAction extends api_ui.Action {
 
         constructor() {
-            super("Delete");
+            super("Delete", "mod+del");
             this.setEnabled(false);
             this.addExecutionListener(() => {
                 new app_event.DeleteContentEvent(app.ContentContext.get().getSelectedContents()).fire();
