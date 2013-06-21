@@ -106,5 +106,17 @@ module api_ui {
         addPropertyChangeListener(listener:(action:Action) => void) {
             this.propertyChangeListeners.push(listener);
         }
+
+        static activateShortcuts(actions:api_ui.Action[]) {
+            actions.forEach((action, index, array) => {
+                action.activateShortcut();
+            });
+        }
+
+        static deactivateShortcuts(actions:api_ui.Action[]) {
+            actions.forEach((action, index, array) => {
+                action.deactivateShortcut();
+            });
+        }
     }
 }

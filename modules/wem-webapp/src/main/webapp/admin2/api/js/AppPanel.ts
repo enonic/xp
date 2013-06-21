@@ -18,7 +18,5 @@ module api{
         showBrowsePanel() {
             this.showPanel(0);
         }
-
-
     }
 }
