@@ -123,6 +123,16 @@ module api_remote {
         success: bool;
         error?: string;
     }
+    interface RemoteCallContentTypeGetParams {
+        format: string;
+        contentType: string;
+        mixinReferencesToFormItems?: bool;
+    }
+    interface RemoteCallContentTypeGetResult extends RemoteCallResultBase {
+        contentType?: ContentType;
+        iconUrl?: string;
+        contentTypeXml?: string;
+    }
     interface RemoteCallContentTypeCreateOrUpdateParams {
         contentType: string;
         iconReference: string;
@@ -151,7 +161,6 @@ module api_remote {
         spaceName: string[];
     }
     interface RemoteCallSpaceGetResult extends RemoteCallResultBase {
-        total: number;
         space: {
             createdTime: Date;
             displayName: string;
@@ -195,14 +204,14 @@ module api_remote {
         userstore_createOrUpdate(params, callback): void;
         userstore_delete(params, callback): void;
         content_createOrUpdate(params, callback): void;
-        contentType_get(params, callback): void;
         content_list(params, callback): void;
         content_tree(params, callback): void;
         content_get(params, callback): void;
-        contentType_list(params, callback): void;
         content_delete(params, callback): void;
         content_find(params, callback): void;
         content_validate(params, callback): void;
+        contentType_get(params:RemoteCallContentTypeGetParams, callback:(result:RemoteCallContentTypeGetResult) => void): void;
+        contentType_list(params, callback): void;
         contentType_createOrUpdate(params:RemoteCallContentTypeCreateOrUpdateParams,
                                    callback:(result:RemoteCallContentTypeCreateOrUpdateResult) => void): void;
         contentType_delete(params, callback): void;
@@ -222,6 +231,76 @@ module api_remote {
         space_createOrUpdate(params:RemoteCallSpaceCreateOrUpdateParams,
                              callback:(result:RemoteCallSpaceCreateOrUpdateResult) => void): void;
         binary_create(params, callback): void;
+    }
+}
+module api_remote {
+    interface ContentType {
+        name: string;
+        module: string;
+        qualifiedName?: string;
+        displayName: string;
+        contentDisplayNameScript: string;
+        superType: string;
+        isAbstract: bool;
+        isFinal: bool;
+        allowChildren: bool;
+        createdTime?: Date;
+        modifiedTime?: Date;
+        form: FormItem[];
+    }
+    interface FormItem {
+        FormItemSet?: FormItemSet;
+        Layout?: Layout;
+        Input?: Input;
+        MixinReference?: MixinReference;
+    }
+    interface FormItemSet {
+        name: string;
+        label: string;
+        immutable: bool;
+        occurrences: Occurrences;
+        customText: string;
+        helpText: string;
+        items: FormItem[];
+    }
+    interface Layout {
+        type: string;
+        label: string;
+        name: string;
+        items: FormItem[];
+    }
+    interface Input {
+        name: string;
+        label: string;
+        immutable: bool;
+        occurrences: Occurrences;
+        indexed: bool;
+        customText: string;
+        validationRegexp?: string;
+        helpText: string;
+        config?: InputTypeConfig;
+        type: InputType;
+    }
+    interface MixinReference {
+        name: string;
+        reference: string;
+        type: string;
+    }
+    interface Occurrences {
+        minimum: number;
+        maximum: number;
+    }
+    interface InputType {
+        name: string;
+        builtIn: bool;
+    }
+    interface InputTypeConfig {
+        relationshipType?: string;
+        selectorType?: string;
+        options?: {
+            label: string;
+            value: string;
+        }[];
     }
 }
 module api_event {

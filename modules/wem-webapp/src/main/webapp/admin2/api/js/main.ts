@@ -26,6 +26,7 @@
 
 ///<reference path='lib/JsonRpcProvider.ts' />
 ///<reference path='lib/RemoteService.ts' />
+///<reference path='lib/RemoteContentTypeModel.ts' />
 
 ///<reference path='event/Event.ts' />
 ///<reference path='event/EventBus.ts' />
