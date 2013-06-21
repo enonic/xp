@@ -37,7 +37,7 @@ module api_appbar {
         private render() {
             this.hide();
             this.isShown = false;
-            document.body.insertBefore(this.getHTMLElement());
+            new api_dom.ElementHelper(document.body).appendChild(this.getHTMLElement());
         }
 
         toggle() {
