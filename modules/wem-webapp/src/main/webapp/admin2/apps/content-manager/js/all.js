@@ -132,8 +132,8 @@ var app;
     })();
     app.ContentContext = ContentContext;    
 })(app || (app = {}));
-var app;
-(function (app) {
+var app_browse;
+(function (app_browse) {
     var NewContentAction = (function (_super) {
         __extends(NewContentAction, _super);
         function NewContentAction() {
@@ -144,7 +144,7 @@ var app;
         }
         return NewContentAction;
     })(api_ui.Action);
-    app.NewContentAction = NewContentAction;    
+    app_browse.NewContentAction = NewContentAction;    
     var OpenContentAction = (function (_super) {
         __extends(OpenContentAction, _super);
         function OpenContentAction() {
@@ -156,7 +156,7 @@ var app;
         }
         return OpenContentAction;
     })(api_ui.Action);
-    app.OpenContentAction = OpenContentAction;    
+    app_browse.OpenContentAction = OpenContentAction;    
     var EditContentAction = (function (_super) {
         __extends(EditContentAction, _super);
         function EditContentAction() {
@@ -168,7 +168,7 @@ var app;
         }
         return EditContentAction;
     })(api_ui.Action);
-    app.EditContentAction = EditContentAction;    
+    app_browse.EditContentAction = EditContentAction;    
     var DeleteContentAction = (function (_super) {
         __extends(DeleteContentAction, _super);
         function DeleteContentAction() {
@@ -180,7 +180,7 @@ var app;
         }
         return DeleteContentAction;
     })(api_ui.Action);
-    app.DeleteContentAction = DeleteContentAction;    
+    app_browse.DeleteContentAction = DeleteContentAction;    
     var DuplicateContentAction = (function (_super) {
         __extends(DuplicateContentAction, _super);
         function DuplicateContentAction() {
@@ -192,7 +192,7 @@ var app;
         }
         return DuplicateContentAction;
     })(api_ui.Action);
-    app.DuplicateContentAction = DuplicateContentAction;    
+    app_browse.DuplicateContentAction = DuplicateContentAction;    
     var MoveContentAction = (function (_super) {
         __extends(MoveContentAction, _super);
         function MoveContentAction() {
@@ -204,7 +204,7 @@ var app;
         }
         return MoveContentAction;
     })(api_ui.Action);
-    app.MoveContentAction = MoveContentAction;    
+    app_browse.MoveContentAction = MoveContentAction;    
     var BrowseContentSettingsAction = (function (_super) {
         __extends(BrowseContentSettingsAction, _super);
         function BrowseContentSettingsAction() {
@@ -217,44 +217,44 @@ var app;
         }
         return BrowseContentSettingsAction;
     })(api_ui.Action);
-    app.BrowseContentSettingsAction = BrowseContentSettingsAction;    
-    var ContentActions = (function () {
-        function ContentActions() { }
-        ContentActions.NEW_CONTENT = new NewContentAction();
-        ContentActions.OPEN_CONTENT = new OpenContentAction();
-        ContentActions.EDIT_CONTENT = new EditContentAction();
-        ContentActions.DELETE_CONTENT = new DeleteContentAction();
-        ContentActions.DUPLICATE_CONTENT = new DuplicateContentAction();
-        ContentActions.MOVE_CONTENT = new MoveContentAction();
-        ContentActions.BROWSE_CONTENT_SETTINGS = new BrowseContentSettingsAction();
-        ContentActions.init = function init() {
+    app_browse.BrowseContentSettingsAction = BrowseContentSettingsAction;    
+    var ContentBrowseActions = (function () {
+        function ContentBrowseActions() { }
+        ContentBrowseActions.NEW_CONTENT = new NewContentAction();
+        ContentBrowseActions.OPEN_CONTENT = new OpenContentAction();
+        ContentBrowseActions.EDIT_CONTENT = new EditContentAction();
+        ContentBrowseActions.DELETE_CONTENT = new DeleteContentAction();
+        ContentBrowseActions.DUPLICATE_CONTENT = new DuplicateContentAction();
+        ContentBrowseActions.MOVE_CONTENT = new MoveContentAction();
+        ContentBrowseActions.BROWSE_CONTENT_SETTINGS = new BrowseContentSettingsAction();
+        ContentBrowseActions.init = function init() {
             app_event.GridSelectionChangeEvent.on(function (event) {
                 var contents = event.getModels();
                 if(contents.length <= 0) {
-                    ContentActions.NEW_CONTENT.setEnabled(true);
-                    ContentActions.OPEN_CONTENT.setEnabled(false);
-                    ContentActions.EDIT_CONTENT.setEnabled(false);
-                    ContentActions.DELETE_CONTENT.setEnabled(false);
-                    ContentActions.DUPLICATE_CONTENT.setEnabled(false);
-                    ContentActions.MOVE_CONTENT.setEnabled(false);
+                    ContentBrowseActions.NEW_CONTENT.setEnabled(true);
+                    ContentBrowseActions.OPEN_CONTENT.setEnabled(false);
+                    ContentBrowseActions.EDIT_CONTENT.setEnabled(false);
+                    ContentBrowseActions.DELETE_CONTENT.setEnabled(false);
+                    ContentBrowseActions.DUPLICATE_CONTENT.setEnabled(false);
+                    ContentBrowseActions.MOVE_CONTENT.setEnabled(false);
                 } else if(contents.length == 1) {
-                    ContentActions.NEW_CONTENT.setEnabled(false);
-                    ContentActions.OPEN_CONTENT.setEnabled(true);
-                    ContentActions.EDIT_CONTENT.setEnabled(contents[0].data.editable);
-                    ContentActions.DELETE_CONTENT.setEnabled(contents[0].data.deletable);
-                    ContentActions.DUPLICATE_CONTENT.setEnabled(true);
-                    ContentActions.MOVE_CONTENT.setEnabled(true);
+                    ContentBrowseActions.NEW_CONTENT.setEnabled(false);
+                    ContentBrowseActions.OPEN_CONTENT.setEnabled(true);
+                    ContentBrowseActions.EDIT_CONTENT.setEnabled(contents[0].data.editable);
+                    ContentBrowseActions.DELETE_CONTENT.setEnabled(contents[0].data.deletable);
+                    ContentBrowseActions.DUPLICATE_CONTENT.setEnabled(true);
+                    ContentBrowseActions.MOVE_CONTENT.setEnabled(true);
                 } else {
-                    ContentActions.NEW_CONTENT.setEnabled(false);
-                    ContentActions.OPEN_CONTENT.setEnabled(true);
-                    ContentActions.EDIT_CONTENT.setEnabled(ContentActions.anyEditable(contents));
-                    ContentActions.DELETE_CONTENT.setEnabled(ContentActions.anyDeleteable(contents));
-                    ContentActions.DUPLICATE_CONTENT.setEnabled(true);
-                    ContentActions.MOVE_CONTENT.setEnabled(true);
+                    ContentBrowseActions.NEW_CONTENT.setEnabled(false);
+                    ContentBrowseActions.OPEN_CONTENT.setEnabled(true);
+                    ContentBrowseActions.EDIT_CONTENT.setEnabled(ContentBrowseActions.anyEditable(contents));
+                    ContentBrowseActions.DELETE_CONTENT.setEnabled(ContentBrowseActions.anyDeleteable(contents));
+                    ContentBrowseActions.DUPLICATE_CONTENT.setEnabled(true);
+                    ContentBrowseActions.MOVE_CONTENT.setEnabled(true);
                 }
             });
         };
-        ContentActions.anyEditable = function anyEditable(contents) {
+        ContentBrowseActions.anyEditable = function anyEditable(contents) {
             for(var i in contents) {
                 var content = contents[i];
                 if(content.data.editable) {
@@ -263,7 +263,7 @@ var app;
             }
             return false;
         };
-        ContentActions.anyDeleteable = function anyDeleteable(contents) {
+        ContentBrowseActions.anyDeleteable = function anyDeleteable(contents) {
             for(var i in contents) {
                 var content = contents[i];
                 if(content.data.deletable) {
@@ -272,10 +272,10 @@ var app;
             }
             return false;
         };
-        return ContentActions;
+        return ContentBrowseActions;
     })();
-    app.ContentActions = ContentActions;    
-})(app || (app = {}));
+    app_browse.ContentBrowseActions = ContentBrowseActions;    
+})(app_browse || (app_browse = {}));
 Ext.define('Ext.ux.toggleslide.Thumb', {
     topZIndex: 10000,
     constructor: function (config) {
@@ -557,6 +557,161 @@ Ext.define('Ext.ux.toggleslide.ToggleSlide', {
         return me.booleanMode ? me.state : (me.state ? me.onText : me.offText);
     }
 });
+var app_browse;
+(function (app_browse) {
+    var ContentActionMenu = (function (_super) {
+        __extends(ContentActionMenu, _super);
+        function ContentActionMenu() {
+                _super.call(this, app_browse.ContentBrowseActions.NEW_CONTENT, app_browse.ContentBrowseActions.EDIT_CONTENT, app_browse.ContentBrowseActions.OPEN_CONTENT, app_browse.ContentBrowseActions.DELETE_CONTENT, app_browse.ContentBrowseActions.DUPLICATE_CONTENT, app_browse.ContentBrowseActions.MOVE_CONTENT);
+        }
+        return ContentActionMenu;
+    })(api_ui_menu.ActionMenu);
+    app_browse.ContentActionMenu = ContentActionMenu;    
+})(app_browse || (app_browse = {}));
+var app_browse;
+(function (app_browse) {
+    var ContentBrowseToolbar = (function (_super) {
+        __extends(ContentBrowseToolbar, _super);
+        function ContentBrowseToolbar() {
+                _super.call(this);
+            _super.prototype.addAction.call(this, app_browse.ContentBrowseActions.NEW_CONTENT);
+            _super.prototype.addAction.call(this, app_browse.ContentBrowseActions.EDIT_CONTENT);
+            _super.prototype.addAction.call(this, app_browse.ContentBrowseActions.OPEN_CONTENT);
+            _super.prototype.addAction.call(this, app_browse.ContentBrowseActions.DELETE_CONTENT);
+            _super.prototype.addAction.call(this, app_browse.ContentBrowseActions.DUPLICATE_CONTENT);
+            _super.prototype.addAction.call(this, app_browse.ContentBrowseActions.MOVE_CONTENT);
+            _super.prototype.addGreedySpacer.call(this);
+            _super.prototype.addAction.call(this, app_browse.ContentBrowseActions.BROWSE_CONTENT_SETTINGS);
+            var displayModeToggle = new api_ui_toolbar.ToggleSlide('PREVIEW', 'DETAILS', false);
+            _super.prototype.addElement.call(this, displayModeToggle);
+        }
+        return ContentBrowseToolbar;
+    })(api_ui_toolbar.Toolbar);
+    app_browse.ContentBrowseToolbar = ContentBrowseToolbar;    
+})(app_browse || (app_browse = {}));
+var app_browse;
+(function (app_browse) {
+    var ContentTreeGridContextMenu = (function (_super) {
+        __extends(ContentTreeGridContextMenu, _super);
+        function ContentTreeGridContextMenu() {
+                _super.call(this, app_browse.ContentBrowseActions.NEW_CONTENT, app_browse.ContentBrowseActions.EDIT_CONTENT, app_browse.ContentBrowseActions.OPEN_CONTENT, app_browse.ContentBrowseActions.DELETE_CONTENT, app_browse.ContentBrowseActions.DUPLICATE_CONTENT, app_browse.ContentBrowseActions.MOVE_CONTENT);
+        }
+        return ContentTreeGridContextMenu;
+    })(api_ui_menu.ContextMenu);
+    app_browse.ContentTreeGridContextMenu = ContentTreeGridContextMenu;    
+})(app_browse || (app_browse = {}));
+var app_browse;
+(function (app_browse) {
+    var ContentTreeGridPanel = (function (_super) {
+        __extends(ContentTreeGridPanel, _super);
+        function ContentTreeGridPanel(itemId) {
+                _super.call(this, this.createColumns(), this.createGridStore(), this.createTreeStore(), this.createGridConfig(), this.createTreeConfig());
+            this.setActiveList(api_ui_grid.TreeGridPanel.TREE);
+            this.setKeyField("path");
+            this.setItemId(itemId);
+        }
+        ContentTreeGridPanel.prototype.createGridStore = function () {
+            return new Ext.data.Store({
+                model: 'Admin.model.contentManager.ContentModel',
+                proxy: {
+                    type: 'direct',
+                    directFn: api_remote.RemoteService.content_find,
+                    simpleSortMode: true,
+                    reader: {
+                        type: 'json',
+                        root: 'contents',
+                        totalProperty: 'total'
+                    }
+                }
+            });
+        };
+        ContentTreeGridPanel.prototype.createTreeStore = function () {
+            return new Ext.data.TreeStore({
+                model: 'Admin.model.contentManager.ContentModel',
+                folderSort: true,
+                autoLoad: false,
+                proxy: {
+                    type: 'direct',
+                    directFn: api_remote.RemoteService.content_tree,
+                    simpleSortMode: true,
+                    reader: {
+                        type: 'json',
+                        root: 'contents',
+                        totalProperty: 'total'
+                    }
+                }
+            });
+        };
+        ContentTreeGridPanel.prototype.createColumns = function () {
+            return [
+                {
+                    text: 'Display Name',
+                    dataIndex: 'displayName',
+                    sortable: true,
+                    renderer: this.nameRenderer,
+                    scope: this,
+                    flex: 1
+                }, 
+                {
+                    text: 'Status',
+                    renderer: this.statusRenderer
+                }, 
+                {
+                    text: 'Modified',
+                    dataIndex: 'modifiedTime',
+                    renderer: this.prettyDateRenderer,
+                    scope: this,
+                    sortable: true
+                }
+            ];
+        };
+        ContentTreeGridPanel.prototype.createGridConfig = function () {
+            return {
+                listeners: {
+                    selectionchange: function (selModel, selected, opts) {
+                        new app_event.GridSelectionChangeEvent(selected).fire();
+                    },
+                    itemcontextmenu: function (view, rec, node, index, event) {
+                        event.stopEvent();
+                        new app_event.ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
+                    },
+                    itemdblclick: function (grid, record) {
+                        new app_event.EditContentEvent(grid.getSelection()).fire();
+                    }
+                }
+            };
+        };
+        ContentTreeGridPanel.prototype.createTreeConfig = function () {
+            return {
+                selectionchange: function (selModel, selected, opts) {
+                    new app_event.GridSelectionChangeEvent(selected).fire();
+                }
+            };
+        };
+        ContentTreeGridPanel.prototype.nameRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
+            var nameTemplate = '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>';
+            var content = record.data;
+            var activeListType = this.getActiveList().getItemId();
+            return Ext.String.format(nameTemplate, activeListType, content.iconUrl, value, content.name);
+        };
+        ContentTreeGridPanel.prototype.statusRenderer = function () {
+            return "Online";
+        };
+        ContentTreeGridPanel.prototype.prettyDateRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
+            try  {
+                if(parent && Ext.isFunction(parent['humane_date'])) {
+                    return parent['humane_date'](value);
+                } else {
+                    return value;
+                }
+            } catch (e) {
+                return value;
+            }
+        };
+        return ContentTreeGridPanel;
+    })(api_ui_grid.TreeGridPanel);
+    app_browse.ContentTreeGridPanel = ContentTreeGridPanel;    
+})(app_browse || (app_browse = {}));
 var admin;
 (function (admin) {
     (function (app) {
@@ -1614,7 +1769,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
         }
     },
     getActionButton: function () {
-        return Ext.apply(new app_ui.ActionMenu().getExt(), {
+        return Ext.apply(new app_browse.ContentActionMenu().getExt(), {
             itemId: 'actionMenu',
             text: 'Actions',
             height: 30,
@@ -2894,50 +3049,6 @@ Ext.define('Admin.view.contentManager.FilterPanel', {
     extend: 'Admin.view.FilterPanel',
     alias: 'widget.contentFilter'
 });
-var app_ui;
-(function (app_ui) {
-    var BrowseToolbar = (function (_super) {
-        __extends(BrowseToolbar, _super);
-        function BrowseToolbar() {
-                _super.call(this);
-            this.isLiveMode = false;
-            _super.prototype.addAction.call(this, app.ContentActions.NEW_CONTENT);
-            _super.prototype.addAction.call(this, app.ContentActions.EDIT_CONTENT);
-            _super.prototype.addAction.call(this, app.ContentActions.OPEN_CONTENT);
-            _super.prototype.addAction.call(this, app.ContentActions.DELETE_CONTENT);
-            _super.prototype.addAction.call(this, app.ContentActions.DUPLICATE_CONTENT);
-            _super.prototype.addAction.call(this, app.ContentActions.MOVE_CONTENT);
-            _super.prototype.addGreedySpacer.call(this);
-            _super.prototype.addAction.call(this, app.ContentActions.BROWSE_CONTENT_SETTINGS);
-            var displayModeToggle = new api_ui_toolbar.ToggleSlide('PREVIEW', 'DETAILS', false);
-            _super.prototype.addElement.call(this, displayModeToggle);
-        }
-        return BrowseToolbar;
-    })(api_ui_toolbar.Toolbar);
-    app_ui.BrowseToolbar = BrowseToolbar;    
-})(app_ui || (app_ui = {}));
-var app_ui;
-(function (app_ui) {
-    var ActionMenu = (function (_super) {
-        __extends(ActionMenu, _super);
-        function ActionMenu() {
-                _super.call(this, app.ContentActions.NEW_CONTENT, app.ContentActions.EDIT_CONTENT, app.ContentActions.OPEN_CONTENT, app.ContentActions.DELETE_CONTENT, app.ContentActions.DUPLICATE_CONTENT, app.ContentActions.MOVE_CONTENT);
-        }
-        return ActionMenu;
-    })(api_ui_menu.ActionMenu);
-    app_ui.ActionMenu = ActionMenu;    
-})(app_ui || (app_ui = {}));
-var app_ui;
-(function (app_ui) {
-    var ContextMenu = (function (_super) {
-        __extends(ContextMenu, _super);
-        function ContextMenu() {
-                _super.call(this, app.ContentActions.NEW_CONTENT, app.ContentActions.EDIT_CONTENT, app.ContentActions.OPEN_CONTENT, app.ContentActions.DELETE_CONTENT, app.ContentActions.DUPLICATE_CONTENT, app.ContentActions.MOVE_CONTENT);
-        }
-        return ContextMenu;
-    })(api_ui_menu.ContextMenu);
-    app_ui.ContextMenu = ContextMenu;    
-})(app_ui || (app_ui = {}));
 var admin;
 (function (admin) {
     (function (ui) {
@@ -4702,118 +4813,6 @@ Ext.define('Admin.view.WizardPanel', {
     createActionButton: function () {
     }
 });
-var app_browse;
-(function (app_browse) {
-    var ContentTreeGridPanel = (function (_super) {
-        __extends(ContentTreeGridPanel, _super);
-        function ContentTreeGridPanel(itemId) {
-                _super.call(this, this.createColumns(), this.createGridStore(), this.createTreeStore(), this.createGridConfig(), this.createTreeConfig());
-            this.setActiveList(api_ui_grid.TreeGridPanel.TREE);
-            this.setKeyField("path");
-            this.setItemId(itemId);
-        }
-        ContentTreeGridPanel.prototype.createGridStore = function () {
-            return new Ext.data.Store({
-                model: 'Admin.model.contentManager.ContentModel',
-                proxy: {
-                    type: 'direct',
-                    directFn: api_remote.RemoteService.content_find,
-                    simpleSortMode: true,
-                    reader: {
-                        type: 'json',
-                        root: 'contents',
-                        totalProperty: 'total'
-                    }
-                }
-            });
-        };
-        ContentTreeGridPanel.prototype.createTreeStore = function () {
-            return new Ext.data.TreeStore({
-                model: 'Admin.model.contentManager.ContentModel',
-                folderSort: true,
-                autoLoad: false,
-                proxy: {
-                    type: 'direct',
-                    directFn: api_remote.RemoteService.content_tree,
-                    simpleSortMode: true,
-                    reader: {
-                        type: 'json',
-                        root: 'contents',
-                        totalProperty: 'total'
-                    }
-                }
-            });
-        };
-        ContentTreeGridPanel.prototype.createColumns = function () {
-            return [
-                {
-                    text: 'Display Name',
-                    dataIndex: 'displayName',
-                    sortable: true,
-                    renderer: this.nameRenderer,
-                    scope: this,
-                    flex: 1
-                }, 
-                {
-                    text: 'Status',
-                    renderer: this.statusRenderer
-                }, 
-                {
-                    text: 'Modified',
-                    dataIndex: 'modifiedTime',
-                    renderer: this.prettyDateRenderer,
-                    scope: this,
-                    sortable: true
-                }
-            ];
-        };
-        ContentTreeGridPanel.prototype.createGridConfig = function () {
-            return {
-                listeners: {
-                    selectionchange: function (selModel, selected, opts) {
-                        new app_event.GridSelectionChangeEvent(selected).fire();
-                    },
-                    itemcontextmenu: function (view, rec, node, index, event) {
-                        event.stopEvent();
-                        new app_event.ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
-                    },
-                    itemdblclick: function (grid, record) {
-                        new app_event.EditContentEvent(grid.getSelection()).fire();
-                    }
-                }
-            };
-        };
-        ContentTreeGridPanel.prototype.createTreeConfig = function () {
-            return {
-                selectionchange: function (selModel, selected, opts) {
-                    new app_event.GridSelectionChangeEvent(selected).fire();
-                }
-            };
-        };
-        ContentTreeGridPanel.prototype.nameRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
-            var nameTemplate = '<div class="admin-{0}-thumbnail">' + '<img src="{1}"/>' + '</div>' + '<div class="admin-{0}-description">' + '<h6>{2}</h6>' + '<p>{3}</p>' + '</div>';
-            var content = record.data;
-            var activeListType = this.getActiveList().getItemId();
-            return Ext.String.format(nameTemplate, activeListType, content.iconUrl, value, content.name);
-        };
-        ContentTreeGridPanel.prototype.statusRenderer = function () {
-            return "Online";
-        };
-        ContentTreeGridPanel.prototype.prettyDateRenderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
-            try  {
-                if(parent && Ext.isFunction(parent['humane_date'])) {
-                    return parent['humane_date'](value);
-                } else {
-                    return value;
-                }
-            } catch (e) {
-                return value;
-            }
-        };
-        return ContentTreeGridPanel;
-    })(api_ui_grid.TreeGridPanel);
-    app_browse.ContentTreeGridPanel = ContentTreeGridPanel;    
-})(app_browse || (app_browse = {}));
 var app_appbar;
 (function (app_appbar) {
     var ShowAppLauncherAction = (function (_super) {
@@ -7541,7 +7540,7 @@ Ext.define('Admin.controller.Controller', {
     getContentManagerContextMenu: function () {
         var menu = components.contextMenu;
         if(!menu) {
-            menu = components.contextMenu = new app_ui.ContextMenu();
+            menu = components.contextMenu = new app_browse.ContentTreeGridContextMenu();
         }
         return menu;
     },
@@ -8162,7 +8161,7 @@ Ext.application({
             xtype: 'contentFilter',
             width: 200
         });
-        var toolbar = components.browseToolbar = new app_ui.BrowseToolbar();
+        var toolbar = components.browseToolbar = new app_browse.ContentBrowseToolbar();
         var grid = components.gridPanel = new app_browse.ContentTreeGridPanel('contentTreeGrid').create('center');
         var detailsHorizontal = new Admin.view.contentManager.DetailPanel({
             region: 'south',
@@ -8232,5 +8231,5 @@ Ext.application({
     }
 });
 app.ContentContext.init();
-app.ContentActions.init();
+app_browse.ContentBrowseActions.init();
 //@ sourceMappingURL=all.js.map

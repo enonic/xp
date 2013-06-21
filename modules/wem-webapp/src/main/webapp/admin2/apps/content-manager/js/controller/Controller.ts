@@ -534,10 +534,10 @@ Ext.define('Admin.controller.Controller', {
         return Ext.ComponentQuery.query('browseToolbar')[0];
     },
 
-    getContentManagerContextMenu: function ():app_ui.ContextMenu {
+    getContentManagerContextMenu: function ():app_browse.ContentTreeGridContextMenu {
         var menu = components.contextMenu;
         if (!menu) {
-            menu = components.contextMenu = new app_ui.ContextMenu();
+            menu = components.contextMenu = new app_browse.ContentTreeGridContextMenu();
         }
         return menu;
     },

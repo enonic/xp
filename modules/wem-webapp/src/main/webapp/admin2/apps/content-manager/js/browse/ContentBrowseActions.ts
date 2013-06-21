@@ -1,4 +1,4 @@
-module app {
+module app_browse {
 
     export class NewContentAction extends api_ui.Action {
 
@@ -16,7 +16,7 @@ module app {
             super("Open");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new app_event.OpenContentEvent(ContentContext.get().getSelectedContents()).fire();
+                new app_event.OpenContentEvent(app.ContentContext.get().getSelectedContents()).fire();
             });
         }
     }
@@ -27,7 +27,7 @@ module app {
             super("Edit");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new app_event.EditContentEvent(ContentContext.get().getSelectedContents()).fire();
+                new app_event.EditContentEvent(app.ContentContext.get().getSelectedContents()).fire();
             });
         }
     }
@@ -38,7 +38,7 @@ module app {
             super("Delete");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new app_event.DeleteContentEvent(ContentContext.get().getSelectedContents()).fire();
+                new app_event.DeleteContentEvent(app.ContentContext.get().getSelectedContents()).fire();
             });
         }
     }
@@ -77,7 +77,7 @@ module app {
         }
     }
 
-    export class ContentActions {
+    export class ContentBrowseActions {
 
         static NEW_CONTENT:api_ui.Action = new NewContentAction();
         static OPEN_CONTENT:api_ui.Action = new OpenContentAction;

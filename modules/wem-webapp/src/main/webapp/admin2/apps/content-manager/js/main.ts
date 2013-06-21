@@ -12,16 +12,23 @@
 
 ///<reference path='ContentContext.ts' />
 
-///<reference path='ContentActions.ts' />
+///<reference path='browse/ContentBrowseActions.ts' />
 
 ///<reference path='lib/ux/toggleslide/Thumb.ts' />
 ///<reference path='lib/ux/toggleslide/ToggleSlide.ts' />
+
+
+///<reference path='browse/ContentActionMenu.ts' />
+///<reference path='browse/ContentBrowseToolbar.ts' />
+///<reference path='browse/ContentTreeGridContextMenu.ts' />
+///<reference path='browse/ContentTreeGridPanel.ts' />
 
 ///<reference path='handler/DeleteContentHandler.ts' />
 ///<reference path='view/wizard/form/FormComponent.ts' />
 ///<reference path='view/wizard/form/FormItemSetComponent.ts' />
 ///<reference path='view/wizard/form/input/BaseInputComponent.ts' />
 ///<reference path='view/wizard/form/input/TextLineComponent.ts' />
+
 
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
@@ -47,9 +54,6 @@
 ///<reference path='view/TabPanel.ts' />
 ///<reference path='view/BaseFilterPanel.ts' />
 ///<reference path='view/FilterPanel.ts' />
-///<reference path='view/BrowseToolbar.ts' />
-///<reference path='view/ActionMenu.ts' />
-///<reference path='view/ContextMenu.ts' />
 
 ///<reference path='view/DetailToolbar.ts' />
 ///<reference path='view/LivePreview.ts' />
@@ -62,8 +66,6 @@
 ///<reference path='view/WizardHeader.ts' />
 ///<reference path='view/WizardLayout.ts' />
 ///<reference path='view/WizardPanel.ts' />
-
-///<reference path='browse/ContentTreeGridPanel.ts' />
 
 ///<reference path='appbar/ContentAppBarActions.ts' />
 ///<reference path='appbar/ContentAppBar.ts' />
@@ -117,8 +119,8 @@ declare var Admin;
 declare var CONFIG;
 
 module components {
-    export var browseToolbar:app_ui.BrowseToolbar;
-    export var contextMenu:app_ui.ContextMenu;
+    export var browseToolbar:app_browse.ContentBrowseToolbar;
+    export var contextMenu:app_browse.ContentTreeGridContextMenu;
     export var gridPanel:app_browse.ContentTreeGridPanel;
 }
 
@@ -158,7 +160,7 @@ Ext.application({
             width: 200
         });
 
-        var toolbar = components.browseToolbar = new app_ui.BrowseToolbar();
+        var toolbar = components.browseToolbar = new app_browse.ContentBrowseToolbar();
 
         var grid = components.gridPanel =
                    <app_browse.ContentTreeGridPanel> new app_browse.ContentTreeGridPanel('contentTreeGrid').create('center');
@@ -239,4 +241,4 @@ Ext.application({
 
 
 app.ContentContext.init();
-app.ContentActions.init();
+app_browse.ContentBrowseActions.init();

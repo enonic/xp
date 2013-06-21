@@ -81,7 +81,7 @@ Ext.define('Admin.view.BaseDetailPanel', {
 
     getActionButton: function () {
         return Ext.apply(
-            new app_ui.ActionMenu().getExt(),
+            new app_browse.ContentActionMenu().getExt(),
             {
                 itemId: 'actionMenu',
                 text: 'Actions',

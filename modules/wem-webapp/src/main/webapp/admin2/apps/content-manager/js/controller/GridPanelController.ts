@@ -13,7 +13,7 @@ Ext.define('Admin.controller.GridPanelController', {
     /*    views: [
      'Admin.view.contentManager.FilterPanel',
      'Admin.view.contentManager.ShowPanel',
-     'Admin.view.contentManager.ContextMenu'
+     'Admin.view.contentManager.ContentTreeGridContextMenu'
      ],*/
 
     init: function () {
