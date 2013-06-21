@@ -367,6 +367,12 @@ var app_browse;
                 }
             });
         };
+        SpaceBrowseActions.activateShortcuts = function activateShortcuts() {
+            api_ui.Action.activateShortcuts(SpaceBrowseActions.ACTIONS);
+        };
+        SpaceBrowseActions.deactivateShortcuts = function deactivateShortcuts() {
+            api_ui.Action.deactivateShortcuts(SpaceBrowseActions.ACTIONS);
+        };
         SpaceBrowseActions.anyEditable = function anyEditable(spaces) {
             for(var i in spaces) {
                 var space = spaces[i];
@@ -4534,12 +4540,30 @@ var app;
     var SpaceAppPanel = (function (_super) {
         __extends(SpaceAppPanel, _super);
         function SpaceAppPanel(appBar) {
-            var _this = this;
             this.appBrowsePanel = new app_browse.SpaceAppBrowsePanel();
-                _super.call(this, appBar.getTabMenu(), this.appBrowsePanel);
+            this.appBarTabMenu = appBar.getTabMenu();
+                _super.call(this, appBar.getTabMenu(), this.appBrowsePanel, app_browse.SpaceBrowseActions.ACTIONS);
+            this.handleGlobalEvents();
+            app_browse.SpaceBrowseActions.activateShortcuts();
+        }
+        SpaceAppPanel.prototype.init = function () {
+            this.appBrowsePanel.init();
+        };
+        SpaceAppPanel.prototype.tabRemove = function (tab) {
+            if(this.hasUnsavedChanges()) {
+                return false;
+            } else {
+                return _super.prototype.tabRemove.call(this, tab);
+            }
+        };
+        SpaceAppPanel.prototype.hasUnsavedChanges = function () {
+            return false;
+        };
+        SpaceAppPanel.prototype.handleGlobalEvents = function () {
+            var _this = this;
             api_appbar.ShowAppBrowsePanelEvent.on(function (event) {
-                _this.showBrowsePanel();
-                appBar.getTabMenu().deselectTab();
+                _this.showHomePanel();
+                _this.appBarTabMenu.deselectTab();
             });
             app_event.NewSpaceEvent.on(function (event) {
                 var tabMenuItem = new app_appbar.SpaceAppBarTabMenuItem("New Space");
@@ -4571,26 +4595,6 @@ var app;
                     });
                 }
             });
-        }
-        SpaceAppPanel.prototype.init = function () {
-            this.appBrowsePanel.init();
-        };
-        SpaceAppPanel.prototype.tabRemove = function (tab) {
-            if(this.hasUnsavedChanges()) {
-                return false;
-            } else {
-                return _super.prototype.tabRemove.call(this, tab);
-            }
-        };
-        SpaceAppPanel.prototype.removePanel = function (index) {
-            var panelRemoved = _super.prototype.removePanel.call(this, index);
-            if(this.getSize() == 0) {
-                this.showBrowsePanel();
-            }
-            return panelRemoved;
-        };
-        SpaceAppPanel.prototype.hasUnsavedChanges = function () {
-            return false;
         };
         SpaceAppPanel.prototype.generateTabId = function (spaceName, isEdit) {
             return 'tab-' + (isEdit ? 'edit-' : 'preview-') + spaceName;

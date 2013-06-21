@@ -3,6 +3,7 @@ module api_ui {
         private label;
         private iconClass;
         private shortcut;
+        private activatedShortcut;
         private enabled;
         private executionListeners;
         private propertyChangeListeners;

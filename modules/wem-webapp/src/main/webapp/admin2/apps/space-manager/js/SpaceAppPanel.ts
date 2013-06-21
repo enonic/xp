@@ -4,15 +4,55 @@ module app {
 
         private appBrowsePanel:app_browse.SpaceAppBrowsePanel;
 
+        private appBarTabMenu:api_appbar.AppBarTabMenu;
+
         constructor(appBar:app_appbar.SpaceAppBar) {
 
             this.appBrowsePanel = new app_browse.SpaceAppBrowsePanel();
+            this.appBarTabMenu = appBar.getTabMenu();
 
-            super(appBar.getTabMenu(), this.appBrowsePanel);
+            super(appBar.getTabMenu(), this.appBrowsePanel, app_browse.SpaceBrowseActions.ACTIONS);
+
+            this.handleGlobalEvents();
+
+            app_browse.SpaceBrowseActions.activateShortcuts();
+        }
+
+        init() {
+            this.appBrowsePanel.init();
+        }
+
+        tabRemove(tab:api_ui_tab.Tab):bool {
+
+            if (this.hasUnsavedChanges()) {
+                return false;
+            }
+            else {
+                return super.tabRemove(tab);
+            }
+        }
+
+        private hasUnsavedChanges():bool {
+            /*TODO: if (wizardPanel != null && wizardPanel.getWizardDirty()) {
+             Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?',
+             (answer) => {
+             if ('yes' === answer) {
+             this.removeTab(tab);
+             } else {
+             return false;
+             }
+             });
+             } else {
+             this.removeTab(tab);
+             }*/
+            return false;
+        }
+
+        private handleGlobalEvents() {
 
             api_appbar.ShowAppBrowsePanelEvent.on((event) => {
-                this.showBrowsePanel();
-                appBar.getTabMenu().deselectTab();
+                this.showHomePanel();
+                this.appBarTabMenu.deselectTab();
             });
 
             app_event.NewSpaceEvent.on((event) => {
@@ -54,51 +94,8 @@ module app {
 
                     });
                 }
-
-
             });
         }
-
-        init() {
-            this.appBrowsePanel.init();
-        }
-
-        tabRemove(tab:api_ui_tab.Tab):bool {
-
-            if (this.hasUnsavedChanges()) {
-                return false;
-            }
-            else {
-                return super.tabRemove(tab);
-            }
-
-        }
-
-        removePanel(index:number):api_ui.Panel {
-            var panelRemoved = super.removePanel(index);
-            if (this.getSize() == 0) {
-                this.showBrowsePanel();
-            }
-            return panelRemoved;
-        }
-
-
-        private hasUnsavedChanges():bool {
-            /*TODO: if (wizardPanel != null && wizardPanel.getWizardDirty()) {
-             Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?',
-             (answer) => {
-             if ('yes' === answer) {
-             this.removeTab(tab);
-             } else {
-             return false;
-             }
-             });
-             } else {
-             this.removeTab(tab);
-             }*/
-            return false;
-        }
-
 
         private generateTabId(spaceName, isEdit) {
             return 'tab-' + ( isEdit ? 'edit-' : 'preview-') + spaceName;

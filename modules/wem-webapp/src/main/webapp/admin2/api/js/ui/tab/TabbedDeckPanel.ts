@@ -14,9 +14,13 @@ module api_ui_tab {
             this.navigator.addTabRemoveListener((tab:Tab) => {
                 return this.tabRemove(tab);
             });
-            this.navigator.addTabSelectedListener((tab:Tab)=>{
+            this.navigator.addTabSelectedListener((tab:Tab)=> {
                 this.showTab(tab);
             });
+        }
+
+        getNavigator():TabNavigator {
+            return this.navigator;
         }
 
         addTab(tab:api_ui_tab.Tab, panel:api_ui.Panel) {
@@ -25,7 +29,7 @@ module api_ui_tab {
         }
 
         showTab(tab:api_ui_tab.Tab) {
-            super.showPanel(tab.getTabIndex());
+            this.showPanel(tab.getTabIndex());
             this.navigator.selectTab(tab.getTabIndex());
         }
 

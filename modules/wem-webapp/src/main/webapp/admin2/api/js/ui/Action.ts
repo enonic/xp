@@ -8,6 +8,8 @@ module api_ui {
 
         private shortcut:string;
 
+        private activatedShortcut:string;
+
         private enabled:bool = true;
 
         private executionListeners:Function[] = [];
@@ -78,15 +80,16 @@ module api_ui {
 
         activateShortcut() {
             if (this.hasShortcut()) {
-                Mousetrap.bind(this.getShortcut(), (e: ExtendedKeyboardEvent, combo: string) => {
+                Mousetrap.bind(this.getShortcut(), (e:ExtendedKeyboardEvent, combo:string) => {
                     this.execute();
                 });
+                this.activatedShortcut = this.getShortcut();
             }
         }
 
         deactivateShortcut() {
-            if (this.hasShortcut()) {
-                Mousetrap.unbind(this.getShortcut());
+            if (this.activatedShortcut != null) {
+                Mousetrap.unbind(this.activatedShortcut);
             }
         }
 

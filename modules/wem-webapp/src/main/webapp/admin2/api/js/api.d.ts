@@ -494,6 +494,7 @@ module api_ui {
         private label;
         private iconClass;
         private shortcut;
+        private activatedShortcut;
         private enabled;
         private executionListeners;
         private propertyChangeListeners;
@@ -737,6 +738,7 @@ module api_ui_tab {
     class TabbedDeckPanel extends api_ui.DeckPanel {
         private navigator;
         constructor(navigator: TabNavigator);
+        public getNavigator(): TabNavigator;
         public addTab(tab: Tab, panel: api_ui.Panel): void;
         public showTab(tab: Tab): void;
         public tabRemove(tab: Tab): bool;
@@ -887,8 +889,12 @@ module api_appbar {
 module api {
     class AppPanel extends api_ui_tab.TabbedDeckPanel {
         private homePanel;
-        constructor(appBar: api_ui_tab.TabNavigator, homePanel: api_ui.Panel);
-        public showBrowsePanel(): void;
+        private homePanelActions;
+        constructor(tabNavigator: api_ui_tab.TabNavigator, homePanel: api_ui.Panel, homePanelActions: api_ui.Action[]);
+        public showHomePanel(): void;
+        public showPanel(index: number): void;
+        public removePanel(index: number): api_ui.Panel;
+        private isHomePanel(index);
     }
 }
 module api_ui_dialog {

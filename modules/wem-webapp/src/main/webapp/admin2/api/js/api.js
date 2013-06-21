@@ -1075,11 +1075,12 @@ var api_ui;
                 Mousetrap.bind(this.getShortcut(), function (e, combo) {
                     _this.execute();
                 });
+                this.activatedShortcut = this.getShortcut();
             }
         };
         Action.prototype.deactivateShortcut = function () {
-            if(this.hasShortcut()) {
-                Mousetrap.unbind(this.getShortcut());
+            if(this.activatedShortcut != null) {
+                Mousetrap.unbind(this.activatedShortcut);
             }
         };
         Action.prototype.execute = function () {
@@ -1852,12 +1853,15 @@ var api_ui_tab;
                 _this.showTab(tab);
             });
         }
+        TabbedDeckPanel.prototype.getNavigator = function () {
+            return this.navigator;
+        };
         TabbedDeckPanel.prototype.addTab = function (tab, panel) {
             this.navigator.addTab(tab);
             this.addPanel(panel);
         };
         TabbedDeckPanel.prototype.showTab = function (tab) {
-            _super.prototype.showPanel.call(this, tab.getTabIndex());
+            this.showPanel(tab.getTabIndex());
             this.navigator.selectTab(tab.getTabIndex());
         };
         TabbedDeckPanel.prototype.tabRemove = function (tab) {
@@ -2431,17 +2435,36 @@ var api;
 (function (api) {
     var AppPanel = (function (_super) {
         __extends(AppPanel, _super);
-        function AppPanel(appBar, homePanel) {
-                _super.call(this, appBar);
+        function AppPanel(tabNavigator, homePanel, homePanelActions) {
+                _super.call(this, tabNavigator);
             this.homePanel = homePanel;
+            this.homePanelActions = homePanelActions;
             var homePanelMenuItem = new api_appbar.AppBarTabMenuItem("home");
             homePanelMenuItem.setVisible(false);
             homePanelMenuItem.setRemovable(false);
             this.addTab(homePanelMenuItem, this.homePanel);
             this.showPanel(0);
         }
-        AppPanel.prototype.showBrowsePanel = function () {
+        AppPanel.prototype.showHomePanel = function () {
             this.showPanel(0);
+        };
+        AppPanel.prototype.showPanel = function (index) {
+            _super.prototype.showPanel.call(this, index);
+            if(this.isHomePanel(index)) {
+                api_ui.Action.activateShortcuts(this.homePanelActions);
+            } else {
+                api_ui.Action.deactivateShortcuts(this.homePanelActions);
+            }
+        };
+        AppPanel.prototype.removePanel = function (index) {
+            var panelRemoved = _super.prototype.removePanel.call(this, index);
+            if(this.getSize() == 0) {
+                this.showHomePanel();
+            }
+            return panelRemoved;
+        };
+        AppPanel.prototype.isHomePanel = function (index) {
+            return index == 0;
         };
         return AppPanel;
     })(api_ui_tab.TabbedDeckPanel);

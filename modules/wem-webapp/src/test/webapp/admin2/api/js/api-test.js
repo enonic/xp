@@ -56,11 +56,12 @@ var api_ui;
                 Mousetrap.bind(this.getShortcut(), function (e, combo) {
                     _this.execute();
                 });
+                this.activatedShortcut = this.getShortcut();
             }
         };
         Action.prototype.deactivateShortcut = function () {
-            if(this.hasShortcut()) {
-                Mousetrap.unbind(this.getShortcut());
+            if(this.activatedShortcut != null) {
+                Mousetrap.unbind(this.activatedShortcut);
             }
         };
         Action.prototype.execute = function () {
