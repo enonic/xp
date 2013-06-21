@@ -13,6 +13,10 @@ module api_ui {
             super(idPrefix || "DeckPanel");
         }
 
+        isEmpty():bool {
+            return this.panels.length == 0;
+        }
+
         getSize():number {
             return this.panels.length;
         }
@@ -32,28 +36,42 @@ module api_ui {
             return this.panels[index];
         }
 
+        getLastPanel():Panel {
+            return this.isEmpty() ? null : this.panels[this.panels.length - 1];
+        }
+
+        getPanelShown():Panel {
+            return this.panels[this.panelShown];
+        }
+
+        getPanelShownIndex():number {
+            return this.panelShown;
+        }
+
         removePanel(index:number):Panel {
 
-            var panel = this.panels[index];
-            panel.getEl().remove();
-            var lastPanel = this.panels.length == index + 1;
+            var panelToRemove = this.panels[index];
+            panelToRemove.getEl().remove();
+            var removingLastPanel:bool = this.panels.length == index + 1;
+            var panelToRemoveIsShown:bool = this.isShownPanel(index);
+
             this.panels.splice(index, 1);
 
-            if (this.panels.length == 0) {
-                return panel;
+            if (this.isEmpty()) {
+                this.panelShown = -1;
             }
+            else if (panelToRemoveIsShown) {
 
-            if (this.isShownPanel(index)) {
-
-                if (!lastPanel) {
-                    this.panels[this.panels.length - 1].show();
+                if (removingLastPanel) {
+                    this.getLastPanel().show();
                     this.panelShown = this.panels.length - 1;
                 }
                 else {
-                    this.panels[index-1].show();
+                    this.panels[index].show();
                 }
             }
-            return panel;
+
+            return panelToRemove;
         }
 
         private isShownPanel(panelIndex:number):bool {

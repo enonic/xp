@@ -26,7 +26,7 @@ module api_ui_tab {
 
         showTab(tab:api_ui_tab.Tab) {
             super.showPanel(tab.getTabIndex());
-            this.navigator.selectTab(tab);
+            this.navigator.selectTab(tab.getTabIndex());
         }
 
         tabRemove(tab:api_ui_tab.Tab):bool {

@@ -1081,7 +1081,7 @@ var api_ui;
     var Panel = (function (_super) {
         __extends(Panel, _super);
         function Panel(idPrefix) {
-                _super.call(this, idPrefix, "panel");
+                _super.call(this, idPrefix, "Panel");
         }
         return Panel;
     })(api_dom.DivEl);
@@ -1096,6 +1096,9 @@ var api_ui;
             this.panels = [];
             this.panelShown = -1;
         }
+        DeckPanel.prototype.isEmpty = function () {
+            return this.panels.length == 0;
+        };
         DeckPanel.prototype.getSize = function () {
             return this.panels.length;
         };
@@ -1107,23 +1110,32 @@ var api_ui;
         DeckPanel.prototype.getPanel = function (index) {
             return this.panels[index];
         };
+        DeckPanel.prototype.getLastPanel = function () {
+            return this.isEmpty() ? null : this.panels[this.panels.length - 1];
+        };
+        DeckPanel.prototype.getPanelShown = function () {
+            return this.panels[this.panelShown];
+        };
+        DeckPanel.prototype.getPanelShownIndex = function () {
+            return this.panelShown;
+        };
         DeckPanel.prototype.removePanel = function (index) {
-            var panel = this.panels[index];
-            panel.getEl().remove();
-            var lastPanel = this.panels.length == index + 1;
+            var panelToRemove = this.panels[index];
+            panelToRemove.getEl().remove();
+            var removingLastPanel = this.panels.length == index + 1;
+            var panelToRemoveIsShown = this.isShownPanel(index);
             this.panels.splice(index, 1);
-            if(this.panels.length == 0) {
-                return panel;
-            }
-            if(this.isShownPanel(index)) {
-                if(!lastPanel) {
-                    this.panels[this.panels.length - 1].show();
+            if(this.isEmpty()) {
+                this.panelShown = -1;
+            } else if(panelToRemoveIsShown) {
+                if(removingLastPanel) {
+                    this.getLastPanel().show();
                     this.panelShown = this.panels.length - 1;
                 } else {
-                    this.panels[index - 1].show();
+                    this.panels[index].show();
                 }
             }
-            return panel;
+            return panelToRemove;
         };
         DeckPanel.prototype.isShownPanel = function (panelIndex) {
             return this.panelShown === panelIndex;
@@ -1594,6 +1606,9 @@ var api_ui_tab;
                 this.menuEl.appendChild(tabMenuItem);
             }
         };
+        TabMenu.prototype.isEmpty = function () {
+            return this.tabs.length == 0;
+        };
         TabMenu.prototype.getSize = function () {
             var size = 0;
             this.tabs.forEach(function (tab) {
@@ -1603,12 +1618,23 @@ var api_ui_tab;
             });
             return size;
         };
+        TabMenu.prototype.getSelectedTabIndex = function () {
+            return this.selectedTab;
+        };
+        TabMenu.prototype.getSelectedTab = function () {
+            return this.tabs[this.selectedTab];
+        };
         TabMenu.prototype.removeTab = function (tab) {
             var tabMenuItem = tab;
             tabMenuItem.getEl().remove();
             var isLastTab = this.isLastTab(tab);
             this.tabs.splice(tab.getTabIndex(), 1);
             if(this.isSelectedTab(tab)) {
+                if(this.isEmpty()) {
+                    this.selectedTab = -1;
+                } else if(tab.getTabIndex() > this.tabs.length - 1) {
+                    this.selectedTab = tab.getTabIndex() - 1;
+                }
             }
             if(!isLastTab) {
                 for(var i = tab.getTabIndex() - 1; i < this.tabs.length; i++) {
@@ -1617,21 +1643,22 @@ var api_ui_tab;
             }
         };
         TabMenu.prototype.isSelectedTab = function (tab) {
-            return tab == this.selectedTab;
+            return tab.getTabIndex() == this.selectedTab;
         };
         TabMenu.prototype.isLastTab = function (tab) {
             return tab.getTabIndex() === this.tabs.length;
         };
-        TabMenu.prototype.selectTab = function (tab) {
-            this.tabMenuButton.setLabel(tab.getLabel());
-            this.selectedTab = tab;
+        TabMenu.prototype.selectTab = function (tabIndex) {
+            var selectedTab = this.tabs[tabIndex];
+            this.tabMenuButton.setLabel(selectedTab.getLabel());
+            this.selectedTab = tabIndex;
         };
         TabMenu.prototype.getActiveTab = function () {
-            return this.selectedTab;
+            return this.getSelectedTab();
         };
         TabMenu.prototype.deselectTab = function () {
             this.tabMenuButton.setLabel("");
-            this.selectedTab = null;
+            this.selectedTab = -1;
         };
         TabMenu.prototype.addTabSelectedListener = function (listener) {
             this.tabSelectedListeners.push(listener);
@@ -1765,7 +1792,7 @@ var api_ui_tab;
         TabBar.prototype.getActiveTab = function () {
             return null;
         };
-        TabBar.prototype.selectTab = function (tab) {
+        TabBar.prototype.selectTab = function (tabIndex) {
         };
         TabBar.prototype.deselectTab = function () {
         };
@@ -1798,7 +1825,7 @@ var api_ui_tab;
         };
         TabbedDeckPanel.prototype.showTab = function (tab) {
             _super.prototype.showPanel.call(this, tab.getTabIndex());
-            this.navigator.selectTab(tab);
+            this.navigator.selectTab(tab.getTabIndex());
         };
         TabbedDeckPanel.prototype.tabRemove = function (tab) {
             this.removePanel(tab.getTabIndex());
