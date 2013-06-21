@@ -6,14 +6,17 @@ module api_ui {
 
         private iconClass:string;
 
+        private shortcut:string;
+
         private enabled:bool = true;
 
         private executionListeners:Function[] = [];
 
         private propertyChangeListeners:Function[] = [];
 
-        constructor(label:string) {
+        constructor(label:string, shortcut?:string) {
             this.label = label;
+            this.shortcut = shortcut;
         }
 
         getLabel():string {
@@ -22,7 +25,7 @@ module api_ui {
 
         setLabel(value:string) {
 
-            if( value !== this.label ) {
+            if (value !== this.label) {
                 this.label = value;
 
                 for (var i in this.propertyChangeListeners) {
@@ -52,12 +55,36 @@ module api_ui {
 
         setIconClass(value:string) {
 
-            if( value !== this.iconClass ) {
+            if (value !== this.iconClass) {
                 this.iconClass = value;
 
                 for (var i in this.propertyChangeListeners) {
                     this.propertyChangeListeners[i](this);
                 }
+            }
+        }
+
+        hasShortcut():bool {
+            return this.shortcut != null;
+        }
+
+        getShortcut():string {
+            return this.shortcut;
+        }
+
+        setShortcut(value:string) {
+            this.shortcut = value;
+        }
+
+        activateShortcut() {
+            if (this.hasShortcut()) {
+            //Mousetrap.bind(this.getShortcut(), this.execute);
+            }
+        }
+
+        deactivateShortcut() {
+            if (this.hasShortcut()) {
+            //Mousetrap.unbind(this.getShortcut());
             }
         }
 

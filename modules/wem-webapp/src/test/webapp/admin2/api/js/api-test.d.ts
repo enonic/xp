@@ -2,16 +2,22 @@ module api_ui {
     class Action {
         private label;
         private iconClass;
+        private shortcut;
         private enabled;
         private executionListeners;
         private propertyChangeListeners;
-        constructor(label: string);
+        constructor(label: string, shortcut?: string);
         public getLabel(): string;
         public setLabel(value: string): void;
         public isEnabled(): bool;
         public setEnabled(value: bool): void;
         public getIconClass(): string;
         public setIconClass(value: string): void;
+        public hasShortcut(): bool;
+        public getShortcut(): string;
+        public setShortcut(value: string): void;
+        public activateShortcut(): void;
+        public deactivateShortcut(): void;
         public execute(): void;
         public addExecutionListener(listener: (action: Action) => void): void;
         public addPropertyChangeListener(listener: (action: Action) => void): void;

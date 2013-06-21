@@ -17,9 +17,13 @@ module api_ui_dialog{
 
         private buttonRow:ModalDialogButtonRow;
 
-        constructor(config:ModalDialogConfig) {
+        private cancelAction:api_ui.Action;
 
+        private actions:api_ui.Action[] = [];
+
+        constructor(config:ModalDialogConfig) {
             super("ModalDialog", "modal-dialog");
+
             this.config = config;
             var el = this.getEl();
             el.setDisplay("none");
@@ -42,6 +46,11 @@ module api_ui_dialog{
             this.appendChild(this.buttonRow);
         }
 
+        setCancelAction(action:api_ui.Action) {
+            this.cancelAction = action;
+            this.addAction(action);
+        }
+
         setTitle(value:string) {
             this.title.setTitle(value);
         }
@@ -51,6 +60,7 @@ module api_ui_dialog{
         }
 
         addAction(action:api_ui.Action) {
+            this.actions.push(action);
             this.buttonRow.addAction(action);
         }
 
@@ -69,7 +79,15 @@ module api_ui_dialog{
             api_ui.BodyMask.get().deActivate();
 
             this.hide();
-            Mousetrap.unbind('esc');
+            this.cancelAction.deactivateShortcut();
+
+
+            this.actions.forEach((action, index, array)=> {
+                //action.deactivateShortcut();
+                if (action.hasShortcut()) {
+                    Mousetrap.unbind(action.getShortcut());
+                }
+            });
         }
 
         open() {
@@ -77,8 +95,13 @@ module api_ui_dialog{
             api_ui.BodyMask.get().activate();
 
             this.show();
-            Mousetrap.bind('esc', () => {
-                this.close();
+            this.cancelAction.activateShortcut();
+
+            this.actions.forEach((action, index, array)=> {
+                if (action.hasShortcut()) {
+                    //action.activateShortcut();
+                    Mousetrap.bind(action.getShortcut(), action.execute);
+                }
             });
         }
     }

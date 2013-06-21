@@ -2,7 +2,7 @@ module app {
 
     export class SpaceDeleteDialog extends api_delete.DeleteDialog {
 
-        private deleteAction:api_ui.Action = new DeleteSpaceDialogAction();
+        private deleteAction:api_ui.Action = new app.SpaceDeleteDialogAction();
 
         private spacesToDelete:api_model.SpaceModel[];
 
@@ -20,7 +20,7 @@ module app {
                 api_notify.showFeedback('Space(s) was deleted!');
             };
 
-            this.deleteAction.addExecutionListener(()=> {
+            this.deleteAction.addExecutionListener(() => {
                 this.deleteHandler.doDelete(api_handler.DeleteSpaceParamFactory.create(this.spacesToDelete), deleteCallback);
             });
 
@@ -32,21 +32,19 @@ module app {
 
             var deleteItems:api_delete.DeleteItem[] = [];
             for (var i in spaces) {
-                var space:api_model.SpaceModel = spaces[i];
+                var spaceModel = spaces[i];
 
-                var deleteItem:api_delete.DeleteItem = new api_delete.DeleteItem(space.data.iconUrl, space.data.displayName);
+                var deleteItem:api_delete.DeleteItem = new api_delete.DeleteItem(spaceModel.data.iconUrl, spaceModel.data.displayName);
                 deleteItems.push(deleteItem);
             }
             this.setDeleteItems(deleteItems);
         }
     }
 
-    export class DeleteSpaceDialogAction extends api_ui.Action {
+    export class SpaceDeleteDialogAction extends api_ui.Action {
 
         constructor() {
-            super("Delete");
+            super("Delete", "enter");
         }
     }
-
-
 }

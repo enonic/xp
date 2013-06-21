@@ -4492,7 +4492,7 @@ var app;
         function SpaceDeleteDialog() {
             var _this = this;
                 _super.call(this, "Space");
-            this.deleteAction = new DeleteSpaceDialogAction();
+            this.deleteAction = new app.SpaceDeleteDialogAction();
             this.deleteHandler = new api_handler.DeleteSpacesHandler();
             this.setDeleteAction(this.deleteAction);
             var deleteCallback = function (obj, success, result) {
@@ -4509,8 +4509,8 @@ var app;
             this.spacesToDelete = spaces;
             var deleteItems = [];
             for(var i in spaces) {
-                var space = spaces[i];
-                var deleteItem = new api_delete.DeleteItem(space.data.iconUrl, space.data.displayName);
+                var spaceModel = spaces[i];
+                var deleteItem = new api_delete.DeleteItem(spaceModel.data.iconUrl, spaceModel.data.displayName);
                 deleteItems.push(deleteItem);
             }
             this.setDeleteItems(deleteItems);
@@ -4518,14 +4518,14 @@ var app;
         return SpaceDeleteDialog;
     })(api_delete.DeleteDialog);
     app.SpaceDeleteDialog = SpaceDeleteDialog;    
-    var DeleteSpaceDialogAction = (function (_super) {
-        __extends(DeleteSpaceDialogAction, _super);
-        function DeleteSpaceDialogAction() {
-                _super.call(this, "Delete");
+    var SpaceDeleteDialogAction = (function (_super) {
+        __extends(SpaceDeleteDialogAction, _super);
+        function SpaceDeleteDialogAction() {
+                _super.call(this, "Delete", "enter");
         }
-        return DeleteSpaceDialogAction;
+        return SpaceDeleteDialogAction;
     })(api_ui.Action);
-    app.DeleteSpaceDialogAction = DeleteSpaceDialogAction;    
+    app.SpaceDeleteDialogAction = SpaceDeleteDialogAction;    
 })(app || (app = {}));
 var app;
 (function (app) {

@@ -1,8 +1,8 @@
-module app_ui {
+module app {
 
-    export class DeleteContentDialog extends api_delete.DeleteDialog {
+    export class ContentDeleteDialog extends api_delete.DeleteDialog {
 
-        private deleteAction:api_ui.Action = new DeleteContentAction();
+        private deleteAction:api_ui.Action = new ContentDeleteDialogAction();
 
         private contentToDelete:api_model.ContentModel[];
 
@@ -15,9 +15,7 @@ module app_ui {
 
             var deleteCallback = (obj, success, result) => {
                 this.close();
-
                 //components.gridPanel.refresh();
-
                 api_notify.showFeedback('Content was deleted!')
             }
 
@@ -32,23 +30,20 @@ module app_ui {
             this.contentToDelete = contentModels;
 
             var deleteItems:api_delete.DeleteItem[] = [];
-
             for (var i in contentModels) {
                 var contentModel = contentModels[i];
 
                 var deleteItem:api_delete.DeleteItem = new api_delete.DeleteItem(contentModel.data.iconUrl, contentModel.data.displayName);
                 deleteItems.push(deleteItem);
             }
-
             this.setDeleteItems(deleteItems);
         }
-
     }
 
-    export class DeleteContentAction extends api_ui.Action {
+    export class ContentDeleteDialogAction extends api_ui.Action {
 
         constructor() {
-            super("Delete");
+            super("Delete", "enter");
         }
     }
 }

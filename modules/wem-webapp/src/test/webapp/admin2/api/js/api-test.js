@@ -1,11 +1,12 @@
 var api_ui;
 (function (api_ui) {
     var Action = (function () {
-        function Action(label) {
+        function Action(label, shortcut) {
             this.enabled = true;
             this.executionListeners = [];
             this.propertyChangeListeners = [];
             this.label = label;
+            this.shortcut = shortcut;
         }
         Action.prototype.getLabel = function () {
             return this.label;
@@ -38,6 +39,23 @@ var api_ui;
                 for(var i in this.propertyChangeListeners) {
                     this.propertyChangeListeners[i](this);
                 }
+            }
+        };
+        Action.prototype.hasShortcut = function () {
+            return this.shortcut != null;
+        };
+        Action.prototype.getShortcut = function () {
+            return this.shortcut;
+        };
+        Action.prototype.setShortcut = function (value) {
+            this.shortcut = value;
+        };
+        Action.prototype.activateShortcut = function () {
+            if(this.hasShortcut()) {
+            }
+        };
+        Action.prototype.deactivateShortcut = function () {
+            if(this.hasShortcut()) {
             }
         };
         Action.prototype.execute = function () {

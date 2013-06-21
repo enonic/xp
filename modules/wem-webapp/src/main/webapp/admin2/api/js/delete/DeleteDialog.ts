@@ -23,7 +23,7 @@ module api_delete{
 
             this.getEl().addClass("delete-dialog");
             this.appendChildToContentPanel(this.itemList);
-            this.addAction(this.cancelAction);
+            this.setCancelAction(this.cancelAction);
 
             this.cancelAction.addExecutionListener(()=> {
                 this.close();
@@ -58,7 +58,7 @@ module api_delete{
     export class CancelDeleteDialogAction extends api_ui.Action {
 
         constructor() {
-            super("Cancel");
+            super("Cancel", "esc");
         }
     }
 

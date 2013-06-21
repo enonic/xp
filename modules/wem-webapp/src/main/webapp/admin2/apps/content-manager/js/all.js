@@ -1555,47 +1555,6 @@ Ext.define('Admin.view.BaseDialogWindow', {
         };
     }
 });
-var app_ui;
-(function (app_ui) {
-    var DeleteContentDialog = (function (_super) {
-        __extends(DeleteContentDialog, _super);
-        function DeleteContentDialog() {
-            var _this = this;
-                _super.call(this, "Delete");
-            this.deleteAction = new DeleteContentAction();
-            this.deleteHandler = new api_handler.DeleteContentHandler();
-            this.setDeleteAction(this.deleteAction);
-            var deleteCallback = function (obj, success, result) {
-                _this.close();
-                api_notify.showFeedback('Content was deleted!');
-            };
-            this.deleteAction.addExecutionListener(function () {
-                _this.deleteHandler.doDelete(api_handler.DeleteContentParamFactory.create(_this.contentToDelete), deleteCallback);
-            });
-            document.body.appendChild(this.getHTMLElement());
-        }
-        DeleteContentDialog.prototype.setContentToDelete = function (contentModels) {
-            this.contentToDelete = contentModels;
-            var deleteItems = [];
-            for(var i in contentModels) {
-                var contentModel = contentModels[i];
-                var deleteItem = new api_delete.DeleteItem(contentModel.data.iconUrl, contentModel.data.displayName);
-                deleteItems.push(deleteItem);
-            }
-            this.setDeleteItems(deleteItems);
-        };
-        return DeleteContentDialog;
-    })(api_delete.DeleteDialog);
-    app_ui.DeleteContentDialog = DeleteContentDialog;    
-    var DeleteContentAction = (function (_super) {
-        __extends(DeleteContentAction, _super);
-        function DeleteContentAction() {
-                _super.call(this, "Delete");
-        }
-        return DeleteContentAction;
-    })(api_ui.Action);
-    app_ui.DeleteContentAction = DeleteContentAction;    
-})(app_ui || (app_ui = {}));
 Ext.define('Admin.view.BaseDetailPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.detailPanel',
@@ -8133,6 +8092,47 @@ Ext.define('Admin.controller.DialogWindowController', {
         });
     }
 });
+var app;
+(function (app) {
+    var ContentDeleteDialog = (function (_super) {
+        __extends(ContentDeleteDialog, _super);
+        function ContentDeleteDialog() {
+            var _this = this;
+                _super.call(this, "Delete");
+            this.deleteAction = new ContentDeleteDialogAction();
+            this.deleteHandler = new api_handler.DeleteContentHandler();
+            this.setDeleteAction(this.deleteAction);
+            var deleteCallback = function (obj, success, result) {
+                _this.close();
+                api_notify.showFeedback('Content was deleted!');
+            };
+            this.deleteAction.addExecutionListener(function () {
+                _this.deleteHandler.doDelete(api_handler.DeleteContentParamFactory.create(_this.contentToDelete), deleteCallback);
+            });
+            document.body.appendChild(this.getHTMLElement());
+        }
+        ContentDeleteDialog.prototype.setContentToDelete = function (contentModels) {
+            this.contentToDelete = contentModels;
+            var deleteItems = [];
+            for(var i in contentModels) {
+                var contentModel = contentModels[i];
+                var deleteItem = new api_delete.DeleteItem(contentModel.data.iconUrl, contentModel.data.displayName);
+                deleteItems.push(deleteItem);
+            }
+            this.setDeleteItems(deleteItems);
+        };
+        return ContentDeleteDialog;
+    })(api_delete.DeleteDialog);
+    app.ContentDeleteDialog = ContentDeleteDialog;    
+    var ContentDeleteDialogAction = (function (_super) {
+        __extends(ContentDeleteDialogAction, _super);
+        function ContentDeleteDialogAction() {
+                _super.call(this, "Delete", "enter");
+        }
+        return ContentDeleteDialogAction;
+    })(api_ui.Action);
+    app.ContentDeleteDialogAction = ContentDeleteDialogAction;    
+})(app || (app = {}));
 var components;
 (function (components) {
     components.browseToolbar;
@@ -8224,7 +8224,7 @@ Ext.application({
                 }
             ]
         });
-        var deleteContentDialog = new app_ui.DeleteContentDialog();
+        var deleteContentDialog = new app.ContentDeleteDialog();
         app_event.DeleteContentEvent.on(function (event) {
             deleteContentDialog.setContentToDelete(event.getModels());
             deleteContentDialog.open();

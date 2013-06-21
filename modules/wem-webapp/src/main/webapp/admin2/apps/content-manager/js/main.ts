@@ -38,7 +38,6 @@
 ///<reference path='lib/Sortable.ts' />
 
 ///<reference path='view/BaseDialogWindow.ts' />
-///<reference path='view/DeleteContentDialog.ts' />
 ///<reference path='view/BaseDetailPanel.ts' />
 ///<reference path='view/AdminImageButton.ts' />
 ///<reference path='view/TopBarMenuItem.ts' />
@@ -110,6 +109,7 @@
 ///<reference path='controller/ContentPreviewController.ts' />
 ///<reference path='controller/DialogWindowController.ts' />
 
+///<reference path='ContentDeleteDialog.ts' />
 
 declare var Ext;
 declare var Admin;
@@ -228,7 +228,7 @@ Ext.application({
             ]
         });
 
-        var deleteContentDialog:app_ui.DeleteContentDialog = new app_ui.DeleteContentDialog();
+        var deleteContentDialog:app.ContentDeleteDialog = new app.ContentDeleteDialog();
         app_event.DeleteContentEvent.on((event) => {
             deleteContentDialog.setContentToDelete(event.getModels());
             deleteContentDialog.open();
