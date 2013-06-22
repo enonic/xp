@@ -104,7 +104,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.DeviceSelector', {
 
         return new Ext.view.View({
             flex: 1,
-            store: Ext.data.StoreManager.lookup('contextWindowDeviceStore'),
+            store: Ext.getStore('contextWindowDeviceStore'),
             tpl: template,
             cls: 'live-edit-device-list',
             itemSelector: 'div.live-edit-device',

@@ -81,7 +81,8 @@ declare var LiveEditMutationSummary;
             // new LiveEdit.ui.ComponentBar();
             new LiveEdit.MutationObserver();
 
-            new LiveEdit.DragDropSort();
+
+            LiveEdit.DragDropSort.init();
 
             $(window).resize(() => $(window).trigger('resize.liveEdit.window'));
         });

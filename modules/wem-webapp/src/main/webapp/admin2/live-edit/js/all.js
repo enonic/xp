@@ -236,202 +236,42 @@ var LiveEdit;
 })(LiveEdit || (LiveEdit = {}));
 var LiveEdit;
 (function (LiveEdit) {
-    var $ = $liveEdit;
-    var componentHelper = LiveEdit.ComponentHelper;
-    var _isDragging = false;
-    var cursorAt = {
-        left: -10,
-        top: -15
-    };
-    var regionSelector = '[data-live-edit-type=region]';
-    var layoutSelector = '[data-live-edit-type=layout]';
-    var partSelector = '[data-live-edit-type=part]';
-    var paragraphSelector = '[data-live-edit-type=paragraph]';
-    var itemsToSortSelector = layoutSelector + ',' + partSelector + ',' + paragraphSelector;
-    var DragDropSort = (function () {
-        function DragDropSort() {
+    (function (DragDropSort) {
+        var $ = $liveEdit;
+        var componentHelper = LiveEdit.ComponentHelper;
+        var _isDragging = false;
+        var cursorAt = {
+            left: -10,
+            top: -15
+        };
+        var regionSelector = '[data-live-edit-type=region]';
+        var layoutSelector = '[data-live-edit-type=layout]';
+        var partSelector = '[data-live-edit-type=part]';
+        var paragraphSelector = '[data-live-edit-type=paragraph]';
+        var sortableItemsSelector = layoutSelector + ',' + partSelector + ',' + paragraphSelector;
+        function init() {
             this.createSortable();
             this.registerGlobalListeners();
         }
-        DragDropSort.isDragging = function isDragging() {
+        DragDropSort.init = init;
+        function isDragging() {
             return _isDragging;
-        };
-        DragDropSort.prototype.enableDragDrop = function () {
+        }
+        DragDropSort.isDragging = isDragging;
+        function enableDragDrop() {
             $(regionSelector).sortable('enable');
-        };
-        DragDropSort.prototype.disableDragDrop = function () {
+        }
+        DragDropSort.enableDragDrop = enableDragDrop;
+        function disableDragDrop() {
             $(regionSelector).sortable('disable');
-        };
-        DragDropSort.prototype.getDragHelperHtml = function (text) {
-            return '<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' + '    <div id="live-edit-drag-helper-status-icon" class="live-edit-drag-helper-yes"></div>' + '    <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' + '</div>';
-        };
-        DragDropSort.prototype.setDragHelperText = function (text) {
-            $('#live-edit-drag-helper-text').text(text);
-        };
-        DragDropSort.prototype.createComponentBarDraggables = function (c) {
-            var _this = this;
-            var draggableOptions = {
-                connectToSortable: regionSelector,
-                addClasses: false,
-                cursor: 'move',
-                appendTo: 'body',
-                zIndex: 5100000,
-                revert: function (validDrop) {
-                },
-                cursorAt: cursorAt,
-                helper: function () {
-                    return _this.getDragHelperHtml('');
-                },
-                start: function (event, ui) {
-                    $(window).trigger('dragStart.liveEdit.component', [
-                        event, 
-                        ui
-                    ]);
-                    _this.setDragHelperText($(event.target).data('live-edit-component-name'));
-                    _isDragging = true;
-                },
-                stop: function (event, ui) {
-                    $(window).trigger('dragStop.liveEdit.component', [
-                        event, 
-                        ui
-                    ]);
-                    _isDragging = false;
-                }
-            };
-            c.draggable(draggableOptions);
-        };
-        DragDropSort.prototype.createDragHelper = function (event, helper) {
-            return $(this.getDragHelperHtml(componentHelper.getComponentName(helper)));
-        };
-        DragDropSort.prototype.refreshSortable = function () {
-            $(regionSelector).sortable('refresh');
-        };
-        DragDropSort.prototype.updateHelperStatusIcon = function (status) {
-            $('#live-edit-drag-helper-status-icon').attr('src', '../../../admin2/live-edit/images/drop-' + status + '.gif');
-        };
-        DragDropSort.prototype.targetIsPlaceholder = function (target) {
-            return target.hasClass('live-edit-drop-target-placeholder');
-        };
-        DragDropSort.prototype.handleSortStart = function (event, ui) {
-            _isDragging = true;
-            var componentIsSelected = ui.item.hasClass('live-edit-selected-component');
-            ui.item.data('live-edit-selected-on-sort-start', componentIsSelected);
-            var targetComponentName = LiveEdit.ComponentHelper.getComponentName($(event.target));
-            ui.placeholder.html('Drop component here' + '<div style="font-size: 10px;">' + targetComponentName + '</div>');
-            this.refreshSortable();
-            $(window).trigger('sortStart.liveEdit.component', [
-                event, 
-                ui
-            ]);
-        };
-        DragDropSort.prototype.handleDragOver = function (event, ui) {
-            event.stopPropagation();
-            var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' || ui.item.data('live-edit-type') === 'layout', isDraggingOverLayoutComponent = ui.placeholder.closest(layoutSelector).length > 0;
-            if(draggedItemIsLayoutComponent && isDraggingOverLayoutComponent) {
-                this.updateHelperStatusIcon('no');
-                ui.placeholder.hide();
-            } else {
-                this.updateHelperStatusIcon('yes');
-                $(window).trigger('sortOver.liveEdit.component', [
-                    event, 
-                    ui
-                ]);
-            }
-        };
-        DragDropSort.prototype.handleDragOut = function (event, ui) {
-            if(this.targetIsPlaceholder($(event.srcElement))) {
-                this.removePaddingFromLayoutComponent();
-            }
-            this.updateHelperStatusIcon('no');
-            $(window).trigger('sortOut.liveEdit.component', [
-                event, 
-                ui
-            ]);
-        };
-        DragDropSort.prototype.handleSortChange = function (event, ui) {
-            this.addPaddingToLayoutComponent($(event.target));
-            this.updateHelperStatusIcon('yes');
-            ui.placeholder.show();
-            $(window).trigger('sortChange.liveEdit.component', [
-                event, 
-                ui
-            ]);
-        };
-        DragDropSort.prototype.handleSortUpdate = function (event, ui) {
-            $(window).trigger('sortUpdate.liveEdit.component', [
-                event, 
-                ui
-            ]);
-        };
-        DragDropSort.prototype.handleSortStop = function (event, ui) {
-            _isDragging = false;
-            this.removePaddingFromLayoutComponent();
-            var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' || ui.item.data('live-edit-type') === 'layout', targetIsInLayoutComponent = $(event.target).closest(layoutSelector).length > 0;
-            if(draggedItemIsLayoutComponent && targetIsInLayoutComponent) {
-                ui.item.remove();
-            }
-            if(LiveEdit.ComponentHelper.supportsTouch()) {
-                $(window).trigger('mouseOut.liveEdit.component');
-            }
-            var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
-            $(window).trigger('sortStop.liveEdit.component', [
-                event, 
-                ui, 
-                wasSelectedOnDragStart
-            ]);
-            ui.item.removeData('live-edit-selected-on-drag-start');
-        };
-        DragDropSort.prototype.handleReceive = function (event, ui) {
-            var _this = this;
-            if(this.itemIsDraggedFromComponentBar(ui.item)) {
-                var $componentBarComponent = $(event.target).children('.live-edit-component');
-                var componentKey = $componentBarComponent.data('live-edit-component-key');
-                var componentType = $componentBarComponent.data('live-edit-component-type');
-                var url = '../../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
-                $componentBarComponent.hide();
-                $.ajax({
-                    url: url,
-                    cache: false
-                }).done(function (html) {
-                    $componentBarComponent.replaceWith(html);
-                    if(componentType === 'layout') {
-                        _this.createSortable();
-                    }
-                    $(window).trigger('sortUpdate.liveEdit.component');
-                });
-            }
-        };
-        DragDropSort.prototype.itemIsDraggedFromComponentBar = function (item) {
-            return item.hasClass('live-edit-component');
-        };
-        DragDropSort.prototype.addPaddingToLayoutComponent = function (component) {
-            component.closest(layoutSelector).addClass('live-edit-component-padding');
-        };
-        DragDropSort.prototype.removePaddingFromLayoutComponent = function () {
-            $('.live-edit-component-padding').removeClass('live-edit-component-padding');
-        };
-        DragDropSort.prototype.registerGlobalListeners = function () {
-            var _this = this;
-            $(window).on('select.liveEdit.component', function (event, $component) {
-            });
-            $(window).on('deselect.liveEdit.component', function () {
-                if(LiveEdit.ComponentHelper.supportsTouch() && !_isDragging) {
-                    _this.disableDragDrop();
-                }
-            });
-            $(window).on('paragraphSelect.liveEdit.component', function () {
-                $(regionSelector).sortable('option', 'cancel', '[data-live-edit-type=paragraph]');
-            });
-            $(window).on('paragraphLeave.liveEdit.component', function () {
-                $(regionSelector).sortable('option', 'cancel', '');
-            });
-        };
-        DragDropSort.prototype.createSortable = function () {
+        }
+        DragDropSort.disableDragDrop = disableDragDrop;
+        function createSortable() {
             var _this = this;
             $(regionSelector).sortable({
                 revert: false,
                 connectWith: regionSelector,
-                items: itemsToSortSelector,
+                items: sortableItemsSelector,
                 distance: 1,
                 delay: 150,
                 tolerance: 'pointer',
@@ -465,10 +305,185 @@ var LiveEdit;
                     return _this.handleSortStop(event, ui);
                 }
             });
-        };
-        return DragDropSort;
-    })();
-    LiveEdit.DragDropSort = DragDropSort;    
+        }
+        DragDropSort.createSortable = createSortable;
+        function createDraggable(component) {
+            var _this = this;
+            component.draggable({
+                connectToSortable: regionSelector,
+                addClasses: false,
+                cursor: 'move',
+                appendTo: 'body',
+                zIndex: 5100000,
+                cursorAt: cursorAt,
+                helper: function () {
+                    return createDragHelperHtml('');
+                },
+                start: function (event, ui) {
+                    $(window).trigger('dragStart.liveEdit.component', [
+                        event, 
+                        ui
+                    ]);
+                    _this.setDragHelperText($(event.target).data('live-edit-component-name'));
+                    _isDragging = true;
+                },
+                stop: function (event, ui) {
+                    $(window).trigger('dragStop.liveEdit.component', [
+                        event, 
+                        ui
+                    ]);
+                    _isDragging = false;
+                }
+            });
+        }
+        DragDropSort.createDraggable = createDraggable;
+        function createDragHelperHtml(text) {
+            return '<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' + '    <div id="live-edit-drag-helper-status-icon" class="live-edit-drag-helper-no"></div>' + '    <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' + '</div>';
+        }
+        DragDropSort.createDragHelperHtml = createDragHelperHtml;
+        function createDragHelper(event, helper) {
+            return $(createDragHelperHtml(componentHelper.getComponentName(helper)));
+        }
+        DragDropSort.createDragHelper = createDragHelper;
+        function setDragHelperText(text) {
+            $('#live-edit-drag-helper-text').text(text);
+        }
+        DragDropSort.setDragHelperText = setDragHelperText;
+        function setHelperStatusIcon(status) {
+            $('#live-edit-drag-helper-status-icon').attr('class', 'live-edit-drag-helper-' + status);
+        }
+        DragDropSort.setHelperStatusIcon = setHelperStatusIcon;
+        function refreshSortable() {
+            $(regionSelector).sortable('refresh');
+        }
+        DragDropSort.refreshSortable = refreshSortable;
+        function targetIsPlaceholder(target) {
+            return target.hasClass('live-edit-drop-target-placeholder');
+        }
+        DragDropSort.targetIsPlaceholder = targetIsPlaceholder;
+        function handleSortStart(event, ui) {
+            _isDragging = true;
+            var componentIsSelected = ui.item.hasClass('live-edit-selected-component');
+            ui.item.data('live-edit-selected-on-sort-start', componentIsSelected);
+            var targetComponentName = LiveEdit.ComponentHelper.getComponentName($(event.target));
+            ui.placeholder.html('Drop component here' + '<div style="font-size: 10px;">' + targetComponentName + '</div>');
+            this.refreshSortable();
+            $(window).trigger('sortStart.liveEdit.component', [
+                event, 
+                ui
+            ]);
+        }
+        DragDropSort.handleSortStart = handleSortStart;
+        function handleDragOver(event, ui) {
+            event.stopPropagation();
+            var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' || ui.item.data('live-edit-type') === 'layout', isDraggingOverLayoutComponent = ui.placeholder.closest(layoutSelector).length > 0;
+            if(draggedItemIsLayoutComponent && isDraggingOverLayoutComponent) {
+                this.setHelperStatusIcon('no');
+                ui.placeholder.hide();
+            } else {
+                this.setHelperStatusIcon('yes');
+                $(window).trigger('sortOver.liveEdit.component', [
+                    event, 
+                    ui
+                ]);
+            }
+        }
+        DragDropSort.handleDragOver = handleDragOver;
+        function handleDragOut(event, ui) {
+            if(this.targetIsPlaceholder($(event.srcElement))) {
+                this.removePaddingFromLayoutComponent();
+            }
+            this.setHelperStatusIcon('no');
+            $(window).trigger('sortOut.liveEdit.component', [
+                event, 
+                ui
+            ]);
+        }
+        DragDropSort.handleDragOut = handleDragOut;
+        function handleSortChange(event, ui) {
+            this.addPaddingToLayoutComponent($(event.target));
+            this.setHelperStatusIcon('yes');
+            ui.placeholder.show(null);
+            $(window).trigger('sortChange.liveEdit.component', [
+                event, 
+                ui
+            ]);
+        }
+        DragDropSort.handleSortChange = handleSortChange;
+        function handleSortUpdate(event, ui) {
+            $(window).trigger('sortUpdate.liveEdit.component', [
+                event, 
+                ui
+            ]);
+        }
+        DragDropSort.handleSortUpdate = handleSortUpdate;
+        function handleSortStop(event, ui) {
+            _isDragging = false;
+            this.removePaddingFromLayoutComponent();
+            var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' || ui.item.data('live-edit-type') === 'layout', targetIsInLayoutComponent = $(event.target).closest(layoutSelector).length > 0;
+            if(draggedItemIsLayoutComponent && targetIsInLayoutComponent) {
+                ui.item.remove();
+            }
+            if(LiveEdit.ComponentHelper.supportsTouch()) {
+                $(window).trigger('mouseOut.liveEdit.component');
+            }
+            var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
+            $(window).trigger('sortStop.liveEdit.component', [
+                event, 
+                ui, 
+                wasSelectedOnDragStart
+            ]);
+            ui.item.removeData('live-edit-selected-on-drag-start');
+        }
+        DragDropSort.handleSortStop = handleSortStop;
+        function handleReceive(event, ui) {
+            var _this = this;
+            console.log('receive');
+            if(this.itemIsDraggedFromComponentBar(ui.item)) {
+                var $componentBarComponent = $(event.target).children('.live-edit-component'), componentKey = $componentBarComponent.data('live-edit-component-key'), componentType = $componentBarComponent.data('live-edit-component-type'), url = '../../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
+                $componentBarComponent.hide();
+                $.ajax({
+                    url: url,
+                    cache: false
+                }).done(function (html) {
+                    $componentBarComponent.replaceWith(html);
+                    if(componentType === 'layout') {
+                        _this.createSortable();
+                    }
+                    $(window).trigger('sortUpdate.liveEdit.component');
+                });
+            }
+        }
+        DragDropSort.handleReceive = handleReceive;
+        function itemIsDraggedFromComponentBar(item) {
+            return item.hasClass('live-edit-component');
+        }
+        DragDropSort.itemIsDraggedFromComponentBar = itemIsDraggedFromComponentBar;
+        function addPaddingToLayoutComponent(component) {
+            component.closest(layoutSelector).addClass('live-edit-component-padding');
+        }
+        DragDropSort.addPaddingToLayoutComponent = addPaddingToLayoutComponent;
+        function removePaddingFromLayoutComponent() {
+            $('.live-edit-component-padding').removeClass('live-edit-component-padding');
+        }
+        DragDropSort.removePaddingFromLayoutComponent = removePaddingFromLayoutComponent;
+        function registerGlobalListeners() {
+            var _this = this;
+            $(window).on('deselect.liveEdit.component', function () {
+                if(LiveEdit.ComponentHelper.supportsTouch() && !_isDragging) {
+                    _this.disableDragDrop();
+                }
+            });
+            $(window).on('paragraphSelect.liveEdit.component', function () {
+                $(regionSelector).sortable('option', 'cancel', '[data-live-edit-type=paragraph]');
+            });
+            $(window).on('paragraphLeave.liveEdit.component', function () {
+                $(regionSelector).sortable('option', 'cancel', '');
+            });
+        }
+        DragDropSort.registerGlobalListeners = registerGlobalListeners;
+    })(LiveEdit.DragDropSort || (LiveEdit.DragDropSort = {}));
+    var DragDropSort = LiveEdit.DragDropSort;
 })(LiveEdit || (LiveEdit = {}));
 var LiveEdit;
 (function (LiveEdit) {
@@ -2200,7 +2215,7 @@ var LiveEdit;
             new LiveEdit.ui.Shader();
             new LiveEdit.ui.Editor();
             new LiveEdit.MutationObserver();
-            new LiveEdit.DragDropSort();
+            LiveEdit.DragDropSort.init();
             $(window).resize(function () {
                 return $(window).trigger('resize.liveEdit.window');
             });

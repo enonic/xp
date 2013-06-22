@@ -3,9 +3,9 @@
 }
 
 .live-edit-component-search-input {
-    background-color: #101010;
-    border: 1px solid #1c1c1c;
-    color: #c7c7c7;
+    background-color: #3f3f46;
+    border: none;
+    color: #c4c4c4;
     padding: 5px;
     width: 100%;
 }
@@ -19,12 +19,13 @@
 }
 
 .live-edit-component {
-    padding: 15px 20px;
+    margin: 0 5px;
+    padding: 15px 30px;
     cursor: move;
 }
 
 .live-edit-component:hover {
-    background-color: #414042; /*4096ee, 3892dd*/
+    background-color: #3f3f46;
 }
 
 .live-edit-component-row {
@@ -32,7 +33,7 @@
 }
 
 .live-edit-component-icon {
-    width: 50px;
+    width: 45px;
     color: #f2f2f2;
     font-size: 32px;
     font-weight: lighter;
@@ -48,7 +49,7 @@
 .live-edit-component-row h3 {
     margin: 0;
     padding: 0;
-    font-size: 13px !important;
+    font-size: 15px !important;
     line-height: 1.3;
-    color: #f2f2f2;
+    color: #e2e2e2;
 }

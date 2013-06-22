@@ -2,7 +2,7 @@
     These classes should be merged with admin2/live-edit/css/live-edit.css
 */
 
-#live-edit-drag-helper {
+.live-edit-drag-helper {
     display: table-row;
     border: 1px solid #c6c6c6;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
@@ -14,7 +14,7 @@
 
 }
 
-#live-edit-drag-helper-status-icon {
+.live-edit-drag-helper-status-icon {
     background-repeat: no-repeat;
     display: table-cell;
     width: 16px;
@@ -22,14 +22,14 @@
     vertical-align: middle;
 }
 
-#live-edit-drag-helper-status-icon.live-edit-drag-helper-yes {
+.live-edit-drag-helper-status-icon.live-edit-drag-helper-yes {
     background: url(../../../admin2/live-edit/images/drop-yes.gif);
 }
-#live-edit-drag-helper-status-icon.live-edit-drag-helper-no {
+.live-edit-drag-helper-status-icon.live-edit-drag-helper-no {
     background: url(../../../admin2/live-edit/images/drop-no.gif);
 }
 
-#live-edit-drag-helper-text {
+.live-edit-drag-helper-text {
     display: table-cell;
     overflow: hidden;
     white-space: nowrap;

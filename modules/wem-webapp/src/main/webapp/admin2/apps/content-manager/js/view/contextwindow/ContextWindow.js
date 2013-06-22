@@ -57,7 +57,6 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         }
     ],
 
-
     initComponent: function () {
         this.titleBarCt = this.createTitleBarCt();
         this.windowBodyCt = this.createWindowBodyCt();
@@ -176,6 +175,32 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             }
         });
     },
+
+    /*
+    createNavigationCmp: function () {
+        var buttons = [
+            { text: 'Insert'},
+            { text: 'Device Selector'}
+        ];
+
+        return new Ext.Component({
+            tpl: new Ext.XTemplate(
+                '<div style="display:table; width: 100%; height: 50px">',
+                '<tpl for=".">',       // process the data.kids node
+                '   <div style="border:1px solid black;display:table-cell; cursor: pointer; vertical-align: middle; width: 50%; text-align:center">{text}</div>',  // use current array index to autonumber
+                '</tpl>',
+                '</div>'
+
+            ),
+            listeners: {
+                afterrender: function (cmp) {
+                    cmp.tpl.overwrite(cmp.getEl(), buttons);
+                }
+            }
+
+        });
+    },
+    */
 
     /**
      * @returns {Ext.container.Container}
