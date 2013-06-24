@@ -198,18 +198,18 @@ module LiveEdit.DragDropSort {
 
     export function handleReceive(event:JQueryEventObject, ui):void {
         if (this.isItemDraggedFromContextWindow(ui.item)) {
-            var $componentBarComponent = $(event.target).children('.context-window-component'),
-                componentKey = $componentBarComponent.data('live-edit-component-key'),
-                componentType = $componentBarComponent.data('live-edit-component-type'),
-                url = '../../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
+            var contextWindowComponent:JQuery = $(event.target).children('.context-window-component'),
+                componentKey:string = contextWindowComponent.data('live-edit-component-key'),
+                componentType:string = contextWindowComponent.data('live-edit-component-type'),
+                url:string = '../../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
 
-            $componentBarComponent.hide();
+            contextWindowComponent.hide(null);
 
             $.ajax({
                 url: url,
                 cache: false
             }).done((html) => {
-                    $componentBarComponent.replaceWith(html);
+                    contextWindowComponent.replaceWith(html);
                     // It seems like it is not possible to add new sortables (region in layout) to the existing sortable
                     // So we have to create it again.
                     // Ideally we should destroy the existing sortable first before creating.
