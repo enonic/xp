@@ -23,7 +23,6 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
             this.searchBarCt,
             this.listView
         ];
-
         this.callParent(arguments);
     },
 
@@ -33,7 +32,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
     createSearchBarCt: function () {
         this.searchInputCmp = this.createSearchInputCmp();
         return new Ext.container.Container({
-            height: 85,
+            height: 70,
             cls: 'live-edit-component-search-bar',
             items: [
                 new Ext.Component({
