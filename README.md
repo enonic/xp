@@ -5,6 +5,12 @@ Welcome to the home of Enonic WEM Community Edition. Here you will find all sour
 
 ## Building 
 
+Before trying to build the project, you need to verify that the following software are installed:
+
+* [Apache Maven 3.x](http://maven.apache.org/download.cgi).
+* [NodeJS](http://nodejs.org/download/).
+* Node Package Manager (npm) - Usually installed together with NodeJS.
+
 Build all code and run all tests including integration tests:
 
     mvn clean install
