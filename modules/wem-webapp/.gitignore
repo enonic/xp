@@ -1,2 +1,5 @@
 node_modules
+**/api/js/api.js
+**/api/js/api.js.map
+**/api/js/api.d.ts
 
