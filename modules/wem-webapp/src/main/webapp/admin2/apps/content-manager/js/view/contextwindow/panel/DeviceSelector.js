@@ -136,7 +136,8 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.DeviceSelector', {
             newHeight = width;
         }
         iFrame.animate({
-            duration: 450,
+            duration: 200,
+            easing: 'linear',
             to: {
                 width: newWidth,
                 height: newHeight

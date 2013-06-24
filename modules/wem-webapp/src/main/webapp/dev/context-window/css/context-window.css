@@ -55,7 +55,7 @@
     cursor: hand;
     cursor: grab !important;
     cursor: -moz-grab;
-    cursor: url('cursor-grab.png'), pointer !important;
+    cursor: url('images/cursor-grab.png'), pointer !important;
     cursor: -webkit-grab;
 }
 

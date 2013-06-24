@@ -1,53 +1,54 @@
 @import "../modules/colors";
 
 #live-edit-drag-helper {
-  display: table;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  background-color: #fff;
-  font-size: 11px;
+    display: table;
+    outline: 1px solid $borderColor;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    font-size: 11px;
 }
 
 #live-edit-drag-helper-inner {
-  display: table-row;
+    display: table-row;
 }
 
 #live-edit-drag-helper-status-icon {
-  display: table-cell;
-  width: 64px;
-  background-repeat: no-repeat;
-  background-position: 8px 6px;
-  vertical-align: middle;
+    display: table-cell;
+    width: 64px;
+    background-repeat: no-repeat;
+    background-position: 8px 6px;
+    vertical-align: middle;
 }
 
 #live-edit-drag-helper-text {
-  display: table-cell;
-  padding-top: 7px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+    display: table-cell;
+    padding-top: 7px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .live-edit-drag-helper-yes {
-  background: url(../../../admin2/live-edit/images/drop-yes.gif);
-}
-.live-edit-drag-helper-no {
-  background: url(../../../admin2/live-edit/images/drop-no.gif);
+    background: url(../../../admin2/live-edit/images/drop-yes.gif);
 }
 
+.live-edit-drag-helper-no {
+    background: url(../../../admin2/live-edit/images/drop-no.gif);
+}
 
 .live-edit-drop-target-placeholder {
-  list-style-type: none; /* The placeholder in jQuery UI has the same tag name as the dragged component */
-  clear: both;
-  border: 2px dashed #000;
-  padding: 28px;
-  color: #000;
-  font-size: 20px;
-  text-align: center;
-  background-color: #eee;
-  margin: 1px 0 10px 0;
+    list-style-type: none; /* The placeholder in jQuery UI has the same tag name as the dragged component */
+    clear: both;
+    border: 2px dashed #000;
+    padding: 28px;
+    color: #000;
+    font-size: 20px;
+    text-align: center;
+    background-color: #eee;
+    margin: 1px 0 10px 0;
 }
 
 .live-edit-component-padding {
-  padding-top: 10px !important;
-  padding-bottom: 10px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
 }

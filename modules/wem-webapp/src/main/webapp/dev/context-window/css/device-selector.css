@@ -36,9 +36,10 @@
 
 .live-edit-device-rotate-button {
     display: none;
+    top: 15px;
+    right: 0;
     position: absolute;
     padding: 10px 15px;
-    right: 10px;
     font-size: 15px;
     color: #fff;
     -webkit-transition: -webkit-transform 100ms;
