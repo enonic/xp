@@ -30,8 +30,9 @@
   </dependencies>
 
   <properties>
-    <npm.exec>node</npm.exec>
-    <grunt.exec>grunt</grunt.exec>
+    <npm.exec>npm</npm.exec>
+    <node.exec>node</node.exec>
+    <grunt.script>node_modules/grunt-cli/bin/grunt</grunt.script>
   </properties>
 
   <profiles>
@@ -44,7 +45,8 @@
       </activation>
       <properties>
         <npm.exec>npm.cmd</npm.exec>
-        <grunt.exec>grunt.cmd</grunt.exec>
+        <node.exec>node.exe</node.exec>
+        <grunt.script>node_modules\grunt-cli\bin\grunt</grunt.script>
       </properties>
     </profile>
     <profile>
@@ -79,8 +81,9 @@
                   <goal>exec</goal>
                 </goals>
                 <configuration>
-                  <executable>${grunt.exec}</executable>
+                  <executable>${node.exec}</executable>
                   <arguments>
+                    <argument>${grunt.script}</argument>
                     <argument>all</argument>
                   </arguments>
                 </configuration>
