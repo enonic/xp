@@ -8,13 +8,14 @@ var api_ui;
             this.label = label;
             this.shortcut = shortcut;
         }
+
         Action.prototype.getLabel = function () {
             return this.label;
         };
         Action.prototype.setLabel = function (value) {
-            if(value !== this.label) {
+            if (value !== this.label) {
                 this.label = value;
-                for(var i in this.propertyChangeListeners) {
+                for (var i in this.propertyChangeListeners) {
                     this.propertyChangeListeners[i](this);
                 }
             }
@@ -23,9 +24,9 @@ var api_ui;
             return this.enabled;
         };
         Action.prototype.setEnabled = function (value) {
-            if(value !== this.enabled) {
+            if (value !== this.enabled) {
                 this.enabled = value;
-                for(var i in this.propertyChangeListeners) {
+                for (var i in this.propertyChangeListeners) {
                     this.propertyChangeListeners[i](this);
                 }
             }
@@ -34,9 +35,9 @@ var api_ui;
             return this.iconClass;
         };
         Action.prototype.setIconClass = function (value) {
-            if(value !== this.iconClass) {
+            if (value !== this.iconClass) {
                 this.iconClass = value;
-                for(var i in this.propertyChangeListeners) {
+                for (var i in this.propertyChangeListeners) {
                     this.propertyChangeListeners[i](this);
                 }
             }
@@ -52,7 +53,7 @@ var api_ui;
         };
         Action.prototype.activateShortcut = function () {
             var _this = this;
-            if(this.hasShortcut()) {
+            if (this.hasShortcut()) {
                 Mousetrap.bind(this.getShortcut(), function (e, combo) {
                     _this.execute();
                 });
@@ -60,13 +61,13 @@ var api_ui;
             }
         };
         Action.prototype.deactivateShortcut = function () {
-            if(this.activatedShortcut != null) {
+            if (this.activatedShortcut != null) {
                 Mousetrap.unbind(this.activatedShortcut);
             }
         };
         Action.prototype.execute = function () {
-            if(this.enabled) {
-                for(var i in this.executionListeners) {
+            if (this.enabled) {
+                for (var i in this.executionListeners) {
                     this.executionListeners[i](this);
                 }
             }
@@ -89,7 +90,7 @@ var api_ui;
         };
         return Action;
     })();
-    api_ui.Action = Action;    
+    api_ui.Action = Action;
 })(api_ui || (api_ui = {}));
 TestCase("Action", {
     "test getLabel": function () {
@@ -118,12 +119,13 @@ var api_content_data;
         function DataId(name, arrayIndex) {
             this.name = name;
             this.arrayIndex = arrayIndex;
-            if(arrayIndex > 0) {
+            if (arrayIndex > 0) {
                 this.refString = name + '[' + arrayIndex + ']';
             } else {
                 this.refString = name;
             }
         }
+
         DataId.prototype.getName = function () {
             return this.name;
         };
@@ -136,7 +138,7 @@ var api_content_data;
         DataId.from = function from(str) {
             var endsWithEndBracket = str.indexOf(']', str.length - ']'.length) !== -1;
             var containsStartBracket = str.indexOf('[') !== -1;
-            if(endsWithEndBracket && containsStartBracket) {
+            if (endsWithEndBracket && containsStartBracket) {
                 var firstBracketPos = str.indexOf('[');
                 var nameStr = str.substring(0, firstBracketPos);
                 var indexStr = str.substring(nameStr.length + 1, (str.length - 1));
@@ -148,7 +150,7 @@ var api_content_data;
         };
         return DataId;
     })();
-    api_content_data.DataId = DataId;    
+    api_content_data.DataId = DataId;
 })(api_content_data || (api_content_data = {}));
 TestCase("DataId", {
     "test getName": function () {
@@ -176,6 +178,7 @@ var api_content_data;
         function Data(name) {
             this.name = name;
         }
+
         Data.prototype.setArrayIndex = function (value) {
             this.arrayIndex = value;
         };
@@ -196,10 +199,13 @@ var api_content_data;
         };
         return Data;
     })();
-    api_content_data.Data = Data;    
+    api_content_data.Data = Data;
 })(api_content_data || (api_content_data = {}));
 var __extends = this.__extends || function (d, b) {
-    function __() { this.constructor = d; }
+    function __() {
+        this.constructor = d;
+    }
+
     __.prototype = b.prototype;
     d.prototype = new __();
 };
@@ -208,10 +214,11 @@ var api_content_data;
     var Property = (function (_super) {
         __extends(Property, _super);
         function Property(name, value, type) {
-                _super.call(this, name);
+            _super.call(this, name);
             this.value = value;
             this.type = type;
         }
+
         Property.from = function from(json) {
             return new Property(json.name, json.value, json.type);
         };
@@ -226,22 +233,23 @@ var api_content_data;
         };
         return Property;
     })(api_content_data.Data);
-    api_content_data.Property = Property;    
+    api_content_data.Property = Property;
 })(api_content_data || (api_content_data = {}));
 var api_content_data;
 (function (api_content_data) {
     var DataSet = (function (_super) {
         __extends(DataSet, _super);
         function DataSet(name) {
-                _super.call(this, name);
+            _super.call(this, name);
             this.dataById = {
             };
         }
+
         DataSet.prototype.nameCount = function (name) {
             var count = 0;
-            for(var i in this.dataById) {
+            for (var i in this.dataById) {
                 var data = this.dataById[i];
-                if(data.getName() === name) {
+                if (data.getName() === name) {
                     count++;
                 }
             }
@@ -259,7 +267,7 @@ var api_content_data;
         };
         return DataSet;
     })(api_content_data.Data);
-    api_content_data.DataSet = DataSet;    
+    api_content_data.DataSet = DataSet;
 })(api_content_data || (api_content_data = {}));
 TestCase("DataSet", {
     "test given a name when getName() then given name is returned": function () {
@@ -317,6 +325,7 @@ var api_dom;
         function ElementHelper(element) {
             this.el = element;
         }
+
         ElementHelper.fromName = function fromName(name) {
             return new ElementHelper(document.createElement(name));
         };
@@ -324,7 +333,7 @@ var api_dom;
             return this.el;
         };
         ElementHelper.prototype.insertBefore = function (newEl, existingEl) {
-            this.el.insertBefore(newEl.getHTMLElement(), existingEl.getHTMLElement());
+            this.el.insertBefore(newEl.getHTMLElement(), existingEl ? existingEl.getHTMLElement() : null);
         };
         ElementHelper.prototype.setDisabled = function (value) {
             this.el.disabled = value;
@@ -343,8 +352,8 @@ var api_dom;
             return this;
         };
         ElementHelper.prototype.addClass = function (clsName) {
-            if(!this.hasClass(clsName)) {
-                if(this.el.className === '') {
+            if (!this.hasClass(clsName)) {
+                if (this.el.className === '') {
                     this.el.className += clsName;
                 } else {
                     this.el.className += ' ' + clsName;
@@ -355,7 +364,7 @@ var api_dom;
             return this.el.className.match(new RegExp('(\\s|^)' + clsName + '(\\s|$)')) !== null;
         };
         ElementHelper.prototype.removeClass = function (clsName) {
-            if(this.hasClass(clsName)) {
+            if (this.hasClass(clsName)) {
                 var reg = new RegExp('(\\s|^)' + clsName + '(\\s|$)');
                 this.el.className = this.el.className.replace(reg, '');
             }
@@ -450,7 +459,7 @@ var api_dom;
         ElementHelper.prototype.getOffset = function () {
             var el = this.el;
             var x = 0, y = 0;
-            while(el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
+            while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
                 x += el.offsetLeft - el.scrollLeft;
                 y += el.offsetTop - el.scrollTop;
                 el = el.offsetParent;
@@ -462,25 +471,26 @@ var api_dom;
         };
         return ElementHelper;
     })();
-    api_dom.ElementHelper = ElementHelper;    
+    api_dom.ElementHelper = ElementHelper;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var Element = (function () {
         function Element(elementName, idPrefix, className, elHelper) {
-            if(elHelper == null) {
+            if (elHelper == null) {
                 this.el = api_dom.ElementHelper.fromName(elementName);
             } else {
                 this.el = elHelper;
             }
-            if(idPrefix != null) {
+            if (idPrefix != null) {
                 this.id = idPrefix + '-' + (++Element.constructorCounter);
                 this.el.setId(this.id);
             }
-            if(className != null) {
+            if (className != null) {
                 this.getHTMLElement().className = className;
             }
         }
+
         Element.constructorCounter = 0;
         Element.prototype.show = function () {
             jQuery(this.el.getHTMLElement()).show();
@@ -513,95 +523,102 @@ var api_dom;
             this.el.getHTMLElement().insertBefore(child.getHTMLElement(), this.el.getHTMLElement().firstChild);
         };
         Element.prototype.removeChild = function (child) {
-            if(this.el.getHTMLElement().contains(child.getHTMLElement())) {
+            if (this.el.getHTMLElement().contains(child.getHTMLElement())) {
                 this.el.getHTMLElement().removeChild(child.getHTMLElement());
             }
         };
         Element.prototype.removeChildren = function () {
             var htmlEl = this.el.getHTMLElement();
-            while(htmlEl.firstChild) {
+            while (htmlEl.firstChild) {
                 htmlEl.removeChild(htmlEl.firstChild);
             }
         };
         return Element;
     })();
-    api_dom.Element = Element;    
+    api_dom.Element = Element;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var DivEl = (function (_super) {
         __extends(DivEl, _super);
         function DivEl(idPrefix, className) {
-                _super.call(this, "div", idPrefix, className);
+            _super.call(this, "div", idPrefix, className);
         }
+
         return DivEl;
     })(api_dom.Element);
-    api_dom.DivEl = DivEl;    
+    api_dom.DivEl = DivEl;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var ButtonEl = (function (_super) {
         __extends(ButtonEl, _super);
         function ButtonEl(idPrefix, className) {
-                _super.call(this, "button", idPrefix, className);
+            _super.call(this, "button", idPrefix, className);
         }
+
         return ButtonEl;
     })(api_dom.Element);
-    api_dom.ButtonEl = ButtonEl;    
+    api_dom.ButtonEl = ButtonEl;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var SpanEl = (function (_super) {
         __extends(SpanEl, _super);
         function SpanEl(idPrefix, className) {
-                _super.call(this, 'span', idPrefix, className);
+            _super.call(this, 'span', idPrefix, className);
         }
+
         return SpanEl;
     })(api_dom.Element);
-    api_dom.SpanEl = SpanEl;    
+    api_dom.SpanEl = SpanEl;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var UlEl = (function (_super) {
         __extends(UlEl, _super);
         function UlEl(idPrefix, className) {
-                _super.call(this, "ul", idPrefix, className);
+            _super.call(this, "ul", idPrefix, className);
         }
+
         return UlEl;
     })(api_dom.Element);
-    api_dom.UlEl = UlEl;    
+    api_dom.UlEl = UlEl;
 })(api_dom || (api_dom = {}));
 var api_dom;
 (function (api_dom) {
     var LiEl = (function (_super) {
         __extends(LiEl, _super);
         function LiEl(idPrefix, className) {
-                _super.call(this, "li", idPrefix, className);
+            _super.call(this, "li", idPrefix, className);
         }
+
         return LiEl;
     })(api_dom.Element);
-    api_dom.LiEl = LiEl;    
+    api_dom.LiEl = LiEl;
 })(api_dom || (api_dom = {}));
 var api_ui;
 (function (api_ui) {
     var Panel = (function (_super) {
         __extends(Panel, _super);
         function Panel(idPrefix) {
-                _super.call(this, idPrefix, "Panel");
+            _super.call(this, idPrefix, "Panel");
         }
+
         return Panel;
     })(api_dom.DivEl);
-    api_ui.Panel = Panel;    
+    api_ui.Panel = Panel;
 })(api_ui || (api_ui = {}));
 var api_ui;
 (function (api_ui) {
     var DeckPanel = (function (_super) {
         __extends(DeckPanel, _super);
         function DeckPanel(idPrefix) {
-                _super.call(this, idPrefix || "DeckPanel");
+            _super.call(this, idPrefix || "DeckPanel");
             this.panels = [];
             this.panelShown = -1;
         }
+
         DeckPanel.prototype.isEmpty = function () {
             return this.panels.length == 0;
         };
@@ -631,10 +648,10 @@ var api_ui;
             var removingLastPanel = this.panels.length == index + 1;
             var panelToRemoveIsShown = this.isShownPanel(index);
             this.panels.splice(index, 1);
-            if(this.isEmpty()) {
+            if (this.isEmpty()) {
                 this.panelShown = -1;
-            } else if(panelToRemoveIsShown) {
-                if(removingLastPanel) {
+            } else if (panelToRemoveIsShown) {
+                if (removingLastPanel) {
                     this.getLastPanel().show();
                     this.panelShown = this.panels.length - 1;
                 } else {
@@ -647,9 +664,9 @@ var api_ui;
             return this.panelShown === panelIndex;
         };
         DeckPanel.prototype.showPanel = function (index) {
-            for(var i = 0; i < this.panels.length; i++) {
+            for (var i = 0; i < this.panels.length; i++) {
                 var panel = this.panels[i];
-                if(i === index) {
+                if (i === index) {
                     panel.show();
                     this.panelShown = index;
                 } else {
@@ -662,7 +679,7 @@ var api_ui;
         };
         return DeckPanel;
     })(api_ui.Panel);
-    api_ui.DeckPanel = DeckPanel;    
+    api_ui.DeckPanel = DeckPanel;
 })(api_ui || (api_ui = {}));
 TestCase("DecPanel", {
     "test given DeckPanel with three panels and last panel is shown when last is removed then the second becomes the shown": function () {
@@ -687,7 +704,7 @@ var api_ui_tab;
         __extends(TabMenuItem, _super);
         function TabMenuItem(label) {
             var _this = this;
-                _super.call(this, "TabMenuItem", "tab-menu-item");
+            _super.call(this, "TabMenuItem", "tab-menu-item");
             this.visible = true;
             this.removable = true;
             this.label = label;
@@ -701,14 +718,15 @@ var api_ui_tab;
                 _this.tabMenu.handleTabClickedEvent(_this);
             });
             removeButton.getEl().addEventListener("click", function () {
-                if(_this.removable) {
+                if (_this.removable) {
                     _this.tabMenu.handleTabRemoveButtonClickedEvent(_this);
-                    if(_this.tabMenu.getSize() == 0) {
+                    if (_this.tabMenu.getSize() == 0) {
                         _this.tabMenu.hideMenu();
                     }
                 }
             });
         }
+
         TabMenuItem.prototype.setTabMenu = function (tabMenu) {
             this.tabMenu = tabMenu;
         };
@@ -726,7 +744,7 @@ var api_ui_tab;
         };
         TabMenuItem.prototype.setVisible = function (value) {
             this.visible = value;
-            if(!this.visible) {
+            if (!this.visible) {
                 this.remove();
             }
         };
@@ -737,23 +755,24 @@ var api_ui_tab;
             this.removable = value;
         };
         TabMenuItem.prototype.remove = function () {
-            if(this.tabMenu) {
+            if (this.tabMenu) {
                 this.tabMenu.removeChild(this);
             }
         };
         return TabMenuItem;
     })(api_dom.LiEl);
-    api_ui_tab.TabMenuItem = TabMenuItem;    
+    api_ui_tab.TabMenuItem = TabMenuItem;
 })(api_ui_tab || (api_ui_tab = {}));
 var api_ui_tab;
 (function (api_ui_tab) {
     var TabMenuButton = (function (_super) {
         __extends(TabMenuButton, _super);
         function TabMenuButton(idPrefix) {
-                _super.call(this, idPrefix || "TabMenuButton");
+            _super.call(this, idPrefix || "TabMenuButton");
             this.labelEl = new api_dom.SpanEl();
             this.appendChild(this.labelEl);
         }
+
         TabMenuButton.prototype.setTabMenu = function (tabMenu) {
             this.tabMenu = tabMenu;
         };
@@ -762,7 +781,7 @@ var api_ui_tab;
         };
         return TabMenuButton;
     })(api_dom.DivEl);
-    api_ui_tab.TabMenuButton = TabMenuButton;    
+    api_ui_tab.TabMenuButton = TabMenuButton;
 })(api_ui_tab || (api_ui_tab = {}));
 var api_ui_tab;
 (function (api_ui_tab) {
@@ -770,7 +789,7 @@ var api_ui_tab;
         __extends(TabMenu, _super);
         function TabMenu(idPrefix) {
             var _this = this;
-                _super.call(this, idPrefix || "TabMenu");
+            _super.call(this, idPrefix || "TabMenu");
             this.showingMenuItems = false;
             this.tabs = [];
             this.tabSelectedListeners = [];
@@ -784,6 +803,7 @@ var api_ui_tab;
             this.appendChild(this.menuEl);
             this.initExt();
         }
+
         TabMenu.prototype.createTabMenuButton = function () {
             return new api_ui_tab.TabMenuButton();
         };
@@ -800,7 +820,7 @@ var api_ui_tab;
             });
         };
         TabMenu.prototype.toggleMenu = function () {
-            if(!this.showingMenuItems) {
+            if (!this.showingMenuItems) {
                 this.showMenu();
             } else {
                 this.hideMenu();
@@ -819,7 +839,7 @@ var api_ui_tab;
             tabMenuItem.setTabMenu(this);
             var newLength = this.tabs.push(tabMenuItem);
             tabMenuItem.setTabIndex(newLength - 1);
-            if(tab.isVisible()) {
+            if (tab.isVisible()) {
                 this.tabMenuButton.setLabel(tab.getLabel());
                 this.menuEl.appendChild(tabMenuItem);
             }
@@ -830,7 +850,7 @@ var api_ui_tab;
         TabMenu.prototype.getSize = function () {
             var size = 0;
             this.tabs.forEach(function (tab) {
-                if(tab.isVisible()) {
+                if (tab.isVisible()) {
                     size++;
                 }
             });
@@ -847,15 +867,15 @@ var api_ui_tab;
             tabMenuItem.getEl().remove();
             var isLastTab = this.isLastTab(tab);
             this.tabs.splice(tab.getTabIndex(), 1);
-            if(this.isSelectedTab(tab)) {
-                if(this.isEmpty()) {
+            if (this.isSelectedTab(tab)) {
+                if (this.isEmpty()) {
                     this.selectedTab = -1;
-                } else if(tab.getTabIndex() > this.tabs.length - 1) {
+                } else if (tab.getTabIndex() > this.tabs.length - 1) {
                     this.selectedTab = tab.getTabIndex() - 1;
                 }
             }
-            if(!isLastTab) {
-                for(var i = tab.getTabIndex() - 1; i < this.tabs.length; i++) {
+            if (!isLastTab) {
+                for (var i = tab.getTabIndex() - 1; i < this.tabs.length; i++) {
                     this.tabs[i].setTabIndex(i);
                 }
             }
@@ -889,18 +909,18 @@ var api_ui_tab;
             this.fireTabSelected(tabMenuItem);
         };
         TabMenu.prototype.handleTabRemoveButtonClickedEvent = function (tabMenuItem) {
-            if(this.fireTabRemoveEvent(tabMenuItem)) {
+            if (this.fireTabRemoveEvent(tabMenuItem)) {
                 this.removeTab(tabMenuItem);
             }
         };
         TabMenu.prototype.fireTabSelected = function (tab) {
-            for(var i = 0; i < this.tabSelectedListeners.length; i++) {
+            for (var i = 0; i < this.tabSelectedListeners.length; i++) {
                 this.tabSelectedListeners[i](tab);
             }
         };
         TabMenu.prototype.fireTabRemoveEvent = function (tab) {
-            for(var i = 0; i < this.tabRemovedListeners.length; i++) {
-                if(!this.tabRemovedListeners[i](tab)) {
+            for (var i = 0; i < this.tabRemovedListeners.length; i++) {
+                if (!this.tabRemovedListeners[i](tab)) {
                     return false;
                 }
             }
@@ -908,7 +928,7 @@ var api_ui_tab;
         };
         return TabMenu;
     })(api_dom.DivEl);
-    api_ui_tab.TabMenu = TabMenu;    
+    api_ui_tab.TabMenu = TabMenu;
 })(api_ui_tab || (api_ui_tab = {}));
 TestCase("TabMenu", {
     "test given TabMenu added to DOM when getElementById then element is returned ": function () {
