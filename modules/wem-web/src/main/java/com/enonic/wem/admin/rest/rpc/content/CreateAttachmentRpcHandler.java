@@ -45,6 +45,7 @@ public final class CreateAttachmentRpcHandler
     {
         final String contentId = context.param( "contentId" ).asString();
         final String contentPath = context.param( "contentPath" ).asString();
+        final String attachmentName = context.param( "attachmentName" ).asString();
         if ( StringUtils.isBlank( contentId ) && StringUtils.isBlank( contentPath ) )
         {
             throw new JsonRpcException( JsonRpcError.invalidParams( "Parameter [contentId] or [contentPath] must be specified" ) );
@@ -64,7 +65,7 @@ public final class CreateAttachmentRpcHandler
         final List<Attachment> attachmentsCreated = Lists.newArrayList();
         for ( final String uploadFileId : uploadFileIds )
         {
-            boolean created = createAttachment( context, contentSelector, uploadFileId, attachmentsCreated );
+            boolean created = createAttachment( context, contentSelector, uploadFileId, attachmentName, attachmentsCreated );
             if ( !created )
             {
                 missingFiles.add( uploadFileId );
@@ -82,7 +83,7 @@ public final class CreateAttachmentRpcHandler
     }
 
     private boolean createAttachment( final JsonRpcContext context, final ContentSelector contentSelector, final String uploadFileId,
-                                      final List<Attachment> attachmentsCreated )
+                                      final String attachmentName, final List<Attachment> attachmentsCreated )
         throws FileNotFoundException
     {
         final UploadItem uploadItem = uploadService.getItem( uploadFileId );
@@ -94,7 +95,7 @@ public final class CreateAttachmentRpcHandler
 
         final Binary binary = Binary.from( new FileInputStream( uploadItem.getFile() ) );
         final Attachment attachment = newAttachment().
-            name( uploadItem.getName() ).
+            name( attachmentName != null ? attachmentName : uploadItem.getName() ).
             mimeType( uploadItem.getMimeType() ).
             binary( binary ).
             build();

@@ -7,6 +7,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
     minHeight: 250,
     flex: 1,
     layout: 'card',
+    imageAttachmentName: null,
+    fileUploaded: null,
 
     initComponent: function () {
         var me = this;
@@ -125,7 +127,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                     tpl: [
                         '<tpl for=".">',
                         '<div class="admin-image-form">',
-                        '<img src="{iconUrl}?size=500" alt="test image"/>',
+                        '<img src="{imageUrl}?size=500" alt="test image"/>',
                         '</div>',
                         '</tpl>'
                     ]
@@ -243,43 +245,38 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
 
     loadFile: function (file) {
         var me = this;
-        me.createTemporaryImageContent(file.response, function (contentModel) {
-            me.imageModel = contentModel;
-            me.hideLoaderOnImageLoad(contentModel);
+        me.createImageContent(file.response, function (contentId, attachments) {
+            var attachmentName = attachments[0].name;
+            var uploadedResUrl = Admin.lib.UriHelper.getAbsoluteUri('admin/rest/attachment/') + contentId + '/' + attachmentName;
+            me.hideLoaderOnImageLoad(uploadedResUrl);
         });
     },
 
     /**
      * @private
      */
-    createTemporaryImageContent: function (file, callback) {
+    createImageContent: function (file, callback) {
         var me = this;
-        this.remoteCreateBinary(file.id, function (binaryId) {
-            me.remoteCreateImageContent(file.name, file.mimeType, binaryId, function (contentId) {
-                var getContentCommand = {
-                    contentIds: [contentId]
-                };
-                Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
-                    if (getContentResponse && getContentResponse.success) {
-                        var contentData = getContentResponse.content[0];
-                        var contentModel = new Admin.model.contentManager.ContentModel(contentData);
-                        callback(contentModel);
-                    }
-                });
-            });
+        this.fileUploaded = file;
+        this.imageAttachmentName = null;
+        me.remoteCreateImageContent(file.name, file.mimeType, file.name, function (contentId) {
+            me.remoteCreateAttachment(contentId, file.id, callback);
         });
     },
 
     /**
      * @private
      */
-    remoteCreateBinary: function (fileUploadId, callback) {
-        var createBinaryCommand = {'uploadFileId': fileUploadId};
-        Admin.lib.RemoteService.binary_create(createBinaryCommand, function (response) {
+    remoteCreateAttachment: function (contentId, fileUploadId, callback) {
+        var createAttachmentCommand = {
+            contentId: contentId,
+            uploadFileId: fileUploadId
+        };
+        Admin.lib.RemoteService.attachment_create(createAttachmentCommand, function (response) {
             if (response && response.success) {
-                callback(response.binaryId);
+                callback(response.contentId, response.attachments);
             } else {
-                Ext.Msg.alert("Error", response ? response.error : "Unable to create binary content.");
+                Ext.Msg.alert("Error", response ? response.error : "Unable to create attachment.");
             }
         });
     },
@@ -287,11 +284,11 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
     /**
      * @private
      */
-    remoteCreateImageContent: function (displayName, mimeType, binaryId, callback) {
+    remoteCreateImageContent: function (displayName, mimeType, imageAttachmentName, callback) {
         var createContentCommand = {
             "contentData": {
                 "mimeType": mimeType,
-                "binary": binaryId
+                "image": imageAttachmentName
             },
             "qualifiedContentTypeName": 'system:image',
             "displayName": displayName,
@@ -310,11 +307,11 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
     /**
      * @private
      */
-    hideLoaderOnImageLoad: function (contentModel) {
+    hideLoaderOnImageLoad: function (imageUrl) {
         var me = this,
             imageForm = me.getLayout().getLayoutItems()[3];
 
-        imageForm.down('#image').update(contentModel.data);
+        imageForm.down('#image').update({imageUrl: imageUrl});
 
         Ext.fly(imageForm.getEl().dom).down('img').on('load', function (event, target, opts) {
             me.getLayout().setActiveItem('imageForm');
@@ -326,31 +323,37 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
     },
 
     getValue: function () {
-        var me = this;
-
-        if (!me.imageModel) {
+        var fileUploaded = this.fileUploaded;
+        if (!fileUploaded && !this.imageAttachmentName) {
             return null;
+        } else if (fileUploaded) {
+            return {
+                path: this.name + '[0]',
+                value: [fileUploaded.id, fileUploaded.name].join(',')
+            }
+        } else {
+            return {
+                path: this.name + '[0]',
+                value: this.imageAttachmentName
+            };
         }
-
-        return {
-            path: this.name.concat('[0]'),
-            value: this.imageModel.data.id
-        };
     },
 
     setValue: function (value) {
         var me = this;
+        this.imageAttachmentName = value[0].value;
         var getContentCommand = {
-            contentIds: [value[0].value]
+            contentIds: [me.contentId]
         };
         me.getLayout().setActiveItem('loadingForm');
-        // retrieve image contents by contentId
+
+        var contentImageUrl = Admin.lib.UriHelper.getAbsoluteUri('admin/rest/attachment/') + me.contentId + '/' + this.imageAttachmentName;
         Admin.lib.RemoteService.content_get(getContentCommand, function (getContentResponse) {
             if (getContentResponse && getContentResponse.success) {
+                console.log(getContentResponse);
                 var contentData = getContentResponse.content[0];
                 var contentModel = new Admin.model.contentManager.ContentModel(contentData);
-                me.imageModel = contentModel;
-                me.hideLoaderOnImageLoad(contentModel);
+                me.hideLoaderOnImageLoad(contentImageUrl);
             }
         });
     }

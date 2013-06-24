@@ -14,12 +14,12 @@ public class AttachmentName
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.ContentId( convert( value ) );
+        return new Value.AttachmentName( convert( value ) );
     }
 
     @Override
     public Property newProperty( final String name, final Value value )
     {
-        return new Property.ContentId( name, value );
+        return new Property.AttachmentName( name, value.asString() );
     }
 }

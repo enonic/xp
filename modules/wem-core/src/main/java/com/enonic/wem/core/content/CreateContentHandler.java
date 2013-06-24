@@ -156,7 +156,11 @@ public class CreateContentHandler
         final ContentType contentType = contentTypeDao.select( content.getType(), session );
         if ( ( contentType.getSuperType() != null ) && contentType.getSuperType().isMedia() )
         {
-            final Attachment mediaAttachment = command.getAttachment( content.getName() );
+            Attachment mediaAttachment = command.getAttachment( content.getName() );
+            if ( ( mediaAttachment == null ) && ( !command.getAttachments().isEmpty() ) )
+            {
+                mediaAttachment = command.getAttachments().iterator().next();
+            }
             if ( mediaAttachment != null )
             {
                 addThumbnail( client, contentId, mediaAttachment );

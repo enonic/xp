@@ -19,7 +19,7 @@ public class Attachment
     public void checkValidity( final Property property )
         throws InvalidValueTypeException, InvalidValueException
     {
-        ValueTypes.BINARY_ID.checkValidity( property );
+        ValueTypes.ATTACHMENT_NAME.checkValidity( property );
     }
 
     @Override
@@ -32,7 +32,7 @@ public class Attachment
     @Override
     public Value newValue( final String value )
     {
-        return new Value.BinaryId( ValueTypes.BINARY_ID.convert( value ) );
+        return new Value.BinaryId( ValueTypes.ATTACHMENT_NAME.convert( value ) );
     }
 }
 

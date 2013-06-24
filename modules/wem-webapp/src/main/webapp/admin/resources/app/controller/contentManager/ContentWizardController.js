@@ -132,6 +132,7 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         var contentWizardData = contentWizard.getData();
         var contentData = contentWizardData.contentData;
         var displayName = contentWizardData.displayName;
+        var attachments = contentWizardData.attachments;
         var isNewContent = !content.path;
         // if content name is not overridden on creation, it should be auto-generated in the server based on the displayname
         var contentName = !isNewContent || contentWizard.contentNameOverridden ? contentWizardData.name : null;
@@ -143,7 +144,8 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
             contentPath: isNewContent ? null : content.path,
             contentName: contentName,
             parentContentPath: isNewContent ? contentParent.path : null,
-            displayName: displayName
+            displayName: displayName,
+            attachments: attachments
         };
 
         var onUpdateContentSuccess = function (created, updated, contentPath, contentId) {

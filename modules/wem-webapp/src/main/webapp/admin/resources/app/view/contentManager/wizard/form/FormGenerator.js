@@ -1,6 +1,6 @@
 Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
 
-    addComponentsBasedOnContentType: function (formItemConfigs, parentComponent, dataSet) {
+    addComponentsBasedOnContentType: function (formItemConfigs, parentComponent, dataSet, contentId) {
         var me = this;
         var component;
 
@@ -8,7 +8,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
             var formItemConfig = me.getFormItemConfig(item);
             var data = me.getDataForConfig(formItemConfig, dataSet);
             var creationFunction = me.constructCreationFunction(item);
-            component = creationFunction.call(me, formItemConfig, data);
+            component = creationFunction.call(me, formItemConfig, data, contentId);
 
             me.addComponent(component, parentComponent);
         });
@@ -59,7 +59,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
     /**
      * @private
      */
-    createInputComponent: function (inputConfig, inputData) {
+    createInputComponent: function (inputConfig, inputData, contentId) {
         var classAlias = 'widget.' + inputConfig.type.name;
         if (!this.formItemIsSupported(classAlias)) {
             console.error('Unsupported input type', inputConfig);
@@ -71,7 +71,8 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
             name: inputConfig.name,
             copyNo: inputConfig.copyNo || 1,
             inputConfig: inputConfig,
-            value: inputData
+            value: inputData,
+            contentId: contentId
         });
 
         if (!inputComponent.defaultOccurrencesHandling) {

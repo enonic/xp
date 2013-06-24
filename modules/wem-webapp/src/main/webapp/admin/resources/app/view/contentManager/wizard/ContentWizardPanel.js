@@ -205,8 +205,20 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     },
 
     getData: function () {
+        var contentData = this.callParent();
+        // TODO HACK: generate attachments from image input type
+        var attachments = [];
+        if (contentData && contentData['image[0]'] && (contentData['image[0]'].indexOf(',') !== -1) ) {
+            var values = contentData['image[0]'].split(',');
+            attachments.push({
+                uploadId: values[0],
+                attachmentName: values[1]
+            });
+            contentData['image[0]'] = values[1];
+        }
         var data = {
-            contentData: this.callParent()
+            contentData: contentData,
+            attachments: attachments
         };
         Ext.apply(data, this.getWizardHeader().getData());
         return data;

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.account.UserKey;
@@ -92,6 +93,11 @@ public final class CreateContent
             this.attachments.put( attachment.getName(), attachment );
         }
         return this;
+    }
+
+    public CreateContent attachments( final Iterable<Attachment> attachments )
+    {
+        return attachments( Iterables.toArray( attachments, Attachment.class ) );
     }
 
     public ContentPath getParentContentPath()

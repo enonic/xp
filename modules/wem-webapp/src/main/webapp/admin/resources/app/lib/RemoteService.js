@@ -19,7 +19,7 @@ Ext.define('Admin.lib.RemoteService', {
                 "content_delete", "content_validate", "content_find", "contentType_createOrUpdate", "contentType_delete", "contentType_tree",
                 "schema_list", "schema_tree", "system_getSystemInfo", "mixin_get", "mixin_createOrUpdate", "mixin_delete",
                 "relationshipType_get", "relationshipType_createOrUpdate", "relationshipType_delete", "space_list", "space_get",
-                "space_delete", "space_createOrUpdate", "binary_create"
+                "space_delete", "space_createOrUpdate", "binary_create", "attachment_create"
             ]
         };
 
@@ -192,6 +192,10 @@ Ext.define('Admin.lib.RemoteService', {
     },
 
     binary_create: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    attachment_create: function (params, callback) {
         console.log(params, callback);
     },
 

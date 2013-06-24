@@ -18,7 +18,7 @@ public class Image
     public void checkValidity( final Property property )
         throws InvalidValueTypeException, InvalidValueException
     {
-        ValueTypes.BINARY_ID.checkValidity( property );
+        ValueTypes.ATTACHMENT_NAME.checkValidity( property );
     }
 
     @Override
@@ -31,6 +31,6 @@ public class Image
     @Override
     public Value newValue( final String value )
     {
-        return new Value.BinaryId( ValueTypes.BINARY_ID.convert( value ) );
+        return new Value.AttachmentName( ValueTypes.ATTACHMENT_NAME.convert( value ) );
     }
 }
