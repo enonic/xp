@@ -6,9 +6,7 @@ module api_ui {
 
         private iconClass:string;
 
-        private shortcut:string;
-
-        private activatedShortcut:string;
+        private shortcut:KeyBinding;
 
         private enabled:bool = true;
 
@@ -18,7 +16,12 @@ module api_ui {
 
         constructor(label:string, shortcut?:string) {
             this.label = label;
-            this.shortcut = shortcut;
+
+            if (shortcut) {
+                this.shortcut = new KeyBinding(shortcut).setCallback(() => {
+                    this.execute();
+                });
+            }
         }
 
         getLabel():string {
@@ -70,27 +73,8 @@ module api_ui {
             return this.shortcut != null;
         }
 
-        getShortcut():string {
+        getShortcut():KeyBinding {
             return this.shortcut;
-        }
-
-        setShortcut(value:string) {
-            this.shortcut = value;
-        }
-
-        activateShortcut() {
-            if (this.hasShortcut()) {
-                Mousetrap.bind(this.getShortcut(), (e:ExtendedKeyboardEvent, combo:string) => {
-                    this.execute();
-                });
-                this.activatedShortcut = this.getShortcut();
-            }
-        }
-
-        deactivateShortcut() {
-            if (this.activatedShortcut != null) {
-                Mousetrap.unbind(this.activatedShortcut);
-            }
         }
 
         execute():void {
@@ -110,16 +94,15 @@ module api_ui {
             this.propertyChangeListeners.push(listener);
         }
 
-        static activateShortcuts(actions:api_ui.Action[]) {
-            actions.forEach((action, index, array) => {
-                action.activateShortcut();
-            });
-        }
+        static getKeyBindings(actions:api_ui.Action[]):KeyBinding[] {
 
-        static deactivateShortcuts(actions:api_ui.Action[]) {
+            var bindings:KeyBinding[] = [];
             actions.forEach((action, index, array) => {
-                action.deactivateShortcut();
+                if (action.hasShortcut()) {
+                    bindings.push(action.getShortcut());
+                }
             });
+            return bindings;
         }
     }
 }

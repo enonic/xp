@@ -14,8 +14,6 @@ module app {
             super(appBar.getTabMenu(), this.appBrowsePanel, app_browse.SpaceBrowseActions.ACTIONS);
 
             this.handleGlobalEvents();
-
-            app_browse.SpaceBrowseActions.activateShortcuts();
         }
 
         init() {

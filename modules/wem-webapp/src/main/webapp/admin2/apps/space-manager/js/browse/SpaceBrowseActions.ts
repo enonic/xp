@@ -81,14 +81,6 @@ module app_browse {
             });
         }
 
-        static activateShortcuts() {
-            api_ui.Action.activateShortcuts(ACTIONS);
-        }
-
-        static deactivateShortcuts() {
-            api_ui.Action.deactivateShortcuts(ACTIONS);
-        }
-
         private static anyEditable(spaces:api_model.SpaceModel[]):bool {
             for (var i in spaces) {
                 var space:api_model.SpaceModel = spaces[i];

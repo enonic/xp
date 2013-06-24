@@ -1,9 +1,34 @@
 module api_ui {
+    class KeyBindings {
+        private static mousetraps;
+        private static shelves;
+        static bindKeys(bindings: KeyBinding[]): void;
+        static bindKey(binding: KeyBinding): void;
+        static unbindKeys(bindings: KeyBinding[]): void;
+        static unbindKey(binding: KeyBinding): void;
+        static trigger(combination: string, action?: string): void;
+        static reset(): void;
+        static shelveBindings(): void;
+        static unshelveBindings(): void;
+    }
+    class KeyBinding {
+        private combination;
+        private callback;
+        private action;
+        constructor(combination: string, callback?: (e: ExtendedKeyboardEvent, combo: string) => any, action?: string);
+        public setCallback(value: (e: ExtendedKeyboardEvent, combo: string) => any): KeyBinding;
+        public setAction(value: string): KeyBinding;
+        public getCombination(): string;
+        public getCallback(): (e: ExtendedKeyboardEvent, combo: string) => any;
+        public getAction(): string;
+        static newKeyBinding(combination: string): KeyBinding;
+    }
+}
+module api_ui {
     class Action {
         private label;
         private iconClass;
         private shortcut;
-        private activatedShortcut;
         private enabled;
         private executionListeners;
         private propertyChangeListeners;
@@ -15,15 +40,11 @@ module api_ui {
         public getIconClass(): string;
         public setIconClass(value: string): void;
         public hasShortcut(): bool;
-        public getShortcut(): string;
-        public setShortcut(value: string): void;
-        public activateShortcut(): void;
-        public deactivateShortcut(): void;
+        public getShortcut(): KeyBinding;
         public execute(): void;
         public addExecutionListener(listener: (action: Action) => void): void;
         public addPropertyChangeListener(listener: (action: Action) => void): void;
-        static activateShortcuts(actions: Action[]): void;
-        static deactivateShortcuts(actions: Action[]): void;
+        static getKeyBindings(actions: Action[]): KeyBinding[];
     }
 }
 module api_content_data {

@@ -79,21 +79,19 @@ module api_ui_dialog{
             api_ui.BodyMask.get().deActivate();
 
             this.hide();
-            this.actions.forEach((action, index, array)=> {
-                action.deactivateShortcut();
-            });
+
+            api_ui.KeyBindings.unshelveBindings();
         }
 
         open() {
 
             api_ui.BodyMask.get().activate();
 
+            api_ui.KeyBindings.shelveBindings();
+
             this.show();
-            this.actions.forEach((action, index, array)=> {
-                if (action.hasShortcut()) {
-                    action.activateShortcut();
-                }
-            });
+
+            api_ui.KeyBindings.bindKeys(api_ui.Action.getKeyBindings(this.actions));
         }
     }
 

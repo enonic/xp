@@ -1,12 +1,113 @@
 var api_ui;
 (function (api_ui) {
+    var KeyBindings = (function () {
+        function KeyBindings() { }
+        KeyBindings.mousetraps = {
+        };
+        KeyBindings.shelves = [];
+        KeyBindings.bindKeys = function bindKeys(bindings) {
+            bindings.forEach(function (binding) {
+                KeyBindings.bindKey(binding);
+            });
+        };
+        KeyBindings.bindKey = function bindKey(binding) {
+            console.log("KeyBindings.bindKey", binding);
+            Mousetrap.bind(binding.getCombination(), binding.getCallback(), binding.getAction());
+            KeyBindings.mousetraps[binding.getCombination()] = binding;
+        };
+        KeyBindings.unbindKeys = function unbindKeys(bindings) {
+            console.log("KeyBindings.unbindKeys");
+            bindings.forEach(function (binding) {
+                KeyBindings.unbindKey(binding);
+            });
+        };
+        KeyBindings.unbindKey = function unbindKey(binding) {
+            console.log("KeyBindings.unbindKey");
+            Mousetrap.unbind(binding.getCombination());
+            delete KeyBindings.mousetraps[binding.getCombination()];
+        };
+        KeyBindings.trigger = function trigger(combination, action) {
+            Mousetrap.trigger(combination, action);
+        };
+        KeyBindings.reset = function reset() {
+            console.log("KeyBindings.reset");
+            Mousetrap.reset();
+            KeyBindings.mousetraps = {
+            };
+        };
+        KeyBindings.shelveBindings = function shelveBindings() {
+            console.log("shelveBindings() {");
+            console.log("  resetting current");
+            for(var key in KeyBindings.mousetraps) {
+                console.log("  shelving: " + KeyBindings.mousetraps[key].getCombination());
+            }
+            Mousetrap.reset();
+            KeyBindings.shelves.push(KeyBindings.mousetraps);
+            KeyBindings.mousetraps = {
+            };
+            console.log("}");
+        };
+        KeyBindings.unshelveBindings = function unshelveBindings() {
+            console.log("unshelveBindings() {");
+            console.log(" resetting current");
+            console.log(" removing last shelf");
+            Mousetrap.reset();
+            var previousMousetraps = KeyBindings.shelves.pop();
+            for(var key in previousMousetraps) {
+                var mousetrap = previousMousetraps[key];
+                console.log("  binding: " + mousetrap.getCombination());
+                Mousetrap.bind(mousetrap.getCombination(), mousetrap.getCallback(), mousetrap.getAction());
+            }
+            KeyBindings.mousetraps = previousMousetraps;
+            console.log("}");
+        };
+        return KeyBindings;
+    })();
+    api_ui.KeyBindings = KeyBindings;    
+    var KeyBinding = (function () {
+        function KeyBinding(combination, callback, action) {
+            this.combination = combination;
+            this.callback = callback;
+            this.action = action;
+        }
+        KeyBinding.prototype.setCallback = function (value) {
+            this.callback = value;
+            return this;
+        };
+        KeyBinding.prototype.setAction = function (value) {
+            this.action = value;
+            return this;
+        };
+        KeyBinding.prototype.getCombination = function () {
+            return this.combination;
+        };
+        KeyBinding.prototype.getCallback = function () {
+            return this.callback;
+        };
+        KeyBinding.prototype.getAction = function () {
+            return this.action;
+        };
+        KeyBinding.newKeyBinding = function newKeyBinding(combination) {
+            return new KeyBinding(combination);
+        };
+        return KeyBinding;
+    })();
+    api_ui.KeyBinding = KeyBinding;    
+})(api_ui || (api_ui = {}));
+var api_ui;
+(function (api_ui) {
     var Action = (function () {
         function Action(label, shortcut) {
+            var _this = this;
             this.enabled = true;
             this.executionListeners = [];
             this.propertyChangeListeners = [];
             this.label = label;
-            this.shortcut = shortcut;
+            if(shortcut) {
+                this.shortcut = new api_ui.KeyBinding(shortcut).setCallback(function () {
+                    _this.execute();
+                });
+            }
         }
         Action.prototype.getLabel = function () {
             return this.label;
@@ -47,23 +148,6 @@ var api_ui;
         Action.prototype.getShortcut = function () {
             return this.shortcut;
         };
-        Action.prototype.setShortcut = function (value) {
-            this.shortcut = value;
-        };
-        Action.prototype.activateShortcut = function () {
-            var _this = this;
-            if(this.hasShortcut()) {
-                Mousetrap.bind(this.getShortcut(), function (e, combo) {
-                    _this.execute();
-                });
-                this.activatedShortcut = this.getShortcut();
-            }
-        };
-        Action.prototype.deactivateShortcut = function () {
-            if(this.activatedShortcut != null) {
-                Mousetrap.unbind(this.activatedShortcut);
-            }
-        };
         Action.prototype.execute = function () {
             if(this.enabled) {
                 for(var i in this.executionListeners) {
@@ -77,15 +161,14 @@ var api_ui;
         Action.prototype.addPropertyChangeListener = function (listener) {
             this.propertyChangeListeners.push(listener);
         };
-        Action.activateShortcuts = function activateShortcuts(actions) {
+        Action.getKeyBindings = function getKeyBindings(actions) {
+            var bindings = [];
             actions.forEach(function (action, index, array) {
-                action.activateShortcut();
+                if(action.hasShortcut()) {
+                    bindings.push(action.getShortcut());
+                }
             });
-        };
-        Action.deactivateShortcuts = function deactivateShortcuts(actions) {
-            actions.forEach(function (action, index, array) {
-                action.deactivateShortcut();
-            });
+            return bindings;
         };
         return Action;
     })();

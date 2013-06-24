@@ -51,6 +51,7 @@
 ///<reference path='dom/SpanEl.ts' />
 ///<reference path='dom/ButtonEl.ts' />
 
+///<reference path='ui/KeyBindings.ts'/>
 ///<reference path='ui/Action.ts' />
 ///<reference path='ui/Panel.ts' />
 ///<reference path='ui/DeckPanel.ts' />

@@ -26,10 +26,10 @@ module api{
             super.showPanel(index);
 
             if (this.isHomePanel(index)) {
-                api_ui.Action.activateShortcuts(this.homePanelActions);
+                api_ui.KeyBindings.bindKeys(api_ui.Action.getKeyBindings(this.homePanelActions));
             }
             else {
-                api_ui.Action.deactivateShortcuts(this.homePanelActions);
+                api_ui.KeyBindings.unbindKeys(api_ui.Action.getKeyBindings(this.homePanelActions));
             }
         }
 
