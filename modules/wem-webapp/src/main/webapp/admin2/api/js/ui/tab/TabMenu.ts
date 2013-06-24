@@ -130,6 +130,12 @@ module api_ui_tab {
                     this.tabs[i].setTabIndex(i);
                 }
             }
+
+            if (this.countVisible() == 0) {
+                this.tabMenuButton.setLabel("");
+                this.tabMenuButton.hide();
+                this.hideMenu();
+            }
         }
 
         private isSelectedTab(tab:Tab) {
@@ -140,10 +146,18 @@ module api_ui_tab {
             return tab.getTabIndex() === this.tabs.length;
         }
 
+        private updateActiveTab(tabIndex:number) {
+            this.tabs.forEach((tab, index) => {
+                var activate = (tabIndex == index);
+                tab.setActive(activate);
+            });
+        }
+
         selectTab(tabIndex:number) {
             var selectedTab = this.tabs[tabIndex];
             this.tabMenuButton.setLabel(selectedTab.getLabel());
             this.selectedTab = tabIndex;
+            this.updateActiveTab(tabIndex);
         }
 
         getActiveTab():api_ui_tab.Tab {
