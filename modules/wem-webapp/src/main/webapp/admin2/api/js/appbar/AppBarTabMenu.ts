@@ -11,8 +11,7 @@ module api_appbar{
 
         addTab(tab:api_ui_tab.Tab) {
             super.addTab(tab);
-            this.tabMenuButton.setTabCount(this.getSize())
-            this.tabMenuButton.show();
+            this.tabMenuButton.setTabCount(this.countVisible());
         }
 
         createTabMenuButton():api_ui_tab.TabMenuButton {
@@ -22,12 +21,7 @@ module api_appbar{
 
         removeTab(tab:api_ui_tab.Tab) {
             super.removeTab(tab);
-
-            this.tabMenuButton.setTabCount( this.getSize() );
-            if( this.getSize() == 0 ) {
-                this.tabMenuButton.setLabel("");
-                this.tabMenuButton.hide();
-            }
+            this.tabMenuButton.setTabCount(this.countVisible());
         }
     }
 }

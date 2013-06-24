@@ -22,6 +22,7 @@ module api_ui_tab {
             super(idPrefix || "TabMenu");
 
             this.tabMenuButton = this.createTabMenuButton();
+            this.tabMenuButton.hide();
             this.tabMenuButton.getEl().addEventListener("click", () => {
                 this.toggleMenu();
             });
@@ -81,6 +82,7 @@ module api_ui_tab {
             if (tab.isVisible()) {
                 this.tabMenuButton.setLabel(tab.getLabel());
                 this.menuEl.appendChild(tabMenuItem);
+                this.tabMenuButton.show();
             }
         }
 
@@ -89,8 +91,12 @@ module api_ui_tab {
         }
 
         getSize():number {
+            return this.tabs.length;
+        }
+
+        countVisible():number {
             var size = 0;
-            this.tabs.forEach(function (tab:TabMenuItem) {
+            this.tabs.forEach((tab:TabMenuItem) => {
                 if (tab.isVisible()) {
                     size++;
                 }
@@ -112,7 +118,6 @@ module api_ui_tab {
             tabMenuItem.getEl().remove();
             var isLastTab = this.isLastTab(tab);
             this.tabs.splice(tab.getTabIndex(), 1);
-
             if (this.isSelectedTab(tab)) {
                 if (this.isEmpty()) {
                     this.selectedTab = -1;
@@ -125,6 +130,12 @@ module api_ui_tab {
                     this.tabs[i].setTabIndex(i);
                 }
             }
+
+            if (this.countVisible() == 0) {
+                this.tabMenuButton.setLabel("");
+                this.tabMenuButton.hide();
+                this.hideMenu();
+            }
         }
 
         private isSelectedTab(tab:Tab) {
@@ -135,10 +146,18 @@ module api_ui_tab {
             return tab.getTabIndex() === this.tabs.length;
         }
 
+        private updateActiveTab(tabIndex:number) {
+            this.tabs.forEach((tab, index) => {
+                var activate = (tabIndex == index);
+                tab.setActive(activate);
+            });
+        }
+
         selectTab(tabIndex:number) {
             var selectedTab = this.tabs[tabIndex];
             this.tabMenuButton.setLabel(selectedTab.getLabel());
             this.selectedTab = tabIndex;
+            this.updateActiveTab(tabIndex);
         }
 
         getActiveTab():api_ui_tab.Tab {

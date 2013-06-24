@@ -662,7 +662,7 @@ var api_dom;
             return this.el;
         };
         ElementHelper.prototype.insertBefore = function (newEl, existingEl) {
-            this.el.insertBefore(newEl.getHTMLElement(), existingEl.getHTMLElement());
+            this.el.insertBefore(newEl.getHTMLElement(), existingEl ? existingEl.getHTMLElement() : null);
         };
         ElementHelper.prototype.setDisabled = function (value) {
             this.el.disabled = value;
@@ -1592,6 +1592,7 @@ var api_ui_tab;
             this.tabSelectedListeners = [];
             this.tabRemovedListeners = [];
             this.tabMenuButton = this.createTabMenuButton();
+            this.tabMenuButton.hide();
             this.tabMenuButton.getEl().addEventListener("click", function () {
                 _this.toggleMenu();
             });
@@ -1638,12 +1639,16 @@ var api_ui_tab;
             if(tab.isVisible()) {
                 this.tabMenuButton.setLabel(tab.getLabel());
                 this.menuEl.appendChild(tabMenuItem);
+                this.tabMenuButton.show();
             }
         };
         TabMenu.prototype.isEmpty = function () {
             return this.tabs.length == 0;
         };
         TabMenu.prototype.getSize = function () {
+            return this.tabs.length;
+        };
+        TabMenu.prototype.countVisible = function () {
             var size = 0;
             this.tabs.forEach(function (tab) {
                 if(tab.isVisible()) {
@@ -1675,6 +1680,11 @@ var api_ui_tab;
                     this.tabs[i].setTabIndex(i);
                 }
             }
+            if(this.countVisible() == 0) {
+                this.tabMenuButton.setLabel("");
+                this.tabMenuButton.hide();
+                this.hideMenu();
+            }
         };
         TabMenu.prototype.isSelectedTab = function (tab) {
             return tab.getTabIndex() == this.selectedTab;
@@ -1682,10 +1692,17 @@ var api_ui_tab;
         TabMenu.prototype.isLastTab = function (tab) {
             return tab.getTabIndex() === this.tabs.length;
         };
+        TabMenu.prototype.updateActiveTab = function (tabIndex) {
+            this.tabs.forEach(function (tab, index) {
+                var activate = (tabIndex == index);
+                tab.setActive(activate);
+            });
+        };
         TabMenu.prototype.selectTab = function (tabIndex) {
             var selectedTab = this.tabs[tabIndex];
             this.tabMenuButton.setLabel(selectedTab.getLabel());
             this.selectedTab = tabIndex;
+            this.updateActiveTab(tabIndex);
         };
         TabMenu.prototype.getActiveTab = function () {
             return this.getSelectedTab();
@@ -1792,6 +1809,17 @@ var api_ui_tab;
             this.visible = value;
             if(!this.visible) {
                 this.remove();
+            }
+        };
+        TabMenuItem.prototype.isActive = function () {
+            return this.active;
+        };
+        TabMenuItem.prototype.setActive = function (value) {
+            this.active = value;
+            if(this.active) {
+                this.getEl().addClass("active");
+            } else {
+                this.getEl().removeClass("active");
             }
         };
         TabMenuItem.prototype.isRemovable = function () {
@@ -1968,14 +1996,14 @@ var api_ui;
             });
         };
         Tooltip.prototype.startTimeout = function (ms) {
+            var _this = this;
             this.stopTimeout();
-            var me = this;
             if(this.timeout > 0) {
                 this.hideTimeout = setTimeout(function () {
-                    me.hide();
+                    _this.hide();
                 }, ms || this.timeout);
             } else {
-                me.hide();
+                this.hide();
             }
         };
         Tooltip.prototype.stopTimeout = function () {
@@ -2320,7 +2348,7 @@ var api_appbar;
         UserInfoPopup.prototype.render = function () {
             this.hide();
             this.isShown = false;
-            document.body.insertBefore(this.getHTMLElement());
+            new api_dom.ElementHelper(document.body).appendChild(this.getHTMLElement());
         };
         UserInfoPopup.prototype.toggle = function () {
             this.isShown ? this.hide() : this.show();
@@ -2365,8 +2393,7 @@ var api_appbar;
         }
         AppBarTabMenu.prototype.addTab = function (tab) {
             _super.prototype.addTab.call(this, tab);
-            this.tabMenuButton.setTabCount(this.getSize());
-            this.tabMenuButton.show();
+            this.tabMenuButton.setTabCount(this.countVisible());
         };
         AppBarTabMenu.prototype.createTabMenuButton = function () {
             this.tabMenuButton = new api_appbar.AppBarTabMenuButton();
@@ -2374,11 +2401,7 @@ var api_appbar;
         };
         AppBarTabMenu.prototype.removeTab = function (tab) {
             _super.prototype.removeTab.call(this, tab);
-            this.tabMenuButton.setTabCount(this.getSize());
-            if(this.getSize() == 0) {
-                this.tabMenuButton.setLabel("");
-                this.tabMenuButton.hide();
-            }
+            this.tabMenuButton.setTabCount(this.countVisible());
         };
         return AppBarTabMenu;
     })(api_ui_tab.TabMenu);

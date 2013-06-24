@@ -17,7 +17,7 @@ module api_dom {
         }
 
         insertBefore(newEl:Element, existingEl:Element) {
-            this.el.insertBefore(newEl.getHTMLElement(), existingEl.getHTMLElement());
+            this.el.insertBefore(newEl.getHTMLElement(), existingEl ? existingEl.getHTMLElement() : null);
         }
 
         setDisabled(value:bool):ElementHelper {

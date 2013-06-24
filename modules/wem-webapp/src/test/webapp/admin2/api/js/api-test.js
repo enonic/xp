@@ -324,7 +324,7 @@ var api_dom;
             return this.el;
         };
         ElementHelper.prototype.insertBefore = function (newEl, existingEl) {
-            this.el.insertBefore(newEl.getHTMLElement(), existingEl.getHTMLElement());
+            this.el.insertBefore(newEl.getHTMLElement(), existingEl ? existingEl.getHTMLElement() : null);
         };
         ElementHelper.prototype.setDisabled = function (value) {
             this.el.disabled = value;
@@ -730,6 +730,17 @@ var api_ui_tab;
                 this.remove();
             }
         };
+        TabMenuItem.prototype.isActive = function () {
+            return this.active;
+        };
+        TabMenuItem.prototype.setActive = function (value) {
+            this.active = value;
+            if(this.active) {
+                this.getEl().addClass("active");
+            } else {
+                this.getEl().removeClass("active");
+            }
+        };
         TabMenuItem.prototype.isRemovable = function () {
             return this.removable;
         };
@@ -776,6 +787,7 @@ var api_ui_tab;
             this.tabSelectedListeners = [];
             this.tabRemovedListeners = [];
             this.tabMenuButton = this.createTabMenuButton();
+            this.tabMenuButton.hide();
             this.tabMenuButton.getEl().addEventListener("click", function () {
                 _this.toggleMenu();
             });
@@ -822,12 +834,16 @@ var api_ui_tab;
             if(tab.isVisible()) {
                 this.tabMenuButton.setLabel(tab.getLabel());
                 this.menuEl.appendChild(tabMenuItem);
+                this.tabMenuButton.show();
             }
         };
         TabMenu.prototype.isEmpty = function () {
             return this.tabs.length == 0;
         };
         TabMenu.prototype.getSize = function () {
+            return this.tabs.length;
+        };
+        TabMenu.prototype.countVisible = function () {
             var size = 0;
             this.tabs.forEach(function (tab) {
                 if(tab.isVisible()) {
@@ -859,6 +875,11 @@ var api_ui_tab;
                     this.tabs[i].setTabIndex(i);
                 }
             }
+            if(this.countVisible() == 0) {
+                this.tabMenuButton.setLabel("");
+                this.tabMenuButton.hide();
+                this.hideMenu();
+            }
         };
         TabMenu.prototype.isSelectedTab = function (tab) {
             return tab.getTabIndex() == this.selectedTab;
@@ -866,10 +887,17 @@ var api_ui_tab;
         TabMenu.prototype.isLastTab = function (tab) {
             return tab.getTabIndex() === this.tabs.length;
         };
+        TabMenu.prototype.updateActiveTab = function (tabIndex) {
+            this.tabs.forEach(function (tab, index) {
+                var activate = (tabIndex == index);
+                tab.setActive(activate);
+            });
+        };
         TabMenu.prototype.selectTab = function (tabIndex) {
             var selectedTab = this.tabs[tabIndex];
             this.tabMenuButton.setLabel(selectedTab.getLabel());
             this.selectedTab = tabIndex;
+            this.updateActiveTab(tabIndex);
         };
         TabMenu.prototype.getActiveTab = function () {
             return this.getSelectedTab();

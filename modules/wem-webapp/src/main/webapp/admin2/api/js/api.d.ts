@@ -676,11 +676,13 @@ module api_ui_tab {
         public addTab(tab: Tab): void;
         public isEmpty(): bool;
         public getSize(): number;
+        public countVisible(): number;
         public getSelectedTabIndex(): number;
         public getSelectedTab(): Tab;
         public removeTab(tab: Tab): void;
         private isSelectedTab(tab);
         private isLastTab(tab);
+        private updateActiveTab(tabIndex);
         public selectTab(tabIndex: number): void;
         public getActiveTab(): Tab;
         public deselectTab(): void;
@@ -709,6 +711,7 @@ module api_ui_tab {
         private tabMenu;
         private visible;
         private removable;
+        private active;
         constructor(label: string);
         public setTabMenu(tabMenu: TabMenu): void;
         public setTabIndex(value: number): void;
@@ -716,6 +719,8 @@ module api_ui_tab {
         public getLabel(): string;
         public isVisible(): bool;
         public setVisible(value: bool): void;
+        public isActive(): bool;
+        public setActive(value: bool): void;
         public isRemovable(): bool;
         public setRemovable(value: bool): void;
         private remove();

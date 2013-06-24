@@ -128,13 +128,12 @@ module api_ui {
 
             this.stopTimeout();
 
-            var me = this;
             if (this.timeout > 0) {
-                this.hideTimeout = setTimeout(function () {
-                    me.hide();
+                this.hideTimeout = setTimeout(() => {
+                    this.hide();
                 }, ms || this.timeout);
             } else {
-                me.hide();
+                this.hide();
             }
         }
 

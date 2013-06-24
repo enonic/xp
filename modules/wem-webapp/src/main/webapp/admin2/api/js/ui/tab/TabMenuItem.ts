@@ -14,6 +14,8 @@ module api_ui_tab {
 
         private removable:bool = true;
 
+        private active:bool;
+
         constructor(label:string) {
             super("TabMenuItem", "tab-menu-item");
 
@@ -64,6 +66,19 @@ module api_ui_tab {
             this.visible = value;
             if (!this.visible) {
                 this.remove();
+            }
+        }
+
+        isActive():bool {
+            return this.active;
+        }
+
+        setActive(value:bool) {
+            this.active = value;
+            if (this.active) {
+                this.getEl().addClass("active");
+            } else {
+                this.getEl().removeClass("active");
             }
         }
 

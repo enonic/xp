@@ -29,7 +29,26 @@
     </dependency>
   </dependencies>
 
+  <properties>
+    <npm.exec>npm</npm.exec>
+    <node.exec>node</node.exec>
+    <grunt.script>node_modules/grunt-cli/bin/grunt</grunt.script>
+  </properties>
+
   <profiles>
+    <profile>
+      <id>windows_properties</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <npm.exec>npm.cmd</npm.exec>
+        <node.exec>node.exe</node.exec>
+        <grunt.script>node_modules\grunt-cli\bin\grunt</grunt.script>
+      </properties>
+    </profile>
     <profile>
       <id>experimental</id>
       <activation>
@@ -49,7 +68,7 @@
                   <goal>exec</goal>
                 </goals>
                 <configuration>
-                  <executable>npm</executable>
+                  <executable>${npm.exec}</executable>
                   <arguments>
                     <argument>install</argument>
                   </arguments>
@@ -62,8 +81,9 @@
                   <goal>exec</goal>
                 </goals>
                 <configuration>
-                  <executable>node_modules/grunt-cli/bin/grunt</executable>
+                  <executable>${node.exec}</executable>
                   <arguments>
+                    <argument>${grunt.script}</argument>
                     <argument>all</argument>
                   </arguments>
                 </configuration>
@@ -88,7 +108,7 @@
           <webApp>
             <contextPath>/</contextPath>
             <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
-              <resourcesAsCSV>src/main/webapp</resourcesAsCSV>
+              <resourcesAsCSV>src/main/webapp,target/webapp-generated</resourcesAsCSV>
             </baseResource>
           </webApp>
         </configuration>
