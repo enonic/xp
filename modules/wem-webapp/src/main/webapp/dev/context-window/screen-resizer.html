@@ -1,0 +1,116 @@
+<html>
+<head>
+    <title>Enonic WEM Admin</title>
+    <link rel="stylesheet" type="text/css" href="../../admin/resources/lib/ext/resources/css/admin.css">
+    <style type="text/css">
+        #live-edit-iframe-container {
+            background-color: #2e2f30;
+        }
+
+        .screen-resizer-ct-main {
+            background-color: #3a3e41;
+        }
+
+        .screen-resizer-toolbar {
+            background-color: #393839;
+        }
+
+        .screen-resizer-breakpoint-cmp {
+            position: relative;
+            background-color: #323236;
+            height: 15px;
+        }
+        .screen-resizer-breakpoint {
+            position: absolute;
+            top: 1px;
+            left: 0;
+            height: 15px;
+            font-size: 10px;
+            color: #fff;
+            text-align: right;
+            padding-right: 5px;
+            cursor: pointer;
+        }
+
+        .screen-resizer-cmp {
+        }
+
+        .screen-resizer {
+            height: 20px;
+            border-right: none;
+            padding-top: 2px;
+            padding-right: 15px;
+            font-size: 10px;
+            color: #ccc;
+            text-align: right;
+        }
+
+        .screen-resizer-handle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 5px;
+            height: 20px;
+            background-color: #767676;
+        }
+
+    </style>
+    <script type="text/javascript" src="../../admin/resources/lib/ext/ext-all-debug.js"></script>
+    <script type="text/javascript" src="ScreenResizer.js"></script>
+    <script type="text/javascript">
+        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        // App
+        Ext.application({
+            name: 'App',
+
+            controllers: [
+            ],
+
+            requires: [
+            ],
+
+            launch: function () {
+                Ext.create('Ext.container.Viewport', {
+                    layout: 'border',
+                    items: [
+                        {
+                            region: 'center',
+                            flex: 1,
+                            split: true,
+                            border: 0,
+
+                            padding: '0',
+                            tbar: [
+                                {
+                                    text: 'Save'
+                                },
+                                {
+                                    text: 'Preview'
+                                },
+                                {
+                                    text: 'Publish'
+                                }
+                            ],
+                            items: [
+                                {
+                                    xtype: 'screenResizer'
+                                },
+                                {
+                                    xtype: 'component',
+                                    id: 'live-edit-iframe-container',
+                                    html: '<iframe id="live-edit-iframe" style="border:0;width: 100%; height: 100%" src="../live-edit-page/bootstrap.jsp?edit=true"></iframe>'
+                                }
+                            ]
+                        }
+                    ]
+                });
+            }
+
+        });
+
+    </script>
+
+</head>
+<body>
+</body>
+</html>
