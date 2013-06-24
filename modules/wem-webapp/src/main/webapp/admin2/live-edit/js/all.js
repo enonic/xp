@@ -333,7 +333,6 @@ var LiveEdit;
                         ui
                     ]);
                     _isDragging = false;
-                    console.log('stop');
                 }
             });
         }
@@ -1286,24 +1285,25 @@ var LiveEdit;
             __extends(Cursor, _super);
             function Cursor() {
                         _super.call(this);
+                this.DEFAULT_CURSOR = 'default';
                 this.registerGlobalListeners();
             }
             Cursor.prototype.registerGlobalListeners = function () {
                 var _this = this;
                 $(window).on('mouseOver.liveEdit.component', function (event, component) {
-                    return _this.updateCursor(component);
+                    return _this.update(component);
                 });
                 $(window).on('select.liveEdit.component', function (event, component) {
-                    return _this.updateCursor(component);
+                    return _this.update(component);
                 });
                 $(window).on('mouseOut.liveEdit.component', function () {
-                    return _this.resetCursor();
+                    return _this.reset();
                 });
             };
-            Cursor.prototype.updateCursor = function (component) {
+            Cursor.prototype.update = function (component) {
                 var componentType = LiveEdit.ComponentHelper.getComponentType(component);
-                var $body = $('body');
-                var cursor = 'default';
+                var body = $('body');
+                var cursor = this.DEFAULT_CURSOR;
                 switch(componentType) {
                     case 'region':
                         cursor = 'pointer';
@@ -1320,10 +1320,13 @@ var LiveEdit;
                     default:
                         cursor = 'default';
                 }
-                $body.css('cursor', cursor);
+                body.css('cursor', cursor);
             };
-            Cursor.prototype.resetCursor = function () {
-                $('body').css('cursor', 'default');
+            Cursor.prototype.reset = function () {
+                if(LiveEdit.DragDropSort.isDragging()) {
+                    return;
+                }
+                $('body').css('cursor', this.DEFAULT_CURSOR);
             };
             return Cursor;
         })(LiveEdit.ui.Base);

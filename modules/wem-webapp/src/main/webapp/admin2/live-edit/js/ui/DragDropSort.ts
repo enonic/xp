@@ -83,7 +83,6 @@ module LiveEdit.DragDropSort {
             stop: (event, ui) => {
                 $(window).trigger('dragStop.liveEdit.component', [event, ui]);
                 _isDragging = false;
-                console.log('stop')
             }
         });
     }

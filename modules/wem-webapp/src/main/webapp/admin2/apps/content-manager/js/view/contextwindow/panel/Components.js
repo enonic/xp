@@ -180,6 +180,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
             zIndex: 400000,
             cursorAt: me.cursorAt,
             appendTo: 'body',
+            cursor: 'move',
             helper: me.createDragHelper,
             start: function (event, ui) {
                 me.onStartDragComponent(event, ui);

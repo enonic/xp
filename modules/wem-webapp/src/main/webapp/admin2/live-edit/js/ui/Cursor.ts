@@ -2,21 +2,24 @@ module LiveEdit.ui {
     var $ = $liveEdit;
 
     export class Cursor extends LiveEdit.ui.Base {
+
+        private DEFAULT_CURSOR:string = 'default';
+
         constructor() {
             super();
             this.registerGlobalListeners();
         }
 
         private registerGlobalListeners():void {
-            $(window).on('mouseOver.liveEdit.component', (event:JQueryEventObject, component) => this.updateCursor(component));
-            $(window).on('select.liveEdit.component', (event:JQueryEventObject, component:JQuery) => this.updateCursor(component));
-            $(window).on('mouseOut.liveEdit.component', () => this.resetCursor());
+            $(window).on('mouseOver.liveEdit.component', (event:JQueryEventObject, component) => this.update(component));
+            $(window).on('select.liveEdit.component', (event:JQueryEventObject, component:JQuery) => this.update(component));
+            $(window).on('mouseOut.liveEdit.component', () => this.reset());
         }
 
-        private updateCursor(component:JQuery):void {
+        private update(component:JQuery):void {
             var componentType = LiveEdit.ComponentHelper.getComponentType(component);
-            var $body = $('body');
-            var cursor = 'default';
+            var body:JQuery = $('body');
+            var cursor:string = this.DEFAULT_CURSOR;
 
             switch (componentType) {
             case 'region':
@@ -34,11 +37,14 @@ module LiveEdit.ui {
             default:
                 cursor = 'default';
             }
-            $body.css('cursor', cursor);
+            body.css('cursor', cursor);
         }
 
-        private resetCursor():void {
-            $('body').css('cursor', 'default');
+        private reset():void {
+            if(LiveEdit.DragDropSort.isDragging()) {
+                return;
+            }
+            $('body').css('cursor', this.DEFAULT_CURSOR);
         }
 
     }
