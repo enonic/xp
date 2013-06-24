@@ -168,6 +168,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
      ***************************************************************************************************/
 
     windowRegion: null,
+    frameRegion: null,
     cursorAt: {left: -10, top: -15},
 
     initComponentDraggables: function () {
@@ -181,19 +182,25 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
             cursorAt: me.cursorAt,
             appendTo: 'body',
             cursor: 'move',
+            revert: 'invalid',
+            distance: 10,
+            addClasses: false,
             helper: me.createDragHelper,
             start: function (event, ui) {
                 me.onStartDragComponent(event, ui);
-            },
-            drag: function (event, ui) {
-                // me.onDragComponent(event, ui);
             }
+            /*
+            ,
+            drag: function (event, ui) {
+                me.onDragComponent(event, ui);
+            }
+            */
         });
 
         liveEditIFrame.droppable({
             tolerance: 'fit',
             over: function (event, ui) {
-                me.onDragOverIframe(event, ui);
+                me.onDragOverIFrame(event, ui);
             }
         });
     },
@@ -202,27 +209,25 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
         var panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
             contextWindow = panelHelper.getContextWindowFromChildCmp(this);
 
-        // cache the window view region on drag start for performance
+        // cache the regions on drag start for performance
         this.windowRegion = panelHelper.getContextWindowViewRegion(contextWindow);
     },
 
-    /*
     onDragComponent: function (event, ui) {
-        var me = this,
-            panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
+        var me = this;
+        var panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
             mouseX = event.pageX,
             mouseY = event.pageY,
-            mousePointerIsOutsideOfWindow = mouseY <= me.windowRegion.top || mouseY >= (me.windowRegion.bottom - 10) ||
+            mousePointerIsOutsideOfWindowRegion = mouseY <= me.windowRegion.top || mouseY >= (me.windowRegion.bottom - 10) ||
                                             mouseX >= (me.windowRegion.right - 10) ||
                                             mouseX <= me.windowRegion.left;
 
-        if (mousePointerIsOutsideOfWindow) {
-            panelHelper.getContextWindowFromChildCmp(me).hide();
+        if (mousePointerIsOutsideOfWindowRegion) {
+            //
         }
     },
-    */
 
-    onDragOverIframe: function (event, ui) {
+    onDragOverIFrame: function (event, ui) {
         var me = this,
             panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
             jQuery = panelHelper.getJQueryFromLiveEditPage();

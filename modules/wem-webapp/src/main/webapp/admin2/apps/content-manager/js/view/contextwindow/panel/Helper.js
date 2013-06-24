@@ -28,6 +28,10 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Helper', {
             return Ext.DomQuery.selectNode('#live-edit-iframe');
         },
 
+        getLiveEditIFrameViewRegion: function () {
+            return Ext.fly(this.getLiveEditIFrameDomEl()).getViewRegion();
+        },
+
         getLiveEditIFrameContainerEl: function () {
             return Ext.get('live-edit-iframe-container')
         },
