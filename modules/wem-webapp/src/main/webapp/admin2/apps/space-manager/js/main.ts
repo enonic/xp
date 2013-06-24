@@ -40,7 +40,6 @@
 ///<reference path='view/WizardLayout.ts' />
 ///<reference path='view/WizardHeader.ts' />
 ///<reference path='view/WizardPanel.ts' />
-///<reference path='view/ContextMenu.ts' />
 ///<reference path='view/wizard/SpaceWizardToolbar.ts' />
 ///<reference path='view/wizard/SpaceStepPanel.ts' />
 ///<reference path='view/wizard/SpaceWizardPanel.ts' />
