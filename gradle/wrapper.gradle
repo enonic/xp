@@ -1,5 +1,0 @@
-task wrapper( type: Wrapper ) {
-    group = 'Buildmaster';
-    gradleVersion = '1.6'
-    description = 'Generates gradle wrappers (sh/bat).';
-}

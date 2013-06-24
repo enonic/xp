@@ -1,8 +1,0 @@
-dependencies {
-    compile project( ':wem-web' )
-    compile 'org.eclipse.jetty.aggregate:jetty-webapp:8.1.10.v20130312'
-    compile 'org.glassfish.web:javax.servlet.jsp:2.2.3'
-    compile 'org.glassfish.web:jsp-impl:2.2'
-    compile 'org.glassfish.web:javax.el:2.2.3'
-    compile 'org.glassfish.web:el-impl:2.2'
-}
