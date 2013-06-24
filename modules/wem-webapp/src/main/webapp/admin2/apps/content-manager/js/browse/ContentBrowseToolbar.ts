@@ -14,7 +14,10 @@ module app_browse {
 
             super.addAction(app_browse.ContentBrowseActions.BROWSE_CONTENT_SETTINGS);
 
-            var displayModeToggle = new api_ui_toolbar.ToggleSlide('PREVIEW', 'DETAILS', false);
+            var displayModeToggle = new api_ui_toolbar.ToggleSlide({
+                turnOnAction: app_browse.ContentBrowseActions.SHOW_PREVIEW,
+                turnOffAction: app_browse.ContentBrowseActions.SHOW_DETAILS
+            }, false);
             super.addElement(displayModeToggle);
         }
     }

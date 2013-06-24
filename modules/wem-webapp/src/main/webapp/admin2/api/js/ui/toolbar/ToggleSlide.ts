@@ -1,32 +1,41 @@
 module api_ui_toolbar {
 
+    export interface ToggleSlideActions {
+
+        turnOnAction: api_ui.Action;
+        turnOffAction: api_ui.Action;
+
+    }
+
     export class ToggleSlide extends api_dom.DivEl {
 
-        private onText:string;
-        private offText:string;
+        private actions:ToggleSlideActions;
 
         private isOn:bool;
 
-        private thumb:api_dom.Element;
+        private slider:api_dom.Element;
         private holder:api_dom.Element;
         private onLabel:api_dom.Element;
         private offLabel:api_dom.Element;
 
-        private animationId:number;
         private animationDuration:number = 300;
+        private slideLeft:api_util.Animation;
+        private slideRight:api_util.Animation;
 
-        constructor(onText:string, offText:string, initOn:bool) {
+        constructor(actions:ToggleSlideActions, initOn:bool) {
             super('ToogleSlide', 'toggle-slide');
 
-            this.onText = onText;
-            this.offText = offText;
+            this.actions = actions;
 
             this.createMarkup();
             this.calculateStyles();
+            this.setupAnimation();
 
             initOn ? this.turnOn() : this.turnOff();
 
-            this.addListeners();
+            this.getEl().addEventListener('click', () => {
+                this.toggle();
+            });
         }
 
         toggle() {
@@ -34,13 +43,25 @@ module api_ui_toolbar {
         }
 
         turnOn() {
-            this.slideRight();
+            if (this.slideLeft.isRunning()) {
+                this.slideLeft.stop();
+            }
+            this.slideRight.start();
+
             this.isOn = true;
+
+            this.actions.turnOnAction.execute();
         }
 
         turnOff() {
-            this.slideLeft();
+            if (this.slideRight.isRunning()) {
+                this.slideRight.stop();
+            }
+            this.slideLeft.start();
+
             this.isOn = false;
+
+            this.actions.turnOffAction.execute();
         }
 
         isTurnedOn():bool {
@@ -48,85 +69,55 @@ module api_ui_toolbar {
         }
 
         private createMarkup() {
-            this.thumb = new api_dom.DivEl(null, 'thumb');
+            this.slider = new api_dom.DivEl(null, 'slider');
             this.holder = new api_dom.DivEl(null, 'holder');
             this.onLabel = new api_dom.DivEl(null, 'on');
             this.offLabel = new api_dom.DivEl(null, 'off');
 
-            var thumbEl = this.thumb.getEl(),
-                holderEl = this.holder.getEl(),
-                onLabelEl = this.onLabel.getEl(),
-                offLabelEl = this.offLabel.getEl();
+            this.appendChild(this.slider);
+            this.appendChild(this.holder);
+            this.holder.appendChild(this.onLabel);
+            this.holder.appendChild(this.offLabel);
 
-            this.getEl()
-                .appendChild(thumbEl.getHTMLElement())
-                .appendChild(holderEl.getHTMLElement());
-            holderEl
-                .appendChild(onLabelEl.getHTMLElement())
-                .appendChild(offLabelEl.getHTMLElement());
-
-            onLabelEl.setInnerHtml(this.onText);
-            offLabelEl.setInnerHtml(this.offText);
+            this.onLabel.getEl().setInnerHtml(this.actions.turnOnAction.getLabel());
+            this.offLabel.getEl().setInnerHtml(this.actions.turnOffAction.getLabel());
         }
 
         private calculateStyles() {
-            var thumbEl = this.thumb.getEl(),
+            var sliderEl = this.slider.getEl(),
                 onLabelEl = this.onLabel.getEl(),
                 offLabelEl = this.offLabel.getEl();
 
-            document.body.appendChild(this.getHTMLElement());
+            // ToggleSlide width depends on width of longest label.
+            // To have labels width calculated by browser they should be rendered into dom.
+            // Therefore append ToggleSlide to body.
+            // It will be removed from here when it is inserted in another place.
+            new api_dom.ElementHelper(document.body).appendChild(this.getHTMLElement());
 
-            var onWidth = onLabelEl.getWidth(),
-                offWidth = offLabelEl.getWidth();
+            var labelWidth = Math.max(onLabelEl.getWidth(), offLabelEl.getWidth());
 
-            var thumbWidth = Math.max(onWidth, offWidth);
+            // Increase slider width a bit so it hides seam between labels.
+            sliderEl.setWidth((labelWidth + 4) + 'px');
 
-            thumbEl.setWidth((thumbWidth + 4) + 'px');
-            onLabelEl.setWidth(thumbWidth + 'px');
-            offLabelEl.setWidth(thumbWidth + 'px');
+            // Adjust labels width to the same value.
+            onLabelEl.setWidth(labelWidth + 'px');
+            offLabelEl.setWidth(labelWidth + 'px');
         }
 
-        private addListeners() {
-            var me = this;
+        private setupAnimation() {
+            // calculate distance by which the slider moves
+            var offset = this.getEl().getWidth() - this.slider.getEl().getWidth();
 
-            me.getEl().addEventListener('click', () => {
-                me.toggle();
+            this.slideLeft = new api_util.Animation(this.animationDuration);
+            this.slideLeft.onStep((progress) => {
+                this.slider.getEl().setLeft(offset * (1 - progress) + 'px');
             });
-        }
 
-        private slideLeft() {
-            var thumbEl = this.thumb.getEl(),
-                offset = this.calculateOffset();
-
-            this.animate((progress) => {
-                thumbEl.setLeft(offset * (1 - progress) + 'px');
+            this.slideRight = new api_util.Animation(this.animationDuration);
+            this.slideRight.onStep((progress) => {
+                this.slider.getEl().setLeft(offset * progress + 'px');
             });
-        }
-
-        private slideRight() {
-            var thumbEl = this.thumb.getEl(),
-                offset = this.calculateOffset();
-
-            this.animate((progress) => {
-                thumbEl.setLeft(offset * progress + 'px');
-            });
-        }
-
-        private calculateOffset() {
-            var toggleWidth = this.getEl().getWidth(),
-                thumbWidth = this.thumb.getEl().getWidth();
-
-            return toggleWidth - thumbWidth;
-        }
-
-        private animate(step:Function) {
-            if (this.animationId) {
-                api_util.Animation.stop(this.animationId);
-            }
-
-            this.animationId = api_util.Animation.start(step, this.animationDuration);
         }
 
     }
-
 }
