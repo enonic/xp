@@ -409,6 +409,12 @@ var api_dom;
         ElementHelper.prototype.insertBefore = function (newEl, existingEl) {
             this.el.insertBefore(newEl.getHTMLElement(), existingEl ? existingEl.getHTMLElement() : null);
         };
+        ElementHelper.prototype.insertBeforeEl = function (existingEl) {
+            existingEl.getHTMLElement().parentNode.insertBefore(this.el, existingEl.getHTMLElement());
+        };
+        ElementHelper.prototype.insertAfterEl = function (existingEl) {
+            existingEl.getHTMLElement().parentNode.insertBefore(this.el, existingEl.getHTMLElement().nextSibling);
+        };
         ElementHelper.prototype.setDisabled = function (value) {
             this.el.disabled = value;
             return this;
@@ -602,6 +608,12 @@ var api_dom;
             if(this.el.getHTMLElement().contains(child.getHTMLElement())) {
                 this.el.getHTMLElement().removeChild(child.getHTMLElement());
             }
+        };
+        Element.prototype.insertAfterEl = function (existingEl) {
+            this.el.insertAfterEl(existingEl);
+        };
+        Element.prototype.insertBeforeEl = function (existingEl) {
+            this.el.insertBeforeEl(existingEl);
         };
         Element.prototype.removeChildren = function () {
             var htmlEl = this.el.getHTMLElement();

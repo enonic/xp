@@ -70,6 +70,14 @@ module api_dom {
             }
         }
 
+        insertAfterEl(existingEl:Element) {
+            this.el.insertAfterEl(existingEl);
+        }
+
+        insertBeforeEl(existingEl:Element) {
+            this.el.insertBeforeEl(existingEl);
+        }
+
         removeChildren() {
             var htmlEl = this.el.getHTMLElement();
             while (htmlEl.firstChild) {

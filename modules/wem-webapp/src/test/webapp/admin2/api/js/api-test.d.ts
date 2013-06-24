@@ -100,6 +100,8 @@ module api_dom {
         constructor(element: HTMLElement);
         public getHTMLElement(): HTMLElement;
         public insertBefore(newEl: Element, existingEl: Element): void;
+        public insertBeforeEl(existingEl: Element): void;
+        public insertAfterEl(existingEl: Element): void;
         public setDisabled(value: bool): ElementHelper;
         public isDisabled(): bool;
         public setId(value: string): ElementHelper;
@@ -153,6 +155,8 @@ module api_dom {
         public appendChild(child: Element): void;
         public prependChild(child: Element): void;
         public removeChild(child: Element): void;
+        public insertAfterEl(existingEl: Element): void;
+        public insertBeforeEl(existingEl: Element): void;
         public removeChildren(): void;
     }
 }

@@ -55,6 +55,7 @@
 ///<reference path='ui/Action.ts' />
 ///<reference path='ui/Panel.ts' />
 ///<reference path='ui/DeckPanel.ts' />
+///<reference path='ui/SplitPanel.ts' />
 ///<reference path='ui/BodyMask.ts' />
 ///<reference path='ui/AbstractButton.ts' />
 ///<reference path='ui/toolbar/Toolbar.ts' />

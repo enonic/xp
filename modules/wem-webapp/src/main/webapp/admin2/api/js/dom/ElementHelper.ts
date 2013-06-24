@@ -20,6 +20,14 @@ module api_dom {
             this.el.insertBefore(newEl.getHTMLElement(), existingEl ? existingEl.getHTMLElement() : null);
         }
 
+        insertBeforeEl(existingEl:Element) {
+            existingEl.getHTMLElement().parentNode.insertBefore(this.el, existingEl.getHTMLElement());
+        }
+
+        insertAfterEl(existingEl:Element) {
+            existingEl.getHTMLElement().parentNode.insertBefore( this.el, existingEl.getHTMLElement().nextSibling );
+        }
+
         setDisabled(value:bool):ElementHelper {
             this.el.disabled = value;
             return this;
