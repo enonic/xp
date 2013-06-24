@@ -98,7 +98,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
 
         var templates = new Ext.XTemplate(
             '<tpl for=".">',
-            '   <div class="live-edit-component context-window-component" data-live-edit-key="{key}" data-live-edit-type="{type}" data-live-edit-name="{name}">',
+            '   <div class="live-edit-component" data-context-window-draggable="true" data-live-edit-key="{key}" data-live-edit-type="{type}" data-live-edit-name="{name}">',
             '      <div class="live-edit-component-row">',
             '           <div class="live-edit-component-icon {[this.resolveIconCls(values.type)]}"></div>',
             '           <div class="live-edit-component-info">',
@@ -174,7 +174,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
         var me = this,
             panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
             liveEditIFrame = $(panelHelper.getLiveEditIFrameDomEl()),
-            components = $('.live-edit-component');
+            components = $('[data-context-window-draggable="true"]');
 
         components.liveDraggable({
             zIndex: 400000,

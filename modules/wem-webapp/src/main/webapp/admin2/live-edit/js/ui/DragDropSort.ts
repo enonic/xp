@@ -8,17 +8,19 @@ module LiveEdit.DragDropSort {
 
     var componentHelper = LiveEdit.ComponentHelper;
 
-    var _isDragging = false;
+    var _isDragging:bool = false;
 
-    var cursorAt = {left: -10, top: -15};
+    var cursorAt:any = {left: -10, top: -15};
 
-    var regionSelector = '[data-live-edit-type=region]';
+    var regionSelector:string = '[data-live-edit-type=region]';
 
-    var layoutSelector = '[data-live-edit-type=layout]';
+    var layoutSelector:string = '[data-live-edit-type=layout]';
 
-    var partSelector = '[data-live-edit-type=part]';
+    var partSelector:string = '[data-live-edit-type=part]';
 
-    var paragraphSelector = '[data-live-edit-type=paragraph]';
+    var paragraphSelector:string = '[data-live-edit-type=paragraph]';
+
+    var contextWindowDragSourceSelector:string = '[data-context-window-draggable="true"]';
 
     var sortableItemsSelector = layoutSelector + ',' + partSelector + ',' + paragraphSelector;
 
@@ -193,7 +195,7 @@ module LiveEdit.DragDropSort {
 
     export function handleReceive(event:JQueryEventObject, ui):void {
         if (this.isItemDraggedFromContextWindow(ui.item)) {
-            var contextWindowComponent:JQuery = $(event.target).children('.context-window-component'),
+            var contextWindowComponent:JQuery = $(event.target).children(contextWindowDragSourceSelector),
                 componentKey:string = contextWindowComponent.data('live-edit-key'),
                 componentType:string = contextWindowComponent.data('live-edit-type'),
                 url:string = '../../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
@@ -217,7 +219,8 @@ module LiveEdit.DragDropSort {
     }
 
     export function isItemDraggedFromContextWindow(item:JQuery):Boolean {
-        return item.hasClass('context-window-component');
+        var d:bool = item.data('context-window-draggable');
+        return d != undefined && d == true;
     }
 
     export function addPaddingToLayoutComponent(component:JQuery):void {
