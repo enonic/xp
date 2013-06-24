@@ -99,7 +99,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
 
         var templates = new Ext.XTemplate(
             '<tpl for=".">',
-            '   <div class="live-edit-component context-window-component" data-live-edit-component-key="{key}" data-live-edit-component-type="{type}" data-live-edit-component-name="{name}">',
+            '   <div class="live-edit-component context-window-component" data-live-edit-key="{key}" data-live-edit-type="{type}" data-live-edit-name="{name}">',
             '      <div class="live-edit-component-row">',
             '           <div class="live-edit-component-icon {[this.resolveIconCls(values.type)]}"></div>',
             '           <div class="live-edit-component-info">',
@@ -247,7 +247,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
 
     createDragHelper: function (jQueryEvent) {
         var draggable = $(jQueryEvent.currentTarget),
-            text = draggable.data('live-edit-component-name');
+            text = draggable.data('live-edit-name');
 
         // fixme: can this be shared with live edit Live Edit/DragDropSort.ts ?
         var html = '<div id="live-edit-drag-helper" style="width: 150px; height: 28px; position: absolute;"><div id="live-edit-drag-helper-inner">' +

@@ -77,7 +77,7 @@ module LiveEdit.DragDropSort {
             },
             start: (event, ui) => {
                 $(window).trigger('dragStart.liveEdit.component', [event, ui]);
-                this.setDragHelperText($(event.target).data('live-edit-component-name'));
+                this.setDragHelperText($(event.target).data('live-edit-name'));
                 _isDragging = true;
             },
             stop: (event, ui) => {
@@ -138,9 +138,7 @@ module LiveEdit.DragDropSort {
     export function handleDragOver(event:JQueryEventObject, ui):void {
         event.stopPropagation();
 
-        // todo: Items in component should have the same @data-live-edit-* structure
-        var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' ||
-                                           ui.item.data('live-edit-type') === 'layout',
+        var draggedItemIsLayoutComponent = ui.item.data('live-edit-type') === 'layout',
             isDraggingOverLayoutComponent = ui.placeholder.closest(layoutSelector).length > 0;
 
         if (draggedItemIsLayoutComponent && isDraggingOverLayoutComponent) {
@@ -176,12 +174,10 @@ module LiveEdit.DragDropSort {
 
         this.removePaddingFromLayoutComponent();
 
-        // todo: Items in component should have the same @data-live-edit-* structure
-        var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' ||
-                                           ui.item.data('live-edit-type') === 'layout',
-            targetIsInLayoutComponent = $(event.target).closest(layoutSelector).length > 0;
+        var draggedItemIsLayoutComponent = ui.item.data('live-edit-type') === 'layout',
+            targetComponentIsInLayoutComponent = $(event.target).closest(layoutSelector).length > 0;
 
-        if (draggedItemIsLayoutComponent && targetIsInLayoutComponent) {
+        if (draggedItemIsLayoutComponent && targetComponentIsInLayoutComponent) {
             ui.item.remove()
         }
 
@@ -199,8 +195,8 @@ module LiveEdit.DragDropSort {
     export function handleReceive(event:JQueryEventObject, ui):void {
         if (this.isItemDraggedFromContextWindow(ui.item)) {
             var contextWindowComponent:JQuery = $(event.target).children('.context-window-component'),
-                componentKey:string = contextWindowComponent.data('live-edit-component-key'),
-                componentType:string = contextWindowComponent.data('live-edit-component-type'),
+                componentKey:string = contextWindowComponent.data('live-edit-key'),
+                componentType:string = contextWindowComponent.data('live-edit-type'),
                 url:string = '../../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
 
             contextWindowComponent.hide(null);

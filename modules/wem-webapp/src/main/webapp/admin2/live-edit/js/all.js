@@ -324,7 +324,7 @@ var LiveEdit;
                         event, 
                         ui
                     ]);
-                    _this.setDragHelperText($(event.target).data('live-edit-component-name'));
+                    _this.setDragHelperText($(event.target).data('live-edit-name'));
                     _isDragging = true;
                 },
                 stop: function (event, ui) {
@@ -378,7 +378,7 @@ var LiveEdit;
         DragDropSort.handleSortStart = handleSortStart;
         function handleDragOver(event, ui) {
             event.stopPropagation();
-            var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' || ui.item.data('live-edit-type') === 'layout', isDraggingOverLayoutComponent = ui.placeholder.closest(layoutSelector).length > 0;
+            var draggedItemIsLayoutComponent = ui.item.data('live-edit-type') === 'layout', isDraggingOverLayoutComponent = ui.placeholder.closest(layoutSelector).length > 0;
             if(draggedItemIsLayoutComponent && isDraggingOverLayoutComponent) {
                 this.setHelperStatusIcon('no');
                 ui.placeholder.hide();
@@ -422,7 +422,7 @@ var LiveEdit;
         function handleSortStop(event, ui) {
             _isDragging = false;
             this.removePaddingFromLayoutComponent();
-            var draggedItemIsLayoutComponent = ui.item.data('live-edit-component-type') === 'layout' || ui.item.data('live-edit-type') === 'layout', targetIsInLayoutComponent = $(event.target).closest(layoutSelector).length > 0;
+            var draggedItemIsLayoutComponent = ui.item.data('live-edit-type') === 'layout', targetIsInLayoutComponent = $(event.target).closest(layoutSelector).length > 0;
             if(draggedItemIsLayoutComponent && targetIsInLayoutComponent) {
                 ui.item.remove();
             }
@@ -441,13 +441,13 @@ var LiveEdit;
         function handleReceive(event, ui) {
             var _this = this;
             if(this.isItemDraggedFromContextWindow(ui.item)) {
-                var $componentBarComponent = $(event.target).children('.context-window-component'), componentKey = $componentBarComponent.data('live-edit-component-key'), componentType = $componentBarComponent.data('live-edit-component-type'), url = '../../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
-                $componentBarComponent.hide();
+                var contextWindowComponent = $(event.target).children('.context-window-component'), componentKey = contextWindowComponent.data('live-edit-key'), componentType = contextWindowComponent.data('live-edit-type'), url = '../../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
+                contextWindowComponent.hide(null);
                 $.ajax({
                     url: url,
                     cache: false
                 }).done(function (html) {
-                    $componentBarComponent.replaceWith(html);
+                    contextWindowComponent.replaceWith(html);
                     if(componentType === 'layout') {
                         _this.createSortable();
                     }

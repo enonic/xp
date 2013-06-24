@@ -127,8 +127,8 @@ module LiveEdit.ui {
         addComponent(component:ComponentItem):void {
             var html = '';
 
-            html += '<li class="live-edit-component" data-live-edit-component-key="' + component.key + '" data-live-edit-component-name="' +
-                    component.name + '" data-live-edit-component-type="' + component.type + '">';
+            html += '<li class="live-edit-component" data-live-edit-key="' + component.key + '" data-live-edit-name="' +
+                    component.name + '" data-live-edit-type="' + component.type + '">';
             html += '    <img src="' + component.icon + '"/>';
             html += '    <div class="live-edit-component-text">';
             html += '        <div class="live-edit-component-text-name">' + component.name + '</div>';
@@ -147,7 +147,7 @@ module LiveEdit.ui {
 
             list.each((index) => {
                 $element = list[index];
-                name = $element.data('live-edit-component-name').toLowerCase();
+                name = $element.data('live-edit-name').toLowerCase();
                 $element.css('display', name.indexOf(valueLowerCased) > -1 ? '' : 'none');
             });
         }
