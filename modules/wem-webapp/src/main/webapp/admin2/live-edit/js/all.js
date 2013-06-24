@@ -422,8 +422,8 @@ var LiveEdit;
         function handleSortStop(event, ui) {
             _isDragging = false;
             this.removePaddingFromLayoutComponent();
-            var draggedItemIsLayoutComponent = ui.item.data('live-edit-type') === 'layout', targetIsInLayoutComponent = $(event.target).closest(layoutSelector).length > 0;
-            if(draggedItemIsLayoutComponent && targetIsInLayoutComponent) {
+            var draggedItemIsLayoutComponent = ui.item.data('live-edit-type') === 'layout', targetComponentIsInLayoutComponent = $(event.target).closest(layoutSelector).length > 0;
+            if(draggedItemIsLayoutComponent && targetComponentIsInLayoutComponent) {
                 ui.item.remove();
             }
             if(LiveEdit.ComponentHelper.supportsTouch()) {
