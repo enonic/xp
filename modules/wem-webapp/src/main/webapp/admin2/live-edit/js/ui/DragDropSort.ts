@@ -83,16 +83,20 @@ module LiveEdit.DragDropSort {
             stop: (event, ui) => {
                 $(window).trigger('dragStop.liveEdit.component', [event, ui]);
                 _isDragging = false;
+                console.log('stop')
             }
         });
     }
 
+    // fixme: can this be shared with live edit Context Window/Components.js ?
     export function createDragHelperHtml(text:string):string {
-        // Override jQueryUi with inline width/height
-        return '<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' +
-               '    <div id="live-edit-drag-helper-status-icon" class="live-edit-drag-helper-no"></div>' +
-               '    <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' +
-               '</div>';
+        // We need to inline the width and height, if not jQuery ui will overwrite it
+        var html = '<div id="live-edit-drag-helper" style="width: 150px; height: 28px; position: absolute; z-index: 400000;"><div id="live-edit-drag-helper-inner">' +
+            '               <div id="live-edit-drag-helper-status-icon" class="live-edit-drag-helper-no"></div>' +
+            '               <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' +
+            '           </div></div>';
+
+        return html;
     }
 
     export function createDragHelper(event:JQueryEventObject, helper):string {
@@ -193,9 +197,8 @@ module LiveEdit.DragDropSort {
     }
 
     export function handleReceive(event:JQueryEventObject, ui):void {
-        console.log('receive')
-        if (this.itemIsDraggedFromComponentBar(ui.item)) {
-            var $componentBarComponent = $(event.target).children('.live-edit-component'),
+        if (this.isItemDraggedFromContextWindow(ui.item)) {
+            var $componentBarComponent = $(event.target).children('.context-window-component'),
                 componentKey = $componentBarComponent.data('live-edit-component-key'),
                 componentType = $componentBarComponent.data('live-edit-component-type'),
                 url = '../../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
@@ -218,8 +221,8 @@ module LiveEdit.DragDropSort {
         }
     }
 
-    export function itemIsDraggedFromComponentBar(item:JQuery):Boolean {
-        return item.hasClass('live-edit-component');
+    export function isItemDraggedFromContextWindow(item:JQuery):Boolean {
+        return item.hasClass('context-window-component');
     }
 
     export function addPaddingToLayoutComponent(component:JQuery):void {

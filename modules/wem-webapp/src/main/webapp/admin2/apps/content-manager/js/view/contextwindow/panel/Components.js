@@ -99,7 +99,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
 
         var templates = new Ext.XTemplate(
             '<tpl for=".">',
-            '   <div class="live-edit-component" data-live-edit-component-key="{key}" data-live-edit-component-type="{type}" data-live-edit-component-name="{name}">',
+            '   <div class="live-edit-component context-window-component" data-live-edit-component-key="{key}" data-live-edit-component-type="{type}" data-live-edit-component-name="{name}">',
             '      <div class="live-edit-component-row">',
             '           <div class="live-edit-component-icon {[this.resolveIconCls(values.type)]}"></div>',
             '           <div class="live-edit-component-info">',
@@ -231,7 +231,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
         clone.css({
             'position': 'absolute',
             'z-index': '5100000',
-            'top': '0'
+            'top': '-1000px'
         });
 
         jQuery('body').append(clone);
@@ -246,25 +246,26 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
     },
 
     createDragHelper: function (jQueryEvent) {
-        var currentTarget = $(jQueryEvent.currentTarget),
-            key = currentTarget.data('live-edit-component-key'),
-            type = currentTarget.data('live-edit-component-type'),
-            name = currentTarget.data('live-edit-component-name');
+        var draggable = $(jQueryEvent.currentTarget),
+            text = draggable.data('live-edit-component-name');
 
-        return $('<div class="live-edit-drag-helper live-edit-component" style="width: 150px; height: 16px;" data-live-edit-component-key="' +
-                 key + '" data-live-edit-component-name="' + name + '" data-live-edit-component-type="' + type +
-                 '"><div class="live-edit-drag-helper-status-icon live-edit-drag-helper-no"></div><span class="live-edit-drag-helper-text">' + name + '</span></div>');
+        // fixme: can this be shared with live edit Live Edit/DragDropSort.ts ?
+        var html = '<div id="live-edit-drag-helper" style="width: 150px; height: 28px; position: absolute;"><div id="live-edit-drag-helper-inner">' +
+            '               <div id="live-edit-drag-helper-status-icon" class="live-edit-drag-helper-no"></div>' +
+            '               <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' +
+            '           </div></div>';
+
+        return $(html);
     },
 
     registerListenersFromLiveEditPage: function () {
         var me = this,
             panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
             // Right now We need to use the jQuery object from the live edit page in order to listen for the events
-            jQuery = panelHelper.getJQueryFromLiveEditPage(),
-            liveEditWindow = panelHelper.getLiveEditWindow()
+            liveEditWindow = panelHelper.getLiveEditWindow(),
+            liveEditJQuery = panelHelper.getJQueryFromLiveEditPage();
 
-        jQuery(liveEditWindow).on('sortStop.liveEdit.component dragStop.liveEdit.component', function (event) {
-            console.log(event)
+        liveEditJQuery(liveEditWindow).on('sortStop.liveEdit.component dragStop.liveEdit.component', function (event) {
             $('.live-edit-component').simulate('mouseup');
             panelHelper.getContextWindowFromChildCmp(me).doShow();
         });

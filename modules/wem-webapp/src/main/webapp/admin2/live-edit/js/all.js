@@ -333,12 +333,14 @@ var LiveEdit;
                         ui
                     ]);
                     _isDragging = false;
+                    console.log('stop');
                 }
             });
         }
         DragDropSort.createDraggable = createDraggable;
         function createDragHelperHtml(text) {
-            return '<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' + '    <div id="live-edit-drag-helper-status-icon" class="live-edit-drag-helper-no"></div>' + '    <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' + '</div>';
+            var html = '<div id="live-edit-drag-helper" style="width: 150px; height: 28px; position: absolute; z-index: 400000;"><div id="live-edit-drag-helper-inner">' + '               <div id="live-edit-drag-helper-status-icon" class="live-edit-drag-helper-no"></div>' + '               <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' + '           </div></div>';
+            return html;
         }
         DragDropSort.createDragHelperHtml = createDragHelperHtml;
         function createDragHelper(event, helper) {
@@ -438,9 +440,8 @@ var LiveEdit;
         DragDropSort.handleSortStop = handleSortStop;
         function handleReceive(event, ui) {
             var _this = this;
-            console.log('receive');
-            if(this.itemIsDraggedFromComponentBar(ui.item)) {
-                var $componentBarComponent = $(event.target).children('.live-edit-component'), componentKey = $componentBarComponent.data('live-edit-component-key'), componentType = $componentBarComponent.data('live-edit-component-type'), url = '../../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
+            if(this.isItemDraggedFromContextWindow(ui.item)) {
+                var $componentBarComponent = $(event.target).children('.context-window-component'), componentKey = $componentBarComponent.data('live-edit-component-key'), componentType = $componentBarComponent.data('live-edit-component-type'), url = '../../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
                 $componentBarComponent.hide();
                 $.ajax({
                     url: url,
@@ -455,10 +456,10 @@ var LiveEdit;
             }
         }
         DragDropSort.handleReceive = handleReceive;
-        function itemIsDraggedFromComponentBar(item) {
-            return item.hasClass('live-edit-component');
+        function isItemDraggedFromContextWindow(item) {
+            return item.hasClass('context-window-component');
         }
-        DragDropSort.itemIsDraggedFromComponentBar = itemIsDraggedFromComponentBar;
+        DragDropSort.isItemDraggedFromContextWindow = isItemDraggedFromContextWindow;
         function addPaddingToLayoutComponent(component) {
             component.closest(layoutSelector).addClass('live-edit-component-padding');
         }

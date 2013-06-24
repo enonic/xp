@@ -1,23 +1,30 @@
 @import "../modules/colors";
 
 #live-edit-drag-helper {
-  display: table-row;
-  border: 1px solid #c6c6c6;
-  box-shadow: $shadow;
+  display: table;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   background-color: #fff;
   font-size: 11px;
-  overflow: hidden;
-  white-space: nowrap;
-  padding: 6px 16px 6px 8px;
+}
 
+#live-edit-drag-helper-inner {
+  display: table-row;
 }
 
 #live-edit-drag-helper-status-icon {
-  background-repeat: no-repeat;
   display: table-cell;
-  width: 16px;
-  height: 16px;
+  width: 64px;
+  background-repeat: no-repeat;
+  background-position: 8px 6px;
   vertical-align: middle;
+}
+
+#live-edit-drag-helper-text {
+  display: table-cell;
+  padding-top: 7px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .live-edit-drag-helper-yes {
@@ -27,12 +34,6 @@
   background: url(../../../admin2/live-edit/images/drop-no.gif);
 }
 
-#live-edit-drag-helper-text {
-  display: table-cell;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
 
 .live-edit-drop-target-placeholder {
   list-style-type: none; /* The placeholder in jQuery UI has the same tag name as the dragged component */

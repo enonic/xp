@@ -1,8 +1,6 @@
-@import "../modules/colors";
-
 [id^=live-edit-ui-cmp-],
 [id^=live-edit-ui-cmp-] *,
-#live-edit-drag-helper-text {
+#live-edit-drag-helper * {
   border: 0;
   outline: 0;
   color: #000;
