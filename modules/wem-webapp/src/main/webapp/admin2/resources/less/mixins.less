@@ -20,3 +20,9 @@
   -o-border-radius: @size;
   border-radius: @size;
 }
+
+.clearfix() {
+  zoom: 1;
+  &:before { content: ''; display: block; }
+  &:after { content: ''; display: table; clear: both; }
+}

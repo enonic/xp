@@ -11,8 +11,12 @@ module api_ui{
             this.getEl().setInnerHtml(this.label);
         }
 
-        setEnable(value:bool) {
+        setEnabled(value:bool) {
             this.getEl().setDisabled(!value);
+        }
+
+        isEnabled() {
+            return !this.getEl().isDisabled();
         }
 
     }

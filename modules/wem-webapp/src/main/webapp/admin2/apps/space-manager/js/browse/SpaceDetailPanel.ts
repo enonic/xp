@@ -34,8 +34,9 @@ module app_browse {
             tabPanel.addTab(new api_browse.DetailPanelTab("Sales"));
             tabPanel.addTab(new api_browse.DetailPanelTab("History"));
 
-            var testAction = new api_ui.Action("Test");
-            tabPanel.addAction(testAction);
+            tabPanel.addAction(new api_ui.Action("Test"));
+            tabPanel.addAction(new api_ui.Action("More test"));
+            tabPanel.addAction(new api_ui.Action("And finally the last one"));
 
             this.getEl().appendChild(tabPanel.getHTMLElement());
         }

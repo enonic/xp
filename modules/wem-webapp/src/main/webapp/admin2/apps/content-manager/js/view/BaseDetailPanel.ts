@@ -80,12 +80,9 @@ Ext.define('Admin.view.BaseDetailPanel', {
     },
 
     getActionButton: function () {
-        return Ext.apply(
-            new app_browse.ContentActionMenu().getExt(),
-            {
+        return new Ext.Component({
                 itemId: 'actionMenu',
-                text: 'Actions',
-                height: 30,
+                contentEl: new app_browse.ContentActionMenu().getHTMLElement(),
                 width: 120,
                 tdAttrs: {
                     width: 120,

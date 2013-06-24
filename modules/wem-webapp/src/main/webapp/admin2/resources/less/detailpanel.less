@@ -19,13 +19,8 @@
     }
 
     .header {
-      overflow: hidden;
+      .clearfix();
       margin-bottom: 20px;
-
-      button {
-        float: right;
-        margin-right: 10px;
-      }
 
       img {
         float: left;
@@ -41,6 +36,11 @@
           color: @admin-light-gray-font;
           font-size: 14px !important;
         }
+      }
+
+      .action-menu {
+        float: right;
+        width: 120px;
       }
     }
   }

@@ -88,7 +88,7 @@ module api_browse {
 
         private createActionMenu() {
             this.actionMenu = new api_ui_menu.ActionMenu();
-            return new api_ui_menu.ActionMenuButton(this.actionMenu);
+            return this.actionMenu;
         }
 
         private addNavigation() {

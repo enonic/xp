@@ -56,15 +56,15 @@ module api_dom {
             return this.el.getHTMLElement();
         }
 
-        appendChild(child:Element) {
+        appendChild(child:api_dom.Element) {
             this.el.appendChild(child.getEl().getHTMLElement());
         }
 
-        prependChild(child:Element) {
+        prependChild(child:api_dom.Element) {
             this.el.getHTMLElement().insertBefore(child.getHTMLElement(), this.el.getHTMLElement().firstChild);
         }
 
-        removeChild(child:Element) {
+        removeChild(child:api_dom.Element) {
             if (this.el.getHTMLElement().contains(child.getHTMLElement())) {
                 this.el.getHTMLElement().removeChild(child.getHTMLElement());
             }

@@ -1,64 +1,61 @@
-module api_ui_menu{
+module api_ui_menu {
 
-    export class ActionMenu extends api_dom.UlEl {
-        private ext; //:Ext.Component;
+    export class ActionMenu extends api_dom.DivEl {
 
-        private button:ActionMenuButton;
-
-        private menuItems:MenuItem[] = [];
+        private button:api_ui.AbstractButton;
+        private list;       //:ActionList; (gives typescript error ActionList not defined)
 
         constructor(...actions:api_ui.Action[]) {
-            super("action-menu", "action-menu");
+            super("ActionMenu", "action-menu");
 
-            this.button = new ActionMenuButton(this);
+            this.button = new api_ui.AbstractButton("ActionButton", "Actions");
+            this.button.getEl().addEventListener("click", (evt:Event) => {
+                this.showMenuOnButtonClick(evt);
+            });
+            this.appendChild(this.button);
 
-            for (var i = 0; i < actions.length; i++) {
-                this.addAction(actions[i]);
-            }
+            this.list = new ActionList(this, actions);
+            this.list.hide();
+            this.appendChild(this.list);
 
             window.document.addEventListener("click", (evt:Event) => {
                 this.hideMenuOnOutsideClick(evt);
             });
 
-            this.initExt();
         }
 
         addAction(action:api_ui.Action) {
-            var menuItem = this.createMenuItem(action);
-            this.appendChild(menuItem);
+            this.list.addAction(action);
         }
 
-        getExt() {
-            return this.button.getExt();
+        show() {
+            this.list.show();
+            this.getEl().addClass("expanded");
         }
 
-        showBy(button:ActionMenuButton) {
-            this.ext.show();
-            this.ext.getEl().alignTo(button.getExt().getEl(), 'tl-bl?', [-2, 0]);
+        hide() {
+            this.list.hide();
+            this.getEl().removeClass("expanded");
         }
 
-        private initExt() {
-            var htmlEl = this.getHTMLElement();
-            this.ext = new Ext.Component({
-                contentEl: htmlEl
-            });
-
-            // add Floating mixin so that later call to showAt() works properly
-            this.ext.self.mixin('floating', Ext.util.Floating);
-            this.ext.mixins.floating.constructor.call(this.ext);
+        setEnabled(enabled:bool) {
+            this.button.setEnabled(enabled);
         }
 
-        private createMenuItem(action:api_ui.Action):MenuItem {
-            var menuItem = new MenuItem(action);
-            menuItem.getEl().addEventListener("click", (evt:Event) => {
+        isEnabled() {
+            return this.button.isEnabled();
+        }
+
+        private showMenuOnButtonClick(evt:Event):void {
+            if (!this.button.isEnabled()) {
+                return;
+            }
+
+            if (!this.list.isVisible()) {
+                this.show();
+            } else {
                 this.hide();
-            });
-            this.menuItems.push(menuItem);
-            return menuItem;
-        }
-
-        private hide() {
-            this.ext.hide();
+            }
         }
 
         private hideMenuOnOutsideClick(evt:Event):void {
@@ -76,44 +73,32 @@ module api_ui_menu{
 
     }
 
-
-    export class ActionMenuButton extends api_dom.ButtonEl {
-        private ext;
+    class ActionList extends api_dom.UlEl {
 
         private menu:ActionMenu;
+        private menuItems:api_ui_menu.MenuItem[] = [];
 
-        constructor(menu:ActionMenu) {
-            super("button", "action-menu-button");
+        constructor(menu:ActionMenu, actions:api_ui.Action[]) {
+            super("ActionList");
             this.menu = menu;
 
-            var btnEl = this.getEl();
-            btnEl.setInnerHtml("Actions");
-            btnEl.addEventListener("click", (e) => {
-                menu.showBy(this);
+            for (var i = 0; i < actions.length; i++) {
+                this.addAction(actions[i]);
+            }
+        }
 
-                // stop event to prevent menu close because of body click
-                if (e.stopPropagation) {
-                    e.stopPropagation();
-                }
-                e.cancelBubble = true;
+        addAction(action:api_ui.Action) {
+            var menuItem = this.createMenuItem(action);
+            this.menuItems.push(menuItem);
+            this.appendChild(menuItem);
+        }
+
+        private createMenuItem(action:api_ui.Action):MenuItem {
+            var menuItem = new api_ui_menu.MenuItem(action);
+            menuItem.getEl().addEventListener("click", (evt:Event) => {
+                this.menu.hide();
             });
-
-            this.initExt();
-        }
-
-        setEnabled(value:bool) {
-            this.getEl().setDisabled(!value);
-        }
-
-        getExt() {
-            return this.ext;
-        }
-
-        private initExt() {
-            var htmlEl = this.getHTMLElement();
-            this.ext = new Ext.Component({
-                contentEl: htmlEl
-            });
+            return menuItem;
         }
     }
 

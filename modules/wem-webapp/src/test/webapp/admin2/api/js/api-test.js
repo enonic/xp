@@ -413,6 +413,9 @@ var api_dom;
             this.el.disabled = value;
             return this;
         };
+        ElementHelper.prototype.isDisabled = function () {
+            return this.el.disabled;
+        };
         ElementHelper.prototype.setId = function (value) {
             this.el.id = value;
             return this;

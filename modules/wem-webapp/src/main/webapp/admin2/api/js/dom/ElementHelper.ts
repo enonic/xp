@@ -25,6 +25,10 @@ module api_dom {
             return this;
         }
 
+        isDisabled():bool {
+            return this.el.disabled;
+        }
+
         setId(value:string):ElementHelper {
             this.el.id = value;
             return this;

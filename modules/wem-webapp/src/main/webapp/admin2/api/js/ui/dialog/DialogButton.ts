@@ -11,10 +11,10 @@ module api_ui_dialog{
             this.getEl().addEventListener("click", () => {
                 this.action.execute();
             });
-            this.setEnable(action.isEnabled());
+            this.setEnabled(action.isEnabled());
 
             action.addPropertyChangeListener((action:api_ui.Action) => {
-                this.setEnable(action.isEnabled());
+                this.setEnabled(action.isEnabled());
             });
         }
     }

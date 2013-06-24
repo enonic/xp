@@ -101,6 +101,7 @@ module api_dom {
         public getHTMLElement(): HTMLElement;
         public insertBefore(newEl: Element, existingEl: Element): void;
         public setDisabled(value: bool): ElementHelper;
+        public isDisabled(): bool;
         public setId(value: string): ElementHelper;
         public setInnerHtml(value: string): ElementHelper;
         public setValue(value: string): ElementHelper;

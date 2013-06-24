@@ -69,10 +69,10 @@ module api_ui_toolbar {
             if (action.getIconClass()) {
                 this.getEl().addClass(action.getIconClass());
             }
-            this.setEnable(action.isEnabled());
+            this.setEnabled(action.isEnabled());
 
             action.addPropertyChangeListener((action:api_ui.Action) => {
-                this.setEnable(action.isEnabled());
+                this.setEnabled(action.isEnabled());
             });
         }
 
