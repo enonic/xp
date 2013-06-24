@@ -82,6 +82,25 @@ module api_remote {
         failureReason?:string;
     }
 
+    export interface RemoteCallContentTypeDeleteParams {
+        qualifiedContentTypeNames:string[];
+    }
+
+    export interface RemoteCallContentTypeDeleteResult extends RemoteCallResultBase {
+        successes:RemoteCallContentTypeDeleteSuccess[];
+        failures:RemoteCallContentTypeDeleteFailure[];
+    }
+
+    export interface RemoteCallContentTypeDeleteSuccess {
+        qualifiedContentTypeName:string;
+
+    }
+
+    export interface RemoteCallContentTypeDeleteFailure {
+        qualifiedContentTypeName:string;
+        reason:string;
+    }
+
     export interface RemoteServiceInterface {
         account_find (params, callback):void;
         account_getGraph (params, callback):void;
@@ -110,7 +129,7 @@ module api_remote {
         contentType_list (params, callback):void;
         contentType_createOrUpdate (params:RemoteCallContentTypeCreateOrUpdateParams,
                                     callback:(result:RemoteCallContentTypeCreateOrUpdateResult)=>void):void;
-        contentType_delete (params, callback):void;
+        contentType_delete (params:RemoteCallContentTypeDeleteParams, callback:(result:RemoteCallContentTypeDeleteResult)=>void):void;
         contentType_tree (params, callback):void;
         schema_tree (params, callback):void;
         schema_list (params, callback):void;
@@ -259,7 +278,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        contentType_delete(params, callback):void {
+        contentType_delete(params:RemoteCallContentTypeDeleteParams, callback:(result:RemoteCallContentTypeDeleteResult)=>void):void {
             console.log(params, callback);
         }
 
