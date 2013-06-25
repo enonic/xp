@@ -82,7 +82,7 @@ module api_dom {
             this.el.removeEventListener(eventName, f);
         }
 
-        appendChild(child:HTMLElement) {
+        appendChild(child:HTMLElement):ElementHelper {
             this.el.appendChild(child);
             return this;
         }

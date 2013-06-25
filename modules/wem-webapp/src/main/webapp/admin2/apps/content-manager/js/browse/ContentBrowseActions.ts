@@ -65,6 +65,30 @@ module app_browse {
         }
     }
 
+    export class ShowPreviewAction extends api_ui.Action {
+
+        constructor() {
+            super("PREVIEW");
+
+            this.setEnabled(true);
+            this.addExecutionListener(() => {
+                console.log('TODO: implement ShowPreviewAction');
+            });
+        }
+    }
+
+    export class ShowDetailsAction extends api_ui.Action {
+
+        constructor() {
+            super("DETAILS");
+
+            this.setEnabled(true);
+            this.addExecutionListener(() => {
+                console.log('TODO: implement ShowDetailsAction');
+            })
+        }
+    }
+
     export class BrowseContentSettingsAction extends api_ui.Action {
 
         constructor() {
@@ -85,6 +109,8 @@ module app_browse {
         static DELETE_CONTENT:api_ui.Action = new DeleteContentAction();
         static DUPLICATE_CONTENT:api_ui.Action = new DuplicateContentAction();
         static MOVE_CONTENT:api_ui.Action = new MoveContentAction();
+        static SHOW_PREVIEW:api_ui.Action = new ShowPreviewAction();
+        static SHOW_DETAILS:api_ui.Action = new ShowDetailsAction();
         static BROWSE_CONTENT_SETTINGS:api_ui.Action = new BrowseContentSettingsAction();
 
         static init() {
