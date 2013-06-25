@@ -113,6 +113,14 @@ module api_remote {
         content: Content[];
     }
 
+    export interface RemoteCallGetContentTypeTreeParams {
+    }
+
+    export interface RemoteCallGetContentTypeTreeResult extends RemoteCallResultBase {
+        total:number;
+        contentTypes:ContentTypeTreeNode[];
+    }
+
     export interface RemoteServiceInterface {
         account_find (params, callback):void;
         account_getGraph (params, callback):void;
@@ -142,7 +150,7 @@ module api_remote {
         contentType_createOrUpdate (params:RemoteCallContentTypeCreateOrUpdateParams,
                                     callback:(result:RemoteCallContentTypeCreateOrUpdateResult)=>void):void;
         contentType_delete (params:RemoteCallContentTypeDeleteParams, callback:(result:RemoteCallContentTypeDeleteResult)=>void):void;
-        contentType_tree (params, callback):void;
+        contentType_tree (params:RemoteCallGetContentTypeTreeParams, callback:(result:RemoteCallGetContentTypeTreeResult)=>void):void;
         schema_tree (params, callback):void;
         schema_list (params, callback):void;
         system_getSystemInfo (params, callback):void;
@@ -294,7 +302,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        contentType_tree(params, callback):void {
+        contentType_tree(params:RemoteCallGetContentTypeTreeParams, callback:(result:RemoteCallGetContentTypeTreeResult)=>void):void {
             console.log(params, callback);
         }
 
