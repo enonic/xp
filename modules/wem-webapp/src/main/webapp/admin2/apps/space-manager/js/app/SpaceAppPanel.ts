@@ -56,7 +56,7 @@ module app {
             app_event.NewSpaceEvent.on((event) => {
 
                 var tabMenuItem = new SpaceAppBarTabMenuItem("New Space");
-                var spaceWizardPanel = new app_wizard.SpaceWizardPanel2('new-space');
+                var spaceWizardPanel = new app_wizard.SpaceWizardPanel('new-space');
                 this.addTab(tabMenuItem, spaceWizardPanel);
                 this.showTab(tabMenuItem);
             });
@@ -81,7 +81,7 @@ module app {
 
                             var tabMenuItem = new SpaceAppBarTabMenuItem(result.space.displayName);
                             var id = this.generateTabId(result.space.name, true);
-                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel2(id);
+                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel(id);
                             spaceWizardPanel.setData(result);
 
                             this.addTab(tabMenuItem, spaceWizardPanel);

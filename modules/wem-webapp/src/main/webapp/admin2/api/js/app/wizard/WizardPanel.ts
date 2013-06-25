@@ -1,8 +1,8 @@
-module api_wizard {
+module api_app_wizard {
 
     export interface WizardPanelParams {
 
-        formIcon:api_wizard.FormIcon;
+        formIcon:FormIcon;
 
         toolbar:api_ui_toolbar.Toolbar;
     }

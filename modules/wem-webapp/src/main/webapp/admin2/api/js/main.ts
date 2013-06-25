@@ -73,6 +73,9 @@
 ///<reference path='ui/ProgressBar.ts' />
 ///<reference path='ui/grid/TreeGridPanel.ts' />
 
+///<reference path='app/wizard/FormIcon.ts' />
+///<reference path='app/wizard/WizardPanel.ts' />
+
 ///<reference path='app/AppBar.ts' />
 ///<reference path='app/UserInfoPopup.ts' />
 ///<reference path='app/AppBarEvents.ts' />
@@ -89,11 +92,6 @@
 ///<reference path='ui/dialog/ModalDialog.ts' />
 ///<reference path='app/delete/DeleteItem.ts' />
 ///<reference path='app/delete/DeleteDialog.ts' />
-
-
-
-///<reference path='wizard/FormIcon.ts' />
-///<reference path='wizard/WizardPanel.ts' />
 
 ///<reference path='content/data/DataId.ts' />
 ///<reference path='content/data/Data.ts' />

@@ -1,12 +1,12 @@
 module app_wizard {
 
-    export class SpaceWizardPanel2 extends api_wizard.WizardPanel {
+    export class SpaceWizardPanel extends api_app_wizard.WizardPanel {
 
         private static DEFAULT_SPACE_ICON_URL:string = "resources/images/icons/128x128/default_space.png";
 
-        private formIcon:api_wizard.FormIcon;
+        private formIcon:api_app_wizard.FormIcon;
 
-        private toolbar:SpaceWizardToolbar2;
+        private toolbar:SpaceWizardToolbar;
 
         private spacePanel:api_ui.Panel;
 
@@ -20,8 +20,8 @@ module app_wizard {
 
             var context = SpaceWizardContext.createSpaceWizardContext();
 
-            this.formIcon = new api_wizard.FormIcon(SpaceWizardPanel2.DEFAULT_SPACE_ICON_URL, "Click to upload icon", "rest/upload");
-            this.toolbar = new SpaceWizardToolbar2(context.getActions());
+            this.formIcon = new api_app_wizard.FormIcon(SpaceWizardPanel.DEFAULT_SPACE_ICON_URL, "Click to upload icon", "rest/upload");
+            this.toolbar = new SpaceWizardToolbar(context.getActions());
 
             super({
                 formIcon: this.formIcon,
@@ -51,10 +51,10 @@ module app_wizard {
             h1El.getEl().setInnerHtml("templates");
             this.templatesPanel.appendChild(h1El);
 
-            this.addStep(new api_wizard.WizardStep("Space", this.spacePanel));
-            this.addStep(new api_wizard.WizardStep("Schemas", this.schemaPanel));
-            this.addStep(new api_wizard.WizardStep("Modules", this.modulesPanel));
-            this.addStep(new api_wizard.WizardStep("Templates", this.templatesPanel));
+            this.addStep(new api_app_wizard.WizardStep("Space", this.spacePanel));
+            this.addStep(new api_app_wizard.WizardStep("Schemas", this.schemaPanel));
+            this.addStep(new api_app_wizard.WizardStep("Modules", this.modulesPanel));
+            this.addStep(new api_app_wizard.WizardStep("Templates", this.templatesPanel));
         }
 
         setData(result:api_remote.RemoteCallSpaceGetResult) {
