@@ -1,3 +1,6 @@
+///<reference path='RemoteContentTypeModel.ts' />
+///<reference path='RemoteContentModel.ts' />
+
 module api_remote {
 
     export var RemoteService:RemoteServiceInterface;
@@ -101,6 +104,15 @@ module api_remote {
         reason:string;
     }
 
+    export interface RemoteCallContentGetParams {
+        path?: string;
+        contentIds?: string[];
+    }
+
+    export interface RemoteCallContentGetResult extends RemoteCallResultBase {
+        content: Content[];
+    }
+
     export interface RemoteServiceInterface {
         account_find (params, callback):void;
         account_getGraph (params, callback):void;
@@ -121,7 +133,7 @@ module api_remote {
         content_createOrUpdate (params, callback):void;
         content_list (params, callback):void;
         content_tree (params, callback):void;
-        content_get (params, callback):void;
+        content_get (params:RemoteCallContentGetParams, callback:(result:RemoteCallContentGetResult)=>void):void;
         content_delete (params, callback):void;
         content_find (params, callback):void;
         content_validate (params, callback):void;
@@ -250,7 +262,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        content_get(params, callback):void {
+        content_get(params:RemoteCallContentGetParams, callback:(result:RemoteCallContentGetResult)=>void):void {
             console.log(params, callback);
         }
 
