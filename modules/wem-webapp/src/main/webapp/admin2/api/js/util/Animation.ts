@@ -2,26 +2,55 @@ module api_util {
 
     export class Animation {
 
-        static DELAY:number = 10;
+        private static DEFAULT_INTERVAL:number = 10;
 
-        static start(doStep:Function, duration:number, delay?:number):number {
-            var startTime = new Date().getTime();
+        private duration:number;
+        private interval:number;
 
-            var id = setInterval(() => {
-                var progress = Math.min(((new Date()).getTime() - startTime) / duration, 1);
+        private doStep:(progress:number)=>{};
 
-                doStep(progress);
+        private id:number;
+        private running:bool = false;
 
-                if (progress == 1) {
-                    clearInterval(id);
-                }
-            }, delay || api_util.Animation.DELAY);
-
-            return id;
+        constructor(duration:number, interval:number = Animation.DEFAULT_INTERVAL) {
+            this.duration = duration;
+            this.interval = interval;
         }
 
-        static stop(id:number):void {
-            clearInterval(id);
+        onStep(doStep:(progress)=>{}):void {
+            this.doStep = doStep;
+        }
+
+        start():void {
+            var startTime = this.getCurrentTime();
+
+            this.id = setInterval(() => {
+                var progress = Math.min((this.getCurrentTime() - startTime) / this.duration, 1);
+
+                if (this.doStep) {
+                    this.doStep(progress);
+                }
+
+                if (progress == 1) {
+                    this.stop();
+                }
+            }, this.interval);
+
+            this.running = true;
+        }
+
+        stop():void {
+            clearInterval(this.id);
+
+            this.running = false;
+        }
+
+        isRunning():bool {
+            return this.running;
+        }
+
+        private getCurrentTime():number {
+            return new Date().getTime();
         }
     }
 }
