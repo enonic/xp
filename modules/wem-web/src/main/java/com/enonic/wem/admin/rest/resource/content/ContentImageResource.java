@@ -21,6 +21,8 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.binary.Binary;
+import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
@@ -79,7 +81,7 @@ public class ContentImageResource
         final BufferedImage contentImage;
         if ( contentType.isImageMedia() )
         {
-            final String attachmentName = content.getName();
+            final String attachmentName = getImageAttachmentName( content );
             final Attachment attachment = findAttachment( contentIdValue, attachmentName );
 
             final Binary binary = attachment.getBinary();
@@ -101,6 +103,14 @@ public class ContentImageResource
         }
 
         return Response.ok( contentImage, mimeType ).build();
+    }
+
+    private String getImageAttachmentName( final Content content )
+    {
+        final ContentData contentData = content.getContentData();
+
+        final Property image = contentData.getProperty( "image" );
+        return image == null ? content.getName() : image.getString();
     }
 
     private Icon findRootContentTypeIcon( final QualifiedContentTypeName contentTypeName )
