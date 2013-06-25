@@ -142,22 +142,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                     items: [
                         {
                             xtype: 'button',
-                            text: 'Edit',
-                            cls: 'icon-button',
-                            scale: 'medium',
-                            width: 130,
-                            height: 30,
-                            margin: 10,
-                            listeners: {
-                                click: {
-                                    fn: me.removeUploadedImage,
-                                    scope: me
-                                }
-                            }
-                        },
-                        {
-                            xtype: 'button',
-                            text: 'Remove',
+                            text: 'Reset',
                             cls: 'icon-button',
                             scale: 'medium',
                             width: 130,
