@@ -6,7 +6,7 @@ module app {
 
         private appBarTabMenu:api_app.AppBarTabMenu;
 
-        constructor(appBar:app_appbar.SpaceAppBar) {
+        constructor(appBar:SpaceAppBar) {
 
             this.appBrowsePanel = new app_browse.SpaceAppBrowsePanel();
             this.appBarTabMenu = appBar.getTabMenu();
@@ -55,7 +55,7 @@ module app {
 
             app_event.NewSpaceEvent.on((event) => {
 
-                var tabMenuItem = new app_appbar.SpaceAppBarTabMenuItem("New Space");
+                var tabMenuItem = new SpaceAppBarTabMenuItem("New Space");
                 var spaceWizardPanel = new app_wizard.SpaceWizardPanel2('new-space', 'New Space', "");
 
                 this.addTab(tabMenuItem, spaceWizardPanel);
@@ -80,7 +80,7 @@ module app {
 
                         if (result) {
 
-                            var tabMenuItem = new app_appbar.SpaceAppBarTabMenuItem(result.space.displayName);
+                            var tabMenuItem = new SpaceAppBarTabMenuItem(result.space.displayName);
                             var id = this.generateTabId(result.space.name, true);
                             var spaceWizardPanel = new app_wizard.SpaceWizardPanel2(id, result.space.displayName, result.space.iconUrl);
 

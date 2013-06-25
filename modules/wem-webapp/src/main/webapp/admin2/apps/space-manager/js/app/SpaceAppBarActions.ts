@@ -1,4 +1,4 @@
-module app_appbar {
+module app {
 
     export class ShowAppLauncherAction extends api_ui.Action {
 
@@ -24,7 +24,7 @@ module app_appbar {
 
     export class SpaceAppBarActions {
 
-        static SHOW_APP_LAUNCHER:api_ui.Action = new app_appbar.ShowAppLauncherAction();
+        static SHOW_APP_LAUNCHER:api_ui.Action = new ShowAppLauncherAction();
 
         static SHOW_APP_BROWSER_PANEL:api_ui.Action = new ShowAppBrowsePanelAction();
     }

@@ -14,20 +14,10 @@
 ///<reference path='event/SaveSpaceEvent.ts' />
 ///<reference path='event/CloseActiveSpacePanelEvent.ts' />
 
-///<reference path='SpaceContext.ts' />
-
 ///<reference path='wizard/SpaceWizardActions.ts' />
 ///<reference path='wizard/SpaceWizardContext.ts' />
 ///<reference path='wizard/SpaceWizardToolbar2.ts' />
 ///<reference path='wizard/SpaceWizardPanel2.ts' />
-
-///<reference path='browse/SpaceBrowseActions.ts' />
-///<reference path='browse/SpaceBrowseToolbar.ts' />
-///<reference path='browse/SpaceActionMenu.ts' />
-///<reference path='browse/SpaceDetailPanel.ts' />
-///<reference path='browse/SpaceAppBrowsePanel.ts' />
-///<reference path='browse/SpaceTreeGridContextMenu.ts' />
-///<reference path='browse/SpaceTreeGridPanel.ts' />
 
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
@@ -52,14 +42,23 @@
 ///<reference path='controller/GridPanelController.ts' />
 ///<reference path='controller/WizardController.ts' />
 
-///<reference path='appbar/SpaceAppBar.ts' />
-///<reference path='appbar/SpaceAppBarActions.ts' />
-///<reference path='appbar/SpaceAppBarTabMenuItem.ts' />
-///<reference path='appbar/SpaceAppBarTabMenu.ts' />
-///<reference path='appbar/SpaceAppBar.ts' />
+///<reference path='app/browse/SpaceBrowseActions.ts' />
+///<reference path='app/browse/SpaceBrowseToolbar.ts' />
+///<reference path='app/browse/SpaceActionMenu.ts' />
+///<reference path='app/browse/SpaceDetailPanel.ts' />
+///<reference path='app/browse/SpaceAppBrowsePanel.ts' />
+///<reference path='app/browse/SpaceTreeGridContextMenu.ts' />
+///<reference path='app/browse/SpaceTreeGridPanel.ts' />
 
-///<reference path='SpaceDeleteDialog.ts' />
-///<reference path='SpaceAppPanel.ts' />
+///<reference path='app/delete/SpaceDeleteDialog.ts' />
+
+///<reference path='app/SpaceAppBar.ts' />
+///<reference path='app/SpaceAppBarActions.ts' />
+///<reference path='app/SpaceAppBarTabMenuItem.ts' />
+///<reference path='app/SpaceAppBarTabMenu.ts' />
+///<reference path='app/SpaceAppBar.ts' />
+///<reference path='app/SpaceContext.ts' />
+///<reference path='app/SpaceAppPanel.ts' />
 
 
 declare var Ext;
@@ -92,7 +91,7 @@ Ext.application({
 
     launch: function () {
 
-        var appBar = new app_appbar.SpaceAppBar();
+        var appBar = new app.SpaceAppBar();
         var appPanel = new app.SpaceAppPanel(appBar);
 
         document.body.appendChild(appBar.getHTMLElement());

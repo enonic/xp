@@ -1,4 +1,4 @@
-module app_appbar {
+module app {
 
     export class SpaceAppBar extends api_app.AppBar {
 
@@ -8,7 +8,7 @@ module app_appbar {
                     showAppLauncherAction: SpaceAppBarActions.SHOW_APP_LAUNCHER,
                     showAppBrowsePanelAction: SpaceAppBarActions.SHOW_APP_BROWSER_PANEL
                 },
-                new app_appbar.SpaceAppBarTabMenu());
+                new SpaceAppBarTabMenu());
         }
 
     }

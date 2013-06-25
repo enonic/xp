@@ -1,4 +1,4 @@
-module app_browse {
+module  app_browse {
 
     export class SpaceTreeGridPanel extends api_ui_grid.TreeGridPanel {
 

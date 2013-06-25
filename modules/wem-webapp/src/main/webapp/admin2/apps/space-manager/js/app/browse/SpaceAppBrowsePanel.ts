@@ -5,8 +5,8 @@ module app_browse {
         constructor() {
 
             var toolbar = new BrowseToolbar();
-            var grid = components.gridPanel = new app_browse.SpaceTreeGridPanel('spaceTreeGrid');
-            var detail = components.detailPanel = new app_browse.SpaceDetailPanel();
+            var grid = components.gridPanel = new SpaceTreeGridPanel('spaceTreeGrid');
+            var detail = components.detailPanel = new SpaceDetailPanel();
 
             var filterPanel = new app_ui.FilterPanel({
                 region: 'west',

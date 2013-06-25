@@ -1,4 +1,4 @@
-module app_appbar {
+module app {
 
     export class SpaceAppBarTabMenuItem extends api_app.AppBarTabMenuItem {
 
