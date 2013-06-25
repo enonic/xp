@@ -48,8 +48,8 @@
 }
 
 .live-edit-drag-helper-yes {
-    background: url(../../../admin2/live-edit/images/drop-yes.gif);
+    background: url(../../../../admin2/live-edit/images/drop-yes.gif);
 }
 .live-edit-drag-helper-no {
-    background: url(../../../admin2/live-edit/images/drop-no.gif);
+    background: url(../../../../admin2/live-edit/images/drop-no.gif);
 }

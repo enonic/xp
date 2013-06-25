@@ -1,58 +1,74 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8"/>
-  <title>Enonic WEM Admin</title>
-  <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/icons-metro.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/icons-icomoon.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/admin-preview-panel.css">
+    <meta charset="utf-8"/>
+    <title>Enonic WEM Admin</title>
+    <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/icons-metro.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/icons-icomoon.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/admin-preview-panel.css">
 
-  <!-- WEM ExtJS theme -->
+    <!-- WEM ExtJS theme -->
 
-  <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/admin.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/admin.css"/>
 
-  <!-- ExtJS -->
+    <!-- ExtJS -->
 
-  <script type="text/javascript" src="resources/lib/ext/ext-all-debug.js"></script>
+    <script type="text/javascript" src="resources/lib/ext/ext-all-debug.js"></script>
 
-  <!--  ExtJS UX -->
+    <!--  ExtJS UX -->
 
-  <link rel="stylesheet" type="text/css" href="resources/lib/ux/toggleslide/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/lib/ux/toggleslide/css/style.css"/>
 
-  <script type="text/javascript" src="resources/lib/ux/toggleslide/Thumb.js"></script>
-  <script type="text/javascript" src="resources/lib/ux/toggleslide/ToggleSlide.js"></script>
+    <script type="text/javascript" src="resources/lib/ux/toggleslide/Thumb.js"></script>
+    <script type="text/javascript" src="resources/lib/ux/toggleslide/ToggleSlide.js"></script>
 
-  <!-- Configuration -->
 
-  <script type="text/javascript" src="global.config.js"></script>
-  <script type="text/javascript" charset="utf-8">
+    <!-- Context Window Dependencies -->
 
-    window.CONFIG = {
-      baseUrl: '..'
-    };
+    <link rel="stylesheet" type="text/css" href="resources/css/contextwindow/context-window.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/contextwindow/components.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/contextwindow/device-selector.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/contextwindow/drag-helper.css">
+    <script type="text/javascript" charset="UTF-8" src="../admin2/live-edit/lib/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" charset="UTF-8"
+            src="../admin2/live-edit/lib/jquery-ui-1.9.2.custom.min.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../admin2/live-edit/lib/jquery.simulate.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../admin2/live-edit/lib/jquery.ui.live-draggable.js"></script>
 
-    Ext.Loader.setConfig({
-      paths: {
-        'Common': 'common/js',
-        'Admin': 'resources/app',
-        'Ext.ux': 'resources/lib/ux'
-      },
-      disableCaching: false
-    });
+    <!-- // Context Window Dependencies -->
 
-  </script>
 
-  <script type="text/javascript" src="resources/app/view/contentManager/wizard/evaluateContentDisplayNameScript.js"></script>
+    <!-- Configuration -->
 
-  <!-- Third party plugins -->
+    <script type="text/javascript" src="global.config.js"></script>
+    <script type="text/javascript" charset="utf-8">
 
-  <script type="text/javascript" src="resources/lib/plupload/js/plupload.full.js"></script>
-  <script type="text/javascript" src="resources/lib/jit/jit-yc.js"></script>
+        window.CONFIG = {
+            baseUrl: '..'
+        };
 
-  <!-- Application -->
+        Ext.Loader.setConfig({
+            paths: {
+                'Common': 'common/js',
+                'Admin': 'resources/app',
+                'Ext.ux': 'resources/lib/ux'
+            },
+            disableCaching: false
+        });
 
-  <script type="text/javascript" src="app-content-manager.js"></script>
+    </script>
+
+    <script type="text/javascript" src="resources/app/view/contentManager/wizard/evaluateContentDisplayNameScript.js"></script>
+
+    <!-- Third party plugins -->
+
+    <script type="text/javascript" src="resources/lib/plupload/js/plupload.full.js"></script>
+    <script type="text/javascript" src="resources/lib/jit/jit-yc.js"></script>
+
+    <!-- Application -->
+
+    <script type="text/javascript" src="app-content-manager.js"></script>
 
 </head>
 <body>

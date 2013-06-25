@@ -2,10 +2,10 @@
 <head>
     <title>Enonic WEM Admin</title>
     <link rel="stylesheet" type="text/css" href="../../admin/resources/lib/ext/resources/css/admin.css">
-    <link rel="stylesheet" type="text/css" href="css/context-window.css">
-    <link rel="stylesheet" type="text/css" href="css/components.css">
-    <link rel="stylesheet" type="text/css" href="css/device-selector.css">
-    <link rel="stylesheet" type="text/css" href="css/drag-helper.css">
+    <link rel="stylesheet" type="text/css" href="../../admin/resources/css/contextwindow/context-window.css">
+    <link rel="stylesheet" type="text/css" href="../../admin/resources/css/contextwindow/components.css">
+    <link rel="stylesheet" type="text/css" href="../../admin/resources/css/contextwindow/device-selector.css">
+    <link rel="stylesheet" type="text/css" href="../../admin/resources/css/contextwindow/drag-helper.css">
     <style type="text/css">
         iframe {
             /* fixme: move to CSS file */
@@ -18,25 +18,18 @@
     <script type="text/javascript" charset="UTF-8"
             src="../../admin2/live-edit/lib/jquery-ui-1.9.2.custom.min.js"></script>
     <script type="text/javascript" charset="UTF-8" src="../../admin2/live-edit/lib/jquery.simulate.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../../admin2/live-edit/lib/jquery.ui.live-draggable.js"></script>
+
     <script type="text/javascript">
-        // Patch jQuery draggable in order to make draggables on-the-fly
-        (function ($) {
-            $.fn.liveDraggable = function (opts) {
-                this.live("mouseover", function () {
-                    if (!$(this).data("init")) {
-                        $(this).data("init", true).draggable(opts);
-                    }
-                });
-                return this;
-            };
-        }(jQuery));
+        Ext.Loader.setConfig({
+            enabled: true,
+            disableCaching: true,
+            paths: {
+                'Admin': '../../admin/resources/app'
+            }
+        });
     </script>
 
-    <script type="text/javascript" src="../../admin/resources/app/view/contentManager/contextwindow/panel/Helper.js"></script>
-    <script type="text/javascript" src="../../admin/resources/app/view/contentManager/contextwindow/ContextWindow.js"></script>
-    <script type="text/javascript" src="../../admin/resources/app/view/contentManager/contextwindow/panel/Components.js"></script>
-    <script type="text/javascript" src="../../admin/resources/app/view/contentManager/contextwindow/panel/DeviceSelector.js"></script>
-    <script type="text/javascript" src="../../admin/resources/app/view/contentManager/contextwindow/panel/Images.js"></script>
     <script type="text/javascript">
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         // App
@@ -47,6 +40,7 @@
             ],
 
             requires: [
+                'Admin.view.contentManager.contextwindow.ContextWindow'
             ],
 
             launch: function () {
@@ -75,7 +69,19 @@
                                     xtype: 'component',
                                     id: 'live-edit-iframe-container',
                                     style: 'height: 100%; text-align: center; background-color: #ccc',
-                                    html: '<iframe id="live-edit-iframe" style="border:0;width: 100%; height: 100%" src="../live-edit-page/bootstrap.jsp?edit=true"></iframe>'
+                                    html: '<iframe id="live-edit-iframe" style="border:0;width: 100%; height: 100%" src="../live-edit-page/bootstrap.jsp?edit=true"></iframe>',
+                                    listeners: {
+                                        render: function () {
+                                            Ext.get('live-edit-iframe').on('load', function () {
+
+                                                var contextWindow = new Admin.view.contentManager.contextwindow.ContextWindow({
+                                                    liveEditIFrameDom: Ext.get('live-edit-iframe').dom,
+                                                    y: 40
+                                                });
+                                                contextWindow.doShow();
+                                            });
+                                        }
+                                    }
                                 }
                             ]
                         }
@@ -84,6 +90,8 @@
             }
 
         });
+
+
 
     </script>
 

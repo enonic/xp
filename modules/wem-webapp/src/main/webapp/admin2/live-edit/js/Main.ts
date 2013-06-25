@@ -47,16 +47,6 @@ declare var LiveEditMutationSummary;
     'use strict';
 
     $(window).load(() => {
-
-        // Open the context window
-        try {
-            if (window['parent'] && window['parent'].Admin.view.contentManager.contextwindow !== undefined) {
-                new window['parent'].Admin.view.contentManager.contextwindow.ContextWindow({}).doShow();
-            }
-        } catch(e) {
-
-        }
-
         // Fade out the loader splash and start the app.
         var loaderSplash:JQuery = $('.live-edit-loader-splash-container');
         loaderSplash.fadeOut('fast', () => {
@@ -87,7 +77,7 @@ declare var LiveEditMutationSummary;
     // Prevent the user from clicking on things
     // This needs more work as we want them to click on Live Edit ui stuff.
     $(document).ready(() => {
-        $(document).on('mousedown', 'btn, button, a, select', (event) => {
+        $(document).on('mousedown', 'btn, button, a, select, input', (event) => {
             event.preventDefault();
             return false;
         });

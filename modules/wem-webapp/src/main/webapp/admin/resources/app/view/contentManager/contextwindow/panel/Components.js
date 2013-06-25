@@ -166,14 +166,16 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
      * fixme: Refactor, use a mixin or something similar for the drag drop implementation
      ***************************************************************************************************/
 
+    /*
     windowRegion: null,
     frameRegion: null,
+    */
+
     cursorAt: {left: -10, top: -15},
 
     initComponentDraggables: function () {
         var me = this,
-            panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
-            liveEditIFrame = $(panelHelper.getLiveEditIFrameDomEl()),
+            liveEditIFrame = $(me.getContextWindow().getLiveEditIFrameDom()),
             components = $('[data-context-window-draggable="true"]');
 
         components.liveDraggable({
@@ -205,13 +207,17 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
     },
 
     onStartDragComponent: function (event, ui) {
-        var panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
-            contextWindow = panelHelper.getContextWindowFromChildCmp(this);
+        /*
+        var me = this,
+            panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
+            contextWindow = me.getContextWindow();
+        */
 
         // cache the regions on drag start for performance
-        this.windowRegion = panelHelper.getContextWindowViewRegion(contextWindow);
+        // this.windowRegion = panelHelper.getContextWindowViewRegion(contextWindow);
     },
 
+    /*
     onDragComponent: function (event, ui) {
         var me = this;
         var panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
@@ -225,11 +231,12 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
             //
         }
     },
+    */
 
     onDragOverIFrame: function (event, ui) {
         var me = this,
-            panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
-            jQuery = panelHelper.getJQueryFromLiveEditPage();
+            contextWindow = me.getContextWindow(),
+            jQuery = contextWindow.getLiveEditJQuery();
 
         var clone = jQuery(ui.draggable.clone());
 
@@ -243,11 +250,11 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
 
         ui.helper.hide(null);
 
-        panelHelper.getLiveEditWindow().LiveEdit.DragDropSort.createDraggable(clone);
+        contextWindow.getLiveEditContentWindowObject().LiveEdit.DragDropSort.createDraggable(clone);
 
         clone.simulate('mousedown');
 
-        panelHelper.getContextWindowFromChildCmp(me).hide();
+        contextWindow.hide();
     },
 
     createDragHelper: function (jQueryEvent) {
@@ -265,16 +272,19 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
 
     registerListenersFromLiveEditPage: function () {
         var me = this,
-            panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
             // Right now We need to use the jQuery object from the live edit page in order to listen for the events
-            liveEditWindow = panelHelper.getLiveEditWindow(),
-            liveEditJQuery = panelHelper.getJQueryFromLiveEditPage();
+            contextWindow = me.getContextWindow(),
+            liveEditWindow = contextWindow.getLiveEditContentWindowObject(),
+            liveEditJQuery = contextWindow.getLiveEditJQuery();
 
         liveEditJQuery(liveEditWindow).on('sortStop.liveEdit.component dragStop.liveEdit.component', function (event) {
-            $('.live-edit-component').simulate('mouseup');
-            panelHelper.getContextWindowFromChildCmp(me).doShow();
+            $('[data-context-window-draggable="true"]').simulate('mouseup');
+            contextWindow.doShow();
         });
+    },
 
+    getContextWindow: function () {
+        return this.up('contextWindow');
     }
 
 });

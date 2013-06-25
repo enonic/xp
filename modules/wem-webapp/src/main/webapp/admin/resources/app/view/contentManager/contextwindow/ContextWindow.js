@@ -4,10 +4,17 @@
 Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     extend: 'Ext.container.Container',
     alias: 'widget.contextWindow',
+
+    requires: [
+        'Admin.view.contentManager.contextwindow.panel.Components',
+        'Admin.view.contentManager.contextwindow.panel.DeviceSelector',
+        'Admin.view.contentManager.contextwindow.panel.Images'
+    ],
+
     modal: false,
     cls: 'admin-context-window',
     x: 10,
-    y: 40,
+    y: 10,
     width: 300,
     height: 480,
     shadow: false,
@@ -35,6 +42,8 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     toggleButton: undefined,
     windowBodyCt: undefined,
     draggingShim: undefined,
+
+    liveEditIFrameDom: undefined, // Passed as constructor config
 
     panels: [
         {
@@ -260,7 +269,9 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     },
 
     addPanels: function () {
-        var key, panel;
+        // Should this function add menu items too?
+        var key,
+            panel;
         for (key in this.panels) {
             if (this.panels.hasOwnProperty(key)) {
                 panel = this.panels[key];
@@ -330,6 +341,28 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         for (var i = 0; i < addedPanels.length; i++) {
             addedPanels[i].setHeight(newBodyHeight);
         }
+    },
+
+
+    /**
+     * @returns {HTMLElement}
+     */
+    getLiveEditIFrameDom: function () {
+        return this.liveEditIFrameDom;
+    },
+
+    /**
+     * @returns {window|Window|Window}
+     */
+    getLiveEditContentWindowObject: function () {
+        return this.getLiveEditIFrameDom().contentWindow;
+    },
+
+    /**
+     * @returns JQuery
+     */
+    getLiveEditJQuery: function () {
+        return this.getLiveEditContentWindowObject().$liveEdit;
     },
 
     doShow: function () {

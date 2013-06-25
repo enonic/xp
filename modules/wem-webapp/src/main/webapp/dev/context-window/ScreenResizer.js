@@ -36,10 +36,14 @@ Ext.define('Admin.view.ScreenResizer', {
             items: [
                 {
                     xtype: 'button',
-                    style: 'background-color: #393839; border: 1px solid #000;padding: 4px 6px',
+                    cls: 'screen-resizer-button',
                     text: '+',
                     handler: function () {
-                        me.addBreakpoint(me.resizerCmp.getEl().getWidth());
+                        var s = new Admin.view.ScreenResizerPopup({
+                            opener: me,
+                            closeCallback: me.addBreakpoint
+                        });
+                        s.doShow();
                     }
                 }
             ]
@@ -153,13 +157,14 @@ Ext.define('Admin.view.ScreenResizer', {
         resizerEl.down('.screen-resizer-text').dom.innerHTML = resizerEl.getWidth() + 'px';
     },
 
-    addBreakpoint: function (width) {
+    addBreakpoint: function (name, width, color) {
         var breakpointEl = this.breakpointCmp.getEl();
         var breakpointBarSpec = {
             tag: 'div',
             cls: 'screen-resizer-breakpoint',
-            style: 'width: ' + width + 'px; background-color: ' + this.generateColor(),
-            html: width + 'px'
+            style: 'width: ' + width + 'px; background-color: ' + color,
+            html: name,
+            title: name + ' (' + width + 'px)'
         };
         Ext.DomHelper.append(breakpointEl, breakpointBarSpec);
 
@@ -183,19 +188,6 @@ Ext.define('Admin.view.ScreenResizer', {
         Ext.Array.forEach(newStack, function (s, i) {
             s[0].style.zIndex = i;
         });
-    },
-
-    generateColor: function () {
-        // http://stackoverflow.com/questions/1484506/random-color-generator-in-javascript
-
-        var ranges = [[80, 200],[20, 120],[10, 170]];
-        var g = function () {
-            //select random range and remove
-            var range = ranges.splice(Math.floor(Math.random() * ranges.length), 1)[0];
-            //pick a random number from within the range
-            return Math.floor(Math.random() * (range[1] - range[0])) + range[0];
-        }
-        return "rgb(" + g() + "," + g() + "," + g() + ")";
     },
 
     isClickTargetBreakpoint: function (targetDom) {

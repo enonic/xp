@@ -120,22 +120,22 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.DeviceSelector', {
     },
 
     resizeLiveEditFrame: function (deviceModel) {
-        var panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
-            iFrame = Ext.get(panelHelper.getLiveEditIFrameDomEl().id),
-            iFrameContainer = panelHelper.getLiveEditIFrameContainerEl(),
+        var me = this,
+            iFrameEl = Ext.get(me.getContextWindow().getLiveEditIFrameDom().id),
+            iFrameContainer = iFrameEl.parent(),
             deviceType = deviceModel.data.device_type,
-            isRotatable = deviceModel.data.rotatable,
+            deviceIsRotatable = deviceModel.data.rotatable,
             width = deviceModel.data.width,
             height = deviceModel.data.height,
             useFullWidth = deviceType === 'monitor_full',
             newWidth = useFullWidth ? iFrameContainer.getWidth() : width,
-            newHeight = useFullWidth ? iFrameContainer.getWidth() : height;
+            newHeight = useFullWidth ? iFrameContainer.getHeight() : height;
 
-        if (this.deviceOrientation === 'horizontal' && isRotatable) {
+        if (this.deviceOrientation === 'horizontal' && deviceIsRotatable) {
             newWidth = height;
             newHeight = width;
         }
-        iFrame.animate({
+        iFrameEl.animate({
             duration: 200,
             easing: 'linear',
             to: {
@@ -145,10 +145,10 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.DeviceSelector', {
             listeners: {
                 afteranimate: function () {
                     if (useFullWidth) {
-                        iFrame.setStyle('width', width);
+                        iFrameEl.setStyle('width', width);
                     }
                     if (useFullWidth) {
-                        iFrame.setStyle('height', height);
+                        iFrameEl.setStyle('height', height);
                     }
                 }
             }
@@ -199,6 +199,10 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.DeviceSelector', {
         } else {
             buttonEl.removeCls('live-edit-device-rotate-button-horizontal');
         }
+    },
+
+    getContextWindow: function () {
+        return this.up('contextWindow');
     }
 
 });

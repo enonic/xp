@@ -6,14 +6,20 @@ Ext.define('Admin.view.contentManager.LivePreview', {
         backgroundColor: '#ccc'
     },
 
+    requires: [
+        'Admin.view.contentManager.contextwindow.ContextWindow'
+    ],
+
     // For 18/4. todo: create CSS classes for the elements.
     html: '<div style="display:table; height:100%; width: 100%;"><div style="display:table-row"><div style="display:table-cell; height:100%; vertical-align: middle; text-align:center;"><iframe style="border: 0 none; width: 100%; height: 100%; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2)"></iframe></div></div></div>',
 
-    autoScroll: false,
+    autoScroll: true,
     styleHtmlContent: true,
     layout: 'fit',
 
     iFrameLoaded: false,
+
+    contextWindow: undefined,
 
     initComponent: function () {
         var me = this;
@@ -55,8 +61,19 @@ Ext.define('Admin.view.contentManager.LivePreview', {
 
 
     load: function (url, isEdit) {
+        var me = this;
         var iFrame = this.getIframe();
         isEdit = isEdit || false;
+
+        if (isEdit) {
+            iFrame.on('load', function () {
+                me.contextWindow = new Admin.view.contentManager.contextwindow.ContextWindow({
+                    renderTo: me.getEl(),
+                    liveEditIFrameDom: iFrame.dom
+                });
+            });
+        }
+
         if (!Ext.isEmpty(url)) {
             iFrame.dom.src = Admin.lib.UriHelper.getAbsoluteUri(url + "?edit=" + isEdit);
             this.iFrameLoaded = true;
