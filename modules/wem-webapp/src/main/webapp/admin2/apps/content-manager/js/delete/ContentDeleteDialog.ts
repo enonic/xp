@@ -1,4 +1,4 @@
-module app {
+module app_delete {
 
     export class ContentDeleteDialog extends api_app_delete.DeleteDialog {
 

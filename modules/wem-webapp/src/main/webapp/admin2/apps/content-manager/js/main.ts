@@ -67,8 +67,8 @@
 ///<reference path='view/WizardLayout.ts' />
 ///<reference path='view/WizardPanel.ts' />
 
-///<reference path='appbar/ContentAppBarActions.ts' />
-///<reference path='appbar/ContentAppBar.ts' />
+///<reference path='ContentAppBarActions.ts' />
+///<reference path='ContentAppBar.ts' />
 
 /// <reference path='view/wizard/form/FormItemOccurrencesHandler.ts' />
 /// <reference path='view/wizard/form/ImagePopupDialog.ts' />
@@ -112,7 +112,7 @@
 ///<reference path='controller/ContentPreviewController.ts' />
 ///<reference path='controller/DialogWindowController.ts' />
 
-///<reference path='ContentDeleteDialog.ts' />
+///<reference path='delete/ContentDeleteDialog.ts' />
 
 declare var Ext;
 declare var Admin;
@@ -231,7 +231,7 @@ Ext.application({
             ]
         });
 
-        var deleteContentDialog:app.ContentDeleteDialog = new app.ContentDeleteDialog();
+        var deleteContentDialog = new app_delete.ContentDeleteDialog();
         app_event.DeleteContentEvent.on((event) => {
             deleteContentDialog.setContentToDelete(event.getModels());
             deleteContentDialog.open();
