@@ -5,7 +5,7 @@ module app_wizard {
      */
     export class SpaceWizardToolbar2 extends api_ui_toolbar.Toolbar {
 
-        constructor(actions:app_wizard.SpaceWizardActions) {
+        constructor(actions:SpaceWizardActions) {
             super();
             super.addAction(actions.SAVE_SPACE);
             super.addAction(actions.DUPLICATE_SPACE);

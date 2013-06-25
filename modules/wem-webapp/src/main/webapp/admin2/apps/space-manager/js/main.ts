@@ -14,11 +14,6 @@
 ///<reference path='event/SaveSpaceEvent.ts' />
 ///<reference path='event/CloseActiveSpacePanelEvent.ts' />
 
-///<reference path='wizard/SpaceWizardActions.ts' />
-///<reference path='wizard/SpaceWizardContext.ts' />
-///<reference path='wizard/SpaceWizardToolbar2.ts' />
-///<reference path='wizard/SpaceWizardPanel2.ts' />
-
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
 ///<reference path='plugin/fileupload/FileUploadGrid.ts' />
@@ -41,6 +36,11 @@
 ///<reference path='controller/FilterPanelController.ts' />
 ///<reference path='controller/GridPanelController.ts' />
 ///<reference path='controller/WizardController.ts' />
+
+///<reference path='app/wizard/SpaceWizardActions.ts' />
+///<reference path='app/wizard/SpaceWizardContext.ts' />
+///<reference path='app/wizard/SpaceWizardToolbar2.ts' />
+///<reference path='app/wizard/SpaceWizardPanel2.ts' />
 
 ///<reference path='app/browse/SpaceBrowseActions.ts' />
 ///<reference path='app/browse/SpaceBrowseToolbar.ts' />

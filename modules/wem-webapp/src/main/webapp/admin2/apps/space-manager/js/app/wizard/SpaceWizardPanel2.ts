@@ -2,7 +2,7 @@ module app_wizard {
     export class SpaceWizardPanel2 extends api_wizard.WizardPanel {
         constructor(id:string, title:string, iconUrl:string) {
             super();
-            var context = app_wizard.SpaceWizardContext.createSpaceWizardContext();
+            var context = SpaceWizardContext.createSpaceWizardContext();
             this.setTitle(title);
             this.setSubtitle(id);
 
