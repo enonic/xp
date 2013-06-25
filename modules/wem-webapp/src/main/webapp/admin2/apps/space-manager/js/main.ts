@@ -19,6 +19,7 @@
 ///<reference path='view/AdminImageButton.ts' />
 ///<reference path='view/FilterPanel.ts' />
 
+///<reference path='app/event/SaveSpaceEvent.ts' />
 ///<reference path='controller/Controller.ts' />
 ///<reference path='controller/SpaceController.ts' />
 ///<reference path='controller/FilterPanelController.ts' />
@@ -34,7 +35,6 @@
 ///<reference path='app/event/NewSpaceEvent.ts' />
 ///<reference path='app/event/OpenSpaceEvent.ts' />
 ///<reference path='app/event/EditSpaceEvent.ts' />
-///<reference path='app/event/SaveSpaceEvent.ts' />
 ///<reference path='app/event/CloseActiveSpacePanelEvent.ts' />
 
 ///<reference path='app/wizard/SpaceWizardActions.ts' />
