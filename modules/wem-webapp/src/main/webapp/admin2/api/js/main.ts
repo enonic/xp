@@ -74,15 +74,13 @@
 ///<reference path='ui/ProgressBar.ts' />
 ///<reference path='ui/grid/TreeGridPanel.ts' />
 
-///<reference path='appbar/AppBar.ts' />
-///<reference path='appbar/UserInfoPopup.ts' />
-///<reference path='appbar/AppBarEvents.ts' />
-///<reference path='appbar/AppBarTabMenu.ts' />
-///<reference path='appbar/AppBarTabMenuButton.ts' />
-///<reference path='appbar/AppBarTabMenuItem.ts' />
-///<reference path='appbar/AppBar.ts' />
-
-///<reference path='AppPanel.ts' />
+///<reference path='app/AppBar.ts' />
+///<reference path='app/UserInfoPopup.ts' />
+///<reference path='app/AppBarEvents.ts' />
+///<reference path='app/AppBarTabMenu.ts' />
+///<reference path='app/AppBarTabMenuButton.ts' />
+///<reference path='app/AppBarTabMenuItem.ts' />
+///<reference path='app/AppPanel.ts' />
 
 ///<reference path='ui/dialog/DialogButton.ts' />
 ///<reference path='ui/dialog/ModalDialog.ts' />

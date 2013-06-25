@@ -1,10 +1,10 @@
 module app {
 
-    export class SpaceAppPanel extends api.AppPanel {
+    export class SpaceAppPanel extends api_app.AppPanel {
 
         private appBrowsePanel:app_browse.SpaceAppBrowsePanel;
 
-        private appBarTabMenu:api_appbar.AppBarTabMenu;
+        private appBarTabMenu:api_app.AppBarTabMenu;
 
         constructor(appBar:app_appbar.SpaceAppBar) {
 
@@ -48,7 +48,7 @@ module app {
 
         private handleGlobalEvents() {
 
-            api_appbar.ShowAppBrowsePanelEvent.on((event) => {
+            api_app.ShowAppBrowsePanelEvent.on((event) => {
                 this.showHomePanel();
                 this.appBarTabMenu.deselectTab();
             });

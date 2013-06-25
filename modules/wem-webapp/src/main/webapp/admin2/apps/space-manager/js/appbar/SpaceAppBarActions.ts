@@ -6,7 +6,7 @@ module app_appbar {
             super('Start');
 
             this.addExecutionListener(() => {
-                new api_appbar.ShowAppLauncherEvent().fire();
+                new api_app.ShowAppLauncherEvent().fire();
             });
         }
     }
@@ -17,7 +17,7 @@ module app_appbar {
             super('Browse');
 
             this.addExecutionListener(() => {
-                new api_appbar.ShowAppBrowsePanelEvent().fire();
+                new api_app.ShowAppBrowsePanelEvent().fire();
             });
         }
     }

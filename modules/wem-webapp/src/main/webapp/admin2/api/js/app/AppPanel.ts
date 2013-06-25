@@ -1,4 +1,4 @@
-module api{
+module api_app{
 
     export class AppPanel extends api_ui_tab.TabbedDeckPanel {
 
@@ -11,7 +11,7 @@ module api{
 
             this.homePanel = homePanel;
             this.homePanelActions = homePanelActions;
-            var homePanelMenuItem = new api_appbar.AppBarTabMenuItem("home");
+            var homePanelMenuItem = new AppBarTabMenuItem("home");
             homePanelMenuItem.setVisible(false);
             homePanelMenuItem.setRemovable(false);
             this.addTab(homePanelMenuItem, this.homePanel);

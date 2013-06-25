@@ -1,4 +1,4 @@
-module api_appbar {
+module api_app {
 
     export class ShowAppLauncherEvent extends api_event.Event {
 
@@ -6,7 +6,7 @@ module api_appbar {
             super('showAppLauncher');
         }
 
-        static on(handler:(event:api_appbar.ShowAppLauncherEvent) => void) {
+        static on(handler:(event:ShowAppLauncherEvent) => void) {
             api_event.onEvent('showAppLauncher', handler);
         }
 

@@ -1,4 +1,4 @@
-module api_appbar{
+module api_app{
 
     export class AppBarTabMenu extends api_ui_tab.TabMenu {
 

@@ -1,4 +1,4 @@
-module api_appbar {
+module api_app {
 
     export class UserInfoPopup extends api_dom.DivEl {
 

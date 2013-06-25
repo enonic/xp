@@ -1,6 +1,6 @@
 module app_appbar {
 
-    export class SpaceAppBar extends api_appbar.AppBar {
+    export class SpaceAppBar extends api_app.AppBar {
 
         constructor() {
             super("Space Admin",

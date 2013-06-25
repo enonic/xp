@@ -1,4 +1,4 @@
-module api_appbar {
+module api_app {
 
     export class AppBar extends api_dom.DivEl {
 
@@ -12,11 +12,11 @@ module api_appbar {
 
         private homeButton:api_dom.ButtonEl;
 
-        private tabMenu:api_appbar.AppBarTabMenu;
+        private tabMenu:AppBarTabMenu;
 
-        private userButton:api_appbar.UserButton;
+        private userButton:UserButton;
 
-        private userInfoPopup:api_appbar.UserInfoPopup;
+        private userInfoPopup:UserInfoPopup;
 
         constructor(appName, actions:AppBarActions, tabMenu?:AppBarTabMenu) {
             super('AppBar', 'appbar');
@@ -25,16 +25,16 @@ module api_appbar {
             this.actions = actions;
             this.tabMenu = tabMenu;
 
-            this.launcherButton = new api_appbar.LauncherButton(actions.showAppLauncherAction);
+            this.launcherButton = new LauncherButton(actions.showAppLauncherAction);
             this.appendChild(this.launcherButton);
 
-            var separator = new api_appbar.Separator();
+            var separator = new Separator();
             this.appendChild(separator);
 
-            this.homeButton = new api_appbar.HomeButton(this.appName, actions.showAppBrowsePanelAction);
+            this.homeButton = new HomeButton(this.appName, actions.showAppBrowsePanelAction);
             this.appendChild(this.homeButton);
 
-            this.userButton = new api_appbar.UserButton();
+            this.userButton = new UserButton();
             this.appendChild(this.userButton);
 
             if (this.tabMenu != null) {
@@ -44,7 +44,7 @@ module api_appbar {
                 this.appendChild(new TabMenuContainer())
             }
 
-            this.userInfoPopup = new api_appbar.UserInfoPopup();
+            this.userInfoPopup = new UserInfoPopup();
 
             this.userButton.getEl().addEventListener('click', (event:Event) => {
                 this.userInfoPopup.toggle();
@@ -62,7 +62,7 @@ module api_appbar {
             });
         }
 
-        getTabMenu():api_appbar.AppBarTabMenu {
+        getTabMenu():AppBarTabMenu {
             return this.tabMenu;
         }
     }

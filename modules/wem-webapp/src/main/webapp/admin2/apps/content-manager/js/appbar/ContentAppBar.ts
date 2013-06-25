@@ -1,6 +1,6 @@
 module app_appbar {
 
-    export class ContentAppBar extends api_appbar.AppBar {
+    export class ContentAppBar extends api_app.AppBar {
 
         constructor() {
             super("Content Manager", {
