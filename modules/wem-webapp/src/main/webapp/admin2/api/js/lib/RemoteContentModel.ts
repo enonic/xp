@@ -15,19 +15,27 @@ module api_remote {
         value: string;
     }
 
-    export interface Content {
+    export interface ContentBase {
         id: string;
         path: string;
-        name?: string;
+        name: string;
         type: string;
         displayName: string;
         owner: string;
         modifier: string;
-        isRoot: bool;
         modifiedTime: Date;
         createdTime: Date;
-        data: ContentData[];
         iconUrl: string;
     }
 
+    export interface ContentGet extends ContentBase{
+        isRoot: bool;
+        data: ContentData[];
+    }
+
+    export interface ContentList extends ContentBase{
+        editable: bool;
+        deletable: bool;
+        allowsChildren: bool;
+    }
 }

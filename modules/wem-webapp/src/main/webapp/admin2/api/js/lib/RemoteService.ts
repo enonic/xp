@@ -110,7 +110,16 @@ module api_remote {
     }
 
     export interface RemoteCallContentGetResult extends RemoteCallResultBase {
-        content: Content[];
+        content: ContentGet[];
+    }
+
+    export interface RemoteCallContentListParams {
+        path: string;
+    }
+
+    export interface RemoteCallContentListResult extends RemoteCallResultBase {
+        total: number;
+        contents: ContentList[];
     }
 
     export interface RemoteServiceInterface {
@@ -131,7 +140,7 @@ module api_remote {
         userstore_createOrUpdate (params, callback):void;
         userstore_delete (params, callback):void;
         content_createOrUpdate (params, callback):void;
-        content_list (params, callback):void;
+        content_list (params:RemoteCallContentListParams, callback:(result:RemoteCallContentListResult)=>void):void;
         content_tree (params, callback):void;
         content_get (params:RemoteCallContentGetParams, callback:(result:RemoteCallContentGetResult)=>void):void;
         content_delete (params, callback):void;
@@ -254,7 +263,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        content_list(params, callback):void {
+        content_list(params:RemoteCallContentListParams, callback:(result:RemoteCallContentListResult)=>void):void {
             console.log(params, callback);
         }
 
