@@ -34,6 +34,7 @@
 ///<reference path='app/wizard/SpaceWizardActions.ts' />
 ///<reference path='app/wizard/SpaceWizardContext.ts' />
 ///<reference path='app/wizard/SpaceWizardToolbar.ts' />
+///<reference path='app/wizard/SpaceForm.ts' />
 ///<reference path='app/wizard/SpaceWizardPanel.ts' />
 
 ///<reference path='app/browse/SpaceBrowseActions.ts' />

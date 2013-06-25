@@ -8,7 +8,7 @@ module app_wizard {
 
         private toolbar:SpaceWizardToolbar;
 
-        private spacePanel:api_ui.Panel;
+        private spaceForm:SpaceForm;
 
         private schemaPanel:api_ui.Panel;
 
@@ -31,27 +31,24 @@ module app_wizard {
             this.setDisplayName("New Space");
             this.setName(id);
 
-            this.spacePanel = new api_ui.Panel("spacePanel");
-            var h1El = new api_dom.H1El();
-            h1El.getEl().setInnerHtml("space");
-            this.spacePanel.appendChild(h1El);
+            this.spaceForm = new SpaceForm();
 
             this.schemaPanel = new api_ui.Panel("schemaPanel");
-            h1El = new api_dom.H1El();
-            h1El.getEl().setInnerHtml("schema");
+            var h1El = new api_dom.H1El();
+            h1El.getEl().setInnerHtml("TODO: schema");
             this.schemaPanel.appendChild(h1El);
 
             this.modulesPanel = new api_ui.Panel("modulesPanel");
             h1El = new api_dom.H1El();
-            h1El.getEl().setInnerHtml("modules");
+            h1El.getEl().setInnerHtml("TODO: modules");
             this.modulesPanel.appendChild(h1El);
 
             this.templatesPanel = new api_ui.Panel("templatesPanel");
             h1El = new api_dom.H1El();
-            h1El.getEl().setInnerHtml("templates");
+            h1El.getEl().setInnerHtml("TODO: templates");
             this.templatesPanel.appendChild(h1El);
 
-            this.addStep(new api_app_wizard.WizardStep("Space", this.spacePanel));
+            this.addStep(new api_app_wizard.WizardStep("Space", this.spaceForm));
             this.addStep(new api_app_wizard.WizardStep("Schemas", this.schemaPanel));
             this.addStep(new api_app_wizard.WizardStep("Modules", this.modulesPanel));
             this.addStep(new api_app_wizard.WizardStep("Templates", this.templatesPanel));
