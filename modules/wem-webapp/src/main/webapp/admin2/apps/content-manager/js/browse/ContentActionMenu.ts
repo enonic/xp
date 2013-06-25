@@ -4,12 +4,12 @@ module app_browse {
 
         constructor() {
             super(
-                app_browse.ContentBrowseActions.NEW_CONTENT,
-                app_browse.ContentBrowseActions.EDIT_CONTENT,
-                app_browse.ContentBrowseActions.OPEN_CONTENT,
-                app_browse.ContentBrowseActions.DELETE_CONTENT,
-                app_browse.ContentBrowseActions.DUPLICATE_CONTENT,
-                app_browse.ContentBrowseActions.MOVE_CONTENT
+                ContentBrowseActions.NEW_CONTENT,
+                ContentBrowseActions.EDIT_CONTENT,
+                ContentBrowseActions.OPEN_CONTENT,
+                ContentBrowseActions.DELETE_CONTENT,
+                ContentBrowseActions.DUPLICATE_CONTENT,
+                ContentBrowseActions.MOVE_CONTENT
             );
         }
     }
