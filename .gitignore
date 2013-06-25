@@ -9,3 +9,4 @@ target/
 *.ipr
 .idea
 .sass-cache
+npm-debug.log
