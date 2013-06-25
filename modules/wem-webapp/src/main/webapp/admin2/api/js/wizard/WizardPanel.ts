@@ -1,5 +1,15 @@
 module api_wizard {
+
+    export interface WizardPanelParams {
+
+        formIcon:api_wizard.FormIcon;
+
+        toolbar:api_ui_toolbar.Toolbar;
+    }
+
     export class WizardPanel extends api_ui.Panel {
+
+        private wizardPanelHeader:WizardPanelHeader;
 
         private steps:WizardStep[] = [];
 
@@ -7,19 +17,22 @@ module api_wizard {
 
         private wizardStepPanels:WizardStepPanels;
 
-        private titleEl:api_dom.Element;
-
-        private subTitleEl:api_dom.Element;
-
         ext;
 
-        constructor() {
-            super("wizard-panel");
+        constructor(params:WizardPanelParams) {
+            super("WizardPanel");
+
             this.getEl().addClass("wizard-panel");
-            this.addTitle();
-            this.addSubTitle();
+
+            this.appendChild(params.toolbar);
+            this.appendChild(params.formIcon);
+
+            this.wizardPanelHeader = new WizardPanelHeader();
+            this.appendChild(this.wizardPanelHeader);
+
             this.wizardStepPanels = new WizardStepPanels();
-            this.addStepContainer();
+            this.stepContainer = new WizardStepContainer(this.wizardStepPanels);
+            this.appendChild(this.stepContainer);
             this.appendChild(this.wizardStepPanels);
 
             this.initExt();
@@ -32,45 +45,41 @@ module api_wizard {
             });
         }
 
-        setTitle(title:string) {
-            this.titleEl.getEl().setValue(title);
+        setDisplayName(value:string) {
+            this.wizardPanelHeader.setDisplayName(value);
         }
 
-        setSubtitle(subtitle:string) {
-            this.subTitleEl.getEl().setValue(subtitle);
+        setName(value:string) {
+            this.wizardPanelHeader.setName(value);
         }
 
         addStep(step:WizardStep) {
             this.steps.push(step);
             this.stepContainer.addStep(step);
         }
+    }
 
-        addIcon(icon:FormIcon) {
-            this.getEl().insertBefore(icon, this.titleEl);
+    export class WizardPanelHeader extends api_dom.DivEl {
+
+        private displayNameEl:api_dom.Element;
+
+        private nameEl:api_dom.Element;
+
+        constructor() {
+            super(null, "header");
+            this.displayNameEl = new api_dom.Element("input").className("displayName");
+            this.appendChild(this.displayNameEl);
+            this.nameEl = new api_dom.Element("input").className("name");
+            this.appendChild(this.nameEl);
         }
 
-        addToolbar(toolbar:api_ui_toolbar.Toolbar) {
-            this.getEl().insertBefore(toolbar, this.titleEl);
+        setDisplayName(value:string) {
+            this.displayNameEl.getEl().setValue(value);
         }
 
-        private addTitle() {
-            this.titleEl = new api_dom.Element("input", "title");
-            this.titleEl.getEl().addClass("title");
-            this.appendChild(this.titleEl);
+        setName(value:string) {
+            this.nameEl.getEl().setValue(value);
         }
-
-        private addSubTitle() {
-            this.subTitleEl = new api_dom.Element("input", "title");
-            this.subTitleEl.getEl().addClass("subtitle");
-            this.appendChild(this.subTitleEl);
-        }
-
-        private addStepContainer() {
-            var stepContainerEl = new WizardStepContainer(this.wizardStepPanels);
-            this.stepContainer = stepContainerEl;
-            this.appendChild(stepContainerEl);
-        }
-
     }
 
     export class WizardStepPanels extends api_ui.DeckPanel {

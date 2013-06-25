@@ -574,6 +574,10 @@ var api_dom;
             }
         }
         Element.constructorCounter = 0;
+        Element.prototype.className = function (value) {
+            this.getHTMLElement().className = value;
+            return this;
+        };
         Element.prototype.show = function () {
             jQuery(this.el.getHTMLElement()).show();
         };

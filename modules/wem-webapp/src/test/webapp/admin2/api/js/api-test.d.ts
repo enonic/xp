@@ -145,6 +145,7 @@ module api_dom {
         private el;
         private id;
         constructor(elementName: string, idPrefix?: string, className?: string, elHelper?: ElementHelper);
+        public className(value: string): Element;
         public show(): void;
         public hide(): void;
         public isVisible(): bool;

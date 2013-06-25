@@ -4,45 +4,63 @@ module app_wizard {
 
         private static DEFAULT_SPACE_ICON_URL:string = "resources/images/icons/128x128/default_space.png";
 
-        constructor(id:string, title:string, iconUrl?:string) {
-            super();
+        private formIcon:api_wizard.FormIcon;
 
-            if( iconUrl == null ) {
-                iconUrl = SpaceWizardPanel2.DEFAULT_SPACE_ICON_URL;
-            }
+        private toolbar:SpaceWizardToolbar2;
+
+        private spacePanel:api_ui.Panel;
+
+        private schemaPanel:api_ui.Panel;
+
+        private modulesPanel:api_ui.Panel;
+
+        private templatesPanel:api_ui.Panel;
+
+        constructor(id:string) {
 
             var context = SpaceWizardContext.createSpaceWizardContext();
-            this.setTitle(title);
-            this.setSubtitle(id);
 
+            this.formIcon = new api_wizard.FormIcon(SpaceWizardPanel2.DEFAULT_SPACE_ICON_URL, "Click to upload icon", "rest/upload");
+            this.toolbar = new SpaceWizardToolbar2(context.getActions());
 
-            var spacePanel = new api_ui.Panel("spacePanel");
+            super({
+                formIcon: this.formIcon,
+                toolbar: this.toolbar
+            });
+
+            this.setDisplayName("New Space");
+            this.setName(id);
+
+            this.spacePanel = new api_ui.Panel("spacePanel");
             var h1El = new api_dom.H1El();
             h1El.getEl().setInnerHtml("space");
-            spacePanel.appendChild(h1El);
+            this.spacePanel.appendChild(h1El);
 
-            var schemaPanel = new api_ui.Panel("schemaPanel");
+            this.schemaPanel = new api_ui.Panel("schemaPanel");
             h1El = new api_dom.H1El();
             h1El.getEl().setInnerHtml("schema");
-            schemaPanel.appendChild(h1El);
+            this.schemaPanel.appendChild(h1El);
 
-            var modulesPanel = new api_ui.Panel("modulesPanel");
+            this.modulesPanel = new api_ui.Panel("modulesPanel");
             h1El = new api_dom.H1El();
             h1El.getEl().setInnerHtml("modules");
-            modulesPanel.appendChild(h1El);
+            this.modulesPanel.appendChild(h1El);
 
-            var templatesPanel = new api_ui.Panel("templatesPanel");
+            this.templatesPanel = new api_ui.Panel("templatesPanel");
             h1El = new api_dom.H1El();
             h1El.getEl().setInnerHtml("templates");
-            templatesPanel.appendChild(h1El);
+            this.templatesPanel.appendChild(h1El);
 
-            this.addStep(new api_wizard.WizardStep("Space", spacePanel));
-            this.addStep(new api_wizard.WizardStep("Schemas", schemaPanel));
-            this.addStep(new api_wizard.WizardStep("Modules", modulesPanel));
-            this.addStep(new api_wizard.WizardStep("Templates", templatesPanel));
+            this.addStep(new api_wizard.WizardStep("Space", this.spacePanel));
+            this.addStep(new api_wizard.WizardStep("Schemas", this.schemaPanel));
+            this.addStep(new api_wizard.WizardStep("Modules", this.modulesPanel));
+            this.addStep(new api_wizard.WizardStep("Templates", this.templatesPanel));
+        }
 
-            this.addToolbar(new SpaceWizardToolbar2(context.getActions()));
-            this.addIcon(new api_wizard.FormIcon(iconUrl, "Click to upload icon", "rest/upload"))
+        setData(result:api_remote.RemoteCallSpaceGetResult) {
+            this.setDisplayName(result.space.displayName);
+            this.setName(result.space.name);
+            this.formIcon.setSrc(result.space.iconUrl);
         }
     }
 }

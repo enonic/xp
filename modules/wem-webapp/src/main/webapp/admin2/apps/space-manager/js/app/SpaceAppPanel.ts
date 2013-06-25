@@ -56,8 +56,7 @@ module app {
             app_event.NewSpaceEvent.on((event) => {
 
                 var tabMenuItem = new SpaceAppBarTabMenuItem("New Space");
-                var spaceWizardPanel = new app_wizard.SpaceWizardPanel2('new-space', 'New Space');
-
+                var spaceWizardPanel = new app_wizard.SpaceWizardPanel2('new-space');
                 this.addTab(tabMenuItem, spaceWizardPanel);
                 this.showTab(tabMenuItem);
             });
@@ -82,14 +81,14 @@ module app {
 
                             var tabMenuItem = new SpaceAppBarTabMenuItem(result.space.displayName);
                             var id = this.generateTabId(result.space.name, true);
-                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel2(id, result.space.displayName, result.space.iconUrl);
+                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel2(id);
+                            spaceWizardPanel.setData(result);
 
                             this.addTab(tabMenuItem, spaceWizardPanel);
                             this.showTab(tabMenuItem);
                         } else {
                             console.error("Error", result ? result.error : "Unable to retrieve space.");
                         }
-
                     });
                 }
             });

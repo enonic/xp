@@ -23,6 +23,11 @@ module api_dom {
             }
         }
 
+        className(value:string):Element {
+            this.getHTMLElement().className = value;
+            return this;
+        }
+
         show() {
             // Using jQuery to show, since it seems to contain some smartness
             jQuery(this.el.getHTMLElement()).show();
