@@ -1,7 +1,16 @@
 module app_wizard {
+
     export class SpaceWizardPanel2 extends api_wizard.WizardPanel {
-        constructor(id:string, title:string, iconUrl:string) {
+
+        private static DEFAULT_SPACE_ICON_URL:string = "resources/images/icons/128x128/default_space.png";
+
+        constructor(id:string, title:string, iconUrl?:string) {
             super();
+
+            if( iconUrl == null ) {
+                iconUrl = SpaceWizardPanel2.DEFAULT_SPACE_ICON_URL;
+            }
+
             var context = SpaceWizardContext.createSpaceWizardContext();
             this.setTitle(title);
             this.setSubtitle(id);

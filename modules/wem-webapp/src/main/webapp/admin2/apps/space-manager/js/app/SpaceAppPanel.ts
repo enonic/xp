@@ -56,7 +56,7 @@ module app {
             app_event.NewSpaceEvent.on((event) => {
 
                 var tabMenuItem = new SpaceAppBarTabMenuItem("New Space");
-                var spaceWizardPanel = new app_wizard.SpaceWizardPanel2('new-space', 'New Space', "");
+                var spaceWizardPanel = new app_wizard.SpaceWizardPanel2('new-space', 'New Space');
 
                 this.addTab(tabMenuItem, spaceWizardPanel);
                 this.showTab(tabMenuItem);
