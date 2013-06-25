@@ -2,18 +2,6 @@
 ///<reference path='../../../api/js/Mousetrap.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
-///<reference path='event/DeletedEvent.ts' />
-///<reference path='event/BaseSpaceModelEvent.ts' />
-///<reference path='event/DeletePromptEvent.ts' />
-///<reference path='event/GridSelectionChangeEvent.ts' />
-///<reference path='event/GridDeselectEvent.ts' />
-///<reference path='event/ShowContextMenuEvent.ts' />
-///<reference path='event/NewSpaceEvent.ts' />
-///<reference path='event/OpenSpaceEvent.ts' />
-///<reference path='event/EditSpaceEvent.ts' />
-///<reference path='event/SaveSpaceEvent.ts' />
-///<reference path='event/CloseActiveSpacePanelEvent.ts' />
-
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
 ///<reference path='plugin/fileupload/FileUploadGrid.ts' />
@@ -36,6 +24,18 @@
 ///<reference path='controller/FilterPanelController.ts' />
 ///<reference path='controller/GridPanelController.ts' />
 ///<reference path='controller/WizardController.ts' />
+
+///<reference path='app/event/DeletedEvent.ts' />
+///<reference path='app/event/BaseSpaceModelEvent.ts' />
+///<reference path='app/event/DeletePromptEvent.ts' />
+///<reference path='app/event/GridSelectionChangeEvent.ts' />
+///<reference path='app/event/GridDeselectEvent.ts' />
+///<reference path='app/event/ShowContextMenuEvent.ts' />
+///<reference path='app/event/NewSpaceEvent.ts' />
+///<reference path='app/event/OpenSpaceEvent.ts' />
+///<reference path='app/event/EditSpaceEvent.ts' />
+///<reference path='app/event/SaveSpaceEvent.ts' />
+///<reference path='app/event/CloseActiveSpacePanelEvent.ts' />
 
 ///<reference path='app/wizard/SpaceWizardActions.ts' />
 ///<reference path='app/wizard/SpaceWizardContext.ts' />
