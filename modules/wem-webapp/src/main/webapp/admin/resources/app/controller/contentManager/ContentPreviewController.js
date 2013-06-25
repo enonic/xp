@@ -23,14 +23,6 @@ Ext.define('Admin.controller.contentManager.ContentPreviewController', {
                 change: this.toggleLiveDetail
             }
         });
-
-        this.application.on({
-            toggleDeviceContext: function (device) {
-                var previewPanel = this.getContentPreviewPanel().down('#livePreview');
-                previewPanel.resizeIframe(this.getDimensionsForDevice(device));
-            },
-            scope: this
-        });
     },
 
 

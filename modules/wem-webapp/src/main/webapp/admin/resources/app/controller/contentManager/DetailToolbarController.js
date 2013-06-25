@@ -47,16 +47,6 @@ Ext.define('Admin.controller.contentManager.DetailToolbarController', {
                 click: function (el, e) {
                     this.getCmsTabPanel().getActiveTab().close();
                 }
-            },
-            'contentOpenToolbar *[action=toggleLive]': {
-                change: function (slider, state) {
-                    slider.up().down('#deviceCycle').setDisabled(!state);
-                }
-            },
-            'contentOpenToolbar #deviceCycle': {
-                change: function (cycle, item) {
-                    this.application.fireEvent('toggleDeviceContext', item.device);
-                }
             }
         });
     }

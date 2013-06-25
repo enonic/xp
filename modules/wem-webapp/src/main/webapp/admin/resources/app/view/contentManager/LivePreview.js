@@ -33,33 +33,6 @@ Ext.define('Admin.view.contentManager.LivePreview', {
     },
 
 
-    resizeIframe: function (dimmensions) {
-        var iFrame = this.getIframe(),
-            widthHasPercentUnit = dimmensions.width.indexOf('%') > -1,
-            heightHasPercentUnit = dimmensions.height.indexOf('%') > -1,
-            width = widthHasPercentUnit ? this.getWidth() : dimmensions.width,
-            height = heightHasPercentUnit ? this.getHeight() : dimmensions.height;
-
-        var animation = iFrame.animate({
-            duration: 300,
-            to: {
-                width: width,
-                height: height
-            },
-            listeners: {
-                afteranimate: function () {
-                    if (widthHasPercentUnit) {
-                        iFrame.setStyle('width', dimmensions.width);
-                    }
-                    if (heightHasPercentUnit) {
-                        iFrame.setStyle('height', dimmensions.height);
-                    }
-                }
-            }
-        });
-    },
-
-
     renderActionButton: function () {
         var me = this;
 

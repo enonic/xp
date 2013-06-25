@@ -44,38 +44,7 @@ Ext.define('Admin.view.contentManager.open.OpenToolbar', {
                 text: 'Export'
             },
             '->',
-            {
-                xtype: 'cycle',
-                itemId: 'deviceCycle',
-                disabled: !me.isLiveMode,
-                showText: true,
-                prependText: 'Device: ',
-                menu: {
-                    items: [
-                        {
-                            text: 'Desktop',
-                            checked: true,
-                            device: 'DESKTOP'
-                        },
-                        {
-                            text: 'iPhone 5 Vertical',
-                            device: 'IPHONE_5_VERTICAL'
-                        },
-                        {
-                            text: 'iPhone 5 Horizontal',
-                            device: 'IPHONE_5_HORIZONTAL'
-                        },
-                        {
-                            text: 'iPad 3 Vertical',
-                            device: 'IPAD_3_VERTICAL'
-                        },
-                        {
-                            text: 'iPad 3 Horizontal',
-                            device: 'IPAD_3_HORIZONTAL'
-                        }
-                    ]
-                }
-            },
+                        
             {
                 xtype: 'toggleslide',
                 onText: 'Preview',
