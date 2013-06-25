@@ -88,8 +88,8 @@
 
 ///<reference path='ui/dialog/DialogButton.ts' />
 ///<reference path='ui/dialog/ModalDialog.ts' />
-///<reference path='delete/DeleteItem.ts' />
-///<reference path='delete/DeleteDialog.ts' />
+///<reference path='app/delete/DeleteItem.ts' />
+///<reference path='app/delete/DeleteDialog.ts' />
 
 
 

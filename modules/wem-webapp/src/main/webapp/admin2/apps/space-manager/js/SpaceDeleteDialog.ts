@@ -1,6 +1,6 @@
 module app {
 
-    export class SpaceDeleteDialog extends api_delete.DeleteDialog {
+    export class SpaceDeleteDialog extends api_app_delete.DeleteDialog {
 
         private deleteAction:api_ui.Action = new app.SpaceDeleteDialogAction();
 
@@ -30,11 +30,11 @@ module app {
         setSpacesToDelete(spaces:api_model.SpaceModel[]) {
             this.spacesToDelete = spaces;
 
-            var deleteItems:api_delete.DeleteItem[] = [];
+            var deleteItems:api_app_delete.DeleteItem[] = [];
             for (var i in spaces) {
                 var spaceModel = spaces[i];
 
-                var deleteItem:api_delete.DeleteItem = new api_delete.DeleteItem(spaceModel.data.iconUrl, spaceModel.data.displayName);
+                var deleteItem = new api_app_delete.DeleteItem(spaceModel.data.iconUrl, spaceModel.data.displayName);
                 deleteItems.push(deleteItem);
             }
             this.setDeleteItems(deleteItems);

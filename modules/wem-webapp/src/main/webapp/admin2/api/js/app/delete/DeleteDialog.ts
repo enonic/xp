@@ -1,4 +1,4 @@
-module api_delete{
+module api_app_delete{
 
     export class DeleteDialog extends api_ui_dialog.ModalDialog {
 
@@ -74,7 +74,7 @@ module api_delete{
     }
 
     class DeleteDialogItemComponent extends api_dom.DivEl {
-        constructor(deleteItem:api_delete.DeleteItem) {
+        constructor(deleteItem:DeleteItem) {
             super("DeleteDialogItem");
             this.getEl().addClass("item");
 

@@ -1,6 +1,6 @@
 module app {
 
-    export class ContentDeleteDialog extends api_delete.DeleteDialog {
+    export class ContentDeleteDialog extends api_app_delete.DeleteDialog {
 
         private deleteAction:api_ui.Action = new ContentDeleteDialogAction();
 
@@ -29,11 +29,11 @@ module app {
         setContentToDelete(contentModels:api_model.ContentModel[]) {
             this.contentToDelete = contentModels;
 
-            var deleteItems:api_delete.DeleteItem[] = [];
+            var deleteItems:api_app_delete.DeleteItem[] = [];
             for (var i in contentModels) {
                 var contentModel = contentModels[i];
 
-                var deleteItem:api_delete.DeleteItem = new api_delete.DeleteItem(contentModel.data.iconUrl, contentModel.data.displayName);
+                var deleteItem = new api_app_delete.DeleteItem(contentModel.data.iconUrl, contentModel.data.displayName);
                 deleteItems.push(deleteItem);
             }
             this.setDeleteItems(deleteItems);
