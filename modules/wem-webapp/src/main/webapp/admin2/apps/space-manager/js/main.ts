@@ -20,12 +20,6 @@
 ///<reference path='view/FilterPanel.ts' />
 
 ///<reference path='app/event/SaveSpaceEvent.ts' />
-///<reference path='controller/Controller.ts' />
-///<reference path='controller/SpaceController.ts' />
-///<reference path='controller/FilterPanelController.ts' />
-///<reference path='controller/GridPanelController.ts' />
-///<reference path='controller/WizardController.ts' />
-
 ///<reference path='app/event/DeletedEvent.ts' />
 ///<reference path='app/event/BaseSpaceModelEvent.ts' />
 ///<reference path='app/event/DeletePromptEvent.ts' />
@@ -59,6 +53,12 @@
 ///<reference path='app/SpaceAppBar.ts' />
 ///<reference path='app/SpaceContext.ts' />
 ///<reference path='app/SpaceAppPanel.ts' />
+
+///<reference path='controller/Controller.ts' />
+///<reference path='controller/SpaceController.ts' />
+///<reference path='controller/FilterPanelController.ts' />
+///<reference path='controller/GridPanelController.ts' />
+///<reference path='controller/WizardController.ts' />
 
 
 declare var Ext;
