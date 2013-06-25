@@ -1,4 +1,4 @@
-module api_browse{
+module api_app_browse{
 
     export class AppBrowsePanel extends api_ui.Panel {
 

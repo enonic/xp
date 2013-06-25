@@ -82,13 +82,16 @@
 ///<reference path='app/AppBarTabMenuItem.ts' />
 ///<reference path='app/AppPanel.ts' />
 
+///<reference path='app/browse/AppBrowsePanel.ts' />
+///<reference path='app/browse/DetailPanel.ts' />
+
+
 ///<reference path='ui/dialog/DialogButton.ts' />
 ///<reference path='ui/dialog/ModalDialog.ts' />
 ///<reference path='delete/DeleteItem.ts' />
 ///<reference path='delete/DeleteDialog.ts' />
 
-///<reference path='browse/AppBrowsePanel.ts' />
-///<reference path='browse/DetailPanel.ts' />
+
 
 ///<reference path='wizard/FormIcon.ts' />
 ///<reference path='wizard/WizardPanel.ts' />

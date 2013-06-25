@@ -1,4 +1,4 @@
-module api_browse {
+module api_app_browse {
     export class DetailPanel extends api_dom.DivEl {
 
         ext;

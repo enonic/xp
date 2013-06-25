@@ -1,6 +1,6 @@
 module app_browse {
 
-    export class SpaceAppBrowsePanel extends api_browse.AppBrowsePanel {
+    export class SpaceAppBrowsePanel extends api_app_browse.AppBrowsePanel {
 
         constructor() {
 
