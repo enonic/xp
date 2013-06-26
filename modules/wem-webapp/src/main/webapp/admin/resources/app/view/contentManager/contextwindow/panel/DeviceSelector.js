@@ -6,7 +6,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.DeviceSelector', {
         align: 'stretch'
     },
 
-    DEVICES_URL: '../../admin2/apps/content-manager/js/data/context-window/devices.json',
+    DEVICES_URL: '../admin2/apps/content-manager/js/data/context-window/devices.json',
 
     topTextCmp: undefined,
     listView: undefined,

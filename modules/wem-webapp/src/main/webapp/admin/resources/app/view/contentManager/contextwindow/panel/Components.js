@@ -9,7 +9,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
         align: 'stretch'
     },
 
-    URL_TO_COMPONENTS: '../../admin2/apps/content-manager/js/data/context-window/mock-components.json',
+    URL_TO_COMPONENTS: '../admin2/apps/content-manager/js/data/context-window/mock-components.json',
 
     searchBarCt: undefined,
     searchInputCmp: undefined,
@@ -200,7 +200,6 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
         $(me.getContextWindow().iFrameMask).droppable({
             tolerance: 'pointer',
             addClasses: false,
-            activeClass: 'live-edit-droppable-active',
             over: function (event, ui) {
                 me.onDragOverIFrame(event, ui);
             }
@@ -209,6 +208,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
 
     onStartDragComponent: function (event, ui) {
         this.getContextWindow().showHideIFrameMask(true);
+        this.getContextWindow().iFrameMask.className += ' live-edit-droppable-active';
         /*
         var me = this,
             panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
@@ -236,8 +236,6 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
     */
 
     onDragOverIFrame: function (event, ui) {
-        console.log('hover');
-
         var me = this,
             contextWindow = me.getContextWindow(),
             jQuery = contextWindow.getLiveEditJQuery();
@@ -286,6 +284,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
         liveEditJQuery(liveEditWindow).on('sortStop.liveEdit.component dragStop.liveEdit.component', function (event) {
             $('[data-context-window-draggable="true"]').simulate('mouseup');
             contextWindow.doShow();
+            contextWindow.iFrameMask.className = contextWindow.iFrameMask.className.replace(/live-edit-droppable-active/g, '');
         });
     },
 
