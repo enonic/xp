@@ -10,6 +10,7 @@ import com.enonic.wem.admin.rest.resource.account.AccountImageResource;
 import com.enonic.wem.admin.rest.resource.auth.AuthResource;
 import com.enonic.wem.admin.rest.resource.content.ContentImageResource;
 import com.enonic.wem.admin.rest.resource.jcr.GetNodesResource;
+import com.enonic.wem.admin.rest.resource.relationship.RelationshipResource;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageResource;
 import com.enonic.wem.admin.rest.resource.space.SpaceImageResource;
 import com.enonic.wem.admin.rest.resource.space.SpaceResource;
@@ -45,6 +46,8 @@ public final class RestServlet
 
         addClass( SpaceResource.class );
         addClass( SpaceImageResource.class );
+
+        addClass( RelationshipResource.class );
 
         addClass( CountryResource.class );
         addClass( TimeZoneResource.class );
