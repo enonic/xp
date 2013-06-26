@@ -47,7 +47,7 @@ module api_remote {
     }
 
     export interface RemoteCallSpaceGetResult extends RemoteCallResultBase {
-        space: SpaceLight;
+        space: SpaceSummary;
     }
 
     export interface RemoteCallSpaceCreateOrUpdateParams {
@@ -124,7 +124,9 @@ module api_remote {
             lower: string;
             upper: string;
         }[];
-        facets: Object;
+        facets: {
+            [key:string]:any;
+        };
     }
 
     export interface RemoteCallContentFindResult extends RemoteCallResultBase {
@@ -147,11 +149,35 @@ module api_remote {
         }[];
     }
 
-    export interface RemoteCallGetContentTypeListParams {
+    export interface RemoteCallContentTypeListParams {
     }
 
-    export interface RemoteCallGetContentTypeListResult extends RemoteCallResultBase{
+    export interface RemoteCallContentTypeListResult extends RemoteCallResultBase{
         contentTypes:ContentTypeListNode[];
+    }
+
+    export interface RemoteCallCreateOrUpdateContentParams {
+        contentId?: string;
+        temporary?: bool;
+        contentName?: string;
+        parentContentPath?: string;
+        qualifiedContentTypeName: string;
+        contentData: {
+            [key:string]: string;
+        };
+        displayName: string;
+        attachments?: {
+            uploadId: string;
+            attachmentName: string;
+        }[];
+    }
+
+    export interface RemoteCallCreateOrUpdateContentResult extends RemoteCallResultBase{
+        created: bool;
+        updated: bool;
+        contentId?: string;
+        contentPath?: string;
+        failure?: string;
     }
 
     export interface RemoteServiceInterface {
@@ -171,7 +197,8 @@ module api_remote {
         userstore_getConnectors (params, callback):void;
         userstore_createOrUpdate (params, callback):void;
         userstore_delete (params, callback):void;
-        content_createOrUpdate (params, callback):void;
+        content_createOrUpdate (params:RemoteCallCreateOrUpdateContentParams,
+                                callback:(result:RemoteCallCreateOrUpdateContentResult)=>void):void;
         content_list (params:RemoteCallContentListParams, callback:(result:RemoteCallContentListResult)=>void):void;
         content_tree (params, callback):void;
         content_get (params:RemoteCallContentGetParams, callback:(result:RemoteCallContentGetResult)=>void):void;
@@ -179,7 +206,7 @@ module api_remote {
         content_find (params:RemoteCallContentFindParams, callback:(result:RemoteCallContentFindResult)=>void):void;
         content_validate (params, callback):void;
         contentType_get (params:RemoteCallContentTypeGetParams, callback:(result:RemoteCallContentTypeGetResult)=>void):void;
-        contentType_list (params:RemoteCallContentListParams, callback:(result:RemoteCallContentListResult)=>void):void;
+        contentType_list (params:RemoteCallContentTypeListParams, callback:(result:RemoteCallContentTypeListResult)=>void):void;
         contentType_createOrUpdate (params:RemoteCallContentTypeCreateOrUpdateParams,
                                     callback:(result:RemoteCallContentTypeCreateOrUpdateResult)=>void):void;
         contentType_delete (params:RemoteCallContentTypeDeleteParams, callback:(result:RemoteCallContentTypeDeleteResult)=>void):void;
@@ -291,7 +318,8 @@ module api_remote {
             console.log(params, callback);
         }
 
-        content_createOrUpdate(params, callback):void {
+        content_createOrUpdate(params:RemoteCallCreateOrUpdateContentParams,
+                               callback:(result:RemoteCallCreateOrUpdateContentResult)=>void):void {
             console.log(params, callback);
         }
 
@@ -323,7 +351,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        contentType_list(params:RemoteCallContentListParams, callback:(result:RemoteCallContentListResult)=>void):void {
+        contentType_list(params:RemoteCallContentTypeListParams, callback:(result:RemoteCallContentTypeListResult)=>void):void {
             console.log(params, callback);
         }
 

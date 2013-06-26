@@ -11,7 +11,7 @@ module api_remote {
         rootContentId:string;
     }
 
-    export interface SpaceLight {
+    export interface SpaceSummary {
         createdTime:Date;
         displayName:string;
         iconUrl:string;
