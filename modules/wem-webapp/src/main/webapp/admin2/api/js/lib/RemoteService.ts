@@ -130,7 +130,7 @@ module api_remote {
         contentTypes:ContentTypeTreeNode[];
     }
 
-    export interface RemoteCallContentFindParams extends RemoteCallResultBase {
+    export interface RemoteCallContentFindParams {
         fulltext?: string;
         includeFacets?: bool;
         contentTypes: string[];
@@ -146,6 +146,20 @@ module api_remote {
         total: number;
         contents: ContentFind[];
         facets?: ContentFacet[];
+    }
+
+    export interface RemoteCallContentDeleteParams {
+        contentPaths: string[];
+    }
+
+    export interface RemoteCallContentDeleteResult extends RemoteCallResultBase {
+        successes: {
+            path:string;
+        }[];
+        failures: {
+            path:string;
+            reason:string;
+        }[];
     }
 
     export interface RemoteServiceInterface {
@@ -169,7 +183,7 @@ module api_remote {
         content_list (params:RemoteCallContentListParams, callback:(result:RemoteCallContentListResult)=>void):void;
         content_tree (params, callback):void;
         content_get (params:RemoteCallContentGetParams, callback:(result:RemoteCallContentGetResult)=>void):void;
-        content_delete (params, callback):void;
+        content_delete (params:RemoteCallContentDeleteParams, callback:(result:RemoteCallContentDeleteResult)=>void):void;
         content_find (params:RemoteCallContentFindParams, callback:(result:RemoteCallContentFindResult)=>void):void;
         content_validate (params, callback):void;
         contentType_get (params:RemoteCallContentTypeGetParams, callback:(result:RemoteCallContentTypeGetResult)=>void):void;
@@ -301,7 +315,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        content_delete(params, callback):void {
+        content_delete (params:RemoteCallContentDeleteParams, callback:(result:RemoteCallContentDeleteResult)=>void):void {
             console.log(params, callback);
         }
 

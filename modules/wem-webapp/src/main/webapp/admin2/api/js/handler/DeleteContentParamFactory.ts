@@ -3,13 +3,13 @@ module api_handler {
     export class DeleteContentParamFactory {
 
         static create(content:api_model.ContentModel[]):api_handler.DeleteContentParam {
-            var contentIds:string[] = [];
+            var contentPaths:string[] = [];
             for (var i = 0; i < content.length; i++) {
-                contentIds[i] = content[i].data.id;
+                contentPaths[i] = content[i].data.path;
             }
 
             return  {
-                contentIds: contentIds
+                contentPaths: contentPaths
             };
         }
     }
