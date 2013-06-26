@@ -32,7 +32,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
     createSearchBarCt: function () {
         this.searchInputCmp = this.createSearchInputCmp();
         return new Ext.container.Container({
-            height: 70,
+            height: 75,
             cls: 'admin-components-search-bar',
             items: [
                 new Ext.Component({

@@ -7,7 +7,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
 
     requires: [
         'Admin.view.contentManager.contextwindow.panel.Components',
-        'Admin.view.contentManager.contextwindow.panel.DeviceSelector',
+        'Admin.view.contentManager.contextwindow.panel.Emulator',
         'Admin.view.contentManager.contextwindow.panel.Images'
     ],
 
@@ -53,9 +53,9 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             }
         },
         {
-            name: 'Device Selector',
+            name: 'Emulator',
             item: function () {
-                return new Admin.view.contentManager.contextwindow.panel.DeviceSelector({hidden:true});
+                return new Admin.view.contentManager.contextwindow.panel.Emulator({hidden:true});
             }
         },
         {
@@ -124,6 +124,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         return new Ext.menu.Menu({
             border: false,
             plain: true,
+            shadow: false,
             cls: 'context-window-menu',
             items: this.createMenuItems(),
             listeners: {

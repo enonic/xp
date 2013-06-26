@@ -31,7 +31,11 @@
     border: none;
 }
 
-/** Menu button */
+.admin-context-window-menu-button:hover {
+    color: #fff;
+}
+
+/** Menu */
 .context-window-menu .x-panel-body {
     background-color: #2d2c31 !important;
     color: #fff;
@@ -42,7 +46,7 @@
 }
 
 .context-window-menu-item {
-    padding: 10px;
+    padding: 10px 15px;
 }
 
 .context-window-menu-item:hover {
@@ -65,6 +69,10 @@
     padding-top: 8px;
     cursor: pointer;
     font-size: 15px;
+}
+
+.admin-context-window-expand-collapse-button:hover {
+    color: #fff;
 }
 
 .admin-context-window-body {

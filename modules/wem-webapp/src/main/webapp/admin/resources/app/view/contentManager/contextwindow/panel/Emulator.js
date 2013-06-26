@@ -1,6 +1,6 @@
-Ext.define('Admin.view.contentManager.contextwindow.panel.DeviceSelector', {
+Ext.define('Admin.view.contentManager.contextwindow.panel.Emulator', {
     extend: 'Ext.container.Container',
-    alias: 'widget.contextWindowDeviceSelector',
+    alias: 'widget.contextWindowEmulator',
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -29,7 +29,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.DeviceSelector', {
     createTopTextCmp: function () {
         return new Ext.Component({
             height: 40,
-            cls: 'admin-device-top-bar',
+            cls: 'admin-emulator-top-bar',
             html: '<p>Emulate different client\'s physical sizes</p>'
         });
     },
@@ -75,6 +75,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.DeviceSelector', {
                 load: function (store, records) {
                     var monitorFullModel = new Admin.ContextWindow.DeviceModel(monitorFullModelData);
                     store.insert(0, monitorFullModel);
+                    me.listView.getSelectionModel().select(0);
                 }
             },
             autoLoad: true
