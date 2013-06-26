@@ -107,11 +107,12 @@ module api_dom {
         public setId(value: string): ElementHelper;
         public setInnerHtml(value: string): ElementHelper;
         public setValue(value: string): ElementHelper;
-        public addClass(clsName: string): void;
+        public addClass(clsName: string): ElementHelper;
+        public setClass(value: string): ElementHelper;
         public hasClass(clsName: string): bool;
-        public removeClass(clsName: string): void;
-        public addEventListener(eventName: string, f: (event: Event) => any): void;
-        public removeEventListener(eventName: string, f: (event: Event) => any): void;
+        public removeClass(clsName: string): ElementHelper;
+        public addEventListener(eventName: string, f: (event: Event) => any): ElementHelper;
+        public removeEventListener(eventName: string, f: (event: Event) => any): ElementHelper;
         public appendChild(child: HTMLElement): ElementHelper;
         public setData(name: string, value: string): ElementHelper;
         public getData(name: string): string;
@@ -145,7 +146,6 @@ module api_dom {
         private el;
         private id;
         constructor(elementName: string, idPrefix?: string, className?: string, elHelper?: ElementHelper);
-        public className(value: string): Element;
         public show(): void;
         public hide(): void;
         public isVisible(): bool;
@@ -159,6 +159,7 @@ module api_dom {
         public insertAfterEl(existingEl: Element): void;
         public insertBeforeEl(existingEl: Element): void;
         public removeChildren(): void;
+        public remove(): void;
     }
 }
 module api_dom {

@@ -97,9 +97,11 @@ module api_app_wizard {
 
         constructor() {
             super(null, "header");
-            this.displayNameEl = new api_dom.Element("input").className("displayName");
+            this.displayNameEl = new api_dom.Element("input", null, "displayName");
+            new api_ui.Tooltip(this.displayNameEl, "Display name", 100, api_ui.Tooltip.TRIGGER_FOCUS, api_ui.Tooltip.SIDE_RIGHT, [7,0]);
             this.appendChild(this.displayNameEl);
-            this.nameEl = new api_dom.Element("input").className("name");
+            this.nameEl = new api_dom.Element("input", null, "name");
+            new api_ui.Tooltip(this.nameEl, "Name", 100, api_ui.Tooltip.TRIGGER_FOCUS, api_ui.Tooltip.SIDE_RIGHT, [7,0]);
             this.appendChild(this.nameEl);
         }
 

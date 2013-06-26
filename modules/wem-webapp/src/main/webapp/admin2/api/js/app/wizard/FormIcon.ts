@@ -22,11 +22,13 @@ module api_app_wizard {
             var el = this.getEl();
             var me = this;
 
-            this.tooltip = new api_ui.Tooltip(this, iconTitle, 10, "bottom", [0, 5]);
+            this.tooltip = new api_ui.Tooltip(this, iconTitle, 0).setOffset([0, 7]);
 
             var img = this.img = new api_dom.ImgEl(this.iconUrl, "FormIcon");
             img.getEl().addEventListener("load", function () => {
-                this.tooltip.showFor(10000);
+                if (img.isVisible()) {
+                    this.tooltip.showFor(10000);
+                }
             });
             el.appendChild(img.getHTMLElement());
 
@@ -53,7 +55,6 @@ module api_app_wizard {
         }
 
         private initExt() {
-            var me = this;
             return new Ext.Component({
                 contentEl: this.getHTMLElement()
             });

@@ -25,7 +25,7 @@ module api_dom {
         }
 
         insertAfterEl(existingEl:Element) {
-            existingEl.getHTMLElement().parentNode.insertBefore( this.el, existingEl.getHTMLElement().nextSibling );
+            existingEl.getHTMLElement().parentNode.insertBefore(this.el, existingEl.getHTMLElement().nextSibling);
         }
 
         setDisabled(value:bool):ElementHelper {
@@ -61,6 +61,12 @@ module api_dom {
                     this.el.className += ' ' + clsName;
                 }
             }
+            return this;
+        }
+
+        setClass(value:string) {
+            this.el.className = value;
+            return this;
         }
 
         hasClass(clsName:string):bool {
@@ -72,14 +78,17 @@ module api_dom {
                 var reg = new RegExp('(\\s|^)' + clsName + '(\\s|$)');
                 this.el.className = this.el.className.replace(reg, '');
             }
+            return this;
         }
 
         addEventListener(eventName:string, f:(event:Event) => any) {
             this.el.addEventListener(eventName, f);
+            return this;
         }
 
         removeEventListener(eventName:string, f:(event:Event) => any) {
             this.el.removeEventListener(eventName, f);
+            return this;
         }
 
         appendChild(child:HTMLElement):ElementHelper {

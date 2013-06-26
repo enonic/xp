@@ -19,13 +19,8 @@ module api_dom {
                 this.el.setId(this.id);
             }
             if (className != null) {
-                this.getHTMLElement().className = className;
+                this.el.setClass(className);
             }
-        }
-
-        className(value:string):Element {
-            this.getHTMLElement().className = value;
-            return this;
         }
 
         show() {
@@ -88,6 +83,11 @@ module api_dom {
             while (htmlEl.firstChild) {
                 htmlEl.removeChild(htmlEl.firstChild);
             }
+        }
+
+        remove() {
+            var htmlEl = this.el.getHTMLElement();
+            htmlEl.parentNode.removeChild(htmlEl);
         }
     }
 }

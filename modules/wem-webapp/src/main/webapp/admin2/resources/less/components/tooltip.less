@@ -6,47 +6,46 @@
   padding: 10px;
   z-index: 99;
 
-  .tooltip-anchor {
-    width: 10px;
-    height: 10px;
+  &:before {
+    content: " ";
     position: absolute;
     overflow: hidden;
-    border: 5px @admin-medium-gray-border solid;
   }
 
-  &.bottom .tooltip-anchor {
-    top: -10px;
+  &.bottom:before {
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid @admin-medium-gray-border;
+    top: -7px;
     left: 50%;
-    margin-left: -5px;
-    border-left-color: transparent;
-    border-top-color: transparent;
-    border-right-color: transparent;
+    margin-left: -7px;
   }
 
-  &.left .tooltip-anchor {
-    right: -10px;
+  &.left:before {
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    border-left: 7px solid @admin-medium-gray-border;
+    right: -7px;
     top: 50%;
-    margin-top: -5px;
-    border-top-color: transparent;
-    border-right-color: transparent;
-    border-bottom-color: transparent;
+    margin-top: -7px;
   }
-  &.top .tooltip-anchor {
-    bottom: -10px;
+
+  &.top:before {
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 7px solid @admin-medium-gray-border;
+    bottom: -7px;
     left: 50%;
-    margin-left: -5px;
-    border-left-color: transparent;
-    border-bottom-color: transparent;
-    border-right-color: transparent;
+    margin-left: -7px;
   }
 
-  &.right .tooltip-anchor {
-    left: -10px;
+  &.right:before {
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    border-right: 7px solid @admin-medium-gray-border;
+    left: -7px;
     top: 50%;
-    margin-top: -5px;
-    border-top-color: transparent;
-    border-left-color: transparent;
-    border-bottom-color: transparent;
+    margin-top: -7px;
   }
 
 }

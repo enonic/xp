@@ -442,6 +442,11 @@ var api_dom;
                     this.el.className += ' ' + clsName;
                 }
             }
+            return this;
+        };
+        ElementHelper.prototype.setClass = function (value) {
+            this.el.className = value;
+            return this;
         };
         ElementHelper.prototype.hasClass = function (clsName) {
             return this.el.className.match(new RegExp('(\\s|^)' + clsName + '(\\s|$)')) !== null;
@@ -451,12 +456,15 @@ var api_dom;
                 var reg = new RegExp('(\\s|^)' + clsName + '(\\s|$)');
                 this.el.className = this.el.className.replace(reg, '');
             }
+            return this;
         };
         ElementHelper.prototype.addEventListener = function (eventName, f) {
             this.el.addEventListener(eventName, f);
+            return this;
         };
         ElementHelper.prototype.removeEventListener = function (eventName, f) {
             this.el.removeEventListener(eventName, f);
+            return this;
         };
         ElementHelper.prototype.appendChild = function (child) {
             this.el.appendChild(child);
@@ -570,14 +578,10 @@ var api_dom;
                 this.el.setId(this.id);
             }
             if(className != null) {
-                this.getHTMLElement().className = className;
+                this.el.setClass(className);
             }
         }
         Element.constructorCounter = 0;
-        Element.prototype.className = function (value) {
-            this.getHTMLElement().className = value;
-            return this;
-        };
         Element.prototype.show = function () {
             jQuery(this.el.getHTMLElement()).show();
         };
@@ -624,6 +628,10 @@ var api_dom;
             while(htmlEl.firstChild) {
                 htmlEl.removeChild(htmlEl.firstChild);
             }
+        };
+        Element.prototype.remove = function () {
+            var htmlEl = this.el.getHTMLElement();
+            htmlEl.parentNode.removeChild(htmlEl);
         };
         return Element;
     })();

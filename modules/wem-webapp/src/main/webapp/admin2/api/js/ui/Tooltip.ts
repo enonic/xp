@@ -1,62 +1,63 @@
 module api_ui {
 
-    export class Tooltip extends api_dom.DivEl {
+    export class Tooltip {
+
+        static SIDE_TOP = "top";
+        static SIDE_RIGHT = "right";
+        static SIDE_BOTTOM = "bottom";
+        static SIDE_LEFT = "left";
+
+        static TRIGGER_MOUSE = "mouse";
+        static TRIGGER_FOCUS = "focus";
+
+        private static tip:api_dom.DivEl;
+        private static timeoutTimer:number;
 
         private target:api_dom.Element;
+        private text:string;
         private timeout:number;
+        private trigger:string;
         private side:string;
         private offset:number[];
-
-        private hideTimeout:number;
 
         /**
          * Widget to show floating tooltips
          * @param target Element to show tooltip at
          * @param text Text of the tooltip
          * @param timeout Time to keep tooltip visible after leaving target
+         * @param trigger Event type to hook on (mouse,focus)
          * @param side Side of the target where tooltip should be shown (top,left,right,bottom)
          * @param offset Fine tuning of the tooltip positioning (defaults to the center of the side)
          */
-            constructor(target:api_dom.Element, text:string, timeout?:number, side?:string, offset?:number[]) {
-            super("Tooltip", "tooltip");
+            constructor(target:api_dom.Element, text:string, timeout?:number = 1000, trigger?:string = Tooltip.TRIGGER_MOUSE,
+                        side?:string = Tooltip.SIDE_BOTTOM, offset?:number[] = [0, 0]) {
 
             this.target = target;
-            this.timeout = timeout !== undefined ? timeout : 1000;
-            this.side = side || "bottom";
-            this.offset = offset || [0, 0];
-
-            var me = this;
-            var el = this.getEl();
-            el.addClass(this.side);
-            el.setInnerHtml(text);
-
-            var anchorEl = new api_dom.DivEl("Tooltip", "tooltip-anchor");
-            el.appendChild(anchorEl.getHTMLElement());
-
-            el.addEventListener("mouseover", function (event:Event) {
-                me.stopTimeout();
-            });
-            el.addEventListener("mouseout", function (event:Event) {
-                me.startTimeout();
-            });
+            this.text = text;
+            this.timeout = timeout;
+            this.trigger = trigger;
+            this.side = side;
+            this.offset = offset;
 
             var targetEl = target.getEl();
-            targetEl.addEventListener("mouseover", function (event:Event) {
-                me.stopTimeout();
-                if (!me.isVisible()) {
-                    me.show();
-                }
+            targetEl.addEventListener(this.getEventName(true), (event:Event) => {
+                this.stopTimeout();
+                this.show();
             });
-            targetEl.addEventListener("mouseout", function (event:Event) {
-                me.startTimeout();
+            targetEl.addEventListener(this.getEventName(false), (event:Event) => {
+                this.startTimeout();
             });
-
-            document.body.appendChild(this.getHTMLElement());
         }
 
         show() {
-            super.show();
+            this.getInstance().show();
             this.positionByTarget();
+        }
+
+        hide() {
+            if (Tooltip.tip) {
+                Tooltip.tip.hide();
+            }
         }
 
         showFor(ms:number) {
@@ -66,41 +67,60 @@ module api_ui {
 
         setTimeout(timeout:number) {
             this.timeout = timeout;
+            return this;
         }
 
         getTimeout() {
             return this.timeout;
         }
 
+        setTrigger(trigger:string) {
+            this.trigger = trigger;
+        }
+
+        getTrigger() {
+            return this.trigger;
+        }
+
         setSide(side:string) {
             this.side = side;
+            return this;
         }
 
         getSide() {
             return this.side;
         }
 
+        setOffset(offset:number[]) {
+            this.offset = offset;
+            return this;
+        }
+
+        getOffset() {
+            return this.offset;
+        }
+
         private positionByTarget() {
 
             var targetEl = this.target.getHTMLElement();
             var targetOffset = this.target.getEl().getOffset();
-            var el = this.getHTMLElement();
+            var el = Tooltip.tip.getHTMLElement();
 
             var offsetLeft, offsetTop;
             switch (this.side) {
-            case "top":
+            case Tooltip.SIDE_TOP:
                 offsetLeft = targetOffset.left + (targetEl.offsetWidth - el.offsetWidth) / 2 + this.offset[0];
                 offsetTop = targetOffset.top - el.offsetHeight + this.offset[1];
                 break;
-            case "bottom":
+            case Tooltip.SIDE_BOTTOM:
                 offsetLeft = targetOffset.left + (targetEl.offsetWidth - el.offsetWidth) / 2 + this.offset[0];
                 offsetTop = targetOffset.top + targetEl.offsetHeight + this.offset[1];
                 break;
-            case "left":
+            case Tooltip.SIDE_LEFT:
                 offsetLeft = targetOffset.left - el.offsetWidth + this.offset[0];
                 offsetTop = targetOffset.top + (targetEl.offsetHeight - el.offsetHeight) / 2 + this.offset[1];
                 break;
-            case "right":
+            case Tooltip.SIDE_RIGHT:
                 offsetLeft = targetOffset.left + targetEl.offsetWidth + this.offset[0];
                 offsetTop = targetOffset.top + (targetEl.offsetHeight - el.offsetHeight) / 2 + this.offset[1];
                 break;
@@ -118,7 +138,7 @@ module api_ui {
                 offsetTop = document.body.clientHeight - el.offsetHeight;
             }
 
-            jQuery(this.getHTMLElement()).offset({
+            jQuery(el).offset({
                 left: offsetLeft,
                 top: offsetTop
             });
@@ -127,24 +147,48 @@ module api_ui {
         private startTimeout(ms?:number) {
 
             this.stopTimeout();
-
-            if (this.timeout > 0) {
-                this.hideTimeout = setTimeout(() => {
+            var t = ms || this.timeout;
+            if (t > 0) {
+                Tooltip.timeoutTimer = setTimeout(() => {
                     this.hide();
-                }, ms || this.timeout);
+                }, t);
             } else {
                 this.hide();
             }
         }
 
         private stopTimeout() {
-            if (this.hideTimeout) {
-                clearTimeout(this.hideTimeout);
-                this.hideTimeout = undefined;
+            if (Tooltip.timeoutTimer) {
+                clearTimeout(Tooltip.timeoutTimer);
+                Tooltip.timeoutTimer = undefined;
+            }
+        }
+
+        private getInstance() {
+
+            if (!Tooltip.tip) {
+
+                Tooltip.tip = new api_dom.DivEl("Tooltip", "tooltip " + this.side);
+
+                document.body.appendChild(Tooltip.tip.getHTMLElement());
+            }
+
+            Tooltip.tip.getEl().setInnerHtml(this.text).setClass("tooltip " + this.side);
+
+            return Tooltip.tip;
+        }
+
+        private getEventName(enter:bool) {
+            switch (this.trigger) {
+            case Tooltip.TRIGGER_FOCUS:
+                return enter ? "focus" : "blur";
+            case Tooltip.TRIGGER_MOUSE:
+            default:
+                return enter ? "mouseover" : "mouseout";
+                break;
             }
         }
 
     }
-
 
 }
