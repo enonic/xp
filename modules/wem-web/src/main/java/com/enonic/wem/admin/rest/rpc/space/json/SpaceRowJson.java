@@ -1,13 +1,10 @@
 package com.enonic.wem.admin.rest.rpc.space.json;
 
 
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-
 import com.enonic.wem.admin.rest.resource.space.SpaceImageUriResolver;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
-@JsonPropertyOrder(alphabetic = true)
 public class SpaceRowJson
 {
     private final Space space;
