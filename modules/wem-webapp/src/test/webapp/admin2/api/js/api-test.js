@@ -736,10 +736,11 @@ var api_ui;
             });
             return foundAtIndex;
         };
-        DeckPanel.prototype.removePanel = function (panelToRemove) {
+        DeckPanel.prototype.removePanel = function (panelToRemove, checkCanRemovePanel) {
+            if (typeof checkCanRemovePanel === "undefined") { checkCanRemovePanel = true; }
             var panelIndex = this.getPanelIndex(panelToRemove);
             if(panelIndex > -1) {
-                if(this.doRemovePanel(panelToRemove, panelIndex)) {
+                if(this.doRemovePanel(panelToRemove, panelIndex, checkCanRemovePanel)) {
                     return panelIndex;
                 } else {
                     return -1;
@@ -747,9 +748,10 @@ var api_ui;
             }
             return panelIndex;
         };
-        DeckPanel.prototype.removePanelByIndex = function (index) {
+        DeckPanel.prototype.removePanelByIndex = function (index, checkCanRemovePanel) {
+            if (typeof checkCanRemovePanel === "undefined") { checkCanRemovePanel = true; }
             var panelToRemove = this.panels[index];
-            if(this.doRemovePanel(panelToRemove, index)) {
+            if(this.doRemovePanel(panelToRemove, index, checkCanRemovePanel)) {
                 return panelToRemove;
             } else {
                 return null;
@@ -758,9 +760,11 @@ var api_ui;
         DeckPanel.prototype.canRemovePanel = function (panel, index) {
             return true;
         };
-        DeckPanel.prototype.doRemovePanel = function (panelToRemove, index) {
-            if(!this.canRemovePanel(panelToRemove, index)) {
-                return false;
+        DeckPanel.prototype.doRemovePanel = function (panelToRemove, index, checkCanRemovePanel) {
+            if(checkCanRemovePanel) {
+                if(!this.canRemovePanel(panelToRemove, index)) {
+                    return false;
+                }
             }
             panelToRemove.getEl().remove();
             var removingLastPanel = this.panels.length == index + 1;

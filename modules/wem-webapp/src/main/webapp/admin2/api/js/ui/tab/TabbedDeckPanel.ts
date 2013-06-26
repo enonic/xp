@@ -34,7 +34,7 @@ module api_ui_tab {
             this.navigator.selectTab(tab.getTabIndex());
         }
 
-        removePanel(panel:api_ui.Panel):number {
+        removePanel(panel:api_ui.Panel, checkCanRemovePanel?:bool = true):number {
 
             var panelIndex:number = this.getPanelIndex(panel);
             var tab:Tab = this.navigator.getTab(panelIndex);

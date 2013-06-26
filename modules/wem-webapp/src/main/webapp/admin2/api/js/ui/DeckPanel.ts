@@ -62,11 +62,11 @@ module api_ui {
          * Removes given panel. Method canRemovePanel will be called to know if specified panel is allowed to be removed.
          * @returns {number} the index of the removed panel. -1 if it was not removable.
          */
-        removePanel(panelToRemove:Panel):number {
+        removePanel(panelToRemove:Panel, checkCanRemovePanel?:bool = true):number {
 
             var panelIndex:number = this.getPanelIndex(panelToRemove);
             if (panelIndex > -1) {
-                if( this.doRemovePanel(panelToRemove, panelIndex) ){
+                if (this.doRemovePanel(panelToRemove, panelIndex, checkCanRemovePanel)) {
                     return panelIndex;
                 }
                 else {
@@ -80,11 +80,11 @@ module api_ui {
          * Removes panel specified by given index. Method canRemovePanel will be called to know if specified panel is allowed to be removed.
          * @returns {Panel} the removed panel. Null if not was not removable.
          */
-        removePanelByIndex(index:number):Panel {
+        removePanelByIndex(index:number, checkCanRemovePanel?:bool = true):Panel {
 
             var panelToRemove = this.panels[index];
 
-            if (this.doRemovePanel(panelToRemove, index)) {
+            if (this.doRemovePanel(panelToRemove, index, checkCanRemovePanel)) {
                 return panelToRemove;
             }
             else {
@@ -99,10 +99,14 @@ module api_ui {
             return true;
         }
 
-        private doRemovePanel(panelToRemove:Panel, index):bool {
-            if (!this.canRemovePanel(panelToRemove, index)) {
-                return false;
+        private doRemovePanel(panelToRemove:Panel, index:number, checkCanRemovePanel:bool):bool {
+
+            if (checkCanRemovePanel) {
+                if (!this.canRemovePanel(panelToRemove, index)) {
+                    return false;
+                }
             }
+
             panelToRemove.getEl().remove();
             var removingLastPanel:bool = this.panels.length == index + 1;
             var panelToRemoveIsShown:bool = this.isShownPanel(index);

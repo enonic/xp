@@ -22,23 +22,11 @@ module app {
 
         canRemovePanel(panel:api_ui.Panel, index:number):bool {
 
-            return true;//!this.hasUnsavedChanges();  // TODO:
-        }
-
-        private hasUnsavedChanges():bool {
-            /*TODO: if (wizardPanel != null && wizardPanel.getWizardDirty()) {
-             Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?',
-             (answer) => {
-             if ('yes' === answer) {
-             this.removeTab(tab);
-             } else {
-             return false;
-             }
-             });
-             } else {
-             this.removeTab(tab);
-             }*/
-            return false;
+            if (panel instanceof api_app_wizard.WizardPanel) {
+                var wizardPanel:api_app_wizard.WizardPanel = <api_app_wizard.WizardPanel>panel;
+                return wizardPanel.canClose();
+            }
+            return true;
         }
 
         private handleGlobalEvents() {
@@ -88,8 +76,8 @@ module app {
                 }
             });
 
-            app_event.CloseOpenSpacePanelEvent.on((event) => {
-                this.removePanel(event.getPanel());
+            app_event.CloseSpaceWizardPanelEvent.on((event) => {
+                this.removePanel(event.getPanel(), event.isCheckCanRemovePanel());
             });
         }
 

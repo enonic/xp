@@ -29,10 +29,9 @@
 ///<reference path='app/event/NewSpaceEvent.ts' />
 ///<reference path='app/event/OpenSpaceEvent.ts' />
 ///<reference path='app/event/EditSpaceEvent.ts' />
-///<reference path='app/event/CloseActiveSpacePanelEvent.ts' />
+///<reference path='app/event/CloseSpaceWizardPanelEvent.ts' />
 
 ///<reference path='app/wizard/SpaceWizardActions.ts' />
-///<reference path='app/wizard/SpaceWizardContext.ts' />
 ///<reference path='app/wizard/SpaceWizardToolbar.ts' />
 ///<reference path='app/wizard/SpaceForm.ts' />
 ///<reference path='app/wizard/SpaceWizardPanel.ts' />

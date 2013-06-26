@@ -204,10 +204,10 @@ module api_ui {
         public getPanelShown(): Panel;
         public getPanelShownIndex(): number;
         public getPanelIndex(panel: Panel): number;
-        public removePanel(panelToRemove: Panel): number;
-        public removePanelByIndex(index: number): Panel;
+        public removePanel(panelToRemove: Panel, checkCanRemovePanel?: bool): number;
+        public removePanelByIndex(index: number, checkCanRemovePanel?: bool): Panel;
         public canRemovePanel(panel: Panel, index: number): bool;
-        private doRemovePanel(panelToRemove, index);
+        private doRemovePanel(panelToRemove, index, checkCanRemovePanel);
         private isShownPanel(panelIndex);
         public showPanel(index: number): void;
     }

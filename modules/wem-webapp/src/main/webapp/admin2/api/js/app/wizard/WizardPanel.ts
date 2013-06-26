@@ -57,6 +57,36 @@ module api_app_wizard {
             this.steps.push(step);
             this.stepContainer.addStep(step);
         }
+
+
+        canClose():bool {
+
+            if (this.hasUnsavedChanges()) {
+                this.askUserForSaveChangesBeforeClosing();
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        /*
+         * Override this method in specific wizard to do proper check.
+         */
+        hasUnsavedChanges():bool {
+            return false;
+        }
+
+        askUserForSaveChangesBeforeClosing() {
+            // TODO: You have unsaved changes - do you want to save before closing?
+        }
+
+        /*
+         * Override this method in specific wizard to actual saving of changes.
+         */
+        saveChanges() {
+            // TODO
+        }
     }
 
     export class WizardPanelHeader extends api_dom.DivEl {
