@@ -15,6 +15,19 @@ module api_remote {
         form: FormItem[];
     }
 
+    export interface SchemaTreeNode {
+        key:string;
+        name:string;
+        module:string;
+        qualifiedName:string;
+        displayName:string;
+        type:string;
+        createdTime?:Date;
+        modifiedTime?:Date;
+        hasChildren:bool;
+        schemas:SchemaTreeNode[];
+    }
+
     export interface ContentTypeTreeNode extends ContentType {
         iconUrl:string;
         hasChildren:bool;

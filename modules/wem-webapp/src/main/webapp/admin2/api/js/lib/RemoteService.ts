@@ -180,6 +180,15 @@ module api_remote {
         failure?: string;
     }
 
+    export interface RemoteCallGetSchemaTreeParams {
+        types:string[];
+    }
+
+    export interface RemoteCallGetSchemaTreeResult extends RemoteCallResultBase {
+        schemas:SchemaTreeNode[];
+        total:number;
+    }
+
     export interface RemoteServiceInterface {
         account_find (params, callback):void;
         account_getGraph (params, callback):void;
@@ -211,7 +220,7 @@ module api_remote {
                                     callback:(result:RemoteCallContentTypeCreateOrUpdateResult)=>void):void;
         contentType_delete (params:RemoteCallContentTypeDeleteParams, callback:(result:RemoteCallContentTypeDeleteResult)=>void):void;
         contentType_tree (params:RemoteCallGetContentTypeTreeParams, callback:(result:RemoteCallGetContentTypeTreeResult)=>void):void;
-        schema_tree (params, callback):void;
+        schema_tree (params:RemoteCallGetSchemaTreeParams, callback:(result:RemoteCallGetSchemaTreeResult)=>void):void;
         schema_list (params, callback):void;
         system_getSystemInfo (params, callback):void;
         mixin_get (params, callback):void;
@@ -367,7 +376,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        schema_tree(params, callback):void {
+        schema_tree(params:RemoteCallGetSchemaTreeParams, callback:(result:RemoteCallGetSchemaTreeResult)=>void):void {
             console.log(params, callback);
         }
 
