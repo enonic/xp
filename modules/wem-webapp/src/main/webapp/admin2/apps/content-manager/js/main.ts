@@ -68,6 +68,8 @@
 ///<reference path='view/WizardPanel.ts' />
 
 ///<reference path='ContentAppBarActions.ts' />
+///<reference path='ContentAppBarTabMenu.ts' />
+///<reference path='ContentAppBarTabMenuItem.ts' />
 ///<reference path='ContentAppBar.ts' />
 
 /// <reference path='view/wizard/form/FormItemOccurrencesHandler.ts' />
