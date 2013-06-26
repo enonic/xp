@@ -856,10 +856,10 @@ var api_ui_tab;
         TabMenuItem.prototype.setTabMenu = function (tabMenu) {
             this.tabMenu = tabMenu;
         };
-        TabMenuItem.prototype.setTabIndex = function (value) {
+        TabMenuItem.prototype.setIndex = function (value) {
             this.tabIndex = value;
         };
-        TabMenuItem.prototype.getTabIndex = function () {
+        TabMenuItem.prototype.getIndex = function () {
             return this.tabIndex;
         };
         TabMenuItem.prototype.getLabel = function () {
@@ -873,9 +873,6 @@ var api_ui_tab;
             if(!this.visible) {
                 this.remove();
             }
-        };
-        TabMenuItem.prototype.isActive = function () {
-            return this.active;
         };
         TabMenuItem.prototype.setActive = function (value) {
             this.active = value;
@@ -970,11 +967,11 @@ var api_ui_tab;
             this.menuEl.show();
             this.showingMenuItems = true;
         };
-        TabMenu.prototype.addTab = function (tab) {
+        TabMenu.prototype.addNavigationItem = function (tab) {
             var tabMenuItem = tab;
             tabMenuItem.setTabMenu(this);
             var newLength = this.tabs.push(tabMenuItem);
-            tabMenuItem.setTabIndex(newLength - 1);
+            tabMenuItem.setIndex(newLength - 1);
             if(tab.isVisible()) {
                 this.tabMenuButton.setLabel(tab.getLabel());
                 this.menuEl.appendChild(tabMenuItem);
@@ -999,27 +996,27 @@ var api_ui_tab;
         TabMenu.prototype.getSelectedTabIndex = function () {
             return this.selectedTab;
         };
-        TabMenu.prototype.getSelectedTab = function () {
+        TabMenu.prototype.getSelectedNavigationItem = function () {
             return this.tabs[this.selectedTab];
         };
-        TabMenu.prototype.getTab = function (tabIndex) {
+        TabMenu.prototype.getNavigationItem = function (tabIndex) {
             return this.tabs[tabIndex];
         };
-        TabMenu.prototype.removeTab = function (tab) {
+        TabMenu.prototype.removeNavigationItem = function (tab) {
             var tabMenuItem = tab;
             tabMenuItem.getEl().remove();
             var isLastTab = this.isLastTab(tab);
-            this.tabs.splice(tab.getTabIndex(), 1);
+            this.tabs.splice(tab.getIndex(), 1);
             if(this.isSelectedTab(tab)) {
                 if(this.isEmpty()) {
                     this.selectedTab = -1;
-                } else if(tab.getTabIndex() > this.tabs.length - 1) {
-                    this.selectedTab = tab.getTabIndex() - 1;
+                } else if(tab.getIndex() > this.tabs.length - 1) {
+                    this.selectedTab = tab.getIndex() - 1;
                 }
             }
             if(!isLastTab) {
-                for(var i = tab.getTabIndex() - 1; i < this.tabs.length; i++) {
-                    this.tabs[i].setTabIndex(i);
+                for(var i = tab.getIndex() - 1; i < this.tabs.length; i++) {
+                    this.tabs[i].setIndex(i);
                 }
             }
             if(this.countVisible() == 0) {
@@ -1029,10 +1026,10 @@ var api_ui_tab;
             }
         };
         TabMenu.prototype.isSelectedTab = function (tab) {
-            return tab.getTabIndex() == this.selectedTab;
+            return tab.getIndex() == this.selectedTab;
         };
         TabMenu.prototype.isLastTab = function (tab) {
-            return tab.getTabIndex() === this.tabs.length;
+            return tab.getIndex() === this.tabs.length;
         };
         TabMenu.prototype.updateActiveTab = function (tabIndex) {
             this.tabs.forEach(function (tab, index) {
@@ -1040,20 +1037,20 @@ var api_ui_tab;
                 tab.setActive(activate);
             });
         };
-        TabMenu.prototype.selectTab = function (tabIndex) {
+        TabMenu.prototype.selectNavigationItem = function (tabIndex) {
             var selectedTab = this.tabs[tabIndex];
             this.tabMenuButton.setLabel(selectedTab.getLabel());
             this.selectedTab = tabIndex;
             this.updateActiveTab(tabIndex);
         };
-        TabMenu.prototype.deselectTab = function () {
+        TabMenu.prototype.deselectNavigationItem = function () {
             this.tabMenuButton.setLabel("");
             this.selectedTab = -1;
         };
-        TabMenu.prototype.addTabSelectedListener = function (listener) {
+        TabMenu.prototype.addNavigationItemSelectedListener = function (listener) {
             this.tabSelectedListeners.push(listener);
         };
-        TabMenu.prototype.addTabRemoveListener = function (listener) {
+        TabMenu.prototype.addNavigationItemRemoveListener = function (listener) {
             this.tabRemovedListeners.push(listener);
         };
         TabMenu.prototype.handleTabClickedEvent = function (tabMenuItem) {
@@ -1062,7 +1059,7 @@ var api_ui_tab;
         };
         TabMenu.prototype.handleTabRemoveButtonClickedEvent = function (tabMenuItem) {
             if(this.fireTabRemoveEvent(tabMenuItem)) {
-                this.removeTab(tabMenuItem);
+                this.removeNavigationItem(tabMenuItem);
             }
         };
         TabMenu.prototype.fireTabSelected = function (tab) {
@@ -1087,8 +1084,8 @@ TestCase("TabMenu", {
         var tabMenu = new api_ui_tab.TabMenu();
         var tab1 = new api_ui_tab.TabMenuItem("Tab1");
         var tab2 = new api_ui_tab.TabMenuItem("Tab2");
-        tabMenu.addTab(tab1);
-        tabMenu.addTab(tab2);
+        tabMenu.addNavigationItem(tab1);
+        tabMenu.addNavigationItem(tab2);
         document.body.appendChild(tabMenu.getHTMLElement());
         var tabMenuEl = document.getElementById(tabMenu.getId());
         assertNotNull(tabMenuEl);
@@ -1098,8 +1095,8 @@ TestCase("TabMenu", {
         var tabMenu = new api_ui_tab.TabMenu();
         var tab1 = new api_ui_tab.TabMenuItem("Tab1");
         var tab2 = new api_ui_tab.TabMenuItem("Tab2");
-        tabMenu.addTab(tab1);
-        tabMenu.addTab(tab2);
+        tabMenu.addNavigationItem(tab1);
+        tabMenu.addNavigationItem(tab2);
         assertEquals(2, tabMenu.getSize());
     },
     "test given TabMenu with four tabs when second removed then the indexes of the succeeding tabs is lowered by one": function () {
@@ -1108,30 +1105,30 @@ TestCase("TabMenu", {
         var tab2 = new api_ui_tab.TabMenuItem("Tab2");
         var tab3 = new api_ui_tab.TabMenuItem("Tab3");
         var tab4 = new api_ui_tab.TabMenuItem("Tab4");
-        tabMenu.addTab(tab1);
-        tabMenu.addTab(tab2);
-        tabMenu.addTab(tab3);
-        tabMenu.addTab(tab4);
-        assertEquals(0, tab1.getTabIndex());
-        assertEquals(1, tab2.getTabIndex());
-        assertEquals(2, tab3.getTabIndex());
-        assertEquals(3, tab4.getTabIndex());
-        tabMenu.removeTab(tab2);
-        assertEquals(0, tab1.getTabIndex());
-        assertEquals(1, tab3.getTabIndex());
-        assertEquals(2, tab4.getTabIndex());
+        tabMenu.addNavigationItem(tab1);
+        tabMenu.addNavigationItem(tab2);
+        tabMenu.addNavigationItem(tab3);
+        tabMenu.addNavigationItem(tab4);
+        assertEquals(0, tab1.getIndex());
+        assertEquals(1, tab2.getIndex());
+        assertEquals(2, tab3.getIndex());
+        assertEquals(3, tab4.getIndex());
+        tabMenu.removeNavigationItem(tab2);
+        assertEquals(0, tab1.getIndex());
+        assertEquals(1, tab3.getIndex());
+        assertEquals(2, tab4.getIndex());
     },
     "test given TabMenu with three tabs and last tab is selected when last is removed then the second becomes the selected": function () {
         var tabMenu = new api_ui_tab.TabMenu();
         var tab1 = new api_ui_tab.TabMenuItem("Tab1");
         var tab2 = new api_ui_tab.TabMenuItem("Tab2");
         var tab3 = new api_ui_tab.TabMenuItem("Tab3");
-        tabMenu.addTab(tab1);
-        tabMenu.addTab(tab2);
-        tabMenu.addTab(tab3);
-        tabMenu.selectTab(2);
+        tabMenu.addNavigationItem(tab1);
+        tabMenu.addNavigationItem(tab2);
+        tabMenu.addNavigationItem(tab3);
+        tabMenu.selectNavigationItem(2);
         assertEquals(2, tabMenu.getSelectedTabIndex());
-        tabMenu.removeTab(tab3);
+        tabMenu.removeNavigationItem(tab3);
         assertEquals(1, tabMenu.getSelectedTabIndex());
     }
 });

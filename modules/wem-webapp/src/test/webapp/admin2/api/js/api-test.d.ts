@@ -213,30 +213,30 @@ module api_ui {
         public showPanel(index: number): void;
     }
 }
-module api_ui_tab {
-    interface Tab {
-        setTabIndex(value: number);
-        getTabIndex(): number;
+module api_ui {
+    interface PanelNavigationItem {
+        setIndex(value: number);
+        getIndex(): number;
         getLabel(): string;
         isVisible(): bool;
         isRemovable(): bool;
     }
 }
-module api_ui_tab {
-    interface TabNavigator {
-        addTab(tab: Tab);
-        removeTab(tab: Tab);
-        getTab(tabIndex: number);
-        selectTab(tabIndex: number);
-        getSelectedTab(): Tab;
-        deselectTab();
+module api_ui {
+    interface DeckPanelNavigator {
+        addNavigationItem(item: PanelNavigationItem);
+        removeNavigationItem(item: PanelNavigationItem);
+        getNavigationItem(index: number);
+        selectNavigationItem(index: number);
+        getSelectedNavigationItem(): PanelNavigationItem;
+        deselectNavigationItem();
         getSize(): number;
-        addTabSelectedListener(listener: (Tab: any) => void);
-        addTabRemoveListener(listener: (Tab: any) => bool);
+        addNavigationItemSelectedListener(listener: (item: PanelNavigationItem) => void);
+        addNavigationItemRemoveListener(listener: (item: PanelNavigationItem) => bool);
     }
 }
 module api_ui_tab {
-    class TabMenuItem extends api_dom.LiEl implements Tab {
+    class TabMenuItem extends api_dom.LiEl implements api_ui.PanelNavigationItem {
         private tabIndex;
         private label;
         private labelEl;
@@ -246,12 +246,11 @@ module api_ui_tab {
         private active;
         constructor(label: string);
         public setTabMenu(tabMenu: TabMenu): void;
-        public setTabIndex(value: number): void;
-        public getTabIndex(): number;
+        public setIndex(value: number): void;
+        public getIndex(): number;
         public getLabel(): string;
         public isVisible(): bool;
         public setVisible(value: bool): void;
-        public isActive(): bool;
         public setActive(value: bool): void;
         public isRemovable(): bool;
         public setRemovable(value: bool): void;
@@ -268,7 +267,7 @@ module api_ui_tab {
     }
 }
 module api_ui_tab {
-    class TabMenu extends api_dom.DivEl implements TabNavigator {
+    class TabMenu extends api_dom.DivEl implements api_ui.DeckPanelNavigator {
         public ext;
         private tabMenuButton;
         private menuEl;
@@ -284,24 +283,24 @@ module api_ui_tab {
         private toggleMenu();
         public hideMenu(): void;
         public showMenu(): void;
-        public addTab(tab: Tab): void;
+        public addNavigationItem(tab: api_ui.PanelNavigationItem): void;
         public isEmpty(): bool;
         public getSize(): number;
         public countVisible(): number;
         public getSelectedTabIndex(): number;
-        public getSelectedTab(): Tab;
-        public getTab(tabIndex: number): TabMenuItem;
-        public removeTab(tab: Tab): void;
+        public getSelectedNavigationItem(): api_ui.PanelNavigationItem;
+        public getNavigationItem(tabIndex: number): TabMenuItem;
+        public removeNavigationItem(tab: api_ui.PanelNavigationItem): void;
         private isSelectedTab(tab);
         private isLastTab(tab);
         private updateActiveTab(tabIndex);
-        public selectTab(tabIndex: number): void;
-        public deselectTab(): void;
-        public addTabSelectedListener(listener: (Tab: any) => void): void;
-        public addTabRemoveListener(listener: (Tab: any) => bool): void;
+        public selectNavigationItem(tabIndex: number): void;
+        public deselectNavigationItem(): void;
+        public addNavigationItemSelectedListener(listener: (tab: api_ui.PanelNavigationItem) => void): void;
+        public addNavigationItemRemoveListener(listener: (tab: api_ui.PanelNavigationItem) => bool): void;
         public handleTabClickedEvent(tabMenuItem: TabMenuItem): void;
         public handleTabRemoveButtonClickedEvent(tabMenuItem: TabMenuItem): void;
-        public fireTabSelected(tab: Tab): void;
+        public fireTabSelected(tab: api_ui.PanelNavigationItem): void;
         private fireTabRemoveEvent(tab);
     }
 }

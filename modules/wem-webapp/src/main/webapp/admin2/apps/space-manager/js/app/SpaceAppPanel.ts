@@ -33,15 +33,15 @@ module app {
 
             api_app.ShowAppBrowsePanelEvent.on((event) => {
                 this.showHomePanel();
-                this.appBarTabMenu.deselectTab();
+                this.appBarTabMenu.deselectNavigationItem();
             });
 
             app_event.NewSpaceEvent.on((event) => {
 
                 var tabMenuItem = new SpaceAppBarTabMenuItem("New Space");
                 var spaceWizardPanel = new app_wizard.SpaceWizardPanel('new-space');
-                this.addTab(tabMenuItem, spaceWizardPanel);
-                this.showTab(tabMenuItem);
+                this.addNavigationItem(tabMenuItem, spaceWizardPanel);
+                this.selectPanel(tabMenuItem);
             });
 
             app_event.OpenSpaceEvent.on((event) => {
@@ -67,8 +67,8 @@ module app {
                             var spaceWizardPanel = new app_wizard.SpaceWizardPanel(id);
                             spaceWizardPanel.setData(result);
 
-                            this.addTab(tabMenuItem, spaceWizardPanel);
-                            this.showTab(tabMenuItem);
+                            this.addNavigationItem(tabMenuItem, spaceWizardPanel);
+                            this.selectPanel(tabMenuItem);
                         } else {
                             console.error("Error", result ? result.error : "Unable to retrieve space.");
                         }

@@ -1,6 +1,6 @@
 module api_ui_tab {
 
-    export class TabMenu extends api_dom.DivEl implements TabNavigator {
+    export class TabMenu extends api_dom.DivEl implements api_ui.DeckPanelNavigator {
 
         ext;
 
@@ -70,14 +70,14 @@ module api_ui_tab {
             this.showingMenuItems = true;
         }
 
-        addTab(tab:api_ui_tab.Tab) {
+        addNavigationItem(tab:api_ui.PanelNavigationItem) {
 
             var tabMenuItem = <TabMenuItem>tab;
 
             tabMenuItem.setTabMenu(this);
 
             var newLength = this.tabs.push(tabMenuItem);
-            tabMenuItem.setTabIndex(newLength - 1);
+            tabMenuItem.setIndex(newLength - 1);
 
             if (tab.isVisible()) {
                 this.tabMenuButton.setLabel(tab.getLabel());
@@ -108,30 +108,30 @@ module api_ui_tab {
             return this.selectedTab;
         }
 
-        getSelectedTab():Tab {
+        getSelectedNavigationItem():api_ui.PanelNavigationItem {
             return this.tabs[this.selectedTab];
         }
 
-        getTab(tabIndex:number) {
+        getNavigationItem(tabIndex:number) {
             return this.tabs[tabIndex];
         }
 
-        removeTab(tab:api_ui_tab.Tab) {
+        removeNavigationItem(tab:api_ui.PanelNavigationItem) {
             var tabMenuItem = <TabMenuItem>tab;
 
             tabMenuItem.getEl().remove();
             var isLastTab = this.isLastTab(tab);
-            this.tabs.splice(tab.getTabIndex(), 1);
+            this.tabs.splice(tab.getIndex(), 1);
             if (this.isSelectedTab(tab)) {
                 if (this.isEmpty()) {
                     this.selectedTab = -1;
-                } else if (tab.getTabIndex() > this.tabs.length - 1) {
-                    this.selectedTab = tab.getTabIndex() - 1;
+                } else if (tab.getIndex() > this.tabs.length - 1) {
+                    this.selectedTab = tab.getIndex() - 1;
                 }
             }
             if (!isLastTab) {
-                for (var i = tab.getTabIndex() - 1; i < this.tabs.length; i++) {
-                    this.tabs[i].setTabIndex(i);
+                for (var i = tab.getIndex() - 1; i < this.tabs.length; i++) {
+                    this.tabs[i].setIndex(i);
                 }
             }
 
@@ -142,12 +142,12 @@ module api_ui_tab {
             }
         }
 
-        private isSelectedTab(tab:Tab) {
-            return tab.getTabIndex() == this.selectedTab;
+        private isSelectedTab(tab:api_ui.PanelNavigationItem) {
+            return tab.getIndex() == this.selectedTab;
         }
 
-        private isLastTab(tab:Tab):bool {
-            return tab.getTabIndex() === this.tabs.length;
+        private isLastTab(tab:api_ui.PanelNavigationItem):bool {
+            return tab.getIndex() === this.tabs.length;
         }
 
         private updateActiveTab(tabIndex:number) {
@@ -157,23 +157,23 @@ module api_ui_tab {
             });
         }
 
-        selectTab(tabIndex:number) {
+        selectNavigationItem(tabIndex:number) {
             var selectedTab = this.tabs[tabIndex];
             this.tabMenuButton.setLabel(selectedTab.getLabel());
             this.selectedTab = tabIndex;
             this.updateActiveTab(tabIndex);
         }
 
-        deselectTab() {
+        deselectNavigationItem() {
             this.tabMenuButton.setLabel("");
             this.selectedTab = -1;
         }
 
-        addTabSelectedListener(listener:(Tab) => void) {
+        addNavigationItemSelectedListener(listener:(tab:api_ui.PanelNavigationItem) => void) {
             this.tabSelectedListeners.push(listener);
         }
 
-        addTabRemoveListener(listener:(Tab) => bool) {
+        addNavigationItemRemoveListener(listener:(tab:api_ui.PanelNavigationItem) => bool) {
             this.tabRemovedListeners.push(listener);
         }
 
@@ -184,17 +184,17 @@ module api_ui_tab {
 
         handleTabRemoveButtonClickedEvent(tabMenuItem:TabMenuItem) {
             if (this.fireTabRemoveEvent(tabMenuItem)) {
-                this.removeTab(tabMenuItem);
+                this.removeNavigationItem(tabMenuItem);
             }
         }
 
-        fireTabSelected(tab:api_ui_tab.Tab) {
+        fireTabSelected(tab:api_ui.PanelNavigationItem) {
             for (var i = 0; i < this.tabSelectedListeners.length; i++) {
                 this.tabSelectedListeners[i](tab);
             }
         }
 
-        private fireTabRemoveEvent(tab:api_ui_tab.Tab):bool {
+        private fireTabRemoveEvent(tab:api_ui.PanelNavigationItem):bool {
             for (var i = 0; i < this.tabRemovedListeners.length; i++) {
                 if (!this.tabRemovedListeners[i](tab)) {
                     return false;

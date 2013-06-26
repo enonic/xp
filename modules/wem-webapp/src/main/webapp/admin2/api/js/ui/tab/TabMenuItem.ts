@@ -1,6 +1,6 @@
 module api_ui_tab {
 
-    export class TabMenuItem extends api_dom.LiEl implements Tab {
+    export class TabMenuItem extends api_dom.LiEl implements api_ui.PanelNavigationItem {
 
         private tabIndex:number;
 
@@ -46,11 +46,11 @@ module api_ui_tab {
             this.tabMenu = tabMenu;
         }
 
-        setTabIndex(value:number) {
+        setIndex(value:number) {
             this.tabIndex = value;
         }
 
-        getTabIndex():number {
+        getIndex():number {
             return this.tabIndex;
         }
 
@@ -67,10 +67,6 @@ module api_ui_tab {
             if (!this.visible) {
                 this.remove();
             }
-        }
-
-        isActive():bool {
-            return this.active;
         }
 
         setActive(value:bool) {

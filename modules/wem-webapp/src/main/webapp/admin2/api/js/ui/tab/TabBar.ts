@@ -1,16 +1,16 @@
 module api_ui_tab {
 
-    export class TabBar extends api_dom.DivEl implements TabNavigator {
+    export class TabBar extends api_dom.DivEl implements api_ui.DeckPanelNavigator {
 
         constructor(idPrefix?:string) {
             super(idPrefix || "TabBar");
         }
 
-        addTab(tab:api_ui_tab.Tab) {
+        addNavigationItem(tab:api_ui.PanelNavigationItem) {
 
         }
 
-        removeTab(tab:api_ui_tab.Tab) {
+        removeNavigationItem(tab:api_ui.PanelNavigationItem) {
 
         }
 
@@ -18,27 +18,27 @@ module api_ui_tab {
             return 0;
         }
 
-        getSelectedTab():api_ui_tab.Tab {
+        getSelectedNavigationItem():api_ui.PanelNavigationItem {
             return null;
         }
 
-        getTab(tabIndex:number) {
+        getNavigationItem(tabIndex:number) {
             return null;
         }
 
-        selectTab(tabIndex:number) {
+        selectNavigationItem(tabIndex:number) {
 
         }
 
-        deselectTab() {
+        deselectNavigationItem() {
 
         }
 
-        addTabSelectedListener(listener:(Tab) => void) {
+        addNavigationItemSelectedListener(listener:(tab:api_ui.PanelNavigationItem) => void) {
 
         }
 
-        addTabRemoveListener(listener:(Tab) => bool) {
+        addNavigationItemRemoveListener(listener:(tab:api_ui.PanelNavigationItem) => bool) {
 
         }
     }
