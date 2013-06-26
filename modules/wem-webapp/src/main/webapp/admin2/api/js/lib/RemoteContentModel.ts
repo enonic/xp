@@ -38,4 +38,26 @@ module api_remote {
         deletable: bool;
         allowsChildren: bool;
     }
+
+    export interface ContentFind extends ContentList{
+        order: number;
+        score: number;
+    }
+
+    export interface ContentFacet {
+        name: string;
+        displayName: string;
+        _type: string;
+        terms?: {
+            name?: string;
+            displayName?: string;
+            count?: number;
+            time?: number;
+        }[];
+        ranges?: {
+            from: string;
+            to: string;
+            total_count: number;
+        }[];
+    }
 }
