@@ -120,11 +120,17 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
      * @returns {Ext.menu.Menu}
      */
     createMenu: function () {
+        var me = this;
         return new Ext.menu.Menu({
             border: false,
             plain: true,
             cls: 'context-window-menu',
-            items: this.createMenuItems()
+            items: this.createMenuItems(),
+            listeners: {
+                beforeshow: function (menu) {
+                    menu.setWidth(me.getWidth());
+                }
+            }
         });
     },
 
@@ -140,6 +146,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
                     plain: true,
                     cls: 'context-window-menu-item',
                     itemId: key,
+                    width:'100%',
                     text: panel.name,
                     handler: function (item) {
                         me.showPanel(item.itemId);
@@ -184,32 +191,6 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             }
         });
     },
-
-    /*
-    createNavigationCmp: function () {
-        var buttons = [
-            { text: 'Insert'},
-            { text: 'Device Selector'}
-        ];
-
-        return new Ext.Component({
-            tpl: new Ext.XTemplate(
-                '<div style="display:table; width: 100%; height: 50px">',
-                '<tpl for=".">',       // process the data.kids node
-                '   <div style="border:1px solid black;display:table-cell; cursor: pointer; vertical-align: middle; width: 50%; text-align:center">{text}</div>',  // use current array index to autonumber
-                '</tpl>',
-                '</div>'
-
-            ),
-            listeners: {
-                afterrender: function (cmp) {
-                    cmp.tpl.overwrite(cmp.getEl(), buttons);
-                }
-            }
-
-        });
-    },
-    */
 
     /**
      * @returns {Ext.container.Container}

@@ -31,8 +31,10 @@
     border: none;
 }
 
+/** Menu button */
 .context-window-menu .x-panel-body {
-    background-color: #fff !important;
+    background-color: #2d2c31 !important;
+    color: #fff;
 }
 
 .context-window-menu .x-menu-body {
@@ -40,11 +42,11 @@
 }
 
 .context-window-menu-item {
-    padding: 7px;
+    padding: 10px;
 }
 
 .context-window-menu-item:hover {
-    background-color: #3399fe;
+    background-color: #3f3f46;
     color: #fff;
 }
 
