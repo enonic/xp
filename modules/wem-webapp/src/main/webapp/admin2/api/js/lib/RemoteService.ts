@@ -1,5 +1,6 @@
 ///<reference path='RemoteContentTypeModel.ts' />
 ///<reference path='RemoteContentModel.ts' />
+///<reference path='RemoteSpaceModel.ts' />
 
 module api_remote {
 
@@ -38,16 +39,7 @@ module api_remote {
 
     export interface RemoteCallSpaceListResult extends RemoteCallResultBase {
         total: number;
-        spaces: {
-            createdTime:Date;
-            deletable:bool;
-            displayName:string;
-            editable:bool;
-            iconUrl:string;
-            modifiedTime:Date;
-            name:string;
-            rootContentId:string;
-        }[];
+        spaces: Space[];
     }
 
     export interface RemoteCallSpaceGetParams {
@@ -55,14 +47,7 @@ module api_remote {
     }
 
     export interface RemoteCallSpaceGetResult extends RemoteCallResultBase {
-        space: {
-            createdTime:Date;
-            displayName:string;
-            iconUrl:string;
-            modifiedTime:Date;
-            name:string;
-            rootContentId:string;
-        };
+        space: SpaceLight;
     }
 
     export interface RemoteCallSpaceCreateOrUpdateParams {
@@ -163,7 +148,6 @@ module api_remote {
     }
 
     export interface RemoteCallGetContentTypeListParams {
-
     }
 
     export interface RemoteCallGetContentTypeListResult extends RemoteCallResultBase{
