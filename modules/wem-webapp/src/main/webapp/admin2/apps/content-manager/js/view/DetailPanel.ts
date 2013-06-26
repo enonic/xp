@@ -131,10 +131,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     },
 
     createToolBar: function () {
-        var me = this;
-        return Ext.createByAlias('widget.contentDetailToolbar', {
-            isLiveMode: me.isLiveMode
-        });
+        return new app.DetailToolbar(this.isLiveMode).ext;
     },
 
     createLivePreview: function (data) {
@@ -167,7 +164,16 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
 
     toggleLive: function () {
-        this.isLiveMode = !this.isLiveMode;
+        this.isLiveMode ? this.showDetails() : this.showPreview();
+    },
+
+    showPreview: function () {
+        this.isLiveMode = true;
+        this.setData(this.data, false);
+    },
+
+    showDetails: function () {
+        this.isLiveMode = false;
         this.setData(this.data, false);
     }
 
