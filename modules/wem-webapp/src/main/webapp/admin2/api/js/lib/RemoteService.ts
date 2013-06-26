@@ -156,6 +156,26 @@ module api_remote {
         contentTypes:ContentTypeListNode[];
     }
 
+    export interface RemoteCallSchemaListParams {
+        types:string[];
+        search:string;
+        modules:string[];
+    }
+
+    export interface RemoteCallSchemaListResult extends RemoteCallResultBase {
+        schemas:{
+            key:string;
+            name:string;
+            module:string;
+            qualifiedName:string;
+            displayName:string;
+            type:string;
+            createdTime:Date;
+            modifiedTime:Date;
+            iconUrl:string;
+        }[];
+    }
+
     export interface RemoteCallCreateOrUpdateContentParams {
         contentId?: string;
         temporary?: bool;
@@ -212,7 +232,7 @@ module api_remote {
         contentType_delete (params:RemoteCallContentTypeDeleteParams, callback:(result:RemoteCallContentTypeDeleteResult)=>void):void;
         contentType_tree (params:RemoteCallGetContentTypeTreeParams, callback:(result:RemoteCallGetContentTypeTreeResult)=>void):void;
         schema_tree (params, callback):void;
-        schema_list (params, callback):void;
+        schema_list (params:RemoteCallSchemaListParams, callback:(result:RemoteCallSchemaListResult)=>void):void;
         system_getSystemInfo (params, callback):void;
         mixin_get (params, callback):void;
         mixin_createOrUpdate (params, callback):void;
@@ -371,7 +391,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        schema_list(params, callback):void {
+        schema_list(params:RemoteCallSchemaListParams, callback:(result:RemoteCallSchemaListResult)=>void):void {
             console.log(params, callback);
         }
 
