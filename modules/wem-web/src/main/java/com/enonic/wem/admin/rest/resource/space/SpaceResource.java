@@ -1,6 +1,10 @@
 package com.enonic.wem.admin.rest.resource.space;
 
+import java.util.List;
+
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -50,5 +54,13 @@ public final class SpaceResource
         }
 
         return result;
+    }
+
+    @POST
+    @Path("delete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void delete( final List<String> names )
+    {
+        // Implement. No results need to be returned.
     }
 }
