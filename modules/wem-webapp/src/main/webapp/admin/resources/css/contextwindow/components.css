@@ -1,8 +1,8 @@
-.live-edit-component-search-bar {
+.admin-components-search-bar {
     padding: 10px 5px;
 }
 
-.live-edit-component-search-input {
+.admin-components-search-input {
     background-color: #3f3f46;
     border: none;
     color: #c4c4c4;
@@ -10,30 +10,30 @@
     width: 100%;
 }
 
-.live-edit-component-list {
+.admin-components-list {
     overflow: hidden;
 }
 
-.live-edit-component-list:hover {
+.admin-components-list:hover {
     overflow: auto;
 }
 
-.live-edit-component {
+.admin-components-item {
     border-left: 5px solid #252526;
     border-right: 5px solid #252526;
     padding: 15px;
     cursor: move;
 }
 
-.live-edit-component:hover {
+.admin-components-item:hover {
     background-color: #3f3f46;
 }
 
-.live-edit-component-row {
+.admin-components-item-row {
     display: table-row;
 }
 
-.live-edit-component-icon {
+.admin-components-item-icon {
     width: 35px;
     color: #f2f2f2;
     font-size: 24px;
@@ -42,15 +42,19 @@
     padding-top: 1px;
 }
 
-.live-edit-component-row .live-edit-component-info {
+.admin-components-item-row .admin-components-item-info {
     display: table-cell;
     vertical-align: top;
 }
 
-.live-edit-component-row h3 {
+.admin-components-item-row h3 {
     margin: 0;
     padding: 0;
     font-size: 13px !important;
     line-height: 1.3;
     color: #e2e2e2;
+}
+
+.live-edit-droppable-active {
+    border: 1px solid #3399fe;
 }

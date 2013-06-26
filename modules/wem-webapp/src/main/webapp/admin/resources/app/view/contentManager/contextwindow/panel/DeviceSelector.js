@@ -29,7 +29,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.DeviceSelector', {
     createTopTextCmp: function () {
         return new Ext.Component({
             height: 40,
-            cls: 'live-edit-device-top-bar',
+            cls: 'admin-device-top-bar',
             html: '<p>Emulate different client\'s physical sizes</p>'
         });
     },
@@ -82,15 +82,15 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.DeviceSelector', {
 
         var template = new Ext.XTemplate(
             '<tpl for=".">',
-            '   <div class="live-edit-device">',
-            '      <div class="live-edit-device-row">',
-            '           <div class="live-edit-device-icon {[this.getIconCls(values.device_type)]}"></div>',
-            '           <div class="live-edit-device-info">',
+            '   <div class="admin-device-item">',
+            '      <div class="admin-device-item-row">',
+            '           <div class="admin-device-item-icon {[this.getIconCls(values.device_type)]}"></div>',
+            '           <div class="admin-device-item-info">',
             '               <h3>{name}</h3>',
             '               <small>{width} x {height}</small>',
             '           </div>',
             '           <tpl if="rotatable">',
-            '               <div class="live-edit-device-rotate-button icon-rotate-right" title="Rotate"></div>',
+            '               <div class="admin-device-item-rotate-button icon-rotate-right" title="Rotate"></div>',
             '           </tpl>',
             '       </div>',
             '   </div>',
@@ -106,10 +106,10 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.DeviceSelector', {
             flex: 1,
             store: Ext.getStore('contextWindowDeviceStore'),
             tpl: template,
-            cls: 'live-edit-device-list',
-            itemSelector: 'div.live-edit-device',
+            cls: 'admin-device-list',
+            itemSelector: 'div.admin-device-item',
             emptyText: 'No devices available',
-            selectedItemCls: 'live-edit-device-selected',
+            selectedItemCls: 'admin-device-item-selected',
             listeners: {
                 itemclick: {
                     fn: me.onItemClick,
@@ -178,15 +178,15 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.DeviceSelector', {
 
     onItemClick: function (view, record, item, index, event) {
         var me = this;
-        var targetIsRotateButton = Ext.fly(event.target).hasCls('live-edit-device-rotate-button');
+        var targetIsRotateButton = Ext.fly(event.target).hasCls('admin-device-item-rotate-button');
         if (targetIsRotateButton) {
             me.deviceOrientation = me.deviceOrientation === 'vertical' ? 'horizontal' : 'vertical';
             me.rotateRotateButton(Ext.fly(event.target));
         } else {
             me.deviceOrientation = 'vertical';
-            var rotateButtonDom = Ext.get(item).down('.live-edit-device-rotate-button');
+            var rotateButtonDom = Ext.get(item).down('.admin-device-item-rotate-button');
             if (rotateButtonDom) {
-                rotateButtonDom.removeCls('live-edit-device-rotate-button-horizontal');
+                rotateButtonDom.removeCls('admin-device-item-rotate-button-horizontal');
             }
         }
 
@@ -195,9 +195,9 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.DeviceSelector', {
 
     rotateRotateButton: function (buttonEl) {
         if (this.deviceOrientation === 'horizontal') {
-            buttonEl.addCls('live-edit-device-rotate-button-horizontal');
+            buttonEl.addCls('admin-device-item-rotate-button-horizontal');
         } else {
-            buttonEl.removeCls('live-edit-device-rotate-button-horizontal');
+            buttonEl.removeCls('admin-device-item-rotate-button-horizontal');
         }
     },
 

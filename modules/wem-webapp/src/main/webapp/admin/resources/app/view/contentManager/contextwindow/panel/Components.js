@@ -33,7 +33,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
         this.searchInputCmp = this.createSearchInputCmp();
         return new Ext.container.Container({
             height: 70,
-            cls: 'live-edit-component-search-bar',
+            cls: 'admin-components-search-bar',
             items: [
                 new Ext.Component({
                     html: '<p>Drag\'n drop Parts, Layouts and more..</p>'
@@ -53,7 +53,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
                 tag: 'input',
                 placeholder: 'Search'
             },
-            cls: 'live-edit-component-search-input',
+            cls: 'admin-components-search-input',
             listeners: {
                 render: function () {
                     this.getEl().on('keyup', function (event, el) {
@@ -98,10 +98,10 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
 
         var templates = new Ext.XTemplate(
             '<tpl for=".">',
-            '   <div class="live-edit-component" data-context-window-draggable="true" data-live-edit-key="{key}" data-live-edit-type="{type}" data-live-edit-name="{name}">',
-            '      <div class="live-edit-component-row">',
-            '           <div class="live-edit-component-icon {[this.resolveIconCls(values.type)]}"></div>',
-            '           <div class="live-edit-component-info">',
+            '   <div class="admin-components-item" data-context-window-draggable="true" data-live-edit-key="{key}" data-live-edit-type="{type}" data-live-edit-name="{name}">',
+            '      <div class="admin-components-item-row">',
+            '           <div class="admin-components-item-icon {[this.resolveIconCls(values.type)]}"></div>',
+            '           <div class="admin-components-item-info">',
             '               <h3>{name}</h3>',
             '               <small>{subtitle}</small>',
             '           </div>',
@@ -139,8 +139,8 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
             flex: 1,
             store: Ext.data.StoreManager.lookup('contextWindowComponentStore'),
             tpl: templates,
-            cls: 'live-edit-component-list',
-            itemSelector: 'div.live-edit-component',
+            cls: 'admin-components-list',
+            itemSelector: 'div.live-edit-components-item',
             emptyText: 'No components available',
             listeners: {
                 render: function () {
@@ -199,6 +199,8 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
 
         $(me.getContextWindow().iFrameMask).droppable({
             tolerance: 'pointer',
+            addClasses: false,
+            activeClass: 'live-edit-droppable-active',
             over: function (event, ui) {
                 me.onDragOverIFrame(event, ui);
             }

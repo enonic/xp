@@ -1,18 +1,19 @@
-.live-edit-device-top-bar {
+.admin-device-top-bar {
     padding: 10px 5px;
 }
 
+
 /** fixme: make generic / merge with components.css? */
 
-.live-edit-device-list {
+.admin-device-list {
     overflow: hidden;
 }
 
-.live-edit-device-list:hover {
+.admin-device-list:hover {
     overflow: auto;
 }
 
-.live-edit-device {
+.admin-device-item {
     position: relative;
     border-left: 5px solid #252526;
     border-right: 5px solid #252526;
@@ -20,21 +21,21 @@
     cursor: pointer;
 }
 
-.live-edit-device:not(.live-edit-device-selected):hover {
+.admin-device-item:not(.admin-device-item-selected):hover {
     background-color: #3f3f46;
 }
 
-.live-edit-device-selected {
+.admin-device-item-selected {
     background-color: #3f3f46;
     border-left: 5px solid #3399fe;
     color: #fff;
 }
 
-.live-edit-device-selected h3 {
+.admin-device-item-selected h3 {
     color: #fff !important;
 }
 
-.live-edit-device-rotate-button {
+.admin-device-item-rotate-button {
     display: none;
     top: 15px;
     right: 0;
@@ -45,19 +46,19 @@
     -webkit-transition: -webkit-transform 100ms;
     transition: transform 100ms;
 }
-.live-edit-device-selected .live-edit-device-rotate-button {
+.admin-device-item-selected .admin-device-item-rotate-button {
     display: block;
 }
-.live-edit-device-rotate-button-horizontal {
+.admin-device-item-rotate-button-horizontal {
     -webkit-transform:rotate(90deg) !important;
     transform:rotate(90deg) !important;
 }
 
-.live-edit-device-row {
+.admin-device-item-row {
     display: table-row;
 }
 
-.live-edit-device-icon {
+.admin-device-item-icon {
     width: 35px;
     color: #f2f2f2;
     font-size: 24px;
@@ -66,12 +67,12 @@
     padding-top: 1px;
 }
 
-.live-edit-device-info {
+.admin-device-item-info {
     display: table-cell;
     vertical-align: top;
 }
 
-.live-edit-device-row h3 {
+.admin-device-item-row h3 {
     margin: 0;
     padding: 0;
     font-size: 13px !important;
