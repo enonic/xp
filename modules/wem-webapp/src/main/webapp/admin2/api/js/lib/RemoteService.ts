@@ -162,6 +162,14 @@ module api_remote {
         }[];
     }
 
+    export interface RemoteCallGetContentTypeListParams {
+
+    }
+
+    export interface RemoteCallGetContentTypeListResult extends RemoteCallResultBase{
+        contentTypes:ContentTypeListNode[];
+    }
+
     export interface RemoteServiceInterface {
         account_find (params, callback):void;
         account_getGraph (params, callback):void;
@@ -187,7 +195,7 @@ module api_remote {
         content_find (params:RemoteCallContentFindParams, callback:(result:RemoteCallContentFindResult)=>void):void;
         content_validate (params, callback):void;
         contentType_get (params:RemoteCallContentTypeGetParams, callback:(result:RemoteCallContentTypeGetResult)=>void):void;
-        contentType_list (params, callback):void;
+        contentType_list (params:RemoteCallContentListParams, callback:(result:RemoteCallContentListResult)=>void):void;
         contentType_createOrUpdate (params:RemoteCallContentTypeCreateOrUpdateParams,
                                     callback:(result:RemoteCallContentTypeCreateOrUpdateResult)=>void):void;
         contentType_delete (params:RemoteCallContentTypeDeleteParams, callback:(result:RemoteCallContentTypeDeleteResult)=>void):void;
@@ -315,7 +323,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        content_delete (params:RemoteCallContentDeleteParams, callback:(result:RemoteCallContentDeleteResult)=>void):void {
+        content_delete(params:RemoteCallContentDeleteParams, callback:(result:RemoteCallContentDeleteResult)=>void):void {
             console.log(params, callback);
         }
 
@@ -331,7 +339,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        contentType_list(params, callback):void {
+        contentType_list(params:RemoteCallContentListParams, callback:(result:RemoteCallContentListResult)=>void):void {
             console.log(params, callback);
         }
 

@@ -21,6 +21,10 @@ module api_remote {
         contentTypes:ContentTypeTreeNode[];
     }
 
+    export interface ContentTypeListNode extends ContentType {
+        iconUrl:string;
+    }
+
     export interface ContentTreeNode {
         allowsChildren:bool;
         contents:ContentTreeNode[];
