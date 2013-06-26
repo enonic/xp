@@ -20,14 +20,9 @@ module app {
             this.appBrowsePanel.init();
         }
 
-        tabRemove(tab:api_ui_tab.Tab):bool {
+        canRemovePanel(panel:api_ui.Panel, index:number):bool {
 
-            if (this.hasUnsavedChanges()) {
-                return false;
-            }
-            else {
-                return super.tabRemove(tab);
-            }
+            return true;//!this.hasUnsavedChanges();  // TODO:
         }
 
         private hasUnsavedChanges():bool {
@@ -91,6 +86,10 @@ module app {
                         }
                     });
                 }
+            });
+
+            app_event.CloseOpenSpacePanelEvent.on((event) => {
+                this.removePanel(event.getPanel());
             });
         }
 
