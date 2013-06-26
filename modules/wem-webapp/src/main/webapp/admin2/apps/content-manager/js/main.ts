@@ -9,6 +9,7 @@
 ///<reference path='event/EditContentEvent.ts' />
 ///<reference path='event/DeleteContentEvent.ts' />
 ///<reference path='event/ShowContextMenuEvent.ts' />
+///<reference path='event/GridDeselectEvent.ts' />
 
 ///<reference path='ContentContext.ts' />
 
@@ -22,6 +23,7 @@
 ///<reference path='browse/ContentBrowseToolbar.ts' />
 ///<reference path='browse/ContentTreeGridContextMenu.ts' />
 ///<reference path='browse/ContentTreeGridPanel.ts' />
+///<reference path='browse/ContentDetailPanel.ts' />
 
 ///<reference path='handler/DeleteContentHandler.ts' />
 ///<reference path='view/wizard/form/FormComponent.ts' />
@@ -46,7 +48,6 @@
 ///<reference path='lib/Sortable.ts' />
 
 ///<reference path='view/BaseDialogWindow.ts' />
-///<reference path='view/BaseDetailPanel.ts' />
 ///<reference path='view/AdminImageButton.ts' />
 ///<reference path='view/TopBarMenuItem.ts' />
 ///<reference path='view/TopBarMenu.ts' />
@@ -59,7 +60,6 @@
 ///<reference path='view/LivePreview.ts' />
 ///<reference path='view/DropDownButton.ts' />
 ///<reference path='view/IframeContainer.ts' />
-///<reference path='view/DetailPanel.ts' />
 ///<reference path='view/NewContentWindow.ts' />
 ///<reference path='view/FileUploadWindow.ts' />
 ///<reference path='view/AutosizeTextField.ts' />
@@ -122,6 +122,8 @@ module components {
     export var browseToolbar:app_browse.ContentBrowseToolbar;
     export var contextMenu:app_browse.ContentTreeGridContextMenu;
     export var gridPanel:app_browse.ContentTreeGridPanel;
+    export var detailPanelHorizontal: app_browse.ContentDetailPanel;
+    export var detailPanelVertical: app_browse.ContentDetailPanel;
 }
 
 Ext.application({
@@ -165,31 +167,8 @@ Ext.application({
         var grid = components.gridPanel =
                    <app_browse.ContentTreeGridPanel> new app_browse.ContentTreeGridPanel('contentTreeGrid').create('center');
 
-        var detailsHorizontal = new Admin.view.contentManager.DetailPanel({
-            region: 'south',
-            split: true,
-            collapsible: true,
-            header: false,
-            xtype: 'contentDetail',
-            isLiveMode: contentIsOpenedFromPortal,
-
-            showToolbar: false,
-            flex: 1
-        });
-
-        var detailsVertical = new Admin.view.contentManager.DetailPanel({
-            region: 'east',
-            split: true,
-            collapsible: true,
-            header: false,
-            xtype: 'contentDetail',
-            isLiveMode: contentIsOpenedFromPortal,
-
-            showToolbar: false,
-            flex: 1,
-            hidden: true,
-            isVertical: true
-        });
+        var detailsHorizontal = components.detailPanelHorizontal = new app_browse.ContentDetailPanel();
+        var detailsVertical = components.detailPanelVertical = new app_browse.ContentDetailPanel();
 
         Ext.create('Ext.container.Viewport', {
             layout: 'fit',
@@ -220,8 +199,30 @@ Ext.application({
                                     items: <any>[
                                         toolbar.ext,
                                         grid.ext,
-                                        detailsHorizontal,
-                                        detailsVertical
+                                        {
+                                            region: 'south',
+                                            split: true,
+                                            collapsible: true,
+                                            header: false,
+                                            contentEl: detailsHorizontal.getHTMLElement(),
+                                            isLiveMode: contentIsOpenedFromPortal,
+
+                                            showToolbar: false,
+                                            flex: 1
+                                        },
+                                        {
+                                            region: 'east',
+                                            split: true,
+                                            collapsible: true,
+                                            header: false,
+                                            contentEl: detailsVertical.getHTMLElement(),
+                                            isLiveMode: contentIsOpenedFromPortal,
+
+                                            showToolbar: false,
+                                            flex: 1,
+                                            hidden: true,
+                                            isVertical: true
+                                        }
                                     ]
                                 }
                             ]

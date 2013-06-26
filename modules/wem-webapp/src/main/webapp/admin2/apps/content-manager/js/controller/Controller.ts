@@ -326,7 +326,7 @@ Ext.define('Admin.controller.Controller', {
 
         // need to use this methods to preserve persistent selection
         var selection = this.getContentTreeGridPanel().getSelection();
-        this.getContentDetailPanel().setData(selection);
+        this.getContentDetailPanel().update(selection);
     },
 
     updateToolbarButtons: function (selected) {
@@ -348,11 +348,6 @@ Ext.define('Admin.controller.Controller', {
                 }
             }
             deleteContentButton.setDisabled(disabled);
-
-            deleteContentButton = detailPanel.down('*[action=deleteContent]');
-            if (deleteContentButton) {
-                deleteContentButton.setDisabled(disabled);
-            }
         }
     },
 
@@ -546,10 +541,8 @@ Ext.define('Admin.controller.Controller', {
         return components.gridPanel;
     },
 
-    getContentDetailPanel: function () {
-        var contentDetail = Ext.ComponentQuery.query('contentDetail');
-        var vertical = contentDetail[0].isVisible();
-        return Ext.ComponentQuery.query('contentDetail')[vertical ? 0 : 1];
+    getContentDetailPanel: function ():app_browse.ContentDetailPanel {
+        return components.detailPanelHorizontal.isVisible() ? components.detailPanelHorizontal : components.detailPanelVertical;
     },
 
     getPersistentGridSelectionPlugin: function () {
