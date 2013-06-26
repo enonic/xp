@@ -156,6 +156,26 @@ module api_remote {
         contentTypes:ContentTypeListNode[];
     }
 
+    export interface RemoteCallMixinGetParams {
+        format:string;
+        mixin:string;
+    }
+
+    export interface RemoteCallMixinGetResult extends RemoteCallResultBase {
+        mixin?: {
+            name:string;
+            module:string;
+            displayName:string;
+            FormItemSet?: FormItemSet;
+            Layout?: Layout;
+            Input?: Input;
+            MixinReference?: MixinReference;
+            iconUrl:string;
+        };
+        mixinXml:string;
+        iconUrl:string;
+    }
+
     export interface RemoteCallCreateOrUpdateContentParams {
         contentId?: string;
         temporary?: bool;
@@ -214,7 +234,7 @@ module api_remote {
         schema_tree (params, callback):void;
         schema_list (params, callback):void;
         system_getSystemInfo (params, callback):void;
-        mixin_get (params, callback):void;
+        mixin_get (params:RemoteCallMixinGetParams, callback:(result:RemoteCallMixinGetResult)=>void):void;
         mixin_createOrUpdate (params, callback):void;
         mixin_delete (params, callback):void;
         relationshipType_get (params, callback):void;
@@ -379,7 +399,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        mixin_get(params, callback):void {
+        mixin_get(params:RemoteCallMixinGetParams, callback:(result:RemoteCallMixinGetResult)=>void):void {
             console.log(params, callback);
         }
 
