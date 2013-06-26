@@ -12,6 +12,8 @@ import com.enonic.wem.admin.rest.resource.content.ContentImageResource;
 import com.enonic.wem.admin.rest.resource.jcr.GetNodesResource;
 import com.enonic.wem.admin.rest.resource.relationship.RelationshipResource;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageResource;
+import com.enonic.wem.admin.rest.resource.schema.SchemaResource;
+import com.enonic.wem.admin.rest.resource.schema.mixin.MixinResource;
 import com.enonic.wem.admin.rest.resource.space.SpaceImageResource;
 import com.enonic.wem.admin.rest.resource.space.SpaceResource;
 import com.enonic.wem.admin.rest.resource.status.StatusResource;
@@ -37,7 +39,6 @@ public final class RestServlet
         addClass( AccountExportResource.class );
         addClass( AccountImageResource.class );
         addClass( ContentImageResource.class );
-        addClass( SchemaImageResource.class );
         addClass( GetNodesResource.class );
         addClass( UploadResource.class );
         addClass( AuthResource.class );
@@ -48,6 +49,11 @@ public final class RestServlet
         addClass( SpaceImageResource.class );
 
         addClass( RelationshipResource.class );
+
+        addClass( SchemaResource.class );
+        addClass( SchemaImageResource.class );
+
+        addClass( MixinResource.class );
 
         addClass( CountryResource.class );
         addClass( TimeZoneResource.class );
