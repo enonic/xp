@@ -8,8 +8,6 @@ module app_wizard {
 
         private id:number;
 
-        private spaceWizardActions:SpaceWizardActions;
-
         static createSpaceWizardContext():SpaceWizardContext {
             var id = spaceWizardContexts.length + 1;
             var context:SpaceWizardContext = new SpaceWizardContext(id);
@@ -27,15 +25,10 @@ module app_wizard {
 
         constructor(id:number) {
             this.id = id;
-            this.spaceWizardActions = new SpaceWizardActions();
         }
 
         getId():number {
             return this.id;
-        }
-
-        getActions():SpaceWizardActions {
-            return this.spaceWizardActions;
         }
     }
 }

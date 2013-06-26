@@ -31,21 +31,14 @@ module app_wizard {
         }
     }
 
-    export class CloseSpaceAction extends api_ui.Action {
+    export class CloseSpacePanelAction extends api_ui.Action {
 
-        constructor() {
+        constructor(panel:api_ui.Panel) {
             super("Close");
+
             this.addExecutionListener(() => {
-                // TODO
+                new app_event.CloseOpenSpacePanelEvent(panel).fire();
             });
         }
-    }
-
-    export class SpaceWizardActions {
-
-        SAVE_SPACE:api_ui.Action = new SaveSpaceAction();
-        DUPLICATE_SPACE:api_ui.Action = new DuplicateSpaceAction();
-        DELETE_SPACE:api_ui.Action = new DeleteSpaceAction();
-        CLOSE_SPACE:api_ui.Action = new CloseSpaceAction();
     }
 }

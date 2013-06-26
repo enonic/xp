@@ -4,6 +4,14 @@ module app_wizard {
 
         private static DEFAULT_SPACE_ICON_URL:string = "resources/images/icons/128x128/default_space.png";
 
+        private closeAction:api_ui.Action;
+
+        private saveAction:api_ui.Action;
+
+        private duplicateAction:api_ui.Action;
+
+        private deleteAction:api_ui.Action;
+
         private formIcon:api_app_wizard.FormIcon;
 
         private toolbar:SpaceWizardToolbar;
@@ -18,10 +26,21 @@ module app_wizard {
 
         constructor(id:string) {
 
-            var context = SpaceWizardContext.createSpaceWizardContext();
-
             this.formIcon = new api_app_wizard.FormIcon(SpaceWizardPanel.DEFAULT_SPACE_ICON_URL, "Click to upload icon", "rest/upload");
-            this.toolbar = new SpaceWizardToolbar(context.getActions());
+
+            this.closeAction = new CloseSpacePanelAction(this);
+            this.saveAction = new SaveSpaceAction();
+            this.saveAction.addExecutionListener(this.handleSaveAction);
+
+            this.duplicateAction = new DuplicateSpaceAction();
+            this.deleteAction = new DeleteSpaceAction();
+
+            this.toolbar = new SpaceWizardToolbar({
+                saveAction: this.saveAction,
+                duplicateAction: this.duplicateAction,
+                deleteAction: this.deleteAction,
+                closeAction: this.closeAction
+            });
 
             super({
                 formIcon: this.formIcon,
@@ -58,6 +77,10 @@ module app_wizard {
             this.setDisplayName(result.space.displayName);
             this.setName(result.space.name);
             this.formIcon.setSrc(result.space.iconUrl);
+        }
+
+        private handleSaveAction() {
+            console.log("SpacwWizardPanel.handleSaveAction");
         }
     }
 }

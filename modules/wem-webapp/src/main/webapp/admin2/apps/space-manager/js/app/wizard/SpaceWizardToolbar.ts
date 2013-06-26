@@ -1,17 +1,21 @@
 module app_wizard {
 
-    /**
-     * TODO: The upcoming successor of SpaceWizardToolbar, when the Toolbar code is working....
-     */
+    export interface SpaceWizardToolbarParams {
+        saveAction:api_ui.Action;
+        duplicateAction:api_ui.Action;
+        deleteAction:api_ui.Action;
+        closeAction:api_ui.Action;
+    }
+
     export class SpaceWizardToolbar extends api_ui_toolbar.Toolbar {
 
-        constructor(actions:SpaceWizardActions) {
+        constructor(params:SpaceWizardToolbarParams) {
             super();
-            super.addAction(actions.SAVE_SPACE);
-            super.addAction(actions.DUPLICATE_SPACE);
-            super.addAction(actions.DELETE_SPACE);
+            super.addAction(params.saveAction);
+            super.addAction(params.duplicateAction);
+            super.addAction(params.deleteAction);
             super.addGreedySpacer();
-            super.addAction(actions.CLOSE_SPACE);
+            super.addAction(params.closeAction);
         }
     }
 }
