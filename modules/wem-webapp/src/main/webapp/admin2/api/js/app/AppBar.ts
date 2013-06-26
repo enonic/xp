@@ -40,9 +40,6 @@ module api_app {
             if (this.tabMenu != null) {
                 this.appendChild(this.tabMenu);
             }
-            else {
-                this.appendChild(new TabMenuContainer())
-            }
 
             this.userInfoPopup = new UserInfoPopup();
 
@@ -104,14 +101,6 @@ module api_app {
             this.getEl().addEventListener('click', (event:Event) => {
                 action.execute();
             });
-        }
-
-    }
-
-    export class TabMenuContainer extends api_dom.DivEl {
-
-        constructor() {
-            super('TabMenuContainer', 'tabmenu-container');
         }
 
     }
