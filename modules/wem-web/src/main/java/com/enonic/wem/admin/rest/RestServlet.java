@@ -16,6 +16,9 @@ import com.enonic.wem.admin.rest.resource.space.SpaceResource;
 import com.enonic.wem.admin.rest.resource.status.StatusResource;
 import com.enonic.wem.admin.rest.resource.tools.ToolsResource;
 import com.enonic.wem.admin.rest.resource.upload.UploadResource;
+import com.enonic.wem.admin.rest.resource.util.CountryResource;
+import com.enonic.wem.admin.rest.resource.util.LocaleResource;
+import com.enonic.wem.admin.rest.resource.util.TimeZoneResource;
 import com.enonic.wem.admin.rest.ui.BackgroundImageResource;
 import com.enonic.wem.web.jaxrs.JaxRsServlet;
 
@@ -42,6 +45,10 @@ public final class RestServlet
 
         addClass( SpaceResource.class );
         addClass( SpaceImageResource.class );
+
+        addClass( CountryResource.class );
+        addClass( TimeZoneResource.class );
+        addClass( LocaleResource.class );
 
         addSingleton( JsonRpcController.class );
     }
