@@ -175,7 +175,6 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
 
     initComponentDraggables: function () {
         var me = this,
-            liveEditIFrame = $(me.getContextWindow().getLiveEditIFrameDom()),
             components = $('[data-context-window-draggable="true"]');
 
         components.liveDraggable({
@@ -198,8 +197,8 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
             */
         });
 
-        liveEditIFrame.droppable({
-            tolerance: 'fit',
+        $(me.getContextWindow().iFrameMask).droppable({
+            tolerance: 'pointer',
             over: function (event, ui) {
                 me.onDragOverIFrame(event, ui);
             }
@@ -207,6 +206,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
     },
 
     onStartDragComponent: function (event, ui) {
+        this.getContextWindow().showHideIFrameMask(true);
         /*
         var me = this,
             panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
@@ -234,9 +234,13 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
     */
 
     onDragOverIFrame: function (event, ui) {
+        console.log('hover');
+
         var me = this,
             contextWindow = me.getContextWindow(),
             jQuery = contextWindow.getLiveEditJQuery();
+
+        contextWindow.showHideIFrameMask(false);
 
         var clone = jQuery(ui.draggable.clone());
 

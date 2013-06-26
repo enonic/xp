@@ -70,14 +70,13 @@
 }
 
 /** Drag shim */
-.admin-context-window-dragging-shim {
+.admin-context-window-iframe-mask {
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    background: #fff;
-    opacity: 0;
+    background: transparent;
 }
 
 /** Scroll bar */
@@ -107,9 +106,9 @@
 
 .admin-context-window .x-resizable-handle-north,
 .admin-context-window .x-resizable-handle-south {
-    height: 1px;
+    height: 4px;
 }
 .admin-context-window .x-resizable-handle-east,
 .admin-context-window .x-resizable-handle-west {
-    width: 1px;
+    width: 4px;
 }

@@ -26,7 +26,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     },
     listeners: {
         resize: function () {
-            this.onWindowResize();
+            this.resizePanelHeights();
         }
     },
 
@@ -41,7 +41,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     titleTextCmp: undefined,
     toggleButton: undefined,
     windowBodyCt: undefined,
-    draggingShim: undefined,
+    iFrameMask: undefined,
 
     liveEditIFrameDom: undefined, // Passed as constructor config
 
@@ -73,7 +73,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             this.titleBarCt,
             this.windowBodyCt
         ];
-        this.draggingShim = this.createDraggingShim();
+        this.iFrameMask = this.createIFrameMask();
         this.enableWindowDrag();
         this.enableWindowResize();
         this.currentHeight = this.height;
@@ -286,16 +286,26 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
      *
      * @returns {HTMLElement}
      */
-    createDraggingShim: function () {
+    createIFrameMask: function () {
         var div = document.createElement('div');
-        div.setAttribute('class', 'admin-context-window-dragging-shim');
+        div.setAttribute('class', 'admin-context-window-iframe-mask');
         div.setAttribute('style', 'display: none');
         document.body.appendChild(div);
         return div;
     },
 
-    showHideDraggingShim: function (show) {
-        this.draggingShim.style.display = show ? 'block' : 'none';
+    showHideIFrameMask: function (show) {
+        var iFrameEl = Ext.get(this.getLiveEditIFrameDom().id),
+            y = iFrameEl.getY(),
+            x = iFrameEl.getX(),
+            w = iFrameEl.getComputedWidth(),
+            h = iFrameEl.getComputedHeight();
+
+        this.iFrameMask.style.display = show ? 'block' : 'none';
+        this.iFrameMask.style.top = y + 'px';
+        this.iFrameMask.style.left = x + 'px';
+        this.iFrameMask.style.width = w + 'px';
+        this.iFrameMask.style.height = h + 'px';
     },
 
     enableWindowDrag: function () {
@@ -305,11 +315,11 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             listeners: {
                 dragstart: function () {
                     me.getEl().toggleCls('is-dragging');
-                    me.showHideDraggingShim(true);
+                    me.showHideIFrameMask(true);
                 },
                 dragend: function () {
                     me.getEl().toggleCls('is-dragging');
-                    me.showHideDraggingShim(false);
+                    me.showHideIFrameMask(false);
                 }
             }
         };
@@ -324,25 +334,23 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             transparent: false,
             listeners: {
                 beforeresize: function () {
-                    me.showHideDraggingShim(true)
+                    me.showHideIFrameMask(true)
                 },
                 resize: function () {
-                    me.showHideDraggingShim(false)
+                    me.showHideIFrameMask(false)
                 }
             }
         };
     },
 
-    onWindowResize: function () {
-        // fixme: optimize
-        var addedPanels = this.windowBodyCt.items.items,
+    resizePanelHeights: function () {
+        var addedBodyPanels = this.windowBodyCt.items.items,
             newBodyHeight = this.height - this.TITLE_BAR_HEIGHT;
 
-        for (var i = 0; i < addedPanels.length; i++) {
-            addedPanels[i].setHeight(newBodyHeight);
+        for (var i = 0; i < addedBodyPanels.length; i++) {
+            addedBodyPanels[i].setHeight(newBodyHeight);
         }
     },
-
 
     /**
      * @returns {HTMLElement}
