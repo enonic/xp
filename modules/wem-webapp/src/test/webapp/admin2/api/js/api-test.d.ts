@@ -203,10 +203,13 @@ module api_ui {
         public getLastPanel(): Panel;
         public getPanelShown(): Panel;
         public getPanelShownIndex(): number;
-        public removePanel(index: number): Panel;
+        public getPanelIndex(panel: Panel): number;
+        public removePanel(panelToRemove: Panel): number;
+        public removePanelByIndex(index: number): Panel;
+        public canRemovePanel(panel: Panel, index: number): bool;
+        private doRemovePanel(panelToRemove, index);
         private isShownPanel(panelIndex);
         public showPanel(index: number): void;
-        public getPanels(): Panel[];
     }
 }
 module api_ui_tab {
@@ -222,8 +225,9 @@ module api_ui_tab {
     interface TabNavigator {
         addTab(tab: Tab);
         removeTab(tab: Tab);
+        getTab(tabIndex: number);
         selectTab(tabIndex: number);
-        getActiveTab(): Tab;
+        getSelectedTab(): Tab;
         deselectTab();
         getSize(): number;
         addTabSelectedListener(listener: (Tab: any) => void);
@@ -285,12 +289,12 @@ module api_ui_tab {
         public countVisible(): number;
         public getSelectedTabIndex(): number;
         public getSelectedTab(): Tab;
+        public getTab(tabIndex: number): TabMenuItem;
         public removeTab(tab: Tab): void;
         private isSelectedTab(tab);
         private isLastTab(tab);
         private updateActiveTab(tabIndex);
         public selectTab(tabIndex: number): void;
-        public getActiveTab(): Tab;
         public deselectTab(): void;
         public addTabSelectedListener(listener: (Tab: any) => void): void;
         public addTabRemoveListener(listener: (Tab: any) => bool): void;

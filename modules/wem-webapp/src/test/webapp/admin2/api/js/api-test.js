@@ -727,8 +727,41 @@ var api_ui;
         DeckPanel.prototype.getPanelShownIndex = function () {
             return this.panelShown;
         };
-        DeckPanel.prototype.removePanel = function (index) {
+        DeckPanel.prototype.getPanelIndex = function (panel) {
+            var foundAtIndex = -1;
+            this.panels.forEach(function (currPanel, index) {
+                if(panel === currPanel && foundAtIndex === -1) {
+                    foundAtIndex = index;
+                }
+            });
+            return foundAtIndex;
+        };
+        DeckPanel.prototype.removePanel = function (panelToRemove) {
+            var panelIndex = this.getPanelIndex(panelToRemove);
+            if(panelIndex > -1) {
+                if(this.doRemovePanel(panelToRemove, panelIndex)) {
+                    return panelIndex;
+                } else {
+                    return -1;
+                }
+            }
+            return panelIndex;
+        };
+        DeckPanel.prototype.removePanelByIndex = function (index) {
             var panelToRemove = this.panels[index];
+            if(this.doRemovePanel(panelToRemove, index)) {
+                return panelToRemove;
+            } else {
+                return null;
+            }
+        };
+        DeckPanel.prototype.canRemovePanel = function (panel, index) {
+            return true;
+        };
+        DeckPanel.prototype.doRemovePanel = function (panelToRemove, index) {
+            if(!this.canRemovePanel(panelToRemove, index)) {
+                return false;
+            }
             panelToRemove.getEl().remove();
             var removingLastPanel = this.panels.length == index + 1;
             var panelToRemoveIsShown = this.isShownPanel(index);
@@ -743,7 +776,7 @@ var api_ui;
                     this.panels[index].show();
                 }
             }
-            return panelToRemove;
+            return true;
         };
         DeckPanel.prototype.isShownPanel = function (panelIndex) {
             return this.panelShown === panelIndex;
@@ -758,9 +791,6 @@ var api_ui;
                     panel.hide();
                 }
             }
-        };
-        DeckPanel.prototype.getPanels = function () {
-            return this.panels;
         };
         return DeckPanel;
     })(api_ui.Panel);
@@ -778,7 +808,7 @@ TestCase("DecPanel", {
         deckPanel.showPanel(2);
         assertEquals(2, deckPanel.getPanelShownIndex());
         assertEquals(panel3, deckPanel.getPanelShown());
-        deckPanel.removePanel(2);
+        deckPanel.removePanelByIndex(2);
         assertEquals(1, deckPanel.getPanelShownIndex());
         assertEquals(panel2, deckPanel.getPanelShown());
     }
@@ -960,6 +990,9 @@ var api_ui_tab;
         TabMenu.prototype.getSelectedTab = function () {
             return this.tabs[this.selectedTab];
         };
+        TabMenu.prototype.getTab = function (tabIndex) {
+            return this.tabs[tabIndex];
+        };
         TabMenu.prototype.removeTab = function (tab) {
             var tabMenuItem = tab;
             tabMenuItem.getEl().remove();
@@ -1000,9 +1033,6 @@ var api_ui_tab;
             this.tabMenuButton.setLabel(selectedTab.getLabel());
             this.selectedTab = tabIndex;
             this.updateActiveTab(tabIndex);
-        };
-        TabMenu.prototype.getActiveTab = function () {
-            return this.getSelectedTab();
         };
         TabMenu.prototype.deselectTab = function () {
             this.tabMenuButton.setLabel("");

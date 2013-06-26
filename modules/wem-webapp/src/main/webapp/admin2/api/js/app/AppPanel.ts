@@ -33,8 +33,8 @@ module api_app{
             }
         }
 
-        removePanel(index:number):api_ui.Panel {
-            var panelRemoved = super.removePanel(index);
+        removePanelByIndex(index:number):api_ui.Panel {
+            var panelRemoved = super.removePanelByIndex(index);
             if (this.getSize() == 0) {
                 this.showHomePanel();
             }

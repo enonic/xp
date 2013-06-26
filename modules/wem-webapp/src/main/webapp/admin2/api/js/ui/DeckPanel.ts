@@ -1,7 +1,7 @@
 module api_ui {
 
     /**
-     * TODO: Implement remaining functionality.
+     * A panel having multiple child panels, but showing only one at a time - like a deck of cards.
      */
     export class DeckPanel extends Panel {
 
@@ -48,9 +48,61 @@ module api_ui {
             return this.panelShown;
         }
 
-        removePanel(index:number):Panel {
+        getPanelIndex(panel:Panel):number {
+            var foundAtIndex:number = -1;
+            this.panels.forEach((currPanel, index) => {
+                if (panel === currPanel && foundAtIndex === -1) {
+                    foundAtIndex = index;
+                }
+            });
+            return foundAtIndex;
+        }
+
+        /*
+         * Removes given panel. Method canRemovePanel will be called to know if specified panel is allowed to be removed.
+         * @returns {number} the index of the removed panel. -1 if it was not removable.
+         */
+        removePanel(panelToRemove:Panel):number {
+
+            var panelIndex:number = this.getPanelIndex(panelToRemove);
+            if (panelIndex > -1) {
+                if( this.doRemovePanel(panelToRemove, panelIndex) ){
+                    return panelIndex;
+                }
+                else {
+                    return -1;
+                }
+            }
+            return panelIndex;
+        }
+
+        /*
+         * Removes panel specified by given index. Method canRemovePanel will be called to know if specified panel is allowed to be removed.
+         * @returns {Panel} the removed panel. Null if not was not removable.
+         */
+        removePanelByIndex(index:number):Panel {
 
             var panelToRemove = this.panels[index];
+
+            if (this.doRemovePanel(panelToRemove, index)) {
+                return panelToRemove;
+            }
+            else {
+                return null;
+            }
+        }
+
+        /*
+         * Override this method to decide whether given panel at given index can be removed or not. Default is true.
+         */
+        canRemovePanel(panel:Panel, index:number):bool {
+            return true;
+        }
+
+        private doRemovePanel(panelToRemove:Panel, index):bool {
+            if (!this.canRemovePanel(panelToRemove, index)) {
+                return false;
+            }
             panelToRemove.getEl().remove();
             var removingLastPanel:bool = this.panels.length == index + 1;
             var panelToRemoveIsShown:bool = this.isShownPanel(index);
@@ -70,8 +122,7 @@ module api_ui {
                     this.panels[index].show();
                 }
             }
-
-            return panelToRemove;
+            return true;
         }
 
         private isShownPanel(panelIndex:number):bool {
@@ -89,10 +140,6 @@ module api_ui {
                     panel.hide();
                 }
             }
-        }
-
-        getPanels():Panel[] {
-            return this.panels;
         }
     }
 }

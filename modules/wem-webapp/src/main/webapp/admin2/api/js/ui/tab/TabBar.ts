@@ -18,7 +18,11 @@ module api_ui_tab {
             return 0;
         }
 
-        getActiveTab():api_ui_tab.Tab {
+        getSelectedTab():api_ui_tab.Tab {
+            return null;
+        }
+
+        getTab(tabIndex:number) {
             return null;
         }
 

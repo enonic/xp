@@ -12,18 +12,19 @@ module api_ui_tab {
             this.navigator = navigator;
 
             this.navigator.addTabRemoveListener((tab:Tab) => {
-                return this.tabRemove(tab);
+                return this.handleTabRemoveEvent(tab);
             });
             this.navigator.addTabSelectedListener((tab:Tab)=> {
                 this.showTab(tab);
             });
         }
 
-        getNavigator():TabNavigator {
-            return this.navigator;
+        getSelectedTab():api_ui_tab.Tab {
+            return this.navigator.getSelectedTab();
         }
 
         addTab(tab:api_ui_tab.Tab, panel:api_ui.Panel) {
+
             this.navigator.addTab(tab);
             this.addPanel(panel);
         }
@@ -33,9 +34,22 @@ module api_ui_tab {
             this.navigator.selectTab(tab.getTabIndex());
         }
 
-        tabRemove(tab:api_ui_tab.Tab):bool {
-            this.removePanel(tab.getTabIndex());
-            return true;
+        removePanel(panel:api_ui.Panel):number {
+
+            var panelIndex:number = this.getPanelIndex(panel);
+            var tab:Tab = this.navigator.getTab(panelIndex);
+            var removedPanelAtIndex = super.removePanel(panel);
+            var removed:bool = removedPanelAtIndex !== -1;
+
+            if (removed) {
+                this.navigator.removeTab(tab);
+            }
+            return removedPanelAtIndex;
+        }
+
+        handleTabRemoveEvent(tab:api_ui_tab.Tab):bool {
+            var removedPanel:api_ui.Panel = this.removePanelByIndex(tab.getTabIndex());
+            return removedPanel !== null;
         }
     }
 }

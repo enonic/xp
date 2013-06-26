@@ -112,6 +112,10 @@ module api_ui_tab {
             return this.tabs[this.selectedTab];
         }
 
+        getTab(tabIndex:number) {
+            return this.tabs[tabIndex];
+        }
+
         removeTab(tab:api_ui_tab.Tab) {
             var tabMenuItem = <TabMenuItem>tab;
 
@@ -158,10 +162,6 @@ module api_ui_tab {
             this.tabMenuButton.setLabel(selectedTab.getLabel());
             this.selectedTab = tabIndex;
             this.updateActiveTab(tabIndex);
-        }
-
-        getActiveTab():api_ui_tab.Tab {
-            return this.getSelectedTab();
         }
 
         deselectTab() {

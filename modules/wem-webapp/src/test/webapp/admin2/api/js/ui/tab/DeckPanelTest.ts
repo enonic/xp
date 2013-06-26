@@ -31,7 +31,7 @@ TestCase("DecPanel", {
         assertEquals(panel3, deckPanel.getPanelShown());
 
         // exercise
-        deckPanel.removePanel(2);
+        deckPanel.removePanelByIndex(2);
 
         // verify
         assertEquals(1, deckPanel.getPanelShownIndex());
