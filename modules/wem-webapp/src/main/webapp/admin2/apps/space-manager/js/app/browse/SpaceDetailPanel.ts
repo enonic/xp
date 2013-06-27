@@ -8,7 +8,7 @@ module app_browse {
                 this.showBlank();
             }
 
-            app_event.GridSelectionChangeEvent.on((event) => {
+            GridSelectionChangeEvent.on((event) => {
                 this.update(event.getModels());
             });
 
@@ -46,7 +46,7 @@ module app_browse {
             for (var i in models) {
                 var removeCallback = (box:api_app_browse.DetailPanelBox) => {
                     var models:api_model.SpaceModel[] = [box.getModel()];
-                    new app_event.GridDeselectEvent(models).fire();
+                    new GridDeselectEvent(models).fire();
                 }
                 this.getEl().appendChild(new api_app_browse.DetailPanelBox(models[i], removeCallback).getHTMLElement());
             }

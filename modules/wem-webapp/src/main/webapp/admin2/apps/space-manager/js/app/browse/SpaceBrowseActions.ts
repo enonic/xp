@@ -5,7 +5,7 @@ module app_browse {
         constructor() {
             super("New");
             this.addExecutionListener(() => {
-                new app_event.NewSpaceEvent().fire();
+                new NewSpaceEvent().fire();
             });
         }
     }
@@ -16,7 +16,7 @@ module app_browse {
             super("Open");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new app_event.OpenSpaceEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
+                new OpenSpaceEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
     }
@@ -27,7 +27,7 @@ module app_browse {
             super("Edit");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new app_event.EditSpaceEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
+                new EditSpaceEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
     }
@@ -38,7 +38,7 @@ module app_browse {
             super("Delete", "mod+del");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new app_event.DeletePromptEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
+                new DeletePromptEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
     }
@@ -56,7 +56,7 @@ module app_browse {
 
             ACTIONS.push(NEW_SPACE, OPEN_SPACE, EDIT_SPACE, DELETE_SPACE);
 
-            app_event.GridSelectionChangeEvent.on((event) => {
+            GridSelectionChangeEvent.on((event) => {
 
                 var spaces:api_model.SpaceModel[] = event.getModels();
 

@@ -1,5 +1,6 @@
-module app_event {
-    export class EditSpaceEvent extends BaseSpaceModelEvent {
+module app_browse {
+
+    export class EditSpaceEvent extends app_event.BaseSpaceModelEvent {
 
         constructor(model:api_model.SpaceModel[]) {
             super('editSpaceEvent', model);

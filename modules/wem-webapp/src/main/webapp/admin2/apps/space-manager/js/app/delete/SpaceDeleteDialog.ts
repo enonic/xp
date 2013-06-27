@@ -24,7 +24,7 @@ module app {
                 this.deleteHandler.doDelete(api_handler.DeleteSpaceParamFactory.create(this.spacesToDelete), deleteCallback);
             });
 
-            document.body.appendChild(this.getHTMLElement());
+            api_dom.Body.get().appendChild(this);
         }
 
         setSpacesToDelete(spaces:api_model.SpaceModel[]) {

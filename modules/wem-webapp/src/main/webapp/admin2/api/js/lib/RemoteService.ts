@@ -1,6 +1,8 @@
 ///<reference path='RemoteContentTypeModel.ts' />
 ///<reference path='RemoteContentModel.ts' />
 ///<reference path='RemoteSpaceModel.ts' />
+///<reference path='RemoteMixinModel.ts' />
+///<reference path='RemoteSchemaModel.ts' />
 
 module api_remote {
 
@@ -156,6 +158,27 @@ module api_remote {
         contentTypes:ContentTypeListNode[];
     }
 
+    export interface RemoteCallSchemaListParams {
+        types:string[];
+        search:string;
+        modules:string[];
+    }
+
+    export interface RemoteCallSchemaListResult extends RemoteCallResultBase {
+        schemas:Schema[];
+    }
+
+    export interface RemoteCallMixinGetParams {
+        format:string;
+        mixin:string;
+    }
+
+    export interface RemoteCallMixinGetResult extends RemoteCallResultBase {
+        mixin?: Mixin;
+        mixinXml:string;
+        iconUrl:string;
+    }
+
     export interface RemoteCallCreateOrUpdateContentParams {
         contentId?: string;
         temporary?: bool;
@@ -194,6 +217,16 @@ module api_remote {
         }[];
     }
 
+    export interface RemoteCallMixinCreateOrUpdateParams {
+        mixin:string;
+        iconReference:string;
+    }
+
+    export interface RemoteCallMixinCreateOrUpdateResult extends RemoteCallResultBase {
+        created:bool;
+        updated:bool;
+    }
+
     export interface RemoteCallGetContentTreeParams {
         contentIds?:string[];
     }
@@ -211,6 +244,16 @@ module api_remote {
     export interface RemoteCallGetRelationshipTypeResult extends RemoteCallResultBase {
         iconUrl:string;
         relationshiptType:RelationshipType;
+    }
+
+    export interface RemoteCallCreateOrUpdateRelationshipTypeParams {
+        relationshipType:string;
+        iconReference:string;
+    }
+
+    export interface RemoteCallCreateOrUpdateRelationshipTypeResult extends RemoteCallResultBase {
+        created:bool;
+        updated:bool;
     }
 
     export interface RemoteServiceInterface {
@@ -245,13 +288,14 @@ module api_remote {
         contentType_delete (params:RemoteCallContentTypeDeleteParams, callback:(result:RemoteCallContentTypeDeleteResult)=>void):void;
         contentType_tree (params:RemoteCallGetContentTypeTreeParams, callback:(result:RemoteCallGetContentTypeTreeResult)=>void):void;
         schema_tree (params, callback):void;
-        schema_list (params, callback):void;
+        schema_list (params:RemoteCallSchemaListParams, callback:(result:RemoteCallSchemaListResult)=>void):void;
         system_getSystemInfo (params, callback):void;
-        mixin_get (params, callback):void;
-        mixin_createOrUpdate (params, callback):void;
+        mixin_get (params:RemoteCallMixinGetParams, callback:(result:RemoteCallMixinGetResult)=>void):void;
+        mixin_createOrUpdate (params:RemoteCallMixinCreateOrUpdateParams, callback:(result:RemoteCallMixinCreateOrUpdateResult)=>void):void;
         mixin_delete (params:RemoteCallMixinDeleteParams, callback:(result:RemoteCallMixinDeleteResult)=>void):void;
         relationshipType_get (params:RemoteCallGetRelationshipTypeParams, callback:(result:RemoteCallGetRelationshipTypeResult)=>void):void;
-        relationshipType_createOrUpdate (params, callback):void;
+        relationshipType_createOrUpdate (params:RemoteCallCreateOrUpdateRelationshipTypeParams,
+                                         callback:(result:RemoteCallCreateOrUpdateRelationshipTypeResult)=>void):void;
         relationshipType_delete (params, callback):void;
         space_list (params:RemoteCallSpaceListParams, callback:(result:RemoteCallSpaceListResult)=>void):void;
         space_get (params:RemoteCallSpaceGetParams, callback:(result:RemoteCallSpaceGetResult)=>void):void;
@@ -404,7 +448,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        schema_list(params, callback):void {
+        schema_list(params:RemoteCallSchemaListParams, callback:(result:RemoteCallSchemaListResult)=>void):void {
             console.log(params, callback);
         }
 
@@ -412,11 +456,11 @@ module api_remote {
             console.log(params, callback);
         }
 
-        mixin_get(params, callback):void {
+        mixin_get(params:RemoteCallMixinGetParams, callback:(result:RemoteCallMixinGetResult)=>void):void {
             console.log(params, callback);
         }
 
-        mixin_createOrUpdate(params, callback):void {
+        mixin_createOrUpdate(params:RemoteCallMixinCreateOrUpdateParams, callback:(result:RemoteCallMixinCreateOrUpdateResult)=>void):void {
             console.log(params, callback);
         }
 
@@ -428,7 +472,8 @@ module api_remote {
             console.log(params, callback);
         }
 
-        relationshipType_createOrUpdate(params, callback):void {
+        relationshipType_createOrUpdate(params:RemoteCallCreateOrUpdateRelationshipTypeParams,
+                                        callback:(result:RemoteCallCreateOrUpdateRelationshipTypeResult)=>void):void {
             console.log(params, callback);
         }
 
