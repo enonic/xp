@@ -33,6 +33,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     DEFAULT_SELECTED_PANEL_INDEX: 0,
     TITLE_BAR_HEIGHT: 32,
 
+    selectedPanelIndex: undefined,
     collapsed: false,
     currentHeight: undefined,
 
@@ -58,6 +59,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
                 return new Admin.view.contentManager.contextwindow.panel.Emulator({hidden:true});
             }
         },
+        // fixme: inspector panel should be built-in
         {
             name: 'Inspector',
             item: function () {
@@ -76,6 +78,8 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         this.iFrameMask = this.createIFrameMask();
         this.enableWindowDrag();
         this.enableWindowResize();
+
+        this.registerListenersFromLiveEditPage();
         this.currentHeight = this.height;
 
         this.callParent(arguments);
@@ -139,14 +143,14 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
      * @returns {Array}
      */
     createMenuItems: function () {
-        var me = this, menuItems = [], panels = this.panels, key, panel;
-        for (key in this.panels) {
-            if (this.panels.hasOwnProperty(key)) {
-                panel = panels[key];
+        var me = this, menuItems = [], panels = this.panels, i, panel;
+        for (i in this.panels) {
+            if (this.panels.hasOwnProperty(i)) {
+                panel = panels[i];
                 menuItems.push({
                     plain: true,
                     cls: 'context-window-menu-item',
-                    itemId: key,
+                    itemId: i, // fixme: use another property for storing the index value
                     width:'100%',
                     text: panel.name,
                     handler: function (item) {
@@ -243,7 +247,10 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             if (i == index) {
                 panel.show();
                 this.setTitleText(this.panels[i].name); // ai, move this
-
+                // fixme: temporary fix, until Inspector is hardcoded
+                if (index != addedPanels.length-1) {
+                    this.setSelectedPanelIndex(i);
+                }
             } else {
                 panel.hide();
             }
@@ -332,6 +339,26 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         for (var i = 0; i < addedBodyPanels.length; i++) {
             addedBodyPanels[i].setHeight(newBodyHeight);
         }
+    },
+
+    registerListenersFromLiveEditPage: function () {
+        var me = this,
+        // Right now We need to use the jQuery object from the live edit page in order to listen for the events
+            liveEditWindow = me.getLiveEditContentWindowObject(),
+            liveEditJQuery = me.getLiveEditJQuery();
+
+        liveEditJQuery(liveEditWindow).on('selectComponent.liveEdit', function (event) {
+            me.showPanel(2);
+        });
+        liveEditJQuery(liveEditWindow).on('deselectComponent.liveEdit', function (event) {
+            if (me.selectedPanelIndex != undefined) {
+                me.showPanel(me.selectedPanelIndex);
+            }
+        });
+    },
+
+    setSelectedPanelIndex: function (index) {
+        this.selectedPanelIndex = index;
     },
 
     /**
