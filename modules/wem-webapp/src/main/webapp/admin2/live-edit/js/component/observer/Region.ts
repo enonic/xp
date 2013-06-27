@@ -18,7 +18,7 @@ module LiveEdit.component.observer {
         }
 
         private registerGlobalListeners():void {
-            $(window).on('sortUpdate.liveEdit.component sortOver.liveEdit.component remove.liveEdit.component', () => {
+            $(window).on('sortableUpdate.liveEdit sortableOver.liveEdit removeComponent.liveEdit', () => {
                 this.renderEmptyPlaceholders();
             });
         }

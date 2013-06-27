@@ -16,18 +16,18 @@ module LiveEdit.ui {
         }
 
         private registerGlobalListeners():void {
-            $(window).on('mouseOver.liveEdit.component', (event, component) => this.componentMouseOver(component));
-            $(window).on('select.liveEdit.component', (event, component)    => this.selectComponent(component));
-            $(window).on('deselect.liveEdit.component', ()                  => this.deselect());
-            $(window).on('mouseOut.liveEdit.component', ()                  => this.hide());
-            $(window).on('sortStart.liveEdit.component', ()                 => this.hide());
-            $(window).on('remove.liveEdit.component', ()                    => this.hide());
-            $(window).on('paragraphEdit.liveEdit.component', ()             => this.hide());
-            $(window).on('resize.liveEdit.window', ()                       => this.handleWindowResize());
+            $(window).on('mouseOverComponent.liveEdit', (event, component) => this.componentMouseOver(component));
+            $(window).on('selectComponent.liveEdit', (event, component)    => this.selectComponent(component));
+            $(window).on('deselectComponent.liveEdit', ()                  => this.deselect());
+            $(window).on('mouseOutComponent.liveEdit', ()                  => this.hide());
+            $(window).on('sortableStart.liveEdit', ()                 => this.hide());
+            $(window).on('removeComponent.liveEdit', ()                    => this.hide());
+            $(window).on('editParagraphComponent.liveEdit', ()             => this.hide());
+            $(window).on('resizeBrowserWindow.liveEdit', ()                       => this.handleWindowResize());
 
             $(window).on('sortstop.liveedit.component', (event, uiEvent, ui, wasSelectedOnDragStart) => {
                 if (wasSelectedOnDragStart) {
-                    $(window).trigger('select.liveEdit.component', [ui.item]);
+                    $(window).trigger('selectComponent.liveEdit', [ui.item]);
                 }
             });
         }

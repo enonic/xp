@@ -27,7 +27,7 @@ module LiveEdit.ui.contextmenu.menuitem {
                         parent = $(parent[0]);
 
                         var menuPagePosition:any = {x: 0, y: 0};
-                        $(window).trigger('select.liveEdit.component', [parent, menuPagePosition]);
+                        $(window).trigger('selectComponent.liveEdit', [parent, menuPagePosition]);
 
                         this.scrollComponentIntoView(parent);
 

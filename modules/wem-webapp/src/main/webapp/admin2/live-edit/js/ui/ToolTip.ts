@@ -23,7 +23,7 @@ module LiveEdit.ui {
         }
 
         private registerGlobalListeners():void {
-            $(window).on('select.liveEdit.component', () => this.hide());
+            $(window).on('selectComponent.liveEdit', () => this.hide());
         }
 
         private addView():void {
