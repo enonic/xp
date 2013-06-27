@@ -14,6 +14,7 @@ import com.enonic.wem.admin.rest.resource.jcr.GetNodesResource;
 import com.enonic.wem.admin.rest.resource.relationship.RelationshipResource;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageResource;
 import com.enonic.wem.admin.rest.resource.schema.SchemaResource;
+import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeResource;
 import com.enonic.wem.admin.rest.resource.schema.mixin.MixinResource;
 import com.enonic.wem.admin.rest.resource.space.SpaceImageResource;
 import com.enonic.wem.admin.rest.resource.space.SpaceResource;
@@ -54,8 +55,8 @@ public final class RestServlet
 
         addClass( SchemaResource.class );
         addClass( SchemaImageResource.class );
-
         addClass( MixinResource.class );
+        addClass( ContentTypeResource.class );
 
         addClass( CountryResource.class );
         addClass( TimeZoneResource.class );
