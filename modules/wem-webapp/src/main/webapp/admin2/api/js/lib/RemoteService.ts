@@ -1,6 +1,7 @@
 ///<reference path='RemoteContentTypeModel.ts' />
 ///<reference path='RemoteContentModel.ts' />
 ///<reference path='RemoteSpaceModel.ts' />
+///<reference path='RemoteMixinModel.ts' />
 
 module api_remote {
 
@@ -162,16 +163,7 @@ module api_remote {
     }
 
     export interface RemoteCallMixinGetResult extends RemoteCallResultBase {
-        mixin?: {
-            name:string;
-            module:string;
-            displayName:string;
-            FormItemSet?: FormItemSet;
-            Layout?: Layout;
-            Input?: Input;
-            MixinReference?: MixinReference;
-            iconUrl:string;
-        };
+        mixin?: Mixin;
         mixinXml:string;
         iconUrl:string;
     }
