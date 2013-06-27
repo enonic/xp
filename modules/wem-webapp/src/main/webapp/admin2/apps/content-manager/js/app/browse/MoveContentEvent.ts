@@ -1,6 +1,6 @@
-module app_event {
+module app_browse {
 
-    export class MoveContentEvent extends BaseContentModelEvent {
+    export class MoveContentEvent extends app_event.BaseContentModelEvent {
 
         constructor(model:api_model.ContentModel[]) {
             super('moveContent', model);

@@ -16,40 +16,40 @@ Ext.define('Admin.controller.Controller', {
 
     init: function () {
 
-        app_event.NewContentEvent.on((event) => {
+        app_browse.NewContentEvent.on((event) => {
             this.getNewContentWindow().doShow();
         });
 
-        app_event.OpenContentEvent.on((event) => {
+        app_browse.OpenContentEvent.on((event) => {
             this.viewContent(event.getModels());
         });
 
-        app_event.EditContentEvent.on((event) => {
+        app_browse.EditContentEvent.on((event) => {
             this.editContent(event.getModels());
         });
 
-        app_event.DeleteContentEvent.on((event) => {
+        app_browse.DeleteContentEvent.on((event) => {
             components.contentDeleteDialog.setContentToDelete(event.getModels());
             components.contentDeleteDialog.open();
         });
 
-        app_event.DuplicateContentEvent.on((event) => {
+        app_browse.DuplicateContentEvent.on((event) => {
             this.duplicateContent(event.getModels());
         });
 
-        app_event.MoveContentEvent.on((event) => {
+        app_browse.MoveContentEvent.on((event) => {
             console.log('TODO: implement move content');
         });
 
-        app_event.ShowPreviewEvent.on((event) => {
+        app_browse.ShowPreviewEvent.on((event) => {
             console.log('TODO: implement show preview');
         });
 
-        app_event.ShowDetailsEvent.on((event) => {
+        app_browse.ShowDetailsEvent.on((event) => {
             console.log('TODO: implement show details');
         });
 
-        app_event.GridSelectionChangeEvent.on((event) => {
+        app_browse.GridSelectionChangeEvent.on((event) => {
             this.updateDetailPanel(event.getModels());
         });
 

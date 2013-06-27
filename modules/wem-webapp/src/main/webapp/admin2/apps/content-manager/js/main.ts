@@ -6,17 +6,17 @@
 ///<reference path='model/ContentTypeExtModel.ts' />
 
 ///<reference path='app/event/BaseContentModelEvent.ts' />
-///<reference path='app/event/GridSelectionChangeEvent.ts' />
-///<reference path='app/event/NewContentEvent.ts' />
-///<reference path='app/event/OpenContentEvent.ts' />
-///<reference path='app/event/EditContentEvent.ts' />
-///<reference path='app/event/DeleteContentEvent.ts' />
-///<reference path='app/event/DuplicateContentEvent.ts' />
-///<reference path='app/event/MoveContentEvent.ts' />
-///<reference path='app/event/ShowPreviewEvent.ts' />
-///<reference path='app/event/ShowDetailsEvent.ts' />
-///<reference path='app/event/ShowContextMenuEvent.ts' />
-///<reference path='app/event/GridDeselectEvent.ts' />
+///<reference path='app/browse/GridSelectionChangeEvent.ts' />
+///<reference path='app/browse/NewContentEvent.ts' />
+///<reference path='app/browse/OpenContentEvent.ts' />
+///<reference path='app/browse/EditContentEvent.ts' />
+///<reference path='app/browse/DeleteContentEvent.ts' />
+///<reference path='app/browse/DuplicateContentEvent.ts' />
+///<reference path='app/browse/MoveContentEvent.ts' />
+///<reference path='app/browse/ShowPreviewEvent.ts' />
+///<reference path='app/browse/ShowDetailsEvent.ts' />
+///<reference path='app/browse/ShowContextMenuEvent.ts' />
+///<reference path='app/browse/GridDeselectEvent.ts' />
 
 ///<reference path='lib/ux/toggleslide/Thumb.ts' />
 ///<reference path='lib/ux/toggleslide/ToggleSlide.ts' />

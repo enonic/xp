@@ -1,6 +1,6 @@
-module app_event {
+module app_browse {
 
-    export class DeleteContentEvent extends BaseContentModelEvent {
+    export class DeleteContentEvent extends app_event.BaseContentModelEvent {
         constructor(model:api_model.ContentModel[]) {
             super('deleteContent', model);
         }

@@ -1,6 +1,6 @@
-module app_event {
+module app_browse {
 
-    export class OpenContentEvent extends BaseContentModelEvent {
+    export class OpenContentEvent extends app_event.BaseContentModelEvent {
 
         constructor(model:api_model.ContentModel[]) {
             super('openContent', model);

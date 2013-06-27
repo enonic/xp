@@ -80,14 +80,14 @@ module app_browse {
             return {
                 listeners: {
                     selectionchange: (selModel, selected, opts) => {
-                        new app_event.GridSelectionChangeEvent(selected).fire();
+                        new GridSelectionChangeEvent(selected).fire();
                     },
                     itemcontextmenu: (view, rec, node, index, event) => {
                         event.stopEvent();
-                        new app_event.ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
+                        new ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
                     },
                     itemdblclick: (grid, record) => {
-                        new app_event.EditContentEvent(grid.getSelection()).fire();
+                        new EditContentEvent(grid.getSelection()).fire();
                     }
                 }
             }
@@ -97,14 +97,14 @@ module app_browse {
             return {
                 listeners: {
                     selectionchange: (selModel, selected, opts) => {
-                        new app_event.GridSelectionChangeEvent(selected).fire();
+                        new GridSelectionChangeEvent(selected).fire();
                     },
                     itemcontextmenu: (view, rec, node, index, event) => {
                         event.stopEvent();
-                        new app_event.ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
+                        new ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
                     },
                     itemdblclick: (grid, record) => {
-                        new app_event.EditContentEvent(grid.getSelection()).fire();
+                        new EditContentEvent(grid.getSelection()).fire();
                     }
                 }
             }

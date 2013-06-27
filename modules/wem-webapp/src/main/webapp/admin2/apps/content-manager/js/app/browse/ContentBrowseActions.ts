@@ -5,7 +5,7 @@ module app_browse {
         constructor() {
             super("New");
             this.addExecutionListener(() => {
-                new app_event.NewContentEvent().fire();
+                new NewContentEvent().fire();
             });
         }
     }
@@ -16,7 +16,7 @@ module app_browse {
             super("Open");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new app_event.OpenContentEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new OpenContentEvent(app.ContentContext.get().getSelectedContents()).fire();
             });
         }
     }
@@ -27,7 +27,7 @@ module app_browse {
             super("Edit");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new app_event.EditContentEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new EditContentEvent(app.ContentContext.get().getSelectedContents()).fire();
             });
         }
     }
@@ -38,7 +38,7 @@ module app_browse {
             super("Delete", "mod+del");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new app_event.DeleteContentEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new DeleteContentEvent(app.ContentContext.get().getSelectedContents()).fire();
             });
         }
     }
@@ -49,7 +49,7 @@ module app_browse {
             super("Duplicate");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new app_event.DuplicateContentEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new DuplicateContentEvent(app.ContentContext.get().getSelectedContents()).fire();
             });
         }
     }
@@ -60,7 +60,7 @@ module app_browse {
             super("Move");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new app_event.MoveContentEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new MoveContentEvent(app.ContentContext.get().getSelectedContents()).fire();
             });
         }
     }
@@ -72,7 +72,7 @@ module app_browse {
 
             this.setEnabled(true);
             this.addExecutionListener(() => {
-                new app_event.ShowPreviewEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new ShowPreviewEvent(app.ContentContext.get().getSelectedContents()).fire();
             });
         }
     }
@@ -84,7 +84,7 @@ module app_browse {
 
             this.setEnabled(true);
             this.addExecutionListener(() => {
-                new app_event.ShowDetailsEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new ShowDetailsEvent(app.ContentContext.get().getSelectedContents()).fire();
             })
         }
     }
@@ -115,7 +115,7 @@ module app_browse {
 
         static init() {
 
-            app_event.GridSelectionChangeEvent.on((event) => {
+            GridSelectionChangeEvent.on((event) => {
 
                 var contents:api_model.ContentModel[] = event.getModels();
 

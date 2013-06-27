@@ -1,6 +1,6 @@
-module app_event {
+module app_browse {
 
-    export class DuplicateContentEvent extends BaseContentModelEvent {
+    export class DuplicateContentEvent extends app_event.BaseContentModelEvent {
 
         constructor(model:api_model.ContentModel[]) {
             super('duplicateContent', model);
