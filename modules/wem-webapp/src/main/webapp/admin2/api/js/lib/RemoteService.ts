@@ -1,6 +1,7 @@
 ///<reference path='RemoteContentTypeModel.ts' />
 ///<reference path='RemoteContentModel.ts' />
 ///<reference path='RemoteSpaceModel.ts' />
+///<reference path='RemoteSchemaModel.ts' />
 
 module api_remote {
 
@@ -163,17 +164,7 @@ module api_remote {
     }
 
     export interface RemoteCallSchemaListResult extends RemoteCallResultBase {
-        schemas:{
-            key:string;
-            name:string;
-            module:string;
-            qualifiedName:string;
-            displayName:string;
-            type:string;
-            createdTime:Date;
-            modifiedTime:Date;
-            iconUrl:string;
-        }[];
+        schemas:Schema[];
     }
 
     export interface RemoteCallCreateOrUpdateContentParams {
