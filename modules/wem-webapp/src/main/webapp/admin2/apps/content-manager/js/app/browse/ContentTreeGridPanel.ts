@@ -95,8 +95,17 @@ module app_browse {
 
         private createTreeConfig() {
             return {
-                selectionchange: (selModel, selected, opts) => {
-                    new app_event.GridSelectionChangeEvent(selected).fire();
+                listeners: {
+                    selectionchange: (selModel, selected, opts) => {
+                        new app_event.GridSelectionChangeEvent(selected).fire();
+                    },
+                    itemcontextmenu: (view, rec, node, index, event) => {
+                        event.stopEvent();
+                        new app_event.ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
+                    },
+                    itemdblclick: (grid, record) => {
+                        new app_event.EditContentEvent(grid.getSelection()).fire();
+                    }
                 }
             }
         }

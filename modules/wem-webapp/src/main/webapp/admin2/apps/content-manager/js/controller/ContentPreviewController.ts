@@ -9,17 +9,17 @@ Ext.define('Admin.controller.ContentPreviewController', {
 
     init: function () {
         this.control({
-            'contentDetailToolbar *[action=duplicateContent]': {
-                click: function (el, e) {
-                    this.duplicateContent(this.getContentPreviewPanel().data);
+            '#contentDetailToolbar *[action=duplicateContent]': {
+                click: (el, e) => {
+                    app_browse.ContentBrowseActions.DUPLICATE_CONTENT.execute();
                 }
             },
-            'contentDetailToolbar *[action=deleteContent]': {
-                click: function (el, e) {
-                    this.deleteContent(this.getContentPreviewPanel().data);
+            '#contentDetailToolbar *[action=deleteContent]': {
+                click: (el, e) => {
+                    app_browse.ContentBrowseActions.DELETE_CONTENT.execute();
                 }
             },
-            'contentDetailToolbar toggleslide': {
+            '#contentDetailToolbar toggleslide': {
                 change: this.toggleLiveDetail
             }
         });
