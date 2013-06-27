@@ -23,7 +23,7 @@ module app_delete {
                 this.deleteHandler.doDelete(api_handler.DeleteContentParamFactory.create(this.contentToDelete), deleteCallback);
             });
 
-            document.body.appendChild(this.getHTMLElement());
+            api_dom.Body.get().appendChild(this);
         }
 
         setContentToDelete(contentModels:api_model.ContentModel[]) {

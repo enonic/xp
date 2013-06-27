@@ -38,6 +38,7 @@
 ///<reference path='dom/ElementHelper.ts' />
 ///<reference path='dom/ImgElHelper.ts' />
 ///<reference path='dom/Element.ts' />
+///<reference path='dom/Body.ts' />
 ///<reference path='dom/DivEl.ts' />
 ///<reference path='dom/H1El.ts' />
 ///<reference path='dom/H2El.ts' />
