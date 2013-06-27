@@ -17,7 +17,7 @@ module api_ui{
             this.getEl().addClass("body-mask")
             this.getEl().setZindex(30000);
 
-            document.body.appendChild(this.getHTMLElement());
+            api_dom.Body.get().appendChild(this);
         }
 
         activate() {

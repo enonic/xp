@@ -94,8 +94,8 @@ Ext.application({
         var appBar = new app.SpaceAppBar();
         var appPanel = new app.SpaceAppPanel(appBar);
 
-        document.body.appendChild(appBar.getHTMLElement());
-        document.body.appendChild(appPanel.getHTMLElement());
+        api_dom.Body.get().appendChild(appBar);
+        api_dom.Body.get().appendChild(appPanel);
 
         appPanel.init();
 

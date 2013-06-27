@@ -92,7 +92,7 @@ module api_ui_toolbar {
             // To have labels width calculated by browser they should be rendered into dom.
             // Therefore append ToggleSlide to body.
             // It will be removed from here when it is inserted in another place.
-            new api_dom.ElementHelper(document.body).appendChild(this.getHTMLElement());
+            api_dom.Body.get().appendChild(this);
 
             var labelWidth = Math.max(onLabelEl.getWidth(), offLabelEl.getWidth());
 
