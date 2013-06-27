@@ -14,6 +14,8 @@
     </script>
 
 
+
+
 </head>
 <body>
 <!-- API -->
@@ -22,11 +24,14 @@
     var splitPanel = new api_ui.SplitPanel();
     var panelA = new api_ui.Panel();
     var panelB = new api_ui.Panel();
+
     panelA.getHTMLElement().style.backgroundColor = "red";
     panelB.getHTMLElement().style.backgroundColor = "blue";
-    splitPanel.setPanelA(panelA);
-    splitPanel.setPanelB(panelB);
-    api_dom.Body.get().appendChild(splitPanel);
+    var splitPanel = new api_ui.SplitPanel(panelA, panelB);
+
+    splitPanel.setDistribution(70, 30);
+    document.body.appendChild(splitPanel.getHTMLElement());
+    splitPanel.render();
 </script>
 </body>
 </html>

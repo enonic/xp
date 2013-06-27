@@ -1,11 +1,29 @@
 .split-panel {
-  position: absolute;
-  top:0;
-  bottom:0;
-  width:100%;
+  width: 100%;
+
+  &.dragging {
+    cursor: ns-resize;
+  }
+
+  .panel {
+    position: relative;
+    overflow-y: scroll;
+  }
 
   .splitter {
     background-color: @admin-light-gray-bg;
     cursor: ns-resize;
+    .noSelect
+  }
+
+  .ghost-dragger {
+    height: 5px;
+    background-color: @admin-dark-gray;
+    opacity: 0.5;
+    position: absolute;
+    z-index: 100;
+    cursor: ns-resize;
+    width: 100%;
+    .noSelect
   }
 }
