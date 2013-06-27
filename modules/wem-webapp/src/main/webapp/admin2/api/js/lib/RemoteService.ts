@@ -237,13 +237,13 @@ module api_remote {
     }
 
     export interface RemoteCallGetRelationshipTypeParams {
-        qualifiedrelationshipTypeName:string;
+        qualifiedRelationshipTypeName:string;
         format:string;
     }
 
     export interface RemoteCallGetRelationshipTypeResult extends RemoteCallResultBase {
         iconUrl:string;
-        relationshiptType:RelationshipType;
+        relationshipType:RelationshipType;
     }
 
     export interface RemoteCallCreateOrUpdateRelationshipTypeParams {
