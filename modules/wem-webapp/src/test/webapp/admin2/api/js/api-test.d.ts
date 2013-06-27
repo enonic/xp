@@ -125,6 +125,7 @@ module api_dom {
         public setHeight(value: string): ElementHelper;
         public getHeight(): number;
         public setTop(value: string): ElementHelper;
+        public setTopPx(value: number): ElementHelper;
         public setLeft(value: string): ElementHelper;
         public setMarginLeft(value: string): ElementHelper;
         public setMarginRight(value: string): ElementHelper;
@@ -144,6 +145,7 @@ module api_dom {
         private static constructorCounter;
         private el;
         private id;
+        private parent;
         constructor(elementName: string, idPrefix?: string, className?: string, elHelper?: ElementHelper);
         public className(value: string): Element;
         public show(): void;
@@ -159,6 +161,8 @@ module api_dom {
         public insertAfterEl(existingEl: Element): void;
         public insertBeforeEl(existingEl: Element): void;
         public removeChildren(): void;
+        private setParent(parent);
+        public getParent(): Element;
     }
 }
 module api_dom {

@@ -507,6 +507,9 @@ var api_dom;
             this.el.style.top = value;
             return this;
         };
+        ElementHelper.prototype.setTopPx = function (value) {
+            return this.setTop(value + "px");
+        };
         ElementHelper.prototype.setLeft = function (value) {
             this.el.style.left = value;
             return this;
@@ -604,6 +607,7 @@ var api_dom;
         };
         Element.prototype.appendChild = function (child) {
             this.el.appendChild(child.getEl().getHTMLElement());
+            child.setParent(this);
         };
         Element.prototype.prependChild = function (child) {
             this.el.getHTMLElement().insertBefore(child.getHTMLElement(), this.el.getHTMLElement().firstChild);
@@ -624,6 +628,12 @@ var api_dom;
             while(htmlEl.firstChild) {
                 htmlEl.removeChild(htmlEl.firstChild);
             }
+        };
+        Element.prototype.setParent = function (parent) {
+            this.parent = parent;
+        };
+        Element.prototype.getParent = function () {
+            return this.parent;
         };
         return Element;
     })();
@@ -689,7 +699,7 @@ var api_ui;
     var Panel = (function (_super) {
         __extends(Panel, _super);
         function Panel(idPrefix) {
-                _super.call(this, idPrefix, "Panel");
+                _super.call(this, idPrefix, "panel");
         }
         return Panel;
     })(api_dom.DivEl);

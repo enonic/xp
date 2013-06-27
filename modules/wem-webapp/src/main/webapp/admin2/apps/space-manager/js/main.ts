@@ -31,6 +31,12 @@
 ///<reference path='app/event/EditSpaceEvent.ts' />
 ///<reference path='app/event/CloseActiveSpacePanelEvent.ts' />
 
+///<reference path='controller/Controller.ts' />
+///<reference path='controller/SpaceController.ts' />
+///<reference path='controller/FilterPanelController.ts' />
+///<reference path='controller/GridPanelController.ts' />
+///<reference path='controller/WizardController.ts' />
+
 ///<reference path='app/wizard/SpaceWizardActions.ts' />
 ///<reference path='app/wizard/SpaceWizardContext.ts' />
 ///<reference path='app/wizard/SpaceWizardToolbar.ts' />

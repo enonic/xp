@@ -28,15 +28,13 @@ module app_browse {
 
         private showSingle(model) {
             this.empty();
+            var actionMenu = new api_ui_menu.ActionMenu(SpaceBrowseActions.OPEN_SPACE, SpaceBrowseActions.EDIT_SPACE);
+            var tabPanel = new api_app_browse.DetailTabPanel(model, actionMenu);
 
-            var tabPanel = new api_app_browse.DetailTabPanel(model);
             tabPanel.addTab(new api_app_browse.DetailPanelTab("Analytics"));
             tabPanel.addTab(new api_app_browse.DetailPanelTab("Sales"));
             tabPanel.addTab(new api_app_browse.DetailPanelTab("History"));
 
-            tabPanel.addAction(new api_ui.Action("Test"));
-            tabPanel.addAction(new api_ui.Action("More test"));
-            tabPanel.addAction(new api_ui.Action("And finally the last one"));
 
             this.getEl().appendChild(tabPanel.getHTMLElement());
         }

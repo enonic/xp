@@ -144,6 +144,10 @@ module api_dom {
             return this;
         }
 
+        setTopPx(value:number):ElementHelper {
+            return this.setTop(value + "px");
+        }
+
         setLeft(value:string):ElementHelper {
             this.el.style.left = value;
             return this;

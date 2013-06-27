@@ -1,10 +1,11 @@
 module api_app_browse {
-    export class DetailPanel extends api_dom.DivEl {
+    export class DetailPanel extends api_ui.Panel {
 
         ext;
 
         constructor() {
-            super("detailpanel", "detailpanel");
+            super("detailpanel");
+            this.getEl().addClass("detailpanel");
             this.initExt();
         }
 
@@ -16,8 +17,6 @@ module api_app_browse {
                 split: true
             });
         }
-
-
     }
 
     export class DetailTabPanel extends api_dom.DivEl {
@@ -28,12 +27,16 @@ module api_app_browse {
         private tabChangeCallback:(DetailPanelTab) => void;
         private actionMenu:api_ui_menu.ActionMenu;
 
-        constructor(model:api_model.Model) {
+        constructor(model:api_model.Model, actionMenu:api_ui_menu.ActionMenu) {
             super("detailpanel-tab", "detailpanel-tab");
+
             this.model = model;
+            this.actionMenu = actionMenu;
+
             this.addHeader(model.data.name, model.id, model.data.iconUrl);
             this.addNavigation();
             this.addCanvas();
+
             this.setTabChangeCallback((tab:DetailPanelTab) => {
                 this.setActiveTab(tab);
             })
@@ -58,7 +61,7 @@ module api_app_browse {
 
             headerEl.getEl().appendChild(iconEl);
             headerEl.appendChild(hgroupEl);
-            headerEl.appendChild(this.createActionMenu());
+            headerEl.appendChild(this.actionMenu);
 
             this.appendChild(headerEl);
         }
@@ -80,15 +83,6 @@ module api_app_browse {
         setActiveTab(tab:DetailPanelTab) {
             this.canvas.empty();
             this.canvas.appendChild(tab.content);
-        }
-
-        addAction(action:api_ui.Action) {
-            this.actionMenu.addAction(action);
-        }
-
-        private createActionMenu() {
-            this.actionMenu = new api_ui_menu.ActionMenu();
-            return this.actionMenu;
         }
 
         private addNavigation() {

@@ -8,6 +8,8 @@ module api_dom {
 
         private id:string;
 
+        private parent:Element;
+
         constructor(elementName:string, idPrefix?:string, className?:string, elHelper?:ElementHelper) {
             if (elHelper == null) {
                 this.el = ElementHelper.fromName(elementName);
@@ -61,15 +63,16 @@ module api_dom {
             return this.el.getHTMLElement();
         }
 
-        appendChild(child:api_dom.Element) {
+        appendChild(child:Element) {
             this.el.appendChild(child.getEl().getHTMLElement());
+            child.setParent(this);
         }
 
-        prependChild(child:api_dom.Element) {
+        prependChild(child:Element) {
             this.el.getHTMLElement().insertBefore(child.getHTMLElement(), this.el.getHTMLElement().firstChild);
         }
 
-        removeChild(child:api_dom.Element) {
+        removeChild(child:Element) {
             if (this.el.getHTMLElement().contains(child.getHTMLElement())) {
                 this.el.getHTMLElement().removeChild(child.getHTMLElement());
             }
@@ -88,6 +91,14 @@ module api_dom {
             while (htmlEl.firstChild) {
                 htmlEl.removeChild(htmlEl.firstChild);
             }
+        }
+
+        private setParent(parent:Element) {
+            this.parent = parent;
+        }
+
+        getParent():Element {
+            return this.parent;
         }
     }
 }

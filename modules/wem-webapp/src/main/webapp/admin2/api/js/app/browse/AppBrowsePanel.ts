@@ -8,7 +8,12 @@ module api_app_browse{
 
         private detailPanel:DetailPanel;
 
+        private gridAndDetailSplitPanel:api_ui.SplitPanel;
+
         private filterPanel:any;
+
+        private gridContainer:api_ui.Panel;
+
 
         constructor(browseToolbar:api_ui_toolbar.Toolbar, grid:api_ui_grid.TreeGridPanel, detailPanel:DetailPanel, filterPanel:any) {
             super("AppBrowsePanel");
@@ -17,13 +22,16 @@ module api_app_browse{
             this.grid = grid;
             this.detailPanel = detailPanel;
             this.filterPanel = filterPanel;
+            this.gridContainer = new api_ui.Panel("grid-container");
+            this.gridAndDetailSplitPanel = new api_ui.SplitPanel(this.gridContainer, this.detailPanel);
         }
 
         init() {
             this.appendChild(this.browseToolbar);
+            this.appendChild(this.gridAndDetailSplitPanel);
+            this.gridAndDetailSplitPanel.render();
             // TODO: filterPanel.renderTo(this);
-            this.grid.create('center', this.getId());
-            this.appendChild(this.detailPanel);
+            this.grid.create('center', this.gridContainer.getId());
         }
     }
 }
