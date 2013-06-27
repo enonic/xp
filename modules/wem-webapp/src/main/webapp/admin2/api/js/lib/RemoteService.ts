@@ -203,6 +203,16 @@ module api_remote {
         contents:ContentTreeNode[];
     }
 
+    export interface RemoteCallCreateOrUpdateRelationshipTypeParams {
+        relationshipType:string;
+        iconReference:string;
+    }
+
+    export interface RemoteCallCreateOrUpdateRelationshipTypeResult extends RemoteCallResultBase {
+        created:bool;
+        updated:bool;
+    }
+
     export interface RemoteServiceInterface {
         account_find (params, callback):void;
         account_getGraph (params, callback):void;
@@ -241,7 +251,8 @@ module api_remote {
         mixin_createOrUpdate (params, callback):void;
         mixin_delete (params:RemoteCallMixinDeleteParams, callback:(result:RemoteCallMixinDeleteResult)=>void):void;
         relationshipType_get (params, callback):void;
-        relationshipType_createOrUpdate (params, callback):void;
+        relationshipType_createOrUpdate (params:RemoteCallCreateOrUpdateRelationshipTypeParams,
+                                         callback:(result:RemoteCallCreateOrUpdateRelationshipTypeResult)=>void):void;
         relationshipType_delete (params, callback):void;
         space_list (params:RemoteCallSpaceListParams, callback:(result:RemoteCallSpaceListResult)=>void):void;
         space_get (params:RemoteCallSpaceGetParams, callback:(result:RemoteCallSpaceGetResult)=>void):void;
@@ -418,7 +429,8 @@ module api_remote {
             console.log(params, callback);
         }
 
-        relationshipType_createOrUpdate(params, callback):void {
+        relationshipType_createOrUpdate(params:RemoteCallCreateOrUpdateRelationshipTypeParams,
+                                        callback:(result:RemoteCallCreateOrUpdateRelationshipTypeResult)=>void):void {
             console.log(params, callback);
         }
 
