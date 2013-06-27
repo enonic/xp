@@ -8,6 +8,7 @@ import com.enonic.wem.admin.rest.provider.JsonSerializableProvider;
 import com.enonic.wem.admin.rest.resource.account.AccountExportResource;
 import com.enonic.wem.admin.rest.resource.account.AccountImageResource;
 import com.enonic.wem.admin.rest.resource.auth.AuthResource;
+import com.enonic.wem.admin.rest.resource.content.ContentAttachmentResource;
 import com.enonic.wem.admin.rest.resource.content.ContentImageResource;
 import com.enonic.wem.admin.rest.resource.jcr.GetNodesResource;
 import com.enonic.wem.admin.rest.resource.relationship.RelationshipResource;
@@ -39,6 +40,7 @@ public final class RestServlet
         addClass( AccountExportResource.class );
         addClass( AccountImageResource.class );
         addClass( ContentImageResource.class );
+        addClass( ContentAttachmentResource.class );
         addClass( GetNodesResource.class );
         addClass( UploadResource.class );
         addClass( AuthResource.class );
