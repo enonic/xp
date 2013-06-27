@@ -2,7 +2,7 @@ module app_wizard {
 
     export class SpaceWizardPanel extends api_app_wizard.WizardPanel {
 
-        private static DEFAULT_SPACE_ICON_URL:string = "resources/images/icons/128x128/default_space.png";
+        private static DEFAULT_SPACE_ICON_URL:string = "/admin/rest/space/image/_";
 
         private closeAction:api_ui.Action;
 
