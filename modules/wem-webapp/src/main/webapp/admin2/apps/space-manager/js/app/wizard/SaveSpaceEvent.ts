@@ -1,4 +1,4 @@
-module app_event {
+module app_wizard {
 
     export class SaveSpaceEvent extends api_event.Event {
         constructor() {

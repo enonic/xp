@@ -7,7 +7,7 @@ module  app_browse {
 
             this.setItemId(itemId);
 
-            app_event.GridDeselectEvent.on((event) => {
+            GridDeselectEvent.on((event) => {
                 this.deselect(event.getModels()[0].data.name);
             });
         }
@@ -68,14 +68,14 @@ module  app_browse {
             return {
                 listeners: {
                     selectionchange: (selModel, selected, opts) => {
-                        new app_event.GridSelectionChangeEvent(selected).fire();
+                        new GridSelectionChangeEvent(selected).fire();
                     },
                     itemcontextmenu: (view, rec, node, index, event) => {
                         event.stopEvent();
-                        new app_event.ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
+                        new ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
                     },
                     itemdblclick: (grid, record) => {
-                        new app_event.EditSpaceEvent(grid.getSelection()).fire();
+                        new EditSpaceEvent(grid.getSelection()).fire();
                     }
                 }
             }
@@ -84,7 +84,7 @@ module  app_browse {
         private createTreeConfig() {
             return {
                 selectionchange: (selModel, selected, opts) => {
-                    new app_event.GridSelectionChangeEvent(selected).fire();
+                    new GridSelectionChangeEvent(selected).fire();
                 }
             }
         }
