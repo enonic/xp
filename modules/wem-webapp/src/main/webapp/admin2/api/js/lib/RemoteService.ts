@@ -203,6 +203,16 @@ module api_remote {
         contents:ContentTreeNode[];
     }
 
+    export interface RemoteCallGetRelationshipTypeParams {
+        qualifiedrelationshipTypeName:string;
+        format:string;
+    }
+
+    export interface RemoteCallGetRelationshipTypeResult extends RemoteCallResultBase {
+        iconUrl:string;
+        relationshiptType:RelationshipType;
+    }
+
     export interface RemoteServiceInterface {
         account_find (params, callback):void;
         account_getGraph (params, callback):void;
@@ -240,7 +250,7 @@ module api_remote {
         mixin_get (params, callback):void;
         mixin_createOrUpdate (params, callback):void;
         mixin_delete (params:RemoteCallMixinDeleteParams, callback:(result:RemoteCallMixinDeleteResult)=>void):void;
-        relationshipType_get (params, callback):void;
+        relationshipType_get (params:RemoteCallGetRelationshipTypeParams, callback:(result:RemoteCallGetRelationshipTypeResult)=>void):void;
         relationshipType_createOrUpdate (params, callback):void;
         relationshipType_delete (params, callback):void;
         space_list (params:RemoteCallSpaceListParams, callback:(result:RemoteCallSpaceListResult)=>void):void;
@@ -414,7 +424,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        relationshipType_get(params, callback):void {
+        relationshipType_get(params:RemoteCallGetRelationshipTypeParams, callback:(result:RemoteCallGetRelationshipTypeResult)=>void):void {
             console.log(params, callback);
         }
 
