@@ -5,14 +5,14 @@
 ///<reference path='model/ContentExtModel.ts' />
 ///<reference path='model/ContentTypeExtModel.ts' />
 
-///<reference path='event/BaseContentModelEvent.ts' />
-///<reference path='event/GridSelectionChangeEvent.ts' />
-///<reference path='event/NewContentEvent.ts' />
-///<reference path='event/OpenContentEvent.ts' />
-///<reference path='event/EditContentEvent.ts' />
-///<reference path='event/DeleteContentEvent.ts' />
-///<reference path='event/ShowContextMenuEvent.ts' />
-///<reference path='event/GridDeselectEvent.ts' />
+///<reference path='app/event/BaseContentModelEvent.ts' />
+///<reference path='app/event/GridSelectionChangeEvent.ts' />
+///<reference path='app/event/NewContentEvent.ts' />
+///<reference path='app/event/OpenContentEvent.ts' />
+///<reference path='app/event/EditContentEvent.ts' />
+///<reference path='app/event/DeleteContentEvent.ts' />
+///<reference path='app/event/ShowContextMenuEvent.ts' />
+///<reference path='app/event/GridDeselectEvent.ts' />
 
 
 ///<reference path='lib/ux/toggleslide/Thumb.ts' />
