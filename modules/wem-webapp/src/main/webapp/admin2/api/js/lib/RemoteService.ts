@@ -203,6 +203,24 @@ module api_remote {
         contents:ContentTreeNode[];
     }
 
+    export interface RemoteCallDeleteRelationshipTypeParams {
+        qualifiedRelationshipTypeNames:string[];
+    }
+
+    export interface DeleteRelationshipTypeSuccess {
+        qualifiedRelationshipTypeName:string;
+    }
+
+    export interface DeleteRelationshipTypeFailure {
+        qualifiedRelationshipTypeName:string;
+        reason:string;
+    }
+
+    export interface RemoteCallDeleteRelationshipTypeResult extends RemoteCallResultBase {
+        successes:DeleteRelationshipTypeSuccess[];
+        failures:DeleteRelationshipTypeFailure[];
+    }
+
     export interface RemoteServiceInterface {
         account_find (params, callback):void;
         account_getGraph (params, callback):void;
@@ -242,7 +260,8 @@ module api_remote {
         mixin_delete (params:RemoteCallMixinDeleteParams, callback:(result:RemoteCallMixinDeleteResult)=>void):void;
         relationshipType_get (params, callback):void;
         relationshipType_createOrUpdate (params, callback):void;
-        relationshipType_delete (params, callback):void;
+        relationshipType_delete (params:RemoteCallDeleteRelationshipTypeParams,
+                                 callback:(result:RemoteCallDeleteRelationshipTypeResult)=>void):void;
         space_list (params:RemoteCallSpaceListParams, callback:(result:RemoteCallSpaceListResult)=>void):void;
         space_get (params:RemoteCallSpaceGetParams, callback:(result:RemoteCallSpaceGetResult)=>void):void;
         space_delete (params:RemoteCallSpaceDeleteParams, callback:(result:RemoteCallSpaceDeleteResult)=>void):void;
@@ -422,7 +441,8 @@ module api_remote {
             console.log(params, callback);
         }
 
-        relationshipType_delete(params, callback):void {
+        relationshipType_delete(params:RemoteCallDeleteRelationshipTypeParams,
+                                callback:(result:RemoteCallDeleteRelationshipTypeResult)=>void):void {
             console.log(params, callback);
         }
 
