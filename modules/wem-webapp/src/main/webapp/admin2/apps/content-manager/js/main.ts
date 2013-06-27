@@ -2,6 +2,9 @@
 ///<reference path='../../../api/js/Mousetrap.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
+///<reference path='model/ContentExtModel.ts' />
+///<reference path='model/ContentTypeExtModel.ts' />
+
 ///<reference path='event/BaseContentModelEvent.ts' />
 ///<reference path='event/GridSelectionChangeEvent.ts' />
 ///<reference path='event/NewContentEvent.ts' />
@@ -10,8 +13,6 @@
 ///<reference path='event/DeleteContentEvent.ts' />
 ///<reference path='event/ShowContextMenuEvent.ts' />
 ///<reference path='event/GridDeselectEvent.ts' />
-
-///<reference path='ContentContext.ts' />
 
 
 ///<reference path='lib/ux/toggleslide/Thumb.ts' />
@@ -26,18 +27,17 @@
 ///<reference path='app/browse/ContentTreeGridPanel.ts' />
 ///<reference path='app/browse/ContentDetailPanel.ts' />
 
-///<reference path='handler/DeleteContentHandler.ts' />
-///<reference path='view/wizard/form/FormComponent.ts' />
-///<reference path='view/wizard/form/FormItemSetComponent.ts' />
-///<reference path='view/wizard/form/input/BaseInputComponent.ts' />
-///<reference path='view/wizard/form/input/TextLineComponent.ts' />
+///<reference path='app/ContentAppBarActions.ts' />
+///<reference path='app/ContentAppBarTabMenu.ts' />
+///<reference path='app/ContentAppBarTabMenuItem.ts' />
+///<reference path='app/ContentAppBar.ts' />
+///<reference path='app/ContentContext.ts' />
 
+///<reference path='handler/DeleteContentHandler.ts' />
 
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
 
-///<reference path='model/ContentExtModel.ts' />
-///<reference path='model/ContentTypeExtModel.ts' />
 
 ///<reference path='store/ContentStore.ts' />
 ///<reference path='store/ContentTreeStore.ts' />
@@ -68,32 +68,31 @@
 ///<reference path='view/WizardLayout.ts' />
 ///<reference path='view/WizardPanel.ts' />
 
-///<reference path='ContentAppBarActions.ts' />
-///<reference path='ContentAppBarTabMenu.ts' />
-///<reference path='ContentAppBarTabMenuItem.ts' />
-///<reference path='ContentAppBar.ts' />
+///<reference path='view/wizard/form/FormComponent.ts' />
+///<reference path='view/wizard/form/FormItemSetComponent.ts' />
+///<reference path='view/wizard/form/input/BaseInputComponent.ts' />
+///<reference path='view/wizard/form/input/TextLineComponent.ts' />
+///<reference path='view/wizard/form/FormItemOccurrencesHandler.ts' />
+///<reference path='view/wizard/form/ImagePopupDialog.ts' />
+///<reference path='view/wizard/form/FormGenerator.ts' />
+///<reference path='view/wizard/form/FieldSetLayout.ts' />
+///<reference path='view/wizard/form/FormComponent.ts' />
+///<reference path='view/wizard/form/FormItemContainer.ts' />
+///<reference path='view/wizard/form/FormItemSet.ts' />
+///<reference path='view/wizard/form/FormItemSetComponent.ts' />
+///<reference path='view/wizard/form/FormItemSetContainer.ts' />
+///<reference path='view/wizard/form/InputContainer.ts' />
 
-/// <reference path='view/wizard/form/FormItemOccurrencesHandler.ts' />
-/// <reference path='view/wizard/form/ImagePopupDialog.ts' />
-/// <reference path='view/wizard/form/FormGenerator.ts' />
-/// <reference path='view/wizard/form/FieldSetLayout.ts' />
-/// <reference path='view/wizard/form/FormComponent.ts' />
-/// <reference path='view/wizard/form/FormItemContainer.ts' />
-/// <reference path='view/wizard/form/FormItemSet.ts' />
-/// <reference path='view/wizard/form/FormItemSetComponent.ts' />
-/// <reference path='view/wizard/form/FormItemSetContainer.ts' />
-/// <reference path='view/wizard/form/InputContainer.ts' />
-
-/// <reference path='view/wizard/form/input/Base.ts' />
-/// <reference path='view/wizard/form/input/BaseInputComponent.ts' />
-/// <reference path='view/wizard/form/input/HtmlArea.ts' />
-/// <reference path='view/wizard/form/input/HtmlArea-temp.ts' />
-/// <reference path='view/wizard/form/input/Image.ts' />
-/// <reference path='view/wizard/form/input/ImageSelector.ts' />
-/// <reference path='view/wizard/form/input/Relationship.ts' />
-/// <reference path='view/wizard/form/input/TextArea.ts' />
-/// <reference path='view/wizard/form/input/TextLine.ts' />
-/// <reference path='view/wizard/form/input/TextLineComponent.ts' />
+///<reference path='view/wizard/form/input/Base.ts' />
+///<reference path='view/wizard/form/input/BaseInputComponent.ts' />
+///<reference path='view/wizard/form/input/HtmlArea.ts' />
+///<reference path='view/wizard/form/input/HtmlArea-temp.ts' />
+///<reference path='view/wizard/form/input/Image.ts' />
+///<reference path='view/wizard/form/input/ImageSelector.ts' />
+///<reference path='view/wizard/form/input/Relationship.ts' />
+///<reference path='view/wizard/form/input/TextArea.ts' />
+///<reference path='view/wizard/form/input/TextLine.ts' />
+///<reference path='view/wizard/form/input/TextLineComponent.ts' />
 
 ///<reference path='view/wizard/ContentWizardToolbar.ts' />
 ///<reference path='view/wizard/WizardToolbarMenu.ts' />
