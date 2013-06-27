@@ -180,6 +180,15 @@ module api_remote {
         failure?: string;
     }
 
+    export interface RemoteCallGetContentTreeParams {
+        contentIds?:string[];
+    }
+
+    export interface RemoteCallGetContentTreeResult extends RemoteCallResultBase {
+        total:number;
+        contents:ContentTreeNode[];
+    }
+
     export interface RemoteServiceInterface {
         account_find (params, callback):void;
         account_getGraph (params, callback):void;
@@ -200,7 +209,7 @@ module api_remote {
         content_createOrUpdate (params:RemoteCallCreateOrUpdateContentParams,
                                 callback:(result:RemoteCallCreateOrUpdateContentResult)=>void):void;
         content_list (params:RemoteCallContentListParams, callback:(result:RemoteCallContentListResult)=>void):void;
-        content_tree (params, callback):void;
+        content_tree (params:RemoteCallGetContentTreeParams, callback:(result:RemoteCallGetContentTreeResult)=>void):void;
         content_get (params:RemoteCallContentGetParams, callback:(result:RemoteCallContentGetResult)=>void):void;
         content_delete (params:RemoteCallContentDeleteParams, callback:(result:RemoteCallContentDeleteResult)=>void):void;
         content_find (params:RemoteCallContentFindParams, callback:(result:RemoteCallContentFindResult)=>void):void;
@@ -327,7 +336,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        content_tree(params, callback):void {
+        content_tree(params:RemoteCallGetContentTreeParams, callback:(result:RemoteCallGetContentTreeResult)=>void):void {
             console.log(params, callback);
         }
 
