@@ -17,8 +17,6 @@
 ///<reference path='app/event/ShowDetailsEvent.ts' />
 ///<reference path='app/event/ShowContextMenuEvent.ts' />
 ///<reference path='app/event/GridDeselectEvent.ts' />
-///<reference path='app/event/CloseContentWizardPanelEvent.ts' />
-
 
 ///<reference path='lib/ux/toggleslide/Thumb.ts' />
 ///<reference path='lib/ux/toggleslide/ToggleSlide.ts' />
@@ -26,6 +24,7 @@
 ///<reference path='app/delete/ContentDeleteDialog.ts' />
 
 
+///<reference path='app/wizard/CloseContentWizardPanelEvent.ts' />
 ///<reference path='app/wizard/ContentWizardActions.ts' />
 ///<reference path='app/wizard/ContentForm.ts' />
 ///<reference path='app/wizard/ContentWizardToolbar.ts' />

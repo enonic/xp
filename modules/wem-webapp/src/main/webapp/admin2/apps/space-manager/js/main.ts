@@ -29,7 +29,7 @@
 ///<reference path='app/event/NewSpaceEvent.ts' />
 ///<reference path='app/event/OpenSpaceEvent.ts' />
 ///<reference path='app/event/EditSpaceEvent.ts' />
-///<reference path='app/event/CloseSpaceWizardPanelEvent.ts' />
+///<reference path='app/wizard/CloseSpaceWizardPanelEvent.ts' />
 
 ///<reference path='app/wizard/SpaceWizardActions.ts' />
 ///<reference path='app/wizard/SpaceWizardToolbar.ts' />

@@ -37,7 +37,7 @@ module app_wizard {
             super("Close");
 
             this.addExecutionListener(() => {
-                new app_event.CloseContentWizardPanelEvent(panel, checkCanRemovePanel).fire();
+                new app_wizard.CloseContentWizardPanelEvent(panel, checkCanRemovePanel).fire();
             });
         }
     }

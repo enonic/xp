@@ -76,7 +76,7 @@ module app {
                 }
             });
 
-            app_event.CloseSpaceWizardPanelEvent.on((event) => {
+            app_wizard.CloseSpaceWizardPanelEvent.on((event) => {
                 this.removePanel(event.getPanel(), event.isCheckCanRemovePanel());
             });
         }
