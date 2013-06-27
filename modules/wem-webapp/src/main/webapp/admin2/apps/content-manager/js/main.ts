@@ -10,7 +10,7 @@
 ///<reference path='app/browse/NewContentEvent.ts' />
 ///<reference path='app/browse/OpenContentEvent.ts' />
 ///<reference path='app/browse/EditContentEvent.ts' />
-///<reference path='app/browse/DeleteContentEvent.ts' />
+///<reference path='app/browse/ContentDeletePromptEvent.ts' />
 ///<reference path='app/browse/DuplicateContentEvent.ts' />
 ///<reference path='app/browse/MoveContentEvent.ts' />
 ///<reference path='app/browse/ShowPreviewEvent.ts' />

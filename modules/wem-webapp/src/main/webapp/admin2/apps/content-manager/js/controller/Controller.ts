@@ -28,7 +28,7 @@ Ext.define('Admin.controller.Controller', {
             this.editContent(event.getModels());
         });
 
-        app_browse.DeleteContentEvent.on((event) => {
+        app_browse.ContentDeletePromptEvent.on((event) => {
             components.contentDeleteDialog.setContentToDelete(event.getModels());
             components.contentDeleteDialog.open();
         });
