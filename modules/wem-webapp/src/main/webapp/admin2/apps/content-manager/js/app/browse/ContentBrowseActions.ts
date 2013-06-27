@@ -38,7 +38,7 @@ module app_browse {
             super("Delete", "mod+del");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new DeleteContentEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new ContentDeletePromptEvent(app.ContentContext.get().getSelectedContents()).fire();
             });
         }
     }
