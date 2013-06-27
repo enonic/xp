@@ -8,7 +8,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     requires: [
         'Admin.view.contentManager.contextwindow.panel.Components',
         'Admin.view.contentManager.contextwindow.panel.Emulator',
-        'Admin.view.contentManager.contextwindow.panel.Images'
+        'Admin.view.contentManager.contextwindow.panel.Inspector'
     ],
 
     modal: false,
@@ -59,9 +59,9 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             }
         },
         {
-            name: 'Images',
+            name: 'Inspector',
             item: function () {
-                return new Admin.view.contentManager.contextwindow.panel.Images({hidden:true});
+                return new Admin.view.contentManager.contextwindow.panel.Inspector({hidden:true});
             }
         }
     ],
