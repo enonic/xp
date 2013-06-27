@@ -8,6 +8,10 @@
 ///<reference path='event/OpenContentEvent.ts' />
 ///<reference path='event/EditContentEvent.ts' />
 ///<reference path='event/DeleteContentEvent.ts' />
+///<reference path='event/DuplicateContentEvent.ts' />
+///<reference path='event/MoveContentEvent.ts' />
+///<reference path='event/ShowPreviewEvent.ts' />
+///<reference path='event/ShowDetailsEvent.ts' />
 ///<reference path='event/ShowContextMenuEvent.ts' />
 ///<reference path='event/GridDeselectEvent.ts' />
 
@@ -105,7 +109,6 @@
 ///<reference path='controller/BaseController.ts' />
 ///<reference path='controller/Controller.ts' />
 ///<reference path='controller/TopBarController.ts' />
-///<reference path='controller/GridPanelController.ts' />
 ///<reference path='controller/DetailPanelController.ts' />
 ///<reference path='controller/FilterPanelController.ts' />
 ///<reference path='controller/BrowseToolbarController.ts' />
@@ -126,6 +129,7 @@ module components {
     export var gridPanel:app_browse.ContentTreeGridPanel;
     export var detailPanelHorizontal:app_browse.ContentDetailPanel;
     export var detailPanelVertical:app_browse.ContentDetailPanel;
+    export var contentDeleteDialog:app_delete.ContentDeleteDialog;
 }
 
 Ext.application({
@@ -137,7 +141,6 @@ Ext.application({
         'Admin.controller.BaseController',
         'Admin.controller.Controller',
         'Admin.controller.TopBarController',
-        'Admin.controller.GridPanelController',
         'Admin.controller.DetailPanelController',
         'Admin.controller.FilterPanelController',
         'Admin.controller.BrowseToolbarController',
@@ -234,11 +237,7 @@ Ext.application({
             ]
         });
 
-        var deleteContentDialog = new app_delete.ContentDeleteDialog();
-        app_event.DeleteContentEvent.on((event) => {
-            deleteContentDialog.setContentToDelete(event.getModels());
-            deleteContentDialog.open();
-        });
+        components.contentDeleteDialog = new app_delete.ContentDeleteDialog();
     }
 });
 

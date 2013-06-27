@@ -25,11 +25,6 @@ Ext.define('Admin.controller.BrowseToolbarController', {
                     this.showToolbarMenu(button, event);
                 }
             },
-            'browseToolbar *[action=toggleLive]': {
-                change: function (slider, state) {
-                    this.getContentDetailPanel().toggleLive();
-                }
-            },
             'contentManagerToolbarMenu *[action=moveDetailPanel]': {
                 click: function (button, event) {
                     this.moveDetailPanel(button, event);

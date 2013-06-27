@@ -13,47 +13,47 @@ Ext.define('Admin.controller.DetailToolbarController', {
     init: function () {
 
         this.control({
-            'contentDetailToolbar *[action=newContent]': {
+            '#contentDetailToolbar *[action=newContent]': {
                 click: function (el, e) {
-                    this.getNewContentWindow().doShow();
+                    app_browse.ContentBrowseActions.NEW_CONTENT.execute();
                 }
             },
-            'contentDetailToolbar *[action=editContent]': {
+            '#contentDetailToolbar *[action=editContent]': {
                 click: function (el, e) {
-                    this.editContent();
+                    app_browse.ContentBrowseActions.EDIT_CONTENT.execute();
                 }
             },
-            'contentDetailToolbar *[action=deleteContent]': {
+            '#contentDetailToolbar *[action=deleteContent]': {
                 click: function (el, e) {
-                    this.deleteContent();
+                    app_browse.ContentBrowseActions.DELETE_CONTENT.execute();
                 }
             },
-            'contentDetailToolbar *[action=duplicateContent]': {
+            '#contentDetailToolbar *[action=duplicateContent]': {
                 click: function (el, e) {
-                    this.duplicateContent();
+                    app_browse.ContentBrowseActions.DUPLICATE_CONTENT.execute();
                 }
             },
-            'contentDetailToolbar *[action=moveContent]': {
+            '#contentDetailToolbar *[action=moveContent]': {
+                click: function (el, e) {
+                    app_browse.ContentBrowseActions.MOVE_CONTENT.execute();
+                }
+            },
+            '#contentDetailToolbar *[action=relations]': {
                 click: function (el, e) {
 
                 }
             },
-            'contentDetailToolbar *[action=relations]': {
-                click: function (el, e) {
-
-                }
-            },
-            'contentDetailToolbar *[action=closeContent]': {
+            '#contentDetailToolbar *[action=closeContent]': {
                 click: function (el, e) {
                     this.getCmsTabPanel().getActiveTab().close();
                 }
             },
-            'contentDetailToolbar *[action=toggleLive]': {
+            '#contentDetailToolbar *[action=toggleLive]': {
                 change: function (slider, state) {
                     slider.up().down('#deviceCycle').setDisabled(!state);
                 }
             },
-            'contentDetailToolbar #deviceCycle': {
+            '#contentDetailToolbar #deviceCycle': {
                 change: function (cycle, item) {
                     this.application.fireEvent('toggleDeviceContext', item.device);
                 }
