@@ -11,6 +11,10 @@
 ///<reference path='app/event/OpenContentEvent.ts' />
 ///<reference path='app/event/EditContentEvent.ts' />
 ///<reference path='app/event/DeleteContentEvent.ts' />
+///<reference path='app/event/DuplicateContentEvent.ts' />
+///<reference path='app/event/MoveContentEvent.ts' />
+///<reference path='app/event/ShowPreviewEvent.ts' />
+///<reference path='app/event/ShowDetailsEvent.ts' />
 ///<reference path='app/event/ShowContextMenuEvent.ts' />
 ///<reference path='app/event/GridDeselectEvent.ts' />
 
@@ -104,7 +108,6 @@
 ///<reference path='controller/BaseController.ts' />
 ///<reference path='controller/Controller.ts' />
 ///<reference path='controller/TopBarController.ts' />
-///<reference path='controller/GridPanelController.ts' />
 ///<reference path='controller/DetailPanelController.ts' />
 ///<reference path='controller/FilterPanelController.ts' />
 ///<reference path='controller/BrowseToolbarController.ts' />
@@ -125,6 +128,7 @@ module components {
     export var gridPanel:app_browse.ContentTreeGridPanel;
     export var detailPanelHorizontal:app_browse.ContentDetailPanel;
     export var detailPanelVertical:app_browse.ContentDetailPanel;
+    export var contentDeleteDialog:app_delete.ContentDeleteDialog;
 }
 
 Ext.application({
@@ -136,7 +140,6 @@ Ext.application({
         'Admin.controller.BaseController',
         'Admin.controller.Controller',
         'Admin.controller.TopBarController',
-        'Admin.controller.GridPanelController',
         'Admin.controller.DetailPanelController',
         'Admin.controller.FilterPanelController',
         'Admin.controller.BrowseToolbarController',
@@ -233,11 +236,7 @@ Ext.application({
             ]
         });
 
-        var deleteContentDialog = new app_delete.ContentDeleteDialog();
-        app_event.DeleteContentEvent.on((event) => {
-            deleteContentDialog.setContentToDelete(event.getModels());
-            deleteContentDialog.open();
-        });
+        components.contentDeleteDialog = new app_delete.ContentDeleteDialog();
     }
 });
 
