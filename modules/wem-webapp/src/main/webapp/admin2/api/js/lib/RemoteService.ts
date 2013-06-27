@@ -180,6 +180,16 @@ module api_remote {
         failure?: string;
     }
 
+    export interface RemoteCallMixinCreateOrUpdateParams {
+        mixin:string;
+        iconReference:string;
+    }
+
+    export interface RemoteCallMixinCreateOrUpdateResult extends RemoteCallResultBase {
+        created:bool;
+        updated:bool;
+    }
+
     export interface RemoteCallGetContentTreeParams {
         contentIds?:string[];
     }
@@ -224,7 +234,7 @@ module api_remote {
         schema_list (params, callback):void;
         system_getSystemInfo (params, callback):void;
         mixin_get (params, callback):void;
-        mixin_createOrUpdate (params, callback):void;
+        mixin_createOrUpdate (params:RemoteCallMixinCreateOrUpdateParams, callback:(result:RemoteCallMixinCreateOrUpdateResult)=>void):void;
         mixin_delete (params, callback):void;
         relationshipType_get (params, callback):void;
         relationshipType_createOrUpdate (params, callback):void;
@@ -392,7 +402,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        mixin_createOrUpdate(params, callback):void {
+        mixin_createOrUpdate(params:RemoteCallMixinCreateOrUpdateParams, callback:(result:RemoteCallMixinCreateOrUpdateResult)=>void):void {
             console.log(params, callback);
         }
 
