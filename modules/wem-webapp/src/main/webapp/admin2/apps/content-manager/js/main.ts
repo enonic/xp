@@ -13,17 +13,18 @@
 
 ///<reference path='ContentContext.ts' />
 
-///<reference path='browse/ContentBrowseActions.ts' />
 
 ///<reference path='lib/ux/toggleslide/Thumb.ts' />
 ///<reference path='lib/ux/toggleslide/ToggleSlide.ts' />
 
+///<reference path='app/delete/ContentDeleteDialog.ts' />
 
-///<reference path='browse/ContentActionMenu.ts' />
-///<reference path='browse/ContentBrowseToolbar.ts' />
-///<reference path='browse/ContentTreeGridContextMenu.ts' />
-///<reference path='browse/ContentTreeGridPanel.ts' />
-///<reference path='browse/ContentDetailPanel.ts' />
+///<reference path='app/browse/ContentBrowseActions.ts' />
+///<reference path='app/browse/ContentActionMenu.ts' />
+///<reference path='app/browse/ContentBrowseToolbar.ts' />
+///<reference path='app/browse/ContentTreeGridContextMenu.ts' />
+///<reference path='app/browse/ContentTreeGridPanel.ts' />
+///<reference path='app/browse/ContentDetailPanel.ts' />
 
 ///<reference path='handler/DeleteContentHandler.ts' />
 ///<reference path='view/wizard/form/FormComponent.ts' />
@@ -112,7 +113,6 @@
 ///<reference path='controller/ContentPreviewController.ts' />
 ///<reference path='controller/DialogWindowController.ts' />
 
-///<reference path='delete/ContentDeleteDialog.ts' />
 
 declare var Ext;
 declare var Admin;
