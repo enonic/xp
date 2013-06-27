@@ -18,7 +18,7 @@ module api_app {
 
         private userInfoPopup:UserInfoPopup;
 
-        constructor(appName, actions:AppBarActions, tabMenu?:AppBarTabMenu) {
+        constructor(appName, actions:AppBarActions, tabMenu:AppBarTabMenu) {
             super('AppBar', 'appbar');
 
             this.appName = appName;
@@ -37,9 +37,7 @@ module api_app {
             this.userButton = new UserButton();
             this.appendChild(this.userButton);
 
-            if (this.tabMenu != null) {
-                this.appendChild(this.tabMenu);
-            }
+            this.appendChild(this.tabMenu);
 
             this.userInfoPopup = new UserInfoPopup();
 
