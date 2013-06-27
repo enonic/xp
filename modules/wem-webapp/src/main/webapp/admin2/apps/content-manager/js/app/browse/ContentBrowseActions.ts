@@ -49,7 +49,7 @@ module app_browse {
             super("Duplicate");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                console.log('TODO: Duplicate content');
+                new app_event.DuplicateContentEvent(app.ContentContext.get().getSelectedContents()).fire();
             });
         }
     }
@@ -60,7 +60,7 @@ module app_browse {
             super("Move");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                console.log('TODO: Move content');
+                new app_event.MoveContentEvent(app.ContentContext.get().getSelectedContents()).fire();
             });
         }
     }
@@ -72,7 +72,7 @@ module app_browse {
 
             this.setEnabled(true);
             this.addExecutionListener(() => {
-                console.log('TODO: implement ShowPreviewAction');
+                new app_event.ShowPreviewEvent(app.ContentContext.get().getSelectedContents()).fire();
             });
         }
     }
@@ -84,7 +84,7 @@ module app_browse {
 
             this.setEnabled(true);
             this.addExecutionListener(() => {
-                console.log('TODO: implement ShowDetailsAction');
+                new app_event.ShowDetailsEvent(app.ContentContext.get().getSelectedContents()).fire();
             })
         }
     }
