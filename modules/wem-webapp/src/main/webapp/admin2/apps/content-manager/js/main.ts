@@ -69,6 +69,8 @@
 ///<reference path='view/WizardPanel.ts' />
 
 ///<reference path='ContentAppBarActions.ts' />
+///<reference path='ContentAppBarTabMenu.ts' />
+///<reference path='ContentAppBarTabMenuItem.ts' />
 ///<reference path='ContentAppBar.ts' />
 
 /// <reference path='view/wizard/form/FormItemOccurrencesHandler.ts' />
@@ -122,8 +124,8 @@ module components {
     export var browseToolbar:app_browse.ContentBrowseToolbar;
     export var contextMenu:app_browse.ContentTreeGridContextMenu;
     export var gridPanel:app_browse.ContentTreeGridPanel;
-    export var detailPanelHorizontal: app_browse.ContentDetailPanel;
-    export var detailPanelVertical: app_browse.ContentDetailPanel;
+    export var detailPanelHorizontal:app_browse.ContentDetailPanel;
+    export var detailPanelVertical:app_browse.ContentDetailPanel;
 }
 
 Ext.application({
