@@ -17,12 +17,19 @@
 ///<reference path='app/event/ShowDetailsEvent.ts' />
 ///<reference path='app/event/ShowContextMenuEvent.ts' />
 ///<reference path='app/event/GridDeselectEvent.ts' />
+///<reference path='app/event/CloseContentWizardPanelEvent.ts' />
 
 
 ///<reference path='lib/ux/toggleslide/Thumb.ts' />
 ///<reference path='lib/ux/toggleslide/ToggleSlide.ts' />
 
 ///<reference path='app/delete/ContentDeleteDialog.ts' />
+
+
+///<reference path='app/wizard/ContentWizardActions.ts' />
+///<reference path='app/wizard/ContentForm.ts' />
+///<reference path='app/wizard/ContentWizardToolbar.ts' />
+///<reference path='app/wizard/ContentWizardPanel.ts' />
 
 ///<reference path='app/browse/ContentBrowseActions.ts' />
 ///<reference path='app/browse/ContentActionMenu.ts' />
@@ -169,7 +176,7 @@ Ext.application({
         var toolbar = components.browseToolbar = new app_browse.ContentBrowseToolbar();
 
         var grid = components.gridPanel =
-                   <app_browse.ContentTreeGridPanel> new app_browse.ContentTreeGridPanel('contentTreeGrid').create('center');
+            <app_browse.ContentTreeGridPanel> new app_browse.ContentTreeGridPanel('contentTreeGrid').create('center');
 
         var detailsHorizontal = components.detailPanelHorizontal = new app_browse.ContentDetailPanel();
         var detailsVertical = components.detailPanelVertical = new app_browse.ContentDetailPanel();
