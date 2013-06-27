@@ -180,6 +180,20 @@ module api_remote {
         failure?: string;
     }
 
+    export interface RemoteCallMixinDeleteParams {
+        qualifiedMixinNames:string[];
+    }
+
+    export interface RemoteCallMixinDeleteResult extends RemoteCallResultBase {
+        successes: {
+            qualifiedMixinName:string;
+        }[];
+        failures: {
+            qualifiedMixinName:string;
+            reason:string;
+        }[];
+    }
+
     export interface RemoteCallGetContentTreeParams {
         contentIds?:string[];
     }
@@ -225,7 +239,7 @@ module api_remote {
         system_getSystemInfo (params, callback):void;
         mixin_get (params, callback):void;
         mixin_createOrUpdate (params, callback):void;
-        mixin_delete (params, callback):void;
+        mixin_delete (params:RemoteCallMixinDeleteParams, callback:(result:RemoteCallMixinDeleteResult)=>void):void;
         relationshipType_get (params, callback):void;
         relationshipType_createOrUpdate (params, callback):void;
         relationshipType_delete (params, callback):void;
@@ -396,7 +410,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        mixin_delete(params, callback):void {
+        mixin_delete(params:RemoteCallMixinDeleteParams, callback:(result:RemoteCallMixinDeleteResult)=>void):void {
             console.log(params, callback);
         }
 
