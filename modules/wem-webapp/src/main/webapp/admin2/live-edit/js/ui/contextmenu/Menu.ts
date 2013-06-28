@@ -80,6 +80,15 @@ module LiveEdit.ui.contextmenu {
             this.moveToXY(pageXPosition, pageYPosition);
             this.getRootEl().show(null);
 
+
+            // fixme: remove. Experiment.
+            // - remove Related file PlayVideo.ts
+            // - remove selectedComponentHasHTML5Video()
+            if (this.selectedComponentHasHTML5Video()) {
+                new LiveEdit.ui.contextmenu.menuitem.PlayVideo(this);
+            }
+
+
             this.hidden = false;
         }
 
@@ -122,6 +131,12 @@ module LiveEdit.ui.contextmenu {
                 this.buttons[i].appendTo($menuItemsPlaceholder);
             }
         }
+
+
+        private selectedComponentHasHTML5Video() {
+            return $('video', this.selectedComponent).length > 0;
+        }
+
 
         private updateMenuItemsForComponent(component:JQuery):void {
             var componentType = componentHelper.getComponentType(component);
