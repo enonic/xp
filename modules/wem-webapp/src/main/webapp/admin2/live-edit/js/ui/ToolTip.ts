@@ -10,8 +10,8 @@ module LiveEdit.ui {
     var domHelper = LiveEdit.DomHelper;
 
     export class ToolTip extends LiveEdit.ui.Base {
-        private OFFSET_X = 0;
-        private OFFSET_Y = 18;
+        private OFFSET_X = 10;
+        private OFFSET_Y = 10;
 
         constructor() {
             super();
@@ -77,14 +77,14 @@ module LiveEdit.ui {
         }
 
         private getPosition(event:JQueryEventObject):ToolTipPosition {
-            var pageX = event.pageX;
-            var pageY = event.pageY;
-            var x = pageX + this.OFFSET_X;
-            var y = pageY + this.OFFSET_Y;
-            var viewPortSize = domHelper.getViewPortSize();
-            var scrollTop = domHelper.getDocumentScrollTop();
-            var toolTipWidth = this.getRootEl().width();
-            var toolTipHeight = this.getRootEl().height();
+            var pageX = event.pageX,
+                pageY = event.pageY,
+                x = pageX + this.OFFSET_X,
+                y = pageY + this.OFFSET_Y,
+                viewPortSize = domHelper.getViewPortSize(),
+                scrollTop = domHelper.getDocumentScrollTop(),
+                toolTipWidth = this.getRootEl().width(),
+                toolTipHeight = this.getRootEl().height();
 
             if (x + toolTipWidth > (viewPortSize.width - this.OFFSET_X * 2) - 50) {
                 x = pageX - toolTipWidth - (this.OFFSET_X * 2);
