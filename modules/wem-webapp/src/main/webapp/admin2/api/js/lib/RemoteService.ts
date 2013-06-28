@@ -1,3 +1,4 @@
+///<reference path='RemoteAccountModel.ts' />
 ///<reference path='RemoteContentTypeModel.ts' />
 ///<reference path='RemoteContentModel.ts' />
 ///<reference path='RemoteSpaceModel.ts' />
@@ -11,6 +12,23 @@ module api_remote {
     export interface RemoteCallResultBase {
         success: bool;
         error?: string;
+    }
+
+    export interface RemoteCallAccountFindParams {
+        key?: string[];
+        query?: string;
+        start?: number;
+        limit?: number;
+        userstores?: string[];
+        sort?: string;
+        dir?: string;
+        types?: string[];
+    }
+
+    export interface RemoteCallAccountFindResult extends RemoteCallResultBase {
+        accounts: Account[];
+        facets?: AccountFacet[];
+        total?: number;
     }
 
     export interface RemoteCallContentTypeGetParams {
@@ -279,7 +297,7 @@ module api_remote {
     }
 
     export interface RemoteServiceInterface {
-        account_find (params, callback):void;
+        account_find (params:RemoteCallAccountFindParams, callback:(result:RemoteCallAccountFindResult)=>void):void;
         account_getGraph (params, callback):void;
         account_changePassword (params, callback):void;
         account_verifyUniqueEmail (params, callback):void;
@@ -353,7 +371,7 @@ module api_remote {
             this.provider = Ext.Direct.addProvider(jsonRpcProvider.ext);
         }
 
-        account_find(params, callback:(accountFindResult:any)=>void):void {
+        account_find(params:RemoteCallAccountFindParams, callback:(result:RemoteCallAccountFindResult)=>void):void {
             console.log(params, callback);
         }
 
