@@ -17,7 +17,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Helper', {
                     iconCls = 'icon-file';
                     break;
                 case 'region':
-                    iconCls = 'icon-th-large';
+                    iconCls = 'icon-compass';
                     break;
                 case 'layout':
                     iconCls = 'icon-columns';
@@ -29,7 +29,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Helper', {
                     iconCls = 'icon-edit';
                     break;
                 case 'content':
-                    iconCls = 'icon-edit';
+                    iconCls = 'icon-file-text-alt';
                     break;
                 default:
                     iconCls = '';
