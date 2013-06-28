@@ -258,6 +258,24 @@ module api_remote {
         contents:ContentTreeNode[];
     }
 
+    export interface RemoteCallDeleteRelationshipTypeParams {
+        qualifiedRelationshipTypeNames:string[];
+    }
+
+    export interface DeleteRelationshipTypeSuccess {
+        qualifiedRelationshipTypeName:string;
+    }
+
+    export interface DeleteRelationshipTypeFailure {
+        qualifiedRelationshipTypeName:string;
+        reason:string;
+    }
+
+    export interface RemoteCallDeleteRelationshipTypeResult extends RemoteCallResultBase {
+        successes:DeleteRelationshipTypeSuccess[];
+        failures:DeleteRelationshipTypeFailure[]; 
+    }
+
     export interface RemoteCallGetRelationshipTypeParams {
         qualifiedRelationshipTypeName:string;
         format:string;
@@ -315,10 +333,11 @@ module api_remote {
         mixin_get (params:RemoteCallMixinGetParams, callback:(result:RemoteCallMixinGetResult)=>void):void;
         mixin_createOrUpdate (params:RemoteCallMixinCreateOrUpdateParams, callback:(result:RemoteCallMixinCreateOrUpdateResult)=>void):void;
         mixin_delete (params:RemoteCallMixinDeleteParams, callback:(result:RemoteCallMixinDeleteResult)=>void):void;
+        relationshipType_delete (params:RemoteCallDeleteRelationshipTypeParams,
+                                 callback:(result:RemoteCallDeleteRelationshipTypeResult)=>void):void;
         relationshipType_get (params:RemoteCallGetRelationshipTypeParams, callback:(result:RemoteCallGetRelationshipTypeResult)=>void):void;
         relationshipType_createOrUpdate (params:RemoteCallCreateOrUpdateRelationshipTypeParams,
                                          callback:(result:RemoteCallCreateOrUpdateRelationshipTypeResult)=>void):void;
-        relationshipType_delete (params, callback):void;
         space_list (params:RemoteCallSpaceListParams, callback:(result:RemoteCallSpaceListResult)=>void):void;
         space_get (params:RemoteCallSpaceGetParams, callback:(result:RemoteCallSpaceGetResult)=>void):void;
         space_delete (params:RemoteCallSpaceDeleteParams, callback:(result:RemoteCallSpaceDeleteResult)=>void):void;
@@ -500,7 +519,8 @@ module api_remote {
             console.log(params, callback);
         }
 
-        relationshipType_delete(params, callback):void {
+        relationshipType_delete(params:RemoteCallDeleteRelationshipTypeParams,
+                                callback:(result:RemoteCallDeleteRelationshipTypeResult)=>void):void {
             console.log(params, callback);
         }
 
