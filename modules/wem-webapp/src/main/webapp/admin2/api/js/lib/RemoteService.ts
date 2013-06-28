@@ -137,6 +137,19 @@ module api_remote {
         facets?: ContentFacet[];
     }
 
+    export interface RemoteCallContentValidateParams {
+        qualifiedContentTypeName: string;
+        contentData: ContentData;
+    }
+
+    export interface RemoteCallContentValidateResult extends RemoteCallResultBase {
+        hasError: bool;
+        errors: {
+            path: string;
+            message: string;
+        }[];
+    }
+
     export interface RemoteCallContentDeleteParams {
         contentPaths: string[];
     }
@@ -280,7 +293,7 @@ module api_remote {
         content_get (params:RemoteCallContentGetParams, callback:(result:RemoteCallContentGetResult)=>void):void;
         content_delete (params:RemoteCallContentDeleteParams, callback:(result:RemoteCallContentDeleteResult)=>void):void;
         content_find (params:RemoteCallContentFindParams, callback:(result:RemoteCallContentFindResult)=>void):void;
-        content_validate (params, callback):void;
+        content_validate (params:RemoteCallContentValidateParams, callback:(result:RemoteCallContentValidateResult)=>void):void;
         contentType_get (params:RemoteCallContentTypeGetParams, callback:(result:RemoteCallContentTypeGetResult)=>void):void;
         contentType_list (params:RemoteCallContentTypeListParams, callback:(result:RemoteCallContentTypeListResult)=>void):void;
         contentType_createOrUpdate (params:RemoteCallContentTypeCreateOrUpdateParams,
@@ -420,11 +433,11 @@ module api_remote {
             console.log(params, callback);
         }
 
-        content_validate(params, callback):void {
+        content_validate(params:RemoteCallContentValidateParams, callback:(result:RemoteCallContentValidateResult)=>void):void {
             console.log(params, callback);
         }
 
-        contentType_get(params, callback):void {
+        contentType_get(params:RemoteCallContentTypeGetParams, callback:(result:RemoteCallContentTypeGetResult)=>void):void {
             console.log(params, callback);
         }
 
@@ -432,7 +445,8 @@ module api_remote {
             console.log(params, callback);
         }
 
-        contentType_createOrUpdate(params, callback):void {
+        contentType_createOrUpdate(params:RemoteCallContentTypeCreateOrUpdateParams,
+                                   callback:(result:RemoteCallContentTypeCreateOrUpdateResult)=>void):void {
             console.log(params, callback);
         }
 
