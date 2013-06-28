@@ -278,6 +278,14 @@ module api_remote {
         updated:bool;
     }
 
+    export interface RemoteCallDeleteAccountParams {
+        key:string[];
+    }
+
+    export interface RemoteCallDeleteAccountResult extends RemoteCallResultBase {
+        deleted:number;
+    }
+
     export interface RemoteServiceInterface {
         account_find (params, callback):void;
         account_getGraph (params, callback):void;
@@ -285,7 +293,7 @@ module api_remote {
         account_verifyUniqueEmail (params, callback):void;
         account_suggestUserName (params, callback):void;
         account_createOrUpdate (params, callback):void;
-        account_delete (params, callback):void;
+        account_delete (params:RemoteCallDeleteAccountParams, callback:(result:RemoteCallDeleteAccountResult)=>void):void;
         account_get (params, callback):void;
         util_getCountries (params, callback):void;
         util_getLocales (params, callback):void;
@@ -377,7 +385,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        account_delete(params, callback):void {
+        account_delete(params:RemoteCallDeleteAccountParams, callback:(result:RemoteCallDeleteAccountResult)=>void):void {
             console.log(params, callback);
         }
 
