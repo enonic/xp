@@ -79,6 +79,21 @@ module api_remote {
         username: string;
     }
 
+    export interface RemoteCallAccountCreateOrUpdateParams {
+        key: string;
+        email?: string;
+        imageRef?: string;
+        profile?: UserProfile;
+        members?: string[];
+        displayName: string;
+        groups?: string[];
+    }
+
+    export interface RemoteCallAccountCreateOrUpdateResult extends RemoteCallResultBase {
+        created: bool;
+        updated: bool;
+    }
+
     export interface RemoteCallContentTypeGetParams {
         format: string;
         contentType: string;
@@ -353,7 +368,8 @@ module api_remote {
                                    callback:(result:RemoteCallAccountVerifyUniqueEmailResult)=>void):void;
         account_suggestUserName (params:RemoteCallAccountSuggestUserNameParams,
                                  callback:(result:RemoteCallAccountSuggestUserNameResult)=>void):void;
-        account_createOrUpdate (params, callback):void;
+        account_createOrUpdate (params:RemoteCallAccountCreateOrUpdateParams,
+                                callback:(result:RemoteCallAccountCreateOrUpdateResult)=>void):void;
         account_delete (params, callback):void;
         account_get (params, callback):void;
         util_getCountries (params, callback):void;
@@ -445,7 +461,8 @@ module api_remote {
             console.log(params, callback);
         }
 
-        account_createOrUpdate(params, callback):void {
+        account_createOrUpdate(params:RemoteCallAccountCreateOrUpdateParams,
+                               callback:(result:RemoteCallAccountCreateOrUpdateResult)=>void):void {
             console.log(params, callback);
         }
 
