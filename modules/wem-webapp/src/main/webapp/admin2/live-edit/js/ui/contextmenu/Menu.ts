@@ -39,13 +39,13 @@ module LiveEdit.ui.contextmenu {
 
         private addView():void {
             var html:string = '';
-            html += '<div class="live-edit-component-menu live-edit-arrow-top" style="display: none">';
-            html += '   <div class="live-edit-component-menu-title-bar">';
-            html += '       <div class="live-edit-component-menu-title-icon"><div><!-- --></div></div>';
-            html += '       <div class="live-edit-component-menu-title-text"><!-- populated --></div>';
-            html += '       <div class="live-edit-component-menu-title-close-button"><!-- --></div>';
+            html += '<div class="live-edit-context-menu live-edit-arrow-top" style="display: none">';
+            html += '   <div class="live-edit-context-menu-title-bar">';
+            html += '       <div class="live-edit-context-menu-title-icon"><div><!-- --></div></div>';
+            html += '       <div class="live-edit-context-menu-title-text"><!-- populated --></div>';
+            html += '       <div class="live-edit-context-menu-title-close-button"><!-- --></div>';
             html += '   </div>';
-            html += '   <div class="live-edit-component-menu-items">';
+            html += '   <div class="live-edit-context-menu-items">';
             html += '   </div>';
             html += '</div>';
 
@@ -56,7 +56,7 @@ module LiveEdit.ui.contextmenu {
 
         private registerEvents():void {
             this.getRootEl().draggable({
-                handle: '.live-edit-component-menu-title-bar',
+                handle: '.live-edit-context-menu-title-bar',
                 addClasses: false
             });
 
@@ -178,19 +178,19 @@ module LiveEdit.ui.contextmenu {
         }
 
         private getIconElement():JQuery {
-            return $('.live-edit-component-menu-title-icon', this.getRootEl());
+            return $('.live-edit-context-menu-title-icon', this.getRootEl());
         }
 
         private getTitleElement():JQuery {
-            return $('.live-edit-component-menu-title-text', this.getRootEl());
+            return $('.live-edit-context-menu-title-text', this.getRootEl());
         }
 
         private getCloseButton():JQuery {
-            return $('.live-edit-component-menu-title-close-button', this.getRootEl());
+            return $('.live-edit-context-menu-title-close-button', this.getRootEl());
         }
 
         private getMenuItemsPlaceholderElement():JQuery {
-            return $('.live-edit-component-menu-items', this.getRootEl());
+            return $('.live-edit-context-menu-items', this.getRootEl());
         }
 
     }
