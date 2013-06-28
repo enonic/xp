@@ -92,7 +92,7 @@ module app_ui_wizard {
                 xtype: 'button',
                 text: 'Save',
                 handler: () => {
-                    new app_event.SaveSpaceEvent().fire();
+                    new app_wizard.SaveSpaceEvent().fire();
                 }
             };
         }

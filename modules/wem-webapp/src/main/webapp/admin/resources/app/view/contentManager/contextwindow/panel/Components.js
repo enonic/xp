@@ -197,7 +197,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
             */
         });
 
-        $(me.getContextWindow().iFrameMask).droppable({
+        $(me.getContextWindow().getLiveEditIFrameDom()).droppable({
             tolerance: 'pointer',
             addClasses: false,
             over: function (event, ui) {

@@ -6,17 +6,17 @@
 ///<reference path='model/ContentTypeExtModel.ts' />
 
 ///<reference path='app/event/BaseContentModelEvent.ts' />
-///<reference path='app/event/GridSelectionChangeEvent.ts' />
-///<reference path='app/event/NewContentEvent.ts' />
-///<reference path='app/event/OpenContentEvent.ts' />
-///<reference path='app/event/EditContentEvent.ts' />
-///<reference path='app/event/DeleteContentEvent.ts' />
-///<reference path='app/event/DuplicateContentEvent.ts' />
-///<reference path='app/event/MoveContentEvent.ts' />
-///<reference path='app/event/ShowPreviewEvent.ts' />
-///<reference path='app/event/ShowDetailsEvent.ts' />
-///<reference path='app/event/ShowContextMenuEvent.ts' />
-///<reference path='app/event/GridDeselectEvent.ts' />
+///<reference path='app/browse/GridSelectionChangeEvent.ts' />
+///<reference path='app/browse/NewContentEvent.ts' />
+///<reference path='app/browse/OpenContentEvent.ts' />
+///<reference path='app/browse/EditContentEvent.ts' />
+///<reference path='app/browse/ContentDeletePromptEvent.ts' />
+///<reference path='app/browse/DuplicateContentEvent.ts' />
+///<reference path='app/browse/MoveContentEvent.ts' />
+///<reference path='app/browse/ShowPreviewEvent.ts' />
+///<reference path='app/browse/ShowDetailsEvent.ts' />
+///<reference path='app/browse/ShowContextMenuEvent.ts' />
+///<reference path='app/browse/GridDeselectEvent.ts' />
 
 ///<reference path='lib/ux/toggleslide/Thumb.ts' />
 ///<reference path='lib/ux/toggleslide/ToggleSlide.ts' />
@@ -36,7 +36,9 @@
 ///<reference path='app/browse/ContentTreeGridContextMenu.ts' />
 ///<reference path='app/browse/ContentTreeGridPanel.ts' />
 ///<reference path='app/browse/ContentDetailPanel.ts' />
+///<reference path='app/browse/ContentAppBrowsePanel.ts' />
 
+///<reference path='app/ContentAppPanel.ts' />
 ///<reference path='app/ContentAppBarActions.ts' />
 ///<reference path='app/ContentAppBarTabMenu.ts' />
 ///<reference path='app/ContentAppBarTabMenuItem.ts' />
@@ -132,8 +134,7 @@ module components {
     export var browseToolbar:app_browse.ContentBrowseToolbar;
     export var contextMenu:app_browse.ContentTreeGridContextMenu;
     export var gridPanel:app_browse.ContentTreeGridPanel;
-    export var detailPanelHorizontal:app_browse.ContentDetailPanel;
-    export var detailPanelVertical:app_browse.ContentDetailPanel;
+    export var detailPanel:app_browse.ContentDetailPanel;
     export var contentDeleteDialog:app_delete.ContentDeleteDialog;
 }
 
@@ -163,84 +164,13 @@ Ext.application({
 
     launch: function () {
 
-        /* For 18/4 demo */
-        var contentIsOpenedFromPortal = document.location.href.indexOf('/open') > -1;
+        var appBar = new app.ContentAppBar();
+        var appPanel = new app.ContentAppPanel(appBar);
 
-        var filter = new Admin.view.contentManager.FilterPanel({
-            region: 'west',
-            xtype: 'contentFilter',
-            width: 200
-        });
+        document.body.appendChild(appBar.getHTMLElement());
+        document.body.appendChild(appPanel.getHTMLElement());
 
-        var toolbar = components.browseToolbar = new app_browse.ContentBrowseToolbar();
-
-        var grid = components.gridPanel =
-            <app_browse.ContentTreeGridPanel> new app_browse.ContentTreeGridPanel('contentTreeGrid').create('center');
-
-        var detailsHorizontal = components.detailPanelHorizontal = new app_browse.ContentDetailPanel();
-        var detailsVertical = components.detailPanelVertical = new app_browse.ContentDetailPanel();
-
-        Ext.create('Ext.container.Viewport', {
-            layout: 'fit',
-            cls: 'admin-viewport',
-
-            items: [
-                {
-                    xtype: 'cmsTabPanel',
-                    appName: 'Content Manager',
-                    appIconCls: 'icon-metro-content-manager-24',
-                    items: [
-                        {
-                            id: 'tab-browse',
-                            title: 'Browse',
-                            closable: false,
-                            xtype: 'panel',
-                            layout: 'border',
-                            tabConfig: {
-                                hidden: true
-                            },
-                            items: <any[]>[
-                                filter,
-                                {
-                                    region: 'center',
-                                    xtype: 'container',
-                                    layout: 'border',
-                                    border: false,
-                                    items: <any>[
-                                        toolbar.ext,
-                                        grid.ext,
-                                        {
-                                            region: 'south',
-                                            split: true,
-                                            collapsible: true,
-                                            header: false,
-                                            contentEl: detailsHorizontal.getHTMLElement(),
-                                            isLiveMode: contentIsOpenedFromPortal,
-
-                                            showToolbar: false,
-                                            flex: 1
-                                        },
-                                        {
-                                            region: 'east',
-                                            split: true,
-                                            collapsible: true,
-                                            header: false,
-                                            contentEl: detailsVertical.getHTMLElement(),
-                                            isLiveMode: contentIsOpenedFromPortal,
-
-                                            showToolbar: false,
-                                            flex: 1,
-                                            hidden: true,
-                                            isVertical: true
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        });
+        appPanel.init();
 
         components.contentDeleteDialog = new app_delete.ContentDeleteDialog();
     }

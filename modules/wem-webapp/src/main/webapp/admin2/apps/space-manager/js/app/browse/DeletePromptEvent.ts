@@ -1,6 +1,7 @@
-module app_event {
+module app_browse {
 
-    export class DeletePromptEvent extends BaseSpaceModelEvent {
+    export class DeletePromptEvent extends app_event.BaseSpaceModelEvent {
+
         constructor(model:api_model.SpaceModel[]) {
             super('deletePrompt', model);
         }

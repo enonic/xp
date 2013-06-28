@@ -10,12 +10,14 @@ import com.enonic.wem.admin.rest.resource.account.AccountImageResource;
 import com.enonic.wem.admin.rest.resource.auth.AuthResource;
 import com.enonic.wem.admin.rest.resource.content.ContentAttachmentResource;
 import com.enonic.wem.admin.rest.resource.content.ContentImageResource;
+import com.enonic.wem.admin.rest.resource.content.ContentResource;
 import com.enonic.wem.admin.rest.resource.jcr.GetNodesResource;
 import com.enonic.wem.admin.rest.resource.relationship.RelationshipResource;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageResource;
 import com.enonic.wem.admin.rest.resource.schema.SchemaResource;
 import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeResource;
 import com.enonic.wem.admin.rest.resource.schema.mixin.MixinResource;
+import com.enonic.wem.admin.rest.resource.schema.relationship.RelationshipTypeResource;
 import com.enonic.wem.admin.rest.resource.space.SpaceImageResource;
 import com.enonic.wem.admin.rest.resource.space.SpaceResource;
 import com.enonic.wem.admin.rest.resource.status.StatusResource;
@@ -52,6 +54,9 @@ public final class RestServlet
         addClass( SpaceImageResource.class );
 
         addClass( RelationshipResource.class );
+        addClass( RelationshipTypeResource.class );
+
+        addClass( ContentResource.class );
 
         addClass( SchemaResource.class );
         addClass( SchemaImageResource.class );

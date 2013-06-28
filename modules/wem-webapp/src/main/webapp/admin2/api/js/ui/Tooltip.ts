@@ -126,16 +126,17 @@ module api_ui {
                 break;
             }
 
+            var bodyEl = api_dom.Body.get().getHTMLElement();
             // check screen edges
             if (offsetLeft < 0) {
                 offsetLeft = 0;
-            } else if (offsetLeft + el.offsetWidth > document.body.clientWidth) {
-                offsetLeft = document.body.clientWidth - el.offsetWidth;
+            } else if (offsetLeft + el.offsetWidth > bodyEl.clientWidth) {
+                offsetLeft = bodyEl.clientWidth - el.offsetWidth;
             }
             if (offsetTop < 0) {
                 offsetTop = 0;
-            } else if (offsetTop + el.offsetHeight > document.body.clientHeight) {
-                offsetTop = document.body.clientHeight - el.offsetHeight;
+            } else if (offsetTop + el.offsetHeight > bodyEl.clientHeight) {
+                offsetTop = bodyEl.clientHeight - el.offsetHeight;
             }
 
             jQuery(el).offset({
@@ -170,7 +171,7 @@ module api_ui {
 
                 Tooltip.tip = new api_dom.DivEl("Tooltip", "tooltip " + this.side);
 
-                document.body.appendChild(Tooltip.tip.getHTMLElement());
+                api_dom.Body.get().appendChild(Tooltip.tip);
             }
 
             Tooltip.tip.getEl().setInnerHtml(this.text).setClass("tooltip " + this.side);

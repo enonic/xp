@@ -36,7 +36,7 @@ module app {
                 this.appBarTabMenu.deselectNavigationItem();
             });
 
-            app_event.NewSpaceEvent.on((event) => {
+            app_browse.NewSpaceEvent.on((event) => {
 
                 var tabMenuItem = new SpaceAppBarTabMenuItem("New Space");
                 var spaceWizardPanel = new app_wizard.SpaceWizardPanel('new-space');
@@ -44,12 +44,12 @@ module app {
                 this.selectPanel(tabMenuItem);
             });
 
-            app_event.OpenSpaceEvent.on((event) => {
+            app_browse.OpenSpaceEvent.on((event) => {
 
                 // TODO: Open detailpanel in "full screen"
             });
 
-            app_event.EditSpaceEvent.on((event) => {
+            app_browse.EditSpaceEvent.on((event) => {
 
                 var spaces:api_model.SpaceModel[] = event.getModels();
                 for (var i = 0; i < spaces.length; i++) {

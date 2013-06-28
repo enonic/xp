@@ -15,7 +15,7 @@ module app {
         }
 
         constructor(){
-            app_event.GridSelectionChangeEvent.on((event) => {
+            app_browse.GridSelectionChangeEvent.on((event) => {
                 this.selectedContents = event.getModels();
             });
         }

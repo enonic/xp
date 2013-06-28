@@ -1,4 +1,4 @@
-module app_event {
+module app_browse {
     export class ShowContextMenuEvent extends api_event.Event {
 
         private x:number;

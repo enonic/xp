@@ -1,6 +1,7 @@
-module app_event {
+module app_browse {
 
     export class NewSpaceEvent extends api_event.Event {
+
         constructor() {
             super('newSpace');
         }

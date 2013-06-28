@@ -1,4 +1,4 @@
-module app_event {
+module app_delete {
 
     export class DeletedEvent extends api_event.Event {
         constructor() {
