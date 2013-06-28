@@ -130,27 +130,27 @@ module LiveEdit {
 
             switch (componentType) {
             case 'page':
-                iconCls = 'live-edit-component-menu-page-icon';
+                iconCls = 'live-edit-context-menu-page-icon';
                 break;
 
             case 'region':
-                iconCls = 'live-edit-component-menu-region-icon';
+                iconCls = 'live-edit-context-menu-region-icon';
                 break;
 
             case 'layout':
-                iconCls = 'live-edit-component-menu-layout-icon';
+                iconCls = 'live-edit-context-menu-layout-icon';
                 break;
 
             case 'part':
-                iconCls = 'live-edit-component-menu-part-icon';
+                iconCls = 'live-edit-context-menu-part-icon';
                 break;
 
             case 'content':
-                iconCls = 'live-edit-component-menu-content-icon';
+                iconCls = 'live-edit-context-menu-content-icon';
                 break;
 
             case 'paragraph':
-                iconCls = 'live-edit-component-menu-paragraph-icon';
+                iconCls = 'live-edit-context-menu-paragraph-icon';
                 break;
 
             default:
