@@ -1,13 +1,13 @@
-package com.enonic.wem.admin.json.rpc.processor;
+package com.enonic.wem.admin.jsonrpc.processor;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
-import com.enonic.wem.admin.json.rpc.JsonRpcException;
-import com.enonic.wem.admin.json.rpc.JsonRpcHandler;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcException;
+import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 
 import static org.junit.Assert.*;
 

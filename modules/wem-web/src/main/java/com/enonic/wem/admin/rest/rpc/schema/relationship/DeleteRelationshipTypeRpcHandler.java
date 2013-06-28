@@ -1,7 +1,7 @@
 package com.enonic.wem.admin.rest.rpc.schema.relationship;
 
 
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipType;

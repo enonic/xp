@@ -2,7 +2,7 @@ package com.enonic.wem.admin.rest.rpc;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcHandler;
+import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.api.Client;
 
 public abstract class AbstractDataRpcHandler

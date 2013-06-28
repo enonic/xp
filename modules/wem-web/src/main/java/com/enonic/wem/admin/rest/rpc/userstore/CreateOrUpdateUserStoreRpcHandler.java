@@ -3,7 +3,7 @@ package com.enonic.wem.admin.rest.rpc.userstore;
 
 import com.google.common.base.Strings;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;

@@ -1,10 +1,10 @@
-package com.enonic.wem.admin.json.rpc;
+package com.enonic.wem.admin.jsonrpc;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
-import com.enonic.wem.admin.json.rpc.processor.JsonRpcProcessor;
-import com.enonic.wem.admin.json.rpc.processor.JsonRpcProcessorImpl;
+import com.enonic.wem.admin.jsonrpc.processor.JsonRpcProcessor;
+import com.enonic.wem.admin.jsonrpc.processor.JsonRpcProcessorImpl;
 
 public final class JsonRpcModule
     extends AbstractModule

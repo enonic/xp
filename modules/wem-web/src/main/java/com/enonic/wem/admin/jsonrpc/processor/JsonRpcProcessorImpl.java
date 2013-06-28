@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.json.rpc.processor;
+package com.enonic.wem.admin.jsonrpc.processor;
 
 import java.util.Set;
 
@@ -8,9 +8,9 @@ import org.codehaus.jackson.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcError;
-import com.enonic.wem.admin.json.rpc.JsonRpcException;
-import com.enonic.wem.admin.json.rpc.JsonRpcHandler;
+import com.enonic.wem.admin.jsonrpc.JsonRpcError;
+import com.enonic.wem.admin.jsonrpc.JsonRpcException;
+import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 
 
 public final class JsonRpcProcessorImpl

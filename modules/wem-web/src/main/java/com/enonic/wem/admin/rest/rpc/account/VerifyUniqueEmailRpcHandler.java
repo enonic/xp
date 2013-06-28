@@ -1,7 +1,7 @@
 package com.enonic.wem.admin.rest.rpc.account;
 
 
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.account.query.AccountQuery;
 import com.enonic.wem.api.account.query.AccountQueryHits;

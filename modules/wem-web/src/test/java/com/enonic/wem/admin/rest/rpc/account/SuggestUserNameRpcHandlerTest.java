@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.OngoingStubbing;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcHandler;
+import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.admin.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.Accounts;

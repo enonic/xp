@@ -16,7 +16,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;

@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.command.space.DeleteSpace;
 import com.enonic.wem.api.space.SpaceName;

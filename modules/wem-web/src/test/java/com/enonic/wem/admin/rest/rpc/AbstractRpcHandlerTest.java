@@ -11,11 +11,11 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcError;
-import com.enonic.wem.admin.json.rpc.JsonRpcHandler;
-import com.enonic.wem.admin.json.rpc.processor.JsonRpcProcessorImpl;
-import com.enonic.wem.admin.json.rpc.processor.JsonRpcRequest;
-import com.enonic.wem.admin.json.rpc.processor.JsonRpcResponse;
+import com.enonic.wem.admin.jsonrpc.JsonRpcError;
+import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
+import com.enonic.wem.admin.jsonrpc.processor.JsonRpcProcessorImpl;
+import com.enonic.wem.admin.jsonrpc.processor.JsonRpcRequest;
+import com.enonic.wem.admin.jsonrpc.processor.JsonRpcResponse;
 import com.enonic.wem.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
