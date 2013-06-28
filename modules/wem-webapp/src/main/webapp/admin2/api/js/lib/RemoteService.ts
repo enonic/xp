@@ -51,6 +51,14 @@ module api_remote {
         }[];
     }
 
+    export interface RemoteCallAccountChangePasswordParams {
+        key: string;
+        password: string;
+    }
+
+    export interface RemoteCallAccountChangePasswordResult extends RemoteCallResultBase {
+    }
+
     export interface RemoteCallContentTypeGetParams {
         format: string;
         contentType: string;
@@ -319,7 +327,8 @@ module api_remote {
     export interface RemoteServiceInterface {
         account_find (params:RemoteCallAccountFindParams, callback:(result:RemoteCallAccountFindResult)=>void):void;
         account_getGraph (params:RemoteCallAccountGetGraphParams, callback:(result:RemoteCallAccountGetGraphResult)=>void):void;
-        account_changePassword (params, callback):void;
+        account_changePassword (params:RemoteCallAccountChangePasswordParams,
+                                callback:(result:RemoteCallAccountChangePasswordResult)=>void):void;
         account_verifyUniqueEmail (params, callback):void;
         account_suggestUserName (params, callback):void;
         account_createOrUpdate (params, callback):void;
@@ -399,7 +408,8 @@ module api_remote {
             console.log(params, callback);
         }
 
-        account_changePassword(params, callback):void {
+        account_changePassword(params:RemoteCallAccountChangePasswordParams,
+                               callback:(result:RemoteCallAccountChangePasswordResult)=>void):void {
             console.log(params, callback);
         }
 
