@@ -181,6 +181,15 @@ module api_remote {
         schemas:Schema[];
     }
 
+    export interface RemoteCallSystemGetSystemInfoParams {
+    }
+
+    export interface RemoteCallSystemGetSystemInfoResult extends RemoteCallResultBase {
+        installationName: string;
+        version: string;
+        title: string;
+    }
+
     export interface RemoteCallMixinGetParams {
         format:string;
         mixin:string;
@@ -302,7 +311,7 @@ module api_remote {
         contentType_tree (params:RemoteCallGetContentTypeTreeParams, callback:(result:RemoteCallGetContentTypeTreeResult)=>void):void;
         schema_tree (params, callback):void;
         schema_list (params:RemoteCallSchemaListParams, callback:(result:RemoteCallSchemaListResult)=>void):void;
-        system_getSystemInfo (params, callback):void;
+        system_getSystemInfo (params:RemoteCallSystemGetSystemInfoParams, callback:(result:RemoteCallSystemGetSystemInfoResult)=>void):void;
         mixin_get (params:RemoteCallMixinGetParams, callback:(result:RemoteCallMixinGetResult)=>void):void;
         mixin_createOrUpdate (params:RemoteCallMixinCreateOrUpdateParams, callback:(result:RemoteCallMixinCreateOrUpdateResult)=>void):void;
         mixin_delete (params:RemoteCallMixinDeleteParams, callback:(result:RemoteCallMixinDeleteResult)=>void):void;
@@ -466,7 +475,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        system_getSystemInfo(params, callback):void {
+        system_getSystemInfo(params:RemoteCallSystemGetSystemInfoParams, callback:(result:RemoteCallSystemGetSystemInfoResult)=>void):void {
             console.log(params, callback);
         }
 
