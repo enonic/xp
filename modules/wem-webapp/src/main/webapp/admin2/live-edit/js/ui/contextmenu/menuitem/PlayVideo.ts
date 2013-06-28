@@ -23,8 +23,6 @@ module LiveEdit.ui.contextmenu.menuitem {
                         videoDomEl.play();
                     });
 
-                    this.menu.hide();
-
                     event.stopPropagation();
                 }
             });
