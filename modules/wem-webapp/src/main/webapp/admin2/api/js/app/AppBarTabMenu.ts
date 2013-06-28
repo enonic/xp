@@ -9,8 +9,8 @@ module api_app{
             this.getEl().addClass("appbar-tabmenu");
         }
 
-        addTab(tab:api_ui_tab.Tab) {
-            super.addTab(tab);
+        addNavigationItem(tab:api_ui.PanelNavigationItem) {
+            super.addNavigationItem(tab);
             this.tabMenuButton.setTabCount(this.countVisible());
         }
 
@@ -19,8 +19,8 @@ module api_app{
             return this.tabMenuButton;
         }
 
-        removeTab(tab:api_ui_tab.Tab) {
-            super.removeTab(tab);
+        removeNavigationItem(tab:api_ui.PanelNavigationItem) {
+            super.removeNavigationItem(tab);
             this.tabMenuButton.setTabCount(this.countVisible());
         }
     }

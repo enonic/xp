@@ -32,7 +32,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
     createSearchBarCt: function () {
         this.searchInputCmp = this.createSearchInputCmp();
         return new Ext.container.Container({
-            height: 70,
+            height: 75,
             cls: 'admin-components-search-bar',
             items: [
                 new Ext.Component({
@@ -197,7 +197,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
             */
         });
 
-        $(me.getContextWindow().iFrameMask).droppable({
+        $(me.getContextWindow().getLiveEditIFrameDom()).droppable({
             tolerance: 'pointer',
             addClasses: false,
             over: function (event, ui) {
@@ -281,7 +281,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
             liveEditWindow = contextWindow.getLiveEditContentWindowObject(),
             liveEditJQuery = contextWindow.getLiveEditJQuery();
 
-        liveEditJQuery(liveEditWindow).on('sortStop.liveEdit.component dragStop.liveEdit.component', function (event) {
+        liveEditJQuery(liveEditWindow).on('sortableStop.liveEdit draggableStop.liveEdit', function (event) {
             $('[data-context-window-draggable="true"]').simulate('mouseup');
             contextWindow.doShow();
             contextWindow.iFrameMask.className = contextWindow.iFrameMask.className.replace(/live-edit-droppable-active/g, '');

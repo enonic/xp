@@ -1,12 +1,12 @@
 module api_app{
 
-    export class AppPanel extends api_ui_tab.TabbedDeckPanel {
+    export class AppPanel extends api_ui.NavigatedDeckPanel {
 
         private homePanel:api_ui.Panel;
 
         private homePanelActions:api_ui.Action[];
 
-        constructor(tabNavigator:api_ui_tab.TabNavigator, homePanel:api_ui.Panel, homePanelActions:api_ui.Action[]) {
+        constructor(tabNavigator:api_ui.DeckPanelNavigator, homePanel:api_ui.Panel, homePanelActions:api_ui.Action[]) {
             super(tabNavigator);
 
             this.homePanel = homePanel;
@@ -14,7 +14,7 @@ module api_app{
             var homePanelMenuItem = new AppBarTabMenuItem("home");
             homePanelMenuItem.setVisible(false);
             homePanelMenuItem.setRemovable(false);
-            this.addTab(homePanelMenuItem, this.homePanel);
+            this.addNavigationItem(homePanelMenuItem, this.homePanel);
             this.showPanel(0);
         }
 

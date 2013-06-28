@@ -78,12 +78,12 @@ module LiveEdit.DragDropSort {
                 return createDragHelperHtml('');
             },
             start: (event, ui) => {
-                $(window).trigger('dragStart.liveEdit.component', [event, ui]);
+                $(window).trigger('draggableStart.liveEdit', [event, ui]);
                 this.setDragHelperText($(event.target).data('live-edit-name'));
                 _isDragging = true;
             },
             stop: (event, ui) => {
-                $(window).trigger('dragStop.liveEdit.component', [event, ui]);
+                $(window).trigger('draggableStop.liveEdit', [event, ui]);
                 _isDragging = false;
             }
         });
@@ -133,7 +133,7 @@ module LiveEdit.DragDropSort {
 
         this.refreshSortable();
 
-        $(window).trigger('sortStart.liveEdit.component', [event, ui]);
+        $(window).trigger('sortableStart.liveEdit', [event, ui]);
     }
 
     export function handleDragOver(event:JQueryEventObject, ui):void {
@@ -147,7 +147,7 @@ module LiveEdit.DragDropSort {
             ui.placeholder.hide();
         } else {
             this.setHelperStatusIcon('yes');
-            $(window).trigger('sortOver.liveEdit.component', [event, ui]);
+            $(window).trigger('sortableOver.liveEdit', [event, ui]);
         }
     }
 
@@ -156,18 +156,18 @@ module LiveEdit.DragDropSort {
             this.removePaddingFromLayoutComponent();
         }
         this.setHelperStatusIcon('no');
-        $(window).trigger('sortOut.liveEdit.component', [event, ui]);
+        $(window).trigger('sortableOut.liveEdit', [event, ui]);
     }
 
     export function handleSortChange(event:JQueryEventObject, ui):void {
         this.addPaddingToLayoutComponent($(event.target));
         this.setHelperStatusIcon('yes');
         ui.placeholder.show(null);
-        $(window).trigger('sortChange.liveEdit.component', [event, ui]);
+        $(window).trigger('sortableChange.liveEdit', [event, ui]);
     }
 
     export function handleSortUpdate(event:JQueryEventObject, ui):void {
-        $(window).trigger('sortUpdate.liveEdit.component', [event, ui]);
+        $(window).trigger('sortableUpdate.liveEdit', [event, ui]);
     }
 
     export function handleSortStop(event:JQueryEventObject, ui):void {
@@ -183,12 +183,12 @@ module LiveEdit.DragDropSort {
         }
 
         if (LiveEdit.ComponentHelper.supportsTouch()) {
-            $(window).trigger('mouseOut.liveEdit.component');
+            $(window).trigger('mouseOutComponent.liveEdit');
         }
 
         var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
 
-        $(window).trigger('sortStop.liveEdit.component', [event, ui, wasSelectedOnDragStart]);
+        $(window).trigger('sortableStop.liveEdit', [event, ui, wasSelectedOnDragStart]);
 
         ui.item.removeData('live-edit-selected-on-drag-start');
     }
@@ -213,7 +213,7 @@ module LiveEdit.DragDropSort {
                     if (componentType === 'layout') {
                         this.createSortable();
                     }
-                    $(window).trigger('sortUpdate.liveEdit.component');
+                    $(window).trigger('sortableUpdate.liveEdit');
                 });
         }
     }
@@ -233,17 +233,17 @@ module LiveEdit.DragDropSort {
     }
 
     export function registerGlobalListeners():void {
-        $(window).on('deselect.liveEdit.component', () => {
+        $(window).on('deselectComponent.liveEdit', () => {
             if (LiveEdit.ComponentHelper.supportsTouch() && !_isDragging) {
                 this.disableDragDrop();
             }
         });
 
-        $(window).on('paragraphSelect.liveEdit.component', () => {
+        $(window).on('selectParagraphComponent.liveEdit', () => {
             $(regionSelector).sortable('option', 'cancel', '[data-live-edit-type=paragraph]');
         });
 
-        $(window).on('paragraphLeave.liveEdit.component', () => {
+        $(window).on('leaveParagraphComponent.liveEdit', () => {
             $(regionSelector).sortable('option', 'cancel', '');
         });
     }

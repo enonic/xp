@@ -21,7 +21,7 @@ module LiveEdit.ui.contextmenu.menuitem {
                     event.stopPropagation();
                     // For demo purposes
                     this.menu.selectedComponent.remove();
-                    $(window).trigger('remove.liveEdit.component');
+                    $(window).trigger('removeComponent.liveEdit');
                 }
             });
 

@@ -37,7 +37,7 @@ module api_app {
         private render() {
             this.hide();
             this.isShown = false;
-            new api_dom.ElementHelper(document.body).appendChild(this.getHTMLElement());
+            api_dom.Body.get().appendChild(this);
         }
 
         toggle() {

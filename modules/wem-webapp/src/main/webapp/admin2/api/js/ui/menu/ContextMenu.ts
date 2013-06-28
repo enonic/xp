@@ -6,8 +6,7 @@ module api_ui_menu{
         constructor(...actions:api_ui.Action[]) {
             super("context-menu", "context-menu");
 
-            var htmlEl = this.getHTMLElement();
-            document.body.insertBefore(htmlEl, document.body.childNodes[0]);
+            api_dom.Body.get().prependChild(this);
 
             for (var i = 0; i < actions.length; i++) {
                 this.addAction(actions[i]);

@@ -28,13 +28,13 @@ module LiveEdit.ui.contextmenu {
         }
 
         private registerGlobalListeners():void {
-            $(window).on('select.liveEdit.component',
+            $(window).on('selectComponent.liveEdit',
                 (event:JQueryEventObject, component:JQuery, pagePosition) => this.show(component, pagePosition));
-            $(window).on('deselect.liveEdit.component', () => this.hide());
-            $(window).on('remove.liveEdit.component', () => this.hide());
-            $(window).on('paragraphEdit.liveEdit.component', () => this.hide());
-            $(window).on('sortStart.liveEdit.component', () => this.fadeOutAndHide());
-            $(window).on('resize.liveEdit.window', () => this.handleWindowResize());
+            $(window).on('deselectComponent.liveEdit', () => this.hide());
+            $(window).on('removeComponent.liveEdit', () => this.hide());
+            $(window).on('editParagraphComponent.liveEdit', () => this.hide());
+            $(window).on('sortableStart.liveEdit', () => this.fadeOutAndHide());
+            $(window).on('resizeBrowserWindow.liveEdit', () => this.handleWindowResize());
         }
 
         private addView():void {
@@ -61,7 +61,7 @@ module LiveEdit.ui.contextmenu {
             });
 
             this.getCloseButton().click(function () {
-                $(window).trigger('deselect.liveEdit.component');
+                $(window).trigger('deselectComponent.liveEdit');
             });
         }
 
@@ -92,7 +92,7 @@ module LiveEdit.ui.contextmenu {
         private fadeOutAndHide():void {
             this.getRootEl().fadeOut(500, () => {
                 this.hide();
-                $(window).trigger('deselect.liveEdit.component', {showComponentBar: false});
+                $(window).trigger('deselectComponent.liveEdit', {showComponentBar: false});
             });
             this.selectedComponent = null;
         }

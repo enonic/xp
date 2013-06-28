@@ -33,23 +33,23 @@ module app {
 
             api_app.ShowAppBrowsePanelEvent.on((event) => {
                 this.showHomePanel();
-                this.appBarTabMenu.deselectTab();
+                this.appBarTabMenu.deselectNavigationItem();
             });
 
-            app_event.NewSpaceEvent.on((event) => {
+            app_browse.NewSpaceEvent.on((event) => {
 
                 var tabMenuItem = new SpaceAppBarTabMenuItem("New Space");
                 var spaceWizardPanel = new app_wizard.SpaceWizardPanel('new-space');
-                this.addTab(tabMenuItem, spaceWizardPanel);
-                this.showTab(tabMenuItem);
+                this.addNavigationItem(tabMenuItem, spaceWizardPanel);
+                this.selectPanel(tabMenuItem);
             });
 
-            app_event.OpenSpaceEvent.on((event) => {
+            app_browse.OpenSpaceEvent.on((event) => {
 
                 // TODO: Open detailpanel in "full screen"
             });
 
-            app_event.EditSpaceEvent.on((event) => {
+            app_browse.EditSpaceEvent.on((event) => {
 
                 var spaces:api_model.SpaceModel[] = event.getModels();
                 for (var i = 0; i < spaces.length; i++) {
@@ -67,8 +67,8 @@ module app {
                             var spaceWizardPanel = new app_wizard.SpaceWizardPanel(id);
                             spaceWizardPanel.setData(result);
 
-                            this.addTab(tabMenuItem, spaceWizardPanel);
-                            this.showTab(tabMenuItem);
+                            this.addNavigationItem(tabMenuItem, spaceWizardPanel);
+                            this.selectPanel(tabMenuItem);
                         } else {
                             console.error("Error", result ? result.error : "Unable to retrieve space.");
                         }
@@ -76,7 +76,7 @@ module app {
                 }
             });
 
-            app_event.CloseSpaceWizardPanelEvent.on((event) => {
+            app_wizard.CloseSpaceWizardPanelEvent.on((event) => {
                 this.removePanel(event.getPanel(), event.isCheckCanRemovePanel());
             });
         }

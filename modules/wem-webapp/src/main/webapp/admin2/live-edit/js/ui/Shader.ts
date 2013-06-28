@@ -21,12 +21,12 @@ module LiveEdit.ui {
         }
 
         registerGlobalListeners():void {
-            $(window).on('select.liveEdit.component', (event:JQueryEventObject, component:JQuery) => this.show(component));
-            $(window).on('paragraphEdit.liveEdit.component', (event:JQueryEventObject, component:JQuery) => this.show(component));
-            $(window).on('deselect.liveEdit.component', () => this.hide());
-            $(window).on('remove.liveEdit.component', () => this.hide());
-            $(window).on('sortStart.liveEdit.component', () => this.hide());
-            $(window).on('resize.liveEdit.window', () => this.handleWindowResize());
+            $(window).on('selectComponent.liveEdit', (event:JQueryEventObject, component:JQuery) => this.show(component));
+            $(window).on('editParagraphComponent.liveEdit', (event:JQueryEventObject, component:JQuery) => this.show(component));
+            $(window).on('deselectComponent.liveEdit', () => this.hide());
+            $(window).on('removeComponent.liveEdit', () => this.hide());
+            $(window).on('sortableStart.liveEdit', () => this.hide());
+            $(window).on('resizeBrowserWindow.liveEdit', () => this.handleWindowResize());
         }
 
         addView():void {
@@ -51,8 +51,8 @@ module LiveEdit.ui {
             $('.live-edit-shader').on('click contextmenu', function (event) {
                 event.stopPropagation();
                 event.preventDefault();
-                $(window).trigger('deselect.liveEdit.component');
-                $(window).trigger('click.liveEdit.shader');
+                $(window).trigger('deselectComponent.liveEdit');
+                $(window).trigger('clickShader.liveEdit');
             });
         }
 

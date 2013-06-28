@@ -1,5 +1,5 @@
 .admin-components-search-bar {
-    padding: 10px 5px;
+    padding: 10px 15px;
 }
 
 .admin-components-search-input {
@@ -19,8 +19,9 @@
 }
 
 .admin-components-item {
-    border-left: 5px solid #252526;
     border-right: 5px solid #252526;
+    border-bottom: 1px dashed #3f3f46;
+    border-left: 5px solid #252526;
     padding: 15px;
     cursor: move;
 }
@@ -34,15 +35,15 @@
 }
 
 .admin-components-item-icon {
-    width: 35px;
+    width: 45px;
     color: #f2f2f2;
     font-size: 24px;
     font-weight: lighter;
     display: table-cell;
-    padding-top: 1px;
+    vertical-align: middle;
 }
 
-.admin-components-item-row .admin-components-item-info {
+.admin-components-item-info {
     display: table-cell;
     vertical-align: top;
 }
@@ -51,8 +52,8 @@
     margin: 0;
     padding: 0;
     font-size: 13px !important;
-    line-height: 1.3;
-    color: #e2e2e2;
+    line-height: 1.7;
+    color: #fff;
 }
 
 .live-edit-droppable-active {

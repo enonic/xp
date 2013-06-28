@@ -38,6 +38,7 @@
 ///<reference path='dom/ElementHelper.ts' />
 ///<reference path='dom/ImgElHelper.ts' />
 ///<reference path='dom/Element.ts' />
+///<reference path='dom/Body.ts' />
 ///<reference path='dom/DivEl.ts' />
 ///<reference path='dom/H1El.ts' />
 ///<reference path='dom/H2El.ts' />
@@ -62,13 +63,13 @@
 ///<reference path='ui/menu/MenuItem.ts' />
 ///<reference path='ui/menu/ContextMenu.ts' />
 ///<reference path='ui/menu/ActionMenu.ts' />
-///<reference path='ui/tab/Tab.ts' />
-///<reference path='ui/tab/TabNavigator.ts' />
+///<reference path='ui/PanelNavigationItem.ts' />
+///<reference path='ui/DeckPanelNavigator.ts' />
+///<reference path='ui/tab/TabBar.ts' />
 ///<reference path='ui/tab/TabMenu.ts' />
 ///<reference path='ui/tab/TabMenuButton.ts' />
 ///<reference path='ui/tab/TabMenuItem.ts' />
-///<reference path='ui/tab/TabBar.ts' />
-///<reference path='ui/tab/TabbedDeckPanel.ts' />
+///<reference path='ui/NavigatedDeckPanel.ts' />
 ///<reference path='ui/Tooltip.ts' />
 ///<reference path='ui/ProgressBar.ts' />
 ///<reference path='ui/grid/TreeGridPanel.ts' />

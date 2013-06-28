@@ -117,4 +117,14 @@ module api_remote {
             value: string;
         }[];
     }
+
+    export interface RelationshipType {
+        name:string;
+        displayName:string;
+        module:string;
+        fromSemantic:string;
+        toSemantic:string;
+        allowedFromTypes:string[];
+        allowedToTypes:string[];
+    }
 }

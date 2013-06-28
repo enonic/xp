@@ -18,7 +18,7 @@ module LiveEdit.component.observer {
 
                 event.stopPropagation();
 
-                $(window).trigger('mouseOver.liveEdit.component', [$(event.currentTarget)]);
+                $(window).trigger('mouseOverComponent.liveEdit', [$(event.currentTarget)]);
             });
         }
 
@@ -28,7 +28,7 @@ module LiveEdit.component.observer {
                 if (this.hasComponentSelected()) {
                     return;
                 }
-                $(window).trigger('mouseOut.liveEdit.component');
+                $(window).trigger('mouseOutComponent.liveEdit');
             });
         }
 
@@ -47,7 +47,7 @@ module LiveEdit.component.observer {
                     pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
 
                 if (componentIsSelected || pageHasComponentSelected) {
-                    $(window).trigger('deselect.liveEdit.component');
+                    $(window).trigger('deselectComponent.liveEdit');
                 } else {
 
                     // Used by eg. Menu
@@ -56,7 +56,7 @@ module LiveEdit.component.observer {
                         y: event.pageY
                     };
 
-                    $(window).trigger('select.liveEdit.component', [component, pagePosition]);
+                    $(window).trigger('selectComponent.liveEdit', [component, pagePosition]);
                 }
             });
         }

@@ -31,7 +31,11 @@
     border: none;
 }
 
-/** Menu button */
+.admin-context-window-menu-button:hover {
+    color: #fff;
+}
+
+/** Menu */
 .context-window-menu .x-panel-body {
     background-color: #2d2c31 !important;
     color: #fff;
@@ -42,7 +46,7 @@
 }
 
 .context-window-menu-item {
-    padding: 10px;
+    padding: 10px 20px;
 }
 
 .context-window-menu-item:hover {
@@ -65,6 +69,10 @@
     padding-top: 8px;
     cursor: pointer;
     font-size: 15px;
+}
+
+.admin-context-window-expand-collapse-button:hover {
+    color: #fff;
 }
 
 .admin-context-window-body {
@@ -103,14 +111,21 @@
 .admin-context-window .x-resizable-handle-northwest,
 .admin-context-window .x-resizable-handle-southeast,
 .admin-context-window .x-resizable-handle-southwest {
-    background: #000 !important;
+    background: #1ba1e2 !important;
 }
 
 .admin-context-window .x-resizable-handle-north,
 .admin-context-window .x-resizable-handle-south {
-    height: 4px;
+    height: 3px;
 }
 .admin-context-window .x-resizable-handle-east,
 .admin-context-window .x-resizable-handle-west {
-    width: 4px;
+    width: 3px;
 }
+.admin-context-window .x-resizable-handle-northwest,
+.admin-context-window .x-resizable-handle-northeast,
+.admin-context-window .x-resizable-handle-southeast,
+.admin-context-window .x-resizable-handle-southwest {
+    width: 3px;
+}
+

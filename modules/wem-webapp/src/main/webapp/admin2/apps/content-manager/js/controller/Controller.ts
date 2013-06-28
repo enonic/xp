@@ -6,97 +6,53 @@ Ext.define('Admin.controller.Controller', {
 
     /*      Base controller for the content manager module      */
 
-    stores: [],
-    models: [],
-    /*    views: [
-     'Admin.view.contentManager.DeleteContentWindow',
-     'Admin.view.contentManager.LiveEditTestWindow',
-     'Admin.view.contentManager.wizard.ContentLiveEditPanel'
-     ],*/
+    stores: [
+        'Admin.store.contentManager.ContentStore',
+        'Admin.store.contentManager.ContentTreeStore'
+    ],
+    models: [
+        'Admin.model.contentManager.ContentModel'
+    ],
 
     init: function () {
-        var me = this;
 
-        me.control({
-            'browseToolbar *[action=newContent], contentManagerContextMenu *[action=newContent], contentDetail *[action=newContent]': {
-                click: function (button, event) {
-                    this.getNewContentWindow().doShow();
-                }
-            },
-            'browseToolbar *[action=viewContent], contentManagerContextMenu *[action=viewContent], contentDetail *[action=viewContent]': {
-                click: function (button, event) {
-                    this.viewContent();
-                }
-            },
-            'browseToolbar *[action=editContent], contentManagerContextMenu *[action=editContent], contentDetail *[action=editContent]': {
-                click: function (button, event) {
-                    this.editContent();
-                }
-            },
-            'browseToolbar *[action=duplicateContent], contentManagerContextMenu *[action=duplicateContent], contentDetail *[action=duplicateContent]': {
-                click: function (button, event) {
-                    this.duplicateContent();
-                }
-            }
+        app_browse.NewContentEvent.on((event) => {
+            this.getNewContentWindow().doShow();
         });
 
-        me.application.on({});
+        app_browse.OpenContentEvent.on((event) => {
+            this.viewContent(event.getModels());
+        });
 
-        /* For 18/4 demo */
-        //TODO: Use new notify method
-        /*
-         Admin.MessageBus.on('liveEdit.openContent', function () {
+        app_browse.EditContentEvent.on((event) => {
+            this.editContent(event.getModels());
+        });
 
-         var contentImageService = Admin.lib.UriHelper.getAbsoluteUri('admin/rest/content/image');
+        app_browse.ContentDeletePromptEvent.on((event) => {
+            components.contentDeleteDialog.setContentToDelete(event.getModels());
+            components.contentDeleteDialog.open();
+        });
 
-         // We should use a content/space from the demo server
-         var contentModel = new Admin.model.contentManager.ContentModel({
-         "id": "56bf6229-b5f8-4085-9bd2-58eb103e367b",
-         "path": "default:/",
-         "name": null,
-         "type": "system:space",
-         "displayName": "Default space",
-         "owner": null,
-         "modifier": null,
-         "iconUrl": contentImageService + "/56bf6229-b5f8-4085-9bd2-58eb103e367b",
-         "modifiedTime": "2013-03-26T10:59:22.842Z",
-         "createdTime": "2013-03-26T10:59:22.842Z",
-         "editable": true,
-         "deletable": false,
-         "hasChildren": true,
-         "parentId": "root",
-         "index": 0,
-         "depth": 1,
-         "expanded": false,
-         "expandable": true,
-         "checked": null,
-         "cls": "",
-         "iconCls": "",
-         "icon": "",
-         "root": false,
-         "isLast": false,
-         "isFirst": true,
-         "allowDrop": true,
-         "allowDrag": true,
-         "loaded": true,
-         "loading": false,
-         "href": "",
-         "hrefTarget": "",
-         "qtip": "",
-         "qtitle": "",
-         "children": null,
-         "leaf": false
-         });
+        app_browse.DuplicateContentEvent.on((event) => {
+            this.duplicateContent(event.getModels());
+        });
 
-         me.viewContent(contentModel, null, true);
-         }, me);
-         */
+        app_browse.MoveContentEvent.on((event) => {
+            console.log('TODO: implement move content');
+        });
 
+        app_browse.ShowPreviewEvent.on((event) => {
+            console.log('TODO: implement show preview');
+        });
 
-        /* For 18/4 demo */
-        /*Admin.MessageBus.on('liveEdit.showTestSettingsWindow', function () {
-         me.getLiveEditTestWindow().doShow();
-         }, me);*/
+        app_browse.ShowDetailsEvent.on((event) => {
+            console.log('TODO: implement show details');
+        });
+
+        app_browse.GridSelectionChangeEvent.on((event) => {
+            this.updateDetailPanel(event.getModels());
+        });
+
     },
 
     getNewContentWindow: function () {
@@ -111,20 +67,12 @@ Ext.define('Admin.controller.Controller', {
         return 'tab-' + ( isEdit ? 'edit' : 'preview') + '-content-' + content.get('path');
     },
 
-    viewContent: function (contentModels, callback, contentOpenedFromLiveEdit) {
-        var me = this;
+    viewContent: function (contentModels, callback?, contentOpenedFromLiveEdit?) {
+        var me = this,
+            tabs = this.getCmsTabPanel();
 
-        if (!contentModels) {
-            var showPanel = this.getContentTreeGridPanel();
-            contentModels = showPanel.getSelection();
-        } else {
-            contentModels = [].concat(contentModels);
-        }
-
-        var tabs = this.getCmsTabPanel();
-        var i;
         if (tabs) {
-            for (i = 0; i < contentModels.length; i += 1) {
+            for (var i = 0; i < contentModels.length; i += 1) {
 
                 var activeTab = tabs.setActiveTab(me.generateTabId(contentModels[i], true));
 
@@ -147,17 +95,8 @@ Ext.define('Admin.controller.Controller', {
     },
 
     editContent: function (contentModel, callback) {
-
-        var me = this;
-
-        if (!contentModel) {
-            var showPanel = this.getContentTreeGridPanel();
-            contentModel = showPanel.getSelection();
-        }
-        else {
-            contentModel = [].concat(contentModel);
-        }
-        var tabs = this.getCmsTabPanel();
+        var me = this,
+            tabs = this.getCmsTabPanel();
 
         var createContentTabFn = function (response) {
             if (Ext.isFunction(callback)) {
@@ -304,21 +243,10 @@ Ext.define('Admin.controller.Controller', {
     },
 
     duplicateContent: function (content) {
-        if (!content) {
-            var showPanel = this.getContentTreeGridPanel();
-            content = showPanel.getSelection();
-        }
-        else {
-            content = [].concat(content);
-        }
-
+        // TODO: implement duplicate content
         var selection = content[0];
         if (selection) {
-            Admin.MessageBus.showFeedback({
-                title: selection.get('name') + ' duplicated into /path/to/content-copy',
-                message: 'Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.',
-                opts: {}
-            });
+            api_notify.showFeedback(selection.get('name') + ' duplicated into /path/to/content-copy');
         }
     },
 
@@ -326,7 +254,7 @@ Ext.define('Admin.controller.Controller', {
 
         // need to use this methods to preserve persistent selection
         var selection = this.getContentTreeGridPanel().getSelection();
-        this.getContentDetailPanel().setData(selection);
+        this.getContentDetailPanel().update(selection);
     },
 
     updateToolbarButtons: function (selected) {
@@ -348,11 +276,6 @@ Ext.define('Admin.controller.Controller', {
                 }
             }
             deleteContentButton.setDisabled(disabled);
-
-            deleteContentButton = detailPanel.down('*[action=deleteContent]');
-            if (deleteContentButton) {
-                deleteContentButton.setDisabled(disabled);
-            }
         }
     },
 
@@ -530,26 +453,20 @@ Ext.define('Admin.controller.Controller', {
         return Ext.ComponentQuery.query('contentFilter')[0];
     },
 
-    getContentBrowseToolbar: function () {
-        return Ext.ComponentQuery.query('browseToolbar')[0];
-    },
-
     getContentManagerContextMenu: function ():app_browse.ContentTreeGridContextMenu {
-        var menu = components.contextMenu;
-        if (!menu) {
-            menu = components.contextMenu = new app_browse.ContentTreeGridContextMenu();
+        if (!components.contextMenu) {
+            components.contextMenu = new app_browse.ContentTreeGridContextMenu();
         }
-        return menu;
+
+        return components.contextMenu;
     },
 
     getContentTreeGridPanel: function () {
         return components.gridPanel;
     },
 
-    getContentDetailPanel: function () {
-        var contentDetail = Ext.ComponentQuery.query('contentDetail');
-        var vertical = contentDetail[0].isVisible();
-        return Ext.ComponentQuery.query('contentDetail')[vertical ? 0 : 1];
+    getContentDetailPanel: function ():app_browse.ContentDetailPanel {
+        return components.detailPanel;
     },
 
     getPersistentGridSelectionPlugin: function () {

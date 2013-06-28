@@ -11,9 +11,9 @@ module LiveEdit.ui {
         }
 
         private registerGlobalListeners():void {
-            $(window).on('mouseOver.liveEdit.component', (event:JQueryEventObject, component) => this.update(component));
-            $(window).on('select.liveEdit.component', (event:JQueryEventObject, component:JQuery) => this.update(component));
-            $(window).on('mouseOut.liveEdit.component', () => this.reset());
+            $(window).on('mouseOverComponent.liveEdit', (event:JQueryEventObject, component) => this.update(component));
+            $(window).on('selectComponent.liveEdit', (event:JQueryEventObject, component:JQuery) => this.update(component));
+            $(window).on('mouseOutComponent.liveEdit', () => this.reset());
         }
 
         private update(component:JQuery):void {

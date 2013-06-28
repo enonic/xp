@@ -1,4 +1,4 @@
-module admin.ui {
+module app {
 
     export class DetailToolbar {
         ext;
@@ -50,14 +50,14 @@ module admin.ui {
 
             var cycle = this.createCycle();
 
-            var toggleSlide = this.createToggleSlide();
+//            var toggleSlide = this.createToggleSlide();
 
             var btnClose = this.createButton({
                 text: 'Close',
                 action: 'closeContent'
             }, defaults);
 
-            tbar.add(btnNew, btnEdit, btnDelete, btnDuplicate, btnMove, btnExport, separator, cycle, toggleSlide, btnClose);
+            tbar.add(btnNew, btnEdit, btnDelete, btnDuplicate, btnMove, btnExport, separator, cycle, /*toggleSlide,*/ btnClose);
 
             this.ext = tbar;
         }
