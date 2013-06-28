@@ -55,6 +55,10 @@
     color: #fff;
 }
 
+.admin-components-item-row sub {
+    font-size: 11px;
+}
+
 .live-edit-droppable-active {
     border: 1px solid #3399fe;
 }

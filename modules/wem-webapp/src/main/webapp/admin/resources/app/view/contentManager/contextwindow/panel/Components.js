@@ -105,7 +105,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
             '           <div class="admin-components-item-icon {[this.resolveIconCls(values.type)]}"></div>',
             '           <div class="admin-components-item-info">',
             '               <h3>{name}</h3>',
-            '               <small>{subtitle}</small>',
+            '               <sub>{subtitle}</sub>',
             '           </div>',
             '       </div>',
             '   </div>',

@@ -27,11 +27,6 @@
 .admin-device-item-selected {
     background-color: #3f3f46;
     border-left: 5px solid #3399fe;
-    color: #fff;
-}
-
-.admin-device-item-selected h3 {
-    color: #fff !important;
 }
 
 .admin-device-item-rotate-button {
@@ -77,3 +72,8 @@
     line-height: 1.7;
     color: #fff;
 }
+
+.admin-device-item-row sub {
+    font-size: 11px;
+}
+

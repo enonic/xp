@@ -90,7 +90,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Emulator', {
             '           <div class="admin-device-item-icon {[this.getIconCls(values.device_type)]}"></div>',
             '           <div class="admin-device-item-info">',
             '               <h3>{name}</h3>',
-            '               <small>{width} x {height}</small>',
+            '               <sub>{width} x {height}</sub>',
             '           </div>',
             '           <tpl if="rotatable">',
             '               <div class="admin-device-item-rotate-button icon-rotate-right" title="Rotate"></div>',
