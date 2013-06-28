@@ -55,13 +55,6 @@ Ext.define('Admin.MessageBus', {
 
     liveEditOpenContent: function () {
         this.fireEvent('liveEdit.openContent');
-    },
-
-
-    // Just for prototyping purposes
-    showLiveEditTestSettingsWindow: function (config) {
-        this.fireEvent('liveEdit.showTestSettingsWindow', config);
-
     }
 
 });
