@@ -31,6 +31,26 @@ module api_remote {
         total?: number;
     }
 
+    export interface RemoteCallAccountGetGraphParams {
+        key: string;
+    }
+
+    export interface RemoteCallAccountGetGraphResult extends RemoteCallResultBase {
+        graph: {
+            id: string;
+            name: string;
+            data: {
+                type: string;
+                key: string;
+                image_uri: string;
+                name: string;
+            };
+            adjacencies?: {
+                nodeTo: string;
+            }[];
+        }[];
+    }
+
     export interface RemoteCallContentTypeGetParams {
         format: string;
         contentType: string;
@@ -298,7 +318,7 @@ module api_remote {
 
     export interface RemoteServiceInterface {
         account_find (params:RemoteCallAccountFindParams, callback:(result:RemoteCallAccountFindResult)=>void):void;
-        account_getGraph (params, callback):void;
+        account_getGraph (params:RemoteCallAccountGetGraphParams, callback:(result:RemoteCallAccountGetGraphResult)=>void):void;
         account_changePassword (params, callback):void;
         account_verifyUniqueEmail (params, callback):void;
         account_suggestUserName (params, callback):void;
@@ -375,7 +395,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        account_getGraph(params, callback):void {
+        account_getGraph(params:RemoteCallAccountGetGraphParams, callback:(result:RemoteCallAccountGetGraphResult)=>void):void {
             console.log(params, callback);
         }
 
