@@ -10,10 +10,10 @@ module LiveEdit.ui.contextmenu {
         private hidden = true;
         private buttons = [];
         private buttonConfig = {
-            'page': ['settings', 'reset'],
-            'region': ['parent', 'settings', 'reset', 'clear'],
-            'layout': ['parent', 'settings', 'remove'],
-            'part': ['parent', 'settings', 'details', 'remove'],
+            'page': ['reset'],
+            'region': ['parent', 'reset', 'clear'],
+            'layout': ['parent', 'remove'],
+            'part': ['parent', 'details', 'remove'],
             'content': ['parent', 'opencontent', 'view'],
             'paragraph': ['parent', 'edit', 'remove']
         };
@@ -107,7 +107,6 @@ module LiveEdit.ui.contextmenu {
         private addButtons():void {
             var menuItem = LiveEdit.ui.contextmenu.menuitem;
             var parentButton = new menuitem.Parent(this);
-            var settingsButton = new menuitem.Settings(this);
             var detailsButton = new menuitem.Details(this);
             var insertButton = new menuitem.Insert(this);
             var resetButton = new menuitem.Reset(this);
