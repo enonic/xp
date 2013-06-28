@@ -113,7 +113,11 @@ module app_browse {
         static SHOW_DETAILS:api_ui.Action = new ShowDetailsAction();
         static BROWSE_CONTENT_SETTINGS:api_ui.Action = new BrowseContentSettingsAction();
 
+        static ACTIONS:api_ui.Action[] = [];
+
         static init() {
+
+            ACTIONS.push(NEW_CONTENT,OPEN_CONTENT,EDIT_CONTENT,DELETE_CONTENT,DUPLICATE_CONTENT,MOVE_CONTENT);
 
             GridSelectionChangeEvent.on((event) => {
 

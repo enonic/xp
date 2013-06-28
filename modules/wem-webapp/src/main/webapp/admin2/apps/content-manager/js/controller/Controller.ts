@@ -466,7 +466,7 @@ Ext.define('Admin.controller.Controller', {
     },
 
     getContentDetailPanel: function ():app_browse.ContentDetailPanel {
-        return components.detailPanelHorizontal.isVisible() ? components.detailPanelHorizontal : components.detailPanelVertical;
+        return components.detailPanel;
     },
 
     getPersistentGridSelectionPlugin: function () {
