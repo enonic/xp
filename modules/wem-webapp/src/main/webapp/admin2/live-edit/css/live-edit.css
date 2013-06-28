@@ -394,6 +394,9 @@ svg.live-edit-highlight-border rect {
 .live-edit-component-menu-layout-icon {
   background: transparent url("..//images/component-types/22/insert-template.png") center center no-repeat; }
 
+.live-edit-component-menu-content-icon {
+  background: transparent url("..//images/component-types/22/text-color.png") center center no-repeat; }
+
 .live-edit-component-menu-title-text {
   float: left;
   font-size: 14px;

@@ -121,6 +121,9 @@ module LiveEdit {
             }
         }
 
+        /**
+         * Will be shared with Context Window later in the project
+         */
         public static resolveCssClassForComponent(component:JQuery):string {
             var iconCls:string;
             var componentType = ComponentHelper.getComponentType(component);

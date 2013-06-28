@@ -4,6 +4,8 @@
 Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
     extend: 'Ext.container.Container',
     alias: 'widget.contextWindowComponentsPanel',
+    uses: 'Admin.view.contentManager.contextwindow.Helper',
+
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -110,27 +112,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
             '</tpl>',
             {
                 resolveIconCls: function (componentType) {
-                    var iconCls;
-                    switch (componentType) {
-                    case 'page':
-                        iconCls = 'icon-file';
-                        break;
-                    case 'region':
-                        iconCls = 'icon-th-large';
-                        break;
-                    case 'layout':
-                        iconCls = 'icon-columns';
-                        break;
-                    case 'part':
-                        iconCls = 'icon-puzzle-piece';
-                        break;
-                    case 'paragraph':
-                        iconCls = 'icon-edit';
-                        break;
-                    default:
-                        iconCls = '';
-                    }
-                    return iconCls;
+                    return Admin.view.contentManager.contextwindow.Helper.resolveComponentTypeIconCls(componentType);
                 }
             }
         );

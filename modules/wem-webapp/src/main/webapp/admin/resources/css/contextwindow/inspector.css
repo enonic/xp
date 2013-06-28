@@ -1,0 +1,11 @@
+.admin-inspector-info-container {
+    padding-top: 25%;
+    text-align: center;
+}
+.admin-inspector-info-container h3 {
+    line-height: 1.8
+}
+
+.admin-inspector-icon {
+    font-size: 128px;
+}
