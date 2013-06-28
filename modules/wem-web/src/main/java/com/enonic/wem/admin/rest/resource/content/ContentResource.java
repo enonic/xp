@@ -1,9 +1,9 @@
-package com.enonic.wem.admin.rest.resource.schema.relationship;
+package com.enonic.wem.admin.rest.resource.content;
 
 import javax.ws.rs.Path;
 
-@Path("schema/relationship")
-public class RelationshipTypeResource
+@Path("content")
+public class ContentResource
 {
     // get() @GET
     // list() @GET

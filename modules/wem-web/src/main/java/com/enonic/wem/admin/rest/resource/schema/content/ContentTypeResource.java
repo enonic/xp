@@ -7,7 +7,8 @@ public class ContentTypeResource
 {
     // get() @GET
     // list() @GET
-    // getTree() @GET
+    // find() @GET
+    // generateName() @GET
     // validate() @POST
     // delete() @POST
     // create() @POST
