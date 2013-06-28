@@ -114,4 +114,61 @@ module api_remote {
         allowedFromTypes:string[];
         allowedToTypes:string[];
     }
+
+    export interface Account {
+        key:string;
+        type:string;
+        name:string;
+        userStore:string;
+        qualifiedName:string;
+        builtIn:bool;
+        displayName:string;
+        modifiedTime?:Date;
+        createdTime?:Date;
+        editable:bool;
+        deleted:bool;
+        image_url:string;
+        email?:string;
+        profile?:UserProfile;
+        memberships?:Account[];
+        members?:Account[];
+    }
+
+    export interface UserProfile {
+        firstName:string;
+        lastName:string;
+        middleName:string;
+        birthday?:Date;
+        country:string;
+        description:string;
+        initials:string;
+        globalPosition:string;
+        htmlEmail:string;
+        locale?:string;
+        nickName:string;
+        personalId:string;
+        memberId:string;
+        organization:string;
+        prefix:string;
+        suffix:string;
+        title:string;
+        homePage:string;
+        mobile:string;
+        fax:string;
+        phone:string;
+        gender?:string;
+        timezone?:string;
+        addresses:Address[];
+    }
+
+    export interface Address {
+        country:string;
+        isoCountry:string;
+        region:string;
+        isoRegion:string;
+        label:string;
+        street:string;
+        postalCode:string;
+        postalAddress:string;
+    }
 }
