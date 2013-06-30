@@ -31,6 +31,12 @@
             "subtitle": "The quick, brown fox jumps over a lazy dog"
         },
         {
+            "key": "10050",
+            "type": "paragraph",
+            "name": "æøå",
+            "subtitle": "På Værøy, rett ved Røst, bodde en gang en fattig fisker, som hette Isak"
+        },
+        {
             "key": "10011",
             "type": "part",
             "name": "Banner",

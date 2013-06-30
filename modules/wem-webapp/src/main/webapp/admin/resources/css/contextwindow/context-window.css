@@ -28,11 +28,12 @@
 }
 
 .admin-context-window-menu-button {
-    font-size: 20px;
+    border: none;
     background-color: transparent;
     padding-left: 10px;
     padding-right: 10px;
-    border: none;
+    font-size: 20px;
+    color: #fff;
 }
 
 .admin-context-window-menu-button:hover {
@@ -43,6 +44,7 @@
 .context-window-menu .x-panel-body {
     background-color: #2d2c31 !important;
     color: #fff;
+    border-bottom: 1px solid #3f3f46 !important;
 }
 
 .context-window-menu .x-menu-body {
@@ -50,7 +52,7 @@
 }
 
 .context-window-menu-item {
-    padding: 10px 20px;
+    padding: 10px;
 }
 
 .context-window-menu-item:hover {
@@ -71,8 +73,9 @@
 
 .admin-context-window-expand-collapse-button {
     padding-top: 8px;
-    cursor: pointer;
     font-size: 15px;
+    color: #fff;
+    cursor: pointer;
 }
 
 .admin-context-window-expand-collapse-button:hover {

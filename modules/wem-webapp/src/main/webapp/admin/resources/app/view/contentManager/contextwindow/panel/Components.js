@@ -34,7 +34,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
     createSearchBarCt: function () {
         this.searchInputCmp = this.createSearchInputCmp();
         return new Ext.container.Container({
-            height: 75,
+            padding: '20',
             cls: 'admin-components-search-bar',
             items: [
                 new Ext.Component({
@@ -105,12 +105,20 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
             '           <div class="admin-components-item-icon {[this.resolveIconCls(values.type)]}"></div>',
             '           <div class="admin-components-item-info">',
             '               <h3>{name}</h3>',
-            '               <sub>{subtitle}</sub>',
+            '               <sub title="{subtitle}">{[this.substringSubtitle(values.subtitle)]}</sub>',
             '           </div>',
             '       </div>',
             '   </div>',
             '</tpl>',
             {
+                substringSubtitle: function (subtitle) {
+                    var maxLength = 33,
+                        result = subtitle;
+                    if (subtitle.length > maxLength) {
+                        result = subtitle.substring(0, maxLength) + ' ...'
+                    }
+                    return result;
+                },
                 resolveIconCls: function (componentType) {
                     return Admin.view.contentManager.contextwindow.Helper.resolveComponentTypeIconCls(componentType);
                 }
@@ -170,6 +178,9 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
             helper: me.createDragHelper,
             start: function (event, ui) {
                 me.onStartDragComponent(event, ui);
+            },
+            stop: function () {
+                me.getContextWindow().showHideIFrameMask(false);
             }
             /*
             ,

@@ -30,9 +30,9 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Emulator', {
      */
     createTopTextCmp: function () {
         return new Ext.Component({
-            height: 40,
+            padding: '20',
             cls: 'admin-emulator-top-bar',
-            html: '<p>Emulate different client\'s physical sizes</p>'
+            html: '<div>Emulate different client\'s physical sizes</div>'
         });
     },
 

@@ -1,12 +1,8 @@
-.admin-components-search-bar {
-    padding: 10px 15px;
-}
-
 .admin-components-search-input {
     background-color: #3f3f46;
     border: none;
-    color: #c4c4c4;
-    padding: 5px;
+    color: #fff;
+    padding: 5px 3px;
     width: 100%;
 }
 
@@ -19,24 +15,30 @@
 }
 
 .admin-components-item {
-    border-right: 5px solid #252526;
     border-bottom: 1px dashed #3f3f46;
-    border-left: 5px solid #252526;
-    padding: 15px;
+    border-left: 5px solid transparent;
+    padding: 15px 25px;
     cursor: move;
 }
 
 .admin-components-item:hover {
     background-color: #3f3f46;
+    border-left: 5px solid #e3c800;
+
 }
+.admin-components-item:hover h3,
+.admin-components-item:hover .admin-components-item-icon {
+    color: #fff;
+}
+
 
 .admin-components-item-row {
     display: table-row;
 }
 
 .admin-components-item-icon {
-    width: 45px;
-    font-size: 24px;
+    width: 49px;
+    font-size: 32px;
     font-weight: lighter;
     display: table-cell;
     vertical-align: middle;
@@ -51,12 +53,11 @@
     margin: 0;
     padding: 0;
     font-size: 13px !important;
-    line-height: 1.7;
-    color: #fff;
+    line-height: 1.45;
 }
 
 .admin-components-item-row sub {
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .live-edit-droppable-active {

@@ -19,7 +19,7 @@ module LiveEdit.ui.contextmenu.menuitem {
                 handler: (event) => {
 
                     // fixme: remove. Play all videos for now :)
-                    $('video', this.menu.selectedComponent).each(function (i, videoDomEl) {
+                    $('video', this.menu.selectedComponent).each((i, videoDomEl) => {
                         videoDomEl.play();
                     });
 
