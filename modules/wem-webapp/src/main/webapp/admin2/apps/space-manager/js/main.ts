@@ -47,7 +47,6 @@
 ///<reference path='app/delete/SpaceDeleteDialog.ts' />
 
 ///<reference path='app/SpaceAppBar.ts' />
-///<reference path='app/SpaceAppBarActions.ts' />
 ///<reference path='app/SpaceAppBarTabMenuItem.ts' />
 ///<reference path='app/SpaceAppBarTabMenu.ts' />
 ///<reference path='app/SpaceAppBar.ts' />
