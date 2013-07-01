@@ -2,7 +2,7 @@ package com.enonic.wem.admin.rest.rpc.util;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.core.time.TimeZoneService;
 

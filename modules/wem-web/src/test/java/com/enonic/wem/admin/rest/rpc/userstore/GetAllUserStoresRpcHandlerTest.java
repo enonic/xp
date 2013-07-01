@@ -3,7 +3,7 @@ package com.enonic.wem.admin.rest.rpc.userstore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcHandler;
+import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.userstore.FindAllUserStores;
 import com.enonic.wem.api.command.userstore.GetUserStores;

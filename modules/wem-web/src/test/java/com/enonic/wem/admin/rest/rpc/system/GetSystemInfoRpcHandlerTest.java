@@ -3,7 +3,7 @@ package com.enonic.wem.admin.rest.rpc.system;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcHandler;
+import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.admin.rest.rpc.AbstractRpcHandlerTest;
 
 public class GetSystemInfoRpcHandlerTest

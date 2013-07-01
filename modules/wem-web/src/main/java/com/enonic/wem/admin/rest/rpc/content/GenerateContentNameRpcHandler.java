@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.rest.rpc.content;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.GenerateContentName;

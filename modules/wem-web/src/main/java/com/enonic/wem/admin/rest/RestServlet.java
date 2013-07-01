@@ -2,7 +2,7 @@ package com.enonic.wem.admin.rest;
 
 import com.google.inject.Singleton;
 
-import com.enonic.wem.admin.json.rpc.controller.JsonRpcController;
+import com.enonic.wem.admin.jsonrpc.controller.JsonRpcController;
 import com.enonic.wem.admin.rest.provider.JsonObjectProvider;
 import com.enonic.wem.admin.rest.provider.JsonSerializableProvider;
 import com.enonic.wem.admin.rest.resource.account.AccountExportResource;

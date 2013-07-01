@@ -2,7 +2,7 @@ package com.enonic.wem.admin.rest.rpc.schema.mixin;
 
 
 import com.enonic.wem.admin.json.JsonErrorResult;
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.schema.mixin.Mixin;

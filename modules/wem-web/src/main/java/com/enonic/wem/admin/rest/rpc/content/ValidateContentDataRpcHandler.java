@@ -2,7 +2,7 @@ package com.enonic.wem.admin.rest.rpc.content;
 
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.data.ContentData;

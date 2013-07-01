@@ -1,7 +1,7 @@
 package com.enonic.wem.admin.rest.rpc.system;
 
 
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rest.rpc.AbstractDataRpcHandler;
 
 

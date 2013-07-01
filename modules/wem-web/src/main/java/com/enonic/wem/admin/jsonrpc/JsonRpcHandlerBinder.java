@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.json.rpc;
+package com.enonic.wem.admin.jsonrpc;
 
 import com.google.inject.Binder;
 import com.google.inject.Scopes;

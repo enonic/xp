@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.base.Strings;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.ContentIds;
