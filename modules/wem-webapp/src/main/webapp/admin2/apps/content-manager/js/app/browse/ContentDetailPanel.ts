@@ -7,11 +7,6 @@ module app_browse {
             if (!selectedContents || selectedContents.length == 0) {
                 this.showBlank();
             }
-
-            GridSelectionChangeEvent.on((event) => {
-                this.update(event.getModels());
-            });
-
         }
 
         showBlank() {
@@ -26,33 +21,10 @@ module app_browse {
             }
         }
 
-        private showSingle(model) {
-            this.empty();
-
-            var tabPanel = new api_app_browse.DetailTabPanel(model);
-            tabPanel.addTab(new api_app_browse.DetailPanelTab("Analytics"));
-            tabPanel.addTab(new api_app_browse.DetailPanelTab("Sales"));
-            tabPanel.addTab(new api_app_browse.DetailPanelTab("History"));
-
-            tabPanel.addAction(app_browse.ContentBrowseActions.NEW_CONTENT);
-            tabPanel.addAction(app_browse.ContentBrowseActions.EDIT_CONTENT);
-            tabPanel.addAction(app_browse.ContentBrowseActions.OPEN_CONTENT);
-            tabPanel.addAction(app_browse.ContentBrowseActions.DELETE_CONTENT);
-            tabPanel.addAction(app_browse.ContentBrowseActions.DUPLICATE_CONTENT);
-            tabPanel.addAction(app_browse.ContentBrowseActions.MOVE_CONTENT);
-
-            this.getEl().appendChild(tabPanel.getHTMLElement());
-        }
-
-        private showMultiple(models:any[]) {
-            this.empty();
-            for (var i in models) {
-                var removeCallback = (box:api_app_browse.DetailPanelBox) => {
-                    var models:api_model.ContentModel[] = [box.getModel()];
-                    new GridDeselectEvent(models).fire();
-                }
-                this.getEl().appendChild(new api_app_browse.DetailPanelBox(models[i], removeCallback).getHTMLElement());
-            }
+        fireGridDeselectEvent(model:api_model.ContentModel) {
+            var models:api_model.ContentModel[] = [];
+            models.push(model);
+            new GridDeselectEvent(models).fire();
         }
     }
 }

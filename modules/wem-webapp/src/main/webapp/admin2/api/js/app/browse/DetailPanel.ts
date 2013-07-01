@@ -1,4 +1,51 @@
 module api_app_browse {
+
+    export class DetailPanelItem {
+
+        private model:any;
+
+        private displayName:string;
+
+        private path:string;
+
+        private iconUrl;
+
+        constructor(model:any) {
+            this.model = model;
+        }
+
+        setDisplayName(value:string):DetailPanelItem {
+            this.displayName = value;
+            return this;
+        }
+
+        setPath(value:string):DetailPanelItem {
+            this.path = value;
+            return this;
+        }
+
+        setIconUrl(value:string):DetailPanelItem {
+            this.iconUrl = value;
+            return this;
+        }
+
+        getModel():any {
+            return this.model;
+        }
+
+        getDisplayName():string {
+            return this.displayName;
+        }
+
+        getPath():string {
+            return this.path;
+        }
+
+        getIconUrl():string {
+            return this.iconUrl;
+        }
+    }
+
     export class DetailPanel extends api_dom.DivEl {
 
         ext;
@@ -17,21 +64,66 @@ module api_app_browse {
             });
         }
 
+        setItems(items:DetailPanelItem[]) {
 
+            if (items.length == 1) {
+                this.showSingle(items[0]);
+            } else if (items.length > 1) {
+                this.showMultiple(items);
+            }
+        }
+
+        showSingle(item:DetailPanelItem) {
+
+            this.empty();
+
+            var tabPanel = new api_app_browse.DetailTabPanel(item);
+            tabPanel.addTab(new api_app_browse.DetailPanelTab("Analytics"));
+            tabPanel.addTab(new api_app_browse.DetailPanelTab("Sales"));
+            tabPanel.addTab(new api_app_browse.DetailPanelTab("History"));
+
+            tabPanel.addAction(new api_ui.Action("Test"));
+            tabPanel.addAction(new api_ui.Action("More test"));
+            tabPanel.addAction(new api_ui.Action("And finally the last one"));
+
+            this.getEl().appendChild(tabPanel.getHTMLElement());
+        }
+
+        showMultiple(items:DetailPanelItem[]) {
+            this.empty();
+            for (var i in items) {
+
+                var removeCallback = (box:api_app_browse.DetailPanelBox) => {
+                    this.fireGridDeselectEvent(box.getDetailPanelItem().getModel());
+                }
+
+                this.getEl().appendChild(new api_app_browse.DetailPanelBox(items[i], removeCallback).getHTMLElement());
+            }
+        }
+
+        fireGridDeselectEvent(model:any) {
+
+        }
     }
 
     export class DetailTabPanel extends api_dom.DivEl {
-        private model:api_model.Model;
+
+        private detailPanelItem:DetailPanelItem;
+
         private navigation:DetailPanelTabList;
+
         private tabs:DetailPanelTab[] = [];
+
         private canvas:api_dom.DivEl;
+
         private tabChangeCallback:(DetailPanelTab) => void;
+
         private actionMenu:api_ui_menu.ActionMenu;
 
-        constructor(model:api_model.Model) {
+        constructor(item:DetailPanelItem) {
             super("detailpanel-tab", "detailpanel-tab");
-            this.model = model;
-            this.addHeader(model.data.name, model.id, model.data.iconUrl);
+            this.detailPanelItem = item;
+            this.addHeader();
             this.addNavigation();
             this.addCanvas();
             this.setTabChangeCallback((tab:DetailPanelTab) => {
@@ -40,20 +132,20 @@ module api_app_browse {
 
         }
 
-        private addHeader(title:string, subtitle:string, iconUrl:string) {
+        private addHeader() {
             var headerEl = new api_dom.DivEl("header", "header");
 
-            var iconEl = api_util.ImageLoader.get(iconUrl + "?size=80", 80, 80);
+            var iconEl = api_util.ImageLoader.get(this.detailPanelItem.getIconUrl() + "?size=80", 80, 80);
 
 
             var hgroupEl = new api_dom.Element("hgroup");
 
             var headerTextEl = new api_dom.H1El();
-            headerTextEl.getEl().setInnerHtml(title);
+            headerTextEl.getEl().setInnerHtml(this.detailPanelItem.getDisplayName());
             hgroupEl.appendChild(headerTextEl);
 
             var subtitleEl = new api_dom.H4El();
-            subtitleEl.getEl().setInnerHtml(subtitle);
+            subtitleEl.getEl().setInnerHtml(this.detailPanelItem.getPath());
             hgroupEl.appendChild(subtitleEl);
 
             headerEl.getEl().appendChild(iconEl);
@@ -98,7 +190,9 @@ module api_app_browse {
     }
 
     export class DetailPanelTab {
+
         name:string;
+
         content:api_dom.Element;
 
         constructor(name:string) {
@@ -136,13 +230,14 @@ module api_app_browse {
     }
 
     export class DetailPanelBox extends api_dom.DivEl {
-        private model:api_model.Model;
 
-        constructor(model:any, removeCallback?:(DetailPanelBox) => void) {
+        private detailPanelItem:DetailPanelItem;
+
+        constructor(detailPanelItem:DetailPanelItem, removeCallback?:(DetailPanelBox) => void) {
             super("detailpanel-box", "detailpanel-box");
-            this.model = model;
-            this.setIcon(model.data.iconUrl, 32);
-            this.setData(model.data.displayName, model.data.name);
+            this.detailPanelItem = detailPanelItem;
+            this.setIcon(this.detailPanelItem.getIconUrl(), 32);
+            this.setData(this.detailPanelItem.getDisplayName(), this.detailPanelItem.getPath());
             this.addRemoveButton(removeCallback);
         }
 
@@ -175,8 +270,8 @@ module api_app_browse {
             return titleEl;
         }
 
-        getModel() {
-            return this.model;
+        getDetailPanelItem():DetailPanelItem {
+            return this.detailPanelItem;
         }
     }
 
