@@ -282,7 +282,7 @@ module api_remote {
 
     export interface RemoteCallDeleteRelationshipTypeResult extends RemoteCallResultBase {
         successes:DeleteRelationshipTypeSuccess[];
-        failures:DeleteRelationshipTypeFailure[]; 
+        failures:DeleteRelationshipTypeFailure[];
     }
 
     export interface RemoteCallGetRelationshipTypeParams {
@@ -305,6 +305,14 @@ module api_remote {
         updated:bool;
     }
 
+    export interface RemoteCallGetAccountParams {
+        key:string;
+    }
+
+    export interface RemoteCallGetAccountResult extends RemoteCallResultBase, Account {
+
+    }
+
     export interface RemoteServiceInterface {
         account_find (params, callback):void;
         account_getGraph (params, callback):void;
@@ -313,7 +321,7 @@ module api_remote {
         account_suggestUserName (params, callback):void;
         account_createOrUpdate (params, callback):void;
         account_delete (params, callback):void;
-        account_get (params, callback):void;
+        account_get (params:RemoteCallGetAccountParams, callback:(result:RemoteCallGetAccountResult)=>void):void;
         util_getCountries (params, callback):void;
         util_getLocales (params, callback):void;
         util_getTimeZones (params, callback):void;
@@ -409,7 +417,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        account_get(params, callback):void {
+        account_get(params:RemoteCallGetAccountParams, callback:(result:RemoteCallGetAccountResult)=>void):void {
             console.log(params, callback);
         }
 
