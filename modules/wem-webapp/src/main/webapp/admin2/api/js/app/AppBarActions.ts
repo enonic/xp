@@ -1,4 +1,4 @@
-module app {
+module api_app {
 
     export class ShowAppLauncherAction extends api_ui.Action {
 
@@ -6,7 +6,7 @@ module app {
             super('Start');
 
             this.addExecutionListener(() => {
-                new api_app.ShowAppLauncherEvent().fire();
+                new ShowAppLauncherEvent().fire();
             });
         }
     }
@@ -17,16 +17,16 @@ module app {
             super('Browse');
 
             this.addExecutionListener(() => {
-                new api_app.ShowAppBrowsePanelEvent().fire();
+                new ShowAppBrowsePanelEvent().fire();
             });
         }
     }
 
-    export class SpaceAppBarActions {
+    export class AppBarActions {
 
-        static SHOW_APP_LAUNCHER:api_ui.Action = new ShowAppLauncherAction();
+        public static SHOW_APP_LAUNCHER:api_ui.Action = new ShowAppLauncherAction();
 
-        static SHOW_APP_BROWSER_PANEL:api_ui.Action = new ShowAppBrowsePanelAction();
+        public static SHOW_APP_BROWSE_PANEL:api_ui.Action = new ShowAppBrowsePanelAction();
     }
 
 }
