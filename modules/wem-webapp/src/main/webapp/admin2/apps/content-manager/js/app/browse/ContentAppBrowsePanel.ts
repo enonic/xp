@@ -26,7 +26,7 @@ module app_browse {
 
             GridSelectionChangeEvent.on((event) => {
 
-                var items:api_app_browse.DetailPanelItem[] = [];
+                var items:api_app_browse.BrowseDetailPanelItem[] = [];
                 var models:api_model.ContentModel[] = event.getModels();
                 var contentIds:string[] = [];
                 models.forEach( (model:api_model.ContentModel) => {
@@ -38,7 +38,7 @@ module app_browse {
                 api_remote.RemoteService.content_get(getParams, (result:api_remote.RemoteCallContentGetResult)=> {
 
                     result.content.forEach((contentGet:api_remote.ContentGet, index:number) => {
-                        var item = new api_app_browse.DetailPanelItem(models[index]).
+                        var item = new api_app_browse.BrowseDetailPanelItem(models[index]).
                             setDisplayName(contentGet.displayName).
                             setPath(contentGet.path).
                             setIconUrl(contentGet.iconUrl);

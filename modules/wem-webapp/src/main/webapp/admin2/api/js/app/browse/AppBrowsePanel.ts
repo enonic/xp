@@ -6,11 +6,11 @@ module api_app_browse{
 
         private grid:api_ui_grid.TreeGridPanel;
 
-        private detailPanel:DetailPanel;
+        private detailPanel:api_app_browse.BrowseDetailPanel;
 
         private filterPanel:any;
 
-        constructor(browseToolbar:api_ui_toolbar.Toolbar, grid:api_ui_grid.TreeGridPanel, detailPanel:DetailPanel, filterPanel:any) {
+        constructor(browseToolbar:api_ui_toolbar.Toolbar, grid:api_ui_grid.TreeGridPanel, detailPanel:api_app_browse.BrowseDetailPanel, filterPanel:any) {
             super("AppBrowsePanel");
 
             this.browseToolbar = browseToolbar;

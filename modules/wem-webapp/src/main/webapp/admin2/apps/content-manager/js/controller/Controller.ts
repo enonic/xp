@@ -50,7 +50,7 @@ Ext.define('Admin.controller.Controller', {
         });
 
         app_browse.GridSelectionChangeEvent.on((event) => {
-            this.updateDetailPanel(event.getModels());
+            //this.updateDetailPanel(event.getModels());
         });
 
     },

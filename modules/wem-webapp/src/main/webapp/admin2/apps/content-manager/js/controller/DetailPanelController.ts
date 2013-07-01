@@ -6,7 +6,7 @@ Ext.define('Admin.controller.DetailPanelController', {
     stores: [],
     models: [],
     /*    views: [
-     'Admin.view.contentManager.DetailPanel'
+     'Admin.view.contentManager.BrowseDetailPanel'
      ],*/
 
     init: function () {

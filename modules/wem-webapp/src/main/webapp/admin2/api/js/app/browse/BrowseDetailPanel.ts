@@ -1,6 +1,6 @@
 module api_app_browse {
 
-    export class DetailPanelItem {
+    export class BrowseDetailPanelItem {
 
         private model:any;
 
@@ -14,17 +14,17 @@ module api_app_browse {
             this.model = model;
         }
 
-        setDisplayName(value:string):DetailPanelItem {
+        setDisplayName(value:string):api_app_browse.BrowseDetailPanelItem {
             this.displayName = value;
             return this;
         }
 
-        setPath(value:string):DetailPanelItem {
+        setPath(value:string):api_app_browse.BrowseDetailPanelItem {
             this.path = value;
             return this;
         }
 
-        setIconUrl(value:string):DetailPanelItem {
+        setIconUrl(value:string):api_app_browse.BrowseDetailPanelItem {
             this.iconUrl = value;
             return this;
         }
@@ -46,7 +46,7 @@ module api_app_browse {
         }
     }
 
-    export class DetailPanel extends api_dom.DivEl {
+    export class BrowseDetailPanel extends api_dom.DivEl {
 
         ext;
 
@@ -64,7 +64,7 @@ module api_app_browse {
             });
         }
 
-        setItems(items:DetailPanelItem[]) {
+        setItems(items:api_app_browse.BrowseDetailPanelItem[]) {
 
             if( items.length == 0 ) {
                 this.showBlank();
@@ -80,7 +80,7 @@ module api_app_browse {
             this.removeChildren();
         }
 
-        showSingle(item:DetailPanelItem) {
+        showSingle(item:api_app_browse.BrowseDetailPanelItem) {
 
             this.removeChildren();
 
@@ -96,7 +96,7 @@ module api_app_browse {
             this.getEl().appendChild(tabPanel.getHTMLElement());
         }
 
-        showMultiple(items:DetailPanelItem[]) {
+        showMultiple(items:api_app_browse.BrowseDetailPanelItem[]) {
             this.removeChildren();
 
             for (var i in items) {
@@ -116,7 +116,7 @@ module api_app_browse {
 
     export class DetailTabPanel extends api_dom.DivEl {
 
-        private detailPanelItem:DetailPanelItem;
+        private detailPanelItem:api_app_browse.BrowseDetailPanelItem;
 
         private navigation:DetailPanelTabList;
 
@@ -128,7 +128,7 @@ module api_app_browse {
 
         private actionMenu:api_ui_menu.ActionMenu;
 
-        constructor(item:DetailPanelItem) {
+        constructor(item:api_app_browse.BrowseDetailPanelItem) {
             super("detailpanel-tab", "detailpanel-tab");
             this.detailPanelItem = item;
             this.addHeader();
@@ -239,9 +239,9 @@ module api_app_browse {
 
     export class DetailPanelBox extends api_dom.DivEl {
 
-        private detailPanelItem:DetailPanelItem;
+        private detailPanelItem:api_app_browse.BrowseDetailPanelItem;
 
-        constructor(detailPanelItem:DetailPanelItem, removeCallback?:(DetailPanelBox) => void) {
+        constructor(detailPanelItem:api_app_browse.BrowseDetailPanelItem, removeCallback?:(DetailPanelBox) => void) {
             super("detailpanel-box", "detailpanel-box");
             this.detailPanelItem = detailPanelItem;
             this.setIcon(this.detailPanelItem.getIconUrl(), 32);
@@ -278,7 +278,7 @@ module api_app_browse {
             return titleEl;
         }
 
-        getDetailPanelItem():DetailPanelItem {
+        getDetailPanelItem():api_app_browse.BrowseDetailPanelItem {
             return this.detailPanelItem;
         }
     }
