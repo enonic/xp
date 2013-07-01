@@ -1,3 +1,4 @@
+///<reference path='RemoteAccountModel.ts' />
 ///<reference path='RemoteContentTypeModel.ts' />
 ///<reference path='RemoteContentModel.ts' />
 ///<reference path='RemoteSpaceModel.ts' />
@@ -11,6 +12,86 @@ module api_remote {
     export interface RemoteCallResultBase {
         success: bool;
         error?: string;
+    }
+
+    export interface RemoteCallAccountFindParams {
+        key?: string[];
+        query?: string;
+        start?: number;
+        limit?: number;
+        userstores?: string[];
+        sort?: string;
+        dir?: string;
+        types?: string[];
+    }
+
+    export interface RemoteCallAccountFindResult extends RemoteCallResultBase {
+        accounts: Account[];
+        facets?: AccountFacet[];
+        total?: number;
+    }
+
+    export interface RemoteCallAccountGetGraphParams {
+        key: string;
+    }
+
+    export interface RemoteCallAccountGetGraphResult extends RemoteCallResultBase {
+        graph: {
+            id: string;
+            name: string;
+            data: {
+                type: string;
+                key: string;
+                image_uri: string;
+                name: string;
+            };
+            adjacencies?: {
+                nodeTo: string;
+            }[];
+        }[];
+    }
+
+    export interface RemoteCallAccountChangePasswordParams {
+        key: string;
+        password: string;
+    }
+
+    export interface RemoteCallAccountChangePasswordResult extends RemoteCallResultBase {
+    }
+
+    export interface RemoteCallAccountVerifyUniqueEmailParams {
+        userStore: string;
+        email: string;
+    }
+
+    export interface RemoteCallAccountVerifyUniqueEmailResult extends RemoteCallResultBase {
+        emailInUse: bool;
+        key: string;
+    }
+
+    export interface RemoteCallAccountSuggestUserNameParams {
+        userStore: string;
+        firstName: string;
+        lastName: string;
+    }
+
+    export interface RemoteCallAccountSuggestUserNameResult extends RemoteCallResultBase {
+        username: string;
+    }
+
+    export interface RemoteCallAccountCreateOrUpdateParams {
+        key: string;
+        email?: string;
+        imageRef?: string;
+        profile?: UserProfile;
+        members?: string[];
+        displayName: string;
+        groups?: string[];
+    }
+
+    export interface RemoteCallAccountCreateOrUpdateResult extends RemoteCallResultBase {
+        created: bool;
+        updated: bool;
     }
 
     export interface RemoteCallContentTypeGetParams {
@@ -314,12 +395,16 @@ module api_remote {
     }
 
     export interface RemoteServiceInterface {
-        account_find (params, callback):void;
-        account_getGraph (params, callback):void;
-        account_changePassword (params, callback):void;
-        account_verifyUniqueEmail (params, callback):void;
-        account_suggestUserName (params, callback):void;
-        account_createOrUpdate (params, callback):void;
+        account_find (params:RemoteCallAccountFindParams, callback:(result:RemoteCallAccountFindResult)=>void):void;
+        account_getGraph (params:RemoteCallAccountGetGraphParams, callback:(result:RemoteCallAccountGetGraphResult)=>void):void;
+        account_changePassword (params:RemoteCallAccountChangePasswordParams,
+                                callback:(result:RemoteCallAccountChangePasswordResult)=>void):void;
+        account_verifyUniqueEmail (params:RemoteCallAccountVerifyUniqueEmailParams,
+                                   callback:(result:RemoteCallAccountVerifyUniqueEmailResult)=>void):void;
+        account_suggestUserName (params:RemoteCallAccountSuggestUserNameParams,
+                                 callback:(result:RemoteCallAccountSuggestUserNameResult)=>void):void;
+        account_createOrUpdate (params:RemoteCallAccountCreateOrUpdateParams,
+                                callback:(result:RemoteCallAccountCreateOrUpdateResult)=>void):void;
         account_delete (params, callback):void;
         account_get (params:RemoteCallGetAccountParams, callback:(result:RemoteCallGetAccountResult)=>void):void;
         util_getCountries (params, callback):void;
@@ -389,27 +474,31 @@ module api_remote {
             this.provider = Ext.Direct.addProvider(jsonRpcProvider.ext);
         }
 
-        account_find(params, callback:(accountFindResult:any)=>void):void {
+        account_find(params:RemoteCallAccountFindParams, callback:(result:RemoteCallAccountFindResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_getGraph(params, callback):void {
+        account_getGraph(params:RemoteCallAccountGetGraphParams, callback:(result:RemoteCallAccountGetGraphResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_changePassword(params, callback):void {
+        account_changePassword(params:RemoteCallAccountChangePasswordParams,
+                               callback:(result:RemoteCallAccountChangePasswordResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_verifyUniqueEmail(params, callback):void {
+        account_verifyUniqueEmail(params:RemoteCallAccountVerifyUniqueEmailParams,
+                                  callback:(result:RemoteCallAccountVerifyUniqueEmailResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_suggestUserName(params, callback):void {
+        account_suggestUserName(params:RemoteCallAccountSuggestUserNameParams,
+                                callback:(result:RemoteCallAccountSuggestUserNameResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_createOrUpdate(params, callback):void {
+        account_createOrUpdate(params:RemoteCallAccountCreateOrUpdateParams,
+                               callback:(result:RemoteCallAccountCreateOrUpdateResult)=>void):void {
             console.log(params, callback);
         }
 
