@@ -19,7 +19,6 @@
 ///<reference path='view/AdminImageButton.ts' />
 ///<reference path='view/FilterPanel.ts' />
 
-///<reference path='app/event/BaseSpaceModelEvent.ts' />
 
 ///<reference path='app/wizard/CloseSpaceWizardPanelEvent.ts' />
 ///<reference path='app/wizard/SaveSpaceEvent.ts' />
@@ -28,13 +27,7 @@
 ///<reference path='app/wizard/SpaceForm.ts' />
 ///<reference path='app/wizard/SpaceWizardPanel.ts' />
 
-///<reference path='app/browse/DeletePromptEvent.ts' />
-///<reference path='app/browse/GridSelectionChangeEvent.ts' />
-///<reference path='app/browse/GridDeselectEvent.ts' />
-///<reference path='app/browse/ShowContextMenuEvent.ts' />
-///<reference path='app/browse/NewSpaceEvent.ts' />
-///<reference path='app/browse/OpenSpaceEvent.ts' />
-///<reference path='app/browse/EditSpaceEvent.ts' />
+///<reference path='app/browse/SpaceBrowseEvents.ts' />
 ///<reference path='app/browse/SpaceBrowseActions.ts' />
 ///<reference path='app/browse/SpaceBrowseToolbar.ts' />
 ///<reference path='app/browse/SpaceActionMenu.ts' />
