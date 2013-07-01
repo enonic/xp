@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.json.rpc.controller;
+package com.enonic.wem.admin.jsonrpc.controller;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -16,10 +16,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.json.ObjectMapperHelper;
-import com.enonic.wem.admin.json.rpc.JsonRpcError;
-import com.enonic.wem.admin.json.rpc.JsonRpcException;
-import com.enonic.wem.admin.json.rpc.processor.JsonRpcRequest;
-import com.enonic.wem.admin.json.rpc.processor.JsonRpcResponse;
+import com.enonic.wem.admin.jsonrpc.JsonRpcError;
+import com.enonic.wem.admin.jsonrpc.JsonRpcException;
+import com.enonic.wem.admin.jsonrpc.processor.JsonRpcRequest;
+import com.enonic.wem.admin.jsonrpc.processor.JsonRpcResponse;
 
 final class JsonRpcMessageHelper
 {

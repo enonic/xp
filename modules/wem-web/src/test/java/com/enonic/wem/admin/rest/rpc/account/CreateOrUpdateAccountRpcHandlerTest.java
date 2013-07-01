@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 
 import com.google.common.io.Files;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcHandler;
+import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.admin.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;

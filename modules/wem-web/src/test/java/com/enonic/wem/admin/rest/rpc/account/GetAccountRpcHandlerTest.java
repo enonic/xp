@@ -10,7 +10,7 @@ import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcHandler;
+import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.UserAccount;

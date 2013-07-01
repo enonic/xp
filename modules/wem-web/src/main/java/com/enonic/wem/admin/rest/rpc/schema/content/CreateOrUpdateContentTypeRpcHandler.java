@@ -3,8 +3,8 @@ package com.enonic.wem.admin.rest.rpc.schema.content;
 import javax.inject.Inject;
 
 import com.enonic.wem.admin.json.JsonErrorResult;
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
-import com.enonic.wem.admin.json.rpc.JsonRpcException;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcException;
 import com.enonic.wem.admin.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.admin.rest.rpc.UploadedIconFetcher;
 import com.enonic.wem.admin.rest.service.upload.UploadService;

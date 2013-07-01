@@ -13,9 +13,9 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.json.JsonErrorResult;
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
-import com.enonic.wem.admin.json.rpc.JsonRpcError;
-import com.enonic.wem.admin.json.rpc.JsonRpcException;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcError;
+import com.enonic.wem.admin.jsonrpc.JsonRpcException;
 import com.enonic.wem.admin.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;

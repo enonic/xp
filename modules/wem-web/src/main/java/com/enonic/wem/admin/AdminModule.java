@@ -2,7 +2,7 @@ package com.enonic.wem.admin;
 
 import com.google.inject.AbstractModule;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcModule;
+import com.enonic.wem.admin.jsonrpc.JsonRpcModule;
 import com.enonic.wem.admin.rest.RestModule;
 
 public final class AdminModule

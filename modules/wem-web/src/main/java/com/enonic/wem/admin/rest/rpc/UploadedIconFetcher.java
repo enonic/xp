@@ -15,8 +15,8 @@ import org.apache.commons.io.FileUtils;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcError;
-import com.enonic.wem.admin.json.rpc.JsonRpcException;
+import com.enonic.wem.admin.jsonrpc.JsonRpcError;
+import com.enonic.wem.admin.jsonrpc.JsonRpcException;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Icon;

@@ -5,7 +5,7 @@ import java.util.Locale;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcHandler;
+import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.admin.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.core.locale.LocaleService;
 

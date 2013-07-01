@@ -4,7 +4,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import com.enonic.wem.admin.json.JsonErrorResult;
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.command.schema.GetSchemaTree;
 import com.enonic.wem.api.schema.Schema;

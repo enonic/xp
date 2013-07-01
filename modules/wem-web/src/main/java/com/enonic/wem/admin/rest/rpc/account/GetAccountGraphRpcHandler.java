@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import com.enonic.wem.admin.json.JsonSerializable;
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;

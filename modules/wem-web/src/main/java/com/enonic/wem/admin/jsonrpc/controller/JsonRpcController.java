@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.json.rpc.controller;
+package com.enonic.wem.admin.jsonrpc.controller;
 
 import java.util.List;
 
@@ -16,10 +16,10 @@ import javax.ws.rs.core.UriInfo;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcException;
-import com.enonic.wem.admin.json.rpc.processor.JsonRpcProcessor;
-import com.enonic.wem.admin.json.rpc.processor.JsonRpcRequest;
-import com.enonic.wem.admin.json.rpc.processor.JsonRpcResponse;
+import com.enonic.wem.admin.jsonrpc.JsonRpcException;
+import com.enonic.wem.admin.jsonrpc.processor.JsonRpcProcessor;
+import com.enonic.wem.admin.jsonrpc.processor.JsonRpcRequest;
+import com.enonic.wem.admin.jsonrpc.processor.JsonRpcResponse;
 
 
 @Path("jsonrpc")

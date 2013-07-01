@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.json.rpc;
+package com.enonic.wem.admin.jsonrpc;
 
 public final class JsonRpcError
 {

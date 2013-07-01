@@ -1,7 +1,7 @@
 package com.enonic.wem.admin.rest.rpc.schema.content;
 
 
-import com.enonic.wem.admin.json.rpc.JsonRpcContext;
+import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.support.tree.Tree;

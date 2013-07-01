@@ -8,7 +8,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcHandler;
+import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.admin.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.UpdateResult;

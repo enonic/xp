@@ -3,7 +3,7 @@ package com.enonic.wem.admin.rest;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
-import com.enonic.wem.admin.json.rpc.JsonRpcHandlerBinder;
+import com.enonic.wem.admin.jsonrpc.JsonRpcHandlerBinder;
 import com.enonic.wem.admin.rest.rpc.account.ChangePasswordRpcHandler;
 import com.enonic.wem.admin.rest.rpc.account.CreateOrUpdateAccountRpcHandler;
 import com.enonic.wem.admin.rest.rpc.account.DeleteAccountsRpcHandler;
