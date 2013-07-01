@@ -66,16 +66,23 @@ module api_app_browse {
 
         setItems(items:DetailPanelItem[]) {
 
-            if (items.length == 1) {
+            if( items.length == 0 ) {
+                this.showBlank();
+            }
+            else if (items.length == 1) {
                 this.showSingle(items[0]);
             } else if (items.length > 1) {
                 this.showMultiple(items);
             }
         }
 
+        showBlank() {
+            this.removeChildren();
+        }
+
         showSingle(item:DetailPanelItem) {
 
-            this.empty();
+            this.removeChildren();
 
             var tabPanel = new api_app_browse.DetailTabPanel(item);
             tabPanel.addTab(new api_app_browse.DetailPanelTab("Analytics"));
@@ -90,14 +97,15 @@ module api_app_browse {
         }
 
         showMultiple(items:DetailPanelItem[]) {
-            this.empty();
+            this.removeChildren();
+
             for (var i in items) {
 
                 var removeCallback = (box:api_app_browse.DetailPanelBox) => {
                     this.fireGridDeselectEvent(box.getDetailPanelItem().getModel());
-                }
+                };
 
-                this.getEl().appendChild(new api_app_browse.DetailPanelBox(items[i], removeCallback).getHTMLElement());
+                this.appendChild(new api_app_browse.DetailPanelBox(items[i], removeCallback));
             }
         }
 
@@ -170,7 +178,7 @@ module api_app_browse {
         }
 
         setActiveTab(tab:DetailPanelTab) {
-            this.canvas.empty();
+            this.canvas.getEl().setInnerHtml("");
             this.canvas.appendChild(tab.content);
         }
 

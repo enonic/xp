@@ -1,6 +1,6 @@
 module app_browse {
 
-    export class BrowseToolbar extends api_ui_toolbar.Toolbar {
+    export class SpaceBrowseToolbar extends api_ui_toolbar.Toolbar {
 
         constructor() {
             super();

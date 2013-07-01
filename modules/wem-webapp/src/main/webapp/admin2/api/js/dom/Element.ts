@@ -40,10 +40,6 @@ module api_dom {
             return displayed && visible && sized;
         }
 
-        empty() {
-            this.el.setInnerHtml("");
-        }
-
         getId():string {
             return this.id;
         }

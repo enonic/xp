@@ -2,7 +2,7 @@ module app_browse {
 
     export class SpaceAppBrowsePanel extends api_app_browse.AppBrowsePanel {
 
-        private toolbar:BrowseToolbar;
+        private toolbar:SpaceBrowseToolbar;
 
         private filterPanel:app_ui.FilterPanel;
 
@@ -12,7 +12,7 @@ module app_browse {
 
         constructor() {
 
-            this.toolbar = new BrowseToolbar();
+            this.toolbar = new app_browse.SpaceBrowseToolbar();
             this.grid = components.gridPanel = new SpaceTreeGridPanel('spaceTreeGrid');
             this.detailPanel = components.detailPanel = new SpaceDetailPanel();
 
@@ -25,13 +25,13 @@ module app_browse {
 
             GridSelectionChangeEvent.on((event) => {
 
-                var spaceModels:api_model.SpaceModel[] = event.getModels();
-                var spaceLoader:SpaceLoader = new SpaceLoader(SpaceLoader.convert(spaceModels));
+                var models:api_model.SpaceModel[] = event.getModels();
+                var spaceLoader:SpaceLoader = new SpaceLoader(SpaceLoader.convert(models));
                 spaceLoader.load((loadedSpaces:api_remote.SpaceSummary[]) => {
 
                     var items:api_app_browse.DetailPanelItem[] = [];
                     loadedSpaces.forEach( (space:api_remote.SpaceSummary, index:number) => {
-                        var item = new api_app_browse.DetailPanelItem(spaceModels[index]).
+                        var item = new api_app_browse.DetailPanelItem(models[index]).
                             setDisplayName(space.displayName).
                             setPath(space.name).
                             setIconUrl(space.iconUrl);
