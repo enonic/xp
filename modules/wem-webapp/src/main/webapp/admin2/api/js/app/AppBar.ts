@@ -6,7 +6,7 @@ module api_app {
 
         private appName:string;
 
-        private actions:AppBarActions;
+        private actions:AppBarActionsConfig;
 
         private launcherButton:api_dom.ButtonEl;
 
@@ -18,20 +18,23 @@ module api_app {
 
         private userInfoPopup:UserInfoPopup;
 
-        constructor(appName, actions:AppBarActions, tabMenu:AppBarTabMenu) {
+        constructor(appName, tabMenu:AppBarTabMenu, actions?:AppBarActionsConfig) {
             super('AppBar', 'appbar');
 
             this.appName = appName;
-            this.actions = actions;
             this.tabMenu = tabMenu;
 
-            this.launcherButton = new LauncherButton(actions.showAppLauncherAction);
+            this.actions = <AppBarActionsConfig> {};
+            this.actions.showAppLauncherAction = (actions && actions.showAppLauncherAction) || AppBarActions.SHOW_APP_LAUNCHER;
+            this.actions.showAppBrowsePanelAction = (actions && actions.showAppBrowsePanelAction) || AppBarActions.SHOW_APP_BROWSE_PANEL;
+
+            this.launcherButton = new LauncherButton(this.actions.showAppLauncherAction);
             this.appendChild(this.launcherButton);
 
             var separator = new Separator();
             this.appendChild(separator);
 
-            this.homeButton = new HomeButton(this.appName, actions.showAppBrowsePanelAction);
+            this.homeButton = new HomeButton(this.appName, this.actions.showAppBrowsePanelAction);
             this.appendChild(this.homeButton);
 
             this.userButton = new UserButton();
@@ -45,16 +48,6 @@ module api_app {
                 this.userInfoPopup.toggle();
             });
 
-            this.initExt();
-        }
-
-        private initExt() {
-            var htmlEl = this.getHTMLElement();
-            this.ext = new Ext.Component({
-                contentEl: htmlEl,
-                cls: 'appbar-container',
-                region: 'north'
-            });
         }
 
         getTabMenu():AppBarTabMenu {
@@ -62,11 +55,11 @@ module api_app {
         }
     }
 
-    export interface AppBarActions {
+    export interface AppBarActionsConfig {
 
-        showAppLauncherAction:api_ui.Action;
+        showAppLauncherAction?:api_ui.Action;
 
-        showAppBrowsePanelAction:api_ui.Action;
+        showAppBrowsePanelAction?:api_ui.Action;
     }
 
     export class LauncherButton extends api_dom.ButtonEl {

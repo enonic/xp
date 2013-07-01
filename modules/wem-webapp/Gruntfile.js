@@ -42,6 +42,14 @@ module.exports = function (grunt) {
                     sourcemap: true
                 }
             },
+            schema_manager: {
+                src: ['src/main/webapp/admin2/apps/schema-manager/js/main.ts'],
+                dest: 'src/main/webapp/admin2/apps/schema-manager/js/all.js',
+                options: {
+                    // target: 'es5',
+                    sourcemap: true
+                }
+            },
             live_edit: {
                 src: ['src/main/webapp/admin2/live-edit/js/Main.ts'],
                 dest: 'src/main/webapp/admin2/live-edit/js/all.js',

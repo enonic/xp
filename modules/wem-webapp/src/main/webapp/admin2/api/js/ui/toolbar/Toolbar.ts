@@ -24,6 +24,12 @@ module api_ui_toolbar {
             this.appendChild(button);
         }
 
+        addActions(actions:api_ui.Action[]) {
+            actions.forEach((action:api_ui.Action) => {
+                this.addAction(action);
+            });
+        }
+
         addElement(element:api_dom.Element) {
             if (this.hasGreedySpacer()) {
                 element.getEl().addClass('pull-right');
