@@ -15,6 +15,7 @@
 ///<reference path='model/Model.ts' />
 ///<reference path='model/SpaceModel.ts' />
 ///<reference path='model/ContentModel.ts' />
+///<reference path='model/SchemaModel.ts' />
 ///<reference path='model/ContentTypeModel.ts' />
 
 ///<reference path='handler/DeleteSpaceParam.ts' />
@@ -79,6 +80,7 @@
 
 ///<reference path='app/AppBar.ts' />
 ///<reference path='app/UserInfoPopup.ts' />
+///<reference path='app/AppBarActions.ts' />
 ///<reference path='app/AppBarEvents.ts' />
 ///<reference path='app/AppBarTabMenu.ts' />
 ///<reference path='app/AppBarTabMenuButton.ts' />

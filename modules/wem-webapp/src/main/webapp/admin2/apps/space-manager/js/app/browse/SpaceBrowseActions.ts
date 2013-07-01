@@ -46,7 +46,7 @@ module app_browse {
     export class SpaceBrowseActions {
 
         static NEW_SPACE:api_ui.Action = new NewSpaceAction();
-        static OPEN_SPACE:api_ui.Action = new OpenSpaceAction;
+        static OPEN_SPACE:api_ui.Action = new OpenSpaceAction();
         static EDIT_SPACE:api_ui.Action = new EditSpaceAction();
         static DELETE_SPACE:api_ui.Action = new DeleteSpaceAction();
 

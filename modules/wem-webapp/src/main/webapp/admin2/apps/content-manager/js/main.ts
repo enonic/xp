@@ -5,24 +5,10 @@
 ///<reference path='model/ContentExtModel.ts' />
 ///<reference path='model/ContentTypeExtModel.ts' />
 
-///<reference path='app/event/BaseContentModelEvent.ts' />
-///<reference path='app/browse/GridSelectionChangeEvent.ts' />
-///<reference path='app/browse/NewContentEvent.ts' />
-///<reference path='app/browse/OpenContentEvent.ts' />
-///<reference path='app/browse/EditContentEvent.ts' />
-///<reference path='app/browse/ContentDeletePromptEvent.ts' />
-///<reference path='app/browse/DuplicateContentEvent.ts' />
-///<reference path='app/browse/MoveContentEvent.ts' />
-///<reference path='app/browse/ShowPreviewEvent.ts' />
-///<reference path='app/browse/ShowDetailsEvent.ts' />
-///<reference path='app/browse/ShowContextMenuEvent.ts' />
-///<reference path='app/browse/GridDeselectEvent.ts' />
-
 ///<reference path='lib/ux/toggleslide/Thumb.ts' />
 ///<reference path='lib/ux/toggleslide/ToggleSlide.ts' />
 
 ///<reference path='app/delete/ContentDeleteDialog.ts' />
-
 
 ///<reference path='app/wizard/CloseContentWizardPanelEvent.ts' />
 ///<reference path='app/wizard/ContentWizardActions.ts' />
@@ -30,6 +16,7 @@
 ///<reference path='app/wizard/ContentWizardToolbar.ts' />
 ///<reference path='app/wizard/ContentWizardPanel.ts' />
 
+///<reference path='app/browse/ContentBrowseEvents.ts' />
 ///<reference path='app/browse/ContentBrowseActions.ts' />
 ///<reference path='app/browse/ContentActionMenu.ts' />
 ///<reference path='app/browse/ContentBrowseToolbar.ts' />
@@ -39,7 +26,6 @@
 ///<reference path='app/browse/ContentAppBrowsePanel.ts' />
 
 ///<reference path='app/ContentAppPanel.ts' />
-///<reference path='app/ContentAppBarActions.ts' />
 ///<reference path='app/ContentAppBarTabMenu.ts' />
 ///<reference path='app/ContentAppBarTabMenuItem.ts' />
 ///<reference path='app/ContentAppBar.ts' />
@@ -163,8 +149,8 @@ Ext.application({
         var appBar = new app.ContentAppBar();
         var appPanel = new app.ContentAppPanel(appBar);
 
-        document.body.appendChild(appBar.getHTMLElement());
-        document.body.appendChild(appPanel.getHTMLElement());
+        api_dom.Body.get().appendChild(appBar);
+        api_dom.Body.get().appendChild(appPanel);
 
         appPanel.init();
 
