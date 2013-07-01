@@ -394,17 +394,6 @@ module api_remote {
         deleted:number;
     }
 
-    export interface RemoteServiceInterface {
-        account_find (params, callback):void;
-        account_getGraph (params, callback):void;
-        account_changePassword (params, callback):void;
-        account_verifyUniqueEmail (params, callback):void;
-        account_suggestUserName (params, callback):void;
-        account_createOrUpdate (params, callback):void;
-        account_delete (params:RemoteCallDeleteAccountParams, callback:(result:RemoteCallDeleteAccountResult)=>void):void;
-        account_get (params, callback):void;
-    }
-
     export interface RemoteCallGetAccountParams {
         key:string;
     }
@@ -424,7 +413,7 @@ module api_remote {
                                  callback:(result:RemoteCallAccountSuggestUserNameResult)=>void):void;
         account_createOrUpdate (params:RemoteCallAccountCreateOrUpdateParams,
                                 callback:(result:RemoteCallAccountCreateOrUpdateResult)=>void):void;
-        account_delete (params, callback):void;
+        account_delete (params:RemoteCallDeleteAccountParams, callback:(result:RemoteCallDeleteAccountResult)=>void):void;
         account_get (params:RemoteCallGetAccountParams, callback:(result:RemoteCallGetAccountResult)=>void):void;
         util_getCountries (params, callback):void;
         util_getLocales (params, callback):void;
