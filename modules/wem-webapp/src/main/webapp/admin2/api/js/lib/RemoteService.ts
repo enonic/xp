@@ -1,3 +1,4 @@
+///<reference path='RemoteAccountModel.ts' />
 ///<reference path='RemoteContentTypeModel.ts' />
 ///<reference path='RemoteContentModel.ts' />
 ///<reference path='RemoteSpaceModel.ts' />
@@ -11,6 +12,86 @@ module api_remote {
     export interface RemoteCallResultBase {
         success: bool;
         error?: string;
+    }
+
+    export interface RemoteCallAccountFindParams {
+        key?: string[];
+        query?: string;
+        start?: number;
+        limit?: number;
+        userstores?: string[];
+        sort?: string;
+        dir?: string;
+        types?: string[];
+    }
+
+    export interface RemoteCallAccountFindResult extends RemoteCallResultBase {
+        accounts: Account[];
+        facets?: AccountFacet[];
+        total?: number;
+    }
+
+    export interface RemoteCallAccountGetGraphParams {
+        key: string;
+    }
+
+    export interface RemoteCallAccountGetGraphResult extends RemoteCallResultBase {
+        graph: {
+            id: string;
+            name: string;
+            data: {
+                type: string;
+                key: string;
+                image_uri: string;
+                name: string;
+            };
+            adjacencies?: {
+                nodeTo: string;
+            }[];
+        }[];
+    }
+
+    export interface RemoteCallAccountChangePasswordParams {
+        key: string;
+        password: string;
+    }
+
+    export interface RemoteCallAccountChangePasswordResult extends RemoteCallResultBase {
+    }
+
+    export interface RemoteCallAccountVerifyUniqueEmailParams {
+        userStore: string;
+        email: string;
+    }
+
+    export interface RemoteCallAccountVerifyUniqueEmailResult extends RemoteCallResultBase {
+        emailInUse: bool;
+        key: string;
+    }
+
+    export interface RemoteCallAccountSuggestUserNameParams {
+        userStore: string;
+        firstName: string;
+        lastName: string;
+    }
+
+    export interface RemoteCallAccountSuggestUserNameResult extends RemoteCallResultBase {
+        username: string;
+    }
+
+    export interface RemoteCallAccountCreateOrUpdateParams {
+        key: string;
+        email?: string;
+        imageRef?: string;
+        profile?: UserProfile;
+        members?: string[];
+        displayName: string;
+        groups?: string[];
+    }
+
+    export interface RemoteCallAccountCreateOrUpdateResult extends RemoteCallResultBase {
+        created: bool;
+        updated: bool;
     }
 
     export interface RemoteCallContentTypeGetParams {
@@ -225,6 +306,15 @@ module api_remote {
         failure?: string;
     }
 
+    export interface RemoteCallGetSchemaTreeParams {
+        types:string[];
+    }
+
+    export interface RemoteCallGetSchemaTreeResult extends RemoteCallResultBase {
+        schemas:SchemaTreeNode[];
+        total:number;
+    }
+
     export interface RemoteCallMixinDeleteParams {
         qualifiedMixinNames:string[];
     }
@@ -256,6 +346,24 @@ module api_remote {
     export interface RemoteCallGetContentTreeResult extends RemoteCallResultBase {
         total:number;
         contents:ContentTreeNode[];
+    }
+
+    export interface RemoteCallDeleteRelationshipTypeParams {
+        qualifiedRelationshipTypeNames:string[];
+    }
+
+    export interface DeleteRelationshipTypeSuccess {
+        qualifiedRelationshipTypeName:string;
+    }
+
+    export interface DeleteRelationshipTypeFailure {
+        qualifiedRelationshipTypeName:string;
+        reason:string;
+    }
+
+    export interface RemoteCallDeleteRelationshipTypeResult extends RemoteCallResultBase {
+        successes:DeleteRelationshipTypeSuccess[];
+        failures:DeleteRelationshipTypeFailure[];
     }
 
     export interface RemoteCallGetRelationshipTypeParams {
@@ -295,6 +403,29 @@ module api_remote {
         account_createOrUpdate (params, callback):void;
         account_delete (params:RemoteCallDeleteAccountParams, callback:(result:RemoteCallDeleteAccountResult)=>void):void;
         account_get (params, callback):void;
+    }
+
+    export interface RemoteCallGetAccountParams {
+        key:string;
+    }
+
+    export interface RemoteCallGetAccountResult extends RemoteCallResultBase, Account {
+
+    }
+
+    export interface RemoteServiceInterface {
+        account_find (params:RemoteCallAccountFindParams, callback:(result:RemoteCallAccountFindResult)=>void):void;
+        account_getGraph (params:RemoteCallAccountGetGraphParams, callback:(result:RemoteCallAccountGetGraphResult)=>void):void;
+        account_changePassword (params:RemoteCallAccountChangePasswordParams,
+                                callback:(result:RemoteCallAccountChangePasswordResult)=>void):void;
+        account_verifyUniqueEmail (params:RemoteCallAccountVerifyUniqueEmailParams,
+                                   callback:(result:RemoteCallAccountVerifyUniqueEmailResult)=>void):void;
+        account_suggestUserName (params:RemoteCallAccountSuggestUserNameParams,
+                                 callback:(result:RemoteCallAccountSuggestUserNameResult)=>void):void;
+        account_createOrUpdate (params:RemoteCallAccountCreateOrUpdateParams,
+                                callback:(result:RemoteCallAccountCreateOrUpdateResult)=>void):void;
+        account_delete (params, callback):void;
+        account_get (params:RemoteCallGetAccountParams, callback:(result:RemoteCallGetAccountResult)=>void):void;
         util_getCountries (params, callback):void;
         util_getLocales (params, callback):void;
         util_getTimeZones (params, callback):void;
@@ -317,16 +448,17 @@ module api_remote {
                                     callback:(result:RemoteCallContentTypeCreateOrUpdateResult)=>void):void;
         contentType_delete (params:RemoteCallContentTypeDeleteParams, callback:(result:RemoteCallContentTypeDeleteResult)=>void):void;
         contentType_tree (params:RemoteCallGetContentTypeTreeParams, callback:(result:RemoteCallGetContentTypeTreeResult)=>void):void;
-        schema_tree (params, callback):void;
+        schema_tree (params:RemoteCallGetSchemaTreeParams, callback:(result:RemoteCallGetSchemaTreeResult)=>void):void;
         schema_list (params:RemoteCallSchemaListParams, callback:(result:RemoteCallSchemaListResult)=>void):void;
         system_getSystemInfo (params:RemoteCallSystemGetSystemInfoParams, callback:(result:RemoteCallSystemGetSystemInfoResult)=>void):void;
         mixin_get (params:RemoteCallMixinGetParams, callback:(result:RemoteCallMixinGetResult)=>void):void;
         mixin_createOrUpdate (params:RemoteCallMixinCreateOrUpdateParams, callback:(result:RemoteCallMixinCreateOrUpdateResult)=>void):void;
         mixin_delete (params:RemoteCallMixinDeleteParams, callback:(result:RemoteCallMixinDeleteResult)=>void):void;
+        relationshipType_delete (params:RemoteCallDeleteRelationshipTypeParams,
+                                 callback:(result:RemoteCallDeleteRelationshipTypeResult)=>void):void;
         relationshipType_get (params:RemoteCallGetRelationshipTypeParams, callback:(result:RemoteCallGetRelationshipTypeResult)=>void):void;
         relationshipType_createOrUpdate (params:RemoteCallCreateOrUpdateRelationshipTypeParams,
                                          callback:(result:RemoteCallCreateOrUpdateRelationshipTypeResult)=>void):void;
-        relationshipType_delete (params, callback):void;
         space_list (params:RemoteCallSpaceListParams, callback:(result:RemoteCallSpaceListResult)=>void):void;
         space_get (params:RemoteCallSpaceGetParams, callback:(result:RemoteCallSpaceGetResult)=>void):void;
         space_delete (params:RemoteCallSpaceDeleteParams, callback:(result:RemoteCallSpaceDeleteResult)=>void):void;
@@ -361,27 +493,31 @@ module api_remote {
             this.provider = Ext.Direct.addProvider(jsonRpcProvider.ext);
         }
 
-        account_find(params, callback:(accountFindResult:any)=>void):void {
+        account_find(params:RemoteCallAccountFindParams, callback:(result:RemoteCallAccountFindResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_getGraph(params, callback):void {
+        account_getGraph(params:RemoteCallAccountGetGraphParams, callback:(result:RemoteCallAccountGetGraphResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_changePassword(params, callback):void {
+        account_changePassword(params:RemoteCallAccountChangePasswordParams,
+                               callback:(result:RemoteCallAccountChangePasswordResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_verifyUniqueEmail(params, callback):void {
+        account_verifyUniqueEmail(params:RemoteCallAccountVerifyUniqueEmailParams,
+                                  callback:(result:RemoteCallAccountVerifyUniqueEmailResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_suggestUserName(params, callback):void {
+        account_suggestUserName(params:RemoteCallAccountSuggestUserNameParams,
+                                callback:(result:RemoteCallAccountSuggestUserNameResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_createOrUpdate(params, callback):void {
+        account_createOrUpdate(params:RemoteCallAccountCreateOrUpdateParams,
+                               callback:(result:RemoteCallAccountCreateOrUpdateResult)=>void):void {
             console.log(params, callback);
         }
 
@@ -389,7 +525,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        account_get(params, callback):void {
+        account_get(params:RemoteCallGetAccountParams, callback:(result:RemoteCallGetAccountResult)=>void):void {
             console.log(params, callback);
         }
 
@@ -475,7 +611,7 @@ module api_remote {
             console.log(params, callback);
         }
 
-        schema_tree(params, callback):void {
+        schema_tree(params:RemoteCallGetSchemaTreeParams, callback:(result:RemoteCallGetSchemaTreeResult)=>void):void {
             console.log(params, callback);
         }
 
@@ -508,7 +644,8 @@ module api_remote {
             console.log(params, callback);
         }
 
-        relationshipType_delete(params, callback):void {
+        relationshipType_delete(params:RemoteCallDeleteRelationshipTypeParams,
+                                callback:(result:RemoteCallDeleteRelationshipTypeResult)=>void):void {
             console.log(params, callback);
         }
 

@@ -10,7 +10,6 @@ Ext.define('Admin.controller.contentManager.Controller', {
     models: [],
     views: [
         'Admin.view.contentManager.DeleteContentWindow',
-        'Admin.view.contentManager.LiveEditTestWindow',
         'Admin.view.contentManager.wizard.ContentLiveEditPanel'
     ],
 
@@ -93,12 +92,6 @@ Ext.define('Admin.controller.contentManager.Controller', {
             });
 
             me.viewContent(contentModel, null, true);
-        }, me);
-
-
-        /* For 18/4 demo */
-        Admin.MessageBus.on('liveEdit.showTestSettingsWindow', function () {
-            me.getLiveEditTestWindow().doShow();
         }, me);
     },
 
@@ -581,14 +574,6 @@ Ext.define('Admin.controller.contentManager.Controller', {
         var win = Ext.ComponentQuery.query('deleteContentWindow')[0];
         if (!win) {
             win = Ext.create('widget.deleteContentWindow');
-        }
-        return win;
-    },
-
-    getLiveEditTestWindow: function () {
-        var win = Ext.ComponentQuery.query('liveEditTestWindow')[0];
-        if (!win) {
-            win = Ext.create('widget.liveEditTestWindow');
         }
         return win;
     }

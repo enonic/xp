@@ -15,7 +15,6 @@ module LiveEdit.ui.contextmenu.menuitem {
             var $button = this.createButton({
                 text: 'Show Details',
                 id: 'live-edit-button-details',
-                cls: 'live-edit-component-menu-button',
                 handler: (event) => {
                     event.stopPropagation();
                 }

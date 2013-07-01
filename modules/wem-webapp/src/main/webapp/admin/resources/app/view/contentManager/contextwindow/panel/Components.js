@@ -4,6 +4,8 @@
 Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
     extend: 'Ext.container.Container',
     alias: 'widget.contextWindowComponentsPanel',
+    uses: 'Admin.view.contentManager.contextwindow.Helper',
+
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -32,7 +34,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
     createSearchBarCt: function () {
         this.searchInputCmp = this.createSearchInputCmp();
         return new Ext.container.Container({
-            height: 75,
+            padding: '20',
             cls: 'admin-components-search-bar',
             items: [
                 new Ext.Component({
@@ -103,34 +105,22 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
             '           <div class="admin-components-item-icon {[this.resolveIconCls(values.type)]}"></div>',
             '           <div class="admin-components-item-info">',
             '               <h3>{name}</h3>',
-            '               <small>{subtitle}</small>',
+            '               <sub title="{subtitle}">{[this.substringSubtitle(values.subtitle)]}</sub>',
             '           </div>',
             '       </div>',
             '   </div>',
             '</tpl>',
             {
-                resolveIconCls: function (componentType) {
-                    var iconCls;
-                    switch (componentType) {
-                    case 'page':
-                        iconCls = 'icon-file';
-                        break;
-                    case 'region':
-                        iconCls = 'icon-th-large';
-                        break;
-                    case 'layout':
-                        iconCls = 'icon-columns';
-                        break;
-                    case 'part':
-                        iconCls = 'icon-puzzle-piece';
-                        break;
-                    case 'paragraph':
-                        iconCls = 'icon-edit';
-                        break;
-                    default:
-                        iconCls = '';
+                substringSubtitle: function (subtitle) {
+                    var maxLength = 33,
+                        result = subtitle;
+                    if (subtitle.length > maxLength) {
+                        result = subtitle.substring(0, maxLength) + ' ...'
                     }
-                    return iconCls;
+                    return result;
+                },
+                resolveIconCls: function (componentType) {
+                    return Admin.view.contentManager.contextwindow.Helper.resolveComponentTypeIconCls(componentType);
                 }
             }
         );
@@ -188,6 +178,9 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
             helper: me.createDragHelper,
             start: function (event, ui) {
                 me.onStartDragComponent(event, ui);
+            },
+            stop: function () {
+                me.getContextWindow().showHideIFrameMask(false);
             }
             /*
             ,

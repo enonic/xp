@@ -23,10 +23,10 @@ module LiveEdit {
         }
 
         public static getViewPortSize():ViewPortSize {
-            var window:JQuery = $(window);
+            var win:JQuery = $(window);
             return {
-                width: window.width(),
-                height: window.height()
+                width: win.width(),
+                height: win.height()
             };
         }
 

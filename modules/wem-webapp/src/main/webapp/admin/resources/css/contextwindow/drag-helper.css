@@ -1,6 +1,8 @@
 /*
-    Reset
+    We should merge this with live-edit/css/live-edit.css at a later stage of the project
 */
+
+/** Reset */
 [id^=live-edit-ui-cmp-],
 [id^=live-edit-ui-cmp-] *,
 #live-edit-drag-helper * {
@@ -16,9 +18,7 @@
     line-height: 1.2;
 }
 
-/*
-    These classes should be merged with admin2/live-edit/css/live-edit.css
-*/
+/** Drag helper */
 #live-edit-drag-helper {
     display: table;
     outline: 1px solid #aaa;

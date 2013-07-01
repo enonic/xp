@@ -40,8 +40,8 @@ declare var LiveEditMutationSummary;
 ///<reference path='ui/contextmenu/menuitem/Reset.ts' />
 ///<reference path='ui/contextmenu/menuitem/Empty.ts' />
 ///<reference path='ui/contextmenu/menuitem/View.ts' />
-///<reference path='ui/contextmenu/menuitem/Settings.ts' />
 ///<reference path='ui/contextmenu/menuitem/Remove.ts' />
+///<reference path='ui/contextmenu/menuitem/PlayVideo.ts' />
 
 (function ($) {
     'use strict';

@@ -1,6 +1,8 @@
 Ext.define('Admin.view.contentManager.contextwindow.panel.Emulator', {
     extend: 'Ext.container.Container',
     alias: 'widget.contextWindowEmulator',
+    uses: 'Admin.view.contentManager.contextwindow.Helper',
+
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -28,9 +30,9 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Emulator', {
      */
     createTopTextCmp: function () {
         return new Ext.Component({
-            height: 40,
+            padding: '20',
             cls: 'admin-emulator-top-bar',
-            html: '<p>Emulate different client\'s physical sizes</p>'
+            html: '<div>Emulate different client\'s physical sizes</div>'
         });
     },
 
@@ -88,7 +90,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Emulator', {
             '           <div class="admin-device-item-icon {[this.getIconCls(values.device_type)]}"></div>',
             '           <div class="admin-device-item-info">',
             '               <h3>{name}</h3>',
-            '               <small>{width} x {height}</small>',
+            '               <sub>{width} x {height}</sub>',
             '           </div>',
             '           <tpl if="rotatable">',
             '               <div class="admin-device-item-rotate-button icon-rotate-right" title="Rotate"></div>',
@@ -98,7 +100,7 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Emulator', {
             '</tpl>',
             {
                 getIconCls: function (deviceType) {
-                    return me.resolveIconCls(deviceType);
+                    return Admin.view.contentManager.contextwindow.Helper.resolveDeviceTypeIconCls(deviceType);
                 }
             }
         );
@@ -154,27 +156,6 @@ Ext.define('Admin.view.contentManager.contextwindow.panel.Emulator', {
                 }
             }
         });
-    },
-
-    resolveIconCls: function (deviceType) {
-        var iconCls;
-        switch (deviceType) {
-        case 'monitor':
-            iconCls = 'icon-desktop';
-            break;
-        case 'monitor_full':
-            iconCls = 'icon-desktop';
-            break;
-        case 'mobile':
-            iconCls = 'icon-mobile-phone';
-            break;
-        case 'tablet':
-            iconCls = 'icon-tablet';
-            break;
-        default:
-            iconCls = '';
-        }
-        return iconCls;
     },
 
     onItemClick: function (view, record, item, index, event) {

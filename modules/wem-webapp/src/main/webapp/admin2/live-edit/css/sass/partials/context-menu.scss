@@ -1,6 +1,6 @@
 @import "../modules/colors";
 
-.live-edit-component-menu {
+.live-edit-context-menu {
   position: absolute;
   min-width: 150px;
   padding: 0;
@@ -9,7 +9,7 @@
   box-shadow: $shadow;
 }
 
-.live-edit-component-menu-title-bar {
+.live-edit-context-menu-title-bar {
   overflow: hidden;
   margin-bottom: 2px;
   cursor: hand;
@@ -19,43 +19,47 @@
   cursor: -webkit-grab;
 }
 
-.live-edit-component-menu-title-icon,
-.live-edit-component-menu-title-text,
-.live-edit-component-menu-title-close-button {
+.live-edit-context-menu-title-icon,
+.live-edit-context-menu-title-text,
+.live-edit-context-menu-title-close-button {
   padding: 5px;
 }
 
-.live-edit-component-menu-title-icon {
+.live-edit-context-menu-title-icon {
   padding: 7px;
   float: left;
 }
 
-.live-edit-component-menu-title-icon > div {
+.live-edit-context-menu-title-icon > div {
   width: 22px;
   height: 22px;
 }
 
-.live-edit-component-menu-page-icon {
+.live-edit-context-menu-page-icon {
   background: transparent url($resourcePath + "/images/component-types/22/file.png") center center no-repeat;
 }
 
-.live-edit-component-menu-region-icon {
+.live-edit-context-menu-region-icon {
   background: transparent url($resourcePath + "/images/component-types/22/compass.png") center center no-repeat;
 }
 
-.live-edit-component-menu-part-icon {
+.live-edit-context-menu-part-icon {
   background: transparent url($resourcePath + "/images/component-types/22/puzzle.png") center center no-repeat;
 }
 
-.live-edit-component-menu-paragraph-icon {
+.live-edit-context-menu-paragraph-icon {
   background: transparent url($resourcePath + "/images/component-types/22/text-color.png") center center no-repeat;
 }
 
-.live-edit-component-menu-layout-icon {
+.live-edit-context-menu-layout-icon {
   background: transparent url($resourcePath + "/images/component-types/22/insert-template.png") center center no-repeat;
 }
 
-.live-edit-component-menu-title-text {
+.live-edit-context-menu-content-icon {
+  background: transparent url($resourcePath + "/images/component-types/22/file.png") center center no-repeat;
+}
+
+.live-edit-context-menu-title-text {
   float: left;
   font-size: 14px;
   color: #000;
@@ -63,7 +67,7 @@
   padding-left: 2px;
 }
 
-.live-edit-component-menu-title-close-button {
+.live-edit-context-menu-title-close-button {
   float: right;
   cursor: pointer;
   background: transparent url($resourcePath + "/images/close.png") center center no-repeat;
@@ -72,31 +76,34 @@
   padding: 5px 7px;
 }
 
-.live-edit-button {
-  cursor: pointer !important;
-  display: block;
-  cursor: pointer;
-  text-decoration: none;
+
+/*** Menu item */
+.live-edit-menu-item {
+    cursor: pointer !important;
+    display: block;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 7px 10px;
+    color: #fff;
 }
 
-/* Component menu button */
-.live-edit-component-menu-button {
-  padding: 7px 10px;
-}
-
-.live-edit-component-menu-button:hover {
+.live-edit-menu-item:hover {
   background-color: $hoverColor;
   color: $hoverTextColor !important;
 }
 
-.live-edit-button-text {
+.live-edit-menu-item:hover .live-edit-menu-item-text {
+    color: $hoverTextColor !important;
+}
+
+.live-edit-menu-item-text {
   font-size: 14px;
   color: #606060;
   line-height: 20px;
   text-transform: capitalize;
 }
 
-.live-edit-button-icon {
+.live-edit-menu-item-icon {
   display: block;
   width: auto;
   height: 24px;
@@ -104,8 +111,4 @@
   background-color: transparent;
   background-repeat: no-repeat;
   background-position: center 5px;
-}
-
-.live-edit-component-menu-button:hover .live-edit-button-text {
-  color: #fff !important;
 }

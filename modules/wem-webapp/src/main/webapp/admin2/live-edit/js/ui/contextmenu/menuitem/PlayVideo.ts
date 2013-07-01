@@ -1,7 +1,7 @@
 module LiveEdit.ui.contextmenu.menuitem {
     var $ = $liveEdit;
 
-    export class Remove extends LiveEdit.ui.contextmenu.menuitem.Base {
+    export class PlayVideo extends LiveEdit.ui.contextmenu.menuitem.Base {
 
         private menu = null;
 
@@ -14,13 +14,16 @@ module LiveEdit.ui.contextmenu.menuitem {
 
         init():void {
             var $button = this.createButton({
-                text: 'Remove',
-                id: 'live-edit-button-remove',
+                text: 'Play Video',
+                id: 'live-edit-button-play-video',
                 handler: (event) => {
+
+                    // fixme: remove. Play all videos for now :)
+                    $('video', this.menu.selectedComponent).each((i, videoDomEl) => {
+                        videoDomEl.play();
+                    });
+
                     event.stopPropagation();
-                    // For demo purposes
-                    this.menu.selectedComponent.remove();
-                    $(window).trigger('removeComponent.liveEdit');
                 }
             });
 

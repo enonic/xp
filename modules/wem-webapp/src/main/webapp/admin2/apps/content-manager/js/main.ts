@@ -62,10 +62,6 @@
 
 ///<reference path='view/BaseDialogWindow.ts' />
 ///<reference path='view/AdminImageButton.ts' />
-///<reference path='view/TopBarMenuItem.ts' />
-///<reference path='view/TopBarMenu.ts' />
-///<reference path='view/TopBar.ts' />
-///<reference path='view/TabPanel.ts' />
 ///<reference path='view/BaseFilterPanel.ts' />
 ///<reference path='view/FilterPanel.ts' />
 
