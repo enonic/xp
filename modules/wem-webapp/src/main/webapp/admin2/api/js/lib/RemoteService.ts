@@ -5,6 +5,7 @@
 ///<reference path='RemoteMixinModel.ts' />
 ///<reference path='RemoteSchemaModel.ts' />
 ///<reference path='RemoteUtilsModel.ts' />
+///<reference path='RemoteUserStoreModel.ts' />
 
 module api_remote {
 
@@ -427,6 +428,52 @@ module api_remote {
         timezones: TimeZone[];
     }
 
+    export interface RemoteCallUserStoreGetAllParams {
+    }
+
+    export interface RemoteCallUserStoreGetAllResult extends RemoteCallResultBase {
+        total: number;
+        userStores: UserStore[];
+    }
+
+    export interface RemoteCallUserStoreGetParams {
+        name: string;
+    }
+
+    export interface RemoteCallUserStoreGetResult extends UserStore {
+        success: bool;
+        error?: string;
+    }
+
+    export interface RemoteCallUserStoreGetConnectorsParams {
+    }
+
+    export interface RemoteCallUserStoreGetConnectorsResult extends RemoteCallResultBase {
+        total: number;
+        userStoreConnectors: UserStoreConnector[];
+    }
+
+    export interface RemoteCallUserStoreCreateOrUpdateParams {
+        name: string[];
+        defaultUserstore: bool;
+        configXML: string;
+        connectorName: string;
+        administrators: string[];
+    }
+
+    export interface RemoteCallUserStoreCreateOrUpdateResult extends RemoteCallResultBase {
+        created: bool;
+        updated: bool;
+    }
+
+    export interface RemoteCallUserStoreDeleteParams {
+        name: string[];
+    }
+
+    export interface RemoteCallUserStoreDeleteResult extends RemoteCallResultBase {
+        deleted: number;
+    }
+
     export interface RemoteServiceInterface {
         account_find (params:RemoteCallAccountFindParams, callback:(result:RemoteCallAccountFindResult)=>void):void;
         account_getGraph (params:RemoteCallAccountGetGraphParams, callback:(result:RemoteCallAccountGetGraphResult)=>void):void;
@@ -443,11 +490,13 @@ module api_remote {
         util_getCountries (params:RemoteCallGetCountriesParams, callback:(result:RemoteCallGetCountriesResult)=>void):void;
         util_getLocales (params:RemoteCallGetLocalesParams, callback:(result:RemoteCallGetLocalesResult)=>void):void;
         util_getTimeZones (params:RemoteCallGetTimeZonesParams, callback:(result:RemoteCallGetTimeZonesResult)=>void):void;
-        userstore_getAll (params, callback):void;
-        userstore_get (params, callback):void;
-        userstore_getConnectors (params, callback):void;
-        userstore_createOrUpdate (params, callback):void;
-        userstore_delete (params, callback):void;
+        userstore_getAll (params:RemoteCallUserStoreGetAllParams, callback:(result:RemoteCallUserStoreGetAllResult)=>void):void;
+        userstore_get (params:RemoteCallUserStoreGetParams, callback:(result:RemoteCallUserStoreGetResult)=>void):void;
+        userstore_getConnectors (params:RemoteCallUserStoreGetConnectorsParams,
+                                 callback:(result:RemoteCallUserStoreGetConnectorsResult)=>void):void;
+        userstore_createOrUpdate (params:RemoteCallUserStoreCreateOrUpdateParams,
+                                  callback:(result:RemoteCallUserStoreCreateOrUpdateResult)=>void):void;
+        userstore_delete (params:RemoteCallUserStoreDeleteParams, callback:(result:RemoteCallUserStoreDeleteResult)=>void):void;
         content_createOrUpdate (params:RemoteCallCreateOrUpdateContentParams,
                                 callback:(result:RemoteCallCreateOrUpdateContentResult)=>void):void;
         content_list (params:RemoteCallContentListParams, callback:(result:RemoteCallContentListResult)=>void):void;
@@ -547,31 +596,33 @@ module api_remote {
             console.log(params, callback);
         }
 
-        util_getLocales (params:RemoteCallGetLocalesParams, callback:(result:RemoteCallGetLocalesResult)=>void):void {
+        util_getLocales(params:RemoteCallGetLocalesParams, callback:(result:RemoteCallGetLocalesResult)=>void):void {
             console.log(params, callback);
         }
 
-        util_getTimeZones (params:RemoteCallGetTimeZonesParams, callback:(result:RemoteCallGetTimeZonesResult)=>void):void {
+        util_getTimeZones(params:RemoteCallGetTimeZonesParams, callback:(result:RemoteCallGetTimeZonesResult)=>void):void {
             console.log(params, callback);
         }
 
-        userstore_getAll(params, callback):void {
+        userstore_getAll(params:RemoteCallUserStoreGetAllParams, callback:(result:RemoteCallUserStoreGetAllResult)=>void):void {
             console.log(params, callback);
         }
 
-        userstore_get(params, callback):void {
+        userstore_get(params:RemoteCallUserStoreGetParams, callback:(result:RemoteCallUserStoreGetResult)=>void):void {
             console.log(params, callback);
         }
 
-        userstore_getConnectors(params, callback):void {
+        userstore_getConnectors(params:RemoteCallUserStoreGetConnectorsParams,
+                                callback:(result:RemoteCallUserStoreGetConnectorsResult)=>void):void {
             console.log(params, callback);
         }
 
-        userstore_createOrUpdate(params, callback):void {
+        userstore_createOrUpdate(params:RemoteCallUserStoreCreateOrUpdateParams,
+                                 callback:(result:RemoteCallUserStoreCreateOrUpdateResult)=>void):void {
             console.log(params, callback);
         }
 
-        userstore_delete(params, callback):void {
+        userstore_delete(params:RemoteCallUserStoreDeleteParams, callback:(result:RemoteCallUserStoreDeleteResult)=>void):void {
             console.log(params, callback);
         }
 
