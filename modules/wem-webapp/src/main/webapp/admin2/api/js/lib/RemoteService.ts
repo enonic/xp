@@ -4,6 +4,7 @@
 ///<reference path='RemoteSpaceModel.ts' />
 ///<reference path='RemoteMixinModel.ts' />
 ///<reference path='RemoteSchemaModel.ts' />
+///<reference path='RemoteUtilsModel.ts' />
 
 module api_remote {
 
@@ -402,6 +403,30 @@ module api_remote {
 
     }
 
+    export interface RemoteCallGetCountriesParams {
+    }
+
+    export interface RemoteCallGetCountriesResult extends RemoteCallResultBase {
+        total: number;
+        countries: Country[];
+    }
+
+    export interface RemoteCallGetLocalesParams {
+    }
+
+    export interface RemoteCallGetLocalesResult extends RemoteCallResultBase {
+        total: number;
+        locales: Locale[];
+    }
+
+    export interface RemoteCallGetTimeZonesParams {
+    }
+
+    export interface RemoteCallGetTimeZonesResult extends RemoteCallResultBase {
+        total: number;
+        timezones: TimeZone[];
+    }
+
     export interface RemoteServiceInterface {
         account_find (params:RemoteCallAccountFindParams, callback:(result:RemoteCallAccountFindResult)=>void):void;
         account_getGraph (params:RemoteCallAccountGetGraphParams, callback:(result:RemoteCallAccountGetGraphResult)=>void):void;
@@ -415,9 +440,9 @@ module api_remote {
                                 callback:(result:RemoteCallAccountCreateOrUpdateResult)=>void):void;
         account_delete (params:RemoteCallDeleteAccountParams, callback:(result:RemoteCallDeleteAccountResult)=>void):void;
         account_get (params:RemoteCallGetAccountParams, callback:(result:RemoteCallGetAccountResult)=>void):void;
-        util_getCountries (params, callback):void;
-        util_getLocales (params, callback):void;
-        util_getTimeZones (params, callback):void;
+        util_getCountries (params:RemoteCallGetCountriesParams, callback:(result:RemoteCallGetCountriesResult)=>void):void;
+        util_getLocales (params:RemoteCallGetLocalesParams, callback:(result:RemoteCallGetLocalesResult)=>void):void;
+        util_getTimeZones (params:RemoteCallGetTimeZonesParams, callback:(result:RemoteCallGetTimeZonesResult)=>void):void;
         userstore_getAll (params, callback):void;
         userstore_get (params, callback):void;
         userstore_getConnectors (params, callback):void;
@@ -518,15 +543,15 @@ module api_remote {
             console.log(params, callback);
         }
 
-        util_getCountries(params, callback):void {
+        util_getCountries(params:RemoteCallGetCountriesParams, callback:(result:RemoteCallGetCountriesResult)=>void):void {
             console.log(params, callback);
         }
 
-        util_getLocales(params, callback):void {
+        util_getLocales (params:RemoteCallGetLocalesParams, callback:(result:RemoteCallGetLocalesResult)=>void):void {
             console.log(params, callback);
         }
 
-        util_getTimeZones(params, callback):void {
+        util_getTimeZones (params:RemoteCallGetTimeZonesParams, callback:(result:RemoteCallGetTimeZonesResult)=>void):void {
             console.log(params, callback);
         }
 
