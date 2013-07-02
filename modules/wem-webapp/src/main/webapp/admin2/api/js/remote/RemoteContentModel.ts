@@ -1,17 +1,17 @@
 module api_remote {
 
-    export interface ContentData {
+    export interface Data {
         name: string;
         path: string;
         type: string;
         value;
     }
 
-    export interface ContentDataSet extends ContentData {
-        value: ContentData[];
+    export interface DataSet extends Data {
+        value: Data[];
     }
 
-    export interface ContentDataProperty  extends ContentData{
+    export interface ContentDataProperty  extends Data{
         value: string;
     }
 
@@ -30,7 +30,7 @@ module api_remote {
 
     export interface ContentGet extends ContentBase{
         isRoot: bool;
-        data: ContentData[];
+        data: Data[];
     }
 
     export interface ContentList extends ContentBase{

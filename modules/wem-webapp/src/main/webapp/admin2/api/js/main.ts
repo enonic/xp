@@ -25,8 +25,8 @@
 ///<reference path='handler/DeleteContentParamFactory.ts' />
 ///<reference path='handler/DeleteContentHandler.ts' />
 
-///<reference path='lib/JsonRpcProvider.ts' />
-///<reference path='lib/RemoteService.ts' />
+///<reference path='remote/JsonRpcProvider.ts' />
+///<reference path='remote/RemoteService.ts' />
 
 ///<reference path='event/Event.ts' />
 ///<reference path='event/EventBus.ts' />

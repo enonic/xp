@@ -222,7 +222,7 @@ module api_remote {
 
     export interface RemoteCallContentValidateParams {
         qualifiedContentTypeName: string;
-        contentData: ContentData;
+        contentData: Data;
     }
 
     export interface RemoteCallContentValidateResult extends RemoteCallResultBase {
