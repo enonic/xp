@@ -42,7 +42,7 @@ module app {
                 /*
                 var tabMenuItem = new ContentAppBarTabMenuItem("New Content");
                 var contentWizardPanel = new app_wizard.ContentWizardPanel('new-content');
-                this.addNavigationItem(tabMenuItem, contentWizardPanel);
+                this.addWizardPanel(tabMenuItem, contentWizardPanel);
                 this.selectPanel(tabMenuItem);
                 */
             });
@@ -72,7 +72,7 @@ module app {
                             var conetntWizardPanel = new app_wizard.ContentWizardPanel(id);
                             conetntWizardPanel.setData(result);
 
-                            this.addNavigationItem(tabMenuItem, conetntWizardPanel);
+                            this.addWizardPanel(tabMenuItem, conetntWizardPanel);
                             this.selectPanel(tabMenuItem);
                         } else {
                             console.error("Error", result ? result.error : "Unable to retrieve content.");

@@ -40,7 +40,7 @@ module app {
 
                 var tabMenuItem = new SpaceAppBarTabMenuItem("New Space");
                 var spaceWizardPanel = new app_wizard.SpaceWizardPanel('new-space');
-                this.addNavigationItem(tabMenuItem, spaceWizardPanel);
+                this.addWizardPanel(tabMenuItem, spaceWizardPanel);
                 this.selectPanel(tabMenuItem);
             });
 
@@ -67,7 +67,7 @@ module app {
                             var spaceWizardPanel = new app_wizard.SpaceWizardPanel(id);
                             spaceWizardPanel.setData(result);
 
-                            this.addNavigationItem(tabMenuItem, spaceWizardPanel);
+                            this.addWizardPanel(tabMenuItem, spaceWizardPanel);
                             this.selectPanel(tabMenuItem);
                         } else {
                             console.error("Error", result ? result.error : "Unable to retrieve space.");

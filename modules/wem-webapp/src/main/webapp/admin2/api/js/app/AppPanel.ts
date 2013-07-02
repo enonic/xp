@@ -2,11 +2,13 @@ module api_app{
 
     export class AppPanel extends api_ui.NavigatedDeckPanel {
 
+        private tabMenu:AppBarTabMenu;
+
         private homePanel:api_ui.Panel;
 
         private homePanelActions:api_ui.Action[];
 
-        constructor(tabNavigator:api_ui.DeckPanelNavigator, homePanel:api_ui.Panel, homePanelActions:api_ui.Action[]) {
+        constructor(tabNavigator:AppBarTabMenu, homePanel:api_ui.Panel, homePanelActions:api_ui.Action[]) {
             super(tabNavigator);
 
             this.homePanel = homePanel;
@@ -16,6 +18,12 @@ module api_app{
             homePanelMenuItem.setRemovable(false);
             this.addNavigationItem(homePanelMenuItem, this.homePanel);
             this.showPanel(0);
+        }
+
+        addWizardPanel(item:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
+            super.addNavigationItem(item, wizardPanel);
+
+            // TODO: Register as listener for changes to WizardPanel.displayName and update label of AppBarTabMenuItem
         }
 
         showHomePanel() {
