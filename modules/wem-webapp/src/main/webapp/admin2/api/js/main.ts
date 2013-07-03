@@ -88,6 +88,7 @@
 ///<reference path='app/AppPanel.ts' />
 
 ///<reference path='app/browse/BrowsePanel.ts' />
+///<reference path='app/browse/BrowseItem.ts' />
 ///<reference path='app/browse/BrowseItemPanel.ts' />
 
 

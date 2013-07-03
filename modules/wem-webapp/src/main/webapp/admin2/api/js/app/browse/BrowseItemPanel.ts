@@ -1,57 +1,19 @@
 module api_app_browse {
 
-    export class BrowseItem {
+    export interface BrowseItemPanelParams {
 
-        private model:any;
-
-        private displayName:string;
-
-        private path:string;
-
-        private iconUrl;
-
-        constructor(model:any) {
-            this.model = model;
-        }
-
-        setDisplayName(value:string):api_app_browse.BrowseItem {
-            this.displayName = value;
-            return this;
-        }
-
-        setPath(value:string):api_app_browse.BrowseItem {
-            this.path = value;
-            return this;
-        }
-
-        setIconUrl(value:string):api_app_browse.BrowseItem {
-            this.iconUrl = value;
-            return this;
-        }
-
-        getModel():any {
-            return this.model;
-        }
-
-        getDisplayName():string {
-            return this.displayName;
-        }
-
-        getPath():string {
-            return this.path;
-        }
-
-        getIconUrl():string {
-            return this.iconUrl;
-        }
+        actionMenuActions:api_ui.Action[];
     }
 
     export class BrowseItemPanel extends api_dom.DivEl {
 
         ext;
 
-        constructor() {
+        private actionMenuActions:api_ui.Action[];
+
+        constructor(browseItemPanelParams:BrowseItemPanelParams) {
             super("BrowseItemPanel", "browse-item-panel");
+            this.actionMenuActions = browseItemPanelParams.actionMenuActions;
             this.initExt();
         }
 
@@ -89,9 +51,10 @@ module api_app_browse {
             tabPanel.addTab(new api_app_browse.DetailPanelTab("Sales"));
             tabPanel.addTab(new api_app_browse.DetailPanelTab("History"));
 
-            tabPanel.addAction(new api_ui.Action("Test"));
-            tabPanel.addAction(new api_ui.Action("More test"));
-            tabPanel.addAction(new api_ui.Action("And finally the last one"));
+            this.actionMenuActions.forEach( (action:api_ui.Action) => {
+
+                tabPanel.addAction( action );
+            } );
 
             this.getEl().appendChild(tabPanel.getHTMLElement());
         }
