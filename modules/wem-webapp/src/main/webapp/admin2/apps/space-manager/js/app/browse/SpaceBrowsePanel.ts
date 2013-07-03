@@ -8,38 +8,51 @@ module app_browse {
 
         private grid:SpaceTreeGridPanel;
 
-        private detailPanel:app_browse.SpaceBrowseItemPanel;
+        private browseItemPanel:app_browse.SpaceBrowseItemPanel;
 
         constructor() {
 
             this.toolbar = new app_browse.SpaceBrowseToolbar();
             this.grid = components.gridPanel = new SpaceTreeGridPanel('spaceTreeGrid');
-            this.detailPanel = components.detailPanel = new app_browse.SpaceBrowseItemPanel();
+            this.browseItemPanel = components.detailPanel = new app_browse.SpaceBrowseItemPanel();
 
             this.filterPanel = new app_ui.FilterPanel({
                 region: 'west',
                 width: 200
             });
 
-            super(this.toolbar, this.grid, this.detailPanel, this.filterPanel);
+            super(this.toolbar, this.grid, this.browseItemPanel, this.filterPanel);
 
             GridSelectionChangeEvent.on((event) => {
 
-                var models:api_model.SpaceModel[] = event.getModels();
-                var spaceLoader:SpaceLoader = new SpaceLoader(SpaceLoader.convert(models));
-                spaceLoader.load((loadedSpaces:api_remote.SpaceSummary[]) => {
+                console.log("selctionchange", event);
 
-                    var items:api_app_browse.BrowseItem[] = [];
-                    loadedSpaces.forEach( (space:api_remote.SpaceSummary, index:number) => {
-                        var item = new api_app_browse.BrowseItem(models[index]).
-                            setDisplayName(space.displayName).
-                            setPath(space.name).
-                            setIconUrl(space.iconUrl);
-                        items.push(item);
+                if (event.getModels().length == 0) {
+                    this.browseItemPanel.setItems([]);
+                }
+                else {
+                    var models:api_model.SpaceModel[] = event.getModels();
+                    var spaceLoader:SpaceLoader = new SpaceLoader(SpaceLoader.convert(models));
+                    spaceLoader.load((loadedSpaces:api_remote.SpaceSummary[]) => {
+
+                        var items:api_app_browse.BrowseItem[] = [];
+                        loadedSpaces.forEach((space:api_remote.SpaceSummary, index:number) => {
+                            var item = new api_app_browse.BrowseItem(models[index]).
+                                setDisplayName(space.displayName).
+                                setPath(space.name).
+                                setIconUrl(space.iconUrl);
+                            items.push(item);
+                        });
+
+                        this.browseItemPanel.setItems(items);
                     });
+                }
 
-                    this.detailPanel.setItems(items);
-                });
+            });
+
+            GridDeselectEvent.on((event) => {
+
+                console.log("deselect", event);
             });
         }
     }

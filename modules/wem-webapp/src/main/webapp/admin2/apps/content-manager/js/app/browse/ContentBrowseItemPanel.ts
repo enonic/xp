@@ -2,10 +2,14 @@ module app_browse {
 
     export class ContentBrowseItemPanel extends api_app_browse.BrowseItemPanel {
 
+        private actionMenu:ContentActionMenu;
+
         constructor() {
-            super( {actionMenuActions: [ContentBrowseActions.NEW_CONTENT, ContentBrowseActions.EDIT_CONTENT,
-                ContentBrowseActions.OPEN_CONTENT, ContentBrowseActions.DELETE_CONTENT,
-                ContentBrowseActions.DUPLICATE_CONTENT, ContentBrowseActions.MOVE_CONTENT]});
+            this.actionMenu = new ContentActionMenu();
+            super({
+                actionMenu: this.actionMenu,
+                fireGridDeselectEvent: this.fireGridDeselectEvent
+            });
         }
 
         fireGridDeselectEvent(model:api_model.ContentModel) {

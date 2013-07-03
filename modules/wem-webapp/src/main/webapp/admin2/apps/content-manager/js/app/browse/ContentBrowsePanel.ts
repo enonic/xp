@@ -8,20 +8,20 @@ module app_browse {
 
         private grid:ContentTreeGridPanel;
 
-        private detailPanel:app_browse.ContentBrowseItemPanel;
+        private browseItemPanel:app_browse.ContentBrowseItemPanel;
 
         constructor() {
 
             this.toolbar = new ContentBrowseToolbar();
             this.grid = components.gridPanel = new ContentTreeGridPanel('contentTreeGrid');
-            this.detailPanel = components.detailPanel = new app_browse.ContentBrowseItemPanel();
+            this.browseItemPanel = components.detailPanel = new app_browse.ContentBrowseItemPanel();
 
             this.filterPanel = new Admin.view.contentManager.FilterPanel({
                 region: 'west',
                 width: 200
             });
 
-            super(this.toolbar, this.grid, this.detailPanel, this.filterPanel);
+            super(this.toolbar, this.grid, this.browseItemPanel, this.filterPanel);
 
 
             GridSelectionChangeEvent.on((event) => {
@@ -44,7 +44,7 @@ module app_browse {
                             setIconUrl(contentGet.iconUrl);
                         items.push(item);
                     });
-                    this.detailPanel.setItems(items);
+                    this.browseItemPanel.setItems(items);
                 });
             });
         }

@@ -1,8 +1,15 @@
 module api_app_browse {
 
-    export class ItemStatisticsPanel extends api_dom.DivEl {
+    export interface ItemStatisticsPanelParams {
 
-        private detailPanelItem:BrowseItem;
+        actionMenu:api_ui_menu.ActionMenu;
+    }
+
+    export class ItemStatisticsPanel extends api_ui.Panel {
+
+        private browseItem:BrowseItem;
+
+        private header:ItemStatisticsHeader;
 
         private navigation:DetailPanelTabList;
 
@@ -14,39 +21,30 @@ module api_app_browse {
 
         private actionMenu:api_ui_menu.ActionMenu;
 
-        constructor(item:BrowseItem) {
-            super("ItemStatisticsPanel", "browse-item-panel-tab");
-            this.detailPanelItem = item;
-            this.addHeader();
+        constructor(itemStatisticsPanelParams:ItemStatisticsPanelParams) {
+            super("ItemStatisticsPanel");
+            this.getEl().addClass("item-statistics-panel");
+
+            this.actionMenu = itemStatisticsPanelParams.actionMenu;
+
+            this.header = new ItemStatisticsHeader(itemStatisticsPanelParams.actionMenu);
+            this.appendChild(this.header);
+
             this.addNavigation();
             this.addCanvas();
             this.setTabChangeCallback((tab:DetailPanelTab) => {
                 this.setActiveTab(tab);
-            })
+            });
 
+
+            this.addTab(new DetailPanelTab("Analytics"));
+            this.addTab(new DetailPanelTab("Sales"));
+            this.addTab(new DetailPanelTab("History"));
         }
 
-        private addHeader() {
-            var headerEl = new api_dom.DivEl("header", "header");
-
-            var iconEl = api_util.ImageLoader.get(this.detailPanelItem.getIconUrl() + "?size=80", 80, 80);
-
-
-            var hgroupEl = new api_dom.Element("hgroup");
-
-            var headerTextEl = new api_dom.H1El();
-            headerTextEl.getEl().setInnerHtml(this.detailPanelItem.getDisplayName());
-            hgroupEl.appendChild(headerTextEl);
-
-            var subtitleEl = new api_dom.H4El();
-            subtitleEl.getEl().setInnerHtml(this.detailPanelItem.getPath());
-            hgroupEl.appendChild(subtitleEl);
-
-            headerEl.getEl().appendChild(iconEl);
-            headerEl.appendChild(hgroupEl);
-            headerEl.appendChild(this.createActionMenu());
-
-            this.appendChild(headerEl);
+        setItem(item:BrowseItem) {
+            this.browseItem = item;
+            this.header.setItem(item);
         }
 
         private addCanvas() {
@@ -72,14 +70,45 @@ module api_app_browse {
             this.actionMenu.addAction(action);
         }
 
-        private createActionMenu() {
-            this.actionMenu = new api_ui_menu.ActionMenu();
-            return this.actionMenu;
-        }
-
         private addNavigation() {
             this.navigation = new DetailPanelTabList();
             this.getEl().appendChild(this.navigation.getHTMLElement());
+        }
+    }
+
+    export class ItemStatisticsHeader extends api_dom.DivEl {
+
+        private browseItem:BrowseItem;
+
+        private iconContainerEl:api_dom.SpanEl = new api_dom.SpanEl();
+
+        private headerTextEl = new api_dom.H1El();
+
+        private subtitleEl = new api_dom.H4El();
+
+        constructor(actionMenu:api_ui_menu.ActionMenu) {
+            super("header", "header");
+
+            this.appendChild(this.iconContainerEl);
+
+            var hgroupEl = new api_dom.Element("hgroup");
+            hgroupEl.appendChild(this.headerTextEl);
+            hgroupEl.appendChild(this.subtitleEl);
+            this.appendChild(hgroupEl);
+
+            this.appendChild(actionMenu);
+        }
+
+        setItem(item:BrowseItem) {
+            this.browseItem = item;
+
+            var icon:HTMLImageElement = api_util.ImageLoader.get(this.browseItem.getIconUrl() + "?size=80", 80, 80);
+            var iconEl = new api_dom.Element("img", null, null, new api_dom.ImgHelper(icon));
+            this.iconContainerEl.removeChildren();
+            this.iconContainerEl.appendChild(iconEl);
+
+            this.headerTextEl.getEl().setInnerHtml(this.browseItem.getDisplayName());
+            this.subtitleEl.getEl().setInnerHtml(this.browseItem.getPath());
         }
     }
 

@@ -2,8 +2,14 @@ module app_browse {
 
     export class SpaceBrowseItemPanel extends api_app_browse.BrowseItemPanel {
 
+        private actionMenu:SpaceActionMenu;
+
         constructor() {
-            super({actionMenuActions: [SpaceBrowseActions.EDIT_SPACE, SpaceBrowseActions.OPEN_SPACE, SpaceBrowseActions.DELETE_SPACE]});
+            this.actionMenu = new SpaceActionMenu();
+            super({
+                actionMenu: this.actionMenu,
+                fireGridDeselectEvent: this.fireGridDeselectEvent
+            });
         }
 
         fireGridDeselectEvent(model:api_model.SpaceModel) {
