@@ -2,22 +2,22 @@ module app {
 
     export class ContentAppPanel extends api_app.AppPanel {
 
-        private appBrowsePanel:app_browse.ContentAppBrowsePanel;
+        private browsePanel:app_browse.ContentBrowsePanel;
 
         private appBarTabMenu:api_app.AppBarTabMenu;
 
         constructor(appBar:ContentAppBar) {
 
-            this.appBrowsePanel = new app_browse.ContentAppBrowsePanel();
+            this.browsePanel = new app_browse.ContentBrowsePanel();
             this.appBarTabMenu = appBar.getTabMenu();
 
-            super(appBar.getTabMenu(), this.appBrowsePanel, app_browse.ContentBrowseActions.ACTIONS);
+            super(appBar.getTabMenu(), this.browsePanel, app_browse.ContentBrowseActions.ACTIONS);
 
             this.handleGlobalEvents();
         }
 
         init() {
-            this.appBrowsePanel.init();
+            this.browsePanel.init();
         }
 
         canRemovePanel(panel:api_ui.Panel, index:number):bool {

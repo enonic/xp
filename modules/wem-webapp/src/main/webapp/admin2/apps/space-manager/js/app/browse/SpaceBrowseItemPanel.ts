@@ -1,6 +1,6 @@
 module app_browse {
 
-    export class SpaceDetailPanel extends api_app_browse.BrowseDetailPanel {
+    export class SpaceBrowseItemPanel extends api_app_browse.BrowseItemPanel {
 
         fireGridDeselectEvent(model:api_model.SpaceModel) {
             var models:api_model.SpaceModel[] = [];

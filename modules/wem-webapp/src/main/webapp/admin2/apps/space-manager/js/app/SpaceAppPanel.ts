@@ -2,22 +2,22 @@ module app {
 
     export class SpaceAppPanel extends api_app.AppPanel {
 
-        private appBrowsePanel:app_browse.SpaceAppBrowsePanel;
+        private browsePanel:app_browse.SpaceBrowsePanel;
 
         private appBarTabMenu:api_app.AppBarTabMenu;
 
         constructor(appBar:SpaceAppBar) {
 
-            this.appBrowsePanel = new app_browse.SpaceAppBrowsePanel();
+            this.browsePanel = new app_browse.SpaceBrowsePanel();
             this.appBarTabMenu = appBar.getTabMenu();
 
-            super(appBar.getTabMenu(), this.appBrowsePanel, app_browse.SpaceBrowseActions.ACTIONS);
+            super(appBar.getTabMenu(), this.browsePanel, app_browse.SpaceBrowseActions.ACTIONS);
 
             this.handleGlobalEvents();
         }
 
         init() {
-            this.appBrowsePanel.init();
+            this.browsePanel.init();
         }
 
         canRemovePanel(panel:api_ui.Panel, index:number):bool {

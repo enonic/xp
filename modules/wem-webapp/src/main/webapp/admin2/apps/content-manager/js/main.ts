@@ -22,8 +22,8 @@
 ///<reference path='app/browse/ContentBrowseToolbar.ts' />
 ///<reference path='app/browse/ContentTreeGridContextMenu.ts' />
 ///<reference path='app/browse/ContentTreeGridPanel.ts' />
-///<reference path='app/browse/ContentDetailPanel.ts' />
-///<reference path='app/browse/ContentAppBrowsePanel.ts' />
+///<reference path='app/browse/ContentBrowseItemPanel.ts' />
+///<reference path='app/browse/ContentBrowsePanel.ts' />
 
 ///<reference path='app/ContentAppPanel.ts' />
 ///<reference path='app/ContentAppBarTabMenu.ts' />
@@ -116,7 +116,7 @@ module components {
     export var browseToolbar:app_browse.ContentBrowseToolbar;
     export var contextMenu:app_browse.ContentTreeGridContextMenu;
     export var gridPanel:app_browse.ContentTreeGridPanel;
-    export var detailPanel:app_browse.ContentDetailPanel;
+    export var detailPanel:app_browse.ContentBrowseItemPanel;
     export var contentDeleteDialog:app_delete.ContentDeleteDialog;
 }
 

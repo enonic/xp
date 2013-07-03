@@ -31,8 +31,8 @@
 ///<reference path='app/browse/SpaceBrowseActions.ts' />
 ///<reference path='app/browse/SpaceBrowseToolbar.ts' />
 ///<reference path='app/browse/SpaceActionMenu.ts' />
-///<reference path='app/browse/SpaceDetailPanel.ts' />
-///<reference path='app/browse/SpaceAppBrowsePanel.ts' />
+///<reference path='app/browse/SpaceBrowseItemPanel.ts' />
+///<reference path='app/browse/SpaceBrowsePanel.ts' />
 ///<reference path='app/browse/SpaceTreeGridContextMenu.ts' />
 ///<reference path='app/browse/SpaceTreeGridPanel.ts' />
 
@@ -65,7 +65,7 @@ module app {
 }
 
 module components {
-    export var detailPanel:app_browse.SpaceDetailPanel;
+    export var detailPanel:app_browse.SpaceBrowseItemPanel;
     export var gridPanel:app_browse.SpaceTreeGridPanel;
 }
 

@@ -44,7 +44,7 @@ Ext.define('Admin.controller.Controller', {
 
         if (!activeTab) {
             var id = this.generateTabId(space, false);
-            //var tabItem = new app_ui.SpaceDetailPanel(undefined, id, space).ext;
+            //var tabItem = new app_ui.SpaceBrowseItemPanel(undefined, id, space).ext;
             /*    {
              id: me.generateTabId(space, false),
              xtype: 'spaceDetail',

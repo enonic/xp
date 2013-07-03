@@ -1,6 +1,6 @@
 module app_browse {
 
-    export class SchemaAppBrowsePanel extends api_app_browse.AppBrowsePanel {
+    export class SchemaBrowsePanel extends api_app_browse.BrowsePanel {
 
         constructor() {
             var toolbar = new SchemaBrowseToolbar();

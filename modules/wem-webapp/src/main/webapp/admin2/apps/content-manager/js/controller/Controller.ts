@@ -465,7 +465,7 @@ Ext.define('Admin.controller.Controller', {
         return components.gridPanel;
     },
 
-    getContentDetailPanel: function ():app_browse.ContentDetailPanel {
+    getContentDetailPanel: function ():app_browse.ContentBrowseItemPanel {
         return components.detailPanel;
     },
 

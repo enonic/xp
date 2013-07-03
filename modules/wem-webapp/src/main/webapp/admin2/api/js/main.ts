@@ -87,8 +87,8 @@
 ///<reference path='app/AppBarTabMenuItem.ts' />
 ///<reference path='app/AppPanel.ts' />
 
-///<reference path='app/browse/AppBrowsePanel.ts' />
-///<reference path='app/browse/BrowseDetailPanel.ts' />
+///<reference path='app/browse/BrowsePanel.ts' />
+///<reference path='app/browse/BrowseItemPanel.ts' />
 
 
 ///<reference path='ui/dialog/DialogButton.ts' />

@@ -6,7 +6,7 @@
 ///<reference path='app/browse/SchemaBrowseActions.ts' />
 ///<reference path='app/browse/SchemaBrowseToolbar.ts' />
 ///<reference path='app/browse/SchemaActionMenu.ts' />
-///<reference path='app/browse/SchemaAppBrowsePanel.ts' />
+///<reference path='app/browse/SchemaBrowsePanel.ts' />
 
 ///<reference path='app/SchemaAppBar.ts' />
 ///<reference path='app/SchemaAppBarTabMenu.ts' />
