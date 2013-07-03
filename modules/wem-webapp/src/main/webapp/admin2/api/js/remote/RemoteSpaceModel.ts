@@ -20,4 +20,39 @@ module api_remote {
         rootContentId:string;
     }
 
+    export interface RemoteCallSpaceListParams {
+    }
+
+    export interface RemoteCallSpaceListResult extends RemoteCallResultBase {
+        total: number;
+        spaces: Space[];
+    }
+
+    export interface RemoteCallSpaceGetParams {
+        spaceName: string[];
+    }
+
+    export interface RemoteCallSpaceGetResult extends RemoteCallResultBase {
+        space: SpaceSummary;
+    }
+
+    export interface RemoteCallSpaceCreateOrUpdateParams {
+        spaceName:string;
+        displayName:string;
+        iconReference?:string;
+    }
+
+    export interface RemoteCallSpaceCreateOrUpdateResult extends RemoteCallResultBase {
+        created:bool;
+        updated:bool;
+    }
+
+    export interface RemoteCallSpaceDeleteParams {
+        spaceName:string[];
+    }
+
+    export interface RemoteCallSpaceDeleteResult extends RemoteCallResultBase {
+        deleted:bool;
+        failureReason?:string;
+    }
 }

@@ -15,19 +15,6 @@ module api_remote {
         form: FormItem[];
     }
 
-    export interface SchemaTreeNode {
-        key:string;
-        name:string;
-        module:string;
-        qualifiedName:string;
-        displayName:string;
-        type:string;
-        createdTime?:Date;
-        modifiedTime?:Date;
-        hasChildren:bool;
-        schemas:SchemaTreeNode[];
-    }
-
     export interface ContentTypeTreeNode extends ContentType {
         iconUrl:string;
         hasChildren:bool;
@@ -127,4 +114,63 @@ module api_remote {
         allowedFromTypes:string[];
         allowedToTypes:string[];
     }
+
+
+    export interface RemoteCallContentTypeGetParams {
+        format: string;
+        contentType: string;
+        mixinReferencesToFormItems?: bool;
+    }
+
+    export interface RemoteCallContentTypeGetResult extends RemoteCallResultBase {
+        contentType?: ContentType;
+        iconUrl?: string;
+        contentTypeXml?: string;
+    }
+
+    export interface RemoteCallContentTypeCreateOrUpdateParams {
+        contentType: string;
+        iconReference: string;
+    }
+
+    export interface RemoteCallContentTypeCreateOrUpdateResult extends RemoteCallResultBase {
+        created: bool;
+        updated: bool;
+        failure?: string;
+    }
+
+    export interface RemoteCallContentTypeDeleteParams {
+        qualifiedContentTypeNames:string[];
+    }
+
+    export interface RemoteCallContentTypeDeleteResult extends RemoteCallResultBase {
+        successes:RemoteCallContentTypeDeleteSuccess[];
+        failures:RemoteCallContentTypeDeleteFailure[];
+    }
+
+    export interface RemoteCallContentTypeDeleteSuccess {
+        qualifiedContentTypeName:string;
+
+    }
+
+    export interface RemoteCallContentTypeDeleteFailure {
+        qualifiedContentTypeName:string;
+        reason:string;
+    }
+
+    export interface RemoteCallContentTypeListParams {
+    }
+
+    export interface RemoteCallContentTypeListResult extends RemoteCallResultBase{
+        contentTypes:ContentTypeListNode[];
+    }
+
+    export interface RemoteCallGetContentTypeTreeParams {
+    }
+
+    export interface RemoteCallGetContentTypeTreeResult extends RemoteCallResultBase {
+        total:number;
+        contentTypes:ContentTypeTreeNode[];
+    }
+
 }
