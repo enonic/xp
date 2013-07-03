@@ -51,7 +51,7 @@ module api_app_browse {
         ext;
 
         constructor() {
-            super("detailpanel", "detailpanel");
+            super("BrowseItemPanel", "browse-item-panel");
             this.initExt();
         }
 
@@ -129,7 +129,7 @@ module api_app_browse {
         private actionMenu:api_ui_menu.ActionMenu;
 
         constructor(item:api_app_browse.BrowseItem) {
-            super("detailpanel-tab", "detailpanel-tab");
+            super("DetailTabPanel", "browse-item-panel-tab");
             this.detailPanelItem = item;
             this.addHeader();
             this.addNavigation();
@@ -242,7 +242,7 @@ module api_app_browse {
         private detailPanelItem:api_app_browse.BrowseItem;
 
         constructor(detailPanelItem:api_app_browse.BrowseItem, removeCallback?:(DetailPanelBox) => void) {
-            super("detailpanel-box", "detailpanel-box");
+            super("DetailPanelBox", "browse-item-panel-box");
             this.detailPanelItem = detailPanelItem;
             this.setIcon(this.detailPanelItem.getIconUrl(), 32);
             this.setData(this.detailPanelItem.getDisplayName(), this.detailPanelItem.getPath());
