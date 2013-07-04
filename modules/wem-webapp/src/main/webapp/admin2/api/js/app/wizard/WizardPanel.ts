@@ -13,13 +13,13 @@ module api_app_wizard {
 
         private persistedItem:api_remote.Item;
 
-        private wizardPanelHeader:WizardPanelHeader;
+        private header:WizardPanelHeader;
 
         private steps:WizardStep[] = [];
 
-        private stepContainer:WizardStepContainer;
+        private stepNavigator:WizardStepNavigator;
 
-        private wizardStepPanels:WizardStepPanels;
+        private stepPanels:api_app_wizard.WizardStepDeckPanel;
 
         ext;
 
@@ -31,13 +31,13 @@ module api_app_wizard {
             this.appendChild(params.toolbar);
             this.appendChild(params.formIcon);
 
-            this.wizardPanelHeader = new WizardPanelHeader();
-            this.appendChild(this.wizardPanelHeader);
+            this.header = new WizardPanelHeader();
+            this.appendChild(this.header);
 
-            this.wizardStepPanels = new WizardStepPanels();
-            this.stepContainer = new WizardStepContainer(this.wizardStepPanels);
-            this.appendChild(this.stepContainer);
-            this.appendChild(this.wizardStepPanels);
+            this.stepPanels = new api_app_wizard.WizardStepDeckPanel();
+            this.stepNavigator = new WizardStepNavigator(this.stepPanels);
+            this.appendChild(this.stepNavigator);
+            this.appendChild(this.stepPanels);
 
             this.initExt();
 
@@ -67,24 +67,24 @@ module api_app_wizard {
         }
 
         getDisplayName():string {
-            return this.wizardPanelHeader.getDisplayName();
+            return this.header.getDisplayName();
         }
 
         setDisplayName(value:string) {
-            this.wizardPanelHeader.setDisplayName(value);
+            this.header.setDisplayName(value);
         }
 
         setName(value:string) {
-            this.wizardPanelHeader.setName(value);
+            this.header.setName(value);
         }
 
         getName():string {
-            return this.wizardPanelHeader.getName();
+            return this.header.getName();
         }
 
         addStep(step:WizardStep) {
             this.steps.push(step);
-            this.stepContainer.addStep(step);
+            this.stepNavigator.addStep(step);
         }
 
         canClose():bool {
@@ -167,18 +167,21 @@ module api_app_wizard {
         }
     }
 
-    export class WizardStepPanels extends api_ui.DeckPanel {
+    export class WizardStepDeckPanel extends api_ui.DeckPanel {
         constructor() {
-            super("WizardStepPanels");
+            super("WizardStepDeckPanel");
+            this.addClass("step-panel")
         }
     }
 
-    export class WizardStepContainer extends api_dom.UlEl {
-        private deckPanel:WizardStepPanels;
+    export class WizardStepNavigator extends api_dom.UlEl {
+
+        private deckPanel:api_app_wizard.WizardStepDeckPanel;
+
         private steps:WizardStep[] = [];
 
-        constructor(deckPanel:WizardStepPanels) {
-            super("step-container", "step-container");
+        constructor(deckPanel:api_app_wizard.WizardStepDeckPanel) {
+            super("WizardStepNavigator", "step-navigator");
             this.deckPanel = deckPanel;
         }
 
