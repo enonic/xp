@@ -60,7 +60,7 @@ module api_dom {
             return this;
         }
 
-        addClass(clsName:string) {
+        addClass(clsName:string):ElementHelper {
             if (!this.hasClass(clsName)) {
                 if (this.el.className === '') {
                     this.el.className += clsName;
@@ -72,7 +72,7 @@ module api_dom {
             return this;
         }
 
-        setClass(value:string) {
+        setClass(value:string):ElementHelper {
             this.el.className = value;
             return this;
         }
@@ -81,7 +81,7 @@ module api_dom {
             return this.el.className.match(new RegExp('(\\s|^)' + clsName + '(\\s|$)')) !== null;
         }
 
-        removeClass(clsName:string) {
+        removeClass(clsName:string):ElementHelper {
             if (this.hasClass(clsName)) {
                 var reg = new RegExp('(\\s|^)' + clsName + '(\\s|$)');
                 this.el.className = this.el.className.replace(reg, '');
@@ -89,12 +89,12 @@ module api_dom {
             return this;
         }
 
-        addEventListener(eventName:string, f:(event:Event) => any) {
+        addEventListener(eventName:string, f:(event:Event) => any):ElementHelper {
             this.el.addEventListener(eventName, f);
             return this;
         }
 
-        removeEventListener(eventName:string, f:(event:Event) => any) {
+        removeEventListener(eventName:string, f:(event:Event) => any):ElementHelper {
             this.el.removeEventListener(eventName, f);
             return this;
         }
@@ -124,7 +124,7 @@ module api_dom {
             return this;
         }
 
-        getVisibility() {
+        getVisibility():string {
             return this.el.style.visibility;
         }
 
@@ -201,7 +201,7 @@ module api_dom {
             parent.removeChild(this.el);
         }
 
-        getOffset() {
+        getOffset():{ top:number; left:number; } {
             var el = this.el;
             var x = 0,
                 y = 0;

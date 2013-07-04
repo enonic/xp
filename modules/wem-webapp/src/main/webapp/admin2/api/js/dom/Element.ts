@@ -40,6 +40,25 @@ module api_dom {
             return displayed && visible && sized;
         }
 
+        setClass(className:string):api_dom.Element {
+            this.el.setClass(className);
+            return this;
+        }
+
+        addClass(className:string):api_dom.Element {
+            this.el.addClass(className);
+            return this;
+        }
+
+        hasClass(className:string):bool {
+            return this.el.hasClass(className);
+        }
+
+        removeClass(className:string):api_dom.Element {
+            this.el.removeClass(className);
+            return this;
+        }
+
         getId():string {
             return this.id;
         }
