@@ -5,6 +5,8 @@ module api_app_wizard {
         formIcon:FormIcon;
 
         toolbar:api_ui_toolbar.Toolbar;
+
+        saveAction:api_ui.Action;
     }
 
     export class WizardPanel extends api_ui.Panel {
@@ -36,6 +38,11 @@ module api_app_wizard {
             this.appendChild(this.wizardStepPanels);
 
             this.initExt();
+
+            params.saveAction.addExecutionListener( () => {
+
+                this.saveChanges();
+            });
         }
 
         private initExt() {
@@ -70,7 +77,6 @@ module api_app_wizard {
             this.stepContainer.addStep(step);
         }
 
-
         canClose():bool {
 
             if (this.hasUnsavedChanges()) {
@@ -97,7 +103,7 @@ module api_app_wizard {
          * Override this method in specific wizard to actual saving of changes.
          */
         saveChanges() {
-            // TODO
+
         }
     }
 

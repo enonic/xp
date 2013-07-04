@@ -30,7 +30,6 @@ module app_wizard {
 
             this.closeAction = new CloseContentPanelAction(this, true);
             this.saveAction = new SaveContentAction();
-            this.saveAction.addExecutionListener(this.handleSaveAction);
 
             this.duplicateAction = new DuplicateContentAction();
             this.deleteAction = new DeleteContentAction();
@@ -44,7 +43,8 @@ module app_wizard {
 
             super({
                 formIcon: this.formIcon,
-                toolbar: this.toolbar
+                toolbar: this.toolbar,
+                saveAction: this.saveAction
             });
 
             this.setDisplayName("New Content");
@@ -74,14 +74,15 @@ module app_wizard {
         }
 
         setData(result:api_remote.RemoteCallContentGetResult) {
-            // TODO: after ContentAppPanel is done
-            //this.setDisplayName(result.content.displayName);
-            //this.setName(result.content.name);
-            //this.formIcon.setSrc(result.content.iconUrl);
+
+            this.setDisplayName(result.content[0].displayName);
+            this.setName(result.content[0].name);
+            this.formIcon.setSrc(result.content[0].iconUrl);
         }
 
-        private handleSaveAction() {
-            console.log("ContentWizardPanel.handleSaveAction");
+        saveChanges() {
+
+            // TODO
         }
     }
 }
