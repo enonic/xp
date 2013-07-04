@@ -1,16 +1,21 @@
 package com.enonic.wem.admin.rest.resource.space.model;
 
+import com.enonic.wem.admin.rest.resource.model.Item;
 import com.enonic.wem.admin.rest.resource.space.SpaceImageUriResolver;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 public class SpaceSummaryJson
+    extends Item
 {
     private final Space space;
+
+    private final String iconUrl;
 
     public SpaceSummaryJson( final Space space )
     {
         this.space = space;
+        this.iconUrl = SpaceImageUriResolver.resolve( space.getName() );
     }
 
     public String getName()
@@ -40,7 +45,7 @@ public class SpaceSummaryJson
 
     public String getIconUrl()
     {
-        return SpaceImageUriResolver.resolve( space.getName() );
+        return iconUrl;
     }
 
     public boolean getEditable()

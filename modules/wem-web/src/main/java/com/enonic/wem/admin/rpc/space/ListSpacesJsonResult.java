@@ -8,7 +8,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.admin.json.JsonResult;
-import com.enonic.wem.admin.rpc.space.json.SpaceRowJson;
+import com.enonic.wem.admin.rest.resource.space.model.SpaceSummaryJson;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.Spaces;
 
@@ -34,7 +34,7 @@ final class ListSpacesJsonResult
         final ArrayNode spacesNode = arrayNode();
         for ( Space space : list )
         {
-            spacesNode.addPOJO( new SpaceRowJson( space ) );
+            spacesNode.addPOJO( new SpaceSummaryJson( space ) );
         }
         return spacesNode;
     }

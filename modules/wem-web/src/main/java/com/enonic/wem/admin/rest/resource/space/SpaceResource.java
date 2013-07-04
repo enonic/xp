@@ -14,8 +14,7 @@ import com.sun.jersey.api.NotFoundException;
 
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.space.model.SpaceJson;
-import com.enonic.wem.admin.rest.resource.space.model.SpaceResultJson;
-import com.enonic.wem.admin.rest.resource.space.model.SpaceSummaryJson;
+import com.enonic.wem.admin.rest.resource.space.model.SpaceSummaryListJson;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
@@ -43,16 +42,10 @@ public final class SpaceResource
 
     @GET
     @Path("list")
-    public SpaceResultJson list()
+    public SpaceSummaryListJson list()
     {
         final Spaces spaces = client.execute( Commands.space().get().all() );
-        final SpaceResultJson result = new SpaceResultJson();
-
-        for ( final Space space : spaces )
-        {
-            result.addSpace( new SpaceSummaryJson( space ) );
-        }
-
+        final SpaceSummaryListJson result = new SpaceSummaryListJson( spaces );
         return result;
     }
 

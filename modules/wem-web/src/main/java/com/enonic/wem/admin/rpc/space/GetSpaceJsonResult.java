@@ -4,7 +4,7 @@ package com.enonic.wem.admin.rpc.space;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.admin.json.JsonResult;
-import com.enonic.wem.admin.rpc.space.json.SpaceJson;
+import com.enonic.wem.admin.rest.resource.space.model.SpaceJson;
 import com.enonic.wem.api.space.Space;
 
 final class GetSpaceJsonResult
