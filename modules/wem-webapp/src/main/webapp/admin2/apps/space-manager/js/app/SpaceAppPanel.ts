@@ -65,7 +65,7 @@ module app {
                             var tabMenuItem = new SpaceAppBarTabMenuItem(result.space.displayName);
                             var id = this.generateTabId(result.space.name, true);
                             var spaceWizardPanel = new app_wizard.SpaceWizardPanel(id);
-                            spaceWizardPanel.setData(result);
+                            spaceWizardPanel.setPersistedItem(result.space);
 
                             this.addWizardPanel(tabMenuItem, spaceWizardPanel);
                             this.selectPanel(tabMenuItem);

@@ -25,8 +25,6 @@ module app_browse {
 
             GridSelectionChangeEvent.on((event) => {
 
-                console.log("selctionchange", event);
-
                 if (event.getModels().length == 0) {
                     this.browseItemPanel.setItems([]);
                 }

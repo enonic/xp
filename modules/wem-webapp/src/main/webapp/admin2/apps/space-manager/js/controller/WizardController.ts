@@ -22,11 +22,6 @@ Ext.define('Admin.controller.WizardController', {
             '#spaceAdminWizardPanel *[action=closeWizard]': {
                 click: me.closeWizard
             },
-            '#spaceAdminWizardPanel *[action=saveSpace]': {
-                click: (el) => {
-                    new app_wizard.SaveSpaceEvent().fire();
-                }
-            },
             '#spaceAdminWizardPanel *[action=deleteSpace]': {
                 click: function () {
                     this.deleteSpace(this.getWizardTab());
@@ -45,10 +40,6 @@ Ext.define('Admin.controller.WizardController', {
                     this.updateWizardToolbarButtons(isDirty, wizard.isWizardValid);
                 }
             }
-        });
-
-        app_wizard.SaveSpaceEvent.on((event) => {
-            me.saveSpace();
         });
     },
 

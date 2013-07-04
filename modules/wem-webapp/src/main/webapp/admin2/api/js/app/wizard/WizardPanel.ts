@@ -11,6 +11,8 @@ module api_app_wizard {
 
     export class WizardPanel extends api_ui.Panel {
 
+        private persistedItem:api_remote.Item;
+
         private wizardPanelHeader:WizardPanelHeader;
 
         private steps:WizardStep[] = [];
@@ -39,7 +41,7 @@ module api_app_wizard {
 
             this.initExt();
 
-            params.saveAction.addExecutionListener( () => {
+            params.saveAction.addExecutionListener(() => {
 
                 this.saveChanges();
             });
@@ -52,11 +54,19 @@ module api_app_wizard {
             });
         }
 
+        setPersistedItem(item:api_remote.Item) {
+            this.persistedItem = item;
+        }
+
+        isCreate():bool {
+            return !this.persistedItem;
+        }
+
         getIconUrl():string {
             return null; // TODO:
         }
 
-        getDisplayName():string{
+        getDisplayName():string {
             return this.wizardPanelHeader.getDisplayName();
         }
 
@@ -68,7 +78,7 @@ module api_app_wizard {
             this.wizardPanelHeader.setName(value);
         }
 
-        getName():string{
+        getName():string {
             return this.wizardPanelHeader.getName();
         }
 

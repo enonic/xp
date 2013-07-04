@@ -35,10 +35,21 @@ module api_remote {
         space: Space;
     }
 
-    export interface RemoteCallSpaceCreateOrUpdateParams {
+    export interface RemoteCallSpaceCreateParams extends RemoteCallSpaceCreateOrUpdateParams {
         spaceName:string;
         displayName:string;
         iconReference:string;
+    }
+
+    export interface RemoteCallSpaceUpdateParams extends RemoteCallSpaceCreateOrUpdateParams {
+        spaceName:string;
+        newSpaceName:string;
+        displayName:string;
+        iconReference:string;
+    }
+
+    export interface RemoteCallSpaceCreateOrUpdateParams {
+
     }
 
     export interface RemoteCallSpaceCreateOrUpdateResult extends RemoteCallResultBase {

@@ -24,6 +24,8 @@ module app_wizard {
 
         private templatesPanel:api_ui.Panel;
 
+        private persistedSpace:api_remote.Space;
+
         constructor(id:string) {
 
             this.formIcon = new api_app_wizard.FormIcon(SpaceWizardPanel.DEFAULT_SPACE_ICON_URL, "Click to upload icon", "rest/upload");
@@ -72,26 +74,49 @@ module app_wizard {
             this.addStep(new api_app_wizard.WizardStep("Templates", this.templatesPanel));
         }
 
-        setData(result:api_remote.RemoteCallSpaceGetResult) {
-            this.setDisplayName(result.space.displayName);
-            this.setName(result.space.name);
-            this.formIcon.setSrc(result.space.iconUrl);
+        setPersistedItem(space:api_remote.Space) {
+            super.setPersistedItem(space);
+
+            this.setDisplayName(space.displayName);
+            this.setName(space.name);
+            this.formIcon.setSrc(space.iconUrl);
+
+            this.persistedSpace = space;
         }
 
         saveChanges() {
 
-            var createParams:api_remote.RemoteCallSpaceCreateOrUpdateParams = {
-                spaceName: this.getName(),
-                displayName: this.getDisplayName(),
-                iconReference: this.getIconUrl()
-            };
+            if (this.isCreate()) {
 
-            api_remote.RemoteService.space_createOrUpdate(createParams, () => {
+                var createParams:api_remote.RemoteCallSpaceCreateParams = {
+                    spaceName: this.getName(),
+                    displayName: this.getDisplayName(),
+                    iconReference: this.getIconUrl()
+                };
 
-                new SavedSpaceEvent().fire();
-                api_notify.showFeedback('Space was saved!');
+                api_remote.RemoteService.space_createOrUpdate(createParams, () => {
 
-            });
+                    new app_wizard.SpaceCreatedEvent().fire();
+                    api_notify.showFeedback('Space was created!');
+
+                });
+            }
+            else {
+
+                var updateParams:api_remote.RemoteCallSpaceUpdateParams = {
+                    spaceName: this.persistedSpace.name,
+                    newSpaceName: this.getName(),
+                    displayName: this.getDisplayName(),
+                    iconReference: this.getIconUrl()
+                };
+
+                api_remote.RemoteService.space_createOrUpdate(updateParams, () => {
+
+                    new app_wizard.SpaceUpdatedEvent().fire();
+                    api_notify.showFeedback('Space was saved!');
+
+                });
+            }
         }
     }
 }

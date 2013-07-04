@@ -11,9 +11,13 @@ module  app_browse {
                 this.deselect(event.getModels()[0].data.name);
             });
 
-            app_wizard.SavedSpaceEvent.on( (event) => {
-                this.refresh();
-            } )
+            app_wizard.SpaceCreatedEvent.on((event) => {
+                //this.refresh(); // TODO: Uncomment when refresh works
+            });
+
+            app_wizard.SpaceUpdatedEvent.on((event) => {
+                //this.refresh(); // TODO: Uncomment when refresh works
+            });
         }
 
         private createGridStore() {
@@ -96,12 +100,12 @@ module  app_browse {
         private nameRenderer(value, metaData, record, rowIndex, colIndex, store, view) {
             // typescript swears when extracting this as the class field
             var nameTemplate = '<div class="admin-{0}-thumbnail">' +
-                                               '<img src="{1}"/>' +
-                                               '</div>' +
-                                               '<div class="admin-{0}-description">' +
-                                               '<h6>{2}</h6>' +
-                                               '<p>{3}</p>' +
-                                               '</div>';
+                               '<img src="{1}"/>' +
+                               '</div>' +
+                               '<div class="admin-{0}-description">' +
+                               '<h6>{2}</h6>' +
+                               '<p>{3}</p>' +
+                               '</div>';
 
             var space = record.data;
             var activeListType = this.getActiveList().getItemId();
