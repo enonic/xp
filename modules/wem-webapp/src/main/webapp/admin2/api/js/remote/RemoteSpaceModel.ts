@@ -1,22 +1,21 @@
 module api_remote {
 
-    export interface Space {
-        createdTime:Date;
-        deletable:bool;
-        displayName:string;
-        editable:bool;
-        iconUrl:string;
-        modifiedTime:Date;
-        name:string;
-        rootContentId:string;
+    export interface Space extends SpaceSummary {
+
     }
 
-    export interface SpaceSummary {
-        createdTime:Date;
+    export interface SpaceSummary extends Item {
+
         displayName:string;
-        iconUrl:string;
-        modifiedTime:Date;
+
         name:string;
+
+        iconUrl:string;
+
+        modifiedTime:Date;
+
+        createdTime:Date;
+
         rootContentId:string;
     }
 
@@ -25,7 +24,7 @@ module api_remote {
 
     export interface RemoteCallSpaceListResult extends RemoteCallResultBase {
         total: number;
-        spaces: Space[];
+        spaces: SpaceSummary[];
     }
 
     export interface RemoteCallSpaceGetParams {
@@ -33,7 +32,7 @@ module api_remote {
     }
 
     export interface RemoteCallSpaceGetResult extends RemoteCallResultBase {
-        space: SpaceSummary;
+        space: Space;
     }
 
     export interface RemoteCallSpaceCreateOrUpdateParams {

@@ -1,3 +1,4 @@
+///<reference path='RemoteBaseModel.ts' />
 ///<reference path='RemoteAccountModel.ts' />
 ///<reference path='RemoteContentTypeModel.ts' />
 ///<reference path='RemoteContentModel.ts' />
