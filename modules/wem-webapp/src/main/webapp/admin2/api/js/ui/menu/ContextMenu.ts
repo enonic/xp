@@ -4,7 +4,7 @@ module api_ui_menu{
         private menuItems:MenuItem[] = [];
 
         constructor(...actions:api_ui.Action[]) {
-            super("context-menu", "context-menu");
+            super("ContextMenu", "context-menu");
 
             api_dom.Body.get().prependChild(this);
 

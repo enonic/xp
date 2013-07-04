@@ -3,22 +3,26 @@
 @import "variables/color";
 @import "variables/font";
 @import "variables/mixins";
-  //Components
-@import "components/appbar";
-@import "components/appbar-tabmenu";
-@import "components/body-mask";
-@import "components/toolbar";
-@import "components/context-menu";
-@import "components/browse-item-panel";
-@import "components/browse-selection-item";
-@import "components/item-statistics-panel";
-@import "components/action-menu";
-@import "components/modal-dialog";
-@import "components/delete-dialog";
-@import "components/content-browse-toolbar";
-@import "components/wizardpanel";
-@import "components/tooltip";
-@import "components/progress-bar";
-@import "components/form-icon";
-@import "components/toggleslide";
-@import "components/splitpanel";
+
+// api
+@import "api/ui/body-mask";
+@import "api/ui/toolbar";
+@import "api/ui/tooltip";
+@import "api/ui/progress-bar";
+@import "api/ui/toggle-slide";
+@import "api/ui/split-panel";
+@import "api/ui/menu/context-menu";
+@import "api/ui/dialog/modal-dialog";
+@import "api/ui/menu/action-menu";
+
+@import "api/app/appbar";
+@import "api/app/appbar-tabmenu";
+@import "api/app/browse/browse-item-panel";
+@import "api/app/browse/browse-selection-item";
+@import "api/app/browse/item-statistics-panel";
+@import "api/app/delete/delete-dialog";
+@import "api/app/wizard/wizardpanel";
+@import "api/app/wizard/form-icon";
+
+// apps: content
+@import "apps/content/browse/content-browse-toolbar";

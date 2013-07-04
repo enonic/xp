@@ -58,9 +58,11 @@
 ///<reference path='ui/DeckPanel.ts' />
 ///<reference path='ui/SplitPanel.ts' />
 ///<reference path='ui/BodyMask.ts' />
+///<reference path='ui/Tooltip.ts' />
+///<reference path='ui/ProgressBar.ts' />
 ///<reference path='ui/AbstractButton.ts' />
+///<reference path='ui/ToggleSlide.ts' />
 ///<reference path='ui/toolbar/Toolbar.ts' />
-///<reference path='ui/toolbar/ToggleSlide.ts' />
 ///<reference path='ui/menu/MenuItem.ts' />
 ///<reference path='ui/menu/ContextMenu.ts' />
 ///<reference path='ui/menu/ActionMenu.ts' />
@@ -71,8 +73,6 @@
 ///<reference path='ui/tab/TabMenuButton.ts' />
 ///<reference path='ui/tab/TabMenuItem.ts' />
 ///<reference path='ui/NavigatedDeckPanel.ts' />
-///<reference path='ui/Tooltip.ts' />
-///<reference path='ui/ProgressBar.ts' />
 ///<reference path='ui/grid/TreeGridPanel.ts' />
 
 ///<reference path='app/wizard/FormIcon.ts' />

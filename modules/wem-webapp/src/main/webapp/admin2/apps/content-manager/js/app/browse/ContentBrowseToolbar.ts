@@ -14,7 +14,7 @@ module app_browse {
 
             super.addAction(app_browse.ContentBrowseActions.BROWSE_CONTENT_SETTINGS);
 
-            var displayModeToggle = new api_ui_toolbar.ToggleSlide({
+            var displayModeToggle = new api_ui.ToggleSlide({
                 turnOnAction: ContentBrowseActions.SHOW_PREVIEW,
                 turnOffAction: ContentBrowseActions.SHOW_DETAILS
             }, false);

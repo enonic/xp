@@ -1,4 +1,4 @@
-module api_ui_toolbar {
+module api_ui{
 
     export interface ToggleSlideActions {
 
