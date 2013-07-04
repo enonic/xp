@@ -39,7 +39,10 @@ module app_wizard {
                 };
 
                 api_remote.RemoteService.space_createOrUpdate(createParams, () => {
+
+                    new SavedSpaceEvent().fire();
                     api_notify.showFeedback('Space was saved!');
+
                 });
             });
 

@@ -10,6 +10,10 @@ module  app_browse {
             GridDeselectEvent.on((event) => {
                 this.deselect(event.getModels()[0].data.name);
             });
+
+            app_wizard.SavedSpaceEvent.on( (event) => {
+                this.refresh();
+            } )
         }
 
         private createGridStore() {

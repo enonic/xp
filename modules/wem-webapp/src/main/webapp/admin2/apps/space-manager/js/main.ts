@@ -21,6 +21,7 @@
 
 
 ///<reference path='app/wizard/CloseSpaceWizardPanelEvent.ts' />
+///<reference path='app/wizard/SavedSpaceEvent.ts' />
 ///<reference path='app/wizard/SaveSpaceEvent.ts' />
 ///<reference path='app/wizard/SpaceWizardActions.ts' />
 ///<reference path='app/wizard/SpaceWizardToolbar.ts' />
