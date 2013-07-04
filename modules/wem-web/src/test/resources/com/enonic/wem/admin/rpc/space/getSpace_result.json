@@ -2,7 +2,9 @@
     "success": true,
     "space": {
         "createdTime": "2000-01-01T12:00:00.000Z",
+        "deletable": true,
         "displayName": "My Space",
+        "editable": true,
         "iconUrl": "http://localhost/admin/rest/space/image/mySpace",
         "modifiedTime": "2000-01-01T12:00:00.000Z",
         "name": "mySpace",
