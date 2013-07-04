@@ -58,8 +58,8 @@ module api_app_wizard {
             this.persistedItem = item;
         }
 
-        isCreate():bool {
-            return !this.persistedItem;
+        isItemPersisted():bool {
+            return this.persistedItem != null;
         }
 
         getIconUrl():string {
@@ -109,10 +109,27 @@ module api_app_wizard {
             // TODO: You have unsaved changes - do you want to save before closing?
         }
 
-        /*
-         * Override this method in specific wizard to actual saving of changes.
-         */
         saveChanges() {
+
+            if (this.isItemPersisted()) {
+                this.updatePersistedItem();
+            }
+            else {
+                this.persistNewItem()
+            }
+        }
+
+        /*
+         * Override this method in specific wizard to do actual persisting of new item.
+         */
+        persistNewItem() {
+
+        }
+
+        /*
+         * Override this method in specific wizard to do actual update of item.
+         */
+        updatePersistedItem() {
 
         }
     }
@@ -126,10 +143,10 @@ module api_app_wizard {
         constructor() {
             super(null, "header");
             this.displayNameEl = new api_dom.Element("input", null, "displayName");
-            new api_ui.Tooltip(this.displayNameEl, "Display name", 100, api_ui.Tooltip.TRIGGER_FOCUS, api_ui.Tooltip.SIDE_RIGHT, [7,0]);
+            new api_ui.Tooltip(this.displayNameEl, "Display name", 100, api_ui.Tooltip.TRIGGER_FOCUS, api_ui.Tooltip.SIDE_RIGHT, [7, 0]);
             this.appendChild(this.displayNameEl);
             this.nameEl = new api_dom.Element("input", null, "name");
-            new api_ui.Tooltip(this.nameEl, "Name", 100, api_ui.Tooltip.TRIGGER_FOCUS, api_ui.Tooltip.SIDE_RIGHT, [7,0]);
+            new api_ui.Tooltip(this.nameEl, "Name", 100, api_ui.Tooltip.TRIGGER_FOCUS, api_ui.Tooltip.SIDE_RIGHT, [7, 0]);
             this.appendChild(this.nameEl);
         }
 

@@ -84,39 +84,37 @@ module app_wizard {
             this.persistedSpace = space;
         }
 
-        saveChanges() {
+        persistNewItem() {
 
-            if (this.isCreate()) {
+            var createParams:api_remote.RemoteCallSpaceCreateParams = {
+                spaceName: this.getName(),
+                displayName: this.getDisplayName(),
+                iconReference: this.getIconUrl()
+            };
 
-                var createParams:api_remote.RemoteCallSpaceCreateParams = {
-                    spaceName: this.getName(),
-                    displayName: this.getDisplayName(),
-                    iconReference: this.getIconUrl()
-                };
+            api_remote.RemoteService.space_createOrUpdate(createParams, () => {
 
-                api_remote.RemoteService.space_createOrUpdate(createParams, () => {
+                new app_wizard.SpaceCreatedEvent().fire();
+                api_notify.showFeedback('Space was created!');
 
-                    new app_wizard.SpaceCreatedEvent().fire();
-                    api_notify.showFeedback('Space was created!');
+            });
+        }
 
-                });
-            }
-            else {
+        updatePersistedItem() {
 
-                var updateParams:api_remote.RemoteCallSpaceUpdateParams = {
-                    spaceName: this.persistedSpace.name,
-                    newSpaceName: this.getName(),
-                    displayName: this.getDisplayName(),
-                    iconReference: this.getIconUrl()
-                };
+            var updateParams:api_remote.RemoteCallSpaceUpdateParams = {
+                spaceName: this.persistedSpace.name,
+                newSpaceName: this.getName(),
+                displayName: this.getDisplayName(),
+                iconReference: this.getIconUrl()
+            };
 
-                api_remote.RemoteService.space_createOrUpdate(updateParams, () => {
+            api_remote.RemoteService.space_createOrUpdate(updateParams, () => {
 
-                    new app_wizard.SpaceUpdatedEvent().fire();
-                    api_notify.showFeedback('Space was saved!');
+                new app_wizard.SpaceUpdatedEvent().fire();
+                api_notify.showFeedback('Space was saved!');
 
-                });
-            }
+            });
         }
     }
 }
