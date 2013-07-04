@@ -118,7 +118,7 @@ module api_app_wizard {
         }
 
         getDisplayName():string {
-            return this.displayNameEl.getEl().getInnerHtml();
+            return this.displayNameEl.getEl().getValue();
         }
 
         setDisplayName(value:string) {
@@ -126,7 +126,7 @@ module api_app_wizard {
         }
 
         getName():string {
-            return this.nameEl.getEl().getInnerHtml();
+            return this.nameEl.getEl().getValue();
         }
 
         setName(value:string) {
