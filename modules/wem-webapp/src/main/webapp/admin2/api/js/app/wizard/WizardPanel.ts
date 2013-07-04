@@ -45,12 +45,24 @@ module api_app_wizard {
             });
         }
 
+        getIconUrl():string {
+            return null; // TODO:
+        }
+
+        getDisplayName():string{
+            return this.wizardPanelHeader.getDisplayName();
+        }
+
         setDisplayName(value:string) {
             this.wizardPanelHeader.setDisplayName(value);
         }
 
         setName(value:string) {
             this.wizardPanelHeader.setName(value);
+        }
+
+        getName():string{
+            return this.wizardPanelHeader.getName();
         }
 
         addStep(step:WizardStep) {
@@ -105,8 +117,16 @@ module api_app_wizard {
             this.appendChild(this.nameEl);
         }
 
+        getDisplayName():string {
+            return this.displayNameEl.getEl().getInnerHtml();
+        }
+
         setDisplayName(value:string) {
             this.displayNameEl.getEl().setValue(value);
+        }
+
+        getName():string {
+            return this.nameEl.getEl().getInnerHtml();
         }
 
         setName(value:string) {

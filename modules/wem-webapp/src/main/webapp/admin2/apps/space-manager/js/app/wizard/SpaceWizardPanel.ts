@@ -30,7 +30,18 @@ module app_wizard {
 
             this.closeAction = new CloseSpacePanelAction(this, true);
             this.saveAction = new SaveSpaceAction();
-            this.saveAction.addExecutionListener(this.handleSaveAction);
+            this.saveAction.addExecutionListener( () => {
+
+                var createParams:api_remote.RemoteCallSpaceCreateOrUpdateParams = {
+                    spaceName: this.getName(),
+                    displayName: this.getDisplayName(),
+                    iconReference: this.getIconUrl()
+                };
+
+                api_remote.RemoteService.space_createOrUpdate(createParams, () => {
+                    api_notify.showFeedback('Space was saved!');
+                });
+            });
 
             this.duplicateAction = new DuplicateSpaceAction();
             this.deleteAction = new DeleteSpaceAction();
@@ -77,10 +88,6 @@ module app_wizard {
             this.setDisplayName(result.space.displayName);
             this.setName(result.space.name);
             this.formIcon.setSrc(result.space.iconUrl);
-        }
-
-        private handleSaveAction() {
-            console.log("SpacwWizardPanel.handleSaveAction");
         }
     }
 }

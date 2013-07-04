@@ -47,6 +47,10 @@ module api_dom {
             return this;
         }
 
+        getInnerHtml():string {
+            return this.el.innerHTML;
+        }
+
         setValue(value:string):ElementHelper {
             this.el.setAttribute("value", value);
             return this;

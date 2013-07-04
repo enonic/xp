@@ -39,7 +39,7 @@ module api_remote {
     export interface RemoteCallSpaceCreateOrUpdateParams {
         spaceName:string;
         displayName:string;
-        iconReference?:string;
+        iconReference:string;
     }
 
     export interface RemoteCallSpaceCreateOrUpdateResult extends RemoteCallResultBase {

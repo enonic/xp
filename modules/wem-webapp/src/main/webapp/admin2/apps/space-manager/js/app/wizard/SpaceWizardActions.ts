@@ -4,9 +4,6 @@ module app_wizard {
 
         constructor() {
             super("Save");
-            this.addExecutionListener(() => {
-                // TODO
-            });
         }
     }
 
@@ -14,9 +11,6 @@ module app_wizard {
 
         constructor() {
             super("Duplicate");
-            this.addExecutionListener(() => {
-                // TODO
-            });
         }
     }
 
@@ -25,9 +19,6 @@ module app_wizard {
         constructor() {
             super("Delete");
             this.setEnabled(false);
-            this.addExecutionListener(() => {
-                // TODO
-            });
         }
     }
 
