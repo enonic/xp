@@ -51,6 +51,10 @@ module api_dom {
             return this.el.innerHTML;
         }
 
+        getValue():string {
+            return (<any>this.el).value;
+        }
+
         setValue(value:string):ElementHelper {
             this.el.setAttribute("value", value);
             return this;
