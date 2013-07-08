@@ -1,0 +1,125 @@
+// NOT STABLE ENOUGH ACROSS BROWSERS YET
+// https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Flexible_boxes
+
+.display-flex(@dir, @justify, @align) {
+  display: -webkit-flex;
+  -webkit-flex-direction: @dir;
+  -webkit-justify-content: @justify;
+  -webkit-align-items: @align;
+
+  display: flex;
+  flex-direction: @dir;
+  justify-content: @justify;
+  align-items: @align;
+}
+
+.flex(@flex) {
+  -webkit-flex: @flex;
+
+  flex: @flex;
+}
+
+
+.new-dialog {
+
+  .node-list {
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .node-list-item {
+      cursor: pointer;
+      padding: 5px;
+
+      img {
+        height: 32px;
+        width: 32px;
+        display: block;
+        margin: 0 15px 0 10px;
+        float: left;
+      }
+
+      h6, p {
+        // important needed to override style in admin.css
+        margin: 0 0 0 57px !important;
+      }
+
+      &:hover {
+        background-color: #ebebeb;
+      }
+
+    }
+
+  }
+
+  .column {
+    height: 100%;
+    float: left;
+
+    &.column-left {
+      width: 38%;
+    }
+
+    &.column-right {
+      margin-left: 2%;
+      width: 60%;
+    }
+
+  }
+
+  .block {
+
+    &.recommended,
+    &.recent {
+
+      padding: 10px;
+      background-color: #ebebeb;
+
+      h4 {
+        margin-bottom: 10px;
+      }
+
+      .node-list {
+
+        .node-list-item:hover {
+          background-color: #fff;
+        }
+
+      }
+
+    }
+
+    &.recommended {
+
+      margin-bottom: 20px;
+
+      .node-list {
+        height: 44px;
+      }
+
+    }
+
+    &.recent {
+
+      .node-list {
+        height: 216px;
+      }
+
+    }
+
+    &.all {
+
+      input {
+        width: 100%;
+        margin-bottom: 20px;
+        padding: 4px 9px;
+      }
+
+      .node-list {
+        height: 332px;
+      }
+
+    }
+
+  }
+
+}

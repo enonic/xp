@@ -24,6 +24,7 @@
 ///<reference path='app/browse/ContentTreeGridPanel.ts' />
 ///<reference path='app/browse/ContentBrowseItemPanel.ts' />
 ///<reference path='app/browse/ContentBrowsePanel.ts' />
+///<reference path='app/browse/NewContentDialog.ts' />
 
 ///<reference path='app/ContentAppPanel.ts' />
 ///<reference path='app/ContentAppBarTabMenu.ts' />
@@ -118,6 +119,7 @@ module components {
     export var gridPanel:app_browse.ContentTreeGridPanel;
     export var detailPanel:app_browse.ContentBrowseItemPanel;
     export var contentDeleteDialog:app_delete.ContentDeleteDialog;
+    export var newContentDialog:app_browse.NewContentDialog;
 }
 
 Ext.application({
@@ -155,6 +157,7 @@ Ext.application({
         appPanel.init();
 
         components.contentDeleteDialog = new app_delete.ContentDeleteDialog();
+        components.newContentDialog = new app_browse.NewContentDialog();
     }
 });
 

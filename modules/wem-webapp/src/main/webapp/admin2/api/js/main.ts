@@ -45,12 +45,15 @@
 ///<reference path='dom/H2El.ts' />
 ///<reference path='dom/H3El.ts' />
 ///<reference path='dom/H4El.ts' />
+///<reference path='dom/H5El.ts' />
+///<reference path='dom/H6El.ts' />
 ///<reference path='dom/UlEl.ts' />
 ///<reference path='dom/LiEl.ts' />
 ///<reference path='dom/EmEl.ts' />
 ///<reference path='dom/ImgEl.ts' />
 ///<reference path='dom/SpanEl.ts' />
 ///<reference path='dom/ButtonEl.ts' />
+///<reference path='dom/PEl.ts' />
 
 ///<reference path='ui/KeyBindings.ts'/>
 ///<reference path='ui/Action.ts' />

@@ -37,14 +37,7 @@ module app {
             });
 
             app_browse.NewContentEvent.on((event) => {
-
-                // TODO: uncomment after wizard panel is ready
-                /*
-                var tabMenuItem = new ContentAppBarTabMenuItem("New Content");
-                var contentWizardPanel = new app_wizard.ContentWizardPanel('new-content');
-                this.addWizardPanel(tabMenuItem, contentWizardPanel);
-                this.selectPanel(tabMenuItem);
-                */
+                // Done in Controller.js
             });
 
             app_browse.OpenContentEvent.on((event) => {

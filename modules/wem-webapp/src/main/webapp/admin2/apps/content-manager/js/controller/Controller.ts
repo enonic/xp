@@ -17,7 +17,7 @@ Ext.define('Admin.controller.Controller', {
     init: function () {
 
         app_browse.NewContentEvent.on((event) => {
-            this.getNewContentWindow().doShow();
+            components.newContentDialog.open();
         });
 
         app_browse.OpenContentEvent.on((event) => {
