@@ -1,6 +1,6 @@
 module api_app_browse{
 
-    export class AppBrowsePanel extends api_ui.Panel {
+    export class BrowsePanel extends api_ui.Panel {
 
         private browseToolbar:api_ui_toolbar.Toolbar;
 
@@ -26,7 +26,7 @@ module api_app_browse{
             this.gridAndDetailSplitPanel = new api_ui.SplitPanel(this.gridContainer, this.browseItemPanel);
         }
 
-        init() {
+        afterRender() {
             this.appendChild(this.browseToolbar);
             this.appendChild(this.gridAndDetailSplitPanel);
             this.gridAndDetailSplitPanel.render();

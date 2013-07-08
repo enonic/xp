@@ -22,6 +22,9 @@ module api_ui {
             this.panelASpace = 50;
             this.panelBSpace = 50;
 
+            this.panelA.setDoOffset(false);
+            this.panelB.setDoOffset(false);
+
             this.appendChild(this.panelA);
             this.appendChild(this.splitter);
             this.appendChild(this.panelB);

@@ -10,6 +10,8 @@ module api_dom {
 
         private parent:Element;
 
+        private children:Element[];
+
         constructor(elementName:string, idPrefix?:string, className?:string, elHelper?:ElementHelper) {
             if (elHelper == null) {
                 this.el = ElementHelper.fromName(elementName);
@@ -23,6 +25,18 @@ module api_dom {
             if (className != null) {
                 this.el.setClass(className);
             }
+            this.children = [];
+        }
+
+        init() {
+            this.afterRender();
+            this.children.forEach((child) => {
+                child.init();
+            })
+        }
+
+        afterRender() {
+
         }
 
         className(value:string):Element {
@@ -85,6 +99,7 @@ module api_dom {
         appendChild(child:api_dom.Element) {
             this.el.appendChild(child.getEl().getHTMLElement());
             child.setParent(this);
+            this.children.push(child);
         }
 
         prependChild(child:api_dom.Element) {
@@ -118,6 +133,10 @@ module api_dom {
 
         getParent():Element {
             return this.parent;
+        }
+
+        getChildren():Element[] {
+            return this.children;
         }
 
         remove() {
