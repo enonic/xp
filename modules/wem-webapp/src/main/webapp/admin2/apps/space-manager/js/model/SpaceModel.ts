@@ -6,7 +6,7 @@ Ext.define('Admin.model.SpaceModel', {
         {name: 'createdTime', type: 'date', default: new Date()},
         {name: 'modifiedTime', type: 'date', default: new Date()},
         { name: 'editable', type: 'boolean' },
-        { name: 'deletable', type: 'boolean' },
+        { name: 'deletable', type: 'boolean' }
     ],
 
     idProperty: 'name'

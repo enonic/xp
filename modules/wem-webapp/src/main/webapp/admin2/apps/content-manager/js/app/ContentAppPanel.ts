@@ -16,10 +16,6 @@ module app {
             this.handleGlobalEvents();
         }
 
-        init() {
-            this.browsePanel.init();
-        }
-
         canRemovePanel(panel:api_ui.Panel, index:number):bool {
 
             if (panel instanceof api_app_wizard.WizardPanel) {
@@ -47,32 +43,32 @@ module app {
 
             app_browse.EditContentEvent.on((event) => {
 
-               // TODO: uncomment after wizard panel is ready
-               /*
-               var contents:api_model.ContentModel[] = event.getModels();
-                for (var i = 0; i < contents.length; i++) {
-                    var contentModel:api_model.ContentModel = contents[i];
+                // TODO: uncomment after wizard panel is ready
+                /*
+                 var contents:api_model.ContentModel[] = event.getModels();
+                 for (var i = 0; i < contents.length; i++) {
+                 var contentModel:api_model.ContentModel = contents[i];
 
-                    var contentGetParams:api_remote.RemoteCallContentGetParams = {
-                        "contentName": [contentModel.data.name]
-                    };
-                    api_remote.RemoteService.content_get(contentGetParams, (result:api_remote.RemoteCallContentGetResult) => {
+                 var contentGetParams:api_remote.RemoteCallContentGetParams = {
+                 "contentName": [contentModel.data.name]
+                 };
+                 api_remote.RemoteService.content_get(contentGetParams, (result:api_remote.RemoteCallContentGetResult) => {
 
-                        if (result) {
+                 if (result) {
 
-                            var tabMenuItem = new ContentAppBarTabMenuItem(result.content.displayName);
-                            var id = this.generateTabId(result.content.name, true);
-                            var conetntWizardPanel = new app_wizard.ContentWizardPanel(id);
-                            conetntWizardPanel.setData(result);
+                 var tabMenuItem = new ContentAppBarTabMenuItem(result.content.displayName);
+                 var id = this.generateTabId(result.content.name, true);
+                 var conetntWizardPanel = new app_wizard.ContentWizardPanel(id);
+                 conetntWizardPanel.setData(result);
 
-                            this.addWizardPanel(tabMenuItem, conetntWizardPanel);
-                            this.selectPanel(tabMenuItem);
-                        } else {
-                            console.error("Error", result ? result.error : "Unable to retrieve content.");
-                        }
-                    });
-                }
-                */
+                 this.addWizardPanel(tabMenuItem, conetntWizardPanel);
+                 this.selectPanel(tabMenuItem);
+                 } else {
+                 console.error("Error", result ? result.error : "Unable to retrieve content.");
+                 }
+                 });
+                 }
+                 */
             });
 
         }
