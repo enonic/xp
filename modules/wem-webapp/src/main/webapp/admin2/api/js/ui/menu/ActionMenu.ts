@@ -30,12 +30,10 @@ module api_ui_menu {
 
         show() {
             this.list.show();
-            this.getEl().addClass("expanded");
         }
 
         hide() {
             this.list.hide();
-            this.getEl().removeClass("expanded");
         }
 
         setEnabled(enabled:bool) {

@@ -8,6 +8,10 @@ module api_dom {
 
         private id:string;
 
+        private parent:Element;
+
+        private children:Element[];
+
         constructor(elementName:string, idPrefix?:string, className?:string, elHelper?:ElementHelper) {
             if (elHelper == null) {
                 this.el = ElementHelper.fromName(elementName);
@@ -21,6 +25,23 @@ module api_dom {
             if (className != null) {
                 this.el.setClass(className);
             }
+            this.children = [];
+        }
+
+        init() {
+            this.afterRender();
+            this.children.forEach((child) => {
+                child.init();
+            })
+        }
+
+        afterRender() {
+
+        }
+
+        className(value:string):Element {
+            this.getHTMLElement().className = value;
+            return this;
         }
 
         show() {
@@ -38,6 +59,10 @@ module api_dom {
             var visible = this.el.getVisibility() != "hidden";
             var sized = this.el.getWidth() != 0 || this.el.getHeight() != 0;
             return displayed && visible && sized;
+        }
+        
+        empty() {
+            this.el.setInnerHtml("");
         }
 
         setClass(className:string):api_dom.Element {
@@ -73,6 +98,8 @@ module api_dom {
 
         appendChild(child:api_dom.Element) {
             this.el.appendChild(child.getEl().getHTMLElement());
+            child.setParent(this);
+            this.children.push(child);
         }
 
         prependChild(child:api_dom.Element) {
@@ -98,6 +125,18 @@ module api_dom {
             while (htmlEl.firstChild) {
                 htmlEl.removeChild(htmlEl.firstChild);
             }
+        }
+
+        private setParent(parent:Element) {
+            this.parent = parent;
+        }
+
+        getParent():Element {
+            return this.parent;
+        }
+
+        getChildren():Element[] {
+            return this.children;
         }
 
         remove() {

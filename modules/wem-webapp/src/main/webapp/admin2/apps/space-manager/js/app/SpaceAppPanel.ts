@@ -16,10 +16,6 @@ module app {
             this.handleGlobalEvents();
         }
 
-        init() {
-            this.browsePanel.init();
-        }
-
         canRemovePanel(panel:api_ui.Panel, index:number):bool {
 
             if (panel instanceof api_app_wizard.WizardPanel) {
