@@ -65,15 +65,18 @@ module api_ui {
 
         private lastY:number;
 
+        private splitPanelOffset:number;
+
 
         constructor(splitPanel:SplitPanel) {
             super("splitter");
             this.splitPanel = splitPanel;
             this.getEl().addClass("splitter");
             this.createGhostDragger();
+
             this.dragListener = (e:MouseEvent) => {
                 this.lastY = e.clientY;
-                this.ghostDragger.getEl().setTopPx(this.lastY);
+                this.ghostDragger.getEl().setTopPx(this.lastY-this.getSplitPanelOffset());
             };
         }
 
@@ -92,9 +95,16 @@ module api_ui {
             })
         }
 
+        private getSplitPanelOffset() {
+            if (!this.splitPanelOffset || this.splitPanelOffset == 0) {
+                this.splitPanelOffset = this.splitPanel.getCumulativeOffsetTop();
+            }
+            return this.splitPanelOffset;
+        }
+
         private stopDrag() {
             this.splitPanel.getEl().removeClass("dragging");
-            var aSize = this.lastY / this.splitPanel.getHTMLElement().offsetHeight * 100;
+            var aSize = (this.lastY-this.getSplitPanelOffset()) / this.splitPanel.getHTMLElement().offsetHeight * 100;
             var bSize = 100 - aSize;
             if (aSize != 0 && bSize != 0) {
                 this.splitPanel.setDistribution(aSize, bSize);

@@ -60,7 +60,7 @@ module api_dom {
             var sized = this.el.getWidth() != 0 || this.el.getHeight() != 0;
             return displayed && visible && sized;
         }
-        
+
         empty() {
             this.el.setInnerHtml("");
         }
@@ -99,6 +99,7 @@ module api_dom {
         appendChild(child:api_dom.Element) {
             this.el.appendChild(child.getEl().getHTMLElement());
             child.setParent(this);
+            console.log("setting parent for ", child);
             this.children.push(child);
         }
 
@@ -137,6 +138,17 @@ module api_dom {
 
         getChildren():Element[] {
             return this.children;
+        }
+
+        getCumulativeOffsetTop() {
+            var top = 0;
+            var element = this.el.getHTMLElement();
+            do {
+                top += parseInt(element.style.top, 10) || 0;
+                element = element.parentElement;
+            } while (element);
+
+            return top;
         }
 
         remove() {
