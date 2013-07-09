@@ -122,7 +122,7 @@ module app_browse {
 
             var content = record.data;
             var activeListType = this.getActiveList().getItemId();
-            return Ext.String.format(nameTemplate, activeListType, content.iconUrl, value, content.name);
+            return Ext.String.format(nameTemplate, activeListType, content.iconUrl, value, content.path);
         }
 
         private statusRenderer() {
