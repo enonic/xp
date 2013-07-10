@@ -48,15 +48,11 @@
 ///<reference path='lib/Sortable.ts' />
 
 ///<reference path='view/BaseDialogWindow.ts' />
-///<reference path='view/AdminImageButton.ts' />
 ///<reference path='view/BaseFilterPanel.ts' />
 ///<reference path='view/FilterPanel.ts' />
 
-///<reference path='view/DetailToolbar.ts' />
 ///<reference path='view/LivePreview.ts' />
-///<reference path='view/DropDownButton.ts' />
 ///<reference path='view/IframeContainer.ts' />
-///<reference path='view/NewContentWindow.ts' />
 ///<reference path='view/FileUploadWindow.ts' />
 ///<reference path='view/AutosizeTextField.ts' />
 ///<reference path='view/WizardHeader.ts' />
@@ -98,15 +94,8 @@
 
 ///<reference path='controller/BaseController.ts' />
 ///<reference path='controller/Controller.ts' />
-///<reference path='controller/TopBarController.ts' />
-///<reference path='controller/DetailPanelController.ts' />
-///<reference path='controller/FilterPanelController.ts' />
-///<reference path='controller/BrowseToolbarController.ts' />
-///<reference path='controller/DetailToolbarController.ts' />
 ///<reference path='controller/ContentController.ts' />
 ///<reference path='controller/ContentWizardController.ts' />
-///<reference path='controller/ContentPreviewController.ts' />
-///<reference path='controller/DialogWindowController.ts' />
 
 
 declare var Ext;
@@ -130,14 +119,7 @@ Ext.application({
     controllers: [
         'Admin.controller.BaseController',
         'Admin.controller.Controller',
-        'Admin.controller.TopBarController',
-        'Admin.controller.DetailPanelController',
-        'Admin.controller.FilterPanelController',
-        'Admin.controller.BrowseToolbarController',
-        'Admin.controller.DetailToolbarController',
-        'Admin.controller.ContentWizardController',
-        'Admin.controller.ContentPreviewController',
-        'Admin.controller.DialogWindowController'
+        'Admin.controller.ContentWizardController'
     ],
 
     /*    requires: [
