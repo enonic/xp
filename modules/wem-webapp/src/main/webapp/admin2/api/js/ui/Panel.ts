@@ -11,6 +11,7 @@ module api_ui {
 
         afterRender() {
             if(this.doOffset) {
+                console.log(this.getHTMLElement());
                 this.calculateOffset();
             }
         }

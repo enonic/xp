@@ -39,12 +39,17 @@ module api_app_wizard {
             this.appendChild(this.stepNavigator);
             this.appendChild(this.stepPanels);
 
-            this.initExt();
+            //this.initExt();
 
             params.saveAction.addExecutionListener(() => {
 
                 this.saveChanges();
             });
+        }
+
+        afterRender() {
+            console.log("afterrender wizardPanel");
+            super.afterRender();
         }
 
         private initExt() {
@@ -170,7 +175,7 @@ module api_app_wizard {
     export class WizardStepDeckPanel extends api_ui.DeckPanel {
         constructor() {
             super("WizardStepDeckPanel");
-            this.addClass("step-panel")
+            this.addClass("step-panel");
         }
     }
 
@@ -180,6 +185,8 @@ module api_app_wizard {
 
         private steps:WizardStep[] = [];
 
+        private activeStepIndex:number;
+
         constructor(deckPanel:api_app_wizard.WizardStepDeckPanel) {
             super("WizardStepNavigator", "step-navigator");
             this.deckPanel = deckPanel;
@@ -188,22 +195,50 @@ module api_app_wizard {
         addStep(step:WizardStep) {
             this.steps.push(step);
             var panelIndex = this.deckPanel.addPanel(step.getPanel());
-            if (panelIndex == 0) {
-                this.deckPanel.showPanel(0);
-            }
+
 
             var stepEl = new api_dom.LiEl(step.getLabel());
             step.setEl(stepEl);
             stepEl.getEl().setInnerHtml(step.getLabel());
             stepEl.getEl().addEventListener("click", (event) => {
-                this.removeActive();
-                step.setActive(true);
-                this.deckPanel.showPanel(panelIndex);
+                this.showStep(step);
             });
             if (this.steps.length == 1) {
                 step.setActive(true);
             }
+            step.setIndex(panelIndex);
+
+            if (panelIndex == 0) {
+                this.showStep(step);
+            }
             this.appendChild(stepEl);
+        }
+
+        showStep(step:WizardStep) {
+            this.removeActive();
+            step.setActive(true);
+            this.deckPanel.showPanel(step.getIndex());
+            this.activeStepIndex = step.getIndex();
+        }
+
+        nextStep() {
+            var step;
+            if (this.activeStepIndex >= this.steps.length) {
+                step = this.steps[this.steps.length];
+            } else {
+                step = this.steps[this.activeStepIndex+1];
+            }
+            this.showStep(step);
+        }
+
+        previousStep() {
+            var step;
+            if (this.activeStepIndex == 0) {
+                step = this.steps[0];
+            } else {
+                step = this.steps[this.activeStepIndex-1];
+            }
+            this.showStep(step);
         }
 
         private removeActive() {
@@ -218,10 +253,19 @@ module api_app_wizard {
         private panel:api_ui.Panel;
         private active:bool;
         private el:api_dom.Element;
+        private index:number;
 
         constructor(label:string, panel:api_ui.Panel) {
             this.label = label;
             this.panel = panel;
+        }
+
+        setIndex(index:number) {
+            this.index = index;
+        }
+
+        getIndex() {
+            return this.index;
         }
 
         setEl(el:api_dom.Element) {

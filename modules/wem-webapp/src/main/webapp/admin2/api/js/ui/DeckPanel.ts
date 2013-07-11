@@ -29,6 +29,7 @@ module api_ui {
         addPanel(panel:Panel):number {
             panel.hide();
             this.appendChild(panel);
+            console.log("adding panel", panel.getHTMLElement(), this.isRendered());
             return this.panels.push(panel) - 1;
         }
 

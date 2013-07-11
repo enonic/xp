@@ -12,7 +12,10 @@ module api_dom {
 
         private children:Element[];
 
+        private rendered:bool;
+
         constructor(elementName:string, idPrefix?:string, className?:string, elHelper?:ElementHelper) {
+            this.rendered = false;
             if (elHelper == null) {
                 this.el = ElementHelper.fromName(elementName);
             } else {
@@ -29,7 +32,11 @@ module api_dom {
         }
 
         init() {
-            this.afterRender();
+            if (!this.isRendered()) {
+                this.afterRender();
+                this.rendered = true;
+            }
+
             this.children.forEach((child) => {
                 child.init();
             })
@@ -99,8 +106,11 @@ module api_dom {
         appendChild(child:api_dom.Element) {
             this.el.appendChild(child.getEl().getHTMLElement());
             child.setParent(this);
-            console.log("setting parent for ", child);
             this.children.push(child);
+            console.log("appending " + child.getId() + " to " + this.getId(), this.isRendered());
+            if (this.isRendered()) {
+                child.init();
+            }
         }
 
         prependChild(child:api_dom.Element) {
@@ -154,6 +164,10 @@ module api_dom {
         remove() {
             var htmlEl = this.el.getHTMLElement();
             htmlEl.parentNode.removeChild(htmlEl);
+        }
+
+        isRendered():bool {
+            return this.rendered;
         }
     }
 }
