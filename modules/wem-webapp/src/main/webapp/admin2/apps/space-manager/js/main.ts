@@ -20,18 +20,18 @@
 ///<reference path='view/FilterPanel.ts' />
 
 /*///<reference path='app/event/SaveSpaceEvent.ts' />
-///<reference path='app/event/DeletedEvent.ts' />
-///<reference path='app/event/BaseSpaceModelEvent.ts' />
-///<reference path='app/event/DeletePromptEvent.ts' />
-///<reference path='app/event/GridSelectionChangeEvent.ts' />
-///<reference path='app/event/GridDeselectEvent.ts' />
-///<reference path='app/event/ShowContextMenuEvent.ts' />
-///<reference path='app/event/NewSpaceEvent.ts' />
-///<reference path='app/event/OpenSpaceEvent.ts' />
-///<reference path='app/event/EditSpaceEvent.ts' />
-///<reference path='app/event/CloseActiveSpacePanelEvent.ts' />*/
+ ///<reference path='app/event/DeletedEvent.ts' />
+ ///<reference path='app/event/BaseSpaceModelEvent.ts' />
+ ///<reference path='app/event/DeletePromptEvent.ts' />
+ ///<reference path='app/event/GridSelectionChangeEvent.ts' />
+ ///<reference path='app/event/GridDeselectEvent.ts' />
+ ///<reference path='app/event/ShowContextMenuEvent.ts' />
+ ///<reference path='app/event/NewSpaceEvent.ts' />
+ ///<reference path='app/event/OpenSpaceEvent.ts' />
+ ///<reference path='app/event/EditSpaceEvent.ts' />
+ ///<reference path='app/event/CloseActiveSpacePanelEvent.ts' />*/
 
-///<reference path='app/wizard/CloseSpaceWizardPanelEvent.ts' />
+///<reference path='app/wizard/SpaceCloseWizardPanelEvent.ts' />
 ///<reference path='app/wizard/SpaceCreatedEvent.ts' />
 ///<reference path='app/wizard/SpaceUpdatedEvent.ts' />
 ///<reference path='app/wizard/SpaceWizardActions.ts' />

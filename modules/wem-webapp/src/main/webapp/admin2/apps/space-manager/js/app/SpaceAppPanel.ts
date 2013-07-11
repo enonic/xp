@@ -72,7 +72,18 @@ module app {
                 }
             });
 
-            app_wizard.CloseSpaceWizardPanelEvent.on((event) => {
+            api_ui_tab.TabMenuItemSelectEvent.on((event) => {
+                this.appBarTabMenu.hideMenu();
+                this.selectPanel(event.getTab());
+            });
+
+            api_ui_tab.TabMenuItemCloseEvent.on((event) => {
+                var tabIndex = event.getTab().getIndex();
+                var panel = this.getPanel(tabIndex);
+                new app_wizard.SpaceCloseWizardPanelEvent(panel, true).fire();
+            });
+
+            app_wizard.SpaceCloseWizardPanelEvent.on((event) => {
                 this.removePanel(event.getPanel(), event.isCheckCanRemovePanel());
             });
         }

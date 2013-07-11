@@ -21,6 +21,9 @@ module api_app_wizard {
 
         private stepPanels:api_app_wizard.WizardStepDeckPanel;
 
+        // TODO: @alb - Value is set to 'changed' by default to see SaveChangesBeforeCloseDialog behavior.
+        private isChanged:bool = true;
+
         ext;
 
         constructor(params:WizardPanelParams) {
@@ -37,7 +40,8 @@ module api_app_wizard {
             this.stepPanels = new api_app_wizard.WizardStepDeckPanel();
             this.stepNavigator = new WizardStepNavigator(this.stepPanels);
             this.appendChild(this.stepNavigator);
-            this.appendChild(this.stepPanels);
+            // TODO: @alb - Remove comment to display stepPanels. Commented because it breaks wizard layout.
+            // this.appendChild(this.stepPanels);
 
             this.initExt();
 
@@ -102,7 +106,7 @@ module api_app_wizard {
          * Override this method in specific wizard to do proper check.
          */
         hasUnsavedChanges():bool {
-            return false;
+            return this.isChanged;
         }
 
         askUserForSaveChangesBeforeClosing() {
@@ -115,8 +119,10 @@ module api_app_wizard {
                 this.updatePersistedItem();
             }
             else {
-                this.persistNewItem()
+                this.persistNewItem();
             }
+
+            this.isChanged = false;
         }
 
         /*

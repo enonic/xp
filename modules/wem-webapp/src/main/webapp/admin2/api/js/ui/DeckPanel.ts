@@ -7,7 +7,7 @@ module api_ui {
 
         private panels:Panel[] = [];
 
-        private panelShown:number = -1;
+        private panelShown:Panel = null;
 
         constructor(idPrefix?:string) {
             super(idPrefix || "DeckPanel");
@@ -41,11 +41,11 @@ module api_ui {
         }
 
         getPanelShown():Panel {
-            return this.panels[this.panelShown];
+            return this.panelShown;
         }
 
         getPanelShownIndex():number {
-            return this.panelShown;
+            return this.getPanelIndex(this.panelShown);
         }
 
         getPanelIndex(panel:Panel):number {
@@ -65,15 +65,12 @@ module api_ui {
         removePanel(panelToRemove:Panel, checkCanRemovePanel?:bool = true):number {
 
             var panelIndex:number = this.getPanelIndex(panelToRemove);
-            if (panelIndex > -1) {
-                if (this.doRemovePanel(panelToRemove, panelIndex, checkCanRemovePanel)) {
-                    return panelIndex;
-                }
-                else {
-                    return -1;
-                }
+
+            if (panelIndex < 0) {
+                return panelIndex;
             }
-            return panelIndex;
+
+            return this.doRemovePanel(panelToRemove, panelIndex, checkCanRemovePanel) ? panelIndex : -1;
         }
 
         /*
@@ -81,15 +78,8 @@ module api_ui {
          * @returns {Panel} the removed panel. Null if not was not removable.
          */
         removePanelByIndex(index:number, checkCanRemovePanel?:bool = true):Panel {
-
             var panelToRemove = this.panels[index];
-
-            if (this.doRemovePanel(panelToRemove, index, checkCanRemovePanel)) {
-                return panelToRemove;
-            }
-            else {
-                return null;
-            }
+            return this.removePanel(panelToRemove, checkCanRemovePanel) ? panelToRemove : null;
         }
 
         /*
@@ -108,42 +98,31 @@ module api_ui {
             }
 
             panelToRemove.getEl().remove();
-            var removingLastPanel:bool = this.panels.length == index + 1;
+            var panelToRemoveIsLast:bool = panelToRemove == this.getLastPanel();
             var panelToRemoveIsShown:bool = this.isShownPanel(index);
 
             this.panels.splice(index, 1);
 
             if (this.isEmpty()) {
-                this.panelShown = -1;
+                this.panelShown = null;
             }
             else if (panelToRemoveIsShown) {
-
-                if (removingLastPanel) {
-                    this.getLastPanel().show();
-                    this.panelShown = this.panels.length - 1;
-                }
-                else {
-                    this.panels[index].show();
-                }
+                this.showPanel(panelToRemoveIsLast ? this.panels.length - 1 : index);
             }
             return true;
         }
 
         private isShownPanel(panelIndex:number):bool {
-            return this.panelShown === panelIndex;
+            return this.panelShown === this.panels[panelIndex];
         }
 
         showPanel(index:number) {
-            for (var i:number = 0; i < this.panels.length; i++) {
-                var panel = this.panels[i];
-                if (i === index) {
-                    panel.show();
-                    this.panelShown = index;
-                }
-                else {
-                    panel.hide();
-                }
+            if (this.panelShown != null) {
+                this.panelShown.hide();
             }
+
+            this.panelShown = this.panels[index];
+            this.panelShown.show();
         }
     }
 }
