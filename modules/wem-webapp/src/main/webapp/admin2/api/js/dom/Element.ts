@@ -32,6 +32,10 @@ module api_dom {
         }
 
         init() {
+            if (this.getId()) {
+                console.log("exsists in dom: ",  document.getElementById(this.getId()));
+                console.log("height is : " + document.getElementById(this.getId()).offsetHeight);
+            }
             if (!this.isRendered()) {
                 this.afterRender();
                 this.rendered = true;

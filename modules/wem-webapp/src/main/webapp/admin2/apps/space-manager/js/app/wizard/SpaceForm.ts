@@ -4,6 +4,7 @@ module app_wizard {
 
         constructor() {
             super("SpaceForm");
+            //this.removeClass("panel");
 
             var h1El = new api_dom.H1El();
             h1El.getEl().setInnerHtml("SpaceForm: TODO");

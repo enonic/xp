@@ -176,6 +176,12 @@ module api_app_wizard {
         constructor() {
             super("WizardStepDeckPanel");
             this.addClass("step-panel");
+            //this.removeClass("panel");
+        }
+
+        afterRender() {
+            console.log("after render in wizardstepdeckpanel");
+            super.afterRender();
         }
     }
 
