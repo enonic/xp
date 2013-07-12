@@ -54,6 +54,7 @@
 ///<reference path='dom/SpanEl.ts' />
 ///<reference path='dom/ButtonEl.ts' />
 ///<reference path='dom/PEl.ts' />
+///<reference path='dom/InputEl.ts' />
 
 ///<reference path='ui/KeyBindings.ts'/>
 ///<reference path='ui/Action.ts' />
@@ -108,6 +109,7 @@
 ///<reference path='content/data/ContentData.ts' />
 ///<reference path='content/data/Property.ts' />
 
+///<reference path='ui/TextInput.ts' />
 ///<reference path='schema/content/form/FormItem.ts' />
 ///<reference path='schema/content/form/InputType.ts' />
 ///<reference path='schema/content/form/Input.ts' />
