@@ -12,12 +12,18 @@ module  app_browse {
             });
 
             app_wizard.SpaceCreatedEvent.on((event) => {
-                //this.refresh(); // TODO: Uncomment when refresh works
+                this.setRefreshNeeded(true);
             });
 
             app_wizard.SpaceUpdatedEvent.on((event) => {
-                //this.refresh(); // TODO: Uncomment when refresh works
+                this.setRefreshNeeded(true);
             });
+
+            api_ui.DeckPanelShownPanelChangedEvent.on((event:api_ui.DeckPanelShownPanelChangedEvent) => {
+                if (event.index == 0 && this.isRefreshNeeded()) {
+                    this.refresh();
+                }
+            })
         }
 
         private createGridStore() {

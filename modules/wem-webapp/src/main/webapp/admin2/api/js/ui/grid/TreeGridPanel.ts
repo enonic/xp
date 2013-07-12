@@ -15,6 +15,7 @@ module api_ui_grid {
         private keyField:string = 'name';
         private activeList:string = "grid";
         private itemId:string;
+        private refreshNeeded:bool = false;
 
         //TODO: move to constructor after ext has been dropped
         create(region?:string, renderTo?:string) {
@@ -22,7 +23,6 @@ module api_ui_grid {
             this.ext = <any> new Ext.panel.Panel({
                 region: region,
                 renderTo: renderTo,
-                flex: 1,
                 layout: 'card',
                 border: false,
                 activeItem: this.activeList,
@@ -144,7 +144,7 @@ module api_ui_grid {
          * Switches the view
          * @param listId the view to show can be either of TreeGridPanel.GRID or TreeGridPanel.TREE
          */
-            setActiveList(listId) {
+        setActiveList(listId) {
             this.activeList = listId;
             if (this.ext) {
                 (<Ext_layout_container_Card> this.ext.getLayout()).setActiveItem(listId);
@@ -174,6 +174,15 @@ module api_ui_grid {
             } else {
                 activeStore.load();
             }
+            this.refreshNeeded = false;
+        }
+
+        isRefreshNeeded(): bool {
+            return this.refreshNeeded;
+        }
+
+        setRefreshNeeded(refreshNeeded:bool) {
+            this.refreshNeeded = refreshNeeded;
         }
 
         removeAll() {

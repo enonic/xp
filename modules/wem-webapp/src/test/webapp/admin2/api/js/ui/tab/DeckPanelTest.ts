@@ -2,6 +2,8 @@
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/jquery.d.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ExtJs.d.ts' />
 
+///<reference path='../../../../../../../main/webapp/admin2/api/js/event/Event.ts' />
+///<reference path='../../../../../../../main/webapp/admin2/api/js/event/EventBus.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/ElementHelper.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/Element.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/DivEl.ts' />

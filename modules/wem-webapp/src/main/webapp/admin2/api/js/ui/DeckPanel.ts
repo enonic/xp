@@ -118,14 +118,17 @@ module api_ui {
                 this.panelShown = -1;
             }
             else if (panelToRemoveIsShown) {
-
+                var panel;
                 if (removingLastPanel) {
-                    this.getLastPanel().show();
+                    panel = this.getLastPanel();
                     this.panelShown = this.panels.length - 1;
                 }
                 else {
-                    this.panels[index].show();
+                    panel = this.panels[index];
+                    this.panelShown = index;
                 }
+                panel.show();
+                new DeckPanelShownPanelChangedEvent(panel, this.panelShown).fire();
             }
             return true;
         }
@@ -140,11 +143,30 @@ module api_ui {
                 if (i === index) {
                     panel.show();
                     this.panelShown = index;
+                    new DeckPanelShownPanelChangedEvent(panel, this.panelShown).fire();
                 }
                 else {
                     panel.hide();
                 }
             }
         }
+    }
+
+    export class DeckPanelShownPanelChangedEvent extends api_event.Event {
+
+        panel:api_ui.Panel;
+        index:number;
+
+        constructor(panel:api_ui.Panel, index:number) {
+            super("deckPanelShownPanelChangedEvent");
+            this.panel = panel;
+            this.index = index;
+        }
+
+        static on(handler:(event:DeckPanelShownPanelChangedEvent) => void) {
+            api_event.onEvent('deckPanelShownPanelChangedEvent', handler);
+        }
+
+
     }
 }
