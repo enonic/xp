@@ -23,7 +23,7 @@ module api_app_delete{
 
             this.getEl().addClass("delete-dialog");
             this.appendChildToContentPanel(this.itemList);
-            this.setCancelAction(this.cancelAction);
+            this.addAction(this.cancelAction);
 
             this.cancelAction.addExecutionListener(()=> {
                 this.close();

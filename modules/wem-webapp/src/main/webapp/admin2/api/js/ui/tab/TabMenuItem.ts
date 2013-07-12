@@ -29,15 +29,12 @@ module api_ui_tab {
             this.appendChild(removeButton);
 
             this.labelEl.getEl().addEventListener("click", () => {
-                this.tabMenu.handleTabClickedEvent(this);
+                new TabMenuItemSelectEvent(this).fire();
             });
 
             removeButton.getEl().addEventListener("click", () => {
                 if (this.removable) {
-                    this.tabMenu.handleTabRemoveButtonClickedEvent(this);
-                    if (this.tabMenu.getSize() == 0) {
-                        this.tabMenu.hideMenu();
-                    }
+                    new TabMenuItemCloseEvent(this).fire();
                 }
             });
         }
@@ -90,6 +87,44 @@ module api_ui_tab {
             if (this.tabMenu) {
                 this.tabMenu.removeChild(this);
             }
+        }
+    }
+
+    export class TabMenuItemSelectEvent extends api_event.Event {
+
+        private item:TabMenuItem;
+
+        constructor(item:TabMenuItem) {
+            super('tabMenuItemSelect');
+
+            this.item = item;
+        }
+
+        getTab():TabMenuItem {
+            return this.item;
+        }
+
+        static on(handler:(event:TabMenuItemSelectEvent) => void) {
+            api_event.onEvent('tabMenuItemSelect', handler);
+        }
+    }
+
+    export class TabMenuItemCloseEvent extends api_event.Event {
+
+        private item:TabMenuItem;
+
+        constructor(item:TabMenuItem) {
+            super('tabMenuItemClose');
+
+            this.item = item;
+        }
+
+        getTab():TabMenuItem {
+            return this.item;
+        }
+
+        static on(handler:(event:TabMenuItemCloseEvent) => void) {
+            api_event.onEvent('tabMenuItemClose', handler);
         }
     }
 }

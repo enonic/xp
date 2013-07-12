@@ -14,10 +14,6 @@ module api_ui_tab {
 
         private selectedTab:number;
 
-        private tabSelectedListeners:Function[] = [];
-
-        private tabRemovedListeners:Function[] = [];
-
         constructor(idPrefix?:string) {
             super(idPrefix || "TabMenu");
 
@@ -167,40 +163,6 @@ module api_ui_tab {
         deselectNavigationItem() {
             this.tabMenuButton.setLabel("");
             this.selectedTab = -1;
-        }
-
-        addNavigationItemSelectedListener(listener:(tab:api_ui.PanelNavigationItem) => void) {
-            this.tabSelectedListeners.push(listener);
-        }
-
-        addNavigationItemRemoveListener(listener:(tab:api_ui.PanelNavigationItem) => bool) {
-            this.tabRemovedListeners.push(listener);
-        }
-
-        handleTabClickedEvent(tabMenuItem:TabMenuItem) {
-            this.hideMenu();
-            this.fireTabSelected(tabMenuItem);
-        }
-
-        handleTabRemoveButtonClickedEvent(tabMenuItem:TabMenuItem) {
-            if (this.fireTabRemoveEvent(tabMenuItem)) {
-                this.removeNavigationItem(tabMenuItem);
-            }
-        }
-
-        fireTabSelected(tab:api_ui.PanelNavigationItem) {
-            for (var i = 0; i < this.tabSelectedListeners.length; i++) {
-                this.tabSelectedListeners[i](tab);
-            }
-        }
-
-        private fireTabRemoveEvent(tab:api_ui.PanelNavigationItem):bool {
-            for (var i = 0; i < this.tabRemovedListeners.length; i++) {
-                if (!this.tabRemovedListeners[i](tab)) {
-                    return false;
-                }
-            }
-            return true;
         }
     }
 }

@@ -1,13 +1,13 @@
 module app_wizard {
 
-    export class CloseSpaceWizardPanelEvent extends api_event.Event {
+    export class SpaceCloseWizardPanelEvent extends api_event.Event {
 
         private panel:api_ui.Panel;
 
         private checkCanRemovePanel:bool;
 
         constructor(panel:api_ui.Panel, checkCanRemovePanel?:bool = true) {
-            super('closeSpaceWizardPanel');
+            super('spaceCloseWizardPanel');
             this.panel = panel;
             this.checkCanRemovePanel = checkCanRemovePanel;
         }
@@ -20,8 +20,8 @@ module app_wizard {
             return this.checkCanRemovePanel;
         }
 
-        static on(handler:(event:CloseSpaceWizardPanelEvent) => void) {
-            api_event.onEvent('closeSpaceWizardPanel', handler);
+        static on(handler:(event:app_wizard.SpaceCloseWizardPanelEvent) => void) {
+            api_event.onEvent('spaceCloseWizardPanel', handler);
         }
     }
 }

@@ -146,9 +146,4 @@ module api_ui_dialog{
         }
     }
 
-    export class ModalDialogCancelAction extends api_ui.Action {
-        constructor() {
-            super("Cancel");
-        }
-    }
 }
