@@ -28,6 +28,7 @@ module api_ui {
          */
         addPanel(panel:Panel):number {
             panel.hide();
+            panel.setDoOffset(false);
             this.appendChild(panel);
             return this.panels.push(panel) - 1;
         }

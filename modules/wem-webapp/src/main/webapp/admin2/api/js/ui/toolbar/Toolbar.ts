@@ -11,6 +11,11 @@ module api_ui_toolbar {
             this.initExt();
         }
 
+        afterRender() {
+            console.log("afterrender toolbar");
+            super.afterRender();
+        }
+
         private initExt() {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({

@@ -38,6 +38,7 @@ module app {
                 var spaceWizardPanel = new app_wizard.SpaceWizardPanel('new-space');
                 this.addWizardPanel(tabMenuItem, spaceWizardPanel);
                 this.selectPanel(tabMenuItem);
+                spaceWizardPanel.reRender();
             });
 
             app_browse.OpenSpaceEvent.on((event) => {
