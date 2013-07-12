@@ -51,12 +51,30 @@ module api_dom {
             return this.el.innerHTML;
         }
 
+        setAttribute(name:string, value:string):ElementHelper {
+            this.el.setAttribute(name, value);
+            return this;
+        }
+
+        getAttribute(name:string):string {
+            return this.el.getAttribute(name);
+        }
+
+        hasAttribute(name:string):bool {
+            return this.el.hasAttribute(name);
+        }
+
+        removeAttribute(name:string):ElementHelper {
+            this.el.removeAttribute(name);
+            return this;
+        }
+
         getValue():string {
-            return (<any>this.el).value;
+            return this.el['value'];
         }
 
         setValue(value:string):ElementHelper {
-            this.el.setAttribute("value", value);
+            this.el['value'] = value;
             return this;
         }
 
