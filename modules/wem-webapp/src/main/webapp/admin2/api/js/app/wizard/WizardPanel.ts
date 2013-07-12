@@ -39,6 +39,7 @@ module api_app_wizard {
             this.appendChild(this.stepNavigator);
             this.appendChild(this.stepPanels);
 
+            // TODO: @alb - remove if unnecessary.
             //this.initExt();
 
             params.saveAction.addExecutionListener(() => {
@@ -147,10 +148,10 @@ module api_app_wizard {
 
         constructor() {
             super(null, "header");
-            this.displayNameEl = new api_dom.Element("input", null, "displayName");
+            this.displayNameEl = api_ui.TextInput.large().setName('displayName');
             new api_ui.Tooltip(this.displayNameEl, "Display name", 100, api_ui.Tooltip.TRIGGER_FOCUS, api_ui.Tooltip.SIDE_RIGHT, [7, 0]);
             this.appendChild(this.displayNameEl);
-            this.nameEl = new api_dom.Element("input", null, "name");
+            this.nameEl = api_ui.TextInput.middle().setName('name');
             new api_ui.Tooltip(this.nameEl, "Name", 100, api_ui.Tooltip.TRIGGER_FOCUS, api_ui.Tooltip.SIDE_RIGHT, [7, 0]);
             this.appendChild(this.nameEl);
         }
@@ -232,7 +233,7 @@ module api_app_wizard {
             if (this.activeStepIndex >= this.steps.length) {
                 step = this.steps[this.steps.length];
             } else {
-                step = this.steps[this.activeStepIndex+1];
+                step = this.steps[this.activeStepIndex + 1];
             }
             this.showStep(step);
         }
@@ -242,7 +243,7 @@ module api_app_wizard {
             if (this.activeStepIndex == 0) {
                 step = this.steps[0];
             } else {
-                step = this.steps[this.activeStepIndex-1];
+                step = this.steps[this.activeStepIndex - 1];
             }
             this.showStep(step);
         }
