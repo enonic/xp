@@ -72,7 +72,6 @@
 ///<reference path='ui/menu/ActionMenu.ts' />
 ///<reference path='ui/PanelNavigationItem.ts' />
 ///<reference path='ui/DeckPanelNavigator.ts' />
-///<reference path='ui/tab/TabBar.ts' />
 ///<reference path='ui/tab/TabMenu.ts' />
 ///<reference path='ui/tab/TabMenuButton.ts' />
 ///<reference path='ui/tab/TabMenuItem.ts' />
