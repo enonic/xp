@@ -146,4 +146,29 @@ module app_browse {
         }
     }
 
+    export class CloseContentEvent extends api_event.Event {
+
+        private panel:api_ui.Panel;
+
+        private checkCanRemovePanel:bool;
+
+        constructor(panel:api_ui.Panel, checkCanRemovePanel?:bool = true) {
+            super('closeContentEvent');
+            this.panel = panel;
+            this.checkCanRemovePanel = checkCanRemovePanel;
+        }
+
+        getPanel():api_ui.Panel {
+            return this.panel;
+        }
+
+        isCheckCanRemovePanel() {
+            return this.checkCanRemovePanel;
+        }
+
+        static on(handler:(event:CloseContentEvent) => void) {
+            api_event.onEvent('closeContentEvent', handler);
+        }
+    }
+
 }

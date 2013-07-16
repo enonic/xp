@@ -42,37 +42,57 @@ module app {
 
             app_browse.OpenContentEvent.on((event) => {
 
-                // TODO: Open detailpanel in "full screen"
+                var contents:api_model.ContentModel[] = event.getModels();
+                for (var i = 0; i < contents.length; i++) {
+                    var contentModel:api_model.ContentModel = contents[i];
+
+                    var tabMenuItem = new ContentAppBarTabMenuItem(contentModel.data.displayName);
+                    var id = this.generateTabId(contentModel.data.name, false);
+                    var contentItemViewPanel = new app_browse.ContentItemViewPanel(id);
+
+                    var contentItem = new api_app_browse.BrowseItem(contentModel)
+                        .setDisplayName(contentModel.data.displayName)
+                        .setPath(contentModel.data.name)
+                        .setIconUrl(contentModel.data.iconUrl);
+
+                    contentItemViewPanel.setItem(contentItem);
+
+                    this.addNavigationItem(tabMenuItem, contentItemViewPanel);
+                    this.selectPanel(tabMenuItem);
+                }
+
             });
 
             app_browse.EditContentEvent.on((event) => {
 
-               // TODO: uncomment after wizard panel is ready
-               /*
                var contents:api_model.ContentModel[] = event.getModels();
                 for (var i = 0; i < contents.length; i++) {
                     var contentModel:api_model.ContentModel = contents[i];
 
+                    //TODO: RemoteCallContentGetResult doesn't match returned result  if 'path' param is used!
                     var contentGetParams:api_remote.RemoteCallContentGetParams = {
-                        "contentName": [contentModel.data.name]
+                        "contentIds": [contentModel.data.id]
                     };
                     api_remote.RemoteService.content_get(contentGetParams, (result:api_remote.RemoteCallContentGetResult) => {
 
-                        if (result) {
+                        if (result && result.success) {
 
-                            var tabMenuItem = new ContentAppBarTabMenuItem(result.content.displayName);
-                            var id = this.generateTabId(result.content.name, true);
-                            var conetntWizardPanel = new app_wizard.ContentWizardPanel(id);
-                            conetntWizardPanel.setData(result);
+                            var tabMenuItem = new ContentAppBarTabMenuItem(result.content[0].displayName);
+                            var id = this.generateTabId(result.content[0].name, true);
+                            var contentWizardPanel = new app_wizard.ContentWizardPanel(id);
+                            contentWizardPanel.setData(result);
 
-                            this.addWizardPanel(tabMenuItem, conetntWizardPanel);
+                            this.addWizardPanel(tabMenuItem, contentWizardPanel);
                             this.selectPanel(tabMenuItem);
                         } else {
                             console.error("Error", result ? result.error : "Unable to retrieve content.");
                         }
                     });
                 }
-                */
+            });
+
+            app_browse.CloseContentEvent.on((event) => {
+                this.removePanel(event.getPanel(), event.isCheckCanRemovePanel());
             });
 
         }

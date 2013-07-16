@@ -10,7 +10,6 @@
 
 ///<reference path='app/delete/ContentDeleteDialog.ts' />
 
-///<reference path='app/wizard/CloseContentWizardPanelEvent.ts' />
 ///<reference path='app/wizard/ContentWizardActions.ts' />
 ///<reference path='app/wizard/ContentForm.ts' />
 ///<reference path='app/wizard/ContentWizardToolbar.ts' />
@@ -25,6 +24,10 @@
 ///<reference path='app/browse/ContentBrowseItemPanel.ts' />
 ///<reference path='app/browse/ContentBrowsePanel.ts' />
 ///<reference path='app/browse/NewContentDialog.ts' />
+///<reference path='app/browse/ContentViewActions.ts' />
+///<reference path='app/browse/ContentItemViewToolbar.ts' />
+///<reference path='app/browse/ContentItemStatisticsPanel.ts' />
+///<reference path='app/browse/ContentItemViewPanel.ts' />
 
 ///<reference path='app/ContentAppPanel.ts' />
 ///<reference path='app/ContentAppBarTabMenu.ts' />

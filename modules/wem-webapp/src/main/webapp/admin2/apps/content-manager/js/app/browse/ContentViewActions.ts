@@ -1,34 +1,25 @@
-module app_wizard {
+module app_view {
 
-    export class SaveContentAction extends api_ui.Action {
+    export class EditContentAction extends api_ui.Action {
 
-        constructor() {
-            super("Save");
+        constructor(panel:api_app_browse.ItemViewPanel) {
+            super("Edit");
             this.addExecutionListener(() => {
-                // TODO
+                new app_browse.EditContentEvent([panel.getItem().getModel()]).fire();
             });
         }
-    }
 
-    export class DuplicateContentAction extends api_ui.Action {
-
-        constructor() {
-            super("Duplicate");
-            this.addExecutionListener(() => {
-                // TODO
-            });
-        }
     }
 
     export class DeleteContentAction extends api_ui.Action {
 
-        constructor() {
-            super("Delete");
-            this.setEnabled(false);
+        constructor(panel:api_app_browse.ItemViewPanel) {
+            super("Delete", "mod+del");
             this.addExecutionListener(() => {
-                // TODO
+                new app_browse.ContentDeletePromptEvent([panel.getItem().getModel()]).fire();
             });
         }
+
     }
 
     export class CloseContentAction extends api_ui.Action {

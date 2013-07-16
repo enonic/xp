@@ -28,7 +28,7 @@ module app_wizard {
 
             this.formIcon = new api_app_wizard.FormIcon(ContentWizardPanel.DEFAULT_CONTENT_ICON_URL, "Click to upload icon", "rest/upload");
 
-            this.closeAction = new CloseContentPanelAction(this, true);
+            this.closeAction = new CloseContentAction(this, true);
             this.saveAction = new SaveContentAction();
 
             this.duplicateAction = new DuplicateContentAction();
