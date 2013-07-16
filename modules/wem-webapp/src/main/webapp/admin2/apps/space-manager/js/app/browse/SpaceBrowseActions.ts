@@ -43,6 +43,17 @@ module app_browse {
         }
     }
 
+    export class CloseSpaceAction extends api_ui.Action {
+
+        constructor(panel:api_ui.Panel, checkCanRemovePanel?:bool = true) {
+            super("Close");
+
+            this.addExecutionListener(() => {
+                new CloseSpaceEvent(panel, checkCanRemovePanel).fire();
+            });
+        }
+    }
+
     export class SpaceBrowseActions {
 
         static NEW_SPACE:api_ui.Action = new NewSpaceAction();

@@ -30,7 +30,7 @@ module app_wizard {
 
             this.formIcon = new api_app_wizard.FormIcon(SpaceWizardPanel.DEFAULT_SPACE_ICON_URL, "Click to upload icon", "rest/upload");
 
-            this.closeAction = new CloseSpacePanelAction(this, true);
+            this.closeAction = new app_browse.CloseSpaceAction(this, true);
             this.saveAction = new SaveSpaceAction();
             this.duplicateAction = new DuplicateSpaceAction();
             this.deleteAction = new DeleteSpaceAction();

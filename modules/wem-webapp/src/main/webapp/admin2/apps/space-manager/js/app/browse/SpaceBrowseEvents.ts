@@ -103,4 +103,29 @@ module app_browse {
         }
     }
 
+    export class CloseSpaceEvent extends api_event.Event {
+
+        private panel:api_ui.Panel;
+
+        private checkCanRemovePanel:bool;
+
+        constructor(panel:api_ui.Panel, checkCanRemovePanel?:bool = true) {
+            super('closeSpaceEvent');
+            this.panel = panel;
+            this.checkCanRemovePanel = checkCanRemovePanel;
+        }
+
+        getPanel():api_ui.Panel {
+            return this.panel;
+        }
+
+        isCheckCanRemovePanel() {
+            return this.checkCanRemovePanel;
+        }
+
+        static on(handler:(event:CloseSpaceEvent) => void) {
+            api_event.onEvent('closeSpaceEvent', handler);
+        }
+    }
+
 }

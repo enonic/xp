@@ -4,10 +4,7 @@ module app_browse {
 
         constructor() {
             super();
-            super.addAction(SpaceBrowseActions.NEW_SPACE);
-            super.addAction(SpaceBrowseActions.EDIT_SPACE);
-            super.addAction(SpaceBrowseActions.OPEN_SPACE);
-            super.addAction(SpaceBrowseActions.DELETE_SPACE);
+            super.addActions(SpaceBrowseActions.ACTIONS);
         }
     }
 }

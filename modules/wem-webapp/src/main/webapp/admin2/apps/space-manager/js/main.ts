@@ -31,9 +31,7 @@
 ///<reference path='app/event/EditSpaceEvent.ts' />
 ///<reference path='app/event/CloseActiveSpacePanelEvent.ts' />*/
 
-///<reference path='app/wizard/CloseSpaceWizardPanelEvent.ts' />
-///<reference path='app/wizard/SpaceCreatedEvent.ts' />
-///<reference path='app/wizard/SpaceUpdatedEvent.ts' />
+///<reference path='app/wizard/SpaceWizardEvents.ts' />
 ///<reference path='app/wizard/SpaceWizardActions.ts' />
 /*///<reference path='app/wizard/SpaceWizardContext.ts' />*/
 ///<reference path='app/wizard/SpaceWizardToolbar.ts' />
@@ -48,6 +46,10 @@
 ///<reference path='app/browse/SpaceBrowsePanel.ts' />
 ///<reference path='app/browse/SpaceTreeGridContextMenu.ts' />
 ///<reference path='app/browse/SpaceTreeGridPanel.ts' />
+///<reference path='app/browse/SpaceItemStatisticsPanel.ts' />
+///<reference path='app/browse/SpaceViewActions.ts' />
+///<reference path='app/browse/SpaceItemViewToolbar.ts' />
+///<reference path='app/browse/SpaceItemViewPanel.ts' />
 
 ///<reference path='app/delete/DeletedEvent.ts' />
 ///<reference path='app/delete/SpaceDeleteDialog.ts' />

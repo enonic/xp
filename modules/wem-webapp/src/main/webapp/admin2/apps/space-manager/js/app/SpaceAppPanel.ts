@@ -43,7 +43,25 @@ module app {
 
             app_browse.OpenSpaceEvent.on((event) => {
 
-                // TODO: Open detailpanel in "full screen"
+                var spaces:api_model.SpaceModel[] = event.getModels();
+                for (var i = 0; i < spaces.length; i++) {
+                    var spaceModel:api_model.SpaceModel = spaces[i];
+
+                    var tabMenuItem = new SpaceAppBarTabMenuItem(spaceModel.data.displayName);
+                    var id = this.generateTabId(spaceModel.data.name, false);
+                    var spaceItemViewPanel = new app_browse.SpaceItemViewPanel(id);
+
+                    var spaceItem = new api_app_browse.BrowseItem(spaceModel)
+                        .setDisplayName(spaceModel.data.displayName)
+                        .setPath(spaceModel.data.name)
+                        .setIconUrl(spaceModel.data.iconUrl);
+
+                    spaceItemViewPanel.setItem(spaceItem);
+
+                    this.addNavigationItem(tabMenuItem, spaceItemViewPanel);
+                    this.selectPanel(tabMenuItem);
+                }
+
             });
 
             app_browse.EditSpaceEvent.on((event) => {
@@ -73,7 +91,7 @@ module app {
                 }
             });
 
-            app_wizard.CloseSpaceWizardPanelEvent.on((event) => {
+            app_browse.CloseSpaceEvent.on((event) => {
                 this.removePanel(event.getPanel(), event.isCheckCanRemovePanel());
             });
         }

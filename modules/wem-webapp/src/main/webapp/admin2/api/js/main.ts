@@ -96,6 +96,7 @@
 ///<reference path='app/browse/ItemStatisticsPanel.ts' />
 ///<reference path='app/browse/ItemsSelectionPanel.ts' />
 ///<reference path='app/browse/BrowseItemPanel.ts' />
+///<reference path='app/browse/ItemViewPanel.ts' />
 
 
 ///<reference path='ui/dialog/DialogButton.ts' />
