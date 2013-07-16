@@ -19,8 +19,5 @@ module api_ui {
 
         getSize():number;
 
-        addNavigationItemSelectedListener(listener:(item:PanelNavigationItem) => void);
-
-        addNavigationItemRemoveListener(listener:(item:PanelNavigationItem) => bool);
     }
 }

@@ -103,6 +103,7 @@
 ///<reference path='ui/dialog/ModalDialog.ts' />
 ///<reference path='app/delete/DeleteItem.ts' />
 ///<reference path='app/delete/DeleteDialog.ts' />
+///<reference path='app/wizard/SaveChangesBeforeCloseDialog.ts' />
 
 ///<reference path='content/data/DataId.ts' />
 ///<reference path='content/data/Data.ts' />
