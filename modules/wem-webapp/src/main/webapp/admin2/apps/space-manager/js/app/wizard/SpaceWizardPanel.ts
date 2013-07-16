@@ -116,5 +116,24 @@ module app_wizard {
 
             });
         }
+
+        askUserForSaveChangesBeforeClosing() {
+            var dialog = new api_app_wizard.SaveChangesBeforeCloseDialog();
+
+            dialog.getYesAction().addExecutionListener(() => {
+                this.saveChanges();
+                new app_browse.CloseSpaceEvent(this, true).fire();
+                dialog.close();
+                dialog.remove();
+            });
+
+            dialog.getNoAction().addExecutionListener(() => {
+                new app_browse.CloseSpaceEvent(this, false).fire();
+                dialog.close();
+                dialog.remove();
+            });
+
+            dialog.open();
+        }
     }
 }
