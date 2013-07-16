@@ -12,7 +12,7 @@ module app_browse {
             this.id = id;
             this.editAction = new app_view.EditSpaceAction(this);
             this.deleteAction = new app_view.DeleteSpaceAction(this);
-            this.closeAction = new app_browse.CloseSpaceAction(this, true);
+            this.closeAction = new app_view.CloseSpaceAction(this, true);
 
             var toolbar = new SpaceItemViewToolbar({
                 editAction: this.editAction,
@@ -20,7 +20,12 @@ module app_browse {
                 closeAction: this.closeAction
             });
 
-            super(toolbar, new SpaceItemStatisticsPanel());
+            var stats = new SpaceItemStatisticsPanel({
+                editAction: this.editAction,
+                deleteAction: this.deleteAction
+            });
+
+            super(toolbar, stats);
 
         }
 

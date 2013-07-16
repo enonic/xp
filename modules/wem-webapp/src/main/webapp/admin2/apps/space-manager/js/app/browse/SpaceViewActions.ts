@@ -16,10 +16,21 @@ module app_view {
         constructor(panel:api_app_browse.ItemViewPanel) {
             super("Delete", "mod+del");
             this.addExecutionListener(() => {
-                new app_browse.DeletePromptEvent([panel.getItem().getModel()]).fire();
+                new app_browse.SpaceDeletePromptEvent([panel.getItem().getModel()]).fire();
             });
         }
 
+    }
+
+    export class CloseSpaceAction extends api_ui.Action {
+
+        constructor(panel:api_ui.Panel, checkCanRemovePanel?:bool = true) {
+            super("Close");
+
+            this.addExecutionListener(() => {
+                new app_browse.CloseSpaceEvent(panel, checkCanRemovePanel).fire();
+            });
+        }
     }
 
 }

@@ -22,7 +22,7 @@
 /*///<reference path='app/event/SaveSpaceEvent.ts' />
 ///<reference path='app/event/DeletedEvent.ts' />
 ///<reference path='app/event/BaseSpaceModelEvent.ts' />
-///<reference path='app/event/DeletePromptEvent.ts' />
+///<reference path='app/event/SpaceDeletePromptEvent.ts' />
 ///<reference path='app/event/GridSelectionChangeEvent.ts' />
 ///<reference path='app/event/GridDeselectEvent.ts' />
 ///<reference path='app/event/ShowContextMenuEvent.ts' />
@@ -108,7 +108,7 @@ Ext.application({
         appPanel.init();
 
         var deleteSpaceDialog = new app.SpaceDeleteDialog();
-        app_browse.DeletePromptEvent.on((event) => {
+        app_browse.SpaceDeletePromptEvent.on((event) => {
             deleteSpaceDialog.setSpacesToDelete(event.getModels());
             deleteSpaceDialog.open();
         });

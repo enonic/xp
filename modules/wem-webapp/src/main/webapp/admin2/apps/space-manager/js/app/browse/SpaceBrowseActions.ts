@@ -38,18 +38,7 @@ module app_browse {
             super("Delete", "mod+del");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new DeletePromptEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
-            });
-        }
-    }
-
-    export class CloseSpaceAction extends api_ui.Action {
-
-        constructor(panel:api_ui.Panel, checkCanRemovePanel?:bool = true) {
-            super("Close");
-
-            this.addExecutionListener(() => {
-                new CloseSpaceEvent(panel, checkCanRemovePanel).fire();
+                new app_browse.SpaceDeletePromptEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
             });
         }
     }

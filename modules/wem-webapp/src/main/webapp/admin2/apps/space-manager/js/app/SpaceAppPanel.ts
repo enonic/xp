@@ -75,7 +75,7 @@ module app {
                     };
                     api_remote.RemoteService.space_get(spaceGetParams, (result:api_remote.RemoteCallSpaceGetResult) => {
 
-                        if (result) {
+                        if (result && result.success) {
 
                             var tabMenuItem = new SpaceAppBarTabMenuItem(result.space.displayName);
                             var id = this.generateTabId(result.space.name, true);
