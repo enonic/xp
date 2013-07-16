@@ -1,26 +1,37 @@
 module app_browse {
 
     export class BaseSchemaModelEvent extends api_event.Event {
-        private model:api_model.SchemaModel;
+        private model:api_model.SchemaModel[];
 
-        constructor(name:string, model:api_model.SchemaModel) {
+        constructor(name:string, model:api_model.SchemaModel[]) {
             this.model = model;
             super(name);
         }
 
-        getModel():api_model.SchemaModel {
+        getModels():api_model.SchemaModel[] {
             return this.model;
         }
     }
 
     export class GridSelectionChangeEvent extends BaseSchemaModelEvent {
 
-        constructor(model:api_model.SchemaModel) {
+        constructor(model:api_model.SchemaModel[]) {
             super('gridChange', model);
         }
 
         static on(handler:(event:GridSelectionChangeEvent) => void) {
             api_event.onEvent('gridChange', handler);
+        }
+    }
+
+    export class GridDeselectEvent extends BaseSchemaModelEvent {
+
+        constructor(model:api_model.SchemaModel[]) {
+            super('removeFromGrid', model);
+        }
+
+        static on(handler:(event:GridDeselectEvent) => void) {
+            api_event.onEvent('removeFromGrid', handler);
         }
     }
 
@@ -37,7 +48,7 @@ module app_browse {
 
     export class EditSchemaEvent extends BaseSchemaModelEvent {
 
-        constructor(model:api_model.SchemaModel) {
+        constructor(model:api_model.SchemaModel[]) {
             super('editSchema', model);
         }
 
@@ -48,7 +59,7 @@ module app_browse {
 
     export class OpenSchemaEvent extends BaseSchemaModelEvent {
 
-        constructor(model:api_model.SchemaModel) {
+        constructor(model:api_model.SchemaModel[]) {
             super('openSchema', model);
         }
 
@@ -59,7 +70,7 @@ module app_browse {
 
     export class DeleteSchemaEvent extends BaseSchemaModelEvent {
 
-        constructor(model:api_model.SchemaModel) {
+        constructor(model:api_model.SchemaModel[]) {
             super('deleteSchema', model);
         }
 
@@ -70,7 +81,7 @@ module app_browse {
 
     export class ReindexSchemaEvent extends BaseSchemaModelEvent {
 
-        constructor(model:api_model.SchemaModel) {
+        constructor(model:api_model.SchemaModel[]) {
             super('reindexSchema', model);
         }
 
@@ -81,7 +92,7 @@ module app_browse {
 
     export class ExportSchemaEvent extends BaseSchemaModelEvent {
 
-        constructor(model:api_model.SchemaModel) {
+        constructor(model:api_model.SchemaModel[]) {
             super('exportSchema', model);
         }
 
@@ -89,4 +100,29 @@ module app_browse {
             api_event.onEvent('exportSchema', handler);
         }
     }
+
+    export class ShowContextMenuEvent extends api_event.Event {
+
+        private x:number;
+        private y:number;
+
+        constructor(x:number, y:number) {
+            this.x = x;
+            this.y = y;
+            super('showContextMenu');
+        }
+
+        getX() {
+            return this.x;
+        }
+
+        getY() {
+            return this.y;
+        }
+
+        static on(handler:(event:ShowContextMenuEvent) => void) {
+            api_event.onEvent('showContextMenu', handler);
+        }
+    }
+
 }
