@@ -16,7 +16,7 @@ module app {
             this.handleGlobalEvents();
         }
 
-        canRemovePanel(panel:api_ui.Panel, index:number):bool {
+        canRemovePanel(panel:api_ui.Panel):bool {
 
             if (panel instanceof api_app_wizard.WizardPanel) {
                 var wizardPanel:api_app_wizard.WizardPanel = <api_app_wizard.WizardPanel>panel;
