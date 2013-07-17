@@ -3,8 +3,8 @@ module app_browse {
     export class ContentItemViewPanel extends api_app_browse.ItemViewPanel {
 
         private id:string;
-        private editAction: app_view.EditContentAction;
-        private deleteAction:app_view.DeleteContentAction;
+        private editAction:api_ui.Action;
+        private deleteAction:api_ui.Action;
         private closeAction:api_ui.Action;
 
         constructor(id:string) {

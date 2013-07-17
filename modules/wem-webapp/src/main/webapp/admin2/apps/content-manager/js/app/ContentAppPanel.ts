@@ -32,6 +32,17 @@ module app {
                 this.appBarTabMenu.deselectNavigationItem();
             });
 
+            api_ui_tab.TabMenuItemSelectEvent.on((event) => {
+                this.appBarTabMenu.hideMenu();
+                this.selectPanel(event.getTab());
+            });
+
+            api_ui_tab.TabMenuItemCloseEvent.on((event) => {
+                var tabIndex = event.getTab().getIndex();
+                var panel = this.getPanel(tabIndex);
+                new app_browse.CloseContentEvent(panel, true).fire();
+            });
+
             app_browse.NewContentEvent.on((event) => {
                 // Done in Controller.js
             });

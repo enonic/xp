@@ -16,7 +16,7 @@ module app_browse {
             super("Edit");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new EditSchemaEvent(app.SchemaContext.get().getSelectedSchema()).fire();
+                new EditSchemaEvent(app.SchemaContext.get().getSelectedSchemes()).fire();
             });
         }
     }
@@ -27,7 +27,7 @@ module app_browse {
             super("Open");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new OpenSchemaEvent(app.SchemaContext.get().getSelectedSchema()).fire();
+                new OpenSchemaEvent(app.SchemaContext.get().getSelectedSchemes()).fire();
             });
         }
     }
@@ -38,7 +38,7 @@ module app_browse {
             super("Delete");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new DeleteSchemaEvent(app.SchemaContext.get().getSelectedSchema()).fire();
+                new DeleteSchemaEvent(app.SchemaContext.get().getSelectedSchemes()).fire();
             });
         }
     }
@@ -48,7 +48,7 @@ module app_browse {
         constructor() {
             super("Re-index");
             this.addExecutionListener(() => {
-                new ReindexSchemaEvent(app.SchemaContext.get().getSelectedSchema()).fire();
+                new ReindexSchemaEvent(app.SchemaContext.get().getSelectedSchemes()).fire();
             });
         }
     }
@@ -58,7 +58,7 @@ module app_browse {
         constructor() {
             super("Export");
             this.addExecutionListener(() => {
-                new ExportSchemaEvent(app.SchemaContext.get().getSelectedSchema()).fire();
+                new ExportSchemaEvent(app.SchemaContext.get().getSelectedSchemes()).fire();
             });
         }
     }
@@ -78,9 +78,9 @@ module app_browse {
             ACTIONS.push(NEW_SCHEMA, EDIT_SCHEMA, OPEN_SCHEMA, DELETE_SCHEMA, REINDEX_SCHEMA, EXPORT_SCHEMA);
 
             GridSelectionChangeEvent.on((event) => {
-                var space:api_model.SchemaModel = event.getModels()[0];
+                var spaces:api_model.SchemaModel[] = event.getModels();
 
-                if (space == null) {
+                if (spaces.length <= 0) {
                     NEW_SCHEMA.setEnabled(true);
                     EDIT_SCHEMA.setEnabled(false);
                     OPEN_SCHEMA.setEnabled(false);

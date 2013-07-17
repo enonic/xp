@@ -9,6 +9,10 @@
 ///<reference path='app/browse/SchemaBrowseToolbar.ts' />
 ///<reference path='app/browse/SchemaBrowseItemPanel.ts' />
 ///<reference path='app/browse/SchemaBrowsePanel.ts' />
+///<reference path='app/browse/SchemaViewActions.ts' />
+///<reference path='app/browse/SchemaItemStatisticsPanel.ts' />
+///<reference path='app/browse/SchemaItemViewToolbar.ts' />
+///<reference path='app/browse/SchemaItemViewPanel.ts' />
 ///<reference path='app/browse/SchemaActionMenu.ts' />
 ///<reference path='app/browse/SchemaTreeGridPanel.ts' />
 ///<reference path='app/browse/SchemaTreeGridContextMenu.ts' />
