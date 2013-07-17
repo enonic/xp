@@ -2,12 +2,6 @@
 ///<reference path='../../../api/js/Mousetrap.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
-///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
-///<reference path='plugin/GridToolbarPlugin.ts' />
-///<reference path='plugin/fileupload/FileUploadGrid.ts' />
-///<reference path='plugin/fileupload/PhotoUploadButton.ts' />
-///<reference path='plugin/fileupload/PhotoUploadWindow.ts' />
-
 ///<reference path='model/SpaceModel.ts' />
 
 ///<reference path='view/WizardLayout.ts' />
@@ -112,6 +106,12 @@ Ext.application({
             deleteSpaceDialog.setSpacesToDelete(event.getModels());
             deleteSpaceDialog.open();
         });
+
+        var spaceGridContextMenu = new app_browse.SpaceTreeGridContextMenu();
+        spaceGridContextMenu.hide();
+        app_browse.ShowContextMenuEvent.on((event) => {
+            spaceGridContextMenu.showAt(event.getX(), event.getY());
+        })
 
     }
 });
