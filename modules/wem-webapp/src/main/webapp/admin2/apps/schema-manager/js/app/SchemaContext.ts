@@ -4,7 +4,7 @@ module app {
 
         private static context:SchemaContext;
 
-        private selectedSchema:api_model.SchemaModel;
+        private selectedSchemas:api_model.SchemaModel[];
 
         static init():SchemaContext {
             return context = new SchemaContext();
@@ -16,12 +16,12 @@ module app {
 
         constructor() {
             app_browse.GridSelectionChangeEvent.on((event) => {
-                this.selectedSchema = event.getModel();
+                this.selectedSchemas = event.getModels();
             });
         }
 
-        getSelectedSchema():api_model.SchemaModel {
-            return this.selectedSchema;
+        getSelectedSchema():api_model.SchemaModel[] {
+            return this.selectedSchemas;
         }
     }
 

@@ -37,10 +37,6 @@
 
 ///<reference path='handler/DeleteContentHandler.ts' />
 
-///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
-///<reference path='plugin/GridToolbarPlugin.ts' />
-
-
 ///<reference path='store/ContentStore.ts' />
 ///<reference path='store/ContentTreeStore.ts' />
 ///<reference path='store/ContentTypeStore.ts' />
