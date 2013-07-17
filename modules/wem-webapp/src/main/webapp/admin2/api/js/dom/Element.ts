@@ -32,10 +32,6 @@ module api_dom {
         }
 
         init() {
-      /*      if (this.getId()) {
-                console.log("exsists in dom: ",  document.getElementById(this.getId()));
-                console.log("height is : " + document.getElementById(this.getId()).offsetHeight);
-            }*/
             if (!this.isRendered()) {
                 this.afterRender();
                 this.rendered = true;
@@ -118,7 +114,6 @@ module api_dom {
             this.el.appendChild(child.getEl().getHTMLElement());
             child.setParent(this);
             this.children.push(child);
-            console.log("appending " + child.getId() + " to " + this.getId(), this.isRendered());
             if (this.isRendered()) {
                 child.init();
             }

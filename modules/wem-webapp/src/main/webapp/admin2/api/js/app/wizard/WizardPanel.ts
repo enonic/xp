@@ -24,6 +24,10 @@ module api_app_wizard {
         // TODO: @alb - Value is set to 'changed' by default to see SaveChangesBeforeCloseDialog behavior.
         private isChanged:bool = true;
 
+        private previous:WizardStepNavigationArrow;
+
+        private next:WizardStepNavigationArrow;
+
         ext;
 
         constructor(params:WizardPanelParams) {
@@ -40,8 +44,12 @@ module api_app_wizard {
             this.stepPanels = new api_app_wizard.WizardStepDeckPanel();
             this.stepNavigator = new WizardStepNavigator(this.stepPanels);
             this.appendChild(this.stepNavigator);
-            // TODO: @alb - Remove comment to display stepPanels. Commented because it breaks wizard layout.
-            // this.appendChild(this.stepPanels);
+            this.appendChild(this.stepPanels);
+
+            this.previous = new WizardStepNavigationArrow(WizardStepNavigationArrow.PREVIOUS, this.stepNavigator)
+            this.next = new WizardStepNavigationArrow(WizardStepNavigationArrow.NEXT, this.stepNavigator)
+            this.appendChild(this.previous);
+            this.appendChild(this.next);
 
             // TODO: @alb - remove if unnecessary.
             //this.initExt();
@@ -95,6 +103,7 @@ module api_app_wizard {
         addStep(step:WizardStep) {
             this.steps.push(step);
             this.stepNavigator.addStep(step);
+
         }
 
         canClose():bool {
@@ -187,7 +196,6 @@ module api_app_wizard {
         }
 
         afterRender() {
-            console.log("after render in wizardstepdeckpanel");
             super.afterRender();
         }
     }
@@ -225,6 +233,7 @@ module api_app_wizard {
                 this.showStep(step);
             }
             this.appendChild(stepEl);
+            new WizardStepEvent().fire();
         }
 
         showStep(step:WizardStep) {
@@ -232,12 +241,13 @@ module api_app_wizard {
             step.setActive(true);
             this.deckPanel.showPanel(step.getIndex());
             this.activeStepIndex = step.getIndex();
+            new WizardStepEvent().fire();
         }
 
         nextStep() {
             var step;
-            if (this.activeStepIndex >= this.steps.length) {
-                step = this.steps[this.steps.length];
+            if (this.activeStepIndex >= this.steps.length - 1) {
+                step = this.steps[this.steps.length - 1];
             } else {
                 step = this.steps[this.activeStepIndex + 1];
             }
@@ -254,10 +264,77 @@ module api_app_wizard {
             this.showStep(step);
         }
 
+        hasNext():bool {
+            if (this.steps) {
+                return this.activeStepIndex < this.steps.length-1;
+            }
+            return false;
+        }
+
+        hasPrevious():bool {
+            if (this.steps) {
+                return this.activeStepIndex && this.activeStepIndex != 0;
+            }
+            return false;
+        }
+
         private removeActive() {
             this.steps.forEach((step:WizardStep) => {
                 step.setActive(false);
             })
+        }
+    }
+
+    export class WizardStepNavigationArrow extends api_dom.DivEl {
+        static NEXT = "next";
+        static PREVIOUS = "prev";
+
+        private navigator;
+        private direction:string;
+
+        constructor(direction:string, navigator:WizardStepNavigator) {
+            super();
+            this.navigator = navigator;
+            this.direction = direction;
+
+            this.getEl().addClass("navigation-arrow");
+            this.getEl().addClass(this.direction);
+            this.getEl().addEventListener("click", (e) => {
+                if (this.direction == WizardStepNavigationArrow.NEXT) {
+                    this.navigator.nextStep();
+                } else {
+                    this.navigator.previousStep();
+                }
+            });
+            this.update();
+
+            WizardStepEvent.on((event) => {
+                this.update();
+            })
+        }
+
+        private update() {
+            var show;
+            if (this.direction == WizardStepNavigationArrow.NEXT) {
+                show = this.navigator.hasNext();
+            } else if (this.direction == WizardStepNavigationArrow.PREVIOUS) {
+                show = this.navigator.hasPrevious();
+            }
+            if (show) {
+                this.show();
+            } else {
+                this.hide();
+            }
+        }
+    }
+
+    class WizardStepEvent extends api_event.Event {
+        constructor() {
+            super("wizardStep");
+        }
+
+        static on(handler:(event:WizardStepEvent) => void) {
+            api_event.onEvent('wizardStep', handler);
         }
     }
 

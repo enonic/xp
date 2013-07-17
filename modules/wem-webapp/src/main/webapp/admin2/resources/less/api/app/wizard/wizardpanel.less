@@ -63,4 +63,39 @@
   .step-panel {
     margin-left: 112px;
   }
+
+  .navigation-arrow {
+    position: fixed;
+    top: 55%;
+    height: 100px;
+    width: 100px;
+    .noSelect();
+    cursor: pointer;
+
+    &.next {
+      right: 0;
+      .icon-chevron-right(5em, @admin-medium-gray-font);
+      &:before {
+        position: relative;
+        top: 20px;
+        left: 30px;
+      }
+      &:hover:before {
+        color: @admin-dark-gray-font;
+      }
+    }
+
+    &.prev {
+      left: 0;
+      .icon-chevron-left(5em, @admin-medium-gray-font);
+      &:before {
+        position: relative;
+        top: 20px;
+        left: 20px;
+      }
+      &:hover:before {
+        color: @admin-dark-gray-font;
+      }
+    }
+  }
 }
