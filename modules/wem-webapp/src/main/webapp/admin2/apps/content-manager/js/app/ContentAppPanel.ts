@@ -20,7 +20,7 @@ module app {
             this.browsePanel.init();
         }
 
-        canRemovePanel(panel:api_ui.Panel, index:number):bool {
+        canRemovePanel(panel:api_ui.Panel):bool {
 
             if (panel instanceof api_app_wizard.WizardPanel) {
                 var wizardPanel:api_app_wizard.WizardPanel = <api_app_wizard.WizardPanel>panel;
@@ -65,7 +65,7 @@ module app {
 
             app_browse.EditContentEvent.on((event) => {
 
-               var contents:api_model.ContentModel[] = event.getModels();
+                var contents:api_model.ContentModel[] = event.getModels();
                 for (var i = 0; i < contents.length; i++) {
                     var contentModel:api_model.ContentModel = contents[i];
 

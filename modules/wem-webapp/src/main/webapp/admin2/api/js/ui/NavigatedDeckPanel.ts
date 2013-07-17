@@ -10,13 +10,6 @@ module api_ui {
         constructor(navigator:DeckPanelNavigator) {
             super();
             this.navigator = navigator;
-
-            this.navigator.addNavigationItemRemoveListener((item:PanelNavigationItem) => {
-                return this.handleNavigationItemRemoveEvent(item);
-            });
-            this.navigator.addNavigationItemSelectedListener((item:PanelNavigationItem)=> {
-                this.selectPanel(item);
-            });
         }
 
         getSelectedNavigationItem():PanelNavigationItem {
@@ -38,18 +31,13 @@ module api_ui {
 
             var panelIndex:number = this.getPanelIndex(panel);
             var navigationItem:api_ui.PanelNavigationItem = this.navigator.getNavigationItem(panelIndex);
-            var removedPanelAtIndex = super.removePanel(panel);
+            var removedPanelAtIndex = super.removePanel(panel, checkCanRemovePanel);
             var removed:bool = removedPanelAtIndex !== -1;
 
             if (removed) {
                 this.navigator.removeNavigationItem(navigationItem);
             }
             return removedPanelAtIndex;
-        }
-
-        private handleNavigationItemRemoveEvent(item:PanelNavigationItem):bool {
-            var removedPanel:Panel = this.removePanelByIndex(item.getIndex());
-            return removedPanel !== null;
         }
     }
 }
