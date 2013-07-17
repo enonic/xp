@@ -17,7 +17,32 @@ module app {
 
         private handleGlobalEvents() {
 
-            // TODO: setup event hanlers
+            app_browse.NewSchemaEvent.on(() => {
+                console.log('TODO: implement handler for NewSchemaEvent');
+            });
+
+            app_browse.EditSchemaEvent.on((event) => {
+                console.log('TODO: implement handler for EditSchemaEvent');
+                console.log('Selected schema model: %O', event.getModels());
+            });
+
+            app_browse.OpenSchemaEvent.on((event) => {
+                console.log('TODO: implement handler for OpenSchemaEvent');
+                console.log('Selected schema model: %O', event.getModels());
+            });
+
+            app_browse.DeleteSchemaEvent.on((event) => {
+                console.log('TODO: implement handler for DeleteSchemaEvent');
+                console.log('Selected schema model: %O', event.getModels());
+            });
+
+            app_browse.ReindexSchemaEvent.on(() => {
+                console.log('TODO: implement handler for ReindexSchemaEvent');
+            });
+
+            app_browse.ExportSchemaEvent.on(() => {
+                console.log('TODO: implement handler for ExportSchemaEvent');
+            });
 
         }
     }

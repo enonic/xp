@@ -2,12 +2,6 @@
 ///<reference path='../../../api/js/Mousetrap.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
-///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
-///<reference path='plugin/GridToolbarPlugin.ts' />
-///<reference path='plugin/fileupload/FileUploadGrid.ts' />
-///<reference path='plugin/fileupload/PhotoUploadButton.ts' />
-///<reference path='plugin/fileupload/PhotoUploadWindow.ts' />
-
 ///<reference path='model/SpaceModel.ts' />
 
 ///<reference path='view/WizardLayout.ts' />

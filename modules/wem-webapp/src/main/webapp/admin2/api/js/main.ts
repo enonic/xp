@@ -5,6 +5,12 @@
 // require ExtJs as long as it is used for implementation
 ///<reference path='ExtJs.d.ts' />
 
+///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
+///<reference path='plugin/GridToolbarPlugin.ts' />
+///<reference path='plugin/fileupload/FileUploadGrid.ts' />
+///<reference path='plugin/fileupload/PhotoUploadButton.ts' />
+///<reference path='plugin/fileupload/PhotoUploadWindow.ts' />
+
 ///<reference path='Mousetrap.d.ts' />
 ///<reference path='jquery.d.ts' />
 

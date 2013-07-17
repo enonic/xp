@@ -2,11 +2,16 @@
 ///<reference path='../../../api/js/Mousetrap.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
+///<reference path='model/SchemaModel.ts' />
+
 ///<reference path='app/browse/SchemaBrowseEvents.ts' />
 ///<reference path='app/browse/SchemaBrowseActions.ts' />
 ///<reference path='app/browse/SchemaBrowseToolbar.ts' />
-///<reference path='app/browse/SchemaActionMenu.ts' />
+///<reference path='app/browse/SchemaBrowseItemPanel.ts' />
 ///<reference path='app/browse/SchemaBrowsePanel.ts' />
+///<reference path='app/browse/SchemaActionMenu.ts' />
+///<reference path='app/browse/SchemaTreeGridPanel.ts' />
+///<reference path='app/browse/SchemaTreeGridContextMenu.ts' />
 
 ///<reference path='app/SchemaAppBar.ts' />
 ///<reference path='app/SchemaAppBarTabMenu.ts' />
@@ -24,8 +29,8 @@ module app {
 }
 
 module components {
-//    export var detailPanel:app_browse.SchemaDetailPanel;
-//    export var gridPanel:app_browse.SchemaTreeGridPanel;
+    export var detailPanel:app_browse.SchemaBrowseItemPanel;
+    export var gridPanel:app_browse.SchemaTreeGridPanel;
 }
 
 Ext.application({
@@ -41,6 +46,8 @@ Ext.application({
 
         api_dom.Body.get().appendChild(appBar);
         api_dom.Body.get().appendChild(appPanel);
+
+        appPanel.init();
     }
 });
 
