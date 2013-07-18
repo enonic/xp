@@ -27,7 +27,6 @@ module api_app_browse{
         }
 
         afterRender() {
-            console.log("afterrender browsepanel");
             this.appendChild(this.browseToolbar);
             this.appendChild(this.gridAndDetailSplitPanel);
             this.gridAndDetailSplitPanel.render();

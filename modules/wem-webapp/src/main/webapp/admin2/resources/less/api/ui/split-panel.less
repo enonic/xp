@@ -11,12 +11,23 @@
 
   > .panel {
     overflow-y: scroll;
+    &.vertical {
+      position: absolute;
+      top:0;
+      bottom:0;
+    }
   }
 
   .splitter {
     background-color: @admin-light-gray-bg;
     cursor: ns-resize;
-    .noSelect
+    .noSelect();
+    &.vertical {
+      position: absolute;
+      top:0;
+      bottom:0;
+      cursor: ew-resize;
+    }
   }
 
   .ghost-dragger {
@@ -27,6 +38,13 @@
     z-index: 100;
     cursor: ns-resize;
     width: 100%;
-    .noSelect
+    .noSelect();
+    &.vertical {
+      width:5px;
+      height:100%;
+      top:0;
+      bottom:0;
+      cursor: ew-resize;
+    }
   }
 }

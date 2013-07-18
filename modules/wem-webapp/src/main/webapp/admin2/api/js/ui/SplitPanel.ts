@@ -1,4 +1,10 @@
 module api_ui {
+
+    export enum SplitPanelAlignment {
+        HORIZONTAL,
+        VERTICAL
+    }
+
     export class SplitPanel extends api_ui.Panel {
         private panelA:api_ui.Panel;
 
@@ -10,17 +16,18 @@ module api_ui {
 
         private splitter:SplitPanelSplitter;
 
-        private alignment;
+        private alignment:SplitPanelAlignment;
 
         constructor(panelA:api_ui.Panel, panelB:api_ui.Panel) {
             super();
             this.getEl().addClass("split-panel");
             this.splitter = new SplitPanelSplitter(this);
-            this.splitter.setHeight(5);
+            this.splitter.setThickness(5);
             this.panelA = panelA;
             this.panelB = panelB;
             this.panelASpace = 50;
             this.panelBSpace = 50;
+            this.alignment = SplitPanelAlignment.HORIZONTAL;
 
             this.panelA.setDoOffset(false);
             this.panelB.setDoOffset(false);
@@ -30,6 +37,11 @@ module api_ui {
             this.appendChild(this.panelB);
 
             this.splitter.init();
+        }
+
+        setAlignment(alignment:SplitPanelAlignment) {
+            this.alignment = alignment;
+            this.updateAlignment();
         }
 
         setDistribution(aSpace:number, bSpace:number) {
@@ -42,12 +54,42 @@ module api_ui {
         }
 
         distribute() {
-            this.panelA.getHTMLElement().style.height = "calc(" + this.panelASpace + "% - " + this.splitter.getHeight() / 2 + "px)";
-            this.panelB.getHTMLElement().style.height = "calc(" + this.panelBSpace + "% - " + this.splitter.getHeight() / 2 + "px)";
+            if (this.isHorizontal()) {
+                this.panelA.getHTMLElement().style.height = "calc(" + this.panelASpace + "% - " + this.splitter.getThickness() / 2 + "px)";
+                this.panelB.getHTMLElement().style.height = "calc(" + this.panelBSpace + "% - " + this.splitter.getThickness() / 2 + "px)";
+            }
+            else {
+                this.panelA.getHTMLElement().style.width = "calc(" + this.panelASpace + "% - " + this.splitter.getThickness() / 2 + "px)";
+                this.panelB.getHTMLElement().style.width = "calc(" + this.panelBSpace + "% - " + this.splitter.getThickness() / 2 + "px)";
+            }
         }
 
         render() {
             this.distribute();
+        }
+
+        getPanelA():api_ui.Panel {
+            return this.panelA;
+        }
+
+        getPanelASpace():number {
+            return this.panelASpace;
+        }
+
+        private updateAlignment() {
+            if (this.isHorizontal()) {
+                this.panelA.getEl().removeClass("vertical");
+                this.panelB.getEl().removeClass("vertical");
+            } else {
+                this.panelA.getEl().addClass("vertical");
+                this.panelB.getEl().addClass("vertical");
+                this.panelB.getEl().setRight("0");
+                this.splitter.setVertical();
+            }
+        }
+
+        private isHorizontal() {
+            return this.alignment == SplitPanelAlignment.HORIZONTAL;
         }
     }
 
@@ -65,18 +107,31 @@ module api_ui {
 
         private lastY:number;
 
+        private lastX:number;
+
         private splitPanelOffset:number;
+
+        private thickness:number;
+
+        private alignment:SplitPanelAlignment;
 
 
         constructor(splitPanel:SplitPanel) {
             super("splitter");
             this.splitPanel = splitPanel;
+            this.alignment = SplitPanelAlignment.HORIZONTAL;
             this.getEl().addClass("splitter");
             this.createGhostDragger();
 
             this.dragListener = (e:MouseEvent) => {
-                this.lastY = e.clientY;
-                this.ghostDragger.getEl().setTopPx(this.lastY-this.getSplitPanelOffset());
+                if (this.isHorizontal()) {
+                    this.lastY = e.clientY;
+                    this.ghostDragger.getEl().setTopPx(this.lastY - this.getSplitPanelOffset());
+                } else {
+                    this.lastX = e.clientX;
+                    this.ghostDragger.getEl().setLeft(this.lastX + "px");
+                }
+
             };
         }
 
@@ -104,8 +159,18 @@ module api_ui {
 
         private stopDrag() {
             this.splitPanel.getEl().removeClass("dragging");
-            var aSize = (this.lastY-this.getSplitPanelOffset()) / this.splitPanel.getHTMLElement().offsetHeight * 100;
-            var bSize = 100 - aSize;
+            var aSize;
+            var bSize;
+            if (this.isHorizontal()) {
+                aSize = (this.lastY - this.getSplitPanelOffset()) / this.splitPanel.getHTMLElement().offsetHeight * 100;
+                bSize = 100 - aSize;
+                this.getEl().setLeft(null);
+            } else {
+                aSize = (this.lastX / window.innerWidth) * 100;
+                bSize = 100 - aSize;
+                this.getEl().setLeft(this.lastX + "px");
+            }
+
             if (aSize != 0 && bSize != 0) {
                 this.splitPanel.setDistribution(aSize, bSize);
                 this.splitPanel.distribute();
@@ -123,12 +188,23 @@ module api_ui {
             this.ghostDragger.getEl().addClass("ghost-dragger");
         }
 
-        getHeight():number {
-            return this.getHTMLElement().offsetHeight;
+        getThickness():number {
+            return this.thickness;
         }
 
-        setHeight(height:number) {
-            this.getHTMLElement().style.height = height + "px";
+        setThickness(thickness:number) {
+            this.thickness = thickness;
+            if (this.isHorizontal()) {
+                this.getHTMLElement().style.height = thickness + "px";
+            } else {
+                this.getHTMLElement().style.width = thickness + "px";
+            }
+        }
+
+        private updateThickness() {
+            this.getHTMLElement().style.height = null;
+            this.getHTMLElement().style.width = null;
+            this.setThickness(this.thickness);
         }
 
         setDraggable(value:bool) {
@@ -137,7 +213,27 @@ module api_ui {
 
         setVisible(value:bool) {
             this.visible = value;
-            this.setHeight(0);
+            this.setThickness(0);
+        }
+
+        setVertical() {
+            this.alignment = SplitPanelAlignment.VERTICAL;
+            this.getEl().addClass("vertical");
+            this.ghostDragger.getEl().addClass("vertical");
+            this.getEl().setLeft("calc(" + this.splitPanel.getPanelASpace() + "% - " + (this.thickness/2) + "px)");
+            this.updateThickness();
+        }
+
+        setHorizontal() {
+            this.alignment = SplitPanelAlignment.HORIZONTAL;
+            this.getEl().removeClass("vertical");
+            this.ghostDragger.getEl().removeClass("vertical");
+            this.getEl().setLeft(null);
+            this.updateThickness();
+        }
+
+        private isHorizontal() {
+            return this.alignment == SplitPanelAlignment.HORIZONTAL;
         }
     }
 }

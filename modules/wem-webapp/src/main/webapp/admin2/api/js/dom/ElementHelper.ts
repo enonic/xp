@@ -188,6 +188,11 @@ module api_dom {
             return this;
         }
 
+        setRight(value:string):ElementHelper {
+            this.el.style.right = value;
+            return this;
+        }
+
         setMarginLeft(value:string):ElementHelper {
             this.el.style.marginLeft = value;
             return this;
