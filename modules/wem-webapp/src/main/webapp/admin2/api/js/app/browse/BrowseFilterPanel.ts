@@ -16,7 +16,7 @@ module api_app_browse {
 
         searchFilterTypingTimer;
 
-        constructor(facetData?) {
+        constructor(facetData?:FacetGroupData[]) {
             super('BrowseFilterPanel');
 
             this.getEl().addClass('admin-filter');
@@ -24,7 +24,7 @@ module api_app_browse {
             this.facetContainer = new FacetContainer(facetData);
 
             this.clearFilter = this.createClearFilterEl();
-            api_event.onEvent('filterSearch', (event:api_event.FilterSearchEvent) => {
+            api_event.FilterSearchEvent.on((event:api_event.FilterSearchEvent) => {
                 this.filterSearchAction.execute();
                 if (event.getTarget()) {
                     this.lastFacetGroup = (<Facet>event.getTarget()).getFacetGroup();
@@ -56,7 +56,7 @@ module api_app_browse {
             return searchField;
         }
 
-        updateFacets(facetsData) {
+        updateFacets(facetsData:FacetGroupData[]) {
             for (var i = 0; i < facetsData.length; i++) {
                 var facetGroupData = facetsData[i];
                 var facetGroup:FacetGroup = this.getFacetGroup(facetGroupData.name);
@@ -85,7 +85,8 @@ module api_app_browse {
             clearFilter.getEl().setInnerHtml('Clear filter');
             clearFilter.getHTMLElement().setAttribute('href', 'javascript:;');
             clearFilter.getHTMLElement().style.display = 'block';
-            clearFilter.getHTMLElement().style.visibility = 'hidden';
+            clearFilter.hide();
+
             clearFilter.getEl().addEventListener('click', () => {
                 this.filterResetAction.execute();
                 this.reset();
@@ -118,11 +119,11 @@ module api_app_browse {
             this.searchField.getHTMLElement()['value'] = '';
             window.clearTimeout(this.searchFilterTypingTimer);
             this.facetContainer.reset();
-            this.clearFilter.getHTMLElement().style.visibility = 'hidden';
+            this.clearFilter.hide();
         }
 
         search() {
-            this.clearFilter.getHTMLElement().style.visibility = 'visible';
+            this.clearFilter.show();
             this.filterSearchAction.setFilterValues(this.getValues());
             this.filterSearchAction.execute();
         }
@@ -132,7 +133,7 @@ module api_app_browse {
 
         facetGroups;
 
-        constructor(data?) {
+        constructor(data?:FacetGroupData[]) {
             super('FacetContainer');
             this.facetGroups = [];
             if (data) {
@@ -181,7 +182,7 @@ module api_app_browse {
         facets;
         name:string;
 
-        constructor(facetGroupData) {
+        constructor(facetGroupData:FacetGroupData) {
             super('FacetGroup', 'admin-facet-group');
             var facetTitle:api_dom.H2El = new api_dom.H2El('FacetTitle');
             this.facets = [];
@@ -196,7 +197,7 @@ module api_app_browse {
             this.facets.push(facet);
         }
 
-        updateFacets(facetGroupData) {
+        updateFacets(facetGroupData:FacetGroupData) {
             var isHidden = true;
             for (var i = 0; i < facetGroupData.terms.length; i++) {
                 var facetData = facetGroupData.terms[i];
@@ -213,7 +214,11 @@ module api_app_browse {
 
             }
 
-            this.getHTMLElement().style.display = isHidden ? 'none' : 'block';
+            if (isHidden) {
+                this.hide();
+            } else {
+                this.show();
+            }
         }
 
         private getFacet(name:string):Facet {
@@ -260,7 +265,7 @@ module api_app_browse {
 
         facetGroup;
 
-        constructor(facetData, facetGroup:FacetGroup) {
+        constructor(facetData:FacetData, facetGroup:FacetGroup) {
             super('Facet', 'admin-facet');
             this.name = facetData.name;
 
@@ -281,7 +286,7 @@ module api_app_browse {
             this.appendChild(this.label);
 
             if (facetData.count == 0) {
-                this.getHTMLElement().style.display = 'none';
+                this.hide();
             }
         }
 
@@ -293,12 +298,12 @@ module api_app_browse {
             return this.name;
         }
 
-        update(facetData) {
+        update(facetData:FacetData) {
             this.label.getEl().setInnerHtml(facetData.name + ' (' + facetData.count + ')');
             if (facetData.count > 0 || this.isSelected()) {
-                this.getHTMLElement().style.display = 'block';
+                this.show();
             } else {
-                this.getHTMLElement().style.display = 'none';
+                this.hide();
             }
         }
 
@@ -333,5 +338,16 @@ module api_app_browse {
         constructor() {
             super('filterResetAction');
         }
+    }
+
+    export interface FacetGroupData {
+        name:string;
+        displayName:string;
+        terms:FacetData[];
+    }
+
+    export interface FacetData {
+        count:number;
+        name:string;
     }
 }

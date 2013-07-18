@@ -13,5 +13,9 @@ module api_event {
             return this.target;
         }
 
+        static on(handler:(event:FilterSearchEvent) => void) {
+            api_event.onEvent('filterSearch', handler);
+        }
+
     }
 }

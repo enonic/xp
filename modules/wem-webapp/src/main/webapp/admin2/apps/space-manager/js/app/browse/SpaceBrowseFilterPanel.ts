@@ -8,6 +8,7 @@ module app_browse {
             this.updateFacets([
                 {
                     "name": 'Space',
+                    "displayName": 'Space',
                     "terms": [
                         { "name": 'Public Web', "key": 'public', "count": 8 },
                         { "name": 'Intranet', "key": 'intra', "count": 20 }
@@ -15,6 +16,7 @@ module app_browse {
                 },
                 {
                     "name": "Type",
+                    "displayName": "Type",
                     "terms": [
                         { "name": "Space", "key": "space", "count": 10 },
                         { "name": "Part", "key": "part", "count": 80 },
@@ -23,6 +25,7 @@ module app_browse {
                 },
                 {
                     "name": "Module",
+                    "displayName": "Module",
                     "terms": [
                         { "name": "Twitter Bootrstrap", "key": "twitter", "count": 0 },
                         { "name": "Enonic", "key": "enonic", "count": 3 },
