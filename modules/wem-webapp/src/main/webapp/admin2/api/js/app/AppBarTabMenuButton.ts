@@ -2,7 +2,7 @@ module api_app{
 
     export class AppBarTabMenuButton extends api_ui_tab.TabMenuButton {
 
-        private iconEl:api_dom.SpanEl;
+        private iconEl:api_dom.ImgEl;
 
         private tabCountEl:AppBarTabCount;
 
@@ -10,16 +10,20 @@ module api_app{
             super(idPrefix || "AppBarTabMenuButton");
             this.getEl().addClass("appbar-tabmenu-button");
 
-            this.iconEl = new api_dom.SpanEl(); // TODO:
-            this.iconEl.getEl().addClass("icon-icomoon-pencil-32");
+            this.iconEl = new api_dom.ImgEl();
+            this.iconEl.hide();
             this.prependChild(this.iconEl);
 
-            this.tabCountEl = new AppBarTabCount;
-            this.appendChild(this.tabCountEl);
+            this.tabCountEl = new AppBarTabCount();
+            this.prependChild(this.tabCountEl);
         }
 
         setTabCount(value:number) {
             this.tabCountEl.setCount(value);
+        }
+
+        setEditing(value:bool) {
+            this.iconEl[value ? "show" : "hide"]();
         }
     }
 

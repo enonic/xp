@@ -56,7 +56,7 @@ module app {
 
                  if (result && result.success) {
 
-                 var tabMenuItem = new SchemaAppBarTabMenuItem(result.contentType.displayName);
+                 var tabMenuItem = new SchemaAppBarTabMenuItem(result.contentType.displayName, true);
 
                  var id = this.generateTabId(result.contentType.name, true);
                  var schemaWizardPanel = new app_wizard.SchemaWizardPanel(id);

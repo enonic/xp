@@ -135,6 +135,11 @@ module api_ui_tab {
                 this.tabMenuButton.setLabel("");
                 this.tabMenuButton.hide();
                 this.hideMenu();
+            } else {
+                var newTab = this.getNavigationItem(this.selectedTab);
+                if (newTab) {
+                    this.tabMenuButton.setLabel(newTab.getLabel());
+                }
             }
         }
 

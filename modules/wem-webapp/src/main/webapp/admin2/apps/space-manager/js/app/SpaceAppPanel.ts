@@ -88,7 +88,7 @@ module app {
 
                         if (result && result.success) {
 
-                            var tabMenuItem = new SpaceAppBarTabMenuItem(result.space.displayName);
+                            var tabMenuItem = new SpaceAppBarTabMenuItem(result.space.displayName, true);
                             var id = this.generateTabId(result.space.name, true);
                             var spaceWizardPanel = new app_wizard.SpaceWizardPanel(id);
                             spaceWizardPanel.setPersistedItem(result.space);

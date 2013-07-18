@@ -8,6 +8,8 @@
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/ElementHelper.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/Element.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/DivEl.ts' />
+///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/ImgElHelper.ts' />
+///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/ImgEl.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/ButtonEl.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/SpanEl.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/UlEl.ts' />

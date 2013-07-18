@@ -84,7 +84,7 @@ module app {
 
                         if (result && result.success) {
 
-                            var tabMenuItem = new ContentAppBarTabMenuItem(result.content[0].displayName);
+                            var tabMenuItem = new ContentAppBarTabMenuItem(result.content[0].displayName, true);
                             var id = this.generateTabId(result.content[0].name, true);
                             var contentWizardPanel = new app_wizard.ContentWizardPanel(id);
                             contentWizardPanel.setData(result);
