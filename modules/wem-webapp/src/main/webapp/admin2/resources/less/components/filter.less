@@ -1,0 +1,50 @@
+.admin-filter {
+  padding: 20px;
+  background-color: #eeeeee !important;
+  border-style: none;
+  position: absolute;
+  top: 0 !important;
+  left: 0;
+  bottom: 0;
+  width: auto;
+
+  .admin-facet-group {
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: 15px !important;
+
+    h2 {
+      color: #000000 !important;
+      font-size: 15px !important;
+      padding: 0 !important;
+      text-transform: capitalize;
+    }
+
+    .admin-facet:hover label {
+      color: #000 !important;
+    }
+
+    .admin-facet input[type="checkbox"] {
+      display: none;
+    }
+
+    .admin-facet label {
+      color: #777 !important;
+      background-image: url("../images/admin-unchecked.gif");
+      background-repeat: no-repeat;
+      padding-left: 20px;
+    }
+
+    .admin-facet input[type="checkbox"]:checked + label {
+      background-image: url("../images/admin-checked.gif");
+    }
+
+    .admin-facet.checked label {
+      color: #333 !important;
+    }
+  }
+}
+
+.admin-space-browse-panel {
+  position: relative;
+}
