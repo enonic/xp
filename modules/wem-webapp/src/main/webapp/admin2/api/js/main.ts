@@ -35,6 +35,7 @@
 ///<reference path='remote/RemoteService.ts' />
 
 ///<reference path='event/Event.ts' />
+///<reference path='event/FilterSearchEvent.ts' />
 ///<reference path='event/EventBus.ts' />
 
 ///<reference path='notify/Message.ts' />
@@ -45,6 +46,7 @@
 ///<reference path='dom/ElementHelper.ts' />
 ///<reference path='dom/ImgElHelper.ts' />
 ///<reference path='dom/Element.ts' />
+///<reference path='dom/AEl.ts' />
 ///<reference path='dom/Body.ts' />
 ///<reference path='dom/DivEl.ts' />
 ///<reference path='dom/H1El.ts' />
@@ -61,6 +63,7 @@
 ///<reference path='dom/ButtonEl.ts' />
 ///<reference path='dom/PEl.ts' />
 ///<reference path='dom/InputEl.ts' />
+///<reference path='dom/LabelEl.ts' />
 
 ///<reference path='ui/KeyBindings.ts'/>
 ///<reference path='ui/Action.ts' />
@@ -102,6 +105,7 @@
 ///<reference path='app/browse/ItemsSelectionPanel.ts' />
 ///<reference path='app/browse/BrowseItemPanel.ts' />
 ///<reference path='app/browse/ItemViewPanel.ts' />
+///<reference path='app/browse/BrowseFilterPanel.ts' />
 
 
 ///<reference path='ui/dialog/DialogButton.ts' />
