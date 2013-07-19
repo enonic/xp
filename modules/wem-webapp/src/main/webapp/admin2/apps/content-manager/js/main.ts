@@ -28,6 +28,7 @@
 ///<reference path='app/browse/ContentItemViewToolbar.ts' />
 ///<reference path='app/browse/ContentItemStatisticsPanel.ts' />
 ///<reference path='app/browse/ContentItemViewPanel.ts' />
+///<reference path='app/browse/ContentBrowseFilterPanel.ts' />
 
 ///<reference path='app/ContentAppPanel.ts' />
 ///<reference path='app/ContentAppBarTabMenu.ts' />

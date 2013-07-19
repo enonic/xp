@@ -14,16 +14,16 @@
 ///<reference path='view/FilterPanel.ts' />
 
 /*///<reference path='app/event/SaveSpaceEvent.ts' />
-///<reference path='app/event/DeletedEvent.ts' />
-///<reference path='app/event/BaseSpaceModelEvent.ts' />
-///<reference path='app/event/SpaceDeletePromptEvent.ts' />
-///<reference path='app/event/GridSelectionChangeEvent.ts' />
-///<reference path='app/event/GridDeselectEvent.ts' />
-///<reference path='app/event/ShowContextMenuEvent.ts' />
-///<reference path='app/event/NewSpaceEvent.ts' />
-///<reference path='app/event/OpenSpaceEvent.ts' />
-///<reference path='app/event/EditSpaceEvent.ts' />
-///<reference path='app/event/CloseActiveSpacePanelEvent.ts' />*/
+ ///<reference path='app/event/DeletedEvent.ts' />
+ ///<reference path='app/event/BaseSpaceModelEvent.ts' />
+ ///<reference path='app/event/SpaceDeletePromptEvent.ts' />
+ ///<reference path='app/event/GridSelectionChangeEvent.ts' />
+ ///<reference path='app/event/GridDeselectEvent.ts' />
+ ///<reference path='app/event/ShowContextMenuEvent.ts' />
+ ///<reference path='app/event/NewSpaceEvent.ts' />
+ ///<reference path='app/event/OpenSpaceEvent.ts' />
+ ///<reference path='app/event/EditSpaceEvent.ts' />
+ ///<reference path='app/event/CloseActiveSpacePanelEvent.ts' />*/
 
 ///<reference path='app/wizard/SpaceWizardEvents.ts' />
 ///<reference path='app/wizard/SpaceWizardActions.ts' />
@@ -44,6 +44,7 @@
 ///<reference path='app/browse/SpaceViewActions.ts' />
 ///<reference path='app/browse/SpaceItemViewToolbar.ts' />
 ///<reference path='app/browse/SpaceItemViewPanel.ts' />
+///<reference path='app/browse/SpaceBrowseFilterPanel.ts' />
 
 ///<reference path='app/delete/DeletedEvent.ts' />
 ///<reference path='app/delete/SpaceDeleteDialog.ts' />

@@ -4,7 +4,7 @@ module app_browse {
 
         private toolbar:SpaceBrowseToolbar;
 
-        private filterPanel:app_ui.FilterPanel;
+        private filterPanel:api_app_browse.BrowseFilterPanel;
 
         private grid:SpaceTreeGridPanel;
 
@@ -16,10 +16,12 @@ module app_browse {
             this.grid = components.gridPanel = new SpaceTreeGridPanel('spaceTreeGrid');
             this.browseItemPanel = components.detailPanel = new app_browse.SpaceBrowseItemPanel();
 
-            this.filterPanel = new app_ui.FilterPanel({
-                region: 'west',
-                width: 200
+            this.filterPanel = new app_browse.SpaceBrowseFilterPanel();
+            var action = new api_app_browse.FilterSearchAction();
+            action.addExecutionListener((action:api_app_browse.FilterSearchAction)=> {
+                console.log(action.getFilterValues());
             });
+            this.filterPanel.setFilterSearchAction(action);
 
             super(this.toolbar, this.grid, this.browseItemPanel, this.filterPanel);
 

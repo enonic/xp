@@ -219,6 +219,7 @@ Ext.define('Admin.view.FilterPanel', {
     },
 
     updateFacets: function (facets) {
+        console.log(facets);
         if (facets) {
             this.selectedValues = this.getValues();
             this.down('#facetContainer').update(facets);
