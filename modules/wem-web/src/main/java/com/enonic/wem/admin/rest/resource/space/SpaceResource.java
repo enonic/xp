@@ -10,15 +10,21 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.sun.jersey.api.NotFoundException;
 
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.space.model.SpaceJson;
 import com.enonic.wem.admin.rest.resource.space.model.SpaceSummaryListJson;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.space.DeleteSpace;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.api.space.SpaceNames;
 import com.enonic.wem.api.space.Spaces;
+
+import static com.enonic.wem.api.command.Commands.space;
 
 @Path("space")
 @Produces(MediaType.APPLICATION_JSON)
@@ -54,6 +60,24 @@ public final class SpaceResource
     @Consumes(MediaType.APPLICATION_JSON)
     public void delete( final List<String> names )
     {
-        // Implement. No results need to be returned.
+        final SpaceNames spaceNames = SpaceNames.from( names.toArray( new String[0] ) );
+        final List<SpaceName> notDeleted = Lists.newArrayList();
+        boolean success = true;
+        for ( SpaceName spaceName : spaceNames )
+        {
+            final DeleteSpace deleteSpace = space().delete().name( spaceName );
+            boolean deleted = client.execute( deleteSpace );
+            if ( !deleted )
+            {
+                notDeleted.add( spaceName );
+                success = false;
+            }
+        }
+
+        if ( !success )
+        {
+            final String spacesNotDeleted = Joiner.on( ", " ).join( spaceNames );
+            throw new NotFoundException( String.format( "Space [%s] not found", spacesNotDeleted ) );
+        }
     }
 }
