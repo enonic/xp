@@ -37,6 +37,7 @@ module api_app_browse{
             this.appendChild(this.browseToolbar);
 //            this.appendChild(this.gridAndDetailSplitPanel);
             this.appendChild(this.gridAndFilterAndDetailSplitPanel);
+            this.gridAndFilterAndDetailSplitPanel.render();
             this.gridAndDetailSplitPanel.render();
             this.grid.create('center', this.gridContainer.getId());
         }
