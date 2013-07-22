@@ -31,6 +31,14 @@ module app_browse {
             super(this.toolbar, this.grid, this.browseItemPanel, this.filterPanel);
 
 
+            ShowPreviewEvent.on((event) => {
+                this.browseItemPanel.setPreviewMode(true);
+            });
+
+            ShowDetailsEvent.on((event) => {
+                this.browseItemPanel.setPreviewMode(false);
+            });
+
             GridSelectionChangeEvent.on((event) => {
 
                 var items:api_app_browse.BrowseItem[] = [];

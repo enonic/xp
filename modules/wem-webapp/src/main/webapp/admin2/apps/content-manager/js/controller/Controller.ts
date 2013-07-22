@@ -41,14 +41,6 @@ Ext.define('Admin.controller.Controller', {
             console.log('TODO: implement move content');
         });
 
-        app_browse.ShowPreviewEvent.on((event) => {
-            console.log('TODO: implement show preview');
-        });
-
-        app_browse.ShowDetailsEvent.on((event) => {
-            console.log('TODO: implement show details');
-        });
-
         app_browse.GridSelectionChangeEvent.on((event) => {
             //this.updateDetailPanel(event.getModels());
         });

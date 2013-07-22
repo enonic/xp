@@ -66,6 +66,7 @@
 ///<reference path='dom/LabelEl.ts' />
 ///<reference path='dom/SelectEl.ts' />
 ///<reference path='dom/OptionEl.ts' />
+///<reference path='dom/IFrameEl.ts' />
 
 ///<reference path='ui/KeyBindings.ts'/>
 ///<reference path='ui/Action.ts' />
