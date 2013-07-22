@@ -1,4 +1,4 @@
-module api_form {
+module api_ui {
     export class Dropdown extends api_dom.SelectEl {
 
         constructor(name:string) {
