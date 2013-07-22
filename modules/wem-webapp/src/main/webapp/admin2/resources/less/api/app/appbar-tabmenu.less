@@ -1,10 +1,10 @@
 .appbar-tabmenu {
 
-  color: white;
-  float:left;
-  margin-left:35%;
+  display: inline-block;
   height:32px;
   padding:5px 10px;
+  color: white;
+  text-align: left;
 
   &:hover {
     background-color: @admin-dark-gray;
@@ -15,12 +15,18 @@
   }
 
   .appbar-tabmenu-button {
+    display: table;
     font-size: 14px;
     cursor:pointer;
     overflow:hidden;
     line-height: 20px;
 
+    span {
+      vertical-align: middle;
+    }
+
     img {
+      display: table-cell;
       height: 16px;
       width: 16px;
       margin: 2px 10px 0 0;
@@ -29,19 +35,23 @@
       background: transparent url("../images/pencil-FFFFFF.svg") 0 0 no-repeat;
     }
 
-    span {
-      vertical-align: middle;
+    .label {
+      display: table-cell;
+      height: 20px;
+      max-width: 300px;
+      padding: 0 10px 0 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
     .tabcount {
+      display: table-cell;
       margin-left: 10px;
       border-radius:10px;
       background-color: red;
       height:20px;
-      width:20px;
-      padding-left:6px;
-      float:right;
-      display:block
+      padding: 0 6px;
     }
   }
 
@@ -52,6 +62,7 @@
     box-shadow: 0 0 5px #333;
     padding:5px 5px 0 5px;
     margin-top:10px;
+    margin-left: -5px;
     min-width: 150px;
 
     &:before {
@@ -65,7 +76,7 @@
       margin-left: -7px;
     }
 
-    li {
+    .tab-menu-item {
       font-size: 14px;
       line-height: 20px;
       cursor:pointer;
@@ -82,13 +93,20 @@
         background: transparent url("../images/pencil-333333.svg") 0 0 no-repeat;
       }
 
-      span {
+      .label {
+        display: block;
+        max-width: 290px;
+        margin: 0 20px 0 26px;
         vertical-align: middle;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       button {
         float:right;
-        margin: 2px 0 0 5px;
+        width: 15px;
+        margin: 0 0 0 5px;
         padding:0 5px;
         border:0;
         cursor:pointer;

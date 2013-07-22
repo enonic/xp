@@ -9,7 +9,7 @@ module api_ui_tab {
         constructor(idPrefix?:string) {
             super(idPrefix || "TabMenuButton");
 
-            this.labelEl = new api_dom.SpanEl();
+            this.labelEl = new api_dom.SpanEl(null, 'label');
             this.appendChild(this.labelEl);
         }
 
@@ -19,6 +19,7 @@ module api_ui_tab {
 
         setLabel(value:string) {
             this.labelEl.getEl().setInnerHtml(value);
+            this.labelEl.getEl().setAttribute('title', value);
         }
     }
 }
