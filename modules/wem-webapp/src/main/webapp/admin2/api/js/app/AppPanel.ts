@@ -23,7 +23,19 @@ module api_app{
         addWizardPanel(item:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
             super.addNavigationItem(item, wizardPanel);
 
-            // TODO: Register as listener for changes to WizardPanel.displayName and update label of AppBarTabMenuItem
+            api_app_wizard.DisplayNameChangedEvent.on(function (event) {
+                if (event.getWizardPanel() == wizardPanel) {
+                    var displayName = wizardPanel.getDisplayName();
+                    item.setLabel(displayName);
+                    item.getTabMenu().getTabMenuButton().setLabel(displayName);
+                }
+            });
+
+            api_app_wizard.NameChangedEvent.on(function (event) {
+                if (event.getWizardPanel() == wizardPanel) {
+                    // update something when name changed
+                }
+            });
         }
 
         showHomePanel() {

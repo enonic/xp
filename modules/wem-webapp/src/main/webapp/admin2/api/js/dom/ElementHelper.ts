@@ -213,6 +213,11 @@ module api_dom {
             return this;
         }
 
+        getPaddingLeft(): number {
+            var stringValue = window.getComputedStyle(this.getHTMLElement(), null).getPropertyValue('padding-left');
+            return +stringValue.replace('px', '');
+        }
+
         setZindex(value:number):ElementHelper {
             this.el.style.zIndex = value.toString();
             return this;

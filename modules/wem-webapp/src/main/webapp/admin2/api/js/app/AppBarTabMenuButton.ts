@@ -15,7 +15,7 @@ module api_app{
             this.prependChild(this.iconEl);
 
             this.tabCountEl = new AppBarTabCount();
-            this.prependChild(this.tabCountEl);
+            this.appendChild(this.tabCountEl);
         }
 
         setTabCount(value:number) {
