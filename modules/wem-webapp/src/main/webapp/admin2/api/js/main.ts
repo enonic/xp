@@ -89,6 +89,7 @@
 ///<reference path='ui/NavigatedDeckPanel.ts' />
 ///<reference path='ui/grid/TreeGridPanel.ts' />
 ///<reference path='ui/Dropdown.ts' />
+///<reference path='ui/TextArea.ts' />
 
 ///<reference path='app/wizard/FormIcon.ts' />
 ///<reference path='app/wizard/WizardPanel.ts' />

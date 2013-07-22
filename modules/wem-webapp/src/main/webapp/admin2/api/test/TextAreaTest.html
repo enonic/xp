@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet/less" type="text/css" href="../../resources/less/styles.less">
+
+    <!-- LIB -->
+    <script type="text/javascript" src="../../resources/js/less.js"></script>
+    <script type="text/javascript" src="../../../admin/resources/lib/ext/ext-all-debug.js"></script>
+    <script type="text/javascript" src="../../../admin/resources/lib/plupload/js/plupload.full.js"></script>
+    <script type="text/javascript" src="../../resources/lib/jquery-2.0.2.js"></script>
+    <script type="text/javascript">
+        $.noConflict();
+    </script>
+
+
+</head>
+<body>
+<!-- API -->
+<script type="text/javascript" src="../js/api.js"></script>
+<script type="text/javascript">
+    var textarea = new api_ui.TextArea("test");
+    document.body.appendChild(textarea.getHTMLElement());
+
+    var setTextBtn = new api_dom.ButtonEl();
+    setTextBtn.setText("setText");
+    setTextBtn.setClickListener(function (e) {
+        textarea.setText("lorem ipsum dolor sit amet");
+    });
+
+    var getTextBtn = new api_dom.ButtonEl();
+    getTextBtn.setText("getText");
+    getTextBtn.setClickListener(function (e) {
+        alert(textarea.getText());
+    });
+
+    document.body.appendChild(setTextBtn.getHTMLElement())
+    document.body.appendChild(getTextBtn.getHTMLElement())
+</script>
+</body>
+</html>
