@@ -6,11 +6,28 @@ module api_ui {
         static MIDDLE:string = 'middle';
         static LARGE:string = 'large';
 
+        // Specifies RegExp for characters that will be removed during input.
+        private stripCharsRe: RegExp;
+
         constructor(idPrefix?:string, className?:string, size?:string = TextInput.MIDDLE) {
             super(idPrefix, className);
 
             this.getEl().setAttribute('type', 'text');
             this.addClass('text-input').addClass(size);
+
+            this.getEl().addEventListener('keypress', (event) => {
+                if (!this.stripCharsRe) {
+                    return;
+                }
+
+                var symbol = String.fromCharCode((<any> event).charCode);
+
+                // prevent input of forbidden symbols
+                if (this.containsForbiddenChars(symbol)) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
         }
 
         static large(idPrefix?:string, className?:string):TextInput {
@@ -22,7 +39,7 @@ module api_ui {
         }
 
         setValue(value:string):TextInput {
-            this.getEl().setValue(value);
+            this.getEl().setValue(this.removeForbiddenChars(value));
             return this;
         }
 
@@ -46,6 +63,21 @@ module api_ui {
 
         getPlaceholder():string {
             return this.getEl().getAttribute('placeholder');
+        }
+
+        setForbiddenCharsRe(re: RegExp): TextInput {
+            this.stripCharsRe = re;
+            return this;
+        }
+
+        private removeForbiddenChars(rawValue: string): string {
+            return this.stripCharsRe ? (rawValue || '').replace(this.stripCharsRe, '') : rawValue;
+        }
+
+        private containsForbiddenChars(value: string): bool {
+            // create new RegExp object in order not to mess RegExp.lastIndex
+            var forbidden = new RegExp(<any> this.stripCharsRe);
+            return forbidden.test(value);
         }
     }
 }

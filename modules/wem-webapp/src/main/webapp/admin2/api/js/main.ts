@@ -93,6 +93,7 @@
 ///<reference path='ui/TextArea.ts' />
 
 ///<reference path='app/wizard/FormIcon.ts' />
+///<reference path='app/wizard/WizardEvents.ts' />
 ///<reference path='app/wizard/WizardPanel.ts' />
 
 ///<reference path='app/AppBar.ts' />
