@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet/less" type="text/css" href="../../resources/less/styles.less">
+
+    <!-- LIB -->
+    <script type="text/javascript" src="../../resources/js/less.js"></script>
+    <script type="text/javascript" src="../../../admin/resources/lib/ext/ext-all-debug.js"></script>
+    <script type="text/javascript" src="../../../admin/resources/lib/plupload/js/plupload.full.js"></script>
+    <script type="text/javascript" src="../../resources/lib/jquery-2.0.2.js"></script>
+    <script type="text/javascript">
+        $.noConflict();
+    </script>
+
+
+</head>
+<body>
+<!-- API -->
+<script type="text/javascript" src="../js/api.js"></script>
+<script type="text/javascript">
+    var dropdown = new api_form.Dropdown();
+    document.body.appendChild(dropdown.getHTMLElement());
+    dropdown.addOption("bmw", "BMW");
+    dropdown.addOption("volvo", "Volvo");
+</script>
+</body>
+</html>

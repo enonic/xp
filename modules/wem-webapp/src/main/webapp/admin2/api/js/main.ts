@@ -64,6 +64,8 @@
 ///<reference path='dom/PEl.ts' />
 ///<reference path='dom/InputEl.ts' />
 ///<reference path='dom/LabelEl.ts' />
+///<reference path='dom/SelectEl.ts' />
+///<reference path='dom/OptionEl.ts' />
 
 ///<reference path='ui/KeyBindings.ts'/>
 ///<reference path='ui/Action.ts' />
@@ -86,6 +88,8 @@
 ///<reference path='ui/tab/TabMenuItem.ts' />
 ///<reference path='ui/NavigatedDeckPanel.ts' />
 ///<reference path='ui/grid/TreeGridPanel.ts' />
+
+///<reference path='form/Dropdown.ts' />
 
 ///<reference path='app/wizard/FormIcon.ts' />
 ///<reference path='app/wizard/WizardPanel.ts' />
