@@ -34,6 +34,14 @@ module api_ui_tab {
             return new TabMenuButton();
         }
 
+        getTabMenuButton(): TabMenuButton {
+            return this.tabMenuButton;
+        }
+
+        getMenuEl(): api_dom.Element {
+            return this.menuEl;
+        }
+
         createMenu():api_dom.UlEl {
             var ulEl = new api_dom.UlEl();
             ulEl.getEl().setZindex(19001);
@@ -64,6 +72,10 @@ module api_ui_tab {
         showMenu() {
             this.menuEl.show();
             this.showingMenuItems = true;
+        }
+
+        isShowingMenuItems(): bool {
+            return this.showingMenuItems;
         }
 
         addNavigationItem(tab:api_ui.PanelNavigationItem) {
