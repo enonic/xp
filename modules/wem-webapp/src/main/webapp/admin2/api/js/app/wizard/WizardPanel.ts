@@ -42,7 +42,7 @@ module api_app_wizard {
             this.stepPanels = new api_app_wizard.WizardStepDeckPanel();
             this.stepNavigator = new WizardStepNavigator(this.stepPanels);
             this.appendChild(this.stepNavigator);
-            this.appendChild(this.stepPanels);
+//            this.appendChild(this.stepPanels);
 
             this.previous = new WizardStepNavigationArrow(WizardStepNavigationArrow.PREVIOUS, this.stepNavigator);
             this.next = new WizardStepNavigationArrow(WizardStepNavigationArrow.NEXT, this.stepNavigator);
@@ -172,16 +172,14 @@ module api_app_wizard {
         private autogenerateName: bool = false;
 
         constructor(wizardPanel: WizardPanel) {
-            super(null, "header");
+            super(null, "wizard-header");
 
             this.wizardPanel = wizardPanel;
 
-            this.displayNameEl = api_ui.TextInput.large().setName('displayName');
-            new api_ui.Tooltip(this.displayNameEl, "Display name", 100, api_ui.Tooltip.TRIGGER_FOCUS, api_ui.Tooltip.SIDE_RIGHT, [7, 0]);
+            this.displayNameEl = api_ui.AutosizeTextInput.large().setName('displayName');
             this.appendChild(this.displayNameEl);
 
-            this.nameEl = api_ui.TextInput.middle().setName('name').setForbiddenCharsRe(/[^a-z0-9\-]+/ig);
-            new api_ui.Tooltip(this.nameEl, "Name", 100, api_ui.Tooltip.TRIGGER_FOCUS, api_ui.Tooltip.SIDE_RIGHT, [7, 0]);
+            this.nameEl = api_ui.AutosizeTextInput.middle().setName('name').setForbiddenCharsRe(/[^a-z0-9\-]+/ig);
             this.appendChild(this.nameEl);
 
             this.displayNameEl.getEl().addEventListener('input', () => {

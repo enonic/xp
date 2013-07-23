@@ -94,6 +94,8 @@
 ///<reference path='ui/grid/TreeGridPanel.ts' />
 ///<reference path='ui/Fieldset.ts' />
 ///<reference path='ui/Dropdown.ts' />
+///<reference path='ui/TextInput.ts' />
+///<reference path='ui/AutosizeTextInput.ts' />
 ///<reference path='ui/TextArea.ts' />
 ///<reference path='ui/Form.ts' />
 ///<reference path='ui/FormItem.ts' />
@@ -132,7 +134,6 @@
 ///<reference path='content/data/ContentData.ts' />
 ///<reference path='content/data/Property.ts' />
 
-///<reference path='ui/TextInput.ts' />
 ///<reference path='schema/content/form/FormItem.ts' />
 ///<reference path='schema/content/form/InputType.ts' />
 ///<reference path='schema/content/form/Input.ts' />
