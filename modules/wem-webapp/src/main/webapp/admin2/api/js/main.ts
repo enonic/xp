@@ -67,6 +67,9 @@
 ///<reference path='dom/SelectEl.ts' />
 ///<reference path='dom/OptionEl.ts' />
 ///<reference path='dom/IFrameEl.ts' />
+///<reference path='dom/FieldsetEl.ts' />
+///<reference path='dom/LegendEl.ts' />
+///<reference path='dom/FormEl.ts' />
 
 ///<reference path='ui/KeyBindings.ts'/>
 ///<reference path='ui/Action.ts' />
@@ -89,8 +92,11 @@
 ///<reference path='ui/tab/TabMenuItem.ts' />
 ///<reference path='ui/NavigatedDeckPanel.ts' />
 ///<reference path='ui/grid/TreeGridPanel.ts' />
+///<reference path='ui/Fieldset.ts' />
 ///<reference path='ui/Dropdown.ts' />
 ///<reference path='ui/TextArea.ts' />
+///<reference path='ui/Form.ts' />
+///<reference path='ui/FormItem.ts' />
 
 ///<reference path='app/wizard/FormIcon.ts' />
 ///<reference path='app/wizard/WizardEvents.ts' />

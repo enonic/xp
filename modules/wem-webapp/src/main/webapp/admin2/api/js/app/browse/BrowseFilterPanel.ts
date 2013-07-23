@@ -271,7 +271,7 @@ module api_app_browse {
 
             this.facetGroup = facetGroup;
             this.checkbox = new api_dom.InputEl('FacetCheckbox', 'admin-facet-cb', 'checkbox');
-            this.label = new api_dom.LabelEl('FacetLabel', 'admin-facet-lbl');
+            this.label = new api_dom.LabelEl('', null, 'FacetLabel', 'admin-facet-lbl');
             this.label.getEl().setInnerHtml(facetData.name + ' (' + facetData.count + ')');
             this.label.getEl().addEventListener('click', () => {
                 var node = this.checkbox.getHTMLElement().getAttributeNode('checked');
