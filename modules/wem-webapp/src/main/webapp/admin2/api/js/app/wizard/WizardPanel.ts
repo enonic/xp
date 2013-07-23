@@ -103,6 +103,10 @@ module api_app_wizard {
             this.header.setAutogenerateName(value);
         }
 
+        generateName(value: string): string {
+            return this.header.generateName(value);
+        }
+
         addStep(step:WizardStep) {
             this.steps.push(step);
             this.stepNavigator.addStep(step);
@@ -239,7 +243,7 @@ module api_app_wizard {
             this.autogenerateName = value;
         }
 
-        private generateName(value: string): string {
+        generateName(value: string): string {
             return value ? value.replace(/[\s+\.\/]/ig, '-').replace(/-{2,}/g, '-').replace(/^-|-$/g, '').toLowerCase() : '';
         }
     }
