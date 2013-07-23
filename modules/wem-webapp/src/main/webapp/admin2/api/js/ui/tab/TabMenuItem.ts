@@ -19,14 +19,13 @@ module api_ui_tab {
         constructor(label:string) {
             super("TabMenuItem", "tab-menu-item");
 
-            this.label = label;
-            this.labelEl = new api_dom.SpanEl();
-            this.labelEl.getEl().setInnerHtml(label);
+            this.labelEl = new api_dom.SpanEl(null, 'label');
             this.appendChild(this.labelEl);
+            this.setLabel(label);
 
             var removeButton = new api_dom.ButtonEl();
             removeButton.getEl().setInnerHtml("&times;");
-            this.appendChild(removeButton);
+            this.prependChild(removeButton);
 
             this.labelEl.getEl().addEventListener("click", () => {
                 new TabMenuItemSelectEvent(this).fire();
@@ -43,6 +42,10 @@ module api_ui_tab {
             this.tabMenu = tabMenu;
         }
 
+        getTabMenu(): TabMenu {
+            return this.tabMenu;
+        }
+
         setIndex(value:number) {
             this.tabIndex = value;
         }
@@ -53,6 +56,12 @@ module api_ui_tab {
 
         getLabel():string {
             return this.label;
+        }
+
+        setLabel(value: string) {
+            this.label = value;
+            this.labelEl.getEl().setInnerHtml(value);
+            this.labelEl.getEl().setAttribute('title', value);
         }
 
         isVisible():bool {
