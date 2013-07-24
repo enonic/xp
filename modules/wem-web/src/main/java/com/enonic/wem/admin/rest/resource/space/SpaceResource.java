@@ -26,12 +26,18 @@ import com.enonic.wem.admin.rpc.UploadedIconFetcher;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.space.DeleteSpace;
+import com.enonic.wem.api.command.space.UpdateSpace;
+import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.space.SpaceNames;
 import com.enonic.wem.api.space.Spaces;
+import com.enonic.wem.api.space.editor.SpaceEditor;
 
 import static com.enonic.wem.api.command.Commands.space;
+import static com.enonic.wem.api.space.editor.SpaceEditors.composite;
+import static com.enonic.wem.api.space.editor.SpaceEditors.setDisplayName;
+import static com.enonic.wem.api.space.editor.SpaceEditors.setIcon;
 
 @Path("space")
 @Produces(MediaType.APPLICATION_JSON)
@@ -40,7 +46,6 @@ public final class SpaceResource
 {
 
     private UploadService uploadService;
-
 
     @GET
     public SpaceJson getDetails( @QueryParam("name") final String name )
@@ -117,6 +122,49 @@ public final class SpaceResource
         {
             final String spacesNotDeleted = Joiner.on( ", " ).join( spaceNames );
             throw new NotFoundException( String.format( "Space [%s] not found", spacesNotDeleted ) );
+        }
+    }
+
+    @POST
+    @Path("update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void update( @FormParam("spaceName") String name, @FormParam("displayName") String displayName,
+                        @FormParam("iconReference") String iconReference, @FormParam("newName") String newName )
+    {
+        final SpaceName spaceName = SpaceName.from( name );
+
+        final Icon icon;
+        try
+        {
+            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( iconReference );
+        }
+        catch ( Exception e )
+        {
+            throw new WebApplicationException( e );
+        }
+
+        if ( spaceExists( spaceName ) )
+        {
+            final SpaceEditor editor;
+            if ( icon == null )
+            {
+                editor = setDisplayName( displayName );
+            }
+            else
+            {
+                editor = composite( setDisplayName( displayName ), setIcon( icon ) );
+            }
+            final UpdateSpace updateCommand = space().update().name( spaceName ).editor( editor );
+            client.execute( updateCommand );
+
+            if ( newName != null )
+            {
+                client.execute( space().rename().space( spaceName ).newName( newName ) );
+            }
+        }
+        else
+        {
+            throw new SpaceNotFoundException( spaceName );
         }
     }
 
