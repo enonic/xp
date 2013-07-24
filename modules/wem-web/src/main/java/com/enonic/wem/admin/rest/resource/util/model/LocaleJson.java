@@ -7,7 +7,7 @@ import com.enonic.wem.admin.rest.resource.model.Item;
 public class LocaleJson
     extends Item
 {
-    final Locale locale;
+    private final Locale locale;
 
     public LocaleJson( final Locale locale )
     {
