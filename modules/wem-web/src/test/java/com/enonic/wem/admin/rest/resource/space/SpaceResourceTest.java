@@ -12,6 +12,7 @@ import com.sun.jersey.api.NotFoundException;
 import com.enonic.wem.admin.rest.resource.space.exception.DuplicatedSpaceException;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.space.SpaceNames;
@@ -115,6 +116,33 @@ public class SpaceResourceTest
         Mockito.when( client.execute( space().get().name( SpaceName.from( "space-1" ) ) ) ).thenReturn(
             Spaces.from( Space.newSpace().name( "space-1" ).build() ) );
         spaceResource.create( "space-1", "Space 1", "icon.png" );
+    }
+
+    @Test
+    public void testSpaceUpdateExistedSpace()
+    {
+        final SpaceResource spaceResource = createSpaceResource();
+        Mockito.when( client.execute( space().get().name( SpaceName.from( "space-1" ) ) ) ).thenReturn(
+            Spaces.from( Space.newSpace().name( "space-1" ).build() ) );
+        spaceResource.update( "space-1", "Space 1", "icon.png", "New name" );
+    }
+
+    @Test(expected = SpaceNotFoundException.class)
+    public void testSpaceUpdateNonExistedSpace()
+    {
+        final SpaceResource spaceResource = createSpaceResource();
+        Mockito.when( client.execute( space().get().name( SpaceName.from( "space-1" ) ) ) ).thenReturn( Spaces.empty() );
+        spaceResource.update( "space-1", "Space 1", "icon.png", "New name" );
+
+    }
+
+    @Test
+    public void testSpaceUpdateExistedSpaceNoRename()
+    {
+        final SpaceResource spaceResource = createSpaceResource();
+        Mockito.when( client.execute( space().get().name( SpaceName.from( "space-1" ) ) ) ).thenReturn(
+            Spaces.from( Space.newSpace().name( "space-1" ).build() ) );
+        spaceResource.update( "space-1", "Space 1", "icon.png", null );
     }
 
 }
