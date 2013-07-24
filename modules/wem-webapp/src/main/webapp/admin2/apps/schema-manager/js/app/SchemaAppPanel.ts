@@ -34,7 +34,10 @@ module app {
             });
             
             app_browse.NewSchemaEvent.on(() => {
-                console.log('TODO: implement handler for NewSchemaEvent');
+                if(!components.newSchemaDialog) {
+                    components.newSchemaDialog = new app_browse.NewSchemaDialog();
+                }
+                components.newSchemaDialog.open();
             });
 
             app_browse.EditSchemaEvent.on((event) => {

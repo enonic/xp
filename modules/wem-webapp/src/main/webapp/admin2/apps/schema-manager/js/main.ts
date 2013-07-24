@@ -16,6 +16,7 @@
 ///<reference path='app/browse/SchemaActionMenu.ts' />
 ///<reference path='app/browse/SchemaTreeGridPanel.ts' />
 ///<reference path='app/browse/SchemaTreeGridContextMenu.ts' />
+///<reference path='app/browse/NewSchemaDialog.ts' />
 
 ///<reference path='app/SchemaAppBar.ts' />
 ///<reference path='app/SchemaAppBarTabMenu.ts' />
@@ -35,6 +36,7 @@ module app {
 module components {
     export var detailPanel:app_browse.SchemaBrowseItemPanel;
     export var gridPanel:app_browse.SchemaTreeGridPanel;
+    export var newSchemaDialog:app_browse.NewSchemaDialog;
 }
 
 Ext.application({

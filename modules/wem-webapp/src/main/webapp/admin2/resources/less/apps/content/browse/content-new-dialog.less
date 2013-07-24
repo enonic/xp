@@ -39,12 +39,25 @@
       }
 
       h6, p {
+        .clearfix();
         // important needed to override style in admin.css
         margin: 0 0 0 57px !important;
       }
 
       &:hover {
         background-color: #ebebeb;
+      }
+
+    }
+
+    &.one-line-list {
+
+      h6 {
+        line-height: 32px;
+      }
+
+      p {
+        display: none;
       }
 
     }

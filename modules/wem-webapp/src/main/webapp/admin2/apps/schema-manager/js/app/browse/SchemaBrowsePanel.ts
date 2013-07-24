@@ -12,7 +12,7 @@ module app_browse {
             this.gridPanel = components.gridPanel = new SchemaTreeGridPanel('schemaTreeGrid');
             this.detailPanel = components.detailPanel = new SchemaBrowseItemPanel();
 
-            this.filterPanel = null;
+            this.filterPanel = new api_app_browse.BrowseFilterPanel();
 
             super(this.toolbar, this.gridPanel, this.detailPanel, this.filterPanel);
 
