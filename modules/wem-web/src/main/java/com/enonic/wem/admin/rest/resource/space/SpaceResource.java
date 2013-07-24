@@ -3,20 +3,27 @@ package com.enonic.wem.admin.rest.resource.space;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 import com.sun.jersey.api.NotFoundException;
 
 import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.admin.rest.resource.space.exception.DuplicatedSpaceException;
 import com.enonic.wem.admin.rest.resource.space.model.SpaceJson;
 import com.enonic.wem.admin.rest.resource.space.model.SpaceSummaryListJson;
+import com.enonic.wem.admin.rest.service.upload.UploadService;
+import com.enonic.wem.admin.rpc.UploadedIconFetcher;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.space.DeleteSpace;
 import com.enonic.wem.api.space.Space;
@@ -31,6 +38,10 @@ import static com.enonic.wem.api.command.Commands.space;
 public final class SpaceResource
     extends AbstractResource
 {
+
+    private UploadService uploadService;
+
+
     @GET
     public SpaceJson getDetails( @QueryParam("name") final String name )
     {
@@ -53,6 +64,34 @@ public final class SpaceResource
         final Spaces spaces = client.execute( Commands.space().get().all() );
         final SpaceSummaryListJson result = new SpaceSummaryListJson( spaces );
         return result;
+    }
+
+    @POST
+    @Path("create")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void create( @FormParam("spaceName") String name, @FormParam("displayName") String displayName,
+                        @FormParam("iconReference") String iconReference )
+    {
+        final SpaceName spaceName = SpaceName.from( name );
+
+        final Icon icon;
+        try
+        {
+            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( iconReference );
+        }
+        catch ( Exception e )
+        {
+            throw new WebApplicationException( e );
+        }
+
+        if ( !spaceExists( spaceName ) )
+        {
+            client.execute( space().create().name( spaceName ).displayName( displayName ).icon( icon ) );
+        }
+        else
+        {
+            throw new DuplicatedSpaceException( spaceName );
+        }
     }
 
     @POST
@@ -79,5 +118,16 @@ public final class SpaceResource
             final String spacesNotDeleted = Joiner.on( ", " ).join( spaceNames );
             throw new NotFoundException( String.format( "Space [%s] not found", spacesNotDeleted ) );
         }
+    }
+
+    private boolean spaceExists( final SpaceName spaceName )
+    {
+        return !client.execute( space().get().name( spaceName ) ).isEmpty();
+    }
+
+    @Inject
+    public void setUploadService( final UploadService uploadService )
+    {
+        this.uploadService = uploadService;
     }
 }
