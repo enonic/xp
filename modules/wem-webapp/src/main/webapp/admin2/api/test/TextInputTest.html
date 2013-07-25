@@ -38,21 +38,23 @@
 
     // You can use TextInput constructor to set size manually
     // or use static method to get new TextInput with specified size.
-    var largeInput = new api_ui.TextInput.large().setPlaceholder('Empty');
+    var largeInput = new api_ui.AutosizeTextInput.large().setPlaceholder('Empty');
     var middleInput = new api_ui.TextInput.middle().setPlaceholder('Empty');
 
     var example = document.getElementById('inputs');
     example.appendChild(largeInput.getHTMLElement());
     example.appendChild(middleInput.getHTMLElement());
+    largeInput.init();
+    middleInput.init();
 
     // Display new value for large TextInput.
-    largeInput.getEl().addEventListener('keyup', function () {
+    largeInput.getEl().addEventListener('input', function () {
         // Use InputEl.getValue() method to access current input value.
         document.getElementById('value-large').innerHTML = largeInput.getValue();
     });
 
     // Display new value for middle TextInput.
-    middleInput.getEl().addEventListener('keyup', function () {
+    middleInput.getEl().addEventListener('input', function () {
         // Use InputEl.getValue() method to access the current input value.
         document.getElementById('value-middle').innerHTML = middleInput.getValue();
     });
