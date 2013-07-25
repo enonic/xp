@@ -38,7 +38,7 @@ module app_browse {
             super("Delete");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new DeleteSchemaEvent(app.SchemaContext.get().getSelectedSchemes()).fire();
+                new DeleteSchemaPromptEvent(app.SchemaContext.get().getSelectedSchemes()).fire();
             });
         }
     }

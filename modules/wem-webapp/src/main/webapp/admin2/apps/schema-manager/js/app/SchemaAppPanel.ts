@@ -96,9 +96,11 @@ module app {
                 }
             });
 
-            app_browse.DeleteSchemaEvent.on((event) => {
-                console.log('TODO: implement handler for DeleteSchemaEvent');
-                console.log('Selected schema model: %O', event.getModels());
+            app_browse.DeleteSchemaPromptEvent.on((event) => {
+                if(!components.schemaDeleteDialog) {
+                    components.schemaDeleteDialog = new app_delete.SchemaDeleteDialog();
+                }
+                components.schemaDeleteDialog.setSchemaToDelete(event.getModels()).open();
             });
 
             app_browse.ReindexSchemaEvent.on(() => {

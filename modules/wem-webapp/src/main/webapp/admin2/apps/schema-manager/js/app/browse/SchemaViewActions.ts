@@ -17,7 +17,7 @@ module app_view {
             super("Delete");
 
             this.addExecutionListener(() => {
-                new app_browse.DeleteSchemaEvent([panel.getItem().getModel()]).fire();
+                new app_browse.DeleteSchemaPromptEvent([panel.getItem().getModel()]).fire();
             });
         }
     }

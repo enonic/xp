@@ -30,6 +30,9 @@
 ///<reference path='handler/DeleteContentParam.ts' />
 ///<reference path='handler/DeleteContentParamFactory.ts' />
 ///<reference path='handler/DeleteContentHandler.ts' />
+///<reference path='handler/DeleteSchemaParam.ts' />
+///<reference path='handler/DeleteSchemaParamFactory.ts' />
+///<reference path='handler/DeleteSchemaHandler.ts' />
 
 ///<reference path='remote/JsonRpcProvider.ts' />
 ///<reference path='remote/RemoteService.ts' />

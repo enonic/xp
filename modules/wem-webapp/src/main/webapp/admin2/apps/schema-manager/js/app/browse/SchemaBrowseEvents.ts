@@ -68,13 +68,13 @@ module app_browse {
         }
     }
 
-    export class DeleteSchemaEvent extends BaseSchemaModelEvent {
+    export class DeleteSchemaPromptEvent extends BaseSchemaModelEvent {
 
         constructor(model:api_model.SchemaModel[]) {
             super('deleteSchema', model);
         }
 
-        static on(handler:(event:DeleteSchemaEvent) => void) {
+        static on(handler:(event:DeleteSchemaPromptEvent) => void) {
             api_event.onEvent('deleteSchema', handler);
         }
     }
