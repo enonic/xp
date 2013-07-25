@@ -1,6 +1,5 @@
 module api_ui {
 
-    // TODO: @alb - Why do we need extend InputEl? Why don't we can improve InputEl?
     export class TextInput extends api_dom.InputEl {
 
         static MIDDLE:string = 'middle';
