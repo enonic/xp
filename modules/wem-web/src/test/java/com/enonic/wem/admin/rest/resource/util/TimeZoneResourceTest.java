@@ -38,7 +38,7 @@ public class TimeZoneResourceTest
     }
 
     @Test
-    public void testSpaceDeleteExistedSpaces()
+    public void testList()
         throws Exception
     {
         final TimeZoneResource resource = new TimeZoneResource();

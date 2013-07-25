@@ -47,7 +47,7 @@ public class CountryResourceTest
     }
 
     @Test
-    public void testSpaceDeleteExistedSpaces()
+    public void testList()
         throws Exception
     {
         final CountryResource resource = new CountryResource();
