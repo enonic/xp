@@ -21,11 +21,15 @@ module api_app_browse {
 
             this.getEl().addClass('admin-filter');
             this.searchField = this.createSearchFieldEl();
-            this.facetContainer = new FacetContainer(facetData);
+            this.facetContainer = this.createFacetContainer(facetData);
 
             this.clearFilter = this.createClearFilterEl();
             api_event.FilterSearchEvent.on((event:api_event.FilterSearchEvent) => {
-                this.filterSearchAction.execute();
+                if (this.isDirty()) {
+                    this.clearFilter.show();
+                } else {
+                    this.clearFilter.hide();
+                }
                 if (event.getTarget()) {
                     this.lastFacetGroup = (<Facet>event.getTarget()).getFacetGroup();
                 } else {
@@ -36,13 +40,16 @@ module api_app_browse {
 
         }
 
+        // Need to return any since TypeScript bug: it can't find FacetContainer as return type
+        createFacetContainer(facetData):any {
+            return new FacetContainer(facetData);
+        }
+
         createSearchFieldEl():api_dom.InputEl {
             var searchField = new api_dom.InputEl('SearchField', 'admin-search-trigger');
-            searchField.getEl().addEventListener('keypress', (event:any) => {
+            searchField.getEl().addEventListener('keydown', (event:any) => {
                 if (event.which === 97) {
-                    if (event.type === "keypress") {
-                        new api_event.FilterSearchEvent().fire();
-                    }
+                    new api_event.FilterSearchEvent().fire();
                 } else {
                     if (this.searchFilterTypingTimer !== null) {
                         window.clearTimeout(this.searchFilterTypingTimer);
@@ -123,9 +130,12 @@ module api_app_browse {
         }
 
         search() {
-            this.clearFilter.show();
             this.filterSearchAction.setFilterValues(this.getValues());
             this.filterSearchAction.execute();
+        }
+
+        isDirty() {
+            return this.facetContainer.isDirty() || this.searchField.getHTMLElement()['value'].trim() != '';
         }
     }
 
@@ -175,6 +185,16 @@ module api_app_browse {
             return values;
         }
 
+        isDirty():bool {
+            var isDirty:bool = false;
+            for (var i = 0; i < this.facetGroups.length; i++) {
+                if (this.facetGroups[i].isDirty()) {
+                    isDirty = true;
+                    break;
+                }
+            }
+            return isDirty;
+        }
 
     }
 
@@ -235,6 +255,17 @@ module api_app_browse {
             for (var i = 0; i < this.facets.length; i++) {
                 this.facets[i].reset();
             }
+        }
+
+        isDirty():bool {
+            var isDirty:bool = false;
+            for (var i = 0; i < this.facets.length; i++) {
+                if (this.facets[i].isDirty()) {
+                    isDirty = true;
+                    break;
+                }
+            }
+            return isDirty;
         }
 
         getName():string {
@@ -313,6 +344,14 @@ module api_app_browse {
 
         reset() {
             this.checkbox.getHTMLElement().removeAttribute('checked');
+        }
+
+        isDirty():bool {
+            if (this.checkbox.getHTMLElement().getAttributeNode('checked')) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 

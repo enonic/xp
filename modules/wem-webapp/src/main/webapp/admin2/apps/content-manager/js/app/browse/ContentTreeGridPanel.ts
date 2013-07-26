@@ -9,6 +9,23 @@ module app_browse {
             this.setKeyField("path");
             this.setItemId(itemId);
 
+            ContentBrowseSearchEvent.on((event:ContentBrowseSearchEvent) => {
+                if (event.getResultContentIds().length > 0) {
+                    // show  ids
+                    this.setRemoteSearchParams({ contentIds: event.getResultContentIds() });
+                    this.refresh();
+                } else {
+                    // show none
+                    this.removeAll();
+                    this.updateResultCount(0);
+                }
+            });
+
+            ContentBrowseResetEvent.on((event:ContentBrowseResetEvent) => {
+                this.setRemoteSearchParams({});
+                this.refresh();
+            })
+
         }
 
         private createGridStore() {
