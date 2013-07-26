@@ -1,6 +1,6 @@
 module api_remote {
 
-    export interface ContentType {
+    export interface ContentType extends Item {
         name: string;
         module: string;
         qualifiedName?: string;
@@ -12,6 +12,7 @@ module api_remote {
         allowChildren: bool;
         createdTime?: Date;
         modifiedTime?: Date;
+        iconUrl: string;
         form: FormItem[];
     }
 
@@ -23,24 +24,6 @@ module api_remote {
 
     export interface ContentTypeListNode extends ContentType {
         iconUrl:string;
-    }
-
-    export interface ContentTreeNode {
-        allowsChildren:bool;
-        contents:ContentTreeNode[];
-        createdTime?:Date;
-        deletable:bool;
-        displayName:string;
-        editable:bool;
-        hasChildren:bool;
-        iconUrl:string;
-        id:string;
-        modifiedTime?:Date;
-        modifier:string;
-        name:string;
-        owner:string;
-        path:string;
-        type:string;
     }
 
     export interface FormItem {
@@ -104,17 +87,6 @@ module api_remote {
             value: string;
         }[];
     }
-
-    export interface RelationshipType {
-        name:string;
-        displayName:string;
-        module:string;
-        fromSemantic:string;
-        toSemantic:string;
-        allowedFromTypes:string[];
-        allowedToTypes:string[];
-    }
-
 
     export interface RemoteCallContentTypeGetParams {
         format: string;
