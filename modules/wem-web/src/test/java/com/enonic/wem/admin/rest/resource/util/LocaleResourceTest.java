@@ -33,7 +33,7 @@ public class LocaleResourceTest
     }
 
     @Test
-    public void testSpaceDeleteExistedSpaces()
+    public void testList()
         throws Exception
     {
         final LocaleResource resource = new LocaleResource();
