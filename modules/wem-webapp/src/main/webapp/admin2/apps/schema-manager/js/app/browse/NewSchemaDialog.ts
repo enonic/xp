@@ -3,7 +3,7 @@ module app_browse {
     export class NewSchemaDialog extends api_ui_dialog.ModalDialog {
 
         private cancelAction:api_ui.Action = new CancelNewDialogAction();
-        private selectAction:SelectContentTypeKindAction;
+        private selectAction:SelectSchemaTypeAction;
 
         private kindList;
 
@@ -16,7 +16,7 @@ module app_browse {
 
             this.addClass("new-dialog");
 
-            this.kindList = new ContentTypeKindList();
+            this.kindList = new SchemaTypeList();
             this.appendChildToContentPanel(this.kindList);
 
             this.setCancelAction(this.cancelAction);
@@ -24,12 +24,12 @@ module app_browse {
                 this.close();
             });
 
-            this.setSelectAction(new SelectContentTypeKindAction());
+            this.setSelectAction(new SelectSchemaTypeAction());
 
             api_dom.Body.get().appendChild(this);
         }
 
-        setSelectAction(action:SelectContentTypeKindAction) {
+        setSelectAction(action:SelectSchemaTypeAction) {
 
             this.kindList.setSelectAction(action);
             this.selectAction = action;
@@ -38,7 +38,7 @@ module app_browse {
             });
         }
 
-        getSelectAction():SelectContentTypeKindAction {
+        getSelectAction():SelectSchemaTypeAction {
             return this.selectAction;
         }
     }
@@ -51,81 +51,85 @@ module app_browse {
 
     }
 
-    export class SelectContentTypeKindAction extends api_ui.Action {
+    export class SelectSchemaTypeAction extends api_ui.Action {
 
-        private contentTypeKind;
+        private schemaType: string;
 
-        constructor(contentTypeKind?) {
-            super("SelectContentTypeKind");
-            this.contentTypeKind = contentTypeKind;
+        constructor() {
+            super("SelectSchemaType");
+
+            this.addExecutionListener(() => {
+                new NewSchemaEvent(this.schemaType).fire();
+            });
         }
 
-        setContentTypeKind(contentTypeKind):SelectContentTypeKindAction {
-            this.contentTypeKind = contentTypeKind;
+        setSchemaType(schemaType: string):SelectSchemaTypeAction {
+            this.schemaType = schemaType;
             return this;
         }
 
-        getContentTypeKind() {
-            return this.contentTypeKind;
+        getSchemaType(): string {
+            return this.schemaType;
         }
 
     }
 
-
-    interface ContentTypeKindListNode {
+    interface SchemaTypeListNode {
+        type: string;
         displayName: string;
         iconUrl: string;
     }
 
-    class ContentTypeKindList extends api_dom.DivEl {
+    class SchemaTypeList extends api_dom.DivEl {
 
         private ul:api_dom.UlEl;
-        private nodes:ContentTypeKindListNode[];
-        private selectAction:SelectContentTypeKindAction;
+        private nodes:SchemaTypeListNode[];
+        private selectAction:SelectSchemaTypeAction;
 
         constructor() {
-            super("ContentTypeKindList", "node-list one-line-list");
+            super("SchemaTypeList", "node-list one-line-list");
 
-            this.ul = new api_dom.UlEl("ContentTypeKindList");
+            this.ul = new api_dom.UlEl("SchemaTypeList");
             this.appendChild(this.ul);
 
-
             this.setNodes(this.createNodes());
-
         }
 
-        setNodes(nodes:ContentTypeKindListNode[]):ContentTypeKindList {
+        setNodes(nodes:SchemaTypeListNode[]):SchemaTypeList {
             this.nodes = nodes;
             return this.layoutNodes(nodes);
         }
 
-        getNodes():ContentTypeKindListNode[] {
+        getNodes():SchemaTypeListNode[] {
             return this.nodes;
         }
 
-        setSelectAction(selectAction:SelectContentTypeKindAction):ContentTypeKindList {
+        setSelectAction(selectAction:SelectSchemaTypeAction):SchemaTypeList {
             this.selectAction = selectAction;
             return this;
         }
 
-        private createNodes():ContentTypeKindListNode[] {
+        private createNodes():SchemaTypeListNode[] {
             return [
                 {
-                    displayName: 'ContentType',
+                    type: 'ContentType',
+                    displayName: 'Content Type',
                     iconUrl: api_util.getAbsoluteUri('admin/rest/schema/image/ContentType:system:structured')
                 },
                 {
-                    displayName: 'RelationshipType',
+                    type: 'RelationshipType',
+                    displayName: 'Relationship Type',
                     iconUrl: api_util.getAbsoluteUri('admin/rest/schema/image/RelationshipType:_:_') // default icon for RelationshipType
                 },
                 {
+                    type: 'Mixin',
                     displayName: 'Mixin',
                     iconUrl: api_util.getAbsoluteUri('admin/rest/schema/image/Mixin:_:_') // default icon for Mixin
                 }
             ]
         }
 
-        private layoutNodes(nodes:ContentTypeKindListNode[]):ContentTypeKindList {
+        private layoutNodes(nodes:SchemaTypeListNode[]):SchemaTypeList {
             this.ul.removeChildren();
             for (var i = 0; i < nodes.length; i++) {
                 this.ul.appendChild(this.renderListItem(nodes[i]));
@@ -133,8 +137,8 @@ module app_browse {
             return this;
         }
 
-        private renderListItem(node:ContentTypeKindListNode):api_dom.LiEl {
-            var item = new api_dom.LiEl("ContentTypeKindListItem", "node-list-item");
+        private renderListItem(node:SchemaTypeListNode):api_dom.LiEl {
+            var item = new api_dom.LiEl("SchemaTypeListItem", "node-list-item");
             var img = new api_dom.ImgEl(node.iconUrl);
             var h6 = new api_dom.H6El();
             h6.getEl().setInnerHtml(node.displayName);
@@ -144,7 +148,7 @@ module app_browse {
 
             item.getEl().addEventListener("click", function (event:Event) => {
                 if (this.selectAction) {
-                    this.selectAction.setContentTypeKind(node).execute();
+                    this.selectAction.setSchemaType(node.type).execute();
                 }
             });
             return item;

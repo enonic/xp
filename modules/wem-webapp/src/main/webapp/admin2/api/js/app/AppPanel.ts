@@ -38,6 +38,14 @@ module api_app{
             });
         }
 
+        canRemovePanel(panel:api_ui.Panel):bool {
+            if (panel instanceof api_app_wizard.WizardPanel) {
+                var wizardPanel:api_app_wizard.WizardPanel = <api_app_wizard.WizardPanel>panel;
+                return wizardPanel.canClose();
+            }
+            return true;
+        }
+
         showHomePanel() {
             this.showPanel(0);
         }

@@ -61,6 +61,24 @@ module api_remote {
         }[];
     }
 
+    export interface ContentTreeNode {
+        allowsChildren:bool;
+        contents:ContentTreeNode[];
+        createdTime?:Date;
+        deletable:bool;
+        displayName:string;
+        editable:bool;
+        hasChildren:bool;
+        iconUrl:string;
+        id:string;
+        modifiedTime?:Date;
+        modifier:string;
+        name:string;
+        owner:string;
+        path:string;
+        type:string;
+    }
+
     export interface RemoteCallContentGetParams {
         path?: string;
         contentIds?: string[];

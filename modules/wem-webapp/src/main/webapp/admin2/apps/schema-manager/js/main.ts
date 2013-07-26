@@ -19,6 +19,19 @@
 ///<reference path='app/browse/NewSchemaDialog.ts' />
 ///<reference path='app/delete/SchemaDeleteDialog.ts' />
 
+///<reference path='app/wizard/ContentTypeWizardPanel.ts' />
+///<reference path='app/wizard/ContentTypeWizardActions.ts' />
+///<reference path='app/wizard/ContentTypeWizardToolbar.ts' />
+///<reference path='app/wizard/ContentTypeWizardEvents.ts' />
+///<reference path='app/wizard/RelationshipTypeWizardPanel.ts' />
+///<reference path='app/wizard/RelationshipTypeWizardActions.ts' />
+///<reference path='app/wizard/RelationshipTypeWizardToolbar.ts' />
+///<reference path='app/wizard/RelationshipTypeWizardEvents.ts' />
+///<reference path='app/wizard/MixinWizardPanel.ts' />
+///<reference path='app/wizard/MixinWizardActions.ts' />
+///<reference path='app/wizard/MixinWizardToolbar.ts' />
+///<reference path='app/wizard/MixinWizardEvents.ts' />
+
 ///<reference path='app/SchemaAppBar.ts' />
 ///<reference path='app/SchemaAppBarTabMenu.ts' />
 ///<reference path='app/SchemaAppBarTabMenuItem.ts' />
