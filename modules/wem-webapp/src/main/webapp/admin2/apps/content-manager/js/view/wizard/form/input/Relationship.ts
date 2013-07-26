@@ -27,7 +27,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             };
             api_remote.RemoteService.relationshipType_get(getRelationshipTypeCommand, function (response) {
                 if (response && response.success) {
-                    var iconUrl = response.iconUrl;
+                    var iconUrl = response.relationshipType.iconUrl;
                     if (me.rendered) {
                         me.el.down('.admin-image-icon').set({'src': iconUrl});
                     } else {

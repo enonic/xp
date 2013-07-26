@@ -1,6 +1,6 @@
 module api_remote {
 
-    export interface Mixin {
+    export interface Mixin extends Item {
         name:string;
         module:string;
         displayName:string;
