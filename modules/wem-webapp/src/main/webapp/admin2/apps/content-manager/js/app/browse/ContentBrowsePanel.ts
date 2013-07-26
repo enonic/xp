@@ -4,7 +4,7 @@ module app_browse {
 
         private toolbar:ContentBrowseToolbar;
 
-        private filterPanel:any;
+        private filterPanel:app_browse.ContentBrowseFilterPanel;
 
         private grid:ContentTreeGridPanel;
 
@@ -65,7 +65,7 @@ module app_browse {
         }
     }
 
-    function createLoadContentParams(values) {
+    export function createLoadContentParams(values) {
 
         var now = new Date();
         var oneDayAgo = new Date();

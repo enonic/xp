@@ -22,7 +22,6 @@ module api_app_browse{
             super("BrowsePanel");
 
             this.browseToolbar = browseToolbar;
-            //this.browseToolbar.getEl().setMarginLeft('197px');
             this.grid = grid;
             this.browseItemPanel = browseItemPanel;
             this.filterPanel = filterPanel;
@@ -30,12 +29,10 @@ module api_app_browse{
             this.gridAndDetailSplitPanel = new api_ui.SplitPanel(this.gridContainer, this.browseItemPanel);
             this.gridAndFilterAndDetailSplitPanel = new api_ui.SplitPanel(this.filterPanel, this.gridAndDetailSplitPanel);
             this.gridAndFilterAndDetailSplitPanel.setAlignment(api_ui.SplitPanelAlignment.VERTICAL);
-            //this.gridAndDetailSplitPanel.getEl().setLeft('197px');
         }
 
         afterRender() {
             this.appendChild(this.browseToolbar);
-//            this.appendChild(this.gridAndDetailSplitPanel);
             this.appendChild(this.gridAndFilterAndDetailSplitPanel);
             this.gridAndFilterAndDetailSplitPanel.render();
             this.gridAndDetailSplitPanel.render();
