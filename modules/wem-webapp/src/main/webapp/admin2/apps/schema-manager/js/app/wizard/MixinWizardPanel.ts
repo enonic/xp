@@ -77,22 +77,10 @@ module app_wizard {
         }
 
         askUserForSaveChangesBeforeClosing() {
-            var dialog = new api_app_wizard.SaveChangesBeforeCloseDialog();
-
-            dialog.getYesAction().addExecutionListener(() => {
-                this.saveChanges();
-                new app_browse.CloseSchemaEvent(this, true).fire();
-                dialog.close();
-                dialog.remove();
-            });
-
-            dialog.getNoAction().addExecutionListener(() => {
-                new app_browse.CloseSchemaEvent(this, false).fire();
-                dialog.close();
-                dialog.remove();
-            });
-
-            dialog.open();
+            if (!components.wizardSaveDialog) {
+                components.wizardSaveDialog = new app_wizard.SchemaWizardSaveDialog();
+            }
+            components.wizardSaveDialog.setWizardToSave(this).open();
         }
     }
 }

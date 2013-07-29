@@ -19,6 +19,7 @@
 ///<reference path='app/browse/NewSchemaDialog.ts' />
 ///<reference path='app/delete/SchemaDeleteDialog.ts' />
 
+///<reference path='app/wizard/SchemaWizardSaveDialog.ts' />
 ///<reference path='app/wizard/ContentTypeWizardPanel.ts' />
 ///<reference path='app/wizard/ContentTypeWizardActions.ts' />
 ///<reference path='app/wizard/ContentTypeWizardToolbar.ts' />
@@ -52,6 +53,7 @@ module components {
     export var gridPanel:app_browse.SchemaTreeGridPanel;
     export var newSchemaDialog:app_browse.NewSchemaDialog;
     export var schemaDeleteDialog:app_delete.SchemaDeleteDialog;
+    export var wizardSaveDialog:app_wizard.SchemaWizardSaveDialog;
 }
 
 Ext.application({
