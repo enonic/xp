@@ -42,7 +42,7 @@ module api_app_wizard {
             this.stepPanels = new api_app_wizard.WizardStepDeckPanel();
             this.stepNavigator = new WizardStepNavigator(this.stepPanels);
             this.appendChild(this.stepNavigator);
-//            this.appendChild(this.stepPanels);
+            this.appendChild(this.stepPanels);
 
             this.previous = new WizardStepNavigationArrow(WizardStepNavigationArrow.PREVIOUS, this.stepNavigator);
             this.next = new WizardStepNavigationArrow(WizardStepNavigationArrow.NEXT, this.stepNavigator);
