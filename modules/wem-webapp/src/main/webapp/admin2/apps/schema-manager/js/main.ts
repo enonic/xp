@@ -19,6 +19,7 @@
 ///<reference path='app/browse/NewSchemaDialog.ts' />
 ///<reference path='app/delete/SchemaDeleteDialog.ts' />
 
+///<reference path='app/wizard/ContentTypeForm.ts' />
 ///<reference path='app/wizard/ContentTypeWizardPanel.ts' />
 ///<reference path='app/wizard/ContentTypeWizardActions.ts' />
 ///<reference path='app/wizard/ContentTypeWizardToolbar.ts' />

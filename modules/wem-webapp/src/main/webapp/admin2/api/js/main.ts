@@ -13,6 +13,7 @@
 
 ///<reference path='Mousetrap.d.ts' />
 ///<reference path='jquery.d.ts' />
+///<reference path='codemirror.d.ts' />
 
 ///<reference path='util/ImageLoader.ts' />
 ///<reference path='util/UriHelper.ts' />
@@ -100,6 +101,7 @@
 ///<reference path='ui/TextInput.ts' />
 ///<reference path='ui/AutosizeTextInput.ts' />
 ///<reference path='ui/TextArea.ts' />
+///<reference path='ui/CodeArea.ts' />
 ///<reference path='ui/Form.ts' />
 ///<reference path='ui/FormItem.ts' />
 

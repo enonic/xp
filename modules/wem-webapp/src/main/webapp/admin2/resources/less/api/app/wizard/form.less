@@ -1,5 +1,17 @@
 .form {
   width:720px;
+
+  .form-item {
+    overflow:hidden;
+    * {
+      vertical-align: top;
+    }
+  }
+
+  .CodeMirror {
+    float:left;
+  }
+
   fieldset {
     legend {
       width:100%;
@@ -11,11 +23,19 @@
       font-size:12px;
       width:100px;
       margin-right:10px;
-      display:inline-block;
+      display:block;
+      float:left;
     }
 
     select, input {
       width:400px;
+    }
+
+    textarea {
+      &.large {
+        width:550px;
+        height:350px;
+      }
     }
   }
 }
