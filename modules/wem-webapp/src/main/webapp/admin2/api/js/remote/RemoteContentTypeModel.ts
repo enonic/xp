@@ -1,6 +1,6 @@
-module api_remote {
+module api_remote_contenttype {
 
-    export interface ContentType extends Item {
+    export interface ContentType extends api_remote.Item {
         name: string;
         module: string;
         qualifiedName?: string;
@@ -30,7 +30,7 @@ module api_remote {
         FormItemSet?: FormItemSet;
         Layout?: Layout;
         Input?: Input;
-        MixinReference?: MixinReference;
+        MixinReference?: api_remote_mixin.MixinReference;
     }
 
     export interface FormItemSet {
@@ -63,12 +63,6 @@ module api_remote {
         type: InputType;
     }
 
-    export interface MixinReference {
-        name: string;
-        reference: string;
-        type: string;
-    }
-
     export interface Occurrences {
         minimum: number;
         maximum: number;
@@ -88,59 +82,59 @@ module api_remote {
         }[];
     }
 
-    export interface RemoteCallContentTypeGetParams {
+    export interface GetParams {
         format: string;
         contentType: string;
         mixinReferencesToFormItems?: bool;
     }
 
-    export interface RemoteCallContentTypeGetResult extends RemoteCallResultBase {
+    export interface GetResult extends api_remote.ResultBase {
         contentType?: ContentType;
         iconUrl?: string;
         contentTypeXml?: string;
     }
 
-    export interface RemoteCallContentTypeCreateOrUpdateParams {
+    export interface CreateOrUpdateParams {
         contentType: string;
         iconReference: string;
     }
 
-    export interface RemoteCallContentTypeCreateOrUpdateResult extends RemoteCallResultBase {
+    export interface CreateOrUpdateResult extends api_remote.ResultBase {
         created: bool;
         updated: bool;
         failure?: string;
     }
 
-    export interface RemoteCallContentTypeDeleteParams {
+    export interface DeleteParams {
         qualifiedContentTypeNames:string[];
     }
 
-    export interface RemoteCallContentTypeDeleteResult extends RemoteCallResultBase {
-        successes:RemoteCallContentTypeDeleteSuccess[];
-        failures:RemoteCallContentTypeDeleteFailure[];
+    export interface DeleteResult extends api_remote.ResultBase {
+        successes:ContentTypeDeleteSuccess[];
+        failures:ContentTypeDeleteFailure[];
     }
 
-    export interface RemoteCallContentTypeDeleteSuccess {
+    export interface ContentTypeDeleteSuccess {
         qualifiedContentTypeName:string;
 
     }
 
-    export interface RemoteCallContentTypeDeleteFailure {
+    export interface ContentTypeDeleteFailure {
         qualifiedContentTypeName:string;
         reason:string;
     }
 
-    export interface RemoteCallContentTypeListParams {
+    export interface ListParams {
     }
 
-    export interface RemoteCallContentTypeListResult extends RemoteCallResultBase{
+    export interface ListResult extends api_remote.ResultBase{
         contentTypes:ContentTypeListNode[];
     }
 
-    export interface RemoteCallGetContentTypeTreeParams {
+    export interface GetTreeParams {
     }
 
-    export interface RemoteCallGetContentTypeTreeResult extends RemoteCallResultBase {
+    export interface GetTreeResult extends api_remote.ResultBase {
         total:number;
         contentTypes:ContentTypeTreeNode[];
     }

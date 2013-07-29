@@ -24,7 +24,7 @@ module app_wizard {
 
         private templatesPanel:api_ui.Panel;
 
-        private persistedSpace:api_remote.Space;
+        private persistedSpace:api_remote_space.Space;
 
         constructor(id:string) {
 
@@ -76,7 +76,7 @@ module app_wizard {
             this.addStep(new api_app_wizard.WizardStep("Templates", this.templatesPanel));
         }
 
-        setPersistedItem(space:api_remote.Space) {
+        setPersistedItem(space:api_remote_space.Space) {
             super.setPersistedItem(space);
 
             this.setDisplayName(space.displayName);
@@ -93,7 +93,7 @@ module app_wizard {
 
         persistNewItem() {
 
-            var createParams:api_remote.RemoteCallSpaceCreateParams = {
+            var createParams:api_remote_space.CreateParams = {
                 spaceName: this.getName(),
                 displayName: this.getDisplayName(),
                 iconReference: this.getIconUrl()
@@ -109,7 +109,7 @@ module app_wizard {
 
         updatePersistedItem() {
 
-            var updateParams:api_remote.RemoteCallSpaceUpdateParams = {
+            var updateParams:api_remote_space.UpdateParams = {
                 spaceName: this.persistedSpace.name,
                 newSpaceName: this.getName(),
                 displayName: this.getDisplayName(),

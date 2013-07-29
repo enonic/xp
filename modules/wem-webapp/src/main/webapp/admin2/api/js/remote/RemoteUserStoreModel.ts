@@ -1,4 +1,4 @@
-module api_remote {
+module api_remote_userstore {
 
     export interface UserStore {
         name: string;
@@ -53,32 +53,32 @@ module api_remote {
         groupsLocal: bool;
     }
 
-    export interface RemoteCallUserStoreGetAllParams {
+    export interface GetAllParams {
     }
 
-    export interface RemoteCallUserStoreGetAllResult extends RemoteCallResultBase {
+    export interface GetAllResult extends api_remote.ResultBase {
         total: number;
         userStores: UserStore[];
     }
 
-    export interface RemoteCallUserStoreGetParams {
+    export interface GetParams {
         name: string;
     }
 
-    export interface RemoteCallUserStoreGetResult extends UserStore {
+    export interface GetResult extends UserStore {
         success: bool;
         error?: string;
     }
 
-    export interface RemoteCallUserStoreGetConnectorsParams {
+    export interface GetConnectorsParams {
     }
 
-    export interface RemoteCallUserStoreGetConnectorsResult extends RemoteCallResultBase {
+    export interface GetConnectorsResult extends api_remote.ResultBase {
         total: number;
         userStoreConnectors: UserStoreConnector[];
     }
 
-    export interface RemoteCallUserStoreCreateOrUpdateParams {
+    export interface CreateOrUpdateParams {
         name: string[];
         defaultUserstore: bool;
         configXML: string;
@@ -86,16 +86,16 @@ module api_remote {
         administrators: string[];
     }
 
-    export interface RemoteCallUserStoreCreateOrUpdateResult extends RemoteCallResultBase {
+    export interface CreateOrUpdateResult extends api_remote.ResultBase {
         created: bool;
         updated: bool;
     }
 
-    export interface RemoteCallUserStoreDeleteParams {
+    export interface DeleteParams {
         name: string[];
     }
 
-    export interface RemoteCallUserStoreDeleteResult extends RemoteCallResultBase {
+    export interface DeleteResult extends api_remote.ResultBase {
         deleted: number;
     }
 }

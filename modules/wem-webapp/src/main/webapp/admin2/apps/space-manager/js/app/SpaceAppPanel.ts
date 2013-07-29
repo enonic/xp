@@ -72,10 +72,10 @@ module app {
                 for (var i = 0; i < spaces.length; i++) {
                     var spaceModel:api_model.SpaceModel = spaces[i];
 
-                    var spaceGetParams:api_remote.RemoteCallSpaceGetParams = {
+                    var spaceGetParams:api_remote_space.GetParams = {
                         "spaceName": [spaceModel.data.name]
                     };
-                    api_remote.RemoteService.space_get(spaceGetParams, (result:api_remote.RemoteCallSpaceGetResult) => {
+                    api_remote.RemoteService.space_get(spaceGetParams, (result:api_remote_space.GetResult) => {
 
                         if (result && result.success) {
 

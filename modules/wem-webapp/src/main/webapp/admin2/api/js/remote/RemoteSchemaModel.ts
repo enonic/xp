@@ -1,4 +1,4 @@
-module api_remote {
+module api_remote_schema {
 
     export interface Schema {
         key:string;
@@ -25,21 +25,21 @@ module api_remote {
         schemas:SchemaTreeNode[];
     }
 
-    export interface RemoteCallSchemaListParams {
+    export interface ListParams {
         types:string[];
         search:string;
         modules:string[];
     }
 
-    export interface RemoteCallSchemaListResult extends RemoteCallResultBase {
+    export interface ListResult extends api_remote.ResultBase {
         schemas:Schema[];
     }
 
-    export interface RemoteCallGetSchemaTreeParams {
+    export interface GetTreeParams {
         types:string[];
     }
 
-    export interface RemoteCallGetSchemaTreeResult extends RemoteCallResultBase {
+    export interface GetTreeResult extends api_remote.ResultBase {
         schemas:SchemaTreeNode[];
         total:number;
     }

@@ -1,4 +1,4 @@
-module api_remote {
+module api_remote_account {
 
     export interface Account {
         key: string;
@@ -64,7 +64,7 @@ module api_remote {
         street?: string;
     }
 
-    export interface RemoteCallAccountFindParams {
+    export interface FindParams {
         key?: string[];
         query?: string;
         start?: number;
@@ -75,17 +75,17 @@ module api_remote {
         types?: string[];
     }
 
-    export interface RemoteCallAccountFindResult extends RemoteCallResultBase {
+    export interface FindResult extends api_remote.ResultBase {
         accounts: Account[];
         facets?: AccountFacet[];
         total?: number;
     }
 
-    export interface RemoteCallAccountGetGraphParams {
+    export interface GetGraphParams {
         key: string;
     }
 
-    export interface RemoteCallAccountGetGraphResult extends RemoteCallResultBase {
+    export interface GetGraphResult extends api_remote.ResultBase {
         graph: {
             id: string;
             name: string;
@@ -101,35 +101,35 @@ module api_remote {
         }[];
     }
 
-    export interface RemoteCallAccountChangePasswordParams {
+    export interface ChangePasswordParams {
         key: string;
         password: string;
     }
 
-    export interface RemoteCallAccountChangePasswordResult extends RemoteCallResultBase {
+    export interface ChangePasswordResult extends api_remote.ResultBase {
     }
 
-    export interface RemoteCallAccountVerifyUniqueEmailParams {
+    export interface VerifyUniqueEmailParams {
         userStore: string;
         email: string;
     }
 
-    export interface RemoteCallAccountVerifyUniqueEmailResult extends RemoteCallResultBase {
+    export interface VerifyUniqueEmailResult extends api_remote.ResultBase {
         emailInUse: bool;
         key: string;
     }
 
-    export interface RemoteCallAccountSuggestUserNameParams {
+    export interface SuggestUserNameParams {
         userStore: string;
         firstName: string;
         lastName: string;
     }
 
-    export interface RemoteCallAccountSuggestUserNameResult extends RemoteCallResultBase {
+    export interface SuggestUserNameResult extends api_remote.ResultBase {
         username: string;
     }
 
-    export interface RemoteCallAccountCreateOrUpdateParams {
+    export interface CreateOrUpdateParams {
         key: string;
         email?: string;
         imageRef?: string;
@@ -139,24 +139,24 @@ module api_remote {
         groups?: string[];
     }
 
-    export interface RemoteCallAccountCreateOrUpdateResult extends RemoteCallResultBase {
+    export interface CreateOrUpdateResult extends api_remote.ResultBase {
         created: bool;
         updated: bool;
     }
 
-    export interface RemoteCallDeleteAccountParams {
+    export interface DeleteParams {
         key:string[];
     }
 
-    export interface RemoteCallDeleteAccountResult extends RemoteCallResultBase {
+    export interface DeleteResult extends api_remote.ResultBase {
         deleted:number;
     }
 
-    export interface RemoteCallGetAccountParams {
+    export interface GetParams {
         key:string;
     }
 
-    export interface RemoteCallGetAccountResult extends RemoteCallResultBase, Account {
+    export interface GetResult extends api_remote.ResultBase, Account {
 
     }
 

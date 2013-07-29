@@ -12,7 +12,7 @@ module app_wizard {
 
         private toolbar: api_ui_toolbar.Toolbar;
 
-        private persistedRelationshipType: api_remote.RelationshipType;
+        private persistedRelationshipType: api_remote_relationshiptype.RelationshipType;
 
         constructor(id: string) {
             this.formIcon = new api_app_wizard.FormIcon(RelationshipTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");
@@ -39,7 +39,7 @@ module app_wizard {
             this.addStep(new api_app_wizard.WizardStep("Relationship Type", new RelationshipTypeForm()));
         }
 
-        setPersistedItem(relationshipType: api_remote.RelationshipType) {
+        setPersistedItem(relationshipType: api_remote_relationshiptype.RelationshipType) {
             super.setPersistedItem(relationshipType);
 
             this.setDisplayName(relationshipType.displayName);

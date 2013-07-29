@@ -68,10 +68,10 @@ module app {
                     var contentModel:api_model.ContentModel = contents[i];
 
                     //TODO: RemoteCallContentGetResult doesn't match returned result  if 'path' param is used!
-                    var contentGetParams:api_remote.RemoteCallContentGetParams = {
+                    var contentGetParams:api_remote_content.GetParams = {
                         "contentIds": [contentModel.data.id]
                     };
-                    api_remote.RemoteService.content_get(contentGetParams, (result:api_remote.RemoteCallContentGetResult) => {
+                    api_remote.RemoteService.content_get(contentGetParams, (result:api_remote_content.GetResult) => {
 
                         if (result && result.success) {
 

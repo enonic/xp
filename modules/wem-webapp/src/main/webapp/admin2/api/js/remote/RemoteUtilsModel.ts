@@ -37,35 +37,35 @@ module api_remote {
         offset: string;
     }
 
-    export interface RemoteCallSystemGetSystemInfoParams {
+    export interface SystemGetSystemInfoParams {
     }
 
-    export interface RemoteCallSystemGetSystemInfoResult extends RemoteCallResultBase {
+    export interface SystemGetSystemInfoResult extends ResultBase {
         installationName: string;
         version: string;
         title: string;
     }
 
-    export interface RemoteCallGetCountriesParams {
+    export interface GetCountriesParams {
     }
 
-    export interface RemoteCallGetCountriesResult extends RemoteCallResultBase {
+    export interface GetCountriesResult extends ResultBase {
         total: number;
         countries: Country[];
     }
 
-    export interface RemoteCallGetLocalesParams {
+    export interface GetLocalesParams {
     }
 
-    export interface RemoteCallGetLocalesResult extends RemoteCallResultBase {
+    export interface GetLocalesResult extends ResultBase {
         total: number;
         locales: Locale[];
     }
 
-    export interface RemoteCallGetTimeZonesParams {
+    export interface GetTimeZonesParams {
     }
 
-    export interface RemoteCallGetTimeZonesResult extends RemoteCallResultBase {
+    export interface GetTimeZonesResult extends ResultBase {
         total: number;
         timezones: TimeZone[];
     }

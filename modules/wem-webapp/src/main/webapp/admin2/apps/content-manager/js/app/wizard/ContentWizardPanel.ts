@@ -75,7 +75,7 @@ module app_wizard {
             this.addStep(new api_app_wizard.WizardStep("Templates", this.templatesPanel));
         }
 
-        setData(result:api_remote.RemoteCallContentGetResult) {
+        setData(result:api_remote_content.GetResult) {
             var content = result.content[0];
 
             this.setDisplayName(content.displayName);

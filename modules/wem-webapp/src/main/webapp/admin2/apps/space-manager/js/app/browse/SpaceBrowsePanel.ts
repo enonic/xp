@@ -33,10 +33,10 @@ module app_browse {
                 else {
                     var models:api_model.SpaceModel[] = event.getModels();
                     var spaceLoader:SpaceLoader = new SpaceLoader(SpaceLoader.convert(models));
-                    spaceLoader.load((loadedSpaces:api_remote.SpaceSummary[]) => {
+                    spaceLoader.load((loadedSpaces:api_remote_space.SpaceSummary[]) => {
 
                         var items:api_app_browse.BrowseItem[] = [];
-                        loadedSpaces.forEach((space:api_remote.SpaceSummary, index:number) => {
+                        loadedSpaces.forEach((space:api_remote_space.SpaceSummary, index:number) => {
                             var item = new api_app_browse.BrowseItem(models[index]).
                                 setDisplayName(space.displayName).
                                 setPath(space.name).
@@ -59,12 +59,12 @@ module app_browse {
 
     export class SpaceLoader {
 
-        private getCalls:api_remote.RemoteCallSpaceGetParams[] = [];
+        private getCalls:api_remote_space.GetParams[] = [];
 
-        private spaces:api_remote.SpaceSummary[] = [];
+        private spaces:api_remote_space.SpaceSummary[] = [];
 
-        static convert(models:api_model.SpaceModel[]):api_remote.RemoteCallSpaceGetParams[] {
-            var getParams:api_remote.RemoteCallSpaceGetParams[] = [];
+        static convert(models:api_model.SpaceModel[]):api_remote_space.GetParams[] {
+            var getParams:api_remote_space.GetParams[] = [];
             models.forEach((model:api_model.SpaceModel)=> {
                 getParams.push({
                     "spaceName": [model.data.name]
@@ -73,13 +73,13 @@ module app_browse {
             return getParams;
         }
 
-        constructor(getCalls:api_remote.RemoteCallSpaceGetParams[]) {
+        constructor(getCalls:api_remote_space.GetParams[]) {
             this.getCalls = getCalls;
         }
 
-        load(callback:(loadedSpaces:api_remote.SpaceSummary[])=>void) {
-            this.getCalls.forEach((getParams:api_remote.RemoteCallSpaceGetParams)=> {
-                api_remote.RemoteService.space_get(getParams, (result:api_remote.RemoteCallSpaceGetResult) => {
+        load(callback:(loadedSpaces:api_remote_space.SpaceSummary[])=>void) {
+            this.getCalls.forEach((getParams:api_remote_space.GetParams)=> {
+                api_remote.RemoteService.space_get(getParams, (result:api_remote_space.GetResult) => {
                     if (result) {
                         this.spaces.push(result.space);
                         if (this.spaces.length >= this.getCalls.length) {

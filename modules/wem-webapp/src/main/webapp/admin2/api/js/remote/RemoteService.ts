@@ -13,64 +13,65 @@ module api_remote {
 
     export var RemoteService:RemoteServiceInterface;
 
-    export interface RemoteCallResultBase {
+    export interface ResultBase {
         success: bool;
         error?: string;
     }
 
     export interface RemoteServiceInterface {
-        account_find (params:RemoteCallAccountFindParams, callback:(result:RemoteCallAccountFindResult)=>void):void;
-        account_getGraph (params:RemoteCallAccountGetGraphParams, callback:(result:RemoteCallAccountGetGraphResult)=>void):void;
-        account_changePassword (params:RemoteCallAccountChangePasswordParams,
-                                callback:(result:RemoteCallAccountChangePasswordResult)=>void):void;
-        account_verifyUniqueEmail (params:RemoteCallAccountVerifyUniqueEmailParams,
-                                   callback:(result:RemoteCallAccountVerifyUniqueEmailResult)=>void):void;
-        account_suggestUserName (params:RemoteCallAccountSuggestUserNameParams,
-                                 callback:(result:RemoteCallAccountSuggestUserNameResult)=>void):void;
-        account_createOrUpdate (params:RemoteCallAccountCreateOrUpdateParams,
-                                callback:(result:RemoteCallAccountCreateOrUpdateResult)=>void):void;
-        account_delete (params:RemoteCallDeleteAccountParams, callback:(result:RemoteCallDeleteAccountResult)=>void):void;
-        account_get (params:RemoteCallGetAccountParams, callback:(result:RemoteCallGetAccountResult)=>void):void;
-        util_getCountries (params:RemoteCallGetCountriesParams, callback:(result:RemoteCallGetCountriesResult)=>void):void;
-        util_getLocales (params:RemoteCallGetLocalesParams, callback:(result:RemoteCallGetLocalesResult)=>void):void;
-        util_getTimeZones (params:RemoteCallGetTimeZonesParams, callback:(result:RemoteCallGetTimeZonesResult)=>void):void;
-        userstore_getAll (params:RemoteCallUserStoreGetAllParams, callback:(result:RemoteCallUserStoreGetAllResult)=>void):void;
-        userstore_get (params:RemoteCallUserStoreGetParams, callback:(result:RemoteCallUserStoreGetResult)=>void):void;
-        userstore_getConnectors (params:RemoteCallUserStoreGetConnectorsParams,
-                                 callback:(result:RemoteCallUserStoreGetConnectorsResult)=>void):void;
-        userstore_createOrUpdate (params:RemoteCallUserStoreCreateOrUpdateParams,
-                                  callback:(result:RemoteCallUserStoreCreateOrUpdateResult)=>void):void;
-        userstore_delete (params:RemoteCallUserStoreDeleteParams, callback:(result:RemoteCallUserStoreDeleteResult)=>void):void;
-        content_createOrUpdate (params:RemoteCallCreateOrUpdateContentParams,
-                                callback:(result:RemoteCallCreateOrUpdateContentResult)=>void):void;
-        content_list (params:RemoteCallContentListParams, callback:(result:RemoteCallContentListResult)=>void):void;
-        content_tree (params:RemoteCallGetContentTreeParams, callback:(result:RemoteCallGetContentTreeResult)=>void):void;
-        content_get (params:RemoteCallContentGetParams, callback:(result:RemoteCallContentGetResult)=>void):void;
-        content_delete (params:RemoteCallContentDeleteParams, callback:(result:RemoteCallContentDeleteResult)=>void):void;
-        content_find (params:RemoteCallContentFindParams, callback:(result:RemoteCallContentFindResult)=>void):void;
-        content_validate (params:RemoteCallContentValidateParams, callback:(result:RemoteCallContentValidateResult)=>void):void;
-        contentType_get (params:RemoteCallContentTypeGetParams, callback:(result:RemoteCallContentTypeGetResult)=>void):void;
-        contentType_list (params:RemoteCallContentTypeListParams, callback:(result:RemoteCallContentTypeListResult)=>void):void;
-        contentType_createOrUpdate (params:RemoteCallContentTypeCreateOrUpdateParams,
-                                    callback:(result:RemoteCallContentTypeCreateOrUpdateResult)=>void):void;
-        contentType_delete (params:RemoteCallContentTypeDeleteParams, callback:(result:RemoteCallContentTypeDeleteResult)=>void):void;
-        contentType_tree (params:RemoteCallGetContentTypeTreeParams, callback:(result:RemoteCallGetContentTypeTreeResult)=>void):void;
-        schema_tree (params:RemoteCallGetSchemaTreeParams, callback:(result:RemoteCallGetSchemaTreeResult)=>void):void;
-        schema_list (params:RemoteCallSchemaListParams, callback:(result:RemoteCallSchemaListResult)=>void):void;
-        system_getSystemInfo (params:RemoteCallSystemGetSystemInfoParams, callback:(result:RemoteCallSystemGetSystemInfoResult)=>void):void;
-        mixin_get (params:RemoteCallMixinGetParams, callback:(result:RemoteCallMixinGetResult)=>void):void;
-        mixin_createOrUpdate (params:RemoteCallMixinCreateOrUpdateParams, callback:(result:RemoteCallMixinCreateOrUpdateResult)=>void):void;
-        mixin_delete (params:RemoteCallMixinDeleteParams, callback:(result:RemoteCallMixinDeleteResult)=>void):void;
-        relationshipType_delete (params:RemoteCallDeleteRelationshipTypeParams,
-                                 callback:(result:RemoteCallDeleteRelationshipTypeResult)=>void):void;
-        relationshipType_get (params:RemoteCallGetRelationshipTypeParams, callback:(result:RemoteCallGetRelationshipTypeResult)=>void):void;
-        relationshipType_createOrUpdate (params:RemoteCallCreateOrUpdateRelationshipTypeParams,
-                                         callback:(result:RemoteCallCreateOrUpdateRelationshipTypeResult)=>void):void;
-        space_list (params:RemoteCallSpaceListParams, callback:(result:RemoteCallSpaceListResult)=>void):void;
-        space_get (params:RemoteCallSpaceGetParams, callback:(result:RemoteCallSpaceGetResult)=>void):void;
-        space_delete (params:RemoteCallSpaceDeleteParams, callback:(result:RemoteCallSpaceDeleteResult)=>void):void;
-        space_createOrUpdate (params:RemoteCallSpaceCreateOrUpdateParams, callback:(result:RemoteCallSpaceCreateOrUpdateResult)=>void):void;
-        binary_create (params, callback):void;
+        account_find (params:api_remote_account.FindParams, callback:(result:api_remote_account.FindResult)=>void):void;
+        account_getGraph (params:api_remote_account.GetGraphParams, callback:(result:api_remote_account.GetGraphResult)=>void):void;
+        account_changePassword (params:api_remote_account.ChangePasswordParams,
+                                callback:(result:api_remote_account.ChangePasswordResult)=>void):void;
+        account_verifyUniqueEmail (params:api_remote_account.VerifyUniqueEmailParams,
+                                   callback:(result:api_remote_account.VerifyUniqueEmailResult)=>void):void;
+        account_suggestUserName (params:api_remote_account.SuggestUserNameParams,
+                                 callback:(result:api_remote_account.SuggestUserNameResult)=>void):void;
+        account_createOrUpdate (params:api_remote_account.CreateOrUpdateParams,
+                                callback:(result:api_remote_account.CreateOrUpdateResult)=>void):void;
+        account_delete (params:api_remote_account.DeleteParams, callback:(result:api_remote_account.DeleteResult)=>void):void;
+        account_get (params:api_remote_account.GetParams, callback:(result:api_remote_account.GetResult)=>void):void;
+        util_getCountries (params:GetCountriesParams, callback:(result:GetCountriesResult)=>void):void;
+        util_getLocales (params:GetLocalesParams, callback:(result:GetLocalesResult)=>void):void;
+        util_getTimeZones (params:GetTimeZonesParams, callback:(result:GetTimeZonesResult)=>void):void;
+        userstore_getAll (params:api_remote_userstore.GetAllParams, callback:(result:api_remote_userstore.GetAllResult)=>void):void;
+        userstore_get (params:api_remote_userstore.GetParams, callback:(result:api_remote_userstore.GetResult)=>void):void;
+        userstore_getConnectors (params:api_remote_userstore.GetConnectorsParams, callback:(result:api_remote_userstore.GetConnectorsResult)=>void):void;
+        userstore_createOrUpdate (params:api_remote_userstore.CreateOrUpdateParams, callback:(result:api_remote_userstore.CreateOrUpdateResult)=>void):void;
+        userstore_delete (params:api_remote_userstore.DeleteParams, callback:(result:api_remote_userstore.DeleteResult)=>void):void;
+        content_createOrUpdate (params:api_remote_content.CreateOrUpdateParams,
+                                callback:(result:api_remote_content.CreateOrUpdateResult)=>void):void;
+        content_list (params:api_remote_content.ListParams, callback:(result:api_remote_content.ListResult)=>void):void;
+        content_tree (params:api_remote_content.GetTreeParams, callback:(result:api_remote_content.GetTreeResult)=>void):void;
+        content_get (params:api_remote_content.GetParams, callback:(result:api_remote_content.GetResult)=>void):void;
+        content_delete (params:api_remote_content.DeleteParams, callback:(result:api_remote_content.DeleteResult)=>void):void;
+        content_find (params:api_remote_content.FindParams, callback:(result:api_remote_content.FindResult)=>void):void;
+        content_validate (params:api_remote_content.ValidateParams, callback:(result:api_remote_content.ValidateResult)=>void):void;
+        contentType_get (params:api_remote_contenttype.GetParams, callback:(result:api_remote_contenttype.GetResult)=>void):void;
+        contentType_list (params:api_remote_contenttype.ListParams, callback:(result:api_remote_contenttype.ListResult)=>void):void;
+        contentType_createOrUpdate (params:api_remote_contenttype.CreateOrUpdateParams,
+                                    callback:(result:api_remote_contenttype.CreateOrUpdateResult)=>void):void;
+        contentType_delete (params:api_remote_contenttype.DeleteParams, callback:(result:api_remote_contenttype.DeleteResult)=>void):void;
+        contentType_tree (params:api_remote_contenttype.GetTreeParams, callback:(result:api_remote_contenttype.GetTreeResult)=>void):void;
+        schema_tree (params:api_remote_schema.GetTreeParams, callback:(result:api_remote_schema.GetTreeResult)=>void):void;
+        schema_list (params:api_remote_schema.ListParams, callback:(result:api_remote_schema.ListResult)=>void):void;
+        system_getSystemInfo (params:SystemGetSystemInfoParams, callback:(result:SystemGetSystemInfoResult)=>void):void;
+        mixin_get (params:api_remote_mixin.GetParams, callback:(result:api_remote_mixin.GetResult)=>void):void;
+        mixin_createOrUpdate (params:api_remote_mixin.CreateOrUpdateParams,
+                              callback:(result:api_remote_mixin.CreateOrUpdateResult)=>void):void;
+        mixin_delete (params:api_remote_mixin.DeleteParams, callback:(result:api_remote_mixin.DeleteResult)=>void):void;
+        relationshipType_delete (params:api_remote_relationshiptype.DeleteParams,
+                                 callback:(result:api_remote_relationshiptype.DeleteResult)=>void):void;
+        relationshipType_get (params:api_remote_relationshiptype.GetParams,
+                              callback:(result:api_remote_relationshiptype.GetResult)=>void):void;
+        relationshipType_createOrUpdate (params:api_remote_relationshiptype.CreateOrUpdateParams,
+                                         callback:(result:api_remote_relationshiptype.CreateOrUpdateResult)=>void):void;
+        space_list (params:api_remote_space.ListParams, callback:(result:api_remote_space.ListResult)=>void):void;
+        space_get (params:api_remote_space.GetParams, callback:(result:api_remote_space.GetResult)=>void):void;
+        space_delete (params:api_remote_space.DeleteParams, callback:(result:api_remote_space.DeleteResult)=>void):void;
+        space_createOrUpdate (params:api_remote_space.CreateOrUpdateParams,
+                              callback:(result:api_remote_space.CreateOrUpdateResult)=>void):void;
+        binary_create (params, callback):void; // TO BE REMOVED
     }
 
     class RemoteServiceImpl implements RemoteServiceInterface {
@@ -100,177 +101,178 @@ module api_remote {
             this.provider = Ext.Direct.addProvider(jsonRpcProvider.ext);
         }
 
-        account_find(params:RemoteCallAccountFindParams, callback:(result:RemoteCallAccountFindResult)=>void):void {
+        account_find(params:api_remote_account.FindParams, callback:(result:api_remote_account.FindResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_getGraph(params:RemoteCallAccountGetGraphParams, callback:(result:RemoteCallAccountGetGraphResult)=>void):void {
+        account_getGraph(params:api_remote_account.GetGraphParams, callback:(result:api_remote_account.GetGraphResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_changePassword(params:RemoteCallAccountChangePasswordParams,
-                               callback:(result:RemoteCallAccountChangePasswordResult)=>void):void {
+        account_changePassword(params:api_remote_account.ChangePasswordParams,
+                               callback:(result:api_remote_account.ChangePasswordResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_verifyUniqueEmail(params:RemoteCallAccountVerifyUniqueEmailParams,
-                                  callback:(result:RemoteCallAccountVerifyUniqueEmailResult)=>void):void {
+        account_verifyUniqueEmail(params:api_remote_account.VerifyUniqueEmailParams,
+                                  callback:(result:api_remote_account.VerifyUniqueEmailResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_suggestUserName(params:RemoteCallAccountSuggestUserNameParams,
-                                callback:(result:RemoteCallAccountSuggestUserNameResult)=>void):void {
+        account_suggestUserName(params:api_remote_account.SuggestUserNameParams,
+                                callback:(result:api_remote_account.SuggestUserNameResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_createOrUpdate(params:RemoteCallAccountCreateOrUpdateParams,
-                               callback:(result:RemoteCallAccountCreateOrUpdateResult)=>void):void {
+        account_createOrUpdate(params:api_remote_account.CreateOrUpdateParams,
+                               callback:(result:api_remote_account.CreateOrUpdateResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_delete(params:RemoteCallDeleteAccountParams, callback:(result:RemoteCallDeleteAccountResult)=>void):void {
+        account_delete(params:api_remote_account.DeleteParams, callback:(result:api_remote_account.DeleteResult)=>void):void {
             console.log(params, callback);
         }
 
-        account_get(params:RemoteCallGetAccountParams, callback:(result:RemoteCallGetAccountResult)=>void):void {
+        account_get(params:api_remote_account.GetParams, callback:(result:api_remote_account.GetResult)=>void):void {
             console.log(params, callback);
         }
 
-        util_getCountries(params:RemoteCallGetCountriesParams, callback:(result:RemoteCallGetCountriesResult)=>void):void {
+        util_getCountries(params:GetCountriesParams, callback:(result:GetCountriesResult)=>void):void {
             console.log(params, callback);
         }
 
-        util_getLocales(params:RemoteCallGetLocalesParams, callback:(result:RemoteCallGetLocalesResult)=>void):void {
+        util_getLocales(params:GetLocalesParams, callback:(result:GetLocalesResult)=>void):void {
             console.log(params, callback);
         }
 
-        util_getTimeZones(params:RemoteCallGetTimeZonesParams, callback:(result:RemoteCallGetTimeZonesResult)=>void):void {
+        util_getTimeZones(params:GetTimeZonesParams, callback:(result:GetTimeZonesResult)=>void):void {
             console.log(params, callback);
         }
 
-        userstore_getAll(params:RemoteCallUserStoreGetAllParams, callback:(result:RemoteCallUserStoreGetAllResult)=>void):void {
+        userstore_getAll(params:api_remote_userstore.GetAllParams, callback:(result:api_remote_userstore.GetAllResult)=>void):void {
             console.log(params, callback);
         }
 
-        userstore_get(params:RemoteCallUserStoreGetParams, callback:(result:RemoteCallUserStoreGetResult)=>void):void {
+        userstore_get(params:api_remote_userstore.GetParams, callback:(result:api_remote_userstore.GetResult)=>void):void {
             console.log(params, callback);
         }
 
-        userstore_getConnectors(params:RemoteCallUserStoreGetConnectorsParams,
-                                callback:(result:RemoteCallUserStoreGetConnectorsResult)=>void):void {
+        userstore_getConnectors(params:api_remote_userstore.GetConnectorsParams, callback:(result:api_remote_userstore.GetConnectorsResult)=>void):void {
             console.log(params, callback);
         }
 
-        userstore_createOrUpdate(params:RemoteCallUserStoreCreateOrUpdateParams,
-                                 callback:(result:RemoteCallUserStoreCreateOrUpdateResult)=>void):void {
+        userstore_createOrUpdate(params:api_remote_userstore.CreateOrUpdateParams, callback:(result:api_remote_userstore.CreateOrUpdateResult)=>void):void {
             console.log(params, callback);
         }
 
-        userstore_delete(params:RemoteCallUserStoreDeleteParams, callback:(result:RemoteCallUserStoreDeleteResult)=>void):void {
+        userstore_delete(params:api_remote_userstore.DeleteParams, callback:(result:api_remote_userstore.DeleteResult)=>void):void {
             console.log(params, callback);
         }
 
-        content_createOrUpdate(params:RemoteCallCreateOrUpdateContentParams,
-                               callback:(result:RemoteCallCreateOrUpdateContentResult)=>void):void {
+        content_createOrUpdate(params:api_remote_content.CreateOrUpdateParams,
+                               callback:(result:api_remote_content.CreateOrUpdateResult)=>void):void {
             console.log(params, callback);
         }
 
-        content_list(params:RemoteCallContentListParams, callback:(result:RemoteCallContentListResult)=>void):void {
+        content_list(params:api_remote_content.ListParams, callback:(result:api_remote_content.ListResult)=>void):void {
             console.log(params, callback);
         }
 
-        content_tree(params:RemoteCallGetContentTreeParams, callback:(result:RemoteCallGetContentTreeResult)=>void):void {
+        content_tree(params:api_remote_content.GetTreeParams, callback:(result:api_remote_content.GetTreeResult)=>void):void {
             console.log(params, callback);
         }
 
-        content_get(params:RemoteCallContentGetParams, callback:(result:RemoteCallContentGetResult)=>void):void {
+        content_get(params:api_remote_content.GetParams, callback:(result:api_remote_content.GetResult)=>void):void {
             console.log(params, callback);
         }
 
-        content_delete(params:RemoteCallContentDeleteParams, callback:(result:RemoteCallContentDeleteResult)=>void):void {
+        content_delete(params:api_remote_content.DeleteParams, callback:(result:api_remote_content.DeleteResult)=>void):void {
             console.log(params, callback);
         }
 
-        content_find(params:RemoteCallContentFindParams, callback:(result:RemoteCallContentFindResult)=>void):void {
+        content_find(params:api_remote_content.FindParams, callback:(result:api_remote_content.FindResult)=>void):void {
             console.log(params, callback);
         }
 
-        content_validate(params:RemoteCallContentValidateParams, callback:(result:RemoteCallContentValidateResult)=>void):void {
+        content_validate(params:api_remote_content.ValidateParams, callback:(result:api_remote_content.ValidateResult)=>void):void {
             console.log(params, callback);
         }
 
-        contentType_get(params:RemoteCallContentTypeGetParams, callback:(result:RemoteCallContentTypeGetResult)=>void):void {
+        contentType_get(params:api_remote_contenttype.GetParams, callback:(result:api_remote_contenttype.GetResult)=>void):void {
             console.log(params, callback);
         }
 
-        contentType_list(params:RemoteCallContentTypeListParams, callback:(result:RemoteCallContentTypeListResult)=>void):void {
+        contentType_list(params:api_remote_contenttype.ListParams, callback:(result:api_remote_contenttype.ListResult)=>void):void {
             console.log(params, callback);
         }
 
-        contentType_createOrUpdate(params:RemoteCallContentTypeCreateOrUpdateParams,
-                                   callback:(result:RemoteCallContentTypeCreateOrUpdateResult)=>void):void {
+        contentType_createOrUpdate(params:api_remote_contenttype.CreateOrUpdateParams,
+                                   callback:(result:api_remote_contenttype.CreateOrUpdateResult)=>void):void {
             console.log(params, callback);
         }
 
-        contentType_delete(params:RemoteCallContentTypeDeleteParams, callback:(result:RemoteCallContentTypeDeleteResult)=>void):void {
+        contentType_delete(params:api_remote_contenttype.DeleteParams, callback:(result:api_remote_contenttype.DeleteResult)=>void):void {
             console.log(params, callback);
         }
 
-        contentType_tree(params:RemoteCallGetContentTypeTreeParams, callback:(result:RemoteCallGetContentTypeTreeResult)=>void):void {
+        contentType_tree(params:api_remote_contenttype.GetTreeParams, callback:(result:api_remote_contenttype.GetTreeResult)=>void):void {
             console.log(params, callback);
         }
 
-        schema_tree(params:RemoteCallGetSchemaTreeParams, callback:(result:RemoteCallGetSchemaTreeResult)=>void):void {
+        schema_tree(params:api_remote_schema.GetTreeParams, callback:(result:api_remote_schema.GetTreeResult)=>void):void {
             console.log(params, callback);
         }
 
-        schema_list(params:RemoteCallSchemaListParams, callback:(result:RemoteCallSchemaListResult)=>void):void {
+        schema_list(params:api_remote_schema.ListParams, callback:(result:api_remote_schema.ListResult)=>void):void {
             console.log(params, callback);
         }
 
-        system_getSystemInfo(params:RemoteCallSystemGetSystemInfoParams, callback:(result:RemoteCallSystemGetSystemInfoResult)=>void):void {
+        system_getSystemInfo(params:SystemGetSystemInfoParams, callback:(result:SystemGetSystemInfoResult)=>void):void {
             console.log(params, callback);
         }
 
-        mixin_get(params:RemoteCallMixinGetParams, callback:(result:RemoteCallMixinGetResult)=>void):void {
+        mixin_get(params:api_remote_mixin.GetParams, callback:(result:api_remote_mixin.GetResult)=>void):void {
             console.log(params, callback);
         }
 
-        mixin_createOrUpdate(params:RemoteCallMixinCreateOrUpdateParams, callback:(result:RemoteCallMixinCreateOrUpdateResult)=>void):void {
+        mixin_createOrUpdate(params:api_remote_mixin.CreateOrUpdateParams,
+                             callback:(result:api_remote_mixin.CreateOrUpdateResult)=>void):void {
             console.log(params, callback);
         }
 
-        mixin_delete(params:RemoteCallMixinDeleteParams, callback:(result:RemoteCallMixinDeleteResult)=>void):void {
+        mixin_delete(params:api_remote_mixin.DeleteParams, callback:(result:api_remote_mixin.DeleteResult)=>void):void {
             console.log(params, callback);
         }
 
-        relationshipType_get(params:RemoteCallGetRelationshipTypeParams, callback:(result:RemoteCallGetRelationshipTypeResult)=>void):void {
+        relationshipType_get(params:api_remote_relationshiptype.GetParams,
+                             callback:(result:api_remote_relationshiptype.GetResult)=>void):void {
             console.log(params, callback);
         }
 
-        relationshipType_createOrUpdate(params:RemoteCallCreateOrUpdateRelationshipTypeParams,
-                                        callback:(result:RemoteCallCreateOrUpdateRelationshipTypeResult)=>void):void {
+        relationshipType_createOrUpdate(params:api_remote_relationshiptype.CreateOrUpdateParams,
+                                        callback:(result:api_remote_relationshiptype.CreateOrUpdateResult)=>void):void {
             console.log(params, callback);
         }
 
-        relationshipType_delete(params:RemoteCallDeleteRelationshipTypeParams,
-                                callback:(result:RemoteCallDeleteRelationshipTypeResult)=>void):void {
+        relationshipType_delete(params:api_remote_relationshiptype.DeleteParams,
+                                callback:(result:api_remote_relationshiptype.DeleteResult)=>void):void {
             console.log(params, callback);
         }
 
-        space_list(params:RemoteCallSpaceListParams, callback:(result:RemoteCallSpaceListResult)=>void):void {
+        space_list(params:api_remote_space.ListParams, callback:(result:api_remote_space.ListResult)=>void):void {
             console.log(params, callback);
         }
 
-        space_get(params:RemoteCallSpaceGetParams, callback:(result:RemoteCallSpaceGetResult)=>void):void {
+        space_get(params:api_remote_space.GetParams, callback:(result:api_remote_space.GetResult)=>void):void {
             console.log(params, callback);
         }
 
-        space_delete(params:RemoteCallSpaceDeleteParams, callback:(result:RemoteCallSpaceDeleteResult)=>void):void {
+        space_delete(params:api_remote_space.DeleteParams, callback:(result:api_remote_space.DeleteResult)=>void):void {
             console.log(params, callback);
         }
 
-        space_createOrUpdate(params:RemoteCallSpaceCreateOrUpdateParams, callback:(result:RemoteCallSpaceCreateOrUpdateResult)=>void):void {
+        space_createOrUpdate(params:api_remote_space.CreateOrUpdateParams,
+                             callback:(result:api_remote_space.CreateOrUpdateResult)=>void):void {
             console.log(params, callback);
         }
 

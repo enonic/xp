@@ -1,6 +1,6 @@
-module api_remote {
+module api_remote_relationshiptype {
 
-    export interface RelationshipType extends Item {
+    export interface RelationshipType extends api_remote.Item {
         name:string;
         displayName:string;
         iconUrl:string;
@@ -10,8 +10,8 @@ module api_remote {
         allowedFromTypes:string[];
         allowedToTypes:string[];
     }
-
-    export interface RemoteCallDeleteRelationshipTypeParams {
+    
+    export interface DeleteParams {
         qualifiedRelationshipTypeNames:string[];
     }
 
@@ -24,26 +24,27 @@ module api_remote {
         reason:string;
     }
 
-    export interface RemoteCallDeleteRelationshipTypeResult extends RemoteCallResultBase {
+    export interface DeleteResult extends api_remote.ResultBase {
         successes:DeleteRelationshipTypeSuccess[];
         failures:DeleteRelationshipTypeFailure[];
     }
 
-    export interface RemoteCallGetRelationshipTypeParams {
+    export interface GetParams {
         qualifiedRelationshipTypeName:string;
         format:string;
     }
 
-    export interface RemoteCallGetRelationshipTypeResult extends RemoteCallResultBase {
+    export interface GetResult extends api_remote.ResultBase {
+        iconUrl:string;
         relationshipType:RelationshipType;
     }
 
-    export interface RemoteCallCreateOrUpdateRelationshipTypeParams {
+    export interface CreateOrUpdateParams {
         relationshipType:string;
         iconReference:string;
     }
 
-    export interface RemoteCallCreateOrUpdateRelationshipTypeResult extends RemoteCallResultBase {
+    export interface CreateOrUpdateResult extends api_remote.ResultBase {
         created:bool;
         updated:bool;
     }

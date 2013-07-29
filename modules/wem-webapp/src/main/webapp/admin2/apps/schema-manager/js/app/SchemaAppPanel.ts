@@ -73,11 +73,11 @@ module app {
                 event.getModels().forEach((schemaModel: api_model.SchemaModel) => {
                     switch (schemaModel.data.type) {
                     case SchemaAppPanel.CONTENT_TYPE:
-                        var contentTypeGetParams:api_remote.RemoteCallContentTypeGetParams = {
+                        var contentTypeGetParams:api_remote_contenttype.GetParams = {
                             contentType: schemaModel.data.qualifiedName,
                             format: 'JSON'
                         };
-                        api_remote.RemoteService.contentType_get(contentTypeGetParams, (result:api_remote.RemoteCallContentTypeGetResult) => {
+                        api_remote.RemoteService.contentType_get(contentTypeGetParams, (result:api_remote_contenttype.GetResult) => {
                             if (result && result.success) {
                                 var tabMenuItem = new SchemaAppBarTabMenuItem(result.contentType.displayName, true);
 
@@ -95,11 +95,11 @@ module app {
                         });
                         break;
                     case SchemaAppPanel.RELATIONSHIP_TYPE:
-                        var relationshipTypeGetParams: api_remote.RemoteCallGetRelationshipTypeParams = {
+                        var relationshipTypeGetParams: api_remote_relationshiptype.GetParams = {
                             qualifiedRelationshipTypeName: schemaModel.data.qualifiedName,
                             format: 'JSON'
                         };
-                        api_remote.RemoteService.relationshipType_get(relationshipTypeGetParams, (result:api_remote.RemoteCallGetRelationshipTypeResult) => {
+                        api_remote.RemoteService.relationshipType_get(relationshipTypeGetParams, (result:api_remote_relationshiptype.GetResult) => {
                             if (result && result.success) {
                                 var tabMenuItem = new SchemaAppBarTabMenuItem(result.relationshipType.displayName, true);
 
@@ -115,11 +115,11 @@ module app {
                         });
                         break;
                     case SchemaAppPanel.MIXIN:
-                        var mixinGetParams: api_remote.RemoteCallMixinGetParams = {
+                        var mixinGetParams: api_remote_mixin.GetParams = {
                             mixin: schemaModel.data.qualifiedName,
                             format: 'JSON'
                         };
-                        api_remote.RemoteService.mixin_get(mixinGetParams, (result:api_remote.RemoteCallMixinGetResult) => {
+                        api_remote.RemoteService.mixin_get(mixinGetParams, (result:api_remote_mixin.GetResult) => {
                             if (result && result.success) {
                                 var tabMenuItem = new SchemaAppBarTabMenuItem(result.mixin.displayName, true);
 

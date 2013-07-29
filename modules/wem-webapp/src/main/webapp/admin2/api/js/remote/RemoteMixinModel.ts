@@ -1,32 +1,38 @@
-module api_remote {
+module api_remote_mixin {
 
-    export interface Mixin extends Item {
+    export interface Mixin extends api_remote.Item {
         name:string;
         module:string;
         displayName:string;
-        FormItemSet?: FormItemSet;
-        Layout?: Layout;
-        Input?: Input;
+        FormItemSet?: api_remote_contenttype.FormItemSet;
+        Layout?: api_remote_contenttype.Layout;
+        Input?: api_remote_contenttype.Input;
         MixinReference?: MixinReference;
         iconUrl:string;
     }
 
-    export interface RemoteCallMixinGetParams {
+    export interface MixinReference {
+        name: string;
+        reference: string;
+        type: string;
+    }
+
+    export interface GetParams {
         format:string;
         mixin:string;
     }
 
-    export interface RemoteCallMixinGetResult extends RemoteCallResultBase {
+    export interface GetResult extends api_remote.ResultBase {
         mixin?: Mixin;
         mixinXml:string;
         iconUrl:string;
     }
 
-    export interface RemoteCallMixinDeleteParams {
+    export interface DeleteParams {
         qualifiedMixinNames:string[];
     }
 
-    export interface RemoteCallMixinDeleteResult extends RemoteCallResultBase {
+    export interface DeleteResult extends api_remote.ResultBase {
         successes: {
             qualifiedMixinName:string;
         }[];
@@ -36,12 +42,12 @@ module api_remote {
         }[];
     }
 
-    export interface RemoteCallMixinCreateOrUpdateParams {
+    export interface CreateOrUpdateParams {
         mixin:string;
         iconReference:string;
     }
 
-    export interface RemoteCallMixinCreateOrUpdateResult extends RemoteCallResultBase {
+    export interface CreateOrUpdateResult extends api_remote.ResultBase {
         created:bool;
         updated:bool;
     }

@@ -71,19 +71,19 @@ module app_browse {
 
     export class SelectContentTypeAction extends api_ui.Action {
 
-        private contentType:api_remote.ContentTypeListNode;
+        private contentType:api_remote_contenttype.ContentTypeListNode;
 
-        constructor(contentType?:api_remote.ContentTypeListNode) {
+        constructor(contentType?:api_remote_contenttype.ContentTypeListNode) {
             super("SelectContentType");
             this.contentType = contentType;
         }
 
-        setContentType(contentType:api_remote.ContentTypeListNode):SelectContentTypeAction {
+        setContentType(contentType:api_remote_contenttype.ContentTypeListNode):SelectContentTypeAction {
             this.contentType = contentType;
             return this;
         }
 
-        getContentType():api_remote.ContentTypeListNode {
+        getContentType():api_remote_contenttype.ContentTypeListNode {
             return this.contentType;
         }
 
@@ -115,7 +115,7 @@ module app_browse {
             this.contentTypesList.setNodes(this.getRecentContentTypes());
         }
 
-        getNodes():api_remote.ContentTypeListNode[] {
+        getNodes():api_remote_contenttype.ContentTypeListNode[] {
             return this.contentTypesList.getNodes();
         }
 
@@ -127,9 +127,9 @@ module app_browse {
             return this;
         }
 
-        private getRecentContentTypes():api_remote.ContentTypeListNode[] {
+        private getRecentContentTypes():api_remote_contenttype.ContentTypeListNode[] {
 
-            var recentRecords:api_remote.ContentTypeListNode[] = [];
+            var recentRecords:api_remote_contenttype.ContentTypeListNode[] = [];
 
             var cookies:string = <string> Ext.util.Cookies.get(this.cookieKey);
             if (cookies) {
@@ -142,7 +142,7 @@ module app_browse {
             return recentRecords;
         }
 
-        private addRecentContentType(contentType:api_remote.ContentTypeListNode) {
+        private addRecentContentType(contentType:api_remote_contenttype.ContentTypeListNode) {
 
             var cookies:string = this.getCookie(this.cookieKey);
             var recentArray = cookies ? cookies.split(this.cookieSeparator) : [];
@@ -161,7 +161,7 @@ module app_browse {
             this.setCookie(this.cookieKey, recentArray.join(this.cookieSeparator));
         }
 
-        private serializeContentType(contentType:api_remote.ContentTypeListNode) {
+        private serializeContentType(contentType:api_remote_contenttype.ContentTypeListNode) {
             // serialize only the crucial info
             // because cookie size is just 4093 bytes per domain
             return JSON.stringify({
@@ -172,9 +172,9 @@ module app_browse {
             });
         }
 
-        private parseContentType(text:string):api_remote.ContentTypeListNode {
+        private parseContentType(text:string):api_remote_contenttype.ContentTypeListNode {
             var json = JSON.parse(text);
-            return <api_remote.ContentTypeListNode> json;
+            return <api_remote_contenttype.ContentTypeListNode> json;
         }
 
         private getCookie(name:string):string {
@@ -210,11 +210,11 @@ module app_browse {
             this.appendChild(this.contentTypesList);
         }
 
-        setNodes(nodes:api_remote.ContentTypeListNode[]) {
+        setNodes(nodes:api_remote_contenttype.ContentTypeListNode[]) {
             this.contentTypesList.setNodes(this.recommend(nodes));
         }
 
-        getNodes():api_remote.ContentTypeListNode[] {
+        getNodes():api_remote_contenttype.ContentTypeListNode[] {
             return this.contentTypesList.getNodes();
         }
 
@@ -228,7 +228,7 @@ module app_browse {
          * @param nodes Array to choose from
          * @returns {Array} Array of recommendations
          */
-        private recommend(nodes:api_remote.ContentTypeListNode[]):api_remote.ContentTypeListNode[] {
+        private recommend(nodes:api_remote_contenttype.ContentTypeListNode[]):api_remote_contenttype.ContentTypeListNode[] {
 
             var recommendations = [];
             if (nodes && nodes.length > 0) {
@@ -284,10 +284,10 @@ module app_browse {
     class ContentTypesList extends api_dom.DivEl {
 
         private ul:api_dom.UlEl;
-        private nodes:api_remote.ContentTypeListNode[];
+        private nodes:api_remote_contenttype.ContentTypeListNode[];
         private selectAction:SelectContentTypeAction;
 
-        constructor(nodes?:api_remote.ContentTypeListNode[]) {
+        constructor(nodes?:api_remote_contenttype.ContentTypeListNode[]) {
             super("ContentTypesList", "node-list");
 
             this.ul = new api_dom.UlEl("ContentTypesList");
@@ -298,12 +298,12 @@ module app_browse {
             }
         }
 
-        setNodes(nodes:api_remote.ContentTypeListNode[]):ContentTypesList {
+        setNodes(nodes:api_remote_contenttype.ContentTypeListNode[]):ContentTypesList {
             this.nodes = nodes;
             return this.layoutNodes(nodes);
         }
 
-        getNodes():api_remote.ContentTypeListNode[] {
+        getNodes():api_remote_contenttype.ContentTypeListNode[] {
             return this.nodes;
         }
 
@@ -311,7 +311,7 @@ module app_browse {
             if (!value || value.length == 0) {
                 this.clearFilter();
             }
-            var filteredNodes:api_remote.ContentTypeListNode[] = [];
+            var filteredNodes:api_remote_contenttype.ContentTypeListNode[] = [];
             var regexp = new RegExp(value, 'i');
 
             for (var i = 0; i < this.nodes.length; i++) {
@@ -333,7 +333,7 @@ module app_browse {
             return this;
         }
 
-        private layoutNodes(nodes:api_remote.ContentTypeListNode[]):ContentTypesList {
+        private layoutNodes(nodes:api_remote_contenttype.ContentTypeListNode[]):ContentTypesList {
             this.ul.removeChildren();
             for (var i = 0; i < nodes.length; i++) {
                 this.ul.appendChild(this.renderListItem(nodes[i]));
@@ -341,7 +341,7 @@ module app_browse {
             return this;
         }
 
-        private renderListItem(node:api_remote.ContentTypeListNode):api_dom.LiEl {
+        private renderListItem(node:api_remote_contenttype.ContentTypeListNode):api_dom.LiEl {
             var item = new api_dom.LiEl("ContentTypesListItem", "node-list-item");
             var img = new api_dom.ImgEl(node.iconUrl);
             var h6 = new api_dom.H6El();

@@ -1,4 +1,4 @@
-module api_remote {
+module api_remote_content {
 
     export interface Data {
         name: string;
@@ -79,25 +79,25 @@ module api_remote {
         type:string;
     }
 
-    export interface RemoteCallContentGetParams {
+    export interface GetParams {
         path?: string;
         contentIds?: string[];
     }
 
-    export interface RemoteCallContentGetResult extends RemoteCallResultBase {
+    export interface GetResult extends api_remote.ResultBase {
         content: ContentGet[];
     }
 
-    export interface RemoteCallContentListParams {
+    export interface ListParams {
         path: string;
     }
 
-    export interface RemoteCallContentListResult extends RemoteCallResultBase {
+    export interface ListResult extends api_remote.ResultBase {
         total: number;
         contents: ContentList[];
     }
 
-    export interface RemoteCallContentFindParams {
+    export interface FindParams {
         fulltext?: string;
         includeFacets?: bool;
         contentTypes: string[];
@@ -111,18 +111,18 @@ module api_remote {
         };
     }
 
-    export interface RemoteCallContentFindResult extends RemoteCallResultBase {
+    export interface FindResult extends api_remote.ResultBase {
         total: number;
         contents: ContentFind[];
         facets?: ContentFacet[];
     }
 
-    export interface RemoteCallContentValidateParams {
+    export interface ValidateParams {
         qualifiedContentTypeName: string;
         contentData: Data;
     }
 
-    export interface RemoteCallContentValidateResult extends RemoteCallResultBase {
+    export interface ValidateResult extends api_remote.ResultBase {
         hasError: bool;
         errors: {
             path: string;
@@ -130,11 +130,11 @@ module api_remote {
         }[];
     }
 
-    export interface RemoteCallContentDeleteParams {
+    export interface DeleteParams {
         contentPaths: string[];
     }
 
-    export interface RemoteCallContentDeleteResult extends RemoteCallResultBase {
+    export interface DeleteResult extends api_remote.ResultBase {
         successes: {
             path:string;
         }[];
@@ -144,7 +144,7 @@ module api_remote {
         }[];
     }
 
-    export interface RemoteCallCreateOrUpdateContentParams {
+    export interface CreateOrUpdateParams {
         contentId?: string;
         temporary?: bool;
         contentName?: string;
@@ -160,7 +160,7 @@ module api_remote {
         }[];
     }
 
-    export interface RemoteCallCreateOrUpdateContentResult extends RemoteCallResultBase{
+    export interface CreateOrUpdateResult extends api_remote.ResultBase{
         created: bool;
         updated: bool;
         contentId?: string;
@@ -168,11 +168,11 @@ module api_remote {
         failure?: string;
     }
 
-    export interface RemoteCallGetContentTreeParams {
+    export interface GetTreeParams {
         contentIds?:string[];
     }
 
-    export interface RemoteCallGetContentTreeResult extends RemoteCallResultBase {
+    export interface GetTreeResult extends api_remote.ResultBase {
         total:number;
         contents:ContentTreeNode[];
     }

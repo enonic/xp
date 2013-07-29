@@ -47,12 +47,12 @@ module app_browse {
                 models.forEach((model:api_model.ContentModel) => {
                     contentIds.push(model.data.id);
                 });
-                var getParams:api_remote.RemoteCallContentGetParams = {
+                var getParams:api_remote_content.GetParams = {
                     contentIds: contentIds
                 };
-                api_remote.RemoteService.content_get(getParams, (result:api_remote.RemoteCallContentGetResult)=> {
+                api_remote.RemoteService.content_get(getParams, (result:api_remote_content.GetResult)=> {
 
-                    result.content.forEach((contentGet:api_remote.ContentGet, index:number) => {
+                    result.content.forEach((contentGet:api_remote_content.ContentGet, index:number) => {
                         var item = new api_app_browse.BrowseItem(models[index]).
                             setDisplayName(contentGet.displayName).
                             setPath(contentGet.path).

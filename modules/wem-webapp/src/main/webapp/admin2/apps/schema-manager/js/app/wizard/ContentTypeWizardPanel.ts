@@ -12,7 +12,7 @@ module app_wizard {
 
         private toolbar: api_ui_toolbar.Toolbar;
 
-        private persistedContentType: api_remote.ContentType;
+        private persistedContentType: api_remote_contenttype.ContentType;
 
         constructor(id: string) {
             this.formIcon = new api_app_wizard.FormIcon(ContentTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");
@@ -39,7 +39,7 @@ module app_wizard {
             this.addStep(new api_app_wizard.WizardStep("Content Type", new ContentTypeForm()));
         }
 
-        setPersistedItem(contentType: api_remote.ContentType) {
+        setPersistedItem(contentType: api_remote_contenttype.ContentType) {
             super.setPersistedItem(contentType);
 
             this.setDisplayName(contentType.displayName);
