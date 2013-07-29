@@ -92,5 +92,12 @@ module app_wizard {
 
             // TODO
         }
+
+        askUserForSaveChangesBeforeClosing() {
+            if (!components.wizardSaveDialog) {
+                components.wizardSaveDialog = new app_wizard.ContentWizardSaveDialog();
+            }
+            components.wizardSaveDialog.setWizardToSave(this).open();
+        }
     }
 }
