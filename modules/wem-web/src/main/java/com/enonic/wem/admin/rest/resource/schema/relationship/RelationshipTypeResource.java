@@ -9,6 +9,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
@@ -51,7 +52,7 @@ public class RelationshipTypeResource
     private UploadService uploadService;
 
     @GET
-    public AbstractRelationshipTypeJson get( @FormParam("qualifiedRelationshipTypeName") final String name, @FormParam("format") final String format )
+    public AbstractRelationshipTypeJson get( @QueryParam("qualifiedRelationshipTypeName") final String name, @QueryParam("format") final String format )
     {
         final QualifiedRelationshipTypeNames qualifiedNames = QualifiedRelationshipTypeNames.from( name );
         final GetRelationshipTypes getRelationshipTypes = Commands.relationshipType().get();
