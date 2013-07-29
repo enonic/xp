@@ -1,9 +1,9 @@
 module app_wizard {
 
-    export class ContentTypeForm extends api_ui.Panel {
+    export class RelationshipTypeForm extends api_ui.Panel {
 
         constructor() {
-            super("ContentTypeForm");
+            super("RelationshipTypeForm");
 
             var form = new api_ui.Form();
 

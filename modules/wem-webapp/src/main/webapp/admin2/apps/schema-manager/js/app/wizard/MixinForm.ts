@@ -1,9 +1,9 @@
 module app_wizard {
 
-    export class ContentTypeForm extends api_ui.Panel {
+    export class MixinForm extends api_ui.Panel {
 
         constructor() {
-            super("ContentTypeForm");
+            super("MixinForm");
 
             var form = new api_ui.Form();
 

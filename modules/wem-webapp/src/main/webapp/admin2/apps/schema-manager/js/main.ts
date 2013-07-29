@@ -24,10 +24,12 @@
 ///<reference path='app/wizard/ContentTypeWizardActions.ts' />
 ///<reference path='app/wizard/ContentTypeWizardToolbar.ts' />
 ///<reference path='app/wizard/ContentTypeWizardEvents.ts' />
+///<reference path='app/wizard/RelationshipTypeForm.ts' />
 ///<reference path='app/wizard/RelationshipTypeWizardPanel.ts' />
 ///<reference path='app/wizard/RelationshipTypeWizardActions.ts' />
 ///<reference path='app/wizard/RelationshipTypeWizardToolbar.ts' />
 ///<reference path='app/wizard/RelationshipTypeWizardEvents.ts' />
+///<reference path='app/wizard/MixinForm.ts' />
 ///<reference path='app/wizard/MixinWizardPanel.ts' />
 ///<reference path='app/wizard/MixinWizardActions.ts' />
 ///<reference path='app/wizard/MixinWizardToolbar.ts' />
