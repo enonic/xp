@@ -18,6 +18,13 @@ module api_app{
             homePanelMenuItem.setRemovable(false);
             this.addNavigationItem(homePanelMenuItem, this.homePanel);
             this.showPanel(0);
+
+            api_ui.DeckPanelShownPanelChangedEvent.on((event) => {
+                if (!this.isHomePanel(event.index)) {
+                    // do panel afterrender to calculate offsets for each but home panel cuz they were created hidden
+                    event.panel.afterRender();
+                }
+            })
         }
 
         addWizardPanel(item:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {

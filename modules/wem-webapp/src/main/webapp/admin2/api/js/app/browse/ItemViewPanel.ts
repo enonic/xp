@@ -16,6 +16,12 @@ module api_app_browse {
             this.appendChild(this.statisticsPanel);
         }
 
+        afterRender() {
+            console.log("afterRender viewPanel");
+            super.afterRender();
+            this.statisticsPanel.afterRender();
+        }
+
         setItem(item:BrowseItem) {
             this.browseItem = item;
             this.statisticsPanel.setItem(item);

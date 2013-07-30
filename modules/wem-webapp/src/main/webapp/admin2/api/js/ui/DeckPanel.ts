@@ -126,8 +126,8 @@ module api_ui {
                 this.panelShown.hide();
             }
 
-            this.setPanelShown(selectedPanel);
             selectedPanel.show();
+            this.setPanelShown(selectedPanel);
         }
     }
 
