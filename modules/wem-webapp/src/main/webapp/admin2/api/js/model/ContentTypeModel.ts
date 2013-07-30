@@ -1,6 +1,6 @@
 module api_model {
 
-    export interface ContentTypeModel extends Model {
+    export interface ContentTypeExtModel extends ExtModel {
         data:{
             qualifiedName:string;
             name:string;

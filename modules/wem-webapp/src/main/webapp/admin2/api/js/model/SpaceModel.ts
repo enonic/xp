@@ -1,6 +1,6 @@
 module api_model {
 
-    export interface SpaceModel extends Model {
+    export interface SpaceExtModel extends ExtModel {
         data:{
             name:string;
             displayName:string;

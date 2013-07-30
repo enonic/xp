@@ -4,7 +4,7 @@ module app_delete {
 
         private deleteAction:api_ui.Action = new ContentDeleteDialogAction();
 
-        private contentToDelete:api_model.ContentModel[];
+        private contentToDelete:api_model.ContentExtModel[];
 
         private deleteHandler:api_handler.DeleteContentHandler = new api_handler.DeleteContentHandler();
 
@@ -26,7 +26,7 @@ module app_delete {
             api_dom.Body.get().appendChild(this);
         }
 
-        setContentToDelete(contentModels:api_model.ContentModel[]) {
+        setContentToDelete(contentModels:api_model.ContentExtModel[]) {
             this.contentToDelete = contentModels;
 
             var deleteItems:api_app_delete.DeleteItem[] = [];

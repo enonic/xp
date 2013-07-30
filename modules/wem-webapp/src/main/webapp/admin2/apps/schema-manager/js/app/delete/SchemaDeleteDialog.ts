@@ -4,7 +4,7 @@ module app_delete {
 
         private deleteAction:api_ui.Action = new SchemaDeleteDialogAction();
 
-        private schemaToDelete:api_model.SchemaModel[];
+        private schemaToDelete:api_model.SchemaExtModel[];
 
         private deleteHandler:api_handler.DeleteSchemaHandler = new api_handler.DeleteSchemaHandler();
 
@@ -26,7 +26,7 @@ module app_delete {
             api_dom.Body.get().appendChild(this);
         }
 
-        setSchemaToDelete(schemaModels:api_model.SchemaModel[]):SchemaDeleteDialog {
+        setSchemaToDelete(schemaModels:api_model.SchemaExtModel[]):SchemaDeleteDialog {
             this.schemaToDelete = schemaModels;
 
             var deleteItems:api_app_delete.DeleteItem[] = [];

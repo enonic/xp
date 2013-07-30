@@ -31,7 +31,7 @@ module app_browse {
                     this.browseItemPanel.setItems([]);
                 }
                 else {
-                    var models:api_model.SpaceModel[] = event.getModels();
+                    var models:api_model.SpaceExtModel[] = event.getModels();
                     var spaceLoader:SpaceLoader = new SpaceLoader(SpaceLoader.convert(models));
                     spaceLoader.load((loadedSpaces:api_remote_space.SpaceSummary[]) => {
 
@@ -61,8 +61,8 @@ module app_browse {
 
         private getParams:api_remote_space.GetParams;
 
-        static convert(models:api_model.SpaceModel[]):api_remote_space.GetParams {
-            var spaceNames:string[] = models.map((model:api_model.SpaceModel) => {
+        static convert(models:api_model.SpaceExtModel[]):api_remote_space.GetParams {
+            var spaceNames:string[] = models.map((model:api_model.SpaceExtModel) => {
                 return model.data.name;
             });
             return {

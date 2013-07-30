@@ -121,7 +121,7 @@ module app_browse {
 
             GridSelectionChangeEvent.on((event) => {
 
-                var contents:api_model.ContentModel[] = event.getModels();
+                var contents:api_model.ContentExtModel[] = event.getModels();
 
                 if (contents.length <= 0) {
                     NEW_CONTENT.setEnabled(true);
@@ -150,9 +150,9 @@ module app_browse {
             });
         }
 
-        static anyEditable(contents:api_model.ContentModel[]):bool {
+        static anyEditable(contents:api_model.ContentExtModel[]):bool {
             for (var i in contents) {
-                var content:api_model.ContentModel = contents[i];
+                var content:api_model.ContentExtModel = contents[i];
                 if (content.data.editable) {
                     return true;
                 }
@@ -160,9 +160,9 @@ module app_browse {
             return false;
         }
 
-        static anyDeleteable(contents:api_model.ContentModel[]):bool {
+        static anyDeleteable(contents:api_model.ContentExtModel[]):bool {
             for (var i in contents) {
-                var content:api_model.ContentModel = contents[i];
+                var content:api_model.ContentExtModel = contents[i];
                 if (content.data.deletable) {
                     return true;
                 }

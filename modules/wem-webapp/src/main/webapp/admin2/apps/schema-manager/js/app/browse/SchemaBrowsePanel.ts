@@ -27,7 +27,7 @@ module app_browse {
                     this.detailPanel.setItems([]);
                 } else {
 
-                    var model:api_model.SchemaModel = event.getModels()[0];
+                    var model:api_model.SchemaExtModel = event.getModels()[0];
                     var item = new api_app_browse.BrowseItem(model).
                         setDisplayName(model.data.displayName).
                         setIconUrl(model.data.iconUrl);

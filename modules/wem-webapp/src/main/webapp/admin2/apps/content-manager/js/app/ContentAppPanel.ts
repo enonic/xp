@@ -40,9 +40,9 @@ module app {
 
             app_browse.OpenContentEvent.on((event) => {
 
-                var contents:api_model.ContentModel[] = event.getModels();
+                var contents:api_model.ContentExtModel[] = event.getModels();
                 for (var i = 0; i < contents.length; i++) {
-                    var contentModel:api_model.ContentModel = contents[i];
+                    var contentModel:api_model.ContentExtModel = contents[i];
 
                     var tabMenuItem = new ContentAppBarTabMenuItem(contentModel.data.displayName);
                     var id = this.generateTabId(contentModel.data.name, false);
@@ -63,9 +63,9 @@ module app {
 
             app_browse.EditContentEvent.on((event) => {
 
-                var contents:api_model.ContentModel[] = event.getModels();
+                var contents:api_model.ContentExtModel[] = event.getModels();
                 for (var i = 0; i < contents.length; i++) {
-                    var contentModel:api_model.ContentModel = contents[i];
+                    var contentModel:api_model.ContentExtModel = contents[i];
 
                     //TODO: RemoteCallContentGetResult doesn't match returned result  if 'path' param is used!
                     var contentGetParams:api_remote_content.GetParams = {
