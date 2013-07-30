@@ -73,16 +73,16 @@ module app {
                     var spaceModel:api_model.SpaceModel = spaces[i];
 
                     var spaceGetParams:api_remote_space.GetParams = {
-                        "spaceName": [spaceModel.data.name]
+                        "spaceNames": [spaceModel.data.name]
                     };
                     api_remote.RemoteService.space_get(spaceGetParams, (result:api_remote_space.GetResult) => {
 
                         if (result && result.success) {
-
-                            var tabMenuItem = new SpaceAppBarTabMenuItem(result.space.displayName, true);
-                            var id = this.generateTabId(result.space.name, true);
+                            var space = result.spaces[0];
+                            var tabMenuItem = new SpaceAppBarTabMenuItem(space.displayName, true);
+                            var id = this.generateTabId(space.name, true);
                             var spaceWizardPanel = new app_wizard.SpaceWizardPanel(id);
-                            spaceWizardPanel.setPersistedItem(result.space);
+                            spaceWizardPanel.setPersistedItem(space);
 
                             this.addWizardPanel(tabMenuItem, spaceWizardPanel);
                             this.selectPanel(tabMenuItem);

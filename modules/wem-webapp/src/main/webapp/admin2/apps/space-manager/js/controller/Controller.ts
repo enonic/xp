@@ -65,7 +65,7 @@ Ext.define('Admin.controller.Controller', {
 
         tabs.el.mask();
         api_remote.RemoteService.space_get({
-            "spaceName": [space.data.name]
+            "spaceNames": [space.data.name]
         }, function (r) {
             tabs.el.unmask();
             if (r) {

@@ -23,11 +23,11 @@ module api_remote_space {
     }
 
     export interface GetParams {
-        spaceName: string[];
+        spaceNames: string[];
     }
 
     export interface GetResult extends api_remote.ResultBase {
-        space: Space;
+        spaces: Space[];
     }
 
     export interface CreateParams extends CreateOrUpdateParams {

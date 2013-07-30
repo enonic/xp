@@ -57,36 +57,28 @@ module app_browse {
         }
     }
 
-    export class SpaceLoader {
+    class SpaceLoader {
 
-        private getCalls:api_remote_space.GetParams[] = [];
+        private getParams:api_remote_space.GetParams;
 
-        private spaces:api_remote_space.SpaceSummary[] = [];
-
-        static convert(models:api_model.SpaceModel[]):api_remote_space.GetParams[] {
-            var getParams:api_remote_space.GetParams[] = [];
-            models.forEach((model:api_model.SpaceModel)=> {
-                getParams.push({
-                    "spaceName": [model.data.name]
-                });
+        static convert(models:api_model.SpaceModel[]):api_remote_space.GetParams {
+            var spaceNames:string[] = models.map((model:api_model.SpaceModel) => {
+                return model.data.name;
             });
-            return getParams;
+            return {
+                "spaceNames": spaceNames
+            };
         }
 
-        constructor(getCalls:api_remote_space.GetParams[]) {
-            this.getCalls = getCalls;
+        constructor(getParams:api_remote_space.GetParams) {
+            this.getParams = getParams;
         }
 
         load(callback:(loadedSpaces:api_remote_space.SpaceSummary[])=>void) {
-            this.getCalls.forEach((getParams:api_remote_space.GetParams)=> {
-                api_remote.RemoteService.space_get(getParams, (result:api_remote_space.GetResult) => {
-                    if (result) {
-                        this.spaces.push(result.space);
-                        if (this.spaces.length >= this.getCalls.length) {
-                            callback(this.spaces);
-                        }
-                    }
-                });
+            api_remote.RemoteService.space_get(this.getParams, (result:api_remote_space.GetResult) => {
+                if (result && result.success) {
+                    callback(result.spaces);
+                }
             });
         }
     }
