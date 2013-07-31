@@ -39,8 +39,8 @@ module app_browse {
             return this.previewMode;
         }
 
-        private fireGridDeselectEvent(model:api_model.ContentModel) {
-            var models:api_model.ContentModel[] = [];
+        private fireGridDeselectEvent(model:api_model.ContentExtModel) {
+            var models:api_model.ContentExtModel[] = [];
             models.push(model);
             new GridDeselectEvent(models).fire();
         }

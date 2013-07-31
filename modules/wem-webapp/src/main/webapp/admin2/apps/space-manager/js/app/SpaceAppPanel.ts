@@ -45,9 +45,9 @@ module app {
 
             app_browse.OpenSpaceEvent.on((event) => {
 
-                var spaces:api_model.SpaceModel[] = event.getModels();
+                var spaces:api_model.SpaceExtModel[] = event.getModels();
                 for (var i = 0; i < spaces.length; i++) {
-                    var spaceModel:api_model.SpaceModel = spaces[i];
+                    var spaceModel:api_model.SpaceExtModel = spaces[i];
 
                     var tabMenuItem = new SpaceAppBarTabMenuItem(spaceModel.data.displayName);
                     var id = this.generateTabId(spaceModel.data.name, false);
@@ -68,9 +68,9 @@ module app {
 
             app_browse.EditSpaceEvent.on((event) => {
 
-                var spaces:api_model.SpaceModel[] = event.getModels();
+                var spaces:api_model.SpaceExtModel[] = event.getModels();
                 for (var i = 0; i < spaces.length; i++) {
-                    var spaceModel:api_model.SpaceModel = spaces[i];
+                    var spaceModel:api_model.SpaceExtModel = spaces[i];
 
                     var spaceGetParams:api_remote_space.GetParams = {
                         "spaceNames": [spaceModel.data.name]

@@ -1,6 +1,6 @@
 module api_model {
 
-    export interface Model {
+    export interface ExtModel {
         data:any;
         id:string;
     }

@@ -78,7 +78,7 @@ module app_browse {
             ACTIONS.push(NEW_SCHEMA, EDIT_SCHEMA, OPEN_SCHEMA, DELETE_SCHEMA, REINDEX_SCHEMA, EXPORT_SCHEMA);
 
             GridSelectionChangeEvent.on((event) => {
-                var spaces:api_model.SchemaModel[] = event.getModels();
+                var spaces:api_model.SchemaExtModel[] = event.getModels();
 
                 if (spaces.length <= 0) {
                     NEW_SCHEMA.setEnabled(true);

@@ -58,7 +58,7 @@ module app_browse {
 
             GridSelectionChangeEvent.on((event) => {
 
-                var spaces:api_model.SpaceModel[] = event.getModels();
+                var spaces:api_model.SpaceExtModel[] = event.getModels();
 
                 if (spaces.length <= 0) {
                     NEW_SPACE.setEnabled(true);
@@ -81,9 +81,9 @@ module app_browse {
             });
         }
 
-        private static anyEditable(spaces:api_model.SpaceModel[]):bool {
+        private static anyEditable(spaces:api_model.SpaceExtModel[]):bool {
             for (var i in spaces) {
-                var space:api_model.SpaceModel = spaces[i];
+                var space:api_model.SpaceExtModel = spaces[i];
                 if (space.data.editable) {
                     return true;
                 }
@@ -91,9 +91,9 @@ module app_browse {
             return false;
         }
 
-        private static anyDeleteable(spaces:api_model.SpaceModel[]):bool {
+        private static anyDeleteable(spaces:api_model.SpaceExtModel[]):bool {
             for (var i in spaces) {
-                var space:api_model.SpaceModel = spaces[i];
+                var space:api_model.SpaceExtModel = spaces[i];
                 if (space.data.deletable) {
                     return true;
                 }

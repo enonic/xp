@@ -42,9 +42,9 @@ module app_browse {
             GridSelectionChangeEvent.on((event) => {
 
                 var items:api_app_browse.BrowseItem[] = [];
-                var models:api_model.ContentModel[] = event.getModels();
+                var models:api_model.ContentExtModel[] = event.getModels();
                 var contentIds:string[] = [];
-                models.forEach((model:api_model.ContentModel) => {
+                models.forEach((model:api_model.ContentExtModel) => {
                     contentIds.push(model.data.id);
                 });
                 var getParams:api_remote_content.GetParams = {

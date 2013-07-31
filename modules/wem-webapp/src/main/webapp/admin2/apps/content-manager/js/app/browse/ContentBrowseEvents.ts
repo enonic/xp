@@ -1,20 +1,20 @@
 module app_browse {
 
     export class BaseContentModelEvent extends api_event.Event {
-        private model:api_model.ContentModel[];
+        private model:api_model.ContentExtModel[];
 
-        constructor(name:string, model:api_model.ContentModel[]) {
+        constructor(name:string, model:api_model.ContentExtModel[]) {
             this.model = model;
             super(name);
         }
 
-        getModels():api_model.ContentModel[] {
+        getModels():api_model.ContentExtModel[] {
             return this.model;
         }
     }
 
     export class GridSelectionChangeEvent extends BaseContentModelEvent {
-        constructor(model:api_model.ContentModel[]) {
+        constructor(model:api_model.ContentExtModel[]) {
             super('gridChange', model);
         }
 
@@ -34,7 +34,7 @@ module app_browse {
     }
 
     export class EditContentEvent extends BaseContentModelEvent {
-        constructor(model:api_model.ContentModel[]) {
+        constructor(model:api_model.ContentExtModel[]) {
             super('editContent', model);
         }
 
@@ -45,7 +45,7 @@ module app_browse {
 
     export class OpenContentEvent extends BaseContentModelEvent {
 
-        constructor(model:api_model.ContentModel[]) {
+        constructor(model:api_model.ContentExtModel[]) {
             super('openContent', model);
         }
 
@@ -56,7 +56,7 @@ module app_browse {
 
     export class ShowDetailsEvent extends BaseContentModelEvent {
 
-        constructor(model:api_model.ContentModel[]) {
+        constructor(model:api_model.ContentExtModel[]) {
             super('showDetails', model);
         }
 
@@ -68,7 +68,7 @@ module app_browse {
 
     export class ShowPreviewEvent extends BaseContentModelEvent {
 
-        constructor(model:api_model.ContentModel[]) {
+        constructor(model:api_model.ContentExtModel[]) {
             super('showPreview', model);
         }
 
@@ -80,7 +80,7 @@ module app_browse {
 
     export class DuplicateContentEvent extends BaseContentModelEvent {
 
-        constructor(model:api_model.ContentModel[]) {
+        constructor(model:api_model.ContentExtModel[]) {
             super('duplicateContent', model);
         }
 
@@ -91,7 +91,7 @@ module app_browse {
     }
 
     export class ContentDeletePromptEvent extends BaseContentModelEvent {
-        constructor(model:api_model.ContentModel[]) {
+        constructor(model:api_model.ContentExtModel[]) {
             super('deleteContent', model);
         }
 
@@ -101,7 +101,7 @@ module app_browse {
     }
 
     export class GridDeselectEvent extends BaseContentModelEvent {
-        constructor(model:api_model.ContentModel[]) {
+        constructor(model:api_model.ContentExtModel[]) {
             super('removeFromGrid', model);
         }
 
@@ -112,7 +112,7 @@ module app_browse {
 
     export class MoveContentEvent extends BaseContentModelEvent {
 
-        constructor(model:api_model.ContentModel[]) {
+        constructor(model:api_model.ContentExtModel[]) {
             super('moveContent', model);
         }
 

@@ -4,7 +4,7 @@ module app {
 
         private deleteAction:api_ui.Action = new app.SpaceDeleteDialogAction();
 
-        private spacesToDelete:api_model.SpaceModel[];
+        private spacesToDelete:api_model.SpaceExtModel[];
 
         private deleteHandler:api_handler.DeleteSpacesHandler = new api_handler.DeleteSpacesHandler();
 
@@ -27,7 +27,7 @@ module app {
             api_dom.Body.get().appendChild(this);
         }
 
-        setSpacesToDelete(spaces:api_model.SpaceModel[]) {
+        setSpacesToDelete(spaces:api_model.SpaceExtModel[]) {
             this.spacesToDelete = spaces;
 
             var deleteItems:api_app_delete.DeleteItem[] = [];

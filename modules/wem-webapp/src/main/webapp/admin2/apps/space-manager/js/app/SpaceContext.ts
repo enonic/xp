@@ -4,7 +4,7 @@ module app {
 
         private static context:SpaceContext;
 
-        private selectedSpaces:api_model.SpaceModel[];
+        private selectedSpaces:api_model.SpaceExtModel[];
 
         static init():SpaceContext{
             return context = new SpaceContext();
@@ -20,7 +20,7 @@ module app {
             });
         }
 
-        getSelectedSpaces():api_model.SpaceModel[] {
+        getSelectedSpaces():api_model.SpaceExtModel[] {
             return this.selectedSpaces;
         }
     }

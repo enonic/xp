@@ -4,7 +4,7 @@ module app {
 
         private static context:ContentContext;
 
-        private selectedContents:api_model.ContentModel[];
+        private selectedContents:api_model.ContentExtModel[];
 
         static init():ContentContext{
             return context = new ContentContext();
@@ -20,7 +20,7 @@ module app {
             });
         }
 
-        getSelectedContents():api_model.ContentModel[] {
+        getSelectedContents():api_model.ContentExtModel[] {
             return this.selectedContents;
         }
     }

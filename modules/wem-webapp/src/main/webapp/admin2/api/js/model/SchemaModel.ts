@@ -1,6 +1,6 @@
 module api_model {
 
-    export interface SchemaModel extends Model {
+    export interface SchemaExtModel extends ExtModel {
         data: {
             key:string;
             name:string;
