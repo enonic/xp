@@ -31,6 +31,7 @@
 ///<reference path='app/wizard/SpaceWizardToolbar.ts' />
 ///<reference path='app/wizard/SpaceForm.ts' />
 ///<reference path='app/wizard/SpaceWizardPanel.ts' />
+///<reference path='app/wizard/SpaceWizardSaveDialog.ts' />
 
 ///<reference path='app/browse/SpaceBrowseEvents.ts' />
 ///<reference path='app/browse/SpaceBrowseActions.ts' />
@@ -78,6 +79,7 @@ module app {
 module components {
     export var detailPanel:app_browse.SpaceBrowseItemPanel;
     export var gridPanel:app_browse.SpaceTreeGridPanel;
+    export var wizardSaveDialog:app_wizard.SpaceWizardSaveDialog;
 }
 
 
