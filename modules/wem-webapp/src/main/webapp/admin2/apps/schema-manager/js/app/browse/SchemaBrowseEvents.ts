@@ -37,9 +37,9 @@ module app_browse {
 
     export class NewSchemaEvent extends api_event.Event {
 
-        private schemaType: string;
+        private schemaType:string;
 
-        constructor(schemaType?: string) {
+        constructor(schemaType?:string) {
             super('newSchema');
 
             this.schemaType = schemaType;
@@ -155,6 +155,35 @@ module app_browse {
 
         static on(handler:(event:ShowContextMenuEvent) => void) {
             api_event.onEvent('showContextMenu', handler);
+        }
+    }
+
+    export class SchemaBrowseSearchEvent extends api_event.Event {
+
+        filterParams;
+
+        constructor(filterParams?) {
+            super('schemaBrowseSearch');
+            this.filterParams = filterParams;
+        }
+
+        static on(handler:(event:SchemaBrowseSearchEvent)=>void) {
+            api_event.onEvent('schemaBrowseSearch', handler);
+        }
+
+        getFilterParams() {
+            return this.filterParams;
+        }
+    }
+
+    export class SchemaBrowseResetEvent extends api_event.Event {
+
+        constructor() {
+            super('schemaBrowseReset');
+        }
+
+        static on(handler:(event:SchemaBrowseResetEvent)=>void) {
+            api_event.onEvent('schemaBrowseReset', handler);
         }
     }
 
