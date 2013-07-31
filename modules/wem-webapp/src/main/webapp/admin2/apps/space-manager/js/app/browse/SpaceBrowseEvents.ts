@@ -1,21 +1,21 @@
 module app_browse {
 
     export class BaseSpaceModelEvent extends api_event.Event {
-        private model:api_model.SpaceModel[];
+        private model:api_model.SpaceExtModel[];
 
-        constructor(name:string, model:api_model.SpaceModel[]) {
+        constructor(name:string, model:api_model.SpaceExtModel[]) {
             this.model = model;
             super(name);
         }
 
-        getModels():api_model.SpaceModel[] {
+        getModels():api_model.SpaceExtModel[] {
             return this.model;
         }
     }
 
     export class GridSelectionChangeEvent extends BaseSpaceModelEvent {
 
-        constructor(model:api_model.SpaceModel[]) {
+        constructor(model:api_model.SpaceExtModel[]) {
             super('gridChange', model);
         }
 
@@ -26,7 +26,7 @@ module app_browse {
 
     export class GridDeselectEvent extends BaseSpaceModelEvent {
 
-        constructor(model:api_model.SpaceModel[]) {
+        constructor(model:api_model.SpaceExtModel[]) {
             super('removeFromGrid', model);
         }
 
@@ -48,7 +48,7 @@ module app_browse {
 
     export class EditSpaceEvent extends BaseSpaceModelEvent {
 
-        constructor(model:api_model.SpaceModel[]) {
+        constructor(model:api_model.SpaceExtModel[]) {
             super('editSpaceEvent', model);
         }
 
@@ -59,7 +59,7 @@ module app_browse {
 
     export class OpenSpaceEvent extends BaseSpaceModelEvent {
 
-        constructor(model:api_model.SpaceModel[]) {
+        constructor(model:api_model.SpaceExtModel[]) {
             super('openSpace', model);
         }
 
@@ -70,7 +70,7 @@ module app_browse {
 
     export class SpaceDeletePromptEvent extends BaseSpaceModelEvent {
 
-        constructor(model:api_model.SpaceModel[]) {
+        constructor(model:api_model.SpaceExtModel[]) {
             super('deletePrompt', model);
         }
 

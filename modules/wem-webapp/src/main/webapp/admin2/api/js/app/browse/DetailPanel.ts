@@ -20,14 +20,14 @@ module api_app_browse {
     }
 
     export class DetailTabPanel extends api_dom.DivEl {
-        private model:api_model.Model;
+        private model:api_model.ExtModel;
         private navigation:DetailPanelTabList;
         private tabs:DetailPanelTab[] = [];
         private canvas:api_dom.DivEl;
         private tabChangeCallback:(DetailPanelTab) => void;
         private actionMenu:api_ui_menu.ActionMenu;
 
-        constructor(model:api_model.Model, actionMenu:api_ui_menu.ActionMenu) {
+        constructor(model:api_model.ExtModel, actionMenu:api_ui_menu.ActionMenu) {
             super("detailpanel-tab", "detailpanel-tab");
 
             this.model = model;
@@ -130,7 +130,7 @@ module api_app_browse {
     }
 
     export class DetailPanelBox extends api_dom.DivEl {
-        private model:api_model.Model;
+        private model:api_model.ExtModel;
 
         constructor(model:any, removeCallback?:(DetailPanelBox) => void) {
             super("detailpanel-box", "detailpanel-box");

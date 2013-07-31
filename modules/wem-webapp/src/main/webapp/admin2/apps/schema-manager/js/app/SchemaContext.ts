@@ -4,7 +4,7 @@ module app {
 
         private static context:SchemaContext;
 
-        private selectedSchemes:api_model.SchemaModel[];
+        private selectedSchemes:api_model.SchemaExtModel[];
 
         static init():SchemaContext {
             return context = new SchemaContext();
@@ -20,7 +20,7 @@ module app {
             });
         }
 
-        getSelectedSchemes():api_model.SchemaModel[] {
+        getSelectedSchemes():api_model.SchemaExtModel[] {
             return this.selectedSchemes;
         }
     }

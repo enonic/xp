@@ -12,8 +12,8 @@ module app_browse {
             });
         }
 
-        fireGridDeselectEvent(model:api_model.SpaceModel) {
-            var models:api_model.SpaceModel[] = [];
+        fireGridDeselectEvent(model:api_model.SpaceExtModel) {
+            var models:api_model.SpaceExtModel[] = [];
             models.push(model);
             new GridDeselectEvent(models).fire();
         }

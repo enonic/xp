@@ -13,7 +13,7 @@ module app_browse {
             });
         }
 
-        fireGridDeselectEvent(model:api_model.SchemaModel) {
+        fireGridDeselectEvent(model:api_model.SchemaExtModel) {
             new GridDeselectEvent([model]).fire();
         }
     }

@@ -70,7 +70,7 @@ module app {
             });
 
             app_browse.EditSchemaEvent.on((event) => {
-                event.getModels().forEach((schemaModel: api_model.SchemaModel) => {
+                event.getModels().forEach((schemaModel: api_model.SchemaExtModel) => {
                     switch (schemaModel.data.type) {
                     case SchemaAppPanel.CONTENT_TYPE:
                         var contentTypeGetParams:api_remote_contenttype.GetParams = {
@@ -139,9 +139,9 @@ module app {
             });
 
             app_browse.OpenSchemaEvent.on((event) => {
-                var schemes:api_model.SchemaModel[] = event.getModels();
+                var schemes:api_model.SchemaExtModel[] = event.getModels();
                 for (var i = 0; i < schemes.length; i++) {
-                    var schemaModel:api_model.SchemaModel = schemes[i];
+                    var schemaModel:api_model.SchemaExtModel = schemes[i];
 
                     var tabMenuItem = new SchemaAppBarTabMenuItem(schemaModel.data.displayName);
 

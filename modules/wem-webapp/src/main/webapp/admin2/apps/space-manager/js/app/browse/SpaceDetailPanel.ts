@@ -43,7 +43,7 @@ module app_browse {
             this.empty();
             for (var i in models) {
                 var removeCallback = (box:api_app_browse.DetailPanelBox) => {
-                    var models:api_model.SpaceModel[] = [box.getModel()];
+                    var models:api_model.SpaceExtModel[] = [box.getModel()];
                     new app_event.GridDeselectEvent(models).fire();
                 }
                 this.getEl().appendChild(new api_app_browse.DetailPanelBox(models[i], removeCallback).getHTMLElement());

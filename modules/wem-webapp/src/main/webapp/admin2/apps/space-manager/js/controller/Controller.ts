@@ -33,7 +33,7 @@ Ext.define('Admin.controller.Controller', {
         tabs.addTab(spaceWizardPanel.ext);
     },
 
-    viewSpace: function (space:api_model.SpaceModel) {
+    viewSpace: function (space:api_model.SpaceExtModel) {
         space = this.validateSpace(space);
 
         var me = this;
@@ -57,7 +57,7 @@ Ext.define('Admin.controller.Controller', {
         }
     },
 
-    editSpace: function (space:api_model.SpaceModel) {
+    editSpace: function (space:api_model.SpaceExtModel) {
         space = this.validateSpace(space);
 
         var me = this;
@@ -87,7 +87,7 @@ Ext.define('Admin.controller.Controller', {
         });
     },
 
-    validateSpace: function (space:api_model.SpaceModel) {
+    validateSpace: function (space:api_model.SpaceExtModel) {
         if (!space) {
             var showPanel = this.getSpaceTreeGridPanel();
             return showPanel.getSelection()[0];

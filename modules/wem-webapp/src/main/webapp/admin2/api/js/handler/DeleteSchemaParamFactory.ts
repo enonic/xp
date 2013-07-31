@@ -2,7 +2,7 @@ module api_handler {
 
     export class DeleteSchemaParamFactory {
 
-        static create(schemes:api_model.SchemaModel[]):api_handler.DeleteSchemaParam {
+        static create(schemes:api_model.SchemaExtModel[]):api_handler.DeleteSchemaParam {
 
             var schemaNames:string[] = [];
             for (var i = 0; i < schemes.length; i++) {
