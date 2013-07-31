@@ -18,6 +18,26 @@ module app_browse {
             GridDeselectEvent.on((event) => {
                 this.deselect(event.getModels()[0].data.name);
             });
+
+
+            SchemaBrowseSearchEvent.on((event:SchemaBrowseSearchEvent) => {
+                this.setActiveList('grid');
+                if (event.getFilterParams()) {
+                    // show  ids
+                    this.setRemoteSearchParams(event.getFilterParams());
+                    this.refresh();
+                } else {
+                    // show none
+                    this.removeAll();
+                    this.updateResultCount(0);
+                }
+            });
+
+            SchemaBrowseResetEvent.on((event:SchemaBrowseResetEvent) => {
+                this.setActiveList('tree');
+                this.setRemoteSearchParams({});
+                this.refresh();
+            })
         }
 
         private createColumns() {
