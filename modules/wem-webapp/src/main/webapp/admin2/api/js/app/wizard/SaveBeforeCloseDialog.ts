@@ -1,7 +1,9 @@
 module api_app_wizard {
 
 
-    export class SaveChangesBeforeCloseDialog extends api_ui_dialog.ModalDialog {
+    export class SaveBeforeCloseDialog extends api_ui_dialog.ModalDialog {
+
+        private wizardPanel: api_app_wizard.WizardPanel;
 
         private yesAction = new api_ui.Action('Yes', 'mod+y');
         private noAction = new api_ui.Action('No', 'mod+n');
@@ -14,11 +16,10 @@ module api_app_wizard {
                 height: 180
             });
 
-            // TODO: @alb - Page should have only one SaveChangesBeforeCloseDialog.
             api_dom.Body.get().appendChild(this);
 
             var message = new api_dom.H6El();
-            message.getEl().setInnerHtml("There are unsaved changes, do you want do you want to save them?");
+            message.getEl().setInnerHtml("There are unsaved changes, do you want to save them?");
             this.appendChildToContentPanel(message);
 
             this.setCancelAction(this.cancelAction);
@@ -28,6 +29,15 @@ module api_app_wizard {
             this.cancelAction.addExecutionListener(() => {
                 this.close();
             });
+        }
+
+        setWizardToSave(panel: api_app_wizard.WizardPanel): SaveBeforeCloseDialog {
+            this.wizardPanel = panel;
+            return this;
+        }
+
+        getWizardPanel(): api_app_wizard.WizardPanel {
+            return this.wizardPanel;
         }
 
         getYesAction():api_ui.Action {
