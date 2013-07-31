@@ -62,6 +62,17 @@ public class CreateRelationship
         return this;
     }
 
+    public CreateRelationship property( final Map<String, String> map )
+    {
+        for ( Map.Entry<String, String> entry : map.entrySet() )
+        {
+            final String key = entry.getKey();
+            final String value = entry.getValue();
+            property( key, value );
+        }
+        return this;
+    }
+
     public Map<String, String> getProperties()
     {
         return properties;
