@@ -33,7 +33,7 @@ module  app_browse {
                 model: 'Admin.model.SpaceModel',
                 proxy: {
                     type: 'direct',
-                    directFn: api_remote.RemoteService.space_list,
+                    directFn: api_remote.RemoteSpaceService.space_list,
                     simpleSortMode: true,
                     reader: {
                         type: 'json',

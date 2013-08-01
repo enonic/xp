@@ -1,3 +1,5 @@
+///<reference path='BaseResult.ts' />
+
 module api_remote_relationshiptype {
 
     export interface RelationshipType extends api_remote.Item {
@@ -24,7 +26,7 @@ module api_remote_relationshiptype {
         reason:string;
     }
 
-    export interface DeleteResult extends api_remote.ResultBase {
+    export interface DeleteResult extends api_remote.BaseResult {
         successes:DeleteRelationshipTypeSuccess[];
         failures:DeleteRelationshipTypeFailure[];
     }
@@ -34,7 +36,7 @@ module api_remote_relationshiptype {
         format:string;
     }
 
-    export interface GetResult extends api_remote.ResultBase {
+    export interface GetResult extends api_remote.BaseResult {
         iconUrl:string;
         relationshipType:RelationshipType;
     }
@@ -44,7 +46,7 @@ module api_remote_relationshiptype {
         iconReference:string;
     }
 
-    export interface CreateOrUpdateResult extends api_remote.ResultBase {
+    export interface CreateOrUpdateResult extends api_remote.BaseResult {
         created:bool;
         updated:bool;
     }

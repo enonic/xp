@@ -8,7 +8,7 @@ module app_browse {
             var searchAction = new api_app_browse.FilterSearchAction();
             searchAction.addExecutionListener((action:api_app_browse.FilterSearchAction)=> {
                 var params = app_browse.createLoadContentParams(action.getFilterValues());
-                api_remote.RemoteService.content_find(params, (response) => {
+                api_remote.RemoteContentService.content_find(params, (response) => {
                     if (response && response.success) {
                         var ids = response.contents.map(function (item) {
                             return item.id
@@ -23,7 +23,7 @@ module app_browse {
             resetAction.addExecutionListener((action:api_app_browse.FilterResetAction)=> {
                 var params = app_browse.createLoadContentParams({});
 
-                api_remote.RemoteService.content_find(params, (response) => {
+                api_remote.RemoteContentService.content_find(params, (response) => {
                     if (response && response.success) {
 
                         // set facet data

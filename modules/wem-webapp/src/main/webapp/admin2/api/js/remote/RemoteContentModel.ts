@@ -1,3 +1,5 @@
+///<reference path='BaseResult.ts' />
+
 module api_remote_content {
 
     export interface Data {
@@ -84,7 +86,7 @@ module api_remote_content {
         contentIds?: string[];
     }
 
-    export interface GetResult extends api_remote.ResultBase {
+    export interface GetResult extends api_remote.BaseResult {
         content: ContentGet[];
     }
 
@@ -92,7 +94,7 @@ module api_remote_content {
         path: string;
     }
 
-    export interface ListResult extends api_remote.ResultBase {
+    export interface ListResult extends api_remote.BaseResult {
         total: number;
         contents: ContentList[];
     }
@@ -111,7 +113,7 @@ module api_remote_content {
         };
     }
 
-    export interface FindResult extends api_remote.ResultBase {
+    export interface FindResult extends api_remote.BaseResult {
         total: number;
         contents: ContentFind[];
         facets?: ContentFacet[];
@@ -122,7 +124,7 @@ module api_remote_content {
         contentData: Data;
     }
 
-    export interface ValidateResult extends api_remote.ResultBase {
+    export interface ValidateResult extends api_remote.BaseResult {
         hasError: bool;
         errors: {
             path: string;
@@ -134,7 +136,7 @@ module api_remote_content {
         contentPaths: string[];
     }
 
-    export interface DeleteResult extends api_remote.ResultBase {
+    export interface DeleteResult extends api_remote.BaseResult {
         successes: {
             path:string;
         }[];
@@ -160,7 +162,7 @@ module api_remote_content {
         }[];
     }
 
-    export interface CreateOrUpdateResult extends api_remote.ResultBase{
+    export interface CreateOrUpdateResult extends api_remote.BaseResult{
         created: bool;
         updated: bool;
         contentId?: string;
@@ -172,7 +174,7 @@ module api_remote_content {
         contentIds?:string[];
     }
 
-    export interface GetTreeResult extends api_remote.ResultBase {
+    export interface GetTreeResult extends api_remote.BaseResult {
         total:number;
         contents:ContentTreeNode[];
     }

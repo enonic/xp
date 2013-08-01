@@ -99,7 +99,7 @@ module app_wizard {
                 iconReference: this.getIconUrl()
             };
 
-            api_remote.RemoteService.space_createOrUpdate(createParams, () => {
+            api_remote.RemoteSpaceService.space_createOrUpdate(createParams, () => {
 
                 new app_wizard.SpaceCreatedEvent().fire();
                 api_notify.showFeedback('Space was created!');
@@ -116,7 +116,7 @@ module app_wizard {
                 iconReference: this.getIconUrl()
             };
 
-            api_remote.RemoteService.space_createOrUpdate(updateParams, () => {
+            api_remote.RemoteSpaceService.space_createOrUpdate(updateParams, () => {
 
                 new app_wizard.SpaceUpdatedEvent().fire();
                 api_notify.showFeedback('Space was saved!');

@@ -1,3 +1,6 @@
+///<reference path='BaseResult.ts' />
+///<reference path='RemoteContentTypeModel.ts' />
+
 module api_remote_mixin {
 
     export interface Mixin extends api_remote.Item {
@@ -22,7 +25,7 @@ module api_remote_mixin {
         mixin:string;
     }
 
-    export interface GetResult extends api_remote.ResultBase {
+    export interface GetResult extends api_remote.BaseResult {
         mixin?: Mixin;
         mixinXml:string;
         iconUrl:string;
@@ -32,7 +35,7 @@ module api_remote_mixin {
         qualifiedMixinNames:string[];
     }
 
-    export interface DeleteResult extends api_remote.ResultBase {
+    export interface DeleteResult extends api_remote.BaseResult {
         successes: {
             qualifiedMixinName:string;
         }[];
@@ -47,7 +50,7 @@ module api_remote_mixin {
         iconReference:string;
     }
 
-    export interface CreateOrUpdateResult extends api_remote.ResultBase {
+    export interface CreateOrUpdateResult extends api_remote.BaseResult {
         created:bool;
         updated:bool;
     }

@@ -76,7 +76,7 @@ module app {
                     var contentGetParams:api_remote_content.GetParams = {
                         "contentIds": [contentModel.data.id]
                     };
-                    api_remote.RemoteService.content_get(contentGetParams, (result:api_remote_content.GetResult) => {
+                    api_remote.RemoteContentService.content_get(contentGetParams, (result:api_remote_content.GetResult) => {
 
                         if (result && result.success) {
 

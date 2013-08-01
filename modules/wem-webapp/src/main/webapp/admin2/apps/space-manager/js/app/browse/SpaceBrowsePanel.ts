@@ -75,7 +75,7 @@ module app_browse {
         }
 
         load(callback:(loadedSpaces:api_remote_space.SpaceSummary[])=>void) {
-            api_remote.RemoteService.space_get(this.getParams, (result:api_remote_space.GetResult) => {
+            api_remote.RemoteSpaceService.space_get(this.getParams, (result:api_remote_space.GetResult) => {
                 if (result && result.success) {
                     callback(result.spaces);
                 }

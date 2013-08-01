@@ -14,7 +14,7 @@ Ext.define('Admin.controller.ContentController', {
     /*   Public, only CRUD model methods here please     */
 
     remoteCreateOrUpdateContent: function (contentParams, callback) {
-        api_remote.RemoteService.content_createOrUpdate(contentParams, function (r) {
+        api_remote.RemoteContentService.content_createOrUpdate(contentParams, function (r) {
             if (r && r.success) {
                 callback(r.created, r.updated, r.contentPath, r.contentId);
             } else {
@@ -28,7 +28,7 @@ Ext.define('Admin.controller.ContentController', {
         var contentPaths = Ext.Array.map([].concat(contents), function (item) {
             return item.get('path');
         });
-        api_remote.RemoteService.content_delete({"contentPaths": contentPaths }, function (r) {
+        api_remote.RemoteContentService.content_delete({"contentPaths": contentPaths }, function (r) {
             if (r) {
                 callback.call(me, r.success, r.failures);
             } else {

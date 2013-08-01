@@ -110,7 +110,7 @@ Ext.define('Admin.controller.Controller', {
                         contentType: selectedContent.get('type'),
                         mixinReferencesToFormItems: true
                     };
-                    api_remote.RemoteService.contentType_get(getContentTypeCommand, function (rpcResponse) {
+                    api_remote.RemoteContentTypeService.contentType_get(getContentTypeCommand, function (rpcResponse) {
                         getContentTypeResponse = rpcResponse;
                         if (getContentTypeResponse && getContentTypeResponse.success && getContentResponse && getContentResponse.success) {
                             // both responses received, combine responses and pass them to callback
@@ -122,7 +122,7 @@ Ext.define('Admin.controller.Controller', {
                     var getContentCommand = {
                         path: selectedContent.get('path')
                     };
-                    api_remote.RemoteService.content_get(getContentCommand, function (rpcResponse) {
+                    api_remote.RemoteContentService.content_get(getContentCommand, function (rpcResponse) {
                         getContentResponse = rpcResponse;
                         if (getContentResponse && getContentResponse.success && getContentTypeResponse && getContentTypeResponse.success) {
                             // both responses received, combine responses and pass them to callback
@@ -169,7 +169,7 @@ Ext.define('Admin.controller.Controller', {
 
             switch (type) {
             case 'contentType':
-                api_remote.RemoteService.contentType_get({
+                api_remote.RemoteContentTypeService.contentType_get({
                         format: 'JSON',
                         contentType: qualifiedContentType,
                         mixinReferencesToFormItems: true
@@ -276,7 +276,7 @@ Ext.define('Admin.controller.Controller', {
             filter = this.getContentFilter(),
             params = this.createLoadContentParams(values || filter.getValues());
 
-        api_remote.RemoteService.content_find(params, function (response) {
+        api_remote.RemoteContentService.content_find(params, function (response) {
             if (response && response.success) {
 
                 // set facet data

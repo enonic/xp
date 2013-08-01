@@ -4,7 +4,7 @@ module api_handler {
 
         doDelete(deleteSpaceParam:api_handler.DeleteSpaceParam, callback:(thisArg, success, result) => void) {
 
-            api_remote.RemoteService.space_delete(deleteSpaceParam, function (response) {
+            api_remote.RemoteSpaceService.space_delete(deleteSpaceParam, function (response) {
                 if (response) {
                     callback.call(this, response.success, response);
                 } else {

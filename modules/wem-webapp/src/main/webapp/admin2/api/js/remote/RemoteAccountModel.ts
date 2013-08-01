@@ -1,3 +1,5 @@
+///<reference path='BaseResult.ts' />
+
 module api_remote_account {
 
     export interface Account {
@@ -75,7 +77,7 @@ module api_remote_account {
         types?: string[];
     }
 
-    export interface FindResult extends api_remote.ResultBase {
+    export interface FindResult extends api_remote.BaseResult {
         accounts: Account[];
         facets?: AccountFacet[];
         total?: number;
@@ -85,7 +87,7 @@ module api_remote_account {
         key: string;
     }
 
-    export interface GetGraphResult extends api_remote.ResultBase {
+    export interface GetGraphResult extends api_remote.BaseResult {
         graph: {
             id: string;
             name: string;
@@ -106,7 +108,7 @@ module api_remote_account {
         password: string;
     }
 
-    export interface ChangePasswordResult extends api_remote.ResultBase {
+    export interface ChangePasswordResult extends api_remote.BaseResult {
     }
 
     export interface VerifyUniqueEmailParams {
@@ -114,7 +116,7 @@ module api_remote_account {
         email: string;
     }
 
-    export interface VerifyUniqueEmailResult extends api_remote.ResultBase {
+    export interface VerifyUniqueEmailResult extends api_remote.BaseResult {
         emailInUse: bool;
         key: string;
     }
@@ -125,7 +127,7 @@ module api_remote_account {
         lastName: string;
     }
 
-    export interface SuggestUserNameResult extends api_remote.ResultBase {
+    export interface SuggestUserNameResult extends api_remote.BaseResult {
         username: string;
     }
 
@@ -139,7 +141,7 @@ module api_remote_account {
         groups?: string[];
     }
 
-    export interface CreateOrUpdateResult extends api_remote.ResultBase {
+    export interface CreateOrUpdateResult extends api_remote.BaseResult {
         created: bool;
         updated: bool;
     }
@@ -148,7 +150,7 @@ module api_remote_account {
         key:string[];
     }
 
-    export interface DeleteResult extends api_remote.ResultBase {
+    export interface DeleteResult extends api_remote.BaseResult {
         deleted:number;
     }
 
@@ -156,7 +158,7 @@ module api_remote_account {
         key:string;
     }
 
-    export interface GetResult extends api_remote.ResultBase, Account {
+    export interface GetResult extends api_remote.BaseResult, Account {
 
     }
 

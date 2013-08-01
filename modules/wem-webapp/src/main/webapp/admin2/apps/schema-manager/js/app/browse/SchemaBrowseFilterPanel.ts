@@ -29,7 +29,7 @@ module app_browse {
             var searchAction = new api_app_browse.FilterSearchAction();
             searchAction.addExecutionListener((action:api_app_browse.FilterSearchAction)=> {
                 var params = app_browse.createLoadContentParams(action.getFilterValues());
-                api_remote.RemoteService.schema_list(params, (response) => {
+                api_remote.RemoteSchemaService.schema_list(params, (response) => {
                     if (response && response.success) {
                         if (this.isDirty()) {
                             new SchemaBrowseSearchEvent(params).fire();

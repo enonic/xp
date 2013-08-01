@@ -1,3 +1,5 @@
+///<reference path='BaseResult.ts' />
+
 module api_remote_schema {
 
     export interface Schema {
@@ -31,7 +33,7 @@ module api_remote_schema {
         modules:string[];
     }
 
-    export interface ListResult extends api_remote.ResultBase {
+    export interface ListResult extends api_remote.BaseResult {
         schemas:Schema[];
     }
 
@@ -39,7 +41,7 @@ module api_remote_schema {
         types:string[];
     }
 
-    export interface GetTreeResult extends api_remote.ResultBase {
+    export interface GetTreeResult extends api_remote.BaseResult {
         schemas:SchemaTreeNode[];
         total:number;
     }

@@ -75,7 +75,7 @@ module app {
                     var spaceGetParams:api_remote_space.GetParams = {
                         "spaceNames": [spaceModel.data.name]
                     };
-                    api_remote.RemoteService.space_get(spaceGetParams, (result:api_remote_space.GetResult) => {
+                    api_remote.RemoteSpaceService.space_get(spaceGetParams, (result:api_remote_space.GetResult) => {
 
                         if (result && result.success) {
                             var space = result.spaces[0];

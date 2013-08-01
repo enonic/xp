@@ -81,7 +81,7 @@ module app_browse {
 
                 proxy: {
                     type: 'direct',
-                    directFn: api_remote.RemoteService.schema_list,
+                    directFn: api_remote.RemoteSchemaService.schema_list,
                     simpleSortMode: true,
                     reader: {
                         type: 'json',
@@ -101,7 +101,7 @@ module app_browse {
 
                 proxy: {
                     type: 'direct',
-                    directFn: api_remote.RemoteService.schema_tree,
+                    directFn: api_remote.RemoteSchemaService.schema_tree,
                     simpleSortMode: true,
                     reader: {
                         type: 'json',

@@ -18,17 +18,17 @@ module api_handler {
 
             switch (deleteSchemaParam.type) {
             case DeleteSchemaHandler.CONTENT_TYPE:
-                api_remote.RemoteService.contentType_delete({
+                api_remote.RemoteContentTypeService.contentType_delete({
                     qualifiedContentTypeNames: deleteSchemaParam.qualifiedNames
                 }, callbackFn);
                 break;
             case DeleteSchemaHandler.RELATIONSHIP_TYPE:
-                api_remote.RemoteService.relationshipType_delete({
+                api_remote.RemoteRelationshipTypeService.relationshipType_delete({
                     qualifiedRelationshipTypeNames: deleteSchemaParam.qualifiedNames
                 }, callbackFn);
                 break;
             case DeleteSchemaHandler.MIXIN:
-                api_remote.RemoteService.mixin_delete({
+                api_remote.RemoteMixinService.mixin_delete({
                     qualifiedMixinNames: deleteSchemaParam.qualifiedNames
                 }, callbackFn);
                 break;

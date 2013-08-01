@@ -28,7 +28,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
                 qualifiedRelationshipTypeName: this.inputConfig.type.config.relationshipType,
                 format: 'JSON'
             };
-            api_remote.RemoteService.relationshipType_get(getRelationshipTypeCommand, function (response) {
+            api_remote.RemoteRelationshipTypeService.relationshipType_get(getRelationshipTypeCommand, function (response) {
                 if (response && response.success) {
                     var iconUrl = response.relationshipType.iconUrl;
                     if (me.rendered) {
@@ -74,7 +74,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
             contentIds: Ext.Array.pluck(values, 'value')
         };
         // retrieve image contents by contentId
-        api_remote.RemoteService.content_get(getContentCommand, function (getContentResponse) {
+        api_remote.RemoteContentService.content_get(getContentCommand, function (getContentResponse) {
             if (getContentResponse && getContentResponse.success) {
                 Ext.each(getContentResponse.content, function (contentData) {
                     var contentModel = new Admin.model.contentManager.ContentModel(contentData);
@@ -445,7 +445,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
                 var getContentCommand = {
                     contentIds: [contentId]
                 };
-                api_remote.RemoteService.content_get(getContentCommand, function (getContentResponse) {
+                api_remote.RemoteContentService.content_get(getContentCommand, function (getContentResponse) {
                     if (getContentResponse && getContentResponse.success) {
                         var contentData = getContentResponse.content[0];
                         var contentModel = new Admin.model.contentManager.ContentModel(contentData);
@@ -461,7 +461,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
      */
     remoteCreateBinary: function (fileUploadId, callback) {
         var createBinaryCommand = {'uploadFileId': fileUploadId};
-        api_remote.RemoteService.binary_create(createBinaryCommand, function (response) {
+        api_remote.RemoteContentService.binary_create(createBinaryCommand, function (response) {
             if (response && response.success) {
                 callback(response.binaryId);
             } else {
@@ -484,7 +484,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
             "temporary": true
         };
 
-        api_remote.RemoteService.content_createOrUpdate(createContentCommand, function (response) {
+        api_remote.RemoteContentService.content_createOrUpdate(createContentCommand, function (response) {
             if (response && response.success) {
                 callback(response.contentId);
             } else {

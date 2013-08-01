@@ -1,3 +1,5 @@
+///<reference path='BaseResult.ts' />
+
 module api_remote {
 
     export interface CallingCode {
@@ -40,7 +42,7 @@ module api_remote {
     export interface SystemGetSystemInfoParams {
     }
 
-    export interface SystemGetSystemInfoResult extends ResultBase {
+    export interface SystemGetSystemInfoResult extends BaseResult {
         installationName: string;
         version: string;
         title: string;
@@ -49,7 +51,7 @@ module api_remote {
     export interface GetCountriesParams {
     }
 
-    export interface GetCountriesResult extends ResultBase {
+    export interface GetCountriesResult extends BaseResult {
         total: number;
         countries: Country[];
     }
@@ -57,7 +59,7 @@ module api_remote {
     export interface GetLocalesParams {
     }
 
-    export interface GetLocalesResult extends ResultBase {
+    export interface GetLocalesResult extends BaseResult {
         total: number;
         locales: Locale[];
     }
@@ -65,7 +67,7 @@ module api_remote {
     export interface GetTimeZonesParams {
     }
 
-    export interface GetTimeZonesResult extends ResultBase {
+    export interface GetTimeZonesResult extends BaseResult {
         total: number;
         timezones: TimeZone[];
     }

@@ -35,7 +35,7 @@ module app_browse {
 
                 proxy: {
                     type: 'direct',
-                    directFn: api_remote.RemoteService.content_find,
+                    directFn: api_remote.RemoteContentService.content_find,
                     simpleSortMode: true,
                     reader: {
                         type: 'json',
@@ -56,7 +56,7 @@ module app_browse {
 
                 proxy: {
                     type: 'direct',
-                    directFn: api_remote.RemoteService.content_tree,
+                    directFn: api_remote.RemoteContentService.content_tree,
                     simpleSortMode: true,
                     reader: {
                         type: 'json',

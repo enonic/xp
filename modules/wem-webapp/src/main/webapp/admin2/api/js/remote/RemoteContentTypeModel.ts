@@ -1,3 +1,5 @@
+///<reference path='BaseResult.ts' />
+
 module api_remote_contenttype {
 
     export interface ContentType extends api_remote.Item {
@@ -88,7 +90,7 @@ module api_remote_contenttype {
         mixinReferencesToFormItems?: bool;
     }
 
-    export interface GetResult extends api_remote.ResultBase {
+    export interface GetResult extends api_remote.BaseResult {
         contentType?: ContentType;
         iconUrl?: string;
         contentTypeXml?: string;
@@ -99,7 +101,7 @@ module api_remote_contenttype {
         iconReference: string;
     }
 
-    export interface CreateOrUpdateResult extends api_remote.ResultBase {
+    export interface CreateOrUpdateResult extends api_remote.BaseResult {
         created: bool;
         updated: bool;
         failure?: string;
@@ -109,7 +111,7 @@ module api_remote_contenttype {
         qualifiedContentTypeNames:string[];
     }
 
-    export interface DeleteResult extends api_remote.ResultBase {
+    export interface DeleteResult extends api_remote.BaseResult {
         successes:ContentTypeDeleteSuccess[];
         failures:ContentTypeDeleteFailure[];
     }
@@ -127,14 +129,14 @@ module api_remote_contenttype {
     export interface ListParams {
     }
 
-    export interface ListResult extends api_remote.ResultBase{
+    export interface ListResult extends api_remote.BaseResult{
         contentTypes:ContentTypeListNode[];
     }
 
     export interface GetTreeParams {
     }
 
-    export interface GetTreeResult extends api_remote.ResultBase {
+    export interface GetTreeResult extends api_remote.BaseResult {
         total:number;
         contentTypes:ContentTypeTreeNode[];
     }

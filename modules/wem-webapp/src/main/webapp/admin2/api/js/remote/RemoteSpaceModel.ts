@@ -1,3 +1,5 @@
+///<reference path='BaseResult.ts' />
+
 module api_remote_space {
 
     export interface Space extends SpaceSummary {
@@ -17,7 +19,7 @@ module api_remote_space {
     export interface ListParams {
     }
 
-    export interface ListResult extends api_remote.ResultBase {
+    export interface ListResult extends api_remote.BaseResult {
         total: number;
         spaces: SpaceSummary[];
     }
@@ -26,7 +28,7 @@ module api_remote_space {
         spaceNames: string[];
     }
 
-    export interface GetResult extends api_remote.ResultBase {
+    export interface GetResult extends api_remote.BaseResult {
         spaces: Space[];
     }
 
@@ -47,7 +49,7 @@ module api_remote_space {
 
     }
 
-    export interface CreateOrUpdateResult extends api_remote.ResultBase {
+    export interface CreateOrUpdateResult extends api_remote.BaseResult {
         created:bool;
         updated:bool;
     }
@@ -56,7 +58,7 @@ module api_remote_space {
         spaceName:string[];
     }
 
-    export interface DeleteResult extends api_remote.ResultBase {
+    export interface DeleteResult extends api_remote.BaseResult {
         deleted:bool;
         failureReason?:string;
     }

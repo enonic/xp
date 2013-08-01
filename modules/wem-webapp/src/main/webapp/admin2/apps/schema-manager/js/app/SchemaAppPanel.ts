@@ -77,7 +77,7 @@ module app {
                             contentType: schemaModel.data.qualifiedName,
                             format: 'JSON'
                         };
-                        api_remote.RemoteService.contentType_get(contentTypeGetParams, (result:api_remote_contenttype.GetResult) => {
+                        api_remote.RemoteContentTypeService.contentType_get(contentTypeGetParams, (result:api_remote_contenttype.GetResult) => {
                             if (result && result.success) {
                                 var tabMenuItem = new SchemaAppBarTabMenuItem(result.contentType.displayName, true);
 
@@ -99,7 +99,7 @@ module app {
                             qualifiedRelationshipTypeName: schemaModel.data.qualifiedName,
                             format: 'JSON'
                         };
-                        api_remote.RemoteService.relationshipType_get(relationshipTypeGetParams, (result:api_remote_relationshiptype.GetResult) => {
+                        api_remote.RemoteRelationshipTypeService.relationshipType_get(relationshipTypeGetParams, (result:api_remote_relationshiptype.GetResult) => {
                             if (result && result.success) {
                                 var tabMenuItem = new SchemaAppBarTabMenuItem(result.relationshipType.displayName, true);
 
@@ -119,7 +119,7 @@ module app {
                             mixin: schemaModel.data.qualifiedName,
                             format: 'JSON'
                         };
-                        api_remote.RemoteService.mixin_get(mixinGetParams, (result:api_remote_mixin.GetResult) => {
+                        api_remote.RemoteMixinService.mixin_get(mixinGetParams, (result:api_remote_mixin.GetResult) => {
                             if (result && result.success) {
                                 var tabMenuItem = new SchemaAppBarTabMenuItem(result.mixin.displayName, true);
 

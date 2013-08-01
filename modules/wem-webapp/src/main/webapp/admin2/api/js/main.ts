@@ -36,7 +36,15 @@
 ///<reference path='handler/DeleteSchemaHandler.ts' />
 
 ///<reference path='remote/JsonRpcProvider.ts' />
-///<reference path='remote/RemoteService.ts' />
+///<reference path='remote/RemoteAccountService.ts' />
+///<reference path='remote/RemoteSpaceService.ts' />
+///<reference path='remote/RemoteContentService.ts' />
+///<reference path='remote/RemoteContentTypeService.ts' />
+///<reference path='remote/RemoteMixinService.ts' />
+///<reference path='remote/RemoteRelationshipTypeService.ts' />
+///<reference path='remote/RemoteSchemaService.ts' />
+///<reference path='remote/RemoteSystemService.ts' />
+///<reference path='remote/RemoteUserStoreService.ts' />
 
 ///<reference path='event/Event.ts' />
 ///<reference path='event/FilterSearchEvent.ts' />

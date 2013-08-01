@@ -1,3 +1,5 @@
+///<reference path='BaseResult.ts' />
+
 module api_remote_userstore {
 
     export interface UserStore {
@@ -56,7 +58,7 @@ module api_remote_userstore {
     export interface GetAllParams {
     }
 
-    export interface GetAllResult extends api_remote.ResultBase {
+    export interface GetAllResult extends api_remote.BaseResult {
         total: number;
         userStores: UserStore[];
     }
@@ -73,7 +75,7 @@ module api_remote_userstore {
     export interface GetConnectorsParams {
     }
 
-    export interface GetConnectorsResult extends api_remote.ResultBase {
+    export interface GetConnectorsResult extends api_remote.BaseResult {
         total: number;
         userStoreConnectors: UserStoreConnector[];
     }
@@ -86,7 +88,7 @@ module api_remote_userstore {
         administrators: string[];
     }
 
-    export interface CreateOrUpdateResult extends api_remote.ResultBase {
+    export interface CreateOrUpdateResult extends api_remote.BaseResult {
         created: bool;
         updated: bool;
     }
@@ -95,7 +97,7 @@ module api_remote_userstore {
         name: string[];
     }
 
-    export interface DeleteResult extends api_remote.ResultBase {
+    export interface DeleteResult extends api_remote.BaseResult {
         deleted: number;
     }
 }

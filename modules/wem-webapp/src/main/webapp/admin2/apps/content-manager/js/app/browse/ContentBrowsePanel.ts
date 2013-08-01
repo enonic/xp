@@ -19,7 +19,7 @@ module app_browse {
             this.filterPanel = new app_browse.ContentBrowseFilterPanel();
             var params = createLoadContentParams({});
 
-            api_remote.RemoteService.content_find(params, (response) => {
+            api_remote.RemoteContentService.content_find(params, (response) => {
                 if (response && response.success) {
 
                     // set facet data
@@ -50,7 +50,7 @@ module app_browse {
                 var getParams:api_remote_content.GetParams = {
                     contentIds: contentIds
                 };
-                api_remote.RemoteService.content_get(getParams, (result:api_remote_content.GetResult)=> {
+                api_remote.RemoteContentService.content_get(getParams, (result:api_remote_content.GetResult)=> {
 
                     result.content.forEach((contentGet:api_remote_content.ContentGet, index:number) => {
                         var item = new api_app_browse.BrowseItem(models[index]).

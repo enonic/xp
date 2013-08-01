@@ -7,7 +7,7 @@ Ext.define('Admin.store.schemaManager.ContentTypeTreeStore', {
 
     proxy: {
         type: 'direct',
-        directFn: api_remote.RemoteService.contentType_tree,
+        directFn: api_remote.RemoteContentTypeService.contentType_tree,
         simpleSortMode: true,
         reader: {
             type: 'json',
