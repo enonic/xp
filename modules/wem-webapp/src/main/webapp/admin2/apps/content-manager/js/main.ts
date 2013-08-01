@@ -24,12 +24,18 @@
 ///<reference path='app/browse/ContentTreeGridPanel.ts' />
 ///<reference path='app/browse/ContentBrowseItemPanel.ts' />
 ///<reference path='app/browse/ContentBrowsePanel.ts' />
-///<reference path='app/browse/NewContentDialog.ts' />
 ///<reference path='app/browse/ContentViewActions.ts' />
 ///<reference path='app/browse/ContentItemViewToolbar.ts' />
 ///<reference path='app/browse/ContentItemStatisticsPanel.ts' />
 ///<reference path='app/browse/ContentItemViewPanel.ts' />
 ///<reference path='app/browse/ContentBrowseFilterPanel.ts' />
+///<reference path='app/browse/newcontent/NewContentDialog.ts' />
+///<reference path='app/browse/newcontent/AllContentTypesList.ts' />
+///<reference path='app/browse/newcontent/CancelNewDialogAction.ts' />
+///<reference path='app/browse/newcontent/ContentTypesList.ts' />
+///<reference path='app/browse/newcontent/RecentContentTypesList.ts' />
+///<reference path='app/browse/newcontent/RecommendedContentTypesList.ts' />
+///<reference path='app/browse/newcontent/SelectContentTypeAction.ts' />
 
 ///<reference path='app/ContentAppPanel.ts' />
 ///<reference path='app/ContentAppBarTabMenu.ts' />
@@ -109,7 +115,7 @@ module components {
     export var gridPanel:app_browse.ContentTreeGridPanel;
     export var detailPanel:app_browse.ContentBrowseItemPanel;
     export var contentDeleteDialog:app_delete.ContentDeleteDialog;
-    export var newContentDialog:app_browse.NewContentDialog;
+    export var newContentDialog:app_browse_newcontent.NewContentDialog;
     export var wizardSaveDialog:app_wizard.ContentWizardSaveDialog;
 }
 
@@ -141,7 +147,7 @@ Ext.application({
         appPanel.init();
 
         components.contentDeleteDialog = new app_delete.ContentDeleteDialog();
-        components.newContentDialog = new app_browse.NewContentDialog();
+        components.newContentDialog = new app_browse_newcontent.NewContentDialog();
     }
 });
 
