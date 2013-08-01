@@ -53,7 +53,7 @@ public final class RestServlet
         addClass( SpaceResource.class );
         addClass( SpaceImageResource.class );
 
-        addClass( RelationshipResource.class );
+        // addClass( RelationshipResource.class );
         addClass( RelationshipTypeResource.class );
 
         addClass( ContentResource.class );
