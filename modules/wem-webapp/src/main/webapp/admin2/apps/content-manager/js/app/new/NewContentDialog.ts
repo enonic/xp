@@ -37,12 +37,12 @@ module app_new {
             });
 
             api_dom.Body.get().appendChild(this);
-
         }
 
         show() {
             this.recentList.refresh();
-            this.recommendedList.setNodes(this.recentList.getNodes());
+            this.recommendedList.refresh();
+            this.allList.refresh();
             super.show();
         }
     }

@@ -32,6 +32,7 @@
 
 ///<reference path='app/new/NewContentEvent.ts' />
 ///<reference path='app/new/NewContentDialog.ts' />
+///<reference path='app/new/RecentContentTypes.ts' />
 ///<reference path='app/new/AllContentTypesList.ts' />
 ///<reference path='app/new/ContentTypesList.ts' />
 ///<reference path='app/new/RecentContentTypesList.ts' />

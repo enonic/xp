@@ -17,6 +17,9 @@ module app_new {
 
             this.contentTypesList = new ContentTypesList();
             this.appendChild(this.contentTypesList);
+        }
+
+        refresh() {
 
             api_remote.RemoteService.contentType_list({}, function (result) => {
                 this.contentTypesList.setNodes(result.contentTypes);

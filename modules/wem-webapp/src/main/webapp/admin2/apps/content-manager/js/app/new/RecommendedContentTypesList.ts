@@ -15,39 +15,15 @@ module app_new {
             this.appendChild(this.contentTypesList);
         }
 
-        setNodes(nodes:api_remote_contenttype.ContentTypeListNode[]) {
-            this.contentTypesList.setNodes(this.recommend(nodes));
+        refresh() {
+            this.contentTypesList.setNodes(RecentContentTypes.get().recommendContentTypes());
         }
 
         getNodes():api_remote_contenttype.ContentTypeListNode[] {
             return this.contentTypesList.getNodes();
         }
 
-        /**
-         * Recommends the most frequent node in array
-         * @param nodes Array to choose from
-         * @returns {Array} Array of recommendations
-         */
-        private recommend(nodes:api_remote_contenttype.ContentTypeListNode[]):api_remote_contenttype.ContentTypeListNode[] {
 
-            var recommendations = [];
-            if (nodes && nodes.length > 0) {
-                var node, count, maxCount = 0, maxNode;
-                var namesMap = {};
-                for (var i = 0; i < nodes.length; i++) {
-                    node = nodes[i];
-                    count = namesMap[node.qualifiedName] || 0;
-                    namesMap[node.qualifiedName] = ++count;
-                    if (count > maxCount) {
-                        maxCount = count;
-                        maxNode = node;
-                    }
-                }
-                recommendations.push(maxNode);
-            }
-
-            return recommendations;
-        }
 
     }
 
