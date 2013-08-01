@@ -34,8 +34,13 @@ module app {
                 new app_browse.CloseContentEvent(panel, true).fire();
             });
 
-            app_browse.NewContentEvent.on((event) => {
-                // Done in Controller.js
+            app_browse_newcontent.NewContentEvent.on((event) => {
+
+                var contentType = event.getContentType();
+
+                console.log("NewContentEvent", contentType);
+                // TODO: Open wizard for new content of given content type
+
             });
 
             app_browse.OpenContentEvent.on((event) => {

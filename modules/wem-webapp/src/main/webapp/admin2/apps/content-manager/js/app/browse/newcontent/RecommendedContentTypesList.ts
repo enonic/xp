@@ -23,11 +23,6 @@ module app_browse_newcontent {
             return this.contentTypesList.getNodes();
         }
 
-        setSelectAction(action:SelectContentTypeAction):RecommendedContentTypesList {
-            this.contentTypesList.setSelectAction(action);
-            return this;
-        }
-
         /**
          * Recommends the most frequent node in array
          * @param nodes Array to choose from

@@ -1,11 +1,11 @@
 module app_browse {
 
-    export class NewContentAction extends api_ui.Action {
+    export class ShowNewContentDialogAction extends api_ui.Action {
 
         constructor() {
             super("New");
             this.addExecutionListener(() => {
-                new NewContentEvent().fire();
+                new ShowNewContentDialogEvent().fire();
             });
         }
     }
@@ -103,7 +103,7 @@ module app_browse {
 
     export class ContentBrowseActions {
 
-        static NEW_CONTENT:api_ui.Action = new NewContentAction();
+        static SHOW_NEW_CONTENT_DIALOG_ACTION:api_ui.Action = new app_browse.ShowNewContentDialogAction();
         static OPEN_CONTENT:api_ui.Action = new OpenContentAction;
         static EDIT_CONTENT:api_ui.Action = new EditContentAction();
         static DELETE_CONTENT:api_ui.Action = new DeleteContentAction();
@@ -117,14 +117,14 @@ module app_browse {
 
         static init() {
 
-            ACTIONS.push(NEW_CONTENT,OPEN_CONTENT,EDIT_CONTENT,DELETE_CONTENT,DUPLICATE_CONTENT,MOVE_CONTENT);
+            ACTIONS.push(SHOW_NEW_CONTENT_DIALOG_ACTION, OPEN_CONTENT, EDIT_CONTENT, DELETE_CONTENT, DUPLICATE_CONTENT, MOVE_CONTENT);
 
             GridSelectionChangeEvent.on((event) => {
 
                 var contents:api_model.ContentExtModel[] = event.getModels();
 
                 if (contents.length <= 0) {
-                    NEW_CONTENT.setEnabled(true);
+                    SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
                     OPEN_CONTENT.setEnabled(false);
                     EDIT_CONTENT.setEnabled(false);
                     DELETE_CONTENT.setEnabled(false);
@@ -132,7 +132,7 @@ module app_browse {
                     MOVE_CONTENT.setEnabled(false);
                 }
                 else if (contents.length == 1) {
-                    NEW_CONTENT.setEnabled(false);
+                    SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
                     OPEN_CONTENT.setEnabled(true);
                     EDIT_CONTENT.setEnabled(contents[0].data.editable);
                     DELETE_CONTENT.setEnabled(contents[0].data.deletable);
@@ -140,7 +140,7 @@ module app_browse {
                     MOVE_CONTENT.setEnabled(true);
                 }
                 else {
-                    NEW_CONTENT.setEnabled(false);
+                    SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
                     OPEN_CONTENT.setEnabled(true);
                     EDIT_CONTENT.setEnabled(anyEditable(contents));
                     DELETE_CONTENT.setEnabled(anyDeleteable(contents));

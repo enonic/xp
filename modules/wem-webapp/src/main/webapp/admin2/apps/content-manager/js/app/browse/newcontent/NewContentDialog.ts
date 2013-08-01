@@ -4,8 +4,6 @@ module app_browse_newcontent {
 
         private cancelAction:api_ui.Action = new CancelNewContentDialog();
 
-        private selectAction:SelectContentTypeAction;
-
         private recentList:RecentContentTypesList;
 
         private recommendedList:RecommendedContentTypesList;
@@ -38,25 +36,14 @@ module app_browse_newcontent {
                 this.close();
             });
 
-            this.setSelectAction(new SelectContentTypeAction());
-
             api_dom.Body.get().appendChild(this);
+
         }
 
         show() {
             this.recentList.refresh();
             this.recommendedList.setNodes(this.recentList.getNodes());
             super.show();
-        }
-
-        setSelectAction(action:SelectContentTypeAction) {
-            this.recommendedList.setSelectAction(action);
-            this.recentList.setSelectAction(action);
-            this.allList.setSelectAction(action);
-            this.selectAction = action;
-            this.selectAction.addExecutionListener(()=> {
-                this.close();
-            });
         }
     }
 

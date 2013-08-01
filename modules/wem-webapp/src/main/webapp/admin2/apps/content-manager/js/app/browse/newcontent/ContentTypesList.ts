@@ -6,8 +6,6 @@ module app_browse_newcontent {
 
         private nodes:api_remote_contenttype.ContentTypeListNode[];
 
-        private selectAction:SelectContentTypeAction;
-
         constructor(nodes?:api_remote_contenttype.ContentTypeListNode[]) {
             super("ContentTypesList", "node-list");
 
@@ -49,11 +47,6 @@ module app_browse_newcontent {
             return this;
         }
 
-        setSelectAction(selectAction:SelectContentTypeAction):ContentTypesList {
-            this.selectAction = selectAction;
-            return this;
-        }
-
         private layoutNodes(nodes:api_remote_contenttype.ContentTypeListNode[]):ContentTypesList {
             this.ul.removeChildren();
             for (var i = 0; i < nodes.length; i++) {
@@ -73,9 +66,7 @@ module app_browse_newcontent {
             item.appendChild(h6);
             item.appendChild(p);
             item.getEl().addEventListener("click", function (event:Event) => {
-                if (this.selectAction) {
-                    this.selectAction.setContentType(node).execute();
-                }
+                new NewContentEvent(node).fire();
             });
             return item;
         }

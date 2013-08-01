@@ -1,6 +1,7 @@
 module app_browse {
 
     export class BaseContentModelEvent extends api_event.Event {
+
         private model:api_model.ContentExtModel[];
 
         constructor(name:string, model:api_model.ContentExtModel[]) {
@@ -14,6 +15,7 @@ module app_browse {
     }
 
     export class GridSelectionChangeEvent extends BaseContentModelEvent {
+
         constructor(model:api_model.ContentExtModel[]) {
             super('gridChange', model);
         }
@@ -23,13 +25,14 @@ module app_browse {
         }
     }
 
-    export class NewContentEvent extends api_event.Event {
+    export class ShowNewContentDialogEvent extends api_event.Event {
+
         constructor() {
-            super('newContent');
+            super('showNewContentDialog');
         }
 
-        static on(handler:(event:NewContentEvent) => void) {
-            api_event.onEvent('newContent', handler);
+        static on(handler:(event:ShowNewContentDialogEvent) => void) {
+            api_event.onEvent('showNewContentDialog', handler);
         }
     }
 
@@ -91,6 +94,7 @@ module app_browse {
     }
 
     export class ContentDeletePromptEvent extends BaseContentModelEvent {
+
         constructor(model:api_model.ContentExtModel[]) {
             super('deleteContent', model);
         }
@@ -101,6 +105,7 @@ module app_browse {
     }
 
     export class GridDeselectEvent extends BaseContentModelEvent {
+
         constructor(model:api_model.ContentExtModel[]) {
             super('removeFromGrid', model);
         }
@@ -125,6 +130,7 @@ module app_browse {
     export class ShowContextMenuEvent extends api_event.Event {
 
         private x:number;
+
         private y:number;
 
         constructor(x:number, y:number) {

@@ -22,6 +22,11 @@ module app_browse_newcontent {
             this.contentTypesList = new ContentTypesList();
 
             this.appendChild(this.contentTypesList);
+
+            NewContentEvent.on((event) => {
+                    this.addRecentContentType(event.getContentType());
+                }
+            );
         }
 
         refresh() {
@@ -30,14 +35,6 @@ module app_browse_newcontent {
 
         getNodes():api_remote_contenttype.ContentTypeListNode[] {
             return this.contentTypesList.getNodes();
-        }
-
-        setSelectAction(action:SelectContentTypeAction):RecentContentTypesList {
-            this.contentTypesList.setSelectAction(action);
-            action.addExecutionListener((action:SelectContentTypeAction) => {
-                this.addRecentContentType(action.getContentType());
-            });
-            return this;
         }
 
         private getRecentContentTypes():api_remote_contenttype.ContentTypeListNode[] {

@@ -29,12 +29,12 @@
 ///<reference path='app/browse/ContentItemStatisticsPanel.ts' />
 ///<reference path='app/browse/ContentItemViewPanel.ts' />
 ///<reference path='app/browse/ContentBrowseFilterPanel.ts' />
+///<reference path='app/browse/newcontent/NewContentEvent.ts' />
 ///<reference path='app/browse/newcontent/NewContentDialog.ts' />
 ///<reference path='app/browse/newcontent/AllContentTypesList.ts' />
 ///<reference path='app/browse/newcontent/ContentTypesList.ts' />
 ///<reference path='app/browse/newcontent/RecentContentTypesList.ts' />
 ///<reference path='app/browse/newcontent/RecommendedContentTypesList.ts' />
-///<reference path='app/browse/newcontent/SelectContentTypeAction.ts' />
 
 ///<reference path='app/ContentAppPanel.ts' />
 ///<reference path='app/ContentAppBarTabMenu.ts' />
@@ -147,7 +147,7 @@ Ext.application({
         components.contentDeleteDialog = new app_delete.ContentDeleteDialog();
 
         var newContentDialog = new app_browse_newcontent.NewContentDialog();
-        app_browse.NewContentEvent.on((event) => {
+        app_browse.ShowNewContentDialogEvent.on((event) => {
             newContentDialog.open();
         });
     }

@@ -22,12 +22,6 @@ module app_browse_newcontent {
                 this.contentTypesList.setNodes(result.contentTypes);
             });
         }
-
-        setSelectAction(action:SelectContentTypeAction):AllContentTypesList {
-            this.contentTypesList.setSelectAction(action);
-            return this;
-        }
-
     }
 
 }

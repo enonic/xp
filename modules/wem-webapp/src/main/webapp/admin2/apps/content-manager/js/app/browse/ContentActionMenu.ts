@@ -4,7 +4,7 @@ module app_browse {
 
         constructor() {
             super(
-                ContentBrowseActions.NEW_CONTENT,
+                ContentBrowseActions.SHOW_NEW_CONTENT_DIALOG_ACTION,
                 ContentBrowseActions.EDIT_CONTENT,
                 ContentBrowseActions.OPEN_CONTENT,
                 ContentBrowseActions.DELETE_CONTENT,
