@@ -31,7 +31,6 @@
 ///<reference path='app/browse/ContentBrowseFilterPanel.ts' />
 ///<reference path='app/browse/newcontent/NewContentDialog.ts' />
 ///<reference path='app/browse/newcontent/AllContentTypesList.ts' />
-///<reference path='app/browse/newcontent/CancelNewDialogAction.ts' />
 ///<reference path='app/browse/newcontent/ContentTypesList.ts' />
 ///<reference path='app/browse/newcontent/RecentContentTypesList.ts' />
 ///<reference path='app/browse/newcontent/RecommendedContentTypesList.ts' />

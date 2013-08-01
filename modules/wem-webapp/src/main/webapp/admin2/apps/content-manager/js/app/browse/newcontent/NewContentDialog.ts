@@ -2,7 +2,7 @@ module app_browse_newcontent {
 
     export class NewContentDialog extends api_ui_dialog.ModalDialog {
 
-        private cancelAction:api_ui.Action = new CancelNewDialogAction();
+        private cancelAction:api_ui.Action = new CancelNewContentDialog();
 
         private selectAction:SelectContentTypeAction;
 
@@ -58,9 +58,12 @@ module app_browse_newcontent {
                 this.close();
             });
         }
+    }
 
-        getSelectAction():SelectContentTypeAction {
-            return this.selectAction;
+    export class CancelNewContentDialog extends api_ui.Action {
+
+        constructor() {
+            super("Cancel", "esc");
         }
     }
 
