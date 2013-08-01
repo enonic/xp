@@ -1,4 +1,4 @@
-module app_browse_newcontent {
+module app_new {
 
     export class AllContentTypesList extends api_dom.DivEl {
 

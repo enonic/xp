@@ -34,7 +34,7 @@ module app {
                 new app_browse.CloseContentEvent(panel, true).fire();
             });
 
-            app_browse_newcontent.NewContentEvent.on((event) => {
+            app_new.NewContentEvent.on((event) => {
 
                 var contentType = event.getContentType();
 
