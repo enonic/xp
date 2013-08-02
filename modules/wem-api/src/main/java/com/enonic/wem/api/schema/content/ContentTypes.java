@@ -1,7 +1,6 @@
 package com.enonic.wem.api.schema.content;
 
 import java.util.Collection;
-import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -23,7 +22,7 @@ public final class ContentTypes
         this.map = Maps.uniqueIndex( list, new ToNameFunction() );
     }
 
-    public Set<QualifiedContentTypeName> getNames()
+    public ImmutableSet<QualifiedContentTypeName> getNames()
     {
         final Collection<QualifiedContentTypeName> names = Collections2.transform( this.list, new ToNameFunction() );
         return ImmutableSet.copyOf( names );

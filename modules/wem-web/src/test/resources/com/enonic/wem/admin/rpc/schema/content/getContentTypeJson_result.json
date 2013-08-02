@@ -1,6 +1,6 @@
 {
     "success": true,
-    "contentType": {
+    "contentTypes": [{
         "name": "my_type",
         "module": "mymodule",
         "qualifiedName": "mymodule:my_type",
@@ -69,6 +69,5 @@
                 }
             }
         ]
-    },
-    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:mymodule:my_type"
+    }]
 }

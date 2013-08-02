@@ -19,18 +19,17 @@ module app_new {
             var recommendedArray:string[] = RecentContentTypes.get().recommendContentTypes();
             var newContentTypeArray:api_remote_contenttype.ContentType[] = [];
 
-            recommendedArray.forEach((qualifiedContentTypeName:string, index:number) => {
-                api_remote.RemoteContentTypeService.contentType_get({
-                        contentType: qualifiedContentTypeName,
-                        format: "json"}
-                    , (result:api_remote_contenttype.GetResult) => {
-                        newContentTypeArray.push(result.contentType);
-                        if (index == recommendedArray.length - 1) {
-                            this.contentTypesList.setContentTypes(newContentTypeArray);
-                        }
-                    });
-            });
+            api_remote.RemoteContentTypeService.contentType_get({
+                    qualifiedNames: recommendedArray,
+                    format: "json"}
+                , (result:api_remote_contenttype.GetResult) => {
 
+                    result.contentTypes.forEach((contentType:api_remote_contenttype.ContentType) => {
+                        newContentTypeArray.push(contentType);
+                    });
+
+                    this.contentTypesList.setContentTypes(newContentTypeArray);
+                });
         }
     }
 }

@@ -1,6 +1,12 @@
 package com.enonic.wem.admin.rpc.schema.content;
 
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableSet;
+
 import com.enonic.wem.admin.json.JsonErrorResult;
 import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
@@ -28,27 +34,48 @@ public final class GetContentTypeRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final String format = context.param( "format" ).required().asString();
-        final QualifiedContentTypeName qualifiedName = new QualifiedContentTypeName( context.param( "contentType" ).required().asString() );
-        final GetContentTypes getContentTypes =
-            Commands.contentType().get().qualifiedNames( QualifiedContentTypeNames.from( qualifiedName ) );
+        final QualifiedContentTypeNames qualifiedNames =
+            QualifiedContentTypeNames.from( context.param( "qualifiedNames" ).required().notBlank().asStringArray() );
+        final GetContentTypes getContentTypes = Commands.contentType().get().qualifiedNames( qualifiedNames );
         getContentTypes.mixinReferencesToFormItems( context.param( "mixinReferencesToFormItems" ).asBoolean( false ) );
-        final ContentTypes result = client.execute( getContentTypes );
+        final ContentTypes contentTypes = client.execute( getContentTypes );
 
-        if ( !result.isEmpty() )
+        if ( qualifiedNames.getSize() == contentTypes.getSize() )
         {
+            final String format = context.param( "format" ).required().asString();
             if ( format.equalsIgnoreCase( FORMAT_JSON ) )
             {
-                context.setResult( new GetContentTypeRpcJsonResult( result.first() ) );
+                context.setResult( new GetContentTypeJsonResult( contentTypes ) );
             }
             else if ( format.equalsIgnoreCase( FORMAT_XML ) )
             {
-                context.setResult( new GetContentTypeConfigRpcJsonResult( result.first() ) );
+                context.setResult( new GetContentTypeConfigJsonResult( contentTypes ) );
             }
         }
         else
         {
-            context.setResult( new JsonErrorResult( "ContentType [{0}] was not found", qualifiedName ) );
+            final ImmutableSet<QualifiedContentTypeName> found = contentTypes.getNames();
+
+            final String[] notFound = FluentIterable.
+                from( qualifiedNames ).
+                filter( new Predicate<QualifiedContentTypeName>()
+                {
+                    public boolean apply( final QualifiedContentTypeName requested )
+                    {
+                        return !found.contains( requested );
+                    }
+                } ).
+                transform( new Function<QualifiedContentTypeName, String>()
+                {
+                    public String apply( final QualifiedContentTypeName space )
+                    {
+                        return space.toString();
+                    }
+                } ).
+                toArray( String.class );
+
+            final String missing = Joiner.on( "," ).join( notFound );
+            context.setResult( new JsonErrorResult( "ContentTypes [{0}] not found", missing ) );
         }
     }
 }

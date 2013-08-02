@@ -1,4 +1,4 @@
 {
     "format": "json",
-    "contentType": "mymodule:my_type"
+    "qualifiedNames": ["mymodule:my_type"]
 }

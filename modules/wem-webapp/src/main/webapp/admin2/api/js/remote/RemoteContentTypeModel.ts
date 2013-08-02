@@ -85,15 +85,15 @@ module api_remote_contenttype {
     }
 
     export interface GetParams {
+        qualifiedNames: string[];
         format: string;
-        contentType: string;
         mixinReferencesToFormItems?: bool;
     }
 
     export interface GetResult extends api_remote.BaseResult {
-        contentType?: ContentType;
+        contentTypes?: ContentType[];
         iconUrl?: string;
-        contentTypeXml?: string;
+        contentTypeXmls?: string[];
     }
 
     export interface CreateOrUpdateParams {

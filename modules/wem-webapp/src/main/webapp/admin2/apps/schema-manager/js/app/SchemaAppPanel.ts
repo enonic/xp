@@ -36,12 +36,12 @@ module app {
                 var panel = this.getPanel(tabIndex);
                 new app_browse.CloseSchemaEvent(panel, true).fire();
             });
-            
+
             app_browse.NewSchemaEvent.on((event) => {
                 var schemaType = event.getSchemaType();
 
                 if (!schemaType) {
-                    if(!components.newSchemaDialog) {
+                    if (!components.newSchemaDialog) {
                         components.newSchemaDialog = new app_browse.NewSchemaDialog();
                     }
                     components.newSchemaDialog.open();
@@ -70,52 +70,55 @@ module app {
             });
 
             app_browse.EditSchemaEvent.on((event) => {
-                event.getModels().forEach((schemaModel: api_model.SchemaExtModel) => {
+                event.getModels().forEach((schemaModel:api_model.SchemaExtModel) => {
                     switch (schemaModel.data.type) {
                     case SchemaAppPanel.CONTENT_TYPE:
                         var contentTypeGetParams:api_remote_contenttype.GetParams = {
-                            contentType: schemaModel.data.qualifiedName,
+                            qualifiedNames: [schemaModel.data.qualifiedName],
                             format: 'JSON'
                         };
-                        api_remote.RemoteContentTypeService.contentType_get(contentTypeGetParams, (result:api_remote_contenttype.GetResult) => {
-                            if (result && result.success) {
-                                var tabMenuItem = new SchemaAppBarTabMenuItem(result.contentType.displayName, true);
+                        api_remote.RemoteContentTypeService.contentType_get(contentTypeGetParams,
+                            (result:api_remote_contenttype.GetResult) => {
+                                if (result && result.success) {
+                                    var contentType:api_remote_contenttype.ContentType = result.contentTypes[0];
+                                    var tabMenuItem = new SchemaAppBarTabMenuItem(contentType.displayName, true);
 
-                                var id = this.generateTabId(result.contentType.name, true);
-                                var schemaWizardPanel = new app_wizard.ContentTypeWizardPanel(id);
-                                // TODO: update rpc response to have iconUrl inside contentType property.
-                                result.contentType.iconUrl = result.iconUrl;
-                                schemaWizardPanel.setPersistedItem(result.contentType);
+                                    var id = this.generateTabId(contentType.name, true);
+                                    var schemaWizardPanel = new app_wizard.ContentTypeWizardPanel(id);
+                                    // TODO: update rpc response to have iconUrl inside contentType property.
+                                    contentType.iconUrl = result.iconUrl;
+                                    schemaWizardPanel.setPersistedItem(contentType);
 
-                                this.addWizardPanel(tabMenuItem, schemaWizardPanel);
-                                this.selectPanel(tabMenuItem);
-                            } else {
-                                console.error("Error", result ? result.error : "Unable to retrieve schema.");
-                            }
-                        });
+                                    this.addWizardPanel(tabMenuItem, schemaWizardPanel);
+                                    this.selectPanel(tabMenuItem);
+                                } else {
+                                    console.error("Error", result ? result.error : "Unable to retrieve schema.");
+                                }
+                            });
                         break;
                     case SchemaAppPanel.RELATIONSHIP_TYPE:
-                        var relationshipTypeGetParams: api_remote_relationshiptype.GetParams = {
+                        var relationshipTypeGetParams:api_remote_relationshiptype.GetParams = {
                             qualifiedRelationshipTypeName: schemaModel.data.qualifiedName,
                             format: 'JSON'
                         };
-                        api_remote.RemoteRelationshipTypeService.relationshipType_get(relationshipTypeGetParams, (result:api_remote_relationshiptype.GetResult) => {
-                            if (result && result.success) {
-                                var tabMenuItem = new SchemaAppBarTabMenuItem(result.relationshipType.displayName, true);
+                        api_remote.RemoteRelationshipTypeService.relationshipType_get(relationshipTypeGetParams,
+                            (result:api_remote_relationshiptype.GetResult) => {
+                                if (result && result.success) {
+                                    var tabMenuItem = new SchemaAppBarTabMenuItem(result.relationshipType.displayName, true);
 
-                                var id = this.generateTabId(result.relationshipType.name, true);
-                                var schemaWizardPanel = new app_wizard.RelationshipTypeWizardPanel(id);
-                                schemaWizardPanel.setPersistedItem(result.relationshipType);
+                                    var id = this.generateTabId(result.relationshipType.name, true);
+                                    var schemaWizardPanel = new app_wizard.RelationshipTypeWizardPanel(id);
+                                    schemaWizardPanel.setPersistedItem(result.relationshipType);
 
-                                this.addWizardPanel(tabMenuItem, schemaWizardPanel);
-                                this.selectPanel(tabMenuItem);
-                            } else {
-                                console.error("Error", result ? result.error : "Unable to retrieve schema.");
-                            }
-                        });
+                                    this.addWizardPanel(tabMenuItem, schemaWizardPanel);
+                                    this.selectPanel(tabMenuItem);
+                                } else {
+                                    console.error("Error", result ? result.error : "Unable to retrieve schema.");
+                                }
+                            });
                         break;
                     case SchemaAppPanel.MIXIN:
-                        var mixinGetParams: api_remote_mixin.GetParams = {
+                        var mixinGetParams:api_remote_mixin.GetParams = {
                             mixin: schemaModel.data.qualifiedName,
                             format: 'JSON'
                         };
@@ -161,7 +164,7 @@ module app {
             });
 
             app_browse.DeleteSchemaPromptEvent.on((event) => {
-                if(!components.schemaDeleteDialog) {
+                if (!components.schemaDeleteDialog) {
                     components.schemaDeleteDialog = new app_delete.SchemaDeleteDialog();
                 }
                 components.schemaDeleteDialog.setSchemaToDelete(event.getModels()).open();
@@ -183,7 +186,7 @@ module app {
 
         private generateTabId(shemaName, isEdit) {
             return 'tab-' + ( isEdit ? 'edit-' : 'preview-') + shemaName;
-        }        
-        
+        }
+
     }
 }

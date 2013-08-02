@@ -123,11 +123,11 @@ Ext.define('Admin.controller.schemaManager.Controller', {
         tabPanel.el.mask();
         Admin.lib.RemoteService.contentType_get({
             "format": "XML",
-            "contentType": [contentType.get('qualifiedName')]
+            "qualifiedNames": [contentType.get('qualifiedName')]
         }, function (r) {
             tabPanel.el.unmask();
             if (r) {
-                contentType.set('configXML', r.contentTypeXml);
+                contentType.set('configXML', r.contentTypeXmls[0]);
 
                 var tabItem = {
                     xtype: 'schemaManagerContentTypeWizardPanel',

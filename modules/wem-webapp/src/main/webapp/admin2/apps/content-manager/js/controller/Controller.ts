@@ -107,7 +107,7 @@ Ext.define('Admin.controller.Controller', {
 
                     var getContentTypeCommand = {
                         format: 'JSON',
-                        contentType: selectedContent.get('type'),
+                        qualifiedNames: [selectedContent.get('type')],
                         mixinReferencesToFormItems: true
                     };
                     api_remote.RemoteContentTypeService.contentType_get(getContentTypeCommand, function (rpcResponse) {
@@ -171,7 +171,7 @@ Ext.define('Admin.controller.Controller', {
             case 'contentType':
                 api_remote.RemoteContentTypeService.contentType_get({
                         format: 'JSON',
-                        contentType: qualifiedContentType,
+                        qualifiedNames: [qualifiedContentType],
                         mixinReferencesToFormItems: true
                     },
                     function (rpcResponse) {

@@ -1,4 +1,4 @@
 {
     "format": "xml",
-    "contentType": "mymodule:my_type"
+    "qualifiedNames": ["mymodule:my_type"]
 }

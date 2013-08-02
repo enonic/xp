@@ -101,7 +101,7 @@ public class GetContentTypeRpcHandlerTest
 
         final ObjectNode resultJson = objectNode();
         resultJson.put( "success", false );
-        resultJson.put( "error", "ContentType [mymodule:my_type] was not found" );
+        resultJson.put( "error", "ContentTypes [mymodule:my_type] not found" );
         testSuccess( "getContentTypeJson_param.json", resultJson );
     }
 
@@ -113,7 +113,7 @@ public class GetContentTypeRpcHandlerTest
 
         final ObjectNode resultJson = objectNode();
         resultJson.put( "success", false );
-        resultJson.put( "error", "ContentType [mymodule:my_type] was not found" );
+        resultJson.put( "error", "ContentTypes [mymodule:my_type] not found" );
         testSuccess( "getContentTypeXml_param.json", resultJson );
     }
 }
