@@ -59,7 +59,7 @@ module app_new {
          * Recommends the most frequent content types
          * @returns {Array} Array of qualified content type names
          */
-        public recommendContentTypes():string[] {
+        public getRecommendedContentTypes():string[] {
 
             var qualifiedNames:string[] = this.getRecentContentTypes();
 
