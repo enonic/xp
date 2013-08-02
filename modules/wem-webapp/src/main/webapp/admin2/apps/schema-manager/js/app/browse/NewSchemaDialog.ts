@@ -14,7 +14,7 @@ module app_browse {
                 height: 300
             });
 
-            this.addClass("new-dialog");
+            this.addClass("new-schema-dialog");
 
             this.kindList = new SchemaTypeList();
             this.appendChildToContentPanel(this.kindList);
@@ -87,7 +87,7 @@ module app_browse {
         private selectAction:SelectSchemaTypeAction;
 
         constructor() {
-            super("SchemaTypeList", "node-list");
+            super("SchemaTypeList", "schema-type-list");
 
             this.ul = new api_dom.UlEl("SchemaTypeList");
             this.appendChild(this.ul);
@@ -138,7 +138,7 @@ module app_browse {
         }
 
         private renderListItem(node:SchemaTypeListNode):api_dom.LiEl {
-            var item = new api_dom.LiEl("SchemaTypeListItem", "node-list-item");
+            var item = new api_dom.LiEl("SchemaTypeListItem", "schema-type-list-item");
             var img = new api_dom.ImgEl(node.iconUrl);
             var h6 = new api_dom.H6El();
             h6.getEl().setInnerHtml(node.displayName);
