@@ -17,7 +17,7 @@ module app_new {
                 height: 520
             });
 
-            this.getEl().addClass("new-dialog");
+            this.getEl().addClass("new-content-dialog");
 
 
             this.recommendedList = new RecommendedContentTypesList("block recommended");

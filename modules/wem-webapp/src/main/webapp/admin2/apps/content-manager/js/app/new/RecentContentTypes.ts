@@ -21,81 +21,65 @@ module app_new {
             return INSTANCE;
         }
 
-        public addRecentContentType(contentType:api_remote_contenttype.ContentTypeListNode) {
+        public addRecentContentType(contentType:api_remote_contenttype.ContentType) {
 
-            var cookies:string = this.getCookie(this.cookieKey);
-            var recentArray = cookies ? cookies.split(this.valueSeparator) : [];
+            var cookie:string = this.getCookie(this.cookieKey);
+            var qualifiedContentTypeNames = cookie ? cookie.split(this.valueSeparator) : [];
 
-            var recentItem = this.serializeContentType(contentType);
-            if (recentArray.length === 0 || recentArray[0] !== recentItem) {
-                recentArray.unshift(recentItem);
+            var qualifiedContentTypeName = contentType.qualifiedName;
+            if (qualifiedContentTypeNames.length === 0 || qualifiedContentTypeNames[0] !== qualifiedContentTypeName) {
+                qualifiedContentTypeNames.unshift(qualifiedContentTypeName);
             }
 
-            if (recentArray.length > this.maximum) {
+            if (qualifiedContentTypeNames.length > this.maximum) {
                 // constrain recent items quantity to maximum
-                recentArray = recentArray.slice(0, this.maximum);
+                qualifiedContentTypeNames = qualifiedContentTypeNames.slice(0, this.maximum);
             }
 
             // add chosen item to recent list
-            this.setCookie(this.cookieKey, recentArray.join(this.valueSeparator));
+            this.setCookie(this.cookieKey, qualifiedContentTypeNames.join(this.valueSeparator));
         }
 
-        public getRecentContentTypes():api_remote_contenttype.ContentTypeListNode[] {
+        public getRecentContentTypes():string[] {
 
-            var recentRecords:api_remote_contenttype.ContentTypeListNode[] = [];
+            var qualifiedNames:string[] = [];
 
             var cookies:string = <string> Ext.util.Cookies.get(this.cookieKey);
             if (cookies) {
                 var recentArray = cookies.split(this.valueSeparator);
                 for (var i = 0; i < recentArray.length; i++) {
-                    recentRecords.push(this.parseContentType(recentArray[i]));
+                    var qualifiedName = recentArray[i];
+                    qualifiedNames.push(qualifiedName);
                 }
             }
-
-            return recentRecords;
+            return qualifiedNames;
         }
 
         /**
          * Recommends the most frequent content types
-         * @returns {Array} Array of recommendations
+         * @returns {Array} Array of qualified content type names
          */
-        public recommendContentTypes():api_remote_contenttype.ContentTypeListNode[] {
+        public recommendContentTypes():string[] {
 
-            var contentTypes:api_remote_contenttype.ContentTypeListNode[] = this.getRecentContentTypes();
+            var qualifiedNames:string[] = this.getRecentContentTypes();
 
             var recommendations = [];
-            if (contentTypes && contentTypes.length > 0) {
-                var node, count, maxCount = 0, maxNode;
+            if (qualifiedNames && qualifiedNames.length > 0) {
+                var qualifiedName, count, maxCount = 0, maxNode;
                 var namesMap = {};
-                for (var i = 0; i < contentTypes.length; i++) {
-                    node = contentTypes[i];
-                    count = namesMap[node.qualifiedName] || 0;
-                    namesMap[node.qualifiedName] = ++count;
+                for (var i = 0; i < qualifiedNames.length; i++) {
+                    qualifiedName = qualifiedNames[i];
+                    count = namesMap[qualifiedName] || 0;
+                    namesMap[qualifiedName] = ++count;
                     if (count > maxCount) {
                         maxCount = count;
-                        maxNode = node;
+                        maxNode = qualifiedName;
                     }
                 }
                 recommendations.push(maxNode);
             }
 
             return recommendations;
-        }
-
-        private serializeContentType(contentType:api_remote_contenttype.ContentTypeListNode) {
-            // serialize only the crucial info
-            // because cookie size is just 4093 bytes per domain
-            return JSON.stringify({
-                iconUrl: contentType.iconUrl,
-                displayName: contentType.displayName,
-                qualifiedName: contentType.qualifiedName,
-                name: contentType.name
-            });
-        }
-
-        private parseContentType(text:string):api_remote_contenttype.ContentTypeListNode {
-            var json = JSON.parse(text);
-            return <api_remote_contenttype.ContentTypeListNode> json;
         }
 
         private getCookie(name:string):string {

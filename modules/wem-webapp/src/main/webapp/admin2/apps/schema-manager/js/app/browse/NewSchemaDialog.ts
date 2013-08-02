@@ -87,7 +87,7 @@ module app_browse {
         private selectAction:SelectSchemaTypeAction;
 
         constructor() {
-            super("SchemaTypeList", "node-list one-line-list");
+            super("SchemaTypeList", "node-list");
 
             this.ul = new api_dom.UlEl("SchemaTypeList");
             this.appendChild(this.ul);

@@ -35,6 +35,7 @@
 ///<reference path='app/new/RecentContentTypes.ts' />
 ///<reference path='app/new/AllContentTypesList.ts' />
 ///<reference path='app/new/ContentTypesList.ts' />
+///<reference path='app/new/ContentTypeListItem.ts' />
 ///<reference path='app/new/RecentContentTypesList.ts' />
 ///<reference path='app/new/RecommendedContentTypesList.ts' />
 

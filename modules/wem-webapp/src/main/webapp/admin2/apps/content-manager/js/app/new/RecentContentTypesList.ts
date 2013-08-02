@@ -12,16 +12,25 @@ module app_new {
             this.appendChild(h4);
 
             this.contentTypesList = new ContentTypesList();
-
             this.appendChild(this.contentTypesList);
         }
 
         refresh() {
-            this.contentTypesList.setNodes(RecentContentTypes.get().getRecentContentTypes());
-        }
+            var recentArray:string[] = RecentContentTypes.get().getRecentContentTypes();
+            var newContentTypeArray:api_remote_contenttype.ContentType[] = [];
 
-        getNodes():api_remote_contenttype.ContentTypeListNode[] {
-            return this.contentTypesList.getNodes();
+            recentArray.forEach((qualifiedContentTypeName:string, index:number) => {
+                api_remote.RemoteContentTypeService.contentType_get({
+                        contentType: qualifiedContentTypeName,
+                        format: "json"}
+                    , (result:api_remote_contenttype.GetResult) => {
+                        newContentTypeArray.push(result.contentType);
+
+                        if (index == recentArray.length - 1) {
+                            this.contentTypesList.setContentTypes(newContentTypeArray);
+                        }
+                    });
+            });
         }
     }
 

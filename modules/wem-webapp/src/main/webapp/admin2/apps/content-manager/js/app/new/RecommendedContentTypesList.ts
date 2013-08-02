@@ -16,16 +16,21 @@ module app_new {
         }
 
         refresh() {
-            this.contentTypesList.setNodes(RecentContentTypes.get().recommendContentTypes());
+            var recommendedArray:string[] = RecentContentTypes.get().recommendContentTypes();
+            var newContentTypeArray:api_remote_contenttype.ContentType[] = [];
+
+            recommendedArray.forEach((qualifiedContentTypeName:string, index:number) => {
+                api_remote.RemoteContentTypeService.contentType_get({
+                        contentType: qualifiedContentTypeName,
+                        format: "json"}
+                    , (result:api_remote_contenttype.GetResult) => {
+                        newContentTypeArray.push(result.contentType);
+                        if (index == recommendedArray.length - 1) {
+                            this.contentTypesList.setContentTypes(newContentTypeArray);
+                        }
+                    });
+            });
+
         }
-
-        getNodes():api_remote_contenttype.ContentTypeListNode[] {
-            return this.contentTypesList.getNodes();
-        }
-
-
-
     }
-
-
 }
