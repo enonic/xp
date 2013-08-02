@@ -69,6 +69,19 @@ public class JsonTestHelper
         }
     }
 
+    public String objectToString( final Object value )
+    {
+        try
+        {
+            return objectWriter.writeValueAsString( value );
+        }
+        catch ( Exception e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+
     public JsonNode stringToJson( final String jsonString )
     {
         try
