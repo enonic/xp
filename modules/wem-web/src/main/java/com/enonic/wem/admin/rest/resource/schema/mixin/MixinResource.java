@@ -16,6 +16,8 @@ import com.enonic.wem.admin.rest.resource.schema.mixin.model.AbstractMixinJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinConfigJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinCreateOrUpdateJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinCreateOrUpdateParams;
+import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinDeleteJson;
+import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinDeleteParams;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinGetJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinListJson;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
@@ -23,6 +25,8 @@ import com.enonic.wem.admin.rpc.UploadedIconFetcher;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
+import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
+import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.exception.BaseException;
 import com.enonic.wem.api.schema.mixin.Mixin;
@@ -160,6 +164,39 @@ public class MixinResource extends AbstractResource
         {
             throw new WebApplicationException( e );
         }
+    }
+
+    @POST
+    @Path( "delete" )
+    @Consumes(MediaType.APPLICATION_JSON)
+    public MixinDeleteJson delete( MixinDeleteParams params )
+    {
+        final QualifiedMixinNames qualifiedMixinNames = QualifiedMixinNames.from( params.getQualifiedMixinNames().toArray( new String[0] ) );
+
+        final MixinDeleteJson deletionResult = new MixinDeleteJson();
+        for ( QualifiedMixinName qualifiedMixinName : qualifiedMixinNames )
+        {
+            final DeleteMixin deleteMixin = Commands.mixin().delete().name( qualifiedMixinName );
+            final DeleteMixinResult result = client.execute( deleteMixin );
+            switch ( result )
+            {
+                case SUCCESS:
+                    deletionResult.success( qualifiedMixinName );
+                    break;
+
+                case NOT_FOUND:
+                    deletionResult.failure( qualifiedMixinName,
+                                            String.format( "Mixin [%s] was not found", qualifiedMixinName.toString() ) );
+                    break;
+
+                case UNABLE_TO_DELETE:
+                    deletionResult.failure( qualifiedMixinName,
+                                            String.format( "Unable to delete Mixin [%s]", qualifiedMixinName.toString() ) );
+                    break;
+            }
+        }
+
+        return deletionResult;
     }
 
     private Mixin parseXml(String mixinXml)

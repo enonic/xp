@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,12 +24,16 @@ import com.enonic.wem.admin.rest.resource.schema.mixin.model.AbstractMixinJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinConfigJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinCreateOrUpdateJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinCreateOrUpdateParams;
+import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinDeleteJson;
+import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinDeleteParams;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinGetJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinListJson;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
+import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.module.Module;
@@ -189,6 +194,35 @@ public class MixinResourceTest
         assertTrue( isEqual( result, "update_mixin_result.json" ) );
 
         verify( client, times( 1 ) ).execute( isA( UpdateMixin.class ) );
+    }
+
+    @Test
+    public void test_deleteMixin_single()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.any( Commands.mixin().delete().getClass() ) ) ).thenReturn( DeleteMixinResult.SUCCESS );
+
+        MixinDeleteParams params = new MixinDeleteParams();
+        params.setQualifiedMixinNames( Arrays.asList( "my:existing_mixin" ) );
+        MixinDeleteJson mixinDeleteJson = resource.delete( params );
+
+        assertTrue( isEqual( mixinDeleteJson , "delete_mixin_single_result.json" ) );
+    }
+
+    @Test
+    public void test_deleteMixin_Multiple()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.any( Commands.mixin().delete().getClass() ) ) ).
+            thenReturn( DeleteMixinResult.SUCCESS ).
+            thenReturn( DeleteMixinResult.NOT_FOUND ).
+            thenReturn( DeleteMixinResult.UNABLE_TO_DELETE );
+
+        MixinDeleteParams params = new MixinDeleteParams();
+        params.setQualifiedMixinNames( Arrays.asList( "my:existing_mixin", "my:not_found_mixin", "my:being_used_mixin" ) );
+        MixinDeleteJson mixinDeleteJson = resource.delete( params );
+
+        assertTrue( isEqual( mixinDeleteJson, "delete_mixin_multiple_result.json" ) );
     }
 
     /**
