@@ -168,7 +168,8 @@ module api_ui {
             } else {
                 aSize = (this.lastX / window.innerWidth) * 100;
                 bSize = 100 - aSize;
-                this.getEl().setLeft(this.lastX + "px");
+                //this.getEl().setLeft(this.lastX + "px");
+                this.updatePosition(aSize, bSize);
             }
 
             if (aSize != 0 && bSize != 0) {
@@ -186,6 +187,12 @@ module api_ui {
         private createGhostDragger() {
             this.ghostDragger = new api_dom.DivEl();
             this.ghostDragger.getEl().addClass("ghost-dragger");
+        }
+
+        updatePosition(a:number, b:number) {
+            if (!this.isHorizontal()) {
+                this.getEl().setLeft("calc(" + a + "% - " + this.getThickness() + "px)");
+            }
         }
 
         getThickness():number {
