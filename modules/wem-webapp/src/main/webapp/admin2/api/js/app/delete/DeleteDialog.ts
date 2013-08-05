@@ -14,7 +14,7 @@ module api_app_delete{
 
         constructor(modelName:string) {
             super({
-                idPrefix: "DeleteDialog",
+                idPrefix: modelName + "DeleteDialog",
                 title: "Delete " + modelName,
                 width: 500,
                 height: 300
@@ -29,6 +29,16 @@ module api_app_delete{
             this.cancelAction.addExecutionListener(()=> {
                 this.close();
             })
+        }
+
+        show() {
+            api_dom.Body.get().appendChild(this);
+            super.show();
+        }
+
+        close() {
+            super.close();
+            this.remove();
         }
 
         setDeleteAction(action:api_ui.Action) {

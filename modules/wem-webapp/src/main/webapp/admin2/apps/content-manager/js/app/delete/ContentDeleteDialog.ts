@@ -9,7 +9,7 @@ module app_delete {
         private deleteHandler:api_handler.DeleteContentHandler = new api_handler.DeleteContentHandler();
 
         constructor() {
-            super("Delete");
+            super("Content");
 
             this.setDeleteAction(this.deleteAction);
 
@@ -22,8 +22,6 @@ module app_delete {
             this.deleteAction.addExecutionListener(() => {
                 this.deleteHandler.doDelete(api_handler.DeleteContentParamFactory.create(this.contentToDelete), deleteCallback);
             });
-
-            api_dom.Body.get().appendChild(this);
         }
 
         setContentToDelete(contentModels:api_model.ContentExtModel[]) {

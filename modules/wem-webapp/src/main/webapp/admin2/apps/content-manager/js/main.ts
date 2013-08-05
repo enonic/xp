@@ -115,7 +115,6 @@ module components {
     export var contextMenu:app_browse.ContentTreeGridContextMenu;
     export var gridPanel:app_browse.ContentTreeGridPanel;
     export var detailPanel:app_browse.ContentBrowseItemPanel;
-    export var contentDeleteDialog:app_delete.ContentDeleteDialog;
 }
 
 Ext.application({
@@ -145,7 +144,11 @@ Ext.application({
 
         appPanel.init();
 
-        components.contentDeleteDialog = new app_delete.ContentDeleteDialog();
+        var contentDeleteDialog = new app_delete.ContentDeleteDialog();
+        app_browse.ContentDeletePromptEvent.on((event) => {
+            contentDeleteDialog.setContentToDelete(event.getModels());
+            contentDeleteDialog.open();
+        });
 
         var newContentDialog = new app_new.NewContentDialog();
         app_browse.ShowNewContentDialogEvent.on((event) => {

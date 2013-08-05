@@ -23,8 +23,6 @@ module app {
             this.deleteAction.addExecutionListener(() => {
                 this.deleteHandler.doDelete(api_handler.DeleteSpaceParamFactory.create(this.spacesToDelete), deleteCallback);
             });
-
-            api_dom.Body.get().appendChild(this);
         }
 
         setSpacesToDelete(spaces:api_model.SpaceExtModel[]) {

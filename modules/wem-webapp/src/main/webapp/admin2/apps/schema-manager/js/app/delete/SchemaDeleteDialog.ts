@@ -22,8 +22,6 @@ module app_delete {
             this.deleteAction.addExecutionListener(() => {
                 this.deleteHandler.doDelete(api_handler.DeleteSchemaParamFactory.create(this.schemaToDelete), deleteCallback);
             });
-
-            api_dom.Body.get().appendChild(this);
         }
 
         setSchemaToDelete(schemaModels:api_model.SchemaExtModel[]):SchemaDeleteDialog {
