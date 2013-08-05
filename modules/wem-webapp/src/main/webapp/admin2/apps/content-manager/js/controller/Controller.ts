@@ -16,26 +16,6 @@ Ext.define('Admin.controller.Controller', {
 
     init: function () {
 
-        app_browse.OpenContentEvent.on((event) => {
-            this.viewContent(event.getModels());
-        });
-
-        app_browse.EditContentEvent.on((event) => {
-            this.editContent(event.getModels());
-        });
-
-        app_browse.DuplicateContentEvent.on((event) => {
-            this.duplicateContent(event.getModels());
-        });
-
-        app_browse.MoveContentEvent.on((event) => {
-            console.log('TODO: implement move content');
-        });
-
-        app_browse.GridSelectionChangeEvent.on((event) => {
-            //this.updateDetailPanel(event.getModels());
-        });
-
     },
 
     getNewContentWindow: function () {
