@@ -3,8 +3,6 @@
 module api_remote_space {
 
     export interface Space extends SpaceSummary {
-        deletable:bool;
-        editable:bool;
     }
 
     export interface SpaceSummary extends api_remote.Item {

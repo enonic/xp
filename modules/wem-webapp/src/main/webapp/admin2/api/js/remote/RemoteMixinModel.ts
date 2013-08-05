@@ -27,8 +27,8 @@ module api_remote_mixin {
 
     export interface GetResult extends api_remote.BaseResult {
         mixin?: Mixin;
-        mixinXml:string;
-        iconUrl:string;
+        mixinXml?:string;
+        iconUrl?:string;
     }
 
     export interface DeleteParams {
