@@ -1,6 +1,11 @@
 package com.enonic.wem.admin.rest.resource.schema.mixin;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
@@ -11,13 +16,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.google.common.io.Files;
+
 import com.enonic.wem.admin.json.ObjectMapperHelper;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.AbstractMixinJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinConfigJson;
+import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinCreateOrUpdateJson;
+import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinCreateOrUpdateParams;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinGetJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinListJson;
+import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.form.Input;
@@ -33,9 +44,16 @@ import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_A
 import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_LINE;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class MixinResourceTest
 {
+    private static byte[] IMAGE_DATA =
+        {0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x1, 0x0, 0x1, 0x0, (byte) 0x80, 0x0, 0x0, (byte) 0xff, (byte) 0xff, (byte) 0xff, 0x0, 0x0,
+            0x0, 0x2c, 0x0, 0x0, 0x0, 0x0, 0x1, 0x0, 0x1, 0x0, 0x0, 0x2, 0x2, 0x44, 0x1, 0x0, 0x3b};
+
     private MixinResource resource;
 
     private Client client;
@@ -51,6 +69,7 @@ public class MixinResourceTest
         resource.setClient( client );
 
         this.uploadService = Mockito.mock( UploadService.class );
+        this.resource.setUploadService( uploadService );
 
         mockCurrentContextHttpRequest();
     }
@@ -117,6 +136,39 @@ public class MixinResourceTest
         assertTrue( isEqual( result , "list_mixins_result.json" ));
     }
 
+    @Test
+    public void test_createMixin()
+        throws Exception
+    {
+        Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
+
+        MixinCreateOrUpdateParams params = new MixinCreateOrUpdateParams();
+        params.setMixin( getFileAsString( "create_mixin_xml.txt" ) );
+        MixinCreateOrUpdateJson result = resource.create( params );
+
+        assertTrue( isEqual( result, "create_mixin_result.json" ) );
+
+        verify( client, times( 1 ) ).execute( isA( CreateMixin.class ) );
+    }
+
+    @Test
+    public void test_createMixin_withIcon()
+        throws Exception
+    {
+        Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
+
+        uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "icon.png", IMAGE_DATA, "image/png" );
+
+        MixinCreateOrUpdateParams params = new MixinCreateOrUpdateParams();
+        params.setMixin( getFileAsString( "create_mixin_xml.txt" ) );
+        params.setIconReference( "edc1af66-ecb4-4f8a-8df4-0738418f84fc" );
+        MixinCreateOrUpdateJson result = resource.create( params );
+
+        assertTrue( isEqual( result, "create_mixin_result.json" ) );
+
+        verify( client, times( 1 ) ).execute( isA( CreateMixin.class ) );
+    }
+
     /**
      * Creates mock object for mixin.
      *
@@ -173,5 +225,35 @@ public class MixinResourceTest
         JsonNode actualTree = mapper.valueToTree( actualValue );
 
         return actualTree.equals( expectedTree );
+    }
+
+    private String getFileAsString(String fileName)
+        throws URISyntaxException, IOException
+    {
+        URI fileUri = getClass().getResource( fileName ).toURI();
+        return Files.toString( new File( fileUri ), Charset.defaultCharset() );
+    }
+
+    private void uploadFile( String id, String name, byte[] data, String type )
+        throws Exception
+    {
+        File file = createTempFile( data );
+        UploadItem item = Mockito.mock( UploadItem.class );
+        Mockito.when( item.getId() ).thenReturn( id );
+        Mockito.when( item.getMimeType() ).thenReturn( type );
+        Mockito.when( item.getUploadTime() ).thenReturn( 0L );
+        Mockito.when( item.getName() ).thenReturn( name );
+        Mockito.when( item.getSize() ).thenReturn( (long) data.length );
+        Mockito.when( item.getFile() ).thenReturn( file );
+        Mockito.when( this.uploadService.getItem( Mockito.<String>any() ) ).thenReturn( item );
+    }
+
+    private File createTempFile( byte[] data )
+        throws IOException
+    {
+        String id = UUID.randomUUID().toString();
+        File file = File.createTempFile( id, "" );
+        Files.write( data, file );
+        return file;
     }
 }
