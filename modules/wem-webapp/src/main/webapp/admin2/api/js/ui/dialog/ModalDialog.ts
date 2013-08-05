@@ -5,6 +5,7 @@ module api_ui_dialog{
         title:string;
         width:number;
         height:number;
+        idPrefix?:string;
     }
 
     export class ModalDialog extends api_dom.DivEl {
@@ -22,7 +23,7 @@ module api_ui_dialog{
         private actions:api_ui.Action[] = [];
 
         constructor(config:ModalDialogConfig) {
-            super("ModalDialog", "modal-dialog");
+            super(config.idPrefix != null ? config.idPrefix : "ModalDialog", "modal-dialog");
 
             this.config = config;
             var el = this.getEl();

@@ -3,23 +3,26 @@ module api_app_wizard {
 
     export class SaveBeforeCloseDialog extends api_ui_dialog.ModalDialog {
 
-        private wizardPanel: api_app_wizard.WizardPanel;
+        private wizardPanel:api_app_wizard.WizardPanel;
 
         private yesAction = new api_ui.Action('Yes', 'mod+y');
+
         private noAction = new api_ui.Action('No', 'mod+n');
+
         private cancelAction = new api_ui.Action('Cancel', 'esc');
 
-        constructor() {
+        constructor(wizardPanel:api_app_wizard.WizardPanel) {
             super({
+                idPrefix: "SaveBeforeCloseDialog",
                 title: "Close wizard",
                 width: 500,
                 height: 180
             });
 
-            api_dom.Body.get().appendChild(this);
+            this.wizardPanel = wizardPanel;
 
             var message = new api_dom.H6El();
-            message.getEl().setInnerHtml("There are unsaved changes, do you want to save them?");
+            message.getEl().setInnerHtml("There are unsaved changes, do you want to save them before closing?");
             this.appendChildToContentPanel(message);
 
             this.setCancelAction(this.cancelAction);
@@ -29,27 +32,37 @@ module api_app_wizard {
             this.cancelAction.addExecutionListener(() => {
                 this.close();
             });
+
+            this.yesAction.addExecutionListener(() => {
+                this.doSaveAndClose();
+            });
+
+            this.noAction.addExecutionListener(() => {
+                this.doCloseWithoutSaveCheck();
+            });
         }
 
-        setWizardToSave(panel: api_app_wizard.WizardPanel): SaveBeforeCloseDialog {
-            this.wizardPanel = panel;
-            return this;
+        show() {
+            api_dom.Body.get().appendChild(this);
+            super.show();
         }
 
-        getWizardPanel(): api_app_wizard.WizardPanel {
-            return this.wizardPanel;
+        close() {
+            this.remove();
+            super.close();
         }
 
-        getYesAction():api_ui.Action {
-            return this.yesAction;
+        private doSaveAndClose() {
+
+            this.close();
+            this.wizardPanel.saveChanges();
+            new api_app_wizard.CloseWizardPanelEvent(this.wizardPanel, true).fire();
         }
 
-        getNoAction():api_ui.Action {
-            return this.noAction;
-        }
+        private doCloseWithoutSaveCheck() {
 
-        getCancelAction():api_ui.Action {
-            return this.cancelAction;
+            this.close();
+            new api_app_wizard.CloseWizardPanelEvent(this.wizardPanel, false).fire();
         }
 
     }

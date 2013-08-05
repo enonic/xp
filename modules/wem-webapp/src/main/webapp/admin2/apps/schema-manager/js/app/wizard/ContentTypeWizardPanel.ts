@@ -2,20 +2,21 @@ module app_wizard {
 
     export class ContentTypeWizardPanel extends api_app_wizard.WizardPanel {
 
-        private static DEFAULT_CHEMA_ICON_URL: string = '/admin/rest/schema/image/ContentType:system:structured';
+        private static DEFAULT_CHEMA_ICON_URL:string = '/admin/rest/schema/image/ContentType:system:structured';
 
-        private saveAction: api_ui.Action;
+        private saveAction:api_ui.Action;
 
-        private closeAction: api_ui.Action;
+        private closeAction:api_ui.Action;
 
-        private formIcon: api_app_wizard.FormIcon;
+        private formIcon:api_app_wizard.FormIcon;
 
-        private toolbar: api_ui_toolbar.Toolbar;
+        private toolbar:api_ui_toolbar.Toolbar;
 
-        private persistedContentType: api_remote_contenttype.ContentType;
+        private persistedContentType:api_remote_contenttype.ContentType;
 
-        constructor(id: string) {
-            this.formIcon = new api_app_wizard.FormIcon(ContentTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");
+        constructor(id:string) {
+            this.formIcon =
+            new api_app_wizard.FormIcon(ContentTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");
 
             this.saveAction = new SaveContentTypeAction();
             this.closeAction = new CloseContentTypeAction(this, true);
@@ -39,7 +40,7 @@ module app_wizard {
             this.addStep(new api_app_wizard.WizardStep("Content Type", new ContentTypeForm()));
         }
 
-        setPersistedItem(contentType: api_remote_contenttype.ContentType) {
+        setPersistedItem(contentType:api_remote_contenttype.ContentType) {
             super.setPersistedItem(contentType);
 
             this.setDisplayName(contentType.displayName);
@@ -79,10 +80,7 @@ module app_wizard {
         }
 
         askUserForSaveChangesBeforeClosing() {
-            if (!components.wizardSaveDialog) {
-                components.wizardSaveDialog = new app_wizard.SchemaWizardSaveDialog();
-            }
-            components.wizardSaveDialog.setWizardToSave(this).open();
+            new api_app_wizard.SaveBeforeCloseDialog(this).open();
         }
     }
 }

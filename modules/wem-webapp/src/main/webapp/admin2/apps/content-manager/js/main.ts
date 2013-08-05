@@ -14,7 +14,6 @@
 ///<reference path='app/wizard/ContentForm.ts' />
 ///<reference path='app/wizard/ContentWizardToolbar.ts' />
 ///<reference path='app/wizard/ContentWizardPanel.ts' />
-///<reference path='app/wizard/ContentWizardSaveDialog.ts' />
 
 ///<reference path='app/browse/ContentBrowseEvents.ts' />
 ///<reference path='app/browse/ContentBrowseActions.ts' />
@@ -117,7 +116,6 @@ module components {
     export var gridPanel:app_browse.ContentTreeGridPanel;
     export var detailPanel:app_browse.ContentBrowseItemPanel;
     export var contentDeleteDialog:app_delete.ContentDeleteDialog;
-    export var wizardSaveDialog:app_wizard.ContentWizardSaveDialog;
 }
 
 Ext.application({

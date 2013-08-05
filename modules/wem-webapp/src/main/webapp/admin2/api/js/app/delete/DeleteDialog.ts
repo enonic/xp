@@ -14,6 +14,7 @@ module api_app_delete{
 
         constructor(modelName:string) {
             super({
+                idPrefix: "DeleteDialog",
                 title: "Delete " + modelName,
                 width: 500,
                 height: 300

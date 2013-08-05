@@ -79,10 +79,7 @@ module app_wizard {
         }
 
         askUserForSaveChangesBeforeClosing() {
-            if (!components.wizardSaveDialog) {
-                components.wizardSaveDialog = new app_wizard.SchemaWizardSaveDialog();
-            }
-            components.wizardSaveDialog.setWizardToSave(this).open();
+            new api_app_wizard.SaveBeforeCloseDialog(this).open();
         }
     }
 }

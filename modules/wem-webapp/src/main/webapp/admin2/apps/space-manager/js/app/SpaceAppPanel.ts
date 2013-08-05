@@ -96,6 +96,10 @@ module app {
             app_browse.CloseSpaceEvent.on((event) => {
                 this.removePanel(event.getPanel(), event.isCheckCanRemovePanel());
             });
+
+            api_app_wizard.CloseWizardPanelEvent.on((event) => {
+                this.removePanel(event.getWizardPanel(), event.isCheckCanRemovePanel());
+            });
         }
 
         private generateTabId(spaceName, isEdit) {
