@@ -51,7 +51,7 @@ module app {
 
                     var tabMenuItem = new SpaceAppBarTabMenuItem(spaceModel.data.displayName);
                     var id = this.generateTabId(spaceModel.data.name, false);
-                    var spaceItemViewPanel = new app_browse.SpaceItemViewPanel(id);
+                    var spaceItemViewPanel = new app_view.SpaceItemViewPanel(id);
 
                     var spaceItem = new api_app_browse.BrowseItem(spaceModel)
                         .setDisplayName(spaceModel.data.displayName)

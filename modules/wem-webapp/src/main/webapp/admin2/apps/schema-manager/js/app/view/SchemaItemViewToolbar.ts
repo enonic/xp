@@ -1,4 +1,4 @@
-module app_browse {
+module app_view {
 
     export interface SchemaItemViewToolbarParams {
         editAction: api_ui.Action;

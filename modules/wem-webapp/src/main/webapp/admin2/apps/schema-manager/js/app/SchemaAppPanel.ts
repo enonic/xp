@@ -149,7 +149,7 @@ module app {
                     var tabMenuItem = new SchemaAppBarTabMenuItem(schemaModel.data.displayName);
 
                     var id = this.generateTabId(schemaModel.data.name, false);
-                    var schemaItemViewPanel = new app_browse.SchemaItemViewPanel(id);
+                    var schemaItemViewPanel = new app_view.SchemaItemViewPanel(id);
 
                     var spaceItem = new api_app_browse.BrowseItem(schemaModel)
                         .setDisplayName(schemaModel.data.displayName)

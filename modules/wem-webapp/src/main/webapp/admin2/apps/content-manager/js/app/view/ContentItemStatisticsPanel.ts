@@ -1,11 +1,11 @@
-module app_browse {
+module app_view {
 
     export interface ContentItemStatisticsPanelParams {
         editAction: api_ui.Action;
         deleteAction: api_ui.Action;
     }
 
-    export class ContentItemStatisticsPanel extends api_app_browse.ItemStatisticsPanel {
+    export class ContentItemStatisticsPanel extends api_app_view.ItemStatisticsPanel {
 
         constructor(params:ContentItemStatisticsPanelParams) {
             super({

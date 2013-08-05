@@ -1,6 +1,6 @@
-module app_browse {
+module app_view {
 
-    export class SpaceItemViewPanel extends api_app_browse.ItemViewPanel {
+    export class SpaceItemViewPanel extends api_app_view.ItemViewPanel {
 
         private id:string;
         private editAction:api_ui.Action;
@@ -10,9 +10,9 @@ module app_browse {
         constructor(id:string) {
 
             this.id = id;
-            this.editAction = new app_view.EditSpaceAction(this);
-            this.deleteAction = new app_view.DeleteSpaceAction(this);
-            this.closeAction = new app_view.CloseSpaceAction(this, true);
+            this.editAction = new EditSpaceAction(this);
+            this.deleteAction = new DeleteSpaceAction(this);
+            this.closeAction = new CloseSpaceAction(this, true);
 
             var toolbar = new SpaceItemViewToolbar({
                 editAction: this.editAction,

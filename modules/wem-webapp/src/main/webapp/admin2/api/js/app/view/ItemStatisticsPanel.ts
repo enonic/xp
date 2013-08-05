@@ -1,4 +1,4 @@
-module api_app_browse {
+module api_app_view {
 
     export interface ItemStatisticsPanelParams {
 
@@ -7,7 +7,7 @@ module api_app_browse {
 
     export class ItemStatisticsPanel extends api_ui.Panel {
 
-        private browseItem:BrowseItem;
+        private browseItem:api_app_browse.BrowseItem;
 
         private header:ItemStatisticsHeader;
 
@@ -42,7 +42,7 @@ module api_app_browse {
             this.addTab(new DetailPanelTab("History"));
         }
 
-        setItem(item:BrowseItem) {
+        setItem(item:api_app_browse.BrowseItem) {
             this.browseItem = item;
             this.header.setItem(item);
         }
@@ -78,7 +78,7 @@ module api_app_browse {
 
     export class ItemStatisticsHeader extends api_dom.DivEl {
 
-        private browseItem:BrowseItem;
+        private browseItem:api_app_browse.BrowseItem;
 
         private iconContainerEl:api_dom.SpanEl = new api_dom.SpanEl();
 
@@ -99,7 +99,7 @@ module api_app_browse {
             this.appendChild(actionMenu);
         }
 
-        setItem(item:BrowseItem) {
+        setItem(item:api_app_browse.BrowseItem) {
             this.browseItem = item;
 
             var icon:HTMLImageElement = api_util.ImageLoader.get(this.browseItem.getIconUrl() + "?size=80", 80, 80);

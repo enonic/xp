@@ -10,15 +10,16 @@
 ///<reference path='app/browse/SchemaBrowseItemPanel.ts' />
 ///<reference path='app/browse/SchemaBrowsePanel.ts' />
 ///<reference path='app/browse/SchemaBrowseFilterPanel.ts'/>
-///<reference path='app/browse/SchemaViewActions.ts' />
-///<reference path='app/browse/SchemaItemStatisticsPanel.ts' />
-///<reference path='app/browse/SchemaItemViewToolbar.ts' />
-///<reference path='app/browse/SchemaItemViewPanel.ts' />
 ///<reference path='app/browse/SchemaActionMenu.ts' />
 ///<reference path='app/browse/SchemaTreeGridPanel.ts' />
 ///<reference path='app/browse/SchemaTreeGridContextMenu.ts' />
 ///<reference path='app/browse/NewSchemaDialog.ts' />
 ///<reference path='app/delete/SchemaDeleteDialog.ts' />
+
+///<reference path='app/view/SchemaViewActions.ts' />
+///<reference path='app/view/SchemaItemStatisticsPanel.ts' />
+///<reference path='app/view/SchemaItemViewToolbar.ts' />
+///<reference path='app/view/SchemaItemViewPanel.ts' />
 
 ///<reference path='app/wizard/ContentTypeForm.ts' />
 ///<reference path='app/wizard/ContentTypeWizardPanel.ts' />

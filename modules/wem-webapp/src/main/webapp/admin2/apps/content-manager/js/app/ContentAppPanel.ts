@@ -51,7 +51,7 @@ module app {
 
                     var tabMenuItem = new ContentAppBarTabMenuItem(contentModel.data.displayName);
                     var id = this.generateTabId(contentModel.data.name, false);
-                    var contentItemViewPanel = new app_browse.ContentItemViewPanel(id);
+                    var contentItemViewPanel = new app_view.ContentItemViewPanel(id);
 
                     var contentItem = new api_app_browse.BrowseItem(contentModel)
                         .setDisplayName(contentModel.data.displayName)

@@ -1,6 +1,6 @@
-module app_browse {
+module app_view {
 
-    export class ContentItemViewPanel extends api_app_browse.ItemViewPanel {
+    export class SchemaItemViewPanel extends api_app_view.ItemViewPanel {
 
         private id:string;
         private editAction:api_ui.Action;
@@ -10,17 +10,17 @@ module app_browse {
         constructor(id:string) {
 
             this.id = id;
-            this.editAction = new app_view.EditContentAction(this);
-            this.deleteAction = new app_view.DeleteContentAction(this);
-            this.closeAction = new app_view.CloseContentAction(this, true);
+            this.editAction = new EditSchemaAction(this);
+            this.deleteAction = new DeleteSchemaAction(this);
+            this.closeAction = new CloseSchemaAction(this, true);
 
-            var toolbar = new ContentItemViewToolbar({
+            var toolbar = new SchemaItemViewToolbar({
                 editAction: this.editAction,
                 deleteAction: this.deleteAction,
                 closeAction: this.closeAction
             });
 
-            var stats = new ContentItemStatisticsPanel({
+            var stats = new SchemaItemStatisticsPanel({
                 editAction: this.editAction,
                 deleteAction: this.deleteAction
             });

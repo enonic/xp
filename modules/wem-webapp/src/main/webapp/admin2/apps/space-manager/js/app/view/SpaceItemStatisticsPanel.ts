@@ -1,13 +1,13 @@
-module app_browse {
+module app_view {
 
-    export interface SchemaItemStatisticsPanelParams {
+    export interface SpaceItemStatisticsPanelParams {
         editAction: api_ui.Action;
         deleteAction: api_ui.Action;
     }
 
-    export class SchemaItemStatisticsPanel extends api_app_browse.ItemStatisticsPanel {
+    export class SpaceItemStatisticsPanel extends api_app_view.ItemStatisticsPanel {
 
-        constructor(params:SchemaItemStatisticsPanelParams) {
+        constructor(params:SpaceItemStatisticsPanelParams) {
             super({
                 actionMenu: new api_ui_menu.ActionMenu(
                     params.editAction,

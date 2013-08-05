@@ -1,14 +1,14 @@
-module app_browse {
+module app_view {
 
-    export interface SpaceItemViewToolbarParams {
+    export interface ContentItemViewToolbarParams {
         editAction: api_ui.Action;
         deleteAction: api_ui.Action;
         closeAction: api_ui.Action;
     }
 
-    export class SpaceItemViewToolbar extends api_ui_toolbar.Toolbar {
+    export class ContentItemViewToolbar extends api_ui_toolbar.Toolbar {
 
-        constructor(params:SpaceItemViewToolbarParams) {
+        constructor(params:ContentItemViewToolbarParams) {
             super();
             super.addAction(params.editAction);
             super.addAction(params.deleteAction);

@@ -23,11 +23,12 @@
 ///<reference path='app/browse/ContentTreeGridPanel.ts' />
 ///<reference path='app/browse/ContentBrowseItemPanel.ts' />
 ///<reference path='app/browse/ContentBrowsePanel.ts' />
-///<reference path='app/browse/ContentViewActions.ts' />
-///<reference path='app/browse/ContentItemViewToolbar.ts' />
-///<reference path='app/browse/ContentItemStatisticsPanel.ts' />
-///<reference path='app/browse/ContentItemViewPanel.ts' />
 ///<reference path='app/browse/ContentBrowseFilterPanel.ts' />
+
+///<reference path='app/view/ContentViewActions.ts' />
+///<reference path='app/view/ContentItemViewToolbar.ts' />
+///<reference path='app/view/ContentItemStatisticsPanel.ts' />
+///<reference path='app/view/ContentItemViewPanel.ts' />
 
 ///<reference path='app/new/NewContentEvent.ts' />
 ///<reference path='app/new/NewContentDialog.ts' />

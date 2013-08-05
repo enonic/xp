@@ -11,7 +11,7 @@ module api_app_browse {
 
         ext;
 
-        private itemStatisticsPanel:ItemStatisticsPanel;
+        private itemStatisticsPanel:api_app_view.ItemStatisticsPanel;
 
         private itemsSelectionPanel:ItemsSelectionPanel;
 
@@ -20,7 +20,7 @@ module api_app_browse {
             this.getEl().addClass("browse-item-panel");
 
             this.itemsSelectionPanel = new ItemsSelectionPanel(browseItemPanelParams.fireGridDeselectEvent);
-            this.itemStatisticsPanel = new ItemStatisticsPanel({actionMenu: browseItemPanelParams.actionMenu});
+            this.itemStatisticsPanel = new api_app_view.ItemStatisticsPanel({actionMenu: browseItemPanelParams.actionMenu});
 
             this.addPanel(this.itemsSelectionPanel);
             this.addPanel(this.itemStatisticsPanel);

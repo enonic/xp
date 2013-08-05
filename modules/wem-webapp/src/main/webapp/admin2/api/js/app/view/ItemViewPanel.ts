@@ -1,4 +1,4 @@
-module api_app_browse {
+module api_app_view {
 
     export class ItemViewPanel extends api_ui.Panel {
 
@@ -6,7 +6,7 @@ module api_app_browse {
 
         private statisticsPanel:ItemStatisticsPanel;
 
-        private browseItem:BrowseItem;
+        private browseItem:api_app_browse.BrowseItem;
 
         constructor(toolbar:api_ui_toolbar.Toolbar, statisticsPanel:ItemStatisticsPanel) {
             super("ItemViewPanel");
@@ -22,12 +22,12 @@ module api_app_browse {
             this.statisticsPanel.afterRender();
         }
 
-        setItem(item:BrowseItem) {
+        setItem(item:api_app_browse.BrowseItem) {
             this.browseItem = item;
             this.statisticsPanel.setItem(item);
         }
 
-        getItem():BrowseItem {
+        getItem():api_app_browse.BrowseItem {
             return this.browseItem;
         }
 

@@ -128,12 +128,12 @@
 
 ///<reference path='app/browse/BrowsePanel.ts' />
 ///<reference path='app/browse/BrowseItem.ts' />
-///<reference path='app/browse/ItemStatisticsPanel.ts' />
 ///<reference path='app/browse/ItemsSelectionPanel.ts' />
 ///<reference path='app/browse/BrowseItemPanel.ts' />
-///<reference path='app/browse/ItemViewPanel.ts' />
 ///<reference path='app/browse/BrowseFilterPanel.ts' />
 
+///<reference path='app/view/ItemStatisticsPanel.ts' />
+///<reference path='app/view/ItemViewPanel.ts' />
 
 ///<reference path='ui/dialog/DialogButton.ts' />
 ///<reference path='ui/dialog/ModalDialog.ts' />

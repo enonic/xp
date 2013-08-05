@@ -40,11 +40,12 @@
 ///<reference path='app/browse/SpaceBrowsePanel.ts' />
 ///<reference path='app/browse/SpaceTreeGridContextMenu.ts' />
 ///<reference path='app/browse/SpaceTreeGridPanel.ts' />
-///<reference path='app/browse/SpaceItemStatisticsPanel.ts' />
-///<reference path='app/browse/SpaceViewActions.ts' />
-///<reference path='app/browse/SpaceItemViewToolbar.ts' />
-///<reference path='app/browse/SpaceItemViewPanel.ts' />
 ///<reference path='app/browse/SpaceBrowseFilterPanel.ts' />
+
+///<reference path='app/view/SpaceItemStatisticsPanel.ts' />
+///<reference path='app/view/SpaceViewActions.ts' />
+///<reference path='app/view/SpaceItemViewToolbar.ts' />
+///<reference path='app/view/SpaceItemViewPanel.ts' />
 
 ///<reference path='app/delete/DeletedEvent.ts' />
 ///<reference path='app/delete/SpaceDeleteDialog.ts' />
