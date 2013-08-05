@@ -1,0 +1,48 @@
+{
+    "mixins": [
+        {
+            "name": "input_text1",
+            "module": "mymodule",
+            "input": {
+                "name": "input_text1",
+                "label": "Line Text 1",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "helpText": "Help text line 1",
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            },
+            "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:mymodule:input_text1",
+            "editable": false,
+            "deletable": false
+        },
+        {
+            "name": "text_area_1",
+            "module": "othermodule",
+            "input": {
+                "name": "text_area_1",
+                "label": "Text Area",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "helpText": "Help text area",
+                "type": {
+                    "name": "TextArea",
+                    "builtIn": true
+                }
+            },
+            "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:othermodule:text_area_1",
+            "editable": false,
+            "deletable": false
+        }
+    ]
+}

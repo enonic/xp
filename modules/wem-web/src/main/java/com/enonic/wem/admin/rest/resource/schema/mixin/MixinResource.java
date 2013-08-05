@@ -12,6 +12,8 @@ import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.AbstractMixinJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinConfigJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinGetJson;
+import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinListJson;
+import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
@@ -53,6 +55,15 @@ public class MixinResource extends AbstractResource
             String message = String.format("Response format [%s] doesn't exist.", format);
             throw new WebApplicationException( Response.serverError().entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
         }
+    }
+
+    @GET
+    @Path( "list" )
+    public MixinListJson list()
+    {
+        final Mixins mixins = client.execute( Commands.mixin().get().all() );
+
+        return new MixinListJson( mixins );
     }
 
     private Mixin fetchMixin( final QualifiedMixinName qualifiedName )

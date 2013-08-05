@@ -15,6 +15,7 @@ import com.enonic.wem.admin.json.ObjectMapperHelper;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.AbstractMixinJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinConfigJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinGetJson;
+import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinListJson;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
@@ -28,6 +29,7 @@ import com.enonic.wem.web.servlet.ServletRequestHolder;
 
 import static com.enonic.wem.api.command.Commands.mixin;
 import static com.enonic.wem.api.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_AREA;
 import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_LINE;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -104,6 +106,17 @@ public class MixinResourceTest
         resource.get( mixinName, "not_existed_format" );
     }
 
+    @Test
+    public final void test_listMixins()
+        throws IOException
+    {
+        mockMixinsList();
+
+        MixinListJson result = this.resource.list();
+
+        assertTrue( isEqual( result , "list_mixins_result.json" ));
+    }
+
     /**
      * Creates mock object for mixin.
      *
@@ -114,7 +127,7 @@ public class MixinResourceTest
         String mixinName = "mymodule:mymixin";
 
         Input inputText1 = newInput().name( "input_text1" ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true )
-            .helpText("Help text line 1" ).required( true ).build();
+            .helpText( "Help text line 1" ).required( true ).build();
         Mixin mixin = Mixin.newMixin().module( ModuleName.from( "mymodule" ) ).formItem( inputText1 ).build();
 
         Mixins mixins = Mixins.from( mixin );
@@ -122,6 +135,23 @@ public class MixinResourceTest
         Mockito.when( client.execute( mixin().get().names( names ) ) ).thenReturn( mixins );
 
         return mixinName;
+    }
+
+    /**
+     * Creates mock object for mixins list.
+     */
+    private void mockMixinsList()
+    {
+        Input inputText1 = newInput().name( "input_text1" ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true )
+            .helpText( "Help text line 1" ).required( true ).build();
+        Mixin mixin1 = Mixin.newMixin().module( ModuleName.from( "mymodule" ) ).formItem( inputText1 ).build();
+
+        Input textArea1 = newInput().name( "text_area_1" ).inputType( TEXT_AREA ).label( "Text Area" ).required( true )
+            .helpText("Help text area" ).required( true ).build();
+        Mixin mixin2 = Mixin.newMixin().module( ModuleName.from( "othermodule" ) ).formItem( textArea1 ).build();
+
+        Mixins mixins = Mixins.from( mixin1, mixin2 );
+        Mockito.when( client.execute( mixin().get().all() ) ).thenReturn( mixins );
     }
 
     /**
