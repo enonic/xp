@@ -30,8 +30,11 @@ import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
+import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
+import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.form.Input;
+import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
@@ -47,6 +50,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 
 public class MixinResourceTest
 {
@@ -167,6 +171,24 @@ public class MixinResourceTest
         assertTrue( isEqual( result, "create_mixin_result.json" ) );
 
         verify( client, times( 1 ) ).execute( isA( CreateMixin.class ) );
+    }
+
+    @Test
+    public void test_updateMixin()
+        throws Exception
+    {
+        final Input input = newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build();
+        final Mixin existingMixin = newMixin().formItem( input ).module( Module.SYSTEM.getName() ).build();
+        final Mixins mixins = Mixins.from( existingMixin );
+        Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( mixins );
+
+        MixinCreateOrUpdateParams params = new MixinCreateOrUpdateParams();
+        params.setMixin( getFileAsString( "create_mixin_xml.txt" ) );
+        MixinCreateOrUpdateJson result = resource.update( params );
+
+        assertTrue( isEqual( result, "update_mixin_result.json" ) );
+
+        verify( client, times( 1 ) ).execute( isA( UpdateMixin.class ) );
     }
 
     /**

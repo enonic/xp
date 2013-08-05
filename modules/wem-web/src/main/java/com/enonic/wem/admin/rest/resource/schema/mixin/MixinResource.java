@@ -23,15 +23,18 @@ import com.enonic.wem.admin.rpc.UploadedIconFetcher;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
+import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.exception.BaseException;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
+import com.enonic.wem.api.schema.mixin.editor.SetMixinEditor;
 import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
 import com.enonic.wem.core.support.serializer.ParsingException;
 
 import static com.enonic.wem.api.command.Commands.mixin;
+import static com.enonic.wem.api.schema.mixin.editor.SetMixinEditor.newSetMixinEditor;
 
 @Path("schema/mixin")
 @Produces(MediaType.APPLICATION_JSON)
@@ -119,6 +122,39 @@ public class MixinResource extends AbstractResource
         {
             client.execute( createCommand );
             return MixinCreateOrUpdateJson.created();
+        }
+        catch ( BaseException e )
+        {
+            throw new WebApplicationException( e );
+        }
+    }
+
+    @POST
+    @Path( "update" )
+    @Consumes( MediaType.APPLICATION_JSON )
+    public MixinCreateOrUpdateJson update( MixinCreateOrUpdateParams params )
+    {
+        final Mixin mixin = parseXml( params.getMixin() );
+        final Icon icon = fetchIcon( params.getIconReference() );
+
+        if ( fetchMixin( mixin.getQualifiedName() ) == null )
+        {
+            throw new WebApplicationException(
+                Response.serverError().entity( "Mixin doesn't exist." ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
+        }
+
+        final SetMixinEditor editor = newSetMixinEditor().
+            displayName( mixin.getDisplayName() ).
+            formItem( mixin.getFormItem() ).
+            icon( icon ).
+            build();
+        final UpdateMixin updateCommand = mixin().update().
+            qualifiedName( mixin.getQualifiedName() ).
+            editor( editor );
+        try
+        {
+            client.execute( updateCommand );
+            return MixinCreateOrUpdateJson.updated();
         }
         catch ( BaseException e )
         {
