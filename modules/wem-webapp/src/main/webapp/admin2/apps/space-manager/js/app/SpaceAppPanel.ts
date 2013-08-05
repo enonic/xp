@@ -53,7 +53,7 @@ module app {
                     var id = this.generateTabId(spaceModel.data.name, false);
                     var spaceItemViewPanel = new app_view.SpaceItemViewPanel(id);
 
-                    var spaceItem = new api_app_browse.BrowseItem(spaceModel)
+                    var spaceItem = new api_app_view.ViewItem(spaceModel)
                         .setDisplayName(spaceModel.data.displayName)
                         .setPath(spaceModel.data.name)
                         .setIconUrl(spaceModel.data.iconUrl);

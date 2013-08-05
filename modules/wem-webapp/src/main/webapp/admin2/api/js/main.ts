@@ -132,6 +132,7 @@
 ///<reference path='app/browse/BrowseItemPanel.ts' />
 ///<reference path='app/browse/BrowseFilterPanel.ts' />
 
+///<reference path='app/view/ViewItem.ts' />
 ///<reference path='app/view/ItemStatisticsPanel.ts' />
 ///<reference path='app/view/ItemViewPanel.ts' />
 

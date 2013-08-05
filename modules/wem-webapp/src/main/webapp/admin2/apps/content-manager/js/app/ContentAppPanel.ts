@@ -53,7 +53,7 @@ module app {
                     var id = this.generateTabId(contentModel.data.name, false);
                     var contentItemViewPanel = new app_view.ContentItemViewPanel(id);
 
-                    var contentItem = new api_app_browse.BrowseItem(contentModel)
+                    var contentItem = new api_app_view.ViewItem(contentModel)
                         .setDisplayName(contentModel.data.displayName)
                         .setPath(contentModel.data.name)
                         .setIconUrl(contentModel.data.iconUrl);

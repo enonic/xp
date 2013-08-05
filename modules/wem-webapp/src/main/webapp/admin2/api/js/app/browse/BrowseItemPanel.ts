@@ -47,7 +47,7 @@ module api_app_browse {
             }
             else if (items.length == 1) {
 
-                this.itemStatisticsPanel.setItem(items[0]);
+                this.itemStatisticsPanel.setItem(items[0].toViewItem());
                 this.showPanel(1);
 
             } else if (items.length > 1) {

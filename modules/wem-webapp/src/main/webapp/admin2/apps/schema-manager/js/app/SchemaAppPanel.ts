@@ -151,7 +151,7 @@ module app {
                     var id = this.generateTabId(schemaModel.data.name, false);
                     var schemaItemViewPanel = new app_view.SchemaItemViewPanel(id);
 
-                    var spaceItem = new api_app_browse.BrowseItem(schemaModel)
+                    var spaceItem = new api_app_view.ViewItem(schemaModel)
                         .setDisplayName(schemaModel.data.displayName)
                         .setPath(schemaModel.data.name)
                         .setIconUrl(schemaModel.data.iconUrl);

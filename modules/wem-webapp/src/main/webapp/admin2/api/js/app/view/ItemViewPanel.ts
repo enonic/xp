@@ -6,7 +6,7 @@ module api_app_view {
 
         private statisticsPanel:ItemStatisticsPanel;
 
-        private browseItem:api_app_browse.BrowseItem;
+        private browseItem:ViewItem;
 
         constructor(toolbar:api_ui_toolbar.Toolbar, statisticsPanel:ItemStatisticsPanel) {
             super("ItemViewPanel");
@@ -22,12 +22,12 @@ module api_app_view {
             this.statisticsPanel.afterRender();
         }
 
-        setItem(item:api_app_browse.BrowseItem) {
+        setItem(item:ViewItem) {
             this.browseItem = item;
             this.statisticsPanel.setItem(item);
         }
 
-        getItem():api_app_browse.BrowseItem {
+        getItem():ViewItem {
             return this.browseItem;
         }
 
