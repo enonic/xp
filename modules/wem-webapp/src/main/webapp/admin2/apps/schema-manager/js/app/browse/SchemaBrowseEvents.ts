@@ -35,22 +35,14 @@ module app_browse {
         }
     }
 
-    export class NewSchemaEvent extends api_event.Event {
+    export class ShowNewSchemaDialogEvent extends api_event.Event {
 
-        private schemaType:string;
-
-        constructor(schemaType?:string) {
-            super('newSchema');
-
-            this.schemaType = schemaType;
+        constructor() {
+            super('showNewSchemaDialog');
         }
 
-        static on(handler:(event:NewSchemaEvent) => void) {
-            api_event.onEvent('newSchema', handler);
-        }
-
-        getSchemaType():string {
-            return this.schemaType;
+        static on(handler:(event:ShowNewSchemaDialogEvent) => void) {
+            api_event.onEvent('showNewSchemaDialog', handler);
         }
     }
 

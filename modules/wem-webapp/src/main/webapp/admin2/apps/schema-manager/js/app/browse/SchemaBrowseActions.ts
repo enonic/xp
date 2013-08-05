@@ -5,7 +5,7 @@ module app_browse {
         constructor() {
             super("New");
             this.addExecutionListener(() => {
-                new NewSchemaEvent().fire();
+                new ShowNewSchemaDialogEvent().fire();
             });
         }
     }

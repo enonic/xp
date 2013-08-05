@@ -37,15 +37,17 @@ module app {
                 new app_browse.CloseSchemaEvent(panel, true).fire();
             });
 
-            app_browse.NewSchemaEvent.on((event) => {
+            app_browse.ShowNewSchemaDialogEvent.on((event) => {
+                if (!components.newSchemaDialog) {
+                    components.newSchemaDialog = new app_new.NewSchemaDialog();
+                }
+                components.newSchemaDialog.open();
+            });
+
+            app_new.NewSchemaEvent.on((event) => {
                 var schemaType = event.getSchemaType();
 
-                if (!schemaType) {
-                    if (!components.newSchemaDialog) {
-                        components.newSchemaDialog = new app_browse.NewSchemaDialog();
-                    }
-                    components.newSchemaDialog.open();
-                } else {
+                if (schemaType) {
                     var tabMenuItem, schemaWizardPanel;
 
                     switch (schemaType) {
