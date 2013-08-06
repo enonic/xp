@@ -40,7 +40,9 @@
 ///<reference path='app/browse/SpaceBrowsePanel.ts' />
 ///<reference path='app/browse/SpaceTreeGridContextMenu.ts' />
 ///<reference path='app/browse/SpaceTreeGridPanel.ts' />
-///<reference path='app/browse/SpaceBrowseFilterPanel.ts' />
+
+///<reference path='app/browse/filter/SpaceBrowseFilterEvents.ts' />
+///<reference path='app/browse/filter/SpaceBrowseFilterPanel.ts' />
 
 ///<reference path='app/view/SpaceItemStatisticsPanel.ts' />
 ///<reference path='app/view/SpaceViewActions.ts' />

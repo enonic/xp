@@ -4,12 +4,14 @@
 
 ///<reference path='model/SchemaModel.ts' />
 
+///<reference path='app/browse/filter/SchemaBrowseFilterEvents.ts'/>
+///<reference path='app/browse/filter/SchemaBrowseFilterPanel.ts'/>
+
 ///<reference path='app/browse/SchemaBrowseEvents.ts' />
 ///<reference path='app/browse/SchemaBrowseActions.ts' />
 ///<reference path='app/browse/SchemaBrowseToolbar.ts' />
 ///<reference path='app/browse/SchemaBrowseItemPanel.ts' />
 ///<reference path='app/browse/SchemaBrowsePanel.ts' />
-///<reference path='app/browse/SchemaBrowseFilterPanel.ts'/>
 ///<reference path='app/browse/SchemaActionMenu.ts' />
 ///<reference path='app/browse/SchemaTreeGridPanel.ts' />
 ///<reference path='app/browse/SchemaTreeGridContextMenu.ts' />

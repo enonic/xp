@@ -20,7 +20,7 @@ module app_browse {
             });
 
 
-            SchemaBrowseSearchEvent.on((event:SchemaBrowseSearchEvent) => {
+            app_browse_filter.SchemaBrowseSearchEvent.on((event) => {
                 this.setActiveList('grid');
                 if (event.getFilterParams()) {
                     // show  ids
@@ -33,7 +33,7 @@ module app_browse {
                 }
             });
 
-            SchemaBrowseResetEvent.on((event:SchemaBrowseResetEvent) => {
+            app_browse_filter.SchemaBrowseResetEvent.on((event) => {
                 this.setActiveList('tree');
                 this.setRemoteSearchParams({});
                 this.refresh();

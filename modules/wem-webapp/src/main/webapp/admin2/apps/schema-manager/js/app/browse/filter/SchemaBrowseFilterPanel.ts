@@ -1,11 +1,10 @@
-module app_browse {
+module app_browse_filter {
 
-    export class SchemaBrowseFilterPanel extends api_app_browse.BrowseFilterPanel {
+    export class SchemaBrowseFilterPanel extends api_app_browse_filter.BrowseFilterPanel {
 
 
         constructor() {
-            super();
-            this.updateFacets([
+            super([
                 {
                     "name": "Type",
                     "displayName": "Type",
@@ -26,8 +25,8 @@ module app_browse {
                     ]
                 }
             ]);
-            var searchAction = new api_app_browse.FilterSearchAction();
-            searchAction.addExecutionListener((action:api_app_browse.FilterSearchAction)=> {
+            var searchAction = new api_app_browse_filter.FilterSearchAction();
+            searchAction.addExecutionListener((action:api_app_browse_filter.FilterSearchAction)=> {
                 var params = app_browse.createLoadContentParams(action.getFilterValues());
                 api_remote.RemoteSchemaService.schema_list(params, (response) => {
                     if (response && response.success) {
@@ -41,8 +40,8 @@ module app_browse {
                 });
 
             });
-            var resetAction = new api_app_browse.FilterResetAction();
-            resetAction.addExecutionListener((action:api_app_browse.FilterResetAction)=> {
+            var resetAction = new api_app_browse_filter.FilterResetAction();
+            resetAction.addExecutionListener((action:api_app_browse_filter.FilterResetAction)=> {
                 //TODO: reset filter facets when they are implemented
                 new SchemaBrowseResetEvent().fire();
             });

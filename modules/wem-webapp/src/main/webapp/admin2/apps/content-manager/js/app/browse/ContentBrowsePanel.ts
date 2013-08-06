@@ -4,19 +4,19 @@ module app_browse {
 
         private toolbar:ContentBrowseToolbar;
 
-        private filterPanel:app_browse.ContentBrowseFilterPanel;
+        private filterPanel:app_browse_filter.ContentBrowseFilterPanel;
 
         private grid:ContentTreeGridPanel;
 
-        private browseItemPanel:app_browse.ContentBrowseItemPanel;
+        private browseItemPanel:ContentBrowseItemPanel;
 
         constructor() {
 
             this.toolbar = new ContentBrowseToolbar();
             this.grid = components.gridPanel = new ContentTreeGridPanel('contentTreeGrid');
-            this.browseItemPanel = components.detailPanel = new app_browse.ContentBrowseItemPanel();
+            this.browseItemPanel = components.detailPanel = new ContentBrowseItemPanel();
 
-            this.filterPanel = new app_browse.ContentBrowseFilterPanel();
+            this.filterPanel = new app_browse_filter.ContentBrowseFilterPanel();
             var params = createLoadContentParams({});
 
             api_remote.RemoteContentService.content_find(params, (response) => {

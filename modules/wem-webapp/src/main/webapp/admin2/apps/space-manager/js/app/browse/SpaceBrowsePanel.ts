@@ -4,11 +4,11 @@ module app_browse {
 
         private toolbar:SpaceBrowseToolbar;
 
-        private filterPanel:api_app_browse.BrowseFilterPanel;
+        private filterPanel:app_browse_filter.SpaceBrowseFilterPanel;
 
         private grid:SpaceTreeGridPanel;
 
-        private browseItemPanel:app_browse.SpaceBrowseItemPanel;
+        private browseItemPanel:SpaceBrowseItemPanel;
 
         constructor() {
 
@@ -16,9 +16,9 @@ module app_browse {
             this.grid = components.gridPanel = new SpaceTreeGridPanel('spaceTreeGrid');
             this.browseItemPanel = components.detailPanel = new app_browse.SpaceBrowseItemPanel();
 
-            this.filterPanel = new app_browse.SpaceBrowseFilterPanel();
-            var action = new api_app_browse.FilterSearchAction();
-            action.addExecutionListener((action:api_app_browse.FilterSearchAction)=> {
+            this.filterPanel = new app_browse_filter.SpaceBrowseFilterPanel();
+            var action = new api_app_browse_filter.FilterSearchAction();
+            action.addExecutionListener((action:api_app_browse_filter.FilterSearchAction)=> {
                 console.log(action.getFilterValues());
             });
             this.filterPanel.setFilterSearchAction(action);

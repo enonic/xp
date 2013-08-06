@@ -1,4 +1,4 @@
-module app_browse {
+module app_browse_filter {
 
     export class SpaceBrowseFilterPanel extends api_app_browse_filter.BrowseFilterPanel {
 

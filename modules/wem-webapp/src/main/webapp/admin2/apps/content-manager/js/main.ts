@@ -15,6 +15,9 @@
 ///<reference path='app/wizard/ContentWizardToolbar.ts' />
 ///<reference path='app/wizard/ContentWizardPanel.ts' />
 
+///<reference path='app/browse/filter/ContentBrowseFilterEvents.ts' />
+///<reference path='app/browse/filter/ContentBrowseFilterPanel.ts' />
+
 ///<reference path='app/browse/ContentBrowseEvents.ts' />
 ///<reference path='app/browse/ContentBrowseActions.ts' />
 ///<reference path='app/browse/ContentActionMenu.ts' />
@@ -23,7 +26,6 @@
 ///<reference path='app/browse/ContentTreeGridPanel.ts' />
 ///<reference path='app/browse/ContentBrowseItemPanel.ts' />
 ///<reference path='app/browse/ContentBrowsePanel.ts' />
-///<reference path='app/browse/ContentBrowseFilterPanel.ts' />
 
 ///<reference path='app/view/ContentViewActions.ts' />
 ///<reference path='app/view/ContentItemViewToolbar.ts' />

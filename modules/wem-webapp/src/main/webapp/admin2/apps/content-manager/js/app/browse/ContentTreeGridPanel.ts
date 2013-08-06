@@ -9,7 +9,7 @@ module app_browse {
             this.setKeyField("path");
             this.setItemId(itemId);
 
-            ContentBrowseSearchEvent.on((event:ContentBrowseSearchEvent) => {
+            app_browse_filter.ContentBrowseSearchEvent.on((event) => {
                 if (event.getResultContentIds().length > 0) {
                     // show  ids
                     this.setRemoteSearchParams({ contentIds: event.getResultContentIds() });
@@ -21,7 +21,7 @@ module app_browse {
                 }
             });
 
-            ContentBrowseResetEvent.on((event:ContentBrowseResetEvent) => {
+            app_browse_filter.ContentBrowseResetEvent.on((event) => {
                 this.setRemoteSearchParams({});
                 this.refresh();
             })

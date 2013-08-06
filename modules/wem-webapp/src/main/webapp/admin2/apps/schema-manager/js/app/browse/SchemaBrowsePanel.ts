@@ -5,14 +5,14 @@ module app_browse {
         private toolbar:SchemaBrowseToolbar;
         private gridPanel:SchemaTreeGridPanel;
         private detailPanel:SchemaBrowseItemPanel;
-        private filterPanel;
+        private filterPanel:app_browse_filter.SchemaBrowseFilterPanel;
 
         constructor() {
             this.toolbar = new SchemaBrowseToolbar();
             this.gridPanel = components.gridPanel = new SchemaTreeGridPanel('schemaTreeGrid');
             this.detailPanel = components.detailPanel = new SchemaBrowseItemPanel();
 
-            this.filterPanel = new app_browse.SchemaBrowseFilterPanel();
+            this.filterPanel = new app_browse_filter.SchemaBrowseFilterPanel();
 
             super(this.toolbar, this.gridPanel, this.detailPanel, this.filterPanel);
 
