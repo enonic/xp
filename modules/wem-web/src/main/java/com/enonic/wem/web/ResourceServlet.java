@@ -1,14 +1,14 @@
 package com.enonic.wem.web;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.io.Resources;
+import com.google.common.io.ByteStreams;
 
 public final class ResourceServlet
     extends HttpServlet
@@ -17,10 +17,12 @@ public final class ResourceServlet
     protected void doGet( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
-        final URL url = findResource( req );
-        if ( url != null )
+        final String path = req.getRequestURI().substring( req.getContextPath().length() );
+        final InputStream in = getServletContext().getResourceAsStream( path );
+
+        if ( in != null )
         {
-            serveResource( res, url );
+            serveResource( res, path, in );
         }
         else
         {
@@ -28,17 +30,10 @@ public final class ResourceServlet
         }
     }
 
-    private URL findResource( final HttpServletRequest req )
+    private void serveResource( final HttpServletResponse res, final String path, final InputStream in )
         throws IOException
     {
-        final String path = req.getRequestURI().substring( req.getContextPath().length() );
-        return getServletContext().getResource( path );
-    }
-
-    private void serveResource( final HttpServletResponse res, final URL url )
-        throws IOException
-    {
-        res.setContentType( getServletContext().getMimeType( url.getPath() ) );
-        Resources.copy( url, res.getOutputStream() );
+        res.setContentType( getServletContext().getMimeType( path ) );
+        ByteStreams.copy( in, res.getOutputStream() );
     }
 }
