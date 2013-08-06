@@ -35,14 +35,12 @@ module api_app {
             });
         }
 
-        addWizardPanel(item:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
-            super.addNavigationItem(item, wizardPanel);
+        addWizardPanel(tabMenuItem:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
+            super.addNavigationItem(tabMenuItem, wizardPanel);
 
             api_app_wizard.DisplayNameChangedEvent.on(function (event) {
                 if (event.getWizardPanel() == wizardPanel) {
-                    var displayName = wizardPanel.getDisplayName();
-                    item.setLabel(displayName);
-                    item.getTabMenu().getTabMenuButton().setLabel(displayName);
+                    tabMenuItem.setLabel(wizardPanel.getDisplayName());
                 }
             });
 

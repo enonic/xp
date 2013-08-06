@@ -42,10 +42,6 @@ module api_ui_tab {
             this.tabMenu = tabMenu;
         }
 
-        getTabMenu(): TabMenu {
-            return this.tabMenu;
-        }
-
         setIndex(value:number) {
             this.tabIndex = value;
         }
@@ -62,6 +58,10 @@ module api_ui_tab {
             this.label = value;
             this.labelEl.getEl().setInnerHtml(value);
             this.labelEl.getEl().setAttribute('title', value);
+
+            if( this.tabMenu ) {
+                this.tabMenu.setButtonLabel(value);
+            }
         }
 
         isVisible():bool {

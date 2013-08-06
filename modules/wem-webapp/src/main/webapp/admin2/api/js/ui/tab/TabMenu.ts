@@ -34,11 +34,11 @@ module api_ui_tab {
             return new TabMenuButton();
         }
 
-        getTabMenuButton(): TabMenuButton {
-            return this.tabMenuButton;
+        setButtonLabel(value:string) {
+            this.tabMenuButton.setLabel(value);
         }
 
-        getMenuEl(): api_dom.Element {
+        getMenuEl(): api_dom.UlEl {
             return this.menuEl;
         }
 
