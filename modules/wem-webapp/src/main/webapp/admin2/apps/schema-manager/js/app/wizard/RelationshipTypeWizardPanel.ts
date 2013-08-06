@@ -52,7 +52,7 @@ module app_wizard {
             this.persistedRelationshipType = relationshipType;
         }
 
-        persistNewItem() {
+        persistNewItem(successCallback?:() => void) {
 //            var createParams:api_remote.RemoteCallCreateOrUpdateRelationshipTypeParams = {
 //                // TODO: set relationshipType xml.
 //                relationshipType: "",
@@ -65,7 +65,7 @@ module app_wizard {
 //            });
         }
 
-        updatePersistedItem() {
+        updatePersistedItem(successCallback?:() => void) {
 //            var updateParams:api_remote.RemoteCallCreateOrUpdateRelationshipTypeParams = {
 //                // TODO: set relationshipType xml.
 //                relationshipType: "",

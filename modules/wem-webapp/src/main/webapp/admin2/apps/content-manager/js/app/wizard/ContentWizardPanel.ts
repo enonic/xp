@@ -88,13 +88,18 @@ module app_wizard {
             this.setAutogenerateName(!content.name);
         }
 
-        saveChanges() {
+        askUserForSaveChangesBeforeClosing() {
+            new api_app_wizard.SaveBeforeCloseDialog(this).open();
+        }
+
+        persistNewItem(successCallback?:() => void) {
 
             // TODO
         }
 
-        askUserForSaveChangesBeforeClosing() {
-            new api_app_wizard.SaveBeforeCloseDialog(this).open();
+        updatePersistedItem(successCallback?:() => void) {
+
+            // TODO
         }
     }
 }

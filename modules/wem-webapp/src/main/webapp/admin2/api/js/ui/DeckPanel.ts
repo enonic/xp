@@ -9,6 +9,8 @@ module api_ui {
 
         private panelShown:Panel = null;
 
+        private panelShownChangedEventListeners:Function[] = [];
+
         constructor(idPrefix?:string) {
             super(idPrefix || "DeckPanel");
         }
@@ -43,11 +45,6 @@ module api_ui {
 
         getPanelShown():Panel {
             return this.panelShown;
-        }
-
-        private setPanelShown(panel:Panel) {
-            this.panelShown = panel;
-            new DeckPanelShownPanelChangedEvent(panel, this.getPanelIndex(panel)).fire();
         }
 
         getPanelShownIndex():number {
@@ -93,7 +90,7 @@ module api_ui {
             this.panels.splice(index, 1);
 
             if (this.isEmpty()) {
-                this.setPanelShown(null);
+                this.panelShown = null;
             }
             else if (panelToRemove == this.getPanelShown()) {
                 // show either panel that has the same index now or the last panel
@@ -110,15 +107,10 @@ module api_ui {
             return true;
         }
 
-        /*
-         * Hides shown panel and makes visible a panel with given index.
-         * Does nothing if there is no panel with given index.
-         * Fires DeckPanelShownPanelChangedEvent if new panel was shown.
-         */
         showPanel(index:number) {
-            var selectedPanel = this.getPanel(index);
+            var panelToShow = this.getPanel(index);
 
-            if (selectedPanel == null) {
+            if (panelToShow == null) {
                 return;
             }
 
@@ -126,25 +118,19 @@ module api_ui {
                 this.panelShown.hide();
             }
 
-            selectedPanel.show();
-            this.setPanelShown(selectedPanel);
-        }
-    }
-
-    export class DeckPanelShownPanelChangedEvent extends api_event.Event {
-
-        panel:api_ui.Panel;
-        index:number;
-
-        constructor(panel:api_ui.Panel, index:number) {
-            super("deckPanelShownPanelChangedEvent");
-            this.panel = panel;
-            this.index = index;
+            panelToShow.show();
+            this.panelShown = panelToShow;
+            this.firePanelShownChangedEvent(panelToShow, this.getPanelIndex(panelToShow));
         }
 
-        static on(handler:(event:DeckPanelShownPanelChangedEvent) => void) {
-            api_event.onEvent('deckPanelShownPanelChangedEvent', handler);
+        addPanelShownChangedListener(listener:(panel:api_ui.Panel, index:number) => void) {
+            this.panelShownChangedEventListeners.push(listener);
         }
 
+        private firePanelShownChangedEvent(panel:Panel, panelIndex:number) {
+            this.panelShownChangedEventListeners.forEach((listener:(panel:api_ui.Panel, index:number) => void) => {
+                listener(panel, panelIndex);
+            });
+        }
     }
 }

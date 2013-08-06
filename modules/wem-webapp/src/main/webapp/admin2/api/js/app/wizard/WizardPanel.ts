@@ -135,13 +135,13 @@ module api_app_wizard {
             // TODO: You have unsaved changes - do you want to save before closing?
         }
 
-        saveChanges() {
+        saveChanges(successCallback?:() => void) {
 
             if (this.isItemPersisted()) {
-                this.updatePersistedItem();
+                this.updatePersistedItem(successCallback);
             }
             else {
-                this.persistNewItem();
+                this.persistNewItem(successCallback);
             }
 
             this.isChanged = false;
@@ -150,14 +150,14 @@ module api_app_wizard {
         /*
          * Override this method in specific wizard to do actual persisting of new item.
          */
-        persistNewItem() {
+        persistNewItem(successCallback?:() => void) {
 
         }
 
         /*
          * Override this method in specific wizard to do actual update of item.
          */
-        updatePersistedItem() {
+        updatePersistedItem(successCallback?:() => void) {
 
         }
     }

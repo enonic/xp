@@ -33,6 +33,12 @@ module api_app_browse{
 
         }
 
+        refreshGrid() {
+            if (this.grid.isRefreshNeeded()) {
+                this.grid.refresh();
+            }
+        }
+
         afterRender() {
             this.appendChild(this.browseToolbar);
             this.appendChild(this.gridAndFilterAndDetailSplitPanel);

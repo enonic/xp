@@ -19,12 +19,13 @@ module api_app{
             this.addNavigationItem(homePanelMenuItem, this.homePanel);
             this.showPanel(0);
 
-            api_ui.DeckPanelShownPanelChangedEvent.on((event) => {
-                if (!this.isHomePanel(event.index)) {
-                    // do panel afterrender to calculate offsets for each but home panel cuz they were created hidden
-                    event.panel.afterRender();
+            this.addPanelShownChangedListener((panel:api_ui.Panel, index:number) => {
+
+                if (!this.isHomePanel(index)) {
+                    // do panel afterRender to calculate offsets for each but home panel cuz they were created hidden
+                    panel.afterRender();
                 }
-            })
+            } );
         }
 
         addWizardPanel(item:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {

@@ -16,6 +16,12 @@ module app {
 
             super(this.appBarTabMenu, this.browsePanel, app_browse.SchemaBrowseActions.ACTIONS);
 
+            this.addPanelShownChangedListener((panel:api_ui.Panel, index:number) => {
+                if ( panel === this.browsePanel ) {
+                    this.browsePanel.refreshGrid();
+                }
+            } );
+
             this.handleGlobalEvents();
         }
 

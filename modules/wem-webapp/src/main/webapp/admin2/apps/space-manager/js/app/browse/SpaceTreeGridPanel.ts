@@ -18,12 +18,6 @@ module  app_browse {
             app_wizard.SpaceUpdatedEvent.on((event) => {
                 this.setRefreshNeeded(true);
             });
-
-            api_ui.DeckPanelShownPanelChangedEvent.on((event:api_ui.DeckPanelShownPanelChangedEvent) => {
-                if (event.index == 0 && this.isRefreshNeeded()) {
-                    this.refresh();
-                }
-            })
         }
 
         private createGridStore() {

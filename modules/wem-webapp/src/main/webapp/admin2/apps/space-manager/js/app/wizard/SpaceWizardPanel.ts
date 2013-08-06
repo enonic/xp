@@ -91,7 +91,7 @@ module app_wizard {
             this.persistedSpace = space;
         }
 
-        persistNewItem() {
+        persistNewItem(successCallback?:() => void) {
 
             var createParams:api_remote_space.CreateParams = {
                 spaceName: this.getName(),
@@ -103,11 +103,13 @@ module app_wizard {
 
                 new app_wizard.SpaceCreatedEvent().fire();
                 api_notify.showFeedback('Space was created!');
-
+                if (successCallback) {
+                    successCallback();
+                }
             });
         }
 
-        updatePersistedItem() {
+        updatePersistedItem(successCallback?:() => void) {
 
             var updateParams:api_remote_space.UpdateParams = {
                 spaceName: this.persistedSpace.name,
@@ -120,7 +122,9 @@ module app_wizard {
 
                 new app_wizard.SpaceUpdatedEvent().fire();
                 api_notify.showFeedback('Space was saved!');
-
+                if (successCallback) {
+                    successCallback();
+                }
             });
         }
 

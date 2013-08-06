@@ -53,7 +53,7 @@ module app_wizard {
             this.persistedContentType = contentType;
         }
 
-        persistNewItem() {
+        persistNewItem(successCallback?:() => void) {
 //            var createParams:api_remote.RemoteCallContentTypeCreateOrUpdateParams = {
 //                // TODO: set contentType xml.
 //                contentType: "",
@@ -66,7 +66,7 @@ module app_wizard {
 //            });
         }
 
-        updatePersistedItem() {
+        updatePersistedItem(successCallback?:() => void) {
 //            var updateParams:api_remote.RemoteCallContentTypeCreateOrUpdateParams = {
 //                // TODO: set contentType xml.
 //                contentType: "",

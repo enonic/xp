@@ -52,7 +52,7 @@ module app_wizard {
             this.persistedMixin = mixin;
         }
 
-        persistNewItem() {
+        persistNewItem(successCallback?:() => void) {
 //            var createParams:api_remote.RemoteCallMixinCreateOrUpdateParams = {
 //                // TODO: set mixin xml.
 //                mixin: "",
@@ -65,7 +65,7 @@ module app_wizard {
 //            });
         }
 
-        updatePersistedItem() {
+        updatePersistedItem(successCallback?:() => void) {
 //            var updateParams:api_remote.RemoteCallMixinCreateOrUpdateParams = {
 //                // TODO: set mixin xml.
 //                mixin: "",

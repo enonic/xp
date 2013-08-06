@@ -55,8 +55,9 @@ module api_app_wizard {
         private doSaveAndClose() {
 
             this.close();
-            this.wizardPanel.saveChanges();
-            new api_app_wizard.CloseWizardPanelEvent(this.wizardPanel, true).fire();
+            this.wizardPanel.saveChanges(() => {
+                new api_app_wizard.CloseWizardPanelEvent(this.wizardPanel, true).fire();
+            });
         }
 
         private doCloseWithoutSaveCheck() {
