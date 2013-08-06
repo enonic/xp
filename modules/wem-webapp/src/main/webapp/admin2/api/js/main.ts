@@ -125,6 +125,7 @@
 ///<reference path='app/AppBarTabMenuButton.ts' />
 ///<reference path='app/AppBarTabMenuItem.ts' />
 ///<reference path='app/AppPanel.ts' />
+///<reference path='app/BrowseAndWizardBasedAppPanel.ts' />
 
 ///<reference path='app/browse/BrowsePanel.ts' />
 ///<reference path='app/browse/BrowseItem.ts' />

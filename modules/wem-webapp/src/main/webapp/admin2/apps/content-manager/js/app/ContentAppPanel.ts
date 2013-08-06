@@ -1,6 +1,6 @@
 module app {
 
-    export class ContentAppPanel extends api_app.AppPanel {
+    export class ContentAppPanel extends api_app.BrowseAndWizardBasedAppPanel {
 
         private browsePanel:app_browse.ContentBrowsePanel;
 
@@ -11,13 +11,11 @@ module app {
             this.browsePanel = new app_browse.ContentBrowsePanel();
             this.appBarTabMenu = appBar.getTabMenu();
 
-            super(appBar.getTabMenu(), this.browsePanel, app_browse.ContentBrowseActions.ACTIONS);
-
-            this.addPanelShownChangedListener((panel:api_ui.Panel, index:number) => {
-                if ( panel === this.browsePanel ) {
-                    this.browsePanel.refreshGrid();
-                }
-            } );
+            super({
+                appBar: appBar,
+                browsePanel: this.browsePanel,
+                browsePanelActions: app_browse.ContentBrowseActions.ACTIONS
+            });
 
             this.handleGlobalEvents();
         }
@@ -27,11 +25,6 @@ module app {
             api_app.ShowAppBrowsePanelEvent.on((event) => {
                 this.showHomePanel();
                 this.appBarTabMenu.deselectNavigationItem();
-            });
-
-            api_ui_tab.TabMenuItemSelectEvent.on((event) => {
-                this.appBarTabMenu.hideMenu();
-                this.selectPanel(event.getTab());
             });
 
             api_ui_tab.TabMenuItemCloseEvent.on((event) => {
@@ -102,10 +95,6 @@ module app {
 
             app_browse.CloseContentEvent.on((event) => {
                 this.removePanel(event.getPanel(), event.isCheckCanRemovePanel());
-            });
-
-            api_app_wizard.CloseWizardPanelEvent.on((event) => {
-                this.removePanel(event.getWizardPanel(), event.isCheckCanRemovePanel());
             });
 
         }

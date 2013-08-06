@@ -2,8 +2,6 @@ module api_app{
 
     export class AppPanel extends api_ui.NavigatedDeckPanel {
 
-        private tabMenu:AppBarTabMenu;
-
         private homePanel:api_ui.Panel;
 
         private homePanelActions:api_ui.Action[];
@@ -26,32 +24,6 @@ module api_app{
                     panel.afterRender();
                 }
             } );
-        }
-
-        addWizardPanel(item:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
-            super.addNavigationItem(item, wizardPanel);
-
-            api_app_wizard.DisplayNameChangedEvent.on(function (event) {
-                if (event.getWizardPanel() == wizardPanel) {
-                    var displayName = wizardPanel.getDisplayName();
-                    item.setLabel(displayName);
-                    item.getTabMenu().getTabMenuButton().setLabel(displayName);
-                }
-            });
-
-            api_app_wizard.NameChangedEvent.on(function (event) {
-                if (event.getWizardPanel() == wizardPanel) {
-                    // update something when name changed
-                }
-            });
-        }
-
-        canRemovePanel(panel:api_ui.Panel):bool {
-            if (panel instanceof api_app_wizard.WizardPanel) {
-                var wizardPanel:api_app_wizard.WizardPanel = <api_app_wizard.WizardPanel>panel;
-                return wizardPanel.canClose();
-            }
-            return true;
         }
 
         showHomePanel() {
