@@ -25,10 +25,6 @@ module api_app {
                 }
             });
 
-            api_app_wizard.CloseWizardPanelEvent.on((event) => {
-                this.removePanel(event.getWizardPanel(), event.isCheckCanRemovePanel());
-            });
-
             api_ui_tab.TabMenuItemSelectEvent.on((event) => {
                 this.appBarTabMenu.hideMenu();
                 this.selectPanel(event.getTab());
@@ -49,6 +45,11 @@ module api_app {
                     // update something when name changed
                 }
             });
+
+            wizardPanel.addClosingEventListener( (wizardPanel:api_app_wizard.WizardPanel) => {
+                this.removePanel(wizardPanel, false);
+            });
+
         }
 
         canRemovePanel(panel:api_ui.Panel):bool {

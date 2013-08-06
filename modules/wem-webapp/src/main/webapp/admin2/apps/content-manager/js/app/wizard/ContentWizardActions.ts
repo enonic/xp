@@ -33,11 +33,11 @@ module app_wizard {
 
     export class CloseContentAction extends api_ui.Action {
 
-        constructor(wizarPanel:api_app_wizard.WizardPanel, checkCanRemovePanel?:bool = true) {
+        constructor(wizardPanel:api_app_wizard.WizardPanel, checkCanClose?:bool = true) {
             super("Close");
 
             this.addExecutionListener(() => {
-                new api_app_wizard.CloseWizardPanelEvent(wizarPanel, checkCanRemovePanel).fire();
+                wizardPanel.close(checkCanClose);
             });
         }
     }

@@ -56,14 +56,14 @@ module api_app_wizard {
 
             this.close();
             this.wizardPanel.saveChanges(() => {
-                new api_app_wizard.CloseWizardPanelEvent(this.wizardPanel, true).fire();
+                this.wizardPanel.close(true);
             });
         }
 
         private doCloseWithoutSaveCheck() {
 
             this.close();
-            new api_app_wizard.CloseWizardPanelEvent(this.wizardPanel, false).fire();
+            this.wizardPanel.close();
         }
 
     }

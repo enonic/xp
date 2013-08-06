@@ -19,7 +19,7 @@ module app_wizard {
             new api_app_wizard.FormIcon(ContentTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");
 
             this.saveAction = new SaveContentTypeAction();
-            this.closeAction = new CloseContentTypeAction(this, true);
+            this.closeAction = new CloseContentTypeAction(this);
 
             this.toolbar = new ContentTypeWizardToolbar({
                 saveAction: this.saveAction,
@@ -77,10 +77,6 @@ module app_wizard {
 //                new app_wizard.ContentTypeUpdatedEvent().fire();
 //                api_notify.showFeedback('Relationship type was saved!');
 //            });
-        }
-
-        askUserForSaveChangesBeforeClosing() {
-            new api_app_wizard.SaveBeforeCloseDialog(this).open();
         }
     }
 }

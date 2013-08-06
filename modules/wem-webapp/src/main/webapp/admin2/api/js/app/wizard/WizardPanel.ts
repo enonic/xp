@@ -9,7 +9,7 @@ module api_app_wizard {
         saveAction:api_ui.Action;
     }
 
-    export class WizardPanel extends api_ui.Panel {
+    export class WizardPanel extends api_ui.Panel implements api_ui.Closeable {
 
         private persistedItem:api_remote.Item;
 
@@ -27,6 +27,8 @@ module api_app_wizard {
         private previous:WizardStepNavigationArrow;
 
         private next:WizardStepNavigationArrow;
+
+        private closingEventListeners:Function[] = [];
 
         constructor(params:WizardPanelParams) {
             super("WizardPanel");
@@ -55,9 +57,12 @@ module api_app_wizard {
         }
 
         afterRender() {
-            console.log("afterRender wizardPanel");
             super.afterRender();
             this.stepPanels.afterRender();
+        }
+
+        addClosingEventListener(listener:(wizardPanel:WizardPanel) => void) {
+            this.closingEventListeners.push(listener);
         }
 
         setPersistedItem(item:api_remote.Item) {
@@ -113,6 +118,18 @@ module api_app_wizard {
             this.stepNavigator.addStep(step);
         }
 
+        close(checkCanClose?:bool = false) {
+
+            if (checkCanClose) {
+                if (this.canClose()) {
+                    this.closing();
+                }
+            }
+            else {
+                this.closing();
+            }
+        }
+
         canClose():bool {
 
             if (this.hasUnsavedChanges()) {
@@ -124,6 +141,16 @@ module api_app_wizard {
             }
         }
 
+        closing() {
+            this.fireClosingEvent();
+        }
+
+        private fireClosingEvent() {
+            this.closingEventListeners.forEach((listener:(wizardPanelClosing:WizardPanel) => void) => {
+                listener(this);
+            });
+        }
+
         /*
          * Override this method in specific wizard to do proper check.
          */
@@ -132,7 +159,7 @@ module api_app_wizard {
         }
 
         askUserForSaveChangesBeforeClosing() {
-            // TODO: You have unsaved changes - do you want to save before closing?
+            new api_app_wizard.SaveBeforeCloseDialog(this).open();
         }
 
         saveChanges(successCallback?:() => void) {

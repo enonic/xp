@@ -18,7 +18,7 @@ module app_wizard {
             this.formIcon = new api_app_wizard.FormIcon(RelationshipTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");
 
             this.saveAction = new SaveRelationshipTypeAction();
-            this.closeAction = new CloseRelationshipTypeAction(this, true);
+            this.closeAction = new CloseRelationshipTypeAction(this);
 
             this.toolbar = new RelationshipTypeWizardToolbar({
                 saveAction: this.saveAction,
@@ -78,8 +78,5 @@ module app_wizard {
 //            });
         }
 
-        askUserForSaveChangesBeforeClosing() {
-            new api_app_wizard.SaveBeforeCloseDialog(this).open();
-        }
     }
 }

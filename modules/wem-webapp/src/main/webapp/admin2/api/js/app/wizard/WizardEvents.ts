@@ -14,24 +14,6 @@ module api_app_wizard {
         }
     }
 
-    export class CloseWizardPanelEvent extends WizardPanelEvent {
-
-        private checkCanRemovePanel:bool;
-
-        constructor(wizardPanel:WizardPanel, checkCanRemovePanel?:bool = true) {
-            super('closeWizardPanel', wizardPanel);
-            this.checkCanRemovePanel = checkCanRemovePanel;
-        }
-
-        isCheckCanRemovePanel() {
-            return this.checkCanRemovePanel;
-        }
-
-        static on(handler:(event:CloseWizardPanelEvent) => void) {
-            api_event.onEvent('closeWizardPanel', handler);
-        }
-    }
-
     export class WizardStepEvent extends api_event.Event {
 
         constructor() {

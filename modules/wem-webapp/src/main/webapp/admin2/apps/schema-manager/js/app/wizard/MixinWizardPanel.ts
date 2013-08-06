@@ -18,7 +18,7 @@ module app_wizard {
             this.formIcon = new api_app_wizard.FormIcon(MixinWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");
 
             this.saveAction = new SaveMixinAction();
-            this.closeAction = new CloseMixinAction(this, true);
+            this.closeAction = new CloseMixinAction(this);
 
             this.toolbar = new MixinWizardToolbar({
                 saveAction: this.saveAction,
@@ -76,10 +76,6 @@ module app_wizard {
 //                new app_wizard.MixinUpdatedEvent().fire();
 //                api_notify.showFeedback('Mixin was saved!');
 //            });
-        }
-
-        askUserForSaveChangesBeforeClosing() {
-            new api_app_wizard.SaveBeforeCloseDialog(this).open();
         }
     }
 }

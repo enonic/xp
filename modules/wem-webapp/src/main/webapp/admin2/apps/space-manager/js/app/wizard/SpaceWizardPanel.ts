@@ -30,7 +30,7 @@ module app_wizard {
 
             this.formIcon = new api_app_wizard.FormIcon(SpaceWizardPanel.DEFAULT_SPACE_ICON_URL, "Click to upload icon", "rest/upload");
 
-            this.closeAction = new CloseSpaceAction(this, true);
+            this.closeAction = new CloseSpaceAction(this);
             this.saveAction = new SaveSpaceAction();
             this.duplicateAction = new DuplicateSpaceAction();
             this.deleteAction = new DeleteSpaceAction();
@@ -126,10 +126,6 @@ module app_wizard {
                     successCallback();
                 }
             });
-        }
-
-        askUserForSaveChangesBeforeClosing() {
-            new api_app_wizard.SaveBeforeCloseDialog(this).open();
         }
     }
 }
