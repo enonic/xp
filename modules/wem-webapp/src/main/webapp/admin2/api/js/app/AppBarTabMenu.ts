@@ -34,9 +34,9 @@ module api_app{
             super.removeNavigationItem(tab);
 
             this.tabMenuButton.setTabCount(this.countVisible());
-            var newTab = <AppBarTabMenuItem>this.getSelectedNavigationItem();
-            if (newTab) {
-                this.tabMenuButton.setEditing(newTab.isEditing());
+            var newSelectedTab = <AppBarTabMenuItem>this.getSelectedNavigationItem();
+            if (newSelectedTab) {
+                this.tabMenuButton.setEditing(newSelectedTab.isEditing());
             }
 
             if (this.isShowingMenuItems()) {
