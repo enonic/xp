@@ -115,6 +115,11 @@
 
 ///<reference path='app/wizard/FormIcon.ts' />
 ///<reference path='app/wizard/WizardEvents.ts' />
+///<reference path='app/wizard/WizardPanelHeader.ts' />
+///<reference path='app/wizard/WizardStepDeckPanel.ts' />
+///<reference path='app/wizard/WizardStepNavigator.ts' />
+///<reference path='app/wizard/WizardStepNavigationArrow.ts' />
+///<reference path='app/wizard/WizardStep.ts' />
 ///<reference path='app/wizard/WizardPanel.ts' />
 
 ///<reference path='app/AppBar.ts' />
