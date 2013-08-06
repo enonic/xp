@@ -38,16 +38,12 @@ module api_app {
         addWizardPanel(tabMenuItem:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
             super.addNavigationItem(tabMenuItem, wizardPanel);
 
-            api_app_wizard.DisplayNameChangedEvent.on(function (event) {
-                if (event.getWizardPanel() == wizardPanel) {
-                    tabMenuItem.setLabel(wizardPanel.getDisplayName());
-                }
+            wizardPanel.addDisplayNameChangedEventListener(() => {
+                tabMenuItem.setLabel(wizardPanel.getDisplayName());
             });
 
-            api_app_wizard.NameChangedEvent.on(function (event) {
-                if (event.getWizardPanel() == wizardPanel) {
-                    // update something when name changed
-                }
+            wizardPanel.addNameChangedEventListener(() => {
+                // update something when name changed
             });
         }
 

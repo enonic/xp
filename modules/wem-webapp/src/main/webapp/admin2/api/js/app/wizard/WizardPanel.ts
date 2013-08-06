@@ -36,7 +36,7 @@ module api_app_wizard {
             this.appendChild(params.toolbar);
             this.appendChild(params.formIcon);
 
-            this.header = new WizardPanelHeader(this);
+            this.header = new WizardPanelHeader();
             this.appendChild(this.header);
 
             this.stepPanels = new api_app_wizard.WizardStepDeckPanel();
@@ -106,6 +106,14 @@ module api_app_wizard {
 
         generateName(value:string):string {
             return this.header.generateName(value);
+        }
+
+        addDisplayNameChangedEventListener(listener:() => void) {
+            this.header.addDisplayNameChangedEventListener(listener);
+        }
+
+        addNameChangedEventListener(listener: () => void) {
+            this.header.addNameChangedEventListener(listener);
         }
 
         addStep(step:WizardStep) {
