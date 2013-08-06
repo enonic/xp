@@ -84,7 +84,7 @@ module  app_browse {
                     },
                     itemdblclick: (grid, record) => {
                         new EditSpaceEvent(grid.getSelection()).fire();
-                    }
+                    }, buffer: 10
                 }
             }
         }

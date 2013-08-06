@@ -26,9 +26,10 @@ module api_app_browse {
             this.addPanel(this.itemStatisticsPanel);
             this.showPanel(0);
 
-            this.initExt();
+            /*this.initExt();*/
         }
 
+/*
         private initExt() {
             var htmlEl = this.getHTMLElement();
             this.ext = new Ext.Component({
@@ -37,9 +38,9 @@ module api_app_browse {
                 split: true
             });
         }
+*/
 
         setItems(items:api_app_browse.BrowseItem[]) {
-
             if (items.length == 0) {
 
                 this.itemsSelectionPanel.setItems(items);
