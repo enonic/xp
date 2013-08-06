@@ -10,7 +10,7 @@ module api_ui {
         static TRIGGER_MOUSE = "mouse";
         static TRIGGER_FOCUS = "focus";
 
-        private static tip:api_dom.DivEl;
+        private tooltipEl:api_dom.DivEl;
         private static timeoutTimer:number;
 
         private target:api_dom.Element;
@@ -20,7 +20,7 @@ module api_ui {
         private side:string;
         private offset:number[];
 
-        /**
+        /*
          * Widget to show floating tooltips
          * @param target Element to show tooltip at
          * @param text Text of the tooltip
@@ -29,8 +29,8 @@ module api_ui {
          * @param side Side of the target where tooltip should be shown (top,left,right,bottom)
          * @param offset Fine tuning of the tooltip positioning (defaults to the center of the side)
          */
-            constructor(target:api_dom.Element, text:string, timeout?:number = 1000, trigger?:string = Tooltip.TRIGGER_MOUSE,
-                        side?:string = Tooltip.SIDE_BOTTOM, offset?:number[] = [0, 0]) {
+        constructor(target:api_dom.Element, text:string, timeout?:number = 1000, trigger?:string = Tooltip.TRIGGER_MOUSE,
+                    side?:string = Tooltip.SIDE_BOTTOM, offset?:number[] = [0, 0]) {
 
             this.target = target;
             this.text = text;
@@ -38,6 +38,7 @@ module api_ui {
             this.trigger = trigger;
             this.side = side;
             this.offset = offset;
+
 
             var targetEl = target.getEl();
             targetEl.addEventListener(this.getEventName(true), (event:Event) => {
@@ -50,13 +51,20 @@ module api_ui {
         }
 
         show() {
-            this.getInstance().show();
-            this.positionByTarget();
+            if (!this.tooltipEl) {
+                this.tooltipEl = new api_dom.DivEl("Tooltip", "tooltip " + this.side);
+                this.tooltipEl.getEl().setInnerHtml(this.text).setClass("tooltip " + this.side);
+                this.target.getParent().appendChild(this.tooltipEl);
+                this.tooltipEl.show();
+                this.positionByTarget();
+            }
+
         }
 
         hide() {
-            if (Tooltip.tip) {
-                Tooltip.tip.hide();
+            if (this.tooltipEl) {
+                this.tooltipEl.getEl().remove();
+                this.tooltipEl = null;
             }
         }
 
@@ -104,7 +112,7 @@ module api_ui {
 
             var targetEl = this.target.getHTMLElement();
             var targetOffset = this.target.getEl().getOffset();
-            var el = Tooltip.tip.getHTMLElement();
+            var el = this.tooltipEl.getHTMLElement();
 
             var offsetLeft, offsetTop;
             switch (this.side) {
@@ -163,20 +171,6 @@ module api_ui {
                 clearTimeout(Tooltip.timeoutTimer);
                 Tooltip.timeoutTimer = undefined;
             }
-        }
-
-        private getInstance() {
-
-            if (!Tooltip.tip) {
-
-                Tooltip.tip = new api_dom.DivEl("Tooltip", "tooltip " + this.side);
-
-                api_dom.Body.get().appendChild(Tooltip.tip);
-            }
-
-            Tooltip.tip.getEl().setInnerHtml(this.text).setClass("tooltip " + this.side);
-
-            return Tooltip.tip;
         }
 
         private getEventName(enter:bool) {

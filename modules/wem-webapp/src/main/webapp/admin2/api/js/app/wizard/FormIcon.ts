@@ -11,13 +11,13 @@ module api_app_wizard {
         private progress:api_ui.ProgressBar;
         private tooltip:api_ui.Tooltip;
 
-        /**
+        /*
          * Icon widget with tooltip and upload possibility
          * @param iconUrl url to the icon to display
          * @param iconTitle text to display in tooltip
          * @param uploadUrl url to upload new icon to
          */
-            constructor(public iconUrl:string, public iconTitle:string, public uploadUrl?:string) {
+        constructor(public iconUrl:string, public iconTitle:string, public uploadUrl?:string) {
             super("FormIcon", "form-icon");
             var el = this.getEl();
             var me = this;

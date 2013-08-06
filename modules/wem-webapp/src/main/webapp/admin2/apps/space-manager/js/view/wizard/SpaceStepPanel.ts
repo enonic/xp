@@ -1,3 +1,5 @@
+/**
+ * NOT IN USE */
 module app_ui_wizard {
     export class SpaceStepPanel {
 
