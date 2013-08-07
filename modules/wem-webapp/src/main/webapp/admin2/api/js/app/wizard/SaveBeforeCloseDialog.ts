@@ -5,9 +5,9 @@ module api_app_wizard {
 
         private wizardPanel:api_app_wizard.WizardPanel;
 
-        private yesAction = new api_ui.Action('Yes', 'mod+y');
+        private yesAction = new api_ui.Action('Yes');
 
-        private noAction = new api_ui.Action('No', 'mod+n');
+        private noAction = new api_ui.Action('No');
 
         private cancelAction = new api_ui.Action('Cancel', 'esc');
 
@@ -21,6 +21,22 @@ module api_app_wizard {
 
             this.wizardPanel = wizardPanel;
 
+            this.cancelAction.setMnemonic("c");
+            this.cancelAction.addExecutionListener(() => {
+                this.close();
+            });
+
+            this.yesAction.setMnemonic("y");
+            this.yesAction.addExecutionListener(() => {
+                this.doSaveAndClose();
+            });
+
+            this.noAction.setMnemonic("n");
+            this.noAction.addExecutionListener(() => {
+                this.doCloseWithoutSaveCheck();
+            });
+
+
             var message = new api_dom.H6El();
             message.getEl().setInnerHtml("There are unsaved changes, do you want to save them before closing?");
             this.appendChildToContentPanel(message);
@@ -28,18 +44,6 @@ module api_app_wizard {
             this.setCancelAction(this.cancelAction);
             this.addAction(this.noAction);
             this.addAction(this.yesAction);
-
-            this.cancelAction.addExecutionListener(() => {
-                this.close();
-            });
-
-            this.yesAction.addExecutionListener(() => {
-                this.doSaveAndClose();
-            });
-
-            this.noAction.addExecutionListener(() => {
-                this.doCloseWithoutSaveCheck();
-            });
         }
 
         show() {

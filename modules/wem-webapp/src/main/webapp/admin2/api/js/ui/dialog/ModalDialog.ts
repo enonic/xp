@@ -123,27 +123,8 @@ module api_ui_dialog{
 
         addAction(action:api_ui.Action) {
 
-            var button = new ModalDialogButton(action);
+            var button = new DialogButton(action);
             this.appendChild(button);
-        }
-    }
-
-    export class ModalDialogButton extends api_ui.AbstractButton {
-
-        private action:api_ui.Action;
-
-        constructor(action:api_ui.Action) {
-            super("ModalDialogButton", action.getLabel());
-            this.action = action;
-
-            this.getEl().addEventListener("click", () => {
-                this.action.execute();
-            });
-            super.setEnabled(action.isEnabled());
-
-            action.addPropertyChangeListener((action:api_ui.Action) => {
-                this.setEnabled(action.isEnabled());
-            });
         }
     }
 

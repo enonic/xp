@@ -2,13 +2,13 @@ module api_ui_menu {
 
     export class ActionMenu extends api_dom.DivEl {
 
-        private button:api_ui.AbstractButton;
-        private list;       //:ActionList; (gives typescript error ActionList not defined)
+        private button:api_ui.Button;
+        private list:ActionList;
 
         constructor(...actions:api_ui.Action[]) {
             super("ActionMenu", "action-menu");
 
-            this.button = new api_ui.AbstractButton("ActionButton", "Actions");
+            this.button = new api_ui.Button("Actions");
             this.button.getEl().addEventListener("click", (evt:Event) => {
                 this.showMenuOnButtonClick(evt);
             });
@@ -71,7 +71,7 @@ module api_ui_menu {
 
     }
 
-    class ActionList extends api_dom.UlEl {
+    export class ActionList extends api_dom.UlEl {
 
         private menu:ActionMenu;
         private menuItems:api_ui_menu.MenuItem[] = [];

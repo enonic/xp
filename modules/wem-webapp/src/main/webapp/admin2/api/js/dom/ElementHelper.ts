@@ -117,7 +117,7 @@ module api_dom {
             return this;
         }
 
-        appendChild(child:HTMLElement):ElementHelper {
+        appendChild(child:Node):ElementHelper {
             this.el.appendChild(child);
             return this;
         }

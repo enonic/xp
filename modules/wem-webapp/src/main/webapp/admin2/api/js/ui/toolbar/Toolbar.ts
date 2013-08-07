@@ -67,24 +67,18 @@ module api_ui_toolbar {
         }
     }
 
-    class ToolbarButton extends api_ui.AbstractButton {
+    class ToolbarButton extends api_ui.ActionButton {
 
         private action:api_ui.Action;
 
         constructor(action:api_ui.Action) {
-            super("ToolbarButton", action.getLabel());
+            super("ToolbarButton", action);
+
             this.action = action;
-            this.getEl().addEventListener("click", (evt:Event) => {
-                this.action.execute();
-            });
+
             if (action.getIconClass()) {
                 this.getEl().addClass(action.getIconClass());
             }
-            this.setEnabled(action.isEnabled());
-
-            action.addPropertyChangeListener((action:api_ui.Action) => {
-                this.setEnabled(action.isEnabled());
-            });
         }
 
         setFloatRight(value:bool) {

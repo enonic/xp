@@ -55,6 +55,8 @@
 ///<reference path='notify/NotifyOpts.ts' />
 ///<reference path='notify/MessageBus.ts' />
 
+///<reference path='dom/TextNodeHelper.ts' />
+///<reference path='dom/TextNode.ts' />
 ///<reference path='dom/ElementHelper.ts' />
 ///<reference path='dom/ImgElHelper.ts' />
 ///<reference path='dom/Element.ts' />
@@ -83,7 +85,9 @@
 ///<reference path='dom/LegendEl.ts' />
 ///<reference path='dom/FormEl.ts' />
 
+
 ///<reference path='ui/KeyBindings.ts'/>
+///<reference path='ui/Mnemonic.ts' />
 ///<reference path='ui/Action.ts' />
 ///<reference path='ui/Panel.ts' />
 ///<reference path='ui/Closeable.ts' />
@@ -92,7 +96,8 @@
 ///<reference path='ui/BodyMask.ts' />
 ///<reference path='ui/Tooltip.ts' />
 ///<reference path='ui/ProgressBar.ts' />
-///<reference path='ui/AbstractButton.ts' />
+///<reference path='ui/Button.ts' />
+///<reference path='ui/ActionButton.ts' />
 ///<reference path='ui/ToggleSlide.ts' />
 ///<reference path='ui/toolbar/Toolbar.ts' />
 ///<reference path='ui/menu/MenuItem.ts' />

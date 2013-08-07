@@ -1,6 +1,9 @@
 ///<reference path='../TestCase.d.ts' />
 ///<reference path='../../../../../../main/webapp/admin2/api/js/Mousetrap.d.ts' />
+///<reference path='../../../../../../main/webapp/admin2/api/js/dom/TextNodeHelper.ts' />
+///<reference path='../../../../../../main/webapp/admin2/api/js/dom/TextNode.ts' />
 ///<reference path='../../../../../../main/webapp/admin2/api/js/ui/KeyBindings.ts' />
+///<reference path='../../../../../../main/webapp/admin2/api/js/ui/Mnemonic.ts' />
 ///<reference path='../../../../../../main/webapp/admin2/api/js/ui/Action.ts' />
 
 TestCase("Action", {

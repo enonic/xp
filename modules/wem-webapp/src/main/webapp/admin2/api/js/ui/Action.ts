@@ -8,6 +8,8 @@ module api_ui {
 
         private shortcut:KeyBinding;
 
+        private mnemonic:Mnemonic;
+
         private enabled:bool = true;
 
         private executionListeners:Function[] = [];
@@ -77,6 +79,18 @@ module api_ui {
             return this.shortcut;
         }
 
+        setMnemonic(value:string) {
+            this.mnemonic = new Mnemonic(value);
+        }
+
+        hasMnemonic():bool {
+            return this.mnemonic != null;
+        }
+
+        getMnemonic():Mnemonic {
+            return this.mnemonic;
+        }
+
         execute():void {
 
             if (this.enabled) {
@@ -94,13 +108,30 @@ module api_ui {
             this.propertyChangeListeners.push(listener);
         }
 
+        getKeyBindings():KeyBinding[] {
+
+            var bindings:KeyBinding[] = [];
+
+            if (this.hasShortcut()) {
+                bindings.push(this.getShortcut());
+            }
+            if (this.hasMnemonic()) {
+                bindings.push(this.getMnemonic().toKeyBinding(()=> {
+                    this.execute();
+                }));
+            }
+
+            return bindings;
+        }
+
         static getKeyBindings(actions:api_ui.Action[]):KeyBinding[] {
 
             var bindings:KeyBinding[] = [];
-            actions.forEach((action, index, array) => {
-                if (action.hasShortcut()) {
-                    bindings.push(action.getShortcut());
-                }
+            actions.forEach((action:Action) => {
+                action.getKeyBindings().forEach((keyBinding:KeyBinding) => {
+                    bindings.push(keyBinding);
+                });
+
             });
             return bindings;
         }
