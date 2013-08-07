@@ -24,26 +24,4 @@ module api_app_wizard {
             api_event.onEvent('wizardStep', handler);
         }
     }
-
-    export class DisplayNameChangedEvent extends WizardPanelEvent {
-
-        constructor(wizardPanel:WizardPanel) {
-            super('displayNameChanged', wizardPanel);
-        }
-
-        static on(handler:(event:DisplayNameChangedEvent) => void) {
-            api_event.onEvent('displayNameChanged', handler);
-        }
-    }
-
-    export class NameChangedEvent extends WizardPanelEvent {
-
-        constructor(wizardPanel:WizardPanel) {
-            super('nameChanged', wizardPanel);
-        }
-
-        static on(handler:(event:NameChangedEvent) => void) {
-            api_event.onEvent('nameChanged', handler);
-        }
-    }
 }
