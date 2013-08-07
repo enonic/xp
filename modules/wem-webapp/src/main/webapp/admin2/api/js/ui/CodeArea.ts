@@ -2,6 +2,7 @@ module api_ui {
     export class CodeArea extends TextArea {
         private options:CodeMirrorOptions = {};
         private codeMirror;
+
         constructor(name:string) {
             super(name);
         }
@@ -13,6 +14,10 @@ module api_ui {
 
         setLineNumbers(value:bool) {
             this.options.lineNumbers = value;
+        }
+
+        getValue():string {
+            return this.codeMirror.getValue();
         }
     }
 }
