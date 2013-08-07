@@ -2,6 +2,8 @@ module app_wizard {
 
     export class MixinForm extends api_ui.Panel {
 
+        private xmlTextArea:api_ui.CodeArea;
+
         constructor() {
             super("MixinForm");
 
@@ -9,16 +11,21 @@ module app_wizard {
 
             var fieldset = new api_ui.Fieldset("Config");
 
-            var textArea = new api_ui.CodeArea("xml");
-            textArea.setSize(api_ui.TextAreaSize.LARGE);
-            textArea.setLineNumbers(true);
+            this.xmlTextArea = new api_ui.CodeArea("xml");
+            this.xmlTextArea.setSize(api_ui.TextAreaSize.LARGE);
+            this.xmlTextArea.setLineNumbers(true);
 
 
-            fieldset.add(new api_ui.FormItem("XML", textArea));
+            fieldset.add(new api_ui.FormItem("XML", this.xmlTextArea));
 
             form.appendChild(fieldset);
 
             this.appendChild(form);
         }
+
+        getXml():string {
+            return this.xmlTextArea.getValue();
+        }
     }
+
 }
