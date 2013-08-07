@@ -63,7 +63,7 @@ module api_ui {
 
         hide() {
             if (this.tooltipEl) {
-                this.tooltipEl.getEl().remove();
+                this.tooltipEl.remove();
                 this.tooltipEl = null;
             }
         }
@@ -134,17 +134,16 @@ module api_ui {
                 break;
             }
 
-            var bodyEl = api_dom.Body.get().getHTMLElement();
             // check screen edges
             if (offsetLeft < 0) {
                 offsetLeft = 0;
-            } else if (offsetLeft + el.offsetWidth > bodyEl.clientWidth) {
-                offsetLeft = bodyEl.clientWidth - el.offsetWidth;
+            } else if (offsetLeft + el.offsetWidth > window.innerWidth) {
+                offsetLeft = window.innerWidth - el.offsetWidth;
             }
             if (offsetTop < 0) {
                 offsetTop = 0;
-            } else if (offsetTop + el.offsetHeight > bodyEl.clientHeight) {
-                offsetTop = bodyEl.clientHeight - el.offsetHeight;
+            } else if (offsetTop + el.offsetHeight > window.innerHeight) {
+                offsetTop = window.innerHeight - el.offsetHeight;
             }
 
             jQuery(el).offset({

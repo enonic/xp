@@ -169,7 +169,7 @@ module api_dom {
 
         remove() {
             var htmlEl = this.el.getHTMLElement();
-            htmlEl.parentNode.removeChild(htmlEl);
+            htmlEl.parentElement.removeChild(htmlEl);
         }
 
         isRendered():bool {
