@@ -10,7 +10,7 @@ module api_app_browse{
 
         private gridAndDetailSplitPanel:api_ui.SplitPanel;
 
-        private filterPanel:any;
+        private filterPanel:api_app_browse_filter.BrowseFilterPanel;
 
         private gridContainer:api_ui.Panel;
 
@@ -18,7 +18,7 @@ module api_app_browse{
 
 
         constructor(browseToolbar:api_ui_toolbar.Toolbar, grid:api_ui_grid.TreeGridPanel, browseItemPanel:BrowseItemPanel,
-                    filterPanel:any) {
+                    filterPanel:api_app_browse_filter.BrowseFilterPanel) {
             super("BrowsePanel");
 
             this.browseToolbar = browseToolbar;

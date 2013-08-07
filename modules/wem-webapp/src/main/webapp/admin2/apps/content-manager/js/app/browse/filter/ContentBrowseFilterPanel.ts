@@ -4,6 +4,7 @@ module app_browse_filter {
 
         constructor(facetData?:api_app_browse_filter.FacetGroupData[]) {
             super(facetData);
+
             var searchAction = new api_app_browse_filter.FilterSearchAction();
             searchAction.addExecutionListener((action:api_app_browse_filter.FilterSearchAction)=> {
                 var params = app_browse.createLoadContentParams(action.getFilterValues());
@@ -18,6 +19,8 @@ module app_browse_filter {
                 });
 
             });
+            this.setFilterSearchAction(searchAction);
+
             var resetAction = new api_app_browse_filter.FilterResetAction();
             resetAction.addExecutionListener((action:api_app_browse_filter.FilterResetAction)=> {
                 var params = app_browse.createLoadContentParams({});
@@ -31,7 +34,6 @@ module app_browse_filter {
                 });
                 new ContentBrowseResetEvent().fire();
             });
-            this.setFilterSearchAction(searchAction);
             this.setFilterResetAction(resetAction);
         }
     }

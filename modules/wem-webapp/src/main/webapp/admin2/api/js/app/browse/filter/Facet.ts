@@ -7,13 +7,13 @@ module api_app_browse_filter {
 
     export class Facet extends api_dom.DivEl {
 
-        checkbox:api_dom.InputEl;
+        private checkbox:api_dom.InputEl;
 
-        label:api_dom.LabelEl;
+        private label:api_dom.LabelEl;
 
-        name:string;
+        private name:string;
 
-        facetGroup;
+        private facetGroup:FacetGroup;
 
         constructor(facetData:FacetData, facetGroup:FacetGroup) {
             super('Facet', 'facet');

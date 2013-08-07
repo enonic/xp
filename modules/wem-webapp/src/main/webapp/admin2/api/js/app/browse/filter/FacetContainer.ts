@@ -2,56 +2,79 @@ module api_app_browse_filter {
 
     export class FacetContainer extends api_dom.DivEl {
 
-        facetGroups:FacetGroup[];
+        private facetGroups:FacetGroup[] = [];
+        private lastFacetGroup:FacetGroup;
 
         constructor(data?:FacetGroupData[]) {
             super('FacetContainer');
-            this.facetGroups = [];
+
             if (data) {
                 for (var i = 0; i < data.length; i++) {
-                    var facetGroup:FacetGroup = this.createFacetGroup(data[i]);
-                    this.facetGroups.push(facetGroup);
-                    this.appendChild(facetGroup);
+                    this.addFacetGroup(new FacetGroup(data[i]));
                 }
             }
+
+            api_event.FilterSearchEvent.on((event) => {
+                if (event.getTarget()) {
+                    this.lastFacetGroup = (<Facet>event.getTarget()).getFacetGroup();
+                } else {
+                    this.lastFacetGroup = undefined;
+                }
+            })
         }
 
-        private createFacetGroup(facetGroupData):FacetGroup {
-            return new FacetGroup(facetGroupData);
-        }
-
-        addFacetGroup(facetGroup:FacetGroup) {
+        private addFacetGroup(facetGroup:FacetGroup) {
             this.facetGroups.push(facetGroup);
             this.appendChild(facetGroup);
         }
 
-        reset() {
-            for (var i in this.facetGroups) {
-                this.facetGroups[i].reset();
+        private getFacetGroup(name:string) {
+            for (var i = 0; i < this.facetGroups.length; i++) {
+                var facetGroup:FacetGroup = this.facetGroups[i];
+                if (facetGroup.getName() == name) {
+                    return facetGroup;
+                }
+            }
+            return null;
+        }
+
+        update(facetGroupsData:FacetGroupData[]) {
+            for (var i = 0; i < facetGroupsData.length; i++) {
+                var facetGroupData = facetGroupsData[i];
+                var facetGroup:FacetGroup = this.getFacetGroup(facetGroupData.name);
+
+                if (facetGroup != null && facetGroup != this.lastFacetGroup) {
+                    facetGroup.update(facetGroupData);
+                } else if (facetGroup == null) {
+                    this.addFacetGroup(new FacetGroup(facetGroupData));
+                }
             }
         }
 
-        getFacetGroups():FacetGroup[] {
-            return this.facetGroups;
+        reset() {
+            for (var i = 0; i < this.facetGroups.length; i++) {
+                this.facetGroups[i].reset();
+            }
+            this.lastFacetGroup = undefined;
         }
 
         getValues():any[] {
             var values = [];
-            for (var i in this.facetGroups) {
-                values[this.facetGroups[i].getName()] = this.facetGroups[i].getValues();
+            var facetGroup:FacetGroup;
+            for (var i = 0; i < this.facetGroups.length; i++) {
+                facetGroup = this.facetGroups[i];
+                values[facetGroup.getName()] = facetGroup.getValues();
             }
             return values;
         }
 
         isDirty():bool {
-            var isDirty:bool = false;
             for (var i = 0; i < this.facetGroups.length; i++) {
                 if (this.facetGroups[i].isDirty()) {
-                    isDirty = true;
-                    break;
+                    return true;
                 }
             }
-            return isDirty;
+            return false;
         }
 
     }

@@ -2,7 +2,7 @@ module api_app_browse_filter {
 
     export class FilterSearchAction extends api_ui.Action {
 
-        filterValues:any[];
+        private filterValues:any[];
 
         constructor() {
             super('filterSearchAction');

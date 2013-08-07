@@ -2,46 +2,35 @@ module api_app_browse_filter {
 
     export class BrowseFilterPanel extends api_ui.Panel {
 
-        filterSearchAction = new FilterSearchAction();
+        private filterSearchAction:FilterSearchAction = new FilterSearchAction();
 
-        filterResetAction = new FilterResetAction();
+        private filterResetAction:FilterResetAction = new FilterResetAction();
 
-        facetContainer:FacetContainer;
+        private facetContainer:FacetContainer;
 
-        searchField:api_dom.InputEl;
+        private searchField:api_dom.InputEl;
 
-        clearFilter:api_dom.AEl;
+        private clearFilter:api_dom.AEl;
 
-        lastFacetGroup:FacetGroup;
-
-        searchFilterTypingTimer:number;
+        private searchFilterTypingTimer:number;
 
         constructor(facetData?:FacetGroupData[]) {
             super('BrowseFilterPanel');
+            this.addClass('filter-panel');
 
-            this.getEl().addClass('filter-panel');
             this.searchField = this.createSearchFieldEl();
-            this.facetContainer = this.createFacetContainer(facetData);
-
             this.clearFilter = this.createClearFilterEl();
+            this.facetContainer = new FacetContainer(facetData);
+
             api_event.FilterSearchEvent.on((event:api_event.FilterSearchEvent) => {
                 if (this.isDirty()) {
                     this.clearFilter.show();
                 } else {
                     this.clearFilter.hide();
                 }
-                if (event.getTarget()) {
-                    this.lastFacetGroup = (<Facet>event.getTarget()).getFacetGroup();
-                } else {
-                    this.lastFacetGroup = undefined;
-                }
                 this.search();
             });
 
-        }
-
-        private createFacetContainer(facetData):FacetContainer {
-            return new FacetContainer(facetData);
         }
 
         private createSearchFieldEl():api_dom.InputEl {
@@ -62,17 +51,6 @@ module api_app_browse_filter {
             return searchField;
         }
 
-        private getFacetGroup(name:string) {
-            var facetGroups:FacetGroup[] = this.facetContainer.getFacetGroups();
-            for (var i in facetGroups) {
-                var facetGroup:FacetGroup = facetGroups[i];
-                if (facetGroup.getName() == name) {
-                    return facetGroup;
-                }
-            }
-            return null;
-        }
-
         private createClearFilterEl():api_dom.AEl {
             var clearFilter:api_dom.AEl = new api_dom.AEl('ClearFilter', 'reset-link');
             clearFilter.getEl().setInnerHtml('Clear filter');
@@ -80,35 +58,13 @@ module api_app_browse_filter {
             clearFilter.hide();
 
             clearFilter.getEl().addEventListener('click', () => {
-                this.filterResetAction.execute();
                 this.reset();
             });
             return clearFilter;
         }
 
-        private reset() {
-            this.searchField.getHTMLElement()['value'] = '';
-            window.clearTimeout(this.searchFilterTypingTimer);
-            this.facetContainer.reset();
-            this.clearFilter.hide();
-        }
-
-        private search() {
-            this.filterSearchAction.setFilterValues(this.getValues());
-            this.filterSearchAction.execute();
-        }
-
-        updateFacets(facetsData:FacetGroupData[]) {
-            for (var i = 0; i < facetsData.length; i++) {
-                var facetGroupData = facetsData[i];
-                var facetGroup:FacetGroup = this.getFacetGroup(facetGroupData.name);
-                if (facetGroup != this.lastFacetGroup && facetGroup != null) {
-                    facetGroup.updateFacets(facetGroupData);
-                } else if (facetGroup == null) {
-                    var newFacetGroup:FacetGroup = new FacetGroup(facetGroupData);
-                    this.facetContainer.addFacetGroup(newFacetGroup);
-                }
-            }
+        updateFacets(facetGroupsData:FacetGroupData[]) {
+            this.facetContainer.update(facetGroupsData)
         }
 
         setFilterSearchAction(action:FilterSearchAction) {
@@ -133,6 +89,19 @@ module api_app_browse_filter {
 
         isDirty() {
             return this.facetContainer.isDirty() || this.searchField.getHTMLElement()['value'].trim() != '';
+        }
+
+        private reset() {
+            this.searchField.getHTMLElement()['value'] = '';
+            window.clearTimeout(this.searchFilterTypingTimer);
+            this.facetContainer.reset();
+            this.clearFilter.hide();
+            this.filterResetAction.execute();
+        }
+
+        private search() {
+            this.filterSearchAction.setFilterValues(this.getValues());
+            this.filterSearchAction.execute();
         }
     }
 

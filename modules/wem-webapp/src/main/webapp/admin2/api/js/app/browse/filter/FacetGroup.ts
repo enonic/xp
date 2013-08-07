@@ -7,46 +7,36 @@ module api_app_browse_filter {
     }
 
     export class FacetGroup extends api_dom.DivEl {
-        facets;
-        name:string;
+
+        private facets:Facet[] = [];
+
+        private name:string;
 
         constructor(facetGroupData:FacetGroupData) {
             super('FacetGroup', 'facet-group');
-            var facetTitle:api_dom.H2El = new api_dom.H2El('FacetTitle');
-            this.facets = [];
             this.name = facetGroupData.name;
+
+            var facetTitle:api_dom.H2El = new api_dom.H2El('FacetTitle');
             facetTitle.getEl().setInnerHtml(facetGroupData.displayName || facetGroupData.name);
             this.appendChild(facetTitle);
-            this.updateFacets(facetGroupData);
-        }
 
-        addFacet(facet:Facet) {
-            this.appendChild(facet);
-            this.facets.push(facet);
-        }
-
-        updateFacets(facetGroupData:FacetGroupData) {
-            var isHidden = true;
+            var needHide = true;
             for (var i = 0; i < facetGroupData.terms.length; i++) {
                 var facetData = facetGroupData.terms[i];
                 if (facetData.count > 0) {
-                    isHidden = false;
+                    needHide = false;
                 }
-                var facet:Facet = this.getFacet(facetData.name);
-                if (facet != null) {
-                    facet.update(facetData);
-                } else {
-                    facet = new Facet(facetData, this);
-                    this.addFacet(facet);
-                }
-
+                this.addFacet(new Facet(facetData, this));
             }
 
-            if (isHidden) {
+            if (needHide) {
                 this.hide();
-            } else {
-                this.show();
             }
+        }
+
+        private addFacet(facet:Facet) {
+            this.appendChild(facet);
+            this.facets.push(facet);
         }
 
         private getFacet(name:string):Facet {
@@ -57,6 +47,28 @@ module api_app_browse_filter {
                 }
             }
             return null;
+        }
+
+        update(facetGroupData:FacetGroupData) {
+            var needHide = true;
+            for (var i = 0; i < facetGroupData.terms.length; i++) {
+                var facetData = facetGroupData.terms[i];
+                if (facetData.count > 0) {
+                    needHide = false;
+                }
+                var facet:Facet = this.getFacet(facetData.name);
+                if (facet != null) {
+                    facet.update(facetData);
+                } else {
+                    this.addFacet(new Facet(facetData, this));
+                }
+            }
+
+            if (needHide) {
+                this.hide();
+            } else if (!this.isVisible()) {
+                this.show();
+            }
         }
 
         reset() {
@@ -88,7 +100,6 @@ module api_app_browse_filter {
                     values.push(facet.getName());
                 }
             }
-
             return values;
         }
 
