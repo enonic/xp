@@ -38,21 +38,13 @@ module api_ui {
         }
 
         setValue(value:string):TextInput {
-            this.getEl().setValue(this.removeForbiddenChars(value));
+            super.setValue(this.removeForbiddenChars(value));
             return this;
-        }
-
-        getValue():string {
-            return this.getEl().getValue();
         }
 
         setName(value:string):TextInput {
-            this.getEl().setAttribute('name', value);
+            super.setName(value);
             return this;
-        }
-
-        getName():string {
-            return this.getEl().getAttribute('name');
         }
 
         setPlaceholder(value:string):TextInput {
