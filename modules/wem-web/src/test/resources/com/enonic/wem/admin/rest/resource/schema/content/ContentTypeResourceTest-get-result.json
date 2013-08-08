@@ -1,0 +1,20 @@
+{
+    "contentTypes": [
+        {
+            "abstract": false,
+            "allowChildren": true,
+            "contentDisplayNameScript": null,
+            "displayName": null,
+            "final": false,
+            "form": {
+                "total": 1
+            },
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:mymodule:my_cty",
+            "module": "mymodule",
+            "name": "my_cty",
+            "qualifiedName": "mymodule:my_cty",
+            "superType": "system:unstructured"
+        }
+    ],
+    "total": 1
+}

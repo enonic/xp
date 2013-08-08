@@ -13,8 +13,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.BooleanUtils;
-
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
@@ -65,13 +63,14 @@ public class ContentTypeResource
     private UploadService uploadService;
 
     @GET
-    public AbstractContentTypeJson get( @QueryParam("format") final String format,
-                                        @QueryParam("qualifiedNames") final List<String> names,
-                                        @QueryParam("mixinReferencesToFormItems") final Boolean reference )
+    public AbstractContentTypeJson get( @QueryParam("qualifiedNames") final List<String> qualifiedNamesAsStrings,
+                                        @QueryParam("format") final String format,
+                                        @QueryParam("mixinReferencesToFormItems") final Boolean mixinReferencesToFormItems )
     {
-        final QualifiedContentTypeNames qualifiedNames = QualifiedContentTypeNames.from( names );
-        final GetContentTypes getContentTypes = Commands.contentType().get().qualifiedNames( qualifiedNames );
-        getContentTypes.mixinReferencesToFormItems( BooleanUtils.isTrue( reference ) );
+        final QualifiedContentTypeNames qualifiedNames = QualifiedContentTypeNames.from( qualifiedNamesAsStrings );
+        final GetContentTypes getContentTypes = Commands.contentType().get().
+            qualifiedNames( qualifiedNames ).
+            mixinReferencesToFormItems( mixinReferencesToFormItems );
 
         final ContentTypes contentTypes = client.execute( getContentTypes );
 
@@ -84,6 +83,10 @@ public class ContentTypeResource
             else if ( format.equalsIgnoreCase( FORMAT_XML ) )
             {
                 return new ContentTypeConfigListJson( contentTypes );
+            }
+            else
+            {
+                throw new IllegalArgumentException( "Unknown format: " + format );
             }
         }
 
@@ -99,9 +102,9 @@ public class ContentTypeResource
             } ).
             transform( new Function<QualifiedContentTypeName, String>()
             {
-                public String apply( final QualifiedContentTypeName space )
+                public String apply( final QualifiedContentTypeName qualifiedContentTypeName )
                 {
-                    return space.toString();
+                    return qualifiedContentTypeName.toString();
                 }
             } ).
             toArray( String.class );
@@ -158,7 +161,8 @@ public class ContentTypeResource
         if ( !unableDelete.isEmpty() )
         {
             final String nameNotDeleted = Joiner.on( ", " ).join( unableDelete );
-            throw new NotFoundException( String.format( "Unable to delete content type [%s]: Content type is being used", nameNotDeleted ) );
+            throw new NotFoundException(
+                String.format( "Unable to delete content type [%s]: Content type is being used", nameNotDeleted ) );
         }
     }
 

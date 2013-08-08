@@ -8,6 +8,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
+import org.codehaus.jackson.map.SerializationConfig;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -20,6 +21,15 @@ public class JsonTestHelper
     private final boolean prettyPrint;
 
     private final ResourceTestHelper resourceTestHelper;
+
+    public JsonTestHelper()
+    {
+        this.resourceTestHelper = new ResourceTestHelper( this );
+        this.prettyPrint = true;
+        objectMapper = new ObjectMapper();
+        objectMapper.enable( SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY );
+        objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
+    }
 
     public JsonTestHelper( final Object testInstance )
     {
@@ -81,6 +91,18 @@ public class JsonTestHelper
         }
     }
 
+    public JsonNode objectToJson( final Object value )
+    {
+        try
+        {
+            return objectMapper.valueToTree( value );
+        }
+        catch ( Exception e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
 
     public JsonNode stringToJson( final String jsonString )
     {
@@ -100,5 +122,11 @@ public class JsonTestHelper
     public static void assertJsonEquals( final JsonNode expectedJson, final JsonNode actualJson )
     {
         assertEquals( expectedJson, actualJson );
+    }
+
+    public void assertJsonEquals2( final JsonNode expectedJson, final JsonNode actualJson )
+    {
+
+        assertEquals( jsonToString( expectedJson ), jsonToString( actualJson ) );
     }
 }
