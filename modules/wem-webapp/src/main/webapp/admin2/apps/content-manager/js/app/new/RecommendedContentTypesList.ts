@@ -15,6 +15,10 @@ module app_new {
             this.appendChild(this.contentTypesList);
         }
 
+        addSelectedListener(listener:(selectedContentType:api_remote_contenttype.ContentType) => void) {
+            this.contentTypesList.addSelectedListener(listener);
+        }
+
         refresh() {
             var recommendedArray:string[] = RecentContentTypes.get().getRecommendedContentTypes();
 

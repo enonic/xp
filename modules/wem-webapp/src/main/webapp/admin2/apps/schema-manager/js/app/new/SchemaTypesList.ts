@@ -9,43 +9,29 @@ module app_new {
     export class SchemaTypesList extends api_dom.DivEl {
 
         private ul:api_dom.UlEl;
-        private items:SchemaTypeListItem[];
 
-        constructor() {
+        private selectedListeners:Function[] = [];
+
+        constructor(items:SchemaTypeListItem[]) {
             super("SchemaTypeList", "schema-type-list");
 
             this.ul = new api_dom.UlEl("SchemaTypeList");
             this.appendChild(this.ul);
 
-            this.setItems(this.createItems());
+            this.layoutItems(items);
         }
 
-        private setItems(items:SchemaTypeListItem[]):SchemaTypesList {
-            this.items = items;
-            return this.layoutItems(items);
+        addSelectedListener(listener:(itemSelected:SchemaTypeListItem) => void) {
+            this.selectedListeners.push(listener);
         }
 
-        private createItems():SchemaTypeListItem[] {
-            return [
-                {
-                    type: 'ContentType',
-                    displayName: 'Content Type',
-                    iconUrl: api_util.getAbsoluteUri('admin/rest/schema/image/ContentType:system:structured')
-                },
-                {
-                    type: 'RelationshipType',
-                    displayName: 'Relationship Type',
-                    iconUrl: api_util.getAbsoluteUri('admin/rest/schema/image/RelationshipType:_:_') // default icon for RelationshipType
-                },
-                {
-                    type: 'Mixin',
-                    displayName: 'Mixin',
-                    iconUrl: api_util.getAbsoluteUri('admin/rest/schema/image/Mixin:_:_') // default icon for Mixin
-                }
-            ]
+        private fireSelectedEvent(selectedItem:SchemaTypeListItem) {
+            this.selectedListeners.forEach((listener:(itemSelected:SchemaTypeListItem) => void) => {
+                listener(selectedItem);
+            });
         }
 
-        private layoutItems(items:SchemaTypeListItem[]):SchemaTypesList {
+        private layoutItems(items:SchemaTypeListItem[]) {
             this.ul.removeChildren();
             for (var i = 0; i < items.length; i++) {
                 this.ul.appendChild(this.renderListItem(items[i]));
@@ -63,11 +49,9 @@ module app_new {
             li.appendChild(h6);
 
             li.getEl().addEventListener("click", function (event:Event) => {
-                new NewSchemaEvent(item.type).fire();
+                this.fireSelectedEvent(item);
             });
             return li;
         }
-
     }
-
 }

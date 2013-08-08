@@ -6,11 +6,23 @@ module app_new {
 
         private contentTypes:api_remote_contenttype.ContentType[];
 
+        private contentTypeSelectedListeners:Function[] = [];
+
         constructor() {
             super("ContentTypeList", "content-type-list");
 
             this.ul = new api_dom.UlEl();
             this.appendChild(this.ul);
+        }
+
+        addSelectedListener(listener:(selectedContentType:api_remote_contenttype.ContentType) => void) {
+            this.contentTypeSelectedListeners.push(listener);
+        }
+
+        private fireSelectedEvent(selectedContentType:api_remote_contenttype.ContentType) {
+            this.contentTypeSelectedListeners.forEach((listener:(selectedContentType:api_remote_contenttype.ContentType) => void) => {
+                listener(selectedContentType);
+            });
         }
 
         setContentTypes(contentTypes:api_remote_contenttype.ContentType[]) {
@@ -55,7 +67,7 @@ module app_new {
             var listItemEl = new ContentTypeListItemEl(listItem);
 
             listItemEl.getEl().addEventListener("click", () => {
-                new NewContentEvent(contentType).fire();
+                this.fireSelectedEvent(contentType);
             });
             return listItemEl;
         }

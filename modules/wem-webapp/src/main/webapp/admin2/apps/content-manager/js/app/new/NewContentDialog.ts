@@ -21,7 +21,14 @@ module app_new {
 
 
             this.recommendedList = new RecommendedContentTypesList("block recommended");
+            this.recommendedList.addSelectedListener((selectedContentType:api_remote_contenttype.ContentType) => {
+                this.closeAndIssueNewContentEvent(selectedContentType);
+            });
+
             this.recentList = new RecentContentTypesList("block recent");
+            this.recentList.addSelectedListener((selectedContentType:api_remote_contenttype.ContentType) => {
+                this.closeAndIssueNewContentEvent(selectedContentType);
+            });
 
             var leftColumn = new api_dom.DivEl().setClass("column column-left");
             leftColumn.appendChild(this.recommendedList);
@@ -29,6 +36,10 @@ module app_new {
             this.appendChildToContentPanel(leftColumn);
 
             this.allList = new AllContentTypesList("column column-right block all");
+            this.allList.addSelectedListener((selectedContentType:api_remote_contenttype.ContentType) => {
+                this.closeAndIssueNewContentEvent(selectedContentType);
+            });
+
             this.appendChildToContentPanel(this.allList);
 
             this.setCancelAction(this.cancelAction);
@@ -37,6 +48,11 @@ module app_new {
             });
 
             api_dom.Body.get().appendChild(this);
+        }
+
+        private closeAndIssueNewContentEvent(contentType:api_remote_contenttype.ContentType) {
+            this.close();
+            new NewContentEvent(contentType).fire();
         }
 
         show() {

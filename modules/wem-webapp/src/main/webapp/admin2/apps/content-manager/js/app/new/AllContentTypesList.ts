@@ -19,6 +19,10 @@ module app_new {
             this.appendChild(this.contentTypesList);
         }
 
+        addSelectedListener(listener:(selectedContentType:api_remote_contenttype.ContentType) => void) {
+            this.contentTypesList.addSelectedListener(listener);
+        }
+
         refresh() {
 
             api_remote.RemoteContentTypeService.contentType_list({}, function (result) => {

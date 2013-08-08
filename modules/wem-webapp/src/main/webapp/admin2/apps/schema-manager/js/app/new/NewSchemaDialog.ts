@@ -6,6 +6,24 @@ module app_new {
 
         private schemaTypesList:SchemaTypesList;
 
+        private schemaTypeListItems:SchemaTypeListItem[] = [
+            {
+                type: 'ContentType',
+                displayName: 'Content Type',
+                iconUrl: api_util.getAbsoluteUri('admin/rest/schema/image/ContentType:system:structured')
+            },
+            {
+                type: 'RelationshipType',
+                displayName: 'Relationship Type',
+                iconUrl: api_util.getAbsoluteUri('admin/rest/schema/image/RelationshipType:_:_') // default icon for RelationshipType
+            },
+            {
+                type: 'Mixin',
+                displayName: 'Mixin',
+                iconUrl: api_util.getAbsoluteUri('admin/rest/schema/image/Mixin:_:_') // default icon for Mixin
+            }
+        ];
+
         constructor() {
             super({
                 title: "Select Kind",
@@ -15,7 +33,7 @@ module app_new {
 
             this.addClass("new-schema-dialog");
 
-            this.schemaTypesList = new SchemaTypesList();
+            this.schemaTypesList = new SchemaTypesList(this.schemaTypeListItems);
             this.appendChildToContentPanel(this.schemaTypesList);
 
             this.setCancelAction(this.cancelAction);
@@ -23,12 +41,12 @@ module app_new {
                 this.close();
             });
 
-            api_dom.Body.get().appendChild(this);
+            this.schemaTypesList.addSelectedListener((selectedItem:SchemaTypeListItem) => {
+                this.close();
+                new NewSchemaEvent(selectedItem.type).fire();
+            });
 
-            NewSchemaEvent.on((event) => {
-                    this.close();
-                }
-            );
+            api_dom.Body.get().appendChild(this);
         }
 
     }
