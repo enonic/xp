@@ -69,10 +69,9 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        final ContentTypes contentTypes = ContentTypes.from( contentType );
         Mockito.when( client.execute(
             Commands.contentType().get().qualifiedNames( QualifiedContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
-            contentTypes );
+            ContentTypes.from( contentType ) );
 
         // execute
         Object resultObject = resource.get( Lists.newArrayList( MY_CTY_QUALIFIED_NAME.toString() ), "JSON", true );
