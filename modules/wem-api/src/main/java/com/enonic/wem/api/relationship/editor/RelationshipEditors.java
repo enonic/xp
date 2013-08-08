@@ -14,7 +14,7 @@ public abstract class RelationshipEditors
         return new CompositeRelationshipEditor( editors );
     }
 
-    public static RelationshipEditor removeProperties( final String[] remove )
+    public static RelationshipEditor removeProperties( final List<String> remove )
     {
         return new RemoveRelationshipPropertiesEditor( Lists.newArrayList( remove ) );
     }

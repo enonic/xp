@@ -1,6 +1,7 @@
 package com.enonic.wem.admin.rest.resource.relationship;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +14,11 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.TestUtil;
 import com.enonic.wem.admin.rest.resource.relationship.model.CreateRelationshipJson;
+import com.enonic.wem.admin.rest.resource.relationship.model.RelationshipCreateParams;
 import com.enonic.wem.admin.rest.resource.relationship.model.RelationshipJson;
+import com.enonic.wem.admin.rest.resource.relationship.model.RelationshipKeyParam;
 import com.enonic.wem.admin.rest.resource.relationship.model.RelationshipListJson;
+import com.enonic.wem.admin.rest.resource.relationship.model.RelationshipUpdateParams;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.relationship.CreateRelationship;
 import com.enonic.wem.api.command.relationship.GetRelationships;
@@ -114,7 +118,13 @@ public class RelationshipResourceTest
         properties.put( "b", "2" );
         properties.put( "c", "3" );
 
-        CreateRelationshipJson result = resource.create( QualifiedRelationshipTypeName.LIKE.toString(), "123", "321", properties );
+        final RelationshipCreateParams params = new RelationshipCreateParams();
+        params.setFromContent( "123" );
+        params.setToContent( "321" );
+        params.setProperties( properties );
+        params.setType( QualifiedRelationshipTypeName.LIKE.toString() );
+
+        CreateRelationshipJson result = resource.create( params );
         assertNotNull( result );
         assertEquals( "123", result.getFromContent() );
         assertEquals( "321", result.getToContent() );
@@ -122,7 +132,7 @@ public class RelationshipResourceTest
     }
 
     @Test
-    public void update()
+    public void testUpdate()
         throws Exception
     {
         RelationshipKey relationshipKey = RelationshipKey.newRelationshipKey().
@@ -137,13 +147,24 @@ public class RelationshipResourceTest
         final RelationshipResource resource = new RelationshipResource();
         resource.setClient( client );
 
-        final Map<String, String> propertiesToAdd = new HashMap<>();
-        propertiesToAdd.put( "addA", "1" );
-        propertiesToAdd.put( "addB", "2" );
+        final Map<String, String> add = new HashMap<>();
+        add.put( "addA", "1" );
+        add.put( "addB", "2" );
 
-        final String[] remove = new String[] {"remove1", "remove2"};
+        final List<String> remove = Arrays.asList( "remove1", "remove2" );
 
-        resource.update( relationshipKey, propertiesToAdd, remove );
+        final RelationshipUpdateParams params = new RelationshipUpdateParams();
+        params.setAdd( add );
+        params.setRemove( remove );
+
+        final RelationshipKeyParam relationshipKeyParam = new RelationshipKeyParam();
+        relationshipKeyParam.setType( "system:like" );
+        relationshipKeyParam.setFromContent( "123" );
+        relationshipKeyParam.setToContent( "321" );
+
+        params.setRelationshipKey( relationshipKeyParam );
+
+        resource.update( params );
     }
 
     @Test(expected = WebApplicationException.class)
@@ -163,6 +184,23 @@ public class RelationshipResourceTest
         final RelationshipResource resource = new RelationshipResource();
         resource.setClient( client );
 
-        resource.update( relationshipKey, null, null );
+        final Map<String, String> add = new HashMap<>();
+        add.put( "addA", "1" );
+        add.put( "addB", "2" );
+
+        final List<String> remove = Arrays.asList( "remove1", "remove2" );
+
+        final RelationshipUpdateParams params = new RelationshipUpdateParams();
+        params.setAdd( add );
+        params.setRemove( remove );
+
+        final RelationshipKeyParam relationshipKeyParam = new RelationshipKeyParam();
+        relationshipKeyParam.setType( "system:like" );
+        relationshipKeyParam.setFromContent( "123" );
+        relationshipKeyParam.setToContent( "321" );
+
+        params.setRelationshipKey( relationshipKeyParam );
+
+        resource.update( params );
     }
 }
