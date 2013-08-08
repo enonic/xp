@@ -7,18 +7,26 @@ module api_remote {
     export var RemoteAccountService:RemoteAccountServiceInterface;
 
     export interface RemoteAccountServiceInterface {
-        account_find (params:api_remote_account.FindParams, callback:(result:api_remote_account.FindResult)=>void):void;
-        account_getGraph (params:api_remote_account.GetGraphParams, callback:(result:api_remote_account.GetGraphResult)=>void):void;
+        account_find (params:api_remote_account.FindParams, success:(result:api_remote_account.FindResult)=>void,
+                      failure?:(result:api_remote.FailureResult)=>void):void;
+        account_getGraph (params:api_remote_account.GetGraphParams, success:(result:api_remote_account.GetGraphResult)=>void,
+                          failure?:(result:api_remote.FailureResult)=>void):void;
         account_changePassword (params:api_remote_account.ChangePasswordParams,
-                                callback:(result:api_remote_account.ChangePasswordResult)=>void):void;
+                                success:(result:api_remote_account.ChangePasswordResult)=>void,
+                                failure?:(result:api_remote.FailureResult)=>void):void;
         account_verifyUniqueEmail (params:api_remote_account.VerifyUniqueEmailParams,
-                                   callback:(result:api_remote_account.VerifyUniqueEmailResult)=>void):void;
+                                   success:(result:api_remote_account.VerifyUniqueEmailResult)=>void,
+                                   failure?:(result:api_remote.FailureResult)=>void):void;
         account_suggestUserName (params:api_remote_account.SuggestUserNameParams,
-                                 callback:(result:api_remote_account.SuggestUserNameResult)=>void):void;
+                                 success:(result:api_remote_account.SuggestUserNameResult)=>void,
+                                 failure?:(result:api_remote.FailureResult)=>void):void;
         account_createOrUpdate (params:api_remote_account.CreateOrUpdateParams,
-                                callback:(result:api_remote_account.CreateOrUpdateResult)=>void):void;
-        account_delete (params:api_remote_account.DeleteParams, callback:(result:api_remote_account.DeleteResult)=>void):void;
-        account_get (params:api_remote_account.GetParams, callback:(result:api_remote_account.GetResult)=>void):void;
+                                success:(result:api_remote_account.CreateOrUpdateResult)=>void,
+                                failure?:(result:api_remote.FailureResult)=>void):void;
+        account_delete (params:api_remote_account.DeleteParams, success:(result:api_remote_account.DeleteResult)=>void,
+                        failure?:(result:api_remote.FailureResult)=>void):void;
+        account_get (params:api_remote_account.GetParams, success:(result:api_remote_account.GetResult)=>void,
+                     failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
     class RemoteAccountServiceImpl extends BaseRemoteService implements RemoteAccountServiceInterface {
@@ -32,40 +40,48 @@ module api_remote {
             super('api_remote.RemoteAccountService', methods);
         }
 
-        account_find(params:api_remote_account.FindParams, callback:(result:api_remote_account.FindResult)=>void):void {
-            console.log(params, callback);
+        account_find(params:api_remote_account.FindParams, success:(result:api_remote_account.FindResult)=>void,
+                     failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
-        account_getGraph(params:api_remote_account.GetGraphParams, callback:(result:api_remote_account.GetGraphResult)=>void):void {
-            console.log(params, callback);
+        account_getGraph(params:api_remote_account.GetGraphParams, success:(result:api_remote_account.GetGraphResult)=>void,
+                         failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
         account_changePassword(params:api_remote_account.ChangePasswordParams,
-                               callback:(result:api_remote_account.ChangePasswordResult)=>void):void {
-            console.log(params, callback);
+                               success:(result:api_remote_account.ChangePasswordResult)=>void,
+                               failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
         account_verifyUniqueEmail(params:api_remote_account.VerifyUniqueEmailParams,
-                                  callback:(result:api_remote_account.VerifyUniqueEmailResult)=>void):void {
-            console.log(params, callback);
+                                  success:(result:api_remote_account.VerifyUniqueEmailResult)=>void,
+                                  failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
         account_suggestUserName(params:api_remote_account.SuggestUserNameParams,
-                                callback:(result:api_remote_account.SuggestUserNameResult)=>void):void {
-            console.log(params, callback);
+                                success:(result:api_remote_account.SuggestUserNameResult)=>void,
+                                failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
         account_createOrUpdate(params:api_remote_account.CreateOrUpdateParams,
-                               callback:(result:api_remote_account.CreateOrUpdateResult)=>void):void {
-            console.log(params, callback);
+                               success:(result:api_remote_account.CreateOrUpdateResult)=>void,
+                               failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
-        account_delete(params:api_remote_account.DeleteParams, callback:(result:api_remote_account.DeleteResult)=>void):void {
-            console.log(params, callback);
+        account_delete(params:api_remote_account.DeleteParams, success:(result:api_remote_account.DeleteResult)=>void,
+                       failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
-        account_get(params:api_remote_account.GetParams, callback:(result:api_remote_account.GetResult)=>void):void {
-            console.log(params, callback);
+        account_get(params:api_remote_account.GetParams, success:(result:api_remote_account.GetResult)=>void,
+                    failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
     }
 

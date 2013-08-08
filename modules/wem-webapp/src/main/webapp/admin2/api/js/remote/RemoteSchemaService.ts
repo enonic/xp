@@ -7,8 +7,10 @@ module api_remote {
     export var RemoteSchemaService:RemoteSchemaServiceInterface;
 
     export interface RemoteSchemaServiceInterface {
-        schema_tree (params:api_remote_schema.GetTreeParams, callback:(result:api_remote_schema.GetTreeResult)=>void):void;
-        schema_list (params:api_remote_schema.ListParams, callback:(result:api_remote_schema.ListResult)=>void):void;
+        schema_tree (params:api_remote_schema.GetTreeParams, success:(result:api_remote_schema.GetTreeResult)=>void,
+                     failure?:(result:api_remote.FailureResult)=>void):void;
+        schema_list (params:api_remote_schema.ListParams, success:(result:api_remote_schema.ListResult)=>void,
+                     failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
     class RemoteSchemaServiceImpl extends BaseRemoteService implements RemoteSchemaServiceInterface {
@@ -21,12 +23,14 @@ module api_remote {
             super('api_remote.RemoteSchemaService', methods);
         }
 
-        schema_tree(params:api_remote_schema.GetTreeParams, callback:(result:api_remote_schema.GetTreeResult)=>void):void {
-            console.log(params, callback);
+        schema_tree(params:api_remote_schema.GetTreeParams, success:(result:api_remote_schema.GetTreeResult)=>void,
+                    failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
-        schema_list(params:api_remote_schema.ListParams, callback:(result:api_remote_schema.ListResult)=>void):void {
-            console.log(params, callback);
+        schema_list(params:api_remote_schema.ListParams, success:(result:api_remote_schema.ListResult)=>void,
+                    failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
     }
 

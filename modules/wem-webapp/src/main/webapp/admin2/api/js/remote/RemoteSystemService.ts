@@ -7,10 +7,14 @@ module api_remote {
     export var RemoteSystemService:RemoteSystemServiceInterface;
 
     export interface RemoteSystemServiceInterface {
-        util_getCountries (params:GetCountriesParams, callback:(result:GetCountriesResult)=>void):void;
-        util_getLocales (params:GetLocalesParams, callback:(result:GetLocalesResult)=>void):void;
-        util_getTimeZones (params:GetTimeZonesParams, callback:(result:GetTimeZonesResult)=>void):void;
-        system_getSystemInfo (params:SystemGetSystemInfoParams, callback:(result:SystemGetSystemInfoResult)=>void):void;
+        util_getCountries (params:GetCountriesParams, success:(result:GetCountriesResult)=>void,
+                           failure?:(result:api_remote.FailureResult)=>void):void;
+        util_getLocales (params:GetLocalesParams, success:(result:GetLocalesResult)=>void,
+                         failure?:(result:api_remote.FailureResult)=>void):void;
+        util_getTimeZones (params:GetTimeZonesParams, success:(result:GetTimeZonesResult)=>void,
+                           failure?:(result:api_remote.FailureResult)=>void):void;
+        system_getSystemInfo (params:SystemGetSystemInfoParams, success:(result:SystemGetSystemInfoResult)=>void,
+                              failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
     class RemoteSystemServiceImpl extends BaseRemoteService implements RemoteSystemServiceInterface {
@@ -24,20 +28,24 @@ module api_remote {
             super('api_remote.RemoteSystemService', methods);
         }
 
-        util_getCountries(params:GetCountriesParams, callback:(result:GetCountriesResult)=>void):void {
-            console.log(params, callback);
+        util_getCountries(params:GetCountriesParams, success:(result:GetCountriesResult)=>void,
+                          failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
-        util_getLocales(params:GetLocalesParams, callback:(result:GetLocalesResult)=>void):void {
-            console.log(params, callback);
+        util_getLocales(params:GetLocalesParams, success:(result:GetLocalesResult)=>void,
+                        failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
-        util_getTimeZones(params:GetTimeZonesParams, callback:(result:GetTimeZonesResult)=>void):void {
-            console.log(params, callback);
+        util_getTimeZones(params:GetTimeZonesParams, success:(result:GetTimeZonesResult)=>void,
+                          failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
-        system_getSystemInfo(params:SystemGetSystemInfoParams, callback:(result:SystemGetSystemInfoResult)=>void):void {
-            console.log(params, callback);
+        system_getSystemInfo(params:SystemGetSystemInfoParams, success:(result:SystemGetSystemInfoResult)=>void,
+                             failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
     }
 

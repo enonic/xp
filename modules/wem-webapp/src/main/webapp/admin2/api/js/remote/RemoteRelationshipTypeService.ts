@@ -8,11 +8,13 @@ module api_remote {
 
     export interface RemoteRelationshipTypeServiceInterface {
         relationshipType_delete (params:api_remote_relationshiptype.DeleteParams,
-                                 callback:(result:api_remote_relationshiptype.DeleteResult)=>void):void;
-        relationshipType_get (params:api_remote_relationshiptype.GetParams,
-                              callback:(result:api_remote_relationshiptype.GetResult)=>void):void;
+                                 success:(result:api_remote_relationshiptype.DeleteResult)=>void,
+                                 failure?:(result:api_remote.FailureResult)=>void):void;
+        relationshipType_get (params:api_remote_relationshiptype.GetParams, success:(result:api_remote_relationshiptype.GetResult)=>void,
+                              failure?:(result:api_remote.FailureResult)=>void):void;
         relationshipType_createOrUpdate (params:api_remote_relationshiptype.CreateOrUpdateParams,
-                                         callback:(result:api_remote_relationshiptype.CreateOrUpdateResult)=>void):void;
+                                         success:(result:api_remote_relationshiptype.CreateOrUpdateResult)=>void,
+                                         failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
     class RemoteRelationshipTypeServiceImpl extends BaseRemoteService implements RemoteRelationshipTypeServiceInterface {
@@ -25,19 +27,21 @@ module api_remote {
             super('api_remote.RemoteRelationshipTypeService', methods);
         }
 
-        relationshipType_get(params:api_remote_relationshiptype.GetParams,
-                             callback:(result:api_remote_relationshiptype.GetResult)=>void):void {
-            console.log(params, callback);
+        relationshipType_get(params:api_remote_relationshiptype.GetParams, success:(result:api_remote_relationshiptype.GetResult)=>void,
+                             failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
         relationshipType_createOrUpdate(params:api_remote_relationshiptype.CreateOrUpdateParams,
-                                        callback:(result:api_remote_relationshiptype.CreateOrUpdateResult)=>void):void {
-            console.log(params, callback);
+                                        success:(result:api_remote_relationshiptype.CreateOrUpdateResult)=>void,
+                                        failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
         relationshipType_delete(params:api_remote_relationshiptype.DeleteParams,
-                                callback:(result:api_remote_relationshiptype.DeleteResult)=>void):void {
-            console.log(params, callback);
+                                success:(result:api_remote_relationshiptype.DeleteResult)=>void,
+                                failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
     }
 

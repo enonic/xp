@@ -7,10 +7,12 @@ module api_remote {
     export var RemoteMixinService:RemoteMixinServiceInterface;
 
     export interface RemoteMixinServiceInterface {
-        mixin_get (params:api_remote_mixin.GetParams, callback:(result:api_remote_mixin.GetResult)=>void):void;
-        mixin_createOrUpdate (params:api_remote_mixin.CreateOrUpdateParams,
-                              callback:(result:api_remote_mixin.CreateOrUpdateResult)=>void):void;
-        mixin_delete (params:api_remote_mixin.DeleteParams, callback:(result:api_remote_mixin.DeleteResult)=>void):void;
+        mixin_get (params:api_remote_mixin.GetParams, callback:(result:api_remote_mixin.GetResult)=>void,
+                   failure?:(result:api_remote.FailureResult)=>void):void;
+        mixin_createOrUpdate (params:api_remote_mixin.CreateOrUpdateParams, callback:(result:api_remote_mixin.CreateOrUpdateResult)=>void,
+                              failure?:(result:api_remote.FailureResult)=>void):void;
+        mixin_delete (params:api_remote_mixin.DeleteParams, callback:(result:api_remote_mixin.DeleteResult)=>void,
+                      failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
     class RemoteMixinServiceImpl extends BaseRemoteService implements RemoteMixinServiceInterface {
@@ -23,17 +25,19 @@ module api_remote {
             super('api_remote.RemoteMixinService', methods);
         }
 
-        mixin_get(params:api_remote_mixin.GetParams, callback:(result:api_remote_mixin.GetResult)=>void):void {
-            console.log(params, callback);
+        mixin_get(params:api_remote_mixin.GetParams, callback:(result:api_remote_mixin.GetResult)=>void,
+                  failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, callback, failure);
         }
 
-        mixin_createOrUpdate(params:api_remote_mixin.CreateOrUpdateParams,
-                             callback:(result:api_remote_mixin.CreateOrUpdateResult)=>void):void {
-            console.log(params, callback);
+        mixin_createOrUpdate(params:api_remote_mixin.CreateOrUpdateParams, callback:(result:api_remote_mixin.CreateOrUpdateResult)=>void,
+                             failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, callback, failure);
         }
 
-        mixin_delete(params:api_remote_mixin.DeleteParams, callback:(result:api_remote_mixin.DeleteResult)=>void):void {
-            console.log(params, callback);
+        mixin_delete(params:api_remote_mixin.DeleteParams, callback:(result:api_remote_mixin.DeleteResult)=>void,
+                     failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, callback, failure);
         }
     }
 

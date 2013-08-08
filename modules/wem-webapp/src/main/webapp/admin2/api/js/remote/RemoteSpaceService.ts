@@ -7,11 +7,14 @@ module api_remote {
     export var RemoteSpaceService:RemoteSpaceServiceInterface;
 
     export interface RemoteSpaceServiceInterface {
-        space_list (params:api_remote_space.ListParams, callback:(result:api_remote_space.ListResult)=>void):void;
-        space_get (params:api_remote_space.GetParams, callback:(result:api_remote_space.GetResult)=>void):void;
-        space_delete (params:api_remote_space.DeleteParams, callback:(result:api_remote_space.DeleteResult)=>void):void;
-        space_createOrUpdate (params:api_remote_space.CreateOrUpdateParams,
-                              callback:(result:api_remote_space.CreateOrUpdateResult)=>void):void;
+        space_list (params:api_remote_space.ListParams, success:(result:api_remote_space.ListResult)=>void,
+                    failure?:(result:api_remote.FailureResult)=>void):void;
+        space_get (params:api_remote_space.GetParams, success:(result:api_remote_space.GetResult)=>void,
+                   failure?:(result:api_remote.FailureResult)=>void):void;
+        space_delete (params:api_remote_space.DeleteParams, success:(result:api_remote_space.DeleteResult)=>void,
+                      failure?:(result:api_remote.FailureResult)=>void):void;
+        space_createOrUpdate (params:api_remote_space.CreateOrUpdateParams, success:(result:api_remote_space.CreateOrUpdateResult)=>void,
+                              failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
     class RemoteSpaceServiceImpl extends BaseRemoteService implements RemoteSpaceServiceInterface {
@@ -24,21 +27,24 @@ module api_remote {
             super('api_remote.RemoteSpaceService', methods);
         }
 
-        space_list(params:api_remote_space.ListParams, callback:(result:api_remote_space.ListResult)=>void):void {
-            console.log(params, callback);
+        space_list(params:api_remote_space.ListParams, success:(result:api_remote_space.ListResult)=>void,
+                   failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
-        space_get(params:api_remote_space.GetParams, callback:(result:api_remote_space.GetResult)=>void):void {
-            console.log(params, callback);
+        space_get(params:api_remote_space.GetParams, success:(result:api_remote_space.GetResult)=>void,
+                  failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
-        space_delete(params:api_remote_space.DeleteParams, callback:(result:api_remote_space.DeleteResult)=>void):void {
-            console.log(params, callback);
+        space_delete(params:api_remote_space.DeleteParams, success:(result:api_remote_space.DeleteResult)=>void,
+                     failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
-        space_createOrUpdate(params:api_remote_space.CreateOrUpdateParams,
-                             callback:(result:api_remote_space.CreateOrUpdateResult)=>void):void {
-            console.log(params, callback);
+        space_createOrUpdate(params:api_remote_space.CreateOrUpdateParams, success:(result:api_remote_space.CreateOrUpdateResult)=>void,
+                             failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
     }
 

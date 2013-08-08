@@ -7,12 +7,17 @@ module api_remote {
     export var RemoteContentTypeService:RemoteContentTypeServiceInterface;
 
     export interface RemoteContentTypeServiceInterface {
-        contentType_get (params:api_remote_contenttype.GetParams, callback:(result:api_remote_contenttype.GetResult)=>void):void;
-        contentType_list (params:api_remote_contenttype.ListParams, callback:(result:api_remote_contenttype.ListResult)=>void):void;
+        contentType_get (params:api_remote_contenttype.GetParams, success:(result:api_remote_contenttype.GetResult)=>void,
+                         failure?:(result:api_remote.FailureResult)=>void):void;
+        contentType_list (params:api_remote_contenttype.ListParams, success:(result:api_remote_contenttype.ListResult)=>void,
+                          failure?:(result:api_remote.FailureResult)=>void):void;
         contentType_createOrUpdate (params:api_remote_contenttype.CreateOrUpdateParams,
-                                    callback:(result:api_remote_contenttype.CreateOrUpdateResult)=>void):void;
-        contentType_delete (params:api_remote_contenttype.DeleteParams, callback:(result:api_remote_contenttype.DeleteResult)=>void):void;
-        contentType_tree (params:api_remote_contenttype.GetTreeParams, callback:(result:api_remote_contenttype.GetTreeResult)=>void):void;
+                                    success:(result:api_remote_contenttype.CreateOrUpdateResult)=>void,
+                                    failure?:(result:api_remote.FailureResult)=>void):void;
+        contentType_delete (params:api_remote_contenttype.DeleteParams, success:(result:api_remote_contenttype.DeleteResult)=>void,
+                            failure?:(result:api_remote.FailureResult)=>void):void;
+        contentType_tree (params:api_remote_contenttype.GetTreeParams, success:(result:api_remote_contenttype.GetTreeResult)=>void,
+                          failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
     class RemoteContentTypeServiceImpl extends BaseRemoteService implements RemoteContentTypeServiceInterface {
@@ -26,25 +31,30 @@ module api_remote {
             super('api_remote.RemoteContentTypeService', methods);
         }
 
-        contentType_get(params:api_remote_contenttype.GetParams, callback:(result:api_remote_contenttype.GetResult)=>void):void {
-            console.log(params, callback);
+        contentType_get(params:api_remote_contenttype.GetParams, success:(result:api_remote_contenttype.GetResult)=>void,
+                        failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
-        contentType_list(params:api_remote_contenttype.ListParams, callback:(result:api_remote_contenttype.ListResult)=>void):void {
-            console.log(params, callback);
+        contentType_list(params:api_remote_contenttype.ListParams, success:(result:api_remote_contenttype.ListResult)=>void,
+                         failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
         contentType_createOrUpdate(params:api_remote_contenttype.CreateOrUpdateParams,
-                                   callback:(result:api_remote_contenttype.CreateOrUpdateResult)=>void):void {
-            console.log(params, callback);
+                                   success:(result:api_remote_contenttype.CreateOrUpdateResult)=>void,
+                                   failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
-        contentType_delete(params:api_remote_contenttype.DeleteParams, callback:(result:api_remote_contenttype.DeleteResult)=>void):void {
-            console.log(params, callback);
+        contentType_delete(params:api_remote_contenttype.DeleteParams, success:(result:api_remote_contenttype.DeleteResult)=>void,
+                           failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
-        contentType_tree(params:api_remote_contenttype.GetTreeParams, callback:(result:api_remote_contenttype.GetTreeResult)=>void):void {
-            console.log(params, callback);
+        contentType_tree(params:api_remote_contenttype.GetTreeParams, success:(result:api_remote_contenttype.GetTreeResult)=>void,
+                         failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
     }
 

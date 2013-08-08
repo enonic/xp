@@ -4,4 +4,9 @@ module api_remote {
         success: bool;
         error?: string;
     }
+
+    export interface FailureResult {
+        error: string;
+    }
+
 }

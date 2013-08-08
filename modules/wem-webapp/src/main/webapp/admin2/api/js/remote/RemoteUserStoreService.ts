@@ -7,13 +7,18 @@ module api_remote {
     export var RemoteUserStoreService:RemoteUserStoreServiceInterface;
 
     export interface RemoteUserStoreServiceInterface {
-        userstore_getAll (params:api_remote_userstore.GetAllParams, callback:(result:api_remote_userstore.GetAllResult)=>void):void;
-        userstore_get (params:api_remote_userstore.GetParams, callback:(result:api_remote_userstore.GetResult)=>void):void;
+        userstore_getAll (params:api_remote_userstore.GetAllParams, success:(result:api_remote_userstore.GetAllResult)=>void,
+                          failure?:(result:api_remote.FailureResult)=>void):void;
+        userstore_get (params:api_remote_userstore.GetParams, success:(result:api_remote_userstore.GetResult)=>void,
+                       failure?:(result:api_remote.FailureResult)=>void):void;
         userstore_getConnectors (params:api_remote_userstore.GetConnectorsParams,
-                                 callback:(result:api_remote_userstore.GetConnectorsResult)=>void):void;
+                                 success:(result:api_remote_userstore.GetConnectorsResult)=>void,
+                                 failure?:(result:api_remote.FailureResult)=>void):void;
         userstore_createOrUpdate (params:api_remote_userstore.CreateOrUpdateParams,
-                                  callback:(result:api_remote_userstore.CreateOrUpdateResult)=>void):void;
-        userstore_delete (params:api_remote_userstore.DeleteParams, callback:(result:api_remote_userstore.DeleteResult)=>void):void;
+                                  success:(result:api_remote_userstore.CreateOrUpdateResult)=>void,
+                                  failure?:(result:api_remote.FailureResult)=>void):void;
+        userstore_delete (params:api_remote_userstore.DeleteParams, success:(result:api_remote_userstore.DeleteResult)=>void,
+                          failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
     class RemoteUserStoreServiceImpl extends BaseRemoteService implements RemoteUserStoreServiceInterface {
@@ -27,26 +32,31 @@ module api_remote {
             super('api_remote.RemoteUserStoreService', methods);
         }
 
-        userstore_getAll(params:api_remote_userstore.GetAllParams, callback:(result:api_remote_userstore.GetAllResult)=>void):void {
-            console.log(params, callback);
+        userstore_getAll(params:api_remote_userstore.GetAllParams, success:(result:api_remote_userstore.GetAllResult)=>void,
+                         failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
-        userstore_get(params:api_remote_userstore.GetParams, callback:(result:api_remote_userstore.GetResult)=>void):void {
-            console.log(params, callback);
+        userstore_get(params:api_remote_userstore.GetParams, success:(result:api_remote_userstore.GetResult)=>void,
+                      failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
         userstore_getConnectors(params:api_remote_userstore.GetConnectorsParams,
-                                callback:(result:api_remote_userstore.GetConnectorsResult)=>void):void {
-            console.log(params, callback);
+                                success:(result:api_remote_userstore.GetConnectorsResult)=>void,
+                                failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
         userstore_createOrUpdate(params:api_remote_userstore.CreateOrUpdateParams,
-                                 callback:(result:api_remote_userstore.CreateOrUpdateResult)=>void):void {
-            console.log(params, callback);
+                                 success:(result:api_remote_userstore.CreateOrUpdateResult)=>void,
+                                 failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
 
-        userstore_delete(params:api_remote_userstore.DeleteParams, callback:(result:api_remote_userstore.DeleteResult)=>void):void {
-            console.log(params, callback);
+        userstore_delete(params:api_remote_userstore.DeleteParams, success:(result:api_remote_userstore.DeleteResult)=>void,
+                         failure?:(result:api_remote.FailureResult)=>void):void {
+            console.log(params, success, failure);
         }
     }
 
