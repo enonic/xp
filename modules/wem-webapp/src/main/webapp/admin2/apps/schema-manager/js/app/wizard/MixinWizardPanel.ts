@@ -19,8 +19,8 @@ module app_wizard {
         constructor(id:string) {
             this.formIcon = new api_app_wizard.FormIcon(MixinWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");
 
-            this.saveAction = new SaveMixinAction();
-            this.closeAction = new CloseMixinAction(this);
+            this.closeAction = new api_app_wizard.CloseAction(this);
+            this.saveAction = new api_app_wizard.SaveAction(this);
 
             this.toolbar = new MixinWizardToolbar({
                 saveAction: this.saveAction,

@@ -30,8 +30,8 @@ module app_wizard {
 
             this.formIcon = new api_app_wizard.FormIcon(SpaceWizardPanel.DEFAULT_SPACE_ICON_URL, "Click to upload icon", "rest/upload");
 
-            this.closeAction = new CloseSpaceAction(this);
-            this.saveAction = new SaveSpaceAction();
+            this.closeAction = new api_app_wizard.CloseAction(this);
+            this.saveAction = new api_app_wizard.SaveAction(this);
             this.duplicateAction = new DuplicateSpaceAction();
             this.deleteAction = new DeleteSpaceAction();
 
@@ -44,8 +44,7 @@ module app_wizard {
 
             super({
                 formIcon: this.formIcon,
-                toolbar: this.toolbar,
-                saveAction: this.saveAction
+                toolbar: this.toolbar
             });
 
             this.setDisplayName("New Space");

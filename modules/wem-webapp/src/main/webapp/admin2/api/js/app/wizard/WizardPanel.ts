@@ -5,8 +5,6 @@ module api_app_wizard {
         formIcon:FormIcon;
 
         toolbar:api_ui_toolbar.Toolbar;
-
-        saveAction:api_ui.Action;
     }
 
     export class WizardPanel extends api_ui.Panel implements api_ui.Closeable {
@@ -50,10 +48,6 @@ module api_app_wizard {
             this.next = new WizardStepNavigationArrow(WizardStepNavigationArrow.NEXT, this.stepNavigator);
             this.appendChild(this.previous);
             this.appendChild(this.next);
-
-            params.saveAction.addExecutionListener(() => {
-                this.saveChanges();
-            });
         }
 
         afterRender() {

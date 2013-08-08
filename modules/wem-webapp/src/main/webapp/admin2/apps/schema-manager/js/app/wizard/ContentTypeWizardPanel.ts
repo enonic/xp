@@ -18,8 +18,8 @@ module app_wizard {
             this.formIcon =
             new api_app_wizard.FormIcon(ContentTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");
 
-            this.saveAction = new SaveContentTypeAction();
-            this.closeAction = new CloseContentTypeAction(this);
+            this.closeAction = new api_app_wizard.CloseAction(this);
+            this.saveAction = new api_app_wizard.SaveAction(this);
 
             this.toolbar = new ContentTypeWizardToolbar({
                 saveAction: this.saveAction,

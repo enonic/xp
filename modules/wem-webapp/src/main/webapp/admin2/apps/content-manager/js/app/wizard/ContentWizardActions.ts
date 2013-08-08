@@ -1,15 +1,5 @@
 module app_wizard {
 
-    export class SaveContentAction extends api_ui.Action {
-
-        constructor() {
-            super("Save");
-            this.addExecutionListener(() => {
-                // TODO
-            });
-        }
-    }
-
     export class DuplicateContentAction extends api_ui.Action {
 
         constructor() {
@@ -30,16 +20,4 @@ module app_wizard {
             });
         }
     }
-
-    export class CloseContentAction extends api_ui.Action {
-
-        constructor(wizardPanel:api_app_wizard.WizardPanel, checkCanClose?:bool = true) {
-            super("Close");
-
-            this.addExecutionListener(() => {
-                wizardPanel.close(checkCanClose);
-            });
-        }
-    }
-
 }

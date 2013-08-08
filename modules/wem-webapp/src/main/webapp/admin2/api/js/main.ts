@@ -119,6 +119,8 @@
 ///<reference path='ui/Form.ts' />
 ///<reference path='ui/FormItem.ts' />
 
+///<reference path='app/wizard/SaveAction.ts' />
+///<reference path='app/wizard/CloseAction.ts' />
 ///<reference path='app/wizard/FormIcon.ts' />
 ///<reference path='app/wizard/WizardEvents.ts' />
 ///<reference path='app/wizard/WizardPanelHeader.ts' />

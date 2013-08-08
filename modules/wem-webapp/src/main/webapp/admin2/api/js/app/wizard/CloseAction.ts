@@ -1,13 +1,6 @@
-module app_wizard {
+module api_app_wizard {
 
-    export class SaveMixinAction extends api_ui.Action {
-
-        constructor() {
-            super("Save");
-        }
-    }
-
-    export class CloseMixinAction extends api_ui.Action {
+    export class CloseAction extends api_ui.Action {
 
         constructor(wizardPanel:api_app_wizard.WizardPanel, checkCanClose?:bool = true) {
             super("Close");

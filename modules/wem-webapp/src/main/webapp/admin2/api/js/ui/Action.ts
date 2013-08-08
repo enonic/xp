@@ -100,8 +100,9 @@ module api_ui {
             }
         }
 
-        addExecutionListener(listener:(action:Action) => void) {
+        addExecutionListener(listener:(action:Action) => void):Action {
             this.executionListeners.push(listener);
+            return this;
         }
 
         addPropertyChangeListener(listener:(action:Action) => void) {
