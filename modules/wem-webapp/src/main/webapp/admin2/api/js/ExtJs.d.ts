@@ -413,6 +413,8 @@ interface Ext_Packages extends IExt {
         RemotingProvider: Ext_direct_RemotingProvider;
         JsonProvider: Ext_direct_JsonProvider;
         Event: Ext_direct_Event;
+        Transaction: Ext_direct_Transaction;
+        Manager: Ext_direct_Manager;
     };
     dom: {
         Element: Ext_dom_Element;
@@ -4721,29 +4723,6 @@ interface Ext_data_StoreManager extends Ext_util_MixedCollection {
 }
 
 
-/**
- *      Ext.Direct aims to streamline communication between the client and server
- *      by providing a single interface that reduces the amount of common code
- *      typically required to validate data and handle returned data packets (reading data, error conditions, etc).
- */
-interface Ext_direct_Manager extends Ext_Base {
-
-    exceptions: Object;
-
-    new(): Ext_direct_Manager;
-
-    addProvider(...provider:Object[]): void;
-    addProvider(...provider:Ext_direct_Provider[]): void;
-
-    getProvider(id:string): Ext_direct_Provider;
-    getProvider(id:Ext_direct_Provider): Ext_direct_Provider;
-
-    removeProvider(provider:string) : Ext_direct_Provider;
-    removeProvider(provider:Ext_direct_Provider) : Ext_direct_Provider;
-
-}
-
-
 /*      Direct package      */
 
 
@@ -4815,6 +4794,82 @@ interface Ext_direct_Event {
     new(config?:Object): Ext_direct_Event;
 
     getData(): Object;
+
+}
+
+
+/**
+ *      Supporting Class for Ext.Direct (not intended to be used directly).
+ */
+interface Ext_direct_Transaction extends Ext_Base {
+
+    new(config?:Object): Ext_direct_Transaction;
+
+}
+
+
+interface Ext_direct_Manager_listenerOptions {
+    scope: Object;
+    delay: number;
+    single: bool;
+    buffer: number;
+    target: Ext_util_Observable;
+    element: string;
+    destroyable? : bool;
+}
+
+/**
+ *      Ext.Direct aims to streamline communication between the client and server by providing a single interface that reduces the amount
+ *      of common code typically required to validate data and handle returned data packets (reading data, error conditions, etc).
+ */
+interface Ext_direct_Manager extends Ext_Base {
+
+    new(): Ext_direct_Manager;
+
+    addEvents(eventNames:any /*Object/string*/): void;
+
+    addListener(eventName:string, fn?:Function, scope?:Object, options?:Ext_direct_Manager_listenerOptions): Object;
+
+    addManagedListener(item:Ext_util_Observable, ename:string, fn?:Function, scope?:Object,
+                       options?:Ext_direct_Manager_listenerOptions): Object;
+    addManagedListener(item:Ext_util_Observable, ename:Object, fn?:Function, scope?:Object,
+                       options?:Ext_direct_Manager_listenerOptions): Object;
+
+    addProvider(provider:Ext_direct_Provider): void;
+    addProvider(provider:Object): void;
+
+    clearListeners(): void;
+
+    clearManagedListeners(): void;
+
+    enableBubble(eventNames): void;
+
+    fireEvent(eventName, args): bool;
+
+    getProvider(id:string): Ext_direct_Provider;
+    getProvider(id:Ext_direct_Provider): Ext_direct_Provider;
+
+    hasListener(eventName:string): bool;
+
+    mon(item:Ext_util_Observable, ename:string, fn?:Function, scope?:Object, options?:Ext_direct_Manager_listenerOptions): Object;
+
+    mun(item:Ext_util_Observable, ename:string, fn?:Function, scope?:Object): void;
+
+    on(eventName:string, fn?:Function, scope?:Object, options?:Ext_direct_Manager_listenerOptions): Object;
+
+    relayEvents(origin:Ext_util_Observable, events:string[], prefix?:string): Object;
+
+    removeListener(eventName, fn:Function, scope?:Object): void;
+
+    removeManagedListener(item, ename, fn?:Function, scope?:Object): void;
+
+    removeProvider(provider) : Ext_direct_Provider;
+
+    resumeEvents(): void;
+
+    suspendEvents(queueSuspended): void;
+
+    un(eventName, fnFunction, scope?:Object): void;
 
 }
 

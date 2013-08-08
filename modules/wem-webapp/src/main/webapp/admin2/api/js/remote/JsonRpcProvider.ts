@@ -13,9 +13,10 @@ module api_remote {
                 alias: 'direct.jsonrpcprovider'
             };
 
-            var remotingProvider = new Ext.direct.RemotingProvider(config);
+            var remotingProvider:any = new Ext.direct.RemotingProvider(config);
             remotingProvider.getCallData = this.getCallData;
             remotingProvider.createEvent = this.createEvent;
+            remotingProvider.runCallback = this.runCallback;
 
             this.ext = remotingProvider;
             this.ext.isProvider = true;
@@ -26,7 +27,7 @@ module api_remote {
         private initAPI(methods:string[]) {
             var namespace = this.ext.namespace;
 
-            var methodName: string, length = methods.length;
+            var methodName:string, length = methods.length;
             for (var i = 0; i < length; i++) {
                 methodName = methods[i];
 
@@ -40,7 +41,7 @@ module api_remote {
             }
         }
 
-        private getCallData(transaction:any): any {
+        private getCallData(transaction:any):any {
             return {
                 jsonrpc: '2.0',
                 id: transaction.tid,
@@ -49,7 +50,7 @@ module api_remote {
             };
         }
 
-        private createEvent(response:any): any {
+        private createEvent(response:any):any {
             var error:bool = response.error ? true : false;
 
             response.tid = response.id;
@@ -61,6 +62,38 @@ module api_remote {
 
             return Ext.create('direct.' + response.type, response);
         }
-    }
 
+        private runCallback(transaction, event) {
+            var success,
+                successCallback,
+                failureCallback,
+                result,
+                dataLength;
+
+            if (transaction) {
+                dataLength = transaction.data.length;
+                successCallback = transaction.args[dataLength];
+                failureCallback = transaction.args[dataLength + 1];
+
+                result = Ext.isDefined(event.result) ? event.result : event.data;
+                success = result && !Ext.isDefined(result.error);
+
+                if (success && Ext.isFunction(successCallback)) {
+                    successCallback(result, event);
+
+                } else if (!success) {
+                    var failureResult = {
+                        error: result && result.error ? result.error : 'An unexpected error occurred.'
+                    };
+
+                    if (Ext.isFunction(failureCallback)) {
+                        failureCallback(failureResult, event)
+                    } else {
+                        api_notify.showFeedback(failureResult.error);
+                    }
+                }
+
+            }
+        }
+    }
 }
