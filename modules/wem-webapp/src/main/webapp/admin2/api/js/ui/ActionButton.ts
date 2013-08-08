@@ -9,16 +9,19 @@ module api_ui{
 
             this.action = action;
 
-            this.setEnabled(action.isEnabled());
+            if (this.action.getIconClass()) {
+                this.getEl().addClass(action.getIconClass());
+            }
 
+            this.setEnabled(this.action.isEnabled());
 
-            if (action.hasMnemonic()) {
-                var htmlNodes:Node[] = action.getMnemonic().underlineMnemonic(action.getLabel());
+            if (this.action.hasMnemonic()) {
+                var htmlNodes:Node[] = this.action.getMnemonic().underlineMnemonic(this.action.getLabel());
                 htmlNodes.forEach((node:Node) => {
                     this.getEl().appendChild(node);
                 });
             } else {
-                var labelNode = new api_dom.TextNode(action.getLabel());
+                var labelNode = new api_dom.TextNode(this.action.getLabel());
                 this.getEl().appendChild(labelNode.getText());
             }
 
@@ -26,7 +29,7 @@ module api_ui{
                 this.action.execute();
             });
 
-            action.addPropertyChangeListener((action:api_ui.Action) => {
+            this.action.addPropertyChangeListener((action:api_ui.Action) => {
                 this.setEnabled(action.isEnabled());
             });
         }

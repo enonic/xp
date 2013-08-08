@@ -69,16 +69,8 @@ module api_ui_toolbar {
 
     class ToolbarButton extends api_ui.ActionButton {
 
-        private action:api_ui.Action;
-
         constructor(action:api_ui.Action) {
             super("ToolbarButton", action);
-
-            this.action = action;
-
-            if (action.getIconClass()) {
-                this.getEl().addClass(action.getIconClass());
-            }
         }
 
         setFloatRight(value:bool) {
