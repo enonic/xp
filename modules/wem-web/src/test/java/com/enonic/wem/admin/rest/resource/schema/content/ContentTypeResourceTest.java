@@ -9,7 +9,10 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.admin.rest.resource.schema.content.model.ContentTypeConfigListJson;
+import com.enonic.wem.admin.rest.resource.schema.content.model.ContentTypeList;
 import com.enonic.wem.admin.rest.resource.schema.content.model.ContentTypeListJson;
+import com.enonic.wem.admin.rest.resource.schema.content.model.ContentTypeSummaryListJson;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.JsonTestHelper;
@@ -80,7 +83,7 @@ public class ContentTypeResourceTest
             ContentTypes.from( contentType ) );
 
         // execute
-        Object resultObject = resource.get( Lists.newArrayList( MY_CTY_QUALIFIED_NAME.toString() ), "JSON", true );
+        ContentTypeList resultObject = resource.get( Lists.newArrayList( MY_CTY_QUALIFIED_NAME.toString() ), "JSON", false );
 
         // verify
         assertTrue( resultObject instanceof ContentTypeListJson );
@@ -141,12 +144,65 @@ public class ContentTypeResourceTest
             ContentTypes.from( contentType ) );
 
         // execute
-        Object resultObject = resource.get( Lists.newArrayList( MY_CTY_QUALIFIED_NAME.toString() ), "JSON", true );
+        ContentTypeList resultObject = resource.get( Lists.newArrayList( MY_CTY_QUALIFIED_NAME.toString() ), "JSON", false );
 
         // verify
         assertTrue( resultObject instanceof ContentTypeListJson );
         JsonNode actualJson = objectToJson( resultObject );
         assertJsonEquals2( loadTestJson( "get_contentType_with_all_formItem_types-result.json" ), actualJson );
+    }
+
+    @Test
+    public void get_contentType_with_format_as_xml()
+    {
+        // setup
+        final ContentType contentType = newContentType().
+            module( MY_CTY_QUALIFIED_NAME.getModuleName() ).
+            name( MY_CTY_QUALIFIED_NAME.getLocalName() ).
+            addFormItem( newInput().
+                name( "myTextLine" ).
+                inputType( TEXT_LINE ).
+                label( "My text line" ).
+                required( true ).
+                build() ).
+            build();
+
+        Mockito.when( client.execute(
+            Commands.contentType().get().qualifiedNames( QualifiedContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
+            ContentTypes.from( contentType ) );
+
+        // execute
+        ContentTypeList resultObject = resource.get( Lists.newArrayList( MY_CTY_QUALIFIED_NAME.toString() ), "XML", false );
+
+        // verify
+        assertTrue( resultObject instanceof ContentTypeConfigListJson );
+        JsonNode actualJson = objectToJson( resultObject );
+        assertJsonEquals2( loadTestJson( "get_contentType_with_format_as_xml-result.json" ), actualJson );
+    }
+
+    @Test
+    public void list_one_contentType_with_only_one_input()
+    {
+        // setup
+        final ContentType contentType = newContentType().
+            module( MY_CTY_QUALIFIED_NAME.getModuleName() ).
+            name( MY_CTY_QUALIFIED_NAME.getLocalName() ).
+            addFormItem( newInput().
+                name( "myTextLine" ).
+                inputType( TEXT_LINE ).
+                label( "My text line" ).
+                required( true ).
+                build() ).
+            build();
+
+        Mockito.when( client.execute( Commands.contentType().get().all() ) ).thenReturn( ContentTypes.from( contentType ) );
+
+        // execute
+        ContentTypeSummaryListJson resultObject = resource.list();
+
+        // verify
+        JsonNode actualJson = objectToJson( resultObject );
+        assertJsonEquals2( loadTestJson( "list_one_contentType_with_only_one_input-result.json" ), actualJson );
     }
 
     private void mockCurrentContextHttpRequest()

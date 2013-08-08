@@ -4,7 +4,9 @@
             "abstract": false,
             "allowChildren": true,
             "contentDisplayNameScript": null,
+            "deletable": true,
             "displayName": null,
+            "editable": true,
             "final": false,
             "form": [
                 {
