@@ -28,6 +28,17 @@ module api_dom {
             existingEl.getHTMLElement().parentNode.insertBefore(this.el, existingEl.getHTMLElement().nextSibling);
         }
 
+        /**
+         * @returns {api_dom.ElementHelper} ElementHelper for previous node of this element.
+         */
+        getPrevious(): ElementHelper {
+            var previous = this.el.previousSibling;
+            while (previous && previous.nodeType != Node.ELEMENT_NODE) {
+                previous = previous.previousSibling;
+            }
+            return previous ? new ElementHelper(<HTMLElement> previous) : null;
+        }
+
         setDisabled(value:bool):ElementHelper {
             this.el.disabled = value;
             return this;
@@ -243,6 +254,10 @@ module api_dom {
                 el = <HTMLElement> el.offsetParent;
             }
             return { top: y, left: x };
+        }
+
+        getOffsetTop():number {
+            return this.el.offsetTop;
         }
 
     }
