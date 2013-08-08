@@ -19,6 +19,7 @@ import com.enonic.wem.api.command.relationship.CreateRelationship;
 import com.enonic.wem.api.command.relationship.GetRelationships;
 import com.enonic.wem.api.command.relationship.UpdateRelationship;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.api.relationship.Relationships;
 import com.enonic.wem.api.relationship.UpdateRelationshipFailureException;
 import com.enonic.wem.api.relationship.editor.RelationshipEditors;
@@ -53,7 +54,8 @@ public class RelationshipResource
         createCommand.type( typeName ).fromContent( fromContentId ).toContent( toContentId ).property( params.getProperties() );
         client.execute( createCommand );
 
-        return new CreateRelationshipJson( createCommand.buildRelationshipKey() );
+        return new CreateRelationshipJson(
+            RelationshipKey.from( createCommand.getType(), createCommand.getFromContent(), createCommand.getToContent() ) );
     }
 
     @POST

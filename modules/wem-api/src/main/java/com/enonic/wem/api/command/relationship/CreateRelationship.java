@@ -10,7 +10,6 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.relationship.RelationshipId;
-import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 
 public class CreateRelationship
@@ -77,11 +76,6 @@ public class CreateRelationship
     public Map<String, String> getProperties()
     {
         return properties;
-    }
-
-    public RelationshipKey buildRelationshipKey()
-    {
-        return RelationshipKey.from( this.type, this.fromContent, this.toContent );
     }
 
     @Override
