@@ -88,7 +88,7 @@ public class RelationshipTypeResource
     @POST
     @Path("delete")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void delete( final List<String> names )
+    public void delete( @FormParam("qualifiedRelationshipTypeName") final List<String> names )
     {
         final QualifiedRelationshipTypeNames qualifiedNames = QualifiedRelationshipTypeNames.from(
             names.toArray( new String[names.size()] ) );

@@ -82,6 +82,11 @@ public final class QualifiedContentTypeNames
         return new QualifiedContentTypeNames( parseQualifiedNames( contentTypeNames ) );
     }
 
+    public static QualifiedContentTypeNames from( final Collection<String> contentTypeNames )
+    {
+        return from( contentTypeNames.toArray( new String[contentTypeNames.size()] ) );
+    }
+
     public static QualifiedContentTypeNames from( final QualifiedContentTypeName... contentTypeNames )
     {
         return new QualifiedContentTypeNames( ImmutableSet.copyOf( contentTypeNames ) );

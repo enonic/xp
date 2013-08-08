@@ -1,6 +1,7 @@
 package com.enonic.wem.admin.rpc.relationship;
 
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public final class UpdateRelationshipPropertiesRpcHandler
         final String[] remove = context.param( "remove" ).asStringArray();
         if ( remove != null && remove.length > 0 )
         {
-            compositeEditorBuilder.add( RelationshipEditors.removeProperties( remove ) );
+            compositeEditorBuilder.add( RelationshipEditors.removeProperties( Arrays.asList( remove ) ) );
         }
 
         final UpdateRelationship updateCommand = Commands.relationship().update();
