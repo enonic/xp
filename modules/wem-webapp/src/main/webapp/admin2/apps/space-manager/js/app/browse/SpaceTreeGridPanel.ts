@@ -91,6 +91,7 @@ module  app_browse {
 
         private createTreeConfig() {
             return {
+                selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36}),
                 selectionchange: (selModel, selected, opts) => {
                     new GridSelectionChangeEvent(selected).fire();
                 }
