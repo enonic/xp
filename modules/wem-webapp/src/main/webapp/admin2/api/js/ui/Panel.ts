@@ -20,14 +20,11 @@ module api_ui {
         }
 
         private calculateOffset() {
-            var totalOffset = 0;
-            this.getParent().getChildren().forEach((child) => {
-                if (child != this) {
-                    totalOffset += child.getHTMLElement().offsetHeight;
-                } else {
-                    this.getEl().setTopPx(totalOffset);
-                }
-            })
+            // calculates bottom of previous element in dom and set panel top to this value.
+            var previous = this.getEl().getPrevious();
+            var top = previous ? (previous.getOffsetTop() + previous.getHeight()) : 0;
+
+            this.getEl().setTopPx(top);
         }
     }
 
