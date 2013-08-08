@@ -4,6 +4,7 @@ module app_browse {
 
         constructor() {
             super("New");
+            this.setEnabled(false);
             this.addExecutionListener(() => {
                 new ShowNewContentDialogEvent().fire();
             });
@@ -124,7 +125,7 @@ module app_browse {
                 var contents:api_model.ContentExtModel[] = event.getModels();
 
                 if (contents.length <= 0) {
-                    SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
+                    SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
                     OPEN_CONTENT.setEnabled(false);
                     EDIT_CONTENT.setEnabled(false);
                     DELETE_CONTENT.setEnabled(false);
@@ -132,7 +133,7 @@ module app_browse {
                     MOVE_CONTENT.setEnabled(false);
                 }
                 else if (contents.length == 1) {
-                    SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                    SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
                     OPEN_CONTENT.setEnabled(true);
                     EDIT_CONTENT.setEnabled(contents[0].data.editable);
                     DELETE_CONTENT.setEnabled(contents[0].data.deletable);
