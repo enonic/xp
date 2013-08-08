@@ -18,10 +18,17 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.form.FieldSet;
+import com.enonic.wem.api.schema.content.form.FormItemSet;
+import com.enonic.wem.api.schema.content.form.Input;
+import com.enonic.wem.api.schema.content.form.MixinReference;
 import com.enonic.wem.web.servlet.ServletRequestHolder;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
+import static com.enonic.wem.api.schema.content.form.FieldSet.newFieldSet;
+import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.schema.content.form.MixinReference.newMixinReference;
 import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_LINE;
 import static junit.framework.Assert.assertTrue;
 
@@ -54,7 +61,7 @@ public class ContentTypeResourceTest
     }
 
     @Test
-    public void get()
+    public void get_contentType_with_only_one_input()
     {
         // setup
         final ContentType contentType = newContentType().
@@ -65,7 +72,6 @@ public class ContentTypeResourceTest
                 inputType( TEXT_LINE ).
                 label( "My text line" ).
                 required( true ).
-                helpText( "Help my text line" ).
                 build() ).
             build();
 
@@ -79,7 +85,68 @@ public class ContentTypeResourceTest
         // verify
         assertTrue( resultObject instanceof ContentTypeListJson );
         JsonNode actualJson = objectToJson( resultObject );
-        assertJsonEquals2( loadTestJson( "get-result.json" ), actualJson );
+        assertJsonEquals2( loadTestJson( "get_contentType_with_only_one_input-result.json" ), actualJson );
+    }
+
+    @Test
+    public void get_contentType_with_all_formItem_types()
+    {
+        // setup
+
+        Input myTextLine = newInput().
+            name( "myTextLine" ).
+            inputType( TEXT_LINE ).
+            label( "My text line" ).
+            required( true ).
+            build();
+
+        FieldSet myFieldSet = newFieldSet().
+            name( "myFieldSet" ).
+            label( "My field set" ).
+            add( newInput().
+                name( "myTextLine" ).
+                inputType( TEXT_LINE ).
+                label( "My text line" ).
+                required( false ).
+                build() ).
+            build();
+
+        FormItemSet myFormItemSet = newFormItemSet().
+            name( "myFormItemSet" ).
+            label( "My form item set" ).
+            addFormItem( newInput().
+                name( "myTextLine" ).
+                inputType( TEXT_LINE ).
+                label( "My text line" ).
+                required( false ).
+                build() ).
+            build();
+
+        MixinReference myMixinReference = newMixinReference().
+            name( "myMixinReference" ).
+            mixin( "mymodule:mymixin" ).
+            type( Input.class ).build();
+
+        ContentType contentType = newContentType().
+            module( MY_CTY_QUALIFIED_NAME.getModuleName() ).
+            name( MY_CTY_QUALIFIED_NAME.getLocalName() ).
+            addFormItem( myTextLine ).
+            addFormItem( myFieldSet ).
+            addFormItem( myFormItemSet ).
+            addFormItem( myMixinReference ).
+            build();
+
+        Mockito.when( client.execute(
+            Commands.contentType().get().qualifiedNames( QualifiedContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
+            ContentTypes.from( contentType ) );
+
+        // execute
+        Object resultObject = resource.get( Lists.newArrayList( MY_CTY_QUALIFIED_NAME.toString() ), "JSON", true );
+
+        // verify
+        assertTrue( resultObject instanceof ContentTypeListJson );
+        JsonNode actualJson = objectToJson( resultObject );
+        assertJsonEquals2( loadTestJson( "get_contentType_with_all_formItem_types-result.json" ), actualJson );
     }
 
     private void mockCurrentContextHttpRequest()

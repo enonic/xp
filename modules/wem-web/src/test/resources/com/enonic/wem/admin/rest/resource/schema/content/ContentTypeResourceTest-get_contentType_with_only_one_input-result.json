@@ -1,0 +1,37 @@
+{
+    "contentTypes": [
+        {
+            "abstract": false,
+            "allowChildren": true,
+            "contentDisplayNameScript": null,
+            "displayName": null,
+            "final": false,
+            "form": [
+                {
+                    "customText": null,
+                    "helpText": null,
+                    "immutable": false,
+                    "indexed": false,
+                    "label": "My text line",
+                    "name": "myTextLine",
+                    "occurrences": {
+                        "maximum": 1,
+                        "minimum": 1
+                    },
+                    "type": {
+                        "builtIn": true,
+                        "config": null,
+                        "name": "TextLine"
+                    },
+                    "validationRegexp": null
+                }
+            ],
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:mymodule:my_cty",
+            "module": "mymodule",
+            "name": "my_cty",
+            "qualifiedName": "mymodule:my_cty",
+            "superType": "system:unstructured"
+        }
+    ],
+    "total": 1
+}

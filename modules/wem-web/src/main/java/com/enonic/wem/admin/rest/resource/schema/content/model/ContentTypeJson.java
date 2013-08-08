@@ -1,24 +1,21 @@
 package com.enonic.wem.admin.rest.resource.schema.content.model;
 
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
-import com.enonic.wem.admin.rest.resource.schema.content.model.form.FormItemListJson;
+import com.enonic.wem.admin.rest.resource.schema.content.model.form.FormJson;
 import com.enonic.wem.api.schema.content.ContentType;
 
 public class ContentTypeJson
 {
     private final ContentType contentType;
 
-    private FormItemListJson list;
+    private final FormJson form;
 
     private final String iconUrl;
 
     public ContentTypeJson( final ContentType contentType )
     {
         this.contentType = contentType;
-        if ( this.contentType.form() != null )
-        {
-            this.list = new FormItemListJson( this.contentType.form() );
-        }
+        this.form = new FormJson( this.contentType.form() );
         this.iconUrl = SchemaImageUriResolver.resolve( contentType.getSchemaKey() );
     }
 
@@ -67,9 +64,9 @@ public class ContentTypeJson
         return this.contentType.allowChildren();
     }
 
-    public FormItemListJson getForm()
+    public FormJson getForm()
     {
-        return this.list;
+        return this.form;
     }
 
     public String getIconUrl()

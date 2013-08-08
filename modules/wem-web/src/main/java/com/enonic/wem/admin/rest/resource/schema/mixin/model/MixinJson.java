@@ -2,17 +2,18 @@ package com.enonic.wem.admin.rest.resource.schema.mixin.model;
 
 import com.enonic.wem.admin.rest.resource.model.Item;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
+import com.enonic.wem.admin.rest.resource.schema.content.model.form.FieldSetJson;
 import com.enonic.wem.admin.rest.resource.schema.content.model.form.FormItemSetJson;
-import com.enonic.wem.admin.rest.resource.schema.content.model.form.LayoutJson;
 import com.enonic.wem.admin.rest.resource.schema.content.model.form.MixinReferenceJson;
 import com.enonic.wem.admin.rest.resource.schema.content.model.form.inputtype.InputJson;
+import com.enonic.wem.api.schema.content.form.FieldSet;
 import com.enonic.wem.api.schema.content.form.FormItemSet;
 import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.Layout;
 import com.enonic.wem.api.schema.content.form.MixinReference;
 import com.enonic.wem.api.schema.mixin.Mixin;
 
-public class MixinJson extends Item
+public class MixinJson
+    extends Item
 {
     private final Mixin model;
 
@@ -39,23 +40,26 @@ public class MixinJson extends Item
         return model.getModuleName().toString();
     }
 
-    public FormItemSetJson getFormItemSet() {
+    public FormItemSetJson getFormItemSet()
+    {
         if ( model.getFormItem() instanceof FormItemSet )
         {
-            return new FormItemSetJson((FormItemSet) model.getFormItem());
+            return new FormItemSetJson( (FormItemSet) model.getFormItem() );
         }
         return null;
     }
 
-    public LayoutJson getLayout() {
-        if ( model.getFormItem() instanceof Layout )
+    public FieldSetJson getLayout()
+    {
+        if ( model.getFormItem() instanceof FieldSet )
         {
-            return new LayoutJson( (Layout) model.getFormItem() );
+            return new FieldSetJson( (FieldSet) model.getFormItem() );
         }
         return null;
     }
 
-    public InputJson getInput() {
+    public InputJson getInput()
+    {
         if ( model.getFormItem() instanceof Input )
         {
             return new InputJson( (Input) model.getFormItem() );
@@ -63,7 +67,8 @@ public class MixinJson extends Item
         return null;
     }
 
-    public MixinReferenceJson getMixinReferenceJson() {
+    public MixinReferenceJson getMixinReferenceJson()
+    {
         if ( model.getFormItem() instanceof MixinReference )
         {
             return new MixinReferenceJson( (MixinReference) model.getFormItem() );
@@ -71,7 +76,8 @@ public class MixinJson extends Item
         return null;
     }
 
-    public String getIconUrl() {
+    public String getIconUrl()
+    {
         return this.iconUrl;
     }
 

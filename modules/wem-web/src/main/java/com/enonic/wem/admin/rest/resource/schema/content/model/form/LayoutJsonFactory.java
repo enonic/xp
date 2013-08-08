@@ -1,0 +1,17 @@
+package com.enonic.wem.admin.rest.resource.schema.content.model.form;
+
+import com.enonic.wem.api.schema.content.form.FieldSet;
+import com.enonic.wem.api.schema.content.form.Layout;
+
+public class LayoutJsonFactory
+{
+    public static FormItemJson create( final Layout layout )
+    {
+        if ( layout instanceof FieldSet )
+        {
+            return new FieldSetJson( (FieldSet) layout );
+        }
+
+        throw new IllegalArgumentException( "Unsupported Layout: " + layout.getClass().getSimpleName() );
+    }
+}
