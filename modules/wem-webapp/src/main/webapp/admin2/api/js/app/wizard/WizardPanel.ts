@@ -107,11 +107,11 @@ module api_app_wizard {
             return this.header.generateName(value);
         }
 
-        addDisplayNameChangedEventListener(listener:() => void) {
+        addDisplayNameChangedEventListener(listener: (oldValue:string, newValue:string) => void) {
             this.header.addDisplayNameChangedEventListener(listener);
         }
 
-        addNameChangedEventListener(listener: () => void) {
+        addNameChangedEventListener(listener: (oldValue:string, newValue:string) => void) {
             this.header.addNameChangedEventListener(listener);
         }
 
