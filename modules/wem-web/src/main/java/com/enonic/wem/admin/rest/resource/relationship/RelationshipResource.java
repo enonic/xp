@@ -1,9 +1,6 @@
 package com.enonic.wem.admin.rest.resource.relationship;
 
-import java.util.Map;
-
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -14,13 +11,14 @@ import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.relationship.model.CreateRelationshipJson;
+import com.enonic.wem.admin.rest.resource.relationship.model.RelationshipCreateParams;
 import com.enonic.wem.admin.rest.resource.relationship.model.RelationshipListJson;
+import com.enonic.wem.admin.rest.resource.relationship.model.RelationshipUpdateParams;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.relationship.CreateRelationship;
 import com.enonic.wem.api.command.relationship.GetRelationships;
 import com.enonic.wem.api.command.relationship.UpdateRelationship;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.api.relationship.Relationships;
 import com.enonic.wem.api.relationship.UpdateRelationshipFailureException;
 import com.enonic.wem.api.relationship.editor.RelationshipEditors;
@@ -45,43 +43,36 @@ public class RelationshipResource
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
-    public CreateRelationshipJson create(
-        @FormParam("type") final String type,
-        @FormParam("fromContent") final String fromContent,
-        @FormParam("toContent") final String toContent,
-        @FormParam("properties") final Map<String, String> properties )
+    public CreateRelationshipJson create( final RelationshipCreateParams params )
     {
-        final QualifiedRelationshipTypeName typeName = QualifiedRelationshipTypeName.from( type );
-        final ContentId fromContentId = ContentId.from( fromContent );
-        final ContentId toContentId = ContentId.from( toContent );
+        final QualifiedRelationshipTypeName typeName = QualifiedRelationshipTypeName.from( params.getType() );
+        final ContentId fromContentId = ContentId.from( params.getFromContent() );
+        final ContentId toContentId = ContentId.from( params.getToContent() );
 
         final CreateRelationship createCommand = Commands.relationship().create();
-        createCommand.type( typeName ).fromContent( fromContentId ).toContent( toContentId ).property( properties );
+        createCommand.type( typeName ).fromContent( fromContentId ).toContent( toContentId ).property( params.getProperties() );
         client.execute( createCommand );
 
-        return new CreateRelationshipJson( RelationshipKey.from( createCommand.getType(), createCommand.getFromContent(), createCommand.getToContent() ) );
+        return new CreateRelationshipJson( createCommand.buildRelationshipKey() );
     }
 
     @POST
     @Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void update(
-        @FormParam("relationshipKey") final RelationshipKey relationshipKey,
-        @FormParam("add") final Map<String, String> propertiesToAdd,
-        @FormParam("remove") final String[] remove )
+    public void update( final RelationshipUpdateParams params )
     {
         final RelationshipEditors.CompositeBuilder compositeEditorBuilder = RelationshipEditors.newCompositeBuilder();
-        if ( propertiesToAdd != null )
+        if ( params.getAdd() != null )
         {
-            compositeEditorBuilder.add( RelationshipEditors.addProperties( propertiesToAdd ) );
+            compositeEditorBuilder.add( RelationshipEditors.addProperties( params.getAdd() ) );
         }
-        if ( remove != null && remove.length > 0 )
+        if ( params.getRemove() != null && !params.getRemove().isEmpty() )
         {
-            compositeEditorBuilder.add( RelationshipEditors.removeProperties( remove ) );
+            compositeEditorBuilder.add( RelationshipEditors.removeProperties( params.getRemove() ) );
         }
 
         final UpdateRelationship updateCommand = Commands.relationship().update();
-        updateCommand.relationshipKey( relationshipKey );
+        updateCommand.relationshipKey( params.getRelationshipKey().from() );
         updateCommand.editor( compositeEditorBuilder.build() );
 
         try

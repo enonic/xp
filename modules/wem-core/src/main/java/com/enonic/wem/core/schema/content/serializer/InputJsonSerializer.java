@@ -65,7 +65,7 @@ public class InputJsonSerializer
         if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
         {
             final JsonNode inputTypeNode =
-                input.getInputType().getInputTypeConfigJsonGenerator().serialize( input.getInputTypeConfig(), objectMapper() );
+                input.getInputType().getInputTypeConfigJsonSerializer().serialize( input.getInputTypeConfig(), objectMapper() );
             typeObject.put( CONFIG, inputTypeNode );
         }
         jsonObject.put( TYPE, typeObject );

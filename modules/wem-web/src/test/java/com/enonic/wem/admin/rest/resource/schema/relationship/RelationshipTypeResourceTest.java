@@ -205,7 +205,7 @@ public class RelationshipTypeResourceTest
     }
 
     @Test
-    public void create()
+    public void testCreate()
         throws Exception
     {
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn( RelationshipTypesExistsResult.empty() );
@@ -222,7 +222,7 @@ public class RelationshipTypeResourceTest
     }
 
     @Test
-    public void update()
+    public void testUpdate()
         throws Exception
     {
         QualifiedRelationshipTypeNames qualifiedNames =
@@ -242,7 +242,7 @@ public class RelationshipTypeResourceTest
     }
 
     @Test
-    public void createWithIcon()
+    public void testCreateWithIcon()
         throws Exception
     {
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn( RelationshipTypesExistsResult.empty() );

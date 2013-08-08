@@ -9,6 +9,8 @@ import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
+import com.enonic.wem.api.schema.content.form.inputtype.config.AbstractInputTypeConfigJsonGenerator;
+import com.enonic.wem.api.schema.content.form.inputtype.config.SingleSelectorConfigJsonGenerator;
 
 public class SingleSelector
     extends BaseInputType
@@ -18,9 +20,15 @@ public class SingleSelector
         super( SingleSelectorConfig.class );
     }
 
-    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonGenerator()
+    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
     {
         return SingleSelectorConfigJsonSerializer.DEFAULT;
+    }
+
+    @Override
+    public AbstractInputTypeConfigJsonGenerator getInputTypeConfigJsonGenerator()
+    {
+        return SingleSelectorConfigJsonGenerator.DEFAULT;
     }
 
     @Override
