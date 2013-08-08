@@ -37,8 +37,11 @@ module app {
 
                 var contentType = event.getContentType();
 
-                console.log("NewContentEvent", contentType);
-                // TODO: Open wizard for new content of given content type
+                var tabMenuItem = new ContentAppBarTabMenuItem("New Content");
+                var wizardPanel = new app_wizard.ContentWizardPanel('new-content', contentType);
+                this.addWizardPanel(tabMenuItem, wizardPanel);
+                this.selectPanel(tabMenuItem);
+                wizardPanel.reRender();
 
             });
 
@@ -73,21 +76,31 @@ module app {
 
                     //TODO: RemoteCallContentGetResult doesn't match returned result  if 'path' param is used!
                     var contentGetParams:api_remote_content.GetParams = {
-                        "contentIds": [contentModel.data.id]
+                        contentIds: [contentModel.data.id]
                     };
-                    api_remote.RemoteContentService.content_get(contentGetParams, (result:api_remote_content.GetResult) => {
+                    api_remote.RemoteContentService.content_get(contentGetParams, (getContentResult:api_remote_content.GetResult) => {
 
-                        if (result && result.success) {
+                        if (getContentResult && getContentResult.success) {
 
-                            var tabMenuItem = new ContentAppBarTabMenuItem(result.content[0].displayName, true);
-                            var id = this.generateTabId(result.content[0].name, true);
-                            var contentWizardPanel = new app_wizard.ContentWizardPanel(id);
-                            contentWizardPanel.setData(result);
+                            var contentTypeGetParams:api_remote_contenttype.GetParams = {
+                                qualifiedNames: [getContentResult.content[0].type],
+                                format: "JSON",
+                                mixinReferencesToFormItems: true
+                            };
 
-                            this.addWizardPanel(tabMenuItem, contentWizardPanel);
-                            this.selectPanel(tabMenuItem);
+                            api_remote.RemoteContentTypeService.contentType_get(contentTypeGetParams,
+                                (getContentTypeResult:api_remote_contenttype.GetResult) => {
+
+                                    var tabMenuItem = new ContentAppBarTabMenuItem(getContentResult.content[0].displayName, true);
+                                    var id = this.generateTabId(getContentResult.content[0].name, true);
+                                    var contentWizardPanel = new app_wizard.ContentWizardPanel(id, getContentTypeResult.contentTypes[0]);
+                                    contentWizardPanel.setData(getContentResult);
+
+                                    this.addWizardPanel(tabMenuItem, contentWizardPanel);
+                                    this.selectPanel(tabMenuItem);
+                                });
                         } else {
-                            console.error("Error", result ? result.error : "Unable to retrieve content.");
+                            console.error("Error", getContentResult ? getContentResult.error : "Unable to retrieve content.");
                         }
                     });
                 }
