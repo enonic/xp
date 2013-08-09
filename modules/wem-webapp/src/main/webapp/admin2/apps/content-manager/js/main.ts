@@ -153,9 +153,14 @@ Ext.application({
             contentDeleteDialog.open();
         });
 
+        var contentContextMenu = new app_browse.ContentTreeGridContextMenu();
+        contentContextMenu.hide()
         var newContentDialog = new app_new.NewContentDialog();
         app_browse.ShowNewContentDialogEvent.on((event) => {
             newContentDialog.open();
+        });
+        app_browse.ShowContextMenuEvent.on((event) => {
+            contentContextMenu.showAt(event.getX(), event.getY());
         });
     }
 });
