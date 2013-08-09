@@ -43,24 +43,28 @@ module app_browse {
 
                 var items:api_app_browse.BrowseItem[] = [];
                 var models:api_model.ContentExtModel[] = event.getModels();
-                var contentIds:string[] = [];
-                models.forEach((model:api_model.ContentExtModel) => {
-                    contentIds.push(model.data.id);
-                });
-                var getParams:api_remote_content.GetParams = {
-                    contentIds: contentIds
-                };
-                api_remote.RemoteContentService.content_get(getParams, (result:api_remote_content.GetResult)=> {
+                if (models.length > 0) {
 
-                    result.content.forEach((contentGet:api_remote_content.ContentGet, index:number) => {
-                        var item = new api_app_browse.BrowseItem(models[index]).
-                            setDisplayName(contentGet.displayName).
-                            setPath(contentGet.path).
-                            setIconUrl(contentGet.iconUrl);
-                        items.push(item);
+                    var contentIds:string[] = [];
+                    models.forEach((model:api_model.ContentExtModel) => {
+                        contentIds.push(model.data.id);
                     });
-                    this.browseItemPanel.setItems(items);
-                });
+
+                    var getParams:api_remote_content.GetParams = {
+                        contentIds: contentIds
+                    };
+                    api_remote.RemoteContentService.content_get(getParams, (result:api_remote_content.GetResult)=> {
+
+                        result.content.forEach((contentGet:api_remote_content.ContentGet, index:number) => {
+                            var item = new api_app_browse.BrowseItem(models[index]).
+                                setDisplayName(contentGet.displayName).
+                                setPath(contentGet.path).
+                                setIconUrl(contentGet.iconUrl);
+                            items.push(item);
+                        });
+                        this.browseItemPanel.setItems(items);
+                    });
+                }
             });
         }
     }
