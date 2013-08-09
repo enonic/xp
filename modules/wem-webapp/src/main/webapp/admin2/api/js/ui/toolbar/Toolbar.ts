@@ -70,7 +70,7 @@ module api_ui_toolbar {
     class ToolbarButton extends api_ui.ActionButton {
 
         constructor(action:api_ui.Action) {
-            super("ToolbarButton", action);
+            super("ToolbarButton", action, false);
         }
 
         setFloatRight(value:bool) {
