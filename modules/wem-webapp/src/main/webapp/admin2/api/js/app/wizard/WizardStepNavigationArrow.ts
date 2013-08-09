@@ -23,7 +23,7 @@ module api_app_wizard {
             });
             this.update();
 
-            this.navigator.addStepEventListener(() => {
+            this.navigator.addStepShownEventListener((step:WizardStep) => {
                 this.update();
             });
         }

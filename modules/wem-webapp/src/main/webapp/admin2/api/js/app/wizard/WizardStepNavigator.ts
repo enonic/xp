@@ -8,7 +8,7 @@ module api_app_wizard {
 
         private activeStepIndex:number;
 
-        private stepEventListeners: Function[] = [];
+        private stepShownEventListeners: Function[] = [];
 
         constructor(deckPanel:api_app_wizard.WizardStepDeckPanel) {
             super("WizardStepNavigator", "step-navigator");
@@ -35,7 +35,7 @@ module api_app_wizard {
                 this.showStep(step);
             }
             this.appendChild(stepEl);
-            this.fireStepEvent();
+            this.fireStepShownEvent(step);
         }
 
         showStep(step:WizardStep) {
@@ -43,7 +43,7 @@ module api_app_wizard {
             step.setActive(true);
             this.deckPanel.showPanel(step.getIndex());
             this.activeStepIndex = step.getIndex();
-            this.fireStepEvent();
+            this.fireStepShownEvent(step);
         }
 
         nextStep() {
@@ -86,13 +86,13 @@ module api_app_wizard {
             })
         }
 
-        addStepEventListener(listener:() => void) {
-            this.stepEventListeners.push(listener);
+        addStepShownEventListener(listener:(step:WizardStep) => void) {
+            this.stepShownEventListeners.push(listener);
         }
 
-        private fireStepEvent() {
-            this.stepEventListeners.forEach((listener:() => void) => {
-                listener();
+        private fireStepShownEvent(step:WizardStep) {
+            this.stepShownEventListeners.forEach((listener:(step:WizardStep) => void) => {
+                listener(step);
             });
         }
     }
