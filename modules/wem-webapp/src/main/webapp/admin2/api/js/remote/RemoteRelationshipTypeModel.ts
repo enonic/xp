@@ -1,5 +1,3 @@
-///<reference path='BaseResult.ts' />
-
 module api_remote_relationshiptype {
 
     export interface RelationshipType extends api_remote.Item {

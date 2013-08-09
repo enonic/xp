@@ -8,7 +8,7 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 
 public class ContentTypeListJson
-    extends AbstractContentTypeJson
+    implements ContentTypeList
 {
     private final ImmutableList<ContentTypeJson> list;
 

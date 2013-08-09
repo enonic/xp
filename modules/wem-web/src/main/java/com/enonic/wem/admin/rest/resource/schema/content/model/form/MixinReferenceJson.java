@@ -3,7 +3,7 @@ package com.enonic.wem.admin.rest.resource.schema.content.model.form;
 import com.enonic.wem.api.schema.content.form.MixinReference;
 
 public class MixinReferenceJson
-    extends AbstractFormItem
+    extends FormItemJson
 {
     private final MixinReference mixinReference;
 

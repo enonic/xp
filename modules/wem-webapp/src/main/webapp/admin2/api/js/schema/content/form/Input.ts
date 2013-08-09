@@ -18,10 +18,17 @@ module api_schema_content_form{
 
         private helpText:string;
 
+        public static fromRemote(remoteInput:api_remote_contenttype.Input):Input {
+
+            // TODO
+            return null;
+        }
+
+
         constructor(json) {
 
             super(json.name);
-            this.inputType = new InputType( json.type );
+            this.inputType = new InputType(json.type);
             this.label = json.label;
             this.immutable = json.immutable;
             this.occurrences = new Occurrences(json.occurrences);
@@ -39,23 +46,23 @@ module api_schema_content_form{
             return this.immutable;
         }
 
-        getOccurrences():Occurrences{
+        getOccurrences():Occurrences {
             return this.occurrences;
         }
 
-        isIndexed():bool{
+        isIndexed():bool {
             return this.indexed;
         }
 
-        getCustomText():string{
+        getCustomText():string {
             return this.customText;
         }
 
-        getValidationRegex():string{
+        getValidationRegex():string {
             return this.validationRegex;
         }
 
-        getHelpText():string{
+        getHelpText():string {
             return this.helpText;
         }
     }

@@ -1,5 +1,3 @@
-///<reference path='BaseResult.ts' />
-
 module api_remote_contenttype {
 
     export interface ContentType extends api_remote.Item {

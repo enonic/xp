@@ -4,20 +4,18 @@ import com.enonic.wem.admin.rest.resource.schema.content.model.form.inputtype.Oc
 import com.enonic.wem.api.schema.content.form.FormItemSet;
 
 public class FormItemSetJson
-    extends AbstractFormItem
+    extends FormItemJson
 {
     private final FormItemSet model;
 
-    private final FormItemListJson items;
+    private final FormItemJsonArray items;
 
     private final OccurrencesJson occurrences;
 
     public FormItemSetJson( final FormItemSet formItem )
     {
         this.model = formItem;
-
-        this.items = new FormItemListJson( formItem.getFormItems() );
-
+        this.items = new FormItemJsonArray( formItem.getFormItems() );
         this.occurrences = new OccurrencesJson( formItem.getOccurrences() );
     }
 
@@ -46,7 +44,7 @@ public class FormItemSetJson
         return model.getHelpText();
     }
 
-    public FormItemListJson getItems()
+    public FormItemJsonArray getItems()
     {
         return items;
     }

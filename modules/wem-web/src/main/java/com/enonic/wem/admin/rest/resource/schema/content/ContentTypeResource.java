@@ -23,9 +23,10 @@ import com.sun.jersey.api.NotFoundException;
 
 import com.enonic.wem.admin.jsonrpc.JsonRpcException;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.schema.content.model.AbstractContentTypeJson;
 import com.enonic.wem.admin.rest.resource.schema.content.model.ContentTypeConfigListJson;
+import com.enonic.wem.admin.rest.resource.schema.content.model.ContentTypeList;
 import com.enonic.wem.admin.rest.resource.schema.content.model.ContentTypeListJson;
+import com.enonic.wem.admin.rest.resource.schema.content.model.ContentTypeSummaryListJson;
 import com.enonic.wem.admin.rest.resource.schema.content.model.ContentTypeTreeJson;
 import com.enonic.wem.admin.rest.resource.schema.content.model.ValidateContentTypeJson;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
@@ -63,9 +64,9 @@ public class ContentTypeResource
     private UploadService uploadService;
 
     @GET
-    public AbstractContentTypeJson get( @QueryParam("qualifiedNames") final List<String> qualifiedNamesAsStrings,
-                                        @QueryParam("format") final String format,
-                                        @QueryParam("mixinReferencesToFormItems") final Boolean mixinReferencesToFormItems )
+    public ContentTypeList get( @QueryParam("qualifiedNames") final List<String> qualifiedNamesAsStrings,
+                                @QueryParam("format") final String format,
+                                @QueryParam("mixinReferencesToFormItems") final Boolean mixinReferencesToFormItems )
     {
         final QualifiedContentTypeNames qualifiedNames = QualifiedContentTypeNames.from( qualifiedNamesAsStrings );
         final GetContentTypes getContentTypes = Commands.contentType().get().
@@ -116,11 +117,10 @@ public class ContentTypeResource
 
     @GET
     @Path("list")
-    public ContentTypeListJson list()
+    public ContentTypeSummaryListJson list()
     {
         final ContentTypes contentTypes = client.execute( Commands.contentType().get().all() );
-
-        return new ContentTypeListJson( contentTypes );
+        return new ContentTypeSummaryListJson( contentTypes );
     }
 
     @POST

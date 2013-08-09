@@ -1,0 +1,100 @@
+{
+    "contentTypes": [
+        {
+            "abstract": false,
+            "allowChildren": true,
+            "contentDisplayNameScript": null,
+            "deletable": true,
+            "displayName": null,
+            "editable": true,
+            "final": false,
+            "form": [
+                {
+                    "customText": null,
+                    "helpText": null,
+                    "immutable": false,
+                    "indexed": false,
+                    "label": "My text line",
+                    "name": "myTextLine",
+                    "occurrences": {
+                        "maximum": 1,
+                        "minimum": 1
+                    },
+                    "type": {
+                        "builtIn": true,
+                        "config": null,
+                        "name": "TextLine"
+                    },
+                    "validationRegexp": null
+                },
+                {
+                    "items": [
+                        {
+                            "customText": null,
+                            "helpText": null,
+                            "immutable": false,
+                            "indexed": false,
+                            "label": "My text line",
+                            "name": "myTextLine",
+                            "occurrences": {
+                                "maximum": 1,
+                                "minimum": 0
+                            },
+                            "type": {
+                                "builtIn": true,
+                                "config": null,
+                                "name": "TextLine"
+                            },
+                            "validationRegexp": null
+                        }
+                    ],
+                    "label": "My field set",
+                    "name": "myFieldSet",
+                    "type": "FieldSet"
+                },
+                {
+                    "customText": null,
+                    "helpText": null,
+                    "immutable": false,
+                    "items": [
+                        {
+                            "customText": null,
+                            "helpText": null,
+                            "immutable": false,
+                            "indexed": false,
+                            "label": "My text line",
+                            "name": "myTextLine",
+                            "occurrences": {
+                                "maximum": 1,
+                                "minimum": 0
+                            },
+                            "type": {
+                                "builtIn": true,
+                                "config": null,
+                                "name": "TextLine"
+                            },
+                            "validationRegexp": null
+                        }
+                    ],
+                    "label": "My form item set",
+                    "name": "myFormItemSet",
+                    "occurrences": {
+                        "maximum": 1,
+                        "minimum": 0
+                    }
+                },
+                {
+                    "name": "myMixinReference",
+                    "reference": "mymodule:mymixin",
+                    "type": "Input"
+                }
+            ],
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:mymodule:my_cty",
+            "module": "mymodule",
+            "name": "my_cty",
+            "qualifiedName": "mymodule:my_cty",
+            "superType": "system:unstructured"
+        }
+    ],
+    "total": 1
+}

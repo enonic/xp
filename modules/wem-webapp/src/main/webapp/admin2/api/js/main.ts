@@ -36,6 +36,16 @@
 ///<reference path='handler/DeleteSchemaHandler.ts' />
 
 ///<reference path='remote/JsonRpcProvider.ts' />
+///<reference path='remote/BaseResult.ts' />
+///<reference path='remote/RemoteContentModel.ts' />
+///<reference path='remote/RemoteAccountModel.ts' />
+///<reference path='remote/RemoteContentTypeModel.ts' />
+///<reference path='remote/RemoteMixinModel.ts' />
+///<reference path='remote/RemoteRelationshipTypeModel.ts' />
+///<reference path='remote/RemoteSchemaModel.ts' />
+///<reference path='remote/RemoteSpaceModel.ts' />
+///<reference path='remote/RemoteUserStoreModel.ts' />
+///<reference path='remote/RemoteUtilsModel.ts' />
 ///<reference path='remote/RemoteAccountService.ts' />
 ///<reference path='remote/RemoteSpaceService.ts' />
 ///<reference path='remote/RemoteContentService.ts' />
@@ -167,10 +177,16 @@
 ///<reference path='content/data/ContentData.ts' />
 ///<reference path='content/data/Property.ts' />
 
-///<reference path='schema/content/form/FormItem.ts' />
 ///<reference path='schema/content/form/InputType.ts' />
+///<reference path='schema/content/form/FormItem.ts' />
+///<reference path='schema/content/form/Layout.ts' />
+///<reference path='schema/content/form/FieldSet.ts' />
 ///<reference path='schema/content/form/Input.ts' />
 ///<reference path='schema/content/form/Occurrences.ts' />
+
+
+///<reference path='schema/content/form/FormItemSet.ts' />
+///<reference path='schema/content/form/Form.ts' />
 
 declare var Mousetrap;
 declare var Ext;

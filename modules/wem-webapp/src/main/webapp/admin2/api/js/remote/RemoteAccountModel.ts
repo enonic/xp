@@ -1,5 +1,3 @@
-///<reference path='BaseResult.ts' />
-
 module api_remote_account {
 
     export interface Account {

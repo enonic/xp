@@ -7,17 +7,17 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 
-public class ContentTypeConfigListJson
+public class ContentTypeSummaryListJson
     implements ContentTypeList
 {
-    private final ImmutableList<ContentTypeConfigJson> list;
+    private final ImmutableList<ContentTypeSummaryJson> list;
 
-    public ContentTypeConfigListJson( final ContentTypes contentTypes )
+    public ContentTypeSummaryListJson( final ContentTypes contentTypes )
     {
-        final ImmutableList.Builder<ContentTypeConfigJson> builder = ImmutableList.builder();
+        final ImmutableList.Builder<ContentTypeSummaryJson> builder = ImmutableList.builder();
         for ( final ContentType contentType : contentTypes )
         {
-            builder.add( new ContentTypeConfigJson( contentType ) );
+            builder.add( new ContentTypeSummaryJson( contentType ) );
         }
 
         this.list = builder.build();
@@ -28,7 +28,7 @@ public class ContentTypeConfigListJson
         return this.list.size();
     }
 
-    public List<ContentTypeConfigJson> getContentTypeXmls()
+    public List<ContentTypeSummaryJson> getContentTypes()
     {
         return this.list;
     }

@@ -5,8 +5,17 @@ module api_ui {
         static MIDDLE:string = 'middle';
         static LARGE:string = 'large';
 
-        // Specifies RegExp for characters that will be removed during input.
+        /**
+         * Specifies RegExp for characters that will be removed during input.
+         */
         private stripCharsRe: RegExp;
+
+        /**
+         * Input value before it was changed by last input event.
+         */
+        private oldValue:string = "";
+
+        private valueChangedEventListeners: Function[] = [];
 
         constructor(idPrefix?:string, className?:string, size?:string = TextInput.MIDDLE) {
             super(idPrefix, className);
@@ -27,6 +36,11 @@ module api_ui {
                     return false;
                 }
             });
+
+            this.getEl().addEventListener('input', () => {
+                this.fireValueChangedEvent(this.oldValue, this.getValue());
+                this.oldValue = this.getValue();
+            });
         }
 
         static large(idPrefix?:string, className?:string):TextInput {
@@ -38,7 +52,16 @@ module api_ui {
         }
 
         setValue(value:string):TextInput {
-            super.setValue(this.removeForbiddenChars(value));
+            var oldValue = this.getValue();
+            var newValue = this.removeForbiddenChars(value);
+
+            if (oldValue != newValue) {
+                super.setValue(newValue);
+                this.fireValueChangedEvent(oldValue, newValue);
+                // save new value to know which value was before input event.
+                this.oldValue = newValue;
+            }
+
             return this;
         }
 
@@ -59,6 +82,16 @@ module api_ui {
         setForbiddenCharsRe(re: RegExp): TextInput {
             this.stripCharsRe = re;
             return this;
+        }
+
+        addValueChangedEventListener(listener:(oldValue:string, newValue:string) => void) {
+            this.valueChangedEventListeners.push(listener);
+        }
+
+        private fireValueChangedEvent(oldValue:string, newValue:string) {
+            this.valueChangedEventListeners.forEach((listener: (oldValue:string, newValue:string) => void) => {
+                listener(oldValue, newValue);
+            });
         }
 
         private removeForbiddenChars(rawValue: string): string {
