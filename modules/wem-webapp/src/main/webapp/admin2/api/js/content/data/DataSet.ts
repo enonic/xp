@@ -44,5 +44,33 @@ module api_content_data{
             return matches;
         }
 
+        getPropertiesByName(name:string):Property[] {
+
+            var matches:Property[] = [];
+            this.getDataByName(name).forEach((data:Data) => {
+                if (name === data.getName() && data instanceof Property) {
+                    matches.push(<Property>data);
+                }
+                else if (name === data.getName() && !(data instanceof Property)) {
+                    throw new Error("Expected data of type Property with name '" + name + "', got: " + data);
+                }
+            });
+            return matches;
+        }
+
+        getDataSetsByName(name:string):DataSet[] {
+
+            var matches:DataSet[] = [];
+            this.getDataByName(name).forEach((data:Data) => {
+                if (name === data.getName() && data instanceof DataSet) {
+                    matches.push(<DataSet>data);
+                }
+                else if (name === data.getName() && !(data instanceof DataSet)) {
+                    throw new Error("Expected data of type DataSet with name '" + name + "', got: " + data);
+                }
+            });
+            return matches;
+        }
+
     }
 }

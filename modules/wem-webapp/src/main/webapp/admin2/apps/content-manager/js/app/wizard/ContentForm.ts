@@ -2,16 +2,28 @@ module app_wizard {
 
     export class ContentForm extends api_ui.Panel {
 
-        private contentType:api_remote_contenttype.ContentType;
+        private form:api_schema_content_form.Form;
 
-        constructor(contentType:api_remote_contenttype.ContentType) {
+        constructor(form:api_schema_content_form.Form) {
             super("ContentForm");
 
-            this.contentType = contentType;
+            this.form = form;
+        }
 
-            var h1El = new api_dom.H1El();
-            h1El.getEl().setInnerHtml("ContentForm: TODO");
-            this.appendChild(h1El);
+        renderNew() {
+            this.removeChildren();
+            this.layout(null);
+        }
+
+        renderExisting(contentData:api_content_data.ContentData) {
+            this.removeChildren();
+            this.layout(contentData);
+        }
+
+        private layout(contentData?:api_content_data.ContentData) {
+
+            var formCmp = new app_wizard_form.FormCmp(this.form, contentData);
+            this.appendChild(formCmp)
         }
     }
 }

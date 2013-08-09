@@ -18,13 +18,6 @@ module api_schema_content_form{
 
         private helpText:string;
 
-        public static fromRemote(remoteInput:api_remote_contenttype.Input):Input {
-
-            // TODO
-            return null;
-        }
-
-
         constructor(json) {
 
             super(json.name);

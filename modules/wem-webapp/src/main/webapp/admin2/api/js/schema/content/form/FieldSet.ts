@@ -4,11 +4,6 @@ module api_schema_content_form{
 
         private formItems:FormItem[] = [];
 
-        static fromRemote(layout:api_remote_contenttype.Layout):FieldSet {
-
-            return null;
-        }
-
         constructor(name:string) {
             super(name);
         }

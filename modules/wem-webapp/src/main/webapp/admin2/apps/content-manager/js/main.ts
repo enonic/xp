@@ -10,13 +10,19 @@
 
 ///<reference path='app/delete/ContentDeleteDialog.ts' />
 
+///<reference path='app/wizard/ContentTypeFormFactory.ts' />
+///<reference path='app/wizard/ContentDataFactory.ts' />
 ///<reference path='app/wizard/ContentWizardActions.ts' />
 ///<reference path='app/wizard/ContentForm.ts' />
 ///<reference path='app/wizard/ContentWizardToolbar.ts' />
 ///<reference path='app/wizard/ContentWizardPanel.ts' />
 ///<reference path='app/wizard/form/input/BaseInputCmp.ts' />
 ///<reference path='app/wizard/form/input/TextLineCmp.ts' />
+///<reference path='app/wizard/form/input/TextAreaCmp.ts' />
+///<reference path='app/wizard/form/InputLabel.ts' />
 ///<reference path='app/wizard/form/InputContainer.ts' />
+///<reference path='app/wizard/form/FormItemSetLabel.ts' />
+///<reference path='app/wizard/form/FormItemSetContainer.ts' />
 ///<reference path='app/wizard/form/FormCmp.ts' />
 ///<reference path='app/wizard/form/FormItemSetCmp.ts' />
 

@@ -39,6 +39,8 @@ module app {
 
                 var tabMenuItem = new ContentAppBarTabMenuItem("New Content");
                 var wizardPanel = new app_wizard.ContentWizardPanel('new-content', contentType);
+                wizardPanel.renderNew();
+
                 this.addWizardPanel(tabMenuItem, wizardPanel);
                 this.selectPanel(tabMenuItem);
                 wizardPanel.reRender();
@@ -92,7 +94,7 @@ module app {
                                 var tabMenuItem = new ContentAppBarTabMenuItem(getContentResult.content[0].displayName, true);
                                 var id = this.generateTabId(getContentResult.content[0].name, true);
                                 var contentWizardPanel = new app_wizard.ContentWizardPanel(id, getContentTypeResult.contentTypes[0]);
-                                contentWizardPanel.setData(getContentResult);
+                                contentWizardPanel.renderExisting(getContentResult);
 
                                 this.addWizardPanel(tabMenuItem, contentWizardPanel);
                                 this.selectPanel(tabMenuItem);
