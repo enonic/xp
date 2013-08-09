@@ -167,10 +167,16 @@
 ///<reference path='content/data/ContentData.ts' />
 ///<reference path='content/data/Property.ts' />
 
-///<reference path='schema/content/form/FormItem.ts' />
 ///<reference path='schema/content/form/InputType.ts' />
+///<reference path='schema/content/form/FormItem.ts' />
+///<reference path='schema/content/form/Layout.ts' />
+///<reference path='schema/content/form/FieldSet.ts' />
 ///<reference path='schema/content/form/Input.ts' />
 ///<reference path='schema/content/form/Occurrences.ts' />
+
+
+///<reference path='schema/content/form/FormItemSet.ts' />
+///<reference path='schema/content/form/Form.ts' />
 
 declare var Mousetrap;
 declare var Ext;
