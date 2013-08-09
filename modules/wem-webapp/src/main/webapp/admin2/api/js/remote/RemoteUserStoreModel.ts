@@ -1,5 +1,3 @@
-///<reference path='BaseResult.ts' />
-
 module api_remote_userstore {
 
     export interface UserStore {

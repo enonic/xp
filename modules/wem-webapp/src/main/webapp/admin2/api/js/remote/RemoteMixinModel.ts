@@ -1,5 +1,3 @@
-///<reference path='BaseResult.ts' />
-///<reference path='RemoteContentTypeModel.ts' />
 
 module api_remote_mixin {
 
