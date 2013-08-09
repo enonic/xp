@@ -1,0 +1,7 @@
+{
+    "failures" : [ ],
+    "success" : true,
+    "successes" : [ {
+        "qualifiedMixinName" : "my:existing_mixin"
+    } ]
+}
