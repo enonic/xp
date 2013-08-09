@@ -115,8 +115,7 @@ Ext.application({
         spaceGridContextMenu.hide();
         app_browse.ShowContextMenuEvent.on((event) => {
             spaceGridContextMenu.showAt(event.getX(), event.getY());
-        })
-
+        });
     }
 });
 
