@@ -110,12 +110,6 @@ Ext.application({
             deleteSpaceDialog.setSpacesToDelete(event.getModels());
             deleteSpaceDialog.open();
         });
-
-        var spaceGridContextMenu = new app_browse.SpaceTreeGridContextMenu();
-        spaceGridContextMenu.hide();
-        app_browse.ShowContextMenuEvent.on((event) => {
-            spaceGridContextMenu.showAt(event.getX(), event.getY());
-        });
     }
 });
 

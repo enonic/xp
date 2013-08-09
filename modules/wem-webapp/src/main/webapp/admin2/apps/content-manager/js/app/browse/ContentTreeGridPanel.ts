@@ -26,6 +26,10 @@ module app_browse {
                 this.refresh();
             })
 
+            var contentContextMenu = new app_browse.ContentTreeGridContextMenu();
+            app_browse.ShowContextMenuEvent.on((event) => {
+                contentContextMenu.showAt(event.getX(), event.getY());
+            });
         }
 
         private createGridStore() {

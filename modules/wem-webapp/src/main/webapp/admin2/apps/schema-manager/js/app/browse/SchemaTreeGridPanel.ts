@@ -37,7 +37,12 @@ module app_browse {
                 this.setActiveList('tree');
                 this.setRemoteSearchParams({});
                 this.refresh();
-            })
+            });
+
+            var schemaGridContextMenu = new app_browse.SchemaTreeGridContextMenu();
+            app_browse.ShowContextMenuEvent.on((event) => {
+                schemaGridContextMenu.showAt(event.getX(), event.getY());
+            });
         }
 
         private createColumns() {

@@ -6,6 +6,8 @@ module api_ui_menu{
         constructor(...actions:api_ui.Action[]) {
             super("ContextMenu", "context-menu");
 
+            this.hide();
+
             api_dom.Body.get().prependChild(this);
 
             for (var i = 0; i < actions.length; i++) {

@@ -18,6 +18,11 @@ module  app_browse {
             app_wizard.SpaceUpdatedEvent.on((event) => {
                 this.setRefreshNeeded(true);
             });
+
+            var spaceGridContextMenu = new app_browse.SpaceTreeGridContextMenu();
+            app_browse.ShowContextMenuEvent.on((event) => {
+                spaceGridContextMenu.showAt(event.getX(), event.getY());
+            });
         }
 
         private createGridStore() {

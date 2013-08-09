@@ -76,12 +76,6 @@ Ext.application({
         api_dom.Body.get().appendChild(appPanel);
 
         appPanel.init();
-
-        var schemaGridContextMenu = new app_browse.SchemaTreeGridContextMenu();
-        schemaGridContextMenu.hide();
-        app_browse.ShowContextMenuEvent.on((event) => {
-            schemaGridContextMenu.showAt(event.getX(), event.getY());
-        })
     }
 });
 
