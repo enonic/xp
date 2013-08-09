@@ -19,12 +19,9 @@ module app_browse {
             this.filterPanel = new app_browse_filter.ContentBrowseFilterPanel();
             var params = createLoadContentParams({});
 
-            api_remote.RemoteContentService.content_find(params, (response) => {
-                if (response && response.success) {
-
-                    // set facet data
-                    this.filterPanel.updateFacets(response.facets);
-                }
+            api_remote.RemoteContentService.content_find(params, (response:api_remote_content.FindResult) => {
+                // set facet data
+                this.filterPanel.updateFacets(response.facets);
             });
 
 

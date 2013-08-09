@@ -84,7 +84,7 @@ module api_remote_content {
         contentIds?: string[];
     }
 
-    export interface GetResult extends api_remote.BaseResult {
+    export interface GetResult {
         content: ContentGet[];
     }
 
@@ -92,7 +92,7 @@ module api_remote_content {
         path: string;
     }
 
-    export interface ListResult extends api_remote.BaseResult {
+    export interface ListResult {
         total: number;
         contents: ContentList[];
     }
@@ -111,7 +111,7 @@ module api_remote_content {
         };
     }
 
-    export interface FindResult extends api_remote.BaseResult {
+    export interface FindResult {
         total: number;
         contents: ContentFind[];
         facets?: ContentFacet[];
@@ -122,7 +122,7 @@ module api_remote_content {
         contentData: Data;
     }
 
-    export interface ValidateResult extends api_remote.BaseResult {
+    export interface ValidateResult {
         hasError: bool;
         errors: {
             path: string;
@@ -134,7 +134,7 @@ module api_remote_content {
         contentPaths: string[];
     }
 
-    export interface DeleteResult extends api_remote.BaseResult {
+    export interface DeleteResult {
         successes: {
             path:string;
         }[];
@@ -160,7 +160,7 @@ module api_remote_content {
         }[];
     }
 
-    export interface CreateOrUpdateResult extends api_remote.BaseResult{
+    export interface CreateOrUpdateResult{
         created: bool;
         updated: bool;
         contentId?: string;
@@ -172,7 +172,7 @@ module api_remote_content {
         contentIds?:string[];
     }
 
-    export interface GetTreeResult extends api_remote.BaseResult {
+    export interface GetTreeResult {
         total:number;
         contents:ContentTreeNode[];
     }

@@ -13,28 +13,18 @@ Ext.define('Admin.controller.SpaceController', {
 
     /*   Public, only CRUD model methods here please     */
 
-    remoteCreateOrUpdateSpace: function (spaceParams, callback) {
+    remoteCreateOrUpdateSpace: function (spaceParams, success, failure?) {
         api_remote.RemoteSpaceService.space_createOrUpdate(spaceParams, function (r) {
-            if (r && r.success) {
-                callback(r.created, r.updated);
-            } else {
-                Ext.Msg.alert("Error", r ? r.error : "An unexpected error occurred.");
-            }
-        });
+            success(r.created, r.updated);
+        }, failure);
     },
 
-    remoteDeleteSpace: function (spaces, callback) {
+    remoteDeleteSpace: function (spaces, success, failure?) {
         var me = this;
         var spaceNames = Ext.Array.map([].concat(spaces), function (item) {
             return item.get('name');
         });
-        api_remote.RemoteSpaceService.space_delete({"spaceName": spaceNames}, function (r) {
-            if (r) {
-                callback.call(me, r.success, r);
-            } else {
-                Ext.Msg.alert("Error", r ? r.error : "Unable to delete space.");
-            }
-        });
+        api_remote.RemoteSpaceService.space_delete({"spaceName": spaceNames}, success, failure);
     }
 
 });

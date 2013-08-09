@@ -96,11 +96,9 @@ Ext.define('Admin.controller.WizardController', {
         var me = this;
         var space = wizard.data;
 
-        var onDeleteSpaceSuccess = function (success, failures) {
-            if (success) {
-                wizard.close();
-                api_notify.showFeedback('Space was deleted');
-            }
+        var onDeleteSpaceSuccess = function (result) {
+            wizard.close();
+            api_notify.showFeedback('Space was deleted');
         };
 
         this.remoteDeleteSpace(space, onDeleteSpaceSuccess);

@@ -6,31 +6,24 @@ module api_handler {
         public static RELATIONSHIP_TYPE = "RelationshipType";
         public static MIXIN = "Mixin";
 
-        doDelete(deleteSchemaParam:api_handler.DeleteSchemaParam, callback:(thisArg, success, result) => void) {
-
-            var callbackFn = function (response) {
-                if (response) {
-                    callback.call(this, response.success, response);
-                } else {
-                    console.error('Error', response ? response.error : 'Unable to delete space.');
-                }
-            };
+        doDelete(deleteSchemaParam:api_handler.DeleteSchemaParam, success:(result) => void,
+                 failure?:(result:api_remote.FailureResult) => void) {
 
             switch (deleteSchemaParam.type) {
             case DeleteSchemaHandler.CONTENT_TYPE:
                 api_remote.RemoteContentTypeService.contentType_delete({
                     qualifiedContentTypeNames: deleteSchemaParam.qualifiedNames
-                }, callbackFn);
+                }, success, failure);
                 break;
             case DeleteSchemaHandler.RELATIONSHIP_TYPE:
                 api_remote.RemoteRelationshipTypeService.relationshipType_delete({
                     qualifiedRelationshipTypeNames: deleteSchemaParam.qualifiedNames
-                }, callbackFn);
+                }, success, failure);
                 break;
             case DeleteSchemaHandler.MIXIN:
                 api_remote.RemoteMixinService.mixin_delete({
                     qualifiedMixinNames: deleteSchemaParam.qualifiedNames
-                }, callbackFn);
+                }, success, failure);
                 break;
             }
 

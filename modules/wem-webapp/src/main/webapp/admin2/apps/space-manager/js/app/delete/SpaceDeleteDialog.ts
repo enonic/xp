@@ -13,15 +13,14 @@ module app {
 
             this.setDeleteAction(this.deleteAction);
 
-            var deleteCallback = (obj, success, result) => {
-                this.close();
-                components.gridPanel.refresh();
-                // TODO: fire DeletedEvent or give better feedback directly
-                api_notify.showFeedback('Space(s) was deleted!');
-            };
-
             this.deleteAction.addExecutionListener(() => {
-                this.deleteHandler.doDelete(api_handler.DeleteSpaceParamFactory.create(this.spacesToDelete), deleteCallback);
+                this.deleteHandler.doDelete(api_handler.DeleteSpaceParamFactory.create(this.spacesToDelete),
+                    (result:api_remote_space.DeleteResult) => {
+                        this.close();
+                        components.gridPanel.refresh();
+                        // TODO: fire DeletedEvent or give better feedback directly
+                        api_notify.showFeedback('Space(s) was deleted!');
+                    });
             });
         }
 

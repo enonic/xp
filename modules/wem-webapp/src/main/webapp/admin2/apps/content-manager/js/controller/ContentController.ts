@@ -13,28 +13,18 @@ Ext.define('Admin.controller.ContentController', {
 
     /*   Public, only CRUD model methods here please     */
 
-    remoteCreateOrUpdateContent: function (contentParams, callback) {
-        api_remote.RemoteContentService.content_createOrUpdate(contentParams, function (r) {
-            if (r && r.success) {
-                callback(r.created, r.updated, r.contentPath, r.contentId);
-            } else {
-                Ext.Msg.alert("Error", r ? r.error : "Internal error occured.");
-            }
-        });
+    remoteCreateOrUpdateContent: function (contentParams, success, failure?) {
+        api_remote.RemoteContentService.content_createOrUpdate(contentParams, function (result ) {
+            success(result.created, result.updated, result.contentPath, result.contentId);
+        }, failure);
     },
 
-    remoteDeleteContent: function (contents, callback) {
+    remoteDeleteContent: function (contents, success, failure?) {
         var me = this;
         var contentPaths = Ext.Array.map([].concat(contents), function (item) {
             return item.get('path');
         });
-        api_remote.RemoteContentService.content_delete({"contentPaths": contentPaths }, function (r) {
-            if (r) {
-                callback.call(me, r.success, r.failures);
-            } else {
-                Ext.Msg.alert("Error", r ? r.error : "Internal error occured.");
-            }
-        });
+        api_remote.RemoteContentService.content_delete({"contentPaths": contentPaths }, success, failure);
     }
 
 });

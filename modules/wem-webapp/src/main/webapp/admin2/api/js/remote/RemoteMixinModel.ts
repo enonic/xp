@@ -23,7 +23,7 @@ module api_remote_mixin {
         mixin:string;
     }
 
-    export interface GetResult extends api_remote.BaseResult {
+    export interface GetResult {
         mixin?: Mixin;
         mixinXml:string;
         iconUrl:string;
@@ -33,7 +33,7 @@ module api_remote_mixin {
         qualifiedMixinNames:string[];
     }
 
-    export interface DeleteResult extends api_remote.BaseResult {
+    export interface DeleteResult {
         successes: {
             qualifiedMixinName:string;
         }[];
@@ -48,7 +48,7 @@ module api_remote_mixin {
         iconReference:string;
     }
 
-    export interface CreateOrUpdateResult extends api_remote.BaseResult {
+    export interface CreateOrUpdateResult {
         created:bool;
         updated:bool;
     }

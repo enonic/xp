@@ -24,23 +24,19 @@ module app_new {
 
             // service returns error if empty array is passed
             if (recommendedArray.length > 0) {
-                api_remote.RemoteContentTypeService.contentType_get({
+                api_remote.RemoteContentTypeService.contentType_get(
+                    {
                         qualifiedNames: recommendedArray,
-                        format: "json"}
-                    , (result:api_remote_contenttype.GetResult) => {
+                        format: "json"
+                    },
+                    (result:api_remote_contenttype.GetResult) => {
 
-                        if (result && result.success) {
-                            var newContentTypeArray:api_remote_contenttype.ContentType[] = [];
+                        var newContentTypeArray:api_remote_contenttype.ContentType[] = [];
+                        result.contentTypes.forEach((contentType:api_remote_contenttype.ContentType) => {
+                            newContentTypeArray.push(contentType);
+                        });
 
-                            result.contentTypes.forEach((contentType:api_remote_contenttype.ContentType) => {
-                                newContentTypeArray.push(contentType);
-                            });
-
-                            this.contentTypesList.setContentTypes(newContentTypeArray);
-                        } else {
-                            console.log('Error getting recommended content types');
-                        }
-
+                        this.contentTypesList.setContentTypes(newContentTypeArray);
                     });
             }
 

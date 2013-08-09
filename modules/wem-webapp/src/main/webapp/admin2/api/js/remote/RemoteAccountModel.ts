@@ -75,7 +75,7 @@ module api_remote_account {
         types?: string[];
     }
 
-    export interface FindResult extends api_remote.BaseResult {
+    export interface FindResult {
         accounts: Account[];
         facets?: AccountFacet[];
         total?: number;
@@ -85,7 +85,7 @@ module api_remote_account {
         key: string;
     }
 
-    export interface GetGraphResult extends api_remote.BaseResult {
+    export interface GetGraphResult {
         graph: {
             id: string;
             name: string;
@@ -106,7 +106,7 @@ module api_remote_account {
         password: string;
     }
 
-    export interface ChangePasswordResult extends api_remote.BaseResult {
+    export interface ChangePasswordResult {
     }
 
     export interface VerifyUniqueEmailParams {
@@ -114,7 +114,7 @@ module api_remote_account {
         email: string;
     }
 
-    export interface VerifyUniqueEmailResult extends api_remote.BaseResult {
+    export interface VerifyUniqueEmailResult {
         emailInUse: bool;
         key: string;
     }
@@ -125,7 +125,7 @@ module api_remote_account {
         lastName: string;
     }
 
-    export interface SuggestUserNameResult extends api_remote.BaseResult {
+    export interface SuggestUserNameResult {
         username: string;
     }
 
@@ -139,7 +139,7 @@ module api_remote_account {
         groups?: string[];
     }
 
-    export interface CreateOrUpdateResult extends api_remote.BaseResult {
+    export interface CreateOrUpdateResult {
         created: bool;
         updated: bool;
     }
@@ -148,7 +148,7 @@ module api_remote_account {
         key:string[];
     }
 
-    export interface DeleteResult extends api_remote.BaseResult {
+    export interface DeleteResult {
         deleted:number;
     }
 
@@ -156,7 +156,7 @@ module api_remote_account {
         key:string;
     }
 
-    export interface GetResult extends api_remote.BaseResult, Account {
+    export interface GetResult extends Account {
 
     }
 

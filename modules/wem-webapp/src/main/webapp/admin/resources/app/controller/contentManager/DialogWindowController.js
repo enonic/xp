@@ -38,28 +38,13 @@ Ext.define('Admin.controller.contentManager.DialogWindowController', {
         var me = this;
         var content = win.data;
 
-        var onContentDeleted = function (success, details) {
+        var onContentDeleted = function (result) {
             win.close();
-            if (success) {
-                Admin.MessageBus.showFeedback({
-                    title: 'Content was deleted',
-                    message: Ext.isArray(content) && content.length > 1 ? content.length + ' contents were deleted' : '1 content was deleted',
-                    opts: {}
-                });
-            } else {
-                var message = '';
-                var i;
-                for (i = 0; i < details.length; i++) {
-                    message += details[0].reason + "\n";
-                }
-
-                Admin.MessageBus.showFeedback({
-                    title: 'Content was not deleted',
-                    message: message,
-                    opts: {}
-                });
-
-            }
+            Admin.MessageBus.showFeedback({
+                title: 'Content was deleted',
+                message: Ext.isArray(content) && content.length > 1 ? content.length + ' contents were deleted' : '1 content was deleted',
+                opts: {}
+            });
             me.getContentTreeGridPanel().refresh();
         };
 

@@ -4,6 +4,10 @@ module api_notify {
         newInfo(message).send();
     }
 
+    export function showError(message:string):void {
+        newError(message).send();
+    }
+
     export function updateAppTabCount(appId, tabCount:Number):void {
         // TODO: This needs to be reworked
     }

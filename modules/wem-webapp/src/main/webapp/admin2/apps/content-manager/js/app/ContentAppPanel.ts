@@ -80,28 +80,24 @@ module app {
                     };
                     api_remote.RemoteContentService.content_get(contentGetParams, (getContentResult:api_remote_content.GetResult) => {
 
-                        if (getContentResult && getContentResult.success) {
+                        var contentTypeGetParams:api_remote_contenttype.GetParams = {
+                            qualifiedNames: [getContentResult.content[0].type],
+                            format: "JSON",
+                            mixinReferencesToFormItems: true
+                        };
 
-                            var contentTypeGetParams:api_remote_contenttype.GetParams = {
-                                qualifiedNames: [getContentResult.content[0].type],
-                                format: "JSON",
-                                mixinReferencesToFormItems: true
-                            };
+                        api_remote.RemoteContentTypeService.contentType_get(contentTypeGetParams,
+                            (getContentTypeResult:api_remote_contenttype.GetResult) => {
 
-                            api_remote.RemoteContentTypeService.contentType_get(contentTypeGetParams,
-                                (getContentTypeResult:api_remote_contenttype.GetResult) => {
+                                var tabMenuItem = new ContentAppBarTabMenuItem(getContentResult.content[0].displayName, true);
+                                var id = this.generateTabId(getContentResult.content[0].name, true);
+                                var contentWizardPanel = new app_wizard.ContentWizardPanel(id, getContentTypeResult.contentTypes[0]);
+                                contentWizardPanel.setData(getContentResult);
 
-                                    var tabMenuItem = new ContentAppBarTabMenuItem(getContentResult.content[0].displayName, true);
-                                    var id = this.generateTabId(getContentResult.content[0].name, true);
-                                    var contentWizardPanel = new app_wizard.ContentWizardPanel(id, getContentTypeResult.contentTypes[0]);
-                                    contentWizardPanel.setData(getContentResult);
+                                this.addWizardPanel(tabMenuItem, contentWizardPanel);
+                                this.selectPanel(tabMenuItem);
+                            });
 
-                                    this.addWizardPanel(tabMenuItem, contentWizardPanel);
-                                    this.selectPanel(tabMenuItem);
-                                });
-                        } else {
-                            console.error("Error", getContentResult ? getContentResult.error : "Unable to retrieve content.");
-                        }
                     });
                 }
             });

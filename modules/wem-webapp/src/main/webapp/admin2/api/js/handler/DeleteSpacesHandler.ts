@@ -2,15 +2,10 @@ module api_handler {
 
     export class DeleteSpacesHandler {
 
-        doDelete(deleteSpaceParam:api_handler.DeleteSpaceParam, callback:(thisArg, success, result) => void) {
+        doDelete(deleteSpaceParam:api_handler.DeleteSpaceParam, success:(result:api_remote_space.DeleteResult) => void,
+                 failure?:(error:api_remote.FailureResult) => void) {
 
-            api_remote.RemoteSpaceService.space_delete(deleteSpaceParam, function (response) {
-                if (response) {
-                    callback.call(this, response.success, response);
-                } else {
-                    console.error('Error', response ? response.error : 'Unable to delete space.');
-                }
-            });
+            api_remote.RemoteSpaceService.space_delete(deleteSpaceParam, success, failure);
         }
     }
 }

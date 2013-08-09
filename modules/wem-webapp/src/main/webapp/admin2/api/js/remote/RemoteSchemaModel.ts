@@ -31,7 +31,7 @@ module api_remote_schema {
         modules:string[];
     }
 
-    export interface ListResult extends api_remote.BaseResult {
+    export interface ListResult {
         schemas:Schema[];
     }
 
@@ -39,7 +39,7 @@ module api_remote_schema {
         types:string[];
     }
 
-    export interface GetTreeResult extends api_remote.BaseResult {
+    export interface GetTreeResult {
         schemas:SchemaTreeNode[];
         total:number;
     }

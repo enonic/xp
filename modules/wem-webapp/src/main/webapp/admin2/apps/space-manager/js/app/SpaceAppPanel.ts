@@ -75,19 +75,14 @@ module app {
                         "spaceNames": [spaceModel.data.name]
                     };
                     api_remote.RemoteSpaceService.space_get(spaceGetParams, (result:api_remote_space.GetResult) => {
+                        var space = result.spaces[0];
+                        var tabMenuItem = new SpaceAppBarTabMenuItem(space.displayName, true);
+                        var id = this.generateTabId(space.name, true);
+                        var spaceWizardPanel = new app_wizard.SpaceWizardPanel(id);
+                        spaceWizardPanel.setPersistedItem(space);
 
-                        if (result && result.success) {
-                            var space = result.spaces[0];
-                            var tabMenuItem = new SpaceAppBarTabMenuItem(space.displayName, true);
-                            var id = this.generateTabId(space.name, true);
-                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel(id);
-                            spaceWizardPanel.setPersistedItem(space);
-
-                            this.addWizardPanel(tabMenuItem, spaceWizardPanel);
-                            this.selectPanel(tabMenuItem);
-                        } else {
-                            console.error("Error", result ? result.error : "Unable to retrieve space.");
-                        }
+                        this.addWizardPanel(tabMenuItem, spaceWizardPanel);
+                        this.selectPanel(tabMenuItem);
                     });
                 }
             });

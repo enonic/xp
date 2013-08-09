@@ -56,7 +56,7 @@ module api_remote_userstore {
     export interface GetAllParams {
     }
 
-    export interface GetAllResult extends api_remote.BaseResult {
+    export interface GetAllResult {
         total: number;
         userStores: UserStore[];
     }
@@ -73,7 +73,7 @@ module api_remote_userstore {
     export interface GetConnectorsParams {
     }
 
-    export interface GetConnectorsResult extends api_remote.BaseResult {
+    export interface GetConnectorsResult {
         total: number;
         userStoreConnectors: UserStoreConnector[];
     }
@@ -86,7 +86,7 @@ module api_remote_userstore {
         administrators: string[];
     }
 
-    export interface CreateOrUpdateResult extends api_remote.BaseResult {
+    export interface CreateOrUpdateResult {
         created: bool;
         updated: bool;
     }
@@ -95,7 +95,7 @@ module api_remote_userstore {
         name: string[];
     }
 
-    export interface DeleteResult extends api_remote.BaseResult {
+    export interface DeleteResult {
         deleted: number;
     }
 }

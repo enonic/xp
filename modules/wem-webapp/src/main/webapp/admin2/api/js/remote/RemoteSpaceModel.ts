@@ -17,7 +17,7 @@ module api_remote_space {
     export interface ListParams {
     }
 
-    export interface ListResult extends api_remote.BaseResult {
+    export interface ListResult {
         total: number;
         spaces: SpaceSummary[];
     }
@@ -26,7 +26,7 @@ module api_remote_space {
         spaceNames: string[];
     }
 
-    export interface GetResult extends api_remote.BaseResult {
+    export interface GetResult {
         spaces: Space[];
     }
 
@@ -47,7 +47,7 @@ module api_remote_space {
 
     }
 
-    export interface CreateOrUpdateResult extends api_remote.BaseResult {
+    export interface CreateOrUpdateResult {
         created:bool;
         updated:bool;
     }
@@ -56,7 +56,7 @@ module api_remote_space {
         spaceName:string[];
     }
 
-    export interface DeleteResult extends api_remote.BaseResult {
+    export interface DeleteResult {
         deleted:bool;
         failureReason?:string;
     }

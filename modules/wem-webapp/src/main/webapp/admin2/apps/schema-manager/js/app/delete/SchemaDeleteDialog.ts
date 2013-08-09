@@ -13,7 +13,7 @@ module app_delete {
 
             this.setDeleteAction(this.deleteAction);
 
-            var deleteCallback = (obj, success, result) => {
+            var deleteCallback = (result) => {
                 this.close();
                 //components.gridPanel.refresh();
                 api_notify.showFeedback('Schema was deleted!');

@@ -28,15 +28,13 @@ module app_browse_filter {
             var searchAction = new api_app_browse_filter.FilterSearchAction();
             searchAction.addExecutionListener((action:api_app_browse_filter.FilterSearchAction)=> {
                 var params = app_browse.createLoadContentParams(action.getFilterValues());
-                api_remote.RemoteSchemaService.schema_list(params, (response) => {
-                    if (response && response.success) {
-                        if (this.isDirty()) {
-                            new SchemaBrowseSearchEvent(params).fire();
-                        } else {
-                            new SchemaBrowseResetEvent().fire();
-                        }
-                        //TODO: update filter facets when they are implemented
+                api_remote.RemoteSchemaService.schema_list(params, (response:api_remote_schema.ListResult) => {
+                    if (this.isDirty()) {
+                        new SchemaBrowseSearchEvent(params).fire();
+                    } else {
+                        new SchemaBrowseResetEvent().fire();
                     }
+                    //TODO: update filter facets when they are implemented
                 });
 
             });

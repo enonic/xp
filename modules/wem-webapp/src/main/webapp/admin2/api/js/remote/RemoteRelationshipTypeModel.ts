@@ -24,7 +24,7 @@ module api_remote_relationshiptype {
         reason:string;
     }
 
-    export interface DeleteResult extends api_remote.BaseResult {
+    export interface DeleteResult {
         successes:DeleteRelationshipTypeSuccess[];
         failures:DeleteRelationshipTypeFailure[];
     }
@@ -34,7 +34,7 @@ module api_remote_relationshiptype {
         format:string;
     }
 
-    export interface GetResult extends api_remote.BaseResult {
+    export interface GetResult {
         iconUrl:string;
         relationshipType:RelationshipType;
     }
@@ -44,7 +44,7 @@ module api_remote_relationshiptype {
         iconReference:string;
     }
 
-    export interface CreateOrUpdateResult extends api_remote.BaseResult {
+    export interface CreateOrUpdateResult {
         created:bool;
         updated:bool;
     }

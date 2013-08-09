@@ -80,21 +80,19 @@ module app {
                         };
                         api_remote.RemoteContentTypeService.contentType_get(contentTypeGetParams,
                             (result:api_remote_contenttype.GetResult) => {
-                                if (result && result.success) {
-                                    var contentType:api_remote_contenttype.ContentType = result.contentTypes[0];
-                                    var tabMenuItem = new SchemaAppBarTabMenuItem(contentType.displayName, true);
 
-                                    var id = this.generateTabId(contentType.name, true);
-                                    var schemaWizardPanel = new app_wizard.ContentTypeWizardPanel(id);
-                                    // TODO: update rpc response to have iconUrl inside contentType property.
-                                    contentType.iconUrl = result.iconUrl;
-                                    schemaWizardPanel.setPersistedItem(contentType);
+                                var contentType:api_remote_contenttype.ContentType = result.contentTypes[0];
+                                var tabMenuItem = new SchemaAppBarTabMenuItem(contentType.displayName, true);
 
-                                    this.addWizardPanel(tabMenuItem, schemaWizardPanel);
-                                    this.selectPanel(tabMenuItem);
-                                } else {
-                                    console.error("Error", result ? result.error : "Unable to retrieve schema.");
-                                }
+                                var id = this.generateTabId(contentType.name, true);
+                                var schemaWizardPanel = new app_wizard.ContentTypeWizardPanel(id);
+                                // TODO: update rpc response to have iconUrl inside contentType property.
+                                contentType.iconUrl = result.iconUrl;
+                                schemaWizardPanel.setPersistedItem(contentType);
+
+                                this.addWizardPanel(tabMenuItem, schemaWizardPanel);
+                                this.selectPanel(tabMenuItem);
+
                             });
                         break;
                     case SchemaAppPanel.RELATIONSHIP_TYPE:
@@ -104,18 +102,16 @@ module app {
                         };
                         api_remote.RemoteRelationshipTypeService.relationshipType_get(relationshipTypeGetParams,
                             (result:api_remote_relationshiptype.GetResult) => {
-                                if (result && result.success) {
-                                    var tabMenuItem = new SchemaAppBarTabMenuItem(result.relationshipType.displayName, true);
 
-                                    var id = this.generateTabId(result.relationshipType.name, true);
-                                    var schemaWizardPanel = new app_wizard.RelationshipTypeWizardPanel(id);
-                                    schemaWizardPanel.setPersistedItem(result.relationshipType);
+                                var tabMenuItem = new SchemaAppBarTabMenuItem(result.relationshipType.displayName, true);
 
-                                    this.addWizardPanel(tabMenuItem, schemaWizardPanel);
-                                    this.selectPanel(tabMenuItem);
-                                } else {
-                                    console.error("Error", result ? result.error : "Unable to retrieve schema.");
-                                }
+                                var id = this.generateTabId(result.relationshipType.name, true);
+                                var schemaWizardPanel = new app_wizard.RelationshipTypeWizardPanel(id);
+                                schemaWizardPanel.setPersistedItem(result.relationshipType);
+
+                                this.addWizardPanel(tabMenuItem, schemaWizardPanel);
+                                this.selectPanel(tabMenuItem);
+
                             });
                         break;
                     case SchemaAppPanel.MIXIN:
@@ -124,18 +120,16 @@ module app {
                             format: 'JSON'
                         };
                         api_remote.RemoteMixinService.mixin_get(mixinGetParams, (result:api_remote_mixin.GetResult) => {
-                            if (result && result.success) {
-                                var tabMenuItem = new SchemaAppBarTabMenuItem(result.mixin.displayName, true);
 
-                                var id = this.generateTabId(result.mixin.name, true);
-                                var schemaWizardPanel = new app_wizard.MixinWizardPanel(id);
-                                schemaWizardPanel.setPersistedItem(result.mixin);
+                            var tabMenuItem = new SchemaAppBarTabMenuItem(result.mixin.displayName, true);
 
-                                this.addWizardPanel(tabMenuItem, schemaWizardPanel);
-                                this.selectPanel(tabMenuItem);
-                            } else {
-                                console.error("Error", result ? result.error : "Unable to retrieve schema.");
-                            }
+                            var id = this.generateTabId(result.mixin.name, true);
+                            var schemaWizardPanel = new app_wizard.MixinWizardPanel(id);
+                            schemaWizardPanel.setPersistedItem(result.mixin);
+
+                            this.addWizardPanel(tabMenuItem, schemaWizardPanel);
+                            this.selectPanel(tabMenuItem);
+
                         });
                         break;
                     }

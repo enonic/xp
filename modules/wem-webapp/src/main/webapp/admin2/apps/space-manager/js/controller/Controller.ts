@@ -66,24 +66,20 @@ Ext.define('Admin.controller.Controller', {
         tabs.el.mask();
         api_remote.RemoteSpaceService.space_get({
             "spaceNames": [space.data.name]
-        }, function (r) {
+        }, function (result:api_remote_space.GetResult) {
             tabs.el.unmask();
-            if (r) {
-                var id = me.generateTabId(space, true);
-                var editing = true;
-                var title = <string> space.data.displayName;
-                var data = space;
-                var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel(id, title, editing, data);
+            var id = me.generateTabId(space, true);
+            var editing = true;
+            var title = <string> space.data.displayName;
+            var data = space;
+            var spaceWizardPanel = new app_ui_wizard.SpaceWizardPanel(id, title, editing, data);
 
-                //check if preview tab is open and close it
-                var index = tabs.items.indexOfKey(me.generateTabId(space, false));
-                if (index >= 0) {
-                    tabs.remove(index);
-                }
-                tabs.addTab(spaceWizardPanel.ext, index >= 0 ? index : undefined, undefined);
-            } else {
-                console.error("Error", r ? r.error : "Unable to retrieve space.");
+            //check if preview tab is open and close it
+            var index = tabs.items.indexOfKey(me.generateTabId(space, false));
+            if (index >= 0) {
+                tabs.remove(index);
             }
+            tabs.addTab(spaceWizardPanel.ext, index >= 0 ? index : undefined, undefined);
         });
     },
 

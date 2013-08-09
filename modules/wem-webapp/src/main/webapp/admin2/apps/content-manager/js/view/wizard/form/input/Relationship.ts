@@ -26,13 +26,11 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
                 format: 'JSON'
             };
             api_remote.RemoteRelationshipTypeService.relationshipType_get(getRelationshipTypeCommand, function (response) {
-                if (response && response.success) {
-                    var iconUrl = response.relationshipType.iconUrl;
-                    if (me.rendered) {
-                        me.el.down('.admin-image-icon').set({'src': iconUrl});
-                    } else {
-                        me.relationshipTypeIconUrl = iconUrl;
-                    }
+                var iconUrl = response.relationshipType.iconUrl;
+                if (me.rendered) {
+                    me.el.down('.admin-image-icon').set({'src': iconUrl});
+                } else {
+                    me.relationshipTypeIconUrl = iconUrl;
                 }
             });
         }
@@ -199,12 +197,10 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
         };
         // retrieve image contents by contentId
         api_remote.RemoteContentService.content_get(getContentCommand, function (getContentResponse) {
-            if (getContentResponse && getContentResponse.success) {
-                Ext.each(getContentResponse.content, function (contentData) {
-                    var contentModel = new Admin.model.contentManager.ContentModel(contentData);
-                    me.selectedContentStore.add(contentModel);
-                });
-            }
+            Ext.each(getContentResponse.content, function (contentData) {
+                var contentModel = new Admin.model.contentManager.ContentModel(contentData);
+                me.selectedContentStore.add(contentModel);
+            });
         });
     },
 
@@ -351,11 +347,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
         };
 
         api_remote.RemoteRelationshipTypeService.relationshipType_get(getRelationshipTypeCommand, function (response) {
-            if (response && response.success) {
-                callback(response.relationshipType);
-            } else {
-                Ext.Msg.alert("Error", response ? response.error : "Unable to load relationship type");
-            }
+            callback(response.relationshipType);
         });
     }
 

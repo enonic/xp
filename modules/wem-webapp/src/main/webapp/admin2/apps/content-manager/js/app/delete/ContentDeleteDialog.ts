@@ -13,14 +13,13 @@ module app_delete {
 
             this.setDeleteAction(this.deleteAction);
 
-            var deleteCallback = (obj, success, result) => {
-                this.close();
-                //components.gridPanel.refresh();
-                api_notify.showFeedback('Content was deleted!')
-            }
-
             this.deleteAction.addExecutionListener(() => {
-                this.deleteHandler.doDelete(api_handler.DeleteContentParamFactory.create(this.contentToDelete), deleteCallback);
+                this.deleteHandler.doDelete(api_handler.DeleteContentParamFactory.create(this.contentToDelete),
+                    (result) => {
+                        this.close();
+                        //components.gridPanel.refresh();
+                        api_notify.showFeedback('Content was deleted!')
+                    });
             });
         }
 

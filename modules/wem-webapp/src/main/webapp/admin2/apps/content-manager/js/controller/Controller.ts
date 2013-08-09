@@ -87,7 +87,7 @@ Ext.define('Admin.controller.Controller', {
                     };
                     api_remote.RemoteContentTypeService.contentType_get(getContentTypeCommand, function (rpcResponse) {
                         getContentTypeResponse = rpcResponse;
-                        if (getContentTypeResponse && getContentTypeResponse.success && getContentResponse && getContentResponse.success) {
+                        if (getContentTypeResponse && getContentResponse ) {
                             // both responses received, combine responses and pass them to callback
                             getContentTypeResponse.content = getContentResponse.content;
                             handleRpcResponse(getContentTypeResponse);
@@ -99,7 +99,7 @@ Ext.define('Admin.controller.Controller', {
                     };
                     api_remote.RemoteContentService.content_get(getContentCommand, function (rpcResponse) {
                         getContentResponse = rpcResponse;
-                        if (getContentResponse && getContentResponse.success && getContentTypeResponse && getContentTypeResponse.success) {
+                        if (getContentResponse && getContentTypeResponse ) {
                             // both responses received, combine responses and pass them to callback
                             getContentTypeResponse.content = getContentResponse.content;
                             handleRpcResponse(getContentTypeResponse);
@@ -150,8 +150,6 @@ Ext.define('Admin.controller.Controller', {
                         mixinReferencesToFormItems: true
                     },
                     function (rpcResponse) {
-                        if (rpcResponse.success) {
-
                             //This is stub, logic for new content creation will be added later
                             var createContentTabFn = function (response) {
                                 return {
@@ -188,8 +186,6 @@ Ext.define('Admin.controller.Controller', {
                                 layout: 'fit'
                             };
                             tabs.addTab(tabItem, undefined, requestConfig);
-
-                        }
                     });
                 break;
             case 'site':
@@ -252,8 +248,6 @@ Ext.define('Admin.controller.Controller', {
             params = this.createLoadContentParams(values || filter.getValues());
 
         api_remote.RemoteContentService.content_find(params, function (response) {
-            if (response && response.success) {
-
                 // set facet data
                 me.getContentFilter().updateFacets(response.facets);
 
@@ -280,7 +274,6 @@ Ext.define('Admin.controller.Controller', {
                         treeGridPanel.updateResultCount(0);
                     }
                 }
-            }
         })
 
     },

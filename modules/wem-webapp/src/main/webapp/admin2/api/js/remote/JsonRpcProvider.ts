@@ -89,7 +89,7 @@ module api_remote {
                     if (Ext.isFunction(failureCallback)) {
                         failureCallback(failureResult, event)
                     } else {
-                        api_notify.showFeedback(failureResult.error);
+                        api_notify.showError(failureResult.error);
                     }
                 }
 

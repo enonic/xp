@@ -262,11 +262,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
                     contentIds: [contentId]
                 };
                 api_remote.RemoteContentService.content_get(getContentCommand, function (getContentResponse) {
-                    if (getContentResponse && getContentResponse.success) {
-                        var contentData = getContentResponse.content[0];
-                        var contentModel = new Admin.model.contentManager.ContentModel(contentData);
-                        callback(contentModel);
-                    }
+                    var contentData = getContentResponse.content[0];
+                    var contentModel = new Admin.model.contentManager.ContentModel(contentData);
+                    callback(contentModel);
                 });
             });
         });
@@ -278,11 +276,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
     remoteCreateBinary: function (fileUploadId, callback) {
         var createBinaryCommand = {'uploadFileId': fileUploadId};
         api_remote.RemoteContentService.binary_create(createBinaryCommand, function (response) {
-            if (response && response.success) {
-                callback(response.binaryId);
-            } else {
-                Ext.Msg.alert("Error", response ? response.error : "Unable to create binary content.");
-            }
+            callback(response.binaryId);
         });
     },
 
@@ -301,11 +295,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         };
 
         api_remote.RemoteContentService.content_createOrUpdate(createContentCommand, function (response) {
-            if (response && response.success) {
-                callback(response.contentId);
-            } else {
-                Ext.Msg.alert("Error", response ? response.error : "Unable to create image content.");
-            }
+            callback(response.contentId);
         });
     },
 
@@ -348,12 +338,10 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Image', {
         me.getLayout().setActiveItem('loadingForm');
         // retrieve image contents by contentId
         api_remote.RemoteContentService.content_get(getContentCommand, function (getContentResponse) {
-            if (getContentResponse && getContentResponse.success) {
-                var contentData = getContentResponse.content[0];
-                var contentModel = new Admin.model.contentManager.ContentModel(contentData);
-                me.imageModel = contentModel;
-                me.hideLoaderOnImageLoad(contentModel);
-            }
+            var contentData = getContentResponse.content[0];
+            var contentModel = new Admin.model.contentManager.ContentModel(contentData);
+            me.imageModel = contentModel;
+            me.hideLoaderOnImageLoad(contentModel);
         });
     }
 });
