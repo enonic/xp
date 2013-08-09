@@ -31,5 +31,18 @@ module api_content_data{
             return this.dataById[DataId.from(dataId).toString()];
         }
 
+        getDataByName(name:string):Data[] {
+
+            var matches:Data[] = [];
+            for (var i in this.dataById) {
+                var data:Data = this.dataById[i];
+                if (name === data.getName()) {
+                    matches.push(data);
+                }
+            }
+
+            return matches;
+        }
+
     }
 }

@@ -56,6 +56,17 @@ TestCase("DataSet", {
         dataSet.addData(new api_content_data.Property('myProp', 'B', 'String'))
 
         assertEquals("myProp[1]", dataSet.getData('myProp[1]').getId().toString());
+    },
+    "test given two Data with same name and one different when getDataByName then two Data is returned": function () {
+
+        var dataSet = new api_content_data.DataSet('mySet');
+        dataSet.addData(new api_content_data.Property('myInput', 'A', 'String'))
+        dataSet.addData(new api_content_data.Property('myOtherInput', 'B', 'String'))
+        dataSet.addData(new api_content_data.Property('myInput', 'C', 'String'))
+
+        var dataArray:api_content_data.Data[] = dataSet.getDataByName('myInput');
+
+        assertEquals(2, dataArray.length);
     }
 
 });
