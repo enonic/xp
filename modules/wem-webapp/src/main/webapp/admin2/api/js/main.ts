@@ -42,8 +42,8 @@
 ///<reference path='remote/content/RemoteContentService.ts' />
 ///<reference path='remote/account/RemoteAccountModel.ts' />
 ///<reference path='remote/account/RemoteAccountService.ts' />
-///<reference path='remote/contenttype/RemoteContentTypeModel.ts' />
-///<reference path='remote/contenttype/RemoteContentTypeService.ts' />
+///<reference path='remote/contenttype1/RemoteContentTypeModel.ts' />
+///<reference path='remote/contenttype1/RemoteContentTypeService.ts' />
 ///<reference path='remote/mixin/RemoteMixinModel.ts' />
 ///<reference path='remote/mixin/RemoteMixinService.ts' />
 ///<reference path='remote/relationshiptype/RemoteRelationshipTypeModel.ts' />
