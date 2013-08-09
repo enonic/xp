@@ -1,8 +1,7 @@
-///<reference path='BaseRemoteService.ts' />
-///<reference path='Item.ts' />
+///<reference path='../BaseRemoteService.ts' />
 ///<reference path='RemoteContentModel.ts' />
 
-module api_remote {
+module api_remote_content {
 
     export var RemoteContentService:RemoteContentServiceInterface;
 
@@ -25,7 +24,7 @@ module api_remote {
         binary_create (params, success, failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
-    class RemoteContentServiceImpl extends BaseRemoteService implements RemoteContentServiceInterface {
+    class RemoteContentServiceImpl extends api_remote.BaseRemoteService implements RemoteContentServiceInterface {
         private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
@@ -33,7 +32,7 @@ module api_remote {
                 "content_createOrUpdate", "content_list", "content_tree", "content_get",
                 "content_delete", "content_validate", "content_find", "binary_create"
             ];
-            super('api_remote.RemoteContentService', methods);
+            super('api_remote_content.RemoteContentService', methods);
         }
 
         content_createOrUpdate(params:api_remote_content.CreateOrUpdateParams,

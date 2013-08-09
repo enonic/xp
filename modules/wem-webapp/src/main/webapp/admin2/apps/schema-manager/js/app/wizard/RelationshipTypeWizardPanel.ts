@@ -61,7 +61,7 @@ module app_wizard {
                 iconReference: this.getIconUrl()
             };
 
-            api_remote.RemoteRelationshipTypeService.relationshipType_createOrUpdate(createParams, () => {
+            api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_createOrUpdate(createParams, () => {
                 new app_wizard.RelationshipTypeCreatedEvent().fire();
                 api_notify.showFeedback('Relationship type was created!');
             });
@@ -73,7 +73,7 @@ module app_wizard {
                 iconReference: this.getIconUrl()
             };
 
-            api_remote.RemoteRelationshipTypeService.relationshipType_createOrUpdate(updateParams, () => {
+            api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_createOrUpdate(updateParams, () => {
                 new app_wizard.RelationshipTypeUpdatedEvent().fire();
                 api_notify.showFeedback('Relationship type was saved!');
             });

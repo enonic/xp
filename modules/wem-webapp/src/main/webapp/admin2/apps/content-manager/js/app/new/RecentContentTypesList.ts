@@ -24,7 +24,7 @@ module app_new {
 
             // service returns error if empty array is passed
             if (recentArray.length > 0) {
-                api_remote.RemoteContentTypeService.contentType_get(
+                api_remote_contenttype.RemoteContentTypeService.contentType_get(
                     {
                         qualifiedNames: recentArray,
                         format: "json"

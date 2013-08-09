@@ -64,7 +64,7 @@ Ext.define('Admin.controller.Controller', {
         var tabs = this.getCmsTabPanel();
 
         tabs.el.mask();
-        api_remote.RemoteSpaceService.space_get({
+        api_remote_space.RemoteSpaceService.space_get({
             "spaceNames": [space.data.name]
         }, function (result:api_remote_space.GetResult) {
             tabs.el.unmask();

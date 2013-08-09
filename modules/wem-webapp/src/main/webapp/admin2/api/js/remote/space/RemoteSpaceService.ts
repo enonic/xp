@@ -1,8 +1,7 @@
-///<reference path='BaseRemoteService.ts' />
-///<reference path='Item.ts' />
+///<reference path='../BaseRemoteService.ts' />
 ///<reference path='RemoteSpaceModel.ts' />
 
-module api_remote {
+module api_remote_space {
 
     export var RemoteSpaceService:RemoteSpaceServiceInterface;
 
@@ -17,14 +16,14 @@ module api_remote {
                               failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
-    class RemoteSpaceServiceImpl extends BaseRemoteService implements RemoteSpaceServiceInterface {
+    class RemoteSpaceServiceImpl extends api_remote.BaseRemoteService implements RemoteSpaceServiceInterface {
         private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
             var methods:string[] = [
                 "space_list", "space_get", "space_delete", "space_createOrUpdate"
             ];
-            super('api_remote.RemoteSpaceService', methods);
+            super('api_remote_space.RemoteSpaceService', methods);
         }
 
         space_list(params:api_remote_space.ListParams, success:(result:api_remote_space.ListResult)=>void,

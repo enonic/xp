@@ -1,8 +1,7 @@
-///<reference path='BaseRemoteService.ts' />
-///<reference path='Item.ts' />
+///<reference path='../BaseRemoteService.ts' />
 ///<reference path='RemoteAccountModel.ts' />
 
-module api_remote {
+module api_remote_account {
 
     export var RemoteAccountService:RemoteAccountServiceInterface;
 
@@ -29,7 +28,7 @@ module api_remote {
                      failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
-    class RemoteAccountServiceImpl extends BaseRemoteService implements RemoteAccountServiceInterface {
+    class RemoteAccountServiceImpl extends api_remote.BaseRemoteService implements RemoteAccountServiceInterface {
         private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
@@ -37,7 +36,7 @@ module api_remote {
                 "account_find", "account_getGraph", "account_changePassword", "account_verifyUniqueEmail", "account_suggestUserName",
                 "account_createOrUpdate", "account_delete", "account_get"
             ];
-            super('api_remote.RemoteAccountService', methods);
+            super('api_remote_account.RemoteAccountService', methods);
         }
 
         account_find(params:api_remote_account.FindParams, success:(result:api_remote_account.FindResult)=>void,

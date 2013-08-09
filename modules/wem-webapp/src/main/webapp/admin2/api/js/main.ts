@@ -35,26 +35,27 @@
 ///<reference path='handler/DeleteSchemaParamFactory.ts' />
 ///<reference path='handler/DeleteSchemaHandler.ts' />
 
+///<reference path='remote/BaseRemoteModel.ts' />
 ///<reference path='remote/JsonRpcProvider.ts' />
-///<reference path='remote/BaseResult.ts' />
-///<reference path='remote/RemoteContentModel.ts' />
-///<reference path='remote/RemoteAccountModel.ts' />
-///<reference path='remote/RemoteContentTypeModel.ts' />
-///<reference path='remote/RemoteMixinModel.ts' />
-///<reference path='remote/RemoteRelationshipTypeModel.ts' />
-///<reference path='remote/RemoteSchemaModel.ts' />
-///<reference path='remote/RemoteSpaceModel.ts' />
-///<reference path='remote/RemoteUserStoreModel.ts' />
-///<reference path='remote/RemoteUtilsModel.ts' />
-///<reference path='remote/RemoteAccountService.ts' />
-///<reference path='remote/RemoteSpaceService.ts' />
-///<reference path='remote/RemoteContentService.ts' />
-///<reference path='remote/RemoteContentTypeService.ts' />
-///<reference path='remote/RemoteMixinService.ts' />
-///<reference path='remote/RemoteRelationshipTypeService.ts' />
-///<reference path='remote/RemoteSchemaService.ts' />
-///<reference path='remote/RemoteSystemService.ts' />
-///<reference path='remote/RemoteUserStoreService.ts' />
+
+///<reference path='remote/content/RemoteContentModel.ts' />
+///<reference path='remote/content/RemoteContentService.ts' />
+///<reference path='remote/account/RemoteAccountModel.ts' />
+///<reference path='remote/account/RemoteAccountService.ts' />
+///<reference path='remote/contenttype/RemoteContentTypeModel.ts' />
+///<reference path='remote/contenttype/RemoteContentTypeService.ts' />
+///<reference path='remote/mixin/RemoteMixinModel.ts' />
+///<reference path='remote/mixin/RemoteMixinService.ts' />
+///<reference path='remote/relationshiptype/RemoteRelationshipTypeModel.ts' />
+///<reference path='remote/relationshiptype/RemoteRelationshipTypeService.ts' />
+///<reference path='remote/schema/RemoteSchemaModel.ts' />
+///<reference path='remote/schema/RemoteSchemaService.ts' />
+///<reference path='remote/space/RemoteSpaceModel.ts' />
+///<reference path='remote/space/RemoteSpaceService.ts' />
+///<reference path='remote/userstore/RemoteUserStoreModel.ts' />
+///<reference path='remote/userstore/RemoteUserStoreService.ts' />
+///<reference path='remote/util/RemoteUtilsModel.ts' />
+///<reference path='remote/util/RemoteSystemService.ts' />
 
 ///<reference path='event/Event.ts' />
 ///<reference path='event/FilterSearchEvent.ts' />

@@ -85,7 +85,7 @@ Ext.define('Admin.controller.Controller', {
                         qualifiedNames: [selectedContent.get('type')],
                         mixinReferencesToFormItems: true
                     };
-                    api_remote.RemoteContentTypeService.contentType_get(getContentTypeCommand, function (rpcResponse) {
+                    api_remote_contenttype.RemoteContentTypeService.contentType_get(getContentTypeCommand, function (rpcResponse) {
                         getContentTypeResponse = rpcResponse;
                         if (getContentTypeResponse && getContentResponse ) {
                             // both responses received, combine responses and pass them to callback
@@ -97,7 +97,7 @@ Ext.define('Admin.controller.Controller', {
                     var getContentCommand = {
                         path: selectedContent.get('path')
                     };
-                    api_remote.RemoteContentService.content_get(getContentCommand, function (rpcResponse) {
+                    api_remote_content.RemoteContentService.content_get(getContentCommand, function (rpcResponse) {
                         getContentResponse = rpcResponse;
                         if (getContentResponse && getContentTypeResponse ) {
                             // both responses received, combine responses and pass them to callback
@@ -144,7 +144,7 @@ Ext.define('Admin.controller.Controller', {
 
             switch (type) {
             case 'contentType':
-                api_remote.RemoteContentTypeService.contentType_get({
+                api_remote_contenttype.RemoteContentTypeService.contentType_get({
                         format: 'JSON',
                         qualifiedNames: [qualifiedContentType],
                         mixinReferencesToFormItems: true
@@ -247,7 +247,7 @@ Ext.define('Admin.controller.Controller', {
             filter = this.getContentFilter(),
             params = this.createLoadContentParams(values || filter.getValues());
 
-        api_remote.RemoteContentService.content_find(params, function (response) {
+        api_remote_content.RemoteContentService.content_find(params, function (response) {
                 // set facet data
                 me.getContentFilter().updateFacets(response.facets);
 

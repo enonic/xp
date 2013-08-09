@@ -5,7 +5,7 @@ module api_handler {
         doDelete(deleteContentParam:api_handler.DeleteContentParam, success:(result:api_remote_content.DeleteResult) => void,
                  failure?:(result:api_remote.FailureResult) => void) {
 
-            api_remote.RemoteContentService.content_delete(deleteContentParam, success, failure);
+            api_remote_content.RemoteContentService.content_delete(deleteContentParam, success, failure);
         }
     }
 }

@@ -1,8 +1,7 @@
-///<reference path='BaseRemoteService.ts' />
-///<reference path='Item.ts' />
+///<reference path='../BaseRemoteService.ts' />
 ///<reference path='RemoteUserStoreModel.ts' />
 
-module api_remote {
+module api_remote_userstore {
 
     export var RemoteUserStoreService:RemoteUserStoreServiceInterface;
 
@@ -21,7 +20,7 @@ module api_remote {
                           failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
-    class RemoteUserStoreServiceImpl extends BaseRemoteService implements RemoteUserStoreServiceInterface {
+    class RemoteUserStoreServiceImpl extends api_remote.BaseRemoteService implements RemoteUserStoreServiceInterface {
         private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
@@ -29,7 +28,7 @@ module api_remote {
                 "userstore_getAll", "userstore_get", "userstore_getConnectors",
                 "userstore_createOrUpdate", "userstore_delete"
             ];
-            super('api_remote.RemoteUserStoreService', methods);
+            super('api_remote_userstore.RemoteUserStoreService', methods);
         }
 
         userstore_getAll(params:api_remote_userstore.GetAllParams, success:(result:api_remote_userstore.GetAllResult)=>void,

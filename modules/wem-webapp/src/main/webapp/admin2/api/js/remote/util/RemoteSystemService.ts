@@ -1,8 +1,7 @@
-///<reference path='BaseRemoteService.ts' />
-///<reference path='Item.ts' />
+///<reference path='../BaseRemoteService.ts' />
 ///<reference path='RemoteUtilsModel.ts' />
 
-module api_remote {
+module api_remote_util {
 
     export var RemoteSystemService:RemoteSystemServiceInterface;
 
@@ -17,7 +16,7 @@ module api_remote {
                               failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
-    class RemoteSystemServiceImpl extends BaseRemoteService implements RemoteSystemServiceInterface {
+    class RemoteSystemServiceImpl extends api_remote.BaseRemoteService implements RemoteSystemServiceInterface {
         private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
@@ -25,7 +24,7 @@ module api_remote {
                 "util_getCountries", "util_getLocales", "util_getTimeZones",
                 "system_getSystemInfo"
             ];
-            super('api_remote.RemoteSystemService', methods);
+            super('api_remote_util.RemoteSystemService', methods);
         }
 
         util_getCountries(params:GetCountriesParams, success:(result:GetCountriesResult)=>void,

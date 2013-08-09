@@ -1,8 +1,7 @@
-///<reference path='BaseRemoteService.ts' />
-///<reference path='Item.ts' />
+///<reference path='../BaseRemoteService.ts' />
 ///<reference path='RemoteSchemaModel.ts' />
 
-module api_remote {
+module api_remote_schema {
 
     export var RemoteSchemaService:RemoteSchemaServiceInterface;
 
@@ -13,14 +12,14 @@ module api_remote {
                      failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
-    class RemoteSchemaServiceImpl extends BaseRemoteService implements RemoteSchemaServiceInterface {
+    class RemoteSchemaServiceImpl extends api_remote.BaseRemoteService implements RemoteSchemaServiceInterface {
         private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
             var methods:string[] = [
                 "schema_list", "schema_tree"
             ];
-            super('api_remote.RemoteSchemaService', methods);
+            super('api_remote_schema.RemoteSchemaService', methods);
         }
 
         schema_tree(params:api_remote_schema.GetTreeParams, success:(result:api_remote_schema.GetTreeResult)=>void,

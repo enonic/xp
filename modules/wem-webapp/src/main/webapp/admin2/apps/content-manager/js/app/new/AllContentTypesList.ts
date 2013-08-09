@@ -25,7 +25,7 @@ module app_new {
 
         refresh() {
 
-            api_remote.RemoteContentTypeService.contentType_list({}, function (result) => {
+            api_remote_contenttype.RemoteContentTypeService.contentType_list({}, function (result) => {
                 this.contentTypesList.setContentTypes(result.contentTypes);
             });
         }

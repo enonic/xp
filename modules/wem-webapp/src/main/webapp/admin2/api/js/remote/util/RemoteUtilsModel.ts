@@ -1,4 +1,4 @@
-module api_remote {
+module api_remote_util {
 
     export interface CallingCode {
         callingCodeId: string;
@@ -40,7 +40,7 @@ module api_remote {
     export interface SystemGetSystemInfoParams {
     }
 
-    export interface SystemGetSystemInfoResult extends BaseResult {
+    export interface SystemGetSystemInfoResult {
         installationName: string;
         version: string;
         title: string;
@@ -49,7 +49,7 @@ module api_remote {
     export interface GetCountriesParams {
     }
 
-    export interface GetCountriesResult extends BaseResult {
+    export interface GetCountriesResult {
         total: number;
         countries: Country[];
     }
@@ -57,7 +57,7 @@ module api_remote {
     export interface GetLocalesParams {
     }
 
-    export interface GetLocalesResult extends BaseResult {
+    export interface GetLocalesResult {
         total: number;
         locales: Locale[];
     }
@@ -65,7 +65,7 @@ module api_remote {
     export interface GetTimeZonesParams {
     }
 
-    export interface GetTimeZonesResult extends BaseResult {
+    export interface GetTimeZonesResult {
         total: number;
         timezones: TimeZone[];
     }

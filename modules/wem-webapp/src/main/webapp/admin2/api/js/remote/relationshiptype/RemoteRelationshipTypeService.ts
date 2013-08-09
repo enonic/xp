@@ -1,8 +1,7 @@
-///<reference path='BaseRemoteService.ts' />
-///<reference path='Item.ts' />
+///<reference path='../BaseRemoteService.ts' />
 ///<reference path='RemoteRelationshipTypeModel.ts' />
 
-module api_remote {
+module api_remote_relationshiptype {
 
     export var RemoteRelationshipTypeService:RemoteRelationshipTypeServiceInterface;
 
@@ -17,14 +16,14 @@ module api_remote {
                                          failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
-    class RemoteRelationshipTypeServiceImpl extends BaseRemoteService implements RemoteRelationshipTypeServiceInterface {
+    class RemoteRelationshipTypeServiceImpl extends api_remote.BaseRemoteService implements RemoteRelationshipTypeServiceInterface {
         private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
             var methods:string[] = [
                 "relationshipType_get", "relationshipType_createOrUpdate", "relationshipType_delete"
             ];
-            super('api_remote.RemoteRelationshipTypeService', methods);
+            super('api_remote_relationshiptype.RemoteRelationshipTypeService', methods);
         }
 
         relationshipType_get(params:api_remote_relationshiptype.GetParams, success:(result:api_remote_relationshiptype.GetResult)=>void,

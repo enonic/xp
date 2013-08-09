@@ -25,7 +25,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
                 qualifiedRelationshipTypeName: me.inputConfig.type.config.relationshipType,
                 format: 'JSON'
             };
-            api_remote.RemoteRelationshipTypeService.relationshipType_get(getRelationshipTypeCommand, function (response) {
+            api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_get(getRelationshipTypeCommand, function (response) {
                 var iconUrl = response.relationshipType.iconUrl;
                 if (me.rendered) {
                     me.el.down('.admin-image-icon').set({'src': iconUrl});
@@ -196,7 +196,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             contentIds: Ext.Array.pluck(values, 'value')
         };
         // retrieve image contents by contentId
-        api_remote.RemoteContentService.content_get(getContentCommand, function (getContentResponse) {
+        api_remote_content.RemoteContentService.content_get(getContentCommand, function (getContentResponse) {
             Ext.each(getContentResponse.content, function (contentData) {
                 var contentModel = new Admin.model.contentManager.ContentModel(contentData);
                 me.selectedContentStore.add(contentModel);
@@ -346,7 +346,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
             'format': 'JSON'
         };
 
-        api_remote.RemoteRelationshipTypeService.relationshipType_get(getRelationshipTypeCommand, function (response) {
+        api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_get(getRelationshipTypeCommand, function (response) {
             callback(response.relationshipType);
         });
     }

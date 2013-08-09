@@ -1,8 +1,7 @@
-///<reference path='BaseRemoteService.ts' />
-///<reference path='Item.ts' />
+///<reference path='../BaseRemoteService.ts' />
 ///<reference path='RemoteMixinModel.ts' />
 
-module api_remote {
+module api_remote_mixin {
 
     export var RemoteMixinService:RemoteMixinServiceInterface;
 
@@ -15,14 +14,14 @@ module api_remote {
                       failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
-    class RemoteMixinServiceImpl extends BaseRemoteService implements RemoteMixinServiceInterface {
+    class RemoteMixinServiceImpl extends api_remote.BaseRemoteService implements RemoteMixinServiceInterface {
         private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
             var methods:string[] = [
                 "mixin_get", "mixin_createOrUpdate", "mixin_delete"
             ];
-            super('api_remote.RemoteMixinService', methods);
+            super('api_remote_mixin.RemoteMixinService', methods);
         }
 
         mixin_get(params:api_remote_mixin.GetParams, callback:(result:api_remote_mixin.GetResult)=>void,

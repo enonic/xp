@@ -9,7 +9,7 @@ module admin_app_handler {
                 return item.get('path');
             });
 
-            api_remote.RemoteContentService.content_delete({'contentPaths': contentPaths }, success, failure);
+            api_remote_content.RemoteContentService.content_delete({'contentPaths': contentPaths }, success, failure);
 
         }
 

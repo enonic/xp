@@ -14,7 +14,7 @@ Ext.define('Admin.controller.SpaceController', {
     /*   Public, only CRUD model methods here please     */
 
     remoteCreateOrUpdateSpace: function (spaceParams, success, failure?) {
-        api_remote.RemoteSpaceService.space_createOrUpdate(spaceParams, function (r) {
+        api_remote_space.RemoteSpaceService.space_createOrUpdate(spaceParams, function (r) {
             success(r.created, r.updated);
         }, failure);
     },
@@ -24,7 +24,7 @@ Ext.define('Admin.controller.SpaceController', {
         var spaceNames = Ext.Array.map([].concat(spaces), function (item) {
             return item.get('name');
         });
-        api_remote.RemoteSpaceService.space_delete({"spaceName": spaceNames}, success, failure);
+        api_remote_space.RemoteSpaceService.space_delete({"spaceName": spaceNames}, success, failure);
     }
 
 });

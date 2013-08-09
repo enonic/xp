@@ -74,7 +74,7 @@ module app {
                     var spaceGetParams:api_remote_space.GetParams = {
                         "spaceNames": [spaceModel.data.name]
                     };
-                    api_remote.RemoteSpaceService.space_get(spaceGetParams, (result:api_remote_space.GetResult) => {
+                    api_remote_space.RemoteSpaceService.space_get(spaceGetParams, (result:api_remote_space.GetResult) => {
                         var space = result.spaces[0];
                         var tabMenuItem = new SpaceAppBarTabMenuItem(space.displayName, true);
                         var id = this.generateTabId(space.name, true);

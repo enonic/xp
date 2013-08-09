@@ -9,7 +9,7 @@ module app_browse_filter {
 
             searchAction.addExecutionListener((action:api_app_browse_filter.FilterSearchAction)=> {
                 var params = app_browse.createLoadContentParams(action.getFilterValues());
-                api_remote.RemoteContentService.content_find(params, (response:api_remote_content.FindResult) => {
+                api_remote_content.RemoteContentService.content_find(params, (response:api_remote_content.FindResult) => {
                     var ids = response.contents.map(function (item) {
                         return item.id
                     });
@@ -25,7 +25,7 @@ module app_browse_filter {
             resetAction.addExecutionListener((action:api_app_browse_filter.FilterResetAction)=> {
                 var params = app_browse.createLoadContentParams({});
 
-                api_remote.RemoteContentService.content_find(params, (response:api_remote_content.FindResult) => {
+                api_remote_content.RemoteContentService.content_find(params, (response:api_remote_content.FindResult) => {
                     // set facet data
                     this.updateFacets(response.facets);
                 });

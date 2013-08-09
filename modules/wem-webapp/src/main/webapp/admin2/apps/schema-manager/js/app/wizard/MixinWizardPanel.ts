@@ -61,7 +61,7 @@ module app_wizard {
                 iconReference: this.getIconUrl()
             };
 
-            api_remote.RemoteMixinService.mixin_createOrUpdate(createParams, () => {
+            api_remote_mixin.RemoteMixinService.mixin_createOrUpdate(createParams, () => {
                 new app_wizard.MixinCreatedEvent().fire();
                 api_notify.showFeedback('Mixin was created!');
             });
@@ -73,7 +73,7 @@ module app_wizard {
                 iconReference: this.getIconUrl()
             };
 
-            api_remote.RemoteMixinService.mixin_createOrUpdate(updateParams, () => {
+            api_remote_mixin.RemoteMixinService.mixin_createOrUpdate(updateParams, () => {
                 new app_wizard.MixinUpdatedEvent().fire();
                 api_notify.showFeedback('Mixin was saved!');
             });

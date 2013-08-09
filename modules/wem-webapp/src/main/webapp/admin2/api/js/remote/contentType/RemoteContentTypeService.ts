@@ -1,8 +1,7 @@
-///<reference path='BaseRemoteService.ts' />
-///<reference path='Item.ts' />
+///<reference path='../BaseRemoteService.ts' />
 ///<reference path='RemoteContentTypeModel.ts' />
 
-module api_remote {
+module api_remote_contenttype {
 
     export var RemoteContentTypeService:RemoteContentTypeServiceInterface;
 
@@ -20,7 +19,7 @@ module api_remote {
                           failure?:(result:api_remote.FailureResult)=>void):void;
     }
 
-    class RemoteContentTypeServiceImpl extends BaseRemoteService implements RemoteContentTypeServiceInterface {
+    class RemoteContentTypeServiceImpl extends api_remote.BaseRemoteService implements RemoteContentTypeServiceInterface {
         private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
@@ -28,7 +27,7 @@ module api_remote {
                 "contentType_get", "contentType_list", "contentType_createOrUpdate",
                 "contentType_delete", "contentType_tree"
             ];
-            super('api_remote.RemoteContentTypeService', methods);
+            super('api_remote_contenttype.RemoteContentTypeService', methods);
         }
 
         contentType_get(params:api_remote_contenttype.GetParams, success:(result:api_remote_contenttype.GetResult)=>void,

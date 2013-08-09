@@ -78,7 +78,7 @@ module app {
                     var contentGetParams:api_remote_content.GetParams = {
                         contentIds: [contentModel.data.id]
                     };
-                    api_remote.RemoteContentService.content_get(contentGetParams, (getContentResult:api_remote_content.GetResult) => {
+                    api_remote_content.RemoteContentService.content_get(contentGetParams, (getContentResult:api_remote_content.GetResult) => {
 
                         var contentTypeGetParams:api_remote_contenttype.GetParams = {
                             qualifiedNames: [getContentResult.content[0].type],
@@ -86,7 +86,7 @@ module app {
                             mixinReferencesToFormItems: true
                         };
 
-                        api_remote.RemoteContentTypeService.contentType_get(contentTypeGetParams,
+                        api_remote_contenttype.RemoteContentTypeService.contentType_get(contentTypeGetParams,
                             (getContentTypeResult:api_remote_contenttype.GetResult) => {
 
                                 var tabMenuItem = new ContentAppBarTabMenuItem(getContentResult.content[0].displayName, true);
