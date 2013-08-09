@@ -13,15 +13,4 @@ module api_app_wizard {
             return this.wizardPanel;
         }
     }
-
-    export class WizardStepEvent extends api_event.Event {
-
-        constructor() {
-            super("wizardStep");
-        }
-
-        static on(handler:(event:WizardStepEvent) => void) {
-            api_event.onEvent('wizardStep', handler);
-        }
-    }
 }

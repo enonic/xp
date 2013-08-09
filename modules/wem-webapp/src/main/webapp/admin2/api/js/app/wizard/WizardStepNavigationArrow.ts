@@ -23,9 +23,9 @@ module api_app_wizard {
             });
             this.update();
 
-            WizardStepEvent.on((event) => {
+            this.navigator.addStepEventListener(() => {
                 this.update();
-            })
+            });
         }
 
         private update() {
