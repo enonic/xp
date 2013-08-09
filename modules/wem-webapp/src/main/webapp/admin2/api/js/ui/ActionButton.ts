@@ -3,6 +3,7 @@ module api_ui{
     export class ActionButton extends api_dom.ButtonEl {
 
         private action:Action;
+        private tooltip:Tooltip;
 
         constructor(idPrefix:string, action:Action) {
             super(idPrefix);
@@ -23,6 +24,10 @@ module api_ui{
             } else {
                 var labelNode = new api_dom.TextNode(this.action.getLabel());
                 this.getEl().appendChild(labelNode.getText());
+            }
+
+            if (this.action.hasShortcut()) {
+                this.tooltip = new Tooltip(this, this.action.getShortcut().getCombination());
             }
 
             this.getEl().addEventListener("click", () => {
