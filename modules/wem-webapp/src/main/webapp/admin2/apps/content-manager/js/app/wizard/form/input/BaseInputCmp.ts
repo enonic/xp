@@ -1,6 +1,6 @@
-module admin.ui {
+module app_wizard_form_input {
 
-    export class BaseInputComponent {
+    export class BaseInputCmp {
 
         private input:api_schema_content_form.Input;
 
