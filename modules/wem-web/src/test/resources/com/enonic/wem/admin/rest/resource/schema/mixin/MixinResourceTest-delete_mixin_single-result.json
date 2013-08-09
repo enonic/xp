@@ -1,7 +1,9 @@
 {
-    "failures" : [ ],
-    "success" : true,
-    "successes" : [ {
-        "qualifiedMixinName" : "my:existing_mixin"
-    } ]
+    "failures": [ ],
+    "success": true,
+    "successes": [
+        {
+            "qualifiedMixinName": "my:existing_mixin"
+        }
+    ]
 }

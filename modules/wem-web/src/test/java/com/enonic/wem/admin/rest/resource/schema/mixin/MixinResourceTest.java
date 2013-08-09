@@ -2,24 +2,18 @@ package com.enonic.wem.admin.rest.resource.schema.mixin;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.Files;
 
-import com.enonic.wem.admin.json.ObjectMapperHelper;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.AbstractMixinJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinConfigJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinCreateOrUpdateJson;
@@ -38,8 +32,6 @@ import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.api.schema.content.form.Input;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
@@ -51,12 +43,11 @@ import static com.enonic.wem.api.command.Commands.mixin;
 import static com.enonic.wem.api.schema.content.form.Input.newInput;
 import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_AREA;
 import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_LINE;
-import static junit.framework.Assert.assertNotNull;
+import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 
 public class MixinResourceTest
     extends JsonTestHelper
@@ -101,20 +92,12 @@ public class MixinResourceTest
         throws IOException
     {
         // setup
-        Mixin mixin = Mixin.newMixin()
-            .module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() )
-            .formItem( newInput()
-                .name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() )
-                .inputType( TEXT_LINE )
-                .label( "Line Text 1" )
-                .required( true )
-                .helpText( "Help text line 1" )
-                .required( true )
-                .build() )
-            .build();
+        Mixin mixin = Mixin.newMixin().module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).formItem(
+            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
+                true ).helpText( "Help text line 1" ).required( true ).build() ).build();
 
-        Mockito.when( client.execute( mixin().get().names( QualifiedMixinNames.from( MY_MIXIN_QUALIFIED_NAME_1 ) ) ) )
-            .thenReturn(  Mixins.from( mixin ) );
+        Mockito.when( client.execute( mixin().get().names( QualifiedMixinNames.from( MY_MIXIN_QUALIFIED_NAME_1 ) ) ) ).thenReturn(
+            Mixins.from( mixin ) );
 
         // execute
         AbstractMixinJson result = resource.get( MY_MIXIN_QUALIFIED_NAME_1.toString(), MixinResource.FORMAT_JSON );
@@ -129,20 +112,12 @@ public class MixinResourceTest
         throws IOException
     {
         // setup
-        Mixin mixin = Mixin.newMixin()
-            .module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() )
-            .formItem( newInput()
-                .name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() )
-                .inputType( TEXT_LINE )
-                .label( "Line Text 1" )
-                .required( true )
-                .helpText( "Help text line 1" )
-                .required( true )
-                .build() )
-            .build();
+        Mixin mixin = Mixin.newMixin().module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).formItem(
+            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
+                true ).helpText( "Help text line 1" ).required( true ).build() ).build();
 
-        Mockito.when( client.execute( mixin().get().names( QualifiedMixinNames.from( MY_MIXIN_QUALIFIED_NAME_1 ) ) ) )
-            .thenReturn(  Mixins.from( mixin ) );
+        Mockito.when( client.execute( mixin().get().names( QualifiedMixinNames.from( MY_MIXIN_QUALIFIED_NAME_1 ) ) ) ).thenReturn(
+            Mixins.from( mixin ) );
 
         // execute
         AbstractMixinJson result = resource.get( MY_MIXIN_QUALIFIED_NAME_1.toString(), MixinResource.FORMAT_XML );
@@ -153,7 +128,8 @@ public class MixinResourceTest
     }
 
     @Test(expected = WebApplicationException.class)
-    public final void test_getMixin_notFound() throws Exception
+    public final void test_getMixin_notFound()
+        throws Exception
     {
         // setup
         Mockito.when( client.execute( Mockito.any( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
@@ -166,20 +142,12 @@ public class MixinResourceTest
     public final void test_getMixin_wrongFormat()
     {
         // setup
-        Mixin mixin = Mixin.newMixin()
-            .module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() )
-            .formItem( newInput()
-                .name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() )
-                .inputType( TEXT_LINE )
-                .label( "Line Text 1" )
-                .required( true )
-                .helpText( "Help text line 1" )
-                .required( true )
-                .build() )
-            .build();
+        Mixin mixin = Mixin.newMixin().module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).formItem(
+            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
+                true ).helpText( "Help text line 1" ).required( true ).build() ).build();
 
-        Mockito.when( client.execute( mixin().get().names( QualifiedMixinNames.from( MY_MIXIN_QUALIFIED_NAME_1 ) ) ) )
-            .thenReturn(  Mixins.from( mixin ) );
+        Mockito.when( client.execute( mixin().get().names( QualifiedMixinNames.from( MY_MIXIN_QUALIFIED_NAME_1 ) ) ) ).thenReturn(
+            Mixins.from( mixin ) );
 
         // execute
         resource.get( MY_MIXIN_QUALIFIED_NAME_1.toString(), "not_existed_format" );
@@ -190,29 +158,13 @@ public class MixinResourceTest
         throws IOException
     {
         // setup
-        Mixin mixin1 = Mixin.newMixin()
-            .module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() )
-            .formItem( newInput()
-                .name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() )
-                .inputType( TEXT_LINE )
-                .label( "Line Text 1" )
-                .required( true )
-                .helpText( "Help text line 1" )
-                .required( true )
-                .build() )
-            .build();
+        Mixin mixin1 = Mixin.newMixin().module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).formItem(
+            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
+                true ).helpText( "Help text line 1" ).required( true ).build() ).build();
 
-        Mixin mixin2 = Mixin.newMixin()
-            .module( MY_MIXIN_QUALIFIED_NAME_2.getModuleName() )
-            .formItem( newInput()
-                .name( MY_MIXIN_QUALIFIED_NAME_2.getLocalName() )
-                .inputType( TEXT_AREA )
-                .label( "Text Area" )
-                .required( true )
-                .helpText( "Help text area" )
-                .required( true )
-                .build() )
-            .build();
+        Mixin mixin2 = Mixin.newMixin().module( MY_MIXIN_QUALIFIED_NAME_2.getModuleName() ).formItem(
+            newInput().name( MY_MIXIN_QUALIFIED_NAME_2.getLocalName() ).inputType( TEXT_AREA ).label( "Text Area" ).required(
+                true ).helpText( "Help text area" ).required( true ).build() ).build();
 
         Mockito.when( client.execute( mixin().get().all() ) ).thenReturn( Mixins.from( mixin1, mixin2 ) );
 
@@ -267,13 +219,8 @@ public class MixinResourceTest
         throws Exception
     {
         // setup
-        Mixin mixin = newMixin()
-            .module( Module.SYSTEM.getName() )
-            .formItem( newInput()
-                .name( "some_input" )
-                .inputType( InputTypes.TEXT_LINE )
-                .build() )
-            .build();
+        Mixin mixin = newMixin().module( Module.SYSTEM.getName() ).formItem(
+            newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
 

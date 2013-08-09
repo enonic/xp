@@ -1,31 +1,31 @@
 {
-    "mixin" : {
-        "deletable" : false,
-        "displayName" : null,
-        "editable" : false,
-        "formItemSet" : null,
-        "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:mymodule:input_text1",
-        "input" : {
-            "customText" : null,
-            "helpText" : "Help text line 1",
-            "immutable" : false,
-            "indexed" : false,
-            "label" : "Line Text 1",
-            "name" : "input_text1",
-            "occurrences" : {
-                "maximum" : 1,
-                "minimum" : 1
+    "mixin": {
+        "deletable": false,
+        "displayName": null,
+        "editable": false,
+        "formItemSet": null,
+        "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:mymodule:input_text1",
+        "input": {
+            "customText": null,
+            "helpText": "Help text line 1",
+            "immutable": false,
+            "indexed": false,
+            "label": "Line Text 1",
+            "name": "input_text1",
+            "occurrences": {
+                "maximum": 1,
+                "minimum": 1
             },
-            "type" : {
-                "builtIn" : true,
-                "config" : null,
-                "name" : "TextLine"
+            "type": {
+                "builtIn": true,
+                "config": null,
+                "name": "TextLine"
             },
-            "validationRegexp" : null
+            "validationRegexp": null
         },
-        "layout" : null,
-        "mixinReferenceJson" : null,
-        "module" : "mymodule",
-        "name" : "input_text1"
+        "layout": null,
+        "mixinReferenceJson": null,
+        "module": "mymodule",
+        "name": "input_text1"
     }
 }
