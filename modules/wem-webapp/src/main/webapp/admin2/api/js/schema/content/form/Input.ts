@@ -31,6 +31,10 @@ module api_schema_content_form{
             this.helpText = json.helpText;
         }
 
+        getInputType():InputType {
+            return this.inputType;
+        }
+
         getLabel():string {
             return this.label;
         }
