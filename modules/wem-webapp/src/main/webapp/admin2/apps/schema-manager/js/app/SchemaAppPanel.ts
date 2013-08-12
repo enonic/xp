@@ -86,8 +86,6 @@ module app {
 
                                 var id = this.generateTabId(contentType.name, true);
                                 var schemaWizardPanel = new app_wizard.ContentTypeWizardPanel(id);
-                                // TODO: update rpc response to have iconUrl inside contentType property.
-                                contentType.iconUrl = result.iconUrl;
                                 schemaWizardPanel.setPersistedItem(contentType);
 
                                 this.addWizardPanel(tabMenuItem, schemaWizardPanel);
