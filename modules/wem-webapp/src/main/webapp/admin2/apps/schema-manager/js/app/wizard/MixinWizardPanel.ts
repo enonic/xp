@@ -29,8 +29,7 @@ module app_wizard {
 
             super({
                 formIcon: this.formIcon,
-                toolbar: this.toolbar,
-                saveAction: this.saveAction
+                toolbar: this.toolbar
             });
 
             this.setDisplayName("New Mixin");

@@ -3,6 +3,8 @@ module api_ui {
 
         private legend:api_dom.LegendEl;
 
+        private form:api_ui.Form;
+
         constructor(legend?:string) {
             super();
             if (legend) {
@@ -13,7 +15,11 @@ module api_ui {
 
         add(formItem:api_ui.FormItem) {
             formItem.appendTo(this);
+            this.form.addInput(formItem.getItem());
         }
 
+        setForm(form:Form) {
+            this.form = form;
+        }
     }
 }

@@ -1,12 +1,12 @@
 module api_ui {
     export class FormItem extends api_dom.DivEl {
         private label:api_dom.LabelEl;
-        private item:api_dom.Element;
+        private item:api_dom.FormInputEl;
 
-        constructor(label:string, item:api_dom.Element) {
+        constructor(label:string, item:api_dom.FormInputEl) {
             super(null, "form-item");
-            this.item = item;
             this.label = new api_dom.LabelEl(label, item);
+            this.item = item;
             this.appendChild(this.label);
             this.appendChild(item);
         }
@@ -15,7 +15,7 @@ module api_ui {
             return this.label;
         }
 
-        getItem():api_dom.Element {
+        getItem():api_ui.FormInput {
             return this.item;
         }
 

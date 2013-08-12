@@ -6,19 +6,15 @@ module api_ui {
         SMALL
     }
 
-    export class TextArea extends api_dom.Element {
+    export class TextArea extends api_dom.FormInputEl {
 
         constructor(name:string) {
             super("textarea");
             this.getEl().setAttribute("name", name);
         }
 
-        setText(text:string) {
+        setValue(text:string) {
             this.getEl().setValue(text);
-        }
-
-        getText():string {
-            return this.getEl().getValue();
         }
 
         setSize(size:TextAreaSize) {

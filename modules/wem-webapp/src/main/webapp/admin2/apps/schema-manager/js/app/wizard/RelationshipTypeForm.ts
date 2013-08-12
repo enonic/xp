@@ -1,13 +1,11 @@
 module app_wizard {
 
-    export class RelationshipTypeForm extends api_ui.Panel {
+    export class RelationshipTypeForm extends api_ui.Form {
 
         private xmlTextArea:api_ui.CodeArea;
 
         constructor() {
             super("RelationshipTypeForm");
-
-            var form = new api_ui.Form();
 
             var fieldset = new api_ui.Fieldset("Config");
 
@@ -18,9 +16,7 @@ module app_wizard {
 
             fieldset.add(new api_ui.FormItem("XML", this.xmlTextArea));
 
-            form.appendChild(fieldset);
-
-            this.appendChild(form);
+            this.fieldset(fieldset);
         }
 
         getXml():string {

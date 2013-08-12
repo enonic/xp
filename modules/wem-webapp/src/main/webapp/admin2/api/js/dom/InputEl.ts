@@ -1,6 +1,6 @@
 module api_dom {
 
-    export class InputEl extends Element {
+    export class InputEl extends FormInputEl {
 
         constructor(idPrefix?:string, className?:string, type?:string) {
             super("input", idPrefix, className);

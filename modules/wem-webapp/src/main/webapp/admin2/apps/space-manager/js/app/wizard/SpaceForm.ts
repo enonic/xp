@@ -1,11 +1,9 @@
 module app_wizard {
 
-    export class SpaceForm extends api_ui.Panel {
+    export class SpaceForm extends api_ui.Form {
 
         constructor() {
             super("SpaceForm");
-
-            var form = new api_ui.Form();
 
             var templateFieldset = new api_ui.Fieldset("Template");
 
@@ -16,9 +14,8 @@ module app_wizard {
 
             templateFieldset.add(new api_ui.FormItem("Template", templateSelector));
 
-            form.appendChild(templateFieldset);
+            this.fieldset(templateFieldset);
 
-            this.appendChild(form);
         }
     }
 }

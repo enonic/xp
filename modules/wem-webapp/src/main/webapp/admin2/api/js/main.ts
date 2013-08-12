@@ -87,6 +87,7 @@
 ///<reference path='dom/SpanEl.ts' />
 ///<reference path='dom/ButtonEl.ts' />
 ///<reference path='dom/PEl.ts' />
+///<reference path='dom/FormInputEl.ts' />
 ///<reference path='dom/InputEl.ts' />
 ///<reference path='dom/LabelEl.ts' />
 ///<reference path='dom/SelectEl.ts' />
@@ -95,7 +96,6 @@
 ///<reference path='dom/FieldsetEl.ts' />
 ///<reference path='dom/LegendEl.ts' />
 ///<reference path='dom/FormEl.ts' />
-
 
 ///<reference path='ui/KeyBindings.ts'/>
 ///<reference path='ui/Mnemonic.ts' />
@@ -129,6 +129,8 @@
 ///<reference path='ui/CodeArea.ts' />
 ///<reference path='ui/Form.ts' />
 ///<reference path='ui/FormItem.ts' />
+///<reference path='ui/FormInput.ts' />
+
 
 ///<reference path='app/wizard/SaveAction.ts' />
 ///<reference path='app/wizard/CloseAction.ts' />
