@@ -62,7 +62,6 @@ module api_ui_grid {
                     }
                 },
                 store: gridStore,
-                selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36}),
                 plugins: [
                     new Admin.plugin.PersistentGridSelectionPlugin({
                         keyField: this.keyField
@@ -144,7 +143,7 @@ module api_ui_grid {
          * Switches the view
          * @param listId the view to show can be either of TreeGridPanel.GRID or TreeGridPanel.TREE
          */
-        setActiveList(listId) {
+            setActiveList(listId) {
             this.activeList = listId;
             if (this.ext) {
                 (<Ext_layout_container_Card> this.ext.getLayout()).setActiveItem(listId);
@@ -177,7 +176,7 @@ module api_ui_grid {
             this.refreshNeeded = false;
         }
 
-        isRefreshNeeded(): bool {
+        isRefreshNeeded():bool {
             return this.refreshNeeded;
         }
 
