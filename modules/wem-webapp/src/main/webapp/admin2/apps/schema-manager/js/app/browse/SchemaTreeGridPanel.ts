@@ -131,6 +131,10 @@ module app_browse {
                     itemdblclick: (grid, record) => {
                         new EditSchemaEvent(grid.getSelection()).fire();
                     }
+                },
+                selModel: {
+                    allowDeselect: false,
+                    ignoreRightMouseSelection: true
                 }
             }
         }
@@ -148,6 +152,10 @@ module app_browse {
                     itemdblclick: (grid, record) => {
                         new EditSchemaEvent(grid.getSelection()).fire();
                     }
+                },
+                selModel: {
+                    allowDeselect: false,
+                    ignoreRightMouseSelection: true
                 }
             }
         }
