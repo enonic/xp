@@ -5,21 +5,18 @@ module api_ui {
 
         private form:api_ui.Form;
 
-        constructor(legend?:string) {
+        constructor(form:api_ui.Form, legend?:string) {
             super();
             if (legend) {
                 this.legend = new api_dom.LegendEl(legend);
                 this.appendChild(this.legend);
             }
+            this.form = form;
         }
 
         add(formItem:api_ui.FormItem) {
             formItem.appendTo(this);
             this.form.addInput(formItem.getItem());
-        }
-
-        setForm(form:Form) {
-            this.form = form;
         }
     }
 }

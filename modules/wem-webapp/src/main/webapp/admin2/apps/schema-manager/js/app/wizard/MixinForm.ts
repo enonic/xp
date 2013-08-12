@@ -7,7 +7,7 @@ module app_wizard {
         constructor() {
             super("MixinForm");
 
-            var fieldset = new api_ui.Fieldset("Config");
+            var fieldset = new api_ui.Fieldset(this,"Config");
             this.fieldset(fieldset);
 
             this.xmlTextArea = new api_ui.CodeArea("xml");

@@ -15,7 +15,6 @@ module api_ui {
 
         fieldset(fieldset:api_ui.Fieldset) {
             this.formEl.appendChild(fieldset);
-            fieldset.setForm(this);
             return this;
         }
 

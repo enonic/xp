@@ -5,8 +5,8 @@ module app_wizard {
         constructor() {
             super("ContentTypeForm");
 
-            var fieldset = new api_ui.Fieldset("Config");
-            this.fieldset(fieldset);
+            var fieldset = new api_ui.Fieldset(this, "Config");
+
 
             var textArea = new api_ui.CodeArea("xml");
             textArea.setSize(api_ui.TextAreaSize.LARGE);
@@ -17,6 +17,8 @@ module app_wizard {
 
             fieldset.add(new api_ui.FormItem("Test", text));
             fieldset.add(new api_ui.FormItem("XML", textArea));
+
+            this.fieldset(fieldset);
 
         }
     }

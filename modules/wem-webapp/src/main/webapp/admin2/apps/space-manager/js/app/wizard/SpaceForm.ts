@@ -5,7 +5,7 @@ module app_wizard {
         constructor() {
             super("SpaceForm");
 
-            var templateFieldset = new api_ui.Fieldset("Template");
+            var templateFieldset = new api_ui.Fieldset(this, "Template");
             this.fieldset(templateFieldset);
 
             var templateSelector = new api_ui.Dropdown("template");
