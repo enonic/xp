@@ -27,7 +27,7 @@ module api_ui{
             }
 
             if (this.action.hasShortcut() && showTooltip) {
-                this.tooltip = new Tooltip(this, this.action.getShortcut().getCombination());
+                this.tooltip = new Tooltip(this, this.action.getShortcut().getCombination(), 1000);
             }
 
             this.getEl().addEventListener("click", () => {

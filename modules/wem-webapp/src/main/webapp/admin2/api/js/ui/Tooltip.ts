@@ -11,42 +11,43 @@ module api_ui {
         static TRIGGER_FOCUS = "focus";
 
         private tooltipEl:api_dom.DivEl;
-        private static timeoutTimer:number;
+        private timeoutTimer:number;
 
         private target:api_dom.Element;
         private text:string;
-        private timeout:number;
+        private showDelay:number;
+        private hideTimeout:number;
         private trigger:string;
         private side:string;
-        private offset:number[];
 
         /*
          * Widget to show floating tooltips
+         * Tooltip position can be adjusted in css using left,top attributes
+         *
          * @param target Element to show tooltip at
          * @param text Text of the tooltip
-         * @param timeout Time to keep tooltip visible after leaving target
+         * @param hideTimeout Time to keep tooltip visible after leaving target
+         * @param showDelay Time to hover mouse on target before showing tooltip
          * @param trigger Event type to hook on (mouse,focus)
          * @param side Side of the target where tooltip should be shown (top,left,right,bottom)
-         * @param offset Fine tuning of the tooltip positioning (defaults to the center of the side)
          */
-        constructor(target:api_dom.Element, text:string, timeout?:number = 1000, trigger?:string = Tooltip.TRIGGER_MOUSE,
-                    side?:string = Tooltip.SIDE_BOTTOM, offset?:number[] = [0, 0]) {
+        constructor(target:api_dom.Element, text:string, showDelay?:number = 0, hideTimeout?:number = 1000,
+                    trigger?:string = Tooltip.TRIGGER_MOUSE, side?:string = Tooltip.SIDE_BOTTOM) {
 
             this.target = target;
             this.text = text;
-            this.timeout = timeout;
+            this.showDelay = showDelay;
+            this.hideTimeout = hideTimeout;
             this.trigger = trigger;
             this.side = side;
-            this.offset = offset;
-
 
             var targetEl = target.getEl();
             targetEl.addEventListener(this.getEventName(true), (event:Event) => {
                 this.stopTimeout();
-                this.show();
+                this.startShowDelay();
             });
             targetEl.addEventListener(this.getEventName(false), (event:Event) => {
-                this.startTimeout();
+                this.startHideTimeout();
             });
         }
 
@@ -68,44 +69,51 @@ module api_ui {
             }
         }
 
-        showFor(ms:number) {
-            this.show();
-            this.startTimeout(ms);
-        }
-
-        setTimeout(timeout:number) {
-            this.timeout = timeout;
+        showAfter(ms:number):Tooltip {
+            this.startShowDelay(ms);
             return this;
         }
 
-        getTimeout() {
-            return this.timeout;
+        showFor(ms:number):Tooltip {
+            this.show();
+            this.startHideTimeout(ms);
+            return this;
         }
 
-        setTrigger(trigger:string) {
+        setHideTimeout(timeout:number):Tooltip {
+            this.hideTimeout = timeout;
+            return this;
+        }
+
+        getHideTimeout():number {
+            return this.hideTimeout;
+        }
+
+        setShowDelay(delay:number):Tooltip {
+            this.showDelay = delay;
+            return this;
+        }
+
+        getShowDelay():number {
+            return this.showDelay;
+        }
+
+        setTrigger(trigger:string):Tooltip {
             this.trigger = trigger;
+            return this;
         }
 
-        getTrigger() {
+        getTrigger():string {
             return this.trigger;
         }
 
-        setSide(side:string) {
+        setSide(side:string):Tooltip {
             this.side = side;
             return this;
         }
 
-        getSide() {
+        getSide():string {
             return this.side;
-        }
-
-        setOffset(offset:number[]) {
-            this.offset = offset;
-            return this;
-        }
-
-        getOffset() {
-            return this.offset;
         }
 
         private positionByTarget() {
@@ -113,24 +121,29 @@ module api_ui {
             var targetEl = this.target.getHTMLElement();
             var targetOffset = this.target.getEl().getOffset();
             var el = this.tooltipEl.getHTMLElement();
+            var $el = jQuery(el);
+            var elOffset = {
+                left: parseInt($el.css('left')) || 0,
+                top: parseInt($el.css('top')) || 0
+            };
 
             var offsetLeft, offsetTop;
             switch (this.side) {
             case Tooltip.SIDE_TOP:
-                offsetLeft = targetOffset.left + (targetEl.offsetWidth - el.offsetWidth) / 2 + this.offset[0];
-                offsetTop = targetOffset.top - el.offsetHeight + this.offset[1];
+                offsetLeft = targetOffset.left + (targetEl.offsetWidth - el.offsetWidth) / 2 + elOffset.left;
+                offsetTop = targetOffset.top - el.offsetHeight + elOffset.top;
                 break;
             case Tooltip.SIDE_BOTTOM:
-                offsetLeft = targetOffset.left + (targetEl.offsetWidth - el.offsetWidth) / 2 + this.offset[0];
-                offsetTop = targetOffset.top + targetEl.offsetHeight + this.offset[1];
+                offsetLeft = targetOffset.left + (targetEl.offsetWidth - el.offsetWidth) / 2 + elOffset.left;
+                offsetTop = targetOffset.top + targetEl.offsetHeight + elOffset.top;
                 break;
             case Tooltip.SIDE_LEFT:
-                offsetLeft = targetOffset.left - el.offsetWidth + this.offset[0];
-                offsetTop = targetOffset.top + (targetEl.offsetHeight - el.offsetHeight) / 2 + this.offset[1];
+                offsetLeft = targetOffset.left - el.offsetWidth + elOffset.left;
+                offsetTop = targetOffset.top + (targetEl.offsetHeight - el.offsetHeight) / 2 + elOffset.top;
                 break;
             case Tooltip.SIDE_RIGHT:
-                offsetLeft = targetOffset.left + targetEl.offsetWidth + this.offset[0];
-                offsetTop = targetOffset.top + (targetEl.offsetHeight - el.offsetHeight) / 2 + this.offset[1];
+                offsetLeft = targetOffset.left + targetEl.offsetWidth + elOffset.left;
+                offsetTop = targetOffset.top + (targetEl.offsetHeight - el.offsetHeight) / 2 + elOffset.top;
                 break;
             }
 
@@ -146,18 +159,18 @@ module api_ui {
                 offsetTop = window.innerHeight - el.offsetHeight;
             }
 
-            jQuery(el).offset({
+            $el.offset({
                 left: offsetLeft,
                 top: offsetTop
             });
         }
 
-        private startTimeout(ms?:number) {
+        private startHideTimeout(ms?:number) {
 
             this.stopTimeout();
-            var t = ms || this.timeout;
+            var t = ms || this.hideTimeout;
             if (t > 0) {
-                Tooltip.timeoutTimer = setTimeout(() => {
+                this.timeoutTimer = setTimeout(() => {
                     this.hide();
                 }, t);
             } else {
@@ -165,10 +178,23 @@ module api_ui {
             }
         }
 
+        private startShowDelay(ms?:number) {
+
+            this.stopTimeout();
+            var t = ms || this.showDelay;
+            if(t > 0) {
+                this.timeoutTimer = setTimeout(() => {
+                    this.show();
+                }, t);
+            } else {
+                this.show();
+            }
+        }
+
         private stopTimeout() {
-            if (Tooltip.timeoutTimer) {
-                clearTimeout(Tooltip.timeoutTimer);
-                Tooltip.timeoutTimer = undefined;
+            if (this.timeoutTimer) {
+                clearTimeout(this.timeoutTimer);
+                this.timeoutTimer = undefined;
             }
         }
 
