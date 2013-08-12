@@ -6,6 +6,7 @@ module app_wizard {
             super("SpaceForm");
 
             var templateFieldset = new api_ui.Fieldset("Template");
+            this.fieldset(templateFieldset);
 
             var templateSelector = new api_ui.Dropdown("template");
             templateSelector.addOption("tpl1", "Template 1");
@@ -14,7 +15,7 @@ module app_wizard {
 
             templateFieldset.add(new api_ui.FormItem("Template", templateSelector));
 
-            this.fieldset(templateFieldset);
+
 
         }
     }

@@ -8,6 +8,7 @@ module app_wizard {
             super("RelationshipTypeForm");
 
             var fieldset = new api_ui.Fieldset("Config");
+            this.fieldset(fieldset);
 
             this.xmlTextArea = new api_ui.CodeArea("xml");
             this.xmlTextArea.setSize(api_ui.TextAreaSize.LARGE);
@@ -16,7 +17,7 @@ module app_wizard {
 
             fieldset.add(new api_ui.FormItem("XML", this.xmlTextArea));
 
-            this.fieldset(fieldset);
+
         }
 
         getXml():string {
