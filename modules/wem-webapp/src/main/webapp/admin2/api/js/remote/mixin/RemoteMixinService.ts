@@ -1,6 +1,3 @@
-///<reference path='../BaseRemoteService.ts' />
-///<reference path='RemoteMixinModel.ts' />
-
 module api_remote_mixin {
 
     export var RemoteMixinService:RemoteMixinServiceInterface;

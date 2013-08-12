@@ -1,6 +1,3 @@
-///<reference path='../BaseRemoteService.ts' />
-///<reference path='RemoteRelationshipTypeModel.ts' />
-
 module api_remote_relationshiptype {
 
     export var RemoteRelationshipTypeService:RemoteRelationshipTypeServiceInterface;

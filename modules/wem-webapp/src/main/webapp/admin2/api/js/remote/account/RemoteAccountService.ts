@@ -1,6 +1,3 @@
-///<reference path='../BaseRemoteService.ts' />
-///<reference path='RemoteAccountModel.ts' />
-
 module api_remote_account {
 
     export var RemoteAccountService:RemoteAccountServiceInterface;

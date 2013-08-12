@@ -1,6 +1,3 @@
-///<reference path='../BaseRemoteService.ts' />
-///<reference path='RemoteContentModel.ts' />
-
 module api_remote_content {
 
     export var RemoteContentService:RemoteContentServiceInterface;

@@ -1,6 +1,3 @@
-///<reference path='../BaseRemoteService.ts' />
-///<reference path='RemoteUserStoreModel.ts' />
-
 module api_remote_userstore {
 
     export var RemoteUserStoreService:RemoteUserStoreServiceInterface;

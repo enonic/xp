@@ -1,5 +1,3 @@
-///<reference path='BaseRemoteModel.ts' />
-
 module api_remote {
 
     export class BaseRemoteService {

@@ -1,6 +1,3 @@
-///<reference path='../BaseRemoteService.ts' />
-///<reference path='RemoteSchemaModel.ts' />
-
 module api_remote_schema {
 
     export var RemoteSchemaService:RemoteSchemaServiceInterface;

@@ -1,6 +1,3 @@
-///<reference path='../BaseRemoteService.ts' />
-///<reference path='RemoteUtilsModel.ts' />
-
 module api_remote_util {
 
     export var RemoteSystemService:RemoteSystemServiceInterface;

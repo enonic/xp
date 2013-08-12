@@ -1,6 +1,3 @@
-///<reference path='../BaseRemoteService.ts' />
-///<reference path='RemoteSpaceModel.ts' />
-
 module api_remote_space {
 
     export var RemoteSpaceService:RemoteSpaceServiceInterface;

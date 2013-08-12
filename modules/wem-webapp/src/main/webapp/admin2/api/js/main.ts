@@ -35,9 +35,9 @@
 ///<reference path='handler/DeleteSchemaParamFactory.ts' />
 ///<reference path='handler/DeleteSchemaHandler.ts' />
 
-///<reference path='remote/BaseRemoteModel.ts' />
 ///<reference path='remote/JsonRpcProvider.ts' />
-
+///<reference path='remote/BaseRemoteModel.ts' />
+///<reference path='remote/BaseRemoteService.ts' />
 ///<reference path='remote/content/RemoteContentModel.ts' />
 ///<reference path='remote/content/RemoteContentService.ts' />
 ///<reference path='remote/account/RemoteAccountModel.ts' />
