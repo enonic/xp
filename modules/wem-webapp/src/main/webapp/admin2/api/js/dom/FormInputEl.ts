@@ -12,5 +12,9 @@ module api_dom {
         getName():string {
             return this.getEl().getAttribute("name");
         }
+
+        setValue(value:string) {
+            this.getEl().setValue(value);
+        }
     }
 }

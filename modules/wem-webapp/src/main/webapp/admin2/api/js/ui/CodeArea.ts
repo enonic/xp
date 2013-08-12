@@ -16,6 +16,10 @@ module api_ui {
             this.options.lineNumbers = value;
         }
 
+        setValue(value:string) {
+            this.codeMirror.setValue(value);
+        }
+
         getValue():string {
             return this.codeMirror.getValue();
         }

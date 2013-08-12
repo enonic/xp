@@ -14,7 +14,7 @@ module app_wizard {
 
         private persistedContentType:api_remote_contenttype.ContentType;
 
-        private contentTypeForm:api_ui.Form;
+        private contentTypeForm:app_wizard.ContentTypeForm;
 
         constructor(id:string) {
             this.formIcon =
@@ -56,6 +56,15 @@ module app_wizard {
             this.setAutogenerateName(!contentType.name || contentType.name == this.generateName(contentType.displayName));
 
             this.persistedContentType = contentType;
+
+            var contentTypeGetParams:api_remote_contenttype.GetParams = {
+                qualifiedNames: [contentType.qualifiedName],
+                format: 'XML'
+            };
+
+            api_remote_contenttype.RemoteContentTypeService.contentType_get(contentTypeGetParams, (result:api_remote_contenttype.GetResult) => {
+                this.contentTypeForm.setFormData({"xml":result.contentTypeXmls[0]});
+            })
         }
 
         persistNewItem(successCallback?:() => void) {

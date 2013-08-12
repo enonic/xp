@@ -23,6 +23,15 @@ module api_ui {
             this.inputs.push(input);
         }
 
+        setFormData(data:any) {
+            this.inputs.forEach((input:api_ui.FormInput) => {
+                var inputValue = data[input.getName()];
+                if (inputValue) {
+                    input.setValue(inputValue);
+                }
+            })
+        }
+
         getFormData():any {
             var data = {};
             this.inputs.forEach((input:api_ui.FormInput) => {
