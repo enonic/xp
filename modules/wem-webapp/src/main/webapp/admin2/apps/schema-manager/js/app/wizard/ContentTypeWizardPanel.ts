@@ -65,13 +65,13 @@ module app_wizard {
                 iconReference: this.getIconUrl()
             };
 
-            api_remote.RemoteContentTypeService.contentType_createOrUpdate(createParams,
+            api_remote_contenttype.RemoteContentTypeService.contentType_createOrUpdate(createParams,
                 (result:api_remote_contenttype.CreateOrUpdateResult) => {
-                    if (result.error) {
-                        api_notify.newError(result.error).send();
-                    } else if (result.success) {
+                    if (result.created) {
                         new app_wizard.ContentTypeCreatedEvent().fire();
                         api_notify.showFeedback('Content type was created!');
+                    } else {
+                        api_notify.newError(result.failure).send();
                     }
                 });
         }
@@ -83,13 +83,13 @@ module app_wizard {
                 iconReference: this.getIconUrl()
             };
 
-            api_remote.RemoteContentTypeService.contentType_createOrUpdate(updateParams,
+            api_remote_contenttype.RemoteContentTypeService.contentType_createOrUpdate(updateParams,
                 (result:api_remote_contenttype.CreateOrUpdateResult) => {
-                    if (result.error) {
-                        api_notify.newError(result.error).send();
-                    } else if (result.success) {
+                    if (result.updated) {
                         new app_wizard.ContentTypeUpdatedEvent().fire();
                         api_notify.showFeedback('Content type was saved!');
+                    } else {
+                        api_notify.newError(result.failure).send();
                     }
                 });
         }
