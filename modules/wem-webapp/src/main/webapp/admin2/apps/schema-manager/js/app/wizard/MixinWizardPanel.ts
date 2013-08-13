@@ -64,8 +64,9 @@ module app_wizard {
         }
 
         persistNewItem(successCallback?:() => void) {
+            var formData = this.mixinForm.getFormData();
             var createParams:api_remote_mixin.CreateOrUpdateParams = {
-                mixin: this.mixinForm.getXml(),
+                mixin: formData.xml,
                 iconReference: this.getIconUrl()
             };
 
@@ -80,8 +81,9 @@ module app_wizard {
         }
 
         updatePersistedItem(successCallback?:() => void) {
+            var formData = this.mixinForm.getFormData();
             var updateParams:api_remote_mixin.CreateOrUpdateParams = {
-                mixin: this.mixinForm.getXml(),
+                mixin: formData.xml,
                 iconReference: this.getIconUrl()
             };
 

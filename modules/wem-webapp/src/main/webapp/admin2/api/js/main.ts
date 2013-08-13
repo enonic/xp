@@ -121,15 +121,15 @@
 ///<reference path='ui/tab/TabMenuItem.ts' />
 ///<reference path='ui/NavigatedDeckPanel.ts' />
 ///<reference path='ui/grid/TreeGridPanel.ts' />
-///<reference path='ui/Fieldset.ts' />
+
 ///<reference path='ui/Dropdown.ts' />
 ///<reference path='ui/TextInput.ts' />
 ///<reference path='ui/AutosizeTextInput.ts' />
 ///<reference path='ui/TextArea.ts' />
 ///<reference path='ui/CodeArea.ts' />
-///<reference path='ui/Form.ts' />
-///<reference path='ui/FormItem.ts' />
-///<reference path='ui/FormInput.ts' />
+///<reference path='ui/form/Fieldset.ts' />
+///<reference path='ui/form/Form.ts' />
+///<reference path='ui/form/FormItem.ts' />
 
 
 ///<reference path='app/wizard/SaveAction.ts' />

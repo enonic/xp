@@ -1,6 +1,6 @@
 module app_wizard {
 
-    export class ContentForm extends api_ui.Form {
+    export class ContentForm extends api_ui_form.Form {
 
         private form:api_schema_content_form.Form;
 

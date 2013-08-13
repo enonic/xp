@@ -64,8 +64,9 @@ module app_wizard {
         }
 
         persistNewItem(successCallback?:() => void) {
+            var formData = this.relationshipTypeForm.getFormData();
             var createParams:api_remote_relationshiptype.CreateOrUpdateParams = {
-                relationshipType: this.relationshipTypeForm.getXml(),
+                relationshipType: formData.xml,
                 iconReference: this.getIconUrl()
             };
 
@@ -76,8 +77,9 @@ module app_wizard {
         }
 
         updatePersistedItem(successCallback?:() => void) {
+            var formData = this.relationshipTypeForm.getFormData();
             var updateParams:api_remote_relationshiptype.CreateOrUpdateParams = {
-                relationshipType: this.relationshipTypeForm.getXml(),
+                relationshipType: formData.xml,
                 iconReference: this.getIconUrl()
             };
 
