@@ -1,5 +1,5 @@
 module api_dom {
-    export class FormInputEl extends Element implements api_ui.FormInput {
+    export class FormInputEl extends Element {
 
         constructor(elementName:string, idPrefix?:string, className?:string, elHelper?:ElementHelper) {
             super(elementName, idPrefix, className, elHelper);

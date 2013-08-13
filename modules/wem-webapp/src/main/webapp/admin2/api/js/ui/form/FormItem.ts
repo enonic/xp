@@ -1,4 +1,4 @@
-module api_ui {
+module api_ui_form {
     export class FormItem extends api_dom.DivEl {
         private label:api_dom.LabelEl;
         private item:api_dom.FormInputEl;
@@ -15,7 +15,7 @@ module api_ui {
             return this.label;
         }
 
-        getItem():api_ui.FormInput {
+        getItem():api_dom.FormInputEl {
             return this.item;
         }
 

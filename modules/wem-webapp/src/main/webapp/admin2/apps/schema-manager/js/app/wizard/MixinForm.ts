@@ -1,26 +1,19 @@
 module app_wizard {
 
-    export class MixinForm extends api_ui.Form {
-
-        private xmlTextArea:api_ui.CodeArea;
+    export class MixinForm extends api_ui_form.Form {
 
         constructor() {
             super("MixinForm");
 
-            var fieldset = new api_ui.Fieldset(this,"Config");
+            var fieldset = new api_ui_form.Fieldset(this,"Config");
             this.fieldset(fieldset);
 
-            this.xmlTextArea = new api_ui.CodeArea("xml");
-            this.xmlTextArea.setSize(api_ui.TextAreaSize.LARGE);
-            this.xmlTextArea.setLineNumbers(true);
+            var xmlTextArea = new api_ui.CodeArea("xml");
+            xmlTextArea.setSize(api_ui.TextAreaSize.LARGE);
+            xmlTextArea.setLineNumbers(true);
 
-            fieldset.add(new api_ui.FormItem("XML", this.xmlTextArea));
+            fieldset.add(new api_ui_form.FormItem("XML", xmlTextArea));
 
-
-        }
-
-        getXml():string {
-            return this.xmlTextArea.getValue();
         }
     }
 

@@ -1,11 +1,11 @@
-module api_ui {
+module api_ui_form {
     export class Fieldset extends api_dom.FieldsetEl {
 
         private legend:api_dom.LegendEl;
 
-        private form:api_ui.Form;
+        private form:Form;
 
-        constructor(form:api_ui.Form, legend?:string) {
+        constructor(form:Form, legend?:string) {
             super();
             if (legend) {
                 this.legend = new api_dom.LegendEl(legend);
@@ -14,7 +14,7 @@ module api_ui {
             this.form = form;
         }
 
-        add(formItem:api_ui.FormItem) {
+        add(formItem:FormItem) {
             formItem.appendTo(this);
             this.form.addInput(formItem.getItem());
         }
