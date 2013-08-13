@@ -22,7 +22,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
 
         if (me.inputConfig && me.inputConfig.type && me.inputConfig.type.config) {
             var getRelationshipTypeCommand = {
-                qualifiedRelationshipTypeName: me.inputConfig.type.config.relationshipType,
+                qualifiedName: me.inputConfig.type.config.relationshipType,
                 format: 'JSON'
             };
             api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_get(getRelationshipTypeCommand, function (response) {
@@ -342,7 +342,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relationship', {
      */
     remoteGetRelationshipType: function (relationshipTypeName, callback) {
         var getRelationshipTypeCommand = {
-            'qualifiedRelationshipTypeName': relationshipTypeName,
+            'qualifiedName': relationshipTypeName,
             'format': 'JSON'
         };
 

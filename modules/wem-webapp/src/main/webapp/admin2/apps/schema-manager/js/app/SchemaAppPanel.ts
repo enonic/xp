@@ -95,7 +95,7 @@ module app {
                         break;
                     case SchemaAppPanel.RELATIONSHIP_TYPE:
                         var relationshipTypeGetParams:api_remote_relationshiptype.GetParams = {
-                            qualifiedRelationshipTypeName: schemaModel.data.qualifiedName,
+                            qualifiedName: schemaModel.data.qualifiedName,
                             format: 'JSON'
                         };
                         api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_get(relationshipTypeGetParams,
@@ -114,7 +114,7 @@ module app {
                         break;
                     case SchemaAppPanel.MIXIN:
                         var mixinGetParams:api_remote_mixin.GetParams = {
-                            mixin: schemaModel.data.qualifiedName,
+                            qualifiedName: schemaModel.data.qualifiedName,
                             format: 'JSON'
                         };
                         api_remote_mixin.RemoteMixinService.mixin_get(mixinGetParams, (result:api_remote_mixin.GetResult) => {

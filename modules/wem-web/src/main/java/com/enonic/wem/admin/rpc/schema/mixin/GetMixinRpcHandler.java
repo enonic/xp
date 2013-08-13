@@ -28,7 +28,7 @@ public class GetMixinRpcHandler
         throws Exception
     {
         final String format = context.param( "format" ).required().asString();
-        final QualifiedMixinName qualifiedMixinName = new QualifiedMixinName( context.param( "mixin" ).required().asString() );
+        final QualifiedMixinName qualifiedMixinName = new QualifiedMixinName( context.param( "qualifiedName" ).required().asString() );
 
         final Mixin mixin = fetchMixin( qualifiedMixinName );
 

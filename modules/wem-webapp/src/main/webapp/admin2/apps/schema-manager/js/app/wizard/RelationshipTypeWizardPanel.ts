@@ -52,6 +52,15 @@ module app_wizard {
             this.setAutogenerateName(!relationshipType.name || relationshipType.name == this.generateName(relationshipType.displayName));
 
             this.persistedRelationshipType = relationshipType;
+
+            var relationshipTypeGetParams:api_remote_relationshiptype.GetParams = {
+                qualifiedName: relationshipType.module + ":" + relationshipType.name,
+                format: 'XML'
+            };
+
+            api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_get(relationshipTypeGetParams, (result:api_remote_relationshiptype.GetResult) => {
+                this.relationshipTypeForm.setFormData({"xml": result.relationshipTypeXml})
+            });
         }
 
         persistNewItem(successCallback?:() => void) {

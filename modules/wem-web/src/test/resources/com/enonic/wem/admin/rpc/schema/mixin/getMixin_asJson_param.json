@@ -1,4 +1,4 @@
 {
     "format": "json",
-    "mixin": "mymodule:mymixin"
+    "qualifiedName": "mymodule:mymixin"
 }

@@ -27,7 +27,7 @@ public final class GetRelationshipTypeRpcHandler
         throws Exception
     {
         final QualifiedRelationshipTypeNames qualifiedNames =
-            QualifiedRelationshipTypeNames.from( context.param( "qualifiedRelationshipTypeName" ).required().asString() );
+            QualifiedRelationshipTypeNames.from( context.param( "qualifiedName" ).required().asString() );
         final String format = context.param( "format" ).required().asString();
 
         final GetRelationshipTypes getRelationshipTypes = Commands.relationshipType().get();

@@ -20,7 +20,7 @@ module api_remote_mixin {
 
     export interface GetParams {
         format:string;
-        mixin:string;
+        qualifiedName:string;
     }
 
     export interface GetResult {

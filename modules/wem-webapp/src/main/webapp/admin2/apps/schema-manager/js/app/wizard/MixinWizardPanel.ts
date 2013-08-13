@@ -52,6 +52,15 @@ module app_wizard {
             this.setAutogenerateName(!mixin.name || mixin.name == this.generateName(mixin.displayName));
 
             this.persistedMixin = mixin;
+
+            var mixinGetParams:api_remote_mixin.GetParams = {
+                qualifiedName: mixin.module + ":" + mixin.name,
+                format: 'XML'
+            };
+
+            api_remote_mixin.RemoteMixinService.mixin_get(mixinGetParams, (result:api_remote_mixin.GetResult) => {
+                this.mixinForm.setFormData({"xml": result.mixinXml})
+            });
         }
 
         persistNewItem(successCallback?:() => void) {

@@ -30,13 +30,14 @@ module api_remote_relationshiptype {
     }
 
     export interface GetParams {
-        qualifiedRelationshipTypeName:string;
+        qualifiedName:string;
         format:string;
     }
 
     export interface GetResult {
         iconUrl:string;
-        relationshipType:RelationshipType;
+        relationshipType?:RelationshipType;
+        relationshipTypeXml?:string;
     }
 
     export interface CreateOrUpdateParams {
