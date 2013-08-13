@@ -27,6 +27,15 @@ module api_content_data{
             this.dataById[dataId.toString()] = data;
         }
 
+        getDataArray():Data[] {
+            var datas = new Data[];
+            for(var i in this.dataById){
+                var data = this.dataById[i];
+                datas.push(data);
+            }
+            return datas;
+        }
+
         getData(dataId:string):Data {
             return this.dataById[DataId.from(dataId).toString()];
         }
