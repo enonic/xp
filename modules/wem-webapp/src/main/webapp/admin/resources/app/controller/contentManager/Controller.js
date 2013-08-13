@@ -163,7 +163,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 xtype: 'contentLiveEditPanel',
                 title: response.content.displayName,
                 isLiveMode: me.getContentDetailPanel().isLiveMode,
-                contentType: response.contentType,
+                contentType: response.contentTypes[0],
                 content: response.content,
                 data: {}
             };
