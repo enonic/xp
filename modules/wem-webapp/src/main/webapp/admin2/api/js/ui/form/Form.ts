@@ -9,6 +9,7 @@ module api_ui_form {
             super(id);
             this.inputs = [];
             this.formEl = new api_dom.FormEl();
+            this.formEl.getEl().addClass("form");
 
             this.appendChild(this.formEl);
         }
