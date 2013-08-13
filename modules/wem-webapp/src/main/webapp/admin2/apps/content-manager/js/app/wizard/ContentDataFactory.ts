@@ -10,7 +10,7 @@ module app_wizard {
                 if (data.type == "DataSet") {
                     contentData.addData(ContentDataFactory.createDataSet(<api_remote_content.DataSet>data));
                 }
-                else if (data.type == "Property") {
+                else {
                     contentData.addData(ContentDataFactory.createProperty(<api_remote_content.ContentDataProperty>data));
                 }
             });
@@ -25,7 +25,7 @@ module app_wizard {
                 if (data.type == "DataSet") {
                     dataSet.addData(ContentDataFactory.createDataSet(<api_remote_content.DataSet>data));
                 }
-                if (data.type == "Property") {
+                else {
                     dataSet.addData(ContentDataFactory.createProperty(<api_remote_content.ContentDataProperty>data));
                 }
             });
