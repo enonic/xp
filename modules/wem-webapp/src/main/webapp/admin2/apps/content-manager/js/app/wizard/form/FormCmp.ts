@@ -6,6 +6,8 @@ module app_wizard_form {
 
         private contentData:api_content_data.ContentData;
 
+        private formItemContainers:FormItemContainer[];
+
         constructor(form:api_schema_content_form.Form, contentData?:api_content_data.ContentData) {
             super("FormCmp");
             this.form = form;
@@ -15,41 +17,28 @@ module app_wizard_form {
 
         private layout() {
 
-            console.log("FormCmp.layout() this.form: ", this.form);
+            var layer = new FormItemsLayer(this);
+            if (this.contentData == null) {
+                this.contentData = new api_content_data.ContentData();
+            }
 
-            this.form.getFormItems().forEach((formItem:api_schema_content_form.FormItem) => {
+            this.formItemContainers = layer.layout(this.form.getFormItems(), this.contentData);
+        }
 
-                if (formItem instanceof api_schema_content_form.FormItemSet) {
+        getContentData():api_content_data.ContentData {
+            return this.contentData;
+        }
 
-                    var formItemSet:api_schema_content_form.FormItemSet = <api_schema_content_form.FormItemSet>formItem;
+        rebuildContentData():api_content_data.ContentData {
+            var contentData:api_content_data.ContentData = new api_content_data.ContentData();
+            this.formItemContainers.forEach((formItemContainer:FormItemContainer) => {
 
-                    if (this.contentData != null) {
+                formItemContainer.getData().forEach( (data:api_content_data.Data) => {
+                    contentData.addData(data)
+                });
 
-                        var dataSets:api_content_data.DataSet[] = this.contentData.getDataSetsByName(formItemSet.getName());
-                        var formItemSetContainer = new FormItemSetContainer(formItemSet, dataSets);
-                        this.appendChild(formItemSetContainer);
-                    }
-                    else {
-                        var formItemSetContainer = new FormItemSetContainer(formItemSet);
-                        this.appendChild(formItemSetContainer);
-                    }
-
-                }
-                else if (formItem instanceof api_schema_content_form.Input) {
-
-                    var input:api_schema_content_form.Input = <api_schema_content_form.Input>formItem;
-
-                    if (this.contentData != null) {
-                        var properties:api_content_data.Property[] = this.contentData.getPropertiesByName(input.getName());
-                        var inputContainer = new InputContainer(input, properties);
-                        this.appendChild(inputContainer);
-                    }
-                    else {
-                        var inputContainer = new InputContainer(input);
-                        this.appendChild(inputContainer);
-                    }
-                }
             });
+            return contentData;
         }
     }
 }

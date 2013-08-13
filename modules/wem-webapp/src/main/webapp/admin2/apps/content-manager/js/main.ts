@@ -16,15 +16,19 @@
 ///<reference path='app/wizard/ContentForm.ts' />
 ///<reference path='app/wizard/ContentWizardToolbar.ts' />
 ///<reference path='app/wizard/ContentWizardPanel.ts' />
-///<reference path='app/wizard/form/input/BaseInputCmp.ts' />
-///<reference path='app/wizard/form/input/TextLineCmp.ts' />
-///<reference path='app/wizard/form/input/TextAreaCmp.ts' />
+
+///<reference path='app/wizard/form/input/Input.ts' />
+///<reference path='app/wizard/form/input/TextLine.ts' />
+///<reference path='app/wizard/form/input/TextArea.ts' />
+///<reference path='app/wizard/form/FormItemContainer.ts' />
 ///<reference path='app/wizard/form/InputLabel.ts' />
 ///<reference path='app/wizard/form/InputContainer.ts' />
 ///<reference path='app/wizard/form/FormItemSetLabel.ts' />
 ///<reference path='app/wizard/form/FormItemSetContainer.ts' />
-///<reference path='app/wizard/form/FormCmp.ts' />
 ///<reference path='app/wizard/form/FormItemSetCmp.ts' />
+///<reference path='app/wizard/form/FormItemsLayer.ts' />
+///<reference path='app/wizard/form/FormCmp.ts' />
+
 
 ///<reference path='app/browse/filter/ContentBrowseFilterEvents.ts' />
 ///<reference path='app/browse/filter/ContentBrowseFilterPanel.ts' />
