@@ -35,7 +35,7 @@ module app_browse {
     export class DeleteSchemaAction extends api_ui.Action {
 
         constructor() {
-            super("Delete");
+            super("Delete", "mod+del");
             this.setEnabled(false);
             this.addExecutionListener(() => {
                 new DeleteSchemaPromptEvent(app.SchemaContext.get().getSelectedSchemes()).fire();
