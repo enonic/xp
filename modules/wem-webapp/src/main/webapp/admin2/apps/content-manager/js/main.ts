@@ -74,50 +74,6 @@
 ///<reference path='lib/DateHelper.ts' />
 ///<reference path='lib/Sortable.ts' />
 
-///<reference path='view/BaseDialogWindow.ts' />
-///<reference path='view/BaseFilterPanel.ts' />
-///<reference path='view/FilterPanel.ts' />
-
-///<reference path='view/LivePreview.ts' />
-///<reference path='view/IframeContainer.ts' />
-///<reference path='view/FileUploadWindow.ts' />
-///<reference path='view/AutosizeTextField.ts' />
-///<reference path='view/WizardHeader.ts' />
-///<reference path='view/WizardLayout.ts' />
-///<reference path='view/WizardPanel.ts' />
-
-///<reference path='view/wizard/form/FormItemOccurrencesHandler.ts' />
-///<reference path='view/wizard/form/ImagePopupDialog.ts' />
-///<reference path='view/wizard/form/FormGenerator.ts' />
-///<reference path='view/wizard/form/FieldSetLayout.ts' />
-///<reference path='view/wizard/form/FormItemContainer.ts' />
-///<reference path='view/wizard/form/FormItemSet.ts' />
-///<reference path='view/wizard/form/FormItemSetContainer.ts' />
-///<reference path='view/wizard/form/InputContainer.ts' />
-
-///<reference path='view/wizard/form/input/Base.ts' />
-///<reference path='view/wizard/form/input/HtmlArea.ts' />
-///<reference path='view/wizard/form/input/HtmlArea-temp.ts' />
-///<reference path='view/wizard/form/input/Image.ts' />
-///<reference path='view/wizard/form/input/ImageSelector.ts' />
-///<reference path='view/wizard/form/input/Relationship.ts' />
-///<reference path='view/wizard/form/input/TextArea.ts' />
-///<reference path='view/wizard/form/input/TextLine.ts' />
-
-
-///<reference path='view/wizard/ContentWizardToolbar.ts' />
-///<reference path='view/wizard/WizardToolbarMenu.ts' />
-///<reference path='view/wizard/ContentDataPanel.ts' />
-///<reference path='view/wizard/ContentWizardPanel.ts' />
-///<reference path='view/wizard/ContentLiveEditPanel.ts' />
-
-
-///<reference path='controller/BaseController.ts' />
-///<reference path='controller/Controller.ts' />
-///<reference path='controller/ContentController.ts' />
-///<reference path='controller/ContentWizardController.ts' />
-
-
 declare var Ext;
 declare var Admin;
 declare var CONFIG;
@@ -134,17 +90,7 @@ Ext.application({
 
     appFolder: 'resources/app',
 
-    controllers: [
-        'Admin.controller.BaseController',
-        'Admin.controller.Controller',
-        'Admin.controller.ContentWizardController'
-    ],
-
-    /*    requires: [
-     'Admin.MessageBus',
-     'Admin.NotificationManager',
-     'Admin.view.TabPanel'
-     ],*/
+    controllers: [],
 
     launch: function () {
 

@@ -93,7 +93,7 @@ a [class^="icon-"], a [class*=" icon-"] {
 /* line 48, ../sass/admin/css/_font-awesome.scss */
 .icons-ul .icon-li {
     position: absolute;
-    left: -2.14286em;
+    left: -2.142857142857143em;
     width: 2.142857142857143em;
     text-align: center;
     line-height: inherit;
@@ -2449,61 +2449,6 @@ td {
 /* line 1, ../sass/admin/css/_panel.scss */
 .admin-panel {
     padding: 20px;
-}
-
-/* line 8, ../sass/admin/css/_panel.scss */
-.admin-filter .x-panel-body {
-    padding: 20px;
-    background-color: #eeeeee !important;
-    border-style: none;
-}
-
-/* line 14, ../sass/admin/css/_panel.scss */
-.admin-filter .admin-facet-group {
-    border: none !important;
-    padding: 0 !important;
-    margin-bottom: 15px !important;
-}
-
-/* line 19, ../sass/admin/css/_panel.scss */
-.admin-filter .admin-facet-group h2 {
-    color: #000000 !important;
-    font-size: 15px !important;
-    padding: 0 !important;
-    text-transform: capitalize;
-}
-
-/* line 26, ../sass/admin/css/_panel.scss */
-.admin-filter .admin-facet-group .admin-facet {
-    /*      padding-left: 10px;*/
-}
-
-/* line 30, ../sass/admin/css/_panel.scss */
-.admin-filter .admin-facet-group .admin-facet:hover label {
-    color: #000 !important;
-}
-
-/* line 35, ../sass/admin/css/_panel.scss */
-.admin-filter .admin-facet-group .admin-facet input[type="checkbox"] {
-    display: none;
-}
-
-/* line 39, ../sass/admin/css/_panel.scss */
-.admin-filter .admin-facet-group .admin-facet label {
-    color: #777 !important;
-    background-image: url("../themes/images/default/grid/admin-unchecked.gif");
-    background-repeat: no-repeat;
-    padding-left: 20px;
-}
-
-/* line 46, ../sass/admin/css/_panel.scss */
-.admin-filter .admin-facet-group .admin-facet input[type="checkbox"]:checked + label {
-    background-image: url("../themes/images/default/grid/admin-checked.gif");
-}
-
-/* line 52, ../sass/admin/css/_panel.scss */
-.admin-filter .admin-facet-group .admin-facet.checked label {
-    color: #333 !important;
 }
 
 /* line 65, ../sass/admin/css/_panel.scss */
