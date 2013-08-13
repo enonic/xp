@@ -6,6 +6,7 @@ module api_util {
         static get(url:string, width?:number, height?:number):HTMLImageElement {
             var imageFound:bool = false;
             var returnImage:HTMLImageElement;
+            url = encodeURI(url);
 
             for (var i in cachedImages) {
                 if (cachedImages[i].src == url) {
