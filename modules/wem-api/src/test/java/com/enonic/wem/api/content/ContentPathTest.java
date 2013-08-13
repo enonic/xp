@@ -56,6 +56,14 @@ public class ContentPathTest
     }
 
     @Test
+    public void test_toString()
+        throws Exception
+    {
+        System.out.println(ContentPath.newPath().spaceName("mySpace").elements( "parent", "child" ).build().toString());
+        System.out.println(ContentPath.newPath().spaceName("mySpace").build().toString());
+    }
+
+    @Test
     public void getParentPath()
         throws Exception
     {

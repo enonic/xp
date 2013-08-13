@@ -174,6 +174,7 @@
 ///<reference path='app/delete/DeleteDialog.ts' />
 ///<reference path='app/wizard/SaveBeforeCloseDialog.ts' />
 
+///<reference path='content/ContentPath.ts' />
 ///<reference path='content/data/DataId.ts' />
 ///<reference path='content/data/Data.ts' />
 ///<reference path='content/data/DataSet.ts' />
