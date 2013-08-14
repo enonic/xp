@@ -14,7 +14,7 @@ module api_app_browse_filter {
 
         private searchFilterTypingTimer:number;
 
-        constructor(facetData?:FacetGroupData[]) {
+        constructor(facetData?:api_app_browse_filter.FacetGroupParams[]) {
             super('BrowseFilterPanel');
             this.addClass('filter-panel');
 
@@ -63,7 +63,7 @@ module api_app_browse_filter {
             return clearFilter;
         }
 
-        updateFacets(facetGroupsData:FacetGroupData[]) {
+        updateFacets(facetGroupsData:api_app_browse_filter.FacetGroupParams[]) {
             this.facetContainer.update(facetGroupsData)
         }
 
