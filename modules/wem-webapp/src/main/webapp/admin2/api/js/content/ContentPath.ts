@@ -16,16 +16,20 @@ module api_content{
 
             var spaceName:string;
             var path:string;
-            var absolute:bool = s.indexOf(ContentPath.SPACE_PREFIX_DIVIDER) > -1;
+            var spacePrefixDividerPos:number = s.indexOf(ContentPath.SPACE_PREFIX_DIVIDER);
+            var absolute:bool = spacePrefixDividerPos > -1;
             if (absolute) {
-                path = s.substr(s.indexOf(ContentPath.SPACE_PREFIX_DIVIDER), s.length);
-                spaceName = s.substr(0, s.indexOf(ContentPath.SPACE_PREFIX_DIVIDER));
+                path = s.substr(spacePrefixDividerPos + 1, s.length);
+                spaceName = s.substr(0, spacePrefixDividerPos);
             }
             else {
                 path = s;
                 spaceName = null;
             }
 
+            if( path.indexOf("/") == 0 ) {
+                path = path.substr( 1 );
+            }
             var elements:string[] = path.split(ContentPath.ELEMENT_DIVIDER);
             return new ContentPath(spaceName, elements);
         }
@@ -40,6 +44,10 @@ module api_content{
 
         getSpaceName() {
             return this.spaceName;
+        }
+
+        getElements():string[] {
+            return this.elements;
         }
 
         getParentPath():ContentPath {
