@@ -29,15 +29,15 @@ module api_app_browse{
             this.filterPanel = filterPanel;
 
             this.gridAndToolbarContainer = new api_ui.Panel();
-            this.gridContainer = new api_ui.Panel("grid-container");
+            this.gridContainer = new api_ui.Panel("GridContainer");
             this.gridContainer.setScrollY();
+            this.gridContainer.addClass("grid-container");
             //this.gridContainer.setDoOffset(false);
+
             this.gridAndToolbarContainer.appendChild(this.browseToolbar);
             this.gridAndToolbarContainer.appendChild(this.gridContainer);
 
             this.gridAndDetailSplitPanel = new api_ui.SplitPanel(this.gridAndToolbarContainer, this.browseItemPanel);
-
-            this.gridContainer.addClass("grid-container");
             this.gridAndFilterAndDetailSplitPanel = new api_ui.SplitPanel(this.filterPanel, this.gridAndDetailSplitPanel);
             this.gridAndFilterAndDetailSplitPanel.setDistribution(15, 85);
             this.gridAndFilterAndDetailSplitPanel.setAlignment(api_ui.SplitPanelAlignment.VERTICAL);
