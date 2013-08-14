@@ -83,7 +83,7 @@ module api_remote {
 
                 } else if (!success) {
                     var failureResult = {
-                        error: result && result.error ? result.error : 'An unexpected error occurred.'
+                        error: result && result.error ? result.error : 'An unexpected error occurred:' + event.error.message
                     };
 
                     if (Ext.isFunction(failureCallback)) {
