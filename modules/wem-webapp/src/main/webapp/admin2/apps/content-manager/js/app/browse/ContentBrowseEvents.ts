@@ -25,10 +25,17 @@ module app_browse {
         }
     }
 
-    export class ShowNewContentDialogEvent extends api_event.Event {
+    export class ShowNewContentDialogEvent extends BaseContentModelEvent {
 
-        constructor() {
-            super('showNewContentDialog');
+        private parentContent:api_model.ContentExtModel;
+
+        constructor(parentContent:api_model.ContentExtModel) {
+            super('showNewContentDialog', [parentContent]);
+            this.parentContent = parentContent;
+        }
+
+        getParentContent():api_model.ContentExtModel {
+            return this.parentContent;
         }
 
         static on(handler:(event:ShowNewContentDialogEvent) => void) {

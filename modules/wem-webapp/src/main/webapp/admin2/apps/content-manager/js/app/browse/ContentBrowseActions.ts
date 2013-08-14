@@ -6,7 +6,7 @@ module app_browse {
             super("New");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new ShowNewContentDialogEvent().fire();
+                new ShowNewContentDialogEvent(app.ContentContext.get().getSelectedContents()[0]).fire();
             });
         }
     }

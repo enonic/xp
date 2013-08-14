@@ -21,6 +21,7 @@
 ///<reference path='app/wizard/form/input/BaseInput.ts' />
 ///<reference path='app/wizard/form/input/TextLine.ts' />
 ///<reference path='app/wizard/form/input/TextArea.ts' />
+///<reference path='app/wizard/form/input/HtmlArea.ts' />
 ///<reference path='app/wizard/form/FormItemContainer.ts' />
 ///<reference path='app/wizard/form/InputLabel.ts' />
 ///<reference path='app/wizard/form/InputContainer.ts' />
@@ -110,7 +111,16 @@ Ext.application({
 
         var newContentDialog = new app_new.NewContentDialog();
         app_browse.ShowNewContentDialogEvent.on((event) => {
-            newContentDialog.open();
+
+            var parentContent:api_model.ContentExtModel = event.getParentContent();
+
+            var contentGetParams:api_remote_content.GetParams = {
+                contentIds: [parentContent.data.id]
+            };
+            api_remote_content.RemoteContentService.content_get(contentGetParams, (result:api_remote_content.GetResult) => {
+                newContentDialog.setParentContent(result.content[0]);
+                newContentDialog.open();
+            });
         });
     }
 });

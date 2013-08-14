@@ -2,6 +2,8 @@ module app_new {
 
     export class NewContentDialog extends api_ui_dialog.ModalDialog {
 
+        private parentContent:api_remote_content.ContentGet;
+
         private cancelAction:api_ui.Action = new CancelNewContentDialog();
 
         private recentList:RecentContentTypesList;
@@ -52,7 +54,11 @@ module app_new {
 
         private closeAndIssueNewContentEvent(contentType:api_remote_contenttype.ContentType) {
             this.close();
-            new NewContentEvent(contentType).fire();
+            new NewContentEvent(contentType, this.parentContent).fire();
+        }
+
+        setParentContent(value:api_remote_content.ContentGet) {
+            this.parentContent = value;
         }
 
         show() {

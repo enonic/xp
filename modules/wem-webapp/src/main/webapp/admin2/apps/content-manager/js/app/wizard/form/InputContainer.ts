@@ -28,14 +28,18 @@ module app_wizard_form {
 
             var inputType = this.input.getInputType();
             if (inputType.isBuiltIn()) {
-                var newInputCmp = Object.create(window["app_wizard_form_input"][inputType.getName()].prototype);
-                newInputCmp.constructor.apply(newInputCmp);
+                var newInput = window["app_wizard_form_input"][inputType.getName()];
+                if( newInput == null ){
+                    throw new Error("No built-in component for input type found: " + inputType.getName());
+                }
+                var newInputPrototype = Object.create(newInput.prototype);
+                newInputPrototype.constructor.apply(newInputPrototype);
             }
             else {
                 throw Error("Custom input types are not supported yet: " + inputType.getName());
             }
 
-            this.inputCmp = newInputCmp;
+            this.inputCmp = newInputPrototype;
             this.inputCmp.layout(this.input, this.properties);
             this.getEl().appendChild(this.inputCmp.getHTMLElement());
         }

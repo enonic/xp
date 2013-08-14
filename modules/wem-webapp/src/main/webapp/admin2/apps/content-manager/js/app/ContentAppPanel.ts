@@ -38,13 +38,12 @@ module app {
                 var contentType = event.getContentType();
 
                 var tabMenuItem = new ContentAppBarTabMenuItem("New Content");
-                var wizardPanel = new app_wizard.ContentWizardPanel('new-content', contentType);
+                var wizardPanel = new app_wizard.ContentWizardPanel('new-content', contentType, event.getParentContent());
                 wizardPanel.renderNew();
 
                 this.addWizardPanel(tabMenuItem, wizardPanel);
                 this.selectPanel(tabMenuItem);
                 wizardPanel.reRender();
-
             });
 
             app_browse.OpenContentEvent.on((event) => {
@@ -76,31 +75,53 @@ module app {
                 for (var i = 0; i < contents.length; i++) {
                     var contentModel:api_model.ContentExtModel = contents[i];
 
-                    //TODO: RemoteCallContentGetResult doesn't match returned result  if 'path' param is used!
-                    var contentGetParams:api_remote_content.GetParams = {
-                        contentIds: [contentModel.data.id]
-                    };
-                    api_remote_content.RemoteContentService.content_get(contentGetParams, (getContentResult:api_remote_content.GetResult) => {
+                    // Fetch content to edit
+                    api_remote_content.RemoteContentService.content_get({
+                            contentIds: [contentModel.data.id]
+                        },
+                        (contentResult:api_remote_content.GetResult) => {
+                            var contentToEdit:api_remote_content.ContentGet = contentResult.content[0];
+                            var tabMenuItem = new ContentAppBarTabMenuItem(contentToEdit.displayName, true);
 
-                        var contentTypeGetParams:api_remote_contenttype.GetParams = {
-                            qualifiedNames: [getContentResult.content[0].type],
-                            format: "JSON",
-                            mixinReferencesToFormItems: true
-                        };
+                            // Fetch content type of content to edit
+                            api_remote_contenttype.RemoteContentTypeService.contentType_get({
+                                    qualifiedNames: [contentToEdit.type],
+                                    format: "JSON",
+                                    mixinReferencesToFormItems: true
+                                },
+                                (contentTypeResult:api_remote_contenttype.GetResult) => {
 
-                        api_remote_contenttype.RemoteContentTypeService.contentType_get(contentTypeGetParams,
-                            (getContentTypeResult:api_remote_contenttype.GetResult) => {
+                                    var contentType:api_remote_contenttype.ContentType = contentTypeResult.contentTypes[0];
 
-                                var tabMenuItem = new ContentAppBarTabMenuItem(getContentResult.content[0].displayName, true);
-                                var id = this.generateTabId(getContentResult.content[0].name, true);
-                                var contentWizardPanel = new app_wizard.ContentWizardPanel(id, getContentTypeResult.contentTypes[0]);
-                                contentWizardPanel.renderExisting(getContentResult);
+                                    var tabId = this.generateTabId(contentToEdit.name, true);
 
-                                this.addWizardPanel(tabMenuItem, contentWizardPanel);
-                                this.selectPanel(tabMenuItem);
-                            });
+                                    var contentToEditPath:api_content.ContentPath = api_content.ContentPath.fromString(contentToEdit.path);
+                                    var parentContentPath:api_content.ContentPath = contentToEditPath.getParentPath();
+                                    if (parentContentPath != null) {
+                                        // Fetch parent of content to edit
+                                        api_remote_content.RemoteContentService.content_get({
+                                                path: parentContentPath.toString()
+                                            },
+                                            (parentContentResult:api_remote_content.GetResult) => {
 
-                    });
+                                                var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId,
+                                                    contentType, parentContentResult.content[0]);
+
+                                                contentWizardPanel.renderExisting(contentResult);
+                                                this.addWizardPanel(tabMenuItem, contentWizardPanel);
+                                                this.selectPanel(tabMenuItem);
+                                            });
+                                    }
+                                    else {
+                                        var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId,
+                                            contentType, null);
+                                        contentWizardPanel.renderExisting(contentResult);
+                                        this.addWizardPanel(tabMenuItem, contentWizardPanel);
+                                        this.selectPanel(tabMenuItem);
+                                    }
+                                });
+
+                        });
                 }
             });
 
