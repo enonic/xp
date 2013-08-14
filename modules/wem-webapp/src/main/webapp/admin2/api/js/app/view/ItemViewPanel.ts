@@ -10,6 +10,7 @@ module api_app_view {
 
         constructor(toolbar:api_ui_toolbar.Toolbar, statisticsPanel:ItemStatisticsPanel) {
             super("ItemViewPanel");
+            this.getEl().addClass("item-view-panel");
             this.toolbar = toolbar;
             this.statisticsPanel = statisticsPanel;
             this.appendChild(this.toolbar);

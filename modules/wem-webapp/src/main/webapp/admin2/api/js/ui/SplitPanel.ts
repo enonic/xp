@@ -191,7 +191,7 @@ module api_ui {
 
         updatePosition(a:number, b:number) {
             if (!this.isHorizontal()) {
-                this.getEl().setLeft("calc(" + a + "% - " + this.getThickness() + "px)");
+                this.getEl().setLeft("calc(" + a + "% - " + this.getThickness()/2 + "px)");
             }
         }
 

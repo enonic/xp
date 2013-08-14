@@ -28,6 +28,7 @@ module api_app_wizard {
             });
             if (this.steps.length == 1) {
                 step.setActive(true);
+                stepEl.getEl().addClass("first");
             }
             step.setIndex(panelIndex);
 

@@ -2,7 +2,6 @@
   font-size: 14px;
 
   .wizard-header {
-    margin: 0 0 0 113px;
 
     .text-input {
       min-width: 200px;
@@ -30,7 +29,7 @@
 
   .form-icon {
     float: left;
-    margin:10px 10px 0 10px;
+    margin:10px 15px 0 10px;
   }
 
   .step-navigator {
@@ -44,12 +43,16 @@
       cursor: pointer;
       height: 50px;
 
+      &.first {
+        padding-left:0;
+      }
+
       &.active {
         background-color: white;
         color: @admin-dark-gray-font;
         padding-bottom: 0;
 
-        &:before {
+        &:before:not(.first) {
           content: " ";
           display: block;
           float: left;
@@ -80,7 +83,7 @@
   }
 
   .step-panel {
-    margin: 10px 0 0 112px;
+    margin: 10px 0 0 127px;
   }
 
   .navigation-arrow {

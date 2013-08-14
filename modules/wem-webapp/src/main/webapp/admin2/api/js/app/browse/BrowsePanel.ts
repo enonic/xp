@@ -16,6 +16,8 @@ module api_app_browse{
 
         private gridAndFilterAndDetailSplitPanel;
 
+        private gridAndToolbarContainer:api_ui.Panel;
+
 
         constructor(browseToolbar:api_ui_toolbar.Toolbar, grid:api_ui_grid.TreeGridPanel, browseItemPanel:BrowseItemPanel,
                     filterPanel:api_app_browse_filter.BrowseFilterPanel) {
@@ -25,8 +27,15 @@ module api_app_browse{
             this.grid = grid;
             this.browseItemPanel = browseItemPanel;
             this.filterPanel = filterPanel;
+
+            this.gridAndToolbarContainer = new api_ui.Panel();
             this.gridContainer = new api_ui.Panel("grid-container");
-            this.gridAndDetailSplitPanel = new api_ui.SplitPanel(this.gridContainer, this.browseItemPanel);
+            this.gridContainer.setDoOffset(false);
+            this.gridAndToolbarContainer.appendChild(this.browseToolbar);
+            this.gridAndToolbarContainer.appendChild(this.gridContainer);
+
+            this.gridAndDetailSplitPanel = new api_ui.SplitPanel(this.gridAndToolbarContainer, this.browseItemPanel);
+
             this.gridAndFilterAndDetailSplitPanel = new api_ui.SplitPanel(this.filterPanel, this.gridAndDetailSplitPanel);
             this.gridAndFilterAndDetailSplitPanel.setDistribution(15, 85);
             this.gridAndFilterAndDetailSplitPanel.setAlignment(api_ui.SplitPanelAlignment.VERTICAL);
@@ -40,7 +49,6 @@ module api_app_browse{
         }
 
         afterRender() {
-            this.appendChild(this.browseToolbar);
             this.appendChild(this.gridAndFilterAndDetailSplitPanel);
             this.gridAndFilterAndDetailSplitPanel.render();
             this.gridAndDetailSplitPanel.render();
