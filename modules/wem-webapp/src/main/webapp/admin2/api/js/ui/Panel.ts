@@ -19,6 +19,10 @@ module api_ui {
             this.doOffset = value;
         }
 
+        setScrollY() {
+            this.addClass("scroll-y");
+        }
+
         private calculateOffset() {
             // calculates bottom of previous element in dom and set panel top to this value.
             var previous = this.getEl().getPrevious();

@@ -30,7 +30,8 @@ module api_app_browse{
 
             this.gridAndToolbarContainer = new api_ui.Panel();
             this.gridContainer = new api_ui.Panel("grid-container");
-            this.gridContainer.setDoOffset(false);
+            this.gridContainer.setScrollY();
+            //this.gridContainer.setDoOffset(false);
             this.gridAndToolbarContainer.appendChild(this.browseToolbar);
             this.gridAndToolbarContainer.appendChild(this.gridContainer);
 
