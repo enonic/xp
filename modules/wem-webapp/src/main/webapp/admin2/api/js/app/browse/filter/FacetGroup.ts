@@ -1,6 +1,6 @@
 module api_app_browse_filter {
 
-    export interface FacetGroupParams {
+    export interface FacetGroupData {
         name:string;
         displayName:string;
         terms:FacetData[];
@@ -12,17 +12,17 @@ module api_app_browse_filter {
 
         private name:string;
 
-        constructor(facetGroupParams:FacetGroupParams) {
+        constructor(facetGroupData:FacetGroupData) {
             super('FacetGroup', 'facet-group');
-            this.name = facetGroupParams.name;
+            this.name = facetGroupData.name;
 
             var facetTitle:api_dom.H2El = new api_dom.H2El('FacetTitle');
-            facetTitle.getEl().setInnerHtml(facetGroupParams.displayName || facetGroupParams.name);
+            facetTitle.getEl().setInnerHtml(facetGroupData.displayName || facetGroupData.name);
             this.appendChild(facetTitle);
 
             var needHide = true;
-            for (var i = 0; i < facetGroupParams.terms.length; i++) {
-                var facetData = facetGroupParams.terms[i];
+            for (var i = 0; i < facetGroupData.terms.length; i++) {
+                var facetData = facetGroupData.terms[i];
                 if (facetData.count > 0) {
                     needHide = false;
                 }
@@ -49,10 +49,10 @@ module api_app_browse_filter {
             return null;
         }
 
-        update(facetGroupParams:FacetGroupParams) {
+        update(facetGroupData:FacetGroupData) {
             var needHide = true;
-            for (var i = 0; i < facetGroupParams.terms.length; i++) {
-                var facetData = facetGroupParams.terms[i];
+            for (var i = 0; i < facetGroupData.terms.length; i++) {
+                var facetData = facetGroupData.terms[i];
                 if (facetData.count > 0) {
                     needHide = false;
                 }

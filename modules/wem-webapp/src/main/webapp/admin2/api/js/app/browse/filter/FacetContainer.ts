@@ -5,7 +5,7 @@ module api_app_browse_filter {
         private facetGroups:FacetGroup[] = [];
         private lastFacetGroup:FacetGroup;
 
-        constructor(data?:FacetGroupParams[]) {
+        constructor(data?:FacetGroupData[]) {
             super('FacetContainer');
 
             if (data) {
@@ -38,7 +38,7 @@ module api_app_browse_filter {
             return null;
         }
 
-        update(facetGroupsData:FacetGroupParams[]) {
+        update(facetGroupsData:FacetGroupData[]) {
             for (var i = 0; i < facetGroupsData.length; i++) {
                 var facetGroupData = facetGroupsData[i];
                 var facetGroup:FacetGroup = this.getFacetGroup(facetGroupData.name);
