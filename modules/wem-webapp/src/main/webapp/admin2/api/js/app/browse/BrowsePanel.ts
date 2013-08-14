@@ -37,6 +37,7 @@ module api_app_browse{
 
             this.gridAndDetailSplitPanel = new api_ui.SplitPanel(this.gridAndToolbarContainer, this.browseItemPanel);
 
+            this.gridContainer.addClass("grid-container");
             this.gridAndFilterAndDetailSplitPanel = new api_ui.SplitPanel(this.filterPanel, this.gridAndDetailSplitPanel);
             this.gridAndFilterAndDetailSplitPanel.setDistribution(15, 85);
             this.gridAndFilterAndDetailSplitPanel.setAlignment(api_ui.SplitPanelAlignment.VERTICAL);
