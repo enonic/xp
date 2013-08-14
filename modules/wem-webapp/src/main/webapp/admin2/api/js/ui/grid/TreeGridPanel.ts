@@ -21,6 +21,7 @@ module api_ui_grid {
         create(region?:string, renderTo?:string) {
 
             this.ext = <any> new Ext.panel.Panel({
+                cls: 'tree-grid-panel',
                 region: region,
                 renderTo: renderTo,
                 layout: 'card',
