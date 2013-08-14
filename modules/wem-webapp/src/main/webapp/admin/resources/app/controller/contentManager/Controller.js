@@ -250,11 +250,11 @@ Ext.define('Admin.controller.contentManager.Controller', {
                             var createContentTabFn = function (response) {
                                 return {
                                     xtype: 'contentLiveEditPanel',
-                                    title: '[New ' + response.contentType.displayName + ']',
+                                    title: '[New ' + response.contentTypes[0].displayName + ']',
                                     content: {
-                                        iconUrl: response.iconUrl
+                                        iconUrl: response.contentTypes[0].iconUrl
                                     },
-                                    contentType: response.contentType,
+                                    contentType: response.contentTypes[0],
                                     contentParent: treeGridSelection.length > 0 ? treeGridSelection[0].data : undefined,
                                     data: {}
                                 };
@@ -273,7 +273,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                                 data: {
                                     name: contentTypeName,
                                     content: {
-                                        iconUrl: rpcResponse.iconUrl
+                                        iconUrl: rpcResponse.contentTypes[0].iconUrl
                                     }
                                 },
                                 title: '[New ' + contentTypeName + ']',
