@@ -24,6 +24,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         type: 'vbox',
         align : 'stretch'
     },
+
     listeners: {
         resize: function () {
             this.resizeCustomPanelHeights();
@@ -49,13 +50,11 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
 
     customPanels: [
         {
-            name: 'Insert',
             item: function () {
                 return new Admin.view.contentManager.contextwindow.custompanel.Components({hidden:true});
             }
         },
         {
-            name: 'Emulator',
             item: function () {
                 return new Admin.view.contentManager.contextwindow.custompanel.Emulator({hidden:true});
             }
@@ -111,56 +110,39 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
      * @returns {Ext.button.Button}
      */
     createMenuButton: function () {
+        var me = this;
         return new Ext.button.Button({
             text: '',
             arrowCls: '-none',
             cls: 'admin-context-window-menu-button icon-reorder',
-            menu: this.createMenu()
-        });
-    },
-
-    /**
-     * @returns {Ext.menu.Menu}
-     */
-    createMenu: function () {
-        var me = this;
-        return new Ext.menu.Menu({
-            border: false,
-            plain: true,
-            shadow: false,
-            cls: 'context-window-menu',
-            items: this.createMenuItems(),
-            listeners: {
-                beforeshow: function (menu) {
-                    menu.setWidth(me.getWidth());
-                }
-            }
-        });
-    },
-
-    /**
-     * @returns {Array}
-     */
-    createMenuItems: function () {
-        var me = this, menuItems = [], panels = this.customPanels,
-            panel,
-            i;
-        for (i in this.customPanels) {
-            if (this.customPanels.hasOwnProperty(i)) {
-                panel = panels[i];
-                menuItems.push({
-                    plain: true,
-                    cls: 'context-window-menu-item',
-                    itemId: i, // fixme: use another property for storing the index value
-                    width:'100%',
-                    text: panel.name,
-                    handler: function (item) {
-                        me.showCustomPanel(item.itemId);
+            menu: new Ext.menu.Menu({
+                border: false,
+                plain: true,
+                shadow: false,
+                cls: 'context-window-menu',
+                listeners: {
+                    beforeshow: function (menu) {
+                        menu.setWidth(me.getWidth());
                     }
-                });
+                }
+            })
+        });
+    },
+
+    addMenuItem: function (text, index) {
+        var me = this;
+        var menuItemSpec = {
+            plain: true,
+            cls: 'context-window-menu-item',
+            itemId: index,
+            width:'100%',
+            text: text,
+            handler: function (item) {
+                me.showCustomPanel(item.itemId);
             }
-        }
-        return menuItems;
+        };
+
+        this.menuButton.menu.add(menuItemSpec);
     },
 
     /**
@@ -250,7 +232,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             if (i == index) {
                 panel.show();
 
-                this.setTitleText(this.customPanels[i].name); // ai, move this
+                this.setTitleText(panel.panelName); // ai, move this
                 this.setSelectedPanelIndex(i);
             } else {
                 panel.hide();
@@ -272,11 +254,12 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     addCustomPanels: function () {
         // Should this function add menu items too?
         var key,
-            panel;
+            customPanel;
         for (key in this.customPanels) {
             if (this.customPanels.hasOwnProperty(key)) {
-                panel = this.customPanels[key];
-                this.customPanelsContainer.add(panel.item());
+                customPanel = this.customPanels[key].item();
+                this.customPanelsContainer.add(customPanel);
+                this.addMenuItem(customPanel.panelName, key);
             }
         }
     },

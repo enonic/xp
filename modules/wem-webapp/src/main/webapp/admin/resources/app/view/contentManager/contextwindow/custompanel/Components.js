@@ -6,6 +6,8 @@ Ext.define('Admin.view.contentManager.contextwindow.custompanel.Components', {
     alias: 'widget.contextWindowComponentsPanel',
     uses: 'Admin.view.contentManager.contextwindow.Helper',
 
+    panelName: 'Components',
+
     layout: {
         type: 'vbox',
         align: 'stretch'

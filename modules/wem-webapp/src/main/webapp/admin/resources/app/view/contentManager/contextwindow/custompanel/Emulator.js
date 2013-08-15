@@ -3,6 +3,8 @@ Ext.define('Admin.view.contentManager.contextwindow.custompanel.Emulator', {
     alias: 'widget.contextWindowEmulator',
     uses: 'Admin.view.contentManager.contextwindow.Helper',
 
+    panelName: 'Emulator',
+
     layout: {
         type: 'vbox',
         align: 'stretch'
