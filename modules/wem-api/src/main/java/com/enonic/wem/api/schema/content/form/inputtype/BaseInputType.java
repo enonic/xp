@@ -6,7 +6,6 @@ import com.google.common.base.Objects;
 import com.enonic.wem.api.content.data.Property;
 import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
-import com.enonic.wem.api.schema.content.form.inputtype.config.AbstractInputTypeConfigJsonGenerator;
 
 public abstract class BaseInputType
     implements InputType
@@ -60,13 +59,7 @@ public abstract class BaseInputType
     }
 
     @Override
-    public AbstractInputTypeConfigJsonGenerator getInputTypeConfigJsonGenerator()
-    {
-        return null;
-    }
-
-    @Override
-    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlGenerator()
+    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
         return null;
     }

@@ -94,7 +94,7 @@ public class FormItemXmlSerializer
     {
         if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
         {
-            inputEl.addContent( input.getInputType().getInputTypeConfigXmlGenerator().generate( input.getInputTypeConfig() ) );
+            inputEl.addContent( input.getInputType().getInputTypeConfigXmlSerializer().generate( input.getInputTypeConfig() ) );
         }
     }
 

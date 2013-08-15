@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.schema.content.model.form.inputtype;
+package com.enonic.wem.admin.rest.resource.schema.content.model.form;
 
 import com.enonic.wem.api.schema.content.form.Occurrences;
 

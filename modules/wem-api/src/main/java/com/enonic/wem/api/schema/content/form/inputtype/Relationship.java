@@ -10,8 +10,6 @@ import com.enonic.wem.api.content.data.type.PropertyTool;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
-import com.enonic.wem.api.schema.content.form.inputtype.config.AbstractInputTypeConfigJsonGenerator;
-import com.enonic.wem.api.schema.content.form.inputtype.config.RelationshipConfigJsonGenerator;
 
 public class Relationship
     extends BaseInputType
@@ -27,13 +25,7 @@ public class Relationship
     }
 
     @Override
-    public AbstractInputTypeConfigJsonGenerator getInputTypeConfigJsonGenerator()
-    {
-        return RelationshipConfigJsonGenerator.DEFAULT;
-    }
-
-    @Override
-    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlGenerator()
+    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
         return RelationshipConfigXmlSerializer.DEFAULT;
     }

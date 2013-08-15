@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.schema.content.model.form;
 
-import com.enonic.wem.admin.rest.resource.schema.content.model.form.inputtype.OccurrencesJson;
 import com.enonic.wem.api.schema.content.form.FormItemSet;
 
 public class FormItemSetJson

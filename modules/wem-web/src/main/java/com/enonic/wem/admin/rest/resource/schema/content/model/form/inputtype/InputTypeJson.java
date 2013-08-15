@@ -1,13 +1,12 @@
 package com.enonic.wem.admin.rest.resource.schema.content.model.form.inputtype;
 
 import com.enonic.wem.api.schema.content.form.inputtype.BaseInputType;
-import com.enonic.wem.api.schema.content.form.inputtype.config.AbstractInputTypeConfigJson;
 
 public class InputTypeJson
 {
     private final BaseInputType baseInputType;
 
-    private AbstractInputTypeConfigJson configJson;
+    private Object configJson;
 
     public InputTypeJson( final BaseInputType baseInputType )
     {
@@ -24,12 +23,12 @@ public class InputTypeJson
         return baseInputType.isBuiltIn();
     }
 
-    public void setConfig( final AbstractInputTypeConfigJson configJson )
+    public void setConfig( final Object configJson )
     {
         this.configJson = configJson;
     }
 
-    public AbstractInputTypeConfigJson getConfig()
+    public Object getConfig()
     {
         return configJson;
     }

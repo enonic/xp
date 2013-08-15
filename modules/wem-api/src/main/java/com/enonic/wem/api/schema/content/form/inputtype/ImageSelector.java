@@ -7,8 +7,6 @@ import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
-import com.enonic.wem.api.schema.content.form.inputtype.config.AbstractInputTypeConfigJsonGenerator;
-import com.enonic.wem.api.schema.content.form.inputtype.config.ImageSelectorConfigJsonGenerator;
 
 public class ImageSelector
     extends BaseInputType
@@ -24,13 +22,7 @@ public class ImageSelector
     }
 
     @Override
-    public AbstractInputTypeConfigJsonGenerator getInputTypeConfigJsonGenerator()
-    {
-        return ImageSelectorConfigJsonGenerator.DEFAULT;
-    }
-
-    @Override
-    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlGenerator()
+    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
         return ImageSelectorConfigXmlSerializer.DEFAULT;
     }

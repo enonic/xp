@@ -1,9 +1,9 @@
 package com.enonic.wem.admin.rest.resource.schema.content.model.form.inputtype;
 
 import com.enonic.wem.admin.rest.resource.schema.content.model.form.FormItemJson;
+import com.enonic.wem.admin.rest.resource.schema.content.model.form.OccurrencesJson;
 import com.enonic.wem.api.schema.content.form.Input;
 import com.enonic.wem.api.schema.content.form.inputtype.BaseInputType;
-import com.enonic.wem.api.schema.content.form.inputtype.config.AbstractInputTypeConfigJson;
 
 public class InputJson
     extends FormItemJson
@@ -24,9 +24,7 @@ public class InputJson
 
         if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
         {
-            final AbstractInputTypeConfigJson configJson =
-                input.getInputType().getInputTypeConfigJsonGenerator().generate( input.getInputTypeConfig() );
-            this.inputType.setConfig( configJson );
+            this.inputType.setConfig( input.getInputTypeConfig() );
         }
     }
 
