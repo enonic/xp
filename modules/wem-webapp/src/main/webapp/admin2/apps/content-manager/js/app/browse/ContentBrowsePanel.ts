@@ -52,7 +52,7 @@ module app_browse {
                     };
                     api_remote_content.RemoteContentService.content_get(getParams, (result:api_remote_content.GetResult)=> {
 
-                        result.content.forEach((contentGet:api_remote_content.ContentGet, index:number) => {
+                        result.content.forEach((contentGet:api_remote_content.Content, index:number) => {
                             var item = new api_app_browse.BrowseItem(models[index]).
                                 setDisplayName(contentGet.displayName).
                                 setPath(contentGet.path).

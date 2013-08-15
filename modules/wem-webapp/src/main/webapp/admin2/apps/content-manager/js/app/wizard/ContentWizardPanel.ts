@@ -4,7 +4,7 @@ module app_wizard {
 
         private static DEFAULT_CONTENT_ICON_URL:string = "resources/images/icons/128x128/default_content.png";
 
-        private parentContent:api_remote_content.ContentGet;
+        private parentContent:api_remote_content.Content;
 
         private renderingNew:bool;
 
@@ -26,7 +26,7 @@ module app_wizard {
 
         private templatesPanel:api_ui.Panel;
 
-        constructor(id:string, contentType:api_remote_contenttype.ContentType, parentContent:api_remote_content.ContentGet) {
+        constructor(id:string, contentType:api_remote_contenttype.ContentType, parentContent:api_remote_content.Content) {
 
             this.parentContent = parentContent;
             this.contentType = contentType;
@@ -88,7 +88,7 @@ module app_wizard {
 
             this.renderingNew = false;
 
-            var content:api_remote_content.ContentGet = result.content[0];
+            var content:api_remote_content.Content = result.content[0];
 
             this.setDisplayName(content.displayName);
             this.setName(content.name);

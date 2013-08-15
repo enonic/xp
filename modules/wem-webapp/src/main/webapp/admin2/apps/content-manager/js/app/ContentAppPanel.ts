@@ -80,7 +80,7 @@ module app {
                             contentIds: [contentModel.data.id]
                         },
                         (contentResult:api_remote_content.GetResult) => {
-                            var contentToEdit:api_remote_content.ContentGet = contentResult.content[0];
+                            var contentToEdit:api_remote_content.Content = contentResult.content[0];
                             var tabMenuItem = new ContentAppBarTabMenuItem(contentToEdit.displayName, true);
 
                             // Fetch content type of content to edit

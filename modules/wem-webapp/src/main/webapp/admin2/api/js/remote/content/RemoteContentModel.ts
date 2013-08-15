@@ -11,7 +11,7 @@ module api_remote_content {
         value: Data[];
     }
 
-    export interface ContentDataProperty  extends Data{
+    export interface Property  extends Data{
         value: string;
     }
 
@@ -28,7 +28,7 @@ module api_remote_content {
         iconUrl: string;
     }
 
-    export interface ContentGet extends ContentSummary{
+    export interface Content extends ContentSummary{
         isRoot: bool;
         data: Data[];
     }
@@ -85,7 +85,7 @@ module api_remote_content {
     }
 
     export interface GetResult {
-        content: ContentGet[];
+        content: api_remote_content.Content[];
     }
 
     export interface ListParams {

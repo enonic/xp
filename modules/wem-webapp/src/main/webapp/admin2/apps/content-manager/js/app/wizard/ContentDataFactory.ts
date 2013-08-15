@@ -11,7 +11,7 @@ module app_wizard {
                     contentData.addData(ContentDataFactory.createDataSet(<api_remote_content.DataSet>data));
                 }
                 else {
-                    contentData.addData(ContentDataFactory.createProperty(<api_remote_content.ContentDataProperty>data));
+                    contentData.addData(ContentDataFactory.createProperty(<api_remote_content.Property>data));
                 }
             });
             return contentData;
@@ -26,13 +26,13 @@ module app_wizard {
                     dataSet.addData(ContentDataFactory.createDataSet(<api_remote_content.DataSet>data));
                 }
                 else {
-                    dataSet.addData(ContentDataFactory.createProperty(<api_remote_content.ContentDataProperty>data));
+                    dataSet.addData(ContentDataFactory.createProperty(<api_remote_content.Property>data));
                 }
             });
             return dataSet;
         }
 
-        public static createProperty(remote:api_remote_content.ContentDataProperty):api_content_data.Property {
+        public static createProperty(remote:api_remote_content.Property):api_content_data.Property {
 
             return new api_content_data.Property(remote.name, remote.value, remote.type);
         }
