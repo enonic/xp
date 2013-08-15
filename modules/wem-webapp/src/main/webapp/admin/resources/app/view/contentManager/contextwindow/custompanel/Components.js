@@ -1,7 +1,7 @@
 /**
  * fixme: Extract model and store
  */
-Ext.define('Admin.view.contentManager.contextwindow.panel.Components', {
+Ext.define('Admin.view.contentManager.contextwindow.custompanel.Components', {
     extend: 'Ext.container.Container',
     alias: 'widget.contextWindowComponentsPanel',
     uses: 'Admin.view.contentManager.contextwindow.Helper',

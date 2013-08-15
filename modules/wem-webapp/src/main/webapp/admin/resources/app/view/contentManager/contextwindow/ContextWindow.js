@@ -6,9 +6,9 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     alias: 'widget.contextWindow',
 
     requires: [
-        'Admin.view.contentManager.contextwindow.panel.Components',
-        'Admin.view.contentManager.contextwindow.panel.Emulator',
-        'Admin.view.contentManager.contextwindow.panel.Inspector'
+        'Admin.view.contentManager.contextwindow.custompanel.Components',
+        'Admin.view.contentManager.contextwindow.custompanel.Emulator',
+        'Admin.view.contentManager.contextwindow.inspector.Inspector'
     ],
 
     modal: false,
@@ -26,7 +26,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     },
     listeners: {
         resize: function () {
-            this.resizePanelHeights();
+            this.resizeCustomPanelHeights();
         }
     },
 
@@ -41,45 +41,44 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     menuButton: undefined,
     titleTextCmp: undefined,
     toggleButton: undefined,
-    windowBodyCt: undefined,
+    customPanelsContainer: undefined,
+    inspectorCmp: undefined,
     iFrameMask: undefined,
 
     liveEditIFrameDom: undefined, // Passed as constructor config
 
-    panels: [
+    customPanels: [
         {
             name: 'Insert',
             item: function () {
-                return new Admin.view.contentManager.contextwindow.panel.Components({hidden:true});
+                return new Admin.view.contentManager.contextwindow.custompanel.Components({hidden:true});
             }
         },
         {
             name: 'Emulator',
             item: function () {
-                return new Admin.view.contentManager.contextwindow.panel.Emulator({hidden:true});
+                return new Admin.view.contentManager.contextwindow.custompanel.Emulator({hidden:true});
             }
         },
-        // fixme: inspector panel should be built-in
-        {
-            name: 'Inspector',
-            item: function () {
-                return new Admin.view.contentManager.contextwindow.panel.Inspector({hidden:true});
-            }
-        }
     ],
 
     initComponent: function () {
         this.titleBarCt = this.createTitleBarCt();
-        this.windowBodyCt = this.createWindowBodyCt();
+        this.customPanelsContainer = this.createCustomPanelContainer();
+        this.inspectorCmp = new Admin.view.contentManager.contextwindow.inspector.Inspector({hidden:true});
         this.items = [
             this.titleBarCt,
-            this.windowBodyCt
+            this.customPanelsContainer,
+            this.inspectorCmp
         ];
         this.iFrameMask = this.createIFrameMask();
+
         this.enableWindowDrag();
+
         this.enableWindowResize();
 
         this.registerListenersFromLiveEditPage();
+
         this.currentHeight = this.height;
 
         this.callParent(arguments);
@@ -143,9 +142,11 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
      * @returns {Array}
      */
     createMenuItems: function () {
-        var me = this, menuItems = [], panels = this.panels, i, panel;
-        for (i in this.panels) {
-            if (this.panels.hasOwnProperty(i)) {
+        var me = this, menuItems = [], panels = this.customPanels,
+            panel,
+            i;
+        for (i in this.customPanels) {
+            if (this.customPanels.hasOwnProperty(i)) {
                 panel = panels[i];
                 menuItems.push({
                     plain: true,
@@ -154,7 +155,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
                     width:'100%',
                     text: panel.name,
                     handler: function (item) {
-                        me.showPanel(item.itemId);
+                        me.showCustomPanel(item.itemId);
                     }
                 });
             }
@@ -190,7 +191,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
                         } else {
                             component.getEl().addCls('icon-chevron-up').removeCls('icon-chevron-down');
                         }
-                        me.toggleExpandCollapse();
+                        me.toggleExpandCollapseWindow();
                     });
                 }
             }
@@ -200,16 +201,16 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     /**
      * @returns {Ext.container.Container}
      */
-    createWindowBodyCt: function () {
+    createCustomPanelContainer: function () {
         var me = this;
         return new Ext.container.Container({
             flex: 1,
             height: this.height - this.TITLE_BAR_HEIGHT,
-            cls: 'admin-context-window-body',
+            cls: 'admin-context-window-custom-panels',
             listeners: {
                 render: function () {
-                    me.addPanels();
-                    me.showPanel(me.DEFAULT_SELECTED_PANEL_INDEX);
+                    me.addCustomPanels();
+                    me.showCustomPanel(me.DEFAULT_SELECTED_PANEL_INDEX);
                 }
             }
         });
@@ -219,7 +220,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         this.titleTextCmp.getEl().setHTML(text);
     },
 
-    toggleExpandCollapse: function () {
+    toggleExpandCollapseWindow: function () {
         if (this.collapsed) {
             this.animate({
                 duration: 200,
@@ -240,31 +241,42 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         }
     },
 
-    showPanel: function (index) {
-        var addedPanels = this.windowBodyCt.items.items, panel;
+    showCustomPanel: function (index) {
+        var addedPanels = this.customPanelsContainer.items.items,
+            panel;
+
         for (var i = 0; i < addedPanels.length; i++) {
             panel = addedPanels[i];
             if (i == index) {
                 panel.show();
-                this.setTitleText(this.panels[i].name); // ai, move this
-                // fixme: temporary fix, until Inspector is hardcoded
-                if (index != addedPanels.length-1) {
-                    this.setSelectedPanelIndex(i);
-                }
+
+                this.setTitleText(this.customPanels[i].name); // ai, move this
+                this.setSelectedPanelIndex(i);
             } else {
                 panel.hide();
             }
         }
     },
 
-    addPanels: function () {
+    showHideInspector: function (show) {
+        if (show) {
+            this.setTitleText('Inspector');
+            this.customPanelsContainer.hide();
+            this.inspectorCmp.show();
+        } else {
+            this.customPanelsContainer.show();
+            this.inspectorCmp.hide();
+        }
+    },
+
+    addCustomPanels: function () {
         // Should this function add menu items too?
         var key,
             panel;
-        for (key in this.panels) {
-            if (this.panels.hasOwnProperty(key)) {
-                panel = this.panels[key];
-                this.windowBodyCt.add(panel.item());
+        for (key in this.customPanels) {
+            if (this.customPanels.hasOwnProperty(key)) {
+                panel = this.customPanels[key];
+                this.customPanelsContainer.add(panel.item());
             }
         }
     },
@@ -332,12 +344,12 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         };
     },
 
-    resizePanelHeights: function () {
-        var addedBodyPanels = this.windowBodyCt.items.items,
-            newBodyHeight = this.height - this.TITLE_BAR_HEIGHT;
+    resizeCustomPanelHeights: function () {
+        var addedCustomPanels = this.customPanelsContainer.items.items,
+            newHeight = this.height - this.TITLE_BAR_HEIGHT;
 
-        for (var i = 0; i < addedBodyPanels.length; i++) {
-            addedBodyPanels[i].setHeight(newBodyHeight);
+        for (var i = 0; i < addedCustomPanels.length; i++) {
+            addedCustomPanels[i].setHeight(newHeight);
         }
     },
 
@@ -348,11 +360,12 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             liveEditJQuery = me.getLiveEditJQuery();
 
         liveEditJQuery(liveEditWindow).on('selectComponent.liveEdit', function (event) {
-            me.showPanel(2);
+            me.showHideInspector(true);
         });
         liveEditJQuery(liveEditWindow).on('deselectComponent.liveEdit', function (event) {
             if (me.selectedPanelIndex != undefined) {
-                me.showPanel(me.selectedPanelIndex);
+                me.showHideInspector(false);
+                me.showCustomPanel(me.selectedPanelIndex);
             }
         });
     },

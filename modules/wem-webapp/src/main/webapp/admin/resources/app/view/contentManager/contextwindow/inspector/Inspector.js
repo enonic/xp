@@ -1,4 +1,4 @@
-Ext.define('Admin.view.contentManager.contextwindow.panel.Inspector', {
+Ext.define('Admin.view.contentManager.contextwindow.inspector.Inspector', {
     extend: 'Ext.Component',
     alias: 'widget.contextWindowInspector',
     uses: 'Admin.view.contentManager.contextwindow.Helper',
