@@ -6,9 +6,9 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     alias: 'widget.contextWindow',
 
     requires: [
+        'Admin.view.contentManager.contextwindow.Inspector',
         'Admin.view.contentManager.contextwindow.custompanel.Components',
-        'Admin.view.contentManager.contextwindow.custompanel.Emulator',
-        'Admin.view.contentManager.contextwindow.inspector.Inspector'
+        'Admin.view.contentManager.contextwindow.custompanel.Emulator'
     ],
 
     modal: false,
@@ -65,7 +65,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     initComponent: function () {
         this.titleBarCt = this.createTitleBarCt();
         this.customPanelsContainer = this.createCustomPanelContainer();
-        this.inspectorCmp = new Admin.view.contentManager.contextwindow.inspector.Inspector({hidden:true});
+        this.inspectorCmp = new Admin.view.contentManager.contextwindow.Inspector({hidden:true});
         this.items = [
             this.titleBarCt,
             this.customPanelsContainer,
