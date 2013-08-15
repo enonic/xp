@@ -1,7 +1,7 @@
 module api_remote {
 
     export class JsonRpcProvider {
-        ext:any; //Ext_direct_RemotingProvider;
+        ext:Ext_direct_RemotingProvider;
 
         constructor(url:string, methods:string[], namespace:string) {
             var config = {
@@ -10,16 +10,14 @@ module api_remote {
                 namespace: namespace,
                 methods: methods,
                 enableBuffer: 20,
-                alias: 'direct.jsonrpcprovider'
+                alias: 'direct.jsonrpcprovider',
+                runCallback: this.runCallback,
+                getCallData: this.getCallData,
+                isProvider: true
             };
 
-            var remotingProvider:any = new Ext.direct.RemotingProvider(config);
-            remotingProvider.getCallData = this.getCallData;
-            remotingProvider.createEvent = this.createEvent;
-            remotingProvider.runCallback = this.runCallback;
-
-            this.ext = remotingProvider;
-            this.ext.isProvider = true;
+            this.ext = new Ext.direct.RemotingProvider(config);
+            this.ext.createEvent = this.createEvent;
 
             this.initAPI(methods);
         }
@@ -50,7 +48,7 @@ module api_remote {
             };
         }
 
-        private createEvent(response:any):any {
+        private createEvent(response:any):Ext_direct_Event {
             var error:bool = response.error ? true : false;
 
             response.tid = response.id;
@@ -60,44 +58,45 @@ module api_remote {
                 response.message = response.error.message;
             }
 
-            return Ext.create('direct.' + response.type, response);
+            return <Ext_direct_Event> Ext.create('direct.' + response.type, response);
         }
 
         private runCallback(transaction, event) {
-            var success,
-                successCallback,
-                failureCallback,
-                result,
-                dataLength;
+            var success:bool,
+                successCallback:(successResult:any, event:any) => void,
+                failureCallback:(failureResult:FailureResult, event:any) => void,
+                result:any,
+                dataLength:number;
 
-            if (transaction) {
-                dataLength = transaction.data.length;
-                successCallback = transaction.args[dataLength];
-                failureCallback = transaction.args[dataLength + 1];
+            if (!transaction) {
+                return;
+            }
 
-                result = Ext.isDefined(event.result) ? event.result : event.data;
-                success = result && !Ext.isDefined(result.error);
+            dataLength = transaction.data.length;
+            successCallback = transaction.args[dataLength];
+            failureCallback = transaction.args[dataLength + 1];
 
-                if (success && Ext.isFunction(successCallback)) {
-                    successCallback(result, event);
+            result = Ext.isDefined(event.result) ? event.result : event.data;
+            success = result && !Ext.isDefined(result.error);
 
-                } else if (!success) {
-                    var errorMessage = result && result.error ? result.error : 'An unexpected error occurred';
-                    if( event.error != null ) {
-                        errorMessage += ": " +  event.error.message;
-                    }
-                    var failureResult = {
-                        error: errorMessage
-                    };
-
-                    if (Ext.isFunction(failureCallback)) {
-                        failureCallback(failureResult, event)
-                    } else {
-                        api_notify.showError(failureResult.error);
-                    }
+            if (success && successCallback) {
+                successCallback(result, event);
+            } else if (!success) {
+                var errorMessage = result && result.error ? result.error : 'An unexpected error occurred';
+                if (event.error != null) {
+                    errorMessage += ": " + event.error.message;
                 }
+                var failureResult:FailureResult = {
+                    error: errorMessage
+                };
 
+                if (failureCallback) {
+                    failureCallback(failureResult, event)
+                } else {
+                    api_notify.showError(failureResult.error);
+                }
             }
         }
+
     }
 }

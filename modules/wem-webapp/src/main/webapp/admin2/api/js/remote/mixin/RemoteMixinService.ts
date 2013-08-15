@@ -12,7 +12,6 @@ module api_remote_mixin {
     }
 
     class RemoteMixinServiceImpl extends api_remote.BaseRemoteService implements RemoteMixinServiceInterface {
-        private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
             var methods:string[] = [

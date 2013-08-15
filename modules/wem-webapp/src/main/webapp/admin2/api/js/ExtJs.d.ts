@@ -4778,11 +4778,9 @@ interface Ext_direct_RemotingProvider extends Ext_direct_JsonProvider {
 
     isConnected(): bool;
 
-    getCallData(transaction:any): void;
+    createEvent(response:any): Ext_direct_Event;
 
-    createEvent(response:any): void;
-
-    createHandler(action:any, method:any):any;
+    createHandler(action:any, method:any):Function;
 }
 
 

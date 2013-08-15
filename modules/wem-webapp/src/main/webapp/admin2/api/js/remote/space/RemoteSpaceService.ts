@@ -14,7 +14,6 @@ module api_remote_space {
     }
 
     class RemoteSpaceServiceImpl extends api_remote.BaseRemoteService implements RemoteSpaceServiceInterface {
-        private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
             var methods:string[] = [

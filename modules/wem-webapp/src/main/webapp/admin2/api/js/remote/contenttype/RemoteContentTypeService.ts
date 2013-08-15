@@ -17,7 +17,6 @@ module api_remote_contenttype {
     }
 
     class RemoteContentTypeServiceImpl extends api_remote.BaseRemoteService implements RemoteContentTypeServiceInterface {
-        private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
             var methods:string[] = [

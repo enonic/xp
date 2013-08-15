@@ -18,7 +18,6 @@ module api_remote_userstore {
     }
 
     class RemoteUserStoreServiceImpl extends api_remote.BaseRemoteService implements RemoteUserStoreServiceInterface {
-        private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
             var methods:string[] = [

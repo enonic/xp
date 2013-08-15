@@ -14,7 +14,6 @@ module api_remote_relationshiptype {
     }
 
     class RemoteRelationshipTypeServiceImpl extends api_remote.BaseRemoteService implements RemoteRelationshipTypeServiceInterface {
-        private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
             var methods:string[] = [

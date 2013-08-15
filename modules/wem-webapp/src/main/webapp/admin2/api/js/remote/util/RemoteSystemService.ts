@@ -14,7 +14,6 @@ module api_remote_util {
     }
 
     class RemoteSystemServiceImpl extends api_remote.BaseRemoteService implements RemoteSystemServiceInterface {
-        private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
             var methods:string[] = [

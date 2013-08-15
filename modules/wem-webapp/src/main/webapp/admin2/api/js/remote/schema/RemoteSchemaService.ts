@@ -10,7 +10,6 @@ module api_remote_schema {
     }
 
     class RemoteSchemaServiceImpl extends api_remote.BaseRemoteService implements RemoteSchemaServiceInterface {
-        private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
             var methods:string[] = [

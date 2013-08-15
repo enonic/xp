@@ -26,7 +26,6 @@ module api_remote_account {
     }
 
     class RemoteAccountServiceImpl extends api_remote.BaseRemoteService implements RemoteAccountServiceInterface {
-        private provider:any; //Ext_direct_RemotingProvider;
 
         constructor() {
             var methods:string[] = [
