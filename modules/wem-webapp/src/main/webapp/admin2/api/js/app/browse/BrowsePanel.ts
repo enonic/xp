@@ -28,6 +28,10 @@ module api_app_browse{
             this.browseItemPanel = browseItemPanel;
             this.filterPanel = filterPanel;
 
+            this.browseItemPanel.addDeselectionListener((item:BrowseItem) => {
+                this.grid.deselect(item);
+            });
+
             this.gridAndToolbarContainer = new api_ui.Panel();
             this.gridContainer = new api_ui.Panel("GridContainer");
             this.gridContainer.setScrollY();

@@ -7,15 +7,9 @@ module app_browse {
         constructor() {
             this.actionMenu = new SpaceActionMenu();
             super({
-                actionMenu: this.actionMenu,
-                fireGridDeselectEvent: this.fireGridDeselectEvent
+                actionMenu: this.actionMenu
             });
         }
 
-        fireGridDeselectEvent(model:api_model.SpaceExtModel) {
-            var models:api_model.SpaceExtModel[] = [];
-            models.push(model);
-            new GridDeselectEvent(models).fire();
-        }
     }
 }

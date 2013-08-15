@@ -10,8 +10,7 @@ module app_browse {
         constructor() {
             this.actionMenu = new ContentActionMenu();
             super({
-                actionMenu: this.actionMenu,
-                fireGridDeselectEvent: this.fireGridDeselectEvent
+                actionMenu: this.actionMenu
             });
 
             this.previewPanel = new ContentItemPreviewPanel();
@@ -37,12 +36,6 @@ module app_browse {
 
         public isPreviewMode():bool {
             return this.previewMode;
-        }
-
-        private fireGridDeselectEvent(model:api_model.ContentExtModel) {
-            var models:api_model.ContentExtModel[] = [];
-            models.push(model);
-            new GridDeselectEvent(models).fire();
         }
     }
 

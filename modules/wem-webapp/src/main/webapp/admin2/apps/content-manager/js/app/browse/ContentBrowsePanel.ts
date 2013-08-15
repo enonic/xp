@@ -38,10 +38,13 @@ module app_browse {
 
             GridSelectionChangeEvent.on((event) => {
 
-                var items:api_app_browse.BrowseItem[] = [];
                 var models:api_model.ContentExtModel[] = event.getModels();
-                if (models.length > 0) {
 
+                if (models.length == 0) {
+                    this.browseItemPanel.setItems([]);
+                } else {
+
+                    var items:api_app_browse.BrowseItem[] = [];
                     var contentIds:string[] = [];
                     models.forEach((model:api_model.ContentExtModel) => {
                         contentIds.push(model.data.id);
@@ -59,6 +62,7 @@ module app_browse {
                                 setIconUrl(contentGet.iconUrl);
                             items.push(item);
                         });
+
                         this.browseItemPanel.setItems(items);
                     });
                 }

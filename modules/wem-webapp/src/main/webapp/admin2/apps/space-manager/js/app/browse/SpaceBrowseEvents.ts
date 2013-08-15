@@ -24,17 +24,6 @@ module app_browse {
         }
     }
 
-    export class GridDeselectEvent extends BaseSpaceModelEvent {
-
-        constructor(model:api_model.SpaceExtModel[]) {
-            super('removeFromGrid', model);
-        }
-
-        static on(handler:(event:GridDeselectEvent) => void) {
-            api_event.onEvent('removeFromGrid', handler);
-        }
-    }
-
     export class NewSpaceEvent extends api_event.Event {
 
         constructor() {

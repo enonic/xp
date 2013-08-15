@@ -4,12 +4,9 @@ module api_app_browse {
 
         actionMenu:api_ui_menu.ActionMenu;
 
-        fireGridDeselectEvent:Function;
     }
 
     export class BrowseItemPanel extends api_ui.DeckPanel {
-
-        ext;
 
         private itemStatisticsPanel:api_app_view.ItemStatisticsPanel;
 
@@ -19,26 +16,14 @@ module api_app_browse {
             super("BrowseItemPanel");
             this.getEl().addClass("browse-item-panel");
 
-            this.itemsSelectionPanel = new ItemsSelectionPanel(browseItemPanelParams.fireGridDeselectEvent);
+            this.itemsSelectionPanel = new ItemsSelectionPanel();
             this.itemStatisticsPanel = new api_app_view.ItemStatisticsPanel({actionMenu: browseItemPanelParams.actionMenu});
 
             this.addPanel(this.itemsSelectionPanel);
             this.addPanel(this.itemStatisticsPanel);
             this.showPanel(0);
 
-            /*this.initExt();*/
         }
-
-/*
-        private initExt() {
-            var htmlEl = this.getHTMLElement();
-            this.ext = new Ext.Component({
-                contentEl: htmlEl,
-                region: 'south',
-                split: true
-            });
-        }
-*/
 
         setItems(items:api_app_browse.BrowseItem[]) {
             if (items.length == 0) {
@@ -56,6 +41,10 @@ module api_app_browse {
                 this.itemsSelectionPanel.setItems(items);
                 this.showPanel(0);
             }
+        }
+
+        addDeselectionListener(listener:(item:BrowseItem) => void) {
+            this.itemsSelectionPanel.addDeselectionListener(listener);
         }
     }
 }

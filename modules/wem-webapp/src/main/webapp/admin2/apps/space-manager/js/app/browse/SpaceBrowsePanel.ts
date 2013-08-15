@@ -29,8 +29,7 @@ module app_browse {
 
                 if (event.getModels().length == 0) {
                     this.browseItemPanel.setItems([]);
-                }
-                else {
+                } else {
                     var models:api_model.SpaceExtModel[] = event.getModels();
                     var spaceLoader:SpaceLoader = new SpaceLoader(SpaceLoader.convert(models));
                     spaceLoader.load((loadedSpaces:api_remote_space.SpaceSummary[]) => {
@@ -50,10 +49,6 @@ module app_browse {
 
             });
 
-            GridDeselectEvent.on((event) => {
-
-                console.log("deselect", event);
-            });
         }
     }
 

@@ -15,11 +15,6 @@ module app_browse {
             this.setKeyField("key");
             this.setItemId(itemId);
 
-            GridDeselectEvent.on((event) => {
-                this.deselect(event.getModels()[0].data.name);
-            });
-
-
             app_browse_filter.SchemaBrowseSearchEvent.on((event) => {
                 this.setActiveList('grid');
                 if (event.getFilterParams()) {

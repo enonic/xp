@@ -2,32 +2,60 @@ module api_app_browse {
 
     export class ItemsSelectionPanel extends api_ui.Panel {
 
-        private fireGridDeselectEvent:Function;
+        private deselectionListeners:{ (item:BrowseItem): void; } [] = [];
+        private items:BrowseItem[] = [];
 
-        constructor(fireGridDeselectEvent:Function) {
+        constructor() {
             super("ItemsSelectionPanel");
-            this.fireGridDeselectEvent = fireGridDeselectEvent;
         }
 
         setItems(items:BrowseItem[]) {
-
             this.removeChildren();
-
+            this.items = [];
             if (items.length > 0) {
                 items.forEach((item:BrowseItem) => {
-
-                    var removeCallback = (selectionItem:SelectionItem) => {
-                        this.fireGridDeselectEvent(selectionItem.getBrowseItem().getModel());
-                    };
-
-                    this.appendChild(new SelectionItem(item, removeCallback));
-
+                    this.addItem(item);
                 });
-            }
-            else {
+            } else {
                 this.getEl().setInnerHtml("Nothing selected");
             }
         }
+
+        getItems():BrowseItem[] {
+            return this.items;
+        }
+
+        private removeItem(selectionItem:SelectionItem) {
+            var index = this.items.indexOf(selectionItem.getBrowseItem());
+            if (index >= 0 && this.items.splice(index, 1)) {
+                selectionItem.remove();
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        private addItem(item:BrowseItem) {
+            var removeCallback = (selectionItem:SelectionItem) => {
+                if (this.removeItem(selectionItem)) {
+                    this.notifyDeselected(selectionItem.getBrowseItem());
+                }
+            };
+
+            this.appendChild(new SelectionItem(item, removeCallback));
+            this.items.push(item);
+        }
+
+        addDeselectionListener(listener:(item:BrowseItem) => void) {
+            this.deselectionListeners.push(listener);
+        }
+
+        private notifyDeselected(item:BrowseItem) {
+            for (var i = 0; i < this.deselectionListeners.length; i++) {
+                this.deselectionListeners[i](item);
+            }
+        }
+
     }
 
     export class SelectionItem extends api_dom.DivEl {
@@ -47,7 +75,6 @@ module api_app_browse {
             removeEl.className = "remove";
             removeEl.innerHTML = "&times;";
             removeEl.addEventListener("click", (event) => {
-                this.getEl().remove();
                 if (callback) {
                     callback(this);
                 }

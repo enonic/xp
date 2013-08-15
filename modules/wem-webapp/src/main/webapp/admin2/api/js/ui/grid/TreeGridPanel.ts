@@ -144,7 +144,7 @@ module api_ui_grid {
          * Switches the view
          * @param listId the view to show can be either of TreeGridPanel.GRID or TreeGridPanel.TREE
          */
-            setActiveList(listId) {
+        setActiveList(listId) {
             this.activeList = listId;
             if (this.ext) {
                 (<Ext_layout_container_Card> this.ext.getLayout()).setActiveItem(listId);
@@ -194,13 +194,14 @@ module api_ui_grid {
             }
         }
 
-        deselect(key) {
+        deselect(item:api_app_browse.BrowseItem) {
             var activeList = this.getActiveList(),
                 selModel = activeList.getSelectionModel();
 
-            if (!key || key === -1) {
+            if (!item) {
                 selModel.deselectAll();
             } else {
+                var key = item.getModel().get(this.keyField);
                 var selNodes = selModel.getSelection();
                 var i;
 

@@ -7,10 +7,6 @@ module  app_browse {
 
             this.setItemId(itemId);
 
-            GridDeselectEvent.on((event) => {
-                this.deselect(event.getModels()[0].data.name);
-            });
-
             app_wizard.SpaceCreatedEvent.on((event) => {
                 this.setRefreshNeeded(true);
             });

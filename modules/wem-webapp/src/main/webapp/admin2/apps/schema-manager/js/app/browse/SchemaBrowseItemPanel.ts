@@ -9,12 +9,8 @@ module app_browse {
 
             super({
                 actionMenu: this.actionMenu,
-                fireGridDeselectEvent: this.fireGridDeselectEvent
             });
         }
 
-        fireGridDeselectEvent(model:api_model.SchemaExtModel) {
-            new GridDeselectEvent([model]).fire();
-        }
     }
 }
