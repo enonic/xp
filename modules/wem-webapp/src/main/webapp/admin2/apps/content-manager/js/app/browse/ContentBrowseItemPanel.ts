@@ -46,7 +46,7 @@ module app_browse {
         }
     }
 
-    class ContentItemPreviewPanel extends api_ui.Panel {
+    export class ContentItemPreviewPanel extends api_ui.Panel {
 
         private frame:api_dom.IFrameEl;
 

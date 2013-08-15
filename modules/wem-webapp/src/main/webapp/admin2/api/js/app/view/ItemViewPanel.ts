@@ -4,28 +4,26 @@ module api_app_view {
 
         private toolbar:api_ui_toolbar.Toolbar;
 
-        private statisticsPanel:ItemStatisticsPanel;
+        private panel:api_ui.Panel;
 
         private browseItem:ViewItem;
 
-        constructor(toolbar:api_ui_toolbar.Toolbar, statisticsPanel:ItemStatisticsPanel) {
+        constructor(toolbar:api_ui_toolbar.Toolbar, panel:api_ui.Panel) {
             super("ItemViewPanel");
             this.getEl().addClass("item-view-panel");
             this.toolbar = toolbar;
-            this.statisticsPanel = statisticsPanel;
+            this.panel = panel;
             this.appendChild(this.toolbar);
-            this.appendChild(this.statisticsPanel);
+            this.appendChild(this.panel)
         }
 
         afterRender() {
-            console.log("afterRender viewPanel");
             super.afterRender();
-            this.statisticsPanel.afterRender();
+            this.panel.afterRender();
         }
 
         setItem(item:ViewItem) {
             this.browseItem = item;
-            this.statisticsPanel.setItem(item);
         }
 
         getItem():ViewItem {

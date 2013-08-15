@@ -6,6 +6,7 @@ module app_view {
         private editAction:api_ui.Action;
         private deleteAction:api_ui.Action;
         private closeAction:api_ui.Action;
+        private statisticsPanel:api_app_view.ItemStatisticsPanel;
 
         constructor(id:string) {
 
@@ -20,13 +21,18 @@ module app_view {
                 closeAction: this.closeAction
             });
 
-            var stats = new SpaceItemStatisticsPanel({
+            this.statisticsPanel = new SpaceItemStatisticsPanel({
                 editAction: this.editAction,
                 deleteAction: this.deleteAction
             });
 
-            super(toolbar, stats);
+            super(toolbar, this.statisticsPanel);
 
+        }
+
+        setItem(item:api_app_view.ViewItem) {
+            super.setItem(item);
+            this.statisticsPanel.setItem(item);
         }
 
     }
