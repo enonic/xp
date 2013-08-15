@@ -15,7 +15,7 @@ module api_remote_content {
         value: string;
     }
 
-    export interface ContentBase {
+    export interface ContentSummary {
         id: string;
         path: string;
         name: string;
@@ -28,12 +28,12 @@ module api_remote_content {
         iconUrl: string;
     }
 
-    export interface ContentGet extends ContentBase{
+    export interface ContentGet extends ContentSummary{
         isRoot: bool;
         data: Data[];
     }
 
-    export interface ContentList extends ContentBase{
+    export interface ContentList extends ContentSummary{
         editable: bool;
         deletable: bool;
         allowsChildren: bool;
