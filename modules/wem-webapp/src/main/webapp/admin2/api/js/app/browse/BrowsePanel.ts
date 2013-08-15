@@ -12,7 +12,7 @@ module api_app_browse{
 
         private filterPanel:api_app_browse_filter.BrowseFilterPanel;
 
-        private gridContainer:api_ui.Panel;
+        private gridContainer:api_app_browse.GridContainer;
 
         private gridAndFilterAndDetailSplitPanel;
 
@@ -33,10 +33,7 @@ module api_app_browse{
             });
 
             this.gridAndToolbarContainer = new api_ui.Panel();
-            this.gridContainer = new api_ui.Panel("GridContainer");
-            this.gridContainer.setScrollY();
-            this.gridContainer.addClass("grid-container");
-            //this.gridContainer.setDoOffset(false);
+            this.gridContainer = new api_app_browse.GridContainer(this.grid);
 
             this.gridAndToolbarContainer.appendChild(this.browseToolbar);
             this.gridAndToolbarContainer.appendChild(this.gridContainer);
@@ -58,7 +55,6 @@ module api_app_browse{
             this.appendChild(this.gridAndFilterAndDetailSplitPanel);
             this.gridAndFilterAndDetailSplitPanel.render();
             this.gridAndDetailSplitPanel.render();
-            this.grid.create('center', this.gridContainer.getId());
         }
     }
 }
