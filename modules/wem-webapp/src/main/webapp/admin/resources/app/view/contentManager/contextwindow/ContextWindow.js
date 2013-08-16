@@ -246,6 +246,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             this.customPanelsContainer.hide();
             this.inspectorCmp.show();
         } else {
+            this.setTitleText(this.customPanelsContainer.items.items[this.selectedPanelIndex].panelName);
             this.customPanelsContainer.show();
             this.inspectorCmp.hide();
         }
@@ -348,7 +349,6 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         liveEditJQuery(liveEditWindow).on('deselectComponent.liveEdit', function (event) {
             if (me.selectedPanelIndex != undefined) {
                 me.showHideInspector(false);
-                me.showCustomPanel(me.selectedPanelIndex);
             }
         });
     },
