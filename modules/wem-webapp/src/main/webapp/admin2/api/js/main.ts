@@ -157,6 +157,7 @@
 ///<reference path='app/browse/BrowseItem.ts' />
 ///<reference path='app/browse/ItemsSelectionPanel.ts' />
 ///<reference path='app/browse/BrowseItemPanel.ts' />
+///<reference path='app/browse/GridContainer.ts'/>
 
 ///<reference path='app/browse/filter/BrowseFilterPanelActions.ts' />
 ///<reference path='app/browse/filter/Facet.ts' />
