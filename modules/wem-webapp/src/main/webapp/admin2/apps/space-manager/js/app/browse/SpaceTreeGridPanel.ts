@@ -1,6 +1,6 @@
 module  app_browse {
 
-    export class SpaceTreeGridPanel extends api_ui_grid.TreeGridPanel {
+    export class SpaceTreeGridPanel extends api_app_browse.TreeGridPanel {
 
         constructor(itemId?:string) {
             super(this.createColumns(), this.createGridStore(), this.createTreeStore(), this.createGridConfig(), this.createTreeConfig());
