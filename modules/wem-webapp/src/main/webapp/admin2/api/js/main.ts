@@ -120,7 +120,6 @@
 ///<reference path='ui/tab/TabMenuButton.ts' />
 ///<reference path='ui/tab/TabMenuItem.ts' />
 ///<reference path='ui/NavigatedDeckPanel.ts' />
-///<reference path='ui/grid/TreeGridPanel.ts' />
 
 ///<reference path='ui/Dropdown.ts' />
 ///<reference path='ui/TextInput.ts' />
@@ -158,6 +157,7 @@
 ///<reference path='app/browse/ItemsSelectionPanel.ts' />
 ///<reference path='app/browse/BrowseItemPanel.ts' />
 ///<reference path='app/browse/GridContainer.ts'/>
+///<reference path='app/browse/TreeGridPanel.ts'/>
 
 ///<reference path='app/browse/filter/BrowseFilterPanelActions.ts' />
 ///<reference path='app/browse/filter/Facet.ts' />

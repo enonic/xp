@@ -4,7 +4,7 @@ module api_app_browse{
 
         private browseToolbar:api_ui_toolbar.Toolbar;
 
-        private grid:api_ui_grid.TreeGridPanel;
+        private grid:TreeGridPanel;
 
         private browseItemPanel:BrowseItemPanel;
 
@@ -19,7 +19,7 @@ module api_app_browse{
         private gridAndToolbarContainer:api_ui.Panel;
 
 
-        constructor(browseToolbar:api_ui_toolbar.Toolbar, grid:api_ui_grid.TreeGridPanel, browseItemPanel:BrowseItemPanel,
+        constructor(browseToolbar:api_ui_toolbar.Toolbar, grid:TreeGridPanel, browseItemPanel:BrowseItemPanel,
                     filterPanel:api_app_browse_filter.BrowseFilterPanel) {
             super("BrowsePanel");
 

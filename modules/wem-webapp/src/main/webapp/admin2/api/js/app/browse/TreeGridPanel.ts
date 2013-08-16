@@ -1,4 +1,4 @@
-module api_ui_grid {
+module api_app_browse {
 
     export class TreeGridPanel {
 
@@ -144,7 +144,7 @@ module api_ui_grid {
          * Switches the view
          * @param listId the view to show can be either of TreeGridPanel.GRID or TreeGridPanel.TREE
          */
-        setActiveList(listId) {
+            setActiveList(listId) {
             this.activeList = listId;
             if (this.ext) {
                 (<Ext_layout_container_Card> this.ext.getLayout()).setActiveItem(listId);
