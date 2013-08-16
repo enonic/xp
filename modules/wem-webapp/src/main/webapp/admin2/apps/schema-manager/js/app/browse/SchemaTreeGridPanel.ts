@@ -1,6 +1,6 @@
 module app_browse {
 
-    export class SchemaTreeGridPanel extends api_ui_grid.TreeGridPanel {
+    export class SchemaTreeGridPanel extends api_app_browse.TreeGridPanel {
 
         constructor(itemId?:string) {
             super(
@@ -11,7 +11,7 @@ module app_browse {
                 this.createTreeConfig()
             );
 
-            this.setActiveList(api_ui_grid.TreeGridPanel.TREE);
+            this.setActiveList(api_app_browse.TreeGridPanel.TREE);
             this.setKeyField("key");
             this.setItemId(itemId);
 

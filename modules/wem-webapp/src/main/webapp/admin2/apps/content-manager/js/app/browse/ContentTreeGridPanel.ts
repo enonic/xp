@@ -1,11 +1,11 @@
 module app_browse {
 
-    export class ContentTreeGridPanel extends api_ui_grid.TreeGridPanel {
+    export class ContentTreeGridPanel extends api_app_browse.TreeGridPanel {
 
         constructor(itemId?:string) {
             super(this.createColumns(), this.createGridStore(), this.createTreeStore(), this.createGridConfig(), this.createTreeConfig());
 
-            this.setActiveList(api_ui_grid.TreeGridPanel.TREE);
+            this.setActiveList(api_app_browse.TreeGridPanel.TREE);
             this.setKeyField("path");
             this.setItemId(itemId);
 

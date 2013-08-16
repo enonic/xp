@@ -2,9 +2,9 @@ module api_app_browse {
 
     export class GridContainer extends api_ui.Panel {
 
-        private grid:api_ui_grid.TreeGridPanel;
+        private grid:TreeGridPanel;
 
-        constructor(grid:api_ui_grid.TreeGridPanel) {
+        constructor(grid:TreeGridPanel) {
             super("GridContainer");
             this.setScrollY();
             this.addClass("grid-container");
