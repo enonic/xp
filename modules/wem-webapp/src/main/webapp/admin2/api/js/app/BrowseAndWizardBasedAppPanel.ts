@@ -19,7 +19,7 @@ module api_app {
             this.browsePanel = config.browsePanel;
             this.appBarTabMenu = config.appBar.getTabMenu();
 
-            this.addPanelShownChangedListener((panel:api_ui.Panel, index:number) => {
+            this.addShownPanelChangedListener((panel:api_ui.Panel, index:number) => {
                 if (panel === this.browsePanel) {
                     this.browsePanel.refreshGrid();
                 }
@@ -42,7 +42,7 @@ module api_app {
                 // update something when name changed
             });
 
-            wizardPanel.addClosingEventListener( (wizardPanel:api_app_wizard.WizardPanel) => {
+            wizardPanel.addClosingEventListener((wizardPanel:api_app_wizard.WizardPanel) => {
                 this.removePanel(wizardPanel, false);
             });
 

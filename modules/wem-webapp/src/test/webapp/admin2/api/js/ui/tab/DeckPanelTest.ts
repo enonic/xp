@@ -38,7 +38,38 @@ TestCase("DecPanel", {
         // verify
         assertEquals(1, deckPanel.getPanelShownIndex());
         assertEquals(panel2, deckPanel.getPanelShown());
+    },
+
+    "test given three listeners when removing second then second listener is not notified when event is triggered": function () {
+
+        // setup
+        var deckPanel = new api_ui.DeckPanel();
+        var panel1 = new api_ui.Panel();
+        var panel2 = new api_ui.Panel();
+        deckPanel.addPanel(panel1);
+        deckPanel.addPanel(panel2);
+
+        var listener1 = (panel:api_ui.Panel, index:number) => {
+        };
+        var listener2 = (panel:api_ui.Panel, index:number) => {
+            fail("Second listener not expected to be notified");
+        };
+        var listener3 = (panel:api_ui.Panel, index:number) => {
+        };
+        deckPanel.addShownPanelChangedListener(listener1);
+        deckPanel.addShownPanelChangedListener(listener2);
+        deckPanel.addShownPanelChangedListener(listener3);
+
+        // verify setup
+        deckPanel.showPanel(1);
+
+        // exercise
+        deckPanel.removeShownPanelChangedListener(listener2);
+
+        // verify
+        deckPanel.showPanel(0);
     }
 
 });
+
 

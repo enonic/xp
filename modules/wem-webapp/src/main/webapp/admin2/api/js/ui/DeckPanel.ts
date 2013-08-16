@@ -9,7 +9,7 @@ module api_ui {
 
         private panelShown:Panel = null;
 
-        private panelShownChangedEventListeners:Function[] = [];
+        private shownPanelChangedListeners:{(panel:api_ui.Panel, index:number): void;}[] = [];
 
         constructor(idPrefix?:string) {
             super(idPrefix || "DeckPanel");
@@ -120,15 +120,23 @@ module api_ui {
 
             panelToShow.show();
             this.panelShown = panelToShow;
-            this.firePanelShownChangedEvent(panelToShow, this.getPanelIndex(panelToShow));
+            this.notifyShownPanelChangedListeners(panelToShow, this.getPanelIndex(panelToShow));
         }
 
-        addPanelShownChangedListener(listener:(panel:api_ui.Panel, index:number) => void) {
-            this.panelShownChangedEventListeners.push(listener);
+        addShownPanelChangedListener(listener:(panel:api_ui.Panel, index:number) => void) {
+            this.shownPanelChangedListeners.push(listener);
         }
 
-        private firePanelShownChangedEvent(panel:Panel, panelIndex:number) {
-            this.panelShownChangedEventListeners.forEach((listener:(panel:api_ui.Panel, index:number) => void) => {
+        removeShownPanelChangedListener(listener:(panel:api_ui.Panel, index:number) => void) {
+            this.shownPanelChangedListeners.forEach((curr, index:number) => {
+                if (curr == listener) {
+                    this.shownPanelChangedListeners.splice(index--, 1)
+                }
+            });
+        }
+
+        private notifyShownPanelChangedListeners(panel:Panel, panelIndex:number) {
+            this.shownPanelChangedListeners.forEach((listener) => {
                 listener(panel, panelIndex);
             });
         }

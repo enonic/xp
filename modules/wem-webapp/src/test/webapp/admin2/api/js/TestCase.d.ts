@@ -1,1 +1,1 @@
-var TestCase, assertEquals, assertNotNull;
+var TestCase, assertEquals, assertNotNull, fail;
