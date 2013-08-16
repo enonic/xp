@@ -8,15 +8,26 @@
   bottom: 0;
   width: auto;
 
-  a.reset-link {
+  a.clear-filter-button {
     position: absolute;
-    top: 44px;
+    top: 54px;
     left: 20px;
   }
 
-  input.search-field {
+  input.text-search-field {
     margin-bottom: 20px;
     width: 100%;
+    background-image: url("../images/admin-search-trigger-v.gif") !important;
+    background-repeat: no-repeat !important;
+    background-position: right top !important;
+    padding-right: 30px;
+    padding: 4px 9px;
+    height: 26px;
+    border: solid 1px #aaa;
+  }
+
+  input.text-search-field:focus {
+    border-color: black;
   }
 
   .facet-group {
