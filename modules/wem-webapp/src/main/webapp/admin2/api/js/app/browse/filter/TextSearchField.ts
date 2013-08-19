@@ -4,7 +4,7 @@ module api_app_browse_filter {
     export class TextSearchField extends api_dom.InputEl {
 
         constructor(placeholder?:string) {
-            super('SearchField', 'text-search-field');
+            super('TextSearchField', 'text-search-field');
             this.setPlaceholder(placeholder);
         }
 
